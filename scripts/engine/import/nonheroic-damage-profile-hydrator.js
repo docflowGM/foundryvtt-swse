@@ -3,14 +3,16 @@
  * Nonheroic Damage Profile Hydrator (NH-2)
  *
  * Applies source-backed statblock attack-row profiles to imported NPC weapon
- * reference items. This is intentionally conservative: if no profile matches
- * both the source actor and raw attack text, the importer keeps the legacy
- * reference-only item unchanged.
+ * reference items. Source/actor/match are attribution wrappers; runtime-facing
+ * profile fields intentionally mirror the canonical damage model used by
+ * data/combat/damage-profiles.schema.json.
  */
 
 const PROFILE_FILES = Object.freeze([
   'data/nonheroic/nonheroic-weapon-damage-profiles.nh1-droids.json'
 ]);
+
+const WIREABLE_CONFIDENCE = new Set(['verified', 'sourcebookVerified']);
 
 let profileCachePromise = null;
 
@@ -56,6 +58,10 @@ function deepMerge(target, source) {
   return output;
 }
 
+function uniqueStrings(values) {
+  return [...new Set(asArray(values).map(cleanText).filter(Boolean))];
+}
+
 function maybeIncludes(haystack, needles) {
   const normalized = cleanText(haystack).toLowerCase();
   const list = asArray(needles).map((needle) => cleanText(needle).toLowerCase()).filter(Boolean);
@@ -83,24 +89,121 @@ function rawMatches(profile, raw) {
   return maybeIncludes(raw, profile?.match?.rawIncludes);
 }
 
-function chooseVariant(profile, raw) {
-  const normalizedRaw = cleanText(raw).toLowerCase();
-  for (const variant of asArray(profile.variants)) {
-    const markers = [variant.slug, variant.label, ...asArray(variant.tags)]
-      .map((value) => cleanText(value).toLowerCase())
-      .filter(Boolean);
-    if (markers.some((marker) => normalizedRaw.includes(marker))) {
-      return variant;
-    }
-  }
-  return null;
+function canonicalFormula(profile, variant = null) {
+  return cleanText(
+    asArray(variant?.components)[0]?.formula
+    ?? variant?.damage?.formula
+    ?? asArray(profile.components)[0]?.formula
+    ?? profile.damageFormula
+    ?? profile.damage?.formula
+  );
+}
+
+function canonicalPrimaryType(profile, variant = null) {
+  return cleanText(
+    variant?.primaryType
+    ?? asArray(variant?.components)[0]?.type
+    ?? profile.primaryType
+    ?? asArray(profile.components)[0]?.type
+    ?? profile.damageType
+    ?? profile.damage?.primaryType
+    ?? asArray(profile.damageTypes)[0]
+    ?? asArray(profile.damage?.types)[0]
+  );
+}
+
+function canonicalDamageTypes(profile, variant = null) {
+  return uniqueStrings([
+    ...asArray(variant?.components).map((component) => component?.type),
+    ...asArray(profile.components).map((component) => component?.type),
+    ...asArray(profile.damageTypes),
+    ...asArray(profile.damage?.types),
+    canonicalPrimaryType(profile, variant)
+  ]);
+}
+
+function canonicalTags(profile, variant = null) {
+  return uniqueStrings([
+    ...asArray(profile.tags),
+    ...asArray(profile.weapon?.tags),
+    ...asArray(variant?.tags),
+    ...asArray(variant?.components).flatMap((component) => asArray(component?.tags)),
+    ...asArray(profile.components).flatMap((component) => asArray(component?.tags))
+  ]);
+}
+
+function normalizeRecord(record) {
+  const slug = slugifyStatblockName(record.slug ?? record.id ?? record.name ?? record.weapon?.printedName);
+  const sourceBook = record.source?.book ?? record.sourceBook ?? null;
+  const sourceStatus = record.source?.status ?? record.sourceStatus ?? null;
+  const actorName = record.actor?.name ?? record.actorName ?? null;
+  const attackName = record.name ?? record.weapon?.printedName ?? record.attackName ?? null;
+  const attackKind = record.weapon?.rowKind ?? record.attackKind ?? null;
+  const confidence = record.confidence ?? null;
+  const components = asArray(record.components).length
+    ? asArray(record.components)
+    : asArray(record.damage?.components).map((component, index) => ({
+        key: component.key ?? (index === 0 ? 'base' : `component-${index + 1}`),
+        label: component.label ?? attackName ?? 'Damage',
+        formula: component.formula ?? record.damage?.formula ?? null,
+        type: component.type ?? record.damage?.primaryType ?? asArray(record.damage?.types)[0] ?? null,
+        tags: asArray(component.tags)
+      }));
+
+  return {
+    ...record,
+    slug,
+    actorName,
+    sourceBook,
+    sourceStatus,
+    attackName,
+    attackKind,
+    delivery: record.delivery ?? record.weapon?.delivery ?? null,
+    attackShape: record.attackShape ?? record.resolution?.attackShape ?? null,
+    scale: record.scale ?? record.resolution?.scale ?? 'character',
+    primaryType: record.primaryType ?? record.damage?.primaryType ?? asArray(record.damage?.types)[0] ?? null,
+    damageTypes: record.damageTypes ?? record.damage?.types ?? [],
+    components,
+    attack: record.attack ?? {
+      isArea: !!record.resolution?.areaAttack,
+      halfDamageOnMiss: !!record.resolution?.halfDamageOnMiss,
+      noCriticalDouble: !!record.resolution?.noCriticalDouble,
+      coverCanNegateMissDamage: !!record.resolution?.coverCanNegateMissDamage,
+      attackRollMinimum: record.resolution?.attackRollMinimum ?? null,
+      defense: record.resolution?.defense ?? null
+    },
+    area: record.area ?? {},
+    riders: asArray(record.riders),
+    tags: record.tags ?? record.weapon?.tags ?? [],
+    sourceRefs: record.sourceRefs ?? (sourceBook ? [{ book: sourceBook, page: record.source?.page ?? null, note: sourceStatus ?? '' }] : []),
+    variants: asArray(record.variants).map((variant) => ({
+      ...variant,
+      slug: slugifyStatblockName(variant.slug ?? variant.id ?? variant.label),
+      components: asArray(variant.components).length ? asArray(variant.components) : asArray(variant.damage?.components)
+    })),
+    confidence
+  };
+}
+
+function normalizeLegacyProfile(profile) {
+  return {
+    ...profile,
+    slug: slugifyStatblockName(profile.slug ?? profile.attackName ?? profile.actorName),
+    sourceBook: profile.sourceBook ?? null,
+    sourceStatus: profile.sourceStatus ?? null,
+    attackName: profile.attackName ?? profile.name ?? null,
+    attackKind: profile.attackKind ?? null,
+    components: asArray(profile.components).length
+      ? profile.components
+      : [{ key: 'base', label: profile.attackName ?? profile.name ?? 'Damage', formula: profile.damageFormula ?? null, type: profile.primaryType ?? asArray(profile.damageTypes)[0] ?? null, tags: ['base'] }],
+    variants: asArray(profile.variants).map((variant) => ({ ...variant, slug: slugifyStatblockName(variant.slug ?? variant.id ?? variant.label) }))
+  };
 }
 
 function flattenProfiles(data) {
-  return asArray(data?.profiles)
-    .filter((profile) => profile && typeof profile === 'object')
-    .map((profile) => ({ ...profile, slug: slugifyStatblockName(profile.slug ?? profile.attackName ?? profile.actorName) }))
-    .filter((profile) => profile.slug);
+  const records = asArray(data?.records).map(normalizeRecord);
+  const legacyProfiles = asArray(data?.profiles).map(normalizeLegacyProfile);
+  return [...records, ...legacyProfiles].filter((profile) => profile.slug);
 }
 
 async function loadProfileFile(file, { fetchImpl, basePath }) {
@@ -126,16 +229,17 @@ export function clearNonheroicDamageProfileCache() {
   profileCachePromise = null;
 }
 
+function isWireableProfile(profile) {
+  return WIREABLE_CONFIDENCE.has(profile?.confidence);
+}
+
 export async function findNonheroicDamageProfileMatch(raw, context = {}) {
   const profiles = await loadNonheroicDamageProfiles(context.profileLoaderOptions ?? {});
-  const candidates = profiles.filter((profile) => actorMatches(profile, context) && rawMatches(profile, raw));
+  const candidates = profiles.filter((profile) => isWireableProfile(profile) && actorMatches(profile, context) && rawMatches(profile, raw));
   if (!candidates.length) return null;
 
-  // Prefer fully sourcebook-verified rows, then source-text verified rows, then
-  // any remaining explicit profile. This keeps review-required rows from
-  // displacing page-verified entries when both could match.
   candidates.sort((a, b) => {
-    const score = (profile) => profile.confidence === 'sourcebookVerified' ? 3 : profile.confidence === 'sourceTextVerified' ? 2 : 1;
+    const score = (profile) => profile.confidence === 'verified' || profile.confidence === 'sourcebookVerified' ? 3 : 1;
     return score(b) - score(a);
   });
 
@@ -144,11 +248,28 @@ export async function findNonheroicDamageProfileMatch(raw, context = {}) {
   return { profile, variant };
 }
 
+function chooseVariant(profile, raw) {
+  const normalizedRaw = cleanText(raw).toLowerCase();
+  for (const variant of asArray(profile.variants)) {
+    const markers = [variant.slug, variant.label, ...asArray(variant.tags)]
+      .map((value) => cleanText(value).toLowerCase())
+      .filter(Boolean);
+    if (markers.some((marker) => normalizedRaw.includes(marker))) {
+      return variant;
+    }
+  }
+  return null;
+}
+
 function buildHydratedSystem(baseSystem = {}, profile, variant = null) {
-  const damageFormula = cleanText(variant?.damageFormula ?? profile.damageFormula);
-  const tags = [...new Set([...asArray(profile.tags), ...asArray(variant?.tags)].map(cleanText).filter(Boolean))];
-  const damageTypes = asArray(profile.damageTypes).map(cleanText).filter(Boolean);
-  const primaryType = cleanText(profile.primaryType || damageTypes[0]);
+  const damageFormula = canonicalFormula(profile, variant);
+  const primaryType = canonicalPrimaryType(profile, variant);
+  const damageTypes = canonicalDamageTypes(profile, variant);
+  const tags = canonicalTags(profile, variant);
+  const attack = clone(variant?.attack ?? profile.attack ?? {});
+  const area = clone(variant?.area ?? profile.area ?? {});
+  const components = clone(asArray(variant?.components).length ? variant.components : profile.components ?? []);
+  const riders = clone(asArray(variant?.riders).length ? variant.riders : profile.riders ?? []);
 
   return mergeObject(baseSystem, {
     damage: damageFormula || baseSystem.damage || '',
@@ -159,9 +280,10 @@ function buildHydratedSystem(baseSystem = {}, profile, variant = null) {
     delivery: profile.delivery ?? null,
     attackShape: profile.attackShape ?? null,
     scale: profile.scale ?? 'character',
-    attack: clone(profile.attack ?? {}),
-    area: clone(profile.area ?? {}),
-    riders: clone(profile.riders ?? []),
+    attack,
+    area,
+    components,
+    riders,
     damageProfileSlug: variant?.slug ?? profile.slug,
     damageProfileBaseSlug: profile.slug,
     statblockAttackName: profile.attackName ?? null,
