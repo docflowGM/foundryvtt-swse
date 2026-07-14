@@ -1,0 +1,157 @@
+{
+  "$schema": "./nonheroic-weapon-damage-profiles.schema.json",
+  "$schemaVersion": 2,
+  "schemaVersion": 2,
+  "profileKind": "nonheroic-statblock-weapon-damage",
+  "sourceFamily": "NH-4 Unknown Regions droid statblock damage profiles",
+  "canonPolicy": {
+    "authority": "Printed Unknown Regions statblock/action rows are canonical for imported NPC play-mode attacks.",
+    "rowSemantics": "Each record represents one printed statblock attack/action row, not a generic equipment definition.",
+    "unmatchedRows": "Importer consumers must leave unmatched rows reference-only/manual; do not infer formulas from item names.",
+    "riders": "Stun and other non-HP effects remain typed damage/riders/tags according to the canonical packet model."
+  },
+  "notes": [
+    "This batch starts Unknown Regions with sourcebook-printed droid rows that have clear attack and damage expressions.",
+    "Rows use the same canonical runtime fields as data/combat/damage-profiles.schema.json and the NH-2 profile schema.",
+    "Printed statblock attack totals are intentionally not copied into item attackBonus."
+  ],
+  "records": [
+    {
+      "slug": "wanderer-scout-surveyor-droid-claw",
+      "name": "Claw",
+      "confidence": "verified",
+      "reviewRequired": false,
+      "source": {
+        "book": "The Unknown Regions",
+        "status": "sourcebook-statblock",
+        "page": null,
+        "evidence": [
+          "Wanderer Scout Surveyor Droid statblock lists Melee claw +2 (1d4).",
+          "The droid systems list 1 claw appendage."
+        ]
+      },
+      "actor": {
+        "name": "Wanderer Scout Surveyor Droid",
+        "slugs": ["wanderer-scout-surveyor-droid", "scout-surveyor-droid"],
+        "kind": "droid",
+        "challengeLevel": 1
+      },
+      "match": {
+        "actorSlugs": ["wanderer-scout-surveyor-droid", "scout-surveyor-droid"],
+        "rawIncludes": ["claw"]
+      },
+      "weapon": {
+        "printedName": "Claw",
+        "rowKind": "melee",
+        "integrated": true,
+        "category": "natural",
+        "range": "melee"
+      },
+      "delivery": "natural",
+      "attackShape": "single-target",
+      "scale": "character",
+      "primaryType": "slashing",
+      "tags": ["droid", "natural-weapon", "claw", "statblock"],
+      "attack": {
+        "isArea": false,
+        "halfDamageOnMiss": false,
+        "noCriticalDouble": false,
+        "coverCanNegateMissDamage": false,
+        "attackRollMinimum": null,
+        "defense": "reflex"
+      },
+      "area": {
+        "shape": null,
+        "radius": null,
+        "size": null,
+        "originMode": null,
+        "targetPolicy": "single"
+      },
+      "components": [
+        {
+          "key": "base",
+          "label": "Claw",
+          "formula": "1d4",
+          "type": "slashing",
+          "tags": ["base", "slashing", "claw", "natural-weapon"]
+        }
+      ],
+      "riders": [],
+      "sourceRefs": [
+        { "book": "The Unknown Regions", "page": null, "note": "Wanderer Scout Surveyor Droid melee claw row." }
+      ],
+      "variants": [],
+      "notes": [
+        "The printed row does not state a damage type; claw is authored as slashing using existing natural-weapon conventions."
+      ]
+    },
+    {
+      "slug": "wanderer-scout-surveyor-droid-stun-blaster",
+      "name": "Stun Blaster",
+      "confidence": "verified",
+      "reviewRequired": false,
+      "source": {
+        "book": "The Unknown Regions",
+        "status": "sourcebook-statblock",
+        "page": null,
+        "evidence": [
+          "Wanderer Scout Surveyor Droid statblock lists Ranged stun blaster +3 (3d6 stun).",
+          "The action block says Stun Blast: with its stun blaster, the scout surveyor droid can make a ranged attack at +3; on success it deals 3d6 points of stun damage.",
+          "Possessions state the stun blaster is treated as a blaster pistol set on stun."
+        ]
+      },
+      "actor": {
+        "name": "Wanderer Scout Surveyor Droid",
+        "slugs": ["wanderer-scout-surveyor-droid", "scout-surveyor-droid"],
+        "kind": "droid",
+        "challengeLevel": 1
+      },
+      "match": {
+        "actorSlugs": ["wanderer-scout-surveyor-droid", "scout-surveyor-droid"],
+        "rawIncludes": ["stun blaster", "stun blast"]
+      },
+      "weapon": {
+        "printedName": "Stun Blaster",
+        "rowKind": "ranged",
+        "integrated": false,
+        "category": "pistols",
+        "range": null
+      },
+      "delivery": "weapon",
+      "attackShape": "single-target",
+      "scale": "character",
+      "primaryType": "stun",
+      "tags": ["droid", "weapon", "blaster", "pistol", "stun", "statblock"],
+      "attack": {
+        "isArea": false,
+        "halfDamageOnMiss": false,
+        "noCriticalDouble": false,
+        "coverCanNegateMissDamage": false,
+        "attackRollMinimum": null,
+        "defense": "reflex"
+      },
+      "area": {
+        "shape": null,
+        "radius": null,
+        "size": null,
+        "originMode": null,
+        "targetPolicy": "single"
+      },
+      "components": [
+        {
+          "key": "base",
+          "label": "Stun Blaster",
+          "formula": "3d6",
+          "type": "stun",
+          "tags": ["base", "stun", "blaster", "pistol"]
+        }
+      ],
+      "riders": [],
+      "sourceRefs": [
+        { "book": "The Unknown Regions", "page": null, "note": "Wanderer Scout Surveyor Droid stun blaster/statblock and Stun Blast action row." }
+      ],
+      "variants": [],
+      "notes": []
+    }
+  ]
+}
