@@ -6,9 +6,12 @@ NH-4 continues the nonheroic statblock damage profile pass by adding sourcebook-
 
 The batch is source-strict. It includes only rows where the source text clearly prints the attack and damage expression.
 
+This phase now also pilots the base-weapon reference pattern for ordinary weapons: `weapon.uuid` identifies the reusable compendium item where one exists, while `formula.printed` remains the authoritative statblock damage expression used for hydration.
+
 ## Files changed
 
 ```text
+data/nonheroic/nonheroic-weapon-damage-profiles.schema.json
 data/nonheroic/nonheroic-weapon-damage-profiles.nh4-unknown-regions.json
 data/nonheroic/nonheroic-weapon-damage-profiles.nh4-unknown-regions-beasts.json
 scripts/engine/import/nonheroic-damage-profile-hydrator.js
@@ -37,7 +40,69 @@ sourceRefs
 confidence
 ```
 
-Source, actor, match, and weapon fields remain attribution/matching wrappers and are not a separate runtime damage model.
+Source, actor, match, weapon, and formula fields remain attribution/matching/audit wrappers and are not a separate runtime damage model.
+
+## Base weapon reference pattern
+
+Ordinary equipment rows can now carry:
+
+```json
+"weapon": {
+  "printedName": "Blaster Pistol",
+  "uuid": "Compendium.foundryvtt-swse.weapons-pistols.Item.weapon-blaster-pistol",
+  "baseSlug": "weapon-blaster-pistol",
+  "basePack": "weapons-pistols",
+  "baseFormula": "3d6",
+  "baseType": "energy",
+  "baseFormulaPolicy": "uuid"
+},
+"formula": {
+  "mode": "base-plus-delta",
+  "printed": "3d6+2",
+  "delta": "+2",
+  "deltaSource": "printed-statblock"
+}
+```
+
+The UUID/base fields let tools audit or explain duplication against the compendium weapon. The printed formula remains the authority for imported NPC damage.
+
+Natural attacks and custom actions use `formula.mode: "custom"` and `weapon.uuid: null` until the system has a deliberate reusable natural-weapon item model.
+
+## Packet compatibility
+
+The UUID/formula layer is not a new combat path. During hydration, the importer still writes the same runtime-facing fields used by the packet builders:
+
+```text
+item.system.damage
+item.system.damageFormula
+item.system.damageType
+item.system.damageTypes
+item.system.primaryType
+item.system.delivery
+item.system.attackShape
+item.system.scale
+item.system.attack
+item.system.area
+item.system.components
+item.system.riders
+item.system.tags
+```
+
+The canonical damage packet builder can keep consuming the hydrated item exactly as before. The new fields are retained as metadata:
+
+```text
+item.system.sourceWeaponUuid
+item.system.sourceWeaponBaseSlug
+item.system.sourceWeaponBaseFormula
+item.system.statblockPrintedFormula
+item.system.statblockFormulaMode
+item.system.statblockFormulaDelta
+flags.swse.damageProfile.sourceWeaponUuid
+flags.swse.damageProfile.printedFormula
+flags.swse.damageProfile.formulaDelta
+```
+
+That gives the UI and validators a way to explain `Blaster Pistol 3d6 + printed statblock delta +2 = 3d6+2`, while the packet still receives a normal printed formula.
 
 ## Verified sourcebook rows covered
 
@@ -45,37 +110,37 @@ Source, actor, match, and weapon fields remain attribution/matching wrappers and
 
 Source: *The Unknown Regions*.
 
-- Claw — `1d4`, natural delivery, single-target.
-- Stun Blaster / Stun Blast — `3d6`, stun, single-target.
+- Claw — `1d4`, natural delivery, single-target, custom natural attack.
+- Stun Blaster / Stun Blast — `3d6`, stun, single-target, references the base Blaster Pistol UUID but overrides type to stun.
 
 ### Vagaari Infiltrator, CL 5
 
 Source: *The Unknown Regions*.
 
-- Stun Baton — `2d6+4 stun`, single-target.
-- Blaster Pistol — `3d6+1`, single-target.
-- Hold-Out Blaster Pistol — `3d4+1`, single-target.
+- Stun Baton — `2d6+4 stun`, single-target, base Stun Baton plus printed delta `+1d6+4`.
+- Blaster Pistol — `3d6+1`, single-target, base Blaster Pistol plus printed delta `+1`.
+- Hold-Out Blaster Pistol — `3d4+1`, single-target, base Hold-Out Blaster Pistol plus printed delta `+1`.
 
 ### Sando's Boys, CL 8
 
 Source: *The Unknown Regions*.
 
-- Vibroblade — `2d6+3`, single-target.
-- Blaster Pistol — `3d6+2`, single-target.
+- Vibroblade — `2d6+3`, single-target, base Vibroblade plus printed delta `+3`.
+- Blaster Pistol — `3d6+2`, single-target, base Blaster Pistol plus printed delta `+2`.
 
 ### Sando's Hired Blasters, CL 6
 
 Source: *The Unknown Regions*.
 
-- Unarmed — `1d6+1`, squad melee area attack.
-- Blaster Pistol — `3d6`, single-target.
-- Blaster Carbine — `3d8`, single-target.
+- Unarmed — `1d6+1`, squad melee area attack, custom unarmed row.
+- Blaster Pistol — `3d6`, single-target, base Blaster Pistol match.
+- Blaster Carbine — `3d8`, single-target, base Blaster Carbine match.
 
 ### Reyko, CL 5
 
 Source: *The Unknown Regions*.
 
-- Gore — `1d8+7`, natural delivery, single-target.
+- Gore — `1d8+7`, natural delivery, single-target, custom natural attack.
 - Gore when charging — `1d8+10`, natural delivery, single-target variant.
 - Vehicle charge x2 and push effect are retained as riders/tags, not executable runtime effects.
 
@@ -83,8 +148,8 @@ Source: *The Unknown Regions*.
 
 Source: *The Unknown Regions*.
 
-- Claw — `1d4+8`, natural delivery, single-target.
-- Bite — `1d6+8`, natural delivery, single-target.
+- Claw — `1d4+8`, natural delivery, single-target, custom natural attack.
+- Bite — `1d6+8`, natural delivery, single-target, custom natural attack.
 - Rend `+2d6` is retained as a rider, not an executable runtime effect.
 
 ## Hydrator update
@@ -124,6 +189,8 @@ The printed attack totals are not copied into item `attackBonus` because they ar
 NH-4 does not:
 
 - parse printed attack totals,
+- reverse-engineer why a statblock delta exists,
+- resolve compendium UUIDs at runtime,
 - infer weapon rows from generic equipment names,
 - rewrite compendium actors,
 - rewrite source JSON,
@@ -137,8 +204,9 @@ After NH-4 is present in a local Foundry checkout:
 
 - Import a Wanderer Scout Surveyor Droid if present in the importer source data.
 - Verify the claw row hydrates as `delivery: "natural"`, `attackShape: "single-target"`, `primaryType: "slashing"`, and formula `1d4`.
-- Verify the stun blaster/stun blast row hydrates as `delivery: "weapon"`, `primaryType: "stun"`, and formula `3d6`.
-- Import a Vagaari Infiltrator if present and verify stun baton/blaster/hold-out rows hydrate without printed attack totals.
+- Verify the stun blaster/stun blast row hydrates as `delivery: "weapon"`, `primaryType: "stun"`, source weapon UUID for Blaster Pistol, and formula `3d6`.
+- Import a Vagaari Infiltrator if present and verify stun baton/blaster/hold-out rows hydrate with `statblockPrintedFormula` and `statblockFormulaDelta` metadata but without printed attack totals.
 - Import Sando's Boys and Sando's Hired Blasters if present and verify their printed weapon rows hydrate.
 - Import Reyko and Vindinax if present and verify their natural weapon rows hydrate while riders remain metadata-only.
+- Roll a hydrated row and verify the packet builder receives the printed damage formula from `item.system.damageFormula` without needing to resolve `weapon.uuid`.
 - Verify printed attack totals are not inserted into `item.system.attackBonus`.
