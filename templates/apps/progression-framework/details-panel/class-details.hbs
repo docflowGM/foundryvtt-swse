@@ -120,9 +120,11 @@
       <div class="prog-class-details__mentor-portrait-frame prog-holo-media prog-holo-media--avatar"
            style="width:72px;height:72px;margin:4px auto 6px;">
         <img class="prog-class-details__mentor-portrait prog-holo-media__image"
-             src="{{mentorPortrait}}"
+             data-src="{{mentorPortrait}}"
+             src="data:image/gif;base64,R0lGODlhAQABAAAAACw="
              alt="{{mentorName}}"
              style="width:100%;height:100%;object-fit:contain;display:block;"
+             onload="if(!this.dataset.swseResolved){this.dataset.swseResolved='1';let raw=this.dataset.src||'';let src=raw.trim().replace(/^\/systems\//i,'systems/').replace(/^\/foundryvtt-swse\//i,'systems/foundryvtt-swse/').replace(/^foundryvtt-swse\//i,'systems/foundryvtt-swse/').replace(/^assets\//i,'systems/foundryvtt-swse/assets/').replace(/(assets\/mentors\/[^?#.]+)\.png([?#].*)?$/i,'$1.webp$2');this.src=src||'systems/foundryvtt-swse/assets/mentors/salty.webp';}"
              onerror="this.onerror=null; this.src='systems/foundryvtt-swse/assets/mentors/salty.webp';">
       </div>
     {{/if}}
