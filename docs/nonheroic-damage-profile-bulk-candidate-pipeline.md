@@ -12,18 +12,24 @@ and mechanically sorts the result into a "safe to bulk-generate" lane and a
 ## Two-lane model
 
 **Lane A — ordinary weapons, bulk generated.** Rows where the printed weapon
-name has exactly one compendium match and the printed damage formula
-cleanly derives from the compendium base (`base`, `base-plus-delta`, or
-`base-plus-dice`). These are the `safe-ordinary-weapon-candidate` and
-`safe-ordinary-weapon-with-delta` buckets in the report.
+name has exactly one compendium match, the printed damage formula cleanly
+derives from the compendium base (`base`, `base-plus-delta`, or
+`base-plus-dice`), and the row carries no special attack-mode/feat/
+attack-count/variant suffix. These are the `safe-ordinary-weapon-candidate`
+and `safe-ordinary-weapon-with-delta` buckets in the report, and the only
+statuses ever written into `data/nonheroic/generated/`.
 
 **Lane B — exceptions, reviewed manually.** Everything else: natural/unarmed
-attacks, area/autofire/grenade/rapid-shot/special-mode rows, poison/disease/
-condition-track riders, rows with no compendium match, rows with an
-ambiguous multi-item compendium match, and rows where the compendium exists
-but the printed dice don't obviously derive from it (`formula-unclear` —
-this also catches source text with more than one dice expression, e.g.
-garbled/duplicated import data).
+attacks, area/autofire/grenade/rapid-shot/special-mode rows, ordinary
+weapons whose row expresses a special attack mode/feat/attack-count/variant
+(`ordinary-weapon-special-mode` — e.g. "with Rapid Strike", "with Double
+Attack", "with Trigger Work", "with Power Attack"; the weapon itself matches
+a compendium base item, but the row needs human review or explicit variant
+modeling rather than bulk promotion), poison/disease/condition-track riders,
+rows with no compendium match, rows with an ambiguous multi-item compendium
+match, and rows where the compendium exists but the printed dice don't
+obviously derive from it (`formula-unclear` — this also catches source text
+with more than one dice expression, e.g. garbled/duplicated import data).
 
 ## Inputs (source authority)
 
@@ -82,13 +88,19 @@ files, or runtime code.
 - 4,352 candidate rows extracted from `nonheroic.db` + `npc.db` + `beasts.db`.
 - 10 already match an existing NH-1/NH-3/NH-4/NH-5 profile record
   (`already-profiled`).
-- **1,821 rows (154 + 1,667) are Lane A: an exact single compendium match
-  with an obviously-derived printed formula.** This is the number that
-  matters for "how much can be bulk-generated" — compare against the PR
-  #903 audit's `covered: 4`, which was measuring something else entirely
-  (broad actor-pack/possessions scanning without this tool's clean-field
-  restriction, weapon-name-vs-dice-count validation, or ambiguous-dice
-  detection).
+- **1,556 rows (154 + 1,402) are Lane A: an exact single compendium match
+  with an obviously-derived printed formula and no special attack-mode
+  suffix.** This is the number that matters for "how much can be
+  bulk-generated" — compare against the PR #903 audit's `covered: 4`, which
+  was measuring something else entirely (broad actor-pack/possessions
+  scanning without this tool's clean-field restriction,
+  weapon-name-vs-dice-count validation, or ambiguous-dice detection).
+- 292 rows matched a compendium item exactly, and the printed formula would
+  otherwise classify as base/base+delta/base+dice, but the row text carries
+  a special attack-mode/feat/attack-count/variant suffix (e.g. "with Rapid
+  Strike", "with Double Attack", "with Trigger Work", "with Power Attack")
+  (`ordinary-weapon-special-mode`). These are intentionally excluded from
+  Lane A and routed to manual/variant review instead of bulk promotion.
 - 514 rows have no compendium match at all — this is a real content gap in
   `packs/weapons*.db` (common items like plain "Knife", "Spear",
   "Quarterstaff", "Combat Gloves", "Force Pike", "Bayonet", "Baton", "Mace"
@@ -97,7 +109,7 @@ files, or runtime code.
 - 1,138 rows are natural/unarmed.
 - 549 rows are area/autofire/grenade/rapid-shot/burst/splash/cone rows.
 - 9 rows are poison/disease/condition-track riders.
-- 311 rows matched a compendium item by name but the printed dice don't
+- 284 rows matched a compendium item by name but the printed dice don't
   obviously derive from the compendium base — the most common pattern is
   "Blaster Rifle"/"Heavy Blaster Rifle" printed with a different die size
   than the current compendium base (e.g. printed `3d8+N` against a

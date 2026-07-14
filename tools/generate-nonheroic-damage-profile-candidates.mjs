@@ -50,6 +50,21 @@ const SPECIAL_MODE_WORDS = /\b(autofire|rapid shot|burst|splash|cone|area|grenad
 // vagaari-infiltrator-stun-baton), not a rider/status effect requiring
 // manual review. Genuine status-effect words remain here.
 const RIDER_WORDS = /\b(poison|disease|paraly[sz]e|condition track|persistent condition|trip|knockdown|blind(?:ed)?|deafen(?:ed)?)\b/i;
+// Special attack-mode / feat / attack-count / variant suffixes on an
+// otherwise-ordinary weapon row (e.g. "Lightsaber +7 (3d8+6) with Rapid
+// Strike"). The weapon itself may have an exact compendium match with an
+// obviously-derived formula, but the row is expressing a mode/feat/
+// attack-count/variant behavior that needs human review or explicit variant
+// modeling -- it is not a safe Lane A bulk-promotion row. Checked only after
+// an exact single compendium weapon match is found (see classifyRow), so it
+// never overrides the earlier natural/unarmed, rider, or true
+// area/autofire/grenade/special (SPECIAL_MODE_WORDS) classifications above.
+// "autofire" and "burst fire" are listed here for completeness, but in
+// practice those rows are already caught by SPECIAL_MODE_WORDS earlier in
+// classifyRow and never reach this check. Uses \b word boundaries throughout
+// (same "blast" inside "Blaster" bug class this file already guards against
+// elsewhere).
+const SPECIAL_ATTACK_MODE_WORDS = /\b(rapid shot|rapid strike|double attack|triple attack|dual attack|multiattack|trigger work|mighty swing|power attack|charging|charge|cleave|whirlwind|burst fire|autofire|brace|aimed shot|sniper)\b/i;
 
 function readText(relPath) {
   return fs.readFileSync(path.join(ROOT, relPath), 'utf8');
@@ -347,6 +362,16 @@ function classifyRow(clause, attackKind, weaponIndex, existingMatchers, actorSlu
   }
 
   const item = rawMatches[0];
+
+  if (SPECIAL_ATTACK_MODE_WORDS.test(combinedText)) {
+    return {
+      status: 'ordinary-weapon-special-mode',
+      detail: `exact match to "${item.name}" (${item.pack}); row text indicates a special attack mode/feat/attack-count/variant (e.g. rapid strike, double attack, power attack, trigger work) rather than a plain base weapon damage row, so it is excluded from Lane A bulk promotion and routed to manual/variant review.`,
+      matches: [item],
+      delta: classifyDelta(item.damage, clause.damageFormula)
+    };
+  }
+
   const delta = classifyDelta(item.damage, clause.damageFormula);
   if (!delta) {
     return { status: 'formula-unclear', detail: `matched "${item.name}" (${item.pack}, base ${item.damage}); printed formula "${clause.damageFormula}" is not a simple/obvious base or base+delta/base+dice relationship.`, matches: [item] };
@@ -489,6 +514,7 @@ function main() {
     'already-profiled': [],
     'safe-ordinary-weapon-candidate': [],
     'safe-ordinary-weapon-with-delta': [],
+    'ordinary-weapon-special-mode': [],
     'no-compendium-match': [],
     'ambiguous-compendium-match': [],
     'natural-or-unarmed': [],
@@ -575,6 +601,7 @@ function renderMarkdown(summary, buckets) {
     'already-profiled': 'Already Profiled (matches an existing NH profile record)',
     'safe-ordinary-weapon-candidate': 'Safe Ordinary Weapon Candidates (exact compendium match, printed formula = base)',
     'safe-ordinary-weapon-with-delta': 'Safe Ordinary Weapon Candidates With Delta (exact compendium match, obvious base+delta/base+dice)',
+    'ordinary-weapon-special-mode': 'Ordinary Weapon, Special Attack Mode (exact compendium match, but row expresses a mode/feat/attack-count/variant -- manual review lane)',
     'no-compendium-match': 'No Compendium Match',
     'ambiguous-compendium-match': 'Ambiguous Compendium Match',
     'natural-or-unarmed': 'Natural / Unarmed Rows (manual review lane)',

@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-07-14T13:17:36.369Z",
+  "generatedAt": "2026-07-14T14:18:55.893Z",
   "generatedBy": "tools/generate-nonheroic-damage-profile-candidates.mjs",
   "note": "Staging candidates only. NOT a canonical profile file, NOT wired into the hydrator. Human review required before promoting any row into data/nonheroic/nonheroic-weapon-damage-profiles.*.json.",
   "sourcePack": "packs/nonheroic.db",
-  "recordCount": 523,
+  "recordCount": 468,
   "records": [
     {
       "slug": "goon-heavy-blaster-pistol",
@@ -4006,60 +4006,6 @@
       "reviewRequired": true
     },
     {
-      "slug": "dark-jedi-lightsaber",
-      "name": "Lightsaber",
-      "status": "safe-ordinary-weapon-with-delta",
-      "source": {
-        "book": "Unknown / missing source",
-        "status": "generated-candidate; page and confidence review required",
-        "page": null,
-        "generatedFrom": "packs/nonheroic.db"
-      },
-      "actor": {
-        "name": "Dark Jedi",
-        "slugs": [
-          "dark-jedi"
-        ]
-      },
-      "match": {
-        "actorSlugs": [
-          "dark-jedi"
-        ],
-        "rawIncludes": [
-          "lightsaber"
-        ]
-      },
-      "weapon": {
-        "printedName": "Lightsaber",
-        "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
-        "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
-        "baseFormula": "2d8",
-        "baseType": "energy",
-        "baseFormulaPolicy": "uuid"
-      },
-      "printedAttack": {
-        "text": "+7",
-        "bonus": 7,
-        "bonuses": [
-          7
-        ],
-        "source": "printed-statblock",
-        "hydratePolicy": "metadata-only"
-      },
-      "formula": {
-        "mode": "base-plus-dice",
-        "printed": "3d8+6",
-        "delta": "+1d8+6",
-        "deltaSource": "printed-statblock"
-      },
-      "annotations": [],
-      "suffix": "with Rapid Strike",
-      "confidence": "manualRequired",
-      "reviewRequired": true
-    },
-    {
       "slug": "rodian-black-sun-vigo-heavy-blaster-pistol",
       "name": "Heavy Blaster Pistol",
       "status": "safe-ordinary-weapon-with-delta",
@@ -4164,60 +4110,6 @@
       },
       "annotations": [],
       "suffix": null,
-      "confidence": "manualRequired",
-      "reviewRequired": true
-    },
-    {
-      "slug": "rodian-black-sun-vigo-heavy-blaster-pistol",
-      "name": "Heavy Blaster Pistol",
-      "status": "safe-ordinary-weapon-with-delta",
-      "source": {
-        "book": "Unknown / missing source",
-        "status": "generated-candidate; page and confidence review required",
-        "page": null,
-        "generatedFrom": "packs/nonheroic.db"
-      },
-      "actor": {
-        "name": "Rodian Black Sun Vigo",
-        "slugs": [
-          "rodian-black-sun-vigo"
-        ]
-      },
-      "match": {
-        "actorSlugs": [
-          "rodian-black-sun-vigo"
-        ],
-        "rawIncludes": [
-          "heavy blaster pistol"
-        ]
-      },
-      "weapon": {
-        "printedName": "Heavy Blaster Pistol",
-        "rowKind": "ranged",
-        "uuid": "Compendium.foundryvtt-swse.weapons-pistols.Item.weapon-heavy-blaster-pistol",
-        "baseSlug": "weapon-heavy-blaster-pistol",
-        "basePack": "weapons-pistols",
-        "baseFormula": "3d8",
-        "baseType": "energy",
-        "baseFormulaPolicy": "uuid"
-      },
-      "printedAttack": {
-        "text": "+10",
-        "bonus": 10,
-        "bonuses": [
-          10
-        ],
-        "source": "printed-statblock",
-        "hydratePolicy": "metadata-only"
-      },
-      "formula": {
-        "mode": "base-plus-delta",
-        "printed": "3d8+9",
-        "delta": "+9",
-        "deltaSource": "printed-statblock"
-      },
-      "annotations": [],
-      "suffix": "with Double Attack",
       "confidence": "manualRequired",
       "reviewRequired": true
     },
@@ -4386,60 +4278,6 @@
       "reviewRequired": true
     },
     {
-      "slug": "notorious-outlaw-vibroblade",
-      "name": "Vibroblade",
-      "status": "safe-ordinary-weapon-with-delta",
-      "source": {
-        "book": "Unknown / missing source",
-        "status": "generated-candidate; page and confidence review required",
-        "page": null,
-        "generatedFrom": "packs/nonheroic.db"
-      },
-      "actor": {
-        "name": "Notorious Outlaw",
-        "slugs": [
-          "notorious-outlaw"
-        ]
-      },
-      "match": {
-        "actorSlugs": [
-          "notorious-outlaw"
-        ],
-        "rawIncludes": [
-          "vibroblade"
-        ]
-      },
-      "weapon": {
-        "printedName": "Vibroblade",
-        "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-vibroblade",
-        "baseSlug": "weapon-vibroblade",
-        "basePack": "weapons-simple",
-        "baseFormula": "2d6",
-        "baseType": "kinetic",
-        "baseFormulaPolicy": "uuid"
-      },
-      "printedAttack": {
-        "text": "+7",
-        "bonus": 7,
-        "bonuses": [
-          7
-        ],
-        "source": "printed-statblock",
-        "hydratePolicy": "metadata-only"
-      },
-      "formula": {
-        "mode": "base-plus-dice",
-        "printed": "3d6+6",
-        "delta": "+1d6+6",
-        "deltaSource": "printed-statblock"
-      },
-      "annotations": [],
-      "suffix": "with Rapid Strike",
-      "confidence": "manualRequired",
-      "reviewRequired": true
-    },
-    {
       "slug": "notorious-outlaw-blaster-pistol",
       "name": "Blaster Pistol",
       "status": "safe-ordinary-weapon-with-delta",
@@ -4490,60 +4328,6 @@
       },
       "annotations": [],
       "suffix": null,
-      "confidence": "manualRequired",
-      "reviewRequired": true
-    },
-    {
-      "slug": "notorious-outlaw-blaster-pistol",
-      "name": "Blaster Pistol",
-      "status": "safe-ordinary-weapon-with-delta",
-      "source": {
-        "book": "Unknown / missing source",
-        "status": "generated-candidate; page and confidence review required",
-        "page": null,
-        "generatedFrom": "packs/nonheroic.db"
-      },
-      "actor": {
-        "name": "Notorious Outlaw",
-        "slugs": [
-          "notorious-outlaw"
-        ]
-      },
-      "match": {
-        "actorSlugs": [
-          "notorious-outlaw"
-        ],
-        "rawIncludes": [
-          "blaster pistol"
-        ]
-      },
-      "weapon": {
-        "printedName": "Blaster Pistol",
-        "rowKind": "ranged",
-        "uuid": "Compendium.foundryvtt-swse.weapons-pistols.Item.weapon-blaster-pistol",
-        "baseSlug": "weapon-blaster-pistol",
-        "basePack": "weapons-pistols",
-        "baseFormula": "3d6",
-        "baseType": "energy",
-        "baseFormulaPolicy": "uuid"
-      },
-      "printedAttack": {
-        "text": "+9",
-        "bonus": 9,
-        "bonuses": [
-          9
-        ],
-        "source": "printed-statblock",
-        "hydratePolicy": "metadata-only"
-      },
-      "formula": {
-        "mode": "base-plus-dice",
-        "printed": "4d6+4",
-        "delta": "+1d6+4",
-        "deltaSource": "printed-statblock"
-      },
-      "annotations": [],
-      "suffix": "with Trigger Work",
       "confidence": "manualRequired",
       "reviewRequired": true
     },
@@ -5792,60 +5576,6 @@
       "reviewRequired": true
     },
     {
-      "slug": "jedi-commander-lightsaber",
-      "name": "Lightsaber",
-      "status": "safe-ordinary-weapon-with-delta",
-      "source": {
-        "book": "Unknown / missing source",
-        "status": "generated-candidate; page and confidence review required",
-        "page": null,
-        "generatedFrom": "packs/nonheroic.db"
-      },
-      "actor": {
-        "name": "Jedi Commander",
-        "slugs": [
-          "jedi-commander"
-        ]
-      },
-      "match": {
-        "actorSlugs": [
-          "jedi-commander"
-        ],
-        "rawIncludes": [
-          "lightsaber"
-        ]
-      },
-      "weapon": {
-        "printedName": "Lightsaber",
-        "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
-        "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
-        "baseFormula": "2d8",
-        "baseType": "energy",
-        "baseFormulaPolicy": "uuid"
-      },
-      "printedAttack": {
-        "text": "+7",
-        "bonus": 7,
-        "bonuses": [
-          7
-        ],
-        "source": "printed-statblock",
-        "hydratePolicy": "metadata-only"
-      },
-      "formula": {
-        "mode": "base-plus-dice",
-        "printed": "3d8+5",
-        "delta": "+1d8+5",
-        "deltaSource": "printed-statblock"
-      },
-      "annotations": [],
-      "suffix": "with Rapid Strike",
-      "confidence": "manualRequired",
-      "reviewRequired": true
-    },
-    {
       "slug": "red-fury-pirate-vibroblade",
       "name": "Vibroblade",
       "status": "safe-ordinary-weapon-with-delta",
@@ -6386,60 +6116,6 @@
       "reviewRequired": true
     },
     {
-      "slug": "storm-commando-blaster-carbine",
-      "name": "Blaster Carbine",
-      "status": "safe-ordinary-weapon-with-delta",
-      "source": {
-        "book": "Unknown / missing source",
-        "status": "generated-candidate; page and confidence review required",
-        "page": null,
-        "generatedFrom": "packs/nonheroic.db"
-      },
-      "actor": {
-        "name": "Storm Commando",
-        "slugs": [
-          "storm-commando"
-        ]
-      },
-      "match": {
-        "actorSlugs": [
-          "storm-commando"
-        ],
-        "rawIncludes": [
-          "blaster carbine"
-        ]
-      },
-      "weapon": {
-        "printedName": "Blaster Carbine",
-        "rowKind": "ranged",
-        "uuid": "Compendium.foundryvtt-swse.weapons-rifles.Item.weapon-blaster-carbine",
-        "baseSlug": "weapon-blaster-carbine",
-        "basePack": "weapons-rifles",
-        "baseFormula": "3d8",
-        "baseType": "energy",
-        "baseFormulaPolicy": "uuid"
-      },
-      "printedAttack": {
-        "text": "+7",
-        "bonus": 7,
-        "bonuses": [
-          7
-        ],
-        "source": "printed-statblock",
-        "hydratePolicy": "metadata-only"
-      },
-      "formula": {
-        "mode": "base-plus-delta",
-        "printed": "3d8+3",
-        "delta": "+3",
-        "deltaSource": "printed-statblock"
-      },
-      "annotations": [],
-      "suffix": "with Double Attack",
-      "confidence": "manualRequired",
-      "reviewRequired": true
-    },
-    {
       "slug": "chiss-mercenary-blaster-pistol",
       "name": "Blaster Pistol",
       "status": "safe-ordinary-weapon-with-delta",
@@ -6764,60 +6440,6 @@
       "reviewRequired": true
     },
     {
-      "slug": "dark-jedi-master-lightsaber",
-      "name": "Lightsaber",
-      "status": "safe-ordinary-weapon-with-delta",
-      "source": {
-        "book": "Unknown / missing source",
-        "status": "generated-candidate; page and confidence review required",
-        "page": null,
-        "generatedFrom": "packs/nonheroic.db"
-      },
-      "actor": {
-        "name": "Dark Jedi Master",
-        "slugs": [
-          "dark-jedi-master"
-        ]
-      },
-      "match": {
-        "actorSlugs": [
-          "dark-jedi-master"
-        ],
-        "rawIncludes": [
-          "lightsaber"
-        ]
-      },
-      "weapon": {
-        "printedName": "Lightsaber",
-        "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
-        "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
-        "baseFormula": "2d8",
-        "baseType": "energy",
-        "baseFormulaPolicy": "uuid"
-      },
-      "printedAttack": {
-        "text": "+19",
-        "bonus": 19,
-        "bonuses": [
-          19
-        ],
-        "source": "printed-statblock",
-        "hydratePolicy": "metadata-only"
-      },
-      "formula": {
-        "mode": "base-plus-dice",
-        "printed": "3d8+12",
-        "delta": "+1d8+12",
-        "deltaSource": "printed-statblock"
-      },
-      "annotations": [],
-      "suffix": "with Rapid Strike",
-      "confidence": "manualRequired",
-      "reviewRequired": true
-    },
-    {
       "slug": "imperial-shadow-guard-initiate-lightsaber-pike",
       "name": "Lightsaber Pike *",
       "status": "safe-ordinary-weapon-with-delta",
@@ -7126,60 +6748,6 @@
         "baseFormulaPolicy": "uuid"
       },
       "printedAttack": {
-        "text": "+16",
-        "bonus": 16,
-        "bonuses": [
-          16
-        ],
-        "source": "printed-statblock",
-        "hydratePolicy": "metadata-only"
-      },
-      "formula": {
-        "mode": "base-plus-delta",
-        "printed": "2d8+10",
-        "delta": "+10",
-        "deltaSource": "printed-statblock"
-      },
-      "annotations": [],
-      "suffix": "with Double Attack",
-      "confidence": "manualRequired",
-      "reviewRequired": true
-    },
-    {
-      "slug": "sith-lord-lightsaber",
-      "name": "Lightsaber",
-      "status": "safe-ordinary-weapon-with-delta",
-      "source": {
-        "book": "Unknown / missing source",
-        "status": "generated-candidate; page and confidence review required",
-        "page": null,
-        "generatedFrom": "packs/nonheroic.db"
-      },
-      "actor": {
-        "name": "Sith Lord",
-        "slugs": [
-          "sith-lord"
-        ]
-      },
-      "match": {
-        "actorSlugs": [
-          "sith-lord"
-        ],
-        "rawIncludes": [
-          "lightsaber"
-        ]
-      },
-      "weapon": {
-        "printedName": "Lightsaber",
-        "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
-        "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
-        "baseFormula": "2d8",
-        "baseType": "energy",
-        "baseFormulaPolicy": "uuid"
-      },
-      "printedAttack": {
         "text": "+11",
         "bonus": 11,
         "bonuses": [
@@ -7250,60 +6818,6 @@
       },
       "annotations": [],
       "suffix": null,
-      "confidence": "manualRequired",
-      "reviewRequired": true
-    },
-    {
-      "slug": "sith-lord-lightsaber",
-      "name": "Lightsaber",
-      "status": "safe-ordinary-weapon-with-delta",
-      "source": {
-        "book": "Unknown / missing source",
-        "status": "generated-candidate; page and confidence review required",
-        "page": null,
-        "generatedFrom": "packs/nonheroic.db"
-      },
-      "actor": {
-        "name": "Sith Lord",
-        "slugs": [
-          "sith-lord"
-        ]
-      },
-      "match": {
-        "actorSlugs": [
-          "sith-lord"
-        ],
-        "rawIncludes": [
-          "lightsaber"
-        ]
-      },
-      "weapon": {
-        "printedName": "Lightsaber",
-        "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
-        "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
-        "baseFormula": "2d8",
-        "baseType": "energy",
-        "baseFormulaPolicy": "uuid"
-      },
-      "printedAttack": {
-        "text": "+11",
-        "bonus": 11,
-        "bonuses": [
-          11
-        ],
-        "source": "printed-statblock",
-        "hydratePolicy": "metadata-only"
-      },
-      "formula": {
-        "mode": "base-plus-dice",
-        "printed": "3d8+10",
-        "delta": "+1d8+10",
-        "deltaSource": "printed-statblock"
-      },
-      "annotations": [],
-      "suffix": "with Triple Attack",
       "confidence": "manualRequired",
       "reviewRequired": true
     },
@@ -7466,60 +6980,6 @@
       },
       "annotations": [],
       "suffix": null,
-      "confidence": "manualRequired",
-      "reviewRequired": true
-    },
-    {
-      "slug": "pirate-captain-vibroblade",
-      "name": "Vibroblade",
-      "status": "safe-ordinary-weapon-with-delta",
-      "source": {
-        "book": "Unknown / missing source",
-        "status": "generated-candidate; page and confidence review required",
-        "page": null,
-        "generatedFrom": "packs/nonheroic.db"
-      },
-      "actor": {
-        "name": "Pirate Captain",
-        "slugs": [
-          "pirate-captain"
-        ]
-      },
-      "match": {
-        "actorSlugs": [
-          "pirate-captain"
-        ],
-        "rawIncludes": [
-          "vibroblade"
-        ]
-      },
-      "weapon": {
-        "printedName": "Vibroblade",
-        "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-vibroblade",
-        "baseSlug": "weapon-vibroblade",
-        "basePack": "weapons-simple",
-        "baseFormula": "2d6",
-        "baseType": "kinetic",
-        "baseFormulaPolicy": "uuid"
-      },
-      "printedAttack": {
-        "text": "+4",
-        "bonus": 4,
-        "bonuses": [
-          4
-        ],
-        "source": "printed-statblock",
-        "hydratePolicy": "metadata-only"
-      },
-      "formula": {
-        "mode": "base-plus-delta",
-        "printed": "2d6+5",
-        "delta": "+5",
-        "deltaSource": "printed-statblock"
-      },
-      "annotations": [],
-      "suffix": "with Double Attack",
       "confidence": "manualRequired",
       "reviewRequired": true
     },
@@ -8392,60 +7852,6 @@
       "reviewRequired": true
     },
     {
-      "slug": "first-order-specialist-sniper-blaster-rifle",
-      "name": "Sniper Blaster Rifle",
-      "status": "safe-ordinary-weapon-with-delta",
-      "source": {
-        "book": "Unknown / missing source",
-        "status": "generated-candidate; page and confidence review required",
-        "page": null,
-        "generatedFrom": "packs/nonheroic.db"
-      },
-      "actor": {
-        "name": "First Order Specialist",
-        "slugs": [
-          "first-order-specialist"
-        ]
-      },
-      "match": {
-        "actorSlugs": [
-          "first-order-specialist"
-        ],
-        "rawIncludes": [
-          "sniper blaster rifle"
-        ]
-      },
-      "weapon": {
-        "printedName": "Sniper Blaster Rifle",
-        "rowKind": "ranged",
-        "uuid": "Compendium.foundryvtt-swse.weapons-rifles.Item.weapon-sniper-blaster-rifle",
-        "baseSlug": "weapon-sniper-blaster-rifle",
-        "basePack": "weapons-rifles",
-        "baseFormula": "3d10",
-        "baseType": "energy",
-        "baseFormulaPolicy": "uuid"
-      },
-      "printedAttack": {
-        "text": "+8",
-        "bonus": 8,
-        "bonuses": [
-          8
-        ],
-        "source": "printed-statblock",
-        "hydratePolicy": "metadata-only"
-      },
-      "formula": {
-        "mode": "base-plus-delta",
-        "printed": "3d10+1",
-        "delta": "+1",
-        "deltaSource": "printed-statblock"
-      },
-      "annotations": [],
-      "suffix": null,
-      "confidence": "manualRequired",
-      "reviewRequired": true
-    },
-    {
       "slug": "trandoshan-marauder-vibroblade",
       "name": "Vibroblade",
       "status": "safe-ordinary-weapon-with-delta",
@@ -9202,60 +8608,6 @@
       "reviewRequired": true
     },
     {
-      "slug": "jensaarai-defender-lightsaber",
-      "name": "Lightsaber",
-      "status": "safe-ordinary-weapon-with-delta",
-      "source": {
-        "book": "Unknown / missing source",
-        "status": "generated-candidate; page and confidence review required",
-        "page": null,
-        "generatedFrom": "packs/nonheroic.db"
-      },
-      "actor": {
-        "name": "Jensaarai Defender",
-        "slugs": [
-          "jensaarai-defender"
-        ]
-      },
-      "match": {
-        "actorSlugs": [
-          "jensaarai-defender"
-        ],
-        "rawIncludes": [
-          "lightsaber"
-        ]
-      },
-      "weapon": {
-        "printedName": "Lightsaber",
-        "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
-        "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
-        "baseFormula": "2d8",
-        "baseType": "energy",
-        "baseFormulaPolicy": "uuid"
-      },
-      "printedAttack": {
-        "text": "+12",
-        "bonus": 12,
-        "bonuses": [
-          12
-        ],
-        "source": "printed-statblock",
-        "hydratePolicy": "metadata-only"
-      },
-      "formula": {
-        "mode": "base-plus-dice",
-        "printed": "3d8+7",
-        "delta": "+1d8+7",
-        "deltaSource": "printed-statblock"
-      },
-      "annotations": [],
-      "suffix": "with Mighty Swing",
-      "confidence": "manualRequired",
-      "reviewRequired": true
-    },
-    {
       "slug": "smuggler-heavy-blaster-pistol",
       "name": "Heavy Blaster Pistol",
       "status": "safe-ordinary-weapon-with-delta",
@@ -9838,62 +9190,6 @@
         "baseFormulaPolicy": "uuid"
       },
       "printedAttack": {
-        "text": "+20",
-        "bonus": 20,
-        "bonuses": [
-          20
-        ],
-        "source": "printed-statblock",
-        "hydratePolicy": "metadata-only"
-      },
-      "formula": {
-        "mode": "base-plus-dice",
-        "printed": "4d8+14",
-        "delta": "+2d8+14",
-        "deltaSource": "printed-statblock"
-      },
-      "annotations": [
-        "2-Square Reach"
-      ],
-      "suffix": "with Double Attack",
-      "confidence": "manualRequired",
-      "reviewRequired": true
-    },
-    {
-      "slug": "elite-shadow-guard-lightsaber-pike",
-      "name": "Lightsaber Pike *",
-      "status": "safe-ordinary-weapon-with-delta",
-      "source": {
-        "book": "Unknown / missing source",
-        "status": "generated-candidate; page and confidence review required",
-        "page": null,
-        "generatedFrom": "packs/nonheroic.db"
-      },
-      "actor": {
-        "name": "Elite Shadow Guard",
-        "slugs": [
-          "elite-shadow-guard"
-        ]
-      },
-      "match": {
-        "actorSlugs": [
-          "elite-shadow-guard"
-        ],
-        "rawIncludes": [
-          "lightsaber pike *"
-        ]
-      },
-      "weapon": {
-        "printedName": "Lightsaber Pike *",
-        "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.lightsaber-chassis-pike",
-        "baseSlug": "lightsaber-chassis-pike",
-        "basePack": "weapons-lightsabers",
-        "baseFormula": "2d8",
-        "baseType": "energy",
-        "baseFormulaPolicy": "uuid"
-      },
-      "printedAttack": {
         "text": "+17",
         "bonus": 17,
         "bonuses": [
@@ -9968,62 +9264,6 @@
         "2-Square Reach"
       ],
       "suffix": null,
-      "confidence": "manualRequired",
-      "reviewRequired": true
-    },
-    {
-      "slug": "elite-shadow-guard-lightsaber-pike",
-      "name": "Lightsaber Pike *",
-      "status": "safe-ordinary-weapon-with-delta",
-      "source": {
-        "book": "Unknown / missing source",
-        "status": "generated-candidate; page and confidence review required",
-        "page": null,
-        "generatedFrom": "packs/nonheroic.db"
-      },
-      "actor": {
-        "name": "Elite Shadow Guard",
-        "slugs": [
-          "elite-shadow-guard"
-        ]
-      },
-      "match": {
-        "actorSlugs": [
-          "elite-shadow-guard"
-        ],
-        "rawIncludes": [
-          "lightsaber pike *"
-        ]
-      },
-      "weapon": {
-        "printedName": "Lightsaber Pike *",
-        "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.lightsaber-chassis-pike",
-        "baseSlug": "lightsaber-chassis-pike",
-        "basePack": "weapons-lightsabers",
-        "baseFormula": "2d8",
-        "baseType": "energy",
-        "baseFormulaPolicy": "uuid"
-      },
-      "printedAttack": {
-        "text": "+17",
-        "bonus": 17,
-        "bonuses": [
-          17
-        ],
-        "source": "printed-statblock",
-        "hydratePolicy": "metadata-only"
-      },
-      "formula": {
-        "mode": "base-plus-dice",
-        "printed": "4d8+14",
-        "delta": "+2d8+14",
-        "deltaSource": "printed-statblock"
-      },
-      "annotations": [
-        "2-Square Reach"
-      ],
-      "suffix": "with Triple Attack",
       "confidence": "manualRequired",
       "reviewRequired": true
     },
@@ -10408,114 +9648,6 @@
       "reviewRequired": true
     },
     {
-      "slug": "imperial-knight-lightsaber",
-      "name": "Lightsaber",
-      "status": "safe-ordinary-weapon-with-delta",
-      "source": {
-        "book": "Unknown / missing source",
-        "status": "generated-candidate; page and confidence review required",
-        "page": null,
-        "generatedFrom": "packs/nonheroic.db"
-      },
-      "actor": {
-        "name": "Imperial Knight",
-        "slugs": [
-          "imperial-knight"
-        ]
-      },
-      "match": {
-        "actorSlugs": [
-          "imperial-knight"
-        ],
-        "rawIncludes": [
-          "lightsaber"
-        ]
-      },
-      "weapon": {
-        "printedName": "Lightsaber",
-        "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
-        "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
-        "baseFormula": "2d8",
-        "baseType": "energy",
-        "baseFormulaPolicy": "uuid"
-      },
-      "printedAttack": {
-        "text": "+13",
-        "bonus": 13,
-        "bonuses": [
-          13
-        ],
-        "source": "printed-statblock",
-        "hydratePolicy": "metadata-only"
-      },
-      "formula": {
-        "mode": "base-plus-dice",
-        "printed": "3d8+8",
-        "delta": "+1d8+8",
-        "deltaSource": "printed-statblock"
-      },
-      "annotations": [],
-      "suffix": "with Rapid Strike",
-      "confidence": "manualRequired",
-      "reviewRequired": true
-    },
-    {
-      "slug": "imperial-knight-lightsaber",
-      "name": "Lightsaber",
-      "status": "safe-ordinary-weapon-with-delta",
-      "source": {
-        "book": "Unknown / missing source",
-        "status": "generated-candidate; page and confidence review required",
-        "page": null,
-        "generatedFrom": "packs/nonheroic.db"
-      },
-      "actor": {
-        "name": "Imperial Knight",
-        "slugs": [
-          "imperial-knight"
-        ]
-      },
-      "match": {
-        "actorSlugs": [
-          "imperial-knight"
-        ],
-        "rawIncludes": [
-          "lightsaber"
-        ]
-      },
-      "weapon": {
-        "printedName": "Lightsaber",
-        "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
-        "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
-        "baseFormula": "2d8",
-        "baseType": "energy",
-        "baseFormulaPolicy": "uuid"
-      },
-      "printedAttack": {
-        "text": "+9*",
-        "bonus": 9,
-        "bonuses": [
-          9
-        ],
-        "source": "printed-statblock",
-        "hydratePolicy": "metadata-only"
-      },
-      "formula": {
-        "mode": "base-plus-dice",
-        "printed": "3d8+16",
-        "delta": "+1d8+16",
-        "deltaSource": "printed-statblock"
-      },
-      "annotations": [],
-      "suffix": "with Rapid Strike",
-      "confidence": "manualRequired",
-      "reviewRequired": true
-    },
-    {
       "slug": "detective-blaster-pistol",
       "name": "Blaster Pistol",
       "status": "safe-ordinary-weapon-with-delta",
@@ -10728,60 +9860,6 @@
       },
       "annotations": [],
       "suffix": null,
-      "confidence": "manualRequired",
-      "reviewRequired": true
-    },
-    {
-      "slug": "ship-gunner-blaster-cannon",
-      "name": "Blaster Cannon",
-      "status": "safe-ordinary-weapon-with-delta",
-      "source": {
-        "book": "Unknown / missing source",
-        "status": "generated-candidate; page and confidence review required",
-        "page": null,
-        "generatedFrom": "packs/nonheroic.db"
-      },
-      "actor": {
-        "name": "Ship Gunner",
-        "slugs": [
-          "ship-gunner"
-        ]
-      },
-      "match": {
-        "actorSlugs": [
-          "ship-gunner"
-        ],
-        "rawIncludes": [
-          "blaster cannon"
-        ]
-      },
-      "weapon": {
-        "printedName": "Blaster Cannon",
-        "rowKind": "ranged",
-        "uuid": "Compendium.foundryvtt-swse.weapons-heavy.Item.weapon-blaster-cannon",
-        "baseSlug": "weapon-blaster-cannon",
-        "basePack": "weapons-heavy",
-        "baseFormula": "3d12",
-        "baseType": "energy",
-        "baseFormulaPolicy": "uuid"
-      },
-      "printedAttack": {
-        "text": "+6",
-        "bonus": 6,
-        "bonuses": [
-          6
-        ],
-        "source": "printed-statblock",
-        "hydratePolicy": "metadata-only"
-      },
-      "formula": {
-        "mode": "base-plus-delta",
-        "printed": "3d12+5",
-        "delta": "+5",
-        "deltaSource": "printed-statblock"
-      },
-      "annotations": [],
-      "suffix": "with Double Attack",
       "confidence": "manualRequired",
       "reviewRequired": true
     },
@@ -11434,60 +10512,6 @@
       "reviewRequired": true
     },
     {
-      "slug": "ship-captain-vibrodagger",
-      "name": "Vibrodagger",
-      "status": "safe-ordinary-weapon-with-delta",
-      "source": {
-        "book": "Unknown / missing source",
-        "status": "generated-candidate; page and confidence review required",
-        "page": null,
-        "generatedFrom": "packs/nonheroic.db"
-      },
-      "actor": {
-        "name": "Ship Captain",
-        "slugs": [
-          "ship-captain"
-        ]
-      },
-      "match": {
-        "actorSlugs": [
-          "ship-captain"
-        ],
-        "rawIncludes": [
-          "vibrodagger"
-        ]
-      },
-      "weapon": {
-        "printedName": "Vibrodagger",
-        "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-vibrodagger",
-        "baseSlug": "weapon-vibrodagger",
-        "basePack": "weapons-simple",
-        "baseFormula": "2d4",
-        "baseType": "kinetic",
-        "baseFormulaPolicy": "uuid"
-      },
-      "printedAttack": {
-        "text": "+8",
-        "bonus": 8,
-        "bonuses": [
-          8
-        ],
-        "source": "printed-statblock",
-        "hydratePolicy": "metadata-only"
-      },
-      "formula": {
-        "mode": "base-plus-delta",
-        "printed": "2d4+6",
-        "delta": "+6",
-        "deltaSource": "printed-statblock"
-      },
-      "annotations": [],
-      "suffix": "with Double Attack",
-      "confidence": "manualRequired",
-      "reviewRequired": true
-    },
-    {
       "slug": "ship-captain-blaster-pistol",
       "name": "Blaster Pistol",
       "status": "safe-ordinary-weapon-with-delta",
@@ -11592,60 +10616,6 @@
       },
       "annotations": [],
       "suffix": null,
-      "confidence": "manualRequired",
-      "reviewRequired": true
-    },
-    {
-      "slug": "commando-vibrodagger",
-      "name": "Vibrodagger",
-      "status": "safe-ordinary-weapon-with-delta",
-      "source": {
-        "book": "Unknown / missing source",
-        "status": "generated-candidate; page and confidence review required",
-        "page": null,
-        "generatedFrom": "packs/nonheroic.db"
-      },
-      "actor": {
-        "name": "Commando",
-        "slugs": [
-          "commando"
-        ]
-      },
-      "match": {
-        "actorSlugs": [
-          "commando"
-        ],
-        "rawIncludes": [
-          "vibrodagger"
-        ]
-      },
-      "weapon": {
-        "printedName": "Vibrodagger",
-        "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-vibrodagger",
-        "baseSlug": "weapon-vibrodagger",
-        "basePack": "weapons-simple",
-        "baseFormula": "2d4",
-        "baseType": "kinetic",
-        "baseFormulaPolicy": "uuid"
-      },
-      "printedAttack": {
-        "text": "+10",
-        "bonus": 10,
-        "bonuses": [
-          10
-        ],
-        "source": "printed-statblock",
-        "hydratePolicy": "metadata-only"
-      },
-      "formula": {
-        "mode": "base-plus-dice",
-        "printed": "3d4+4",
-        "delta": "+1d4+4",
-        "deltaSource": "printed-statblock"
-      },
-      "annotations": [],
-      "suffix": "with Rapid Strike",
       "confidence": "manualRequired",
       "reviewRequired": true
     },
@@ -12134,114 +11104,6 @@
       },
       "annotations": [],
       "suffix": null,
-      "confidence": "manualRequired",
-      "reviewRequired": true
-    },
-    {
-      "slug": "sith-bladeborn-sith-tremor-sword",
-      "name": "Sith Tremor Sword",
-      "status": "safe-ordinary-weapon-with-delta",
-      "source": {
-        "book": "Unknown / missing source",
-        "status": "generated-candidate; page and confidence review required",
-        "page": null,
-        "generatedFrom": "packs/nonheroic.db"
-      },
-      "actor": {
-        "name": "Sith Bladeborn",
-        "slugs": [
-          "sith-bladeborn"
-        ]
-      },
-      "match": {
-        "actorSlugs": [
-          "sith-bladeborn"
-        ],
-        "rawIncludes": [
-          "sith tremor sword"
-        ]
-      },
-      "weapon": {
-        "printedName": "Sith Tremor Sword",
-        "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-sith-tremor-sword",
-        "baseSlug": "weapon-sith-tremor-sword",
-        "basePack": "weapons-simple",
-        "baseFormula": "2d6",
-        "baseType": "sonic",
-        "baseFormulaPolicy": "uuid"
-      },
-      "printedAttack": {
-        "text": "+12",
-        "bonus": 12,
-        "bonuses": [
-          12
-        ],
-        "source": "printed-statblock",
-        "hydratePolicy": "metadata-only"
-      },
-      "formula": {
-        "mode": "base-plus-dice",
-        "printed": "3d6+4",
-        "delta": "+1d6+4",
-        "deltaSource": "printed-statblock"
-      },
-      "annotations": [],
-      "suffix": "with Rapid Strike",
-      "confidence": "manualRequired",
-      "reviewRequired": true
-    },
-    {
-      "slug": "sith-bladeborn-sith-tremor-sword",
-      "name": "Sith Tremor Sword",
-      "status": "safe-ordinary-weapon-with-delta",
-      "source": {
-        "book": "Unknown / missing source",
-        "status": "generated-candidate; page and confidence review required",
-        "page": null,
-        "generatedFrom": "packs/nonheroic.db"
-      },
-      "actor": {
-        "name": "Sith Bladeborn",
-        "slugs": [
-          "sith-bladeborn"
-        ]
-      },
-      "match": {
-        "actorSlugs": [
-          "sith-bladeborn"
-        ],
-        "rawIncludes": [
-          "sith tremor sword"
-        ]
-      },
-      "weapon": {
-        "printedName": "Sith Tremor Sword",
-        "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-sith-tremor-sword",
-        "baseSlug": "weapon-sith-tremor-sword",
-        "basePack": "weapons-simple",
-        "baseFormula": "2d6",
-        "baseType": "sonic",
-        "baseFormulaPolicy": "uuid"
-      },
-      "printedAttack": {
-        "text": "+9",
-        "bonus": 9,
-        "bonuses": [
-          9
-        ],
-        "source": "printed-statblock",
-        "hydratePolicy": "metadata-only"
-      },
-      "formula": {
-        "mode": "base-plus-dice",
-        "printed": "4d6+4",
-        "delta": "+2d6+4",
-        "deltaSource": "printed-statblock"
-      },
-      "annotations": [],
-      "suffix": "with Improved Rapid Strike",
       "confidence": "manualRequired",
       "reviewRequired": true
     },
@@ -12941,60 +11803,6 @@
         "hydratePolicy": "metadata-only"
       },
       "formula": {
-        "mode": "base-plus-dice",
-        "printed": "3d8+13",
-        "delta": "+1d8+13",
-        "deltaSource": "printed-statblock"
-      },
-      "annotations": [],
-      "suffix": "with Rapid Strike",
-      "confidence": "manualRequired",
-      "reviewRequired": true
-    },
-    {
-      "slug": "fallen-jedi-sith-lord-lightsaber",
-      "name": "Lightsaber",
-      "status": "safe-ordinary-weapon-with-delta",
-      "source": {
-        "book": "Unknown / missing source",
-        "status": "generated-candidate; page and confidence review required",
-        "page": null,
-        "generatedFrom": "packs/nonheroic.db"
-      },
-      "actor": {
-        "name": "Fallen Jedi Sith Lord",
-        "slugs": [
-          "fallen-jedi-sith-lord"
-        ]
-      },
-      "match": {
-        "actorSlugs": [
-          "fallen-jedi-sith-lord"
-        ],
-        "rawIncludes": [
-          "lightsaber"
-        ]
-      },
-      "weapon": {
-        "printedName": "Lightsaber",
-        "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
-        "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
-        "baseFormula": "2d8",
-        "baseType": "energy",
-        "baseFormulaPolicy": "uuid"
-      },
-      "printedAttack": {
-        "text": "+20",
-        "bonus": 20,
-        "bonuses": [
-          20
-        ],
-        "source": "printed-statblock",
-        "hydratePolicy": "metadata-only"
-      },
-      "formula": {
         "mode": "base-plus-delta",
         "printed": "2d8+13",
         "delta": "+13",
@@ -13218,60 +12026,6 @@
       },
       "annotations": [],
       "suffix": null,
-      "confidence": "manualRequired",
-      "reviewRequired": true
-    },
-    {
-      "slug": "trandoshan-scavenger-vibrosword",
-      "name": "Vibrosword",
-      "status": "safe-ordinary-weapon-with-delta",
-      "source": {
-        "book": "Unknown / missing source",
-        "status": "generated-candidate; page and confidence review required",
-        "page": null,
-        "generatedFrom": "packs/nonheroic.db"
-      },
-      "actor": {
-        "name": "Trandoshan Scavenger",
-        "slugs": [
-          "trandoshan-scavenger"
-        ]
-      },
-      "match": {
-        "actorSlugs": [
-          "trandoshan-scavenger"
-        ],
-        "rawIncludes": [
-          "vibrosword"
-        ]
-      },
-      "weapon": {
-        "printedName": "Vibrosword",
-        "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-vibrosword",
-        "baseSlug": "weapon-vibrosword",
-        "basePack": "weapons-simple",
-        "baseFormula": "2d8",
-        "baseType": "kinetic",
-        "baseFormulaPolicy": "uuid"
-      },
-      "printedAttack": {
-        "text": "+7",
-        "bonus": 7,
-        "bonuses": [
-          7
-        ],
-        "source": "printed-statblock",
-        "hydratePolicy": "metadata-only"
-      },
-      "formula": {
-        "mode": "base-plus-dice",
-        "printed": "3d8+2",
-        "delta": "+1d8+2",
-        "deltaSource": "printed-statblock"
-      },
-      "annotations": [],
-      "suffix": "with Mighty Swing",
       "confidence": "manualRequired",
       "reviewRequired": true
     },
@@ -14068,60 +12822,6 @@
         "baseFormulaPolicy": "uuid"
       },
       "printedAttack": {
-        "text": "+13",
-        "bonus": 13,
-        "bonuses": [
-          13
-        ],
-        "source": "printed-statblock",
-        "hydratePolicy": "metadata-only"
-      },
-      "formula": {
-        "mode": "base-plus-dice",
-        "printed": "3d8+7",
-        "delta": "+1d8+7",
-        "deltaSource": "printed-statblock"
-      },
-      "annotations": [],
-      "suffix": "with Rapid Strike",
-      "confidence": "manualRequired",
-      "reviewRequired": true
-    },
-    {
-      "slug": "jedi-knight-lightsaber",
-      "name": "Lightsaber",
-      "status": "safe-ordinary-weapon-with-delta",
-      "source": {
-        "book": "Unknown / missing source",
-        "status": "generated-candidate; page and confidence review required",
-        "page": null,
-        "generatedFrom": "packs/nonheroic.db"
-      },
-      "actor": {
-        "name": "Jedi Knight",
-        "slugs": [
-          "jedi-knight"
-        ]
-      },
-      "match": {
-        "actorSlugs": [
-          "jedi-knight"
-        ],
-        "rawIncludes": [
-          "lightsaber"
-        ]
-      },
-      "weapon": {
-        "printedName": "Lightsaber",
-        "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
-        "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
-        "baseFormula": "2d8",
-        "baseType": "energy",
-        "baseFormulaPolicy": "uuid"
-      },
-      "printedAttack": {
         "text": "+12",
         "bonus": 12,
         "bonuses": [
@@ -14138,60 +12838,6 @@
       },
       "annotations": [],
       "suffix": null,
-      "confidence": "manualRequired",
-      "reviewRequired": true
-    },
-    {
-      "slug": "jedi-knight-lightsaber",
-      "name": "Lightsaber",
-      "status": "safe-ordinary-weapon-with-delta",
-      "source": {
-        "book": "Unknown / missing source",
-        "status": "generated-candidate; page and confidence review required",
-        "page": null,
-        "generatedFrom": "packs/nonheroic.db"
-      },
-      "actor": {
-        "name": "Jedi Knight",
-        "slugs": [
-          "jedi-knight"
-        ]
-      },
-      "match": {
-        "actorSlugs": [
-          "jedi-knight"
-        ],
-        "rawIncludes": [
-          "lightsaber"
-        ]
-      },
-      "weapon": {
-        "printedName": "Lightsaber",
-        "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
-        "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
-        "baseFormula": "2d8",
-        "baseType": "energy",
-        "baseFormulaPolicy": "uuid"
-      },
-      "printedAttack": {
-        "text": "+12",
-        "bonus": 12,
-        "bonuses": [
-          12
-        ],
-        "source": "printed-statblock",
-        "hydratePolicy": "metadata-only"
-      },
-      "formula": {
-        "mode": "base-plus-delta",
-        "printed": "2d8+7",
-        "delta": "+7",
-        "deltaSource": "printed-statblock"
-      },
-      "annotations": [],
-      "suffix": "with Double Attack",
       "confidence": "manualRequired",
       "reviewRequired": true
     },
@@ -14338,60 +12984,6 @@
         "baseFormulaPolicy": "uuid"
       },
       "printedAttack": {
-        "text": "+14",
-        "bonus": 14,
-        "bonuses": [
-          14
-        ],
-        "source": "printed-statblock",
-        "hydratePolicy": "metadata-only"
-      },
-      "formula": {
-        "mode": "base-plus-delta",
-        "printed": "2d8+8",
-        "delta": "+8",
-        "deltaSource": "printed-statblock"
-      },
-      "annotations": [],
-      "suffix": "with Double Attack",
-      "confidence": "manualRequired",
-      "reviewRequired": true
-    },
-    {
-      "slug": "jedi-watchman-lightsaber",
-      "name": "Lightsaber",
-      "status": "safe-ordinary-weapon-with-delta",
-      "source": {
-        "book": "Unknown / missing source",
-        "status": "generated-candidate; page and confidence review required",
-        "page": null,
-        "generatedFrom": "packs/nonheroic.db"
-      },
-      "actor": {
-        "name": "Jedi Watchman",
-        "slugs": [
-          "jedi-watchman"
-        ]
-      },
-      "match": {
-        "actorSlugs": [
-          "jedi-watchman"
-        ],
-        "rawIncludes": [
-          "lightsaber"
-        ]
-      },
-      "weapon": {
-        "printedName": "Lightsaber",
-        "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
-        "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
-        "baseFormula": "2d8",
-        "baseType": "energy",
-        "baseFormulaPolicy": "uuid"
-      },
-      "printedAttack": {
         "text": "+9",
         "bonus": 9,
         "bonuses": [
@@ -14462,60 +13054,6 @@
       },
       "annotations": [],
       "suffix": null,
-      "confidence": "manualRequired",
-      "reviewRequired": true
-    },
-    {
-      "slug": "jedi-watchman-lightsaber",
-      "name": "Lightsaber",
-      "status": "safe-ordinary-weapon-with-delta",
-      "source": {
-        "book": "Unknown / missing source",
-        "status": "generated-candidate; page and confidence review required",
-        "page": null,
-        "generatedFrom": "packs/nonheroic.db"
-      },
-      "actor": {
-        "name": "Jedi Watchman",
-        "slugs": [
-          "jedi-watchman"
-        ]
-      },
-      "match": {
-        "actorSlugs": [
-          "jedi-watchman"
-        ],
-        "rawIncludes": [
-          "lightsaber"
-        ]
-      },
-      "weapon": {
-        "printedName": "Lightsaber",
-        "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
-        "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
-        "baseFormula": "2d8",
-        "baseType": "energy",
-        "baseFormulaPolicy": "uuid"
-      },
-      "printedAttack": {
-        "text": "+9",
-        "bonus": 9,
-        "bonuses": [
-          9
-        ],
-        "source": "printed-statblock",
-        "hydratePolicy": "metadata-only"
-      },
-      "formula": {
-        "mode": "base-plus-delta",
-        "printed": "2d8+8",
-        "delta": "+8",
-        "deltaSource": "printed-statblock"
-      },
-      "annotations": [],
-      "suffix": "with Triple Attack",
       "confidence": "manualRequired",
       "reviewRequired": true
     },
@@ -15042,60 +13580,6 @@
         "baseFormulaPolicy": "uuid"
       },
       "printedAttack": {
-        "text": "+16",
-        "bonus": 16,
-        "bonuses": [
-          16
-        ],
-        "source": "printed-statblock",
-        "hydratePolicy": "metadata-only"
-      },
-      "formula": {
-        "mode": "base-plus-dice",
-        "printed": "3d8+8",
-        "delta": "+1d8+8",
-        "deltaSource": "printed-statblock"
-      },
-      "annotations": [],
-      "suffix": "with Rapid Strike",
-      "confidence": "manualRequired",
-      "reviewRequired": true
-    },
-    {
-      "slug": "jedi-master-lightsaber",
-      "name": "Lightsaber",
-      "status": "safe-ordinary-weapon-with-delta",
-      "source": {
-        "book": "Unknown / missing source",
-        "status": "generated-candidate; page and confidence review required",
-        "page": null,
-        "generatedFrom": "packs/nonheroic.db"
-      },
-      "actor": {
-        "name": "Jedi Master",
-        "slugs": [
-          "jedi-master"
-        ]
-      },
-      "match": {
-        "actorSlugs": [
-          "jedi-master"
-        ],
-        "rawIncludes": [
-          "lightsaber"
-        ]
-      },
-      "weapon": {
-        "printedName": "Lightsaber",
-        "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
-        "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
-        "baseFormula": "2d8",
-        "baseType": "energy",
-        "baseFormulaPolicy": "uuid"
-      },
-      "printedAttack": {
         "text": "+15",
         "bonus": 15,
         "bonuses": [
@@ -15112,60 +13596,6 @@
       },
       "annotations": [],
       "suffix": null,
-      "confidence": "manualRequired",
-      "reviewRequired": true
-    },
-    {
-      "slug": "jedi-master-lightsaber",
-      "name": "Lightsaber",
-      "status": "safe-ordinary-weapon-with-delta",
-      "source": {
-        "book": "Unknown / missing source",
-        "status": "generated-candidate; page and confidence review required",
-        "page": null,
-        "generatedFrom": "packs/nonheroic.db"
-      },
-      "actor": {
-        "name": "Jedi Master",
-        "slugs": [
-          "jedi-master"
-        ]
-      },
-      "match": {
-        "actorSlugs": [
-          "jedi-master"
-        ],
-        "rawIncludes": [
-          "lightsaber"
-        ]
-      },
-      "weapon": {
-        "printedName": "Lightsaber",
-        "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
-        "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
-        "baseFormula": "2d8",
-        "baseType": "energy",
-        "baseFormulaPolicy": "uuid"
-      },
-      "printedAttack": {
-        "text": "+15",
-        "bonus": 15,
-        "bonuses": [
-          15
-        ],
-        "source": "printed-statblock",
-        "hydratePolicy": "metadata-only"
-      },
-      "formula": {
-        "mode": "base-plus-delta",
-        "printed": "2d8+8",
-        "delta": "+8",
-        "deltaSource": "printed-statblock"
-      },
-      "annotations": [],
-      "suffix": "with Double Attack",
       "confidence": "manualRequired",
       "reviewRequired": true
     },
@@ -15544,60 +13974,6 @@
       },
       "annotations": [],
       "suffix": null,
-      "confidence": "manualRequired",
-      "reviewRequired": true
-    },
-    {
-      "slug": "coruscant-guard-veteran-electrostaff",
-      "name": "Electrostaff",
-      "status": "safe-ordinary-weapon-with-delta",
-      "source": {
-        "book": "Unknown / missing source",
-        "status": "generated-candidate; page and confidence review required",
-        "page": null,
-        "generatedFrom": "packs/nonheroic.db"
-      },
-      "actor": {
-        "name": "Coruscant Guard Veteran",
-        "slugs": [
-          "coruscant-guard-veteran"
-        ]
-      },
-      "match": {
-        "actorSlugs": [
-          "coruscant-guard-veteran"
-        ],
-        "rawIncludes": [
-          "electrostaff"
-        ]
-      },
-      "weapon": {
-        "printedName": "Electrostaff",
-        "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-electrostaff",
-        "baseSlug": "weapon-electrostaff",
-        "basePack": "weapons-simple",
-        "baseFormula": "2d6",
-        "baseType": "kinetic",
-        "baseFormulaPolicy": "uuid"
-      },
-      "printedAttack": {
-        "text": "+11",
-        "bonus": 11,
-        "bonuses": [
-          11
-        ],
-        "source": "printed-statblock",
-        "hydratePolicy": "metadata-only"
-      },
-      "formula": {
-        "mode": "base-plus-dice",
-        "printed": "3d6+4",
-        "delta": "+1d6+4",
-        "deltaSource": "printed-statblock"
-      },
-      "annotations": [],
-      "suffix": "with Mighty Swing",
       "confidence": "manualRequired",
       "reviewRequired": true
     },
@@ -16176,114 +14552,6 @@
         "baseFormulaPolicy": "uuid"
       },
       "printedAttack": {
-        "text": "+16",
-        "bonus": 16,
-        "bonuses": [
-          16
-        ],
-        "source": "printed-statblock",
-        "hydratePolicy": "metadata-only"
-      },
-      "formula": {
-        "mode": "base-plus-dice",
-        "printed": "3d8+13",
-        "delta": "+1d8+13",
-        "deltaSource": "printed-statblock"
-      },
-      "annotations": [],
-      "suffix": "with Rapid Strike",
-      "confidence": "manualRequired",
-      "reviewRequired": true
-    },
-    {
-      "slug": "jedi-duelist-lightsaber",
-      "name": "Lightsaber",
-      "status": "safe-ordinary-weapon-with-delta",
-      "source": {
-        "book": "Unknown / missing source",
-        "status": "generated-candidate; page and confidence review required",
-        "page": null,
-        "generatedFrom": "packs/nonheroic.db"
-      },
-      "actor": {
-        "name": "Jedi Duelist",
-        "slugs": [
-          "jedi-duelist"
-        ]
-      },
-      "match": {
-        "actorSlugs": [
-          "jedi-duelist"
-        ],
-        "rawIncludes": [
-          "lightsaber"
-        ]
-      },
-      "weapon": {
-        "printedName": "Lightsaber",
-        "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
-        "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
-        "baseFormula": "2d8",
-        "baseType": "energy",
-        "baseFormulaPolicy": "uuid"
-      },
-      "printedAttack": {
-        "text": "+18",
-        "bonus": 18,
-        "bonuses": [
-          18
-        ],
-        "source": "printed-statblock",
-        "hydratePolicy": "metadata-only"
-      },
-      "formula": {
-        "mode": "base-plus-dice",
-        "printed": "3d8+13",
-        "delta": "+1d8+13",
-        "deltaSource": "printed-statblock"
-      },
-      "annotations": [],
-      "suffix": "with Mighty Swing",
-      "confidence": "manualRequired",
-      "reviewRequired": true
-    },
-    {
-      "slug": "jedi-duelist-lightsaber",
-      "name": "Lightsaber",
-      "status": "safe-ordinary-weapon-with-delta",
-      "source": {
-        "book": "Unknown / missing source",
-        "status": "generated-candidate; page and confidence review required",
-        "page": null,
-        "generatedFrom": "packs/nonheroic.db"
-      },
-      "actor": {
-        "name": "Jedi Duelist",
-        "slugs": [
-          "jedi-duelist"
-        ]
-      },
-      "match": {
-        "actorSlugs": [
-          "jedi-duelist"
-        ],
-        "rawIncludes": [
-          "lightsaber"
-        ]
-      },
-      "weapon": {
-        "printedName": "Lightsaber",
-        "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
-        "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
-        "baseFormula": "2d8",
-        "baseType": "energy",
-        "baseFormulaPolicy": "uuid"
-      },
-      "printedAttack": {
         "text": "+13",
         "bonus": 13,
         "bonuses": [
@@ -16300,60 +14568,6 @@
       },
       "annotations": [],
       "suffix": null,
-      "confidence": "manualRequired",
-      "reviewRequired": true
-    },
-    {
-      "slug": "jedi-duelist-lightsaber",
-      "name": "Lightsaber",
-      "status": "safe-ordinary-weapon-with-delta",
-      "source": {
-        "book": "Unknown / missing source",
-        "status": "generated-candidate; page and confidence review required",
-        "page": null,
-        "generatedFrom": "packs/nonheroic.db"
-      },
-      "actor": {
-        "name": "Jedi Duelist",
-        "slugs": [
-          "jedi-duelist"
-        ]
-      },
-      "match": {
-        "actorSlugs": [
-          "jedi-duelist"
-        ],
-        "rawIncludes": [
-          "lightsaber"
-        ]
-      },
-      "weapon": {
-        "printedName": "Lightsaber",
-        "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
-        "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
-        "baseFormula": "2d8",
-        "baseType": "energy",
-        "baseFormulaPolicy": "uuid"
-      },
-      "printedAttack": {
-        "text": "+13",
-        "bonus": 13,
-        "bonuses": [
-          13
-        ],
-        "source": "printed-statblock",
-        "hydratePolicy": "metadata-only"
-      },
-      "formula": {
-        "mode": "base-plus-delta",
-        "printed": "2d8+13",
-        "delta": "+13",
-        "deltaSource": "printed-statblock"
-      },
-      "annotations": [],
-      "suffix": "with Double Attack",
       "confidence": "manualRequired",
       "reviewRequired": true
     },
@@ -17440,60 +15654,6 @@
       "reviewRequired": true
     },
     {
-      "slug": "auxiliary-inquisitor-short-lightsaber",
-      "name": "Short Lightsaber",
-      "status": "safe-ordinary-weapon-with-delta",
-      "source": {
-        "book": "Unknown / missing source",
-        "status": "generated-candidate; page and confidence review required",
-        "page": null,
-        "generatedFrom": "packs/nonheroic.db"
-      },
-      "actor": {
-        "name": "Auxiliary Inquisitor",
-        "slugs": [
-          "auxiliary-inquisitor"
-        ]
-      },
-      "match": {
-        "actorSlugs": [
-          "auxiliary-inquisitor"
-        ],
-        "rawIncludes": [
-          "short lightsaber"
-        ]
-      },
-      "weapon": {
-        "printedName": "Short Lightsaber",
-        "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-lightsabers.Item.lightsaber-chassis-short",
-        "baseSlug": "lightsaber-chassis-short",
-        "basePack": "weapons-lightsabers",
-        "baseFormula": "2d6",
-        "baseType": "energy",
-        "baseFormulaPolicy": "uuid"
-      },
-      "printedAttack": {
-        "text": "+4",
-        "bonus": 4,
-        "bonuses": [
-          4
-        ],
-        "source": "printed-statblock",
-        "hydratePolicy": "metadata-only"
-      },
-      "formula": {
-        "mode": "base-plus-dice",
-        "printed": "3d6+4",
-        "delta": "+1d6+4",
-        "deltaSource": "printed-statblock"
-      },
-      "annotations": [],
-      "suffix": "with Rapid Strike",
-      "confidence": "manualRequired",
-      "reviewRequired": true
-    },
-    {
       "slug": "auxiliary-inquisitor-blaster-pistol",
       "name": "Blaster Pistol",
       "status": "safe-ordinary-weapon-with-delta",
@@ -17766,60 +15926,6 @@
       "reviewRequired": true
     },
     {
-      "slug": "jedi-padawan-lightsaber",
-      "name": "Lightsaber",
-      "status": "safe-ordinary-weapon-with-delta",
-      "source": {
-        "book": "Unknown / missing source",
-        "status": "generated-candidate; page and confidence review required",
-        "page": null,
-        "generatedFrom": "packs/nonheroic.db"
-      },
-      "actor": {
-        "name": "Jedi Padawan",
-        "slugs": [
-          "jedi-padawan"
-        ]
-      },
-      "match": {
-        "actorSlugs": [
-          "jedi-padawan"
-        ],
-        "rawIncludes": [
-          "lightsaber"
-        ]
-      },
-      "weapon": {
-        "printedName": "Lightsaber",
-        "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
-        "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
-        "baseFormula": "2d8",
-        "baseType": "energy",
-        "baseFormulaPolicy": "uuid"
-      },
-      "printedAttack": {
-        "text": "+5",
-        "bonus": 5,
-        "bonuses": [
-          5
-        ],
-        "source": "printed-statblock",
-        "hydratePolicy": "metadata-only"
-      },
-      "formula": {
-        "mode": "base-plus-dice",
-        "printed": "3d8+2",
-        "delta": "+1d8+2",
-        "deltaSource": "printed-statblock"
-      },
-      "annotations": [],
-      "suffix": "with Rapid Strike",
-      "confidence": "manualRequired",
-      "reviewRequired": true
-    },
-    {
       "slug": "dark-lord-of-the-sith-lightsaber",
       "name": "Lightsaber",
       "status": "safe-ordinary-weapon-with-delta",
@@ -17978,60 +16084,6 @@
       },
       "annotations": [],
       "suffix": null,
-      "confidence": "manualRequired",
-      "reviewRequired": true
-    },
-    {
-      "slug": "dark-lord-of-the-sith-lightsaber",
-      "name": "Lightsaber",
-      "status": "safe-ordinary-weapon-with-delta",
-      "source": {
-        "book": "Unknown / missing source",
-        "status": "generated-candidate; page and confidence review required",
-        "page": null,
-        "generatedFrom": "packs/nonheroic.db"
-      },
-      "actor": {
-        "name": "Dark Lord of the Sith",
-        "slugs": [
-          "dark-lord-of-the-sith"
-        ]
-      },
-      "match": {
-        "actorSlugs": [
-          "dark-lord-of-the-sith"
-        ],
-        "rawIncludes": [
-          "lightsaber"
-        ]
-      },
-      "weapon": {
-        "printedName": "Lightsaber",
-        "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
-        "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
-        "baseFormula": "2d8",
-        "baseType": "energy",
-        "baseFormulaPolicy": "uuid"
-      },
-      "printedAttack": {
-        "text": "+14",
-        "bonus": 14,
-        "bonuses": [
-          14
-        ],
-        "source": "printed-statblock",
-        "hydratePolicy": "metadata-only"
-      },
-      "formula": {
-        "mode": "base-plus-delta",
-        "printed": "2d8+12",
-        "delta": "+12",
-        "deltaSource": "printed-statblock"
-      },
-      "annotations": [],
-      "suffix": "with Double Attack",
       "confidence": "manualRequired",
       "reviewRequired": true
     },
@@ -18304,60 +16356,6 @@
       },
       "annotations": [],
       "suffix": null,
-      "confidence": "manualRequired",
-      "reviewRequired": true
-    },
-    {
-      "slug": "noghri-assassin-vibrodagger",
-      "name": "Vibrodagger",
-      "status": "safe-ordinary-weapon-with-delta",
-      "source": {
-        "book": "Unknown / missing source",
-        "status": "generated-candidate; page and confidence review required",
-        "page": null,
-        "generatedFrom": "packs/nonheroic.db"
-      },
-      "actor": {
-        "name": "Noghri Assassin",
-        "slugs": [
-          "noghri-assassin"
-        ]
-      },
-      "match": {
-        "actorSlugs": [
-          "noghri-assassin"
-        ],
-        "rawIncludes": [
-          "vibrodagger"
-        ]
-      },
-      "weapon": {
-        "printedName": "Vibrodagger",
-        "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-vibrodagger",
-        "baseSlug": "weapon-vibrodagger",
-        "basePack": "weapons-simple",
-        "baseFormula": "2d4",
-        "baseType": "kinetic",
-        "baseFormulaPolicy": "uuid"
-      },
-      "printedAttack": {
-        "text": "+8",
-        "bonus": 8,
-        "bonuses": [
-          8
-        ],
-        "source": "printed-statblock",
-        "hydratePolicy": "metadata-only"
-      },
-      "formula": {
-        "mode": "base-plus-dice",
-        "printed": "3d4+8",
-        "delta": "+1d4+8",
-        "deltaSource": "printed-statblock"
-      },
-      "annotations": [],
-      "suffix": "with Rapid Strike",
       "confidence": "manualRequired",
       "reviewRequired": true
     },
@@ -19558,60 +17556,6 @@
       "reviewRequired": true
     },
     {
-      "slug": "inquisitorius-recruit-lightsaber",
-      "name": "Lightsaber",
-      "status": "safe-ordinary-weapon-with-delta",
-      "source": {
-        "book": "Unknown / missing source",
-        "status": "generated-candidate; page and confidence review required",
-        "page": null,
-        "generatedFrom": "packs/nonheroic.db"
-      },
-      "actor": {
-        "name": "Inquisitorius Recruit",
-        "slugs": [
-          "inquisitorius-recruit"
-        ]
-      },
-      "match": {
-        "actorSlugs": [
-          "inquisitorius-recruit"
-        ],
-        "rawIncludes": [
-          "lightsaber"
-        ]
-      },
-      "weapon": {
-        "printedName": "Lightsaber",
-        "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
-        "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
-        "baseFormula": "2d8",
-        "baseType": "energy",
-        "baseFormulaPolicy": "uuid"
-      },
-      "printedAttack": {
-        "text": "+11",
-        "bonus": 11,
-        "bonuses": [
-          11
-        ],
-        "source": "printed-statblock",
-        "hydratePolicy": "metadata-only"
-      },
-      "formula": {
-        "mode": "base-plus-dice",
-        "printed": "3d8+7",
-        "delta": "+1d8+7",
-        "deltaSource": "printed-statblock"
-      },
-      "annotations": [],
-      "suffix": "with Rapid Strike",
-      "confidence": "manualRequired",
-      "reviewRequired": true
-    },
-    {
       "slug": "inquisitorius-recruit-heavy-blaster-pistol",
       "name": "Heavy Blaster Pistol",
       "status": "safe-ordinary-weapon-with-delta",
@@ -20102,60 +18046,6 @@
       "reviewRequired": true
     },
     {
-      "slug": "sith-marauder-lightsaber",
-      "name": "Lightsaber",
-      "status": "safe-ordinary-weapon-with-delta",
-      "source": {
-        "book": "Unknown / missing source",
-        "status": "generated-candidate; page and confidence review required",
-        "page": null,
-        "generatedFrom": "packs/nonheroic.db"
-      },
-      "actor": {
-        "name": "Sith Marauder",
-        "slugs": [
-          "sith-marauder"
-        ]
-      },
-      "match": {
-        "actorSlugs": [
-          "sith-marauder"
-        ],
-        "rawIncludes": [
-          "lightsaber"
-        ]
-      },
-      "weapon": {
-        "printedName": "Lightsaber",
-        "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
-        "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
-        "baseFormula": "2d8",
-        "baseType": "energy",
-        "baseFormulaPolicy": "uuid"
-      },
-      "printedAttack": {
-        "text": "+11",
-        "bonus": 11,
-        "bonuses": [
-          11
-        ],
-        "source": "printed-statblock",
-        "hydratePolicy": "metadata-only"
-      },
-      "formula": {
-        "mode": "base-plus-dice",
-        "printed": "3d8+12",
-        "delta": "+1d8+12",
-        "deltaSource": "printed-statblock"
-      },
-      "annotations": [],
-      "suffix": "with Rapid Strike",
-      "confidence": "manualRequired",
-      "reviewRequired": true
-    },
-    {
       "slug": "clone-pilot-blaster-pistol",
       "name": "Blaster Pistol",
       "status": "safe-ordinary-weapon-with-delta",
@@ -20368,60 +18258,6 @@
       },
       "annotations": [],
       "suffix": null,
-      "confidence": "manualRequired",
-      "reviewRequired": true
-    },
-    {
-      "slug": "cultist-acolyte-vibroblade",
-      "name": "Vibroblade",
-      "status": "safe-ordinary-weapon-with-delta",
-      "source": {
-        "book": "Unknown / missing source",
-        "status": "generated-candidate; page and confidence review required",
-        "page": null,
-        "generatedFrom": "packs/nonheroic.db"
-      },
-      "actor": {
-        "name": "Cultist Acolyte",
-        "slugs": [
-          "cultist-acolyte"
-        ]
-      },
-      "match": {
-        "actorSlugs": [
-          "cultist-acolyte"
-        ],
-        "rawIncludes": [
-          "vibroblade"
-        ]
-      },
-      "weapon": {
-        "printedName": "Vibroblade",
-        "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-vibroblade",
-        "baseSlug": "weapon-vibroblade",
-        "basePack": "weapons-simple",
-        "baseFormula": "2d6",
-        "baseType": "kinetic",
-        "baseFormulaPolicy": "uuid"
-      },
-      "printedAttack": {
-        "text": "+7",
-        "bonus": 7,
-        "bonuses": [
-          7
-        ],
-        "source": "printed-statblock",
-        "hydratePolicy": "metadata-only"
-      },
-      "formula": {
-        "mode": "base-plus-dice",
-        "printed": "3d6+2",
-        "delta": "+1d6+2",
-        "deltaSource": "printed-statblock"
-      },
-      "annotations": [],
-      "suffix": "with Rapid Strike",
       "confidence": "manualRequired",
       "reviewRequired": true
     },
@@ -20700,62 +18536,6 @@
       "reviewRequired": true
     },
     {
-      "slug": "gamorrean-jailer-stun-baton",
-      "name": "Stun Baton",
-      "status": "safe-ordinary-weapon-with-delta",
-      "source": {
-        "book": "Unknown / missing source",
-        "status": "generated-candidate; page and confidence review required",
-        "page": null,
-        "generatedFrom": "packs/nonheroic.db"
-      },
-      "actor": {
-        "name": "Gamorrean Jailer",
-        "slugs": [
-          "gamorrean-jailer"
-        ]
-      },
-      "match": {
-        "actorSlugs": [
-          "gamorrean-jailer"
-        ],
-        "rawIncludes": [
-          "stun baton"
-        ]
-      },
-      "weapon": {
-        "printedName": "Stun Baton",
-        "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-stun-baton",
-        "baseSlug": "weapon-stun-baton",
-        "basePack": "weapons-simple",
-        "baseFormula": "1d6",
-        "baseType": "stun",
-        "baseFormulaPolicy": "uuid"
-      },
-      "printedAttack": {
-        "text": "+5",
-        "bonus": 5,
-        "bonuses": [
-          5
-        ],
-        "source": "printed-statblock",
-        "hydratePolicy": "metadata-only"
-      },
-      "formula": {
-        "mode": "base-plus-dice",
-        "printed": "3d6+4",
-        "delta": "+2d6+4",
-        "deltaSource": "printed-statblock"
-      },
-      "annotations": [
-        "Stun"
-      ],
-      "suffix": "with Rapid Strike",
-      "confidence": "manualRequired",
-      "reviewRequired": true
-    },
-    {
       "slug": "gamorrean-jailer-blaster-pistol",
       "name": "Blaster Pistol",
       "status": "safe-ordinary-weapon-with-delta",
@@ -20860,60 +18640,6 @@
       },
       "annotations": [],
       "suffix": null,
-      "confidence": "manualRequired",
-      "reviewRequired": true
-    },
-    {
-      "slug": "imperial-inquisitor-lightsaber",
-      "name": "Lightsaber",
-      "status": "safe-ordinary-weapon-with-delta",
-      "source": {
-        "book": "Unknown / missing source",
-        "status": "generated-candidate; page and confidence review required",
-        "page": null,
-        "generatedFrom": "packs/nonheroic.db"
-      },
-      "actor": {
-        "name": "Imperial Inquisitor",
-        "slugs": [
-          "imperial-inquisitor"
-        ]
-      },
-      "match": {
-        "actorSlugs": [
-          "imperial-inquisitor"
-        ],
-        "rawIncludes": [
-          "lightsaber"
-        ]
-      },
-      "weapon": {
-        "printedName": "Lightsaber",
-        "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
-        "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
-        "baseFormula": "2d8",
-        "baseType": "energy",
-        "baseFormulaPolicy": "uuid"
-      },
-      "printedAttack": {
-        "text": "+9",
-        "bonus": 9,
-        "bonuses": [
-          9
-        ],
-        "source": "printed-statblock",
-        "hydratePolicy": "metadata-only"
-      },
-      "formula": {
-        "mode": "base-plus-dice",
-        "printed": "3d8+6",
-        "delta": "+1d8+6",
-        "deltaSource": "printed-statblock"
-      },
-      "annotations": [],
-      "suffix": "with Rapid Strike",
       "confidence": "manualRequired",
       "reviewRequired": true
     },
@@ -21076,60 +18802,6 @@
       },
       "annotations": [],
       "suffix": null,
-      "confidence": "manualRequired",
-      "reviewRequired": true
-    },
-    {
-      "slug": "jedi-crusader-lightsaber",
-      "name": "Lightsaber",
-      "status": "safe-ordinary-weapon-with-delta",
-      "source": {
-        "book": "Unknown / missing source",
-        "status": "generated-candidate; page and confidence review required",
-        "page": null,
-        "generatedFrom": "packs/nonheroic.db"
-      },
-      "actor": {
-        "name": "Jedi Crusader",
-        "slugs": [
-          "jedi-crusader"
-        ]
-      },
-      "match": {
-        "actorSlugs": [
-          "jedi-crusader"
-        ],
-        "rawIncludes": [
-          "lightsaber"
-        ]
-      },
-      "weapon": {
-        "printedName": "Lightsaber",
-        "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
-        "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
-        "baseFormula": "2d8",
-        "baseType": "energy",
-        "baseFormulaPolicy": "uuid"
-      },
-      "printedAttack": {
-        "text": "+10",
-        "bonus": 10,
-        "bonuses": [
-          10
-        ],
-        "source": "printed-statblock",
-        "hydratePolicy": "metadata-only"
-      },
-      "formula": {
-        "mode": "base-plus-delta",
-        "printed": "2d8+11",
-        "delta": "+11",
-        "deltaSource": "printed-statblock"
-      },
-      "annotations": [],
-      "suffix": "with Double Attack",
       "confidence": "manualRequired",
       "reviewRequired": true
     },
@@ -21406,60 +19078,6 @@
       "reviewRequired": true
     },
     {
-      "slug": "elite-commando-blaster-pistol",
-      "name": "Blaster Pistol",
-      "status": "safe-ordinary-weapon-with-delta",
-      "source": {
-        "book": "Unknown / missing source",
-        "status": "generated-candidate; page and confidence review required",
-        "page": null,
-        "generatedFrom": "packs/nonheroic.db"
-      },
-      "actor": {
-        "name": "Elite Commando",
-        "slugs": [
-          "elite-commando"
-        ]
-      },
-      "match": {
-        "actorSlugs": [
-          "elite-commando"
-        ],
-        "rawIncludes": [
-          "blaster pistol"
-        ]
-      },
-      "weapon": {
-        "printedName": "Blaster Pistol",
-        "rowKind": "ranged",
-        "uuid": "Compendium.foundryvtt-swse.weapons-pistols.Item.weapon-blaster-pistol",
-        "baseSlug": "weapon-blaster-pistol",
-        "basePack": "weapons-pistols",
-        "baseFormula": "3d6",
-        "baseType": "energy",
-        "baseFormulaPolicy": "uuid"
-      },
-      "printedAttack": {
-        "text": "+11",
-        "bonus": 11,
-        "bonuses": [
-          11
-        ],
-        "source": "printed-statblock",
-        "hydratePolicy": "metadata-only"
-      },
-      "formula": {
-        "mode": "base-plus-delta",
-        "printed": "3d6+7",
-        "delta": "+7",
-        "deltaSource": "printed-statblock"
-      },
-      "annotations": [],
-      "suffix": "with Double Attack",
-      "confidence": "manualRequired",
-      "reviewRequired": true
-    },
-    {
       "slug": "galactic-alliance-junior-officer-blaster-pistol",
       "name": "Blaster Pistol",
       "status": "safe-ordinary-weapon-with-delta",
@@ -21719,60 +19337,6 @@
         "hydratePolicy": "metadata-only"
       },
       "formula": {
-        "mode": "base-plus-dice",
-        "printed": "3d6+7",
-        "delta": "+1d6+7",
-        "deltaSource": "printed-statblock"
-      },
-      "annotations": [],
-      "suffix": "with Rapid Strike",
-      "confidence": "manualRequired",
-      "reviewRequired": true
-    },
-    {
-      "slug": "clone-assassin-vibroblade",
-      "name": "Vibroblade",
-      "status": "safe-ordinary-weapon-with-delta",
-      "source": {
-        "book": "Unknown / missing source",
-        "status": "generated-candidate; page and confidence review required",
-        "page": null,
-        "generatedFrom": "packs/nonheroic.db"
-      },
-      "actor": {
-        "name": "Clone Assassin",
-        "slugs": [
-          "clone-assassin"
-        ]
-      },
-      "match": {
-        "actorSlugs": [
-          "clone-assassin"
-        ],
-        "rawIncludes": [
-          "vibroblade"
-        ]
-      },
-      "weapon": {
-        "printedName": "Vibroblade",
-        "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-vibroblade",
-        "baseSlug": "weapon-vibroblade",
-        "basePack": "weapons-simple",
-        "baseFormula": "2d6",
-        "baseType": "kinetic",
-        "baseFormulaPolicy": "uuid"
-      },
-      "printedAttack": {
-        "text": "+12",
-        "bonus": 12,
-        "bonuses": [
-          12
-        ],
-        "source": "printed-statblock",
-        "hydratePolicy": "metadata-only"
-      },
-      "formula": {
         "mode": "base-plus-delta",
         "printed": "2d6+7",
         "delta": "+7",
@@ -21888,60 +19452,6 @@
       },
       "annotations": [],
       "suffix": null,
-      "confidence": "manualRequired",
-      "reviewRequired": true
-    },
-    {
-      "slug": "clone-assassin-vibroblade",
-      "name": "Vibroblade",
-      "status": "safe-ordinary-weapon-with-delta",
-      "source": {
-        "book": "Unknown / missing source",
-        "status": "generated-candidate; page and confidence review required",
-        "page": null,
-        "generatedFrom": "packs/nonheroic.db"
-      },
-      "actor": {
-        "name": "Clone Assassin",
-        "slugs": [
-          "clone-assassin"
-        ]
-      },
-      "match": {
-        "actorSlugs": [
-          "clone-assassin"
-        ],
-        "rawIncludes": [
-          "vibroblade"
-        ]
-      },
-      "weapon": {
-        "printedName": "Vibroblade",
-        "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-vibroblade",
-        "baseSlug": "weapon-vibroblade",
-        "basePack": "weapons-simple",
-        "baseFormula": "2d6",
-        "baseType": "kinetic",
-        "baseFormulaPolicy": "uuid"
-      },
-      "printedAttack": {
-        "text": "+10",
-        "bonus": 10,
-        "bonuses": [
-          10
-        ],
-        "source": "printed-statblock",
-        "hydratePolicy": "metadata-only"
-      },
-      "formula": {
-        "mode": "base-plus-delta",
-        "printed": "2d6+7",
-        "delta": "+7",
-        "deltaSource": "printed-statblock"
-      },
-      "annotations": [],
-      "suffix": "with Rapid Strike",
       "confidence": "manualRequired",
       "reviewRequired": true
     },
@@ -22648,60 +20158,6 @@
       },
       "annotations": [],
       "suffix": null,
-      "confidence": "manualRequired",
-      "reviewRequired": true
-    },
-    {
-      "slug": "swoop-gang-leader-vibrodagger",
-      "name": "Vibrodagger",
-      "status": "safe-ordinary-weapon-with-delta",
-      "source": {
-        "book": "Unknown / missing source",
-        "status": "generated-candidate; page and confidence review required",
-        "page": null,
-        "generatedFrom": "packs/nonheroic.db"
-      },
-      "actor": {
-        "name": "Swoop Gang Leader",
-        "slugs": [
-          "swoop-gang-leader"
-        ]
-      },
-      "match": {
-        "actorSlugs": [
-          "swoop-gang-leader"
-        ],
-        "rawIncludes": [
-          "vibrodagger"
-        ]
-      },
-      "weapon": {
-        "printedName": "Vibrodagger",
-        "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-vibrodagger",
-        "baseSlug": "weapon-vibrodagger",
-        "basePack": "weapons-simple",
-        "baseFormula": "2d4",
-        "baseType": "kinetic",
-        "baseFormulaPolicy": "uuid"
-      },
-      "printedAttack": {
-        "text": "+4",
-        "bonus": 4,
-        "bonuses": [
-          4
-        ],
-        "source": "printed-statblock",
-        "hydratePolicy": "metadata-only"
-      },
-      "formula": {
-        "mode": "base-plus-dice",
-        "printed": "3d4+4",
-        "delta": "+1d4+4",
-        "deltaSource": "printed-statblock"
-      },
-      "annotations": [],
-      "suffix": "with Rapid Strike",
       "confidence": "manualRequired",
       "reviewRequired": true
     },
@@ -23680,60 +21136,6 @@
       "reviewRequired": true
     },
     {
-      "slug": "sith-shadow-hand-lightsaber",
-      "name": "Lightsaber",
-      "status": "safe-ordinary-weapon-with-delta",
-      "source": {
-        "book": "Unknown / missing source",
-        "status": "generated-candidate; page and confidence review required",
-        "page": null,
-        "generatedFrom": "packs/nonheroic.db"
-      },
-      "actor": {
-        "name": "Sith Shadow Hand",
-        "slugs": [
-          "sith-shadow-hand"
-        ]
-      },
-      "match": {
-        "actorSlugs": [
-          "sith-shadow-hand"
-        ],
-        "rawIncludes": [
-          "lightsaber"
-        ]
-      },
-      "weapon": {
-        "printedName": "Lightsaber",
-        "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
-        "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
-        "baseFormula": "2d8",
-        "baseType": "energy",
-        "baseFormulaPolicy": "uuid"
-      },
-      "printedAttack": {
-        "text": "+9",
-        "bonus": 9,
-        "bonuses": [
-          9
-        ],
-        "source": "printed-statblock",
-        "hydratePolicy": "metadata-only"
-      },
-      "formula": {
-        "mode": "base-plus-delta",
-        "printed": "2d8+8",
-        "delta": "+8",
-        "deltaSource": "printed-statblock"
-      },
-      "annotations": [],
-      "suffix": "with Double Attack",
-      "confidence": "manualRequired",
-      "reviewRequired": true
-    },
-    {
       "slug": "csa-assassin-vibrodagger",
       "name": "Vibrodagger",
       "status": "safe-ordinary-weapon-with-delta",
@@ -24004,60 +21406,6 @@
       "reviewRequired": true
     },
     {
-      "slug": "jedi-refugee-lightsaber",
-      "name": "Lightsaber",
-      "status": "safe-ordinary-weapon-with-delta",
-      "source": {
-        "book": "Unknown / missing source",
-        "status": "generated-candidate; page and confidence review required",
-        "page": null,
-        "generatedFrom": "packs/nonheroic.db"
-      },
-      "actor": {
-        "name": "Jedi Refugee",
-        "slugs": [
-          "jedi-refugee"
-        ]
-      },
-      "match": {
-        "actorSlugs": [
-          "jedi-refugee"
-        ],
-        "rawIncludes": [
-          "lightsaber"
-        ]
-      },
-      "weapon": {
-        "printedName": "Lightsaber",
-        "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
-        "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
-        "baseFormula": "2d8",
-        "baseType": "energy",
-        "baseFormulaPolicy": "uuid"
-      },
-      "printedAttack": {
-        "text": "+10",
-        "bonus": 10,
-        "bonuses": [
-          10
-        ],
-        "source": "printed-statblock",
-        "hydratePolicy": "metadata-only"
-      },
-      "formula": {
-        "mode": "base-plus-dice",
-        "printed": "3d8+6",
-        "delta": "+1d8+6",
-        "deltaSource": "printed-statblock"
-      },
-      "annotations": [],
-      "suffix": "with Rapid Strike",
-      "confidence": "manualRequired",
-      "reviewRequired": true
-    },
-    {
       "slug": "skull-squadron-pilot-blaster-pistol",
       "name": "Blaster Pistol",
       "status": "safe-ordinary-weapon-with-delta",
@@ -24162,60 +21510,6 @@
       },
       "annotations": [],
       "suffix": null,
-      "confidence": "manualRequired",
-      "reviewRequired": true
-    },
-    {
-      "slug": "quarren-goon-vibroblade",
-      "name": "Vibroblade",
-      "status": "safe-ordinary-weapon-with-delta",
-      "source": {
-        "book": "Unknown / missing source",
-        "status": "generated-candidate; page and confidence review required",
-        "page": null,
-        "generatedFrom": "packs/nonheroic.db"
-      },
-      "actor": {
-        "name": "Quarren Goon",
-        "slugs": [
-          "quarren-goon"
-        ]
-      },
-      "match": {
-        "actorSlugs": [
-          "quarren-goon"
-        ],
-        "rawIncludes": [
-          "vibroblade"
-        ]
-      },
-      "weapon": {
-        "printedName": "Vibroblade",
-        "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-vibroblade",
-        "baseSlug": "weapon-vibroblade",
-        "basePack": "weapons-simple",
-        "baseFormula": "2d6",
-        "baseType": "kinetic",
-        "baseFormulaPolicy": "uuid"
-      },
-      "printedAttack": {
-        "text": "+5*",
-        "bonus": 5,
-        "bonuses": [
-          5
-        ],
-        "source": "printed-statblock",
-        "hydratePolicy": "metadata-only"
-      },
-      "formula": {
-        "mode": "base-plus-dice",
-        "printed": "3d6+10",
-        "delta": "+1d6+10",
-        "deltaSource": "printed-statblock"
-      },
-      "annotations": [],
-      "suffix": "with Rapid Strike",
       "confidence": "manualRequired",
       "reviewRequired": true
     },
@@ -25068,60 +22362,6 @@
         "baseFormulaPolicy": "uuid"
       },
       "printedAttack": {
-        "text": "+15",
-        "bonus": 15,
-        "bonuses": [
-          15
-        ],
-        "source": "printed-statblock",
-        "hydratePolicy": "metadata-only"
-      },
-      "formula": {
-        "mode": "base-plus-dice",
-        "printed": "4d8+9",
-        "delta": "+1d8+9",
-        "deltaSource": "printed-statblock"
-      },
-      "annotations": [],
-      "suffix": "with Trigger Work",
-      "confidence": "manualRequired",
-      "reviewRequired": true
-    },
-    {
-      "slug": "trandoshan-raider-heavy-blaster-pistol",
-      "name": "Heavy Blaster Pistol",
-      "status": "safe-ordinary-weapon-with-delta",
-      "source": {
-        "book": "Unknown / missing source",
-        "status": "generated-candidate; page and confidence review required",
-        "page": null,
-        "generatedFrom": "packs/nonheroic.db"
-      },
-      "actor": {
-        "name": "Trandoshan Raider",
-        "slugs": [
-          "trandoshan-raider"
-        ]
-      },
-      "match": {
-        "actorSlugs": [
-          "trandoshan-raider"
-        ],
-        "rawIncludes": [
-          "heavy blaster pistol"
-        ]
-      },
-      "weapon": {
-        "printedName": "Heavy Blaster Pistol",
-        "rowKind": "ranged",
-        "uuid": "Compendium.foundryvtt-swse.weapons-pistols.Item.weapon-heavy-blaster-pistol",
-        "baseSlug": "weapon-heavy-blaster-pistol",
-        "basePack": "weapons-pistols",
-        "baseFormula": "3d8",
-        "baseType": "energy",
-        "baseFormulaPolicy": "uuid"
-      },
-      "printedAttack": {
         "text": "+12",
         "bonus": 12,
         "bonuses": [
@@ -25138,60 +22378,6 @@
       },
       "annotations": [],
       "suffix": null,
-      "confidence": "manualRequired",
-      "reviewRequired": true
-    },
-    {
-      "slug": "trandoshan-raider-heavy-blaster-pistol",
-      "name": "Heavy Blaster Pistol",
-      "status": "safe-ordinary-weapon-with-delta",
-      "source": {
-        "book": "Unknown / missing source",
-        "status": "generated-candidate; page and confidence review required",
-        "page": null,
-        "generatedFrom": "packs/nonheroic.db"
-      },
-      "actor": {
-        "name": "Trandoshan Raider",
-        "slugs": [
-          "trandoshan-raider"
-        ]
-      },
-      "match": {
-        "actorSlugs": [
-          "trandoshan-raider"
-        ],
-        "rawIncludes": [
-          "heavy blaster pistol"
-        ]
-      },
-      "weapon": {
-        "printedName": "Heavy Blaster Pistol",
-        "rowKind": "ranged",
-        "uuid": "Compendium.foundryvtt-swse.weapons-pistols.Item.weapon-heavy-blaster-pistol",
-        "baseSlug": "weapon-heavy-blaster-pistol",
-        "basePack": "weapons-pistols",
-        "baseFormula": "3d8",
-        "baseType": "energy",
-        "baseFormulaPolicy": "uuid"
-      },
-      "printedAttack": {
-        "text": "+12",
-        "bonus": 12,
-        "bonuses": [
-          12
-        ],
-        "source": "printed-statblock",
-        "hydratePolicy": "metadata-only"
-      },
-      "formula": {
-        "mode": "base-plus-dice",
-        "printed": "4d8+9",
-        "delta": "+1d8+9",
-        "deltaSource": "printed-statblock"
-      },
-      "annotations": [],
-      "suffix": "with Double Attack",
       "confidence": "manualRequired",
       "reviewRequired": true
     },
@@ -25300,60 +22486,6 @@
       },
       "annotations": [],
       "suffix": null,
-      "confidence": "manualRequired",
-      "reviewRequired": true
-    },
-    {
-      "slug": "sith-apprentice-lightsaber",
-      "name": "Lightsaber",
-      "status": "safe-ordinary-weapon-with-delta",
-      "source": {
-        "book": "Unknown / missing source",
-        "status": "generated-candidate; page and confidence review required",
-        "page": null,
-        "generatedFrom": "packs/nonheroic.db"
-      },
-      "actor": {
-        "name": "Sith Apprentice",
-        "slugs": [
-          "sith-apprentice"
-        ]
-      },
-      "match": {
-        "actorSlugs": [
-          "sith-apprentice"
-        ],
-        "rawIncludes": [
-          "lightsaber"
-        ]
-      },
-      "weapon": {
-        "printedName": "Lightsaber",
-        "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-lightsaber",
-        "baseSlug": "weapon-lightsaber",
-        "basePack": "weapons-simple",
-        "baseFormula": "2d8",
-        "baseType": "energy",
-        "baseFormulaPolicy": "uuid"
-      },
-      "printedAttack": {
-        "text": "+10",
-        "bonus": 10,
-        "bonuses": [
-          10
-        ],
-        "source": "printed-statblock",
-        "hydratePolicy": "metadata-only"
-      },
-      "formula": {
-        "mode": "base-plus-delta",
-        "printed": "2d8+9",
-        "delta": "+9",
-        "deltaSource": "printed-statblock"
-      },
-      "annotations": [],
-      "suffix": "with Double Attack",
       "confidence": "manualRequired",
       "reviewRequired": true
     },
@@ -27517,60 +24649,6 @@
         "hydratePolicy": "metadata-only"
       },
       "formula": {
-        "mode": "base-plus-dice",
-        "printed": "3d6+8",
-        "delta": "+1d6+8",
-        "deltaSource": "printed-statblock"
-      },
-      "annotations": [],
-      "suffix": "with Rapid Strike",
-      "confidence": "manualRequired",
-      "reviewRequired": true
-    },
-    {
-      "slug": "knighthunter-electrostaff",
-      "name": "Electrostaff",
-      "status": "safe-ordinary-weapon-with-delta",
-      "source": {
-        "book": "Unknown / missing source",
-        "status": "generated-candidate; page and confidence review required",
-        "page": null,
-        "generatedFrom": "packs/nonheroic.db"
-      },
-      "actor": {
-        "name": "Knighthunter",
-        "slugs": [
-          "knighthunter"
-        ]
-      },
-      "match": {
-        "actorSlugs": [
-          "knighthunter"
-        ],
-        "rawIncludes": [
-          "electrostaff"
-        ]
-      },
-      "weapon": {
-        "printedName": "Electrostaff",
-        "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-electrostaff",
-        "baseSlug": "weapon-electrostaff",
-        "basePack": "weapons-simple",
-        "baseFormula": "2d6",
-        "baseType": "kinetic",
-        "baseFormulaPolicy": "uuid"
-      },
-      "printedAttack": {
-        "text": "+12",
-        "bonus": 12,
-        "bonuses": [
-          12
-        ],
-        "source": "printed-statblock",
-        "hydratePolicy": "metadata-only"
-      },
-      "formula": {
         "mode": "base-plus-delta",
         "printed": "2d6+8",
         "delta": "+8",
@@ -27686,60 +24764,6 @@
       },
       "annotations": [],
       "suffix": null,
-      "confidence": "manualRequired",
-      "reviewRequired": true
-    },
-    {
-      "slug": "knighthunter-electrostaff",
-      "name": "Electrostaff",
-      "status": "safe-ordinary-weapon-with-delta",
-      "source": {
-        "book": "Unknown / missing source",
-        "status": "generated-candidate; page and confidence review required",
-        "page": null,
-        "generatedFrom": "packs/nonheroic.db"
-      },
-      "actor": {
-        "name": "Knighthunter",
-        "slugs": [
-          "knighthunter"
-        ]
-      },
-      "match": {
-        "actorSlugs": [
-          "knighthunter"
-        ],
-        "rawIncludes": [
-          "electrostaff"
-        ]
-      },
-      "weapon": {
-        "printedName": "Electrostaff",
-        "rowKind": "melee",
-        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-electrostaff",
-        "baseSlug": "weapon-electrostaff",
-        "basePack": "weapons-simple",
-        "baseFormula": "2d6",
-        "baseType": "kinetic",
-        "baseFormulaPolicy": "uuid"
-      },
-      "printedAttack": {
-        "text": "+10",
-        "bonus": 10,
-        "bonuses": [
-          10
-        ],
-        "source": "printed-statblock",
-        "hydratePolicy": "metadata-only"
-      },
-      "formula": {
-        "mode": "base-plus-dice",
-        "printed": "3d6+8",
-        "delta": "+1d6+8",
-        "deltaSource": "printed-statblock"
-      },
-      "annotations": [],
-      "suffix": "with Rapid Strike",
       "confidence": "manualRequired",
       "reviewRequired": true
     },
