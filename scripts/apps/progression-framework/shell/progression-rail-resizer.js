@@ -8,6 +8,7 @@
  */
 
 const STORAGE_PREFIX = 'swse.progression.rails';
+const USER_FLAG_SCOPE = 'foundryvtt-swse';
 
 const DEFAULTS = Object.freeze({
   summary: {
@@ -27,6 +28,13 @@ const DEFAULTS = Object.freeze({
     collapsedClass: 'is-details-rail-collapsed',
   },
 });
+
+const TOP_RAIL_FLAGS = Object.freeze([
+  'mentorRailCollapsed',
+  'progressRailCollapsed',
+  'utilityBarCollapsed',
+  'summaryPanelCollapsed',
+]);
 
 function storageKey(rail, field) {
   return `${STORAGE_PREFIX}.${rail}.${field}`;
@@ -88,6 +96,49 @@ function syncRailControls(shell, rail) {
   }
 }
 
+function activeProgressionShellApp() {
+  return globalThis.game?.__swseActiveProgressionShell || null;
+}
+
+function applyRestoreAllButtonStyles(button) {
+  if (!button) return;
+  Object.assign(button.style, {
+    position: 'absolute',
+    top: '8px',
+    right: '12px',
+    zIndex: '96',
+    minHeight: '24px',
+    padding: '3px 8px',
+    display: 'inline-flex',
+    alignItems: 'center',
+    gap: '5px',
+    fontSize: '10px',
+    letterSpacing: '0.08em',
+    textTransform: 'uppercase',
+    pointerEvents: 'auto',
+  });
+}
+
+function ensureRestoreAllButton(shell) {
+  const row = contentRowFor(shell);
+  if (!row || row.querySelector?.(':scope > .prog-layout-restore-all')) return;
+
+  if (!row.style.position) row.style.position = 'relative';
+
+  const button = document.createElement('button');
+  button.type = 'button';
+  button.className = 'prog-layout-restore-all swse-ui-button';
+  button.title = 'Restore all progression rails, panels, and resized body columns to their default layout';
+  button.setAttribute('aria-label', 'Restore all progression rails and panels');
+  button.innerHTML = '<i class="fas fa-rotate-left" aria-hidden="true"></i><span>Restore All</span>';
+  applyRestoreAllButtonStyles(button);
+  button.addEventListener('click', (event) => {
+    void resetProgressionLayout(event, button);
+  });
+
+  row.prepend(button);
+}
+
 function availableWidth(shell) {
   const row = contentRowFor(shell);
   return Math.max(0, Number(row?.clientWidth || shell?.clientWidth || 0));
@@ -141,9 +192,37 @@ function restoreRail(shell, rail, { persist = false } = {}) {
   applyWidth(shell, rail, stored, { persist });
 }
 
+function resetBodyRailDefaults(shell) {
+  if (!shell) return;
+  for (const rail of Object.keys(DEFAULTS)) {
+    const cfg = configFor(rail);
+    localStorage.removeItem(storageKey(rail, 'width'));
+    localStorage.removeItem(storageKey(rail, 'collapsed'));
+    applyWidth(shell, rail, cfg.width, { persist: true });
+  }
+}
+
+function syncTopRailDom(shell) {
+  if (!shell) return;
+  shell.querySelector?.('[data-region="mentor-rail"]')?.setAttribute('data-collapsed', 'false');
+  shell.querySelector?.('[data-region="progress-rail"]')?.setAttribute('data-collapsed', 'false');
+  shell.querySelector?.('[data-region="utility-bar"]')?.setAttribute('data-collapsed', 'false');
+  shell.querySelector?.('[data-region="summary-panel"]')?.setAttribute('data-collapsed', 'false');
+  shell.dataset.summaryRailCollapsed = 'false';
+  shell.dataset.detailsRailCollapsed = 'false';
+}
+
+async function persistTopRailDefaults() {
+  const user = globalThis.game?.user;
+  if (!user?.setFlag) return;
+  await Promise.allSettled(TOP_RAIL_FLAGS.map(flag => user.setFlag(USER_FLAG_SCOPE, flag, false)));
+}
+
 export function hydrateProgressionRailSizes(root) {
   const shell = shellFor(root) || root?.querySelector?.('.progression-shell') || null;
   if (!shell) return;
+
+  ensureRestoreAllButton(shell);
 
   for (const rail of Object.keys(DEFAULTS)) {
     const cfg = configFor(rail);
@@ -174,6 +253,35 @@ export function restoreProgressionRail(event, target) {
   const shell = shellFor(target);
   if (!shell || !configFor(rail)) return;
   restoreRail(shell, rail, { persist: true });
+}
+
+export async function resetProgressionLayout(event, target) {
+  event?.preventDefault?.();
+  event?.stopPropagation?.();
+
+  const shell = shellFor(target) || target?.querySelector?.('.progression-shell') || null;
+  if (!shell) return;
+
+  resetBodyRailDefaults(shell);
+  syncTopRailDom(shell);
+
+  const app = activeProgressionShellApp();
+  if (app) {
+    app.mentorCollapsed = false;
+    app.progressRailCollapsed = false;
+    app.utilityBarCollapsed = false;
+    app.summaryPanelCollapsed = false;
+  }
+
+  await persistTopRailDefaults();
+
+  ui?.notifications?.info?.('Progression layout restored.');
+
+  if (typeof app?.requestRender === 'function') {
+    app.requestRender({ preserveScroll: true, reason: 'restore-layout-defaults' });
+  } else if (typeof app?.render === 'function') {
+    app.render();
+  }
 }
 
 export function handleProgressionRailResizerKey(event, target) {
@@ -259,6 +367,7 @@ if (typeof window !== 'undefined') {
     key: handleProgressionRailResizerKey,
     reset: resetProgressionRailResize,
     restore: restoreProgressionRail,
+    resetAll: resetProgressionLayout,
     hydrate: hydrateProgressionRailSizes,
   };
 }
