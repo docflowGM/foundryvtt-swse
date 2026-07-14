@@ -7,6 +7,7 @@
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { NPCTemplateDataLoader } from "/systems/foundryvtt-swse/scripts/core/npc-template-data-loader.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
+import { hydrateImportedStatblockWeapon } from "/systems/foundryvtt-swse/scripts/engine/import/nonheroic-damage-profile-hydrator.js";
 
 
 const NPC_IMPORT_NAMESPACE = 'swse';
@@ -487,13 +488,21 @@ export class NPCTemplateImporterEngine {
    */
   static async _addItemsToActor(actor, statblock) {
     const items = [];
+    const weaponContext = {
+      actorName: actor?.name,
+      templateName: cleanText(statblock?.Name || statblock?.name || actor?.name),
+      statblock,
+      npcType: actor?.system?.npcType
+    };
 
-    // Add weapons
+    // Add weapons. NH-2 profile hydration is conservative: matched statblock
+    // attack rows receive formula/type/area/rider metadata; unmatched rows stay
+    // as the same reference-only items this importer already created.
     if (statblock['Melee Weapons']) {
-      items.push(...this._parseWeapons(statblock['Melee Weapons'], 'melee'));
+      items.push(...await this._parseWeapons(statblock['Melee Weapons'], 'melee', weaponContext));
     }
     if (statblock['Ranged Weapons']) {
-      items.push(...this._parseWeapons(statblock['Ranged Weapons'], 'ranged'));
+      items.push(...await this._parseWeapons(statblock['Ranged Weapons'], 'ranged', weaponContext));
     }
 
     // Add feats if available
@@ -549,7 +558,7 @@ export class NPCTemplateImporterEngine {
    * Parse weapons from statblock string
    * @private
    */
-  static _parseWeapons(weaponString, type) {
+  static async _parseWeapons(weaponString, type, context = {}) {
     const weapons = [];
     if (!weaponString) return weapons;
 
@@ -558,7 +567,7 @@ export class NPCTemplateImporterEngine {
     for (const entry of weaponEntries) {
       const trimmed = entry.trim();
       if (trimmed) {
-        weapons.push({
+        const item = {
           name: trimmed,
           type: 'weapon',
           img: 'systems/foundryvtt-swse/assets/icons/weapon.png',
@@ -572,7 +581,8 @@ export class NPCTemplateImporterEngine {
           flags: {
             swse: { import: { sourceAuthority: 'statblock', raw: trimmed } }
           }
-        });
+        };
+        weapons.push(await hydrateImportedStatblockWeapon(item, { ...context, raw: trimmed, weaponType: type }));
       }
     }
 

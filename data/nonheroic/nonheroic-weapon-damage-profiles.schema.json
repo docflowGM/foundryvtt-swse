@@ -1,0 +1,179 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "systems/foundryvtt-swse/data/nonheroic/nonheroic-weapon-damage-profiles.schema.json",
+  "title": "SWSE Nonheroic Statblock Weapon Damage Profiles",
+  "description": "Source-backed statblock weapon/action rows for NPC import hydration. Source/actor/match are attribution wrappers; runtime-facing fields mirror the canonical damage profile model: delivery, attackShape, scale, primaryType, tags, attack, area, components, riders, sourceRefs, and confidence.",
+  "type": "object",
+  "required": ["schemaVersion", "profileKind", "canonPolicy", "records"],
+  "additionalProperties": false,
+  "properties": {
+    "$schemaVersion": { "type": "integer", "const": 2 },
+    "schemaVersion": { "type": "integer", "const": 2 },
+    "profileKind": { "type": "string", "const": "nonheroic-statblock-weapon-damage" },
+    "sourceFamily": { "type": "string" },
+    "canonPolicy": {
+      "type": "object",
+      "required": ["authority", "rowSemantics", "unmatchedRows"],
+      "additionalProperties": false,
+      "properties": {
+        "authority": { "type": "string" },
+        "rowSemantics": { "type": "string" },
+        "unmatchedRows": { "type": "string" },
+        "riders": { "type": "string" }
+      }
+    },
+    "notes": { "type": "array", "items": { "type": "string" } },
+    "records": { "type": "array", "items": { "$ref": "#/$defs/record" } },
+    "profiles": {
+      "description": "Deprecated v1 compatibility field. New data should use records[].",
+      "type": "array",
+      "items": { "type": "object" }
+    }
+  },
+  "$defs": {
+    "record": {
+      "type": "object",
+      "required": ["slug", "name", "source", "actor", "match", "weapon", "delivery", "attackShape", "scale", "primaryType", "tags", "attack", "components", "confidence"],
+      "additionalProperties": false,
+      "properties": {
+        "slug": { "$ref": "#/$defs/slug" },
+        "name": { "type": "string" },
+        "source": { "$ref": "#/$defs/source" },
+        "actor": { "$ref": "#/$defs/actor" },
+        "match": { "$ref": "#/$defs/match" },
+        "weapon": { "$ref": "#/$defs/weapon" },
+        "delivery": { "enum": ["weapon", "unarmed", "natural", "grenade", "force-power", "vehicle-weapon", "hazard", "poison-rider", null] },
+        "attackShape": { "enum": ["single-target", "autofire", "burst-fire", "burst", "splash", "cone", "line", "area", null] },
+        "scale": { "enum": ["character", "vehicle", "starship", "mixed"] },
+        "primaryType": { "type": ["string", "null"] },
+        "tags": { "type": "array", "items": { "type": "string" } },
+        "attack": { "$ref": "#/$defs/attack" },
+        "area": { "$ref": "#/$defs/area" },
+        "components": { "type": "array", "items": { "$ref": "#/$defs/component" } },
+        "riders": { "type": "array", "items": { "$ref": "#/$defs/rider" } },
+        "sourceRefs": { "type": "array", "items": { "$ref": "#/$defs/sourceRef" } },
+        "confidence": { "enum": ["verified", "inferred", "manualRequired"] },
+        "reviewRequired": { "type": "boolean" },
+        "variants": { "type": "array", "items": { "$ref": "#/$defs/variant" } },
+        "notes": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "source": {
+      "type": "object",
+      "required": ["book", "status"],
+      "additionalProperties": false,
+      "properties": {
+        "book": { "type": "string" },
+        "status": { "type": "string" },
+        "page": { "type": ["number", "string", "null"] },
+        "evidence": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "actor": {
+      "type": "object",
+      "required": ["name", "slugs"],
+      "additionalProperties": false,
+      "properties": {
+        "name": { "type": "string" },
+        "slugs": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/slug" } },
+        "kind": { "type": ["string", "null"] },
+        "challengeLevel": { "type": ["number", "null"] }
+      }
+    },
+    "match": {
+      "type": "object",
+      "required": ["actorSlugs", "rawIncludes"],
+      "additionalProperties": false,
+      "properties": {
+        "actorSlugs": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/slug" } },
+        "rawIncludes": { "type": "array", "minItems": 1, "items": { "type": "string" } }
+      }
+    },
+    "weapon": {
+      "type": "object",
+      "required": ["printedName", "rowKind"],
+      "additionalProperties": false,
+      "properties": {
+        "printedName": { "type": "string" },
+        "rowKind": { "enum": ["melee", "ranged", "special", "natural", "unarmed"] },
+        "integrated": { "type": "boolean" },
+        "category": { "type": ["string", "null"] },
+        "range": { "type": ["string", "null"] }
+      }
+    },
+    "attack": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "isArea": { "type": "boolean" },
+        "isAutofire": { "type": "boolean" },
+        "isBurstFire": { "type": "boolean" },
+        "isSplash": { "type": "boolean" },
+        "halfDamageOnMiss": { "type": "boolean" },
+        "noCriticalDouble": { "type": "boolean" },
+        "coverCanNegateMissDamage": { "type": "boolean" },
+        "attackRollMinimum": { "type": ["number", "null"] },
+        "defense": { "enum": ["reflex", "fortitude", "will", null] }
+      }
+    },
+    "area": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "shape": { "enum": ["burst", "cone", "line", "splash", "2x2", null] },
+        "radius": { "type": ["number", "null"] },
+        "size": { "type": ["number", "null"] },
+        "originMode": { "enum": ["grid-intersection", "self", "target-square", null] },
+        "targetPolicy": { "enum": ["all-in-area", "primary-plus-adjacent", "single", null] }
+      }
+    },
+    "component": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "key": { "type": "string" },
+        "label": { "type": "string" },
+        "formula": { "type": ["string", "null"] },
+        "type": { "type": ["string", "null"] },
+        "tags": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "rider": {
+      "type": "object",
+      "required": ["kind"],
+      "additionalProperties": false,
+      "properties": {
+        "kind": { "type": "string" },
+        "defense": { "enum": ["reflex", "fortitude", "will", null] },
+        "amount": { "type": ["number", "null"] },
+        "appliesOn": { "type": ["string", "null"] },
+        "notes": { "type": "string" }
+      }
+    },
+    "sourceRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "book": { "type": "string" },
+        "page": { "type": ["number", "string", "null"] },
+        "note": { "type": "string" }
+      }
+    },
+    "variant": {
+      "type": "object",
+      "required": ["slug", "label"],
+      "additionalProperties": false,
+      "properties": {
+        "slug": { "$ref": "#/$defs/slug" },
+        "label": { "type": "string" },
+        "primaryType": { "type": ["string", "null"] },
+        "tags": { "type": "array", "items": { "type": "string" } },
+        "attack": { "$ref": "#/$defs/attack" },
+        "area": { "$ref": "#/$defs/area" },
+        "components": { "type": "array", "items": { "$ref": "#/$defs/component" } },
+        "riders": { "type": "array", "items": { "$ref": "#/$defs/rider" } }
+      }
+    },
+    "slug": { "type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$" }
+  }
+}
