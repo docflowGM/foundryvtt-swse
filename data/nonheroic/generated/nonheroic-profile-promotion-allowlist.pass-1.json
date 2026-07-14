@@ -1,0 +1,18 @@
+{
+  "$schemaNote": "Pass-1 proof-of-concept allowlist for tools/promote-nonheroic-damage-profile-candidates.mjs. Exactly the rows listed here may be promoted; the tool fails loudly if any entry resolves to zero or more than one candidate.",
+  "generatedBy": "manual (Claude, pass-1 proof-of-concept selection)",
+  "note": "10 boring exact-match ordinary weapon rows, no special-mode suffixes, no lightsabers, no autofire/grenade/rider/natural-unarmed rows. See docs/audits/nonheroic-weapon-damage-bulk-lane-a-pass-1.md for rationale.",
+  "maxEntries": 10,
+  "entries": [
+    { "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json", "actorSlug": "goon", "status": "safe-ordinary-weapon-candidate", "printedName": "Heavy Blaster Pistol", "printedFormula": "3d8" },
+    { "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json", "actorSlug": "imperial-informant", "status": "safe-ordinary-weapon-candidate", "printedName": "Hold-Out Blaster Pistol", "printedFormula": "3d4" },
+    { "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json", "actorSlug": "medic", "status": "safe-ordinary-weapon-candidate", "printedName": "Blaster Carbine", "printedFormula": "3d8" },
+    { "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json", "actorSlug": "scout-trooper", "status": "safe-ordinary-weapon-candidate", "printedName": "Blaster Pistol", "printedFormula": "3d6" },
+    { "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json", "actorSlug": "peace-brigade-thug", "status": "safe-ordinary-weapon-candidate", "printedName": "Vibrodagger", "printedFormula": "2d4" },
+    { "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json", "actorSlug": "ugnaught-worker", "status": "safe-ordinary-weapon-candidate", "printedName": "Blaster Pistol", "printedFormula": "3d6" },
+    { "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json", "actorSlug": "csa-security-guard", "status": "safe-ordinary-weapon-candidate", "printedName": "Blaster Carbine", "printedFormula": "3d8" },
+    { "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json", "actorSlug": "black-sun-thug", "status": "safe-ordinary-weapon-candidate", "printedName": "Heavy Blaster Pistol", "printedFormula": "3d8" },
+    { "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json", "actorSlug": "swoop-gang-member", "status": "safe-ordinary-weapon-candidate", "printedName": "Vibrodagger", "printedFormula": "2d4" },
+    { "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json", "actorSlug": "sith-spy", "status": "safe-ordinary-weapon-candidate", "printedName": "Hold-Out Blaster Pistol", "printedFormula": "3d4" }
+  ]
+}

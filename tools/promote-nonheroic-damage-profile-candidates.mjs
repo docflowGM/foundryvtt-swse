@@ -22,6 +22,7 @@
  *   --max <n>            (default: 10; per-run promotion cap -- each pass's PR
  *                          description must state its intended cap explicitly)
  *
+
  * Fail-loud guarantees (see README/docs/audits/nonheroic-weapon-damage-bulk-
  * lane-a-pass-1.md for the human-facing writeup):
  *   - An allowlist entry that matches zero or more than one candidate aborts
@@ -61,6 +62,7 @@ function argValue(flag, fallback) {
   return fallback;
 }
 
+
 const CANDIDATE_FILES = [
   'data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json',
   'data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json'
@@ -75,6 +77,7 @@ const OUTPUT_MD = argValue('--report-md', 'docs/audits/generated/nonheroic-profi
 // pass's PR must still say up front how many rows it promotes); pass-1's
 // original hardcoded ceiling of 10 remains the default.
 const MAX_PROMOTIONS_ARG = Number(argValue('--max', '10'));
+
 
 const ALLOWED_STATUSES = new Set(['safe-ordinary-weapon-candidate', 'safe-ordinary-weapon-with-delta']);
 // Documented for readers of this file; the two candidate staging files never
