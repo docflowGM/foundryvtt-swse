@@ -395,9 +395,23 @@
       "weapon": {
         "printedName": "Blaster Cannon",
         "rowKind": "ranged",
+        "uuid": "Compendium.foundryvtt-swse.weapons-heavy.Item.weapon-blaster-cannon",
+        "baseSlug": "weapon-blaster-cannon",
+        "basePack": "weapons-heavy",
+        "baseFormula": "3d12",
+        "baseType": "energy",
+        "baseFormulaPolicy": "uuid",
         "integrated": false,
         "category": "heavy",
         "range": null
+      },
+      "formula": {
+        "mode": "base",
+        "printed": "3d12",
+        "delta": null,
+        "deltaSource": "printed-statblock",
+        "typeOverride": null,
+        "notes": []
       },
       "delivery": "weapon",
       "attackShape": "single-target",

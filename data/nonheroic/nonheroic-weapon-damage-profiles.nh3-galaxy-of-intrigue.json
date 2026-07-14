@@ -110,9 +110,23 @@
       "weapon": {
         "printedName": "Stun Baton",
         "rowKind": "melee",
+        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-stun-baton",
+        "baseSlug": "weapon-stun-baton",
+        "basePack": "weapons-simple",
+        "baseFormula": "1d6",
+        "baseType": "stun",
+        "baseFormulaPolicy": "uuid",
         "integrated": false,
         "category": "simple",
         "range": "melee"
+      },
+      "formula": {
+        "mode": "base-plus-delta",
+        "printed": "1d6+2",
+        "delta": "+2",
+        "deltaSource": "printed-statblock",
+        "typeOverride": null,
+        "notes": []
       },
       "delivery": "weapon",
       "attackShape": "single-target",
@@ -177,9 +191,23 @@
       "weapon": {
         "printedName": "Blaster Pistol",
         "rowKind": "ranged",
+        "uuid": "Compendium.foundryvtt-swse.weapons-pistols.Item.weapon-blaster-pistol",
+        "baseSlug": "weapon-blaster-pistol",
+        "basePack": "weapons-pistols",
+        "baseFormula": "3d6",
+        "baseType": "energy",
+        "baseFormulaPolicy": "uuid",
         "integrated": false,
         "category": "pistols",
         "range": null
+      },
+      "formula": {
+        "mode": "base",
+        "printed": "3d6",
+        "delta": null,
+        "deltaSource": "printed-statblock",
+        "typeOverride": null,
+        "notes": []
       },
       "delivery": "weapon",
       "attackShape": "single-target",
@@ -375,9 +403,23 @@
       "weapon": {
         "printedName": "Stun Baton",
         "rowKind": "melee",
+        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-stun-baton",
+        "baseSlug": "weapon-stun-baton",
+        "basePack": "weapons-simple",
+        "baseFormula": "1d6",
+        "baseType": "stun",
+        "baseFormulaPolicy": "uuid",
         "integrated": false,
         "category": "simple",
         "range": "melee"
+      },
+      "formula": {
+        "mode": "base-plus-delta",
+        "printed": "1d6+2",
+        "delta": "+2",
+        "deltaSource": "printed-statblock",
+        "typeOverride": null,
+        "notes": []
       },
       "delivery": "weapon",
       "attackShape": "single-target",
@@ -442,9 +484,23 @@
       "weapon": {
         "printedName": "Blaster Carbine",
         "rowKind": "ranged",
+        "uuid": "Compendium.foundryvtt-swse.weapons-rifles.Item.weapon-blaster-carbine",
+        "baseSlug": "weapon-blaster-carbine",
+        "basePack": "weapons-rifles",
+        "baseFormula": "3d8",
+        "baseType": "energy",
+        "baseFormulaPolicy": "uuid",
         "integrated": false,
         "category": "rifles",
         "range": null
+      },
+      "formula": {
+        "mode": "base",
+        "printed": "3d8",
+        "delta": null,
+        "deltaSource": "printed-statblock",
+        "typeOverride": null,
+        "notes": []
       },
       "delivery": "weapon",
       "attackShape": "single-target",
