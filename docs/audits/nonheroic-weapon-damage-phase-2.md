@@ -16,11 +16,36 @@ This phase is intentionally conservative:
 ```text
 scripts/engine/import/nonheroic-damage-profile-hydrator.js
 scripts/engine/import/npc-template-importer-engine.js
+data/nonheroic/nonheroic-weapon-damage-profiles.schema.json
+data/nonheroic/nonheroic-weapon-damage-profiles.nh1-droids.json
 ```
+
+## Canonical profile parity
+
+The nonheroic profile schema is not a second runtime damage model.
+
+It is a source-attribution wrapper around the same canonical damage profile axes used by `data/combat/damage-profiles.schema.json` and the v2 packet builder:
+
+```text
+source / actor / match / weapon attribution
++ delivery
++ attackShape
++ scale
++ primaryType
++ tags
++ attack
++ area
++ components
++ riders
++ sourceRefs
++ confidence
+```
+
+That means later importer, packet, audit, and migration code can read the canonical fields directly instead of translating from a separate `resolution` shape.
 
 ## Hydrator behavior
 
-The new hydrator loads known nonheroic statblock profile files:
+The hydrator loads known nonheroic statblock profile files:
 
 ```text
 data/nonheroic/nonheroic-weapon-damage-profiles.nh1-droids.json
@@ -28,10 +53,12 @@ data/nonheroic/nonheroic-weapon-damage-profiles.nh1-droids.json
 
 For each imported weapon row, it requires both:
 
-1. actor/template identity match via `profile.match.actorSlugs`, and
-2. raw attack-row text match via `profile.match.rawIncludes`.
+1. actor/template identity match via `match.actorSlugs`, and
+2. raw attack-row text match via `match.rawIncludes`.
 
-This prevents common text such as `blaster cannon`, `grenade launcher`, or `unarmed` from hydrating the wrong actor.
+It also gates runtime hydration on canonical wireability confidence. In the v2 record shape, only `confidence: "verified"` rows hydrate imports. Rows marked `manualRequired`, including source-text-only rows that still need page confirmation, stay reference-only.
+
+This prevents common text such as `blaster cannon`, `grenade launcher`, or `unarmed` from hydrating the wrong actor, and prevents unverified source rows from silently driving runtime metadata.
 
 ## Metadata applied to matched weapon rows
 
@@ -47,6 +74,7 @@ When a profile matches, the imported weapon item receives:
 - `system.scale`
 - `system.attack`
 - `system.area`
+- `system.components`
 - `system.riders`
 - `system.tags`
 - `system.damageProfileSlug`
@@ -94,18 +122,19 @@ NH-2 therefore hydrates damage/profile metadata only. A future statblock-roll mo
 
 In Foundry, import a matching profile-backed droid/statblock and inspect the embedded weapon item:
 
-- matched rows should have `system.statblockHydrated === true`,
-- matched rows should have `system.damage` and `system.damageType`,
+- matched verified rows should have `system.statblockHydrated === true`,
+- matched verified rows should have `system.damage` and `system.damageType`,
 - area rows should carry `system.attack` and `system.area`,
 - rider rows should carry `system.riders`,
-- unmatched rows should still be plain reference-only items.
+- unmatched rows should still be plain reference-only items,
+- matched but non-verified/manualRequired rows should also remain reference-only.
 
 Recommended examples once present in the import source:
 
 - KM1 Mining Droid — Unarmed / Laser Cutter,
 - Viper-Series Probe Droid — Pacify Hostile / Self-Destruct,
 - Colicoid T4 Turret Droid — Blaster Cannon / Grenade Launcher / Cutting Laser,
-- 11-17-Series Mining Droid — Heavy Plasma Jet, if imported from a source containing that attack row.
+- 11-17-Series Mining Droid — Heavy Plasma Jet should remain manual/reference-only until source page verification is recovered.
 
 ## Next phase recommendation
 
