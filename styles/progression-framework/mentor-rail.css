@@ -109,6 +109,42 @@
   transition: opacity 180ms ease;
 }
 
+/* Explicit overlay nodes survive later chrome-trimming CSS that suppresses pseudo-elements. */
+.progression-shell .prog-holo-mentor-media__overlay,
+.progression-shell .prog-holo-mentor-media__scan {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.progression-shell .prog-holo-mentor-media__overlay {
+  z-index: 2;
+  background:
+    radial-gradient(circle at 50% 35%, rgba(124, 236, 255, 0.18), transparent 44%),
+    linear-gradient(135deg, rgba(0, 178, 255, 0.12), transparent 34%, rgba(0, 178, 255, 0.06));
+  mix-blend-mode: screen;
+  opacity: 0.76;
+}
+
+.progression-shell .prog-holo-mentor-media__scan {
+  z-index: 3;
+  background:
+    repeating-linear-gradient(
+      0deg,
+      transparent 0 2px,
+      rgba(94, 224, 255, 0.10) 2px 3px
+    ),
+    linear-gradient(180deg, transparent 0%, rgba(94, 224, 255, 0.10) 50%, transparent 100%);
+  mix-blend-mode: screen;
+  opacity: 0.28;
+}
+
+.progression-shell.swse-prog-v2-shell[data-motion-style="off"] .prog-holo-mentor-media__scan,
+.progression-shell[data-motion-style="off"] .prog-holo-mentor-media__scan {
+  opacity: 0.16;
+}
+
 /* Hover state — stronger "active datapad feed" appearance */
 .progression-shell .prog-mentor__portrait:hover img {
   transform: scale(1.02);
