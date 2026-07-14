@@ -10,16 +10,18 @@ The batch is source-strict. It includes only rows where the source text clearly 
 
 ```text
 data/nonheroic/nonheroic-weapon-damage-profiles.nh4-unknown-regions.json
+data/nonheroic/nonheroic-weapon-damage-profiles.nh4-unknown-regions-beasts.json
 scripts/engine/import/nonheroic-damage-profile-hydrator.js
 ```
 
-## Added source family
+## Added source families
 
 ```text
 NH-4 Unknown Regions nonheroic statblock damage profiles
+NH-4 Unknown Regions beast natural attack profiles
 ```
 
-The profile file uses the same canonical runtime fields as the prior nonheroic phases:
+Both profile files use the same canonical runtime fields as the prior nonheroic phases:
 
 ```text
 delivery
@@ -69,6 +71,22 @@ Source: *The Unknown Regions*.
 - Blaster Pistol — `3d6`, single-target.
 - Blaster Carbine — `3d8`, single-target.
 
+### Reyko, CL 5
+
+Source: *The Unknown Regions*.
+
+- Gore — `1d8+7`, natural delivery, single-target.
+- Gore when charging — `1d8+10`, natural delivery, single-target variant.
+- Vehicle charge x2 and push effect are retained as riders/tags, not executable runtime effects.
+
+### Vindinax, CL 6
+
+Source: *The Unknown Regions*.
+
+- Claw — `1d4+8`, natural delivery, single-target.
+- Bite — `1d6+8`, natural delivery, single-target.
+- Rend `+2d6` is retained as a rider, not an executable runtime effect.
+
 ## Hydrator update
 
 `nonheroic-damage-profile-hydrator.js` now loads:
@@ -77,6 +95,7 @@ Source: *The Unknown Regions*.
 data/nonheroic/nonheroic-weapon-damage-profiles.nh1-droids.json
 data/nonheroic/nonheroic-weapon-damage-profiles.nh3-galaxy-of-intrigue.json
 data/nonheroic/nonheroic-weapon-damage-profiles.nh4-unknown-regions.json
+data/nonheroic/nonheroic-weapon-damage-profiles.nh4-unknown-regions-beasts.json
 ```
 
 Hydration still requires:
@@ -95,6 +114,8 @@ The source text directly prints the included attack rows and damage formulas, in
 - `Melee stun baton +9 (2d6+4 stun)`, `Ranged blaster pistol +7 (3d6+1)`, and `Ranged hold-out blaster pistol +7 (3d4+1)` for the Vagaari Infiltrator.
 - `Melee vibroblade +13 (2d6+3)` and `Ranged blaster pistol +12 (3d6+2)` for Sando's Boys.
 - `Melee unarmed +11 (1d6+1)`, `Ranged blaster pistol +12 (3d6)`, and `Ranged blaster carbine +13 (3d8)` for Sando's Hired Blasters.
+- `Melee gore +11 (1d8+7)`, `Melee gore +13 (1d8+10) when charging`, and `Melee gore +13 (1d8+10 x2) when charging a vehicle` for the Reyko.
+- `Melee claw +7/+7 (1d4+8)`, `Melee bite +7 (1d6+8)`, and Rend `+2d6` for the Vindinax.
 
 The printed attack totals are not copied into item `attackBonus` because they are complete statblock totals and would risk double counting against actor-derived math.
 
@@ -119,4 +140,5 @@ After NH-4 is present in a local Foundry checkout:
 - Verify the stun blaster/stun blast row hydrates as `delivery: "weapon"`, `primaryType: "stun"`, and formula `3d6`.
 - Import a Vagaari Infiltrator if present and verify stun baton/blaster/hold-out rows hydrate without printed attack totals.
 - Import Sando's Boys and Sando's Hired Blasters if present and verify their printed weapon rows hydrate.
+- Import Reyko and Vindinax if present and verify their natural weapon rows hydrate while riders remain metadata-only.
 - Verify printed attack totals are not inserted into `item.system.attackBonus`.
