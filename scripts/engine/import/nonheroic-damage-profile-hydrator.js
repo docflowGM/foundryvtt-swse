@@ -10,7 +10,8 @@
 
 const PROFILE_FILES = Object.freeze([
   'data/nonheroic/nonheroic-weapon-damage-profiles.nh1-droids.json',
-  'data/nonheroic/nonheroic-weapon-damage-profiles.nh3-galaxy-of-intrigue.json'
+  'data/nonheroic/nonheroic-weapon-damage-profiles.nh3-galaxy-of-intrigue.json',
+  'data/nonheroic/nonheroic-weapon-damage-profiles.nh4-unknown-regions.json'
 ]);
 
 const WIREABLE_CONFIDENCE = new Set(['verified', 'sourcebookVerified']);
