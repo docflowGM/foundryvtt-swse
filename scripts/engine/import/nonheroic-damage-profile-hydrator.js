@@ -94,7 +94,9 @@ function rawMatches(profile, raw) {
 
 function canonicalFormula(profile, variant = null) {
   return cleanText(
-    asArray(variant?.components)[0]?.formula
+    variant?.formula?.printed
+    ?? profile?.formula?.printed
+    ?? asArray(variant?.components)[0]?.formula
     ?? variant?.damage?.formula
     ?? asArray(profile.components)[0]?.formula
     ?? profile.damageFormula
@@ -104,7 +106,9 @@ function canonicalFormula(profile, variant = null) {
 
 function canonicalPrimaryType(profile, variant = null) {
   return cleanText(
-    variant?.primaryType
+    variant?.formula?.typeOverride
+    ?? profile?.formula?.typeOverride
+    ?? variant?.primaryType
     ?? asArray(variant?.components)[0]?.type
     ?? profile.primaryType
     ?? asArray(profile.components)[0]?.type
@@ -121,6 +125,8 @@ function canonicalDamageTypes(profile, variant = null) {
     ...asArray(profile.components).map((component) => component?.type),
     ...asArray(profile.damageTypes),
     ...asArray(profile.damage?.types),
+    variant?.formula?.typeOverride,
+    profile?.formula?.typeOverride,
     canonicalPrimaryType(profile, variant)
   ]);
 }
@@ -164,9 +170,10 @@ function normalizeRecord(record) {
     delivery: record.delivery ?? record.weapon?.delivery ?? null,
     attackShape: record.attackShape ?? record.resolution?.attackShape ?? null,
     scale: record.scale ?? record.resolution?.scale ?? 'character',
-    primaryType: record.primaryType ?? record.damage?.primaryType ?? asArray(record.damage?.types)[0] ?? null,
+    primaryType: record.primaryType ?? record.formula?.typeOverride ?? record.damage?.primaryType ?? asArray(record.damage?.types)[0] ?? null,
     damageTypes: record.damageTypes ?? record.damage?.types ?? [],
     components,
+    formula: record.formula ?? null,
     attack: record.attack ?? {
       isArea: !!record.resolution?.areaAttack,
       halfDamageOnMiss: !!record.resolution?.halfDamageOnMiss,
@@ -182,7 +189,8 @@ function normalizeRecord(record) {
     variants: asArray(record.variants).map((variant) => ({
       ...variant,
       slug: slugifyStatblockName(variant.slug ?? variant.id ?? variant.label),
-      components: asArray(variant.components).length ? asArray(variant.components) : asArray(variant.damage?.components)
+      components: asArray(variant.components).length ? asArray(variant.components) : asArray(variant.damage?.components),
+      formula: variant.formula ?? null
     })),
     confidence
   };
@@ -273,6 +281,8 @@ function buildHydratedSystem(baseSystem = {}, profile, variant = null) {
   const area = clone(variant?.area ?? profile.area ?? {});
   const components = clone(asArray(variant?.components).length ? variant.components : profile.components ?? []);
   const riders = clone(asArray(variant?.riders).length ? variant.riders : profile.riders ?? []);
+  const formula = clone(variant?.formula ?? profile.formula ?? null);
+  const weaponRef = clone(profile.weapon ?? {});
 
   return mergeObject(baseSystem, {
     damage: damageFormula || baseSystem.damage || '',
@@ -287,6 +297,12 @@ function buildHydratedSystem(baseSystem = {}, profile, variant = null) {
     area,
     components,
     riders,
+    formula,
+    sourceWeaponUuid: weaponRef.uuid ?? null,
+    sourceWeaponBaseSlug: weaponRef.baseSlug ?? null,
+    sourceWeaponBasePack: weaponRef.basePack ?? null,
+    sourceWeaponBaseFormula: weaponRef.baseFormula ?? null,
+    sourceWeaponBaseType: weaponRef.baseType ?? null,
     damageProfileSlug: variant?.slug ?? profile.slug,
     damageProfileBaseSlug: profile.slug,
     statblockAttackName: profile.attackName ?? null,
@@ -295,6 +311,9 @@ function buildHydratedSystem(baseSystem = {}, profile, variant = null) {
     statblockSourceStatus: profile.sourceStatus ?? null,
     statblockHydrated: true,
     statblockHydrationConfidence: profile.confidence ?? null,
+    statblockPrintedFormula: formula?.printed ?? damageFormula ?? null,
+    statblockFormulaMode: formula?.mode ?? null,
+    statblockFormulaDelta: formula?.delta ?? null,
     tags,
     sourceAuthority: 'statblock',
     playModeReference: true
@@ -302,6 +321,9 @@ function buildHydratedSystem(baseSystem = {}, profile, variant = null) {
 }
 
 function buildHydratedFlags(baseFlags = {}, raw, profile, variant = null) {
+  const formula = variant?.formula ?? profile.formula ?? null;
+  const weaponRef = profile.weapon ?? {};
+
   return mergeObject(baseFlags, {
     swse: {
       import: {
@@ -316,7 +338,13 @@ function buildHydratedFlags(baseFlags = {}, raw, profile, variant = null) {
           sourceBook: profile.sourceBook ?? null,
           sourceStatus: profile.sourceStatus ?? null,
           confidence: profile.confidence ?? null,
-          reviewRequired: !!profile.reviewRequired
+          reviewRequired: !!profile.reviewRequired,
+          printedFormula: formula?.printed ?? null,
+          formulaMode: formula?.mode ?? null,
+          formulaDelta: formula?.delta ?? null,
+          sourceWeaponUuid: weaponRef.uuid ?? null,
+          sourceWeaponBaseSlug: weaponRef.baseSlug ?? null,
+          sourceWeaponBaseFormula: weaponRef.baseFormula ?? null
         }
       },
       damageProfile: {
@@ -324,7 +352,11 @@ function buildHydratedFlags(baseFlags = {}, raw, profile, variant = null) {
         baseSlug: profile.slug,
         sourceType: 'nonheroic-statblock',
         sourceBook: profile.sourceBook ?? null,
-        confidence: profile.confidence ?? null
+        confidence: profile.confidence ?? null,
+        sourceWeaponUuid: weaponRef.uuid ?? null,
+        printedFormula: formula?.printed ?? null,
+        formulaMode: formula?.mode ?? null,
+        formulaDelta: formula?.delta ?? null
       }
     }
   });
