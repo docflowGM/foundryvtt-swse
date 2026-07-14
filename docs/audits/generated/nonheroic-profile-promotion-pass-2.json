@@ -1,0 +1,383 @@
+{
+  "summary": {
+    "generatedAt": "2026-07-14T16:46:45.803Z",
+    "mode": "write",
+    "ok": true,
+    "aborted": false,
+    "allowlistFile": "data/nonheroic/generated/nonheroic-profile-promotion-allowlist.pass-2.json",
+    "targetProfileFile": "data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-2.json",
+    "maxPromotions": 25,
+    "allowlistEntryCount": 25,
+    "candidatePoolSize": 1556,
+    "existingProfileRecordCount": 92,
+    "excludedStatuses": [
+      "ordinary-weapon-special-mode",
+      "area-autofire-grenade-special",
+      "rider-or-condition",
+      "formula-unclear",
+      "natural-or-unarmed",
+      "no-compendium-match",
+      "ambiguous-compendium-match",
+      "already-profiled"
+    ],
+    "counts": {
+      "promoted": 0,
+      "skippedAlreadyCovered": 25,
+      "errors": 0
+    },
+    "writeOutcome": "no-new-records",
+    "errors": []
+  },
+  "results": [
+    {
+      "entry": {
+        "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json",
+        "actorSlug": "imperial-army-trooper",
+        "status": "safe-ordinary-weapon-candidate",
+        "printedName": "Blaster Pistol",
+        "printedFormula": "3d6"
+      },
+      "status": "skipped-already-covered",
+      "detail": "matches existing profile record \"imperial-army-trooper-blaster-pistol\" in data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-2.json",
+      "candidateSlug": "imperial-army-trooper-blaster-pistol",
+      "candidateDescription": "Blaster Pistol +3 (3d6) [Imperial Army Trooper, data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json, safe-ordinary-weapon-candidate]",
+      "promotedSlug": null
+    },
+    {
+      "entry": {
+        "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json",
+        "actorSlug": "clone-naval-officer",
+        "status": "safe-ordinary-weapon-candidate",
+        "printedName": "Blaster Pistol",
+        "printedFormula": "3d6"
+      },
+      "status": "skipped-already-covered",
+      "detail": "matches existing profile record \"clone-naval-officer-blaster-pistol\" in data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-2.json",
+      "candidateSlug": "clone-naval-officer-blaster-pistol",
+      "candidateDescription": "Blaster Pistol +6 (3d6) [Clone Naval Officer, data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json, safe-ordinary-weapon-candidate]",
+      "promotedSlug": null
+    },
+    {
+      "entry": {
+        "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json",
+        "actorSlug": "elite-republic-trooper",
+        "status": "safe-ordinary-weapon-candidate",
+        "printedName": "Blaster Pistol",
+        "printedFormula": "3d6"
+      },
+      "status": "skipped-already-covered",
+      "detail": "matches existing profile record \"elite-republic-trooper-blaster-pistol\" in data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-2.json",
+      "candidateSlug": "elite-republic-trooper-blaster-pistol",
+      "candidateDescription": "Blaster Pistol +8 (3d6) [Elite Republic Trooper, data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json, safe-ordinary-weapon-candidate]",
+      "promotedSlug": null
+    },
+    {
+      "entry": {
+        "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json",
+        "actorSlug": "krath-commander",
+        "status": "safe-ordinary-weapon-with-delta",
+        "printedName": "Blaster Pistol",
+        "printedFormula": "3d6+3"
+      },
+      "status": "skipped-already-covered",
+      "detail": "matches existing profile record \"krath-commander-blaster-pistol\" in data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-2.json",
+      "candidateSlug": "krath-commander-blaster-pistol",
+      "candidateDescription": "Blaster Pistol +7 (3d6+3) [Krath Commander, data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json, safe-ordinary-weapon-with-delta]",
+      "promotedSlug": null
+    },
+    {
+      "entry": {
+        "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json",
+        "actorSlug": "notorious-outlaw",
+        "status": "safe-ordinary-weapon-with-delta",
+        "printedName": "Blaster Pistol",
+        "printedFormula": "3d6+4"
+      },
+      "status": "skipped-already-covered",
+      "detail": "matches existing profile record \"notorious-outlaw-blaster-pistol\" in data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-2.json",
+      "candidateSlug": "notorious-outlaw-blaster-pistol",
+      "candidateDescription": "Blaster Pistol +9 (3d6+4) [Notorious Outlaw, data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json, safe-ordinary-weapon-with-delta]",
+      "promotedSlug": null
+    },
+    {
+      "entry": {
+        "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json",
+        "actorSlug": "imperial-detention-guard",
+        "status": "safe-ordinary-weapon-with-delta",
+        "printedName": "Blaster Pistol",
+        "printedFormula": "3d6+2"
+      },
+      "status": "skipped-already-covered",
+      "detail": "matches existing profile record \"imperial-detention-guard-blaster-pistol\" in data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-2.json",
+      "candidateSlug": "imperial-detention-guard-blaster-pistol",
+      "candidateDescription": "Blaster Pistol +5 (3d6+2) [Imperial Detention Guard, data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json, safe-ordinary-weapon-with-delta]",
+      "promotedSlug": null
+    },
+    {
+      "entry": {
+        "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json",
+        "actorSlug": "compforce-trooper",
+        "status": "safe-ordinary-weapon-candidate",
+        "printedName": "Heavy Blaster Pistol",
+        "printedFormula": "3d8"
+      },
+      "status": "skipped-already-covered",
+      "detail": "matches existing profile record \"compforce-trooper-heavy-blaster-pistol\" in data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-2.json",
+      "candidateSlug": "compforce-trooper-heavy-blaster-pistol",
+      "candidateDescription": "Heavy Blaster Pistol +6 (3d8) [CompForce Trooper, data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json, safe-ordinary-weapon-candidate]",
+      "promotedSlug": null
+    },
+    {
+      "entry": {
+        "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json",
+        "actorSlug": "ugnaught-rigger",
+        "status": "safe-ordinary-weapon-candidate",
+        "printedName": "Heavy Blaster Pistol",
+        "printedFormula": "3d8"
+      },
+      "status": "skipped-already-covered",
+      "detail": "matches existing profile record \"ugnaught-rigger-heavy-blaster-pistol\" in data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-2.json",
+      "candidateSlug": "ugnaught-rigger-heavy-blaster-pistol",
+      "candidateDescription": "Heavy Blaster Pistol +4 (3d8) [Ugnaught Rigger, data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json, safe-ordinary-weapon-candidate]",
+      "promotedSlug": null
+    },
+    {
+      "entry": {
+        "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json",
+        "actorSlug": "black-sun-lieutenant",
+        "status": "safe-ordinary-weapon-with-delta",
+        "printedName": "Heavy Blaster Pistol",
+        "printedFormula": "3d8+3"
+      },
+      "status": "skipped-already-covered",
+      "detail": "matches existing profile record \"black-sun-lieutenant-heavy-blaster-pistol\" in data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-2.json",
+      "candidateSlug": "black-sun-lieutenant-heavy-blaster-pistol",
+      "candidateDescription": "Heavy Blaster Pistol +8 (3d8+3) [Black Sun Lieutenant, data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json, safe-ordinary-weapon-with-delta]",
+      "promotedSlug": null
+    },
+    {
+      "entry": {
+        "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json",
+        "actorSlug": "imperial-royal-guard",
+        "status": "safe-ordinary-weapon-with-delta",
+        "printedName": "Heavy Blaster Pistol",
+        "printedFormula": "3d8+4"
+      },
+      "status": "skipped-already-covered",
+      "detail": "matches existing profile record \"imperial-royal-guard-heavy-blaster-pistol\" in data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-2.json",
+      "candidateSlug": "imperial-royal-guard-heavy-blaster-pistol",
+      "candidateDescription": "Heavy Blaster Pistol +12 (3d8+4) [Imperial Royal Guard, data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json, safe-ordinary-weapon-with-delta]",
+      "promotedSlug": null
+    },
+    {
+      "entry": {
+        "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json",
+        "actorSlug": "devaronian-drifter",
+        "status": "safe-ordinary-weapon-candidate",
+        "printedName": "Hold-Out Blaster Pistol",
+        "printedFormula": "3d4"
+      },
+      "status": "skipped-already-covered",
+      "detail": "matches existing profile record \"devaronian-drifter-hold-out-blaster-pistol\" in data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-2.json",
+      "candidateSlug": "devaronian-drifter-hold-out-blaster-pistol",
+      "candidateDescription": "Hold-Out Blaster Pistol +4 (3d4) [Devaronian Drifter, data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json, safe-ordinary-weapon-candidate]",
+      "promotedSlug": null
+    },
+    {
+      "entry": {
+        "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json",
+        "actorSlug": "rebel-cell-member",
+        "status": "safe-ordinary-weapon-candidate",
+        "printedName": "Hold-Out Blaster Pistol",
+        "printedFormula": "3d4"
+      },
+      "status": "skipped-already-covered",
+      "detail": "matches existing profile record \"rebel-cell-member-hold-out-blaster-pistol\" in data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-2.json",
+      "candidateSlug": "rebel-cell-member-hold-out-blaster-pistol",
+      "candidateDescription": "Hold-Out Blaster Pistol +1 (3d4) [Rebel Cell Member, data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json, safe-ordinary-weapon-candidate]",
+      "promotedSlug": null
+    },
+    {
+      "entry": {
+        "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json",
+        "actorSlug": "con-artist",
+        "status": "safe-ordinary-weapon-with-delta",
+        "printedName": "Hold-Out Blaster Pistol",
+        "printedFormula": "3d4+1"
+      },
+      "status": "skipped-already-covered",
+      "detail": "matches existing profile record \"con-artist-hold-out-blaster-pistol\" in data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-2.json",
+      "candidateSlug": "con-artist-hold-out-blaster-pistol",
+      "candidateDescription": "Hold-Out Blaster Pistol +4 (3d4+1) [Con Artist, data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json, safe-ordinary-weapon-with-delta]",
+      "promotedSlug": null
+    },
+    {
+      "entry": {
+        "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json",
+        "actorSlug": "brute",
+        "status": "safe-ordinary-weapon-candidate",
+        "printedName": "Blaster Carbine",
+        "printedFormula": "3d8"
+      },
+      "status": "skipped-already-covered",
+      "detail": "matches existing profile record \"brute-blaster-carbine\" in data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-2.json",
+      "candidateSlug": "brute-blaster-carbine",
+      "candidateDescription": "Blaster Carbine +4 (3d8) [Brute, data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json, safe-ordinary-weapon-candidate]",
+      "promotedSlug": null
+    },
+    {
+      "entry": {
+        "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json",
+        "actorSlug": "stormtrooper-recruit",
+        "status": "safe-ordinary-weapon-candidate",
+        "printedName": "Blaster Carbine",
+        "printedFormula": "3d8"
+      },
+      "status": "skipped-already-covered",
+      "detail": "matches existing profile record \"stormtrooper-recruit-blaster-carbine\" in data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-2.json",
+      "candidateSlug": "stormtrooper-recruit-blaster-carbine",
+      "candidateDescription": "Blaster Carbine +2 (3d8) [Stormtrooper Recruit, data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json, safe-ordinary-weapon-candidate]",
+      "promotedSlug": null
+    },
+    {
+      "entry": {
+        "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json",
+        "actorSlug": "clone-shadow-trooper",
+        "status": "safe-ordinary-weapon-with-delta",
+        "printedName": "Blaster Carbine",
+        "printedFormula": "3d8+2"
+      },
+      "status": "skipped-already-covered",
+      "detail": "matches existing profile record \"clone-shadow-trooper-blaster-carbine\" in data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-2.json",
+      "candidateSlug": "clone-shadow-trooper-blaster-carbine",
+      "candidateDescription": "Blaster Carbine +10 (3d8+2) [Clone Shadow Trooper, data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json, safe-ordinary-weapon-with-delta]",
+      "promotedSlug": null
+    },
+    {
+      "entry": {
+        "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json",
+        "actorSlug": "bothan-spy",
+        "status": "safe-ordinary-weapon-with-delta",
+        "printedName": "Vibrodagger",
+        "printedFormula": "2d4+5"
+      },
+      "status": "skipped-already-covered",
+      "detail": "matches existing profile record \"bothan-spy-vibrodagger\" in data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-2.json",
+      "candidateSlug": "bothan-spy-vibrodagger",
+      "candidateDescription": "Vibrodagger +1 (2d4+5) [Bothan Spy, data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json, safe-ordinary-weapon-with-delta]",
+      "promotedSlug": null
+    },
+    {
+      "entry": {
+        "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json",
+        "actorSlug": "trandoshan-marauder",
+        "status": "safe-ordinary-weapon-with-delta",
+        "printedName": "Vibrodagger",
+        "printedFormula": "2d4+15"
+      },
+      "status": "skipped-already-covered",
+      "detail": "matches existing profile record \"trandoshan-marauder-vibrodagger\" in data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-2.json",
+      "candidateSlug": "trandoshan-marauder-vibrodagger",
+      "candidateDescription": "Vibrodagger +18 (2d4+15) [Trandoshan Marauder, data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json, safe-ordinary-weapon-with-delta]",
+      "promotedSlug": null
+    },
+    {
+      "entry": {
+        "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json",
+        "actorSlug": "commando",
+        "status": "safe-ordinary-weapon-with-delta",
+        "printedName": "Vibrodagger",
+        "printedFormula": "2d4+4"
+      },
+      "status": "skipped-already-covered",
+      "detail": "matches existing profile record \"commando-vibrodagger\" in data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-2.json",
+      "candidateSlug": "commando-vibrodagger",
+      "candidateDescription": "Vibrodagger +12 (2d4+4) [Commando, data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json, safe-ordinary-weapon-with-delta]",
+      "promotedSlug": null
+    },
+    {
+      "entry": {
+        "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json",
+        "actorSlug": "soldier",
+        "status": "safe-ordinary-weapon-candidate",
+        "printedName": "Vibroblade",
+        "printedFormula": "2d6"
+      },
+      "status": "skipped-already-covered",
+      "detail": "matches existing profile record \"soldier-vibroblade\" in data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-2.json",
+      "candidateSlug": "soldier-vibroblade",
+      "candidateDescription": "Vibroblade +4 (2d6) [Soldier, data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json, safe-ordinary-weapon-candidate]",
+      "promotedSlug": null
+    },
+    {
+      "entry": {
+        "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json",
+        "actorSlug": "theelin-bodyguard",
+        "status": "safe-ordinary-weapon-with-delta",
+        "printedName": "Vibroblade",
+        "printedFormula": "2d6+3"
+      },
+      "status": "skipped-already-covered",
+      "detail": "matches existing profile record \"theelin-bodyguard-vibroblade\" in data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-2.json",
+      "candidateSlug": "theelin-bodyguard-vibroblade",
+      "candidateDescription": "Vibroblade +5 (2d6+3) [Theelin Bodyguard, data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json, safe-ordinary-weapon-with-delta]",
+      "promotedSlug": null
+    },
+    {
+      "entry": {
+        "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json",
+        "actorSlug": "red-fury-pirate",
+        "status": "safe-ordinary-weapon-with-delta",
+        "printedName": "Vibroblade",
+        "printedFormula": "2d6+4"
+      },
+      "status": "skipped-already-covered",
+      "detail": "matches existing profile record \"red-fury-pirate-vibroblade\" in data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-2.json",
+      "candidateSlug": "red-fury-pirate-vibroblade",
+      "candidateDescription": "Vibroblade +10 (2d6+4) [Red Fury Pirate, data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json, safe-ordinary-weapon-with-delta]",
+      "promotedSlug": null
+    },
+    {
+      "entry": {
+        "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json",
+        "actorSlug": "wookiee-warrior",
+        "status": "safe-ordinary-weapon-candidate",
+        "printedName": "Bowcaster",
+        "printedFormula": "3d10"
+      },
+      "status": "skipped-already-covered",
+      "detail": "matches existing profile record \"wookiee-warrior-bowcaster\" in data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-2.json",
+      "candidateSlug": "wookiee-warrior-bowcaster",
+      "candidateDescription": "Bowcaster +6 (3d10) [Wookiee Warrior, data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json, safe-ordinary-weapon-candidate]",
+      "promotedSlug": null
+    },
+    {
+      "entry": {
+        "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json",
+        "actorSlug": "wookiee-slaver",
+        "status": "safe-ordinary-weapon-with-delta",
+        "printedName": "Bowcaster",
+        "printedFormula": "3d10+1"
+      },
+      "status": "skipped-already-covered",
+      "detail": "matches existing profile record \"wookiee-slaver-bowcaster\" in data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-2.json",
+      "candidateSlug": "wookiee-slaver-bowcaster",
+      "candidateDescription": "Bowcaster +3 (3d10+1) [Wookiee Slaver, data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json, safe-ordinary-weapon-with-delta]",
+      "promotedSlug": null
+    },
+    {
+      "entry": {
+        "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json",
+        "actorSlug": "geonosian-warrior",
+        "status": "safe-ordinary-weapon-candidate",
+        "printedName": "Sonic Rifle",
+        "printedFormula": "2d8"
+      },
+      "status": "skipped-already-covered",
+      "detail": "matches existing profile record \"geonosian-warrior-sonic-rifle\" in data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-2.json",
+      "candidateSlug": "geonosian-warrior-sonic-rifle",
+      "candidateDescription": "Sonic Rifle +2 (2d8) [Geonosian Warrior, data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json, safe-ordinary-weapon-candidate]",
+      "promotedSlug": null
+    }
+  ]
+}

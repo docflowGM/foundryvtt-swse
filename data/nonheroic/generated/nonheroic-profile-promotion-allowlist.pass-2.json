@@ -1,0 +1,183 @@
+{
+  "$schemaNote": "Pass-2 promotion allowlist for tools/promote-nonheroic-damage-profile-candidates.mjs. Exactly the rows listed here may be promoted; the tool fails loudly if any entry resolves to zero or more than one candidate.",
+  "generatedBy": "manual (Claude, pass-2 selection)",
+  "note": "25 boring ordinary-weapon Lane A rows (mix of safe-ordinary-weapon-candidate and safe-ordinary-weapon-with-delta), sourced from packs/nonheroic.db only, no lightsabers, no special-mode suffixes, no rows already covered by pass-1 or any existing canonical profile file. See docs/audits/nonheroic-weapon-damage-bulk-lane-a-pass-2.md for rationale.",
+  "maxEntries": 25,
+  "entries": [
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json",
+      "actorSlug": "imperial-army-trooper",
+      "status": "safe-ordinary-weapon-candidate",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json",
+      "actorSlug": "clone-naval-officer",
+      "status": "safe-ordinary-weapon-candidate",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json",
+      "actorSlug": "elite-republic-trooper",
+      "status": "safe-ordinary-weapon-candidate",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json",
+      "actorSlug": "krath-commander",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+3"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json",
+      "actorSlug": "notorious-outlaw",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+4"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json",
+      "actorSlug": "imperial-detention-guard",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+2"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json",
+      "actorSlug": "compforce-trooper",
+      "status": "safe-ordinary-weapon-candidate",
+      "printedName": "Heavy Blaster Pistol",
+      "printedFormula": "3d8"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json",
+      "actorSlug": "ugnaught-rigger",
+      "status": "safe-ordinary-weapon-candidate",
+      "printedName": "Heavy Blaster Pistol",
+      "printedFormula": "3d8"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json",
+      "actorSlug": "black-sun-lieutenant",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Heavy Blaster Pistol",
+      "printedFormula": "3d8+3"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json",
+      "actorSlug": "imperial-royal-guard",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Heavy Blaster Pistol",
+      "printedFormula": "3d8+4"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json",
+      "actorSlug": "devaronian-drifter",
+      "status": "safe-ordinary-weapon-candidate",
+      "printedName": "Hold-Out Blaster Pistol",
+      "printedFormula": "3d4"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json",
+      "actorSlug": "rebel-cell-member",
+      "status": "safe-ordinary-weapon-candidate",
+      "printedName": "Hold-Out Blaster Pistol",
+      "printedFormula": "3d4"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json",
+      "actorSlug": "con-artist",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Hold-Out Blaster Pistol",
+      "printedFormula": "3d4+1"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json",
+      "actorSlug": "brute",
+      "status": "safe-ordinary-weapon-candidate",
+      "printedName": "Blaster Carbine",
+      "printedFormula": "3d8"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json",
+      "actorSlug": "stormtrooper-recruit",
+      "status": "safe-ordinary-weapon-candidate",
+      "printedName": "Blaster Carbine",
+      "printedFormula": "3d8"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json",
+      "actorSlug": "clone-shadow-trooper",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Carbine",
+      "printedFormula": "3d8+2"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json",
+      "actorSlug": "bothan-spy",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Vibrodagger",
+      "printedFormula": "2d4+5"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json",
+      "actorSlug": "trandoshan-marauder",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Vibrodagger",
+      "printedFormula": "2d4+15"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json",
+      "actorSlug": "commando",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Vibrodagger",
+      "printedFormula": "2d4+4"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json",
+      "actorSlug": "soldier",
+      "status": "safe-ordinary-weapon-candidate",
+      "printedName": "Vibroblade",
+      "printedFormula": "2d6"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json",
+      "actorSlug": "theelin-bodyguard",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Vibroblade",
+      "printedFormula": "2d6+3"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json",
+      "actorSlug": "red-fury-pirate",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Vibroblade",
+      "printedFormula": "2d6+4"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json",
+      "actorSlug": "wookiee-warrior",
+      "status": "safe-ordinary-weapon-candidate",
+      "printedName": "Bowcaster",
+      "printedFormula": "3d10"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json",
+      "actorSlug": "wookiee-slaver",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Bowcaster",
+      "printedFormula": "3d10+1"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json",
+      "actorSlug": "geonosian-warrior",
+      "status": "safe-ordinary-weapon-candidate",
+      "printedName": "Sonic Rifle",
+      "printedFormula": "2d8"
+    }
+  ]
+}

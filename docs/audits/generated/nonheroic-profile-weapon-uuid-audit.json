@@ -1,5 +1,6 @@
 {
   "summary": {
+<<<<<<< Updated upstream
     "generatedAt": "2026-07-14T11:43:00.058Z",
     "mode": "report-only",
     "packItemCount": 372,
@@ -9,6 +10,17 @@
       "safe-match": 0,
       "safe-match-formula-unclear": 2,
       "already-valid": 13,
+=======
+    "generatedAt": "2026-07-14T16:47:04.548Z",
+    "mode": "report-only",
+    "packItemCount": 372,
+    "profileFileCount": 7,
+    "recordCount": 92,
+    "counts": {
+      "safe-match": 0,
+      "safe-match-formula-unclear": 2,
+      "already-valid": 59,
+>>>>>>> Stashed changes
       "ambiguous": 0,
       "missing-match": 4,
       "stale-uuid": 0,
@@ -21,6 +33,394 @@
   },
   "results": [
     {
+<<<<<<< Updated upstream
+=======
+      "file": "data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-1.json",
+      "slug": "goon-heavy-blaster-pistol",
+      "printedName": "Heavy Blaster Pistol",
+      "rowKind": "ranged",
+      "status": "already-valid",
+      "detail": "uuid resolves to \"Heavy Blaster Pistol\" (weapons-pistols) with matching base metadata.",
+      "candidates": [],
+      "proposedWeaponPatch": null,
+      "proposedFormulaPatch": null
+    },
+    {
+      "file": "data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-1.json",
+      "slug": "imperial-informant-hold-out-blaster-pistol",
+      "printedName": "Hold-Out Blaster Pistol",
+      "rowKind": "ranged",
+      "status": "already-valid",
+      "detail": "uuid resolves to \"Hold-Out Blaster Pistol\" (weapons-pistols) with matching base metadata.",
+      "candidates": [],
+      "proposedWeaponPatch": null,
+      "proposedFormulaPatch": null
+    },
+    {
+      "file": "data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-1.json",
+      "slug": "medic-blaster-carbine",
+      "printedName": "Blaster Carbine",
+      "rowKind": "ranged",
+      "status": "already-valid",
+      "detail": "uuid resolves to \"Blaster Carbine\" (weapons-rifles) with matching base metadata.",
+      "candidates": [],
+      "proposedWeaponPatch": null,
+      "proposedFormulaPatch": null
+    },
+    {
+      "file": "data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-1.json",
+      "slug": "scout-trooper-blaster-pistol",
+      "printedName": "Blaster Pistol",
+      "rowKind": "ranged",
+      "status": "already-valid",
+      "detail": "uuid resolves to \"Blaster Pistol\" (weapons-pistols) with matching base metadata.",
+      "candidates": [],
+      "proposedWeaponPatch": null,
+      "proposedFormulaPatch": null
+    },
+    {
+      "file": "data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-1.json",
+      "slug": "peace-brigade-thug-vibrodagger",
+      "printedName": "Vibrodagger",
+      "rowKind": "melee",
+      "status": "already-valid",
+      "detail": "uuid resolves to \"Vibrodagger\" (weapons-simple) with matching base metadata.",
+      "candidates": [],
+      "proposedWeaponPatch": null,
+      "proposedFormulaPatch": null
+    },
+    {
+      "file": "data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-1.json",
+      "slug": "ugnaught-worker-blaster-pistol",
+      "printedName": "Blaster Pistol",
+      "rowKind": "ranged",
+      "status": "already-valid",
+      "detail": "uuid resolves to \"Blaster Pistol\" (weapons-pistols) with matching base metadata.",
+      "candidates": [],
+      "proposedWeaponPatch": null,
+      "proposedFormulaPatch": null
+    },
+    {
+      "file": "data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-1.json",
+      "slug": "csa-security-guard-blaster-carbine",
+      "printedName": "Blaster Carbine",
+      "rowKind": "ranged",
+      "status": "already-valid",
+      "detail": "uuid resolves to \"Blaster Carbine\" (weapons-rifles) with matching base metadata.",
+      "candidates": [],
+      "proposedWeaponPatch": null,
+      "proposedFormulaPatch": null
+    },
+    {
+      "file": "data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-1.json",
+      "slug": "black-sun-thug-heavy-blaster-pistol",
+      "printedName": "Heavy Blaster Pistol",
+      "rowKind": "ranged",
+      "status": "already-valid",
+      "detail": "uuid resolves to \"Heavy Blaster Pistol\" (weapons-pistols) with matching base metadata.",
+      "candidates": [],
+      "proposedWeaponPatch": null,
+      "proposedFormulaPatch": null
+    },
+    {
+      "file": "data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-1.json",
+      "slug": "swoop-gang-member-vibrodagger",
+      "printedName": "Vibrodagger",
+      "rowKind": "melee",
+      "status": "already-valid",
+      "detail": "uuid resolves to \"Vibrodagger\" (weapons-simple) with matching base metadata.",
+      "candidates": [],
+      "proposedWeaponPatch": null,
+      "proposedFormulaPatch": null
+    },
+    {
+      "file": "data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-1.json",
+      "slug": "sith-spy-hold-out-blaster-pistol",
+      "printedName": "Hold-Out Blaster Pistol",
+      "rowKind": "ranged",
+      "status": "already-valid",
+      "detail": "uuid resolves to \"Hold-Out Blaster Pistol\" (weapons-pistols) with matching base metadata.",
+      "candidates": [],
+      "proposedWeaponPatch": null,
+      "proposedFormulaPatch": null
+    },
+    {
+      "file": "data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-2.json",
+      "slug": "imperial-army-trooper-blaster-pistol",
+      "printedName": "Blaster Pistol",
+      "rowKind": "ranged",
+      "status": "already-valid",
+      "detail": "uuid resolves to \"Blaster Pistol\" (weapons-pistols) with matching base metadata.",
+      "candidates": [],
+      "proposedWeaponPatch": null,
+      "proposedFormulaPatch": null
+    },
+    {
+      "file": "data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-2.json",
+      "slug": "clone-naval-officer-blaster-pistol",
+      "printedName": "Blaster Pistol",
+      "rowKind": "ranged",
+      "status": "already-valid",
+      "detail": "uuid resolves to \"Blaster Pistol\" (weapons-pistols) with matching base metadata.",
+      "candidates": [],
+      "proposedWeaponPatch": null,
+      "proposedFormulaPatch": null
+    },
+    {
+      "file": "data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-2.json",
+      "slug": "elite-republic-trooper-blaster-pistol",
+      "printedName": "Blaster Pistol",
+      "rowKind": "ranged",
+      "status": "already-valid",
+      "detail": "uuid resolves to \"Blaster Pistol\" (weapons-pistols) with matching base metadata.",
+      "candidates": [],
+      "proposedWeaponPatch": null,
+      "proposedFormulaPatch": null
+    },
+    {
+      "file": "data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-2.json",
+      "slug": "krath-commander-blaster-pistol",
+      "printedName": "Blaster Pistol",
+      "rowKind": "ranged",
+      "status": "already-valid",
+      "detail": "uuid resolves to \"Blaster Pistol\" (weapons-pistols) with matching base metadata.",
+      "candidates": [],
+      "proposedWeaponPatch": null,
+      "proposedFormulaPatch": null
+    },
+    {
+      "file": "data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-2.json",
+      "slug": "notorious-outlaw-blaster-pistol",
+      "printedName": "Blaster Pistol",
+      "rowKind": "ranged",
+      "status": "already-valid",
+      "detail": "uuid resolves to \"Blaster Pistol\" (weapons-pistols) with matching base metadata.",
+      "candidates": [],
+      "proposedWeaponPatch": null,
+      "proposedFormulaPatch": null
+    },
+    {
+      "file": "data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-2.json",
+      "slug": "imperial-detention-guard-blaster-pistol",
+      "printedName": "Blaster Pistol",
+      "rowKind": "ranged",
+      "status": "already-valid",
+      "detail": "uuid resolves to \"Blaster Pistol\" (weapons-pistols) with matching base metadata.",
+      "candidates": [],
+      "proposedWeaponPatch": null,
+      "proposedFormulaPatch": null
+    },
+    {
+      "file": "data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-2.json",
+      "slug": "compforce-trooper-heavy-blaster-pistol",
+      "printedName": "Heavy Blaster Pistol",
+      "rowKind": "ranged",
+      "status": "already-valid",
+      "detail": "uuid resolves to \"Heavy Blaster Pistol\" (weapons-pistols) with matching base metadata.",
+      "candidates": [],
+      "proposedWeaponPatch": null,
+      "proposedFormulaPatch": null
+    },
+    {
+      "file": "data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-2.json",
+      "slug": "ugnaught-rigger-heavy-blaster-pistol",
+      "printedName": "Heavy Blaster Pistol",
+      "rowKind": "ranged",
+      "status": "already-valid",
+      "detail": "uuid resolves to \"Heavy Blaster Pistol\" (weapons-pistols) with matching base metadata.",
+      "candidates": [],
+      "proposedWeaponPatch": null,
+      "proposedFormulaPatch": null
+    },
+    {
+      "file": "data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-2.json",
+      "slug": "black-sun-lieutenant-heavy-blaster-pistol",
+      "printedName": "Heavy Blaster Pistol",
+      "rowKind": "ranged",
+      "status": "already-valid",
+      "detail": "uuid resolves to \"Heavy Blaster Pistol\" (weapons-pistols) with matching base metadata.",
+      "candidates": [],
+      "proposedWeaponPatch": null,
+      "proposedFormulaPatch": null
+    },
+    {
+      "file": "data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-2.json",
+      "slug": "imperial-royal-guard-heavy-blaster-pistol",
+      "printedName": "Heavy Blaster Pistol",
+      "rowKind": "ranged",
+      "status": "already-valid",
+      "detail": "uuid resolves to \"Heavy Blaster Pistol\" (weapons-pistols) with matching base metadata.",
+      "candidates": [],
+      "proposedWeaponPatch": null,
+      "proposedFormulaPatch": null
+    },
+    {
+      "file": "data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-2.json",
+      "slug": "devaronian-drifter-hold-out-blaster-pistol",
+      "printedName": "Hold-Out Blaster Pistol",
+      "rowKind": "ranged",
+      "status": "already-valid",
+      "detail": "uuid resolves to \"Hold-Out Blaster Pistol\" (weapons-pistols) with matching base metadata.",
+      "candidates": [],
+      "proposedWeaponPatch": null,
+      "proposedFormulaPatch": null
+    },
+    {
+      "file": "data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-2.json",
+      "slug": "rebel-cell-member-hold-out-blaster-pistol",
+      "printedName": "Hold-Out Blaster Pistol",
+      "rowKind": "ranged",
+      "status": "already-valid",
+      "detail": "uuid resolves to \"Hold-Out Blaster Pistol\" (weapons-pistols) with matching base metadata.",
+      "candidates": [],
+      "proposedWeaponPatch": null,
+      "proposedFormulaPatch": null
+    },
+    {
+      "file": "data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-2.json",
+      "slug": "con-artist-hold-out-blaster-pistol",
+      "printedName": "Hold-Out Blaster Pistol",
+      "rowKind": "ranged",
+      "status": "already-valid",
+      "detail": "uuid resolves to \"Hold-Out Blaster Pistol\" (weapons-pistols) with matching base metadata.",
+      "candidates": [],
+      "proposedWeaponPatch": null,
+      "proposedFormulaPatch": null
+    },
+    {
+      "file": "data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-2.json",
+      "slug": "brute-blaster-carbine",
+      "printedName": "Blaster Carbine",
+      "rowKind": "ranged",
+      "status": "already-valid",
+      "detail": "uuid resolves to \"Blaster Carbine\" (weapons-rifles) with matching base metadata.",
+      "candidates": [],
+      "proposedWeaponPatch": null,
+      "proposedFormulaPatch": null
+    },
+    {
+      "file": "data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-2.json",
+      "slug": "stormtrooper-recruit-blaster-carbine",
+      "printedName": "Blaster Carbine",
+      "rowKind": "ranged",
+      "status": "already-valid",
+      "detail": "uuid resolves to \"Blaster Carbine\" (weapons-rifles) with matching base metadata.",
+      "candidates": [],
+      "proposedWeaponPatch": null,
+      "proposedFormulaPatch": null
+    },
+    {
+      "file": "data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-2.json",
+      "slug": "clone-shadow-trooper-blaster-carbine",
+      "printedName": "Blaster Carbine",
+      "rowKind": "ranged",
+      "status": "already-valid",
+      "detail": "uuid resolves to \"Blaster Carbine\" (weapons-rifles) with matching base metadata.",
+      "candidates": [],
+      "proposedWeaponPatch": null,
+      "proposedFormulaPatch": null
+    },
+    {
+      "file": "data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-2.json",
+      "slug": "bothan-spy-vibrodagger",
+      "printedName": "Vibrodagger",
+      "rowKind": "melee",
+      "status": "already-valid",
+      "detail": "uuid resolves to \"Vibrodagger\" (weapons-simple) with matching base metadata.",
+      "candidates": [],
+      "proposedWeaponPatch": null,
+      "proposedFormulaPatch": null
+    },
+    {
+      "file": "data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-2.json",
+      "slug": "trandoshan-marauder-vibrodagger",
+      "printedName": "Vibrodagger",
+      "rowKind": "melee",
+      "status": "already-valid",
+      "detail": "uuid resolves to \"Vibrodagger\" (weapons-simple) with matching base metadata.",
+      "candidates": [],
+      "proposedWeaponPatch": null,
+      "proposedFormulaPatch": null
+    },
+    {
+      "file": "data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-2.json",
+      "slug": "commando-vibrodagger",
+      "printedName": "Vibrodagger",
+      "rowKind": "melee",
+      "status": "already-valid",
+      "detail": "uuid resolves to \"Vibrodagger\" (weapons-simple) with matching base metadata.",
+      "candidates": [],
+      "proposedWeaponPatch": null,
+      "proposedFormulaPatch": null
+    },
+    {
+      "file": "data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-2.json",
+      "slug": "soldier-vibroblade",
+      "printedName": "Vibroblade",
+      "rowKind": "melee",
+      "status": "already-valid",
+      "detail": "uuid resolves to \"Vibroblade\" (weapons-simple) with matching base metadata.",
+      "candidates": [],
+      "proposedWeaponPatch": null,
+      "proposedFormulaPatch": null
+    },
+    {
+      "file": "data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-2.json",
+      "slug": "theelin-bodyguard-vibroblade",
+      "printedName": "Vibroblade",
+      "rowKind": "melee",
+      "status": "already-valid",
+      "detail": "uuid resolves to \"Vibroblade\" (weapons-simple) with matching base metadata.",
+      "candidates": [],
+      "proposedWeaponPatch": null,
+      "proposedFormulaPatch": null
+    },
+    {
+      "file": "data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-2.json",
+      "slug": "red-fury-pirate-vibroblade",
+      "printedName": "Vibroblade",
+      "rowKind": "melee",
+      "status": "already-valid",
+      "detail": "uuid resolves to \"Vibroblade\" (weapons-simple) with matching base metadata.",
+      "candidates": [],
+      "proposedWeaponPatch": null,
+      "proposedFormulaPatch": null
+    },
+    {
+      "file": "data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-2.json",
+      "slug": "wookiee-warrior-bowcaster",
+      "printedName": "Bowcaster",
+      "rowKind": "ranged",
+      "status": "already-valid",
+      "detail": "uuid resolves to \"Bowcaster\" (weapons-rifles) with matching base metadata.",
+      "candidates": [],
+      "proposedWeaponPatch": null,
+      "proposedFormulaPatch": null
+    },
+    {
+      "file": "data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-2.json",
+      "slug": "wookiee-slaver-bowcaster",
+      "printedName": "Bowcaster",
+      "rowKind": "ranged",
+      "status": "already-valid",
+      "detail": "uuid resolves to \"Bowcaster\" (weapons-rifles) with matching base metadata.",
+      "candidates": [],
+      "proposedWeaponPatch": null,
+      "proposedFormulaPatch": null
+    },
+    {
+      "file": "data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-2.json",
+      "slug": "geonosian-warrior-sonic-rifle",
+      "printedName": "Sonic Rifle",
+      "rowKind": "ranged",
+      "status": "already-valid",
+      "detail": "uuid resolves to \"Sonic Rifle\" (weapons-rifles) with matching base metadata.",
+      "candidates": [],
+      "proposedWeaponPatch": null,
+      "proposedFormulaPatch": null
+    },
+    {
+>>>>>>> Stashed changes
       "file": "data/nonheroic/nonheroic-weapon-damage-profiles.nh1-droids.json",
       "slug": "11-17-series-mining-droid-heavy-plasma-jet",
       "printedName": "Heavy Plasma Jet",
