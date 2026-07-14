@@ -5,9 +5,11 @@
     <div class="prog-mentor__portrait prog-holo-mentor-media" data-mentor-portrait="{{mentor.id}}">
       {{#if mentor.portrait}}
         <img class="prog-mentor__portrait-image prog-holo-mentor-media__image"
-             src="{{mentor.portrait}}"
+             data-src="{{mentor.portrait}}"
+             src="data:image/gif;base64,R0lGODlhAQABAAAAACw="
              alt=""
              title="{{mentor.name}}"
+             onload="if(!this.dataset.swseResolved){this.dataset.swseResolved='1';let raw=this.dataset.src||'';let src=raw.trim().replace(/^\/systems\//i,'systems/').replace(/^\/foundryvtt-swse\//i,'systems/foundryvtt-swse/').replace(/^foundryvtt-swse\//i,'systems/foundryvtt-swse/').replace(/^assets\//i,'systems/foundryvtt-swse/assets/').replace(/(assets\/mentors\/[^?#.]+)\.png([?#].*)?$/i,'$1.webp$2');this.src=src||'systems/foundryvtt-swse/assets/mentors/salty.webp';}"
              onerror="this.onerror=null; this.src='systems/foundryvtt-swse/assets/mentors/salty.webp';"/>
       {{else}}
         <img class="prog-mentor__portrait-image prog-holo-mentor-media__image"
