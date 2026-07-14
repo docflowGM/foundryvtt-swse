@@ -1,6 +1,6 @@
 # Nonheroic Profile Weapon UUID Audit
 
-Generated: 2026-07-14T11:30:02.075Z
+Generated: 2026-07-14T11:43:00.058Z
 Mode: report-only
 
 This is a mechanical compendium identity audit only. It does not interpret
@@ -19,10 +19,10 @@ bonuses. See docs/nonheroic-weapon-uuid-metadata.md for the policy note.
 - safe-match-formula-unclear: 2
 - already-valid: 13
 - ambiguous: 0
-- missing-match: 6
+- missing-match: 4
 - stale-uuid: 0
 - formula-mismatch: 0
-- skipped-custom: 7
+- skipped-custom: 9
 - inconsistent-custom-row: 0
 
 ## Applied / Applicable Safe Matches (0)
@@ -54,13 +54,11 @@ _None._
 
 _None._
 
-## Missing Compendium Items (6)
+## Missing Compendium Items (4)
 
 - `data/nonheroic/nonheroic-weapon-damage-profiles.nh1-droids.json` :: 11-17-series-mining-droid-heavy-plasma-jet (Heavy Plasma Jet) — no compendium weapon item found with normalized name "heavy plasma jet".
-- `data/nonheroic/nonheroic-weapon-damage-profiles.nh1-droids.json` :: kmi-mining-droid-unarmed (Unarmed) — no compendium weapon item found with normalized name "unarmed".
 - `data/nonheroic/nonheroic-weapon-damage-profiles.nh1-droids.json` :: kmi-mining-droid-laser-cutter (Laser Cutter) — no compendium weapon item found with normalized name "laser cutter".
 - `data/nonheroic/nonheroic-weapon-damage-profiles.nh1-droids.json` :: viper-series-probe-droid-pacify-hostile (Pacify Hostile) — no compendium weapon item found with normalized name "pacify hostile".
-- `data/nonheroic/nonheroic-weapon-damage-profiles.nh3-galaxy-of-intrigue.json` :: deluge-facility-technician-unarmed (Unarmed) — no compendium weapon item found with normalized name "unarmed".
 - `data/nonheroic/nonheroic-weapon-damage-profiles.nh3-galaxy-of-intrigue.json` :: corporate-sector-miner-club (Club) — no compendium weapon item found with normalized name "club".
 
 ## Stale / Invalid UUIDs (0)
@@ -71,15 +69,17 @@ _None._
 
 _None._
 
-## Custom / Natural / Unarmed / Special Rows (Intentionally Skipped) (7)
+## Custom / Natural / Unarmed / Special Rows (Intentionally Skipped) (9)
 
-- `data/nonheroic/nonheroic-weapon-damage-profiles.nh1-droids.json` :: viper-series-probe-droid-self-destruct (Self-Destruct) — rowKind "special" is intentionally left unmatched.
-- `data/nonheroic/nonheroic-weapon-damage-profiles.nh1-droids.json` :: t4-turret-droid-cutting-laser (Cutting Laser) — rowKind "special" is intentionally left unmatched.
-- `data/nonheroic/nonheroic-weapon-damage-profiles.nh4-unknown-regions-beasts.json` :: reyko-gore (Gore) — rowKind "natural" is intentionally left unmatched.
-- `data/nonheroic/nonheroic-weapon-damage-profiles.nh4-unknown-regions-beasts.json` :: vindinax-claw (Claw) — rowKind "natural" is intentionally left unmatched.
-- `data/nonheroic/nonheroic-weapon-damage-profiles.nh4-unknown-regions-beasts.json` :: vindinax-bite (Bite) — rowKind "natural" is intentionally left unmatched.
-- `data/nonheroic/nonheroic-weapon-damage-profiles.nh4-unknown-regions.json` :: wanderer-scout-surveyor-droid-claw (Claw) — rowKind "natural" is intentionally left unmatched.
-- `data/nonheroic/nonheroic-weapon-damage-profiles.nh4-unknown-regions.json` :: sandos-hired-blasters-unarmed (Unarmed) — rowKind "unarmed" is intentionally left unmatched.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.nh1-droids.json` :: kmi-mining-droid-unarmed (Unarmed) — delivery "unarmed" marks this as intentionally left unmatched.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.nh1-droids.json` :: viper-series-probe-droid-self-destruct (Self-Destruct) — rowKind "special" marks this as intentionally left unmatched.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.nh1-droids.json` :: t4-turret-droid-cutting-laser (Cutting Laser) — rowKind "special" marks this as intentionally left unmatched.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.nh3-galaxy-of-intrigue.json` :: deluge-facility-technician-unarmed (Unarmed) — delivery "unarmed" marks this as intentionally left unmatched.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.nh4-unknown-regions-beasts.json` :: reyko-gore (Gore) — rowKind "natural" marks this as intentionally left unmatched.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.nh4-unknown-regions-beasts.json` :: vindinax-claw (Claw) — rowKind "natural" marks this as intentionally left unmatched.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.nh4-unknown-regions-beasts.json` :: vindinax-bite (Bite) — rowKind "natural" marks this as intentionally left unmatched.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.nh4-unknown-regions.json` :: wanderer-scout-surveyor-droid-claw (Claw) — rowKind "natural" marks this as intentionally left unmatched.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.nh4-unknown-regions.json` :: sandos-hired-blasters-unarmed (Unarmed) — rowKind "unarmed" marks this as intentionally left unmatched.
 
 ## Inconsistent Custom Rows (Needs Review) (0)
 

@@ -28,6 +28,26 @@ const PROFILE_DIR = 'data/nonheroic';
 const PACK_DIR = 'packs';
 
 const CUSTOM_ROW_KINDS = new Set(['natural', 'unarmed', 'special']);
+const CUSTOM_CATEGORIES = new Set(['natural', 'unarmed']);
+const CUSTOM_TAGS = new Set(['natural-weapon', 'unarmed', 'special']);
+
+/**
+ * A row is treated as intentionally-custom (never auto-matched to a
+ * compendium UUID) if any signal on the record says so, not just
+ * weapon.rowKind -- some rows have rowKind "melee" but delivery/category/
+ * tags of natural or unarmed (e.g. an "Unarmed" row filed under rowKind
+ * "melee" with delivery "unarmed"). rowKind is kept as the leading /
+ * reported signal since it drives result.rowKind for the report.
+ */
+function isCustomRow(record) {
+  const w = record.weapon || {};
+  if (CUSTOM_ROW_KINDS.has(w.rowKind)) return true;
+  if (CUSTOM_ROW_KINDS.has(record.delivery)) return true;
+  if (CUSTOM_CATEGORIES.has(w.category)) return true;
+  const tags = record.tags || [];
+  if (tags.some(t => CUSTOM_TAGS.has(t))) return true;
+  return false;
+}
 
 function readText(relPath) {
   return fs.readFileSync(path.join(ROOT, relPath), 'utf8');
@@ -226,17 +246,27 @@ function auditRecord(record, index, fileLabel) {
     proposedFormulaPatch: null
   };
 
-  // Custom / natural / unarmed / special rows: never auto-match.
-  if (CUSTOM_ROW_KINDS.has(w.rowKind)) {
+  // Custom / natural / unarmed / special rows: never auto-match. Detected
+  // from rowKind, delivery, weapon.category, or tags -- not rowKind alone,
+  // since some rows (e.g. "Unarmed" filed under rowKind "melee") signal
+  // custom status only through delivery/category/tags.
+  if (isCustomRow(record)) {
+    const signal = CUSTOM_ROW_KINDS.has(w.rowKind)
+      ? `rowKind "${w.rowKind}"`
+      : CUSTOM_ROW_KINDS.has(record.delivery)
+        ? `delivery "${record.delivery}"`
+        : CUSTOM_CATEGORIES.has(w.category)
+          ? `weapon.category "${w.category}"`
+          : `tags`;
     if (w.uuid) {
       result.status = 'inconsistent-custom-row';
-      result.detail = `rowKind "${w.rowKind}" has a uuid set (${w.uuid}) but custom rows must not carry a compendium uuid.`;
+      result.detail = `${signal} marks this as a custom row but weapon.uuid (${w.uuid}) is set; custom rows must not carry a compendium uuid.`;
     } else if (w.baseFormulaPolicy && w.baseFormulaPolicy !== 'custom' && w.baseFormulaPolicy !== 'none') {
       result.status = 'inconsistent-custom-row';
-      result.detail = `rowKind "${w.rowKind}" has baseFormulaPolicy "${w.baseFormulaPolicy}"; expected "custom" or "none".`;
+      result.detail = `${signal} marks this as a custom row but baseFormulaPolicy is "${w.baseFormulaPolicy}"; expected "custom" or "none".`;
     } else {
       result.status = 'skipped-custom';
-      result.detail = `rowKind "${w.rowKind}" is intentionally left unmatched.`;
+      result.detail = `${signal} marks this as intentionally left unmatched.`;
     }
     return result;
   }

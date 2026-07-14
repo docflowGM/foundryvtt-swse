@@ -1,6 +1,6 @@
 {
   "summary": {
-    "generatedAt": "2026-07-14T11:30:02.075Z",
+    "generatedAt": "2026-07-14T11:43:00.058Z",
     "mode": "report-only",
     "packItemCount": 372,
     "profileFileCount": 4,
@@ -10,10 +10,10 @@
       "safe-match-formula-unclear": 2,
       "already-valid": 13,
       "ambiguous": 0,
-      "missing-match": 6,
+      "missing-match": 4,
       "stale-uuid": 0,
       "formula-mismatch": 0,
-      "skipped-custom": 7,
+      "skipped-custom": 9,
       "inconsistent-custom-row": 0
     },
     "writtenFiles": 0,
@@ -36,8 +36,8 @@
       "slug": "kmi-mining-droid-unarmed",
       "printedName": "Unarmed",
       "rowKind": "melee",
-      "status": "missing-match",
-      "detail": "no compendium weapon item found with normalized name \"unarmed\".",
+      "status": "skipped-custom",
+      "detail": "delivery \"unarmed\" marks this as intentionally left unmatched.",
       "candidates": [],
       "proposedWeaponPatch": null,
       "proposedFormulaPatch": null
@@ -70,7 +70,7 @@
       "printedName": "Self-Destruct",
       "rowKind": "special",
       "status": "skipped-custom",
-      "detail": "rowKind \"special\" is intentionally left unmatched.",
+      "detail": "rowKind \"special\" marks this as intentionally left unmatched.",
       "candidates": [],
       "proposedWeaponPatch": null,
       "proposedFormulaPatch": null
@@ -120,7 +120,7 @@
       "printedName": "Cutting Laser",
       "rowKind": "special",
       "status": "skipped-custom",
-      "detail": "rowKind \"special\" is intentionally left unmatched.",
+      "detail": "rowKind \"special\" marks this as intentionally left unmatched.",
       "candidates": [],
       "proposedWeaponPatch": null,
       "proposedFormulaPatch": null
@@ -130,8 +130,8 @@
       "slug": "deluge-facility-technician-unarmed",
       "printedName": "Unarmed",
       "rowKind": "melee",
-      "status": "missing-match",
-      "detail": "no compendium weapon item found with normalized name \"unarmed\".",
+      "status": "skipped-custom",
+      "detail": "delivery \"unarmed\" marks this as intentionally left unmatched.",
       "candidates": [],
       "proposedWeaponPatch": null,
       "proposedFormulaPatch": null
@@ -225,7 +225,7 @@
       "printedName": "Gore",
       "rowKind": "natural",
       "status": "skipped-custom",
-      "detail": "rowKind \"natural\" is intentionally left unmatched.",
+      "detail": "rowKind \"natural\" marks this as intentionally left unmatched.",
       "candidates": [],
       "proposedWeaponPatch": null,
       "proposedFormulaPatch": null
@@ -236,7 +236,7 @@
       "printedName": "Claw",
       "rowKind": "natural",
       "status": "skipped-custom",
-      "detail": "rowKind \"natural\" is intentionally left unmatched.",
+      "detail": "rowKind \"natural\" marks this as intentionally left unmatched.",
       "candidates": [],
       "proposedWeaponPatch": null,
       "proposedFormulaPatch": null
@@ -247,7 +247,7 @@
       "printedName": "Bite",
       "rowKind": "natural",
       "status": "skipped-custom",
-      "detail": "rowKind \"natural\" is intentionally left unmatched.",
+      "detail": "rowKind \"natural\" marks this as intentionally left unmatched.",
       "candidates": [],
       "proposedWeaponPatch": null,
       "proposedFormulaPatch": null
@@ -258,7 +258,7 @@
       "printedName": "Claw",
       "rowKind": "natural",
       "status": "skipped-custom",
-      "detail": "rowKind \"natural\" is intentionally left unmatched.",
+      "detail": "rowKind \"natural\" marks this as intentionally left unmatched.",
       "candidates": [],
       "proposedWeaponPatch": null,
       "proposedFormulaPatch": null
@@ -335,7 +335,7 @@
       "printedName": "Unarmed",
       "rowKind": "unarmed",
       "status": "skipped-custom",
-      "detail": "rowKind \"unarmed\" is intentionally left unmatched.",
+      "detail": "rowKind \"unarmed\" marks this as intentionally left unmatched.",
       "candidates": [],
       "proposedWeaponPatch": null,
       "proposedFormulaPatch": null
