@@ -57,6 +57,37 @@ function configFor(rail) {
   return DEFAULTS[rail] || null;
 }
 
+function railDisplayName(rail) {
+  return rail === 'details' ? 'details' : 'summary';
+}
+
+function regionForRail(rail) {
+  return rail === 'details' ? 'details-panel' : 'summary-panel';
+}
+
+function syncRailControls(shell, rail) {
+  const cfg = configFor(rail);
+  if (!shell || !cfg) return;
+
+  const collapsed = shell.classList.contains(cfg.collapsedClass);
+  const label = railDisplayName(rail);
+  const resizer = shell.querySelector?.(`.prog-rail-resizer[data-rail="${rail}"]`);
+  const region = shell.querySelector?.(`[data-region="${regionForRail(rail)}"]`);
+
+  if (region) region.dataset.collapsed = collapsed ? 'true' : 'false';
+
+  if (resizer) {
+    resizer.dataset.collapsed = collapsed ? 'true' : 'false';
+    resizer.setAttribute('aria-label', collapsed ? `Restore ${label} rail` : `Resize ${label} rail`);
+    resizer.setAttribute(
+      'title',
+      collapsed
+        ? `Click or drag to restore the ${label} rail. Double-click to reset its width.`
+        : `Drag to resize the ${label} rail. Drag closed to collapse; double-click to reset.`
+    );
+  }
+}
+
 function availableWidth(shell) {
   const row = contentRowFor(shell);
   return Math.max(0, Number(row?.clientWidth || shell?.clientWidth || 0));
@@ -91,6 +122,7 @@ function applyWidth(shell, rail, width, { persist = false } = {}) {
     localStorage.setItem(storageKey(rail, 'width'), String(Math.round(next)));
     localStorage.setItem(storageKey(rail, 'collapsed'), 'false');
   }
+  syncRailControls(shell, rail);
 }
 
 function collapseRail(shell, rail, { persist = false } = {}) {
@@ -99,6 +131,7 @@ function collapseRail(shell, rail, { persist = false } = {}) {
   shell.classList.add(cfg.collapsedClass);
   shell.dataset[`${rail}RailCollapsed`] = 'true';
   if (persist) localStorage.setItem(storageKey(rail, 'collapsed'), 'true');
+  syncRailControls(shell, rail);
 }
 
 function restoreRail(shell, rail, { persist = false } = {}) {
@@ -132,6 +165,15 @@ export function resetProgressionRailResize(event, target) {
   localStorage.removeItem(storageKey(rail, 'width'));
   localStorage.removeItem(storageKey(rail, 'collapsed'));
   applyWidth(shell, rail, cfg.width, { persist: true });
+}
+
+export function restoreProgressionRail(event, target) {
+  event?.preventDefault?.();
+  event?.stopPropagation?.();
+  const rail = target?.dataset?.rail;
+  const shell = shellFor(target);
+  if (!shell || !configFor(rail)) return;
+  restoreRail(shell, rail, { persist: true });
 }
 
 export function handleProgressionRailResizerKey(event, target) {
@@ -216,6 +258,7 @@ if (typeof window !== 'undefined') {
     start: startProgressionRailResize,
     key: handleProgressionRailResizerKey,
     reset: resetProgressionRailResize,
+    restore: restoreProgressionRail,
     hydrate: hydrateProgressionRailSizes,
   };
 }
