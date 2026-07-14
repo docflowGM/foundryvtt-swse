@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "systems/foundryvtt-swse/data/nonheroic/nonheroic-weapon-damage-profiles.schema.json",
   "title": "SWSE Nonheroic Statblock Weapon Damage Profiles",
-  "description": "Source-backed statblock weapon/action rows for NPC import hydration. Source/actor/match are attribution wrappers; runtime-facing fields mirror the canonical damage profile model: delivery, attackShape, scale, primaryType, tags, attack, area, components, riders, sourceRefs, and confidence.",
+  "description": "Source-backed statblock weapon/action rows for NPC import hydration. Source/actor/match are attribution wrappers. weapon.uuid/formula identify reusable compendium weapon bases, while runtime-facing fields still mirror the canonical damage profile model: delivery, attackShape, scale, primaryType, tags, attack, area, components, riders, sourceRefs, and confidence.",
   "type": "object",
   "required": ["schemaVersion", "profileKind", "canonPolicy", "records"],
   "additionalProperties": false,
@@ -42,6 +42,7 @@
         "actor": { "$ref": "#/$defs/actor" },
         "match": { "$ref": "#/$defs/match" },
         "weapon": { "$ref": "#/$defs/weapon" },
+        "formula": { "$ref": "#/$defs/formula" },
         "delivery": { "enum": ["weapon", "unarmed", "natural", "grenade", "force-power", "vehicle-weapon", "hazard", "poison-rider", null] },
         "attackShape": { "enum": ["single-target", "autofire", "burst-fire", "burst", "splash", "cone", "line", "area", null] },
         "scale": { "enum": ["character", "vehicle", "starship", "mixed"] },
@@ -96,9 +97,28 @@
       "properties": {
         "printedName": { "type": "string" },
         "rowKind": { "enum": ["melee", "ranged", "special", "natural", "unarmed"] },
+        "uuid": { "type": ["string", "null"] },
+        "baseSlug": { "type": ["string", "null"] },
+        "basePack": { "type": ["string", "null"] },
+        "baseFormula": { "type": ["string", "null"] },
+        "baseType": { "type": ["string", "null"] },
+        "baseFormulaPolicy": { "enum": ["uuid", "none", "custom", null] },
         "integrated": { "type": "boolean" },
         "category": { "type": ["string", "null"] },
         "range": { "type": ["string", "null"] }
+      }
+    },
+    "formula": {
+      "type": "object",
+      "required": ["mode", "printed"],
+      "additionalProperties": false,
+      "properties": {
+        "mode": { "enum": ["base", "base-plus-delta", "base-plus-dice", "printed-override", "custom"] },
+        "printed": { "type": ["string", "null"] },
+        "delta": { "type": ["string", "null"] },
+        "deltaSource": { "type": ["string", "null"] },
+        "typeOverride": { "type": ["string", "null"] },
+        "notes": { "type": "array", "items": { "type": "string" } }
       }
     },
     "attack": {
@@ -166,6 +186,7 @@
       "properties": {
         "slug": { "$ref": "#/$defs/slug" },
         "label": { "type": "string" },
+        "formula": { "$ref": "#/$defs/formula" },
         "primaryType": { "type": ["string", "null"] },
         "tags": { "type": "array", "items": { "type": "string" } },
         "attack": { "$ref": "#/$defs/attack" },
