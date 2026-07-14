@@ -1,256 +1,536 @@
 {
-  "$schemaVersion": 1,
+  "$schema": "./nonheroic-weapon-damage-profiles.schema.json",
+  "$schemaVersion": 2,
+  "schemaVersion": 2,
+  "profileKind": "nonheroic-statblock-weapon-damage",
   "sourceFamily": "NH-1 Scum and Villainy / droid-heavy nonheroic damage profiles",
+  "canonPolicy": {
+    "authority": "Printed/sourcebook statblock attack rows are canonical for imported NPC play-mode attacks.",
+    "rowSemantics": "Each record represents one printed statblock attack/action row, not a generic equipment definition.",
+    "unmatchedRows": "Importer consumers must leave unmatched rows reference-only/manual; do not infer formulas from item names.",
+    "riders": "Condition-track movement, self-destruction, DR bypass, poison, and similar effects are stored as riders/tags outside base HP damage."
+  },
   "notes": [
-    "Audit/correction seed data only. Profiles are statblock attack rows, not generic item base damage.",
-    "Use these entries to hydrate statblock-backed NPC weapon/action rows in later pack rewrites or importer parsing.",
-    "Riders such as condition-track movement, poison, DR bypass, and self-destruction are recorded as riders and must not be folded into base HP damage."
+    "This digestible v2 shape separates source, actor, match, weapon, damage, resolution, area, and rider concerns.",
+    "Hydrators may normalize these records to the older flat runtime shape internally, but new source-backed batches should use records[].",
+    "Source material is canonical. Repository/source-text-only rows remain reviewRequired until exact sourcebook page confirmation is recovered."
   ],
-  "profiles": [
+  "records": [
     {
-      "slug": "11-17-series-mining-droid-heavy-plasma-jet",
-      "actorName": "11-17-Series Mining Droid",
-      "sourceBook": "Scum and Villainy",
-      "sourceStatus": "repo-statblock-text-labelled-sourcebook; page review still required",
+      "id": "11-17-series-mining-droid-heavy-plasma-jet",
+      "confidence": "sourceTextVerified",
+      "reviewRequired": true,
+      "source": {
+        "book": "Scum and Villainy",
+        "status": "repo-statblock-text-labelled-sourcebook; page review still required",
+        "page": null,
+        "citation": null,
+        "evidence": [
+          "Repository statblock notes label the actor as Star Wars Saga Edition Scum and Villainy.",
+          "The statblock text describes a Heavy Plasma Jet blast four squares long by two squares wide.",
+          "On hit, the target takes 3d10 damage and moves -2 steps on the Condition Track; on miss, the target takes half damage and no CT movement."
+        ]
+      },
+      "actor": {
+        "name": "11-17-Series Mining Droid",
+        "slugs": ["11-17-series-mining-droid"],
+        "kind": "droid",
+        "challengeLevel": 1
+      },
       "match": {
         "actorSlugs": ["11-17-series-mining-droid"],
         "rawIncludes": ["heavy plasma jet", "plasma jet"]
       },
-      "attackName": "Heavy Plasma Jet",
-      "attackKind": "ranged",
-      "delivery": "weapon",
-      "attackShape": "line",
-      "scale": "character",
-      "damageFormula": "3d10",
-      "primaryType": "energy",
-      "damageTypes": ["energy"],
-      "tags": ["droid", "integrated-weapon", "area", "line", "plasma"],
-      "attack": {
-        "isArea": true,
+      "weapon": {
+        "name": "Heavy Plasma Jet",
+        "kind": "ranged",
+        "delivery": "weapon",
+        "integrated": true,
+        "category": null,
+        "range": null,
+        "tags": ["droid", "integrated-weapon", "area", "line", "plasma"]
+      },
+      "damage": {
+        "formula": "3d10",
+        "primaryType": "energy",
+        "types": ["energy"],
+        "components": [
+          { "formula": "3d10", "type": "energy", "notes": "Printed statblock/source text damage." }
+        ]
+      },
+      "resolution": {
+        "attackShape": "line",
+        "scale": "character",
+        "defense": "reflex",
+        "areaAttack": true,
         "halfDamageOnMiss": true,
         "noCriticalDouble": true,
-        "defense": "reflex"
+        "coverCanNegateMissDamage": true,
+        "attackRollMinimum": 10
       },
       "area": {
         "shape": "line",
+        "radius": null,
         "lengthSquares": 4,
         "widthSquares": 2,
-        "targetPolicy": "all-in-area"
+        "originMode": null,
+        "targetPolicy": "all-in-area",
+        "notes": "Blast is four squares long by two squares wide."
       },
       "riders": [
         {
           "kind": "condition-track",
           "amount": -2,
           "appliesOn": "hit-only",
-          "notes": "The source text says the Plasma Jet moves the target -2 steps on the Condition Track on a hit; on a miss it deals half damage and does not move the target along the Condition Track."
+          "notes": "Moves the target -2 steps on the Condition Track on a hit; no CT movement on a miss."
         }
       ],
-      "confidence": "sourceTextVerified",
-      "reviewRequired": true,
+      "variants": [],
       "notes": [
-        "The repository statblock text explicitly describes a four-squares-long by two-squares-wide Heavy Plasma Jet dealing 3d10 damage and -2 CT on hit only.",
-        "The source book/page still needs page-number confirmation before this should be stamped final-sourcebook-verified."
+        "Kept reviewRequired because source page confirmation still needs sourcebook verification."
       ]
     },
     {
-      "slug": "kmi-mining-droid-unarmed",
-      "actorName": "KM1 Mining Droid",
-      "sourceBook": "Scavenger's Guide to Droids",
-      "sourceStatus": "sourcebook-statblock",
+      "id": "kmi-mining-droid-unarmed",
+      "confidence": "sourcebookVerified",
+      "reviewRequired": false,
+      "source": {
+        "book": "Scavenger's Guide to Droids",
+        "status": "sourcebook-statblock",
+        "page": null,
+        "citation": null,
+        "evidence": ["KM1 Mining Droid statblock lists Melee unarmed +11 (1d4+7)."]
+      },
+      "actor": {
+        "name": "KM1 Mining Droid",
+        "slugs": ["km1-mining-droid", "kmi-mining-droid"],
+        "kind": "droid",
+        "challengeLevel": 2
+      },
       "match": {
         "actorSlugs": ["km1-mining-droid", "kmi-mining-droid"],
         "rawIncludes": ["unarmed"]
       },
-      "attackName": "Unarmed",
-      "attackKind": "melee",
-      "delivery": "unarmed",
-      "attackShape": "single-target",
-      "scale": "character",
-      "damageFormula": "1d4+7",
-      "primaryType": "kinetic",
-      "damageTypes": ["kinetic"],
-      "tags": ["droid", "unarmed", "statblock"],
-      "attack": { "isArea": false },
-      "confidence": "sourcebookVerified"
+      "weapon": {
+        "name": "Unarmed",
+        "kind": "melee",
+        "delivery": "unarmed",
+        "integrated": false,
+        "category": "unarmed",
+        "range": "melee",
+        "tags": ["droid", "unarmed", "statblock"]
+      },
+      "damage": {
+        "formula": "1d4+7",
+        "primaryType": "kinetic",
+        "types": ["kinetic"],
+        "components": [
+          { "formula": "1d4+7", "type": "kinetic", "notes": "Printed statblock damage." }
+        ]
+      },
+      "resolution": {
+        "attackShape": "single-target",
+        "scale": "character",
+        "defense": "reflex",
+        "areaAttack": false,
+        "halfDamageOnMiss": false,
+        "noCriticalDouble": false,
+        "coverCanNegateMissDamage": false,
+        "attackRollMinimum": null
+      },
+      "area": null,
+      "riders": [],
+      "variants": [],
+      "notes": []
     },
     {
-      "slug": "kmi-mining-droid-laser-cutter",
-      "actorName": "KM1 Mining Droid",
-      "sourceBook": "Scavenger's Guide to Droids",
-      "sourceStatus": "sourcebook-statblock",
+      "id": "kmi-mining-droid-laser-cutter",
+      "confidence": "sourcebookVerified",
+      "reviewRequired": false,
+      "source": {
+        "book": "Scavenger's Guide to Droids",
+        "status": "sourcebook-statblock",
+        "page": null,
+        "citation": null,
+        "evidence": [
+          "KM1 Mining Droid statblock lists Ranged laser cutter +4 (3d8).",
+          "Possessions/Vital Systems state laser cutters are treated as heavy blaster pistols with maximum range 12 squares."
+        ]
+      },
+      "actor": {
+        "name": "KM1 Mining Droid",
+        "slugs": ["km1-mining-droid", "kmi-mining-droid"],
+        "kind": "droid",
+        "challengeLevel": 2
+      },
       "match": {
         "actorSlugs": ["km1-mining-droid", "kmi-mining-droid"],
         "rawIncludes": ["laser cutter"]
       },
-      "attackName": "Laser Cutter",
-      "attackKind": "ranged",
-      "delivery": "weapon",
-      "attackShape": "single-target",
-      "scale": "character",
-      "damageFormula": "3d8",
-      "primaryType": "energy",
-      "damageTypes": ["energy"],
-      "tags": ["droid", "integrated-weapon", "laser", "statblock"],
-      "attack": { "isArea": false },
-      "confidence": "sourcebookVerified",
-      "notes": ["The source says laser cutters are treated as heavy blaster pistols with a maximum range of 12 squares."]
+      "weapon": {
+        "name": "Laser Cutter",
+        "kind": "ranged",
+        "delivery": "weapon",
+        "integrated": true,
+        "category": "pistols",
+        "range": "maximum 12 squares",
+        "tags": ["droid", "integrated-weapon", "laser", "statblock"]
+      },
+      "damage": {
+        "formula": "3d8",
+        "primaryType": "energy",
+        "types": ["energy"],
+        "components": [
+          { "formula": "3d8", "type": "energy", "notes": "Printed statblock damage; treated as heavy blaster pistol."
+          }
+        ]
+      },
+      "resolution": {
+        "attackShape": "single-target",
+        "scale": "character",
+        "defense": "reflex",
+        "areaAttack": false,
+        "halfDamageOnMiss": false,
+        "noCriticalDouble": false,
+        "coverCanNegateMissDamage": false,
+        "attackRollMinimum": null
+      },
+      "area": null,
+      "riders": [],
+      "variants": [],
+      "notes": []
     },
     {
-      "slug": "viper-series-probe-droid-pacify-hostile",
-      "actorName": "Viper-Series Probe Droid",
-      "sourceBook": "Scavenger's Guide to Droids",
-      "sourceStatus": "sourcebook-statblock",
+      "id": "viper-series-probe-droid-pacify-hostile",
+      "confidence": "sourcebookVerified",
+      "reviewRequired": false,
+      "source": {
+        "book": "Scavenger's Guide to Droids",
+        "status": "sourcebook-statblock",
+        "page": null,
+        "citation": null,
+        "evidence": ["Viper-Series Probe Droid Pacify Hostile action makes a ranged attack; if successful, it deals 3d6 damage."]
+      },
+      "actor": {
+        "name": "Viper-Series Probe Droid",
+        "slugs": ["viper-series-probe-droid"],
+        "kind": "droid",
+        "challengeLevel": null
+      },
       "match": {
         "actorSlugs": ["viper-series-probe-droid"],
         "rawIncludes": ["pacify hostile", "blaster"]
       },
-      "attackName": "Pacify Hostile",
-      "attackKind": "ranged",
-      "delivery": "weapon",
-      "attackShape": "single-target",
-      "scale": "character",
-      "damageFormula": "3d6",
-      "primaryType": "energy",
-      "damageTypes": ["energy"],
-      "tags": ["droid", "integrated-weapon", "blaster", "statblock"],
-      "attack": { "isArea": false },
-      "confidence": "sourcebookVerified"
+      "weapon": {
+        "name": "Pacify Hostile",
+        "kind": "ranged",
+        "delivery": "weapon",
+        "integrated": true,
+        "category": "pistols",
+        "range": null,
+        "tags": ["droid", "integrated-weapon", "blaster", "statblock"]
+      },
+      "damage": {
+        "formula": "3d6",
+        "primaryType": "energy",
+        "types": ["energy"],
+        "components": [
+          { "formula": "3d6", "type": "energy", "notes": "Printed action-row damage." }
+        ]
+      },
+      "resolution": {
+        "attackShape": "single-target",
+        "scale": "character",
+        "defense": "reflex",
+        "areaAttack": false,
+        "halfDamageOnMiss": false,
+        "noCriticalDouble": false,
+        "coverCanNegateMissDamage": false,
+        "attackRollMinimum": null
+      },
+      "area": null,
+      "riders": [],
+      "variants": [],
+      "notes": []
     },
     {
-      "slug": "viper-series-probe-droid-self-destruct",
-      "actorName": "Viper-Series Probe Droid",
-      "sourceBook": "Scavenger's Guide to Droids",
-      "sourceStatus": "sourcebook-statblock",
+      "id": "viper-series-probe-droid-self-destruct",
+      "confidence": "sourcebookVerified",
+      "reviewRequired": false,
+      "source": {
+        "book": "Scavenger's Guide to Droids",
+        "status": "sourcebook-statblock",
+        "page": null,
+        "citation": null,
+        "evidence": [
+          "Viper-Series Probe Droid Self-Destruct activates its self-destruct mechanism.",
+          "The action is a 2-square burst area attack at +5; if successful, it deals 4d6 damage and the droid is destroyed."
+        ]
+      },
+      "actor": {
+        "name": "Viper-Series Probe Droid",
+        "slugs": ["viper-series-probe-droid"],
+        "kind": "droid",
+        "challengeLevel": null
+      },
       "match": {
         "actorSlugs": ["viper-series-probe-droid"],
         "rawIncludes": ["self-destruct", "self destruct"]
       },
-      "attackName": "Self-Destruct",
-      "attackKind": "special",
-      "delivery": "hazard",
-      "attackShape": "burst",
-      "scale": "character",
-      "damageFormula": "4d6",
-      "primaryType": "energy",
-      "damageTypes": ["energy"],
-      "tags": ["droid", "self-destruct", "area", "burst", "statblock"],
-      "attack": {
-        "isArea": true,
+      "weapon": {
+        "name": "Self-Destruct",
+        "kind": "special",
+        "delivery": "hazard",
+        "integrated": true,
+        "category": null,
+        "range": "2-square burst",
+        "tags": ["droid", "self-destruct", "area", "burst", "statblock"]
+      },
+      "damage": {
+        "formula": "4d6",
+        "primaryType": "energy",
+        "types": ["energy"],
+        "components": [
+          { "formula": "4d6", "type": "energy", "notes": "Printed action-row damage." }
+        ]
+      },
+      "resolution": {
+        "attackShape": "burst",
+        "scale": "character",
+        "defense": "reflex",
+        "areaAttack": true,
         "halfDamageOnMiss": false,
-        "defense": "reflex"
+        "noCriticalDouble": true,
+        "coverCanNegateMissDamage": false,
+        "attackRollMinimum": 10
       },
       "area": {
         "shape": "burst",
         "radius": 2,
+        "lengthSquares": null,
+        "widthSquares": null,
         "originMode": "self",
-        "targetPolicy": "all-in-area"
+        "targetPolicy": "all-in-area",
+        "notes": "Self-origin 2-square burst."
       },
       "riders": [
         {
           "kind": "self-destroy-source",
+          "amount": null,
           "appliesOn": "activation",
-          "notes": "The source says the droid is immediately destroyed after activating self-destruct."
+          "notes": "The droid is immediately destroyed after activating self-destruct."
         }
       ],
-      "confidence": "sourcebookVerified"
+      "variants": [],
+      "notes": []
     },
     {
-      "slug": "t4-turret-droid-blaster-cannon",
-      "actorName": "Colicoid T4 Turret Droid",
-      "sourceBook": "Scavenger's Guide to Droids",
-      "sourceStatus": "sourcebook-statblock",
+      "id": "t4-turret-droid-blaster-cannon",
+      "confidence": "sourcebookVerified",
+      "reviewRequired": false,
+      "source": {
+        "book": "Scavenger's Guide to Droids",
+        "status": "sourcebook-statblock",
+        "page": null,
+        "citation": null,
+        "evidence": [
+          "Colicoid T4 Turret Droid statblock lists blaster cannon attacks at 3d12.",
+          "Rapid Shot variants increase the row to 4d12."
+        ]
+      },
+      "actor": {
+        "name": "Colicoid T4 Turret Droid",
+        "slugs": ["colicoid-t4-turret-droid", "t4-turret-droid"],
+        "kind": "droid",
+        "challengeLevel": 3
+      },
       "match": {
         "actorSlugs": ["colicoid-t4-turret-droid", "t4-turret-droid"],
         "rawIncludes": ["blaster cannon"]
       },
-      "attackName": "Blaster Cannon",
-      "attackKind": "ranged",
-      "delivery": "weapon",
-      "attackShape": "single-target",
-      "scale": "character",
-      "damageFormula": "3d12",
-      "primaryType": "energy",
-      "damageTypes": ["energy"],
-      "tags": ["droid", "weapon", "blaster", "statblock"],
-      "attack": { "isArea": false },
+      "weapon": {
+        "name": "Blaster Cannon",
+        "kind": "ranged",
+        "delivery": "weapon",
+        "integrated": false,
+        "category": "heavy",
+        "range": null,
+        "tags": ["droid", "weapon", "blaster", "statblock"]
+      },
+      "damage": {
+        "formula": "3d12",
+        "primaryType": "energy",
+        "types": ["energy"],
+        "components": [
+          { "formula": "3d12", "type": "energy", "notes": "Printed statblock damage." }
+        ]
+      },
+      "resolution": {
+        "attackShape": "single-target",
+        "scale": "character",
+        "defense": "reflex",
+        "areaAttack": false,
+        "halfDamageOnMiss": false,
+        "noCriticalDouble": false,
+        "coverCanNegateMissDamage": false,
+        "attackRollMinimum": null
+      },
+      "area": null,
+      "riders": [],
       "variants": [
         {
-          "slug": "t4-turret-droid-blaster-cannon-rapid-shot",
+          "id": "t4-turret-droid-blaster-cannon-rapid-shot",
           "label": "with Rapid Shot",
-          "damageFormula": "4d12",
+          "damage": {
+            "formula": "4d12",
+            "primaryType": "energy",
+            "types": ["energy"],
+            "components": [
+              { "formula": "4d12", "type": "energy", "notes": "Printed Rapid Shot variant damage." }
+            ]
+          },
+          "weapon": null,
+          "resolution": null,
+          "area": null,
+          "riders": [],
           "tags": ["rapid-shot"]
         }
       ],
-      "confidence": "sourcebookVerified"
+      "notes": []
     },
     {
-      "slug": "t4-turret-droid-grenade-launcher",
-      "actorName": "Colicoid T4 Turret Droid",
-      "sourceBook": "Scavenger's Guide to Droids",
-      "sourceStatus": "sourcebook-statblock",
+      "id": "t4-turret-droid-grenade-launcher",
+      "confidence": "sourcebookVerified",
+      "reviewRequired": false,
+      "source": {
+        "book": "Scavenger's Guide to Droids",
+        "status": "sourcebook-statblock",
+        "page": null,
+        "citation": null,
+        "evidence": ["Colicoid T4 Turret Droid statblock lists ranged grenade launcher +9 (5d6, 4-square burst)."]
+      },
+      "actor": {
+        "name": "Colicoid T4 Turret Droid",
+        "slugs": ["colicoid-t4-turret-droid", "t4-turret-droid"],
+        "kind": "droid",
+        "challengeLevel": 3
+      },
       "match": {
         "actorSlugs": ["colicoid-t4-turret-droid", "t4-turret-droid"],
         "rawIncludes": ["grenade launcher"]
       },
-      "attackName": "Grenade Launcher",
-      "attackKind": "ranged",
-      "delivery": "weapon",
-      "attackShape": "burst",
-      "scale": "character",
-      "damageFormula": "5d6",
-      "primaryType": "energy",
-      "damageTypes": ["energy"],
-      "tags": ["droid", "grenade", "explosive", "area", "burst", "statblock"],
-      "attack": {
-        "isArea": true,
+      "weapon": {
+        "name": "Grenade Launcher",
+        "kind": "ranged",
+        "delivery": "weapon",
+        "integrated": false,
+        "category": "heavy",
+        "range": "4-square burst",
+        "tags": ["droid", "grenade", "explosive", "area", "burst", "statblock"]
+      },
+      "damage": {
+        "formula": "5d6",
+        "primaryType": "energy",
+        "types": ["energy"],
+        "components": [
+          { "formula": "5d6", "type": "energy", "notes": "Printed statblock damage." }
+        ]
+      },
+      "resolution": {
+        "attackShape": "burst",
+        "scale": "character",
+        "defense": "reflex",
+        "areaAttack": true,
         "halfDamageOnMiss": true,
         "noCriticalDouble": true,
-        "defense": "reflex"
+        "coverCanNegateMissDamage": true,
+        "attackRollMinimum": 10
       },
       "area": {
         "shape": "burst",
         "radius": 4,
-        "targetPolicy": "all-in-area"
+        "lengthSquares": null,
+        "widthSquares": null,
+        "originMode": "grid-intersection",
+        "targetPolicy": "all-in-area",
+        "notes": "Printed 4-square burst."
       },
-      "confidence": "sourcebookVerified"
+      "riders": [],
+      "variants": [],
+      "notes": []
     },
     {
-      "slug": "t4-turret-droid-cutting-laser",
-      "actorName": "Colicoid T4 Turret Droid",
-      "sourceBook": "Scavenger's Guide to Droids",
-      "sourceStatus": "sourcebook-statblock",
+      "id": "t4-turret-droid-cutting-laser",
+      "confidence": "sourcebookVerified",
+      "reviewRequired": false,
+      "source": {
+        "book": "Scavenger's Guide to Droids",
+        "status": "sourcebook-statblock",
+        "page": null,
+        "citation": null,
+        "evidence": [
+          "Cutting Laser targets 5 contiguous squares within rifle point-blank range.",
+          "On hit, a target takes 3d10 energy and fire damage; half damage on a miss.",
+          "The cutting laser ignores damage reduction and is an area attack."
+        ]
+      },
+      "actor": {
+        "name": "Colicoid T4 Turret Droid",
+        "slugs": ["colicoid-t4-turret-droid", "t4-turret-droid"],
+        "kind": "droid",
+        "challengeLevel": 3
+      },
       "match": {
         "actorSlugs": ["colicoid-t4-turret-droid", "t4-turret-droid"],
         "rawIncludes": ["cutting laser"]
       },
-      "attackName": "Cutting Laser",
-      "attackKind": "special",
-      "delivery": "weapon",
-      "attackShape": "line",
-      "scale": "character",
-      "damageFormula": "3d10",
-      "primaryType": "energy",
-      "damageTypes": ["energy", "fire"],
-      "tags": ["droid", "integrated-weapon", "area", "line", "laser", "ignores-dr", "statblock"],
-      "attack": {
-        "isArea": true,
+      "weapon": {
+        "name": "Cutting Laser",
+        "kind": "special",
+        "delivery": "weapon",
+        "integrated": true,
+        "category": null,
+        "range": "rifle point-blank range",
+        "tags": ["droid", "integrated-weapon", "area", "line", "laser", "ignores-dr", "statblock"]
+      },
+      "damage": {
+        "formula": "3d10",
+        "primaryType": "energy",
+        "types": ["energy", "fire"],
+        "components": [
+          { "formula": "3d10", "type": "energy", "notes": "Printed as energy and fire damage." },
+          { "formula": "3d10", "type": "fire", "notes": "Typed damage also carries fire for resistance/immunity matching." }
+        ]
+      },
+      "resolution": {
+        "attackShape": "line",
+        "scale": "character",
+        "defense": "reflex",
+        "areaAttack": true,
         "halfDamageOnMiss": true,
         "noCriticalDouble": true,
-        "defense": "reflex"
+        "coverCanNegateMissDamage": true,
+        "attackRollMinimum": 10
       },
       "area": {
         "shape": "line",
-        "targetPolicy": "all-in-area",
-        "notes": "Targets 5 contiguous squares within rifle point-blank range."
+        "radius": null,
+        "lengthSquares": 5,
+        "widthSquares": null,
+        "originMode": null,
+        "targetPolicy": "contiguous-squares",
+        "notes": "Targets 5 contiguous squares."
       },
       "riders": [
         {
           "kind": "ignore-damage-reduction",
+          "amount": null,
           "appliesOn": "damage",
-          "notes": "The source says the cutting laser ignores damage reduction."
+          "notes": "Printed source says the weapon ignores damage reduction."
         }
       ],
-      "confidence": "sourcebookVerified"
+      "variants": [],
+      "notes": []
     }
   ]
 }
