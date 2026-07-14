@@ -1,0 +1,619 @@
+{
+  "$schema": "./nonheroic-weapon-damage-profiles.schema.json",
+  "$schemaVersion": 2,
+  "schemaVersion": 2,
+  "profileKind": "nonheroic-statblock-weapon-damage",
+  "sourceFamily": "NH-3 Galaxy of Intrigue nonheroic statblock damage profiles",
+  "canonPolicy": {
+    "authority": "Printed Galaxy of Intrigue statblock attack rows are canonical for imported NPC play-mode attacks.",
+    "rowSemantics": "Each record represents one printed statblock attack/action row, not a generic equipment definition.",
+    "unmatchedRows": "Importer consumers must leave unmatched rows reference-only/manual; do not infer formulas from item names.",
+    "riders": "Non-HP effects remain riders/tags outside base HP damage."
+  },
+  "notes": [
+    "This batch covers sourcebook-verified nonheroic or nonheroic-adjacent NPC attack rows from Galaxy of Intrigue.",
+    "Rows use the same canonical damage fields as data/combat/damage-profiles.schema.json and the NH-2 schema.",
+    "Printed statblock attack totals are intentionally not copied into item attackBonus to avoid double counting."
+  ],
+  "records": [
+    {
+      "slug": "deluge-facility-technician-unarmed",
+      "name": "Unarmed",
+      "confidence": "verified",
+      "reviewRequired": false,
+      "source": {
+        "book": "Galaxy of Intrigue",
+        "status": "sourcebook-statblock",
+        "page": 219,
+        "evidence": [
+          "Deluge Facility Technician is Medium Human nonheroic 4.",
+          "Printed row: Melee unarmed +3 (1d4)."
+        ]
+      },
+      "actor": {
+        "name": "Deluge Facility Technician",
+        "slugs": ["deluge-facility-technician"],
+        "kind": "nonheroic",
+        "challengeLevel": 1
+      },
+      "match": {
+        "actorSlugs": ["deluge-facility-technician"],
+        "rawIncludes": ["unarmed"]
+      },
+      "weapon": {
+        "printedName": "Unarmed",
+        "rowKind": "melee",
+        "integrated": false,
+        "category": "unarmed",
+        "range": "melee"
+      },
+      "delivery": "unarmed",
+      "attackShape": "single-target",
+      "scale": "character",
+      "primaryType": "kinetic",
+      "tags": ["nonheroic", "unarmed", "statblock"],
+      "attack": {
+        "isArea": false,
+        "halfDamageOnMiss": false,
+        "noCriticalDouble": false,
+        "coverCanNegateMissDamage": false,
+        "attackRollMinimum": null,
+        "defense": "reflex"
+      },
+      "area": {
+        "shape": null,
+        "radius": null,
+        "size": null,
+        "originMode": null,
+        "targetPolicy": "single"
+      },
+      "components": [
+        {
+          "key": "base",
+          "label": "Unarmed",
+          "formula": "1d4",
+          "type": "kinetic",
+          "tags": ["base", "kinetic", "unarmed"]
+        }
+      ],
+      "riders": [],
+      "sourceRefs": [
+        { "book": "Galaxy of Intrigue", "page": 219, "note": "Deluge Facility Technician melee unarmed damage row." }
+      ],
+      "variants": [],
+      "notes": []
+    },
+    {
+      "slug": "deluge-facility-guard-stun-baton",
+      "name": "Stun Baton",
+      "confidence": "verified",
+      "reviewRequired": false,
+      "source": {
+        "book": "Galaxy of Intrigue",
+        "status": "sourcebook-statblock",
+        "page": 218,
+        "evidence": [
+          "Deluge Facility Guard is Medium Human nonheroic 6/soldier 1.",
+          "Printed row: Melee stun baton +7 (1d6+2)."
+        ]
+      },
+      "actor": {
+        "name": "Deluge Facility Guard",
+        "slugs": ["deluge-facility-guard"],
+        "kind": "nonheroic-adjacent",
+        "challengeLevel": 3
+      },
+      "match": {
+        "actorSlugs": ["deluge-facility-guard"],
+        "rawIncludes": ["stun baton"]
+      },
+      "weapon": {
+        "printedName": "Stun Baton",
+        "rowKind": "melee",
+        "integrated": false,
+        "category": "simple",
+        "range": "melee"
+      },
+      "delivery": "weapon",
+      "attackShape": "single-target",
+      "scale": "character",
+      "primaryType": "energy",
+      "tags": ["nonheroic", "weapon", "stun-baton", "statblock"],
+      "attack": {
+        "isArea": false,
+        "halfDamageOnMiss": false,
+        "noCriticalDouble": false,
+        "coverCanNegateMissDamage": false,
+        "attackRollMinimum": null,
+        "defense": "reflex"
+      },
+      "area": {
+        "shape": null,
+        "radius": null,
+        "size": null,
+        "originMode": null,
+        "targetPolicy": "single"
+      },
+      "components": [
+        {
+          "key": "base",
+          "label": "Stun Baton",
+          "formula": "1d6+2",
+          "type": "energy",
+          "tags": ["base", "energy", "stun-baton"]
+        }
+      ],
+      "riders": [],
+      "sourceRefs": [
+        { "book": "Galaxy of Intrigue", "page": 218, "note": "Deluge Facility Guard stun baton damage row." }
+      ],
+      "variants": [],
+      "notes": ["Stun baton base damage is kept as printed. Any alternate stun-mode handling remains a later rider/effect decision."]
+    },
+    {
+      "slug": "deluge-facility-guard-blaster-pistol",
+      "name": "Blaster Pistol",
+      "confidence": "verified",
+      "reviewRequired": false,
+      "source": {
+        "book": "Galaxy of Intrigue",
+        "status": "sourcebook-statblock",
+        "page": 218,
+        "evidence": [
+          "Printed row: Ranged blaster pistol +7 (3d6).",
+          "Printed variant: Ranged blaster pistol +5 (4d6) with Rapid Shot."
+        ]
+      },
+      "actor": {
+        "name": "Deluge Facility Guard",
+        "slugs": ["deluge-facility-guard"],
+        "kind": "nonheroic-adjacent",
+        "challengeLevel": 3
+      },
+      "match": {
+        "actorSlugs": ["deluge-facility-guard"],
+        "rawIncludes": ["blaster pistol"]
+      },
+      "weapon": {
+        "printedName": "Blaster Pistol",
+        "rowKind": "ranged",
+        "integrated": false,
+        "category": "pistols",
+        "range": null
+      },
+      "delivery": "weapon",
+      "attackShape": "single-target",
+      "scale": "character",
+      "primaryType": "energy",
+      "tags": ["nonheroic", "weapon", "blaster", "pistol", "statblock"],
+      "attack": {
+        "isArea": false,
+        "halfDamageOnMiss": false,
+        "noCriticalDouble": false,
+        "coverCanNegateMissDamage": false,
+        "attackRollMinimum": null,
+        "defense": "reflex"
+      },
+      "area": {
+        "shape": null,
+        "radius": null,
+        "size": null,
+        "originMode": null,
+        "targetPolicy": "single"
+      },
+      "components": [
+        {
+          "key": "base",
+          "label": "Blaster Pistol",
+          "formula": "3d6",
+          "type": "energy",
+          "tags": ["base", "energy", "blaster", "pistol"]
+        }
+      ],
+      "riders": [],
+      "sourceRefs": [
+        { "book": "Galaxy of Intrigue", "page": 218, "note": "Deluge Facility Guard blaster pistol damage rows." }
+      ],
+      "variants": [
+        {
+          "slug": "deluge-facility-guard-blaster-pistol-rapid-shot",
+          "label": "with Rapid Shot",
+          "primaryType": "energy",
+          "tags": ["rapid-shot"],
+          "attack": {
+            "isArea": false,
+            "halfDamageOnMiss": false,
+            "noCriticalDouble": false,
+            "coverCanNegateMissDamage": false,
+            "attackRollMinimum": null,
+            "defense": "reflex"
+          },
+          "area": {
+            "shape": null,
+            "radius": null,
+            "size": null,
+            "originMode": null,
+            "targetPolicy": "single"
+          },
+          "components": [
+            {
+              "key": "base",
+              "label": "Blaster Pistol with Rapid Shot",
+              "formula": "4d6",
+              "type": "energy",
+              "tags": ["base", "energy", "blaster", "pistol", "rapid-shot"]
+            }
+          ],
+          "riders": []
+        }
+      ],
+      "notes": []
+    },
+    {
+      "slug": "deluge-facility-guard-blaster-rifle",
+      "name": "Blaster Rifle",
+      "confidence": "verified",
+      "reviewRequired": false,
+      "source": {
+        "book": "Galaxy of Intrigue",
+        "status": "sourcebook-statblock",
+        "page": 218,
+        "evidence": [
+          "Printed row: Ranged blaster rifle +7 (3d8).",
+          "Printed variant: Ranged blaster rifle +5 (4d8) with Rapid Shot."
+        ]
+      },
+      "actor": {
+        "name": "Deluge Facility Guard",
+        "slugs": ["deluge-facility-guard"],
+        "kind": "nonheroic-adjacent",
+        "challengeLevel": 3
+      },
+      "match": {
+        "actorSlugs": ["deluge-facility-guard"],
+        "rawIncludes": ["blaster rifle"]
+      },
+      "weapon": {
+        "printedName": "Blaster Rifle",
+        "rowKind": "ranged",
+        "integrated": false,
+        "category": "rifles",
+        "range": null
+      },
+      "delivery": "weapon",
+      "attackShape": "single-target",
+      "scale": "character",
+      "primaryType": "energy",
+      "tags": ["nonheroic", "weapon", "blaster", "rifle", "statblock"],
+      "attack": {
+        "isArea": false,
+        "halfDamageOnMiss": false,
+        "noCriticalDouble": false,
+        "coverCanNegateMissDamage": false,
+        "attackRollMinimum": null,
+        "defense": "reflex"
+      },
+      "area": {
+        "shape": null,
+        "radius": null,
+        "size": null,
+        "originMode": null,
+        "targetPolicy": "single"
+      },
+      "components": [
+        {
+          "key": "base",
+          "label": "Blaster Rifle",
+          "formula": "3d8",
+          "type": "energy",
+          "tags": ["base", "energy", "blaster", "rifle"]
+        }
+      ],
+      "riders": [],
+      "sourceRefs": [
+        { "book": "Galaxy of Intrigue", "page": 218, "note": "Deluge Facility Guard blaster rifle damage rows." }
+      ],
+      "variants": [
+        {
+          "slug": "deluge-facility-guard-blaster-rifle-rapid-shot",
+          "label": "with Rapid Shot",
+          "primaryType": "energy",
+          "tags": ["rapid-shot"],
+          "attack": {
+            "isArea": false,
+            "halfDamageOnMiss": false,
+            "noCriticalDouble": false,
+            "coverCanNegateMissDamage": false,
+            "attackRollMinimum": null,
+            "defense": "reflex"
+          },
+          "area": {
+            "shape": null,
+            "radius": null,
+            "size": null,
+            "originMode": null,
+            "targetPolicy": "single"
+          },
+          "components": [
+            {
+              "key": "base",
+              "label": "Blaster Rifle with Rapid Shot",
+              "formula": "4d8",
+              "type": "energy",
+              "tags": ["base", "energy", "blaster", "rifle", "rapid-shot"]
+            }
+          ],
+          "riders": []
+        }
+      ],
+      "notes": []
+    },
+    {
+      "slug": "corporate-sector-mine-guard-stun-baton",
+      "name": "Stun Baton",
+      "confidence": "verified",
+      "reviewRequired": false,
+      "source": {
+        "book": "Galaxy of Intrigue",
+        "status": "sourcebook-statblock",
+        "page": 216,
+        "evidence": [
+          "Corporate Sector Mine Guard is Medium Human nonheroic 6.",
+          "Printed row: Melee stun baton +6 (1d6+2)."
+        ]
+      },
+      "actor": {
+        "name": "Corporate Sector Mine Guard",
+        "slugs": ["corporate-sector-mine-guard"],
+        "kind": "nonheroic",
+        "challengeLevel": 2
+      },
+      "match": {
+        "actorSlugs": ["corporate-sector-mine-guard"],
+        "rawIncludes": ["stun baton"]
+      },
+      "weapon": {
+        "printedName": "Stun Baton",
+        "rowKind": "melee",
+        "integrated": false,
+        "category": "simple",
+        "range": "melee"
+      },
+      "delivery": "weapon",
+      "attackShape": "single-target",
+      "scale": "character",
+      "primaryType": "energy",
+      "tags": ["nonheroic", "weapon", "stun-baton", "statblock"],
+      "attack": {
+        "isArea": false,
+        "halfDamageOnMiss": false,
+        "noCriticalDouble": false,
+        "coverCanNegateMissDamage": false,
+        "attackRollMinimum": null,
+        "defense": "reflex"
+      },
+      "area": {
+        "shape": null,
+        "radius": null,
+        "size": null,
+        "originMode": null,
+        "targetPolicy": "single"
+      },
+      "components": [
+        {
+          "key": "base",
+          "label": "Stun Baton",
+          "formula": "1d6+2",
+          "type": "energy",
+          "tags": ["base", "energy", "stun-baton"]
+        }
+      ],
+      "riders": [],
+      "sourceRefs": [
+        { "book": "Galaxy of Intrigue", "page": 216, "note": "Corporate Sector Mine Guard stun baton row." }
+      ],
+      "variants": [],
+      "notes": []
+    },
+    {
+      "slug": "corporate-sector-mine-guard-blaster-carbine",
+      "name": "Blaster Carbine",
+      "confidence": "verified",
+      "reviewRequired": false,
+      "source": {
+        "book": "Galaxy of Intrigue",
+        "status": "sourcebook-statblock",
+        "page": 216,
+        "evidence": [
+          "Printed row: Ranged blaster carbine +6 (3d8).",
+          "Printed variant: Ranged blaster carbine +1 (3d8) with autofire."
+        ]
+      },
+      "actor": {
+        "name": "Corporate Sector Mine Guard",
+        "slugs": ["corporate-sector-mine-guard"],
+        "kind": "nonheroic",
+        "challengeLevel": 2
+      },
+      "match": {
+        "actorSlugs": ["corporate-sector-mine-guard"],
+        "rawIncludes": ["blaster carbine"]
+      },
+      "weapon": {
+        "printedName": "Blaster Carbine",
+        "rowKind": "ranged",
+        "integrated": false,
+        "category": "rifles",
+        "range": null
+      },
+      "delivery": "weapon",
+      "attackShape": "single-target",
+      "scale": "character",
+      "primaryType": "energy",
+      "tags": ["nonheroic", "weapon", "blaster", "carbine", "statblock"],
+      "attack": {
+        "isArea": false,
+        "halfDamageOnMiss": false,
+        "noCriticalDouble": false,
+        "coverCanNegateMissDamage": false,
+        "attackRollMinimum": null,
+        "defense": "reflex"
+      },
+      "area": {
+        "shape": null,
+        "radius": null,
+        "size": null,
+        "originMode": null,
+        "targetPolicy": "single"
+      },
+      "components": [
+        {
+          "key": "base",
+          "label": "Blaster Carbine",
+          "formula": "3d8",
+          "type": "energy",
+          "tags": ["base", "energy", "blaster", "carbine"]
+        }
+      ],
+      "riders": [],
+      "sourceRefs": [
+        { "book": "Galaxy of Intrigue", "page": 216, "note": "Corporate Sector Mine Guard blaster carbine and autofire rows." }
+      ],
+      "variants": [
+        {
+          "slug": "corporate-sector-mine-guard-blaster-carbine-autofire",
+          "label": "with autofire",
+          "primaryType": "energy",
+          "tags": ["autofire", "area"],
+          "attack": {
+            "isArea": true,
+            "isAutofire": true,
+            "halfDamageOnMiss": true,
+            "noCriticalDouble": true,
+            "coverCanNegateMissDamage": true,
+            "attackRollMinimum": 10,
+            "defense": "reflex"
+          },
+          "area": {
+            "shape": "2x2",
+            "radius": null,
+            "size": 2,
+            "originMode": "target-square",
+            "targetPolicy": "all-in-area"
+          },
+          "components": [
+            {
+              "key": "base",
+              "label": "Blaster Carbine with autofire",
+              "formula": "3d8",
+              "type": "energy",
+              "tags": ["base", "energy", "blaster", "carbine", "autofire", "area"]
+            }
+          ],
+          "riders": []
+        }
+      ],
+      "notes": []
+    },
+    {
+      "slug": "corporate-sector-miner-club",
+      "name": "Club",
+      "confidence": "verified",
+      "reviewRequired": false,
+      "source": {
+        "book": "Galaxy of Intrigue",
+        "status": "sourcebook-statblock",
+        "page": 217,
+        "evidence": [
+          "Corporate Sector Miner is Medium Human nonheroic 3.",
+          "Printed row: Melee club +2* (1d6+6), with note that the asterisk includes 2 points of Power Attack.",
+          "Printed variant: Melee club +4 (2d6+4) with Mighty Swing."
+        ]
+      },
+      "actor": {
+        "name": "Corporate Sector Miner",
+        "slugs": ["corporate-sector-miner"],
+        "kind": "nonheroic",
+        "challengeLevel": 1
+      },
+      "match": {
+        "actorSlugs": ["corporate-sector-miner"],
+        "rawIncludes": ["club"]
+      },
+      "weapon": {
+        "printedName": "Club",
+        "rowKind": "melee",
+        "integrated": false,
+        "category": "simple",
+        "range": "melee"
+      },
+      "delivery": "weapon",
+      "attackShape": "single-target",
+      "scale": "character",
+      "primaryType": "kinetic",
+      "tags": ["nonheroic", "weapon", "club", "power-attack", "statblock"],
+      "attack": {
+        "isArea": false,
+        "halfDamageOnMiss": false,
+        "noCriticalDouble": false,
+        "coverCanNegateMissDamage": false,
+        "attackRollMinimum": null,
+        "defense": "reflex"
+      },
+      "area": {
+        "shape": null,
+        "radius": null,
+        "size": null,
+        "originMode": null,
+        "targetPolicy": "single"
+      },
+      "components": [
+        {
+          "key": "base",
+          "label": "Club with Power Attack",
+          "formula": "1d6+6",
+          "type": "kinetic",
+          "tags": ["base", "kinetic", "club", "power-attack"]
+        }
+      ],
+      "riders": [],
+      "sourceRefs": [
+        { "book": "Galaxy of Intrigue", "page": 217, "note": "Corporate Sector Miner club row; printed asterisk includes 2 points of Power Attack." }
+      ],
+      "variants": [
+        {
+          "slug": "corporate-sector-miner-club-mighty-swing",
+          "label": "with Mighty Swing",
+          "primaryType": "kinetic",
+          "tags": ["mighty-swing"],
+          "attack": {
+            "isArea": false,
+            "halfDamageOnMiss": false,
+            "noCriticalDouble": false,
+            "coverCanNegateMissDamage": false,
+            "attackRollMinimum": null,
+            "defense": "reflex"
+          },
+          "area": {
+            "shape": null,
+            "radius": null,
+            "size": null,
+            "originMode": null,
+            "targetPolicy": "single"
+          },
+          "components": [
+            {
+              "key": "base",
+              "label": "Club with Mighty Swing",
+              "formula": "2d6+4",
+              "type": "kinetic",
+              "tags": ["base", "kinetic", "club", "mighty-swing"]
+            }
+          ],
+          "riders": []
+        }
+      ],
+      "notes": []
+    }
+  ]
+}
