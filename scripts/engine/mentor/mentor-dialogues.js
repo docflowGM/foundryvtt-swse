@@ -15,50 +15,50 @@ export { MENTORS };
 const SYSTEM_MENTOR_BASE = 'systems/foundryvtt-swse/assets/mentors/';
 
 const CANONICAL_MENTOR_PORTRAIT_BASENAMES = Object.freeze({
-    axiom: 'Axiom.png',
-    breach: 'breach.png',
-    captain: 'captain.png',
-    darth_malbada: 'darth_malbada.png',
-    malbada: 'darth_malbada.png',
-    delta: 'delta.png',
-    dezmin: 'dezmin.png',
-    j0n1: 'j0n1.png',
-    j0_n1: 'j0n1.png',
-    jack: 'Jack.png',
-    kex: 'Kex.png',
-    kex_varon: 'Kex.png',
-    kharjo: 'kharjo.png',
-    kael: 'kharjo.png',
-    korr: 'Korr.png',
-    krag: 'krag.png',
-    kyber: 'Kyber.png',
-    lead: 'lead.png',
-    marl_skindar: 'Marl_Skindar.png',
-    skindar: 'Marl_Skindar.png',
-    mayu: 'mayu.png',
-    miedo: 'miedo.png',
-    miraj: 'miraj.png',
-    ol_salty: 'salty.png',
-    salty: 'salty.png',
-    pegar: 'pegar.png',
-    rajma: 'rajma.png',
-    rax: 'Rax.png',
-    rendarr: 'Rendarr.png',
-    riquis: 'riquis.png',
-    anchorite: 'riquis.png',
-    rogue: 'Rogue.png',
-    sela: 'Sela.png',
-    seraphim: 'Seraphim.png',
-    spark: 'Spark.png',
-    theron: 'theron.png',
-    tideborn: 'captain.png',
-    tio_the_hutt: 'Tio_the_hutt.png',
-    broker: 'Tio_the_hutt.png',
-    urza: 'urza.png',
-    vel: 'urza.png',
-    vera: 'vera.png',
-    venn: 'vera.png',
-    zhen: 'zhen.png'
+    axiom: 'Axiom.webp',
+    breach: 'breach.webp',
+    captain: 'captain.webp',
+    darth_malbada: 'darth_malbada.webp',
+    malbada: 'darth_malbada.webp',
+    delta: 'delta.webp',
+    dezmin: 'dezmin.webp',
+    j0n1: 'j0n1.webp',
+    j0_n1: 'j0n1.webp',
+    jack: 'Jack.webp',
+    kex: 'Kex.webp',
+    kex_varon: 'Kex.webp',
+    kharjo: 'kharjo.webp',
+    kael: 'kharjo.webp',
+    korr: 'Korr.webp',
+    krag: 'krag.webp',
+    kyber: 'Kyber.webp',
+    lead: 'lead.webp',
+    marl_skindar: 'Marl_Skindar.webp',
+    skindar: 'Marl_Skindar.webp',
+    mayu: 'mayu.webp',
+    miedo: 'miedo.webp',
+    miraj: 'miraj.webp',
+    ol_salty: 'salty.webp',
+    salty: 'salty.webp',
+    pegar: 'pegar.webp',
+    rajma: 'rajma.webp',
+    rax: 'Rax.webp',
+    rendarr: 'Rendarr.webp',
+    riquis: 'riquis.webp',
+    anchorite: 'riquis.webp',
+    rogue: 'Rogue.webp',
+    sela: 'Sela.webp',
+    seraphim: 'Seraphim.webp',
+    spark: 'Spark.webp',
+    theron: 'theron.webp',
+    tideborn: 'captain.webp',
+    tio_the_hutt: 'Tio_the_hutt.webp',
+    broker: 'Tio_the_hutt.webp',
+    urza: 'urza.webp',
+    vel: 'urza.webp',
+    vera: 'vera.webp',
+    venn: 'vera.webp',
+    zhen: 'zhen.webp'
 });
 
 function _canonicalMentorPortraitPath(resolved) {
@@ -86,12 +86,12 @@ function _normalizeMentorLookup(value) {
 /**
  * Resolve mentor portrait path for Foundry templates.
  *
- * Mentor portraits are standardized on PNG assets. Older data and some cached
- * UI state can still point at `.webp`; normalize those references back to the
- * PNG path instead of preferring the deprecated webp variant.
+ * Mentor portraits are standardized on WebP assets. Older data and cached UI
+ * state can still point at `.png`; normalize those references to the WebP path
+ * so portrait rails do not break after the asset conversion pass.
  *
  * @param {string} portraitPath - The portrait path to resolve
- * @returns {string} The resolved system-relative PNG portrait path
+ * @returns {string} The resolved system-relative WebP portrait path
  */
 export function resolveMentorPortraitPath(portraitPath) {
     if (!portraitPath) {
@@ -120,10 +120,10 @@ export function resolveMentorPortraitPath(portraitPath) {
         'systems/foundryvtt-swse/assets/mentors/'
     );
 
-    // Webp mentor portraits are deprecated. Prefer the canonical transparent PNG asset.
+    // Canonical mentor portraits are WebP. Normalize stale PNG references too.
     resolved = _canonicalMentorPortraitPath(resolved);
-    if (/assets\/mentors\//i.test(resolved) && resolved.toLowerCase().endsWith('.webp')) {
-        resolved = `${resolved.slice(0, -5)}.png`;
+    if (/assets\/mentors\//i.test(resolved) && resolved.toLowerCase().endsWith('.png')) {
+        resolved = `${resolved.slice(0, -4)}.webp`;
     }
 
     return resolved;
@@ -446,7 +446,7 @@ export async function clearMentorOverride(actor) {
         // @mutation-exception: metadata
         // Clear mentor override to restore automatic selection (UI state)
         await actor.unsetFlag('foundryvtt-swse', 'mentorOverride');
-        SWSELogger.log(`[MENTOR-DIALOGUES] clearMentorOverride: Successfully cleared mentor override flag`);
+        SWSELogger.log(`[MENTOR-DIALOGUES] clearMentorOverride: Successfully cleared mentor override`);
 
         Hooks.callAll('swse:mentor:changed', {
             actor: actor,
