@@ -55,6 +55,7 @@
             "halfDamageOnMiss": { "type": "boolean" },
             "noCriticalDouble": { "type": "boolean" },
             "coverCanNegateMissDamage": { "type": "boolean" },
+            "attackRollMinimum": { "type": ["number", "null"] },
             "defense": { "enum": ["reflex", "fortitude", "will", null] }
           },
           "additionalProperties": false
@@ -95,6 +96,19 @@
               "defense": { "enum": ["reflex", "fortitude", "will", null] },
               "notes": { "type": "string" }
             }
+          }
+        },
+        "sourceRefs": {
+          "description": "Human-readable source notes used to justify verified profile semantics. Runtime does not branch on this field.",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "book": { "type": "string" },
+              "page": { "type": ["number", "string", "null"] },
+              "note": { "type": "string" }
+            },
+            "additionalProperties": false
           }
         },
         "confidence": {
