@@ -67,12 +67,13 @@ function actorMatches(profile, context = {}) {
   const required = asArray(profile?.match?.actorSlugs).map(slugifyStatblockName).filter(Boolean);
   if (!required.length) return true;
 
+  // Never use profile.actorName as matching evidence; that would let a profile
+  // match itself for unrelated actors with similar raw attack text.
   const candidates = [
     context.actorName,
     context.templateName,
     context.statblock?.Name,
-    context.statblock?.name,
-    profile.actorName
+    context.statblock?.name
   ].map(slugifyStatblockName).filter(Boolean);
 
   return candidates.some((candidate) => required.includes(candidate));
