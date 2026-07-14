@@ -1,0 +1,3383 @@
+{
+  "$schema": "./nonheroic-weapon-damage-profiles.schema.json",
+  "$schemaVersion": 2,
+  "schemaVersion": 2,
+  "profileKind": "nonheroic-statblock-weapon-damage",
+  "sourceFamily": "NH-5 Scavenger's Guide to Droids battle/security droid damage profiles",
+  "canonPolicy": {
+    "authority": "Printed/sourcebook statblock attack rows are canonical for imported NPC play-mode attacks.",
+    "rowSemantics": "Each record represents one printed statblock attack/action row, not a generic equipment definition.",
+    "unmatchedRows": "Importer consumers must leave unmatched rows reference-only/manual; do not infer formulas from item names.",
+    "riders": "Condition-track movement and similar non-HP effects are stored as riders/tags outside base HP damage."
+  },
+  "notes": [
+    "This batch covers Scavenger's Guide to Droids 4th-degree battle/security droid statblocks where a printed attack row and damage expression are directly visible in repository statblock text.",
+    "Repository statblock text for this batch uses a wiki-mirrored \"Protocol Format\" presentation (System Actions with Swift Action costs) rather than the classic Melee/Ranged inline statblock line format used by earlier NH batches; page-level sourcebook confirmation is still required before any row here is marked verified.",
+    "Rows use the same canonical damage fields as data/combat/damage-profiles.schema.json and the NH-2 schema. Printed statblock attack totals are intentionally not copied into item attackBonus to avoid double counting.",
+    "weapon.uuid/base* fields are compendium identity metadata only; formula.printed remains authoritative even where compendium dice counts differ from the printed row (see formula.mode \"printed-override\" rows)."
+  ],
+  "records": [
+    {
+      "slug": "gx1-series-battle-droid-blaster-rifle",
+      "name": "Blaster Rifle Attack",
+      "confidence": "manualRequired",
+      "reviewRequired": true,
+      "source": {
+        "book": "Scavenger's Guide to Droids",
+        "status": "repo-statblock-text-labelled-sourcebook; page review still required",
+        "page": null,
+        "evidence": [
+          "GX1-Series Battle Droid System Actions list \"Blaster Rifle Attack\" as a ranged attack at +11 dealing 3d10+4 points of damage.",
+          "\"Rapid Shot\" is listed as a second ranged System Action at +9 dealing 4d10+4 points of damage; modeled as a variant of the same weapon."
+        ]
+      },
+      "actor": {
+        "name": "GX1-Series Battle Droid",
+        "slugs": [
+          "gx1-series-battle-droid"
+        ],
+        "kind": "droid",
+        "challengeLevel": 6
+      },
+      "match": {
+        "actorSlugs": [
+          "gx1-series-battle-droid"
+        ],
+        "rawIncludes": [
+          "blaster rifle attack",
+          "blaster rifle"
+        ]
+      },
+      "weapon": {
+        "printedName": "Blaster Rifle Attack",
+        "rowKind": "ranged",
+        "uuid": "Compendium.foundryvtt-swse.weapons-rifles.Item.weapon-blaster-rifle",
+        "baseSlug": "weapon-blaster-rifle",
+        "basePack": "weapons-rifles",
+        "baseFormula": "3d10",
+        "baseType": "energy",
+        "baseFormulaPolicy": "uuid",
+        "integrated": false,
+        "category": "rifles",
+        "range": null
+      },
+      "printedAttack": {
+        "text": "+11",
+        "bonus": 11,
+        "bonuses": [
+          11
+        ],
+        "source": "printed-statblock",
+        "hydratePolicy": "metadata-only",
+        "notes": [
+          "Printed attack total is preserved only for source/audit display and is not written to item.system.attackBonus."
+        ]
+      },
+      "formula": {
+        "mode": "base-plus-delta",
+        "printed": "3d10+4",
+        "delta": "+4",
+        "deltaSource": "printed-statblock",
+        "typeOverride": null,
+        "notes": []
+      },
+      "delivery": "weapon",
+      "attackShape": "single-target",
+      "scale": "character",
+      "primaryType": "energy",
+      "tags": [
+        "droid",
+        "weapon",
+        "blaster",
+        "statblock"
+      ],
+      "attack": {
+        "isArea": false,
+        "isAutofire": false,
+        "isBurstFire": false,
+        "isSplash": false,
+        "halfDamageOnMiss": false,
+        "noCriticalDouble": false,
+        "coverCanNegateMissDamage": false,
+        "attackRollMinimum": null,
+        "defense": "reflex"
+      },
+      "components": [
+        {
+          "key": "base",
+          "label": "Blaster Rifle Attack",
+          "formula": "3d10+4",
+          "type": "energy",
+          "tags": [
+            "base",
+            "energy",
+            "blaster"
+          ]
+        }
+      ],
+      "riders": [],
+      "sourceRefs": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "page": null,
+          "note": "GX1-Series Battle Droid Blaster Rifle Attack row."
+        }
+      ],
+      "variants": [
+        {
+          "slug": "gx1-series-battle-droid-blaster-rifle-rapid-shot",
+          "label": "with Rapid Shot",
+          "primaryType": "energy",
+          "tags": [
+            "rapid-shot"
+          ],
+          "attack": {
+            "isArea": false,
+            "isAutofire": false,
+            "isBurstFire": false,
+            "isSplash": false,
+            "halfDamageOnMiss": false,
+            "noCriticalDouble": false,
+            "coverCanNegateMissDamage": false,
+            "attackRollMinimum": null,
+            "defense": "reflex"
+          },
+          "area": {
+            "shape": null,
+            "radius": null,
+            "size": null,
+            "originMode": null,
+            "targetPolicy": "single"
+          },
+          "components": [
+            {
+              "key": "base",
+              "label": "Blaster Rifle Attack with Rapid Shot",
+              "formula": "4d10+4",
+              "type": "energy",
+              "tags": [
+                "base",
+                "energy",
+                "blaster",
+                "rapid-shot"
+              ]
+            }
+          ],
+          "riders": [],
+          "printedAttack": {
+            "text": "+9",
+            "bonus": 9,
+            "bonuses": [
+              9
+            ],
+            "source": "printed-statblock",
+            "hydratePolicy": "metadata-only",
+            "notes": [
+              "Printed attack total is preserved only for source/audit display and is not written to item.system.attackBonus."
+            ]
+          }
+        }
+      ],
+      "notes": []
+    },
+    {
+      "slug": "fltch-series-battle-droid-claw-attack",
+      "name": "Claw Attack",
+      "confidence": "manualRequired",
+      "reviewRequired": true,
+      "source": {
+        "book": "Scavenger's Guide to Droids",
+        "status": "repo-statblock-text-labelled-sourcebook; page review still required",
+        "page": null,
+        "evidence": [
+          "FLTCH-Series Battle Droid System Actions list \"Claw Attack\" as a melee attack at +13 dealing 1d6+8 points of damage."
+        ]
+      },
+      "actor": {
+        "name": "FLTCH-Series Battle Droid",
+        "slugs": [
+          "fltch-series-battle-droid"
+        ],
+        "kind": "droid",
+        "challengeLevel": 5
+      },
+      "match": {
+        "actorSlugs": [
+          "fltch-series-battle-droid"
+        ],
+        "rawIncludes": [
+          "claw attack",
+          "claw"
+        ]
+      },
+      "weapon": {
+        "printedName": "Claw Attack",
+        "rowKind": "natural",
+        "uuid": null,
+        "baseSlug": null,
+        "basePack": null,
+        "baseFormula": null,
+        "baseType": null,
+        "baseFormulaPolicy": "custom",
+        "integrated": true,
+        "category": "natural",
+        "range": null
+      },
+      "printedAttack": {
+        "text": "+13",
+        "bonus": 13,
+        "bonuses": [
+          13
+        ],
+        "source": "printed-statblock",
+        "hydratePolicy": "metadata-only",
+        "notes": [
+          "Printed attack total is preserved only for source/audit display and is not written to item.system.attackBonus."
+        ]
+      },
+      "formula": {
+        "mode": "custom",
+        "printed": "1d6+8",
+        "delta": null,
+        "deltaSource": "printed-statblock",
+        "typeOverride": "slashing",
+        "notes": [
+          "No damage type is printed for this integrated claw attachment; slashing is used per the existing claw-attack typing convention already applied to other droid/beast claw rows in this dataset (e.g. vindinax-claw)."
+        ]
+      },
+      "delivery": "natural",
+      "attackShape": "single-target",
+      "scale": "character",
+      "primaryType": "slashing",
+      "tags": [
+        "droid",
+        "natural",
+        "claw",
+        "statblock"
+      ],
+      "attack": {
+        "isArea": false,
+        "isAutofire": false,
+        "isBurstFire": false,
+        "isSplash": false,
+        "halfDamageOnMiss": false,
+        "noCriticalDouble": false,
+        "coverCanNegateMissDamage": false,
+        "attackRollMinimum": null,
+        "defense": "reflex"
+      },
+      "components": [
+        {
+          "key": "base",
+          "label": "Claw Attack",
+          "formula": "1d6+8",
+          "type": "slashing",
+          "tags": [
+            "base",
+            "slashing",
+            "natural"
+          ]
+        }
+      ],
+      "riders": [],
+      "sourceRefs": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "page": null,
+          "note": "FLTCH-Series Battle Droid Claw Attack row."
+        }
+      ],
+      "variants": [],
+      "notes": []
+    },
+    {
+      "slug": "fltch-series-battle-droid-heavy-blaster-rifle",
+      "name": "Heavy Blaster Rifle Attack",
+      "confidence": "manualRequired",
+      "reviewRequired": true,
+      "source": {
+        "book": "Scavenger's Guide to Droids",
+        "status": "repo-statblock-text-labelled-sourcebook; page review still required",
+        "page": null,
+        "evidence": [
+          "FLTCH-Series Battle Droid System Actions list \"Heavy Blaster Rifle Attack\" as a ranged attack at +10 dealing 3d10+2 points of damage."
+        ]
+      },
+      "actor": {
+        "name": "FLTCH-Series Battle Droid",
+        "slugs": [
+          "fltch-series-battle-droid"
+        ],
+        "kind": "droid",
+        "challengeLevel": 5
+      },
+      "match": {
+        "actorSlugs": [
+          "fltch-series-battle-droid"
+        ],
+        "rawIncludes": [
+          "heavy blaster rifle attack",
+          "heavy blaster rifle"
+        ]
+      },
+      "weapon": {
+        "printedName": "Heavy Blaster Rifle Attack",
+        "rowKind": "ranged",
+        "uuid": "Compendium.foundryvtt-swse.weapons-rifles.Item.weapon-heavy-blaster-rifle",
+        "baseSlug": "weapon-heavy-blaster-rifle",
+        "basePack": "weapons-rifles",
+        "baseFormula": "3d12",
+        "baseType": "energy",
+        "baseFormulaPolicy": "uuid",
+        "integrated": false,
+        "category": "rifles",
+        "range": null
+      },
+      "printedAttack": {
+        "text": "+10",
+        "bonus": 10,
+        "bonuses": [
+          10
+        ],
+        "source": "printed-statblock",
+        "hydratePolicy": "metadata-only",
+        "notes": [
+          "Printed attack total is preserved only for source/audit display and is not written to item.system.attackBonus."
+        ]
+      },
+      "formula": {
+        "mode": "printed-override",
+        "printed": "3d10+2",
+        "delta": null,
+        "deltaSource": "printed-statblock",
+        "typeOverride": null,
+        "notes": [
+          "Compendium base for Heavy Blaster Rifle is 3d12 (weapons-rifles); the printed statblock formula is 3d10+2, a different die count than the compendium base. The dice mismatch is not mechanically obvious, so formula.printed is kept as sole authority and no base/delta relationship is claimed. weapon.uuid is retained only as an exact-name identity match, not as a formula derivation."
+        ]
+      },
+      "delivery": "weapon",
+      "attackShape": "single-target",
+      "scale": "character",
+      "primaryType": "energy",
+      "tags": [
+        "droid",
+        "weapon",
+        "blaster",
+        "statblock"
+      ],
+      "attack": {
+        "isArea": false,
+        "isAutofire": false,
+        "isBurstFire": false,
+        "isSplash": false,
+        "halfDamageOnMiss": false,
+        "noCriticalDouble": false,
+        "coverCanNegateMissDamage": false,
+        "attackRollMinimum": null,
+        "defense": "reflex"
+      },
+      "components": [
+        {
+          "key": "base",
+          "label": "Heavy Blaster Rifle Attack",
+          "formula": "3d10+2",
+          "type": "energy",
+          "tags": [
+            "base",
+            "energy",
+            "blaster"
+          ]
+        }
+      ],
+      "riders": [],
+      "sourceRefs": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "page": null,
+          "note": "FLTCH-Series Battle Droid Heavy Blaster Rifle Attack row; printed dice differ from current compendium Heavy Blaster Rifle base (3d12) and are preserved as printed."
+        }
+      ],
+      "variants": [],
+      "notes": []
+    },
+    {
+      "slug": "fltch-series-battle-droid-missile-launcher",
+      "name": "Missile Launcher Attack",
+      "confidence": "manualRequired",
+      "reviewRequired": true,
+      "source": {
+        "book": "Scavenger's Guide to Droids",
+        "status": "repo-statblock-text-labelled-sourcebook; page review still required",
+        "page": null,
+        "evidence": [
+          "FLTCH-Series Battle Droid System Actions list \"Missile Launcher Attack\" as a ranged attack at +9 dealing 6d6+2 points of damage in a 2-square radius."
+        ]
+      },
+      "actor": {
+        "name": "FLTCH-Series Battle Droid",
+        "slugs": [
+          "fltch-series-battle-droid"
+        ],
+        "kind": "droid",
+        "challengeLevel": 5
+      },
+      "match": {
+        "actorSlugs": [
+          "fltch-series-battle-droid"
+        ],
+        "rawIncludes": [
+          "missile launcher attack",
+          "missile launcher"
+        ]
+      },
+      "weapon": {
+        "printedName": "Missile Launcher Attack",
+        "rowKind": "ranged",
+        "uuid": "Compendium.foundryvtt-swse.weapons-heavy.Item.weapon-missile-launcher",
+        "baseSlug": "weapon-missile-launcher",
+        "basePack": "weapons-heavy",
+        "baseFormula": "6d6",
+        "baseType": "kinetic",
+        "baseFormulaPolicy": "uuid",
+        "integrated": false,
+        "category": "heavy",
+        "range": null
+      },
+      "printedAttack": {
+        "text": "+9",
+        "bonus": 9,
+        "bonuses": [
+          9
+        ],
+        "source": "printed-statblock",
+        "hydratePolicy": "metadata-only",
+        "notes": [
+          "Printed attack total is preserved only for source/audit display and is not written to item.system.attackBonus."
+        ]
+      },
+      "formula": {
+        "mode": "base-plus-delta",
+        "printed": "6d6+2",
+        "delta": "+2",
+        "deltaSource": "printed-statblock",
+        "typeOverride": null,
+        "notes": [
+          "No damage type is printed; kinetic is inherited from the matched compendium Missile Launcher base item as reference metadata only."
+        ]
+      },
+      "delivery": "weapon",
+      "attackShape": "burst",
+      "scale": "character",
+      "primaryType": "kinetic",
+      "tags": [
+        "droid",
+        "weapon",
+        "missile",
+        "area",
+        "statblock"
+      ],
+      "attack": {
+        "isArea": true,
+        "isAutofire": false,
+        "isBurstFire": false,
+        "isSplash": false,
+        "halfDamageOnMiss": false,
+        "noCriticalDouble": false,
+        "coverCanNegateMissDamage": false,
+        "attackRollMinimum": null,
+        "defense": "reflex"
+      },
+      "area": {
+        "shape": "burst",
+        "radius": 2,
+        "size": null,
+        "originMode": "target-square",
+        "targetPolicy": "all-in-area"
+      },
+      "components": [
+        {
+          "key": "base",
+          "label": "Missile Launcher Attack",
+          "formula": "6d6+2",
+          "type": "kinetic",
+          "tags": [
+            "base",
+            "kinetic",
+            "missile"
+          ]
+        }
+      ],
+      "riders": [],
+      "sourceRefs": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "page": null,
+          "note": "FLTCH-Series Battle Droid Missile Launcher Attack row."
+        }
+      ],
+      "variants": [],
+      "notes": [
+        "FLTCH-Series Battle Droid also has a \"Zero-Range Attack\" (Grab/Grapple with Claw Appendage followed by an immediate arm-mounted Blaster Rifle attack) and a \"Nightmare\" intimidate action; both are intentionally omitted from this batch as compound/non-damage actions outside straightforward single weapon-row modeling."
+      ]
+    },
+    {
+      "slug": "dt-16-destructor-battle-droid-rapid-shot",
+      "name": "Rapid Shot",
+      "confidence": "manualRequired",
+      "reviewRequired": true,
+      "source": {
+        "book": "Scavenger's Guide to Droids",
+        "status": "repo-statblock-text-labelled-sourcebook; page review still required",
+        "page": null,
+        "evidence": [
+          "DT-16 \"Destructor\" Battle Droid System Actions list \"Rapid Shot\" as a ranged attack at +2 dealing 4d8 points of damage; no underlying weapon name or damage type is printed."
+        ]
+      },
+      "actor": {
+        "name": "DT-16 \"Destructor\" Battle Droid",
+        "slugs": [
+          "dt-16-destructor-battle-droid",
+          "dt-16-battle-droid"
+        ],
+        "kind": "droid",
+        "challengeLevel": 2
+      },
+      "match": {
+        "actorSlugs": [
+          "dt-16-destructor-battle-droid",
+          "dt-16-battle-droid"
+        ],
+        "rawIncludes": [
+          "rapid shot"
+        ]
+      },
+      "weapon": {
+        "printedName": "Rapid Shot",
+        "rowKind": "ranged",
+        "uuid": null,
+        "baseSlug": null,
+        "basePack": null,
+        "baseFormula": null,
+        "baseType": null,
+        "baseFormulaPolicy": "none",
+        "integrated": false,
+        "category": null,
+        "range": null
+      },
+      "printedAttack": {
+        "text": "+2",
+        "bonus": 2,
+        "bonuses": [
+          2
+        ],
+        "source": "printed-statblock",
+        "hydratePolicy": "metadata-only",
+        "notes": [
+          "Printed attack total is preserved only for source/audit display and is not written to item.system.attackBonus."
+        ]
+      },
+      "formula": {
+        "mode": "custom",
+        "printed": "4d8",
+        "delta": null,
+        "deltaSource": "printed-statblock",
+        "typeOverride": null,
+        "notes": [
+          "The statblock names this System Action \"Rapid Shot\" without identifying an underlying weapon model or damage type, so no compendium UUID or damage type is claimed."
+        ]
+      },
+      "delivery": "weapon",
+      "attackShape": "single-target",
+      "scale": "character",
+      "primaryType": null,
+      "tags": [
+        "droid",
+        "weapon",
+        "unspecified-weapon",
+        "statblock"
+      ],
+      "attack": {
+        "isArea": false,
+        "isAutofire": false,
+        "isBurstFire": false,
+        "isSplash": false,
+        "halfDamageOnMiss": false,
+        "noCriticalDouble": false,
+        "coverCanNegateMissDamage": false,
+        "attackRollMinimum": null,
+        "defense": "reflex"
+      },
+      "components": [
+        {
+          "key": "base",
+          "label": "Rapid Shot",
+          "formula": "4d8",
+          "type": null,
+          "tags": [
+            "base",
+            "unspecified-weapon"
+          ]
+        }
+      ],
+      "riders": [],
+      "sourceRefs": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "page": null,
+          "note": "DT-16 \"Destructor\" Battle Droid Rapid Shot row."
+        }
+      ],
+      "variants": [],
+      "notes": []
+    },
+    {
+      "slug": "droideka-mk-ii-destroyer-droid-blaster-barrage",
+      "name": "Blaster Barrage",
+      "confidence": "manualRequired",
+      "reviewRequired": true,
+      "source": {
+        "book": "Scavenger's Guide to Droids",
+        "status": "repo-statblock-text-labelled-sourcebook; page review still required",
+        "page": null,
+        "evidence": [
+          "Droideka Mk II Destroyer Droid System Actions list \"Blaster Barrage\" as two ranged attacks at +10, each dealing 5d8+2 points of damage."
+        ]
+      },
+      "actor": {
+        "name": "Droideka Mk II Destroyer Droid",
+        "slugs": [
+          "droideka-mk-ii-destroyer-droid"
+        ],
+        "kind": "droid",
+        "challengeLevel": 8
+      },
+      "match": {
+        "actorSlugs": [
+          "droideka-mk-ii-destroyer-droid"
+        ],
+        "rawIncludes": [
+          "blaster barrage"
+        ]
+      },
+      "weapon": {
+        "printedName": "Blaster Barrage",
+        "rowKind": "ranged",
+        "uuid": null,
+        "baseSlug": null,
+        "basePack": null,
+        "baseFormula": null,
+        "baseType": null,
+        "baseFormulaPolicy": "none",
+        "integrated": true,
+        "category": null,
+        "range": null
+      },
+      "printedAttack": {
+        "text": "+10 (x2)",
+        "bonus": 10,
+        "bonuses": [
+          10,
+          10
+        ],
+        "source": "printed-statblock",
+        "hydratePolicy": "metadata-only",
+        "notes": [
+          "Printed attack total is preserved only for source/audit display and is not written to item.system.attackBonus.",
+          "Two separate attacks, each at this bonus."
+        ]
+      },
+      "formula": {
+        "mode": "custom",
+        "printed": "5d8+2",
+        "delta": null,
+        "deltaSource": "printed-statblock",
+        "typeOverride": "energy",
+        "notes": [
+          "No damage type is printed; \"energy\" is used because the action is explicitly named as a blaster attack, matching standard SWSE blaster-weapon typing. No specific compendium item name is printed for this integrated twin-blaster weapon, so no UUID is claimed.",
+          "This System Action makes two separate ranged attacks at the printed bonus, each independently rolling this damage; the schema does not yet model an explicit attack-count field, so this is recorded as a single-attack component with the multi-attack behavior noted here."
+        ]
+      },
+      "delivery": "weapon",
+      "attackShape": "single-target",
+      "scale": "character",
+      "primaryType": "energy",
+      "tags": [
+        "droid",
+        "weapon",
+        "blaster",
+        "integrated-weapon",
+        "statblock"
+      ],
+      "attack": {
+        "isArea": false,
+        "isAutofire": false,
+        "isBurstFire": false,
+        "isSplash": false,
+        "halfDamageOnMiss": false,
+        "noCriticalDouble": false,
+        "coverCanNegateMissDamage": false,
+        "attackRollMinimum": null,
+        "defense": "reflex"
+      },
+      "components": [
+        {
+          "key": "base",
+          "label": "Blaster Barrage",
+          "formula": "5d8+2",
+          "type": "energy",
+          "tags": [
+            "base",
+            "energy",
+            "blaster",
+            "integrated-weapon"
+          ]
+        }
+      ],
+      "riders": [],
+      "sourceRefs": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "page": null,
+          "note": "Droideka Mk II Destroyer Droid Blaster Barrage row."
+        }
+      ],
+      "variants": [],
+      "notes": []
+    },
+    {
+      "slug": "droideka-mk-ii-destroyer-droid-rapid-shot",
+      "name": "Rapid Shot",
+      "confidence": "manualRequired",
+      "reviewRequired": true,
+      "source": {
+        "book": "Scavenger's Guide to Droids",
+        "status": "repo-statblock-text-labelled-sourcebook; page review still required",
+        "page": null,
+        "evidence": [
+          "Droideka Mk II Destroyer Droid System Actions list \"Rapid Shot\" as a ranged attack at +15 dealing 4d8+2 points of damage."
+        ]
+      },
+      "actor": {
+        "name": "Droideka Mk II Destroyer Droid",
+        "slugs": [
+          "droideka-mk-ii-destroyer-droid"
+        ],
+        "kind": "droid",
+        "challengeLevel": 8
+      },
+      "match": {
+        "actorSlugs": [
+          "droideka-mk-ii-destroyer-droid"
+        ],
+        "rawIncludes": [
+          "rapid shot"
+        ]
+      },
+      "weapon": {
+        "printedName": "Rapid Shot",
+        "rowKind": "ranged",
+        "uuid": null,
+        "baseSlug": null,
+        "basePack": null,
+        "baseFormula": null,
+        "baseType": null,
+        "baseFormulaPolicy": "none",
+        "integrated": true,
+        "category": null,
+        "range": null
+      },
+      "printedAttack": {
+        "text": "+15",
+        "bonus": 15,
+        "bonuses": [
+          15
+        ],
+        "source": "printed-statblock",
+        "hydratePolicy": "metadata-only",
+        "notes": [
+          "Printed attack total is preserved only for source/audit display and is not written to item.system.attackBonus."
+        ]
+      },
+      "formula": {
+        "mode": "custom",
+        "printed": "4d8+2",
+        "delta": null,
+        "deltaSource": "printed-statblock",
+        "typeOverride": "energy",
+        "notes": [
+          "No damage type is printed; \"energy\" is used because the action is explicitly named as a blaster attack, matching standard SWSE blaster-weapon typing. No specific compendium item name is printed for this integrated twin-blaster weapon, so no UUID is claimed."
+        ]
+      },
+      "delivery": "weapon",
+      "attackShape": "single-target",
+      "scale": "character",
+      "primaryType": "energy",
+      "tags": [
+        "droid",
+        "weapon",
+        "blaster",
+        "integrated-weapon",
+        "statblock"
+      ],
+      "attack": {
+        "isArea": false,
+        "isAutofire": false,
+        "isBurstFire": false,
+        "isSplash": false,
+        "halfDamageOnMiss": false,
+        "noCriticalDouble": false,
+        "coverCanNegateMissDamage": false,
+        "attackRollMinimum": null,
+        "defense": "reflex"
+      },
+      "components": [
+        {
+          "key": "base",
+          "label": "Rapid Shot",
+          "formula": "4d8+2",
+          "type": "energy",
+          "tags": [
+            "base",
+            "energy",
+            "blaster",
+            "integrated-weapon"
+          ]
+        }
+      ],
+      "riders": [],
+      "sourceRefs": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "page": null,
+          "note": "Droideka Mk II Destroyer Droid Rapid Shot row."
+        }
+      ],
+      "variants": [],
+      "notes": []
+    },
+    {
+      "slug": "droideka-mk-ii-destroyer-droid-twin-blaster-burst",
+      "name": "Twin Blaster Burst",
+      "confidence": "manualRequired",
+      "reviewRequired": true,
+      "source": {
+        "book": "Scavenger's Guide to Droids",
+        "status": "repo-statblock-text-labelled-sourcebook; page review still required",
+        "page": null,
+        "evidence": [
+          "Droideka Mk II Destroyer Droid System Actions list \"Twin Blaster Burst\" as a ranged attack at +17 dealing 3d8+2 points of damage."
+        ]
+      },
+      "actor": {
+        "name": "Droideka Mk II Destroyer Droid",
+        "slugs": [
+          "droideka-mk-ii-destroyer-droid"
+        ],
+        "kind": "droid",
+        "challengeLevel": 8
+      },
+      "match": {
+        "actorSlugs": [
+          "droideka-mk-ii-destroyer-droid"
+        ],
+        "rawIncludes": [
+          "twin blaster burst"
+        ]
+      },
+      "weapon": {
+        "printedName": "Twin Blaster Burst",
+        "rowKind": "ranged",
+        "uuid": null,
+        "baseSlug": null,
+        "basePack": null,
+        "baseFormula": null,
+        "baseType": null,
+        "baseFormulaPolicy": "none",
+        "integrated": true,
+        "category": null,
+        "range": null
+      },
+      "printedAttack": {
+        "text": "+17",
+        "bonus": 17,
+        "bonuses": [
+          17
+        ],
+        "source": "printed-statblock",
+        "hydratePolicy": "metadata-only",
+        "notes": [
+          "Printed attack total is preserved only for source/audit display and is not written to item.system.attackBonus."
+        ]
+      },
+      "formula": {
+        "mode": "custom",
+        "printed": "3d8+2",
+        "delta": null,
+        "deltaSource": "printed-statblock",
+        "typeOverride": "energy",
+        "notes": [
+          "No damage type is printed; \"energy\" is used because the action is explicitly named as a blaster attack, matching standard SWSE blaster-weapon typing. No specific compendium item name is printed for this integrated twin-blaster weapon, so no UUID is claimed."
+        ]
+      },
+      "delivery": "weapon",
+      "attackShape": "single-target",
+      "scale": "character",
+      "primaryType": "energy",
+      "tags": [
+        "droid",
+        "weapon",
+        "blaster",
+        "integrated-weapon",
+        "statblock"
+      ],
+      "attack": {
+        "isArea": false,
+        "isAutofire": false,
+        "isBurstFire": false,
+        "isSplash": false,
+        "halfDamageOnMiss": false,
+        "noCriticalDouble": false,
+        "coverCanNegateMissDamage": false,
+        "attackRollMinimum": null,
+        "defense": "reflex"
+      },
+      "components": [
+        {
+          "key": "base",
+          "label": "Twin Blaster Burst",
+          "formula": "3d8+2",
+          "type": "energy",
+          "tags": [
+            "base",
+            "energy",
+            "blaster",
+            "integrated-weapon"
+          ]
+        }
+      ],
+      "riders": [],
+      "sourceRefs": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "page": null,
+          "note": "Droideka Mk II Destroyer Droid Twin Blaster Burst row."
+        }
+      ],
+      "variants": [],
+      "notes": []
+    },
+    {
+      "slug": "hk-77-assassin-droid-blaster-surge",
+      "name": "Blaster Surge",
+      "confidence": "manualRequired",
+      "reviewRequired": true,
+      "source": {
+        "book": "Scavenger's Guide to Droids",
+        "status": "repo-statblock-text-labelled-sourcebook; page review still required",
+        "page": null,
+        "evidence": [
+          "HK-77 Assassin Droid System Actions list \"Blaster Surge\" as a ranged attack at +8 dealing 5d8+4 points of damage."
+        ]
+      },
+      "actor": {
+        "name": "HK-77 Assassin Droid",
+        "slugs": [
+          "hk-77-assassin-droid"
+        ],
+        "kind": "droid",
+        "challengeLevel": 4
+      },
+      "match": {
+        "actorSlugs": [
+          "hk-77-assassin-droid"
+        ],
+        "rawIncludes": [
+          "blaster surge"
+        ]
+      },
+      "weapon": {
+        "printedName": "Blaster Surge",
+        "rowKind": "ranged",
+        "uuid": null,
+        "baseSlug": null,
+        "basePack": null,
+        "baseFormula": null,
+        "baseType": null,
+        "baseFormulaPolicy": "none",
+        "integrated": true,
+        "category": null,
+        "range": null
+      },
+      "printedAttack": {
+        "text": "+8",
+        "bonus": 8,
+        "bonuses": [
+          8
+        ],
+        "source": "printed-statblock",
+        "hydratePolicy": "metadata-only",
+        "notes": [
+          "Printed attack total is preserved only for source/audit display and is not written to item.system.attackBonus."
+        ]
+      },
+      "formula": {
+        "mode": "custom",
+        "printed": "5d8+4",
+        "delta": null,
+        "deltaSource": "printed-statblock",
+        "typeOverride": "energy",
+        "notes": [
+          "No damage type is printed; \"energy\" is used because the action is explicitly named as a blaster attack, matching standard SWSE blaster-weapon typing. No specific compendium item name is printed for this integrated twin-blaster weapon, so no UUID is claimed."
+        ]
+      },
+      "delivery": "weapon",
+      "attackShape": "single-target",
+      "scale": "character",
+      "primaryType": "energy",
+      "tags": [
+        "droid",
+        "weapon",
+        "blaster",
+        "integrated-weapon",
+        "statblock"
+      ],
+      "attack": {
+        "isArea": false,
+        "isAutofire": false,
+        "isBurstFire": false,
+        "isSplash": false,
+        "halfDamageOnMiss": false,
+        "noCriticalDouble": false,
+        "coverCanNegateMissDamage": false,
+        "attackRollMinimum": null,
+        "defense": "reflex"
+      },
+      "components": [
+        {
+          "key": "base",
+          "label": "Blaster Surge",
+          "formula": "5d8+4",
+          "type": "energy",
+          "tags": [
+            "base",
+            "energy",
+            "blaster",
+            "integrated-weapon"
+          ]
+        }
+      ],
+      "riders": [],
+      "sourceRefs": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "page": null,
+          "note": "HK-77 Assassin Droid Blaster Surge row."
+        }
+      ],
+      "variants": [],
+      "notes": []
+    },
+    {
+      "slug": "hk-77-assassin-droid-salvo",
+      "name": "Salvo",
+      "confidence": "manualRequired",
+      "reviewRequired": true,
+      "source": {
+        "book": "Scavenger's Guide to Droids",
+        "status": "repo-statblock-text-labelled-sourcebook; page review still required",
+        "page": null,
+        "evidence": [
+          "HK-77 Assassin Droid System Actions list \"Salvo\" as two ranged attacks at +3 each, each dealing 3d8+4 points of damage."
+        ]
+      },
+      "actor": {
+        "name": "HK-77 Assassin Droid",
+        "slugs": [
+          "hk-77-assassin-droid"
+        ],
+        "kind": "droid",
+        "challengeLevel": 4
+      },
+      "match": {
+        "actorSlugs": [
+          "hk-77-assassin-droid"
+        ],
+        "rawIncludes": [
+          "salvo"
+        ]
+      },
+      "weapon": {
+        "printedName": "Salvo",
+        "rowKind": "ranged",
+        "uuid": null,
+        "baseSlug": null,
+        "basePack": null,
+        "baseFormula": null,
+        "baseType": null,
+        "baseFormulaPolicy": "none",
+        "integrated": true,
+        "category": null,
+        "range": null
+      },
+      "printedAttack": {
+        "text": "+3 (x2)",
+        "bonus": 3,
+        "bonuses": [
+          3,
+          3
+        ],
+        "source": "printed-statblock",
+        "hydratePolicy": "metadata-only",
+        "notes": [
+          "Printed attack total is preserved only for source/audit display and is not written to item.system.attackBonus.",
+          "Two separate attacks, each at this bonus."
+        ]
+      },
+      "formula": {
+        "mode": "custom",
+        "printed": "3d8+4",
+        "delta": null,
+        "deltaSource": "printed-statblock",
+        "typeOverride": "energy",
+        "notes": [
+          "No damage type is printed; \"energy\" is used because the action is explicitly named as a blaster attack, matching standard SWSE blaster-weapon typing. No specific compendium item name is printed for this integrated twin-blaster weapon, so no UUID is claimed.",
+          "This System Action makes two separate ranged attacks at the printed bonus, each independently rolling this damage."
+        ]
+      },
+      "delivery": "weapon",
+      "attackShape": "single-target",
+      "scale": "character",
+      "primaryType": "energy",
+      "tags": [
+        "droid",
+        "weapon",
+        "blaster",
+        "integrated-weapon",
+        "statblock"
+      ],
+      "attack": {
+        "isArea": false,
+        "isAutofire": false,
+        "isBurstFire": false,
+        "isSplash": false,
+        "halfDamageOnMiss": false,
+        "noCriticalDouble": false,
+        "coverCanNegateMissDamage": false,
+        "attackRollMinimum": null,
+        "defense": "reflex"
+      },
+      "components": [
+        {
+          "key": "base",
+          "label": "Salvo",
+          "formula": "3d8+4",
+          "type": "energy",
+          "tags": [
+            "base",
+            "energy",
+            "blaster",
+            "integrated-weapon"
+          ]
+        }
+      ],
+      "riders": [],
+      "sourceRefs": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "page": null,
+          "note": "HK-77 Assassin Droid Salvo row."
+        }
+      ],
+      "variants": [],
+      "notes": []
+    },
+    {
+      "slug": "hk-77-assassin-droid-support-fire",
+      "name": "Support Fire",
+      "confidence": "manualRequired",
+      "reviewRequired": true,
+      "source": {
+        "book": "Scavenger's Guide to Droids",
+        "status": "repo-statblock-text-labelled-sourcebook; page review still required",
+        "page": null,
+        "evidence": [
+          "HK-77 Assassin Droid System Actions list \"Support Fire\" as a ranged attack at +8 dealing 3d8+4 points of damage."
+        ]
+      },
+      "actor": {
+        "name": "HK-77 Assassin Droid",
+        "slugs": [
+          "hk-77-assassin-droid"
+        ],
+        "kind": "droid",
+        "challengeLevel": 4
+      },
+      "match": {
+        "actorSlugs": [
+          "hk-77-assassin-droid"
+        ],
+        "rawIncludes": [
+          "support fire"
+        ]
+      },
+      "weapon": {
+        "printedName": "Support Fire",
+        "rowKind": "ranged",
+        "uuid": null,
+        "baseSlug": null,
+        "basePack": null,
+        "baseFormula": null,
+        "baseType": null,
+        "baseFormulaPolicy": "none",
+        "integrated": true,
+        "category": null,
+        "range": null
+      },
+      "printedAttack": {
+        "text": "+8",
+        "bonus": 8,
+        "bonuses": [
+          8
+        ],
+        "source": "printed-statblock",
+        "hydratePolicy": "metadata-only",
+        "notes": [
+          "Printed attack total is preserved only for source/audit display and is not written to item.system.attackBonus."
+        ]
+      },
+      "formula": {
+        "mode": "custom",
+        "printed": "3d8+4",
+        "delta": null,
+        "deltaSource": "printed-statblock",
+        "typeOverride": "energy",
+        "notes": [
+          "No damage type is printed; \"energy\" is used because the action is explicitly named as a blaster attack, matching standard SWSE blaster-weapon typing. No specific compendium item name is printed for this integrated twin-blaster weapon, so no UUID is claimed."
+        ]
+      },
+      "delivery": "weapon",
+      "attackShape": "single-target",
+      "scale": "character",
+      "primaryType": "energy",
+      "tags": [
+        "droid",
+        "weapon",
+        "blaster",
+        "integrated-weapon",
+        "statblock"
+      ],
+      "attack": {
+        "isArea": false,
+        "isAutofire": false,
+        "isBurstFire": false,
+        "isSplash": false,
+        "halfDamageOnMiss": false,
+        "noCriticalDouble": false,
+        "coverCanNegateMissDamage": false,
+        "attackRollMinimum": null,
+        "defense": "reflex"
+      },
+      "components": [
+        {
+          "key": "base",
+          "label": "Support Fire",
+          "formula": "3d8+4",
+          "type": "energy",
+          "tags": [
+            "base",
+            "energy",
+            "blaster",
+            "integrated-weapon"
+          ]
+        }
+      ],
+      "riders": [],
+      "sourceRefs": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "page": null,
+          "note": "HK-77 Assassin Droid Support Fire row."
+        }
+      ],
+      "variants": [],
+      "notes": []
+    },
+    {
+      "slug": "v2-series-commando-droid-support-fire",
+      "name": "Support Fire",
+      "confidence": "manualRequired",
+      "reviewRequired": true,
+      "source": {
+        "book": "Scavenger's Guide to Droids",
+        "status": "repo-statblock-text-labelled-sourcebook; page review still required",
+        "page": null,
+        "evidence": [
+          "V2-Series Commando Droid System Actions list \"Support Fire\" as a ranged attack at +2 dealing 3d8 points of damage; no weapon name or damage type is printed."
+        ]
+      },
+      "actor": {
+        "name": "V2-Series Commando Droid",
+        "slugs": [
+          "v2-series-commando-droid"
+        ],
+        "kind": "droid",
+        "challengeLevel": 1
+      },
+      "match": {
+        "actorSlugs": [
+          "v2-series-commando-droid"
+        ],
+        "rawIncludes": [
+          "support fire"
+        ]
+      },
+      "weapon": {
+        "printedName": "Support Fire",
+        "rowKind": "ranged",
+        "uuid": null,
+        "baseSlug": null,
+        "basePack": null,
+        "baseFormula": null,
+        "baseType": null,
+        "baseFormulaPolicy": "none",
+        "integrated": false,
+        "category": null,
+        "range": null
+      },
+      "printedAttack": {
+        "text": "+2",
+        "bonus": 2,
+        "bonuses": [
+          2
+        ],
+        "source": "printed-statblock",
+        "hydratePolicy": "metadata-only",
+        "notes": [
+          "Printed attack total is preserved only for source/audit display and is not written to item.system.attackBonus."
+        ]
+      },
+      "formula": {
+        "mode": "custom",
+        "printed": "3d8",
+        "delta": null,
+        "deltaSource": "printed-statblock",
+        "typeOverride": null,
+        "notes": [
+          "No underlying weapon name or damage type is printed for this System Action."
+        ]
+      },
+      "delivery": "weapon",
+      "attackShape": "single-target",
+      "scale": "character",
+      "primaryType": null,
+      "tags": [
+        "droid",
+        "weapon",
+        "unspecified-weapon",
+        "statblock"
+      ],
+      "attack": {
+        "isArea": false,
+        "isAutofire": false,
+        "isBurstFire": false,
+        "isSplash": false,
+        "halfDamageOnMiss": false,
+        "noCriticalDouble": false,
+        "coverCanNegateMissDamage": false,
+        "attackRollMinimum": null,
+        "defense": "reflex"
+      },
+      "components": [
+        {
+          "key": "base",
+          "label": "Support Fire",
+          "formula": "3d8",
+          "type": null,
+          "tags": [
+            "base",
+            "unspecified-weapon"
+          ]
+        }
+      ],
+      "riders": [],
+      "sourceRefs": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "page": null,
+          "note": "V2-Series Commando Droid Support Fire row."
+        }
+      ],
+      "variants": [],
+      "notes": []
+    },
+    {
+      "slug": "scorpenek-annihilator-droid-blaster-barrage",
+      "name": "Blaster Barrage",
+      "confidence": "manualRequired",
+      "reviewRequired": true,
+      "source": {
+        "book": "Scavenger's Guide to Droids",
+        "status": "repo-statblock-text-labelled-sourcebook; page review still required",
+        "page": null,
+        "evidence": [
+          "Scorpenek Annihilator Droid System Actions list \"Blaster Barrage\" as two ranged attacks at +13, each dealing 5d8+4 points of damage."
+        ]
+      },
+      "actor": {
+        "name": "Scorpenek Annihilator Droid",
+        "slugs": [
+          "scorpenek-annihilator-droid"
+        ],
+        "kind": "droid",
+        "challengeLevel": 12
+      },
+      "match": {
+        "actorSlugs": [
+          "scorpenek-annihilator-droid"
+        ],
+        "rawIncludes": [
+          "blaster barrage"
+        ]
+      },
+      "weapon": {
+        "printedName": "Blaster Barrage",
+        "rowKind": "ranged",
+        "uuid": null,
+        "baseSlug": null,
+        "basePack": null,
+        "baseFormula": null,
+        "baseType": null,
+        "baseFormulaPolicy": "none",
+        "integrated": true,
+        "category": null,
+        "range": null
+      },
+      "printedAttack": {
+        "text": "+13 (x2)",
+        "bonus": 13,
+        "bonuses": [
+          13,
+          13
+        ],
+        "source": "printed-statblock",
+        "hydratePolicy": "metadata-only",
+        "notes": [
+          "Printed attack total is preserved only for source/audit display and is not written to item.system.attackBonus.",
+          "Two separate attacks, each at this bonus."
+        ]
+      },
+      "formula": {
+        "mode": "custom",
+        "printed": "5d8+4",
+        "delta": null,
+        "deltaSource": "printed-statblock",
+        "typeOverride": "energy",
+        "notes": [
+          "No damage type is printed; \"energy\" is used because the action is explicitly named as a blaster attack, matching standard SWSE blaster-weapon typing. No specific compendium item name is printed for this integrated twin-blaster weapon, so no UUID is claimed.",
+          "This System Action makes two separate ranged attacks at the printed bonus, each independently rolling this damage."
+        ]
+      },
+      "delivery": "weapon",
+      "attackShape": "single-target",
+      "scale": "character",
+      "primaryType": "energy",
+      "tags": [
+        "droid",
+        "weapon",
+        "blaster",
+        "integrated-weapon",
+        "statblock"
+      ],
+      "attack": {
+        "isArea": false,
+        "isAutofire": false,
+        "isBurstFire": false,
+        "isSplash": false,
+        "halfDamageOnMiss": false,
+        "noCriticalDouble": false,
+        "coverCanNegateMissDamage": false,
+        "attackRollMinimum": null,
+        "defense": "reflex"
+      },
+      "components": [
+        {
+          "key": "base",
+          "label": "Blaster Barrage",
+          "formula": "5d8+4",
+          "type": "energy",
+          "tags": [
+            "base",
+            "energy",
+            "blaster",
+            "integrated-weapon"
+          ]
+        }
+      ],
+      "riders": [],
+      "sourceRefs": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "page": null,
+          "note": "Scorpenek Annihilator Droid Blaster Barrage row."
+        }
+      ],
+      "variants": [],
+      "notes": []
+    },
+    {
+      "slug": "scorpenek-annihilator-droid-rapid-shot",
+      "name": "Rapid Shot",
+      "confidence": "manualRequired",
+      "reviewRequired": true,
+      "source": {
+        "book": "Scavenger's Guide to Droids",
+        "status": "repo-statblock-text-labelled-sourcebook; page review still required",
+        "page": null,
+        "evidence": [
+          "Scorpenek Annihilator Droid System Actions list \"Rapid Shot\" as a ranged attack at +18 dealing 4d8+4 points of damage."
+        ]
+      },
+      "actor": {
+        "name": "Scorpenek Annihilator Droid",
+        "slugs": [
+          "scorpenek-annihilator-droid"
+        ],
+        "kind": "droid",
+        "challengeLevel": 12
+      },
+      "match": {
+        "actorSlugs": [
+          "scorpenek-annihilator-droid"
+        ],
+        "rawIncludes": [
+          "rapid shot"
+        ]
+      },
+      "weapon": {
+        "printedName": "Rapid Shot",
+        "rowKind": "ranged",
+        "uuid": null,
+        "baseSlug": null,
+        "basePack": null,
+        "baseFormula": null,
+        "baseType": null,
+        "baseFormulaPolicy": "none",
+        "integrated": true,
+        "category": null,
+        "range": null
+      },
+      "printedAttack": {
+        "text": "+18",
+        "bonus": 18,
+        "bonuses": [
+          18
+        ],
+        "source": "printed-statblock",
+        "hydratePolicy": "metadata-only",
+        "notes": [
+          "Printed attack total is preserved only for source/audit display and is not written to item.system.attackBonus."
+        ]
+      },
+      "formula": {
+        "mode": "custom",
+        "printed": "4d8+4",
+        "delta": null,
+        "deltaSource": "printed-statblock",
+        "typeOverride": "energy",
+        "notes": [
+          "No damage type is printed; \"energy\" is used because the action is explicitly named as a blaster attack, matching standard SWSE blaster-weapon typing. No specific compendium item name is printed for this integrated twin-blaster weapon, so no UUID is claimed."
+        ]
+      },
+      "delivery": "weapon",
+      "attackShape": "single-target",
+      "scale": "character",
+      "primaryType": "energy",
+      "tags": [
+        "droid",
+        "weapon",
+        "blaster",
+        "integrated-weapon",
+        "statblock"
+      ],
+      "attack": {
+        "isArea": false,
+        "isAutofire": false,
+        "isBurstFire": false,
+        "isSplash": false,
+        "halfDamageOnMiss": false,
+        "noCriticalDouble": false,
+        "coverCanNegateMissDamage": false,
+        "attackRollMinimum": null,
+        "defense": "reflex"
+      },
+      "components": [
+        {
+          "key": "base",
+          "label": "Rapid Shot",
+          "formula": "4d8+4",
+          "type": "energy",
+          "tags": [
+            "base",
+            "energy",
+            "blaster",
+            "integrated-weapon"
+          ]
+        }
+      ],
+      "riders": [],
+      "sourceRefs": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "page": null,
+          "note": "Scorpenek Annihilator Droid Rapid Shot row."
+        }
+      ],
+      "variants": [],
+      "notes": []
+    },
+    {
+      "slug": "scorpenek-annihilator-droid-twin-blaster-burst",
+      "name": "Twin Blaster Burst",
+      "confidence": "manualRequired",
+      "reviewRequired": true,
+      "source": {
+        "book": "Scavenger's Guide to Droids",
+        "status": "repo-statblock-text-labelled-sourcebook; page review still required",
+        "page": null,
+        "evidence": [
+          "Scorpenek Annihilator Droid System Actions list \"Twin Blaster Burst\" as a ranged attack at +20 dealing 3d8+4 points of damage."
+        ]
+      },
+      "actor": {
+        "name": "Scorpenek Annihilator Droid",
+        "slugs": [
+          "scorpenek-annihilator-droid"
+        ],
+        "kind": "droid",
+        "challengeLevel": 12
+      },
+      "match": {
+        "actorSlugs": [
+          "scorpenek-annihilator-droid"
+        ],
+        "rawIncludes": [
+          "twin blaster burst"
+        ]
+      },
+      "weapon": {
+        "printedName": "Twin Blaster Burst",
+        "rowKind": "ranged",
+        "uuid": null,
+        "baseSlug": null,
+        "basePack": null,
+        "baseFormula": null,
+        "baseType": null,
+        "baseFormulaPolicy": "none",
+        "integrated": true,
+        "category": null,
+        "range": null
+      },
+      "printedAttack": {
+        "text": "+20",
+        "bonus": 20,
+        "bonuses": [
+          20
+        ],
+        "source": "printed-statblock",
+        "hydratePolicy": "metadata-only",
+        "notes": [
+          "Printed attack total is preserved only for source/audit display and is not written to item.system.attackBonus."
+        ]
+      },
+      "formula": {
+        "mode": "custom",
+        "printed": "3d8+4",
+        "delta": null,
+        "deltaSource": "printed-statblock",
+        "typeOverride": "energy",
+        "notes": [
+          "No damage type is printed; \"energy\" is used because the action is explicitly named as a blaster attack, matching standard SWSE blaster-weapon typing. No specific compendium item name is printed for this integrated twin-blaster weapon, so no UUID is claimed."
+        ]
+      },
+      "delivery": "weapon",
+      "attackShape": "single-target",
+      "scale": "character",
+      "primaryType": "energy",
+      "tags": [
+        "droid",
+        "weapon",
+        "blaster",
+        "integrated-weapon",
+        "statblock"
+      ],
+      "attack": {
+        "isArea": false,
+        "isAutofire": false,
+        "isBurstFire": false,
+        "isSplash": false,
+        "halfDamageOnMiss": false,
+        "noCriticalDouble": false,
+        "coverCanNegateMissDamage": false,
+        "attackRollMinimum": null,
+        "defense": "reflex"
+      },
+      "components": [
+        {
+          "key": "base",
+          "label": "Twin Blaster Burst",
+          "formula": "3d8+4",
+          "type": "energy",
+          "tags": [
+            "base",
+            "energy",
+            "blaster",
+            "integrated-weapon"
+          ]
+        }
+      ],
+      "riders": [],
+      "sourceRefs": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "page": null,
+          "note": "Scorpenek Annihilator Droid Twin Blaster Burst row."
+        }
+      ],
+      "variants": [],
+      "notes": []
+    },
+    {
+      "slug": "hkb-3-hunter-killer-droid-blaster-rifle",
+      "name": "Blaster Rifle Attack",
+      "confidence": "manualRequired",
+      "reviewRequired": true,
+      "source": {
+        "book": "Scavenger's Guide to Droids",
+        "status": "repo-statblock-text-labelled-sourcebook; page review still required",
+        "page": null,
+        "evidence": [
+          "HKB-3 Hunter-Killer Droid System Actions list \"Blaster Rifle Attack\" as a ranged attack at +8 dealing 3d8+4 points of damage."
+        ]
+      },
+      "actor": {
+        "name": "HKB-3 Hunter-Killer Droid",
+        "slugs": [
+          "hkb-3-hunter-killer-droid"
+        ],
+        "kind": "droid",
+        "challengeLevel": 6
+      },
+      "match": {
+        "actorSlugs": [
+          "hkb-3-hunter-killer-droid"
+        ],
+        "rawIncludes": [
+          "blaster rifle attack",
+          "blaster rifle"
+        ]
+      },
+      "weapon": {
+        "printedName": "Blaster Rifle Attack",
+        "rowKind": "ranged",
+        "uuid": "Compendium.foundryvtt-swse.weapons-rifles.Item.weapon-blaster-rifle",
+        "baseSlug": "weapon-blaster-rifle",
+        "basePack": "weapons-rifles",
+        "baseFormula": "3d10",
+        "baseType": "energy",
+        "baseFormulaPolicy": "uuid",
+        "integrated": false,
+        "category": "rifles",
+        "range": null
+      },
+      "printedAttack": {
+        "text": "+8",
+        "bonus": 8,
+        "bonuses": [
+          8
+        ],
+        "source": "printed-statblock",
+        "hydratePolicy": "metadata-only",
+        "notes": [
+          "Printed attack total is preserved only for source/audit display and is not written to item.system.attackBonus."
+        ]
+      },
+      "formula": {
+        "mode": "printed-override",
+        "printed": "3d8+4",
+        "delta": null,
+        "deltaSource": "printed-statblock",
+        "typeOverride": null,
+        "notes": [
+          "Compendium base for Blaster Rifle is 3d10 (weapons-rifles); the printed statblock formula is 3d8+4, a different die count. The dice mismatch is not mechanically obvious, so formula.printed is kept as sole authority. weapon.uuid is retained only as an exact-name identity match."
+        ]
+      },
+      "delivery": "weapon",
+      "attackShape": "single-target",
+      "scale": "character",
+      "primaryType": "energy",
+      "tags": [
+        "droid",
+        "weapon",
+        "blaster",
+        "statblock"
+      ],
+      "attack": {
+        "isArea": false,
+        "isAutofire": false,
+        "isBurstFire": false,
+        "isSplash": false,
+        "halfDamageOnMiss": false,
+        "noCriticalDouble": false,
+        "coverCanNegateMissDamage": false,
+        "attackRollMinimum": null,
+        "defense": "reflex"
+      },
+      "components": [
+        {
+          "key": "base",
+          "label": "Blaster Rifle Attack",
+          "formula": "3d8+4",
+          "type": "energy",
+          "tags": [
+            "base",
+            "energy",
+            "blaster"
+          ]
+        }
+      ],
+      "riders": [],
+      "sourceRefs": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "page": null,
+          "note": "HKB-3 Hunter-Killer Droid Blaster Rifle Attack row; printed dice differ from current compendium Blaster Rifle base (3d10) and are preserved as printed."
+        }
+      ],
+      "variants": [],
+      "notes": []
+    },
+    {
+      "slug": "e522-assassin-droid-rapid-shot",
+      "name": "Rapid Shot",
+      "confidence": "manualRequired",
+      "reviewRequired": true,
+      "source": {
+        "book": "Scavenger's Guide to Droids",
+        "status": "repo-statblock-text-labelled-sourcebook; page review still required",
+        "page": null,
+        "evidence": [
+          "E522 Assassin Droid System Actions list \"Rapid Shot\" as a ranged attack at +5 \"with either its Heavy Repeating Blaster or its Ion Rifle\", dealing either 4d10+3 points of damage or 4d8+3 points of Ion damage depending on the weapon used."
+        ]
+      },
+      "actor": {
+        "name": "E522 Assassin Droid",
+        "slugs": [
+          "e522-assassin-droid"
+        ],
+        "kind": "droid",
+        "challengeLevel": 7
+      },
+      "match": {
+        "actorSlugs": [
+          "e522-assassin-droid"
+        ],
+        "rawIncludes": [
+          "rapid shot",
+          "heavy repeating blaster",
+          "ion rifle"
+        ]
+      },
+      "weapon": {
+        "printedName": "Rapid Shot (Heavy Repeating Blaster)",
+        "rowKind": "ranged",
+        "uuid": "Compendium.foundryvtt-swse.weapons-heavy.Item.weapon-heavy-repeating-blaster",
+        "baseSlug": "weapon-heavy-repeating-blaster",
+        "basePack": "weapons-heavy",
+        "baseFormula": "3d10",
+        "baseType": "energy",
+        "baseFormulaPolicy": "uuid",
+        "integrated": false,
+        "category": "heavy",
+        "range": null
+      },
+      "printedAttack": {
+        "text": "+5",
+        "bonus": 5,
+        "bonuses": [
+          5
+        ],
+        "source": "printed-statblock",
+        "hydratePolicy": "metadata-only",
+        "notes": [
+          "Printed attack total is preserved only for source/audit display and is not written to item.system.attackBonus."
+        ]
+      },
+      "formula": {
+        "mode": "base-plus-dice",
+        "printed": "4d10+3",
+        "delta": "+1d10+3",
+        "deltaSource": "printed-statblock",
+        "typeOverride": null,
+        "notes": []
+      },
+      "delivery": "weapon",
+      "attackShape": "single-target",
+      "scale": "character",
+      "primaryType": "energy",
+      "tags": [
+        "droid",
+        "weapon",
+        "blaster",
+        "statblock"
+      ],
+      "attack": {
+        "isArea": false,
+        "isAutofire": false,
+        "isBurstFire": false,
+        "isSplash": false,
+        "halfDamageOnMiss": false,
+        "noCriticalDouble": false,
+        "coverCanNegateMissDamage": false,
+        "attackRollMinimum": null,
+        "defense": "reflex"
+      },
+      "components": [
+        {
+          "key": "base",
+          "label": "Rapid Shot (Heavy Repeating Blaster)",
+          "formula": "4d10+3",
+          "type": "energy",
+          "tags": [
+            "base",
+            "energy",
+            "blaster"
+          ]
+        }
+      ],
+      "riders": [],
+      "sourceRefs": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "page": null,
+          "note": "E522 Assassin Droid Rapid Shot row (Heavy Repeating Blaster option)."
+        }
+      ],
+      "variants": [
+        {
+          "slug": "e522-assassin-droid-rapid-shot-ion-rifle",
+          "label": "with Ion Rifle",
+          "primaryType": "ion",
+          "tags": [
+            "ion"
+          ],
+          "attack": {
+            "isArea": false,
+            "isAutofire": false,
+            "isBurstFire": false,
+            "isSplash": false,
+            "halfDamageOnMiss": false,
+            "noCriticalDouble": false,
+            "coverCanNegateMissDamage": false,
+            "attackRollMinimum": null,
+            "defense": "reflex"
+          },
+          "area": {
+            "shape": null,
+            "radius": null,
+            "size": null,
+            "originMode": null,
+            "targetPolicy": "single"
+          },
+          "components": [
+            {
+              "key": "base",
+              "label": "Rapid Shot (Ion Rifle)",
+              "formula": "4d8+3",
+              "type": "ion",
+              "tags": [
+                "base",
+                "ion",
+                "blaster"
+              ]
+            }
+          ],
+          "riders": [],
+          "printedAttack": {
+            "text": "+5",
+            "bonus": 5,
+            "bonuses": [
+              5
+            ],
+            "source": "printed-statblock",
+            "hydratePolicy": "metadata-only",
+            "notes": [
+              "Printed attack total is preserved only for source/audit display and is not written to item.system.attackBonus."
+            ]
+          }
+        }
+      ],
+      "notes": [
+        "The statblock explicitly presents two alternate weapon options for this same System Action; the Ion Rifle option is modeled as a variant. The Droid's \"Needler\" (used only for its Paralyze Opponent rider effect) has no printed damage formula and is intentionally omitted."
+      ]
+    },
+    {
+      "slug": "sd-9-battle-droid-heavy-repeating-blaster",
+      "name": "Heavy Repeating Blaster Attack",
+      "confidence": "manualRequired",
+      "reviewRequired": true,
+      "source": {
+        "book": "Scavenger's Guide to Droids",
+        "status": "repo-statblock-text-labelled-sourcebook; page review still required",
+        "page": null,
+        "evidence": [
+          "SD-9 Battle Droid System Actions list \"Heavy Repeating Blaster Attack\" as a ranged Autofire attack at +15 dealing 3d10+10 points of damage in a 2x2-square area, with half damage on a miss."
+        ]
+      },
+      "actor": {
+        "name": "SD-9 Battle Droid",
+        "slugs": [
+          "sd-9-battle-droid"
+        ],
+        "kind": "droid",
+        "challengeLevel": 16
+      },
+      "match": {
+        "actorSlugs": [
+          "sd-9-battle-droid"
+        ],
+        "rawIncludes": [
+          "heavy repeating blaster attack",
+          "heavy repeating blaster"
+        ]
+      },
+      "weapon": {
+        "printedName": "Heavy Repeating Blaster Attack",
+        "rowKind": "ranged",
+        "uuid": "Compendium.foundryvtt-swse.weapons-heavy.Item.weapon-heavy-repeating-blaster",
+        "baseSlug": "weapon-heavy-repeating-blaster",
+        "basePack": "weapons-heavy",
+        "baseFormula": "3d10",
+        "baseType": "energy",
+        "baseFormulaPolicy": "uuid",
+        "integrated": false,
+        "category": "heavy",
+        "range": null
+      },
+      "printedAttack": {
+        "text": "+15",
+        "bonus": 15,
+        "bonuses": [
+          15
+        ],
+        "source": "printed-statblock",
+        "hydratePolicy": "metadata-only",
+        "notes": [
+          "Printed attack total is preserved only for source/audit display and is not written to item.system.attackBonus."
+        ]
+      },
+      "formula": {
+        "mode": "base-plus-delta",
+        "printed": "3d10+10",
+        "delta": "+10",
+        "deltaSource": "printed-statblock",
+        "typeOverride": null,
+        "notes": []
+      },
+      "delivery": "weapon",
+      "attackShape": "autofire",
+      "scale": "character",
+      "primaryType": "energy",
+      "tags": [
+        "droid",
+        "weapon",
+        "blaster",
+        "autofire",
+        "area",
+        "statblock"
+      ],
+      "attack": {
+        "isArea": true,
+        "isAutofire": true,
+        "isBurstFire": false,
+        "isSplash": false,
+        "halfDamageOnMiss": true,
+        "noCriticalDouble": false,
+        "coverCanNegateMissDamage": false,
+        "attackRollMinimum": null,
+        "defense": "reflex"
+      },
+      "area": {
+        "shape": "2x2",
+        "radius": null,
+        "size": null,
+        "originMode": "target-square",
+        "targetPolicy": "all-in-area"
+      },
+      "components": [
+        {
+          "key": "base",
+          "label": "Heavy Repeating Blaster Attack",
+          "formula": "3d10+10",
+          "type": "energy",
+          "tags": [
+            "base",
+            "energy",
+            "blaster",
+            "autofire"
+          ]
+        }
+      ],
+      "riders": [],
+      "sourceRefs": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "page": null,
+          "note": "SD-9 Battle Droid Heavy Repeating Blaster Attack row."
+        }
+      ],
+      "variants": [],
+      "notes": []
+    },
+    {
+      "slug": "sd-9-battle-droid-twin-blaster-burst",
+      "name": "Twin Blaster Burst",
+      "confidence": "manualRequired",
+      "reviewRequired": true,
+      "source": {
+        "book": "Scavenger's Guide to Droids",
+        "status": "repo-statblock-text-labelled-sourcebook; page review still required",
+        "page": null,
+        "evidence": [
+          "SD-9 Battle Droid System Actions list \"Twin Blaster Burst\" as a ranged attack at +20 dealing 3d12+10 points of damage with a 1-square splash."
+        ]
+      },
+      "actor": {
+        "name": "SD-9 Battle Droid",
+        "slugs": [
+          "sd-9-battle-droid"
+        ],
+        "kind": "droid",
+        "challengeLevel": 16
+      },
+      "match": {
+        "actorSlugs": [
+          "sd-9-battle-droid"
+        ],
+        "rawIncludes": [
+          "twin blaster burst"
+        ]
+      },
+      "weapon": {
+        "printedName": "Twin Blaster Burst",
+        "rowKind": "ranged",
+        "uuid": null,
+        "baseSlug": null,
+        "basePack": null,
+        "baseFormula": null,
+        "baseType": null,
+        "baseFormulaPolicy": "none",
+        "integrated": true,
+        "category": null,
+        "range": null
+      },
+      "printedAttack": {
+        "text": "+20",
+        "bonus": 20,
+        "bonuses": [
+          20
+        ],
+        "source": "printed-statblock",
+        "hydratePolicy": "metadata-only",
+        "notes": [
+          "Printed attack total is preserved only for source/audit display and is not written to item.system.attackBonus."
+        ]
+      },
+      "formula": {
+        "mode": "custom",
+        "printed": "3d12+10",
+        "delta": null,
+        "deltaSource": "printed-statblock",
+        "typeOverride": "energy",
+        "notes": [
+          "No damage type is printed; \"energy\" is used because the action is explicitly named as a blaster attack. No specific compendium item name is printed for this integrated weapon, so no UUID is claimed."
+        ]
+      },
+      "delivery": "weapon",
+      "attackShape": "splash",
+      "scale": "character",
+      "primaryType": "energy",
+      "tags": [
+        "droid",
+        "weapon",
+        "blaster",
+        "integrated-weapon",
+        "splash",
+        "statblock"
+      ],
+      "attack": {
+        "isArea": false,
+        "isAutofire": false,
+        "isBurstFire": false,
+        "isSplash": true,
+        "halfDamageOnMiss": false,
+        "noCriticalDouble": false,
+        "coverCanNegateMissDamage": false,
+        "attackRollMinimum": null,
+        "defense": "reflex"
+      },
+      "area": {
+        "shape": "splash",
+        "radius": null,
+        "size": 1,
+        "originMode": "target-square",
+        "targetPolicy": "primary-plus-adjacent"
+      },
+      "components": [
+        {
+          "key": "base",
+          "label": "Twin Blaster Burst",
+          "formula": "3d12+10",
+          "type": "energy",
+          "tags": [
+            "base",
+            "energy",
+            "blaster",
+            "integrated-weapon"
+          ]
+        }
+      ],
+      "riders": [],
+      "sourceRefs": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "page": null,
+          "note": "SD-9 Battle Droid Twin Blaster Burst row."
+        }
+      ],
+      "variants": [],
+      "notes": [
+        "SD-9 Battle Droid also has non-damage \"Defense Mode\" and \"Delay Damage\" System Actions; both are intentionally omitted from this batch."
+      ]
+    },
+    {
+      "slug": "sd-x-stealth-battle-droid-blaster-rifle",
+      "name": "Blaster Rifle Attack",
+      "confidence": "manualRequired",
+      "reviewRequired": true,
+      "source": {
+        "book": "Scavenger's Guide to Droids",
+        "status": "repo-statblock-text-labelled-sourcebook; page review still required",
+        "page": null,
+        "evidence": [
+          "SD-X Stealth Battle Droid System Actions list \"Blaster Rifle Attack\" as a ranged attack at +9 dealing 3d8+4 points of damage."
+        ]
+      },
+      "actor": {
+        "name": "SD-X Stealth Battle Droid",
+        "slugs": [
+          "sd-x-stealth-battle-droid"
+        ],
+        "kind": "droid",
+        "challengeLevel": 9
+      },
+      "match": {
+        "actorSlugs": [
+          "sd-x-stealth-battle-droid"
+        ],
+        "rawIncludes": [
+          "blaster rifle attack",
+          "blaster rifle"
+        ]
+      },
+      "weapon": {
+        "printedName": "Blaster Rifle Attack",
+        "rowKind": "ranged",
+        "uuid": "Compendium.foundryvtt-swse.weapons-rifles.Item.weapon-blaster-rifle",
+        "baseSlug": "weapon-blaster-rifle",
+        "basePack": "weapons-rifles",
+        "baseFormula": "3d10",
+        "baseType": "energy",
+        "baseFormulaPolicy": "uuid",
+        "integrated": false,
+        "category": "rifles",
+        "range": null
+      },
+      "printedAttack": {
+        "text": "+9",
+        "bonus": 9,
+        "bonuses": [
+          9
+        ],
+        "source": "printed-statblock",
+        "hydratePolicy": "metadata-only",
+        "notes": [
+          "Printed attack total is preserved only for source/audit display and is not written to item.system.attackBonus."
+        ]
+      },
+      "formula": {
+        "mode": "printed-override",
+        "printed": "3d8+4",
+        "delta": null,
+        "deltaSource": "printed-statblock",
+        "typeOverride": null,
+        "notes": [
+          "Compendium base for Blaster Rifle is 3d10 (weapons-rifles); the printed statblock formula is 3d8+4, a different die count. The dice mismatch is not mechanically obvious, so formula.printed is kept as sole authority. weapon.uuid is retained only as an exact-name identity match."
+        ]
+      },
+      "delivery": "weapon",
+      "attackShape": "single-target",
+      "scale": "character",
+      "primaryType": "energy",
+      "tags": [
+        "droid",
+        "weapon",
+        "blaster",
+        "statblock"
+      ],
+      "attack": {
+        "isArea": false,
+        "isAutofire": false,
+        "isBurstFire": false,
+        "isSplash": false,
+        "halfDamageOnMiss": false,
+        "noCriticalDouble": false,
+        "coverCanNegateMissDamage": false,
+        "attackRollMinimum": null,
+        "defense": "reflex"
+      },
+      "components": [
+        {
+          "key": "base",
+          "label": "Blaster Rifle Attack",
+          "formula": "3d8+4",
+          "type": "energy",
+          "tags": [
+            "base",
+            "energy",
+            "blaster"
+          ]
+        }
+      ],
+      "riders": [],
+      "sourceRefs": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "page": null,
+          "note": "SD-X Stealth Battle Droid Blaster Rifle Attack row; printed dice differ from current compendium Blaster Rifle base (3d10) and are preserved as printed."
+        }
+      ],
+      "variants": [],
+      "notes": []
+    },
+    {
+      "slug": "sd-x-stealth-battle-droid-concealed-vibrodaggers",
+      "name": "Concealed Vibrodaggers",
+      "confidence": "manualRequired",
+      "reviewRequired": true,
+      "source": {
+        "book": "Scavenger's Guide to Droids",
+        "status": "repo-statblock-text-labelled-sourcebook; page review still required",
+        "page": null,
+        "evidence": [
+          "SD-X Stealth Battle Droid System Actions list \"Concealed Vibrodaggers\" as a melee attack at +10 dealing 4d4+7 points of damage."
+        ]
+      },
+      "actor": {
+        "name": "SD-X Stealth Battle Droid",
+        "slugs": [
+          "sd-x-stealth-battle-droid"
+        ],
+        "kind": "droid",
+        "challengeLevel": 9
+      },
+      "match": {
+        "actorSlugs": [
+          "sd-x-stealth-battle-droid"
+        ],
+        "rawIncludes": [
+          "concealed vibrodaggers",
+          "vibrodaggers"
+        ]
+      },
+      "weapon": {
+        "printedName": "Concealed Vibrodaggers",
+        "rowKind": "melee",
+        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-vibrodagger",
+        "baseSlug": "weapon-vibrodagger",
+        "basePack": "weapons-simple",
+        "baseFormula": "2d4",
+        "baseType": "kinetic",
+        "baseFormulaPolicy": "uuid",
+        "integrated": false,
+        "category": "simple",
+        "range": null
+      },
+      "printedAttack": {
+        "text": "+10",
+        "bonus": 10,
+        "bonuses": [
+          10
+        ],
+        "source": "printed-statblock",
+        "hydratePolicy": "metadata-only",
+        "notes": [
+          "Printed attack total is preserved only for source/audit display and is not written to item.system.attackBonus."
+        ]
+      },
+      "formula": {
+        "mode": "base-plus-dice",
+        "printed": "4d4+7",
+        "delta": "+2d4+7",
+        "deltaSource": "printed-statblock",
+        "typeOverride": null,
+        "notes": [
+          "Printed formula (4d4+7) is double the compendium Vibrodagger base dice (2d4) plus a flat modifier, consistent with the printed name referring to a pair of concealed vibrodaggers used together; the extra dice are preserved as a printed delta, not reverse-engineered."
+        ]
+      },
+      "delivery": "weapon",
+      "attackShape": "single-target",
+      "scale": "character",
+      "primaryType": "kinetic",
+      "tags": [
+        "droid",
+        "weapon",
+        "vibrodagger",
+        "statblock"
+      ],
+      "attack": {
+        "isArea": false,
+        "isAutofire": false,
+        "isBurstFire": false,
+        "isSplash": false,
+        "halfDamageOnMiss": false,
+        "noCriticalDouble": false,
+        "coverCanNegateMissDamage": false,
+        "attackRollMinimum": null,
+        "defense": "reflex"
+      },
+      "components": [
+        {
+          "key": "base",
+          "label": "Concealed Vibrodaggers",
+          "formula": "4d4+7",
+          "type": "kinetic",
+          "tags": [
+            "base",
+            "kinetic",
+            "vibrodagger"
+          ]
+        }
+      ],
+      "riders": [],
+      "sourceRefs": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "page": null,
+          "note": "SD-X Stealth Battle Droid Concealed Vibrodaggers row."
+        }
+      ],
+      "variants": [],
+      "notes": []
+    },
+    {
+      "slug": "tc-sc-infiltration-droid-dastardly-blade",
+      "name": "Dastardly Blade",
+      "confidence": "manualRequired",
+      "reviewRequired": true,
+      "source": {
+        "book": "Scavenger's Guide to Droids",
+        "status": "repo-statblock-text-labelled-sourcebook; page review still required",
+        "page": null,
+        "evidence": [
+          "TC-SC Infiltration Droid System Actions list \"Dastardly Blade\" as a melee attack at +0 dealing 1d4 points of damage; if the target is denied its Dexterity bonus to Reflex Defense, the target moves -1 step on the Condition Track."
+        ]
+      },
+      "actor": {
+        "name": "TC-SC Infiltration Droid",
+        "slugs": [
+          "tc-sc-infiltration-droid"
+        ],
+        "kind": "droid",
+        "challengeLevel": 1
+      },
+      "match": {
+        "actorSlugs": [
+          "tc-sc-infiltration-droid"
+        ],
+        "rawIncludes": [
+          "dastardly blade"
+        ]
+      },
+      "weapon": {
+        "printedName": "Dastardly Blade",
+        "rowKind": "melee",
+        "uuid": null,
+        "baseSlug": null,
+        "basePack": null,
+        "baseFormula": null,
+        "baseType": null,
+        "baseFormulaPolicy": "none",
+        "integrated": true,
+        "category": null,
+        "range": null
+      },
+      "printedAttack": {
+        "text": "+0",
+        "bonus": 0,
+        "bonuses": [
+          0
+        ],
+        "source": "printed-statblock",
+        "hydratePolicy": "metadata-only",
+        "notes": [
+          "Printed attack total is preserved only for source/audit display and is not written to item.system.attackBonus."
+        ]
+      },
+      "formula": {
+        "mode": "custom",
+        "printed": "1d4",
+        "delta": null,
+        "deltaSource": "printed-statblock",
+        "typeOverride": null,
+        "notes": [
+          "No underlying weapon name or damage type is printed for this System Action."
+        ]
+      },
+      "delivery": "weapon",
+      "attackShape": "single-target",
+      "scale": "character",
+      "primaryType": null,
+      "tags": [
+        "droid",
+        "weapon",
+        "unspecified-weapon",
+        "rider",
+        "statblock"
+      ],
+      "attack": {
+        "isArea": false,
+        "isAutofire": false,
+        "isBurstFire": false,
+        "isSplash": false,
+        "halfDamageOnMiss": false,
+        "noCriticalDouble": false,
+        "coverCanNegateMissDamage": false,
+        "attackRollMinimum": null,
+        "defense": "reflex"
+      },
+      "components": [
+        {
+          "key": "base",
+          "label": "Dastardly Blade",
+          "formula": "1d4",
+          "type": null,
+          "tags": [
+            "base",
+            "unspecified-weapon"
+          ]
+        }
+      ],
+      "riders": [
+        {
+          "kind": "condition-track",
+          "defense": null,
+          "amount": -1,
+          "appliesOn": "hit-if-target-denied-dexterity-bonus",
+          "notes": "If the target is denied its Dexterity bonus to Reflex Defense, it moves -1 step on the Condition Track on a hit."
+        }
+      ],
+      "sourceRefs": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "page": null,
+          "note": "TC-SC Infiltration Droid Dastardly Blade row."
+        }
+      ],
+      "variants": [],
+      "notes": []
+    },
+    {
+      "slug": "tc-sc-infiltration-droid-dastardly-blast",
+      "name": "Dastardly Blast",
+      "confidence": "manualRequired",
+      "reviewRequired": true,
+      "source": {
+        "book": "Scavenger's Guide to Droids",
+        "status": "repo-statblock-text-labelled-sourcebook; page review still required",
+        "page": null,
+        "evidence": [
+          "TC-SC Infiltration Droid System Actions list \"Dastardly Blast\" as a ranged attack at +3 dealing 3d6 points of damage; if the target is denied its Dexterity bonus to Reflex Defense, the target moves -1 step on the Condition Track."
+        ]
+      },
+      "actor": {
+        "name": "TC-SC Infiltration Droid",
+        "slugs": [
+          "tc-sc-infiltration-droid"
+        ],
+        "kind": "droid",
+        "challengeLevel": 1
+      },
+      "match": {
+        "actorSlugs": [
+          "tc-sc-infiltration-droid"
+        ],
+        "rawIncludes": [
+          "dastardly blast"
+        ]
+      },
+      "weapon": {
+        "printedName": "Dastardly Blast",
+        "rowKind": "ranged",
+        "uuid": null,
+        "baseSlug": null,
+        "basePack": null,
+        "baseFormula": null,
+        "baseType": null,
+        "baseFormulaPolicy": "none",
+        "integrated": true,
+        "category": null,
+        "range": null
+      },
+      "printedAttack": {
+        "text": "+3",
+        "bonus": 3,
+        "bonuses": [
+          3
+        ],
+        "source": "printed-statblock",
+        "hydratePolicy": "metadata-only",
+        "notes": [
+          "Printed attack total is preserved only for source/audit display and is not written to item.system.attackBonus."
+        ]
+      },
+      "formula": {
+        "mode": "custom",
+        "printed": "3d6",
+        "delta": null,
+        "deltaSource": "printed-statblock",
+        "typeOverride": null,
+        "notes": [
+          "No underlying weapon name or damage type is printed for this System Action."
+        ]
+      },
+      "delivery": "weapon",
+      "attackShape": "single-target",
+      "scale": "character",
+      "primaryType": null,
+      "tags": [
+        "droid",
+        "weapon",
+        "unspecified-weapon",
+        "rider",
+        "statblock"
+      ],
+      "attack": {
+        "isArea": false,
+        "isAutofire": false,
+        "isBurstFire": false,
+        "isSplash": false,
+        "halfDamageOnMiss": false,
+        "noCriticalDouble": false,
+        "coverCanNegateMissDamage": false,
+        "attackRollMinimum": null,
+        "defense": "reflex"
+      },
+      "components": [
+        {
+          "key": "base",
+          "label": "Dastardly Blast",
+          "formula": "3d6",
+          "type": null,
+          "tags": [
+            "base",
+            "unspecified-weapon"
+          ]
+        }
+      ],
+      "riders": [
+        {
+          "kind": "condition-track",
+          "defense": null,
+          "amount": -1,
+          "appliesOn": "hit-if-target-denied-dexterity-bonus",
+          "notes": "If the target is denied its Dexterity bonus to Reflex Defense, it moves -1 step on the Condition Track on a hit."
+        }
+      ],
+      "sourceRefs": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "page": null,
+          "note": "TC-SC Infiltration Droid Dastardly Blast row."
+        }
+      ],
+      "variants": [],
+      "notes": []
+    },
+    {
+      "slug": "infiltrator-series-droid-penetrate-hull",
+      "name": "Penetrate Hull",
+      "confidence": "manualRequired",
+      "reviewRequired": true,
+      "source": {
+        "book": "Scavenger's Guide to Droids",
+        "status": "repo-statblock-text-labelled-sourcebook; page review still required",
+        "page": null,
+        "evidence": [
+          "Infiltrator-Series Droid System Actions list \"Penetrate Hull\" as a melee attack at +13 dealing 2d6+4 points of damage, or 16 points of damage against the hull of a Vehicle or against solid walls and doors."
+        ]
+      },
+      "actor": {
+        "name": "Infiltrator-Series Droid",
+        "slugs": [
+          "infiltrator-series-droid"
+        ],
+        "kind": "droid",
+        "challengeLevel": 4
+      },
+      "match": {
+        "actorSlugs": [
+          "infiltrator-series-droid"
+        ],
+        "rawIncludes": [
+          "penetrate hull"
+        ]
+      },
+      "weapon": {
+        "printedName": "Penetrate Hull",
+        "rowKind": "natural",
+        "uuid": null,
+        "baseSlug": null,
+        "basePack": null,
+        "baseFormula": null,
+        "baseType": null,
+        "baseFormulaPolicy": "custom",
+        "integrated": true,
+        "category": "natural",
+        "range": null
+      },
+      "printedAttack": {
+        "text": "+13",
+        "bonus": 13,
+        "bonuses": [
+          13
+        ],
+        "source": "printed-statblock",
+        "hydratePolicy": "metadata-only",
+        "notes": [
+          "Printed attack total is preserved only for source/audit display and is not written to item.system.attackBonus."
+        ]
+      },
+      "formula": {
+        "mode": "custom",
+        "printed": "2d6+4",
+        "delta": null,
+        "deltaSource": "printed-statblock",
+        "typeOverride": "piercing",
+        "notes": [
+          "The statblock also prints an alternate flat 16 points of damage \"against the hull of a Vehicle or against solid walls and doors\"; that object/vehicle-hull interaction is out of scope for this character-scale weapon-damage batch and is preserved here only as a note, not as a modeled mechanic."
+        ]
+      },
+      "delivery": "natural",
+      "attackShape": "single-target",
+      "scale": "character",
+      "primaryType": "piercing",
+      "tags": [
+        "droid",
+        "natural",
+        "statblock"
+      ],
+      "attack": {
+        "isArea": false,
+        "isAutofire": false,
+        "isBurstFire": false,
+        "isSplash": false,
+        "halfDamageOnMiss": false,
+        "noCriticalDouble": false,
+        "coverCanNegateMissDamage": false,
+        "attackRollMinimum": null,
+        "defense": "reflex"
+      },
+      "components": [
+        {
+          "key": "base",
+          "label": "Penetrate Hull",
+          "formula": "2d6+4",
+          "type": "piercing",
+          "tags": [
+            "base",
+            "piercing",
+            "natural"
+          ]
+        }
+      ],
+      "riders": [],
+      "sourceRefs": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "page": null,
+          "note": "Infiltrator-Series Droid Penetrate Hull row."
+        }
+      ],
+      "variants": [],
+      "notes": []
+    },
+    {
+      "slug": "infiltrator-series-droid-rapid-shot",
+      "name": "Rapid Shot",
+      "confidence": "manualRequired",
+      "reviewRequired": true,
+      "source": {
+        "book": "Scavenger's Guide to Droids",
+        "status": "repo-statblock-text-labelled-sourcebook; page review still required",
+        "page": null,
+        "evidence": [
+          "Infiltrator-Series Droid System Actions list \"Rapid Shot\" as a ranged attack at +9 dealing 4d8 points of damage; no weapon name or damage type is printed."
+        ]
+      },
+      "actor": {
+        "name": "Infiltrator-Series Droid",
+        "slugs": [
+          "infiltrator-series-droid"
+        ],
+        "kind": "droid",
+        "challengeLevel": 4
+      },
+      "match": {
+        "actorSlugs": [
+          "infiltrator-series-droid"
+        ],
+        "rawIncludes": [
+          "rapid shot"
+        ]
+      },
+      "weapon": {
+        "printedName": "Rapid Shot",
+        "rowKind": "ranged",
+        "uuid": null,
+        "baseSlug": null,
+        "basePack": null,
+        "baseFormula": null,
+        "baseType": null,
+        "baseFormulaPolicy": "none",
+        "integrated": false,
+        "category": null,
+        "range": null
+      },
+      "printedAttack": {
+        "text": "+9",
+        "bonus": 9,
+        "bonuses": [
+          9
+        ],
+        "source": "printed-statblock",
+        "hydratePolicy": "metadata-only",
+        "notes": [
+          "Printed attack total is preserved only for source/audit display and is not written to item.system.attackBonus."
+        ]
+      },
+      "formula": {
+        "mode": "custom",
+        "printed": "4d8",
+        "delta": null,
+        "deltaSource": "printed-statblock",
+        "typeOverride": null,
+        "notes": [
+          "No underlying weapon name or damage type is printed for this System Action."
+        ]
+      },
+      "delivery": "weapon",
+      "attackShape": "single-target",
+      "scale": "character",
+      "primaryType": null,
+      "tags": [
+        "droid",
+        "weapon",
+        "unspecified-weapon",
+        "statblock"
+      ],
+      "attack": {
+        "isArea": false,
+        "isAutofire": false,
+        "isBurstFire": false,
+        "isSplash": false,
+        "halfDamageOnMiss": false,
+        "noCriticalDouble": false,
+        "coverCanNegateMissDamage": false,
+        "attackRollMinimum": null,
+        "defense": "reflex"
+      },
+      "components": [
+        {
+          "key": "base",
+          "label": "Rapid Shot",
+          "formula": "4d8",
+          "type": null,
+          "tags": [
+            "base",
+            "unspecified-weapon"
+          ]
+        }
+      ],
+      "riders": [],
+      "sourceRefs": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "page": null,
+          "note": "Infiltrator-Series Droid Rapid Shot row."
+        }
+      ],
+      "variants": [],
+      "notes": []
+    },
+    {
+      "slug": "de-training-droid-rapier-thrust",
+      "name": "Rapier Thrust",
+      "confidence": "manualRequired",
+      "reviewRequired": true,
+      "source": {
+        "book": "Scavenger's Guide to Droids",
+        "status": "repo-statblock-text-labelled-sourcebook; page review still required",
+        "page": null,
+        "evidence": [
+          "DE Training Droid System Actions list \"Rapier Thrust\" as a melee attack at +4 dealing 1d8+4 points of damage."
+        ]
+      },
+      "actor": {
+        "name": "DE Training Droid",
+        "slugs": [
+          "de-training-droid"
+        ],
+        "kind": "droid",
+        "challengeLevel": 1
+      },
+      "match": {
+        "actorSlugs": [
+          "de-training-droid"
+        ],
+        "rawIncludes": [
+          "rapier thrust",
+          "rapier"
+        ]
+      },
+      "weapon": {
+        "printedName": "Rapier Thrust",
+        "rowKind": "melee",
+        "uuid": null,
+        "baseSlug": null,
+        "basePack": null,
+        "baseFormula": null,
+        "baseType": null,
+        "baseFormulaPolicy": "none",
+        "integrated": false,
+        "category": null,
+        "range": null
+      },
+      "printedAttack": {
+        "text": "+4",
+        "bonus": 4,
+        "bonuses": [
+          4
+        ],
+        "source": "printed-statblock",
+        "hydratePolicy": "metadata-only",
+        "notes": [
+          "Printed attack total is preserved only for source/audit display and is not written to item.system.attackBonus."
+        ]
+      },
+      "formula": {
+        "mode": "custom",
+        "printed": "1d8+4",
+        "delta": null,
+        "deltaSource": "printed-statblock",
+        "typeOverride": "piercing",
+        "notes": [
+          "No compendium item named \"Rapier\" exists in the scanned weapon packs, so no UUID is claimed. Damage type is set to piercing per standard thrust-blade convention (no explicit damage type is printed)."
+        ]
+      },
+      "delivery": "weapon",
+      "attackShape": "single-target",
+      "scale": "character",
+      "primaryType": "piercing",
+      "tags": [
+        "droid",
+        "weapon",
+        "rapier",
+        "statblock"
+      ],
+      "attack": {
+        "isArea": false,
+        "isAutofire": false,
+        "isBurstFire": false,
+        "isSplash": false,
+        "halfDamageOnMiss": false,
+        "noCriticalDouble": false,
+        "coverCanNegateMissDamage": false,
+        "attackRollMinimum": null,
+        "defense": "reflex"
+      },
+      "components": [
+        {
+          "key": "base",
+          "label": "Rapier Thrust",
+          "formula": "1d8+4",
+          "type": "piercing",
+          "tags": [
+            "base",
+            "piercing"
+          ]
+        }
+      ],
+      "riders": [],
+      "sourceRefs": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "page": null,
+          "note": "DE Training Droid Rapier Thrust row."
+        }
+      ],
+      "variants": [],
+      "notes": []
+    },
+    {
+      "slug": "yvh-battle-droid-blaster-cannon",
+      "name": "Blaster Cannon Attack",
+      "confidence": "manualRequired",
+      "reviewRequired": true,
+      "source": {
+        "book": "Scavenger's Guide to Droids",
+        "status": "repo-statblock-text-labelled-sourcebook; page review still required",
+        "page": null,
+        "evidence": [
+          "YVH Battle Droid System Actions list \"Blaster Cannon Attack\" as a ranged attack at +10 dealing 3d12+4 points of damage as an Area Attack that also has a chance to hit enemies adjacent to the target; on a miss, the attack deals half damage to the target and no damage to adjacent enemies."
+        ]
+      },
+      "actor": {
+        "name": "YVH Battle Droid",
+        "slugs": [
+          "yvh-battle-droid"
+        ],
+        "kind": "droid",
+        "challengeLevel": 9
+      },
+      "match": {
+        "actorSlugs": [
+          "yvh-battle-droid"
+        ],
+        "rawIncludes": [
+          "blaster cannon attack",
+          "blaster cannon"
+        ]
+      },
+      "weapon": {
+        "printedName": "Blaster Cannon Attack",
+        "rowKind": "ranged",
+        "uuid": "Compendium.foundryvtt-swse.weapons-heavy.Item.weapon-blaster-cannon",
+        "baseSlug": "weapon-blaster-cannon",
+        "basePack": "weapons-heavy",
+        "baseFormula": "3d12",
+        "baseType": "energy",
+        "baseFormulaPolicy": "uuid",
+        "integrated": false,
+        "category": "heavy",
+        "range": null
+      },
+      "printedAttack": {
+        "text": "+10",
+        "bonus": 10,
+        "bonuses": [
+          10
+        ],
+        "source": "printed-statblock",
+        "hydratePolicy": "metadata-only",
+        "notes": [
+          "Printed attack total is preserved only for source/audit display and is not written to item.system.attackBonus."
+        ]
+      },
+      "formula": {
+        "mode": "base-plus-delta",
+        "printed": "3d12+4",
+        "delta": "+4",
+        "deltaSource": "printed-statblock",
+        "typeOverride": null,
+        "notes": []
+      },
+      "delivery": "weapon",
+      "attackShape": "single-target",
+      "scale": "character",
+      "primaryType": "energy",
+      "tags": [
+        "droid",
+        "weapon",
+        "blaster",
+        "area",
+        "statblock"
+      ],
+      "attack": {
+        "isArea": true,
+        "isAutofire": false,
+        "isBurstFire": false,
+        "isSplash": false,
+        "halfDamageOnMiss": true,
+        "noCriticalDouble": false,
+        "coverCanNegateMissDamage": false,
+        "attackRollMinimum": null,
+        "defense": "reflex"
+      },
+      "area": {
+        "shape": null,
+        "radius": null,
+        "size": null,
+        "originMode": "target-square",
+        "targetPolicy": "primary-plus-adjacent"
+      },
+      "components": [
+        {
+          "key": "base",
+          "label": "Blaster Cannon Attack",
+          "formula": "3d12+4",
+          "type": "energy",
+          "tags": [
+            "base",
+            "energy",
+            "blaster"
+          ]
+        }
+      ],
+      "riders": [],
+      "sourceRefs": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "page": null,
+          "note": "YVH Battle Droid Blaster Cannon Attack row."
+        }
+      ],
+      "variants": [],
+      "notes": []
+    },
+    {
+      "slug": "yvh-battle-droid-maximum-firepower",
+      "name": "Maximum Firepower",
+      "confidence": "manualRequired",
+      "reviewRequired": true,
+      "source": {
+        "book": "Scavenger's Guide to Droids",
+        "status": "repo-statblock-text-labelled-sourcebook; page review still required",
+        "page": null,
+        "evidence": [
+          "YVH Battle Droid System Actions list \"Maximum Firepower\" as its Blaster Cannon fired at +10 dealing 4d12+4 points of damage, using the same Area Attack rules as Blaster Cannon Attack."
+        ]
+      },
+      "actor": {
+        "name": "YVH Battle Droid",
+        "slugs": [
+          "yvh-battle-droid"
+        ],
+        "kind": "droid",
+        "challengeLevel": 9
+      },
+      "match": {
+        "actorSlugs": [
+          "yvh-battle-droid"
+        ],
+        "rawIncludes": [
+          "maximum firepower"
+        ]
+      },
+      "weapon": {
+        "printedName": "Maximum Firepower",
+        "rowKind": "ranged",
+        "uuid": "Compendium.foundryvtt-swse.weapons-heavy.Item.weapon-blaster-cannon",
+        "baseSlug": "weapon-blaster-cannon",
+        "basePack": "weapons-heavy",
+        "baseFormula": "3d12",
+        "baseType": "energy",
+        "baseFormulaPolicy": "uuid",
+        "integrated": false,
+        "category": "heavy",
+        "range": null
+      },
+      "printedAttack": {
+        "text": "+10",
+        "bonus": 10,
+        "bonuses": [
+          10
+        ],
+        "source": "printed-statblock",
+        "hydratePolicy": "metadata-only",
+        "notes": [
+          "Printed attack total is preserved only for source/audit display and is not written to item.system.attackBonus."
+        ]
+      },
+      "formula": {
+        "mode": "base-plus-dice",
+        "printed": "4d12+4",
+        "delta": "+1d12+4",
+        "deltaSource": "printed-statblock",
+        "typeOverride": null,
+        "notes": []
+      },
+      "delivery": "weapon",
+      "attackShape": "single-target",
+      "scale": "character",
+      "primaryType": "energy",
+      "tags": [
+        "droid",
+        "weapon",
+        "blaster",
+        "area",
+        "statblock"
+      ],
+      "attack": {
+        "isArea": true,
+        "isAutofire": false,
+        "isBurstFire": false,
+        "isSplash": false,
+        "halfDamageOnMiss": true,
+        "noCriticalDouble": false,
+        "coverCanNegateMissDamage": false,
+        "attackRollMinimum": null,
+        "defense": "reflex"
+      },
+      "area": {
+        "shape": null,
+        "radius": null,
+        "size": null,
+        "originMode": "target-square",
+        "targetPolicy": "primary-plus-adjacent"
+      },
+      "components": [
+        {
+          "key": "base",
+          "label": "Maximum Firepower",
+          "formula": "4d12+4",
+          "type": "energy",
+          "tags": [
+            "base",
+            "energy",
+            "blaster"
+          ]
+        }
+      ],
+      "riders": [],
+      "sourceRefs": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "page": null,
+          "note": "YVH Battle Droid Maximum Firepower row."
+        }
+      ],
+      "variants": [],
+      "notes": []
+    },
+    {
+      "slug": "yvh-battle-droid-vibroblade",
+      "name": "Vibroblade Attack",
+      "confidence": "manualRequired",
+      "reviewRequired": true,
+      "source": {
+        "book": "Scavenger's Guide to Droids",
+        "status": "repo-statblock-text-labelled-sourcebook; page review still required",
+        "page": null,
+        "evidence": [
+          "YVH Battle Droid System Actions list \"Vibroblade Attack\" as a melee attack at +12 dealing 2d6+8 points of damage."
+        ]
+      },
+      "actor": {
+        "name": "YVH Battle Droid",
+        "slugs": [
+          "yvh-battle-droid"
+        ],
+        "kind": "droid",
+        "challengeLevel": 9
+      },
+      "match": {
+        "actorSlugs": [
+          "yvh-battle-droid"
+        ],
+        "rawIncludes": [
+          "vibroblade attack",
+          "vibroblade"
+        ]
+      },
+      "weapon": {
+        "printedName": "Vibroblade Attack",
+        "rowKind": "melee",
+        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-vibroblade",
+        "baseSlug": "weapon-vibroblade",
+        "basePack": "weapons-simple",
+        "baseFormula": "2d6",
+        "baseType": "kinetic",
+        "baseFormulaPolicy": "uuid",
+        "integrated": false,
+        "category": "simple",
+        "range": null
+      },
+      "printedAttack": {
+        "text": "+12",
+        "bonus": 12,
+        "bonuses": [
+          12
+        ],
+        "source": "printed-statblock",
+        "hydratePolicy": "metadata-only",
+        "notes": [
+          "Printed attack total is preserved only for source/audit display and is not written to item.system.attackBonus."
+        ]
+      },
+      "formula": {
+        "mode": "base-plus-delta",
+        "printed": "2d6+8",
+        "delta": "+8",
+        "deltaSource": "printed-statblock",
+        "typeOverride": null,
+        "notes": []
+      },
+      "delivery": "weapon",
+      "attackShape": "single-target",
+      "scale": "character",
+      "primaryType": "kinetic",
+      "tags": [
+        "droid",
+        "weapon",
+        "vibroblade",
+        "statblock"
+      ],
+      "attack": {
+        "isArea": false,
+        "isAutofire": false,
+        "isBurstFire": false,
+        "isSplash": false,
+        "halfDamageOnMiss": false,
+        "noCriticalDouble": false,
+        "coverCanNegateMissDamage": false,
+        "attackRollMinimum": null,
+        "defense": "reflex"
+      },
+      "components": [
+        {
+          "key": "base",
+          "label": "Vibroblade Attack",
+          "formula": "2d6+8",
+          "type": "kinetic",
+          "tags": [
+            "base",
+            "kinetic",
+            "vibroblade"
+          ]
+        }
+      ],
+      "riders": [],
+      "sourceRefs": [
+        {
+          "book": "Scavenger's Guide to Droids",
+          "page": null,
+          "note": "YVH Battle Droid Vibroblade Attack row."
+        }
+      ],
+      "variants": [],
+      "notes": [
+        "YVH Battle Droid also has non-damage \"Yuuzhan Vong Scan\" and \"Yuuzhan Vong Taunt\" System Actions; both are intentionally omitted from this batch."
+      ]
+    }
+  ]
+}
