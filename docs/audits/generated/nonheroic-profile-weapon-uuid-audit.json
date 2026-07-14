@@ -1,0 +1,366 @@
+{
+  "summary": {
+    "generatedAt": "2026-07-14T11:43:00.058Z",
+    "mode": "report-only",
+    "packItemCount": 372,
+    "profileFileCount": 4,
+    "recordCount": 28,
+    "counts": {
+      "safe-match": 0,
+      "safe-match-formula-unclear": 2,
+      "already-valid": 13,
+      "ambiguous": 0,
+      "missing-match": 4,
+      "stale-uuid": 0,
+      "formula-mismatch": 0,
+      "skipped-custom": 9,
+      "inconsistent-custom-row": 0
+    },
+    "writtenFiles": 0,
+    "writtenRecords": 0
+  },
+  "results": [
+    {
+      "file": "data/nonheroic/nonheroic-weapon-damage-profiles.nh1-droids.json",
+      "slug": "11-17-series-mining-droid-heavy-plasma-jet",
+      "printedName": "Heavy Plasma Jet",
+      "rowKind": "ranged",
+      "status": "missing-match",
+      "detail": "no compendium weapon item found with normalized name \"heavy plasma jet\".",
+      "candidates": [],
+      "proposedWeaponPatch": null,
+      "proposedFormulaPatch": null
+    },
+    {
+      "file": "data/nonheroic/nonheroic-weapon-damage-profiles.nh1-droids.json",
+      "slug": "kmi-mining-droid-unarmed",
+      "printedName": "Unarmed",
+      "rowKind": "melee",
+      "status": "skipped-custom",
+      "detail": "delivery \"unarmed\" marks this as intentionally left unmatched.",
+      "candidates": [],
+      "proposedWeaponPatch": null,
+      "proposedFormulaPatch": null
+    },
+    {
+      "file": "data/nonheroic/nonheroic-weapon-damage-profiles.nh1-droids.json",
+      "slug": "kmi-mining-droid-laser-cutter",
+      "printedName": "Laser Cutter",
+      "rowKind": "ranged",
+      "status": "missing-match",
+      "detail": "no compendium weapon item found with normalized name \"laser cutter\".",
+      "candidates": [],
+      "proposedWeaponPatch": null,
+      "proposedFormulaPatch": null
+    },
+    {
+      "file": "data/nonheroic/nonheroic-weapon-damage-profiles.nh1-droids.json",
+      "slug": "viper-series-probe-droid-pacify-hostile",
+      "printedName": "Pacify Hostile",
+      "rowKind": "ranged",
+      "status": "missing-match",
+      "detail": "no compendium weapon item found with normalized name \"pacify hostile\".",
+      "candidates": [],
+      "proposedWeaponPatch": null,
+      "proposedFormulaPatch": null
+    },
+    {
+      "file": "data/nonheroic/nonheroic-weapon-damage-profiles.nh1-droids.json",
+      "slug": "viper-series-probe-droid-self-destruct",
+      "printedName": "Self-Destruct",
+      "rowKind": "special",
+      "status": "skipped-custom",
+      "detail": "rowKind \"special\" marks this as intentionally left unmatched.",
+      "candidates": [],
+      "proposedWeaponPatch": null,
+      "proposedFormulaPatch": null
+    },
+    {
+      "file": "data/nonheroic/nonheroic-weapon-damage-profiles.nh1-droids.json",
+      "slug": "t4-turret-droid-blaster-cannon",
+      "printedName": "Blaster Cannon",
+      "rowKind": "ranged",
+      "status": "already-valid",
+      "detail": "uuid resolves to \"Blaster Cannon\" (weapons-heavy) with matching base metadata.",
+      "candidates": [],
+      "proposedWeaponPatch": null,
+      "proposedFormulaPatch": null
+    },
+    {
+      "file": "data/nonheroic/nonheroic-weapon-damage-profiles.nh1-droids.json",
+      "slug": "t4-turret-droid-grenade-launcher",
+      "printedName": "Grenade Launcher",
+      "rowKind": "ranged",
+      "status": "safe-match-formula-unclear",
+      "detail": "exact name match to \"Grenade Launcher\" (weapons-heavy); printed formula \"5d6\" vs base \"Special\" is not a simple/obvious delta and formula.mode is left untouched.",
+      "candidates": [
+        {
+          "id": "weapon-grenade-launcher",
+          "name": "Grenade Launcher",
+          "normalizedName": "grenade launcher",
+          "pack": "weapons-heavy",
+          "uuid": "Compendium.foundryvtt-swse.weapons-heavy.Item.weapon-grenade-launcher",
+          "damage": "Special",
+          "damageType": "energy"
+        }
+      ],
+      "proposedWeaponPatch": {
+        "uuid": "Compendium.foundryvtt-swse.weapons-heavy.Item.weapon-grenade-launcher",
+        "baseSlug": "weapon-grenade-launcher",
+        "basePack": "weapons-heavy",
+        "baseFormula": "Special",
+        "baseType": "energy",
+        "baseFormulaPolicy": "uuid"
+      },
+      "proposedFormulaPatch": null
+    },
+    {
+      "file": "data/nonheroic/nonheroic-weapon-damage-profiles.nh1-droids.json",
+      "slug": "t4-turret-droid-cutting-laser",
+      "printedName": "Cutting Laser",
+      "rowKind": "special",
+      "status": "skipped-custom",
+      "detail": "rowKind \"special\" marks this as intentionally left unmatched.",
+      "candidates": [],
+      "proposedWeaponPatch": null,
+      "proposedFormulaPatch": null
+    },
+    {
+      "file": "data/nonheroic/nonheroic-weapon-damage-profiles.nh3-galaxy-of-intrigue.json",
+      "slug": "deluge-facility-technician-unarmed",
+      "printedName": "Unarmed",
+      "rowKind": "melee",
+      "status": "skipped-custom",
+      "detail": "delivery \"unarmed\" marks this as intentionally left unmatched.",
+      "candidates": [],
+      "proposedWeaponPatch": null,
+      "proposedFormulaPatch": null
+    },
+    {
+      "file": "data/nonheroic/nonheroic-weapon-damage-profiles.nh3-galaxy-of-intrigue.json",
+      "slug": "deluge-facility-guard-stun-baton",
+      "printedName": "Stun Baton",
+      "rowKind": "melee",
+      "status": "already-valid",
+      "detail": "uuid resolves to \"Stun Baton\" (weapons-simple) with matching base metadata.",
+      "candidates": [],
+      "proposedWeaponPatch": null,
+      "proposedFormulaPatch": null
+    },
+    {
+      "file": "data/nonheroic/nonheroic-weapon-damage-profiles.nh3-galaxy-of-intrigue.json",
+      "slug": "deluge-facility-guard-blaster-pistol",
+      "printedName": "Blaster Pistol",
+      "rowKind": "ranged",
+      "status": "already-valid",
+      "detail": "uuid resolves to \"Blaster Pistol\" (weapons-pistols) with matching base metadata.",
+      "candidates": [],
+      "proposedWeaponPatch": null,
+      "proposedFormulaPatch": null
+    },
+    {
+      "file": "data/nonheroic/nonheroic-weapon-damage-profiles.nh3-galaxy-of-intrigue.json",
+      "slug": "deluge-facility-guard-blaster-rifle",
+      "printedName": "Blaster Rifle",
+      "rowKind": "ranged",
+      "status": "safe-match-formula-unclear",
+      "detail": "exact name match to \"Blaster Rifle\" (weapons-rifles); printed formula \"3d8\" vs base \"3d10\" is not a simple/obvious delta and formula.mode is left untouched.",
+      "candidates": [
+        {
+          "id": "weapon-blaster-rifle",
+          "name": "Blaster Rifle",
+          "normalizedName": "blaster rifle",
+          "pack": "weapons-rifles",
+          "uuid": "Compendium.foundryvtt-swse.weapons-rifles.Item.weapon-blaster-rifle",
+          "damage": "3d10",
+          "damageType": "energy"
+        }
+      ],
+      "proposedWeaponPatch": {
+        "uuid": "Compendium.foundryvtt-swse.weapons-rifles.Item.weapon-blaster-rifle",
+        "baseSlug": "weapon-blaster-rifle",
+        "basePack": "weapons-rifles",
+        "baseFormula": "3d10",
+        "baseType": "energy",
+        "baseFormulaPolicy": "uuid"
+      },
+      "proposedFormulaPatch": null
+    },
+    {
+      "file": "data/nonheroic/nonheroic-weapon-damage-profiles.nh3-galaxy-of-intrigue.json",
+      "slug": "corporate-sector-mine-guard-stun-baton",
+      "printedName": "Stun Baton",
+      "rowKind": "melee",
+      "status": "already-valid",
+      "detail": "uuid resolves to \"Stun Baton\" (weapons-simple) with matching base metadata.",
+      "candidates": [],
+      "proposedWeaponPatch": null,
+      "proposedFormulaPatch": null
+    },
+    {
+      "file": "data/nonheroic/nonheroic-weapon-damage-profiles.nh3-galaxy-of-intrigue.json",
+      "slug": "corporate-sector-mine-guard-blaster-carbine",
+      "printedName": "Blaster Carbine",
+      "rowKind": "ranged",
+      "status": "already-valid",
+      "detail": "uuid resolves to \"Blaster Carbine\" (weapons-rifles) with matching base metadata.",
+      "candidates": [],
+      "proposedWeaponPatch": null,
+      "proposedFormulaPatch": null
+    },
+    {
+      "file": "data/nonheroic/nonheroic-weapon-damage-profiles.nh3-galaxy-of-intrigue.json",
+      "slug": "corporate-sector-miner-club",
+      "printedName": "Club",
+      "rowKind": "melee",
+      "status": "missing-match",
+      "detail": "no compendium weapon item found with normalized name \"club\".",
+      "candidates": [],
+      "proposedWeaponPatch": null,
+      "proposedFormulaPatch": null
+    },
+    {
+      "file": "data/nonheroic/nonheroic-weapon-damage-profiles.nh4-unknown-regions-beasts.json",
+      "slug": "reyko-gore",
+      "printedName": "Gore",
+      "rowKind": "natural",
+      "status": "skipped-custom",
+      "detail": "rowKind \"natural\" marks this as intentionally left unmatched.",
+      "candidates": [],
+      "proposedWeaponPatch": null,
+      "proposedFormulaPatch": null
+    },
+    {
+      "file": "data/nonheroic/nonheroic-weapon-damage-profiles.nh4-unknown-regions-beasts.json",
+      "slug": "vindinax-claw",
+      "printedName": "Claw",
+      "rowKind": "natural",
+      "status": "skipped-custom",
+      "detail": "rowKind \"natural\" marks this as intentionally left unmatched.",
+      "candidates": [],
+      "proposedWeaponPatch": null,
+      "proposedFormulaPatch": null
+    },
+    {
+      "file": "data/nonheroic/nonheroic-weapon-damage-profiles.nh4-unknown-regions-beasts.json",
+      "slug": "vindinax-bite",
+      "printedName": "Bite",
+      "rowKind": "natural",
+      "status": "skipped-custom",
+      "detail": "rowKind \"natural\" marks this as intentionally left unmatched.",
+      "candidates": [],
+      "proposedWeaponPatch": null,
+      "proposedFormulaPatch": null
+    },
+    {
+      "file": "data/nonheroic/nonheroic-weapon-damage-profiles.nh4-unknown-regions.json",
+      "slug": "wanderer-scout-surveyor-droid-claw",
+      "printedName": "Claw",
+      "rowKind": "natural",
+      "status": "skipped-custom",
+      "detail": "rowKind \"natural\" marks this as intentionally left unmatched.",
+      "candidates": [],
+      "proposedWeaponPatch": null,
+      "proposedFormulaPatch": null
+    },
+    {
+      "file": "data/nonheroic/nonheroic-weapon-damage-profiles.nh4-unknown-regions.json",
+      "slug": "wanderer-scout-surveyor-droid-stun-blaster",
+      "printedName": "Stun Blaster",
+      "rowKind": "ranged",
+      "status": "already-valid",
+      "detail": "uuid resolves to \"Blaster Pistol\" (weapons-pistols) with matching base metadata.",
+      "candidates": [],
+      "proposedWeaponPatch": null,
+      "proposedFormulaPatch": null
+    },
+    {
+      "file": "data/nonheroic/nonheroic-weapon-damage-profiles.nh4-unknown-regions.json",
+      "slug": "vagaari-infiltrator-stun-baton",
+      "printedName": "Stun Baton",
+      "rowKind": "melee",
+      "status": "already-valid",
+      "detail": "uuid resolves to \"Stun Baton\" (weapons-simple) with matching base metadata.",
+      "candidates": [],
+      "proposedWeaponPatch": null,
+      "proposedFormulaPatch": null
+    },
+    {
+      "file": "data/nonheroic/nonheroic-weapon-damage-profiles.nh4-unknown-regions.json",
+      "slug": "vagaari-infiltrator-blaster-pistol",
+      "printedName": "Blaster Pistol",
+      "rowKind": "ranged",
+      "status": "already-valid",
+      "detail": "uuid resolves to \"Blaster Pistol\" (weapons-pistols) with matching base metadata.",
+      "candidates": [],
+      "proposedWeaponPatch": null,
+      "proposedFormulaPatch": null
+    },
+    {
+      "file": "data/nonheroic/nonheroic-weapon-damage-profiles.nh4-unknown-regions.json",
+      "slug": "vagaari-infiltrator-hold-out-blaster-pistol",
+      "printedName": "Hold-Out Blaster Pistol",
+      "rowKind": "ranged",
+      "status": "already-valid",
+      "detail": "uuid resolves to \"Hold-Out Blaster Pistol\" (weapons-pistols) with matching base metadata.",
+      "candidates": [],
+      "proposedWeaponPatch": null,
+      "proposedFormulaPatch": null
+    },
+    {
+      "file": "data/nonheroic/nonheroic-weapon-damage-profiles.nh4-unknown-regions.json",
+      "slug": "sandos-boys-vibroblade",
+      "printedName": "Vibroblade",
+      "rowKind": "melee",
+      "status": "already-valid",
+      "detail": "uuid resolves to \"Vibroblade\" (weapons-simple) with matching base metadata.",
+      "candidates": [],
+      "proposedWeaponPatch": null,
+      "proposedFormulaPatch": null
+    },
+    {
+      "file": "data/nonheroic/nonheroic-weapon-damage-profiles.nh4-unknown-regions.json",
+      "slug": "sandos-boys-blaster-pistol",
+      "printedName": "Blaster Pistol",
+      "rowKind": "ranged",
+      "status": "already-valid",
+      "detail": "uuid resolves to \"Blaster Pistol\" (weapons-pistols) with matching base metadata.",
+      "candidates": [],
+      "proposedWeaponPatch": null,
+      "proposedFormulaPatch": null
+    },
+    {
+      "file": "data/nonheroic/nonheroic-weapon-damage-profiles.nh4-unknown-regions.json",
+      "slug": "sandos-hired-blasters-unarmed",
+      "printedName": "Unarmed",
+      "rowKind": "unarmed",
+      "status": "skipped-custom",
+      "detail": "rowKind \"unarmed\" marks this as intentionally left unmatched.",
+      "candidates": [],
+      "proposedWeaponPatch": null,
+      "proposedFormulaPatch": null
+    },
+    {
+      "file": "data/nonheroic/nonheroic-weapon-damage-profiles.nh4-unknown-regions.json",
+      "slug": "sandos-hired-blasters-blaster-pistol",
+      "printedName": "Blaster Pistol",
+      "rowKind": "ranged",
+      "status": "already-valid",
+      "detail": "uuid resolves to \"Blaster Pistol\" (weapons-pistols) with matching base metadata.",
+      "candidates": [],
+      "proposedWeaponPatch": null,
+      "proposedFormulaPatch": null
+    },
+    {
+      "file": "data/nonheroic/nonheroic-weapon-damage-profiles.nh4-unknown-regions.json",
+      "slug": "sandos-hired-blasters-blaster-carbine",
+      "printedName": "Blaster Carbine",
+      "rowKind": "ranged",
+      "status": "already-valid",
+      "detail": "uuid resolves to \"Blaster Carbine\" (weapons-rifles) with matching base metadata.",
+      "candidates": [],
+      "proposedWeaponPatch": null,
+      "proposedFormulaPatch": null
+    }
+  ]
+}
