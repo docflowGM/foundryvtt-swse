@@ -214,14 +214,55 @@
   user-select: none !important;
 }
 
-.progression-shell.is-summary-rail-collapsed [data-region="summary-panel"],
-.progression-shell.is-summary-rail-collapsed .prog-rail-resizer--summary {
+.progression-shell.is-summary-rail-collapsed [data-region="summary-panel"] {
   display: none !important;
 }
 
-.progression-shell.is-details-rail-collapsed [data-region="details-panel"],
-.progression-shell.is-details-rail-collapsed .prog-rail-resizer--details {
+.progression-shell.is-details-rail-collapsed [data-region="details-panel"] {
   display: none !important;
+}
+
+.progression-shell.is-summary-rail-collapsed .prog-rail-resizer--summary,
+.progression-shell.is-details-rail-collapsed .prog-rail-resizer--details {
+  display: block !important;
+  flex: 0 0 18px !important;
+  min-width: 18px !important;
+  max-width: 18px !important;
+  opacity: 1 !important;
+}
+
+.progression-shell.is-summary-rail-collapsed .prog-rail-resizer--summary {
+  cursor: e-resize !important;
+}
+
+.progression-shell.is-details-rail-collapsed .prog-rail-resizer--details {
+  cursor: w-resize !important;
+}
+
+.progression-shell.is-summary-rail-collapsed .prog-rail-resizer--summary::before,
+.progression-shell.is-details-rail-collapsed .prog-rail-resizer--details::before {
+  inset: 6px 2px;
+  border-left-color: rgba(120, 255, 255, 0.72);
+  background: rgba(3, 16, 28, 0.72);
+  box-shadow: 0 0 14px rgba(80, 220, 255, 0.42), inset 0 0 10px rgba(80, 220, 255, 0.12);
+}
+
+.progression-shell.is-summary-rail-collapsed .prog-rail-resizer--summary::after,
+.progression-shell.is-details-rail-collapsed .prog-rail-resizer--details::after {
+  width: auto;
+  height: auto;
+  padding: 4px 1px;
+  border: 0;
+  background: transparent;
+  color: rgba(180, 245, 255, 0.95);
+  content: 'RESTORE';
+  font-family: var(--prog-font-mono, monospace);
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  line-height: 1;
+  text-shadow: 0 0 8px rgba(80, 220, 255, 0.65);
+  writing-mode: vertical-rl;
 }
 
 /* Collapse low-value rails sooner on narrow sheets so the workspace stays useful. */
