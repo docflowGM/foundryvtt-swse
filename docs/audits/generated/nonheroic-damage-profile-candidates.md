@@ -1,6 +1,6 @@
 # Nonheroic Damage Profile Bulk Candidate Report
 
-Generated: 2026-07-14T14:18:55.893Z
+Generated: 2026-07-15T21:26:04.928Z
 Mode: write-candidates
 
 This report extracts candidate weapon-damage profile rows only from clean,
@@ -14,131 +14,146 @@ to canonical profile files, actor packs, compendium packs, or runtime code.
 ## Summary
 
 - Weapon compendium items scanned: 372
-- Existing profile records (already-profiled index): 57
+- Existing profile records (already-profiled index): 644
 - Source files scanned: packs/nonheroic.db, packs/npc.db, packs/beasts.db
 - Candidate rows extracted: 4352
 - Candidate files written: data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json, data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json
 
 > All candidate rows are generated from actor-pack raw statblock fields, which carry no book/page attribution in this repository (matches the finding already documented in the PR #903 coverage audit and every prior NH batch). source.book is set to "Unknown / missing source" and confidence is manualRequired for every candidate rather than gating generation on a source-missing bucket that would otherwise swallow ~100% of rows.
 
-- already-profiled: 10
-- safe-ordinary-weapon-candidate: 154
-- safe-ordinary-weapon-with-delta: 1402
-- ordinary-weapon-special-mode: 292
-- no-compendium-match: 514
+- already-profiled: 1118
+- safe-ordinary-weapon-candidate: 26
+- safe-ordinary-weapon-with-delta: 591
+- ordinary-weapon-special-mode: 198
+- no-compendium-match: 509
 - ambiguous-compendium-match: 0
 - natural-or-unarmed: 1138
-- area-autofire-grenade-special: 549
+- area-autofire-grenade-special: 480
 - rider-or-condition: 9
-- formula-unclear: 284
+- formula-unclear: 283
 
-## Already Profiled (matches an existing NH profile record) (10)
+## Already Profiled (matches an existing NH profile record) (1118)
 
-- `packs/nonheroic.db` :: Vagaari Infiltrator — "Stun Baton +9 (2d6+4 ( Stun ))" — matches existing profile record "vagaari-infiltrator-stun-baton" in data/nonheroic/nonheroic-weapon-damage-profiles.nh4-unknown-regions.json.
-- `packs/nonheroic.db` :: Vagaari Infiltrator — "Blaster Pistol +7 (3d6+1)" — matches existing profile record "vagaari-infiltrator-blaster-pistol" in data/nonheroic/nonheroic-weapon-damage-profiles.nh4-unknown-regions.json.
-- `packs/nonheroic.db` :: Vagaari Infiltrator — "Hold-Out Blaster Pistol +7 (3d4+1)" — matches existing profile record "vagaari-infiltrator-blaster-pistol" in data/nonheroic/nonheroic-weapon-damage-profiles.nh4-unknown-regions.json.
-- `packs/npc.db` :: Vagaari Infiltrator — "Stun Baton +9 (2d6+4 ( Stun ))" — matches existing profile record "vagaari-infiltrator-stun-baton" in data/nonheroic/nonheroic-weapon-damage-profiles.nh4-unknown-regions.json.
-- `packs/npc.db` :: Vagaari Infiltrator — "Blaster Pistol +7 (3d6+1)" — matches existing profile record "vagaari-infiltrator-blaster-pistol" in data/nonheroic/nonheroic-weapon-damage-profiles.nh4-unknown-regions.json.
-- `packs/npc.db` :: Vagaari Infiltrator — "Hold-Out Blaster Pistol +7 (3d4+1)" — matches existing profile record "vagaari-infiltrator-blaster-pistol" in data/nonheroic/nonheroic-weapon-damage-profiles.nh4-unknown-regions.json.
-- `packs/beasts.db` :: Vindinax — "Bite +7* (1d6+8)" — matches existing profile record "vindinax-bite" in data/nonheroic/nonheroic-weapon-damage-profiles.nh4-unknown-regions-beasts.json.
-- `packs/beasts.db` :: Vindinax — "Claws (2) +7* (1d4+8)" — matches existing profile record "vindinax-claw" in data/nonheroic/nonheroic-weapon-damage-profiles.nh4-unknown-regions-beasts.json.
-- `packs/beasts.db` :: Reyko — "Gore +11 (1d8+7)" — matches existing profile record "reyko-gore" in data/nonheroic/nonheroic-weapon-damage-profiles.nh4-unknown-regions-beasts.json.
-- `packs/beasts.db` :: Reyko — "Gore +13 ((1d8+10)x2) with Battering Rush" — matches existing profile record "reyko-gore" in data/nonheroic/nonheroic-weapon-damage-profiles.nh4-unknown-regions-beasts.json.
+- `packs/nonheroic.db` :: Theelin Bodyguard — "Vibroblade +5 (2d6+3)" — matches existing profile record "theelin-bodyguard-vibroblade" in data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-2.json.
+- `packs/nonheroic.db` :: Goon — "Heavy Blaster Pistol +5 (3d8)" — matches existing profile record "goon-heavy-blaster-pistol" in data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-1.json.
+- `packs/nonheroic.db` :: Krath Commander — "Blaster Pistol +7 (3d6+3)" — matches existing profile record "krath-commander-blaster-pistol" in data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-2.json.
+- `packs/nonheroic.db` :: Notorious Outlaw — "Blaster Pistol +9 (3d6+4)" — matches existing profile record "notorious-outlaw-blaster-pistol" in data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-2.json.
+- `packs/nonheroic.db` :: Notorious Outlaw — "Blaster Pistol +9 (4d6+4) with Trigger Work" — matches existing profile record "notorious-outlaw-blaster-pistol" in data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-2.json.
+- `packs/nonheroic.db` :: Imperial Detention Guard — "Blaster Pistol +5 (3d6+2)" — matches existing profile record "imperial-detention-guard-blaster-pistol" in data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-2.json.
+- `packs/nonheroic.db` :: Imperial Informant — "Hold-Out Blaster Pistol +1 (3d4)" — matches existing profile record "imperial-informant-hold-out-blaster-pistol" in data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-1.json.
+- `packs/nonheroic.db` :: Soldier Commander — "Blaster Pistol +10 (3d6+2)" — matches existing profile record "soldier-commander-blaster-pistol" in data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-3.json.
+- `packs/nonheroic.db` :: Star Destroyer Officer — "Blaster Pistol +5 (3d6+2)" — matches existing profile record "star-destroyer-officer-blaster-pistol" in data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-3.json.
+- `packs/nonheroic.db` :: Clone Shadow Trooper — "Blaster Carbine +10 (3d8+2)" — matches existing profile record "clone-shadow-trooper-blaster-carbine" in data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-2.json.
+- `packs/nonheroic.db` :: Clone Shadow Trooper — "Blaster Carbine +11 (4d8+2) with Deadeye" — matches existing profile record "clone-shadow-trooper-blaster-carbine" in data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-2.json.
+- `packs/nonheroic.db` :: Con Artist — "Hold-Out Blaster Pistol +4 (3d4+1)" — matches existing profile record "con-artist-hold-out-blaster-pistol" in data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-2.json.
+- `packs/nonheroic.db` :: Medic — "Blaster Carbine +5 (3d8)" — matches existing profile record "medic-blaster-carbine" in data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-1.json.
+- `packs/nonheroic.db` :: Dug Fringer — "Blaster Pistol +4 (3d6+1)" — matches existing profile record "dug-fringer-blaster-pistol" in data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-3.json.
+- `packs/nonheroic.db` :: Dug Fringer — "Blaster Pistol +2 (4d6+1) with Rapid Shot" — matches existing profile record "dug-fringer-blaster-pistol" in data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-3.json.
+- `packs/nonheroic.db` :: Black Sun Lieutenant — "Heavy Blaster Pistol +8 (3d8+3)" — matches existing profile record "black-sun-lieutenant-heavy-blaster-pistol" in data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-2.json.
+- `packs/nonheroic.db` :: Black Sun Lieutenant — "Heavy Blaster Pistol +8 (4d8+3) with Deadeye" — matches existing profile record "black-sun-lieutenant-heavy-blaster-pistol" in data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-2.json.
+- `packs/nonheroic.db` :: Gambler — "Hold-Out Blaster Pistol +5 (3d4+2)" — matches existing profile record "gambler-hold-out-blaster-pistol" in data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-3.json.
+- `packs/nonheroic.db` :: Elite Death Star Trooper — "Blaster Pistol +10 (3d6+4)" — matches existing profile record "elite-death-star-trooper-blaster-pistol" in data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-3.json.
+- `packs/nonheroic.db` :: Trandoshan Slaver — "Hold-Out Blaster Pistol +7 (3d4+2)" — matches existing profile record "trandoshan-slaver-hold-out-blaster-pistol" in data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-3.json.
+- `packs/nonheroic.db` :: Imperial Royal Guard — "Heavy Blaster Pistol +12 (3d8+4)" — matches existing profile record "imperial-royal-guard-heavy-blaster-pistol" in data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-2.json.
+- `packs/nonheroic.db` :: Imperial Sovereign Protector — "Heavy Blaster Pistol +18 (3d8+6)" — matches existing profile record "imperial-sovereign-protector-heavy-blaster-pistol" in data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-3.json.
+- `packs/nonheroic.db` :: Sith Mage — "Hold-Out Blaster Pistol +6 (3d4+4)" — matches existing profile record "sith-mage-hold-out-blaster-pistol" in data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-3.json.
+- `packs/nonheroic.db` :: Bothan Spy — "Vibrodagger +1 (2d4+5)" — matches existing profile record "bothan-spy-vibrodagger" in data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-2.json.
+- `packs/nonheroic.db` :: Core Fleet Covert Agent — "Heavy Blaster Pistol +4 (3d8+2)" — matches existing profile record "core-fleet-covert-agent-heavy-blaster-pistol" in data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-3.json.
+- `packs/nonheroic.db` :: SpecForce Heavy Weapons Specialist — "Heavy Blaster Pistol +9 (3d8+1)" — matches existing profile record "specforce-heavy-weapons-specialist-heavy-blaster-pistol" in data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-3.json.
+- `packs/nonheroic.db` :: Red Fury Pirate — "Vibroblade +10 (2d6+4)" — matches existing profile record "red-fury-pirate-vibroblade" in data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-2.json.
+- `packs/nonheroic.db` :: Clone Fighter Pilot — "Blaster Pistol +8 (3d6+2)" — matches existing profile record "clone-fighter-pilot-blaster-pistol" in data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-3.json.
+- `packs/nonheroic.db` :: Clone Fighter Pilot — "Blaster Pistol +6 (4d6+2) with Rapid Shot" — matches existing profile record "clone-fighter-pilot-blaster-pistol" in data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-3.json.
+- `packs/nonheroic.db` :: Rodian Thief — "Heavy Blaster Pistol +10 (3d8+4)" — matches existing profile record "rodian-thief-heavy-blaster-pistol" in data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-3.json.
+- `packs/nonheroic.db` :: Rodian Thief — "Heavy Blaster Pistol +10 (4d8+4) with Deadeye" — matches existing profile record "rodian-thief-heavy-blaster-pistol" in data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-3.json.
+- `packs/nonheroic.db` :: Rodian Thief — "Heavy Blaster Pistol +8 (4d8+4) with Rapid Shot" — matches existing profile record "rodian-thief-heavy-blaster-pistol" in data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-3.json.
+- `packs/nonheroic.db` :: SpecForce Elite Soldier — "Blaster Pistol +15 (3d6+6)" — matches existing profile record "specforce-elite-soldier-blaster-pistol" in data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-3.json.
+- `packs/nonheroic.db` :: Detention Block Guard — "Blaster Pistol +7 (3d6+3)" — matches existing profile record "detention-block-guard-blaster-pistol" in data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-3.json.
+- `packs/nonheroic.db` :: Chiss Mercenary — "Blaster Pistol +8 (3d6+1)" — matches existing profile record "chiss-mercenary-blaster-pistol" in data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-4.json.
+- `packs/nonheroic.db` :: Chiss Mercenary — "Blaster Pistol +6 (4d6+1) with Rapid Shot" — matches existing profile record "chiss-mercenary-blaster-pistol" in data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-4.json.
+- `packs/nonheroic.db` :: SpecForce Officer — "Vibroblade +8 (2d6+5)" — matches existing profile record "specforce-officer-vibroblade" in data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-3.json.
+- `packs/nonheroic.db` :: ISB Tactical Agent — "Blaster Carbine +12 (3d8+4)" — matches existing profile record "isb-tactical-agent-blaster-carbine" in data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-3.json.
+- `packs/nonheroic.db` :: ISB Tactical Agent — "Blaster Carbine +7 (5d8+4) with Burst Fire" — matches existing profile record "isb-tactical-agent-blaster-carbine" in data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-3.json.
+- `packs/nonheroic.db` :: Scout Trooper — "Blaster Pistol +5 (3d6)" — matches existing profile record "scout-trooper-blaster-pistol" in data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-1.json.
+- _(1078 more rows in this bucket omitted from the Markdown sample; see the JSON report for the full list.)_
 
-## Safe Ordinary Weapon Candidates (exact compendium match, printed formula = base) (154)
+## Safe Ordinary Weapon Candidates (exact compendium match, printed formula = base) (26)
 
-- `packs/nonheroic.db` :: Goon — "Heavy Blaster Pistol +5 (3d8)" — exact match to "Heavy Blaster Pistol" (weapons-pistols); printed formula equals compendium base.
-- `packs/nonheroic.db` :: Imperial Informant — "Hold-Out Blaster Pistol +1 (3d4)" — exact match to "Hold-Out Blaster Pistol" (weapons-pistols); printed formula equals compendium base.
-- `packs/nonheroic.db` :: Medic — "Blaster Carbine +5 (3d8)" — exact match to "Blaster Carbine" (weapons-rifles); printed formula equals compendium base.
 - `packs/nonheroic.db` :: Medic — "Blaster Pistol +5 (3d6)" — exact match to "Blaster Pistol" (weapons-pistols); printed formula equals compendium base.
-- `packs/nonheroic.db` :: Scout Trooper — "Blaster Pistol +5 (3d6)" — exact match to "Blaster Pistol" (weapons-pistols); printed formula equals compendium base.
-- `packs/nonheroic.db` :: Ugnaught Worker — "Blaster Pistol +4 (3d6)" — exact match to "Blaster Pistol" (weapons-pistols); printed formula equals compendium base.
-- `packs/nonheroic.db` :: Imperial Army Trooper — "Blaster Pistol +3 (3d6)" — exact match to "Blaster Pistol" (weapons-pistols); printed formula equals compendium base.
-- `packs/nonheroic.db` :: Peace Brigade Thug — "Vibrodagger +2 (2d4)" — exact match to "Vibrodagger" (weapons-simple); printed formula equals compendium base.
 - `packs/nonheroic.db` :: Peace Brigade Thug — "Blaster Pistol +2 (3d6)" — exact match to "Blaster Pistol" (weapons-pistols); printed formula equals compendium base.
-- `packs/nonheroic.db` :: Clone Naval Officer — "Blaster Pistol +6 (3d6)" — exact match to "Blaster Pistol" (weapons-pistols); printed formula equals compendium base.
-- `packs/nonheroic.db` :: Elite Republic Trooper — "Blaster Pistol +8 (3d6)" — exact match to "Blaster Pistol" (weapons-pistols); printed formula equals compendium base.
-- `packs/nonheroic.db` :: Elite Wing Security Guard — "Blaster Pistol +5 (3d6)" — exact match to "Blaster Pistol" (weapons-pistols); printed formula equals compendium base.
-- `packs/nonheroic.db` :: CSA Security Guard — "Blaster Carbine +6 (3d8)" — exact match to "Blaster Carbine" (weapons-rifles); printed formula equals compendium base.
 - `packs/nonheroic.db` :: CSA Security Guard — "Blaster Pistol +6 (3d6)" — exact match to "Blaster Pistol" (weapons-pistols); printed formula equals compendium base.
-- `packs/nonheroic.db` :: CompForce Trooper — "Heavy Blaster Pistol +6 (3d8)" — exact match to "Heavy Blaster Pistol" (weapons-pistols); printed formula equals compendium base.
-- `packs/nonheroic.db` :: Imperial Navy Trooper — "Blaster Pistol +3 (3d6)" — exact match to "Blaster Pistol" (weapons-pistols); printed formula equals compendium base.
-- `packs/nonheroic.db` :: Black Sun Thug — "Heavy Blaster Pistol +6 (3d8)" — exact match to "Heavy Blaster Pistol" (weapons-pistols); printed formula equals compendium base.
-- `packs/nonheroic.db` :: Ugnaught Rigger — "Heavy Blaster Pistol +4 (3d8)" — exact match to "Heavy Blaster Pistol" (weapons-pistols); printed formula equals compendium base.
-- `packs/nonheroic.db` :: Mon Calamari Resistance Member — "Blaster Pistol +4 (3d6)" — exact match to "Blaster Pistol" (weapons-pistols); printed formula equals compendium base.
-- `packs/nonheroic.db` :: Bureaucrat — "Blaster Pistol +2 (3d6)" — exact match to "Blaster Pistol" (weapons-pistols); printed formula equals compendium base.
 - `packs/nonheroic.db` :: Espo Trooper — "ESPO 500 Riot Gun +4 (3d8)" — exact match to "ESPO 500 Riot Gun" (weapons-rifles); printed formula equals compendium base.
-- `packs/nonheroic.db` :: Krath Warrior — "Heavy Blaster Pistol +4 (3d8)" — exact match to "Heavy Blaster Pistol" (weapons-pistols); printed formula equals compendium base.
-- `packs/nonheroic.db` :: Swoop Gang Member — "Vibrodagger +3 (2d4)" — exact match to "Vibrodagger" (weapons-simple); printed formula equals compendium base.
 - `packs/nonheroic.db` :: Swoop Gang Member — "Blaster Pistol +4 (3d6)" — exact match to "Blaster Pistol" (weapons-pistols); printed formula equals compendium base.
-- `packs/nonheroic.db` :: Wing Security Guard — "Blaster Pistol +4 (3d6)" — exact match to "Blaster Pistol" (weapons-pistols); printed formula equals compendium base.
-- `packs/nonheroic.db` :: Wookiee Warrior — "Bowcaster +6 (3d10)" — exact match to "Bowcaster" (weapons-rifles); printed formula equals compendium base.
 - `packs/nonheroic.db` :: Sith Spy — "Blaster Pistol +8 (3d6)" — exact match to "Blaster Pistol" (weapons-pistols); printed formula equals compendium base.
-- `packs/nonheroic.db` :: Sith Spy — "Hold-Out Blaster Pistol +8 (3d4)" — exact match to "Hold-Out Blaster Pistol" (weapons-pistols); printed formula equals compendium base.
-- `packs/nonheroic.db` :: Hired Muscle — "Blaster Pistol +3 (3d6)" — exact match to "Blaster Pistol" (weapons-pistols); printed formula equals compendium base.
-- `packs/nonheroic.db` :: Devaronian Drifter — "Hold-Out Blaster Pistol +4 (3d4)" — exact match to "Hold-Out Blaster Pistol" (weapons-pistols); printed formula equals compendium base.
-- `packs/nonheroic.db` :: Death Star Trooper — "Blaster Pistol +5 (3d6)" — exact match to "Blaster Pistol" (weapons-pistols); printed formula equals compendium base.
-- `packs/nonheroic.db` :: Elite Rebel Trooper — "Blaster Pistol +6 (3d6)" — exact match to "Blaster Pistol" (weapons-pistols); printed formula equals compendium base.
-- `packs/nonheroic.db` :: Thug — "Blaster Pistol +1 (3d6)" — exact match to "Blaster Pistol" (weapons-pistols); printed formula equals compendium base.
-- `packs/nonheroic.db` :: Consortium Troubleshooter — "Blaster Pistol +5 (3d6)" — exact match to "Blaster Pistol" (weapons-pistols); printed formula equals compendium base.
-- `packs/nonheroic.db` :: Wookiee Berserker — "Bowcaster +7 (3d10)" — exact match to "Bowcaster" (weapons-rifles); printed formula equals compendium base.
-- `packs/nonheroic.db` :: Geonosian Warrior — "Sonic Rifle +2 (2d8 ( Sonic ))" — exact match to "Sonic Rifle" (weapons-rifles); printed formula equals compendium base.
-- `packs/nonheroic.db` :: Security Personnel — "Blaster Pistol +6 (3d6)" — exact match to "Blaster Pistol" (weapons-pistols); printed formula equals compendium base.
-- `packs/nonheroic.db` :: Animated Corpse — "Blaster Pistol +8 (3d6)" — exact match to "Blaster Pistol" (weapons-pistols); printed formula equals compendium base.
-- `packs/nonheroic.db` :: Field Medic — "Blaster Pistol +5 (3d6)" — exact match to "Blaster Pistol" (weapons-pistols); printed formula equals compendium base.
-- `packs/nonheroic.db` :: Police Officer — "Blaster Pistol +5 (3d6)" — exact match to "Blaster Pistol" (weapons-pistols); printed formula equals compendium base.
-- _(114 more rows in this bucket omitted from the Markdown sample; see the JSON report for the full list.)_
+- `packs/nonheroic.db` :: Joker Squad Heavy Weapons Specialist — "ARC-9965 Blaster +7 (3d8)" — exact match to "ARC-9965 Blaster" (weapons-rifles); printed formula equals compendium base.
+- `packs/nonheroic.db` :: Sith Descendant — "Pulse-Wave Pistol +4 (2d6)" — exact match to "Pulse-Wave Pistol" (weapons-pistols); printed formula equals compendium base.
+- `packs/nonheroic.db` :: Viper Swoop Gang Member — "Blaster Pistol +4 (3d6)" — exact match to "Blaster Pistol" (weapons-pistols); printed formula equals compendium base.
+- `packs/nonheroic.db` :: Joker Squad Stormtrooper — "ARC-9965 Blaster +8 (3d8)" — exact match to "ARC-9965 Blaster" (weapons-rifles); printed formula equals compendium base.
+- `packs/nonheroic.db` :: Joker Squad Demolitionist — "ARC-9965 Blaster +7 (3d8)" — exact match to "ARC-9965 Blaster" (weapons-rifles); printed formula equals compendium base.
+- `packs/nonheroic.db` :: Hooligan — "Blaster Pistol +3 (3d6)" — exact match to "Blaster Pistol" (weapons-pistols); printed formula equals compendium base.
+- `packs/nonheroic.db` :: Geonosian Elite Warrior — "Sonic Pistol +4 (2d6 ( Sonic ))" — exact match to "Sonic Pistol" (weapons-pistols); printed formula equals compendium base.
+- `packs/npc.db` :: Medic — "Blaster Pistol +5 (3d6)" — exact match to "Blaster Pistol" (weapons-pistols); printed formula equals compendium base.
+- `packs/npc.db` :: Peace Brigade Thug — "Blaster Pistol +2 (3d6)" — exact match to "Blaster Pistol" (weapons-pistols); printed formula equals compendium base.
+- `packs/npc.db` :: CSA Security Guard — "Blaster Pistol +6 (3d6)" — exact match to "Blaster Pistol" (weapons-pistols); printed formula equals compendium base.
+- `packs/npc.db` :: Espo Trooper — "ESPO 500 Riot Gun +4 (3d8)" — exact match to "ESPO 500 Riot Gun" (weapons-rifles); printed formula equals compendium base.
+- `packs/npc.db` :: Swoop Gang Member — "Blaster Pistol +4 (3d6)" — exact match to "Blaster Pistol" (weapons-pistols); printed formula equals compendium base.
+- `packs/npc.db` :: Sith Spy — "Blaster Pistol +8 (3d6)" — exact match to "Blaster Pistol" (weapons-pistols); printed formula equals compendium base.
+- `packs/npc.db` :: Joker Squad Heavy Weapons Specialist — "ARC-9965 Blaster +7 (3d8)" — exact match to "ARC-9965 Blaster" (weapons-rifles); printed formula equals compendium base.
+- `packs/npc.db` :: Sith Descendant — "Pulse-Wave Pistol +4 (2d6)" — exact match to "Pulse-Wave Pistol" (weapons-pistols); printed formula equals compendium base.
+- `packs/npc.db` :: Viper Swoop Gang Member — "Blaster Pistol +4 (3d6)" — exact match to "Blaster Pistol" (weapons-pistols); printed formula equals compendium base.
+- `packs/npc.db` :: Joker Squad Stormtrooper — "ARC-9965 Blaster +8 (3d8)" — exact match to "ARC-9965 Blaster" (weapons-rifles); printed formula equals compendium base.
+- `packs/npc.db` :: Joker Squad Demolitionist — "ARC-9965 Blaster +7 (3d8)" — exact match to "ARC-9965 Blaster" (weapons-rifles); printed formula equals compendium base.
+- `packs/npc.db` :: Hooligan — "Blaster Pistol +3 (3d6)" — exact match to "Blaster Pistol" (weapons-pistols); printed formula equals compendium base.
+- `packs/npc.db` :: Geonosian Elite Warrior — "Sonic Pistol +4 (2d6 ( Sonic ))" — exact match to "Sonic Pistol" (weapons-pistols); printed formula equals compendium base.
 
-## Safe Ordinary Weapon Candidates With Delta (exact compendium match, obvious base+delta/base+dice) (1402)
+## Safe Ordinary Weapon Candidates With Delta (exact compendium match, obvious base+delta/base+dice) (591)
 
-- `packs/nonheroic.db` :: Theelin Bodyguard — "Vibroblade +5 (2d6+3)" — exact match to "Vibroblade" (weapons-simple); printed formula classified as base-plus-delta.
 - `packs/nonheroic.db` :: Dark Jedi — "Lightsaber +9 (2d8+6)" — exact match to "Lightsaber" (weapons-simple); printed formula classified as base-plus-delta.
 - `packs/nonheroic.db` :: Rodian Black Sun Vigo — "Heavy Blaster Pistol +15 (3d8+9)" — exact match to "Heavy Blaster Pistol" (weapons-pistols); printed formula classified as base-plus-delta.
 - `packs/nonheroic.db` :: Rodian Black Sun Vigo — "Heavy Blaster Pistol +10 (3d8+9)" — exact match to "Heavy Blaster Pistol" (weapons-pistols); printed formula classified as base-plus-delta.
 - `packs/nonheroic.db` :: Krath Commander — "Stun Baton +5 (2d6+3 ( Stun ))" — exact match to "Stun Baton" (weapons-simple); printed formula classified as base-plus-dice.
-- `packs/nonheroic.db` :: Krath Commander — "Blaster Pistol +7 (3d6+3)" — exact match to "Blaster Pistol" (weapons-pistols); printed formula classified as base-plus-delta.
 - `packs/nonheroic.db` :: Notorious Outlaw — "Vibroblade +9 (2d6+6)" — exact match to "Vibroblade" (weapons-simple); printed formula classified as base-plus-delta.
-- `packs/nonheroic.db` :: Notorious Outlaw — "Blaster Pistol +9 (3d6+4)" — exact match to "Blaster Pistol" (weapons-pistols); printed formula classified as base-plus-delta.
-- `packs/nonheroic.db` :: Imperial Detention Guard — "Blaster Pistol +5 (3d6+2)" — exact match to "Blaster Pistol" (weapons-pistols); printed formula classified as base-plus-delta.
-- `packs/nonheroic.db` :: Soldier Commander — "Blaster Pistol +10 (3d6+2)" — exact match to "Blaster Pistol" (weapons-pistols); printed formula classified as base-plus-delta.
-- `packs/nonheroic.db` :: Star Destroyer Officer — "Blaster Pistol +5 (3d6+2)" — exact match to "Blaster Pistol" (weapons-pistols); printed formula classified as base-plus-delta.
 - `packs/nonheroic.db` :: Clone Shadow Trooper — "Vibrodagger +9 (2d4+3)" — exact match to "Vibrodagger" (weapons-simple); printed formula classified as base-plus-delta.
-- `packs/nonheroic.db` :: Clone Shadow Trooper — "Blaster Carbine +10 (3d8+2)" — exact match to "Blaster Carbine" (weapons-rifles); printed formula classified as base-plus-delta.
-- `packs/nonheroic.db` :: Clone Shadow Trooper — "Blaster Carbine +11 (4d8+2) with Deadeye" — exact match to "Blaster Carbine" (weapons-rifles); printed formula classified as base-plus-dice.
-- `packs/nonheroic.db` :: Con Artist — "Hold-Out Blaster Pistol +4 (3d4+1)" — exact match to "Hold-Out Blaster Pistol" (weapons-pistols); printed formula classified as base-plus-delta.
-- `packs/nonheroic.db` :: Dug Fringer — "Blaster Pistol +4 (3d6+1)" — exact match to "Blaster Pistol" (weapons-pistols); printed formula classified as base-plus-delta.
-- `packs/nonheroic.db` :: Black Sun Lieutenant — "Heavy Blaster Pistol +8 (3d8+3)" — exact match to "Heavy Blaster Pistol" (weapons-pistols); printed formula classified as base-plus-delta.
-- `packs/nonheroic.db` :: Black Sun Lieutenant — "Heavy Blaster Pistol +8 (4d8+3) with Deadeye" — exact match to "Heavy Blaster Pistol" (weapons-pistols); printed formula classified as base-plus-dice.
-- `packs/nonheroic.db` :: Gambler — "Hold-Out Blaster Pistol +5 (3d4+2)" — exact match to "Hold-Out Blaster Pistol" (weapons-pistols); printed formula classified as base-plus-delta.
-- `packs/nonheroic.db` :: Elite Death Star Trooper — "Blaster Pistol +10 (3d6+4)" — exact match to "Blaster Pistol" (weapons-pistols); printed formula classified as base-plus-delta.
-- `packs/nonheroic.db` :: Trandoshan Slaver — "Hold-Out Blaster Pistol +7 (3d4+2)" — exact match to "Hold-Out Blaster Pistol" (weapons-pistols); printed formula classified as base-plus-delta.
-- `packs/nonheroic.db` :: Imperial Royal Guard — "Heavy Blaster Pistol +12 (3d8+4)" — exact match to "Heavy Blaster Pistol" (weapons-pistols); printed formula classified as base-plus-delta.
-- `packs/nonheroic.db` :: Imperial Sovereign Protector — "Heavy Blaster Pistol +18 (3d8+6)" — exact match to "Heavy Blaster Pistol" (weapons-pistols); printed formula classified as base-plus-delta.
-- `packs/nonheroic.db` :: Sith Mage — "Hold-Out Blaster Pistol +6 (3d4+4)" — exact match to "Hold-Out Blaster Pistol" (weapons-pistols); printed formula classified as base-plus-delta.
-- `packs/nonheroic.db` :: Bothan Spy — "Vibrodagger +1 (2d4+5)" — exact match to "Vibrodagger" (weapons-simple); printed formula classified as base-plus-delta.
 - `packs/nonheroic.db` :: Bothan Spy — "Blaster Pistol +8 (3d6+4)" — exact match to "Blaster Pistol" (weapons-pistols); printed formula classified as base-plus-delta.
 - `packs/nonheroic.db` :: Core Fleet Covert Agent — "Stun Baton +3 (2d6+2 ( Stun ))" — exact match to "Stun Baton" (weapons-simple); printed formula classified as base-plus-dice.
-- `packs/nonheroic.db` :: Core Fleet Covert Agent — "Heavy Blaster Pistol +4 (3d8+2)" — exact match to "Heavy Blaster Pistol" (weapons-pistols); printed formula classified as base-plus-delta.
 - `packs/nonheroic.db` :: Core Fleet Covert Agent — "Hold-Out Blaster Pistol +4 (3d4+2)" — exact match to "Hold-Out Blaster Pistol" (weapons-pistols); printed formula classified as base-plus-delta.
-- `packs/nonheroic.db` :: SpecForce Heavy Weapons Specialist — "Heavy Blaster Pistol +9 (3d8+1)" — exact match to "Heavy Blaster Pistol" (weapons-pistols); printed formula classified as base-plus-delta.
 - `packs/nonheroic.db` :: Jedi Commander — "Lightsaber +9 (2d8+5)" — exact match to "Lightsaber" (weapons-simple); printed formula classified as base-plus-delta.
-- `packs/nonheroic.db` :: Red Fury Pirate — "Vibroblade +10 (2d6+4)" — exact match to "Vibroblade" (weapons-simple); printed formula classified as base-plus-delta.
 - `packs/nonheroic.db` :: Red Fury Pirate — "Heavy Blaster Pistol +9 (3d8+1)" — exact match to "Heavy Blaster Pistol" (weapons-pistols); printed formula classified as base-plus-delta.
-- `packs/nonheroic.db` :: Clone Fighter Pilot — "Blaster Pistol +8 (3d6+2)" — exact match to "Blaster Pistol" (weapons-pistols); printed formula classified as base-plus-delta.
-- `packs/nonheroic.db` :: Rodian Thief — "Heavy Blaster Pistol +10 (3d8+4)" — exact match to "Heavy Blaster Pistol" (weapons-pistols); printed formula classified as base-plus-delta.
-- `packs/nonheroic.db` :: Rodian Thief — "Heavy Blaster Pistol +10 (4d8+4) with Deadeye" — exact match to "Heavy Blaster Pistol" (weapons-pistols); printed formula classified as base-plus-dice.
 - `packs/nonheroic.db` :: Whiphid Tracker — "Bow +6 (1d6+2)" — exact match to "Bow" (weapons-simple); printed formula classified as base-plus-delta.
-- `packs/nonheroic.db` :: SpecForce Elite Soldier — "Blaster Pistol +15 (3d6+6)" — exact match to "Blaster Pistol" (weapons-pistols); printed formula classified as base-plus-delta.
-- `packs/nonheroic.db` :: Detention Block Guard — "Blaster Pistol +7 (3d6+3)" — exact match to "Blaster Pistol" (weapons-pistols); printed formula classified as base-plus-delta.
 - `packs/nonheroic.db` :: Storm Commando — "Blaster Carbine +12 (3d8+3)" — exact match to "Blaster Carbine" (weapons-rifles); printed formula classified as base-plus-delta.
-- _(1362 more rows in this bucket omitted from the Markdown sample; see the JSON report for the full list.)_
+- `packs/nonheroic.db` :: Storm Commando — "Blaster Carbine +7 (3d8+3)" — exact match to "Blaster Carbine" (weapons-rifles); printed formula classified as base-plus-delta.
+- `packs/nonheroic.db` :: SpecForce Officer — "Blaster Pistol +8 (3d6+3)" — exact match to "Blaster Pistol" (weapons-pistols); printed formula classified as base-plus-delta.
+- `packs/nonheroic.db` :: Jedi Sentinel Master — "Lightsaber +17 (2d8+8)" — exact match to "Lightsaber" (weapons-simple); printed formula classified as base-plus-delta.
+- `packs/nonheroic.db` :: Dark Jedi Master — "Lightsaber +21 (2d8+12)" — exact match to "Lightsaber" (weapons-simple); printed formula classified as base-plus-delta.
+- `packs/nonheroic.db` :: Imperial Shadow Guard Initiate — "Lightsaber Pike * +12** (3d8+7; 2-Square Reach )" — exact match to "Lightsaber Pike" (weapons-lightsabers); printed formula classified as base-plus-dice.
+- `packs/nonheroic.db` :: Noghri Infiltrator — "Stokhli Spray Stick +12 (3d8+5 ( Stun ))" — exact match to "Stokhli Spray Stick" (weapons-rifles); printed formula classified as base-plus-delta.
+- `packs/nonheroic.db` :: Sith Lord — "Lightsaber +19 (2d8+10)" — exact match to "Lightsaber" (weapons-simple); printed formula classified as base-plus-delta.
+- `packs/nonheroic.db` :: Sith Lord — "Lightsaber +16 (2d8+10)" — exact match to "Lightsaber" (weapons-simple); printed formula classified as base-plus-delta.
+- `packs/nonheroic.db` :: Sith Lord — "Lightsaber +11 (3d8+10)" — exact match to "Lightsaber" (weapons-simple); printed formula classified as base-plus-dice.
+- `packs/nonheroic.db` :: Sith Lord — "Lightsaber +11 (3d8+10)" — exact match to "Lightsaber" (weapons-simple); printed formula classified as base-plus-dice.
+- `packs/nonheroic.db` :: Pirate Captain — "Vibroblade +9 (2d6+5)" — exact match to "Vibroblade" (weapons-simple); printed formula classified as base-plus-delta.
+- `packs/nonheroic.db` :: Pirate Captain — "Vibroblade +4 (2d6+5)" — exact match to "Vibroblade" (weapons-simple); printed formula classified as base-plus-delta.
+- `packs/nonheroic.db` :: Imperial Dungeoneer — "Blaster Pistol +9 (3d6+2)" — exact match to "Blaster Pistol" (weapons-pistols); printed formula classified as base-plus-delta.
+- `packs/nonheroic.db` :: Trandoshan Elite Mercenary — "Blaster Carbine +17 (3d8+9)" — exact match to "Blaster Carbine" (weapons-rifles); printed formula classified as base-plus-delta.
+- `packs/nonheroic.db` :: Core Craft Sentry — "Sporting Blaster Rifle +8 (3d6+4)" — exact match to "Sporting Blaster Rifle" (weapons-rifles); printed formula classified as base-plus-delta.
+- `packs/nonheroic.db` :: Core Craft Sentry — "Sporting Blaster Rifle +9 (4d6+4) with Deadeye" — exact match to "Sporting Blaster Rifle" (weapons-rifles); printed formula classified as base-plus-dice.
+- `packs/nonheroic.db` :: Core Craft Sentry — "Blaster Pistol +8 (3d6+4)" — exact match to "Blaster Pistol" (weapons-pistols); printed formula classified as base-plus-delta.
+- `packs/nonheroic.db` :: First Order Specialist — "Blaster Carbine +8 (3d8+1)" — exact match to "Blaster Carbine" (weapons-rifles); printed formula classified as base-plus-delta.
+- `packs/nonheroic.db` :: Trandoshan Marauder — "Vibroblade +18 (2d6+15)" — exact match to "Vibroblade" (weapons-simple); printed formula classified as base-plus-delta.
+- `packs/nonheroic.db` :: Trandoshan Marauder — "Lightsaber +11 (2d8+11)" — exact match to "Lightsaber" (weapons-simple); printed formula classified as base-plus-delta.
+- `packs/nonheroic.db` :: Mandalorian Scout — "Blaster Carbine +7 (3d8+2)" — exact match to "Blaster Carbine" (weapons-rifles); printed formula classified as base-plus-delta.
+- `packs/nonheroic.db` :: Mandalorian Scout — "Blaster Carbine +7 (4d8+2) with Deadeye" — exact match to "Blaster Carbine" (weapons-rifles); printed formula classified as base-plus-dice.
+- `packs/nonheroic.db` :: Mandalorian Scout — "Blaster Pistol +6 (3d6+2)" — exact match to "Blaster Pistol" (weapons-pistols); printed formula classified as base-plus-delta.
+- `packs/nonheroic.db` :: Jedi Sage Master — "Lightsaber +16 (2d8+7)" — exact match to "Lightsaber" (weapons-simple); printed formula classified as base-plus-delta.
+- `packs/nonheroic.db` :: Gray Jedi — "Lightsaber +6 (2d8+1)" — exact match to "Lightsaber" (weapons-simple); printed formula classified as base-plus-delta.
+- `packs/nonheroic.db` :: Primitive Dark Side Adept — "Slugthrower Rifle +7 (2d8+4)" — exact match to "Slugthrower Rifle" (weapons-rifles); printed formula classified as base-plus-delta.
+- `packs/nonheroic.db` :: Jensaarai Defender — "Lightsaber +12 (2d8+7)" — exact match to "Lightsaber" (weapons-simple); printed formula classified as base-plus-delta.
+- _(551 more rows in this bucket omitted from the Markdown sample; see the JSON report for the full list.)_
 
-## Ordinary Weapon, Special Attack Mode (exact compendium match, but row expresses a mode/feat/attack-count/variant -- manual review lane) (292)
+## Ordinary Weapon, Special Attack Mode (exact compendium match, but row expresses a mode/feat/attack-count/variant -- manual review lane) (198)
 
 - `packs/nonheroic.db` :: Dark Jedi — "Lightsaber +7 (3d8+6) with Rapid Strike" — exact match to "Lightsaber" (weapons-simple); row text indicates a special attack mode/feat/attack-count/variant (e.g. rapid strike, double attack, power attack, trigger work) rather than a plain base weapon damage row, so it is excluded from Lane A bulk promotion and routed to manual/variant review.
 - `packs/nonheroic.db` :: Rodian Black Sun Vigo — "Heavy Blaster Pistol +10 (3d8+9) with Double Attack" — exact match to "Heavy Blaster Pistol" (weapons-pistols); row text indicates a special attack mode/feat/attack-count/variant (e.g. rapid strike, double attack, power attack, trigger work) rather than a plain base weapon damage row, so it is excluded from Lane A bulk promotion and routed to manual/variant review.
 - `packs/nonheroic.db` :: Notorious Outlaw — "Vibroblade +7 (3d6+6) with Rapid Strike" — exact match to "Vibroblade" (weapons-simple); row text indicates a special attack mode/feat/attack-count/variant (e.g. rapid strike, double attack, power attack, trigger work) rather than a plain base weapon damage row, so it is excluded from Lane A bulk promotion and routed to manual/variant review.
-- `packs/nonheroic.db` :: Notorious Outlaw — "Blaster Pistol +9 (4d6+4) with Trigger Work" — exact match to "Blaster Pistol" (weapons-pistols); row text indicates a special attack mode/feat/attack-count/variant (e.g. rapid strike, double attack, power attack, trigger work) rather than a plain base weapon damage row, so it is excluded from Lane A bulk promotion and routed to manual/variant review.
 - `packs/nonheroic.db` :: Jedi Commander — "Lightsaber +7 (3d8+5) with Rapid Strike" — exact match to "Lightsaber" (weapons-simple); row text indicates a special attack mode/feat/attack-count/variant (e.g. rapid strike, double attack, power attack, trigger work) rather than a plain base weapon damage row, so it is excluded from Lane A bulk promotion and routed to manual/variant review.
 - `packs/nonheroic.db` :: SpecForce Elite Soldier — "Blaster Rifle +15 (3d8+8) with Double Attack" — exact match to "Blaster Rifle" (weapons-rifles); row text indicates a special attack mode/feat/attack-count/variant (e.g. rapid strike, double attack, power attack, trigger work) rather than a plain base weapon damage row, so it is excluded from Lane A bulk promotion and routed to manual/variant review.
 - `packs/nonheroic.db` :: Storm Commando — "Blaster Carbine +7 (3d8+3) with Double Attack" — exact match to "Blaster Carbine" (weapons-rifles); row text indicates a special attack mode/feat/attack-count/variant (e.g. rapid strike, double attack, power attack, trigger work) rather than a plain base weapon damage row, so it is excluded from Lane A bulk promotion and routed to manual/variant review.
@@ -154,7 +169,6 @@ to canonical profile files, actor packs, compendium packs, or runtime code.
 - `packs/nonheroic.db` :: Imperial Knight — "Lightsaber +9* (3d8+16) with Rapid Strike" — exact match to "Lightsaber" (weapons-simple); row text indicates a special attack mode/feat/attack-count/variant (e.g. rapid strike, double attack, power attack, trigger work) rather than a plain base weapon damage row, so it is excluded from Lane A bulk promotion and routed to manual/variant review.
 - `packs/nonheroic.db` :: Ship Gunner — "Blaster Cannon +6 (3d12+5) with Double Attack" — exact match to "Blaster Cannon" (weapons-heavy); row text indicates a special attack mode/feat/attack-count/variant (e.g. rapid strike, double attack, power attack, trigger work) rather than a plain base weapon damage row, so it is excluded from Lane A bulk promotion and routed to manual/variant review.
 - `packs/nonheroic.db` :: Ship Captain — "Vibrodagger +8 (2d4+6) with Double Attack" — exact match to "Vibrodagger" (weapons-simple); row text indicates a special attack mode/feat/attack-count/variant (e.g. rapid strike, double attack, power attack, trigger work) rather than a plain base weapon damage row, so it is excluded from Lane A bulk promotion and routed to manual/variant review.
-- `packs/nonheroic.db` :: Commando — "Vibrodagger +10 (3d4+4) with Rapid Strike" — exact match to "Vibrodagger" (weapons-simple); row text indicates a special attack mode/feat/attack-count/variant (e.g. rapid strike, double attack, power attack, trigger work) rather than a plain base weapon damage row, so it is excluded from Lane A bulk promotion and routed to manual/variant review.
 - `packs/nonheroic.db` :: Sith Bladeborn — "Sith Tremor Sword +12 (3d6+4) with Rapid Strike" — exact match to "Sith Tremor Sword" (weapons-simple); row text indicates a special attack mode/feat/attack-count/variant (e.g. rapid strike, double attack, power attack, trigger work) rather than a plain base weapon damage row, so it is excluded from Lane A bulk promotion and routed to manual/variant review.
 - `packs/nonheroic.db` :: Sith Bladeborn — "Sith Tremor Sword +9 (4d6+4) with Improved Rapid Strike" — exact match to "Sith Tremor Sword" (weapons-simple); row text indicates a special attack mode/feat/attack-count/variant (e.g. rapid strike, double attack, power attack, trigger work) rather than a plain base weapon damage row, so it is excluded from Lane A bulk promotion and routed to manual/variant review.
 - `packs/nonheroic.db` :: Fallen Jedi Sith Lord — "Lightsaber +20 (3d8+13) with Rapid Strike" — exact match to "Lightsaber" (weapons-simple); row text indicates a special attack mode/feat/attack-count/variant (e.g. rapid strike, double attack, power attack, trigger work) rather than a plain base weapon damage row, so it is excluded from Lane A bulk promotion and routed to manual/variant review.
@@ -174,10 +188,12 @@ to canonical profile files, actor packs, compendium packs, or runtime code.
 - `packs/nonheroic.db` :: Auxiliary Inquisitor — "Short Lightsaber +4 (3d6+4) with Rapid Strike" — exact match to "Short Lightsaber" (weapons-lightsabers); row text indicates a special attack mode/feat/attack-count/variant (e.g. rapid strike, double attack, power attack, trigger work) rather than a plain base weapon damage row, so it is excluded from Lane A bulk promotion and routed to manual/variant review.
 - `packs/nonheroic.db` :: Jedi Padawan — "Lightsaber +5 (3d8+2) with Rapid Strike" — exact match to "Lightsaber" (weapons-simple); row text indicates a special attack mode/feat/attack-count/variant (e.g. rapid strike, double attack, power attack, trigger work) rather than a plain base weapon damage row, so it is excluded from Lane A bulk promotion and routed to manual/variant review.
 - `packs/nonheroic.db` :: Dark Lord of the Sith — "Lightsaber +14 (2d8+12) with Double Attack" — exact match to "Lightsaber" (weapons-simple); row text indicates a special attack mode/feat/attack-count/variant (e.g. rapid strike, double attack, power attack, trigger work) rather than a plain base weapon damage row, so it is excluded from Lane A bulk promotion and routed to manual/variant review.
-- `packs/nonheroic.db` :: Noghri Assassin — "Vibrodagger +8 (3d4+8) with Rapid Strike" — exact match to "Vibrodagger" (weapons-simple); row text indicates a special attack mode/feat/attack-count/variant (e.g. rapid strike, double attack, power attack, trigger work) rather than a plain base weapon damage row, so it is excluded from Lane A bulk promotion and routed to manual/variant review.
-- _(252 more rows in this bucket omitted from the Markdown sample; see the JSON report for the full list.)_
+- `packs/nonheroic.db` :: Elite Warrior — "Heavy Blaster Rifle +15 (3d10+8) with Double Attack" — exact match to "Heavy Blaster Rifle" (weapons-rifles); row text indicates a special attack mode/feat/attack-count/variant (e.g. rapid strike, double attack, power attack, trigger work) rather than a plain base weapon damage row, so it is excluded from Lane A bulk promotion and routed to manual/variant review.
+- `packs/nonheroic.db` :: Elite Warrior — "Heavy Blaster Rifle +10 (3d10+8) with Triple Attack" — exact match to "Heavy Blaster Rifle" (weapons-rifles); row text indicates a special attack mode/feat/attack-count/variant (e.g. rapid strike, double attack, power attack, trigger work) rather than a plain base weapon damage row, so it is excluded from Lane A bulk promotion and routed to manual/variant review.
+- `packs/nonheroic.db` :: Inquisitorius Recruit — "Lightsaber +11 (3d8+7) with Rapid Strike" — exact match to "Lightsaber" (weapons-simple); row text indicates a special attack mode/feat/attack-count/variant (e.g. rapid strike, double attack, power attack, trigger work) rather than a plain base weapon damage row, so it is excluded from Lane A bulk promotion and routed to manual/variant review.
+- _(158 more rows in this bucket omitted from the Markdown sample; see the JSON report for the full list.)_
 
-## No Compendium Match (514)
+## No Compendium Match (509)
 
 - `packs/nonheroic.db` :: Goon — "Knife +2 (1d4)" — no compendium weapon item found with normalized name "knife".
 - `packs/nonheroic.db` :: Rodian Black Sun Vigo — "Gun Club +11 (1d6+7)" — no compendium weapon item found with normalized name "gun club".
@@ -219,7 +235,7 @@ to canonical profile files, actor packs, compendium packs, or runtime code.
 - `packs/nonheroic.db` :: Tribal Shaman — "Knife +4 (1d4+4)" — no compendium weapon item found with normalized name "knife".
 - `packs/nonheroic.db` :: Trandoshan Marauder — "Vibro-Axe +12* (2d10+31)" — no compendium weapon item found with normalized name "vibro axe".
 - `packs/nonheroic.db` :: Trandoshan Marauder — "Vibro-Axe +14* (2d10+31) with Flurry" — no compendium weapon item found with normalized name "vibro axe".
-- _(474 more rows in this bucket omitted from the Markdown sample; see the JSON report for the full list.)_
+- _(469 more rows in this bucket omitted from the Markdown sample; see the JSON report for the full list.)_
 
 ## Ambiguous Compendium Match (0)
 
@@ -269,7 +285,7 @@ _None._
 - `packs/nonheroic.db` :: Imperial Shadow Guard Initiate — "Unarmed +13 (1d6+6)" — printed weapon/action name indicates a natural or unarmed attack.
 - _(1098 more rows in this bucket omitted from the Markdown sample; see the JSON report for the full list.)_
 
-## Area / Autofire / Grenade / Special Mode Rows (manual review lane) (549)
+## Area / Autofire / Grenade / Special Mode Rows (manual review lane) (480)
 
 - `packs/nonheroic.db` :: Elite Stormtrooper — "Blaster Rifle +11 (4d8+3) with Rapid Shot" — row text indicates autofire/rapid-shot/area/grenade/explosive delivery.
 - `packs/nonheroic.db` :: Elite Stormtrooper — "Blaster Rifle +8 (5d8+3) with Burst Fire" — row text indicates autofire/rapid-shot/area/grenade/explosive delivery.
@@ -280,7 +296,6 @@ _None._
 - `packs/nonheroic.db` :: Byss Elite Stormtrooper Squad — "Blaster Rifle +17 (3d8+5, 1-Square Splash ) with Double Attack" — row text indicates autofire/rapid-shot/area/grenade/explosive delivery.
 - `packs/nonheroic.db` :: Byss Elite Stormtrooper Squad — "Frag Grenade (2) +17 (4d6+5, 2-Square Burst , 1-Square Splash )" — row text indicates autofire/rapid-shot/area/grenade/explosive delivery.
 - `packs/nonheroic.db` :: Medic — "Stun Grenade (2) +5 (4d6 ( Stun ), 2-Square Burst )" — row text indicates autofire/rapid-shot/area/grenade/explosive delivery.
-- `packs/nonheroic.db` :: Dug Fringer — "Blaster Pistol +2 (4d6+1) with Rapid Shot" — row text indicates autofire/rapid-shot/area/grenade/explosive delivery.
 - `packs/nonheroic.db` :: Veteran Stormtrooper — "Blaster Rifle +6 (5d8) with Burst Fire" — row text indicates autofire/rapid-shot/area/grenade/explosive delivery.
 - `packs/nonheroic.db` :: Veteran Stormtrooper — "Frag Grenade (1) +10 (4d6, 2-Square Burst )" — row text indicates autofire/rapid-shot/area/grenade/explosive delivery.
 - `packs/nonheroic.db` :: SpecForce Heavy Weapons Specialist — "Heavy Repeating Blaster +10 (3d10+3, 2-Square Autofire )" — row text indicates autofire/rapid-shot/area/grenade/explosive delivery.
@@ -293,25 +308,26 @@ _None._
 - `packs/nonheroic.db` :: Veteran Heavy Stormtrooper — "Light Repeating Blaster ( Braced ) +9 (3d8, 2-Square Autofire )" — row text indicates autofire/rapid-shot/area/grenade/explosive delivery.
 - `packs/nonheroic.db` :: Veteran Heavy Stormtrooper — "Light Repeating Blaster ( Braced ) +9 (5d8) with Burst Fire" — row text indicates autofire/rapid-shot/area/grenade/explosive delivery.
 - `packs/nonheroic.db` :: Veteran Heavy Stormtrooper — "Frag Grenade (1) +10 (4d6, 2-Square Burst )" — row text indicates autofire/rapid-shot/area/grenade/explosive delivery.
-- `packs/nonheroic.db` :: Clone Fighter Pilot — "Blaster Pistol +6 (4d6+2) with Rapid Shot" — row text indicates autofire/rapid-shot/area/grenade/explosive delivery.
 - `packs/nonheroic.db` :: Militia Soldier — "Rail Detonator Gun +9 (3d8, 1-Square Splash )" — row text indicates autofire/rapid-shot/area/grenade/explosive delivery.
-- `packs/nonheroic.db` :: Rodian Thief — "Heavy Blaster Pistol +8 (4d8+4) with Rapid Shot" — row text indicates autofire/rapid-shot/area/grenade/explosive delivery.
 - `packs/nonheroic.db` :: SpecForce Elite Soldier — "Blaster Rifle +14 (4d8+8) with Rapid Shot" — row text indicates autofire/rapid-shot/area/grenade/explosive delivery.
 - `packs/nonheroic.db` :: Storm Commando — "Thermal Detonator (1) +12 (8d6+3, 4-Square Burst )" — row text indicates autofire/rapid-shot/area/grenade/explosive delivery.
-- `packs/nonheroic.db` :: Chiss Mercenary — "Blaster Pistol +6 (4d6+1) with Rapid Shot" — row text indicates autofire/rapid-shot/area/grenade/explosive delivery.
 - `packs/nonheroic.db` :: Chiss Mercenary — "Heavy Blaster Rifle +7 (4d10+2) with Rapid Shot" — row text indicates autofire/rapid-shot/area/grenade/explosive delivery.
 - `packs/nonheroic.db` :: Chiss Mercenary — "Heavy Blaster Rifle +4 (5d10+2) with Burst Fire" — row text indicates autofire/rapid-shot/area/grenade/explosive delivery.
 - `packs/nonheroic.db` :: SpecForce Officer — "Frag Grenade (1) +8 (4d6+3, 2-Square Burst )" — row text indicates autofire/rapid-shot/area/grenade/explosive delivery.
-- `packs/nonheroic.db` :: ISB Tactical Agent — "Blaster Carbine +7 (5d8+4) with Burst Fire" — row text indicates autofire/rapid-shot/area/grenade/explosive delivery.
 - `packs/nonheroic.db` :: Scout Trooper — "Frag Grenade (1) +5 (4d6, 2-Square Burst )" — row text indicates autofire/rapid-shot/area/grenade/explosive delivery.
 - `packs/nonheroic.db` :: Imperial Dungeoneer — "Stun Grenade (1) +9 (4d6+2 ( Stun ), 2-Square Burst )" — row text indicates autofire/rapid-shot/area/grenade/explosive delivery.
 - `packs/nonheroic.db` :: Trandoshan Elite Mercenary — "Blaster Carbine +15 (5d8+9) with Controlled Burst" — row text indicates autofire/rapid-shot/area/grenade/explosive delivery.
 - `packs/nonheroic.db` :: Sith Trooper — "Frag Grenade (1) +3 (4d6, 2-Square Burst )" — row text indicates autofire/rapid-shot/area/grenade/explosive delivery.
-- `packs/nonheroic.db` :: 181st Imperial Pilot — "Hold-Out Blaster Pistol +11 (4d4+6) with Rapid Shot" — row text indicates autofire/rapid-shot/area/grenade/explosive delivery.
 - `packs/nonheroic.db` :: CSA Trooper — "Blaster Rifle +5 (4d8) with Rapid Shot" — row text indicates autofire/rapid-shot/area/grenade/explosive delivery.
 - `packs/nonheroic.db` :: Imperial Army Trooper — "Frag Grenade (1) +3 (4d6, 2-Square Burst )" — row text indicates autofire/rapid-shot/area/grenade/explosive delivery.
 - `packs/nonheroic.db` :: First Order Specialist — "Subrepeating Blaster +3 (3d6+1, 2-Square Autofire )" — row text indicates autofire/rapid-shot/area/grenade/explosive delivery.
-- _(509 more rows in this bucket omitted from the Markdown sample; see the JSON report for the full list.)_
+- `packs/nonheroic.db` :: First Order Specialist — "Missile Launcher +8 (6d6+1, 2-Square Burst )" — row text indicates autofire/rapid-shot/area/grenade/explosive delivery.
+- `packs/nonheroic.db` :: First Order Specialist — "Concussion Grenade (2) +2 (8d6+1, 2-Square Burst )" — row text indicates autofire/rapid-shot/area/grenade/explosive delivery.
+- `packs/nonheroic.db` :: Mandalorian Scout — "Frag Grenade (2) +6 (4d6+2, 2-Square Burst )" — row text indicates autofire/rapid-shot/area/grenade/explosive delivery.
+- `packs/nonheroic.db` :: Elite Republic Trooper — "Frag Grenade (2) +8 (4d6, 2-square Burst )" — row text indicates autofire/rapid-shot/area/grenade/explosive delivery.
+- `packs/nonheroic.db` :: New Republic Commando — "Frag Grenade (4) +6 (4d6+2, 2-Square Burst )" — row text indicates autofire/rapid-shot/area/grenade/explosive delivery.
+- `packs/nonheroic.db` :: Army Soldier — "Blaster Pistol +4 (4d6+1) with Rapid Shot" — row text indicates autofire/rapid-shot/area/grenade/explosive delivery.
+- _(440 more rows in this bucket omitted from the Markdown sample; see the JSON report for the full list.)_
 
 ## Rider / Condition Rows (manual review lane) (9)
 
@@ -325,7 +341,7 @@ _None._
 - `packs/npc.db` :: Shimrra Jamaane, Supreme Overlord — "Sceptre of Power (Whip Form) +28 (1d8+21 ( Amphistaff Poison))" — row text indicates a poison/disease/condition-track/maneuver rider rather than plain damage.
 - `packs/beasts.db` :: Brintak — "Tentacle +19 (1d8+7) plus Poison" — row text indicates a poison/disease/condition-track/maneuver rider rather than plain damage.
 
-## Formula Unclear (compendium matched but dice do not obviously derive) (284)
+## Formula Unclear (compendium matched but dice do not obviously derive) (283)
 
 - `packs/nonheroic.db` :: Theelin Bodyguard — "Blaster Rifle +6 (3d8+1)" — matched "Blaster Rifle" (weapons-rifles, base 3d10); printed formula "3d8+1" is not a simple/obvious base or base+delta/base+dice relationship.
 - `packs/nonheroic.db` :: Elite Stormtrooper — "Blaster Rifle +13 (3d8+3)" — matched "Blaster Rifle" (weapons-rifles, base 3d10); printed formula "3d8+3" is not a simple/obvious base or base+delta/base+dice relationship.
@@ -367,4 +383,4 @@ _None._
 - `packs/nonheroic.db` :: Trandoshan Bounty Hunter — "Heavy Blaster Rifle +5 (3d10+2)" — matched "Heavy Blaster Rifle" (weapons-rifles, base 3d12); printed formula "3d10+2" is not a simple/obvious base or base+delta/base+dice relationship.
 - `packs/nonheroic.db` :: Royal Handmaiden — "Sporting Blaster Pistol +6 (3d4+3)" — matched "Sporting Blaster Pistol" (weapons-pistols, base 2d6); printed formula "3d4+3" is not a simple/obvious base or base+delta/base+dice relationship.
 - `packs/nonheroic.db` :: SpecForce Marine — "Blaster Rifle +8 (3d8+1)" — matched "Blaster Rifle" (weapons-rifles, base 3d10); printed formula "3d8+1" is not a simple/obvious base or base+delta/base+dice relationship.
-- _(244 more rows in this bucket omitted from the Markdown sample; see the JSON report for the full list.)_
+- _(243 more rows in this bucket omitted from the Markdown sample; see the JSON report for the full list.)_
