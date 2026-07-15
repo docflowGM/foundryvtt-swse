@@ -1,9 +1,6 @@
 # Nonheroic Profile Weapon UUID Audit
 
-Generated: 2026-07-14T16:47:04.548Z
-=======
-Generated: 2026-07-14T16:09:13.606Z
->>>>>>> 42d3d65c97a5783f06b170f8d9274220df104f49
+Generated: 2026-07-15T18:11:00.764Z
 Mode: report-only
 
 This is a mechanical compendium identity audit only. It does not interpret
@@ -13,21 +10,14 @@ bonuses. See docs/nonheroic-weapon-uuid-metadata.md for the policy note.
 ## Summary
 
 - Pack weapon items scanned: 372
-- Profile files scanned: 7
-- Records scanned: 92
-=======
-- Profile files scanned: 6
-- Records scanned: 67
->>>>>>> 42d3d65c97a5783f06b170f8d9274220df104f49
+- Profile files scanned: 10
+- Records scanned: 644
 - Files written: 0
 - Records written: 0
 
 - safe-match: 0
 - safe-match-formula-unclear: 2
-- already-valid: 59
-=======
-- already-valid: 34
->>>>>>> 42d3d65c97a5783f06b170f8d9274220df104f49
+- already-valid: 611
 - ambiguous: 0
 - missing-match: 20
 - stale-uuid: 0
@@ -44,7 +34,7 @@ _None._
 - `data/nonheroic/nonheroic-weapon-damage-profiles.nh1-droids.json` :: t4-turret-droid-grenade-launcher (Grenade Launcher) — exact name match to "Grenade Launcher" (weapons-heavy); printed formula "5d6" vs base "Special" is not a simple/obvious delta and formula.mode is left untouched.
 - `data/nonheroic/nonheroic-weapon-damage-profiles.nh3-galaxy-of-intrigue.json` :: deluge-facility-guard-blaster-rifle (Blaster Rifle) — exact name match to "Blaster Rifle" (weapons-rifles); printed formula "3d8" vs base "3d10" is not a simple/obvious delta and formula.mode is left untouched.
 
-## Already-Valid UUIDs (59)
+## Already-Valid UUIDs (611)
 
 - `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-1.json` :: goon-heavy-blaster-pistol (Heavy Blaster Pistol) — uuid resolves to "Heavy Blaster Pistol" (weapons-pistols) with matching base metadata.
 - `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-1.json` :: imperial-informant-hold-out-blaster-pistol (Hold-Out Blaster Pistol) — uuid resolves to "Hold-Out Blaster Pistol" (weapons-pistols) with matching base metadata.
@@ -56,7 +46,6 @@ _None._
 - `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-1.json` :: black-sun-thug-heavy-blaster-pistol (Heavy Blaster Pistol) — uuid resolves to "Heavy Blaster Pistol" (weapons-pistols) with matching base metadata.
 - `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-1.json` :: swoop-gang-member-vibrodagger (Vibrodagger) — uuid resolves to "Vibrodagger" (weapons-simple) with matching base metadata.
 - `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-1.json` :: sith-spy-hold-out-blaster-pistol (Hold-Out Blaster Pistol) — uuid resolves to "Hold-Out Blaster Pistol" (weapons-pistols) with matching base metadata.
-<<<<<<< HEAD
 - `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-2.json` :: imperial-army-trooper-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
 - `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-2.json` :: clone-naval-officer-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
 - `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-2.json` :: elite-republic-trooper-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
@@ -82,9 +71,558 @@ _None._
 - `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-2.json` :: wookiee-warrior-bowcaster (Bowcaster) — uuid resolves to "Bowcaster" (weapons-rifles) with matching base metadata.
 - `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-2.json` :: wookiee-slaver-bowcaster (Bowcaster) — uuid resolves to "Bowcaster" (weapons-rifles) with matching base metadata.
 - `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-2.json` :: geonosian-warrior-sonic-rifle (Sonic Rifle) — uuid resolves to "Sonic Rifle" (weapons-rifles) with matching base metadata.
->>>>>>> Stashed changes
-=======
->>>>>>> 42d3d65c97a5783f06b170f8d9274220df104f49
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-3.json` :: elite-wing-security-guard-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-3.json` :: imperial-navy-trooper-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-3.json` :: mon-calamari-resistance-member-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-3.json` :: bureaucrat-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-3.json` :: wing-security-guard-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-3.json` :: hired-muscle-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-3.json` :: death-star-trooper-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-3.json` :: soldier-commander-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-3.json` :: star-destroyer-officer-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-3.json` :: dug-fringer-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-3.json` :: elite-death-star-trooper-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-3.json` :: clone-fighter-pilot-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-3.json` :: specforce-elite-soldier-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-3.json` :: detention-block-guard-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-3.json` :: krath-warrior-heavy-blaster-pistol (Heavy Blaster Pistol) — uuid resolves to "Heavy Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-3.json` :: imperial-sovereign-protector-heavy-blaster-pistol (Heavy Blaster Pistol) — uuid resolves to "Heavy Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-3.json` :: core-fleet-covert-agent-heavy-blaster-pistol (Heavy Blaster Pistol) — uuid resolves to "Heavy Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-3.json` :: specforce-heavy-weapons-specialist-heavy-blaster-pistol (Heavy Blaster Pistol) — uuid resolves to "Heavy Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-3.json` :: rodian-thief-heavy-blaster-pistol (Heavy Blaster Pistol) — uuid resolves to "Heavy Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-3.json` :: imperial-shadow-guard-initiate-heavy-blaster-pistol (Heavy Blaster Pistol) — uuid resolves to "Heavy Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-3.json` :: trandoshan-elite-mercenary-heavy-blaster-pistol (Heavy Blaster Pistol) — uuid resolves to "Heavy Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-3.json` :: isb-informant-heavy-blaster-pistol (Heavy Blaster Pistol) — uuid resolves to "Heavy Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-3.json` :: specforce-officer-vibroblade (Vibroblade) — uuid resolves to "Vibroblade" (weapons-simple) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-3.json` :: imperial-dungeoneer-vibroblade (Vibroblade) — uuid resolves to "Vibroblade" (weapons-simple) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-3.json` :: first-order-specialist-vibroblade (Vibroblade) — uuid resolves to "Vibroblade" (weapons-simple) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-3.json` :: mandalorian-scout-vibroblade (Vibroblade) — uuid resolves to "Vibroblade" (weapons-simple) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-3.json` :: commando-strike-leader-vibroblade (Vibroblade) — uuid resolves to "Vibroblade" (weapons-simple) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-3.json` :: core-fleet-commando-vibroblade (Vibroblade) — uuid resolves to "Vibroblade" (weapons-simple) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-3.json` :: mandalorian-commando-vibroblade (Vibroblade) — uuid resolves to "Vibroblade" (weapons-simple) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-3.json` :: mandalorian-trooper-vibroblade (Vibroblade) — uuid resolves to "Vibroblade" (weapons-simple) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-3.json` :: trader-hold-out-blaster-pistol (Hold-Out Blaster Pistol) — uuid resolves to "Hold-Out Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-3.json` :: varan-cormin-hold-out-blaster-pistol (Hold-Out Blaster Pistol) — uuid resolves to "Hold-Out Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-3.json` :: naxy-screeger-hold-out-blaster-pistol (Hold-Out Blaster Pistol) — uuid resolves to "Hold-Out Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-3.json` :: gambler-hold-out-blaster-pistol (Hold-Out Blaster Pistol) — uuid resolves to "Hold-Out Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-3.json` :: trandoshan-slaver-hold-out-blaster-pistol (Hold-Out Blaster Pistol) — uuid resolves to "Hold-Out Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-3.json` :: sith-mage-hold-out-blaster-pistol (Hold-Out Blaster Pistol) — uuid resolves to "Hold-Out Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-3.json` :: isb-tactical-agent-blaster-carbine (Blaster Carbine) — uuid resolves to "Blaster Carbine" (weapons-rifles) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-3.json` :: army-soldier-blaster-carbine (Blaster Carbine) — uuid resolves to "Blaster Carbine" (weapons-rifles) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-3.json` :: mandalorian-supercommando-blaster-carbine (Blaster Carbine) — uuid resolves to "Blaster Carbine" (weapons-rifles) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-3.json` :: radtrooper-blaster-carbine (Blaster Carbine) — uuid resolves to "Blaster Carbine" (weapons-rifles) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-3.json` :: mercenary-commander-blaster-carbine (Blaster Carbine) — uuid resolves to "Blaster Carbine" (weapons-rifles) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-3.json` :: specforce-urban-guerrilla-blaster-carbine (Blaster Carbine) — uuid resolves to "Blaster Carbine" (weapons-rifles) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-3.json` :: commando-pathfinder-vibrodagger (Vibrodagger) — uuid resolves to "Vibrodagger" (weapons-simple) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-3.json` :: saboteur-vibrodagger (Vibrodagger) — uuid resolves to "Vibrodagger" (weapons-simple) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-3.json` :: commando-squad-leader-vibrodagger (Vibrodagger) — uuid resolves to "Vibrodagger" (weapons-simple) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-3.json` :: noghri-assassin-vibrodagger (Vibrodagger) — uuid resolves to "Vibrodagger" (weapons-simple) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-3.json` :: wookiee-berserker-bowcaster (Bowcaster) — uuid resolves to "Bowcaster" (weapons-rifles) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-3.json` :: wookiee-freedom-fighter-bowcaster (Bowcaster) — uuid resolves to "Bowcaster" (weapons-rifles) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-3.json` :: core-craft-sentry-stun-baton (Stun Baton) — uuid resolves to "Stun Baton" (weapons-simple) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-3.json` :: csa-trooper-stun-baton (Stun Baton) — uuid resolves to "Stun Baton" (weapons-simple) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-4.json` :: elite-rebel-trooper-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-4.json` :: thug-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-4.json` :: consortium-troubleshooter-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-4.json` :: security-personnel-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-4.json` :: animated-corpse-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-4.json` :: field-medic-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-4.json` :: police-officer-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-4.json` :: imperial-medical-researcher-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-4.json` :: rebel-trooper-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-4.json` :: czerka-associate-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-4.json` :: sith-pilot-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-4.json` :: explorcorps-worker-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-4.json` :: mine-guard-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-4.json` :: security-officer-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-4.json` :: clone-scout-trooper-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-4.json` :: chiss-mercenary-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-4.json` :: duros-scoundrel-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-4.json` :: krath-adept-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-4.json` :: core-craft-senior-tech-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-4.json` :: gray-jedi-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-4.json` :: imperial-agent-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-4.json` :: elite-imperial-navy-trooper-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-4.json` :: rebel-honor-guard-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-4.json` :: csa-commando-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-4.json` :: isb-special-agent-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-4.json` :: detective-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-4.json` :: enforcer-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-4.json` :: rebel-marksman-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-4.json` :: ship-captain-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-4.json` :: gray-jedi-rogue-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-4.json` :: smuggler-heavy-blaster-pistol (Heavy Blaster Pistol) — uuid resolves to "Heavy Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-4.json` :: mandalorian-crusader-heavy-blaster-pistol (Heavy Blaster Pistol) — uuid resolves to "Heavy Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-4.json` :: ship-gunner-heavy-blaster-pistol (Heavy Blaster Pistol) — uuid resolves to "Heavy Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-4.json` :: pirate-heavy-blaster-pistol (Heavy Blaster Pistol) — uuid resolves to "Heavy Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-4.json` :: space-transport-pilot-heavy-blaster-pistol (Heavy Blaster Pistol) — uuid resolves to "Heavy Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-4.json` :: specforce-infiltrator-heavy-blaster-pistol (Heavy Blaster Pistol) — uuid resolves to "Heavy Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-4.json` :: resistance-leader-heavy-blaster-pistol (Heavy Blaster Pistol) — uuid resolves to "Heavy Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-4.json` :: trandoshan-sergeant-heavy-blaster-pistol (Heavy Blaster Pistol) — uuid resolves to "Heavy Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-4.json` :: mandalorian-marauder-heavy-blaster-pistol (Heavy Blaster Pistol) — uuid resolves to "Heavy Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-4.json` :: black-sun-agent-heavy-blaster-pistol (Heavy Blaster Pistol) — uuid resolves to "Heavy Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-4.json` :: privateer-heavy-blaster-pistol (Heavy Blaster Pistol) — uuid resolves to "Heavy Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-4.json` :: inspector-heavy-blaster-pistol (Heavy Blaster Pistol) — uuid resolves to "Heavy Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-4.json` :: inquisitor-apprentice-heavy-blaster-pistol (Heavy Blaster Pistol) — uuid resolves to "Heavy Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-4.json` :: starfighter-pilot-heavy-blaster-pistol (Heavy Blaster Pistol) — uuid resolves to "Heavy Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-4.json` :: sector-ranger-heavy-blaster-pistol (Heavy Blaster Pistol) — uuid resolves to "Heavy Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-4.json` :: citadel-watchman-heavy-blaster-pistol (Heavy Blaster Pistol) — uuid resolves to "Heavy Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-4.json` :: elite-warrior-heavy-blaster-pistol (Heavy Blaster Pistol) — uuid resolves to "Heavy Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-4.json` :: inquisitorius-recruit-heavy-blaster-pistol (Heavy Blaster Pistol) — uuid resolves to "Heavy Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-4.json` :: wheel-thug-heavy-blaster-pistol (Heavy Blaster Pistol) — uuid resolves to "Heavy Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-4.json` :: black-sun-pirate-heavy-blaster-pistol (Heavy Blaster Pistol) — uuid resolves to "Heavy Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-4.json` :: compnor-supporter-vibroblade (Vibroblade) — uuid resolves to "Vibroblade" (weapons-simple) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-4.json` :: republic-officer-vibroblade (Vibroblade) — uuid resolves to "Vibroblade" (weapons-simple) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-4.json` :: sith-commando-vibroblade (Vibroblade) — uuid resolves to "Vibroblade" (weapons-simple) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-4.json` :: cultist-acolyte-vibroblade (Vibroblade) — uuid resolves to "Vibroblade" (weapons-simple) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-4.json` :: wheel-security-vibroblade (Vibroblade) — uuid resolves to "Vibroblade" (weapons-simple) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-4.json` :: genoharadan-assassin-vibroblade (Vibroblade) — uuid resolves to "Vibroblade" (weapons-simple) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-4.json` :: sith-assassin-vibroblade (Vibroblade) — uuid resolves to "Vibroblade" (weapons-simple) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-4.json` :: quarren-goon-vibroblade (Vibroblade) — uuid resolves to "Vibroblade" (weapons-simple) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-4.json` :: hired-blaster-vibroblade (Vibroblade) — uuid resolves to "Vibroblade" (weapons-simple) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-4.json` :: viper-swoop-gang-member-vibroblade (Vibroblade) — uuid resolves to "Vibroblade" (weapons-simple) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-4.json` :: malkite-poisoner-vibroblade (Vibroblade) — uuid resolves to "Vibroblade" (weapons-simple) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-4.json` :: blockade-runner-vibroblade (Vibroblade) — uuid resolves to "Vibroblade" (weapons-simple) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-4.json` :: yalpor-waar-vibroblade (Vibroblade) — uuid resolves to "Vibroblade" (weapons-simple) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-4.json` :: drexl-roosh-vibroblade (Vibroblade) — uuid resolves to "Vibroblade" (weapons-simple) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-4.json` :: ronto-vibroblade (Vibroblade) — uuid resolves to "Vibroblade" (weapons-simple) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-4.json` :: veteran-politician-hold-out-blaster-pistol (Hold-Out Blaster Pistol) — uuid resolves to "Hold-Out Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-4.json` :: 181st-imperial-pilot-hold-out-blaster-pistol (Hold-Out Blaster Pistol) — uuid resolves to "Hold-Out Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-4.json` :: sith-bladeborn-hold-out-blaster-pistol (Hold-Out Blaster Pistol) — uuid resolves to "Hold-Out Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-4.json` :: dark-side-adept-hold-out-blaster-pistol (Hold-Out Blaster Pistol) — uuid resolves to "Hold-Out Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-4.json` :: slicer-hold-out-blaster-pistol (Hold-Out Blaster Pistol) — uuid resolves to "Hold-Out Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-4.json` :: brawler-hold-out-blaster-pistol (Hold-Out Blaster Pistol) — uuid resolves to "Hold-Out Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-4.json` :: infiltrator-hold-out-blaster-pistol (Hold-Out Blaster Pistol) — uuid resolves to "Hold-Out Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-4.json` :: information-broker-hold-out-blaster-pistol (Hold-Out Blaster Pistol) — uuid resolves to "Hold-Out Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-4.json` :: charlatan-hold-out-blaster-pistol (Hold-Out Blaster Pistol) — uuid resolves to "Hold-Out Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-4.json` :: csa-assassin-hold-out-blaster-pistol (Hold-Out Blaster Pistol) — uuid resolves to "Hold-Out Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-4.json` :: dark-side-marauder-hold-out-blaster-pistol (Hold-Out Blaster Pistol) — uuid resolves to "Hold-Out Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-4.json` :: black-sun-vigo-hold-out-blaster-pistol (Hold-Out Blaster Pistol) — uuid resolves to "Hold-Out Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-4.json` :: espo-trooper-stun-baton (Stun Baton) — uuid resolves to "Stun Baton" (weapons-simple) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-4.json` :: galactic-alliance-trooper-stun-baton (Stun Baton) — uuid resolves to "Stun Baton" (weapons-simple) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-4.json` :: corsec-officer-stun-baton (Stun Baton) — uuid resolves to "Stun Baton" (weapons-simple) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-4.json` :: corporate-security-agent-stun-baton (Stun Baton) — uuid resolves to "Stun Baton" (weapons-simple) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-4.json` :: military-guard-commander-stun-baton (Stun Baton) — uuid resolves to "Stun Baton" (weapons-simple) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-4.json` :: elite-espo-trooper-stun-baton (Stun Baton) — uuid resolves to "Stun Baton" (weapons-simple) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-4.json` :: hutt-crime-lord-stun-baton (Stun Baton) — uuid resolves to "Stun Baton" (weapons-simple) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-4.json` :: gamorrean-jailer-stun-baton (Stun Baton) — uuid resolves to "Stun Baton" (weapons-simple) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-4.json` :: varactyl-handler-stun-baton (Stun Baton) — uuid resolves to "Stun Baton" (weapons-simple) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-4.json` :: security-specialist-stun-baton (Stun Baton) — uuid resolves to "Stun Baton" (weapons-simple) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-4.json` :: ugnaught-boss-blaster-carbine (Blaster Carbine) — uuid resolves to "Blaster Carbine" (weapons-rifles) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-4.json` :: ambusher-officer-blaster-carbine (Blaster Carbine) — uuid resolves to "Blaster Carbine" (weapons-rifles) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-4.json` :: first-order-riot-trooper-blaster-carbine (Blaster Carbine) — uuid resolves to "Blaster Carbine" (weapons-rifles) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-4.json` :: bounty-hunter-blaster-carbine (Blaster Carbine) — uuid resolves to "Blaster Carbine" (weapons-rifles) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-4.json` :: epsis-sentry-blaster-carbine (Blaster Carbine) — uuid resolves to "Blaster Carbine" (weapons-rifles) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-4.json` :: anjiliac-thug-blaster-carbine (Blaster Carbine) — uuid resolves to "Blaster Carbine" (weapons-rifles) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-4.json` :: clone-commando-vibrodagger (Vibrodagger) — uuid resolves to "Vibrodagger" (weapons-simple) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-4.json` :: swoop-gang-leader-vibrodagger (Vibrodagger) — uuid resolves to "Vibrodagger" (weapons-simple) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-4.json` :: spy-vibrodagger (Vibrodagger) — uuid resolves to "Vibrodagger" (weapons-simple) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-4.json` :: shadow-trooper-vibrodagger (Vibrodagger) — uuid resolves to "Vibrodagger" (weapons-simple) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-4.json` :: hooligan-vibrodagger (Vibrodagger) — uuid resolves to "Vibrodagger" (weapons-simple) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-4.json` :: chalkazza-bowcaster (Bowcaster) — uuid resolves to "Bowcaster" (weapons-rifles) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-4.json` :: chewbacca-bowcaster (Bowcaster) — uuid resolves to "Bowcaster" (weapons-rifles) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: galactic-alliance-crewmember-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: gamorrean-guard-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: resistance-combatant-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: emergency-crew-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: diplomat-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: ambusher-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: technician-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: rebel-vanguard-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: imperial-junior-officer-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: bridge-crew-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: security-guard-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: citizen-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: maya-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: gamma-383-trench-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: captain-vischera-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: tevlun-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: niffla-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: lieutenant-aden-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: tekkur-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: clone-jet-trooper-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: squib-scavenger-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: wing-security-chief-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: sable-dawn-lieutenant-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: mon-calamari-radical-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: ace-starfighter-pilot-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: fixer-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: imperial-comm-officer-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: ugor-forager-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: personal-guard-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: republic-brigadier-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: quarren-assassin-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: elite-starfighter-pilot-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: galactic-alliance-pilot-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: core-craft-administrator-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: assassin-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: isb-officer-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: auxiliary-inquisitor-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: outlaw-tech-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: rogue-squadron-pilot-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: gray-jedi-disciple-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: republic-admiral-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: clone-pilot-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: republic-lieutenant-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: isb-agent-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: imperial-inquisitor-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: imperial-field-medic-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: galactic-alliance-junior-officer-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: clone-assassin-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: wing-guard-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: data-slicer-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: veteran-imperial-officer-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: sable-dawn-thug-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: jedi-battlemaster-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: mionne-escort-pilot-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: gray-jedi-adept-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: skull-squadron-pilot-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: sable-dawn-assassin-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: imperial-officer-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: bodyguard-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: republic-captain-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: force-parasite-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: sith-officer-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: clone-blaze-trooper-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: imperial-technician-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: galactic-alliance-officer-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: captain-typho-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: oron-jaeger-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: tycho-celchu-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: deena-shan-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: zan-dane-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: juno-eclipse-imperial-graduate-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: pol-virten-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: mira-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: admiral-wullf-yularen-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: morlish-veed-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: zakarisz-ghent-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: warrick-raden-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: darga-the-hutt-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: puzell-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: mara-jade-jedi-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: darth-nihilus-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: zayne-carrick-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: hired-sentry-heavy-blaster-pistol (Heavy Blaster Pistol) — uuid resolves to "Heavy Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: mon-calamari-outlaw-tech-heavy-blaster-pistol (Heavy Blaster Pistol) — uuid resolves to "Heavy Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: trandoshan-raider-heavy-blaster-pistol (Heavy Blaster Pistol) — uuid resolves to "Heavy Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: special-enforcement-officer-heavy-blaster-pistol (Heavy Blaster Pistol) — uuid resolves to "Heavy Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: imperial-shadow-guard-heavy-blaster-pistol (Heavy Blaster Pistol) — uuid resolves to "Heavy Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: clone-commander-rex-heavy-blaster-pistol (Heavy Blaster Pistol) — uuid resolves to "Heavy Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: rav-heavy-blaster-pistol (Heavy Blaster Pistol) — uuid resolves to "Heavy Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: mara-davos-heavy-blaster-pistol (Heavy Blaster Pistol) — uuid resolves to "Heavy Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: han-solo-galactic-hero-heavy-blaster-pistol (Heavy Blaster Pistol) — uuid resolves to "Heavy Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: jodo-kast-heavy-blaster-pistol (Heavy Blaster Pistol) — uuid resolves to "Heavy Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: acaadi-heavy-blaster-pistol (Heavy Blaster Pistol) — uuid resolves to "Heavy Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: garm-bel-iblis-heavy-blaster-pistol (Heavy Blaster Pistol) — uuid resolves to "Heavy Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: chokoo-thool-heavy-blaster-pistol (Heavy Blaster Pistol) — uuid resolves to "Heavy Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: cavik-toth-heavy-blaster-pistol (Heavy Blaster Pistol) — uuid resolves to "Heavy Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: finn-heavy-blaster-pistol (Heavy Blaster Pistol) — uuid resolves to "Heavy Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: airen-cracken-general-heavy-blaster-pistol (Heavy Blaster Pistol) — uuid resolves to "Heavy Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: han-solo-smuggler-heavy-blaster-pistol (Heavy Blaster Pistol) — uuid resolves to "Heavy Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: darok-tho-heavy-blaster-pistol (Heavy Blaster Pistol) — uuid resolves to "Heavy Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: azlyn-rae-heavy-blaster-pistol (Heavy Blaster Pistol) — uuid resolves to "Heavy Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: bonnie-reed-heavy-blaster-pistol (Heavy Blaster Pistol) — uuid resolves to "Heavy Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: han-solo-heavy-blaster-pistol (Heavy Blaster Pistol) — uuid resolves to "Heavy Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: kyle-katarn-heavy-blaster-pistol (Heavy Blaster Pistol) — uuid resolves to "Heavy Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: meekah-hozard-heavy-blaster-pistol (Heavy Blaster Pistol) — uuid resolves to "Heavy Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: commander-zolghast-heavy-blaster-pistol (Heavy Blaster Pistol) — uuid resolves to "Heavy Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: nyna-calixte-heavy-blaster-pistol (Heavy Blaster Pistol) — uuid resolves to "Heavy Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: nym-heavy-blaster-pistol (Heavy Blaster Pistol) — uuid resolves to "Heavy Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: braxus-lyn-heavy-blaster-pistol (Heavy Blaster Pistol) — uuid resolves to "Heavy Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: cobb-vanth-heavy-blaster-pistol (Heavy Blaster Pistol) — uuid resolves to "Heavy Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: tavik-moern-heavy-blaster-pistol (Heavy Blaster Pistol) — uuid resolves to "Heavy Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: kessra-heavy-blaster-pistol (Heavy Blaster Pistol) — uuid resolves to "Heavy Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: karvas-toll-heavy-blaster-pistol (Heavy Blaster Pistol) — uuid resolves to "Heavy Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: hondo-ohnaka-heavy-blaster-pistol (Heavy Blaster Pistol) — uuid resolves to "Heavy Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: sisla-heavy-blaster-pistol (Heavy Blaster Pistol) — uuid resolves to "Heavy Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: kal-jorek-heavy-blaster-pistol (Heavy Blaster Pistol) — uuid resolves to "Heavy Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: cassus-fett-heavy-blaster-pistol (Heavy Blaster Pistol) — uuid resolves to "Heavy Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: zayda-heavy-blaster-pistol (Heavy Blaster Pistol) — uuid resolves to "Heavy Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: han-solo-stormtrooper-armor-heavy-blaster-pistol (Heavy Blaster Pistol) — uuid resolves to "Heavy Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: general-grievous-heavy-blaster-pistol (Heavy Blaster Pistol) — uuid resolves to "Heavy Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: ania-solo-heavy-blaster-pistol (Heavy Blaster Pistol) — uuid resolves to "Heavy Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: anakin-solo-heavy-blaster-pistol (Heavy Blaster Pistol) — uuid resolves to "Heavy Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: mara-jade-heavy-blaster-pistol (Heavy Blaster Pistol) — uuid resolves to "Heavy Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: bendak-starkiller-heavy-blaster-pistol (Heavy Blaster Pistol) — uuid resolves to "Heavy Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: rohlan-dyre-heavy-blaster-pistol (Heavy Blaster Pistol) — uuid resolves to "Heavy Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: resh-heavy-blaster-pistol (Heavy Blaster Pistol) — uuid resolves to "Heavy Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: loodux-heavy-blaster-pistol (Heavy Blaster Pistol) — uuid resolves to "Heavy Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: carnor-jax-heavy-blaster-pistol (Heavy Blaster Pistol) — uuid resolves to "Heavy Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: sirona-okeefe-heavy-blaster-pistol (Heavy Blaster Pistol) — uuid resolves to "Heavy Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: verinos-heavy-blaster-pistol (Heavy Blaster Pistol) — uuid resolves to "Heavy Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: corran-horn-heavy-blaster-pistol (Heavy Blaster Pistol) — uuid resolves to "Heavy Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: vril-vrakth-heavy-blaster-pistol (Heavy Blaster Pistol) — uuid resolves to "Heavy Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: zabrak-engineer-hold-out-blaster-pistol (Hold-Out Blaster Pistol) — uuid resolves to "Hold-Out Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: winter-hold-out-blaster-pistol (Hold-Out Blaster Pistol) — uuid resolves to "Hold-Out Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: mon-mothma-hold-out-blaster-pistol (Hold-Out Blaster Pistol) — uuid resolves to "Hold-Out Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: barin-trevina-hold-out-blaster-pistol (Hold-Out Blaster Pistol) — uuid resolves to "Hold-Out Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: switch-hold-out-blaster-pistol (Hold-Out Blaster Pistol) — uuid resolves to "Hold-Out Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: nonul-weran-hold-out-blaster-pistol (Hold-Out Blaster Pistol) — uuid resolves to "Hold-Out Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: dool-pundar-hold-out-blaster-pistol (Hold-Out Blaster Pistol) — uuid resolves to "Hold-Out Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: ferrika-lazerra-hold-out-blaster-pistol (Hold-Out Blaster Pistol) — uuid resolves to "Hold-Out Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: tis-dolan-hold-out-blaster-pistol (Hold-Out Blaster Pistol) — uuid resolves to "Hold-Out Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: solvek-hold-out-blaster-pistol (Hold-Out Blaster Pistol) — uuid resolves to "Hold-Out Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: braxus-lyn-hold-out-blaster-pistol (Hold-Out Blaster Pistol) — uuid resolves to "Hold-Out Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: hondo-ohnaka-hold-out-blaster-pistol (Hold-Out Blaster Pistol) — uuid resolves to "Hold-Out Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: borsk-feylya-hold-out-blaster-pistol (Hold-Out Blaster Pistol) — uuid resolves to "Hold-Out Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: lord-arkoh-adasca-hold-out-blaster-pistol (Hold-Out Blaster Pistol) — uuid resolves to "Hold-Out Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: empress-marasiah-fel-hold-out-blaster-pistol (Hold-Out Blaster Pistol) — uuid resolves to "Hold-Out Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: kurka-hold-out-blaster-pistol (Hold-Out Blaster Pistol) — uuid resolves to "Hold-Out Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: bib-fortuna-hold-out-blaster-pistol (Hold-Out Blaster Pistol) — uuid resolves to "Hold-Out Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: marasiah-fel-hold-out-blaster-pistol (Hold-Out Blaster Pistol) — uuid resolves to "Hold-Out Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: haako-hold-out-blaster-pistol (Hold-Out Blaster Pistol) — uuid resolves to "Hold-Out Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: sab-hold-out-blaster-pistol (Hold-Out Blaster Pistol) — uuid resolves to "Hold-Out Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: xanatos-hold-out-blaster-pistol (Hold-Out Blaster Pistol) — uuid resolves to "Hold-Out Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: tyber-zann-hold-out-blaster-pistol (Hold-Out Blaster Pistol) — uuid resolves to "Hold-Out Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: mira-vibroblade (Vibroblade) — uuid resolves to "Vibroblade" (weapons-simple) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: bao-dur-vibroblade (Vibroblade) — uuid resolves to "Vibroblade" (weapons-simple) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: calo-nord-vibroblade (Vibroblade) — uuid resolves to "Vibroblade" (weapons-simple) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: nonul-weran-vibroblade (Vibroblade) — uuid resolves to "Vibroblade" (weapons-simple) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: crix-madine-vibroblade (Vibroblade) — uuid resolves to "Vibroblade" (weapons-simple) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: samar-vibroblade (Vibroblade) — uuid resolves to "Vibroblade" (weapons-simple) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: dob-and-del-moomo-vibroblade (Vibroblade) — uuid resolves to "Vibroblade" (weapons-simple) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: tis-dolan-vibroblade (Vibroblade) — uuid resolves to "Vibroblade" (weapons-simple) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: bonnie-reed-vibroblade (Vibroblade) — uuid resolves to "Vibroblade" (weapons-simple) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: nyna-calixte-vibroblade (Vibroblade) — uuid resolves to "Vibroblade" (weapons-simple) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: bantha-rawk-vibroblade (Vibroblade) — uuid resolves to "Vibroblade" (weapons-simple) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: karvas-toll-vibroblade (Vibroblade) — uuid resolves to "Vibroblade" (weapons-simple) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: sugi-vibroblade (Vibroblade) — uuid resolves to "Vibroblade" (weapons-simple) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: dengar-vibroblade (Vibroblade) — uuid resolves to "Vibroblade" (weapons-simple) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: jerec-vibroblade (Vibroblade) — uuid resolves to "Vibroblade" (weapons-simple) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: resh-vibroblade (Vibroblade) — uuid resolves to "Vibroblade" (weapons-simple) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: mirax-terrik-horn-vibroblade (Vibroblade) — uuid resolves to "Vibroblade" (weapons-simple) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: hondo-karr-vibroblade (Vibroblade) — uuid resolves to "Vibroblade" (weapons-simple) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: andurgo-vibroblade (Vibroblade) — uuid resolves to "Vibroblade" (weapons-simple) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: baron-kithriss-vibroblade (Vibroblade) — uuid resolves to "Vibroblade" (weapons-simple) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: sartok-vibroblade (Vibroblade) — uuid resolves to "Vibroblade" (weapons-simple) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: military-guard-stun-baton (Stun Baton) — uuid resolves to "Stun Baton" (weapons-simple) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: security-guard-stun-baton (Stun Baton) — uuid resolves to "Stun Baton" (weapons-simple) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: finn-stun-baton (Stun Baton) — uuid resolves to "Stun Baton" (weapons-simple) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: dool-pundar-stun-baton (Stun Baton) — uuid resolves to "Stun Baton" (weapons-simple) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: meekah-hozard-stun-baton (Stun Baton) — uuid resolves to "Stun Baton" (weapons-simple) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: captain-greeku-stun-baton (Stun Baton) — uuid resolves to "Stun Baton" (weapons-simple) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: lesan-dos-stun-baton (Stun Baton) — uuid resolves to "Stun Baton" (weapons-simple) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: loodux-stun-baton (Stun Baton) — uuid resolves to "Stun Baton" (weapons-simple) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: ananah-kragana-blaster-carbine (Blaster Carbine) — uuid resolves to "Blaster Carbine" (weapons-rifles) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: lieutenant-kareme-blaster-carbine (Blaster Carbine) — uuid resolves to "Blaster Carbine" (weapons-rifles) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: bantha-rawk-blaster-carbine (Blaster Carbine) — uuid resolves to "Blaster Carbine" (weapons-rifles) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: sugi-blaster-carbine (Blaster Carbine) — uuid resolves to "Blaster Carbine" (weapons-rifles) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: rx-7246-blaster-carbine (Blaster Carbine) — uuid resolves to "Blaster Carbine" (weapons-rifles) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: sando-blaster-carbine (Blaster Carbine) — uuid resolves to "Blaster Carbine" (weapons-rifles) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: yrssk-blaster-carbine (Blaster Carbine) — uuid resolves to "Blaster Carbine" (weapons-rifles) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: salporin-bowcaster (Bowcaster) — uuid resolves to "Bowcaster" (weapons-rifles) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: merumeru-bowcaster (Bowcaster) — uuid resolves to "Bowcaster" (weapons-rifles) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: tarfful-bowcaster (Bowcaster) — uuid resolves to "Bowcaster" (weapons-rifles) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: chewbacca-claatuvac-scout-bowcaster (Bowcaster) — uuid resolves to "Bowcaster" (weapons-rifles) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: zaalbar-bowcaster (Bowcaster) — uuid resolves to "Bowcaster" (weapons-rifles) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: black-krrsantan-bowcaster (Bowcaster) — uuid resolves to "Bowcaster" (weapons-rifles) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: ananah-kragana-vibrodagger (Vibrodagger) — uuid resolves to "Vibrodagger" (weapons-simple) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: bail-antilles-vibrodagger (Vibrodagger) — uuid resolves to "Vibrodagger" (weapons-simple) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: sab-vibrodagger (Vibrodagger) — uuid resolves to "Vibrodagger" (weapons-simple) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: cel-nero-vibrodagger (Vibrodagger) — uuid resolves to "Vibrodagger" (weapons-simple) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: yalpor-waar-heavy-blaster-pistol (Heavy Blaster Pistol) — uuid resolves to "Heavy Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: drexl-roosh-heavy-blaster-pistol (Heavy Blaster Pistol) — uuid resolves to "Heavy Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: ronto-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: lucien-draay-lightsaber (Lightsaber) — uuid resolves to "Lightsaber" (weapons-simple) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: deliah-blue-bluebolt-blaster-pistol (Bluebolt Blaster Pistol) — uuid resolves to "Bluebolt Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: darth-azard-double-bladed-lightsaber (Double-Bladed Lightsaber) — uuid resolves to "Double-Bladed Lightsaber" (weapons-simple) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: zayne-carrick-lightsaber (Lightsaber) — uuid resolves to "Lightsaber" (weapons-simple) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: t3-m4-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: mace-windu-lightsaber (Lightsaber) — uuid resolves to "Lightsaber" (weapons-simple) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: nien-nunb-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: raik-muun-lightsaber (Lightsaber) — uuid resolves to "Lightsaber" (weapons-simple) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: acaadi-lightsaber (Lightsaber) — uuid resolves to "Lightsaber" (weapons-simple) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: bythen-forral-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: bao-dur-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: dace-diath-lightsaber (Lightsaber) — uuid resolves to "Lightsaber" (weapons-simple) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: derek-hobbie-klivian-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: luke-skywalker-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: jorj-cardas-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: doel-scherp-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: forn-dodonna-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: maximilian-veers-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: herdrtui-sling (Sling) — uuid resolves to "Sling" (weapons-simple) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: galen-marek-vaders-apprentice-lightsaber (Lightsaber) — uuid resolves to "Lightsaber" (weapons-simple) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: wilhuff-tarkin-imperial-governor-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: asajj-ventress-strike-leader-dueling-lightsaber (Dueling Lightsaber) — uuid resolves to "Dueling Lightsaber" (weapons-lightsabers) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: darth-vader-lightsaber (Lightsaber) — uuid resolves to "Lightsaber" (weapons-simple) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: azrakel-the-dark-warrior-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: rahm-kota-lightsaber (Lightsaber) — uuid resolves to "Lightsaber" (weapons-simple) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: ozzik-sturn-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: darth-talon-lightsaber (Lightsaber) — uuid resolves to "Lightsaber" (weapons-simple) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: dallan-morvis-captain-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: bail-antilles-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: g0-t0-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: darth-revan-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: kol-skywalker-lightsaber (Lightsaber) — uuid resolves to "Lightsaber" (weapons-simple) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: wilhuff-tarkin-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: high-lady-brezwalt-iii-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: ahsoka-tano-lightsaber (Lightsaber) — uuid resolves to "Lightsaber" (weapons-simple) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: booster-terrik-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: crix-madine-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: jan-dodonna-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: sedriss-lightsaber (Lightsaber) — uuid resolves to "Lightsaber" (weapons-simple) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: aurra-sing-lightsaber (Lightsaber) — uuid resolves to "Lightsaber" (weapons-simple) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: aurra-sing-slugthrower-rifle (Slugthrower Rifle) — uuid resolves to "Slugthrower Rifle" (weapons-rifles) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: biggs-darklighter-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: rulf-yage-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: samar-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: tamith-kai-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: janek-sunber-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: jango-fett-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: azlyn-rae-lightsaber (Lightsaber) — uuid resolves to "Lightsaber" (weapons-simple) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: quinlan-vos-lightsaber (Lightsaber) — uuid resolves to "Lightsaber" (weapons-simple) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: dob-and-del-moomo-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: dob-and-del-moomo-slugthrower-pistol (Slugthrower Pistol) — uuid resolves to "Slugthrower Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: dob-and-del-moomo-sonic-disruptor (Sonic Disruptor) — uuid resolves to "Sonic Disruptor" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: inquisitor-nolor-lightsaber (Lightsaber) — uuid resolves to "Lightsaber" (weapons-simple) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: inquisitor-nolor-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: arca-jeth-lightsaber (Lightsaber) — uuid resolves to "Lightsaber" (weapons-simple) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: chalkazza-vibroblade (Vibroblade) — uuid resolves to "Vibroblade" (weapons-simple) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: ganga-lor-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: tehlan-aleece-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: wedge-antilles-red-two-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: tott-doneeta-lightsaber (Lightsaber) — uuid resolves to "Lightsaber" (weapons-simple) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: kyle-katarn-lightsaber (Lightsaber) — uuid resolves to "Lightsaber" (weapons-simple) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: prello-the-hutt-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: antares-draco-lightsaber (Lightsaber) — uuid resolves to "Lightsaber" (weapons-simple) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: juhani-lightsaber (Lightsaber) — uuid resolves to "Lightsaber" (weapons-simple) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: thrawn-admiral-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: silas-draver-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: bastila-shan-double-bladed-lightsaber (Double-Bladed Lightsaber) — uuid resolves to "Double-Bladed Lightsaber" (weapons-simple) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: jak-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: whorm-loathsom-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: kagen-brendel-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: oss-willum-lightsaber (Lightsaber) — uuid resolves to "Lightsaber" (weapons-simple) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: luke-skywalker-hoth-pilot-ascension-gun (Ascension Gun) — uuid resolves to "Ascension Gun" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: luke-skywalker-hoth-pilot-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: nyna-calixte-heavy-assault-blaster (Heavy Assault Blaster) — uuid resolves to "Heavy Assault Blaster" (weapons-rifles) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: nyna-calixte-snap-shot-blaster-pistol (Snap-Shot Blaster Pistol) — uuid resolves to "Snap-Shot Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: bantha-rawk-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: kazdan-paratus-commander-lightsaber (Lightsaber) — uuid resolves to "Lightsaber" (weapons-simple) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: braxus-lyn-lightsaber (Lightsaber) — uuid resolves to "Lightsaber" (weapons-simple) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: darth-maleval-lightsaber (Lightsaber) — uuid resolves to "Lightsaber" (weapons-simple) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: admiral-saul-karath-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: misha-vekkian-lightsaber (Lightsaber) — uuid resolves to "Lightsaber" (weapons-simple) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: misha-vekkian-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: zerik-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: gial-gahan-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: darth-sion-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: durge-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: galen-marek-lightsaber (Lightsaber) — uuid resolves to "Lightsaber" (weapons-simple) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: finvarra-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: brianna-the-last-handmaiden-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: wolf-sazen-lightsaber (Lightsaber) — uuid resolves to "Lightsaber" (weapons-simple) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: juno-eclipse-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: brogar-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: wes-janson-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: nomi-sunrider-lightsaber (Lightsaber) — uuid resolves to "Lightsaber" (weapons-simple) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: demagol-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: aldren-dayos-lightsaber (Lightsaber) — uuid resolves to "Lightsaber" (weapons-simple) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: karvas-toll-snare-pistol (Snare Pistol) — uuid resolves to "Snare Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: admiral-ackbar-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: cilghal-lightsaber (Lightsaber) — uuid resolves to "Lightsaber" (weapons-simple) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: deliah-blue-bounty-hunter-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: inquisitor-tremayne-lightsaber (Lightsaber) — uuid resolves to "Lightsaber" (weapons-simple) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: inquisitor-tremayne-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: darth-malak-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: cay-qel-droma-lightsaber (Lightsaber) — uuid resolves to "Lightsaber" (weapons-simple) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: armen-arandis-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: shoaneb-culu-lightsaber (Lightsaber) — uuid resolves to "Lightsaber" (weapons-simple) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: wullf-yularen-colonel-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: boushh-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: celeste-morne-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: fehlaaur-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: zardra-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: vordell-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: hosk-treylis-lightsaber (Lightsaber) — uuid resolves to "Lightsaber" (weapons-simple) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: karnak-tetsu-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: guri-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: mission-vao-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: shasa-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: lesan-dos-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: nera-dantels-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: 4-lom-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: blackhole-lightsaber (Lightsaber) — uuid resolves to "Lightsaber" (weapons-simple) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: general-grievous-lightsaber (Lightsaber) — uuid resolves to "Lightsaber" (weapons-simple) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: inquisitor-valin-draco-lightsaber (Lightsaber) — uuid resolves to "Lightsaber" (weapons-simple) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: graaf-savraan-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: grand-moff-trachta-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: eldewn-and-elsae-sarvool-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: gilad-pellaeon-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: carlist-rieekan-general-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: empress-marasiah-fel-lightsaber (Lightsaber) — uuid resolves to "Lightsaber" (weapons-simple) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: amar-cros-lightsaber (Lightsaber) — uuid resolves to "Lightsaber" (weapons-simple) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: taarna-renay-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: desann-lightsaber (Lightsaber) — uuid resolves to "Lightsaber" (weapons-simple) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: prince-xizor-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: proxy-lightsaber (Lightsaber) — uuid resolves to "Lightsaber" (weapons-simple) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: proxy-double-bladed-lightsaber (Double-Bladed Lightsaber) — uuid resolves to "Double-Bladed Lightsaber" (weapons-simple) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: pol-temm-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: darth-wyyrlok-lightsaber (Lightsaber) — uuid resolves to "Lightsaber" (weapons-simple) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: nahdar-vebb-lightsaber (Lightsaber) — uuid resolves to "Lightsaber" (weapons-simple) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: inquisitor-jorad-lightsaber (Lightsaber *) — uuid resolves to "Lightsaber" (weapons-simple) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: inquisitor-jorad-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: zietta-the-hutt-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: anakin-solo-lightsaber (Lightsaber) — uuid resolves to "Lightsaber" (weapons-simple) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: chak-hunting-blaster-carbine (Hunting Blaster Carbine) — uuid resolves to "Hunting Blaster Carbine" (weapons-rifles) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: atris-lightsaber (Lightsaber) — uuid resolves to "Lightsaber" (weapons-simple) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: duqua-dar-lightsaber (Lightsaber) — uuid resolves to "Lightsaber" (weapons-simple) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: darth-maladi-lightsaber (Lightsaber) — uuid resolves to "Lightsaber" (weapons-simple) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: hethrir-lightsaber (Lightsaber) — uuid resolves to "Lightsaber" (weapons-simple) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: cade-skywalker-bounty-hunter-lightsaber (Lightsaber) — uuid resolves to "Lightsaber" (weapons-simple) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: admiral-stazi-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: bo-katan-kryze-wrist-blaster (Wrist Blaster) — uuid resolves to "Wrist Blaster" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: wat-tambor-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: jhoram-bey-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: marasiah-fel-lightsaber (Lightsaber) — uuid resolves to "Lightsaber" (weapons-simple) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: exar-kun-double-bladed-lightsaber (Double-Bladed Lightsaber) — uuid resolves to "Double-Bladed Lightsaber" (weapons-simple) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: gunn-yage-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: reddjak-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: ahsoka-tano-the-hand-of-vader-lightsaber (Lightsaber) — uuid resolves to "Lightsaber" (weapons-simple) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: armand-isard-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: wedge-antilles-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: ahsoka-tano-commander-lightsaber (Lightsaber) — uuid resolves to "Lightsaber" (weapons-simple) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: frizz-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: kaah-ohtok-lightsaber (Lightsaber) — uuid resolves to "Lightsaber" (weapons-simple) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: monia-gahan-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: ghia-preyssola-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: luke-skywalker-grand-master-short-lightsaber (Short Lightsaber) — uuid resolves to "Short Lightsaber" (weapons-lightsabers) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: anj-dahl-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: jariah-syn-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: jariah-syn-sporting-blaster-carbine (Sporting Blaster Carbine) — uuid resolves to "Sporting Blaster Carbine" (weapons-rifles) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: cade-skywalker-lightsaber (Lightsaber) — uuid resolves to "Lightsaber" (weapons-simple) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: mirax-terrik-horn-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: tyrnia-masak-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: fetwin-porlo-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: eetoa-ro-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: boshek-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: bail-organa-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: pleth-juun-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: the-exile-lightsaber (Lightsaber) — uuid resolves to "Lightsaber" (weapons-simple) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: the-exile-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: jacen-solo-lightsaber (Lightsaber) — uuid resolves to "Lightsaber" (weapons-simple) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: ki-adi-mundi-lightsaber (Lightsaber) — uuid resolves to "Lightsaber" (weapons-simple) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: hanna-ding-lightsaber (Lightsaber) — uuid resolves to "Lightsaber" (weapons-simple) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: kee-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: jirany-sha-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: high-inquisitor-valin-draco-lightsaber (Lightsaber) — uuid resolves to "Lightsaber" (weapons-simple) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: andurgo-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: baron-kithriss-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: jolee-bindo-lightsaber (Lightsaber) — uuid resolves to "Lightsaber" (weapons-simple) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: jolee-bindo-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: odan-urr-lightsaber (Lightsaber) — uuid resolves to "Lightsaber" (weapons-simple) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: saesee-tiin-lightsaber (Lightsaber) — uuid resolves to "Lightsaber" (weapons-simple) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: kazdan-paratus-lightsaber (Lightsaber) — uuid resolves to "Lightsaber" (weapons-simple) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: xanatos-lightsaber (Lightsaber) — uuid resolves to "Lightsaber" (weapons-simple) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: regera-girawn-lightsaber (Lightsaber) — uuid resolves to "Lightsaber" (weapons-simple) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: anakin-skywalker-lightsaber (Lightsaber) — uuid resolves to "Lightsaber" (weapons-simple) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: sartok-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: zam-wesell-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: jaius-yorub-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: cel-nero-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.
+- `data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json` :: talon-karrde-heavy-blaster-pistol (Heavy Blaster Pistol) — uuid resolves to "Heavy Blaster Pistol" (weapons-pistols) with matching base metadata.
 - `data/nonheroic/nonheroic-weapon-damage-profiles.nh1-droids.json` :: t4-turret-droid-blaster-cannon (Blaster Cannon) — uuid resolves to "Blaster Cannon" (weapons-heavy) with matching base metadata.
 - `data/nonheroic/nonheroic-weapon-damage-profiles.nh3-galaxy-of-intrigue.json` :: deluge-facility-guard-stun-baton (Stun Baton) — uuid resolves to "Stun Baton" (weapons-simple) with matching base metadata.
 - `data/nonheroic/nonheroic-weapon-damage-profiles.nh3-galaxy-of-intrigue.json` :: deluge-facility-guard-blaster-pistol (Blaster Pistol) — uuid resolves to "Blaster Pistol" (weapons-pistols) with matching base metadata.

@@ -1,0 +1,2829 @@
+{
+  "$schemaNote": "Pass-5 promotion allowlist for tools/promote-nonheroic-damage-profile-candidates.mjs. Exactly the rows listed here may be promoted; the tool fails loudly if any entry resolves to zero or more than one candidate.",
+  "generatedBy": "tools selection script (pass-5 expansion, includes lightsabers per user decision)",
+  "note": "Pass 5 expanded from 200 to 403 rows: kept the original 200 non-lightsaber entries, added all remaining clean Lane A supply (203 rows) including lightsaber variants for the first time in this pipeline, since non-lightsaber supply alone (328 max) could not reach the requested 500-row target.",
+  "maxEntries": 403,
+  "entries": [
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json",
+      "actorSlug": "galactic-alliance-crewmember",
+      "status": "safe-ordinary-weapon-candidate",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json",
+      "actorSlug": "gamorrean-guard",
+      "status": "safe-ordinary-weapon-candidate",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json",
+      "actorSlug": "resistance-combatant",
+      "status": "safe-ordinary-weapon-candidate",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json",
+      "actorSlug": "emergency-crew",
+      "status": "safe-ordinary-weapon-candidate",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json",
+      "actorSlug": "diplomat",
+      "status": "safe-ordinary-weapon-candidate",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json",
+      "actorSlug": "ambusher",
+      "status": "safe-ordinary-weapon-candidate",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json",
+      "actorSlug": "technician",
+      "status": "safe-ordinary-weapon-candidate",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json",
+      "actorSlug": "rebel-vanguard",
+      "status": "safe-ordinary-weapon-candidate",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json",
+      "actorSlug": "imperial-junior-officer",
+      "status": "safe-ordinary-weapon-candidate",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json",
+      "actorSlug": "bridge-crew",
+      "status": "safe-ordinary-weapon-candidate",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json",
+      "actorSlug": "security-guard",
+      "status": "safe-ordinary-weapon-candidate",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json",
+      "actorSlug": "citizen",
+      "status": "safe-ordinary-weapon-candidate",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "maya",
+      "status": "safe-ordinary-weapon-candidate",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "gamma-383-trench",
+      "status": "safe-ordinary-weapon-candidate",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "captain-vischera",
+      "status": "safe-ordinary-weapon-candidate",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "tevlun",
+      "status": "safe-ordinary-weapon-candidate",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "niffla",
+      "status": "safe-ordinary-weapon-candidate",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "lieutenant-aden",
+      "status": "safe-ordinary-weapon-candidate",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "tekkur",
+      "status": "safe-ordinary-weapon-candidate",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json",
+      "actorSlug": "clone-jet-trooper",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+1"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json",
+      "actorSlug": "squib-scavenger",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+1"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json",
+      "actorSlug": "wing-security-chief",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+1"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json",
+      "actorSlug": "sable-dawn-lieutenant",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+2"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json",
+      "actorSlug": "mon-calamari-radical",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+2"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json",
+      "actorSlug": "ace-starfighter-pilot",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+7"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json",
+      "actorSlug": "fixer",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+3"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json",
+      "actorSlug": "imperial-comm-officer",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+2"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json",
+      "actorSlug": "ugor-forager",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+1"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json",
+      "actorSlug": "personal-guard",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+2"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json",
+      "actorSlug": "republic-brigadier",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+5"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json",
+      "actorSlug": "quarren-assassin",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+2"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json",
+      "actorSlug": "elite-starfighter-pilot",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+5"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json",
+      "actorSlug": "galactic-alliance-pilot",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+2"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json",
+      "actorSlug": "core-craft-administrator",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+2"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json",
+      "actorSlug": "assassin",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+2"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json",
+      "actorSlug": "isb-officer",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+4"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json",
+      "actorSlug": "auxiliary-inquisitor",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+4"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json",
+      "actorSlug": "outlaw-tech",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+2"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json",
+      "actorSlug": "rogue-squadron-pilot",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+4"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json",
+      "actorSlug": "gray-jedi-disciple",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+8"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json",
+      "actorSlug": "republic-admiral",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+7"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json",
+      "actorSlug": "clone-pilot",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+1"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json",
+      "actorSlug": "republic-lieutenant",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+2"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json",
+      "actorSlug": "isb-agent",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+1"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json",
+      "actorSlug": "imperial-inquisitor",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+6"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json",
+      "actorSlug": "imperial-field-medic",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+1"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json",
+      "actorSlug": "galactic-alliance-junior-officer",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+2"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json",
+      "actorSlug": "clone-assassin",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+3"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json",
+      "actorSlug": "wing-guard",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+3"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json",
+      "actorSlug": "data-slicer",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+3"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json",
+      "actorSlug": "veteran-imperial-officer",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+4"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json",
+      "actorSlug": "sable-dawn-thug",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+1"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json",
+      "actorSlug": "jedi-battlemaster",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+6"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json",
+      "actorSlug": "mionne-escort-pilot",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+1"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json",
+      "actorSlug": "gray-jedi-adept",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+6"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json",
+      "actorSlug": "skull-squadron-pilot",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+4"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json",
+      "actorSlug": "sable-dawn-assassin",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+4"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json",
+      "actorSlug": "imperial-officer",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+2"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json",
+      "actorSlug": "bodyguard",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+2"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json",
+      "actorSlug": "republic-captain",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+4"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json",
+      "actorSlug": "force-parasite",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+3"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json",
+      "actorSlug": "sith-officer",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+2"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json",
+      "actorSlug": "clone-blaze-trooper",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+1"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json",
+      "actorSlug": "imperial-technician",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+2"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json",
+      "actorSlug": "galactic-alliance-officer",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+5"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "captain-typho",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+4"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "oron-jaeger",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+6"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "tycho-celchu",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+4"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "deena-shan",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+2"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "zan-dane",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+4"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "juno-eclipse-imperial-graduate",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+1"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "pol-virten",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+4"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "mira",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+3"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "admiral-wullf-yularen",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+2"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "morlish-veed",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+7"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "zakarisz-ghent",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+5"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "warrick-raden",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+3"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "darga-the-hutt",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+4"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "puzell",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+2"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "mara-jade-jedi",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+7"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "darth-nihilus",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+9"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "zayne-carrick",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+3"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json",
+      "actorSlug": "hired-sentry",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Heavy Blaster Pistol",
+      "printedFormula": "3d8+3"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json",
+      "actorSlug": "mon-calamari-outlaw-tech",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Heavy Blaster Pistol",
+      "printedFormula": "3d8+3"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json",
+      "actorSlug": "trandoshan-raider",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Heavy Blaster Pistol",
+      "printedFormula": "4d8+9"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json",
+      "actorSlug": "special-enforcement-officer",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Heavy Blaster Pistol",
+      "printedFormula": "3d8+6"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json",
+      "actorSlug": "imperial-shadow-guard",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Heavy Blaster Pistol",
+      "printedFormula": "3d8+5"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "clone-commander-rex",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Heavy Blaster Pistol",
+      "printedFormula": "4d8+5"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "rav",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Heavy Blaster Pistol",
+      "printedFormula": "3d8+6"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "mara-davos",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Heavy Blaster Pistol",
+      "printedFormula": "3d8+4"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "han-solo-galactic-hero",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Heavy Blaster Pistol",
+      "printedFormula": "3d8+13"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "jodo-kast",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Heavy Blaster Pistol",
+      "printedFormula": "3d8+6"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "acaadi",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Heavy Blaster Pistol",
+      "printedFormula": "3d8+4"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "garm-bel-iblis",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Heavy Blaster Pistol",
+      "printedFormula": "3d8+4"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "chokoo-thool",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Heavy Blaster Pistol",
+      "printedFormula": "3d8+2"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "cavik-toth",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Heavy Blaster Pistol",
+      "printedFormula": "3d8+5"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "finn",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Heavy Blaster Pistol",
+      "printedFormula": "3d8+2"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "airen-cracken-general",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Heavy Blaster Pistol",
+      "printedFormula": "3d8+5"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "han-solo-smuggler",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Heavy Blaster Pistol",
+      "printedFormula": "3d8+4"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "darok-tho",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Heavy Blaster Pistol",
+      "printedFormula": "3d8+1"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "azlyn-rae",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Heavy Blaster Pistol",
+      "printedFormula": "3d8+5"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "bonnie-reed",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Heavy Blaster Pistol",
+      "printedFormula": "3d8+7"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "han-solo",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Heavy Blaster Pistol",
+      "printedFormula": "3d8+9"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "kyle-katarn",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Heavy Blaster Pistol",
+      "printedFormula": "3d8+7"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "meekah-hozard",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Heavy Blaster Pistol",
+      "printedFormula": "3d8+5"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "commander-zolghast",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Heavy Blaster Pistol",
+      "printedFormula": "3d8+1"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "nyna-calixte",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Heavy Blaster Pistol",
+      "printedFormula": "3d8+7"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "nym",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Heavy Blaster Pistol",
+      "printedFormula": "3d8+5"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "braxus-lyn",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Heavy Blaster Pistol",
+      "printedFormula": "3d8+1"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "cobb-vanth",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Heavy Blaster Pistol",
+      "printedFormula": "3d8+4"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "tavik-moern",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Heavy Blaster Pistol",
+      "printedFormula": "3d8+8"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "kessra",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Heavy Blaster Pistol",
+      "printedFormula": "3d8+3"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "karvas-toll",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Heavy Blaster Pistol",
+      "printedFormula": "3d8+4"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "hondo-ohnaka",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Heavy Blaster Pistol",
+      "printedFormula": "3d8+5"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "sisla",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Heavy Blaster Pistol",
+      "printedFormula": "3d8+5"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "kal-jorek",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Heavy Blaster Pistol",
+      "printedFormula": "3d8+1"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "cassus-fett",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Heavy Blaster Pistol",
+      "printedFormula": "3d8+8"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "zayda",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Heavy Blaster Pistol",
+      "printedFormula": "3d8+3"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "han-solo-stormtrooper-armor",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Heavy Blaster Pistol",
+      "printedFormula": "3d8+5"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "general-grievous",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Heavy Blaster Pistol",
+      "printedFormula": "3d8+7"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "ania-solo",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Heavy Blaster Pistol",
+      "printedFormula": "3d8+4"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "anakin-solo",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Heavy Blaster Pistol",
+      "printedFormula": "3d8+6"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "mara-jade",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Heavy Blaster Pistol",
+      "printedFormula": "3d8+10"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "bendak-starkiller",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Heavy Blaster Pistol",
+      "printedFormula": "3d8+10"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "rohlan-dyre",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Heavy Blaster Pistol",
+      "printedFormula": "3d8+6"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "resh",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Heavy Blaster Pistol",
+      "printedFormula": "3d8+5"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "loodux",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Heavy Blaster Pistol",
+      "printedFormula": "3d8+7"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "carnor-jax",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Heavy Blaster Pistol",
+      "printedFormula": "3d8+8"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "sirona-okeefe",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Heavy Blaster Pistol",
+      "printedFormula": "3d8+3"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "verinos",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Heavy Blaster Pistol",
+      "printedFormula": "3d8+4"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "corran-horn",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Heavy Blaster Pistol",
+      "printedFormula": "3d8+6"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "vril-vrakth",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Heavy Blaster Pistol",
+      "printedFormula": "4d8+6"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json",
+      "actorSlug": "zabrak-engineer",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Hold-Out Blaster Pistol",
+      "printedFormula": "3d4+3"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "winter",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Hold-Out Blaster Pistol",
+      "printedFormula": "3d4+1"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "mon-mothma",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Hold-Out Blaster Pistol",
+      "printedFormula": "3d4+4"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "barin-trevina",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Hold-Out Blaster Pistol",
+      "printedFormula": "3d4+1"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "switch",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Hold-Out Blaster Pistol",
+      "printedFormula": "3d4+1"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "nonul-weran",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Hold-Out Blaster Pistol",
+      "printedFormula": "3d4+4"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "dool-pundar",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Hold-Out Blaster Pistol",
+      "printedFormula": "3d4+8"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "ferrika-lazerra",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Hold-Out Blaster Pistol",
+      "printedFormula": "3d4+2"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "tis-dolan",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Hold-Out Blaster Pistol",
+      "printedFormula": "3d4+6"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "solvek",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Hold-Out Blaster Pistol",
+      "printedFormula": "3d4+5"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "braxus-lyn",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Hold-Out Blaster Pistol",
+      "printedFormula": "3d4+1"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "hondo-ohnaka",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Hold-Out Blaster Pistol",
+      "printedFormula": "3d4+5"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "borsk-feylya",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Hold-Out Blaster Pistol",
+      "printedFormula": "3d4+6"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "lord-arkoh-adasca",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Hold-Out Blaster Pistol",
+      "printedFormula": "3d4+6"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "empress-marasiah-fel",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Hold-Out Blaster Pistol",
+      "printedFormula": "3d4+8"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "kurka",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Hold-Out Blaster Pistol",
+      "printedFormula": "3d4+1"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "bib-fortuna",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Hold-Out Blaster Pistol",
+      "printedFormula": "3d4+2"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "marasiah-fel",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Hold-Out Blaster Pistol",
+      "printedFormula": "3d4+5"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "haako",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Hold-Out Blaster Pistol",
+      "printedFormula": "3d4+1"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "sab",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Hold-Out Blaster Pistol",
+      "printedFormula": "3d4+3"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "xanatos",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Hold-Out Blaster Pistol",
+      "printedFormula": "3d4+4"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "tyber-zann",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Hold-Out Blaster Pistol",
+      "printedFormula": "3d4+6"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "mira",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Vibroblade",
+      "printedFormula": "2d6+3"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "bao-dur",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Vibroblade",
+      "printedFormula": "2d6+6"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "calo-nord",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Vibroblade",
+      "printedFormula": "2d6+9"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "nonul-weran",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Vibroblade",
+      "printedFormula": "2d6+4"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "crix-madine",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Vibroblade",
+      "printedFormula": "2d6+5"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "samar",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Vibroblade",
+      "printedFormula": "3d6+4"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "dob-and-del-moomo",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Vibroblade",
+      "printedFormula": "2d6+10"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "tis-dolan",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Vibroblade",
+      "printedFormula": "2d6+6"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "bonnie-reed",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Vibroblade",
+      "printedFormula": "2d6+8"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "nyna-calixte",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Vibroblade",
+      "printedFormula": "2d6+8"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "bantha-rawk",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Vibroblade",
+      "printedFormula": "2d6+6"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "karvas-toll",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Vibroblade",
+      "printedFormula": "2d6+4"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "sugi",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Vibroblade",
+      "printedFormula": "2d6+6"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "dengar",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Vibroblade",
+      "printedFormula": "2d6+7"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "jerec",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Vibroblade",
+      "printedFormula": "2d6+12"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "resh",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Vibroblade",
+      "printedFormula": "2d6+8"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "mirax-terrik-horn",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Vibroblade",
+      "printedFormula": "2d6+4"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "hondo-karr",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Vibroblade",
+      "printedFormula": "2d6+8"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "andurgo",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Vibroblade",
+      "printedFormula": "2d6+6"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "baron-kithriss",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Vibroblade",
+      "printedFormula": "2d6+2"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "sartok",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Vibroblade",
+      "printedFormula": "2d6+5"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json",
+      "actorSlug": "military-guard",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Stun Baton",
+      "printedFormula": "2d6+8"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json",
+      "actorSlug": "security-guard",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Stun Baton",
+      "printedFormula": "2d6+1"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "finn",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Stun Baton",
+      "printedFormula": "2d6+2"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "dool-pundar",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Stun Baton",
+      "printedFormula": "2d6+7"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "meekah-hozard",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Stun Baton",
+      "printedFormula": "2d6+5"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "captain-greeku",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Stun Baton",
+      "printedFormula": "2d6+5"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "lesan-dos",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Stun Baton",
+      "printedFormula": "2d6+5"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "loodux",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Stun Baton",
+      "printedFormula": "1d6+4"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "ananah-kragana",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Carbine",
+      "printedFormula": "3d8+5"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "lieutenant-kareme",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Carbine",
+      "printedFormula": "3d8+5"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "bantha-rawk",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Carbine",
+      "printedFormula": "3d8+6"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "sugi",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Carbine",
+      "printedFormula": "4d8+5"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "rx-7246",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Carbine",
+      "printedFormula": "3d8+1"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "sando",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Carbine",
+      "printedFormula": "3d8+8"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "yrssk",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Carbine",
+      "printedFormula": "3d8+2"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "salporin",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Bowcaster",
+      "printedFormula": "3d10+2"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "merumeru",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Bowcaster",
+      "printedFormula": "3d10+3"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "tarfful",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Bowcaster",
+      "printedFormula": "4d10+6"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "chewbacca-claatuvac-scout",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Bowcaster",
+      "printedFormula": "3d10+3"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "zaalbar",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Bowcaster",
+      "printedFormula": "3d10+2"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "black-krrsantan",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Bowcaster",
+      "printedFormula": "3d10+5"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "ananah-kragana",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Vibrodagger",
+      "printedFormula": "2d4+5"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "bail-antilles",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Vibrodagger",
+      "printedFormula": "2d4+3"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "sab",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Vibrodagger",
+      "printedFormula": "2d4+2"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "cel-nero",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Vibrodagger",
+      "printedFormula": "2d4+2"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "yalpor-waar",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Heavy Blaster Pistol",
+      "printedFormula": "3d8+2"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "drexl-roosh",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Heavy Blaster Pistol",
+      "printedFormula": "3d8+1"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "ronto",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+4"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "lucien-draay",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Lightsaber",
+      "printedFormula": "3d8+10"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "deliah-blue",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Bluebolt Blaster Pistol",
+      "printedFormula": "3d8+4"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "darth-azard",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Double-Bladed Lightsaber",
+      "printedFormula": "2d8+23"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "zayne-carrick",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Lightsaber",
+      "printedFormula": "2d8+4"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "t3-m4",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+3"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "mace-windu",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Lightsaber",
+      "printedFormula": "3d8+17"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "nien-nunb",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+4"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "raik-muun",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Lightsaber",
+      "printedFormula": "2d8+5"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "acaadi",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Lightsaber",
+      "printedFormula": "2d8+5"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "bythen-forral",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+4"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "bao-dur",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+4"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "dace-diath",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Lightsaber",
+      "printedFormula": "2d8+8"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "derek-hobbie-klivian",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+4"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "luke-skywalker",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+5"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "jorj-cardas",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+6"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "doel-scherp",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+5"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "forn-dodonna",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+7"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "maximilian-veers",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+2"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "herdrtui",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Sling",
+      "printedFormula": "1d4+6"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "galen-marek-vaders-apprentice",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Lightsaber",
+      "printedFormula": "2d8+10"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "wilhuff-tarkin-imperial-governor",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+3"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "asajj-ventress-strike-leader",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Dueling Lightsaber",
+      "printedFormula": "3d8+12"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "darth-vader",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Lightsaber",
+      "printedFormula": "3d8+17"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "azrakel-the-dark-warrior",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+3"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "rahm-kota",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Lightsaber",
+      "printedFormula": "2d8+19"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "ozzik-sturn",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+6"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "darth-talon",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Lightsaber",
+      "printedFormula": "2d8+8"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "dallan-morvis-captain",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+5"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "bail-antilles",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+4"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "g0-t0",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+2"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "darth-revan",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+8"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "kol-skywalker",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Lightsaber",
+      "printedFormula": "3d8+8"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "wilhuff-tarkin",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+4"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "high-lady-brezwalt-iii",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+8"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "ahsoka-tano",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Lightsaber",
+      "printedFormula": "2d8+1"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "booster-terrik",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+6"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "crix-madine",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+4"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "jan-dodonna",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+4"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "sedriss",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Lightsaber",
+      "printedFormula": "2d8+11"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "aurra-sing",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Lightsaber",
+      "printedFormula": "2d8+7"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "aurra-sing",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Slugthrower Rifle",
+      "printedFormula": "2d8+6"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "biggs-darklighter",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+2"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "rulf-yage",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+6"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "samar",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+4"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "tamith-kai",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+5"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "janek-sunber",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+3"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "jango-fett",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "4d6+8"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "azlyn-rae",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Lightsaber",
+      "printedFormula": "2d8+5"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "quinlan-vos",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Lightsaber",
+      "printedFormula": "2d8+10"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "dob-and-del-moomo",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "4d6+5"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "dob-and-del-moomo",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Slugthrower Pistol",
+      "printedFormula": "2d6+5"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "dob-and-del-moomo",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Sonic Disruptor",
+      "printedFormula": "3d6+5"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "inquisitor-nolor",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Lightsaber",
+      "printedFormula": "2d8+6"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "inquisitor-nolor",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+6"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "arca-jeth",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Lightsaber",
+      "printedFormula": "2d8+8"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "chalkazza",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Vibroblade",
+      "printedFormula": "2d6+3"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "ganga-lor",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+1"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "tehlan-aleece",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+3"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "wedge-antilles-red-two",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+2"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "tott-doneeta",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Lightsaber",
+      "printedFormula": "2d8+8"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "kyle-katarn",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Lightsaber",
+      "printedFormula": "3d8+9"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "prello-the-hutt",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+3"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "antares-draco",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Lightsaber",
+      "printedFormula": "2d8+13"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "juhani",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Lightsaber",
+      "printedFormula": "2d8+5"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "thrawn-admiral",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+4"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "silas-draver",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+3"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "bastila-shan",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Double-Bladed Lightsaber",
+      "printedFormula": "3d8+9"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "jak",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+3"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "whorm-loathsom",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+2"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "kagen-brendel",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+4"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "oss-willum",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Lightsaber",
+      "printedFormula": "2d8+5"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "luke-skywalker-hoth-pilot",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Ascension Gun",
+      "printedFormula": "3d8+4"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "luke-skywalker-hoth-pilot",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+4"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "nyna-calixte",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Heavy Assault Blaster",
+      "printedFormula": "3d10+7"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "nyna-calixte",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Snap-Shot Blaster Pistol",
+      "printedFormula": "3d6+7"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "bantha-rawk",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+6"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "kazdan-paratus-commander",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Lightsaber",
+      "printedFormula": "2d8+7"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "braxus-lyn",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Lightsaber",
+      "printedFormula": "2d8+1"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "darth-maleval",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Lightsaber",
+      "printedFormula": "2d8+9"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "admiral-saul-karath",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+8"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "misha-vekkian",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Lightsaber",
+      "printedFormula": "2d8+7"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "misha-vekkian",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+5"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "zerik",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+4"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "gial-gahan",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+7"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "darth-sion",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+9"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "durge",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "4d6+8"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "galen-marek",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Lightsaber",
+      "printedFormula": "2d8+12"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "finvarra",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+1"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "brianna-the-last-handmaiden",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+5"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "wolf-sazen",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Lightsaber",
+      "printedFormula": "2d8+7"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "juno-eclipse",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+5"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "brogar",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+2"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "wes-janson",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+4"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "nomi-sunrider",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Lightsaber",
+      "printedFormula": "2d8+4"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "demagol",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+7"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "aldren-dayos",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Lightsaber",
+      "printedFormula": "3d8+10"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "karvas-toll",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Snare Pistol",
+      "printedFormula": "1d4+4"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "admiral-ackbar",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+5"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "cilghal",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Lightsaber",
+      "printedFormula": "2d8+5"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "deliah-blue-bounty-hunter",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+4"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "inquisitor-tremayne",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Lightsaber",
+      "printedFormula": "2d8+7"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "inquisitor-tremayne",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+5"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "darth-malak",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+10"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "cay-qel-droma",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Lightsaber",
+      "printedFormula": "2d8+6"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "armen-arandis",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+2"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "shoaneb-culu",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Lightsaber",
+      "printedFormula": "2d8+2"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "wullf-yularen-colonel",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+3"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "boushh",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+5"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "celeste-morne",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+6"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "fehlaaur",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+5"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "zardra",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+4"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "vordell",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+3"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "hosk-treylis",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Lightsaber",
+      "printedFormula": "2d8+6"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "karnak-tetsu",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+7"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "guri",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+5"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "mission-vao",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+2"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "shasa",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+4"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "lesan-dos",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+5"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "nera-dantels",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+2"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "4-lom",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+6"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "blackhole",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Lightsaber",
+      "printedFormula": "2d8+10"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "general-grievous",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Lightsaber",
+      "printedFormula": "2d8+21"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "inquisitor-valin-draco",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Lightsaber",
+      "printedFormula": "2d8+5"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "graaf-savraan",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+1"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "grand-moff-trachta",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+2"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "eldewn-and-elsae-sarvool",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+1"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "gilad-pellaeon",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+3"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "carlist-rieekan-general",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+6"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "empress-marasiah-fel",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Lightsaber",
+      "printedFormula": "2d8+14"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "amar-cros",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Lightsaber",
+      "printedFormula": "2d8+12"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "taarna-renay",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+4"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "desann",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Lightsaber",
+      "printedFormula": "2d8+7"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "prince-xizor",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+8"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "proxy",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Lightsaber",
+      "printedFormula": "2d8+16"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "proxy",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Double-Bladed Lightsaber",
+      "printedFormula": "3d8+16"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "pol-temm",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+6"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "darth-wyyrlok",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Lightsaber",
+      "printedFormula": "2d8+8"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "nahdar-vebb",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Lightsaber",
+      "printedFormula": "2d8+6"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "inquisitor-jorad",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Lightsaber *",
+      "printedFormula": "3d8+6"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "inquisitor-jorad",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+6"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "zietta-the-hutt",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+4"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "anakin-solo",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Lightsaber",
+      "printedFormula": "2d8+12"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "chak",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Hunting Blaster Carbine",
+      "printedFormula": "3d8+4"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "atris",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Lightsaber",
+      "printedFormula": "2d8+10"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "duqua-dar",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Lightsaber",
+      "printedFormula": "2d8+3"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "darth-maladi",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Lightsaber",
+      "printedFormula": "2d8+7"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "hethrir",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Lightsaber",
+      "printedFormula": "2d8+4"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "cade-skywalker-bounty-hunter",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Lightsaber",
+      "printedFormula": "2d8+6"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "admiral-stazi",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+8"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "bo-katan-kryze",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Wrist Blaster",
+      "printedFormula": "3d4+7"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "wat-tambor",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+5"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "jhoram-bey",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+6"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "marasiah-fel",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Lightsaber",
+      "printedFormula": "2d8+5"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "exar-kun",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Double-Bladed Lightsaber",
+      "printedFormula": "3d8+15"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "gunn-yage",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+4"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "reddjak",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+3"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "ahsoka-tano-the-hand-of-vader",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Lightsaber",
+      "printedFormula": "2d8+7"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "armand-isard",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+3"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "wedge-antilles",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+4"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "ahsoka-tano-commander",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Lightsaber",
+      "printedFormula": "2d8+2"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "frizz",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+1"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "kaah-ohtok",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Lightsaber",
+      "printedFormula": "2d8+5"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "monia-gahan",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+4"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "ghia-preyssola",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+3"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "luke-skywalker-grand-master",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Short Lightsaber",
+      "printedFormula": "2d6+15"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "anj-dahl",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+4"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "jariah-syn",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+4"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "jariah-syn",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Sporting Blaster Carbine",
+      "printedFormula": "3d8+4"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "cade-skywalker",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Lightsaber",
+      "printedFormula": "2d8+6"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "mirax-terrik-horn",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+5"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "tyrnia-masak",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+3"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "fetwin-porlo",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+3"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "eetoa-ro",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+2"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "boshek",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+4"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "bail-organa",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+4"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "pleth-juun",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+2"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "the-exile",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Lightsaber",
+      "printedFormula": "3d8+9"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "the-exile",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+7"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "jacen-solo",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Lightsaber",
+      "printedFormula": "3d8+10"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "ki-adi-mundi",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Lightsaber",
+      "printedFormula": "2d8+9"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "hanna-ding",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Lightsaber",
+      "printedFormula": "2d8+1"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "kee",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+1"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "jirany-sha",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+1"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "high-inquisitor-valin-draco",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Lightsaber",
+      "printedFormula": "2d8+10"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "andurgo",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+4"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "baron-kithriss",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+2"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "jolee-bindo",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Lightsaber",
+      "printedFormula": "2d8+6"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "jolee-bindo",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+5"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "odan-urr",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Lightsaber",
+      "printedFormula": "2d8+9"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "saesee-tiin",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Lightsaber",
+      "printedFormula": "2d8+9"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "kazdan-paratus",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Lightsaber",
+      "printedFormula": "2d8+11"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "xanatos",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Lightsaber",
+      "printedFormula": "2d8+5"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "regera-girawn",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Lightsaber",
+      "printedFormula": "2d8+6"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "anakin-skywalker",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Lightsaber",
+      "printedFormula": "2d8+15"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "sartok",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+3"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "zam-wesell",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+5"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "jaius-yorub",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+6"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "cel-nero",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+1"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "talon-karrde",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Heavy Blaster Pistol",
+      "printedFormula": "3d8+6"
+    },
+    {
+      "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+      "actorSlug": "tyber-zann",
+      "status": "safe-ordinary-weapon-with-delta",
+      "printedName": "Blaster Pistol",
+      "printedFormula": "3d6+6"
+    }
+  ]
+}

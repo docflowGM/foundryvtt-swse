@@ -1,0 +1,6049 @@
+{
+  "$schema": "./nonheroic-weapon-damage-profiles.schema.json",
+  "$schemaVersion": 2,
+  "schemaVersion": 2,
+  "profileKind": "nonheroic-statblock-weapon-damage",
+  "sourceFamily": "Bulk Lane A candidate promotion, pass 1 (allowlisted proof-of-concept batch)",
+  "canonPolicy": {
+    "authority": "Records in this file are mechanically promoted from Lane A candidate generation (tools/generate-nonheroic-damage-profile-candidates.mjs) via an explicit, human-curated allowlist (tools/promote-nonheroic-damage-profile-candidates.mjs). They are NOT sourcebook-verified: confidence is manualRequired for every record in this file, and page/book attribution is still outstanding.",
+    "rowSemantics": "Each record represents one printed statblock attack/action row with an exact single compendium weapon match and a mechanically-derived base/base-plus-delta/base-plus-dice formula relationship. weapon.uuid identifies the matched compendium base; formula.printed remains authoritative for hydration.",
+    "unmatchedRows": "This file only ever contains rows that had an exact single compendium match; ambiguous, unmatched, special-mode, area/autofire/grenade, rider, and natural/unarmed rows are never written here.",
+    "riders": "Not applicable to this batch: rows with rider/condition text are excluded from Lane A and never promoted by this tool."
+  },
+  "notes": [
+    "This file is intentionally NOT included in scripts/engine/import/nonheroic-damage-profile-hydrator.js PROFILE_FILES. It is staged canonical-shaped data awaiting page/source review, not live runtime data.",
+    "Generated and updated only by tools/promote-nonheroic-damage-profile-candidates.mjs --write, driven by data/nonheroic/generated/nonheroic-profile-promotion-allowlist.pass-1.json. Do not hand-edit; re-run the tool with an updated allowlist instead."
+  ],
+  "records": [
+    {
+      "slug": "elite-wing-security-guard-blaster-pistol",
+      "name": "Blaster Pistol",
+      "confidence": "manualRequired",
+      "reviewRequired": true,
+      "source": {
+        "book": "Unknown / missing source",
+        "status": "repo-raw-statblock-field; page review still required",
+        "page": null,
+        "evidence": [
+          "Bulk-promoted from Lane A candidate \"elite-wing-security-guard-blaster-pistol\" (status safe-ordinary-weapon-candidate) staged in data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json.",
+          "Candidate originally generated from packs/nonheroic.db."
+        ]
+      },
+      "actor": {
+        "name": "Elite Wing Security Guard",
+        "slugs": [
+          "elite-wing-security-guard"
+        ]
+      },
+      "match": {
+        "actorSlugs": [
+          "elite-wing-security-guard"
+        ],
+        "rawIncludes": [
+          "blaster pistol"
+        ]
+      },
+      "weapon": {
+        "printedName": "Blaster Pistol",
+        "rowKind": "ranged",
+        "uuid": "Compendium.foundryvtt-swse.weapons-pistols.Item.weapon-blaster-pistol",
+        "baseSlug": "weapon-blaster-pistol",
+        "basePack": "weapons-pistols",
+        "baseFormula": "3d6",
+        "baseType": "energy",
+        "baseFormulaPolicy": "uuid"
+      },
+      "formula": {
+        "mode": "base",
+        "printed": "3d6",
+        "delta": null,
+        "deltaSource": "generated-from-compendium-base-comparison",
+        "typeOverride": "energy",
+        "notes": [
+          "Formula mode/delta were classified mechanically by comparing the printed statblock formula against the matched compendium base weapon; no sourcebook was read."
+        ]
+      },
+      "printedAttack": {
+        "text": "+5",
+        "bonus": 5,
+        "bonuses": [
+          5
+        ],
+        "source": "printed-statblock",
+        "hydratePolicy": "metadata-only"
+      },
+      "delivery": "weapon",
+      "attackShape": "single-target",
+      "scale": "character",
+      "primaryType": "energy",
+      "tags": [
+        "nonheroic",
+        "weapon",
+        "blaster",
+        "pistol",
+        "bulk-lane-a-pass-1",
+        "generated-candidate"
+      ],
+      "attack": {
+        "isArea": false,
+        "halfDamageOnMiss": false,
+        "noCriticalDouble": false,
+        "coverCanNegateMissDamage": false,
+        "attackRollMinimum": null,
+        "defense": "reflex"
+      },
+      "area": {
+        "shape": null,
+        "radius": null,
+        "size": null,
+        "originMode": null,
+        "targetPolicy": "single"
+      },
+      "components": [
+        {
+          "key": "base-weapon",
+          "label": "Blaster Pistol",
+          "formula": "3d6",
+          "type": "energy",
+          "tags": [
+            "base",
+            "energy",
+            "blaster",
+            "pistol"
+          ]
+        }
+      ],
+      "riders": [],
+      "sourceRefs": [
+        {
+          "book": "Unknown / missing source",
+          "page": null,
+          "note": "Bulk Lane A promotion pass 1, generated from data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json; original row from packs/nonheroic.db."
+        }
+      ],
+      "variants": [],
+      "notes": [
+        "Bulk-promoted by tools/promote-nonheroic-damage-profile-candidates.mjs (pass 1) from an allowlisted Lane A candidate. confidence remains manualRequired: page/book attribution and full sourcebook review have not been performed.",
+        "Not wired into scripts/engine/import/nonheroic-damage-profile-hydrator.js PROFILE_FILES; this file is staged canonical-shaped data awaiting review."
+      ]
+    },
+    {
+      "slug": "imperial-navy-trooper-blaster-pistol",
+      "name": "Blaster Pistol",
+      "confidence": "manualRequired",
+      "reviewRequired": true,
+      "source": {
+        "book": "Unknown / missing source",
+        "status": "repo-raw-statblock-field; page review still required",
+        "page": null,
+        "evidence": [
+          "Bulk-promoted from Lane A candidate \"imperial-navy-trooper-blaster-pistol\" (status safe-ordinary-weapon-candidate) staged in data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json.",
+          "Candidate originally generated from packs/nonheroic.db."
+        ]
+      },
+      "actor": {
+        "name": "Imperial Navy Trooper",
+        "slugs": [
+          "imperial-navy-trooper"
+        ]
+      },
+      "match": {
+        "actorSlugs": [
+          "imperial-navy-trooper"
+        ],
+        "rawIncludes": [
+          "blaster pistol"
+        ]
+      },
+      "weapon": {
+        "printedName": "Blaster Pistol",
+        "rowKind": "ranged",
+        "uuid": "Compendium.foundryvtt-swse.weapons-pistols.Item.weapon-blaster-pistol",
+        "baseSlug": "weapon-blaster-pistol",
+        "basePack": "weapons-pistols",
+        "baseFormula": "3d6",
+        "baseType": "energy",
+        "baseFormulaPolicy": "uuid"
+      },
+      "formula": {
+        "mode": "base",
+        "printed": "3d6",
+        "delta": null,
+        "deltaSource": "generated-from-compendium-base-comparison",
+        "typeOverride": "energy",
+        "notes": [
+          "Formula mode/delta were classified mechanically by comparing the printed statblock formula against the matched compendium base weapon; no sourcebook was read."
+        ]
+      },
+      "printedAttack": {
+        "text": "+3",
+        "bonus": 3,
+        "bonuses": [
+          3
+        ],
+        "source": "printed-statblock",
+        "hydratePolicy": "metadata-only"
+      },
+      "delivery": "weapon",
+      "attackShape": "single-target",
+      "scale": "character",
+      "primaryType": "energy",
+      "tags": [
+        "nonheroic",
+        "weapon",
+        "blaster",
+        "pistol",
+        "bulk-lane-a-pass-1",
+        "generated-candidate"
+      ],
+      "attack": {
+        "isArea": false,
+        "halfDamageOnMiss": false,
+        "noCriticalDouble": false,
+        "coverCanNegateMissDamage": false,
+        "attackRollMinimum": null,
+        "defense": "reflex"
+      },
+      "area": {
+        "shape": null,
+        "radius": null,
+        "size": null,
+        "originMode": null,
+        "targetPolicy": "single"
+      },
+      "components": [
+        {
+          "key": "base-weapon",
+          "label": "Blaster Pistol",
+          "formula": "3d6",
+          "type": "energy",
+          "tags": [
+            "base",
+            "energy",
+            "blaster",
+            "pistol"
+          ]
+        }
+      ],
+      "riders": [],
+      "sourceRefs": [
+        {
+          "book": "Unknown / missing source",
+          "page": null,
+          "note": "Bulk Lane A promotion pass 1, generated from data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json; original row from packs/nonheroic.db."
+        }
+      ],
+      "variants": [],
+      "notes": [
+        "Bulk-promoted by tools/promote-nonheroic-damage-profile-candidates.mjs (pass 1) from an allowlisted Lane A candidate. confidence remains manualRequired: page/book attribution and full sourcebook review have not been performed.",
+        "Not wired into scripts/engine/import/nonheroic-damage-profile-hydrator.js PROFILE_FILES; this file is staged canonical-shaped data awaiting review."
+      ]
+    },
+    {
+      "slug": "mon-calamari-resistance-member-blaster-pistol",
+      "name": "Blaster Pistol",
+      "confidence": "manualRequired",
+      "reviewRequired": true,
+      "source": {
+        "book": "Unknown / missing source",
+        "status": "repo-raw-statblock-field; page review still required",
+        "page": null,
+        "evidence": [
+          "Bulk-promoted from Lane A candidate \"mon-calamari-resistance-member-blaster-pistol\" (status safe-ordinary-weapon-candidate) staged in data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json.",
+          "Candidate originally generated from packs/nonheroic.db."
+        ]
+      },
+      "actor": {
+        "name": "Mon Calamari Resistance Member",
+        "slugs": [
+          "mon-calamari-resistance-member"
+        ]
+      },
+      "match": {
+        "actorSlugs": [
+          "mon-calamari-resistance-member"
+        ],
+        "rawIncludes": [
+          "blaster pistol"
+        ]
+      },
+      "weapon": {
+        "printedName": "Blaster Pistol",
+        "rowKind": "ranged",
+        "uuid": "Compendium.foundryvtt-swse.weapons-pistols.Item.weapon-blaster-pistol",
+        "baseSlug": "weapon-blaster-pistol",
+        "basePack": "weapons-pistols",
+        "baseFormula": "3d6",
+        "baseType": "energy",
+        "baseFormulaPolicy": "uuid"
+      },
+      "formula": {
+        "mode": "base",
+        "printed": "3d6",
+        "delta": null,
+        "deltaSource": "generated-from-compendium-base-comparison",
+        "typeOverride": "energy",
+        "notes": [
+          "Formula mode/delta were classified mechanically by comparing the printed statblock formula against the matched compendium base weapon; no sourcebook was read."
+        ]
+      },
+      "printedAttack": {
+        "text": "+4",
+        "bonus": 4,
+        "bonuses": [
+          4
+        ],
+        "source": "printed-statblock",
+        "hydratePolicy": "metadata-only"
+      },
+      "delivery": "weapon",
+      "attackShape": "single-target",
+      "scale": "character",
+      "primaryType": "energy",
+      "tags": [
+        "nonheroic",
+        "weapon",
+        "blaster",
+        "pistol",
+        "bulk-lane-a-pass-1",
+        "generated-candidate"
+      ],
+      "attack": {
+        "isArea": false,
+        "halfDamageOnMiss": false,
+        "noCriticalDouble": false,
+        "coverCanNegateMissDamage": false,
+        "attackRollMinimum": null,
+        "defense": "reflex"
+      },
+      "area": {
+        "shape": null,
+        "radius": null,
+        "size": null,
+        "originMode": null,
+        "targetPolicy": "single"
+      },
+      "components": [
+        {
+          "key": "base-weapon",
+          "label": "Blaster Pistol",
+          "formula": "3d6",
+          "type": "energy",
+          "tags": [
+            "base",
+            "energy",
+            "blaster",
+            "pistol"
+          ]
+        }
+      ],
+      "riders": [],
+      "sourceRefs": [
+        {
+          "book": "Unknown / missing source",
+          "page": null,
+          "note": "Bulk Lane A promotion pass 1, generated from data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json; original row from packs/nonheroic.db."
+        }
+      ],
+      "variants": [],
+      "notes": [
+        "Bulk-promoted by tools/promote-nonheroic-damage-profile-candidates.mjs (pass 1) from an allowlisted Lane A candidate. confidence remains manualRequired: page/book attribution and full sourcebook review have not been performed.",
+        "Not wired into scripts/engine/import/nonheroic-damage-profile-hydrator.js PROFILE_FILES; this file is staged canonical-shaped data awaiting review."
+      ]
+    },
+    {
+      "slug": "bureaucrat-blaster-pistol",
+      "name": "Blaster Pistol",
+      "confidence": "manualRequired",
+      "reviewRequired": true,
+      "source": {
+        "book": "Unknown / missing source",
+        "status": "repo-raw-statblock-field; page review still required",
+        "page": null,
+        "evidence": [
+          "Bulk-promoted from Lane A candidate \"bureaucrat-blaster-pistol\" (status safe-ordinary-weapon-candidate) staged in data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json.",
+          "Candidate originally generated from packs/nonheroic.db."
+        ]
+      },
+      "actor": {
+        "name": "Bureaucrat",
+        "slugs": [
+          "bureaucrat"
+        ]
+      },
+      "match": {
+        "actorSlugs": [
+          "bureaucrat"
+        ],
+        "rawIncludes": [
+          "blaster pistol"
+        ]
+      },
+      "weapon": {
+        "printedName": "Blaster Pistol",
+        "rowKind": "ranged",
+        "uuid": "Compendium.foundryvtt-swse.weapons-pistols.Item.weapon-blaster-pistol",
+        "baseSlug": "weapon-blaster-pistol",
+        "basePack": "weapons-pistols",
+        "baseFormula": "3d6",
+        "baseType": "energy",
+        "baseFormulaPolicy": "uuid"
+      },
+      "formula": {
+        "mode": "base",
+        "printed": "3d6",
+        "delta": null,
+        "deltaSource": "generated-from-compendium-base-comparison",
+        "typeOverride": "energy",
+        "notes": [
+          "Formula mode/delta were classified mechanically by comparing the printed statblock formula against the matched compendium base weapon; no sourcebook was read."
+        ]
+      },
+      "printedAttack": {
+        "text": "+2",
+        "bonus": 2,
+        "bonuses": [
+          2
+        ],
+        "source": "printed-statblock",
+        "hydratePolicy": "metadata-only"
+      },
+      "delivery": "weapon",
+      "attackShape": "single-target",
+      "scale": "character",
+      "primaryType": "energy",
+      "tags": [
+        "nonheroic",
+        "weapon",
+        "blaster",
+        "pistol",
+        "bulk-lane-a-pass-1",
+        "generated-candidate"
+      ],
+      "attack": {
+        "isArea": false,
+        "halfDamageOnMiss": false,
+        "noCriticalDouble": false,
+        "coverCanNegateMissDamage": false,
+        "attackRollMinimum": null,
+        "defense": "reflex"
+      },
+      "area": {
+        "shape": null,
+        "radius": null,
+        "size": null,
+        "originMode": null,
+        "targetPolicy": "single"
+      },
+      "components": [
+        {
+          "key": "base-weapon",
+          "label": "Blaster Pistol",
+          "formula": "3d6",
+          "type": "energy",
+          "tags": [
+            "base",
+            "energy",
+            "blaster",
+            "pistol"
+          ]
+        }
+      ],
+      "riders": [],
+      "sourceRefs": [
+        {
+          "book": "Unknown / missing source",
+          "page": null,
+          "note": "Bulk Lane A promotion pass 1, generated from data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json; original row from packs/nonheroic.db."
+        }
+      ],
+      "variants": [],
+      "notes": [
+        "Bulk-promoted by tools/promote-nonheroic-damage-profile-candidates.mjs (pass 1) from an allowlisted Lane A candidate. confidence remains manualRequired: page/book attribution and full sourcebook review have not been performed.",
+        "Not wired into scripts/engine/import/nonheroic-damage-profile-hydrator.js PROFILE_FILES; this file is staged canonical-shaped data awaiting review."
+      ]
+    },
+    {
+      "slug": "wing-security-guard-blaster-pistol",
+      "name": "Blaster Pistol",
+      "confidence": "manualRequired",
+      "reviewRequired": true,
+      "source": {
+        "book": "Unknown / missing source",
+        "status": "repo-raw-statblock-field; page review still required",
+        "page": null,
+        "evidence": [
+          "Bulk-promoted from Lane A candidate \"wing-security-guard-blaster-pistol\" (status safe-ordinary-weapon-candidate) staged in data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json.",
+          "Candidate originally generated from packs/nonheroic.db."
+        ]
+      },
+      "actor": {
+        "name": "Wing Security Guard",
+        "slugs": [
+          "wing-security-guard"
+        ]
+      },
+      "match": {
+        "actorSlugs": [
+          "wing-security-guard"
+        ],
+        "rawIncludes": [
+          "blaster pistol"
+        ]
+      },
+      "weapon": {
+        "printedName": "Blaster Pistol",
+        "rowKind": "ranged",
+        "uuid": "Compendium.foundryvtt-swse.weapons-pistols.Item.weapon-blaster-pistol",
+        "baseSlug": "weapon-blaster-pistol",
+        "basePack": "weapons-pistols",
+        "baseFormula": "3d6",
+        "baseType": "energy",
+        "baseFormulaPolicy": "uuid"
+      },
+      "formula": {
+        "mode": "base",
+        "printed": "3d6",
+        "delta": null,
+        "deltaSource": "generated-from-compendium-base-comparison",
+        "typeOverride": "energy",
+        "notes": [
+          "Formula mode/delta were classified mechanically by comparing the printed statblock formula against the matched compendium base weapon; no sourcebook was read."
+        ]
+      },
+      "printedAttack": {
+        "text": "+4",
+        "bonus": 4,
+        "bonuses": [
+          4
+        ],
+        "source": "printed-statblock",
+        "hydratePolicy": "metadata-only"
+      },
+      "delivery": "weapon",
+      "attackShape": "single-target",
+      "scale": "character",
+      "primaryType": "energy",
+      "tags": [
+        "nonheroic",
+        "weapon",
+        "blaster",
+        "pistol",
+        "bulk-lane-a-pass-1",
+        "generated-candidate"
+      ],
+      "attack": {
+        "isArea": false,
+        "halfDamageOnMiss": false,
+        "noCriticalDouble": false,
+        "coverCanNegateMissDamage": false,
+        "attackRollMinimum": null,
+        "defense": "reflex"
+      },
+      "area": {
+        "shape": null,
+        "radius": null,
+        "size": null,
+        "originMode": null,
+        "targetPolicy": "single"
+      },
+      "components": [
+        {
+          "key": "base-weapon",
+          "label": "Blaster Pistol",
+          "formula": "3d6",
+          "type": "energy",
+          "tags": [
+            "base",
+            "energy",
+            "blaster",
+            "pistol"
+          ]
+        }
+      ],
+      "riders": [],
+      "sourceRefs": [
+        {
+          "book": "Unknown / missing source",
+          "page": null,
+          "note": "Bulk Lane A promotion pass 1, generated from data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json; original row from packs/nonheroic.db."
+        }
+      ],
+      "variants": [],
+      "notes": [
+        "Bulk-promoted by tools/promote-nonheroic-damage-profile-candidates.mjs (pass 1) from an allowlisted Lane A candidate. confidence remains manualRequired: page/book attribution and full sourcebook review have not been performed.",
+        "Not wired into scripts/engine/import/nonheroic-damage-profile-hydrator.js PROFILE_FILES; this file is staged canonical-shaped data awaiting review."
+      ]
+    },
+    {
+      "slug": "hired-muscle-blaster-pistol",
+      "name": "Blaster Pistol",
+      "confidence": "manualRequired",
+      "reviewRequired": true,
+      "source": {
+        "book": "Unknown / missing source",
+        "status": "repo-raw-statblock-field; page review still required",
+        "page": null,
+        "evidence": [
+          "Bulk-promoted from Lane A candidate \"hired-muscle-blaster-pistol\" (status safe-ordinary-weapon-candidate) staged in data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json.",
+          "Candidate originally generated from packs/nonheroic.db."
+        ]
+      },
+      "actor": {
+        "name": "Hired Muscle",
+        "slugs": [
+          "hired-muscle"
+        ]
+      },
+      "match": {
+        "actorSlugs": [
+          "hired-muscle"
+        ],
+        "rawIncludes": [
+          "blaster pistol"
+        ]
+      },
+      "weapon": {
+        "printedName": "Blaster Pistol",
+        "rowKind": "ranged",
+        "uuid": "Compendium.foundryvtt-swse.weapons-pistols.Item.weapon-blaster-pistol",
+        "baseSlug": "weapon-blaster-pistol",
+        "basePack": "weapons-pistols",
+        "baseFormula": "3d6",
+        "baseType": "energy",
+        "baseFormulaPolicy": "uuid"
+      },
+      "formula": {
+        "mode": "base",
+        "printed": "3d6",
+        "delta": null,
+        "deltaSource": "generated-from-compendium-base-comparison",
+        "typeOverride": "energy",
+        "notes": [
+          "Formula mode/delta were classified mechanically by comparing the printed statblock formula against the matched compendium base weapon; no sourcebook was read."
+        ]
+      },
+      "printedAttack": {
+        "text": "+3",
+        "bonus": 3,
+        "bonuses": [
+          3
+        ],
+        "source": "printed-statblock",
+        "hydratePolicy": "metadata-only"
+      },
+      "delivery": "weapon",
+      "attackShape": "single-target",
+      "scale": "character",
+      "primaryType": "energy",
+      "tags": [
+        "nonheroic",
+        "weapon",
+        "blaster",
+        "pistol",
+        "bulk-lane-a-pass-1",
+        "generated-candidate"
+      ],
+      "attack": {
+        "isArea": false,
+        "halfDamageOnMiss": false,
+        "noCriticalDouble": false,
+        "coverCanNegateMissDamage": false,
+        "attackRollMinimum": null,
+        "defense": "reflex"
+      },
+      "area": {
+        "shape": null,
+        "radius": null,
+        "size": null,
+        "originMode": null,
+        "targetPolicy": "single"
+      },
+      "components": [
+        {
+          "key": "base-weapon",
+          "label": "Blaster Pistol",
+          "formula": "3d6",
+          "type": "energy",
+          "tags": [
+            "base",
+            "energy",
+            "blaster",
+            "pistol"
+          ]
+        }
+      ],
+      "riders": [],
+      "sourceRefs": [
+        {
+          "book": "Unknown / missing source",
+          "page": null,
+          "note": "Bulk Lane A promotion pass 1, generated from data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json; original row from packs/nonheroic.db."
+        }
+      ],
+      "variants": [],
+      "notes": [
+        "Bulk-promoted by tools/promote-nonheroic-damage-profile-candidates.mjs (pass 1) from an allowlisted Lane A candidate. confidence remains manualRequired: page/book attribution and full sourcebook review have not been performed.",
+        "Not wired into scripts/engine/import/nonheroic-damage-profile-hydrator.js PROFILE_FILES; this file is staged canonical-shaped data awaiting review."
+      ]
+    },
+    {
+      "slug": "death-star-trooper-blaster-pistol",
+      "name": "Blaster Pistol",
+      "confidence": "manualRequired",
+      "reviewRequired": true,
+      "source": {
+        "book": "Unknown / missing source",
+        "status": "repo-raw-statblock-field; page review still required",
+        "page": null,
+        "evidence": [
+          "Bulk-promoted from Lane A candidate \"death-star-trooper-blaster-pistol\" (status safe-ordinary-weapon-candidate) staged in data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json.",
+          "Candidate originally generated from packs/nonheroic.db."
+        ]
+      },
+      "actor": {
+        "name": "Death Star Trooper",
+        "slugs": [
+          "death-star-trooper"
+        ]
+      },
+      "match": {
+        "actorSlugs": [
+          "death-star-trooper"
+        ],
+        "rawIncludes": [
+          "blaster pistol"
+        ]
+      },
+      "weapon": {
+        "printedName": "Blaster Pistol",
+        "rowKind": "ranged",
+        "uuid": "Compendium.foundryvtt-swse.weapons-pistols.Item.weapon-blaster-pistol",
+        "baseSlug": "weapon-blaster-pistol",
+        "basePack": "weapons-pistols",
+        "baseFormula": "3d6",
+        "baseType": "energy",
+        "baseFormulaPolicy": "uuid"
+      },
+      "formula": {
+        "mode": "base",
+        "printed": "3d6",
+        "delta": null,
+        "deltaSource": "generated-from-compendium-base-comparison",
+        "typeOverride": "energy",
+        "notes": [
+          "Formula mode/delta were classified mechanically by comparing the printed statblock formula against the matched compendium base weapon; no sourcebook was read."
+        ]
+      },
+      "printedAttack": {
+        "text": "+5",
+        "bonus": 5,
+        "bonuses": [
+          5
+        ],
+        "source": "printed-statblock",
+        "hydratePolicy": "metadata-only"
+      },
+      "delivery": "weapon",
+      "attackShape": "single-target",
+      "scale": "character",
+      "primaryType": "energy",
+      "tags": [
+        "nonheroic",
+        "weapon",
+        "blaster",
+        "pistol",
+        "bulk-lane-a-pass-1",
+        "generated-candidate"
+      ],
+      "attack": {
+        "isArea": false,
+        "halfDamageOnMiss": false,
+        "noCriticalDouble": false,
+        "coverCanNegateMissDamage": false,
+        "attackRollMinimum": null,
+        "defense": "reflex"
+      },
+      "area": {
+        "shape": null,
+        "radius": null,
+        "size": null,
+        "originMode": null,
+        "targetPolicy": "single"
+      },
+      "components": [
+        {
+          "key": "base-weapon",
+          "label": "Blaster Pistol",
+          "formula": "3d6",
+          "type": "energy",
+          "tags": [
+            "base",
+            "energy",
+            "blaster",
+            "pistol"
+          ]
+        }
+      ],
+      "riders": [],
+      "sourceRefs": [
+        {
+          "book": "Unknown / missing source",
+          "page": null,
+          "note": "Bulk Lane A promotion pass 1, generated from data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json; original row from packs/nonheroic.db."
+        }
+      ],
+      "variants": [],
+      "notes": [
+        "Bulk-promoted by tools/promote-nonheroic-damage-profile-candidates.mjs (pass 1) from an allowlisted Lane A candidate. confidence remains manualRequired: page/book attribution and full sourcebook review have not been performed.",
+        "Not wired into scripts/engine/import/nonheroic-damage-profile-hydrator.js PROFILE_FILES; this file is staged canonical-shaped data awaiting review."
+      ]
+    },
+    {
+      "slug": "soldier-commander-blaster-pistol",
+      "name": "Blaster Pistol",
+      "confidence": "manualRequired",
+      "reviewRequired": true,
+      "source": {
+        "book": "Unknown / missing source",
+        "status": "repo-raw-statblock-field; page review still required",
+        "page": null,
+        "evidence": [
+          "Bulk-promoted from Lane A candidate \"soldier-commander-blaster-pistol\" (status safe-ordinary-weapon-with-delta) staged in data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json.",
+          "Candidate originally generated from packs/nonheroic.db."
+        ]
+      },
+      "actor": {
+        "name": "Soldier Commander",
+        "slugs": [
+          "soldier-commander"
+        ]
+      },
+      "match": {
+        "actorSlugs": [
+          "soldier-commander"
+        ],
+        "rawIncludes": [
+          "blaster pistol"
+        ]
+      },
+      "weapon": {
+        "printedName": "Blaster Pistol",
+        "rowKind": "ranged",
+        "uuid": "Compendium.foundryvtt-swse.weapons-pistols.Item.weapon-blaster-pistol",
+        "baseSlug": "weapon-blaster-pistol",
+        "basePack": "weapons-pistols",
+        "baseFormula": "3d6",
+        "baseType": "energy",
+        "baseFormulaPolicy": "uuid"
+      },
+      "formula": {
+        "mode": "base-plus-delta",
+        "printed": "3d6+2",
+        "delta": "+2",
+        "deltaSource": "generated-from-compendium-base-comparison",
+        "typeOverride": "energy",
+        "notes": [
+          "Formula mode/delta were classified mechanically by comparing the printed statblock formula against the matched compendium base weapon; no sourcebook was read."
+        ]
+      },
+      "printedAttack": {
+        "text": "+10",
+        "bonus": 10,
+        "bonuses": [
+          10
+        ],
+        "source": "printed-statblock",
+        "hydratePolicy": "metadata-only"
+      },
+      "delivery": "weapon",
+      "attackShape": "single-target",
+      "scale": "character",
+      "primaryType": "energy",
+      "tags": [
+        "nonheroic",
+        "weapon",
+        "blaster",
+        "pistol",
+        "bulk-lane-a-pass-1",
+        "generated-candidate"
+      ],
+      "attack": {
+        "isArea": false,
+        "halfDamageOnMiss": false,
+        "noCriticalDouble": false,
+        "coverCanNegateMissDamage": false,
+        "attackRollMinimum": null,
+        "defense": "reflex"
+      },
+      "area": {
+        "shape": null,
+        "radius": null,
+        "size": null,
+        "originMode": null,
+        "targetPolicy": "single"
+      },
+      "components": [
+        {
+          "key": "base-weapon",
+          "label": "Blaster Pistol",
+          "formula": "3d6",
+          "type": "energy",
+          "tags": [
+            "base",
+            "energy",
+            "blaster",
+            "pistol"
+          ]
+        },
+        {
+          "key": "printed-statblock-delta",
+          "label": "Printed Statblock Delta",
+          "formula": "+2",
+          "type": "energy",
+          "tags": [
+            "printed",
+            "delta",
+            "energy"
+          ]
+        }
+      ],
+      "riders": [],
+      "sourceRefs": [
+        {
+          "book": "Unknown / missing source",
+          "page": null,
+          "note": "Bulk Lane A promotion pass 1, generated from data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json; original row from packs/nonheroic.db."
+        }
+      ],
+      "variants": [],
+      "notes": [
+        "Bulk-promoted by tools/promote-nonheroic-damage-profile-candidates.mjs (pass 1) from an allowlisted Lane A candidate. confidence remains manualRequired: page/book attribution and full sourcebook review have not been performed.",
+        "Not wired into scripts/engine/import/nonheroic-damage-profile-hydrator.js PROFILE_FILES; this file is staged canonical-shaped data awaiting review."
+      ]
+    },
+    {
+      "slug": "star-destroyer-officer-blaster-pistol",
+      "name": "Blaster Pistol",
+      "confidence": "manualRequired",
+      "reviewRequired": true,
+      "source": {
+        "book": "Unknown / missing source",
+        "status": "repo-raw-statblock-field; page review still required",
+        "page": null,
+        "evidence": [
+          "Bulk-promoted from Lane A candidate \"star-destroyer-officer-blaster-pistol\" (status safe-ordinary-weapon-with-delta) staged in data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json.",
+          "Candidate originally generated from packs/nonheroic.db."
+        ]
+      },
+      "actor": {
+        "name": "Star Destroyer Officer",
+        "slugs": [
+          "star-destroyer-officer"
+        ]
+      },
+      "match": {
+        "actorSlugs": [
+          "star-destroyer-officer"
+        ],
+        "rawIncludes": [
+          "blaster pistol"
+        ]
+      },
+      "weapon": {
+        "printedName": "Blaster Pistol",
+        "rowKind": "ranged",
+        "uuid": "Compendium.foundryvtt-swse.weapons-pistols.Item.weapon-blaster-pistol",
+        "baseSlug": "weapon-blaster-pistol",
+        "basePack": "weapons-pistols",
+        "baseFormula": "3d6",
+        "baseType": "energy",
+        "baseFormulaPolicy": "uuid"
+      },
+      "formula": {
+        "mode": "base-plus-delta",
+        "printed": "3d6+2",
+        "delta": "+2",
+        "deltaSource": "generated-from-compendium-base-comparison",
+        "typeOverride": "energy",
+        "notes": [
+          "Formula mode/delta were classified mechanically by comparing the printed statblock formula against the matched compendium base weapon; no sourcebook was read."
+        ]
+      },
+      "printedAttack": {
+        "text": "+5",
+        "bonus": 5,
+        "bonuses": [
+          5
+        ],
+        "source": "printed-statblock",
+        "hydratePolicy": "metadata-only"
+      },
+      "delivery": "weapon",
+      "attackShape": "single-target",
+      "scale": "character",
+      "primaryType": "energy",
+      "tags": [
+        "nonheroic",
+        "weapon",
+        "blaster",
+        "pistol",
+        "bulk-lane-a-pass-1",
+        "generated-candidate"
+      ],
+      "attack": {
+        "isArea": false,
+        "halfDamageOnMiss": false,
+        "noCriticalDouble": false,
+        "coverCanNegateMissDamage": false,
+        "attackRollMinimum": null,
+        "defense": "reflex"
+      },
+      "area": {
+        "shape": null,
+        "radius": null,
+        "size": null,
+        "originMode": null,
+        "targetPolicy": "single"
+      },
+      "components": [
+        {
+          "key": "base-weapon",
+          "label": "Blaster Pistol",
+          "formula": "3d6",
+          "type": "energy",
+          "tags": [
+            "base",
+            "energy",
+            "blaster",
+            "pistol"
+          ]
+        },
+        {
+          "key": "printed-statblock-delta",
+          "label": "Printed Statblock Delta",
+          "formula": "+2",
+          "type": "energy",
+          "tags": [
+            "printed",
+            "delta",
+            "energy"
+          ]
+        }
+      ],
+      "riders": [],
+      "sourceRefs": [
+        {
+          "book": "Unknown / missing source",
+          "page": null,
+          "note": "Bulk Lane A promotion pass 1, generated from data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json; original row from packs/nonheroic.db."
+        }
+      ],
+      "variants": [],
+      "notes": [
+        "Bulk-promoted by tools/promote-nonheroic-damage-profile-candidates.mjs (pass 1) from an allowlisted Lane A candidate. confidence remains manualRequired: page/book attribution and full sourcebook review have not been performed.",
+        "Not wired into scripts/engine/import/nonheroic-damage-profile-hydrator.js PROFILE_FILES; this file is staged canonical-shaped data awaiting review."
+      ]
+    },
+    {
+      "slug": "dug-fringer-blaster-pistol",
+      "name": "Blaster Pistol",
+      "confidence": "manualRequired",
+      "reviewRequired": true,
+      "source": {
+        "book": "Unknown / missing source",
+        "status": "repo-raw-statblock-field; page review still required",
+        "page": null,
+        "evidence": [
+          "Bulk-promoted from Lane A candidate \"dug-fringer-blaster-pistol\" (status safe-ordinary-weapon-with-delta) staged in data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json.",
+          "Candidate originally generated from packs/nonheroic.db."
+        ]
+      },
+      "actor": {
+        "name": "Dug Fringer",
+        "slugs": [
+          "dug-fringer"
+        ]
+      },
+      "match": {
+        "actorSlugs": [
+          "dug-fringer"
+        ],
+        "rawIncludes": [
+          "blaster pistol"
+        ]
+      },
+      "weapon": {
+        "printedName": "Blaster Pistol",
+        "rowKind": "ranged",
+        "uuid": "Compendium.foundryvtt-swse.weapons-pistols.Item.weapon-blaster-pistol",
+        "baseSlug": "weapon-blaster-pistol",
+        "basePack": "weapons-pistols",
+        "baseFormula": "3d6",
+        "baseType": "energy",
+        "baseFormulaPolicy": "uuid"
+      },
+      "formula": {
+        "mode": "base-plus-delta",
+        "printed": "3d6+1",
+        "delta": "+1",
+        "deltaSource": "generated-from-compendium-base-comparison",
+        "typeOverride": "energy",
+        "notes": [
+          "Formula mode/delta were classified mechanically by comparing the printed statblock formula against the matched compendium base weapon; no sourcebook was read."
+        ]
+      },
+      "printedAttack": {
+        "text": "+4",
+        "bonus": 4,
+        "bonuses": [
+          4
+        ],
+        "source": "printed-statblock",
+        "hydratePolicy": "metadata-only"
+      },
+      "delivery": "weapon",
+      "attackShape": "single-target",
+      "scale": "character",
+      "primaryType": "energy",
+      "tags": [
+        "nonheroic",
+        "weapon",
+        "blaster",
+        "pistol",
+        "bulk-lane-a-pass-1",
+        "generated-candidate"
+      ],
+      "attack": {
+        "isArea": false,
+        "halfDamageOnMiss": false,
+        "noCriticalDouble": false,
+        "coverCanNegateMissDamage": false,
+        "attackRollMinimum": null,
+        "defense": "reflex"
+      },
+      "area": {
+        "shape": null,
+        "radius": null,
+        "size": null,
+        "originMode": null,
+        "targetPolicy": "single"
+      },
+      "components": [
+        {
+          "key": "base-weapon",
+          "label": "Blaster Pistol",
+          "formula": "3d6",
+          "type": "energy",
+          "tags": [
+            "base",
+            "energy",
+            "blaster",
+            "pistol"
+          ]
+        },
+        {
+          "key": "printed-statblock-delta",
+          "label": "Printed Statblock Delta",
+          "formula": "+1",
+          "type": "energy",
+          "tags": [
+            "printed",
+            "delta",
+            "energy"
+          ]
+        }
+      ],
+      "riders": [],
+      "sourceRefs": [
+        {
+          "book": "Unknown / missing source",
+          "page": null,
+          "note": "Bulk Lane A promotion pass 1, generated from data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json; original row from packs/nonheroic.db."
+        }
+      ],
+      "variants": [],
+      "notes": [
+        "Bulk-promoted by tools/promote-nonheroic-damage-profile-candidates.mjs (pass 1) from an allowlisted Lane A candidate. confidence remains manualRequired: page/book attribution and full sourcebook review have not been performed.",
+        "Not wired into scripts/engine/import/nonheroic-damage-profile-hydrator.js PROFILE_FILES; this file is staged canonical-shaped data awaiting review."
+      ]
+    },
+    {
+      "slug": "elite-death-star-trooper-blaster-pistol",
+      "name": "Blaster Pistol",
+      "confidence": "manualRequired",
+      "reviewRequired": true,
+      "source": {
+        "book": "Unknown / missing source",
+        "status": "repo-raw-statblock-field; page review still required",
+        "page": null,
+        "evidence": [
+          "Bulk-promoted from Lane A candidate \"elite-death-star-trooper-blaster-pistol\" (status safe-ordinary-weapon-with-delta) staged in data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json.",
+          "Candidate originally generated from packs/nonheroic.db."
+        ]
+      },
+      "actor": {
+        "name": "Elite Death Star Trooper",
+        "slugs": [
+          "elite-death-star-trooper"
+        ]
+      },
+      "match": {
+        "actorSlugs": [
+          "elite-death-star-trooper"
+        ],
+        "rawIncludes": [
+          "blaster pistol"
+        ]
+      },
+      "weapon": {
+        "printedName": "Blaster Pistol",
+        "rowKind": "ranged",
+        "uuid": "Compendium.foundryvtt-swse.weapons-pistols.Item.weapon-blaster-pistol",
+        "baseSlug": "weapon-blaster-pistol",
+        "basePack": "weapons-pistols",
+        "baseFormula": "3d6",
+        "baseType": "energy",
+        "baseFormulaPolicy": "uuid"
+      },
+      "formula": {
+        "mode": "base-plus-delta",
+        "printed": "3d6+4",
+        "delta": "+4",
+        "deltaSource": "generated-from-compendium-base-comparison",
+        "typeOverride": "energy",
+        "notes": [
+          "Formula mode/delta were classified mechanically by comparing the printed statblock formula against the matched compendium base weapon; no sourcebook was read."
+        ]
+      },
+      "printedAttack": {
+        "text": "+10",
+        "bonus": 10,
+        "bonuses": [
+          10
+        ],
+        "source": "printed-statblock",
+        "hydratePolicy": "metadata-only"
+      },
+      "delivery": "weapon",
+      "attackShape": "single-target",
+      "scale": "character",
+      "primaryType": "energy",
+      "tags": [
+        "nonheroic",
+        "weapon",
+        "blaster",
+        "pistol",
+        "bulk-lane-a-pass-1",
+        "generated-candidate"
+      ],
+      "attack": {
+        "isArea": false,
+        "halfDamageOnMiss": false,
+        "noCriticalDouble": false,
+        "coverCanNegateMissDamage": false,
+        "attackRollMinimum": null,
+        "defense": "reflex"
+      },
+      "area": {
+        "shape": null,
+        "radius": null,
+        "size": null,
+        "originMode": null,
+        "targetPolicy": "single"
+      },
+      "components": [
+        {
+          "key": "base-weapon",
+          "label": "Blaster Pistol",
+          "formula": "3d6",
+          "type": "energy",
+          "tags": [
+            "base",
+            "energy",
+            "blaster",
+            "pistol"
+          ]
+        },
+        {
+          "key": "printed-statblock-delta",
+          "label": "Printed Statblock Delta",
+          "formula": "+4",
+          "type": "energy",
+          "tags": [
+            "printed",
+            "delta",
+            "energy"
+          ]
+        }
+      ],
+      "riders": [],
+      "sourceRefs": [
+        {
+          "book": "Unknown / missing source",
+          "page": null,
+          "note": "Bulk Lane A promotion pass 1, generated from data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json; original row from packs/nonheroic.db."
+        }
+      ],
+      "variants": [],
+      "notes": [
+        "Bulk-promoted by tools/promote-nonheroic-damage-profile-candidates.mjs (pass 1) from an allowlisted Lane A candidate. confidence remains manualRequired: page/book attribution and full sourcebook review have not been performed.",
+        "Not wired into scripts/engine/import/nonheroic-damage-profile-hydrator.js PROFILE_FILES; this file is staged canonical-shaped data awaiting review."
+      ]
+    },
+    {
+      "slug": "clone-fighter-pilot-blaster-pistol",
+      "name": "Blaster Pistol",
+      "confidence": "manualRequired",
+      "reviewRequired": true,
+      "source": {
+        "book": "Unknown / missing source",
+        "status": "repo-raw-statblock-field; page review still required",
+        "page": null,
+        "evidence": [
+          "Bulk-promoted from Lane A candidate \"clone-fighter-pilot-blaster-pistol\" (status safe-ordinary-weapon-with-delta) staged in data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json.",
+          "Candidate originally generated from packs/nonheroic.db."
+        ]
+      },
+      "actor": {
+        "name": "Clone Fighter Pilot",
+        "slugs": [
+          "clone-fighter-pilot"
+        ]
+      },
+      "match": {
+        "actorSlugs": [
+          "clone-fighter-pilot"
+        ],
+        "rawIncludes": [
+          "blaster pistol"
+        ]
+      },
+      "weapon": {
+        "printedName": "Blaster Pistol",
+        "rowKind": "ranged",
+        "uuid": "Compendium.foundryvtt-swse.weapons-pistols.Item.weapon-blaster-pistol",
+        "baseSlug": "weapon-blaster-pistol",
+        "basePack": "weapons-pistols",
+        "baseFormula": "3d6",
+        "baseType": "energy",
+        "baseFormulaPolicy": "uuid"
+      },
+      "formula": {
+        "mode": "base-plus-delta",
+        "printed": "3d6+2",
+        "delta": "+2",
+        "deltaSource": "generated-from-compendium-base-comparison",
+        "typeOverride": "energy",
+        "notes": [
+          "Formula mode/delta were classified mechanically by comparing the printed statblock formula against the matched compendium base weapon; no sourcebook was read."
+        ]
+      },
+      "printedAttack": {
+        "text": "+8",
+        "bonus": 8,
+        "bonuses": [
+          8
+        ],
+        "source": "printed-statblock",
+        "hydratePolicy": "metadata-only"
+      },
+      "delivery": "weapon",
+      "attackShape": "single-target",
+      "scale": "character",
+      "primaryType": "energy",
+      "tags": [
+        "nonheroic",
+        "weapon",
+        "blaster",
+        "pistol",
+        "bulk-lane-a-pass-1",
+        "generated-candidate"
+      ],
+      "attack": {
+        "isArea": false,
+        "halfDamageOnMiss": false,
+        "noCriticalDouble": false,
+        "coverCanNegateMissDamage": false,
+        "attackRollMinimum": null,
+        "defense": "reflex"
+      },
+      "area": {
+        "shape": null,
+        "radius": null,
+        "size": null,
+        "originMode": null,
+        "targetPolicy": "single"
+      },
+      "components": [
+        {
+          "key": "base-weapon",
+          "label": "Blaster Pistol",
+          "formula": "3d6",
+          "type": "energy",
+          "tags": [
+            "base",
+            "energy",
+            "blaster",
+            "pistol"
+          ]
+        },
+        {
+          "key": "printed-statblock-delta",
+          "label": "Printed Statblock Delta",
+          "formula": "+2",
+          "type": "energy",
+          "tags": [
+            "printed",
+            "delta",
+            "energy"
+          ]
+        }
+      ],
+      "riders": [],
+      "sourceRefs": [
+        {
+          "book": "Unknown / missing source",
+          "page": null,
+          "note": "Bulk Lane A promotion pass 1, generated from data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json; original row from packs/nonheroic.db."
+        }
+      ],
+      "variants": [],
+      "notes": [
+        "Bulk-promoted by tools/promote-nonheroic-damage-profile-candidates.mjs (pass 1) from an allowlisted Lane A candidate. confidence remains manualRequired: page/book attribution and full sourcebook review have not been performed.",
+        "Not wired into scripts/engine/import/nonheroic-damage-profile-hydrator.js PROFILE_FILES; this file is staged canonical-shaped data awaiting review."
+      ]
+    },
+    {
+      "slug": "specforce-elite-soldier-blaster-pistol",
+      "name": "Blaster Pistol",
+      "confidence": "manualRequired",
+      "reviewRequired": true,
+      "source": {
+        "book": "Unknown / missing source",
+        "status": "repo-raw-statblock-field; page review still required",
+        "page": null,
+        "evidence": [
+          "Bulk-promoted from Lane A candidate \"specforce-elite-soldier-blaster-pistol\" (status safe-ordinary-weapon-with-delta) staged in data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json.",
+          "Candidate originally generated from packs/nonheroic.db."
+        ]
+      },
+      "actor": {
+        "name": "SpecForce Elite Soldier",
+        "slugs": [
+          "specforce-elite-soldier"
+        ]
+      },
+      "match": {
+        "actorSlugs": [
+          "specforce-elite-soldier"
+        ],
+        "rawIncludes": [
+          "blaster pistol"
+        ]
+      },
+      "weapon": {
+        "printedName": "Blaster Pistol",
+        "rowKind": "ranged",
+        "uuid": "Compendium.foundryvtt-swse.weapons-pistols.Item.weapon-blaster-pistol",
+        "baseSlug": "weapon-blaster-pistol",
+        "basePack": "weapons-pistols",
+        "baseFormula": "3d6",
+        "baseType": "energy",
+        "baseFormulaPolicy": "uuid"
+      },
+      "formula": {
+        "mode": "base-plus-delta",
+        "printed": "3d6+6",
+        "delta": "+6",
+        "deltaSource": "generated-from-compendium-base-comparison",
+        "typeOverride": "energy",
+        "notes": [
+          "Formula mode/delta were classified mechanically by comparing the printed statblock formula against the matched compendium base weapon; no sourcebook was read."
+        ]
+      },
+      "printedAttack": {
+        "text": "+15",
+        "bonus": 15,
+        "bonuses": [
+          15
+        ],
+        "source": "printed-statblock",
+        "hydratePolicy": "metadata-only"
+      },
+      "delivery": "weapon",
+      "attackShape": "single-target",
+      "scale": "character",
+      "primaryType": "energy",
+      "tags": [
+        "nonheroic",
+        "weapon",
+        "blaster",
+        "pistol",
+        "bulk-lane-a-pass-1",
+        "generated-candidate"
+      ],
+      "attack": {
+        "isArea": false,
+        "halfDamageOnMiss": false,
+        "noCriticalDouble": false,
+        "coverCanNegateMissDamage": false,
+        "attackRollMinimum": null,
+        "defense": "reflex"
+      },
+      "area": {
+        "shape": null,
+        "radius": null,
+        "size": null,
+        "originMode": null,
+        "targetPolicy": "single"
+      },
+      "components": [
+        {
+          "key": "base-weapon",
+          "label": "Blaster Pistol",
+          "formula": "3d6",
+          "type": "energy",
+          "tags": [
+            "base",
+            "energy",
+            "blaster",
+            "pistol"
+          ]
+        },
+        {
+          "key": "printed-statblock-delta",
+          "label": "Printed Statblock Delta",
+          "formula": "+6",
+          "type": "energy",
+          "tags": [
+            "printed",
+            "delta",
+            "energy"
+          ]
+        }
+      ],
+      "riders": [],
+      "sourceRefs": [
+        {
+          "book": "Unknown / missing source",
+          "page": null,
+          "note": "Bulk Lane A promotion pass 1, generated from data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json; original row from packs/nonheroic.db."
+        }
+      ],
+      "variants": [],
+      "notes": [
+        "Bulk-promoted by tools/promote-nonheroic-damage-profile-candidates.mjs (pass 1) from an allowlisted Lane A candidate. confidence remains manualRequired: page/book attribution and full sourcebook review have not been performed.",
+        "Not wired into scripts/engine/import/nonheroic-damage-profile-hydrator.js PROFILE_FILES; this file is staged canonical-shaped data awaiting review."
+      ]
+    },
+    {
+      "slug": "detention-block-guard-blaster-pistol",
+      "name": "Blaster Pistol",
+      "confidence": "manualRequired",
+      "reviewRequired": true,
+      "source": {
+        "book": "Unknown / missing source",
+        "status": "repo-raw-statblock-field; page review still required",
+        "page": null,
+        "evidence": [
+          "Bulk-promoted from Lane A candidate \"detention-block-guard-blaster-pistol\" (status safe-ordinary-weapon-with-delta) staged in data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json.",
+          "Candidate originally generated from packs/nonheroic.db."
+        ]
+      },
+      "actor": {
+        "name": "Detention Block Guard",
+        "slugs": [
+          "detention-block-guard"
+        ]
+      },
+      "match": {
+        "actorSlugs": [
+          "detention-block-guard"
+        ],
+        "rawIncludes": [
+          "blaster pistol"
+        ]
+      },
+      "weapon": {
+        "printedName": "Blaster Pistol",
+        "rowKind": "ranged",
+        "uuid": "Compendium.foundryvtt-swse.weapons-pistols.Item.weapon-blaster-pistol",
+        "baseSlug": "weapon-blaster-pistol",
+        "basePack": "weapons-pistols",
+        "baseFormula": "3d6",
+        "baseType": "energy",
+        "baseFormulaPolicy": "uuid"
+      },
+      "formula": {
+        "mode": "base-plus-delta",
+        "printed": "3d6+3",
+        "delta": "+3",
+        "deltaSource": "generated-from-compendium-base-comparison",
+        "typeOverride": "energy",
+        "notes": [
+          "Formula mode/delta were classified mechanically by comparing the printed statblock formula against the matched compendium base weapon; no sourcebook was read."
+        ]
+      },
+      "printedAttack": {
+        "text": "+7",
+        "bonus": 7,
+        "bonuses": [
+          7
+        ],
+        "source": "printed-statblock",
+        "hydratePolicy": "metadata-only"
+      },
+      "delivery": "weapon",
+      "attackShape": "single-target",
+      "scale": "character",
+      "primaryType": "energy",
+      "tags": [
+        "nonheroic",
+        "weapon",
+        "blaster",
+        "pistol",
+        "bulk-lane-a-pass-1",
+        "generated-candidate"
+      ],
+      "attack": {
+        "isArea": false,
+        "halfDamageOnMiss": false,
+        "noCriticalDouble": false,
+        "coverCanNegateMissDamage": false,
+        "attackRollMinimum": null,
+        "defense": "reflex"
+      },
+      "area": {
+        "shape": null,
+        "radius": null,
+        "size": null,
+        "originMode": null,
+        "targetPolicy": "single"
+      },
+      "components": [
+        {
+          "key": "base-weapon",
+          "label": "Blaster Pistol",
+          "formula": "3d6",
+          "type": "energy",
+          "tags": [
+            "base",
+            "energy",
+            "blaster",
+            "pistol"
+          ]
+        },
+        {
+          "key": "printed-statblock-delta",
+          "label": "Printed Statblock Delta",
+          "formula": "+3",
+          "type": "energy",
+          "tags": [
+            "printed",
+            "delta",
+            "energy"
+          ]
+        }
+      ],
+      "riders": [],
+      "sourceRefs": [
+        {
+          "book": "Unknown / missing source",
+          "page": null,
+          "note": "Bulk Lane A promotion pass 1, generated from data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json; original row from packs/nonheroic.db."
+        }
+      ],
+      "variants": [],
+      "notes": [
+        "Bulk-promoted by tools/promote-nonheroic-damage-profile-candidates.mjs (pass 1) from an allowlisted Lane A candidate. confidence remains manualRequired: page/book attribution and full sourcebook review have not been performed.",
+        "Not wired into scripts/engine/import/nonheroic-damage-profile-hydrator.js PROFILE_FILES; this file is staged canonical-shaped data awaiting review."
+      ]
+    },
+    {
+      "slug": "krath-warrior-heavy-blaster-pistol",
+      "name": "Heavy Blaster Pistol",
+      "confidence": "manualRequired",
+      "reviewRequired": true,
+      "source": {
+        "book": "Unknown / missing source",
+        "status": "repo-raw-statblock-field; page review still required",
+        "page": null,
+        "evidence": [
+          "Bulk-promoted from Lane A candidate \"krath-warrior-heavy-blaster-pistol\" (status safe-ordinary-weapon-candidate) staged in data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json.",
+          "Candidate originally generated from packs/nonheroic.db."
+        ]
+      },
+      "actor": {
+        "name": "Krath Warrior",
+        "slugs": [
+          "krath-warrior"
+        ]
+      },
+      "match": {
+        "actorSlugs": [
+          "krath-warrior"
+        ],
+        "rawIncludes": [
+          "heavy blaster pistol"
+        ]
+      },
+      "weapon": {
+        "printedName": "Heavy Blaster Pistol",
+        "rowKind": "ranged",
+        "uuid": "Compendium.foundryvtt-swse.weapons-pistols.Item.weapon-heavy-blaster-pistol",
+        "baseSlug": "weapon-heavy-blaster-pistol",
+        "basePack": "weapons-pistols",
+        "baseFormula": "3d8",
+        "baseType": "energy",
+        "baseFormulaPolicy": "uuid"
+      },
+      "formula": {
+        "mode": "base",
+        "printed": "3d8",
+        "delta": null,
+        "deltaSource": "generated-from-compendium-base-comparison",
+        "typeOverride": "energy",
+        "notes": [
+          "Formula mode/delta were classified mechanically by comparing the printed statblock formula against the matched compendium base weapon; no sourcebook was read."
+        ]
+      },
+      "printedAttack": {
+        "text": "+4",
+        "bonus": 4,
+        "bonuses": [
+          4
+        ],
+        "source": "printed-statblock",
+        "hydratePolicy": "metadata-only"
+      },
+      "delivery": "weapon",
+      "attackShape": "single-target",
+      "scale": "character",
+      "primaryType": "energy",
+      "tags": [
+        "nonheroic",
+        "weapon",
+        "heavy",
+        "blaster",
+        "pistol",
+        "bulk-lane-a-pass-1",
+        "generated-candidate"
+      ],
+      "attack": {
+        "isArea": false,
+        "halfDamageOnMiss": false,
+        "noCriticalDouble": false,
+        "coverCanNegateMissDamage": false,
+        "attackRollMinimum": null,
+        "defense": "reflex"
+      },
+      "area": {
+        "shape": null,
+        "radius": null,
+        "size": null,
+        "originMode": null,
+        "targetPolicy": "single"
+      },
+      "components": [
+        {
+          "key": "base-weapon",
+          "label": "Heavy Blaster Pistol",
+          "formula": "3d8",
+          "type": "energy",
+          "tags": [
+            "base",
+            "energy",
+            "heavy",
+            "blaster",
+            "pistol"
+          ]
+        }
+      ],
+      "riders": [],
+      "sourceRefs": [
+        {
+          "book": "Unknown / missing source",
+          "page": null,
+          "note": "Bulk Lane A promotion pass 1, generated from data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json; original row from packs/nonheroic.db."
+        }
+      ],
+      "variants": [],
+      "notes": [
+        "Bulk-promoted by tools/promote-nonheroic-damage-profile-candidates.mjs (pass 1) from an allowlisted Lane A candidate. confidence remains manualRequired: page/book attribution and full sourcebook review have not been performed.",
+        "Not wired into scripts/engine/import/nonheroic-damage-profile-hydrator.js PROFILE_FILES; this file is staged canonical-shaped data awaiting review."
+      ]
+    },
+    {
+      "slug": "imperial-sovereign-protector-heavy-blaster-pistol",
+      "name": "Heavy Blaster Pistol",
+      "confidence": "manualRequired",
+      "reviewRequired": true,
+      "source": {
+        "book": "Unknown / missing source",
+        "status": "repo-raw-statblock-field; page review still required",
+        "page": null,
+        "evidence": [
+          "Bulk-promoted from Lane A candidate \"imperial-sovereign-protector-heavy-blaster-pistol\" (status safe-ordinary-weapon-with-delta) staged in data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json.",
+          "Candidate originally generated from packs/nonheroic.db."
+        ]
+      },
+      "actor": {
+        "name": "Imperial Sovereign Protector",
+        "slugs": [
+          "imperial-sovereign-protector"
+        ]
+      },
+      "match": {
+        "actorSlugs": [
+          "imperial-sovereign-protector"
+        ],
+        "rawIncludes": [
+          "heavy blaster pistol"
+        ]
+      },
+      "weapon": {
+        "printedName": "Heavy Blaster Pistol",
+        "rowKind": "ranged",
+        "uuid": "Compendium.foundryvtt-swse.weapons-pistols.Item.weapon-heavy-blaster-pistol",
+        "baseSlug": "weapon-heavy-blaster-pistol",
+        "basePack": "weapons-pistols",
+        "baseFormula": "3d8",
+        "baseType": "energy",
+        "baseFormulaPolicy": "uuid"
+      },
+      "formula": {
+        "mode": "base-plus-delta",
+        "printed": "3d8+6",
+        "delta": "+6",
+        "deltaSource": "generated-from-compendium-base-comparison",
+        "typeOverride": "energy",
+        "notes": [
+          "Formula mode/delta were classified mechanically by comparing the printed statblock formula against the matched compendium base weapon; no sourcebook was read."
+        ]
+      },
+      "printedAttack": {
+        "text": "+18",
+        "bonus": 18,
+        "bonuses": [
+          18
+        ],
+        "source": "printed-statblock",
+        "hydratePolicy": "metadata-only"
+      },
+      "delivery": "weapon",
+      "attackShape": "single-target",
+      "scale": "character",
+      "primaryType": "energy",
+      "tags": [
+        "nonheroic",
+        "weapon",
+        "heavy",
+        "blaster",
+        "pistol",
+        "bulk-lane-a-pass-1",
+        "generated-candidate"
+      ],
+      "attack": {
+        "isArea": false,
+        "halfDamageOnMiss": false,
+        "noCriticalDouble": false,
+        "coverCanNegateMissDamage": false,
+        "attackRollMinimum": null,
+        "defense": "reflex"
+      },
+      "area": {
+        "shape": null,
+        "radius": null,
+        "size": null,
+        "originMode": null,
+        "targetPolicy": "single"
+      },
+      "components": [
+        {
+          "key": "base-weapon",
+          "label": "Heavy Blaster Pistol",
+          "formula": "3d8",
+          "type": "energy",
+          "tags": [
+            "base",
+            "energy",
+            "heavy",
+            "blaster",
+            "pistol"
+          ]
+        },
+        {
+          "key": "printed-statblock-delta",
+          "label": "Printed Statblock Delta",
+          "formula": "+6",
+          "type": "energy",
+          "tags": [
+            "printed",
+            "delta",
+            "energy"
+          ]
+        }
+      ],
+      "riders": [],
+      "sourceRefs": [
+        {
+          "book": "Unknown / missing source",
+          "page": null,
+          "note": "Bulk Lane A promotion pass 1, generated from data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json; original row from packs/nonheroic.db."
+        }
+      ],
+      "variants": [],
+      "notes": [
+        "Bulk-promoted by tools/promote-nonheroic-damage-profile-candidates.mjs (pass 1) from an allowlisted Lane A candidate. confidence remains manualRequired: page/book attribution and full sourcebook review have not been performed.",
+        "Not wired into scripts/engine/import/nonheroic-damage-profile-hydrator.js PROFILE_FILES; this file is staged canonical-shaped data awaiting review."
+      ]
+    },
+    {
+      "slug": "core-fleet-covert-agent-heavy-blaster-pistol",
+      "name": "Heavy Blaster Pistol",
+      "confidence": "manualRequired",
+      "reviewRequired": true,
+      "source": {
+        "book": "Unknown / missing source",
+        "status": "repo-raw-statblock-field; page review still required",
+        "page": null,
+        "evidence": [
+          "Bulk-promoted from Lane A candidate \"core-fleet-covert-agent-heavy-blaster-pistol\" (status safe-ordinary-weapon-with-delta) staged in data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json.",
+          "Candidate originally generated from packs/nonheroic.db."
+        ]
+      },
+      "actor": {
+        "name": "Core Fleet Covert Agent",
+        "slugs": [
+          "core-fleet-covert-agent"
+        ]
+      },
+      "match": {
+        "actorSlugs": [
+          "core-fleet-covert-agent"
+        ],
+        "rawIncludes": [
+          "heavy blaster pistol"
+        ]
+      },
+      "weapon": {
+        "printedName": "Heavy Blaster Pistol",
+        "rowKind": "ranged",
+        "uuid": "Compendium.foundryvtt-swse.weapons-pistols.Item.weapon-heavy-blaster-pistol",
+        "baseSlug": "weapon-heavy-blaster-pistol",
+        "basePack": "weapons-pistols",
+        "baseFormula": "3d8",
+        "baseType": "energy",
+        "baseFormulaPolicy": "uuid"
+      },
+      "formula": {
+        "mode": "base-plus-delta",
+        "printed": "3d8+2",
+        "delta": "+2",
+        "deltaSource": "generated-from-compendium-base-comparison",
+        "typeOverride": "energy",
+        "notes": [
+          "Formula mode/delta were classified mechanically by comparing the printed statblock formula against the matched compendium base weapon; no sourcebook was read."
+        ]
+      },
+      "printedAttack": {
+        "text": "+4",
+        "bonus": 4,
+        "bonuses": [
+          4
+        ],
+        "source": "printed-statblock",
+        "hydratePolicy": "metadata-only"
+      },
+      "delivery": "weapon",
+      "attackShape": "single-target",
+      "scale": "character",
+      "primaryType": "energy",
+      "tags": [
+        "nonheroic",
+        "weapon",
+        "heavy",
+        "blaster",
+        "pistol",
+        "bulk-lane-a-pass-1",
+        "generated-candidate"
+      ],
+      "attack": {
+        "isArea": false,
+        "halfDamageOnMiss": false,
+        "noCriticalDouble": false,
+        "coverCanNegateMissDamage": false,
+        "attackRollMinimum": null,
+        "defense": "reflex"
+      },
+      "area": {
+        "shape": null,
+        "radius": null,
+        "size": null,
+        "originMode": null,
+        "targetPolicy": "single"
+      },
+      "components": [
+        {
+          "key": "base-weapon",
+          "label": "Heavy Blaster Pistol",
+          "formula": "3d8",
+          "type": "energy",
+          "tags": [
+            "base",
+            "energy",
+            "heavy",
+            "blaster",
+            "pistol"
+          ]
+        },
+        {
+          "key": "printed-statblock-delta",
+          "label": "Printed Statblock Delta",
+          "formula": "+2",
+          "type": "energy",
+          "tags": [
+            "printed",
+            "delta",
+            "energy"
+          ]
+        }
+      ],
+      "riders": [],
+      "sourceRefs": [
+        {
+          "book": "Unknown / missing source",
+          "page": null,
+          "note": "Bulk Lane A promotion pass 1, generated from data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json; original row from packs/nonheroic.db."
+        }
+      ],
+      "variants": [],
+      "notes": [
+        "Bulk-promoted by tools/promote-nonheroic-damage-profile-candidates.mjs (pass 1) from an allowlisted Lane A candidate. confidence remains manualRequired: page/book attribution and full sourcebook review have not been performed.",
+        "Not wired into scripts/engine/import/nonheroic-damage-profile-hydrator.js PROFILE_FILES; this file is staged canonical-shaped data awaiting review."
+      ]
+    },
+    {
+      "slug": "specforce-heavy-weapons-specialist-heavy-blaster-pistol",
+      "name": "Heavy Blaster Pistol",
+      "confidence": "manualRequired",
+      "reviewRequired": true,
+      "source": {
+        "book": "Unknown / missing source",
+        "status": "repo-raw-statblock-field; page review still required",
+        "page": null,
+        "evidence": [
+          "Bulk-promoted from Lane A candidate \"specforce-heavy-weapons-specialist-heavy-blaster-pistol\" (status safe-ordinary-weapon-with-delta) staged in data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json.",
+          "Candidate originally generated from packs/nonheroic.db."
+        ]
+      },
+      "actor": {
+        "name": "SpecForce Heavy Weapons Specialist",
+        "slugs": [
+          "specforce-heavy-weapons-specialist"
+        ]
+      },
+      "match": {
+        "actorSlugs": [
+          "specforce-heavy-weapons-specialist"
+        ],
+        "rawIncludes": [
+          "heavy blaster pistol"
+        ]
+      },
+      "weapon": {
+        "printedName": "Heavy Blaster Pistol",
+        "rowKind": "ranged",
+        "uuid": "Compendium.foundryvtt-swse.weapons-pistols.Item.weapon-heavy-blaster-pistol",
+        "baseSlug": "weapon-heavy-blaster-pistol",
+        "basePack": "weapons-pistols",
+        "baseFormula": "3d8",
+        "baseType": "energy",
+        "baseFormulaPolicy": "uuid"
+      },
+      "formula": {
+        "mode": "base-plus-delta",
+        "printed": "3d8+1",
+        "delta": "+1",
+        "deltaSource": "generated-from-compendium-base-comparison",
+        "typeOverride": "energy",
+        "notes": [
+          "Formula mode/delta were classified mechanically by comparing the printed statblock formula against the matched compendium base weapon; no sourcebook was read."
+        ]
+      },
+      "printedAttack": {
+        "text": "+9",
+        "bonus": 9,
+        "bonuses": [
+          9
+        ],
+        "source": "printed-statblock",
+        "hydratePolicy": "metadata-only"
+      },
+      "delivery": "weapon",
+      "attackShape": "single-target",
+      "scale": "character",
+      "primaryType": "energy",
+      "tags": [
+        "nonheroic",
+        "weapon",
+        "heavy",
+        "blaster",
+        "pistol",
+        "bulk-lane-a-pass-1",
+        "generated-candidate"
+      ],
+      "attack": {
+        "isArea": false,
+        "halfDamageOnMiss": false,
+        "noCriticalDouble": false,
+        "coverCanNegateMissDamage": false,
+        "attackRollMinimum": null,
+        "defense": "reflex"
+      },
+      "area": {
+        "shape": null,
+        "radius": null,
+        "size": null,
+        "originMode": null,
+        "targetPolicy": "single"
+      },
+      "components": [
+        {
+          "key": "base-weapon",
+          "label": "Heavy Blaster Pistol",
+          "formula": "3d8",
+          "type": "energy",
+          "tags": [
+            "base",
+            "energy",
+            "heavy",
+            "blaster",
+            "pistol"
+          ]
+        },
+        {
+          "key": "printed-statblock-delta",
+          "label": "Printed Statblock Delta",
+          "formula": "+1",
+          "type": "energy",
+          "tags": [
+            "printed",
+            "delta",
+            "energy"
+          ]
+        }
+      ],
+      "riders": [],
+      "sourceRefs": [
+        {
+          "book": "Unknown / missing source",
+          "page": null,
+          "note": "Bulk Lane A promotion pass 1, generated from data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json; original row from packs/nonheroic.db."
+        }
+      ],
+      "variants": [],
+      "notes": [
+        "Bulk-promoted by tools/promote-nonheroic-damage-profile-candidates.mjs (pass 1) from an allowlisted Lane A candidate. confidence remains manualRequired: page/book attribution and full sourcebook review have not been performed.",
+        "Not wired into scripts/engine/import/nonheroic-damage-profile-hydrator.js PROFILE_FILES; this file is staged canonical-shaped data awaiting review."
+      ]
+    },
+    {
+      "slug": "rodian-thief-heavy-blaster-pistol",
+      "name": "Heavy Blaster Pistol",
+      "confidence": "manualRequired",
+      "reviewRequired": true,
+      "source": {
+        "book": "Unknown / missing source",
+        "status": "repo-raw-statblock-field; page review still required",
+        "page": null,
+        "evidence": [
+          "Bulk-promoted from Lane A candidate \"rodian-thief-heavy-blaster-pistol\" (status safe-ordinary-weapon-with-delta) staged in data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json.",
+          "Candidate originally generated from packs/nonheroic.db."
+        ]
+      },
+      "actor": {
+        "name": "Rodian Thief",
+        "slugs": [
+          "rodian-thief"
+        ]
+      },
+      "match": {
+        "actorSlugs": [
+          "rodian-thief"
+        ],
+        "rawIncludes": [
+          "heavy blaster pistol"
+        ]
+      },
+      "weapon": {
+        "printedName": "Heavy Blaster Pistol",
+        "rowKind": "ranged",
+        "uuid": "Compendium.foundryvtt-swse.weapons-pistols.Item.weapon-heavy-blaster-pistol",
+        "baseSlug": "weapon-heavy-blaster-pistol",
+        "basePack": "weapons-pistols",
+        "baseFormula": "3d8",
+        "baseType": "energy",
+        "baseFormulaPolicy": "uuid"
+      },
+      "formula": {
+        "mode": "base-plus-delta",
+        "printed": "3d8+4",
+        "delta": "+4",
+        "deltaSource": "generated-from-compendium-base-comparison",
+        "typeOverride": "energy",
+        "notes": [
+          "Formula mode/delta were classified mechanically by comparing the printed statblock formula against the matched compendium base weapon; no sourcebook was read."
+        ]
+      },
+      "printedAttack": {
+        "text": "+10",
+        "bonus": 10,
+        "bonuses": [
+          10
+        ],
+        "source": "printed-statblock",
+        "hydratePolicy": "metadata-only"
+      },
+      "delivery": "weapon",
+      "attackShape": "single-target",
+      "scale": "character",
+      "primaryType": "energy",
+      "tags": [
+        "nonheroic",
+        "weapon",
+        "heavy",
+        "blaster",
+        "pistol",
+        "bulk-lane-a-pass-1",
+        "generated-candidate"
+      ],
+      "attack": {
+        "isArea": false,
+        "halfDamageOnMiss": false,
+        "noCriticalDouble": false,
+        "coverCanNegateMissDamage": false,
+        "attackRollMinimum": null,
+        "defense": "reflex"
+      },
+      "area": {
+        "shape": null,
+        "radius": null,
+        "size": null,
+        "originMode": null,
+        "targetPolicy": "single"
+      },
+      "components": [
+        {
+          "key": "base-weapon",
+          "label": "Heavy Blaster Pistol",
+          "formula": "3d8",
+          "type": "energy",
+          "tags": [
+            "base",
+            "energy",
+            "heavy",
+            "blaster",
+            "pistol"
+          ]
+        },
+        {
+          "key": "printed-statblock-delta",
+          "label": "Printed Statblock Delta",
+          "formula": "+4",
+          "type": "energy",
+          "tags": [
+            "printed",
+            "delta",
+            "energy"
+          ]
+        }
+      ],
+      "riders": [],
+      "sourceRefs": [
+        {
+          "book": "Unknown / missing source",
+          "page": null,
+          "note": "Bulk Lane A promotion pass 1, generated from data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json; original row from packs/nonheroic.db."
+        }
+      ],
+      "variants": [],
+      "notes": [
+        "Bulk-promoted by tools/promote-nonheroic-damage-profile-candidates.mjs (pass 1) from an allowlisted Lane A candidate. confidence remains manualRequired: page/book attribution and full sourcebook review have not been performed.",
+        "Not wired into scripts/engine/import/nonheroic-damage-profile-hydrator.js PROFILE_FILES; this file is staged canonical-shaped data awaiting review."
+      ]
+    },
+    {
+      "slug": "imperial-shadow-guard-initiate-heavy-blaster-pistol",
+      "name": "Heavy Blaster Pistol",
+      "confidence": "manualRequired",
+      "reviewRequired": true,
+      "source": {
+        "book": "Unknown / missing source",
+        "status": "repo-raw-statblock-field; page review still required",
+        "page": null,
+        "evidence": [
+          "Bulk-promoted from Lane A candidate \"imperial-shadow-guard-initiate-heavy-blaster-pistol\" (status safe-ordinary-weapon-with-delta) staged in data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json.",
+          "Candidate originally generated from packs/nonheroic.db."
+        ]
+      },
+      "actor": {
+        "name": "Imperial Shadow Guard Initiate",
+        "slugs": [
+          "imperial-shadow-guard-initiate"
+        ]
+      },
+      "match": {
+        "actorSlugs": [
+          "imperial-shadow-guard-initiate"
+        ],
+        "rawIncludes": [
+          "heavy blaster pistol"
+        ]
+      },
+      "weapon": {
+        "printedName": "Heavy Blaster Pistol",
+        "rowKind": "ranged",
+        "uuid": "Compendium.foundryvtt-swse.weapons-pistols.Item.weapon-heavy-blaster-pistol",
+        "baseSlug": "weapon-heavy-blaster-pistol",
+        "basePack": "weapons-pistols",
+        "baseFormula": "3d8",
+        "baseType": "energy",
+        "baseFormulaPolicy": "uuid"
+      },
+      "formula": {
+        "mode": "base-plus-delta",
+        "printed": "3d8+4",
+        "delta": "+4",
+        "deltaSource": "generated-from-compendium-base-comparison",
+        "typeOverride": "energy",
+        "notes": [
+          "Formula mode/delta were classified mechanically by comparing the printed statblock formula against the matched compendium base weapon; no sourcebook was read."
+        ]
+      },
+      "printedAttack": {
+        "text": "+11",
+        "bonus": 11,
+        "bonuses": [
+          11
+        ],
+        "source": "printed-statblock",
+        "hydratePolicy": "metadata-only"
+      },
+      "delivery": "weapon",
+      "attackShape": "single-target",
+      "scale": "character",
+      "primaryType": "energy",
+      "tags": [
+        "nonheroic",
+        "weapon",
+        "heavy",
+        "blaster",
+        "pistol",
+        "bulk-lane-a-pass-1",
+        "generated-candidate"
+      ],
+      "attack": {
+        "isArea": false,
+        "halfDamageOnMiss": false,
+        "noCriticalDouble": false,
+        "coverCanNegateMissDamage": false,
+        "attackRollMinimum": null,
+        "defense": "reflex"
+      },
+      "area": {
+        "shape": null,
+        "radius": null,
+        "size": null,
+        "originMode": null,
+        "targetPolicy": "single"
+      },
+      "components": [
+        {
+          "key": "base-weapon",
+          "label": "Heavy Blaster Pistol",
+          "formula": "3d8",
+          "type": "energy",
+          "tags": [
+            "base",
+            "energy",
+            "heavy",
+            "blaster",
+            "pistol"
+          ]
+        },
+        {
+          "key": "printed-statblock-delta",
+          "label": "Printed Statblock Delta",
+          "formula": "+4",
+          "type": "energy",
+          "tags": [
+            "printed",
+            "delta",
+            "energy"
+          ]
+        }
+      ],
+      "riders": [],
+      "sourceRefs": [
+        {
+          "book": "Unknown / missing source",
+          "page": null,
+          "note": "Bulk Lane A promotion pass 1, generated from data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json; original row from packs/nonheroic.db."
+        }
+      ],
+      "variants": [],
+      "notes": [
+        "Bulk-promoted by tools/promote-nonheroic-damage-profile-candidates.mjs (pass 1) from an allowlisted Lane A candidate. confidence remains manualRequired: page/book attribution and full sourcebook review have not been performed.",
+        "Not wired into scripts/engine/import/nonheroic-damage-profile-hydrator.js PROFILE_FILES; this file is staged canonical-shaped data awaiting review."
+      ]
+    },
+    {
+      "slug": "trandoshan-elite-mercenary-heavy-blaster-pistol",
+      "name": "Heavy Blaster Pistol",
+      "confidence": "manualRequired",
+      "reviewRequired": true,
+      "source": {
+        "book": "Unknown / missing source",
+        "status": "repo-raw-statblock-field; page review still required",
+        "page": null,
+        "evidence": [
+          "Bulk-promoted from Lane A candidate \"trandoshan-elite-mercenary-heavy-blaster-pistol\" (status safe-ordinary-weapon-with-delta) staged in data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json.",
+          "Candidate originally generated from packs/nonheroic.db."
+        ]
+      },
+      "actor": {
+        "name": "Trandoshan Elite Mercenary",
+        "slugs": [
+          "trandoshan-elite-mercenary"
+        ]
+      },
+      "match": {
+        "actorSlugs": [
+          "trandoshan-elite-mercenary"
+        ],
+        "rawIncludes": [
+          "heavy blaster pistol"
+        ]
+      },
+      "weapon": {
+        "printedName": "Heavy Blaster Pistol",
+        "rowKind": "ranged",
+        "uuid": "Compendium.foundryvtt-swse.weapons-pistols.Item.weapon-heavy-blaster-pistol",
+        "baseSlug": "weapon-heavy-blaster-pistol",
+        "basePack": "weapons-pistols",
+        "baseFormula": "3d8",
+        "baseType": "energy",
+        "baseFormulaPolicy": "uuid"
+      },
+      "formula": {
+        "mode": "base-plus-delta",
+        "printed": "3d8+5",
+        "delta": "+5",
+        "deltaSource": "generated-from-compendium-base-comparison",
+        "typeOverride": "energy",
+        "notes": [
+          "Formula mode/delta were classified mechanically by comparing the printed statblock formula against the matched compendium base weapon; no sourcebook was read."
+        ]
+      },
+      "printedAttack": {
+        "text": "+15",
+        "bonus": 15,
+        "bonuses": [
+          15
+        ],
+        "source": "printed-statblock",
+        "hydratePolicy": "metadata-only"
+      },
+      "delivery": "weapon",
+      "attackShape": "single-target",
+      "scale": "character",
+      "primaryType": "energy",
+      "tags": [
+        "nonheroic",
+        "weapon",
+        "heavy",
+        "blaster",
+        "pistol",
+        "bulk-lane-a-pass-1",
+        "generated-candidate"
+      ],
+      "attack": {
+        "isArea": false,
+        "halfDamageOnMiss": false,
+        "noCriticalDouble": false,
+        "coverCanNegateMissDamage": false,
+        "attackRollMinimum": null,
+        "defense": "reflex"
+      },
+      "area": {
+        "shape": null,
+        "radius": null,
+        "size": null,
+        "originMode": null,
+        "targetPolicy": "single"
+      },
+      "components": [
+        {
+          "key": "base-weapon",
+          "label": "Heavy Blaster Pistol",
+          "formula": "3d8",
+          "type": "energy",
+          "tags": [
+            "base",
+            "energy",
+            "heavy",
+            "blaster",
+            "pistol"
+          ]
+        },
+        {
+          "key": "printed-statblock-delta",
+          "label": "Printed Statblock Delta",
+          "formula": "+5",
+          "type": "energy",
+          "tags": [
+            "printed",
+            "delta",
+            "energy"
+          ]
+        }
+      ],
+      "riders": [],
+      "sourceRefs": [
+        {
+          "book": "Unknown / missing source",
+          "page": null,
+          "note": "Bulk Lane A promotion pass 1, generated from data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json; original row from packs/nonheroic.db."
+        }
+      ],
+      "variants": [],
+      "notes": [
+        "Bulk-promoted by tools/promote-nonheroic-damage-profile-candidates.mjs (pass 1) from an allowlisted Lane A candidate. confidence remains manualRequired: page/book attribution and full sourcebook review have not been performed.",
+        "Not wired into scripts/engine/import/nonheroic-damage-profile-hydrator.js PROFILE_FILES; this file is staged canonical-shaped data awaiting review."
+      ]
+    },
+    {
+      "slug": "isb-informant-heavy-blaster-pistol",
+      "name": "Heavy Blaster Pistol",
+      "confidence": "manualRequired",
+      "reviewRequired": true,
+      "source": {
+        "book": "Unknown / missing source",
+        "status": "repo-raw-statblock-field; page review still required",
+        "page": null,
+        "evidence": [
+          "Bulk-promoted from Lane A candidate \"isb-informant-heavy-blaster-pistol\" (status safe-ordinary-weapon-with-delta) staged in data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json.",
+          "Candidate originally generated from packs/nonheroic.db."
+        ]
+      },
+      "actor": {
+        "name": "ISB Informant",
+        "slugs": [
+          "isb-informant"
+        ]
+      },
+      "match": {
+        "actorSlugs": [
+          "isb-informant"
+        ],
+        "rawIncludes": [
+          "heavy blaster pistol"
+        ]
+      },
+      "weapon": {
+        "printedName": "Heavy Blaster Pistol",
+        "rowKind": "ranged",
+        "uuid": "Compendium.foundryvtt-swse.weapons-pistols.Item.weapon-heavy-blaster-pistol",
+        "baseSlug": "weapon-heavy-blaster-pistol",
+        "basePack": "weapons-pistols",
+        "baseFormula": "3d8",
+        "baseType": "energy",
+        "baseFormulaPolicy": "uuid"
+      },
+      "formula": {
+        "mode": "base-plus-delta",
+        "printed": "3d8+3",
+        "delta": "+3",
+        "deltaSource": "generated-from-compendium-base-comparison",
+        "typeOverride": "energy",
+        "notes": [
+          "Formula mode/delta were classified mechanically by comparing the printed statblock formula against the matched compendium base weapon; no sourcebook was read."
+        ]
+      },
+      "printedAttack": {
+        "text": "+7",
+        "bonus": 7,
+        "bonuses": [
+          7
+        ],
+        "source": "printed-statblock",
+        "hydratePolicy": "metadata-only"
+      },
+      "delivery": "weapon",
+      "attackShape": "single-target",
+      "scale": "character",
+      "primaryType": "energy",
+      "tags": [
+        "nonheroic",
+        "weapon",
+        "heavy",
+        "blaster",
+        "pistol",
+        "bulk-lane-a-pass-1",
+        "generated-candidate"
+      ],
+      "attack": {
+        "isArea": false,
+        "halfDamageOnMiss": false,
+        "noCriticalDouble": false,
+        "coverCanNegateMissDamage": false,
+        "attackRollMinimum": null,
+        "defense": "reflex"
+      },
+      "area": {
+        "shape": null,
+        "radius": null,
+        "size": null,
+        "originMode": null,
+        "targetPolicy": "single"
+      },
+      "components": [
+        {
+          "key": "base-weapon",
+          "label": "Heavy Blaster Pistol",
+          "formula": "3d8",
+          "type": "energy",
+          "tags": [
+            "base",
+            "energy",
+            "heavy",
+            "blaster",
+            "pistol"
+          ]
+        },
+        {
+          "key": "printed-statblock-delta",
+          "label": "Printed Statblock Delta",
+          "formula": "+3",
+          "type": "energy",
+          "tags": [
+            "printed",
+            "delta",
+            "energy"
+          ]
+        }
+      ],
+      "riders": [],
+      "sourceRefs": [
+        {
+          "book": "Unknown / missing source",
+          "page": null,
+          "note": "Bulk Lane A promotion pass 1, generated from data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json; original row from packs/nonheroic.db."
+        }
+      ],
+      "variants": [],
+      "notes": [
+        "Bulk-promoted by tools/promote-nonheroic-damage-profile-candidates.mjs (pass 1) from an allowlisted Lane A candidate. confidence remains manualRequired: page/book attribution and full sourcebook review have not been performed.",
+        "Not wired into scripts/engine/import/nonheroic-damage-profile-hydrator.js PROFILE_FILES; this file is staged canonical-shaped data awaiting review."
+      ]
+    },
+    {
+      "slug": "specforce-officer-vibroblade",
+      "name": "Vibroblade",
+      "confidence": "manualRequired",
+      "reviewRequired": true,
+      "source": {
+        "book": "Unknown / missing source",
+        "status": "repo-raw-statblock-field; page review still required",
+        "page": null,
+        "evidence": [
+          "Bulk-promoted from Lane A candidate \"specforce-officer-vibroblade\" (status safe-ordinary-weapon-with-delta) staged in data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json.",
+          "Candidate originally generated from packs/nonheroic.db."
+        ]
+      },
+      "actor": {
+        "name": "SpecForce Officer",
+        "slugs": [
+          "specforce-officer"
+        ]
+      },
+      "match": {
+        "actorSlugs": [
+          "specforce-officer"
+        ],
+        "rawIncludes": [
+          "vibroblade"
+        ]
+      },
+      "weapon": {
+        "printedName": "Vibroblade",
+        "rowKind": "melee",
+        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-vibroblade",
+        "baseSlug": "weapon-vibroblade",
+        "basePack": "weapons-simple",
+        "baseFormula": "2d6",
+        "baseType": "kinetic",
+        "baseFormulaPolicy": "uuid"
+      },
+      "formula": {
+        "mode": "base-plus-delta",
+        "printed": "2d6+5",
+        "delta": "+5",
+        "deltaSource": "generated-from-compendium-base-comparison",
+        "typeOverride": "kinetic",
+        "notes": [
+          "Formula mode/delta were classified mechanically by comparing the printed statblock formula against the matched compendium base weapon; no sourcebook was read."
+        ]
+      },
+      "printedAttack": {
+        "text": "+8",
+        "bonus": 8,
+        "bonuses": [
+          8
+        ],
+        "source": "printed-statblock",
+        "hydratePolicy": "metadata-only"
+      },
+      "delivery": "weapon",
+      "attackShape": "single-target",
+      "scale": "character",
+      "primaryType": "kinetic",
+      "tags": [
+        "nonheroic",
+        "weapon",
+        "vibroblade",
+        "bulk-lane-a-pass-1",
+        "generated-candidate"
+      ],
+      "attack": {
+        "isArea": false,
+        "halfDamageOnMiss": false,
+        "noCriticalDouble": false,
+        "coverCanNegateMissDamage": false,
+        "attackRollMinimum": null,
+        "defense": "reflex"
+      },
+      "area": {
+        "shape": null,
+        "radius": null,
+        "size": null,
+        "originMode": null,
+        "targetPolicy": "single"
+      },
+      "components": [
+        {
+          "key": "base-weapon",
+          "label": "Vibroblade",
+          "formula": "2d6",
+          "type": "kinetic",
+          "tags": [
+            "base",
+            "kinetic",
+            "vibroblade"
+          ]
+        },
+        {
+          "key": "printed-statblock-delta",
+          "label": "Printed Statblock Delta",
+          "formula": "+5",
+          "type": "kinetic",
+          "tags": [
+            "printed",
+            "delta",
+            "kinetic"
+          ]
+        }
+      ],
+      "riders": [],
+      "sourceRefs": [
+        {
+          "book": "Unknown / missing source",
+          "page": null,
+          "note": "Bulk Lane A promotion pass 1, generated from data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json; original row from packs/nonheroic.db."
+        }
+      ],
+      "variants": [],
+      "notes": [
+        "Bulk-promoted by tools/promote-nonheroic-damage-profile-candidates.mjs (pass 1) from an allowlisted Lane A candidate. confidence remains manualRequired: page/book attribution and full sourcebook review have not been performed.",
+        "Not wired into scripts/engine/import/nonheroic-damage-profile-hydrator.js PROFILE_FILES; this file is staged canonical-shaped data awaiting review."
+      ]
+    },
+    {
+      "slug": "imperial-dungeoneer-vibroblade",
+      "name": "Vibroblade",
+      "confidence": "manualRequired",
+      "reviewRequired": true,
+      "source": {
+        "book": "Unknown / missing source",
+        "status": "repo-raw-statblock-field; page review still required",
+        "page": null,
+        "evidence": [
+          "Bulk-promoted from Lane A candidate \"imperial-dungeoneer-vibroblade\" (status safe-ordinary-weapon-with-delta) staged in data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json.",
+          "Candidate originally generated from packs/nonheroic.db."
+        ]
+      },
+      "actor": {
+        "name": "Imperial Dungeoneer",
+        "slugs": [
+          "imperial-dungeoneer"
+        ]
+      },
+      "match": {
+        "actorSlugs": [
+          "imperial-dungeoneer"
+        ],
+        "rawIncludes": [
+          "vibroblade"
+        ]
+      },
+      "weapon": {
+        "printedName": "Vibroblade",
+        "rowKind": "melee",
+        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-vibroblade",
+        "baseSlug": "weapon-vibroblade",
+        "basePack": "weapons-simple",
+        "baseFormula": "2d6",
+        "baseType": "kinetic",
+        "baseFormulaPolicy": "uuid"
+      },
+      "formula": {
+        "mode": "base-plus-delta",
+        "printed": "2d6+5",
+        "delta": "+5",
+        "deltaSource": "generated-from-compendium-base-comparison",
+        "typeOverride": "kinetic",
+        "notes": [
+          "Formula mode/delta were classified mechanically by comparing the printed statblock formula against the matched compendium base weapon; no sourcebook was read."
+        ]
+      },
+      "printedAttack": {
+        "text": "+11",
+        "bonus": 11,
+        "bonuses": [
+          11
+        ],
+        "source": "printed-statblock",
+        "hydratePolicy": "metadata-only"
+      },
+      "delivery": "weapon",
+      "attackShape": "single-target",
+      "scale": "character",
+      "primaryType": "kinetic",
+      "tags": [
+        "nonheroic",
+        "weapon",
+        "vibroblade",
+        "bulk-lane-a-pass-1",
+        "generated-candidate"
+      ],
+      "attack": {
+        "isArea": false,
+        "halfDamageOnMiss": false,
+        "noCriticalDouble": false,
+        "coverCanNegateMissDamage": false,
+        "attackRollMinimum": null,
+        "defense": "reflex"
+      },
+      "area": {
+        "shape": null,
+        "radius": null,
+        "size": null,
+        "originMode": null,
+        "targetPolicy": "single"
+      },
+      "components": [
+        {
+          "key": "base-weapon",
+          "label": "Vibroblade",
+          "formula": "2d6",
+          "type": "kinetic",
+          "tags": [
+            "base",
+            "kinetic",
+            "vibroblade"
+          ]
+        },
+        {
+          "key": "printed-statblock-delta",
+          "label": "Printed Statblock Delta",
+          "formula": "+5",
+          "type": "kinetic",
+          "tags": [
+            "printed",
+            "delta",
+            "kinetic"
+          ]
+        }
+      ],
+      "riders": [],
+      "sourceRefs": [
+        {
+          "book": "Unknown / missing source",
+          "page": null,
+          "note": "Bulk Lane A promotion pass 1, generated from data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json; original row from packs/nonheroic.db."
+        }
+      ],
+      "variants": [],
+      "notes": [
+        "Bulk-promoted by tools/promote-nonheroic-damage-profile-candidates.mjs (pass 1) from an allowlisted Lane A candidate. confidence remains manualRequired: page/book attribution and full sourcebook review have not been performed.",
+        "Not wired into scripts/engine/import/nonheroic-damage-profile-hydrator.js PROFILE_FILES; this file is staged canonical-shaped data awaiting review."
+      ]
+    },
+    {
+      "slug": "first-order-specialist-vibroblade",
+      "name": "Vibroblade",
+      "confidence": "manualRequired",
+      "reviewRequired": true,
+      "source": {
+        "book": "Unknown / missing source",
+        "status": "repo-raw-statblock-field; page review still required",
+        "page": null,
+        "evidence": [
+          "Bulk-promoted from Lane A candidate \"first-order-specialist-vibroblade\" (status safe-ordinary-weapon-with-delta) staged in data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json.",
+          "Candidate originally generated from packs/nonheroic.db."
+        ]
+      },
+      "actor": {
+        "name": "First Order Specialist",
+        "slugs": [
+          "first-order-specialist"
+        ]
+      },
+      "match": {
+        "actorSlugs": [
+          "first-order-specialist"
+        ],
+        "rawIncludes": [
+          "vibroblade"
+        ]
+      },
+      "weapon": {
+        "printedName": "Vibroblade",
+        "rowKind": "melee",
+        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-vibroblade",
+        "baseSlug": "weapon-vibroblade",
+        "basePack": "weapons-simple",
+        "baseFormula": "2d6",
+        "baseType": "kinetic",
+        "baseFormulaPolicy": "uuid"
+      },
+      "formula": {
+        "mode": "base-plus-delta",
+        "printed": "2d6+2",
+        "delta": "+2",
+        "deltaSource": "generated-from-compendium-base-comparison",
+        "typeOverride": "kinetic",
+        "notes": [
+          "Formula mode/delta were classified mechanically by comparing the printed statblock formula against the matched compendium base weapon; no sourcebook was read."
+        ]
+      },
+      "printedAttack": {
+        "text": "+7",
+        "bonus": 7,
+        "bonuses": [
+          7
+        ],
+        "source": "printed-statblock",
+        "hydratePolicy": "metadata-only"
+      },
+      "delivery": "weapon",
+      "attackShape": "single-target",
+      "scale": "character",
+      "primaryType": "kinetic",
+      "tags": [
+        "nonheroic",
+        "weapon",
+        "vibroblade",
+        "bulk-lane-a-pass-1",
+        "generated-candidate"
+      ],
+      "attack": {
+        "isArea": false,
+        "halfDamageOnMiss": false,
+        "noCriticalDouble": false,
+        "coverCanNegateMissDamage": false,
+        "attackRollMinimum": null,
+        "defense": "reflex"
+      },
+      "area": {
+        "shape": null,
+        "radius": null,
+        "size": null,
+        "originMode": null,
+        "targetPolicy": "single"
+      },
+      "components": [
+        {
+          "key": "base-weapon",
+          "label": "Vibroblade",
+          "formula": "2d6",
+          "type": "kinetic",
+          "tags": [
+            "base",
+            "kinetic",
+            "vibroblade"
+          ]
+        },
+        {
+          "key": "printed-statblock-delta",
+          "label": "Printed Statblock Delta",
+          "formula": "+2",
+          "type": "kinetic",
+          "tags": [
+            "printed",
+            "delta",
+            "kinetic"
+          ]
+        }
+      ],
+      "riders": [],
+      "sourceRefs": [
+        {
+          "book": "Unknown / missing source",
+          "page": null,
+          "note": "Bulk Lane A promotion pass 1, generated from data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json; original row from packs/nonheroic.db."
+        }
+      ],
+      "variants": [],
+      "notes": [
+        "Bulk-promoted by tools/promote-nonheroic-damage-profile-candidates.mjs (pass 1) from an allowlisted Lane A candidate. confidence remains manualRequired: page/book attribution and full sourcebook review have not been performed.",
+        "Not wired into scripts/engine/import/nonheroic-damage-profile-hydrator.js PROFILE_FILES; this file is staged canonical-shaped data awaiting review."
+      ]
+    },
+    {
+      "slug": "mandalorian-scout-vibroblade",
+      "name": "Vibroblade",
+      "confidence": "manualRequired",
+      "reviewRequired": true,
+      "source": {
+        "book": "Unknown / missing source",
+        "status": "repo-raw-statblock-field; page review still required",
+        "page": null,
+        "evidence": [
+          "Bulk-promoted from Lane A candidate \"mandalorian-scout-vibroblade\" (status safe-ordinary-weapon-with-delta) staged in data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json.",
+          "Candidate originally generated from packs/nonheroic.db."
+        ]
+      },
+      "actor": {
+        "name": "Mandalorian Scout",
+        "slugs": [
+          "mandalorian-scout"
+        ]
+      },
+      "match": {
+        "actorSlugs": [
+          "mandalorian-scout"
+        ],
+        "rawIncludes": [
+          "vibroblade"
+        ]
+      },
+      "weapon": {
+        "printedName": "Vibroblade",
+        "rowKind": "melee",
+        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-vibroblade",
+        "baseSlug": "weapon-vibroblade",
+        "basePack": "weapons-simple",
+        "baseFormula": "2d6",
+        "baseType": "kinetic",
+        "baseFormulaPolicy": "uuid"
+      },
+      "formula": {
+        "mode": "base-plus-delta",
+        "printed": "2d6+4",
+        "delta": "+4",
+        "deltaSource": "generated-from-compendium-base-comparison",
+        "typeOverride": "kinetic",
+        "notes": [
+          "Formula mode/delta were classified mechanically by comparing the printed statblock formula against the matched compendium base weapon; no sourcebook was read."
+        ]
+      },
+      "printedAttack": {
+        "text": "+5",
+        "bonus": 5,
+        "bonuses": [
+          5
+        ],
+        "source": "printed-statblock",
+        "hydratePolicy": "metadata-only"
+      },
+      "delivery": "weapon",
+      "attackShape": "single-target",
+      "scale": "character",
+      "primaryType": "kinetic",
+      "tags": [
+        "nonheroic",
+        "weapon",
+        "vibroblade",
+        "bulk-lane-a-pass-1",
+        "generated-candidate"
+      ],
+      "attack": {
+        "isArea": false,
+        "halfDamageOnMiss": false,
+        "noCriticalDouble": false,
+        "coverCanNegateMissDamage": false,
+        "attackRollMinimum": null,
+        "defense": "reflex"
+      },
+      "area": {
+        "shape": null,
+        "radius": null,
+        "size": null,
+        "originMode": null,
+        "targetPolicy": "single"
+      },
+      "components": [
+        {
+          "key": "base-weapon",
+          "label": "Vibroblade",
+          "formula": "2d6",
+          "type": "kinetic",
+          "tags": [
+            "base",
+            "kinetic",
+            "vibroblade"
+          ]
+        },
+        {
+          "key": "printed-statblock-delta",
+          "label": "Printed Statblock Delta",
+          "formula": "+4",
+          "type": "kinetic",
+          "tags": [
+            "printed",
+            "delta",
+            "kinetic"
+          ]
+        }
+      ],
+      "riders": [],
+      "sourceRefs": [
+        {
+          "book": "Unknown / missing source",
+          "page": null,
+          "note": "Bulk Lane A promotion pass 1, generated from data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json; original row from packs/nonheroic.db."
+        }
+      ],
+      "variants": [],
+      "notes": [
+        "Bulk-promoted by tools/promote-nonheroic-damage-profile-candidates.mjs (pass 1) from an allowlisted Lane A candidate. confidence remains manualRequired: page/book attribution and full sourcebook review have not been performed.",
+        "Not wired into scripts/engine/import/nonheroic-damage-profile-hydrator.js PROFILE_FILES; this file is staged canonical-shaped data awaiting review."
+      ]
+    },
+    {
+      "slug": "commando-strike-leader-vibroblade",
+      "name": "Vibroblade",
+      "confidence": "manualRequired",
+      "reviewRequired": true,
+      "source": {
+        "book": "Unknown / missing source",
+        "status": "repo-raw-statblock-field; page review still required",
+        "page": null,
+        "evidence": [
+          "Bulk-promoted from Lane A candidate \"commando-strike-leader-vibroblade\" (status safe-ordinary-weapon-with-delta) staged in data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json.",
+          "Candidate originally generated from packs/nonheroic.db."
+        ]
+      },
+      "actor": {
+        "name": "Commando Strike Leader",
+        "slugs": [
+          "commando-strike-leader"
+        ]
+      },
+      "match": {
+        "actorSlugs": [
+          "commando-strike-leader"
+        ],
+        "rawIncludes": [
+          "vibroblade"
+        ]
+      },
+      "weapon": {
+        "printedName": "Vibroblade",
+        "rowKind": "melee",
+        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-vibroblade",
+        "baseSlug": "weapon-vibroblade",
+        "basePack": "weapons-simple",
+        "baseFormula": "2d6",
+        "baseType": "kinetic",
+        "baseFormulaPolicy": "uuid"
+      },
+      "formula": {
+        "mode": "base-plus-delta",
+        "printed": "2d6+2",
+        "delta": "+2",
+        "deltaSource": "generated-from-compendium-base-comparison",
+        "typeOverride": "kinetic",
+        "notes": [
+          "Formula mode/delta were classified mechanically by comparing the printed statblock formula against the matched compendium base weapon; no sourcebook was read."
+        ]
+      },
+      "printedAttack": {
+        "text": "+7",
+        "bonus": 7,
+        "bonuses": [
+          7
+        ],
+        "source": "printed-statblock",
+        "hydratePolicy": "metadata-only"
+      },
+      "delivery": "weapon",
+      "attackShape": "single-target",
+      "scale": "character",
+      "primaryType": "kinetic",
+      "tags": [
+        "nonheroic",
+        "weapon",
+        "vibroblade",
+        "bulk-lane-a-pass-1",
+        "generated-candidate"
+      ],
+      "attack": {
+        "isArea": false,
+        "halfDamageOnMiss": false,
+        "noCriticalDouble": false,
+        "coverCanNegateMissDamage": false,
+        "attackRollMinimum": null,
+        "defense": "reflex"
+      },
+      "area": {
+        "shape": null,
+        "radius": null,
+        "size": null,
+        "originMode": null,
+        "targetPolicy": "single"
+      },
+      "components": [
+        {
+          "key": "base-weapon",
+          "label": "Vibroblade",
+          "formula": "2d6",
+          "type": "kinetic",
+          "tags": [
+            "base",
+            "kinetic",
+            "vibroblade"
+          ]
+        },
+        {
+          "key": "printed-statblock-delta",
+          "label": "Printed Statblock Delta",
+          "formula": "+2",
+          "type": "kinetic",
+          "tags": [
+            "printed",
+            "delta",
+            "kinetic"
+          ]
+        }
+      ],
+      "riders": [],
+      "sourceRefs": [
+        {
+          "book": "Unknown / missing source",
+          "page": null,
+          "note": "Bulk Lane A promotion pass 1, generated from data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json; original row from packs/nonheroic.db."
+        }
+      ],
+      "variants": [],
+      "notes": [
+        "Bulk-promoted by tools/promote-nonheroic-damage-profile-candidates.mjs (pass 1) from an allowlisted Lane A candidate. confidence remains manualRequired: page/book attribution and full sourcebook review have not been performed.",
+        "Not wired into scripts/engine/import/nonheroic-damage-profile-hydrator.js PROFILE_FILES; this file is staged canonical-shaped data awaiting review."
+      ]
+    },
+    {
+      "slug": "core-fleet-commando-vibroblade",
+      "name": "Vibroblade",
+      "confidence": "manualRequired",
+      "reviewRequired": true,
+      "source": {
+        "book": "Unknown / missing source",
+        "status": "repo-raw-statblock-field; page review still required",
+        "page": null,
+        "evidence": [
+          "Bulk-promoted from Lane A candidate \"core-fleet-commando-vibroblade\" (status safe-ordinary-weapon-with-delta) staged in data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json.",
+          "Candidate originally generated from packs/nonheroic.db."
+        ]
+      },
+      "actor": {
+        "name": "Core Fleet Commando",
+        "slugs": [
+          "core-fleet-commando"
+        ]
+      },
+      "match": {
+        "actorSlugs": [
+          "core-fleet-commando"
+        ],
+        "rawIncludes": [
+          "vibroblade"
+        ]
+      },
+      "weapon": {
+        "printedName": "Vibroblade",
+        "rowKind": "melee",
+        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-vibroblade",
+        "baseSlug": "weapon-vibroblade",
+        "basePack": "weapons-simple",
+        "baseFormula": "2d6",
+        "baseType": "kinetic",
+        "baseFormulaPolicy": "uuid"
+      },
+      "formula": {
+        "mode": "base-plus-delta",
+        "printed": "2d6+8",
+        "delta": "+8",
+        "deltaSource": "generated-from-compendium-base-comparison",
+        "typeOverride": "kinetic",
+        "notes": [
+          "Formula mode/delta were classified mechanically by comparing the printed statblock formula against the matched compendium base weapon; no sourcebook was read."
+        ]
+      },
+      "printedAttack": {
+        "text": "+12",
+        "bonus": 12,
+        "bonuses": [
+          12
+        ],
+        "source": "printed-statblock",
+        "hydratePolicy": "metadata-only"
+      },
+      "delivery": "weapon",
+      "attackShape": "single-target",
+      "scale": "character",
+      "primaryType": "kinetic",
+      "tags": [
+        "nonheroic",
+        "weapon",
+        "vibroblade",
+        "bulk-lane-a-pass-1",
+        "generated-candidate"
+      ],
+      "attack": {
+        "isArea": false,
+        "halfDamageOnMiss": false,
+        "noCriticalDouble": false,
+        "coverCanNegateMissDamage": false,
+        "attackRollMinimum": null,
+        "defense": "reflex"
+      },
+      "area": {
+        "shape": null,
+        "radius": null,
+        "size": null,
+        "originMode": null,
+        "targetPolicy": "single"
+      },
+      "components": [
+        {
+          "key": "base-weapon",
+          "label": "Vibroblade",
+          "formula": "2d6",
+          "type": "kinetic",
+          "tags": [
+            "base",
+            "kinetic",
+            "vibroblade"
+          ]
+        },
+        {
+          "key": "printed-statblock-delta",
+          "label": "Printed Statblock Delta",
+          "formula": "+8",
+          "type": "kinetic",
+          "tags": [
+            "printed",
+            "delta",
+            "kinetic"
+          ]
+        }
+      ],
+      "riders": [],
+      "sourceRefs": [
+        {
+          "book": "Unknown / missing source",
+          "page": null,
+          "note": "Bulk Lane A promotion pass 1, generated from data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json; original row from packs/nonheroic.db."
+        }
+      ],
+      "variants": [],
+      "notes": [
+        "Bulk-promoted by tools/promote-nonheroic-damage-profile-candidates.mjs (pass 1) from an allowlisted Lane A candidate. confidence remains manualRequired: page/book attribution and full sourcebook review have not been performed.",
+        "Not wired into scripts/engine/import/nonheroic-damage-profile-hydrator.js PROFILE_FILES; this file is staged canonical-shaped data awaiting review."
+      ]
+    },
+    {
+      "slug": "mandalorian-commando-vibroblade",
+      "name": "Vibroblade",
+      "confidence": "manualRequired",
+      "reviewRequired": true,
+      "source": {
+        "book": "Unknown / missing source",
+        "status": "repo-raw-statblock-field; page review still required",
+        "page": null,
+        "evidence": [
+          "Bulk-promoted from Lane A candidate \"mandalorian-commando-vibroblade\" (status safe-ordinary-weapon-with-delta) staged in data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json.",
+          "Candidate originally generated from packs/nonheroic.db."
+        ]
+      },
+      "actor": {
+        "name": "Mandalorian Commando",
+        "slugs": [
+          "mandalorian-commando"
+        ]
+      },
+      "match": {
+        "actorSlugs": [
+          "mandalorian-commando"
+        ],
+        "rawIncludes": [
+          "vibroblade"
+        ]
+      },
+      "weapon": {
+        "printedName": "Vibroblade",
+        "rowKind": "melee",
+        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-vibroblade",
+        "baseSlug": "weapon-vibroblade",
+        "basePack": "weapons-simple",
+        "baseFormula": "2d6",
+        "baseType": "kinetic",
+        "baseFormulaPolicy": "uuid"
+      },
+      "formula": {
+        "mode": "base-plus-delta",
+        "printed": "2d6+6",
+        "delta": "+6",
+        "deltaSource": "generated-from-compendium-base-comparison",
+        "typeOverride": "kinetic",
+        "notes": [
+          "Formula mode/delta were classified mechanically by comparing the printed statblock formula against the matched compendium base weapon; no sourcebook was read."
+        ]
+      },
+      "printedAttack": {
+        "text": "+9",
+        "bonus": 9,
+        "bonuses": [
+          9
+        ],
+        "source": "printed-statblock",
+        "hydratePolicy": "metadata-only"
+      },
+      "delivery": "weapon",
+      "attackShape": "single-target",
+      "scale": "character",
+      "primaryType": "kinetic",
+      "tags": [
+        "nonheroic",
+        "weapon",
+        "vibroblade",
+        "bulk-lane-a-pass-1",
+        "generated-candidate"
+      ],
+      "attack": {
+        "isArea": false,
+        "halfDamageOnMiss": false,
+        "noCriticalDouble": false,
+        "coverCanNegateMissDamage": false,
+        "attackRollMinimum": null,
+        "defense": "reflex"
+      },
+      "area": {
+        "shape": null,
+        "radius": null,
+        "size": null,
+        "originMode": null,
+        "targetPolicy": "single"
+      },
+      "components": [
+        {
+          "key": "base-weapon",
+          "label": "Vibroblade",
+          "formula": "2d6",
+          "type": "kinetic",
+          "tags": [
+            "base",
+            "kinetic",
+            "vibroblade"
+          ]
+        },
+        {
+          "key": "printed-statblock-delta",
+          "label": "Printed Statblock Delta",
+          "formula": "+6",
+          "type": "kinetic",
+          "tags": [
+            "printed",
+            "delta",
+            "kinetic"
+          ]
+        }
+      ],
+      "riders": [],
+      "sourceRefs": [
+        {
+          "book": "Unknown / missing source",
+          "page": null,
+          "note": "Bulk Lane A promotion pass 1, generated from data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json; original row from packs/nonheroic.db."
+        }
+      ],
+      "variants": [],
+      "notes": [
+        "Bulk-promoted by tools/promote-nonheroic-damage-profile-candidates.mjs (pass 1) from an allowlisted Lane A candidate. confidence remains manualRequired: page/book attribution and full sourcebook review have not been performed.",
+        "Not wired into scripts/engine/import/nonheroic-damage-profile-hydrator.js PROFILE_FILES; this file is staged canonical-shaped data awaiting review."
+      ]
+    },
+    {
+      "slug": "mandalorian-trooper-vibroblade",
+      "name": "Vibroblade",
+      "confidence": "manualRequired",
+      "reviewRequired": true,
+      "source": {
+        "book": "Unknown / missing source",
+        "status": "repo-raw-statblock-field; page review still required",
+        "page": null,
+        "evidence": [
+          "Bulk-promoted from Lane A candidate \"mandalorian-trooper-vibroblade\" (status safe-ordinary-weapon-with-delta) staged in data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json.",
+          "Candidate originally generated from packs/nonheroic.db."
+        ]
+      },
+      "actor": {
+        "name": "Mandalorian Trooper",
+        "slugs": [
+          "mandalorian-trooper"
+        ]
+      },
+      "match": {
+        "actorSlugs": [
+          "mandalorian-trooper"
+        ],
+        "rawIncludes": [
+          "vibroblade"
+        ]
+      },
+      "weapon": {
+        "printedName": "Vibroblade",
+        "rowKind": "melee",
+        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-vibroblade",
+        "baseSlug": "weapon-vibroblade",
+        "basePack": "weapons-simple",
+        "baseFormula": "2d6",
+        "baseType": "kinetic",
+        "baseFormulaPolicy": "uuid"
+      },
+      "formula": {
+        "mode": "base-plus-delta",
+        "printed": "2d6+2",
+        "delta": "+2",
+        "deltaSource": "generated-from-compendium-base-comparison",
+        "typeOverride": "kinetic",
+        "notes": [
+          "Formula mode/delta were classified mechanically by comparing the printed statblock formula against the matched compendium base weapon; no sourcebook was read."
+        ]
+      },
+      "printedAttack": {
+        "text": "+7",
+        "bonus": 7,
+        "bonuses": [
+          7
+        ],
+        "source": "printed-statblock",
+        "hydratePolicy": "metadata-only"
+      },
+      "delivery": "weapon",
+      "attackShape": "single-target",
+      "scale": "character",
+      "primaryType": "kinetic",
+      "tags": [
+        "nonheroic",
+        "weapon",
+        "vibroblade",
+        "bulk-lane-a-pass-1",
+        "generated-candidate"
+      ],
+      "attack": {
+        "isArea": false,
+        "halfDamageOnMiss": false,
+        "noCriticalDouble": false,
+        "coverCanNegateMissDamage": false,
+        "attackRollMinimum": null,
+        "defense": "reflex"
+      },
+      "area": {
+        "shape": null,
+        "radius": null,
+        "size": null,
+        "originMode": null,
+        "targetPolicy": "single"
+      },
+      "components": [
+        {
+          "key": "base-weapon",
+          "label": "Vibroblade",
+          "formula": "2d6",
+          "type": "kinetic",
+          "tags": [
+            "base",
+            "kinetic",
+            "vibroblade"
+          ]
+        },
+        {
+          "key": "printed-statblock-delta",
+          "label": "Printed Statblock Delta",
+          "formula": "+2",
+          "type": "kinetic",
+          "tags": [
+            "printed",
+            "delta",
+            "kinetic"
+          ]
+        }
+      ],
+      "riders": [],
+      "sourceRefs": [
+        {
+          "book": "Unknown / missing source",
+          "page": null,
+          "note": "Bulk Lane A promotion pass 1, generated from data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json; original row from packs/nonheroic.db."
+        }
+      ],
+      "variants": [],
+      "notes": [
+        "Bulk-promoted by tools/promote-nonheroic-damage-profile-candidates.mjs (pass 1) from an allowlisted Lane A candidate. confidence remains manualRequired: page/book attribution and full sourcebook review have not been performed.",
+        "Not wired into scripts/engine/import/nonheroic-damage-profile-hydrator.js PROFILE_FILES; this file is staged canonical-shaped data awaiting review."
+      ]
+    },
+    {
+      "slug": "trader-hold-out-blaster-pistol",
+      "name": "Hold-Out Blaster Pistol",
+      "confidence": "manualRequired",
+      "reviewRequired": true,
+      "source": {
+        "book": "Unknown / missing source",
+        "status": "repo-raw-statblock-field; page review still required",
+        "page": null,
+        "evidence": [
+          "Bulk-promoted from Lane A candidate \"trader-hold-out-blaster-pistol\" (status safe-ordinary-weapon-candidate) staged in data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json.",
+          "Candidate originally generated from packs/nonheroic.db."
+        ]
+      },
+      "actor": {
+        "name": "Trader",
+        "slugs": [
+          "trader"
+        ]
+      },
+      "match": {
+        "actorSlugs": [
+          "trader"
+        ],
+        "rawIncludes": [
+          "hold-out blaster pistol"
+        ]
+      },
+      "weapon": {
+        "printedName": "Hold-Out Blaster Pistol",
+        "rowKind": "ranged",
+        "uuid": "Compendium.foundryvtt-swse.weapons-pistols.Item.weapon-hold-out-blaster-pistol",
+        "baseSlug": "weapon-hold-out-blaster-pistol",
+        "basePack": "weapons-pistols",
+        "baseFormula": "3d4",
+        "baseType": "energy",
+        "baseFormulaPolicy": "uuid"
+      },
+      "formula": {
+        "mode": "base",
+        "printed": "3d4",
+        "delta": null,
+        "deltaSource": "generated-from-compendium-base-comparison",
+        "typeOverride": "energy",
+        "notes": [
+          "Formula mode/delta were classified mechanically by comparing the printed statblock formula against the matched compendium base weapon; no sourcebook was read."
+        ]
+      },
+      "printedAttack": {
+        "text": "+3",
+        "bonus": 3,
+        "bonuses": [
+          3
+        ],
+        "source": "printed-statblock",
+        "hydratePolicy": "metadata-only"
+      },
+      "delivery": "weapon",
+      "attackShape": "single-target",
+      "scale": "character",
+      "primaryType": "energy",
+      "tags": [
+        "nonheroic",
+        "weapon",
+        "hold",
+        "out",
+        "blaster",
+        "pistol",
+        "bulk-lane-a-pass-1",
+        "generated-candidate"
+      ],
+      "attack": {
+        "isArea": false,
+        "halfDamageOnMiss": false,
+        "noCriticalDouble": false,
+        "coverCanNegateMissDamage": false,
+        "attackRollMinimum": null,
+        "defense": "reflex"
+      },
+      "area": {
+        "shape": null,
+        "radius": null,
+        "size": null,
+        "originMode": null,
+        "targetPolicy": "single"
+      },
+      "components": [
+        {
+          "key": "base-weapon",
+          "label": "Hold-Out Blaster Pistol",
+          "formula": "3d4",
+          "type": "energy",
+          "tags": [
+            "base",
+            "energy",
+            "hold",
+            "out",
+            "blaster",
+            "pistol"
+          ]
+        }
+      ],
+      "riders": [],
+      "sourceRefs": [
+        {
+          "book": "Unknown / missing source",
+          "page": null,
+          "note": "Bulk Lane A promotion pass 1, generated from data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json; original row from packs/nonheroic.db."
+        }
+      ],
+      "variants": [],
+      "notes": [
+        "Bulk-promoted by tools/promote-nonheroic-damage-profile-candidates.mjs (pass 1) from an allowlisted Lane A candidate. confidence remains manualRequired: page/book attribution and full sourcebook review have not been performed.",
+        "Not wired into scripts/engine/import/nonheroic-damage-profile-hydrator.js PROFILE_FILES; this file is staged canonical-shaped data awaiting review."
+      ]
+    },
+    {
+      "slug": "varan-cormin-hold-out-blaster-pistol",
+      "name": "Hold-Out Blaster Pistol",
+      "confidence": "manualRequired",
+      "reviewRequired": true,
+      "source": {
+        "book": "Unknown / missing source",
+        "status": "repo-raw-statblock-field; page review still required",
+        "page": null,
+        "evidence": [
+          "Bulk-promoted from Lane A candidate \"varan-cormin-hold-out-blaster-pistol\" (status safe-ordinary-weapon-candidate) staged in data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json.",
+          "Candidate originally generated from packs/npc.db."
+        ]
+      },
+      "actor": {
+        "name": "Varan Cormin",
+        "slugs": [
+          "varan-cormin"
+        ]
+      },
+      "match": {
+        "actorSlugs": [
+          "varan-cormin"
+        ],
+        "rawIncludes": [
+          "hold-out blaster pistol"
+        ]
+      },
+      "weapon": {
+        "printedName": "Hold-Out Blaster Pistol",
+        "rowKind": "ranged",
+        "uuid": "Compendium.foundryvtt-swse.weapons-pistols.Item.weapon-hold-out-blaster-pistol",
+        "baseSlug": "weapon-hold-out-blaster-pistol",
+        "basePack": "weapons-pistols",
+        "baseFormula": "3d4",
+        "baseType": "energy",
+        "baseFormulaPolicy": "uuid"
+      },
+      "formula": {
+        "mode": "base",
+        "printed": "3d4",
+        "delta": null,
+        "deltaSource": "generated-from-compendium-base-comparison",
+        "typeOverride": "energy",
+        "notes": [
+          "Formula mode/delta were classified mechanically by comparing the printed statblock formula against the matched compendium base weapon; no sourcebook was read."
+        ]
+      },
+      "printedAttack": {
+        "text": "+3",
+        "bonus": 3,
+        "bonuses": [
+          3
+        ],
+        "source": "printed-statblock",
+        "hydratePolicy": "metadata-only"
+      },
+      "delivery": "weapon",
+      "attackShape": "single-target",
+      "scale": "character",
+      "primaryType": "energy",
+      "tags": [
+        "nonheroic",
+        "weapon",
+        "hold",
+        "out",
+        "blaster",
+        "pistol",
+        "bulk-lane-a-pass-1",
+        "generated-candidate"
+      ],
+      "attack": {
+        "isArea": false,
+        "halfDamageOnMiss": false,
+        "noCriticalDouble": false,
+        "coverCanNegateMissDamage": false,
+        "attackRollMinimum": null,
+        "defense": "reflex"
+      },
+      "area": {
+        "shape": null,
+        "radius": null,
+        "size": null,
+        "originMode": null,
+        "targetPolicy": "single"
+      },
+      "components": [
+        {
+          "key": "base-weapon",
+          "label": "Hold-Out Blaster Pistol",
+          "formula": "3d4",
+          "type": "energy",
+          "tags": [
+            "base",
+            "energy",
+            "hold",
+            "out",
+            "blaster",
+            "pistol"
+          ]
+        }
+      ],
+      "riders": [],
+      "sourceRefs": [
+        {
+          "book": "Unknown / missing source",
+          "page": null,
+          "note": "Bulk Lane A promotion pass 1, generated from data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json; original row from packs/npc.db."
+        }
+      ],
+      "variants": [],
+      "notes": [
+        "Bulk-promoted by tools/promote-nonheroic-damage-profile-candidates.mjs (pass 1) from an allowlisted Lane A candidate. confidence remains manualRequired: page/book attribution and full sourcebook review have not been performed.",
+        "Not wired into scripts/engine/import/nonheroic-damage-profile-hydrator.js PROFILE_FILES; this file is staged canonical-shaped data awaiting review."
+      ]
+    },
+    {
+      "slug": "naxy-screeger-hold-out-blaster-pistol",
+      "name": "Hold-Out Blaster Pistol",
+      "confidence": "manualRequired",
+      "reviewRequired": true,
+      "source": {
+        "book": "Unknown / missing source",
+        "status": "repo-raw-statblock-field; page review still required",
+        "page": null,
+        "evidence": [
+          "Bulk-promoted from Lane A candidate \"naxy-screeger-hold-out-blaster-pistol\" (status safe-ordinary-weapon-candidate) staged in data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json.",
+          "Candidate originally generated from packs/npc.db."
+        ]
+      },
+      "actor": {
+        "name": "Naxy Screeger",
+        "slugs": [
+          "naxy-screeger"
+        ]
+      },
+      "match": {
+        "actorSlugs": [
+          "naxy-screeger"
+        ],
+        "rawIncludes": [
+          "hold-out blaster pistol"
+        ]
+      },
+      "weapon": {
+        "printedName": "Hold-Out Blaster Pistol",
+        "rowKind": "ranged",
+        "uuid": "Compendium.foundryvtt-swse.weapons-pistols.Item.weapon-hold-out-blaster-pistol",
+        "baseSlug": "weapon-hold-out-blaster-pistol",
+        "basePack": "weapons-pistols",
+        "baseFormula": "3d4",
+        "baseType": "energy",
+        "baseFormulaPolicy": "uuid"
+      },
+      "formula": {
+        "mode": "base",
+        "printed": "3d4",
+        "delta": null,
+        "deltaSource": "generated-from-compendium-base-comparison",
+        "typeOverride": "energy",
+        "notes": [
+          "Formula mode/delta were classified mechanically by comparing the printed statblock formula against the matched compendium base weapon; no sourcebook was read."
+        ]
+      },
+      "printedAttack": {
+        "text": "+1",
+        "bonus": 1,
+        "bonuses": [
+          1
+        ],
+        "source": "printed-statblock",
+        "hydratePolicy": "metadata-only"
+      },
+      "delivery": "weapon",
+      "attackShape": "single-target",
+      "scale": "character",
+      "primaryType": "energy",
+      "tags": [
+        "nonheroic",
+        "weapon",
+        "hold",
+        "out",
+        "blaster",
+        "pistol",
+        "bulk-lane-a-pass-1",
+        "generated-candidate"
+      ],
+      "attack": {
+        "isArea": false,
+        "halfDamageOnMiss": false,
+        "noCriticalDouble": false,
+        "coverCanNegateMissDamage": false,
+        "attackRollMinimum": null,
+        "defense": "reflex"
+      },
+      "area": {
+        "shape": null,
+        "radius": null,
+        "size": null,
+        "originMode": null,
+        "targetPolicy": "single"
+      },
+      "components": [
+        {
+          "key": "base-weapon",
+          "label": "Hold-Out Blaster Pistol",
+          "formula": "3d4",
+          "type": "energy",
+          "tags": [
+            "base",
+            "energy",
+            "hold",
+            "out",
+            "blaster",
+            "pistol"
+          ]
+        }
+      ],
+      "riders": [],
+      "sourceRefs": [
+        {
+          "book": "Unknown / missing source",
+          "page": null,
+          "note": "Bulk Lane A promotion pass 1, generated from data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json; original row from packs/npc.db."
+        }
+      ],
+      "variants": [],
+      "notes": [
+        "Bulk-promoted by tools/promote-nonheroic-damage-profile-candidates.mjs (pass 1) from an allowlisted Lane A candidate. confidence remains manualRequired: page/book attribution and full sourcebook review have not been performed.",
+        "Not wired into scripts/engine/import/nonheroic-damage-profile-hydrator.js PROFILE_FILES; this file is staged canonical-shaped data awaiting review."
+      ]
+    },
+    {
+      "slug": "gambler-hold-out-blaster-pistol",
+      "name": "Hold-Out Blaster Pistol",
+      "confidence": "manualRequired",
+      "reviewRequired": true,
+      "source": {
+        "book": "Unknown / missing source",
+        "status": "repo-raw-statblock-field; page review still required",
+        "page": null,
+        "evidence": [
+          "Bulk-promoted from Lane A candidate \"gambler-hold-out-blaster-pistol\" (status safe-ordinary-weapon-with-delta) staged in data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json.",
+          "Candidate originally generated from packs/nonheroic.db."
+        ]
+      },
+      "actor": {
+        "name": "Gambler",
+        "slugs": [
+          "gambler"
+        ]
+      },
+      "match": {
+        "actorSlugs": [
+          "gambler"
+        ],
+        "rawIncludes": [
+          "hold-out blaster pistol"
+        ]
+      },
+      "weapon": {
+        "printedName": "Hold-Out Blaster Pistol",
+        "rowKind": "ranged",
+        "uuid": "Compendium.foundryvtt-swse.weapons-pistols.Item.weapon-hold-out-blaster-pistol",
+        "baseSlug": "weapon-hold-out-blaster-pistol",
+        "basePack": "weapons-pistols",
+        "baseFormula": "3d4",
+        "baseType": "energy",
+        "baseFormulaPolicy": "uuid"
+      },
+      "formula": {
+        "mode": "base-plus-delta",
+        "printed": "3d4+2",
+        "delta": "+2",
+        "deltaSource": "generated-from-compendium-base-comparison",
+        "typeOverride": "energy",
+        "notes": [
+          "Formula mode/delta were classified mechanically by comparing the printed statblock formula against the matched compendium base weapon; no sourcebook was read."
+        ]
+      },
+      "printedAttack": {
+        "text": "+5",
+        "bonus": 5,
+        "bonuses": [
+          5
+        ],
+        "source": "printed-statblock",
+        "hydratePolicy": "metadata-only"
+      },
+      "delivery": "weapon",
+      "attackShape": "single-target",
+      "scale": "character",
+      "primaryType": "energy",
+      "tags": [
+        "nonheroic",
+        "weapon",
+        "hold",
+        "out",
+        "blaster",
+        "pistol",
+        "bulk-lane-a-pass-1",
+        "generated-candidate"
+      ],
+      "attack": {
+        "isArea": false,
+        "halfDamageOnMiss": false,
+        "noCriticalDouble": false,
+        "coverCanNegateMissDamage": false,
+        "attackRollMinimum": null,
+        "defense": "reflex"
+      },
+      "area": {
+        "shape": null,
+        "radius": null,
+        "size": null,
+        "originMode": null,
+        "targetPolicy": "single"
+      },
+      "components": [
+        {
+          "key": "base-weapon",
+          "label": "Hold-Out Blaster Pistol",
+          "formula": "3d4",
+          "type": "energy",
+          "tags": [
+            "base",
+            "energy",
+            "hold",
+            "out",
+            "blaster",
+            "pistol"
+          ]
+        },
+        {
+          "key": "printed-statblock-delta",
+          "label": "Printed Statblock Delta",
+          "formula": "+2",
+          "type": "energy",
+          "tags": [
+            "printed",
+            "delta",
+            "energy"
+          ]
+        }
+      ],
+      "riders": [],
+      "sourceRefs": [
+        {
+          "book": "Unknown / missing source",
+          "page": null,
+          "note": "Bulk Lane A promotion pass 1, generated from data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json; original row from packs/nonheroic.db."
+        }
+      ],
+      "variants": [],
+      "notes": [
+        "Bulk-promoted by tools/promote-nonheroic-damage-profile-candidates.mjs (pass 1) from an allowlisted Lane A candidate. confidence remains manualRequired: page/book attribution and full sourcebook review have not been performed.",
+        "Not wired into scripts/engine/import/nonheroic-damage-profile-hydrator.js PROFILE_FILES; this file is staged canonical-shaped data awaiting review."
+      ]
+    },
+    {
+      "slug": "trandoshan-slaver-hold-out-blaster-pistol",
+      "name": "Hold-Out Blaster Pistol",
+      "confidence": "manualRequired",
+      "reviewRequired": true,
+      "source": {
+        "book": "Unknown / missing source",
+        "status": "repo-raw-statblock-field; page review still required",
+        "page": null,
+        "evidence": [
+          "Bulk-promoted from Lane A candidate \"trandoshan-slaver-hold-out-blaster-pistol\" (status safe-ordinary-weapon-with-delta) staged in data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json.",
+          "Candidate originally generated from packs/nonheroic.db."
+        ]
+      },
+      "actor": {
+        "name": "Trandoshan Slaver",
+        "slugs": [
+          "trandoshan-slaver"
+        ]
+      },
+      "match": {
+        "actorSlugs": [
+          "trandoshan-slaver"
+        ],
+        "rawIncludes": [
+          "hold-out blaster pistol"
+        ]
+      },
+      "weapon": {
+        "printedName": "Hold-Out Blaster Pistol",
+        "rowKind": "ranged",
+        "uuid": "Compendium.foundryvtt-swse.weapons-pistols.Item.weapon-hold-out-blaster-pistol",
+        "baseSlug": "weapon-hold-out-blaster-pistol",
+        "basePack": "weapons-pistols",
+        "baseFormula": "3d4",
+        "baseType": "energy",
+        "baseFormulaPolicy": "uuid"
+      },
+      "formula": {
+        "mode": "base-plus-delta",
+        "printed": "3d4+2",
+        "delta": "+2",
+        "deltaSource": "generated-from-compendium-base-comparison",
+        "typeOverride": "energy",
+        "notes": [
+          "Formula mode/delta were classified mechanically by comparing the printed statblock formula against the matched compendium base weapon; no sourcebook was read."
+        ]
+      },
+      "printedAttack": {
+        "text": "+7",
+        "bonus": 7,
+        "bonuses": [
+          7
+        ],
+        "source": "printed-statblock",
+        "hydratePolicy": "metadata-only"
+      },
+      "delivery": "weapon",
+      "attackShape": "single-target",
+      "scale": "character",
+      "primaryType": "energy",
+      "tags": [
+        "nonheroic",
+        "weapon",
+        "hold",
+        "out",
+        "blaster",
+        "pistol",
+        "bulk-lane-a-pass-1",
+        "generated-candidate"
+      ],
+      "attack": {
+        "isArea": false,
+        "halfDamageOnMiss": false,
+        "noCriticalDouble": false,
+        "coverCanNegateMissDamage": false,
+        "attackRollMinimum": null,
+        "defense": "reflex"
+      },
+      "area": {
+        "shape": null,
+        "radius": null,
+        "size": null,
+        "originMode": null,
+        "targetPolicy": "single"
+      },
+      "components": [
+        {
+          "key": "base-weapon",
+          "label": "Hold-Out Blaster Pistol",
+          "formula": "3d4",
+          "type": "energy",
+          "tags": [
+            "base",
+            "energy",
+            "hold",
+            "out",
+            "blaster",
+            "pistol"
+          ]
+        },
+        {
+          "key": "printed-statblock-delta",
+          "label": "Printed Statblock Delta",
+          "formula": "+2",
+          "type": "energy",
+          "tags": [
+            "printed",
+            "delta",
+            "energy"
+          ]
+        }
+      ],
+      "riders": [],
+      "sourceRefs": [
+        {
+          "book": "Unknown / missing source",
+          "page": null,
+          "note": "Bulk Lane A promotion pass 1, generated from data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json; original row from packs/nonheroic.db."
+        }
+      ],
+      "variants": [],
+      "notes": [
+        "Bulk-promoted by tools/promote-nonheroic-damage-profile-candidates.mjs (pass 1) from an allowlisted Lane A candidate. confidence remains manualRequired: page/book attribution and full sourcebook review have not been performed.",
+        "Not wired into scripts/engine/import/nonheroic-damage-profile-hydrator.js PROFILE_FILES; this file is staged canonical-shaped data awaiting review."
+      ]
+    },
+    {
+      "slug": "sith-mage-hold-out-blaster-pistol",
+      "name": "Hold-Out Blaster Pistol",
+      "confidence": "manualRequired",
+      "reviewRequired": true,
+      "source": {
+        "book": "Unknown / missing source",
+        "status": "repo-raw-statblock-field; page review still required",
+        "page": null,
+        "evidence": [
+          "Bulk-promoted from Lane A candidate \"sith-mage-hold-out-blaster-pistol\" (status safe-ordinary-weapon-with-delta) staged in data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json.",
+          "Candidate originally generated from packs/nonheroic.db."
+        ]
+      },
+      "actor": {
+        "name": "Sith Mage",
+        "slugs": [
+          "sith-mage"
+        ]
+      },
+      "match": {
+        "actorSlugs": [
+          "sith-mage"
+        ],
+        "rawIncludes": [
+          "hold-out blaster pistol"
+        ]
+      },
+      "weapon": {
+        "printedName": "Hold-Out Blaster Pistol",
+        "rowKind": "ranged",
+        "uuid": "Compendium.foundryvtt-swse.weapons-pistols.Item.weapon-hold-out-blaster-pistol",
+        "baseSlug": "weapon-hold-out-blaster-pistol",
+        "basePack": "weapons-pistols",
+        "baseFormula": "3d4",
+        "baseType": "energy",
+        "baseFormulaPolicy": "uuid"
+      },
+      "formula": {
+        "mode": "base-plus-delta",
+        "printed": "3d4+4",
+        "delta": "+4",
+        "deltaSource": "generated-from-compendium-base-comparison",
+        "typeOverride": "energy",
+        "notes": [
+          "Formula mode/delta were classified mechanically by comparing the printed statblock formula against the matched compendium base weapon; no sourcebook was read."
+        ]
+      },
+      "printedAttack": {
+        "text": "+6",
+        "bonus": 6,
+        "bonuses": [
+          6
+        ],
+        "source": "printed-statblock",
+        "hydratePolicy": "metadata-only"
+      },
+      "delivery": "weapon",
+      "attackShape": "single-target",
+      "scale": "character",
+      "primaryType": "energy",
+      "tags": [
+        "nonheroic",
+        "weapon",
+        "hold",
+        "out",
+        "blaster",
+        "pistol",
+        "bulk-lane-a-pass-1",
+        "generated-candidate"
+      ],
+      "attack": {
+        "isArea": false,
+        "halfDamageOnMiss": false,
+        "noCriticalDouble": false,
+        "coverCanNegateMissDamage": false,
+        "attackRollMinimum": null,
+        "defense": "reflex"
+      },
+      "area": {
+        "shape": null,
+        "radius": null,
+        "size": null,
+        "originMode": null,
+        "targetPolicy": "single"
+      },
+      "components": [
+        {
+          "key": "base-weapon",
+          "label": "Hold-Out Blaster Pistol",
+          "formula": "3d4",
+          "type": "energy",
+          "tags": [
+            "base",
+            "energy",
+            "hold",
+            "out",
+            "blaster",
+            "pistol"
+          ]
+        },
+        {
+          "key": "printed-statblock-delta",
+          "label": "Printed Statblock Delta",
+          "formula": "+4",
+          "type": "energy",
+          "tags": [
+            "printed",
+            "delta",
+            "energy"
+          ]
+        }
+      ],
+      "riders": [],
+      "sourceRefs": [
+        {
+          "book": "Unknown / missing source",
+          "page": null,
+          "note": "Bulk Lane A promotion pass 1, generated from data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json; original row from packs/nonheroic.db."
+        }
+      ],
+      "variants": [],
+      "notes": [
+        "Bulk-promoted by tools/promote-nonheroic-damage-profile-candidates.mjs (pass 1) from an allowlisted Lane A candidate. confidence remains manualRequired: page/book attribution and full sourcebook review have not been performed.",
+        "Not wired into scripts/engine/import/nonheroic-damage-profile-hydrator.js PROFILE_FILES; this file is staged canonical-shaped data awaiting review."
+      ]
+    },
+    {
+      "slug": "isb-tactical-agent-blaster-carbine",
+      "name": "Blaster Carbine",
+      "confidence": "manualRequired",
+      "reviewRequired": true,
+      "source": {
+        "book": "Unknown / missing source",
+        "status": "repo-raw-statblock-field; page review still required",
+        "page": null,
+        "evidence": [
+          "Bulk-promoted from Lane A candidate \"isb-tactical-agent-blaster-carbine\" (status safe-ordinary-weapon-with-delta) staged in data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json.",
+          "Candidate originally generated from packs/nonheroic.db."
+        ]
+      },
+      "actor": {
+        "name": "ISB Tactical Agent",
+        "slugs": [
+          "isb-tactical-agent"
+        ]
+      },
+      "match": {
+        "actorSlugs": [
+          "isb-tactical-agent"
+        ],
+        "rawIncludes": [
+          "blaster carbine"
+        ]
+      },
+      "weapon": {
+        "printedName": "Blaster Carbine",
+        "rowKind": "ranged",
+        "uuid": "Compendium.foundryvtt-swse.weapons-rifles.Item.weapon-blaster-carbine",
+        "baseSlug": "weapon-blaster-carbine",
+        "basePack": "weapons-rifles",
+        "baseFormula": "3d8",
+        "baseType": "energy",
+        "baseFormulaPolicy": "uuid"
+      },
+      "formula": {
+        "mode": "base-plus-delta",
+        "printed": "3d8+4",
+        "delta": "+4",
+        "deltaSource": "generated-from-compendium-base-comparison",
+        "typeOverride": "energy",
+        "notes": [
+          "Formula mode/delta were classified mechanically by comparing the printed statblock formula against the matched compendium base weapon; no sourcebook was read."
+        ]
+      },
+      "printedAttack": {
+        "text": "+12",
+        "bonus": 12,
+        "bonuses": [
+          12
+        ],
+        "source": "printed-statblock",
+        "hydratePolicy": "metadata-only"
+      },
+      "delivery": "weapon",
+      "attackShape": "single-target",
+      "scale": "character",
+      "primaryType": "energy",
+      "tags": [
+        "nonheroic",
+        "weapon",
+        "blaster",
+        "carbine",
+        "bulk-lane-a-pass-1",
+        "generated-candidate"
+      ],
+      "attack": {
+        "isArea": false,
+        "halfDamageOnMiss": false,
+        "noCriticalDouble": false,
+        "coverCanNegateMissDamage": false,
+        "attackRollMinimum": null,
+        "defense": "reflex"
+      },
+      "area": {
+        "shape": null,
+        "radius": null,
+        "size": null,
+        "originMode": null,
+        "targetPolicy": "single"
+      },
+      "components": [
+        {
+          "key": "base-weapon",
+          "label": "Blaster Carbine",
+          "formula": "3d8",
+          "type": "energy",
+          "tags": [
+            "base",
+            "energy",
+            "blaster",
+            "carbine"
+          ]
+        },
+        {
+          "key": "printed-statblock-delta",
+          "label": "Printed Statblock Delta",
+          "formula": "+4",
+          "type": "energy",
+          "tags": [
+            "printed",
+            "delta",
+            "energy"
+          ]
+        }
+      ],
+      "riders": [],
+      "sourceRefs": [
+        {
+          "book": "Unknown / missing source",
+          "page": null,
+          "note": "Bulk Lane A promotion pass 1, generated from data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json; original row from packs/nonheroic.db."
+        }
+      ],
+      "variants": [],
+      "notes": [
+        "Bulk-promoted by tools/promote-nonheroic-damage-profile-candidates.mjs (pass 1) from an allowlisted Lane A candidate. confidence remains manualRequired: page/book attribution and full sourcebook review have not been performed.",
+        "Not wired into scripts/engine/import/nonheroic-damage-profile-hydrator.js PROFILE_FILES; this file is staged canonical-shaped data awaiting review."
+      ]
+    },
+    {
+      "slug": "army-soldier-blaster-carbine",
+      "name": "Blaster Carbine",
+      "confidence": "manualRequired",
+      "reviewRequired": true,
+      "source": {
+        "book": "Unknown / missing source",
+        "status": "repo-raw-statblock-field; page review still required",
+        "page": null,
+        "evidence": [
+          "Bulk-promoted from Lane A candidate \"army-soldier-blaster-carbine\" (status safe-ordinary-weapon-with-delta) staged in data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json.",
+          "Candidate originally generated from packs/nonheroic.db."
+        ]
+      },
+      "actor": {
+        "name": "Army Soldier",
+        "slugs": [
+          "army-soldier"
+        ]
+      },
+      "match": {
+        "actorSlugs": [
+          "army-soldier"
+        ],
+        "rawIncludes": [
+          "blaster carbine"
+        ]
+      },
+      "weapon": {
+        "printedName": "Blaster Carbine",
+        "rowKind": "ranged",
+        "uuid": "Compendium.foundryvtt-swse.weapons-rifles.Item.weapon-blaster-carbine",
+        "baseSlug": "weapon-blaster-carbine",
+        "basePack": "weapons-rifles",
+        "baseFormula": "3d8",
+        "baseType": "energy",
+        "baseFormulaPolicy": "uuid"
+      },
+      "formula": {
+        "mode": "base-plus-delta",
+        "printed": "3d8+1",
+        "delta": "+1",
+        "deltaSource": "generated-from-compendium-base-comparison",
+        "typeOverride": "energy",
+        "notes": [
+          "Formula mode/delta were classified mechanically by comparing the printed statblock formula against the matched compendium base weapon; no sourcebook was read."
+        ]
+      },
+      "printedAttack": {
+        "text": "+5",
+        "bonus": 5,
+        "bonuses": [
+          5
+        ],
+        "source": "printed-statblock",
+        "hydratePolicy": "metadata-only"
+      },
+      "delivery": "weapon",
+      "attackShape": "single-target",
+      "scale": "character",
+      "primaryType": "energy",
+      "tags": [
+        "nonheroic",
+        "weapon",
+        "blaster",
+        "carbine",
+        "bulk-lane-a-pass-1",
+        "generated-candidate"
+      ],
+      "attack": {
+        "isArea": false,
+        "halfDamageOnMiss": false,
+        "noCriticalDouble": false,
+        "coverCanNegateMissDamage": false,
+        "attackRollMinimum": null,
+        "defense": "reflex"
+      },
+      "area": {
+        "shape": null,
+        "radius": null,
+        "size": null,
+        "originMode": null,
+        "targetPolicy": "single"
+      },
+      "components": [
+        {
+          "key": "base-weapon",
+          "label": "Blaster Carbine",
+          "formula": "3d8",
+          "type": "energy",
+          "tags": [
+            "base",
+            "energy",
+            "blaster",
+            "carbine"
+          ]
+        },
+        {
+          "key": "printed-statblock-delta",
+          "label": "Printed Statblock Delta",
+          "formula": "+1",
+          "type": "energy",
+          "tags": [
+            "printed",
+            "delta",
+            "energy"
+          ]
+        }
+      ],
+      "riders": [],
+      "sourceRefs": [
+        {
+          "book": "Unknown / missing source",
+          "page": null,
+          "note": "Bulk Lane A promotion pass 1, generated from data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json; original row from packs/nonheroic.db."
+        }
+      ],
+      "variants": [],
+      "notes": [
+        "Bulk-promoted by tools/promote-nonheroic-damage-profile-candidates.mjs (pass 1) from an allowlisted Lane A candidate. confidence remains manualRequired: page/book attribution and full sourcebook review have not been performed.",
+        "Not wired into scripts/engine/import/nonheroic-damage-profile-hydrator.js PROFILE_FILES; this file is staged canonical-shaped data awaiting review."
+      ]
+    },
+    {
+      "slug": "mandalorian-supercommando-blaster-carbine",
+      "name": "Blaster Carbine",
+      "confidence": "manualRequired",
+      "reviewRequired": true,
+      "source": {
+        "book": "Unknown / missing source",
+        "status": "repo-raw-statblock-field; page review still required",
+        "page": null,
+        "evidence": [
+          "Bulk-promoted from Lane A candidate \"mandalorian-supercommando-blaster-carbine\" (status safe-ordinary-weapon-with-delta) staged in data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json.",
+          "Candidate originally generated from packs/nonheroic.db."
+        ]
+      },
+      "actor": {
+        "name": "Mandalorian Supercommando",
+        "slugs": [
+          "mandalorian-supercommando"
+        ]
+      },
+      "match": {
+        "actorSlugs": [
+          "mandalorian-supercommando"
+        ],
+        "rawIncludes": [
+          "blaster carbine"
+        ]
+      },
+      "weapon": {
+        "printedName": "Blaster Carbine",
+        "rowKind": "ranged",
+        "uuid": "Compendium.foundryvtt-swse.weapons-rifles.Item.weapon-blaster-carbine",
+        "baseSlug": "weapon-blaster-carbine",
+        "basePack": "weapons-rifles",
+        "baseFormula": "3d8",
+        "baseType": "energy",
+        "baseFormulaPolicy": "uuid"
+      },
+      "formula": {
+        "mode": "base-plus-delta",
+        "printed": "3d8+8",
+        "delta": "+8",
+        "deltaSource": "generated-from-compendium-base-comparison",
+        "typeOverride": "energy",
+        "notes": [
+          "Formula mode/delta were classified mechanically by comparing the printed statblock formula against the matched compendium base weapon; no sourcebook was read."
+        ]
+      },
+      "printedAttack": {
+        "text": "+19",
+        "bonus": 19,
+        "bonuses": [
+          19
+        ],
+        "source": "printed-statblock",
+        "hydratePolicy": "metadata-only"
+      },
+      "delivery": "weapon",
+      "attackShape": "single-target",
+      "scale": "character",
+      "primaryType": "energy",
+      "tags": [
+        "nonheroic",
+        "weapon",
+        "blaster",
+        "carbine",
+        "bulk-lane-a-pass-1",
+        "generated-candidate"
+      ],
+      "attack": {
+        "isArea": false,
+        "halfDamageOnMiss": false,
+        "noCriticalDouble": false,
+        "coverCanNegateMissDamage": false,
+        "attackRollMinimum": null,
+        "defense": "reflex"
+      },
+      "area": {
+        "shape": null,
+        "radius": null,
+        "size": null,
+        "originMode": null,
+        "targetPolicy": "single"
+      },
+      "components": [
+        {
+          "key": "base-weapon",
+          "label": "Blaster Carbine",
+          "formula": "3d8",
+          "type": "energy",
+          "tags": [
+            "base",
+            "energy",
+            "blaster",
+            "carbine"
+          ]
+        },
+        {
+          "key": "printed-statblock-delta",
+          "label": "Printed Statblock Delta",
+          "formula": "+8",
+          "type": "energy",
+          "tags": [
+            "printed",
+            "delta",
+            "energy"
+          ]
+        }
+      ],
+      "riders": [],
+      "sourceRefs": [
+        {
+          "book": "Unknown / missing source",
+          "page": null,
+          "note": "Bulk Lane A promotion pass 1, generated from data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json; original row from packs/nonheroic.db."
+        }
+      ],
+      "variants": [],
+      "notes": [
+        "Bulk-promoted by tools/promote-nonheroic-damage-profile-candidates.mjs (pass 1) from an allowlisted Lane A candidate. confidence remains manualRequired: page/book attribution and full sourcebook review have not been performed.",
+        "Not wired into scripts/engine/import/nonheroic-damage-profile-hydrator.js PROFILE_FILES; this file is staged canonical-shaped data awaiting review."
+      ]
+    },
+    {
+      "slug": "radtrooper-blaster-carbine",
+      "name": "Blaster Carbine",
+      "confidence": "manualRequired",
+      "reviewRequired": true,
+      "source": {
+        "book": "Unknown / missing source",
+        "status": "repo-raw-statblock-field; page review still required",
+        "page": null,
+        "evidence": [
+          "Bulk-promoted from Lane A candidate \"radtrooper-blaster-carbine\" (status safe-ordinary-weapon-with-delta) staged in data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json.",
+          "Candidate originally generated from packs/nonheroic.db."
+        ]
+      },
+      "actor": {
+        "name": "Radtrooper",
+        "slugs": [
+          "radtrooper"
+        ]
+      },
+      "match": {
+        "actorSlugs": [
+          "radtrooper"
+        ],
+        "rawIncludes": [
+          "blaster carbine"
+        ]
+      },
+      "weapon": {
+        "printedName": "Blaster Carbine",
+        "rowKind": "ranged",
+        "uuid": "Compendium.foundryvtt-swse.weapons-rifles.Item.weapon-blaster-carbine",
+        "baseSlug": "weapon-blaster-carbine",
+        "basePack": "weapons-rifles",
+        "baseFormula": "3d8",
+        "baseType": "energy",
+        "baseFormulaPolicy": "uuid"
+      },
+      "formula": {
+        "mode": "base-plus-delta",
+        "printed": "3d8+1",
+        "delta": "+1",
+        "deltaSource": "generated-from-compendium-base-comparison",
+        "typeOverride": "energy",
+        "notes": [
+          "Formula mode/delta were classified mechanically by comparing the printed statblock formula against the matched compendium base weapon; no sourcebook was read."
+        ]
+      },
+      "printedAttack": {
+        "text": "+8",
+        "bonus": 8,
+        "bonuses": [
+          8
+        ],
+        "source": "printed-statblock",
+        "hydratePolicy": "metadata-only"
+      },
+      "delivery": "weapon",
+      "attackShape": "single-target",
+      "scale": "character",
+      "primaryType": "energy",
+      "tags": [
+        "nonheroic",
+        "weapon",
+        "blaster",
+        "carbine",
+        "bulk-lane-a-pass-1",
+        "generated-candidate"
+      ],
+      "attack": {
+        "isArea": false,
+        "halfDamageOnMiss": false,
+        "noCriticalDouble": false,
+        "coverCanNegateMissDamage": false,
+        "attackRollMinimum": null,
+        "defense": "reflex"
+      },
+      "area": {
+        "shape": null,
+        "radius": null,
+        "size": null,
+        "originMode": null,
+        "targetPolicy": "single"
+      },
+      "components": [
+        {
+          "key": "base-weapon",
+          "label": "Blaster Carbine",
+          "formula": "3d8",
+          "type": "energy",
+          "tags": [
+            "base",
+            "energy",
+            "blaster",
+            "carbine"
+          ]
+        },
+        {
+          "key": "printed-statblock-delta",
+          "label": "Printed Statblock Delta",
+          "formula": "+1",
+          "type": "energy",
+          "tags": [
+            "printed",
+            "delta",
+            "energy"
+          ]
+        }
+      ],
+      "riders": [],
+      "sourceRefs": [
+        {
+          "book": "Unknown / missing source",
+          "page": null,
+          "note": "Bulk Lane A promotion pass 1, generated from data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json; original row from packs/nonheroic.db."
+        }
+      ],
+      "variants": [],
+      "notes": [
+        "Bulk-promoted by tools/promote-nonheroic-damage-profile-candidates.mjs (pass 1) from an allowlisted Lane A candidate. confidence remains manualRequired: page/book attribution and full sourcebook review have not been performed.",
+        "Not wired into scripts/engine/import/nonheroic-damage-profile-hydrator.js PROFILE_FILES; this file is staged canonical-shaped data awaiting review."
+      ]
+    },
+    {
+      "slug": "mercenary-commander-blaster-carbine",
+      "name": "Blaster Carbine",
+      "confidence": "manualRequired",
+      "reviewRequired": true,
+      "source": {
+        "book": "Unknown / missing source",
+        "status": "repo-raw-statblock-field; page review still required",
+        "page": null,
+        "evidence": [
+          "Bulk-promoted from Lane A candidate \"mercenary-commander-blaster-carbine\" (status safe-ordinary-weapon-with-delta) staged in data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json.",
+          "Candidate originally generated from packs/nonheroic.db."
+        ]
+      },
+      "actor": {
+        "name": "Mercenary Commander",
+        "slugs": [
+          "mercenary-commander"
+        ]
+      },
+      "match": {
+        "actorSlugs": [
+          "mercenary-commander"
+        ],
+        "rawIncludes": [
+          "blaster carbine"
+        ]
+      },
+      "weapon": {
+        "printedName": "Blaster Carbine",
+        "rowKind": "ranged",
+        "uuid": "Compendium.foundryvtt-swse.weapons-rifles.Item.weapon-blaster-carbine",
+        "baseSlug": "weapon-blaster-carbine",
+        "basePack": "weapons-rifles",
+        "baseFormula": "3d8",
+        "baseType": "energy",
+        "baseFormulaPolicy": "uuid"
+      },
+      "formula": {
+        "mode": "base-plus-delta",
+        "printed": "3d8+1",
+        "delta": "+1",
+        "deltaSource": "generated-from-compendium-base-comparison",
+        "typeOverride": "energy",
+        "notes": [
+          "Formula mode/delta were classified mechanically by comparing the printed statblock formula against the matched compendium base weapon; no sourcebook was read."
+        ]
+      },
+      "printedAttack": {
+        "text": "+7",
+        "bonus": 7,
+        "bonuses": [
+          7
+        ],
+        "source": "printed-statblock",
+        "hydratePolicy": "metadata-only"
+      },
+      "delivery": "weapon",
+      "attackShape": "single-target",
+      "scale": "character",
+      "primaryType": "energy",
+      "tags": [
+        "nonheroic",
+        "weapon",
+        "blaster",
+        "carbine",
+        "bulk-lane-a-pass-1",
+        "generated-candidate"
+      ],
+      "attack": {
+        "isArea": false,
+        "halfDamageOnMiss": false,
+        "noCriticalDouble": false,
+        "coverCanNegateMissDamage": false,
+        "attackRollMinimum": null,
+        "defense": "reflex"
+      },
+      "area": {
+        "shape": null,
+        "radius": null,
+        "size": null,
+        "originMode": null,
+        "targetPolicy": "single"
+      },
+      "components": [
+        {
+          "key": "base-weapon",
+          "label": "Blaster Carbine",
+          "formula": "3d8",
+          "type": "energy",
+          "tags": [
+            "base",
+            "energy",
+            "blaster",
+            "carbine"
+          ]
+        },
+        {
+          "key": "printed-statblock-delta",
+          "label": "Printed Statblock Delta",
+          "formula": "+1",
+          "type": "energy",
+          "tags": [
+            "printed",
+            "delta",
+            "energy"
+          ]
+        }
+      ],
+      "riders": [],
+      "sourceRefs": [
+        {
+          "book": "Unknown / missing source",
+          "page": null,
+          "note": "Bulk Lane A promotion pass 1, generated from data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json; original row from packs/nonheroic.db."
+        }
+      ],
+      "variants": [],
+      "notes": [
+        "Bulk-promoted by tools/promote-nonheroic-damage-profile-candidates.mjs (pass 1) from an allowlisted Lane A candidate. confidence remains manualRequired: page/book attribution and full sourcebook review have not been performed.",
+        "Not wired into scripts/engine/import/nonheroic-damage-profile-hydrator.js PROFILE_FILES; this file is staged canonical-shaped data awaiting review."
+      ]
+    },
+    {
+      "slug": "specforce-urban-guerrilla-blaster-carbine",
+      "name": "Blaster Carbine",
+      "confidence": "manualRequired",
+      "reviewRequired": true,
+      "source": {
+        "book": "Unknown / missing source",
+        "status": "repo-raw-statblock-field; page review still required",
+        "page": null,
+        "evidence": [
+          "Bulk-promoted from Lane A candidate \"specforce-urban-guerrilla-blaster-carbine\" (status safe-ordinary-weapon-with-delta) staged in data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json.",
+          "Candidate originally generated from packs/nonheroic.db."
+        ]
+      },
+      "actor": {
+        "name": "SpecForce Urban Guerrilla",
+        "slugs": [
+          "specforce-urban-guerrilla"
+        ]
+      },
+      "match": {
+        "actorSlugs": [
+          "specforce-urban-guerrilla"
+        ],
+        "rawIncludes": [
+          "blaster carbine"
+        ]
+      },
+      "weapon": {
+        "printedName": "Blaster Carbine",
+        "rowKind": "ranged",
+        "uuid": "Compendium.foundryvtt-swse.weapons-rifles.Item.weapon-blaster-carbine",
+        "baseSlug": "weapon-blaster-carbine",
+        "basePack": "weapons-rifles",
+        "baseFormula": "3d8",
+        "baseType": "energy",
+        "baseFormulaPolicy": "uuid"
+      },
+      "formula": {
+        "mode": "base-plus-delta",
+        "printed": "3d8+2",
+        "delta": "+2",
+        "deltaSource": "generated-from-compendium-base-comparison",
+        "typeOverride": "energy",
+        "notes": [
+          "Formula mode/delta were classified mechanically by comparing the printed statblock formula against the matched compendium base weapon; no sourcebook was read."
+        ]
+      },
+      "printedAttack": {
+        "text": "+7",
+        "bonus": 7,
+        "bonuses": [
+          7
+        ],
+        "source": "printed-statblock",
+        "hydratePolicy": "metadata-only"
+      },
+      "delivery": "weapon",
+      "attackShape": "single-target",
+      "scale": "character",
+      "primaryType": "energy",
+      "tags": [
+        "nonheroic",
+        "weapon",
+        "blaster",
+        "carbine",
+        "bulk-lane-a-pass-1",
+        "generated-candidate"
+      ],
+      "attack": {
+        "isArea": false,
+        "halfDamageOnMiss": false,
+        "noCriticalDouble": false,
+        "coverCanNegateMissDamage": false,
+        "attackRollMinimum": null,
+        "defense": "reflex"
+      },
+      "area": {
+        "shape": null,
+        "radius": null,
+        "size": null,
+        "originMode": null,
+        "targetPolicy": "single"
+      },
+      "components": [
+        {
+          "key": "base-weapon",
+          "label": "Blaster Carbine",
+          "formula": "3d8",
+          "type": "energy",
+          "tags": [
+            "base",
+            "energy",
+            "blaster",
+            "carbine"
+          ]
+        },
+        {
+          "key": "printed-statblock-delta",
+          "label": "Printed Statblock Delta",
+          "formula": "+2",
+          "type": "energy",
+          "tags": [
+            "printed",
+            "delta",
+            "energy"
+          ]
+        }
+      ],
+      "riders": [],
+      "sourceRefs": [
+        {
+          "book": "Unknown / missing source",
+          "page": null,
+          "note": "Bulk Lane A promotion pass 1, generated from data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json; original row from packs/nonheroic.db."
+        }
+      ],
+      "variants": [],
+      "notes": [
+        "Bulk-promoted by tools/promote-nonheroic-damage-profile-candidates.mjs (pass 1) from an allowlisted Lane A candidate. confidence remains manualRequired: page/book attribution and full sourcebook review have not been performed.",
+        "Not wired into scripts/engine/import/nonheroic-damage-profile-hydrator.js PROFILE_FILES; this file is staged canonical-shaped data awaiting review."
+      ]
+    },
+    {
+      "slug": "commando-pathfinder-vibrodagger",
+      "name": "Vibrodagger",
+      "confidence": "manualRequired",
+      "reviewRequired": true,
+      "source": {
+        "book": "Unknown / missing source",
+        "status": "repo-raw-statblock-field; page review still required",
+        "page": null,
+        "evidence": [
+          "Bulk-promoted from Lane A candidate \"commando-pathfinder-vibrodagger\" (status safe-ordinary-weapon-with-delta) staged in data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json.",
+          "Candidate originally generated from packs/nonheroic.db."
+        ]
+      },
+      "actor": {
+        "name": "Commando Pathfinder",
+        "slugs": [
+          "commando-pathfinder"
+        ]
+      },
+      "match": {
+        "actorSlugs": [
+          "commando-pathfinder"
+        ],
+        "rawIncludes": [
+          "vibrodagger"
+        ]
+      },
+      "weapon": {
+        "printedName": "Vibrodagger",
+        "rowKind": "melee",
+        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-vibrodagger",
+        "baseSlug": "weapon-vibrodagger",
+        "basePack": "weapons-simple",
+        "baseFormula": "2d4",
+        "baseType": "kinetic",
+        "baseFormulaPolicy": "uuid"
+      },
+      "formula": {
+        "mode": "base-plus-delta",
+        "printed": "2d4+5",
+        "delta": "+5",
+        "deltaSource": "generated-from-compendium-base-comparison",
+        "typeOverride": "kinetic",
+        "notes": [
+          "Formula mode/delta were classified mechanically by comparing the printed statblock formula against the matched compendium base weapon; no sourcebook was read."
+        ]
+      },
+      "printedAttack": {
+        "text": "+6",
+        "bonus": 6,
+        "bonuses": [
+          6
+        ],
+        "source": "printed-statblock",
+        "hydratePolicy": "metadata-only"
+      },
+      "delivery": "weapon",
+      "attackShape": "single-target",
+      "scale": "character",
+      "primaryType": "kinetic",
+      "tags": [
+        "nonheroic",
+        "weapon",
+        "vibrodagger",
+        "bulk-lane-a-pass-1",
+        "generated-candidate"
+      ],
+      "attack": {
+        "isArea": false,
+        "halfDamageOnMiss": false,
+        "noCriticalDouble": false,
+        "coverCanNegateMissDamage": false,
+        "attackRollMinimum": null,
+        "defense": "reflex"
+      },
+      "area": {
+        "shape": null,
+        "radius": null,
+        "size": null,
+        "originMode": null,
+        "targetPolicy": "single"
+      },
+      "components": [
+        {
+          "key": "base-weapon",
+          "label": "Vibrodagger",
+          "formula": "2d4",
+          "type": "kinetic",
+          "tags": [
+            "base",
+            "kinetic",
+            "vibrodagger"
+          ]
+        },
+        {
+          "key": "printed-statblock-delta",
+          "label": "Printed Statblock Delta",
+          "formula": "+5",
+          "type": "kinetic",
+          "tags": [
+            "printed",
+            "delta",
+            "kinetic"
+          ]
+        }
+      ],
+      "riders": [],
+      "sourceRefs": [
+        {
+          "book": "Unknown / missing source",
+          "page": null,
+          "note": "Bulk Lane A promotion pass 1, generated from data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json; original row from packs/nonheroic.db."
+        }
+      ],
+      "variants": [],
+      "notes": [
+        "Bulk-promoted by tools/promote-nonheroic-damage-profile-candidates.mjs (pass 1) from an allowlisted Lane A candidate. confidence remains manualRequired: page/book attribution and full sourcebook review have not been performed.",
+        "Not wired into scripts/engine/import/nonheroic-damage-profile-hydrator.js PROFILE_FILES; this file is staged canonical-shaped data awaiting review."
+      ]
+    },
+    {
+      "slug": "saboteur-vibrodagger",
+      "name": "Vibrodagger",
+      "confidence": "manualRequired",
+      "reviewRequired": true,
+      "source": {
+        "book": "Unknown / missing source",
+        "status": "repo-raw-statblock-field; page review still required",
+        "page": null,
+        "evidence": [
+          "Bulk-promoted from Lane A candidate \"saboteur-vibrodagger\" (status safe-ordinary-weapon-with-delta) staged in data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json.",
+          "Candidate originally generated from packs/nonheroic.db."
+        ]
+      },
+      "actor": {
+        "name": "Saboteur",
+        "slugs": [
+          "saboteur"
+        ]
+      },
+      "match": {
+        "actorSlugs": [
+          "saboteur"
+        ],
+        "rawIncludes": [
+          "vibrodagger"
+        ]
+      },
+      "weapon": {
+        "printedName": "Vibrodagger",
+        "rowKind": "melee",
+        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-vibrodagger",
+        "baseSlug": "weapon-vibrodagger",
+        "basePack": "weapons-simple",
+        "baseFormula": "2d4",
+        "baseType": "kinetic",
+        "baseFormulaPolicy": "uuid"
+      },
+      "formula": {
+        "mode": "base-plus-delta",
+        "printed": "2d4+5",
+        "delta": "+5",
+        "deltaSource": "generated-from-compendium-base-comparison",
+        "typeOverride": "kinetic",
+        "notes": [
+          "Formula mode/delta were classified mechanically by comparing the printed statblock formula against the matched compendium base weapon; no sourcebook was read."
+        ]
+      },
+      "printedAttack": {
+        "text": "+3",
+        "bonus": 3,
+        "bonuses": [
+          3
+        ],
+        "source": "printed-statblock",
+        "hydratePolicy": "metadata-only"
+      },
+      "delivery": "weapon",
+      "attackShape": "single-target",
+      "scale": "character",
+      "primaryType": "kinetic",
+      "tags": [
+        "nonheroic",
+        "weapon",
+        "vibrodagger",
+        "bulk-lane-a-pass-1",
+        "generated-candidate"
+      ],
+      "attack": {
+        "isArea": false,
+        "halfDamageOnMiss": false,
+        "noCriticalDouble": false,
+        "coverCanNegateMissDamage": false,
+        "attackRollMinimum": null,
+        "defense": "reflex"
+      },
+      "area": {
+        "shape": null,
+        "radius": null,
+        "size": null,
+        "originMode": null,
+        "targetPolicy": "single"
+      },
+      "components": [
+        {
+          "key": "base-weapon",
+          "label": "Vibrodagger",
+          "formula": "2d4",
+          "type": "kinetic",
+          "tags": [
+            "base",
+            "kinetic",
+            "vibrodagger"
+          ]
+        },
+        {
+          "key": "printed-statblock-delta",
+          "label": "Printed Statblock Delta",
+          "formula": "+5",
+          "type": "kinetic",
+          "tags": [
+            "printed",
+            "delta",
+            "kinetic"
+          ]
+        }
+      ],
+      "riders": [],
+      "sourceRefs": [
+        {
+          "book": "Unknown / missing source",
+          "page": null,
+          "note": "Bulk Lane A promotion pass 1, generated from data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json; original row from packs/nonheroic.db."
+        }
+      ],
+      "variants": [],
+      "notes": [
+        "Bulk-promoted by tools/promote-nonheroic-damage-profile-candidates.mjs (pass 1) from an allowlisted Lane A candidate. confidence remains manualRequired: page/book attribution and full sourcebook review have not been performed.",
+        "Not wired into scripts/engine/import/nonheroic-damage-profile-hydrator.js PROFILE_FILES; this file is staged canonical-shaped data awaiting review."
+      ]
+    },
+    {
+      "slug": "commando-squad-leader-vibrodagger",
+      "name": "Vibrodagger",
+      "confidence": "manualRequired",
+      "reviewRequired": true,
+      "source": {
+        "book": "Unknown / missing source",
+        "status": "repo-raw-statblock-field; page review still required",
+        "page": null,
+        "evidence": [
+          "Bulk-promoted from Lane A candidate \"commando-squad-leader-vibrodagger\" (status safe-ordinary-weapon-with-delta) staged in data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json.",
+          "Candidate originally generated from packs/nonheroic.db."
+        ]
+      },
+      "actor": {
+        "name": "Commando Squad Leader",
+        "slugs": [
+          "commando-squad-leader"
+        ]
+      },
+      "match": {
+        "actorSlugs": [
+          "commando-squad-leader"
+        ],
+        "rawIncludes": [
+          "vibrodagger"
+        ]
+      },
+      "weapon": {
+        "printedName": "Vibrodagger",
+        "rowKind": "melee",
+        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-vibrodagger",
+        "baseSlug": "weapon-vibrodagger",
+        "basePack": "weapons-simple",
+        "baseFormula": "2d4",
+        "baseType": "kinetic",
+        "baseFormulaPolicy": "uuid"
+      },
+      "formula": {
+        "mode": "base-plus-delta",
+        "printed": "2d4+6",
+        "delta": "+6",
+        "deltaSource": "generated-from-compendium-base-comparison",
+        "typeOverride": "kinetic",
+        "notes": [
+          "Formula mode/delta were classified mechanically by comparing the printed statblock formula against the matched compendium base weapon; no sourcebook was read."
+        ]
+      },
+      "printedAttack": {
+        "text": "+16",
+        "bonus": 16,
+        "bonuses": [
+          16
+        ],
+        "source": "printed-statblock",
+        "hydratePolicy": "metadata-only"
+      },
+      "delivery": "weapon",
+      "attackShape": "single-target",
+      "scale": "character",
+      "primaryType": "kinetic",
+      "tags": [
+        "nonheroic",
+        "weapon",
+        "vibrodagger",
+        "bulk-lane-a-pass-1",
+        "generated-candidate"
+      ],
+      "attack": {
+        "isArea": false,
+        "halfDamageOnMiss": false,
+        "noCriticalDouble": false,
+        "coverCanNegateMissDamage": false,
+        "attackRollMinimum": null,
+        "defense": "reflex"
+      },
+      "area": {
+        "shape": null,
+        "radius": null,
+        "size": null,
+        "originMode": null,
+        "targetPolicy": "single"
+      },
+      "components": [
+        {
+          "key": "base-weapon",
+          "label": "Vibrodagger",
+          "formula": "2d4",
+          "type": "kinetic",
+          "tags": [
+            "base",
+            "kinetic",
+            "vibrodagger"
+          ]
+        },
+        {
+          "key": "printed-statblock-delta",
+          "label": "Printed Statblock Delta",
+          "formula": "+6",
+          "type": "kinetic",
+          "tags": [
+            "printed",
+            "delta",
+            "kinetic"
+          ]
+        }
+      ],
+      "riders": [],
+      "sourceRefs": [
+        {
+          "book": "Unknown / missing source",
+          "page": null,
+          "note": "Bulk Lane A promotion pass 1, generated from data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json; original row from packs/nonheroic.db."
+        }
+      ],
+      "variants": [],
+      "notes": [
+        "Bulk-promoted by tools/promote-nonheroic-damage-profile-candidates.mjs (pass 1) from an allowlisted Lane A candidate. confidence remains manualRequired: page/book attribution and full sourcebook review have not been performed.",
+        "Not wired into scripts/engine/import/nonheroic-damage-profile-hydrator.js PROFILE_FILES; this file is staged canonical-shaped data awaiting review."
+      ]
+    },
+    {
+      "slug": "noghri-assassin-vibrodagger",
+      "name": "Vibrodagger",
+      "confidence": "manualRequired",
+      "reviewRequired": true,
+      "source": {
+        "book": "Unknown / missing source",
+        "status": "repo-raw-statblock-field; page review still required",
+        "page": null,
+        "evidence": [
+          "Bulk-promoted from Lane A candidate \"noghri-assassin-vibrodagger\" (status safe-ordinary-weapon-with-delta) staged in data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json.",
+          "Candidate originally generated from packs/nonheroic.db."
+        ]
+      },
+      "actor": {
+        "name": "Noghri Assassin",
+        "slugs": [
+          "noghri-assassin"
+        ]
+      },
+      "match": {
+        "actorSlugs": [
+          "noghri-assassin"
+        ],
+        "rawIncludes": [
+          "vibrodagger"
+        ]
+      },
+      "weapon": {
+        "printedName": "Vibrodagger",
+        "rowKind": "melee",
+        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-vibrodagger",
+        "baseSlug": "weapon-vibrodagger",
+        "basePack": "weapons-simple",
+        "baseFormula": "2d4",
+        "baseType": "kinetic",
+        "baseFormulaPolicy": "uuid"
+      },
+      "formula": {
+        "mode": "base-plus-delta",
+        "printed": "2d4+8",
+        "delta": "+8",
+        "deltaSource": "generated-from-compendium-base-comparison",
+        "typeOverride": "kinetic",
+        "notes": [
+          "Formula mode/delta were classified mechanically by comparing the printed statblock formula against the matched compendium base weapon; no sourcebook was read."
+        ]
+      },
+      "printedAttack": {
+        "text": "+10",
+        "bonus": 10,
+        "bonuses": [
+          10
+        ],
+        "source": "printed-statblock",
+        "hydratePolicy": "metadata-only"
+      },
+      "delivery": "weapon",
+      "attackShape": "single-target",
+      "scale": "character",
+      "primaryType": "kinetic",
+      "tags": [
+        "nonheroic",
+        "weapon",
+        "vibrodagger",
+        "bulk-lane-a-pass-1",
+        "generated-candidate"
+      ],
+      "attack": {
+        "isArea": false,
+        "halfDamageOnMiss": false,
+        "noCriticalDouble": false,
+        "coverCanNegateMissDamage": false,
+        "attackRollMinimum": null,
+        "defense": "reflex"
+      },
+      "area": {
+        "shape": null,
+        "radius": null,
+        "size": null,
+        "originMode": null,
+        "targetPolicy": "single"
+      },
+      "components": [
+        {
+          "key": "base-weapon",
+          "label": "Vibrodagger",
+          "formula": "2d4",
+          "type": "kinetic",
+          "tags": [
+            "base",
+            "kinetic",
+            "vibrodagger"
+          ]
+        },
+        {
+          "key": "printed-statblock-delta",
+          "label": "Printed Statblock Delta",
+          "formula": "+8",
+          "type": "kinetic",
+          "tags": [
+            "printed",
+            "delta",
+            "kinetic"
+          ]
+        }
+      ],
+      "riders": [],
+      "sourceRefs": [
+        {
+          "book": "Unknown / missing source",
+          "page": null,
+          "note": "Bulk Lane A promotion pass 1, generated from data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json; original row from packs/nonheroic.db."
+        }
+      ],
+      "variants": [],
+      "notes": [
+        "Bulk-promoted by tools/promote-nonheroic-damage-profile-candidates.mjs (pass 1) from an allowlisted Lane A candidate. confidence remains manualRequired: page/book attribution and full sourcebook review have not been performed.",
+        "Not wired into scripts/engine/import/nonheroic-damage-profile-hydrator.js PROFILE_FILES; this file is staged canonical-shaped data awaiting review."
+      ]
+    },
+    {
+      "slug": "wookiee-berserker-bowcaster",
+      "name": "Bowcaster",
+      "confidence": "manualRequired",
+      "reviewRequired": true,
+      "source": {
+        "book": "Unknown / missing source",
+        "status": "repo-raw-statblock-field; page review still required",
+        "page": null,
+        "evidence": [
+          "Bulk-promoted from Lane A candidate \"wookiee-berserker-bowcaster\" (status safe-ordinary-weapon-candidate) staged in data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json.",
+          "Candidate originally generated from packs/nonheroic.db."
+        ]
+      },
+      "actor": {
+        "name": "Wookiee Berserker",
+        "slugs": [
+          "wookiee-berserker"
+        ]
+      },
+      "match": {
+        "actorSlugs": [
+          "wookiee-berserker"
+        ],
+        "rawIncludes": [
+          "bowcaster"
+        ]
+      },
+      "weapon": {
+        "printedName": "Bowcaster",
+        "rowKind": "ranged",
+        "uuid": "Compendium.foundryvtt-swse.weapons-rifles.Item.weapon-bowcaster",
+        "baseSlug": "weapon-bowcaster",
+        "basePack": "weapons-rifles",
+        "baseFormula": "3d10",
+        "baseType": "kinetic",
+        "baseFormulaPolicy": "uuid"
+      },
+      "formula": {
+        "mode": "base",
+        "printed": "3d10",
+        "delta": null,
+        "deltaSource": "generated-from-compendium-base-comparison",
+        "typeOverride": "kinetic",
+        "notes": [
+          "Formula mode/delta were classified mechanically by comparing the printed statblock formula against the matched compendium base weapon; no sourcebook was read."
+        ]
+      },
+      "printedAttack": {
+        "text": "+7",
+        "bonus": 7,
+        "bonuses": [
+          7
+        ],
+        "source": "printed-statblock",
+        "hydratePolicy": "metadata-only"
+      },
+      "delivery": "weapon",
+      "attackShape": "single-target",
+      "scale": "character",
+      "primaryType": "kinetic",
+      "tags": [
+        "nonheroic",
+        "weapon",
+        "bowcaster",
+        "bulk-lane-a-pass-1",
+        "generated-candidate"
+      ],
+      "attack": {
+        "isArea": false,
+        "halfDamageOnMiss": false,
+        "noCriticalDouble": false,
+        "coverCanNegateMissDamage": false,
+        "attackRollMinimum": null,
+        "defense": "reflex"
+      },
+      "area": {
+        "shape": null,
+        "radius": null,
+        "size": null,
+        "originMode": null,
+        "targetPolicy": "single"
+      },
+      "components": [
+        {
+          "key": "base-weapon",
+          "label": "Bowcaster",
+          "formula": "3d10",
+          "type": "kinetic",
+          "tags": [
+            "base",
+            "kinetic",
+            "bowcaster"
+          ]
+        }
+      ],
+      "riders": [],
+      "sourceRefs": [
+        {
+          "book": "Unknown / missing source",
+          "page": null,
+          "note": "Bulk Lane A promotion pass 1, generated from data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json; original row from packs/nonheroic.db."
+        }
+      ],
+      "variants": [],
+      "notes": [
+        "Bulk-promoted by tools/promote-nonheroic-damage-profile-candidates.mjs (pass 1) from an allowlisted Lane A candidate. confidence remains manualRequired: page/book attribution and full sourcebook review have not been performed.",
+        "Not wired into scripts/engine/import/nonheroic-damage-profile-hydrator.js PROFILE_FILES; this file is staged canonical-shaped data awaiting review."
+      ]
+    },
+    {
+      "slug": "wookiee-freedom-fighter-bowcaster",
+      "name": "Bowcaster",
+      "confidence": "manualRequired",
+      "reviewRequired": true,
+      "source": {
+        "book": "Unknown / missing source",
+        "status": "repo-raw-statblock-field; page review still required",
+        "page": null,
+        "evidence": [
+          "Bulk-promoted from Lane A candidate \"wookiee-freedom-fighter-bowcaster\" (status safe-ordinary-weapon-with-delta) staged in data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json.",
+          "Candidate originally generated from packs/nonheroic.db."
+        ]
+      },
+      "actor": {
+        "name": "Wookiee Freedom Fighter",
+        "slugs": [
+          "wookiee-freedom-fighter"
+        ]
+      },
+      "match": {
+        "actorSlugs": [
+          "wookiee-freedom-fighter"
+        ],
+        "rawIncludes": [
+          "bowcaster"
+        ]
+      },
+      "weapon": {
+        "printedName": "Bowcaster",
+        "rowKind": "ranged",
+        "uuid": "Compendium.foundryvtt-swse.weapons-rifles.Item.weapon-bowcaster",
+        "baseSlug": "weapon-bowcaster",
+        "basePack": "weapons-rifles",
+        "baseFormula": "3d10",
+        "baseType": "kinetic",
+        "baseFormulaPolicy": "uuid"
+      },
+      "formula": {
+        "mode": "base-plus-delta",
+        "printed": "3d10+1",
+        "delta": "+1",
+        "deltaSource": "generated-from-compendium-base-comparison",
+        "typeOverride": "kinetic",
+        "notes": [
+          "Formula mode/delta were classified mechanically by comparing the printed statblock formula against the matched compendium base weapon; no sourcebook was read."
+        ]
+      },
+      "printedAttack": {
+        "text": "+3",
+        "bonus": 3,
+        "bonuses": [
+          3
+        ],
+        "source": "printed-statblock",
+        "hydratePolicy": "metadata-only"
+      },
+      "delivery": "weapon",
+      "attackShape": "single-target",
+      "scale": "character",
+      "primaryType": "kinetic",
+      "tags": [
+        "nonheroic",
+        "weapon",
+        "bowcaster",
+        "bulk-lane-a-pass-1",
+        "generated-candidate"
+      ],
+      "attack": {
+        "isArea": false,
+        "halfDamageOnMiss": false,
+        "noCriticalDouble": false,
+        "coverCanNegateMissDamage": false,
+        "attackRollMinimum": null,
+        "defense": "reflex"
+      },
+      "area": {
+        "shape": null,
+        "radius": null,
+        "size": null,
+        "originMode": null,
+        "targetPolicy": "single"
+      },
+      "components": [
+        {
+          "key": "base-weapon",
+          "label": "Bowcaster",
+          "formula": "3d10",
+          "type": "kinetic",
+          "tags": [
+            "base",
+            "kinetic",
+            "bowcaster"
+          ]
+        },
+        {
+          "key": "printed-statblock-delta",
+          "label": "Printed Statblock Delta",
+          "formula": "+1",
+          "type": "kinetic",
+          "tags": [
+            "printed",
+            "delta",
+            "kinetic"
+          ]
+        }
+      ],
+      "riders": [],
+      "sourceRefs": [
+        {
+          "book": "Unknown / missing source",
+          "page": null,
+          "note": "Bulk Lane A promotion pass 1, generated from data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json; original row from packs/nonheroic.db."
+        }
+      ],
+      "variants": [],
+      "notes": [
+        "Bulk-promoted by tools/promote-nonheroic-damage-profile-candidates.mjs (pass 1) from an allowlisted Lane A candidate. confidence remains manualRequired: page/book attribution and full sourcebook review have not been performed.",
+        "Not wired into scripts/engine/import/nonheroic-damage-profile-hydrator.js PROFILE_FILES; this file is staged canonical-shaped data awaiting review."
+      ]
+    },
+    {
+      "slug": "core-craft-sentry-stun-baton",
+      "name": "Stun Baton",
+      "confidence": "manualRequired",
+      "reviewRequired": true,
+      "source": {
+        "book": "Unknown / missing source",
+        "status": "repo-raw-statblock-field; page review still required",
+        "page": null,
+        "evidence": [
+          "Bulk-promoted from Lane A candidate \"core-craft-sentry-stun-baton\" (status safe-ordinary-weapon-with-delta) staged in data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json.",
+          "Candidate originally generated from packs/nonheroic.db."
+        ]
+      },
+      "actor": {
+        "name": "Core Craft Sentry",
+        "slugs": [
+          "core-craft-sentry"
+        ]
+      },
+      "match": {
+        "actorSlugs": [
+          "core-craft-sentry"
+        ],
+        "rawIncludes": [
+          "stun baton"
+        ]
+      },
+      "weapon": {
+        "printedName": "Stun Baton",
+        "rowKind": "melee",
+        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-stun-baton",
+        "baseSlug": "weapon-stun-baton",
+        "basePack": "weapons-simple",
+        "baseFormula": "1d6",
+        "baseType": "stun",
+        "baseFormulaPolicy": "uuid"
+      },
+      "formula": {
+        "mode": "base-plus-dice",
+        "printed": "2d6+5",
+        "delta": "+1d6+5",
+        "deltaSource": "generated-from-compendium-base-comparison",
+        "typeOverride": "stun",
+        "notes": [
+          "Formula mode/delta were classified mechanically by comparing the printed statblock formula against the matched compendium base weapon; no sourcebook was read."
+        ]
+      },
+      "printedAttack": {
+        "text": "+7",
+        "bonus": 7,
+        "bonuses": [
+          7
+        ],
+        "source": "printed-statblock",
+        "hydratePolicy": "metadata-only"
+      },
+      "delivery": "weapon",
+      "attackShape": "single-target",
+      "scale": "character",
+      "primaryType": "stun",
+      "tags": [
+        "nonheroic",
+        "weapon",
+        "stun",
+        "baton",
+        "bulk-lane-a-pass-1",
+        "generated-candidate"
+      ],
+      "attack": {
+        "isArea": false,
+        "halfDamageOnMiss": false,
+        "noCriticalDouble": false,
+        "coverCanNegateMissDamage": false,
+        "attackRollMinimum": null,
+        "defense": "reflex"
+      },
+      "area": {
+        "shape": null,
+        "radius": null,
+        "size": null,
+        "originMode": null,
+        "targetPolicy": "single"
+      },
+      "components": [
+        {
+          "key": "base-weapon",
+          "label": "Stun Baton",
+          "formula": "1d6",
+          "type": "stun",
+          "tags": [
+            "base",
+            "stun",
+            "stun",
+            "baton"
+          ]
+        },
+        {
+          "key": "printed-statblock-delta",
+          "label": "Printed Statblock Delta",
+          "formula": "+1d6+5",
+          "type": "stun",
+          "tags": [
+            "printed",
+            "delta",
+            "stun"
+          ]
+        }
+      ],
+      "riders": [],
+      "sourceRefs": [
+        {
+          "book": "Unknown / missing source",
+          "page": null,
+          "note": "Bulk Lane A promotion pass 1, generated from data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json; original row from packs/nonheroic.db."
+        }
+      ],
+      "variants": [],
+      "notes": [
+        "Bulk-promoted by tools/promote-nonheroic-damage-profile-candidates.mjs (pass 1) from an allowlisted Lane A candidate. confidence remains manualRequired: page/book attribution and full sourcebook review have not been performed.",
+        "Not wired into scripts/engine/import/nonheroic-damage-profile-hydrator.js PROFILE_FILES; this file is staged canonical-shaped data awaiting review."
+      ]
+    },
+    {
+      "slug": "csa-trooper-stun-baton",
+      "name": "Stun Baton",
+      "confidence": "manualRequired",
+      "reviewRequired": true,
+      "source": {
+        "book": "Unknown / missing source",
+        "status": "repo-raw-statblock-field; page review still required",
+        "page": null,
+        "evidence": [
+          "Bulk-promoted from Lane A candidate \"csa-trooper-stun-baton\" (status safe-ordinary-weapon-with-delta) staged in data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json.",
+          "Candidate originally generated from packs/nonheroic.db."
+        ]
+      },
+      "actor": {
+        "name": "CSA Trooper",
+        "slugs": [
+          "csa-trooper"
+        ]
+      },
+      "match": {
+        "actorSlugs": [
+          "csa-trooper"
+        ],
+        "rawIncludes": [
+          "stun baton"
+        ]
+      },
+      "weapon": {
+        "printedName": "Stun Baton",
+        "rowKind": "melee",
+        "uuid": "Compendium.foundryvtt-swse.weapons-simple.Item.weapon-stun-baton",
+        "baseSlug": "weapon-stun-baton",
+        "basePack": "weapons-simple",
+        "baseFormula": "1d6",
+        "baseType": "stun",
+        "baseFormulaPolicy": "uuid"
+      },
+      "formula": {
+        "mode": "base-plus-dice",
+        "printed": "2d6+2",
+        "delta": "+1d6+2",
+        "deltaSource": "generated-from-compendium-base-comparison",
+        "typeOverride": "stun",
+        "notes": [
+          "Formula mode/delta were classified mechanically by comparing the printed statblock formula against the matched compendium base weapon; no sourcebook was read."
+        ]
+      },
+      "printedAttack": {
+        "text": "+7",
+        "bonus": 7,
+        "bonuses": [
+          7
+        ],
+        "source": "printed-statblock",
+        "hydratePolicy": "metadata-only"
+      },
+      "delivery": "weapon",
+      "attackShape": "single-target",
+      "scale": "character",
+      "primaryType": "stun",
+      "tags": [
+        "nonheroic",
+        "weapon",
+        "stun",
+        "baton",
+        "bulk-lane-a-pass-1",
+        "generated-candidate"
+      ],
+      "attack": {
+        "isArea": false,
+        "halfDamageOnMiss": false,
+        "noCriticalDouble": false,
+        "coverCanNegateMissDamage": false,
+        "attackRollMinimum": null,
+        "defense": "reflex"
+      },
+      "area": {
+        "shape": null,
+        "radius": null,
+        "size": null,
+        "originMode": null,
+        "targetPolicy": "single"
+      },
+      "components": [
+        {
+          "key": "base-weapon",
+          "label": "Stun Baton",
+          "formula": "1d6",
+          "type": "stun",
+          "tags": [
+            "base",
+            "stun",
+            "stun",
+            "baton"
+          ]
+        },
+        {
+          "key": "printed-statblock-delta",
+          "label": "Printed Statblock Delta",
+          "formula": "+1d6+2",
+          "type": "stun",
+          "tags": [
+            "printed",
+            "delta",
+            "stun"
+          ]
+        }
+      ],
+      "riders": [],
+      "sourceRefs": [
+        {
+          "book": "Unknown / missing source",
+          "page": null,
+          "note": "Bulk Lane A promotion pass 1, generated from data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json; original row from packs/nonheroic.db."
+        }
+      ],
+      "variants": [],
+      "notes": [
+        "Bulk-promoted by tools/promote-nonheroic-damage-profile-candidates.mjs (pass 1) from an allowlisted Lane A candidate. confidence remains manualRequired: page/book attribution and full sourcebook review have not been performed.",
+        "Not wired into scripts/engine/import/nonheroic-damage-profile-hydrator.js PROFILE_FILES; this file is staged canonical-shaped data awaiting review."
+      ]
+    }
+  ]
+}
