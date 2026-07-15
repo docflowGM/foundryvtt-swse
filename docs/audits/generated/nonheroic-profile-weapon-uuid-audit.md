@@ -1,6 +1,6 @@
 # Nonheroic Profile Weapon UUID Audit
 
-Generated: 2026-07-15T18:11:00.764Z
+Generated: 2026-07-15T20:27:04.215Z
 Mode: report-only
 
 This is a mechanical compendium identity audit only. It does not interpret
