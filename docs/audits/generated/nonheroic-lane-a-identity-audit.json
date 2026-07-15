@@ -1,0 +1,1116 @@
+{
+  "summary": {
+    "generatedAt": "2026-07-15T21:26:05.540Z",
+    "inputs": {
+      "candidatePoolFiles": [
+        "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json",
+        "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json"
+      ],
+      "candidatePoolSize": 617
+    },
+    "totalActorWeaponGroups": 228,
+    "singletonGroups": 1,
+    "duplicateGroups": 227,
+    "rowsInDuplicateGroups": 616,
+    "duplicateGroupBreakdown": {
+      "identical": {
+        "groupCount": 129,
+        "rowCount": 262,
+        "crossPackSpanningGroupCount": 124,
+        "note": "Every member shares the exact printed clause text. Not a distinct-row case; almost always the same actor document duplicated across more than one source pack (packs/nonheroic.db and packs/npc.db both carry it). No available field distinguishes these from each other, so only one representative per group should be promoted; the promotion tool's duplicate-slug guard already refuses to promote more than one from the same batch."
+      },
+      "distinct": {
+        "groupCount": 43,
+        "rowCount": 90,
+        "note": "Every member has a distinct printed clause (different attack bonus and/or formula, e.g. a full-attack sequence). Every member of these groups is now independently promotable: match.rawClause gives each a unique marker and the disambiguated slug (bonus + formula suffix) gives each a unique candidate slug."
+      },
+      "mixed": {
+        "groupCount": 55,
+        "rowCount": 264,
+        "note": "Some members are identical-clause duplicates of each other and some are genuinely distinct rows, within the same actor+weapon-name group."
+      }
+    },
+    "identityIntegrityCheck": {
+      "residualSlugCollisions": 0,
+      "ok": true
+    },
+    "methodologyNote": "Grouping mirrors tools/generate-nonheroic-damage-profile-candidates.mjs exactly (actorSlug + normalizeWeaponName(printedName)). This audit only covers the current \"safe\" Lane A candidate pool (safe-ordinary-weapon-candidate / safe-ordinary-weapon-with-delta); it does not re-derive Lane B buckets or already-covered exclusions, which remain the responsibility of tools/audit-nonheroic-lane-b-remainder.mjs."
+  },
+  "residualSlugCollisions": [],
+  "sampleGroups": {
+    "identical": [
+      {
+        "key": "medic::blaster pistol",
+        "memberCount": 2,
+        "kind": "identical",
+        "crossPackSpanning": true,
+        "sampleActorName": "Medic",
+        "sampleWeaponName": "Blaster Pistol",
+        "members": [
+          {
+            "slug": "medic-blaster-pistol-p5-3d6",
+            "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json",
+            "rawClause": "blaster pistol +5 (3d6)",
+            "rawIncludesMarker": "blaster pistol",
+            "attackBonusText": "+5",
+            "formulaPrinted": "3d6"
+          },
+          {
+            "slug": "medic-blaster-pistol-p5-3d6",
+            "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+            "rawClause": "blaster pistol +5 (3d6)",
+            "rawIncludesMarker": "blaster pistol",
+            "attackBonusText": "+5",
+            "formulaPrinted": "3d6"
+          }
+        ]
+      },
+      {
+        "key": "peace-brigade-thug::blaster pistol",
+        "memberCount": 2,
+        "kind": "identical",
+        "crossPackSpanning": true,
+        "sampleActorName": "Peace Brigade Thug",
+        "sampleWeaponName": "Blaster Pistol",
+        "members": [
+          {
+            "slug": "peace-brigade-thug-blaster-pistol-p2-3d6",
+            "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json",
+            "rawClause": "blaster pistol +2 (3d6)",
+            "rawIncludesMarker": "blaster pistol",
+            "attackBonusText": "+2",
+            "formulaPrinted": "3d6"
+          },
+          {
+            "slug": "peace-brigade-thug-blaster-pistol-p2-3d6",
+            "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+            "rawClause": "blaster pistol +2 (3d6)",
+            "rawIncludesMarker": "blaster pistol",
+            "attackBonusText": "+2",
+            "formulaPrinted": "3d6"
+          }
+        ]
+      },
+      {
+        "key": "csa-security-guard::blaster pistol",
+        "memberCount": 2,
+        "kind": "identical",
+        "crossPackSpanning": true,
+        "sampleActorName": "CSA Security Guard",
+        "sampleWeaponName": "Blaster Pistol",
+        "members": [
+          {
+            "slug": "csa-security-guard-blaster-pistol-p6-3d6",
+            "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json",
+            "rawClause": "blaster pistol +6 (3d6)",
+            "rawIncludesMarker": "blaster pistol",
+            "attackBonusText": "+6",
+            "formulaPrinted": "3d6"
+          },
+          {
+            "slug": "csa-security-guard-blaster-pistol-p6-3d6",
+            "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+            "rawClause": "blaster pistol +6 (3d6)",
+            "rawIncludesMarker": "blaster pistol",
+            "attackBonusText": "+6",
+            "formulaPrinted": "3d6"
+          }
+        ]
+      },
+      {
+        "key": "espo-trooper::espo 500 riot gun",
+        "memberCount": 2,
+        "kind": "identical",
+        "crossPackSpanning": true,
+        "sampleActorName": "Espo Trooper",
+        "sampleWeaponName": "ESPO 500 Riot Gun",
+        "members": [
+          {
+            "slug": "espo-trooper-espo-500-riot-gun-p4-3d8",
+            "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json",
+            "rawClause": "espo 500 riot gun +4 (3d8)",
+            "rawIncludesMarker": "espo 500 riot gun",
+            "attackBonusText": "+4",
+            "formulaPrinted": "3d8"
+          },
+          {
+            "slug": "espo-trooper-espo-500-riot-gun-p4-3d8",
+            "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+            "rawClause": "espo 500 riot gun +4 (3d8)",
+            "rawIncludesMarker": "espo 500 riot gun",
+            "attackBonusText": "+4",
+            "formulaPrinted": "3d8"
+          }
+        ]
+      },
+      {
+        "key": "swoop-gang-member::blaster pistol",
+        "memberCount": 2,
+        "kind": "identical",
+        "crossPackSpanning": true,
+        "sampleActorName": "Swoop Gang Member",
+        "sampleWeaponName": "Blaster Pistol",
+        "members": [
+          {
+            "slug": "swoop-gang-member-blaster-pistol-p4-3d6",
+            "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json",
+            "rawClause": "blaster pistol +4 (3d6)",
+            "rawIncludesMarker": "blaster pistol",
+            "attackBonusText": "+4",
+            "formulaPrinted": "3d6"
+          },
+          {
+            "slug": "swoop-gang-member-blaster-pistol-p4-3d6",
+            "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+            "rawClause": "blaster pistol +4 (3d6)",
+            "rawIncludesMarker": "blaster pistol",
+            "attackBonusText": "+4",
+            "formulaPrinted": "3d6"
+          }
+        ]
+      },
+      {
+        "key": "sith-spy::blaster pistol",
+        "memberCount": 2,
+        "kind": "identical",
+        "crossPackSpanning": true,
+        "sampleActorName": "Sith Spy",
+        "sampleWeaponName": "Blaster Pistol",
+        "members": [
+          {
+            "slug": "sith-spy-blaster-pistol-p8-3d6",
+            "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json",
+            "rawClause": "blaster pistol +8 (3d6)",
+            "rawIncludesMarker": "blaster pistol",
+            "attackBonusText": "+8",
+            "formulaPrinted": "3d6"
+          },
+          {
+            "slug": "sith-spy-blaster-pistol-p8-3d6",
+            "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+            "rawClause": "blaster pistol +8 (3d6)",
+            "rawIncludesMarker": "blaster pistol",
+            "attackBonusText": "+8",
+            "formulaPrinted": "3d6"
+          }
+        ]
+      },
+      {
+        "key": "joker-squad-heavy-weapons-specialist::arc 9965 blaster",
+        "memberCount": 2,
+        "kind": "identical",
+        "crossPackSpanning": true,
+        "sampleActorName": "Joker Squad Heavy Weapons Specialist",
+        "sampleWeaponName": "ARC-9965 Blaster",
+        "members": [
+          {
+            "slug": "joker-squad-heavy-weapons-specialist-arc-9965-blaster-p7-3d8",
+            "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json",
+            "rawClause": "arc-9965 blaster +7 (3d8)",
+            "rawIncludesMarker": "arc-9965 blaster",
+            "attackBonusText": "+7",
+            "formulaPrinted": "3d8"
+          },
+          {
+            "slug": "joker-squad-heavy-weapons-specialist-arc-9965-blaster-p7-3d8",
+            "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+            "rawClause": "arc-9965 blaster +7 (3d8)",
+            "rawIncludesMarker": "arc-9965 blaster",
+            "attackBonusText": "+7",
+            "formulaPrinted": "3d8"
+          }
+        ]
+      },
+      {
+        "key": "sith-descendant::pulse wave pistol",
+        "memberCount": 2,
+        "kind": "identical",
+        "crossPackSpanning": true,
+        "sampleActorName": "Sith Descendant",
+        "sampleWeaponName": "Pulse-Wave Pistol",
+        "members": [
+          {
+            "slug": "sith-descendant-pulse-wave-pistol-p4-2d6",
+            "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json",
+            "rawClause": "pulse-wave pistol +4 (2d6)",
+            "rawIncludesMarker": "pulse-wave pistol",
+            "attackBonusText": "+4",
+            "formulaPrinted": "2d6"
+          },
+          {
+            "slug": "sith-descendant-pulse-wave-pistol-p4-2d6",
+            "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+            "rawClause": "pulse-wave pistol +4 (2d6)",
+            "rawIncludesMarker": "pulse-wave pistol",
+            "attackBonusText": "+4",
+            "formulaPrinted": "2d6"
+          }
+        ]
+      },
+      {
+        "key": "viper-swoop-gang-member::blaster pistol",
+        "memberCount": 2,
+        "kind": "identical",
+        "crossPackSpanning": true,
+        "sampleActorName": "Viper Swoop Gang Member",
+        "sampleWeaponName": "Blaster Pistol",
+        "members": [
+          {
+            "slug": "viper-swoop-gang-member-blaster-pistol-p4-3d6",
+            "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json",
+            "rawClause": "blaster pistol +4 (3d6)",
+            "rawIncludesMarker": "blaster pistol",
+            "attackBonusText": "+4",
+            "formulaPrinted": "3d6"
+          },
+          {
+            "slug": "viper-swoop-gang-member-blaster-pistol-p4-3d6",
+            "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+            "rawClause": "blaster pistol +4 (3d6)",
+            "rawIncludesMarker": "blaster pistol",
+            "attackBonusText": "+4",
+            "formulaPrinted": "3d6"
+          }
+        ]
+      },
+      {
+        "key": "joker-squad-stormtrooper::arc 9965 blaster",
+        "memberCount": 2,
+        "kind": "identical",
+        "crossPackSpanning": true,
+        "sampleActorName": "Joker Squad Stormtrooper",
+        "sampleWeaponName": "ARC-9965 Blaster",
+        "members": [
+          {
+            "slug": "joker-squad-stormtrooper-arc-9965-blaster-p8-3d8",
+            "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json",
+            "rawClause": "arc-9965 blaster +8 (3d8)",
+            "rawIncludesMarker": "arc-9965 blaster",
+            "attackBonusText": "+8",
+            "formulaPrinted": "3d8"
+          },
+          {
+            "slug": "joker-squad-stormtrooper-arc-9965-blaster-p8-3d8",
+            "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+            "rawClause": "arc-9965 blaster +8 (3d8)",
+            "rawIncludesMarker": "arc-9965 blaster",
+            "attackBonusText": "+8",
+            "formulaPrinted": "3d8"
+          }
+        ]
+      }
+    ],
+    "distinct": [
+      {
+        "key": "plo-koon::lightsaber",
+        "memberCount": 2,
+        "kind": "distinct",
+        "crossPackSpanning": false,
+        "sampleActorName": "Plo Koon",
+        "sampleWeaponName": "Lightsaber",
+        "members": [
+          {
+            "slug": "plo-koon-lightsaber-p20-2d8-11",
+            "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+            "rawClause": "lightsaber +20 (2d8+11)",
+            "rawIncludesMarker": "lightsaber",
+            "attackBonusText": "+20",
+            "formulaPrinted": "2d8+11"
+          },
+          {
+            "slug": "plo-koon-lightsaber-p15-2d8-11",
+            "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+            "rawClause": "lightsaber +15 (2d8+11)",
+            "rawIncludesMarker": "lightsaber",
+            "attackBonusText": "+15",
+            "formulaPrinted": "2d8+11"
+          }
+        ]
+      },
+      {
+        "key": "ulic-qel-droma::lightsaber",
+        "memberCount": 2,
+        "kind": "distinct",
+        "crossPackSpanning": false,
+        "sampleActorName": "Ulic Qel-Droma",
+        "sampleWeaponName": "Lightsaber",
+        "members": [
+          {
+            "slug": "ulic-qel-droma-lightsaber-p22-2d8-13",
+            "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+            "rawClause": "lightsaber +22 (2d8+13)",
+            "rawIncludesMarker": "lightsaber",
+            "attackBonusText": "+22",
+            "formulaPrinted": "2d8+13"
+          },
+          {
+            "slug": "ulic-qel-droma-lightsaber-p19-2d8-13",
+            "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+            "rawClause": "lightsaber +19 (2d8+13)",
+            "rawIncludesMarker": "lightsaber",
+            "attackBonusText": "+19",
+            "formulaPrinted": "2d8+13"
+          }
+        ]
+      },
+      {
+        "key": "bo-katan-kryze-liberator::blaster pistol",
+        "memberCount": 3,
+        "kind": "distinct",
+        "crossPackSpanning": false,
+        "sampleActorName": "Bo-Katan Kryze, Liberator",
+        "sampleWeaponName": "Blaster Pistol",
+        "members": [
+          {
+            "slug": "bo-katan-kryze-liberator-blaster-pistol-p20-4d6-12-with-twin-shot",
+            "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+            "rawClause": "blaster pistol +20 (4d6+12) with twin shot",
+            "rawIncludesMarker": "blaster pistol",
+            "attackBonusText": "+20",
+            "formulaPrinted": "4d6+12"
+          },
+          {
+            "slug": "bo-katan-kryze-liberator-blaster-pistol-p18-4d6-12",
+            "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+            "rawClause": "blaster pistol +18 (4d6+12)",
+            "rawIncludesMarker": "blaster pistol",
+            "attackBonusText": "+18",
+            "formulaPrinted": "4d6+12"
+          },
+          {
+            "slug": "bo-katan-kryze-liberator-blaster-pistol-p18-4d6-12-with-twin-shot",
+            "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+            "rawClause": "blaster pistol +18 (4d6+12) with twin shot",
+            "rawIncludesMarker": "blaster pistol",
+            "attackBonusText": "+18",
+            "formulaPrinted": "4d6+12"
+          }
+        ]
+      },
+      {
+        "key": "mara-jade-jedi::lightsaber",
+        "memberCount": 2,
+        "kind": "distinct",
+        "crossPackSpanning": false,
+        "sampleActorName": "Mara Jade, Jedi",
+        "sampleWeaponName": "Lightsaber",
+        "members": [
+          {
+            "slug": "mara-jade-jedi-lightsaber-p16-2d8-9",
+            "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+            "rawClause": "lightsaber +16 (2d8+9)",
+            "rawIncludesMarker": "lightsaber",
+            "attackBonusText": "+16",
+            "formulaPrinted": "2d8+9"
+          },
+          {
+            "slug": "mara-jade-jedi-lightsaber-p11-2d8-9",
+            "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+            "rawClause": "lightsaber +11 (2d8+9)",
+            "rawIncludesMarker": "lightsaber",
+            "attackBonusText": "+11",
+            "formulaPrinted": "2d8+9"
+          }
+        ]
+      },
+      {
+        "key": "darth-nihilus::lightsaber",
+        "memberCount": 5,
+        "kind": "distinct",
+        "crossPackSpanning": false,
+        "sampleActorName": "Darth Nihilus",
+        "sampleWeaponName": "Lightsaber",
+        "members": [
+          {
+            "slug": "darth-nihilus-lightsaber-p25-2d8-13",
+            "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+            "rawClause": "lightsaber +25 (2d8+13)",
+            "rawIncludesMarker": "lightsaber",
+            "attackBonusText": "+25",
+            "formulaPrinted": "2d8+13"
+          },
+          {
+            "slug": "darth-nihilus-lightsaber-p22-2d8-13",
+            "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+            "rawClause": "lightsaber +22 (2d8+13)",
+            "rawIncludesMarker": "lightsaber",
+            "attackBonusText": "+22",
+            "formulaPrinted": "2d8+13"
+          },
+          {
+            "slug": "darth-nihilus-lightsaber-p20-3d8-13",
+            "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+            "rawClause": "lightsaber +20 (3d8+13)",
+            "rawIncludesMarker": "lightsaber",
+            "attackBonusText": "+20",
+            "formulaPrinted": "3d8+13"
+          },
+          {
+            "slug": "darth-nihilus-lightsaber-p17-2d8-13",
+            "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+            "rawClause": "lightsaber +17 (2d8+13)",
+            "rawIncludesMarker": "lightsaber",
+            "attackBonusText": "+17",
+            "formulaPrinted": "2d8+13"
+          },
+          {
+            "slug": "darth-nihilus-lightsaber-p15-3d8-13",
+            "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+            "rawClause": "lightsaber +15 (3d8+13)",
+            "rawIncludesMarker": "lightsaber",
+            "attackBonusText": "+15",
+            "formulaPrinted": "3d8+13"
+          }
+        ]
+      },
+      {
+        "key": "brakiss::lightsaber",
+        "memberCount": 2,
+        "kind": "distinct",
+        "crossPackSpanning": false,
+        "sampleActorName": "Brakiss",
+        "sampleWeaponName": "Lightsaber",
+        "members": [
+          {
+            "slug": "brakiss-lightsaber-p12-2d8-6",
+            "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+            "rawClause": "lightsaber +12 (2d8+6)",
+            "rawIncludesMarker": "lightsaber",
+            "attackBonusText": "+12",
+            "formulaPrinted": "2d8+6"
+          },
+          {
+            "slug": "brakiss-lightsaber-p7-2d8-6",
+            "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+            "rawClause": "lightsaber +7 (2d8+6)",
+            "rawIncludesMarker": "lightsaber",
+            "attackBonusText": "+7",
+            "formulaPrinted": "2d8+6"
+          }
+        ]
+      },
+      {
+        "key": "luke-skywalker::lightsaber",
+        "memberCount": 2,
+        "kind": "distinct",
+        "crossPackSpanning": false,
+        "sampleActorName": "Luke Skywalker",
+        "sampleWeaponName": "Lightsaber",
+        "members": [
+          {
+            "slug": "luke-skywalker-lightsaber-p14-2d8-11",
+            "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+            "rawClause": "lightsaber +14 (2d8+11)",
+            "rawIncludesMarker": "lightsaber",
+            "attackBonusText": "+14",
+            "formulaPrinted": "2d8+11"
+          },
+          {
+            "slug": "luke-skywalker-lightsaber-p9-2d8-11",
+            "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+            "rawClause": "lightsaber +9 (2d8+11)",
+            "rawIncludesMarker": "lightsaber",
+            "attackBonusText": "+9",
+            "formulaPrinted": "2d8+11"
+          }
+        ]
+      },
+      {
+        "key": "emperor-roan-fel::lightsaber",
+        "memberCount": 2,
+        "kind": "distinct",
+        "crossPackSpanning": false,
+        "sampleActorName": "Emperor Roan Fel",
+        "sampleWeaponName": "Lightsaber",
+        "members": [
+          {
+            "slug": "emperor-roan-fel-lightsaber-p22-2d8-12",
+            "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+            "rawClause": "lightsaber +22 (2d8+12)",
+            "rawIncludesMarker": "lightsaber",
+            "attackBonusText": "+22",
+            "formulaPrinted": "2d8+12"
+          },
+          {
+            "slug": "emperor-roan-fel-lightsaber-p17-2d8-12",
+            "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+            "rawClause": "lightsaber +17 (2d8+12)",
+            "rawIncludesMarker": "lightsaber",
+            "attackBonusText": "+17",
+            "formulaPrinted": "2d8+12"
+          }
+        ]
+      },
+      {
+        "key": "anya-kuro::lightsaber",
+        "memberCount": 2,
+        "kind": "distinct",
+        "crossPackSpanning": false,
+        "sampleActorName": "An'ya Kuro",
+        "sampleWeaponName": "Lightsaber",
+        "members": [
+          {
+            "slug": "anya-kuro-lightsaber-p20-2d8-10",
+            "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+            "rawClause": "lightsaber +20 (2d8+10)",
+            "rawIncludesMarker": "lightsaber",
+            "attackBonusText": "+20",
+            "formulaPrinted": "2d8+10"
+          },
+          {
+            "slug": "anya-kuro-lightsaber-p17-2d8-10",
+            "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+            "rawClause": "lightsaber +17 (2d8+10)",
+            "rawIncludesMarker": "lightsaber",
+            "attackBonusText": "+17",
+            "formulaPrinted": "2d8+10"
+          }
+        ]
+      },
+      {
+        "key": "liash-keane::blaster carbine",
+        "memberCount": 2,
+        "kind": "distinct",
+        "crossPackSpanning": false,
+        "sampleActorName": "Liash Keane",
+        "sampleWeaponName": "Blaster Carbine",
+        "members": [
+          {
+            "slug": "liash-keane-blaster-carbine-p10-3d8-5",
+            "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+            "rawClause": "blaster carbine +10 (3d8+5)",
+            "rawIncludesMarker": "blaster carbine",
+            "attackBonusText": "+10",
+            "formulaPrinted": "3d8+5"
+          },
+          {
+            "slug": "liash-keane-blaster-carbine-p5-3d8-5",
+            "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+            "rawClause": "blaster carbine +5 (3d8+5)",
+            "rawIncludesMarker": "blaster carbine",
+            "attackBonusText": "+5",
+            "formulaPrinted": "3d8+5"
+          }
+        ]
+      }
+    ],
+    "mixed": [
+      {
+        "key": "rodian-black-sun-vigo::heavy blaster pistol",
+        "memberCount": 4,
+        "kind": "mixed",
+        "crossPackSpanning": true,
+        "sampleActorName": "Rodian Black Sun Vigo",
+        "sampleWeaponName": "Heavy Blaster Pistol",
+        "members": [
+          {
+            "slug": "rodian-black-sun-vigo-heavy-blaster-pistol-p15-3d8-9",
+            "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json",
+            "rawClause": "heavy blaster pistol +15 (3d8+9)",
+            "rawIncludesMarker": "heavy blaster pistol",
+            "attackBonusText": "+15",
+            "formulaPrinted": "3d8+9"
+          },
+          {
+            "slug": "rodian-black-sun-vigo-heavy-blaster-pistol-p10-3d8-9",
+            "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json",
+            "rawClause": "heavy blaster pistol +10 (3d8+9)",
+            "rawIncludesMarker": "heavy blaster pistol",
+            "attackBonusText": "+10",
+            "formulaPrinted": "3d8+9"
+          },
+          {
+            "slug": "rodian-black-sun-vigo-heavy-blaster-pistol-p15-3d8-9",
+            "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+            "rawClause": "heavy blaster pistol +15 (3d8+9)",
+            "rawIncludesMarker": "heavy blaster pistol",
+            "attackBonusText": "+15",
+            "formulaPrinted": "3d8+9"
+          },
+          {
+            "slug": "rodian-black-sun-vigo-heavy-blaster-pistol-p10-3d8-9",
+            "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+            "rawClause": "heavy blaster pistol +10 (3d8+9)",
+            "rawIncludesMarker": "heavy blaster pistol",
+            "attackBonusText": "+10",
+            "formulaPrinted": "3d8+9"
+          }
+        ]
+      },
+      {
+        "key": "storm-commando::blaster carbine",
+        "memberCount": 4,
+        "kind": "mixed",
+        "crossPackSpanning": true,
+        "sampleActorName": "Storm Commando",
+        "sampleWeaponName": "Blaster Carbine",
+        "members": [
+          {
+            "slug": "storm-commando-blaster-carbine-p12-3d8-3",
+            "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json",
+            "rawClause": "blaster carbine +12 (3d8+3)",
+            "rawIncludesMarker": "blaster carbine",
+            "attackBonusText": "+12",
+            "formulaPrinted": "3d8+3"
+          },
+          {
+            "slug": "storm-commando-blaster-carbine-p7-3d8-3",
+            "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json",
+            "rawClause": "blaster carbine +7 (3d8+3)",
+            "rawIncludesMarker": "blaster carbine",
+            "attackBonusText": "+7",
+            "formulaPrinted": "3d8+3"
+          },
+          {
+            "slug": "storm-commando-blaster-carbine-p12-3d8-3",
+            "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+            "rawClause": "blaster carbine +12 (3d8+3)",
+            "rawIncludesMarker": "blaster carbine",
+            "attackBonusText": "+12",
+            "formulaPrinted": "3d8+3"
+          },
+          {
+            "slug": "storm-commando-blaster-carbine-p7-3d8-3",
+            "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+            "rawClause": "blaster carbine +7 (3d8+3)",
+            "rawIncludesMarker": "blaster carbine",
+            "attackBonusText": "+7",
+            "formulaPrinted": "3d8+3"
+          }
+        ]
+      },
+      {
+        "key": "sith-lord::lightsaber",
+        "memberCount": 8,
+        "kind": "mixed",
+        "crossPackSpanning": true,
+        "sampleActorName": "Sith Lord",
+        "sampleWeaponName": "Lightsaber",
+        "members": [
+          {
+            "slug": "sith-lord-lightsaber-p19-2d8-10",
+            "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json",
+            "rawClause": "lightsaber +19 (2d8+10)",
+            "rawIncludesMarker": "lightsaber",
+            "attackBonusText": "+19",
+            "formulaPrinted": "2d8+10"
+          },
+          {
+            "slug": "sith-lord-lightsaber-p16-2d8-10",
+            "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json",
+            "rawClause": "lightsaber +16 (2d8+10)",
+            "rawIncludesMarker": "lightsaber",
+            "attackBonusText": "+16",
+            "formulaPrinted": "2d8+10"
+          },
+          {
+            "slug": "sith-lord-lightsaber-p11-3d8-10",
+            "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json",
+            "rawClause": "lightsaber +11 (3d8+10)",
+            "rawIncludesMarker": "lightsaber",
+            "attackBonusText": "+11",
+            "formulaPrinted": "3d8+10"
+          },
+          {
+            "slug": "sith-lord-lightsaber-p11-3d8-10",
+            "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json",
+            "rawClause": "lightsaber +11 (3d8+10)",
+            "rawIncludesMarker": "lightsaber",
+            "attackBonusText": "+11",
+            "formulaPrinted": "3d8+10"
+          },
+          {
+            "slug": "sith-lord-lightsaber-p19-2d8-10",
+            "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+            "rawClause": "lightsaber +19 (2d8+10)",
+            "rawIncludesMarker": "lightsaber",
+            "attackBonusText": "+19",
+            "formulaPrinted": "2d8+10"
+          },
+          {
+            "slug": "sith-lord-lightsaber-p16-2d8-10",
+            "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+            "rawClause": "lightsaber +16 (2d8+10)",
+            "rawIncludesMarker": "lightsaber",
+            "attackBonusText": "+16",
+            "formulaPrinted": "2d8+10"
+          },
+          {
+            "slug": "sith-lord-lightsaber-p11-3d8-10",
+            "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+            "rawClause": "lightsaber +11 (3d8+10)",
+            "rawIncludesMarker": "lightsaber",
+            "attackBonusText": "+11",
+            "formulaPrinted": "3d8+10"
+          },
+          {
+            "slug": "sith-lord-lightsaber-p11-3d8-10",
+            "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+            "rawClause": "lightsaber +11 (3d8+10)",
+            "rawIncludesMarker": "lightsaber",
+            "attackBonusText": "+11",
+            "formulaPrinted": "3d8+10"
+          }
+        ]
+      },
+      {
+        "key": "pirate-captain::vibroblade",
+        "memberCount": 4,
+        "kind": "mixed",
+        "crossPackSpanning": true,
+        "sampleActorName": "Pirate Captain",
+        "sampleWeaponName": "Vibroblade",
+        "members": [
+          {
+            "slug": "pirate-captain-vibroblade-p9-2d6-5",
+            "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json",
+            "rawClause": "vibroblade +9 (2d6+5)",
+            "rawIncludesMarker": "vibroblade",
+            "attackBonusText": "+9",
+            "formulaPrinted": "2d6+5"
+          },
+          {
+            "slug": "pirate-captain-vibroblade-p4-2d6-5",
+            "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json",
+            "rawClause": "vibroblade +4 (2d6+5)",
+            "rawIncludesMarker": "vibroblade",
+            "attackBonusText": "+4",
+            "formulaPrinted": "2d6+5"
+          },
+          {
+            "slug": "pirate-captain-vibroblade-p9-2d6-5",
+            "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+            "rawClause": "vibroblade +9 (2d6+5)",
+            "rawIncludesMarker": "vibroblade",
+            "attackBonusText": "+9",
+            "formulaPrinted": "2d6+5"
+          },
+          {
+            "slug": "pirate-captain-vibroblade-p4-2d6-5",
+            "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+            "rawClause": "vibroblade +4 (2d6+5)",
+            "rawIncludesMarker": "vibroblade",
+            "attackBonusText": "+4",
+            "formulaPrinted": "2d6+5"
+          }
+        ]
+      },
+      {
+        "key": "core-craft-sentry::sporting blaster rifle",
+        "memberCount": 4,
+        "kind": "mixed",
+        "crossPackSpanning": true,
+        "sampleActorName": "Core Craft Sentry",
+        "sampleWeaponName": "Sporting Blaster Rifle",
+        "members": [
+          {
+            "slug": "core-craft-sentry-sporting-blaster-rifle-p8-3d6-4",
+            "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json",
+            "rawClause": "sporting blaster rifle +8 (3d6+4)",
+            "rawIncludesMarker": "sporting blaster rifle",
+            "attackBonusText": "+8",
+            "formulaPrinted": "3d6+4"
+          },
+          {
+            "slug": "core-craft-sentry-sporting-blaster-rifle-p9-4d6-4-with-deadeye",
+            "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json",
+            "rawClause": "sporting blaster rifle +9 (4d6+4) with deadeye",
+            "rawIncludesMarker": "sporting blaster rifle",
+            "attackBonusText": "+9",
+            "formulaPrinted": "4d6+4"
+          },
+          {
+            "slug": "core-craft-sentry-sporting-blaster-rifle-p8-3d6-4",
+            "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+            "rawClause": "sporting blaster rifle +8 (3d6+4)",
+            "rawIncludesMarker": "sporting blaster rifle",
+            "attackBonusText": "+8",
+            "formulaPrinted": "3d6+4"
+          },
+          {
+            "slug": "core-craft-sentry-sporting-blaster-rifle-p9-4d6-4-with-deadeye",
+            "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+            "rawClause": "sporting blaster rifle +9 (4d6+4) with deadeye",
+            "rawIncludesMarker": "sporting blaster rifle",
+            "attackBonusText": "+9",
+            "formulaPrinted": "4d6+4"
+          }
+        ]
+      },
+      {
+        "key": "mandalorian-scout::blaster carbine",
+        "memberCount": 4,
+        "kind": "mixed",
+        "crossPackSpanning": true,
+        "sampleActorName": "Mandalorian Scout",
+        "sampleWeaponName": "Blaster Carbine",
+        "members": [
+          {
+            "slug": "mandalorian-scout-blaster-carbine-p7-3d8-2",
+            "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json",
+            "rawClause": "blaster carbine +7 (3d8+2)",
+            "rawIncludesMarker": "blaster carbine",
+            "attackBonusText": "+7",
+            "formulaPrinted": "3d8+2"
+          },
+          {
+            "slug": "mandalorian-scout-blaster-carbine-p7-4d8-2-with-deadeye",
+            "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json",
+            "rawClause": "blaster carbine +7 (4d8+2) with deadeye",
+            "rawIncludesMarker": "blaster carbine",
+            "attackBonusText": "+7",
+            "formulaPrinted": "4d8+2"
+          },
+          {
+            "slug": "mandalorian-scout-blaster-carbine-p7-3d8-2",
+            "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+            "rawClause": "blaster carbine +7 (3d8+2)",
+            "rawIncludesMarker": "blaster carbine",
+            "attackBonusText": "+7",
+            "formulaPrinted": "3d8+2"
+          },
+          {
+            "slug": "mandalorian-scout-blaster-carbine-p7-4d8-2-with-deadeye",
+            "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+            "rawClause": "blaster carbine +7 (4d8+2) with deadeye",
+            "rawIncludesMarker": "blaster carbine",
+            "attackBonusText": "+7",
+            "formulaPrinted": "4d8+2"
+          }
+        ]
+      },
+      {
+        "key": "elite-shadow-guard::lightsaber pike",
+        "memberCount": 12,
+        "kind": "mixed",
+        "crossPackSpanning": true,
+        "sampleActorName": "Elite Shadow Guard",
+        "sampleWeaponName": "Lightsaber Pike *",
+        "members": [
+          {
+            "slug": "elite-shadow-guard-lightsaber-pike-p23-3d8-14",
+            "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json",
+            "rawClause": "lightsaber pike * +23 (3d8+14; 2-square reach )",
+            "rawIncludesMarker": "lightsaber pike *",
+            "attackBonusText": "+23",
+            "formulaPrinted": "3d8+14"
+          },
+          {
+            "slug": "elite-shadow-guard-lightsaber-pike-p25-3d8-14-with-flurry",
+            "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json",
+            "rawClause": "lightsaber pike * +25 (3d8+14; 2-square reach ) with flurry",
+            "rawIncludesMarker": "lightsaber pike *",
+            "attackBonusText": "+25",
+            "formulaPrinted": "3d8+14"
+          },
+          {
+            "slug": "elite-shadow-guard-lightsaber-pike-p23-4d8-14-with-flurry",
+            "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json",
+            "rawClause": "lightsaber pike * +23 (4d8+14; 2-square reach ) with flurry",
+            "rawIncludesMarker": "lightsaber pike *",
+            "attackBonusText": "+23",
+            "formulaPrinted": "4d8+14"
+          },
+          {
+            "slug": "elite-shadow-guard-lightsaber-pike-p20-3d8-14",
+            "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json",
+            "rawClause": "lightsaber pike * +20 (3d8+14; 2-square reach )",
+            "rawIncludesMarker": "lightsaber pike *",
+            "attackBonusText": "+20",
+            "formulaPrinted": "3d8+14"
+          },
+          {
+            "slug": "elite-shadow-guard-lightsaber-pike-p17-3d8-14",
+            "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json",
+            "rawClause": "lightsaber pike * +17 (3d8+14; 2-square reach )",
+            "rawIncludesMarker": "lightsaber pike *",
+            "attackBonusText": "+17",
+            "formulaPrinted": "3d8+14"
+          },
+          {
+            "slug": "elite-shadow-guard-lightsaber-pike-p17-4d8-14",
+            "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json",
+            "rawClause": "lightsaber pike * +17 (4d8+14; 2-square reach )",
+            "rawIncludesMarker": "lightsaber pike *",
+            "attackBonusText": "+17",
+            "formulaPrinted": "4d8+14"
+          },
+          {
+            "slug": "elite-shadow-guard-lightsaber-pike-p23-3d8-14",
+            "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+            "rawClause": "lightsaber pike * +23 (3d8+14; 2-square reach )",
+            "rawIncludesMarker": "lightsaber pike *",
+            "attackBonusText": "+23",
+            "formulaPrinted": "3d8+14"
+          },
+          {
+            "slug": "elite-shadow-guard-lightsaber-pike-p25-3d8-14-with-flurry",
+            "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+            "rawClause": "lightsaber pike * +25 (3d8+14; 2-square reach ) with flurry",
+            "rawIncludesMarker": "lightsaber pike *",
+            "attackBonusText": "+25",
+            "formulaPrinted": "3d8+14"
+          },
+          {
+            "slug": "elite-shadow-guard-lightsaber-pike-p23-4d8-14-with-flurry",
+            "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+            "rawClause": "lightsaber pike * +23 (4d8+14; 2-square reach ) with flurry",
+            "rawIncludesMarker": "lightsaber pike *",
+            "attackBonusText": "+23",
+            "formulaPrinted": "4d8+14"
+          },
+          {
+            "slug": "elite-shadow-guard-lightsaber-pike-p20-3d8-14",
+            "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+            "rawClause": "lightsaber pike * +20 (3d8+14; 2-square reach )",
+            "rawIncludesMarker": "lightsaber pike *",
+            "attackBonusText": "+20",
+            "formulaPrinted": "3d8+14"
+          },
+          {
+            "slug": "elite-shadow-guard-lightsaber-pike-p17-3d8-14",
+            "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+            "rawClause": "lightsaber pike * +17 (3d8+14; 2-square reach )",
+            "rawIncludesMarker": "lightsaber pike *",
+            "attackBonusText": "+17",
+            "formulaPrinted": "3d8+14"
+          },
+          {
+            "slug": "elite-shadow-guard-lightsaber-pike-p17-4d8-14",
+            "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+            "rawClause": "lightsaber pike * +17 (4d8+14; 2-square reach )",
+            "rawIncludesMarker": "lightsaber pike *",
+            "attackBonusText": "+17",
+            "formulaPrinted": "4d8+14"
+          }
+        ]
+      },
+      {
+        "key": "imperial-knight::lightsaber",
+        "memberCount": 4,
+        "kind": "mixed",
+        "crossPackSpanning": true,
+        "sampleActorName": "Imperial Knight",
+        "sampleWeaponName": "Lightsaber",
+        "members": [
+          {
+            "slug": "imperial-knight-lightsaber-p15-2d8-8",
+            "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json",
+            "rawClause": "lightsaber +15 (2d8+8)",
+            "rawIncludesMarker": "lightsaber",
+            "attackBonusText": "+15",
+            "formulaPrinted": "2d8+8"
+          },
+          {
+            "slug": "imperial-knight-lightsaber-p11-2d8-16",
+            "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json",
+            "rawClause": "lightsaber +11* (2d8+16)",
+            "rawIncludesMarker": "lightsaber",
+            "attackBonusText": "+11*",
+            "formulaPrinted": "2d8+16"
+          },
+          {
+            "slug": "imperial-knight-lightsaber-p15-2d8-8",
+            "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+            "rawClause": "lightsaber +15 (2d8+8)",
+            "rawIncludesMarker": "lightsaber",
+            "attackBonusText": "+15",
+            "formulaPrinted": "2d8+8"
+          },
+          {
+            "slug": "imperial-knight-lightsaber-p11-2d8-16",
+            "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+            "rawClause": "lightsaber +11* (2d8+16)",
+            "rawIncludesMarker": "lightsaber",
+            "attackBonusText": "+11*",
+            "formulaPrinted": "2d8+16"
+          }
+        ]
+      },
+      {
+        "key": "ship-gunner::blaster cannon",
+        "memberCount": 4,
+        "kind": "mixed",
+        "crossPackSpanning": true,
+        "sampleActorName": "Ship Gunner",
+        "sampleWeaponName": "Blaster Cannon",
+        "members": [
+          {
+            "slug": "ship-gunner-blaster-cannon-p11-3d12-5",
+            "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json",
+            "rawClause": "blaster cannon +11 (3d12+5)",
+            "rawIncludesMarker": "blaster cannon",
+            "attackBonusText": "+11",
+            "formulaPrinted": "3d12+5"
+          },
+          {
+            "slug": "ship-gunner-blaster-cannon-p6-3d12-5",
+            "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json",
+            "rawClause": "blaster cannon +6 (3d12+5)",
+            "rawIncludesMarker": "blaster cannon",
+            "attackBonusText": "+6",
+            "formulaPrinted": "3d12+5"
+          },
+          {
+            "slug": "ship-gunner-blaster-cannon-p11-3d12-5",
+            "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+            "rawClause": "blaster cannon +11 (3d12+5)",
+            "rawIncludesMarker": "blaster cannon",
+            "attackBonusText": "+11",
+            "formulaPrinted": "3d12+5"
+          },
+          {
+            "slug": "ship-gunner-blaster-cannon-p6-3d12-5",
+            "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+            "rawClause": "blaster cannon +6 (3d12+5)",
+            "rawIncludesMarker": "blaster cannon",
+            "attackBonusText": "+6",
+            "formulaPrinted": "3d12+5"
+          }
+        ]
+      },
+      {
+        "key": "ship-captain::vibrodagger",
+        "memberCount": 4,
+        "kind": "mixed",
+        "crossPackSpanning": true,
+        "sampleActorName": "Ship Captain",
+        "sampleWeaponName": "Vibrodagger",
+        "members": [
+          {
+            "slug": "ship-captain-vibrodagger-p13-2d4-6",
+            "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json",
+            "rawClause": "vibrodagger +13 (2d4+6)",
+            "rawIncludesMarker": "vibrodagger",
+            "attackBonusText": "+13",
+            "formulaPrinted": "2d4+6"
+          },
+          {
+            "slug": "ship-captain-vibrodagger-p8-2d4-6",
+            "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json",
+            "rawClause": "vibrodagger +8 (2d4+6)",
+            "rawIncludesMarker": "vibrodagger",
+            "attackBonusText": "+8",
+            "formulaPrinted": "2d4+6"
+          },
+          {
+            "slug": "ship-captain-vibrodagger-p13-2d4-6",
+            "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+            "rawClause": "vibrodagger +13 (2d4+6)",
+            "rawIncludesMarker": "vibrodagger",
+            "attackBonusText": "+13",
+            "formulaPrinted": "2d4+6"
+          },
+          {
+            "slug": "ship-captain-vibrodagger-p8-2d4-6",
+            "sourceFile": "data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json",
+            "rawClause": "vibrodagger +8 (2d4+6)",
+            "rawIncludesMarker": "vibrodagger",
+            "attackBonusText": "+8",
+            "formulaPrinted": "2d4+6"
+          }
+        ]
+      }
+    ]
+  }
+}

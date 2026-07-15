@@ -193,10 +193,33 @@ function loadExistingProfileMatchers() {
       const actorSlugs = (record.match?.actorSlugs || []).map(slugify).filter(Boolean);
       const rawIncludes = (record.match?.rawIncludes || []).map(v => clean(v).toLowerCase()).filter(Boolean);
       if (!actorSlugs.length || !rawIncludes.length) continue;
-      matchers.push({ file: relPath, slug: record.slug, actorSlugs, rawIncludes });
+      // formulaPrinted/attackBonusText/weaponName give an exact, row-specific
+      // identity signal (actor + weapon name + printed formula + printed
+      // attack bonus) independent of rawIncludes marker granularity. Mirrors
+      // tools/generate-nonheroic-damage-profile-candidates.mjs
+      // loadExistingProfileMatchers -- see findAlreadyProfiled below and
+      // docs/audits/nonheroic-lane-a-identity-tightening.md.
+      const formulaPrinted = record.formula?.printed != null ? clean(record.formula.printed).toLowerCase() : null;
+      const attackBonusText = record.printedAttack?.text != null ? clean(record.printedAttack.text).toLowerCase() : null;
+      const weaponName = record.name != null ? clean(record.name).toLowerCase() : null;
+      matchers.push({ file: relPath, slug: record.slug, actorSlugs, rawIncludes, formulaPrinted, attackBonusText, weaponName });
     }
   }
   return matchers;
+}
+
+// Mirrors tools/generate-nonheroic-damage-profile-candidates.mjs
+// normalizeWeaponName, used only to group candidate-pool rows by
+// actor+weapon-name pair for duplicate-row identity gating (see
+// findAlreadyProfiled below).
+function normalizeWeaponName(name) {
+  return String(name || '')
+    .toLowerCase()
+    .normalize('NFKD')
+    .replace(/[’']/g, '')
+    .replace(/[^a-z0-9]+/g, ' ')
+    .trim()
+    .replace(/\s+/g, ' ');
 }
 
 // ---------------------------------------------------------------------------
@@ -230,10 +253,39 @@ function matchAllowlistEntry(entry, pool) {
   });
 }
 
-function findAlreadyProfiled(actorSlug, marker, matchers) {
+// Identity resolution for "has this exact candidate row already been
+// promoted into an existing canonical profile record?" Mirrors
+// tools/generate-nonheroic-damage-profile-candidates.mjs findAlreadyProfiled.
+//
+// Tier 1 (exact): actorSlug + weapon name + printed formula + printed attack
+// bonus text, all of which are populated on every promoted/hand-authored
+// record regardless of pass. Robust even when the existing record's
+// rawIncludes marker is the legacy bare weapon name, and correctly
+// distinguishes duplicate raw rows for the same actor+weapon-name pair.
+//
+// Tier 2 (legacy fallback): the original bidirectional bare-marker substring
+// check, retained for records that predate formula.printed/printedAttack.text
+// capture. Only trusted when duplicateGroupSize is 1 -- with more than one
+// raw candidate row sharing this actor+weapon-name pair, a bare marker
+// cannot safely say which duplicate it covers, so falling back here would
+// risk silently skipping a row that was never actually promoted (the
+// blocking bug this pass fixes; see
+// docs/audits/nonheroic-lane-a-identity-tightening.md).
+function findAlreadyProfiled(actorSlug, record, matchers, duplicateGroupSize) {
+  const candidatesForActor = matchers.filter(m => m.actorSlugs.includes(actorSlug));
+  if (!candidatesForActor.length) return null;
+
+  const normName = clean(record.weapon.printedName).toLowerCase();
+  const normFormula = clean(record.formula?.printed).toLowerCase();
+  const normBonus = clean(record.printedAttack?.text).toLowerCase();
+  const exact = candidatesForActor.find(m => m.weaponName != null && m.formulaPrinted != null && m.attackBonusText != null &&
+    m.weaponName === normName && m.formulaPrinted === normFormula && m.attackBonusText === normBonus);
+  if (exact) return exact;
+
+  if (duplicateGroupSize > 1) return null;
+  const marker = record.match.rawIncludes[0];
   const normMarker = clean(marker).toLowerCase();
-  return matchers.find(m => m.actorSlugs.includes(actorSlug) &&
-    m.rawIncludes.some(r => normMarker.includes(r) || r.includes(normMarker)));
+  return candidatesForActor.find(m => m.rawIncludes.some(r => normMarker.includes(r) || r.includes(normMarker))) || null;
 }
 
 // ---------------------------------------------------------------------------
@@ -295,7 +347,16 @@ function toCanonicalRecord({ sourceFile, record }) {
     },
     match: {
       actorSlugs: [...record.match.actorSlugs],
-      rawIncludes: [...record.match.rawIncludes]
+      // Prefer the fuller, per-row rawClause marker (full printed clause
+      // text) over the legacy bare weapon-name marker where the candidate
+      // provides one -- it is strictly more specific (a superset match
+      // constraint), so it is always at least as safe, and it is the only
+      // granularity that can tell apart duplicate raw rows for the same
+      // actor+weapon-name pair. Falls back to the legacy marker for older
+      // candidate files that predate rawClause. Does not touch any
+      // already-promoted record's match.rawIncludes -- see
+      // docs/audits/nonheroic-lane-a-identity-tightening.md.
+      rawIncludes: [record.match.rawClause || record.match.rawIncludes[0]]
     },
     weapon: {
       printedName: w.printedName,
@@ -401,6 +462,18 @@ function main() {
   const existingMatchers = loadExistingProfileMatchers();
   const existingTargetDoc = loadTargetProfileDoc();
 
+  // Duplicate raw-row identity grouping across the full candidate pool (not
+  // just the allowlisted entries), mirroring
+  // tools/generate-nonheroic-damage-profile-candidates.mjs. Used to gate the
+  // legacy bare-marker fallback in findAlreadyProfiled.
+  const poolDuplicateGroupCounts = new Map();
+  for (const { record } of pool) {
+    const actorSlug = record.actor?.slugs?.[0];
+    if (!actorSlug || !record.weapon?.printedName) continue;
+    const key = `${actorSlug}::${normalizeWeaponName(record.weapon.printedName)}`;
+    poolDuplicateGroupCounts.set(key, (poolDuplicateGroupCounts.get(key) || 0) + 1);
+  }
+
   const perEntry = [];
   let aborted = errors.length > 0;
 
@@ -445,8 +518,9 @@ function main() {
       }
 
       const actorSlug = record.actor.slugs[0];
-      const marker = record.match.rawIncludes[0];
-      const already = findAlreadyProfiled(actorSlug, marker, existingMatchers);
+      const dupKey = `${actorSlug}::${normalizeWeaponName(record.weapon.printedName)}`;
+      const duplicateGroupSize = poolDuplicateGroupCounts.get(dupKey) || 1;
+      const already = findAlreadyProfiled(actorSlug, record, existingMatchers, duplicateGroupSize);
       if (already) {
         perEntry.push({
           entry,

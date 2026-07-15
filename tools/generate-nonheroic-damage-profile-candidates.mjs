@@ -103,6 +103,17 @@ function slugify(value) {
   return clean(value).toLowerCase().replace(/['’]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
 }
 
+// Sign-preserving slug for an attack-bonus string (e.g. "+20" -> "p20",
+// "-2" -> "m2"), used only to disambiguate candidate slugs for duplicate raw
+// rows (see toCandidateRecord). Plain slugify() would collapse both "+2" and
+// "-2" to the same "2" token, which would silently recreate the exact
+// duplicate-identity problem this disambiguation exists to fix.
+function bonusSlug(attackBonusText) {
+  const text = clean(attackBonusText);
+  const sign = text.startsWith('-') ? 'm' : text.startsWith('+') ? 'p' : '';
+  return sign + slugify(text.replace(/^[+-]/, ''));
+}
+
 // ---------------------------------------------------------------------------
 // Weapon pack index (mirrors tools/audit-nonheroic-profile-weapon-uuids.mjs)
 // ---------------------------------------------------------------------------
@@ -431,9 +442,29 @@ function extractFromBeastPack(sourcePath, sourceKind) {
 // Candidate JSON (staging shape, close to but not identical to NH-2 records)
 // ---------------------------------------------------------------------------
 
-function toCandidateRecord(row, result) {
+function toCandidateRecord(row, result, duplicateGroupSize) {
   const item = result.matches?.[0] ?? null;
-  const slug = `${row.actorSlug}-${slugify(row.clause.printedName)}`;
+  const baseSlug = `${row.actorSlug}-${slugify(row.clause.printedName)}`;
+  // Duplicate raw rows for the same actor+weapon-name pair (different
+  // attack bonus/formula/annotation, e.g. a full-attack sequence, or the
+  // same actor document appearing in more than one source pack) would
+  // otherwise all generate this exact same base slug, which the promotion
+  // tool's duplicate-slug guard would then correctly refuse to promote
+  // together. Disambiguate with the printed attack-bonus text, which is
+  // stable and human-readable, only when this row actually has siblings --
+  // singleton rows keep their original slug unchanged. See
+  // docs/audits/nonheroic-lane-a-identity-tightening.md.
+  // Bonus text alone occasionally collides too (two rows for the same
+  // actor+weapon with the same printed attack bonus but a different damage
+  // formula); appending the formula closes that gap without giving up the
+  // bonus-first ordering that keeps related duplicates' slugs readable next
+  // to each other. A final suffix segment (only when the row actually has a
+  // printed suffix, e.g. "with Flurry") closes the last remaining gap: two
+  // rows can share bonus AND formula and differ only in a trailing
+  // "with ..." qualifier (see docs/audits/nonheroic-lane-a-identity-tightening.md).
+  const slugParts = [baseSlug, bonusSlug(row.clause.attackBonusText), slugify(row.clause.damageFormula)];
+  if (row.clause.suffix) slugParts.push(slugify(row.clause.suffix));
+  const slug = duplicateGroupSize > 1 ? slugParts.join('-') : baseSlug;
   return {
     slug,
     name: row.clause.printedName,
@@ -455,7 +486,18 @@ function toCandidateRecord(row, result) {
       // specific attack bonus/damage numbers -- those live in printedAttack
       // and formula.printed instead, and would make the marker too narrow
       // to match this actor's row again if the exact digits ever changed.
-      rawIncludes: [row.clause.printedName.toLowerCase()]
+      // Kept as-is for backward compatibility with every existing consumer
+      // of this field's shape.
+      rawIncludes: [row.clause.printedName.toLowerCase()],
+      // Fuller, per-row marker: the full printed clause text (name + attack
+      // bonus + damage + annotations), stable and effectively unique per
+      // printed row. The promotion tool prefers this over rawIncludes above
+      // when staging a new canonical record's match.rawIncludes, since it is
+      // the only marker granularity that can tell apart two duplicate raw
+      // rows for the same actor+weapon-name pair (e.g. the same weapon fired
+      // twice with different attack bonuses). See
+      // docs/audits/nonheroic-lane-a-identity-tightening.md.
+      rawClause: clean(row.clause.raw).toLowerCase()
     },
     weapon: {
       printedName: row.clause.printedName,
@@ -505,9 +547,22 @@ function main() {
     rawRows.push(...extractFromBeastPack(BEAST_SOURCE.file, BEAST_SOURCE.kind));
   }
 
+  // Duplicate raw-row identity grouping: how many raw candidate rows share
+  // the same actor + normalized weapon name. A group size > 1 means this
+  // actor has more than one printed attack row using the same weapon name
+  // (different bonus/formula/annotation) -- exactly the case the bare
+  // rawIncludes marker cannot disambiguate. See findAlreadyProfiled above.
+  const duplicateGroupCounts = new Map();
+  for (const row of rawRows) {
+    const key = `${row.actorSlug}::${normalizeWeaponName(row.clause.printedName)}`;
+    duplicateGroupCounts.set(key, (duplicateGroupCounts.get(key) || 0) + 1);
+  }
+
   const results = rawRows.map(row => {
+    const key = `${row.actorSlug}::${normalizeWeaponName(row.clause.printedName)}`;
+    const duplicateGroupSize = duplicateGroupCounts.get(key) || 1;
     const result = classifyRow(row.clause, row.attackKind, weaponIndex, existingMatchers, row.actorSlug, row.actorName);
-    return { row, result };
+    return { row, result, duplicateGroupSize };
   });
 
   const buckets = {
@@ -532,6 +587,10 @@ function main() {
     sourceFilesScanned: ACTOR_SOURCES.map(s => s.file).concat(exists(BEAST_SOURCE.file) ? [BEAST_SOURCE.file] : []),
     candidateRowsExtracted: results.length,
     counts: Object.fromEntries(Object.entries(buckets).map(([k, v]) => [k, v.length])),
+    duplicateRawRowGroups: {
+      rowsInGroupsLargerThanOne: results.filter(r => r.duplicateGroupSize > 1).length,
+      distinctGroupsLargerThanOne: new Set(results.filter(r => r.duplicateGroupSize > 1).map(r => `${r.row.actorSlug}::${normalizeWeaponName(r.row.clause.printedName)}`)).size
+    },
     sourceBookNote: 'All candidate rows are generated from actor-pack raw statblock fields, which carry no book/page attribution in this repository (matches the finding already documented in the PR #903 coverage audit and every prior NH batch). source.book is set to "Unknown / missing source" and confidence is manualRequired for every candidate rather than gating generation on a source-missing bucket that would otherwise swallow ~100% of rows.'
   };
 
@@ -542,7 +601,9 @@ function main() {
       for (const { row, result } of buckets[status]) {
         const packLabel = path.basename(row.sourcePath, '.db');
         if (!safeBySource.has(packLabel)) safeBySource.set(packLabel, []);
-        safeBySource.get(packLabel).push(toCandidateRecord(row, result));
+        const key = `${row.actorSlug}::${normalizeWeaponName(row.clause.printedName)}`;
+        const duplicateGroupSize = duplicateGroupCounts.get(key) || 1;
+        safeBySource.get(packLabel).push(toCandidateRecord(row, result, duplicateGroupSize));
       }
     }
     for (const [packLabel, records] of safeBySource) {
@@ -561,7 +622,7 @@ function main() {
   }
   summary.writtenFiles = writtenFiles;
 
-  writeText(OUTPUT_JSON, JSON.stringify({ summary, results: results.map(r => ({ ...r.row, clause: r.row.clause, status: r.result.status, detail: r.result.detail, matches: r.result.matches?.map(m => ({ uuid: m.uuid, damage: m.damage, damageType: m.damageType })) })) }, null, 2) + '\n');
+  writeText(OUTPUT_JSON, JSON.stringify({ summary, results: results.map(r => ({ ...r.row, clause: r.row.clause, status: r.result.status, detail: r.result.detail, duplicateGroupSize: r.duplicateGroupSize, matches: r.result.matches?.map(m => ({ uuid: m.uuid, damage: m.damage, damageType: m.damageType })) })) }, null, 2) + '\n');
   writeText(OUTPUT_MD, renderMarkdown(summary, buckets));
 
   console.log(JSON.stringify(summary, null, 2));
