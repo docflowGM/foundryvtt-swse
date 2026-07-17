@@ -1,12 +1,14 @@
 import { ForceExecutor } from "/systems/foundryvtt-swse/scripts/engine/force/force-executor.js";
+import { ForceRegimenExecutor } from "/systems/foundryvtt-swse/scripts/engine/force/force-regimen-executor.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { DerivedCalculator } from "/systems/foundryvtt-swse/scripts/actors/derived/derived-calculator.js";
-import { promptForcePowerRollOptions } from "/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet/force-roll-dialog.js";
+import { promptForcePowerRollOptions, promptForceRegimenRollOptions } from "/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet/force-roll-dialog.js";
 
 let registered = false;
 const TELEKINETIC_MESSAGE_PATCH_FLAG = Symbol.for('swse.forceSuiteRuntimeRepairs.telekineticMessage.v1');
 const FORCE_EXECUTOR_ROLLBACK_PATCH_FLAG = Symbol.for('swse.forceSuiteRuntimeRepairs.rollback.v1');
 const SKILL_FOCUS_NON_STACK_PATCH_FLAG = Symbol.for('swse.forceSuiteRuntimeRepairs.skillFocusNonStack.v1');
+const FORCE_SUITE_ACTION_DELEGATE_FLAG = Symbol.for('swse.forceSuiteRuntimeRepairs.actionDelegate.v1');
 
 function normalizeName(value = '') {
   return String(value ?? '').trim().toLowerCase().replace(/\s+/g, ' ').replace(/\s*\(\d+\)\s*$/, '');
@@ -122,12 +124,6 @@ function installTelepathicIntruderBonus() {
 }
 
 function installTelekineticRepeatActionRepair() {
-  // force-executor.js currently passes telekineticPowerRepeatAction while the
-  // local value is named telekineticRepeatAction. In a module, that unresolved
-  // identifier throws after the roll resolves but before the chat card posts.
-  // A global binding prevents the ReferenceError; the message wrapper below
-  // rebuilds the actual action payload so the Telekinetic Power repeat button
-  // still appears when a natural 20 qualifies.
   if (!Object.prototype.hasOwnProperty.call(globalThis, 'telekineticPowerRepeatAction')) {
     globalThis.telekineticPowerRepeatAction = null;
   }
@@ -190,9 +186,6 @@ function installForcePowerErrorRollback() {
       console.error('SWSE | Force power execution threw outside executor catch', err);
     }
 
-    // A failed Use the Force check is still a real power use. Only rollback when
-    // the executor reports an internal/runtime error, which is represented by an
-    // error string on the result object.
     if (result?.error) {
       const currentPower = actor?.items?.get?.(powerId) ?? null;
       const shouldRestoreReady = currentPower && !wasDiscarded && currentPower.system?.discarded === true;
@@ -298,6 +291,11 @@ function actorFromApp(app) {
   return candidate?.items ? candidate : null;
 }
 
+function actorFromButton(button) {
+  const actorId = button?.dataset?.actorId || button?.closest?.('[data-swse-actor-id]')?.dataset?.swseActorId || '';
+  return actorId ? (game?.actors?.get?.(actorId) ?? null) : null;
+}
+
 function forcePowerByName(actor, name) {
   const wanted = normalizeName(name);
   if (!wanted) return null;
@@ -308,17 +306,23 @@ function repairForceCardIds(app, html) {
   const actor = actorFromApp(app);
   const root = rootFromHtml(html);
   if (!actor || !root?.querySelectorAll) return;
-  if (!root.querySelector('[data-force-suite-tab]')) return;
+  const forceRoot = root.querySelector('[data-force-suite-tab]');
+  if (!forceRoot) return;
 
-  for (const card of root.querySelectorAll('.force-card')) {
+  forceRoot.dataset.swseActorId = actor.id;
+  forceRoot.querySelectorAll('[data-action^="force-suite-"], [data-action="activate-force"], [data-action="use-force-regimen"], [data-action="end-force-regimen"]').forEach(button => {
+    button.dataset.actorId = actor.id;
+  });
+
+  for (const card of forceRoot.querySelectorAll('.force-card')) {
     const currentId = card.dataset.itemId || '';
     const name = card.querySelector('.force-name, .fc-name')?.textContent?.trim() || '';
-    const power = currentId ? actor.items?.get?.(currentId) : forcePowerByName(actor, name);
-    if (!power?.id) continue;
+    const item = currentId ? actor.items?.get?.(currentId) : forcePowerByName(actor, name);
+    if (!item?.id) continue;
 
-    card.dataset.itemId = power.id;
-    card.querySelectorAll('[data-action="activate-force"]').forEach(button => {
-      button.dataset.itemId = power.id;
+    card.dataset.itemId = item.id;
+    card.querySelectorAll('[data-action="activate-force"], [data-action="use-force-regimen"], [data-action="end-force-regimen"]').forEach(button => {
+      button.dataset.itemId = item.id;
       button.dataset.actorId = actor.id;
     });
 
@@ -327,7 +331,7 @@ function repairForceCardIds(app, html) {
       button.type = 'button';
       button.className = 'fc-use';
       button.dataset.action = 'activate-force';
-      button.dataset.itemId = power.id;
+      button.dataset.itemId = item.id;
       button.dataset.actorId = actor.id;
       button.dataset.swseRuntimeRepaired = 'true';
       button.textContent = '▶ USE POWER';
@@ -378,7 +382,7 @@ function repairSkillMathDisplay(app, html) {
 }
 
 async function executeRepairedForceButton(button) {
-  const actor = game?.actors?.get?.(button.dataset.actorId) ?? null;
+  const actor = actorFromButton(button) ?? game?.actors?.get?.(button.dataset.actorId) ?? null;
   const itemId = button.dataset.itemId || '';
   const power = actor?.items?.get?.(itemId) ?? null;
   if (!actor || !power) {
@@ -401,6 +405,191 @@ async function executeRepairedForceButton(button) {
   actor.sheet?.render?.(false);
 }
 
+function clearRecoveryModes(root) {
+  root?.classList?.remove('is-picking-recovery');
+  root?.classList?.remove('is-picking-telekinetic-savant');
+  root?.classList?.remove('is-picking-influence-savant');
+  root?.classList?.remove('is-picking-lightsaber-form-savant');
+  root?.querySelectorAll?.('[data-action^="force-suite-pick-"]').forEach(button => button.classList.remove('sel'));
+}
+
+function toggleRecoveryMode(button, modeClass, emptyMessage, eligibleSelector = '[data-action="force-suite-recover-one"]') {
+  const root = button.closest('[data-force-suite-tab]');
+  if (!root) return;
+  const hasEligible = !!root.querySelector(`[data-force-discard-pile] ${eligibleSelector}`);
+  if (!hasEligible) {
+    ui?.notifications?.info?.(emptyMessage);
+    return;
+  }
+  const wasActive = root.classList.contains(modeClass);
+  clearRecoveryModes(root);
+  if (!wasActive) {
+    root.classList.add(modeClass);
+    button.classList.add('sel');
+  }
+}
+
+async function handleForceSuiteRecoverAll(button) {
+  const actor = actorFromButton(button);
+  if (!actor) {
+    ui?.notifications?.warn?.('Could not resolve actor for Force power recovery. Reopen the sheet and try again.');
+    return;
+  }
+  button.disabled = true;
+  try {
+    const result = await ForceExecutor.recoverForcePowers(actor);
+    if (result?.success) {
+      ui?.notifications?.info?.('All spent Force powers recovered.');
+      actor.sheet?.render?.(false);
+    } else {
+      ui?.notifications?.warn?.(result?.error || 'No spent Force powers to recover.');
+    }
+  } catch (err) {
+    console.error('SWSE | Force suite recover-all failed', err);
+    ui?.notifications?.error?.(`Force recovery failed: ${err.message}`);
+  } finally {
+    button.disabled = false;
+  }
+}
+
+async function handleForceSuiteRecoverOne(button) {
+  const actor = actorFromButton(button);
+  const itemId = button.dataset.itemId || '';
+  const root = button.closest('[data-force-suite-tab]');
+  if (!actor || !itemId) {
+    ui?.notifications?.warn?.('Could not resolve actor or Force power for recovery. Reopen the sheet and try again.');
+    return;
+  }
+
+  const usingForcePoint = root?.classList.contains('is-picking-recovery');
+  const usingTelekineticSavant = root?.classList.contains('is-picking-telekinetic-savant');
+  const usingInfluenceSavant = root?.classList.contains('is-picking-influence-savant');
+  const usingLightsaberFormSavant = root?.classList.contains('is-picking-lightsaber-form-savant');
+  if (!usingForcePoint && !usingTelekineticSavant && !usingInfluenceSavant && !usingLightsaberFormSavant) {
+    ui?.notifications?.info?.('Choose Spend Force Point, Telekinetic Savant, Influence Savant, or Form Savant first.');
+    return;
+  }
+  if (usingTelekineticSavant && button.dataset.telekinetic !== 'true') {
+    ui?.notifications?.warn?.('Telekinetic Savant can only recover spent [Telekinetic] powers.');
+    return;
+  }
+  if (usingInfluenceSavant && button.dataset.mindAffecting !== 'true') {
+    ui?.notifications?.warn?.('Influence Savant can only recover spent [Mind-Affecting] powers.');
+    return;
+  }
+  if (usingLightsaberFormSavant && button.dataset.lightsaberForm !== 'true') {
+    ui?.notifications?.warn?.('Lightsaber Form Savant can only recover spent [Lightsaber Form] powers.');
+    return;
+  }
+
+  button.disabled = true;
+  try {
+    const result = usingTelekineticSavant
+      ? await ForceExecutor.recoverTelekineticSavantPower(actor, itemId)
+      : usingInfluenceSavant
+        ? await ForceExecutor.recoverInfluenceSavantPower(actor, itemId)
+        : usingLightsaberFormSavant
+          ? await ForceExecutor.recoverLightsaberFormSavantPower(actor, itemId)
+          : await ForceExecutor.recoverForcePowers(actor, [itemId]);
+    if (result?.success) {
+      ui?.notifications?.info?.('Force power recovered.');
+      clearRecoveryModes(root);
+      actor.sheet?.render?.(false);
+    } else {
+      ui?.notifications?.warn?.(result?.error || 'Could not recover that Force power.');
+    }
+  } catch (err) {
+    console.error('SWSE | Force suite recover-one failed', err);
+    ui?.notifications?.error?.(`Force recovery failed: ${err.message}`);
+  } finally {
+    button.disabled = false;
+  }
+}
+
+async function handleUseForceRegimen(button) {
+  const actor = actorFromButton(button);
+  const itemId = button.dataset.itemId || '';
+  const regimen = actor?.items?.get?.(itemId) ?? null;
+  if (!actor || !regimen || regimen.type !== 'force-regimen') {
+    ui?.notifications?.warn?.('Could not resolve this Force Regimen from the actor. Reopen the sheet and try again.');
+    return;
+  }
+  button.disabled = true;
+  try {
+    const rollOptions = await promptForceRegimenRollOptions({ actor, regimen, sourceElement: button });
+    if (!rollOptions) return;
+    const result = await ForceRegimenExecutor.executeRegimen(actor, itemId, rollOptions);
+    if (result?.success) {
+      ui?.notifications?.info?.(`${result.regimenName || regimen.name} is active until long rest.`);
+      actor.sheet?.render?.(false);
+    } else {
+      ui?.notifications?.warn?.(result?.error || 'Force Regimen could not be used.');
+      if (result?.executed) actor.sheet?.render?.(false);
+    }
+  } catch (err) {
+    console.error('SWSE | Force Regimen use failed', err);
+    ui?.notifications?.error?.(`Force Regimen failed: ${err.message}`);
+  } finally {
+    button.disabled = false;
+  }
+}
+
+async function handleEndForceRegimen(button) {
+  const actor = actorFromButton(button);
+  const itemId = button.dataset.effectId || button.dataset.ruleId || button.dataset.itemId || '';
+  if (!actor || !itemId) {
+    ui?.notifications?.warn?.('Could not resolve Force Regimen effect. Reopen the sheet and try again.');
+    return;
+  }
+  button.disabled = true;
+  try {
+    const result = await ForceRegimenExecutor.endRegimen(actor, itemId);
+    if (result?.success) {
+      ui?.notifications?.info?.('Force Regimen effect ended.');
+      actor.sheet?.render?.(false);
+    } else {
+      ui?.notifications?.warn?.(result?.error || 'Force Regimen effect could not be ended.');
+    }
+  } catch (err) {
+    console.error('SWSE | Force Regimen end failed', err);
+    ui?.notifications?.error?.(`Ending Force Regimen failed: ${err.message}`);
+  } finally {
+    button.disabled = false;
+  }
+}
+
+function installForceSuiteActionDelegate() {
+  if (globalThis[FORCE_SUITE_ACTION_DELEGATE_FLAG]) return;
+  globalThis[FORCE_SUITE_ACTION_DELEGATE_FLAG] = true;
+  document.addEventListener('click', event => {
+    const button = event.target?.closest?.('[data-action]');
+    if (!button || !button.closest?.('[data-force-suite-tab]')) return;
+    const action = button.dataset.action;
+    const handled = [
+      'force-suite-recover-all',
+      'force-suite-pick-recovery',
+      'force-suite-pick-telekinetic-savant',
+      'force-suite-pick-influence-savant',
+      'force-suite-pick-lightsaber-form-savant',
+      'force-suite-recover-one',
+      'use-force-regimen',
+      'end-force-regimen'
+    ].includes(action);
+    if (!handled) return;
+    event.preventDefault();
+    event.stopPropagation();
+
+    if (action === 'force-suite-recover-all') return void handleForceSuiteRecoverAll(button);
+    if (action === 'force-suite-pick-recovery') return void toggleRecoveryMode(button, 'is-picking-recovery', 'Discard pile is empty.');
+    if (action === 'force-suite-pick-telekinetic-savant') return void toggleRecoveryMode(button, 'is-picking-telekinetic-savant', 'No spent [Telekinetic] Force powers to recover.', '[data-action="force-suite-recover-one"][data-telekinetic="true"]');
+    if (action === 'force-suite-pick-influence-savant') return void toggleRecoveryMode(button, 'is-picking-influence-savant', 'No spent [Mind-Affecting] Force powers to recover.', '[data-action="force-suite-recover-one"][data-mind-affecting="true"]');
+    if (action === 'force-suite-pick-lightsaber-form-savant') return void toggleRecoveryMode(button, 'is-picking-lightsaber-form-savant', 'No spent [Lightsaber Form] Force powers to recover.', '[data-action="force-suite-recover-one"][data-lightsaber-form="true"]');
+    if (action === 'force-suite-recover-one') return void handleForceSuiteRecoverOne(button);
+    if (action === 'use-force-regimen') return void handleUseForceRegimen(button);
+    if (action === 'end-force-regimen') return void handleEndForceRegimen(button);
+  }, true);
+}
+
 function installForceCardClickRepair() {
   document.addEventListener('click', event => {
     const button = event.target?.closest?.('[data-action="activate-force"][data-swse-runtime-repaired="true"]');
@@ -420,6 +609,7 @@ export function registerForceSuiteRuntimeRepairs() {
   installTelekineticRepeatActionRepair();
   installForcePowerErrorRollback();
   installSkillFocusNonStackingGuard();
+  installForceSuiteActionDelegate();
   if (registered) return;
   registered = true;
   installForceCardClickRepair();
