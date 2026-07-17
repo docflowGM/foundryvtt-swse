@@ -15,7 +15,7 @@ The current `scripts/patches/combat-ui-behavior-hotfix.js` file remains a tempor
 
 ## Initial contract
 
-See `combat-feature-contract.js` for shared bucket names, automation status values, readiness values, router action names, action-economy groups, triggered-feature groups, and the empty model helper.
+See `combat-feature-contract.js` for shared bucket names, automation status values, readiness values, router action names, action-economy groups, triggered-feature groups, passive-rider groups, and the empty model helper.
 
 ## Phase 1 adapter
 
@@ -106,6 +106,16 @@ scripts/engine/combat/features/combat-feature-trigger-service.js
 ```
 
 The trigger service maps features such as Block, Deflect, Trip, Throw, Pin, Crush, Crush Pinned Opponent, Combat Reflexes, Erratic Target, and Droid Shield Mastery to trigger windows and groups. The adapter uses this registry to move trigger-window features into `triggeredFeatures` and to build `triggeredFeatureGroups` for Defensive Reactions, On-Hit Riders, Grapple / Control, Opportunity Windows, and Other Triggers. This phase is still display/registry only; future chat-card prompting can write pending trigger context under `flags.foundryvtt-swse.combatFeatures.pendingTriggers.*`.
+
+## Phase 9 passive rider audit surface
+
+Passive rider grouping and automation-status hints now live at:
+
+```text
+scripts/engine/combat/features/combat-feature-passive-rider-service.js
+```
+
+The service groups passive riders by what they affect: Attack, Damage, Defense, Threshold / Condition, Movement, Grapple / Control, Equipment, and Other. It annotates each rider with `automationLabel` and `automationHint` so the panel can tell players whether the rider is Automated, Partial, or Manual without pretending to apply math. The adapter keeps `passiveRiders` as the raw flat list and adds `passiveRiderGroups` for the UI.
 
 Future files should follow this split:
 
