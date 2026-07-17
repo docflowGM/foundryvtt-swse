@@ -6,11 +6,13 @@ import { registerCombatUiBehaviorHotfixes } from '/systems/foundryvtt-swse/scrip
 import { registerForceSuiteRenderGuardHotfix } from '/systems/foundryvtt-swse/scripts/patches/force-suite-render-guard-hotfix.js';
 import { registerCombatFeaturesPanelRenderer } from '/systems/foundryvtt-swse/scripts/engine/combat/features/combat-feature-panel-renderer.js';
 import { registerCombatFeatureActionRouter } from '/systems/foundryvtt-swse/scripts/engine/combat/features/combat-feature-action-router.js';
+import { registerCombatFeatureLegacyActionBridge } from '/systems/foundryvtt-swse/scripts/engine/combat/features/combat-feature-legacy-action-bridge.js';
 
 registerRuntimeBugfixHotfixes();
 registerProgressionLedgerReconciliationHotfix();
 registerArmorHydrationDefenseHotfix();
 registerAttackDialogCombatCorrectionsHotfix();
+registerCombatFeatureLegacyActionBridge();
 registerCombatUiBehaviorHotfixes();
 registerForceSuiteRenderGuardHotfix();
 registerCombatFeaturesPanelRenderer();
