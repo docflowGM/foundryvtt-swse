@@ -9,9 +9,9 @@ import {
 /**
  * Combat Feature Classifier
  *
- * Phase 2 of the Combat Features reform. This module owns source-item/effect
- * classification and display-shape enrichment. It is deliberately pure: no
- * actor mutation, no action spending, no roll execution, and no combat math.
+ * Owns source-item/effect classification and display-shape enrichment. It is
+ * deliberately pure: no actor mutation, no action spending, no roll execution,
+ * and no combat math.
  */
 
 export const SOURCE_TYPE_LABELS = Object.freeze({
@@ -30,33 +30,72 @@ export const SOURCE_TYPE_LABELS = Object.freeze({
 export const FEATURE_PROFILES = Object.freeze({
   rage: {
     bucket: COMBAT_FEATURE_BUCKETS.AVAILABLE_ACTIONS,
+    name: 'Rage',
     sourceType: 'Species Trait',
     actionCost: 'Swift',
-    timing: 'Encounter',
+    timing: 'Encounter state',
+    durationLabel: 'Encounter',
     automationStatus: COMBAT_FEATURE_AUTOMATION_STATUS.MANUAL,
-    buttonLabel: 'View Rage',
-    executeAction: COMBAT_FEATURE_ACTIONS.VIEW,
-    summary: 'Enter or track a rage state. Bonuses and penalties are shown for table handling until full automation is wired.',
+    buttonLabel: 'Activate',
+    executeAction: COMBAT_FEATURE_ACTIONS.ACTIVATE,
+    canDeactivate: true,
+    deactivateAction: COMBAT_FEATURE_ACTIONS.DEACTIVATE,
+    summary: 'Track Rage as an active combat state. Bonuses and penalties are shown for table handling until full math automation is wired.',
     deltas: [
       { label: 'Melee Atk +2', v: 2, tone: 'pos' },
       { label: 'Melee Dmg +2', v: 2, tone: 'pos' },
       { label: 'Reflex -2', v: -2, tone: 'neg' },
       { label: 'Will -2', v: -2, tone: 'neg' }
     ],
-    tags: ['swift', 'encounter', 'manual']
+    tags: ['swift', 'encounter', 'state', 'manual']
   },
   braced: {
-    bucket: COMBAT_FEATURE_BUCKETS.ACTIVE_STATES,
-    sourceType: 'Stance',
+    bucket: COMBAT_FEATURE_BUCKETS.AVAILABLE_ACTIONS,
+    name: 'Braced',
+    sourceType: 'Combat State',
     actionCost: 'Swift',
     timing: 'Stance',
     durationLabel: 'Until you move',
     automationStatus: COMBAT_FEATURE_AUTOMATION_STATUS.MANUAL,
+    buttonLabel: 'Brace',
+    executeAction: COMBAT_FEATURE_ACTIONS.ACTIVATE,
     canDeactivate: true,
     deactivateAction: COMBAT_FEATURE_ACTIONS.DEACTIVATE,
-    summary: 'Weapon braced against cover or a bipod. Used as a tracked combat stance.',
-    deltas: [{ label: 'Autofire penalty reduced or ignored', tone: 'pos' }],
-    tags: ['swift', 'stance', 'active', 'manual']
+    summary: 'Track a braced weapon stance against cover, a bipod, or other valid support.',
+    deltas: [{ label: 'Braced weapon context', tone: 'pos' }],
+    tags: ['swift', 'stance', 'state', 'manual']
+  },
+  'fight-defensively': {
+    bucket: COMBAT_FEATURE_BUCKETS.AVAILABLE_ACTIONS,
+    name: 'Fight Defensively',
+    sourceType: 'Core Combat Action',
+    actionCost: 'Standard',
+    timing: 'Until start of next turn',
+    durationLabel: 'Until next turn',
+    automationStatus: COMBAT_FEATURE_AUTOMATION_STATUS.MANUAL,
+    buttonLabel: 'Activate',
+    executeAction: COMBAT_FEATURE_ACTIONS.ACTIVATE,
+    canDeactivate: true,
+    deactivateAction: COMBAT_FEATURE_ACTIONS.DEACTIVATE,
+    summary: 'Track Fight Defensively as an active state. Use the normal attack roller for the attack and table context for the defense bonus until full math automation is wired.',
+    deltas: [{ label: 'Atk penalty / Reflex bonus', tone: 'mixed' }],
+    tags: ['standard', 'defense', 'state', 'manual']
+  },
+  'total-defense': {
+    bucket: COMBAT_FEATURE_BUCKETS.AVAILABLE_ACTIONS,
+    name: 'Total Defense',
+    sourceType: 'Core Combat Action',
+    actionCost: 'Standard',
+    timing: 'Until start of next turn',
+    durationLabel: 'Until next turn',
+    automationStatus: COMBAT_FEATURE_AUTOMATION_STATUS.MANUAL,
+    buttonLabel: 'Activate',
+    executeAction: COMBAT_FEATURE_ACTIONS.ACTIVATE,
+    canDeactivate: true,
+    deactivateAction: COMBAT_FEATURE_ACTIONS.DEACTIVATE,
+    summary: 'Track Total Defense as an active state for the round.',
+    deltas: [{ label: 'Reflex bonus; no attacks', tone: 'pos' }],
+    tags: ['standard', 'defense', 'state', 'manual']
   },
   'second-wind': {
     bucket: COMBAT_FEATURE_BUCKETS.AVAILABLE_ACTIONS,
@@ -251,12 +290,20 @@ export const FEATURE_PROFILES = Object.freeze({
     tags: ['movement', 'manual']
   },
   'melee-defense': {
-    bucket: COMBAT_FEATURE_BUCKETS.PASSIVE_RIDERS,
+    bucket: COMBAT_FEATURE_BUCKETS.AVAILABLE_ACTIONS,
+    name: 'Melee Defense',
     sourceType: 'Feat',
-    appliesTo: 'Reflex',
+    actionCost: 'Attack / Stance',
+    timing: 'Until start of next turn',
+    durationLabel: 'Until next turn',
     automationStatus: COMBAT_FEATURE_AUTOMATION_STATUS.PARTIAL,
-    summary: 'Trade melee attack bonus for Reflex Defense through an attack/stance context.',
-    tags: ['defense', 'partial']
+    buttonLabel: 'Activate',
+    executeAction: COMBAT_FEATURE_ACTIONS.ACTIVATE,
+    canDeactivate: true,
+    deactivateAction: COMBAT_FEATURE_ACTIONS.DEACTIVATE,
+    summary: 'Track Melee Defense as a stance/attack context. The selected penalty/bonus is still handled manually until the dedicated picker is added.',
+    deltas: [{ label: 'Melee Atk -X / Reflex +X', tone: 'mixed' }],
+    tags: ['defense', 'state', 'partial']
   },
   'shield-surge': {
     bucket: COMBAT_FEATURE_BUCKETS.AVAILABLE_ACTIONS,
@@ -266,11 +313,13 @@ export const FEATURE_PROFILES = Object.freeze({
     automationStatus: COMBAT_FEATURE_AUTOMATION_STATUS.MANUAL,
     readiness: COMBAT_FEATURE_READINESS.MISSING,
     readinessNote: 'Requires a powered personal shield context.',
-    buttonLabel: 'View',
-    executeAction: COMBAT_FEATURE_ACTIONS.VIEW,
-    summary: 'Overcharge a personal shield when the equipment and trigger are available.',
+    buttonLabel: 'Activate',
+    executeAction: COMBAT_FEATURE_ACTIONS.ACTIVATE,
+    canDeactivate: true,
+    deactivateAction: COMBAT_FEATURE_ACTIONS.DEACTIVATE,
+    summary: 'Track a shield surge when the equipment and trigger are available.',
     deltas: [{ label: 'Shield SR +5', tone: 'pos' }],
-    tags: ['equipment', 'manual', 'missing-trigger']
+    tags: ['equipment', 'state', 'manual', 'missing-trigger']
   }
 });
 
@@ -282,6 +331,8 @@ const NAME_ALIASES = Object.freeze({
   'rapid shot': 'rapid-shot',
   'double attack': 'double-attack',
   'triple attack': 'triple-attack',
+  'fight defensively': 'fight-defensively',
+  'total defense': 'total-defense',
   'point blank shot': 'point-blank-shot',
   'improved damage threshold': 'improved-damage-threshold',
   'running attack': 'running-attack',
@@ -356,17 +407,18 @@ export function combatFeatureIdForEffect(effect) {
 }
 
 export function isActiveCombatFeatureState(actor, featureId) {
+  const id = canonicalCombatFeatureKey(featureId);
   const flags = actor?.flags ?? {};
   const stateSources = [
-    flags?.['foundryvtt-swse']?.combatFeatures?.activeStates?.[featureId],
-    flags?.swse?.combatFeatures?.activeStates?.[featureId],
-    flags?.['foundryvtt-swse']?.[featureId]?.active,
-    flags?.swse?.[featureId]?.active,
-    actor?.system?.combatFeatures?.activeStates?.[featureId],
-    actor?.system?.states?.[featureId]?.active
+    flags?.['foundryvtt-swse']?.combatFeatures?.activeStates?.[id],
+    flags?.swse?.combatFeatures?.activeStates?.[id],
+    flags?.['foundryvtt-swse']?.[id]?.active,
+    flags?.swse?.[id]?.active,
+    actor?.system?.combatFeatures?.activeStates?.[id],
+    actor?.system?.states?.[id]?.active
   ];
   if (stateSources.some(Boolean)) return true;
-  if (featureId === 'rage') {
+  if (id === 'rage') {
     return actor?.system?.rage?.active === true
       || actor?.system?.species?.rage?.active === true
       || flags?.swse?.rage?.active === true
@@ -448,6 +500,7 @@ export function classifyCombatFeatureEffect(effect) {
       sourceName: effect?.origin ?? effect?.name ?? featureId,
       sourceType: 'Active Effect',
       sourceItemId: null,
+      effectId: effect?.id ?? null,
       summary: cleanCombatFeatureText(effect?.description ?? effect?.flags?.swse?.summary ?? effect?.flags?.['foundryvtt-swse']?.summary ?? ''),
       actionCost: null,
       timing: 'Active',
