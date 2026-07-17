@@ -17,6 +17,28 @@ export const COMBAT_FEATURE_BUCKETS = Object.freeze({
   PASSIVE_RIDERS: 'passiveRiders'
 });
 
+export const COMBAT_FEATURE_ACTION_GROUPS = Object.freeze({
+  SWIFT: 'swift',
+  MOVE: 'move',
+  STANDARD: 'standard',
+  FULL_ROUND: 'full-round',
+  REACTION: 'reaction',
+  FREE: 'free',
+  ATTACK_OPTION: 'attack-option',
+  OTHER: 'other'
+});
+
+export const COMBAT_FEATURE_ACTION_GROUP_ORDER = Object.freeze([
+  { id: COMBAT_FEATURE_ACTION_GROUPS.SWIFT, label: 'Swift Actions', hint: 'Fast tactical toggles and once-per-turn choices.' },
+  { id: COMBAT_FEATURE_ACTION_GROUPS.MOVE, label: 'Move Actions', hint: 'Movement or repositioning actions.' },
+  { id: COMBAT_FEATURE_ACTION_GROUPS.STANDARD, label: 'Standard Actions', hint: 'Primary single-action combat options.' },
+  { id: COMBAT_FEATURE_ACTION_GROUPS.FULL_ROUND, label: 'Full-Round Actions', hint: 'Consumes the full round or full attack sequence.' },
+  { id: COMBAT_FEATURE_ACTION_GROUPS.REACTION, label: 'Reactions', hint: 'Responses outside the actor\'s normal turn.' },
+  { id: COMBAT_FEATURE_ACTION_GROUPS.FREE, label: 'Free Actions', hint: 'Free or incidental combat choices.' },
+  { id: COMBAT_FEATURE_ACTION_GROUPS.ATTACK_OPTION, label: 'Attack Options', hint: 'Options applied through the normal attack roller.' },
+  { id: COMBAT_FEATURE_ACTION_GROUPS.OTHER, label: 'Other Actions', hint: 'Combat features without a mapped economy lane yet.' }
+]);
+
 export const COMBAT_FEATURE_AUTOMATION_STATUS = Object.freeze({
   AUTOMATED: 'automated',
   PARTIAL: 'partial',
@@ -56,6 +78,7 @@ export function emptyCombatFeaturesModel() {
   return {
     [COMBAT_FEATURE_BUCKETS.ACTIVE_STATES]: [],
     [COMBAT_FEATURE_BUCKETS.AVAILABLE_ACTIONS]: [],
+    availableActionGroups: [],
     [COMBAT_FEATURE_BUCKETS.TRIGGERED_FEATURES]: [],
     [COMBAT_FEATURE_BUCKETS.PASSIVE_RIDERS]: [],
     badges: {
@@ -63,6 +86,7 @@ export function emptyCombatFeaturesModel() {
       rageLabel: 'Rage Inactive',
       activeStateCount: 0,
       readyActionCount: 0,
+      availableActionGroupCount: 0,
       passiveRiderCount: 0,
       manualFeatureCount: 0
     }
@@ -72,6 +96,7 @@ export function emptyCombatFeaturesModel() {
 export function combatFeatureSummaryCounts(model = emptyCombatFeaturesModel()) {
   const activeStates = Array.isArray(model.activeStates) ? model.activeStates : [];
   const availableActions = Array.isArray(model.availableActions) ? model.availableActions : [];
+  const availableActionGroups = Array.isArray(model.availableActionGroups) ? model.availableActionGroups : [];
   const triggeredFeatures = Array.isArray(model.triggeredFeatures) ? model.triggeredFeatures : [];
   const passiveRiders = Array.isArray(model.passiveRiders) ? model.passiveRiders : [];
   const manualFeatureCount = [...activeStates, ...availableActions, ...triggeredFeatures, ...passiveRiders]
@@ -81,6 +106,7 @@ export function combatFeatureSummaryCounts(model = emptyCombatFeaturesModel()) {
   return {
     activeStateCount: activeStates.length,
     readyActionCount: availableActions.filter(feature => feature?.readiness !== COMBAT_FEATURE_READINESS.USED).length,
+    availableActionGroupCount: availableActionGroups.filter(group => Array.isArray(group.actions) && group.actions.length).length,
     passiveRiderCount: passiveRiders.length,
     manualFeatureCount
   };
