@@ -1,14 +1,16 @@
 import { handleCombatFeatureAction } from '/systems/foundryvtt-swse/scripts/engine/combat/features/combat-feature-handlers.js';
+import { handleCombatFeatureUxAction } from '/systems/foundryvtt-swse/scripts/engine/combat/features/combat-feature-ux-handlers.js';
 
 /**
  * Combat Feature Action Router
  *
- * Permanent Phase 4/5 router. It resolves the clicked panel element and actor,
- * then dispatches to named handlers. Feature behavior belongs in
- * `combat-feature-handlers.js`; this file should remain a thin event/router layer.
+ * Permanent Phase 4/10 router. It resolves the clicked panel element and actor,
+ * then dispatches to UX handlers or named feature handlers. Feature behavior
+ * belongs in `combat-feature-handlers.js`; UX behavior belongs in
+ * `combat-feature-ux-handlers.js`.
  */
 
-const ROUTER_FLAG = Symbol.for('swse.combatFeatureActionRouter.v2');
+const ROUTER_FLAG = Symbol.for('swse.combatFeatureActionRouter.v3');
 let registered = false;
 
 function actorFromId(id) {
@@ -38,6 +40,9 @@ async function routeCombatFeatureAction(element) {
     ui?.notifications?.warn?.('Could not resolve actor for this combat feature. Reopen the sheet and try again.');
     return;
   }
+
+  const handledUx = await handleCombatFeatureUxAction({ action, actor, element });
+  if (handledUx) return;
   return handleCombatFeatureAction({ action, actor, element });
 }
 
