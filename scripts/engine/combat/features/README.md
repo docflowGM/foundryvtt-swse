@@ -87,6 +87,16 @@ scripts/engine/combat/features/combat-feature-legacy-action-bridge.js
 
 That bridge is registered before the transitional combat UI hotfix. It intercepts legacy Double Attack / Triple Attack rows and sends them to the permanent handler, preventing the older hotfix implementation from running for those rows while the legacy panel still exists.
 
+## Phase 7 active combat states
+
+Tracked active combat states now live under the system flag namespace through:
+
+```text
+scripts/engine/combat/features/combat-feature-active-state-service.js
+```
+
+The service currently tracks Rage, Braced, Fight Defensively, Total Defense, Melee Defense, and Shield Surge. It uses `ActorEngine.updateActor(...)` to set or clear `flags.foundryvtt-swse.combatFeatures.activeStates.*`, so the panel can move an activated feature from Available Actions to Active Combat States without the template doing state work. These flags are display/state tracking only; combat math consumption is intentionally left to later canonical math phases.
+
 Future files should follow this split:
 
 ```text
