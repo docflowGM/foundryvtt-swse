@@ -1,8 +1,8 @@
 import { SWSEDialogV2 } from "/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js";
 
 /**
- * Force power roll configuration dialog.
- * UI-only helper for character/NPC sheets; force execution remains in ForceExecutor.
+ * Force power and Force regimen roll configuration dialogs.
+ * UI-only helpers for character/NPC sheets; execution remains in the Force executors.
  */
 
 function toNumber(value, fallback = 0) {
@@ -56,70 +56,6 @@ function isMoveObjectPower(power) {
   return /move\s*object/i.test(String(power?.name || power?.system?.slug || ''));
 }
 
-
-function normalizeForcePowerSlug(value) {
-  return String(value ?? '')
-    .trim()
-    .toLowerCase()
-    .replace(/[’']/g, '')
-    .replace(/\s*\([^)]*\)\s*$/g, '')
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '');
-}
-
-function baseItemName(value) {
-  return String(value ?? '').replace(/\s*\([^)]*\)\s*$/g, '').trim();
-}
-
-function isForcePowerMasteryItem(item) {
-  return /^(force\s+power\s+mastery)$/i.test(baseItemName(item?.name || item?.system?.name || item?.label));
-}
-
-function getForcePowerMasteryChoice(item) {
-  const candidates = [
-    item?.system?.forcePowerMastery,
-    item?.system?.choice,
-    item?.system?.selectedChoice,
-    item?.flags?.swse?.forcePowerMastery,
-    item?.flags?.swse?.progression?.forcePowerMastery,
-    item?.flags?.['foundryvtt-swse']?.forcePowerMastery,
-  ].filter(Boolean);
-  for (const candidate of candidates) {
-    const slug = normalizeForcePowerSlug(candidate?.slug || candidate?.powerSlug || candidate?.targetSlug || candidate?.id || candidate?.name || candidate?.label || candidate?.value);
-    if (!slug) continue;
-    return {
-      slug,
-      label: String(candidate?.label || candidate?.name || candidate?.powerName || candidate?.targetName || slug).trim() || slug,
-      powerId: candidate?.powerId || candidate?.id || candidate?.targetId || null,
-      powerName: candidate?.powerName || candidate?.name || candidate?.targetName || candidate?.label || slug,
-    };
-  }
-  const match = String(item?.name || '').match(/Force\s+Power\s+Mastery\s*\(([^)]+)\)/i);
-  if (match?.[1]) {
-    const slug = normalizeForcePowerSlug(match[1]);
-    if (slug) return { slug, label: match[1].trim(), powerId: null, powerName: match[1].trim() };
-  }
-  return null;
-}
-
-function getForcePowerMasteryMatch(actor, power) {
-  const powerId = String(power?.id || power?._id || '').trim();
-  const powerName = String(power?.name || power?.label || '').trim();
-  const powerSlug = normalizeForcePowerSlug(power?.system?.slug || power?.slug || powerName || powerId);
-  const candidates = new Set([powerSlug, normalizeForcePowerSlug(powerName), normalizeForcePowerSlug(powerId)].filter(Boolean));
-
-  for (const item of Array.from(actor?.items ?? [])) {
-    const type = String(item?.type || '').toLowerCase();
-    if (!['forcetechnique', 'force-technique', 'feat'].includes(type)) continue;
-    if (!isForcePowerMasteryItem(item)) continue;
-    const choice = getForcePowerMasteryChoice(item);
-    if (!choice?.slug) continue;
-    const choiceKeys = [choice.slug, choice.powerName, choice.powerId, choice.label].map(normalizeForcePowerSlug).filter(Boolean);
-    if (choiceKeys.some(key => candidates.has(key))) return choice;
-  }
-  return null;
-}
-
 function fieldValue(html, name) {
   const root = html?.[0] ?? html;
   const radio = root?.querySelector?.(`[name="${name}"][type="radio"]:checked`);
@@ -135,6 +71,25 @@ function fieldValue(html, name) {
   return null;
 }
 
+function dcRowsHtml(rows = []) {
+  return rows.length ? `
+    <div class="rcd-tiers">
+      ${rows.map(row => `<div class="rcd-tier"><span class="rcd-tier-dc">DC ${escapeHtml(row.dc ?? '')}</span><span class="rcd-tier-fx">${escapeHtml(cleanText(row.effect || row.description || ''))}</span></div>`).join('')}
+    </div>` : '';
+}
+
+function projectedOutcomeHtml(baseBonus, baseDC, { label = 'Reference total' } = {}) {
+  const referenceTotal = baseBonus + 10;
+  return `
+    <section class="rcd-rail-sec rcd-rail-sec--preview">
+      <div class="rcd-rail-lbl">Projected Outcome</div>
+      <div class="rcd-preview-formula">1d20 + ${baseBonus}</div>
+      <div class="rcd-preview-total">${referenceTotal}</div>
+      <div class="rcd-preview-label">${escapeHtml(label)}</div>
+      <div class="rcd-preview-dc ${referenceTotal >= baseDC ? 'pass' : 'fail'}">Reference ${referenceTotal >= baseDC ? 'meets' : 'misses'} DC ${baseDC}</div>
+    </section>`;
+}
+
 export async function promptForcePowerRollOptions({ actor, power, sourceElement = null } = {}) {
   if (!actor || !power) return null;
 
@@ -144,16 +99,10 @@ export async function promptForcePowerRollOptions({ actor, power, sourceElement 
   const boosted = !!sourceElement?.closest?.('.fcard')?.querySelector?.('[data-action="force-suite-toggle-fp-boost"].on');
   const summary = cleanText(power?.system?.effect || power?.system?.summary || power?.system?.description || '');
   const dcRows = Array.isArray(power?.system?.dcChart) ? power.system.dcChart.slice(0, 4) : [];
-  const rowsHtml = dcRows.length ? `
-    <div class="rcd-tiers">
-      ${dcRows.map(row => `<div class="rcd-tier"><span class="rcd-tier-dc">DC ${escapeHtml(row.dc ?? '')}</span><span class="rcd-tier-fx">${escapeHtml(cleanText(row.effect || row.description || ''))}</span></div>`).join('')}
-    </div>` : '';
-  const masteryChoice = getForcePowerMasteryMatch(actor, power);
-  const canTake10 = Boolean(masteryChoice?.slug);
-  const masteryLabel = masteryChoice?.slug || normalizeForcePowerSlug(power?.name || power?.id);
+  const rowsHtml = dcRowsHtml(dcRows);
 
   const content = `
-    <div class="swse-force-roll-config rcd" style="--accent-rgb:180,140,255">
+    <div class="swse-roll-config-shell swse-force-roll-config rcd" style="--accent-rgb:180,140,255">
       <header class="rcd-header">
         <div class="rcd-header-bg"></div>
         <div class="rcd-header-content">
@@ -183,17 +132,6 @@ export async function promptForcePowerRollOptions({ actor, power, sourceElement 
               <label>Target DC<input type="number" name="baseDC" value="${baseDC}" step="1"></label>
             </div>
           </section>
-          <section class="swse-roll-config-panel swse-roll-config-panel--mode">
-            <h4>Check Mode</h4>
-            <label class="rcd-resource rcd-res-active">
-              <span class="rcd-res-header"><input type="radio" name="checkMode" value="roll" checked> <span class="rcd-res-icon">⚂</span><span class="rcd-res-name">Roll normally</span></span>
-              <span class="rcd-res-detail">Roll 1d20 and apply Use the Force modifiers.</span>
-            </label>
-            <label class="rcd-resource ${canTake10 ? '' : 'rcd-resource-disabled'}">
-              <span class="rcd-res-header"><input type="radio" name="checkMode" value="take10" ${canTake10 ? '' : 'disabled'}> <span class="rcd-res-icon">10</span><span class="rcd-res-name">Take 10</span></span>
-              <span class="rcd-res-detail">${canTake10 ? `Force Power Mastery active for <strong>${escapeHtml(masteryLabel)}</strong>. Force Points are not spent on Take 10.` : 'Requires Force Power Mastery for this specific Force Power.'}</span>
-            </label>
-          </section>
           <section class="swse-roll-config-panel swse-roll-config-panel--resources">
             <h4>Resources</h4>
             ${actorHasTalent(actor, 'Move Massive Object') && isMoveObjectPower(power) ? `<label class="rcd-resource ${fpValue <= 0 ? 'rcd-resource-disabled' : ''}">
@@ -207,16 +145,10 @@ export async function promptForcePowerRollOptions({ actor, power, sourceElement 
           </section>
         </form>
         <aside class="rcd-rail">
-          <section class="rcd-rail-sec rcd-rail-sec--preview">
-            <div class="rcd-rail-lbl">Projected Outcome</div>
-            <div class="rcd-preview-formula">1d20 + ${baseBonus}</div>
-            <div class="rcd-preview-total">${baseBonus + 10}</div>
-            <div class="rcd-preview-label">Take 10 reference</div>
-            <div class="rcd-preview-dc ${(baseBonus + 10) >= baseDC ? 'pass' : 'fail'}">Take 10 ${(baseBonus + 10) >= baseDC ? 'meets' : 'misses'} DC ${baseDC}</div>
-          </section>
+          ${projectedOutcomeHtml(baseBonus, baseDC, { label: 'D20 midpoint reference' })}
           <section class="rcd-rail-sec">
             <div class="rcd-rail-lbl">Execution</div>
-            <p class="swse-roll-config-note">The final roll is still handled by the Force executor. This dialog collects bonuses, DC, Force Point intent, and Force Power Mastery Take 10 mode.</p>
+            <p class="swse-roll-config-note">The final roll is handled by the Force executor. This dialog collects bonuses, DC, and Force Point intent.</p>
           </section>
         </aside>
       </div>
@@ -237,20 +169,16 @@ export async function promptForcePowerRollOptions({ actor, power, sourceElement 
         roll: {
           icon: '<i class="fas fa-dice-d20"></i>',
           label: 'Roll / Use',
-          callback: html => {
-            const checkMode = String(fieldValue(html, 'checkMode') || 'roll').toLowerCase();
-            const take10 = checkMode === 'take10' && canTake10;
-            finish({
-              baseBonus: toNumber(fieldValue(html, 'baseBonus'), baseBonus),
-              customModifier: toNumber(fieldValue(html, 'customModifier'), 0),
-              baseDC: toNumber(fieldValue(html, 'baseDC'), baseDC),
-              checkMode: take10 ? 'take10' : 'roll',
-              take10,
-              forcePowerMastery: masteryChoice || null,
-              useForce: !take10 && fieldValue(html, 'useForce') === true,
-              moveMassiveObject: !take10 && fieldValue(html, 'moveMassiveObject') === true
-            });
-          }
+          callback: html => finish({
+            baseBonus: toNumber(fieldValue(html, 'baseBonus'), baseBonus),
+            customModifier: toNumber(fieldValue(html, 'customModifier'), 0),
+            baseDC: toNumber(fieldValue(html, 'baseDC'), baseDC),
+            checkMode: 'roll',
+            take10: false,
+            forcePowerMastery: null,
+            useForce: fieldValue(html, 'useForce') === true,
+            moveMassiveObject: fieldValue(html, 'moveMassiveObject') === true
+          })
         },
         cancel: {
           icon: '<i class="fas fa-times"></i>',
@@ -270,7 +198,6 @@ export async function promptForcePowerRollOptions({ actor, power, sourceElement 
   });
 }
 
-
 export async function promptForceRegimenRollOptions({ actor, regimen, sourceElement = null } = {}) {
   if (!actor || !regimen) return null;
 
@@ -281,13 +208,10 @@ export async function promptForceRegimenRollOptions({ actor, regimen, sourceElem
   const fpValue = Number(actor?.system?.forcePoints?.value ?? actor?.system?.resources?.forcePoints?.value ?? 0) || 0;
   const boosted = !!sourceElement?.closest?.('.fcard')?.querySelector?.('[data-action="force-suite-toggle-fp-boost"].on');
   const summary = cleanText(regimen?.system?.summary || regimen?.system?.effect || regimen?.system?.descriptionText || regimen?.system?.description || '');
-  const rowsHtml = rows.length ? `
-    <div class="rcd-tiers">
-      ${rows.map(row => `<div class="rcd-tier"><span class="rcd-tier-dc">DC ${escapeHtml(row.dc ?? '')}</span><span class="rcd-tier-fx">${escapeHtml(cleanText(row.effect || row.description || ''))}</span></div>`).join('')}
-    </div>` : '';
+  const rowsHtml = dcRowsHtml(rows);
 
   const content = `
-    <div class="swse-force-roll-config rcd swse-force-regimen-roll-config" style="--accent-rgb:120,210,255">
+    <div class="swse-roll-config-shell swse-force-roll-config rcd swse-force-regimen-roll-config" style="--accent-rgb:120,210,255">
       <header class="rcd-header">
         <div class="rcd-header-bg"></div>
         <div class="rcd-header-content">
@@ -319,10 +243,6 @@ export async function promptForceRegimenRollOptions({ actor, regimen, sourceElem
           </section>
           <section class="swse-roll-config-panel swse-roll-config-panel--resources">
             <h4>Resources</h4>
-            ${actorHasTalent(actor, 'Move Massive Object') && isMoveObjectPower(power) ? `<label class="rcd-resource ${fpValue <= 0 ? 'rcd-resource-disabled' : ''}">
-              <span class="rcd-res-header"><input type="checkbox" name="moveMassiveObject" ${fpValue <= 0 ? 'disabled' : ''}> <span class="rcd-res-icon">▦</span><span class="rcd-res-name">Move Massive Object Area Attack</span></span>
-              <span class="rcd-res-detail">Spend 1 Force Point to affect an area with a Large or larger object. Large 2x2, Huge 3x3, Gargantuan 4x4, Colossal+ 6x6.</span>
-            </label>` : ''}
             <label class="rcd-resource ${boosted ? 'rcd-res-active' : ''} ${fpValue <= 0 ? 'rcd-resource-disabled' : ''}">
               <span class="rcd-res-header"><input type="checkbox" name="useForce" ${boosted ? 'checked' : ''} ${fpValue <= 0 ? 'disabled' : ''}> <span class="rcd-res-icon">✦</span><span class="rcd-res-name">Spend Force Point</span></span>
               <span class="rcd-res-detail">${fpValue <= 0 ? 'No Force Points available.' : `${fpValue} Force Points available.`}</span>
@@ -330,13 +250,7 @@ export async function promptForceRegimenRollOptions({ actor, regimen, sourceElem
           </section>
         </form>
         <aside class="rcd-rail">
-          <section class="rcd-rail-sec rcd-rail-sec--preview">
-            <div class="rcd-rail-lbl">Projected Outcome</div>
-            <div class="rcd-preview-formula">1d20 + ${baseBonus}</div>
-            <div class="rcd-preview-total">${baseBonus + 10}</div>
-            <div class="rcd-preview-label">Take 10 reference</div>
-            <div class="rcd-preview-dc ${(baseBonus + 10) >= baseDC ? 'pass' : 'fail'}">Take 10 ${(baseBonus + 10) >= baseDC ? 'meets' : 'misses'} DC ${baseDC}</div>
-          </section>
+          ${projectedOutcomeHtml(baseBonus, baseDC, { label: 'D20 midpoint reference' })}
           <section class="rcd-rail-sec">
             <div class="rcd-rail-lbl">Execution</div>
             <p class="swse-roll-config-note">The final roll is handled by the Force Regimen executor. On success, the resolved tier is stored on the active effect and the card moves to the regimen discard lane.</p>
@@ -364,8 +278,10 @@ export async function promptForceRegimenRollOptions({ actor, regimen, sourceElem
             baseBonus: toNumber(fieldValue(html, 'baseBonus'), baseBonus),
             customModifier: toNumber(fieldValue(html, 'customModifier'), 0),
             baseDC: toNumber(fieldValue(html, 'baseDC'), baseDC),
+            checkMode: 'roll',
+            take10: false,
             useForce: fieldValue(html, 'useForce') === true,
-            moveMassiveObject: !take10 && fieldValue(html, 'moveMassiveObject') === true
+            moveMassiveObject: false
           })
         },
         cancel: {
