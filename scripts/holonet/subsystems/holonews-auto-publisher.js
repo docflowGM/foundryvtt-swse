@@ -14,6 +14,7 @@ import { HolonetAudience } from '../contracts/holonet-audience.js';
 import { DELIVERY_STATE, SOURCE_FAMILY, SURFACE_TYPE } from '../contracts/enums.js';
 import { HolonewsGenerator } from '../data/holonews-seed-events.js';
 import { HolonewsAtomPolicy } from './holonews-atom-policy.js';
+import { ShellMutationGuard } from '/systems/foundryvtt-swse/scripts/ui/shell/ShellMutationGuard.js';
 
 const SYSTEM_ID = 'foundryvtt-swse';
 const SETTING_KEY = 'holonewsAutoPublisherPolicy';
@@ -109,7 +110,10 @@ export class HolonewsAutoPublisher {
       next.nextDueAt = addMinutes(new Date(), next.cadenceMinutes);
     }
 
-    await game.settings.set(SYSTEM_ID, SETTING_KEY, next);
+    await ShellMutationGuard.withDocumentMutation(null, () => game.settings.set(SYSTEM_ID, SETTING_KEY, next), {
+      reason: 'holonews-auto-publisher-save-policy',
+      surfaceId: 'holonet'
+    });
     return next;
   }
 
@@ -261,67 +265,42 @@ export class HolonewsAutoPublisher {
       pool = HolonewsGenerator.sample(HolonewsGenerator.count({ ...filters, excludeIds: [] }), { ...filters, excludeIds: [] });
     }
 
-    return this.shuffle(pool);
-  }
-
-  static shuffle(entries = []) {
-    const pool = [...entries];
-    for (let i = pool.length - 1; i > 0; i -= 1) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [pool[i], pool[j]] = [pool[j], pool[i]];
-    }
     return pool;
   }
 
   static createAmbientRecord(seed, policy, { reason = 'scheduled' } = {}) {
-    const data = HolonewsGenerator.toBulletinData(seed, {
-      breakingNews: false,
-      authorName: policy.sourceName || seed.source || 'Galaxy News Net'
-    });
-    const record = BulletinSource.createBulletinEvent({
-      title: data.title,
-      body: data.body,
-      category: 'holonews',
-      priority: data.priority || seed.priority || 'normal',
-      audience: HolonetAudience.allPlayers(),
-      authorName: data.authorName || seed.source || 'Galaxy News Net',
-      state: DELIVERY_STATE.PUBLISHED,
+    const now = isoNow();
+    const body = [
+      seed.content,
+      '',
+      `<p class="holonews-wire-note">Filed by ${policy.sourceName || 'Galaxy News Net'}.</p>`
+    ].join('\n');
+
+    return BulletinSource.toRecord({
+      title: seed.title,
+      body,
+      tags: uniqueValues(['holonews', 'ambient', seed.category, seed.sector, seed.priority]),
+      channel: SURFACE_TYPE.HOLONEWS,
+      priority: 'normal',
+      audience: HolonetAudience.PUBLIC,
+      publishedAt: now,
       metadata: {
-        ...data.metadata,
-        category: 'holonews',
-        priority: data.priority || seed.priority || 'normal',
-        urgent: false,
-        pinAsLastSession: false,
-        homeSlot: 'feed',
-        imageUrl: '',
-        bulletinHomeRole: 'feed',
-        bulletinConsoleVersion: 5,
-        automatedHolonews: true,
-        holonewsAutoPublishReason: reason,
-        holonewsAutoPublishedAt: isoNow()
-      }
+        holonewsSeedId: seed.id,
+        category: seed.category,
+        sector: seed.sector,
+        generated: true,
+        generatedReason: reason,
+        ambient: true
+      },
+      sourceFamily: SOURCE_FAMILY.BULLETIN,
+      deliveryState: DELIVERY_STATE.PUBLISHED
     });
-
-    record.projections = [
-      {
-        surfaceType: SURFACE_TYPE.HOME_FEED,
-        recordId: record.id,
-        isPinned: false,
-        metadata: {
-          source: 'holonews-auto-publisher',
-          imageUrl: '',
-          urgent: false,
-          breakingNews: false,
-          holonewsSeedId: seed.id,
-          automatedHolonews: true
-        }
-      }
-    ];
-
-    return record;
   }
 
   static appendHistory(history = [], entry = {}) {
-    return [...(Array.isArray(history) ? history : []), entry].slice(-25);
+    return [
+      ...(Array.isArray(history) ? history : []),
+      entry
+    ].slice(-25);
   }
 }
