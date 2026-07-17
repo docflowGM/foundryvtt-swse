@@ -15,7 +15,7 @@ The current `scripts/patches/combat-ui-behavior-hotfix.js` file remains a tempor
 
 ## Initial contract
 
-See `combat-feature-contract.js` for shared bucket names, automation status values, readiness values, router action names, the action-economy group contract, and the empty model helper.
+See `combat-feature-contract.js` for shared bucket names, automation status values, readiness values, router action names, action-economy groups, triggered-feature groups, and the empty model helper.
 
 ## Phase 1 adapter
 
@@ -96,6 +96,16 @@ scripts/engine/combat/features/combat-feature-active-state-service.js
 ```
 
 The service currently tracks Rage, Braced, Fight Defensively, Total Defense, Melee Defense, and Shield Surge. It uses `ActorEngine.updateActor(...)` to set or clear `flags.foundryvtt-swse.combatFeatures.activeStates.*`, so the panel can move an activated feature from Available Actions to Active Combat States without the template doing state work. These flags are display/state tracking only; combat math consumption is intentionally left to later canonical math phases.
+
+## Phase 8 triggered feature pipeline
+
+Triggered feature descriptors now live at:
+
+```text
+scripts/engine/combat/features/combat-feature-trigger-service.js
+```
+
+The trigger service maps features such as Block, Deflect, Trip, Throw, Pin, Crush, Crush Pinned Opponent, Combat Reflexes, Erratic Target, and Droid Shield Mastery to trigger windows and groups. The adapter uses this registry to move trigger-window features into `triggeredFeatures` and to build `triggeredFeatureGroups` for Defensive Reactions, On-Hit Riders, Grapple / Control, Opportunity Windows, and Other Triggers. This phase is still display/registry only; future chat-card prompting can write pending trigger context under `flags.foundryvtt-swse.combatFeatures.pendingTriggers.*`.
 
 Future files should follow this split:
 
