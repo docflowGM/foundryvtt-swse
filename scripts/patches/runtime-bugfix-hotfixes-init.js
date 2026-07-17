@@ -3,9 +3,11 @@ import { registerProgressionLedgerReconciliationHotfix } from '/systems/foundryv
 import { registerArmorHydrationDefenseHotfix } from '/systems/foundryvtt-swse/scripts/patches/armor-hydration-defense-hotfix.js';
 import { registerAttackDialogCombatCorrectionsHotfix } from '/systems/foundryvtt-swse/scripts/patches/attack-dialog-combat-corrections-hotfix.js';
 import { registerCombatUiBehaviorHotfixes } from '/systems/foundryvtt-swse/scripts/patches/combat-ui-behavior-hotfix.js';
+import { registerForceSuiteRenderGuardHotfix } from '/systems/foundryvtt-swse/scripts/patches/force-suite-render-guard-hotfix.js';
 
 registerRuntimeBugfixHotfixes();
 registerProgressionLedgerReconciliationHotfix();
 registerArmorHydrationDefenseHotfix();
 registerAttackDialogCombatCorrectionsHotfix();
 registerCombatUiBehaviorHotfixes();
+registerForceSuiteRenderGuardHotfix();
