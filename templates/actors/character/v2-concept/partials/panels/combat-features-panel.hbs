@@ -4,12 +4,13 @@
       <h3 class="swse-concept-panel__title">Combat Features</h3>
       <p class="swse-concept-panel__hint">Feature console grouped by state, action economy, triggers, and passive riders.</p>
     </div>
-    <span class="swse-concept-panel__eyebrow">Phase 3 Preview</span>
+    <span class="swse-concept-panel__eyebrow">Phase 8 Preview</span>
   </header>
 
   <div class="swse-concept-command-strip swse-combat-feature-badges">
     <div class="swse-concept-command-chip"><strong>{{combatFeatures.badges.activeStateCount}}</strong><span>Active</span></div>
     <div class="swse-concept-command-chip"><strong>{{combatFeatures.badges.readyActionCount}}</strong><span>Actions</span></div>
+    <div class="swse-concept-command-chip"><strong>{{combatFeatures.triggeredFeatures.length}}</strong><span>Triggers</span></div>
     <div class="swse-concept-command-chip"><strong>{{combatFeatures.badges.passiveRiderCount}}</strong><span>Riders</span></div>
     <div class="swse-concept-command-chip"><strong>{{combatFeatures.badges.rageLabel}}</strong><span>Rage</span></div>
   </div>
@@ -79,31 +80,35 @@
     </div>
   {{/if}}
 
-  {{#if combatFeatures.triggeredFeatures.length}}
+  {{#if combatFeatures.triggeredFeatureGroups.length}}
     <div class="swse-concept-action-board swse-combat-feature-section swse-combat-feature-section--triggered" data-combat-feature-section="triggeredFeatures">
-      <article class="swse-concept-action-lane swse-action-lane--reaction">
-        <header class="swse-concept-action-lane__header">
-          <strong>Triggered / Conditional</strong>
-          <span>{{combatFeatures.triggeredFeatures.length}}</span>
-        </header>
-        <div class="swse-concept-action-lane__rows">
-          {{#each combatFeatures.triggeredFeatures as |feature|}}
-            <button type="button"
-                    class="swse-concept-action-button swse-combat-feature-button swse-combat-feature-button--{{feature.automationStatus}} is-reference-only"
-                    data-action="view-combat-feature"
-                    data-feature-id="{{feature.id}}"
-                    data-source-item-id="{{feature.sourceItemId}}"
-                    title="{{feature.trigger}} {{feature.result}}">
-              <span class="swse-concept-action-button__icon" aria-hidden="true">◇</span>
-              <span class="swse-concept-action-button__copy">
-                <strong>{{feature.name}}</strong>
-                {{#if feature.trigger}}<small>{{feature.trigger}}</small>{{/if}}
-              </span>
-              <span class="swse-concept-action-button__cost">{{feature.automationStatus}}</span>
-            </button>
-          {{/each}}
-        </div>
-      </article>
+      {{#each combatFeatures.triggeredFeatureGroups as |group|}}
+        <article class="swse-concept-action-lane swse-action-lane--{{group.id}}" data-combat-feature-trigger-group="{{group.id}}" title="{{group.hint}}">
+          <header class="swse-concept-action-lane__header">
+            <strong>{{group.label}}</strong>
+            <span>{{group.count}}</span>
+          </header>
+          <div class="swse-concept-action-lane__rows">
+            {{#each group.features as |feature|}}
+              <button type="button"
+                      class="swse-concept-action-button swse-combat-feature-button swse-combat-feature-button--{{feature.automationStatus}} swse-combat-feature-button--{{feature.readiness}} is-reference-only"
+                      data-action="view-combat-feature"
+                      data-feature-id="{{feature.id}}"
+                      data-source-item-id="{{feature.sourceItemId}}"
+                      data-trigger-id="{{feature.triggerId}}"
+                      data-trigger-group="{{feature.triggerGroupId}}"
+                      title="{{feature.trigger}} {{feature.result}}">
+                <span class="swse-concept-action-button__icon" aria-hidden="true">◇</span>
+                <span class="swse-concept-action-button__copy">
+                  <strong>{{feature.name}}</strong>
+                  {{#if feature.triggerLabel}}<small>{{feature.triggerLabel}} — {{feature.responseWindow}}</small>{{else}}{{#if feature.trigger}}<small>{{feature.trigger}}</small>{{/if}}{{/if}}
+                </span>
+                <span class="swse-concept-action-button__cost">{{feature.readiness}}</span>
+              </button>
+            {{/each}}
+          </div>
+        </article>
+      {{/each}}
     </div>
   {{/if}}
 
