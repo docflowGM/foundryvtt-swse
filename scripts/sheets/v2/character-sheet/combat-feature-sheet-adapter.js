@@ -1,5 +1,7 @@
 import {
   COMBAT_FEATURE_ACTIONS,
+  COMBAT_FEATURE_ACTION_GROUP_ORDER,
+  COMBAT_FEATURE_ACTION_GROUPS,
   COMBAT_FEATURE_AUTOMATION_STATUS,
   COMBAT_FEATURE_BUCKETS,
   COMBAT_FEATURE_READINESS,
@@ -16,9 +18,10 @@ import {
 /**
  * CombatFeatureSheetAdapter
  *
- * Phase 2 adapter for the Combat Features reform. This class builds the display
+ * Phase 3 adapter for the Combat Features reform. This class builds the display
  * model consumed by the future Combat Features panel. Source-item and effect
- * classification now lives in `combat-feature-classifier.js`.
+ * classification lives in `combat-feature-classifier.js`; this adapter assembles
+ * the model and adds action-economy groupings for available actions.
  *
  * This adapter remains pure: no actor mutation, no roll math, no action
  * spending, and no effect creation.
@@ -69,6 +72,48 @@ function sortFeatureList(list = []) {
   return list.sort((a, b) => String(a.name || '').localeCompare(String(b.name || '')));
 }
 
+function availableActionGroupId(feature = {}) {
+  const haystack = [feature.actionCost, feature.timing, ...(Array.isArray(feature.tags) ? feature.tags : [])]
+    .join(' ')
+    .toLowerCase();
+
+  if (/attack[-\s]?option|melee attack option|ranged attack option|area attack option/.test(haystack)) return COMBAT_FEATURE_ACTION_GROUPS.ATTACK_OPTION;
+  if (/full[-\s]?round|full attack|multiattack/.test(haystack)) return COMBAT_FEATURE_ACTION_GROUPS.FULL_ROUND;
+  if (/reaction|response|attack of opportunity|triggered/.test(haystack)) return COMBAT_FEATURE_ACTION_GROUPS.REACTION;
+  if (/swift/.test(haystack)) return COMBAT_FEATURE_ACTION_GROUPS.SWIFT;
+  if (/move/.test(haystack)) return COMBAT_FEATURE_ACTION_GROUPS.MOVE;
+  if (/standard/.test(haystack)) return COMBAT_FEATURE_ACTION_GROUPS.STANDARD;
+  if (/free/.test(haystack)) return COMBAT_FEATURE_ACTION_GROUPS.FREE;
+  return COMBAT_FEATURE_ACTION_GROUPS.OTHER;
+}
+
+function buildAvailableActionGroups(availableActions = []) {
+  const groups = COMBAT_FEATURE_ACTION_GROUP_ORDER.map(definition => ({
+    ...definition,
+    count: 0,
+    actions: []
+  }));
+  const byId = new Map(groups.map(group => [group.id, group]));
+
+  for (const action of availableActions) {
+    const groupId = availableActionGroupId(action);
+    const group = byId.get(groupId) ?? byId.get(COMBAT_FEATURE_ACTION_GROUPS.OTHER);
+    group.actions.push({
+      ...action,
+      actionGroupId: group.id,
+      actionGroupLabel: group.label
+    });
+  }
+
+  for (const group of groups) {
+    sortFeatureList(group.actions);
+    group.count = group.actions.length;
+    group.hasActions = group.count > 0;
+  }
+
+  return groups.filter(group => group.hasActions);
+}
+
 export class CombatFeatureSheetAdapter {
   static build(actor, _options = {}) {
     const model = emptyCombatFeaturesModel();
@@ -84,6 +129,7 @@ export class CombatFeatureSheetAdapter {
     addSecondWindFallback(model, actor);
 
     for (const key of Object.values(COMBAT_FEATURE_BUCKETS)) sortFeatureList(model[key]);
+    model.availableActionGroups = buildAvailableActionGroups(model.availableActions);
 
     const rageActive = model.activeStates.some(feature => feature.id === 'rage');
     return withCombatFeatureBadges({
