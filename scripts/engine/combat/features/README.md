@@ -63,7 +63,17 @@ The permanent action router lives at:
 scripts/engine/combat/features/combat-feature-action-router.js
 ```
 
-It handles `view-combat-feature`, `execute-combat-feature-attack-option`, `execute-combat-feature-multiattack`, `execute-combat-feature-resource`, and `deactivate-combat-feature` from the new Combat Features panel. Attack-option and multiattack handlers open the normal attack dialog and then call canonical combat roll helpers. Resource handling currently wires Second Wind; unmapped features fail closed by opening source details or warning that the feature is not automated yet.
+It handles panel click capture, actor resolution, and fail-closed dispatch. It should stay thin.
+
+## Phase 5 handlers
+
+Named behavior handlers now live at:
+
+```text
+scripts/engine/combat/features/combat-feature-handlers.js
+```
+
+The handlers own the permanent Power Attack / Flurry / Rapid Strike / Power Blast / Burst Fire / Rapid Shot / Autofire / Charging Fire / Powerful Charge / Mighty Swing attack-option path, plus Double Attack / Triple Attack multiattack execution, Second Wind resource execution, source-item view fallback, and active-effect deactivation. Attack-option and multiattack handlers open the normal attack dialog and then call canonical combat roll helpers.
 
 Future files should follow this split:
 
