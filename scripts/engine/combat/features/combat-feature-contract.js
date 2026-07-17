@@ -96,6 +96,9 @@ export const COMBAT_FEATURE_READINESS = Object.freeze({
 
 export const COMBAT_FEATURE_ACTIONS = Object.freeze({
   VIEW: 'view-combat-feature',
+  VIEW_DETAILS: 'view-combat-feature-details',
+  TOGGLE_FAVORITE: 'toggle-combat-feature-favorite',
+  TOGGLE_COMPACT: 'toggle-combat-features-compact',
   ACTIVATE: 'activate-combat-feature',
   DEACTIVATE: 'deactivate-combat-feature',
   EXECUTE_ATTACK_OPTION: 'execute-combat-feature-attack-option',
@@ -123,10 +126,16 @@ export function emptyCombatFeaturesModel() {
     triggeredFeatureGroups: [],
     [COMBAT_FEATURE_BUCKETS.PASSIVE_RIDERS]: [],
     passiveRiderGroups: [],
+    favoriteFeatures: [],
+    preferences: {
+      compactMode: false,
+      favorites: {}
+    },
     badges: {
       hasRageActive: false,
       rageLabel: 'Rage Inactive',
       activeStateCount: 0,
+      favoriteCount: 0,
       readyActionCount: 0,
       availableActionGroupCount: 0,
       triggeredFeatureGroupCount: 0,
@@ -148,12 +157,14 @@ export function combatFeatureSummaryCounts(model = emptyCombatFeaturesModel()) {
   const triggeredFeatureGroups = Array.isArray(model.triggeredFeatureGroups) ? model.triggeredFeatureGroups : [];
   const passiveRiders = Array.isArray(model.passiveRiders) ? model.passiveRiders : [];
   const passiveRiderGroups = Array.isArray(model.passiveRiderGroups) ? model.passiveRiderGroups : [];
+  const favoriteFeatures = Array.isArray(model.favoriteFeatures) ? model.favoriteFeatures : [];
   const manualFeatureCount = [...activeStates, ...availableActions, ...triggeredFeatures, ...passiveRiders]
     .filter(feature => feature?.automationStatus === COMBAT_FEATURE_AUTOMATION_STATUS.MANUAL)
     .length;
 
   return {
     activeStateCount: activeStates.length,
+    favoriteCount: favoriteFeatures.length,
     readyActionCount: availableActions.filter(feature => feature?.readiness !== COMBAT_FEATURE_READINESS.USED).length,
     availableActionGroupCount: availableActionGroups.filter(group => Array.isArray(group.actions) && group.actions.length).length,
     triggeredFeatureGroupCount: triggeredFeatureGroups.filter(group => Array.isArray(group.features) && group.features.length).length,
