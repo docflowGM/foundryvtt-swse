@@ -1,33 +1,34 @@
 import { SWSEDialogV2 } from '/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js';
+import { ActorEngine } from '/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js';
 
 export const FORCE_TRADITION_OPTIONS = [
-  { value: '', label: 'No Tradition', note: 'No Force tradition is currently selected.' },
-  { value: 'the jensaarai', label: 'The Jensaarai', note: 'Unlocks the Jensaarai Defender tradition tree when eligible.' },
-  { value: 'the witches of dathomir', label: 'The Witches of Dathomir', note: 'Unlocks the Dathomiri Witch tradition tree when eligible.' },
-  { value: 'the jal shey', label: 'The Jal Shey', note: 'Unlocks the Jal Shey tradition tree when eligible.' },
-  { value: 'the keetael', label: 'The Keetael', note: 'Unlocks the Keetael tradition tree when eligible.' },
-  { value: 'the krath', label: 'The Krath', note: 'Unlocks the Krath tradition tree when eligible.' },
-  { value: 'the luka sene', label: 'The Luka Sene', note: 'Unlocks the Luka Sene tradition tree when eligible.' },
-  { value: 'the order of shasa', label: 'The Order of Shasa', note: 'Unlocks the Order of Shasa tradition tree when eligible.' },
-  { value: 'the agents of ossus', label: 'The Agents of Ossus', note: 'Unlocks the Agent of Ossus tradition tree when eligible.' },
-  { value: 'the felucian shamans', label: 'The Felucian Shamans', note: 'Unlocks the Felucian Shaman tradition tree when eligible.' },
-  { value: 'the bando gora', label: 'The Bando Gora', note: 'Unlocks the Bando Gora Captain tradition tree when eligible.' },
-  { value: 'the believers', label: 'The Believers', note: 'Unlocks the Believer Disciple tradition tree when eligible.' },
-  { value: 'the korunnai', label: 'The Korunnai', note: 'Unlocks the Korunnai Adept tradition tree when eligible.' },
-  { value: 'the disciples of twilight', label: 'The Disciples of Twilight', note: 'Unlocks the Disciple of Twilight tradition tree when eligible.' },
-  { value: 'the ember of vahl', label: 'The Ember of Vahl', note: 'Unlocks the Ember of Vahl tradition tree when eligible.' },
-  { value: 'the aing tii monks', label: 'The Aing-Tii Monks', note: 'Unlocks the Aing-Tii Monk tradition tree when eligible.' },
-  { value: 'the baran do sages', label: 'The Baran Do Sages', note: 'Unlocks the Baran-Do Sage tradition tree when eligible.' },
-  { value: 'the iron knights', label: 'The Iron Knights', note: 'Unlocks the Iron Knight tradition tree when eligible.' },
-  { value: 'the matukai', label: 'The Matukai', note: 'Unlocks the Matukai Adept tradition tree when eligible.' },
-  { value: 'the seyugi dervishes', label: 'The Seyugi Dervishes', note: 'Unlocks the Seyugi Dervish tradition tree when eligible.' },
-  { value: 'the shapers of kro var', label: 'The Shapers of Kro Var', note: 'Unlocks the Shaper of Kro Var tradition tree when eligible.' },
-  { value: 'the tyia', label: 'The Tyia', note: 'Unlocks the Tyia Adept tradition tree when eligible.' },
-  { value: 'the wardens of the sky', label: 'The Wardens of the Sky', note: 'Unlocks the Warden of the Sky tradition tree when eligible.' },
-  { value: 'the fallanassi', label: 'The Fallanassi / White Current', note: 'Unlocks the White Current Adept tradition tree when eligible.' },
-  { value: 'the zeison sha', label: 'The Zeison Sha', note: 'Unlocks the Zeison Sha Warrior tradition tree when eligible.' },
-  { value: 'the kilian rangers', label: 'The Kilian Rangers', note: 'Unlocks the Kilian Ranger tradition tree when eligible.' },
-  { value: 'the blazing chain', label: 'The Blazing Chain', note: 'Unlocks the Blazing Chain tradition tree when eligible.' },
+  { value: '', label: 'No Tradition', note: 'No Force tradition is currently selected.', none: true },
+  { value: 'the jensaarai', label: 'The Jensaarai', note: 'Hidden armored defenders who blend Jedi and Sith teachings into a single creed.' },
+  { value: 'the witches of dathomir', label: 'The Witches of Dathomir', note: 'Clan mystics who shape the Force through spoken spells and ritual chants.' },
+  { value: 'the jal shey', label: 'The Jal Shey', note: 'Detached scholars who master the Force through reason and intellect over emotion.' },
+  { value: 'the keetael', label: 'The Keetael', note: 'A secretive circle of Force-attuned healers and keepers of old lore.' },
+  { value: 'the krath', label: 'The Krath', note: 'Sith-inspired sorcerers wielding dark-side magic and ancient rituals.' },
+  { value: 'the luka sene', label: 'The Luka Sene', note: 'Miraluka sense-adepts, unrivaled masters of Force sight and perception.' },
+  { value: 'the order of shasa', label: 'The Order of Shasa', note: 'Aquatic mystics of Manaan awakened to the Force through a sacred power.' },
+  { value: 'the agents of ossus', label: 'The Agents of Ossus', note: 'Guardians who safeguard the ancient Jedi knowledge left on Ossus.' },
+  { value: 'the felucian shamans', label: 'The Felucian Shamans', note: 'Primal healers who channel the living Force of Felucia’s jungles.' },
+  { value: 'the bando gora', label: 'The Bando Gora', note: 'A death-worshipping cult that twists the dark side through fear and pain.' },
+  { value: 'the believers', label: 'The Believers', note: 'A Cularin dark-side cult devoted to a prophesied master of shadow.' },
+  { value: 'the korunnai', label: 'The Korunnai', note: 'Force-sensitive clans of Haruun Kal, bonded to their jungle world.' },
+  { value: 'the disciples of twilight', label: 'The Disciples of Twilight', note: 'Shadow-walkers who seek balance between the light and dark sides.' },
+  { value: 'the ember of vahl', label: 'The Ember of Vahl', note: 'Fire-wielding dark-side assassins sworn to a vengeful goddess.' },
+  { value: 'the aing tii monks', label: 'The Aing-Tii Monks', note: 'Enigmatic monks who bend space and see beyond light and dark.' },
+  { value: 'the baran do sages', label: 'The Baran Do Sages', note: 'Kel Dor seers who foresee danger and disaster through the Force.' },
+  { value: 'the iron knights', label: 'The Iron Knights', note: 'Crystalline Shard beings who fight as Force-attuned warriors in droid bodies.' },
+  { value: 'the matukai', label: 'The Matukai', note: 'Ascetics who unite body and Force through relentless physical discipline.' },
+  { value: 'the seyugi dervishes', label: 'The Seyugi Dervishes', note: 'Warrior-mystics whose whirling battle dances channel the Force.' },
+  { value: 'the shapers of kro var', label: 'The Shapers of Kro Var', note: 'Elementalists who command earth, wind, fire, and water through will.' },
+  { value: 'the tyia', label: 'The Tyia', note: 'Peaceful mystics who follow the Force as a quiet guiding life-path.' },
+  { value: 'the wardens of the sky', label: 'The Wardens of the Sky', note: 'Vigilant protectors who shield their people through watchfulness and the Force.' },
+  { value: 'the fallanassi', label: 'The Fallanassi / White Current', note: 'Illusionists who flow with the White Current to weave flawless illusions.' },
+  { value: 'the zeison sha', label: 'The Zeison Sha', note: 'Self-taught survivors who hurl discblades with raw telekinetic force.' },
+  { value: 'the kilian rangers', label: 'The Kilian Rangers', note: 'Armored knights bonded to steed and blade through the Force.' },
+  { value: 'the blazing chain', label: 'The Blazing Chain', note: 'A militant order bound by oath and Force-forged discipline.' },
 ];
 
 function escapeHtml(value) {
@@ -36,31 +37,38 @@ function escapeHtml(value) {
   return div.innerHTML;
 }
 
+function normalizeTraditionValue(value) {
+  return String(value ?? '').toLowerCase().trim();
+}
+
 function getActorFromSheetApp(app) {
   return app?.actor || app?.document || null;
 }
 
 function getCurrentTradition(actor) {
-  return String(
+  return normalizeTraditionValue(
     actor?.system?.forceTradition
     ?? actor?.system?.progression?.forceTradition
+    ?? actor?.flags?.['foundryvtt-swse']?.forceTradition
     ?? actor?.flags?.swse?.forceTradition
     ?? ''
   );
 }
 
 function getTraditionLabel(value) {
-  const normalized = String(value ?? '').toLowerCase().trim();
+  const normalized = normalizeTraditionValue(value);
   return FORCE_TRADITION_OPTIONS.find((option) => option.value === normalized)?.label || (value ? String(value) : 'No Tradition');
 }
 
 function buildPickerHtml(currentValue) {
-  const current = String(currentValue ?? '').toLowerCase().trim();
+  const current = normalizeTraditionValue(currentValue);
   const cards = FORCE_TRADITION_OPTIONS.map((option) => {
     const checked = option.value === current ? 'checked' : '';
     const active = option.value === current ? ' is-selected' : '';
+    const none = option.none ? ' data-none' : '';
+    const search = `${option.label} ${option.note} ${option.value}`.toLowerCase();
     return `
-      <label class="swse-force-tradition-picker__option${active}">
+      <label class="swse-force-tradition-picker__option${active}"${none} data-search="${escapeHtml(search)}">
         <input type="radio" name="forceTradition" value="${escapeHtml(option.value)}" ${checked}>
         <span class="swse-force-tradition-picker__copy">
           <strong>${escapeHtml(option.label)}</strong>
@@ -71,9 +79,56 @@ function buildPickerHtml(currentValue) {
 
   return `
     <form class="swse-force-tradition-picker">
-      <p class="swse-force-tradition-picker__hint">Choose the actor's Force tradition. This updates <code>system.forceTradition</code> and is used by Force tradition talent-tree access.</p>
+      <p class="swse-force-tradition-picker__hint">Choose the actor's Force tradition. This updates <code>system.forceTradition</code> and gates Force-tradition talent-tree access.</p>
+      <div class="swse-force-tradition-picker__search">
+        <input type="text" name="forceTraditionSearch" placeholder="Filter traditions…" autocomplete="off">
+        <span class="swse-force-tradition-picker__count"></span>
+      </div>
       <div class="swse-force-tradition-picker__grid">${cards}</div>
     </form>`;
+}
+
+function getDialogRoot(html) {
+  return html?.[0] || html?.element || (html instanceof HTMLElement ? html : document);
+}
+
+function bindPickerInteractions(html) {
+  const root = getDialogRoot(html);
+  const picker = root.querySelector?.('.swse-force-tradition-picker');
+  if (!picker || picker.dataset.forceTraditionPickerBound === 'true') return;
+  picker.dataset.forceTraditionPickerBound = 'true';
+
+  const search = picker.querySelector('input[name="forceTraditionSearch"]');
+  const count = picker.querySelector('.swse-force-tradition-picker__count');
+  const grid = picker.querySelector('.swse-force-tradition-picker__grid');
+  const options = () => Array.from(grid?.querySelectorAll('.swse-force-tradition-picker__option') ?? []);
+  const visibleOptions = () => options().filter(option => !option.hidden);
+  const updateCount = () => {
+    if (!count) return;
+    count.textContent = `${visibleOptions().length} / ${FORCE_TRADITION_OPTIONS.length}`;
+  };
+
+  updateCount();
+
+  search?.addEventListener('input', () => {
+    const query = normalizeTraditionValue(search.value);
+    for (const option of options()) {
+      option.hidden = !!query && !String(option.dataset.search ?? '').includes(query);
+    }
+    updateCount();
+  });
+
+  grid?.addEventListener('change', event => {
+    if (!event.target?.matches?.('input[name="forceTradition"]')) return;
+    for (const option of options()) option.classList.remove('is-selected');
+    event.target.closest('.swse-force-tradition-picker__option')?.classList.add('is-selected');
+  });
+}
+
+function selectedTraditionFromHtml(html) {
+  const root = getDialogRoot(html);
+  const selected = root.querySelector?.('input[name="forceTradition"]:checked');
+  return normalizeTraditionValue(selected?.value ?? '');
 }
 
 export async function openForceTraditionPicker(actor, { renderSheet = null } = {}) {
@@ -83,27 +138,40 @@ export async function openForceTraditionPicker(actor, { renderSheet = null } = {
   }
 
   const current = getCurrentTradition(actor);
-  const result = await SWSEDialogV2.prompt({
-    title: 'Choose Force Tradition',
-    label: 'Save Tradition',
-    content: buildPickerHtml(current),
-    callback: (html) => {
-      const root = html?.[0] || html?.element || document;
-      const selected = root.querySelector?.('input[name="forceTradition"]:checked');
-      return selected?.value ?? '';
+  const buttons = {
+    cancel: {
+      icon: '<i class="fa-solid fa-times"></i>',
+      label: game?.i18n?.localize?.('Cancel') ?? 'Cancel',
+      callback: () => null
     },
-    options: {
-      width: 720,
-      classes: ['swse-force-tradition-picker-dialog']
+    ok: {
+      icon: '<i class="fa-solid fa-check"></i>',
+      label: 'Save Tradition',
+      callback: (html) => selectedTraditionFromHtml(html)
     }
+  };
+
+  const result = await SWSEDialogV2.wait({
+    title: 'Choose Force Tradition',
+    content: buildPickerHtml(current),
+    buttons,
+    default: 'ok',
+    render: bindPickerInteractions
+  }, {
+    width: 760,
+    classes: ['swse-force-tradition-picker-dialog']
   });
 
   if (result === null || result === undefined) return null;
-  const selected = String(result ?? '').trim();
-  await actor.update({
+  const selected = normalizeTraditionValue(result);
+  await ActorEngine.updateActor(actor, {
     'system.forceTradition': selected,
     'system.progression.forceTradition': selected,
+    'flags.foundryvtt-swse.forceTradition': selected,
     'flags.swse.forceTradition': selected,
+  }, {
+    meta: { guardKey: 'force-tradition-picker-save' },
+    source: 'force-tradition-picker'
   });
   ui.notifications?.info?.(`Force tradition set to ${getTraditionLabel(selected)}.`);
   if (typeof renderSheet === 'function') renderSheet();
