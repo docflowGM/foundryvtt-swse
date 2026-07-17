@@ -23,14 +23,19 @@ import {
   enrichTriggeredCombatFeature,
   isTriggeredCombatFeature
 } from '/systems/foundryvtt-swse/scripts/engine/combat/features/combat-feature-trigger-service.js';
+import {
+  buildPassiveRiderGroups,
+  enrichPassiveCombatRider
+} from '/systems/foundryvtt-swse/scripts/engine/combat/features/combat-feature-passive-rider-service.js';
 
 /**
  * CombatFeatureSheetAdapter
  *
- * Phase 8 adapter for the Combat Features reform. Source-item/effect
+ * Phase 9 adapter for the Combat Features reform. Source-item/effect
  * classification lives in `combat-feature-classifier.js`; this adapter assembles
  * the model, adds action-economy groupings, exposes tracked active combat states,
- * and groups triggered features by trigger window.
+ * groups triggered features by trigger window, and groups passive riders by what
+ * they affect plus their automation status.
  *
  * This adapter remains pure: no actor mutation, no roll math, no action
  * spending, and no effect creation.
@@ -147,6 +152,10 @@ function pushClassifiedFeature(model, actor, entry) {
     pushUnique(model.triggeredFeatures, enrichTriggeredCombatFeature(actor, entry.feature));
     return;
   }
+  if (entry.bucket === COMBAT_FEATURE_BUCKETS.PASSIVE_RIDERS) {
+    pushUnique(model.passiveRiders, enrichPassiveCombatRider(entry.feature));
+    return;
+  }
   if (!model[entry.bucket]) return;
   pushUnique(model[entry.bucket], entry.feature);
 }
@@ -169,6 +178,7 @@ export class CombatFeatureSheetAdapter {
     for (const key of Object.values(COMBAT_FEATURE_BUCKETS)) sortFeatureList(model[key]);
     model.availableActionGroups = buildAvailableActionGroups(model.availableActions);
     model.triggeredFeatureGroups = buildTriggeredFeatureGroups(actor, model.triggeredFeatures);
+    model.passiveRiderGroups = buildPassiveRiderGroups(model.passiveRiders);
 
     const rageActive = model.activeStates.some(feature => feature.id === 'rage');
     return withCombatFeatureBadges({
