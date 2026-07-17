@@ -4,14 +4,14 @@
       <h3 class="swse-concept-panel__title">Combat Features</h3>
       <p class="swse-concept-panel__hint">Feature console grouped by state, action economy, triggers, and passive riders.</p>
     </div>
-    <span class="swse-concept-panel__eyebrow">Phase 8 Preview</span>
+    <span class="swse-concept-panel__eyebrow">Phase 9 Preview</span>
   </header>
 
   <div class="swse-concept-command-strip swse-combat-feature-badges">
     <div class="swse-concept-command-chip"><strong>{{combatFeatures.badges.activeStateCount}}</strong><span>Active</span></div>
     <div class="swse-concept-command-chip"><strong>{{combatFeatures.badges.readyActionCount}}</strong><span>Actions</span></div>
     <div class="swse-concept-command-chip"><strong>{{combatFeatures.triggeredFeatures.length}}</strong><span>Triggers</span></div>
-    <div class="swse-concept-command-chip"><strong>{{combatFeatures.badges.passiveRiderCount}}</strong><span>Riders</span></div>
+    <div class="swse-concept-command-chip"><strong>{{combatFeatures.badges.passiveAutomatedCount}}/{{combatFeatures.badges.passiveRiderCount}}</strong><span>Auto Riders</span></div>
     <div class="swse-concept-command-chip"><strong>{{combatFeatures.badges.rageLabel}}</strong><span>Rage</span></div>
   </div>
 
@@ -112,31 +112,34 @@
     </div>
   {{/if}}
 
-  {{#if combatFeatures.passiveRiders.length}}
+  {{#if combatFeatures.passiveRiderGroups.length}}
     <div class="swse-concept-action-board swse-combat-feature-section swse-combat-feature-section--passive" data-combat-feature-section="passiveRiders">
-      <article class="swse-concept-action-lane swse-action-lane--passive">
-        <header class="swse-concept-action-lane__header">
-          <strong>Passive Combat Riders</strong>
-          <span>{{combatFeatures.badges.passiveRiderCount}}</span>
-        </header>
-        <div class="swse-concept-action-lane__rows">
-          {{#each combatFeatures.passiveRiders as |feature|}}
-            <button type="button"
-                    class="swse-concept-action-button swse-combat-feature-button swse-combat-feature-button--{{feature.automationStatus}} is-reference-only"
-                    data-action="view-combat-feature"
-                    data-feature-id="{{feature.id}}"
-                    data-source-item-id="{{feature.sourceItemId}}"
-                    title="{{feature.summary}}">
-              <span class="swse-concept-action-button__icon" aria-hidden="true">▣</span>
-              <span class="swse-concept-action-button__copy">
-                <strong>{{feature.name}}</strong>
-                {{#if feature.summary}}<small>{{feature.summary}}</small>{{/if}}
-              </span>
-              <span class="swse-concept-action-button__cost">{{#if feature.appliesTo}}{{feature.appliesTo}}{{else}}{{feature.automationStatus}}{{/if}}</span>
-            </button>
-          {{/each}}
-        </div>
-      </article>
+      {{#each combatFeatures.passiveRiderGroups as |group|}}
+        <article class="swse-concept-action-lane swse-action-lane--{{group.id}}" data-combat-feature-passive-group="{{group.id}}" title="{{group.hint}}">
+          <header class="swse-concept-action-lane__header">
+            <strong>{{group.label}}</strong>
+            <span>{{group.automatedCount}} auto · {{group.partialCount}} partial · {{group.manualCount}} manual</span>
+          </header>
+          <div class="swse-concept-action-lane__rows">
+            {{#each group.riders as |feature|}}
+              <button type="button"
+                      class="swse-concept-action-button swse-combat-feature-button swse-combat-feature-button--{{feature.automationStatus}} is-reference-only"
+                      data-action="view-combat-feature"
+                      data-feature-id="{{feature.id}}"
+                      data-source-item-id="{{feature.sourceItemId}}"
+                      data-passive-group="{{feature.riderGroupId}}"
+                      title="{{feature.automationHint}} {{feature.summary}}">
+                <span class="swse-concept-action-button__icon" aria-hidden="true">▣</span>
+                <span class="swse-concept-action-button__copy">
+                  <strong>{{feature.name}}</strong>
+                  {{#if feature.summary}}<small>{{feature.summary}}</small>{{/if}}
+                </span>
+                <span class="swse-concept-action-button__cost">{{feature.automationLabel}} · {{feature.appliesTo}}</span>
+              </button>
+            {{/each}}
+          </div>
+        </article>
+      {{/each}}
     </div>
   {{/if}}
 </section>
