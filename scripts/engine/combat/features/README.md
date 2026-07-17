@@ -75,6 +75,18 @@ scripts/engine/combat/features/combat-feature-handlers.js
 
 The handlers own the permanent Power Attack / Flurry / Rapid Strike / Power Blast / Burst Fire / Rapid Shot / Autofire / Charging Fire / Powerful Charge / Mighty Swing attack-option path, plus Double Attack / Triple Attack multiattack execution, Second Wind resource execution, source-item view fallback, and active-effect deactivation. Attack-option and multiattack handlers open the normal attack dialog and then call canonical combat roll helpers.
 
+## Phase 6 multiattack reform
+
+Double Attack and Triple Attack now have first-class handler specs in `combat-feature-handlers.js`. The handler owns attack count, fallback penalty, package type, action id, full-round action spending, and per-attack dialog sequencing.
+
+Legacy combat action rows are bridged by:
+
+```text
+scripts/engine/combat/features/combat-feature-legacy-action-bridge.js
+```
+
+That bridge is registered before the transitional combat UI hotfix. It intercepts legacy Double Attack / Triple Attack rows and sends them to the permanent handler, preventing the older hotfix implementation from running for those rows while the legacy panel still exists.
+
 Future files should follow this split:
 
 ```text
