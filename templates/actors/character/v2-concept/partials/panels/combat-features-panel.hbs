@@ -1,4 +1,4 @@
-<section class="swse-concept-panel swse-concept-panel--combat-features swse-combat-features-panel" data-combat-features-panel>
+<section class="swse-concept-panel swse-concept-panel--combat-features swse-combat-features-panel" data-combat-features-panel data-swse-actor-id="{{actor.id}}">
   <header class="swse-concept-panel__header">
     <div>
       <h3 class="swse-concept-panel__title">Combat Features</h3>
@@ -28,6 +28,7 @@
                     data-action="{{#if feature.deactivateAction}}{{feature.deactivateAction}}{{else}}view-combat-feature{{/if}}"
                     data-feature-id="{{feature.id}}"
                     data-source-item-id="{{feature.sourceItemId}}"
+                    data-effect-id="{{feature.effectId}}"
                     title="{{feature.summary}}">
               <span class="swse-concept-action-button__icon" aria-hidden="true">●</span>
               <span class="swse-concept-action-button__copy">
