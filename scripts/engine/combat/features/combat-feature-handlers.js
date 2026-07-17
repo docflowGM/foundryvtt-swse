@@ -5,11 +5,16 @@ import { ActionEconomyConsumption } from '/systems/foundryvtt-swse/scripts/engin
 import { showRollModifiersDialog } from '/systems/foundryvtt-swse/scripts/rolls/roll-config.js';
 import { COMBAT_FEATURE_ACTIONS } from '/systems/foundryvtt-swse/scripts/engine/combat/features/combat-feature-contract.js';
 import { canonicalCombatFeatureKey, combatFeatureIdForEffect } from '/systems/foundryvtt-swse/scripts/engine/combat/features/combat-feature-classifier.js';
+import {
+  activateCombatFeatureState,
+  clearCombatFeatureState,
+  isTrackedCombatState
+} from '/systems/foundryvtt-swse/scripts/engine/combat/features/combat-feature-active-state-service.js';
 
 /**
  * Combat Feature Handlers
  *
- * Phase 5/6 permanent behavior layer. The router dispatches here; handlers are
+ * Phase 5/7 permanent behavior layer. The router dispatches here; handlers are
  * responsible for opening the correct canonical dialog/engine path or failing
  * closed with a clear manual/source-detail fallback.
  */
@@ -380,16 +385,34 @@ export async function deactivateCombatFeature({ actor, element } = {}) {
     ? actor?.effects?.get?.(effectId)
     : Array.from(actor?.effects ?? []).find(candidate => combatFeatureIdForEffect(candidate) === featureId);
 
-  if (!effect?.id) {
-    ui?.notifications?.warn?.('This active combat feature does not have an automated end action yet.');
+  if (effect?.id) {
+    await ActorEngine.deleteActiveEffects(actor, [effect.id], { source: 'combat-feature-handlers' });
+    ui?.notifications?.info?.(`${effect.name ?? 'Combat feature'} ended.`);
     return;
   }
 
-  await ActorEngine.deleteActiveEffects(actor, [effect.id], { source: 'combat-feature-handlers' });
-  ui?.notifications?.info?.(`${effect.name ?? 'Combat feature'} ended.`);
+  if (isTrackedCombatState(featureId)) {
+    const result = await clearCombatFeatureState(actor, featureId);
+    if (result?.success) return;
+  }
+
+  ui?.notifications?.warn?.('This active combat feature does not have an automated end action yet.');
 }
 
 export async function activateCombatFeature({ actor, element } = {}) {
+  const featureId = canonicalCombatFeatureKey(element?.dataset?.featureId || '');
+  if (isTrackedCombatState(featureId)) {
+    const sourceItemId = element?.dataset?.sourceItemId || null;
+    const label = element?.querySelector?.('strong')?.textContent?.trim() || null;
+    const summary = element?.getAttribute?.('title') || null;
+    const result = await activateCombatFeatureState(actor, featureId, {
+      sourceItemId,
+      sourceName: label,
+      summary
+    });
+    if (result?.success) return;
+  }
+
   ui?.notifications?.warn?.('This combat feature activation is not automated yet. Opening source details instead.');
   return viewCombatFeature({ actor, element });
 }
