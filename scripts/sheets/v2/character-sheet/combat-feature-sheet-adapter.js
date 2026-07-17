@@ -27,15 +27,15 @@ import {
   buildPassiveRiderGroups,
   enrichPassiveCombatRider
 } from '/systems/foundryvtt-swse/scripts/engine/combat/features/combat-feature-passive-rider-service.js';
+import { applyCombatFeaturePreferences } from '/systems/foundryvtt-swse/scripts/engine/combat/features/combat-feature-preferences-service.js';
 
 /**
  * CombatFeatureSheetAdapter
  *
- * Phase 9 adapter for the Combat Features reform. Source-item/effect
+ * Phase 10 adapter for the Combat Features reform. Source-item/effect
  * classification lives in `combat-feature-classifier.js`; this adapter assembles
  * the model, adds action-economy groupings, exposes tracked active combat states,
- * groups triggered features by trigger window, and groups passive riders by what
- * they affect plus their automation status.
+ * groups triggered/passive features, and applies per-actor UX preferences.
  *
  * This adapter remains pure: no actor mutation, no roll math, no action
  * spending, and no effect creation.
@@ -181,14 +181,14 @@ export class CombatFeatureSheetAdapter {
     model.passiveRiderGroups = buildPassiveRiderGroups(model.passiveRiders);
 
     const rageActive = model.activeStates.some(feature => feature.id === 'rage');
-    return withCombatFeatureBadges({
+    return withCombatFeatureBadges(applyCombatFeaturePreferences({
       ...model,
       badges: {
         ...model.badges,
         hasRageActive: rageActive,
         rageLabel: rageActive ? 'Rage Active' : 'Rage Inactive'
       }
-    });
+    }, actor));
   }
 }
 
