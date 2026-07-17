@@ -17,6 +17,18 @@ The current `scripts/patches/combat-ui-behavior-hotfix.js` file remains a tempor
 
 See `combat-feature-contract.js` for shared bucket names, automation status values, readiness values, router action names, and the empty model helper.
 
+## Phase 1 adapter
+
+The first adapter lives at:
+
+```text
+scripts/sheets/v2/character-sheet/combat-feature-sheet-adapter.js
+```
+
+It currently builds the future `combatFeatures` model from actor items and active effects without changing the live UI. This is intentional: Phase 1 creates the data source first, while the old combat action panel and compatibility hotfix continue to keep the migration usable.
+
+The adapter is allowed to inspect actor items, actor flags, actor system state, and active effects. It is not allowed to roll, spend actions, create effects, or update actors.
+
 Future files should follow this split:
 
 ```text
