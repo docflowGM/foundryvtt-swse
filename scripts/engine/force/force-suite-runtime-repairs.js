@@ -2,6 +2,7 @@ import { ForceExecutor } from "/systems/foundryvtt-swse/scripts/engine/force/for
 import { promptForcePowerRollOptions } from "/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet/force-roll-dialog.js";
 
 let registered = false;
+const TELEKINETIC_MESSAGE_PATCH_FLAG = Symbol.for('swse.forceSuiteRuntimeRepairs.telekineticMessage.v1');
 
 function normalizeName(value = '') {
   return String(value ?? '').trim().toLowerCase().replace(/\s+/g, ' ').replace(/\s*\(\d+\)\s*$/, '');
@@ -23,8 +24,16 @@ function readTelepathicIntruderState(actor) {
     ?? null;
 }
 
+function actorFromTarget(target) {
+  return target?.actor ?? target ?? null;
+}
+
 function targetActorFromOptions(options = {}) {
-  return options.targetActor ?? options.target ?? options.targetContext?.actor ?? game?.user?.targets?.first?.()?.actor ?? null;
+  return actorFromTarget(options.targetActor
+    ?? options.target
+    ?? options.targetContext?.actor
+    ?? game?.user?.targets?.first?.()
+    ?? null);
 }
 
 function isMindAffectingPower(power, descriptors = []) {
@@ -72,6 +81,57 @@ function installTelepathicIntruderBonus() {
 
     return Number(state.bonus ?? 2) || 2;
   };
+}
+
+function installTelekineticRepeatActionRepair() {
+  // force-executor.js currently passes telekineticPowerRepeatAction while the
+  // local value is named telekineticRepeatAction. In a module, that unresolved
+  // identifier throws after the roll resolves but before the chat card posts.
+  // A global binding prevents the ReferenceError; the message wrapper below
+  // rebuilds the actual action payload so the Telekinetic Power repeat button
+  // still appears when a natural 20 qualifies.
+  if (!Object.prototype.hasOwnProperty.call(globalThis, 'telekineticPowerRepeatAction')) {
+    globalThis.telekineticPowerRepeatAction = null;
+  }
+
+  if (ForceExecutor[TELEKINETIC_MESSAGE_PATCH_FLAG]) return;
+  const originalGenerateForcePowerRollMessage = ForceExecutor._generateForcePowerRollMessage;
+  if (typeof originalGenerateForcePowerRollMessage !== 'function') return;
+
+  ForceExecutor._generateForcePowerRollMessage = async function patchedGenerateForcePowerRollMessage(
+    actor,
+    power,
+    roll,
+    total,
+    baseDC,
+    success,
+    isCritical,
+    extra = {}
+  ) {
+    let patchedExtra = extra || {};
+    if (!patchedExtra.telekineticPowerRepeatAction && isCritical === true && patchedExtra.freeActionRepeat !== true) {
+      try {
+        const descriptors = Array.isArray(patchedExtra.forceDescriptors) && patchedExtra.forceDescriptors.length
+          ? patchedExtra.forceDescriptors
+          : (typeof this._getPowerDescriptors === 'function' ? this._getPowerDescriptors(power) : []);
+        const talentContext = typeof this._buildForceTalentContext === 'function'
+          ? this._buildForceTalentContext(actor, power, descriptors, patchedExtra)
+          : {};
+        const isTelekinetic = talentContext?.isTelekinetic ?? (typeof this._isTelekineticPower === 'function' ? this._isTelekineticPower(power, descriptors) : false);
+        const hasTalent = talentContext?.hasTelekineticPower ?? actorHasTalent(actor, 'Telekinetic Power');
+        const repeatAction = typeof this._buildTelekineticPowerRepeatAction === 'function'
+          ? this._buildTelekineticPowerRepeatAction(actor, power, { isCritical, isTelekinetic, hasTalent, freeRepeat: false })
+          : null;
+        if (repeatAction) patchedExtra = { ...patchedExtra, telekineticPowerRepeatAction: repeatAction };
+      } catch (err) {
+        console.warn('SWSE | Telekinetic Power repeat action repair failed', err);
+      }
+    }
+
+    return originalGenerateForcePowerRollMessage.call(this, actor, power, roll, total, baseDC, success, isCritical, patchedExtra);
+  };
+
+  ForceExecutor[TELEKINETIC_MESSAGE_PATCH_FLAG] = true;
 }
 
 function rootFromHtml(html) {
@@ -161,6 +221,7 @@ function installForceCardClickRepair() {
 
 export function registerForceSuiteRuntimeRepairs() {
   installTelepathicIntruderBonus();
+  installTelekineticRepeatActionRepair();
   if (registered) return;
   registered = true;
   installForceCardClickRepair();
