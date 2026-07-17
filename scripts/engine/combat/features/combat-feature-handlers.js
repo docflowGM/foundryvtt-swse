@@ -9,7 +9,7 @@ import { canonicalCombatFeatureKey, combatFeatureIdForEffect } from '/systems/fo
 /**
  * Combat Feature Handlers
  *
- * Phase 5 permanent behavior layer. The router dispatches here; handlers are
+ * Phase 5/6 permanent behavior layer. The router dispatches here; handlers are
  * responsible for opening the correct canonical dialog/engine path or failing
  * closed with a clear manual/source-detail fallback.
  */
@@ -99,8 +99,35 @@ export const COMBAT_ATTACK_OPTION_SPECS = Object.freeze({
   }
 });
 
+export const COMBAT_MULTIATTACK_SPECS = Object.freeze({
+  'double-attack': {
+    id: 'double-attack',
+    label: 'Double Attack',
+    actionId: 'double-attack',
+    packageType: FULL_ATTACK_PACKAGES.DOUBLE_ATTACK,
+    attackCount: 2,
+    fallbackPenalty: -5,
+    penaltySource: 'Double Attack',
+    actionType: 'full-round'
+  },
+  'triple-attack': {
+    id: 'triple-attack',
+    label: 'Triple Attack',
+    actionId: 'triple-attack',
+    packageType: FULL_ATTACK_PACKAGES.TRIPLE_ATTACK,
+    attackCount: 3,
+    fallbackPenalty: -10,
+    penaltySource: 'Triple Attack',
+    actionType: 'full-round'
+  }
+});
+
 export function getAttackOptionSpec(featureId) {
   return COMBAT_ATTACK_OPTION_SPECS[canonicalCombatFeatureKey(featureId)] ?? null;
+}
+
+export function getMultiattackSpec(featureId) {
+  return COMBAT_MULTIATTACK_SPECS[canonicalCombatFeatureKey(featureId)] ?? null;
 }
 
 function itemFromAnyActor(itemId, actor = null) {
@@ -167,13 +194,13 @@ function applyForcedAttackOption(options = {}, spec = {}) {
   };
 }
 
-function fallbackMultiAttackPlan(actor, packageType, weapon) {
-  const penalty = packageType === FULL_ATTACK_PACKAGES.TRIPLE_ATTACK ? -10 : -5;
-  const count = packageType === FULL_ATTACK_PACKAGES.TRIPLE_ATTACK ? 3 : 2;
+function fallbackMultiAttackPlan(actor, spec, weapon) {
+  const penalty = Number(spec?.fallbackPenalty ?? 0);
+  const count = Number(spec?.attackCount ?? 0);
   return {
-    legal: !!weapon,
-    packageType,
-    actionType: 'full-round',
+    legal: !!weapon && count > 0,
+    packageType: spec.packageType,
+    actionType: spec.actionType ?? 'full-round',
     warnings: weapon ? [] : ['No weapon equipped. Equip a weapon before using this attack.'],
     attacks: Array.from({ length: count }, (_, index) => ({
       weapon,
@@ -182,35 +209,27 @@ function fallbackMultiAttackPlan(actor, packageType, weapon) {
       basePenalty: penalty,
       reduction: 0,
       finalPenalty: penalty,
-      penaltySource: packageType === FULL_ATTACK_PACKAGES.TRIPLE_ATTACK ? 'Triple Attack' : 'Double Attack'
+      penaltySource: spec.penaltySource ?? spec.label
     }))
   };
 }
 
-function multiAttackKindForFeatureId(featureId = '') {
-  const key = canonicalCombatFeatureKey(featureId);
-  if (key === 'triple-attack') return 'triple';
-  if (key === 'double-attack') return 'double';
-  return null;
-}
-
 export async function executeCombatFeatureMultiattack({ actor, element, featureId } = {}) {
-  const kind = multiAttackKindForFeatureId(featureId);
-  if (!actor || !kind) {
+  const spec = getMultiattackSpec(featureId);
+  if (!actor || !spec) {
     ui?.notifications?.warn?.('This multiattack feature is not wired yet.');
     return;
   }
 
   const equipped = getEquippedWeapons(actor);
-  const packageType = kind === 'triple' ? FULL_ATTACK_PACKAGES.TRIPLE_ATTACK : FULL_ATTACK_PACKAGES.DOUBLE_ATTACK;
-  let plan = buildFullAttackSequence(actor, { requestedPackage: packageType, primaryWeapon: equipped.primary });
-  if (!plan?.legal) plan = fallbackMultiAttackPlan(actor, packageType, equipped.primary);
+  let plan = buildFullAttackSequence(actor, { requestedPackage: spec.packageType, primaryWeapon: equipped.primary });
+  if (!plan?.legal) plan = fallbackMultiAttackPlan(actor, spec, equipped.primary);
   if (!plan?.legal || !plan.attacks?.length) {
     ui?.notifications?.warn?.(plan?.warnings?.join(' ') || 'No legal multiattack sequence is available.');
     return;
   }
 
-  const actionName = kind === 'triple' ? 'Triple Attack' : 'Double Attack';
+  const actionName = spec.label;
   let spend = null;
   let rolled = 0;
 
@@ -234,9 +253,9 @@ export async function executeCombatFeatureMultiattack({ actor, element, featureI
     }
 
     if (!spend) {
-      spend = await ActionEconomyConsumption.spend(actor, 'full-round', {
+      spend = await ActionEconomyConsumption.spend(actor, spec.actionType ?? 'full-round', {
         actionName,
-        actionId: kind === 'triple' ? 'triple-attack' : 'double-attack',
+        actionId: spec.actionId,
         source: 'combat-feature-handlers'
       }, { notify: true });
       if (spend?.allowed === false || spend?.permitted === false) return;
@@ -246,19 +265,21 @@ export async function executeCombatFeatureMultiattack({ actor, element, featureI
       ...options,
       sourceElement: element,
       sequencePenalty: Number(step.finalPenalty ?? 0) + Number(options.sequencePenalty ?? 0),
-      actionId: kind === 'triple' ? 'triple-attack' : 'double-attack',
+      actionId: spec.actionId,
       actionName,
       actionData: {
-        packageType,
+        packageType: spec.packageType,
         attackIndex: index + 1,
         attackCount: plan.attacks.length,
-        penaltySource: step.penaltySource,
+        declaredAttackCount: spec.attackCount,
+        penaltySource: step.penaltySource ?? spec.penaltySource,
         basePenalty: step.basePenalty,
         reduction: step.reduction,
         finalPenalty: step.finalPenalty,
-        combatFeatureAction: true
+        combatFeatureAction: true,
+        multiattackFeature: spec.id
       },
-      rollNote: [options.rollNote, `${actionName} ${index + 1}/${plan.attacks.length}: ${step.penaltySource} ${step.finalPenalty}`].filter(Boolean).join(' | ')
+      rollNote: [options.rollNote, `${actionName} ${index + 1}/${plan.attacks.length}: ${(step.penaltySource ?? spec.penaltySource)} ${step.finalPenalty}`].filter(Boolean).join(' | ')
     });
 
     if (!result && !rolled && spend?.rollback) {
