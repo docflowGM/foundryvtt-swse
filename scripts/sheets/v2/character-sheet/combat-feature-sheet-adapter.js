@@ -18,14 +18,19 @@ import {
   buildUniversalCombatStateActions,
   getActiveCombatFeatureStates
 } from '/systems/foundryvtt-swse/scripts/engine/combat/features/combat-feature-active-state-service.js';
+import {
+  buildTriggeredFeatureGroups,
+  enrichTriggeredCombatFeature,
+  isTriggeredCombatFeature
+} from '/systems/foundryvtt-swse/scripts/engine/combat/features/combat-feature-trigger-service.js';
 
 /**
  * CombatFeatureSheetAdapter
  *
- * Phase 7 adapter for the Combat Features reform. Source-item and effect
+ * Phase 8 adapter for the Combat Features reform. Source-item/effect
  * classification lives in `combat-feature-classifier.js`; this adapter assembles
- * the model, adds action-economy groupings, and exposes tracked active combat
- * states from the combat feature state service.
+ * the model, adds action-economy groupings, exposes tracked active combat states,
+ * and groups triggered features by trigger window.
  *
  * This adapter remains pure: no actor mutation, no roll math, no action
  * spending, and no effect creation.
@@ -136,6 +141,16 @@ function buildAvailableActionGroups(availableActions = []) {
   return groups.filter(group => group.hasActions);
 }
 
+function pushClassifiedFeature(model, actor, entry) {
+  if (!entry?.bucket || !entry?.feature?.id) return;
+  if (isTriggeredCombatFeature(entry.feature.id)) {
+    pushUnique(model.triggeredFeatures, enrichTriggeredCombatFeature(actor, entry.feature));
+    return;
+  }
+  if (!model[entry.bucket]) return;
+  pushUnique(model[entry.bucket], entry.feature);
+}
+
 export class CombatFeatureSheetAdapter {
   static build(actor, _options = {}) {
     const model = emptyCombatFeaturesModel();
@@ -143,8 +158,7 @@ export class CombatFeatureSheetAdapter {
 
     for (const item of actor.items ?? []) {
       const entry = classifyCombatFeatureItem(actor, item);
-      if (!entry?.bucket || !model[entry.bucket]) continue;
-      pushUnique(model[entry.bucket], entry.feature);
+      pushClassifiedFeature(model, actor, entry);
     }
 
     addActiveEffects(model, actor);
@@ -154,6 +168,7 @@ export class CombatFeatureSheetAdapter {
 
     for (const key of Object.values(COMBAT_FEATURE_BUCKETS)) sortFeatureList(model[key]);
     model.availableActionGroups = buildAvailableActionGroups(model.availableActions);
+    model.triggeredFeatureGroups = buildTriggeredFeatureGroups(actor, model.triggeredFeatures);
 
     const rageActive = model.activeStates.some(feature => feature.id === 'rage');
     return withCombatFeatureBadges({
