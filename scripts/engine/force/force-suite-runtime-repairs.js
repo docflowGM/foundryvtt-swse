@@ -181,6 +181,44 @@ function repairForceCardIds(app, html) {
   }
 }
 
+function signed(value) {
+  const n = Number(value) || 0;
+  return n >= 0 ? `+${n}` : String(n);
+}
+
+function repairSkillMathDisplay(app, html) {
+  const actor = actorFromApp(app);
+  const root = rootFromHtml(html);
+  if (!actor || !root?.querySelectorAll) return;
+  const rows = root.querySelectorAll('.swse-concept-skill-row[data-skill]');
+  if (!rows.length) return;
+
+  for (const row of rows) {
+    const key = row.dataset.skill;
+    const skill = actor.system?.derived?.skills?.[key];
+    if (!skill) continue;
+    const parts = Array.isArray(skill.math?.parts) ? skill.math.parts : (Array.isArray(skill.breakdown) ? skill.breakdown : []);
+    const title = parts.length
+      ? `${row.dataset.label || key} = ${signed(skill.total)} (${parts.map(part => `${part.label || part.key}: ${signed(part.value)}`).join(' | ')})`
+      : `${row.dataset.label || key} = ${signed(skill.total)}`;
+    row.querySelector('.swse-concept-skill-stat--total')?.setAttribute('title', title);
+
+    const breakdown = row.querySelector('.swse-concept-skill-breakdown');
+    if (!breakdown) continue;
+    const existing = new Set(Array.from(breakdown.querySelectorAll('[data-runtime-skill-part]')).map(el => el.dataset.runtimeSkillPart));
+    for (const part of parts) {
+      const partKey = String(part?.key || part?.label || '').trim();
+      const value = Number(part?.value) || 0;
+      if (!partKey || value === 0 || existing.has(partKey)) continue;
+      if (['ability', 'halfLevel', 'trained', 'focus', 'misc', 'armor'].includes(partKey)) continue;
+      const chip = document.createElement('span');
+      chip.dataset.runtimeSkillPart = partKey;
+      chip.textContent = `${part.label || partKey} ${signed(value)}`;
+      breakdown.appendChild(chip);
+    }
+  }
+}
+
 async function executeRepairedForceButton(button) {
   const actor = game?.actors?.get?.(button.dataset.actorId) ?? null;
   const itemId = button.dataset.itemId || '';
@@ -226,5 +264,7 @@ export function registerForceSuiteRuntimeRepairs() {
   registered = true;
   installForceCardClickRepair();
   Hooks.on('renderSWSEV2CharacterSheet', repairForceCardIds);
+  Hooks.on('renderSWSEV2CharacterSheet', repairSkillMathDisplay);
   Hooks.on('renderApplicationV2', repairForceCardIds);
+  Hooks.on('renderApplicationV2', repairSkillMathDisplay);
 }
