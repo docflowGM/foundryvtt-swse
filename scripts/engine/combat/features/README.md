@@ -25,9 +25,21 @@ The first adapter lives at:
 scripts/sheets/v2/character-sheet/combat-feature-sheet-adapter.js
 ```
 
-It currently builds the future `combatFeatures` model from actor items and active effects without changing the live UI. This is intentional: Phase 1 creates the data source first, while the old combat action panel and compatibility hotfix continue to keep the migration usable.
+It builds the future `combatFeatures` model from actor items and active effects without changing the live UI. This is intentional: the old combat action panel and compatibility hotfix continue to keep the migration usable until the new panel is wired.
 
 The adapter is allowed to inspect actor items, actor flags, actor system state, and active effects. It is not allowed to roll, spend actions, create effects, or update actors.
+
+## Phase 2 classifier
+
+The source-item/effect classification layer now lives at:
+
+```text
+scripts/engine/combat/features/combat-feature-classifier.js
+```
+
+The classifier owns feature profiles, aliases, item/effect identity, bucket inference, readiness inference, triggered-feature shaping, passive-rider shaping, and active-state shaping. The sheet adapter now delegates classification to that module and only assembles/sorts the final display model.
+
+This split is important because Phase 3 can render the panel without reimplementing classification in templates, and Phase 4 can add an action router without moving display rules again.
 
 Future files should follow this split:
 
