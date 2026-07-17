@@ -12,6 +12,7 @@ import { getSelfDestructDamage, hydrateDroidPart } from "/systems/foundryvtt-sws
 import { decodeCombatWorkflowContext } from "/systems/foundryvtt-swse/scripts/engine/combat/workflow/combat-context-serializer.js";
 import { decodeDamageComponents } from "/systems/foundryvtt-swse/scripts/engine/combat/damage-component-rules.js";
 import { TalentRegistry } from "/systems/foundryvtt-swse/scripts/registries/talent-registry.js";
+import { TalentEffectEngine } from "/systems/foundryvtt-swse/scripts/engine/talent/talent-effect-engine.js";
 import { RollEngine } from "/systems/foundryvtt-swse/scripts/engine/roll-engine.js";
 
 const CHAT_LAYOUT_STYLE_ID = 'swse-chat-roll-total-layout-hotfix';
@@ -20,6 +21,7 @@ const BLOCKED_ARMOR_MASTERY_IDS = new Set(['4c236343b01ea763']);
 let registered = false;
 let fetchPatched = false;
 let talentRegistryPatched = false;
+let talentEffectDamagePatched = false;
 
 function normalizeKey(value) {
   return String(value ?? '')
@@ -162,6 +164,61 @@ function itemFromActor(actor, itemId, context = {}) {
   }
   if (id.startsWith('swse-droid-part-')) return buildVirtualDroidPartWeapon(actor, id);
   return actor.items?.get?.(id) ?? actor.items?.find?.(item => item.id === id || item._id === id) ?? null;
+}
+
+function countTalentsNamed(actor, name) {
+  const wanted = normalizeName(name);
+  if (!wanted) return 0;
+  try {
+    return Array.from(actor?.items ?? []).filter(item => item?.type === 'talent' && normalizeName(item?.name) === wanted).length;
+  } catch (_err) {
+    return 0;
+  }
+}
+
+function damageContextTarget(context = {}) {
+  return context.target?.actor ?? context.targetActor ?? context.target ?? game?.user?.targets?.first?.()?.actor ?? null;
+}
+
+function targetIsDeniedDexForDamage(context = {}) {
+  const target = damageContextTarget(context);
+  return context.sneakAttack === true
+    || context.targetFlatFooted === true
+    || context.flatFootedTarget === true
+    || context.deniedDex === true
+    || context.targetDeniedDex === true
+    || context.attack?.targetFlatFooted === true
+    || context.attack?.targetDeniedDex === true
+    || context.combatContext?.targetFlatFooted === true
+    || context.combatContext?.attack?.targetFlatFooted === true
+    || target?.system?.condition?.flatFooted === true
+    || target?.system?.conditions?.flatFooted === true
+    || target?.flags?.swse?.flatFooted === true
+    || target?.flags?.['foundryvtt-swse']?.flatFooted === true;
+}
+
+function buildTalentDamageBonusFallback(actor, context = {}) {
+  const bonusDice = [];
+  const breakdown = [];
+  const notifications = [];
+  let flatBonus = 0;
+
+  const sneakAttackCount = countTalentsNamed(actor, 'Sneak Attack');
+  if (sneakAttackCount > 0 && targetIsDeniedDexForDamage(context)) {
+    const formula = `${sneakAttackCount}d6`;
+    bonusDice.push(formula);
+    breakdown.push(`Sneak Attack +${formula}`);
+  }
+
+  const formulaParts = [...bonusDice];
+  if (flatBonus !== 0) formulaParts.push(String(flatBonus));
+  return {
+    formula: formulaParts.join(' + '),
+    bonusDice,
+    flatBonus,
+    breakdown,
+    notifications
+  };
 }
 
 async function rollDamageFromButton(event, button, message) {
@@ -378,11 +435,29 @@ function installArmorSpecialistFilter() {
   installTalentRegistryArmorFilter();
 }
 
+function installTalentEffectDamageCompatibility() {
+  if (talentEffectDamagePatched) return;
+  talentEffectDamagePatched = true;
+
+  if (typeof TalentEffectEngine.calculateDamageBonus !== 'function') {
+    TalentEffectEngine.calculateDamageBonus = function calculateDamageBonus(actor, context = {}) {
+      return buildTalentDamageBonusFallback(actor, context);
+    };
+  }
+
+  if (typeof TalentEffectEngine.applyPostDamageEffects !== 'function') {
+    TalentEffectEngine.applyPostDamageEffects = async function applyPostDamageEffects() {
+      return { success: true, effects: [] };
+    };
+  }
+}
+
 export function registerRuntimeBugfixHotfixes() {
   if (registered) return false;
   registered = true;
   installChatRollCardLayoutFix();
   installArmorSpecialistFilter();
+  installTalentEffectDamageCompatibility();
   installDamageButtonCapture();
   return true;
 }
