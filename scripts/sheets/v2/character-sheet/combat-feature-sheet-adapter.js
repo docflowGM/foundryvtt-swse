@@ -4,528 +4,25 @@ import {
   COMBAT_FEATURE_BUCKETS,
   COMBAT_FEATURE_READINESS,
   emptyCombatFeaturesModel,
-  normalizeCombatFeatureId,
   withCombatFeatureBadges
 } from '/systems/foundryvtt-swse/scripts/engine/combat/features/combat-feature-contract.js';
+import {
+  activeCombatFeatureEffects,
+  classifyCombatFeatureEffect,
+  classifyCombatFeatureItem,
+  getCombatFeatureProfile
+} from '/systems/foundryvtt-swse/scripts/engine/combat/features/combat-feature-classifier.js';
 
 /**
  * CombatFeatureSheetAdapter
  *
- * Phase 1 adapter for the Combat Features reform. This class builds the display
- * model consumed by the future Combat Features panel. It is intentionally pure:
- * no actor mutation, no roll math, no action spending, and no effect creation.
+ * Phase 2 adapter for the Combat Features reform. This class builds the display
+ * model consumed by the future Combat Features panel. Source-item and effect
+ * classification now lives in `combat-feature-classifier.js`.
+ *
+ * This adapter remains pure: no actor mutation, no roll math, no action
+ * spending, and no effect creation.
  */
-
-const SOURCE_TYPE_LABELS = Object.freeze({
-  feat: 'Feat',
-  talent: 'Talent',
-  'species-trait': 'Species Trait',
-  species: 'Species Trait',
-  'class-feature': 'Class Feature',
-  classFeature: 'Class Feature',
-  equipment: 'Equipment',
-  armor: 'Equipment',
-  weapon: 'Weapon',
-  trait: 'Trait'
-});
-
-const FEATURE_PROFILES = Object.freeze({
-  rage: {
-    bucket: COMBAT_FEATURE_BUCKETS.AVAILABLE_ACTIONS,
-    sourceType: 'Species Trait',
-    actionCost: 'Swift',
-    timing: 'Encounter',
-    automationStatus: COMBAT_FEATURE_AUTOMATION_STATUS.MANUAL,
-    buttonLabel: 'View Rage',
-    executeAction: COMBAT_FEATURE_ACTIONS.VIEW,
-    summary: 'Enter or track a rage state. Bonuses and penalties are shown for table handling until full automation is wired.',
-    deltas: [
-      { label: 'Melee Atk +2', v: 2, tone: 'pos' },
-      { label: 'Melee Dmg +2', v: 2, tone: 'pos' },
-      { label: 'Reflex -2', v: -2, tone: 'neg' },
-      { label: 'Will -2', v: -2, tone: 'neg' }
-    ],
-    tags: ['swift', 'encounter', 'manual']
-  },
-  braced: {
-    bucket: COMBAT_FEATURE_BUCKETS.ACTIVE_STATES,
-    sourceType: 'Stance',
-    actionCost: 'Swift',
-    timing: 'Stance',
-    durationLabel: 'Until you move',
-    automationStatus: COMBAT_FEATURE_AUTOMATION_STATUS.MANUAL,
-    canDeactivate: true,
-    deactivateAction: COMBAT_FEATURE_ACTIONS.DEACTIVATE,
-    summary: 'Weapon braced against cover or a bipod. Used as a tracked combat stance.',
-    deltas: [{ label: 'Autofire penalty reduced or ignored', tone: 'pos' }],
-    tags: ['swift', 'stance', 'active', 'manual']
-  },
-  'second-wind': {
-    bucket: COMBAT_FEATURE_BUCKETS.AVAILABLE_ACTIONS,
-    sourceType: 'Class Feature',
-    actionCost: 'Swift',
-    timing: 'Encounter',
-    automationStatus: COMBAT_FEATURE_AUTOMATION_STATUS.PARTIAL,
-    buttonLabel: 'Use',
-    executeAction: COMBAT_FEATURE_ACTIONS.EXECUTE_RESOURCE,
-    summary: 'Regain HP equal to damage threshold or one-quarter maximum HP, whichever is higher.',
-    tags: ['swift', 'encounter', 'partial']
-  },
-  'power-attack': {
-    bucket: COMBAT_FEATURE_BUCKETS.AVAILABLE_ACTIONS,
-    sourceType: 'Feat',
-    actionCost: 'Attack',
-    timing: 'Melee attack option',
-    automationStatus: COMBAT_FEATURE_AUTOMATION_STATUS.PARTIAL,
-    buttonLabel: 'Attack',
-    executeAction: COMBAT_FEATURE_ACTIONS.EXECUTE_ATTACK_OPTION,
-    summary: 'Trade up to your BAB from melee attack rolls for bonus melee damage.',
-    deltas: [{ label: 'Atk -X / Dmg +X', tone: 'neg' }],
-    tags: ['attack-option', 'melee', 'partial']
-  },
-  flurry: {
-    bucket: COMBAT_FEATURE_BUCKETS.AVAILABLE_ACTIONS,
-    sourceType: 'Feat',
-    actionCost: 'Attack',
-    timing: 'Melee attack option',
-    automationStatus: COMBAT_FEATURE_AUTOMATION_STATUS.PARTIAL,
-    buttonLabel: 'Attack',
-    executeAction: COMBAT_FEATURE_ACTIONS.EXECUTE_ATTACK_OPTION,
-    summary: 'Make a more aggressive melee attack option through the normal attack roller.',
-    tags: ['attack-option', 'melee', 'partial']
-  },
-  'rapid-strike': {
-    bucket: COMBAT_FEATURE_BUCKETS.AVAILABLE_ACTIONS,
-    sourceType: 'Feat',
-    actionCost: 'Attack',
-    timing: 'Melee attack option',
-    automationStatus: COMBAT_FEATURE_AUTOMATION_STATUS.PARTIAL,
-    buttonLabel: 'Attack',
-    executeAction: COMBAT_FEATURE_ACTIONS.EXECUTE_ATTACK_OPTION,
-    summary: 'Apply Rapid Strike through the normal attack roller.',
-    tags: ['attack-option', 'melee', 'partial']
-  },
-  'power-blast': {
-    bucket: COMBAT_FEATURE_BUCKETS.AVAILABLE_ACTIONS,
-    sourceType: 'Feat',
-    actionCost: 'Swift + Attack',
-    timing: 'Ranged attack option',
-    automationStatus: COMBAT_FEATURE_AUTOMATION_STATUS.PARTIAL,
-    buttonLabel: 'Attack',
-    executeAction: COMBAT_FEATURE_ACTIONS.EXECUTE_ATTACK_OPTION,
-    summary: 'Trade up to your BAB from ranged attack rolls for bonus ranged damage.',
-    deltas: [{ label: 'Ranged Atk -X / Dmg +X', tone: 'neg' }],
-    tags: ['attack-option', 'ranged', 'partial']
-  },
-  'burst-fire': {
-    bucket: COMBAT_FEATURE_BUCKETS.AVAILABLE_ACTIONS,
-    sourceType: 'Feat',
-    actionCost: 'Attack',
-    timing: 'Ranged attack option',
-    automationStatus: COMBAT_FEATURE_AUTOMATION_STATUS.PARTIAL,
-    buttonLabel: 'Attack',
-    executeAction: COMBAT_FEATURE_ACTIONS.EXECUTE_ATTACK_OPTION,
-    summary: 'Use Burst Fire through the normal ranged attack roller.',
-    tags: ['attack-option', 'ranged', 'partial']
-  },
-  'rapid-shot': {
-    bucket: COMBAT_FEATURE_BUCKETS.AVAILABLE_ACTIONS,
-    sourceType: 'Feat',
-    actionCost: 'Attack',
-    timing: 'Ranged attack option',
-    automationStatus: COMBAT_FEATURE_AUTOMATION_STATUS.PARTIAL,
-    buttonLabel: 'Attack',
-    executeAction: COMBAT_FEATURE_ACTIONS.EXECUTE_ATTACK_OPTION,
-    summary: 'Use Rapid Shot through the normal ranged attack roller.',
-    tags: ['attack-option', 'ranged', 'partial']
-  },
-  autofire: {
-    bucket: COMBAT_FEATURE_BUCKETS.AVAILABLE_ACTIONS,
-    sourceType: 'Weapon Mode',
-    actionCost: 'Full-Round',
-    timing: 'Area attack option',
-    automationStatus: COMBAT_FEATURE_AUTOMATION_STATUS.PARTIAL,
-    buttonLabel: 'Attack',
-    executeAction: COMBAT_FEATURE_ACTIONS.EXECUTE_ATTACK_OPTION,
-    summary: 'Use Autofire through the normal attack roller with area/autofire context.',
-    tags: ['attack-option', 'ranged', 'area', 'partial']
-  },
-  'double-attack': {
-    bucket: COMBAT_FEATURE_BUCKETS.AVAILABLE_ACTIONS,
-    sourceType: 'Feat',
-    actionCost: 'Full-Round',
-    timing: 'Multiattack',
-    automationStatus: COMBAT_FEATURE_AUTOMATION_STATUS.PARTIAL,
-    buttonLabel: 'Attack x2',
-    executeAction: COMBAT_FEATURE_ACTIONS.EXECUTE_MULTIATTACK,
-    summary: 'Make two separate attacks through the normal attack roller, applying the package penalty to each attack.',
-    tags: ['multiattack', 'full-round', 'partial']
-  },
-  'triple-attack': {
-    bucket: COMBAT_FEATURE_BUCKETS.AVAILABLE_ACTIONS,
-    sourceType: 'Feat',
-    actionCost: 'Full-Round',
-    timing: 'Multiattack',
-    automationStatus: COMBAT_FEATURE_AUTOMATION_STATUS.PARTIAL,
-    buttonLabel: 'Attack x3',
-    executeAction: COMBAT_FEATURE_ACTIONS.EXECUTE_MULTIATTACK,
-    summary: 'Make three separate attacks through the normal attack roller, applying the package penalty to each attack.',
-    tags: ['multiattack', 'full-round', 'partial']
-  },
-  deflect: {
-    bucket: COMBAT_FEATURE_BUCKETS.TRIGGERED_FEATURES,
-    sourceType: 'Talent',
-    trigger: 'When you are hit by a ranged attack while wielding a lightsaber.',
-    result: 'Make a Use the Force check against the attack roll to negate the hit.',
-    automationStatus: COMBAT_FEATURE_AUTOMATION_STATUS.PARTIAL,
-    tags: ['reaction', 'triggered', 'partial']
-  },
-  block: {
-    bucket: COMBAT_FEATURE_BUCKETS.TRIGGERED_FEATURES,
-    sourceType: 'Talent',
-    trigger: 'When you are hit by a melee attack while wielding a lightsaber.',
-    result: 'Make a Use the Force check against the attack roll to negate the hit.',
-    automationStatus: COMBAT_FEATURE_AUTOMATION_STATUS.PARTIAL,
-    tags: ['reaction', 'triggered', 'partial']
-  },
-  trip: {
-    bucket: COMBAT_FEATURE_BUCKETS.TRIGGERED_FEATURES,
-    sourceType: 'Feat',
-    trigger: 'When you hit a target with a melee attack.',
-    result: 'Attempt to knock the target prone in place of dealing normal damage where the rule allows.',
-    automationStatus: COMBAT_FEATURE_AUTOMATION_STATUS.MANUAL,
-    tags: ['triggered', 'manual']
-  },
-  pin: {
-    bucket: COMBAT_FEATURE_BUCKETS.PASSIVE_RIDERS,
-    sourceType: 'Feat',
-    appliesTo: 'Grapple',
-    automationStatus: COMBAT_FEATURE_AUTOMATION_STATUS.MANUAL,
-    summary: 'A foe you are grappling takes a penalty to grapple checks to escape.',
-    tags: ['grapple', 'manual']
-  },
-  'weapon-focus': {
-    bucket: COMBAT_FEATURE_BUCKETS.PASSIVE_RIDERS,
-    sourceType: 'Feat',
-    appliesTo: 'Attack',
-    automationStatus: COMBAT_FEATURE_AUTOMATION_STATUS.AUTOMATED,
-    summary: 'Bonus to attack rolls with the selected weapon group.',
-    tags: ['attack', 'automated']
-  },
-  'point-blank-shot': {
-    bucket: COMBAT_FEATURE_BUCKETS.PASSIVE_RIDERS,
-    sourceType: 'Feat',
-    appliesTo: 'Attack - Damage',
-    automationStatus: COMBAT_FEATURE_AUTOMATION_STATUS.PARTIAL,
-    summary: 'Bonus to attack and damage against close targets when context applies.',
-    tags: ['attack', 'damage', 'conditional', 'partial']
-  },
-  'improved-damage-threshold': {
-    bucket: COMBAT_FEATURE_BUCKETS.PASSIVE_RIDERS,
-    sourceType: 'Feat',
-    appliesTo: 'Threshold',
-    automationStatus: COMBAT_FEATURE_AUTOMATION_STATUS.AUTOMATED,
-    summary: 'Increase Damage Threshold against condition track movement.',
-    tags: ['threshold', 'automated']
-  },
-  'running-attack': {
-    bucket: COMBAT_FEATURE_BUCKETS.PASSIVE_RIDERS,
-    sourceType: 'Feat',
-    appliesTo: 'Movement',
-    automationStatus: COMBAT_FEATURE_AUTOMATION_STATUS.MANUAL,
-    summary: 'Move both before and after making a single attack action.',
-    tags: ['movement', 'manual']
-  },
-  'melee-defense': {
-    bucket: COMBAT_FEATURE_BUCKETS.PASSIVE_RIDERS,
-    sourceType: 'Feat',
-    appliesTo: 'Reflex',
-    automationStatus: COMBAT_FEATURE_AUTOMATION_STATUS.PARTIAL,
-    summary: 'Trade melee attack bonus for Reflex Defense through an attack/stance context.',
-    tags: ['defense', 'partial']
-  },
-  'shield-surge': {
-    bucket: COMBAT_FEATURE_BUCKETS.AVAILABLE_ACTIONS,
-    sourceType: 'Equipment',
-    actionCost: 'Standard',
-    timing: 'Encounter',
-    automationStatus: COMBAT_FEATURE_AUTOMATION_STATUS.MANUAL,
-    readiness: COMBAT_FEATURE_READINESS.MISSING,
-    readinessNote: 'Requires a powered personal shield context.',
-    buttonLabel: 'View',
-    executeAction: COMBAT_FEATURE_ACTIONS.VIEW,
-    summary: 'Overcharge a personal shield when the equipment and trigger are available.',
-    deltas: [{ label: 'Shield SR +5', tone: 'pos' }],
-    tags: ['equipment', 'manual', 'missing-trigger']
-  }
-});
-
-const NAME_ALIASES = Object.freeze({
-  'rapid strike': 'rapid-strike',
-  'power attack': 'power-attack',
-  'power blast': 'power-blast',
-  'burst fire': 'burst-fire',
-  'rapid shot': 'rapid-shot',
-  'double attack': 'double-attack',
-  'triple attack': 'triple-attack',
-  'point blank shot': 'point-blank-shot',
-  'improved damage threshold': 'improved-damage-threshold',
-  'running attack': 'running-attack',
-  'melee defense': 'melee-defense',
-  'shield surge': 'shield-surge',
-  'weapon focus': 'weapon-focus'
-});
-
-function asArray(value) {
-  if (value == null) return [];
-  return Array.isArray(value) ? value : [value];
-}
-
-function cleanText(value = '') {
-  if (value && typeof value === 'object') value = value.value ?? value.description ?? value.text ?? value.label ?? '';
-  const text = String(value ?? '');
-  if (!text) return '';
-  const div = globalThis.document?.createElement?.('div');
-  if (!div) return text.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
-  div.innerHTML = text;
-  return (div.textContent || div.innerText || '').replace(/\s+/g, ' ').trim();
-}
-
-function sourceTypeForItem(item) {
-  return SOURCE_TYPE_LABELS[item?.type] ?? SOURCE_TYPE_LABELS[item?.system?.sourceType] ?? item?.system?.sourceType ?? 'Feature';
-}
-
-function itemSummary(item, fallback = '') {
-  const system = item?.system ?? {};
-  return cleanText(system.summary ?? system.effect ?? system.descriptionText ?? system.description ?? item?.description ?? fallback);
-}
-
-function itemRules(item) {
-  return asArray(item?.system?.abilityMeta?.rules);
-}
-
-function ruleIds(item) {
-  return itemRules(item).map(rule => normalizeCombatFeatureId(rule?.id ?? rule?.key ?? rule?.label ?? rule?.source ?? '')).filter(Boolean);
-}
-
-function canonicalNameKey(name = '') {
-  const normalized = normalizeCombatFeatureId(name).replace(/-/g, ' ');
-  return NAME_ALIASES[normalized] ?? normalizeCombatFeatureId(name);
-}
-
-function featureKeyForItem(item) {
-  const byRule = ruleIds(item).find(id => FEATURE_PROFILES[id]);
-  if (byRule) return byRule;
-
-  const direct = canonicalNameKey(item?.name);
-  if (FEATURE_PROFILES[direct]) return direct;
-
-  for (const [key] of Object.entries(FEATURE_PROFILES)) {
-    const nameKey = normalizeCombatFeatureId(item?.name);
-    if (nameKey === key || nameKey.startsWith(`${key}-`)) return key;
-  }
-
-  return direct;
-}
-
-function isActiveFeatureState(actor, featureId) {
-  const flags = actor?.flags ?? {};
-  const stateSources = [
-    flags?.['foundryvtt-swse']?.combatFeatures?.activeStates?.[featureId],
-    flags?.swse?.combatFeatures?.activeStates?.[featureId],
-    flags?.['foundryvtt-swse']?.[featureId]?.active,
-    flags?.swse?.[featureId]?.active,
-    actor?.system?.combatFeatures?.activeStates?.[featureId],
-    actor?.system?.states?.[featureId]?.active
-  ];
-  if (stateSources.some(Boolean)) return true;
-  if (featureId === 'rage') {
-    return actor?.system?.rage?.active === true
-      || actor?.system?.species?.rage?.active === true
-      || flags?.swse?.rage?.active === true
-      || flags?.['foundryvtt-swse']?.rage?.active === true;
-  }
-  return false;
-}
-
-function activeEffects(actor) {
-  try {
-    return Array.from(actor?.effects ?? []).filter(effect => effect && effect.disabled !== true);
-  } catch (_err) {
-    return [];
-  }
-}
-
-function effectFeatureId(effect) {
-  return canonicalNameKey(effect?.name ?? effect?.label ?? effect?.flags?.swse?.featureId ?? effect?.flags?.['foundryvtt-swse']?.featureId ?? '');
-}
-
-function useStateForFeature(actor, item, featureId, profile) {
-  return isActiveFeatureState(actor, featureId)
-    || (profile?.bucket === COMBAT_FEATURE_BUCKETS.ACTIVE_STATES && activeEffects(actor).some(effect => effectFeatureId(effect) === featureId));
-}
-
-function sourceTags(profile = {}, item = null) {
-  const tags = new Set(asArray(profile.tags));
-  const system = item?.system ?? {};
-  for (const value of asArray(system.tags)) tags.add(String(value).toLowerCase());
-  for (const rule of itemRules(item)) {
-    if (rule?.type) tags.add(String(rule.type).toLowerCase().replace(/_/g, '-'));
-    if (rule?.control) tags.add(String(rule.control).toLowerCase());
-  }
-  return Array.from(tags).filter(Boolean);
-}
-
-function usesForItem(item) {
-  const system = item?.system ?? {};
-  const maxUses = Number(system.uses?.max ?? system.maxUses ?? system.usage?.max ?? NaN);
-  const remainingUses = Number(system.uses?.value ?? system.uses?.remaining ?? system.remainingUses ?? system.usage?.value ?? NaN);
-  return {
-    maxUses: Number.isFinite(maxUses) ? maxUses : null,
-    remainingUses: Number.isFinite(remainingUses) ? remainingUses : null
-  };
-}
-
-function readinessFor(item, profile = {}, actor = null, featureId = '') {
-  if (profile.readiness) return profile.readiness;
-  if (useStateForFeature(actor, item, featureId, profile)) return COMBAT_FEATURE_READINESS.ACTIVE;
-  const uses = usesForItem(item);
-  if (uses.maxUses != null && uses.remainingUses != null && uses.remainingUses <= 0) return COMBAT_FEATURE_READINESS.USED;
-  return COMBAT_FEATURE_READINESS.READY;
-}
-
-function baseFeatureFromItem(actor, item, featureId, profile = {}) {
-  const uses = usesForItem(item);
-  const sourceType = profile.sourceType ?? sourceTypeForItem(item);
-  return {
-    id: featureId,
-    name: profile.name ?? item?.name ?? featureId,
-    sourceName: item?.name ?? profile.sourceName ?? profile.name ?? featureId,
-    sourceType,
-    sourceItemId: item?.id ?? item?._id ?? null,
-    summary: itemSummary(item, profile.summary ?? ''),
-    actionCost: profile.actionCost ?? item?.system?.actionCost ?? item?.system?.activation?.type ?? null,
-    timing: profile.timing ?? item?.system?.timing ?? item?.system?.frequency ?? null,
-    durationLabel: profile.durationLabel ?? item?.system?.durationLabel ?? item?.system?.duration ?? null,
-    remainingUses: uses.remainingUses,
-    maxUses: uses.maxUses,
-    readiness: readinessFor(item, profile, actor, featureId),
-    readinessNote: profile.readinessNote ?? null,
-    buttonLabel: profile.buttonLabel ?? 'View',
-    canExecute: profile.executeAction && profile.executeAction !== COMBAT_FEATURE_ACTIONS.VIEW,
-    executeAction: profile.executeAction ?? COMBAT_FEATURE_ACTIONS.VIEW,
-    canDeactivate: profile.canDeactivate === true,
-    deactivateAction: profile.deactivateAction ?? null,
-    automationStatus: profile.automationStatus ?? COMBAT_FEATURE_AUTOMATION_STATUS.MANUAL,
-    deltas: asArray(profile.deltas),
-    tags: sourceTags(profile, item)
-  };
-}
-
-function activeStateFromEffect(effect) {
-  const featureId = effectFeatureId(effect);
-  return {
-    id: featureId,
-    name: effect?.name ?? effect?.label ?? featureId,
-    sourceName: effect?.origin ?? effect?.name ?? featureId,
-    sourceType: 'Active Effect',
-    sourceItemId: null,
-    summary: cleanText(effect?.description ?? effect?.flags?.swse?.summary ?? effect?.flags?.['foundryvtt-swse']?.summary ?? ''),
-    actionCost: null,
-    timing: 'Active',
-    durationLabel: effect?.duration?.rounds ? `${effect.duration.rounds} rounds` : null,
-    remainingUses: null,
-    maxUses: null,
-    deltas: [],
-    isActive: true,
-    readiness: COMBAT_FEATURE_READINESS.ACTIVE,
-    canDeactivate: true,
-    deactivateAction: COMBAT_FEATURE_ACTIONS.DEACTIVATE,
-    automationStatus: COMBAT_FEATURE_AUTOMATION_STATUS.PARTIAL,
-    tags: ['active-effect', 'active']
-  };
-}
-
-function featureCanBeCombatRelated(item) {
-  if (!item) return false;
-  const type = String(item.type ?? '').toLowerCase();
-  if (['feat', 'talent', 'species-trait', 'class-feature', 'equipment', 'armor', 'weapon'].includes(type)) return true;
-  const system = item.system ?? {};
-  const text = [item.name, system.executionModel, system.subType, system.abilityMeta?.mechanicsMode, system.abilityMeta?.applicationScope, ...ruleIds(item)].join(' ').toLowerCase();
-  return /combat|attack|damage|defense|reflex|grapple|melee|ranged|reaction|encounter|stance|rage|shield/.test(text);
-}
-
-function inferBucket(item, featureId, profile = {}) {
-  if (profile.bucket) return profile.bucket;
-  const system = item?.system ?? {};
-  const subType = String(system.subType ?? '').toUpperCase();
-  const execution = String(system.executionModel ?? '').toUpperCase();
-  const mode = String(system.abilityMeta?.mechanicsMode ?? '').toLowerCase();
-  const scope = String(system.abilityMeta?.applicationScope ?? '').toLowerCase();
-  const rulesText = itemRules(item).map(rule => `${rule?.type ?? ''} ${rule?.control ?? ''} ${rule?.trigger ?? ''}`).join(' ').toLowerCase();
-
-  if (subType === 'ATTACK_OPTION' || mode.includes('attack_option') || rulesText.includes('attack_option')) return COMBAT_FEATURE_BUCKETS.AVAILABLE_ACTIONS;
-  if (execution === 'ACTIVE') return COMBAT_FEATURE_BUCKETS.AVAILABLE_ACTIONS;
-  if (/reaction|trigger|when /.test(`${mode} ${scope} ${rulesText}`)) return COMBAT_FEATURE_BUCKETS.TRIGGERED_FEATURES;
-  return COMBAT_FEATURE_BUCKETS.PASSIVE_RIDERS;
-}
-
-function featureFromItem(actor, item) {
-  const featureId = featureKeyForItem(item);
-  const profile = FEATURE_PROFILES[featureId] ?? {};
-  const bucket = inferBucket(item, featureId, profile);
-  const feature = baseFeatureFromItem(actor, item, featureId, profile);
-
-  if (bucket === COMBAT_FEATURE_BUCKETS.ACTIVE_STATES || useStateForFeature(actor, item, featureId, profile)) {
-    return {
-      bucket: COMBAT_FEATURE_BUCKETS.ACTIVE_STATES,
-      feature: {
-        ...feature,
-        isActive: true,
-        readiness: COMBAT_FEATURE_READINESS.ACTIVE,
-        canDeactivate: feature.canDeactivate || profile.canDeactivate === true,
-        deactivateAction: feature.deactivateAction ?? COMBAT_FEATURE_ACTIONS.DEACTIVATE,
-        tags: Array.from(new Set([...(feature.tags || []), 'active']))
-      }
-    };
-  }
-
-  if (bucket === COMBAT_FEATURE_BUCKETS.TRIGGERED_FEATURES) {
-    return {
-      bucket,
-      feature: {
-        id: feature.id,
-        name: feature.name,
-        sourceName: feature.sourceName,
-        sourceType: feature.sourceType,
-        sourceItemId: feature.sourceItemId,
-        trigger: profile.trigger ?? item?.system?.trigger ?? 'Conditional combat trigger.',
-        result: profile.result ?? feature.summary ?? 'Resolve this feature when its trigger occurs.',
-        automationStatus: feature.automationStatus,
-        tags: feature.tags
-      }
-    };
-  }
-
-  if (bucket === COMBAT_FEATURE_BUCKETS.PASSIVE_RIDERS) {
-    return {
-      bucket,
-      feature: {
-        id: feature.id,
-        name: feature.name,
-        sourceName: feature.sourceName,
-        sourceType: feature.sourceType,
-        sourceItemId: feature.sourceItemId,
-        appliesTo: profile.appliesTo ?? item?.system?.appliesTo ?? 'Combat',
-        summary: feature.summary || profile.summary || 'Combat rider detected from actor feature metadata.',
-        automationStatus: feature.automationStatus,
-        tags: feature.tags
-      }
-    };
-  }
-
-  return { bucket, feature };
-}
 
 function pushUnique(bucket, feature) {
   if (!feature?.id) return;
@@ -535,35 +32,37 @@ function pushUnique(bucket, feature) {
 }
 
 function addActiveEffects(model, actor) {
-  for (const effect of activeEffects(actor)) {
-    const feature = activeStateFromEffect(effect);
-    if (!feature.id || model.activeStates.some(state => state.id === feature.id)) continue;
-    pushUnique(model.activeStates, feature);
+  for (const effect of activeCombatFeatureEffects(actor)) {
+    const entry = classifyCombatFeatureEffect(effect);
+    if (!entry?.feature?.id || entry.bucket !== COMBAT_FEATURE_BUCKETS.ACTIVE_STATES) continue;
+    if (model.activeStates.some(state => state.id === entry.feature.id)) continue;
+    pushUnique(model.activeStates, entry.feature);
   }
 }
 
 function addSecondWindFallback(model, actor) {
   const hasAlready = [...model.availableActions, ...model.activeStates].some(feature => feature.id === 'second-wind');
   if (hasAlready || actor?.type !== 'character') return;
-  const fp = {
+
+  const profile = getCombatFeatureProfile('second-wind') ?? {};
+  pushUnique(model.availableActions, {
     id: 'second-wind',
     name: 'Second Wind',
     sourceName: 'Character Level',
-    sourceType: 'Class Feature',
+    sourceType: profile.sourceType ?? 'Class Feature',
     sourceItemId: null,
-    summary: FEATURE_PROFILES['second-wind'].summary,
-    actionCost: 'Swift',
-    timing: 'Encounter',
+    summary: profile.summary ?? 'Regain HP using the character-level Second Wind feature.',
+    actionCost: profile.actionCost ?? 'Swift',
+    timing: profile.timing ?? 'Encounter',
     remainingUses: null,
     maxUses: 1,
     readiness: COMBAT_FEATURE_READINESS.READY,
-    buttonLabel: 'Use',
+    buttonLabel: profile.buttonLabel ?? 'Use',
     canExecute: true,
-    executeAction: COMBAT_FEATURE_ACTIONS.EXECUTE_RESOURCE,
-    automationStatus: COMBAT_FEATURE_AUTOMATION_STATUS.PARTIAL,
-    tags: ['swift', 'encounter', 'partial']
-  };
-  pushUnique(model.availableActions, fp);
+    executeAction: profile.executeAction ?? COMBAT_FEATURE_ACTIONS.EXECUTE_RESOURCE,
+    automationStatus: profile.automationStatus ?? COMBAT_FEATURE_AUTOMATION_STATUS.PARTIAL,
+    tags: profile.tags ?? ['swift', 'encounter', 'partial']
+  });
 }
 
 function sortFeatureList(list = []) {
@@ -576,8 +75,7 @@ export class CombatFeatureSheetAdapter {
     if (!actor) return withCombatFeatureBadges(model);
 
     for (const item of actor.items ?? []) {
-      if (!featureCanBeCombatRelated(item)) continue;
-      const entry = featureFromItem(actor, item);
+      const entry = classifyCombatFeatureItem(actor, item);
       if (!entry?.bucket || !model[entry.bucket]) continue;
       pushUnique(model[entry.bucket], entry.feature);
     }
