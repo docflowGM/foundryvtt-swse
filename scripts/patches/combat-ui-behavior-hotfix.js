@@ -1,10 +1,30 @@
 import { SWSEChat } from '/systems/foundryvtt-swse/scripts/chat/swse-chat.js';
-import { FullAttackExecutor } from '/systems/foundryvtt-swse/scripts/engine/combat/full-attack-executor.js';
-import { FULL_ATTACK_PACKAGES } from '/systems/foundryvtt-swse/scripts/combat/multi-attack.js';
+import { rollAttack } from '/systems/foundryvtt-swse/scripts/combat/rolls/attacks.js';
+import { buildFullAttackSequence, FULL_ATTACK_PACKAGES, getEquippedWeapons, getWeaponGroup } from '/systems/foundryvtt-swse/scripts/combat/multi-attack.js';
+import { ActionEconomyConsumption } from '/systems/foundryvtt-swse/scripts/engine/combat/action/action-economy-consumption.js';
+import { showRollModifiersDialog } from '/systems/foundryvtt-swse/scripts/rolls/roll-config.js';
 
 const CHAT_OUTCOME_PATCH = Symbol.for('swse.combatUiBehaviorHotfix.chatOutcome.v1');
-const DELEGATE_PATCH = Symbol.for('swse.combatUiBehaviorHotfix.delegate.v1');
+const DELEGATE_PATCH = Symbol.for('swse.combatUiBehaviorHotfix.delegate.v2');
 let registered = false;
+
+const DROID_ONLY_UNLOCK_ACTIONS = new Map([
+  ['distracting droid', ['Distracting Droid']],
+  ['feign haywire', ['Feign Haywire']],
+  ['logic upgrade skill swap', ['Logic Upgrade: Skill Swap', 'Logic Upgrade - Skill Swap', 'Logic Upgrade Skill Swap']],
+  ['droid shield mastery', ['Droid Shield Mastery']],
+  ['sensor link', ['Sensor Link']],
+  ['erratic target', ['Erratic Target']],
+  ['link', ['Link']],
+  ['shield surge', ['Shield Surge']]
+]);
+
+const UNLOCK_ONLY_ACTIONS = new Map([
+  ['crush pinned opponent', ['Crush Pinned Opponent']],
+  ['pin', ['Pin']],
+  ['trip', ['Trip']],
+  ['throw', ['Throw']]
+]);
 
 function normalize(value = '') {
   return String(value ?? '').trim().toLowerCase().replace(/&/g, ' and ').replace(/[^a-z0-9]+/g, ' ').trim();
@@ -34,15 +54,21 @@ function actorFromApp(app) {
   return app?.actor?.items ? app.actor : app?.document?.items ? app.document : null;
 }
 
-function actorFromElement(element) {
-  const actorId = element?.dataset?.actorId || element?.closest?.('[data-swse-actor-id]')?.dataset?.swseActorId || '';
-  if (actorId) return actorFromId(actorId);
+function sheetFromElement(element, actor = null) {
   const appRoot = element?.closest?.('[data-appid], [data-application-id]');
   const appId = appRoot?.dataset?.appid || appRoot?.dataset?.applicationId || '';
   if (appId && ui?.windows) {
     const app = Object.values(ui.windows).find(win => String(win?.appId ?? win?.id ?? '') === String(appId));
-    if (app?.actor) return app.actor;
+    if (app?.actor || app?.document) return app;
   }
+  return actor?.sheet ?? null;
+}
+
+function actorFromElement(element) {
+  const actorId = element?.dataset?.actorId || element?.closest?.('[data-swse-actor-id]')?.dataset?.swseActorId || '';
+  if (actorId) return actorFromId(actorId);
+  const sheet = sheetFromElement(element);
+  if (sheet?.actor) return sheet.actor;
   return canvas?.tokens?.controlled?.[0]?.actor ?? null;
 }
 
@@ -200,6 +226,104 @@ function weaponGroupLabel(item, fallback = '') {
   return String(raw || 'Weapon').replace(/[-_]+/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
 }
 
+function actionNameFromRow(row) {
+  return row?.querySelector?.('.action-name')?.textContent?.trim()
+    || row?.dataset?.actionName
+    || row?.dataset?.actionId
+    || row?.dataset?.actionKey
+    || row?.textContent?.trim()
+    || '';
+}
+
+function canonicalActionKey(row) {
+  const name = actionNameFromRow(row);
+  return normalize(name.replace(/\s*\([^)]*\)\s*/g, ' ').replace(/\b(ref|available|unlimited|full round|full-round|standard|move|swift|reaction|free)\b/ig, ' '));
+}
+
+function rowScore(row) {
+  const button = row.querySelector?.('[data-action="swse-v2-use-action"], button');
+  let score = 0;
+  if (button) score += 4;
+  if (!row.classList?.contains('is-disabled') && !button?.disabled) score += 2;
+  if (button?.dataset?.actionId) score += 1;
+  return score;
+}
+
+function isActorDroid(actor) {
+  const text = [
+    actor?.type,
+    actor?.system?.species,
+    actor?.system?.species?.name,
+    actor?.system?.details?.species,
+    actor?.system?.details?.species?.name,
+    ...(Array.isArray(actor?.system?.tags) ? actor.system.tags : []),
+    ...(Array.isArray(actor?.system?.traits) ? actor.system.traits : [])
+  ].join(' ').toLowerCase();
+  return actor?.type === 'droid' || /\bdroid\b|\bconstruct\b/.test(text);
+}
+
+function actorHasUnlock(actor, aliases = []) {
+  const wanted = new Set((aliases || []).map(normalize).filter(Boolean));
+  if (!wanted.size) return false;
+  for (const item of actor?.items ?? []) {
+    const candidates = [
+      item?.name,
+      item?.system?.slug,
+      item?.system?.key,
+      item?.flags?.swse?.slug,
+      item?.flags?.['foundryvtt-swse']?.slug
+    ].map(normalize).filter(Boolean);
+    if (candidates.some(candidate => wanted.has(candidate))) return true;
+  }
+  return false;
+}
+
+function gatingAliasesForAction(actionKey) {
+  return DROID_ONLY_UNLOCK_ACTIONS.get(actionKey) ?? UNLOCK_ONLY_ACTIONS.get(actionKey) ?? null;
+}
+
+function shouldHideAction(actor, actionKey) {
+  if (DROID_ONLY_UNLOCK_ACTIONS.has(actionKey) && !isActorDroid(actor)) return true;
+  const aliases = gatingAliasesForAction(actionKey);
+  return !!aliases && !actorHasUnlock(actor, aliases);
+}
+
+function dedupeAndGateCombatActions(actor, combatRoot) {
+  const rows = Array.from(combatRoot.querySelectorAll('.combat-action-row'));
+  const kept = new Map();
+
+  for (const row of rows) {
+    const key = canonicalActionKey(row);
+    if (!key) continue;
+    row.dataset.swseCanonicalActionKey = key;
+
+    if (shouldHideAction(actor, key)) {
+      row.remove();
+      continue;
+    }
+
+    const prior = kept.get(key);
+    if (!prior) {
+      kept.set(key, row);
+      continue;
+    }
+
+    if (rowScore(row) > rowScore(prior)) {
+      prior.remove();
+      kept.set(key, row);
+    } else {
+      row.remove();
+    }
+  }
+
+  for (const group of combatRoot.querySelectorAll('.combat-action-group')) {
+    const count = group.querySelectorAll('.combat-action-row').length;
+    const countEl = group.querySelector('.group-meta span:first-child');
+    if (countEl) countEl.textContent = String(count);
+    if (!count) group.remove();
+  }
+}
+
 function repairCombatTabWeaponDisplay(app, html) {
   const actor = actorFromApp(app);
   const root = rootFromHtml(html);
@@ -208,6 +332,7 @@ function repairCombatTabWeaponDisplay(app, html) {
   if (!combatRoot) return;
   combatRoot.dataset.swseActorId = actor.id;
   combatRoot.querySelectorAll('.combat-action-row, [data-action="swse-v2-use-action"]').forEach(el => { el.dataset.actorId = actor.id; });
+  dedupeAndGateCombatActions(actor, combatRoot);
 
   for (const card of combatRoot.querySelectorAll('.swse-concept-attack-card')) {
     const button = card.querySelector('[data-action="roll-attack"][data-weapon-id]');
@@ -245,24 +370,108 @@ function scrubHiddenDefensesInRollDialog(_app, html) {
   if (preview) preview.textContent = 'Target/DC hidden unless you own the target.';
 }
 
-function isTripleAttackElement(element) {
+function multiAttackKind(element) {
   const row = element.closest?.('.combat-action-row, .swse-combat-action-card, .action-row, .swse-concept-action-row--combat') ?? element;
-  const text = [row?.dataset?.actionId, row?.dataset?.actionKey, row?.querySelector?.('.action-name')?.textContent, element?.title, element?.textContent].join(' ');
-  return compact(text).includes('tripleattack');
+  const text = [row?.dataset?.actionId, row?.dataset?.actionKey, row?.dataset?.swseCanonicalActionKey, row?.querySelector?.('.action-name')?.textContent, element?.title, element?.textContent].join(' ');
+  const key = compact(text);
+  if (key.includes('tripleattack')) return 'triple';
+  if (key.includes('doubleattack')) return 'double';
+  return null;
 }
 
-async function executeTripleAttackFromElement(element) {
+function fallbackMultiAttackPlan(actor, packageType, weapon) {
+  const penalty = packageType === FULL_ATTACK_PACKAGES.TRIPLE_ATTACK ? -10 : -5;
+  const count = packageType === FULL_ATTACK_PACKAGES.TRIPLE_ATTACK ? 3 : 2;
+  return {
+    legal: !!weapon,
+    packageType,
+    actionType: 'full-round',
+    warnings: weapon ? [] : ['No weapon equipped. Equip a weapon before using this attack.'],
+    breakdown: [`${packageType === FULL_ATTACK_PACKAGES.TRIPLE_ATTACK ? 'Triple' : 'Double'} Attack fallback: ${penalty} per attack.`],
+    attacks: Array.from({ length: count }, (_, index) => ({
+      weapon,
+      label: `${weapon?.name ?? 'Weapon'} — Attack ${index + 1}`,
+      weaponGroup: getWeaponGroup(weapon),
+      basePenalty: penalty,
+      reduction: 0,
+      finalPenalty: penalty,
+      penaltySource: packageType === FULL_ATTACK_PACKAGES.TRIPLE_ATTACK ? 'Triple Attack' : 'Double Attack'
+    }))
+  };
+}
+
+async function executeMultiAttackFromElement(element, kind) {
   const actor = actorFromElement(element);
   if (!actor) {
-    ui?.notifications?.warn?.('Could not resolve actor for Triple Attack. Reopen the sheet and try again.');
+    ui?.notifications?.warn?.('Could not resolve actor for multiattack. Reopen the sheet and try again.');
     return;
   }
-  await FullAttackExecutor.execute(actor, {
-    requestedPackage: FULL_ATTACK_PACKAGES.TRIPLE_ATTACK,
-    sourceElement: element,
-    actionId: 'triple-attack',
-    actionName: 'Triple Attack'
-  });
+
+  const equipped = getEquippedWeapons(actor);
+  const packageType = kind === 'triple' ? FULL_ATTACK_PACKAGES.TRIPLE_ATTACK : FULL_ATTACK_PACKAGES.DOUBLE_ATTACK;
+  let plan = buildFullAttackSequence(actor, { requestedPackage: packageType, primaryWeapon: equipped.primary });
+  if (!plan?.legal) plan = fallbackMultiAttackPlan(actor, packageType, equipped.primary);
+  if (!plan?.legal || !plan.attacks?.length) {
+    ui?.notifications?.warn?.(plan?.warnings?.join(' ') || 'No legal multiattack sequence is available.');
+    return;
+  }
+
+  const actionName = kind === 'triple' ? 'Triple Attack' : 'Double Attack';
+  let spend = null;
+  let rolled = 0;
+
+  for (let index = 0; index < plan.attacks.length; index += 1) {
+    const step = plan.attacks[index];
+    const weapon = step.weapon;
+    const options = await showRollModifiersDialog({
+      title: `${actionName}: ${step.label}`,
+      rollType: 'attack',
+      actor,
+      weapon,
+      sourceElement: element,
+      showCover: true,
+      showConcealment: true,
+      showForcePoint: true
+    });
+
+    if (!options) {
+      if (!rolled && spend?.rollback) await spend.rollback();
+      return;
+    }
+
+    if (!spend) {
+      spend = await ActionEconomyConsumption.spend(actor, 'full-round', {
+        actionName,
+        actionId: kind === 'triple' ? 'triple-attack' : 'double-attack',
+        source: 'combat-ui-behavior-hotfix'
+      }, { notify: true });
+      if (spend?.allowed === false || spend?.permitted === false) return;
+    }
+
+    const result = await rollAttack(actor, weapon, {
+      ...options,
+      sourceElement: element,
+      sequencePenalty: Number(step.finalPenalty ?? 0) + Number(options.sequencePenalty ?? 0),
+      actionId: kind === 'triple' ? 'triple-attack' : 'double-attack',
+      actionName,
+      actionData: {
+        packageType,
+        attackIndex: index + 1,
+        attackCount: plan.attacks.length,
+        penaltySource: step.penaltySource,
+        basePenalty: step.basePenalty,
+        reduction: step.reduction,
+        finalPenalty: step.finalPenalty
+      },
+      rollNote: [options.rollNote, `${actionName} ${index + 1}/${plan.attacks.length}: ${step.penaltySource} ${step.finalPenalty}`].filter(Boolean).join(' | ')
+    });
+
+    if (!result && !rolled && spend?.rollback) {
+      await spend.rollback();
+      return;
+    }
+    if (result) rolled += 1;
+  }
 }
 
 function installCombatActionDelegate() {
@@ -270,13 +479,14 @@ function installCombatActionDelegate() {
   globalThis[DELEGATE_PATCH] = true;
   document.addEventListener('click', event => {
     const element = event.target?.closest?.('[data-action="swse-v2-use-action"], .combat-action-row, .swse-combat-action-card, .action-row, .swse-concept-action-row--combat');
-    if (!element || !isTripleAttackElement(element)) return;
+    const kind = element ? multiAttackKind(element) : null;
+    if (!element || !kind) return;
     event.preventDefault();
     event.stopPropagation();
     event.stopImmediatePropagation?.();
-    executeTripleAttackFromElement(element).catch(err => {
-      console.error('SWSE | Triple Attack execution failed', err);
-      ui?.notifications?.error?.(`Triple Attack failed: ${err.message}`);
+    executeMultiAttackFromElement(element, kind).catch(err => {
+      console.error(`SWSE | ${kind === 'triple' ? 'Triple' : 'Double'} Attack execution failed`, err);
+      ui?.notifications?.error?.(`${kind === 'triple' ? 'Triple' : 'Double'} Attack failed: ${err.message}`);
     });
   }, true);
 }
