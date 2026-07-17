@@ -5,7 +5,7 @@ import { ActionEconomyConsumption } from '/systems/foundryvtt-swse/scripts/engin
 import { showRollModifiersDialog } from '/systems/foundryvtt-swse/scripts/rolls/roll-config.js';
 
 const CHAT_OUTCOME_PATCH = Symbol.for('swse.combatUiBehaviorHotfix.chatOutcome.v1');
-const DELEGATE_PATCH = Symbol.for('swse.combatUiBehaviorHotfix.delegate.v2');
+const DELEGATE_PATCH = Symbol.for('swse.combatUiBehaviorHotfix.delegate.v3');
 let registered = false;
 
 const DROID_ONLY_UNLOCK_ACTIONS = new Map([
@@ -24,6 +24,91 @@ const UNLOCK_ONLY_ACTIONS = new Map([
   ['pin', ['Pin']],
   ['trip', ['Trip']],
   ['throw', ['Throw']]
+]);
+
+const ATTACK_OPTION_ACTIONS = new Map([
+  ['power attack', {
+    label: 'Power Attack',
+    combatOptions: { powerAttack: 1 },
+    attackOptions: { powerAttack: true },
+    requiresWeaponBranch: 'melee',
+    actionId: 'power-attack',
+    note: 'Power Attack: attack penalty converted to damage bonus.'
+  }],
+  ['flurry', {
+    label: 'Flurry',
+    combatOptions: { flurry: true, rapidStrike: true },
+    attackOptions: { flurry: true, rapidStrike: true },
+    requiresWeaponBranch: 'melee',
+    actionId: 'flurry',
+    note: 'Flurry/Rapid Strike attack option applied.'
+  }],
+  ['rapid strike', {
+    label: 'Rapid Strike',
+    combatOptions: { rapidStrike: true },
+    attackOptions: { flurry: true, rapidStrike: true },
+    requiresWeaponBranch: 'melee',
+    actionId: 'rapid-strike',
+    note: 'Rapid Strike attack option applied.'
+  }],
+  ['power blast', {
+    label: 'Power Blast',
+    combatOptions: { powerBlast: 1 },
+    attackOptions: { powerBlast: true },
+    requiresWeaponBranch: 'ranged',
+    actionId: 'power-blast',
+    note: 'Power Blast: attack penalty converted to ranged damage bonus.'
+  }],
+  ['burst fire', {
+    label: 'Burst Fire',
+    combatOptions: { burstFire: true },
+    attackOptions: { burstFire: true },
+    requiresWeaponBranch: 'ranged',
+    actionId: 'burst-fire',
+    attackMode: 'autofire',
+    note: 'Burst Fire option applied.'
+  }],
+  ['rapid shot', {
+    label: 'Rapid Shot',
+    combatOptions: { rapidShot: true },
+    attackOptions: { rapidShot: true },
+    requiresWeaponBranch: 'ranged',
+    actionId: 'rapid-shot',
+    note: 'Rapid Shot option applied.'
+  }],
+  ['autofire', {
+    label: 'Autofire',
+    combatOptions: { autofire: true },
+    attackOptions: { autofire: true },
+    requiresWeaponBranch: 'ranged',
+    actionId: 'autofire',
+    attackMode: 'autofire',
+    note: 'Autofire attack mode applied.'
+  }],
+  ['charging fire', {
+    label: 'Charging Fire',
+    combatOptions: { chargingFire: true },
+    attackOptions: { chargingFire: true },
+    requiresWeaponBranch: 'ranged',
+    actionId: 'charging-fire',
+    note: 'Charging Fire attack option applied.'
+  }],
+  ['powerful charge', {
+    label: 'Powerful Charge',
+    combatOptions: { powerfulCharge: true },
+    attackOptions: { powerfulCharge: true },
+    requiresWeaponBranch: 'melee',
+    actionId: 'powerful-charge',
+    note: 'Powerful Charge attack option applied.'
+  }],
+  ['mighty swing', {
+    label: 'Mighty Swing',
+    combatOptions: { mightySwing: true },
+    attackOptions: { mightySwing: true },
+    requiresWeaponBranch: 'melee',
+    actionId: 'mighty-swing',
+    note: 'Mighty Swing attack option applied.'
+  }]
 ]);
 
 function normalize(value = '') {
@@ -206,7 +291,19 @@ function installAttackChatOutcomePatch() {
   SWSEChat[CHAT_OUTCOME_PATCH] = true;
 }
 
+function isRangedWeapon(item) {
+  const system = item?.system ?? {};
+  const branch = String(system.meleeOrRanged ?? system.weaponRangeType ?? system.rangeType ?? '').toLowerCase();
+  if (branch === 'ranged') return true;
+  if (branch === 'melee') return false;
+  const range = String(system.range ?? '').toLowerCase();
+  if (range && range !== 'melee') return true;
+  const text = [item?.type, item?.name, system.weaponType, system.weaponGroup, system.weaponCategory, system.proficiency, system.category, system.subcategory].join(' ').toLowerCase();
+  return /ranged|pistol|rifle|blaster|bowcaster|launcher|grenade|heavy/.test(text) && !/lightsaber|melee|vibro|blade|sword|unarmed/.test(text);
+}
+
 function isMeleeWeapon(item) {
+  if (isRangedWeapon(item)) return false;
   const system = item?.system ?? {};
   const branch = String(system.meleeOrRanged ?? system.weaponRangeType ?? system.rangeType ?? system.range ?? '').toLowerCase();
   if (branch === 'ranged') return false;
@@ -215,6 +312,10 @@ function isMeleeWeapon(item) {
   if (text.includes('lightsaber')) return true;
   if (text.includes('melee')) return true;
   return false;
+}
+
+function weaponBranch(item) {
+  return isRangedWeapon(item) ? 'ranged' : 'melee';
 }
 
 function weaponGroupLabel(item, fallback = '') {
@@ -370,12 +471,27 @@ function scrubHiddenDefensesInRollDialog(_app, html) {
   if (preview) preview.textContent = 'Target/DC hidden unless you own the target.';
 }
 
+function combatRowFromElement(element) {
+  return element.closest?.('.combat-action-row, .swse-combat-action-card, .action-row, .swse-concept-action-row--combat') ?? element;
+}
+
 function multiAttackKind(element) {
-  const row = element.closest?.('.combat-action-row, .swse-combat-action-card, .action-row, .swse-concept-action-row--combat') ?? element;
+  const row = combatRowFromElement(element);
   const text = [row?.dataset?.actionId, row?.dataset?.actionKey, row?.dataset?.swseCanonicalActionKey, row?.querySelector?.('.action-name')?.textContent, element?.title, element?.textContent].join(' ');
   const key = compact(text);
   if (key.includes('tripleattack')) return 'triple';
   if (key.includes('doubleattack')) return 'double';
+  return null;
+}
+
+function combatOptionSpecForElement(element) {
+  const row = combatRowFromElement(element);
+  const key = canonicalActionKey(row);
+  if (ATTACK_OPTION_ACTIONS.has(key)) return ATTACK_OPTION_ACTIONS.get(key);
+  const compactKey = compact(key);
+  for (const [name, spec] of ATTACK_OPTION_ACTIONS.entries()) {
+    if (compact(name) === compactKey) return spec;
+  }
   return null;
 }
 
@@ -397,6 +513,45 @@ function fallbackMultiAttackPlan(actor, packageType, weapon) {
       finalPenalty: penalty,
       penaltySource: packageType === FULL_ATTACK_PACKAGES.TRIPLE_ATTACK ? 'Triple Attack' : 'Double Attack'
     }))
+  };
+}
+
+function equippedWeaponForSpec(actor, spec = {}) {
+  const equipped = getEquippedWeapons(actor);
+  const weapons = [equipped.primary, equipped.offhand]
+    .filter(Boolean)
+    .filter((weapon, index, list) => list.findIndex(other => other?.id === weapon?.id) === index);
+  if (!spec.requiresWeaponBranch) return weapons[0] ?? null;
+  return weapons.find(weapon => weaponBranch(weapon) === spec.requiresWeaponBranch) ?? weapons[0] ?? null;
+}
+
+function hasMeaningfulOptionValue(value) {
+  if (value === undefined || value === null || value === false || value === '') return false;
+  if (value === 'off' || value === 'false') return false;
+  const n = Number(value);
+  if (Number.isFinite(n) && n === 0) return false;
+  return true;
+}
+
+function applyForcedAttackOption(options = {}, spec = {}) {
+  const combatOptions = { ...(options.combatOptions ?? {}) };
+  const attackOptions = { ...(options.attackOptions ?? {}) };
+
+  for (const [key, value] of Object.entries(spec.combatOptions ?? {})) {
+    if (!hasMeaningfulOptionValue(combatOptions[key])) combatOptions[key] = value;
+  }
+  for (const [key, value] of Object.entries(spec.attackOptions ?? {})) {
+    if (!hasMeaningfulOptionValue(attackOptions[key])) attackOptions[key] = value;
+  }
+
+  return {
+    ...options,
+    combatOptions,
+    attackOptions,
+    attackMode: spec.attackMode ?? options.attackMode,
+    actionId: spec.actionId ?? options.actionId,
+    actionName: spec.label ?? options.actionName,
+    rollNote: [options.rollNote, spec.note].filter(Boolean).join(' | ')
   };
 }
 
@@ -474,19 +629,70 @@ async function executeMultiAttackFromElement(element, kind) {
   }
 }
 
+async function executeCombatOptionAttackFromElement(element, spec) {
+  const actor = actorFromElement(element);
+  if (!actor) {
+    ui?.notifications?.warn?.('Could not resolve actor for this combat option. Reopen the sheet and try again.');
+    return;
+  }
+
+  const weapon = equippedWeaponForSpec(actor, spec);
+  if (!weapon) {
+    ui?.notifications?.warn?.(`Equip a ${spec.requiresWeaponBranch || ''} weapon before using ${spec.label}.`);
+    return;
+  }
+
+  if (spec.requiresWeaponBranch && weaponBranch(weapon) !== spec.requiresWeaponBranch) {
+    ui?.notifications?.warn?.(`${spec.label} requires a ${spec.requiresWeaponBranch} weapon.`);
+    return;
+  }
+
+  const seedOptions = applyForcedAttackOption({ combatOptions: spec.combatOptions, attackOptions: spec.attackOptions, attackMode: spec.attackMode }, spec);
+  const options = await showRollModifiersDialog({
+    title: `${spec.label}: ${weapon.name}`,
+    rollType: 'attack',
+    actor,
+    weapon,
+    sourceElement: element,
+    showCover: true,
+    showConcealment: true,
+    showForcePoint: true,
+    ...seedOptions
+  });
+
+  if (!options) return;
+  const finalOptions = applyForcedAttackOption(options, spec);
+  await rollAttack(actor, weapon, {
+    ...finalOptions,
+    sourceElement: element,
+    actionData: {
+      ...(finalOptions.actionData ?? {}),
+      combatOptionAction: true,
+      forcedCombatOptions: spec.combatOptions ?? {},
+      forcedAttackOptions: spec.attackOptions ?? {}
+    }
+  });
+}
+
 function installCombatActionDelegate() {
   if (globalThis[DELEGATE_PATCH]) return;
   globalThis[DELEGATE_PATCH] = true;
   document.addEventListener('click', event => {
     const element = event.target?.closest?.('[data-action="swse-v2-use-action"], .combat-action-row, .swse-combat-action-card, .action-row, .swse-concept-action-row--combat');
-    const kind = element ? multiAttackKind(element) : null;
-    if (!element || !kind) return;
+    if (!element) return;
+    const kind = multiAttackKind(element);
+    const optionSpec = kind ? null : combatOptionSpecForElement(element);
+    if (!kind && !optionSpec) return;
     event.preventDefault();
     event.stopPropagation();
     event.stopImmediatePropagation?.();
-    executeMultiAttackFromElement(element, kind).catch(err => {
-      console.error(`SWSE | ${kind === 'triple' ? 'Triple' : 'Double'} Attack execution failed`, err);
-      ui?.notifications?.error?.(`${kind === 'triple' ? 'Triple' : 'Double'} Attack failed: ${err.message}`);
+    const promise = kind
+      ? executeMultiAttackFromElement(element, kind)
+      : executeCombatOptionAttackFromElement(element, optionSpec);
+    promise.catch(err => {
+      const label = kind ? (kind === 'triple' ? 'Triple Attack' : 'Double Attack') : optionSpec?.label ?? 'Combat option';
+      console.error(`SWSE | ${label} execution failed`, err);
+      ui?.notifications?.error?.(`${label} failed: ${err.message}`);
     });
   }, true);
 }
