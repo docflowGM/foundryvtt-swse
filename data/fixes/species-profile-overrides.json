@@ -1,0 +1,9 @@
+{
+  "Wookiee": {
+    "size": "Large",
+    "tags": ["large"],
+    "canonicalStats": {
+      "size": "Large"
+    }
+  }
+}
