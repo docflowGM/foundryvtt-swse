@@ -1,4 +1,5 @@
 import speciesTraits from "/systems/foundryvtt-swse/data/species-traits.json" with { type: "json" };
+import speciesProfileOverrides from "/systems/foundryvtt-swse/data/fixes/species-profile-overrides.json" with { type: "json" };
 
 function uniq(list = []) {
   return Array.from(new Set((list || []).filter(Boolean)));
@@ -12,8 +13,40 @@ export function normalizeSpeciesProfileKey(name) {
     .replace(/^-+|-+$/g, '');
 }
 
+function speciesProfileOverrideFor(name) {
+  const key = normalizeSpeciesProfileKey(name);
+  return Object.entries(speciesProfileOverrides || {}).find(([overrideName]) => normalizeSpeciesProfileKey(overrideName) === key)?.[1] || null;
+}
+
+function applySpeciesProfileOverride(entry) {
+  const override = speciesProfileOverrideFor(entry?.name || entry?.canonicalName);
+  if (!override) return entry;
+
+  const canonicalStats = {
+    ...(entry?.canonicalStats || {}),
+    ...(override.canonicalStats || {})
+  };
+  const size = override.size ?? canonicalStats.size ?? entry?.size;
+  if (size) canonicalStats.size = size;
+
+  const tags = new Set(Array.isArray(entry?.tags) ? entry.tags : []);
+  if (entry?.size) tags.delete(String(entry.size).toLowerCase());
+  if (size) tags.add(String(size).toLowerCase());
+  for (const tag of override.tags || []) tags.add(String(tag).toLowerCase());
+
+  return {
+    ...entry,
+    size,
+    canonicalStats,
+    tags: Array.from(tags)
+  };
+}
+
 const STRUCTURED_SPECIES_INDEX = new Map(
-  (Array.isArray(speciesTraits) ? speciesTraits : []).map(entry => [normalizeSpeciesProfileKey(entry?.name), entry])
+  (Array.isArray(speciesTraits) ? speciesTraits : []).map(entry => {
+    const normalized = applySpeciesProfileOverride(entry);
+    return [normalizeSpeciesProfileKey(normalized?.name), normalized];
+  })
 );
 
 export function getStructuredSpeciesProfile(name) {
@@ -67,7 +100,7 @@ export const CURATED_SPECIES_MENTOR_PROFILES = {
       'Wookiee is less ideal if you are aiming for a subtle, social, or highly finesse-driven concept.'
     ],
     forecast: 'A Wookiee usually keeps rewarding melee pressure, durability, and physical presence later in the build.',
-    tags: ['martial', 'front-line', 'durable', 'strength', 'melee', 'soldier-synergy']
+    tags: ['martial', 'front-line', 'durable', 'strength', 'melee', 'soldier-synergy', 'large']
   },
   'twi-lek': {
     order: 3,
@@ -177,7 +210,7 @@ export function buildSpeciesTags(species, structuredProfile = null) {
 
   addAbilityTags(tags, species?.abilityScores || {});
 
-  const size = String(species?.size || '').toLowerCase().trim();
+  const size = String(structured?.canonicalStats?.size || structured?.size || species?.size || '').toLowerCase().trim();
   if (size) addAll(tags, [size]);
 
   const speed = Number(species?.speed || 0);
