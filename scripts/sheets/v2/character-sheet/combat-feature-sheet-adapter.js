@@ -14,14 +14,18 @@ import {
   classifyCombatFeatureItem,
   getCombatFeatureProfile
 } from '/systems/foundryvtt-swse/scripts/engine/combat/features/combat-feature-classifier.js';
+import {
+  buildUniversalCombatStateActions,
+  getActiveCombatFeatureStates
+} from '/systems/foundryvtt-swse/scripts/engine/combat/features/combat-feature-active-state-service.js';
 
 /**
  * CombatFeatureSheetAdapter
  *
- * Phase 3 adapter for the Combat Features reform. This class builds the display
- * model consumed by the future Combat Features panel. Source-item and effect
+ * Phase 7 adapter for the Combat Features reform. Source-item and effect
  * classification lives in `combat-feature-classifier.js`; this adapter assembles
- * the model and adds action-economy groupings for available actions.
+ * the model, adds action-economy groupings, and exposes tracked active combat
+ * states from the combat feature state service.
  *
  * This adapter remains pure: no actor mutation, no roll math, no action
  * spending, and no effect creation.
@@ -34,12 +38,30 @@ function pushUnique(bucket, feature) {
   else bucket.push(feature);
 }
 
+function removeAvailableAction(model, featureId) {
+  model.availableActions = model.availableActions.filter(feature => feature.id !== featureId);
+}
+
 function addActiveEffects(model, actor) {
   for (const effect of activeCombatFeatureEffects(actor)) {
     const entry = classifyCombatFeatureEffect(effect);
     if (!entry?.feature?.id || entry.bucket !== COMBAT_FEATURE_BUCKETS.ACTIVE_STATES) continue;
     if (model.activeStates.some(state => state.id === entry.feature.id)) continue;
     pushUnique(model.activeStates, entry.feature);
+  }
+}
+
+function addTrackedActiveStates(model, actor) {
+  for (const feature of getActiveCombatFeatureStates(actor)) {
+    pushUnique(model.activeStates, feature);
+    removeAvailableAction(model, feature.id);
+  }
+}
+
+function addUniversalCombatStateActions(model, actor) {
+  for (const feature of buildUniversalCombatStateActions(actor)) {
+    const hasAlready = [...model.availableActions, ...model.activeStates].some(entry => entry.id === feature.id);
+    if (!hasAlready) pushUnique(model.availableActions, feature);
   }
 }
 
@@ -126,6 +148,8 @@ export class CombatFeatureSheetAdapter {
     }
 
     addActiveEffects(model, actor);
+    addTrackedActiveStates(model, actor);
+    addUniversalCombatStateActions(model, actor);
     addSecondWindFallback(model, actor);
 
     for (const key of Object.values(COMBAT_FEATURE_BUCKETS)) sortFeatureList(model[key]);
