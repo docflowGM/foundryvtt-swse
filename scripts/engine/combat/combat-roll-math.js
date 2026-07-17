@@ -304,12 +304,56 @@ function forceItemAttackBonus(actor, weapon) {
   return Number(state.attuned.attackBonus ?? 1) || 1;
 }
 
+function actorFromTargetRef(value) {
+  if (!value) return null;
+  if (value.actor?.items) return value.actor;
+  if (value.items) return value;
+  if (typeof value === 'string') return game?.actors?.get?.(value) ?? null;
+  return null;
+}
+
+function actorFromTokenId(id) {
+  if (!id) return null;
+  return canvas?.tokens?.placeables?.find?.(token => String(token.id) === String(id) || String(token.document?.id) === String(id))?.actor ?? null;
+}
+
+function actorFromCombatantId(id) {
+  if (!id) return null;
+  const combatant = game?.combat?.combatants?.get?.(id)
+    ?? Array.from(game?.combat?.combatants ?? []).find(c => String(c?.id) === String(id));
+  return combatant?.actor ?? null;
+}
+
+function actorFromTargetContext(ctx = {}) {
+  if (!ctx || typeof ctx !== 'object') return null;
+  return actorFromTargetRef(ctx.actor)
+    ?? actorFromTargetRef(ctx.target)
+    ?? actorFromTokenId(ctx.tokenId)
+    ?? actorFromCombatantId(ctx.combatantId)
+    ?? actorFromTargetRef(ctx.actorId)
+    ?? actorFromTargetRef(ctx.targetActorId)
+    ?? actorFromTargetRef(ctx.targetId)
+    ?? null;
+}
+
 // ─────────────────────────────────────────────────────────────────────────────
 // Exported helpers (re-used by attacks.js)
 // ─────────────────────────────────────────────────────────────────────────────
 
 export function getTargetActorFromOptions(options = {}) {
-  return options.target ?? game.user?.targets?.first?.()?.actor ?? null;
+  return actorFromTargetRef(options.targetActor)
+    ?? actorFromTargetRef(options.target)
+    ?? actorFromTargetContext(options.targetContext)
+    ?? actorFromTargetContext(options.combatContext?.targetContext)
+    ?? actorFromTargetContext(options.workflowContext?.targetContext)
+    ?? actorFromTokenId(options.tokenId)
+    ?? actorFromTokenId(options.targetTokenId)
+    ?? actorFromCombatantId(options.combatantId)
+    ?? actorFromTargetRef(options.actorId)
+    ?? actorFromTargetRef(options.targetActorId)
+    ?? actorFromTargetRef(options.targetId)
+    ?? game.user?.targets?.first?.()?.actor
+    ?? null;
 }
 
 export function weaponMatchesId(weapon, id) {
