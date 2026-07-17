@@ -82,7 +82,7 @@ export const PROGRESSION_RULES = {
     },
     Wookiee: {
       name: 'Wookiee',
-      size: 'medium',
+      size: 'large',
       speed: 6,
       languages: ['Shyriiwook'],
       abilityMods: { str: 2, dex: 0, con: 0, int: 0, wis: 0, cha: 0 },
