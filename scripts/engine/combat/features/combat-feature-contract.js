@@ -55,6 +55,28 @@ export const COMBAT_FEATURE_TRIGGER_GROUP_ORDER = Object.freeze([
   { id: COMBAT_FEATURE_TRIGGER_GROUPS.OTHER, label: 'Other Triggers', hint: 'Conditional features without a more specific trigger lane yet.' }
 ]);
 
+export const COMBAT_FEATURE_PASSIVE_GROUPS = Object.freeze({
+  ATTACK: 'attack-riders',
+  DAMAGE: 'damage-riders',
+  DEFENSE: 'defense-riders',
+  THRESHOLD: 'threshold-riders',
+  MOVEMENT: 'movement-riders',
+  GRAPPLE: 'grapple-riders',
+  EQUIPMENT: 'equipment-riders',
+  OTHER: 'other-riders'
+});
+
+export const COMBAT_FEATURE_PASSIVE_GROUP_ORDER = Object.freeze([
+  { id: COMBAT_FEATURE_PASSIVE_GROUPS.ATTACK, label: 'Attack Riders', hint: 'Passive or conditional bonuses that affect attack rolls.' },
+  { id: COMBAT_FEATURE_PASSIVE_GROUPS.DAMAGE, label: 'Damage Riders', hint: 'Passive or conditional bonuses that affect damage rolls.' },
+  { id: COMBAT_FEATURE_PASSIVE_GROUPS.DEFENSE, label: 'Defense Riders', hint: 'Passive or conditional changes to defenses.' },
+  { id: COMBAT_FEATURE_PASSIVE_GROUPS.THRESHOLD, label: 'Threshold / Condition Riders', hint: 'Passive features that affect Damage Threshold or condition movement.' },
+  { id: COMBAT_FEATURE_PASSIVE_GROUPS.MOVEMENT, label: 'Movement Riders', hint: 'Passive features that affect movement or positioning.' },
+  { id: COMBAT_FEATURE_PASSIVE_GROUPS.GRAPPLE, label: 'Grapple / Control Riders', hint: 'Passive features that affect grapple, pin, trip, or control math.' },
+  { id: COMBAT_FEATURE_PASSIVE_GROUPS.EQUIPMENT, label: 'Equipment Riders', hint: 'Passive equipment, armor, shield, or weapon riders.' },
+  { id: COMBAT_FEATURE_PASSIVE_GROUPS.OTHER, label: 'Other Passive Riders', hint: 'Passive combat features without a more specific lane yet.' }
+]);
+
 export const COMBAT_FEATURE_AUTOMATION_STATUS = Object.freeze({
   AUTOMATED: 'automated',
   PARTIAL: 'partial',
@@ -100,6 +122,7 @@ export function emptyCombatFeaturesModel() {
     [COMBAT_FEATURE_BUCKETS.TRIGGERED_FEATURES]: [],
     triggeredFeatureGroups: [],
     [COMBAT_FEATURE_BUCKETS.PASSIVE_RIDERS]: [],
+    passiveRiderGroups: [],
     badges: {
       hasRageActive: false,
       rageLabel: 'Rage Inactive',
@@ -107,6 +130,10 @@ export function emptyCombatFeaturesModel() {
       readyActionCount: 0,
       availableActionGroupCount: 0,
       triggeredFeatureGroupCount: 0,
+      passiveRiderGroupCount: 0,
+      passiveAutomatedCount: 0,
+      passivePartialCount: 0,
+      passiveManualCount: 0,
       passiveRiderCount: 0,
       manualFeatureCount: 0
     }
@@ -120,6 +147,7 @@ export function combatFeatureSummaryCounts(model = emptyCombatFeaturesModel()) {
   const triggeredFeatures = Array.isArray(model.triggeredFeatures) ? model.triggeredFeatures : [];
   const triggeredFeatureGroups = Array.isArray(model.triggeredFeatureGroups) ? model.triggeredFeatureGroups : [];
   const passiveRiders = Array.isArray(model.passiveRiders) ? model.passiveRiders : [];
+  const passiveRiderGroups = Array.isArray(model.passiveRiderGroups) ? model.passiveRiderGroups : [];
   const manualFeatureCount = [...activeStates, ...availableActions, ...triggeredFeatures, ...passiveRiders]
     .filter(feature => feature?.automationStatus === COMBAT_FEATURE_AUTOMATION_STATUS.MANUAL)
     .length;
@@ -129,6 +157,10 @@ export function combatFeatureSummaryCounts(model = emptyCombatFeaturesModel()) {
     readyActionCount: availableActions.filter(feature => feature?.readiness !== COMBAT_FEATURE_READINESS.USED).length,
     availableActionGroupCount: availableActionGroups.filter(group => Array.isArray(group.actions) && group.actions.length).length,
     triggeredFeatureGroupCount: triggeredFeatureGroups.filter(group => Array.isArray(group.features) && group.features.length).length,
+    passiveRiderGroupCount: passiveRiderGroups.filter(group => Array.isArray(group.riders) && group.riders.length).length,
+    passiveAutomatedCount: passiveRiders.filter(feature => feature?.automationStatus === COMBAT_FEATURE_AUTOMATION_STATUS.AUTOMATED).length,
+    passivePartialCount: passiveRiders.filter(feature => feature?.automationStatus === COMBAT_FEATURE_AUTOMATION_STATUS.PARTIAL).length,
+    passiveManualCount: passiveRiders.filter(feature => feature?.automationStatus === COMBAT_FEATURE_AUTOMATION_STATUS.MANUAL).length,
     passiveRiderCount: passiveRiders.length,
     manualFeatureCount
   };
