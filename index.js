@@ -57,6 +57,7 @@ import { registerLightsaberConstructionHooks } from "./scripts/applications/ligh
 import { initializeConceptParityDiagnostics } from "./scripts/ui/concept-parity/concept-parity-diagnostics.js";
 import { initializeShellResponsiveObserver } from "./scripts/ui/shell/shell-responsive-observer.js";
 import { registerTokenNameSyncHooks } from "./scripts/core/token-name-sync.js";
+import { installSwseFlagScopeCompatibility } from "./scripts/utils/flags/swse-flags.js";
 import "./scripts/talents/squad-actions-init.js";
 import "./scripts/talents/minion-actions-init.js";
 
@@ -67,6 +68,7 @@ UIManager.init();
 // ============================================
 Hooks.once("init", async () => {
   console.log("SWSE | Initializing Star Wars Saga Edition system...");
+  installSwseFlagScopeCompatibility();
   // snapshotPhase('init:hook'); // LOGGING DISABLED
   installItemEditorTrace();
   // Register SWSE.debug.defenses(actor) helper for defense breakdown diagnostics
@@ -257,143 +259,4 @@ Hooks.once("ready", async () => {
   };
 
   onDiscoveryReady();
-
-  // Auto-load data on first run
-  if (game.user.isGM) {
-    await WorldDataLoader.autoLoad();
-    repairWorldForcePowerAbilityMeta({ silent: true }).catch((err) => {
-      console.warn('SWSE | Force power abilityMeta backfill failed:', err);
-    });
-  }
 });
-
-// ============================================
-// HANDLEBARS HELPERS (LEGACY)
-// ============================================
-function registerLegacyHandlebarsHelpers() {
-  Handlebars.registerHelper("toUpperCase", str =>
-    typeof str === "string" ? str.toUpperCase() : ""
-  );
-
-  Handlebars.registerHelper("array", function () {
-    return Array.prototype.slice.call(arguments, 0, -1);
-  });
-
-  Handlebars.registerHelper("keys", obj => (obj ? Object.keys(obj) : []));
-
-  Handlebars.registerHelper("eq", (a, b) => a === b);
-  Handlebars.registerHelper("lte", (a, b) => a <= b);
-  Handlebars.registerHelper("gt", (a, b) => Number(a) > Number(b));
-
-  Handlebars.registerHelper("capitalize", str =>
-    typeof str === "string" ? str.charAt(0).toUpperCase() + str.slice(1) : ""
-  );
-
-  Handlebars.registerHelper("json", context => JSON.stringify(context));
-
-  Handlebars.registerHelper("add", (a, b) => Number(a) + Number(b));
-
-  // -------------------------------
-  // Custom Helpers
-  // -------------------------------
-  Handlebars.registerHelper("getCrewName", id => {
-    const actor = game.actors.get(id) || canvas.tokens.get(id)?.actor;
-    return actor ? actor.name : "";
-  });
-
-  Handlebars.registerHelper("calculateDamageThreshold", actor => {
-    if (!actor?.system) return 0;
-
-    const fortitude = actor.system.defenses?.fortitude?.total ?? 10;
-    const size = actor.system.size ?? "medium";
-
-    const sizeMods = {
-      tiny: -5,
-      small: 0,
-      medium: 0,
-      large: 5,
-      huge: 10,
-      gargantuan: 20,
-      colossal: 50
-    };
-
-    const sizeMod = sizeMods[size.toLowerCase()] ?? 0;
-
-    const hasFeat = actor.items?.some(
-      i => i.type === "feat" && i.name?.toLowerCase() === "improved damage threshold"
-    );
-
-    const featBonus = hasFeat ? 5 : 0;
-    return fortitude + sizeMod + featBonus;
-  });
-
-  Handlebars.registerHelper("getSkillMod", (skill, abilities, level, conditionTrack) => {
-    if (!skill || !abilities) return 0;
-
-    const abilMod = abilities[skill.ability]?.mod || 0;
-    const trained = skill.trained ? 5 : 0;
-    const focus = skill.focus ? 1 : 0;
-    const halfLevel = Math.floor((level || 1) / 2);
-    const conditionPenalty = getConditionPenalty(conditionTrack);
-
-    return abilMod + trained + focus + halfLevel + conditionPenalty;
-  });
-
-  function getConditionPenalty(track) {
-    const penalties = {
-      normal: 0,
-      "-1": -1,
-      "-2": -2,
-      "-5": -5,
-      "-10": -10,
-      helpless: -100
-    };
-    return penalties[track] || 0;
-  }
-}
-
-// ============================================
-// SETTINGS
-// ============================================
-function registerSettings() {
-  game.settings.register("swse", "forcePointBonus", {
-    name: "Force Point Bonus",
-    hint: "Extra modifier applied when spending a Force Point on a power.",
-    scope: "world",
-    config: true,
-    type: Number,
-    default: 2
-  });
-
-  game.settings.register("swse", "storeSettings", {
-    name: "Store Price Settings",
-    scope: "world",
-    config: false,
-    type: Object,
-    default: { buyMultiplier: 1.0, sellMultiplier: 0.5 }
-  });
-
-  game.settings.register("swse", "storeMarkup", {
-    name: "Store Markup %",
-    scope: "world",
-    config: false,
-    type: Number,
-    default: 0
-  });
-
-  game.settings.register("swse", "storeDiscount", {
-    name: "Store Discount %",
-    scope: "world",
-    config: false,
-    type: Number,
-    default: 0
-  });
-
-  // Data load flag
-  game.settings.register("swse", "dataLoaded", {
-    scope: "world",
-    config: false,
-    type: Boolean,
-    default: false
-  });
-}
