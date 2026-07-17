@@ -55,6 +55,16 @@ scripts/engine/combat/features/combat-feature-panel-renderer.js
 
 The adapter keeps `availableActions` as a flat list for routers and also exposes `availableActionGroups` for the UI. Action groups are currently Swift, Move, Standard, Full-Round, Reaction, Free, Attack Options, and Other. Phase 3 renders this panel above the legacy combat actions panel for verification rather than deleting the legacy panel immediately.
 
+## Phase 4 action router
+
+The permanent action router lives at:
+
+```text
+scripts/engine/combat/features/combat-feature-action-router.js
+```
+
+It handles `view-combat-feature`, `execute-combat-feature-attack-option`, `execute-combat-feature-multiattack`, `execute-combat-feature-resource`, and `deactivate-combat-feature` from the new Combat Features panel. Attack-option and multiattack handlers open the normal attack dialog and then call canonical combat roll helpers. Resource handling currently wires Second Wind; unmapped features fail closed by opening source details or warning that the feature is not automated yet.
+
 Future files should follow this split:
 
 ```text
