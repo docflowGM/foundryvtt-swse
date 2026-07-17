@@ -39,6 +39,22 @@ export const COMBAT_FEATURE_ACTION_GROUP_ORDER = Object.freeze([
   { id: COMBAT_FEATURE_ACTION_GROUPS.OTHER, label: 'Other Actions', hint: 'Combat features without a mapped economy lane yet.' }
 ]);
 
+export const COMBAT_FEATURE_TRIGGER_GROUPS = Object.freeze({
+  DEFENSIVE_REACTION: 'defensive-reaction',
+  ON_HIT_RIDER: 'on-hit-rider',
+  GRAPPLE_CONTROL: 'grapple-control',
+  OPPORTUNITY: 'opportunity',
+  OTHER: 'other-trigger'
+});
+
+export const COMBAT_FEATURE_TRIGGER_GROUP_ORDER = Object.freeze([
+  { id: COMBAT_FEATURE_TRIGGER_GROUPS.DEFENSIVE_REACTION, label: 'Defensive Reactions', hint: 'Triggered when an incoming attack creates a response window.' },
+  { id: COMBAT_FEATURE_TRIGGER_GROUPS.ON_HIT_RIDER, label: 'On-Hit Riders', hint: 'Triggered after this actor hits or damages a target.' },
+  { id: COMBAT_FEATURE_TRIGGER_GROUPS.GRAPPLE_CONTROL, label: 'Grapple / Control', hint: 'Triggered by grapple, pin, trip, throw, or control windows.' },
+  { id: COMBAT_FEATURE_TRIGGER_GROUPS.OPPORTUNITY, label: 'Opportunity Windows', hint: 'Triggered by attacks of opportunity or movement windows.' },
+  { id: COMBAT_FEATURE_TRIGGER_GROUPS.OTHER, label: 'Other Triggers', hint: 'Conditional features without a more specific trigger lane yet.' }
+]);
+
 export const COMBAT_FEATURE_AUTOMATION_STATUS = Object.freeze({
   AUTOMATED: 'automated',
   PARTIAL: 'partial',
@@ -51,7 +67,9 @@ export const COMBAT_FEATURE_READINESS = Object.freeze({
   MISSING: 'Missing',
   GM: 'GM',
   PASSIVE: 'Passive',
-  ACTIVE: 'Active'
+  ACTIVE: 'Active',
+  WATCHING: 'Watching',
+  PENDING: 'Pending'
 });
 
 export const COMBAT_FEATURE_ACTIONS = Object.freeze({
@@ -80,6 +98,7 @@ export function emptyCombatFeaturesModel() {
     [COMBAT_FEATURE_BUCKETS.AVAILABLE_ACTIONS]: [],
     availableActionGroups: [],
     [COMBAT_FEATURE_BUCKETS.TRIGGERED_FEATURES]: [],
+    triggeredFeatureGroups: [],
     [COMBAT_FEATURE_BUCKETS.PASSIVE_RIDERS]: [],
     badges: {
       hasRageActive: false,
@@ -87,6 +106,7 @@ export function emptyCombatFeaturesModel() {
       activeStateCount: 0,
       readyActionCount: 0,
       availableActionGroupCount: 0,
+      triggeredFeatureGroupCount: 0,
       passiveRiderCount: 0,
       manualFeatureCount: 0
     }
@@ -98,6 +118,7 @@ export function combatFeatureSummaryCounts(model = emptyCombatFeaturesModel()) {
   const availableActions = Array.isArray(model.availableActions) ? model.availableActions : [];
   const availableActionGroups = Array.isArray(model.availableActionGroups) ? model.availableActionGroups : [];
   const triggeredFeatures = Array.isArray(model.triggeredFeatures) ? model.triggeredFeatures : [];
+  const triggeredFeatureGroups = Array.isArray(model.triggeredFeatureGroups) ? model.triggeredFeatureGroups : [];
   const passiveRiders = Array.isArray(model.passiveRiders) ? model.passiveRiders : [];
   const manualFeatureCount = [...activeStates, ...availableActions, ...triggeredFeatures, ...passiveRiders]
     .filter(feature => feature?.automationStatus === COMBAT_FEATURE_AUTOMATION_STATUS.MANUAL)
@@ -107,6 +128,7 @@ export function combatFeatureSummaryCounts(model = emptyCombatFeaturesModel()) {
     activeStateCount: activeStates.length,
     readyActionCount: availableActions.filter(feature => feature?.readiness !== COMBAT_FEATURE_READINESS.USED).length,
     availableActionGroupCount: availableActionGroups.filter(group => Array.isArray(group.actions) && group.actions.length).length,
+    triggeredFeatureGroupCount: triggeredFeatureGroups.filter(group => Array.isArray(group.features) && group.features.length).length,
     passiveRiderCount: passiveRiders.length,
     manualFeatureCount
   };
