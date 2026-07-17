@@ -1,0 +1,136 @@
+<section class="swse-concept-panel swse-concept-panel--combat-features swse-combat-features-panel" data-combat-features-panel>
+  <header class="swse-concept-panel__header">
+    <div>
+      <h3 class="swse-concept-panel__title">Combat Features</h3>
+      <p class="swse-concept-panel__hint">Feature console grouped by state, action economy, triggers, and passive riders.</p>
+    </div>
+    <span class="swse-concept-panel__eyebrow">Phase 3 Preview</span>
+  </header>
+
+  <div class="swse-concept-command-strip swse-combat-feature-badges">
+    <div class="swse-concept-command-chip"><strong>{{combatFeatures.badges.activeStateCount}}</strong><span>Active</span></div>
+    <div class="swse-concept-command-chip"><strong>{{combatFeatures.badges.readyActionCount}}</strong><span>Actions</span></div>
+    <div class="swse-concept-command-chip"><strong>{{combatFeatures.badges.passiveRiderCount}}</strong><span>Riders</span></div>
+    <div class="swse-concept-command-chip"><strong>{{combatFeatures.badges.rageLabel}}</strong><span>Rage</span></div>
+  </div>
+
+  {{#if combatFeatures.activeStates.length}}
+    <div class="swse-concept-action-board swse-combat-feature-section swse-combat-feature-section--active" data-combat-feature-section="activeStates">
+      <article class="swse-concept-action-lane swse-action-lane--active">
+        <header class="swse-concept-action-lane__header">
+          <strong>Active Combat States</strong>
+          <span>{{combatFeatures.badges.activeStateCount}}</span>
+        </header>
+        <div class="swse-concept-action-lane__rows">
+          {{#each combatFeatures.activeStates as |feature|}}
+            <button type="button"
+                    class="swse-concept-action-button swse-combat-feature-button swse-combat-feature-button--{{feature.automationStatus}}"
+                    data-action="{{#if feature.deactivateAction}}{{feature.deactivateAction}}{{else}}view-combat-feature{{/if}}"
+                    data-feature-id="{{feature.id}}"
+                    data-source-item-id="{{feature.sourceItemId}}"
+                    title="{{feature.summary}}">
+              <span class="swse-concept-action-button__icon" aria-hidden="true">●</span>
+              <span class="swse-concept-action-button__copy">
+                <strong>{{feature.name}}</strong>
+                {{#if feature.durationLabel}}<small>{{feature.durationLabel}}</small>{{else}}{{#if feature.summary}}<small>{{feature.summary}}</small>{{/if}}{{/if}}
+              </span>
+              <span class="swse-concept-action-button__cost">{{feature.readiness}}</span>
+            </button>
+          {{/each}}
+        </div>
+      </article>
+    </div>
+  {{/if}}
+
+  {{#if combatFeatures.availableActionGroups.length}}
+    <div class="swse-concept-action-board swse-combat-feature-section swse-combat-feature-section--actions" data-combat-feature-section="availableActions">
+      {{#each combatFeatures.availableActionGroups as |group|}}
+        <article class="swse-concept-action-lane swse-action-lane--{{group.id}}" data-combat-feature-action-group="{{group.id}}" title="{{group.hint}}">
+          <header class="swse-concept-action-lane__header">
+            <strong>{{group.label}}</strong>
+            <span>{{group.count}}</span>
+          </header>
+          <div class="swse-concept-action-lane__rows">
+            {{#each group.actions as |feature|}}
+              <button type="button"
+                      class="swse-concept-action-button swse-combat-feature-button swse-combat-feature-button--{{feature.automationStatus}} {{#if feature.canExecute}}{{else}}is-reference-only{{/if}}"
+                      data-action="{{feature.executeAction}}"
+                      data-feature-id="{{feature.id}}"
+                      data-source-item-id="{{feature.sourceItemId}}"
+                      data-action-group="{{feature.actionGroupId}}"
+                      title="{{#if feature.readinessNote}}{{feature.readinessNote}}{{else}}{{feature.summary}}{{/if}}">
+                <span class="swse-concept-action-button__icon" aria-hidden="true">◆</span>
+                <span class="swse-concept-action-button__copy">
+                  <strong>{{feature.name}}</strong>
+                  {{#if feature.summary}}<small>{{feature.summary}}</small>{{/if}}
+                </span>
+                <span class="swse-concept-action-button__cost">{{#if feature.actionCost}}{{feature.actionCost}}{{else}}{{group.id}}{{/if}}</span>
+              </button>
+            {{/each}}
+          </div>
+        </article>
+      {{/each}}
+    </div>
+  {{else}}
+    <div class="swse-concept-empty-state">
+      <span class="swse-concept-empty-state__eyebrow">No combat feature actions</span>
+      <strong>No available action-style combat features were classified for this actor.</strong>
+    </div>
+  {{/if}}
+
+  {{#if combatFeatures.triggeredFeatures.length}}
+    <div class="swse-concept-action-board swse-combat-feature-section swse-combat-feature-section--triggered" data-combat-feature-section="triggeredFeatures">
+      <article class="swse-concept-action-lane swse-action-lane--reaction">
+        <header class="swse-concept-action-lane__header">
+          <strong>Triggered / Conditional</strong>
+          <span>{{combatFeatures.triggeredFeatures.length}}</span>
+        </header>
+        <div class="swse-concept-action-lane__rows">
+          {{#each combatFeatures.triggeredFeatures as |feature|}}
+            <button type="button"
+                    class="swse-concept-action-button swse-combat-feature-button swse-combat-feature-button--{{feature.automationStatus}} is-reference-only"
+                    data-action="view-combat-feature"
+                    data-feature-id="{{feature.id}}"
+                    data-source-item-id="{{feature.sourceItemId}}"
+                    title="{{feature.trigger}} {{feature.result}}">
+              <span class="swse-concept-action-button__icon" aria-hidden="true">◇</span>
+              <span class="swse-concept-action-button__copy">
+                <strong>{{feature.name}}</strong>
+                {{#if feature.trigger}}<small>{{feature.trigger}}</small>{{/if}}
+              </span>
+              <span class="swse-concept-action-button__cost">{{feature.automationStatus}}</span>
+            </button>
+          {{/each}}
+        </div>
+      </article>
+    </div>
+  {{/if}}
+
+  {{#if combatFeatures.passiveRiders.length}}
+    <div class="swse-concept-action-board swse-combat-feature-section swse-combat-feature-section--passive" data-combat-feature-section="passiveRiders">
+      <article class="swse-concept-action-lane swse-action-lane--passive">
+        <header class="swse-concept-action-lane__header">
+          <strong>Passive Combat Riders</strong>
+          <span>{{combatFeatures.badges.passiveRiderCount}}</span>
+        </header>
+        <div class="swse-concept-action-lane__rows">
+          {{#each combatFeatures.passiveRiders as |feature|}}
+            <button type="button"
+                    class="swse-concept-action-button swse-combat-feature-button swse-combat-feature-button--{{feature.automationStatus}} is-reference-only"
+                    data-action="view-combat-feature"
+                    data-feature-id="{{feature.id}}"
+                    data-source-item-id="{{feature.sourceItemId}}"
+                    title="{{feature.summary}}">
+              <span class="swse-concept-action-button__icon" aria-hidden="true">▣</span>
+              <span class="swse-concept-action-button__copy">
+                <strong>{{feature.name}}</strong>
+                {{#if feature.summary}}<small>{{feature.summary}}</small>{{/if}}
+              </span>
+              <span class="swse-concept-action-button__cost">{{#if feature.appliesTo}}{{feature.appliesTo}}{{else}}{{feature.automationStatus}}{{/if}}</span>
+            </button>
+          {{/each}}
+        </div>
+      </article>
+    </div>
+  {{/if}}
+</section>
