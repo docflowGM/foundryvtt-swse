@@ -15,7 +15,7 @@ The current `scripts/patches/combat-ui-behavior-hotfix.js` file remains a tempor
 
 ## Initial contract
 
-See `combat-feature-contract.js` for shared bucket names, automation status values, readiness values, router action names, action-economy groups, triggered-feature groups, passive-rider groups, and the empty model helper.
+See `combat-feature-contract.js` for shared bucket names, automation status values, readiness values, router action names, action-economy groups, triggered-feature groups, passive-rider groups, UX action names, and the empty model helper.
 
 ## Phase 1 adapter
 
@@ -116,6 +116,22 @@ scripts/engine/combat/features/combat-feature-passive-rider-service.js
 ```
 
 The service groups passive riders by what they affect: Attack, Damage, Defense, Threshold / Condition, Movement, Grapple / Control, Equipment, and Other. It annotates each rider with `automationLabel` and `automationHint` so the panel can tell players whether the rider is Automated, Partial, or Manual without pretending to apply math. The adapter keeps `passiveRiders` as the raw flat list and adds `passiveRiderGroups` for the UI.
+
+## Phase 10 favorites, compact mode, and details
+
+Per-actor UX preferences live at:
+
+```text
+scripts/engine/combat/features/combat-feature-preferences-service.js
+```
+
+UX-only click behavior lives at:
+
+```text
+scripts/engine/combat/features/combat-feature-ux-handlers.js
+```
+
+Preferences are stored under `flags.foundryvtt-swse.combatFeatures.preferences.*`. The adapter annotates all features with favorite/detail metadata and exposes `favoriteFeatures`. The panel now supports favorite stars, a Favorites section, compact/expanded mode, and a detail dialog for passive/triggered/reference features. These actions do not roll dice or change combat math.
 
 Future files should follow this split:
 
