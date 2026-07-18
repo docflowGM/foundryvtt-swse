@@ -15,6 +15,7 @@ import { SWSEV2BaseActor } from "./scripts/actors/v2/base-actor.js";
 import { SWSECombatDocument } from "./scripts/combat/swse-combat.js";
 import { SWSECombatant } from "./scripts/combat/swse-combatant.js";
 import { registerSystemSettings } from "./scripts/core/settings.js";
+import { registerForceTraditionHouseRuleSettings } from "./scripts/settings/force-tradition-house-rules.js";
 import { UIManager } from "./scripts/ui/ui-manager.js";
 import { registerInitHooks } from "./scripts/infrastructure/hooks/init-hooks.js";
 import { registerStoreSheetHooks } from "./scripts/infrastructure/hooks/store-sheet-hooks.js";
@@ -169,6 +170,7 @@ Hooks.once("init", async () => {
   // Register Game Settings
   // -------------------------------
   registerSettings(); // Legacy swse namespace settings retained for compatibility.
+  registerForceTraditionHouseRuleSettings();
   await registerSystemSettings();
 
   // -------------------------------
@@ -218,186 +220,5 @@ Hooks.once("init", async () => {
   const missingHelpers = requiredHelpers.filter(h => !Handlebars.helpers[h]);
   if (missingHelpers.length) {
     console.error("SWSE | Missing required Handlebars helpers:", missingHelpers);
-  } else {
-    console.log("SWSE | All required Handlebars helpers registered:", requiredHelpers);
-  }
-
-  console.log("SWSE | System initialization complete.");
-});
-
-// ============================================
-// READY HOOK
-// ============================================
-Hooks.once("ready", async () => {
-  console.log("SWSE | System ready. May the Force be with you.");
-
-  // -------
-  // Initialize Mutation Interceptor (PHASE 1: Enforcement setup)
-  // Initialized in ready hook after all settings and systems are loaded
-  // -------
-  MutationInterceptor.initialize();
-  RecurringDamageEngine.initializeHooks();
-  PoisonEngine.initializeHooks();
-  SWSEGrappling.init();
-  await initializeHolonet();
-  await initializeGames();
-  initializeConceptParityDiagnostics();
-
-  // Wire debug helpers (logging disabled — uncomment below to re-enable diagnostics)
-  initSidebarIconDiagnostics();
-  // snapshotPhase('ready:start (before SWSE theme)');
-  // auditSidebarIconCssRules();
-  // requestAnimationFrame(() => snapshotPhase('ready:rAF'));
-
-  // Restore sidebar tab icon classes for Foundry v13.
-  initSidebarIconFallback();
-
-  // Setup store shortcut
-  game.swse.openStore = actor => SWSEStore.open(actor ?? null);
-  game.swse.repairForcePowerAbilityMeta = async (actor = null, options = {}) => {
-    return actor
-      ? repairActorForcePowerAbilityMeta(actor, options)
-      : repairWorldForcePowerAbilityMeta(options);
-  };
-
-  onDiscoveryReady();
-
-  // Auto-load data on first run
-  if (game.user.isGM) {
-    await WorldDataLoader.autoLoad();
-    repairWorldForcePowerAbilityMeta({ silent: true }).catch((err) => {
-      console.warn('SWSE | Force power abilityMeta backfill failed:', err);
-    });
   }
 });
-
-// ============================================
-// HANDLEBARS HELPERS (LEGACY)
-// ============================================
-function registerLegacyHandlebarsHelpers() {
-  Handlebars.registerHelper("toUpperCase", str =>
-    typeof str === "string" ? str.toUpperCase() : ""
-  );
-
-  Handlebars.registerHelper("array", function () {
-    return Array.prototype.slice.call(arguments, 0, -1);
-  });
-
-  Handlebars.registerHelper("keys", obj => (obj ? Object.keys(obj) : []));
-
-  Handlebars.registerHelper("eq", (a, b) => a === b);
-  Handlebars.registerHelper("lte", (a, b) => a <= b);
-  Handlebars.registerHelper("gt", (a, b) => Number(a) > Number(b));
-
-  Handlebars.registerHelper("capitalize", str =>
-    typeof str === "string" ? str.charAt(0).toUpperCase() + str.slice(1) : ""
-  );
-
-  Handlebars.registerHelper("json", context => JSON.stringify(context));
-
-  Handlebars.registerHelper("add", (a, b) => Number(a) + Number(b));
-
-  // -------------------------------
-  // Custom Helpers
-  // -------------------------------
-  Handlebars.registerHelper("getCrewName", id => {
-    const actor = game.actors.get(id) || canvas.tokens.get(id)?.actor;
-    return actor ? actor.name : "";
-  });
-
-  Handlebars.registerHelper("calculateDamageThreshold", actor => {
-    if (!actor?.system) return 0;
-
-    const fortitude = actor.system.defenses?.fortitude?.total ?? 10;
-    const size = actor.system.size ?? "medium";
-
-    const sizeMods = {
-      tiny: -5,
-      small: 0,
-      medium: 0,
-      large: 5,
-      huge: 10,
-      gargantuan: 20,
-      colossal: 50
-    };
-
-    const sizeMod = sizeMods[size.toLowerCase()] ?? 0;
-
-    const hasFeat = actor.items?.some(
-      i => i.type === "feat" && i.name?.toLowerCase() === "improved damage threshold"
-    );
-
-    const featBonus = hasFeat ? 5 : 0;
-    return fortitude + sizeMod + featBonus;
-  });
-
-  Handlebars.registerHelper("getSkillMod", (skill, abilities, level, conditionTrack) => {
-    if (!skill || !abilities) return 0;
-
-    const abilMod = abilities[skill.ability]?.mod || 0;
-    const trained = skill.trained ? 5 : 0;
-    const focus = skill.focus ? 1 : 0;
-    const halfLevel = Math.floor((level || 1) / 2);
-    const conditionPenalty = getConditionPenalty(conditionTrack);
-
-    return abilMod + trained + focus + halfLevel + conditionPenalty;
-  });
-
-  function getConditionPenalty(track) {
-    const penalties = {
-      normal: 0,
-      "-1": -1,
-      "-2": -2,
-      "-5": -5,
-      "-10": -10,
-      helpless: -100
-    };
-    return penalties[track] || 0;
-  }
-}
-
-// ============================================
-// SETTINGS
-// ============================================
-function registerSettings() {
-  game.settings.register("swse", "forcePointBonus", {
-    name: "Force Point Bonus",
-    hint: "Extra modifier applied when spending a Force Point on a power.",
-    scope: "world",
-    config: true,
-    type: Number,
-    default: 2
-  });
-
-  game.settings.register("swse", "storeSettings", {
-    name: "Store Price Settings",
-    scope: "world",
-    config: false,
-    type: Object,
-    default: { buyMultiplier: 1.0, sellMultiplier: 0.5 }
-  });
-
-  game.settings.register("swse", "storeMarkup", {
-    name: "Store Markup %",
-    scope: "world",
-    config: false,
-    type: Number,
-    default: 0
-  });
-
-  game.settings.register("swse", "storeDiscount", {
-    name: "Store Discount %",
-    scope: "world",
-    config: false,
-    type: Number,
-    default: 0
-  });
-
-  // Data load flag
-  game.settings.register("swse", "dataLoaded", {
-    scope: "world",
-    config: false,
-    type: Boolean,
-    default: false
-  });
-}
