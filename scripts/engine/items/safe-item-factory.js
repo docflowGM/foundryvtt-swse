@@ -8,6 +8,7 @@
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { addItemEditorTrace, installItemEditorTrace, summarizeActorItems } from "/systems/foundryvtt-swse/scripts/debug/item-editor-trace.js";
 import { buildArmorSystemData } from "/systems/foundryvtt-swse/scripts/items/armor-data-resolver.js";
+import { getCustomContentApprovalState } from "/systems/foundryvtt-swse/scripts/settings/custom-content-approval.js";
 
 const TYPE_ALIASES = Object.freeze({
   gear: 'equipment',
@@ -280,6 +281,7 @@ export function createSafeItemData(kind, options = {}) {
     system.tree = tree;
     system.talentTree = normalizeScalarText(system.talentTree ?? system.talent_tree ?? tree, tree);
     if (system.talent_tree !== undefined) system.talent_tree = normalizeScalarText(system.talent_tree, tree);
+    Object.assign(system, getCustomContentApprovalState('custom-talent', system));
   }
 
   return {
