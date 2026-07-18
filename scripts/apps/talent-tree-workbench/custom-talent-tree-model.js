@@ -1,9 +1,10 @@
 import { ActorEngine } from '/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js';
+import { getCustomContentApprovalState } from '/systems/foundryvtt-swse/scripts/settings/custom-content-approval.js';
 
 /**
  * Custom Talent Tree Model
  *
- * Phase 1 data/model seam for actor-scoped custom talent trees. This is an
+ * Phase 1/2 data/model seam for actor-scoped custom talent trees. This is an
  * adapter layer only; progression integration comes later through TalentTreeDB
  * and membership authority overlays.
  */
@@ -43,6 +44,18 @@ function firstText(...values) {
     if (text) return text;
   }
   return '';
+}
+
+function approvalFields(tree = {}) {
+  return {
+    approvalStatus: tree.approvalStatus || (tree.gmApproved === true ? 'approved' : 'pending'),
+    approvalPolicy: tree.approvalPolicy || '',
+    approvalKind: tree.approvalKind || 'custom-talent-tree',
+    approvalRequestedAt: tree.approvalRequestedAt || null,
+    approvalRequestedBy: tree.approvalRequestedBy || null,
+    approvalReviewedAt: tree.approvalReviewedAt || null,
+    approvalReviewedBy: tree.approvalReviewedBy || null
+  };
 }
 
 export function getActorCustomTalentTrees(actor) {
@@ -88,18 +101,29 @@ export function normalizeCustomTalentTree(tree = {}) {
       talentId: node.talentId || node.id || node.nodeId || null,
       name: firstText(node.name, node.label, node.talentId, node.id),
       sourceType: node.sourceType || 'custom',
+      sourceTreeId: node.sourceTreeId || null,
+      sourceTreeName: node.sourceTreeName || null,
+      sourceTalentId: node.sourceTalentId || node.talentId || null,
+      sourceName: node.sourceName || null,
       uuid: node.uuid || null,
       importMode: node.importMode || 'custom',
+      prerequisiteText: node.prerequisiteText || node.prerequisitesText || '',
       prerequisites: asArray(node.prerequisites).map(String),
+      description: node.description || node.summary || node.system?.description || node.system?.benefit || '',
       x: node.x ?? null,
       y: node.y ?? null,
-      customTalent: node.customTalent || null
+      customTalent: node.customTalent || null,
+      approvalStatus: node.approvalStatus || null,
+      gmApproved: node.gmApproved ?? null
     }))
     .filter(node => node.nodeId && node.name);
 
   const edges = asArray(tree.edges)
     .filter(edge => edge && typeof edge === 'object' && edge.from && edge.to)
     .map(edge => ({ from: String(edge.from), to: String(edge.to), type: edge.type || 'prerequisite' }));
+
+  const gmApproved = tree.gmApproved !== false;
+  const active = tree.active !== false;
 
   return {
     id,
@@ -114,8 +138,9 @@ export function normalizeCustomTalentTree(tree = {}) {
     grantedByClasses: unique(asArray(tree.grantedByClasses)),
     grantedBySpecies: unique(asArray(tree.grantedBySpecies)),
     manualGrant: tree.manualGrant === true,
-    gmApproved: tree.gmApproved !== false,
-    active: tree.active !== false,
+    gmApproved,
+    active,
+    ...approvalFields(tree),
     nodes,
     edges,
     talentIds: unique([...asArray(tree.talentIds), ...nodes.map(node => node.talentId || node.nodeId)]),
@@ -138,6 +163,7 @@ export function createBlankCustomTalentTree({ name = '', description = '', treeT
     edges: [],
     gmApproved: true,
     active: true,
+    approvalStatus: 'approved',
     createdAt: Date.now(),
     updatedAt: Date.now()
   });
@@ -149,7 +175,9 @@ export async function saveCustomTalentTree(actor, tree, { source = 'custom-talen
     return null;
   }
 
-  const normalized = normalizeCustomTalentTree({ ...tree, updatedAt: Date.now() });
+  const existingTree = getCustomTalentTree(actor, tree?.id || tree?.name);
+  const approval = getCustomContentApprovalState('custom-talent-tree', existingTree || tree);
+  const normalized = normalizeCustomTalentTree({ ...tree, ...approval, updatedAt: Date.now() });
   const existing = getActorCustomTalentTrees(actor).filter(entry => entry.id !== normalized.id);
   const customTalentTrees = [...existing, normalized].sort((left, right) => String(left.name || '').localeCompare(String(right.name || '')));
   const update = Object.fromEntries(CUSTOM_TALENT_TREE_MIRROR_PATHS.map(path => [path, customTalentTrees]));
