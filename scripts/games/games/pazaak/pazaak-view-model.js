@@ -26,52 +26,32 @@ function scoreLabel(value) {
   return number > 0 ? `+${number}` : String(number);
 }
 
+function effectiveScore(player = {}) {
+  return player.lockedScore != null ? Number(player.lockedScore) : scorePazaakPlayer(player);
+}
+
 function cardVisual(card = {}, label = '') {
   const tone = cardTone(card);
-  return {
-    image: PAZAAK_CARD_FRONT_IMAGE,
-    backImage: PAZAAK_CARD_BACK_IMAGE,
-    hasTemplateImage: true,
-    visualLabel: label || card.shortLabel || card.label || scoreLabel(card.value),
-    visualTone: tone === 'main' ? 'neutral' : tone
-  };
+  return { image: PAZAAK_CARD_FRONT_IMAGE, backImage: PAZAAK_CARD_BACK_IMAGE, hasTemplateImage: true, visualLabel: label || card.shortLabel || card.label || scoreLabel(card.value), visualTone: tone === 'main' ? 'neutral' : tone };
 }
 
 function mapTableCard(card = {}) {
   const value = Number(card.value || 0);
   const label = card.label || card.shortLabel || scoreLabel(value);
-  return {
-    id: card.instanceId || card.catalogId || card.id,
-    label,
-    value,
-    valueLabel: scoreLabel(value),
-    source: card.source || 'main',
-    tone: cardTone(card),
-    isSide: card.source === 'side',
-    isMain: card.source === 'main',
-    ...cardVisual(card, label)
-  };
+  return { id: card.instanceId || card.catalogId || card.id, label, value, valueLabel: scoreLabel(value), source: card.source || 'main', tone: cardTone(card), isSide: card.source === 'side', isMain: card.source === 'main', ...cardVisual(card, label) };
 }
 
 function mapTableCardSlots(cards = [], limit = PAZAAK_TABLE_LIMIT) {
   const mapped = (Array.isArray(cards) ? cards : []).map(mapTableCard);
   return Array.from({ length: limit }, (_, index) => {
     const card = mapped[index] ?? null;
-    return {
-      index: index + 1,
-      indexLabel: String(index + 1).padStart(2, '0'),
-      hasCard: Boolean(card),
-      card
-    };
+    return { index: index + 1, indexLabel: String(index + 1).padStart(2, '0'), hasCard: Boolean(card), card };
   });
 }
 
 function setPips(setsWon = 0, setsToWin = PAZAAK_SETS_TO_WIN) {
   const won = Number(setsWon || 0);
-  return Array.from({ length: setsToWin }, (_, index) => ({
-    index: index + 1,
-    on: index < won
-  }));
+  return Array.from({ length: setsToWin }, (_, index) => ({ index: index + 1, on: index < won }));
 }
 
 function initialForSeat(seat = {}) {
@@ -89,35 +69,21 @@ function buildSideDeckSlots(selectedIds = [], catalogById = new Map(), limit = P
   const ids = Array.from(selectedIds || []).map(String).filter(Boolean);
   return Array.from({ length: limit }, (_, index) => {
     const card = catalogById.get(ids[index]) || null;
-    return {
-      index: index + 1,
-      indexLabel: String(index + 1).padStart(2, '0'),
-      hasCard: Boolean(card),
-      card,
-      visualLabel: card?.visualLabel || '',
-      label: card?.label || '',
-      visualTone: card?.visualTone || 'neutral',
-      image: card?.image || PAZAAK_CARD_FRONT_IMAGE,
-      hasTemplateImage: Boolean(card?.hasTemplateImage)
-    };
+    return { index: index + 1, indexLabel: String(index + 1).padStart(2, '0'), hasCard: Boolean(card), card, visualLabel: card?.visualLabel || '', label: card?.label || '', visualTone: card?.visualTone || 'neutral', image: card?.image || PAZAAK_CARD_FRONT_IMAGE, hasTemplateImage: Boolean(card?.hasTemplateImage) };
   });
 }
 
 function choiceForms(card = {}) {
-  if (card.type === 'plusMinus' || card.type === 'tiebreaker') {
-    return { requiresChoice: true, signOnly: true, signAndValue: false };
-  }
-  if (card.type === 'plusMinusRange') {
-    return { requiresChoice: true, signOnly: false, signAndValue: true };
-  }
+  if (card.type === 'plusMinus' || card.type === 'tiebreaker') return { requiresChoice: true, signOnly: true, signAndValue: false };
+  if (card.type === 'plusMinusRange') return { requiresChoice: true, signOnly: false, signAndValue: true };
   return { requiresChoice: false, signOnly: false, signAndValue: false };
 }
 
-
 function previewForSideCard(card = {}, player = {}) {
-  const current = scorePazaakPlayer(player);
+  const current = effectiveScore(player);
   const type = String(card.type || '');
   const baseValue = Number(card.value || 0) || 0;
+  if (current > PAZAAK_TARGET) return 'Busted: side cards cannot repair this set.';
   if (type === 'plus') return `Preview: ${scoreLabel(current)} → ${scoreLabel(current + Math.abs(baseValue))}`;
   if (type === 'minus') return `Preview: ${scoreLabel(current)} → ${scoreLabel(current - Math.abs(baseValue))}`;
   if (type === 'plusMinus' || type === 'tiebreaker') return `Choose +${Math.abs(baseValue || 1)} or −${Math.abs(baseValue || 1)} before play.`;
@@ -128,22 +94,11 @@ function previewForSideCard(card = {}, player = {}) {
 }
 
 function mapHandCard(card = {}, player = {}, canAct = false) {
-  const status = playableSideCardStatus(player, card, card.requiresChoice ? { sign: 'plus', value: 1 } : {});
   const forms = choiceForms(card);
+  const status = playableSideCardStatus(player, card, forms.requiresChoice ? { sign: 'plus', value: 1 } : {});
   const label = card.shortLabel || card.label || card.id;
-  return {
-    ...card,
-    id: card.instanceId,
-    catalogId: card.catalogId || card.id,
-    label: card.label || card.shortLabel || card.id,
-    visualLabel: label,
-    tone: cardTone(card),
-    canPlay: Boolean(canAct && (forms.requiresChoice || status.playable)),
-    disabledReason: status.reason,
-    previewLabel: previewForSideCard(card, player),
-    ...cardVisual(card, label),
-    ...forms
-  };
+  const actionSpent = Boolean(player.sideCardPlayedThisTurn);
+  return { ...card, id: card.instanceId, catalogId: card.catalogId || card.id, label: card.label || card.shortLabel || card.id, visualLabel: label, tone: cardTone(card), canPlay: Boolean(canAct && !actionSpent && (forms.requiresChoice || status.playable)), disabledReason: actionSpent ? 'You already used your one action this turn.' : status.reason, previewLabel: previewForSideCard(card, player), ...cardVisual(card, label), ...forms };
 }
 
 function formatDelay(ms) {
@@ -154,7 +109,8 @@ function formatDelay(ms) {
 function mapSeat(session = {}, state = {}, seat = {}, currentSeatId = null) {
   const aiProfile = buildPazaakAiProfile(seat.aiProfile || seat.ai || 'medium');
   const player = state.players?.[seat.seatId] ?? {};
-  const score = scorePazaakPlayer(player);
+  const score = effectiveScore(player);
+  const rawScore = scorePazaakPlayer(player);
   const isCurrent = state.activeSeatId === seat.seatId;
   const isThinking = Boolean(state.aiThinking?.active && state.aiThinking?.seatId === seat.seatId);
   const isViewer = currentSeatId === seat.seatId;
@@ -162,6 +118,8 @@ function mapSeat(session = {}, state = {}, seat = {}, currentSeatId = null) {
   const tableCards = (Array.isArray(player.tableCards) ? player.tableCards : []).map(mapTableCard);
   const displayName = seat.displayName || 'Unknown Seat';
   const avatar = seat.avatar || '';
+  const canChooseAction = Boolean(isViewer && isCurrent && state.phase === 'playing' && !player.stood && !player.bust && !player.filledTable && player.turnDrawn);
+  const actionSpent = Boolean(player.sideCardPlayedThisTurn);
   return {
     seatId: seat.seatId,
     displayName,
@@ -183,8 +141,11 @@ function mapSeat(session = {}, state = {}, seat = {}, currentSeatId = null) {
     sideDeckLocked: Boolean(player.sideDeckLocked),
     sideDeckCount: Array.isArray(player.sideDeckIds) ? player.sideDeckIds.length : 0,
     score,
+    rawScore,
     totalLabel: String(score),
     scoreLabel: scoreLabel(score),
+    rawScoreLabel: scoreLabel(rawScore),
+    lockedScore: player.lockedScore ?? null,
     scoreStateClass: scoreStateClass(player, score),
     setsWon: Number(player.setsWon || 0),
     setPips: setPips(player.setsWon, PAZAAK_SETS_TO_WIN),
@@ -193,6 +154,9 @@ function mapSeat(session = {}, state = {}, seat = {}, currentSeatId = null) {
     filledTable: Boolean(player.filledTable),
     tiebreakerUsed: Boolean(player.tiebreakerUsed),
     lastAction: player.lastAction || '',
+    turnPhase: player.turnPhase || 'waiting',
+    turnDrawn: Boolean(player.turnDrawn),
+    actionSpent,
     isThinking,
     thinkingMessage: isThinking ? (state.aiThinking?.message || player.lastAction || '') : '',
     thinkingIntensity: isThinking ? (state.aiThinking?.intensity || 'normal') : '',
@@ -200,14 +164,15 @@ function mapSeat(session = {}, state = {}, seat = {}, currentSeatId = null) {
     tableCards,
     tableCardSlots: mapTableCardSlots(player.tableCards),
     hasTableCards: tableCards.length > 0,
-    hand: isViewer ? hand.map(card => ({ ...mapHandCard(card, player, isCurrent), sessionId: session.id, seatId: seat.seatId })) : [],
+    hand: isViewer ? hand.map(card => ({ ...mapHandCard(card, player, canChooseAction), sessionId: session.id, seatId: seat.seatId })) : [],
     handCount: hand.length,
     hasHand: isViewer && hand.length > 0,
     showHand: isViewer,
-    canAct: Boolean(isViewer && isCurrent && state.phase === 'playing' && !player.stood && !player.bust),
-    canStand: Boolean(isViewer && isCurrent && state.phase === 'playing' && !player.stood && !player.bust),
-    canEndTurn: Boolean(isViewer && isCurrent && state.phase === 'playing' && !player.stood && !player.bust),
-    statusLabel: isThinking ? 'THINKING' : (player.bust ? 'BUST' : (player.stood ? 'STAND' : (isCurrent ? 'TURN' : 'WAIT')))
+    canAct: canChooseAction,
+    canStand: canChooseAction,
+    canEndTurn: canChooseAction && !actionSpent,
+    rulesHint: canChooseAction ? 'Choose one action: play one side card, stand, or end turn.' : '',
+    statusLabel: isThinking ? 'THINKING' : (player.bust ? 'BUST' : (player.filledTable ? 'FULL BOARD' : (player.stood ? 'STAND' : (isCurrent ? 'TURN' : 'WAIT'))))
   };
 }
 
@@ -218,16 +183,8 @@ function currentSeatCanLock(session, state, currentSeat) {
   return state.phase === 'setup' && !player?.sideDeckLocked;
 }
 
-
 function mapEventLogEntry(entry = {}) {
-  return {
-    id: entry.id,
-    type: entry.type || 'event',
-    seatLabel: entry.seatLabel || '',
-    message: entry.message || '',
-    tone: entry.tone || '',
-    timeLabel: entry.at ? new Date(entry.at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : ''
-  };
+  return { id: entry.id, type: entry.type || 'event', seatLabel: entry.seatLabel || '', message: entry.message || '', tone: entry.tone || '', timeLabel: entry.at ? new Date(entry.at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '' };
 }
 
 function canCancelSession(session = {}, currentSeat = null) {
@@ -246,13 +203,7 @@ export class PazaakViewModel {
     const currentPlayer = currentSeatId ? state.players?.[currentSeatId] : null;
     const lockedDeck = currentPlayer?.sideDeckLocked ? new Set(currentPlayer.sideDeckIds || []) : new Set();
     const effectiveSelected = selected.size ? selected : lockedDeck;
-    const catalog = getPazaakSideCardCatalog().map(card => ({
-      ...card,
-      selected: effectiveSelected.has(card.id),
-      locked: Boolean(currentPlayer?.sideDeckLocked),
-      toneClass: `tone-${card.tone || 'neutral'}`,
-      ...cardVisual(card, card.shortLabel || card.label)
-    }));
+    const catalog = getPazaakSideCardCatalog().map(card => ({ ...card, selected: effectiveSelected.has(card.id), locked: Boolean(currentPlayer?.sideDeckLocked), toneClass: `tone-${card.tone || 'neutral'}`, ...cardVisual(card, card.shortLabel || card.label) }));
     const catalogById = new Map(catalog.map(card => [String(card.id), card]));
     const deckSlots = buildSideDeckSlots(Array.from(effectiveSelected), catalogById);
     const selectedCount = effectiveSelected.size;
@@ -272,16 +223,12 @@ export class PazaakViewModel {
     const wager = GameCreditEscrowService.describe(session);
     const eventLog = (Array.isArray(state.eventLog) ? state.eventLog : []).filter(entry => !entry.gmOnly || game?.user?.isGM).slice(-12).reverse().map(mapEventLogEntry);
     const tableChatter = eventLog.filter(entry => ['force', 'success', 'danger'].includes(entry.tone) || /AI|stood|bust|20|played|draw/i.test(entry.message)).slice(0, 3);
-    const aiThinking = state.aiThinking?.active ? {
-      ...state.aiThinking,
-      delayLabel: formatDelay(state.aiThinking.delayMs),
-      intensityLabel: state.aiThinking.intensity === 'hard' ? 'thinking hard' : (state.aiThinking.intensity === 'easy' ? 'thinking easy' : 'thinking')
-    } : null;
+    const aiThinking = state.aiThinking?.active ? { ...state.aiThinking, delayLabel: formatDelay(state.aiThinking.delayMs), intensityLabel: state.aiThinking.intensity === 'hard' ? 'thinking hard' : (state.aiThinking.intensity === 'easy' ? 'thinking easy' : 'thinking') } : null;
 
     return {
       id: session.id,
       title: session.title,
-      rulesLabel: wager.enabled ? 'Wagered Credits' : 'Republic Senate Rules',
+      rulesLabel: wager.enabled ? 'Wagered Credits' : 'Blackjack Pazaak: first to 20',
       wager,
       phase: state.phase,
       statusLabel: state.statusLabel || state.phase,
@@ -289,6 +236,7 @@ export class PazaakViewModel {
       showPlaying: state.phase === 'playing',
       showComplete: state.phase === 'complete',
       message: state.message || '',
+      rulesHint: 'Mandatory draw each turn, then choose one action: end turn, play one side card, or stand. Busts are final. Exact 20 auto-stands. Nine cards locks to 20.',
       aiThinking,
       hasAiThinking: Boolean(aiThinking),
       canCancel: canCancelSession(session, currentSeat),
