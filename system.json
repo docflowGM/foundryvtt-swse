@@ -143,6 +143,7 @@
     "styles/apps/gm-holopad-concept-phase2.css",
     "styles/system/atlas-surface.css",
     "styles/system/games-table-unification.css",
+    "styles/system/app-responsive-games.css",
     "styles/system/transmission-alchemy-polish.css",
     "styles/system/concept-parity-hardening.css",
     "styles/system/holonet-consolidated.css",
