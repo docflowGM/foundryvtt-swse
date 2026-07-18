@@ -7,9 +7,10 @@ import { slugifyCustomTalentTree } from '/systems/foundryvtt-swse/scripts/apps/t
 /**
  * Custom Talent Tree Importer
  *
- * Phase 2 importer. It reuses TalentTreeDB, talent-tree membership authority,
- * and buildDependencyGraph(...) to pick an existing talent from an existing tree.
- * Prerequisite-chain import comes in Phase 3; this phase imports selected nodes.
+ * Phase 3 importer. It reuses TalentTreeDB, talent-tree membership authority,
+ * and buildDependencyGraph(...) to pick an existing talent from an existing tree,
+ * then offers selected-only vs prerequisite-chain import when graph prerequisites
+ * are detected.
  */
 
 function escapeHtml(value) {
@@ -68,7 +69,7 @@ function talentPrerequisiteText(talent = {}) {
   return '';
 }
 
-function nodeFromTalent(talent, tree, importMode = 'reference') {
+function nodeFromTalent(talent, tree, importMode = 'reference', graphNode = null) {
   const sourceTalentId = talentId(talent);
   const name = talentName(talent);
   const nodeId = slugifyCustomTalentTree(sourceTalentId || name);
@@ -84,11 +85,47 @@ function nodeFromTalent(talent, tree, importMode = 'reference') {
     uuid: talent.uuid || talent.documentUuid || null,
     importMode,
     prerequisiteText: talentPrerequisiteText(talent),
-    prerequisites: asArray(talent.prerequisites).map(String),
+    prerequisites: asArray(graphNode?.prerequisites).map(value => slugifyCustomTalentTree(value)),
+    missingPrerequisiteIds: asArray(graphNode?.prerequisites).map(value => slugifyCustomTalentTree(value)),
     description: talentDescription(talent),
     x: null,
     y: null
   };
+}
+
+function getGraphNode(graph, id) {
+  return graph?.nodes?.get?.(id) || graph?.nodes?.get?.(slugifyCustomTalentTree(id)) || null;
+}
+
+function collectPrerequisiteIds(graph, talentIdValue) {
+  const ordered = [];
+  const seen = new Set();
+
+  const visit = (nodeId) => {
+    const node = getGraphNode(graph, nodeId);
+    if (!node) return;
+    for (const prereqId of asArray(node.prerequisites)) {
+      const key = String(prereqId);
+      if (seen.has(key)) continue;
+      visit(key);
+      seen.add(key);
+      ordered.push(key);
+    }
+  };
+
+  visit(talentIdValue);
+  return ordered;
+}
+
+function graphEdgesForIds(graph, ids) {
+  const allowed = new Set(ids.map(String));
+  return asArray(graph?.edges)
+    .filter(edge => allowed.has(String(edge.from)) && allowed.has(String(edge.to)))
+    .map(edge => ({
+      from: slugifyCustomTalentTree(edge.from),
+      to: slugifyCustomTalentTree(edge.to),
+      type: edge.type || 'prerequisite'
+    }));
 }
 
 async function buildImportTrees() {
@@ -102,9 +139,11 @@ async function buildImportTrees() {
       id: treeId,
       name: tree.name || tree.displayName || treeId,
       tree,
+      graph,
+      talentsById: new Map(talents.map(talent => [talentId(talent), talent])),
       talents: talents.map(talent => {
         const id = talentId(talent);
-        const graphNode = graph?.nodes?.get?.(id);
+        const graphNode = getGraphNode(graph, id);
         const prereqs = graphNode?.prerequisites || [];
         return {
           id,
@@ -112,7 +151,9 @@ async function buildImportTrees() {
           description: talentDescription(talent),
           prerequisiteText: talentPrerequisiteText(talent),
           prerequisites: prereqs,
-          talent
+          prerequisiteChain: collectPrerequisiteIds(graph, id),
+          talent,
+          graphNode
         };
       }).sort((a, b) => a.name.localeCompare(b.name))
     });
@@ -131,7 +172,7 @@ function buildHtml(importTrees, currentTree = {}) {
 
   return `
     <form class="swse-custom-tree-importer" data-custom-tree-importer>
-      <p class="swse-custom-tree-importer__hint">Choose an existing talent tree, then select a talent to import. Phase 2 imports the selected talent node only; prerequisite-chain import is next.</p>
+      <p class="swse-custom-tree-importer__hint">Choose an existing talent tree, then select a talent to import. Talents with graph prerequisites can import the selected talent only or its prerequisite chain.</p>
       <div class="swse-custom-tree-importer__layout">
         <aside class="swse-custom-tree-importer__trees">${treeButtons}</aside>
         <main class="swse-custom-tree-importer__talents" data-importer-talents></main>
@@ -165,7 +206,7 @@ function talentRows(tree, existingNodeIds = new Set()) {
           <strong>${escapeHtml(talent.name)}</strong>
           ${talent.description ? `<small>${escapeHtml(talent.description)}</small>` : '<small>No summary available.</small>'}
           ${talent.prerequisiteText ? `<em>Prerequisites: ${escapeHtml(talent.prerequisiteText)}</em>` : ''}
-          ${talent.prerequisites?.length ? `<em>Graph prereqs: ${talent.prerequisites.map(escapeHtml).join(', ')}</em>` : ''}
+          ${talent.prerequisiteChain?.length ? `<em>Import chain available: ${talent.prerequisiteChain.length} prerequisite${talent.prerequisiteChain.length === 1 ? '' : 's'}</em>` : ''}
           ${imported ? '<em>Already in this custom tree.</em>' : ''}
         </span>
       </button>`;
@@ -219,7 +260,102 @@ function bindImporter(html, importTrees) {
   renderTalentList(0);
 }
 
-function selectedImport(html, importTrees) {
+async function openPrerequisiteChoiceDialog(talentEntry, chainNames = []) {
+  if (!chainNames.length) return 'only';
+  const result = await SWSEDialogV2.wait({
+    title: 'Talent Has Prerequisites',
+    content: `
+      <form class="swse-custom-tree-prereq-choice" data-custom-tree-prereq-choice>
+        <p class="swse-custom-tree-importer__hint"><strong>${escapeHtml(talentEntry.name)}</strong> has prerequisite talents in its source graph.</p>
+        <div class="swse-custom-tree-importer__talent is-selected" style="margin-bottom: 10px;">
+          <span class="swse-custom-tree-importer__mark"></span>
+          <span class="swse-custom-tree-importer__copy">
+            <strong>Prerequisite chain</strong>
+            <small>${chainNames.map(escapeHtml).join(' → ')}</small>
+          </span>
+        </div>
+        <label class="swse-custom-tree-importer__talent is-selected">
+          <input type="radio" name="mode" value="chain" checked hidden>
+          <span class="swse-custom-tree-importer__mark"></span>
+          <span class="swse-custom-tree-importer__copy">
+            <strong>Import prerequisite chain + selected talent</strong>
+            <small>Recommended. Adds the required talents first and preserves prerequisite edges between them.</small>
+          </span>
+        </label>
+        <label class="swse-custom-tree-importer__talent">
+          <input type="radio" name="mode" value="only" hidden>
+          <span class="swse-custom-tree-importer__mark"></span>
+          <span class="swse-custom-tree-importer__copy">
+            <strong>Import selected talent only</strong>
+            <small>Adds only the chosen talent and keeps prerequisite text as a rules warning you can waive or rewrite later.</small>
+          </span>
+        </label>
+      </form>`,
+    buttons: {
+      cancel: {
+        icon: '<i class="fa-solid fa-times"></i>',
+        label: game?.i18n?.localize?.('Cancel') ?? 'Cancel',
+        callback: () => null
+      },
+      ok: {
+        icon: '<i class="fa-solid fa-plus"></i>',
+        label: 'Import',
+        callback: html => rootFromHtml(html).querySelector?.('input[name="mode"]:checked')?.value || 'chain'
+      }
+    },
+    default: 'ok',
+    render: html => {
+      const root = rootFromHtml(html);
+      root.querySelectorAll?.('.swse-custom-tree-prereq-choice .swse-custom-tree-importer__talent').forEach(label => {
+        label.addEventListener('click', () => {
+          root.querySelectorAll('.swse-custom-tree-prereq-choice .swse-custom-tree-importer__talent').forEach(entry => entry.classList.remove('is-selected'));
+          label.classList.add('is-selected');
+          const input = label.querySelector('input[name="mode"]');
+          if (input) input.checked = true;
+        });
+      });
+    }
+  }, {
+    width: 620,
+    classes: ['swse-force-tradition-picker-dialog', 'swse-custom-talent-importer-dialog']
+  });
+  return result;
+}
+
+function buildImportPayload(tree, talentEntry, importMode, prerequisiteMode = 'only') {
+  const selectedId = talentEntry.id;
+  const rawIds = prerequisiteMode === 'chain'
+    ? [...collectPrerequisiteIds(tree.graph, selectedId), selectedId]
+    : [selectedId];
+  const ids = Array.from(new Set(rawIds.map(String)));
+  const nodes = ids
+    .map(id => {
+      const talent = tree.talentsById.get(id);
+      if (!talent) return null;
+      return nodeFromTalent(talent, tree.tree, importMode, getGraphNode(tree.graph, id));
+    })
+    .filter(Boolean);
+  const nodeIds = nodes.map(node => node.nodeId);
+  const edges = prerequisiteMode === 'chain' ? graphEdgesForIds(tree.graph, ids) : [];
+
+  if (prerequisiteMode !== 'chain') {
+    for (const node of nodes) {
+      node.prerequisites = [];
+    }
+  }
+
+  return {
+    nodes,
+    edges,
+    selectedNodeId: slugifyCustomTalentTree(selectedId || talentEntry.name),
+    selectedName: talentEntry.name,
+    importMode,
+    prerequisiteMode,
+    importedNodeIds: nodeIds
+  };
+}
+
+async function selectedImport(html, importTrees) {
   const root = rootFromHtml(html);
   const treeIndex = Number(root.querySelector?.('input[name="treeIndex"]')?.value || 0);
   const talentIdValue = String(root.querySelector?.('input[name="talentId"]')?.value || '').trim();
@@ -227,7 +363,16 @@ function selectedImport(html, importTrees) {
   const tree = importTrees[treeIndex];
   const talentEntry = tree?.talents?.find(talent => talent.id === talentIdValue);
   if (!tree || !talentEntry) return null;
-  return nodeFromTalent(talentEntry.talent, tree.tree, importMode);
+
+  const chainIds = collectPrerequisiteIds(tree.graph, talentEntry.id);
+  if (!chainIds.length) return buildImportPayload(tree, talentEntry, importMode, 'only');
+
+  const chainNames = chainIds
+    .map(id => talentName(tree.talentsById.get(id)))
+    .filter(Boolean);
+  const choice = await openPrerequisiteChoiceDialog(talentEntry, chainNames);
+  if (!choice) return null;
+  return buildImportPayload(tree, talentEntry, importMode, choice === 'chain' ? 'chain' : 'only');
 }
 
 export async function openExistingTalentImportDialog(currentTree = {}) {
@@ -249,7 +394,7 @@ export async function openExistingTalentImportDialog(currentTree = {}) {
       ok: {
         icon: '<i class="fa-solid fa-plus"></i>',
         label: 'Import Talent',
-        callback: (html) => selectedImport(html, importTrees)
+        callback: async (html) => selectedImport(html, importTrees)
       }
     },
     default: 'ok',
