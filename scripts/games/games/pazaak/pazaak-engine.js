@@ -36,46 +36,16 @@ function randomId(prefix = 'pz') {
   return `${prefix}_${globalThis.foundry?.utils?.randomID?.(8) || Math.random().toString(36).slice(2, 10)}`;
 }
 
-function now() {
-  return Date.now();
-}
-
-function currentUserId() {
-  return game?.user?.id ?? null;
-}
-
-function actorDisplay(actor) {
-  return actor?.name || game?.user?.name || 'Player';
-}
-
-function actorImg(actor) {
-  return actor?.img || 'icons/svg/mystery-man.svg';
-}
-
-function participantIdForActor(actor) {
-  if (game?.user?.isGM) return `gm:${game.user.id}`;
-  return `player:${game?.user?.id ?? 'unknown'}`;
-}
-
-function isAutomatedSeat(seat = {}) {
-  return seat.type === 'ai' || seat.type === 'npc' || seat.aiProfile;
-}
-
-function playableSeats(seats = []) {
-  return (Array.isArray(seats) ? seats : []).filter(seat => !seat.spectator && seat.status !== 'declined' && seat.status !== 'cancelled');
-}
-
-function getPlayerOrder(session = {}) {
-  return playableSeats(session.seats).map(seat => seat.seatId).filter(Boolean);
-}
-
-function findSeat(session, seatId) {
-  return playableSeats(session.seats).find(seat => seat.seatId === seatId) ?? null;
-}
-
-function seatLabel(session, seatId) {
-  return findSeat(session, seatId)?.displayName || 'Unknown Seat';
-}
+function now() { return Date.now(); }
+function currentUserId() { return game?.user?.id ?? null; }
+function actorDisplay(actor) { return actor?.name || game?.user?.name || 'Player'; }
+function actorImg(actor) { return actor?.img || 'icons/svg/mystery-man.svg'; }
+function participantIdForActor(actor) { return game?.user?.isGM ? `gm:${game.user.id}` : `player:${game?.user?.id ?? 'unknown'}`; }
+function isAutomatedSeat(seat = {}) { return seat.type === 'ai' || seat.type === 'npc' || seat.aiProfile; }
+function playableSeats(seats = []) { return (Array.isArray(seats) ? seats : []).filter(seat => !seat.spectator && seat.status !== 'declined' && seat.status !== 'cancelled'); }
+function getPlayerOrder(session = {}) { return playableSeats(session.seats).map(seat => seat.seatId).filter(Boolean); }
+function findSeat(session, seatId) { return playableSeats(session.seats).find(seat => seat.seatId === seatId) ?? null; }
+function seatLabel(session, seatId) { return findSeat(session, seatId)?.displayName || 'Unknown Seat'; }
 
 function buildPlayerStateForSeat(seat = {}) {
   const automated = isAutomatedSeat(seat);
@@ -96,6 +66,7 @@ function buildPlayerStateForSeat(seat = {}) {
     sideCardPlayedThisTurn: false,
     turnDrawn: false,
     turnPhase: 'waiting',
+    bustRisk: false,
     matchHandDealt: false,
     tiebreakerUsed: false,
     tiebreakerPlayedAt: null,
@@ -109,8 +80,8 @@ function buildSetupState(session = {}) {
   for (const seat of seats) players[seat.seatId] = buildPlayerStateForSeat(seat);
   return {
     engine: 'pazaak',
-    version: 2,
-    rulesProfile: 'blackjack-20',
+    version: 3,
+    rulesProfile: 'blackjack-20-repairable-bust',
     phase: 'setup',
     statusLabel: 'SIDE DECK SETUP',
     target: PAZAAK_TARGET,
@@ -138,8 +109,8 @@ function buildSetupState(session = {}) {
 function ensurePazaakState(session = {}) {
   const existing = session.gameState?.engine === 'pazaak' ? clone(session.gameState) : buildSetupState(session);
   const seats = playableSeats(session.seats);
-  existing.version = Math.max(2, Number(existing.version || 0));
-  existing.rulesProfile = existing.rulesProfile || 'blackjack-20';
+  existing.version = Math.max(3, Number(existing.version || 0));
+  existing.rulesProfile = 'blackjack-20-repairable-bust';
   existing.players ??= {};
   existing.setHistory = Array.isArray(existing.setHistory) ? existing.setHistory : [];
   existing.eventLog = Array.isArray(existing.eventLog) ? existing.eventLog : [];
@@ -157,6 +128,7 @@ function ensurePazaakState(session = {}) {
     player.turnPhase = player.turnPhase || 'waiting';
     player.lockedScore = player.lockedScore ?? null;
     player.turnDrawn = Boolean(player.turnDrawn);
+    player.bustRisk = Boolean(player.bustRisk);
     if (isAutomatedSeat(seat) && !player.sideDeckLocked) {
       player.sideDeckIds = buildDefaultPazaakSideDeckIds(buildPazaakAiProfile(seat.aiProfile || seat.ai || 'medium').personality || 'balanced');
       player.sideDeckLocked = true;
@@ -166,14 +138,8 @@ function ensurePazaakState(session = {}) {
   return existing;
 }
 
-function allDecksLocked(session, state) {
-  return playableSeats(session.seats).every(seat => state.players?.[seat.seatId]?.sideDeckLocked);
-}
-
-function effectiveScore(player = {}) {
-  return player.lockedScore != null ? Number(player.lockedScore) : scorePazaakPlayer(player);
-}
-
+function allDecksLocked(session, state) { return playableSeats(session.seats).every(seat => state.players?.[seat.seatId]?.sideDeckLocked); }
+function effectiveScore(player = {}) { return player.lockedScore != null ? Number(player.lockedScore) : scorePazaakPlayer(player); }
 function updateScores(state) {
   for (const player of Object.values(state.players ?? {})) {
     player.hand = Array.isArray(player.hand) ? player.hand.filter(Boolean) : [];
@@ -196,17 +162,7 @@ function pushPazaakEvent(session, state, type, seatId = null, message = '', extr
   if (!state) return null;
   state.eventLog = Array.isArray(state.eventLog) ? state.eventLog : [];
   const seat = seatId ? findSeat(session, seatId) : null;
-  const entry = {
-    id: randomId('pzevt'),
-    at: now(),
-    type: String(type || 'event'),
-    seatId: seatId || null,
-    seatLabel: seat?.displayName || null,
-    message: String(message || '').trim(),
-    gmOnly: Boolean(extra.gmOnly),
-    tone: extra.tone || '',
-    ...extra
-  };
+  const entry = { id: randomId('pzevt'), at: now(), type: String(type || 'event'), seatId: seatId || null, seatLabel: seat?.displayName || null, message: String(message || '').trim(), gmOnly: Boolean(extra.gmOnly), tone: extra.tone || '', ...extra };
   state.eventLog.push(entry);
   state.eventLog = state.eventLog.slice(-80);
   return entry;
@@ -226,9 +182,42 @@ function sideCardDialogueType(playedCard = {}) {
   return 'playsCard';
 }
 
-function nextPazaakSequence(state) {
-  state.turnSequence = Number(state.turnSequence || 0) + 1;
-  return state.turnSequence;
+function nextPazaakSequence(state) { state.turnSequence = Number(state.turnSequence || 0) + 1; return state.turnSequence; }
+
+function choicesForSideCard(card = {}) {
+  if (card.type === 'plusMinus' || card.type === 'tiebreaker') return [{ sign: 'plus' }, { sign: 'minus' }];
+  if (card.type === 'plusMinusRange') return [{ sign: 'plus', value: 1 }, { sign: 'minus', value: 1 }, { sign: 'plus', value: 2 }, { sign: 'minus', value: 2 }];
+  return [{}];
+}
+
+function repairOptionsForBustRisk(player = {}) {
+  const score = scorePazaakPlayer(player);
+  if (score <= PAZAAK_TARGET || player.sideCardPlayedThisTurn) return [];
+  const options = [];
+  for (const card of Array.isArray(player.hand) ? player.hand : []) {
+    for (const choice of choicesForSideCard(card)) {
+      const result = applyPazaakSideCard(player, card.instanceId, choice);
+      if (!result.ok) continue;
+      const repairedScore = scorePazaakPlayer(result.player);
+      if (repairedScore <= PAZAAK_TARGET) options.push({ card, choice, score: repairedScore });
+    }
+  }
+  return options;
+}
+
+function canRepairBustRisk(player = {}) { return repairOptionsForBustRisk(player).length > 0; }
+
+function forceBust(session, state, seatId, reason = 'Busted.') {
+  const player = state.players?.[seatId];
+  if (!player) return 'missing';
+  player.bust = true;
+  player.stood = false;
+  player.bustRisk = false;
+  player.turnPhase = 'bust';
+  player.score = scorePazaakPlayer(player);
+  player.lastAction = aiDialogueFor(session, seatId, 'busts', reason);
+  pushPazaakEvent(session, state, 'bust', seatId, player.lastAction, { tone: 'danger' });
+  return 'bust';
 }
 
 function resetPlayersForSet(session, state) {
@@ -246,6 +235,7 @@ function resetPlayersForSet(session, state) {
     state.players[seat.seatId].lockedScore = null;
     state.players[seat.seatId].turnDrawn = false;
     state.players[seat.seatId].turnPhase = 'waiting';
+    state.players[seat.seatId].bustRisk = false;
     state.players[seat.seatId].lastAction = `${state.players[seat.seatId].hand.length} match side-deck card${state.players[seat.seatId].hand.length === 1 ? '' : 's'} remain.`;
   }
 }
@@ -254,7 +244,6 @@ function determineOpeningFirstSeat(session, state) {
   const order = getPlayerOrder(session);
   if (!order.length) return null;
   if (state.openingFirstSeatResolved && state.firstSeatId && order.includes(state.firstSeatId)) return state.firstSeatId;
-
   let contenders = order.slice();
   let deck = buildPazaakMainDeck();
   const drawHistory = [];
@@ -269,7 +258,6 @@ function determineOpeningFirstSeat(session, state) {
     drawHistory.push({ attempt, draws: result.draws, highValue: result.highValue, tiedSeatIds: result.tiedSeatIds });
     contenders = result.winnerSeatId ? [result.winnerSeatId] : (result.tiedSeatIds.length ? result.tiedSeatIds : contenders);
   }
-
   const firstSeatId = contenders[0] || order[0];
   state.firstSeatId = firstSeatId;
   state.openingFirstSeatResolved = true;
@@ -292,21 +280,24 @@ function dealOpeningMainCardsForSet(session, state) {
   updateScores(state);
 }
 
-function finalizeTurnStatus(session, state, seatId, { allowSafe = true } = {}) {
+function finalizeTurnStatus(session, state, seatId, { allowRepair = true } = {}) {
   const player = state.players?.[seatId];
   if (!player) return 'missing';
   const rawScore = scorePazaakPlayer(player);
   player.score = player.lockedScore != null ? Number(player.lockedScore) : rawScore;
 
   if (rawScore > PAZAAK_TARGET) {
-    player.bust = true;
-    player.stood = false;
-    player.turnPhase = 'bust';
-    player.lastAction = aiDialogueFor(session, seatId, 'busts', 'Busted.');
-    pushPazaakEvent(session, state, 'bust', seatId, player.lastAction, { tone: 'danger' });
-    return 'bust';
+    if (allowRepair && canRepairBustRisk(player)) {
+      player.bustRisk = true;
+      player.turnPhase = 'repair';
+      player.lastAction = `Over ${PAZAAK_TARGET}. Play a negative side card or bust.`;
+      pushPazaakEvent(session, state, 'bust-risk', seatId, player.lastAction, { tone: 'warn' });
+      return 'repair';
+    }
+    return forceBust(session, state, seatId, allowRepair ? 'Busted with no legal repair card.' : 'Busted.');
   }
 
+  player.bustRisk = false;
   if (rawScore === PAZAAK_TARGET) {
     player.stood = true;
     player.lockedScore = PAZAAK_TARGET;
@@ -316,7 +307,6 @@ function finalizeTurnStatus(session, state, seatId, { allowSafe = true } = {}) {
     pushPazaakEvent(session, state, 'hit-twenty', seatId, player.lastAction, { tone: 'success' });
     return 'twenty';
   }
-
   if (hasFilledPazaakTable(player)) {
     player.filledTable = true;
     player.stood = true;
@@ -327,9 +317,7 @@ function finalizeTurnStatus(session, state, seatId, { allowSafe = true } = {}) {
     pushPazaakEvent(session, state, 'filled-table', seatId, player.lastAction, { tone: 'success' });
     return 'filled';
   }
-
   player.score = rawScore;
-  if (!allowSafe) return 'safe';
   player.turnPhase = 'post-draw';
   return 'safe';
 }
@@ -357,25 +345,10 @@ function maybeResolveSet(session, state) {
   const players = getPlayerOrder(session).map(seatId => state.players[seatId]).filter(Boolean);
   const immediateFill = players.find(player => player.filledTable && !player.bust);
   if (!immediateFill && !allPlayersDone(session, state)) return false;
-
-  const result = immediateFill
-    ? { winnerSeatId: immediateFill.seatId, tied: false, reason: 'Filled nine cards and locked to 20.' }
-    : comparePazaakSet(players);
-
-  state.setHistory.push({
-    id: randomId('set'),
-    setNumber: state.setNumber,
-    winnerSeatId: result.winnerSeatId,
-    winnerLabel: result.winnerSeatId ? seatLabel(session, result.winnerSeatId) : null,
-    tied: Boolean(result.tied),
-    reason: result.reason,
-    scores: players.map(player => ({ seatId: player.seatId, score: effectiveScore(player), bust: Boolean(player.bust), filledTable: Boolean(player.filledTable) })),
-    at: now()
-  });
+  const result = immediateFill ? { winnerSeatId: immediateFill.seatId, tied: false, reason: 'Filled nine cards and locked to 20.' } : comparePazaakSet(players);
+  state.setHistory.push({ id: randomId('set'), setNumber: state.setNumber, winnerSeatId: result.winnerSeatId, winnerLabel: result.winnerSeatId ? seatLabel(session, result.winnerSeatId) : null, tied: Boolean(result.tied), reason: result.reason, scores: players.map(player => ({ seatId: player.seatId, score: effectiveScore(player), bust: Boolean(player.bust), filledTable: Boolean(player.filledTable) })), at: now() });
   pushPazaakEvent(session, state, result.winnerSeatId ? 'set-won' : 'set-tied', result.winnerSeatId, result.winnerSeatId ? `${seatLabel(session, result.winnerSeatId)} wins set ${state.setNumber}: ${result.reason}` : `Set ${state.setNumber} tied: ${result.reason}`, { setNumber: state.setNumber, tone: result.winnerSeatId ? 'success' : 'neutral' });
-
   if (result.winnerSeatId && state.players[result.winnerSeatId]) state.players[result.winnerSeatId].setsWon = Number(state.players[result.winnerSeatId].setsWon || 0) + 1;
-
   const matchWinner = Object.values(state.players).find(player => Number(player.setsWon || 0) >= PAZAAK_SETS_TO_WIN);
   if (matchWinner) {
     state.phase = 'complete';
@@ -386,11 +359,8 @@ function maybeResolveSet(session, state) {
     pushPazaakEvent(session, state, 'match-won', matchWinner.seatId, state.message, { tone: 'success' });
     return true;
   }
-
   const nextFirst = chooseNextFirstSeat(session, state, result.winnerSeatId, result.tied);
-  state.message = result.winnerSeatId
-    ? `${seatLabel(session, result.winnerSeatId)} wins set ${state.setNumber} (${result.reason}) and starts the next set.`
-    : `Set ${state.setNumber} tied. ${seatLabel(session, nextFirst)} starts the next set.`;
+  state.message = result.winnerSeatId ? `${seatLabel(session, result.winnerSeatId)} wins set ${state.setNumber} (${result.reason}) and starts the next set.` : `Set ${state.setNumber} tied. ${seatLabel(session, nextFirst)} starts the next set.`;
   startNextSet(session, state, nextFirst);
   return true;
 }
@@ -414,21 +384,19 @@ function beginTurn(session, state, seatId) {
   player.turnPhase = 'draw';
   player.turnDrawn = false;
   player.sideCardPlayedThisTurn = false;
-
+  player.bustRisk = false;
   if (player.tableCards.length >= PAZAAK_TABLE_LIMIT) {
     finalizeTurnStatus(session, state, seatId);
     maybeResolveSet(session, state);
     return state;
   }
-
   const card = drawPazaakMainCardForState(state);
   player.tableCards.push(card);
   player.turnDrawn = true;
   player.turnPhase = 'post-draw';
   player.lastAction = aiDialogueFor(session, seatId, 'drawsCard', `Drew ${card?.label || card?.value || 'a card'}.`);
   pushPazaakEvent(session, state, 'draw-main-card', seatId, player.lastAction, { cardLabel: card?.label || String(card?.value || ''), tone: 'draw' });
-
-  const status = finalizeTurnStatus(session, state, seatId);
+  const status = finalizeTurnStatus(session, state, seatId, { allowRepair: true });
   if (['bust', 'twenty', 'filled'].includes(status)) advanceTurn(session, state, seatId);
   return state;
 }
@@ -455,9 +423,7 @@ function startNextSet(session, state, firstSeatId = null) {
   state.debug.lastDeckState = { setNumber: state.setNumber, mainDeckCount: state.mainDeck.length, discardCount: 0, at: now() };
   resetPlayersForSet(session, state);
   const order = getPlayerOrder(session);
-  const chosenFirst = state.setNumber === 1 && !state.openingFirstSeatResolved
-    ? determineOpeningFirstSeat(session, state)
-    : (firstSeatId && order.includes(firstSeatId) ? firstSeatId : (state.firstSeatId && order.includes(state.firstSeatId) ? state.firstSeatId : order[0]));
+  const chosenFirst = state.setNumber === 1 && !state.openingFirstSeatResolved ? determineOpeningFirstSeat(session, state) : (firstSeatId && order.includes(firstSeatId) ? firstSeatId : (state.firstSeatId && order.includes(state.firstSeatId) ? state.firstSeatId : order[0]));
   state.firstSeatId = chosenFirst;
   state.activeSeatId = chosenFirst;
   dealOpeningMainCardsForSet(session, state);
@@ -468,10 +434,7 @@ function startNextSet(session, state, firstSeatId = null) {
   return state;
 }
 
-function sleep(ms) {
-  return new Promise(resolve => setTimeout(resolve, Math.max(0, Number(ms || 0) || 0)));
-}
-
+function sleep(ms) { return new Promise(resolve => setTimeout(resolve, Math.max(0, Number(ms || 0) || 0))); }
 function setAiThinkingState(session, state, seat, profile) {
   const delayMs = PazaakAi.thinkingDelayMs(profile);
   const message = randomPazaakDialogue(profile.personality, 'thinking', 'Considers the next Pazaak move.');
@@ -480,11 +443,7 @@ function setAiThinkingState(session, state, seat, profile) {
   pushPazaakEvent(session, state, 'ai-thinking', seat.seatId, message, { tone: 'thinking', intensity: 'normal', delayMs });
   return state.aiThinking;
 }
-
-function clearAiThinkingState(state) {
-  if (state) state.aiThinking = null;
-}
-
+function clearAiThinkingState(state) { if (state) state.aiThinking = null; }
 function applyAutomatedTurnChoice(session, state, seat, player, profile, choice) {
   if (choice.type === 'play-side-card') return applySeatSideCard(session, state, seat, player, choice.cardInstanceId, choice.choice || {}, profile);
   if (choice.type === 'stand') return applySeatStand(session, state, seat, player, profile, choice);
@@ -517,34 +476,12 @@ async function processAutomatedTurns(session, state) {
   return { session: workingSession, state };
 }
 
-function sessionLogEntry(type, by, extra = {}) {
-  return { id: randomId('log'), at: now(), type, by, ...extra };
-}
-
-function otherPlayableSeat(session, seatId) {
-  return playableSeats(session.seats).find(seat => seat.seatId !== seatId && seat.status !== 'forfeited') ?? null;
-}
-
-async function persistPazaakSession(session, state, status, logEntry) {
-  return GameSessionStore.upsertSession({
-    ...session,
-    status,
-    gameState: state,
-    log: [...(session.log ?? []), logEntry].filter(Boolean)
-  });
-}
+function sessionLogEntry(type, by, extra = {}) { return { id: randomId('log'), at: now(), type, by, ...extra }; }
+function otherPlayableSeat(session, seatId) { return playableSeats(session.seats).find(seat => seat.seatId !== seatId && seat.status !== 'forfeited') ?? null; }
+async function persistPazaakSession(session, state, status, logEntry) { return GameSessionStore.upsertSession({ ...session, status, gameState: state, log: [...(session.log ?? []), logEntry].filter(Boolean) }); }
 
 function applySeatSideCard(session, state, seat, player, cardInstanceId, choice = {}, profile = null) {
-  const currentScore = scorePazaakPlayer(player);
-  if (currentScore > PAZAAK_TARGET) {
-    player.bust = true;
-    player.lastAction = aiDialogueFor(session, seat.seatId, 'busts', 'Busted before a side card could be played.');
-    pushPazaakEvent(session, state, 'bust', seat.seatId, player.lastAction, { tone: 'danger' });
-    advanceTurn(session, state, seat.seatId);
-    return { ok: true };
-  }
   if (player.sideCardPlayedThisTurn) return { ok: false, error: 'Only one side card can be played after the mandatory draw.' };
-
   const result = applyPazaakSideCard(player, String(cardInstanceId || ''), choice);
   if (!result.ok) return result;
   state.players[seat.seatId] = result.player;
@@ -556,9 +493,8 @@ function applySeatSideCard(session, state, seat, player, cardInstanceId, choice 
   const label = result.playedCard?.label || 'a side card';
   next.lastAction = profile ? randomPazaakDialogue(profile.personality, eventType, `Played ${label}.`) : aiDialogueFor(session, seat.seatId, eventType, `Played ${label}.`);
   pushPazaakEvent(session, state, 'play-side-card', seat.seatId, next.lastAction, { cardLabel: label, tone: result.playedCard?.tone || 'card' });
-
-  finalizeTurnStatus(session, state, seat.seatId);
-  if (!next.stood && !next.bust && !next.filledTable) {
+  const status = finalizeTurnStatus(session, state, seat.seatId, { allowRepair: false });
+  if (!['bust', 'twenty', 'filled'].includes(status)) {
     next.lastAction = 'Played a side card and ended the turn.';
     pushPazaakEvent(session, state, 'end-turn', seat.seatId, next.lastAction, { tone: 'turn' });
   }
@@ -567,7 +503,7 @@ function applySeatSideCard(session, state, seat, player, cardInstanceId, choice 
 }
 
 function applySeatStand(session, state, seat, player, profile = null, choice = {}) {
-  const status = finalizeTurnStatus(session, state, seat.seatId);
+  const status = finalizeTurnStatus(session, state, seat.seatId, { allowRepair: false });
   if (status === 'bust') {
     advanceTurn(session, state, seat.seatId);
     return { ok: true };
@@ -585,7 +521,7 @@ function applySeatStand(session, state, seat, player, profile = null, choice = {
 }
 
 function applySeatEndTurn(session, state, seat, player, profile = null, choice = {}) {
-  const status = finalizeTurnStatus(session, state, seat.seatId);
+  const status = finalizeTurnStatus(session, state, seat.seatId, { allowRepair: false });
   if (status === 'safe') {
     player.turnPhase = 'waiting';
     player.lastAction = choice.forceIntuition?.line || (profile ? randomPazaakDialogue(profile.personality, 'drawsCard', 'Ended turn.') : aiDialogueFor(session, seat.seatId, 'stay', 'Ended turn.'));
@@ -597,14 +533,8 @@ function applySeatEndTurn(session, state, seat, player, profile = null, choice =
 }
 
 export class PazaakEngine {
-  static isPazaakSession(session = {}) {
-    return session?.gameId === 'pazaak';
-  }
-
-  static getState(session = {}) {
-    return ensurePazaakState(session);
-  }
-
+  static isPazaakSession(session = {}) { return session?.gameId === 'pazaak'; }
+  static getState(session = {}) { return ensurePazaakState(session); }
   static findSeatForActor(session = {}, actor = null, participantId = null) {
     const userId = currentUserId();
     const preferredParticipantId = participantId || participantIdForActor(actor);
@@ -631,14 +561,10 @@ export class PazaakEngine {
     const settings = getGameSettingsSnapshot();
     const normalizedBuyIn = Number(creditBuyIn || 0) || 0;
     const safeRulesMode = rulesMode === 'wagered' && settings.allowWagers && settings.allowCreditWagers && normalizedBuyIn > 0 ? 'wagered' : 'republic-senate';
-    const wagerProfile = safeRulesMode === 'wagered'
-      ? GameCreditEscrowService.buildCreditWagerProfile({ buyIn: Math.min(normalizedBuyIn, Number(settings.maxCreditWager || 0) || normalizedBuyIn), houseStake: Math.min(normalizedBuyIn, Number(settings.maxCreditWager || 0) || normalizedBuyIn) })
-      : { mode: 'none' };
+    const wagerProfile = safeRulesMode === 'wagered' ? GameCreditEscrowService.buildCreditWagerProfile({ buyIn: Math.min(normalizedBuyIn, Number(settings.maxCreditWager || 0) || normalizedBuyIn), houseStake: Math.min(normalizedBuyIn, Number(settings.maxCreditWager || 0) || normalizedBuyIn) }) : { mode: 'none' };
     const hostSeat = { seatId: 'seat_host', type: requester?.isGM ? 'gm' : 'player', userId, actorId, recipientId: hostRecipientId, displayName: actorDisplay(actor), avatar: actorImg(actor), status: 'host' };
     const requestedFairness = settings.defaultAiFairness || 'fair';
-    const safeFairness = requestedFairness === 'cheating' && (!settings.allowCheatingAi || settings.requireGmApprovalForCheatingAi)
-      ? 'fair'
-      : (requestedFairness === 'houseEdge' && !settings.allowHouseEdgeAi ? 'fair' : requestedFairness);
+    const safeFairness = requestedFairness === 'cheating' && (!settings.allowCheatingAi || settings.requireGmApprovalForCheatingAi) ? 'fair' : (requestedFairness === 'houseEdge' && !settings.allowHouseEdgeAi ? 'fair' : requestedFairness);
     const generatedOpponent = await GameOpponentProfileService.buildPazaakAiOpponentProfile({ difficulty: settings.defaultAiDifficulty || 'medium', fairness: safeFairness, personality: settings.defaultAiPersonality || 'random' });
     const aiProfile = buildPazaakAiProfile(generatedOpponent);
     const aiSeat = { seatId: 'seat_ai', type: 'ai', userId: null, actorId: null, recipientId: null, displayName: aiProfile.name || 'Dealer Droid RX-44', avatar: aiProfile.kind === 'living' ? 'icons/svg/mystery-man.svg' : 'icons/commodities/tech/cog-bronze.webp', status: 'accepted', profession: aiProfile.profession || '', tableFact: aiProfile.tableFact || '', aiProfile, aiDifficulty: aiProfile.difficulty, aiFairness: aiProfile.fairness, aiPersonality: aiProfile.personality };
@@ -666,7 +592,6 @@ export class PazaakEngine {
     const validation = validateSideDeck(cardIds);
     if (!validation.valid) return { ok: false, error: validation.errors.join(' ') };
     if (GameCreditEscrowService.isCreditWager(session) && session.escrow?.credits?.status !== 'escrowed') return { ok: false, error: session.escrow?.credits?.error || 'Credit buy-in escrow must complete before side decks can lock.' };
-
     let workingSession = session;
     const state = ensurePazaakState(session);
     state.players[seat.seatId] ??= buildPlayerStateForSeat(seat);
@@ -675,7 +600,6 @@ export class PazaakEngine {
     state.players[seat.seatId].lastAction = 'Side deck locked.';
     state.message = `${seat.displayName} locked a legal ${PAZAAK_SIDE_DECK_SIZE}-card side deck.`;
     pushPazaakEvent(session, state, 'side-deck-locked', seat.seatId, state.message, { tone: 'setup' });
-
     if (allDecksLocked(session, state)) {
       startNextSet(session, state, state.firstSeatId);
       const processed = await processAutomatedTurns(session, state);
@@ -695,35 +619,27 @@ export class PazaakEngine {
     if (!session || session.gameId !== 'pazaak') return { ok: false, error: 'Pazaak session not found.' };
     const state = ensurePazaakState(session);
     const normalizedAction = String(action || '').trim();
-
     if (normalizedAction === 'cancel-session') return this.#cancelSession(session, state, payload, requesterId);
-
     const seat = findSeat(session, seatId);
     if (!seat) return { ok: false, error: 'Seat not found.' };
     const player = state.players?.[seat.seatId];
     if (!player) return { ok: false, error: 'Player state missing.' };
-
     if (normalizedAction === 'forfeit') return this.#forfeit(session, state, seat, player);
     if (state.phase !== 'playing') return { ok: false, error: 'The Pazaak match is not in play.' };
     if (state.activeSeatId !== seat.seatId) return { ok: false, error: 'It is not this seat\'s turn.' };
     if (player.stood || player.bust || player.filledTable) return { ok: false, error: 'This seat has already finished the set.' };
     if (!player.turnDrawn) return { ok: false, error: 'Mandatory draw has not resolved for this turn.' };
-
     let actionResult = { ok: true };
     if (normalizedAction === 'play-side-card') actionResult = applySeatSideCard(session, state, seat, player, String(payload.cardInstanceId || payload.cardId || ''), payload.choice || {});
     else if (normalizedAction === 'stand') actionResult = applySeatStand(session, state, seat, player, null, payload);
     else if (normalizedAction === 'end-turn') actionResult = applySeatEndTurn(session, state, seat, player, null, payload);
     else return { ok: false, error: 'Unknown Pazaak action.' };
     if (!actionResult.ok) return actionResult;
-
     const processedAutomated = await processAutomatedTurns(session, state);
     const workingSession = processedAutomated.session || session;
     const updatedStatus = state.phase === 'complete' ? 'complete' : 'active';
     let updated = await persistPazaakSession(workingSession, state, updatedStatus, sessionLogEntry(`pazaak-${normalizedAction}`, seat.recipientId || seat.seatId, { seatId: seat.seatId }));
-    if (updatedStatus === 'complete' && GameCreditEscrowService.isCreditWager(updated)) {
-      const settled = await GameCreditEscrowService.settleSession(updated, { winnerSeatId: state.winnerSeatId, reason: `${seatLabel(updated, state.winnerSeatId)} wins ${updated.title || 'Pazaak'}` });
-      updated = settled.session || updated;
-    }
+    if (updatedStatus === 'complete' && GameCreditEscrowService.isCreditWager(updated)) updated = (await GameCreditEscrowService.settleSession(updated, { winnerSeatId: state.winnerSeatId, reason: `${seatLabel(updated, state.winnerSeatId)} wins ${updated.title || 'Pazaak'}` })).session || updated;
     GameNotificationService.emitSessionUpdated(updated, { pazaakPhase: updated.gameState?.phase, action: `pazaak-${normalizedAction}` });
     return { ok: true, session: updated };
   }
