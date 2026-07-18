@@ -60,9 +60,10 @@ function choicesForCard(card = {}) {
 
 function bestSidePlay(player = {}, aiProfile = {}) {
   const currentScore = scorePazaakPlayer(player);
-  if (currentScore > PAZAAK_TARGET || player.sideCardPlayedThisTurn) return null;
+  if (player.sideCardPlayedThisTurn) return null;
   const difficulty = PAZAAK_AI_DIFFICULTIES[aiProfile.difficulty] || PAZAAK_AI_DIFFICULTIES.medium;
   const fairness = PAZAAK_AI_FAIRNESS[aiProfile.fairness] || PAZAAK_AI_FAIRNESS.fair;
+  const mustRepair = currentScore > PAZAAK_TARGET;
   let best = null;
 
   for (const card of Array.isArray(player.hand) ? player.hand : []) {
@@ -76,10 +77,11 @@ function bestSidePlay(player = {}, aiProfile = {}) {
       const isRare = ['tiebreaker', 'double', 'flip', 'plusMinusRange'].includes(card.type);
       const conserveMod = getPazaakPersonalityModifier(aiProfile.personality, 'conserveCards', 0);
       const exactTwentyBias = getPazaakPersonalityModifier(aiProfile.personality, 'exactTwentyBias', 0);
-      const conservationPenalty = isRare ? Math.max(0, difficulty.conserveCards + (conserveMod * 0.18)) : 0;
+      const conservationPenalty = mustRepair ? 0 : (isRare ? Math.max(0, difficulty.conserveCards + (conserveMod * 0.18)) : 0);
       const exactTwentyBonus = score === PAZAAK_TARGET ? exactTwentyBias * 0.4 : 0;
       const houseEdgeBonus = fairness.houseEdge && score >= 19 ? 0.35 : 0;
-      const candidate = { card, choice, score, gain, rating: (score * 2) + gain - conservationPenalty + houseEdgeBonus + exactTwentyBonus - distance };
+      const repairBonus = mustRepair ? 50 : 0;
+      const candidate = { card, choice, score, gain, rating: repairBonus + (score * 2) + gain - conservationPenalty + houseEdgeBonus + exactTwentyBonus - distance };
       if (!best || candidate.rating > best.rating) best = candidate;
     }
   }
@@ -102,12 +104,15 @@ export class PazaakAi {
     const difficulty = PAZAAK_AI_DIFFICULTIES[profile.difficulty] || PAZAAK_AI_DIFFICULTIES.medium;
     const fairness = PAZAAK_AI_FAIRNESS[profile.fairness] || PAZAAK_AI_FAIRNESS.fair;
     const score = scorePazaakPlayer(player);
+    const best = bestSidePlay(player, profile);
 
-    if (score > PAZAAK_TARGET) return { type: 'end-turn', forcedBust: true };
+    if (score > PAZAAK_TARGET) {
+      if (best) return { type: 'play-side-card', cardInstanceId: best.card.instanceId, choice: best.choice, repairBustRisk: true };
+      return { type: 'end-turn', forcedBust: true };
+    }
     if (score === PAZAAK_TARGET) return { type: 'stand', exactTwenty: true };
     if (player.sideCardPlayedThisTurn) return { type: 'end-turn', actionSpent: true };
 
-    const best = bestSidePlay(player, profile);
     const standMod = getPazaakPersonalityModifier(profile.personality, 'standThreshold', 0);
     const riskMod = getPazaakPersonalityModifier(profile.personality, 'riskTolerance', 0);
     let standAt = (fairness.houseEdge ? Math.max(18, difficulty.standAt) : difficulty.standAt) + standMod;
