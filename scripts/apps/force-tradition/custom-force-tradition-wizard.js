@@ -2,6 +2,7 @@ import { SWSEDialogV2 } from '/systems/foundryvtt-swse/scripts/apps/dialogs/swse
 import { ActorEngine } from '/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js';
 import { TalentTreeDB } from '/systems/foundryvtt-swse/scripts/data/talent-tree-db.js';
 import { openCustomTalentTreeWorkbench } from '/systems/foundryvtt-swse/scripts/apps/talent-tree-workbench/custom-talent-tree-workbench.js';
+import { customContentApprovalNotice, getCustomContentApprovalState } from '/systems/foundryvtt-swse/scripts/settings/custom-content-approval.js';
 
 /**
  * Custom Force Tradition Wizard
@@ -247,8 +248,6 @@ function wizardValue(root) {
     philosophy: background,
     grantedTalentTrees: selectedTreeIds(root),
     customTalents: customTalentValues(root),
-    gmApproved: true,
-    active: true,
     adopted: true,
     createdAt: Date.now(),
     updatedAt: Date.now()
@@ -265,7 +264,7 @@ function appendCustomTreeSelection(wizard, tree) {
   wrapper.className = 'swse-custom-tradition-wizard__custom-tree-pill';
   wrapper.dataset.customTreeId = tree.id;
   wrapper.innerHTML = `
-    <span><strong>${escapeHtml(tree.name)}</strong><small>${escapeHtml(tree.treeType || 'custom')}</small></span>
+    <span><strong>${escapeHtml(tree.name)}</strong><small>${escapeHtml(tree.treeType || 'custom')} · ${escapeHtml(tree.approvalStatus || 'approved')}</small></span>
     <span>Attached</span>
     <input type="checkbox" name="grantedTalentTrees" value="${escapeHtml(value)}" checked hidden>`;
   list?.appendChild(wrapper);
@@ -372,15 +371,17 @@ export async function openCustomForceTraditionWizard(actor, { renderSheet = null
     return null;
   }
 
-  const existing = existingCustomTraditions(actor).filter(entry => entry.id !== result.id);
-  const customTraditions = [...existing, result];
+  const approval = getCustomContentApprovalState('custom-force-tradition', result);
+  const savedTradition = { ...result, ...approval };
+  const existing = existingCustomTraditions(actor).filter(entry => entry.id !== savedTradition.id);
+  const customTraditions = [...existing, savedTradition];
   const currentMemberships = [
     ...asArray(actor?.system?.forceTraditions),
     ...asArray(actor?.system?.progression?.forceTraditions),
     ...asArray(actor?.flags?.['foundryvtt-swse']?.forceTraditions),
     ...asArray(actor?.flags?.swse?.forceTraditions),
   ].map(value => typeof value === 'object' ? (value.value || value.id || value.name) : value).filter(Boolean);
-  const memberships = Array.from(new Set([...currentMemberships, result.value]));
+  const memberships = Array.from(new Set([...currentMemberships, savedTradition.value]));
 
   await ActorEngine.updateActor(actor, {
     'system.customForceTraditions': customTraditions,
@@ -392,13 +393,13 @@ export async function openCustomForceTraditionWizard(actor, { renderSheet = null
     'flags.swse.customForceTraditions': customTraditions,
     'flags.swse.forceTraditions': memberships,
   }, {
-    meta: { guardKey: `custom-force-tradition-${result.id}` },
+    meta: { guardKey: `custom-force-tradition-${savedTradition.id}` },
     source: 'custom-force-tradition-wizard'
   });
 
-  ui.notifications?.info?.(`Created custom Force tradition: ${result.name}.`);
+  ui.notifications?.info?.(`Created custom Force tradition: ${savedTradition.name} (${customContentApprovalNotice(savedTradition)}).`);
   if (typeof renderSheet === 'function') renderSheet();
-  return result;
+  return savedTradition;
 }
 
 export function getCustomForceTraditions(actor) {
