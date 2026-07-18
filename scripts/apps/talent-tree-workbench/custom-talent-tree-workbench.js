@@ -13,8 +13,8 @@ import { createSafeEmbeddedItem } from '/systems/foundryvtt-swse/scripts/engine/
 /**
  * Custom Talent Tree Workbench
  *
- * Phase 4 shell + existing-tree importer + blank custom talent creation. The
- * workbench owns metadata and graph state; the importer reuses TalentTreeDB,
+ * Phase 7 shell + importer + custom talent creation + drag/drop interaction.
+ * The workbench owns metadata and graph state; the importer reuses TalentTreeDB,
  * membership authority, and the existing dependency graph builder.
  */
 
@@ -52,6 +52,8 @@ function ensureWorkbenchStyles() {
     .swse-custom-tree-node-prompt textarea { min-height: 96px; resize: vertical; }
     .swse-custom-tree-workbench__graph { position: relative; min-height: 480px; overflow: hidden; background: radial-gradient(circle at 50% 40%, rgba(0, 217, 255, 0.10), transparent 38%), linear-gradient(90deg, rgba(0, 170, 255, 0.08) 1px, transparent 1px), linear-gradient(0deg, rgba(0, 170, 255, 0.08) 1px, transparent 1px); background-size: auto, 48px 48px, 48px 48px; }
     .swse-custom-tree-workbench__graph::after { content: ''; position: absolute; inset: 0; pointer-events: none; box-shadow: inset 0 0 70px rgba(0, 0, 0, 0.54); }
+    .swse-custom-tree-workbench__graph.is-drag-over { outline: 2px dashed rgba(0, 255, 136, 0.72); outline-offset: -8px; box-shadow: inset 0 0 42px rgba(0, 255, 136, 0.16); }
+    .swse-custom-tree-workbench__drop-hint { position: absolute; right: 14px; top: 14px; z-index: 2; border: 1px solid rgba(0, 255, 136, 0.35); border-radius: 999px; padding: 6px 10px; background: rgba(0, 0, 0, 0.42); color: var(--swse-success, #00ff88); font-family: var(--swse-font-mono, ui-monospace, monospace); font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; pointer-events: none; }
     .swse-custom-tree-workbench__toolbar { position: absolute; top: 12px; left: 12px; z-index: 2; display: flex; gap: 8px; }
     .swse-custom-tree-workbench__tool { font-family: var(--swse-font-orbit, Orbitron, system-ui, sans-serif); font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; padding: 8px 13px; border-radius: 6px; cursor: pointer; border: 1px solid rgba(0, 170, 255, 0.36); background: rgba(10,16,26,.85); color: var(--swse-force-picker-text-light, #b5daff); }
     .swse-custom-tree-workbench__tool--primary { background: linear-gradient(135deg, var(--swse-success, #00ff88), var(--swse-secondary, #0af)); color: #071522; border-color: var(--swse-success, #00ff88); }
@@ -61,7 +63,8 @@ function ensureWorkbenchStyles() {
     .swse-custom-tree-workbench__plus-node span { font-family: var(--swse-font-mono, ui-monospace, monospace); font-size: 11px; letter-spacing: 0.10em; text-transform: uppercase; }
     .swse-custom-tree-workbench__node-count { color: var(--swse-force-picker-text-muted, rgba(181,218,255,0.5)); font-size: 10px; }
     .swse-custom-tree-workbench__node-list { position: relative; z-index: 1; display: flex; flex-wrap: wrap; gap: 16px; align-content: flex-start; padding: 70px 18px 18px; }
-    .swse-custom-tree-workbench__node-card { width: 172px; min-height: 110px; border: 1px solid rgba(0, 217, 255, 0.32); border-radius: 14px; background: rgba(8, 20, 34, 0.82); padding: 12px; box-shadow: 0 0 16px rgba(0, 217, 255, 0.10); }
+    .swse-custom-tree-workbench__node-card { width: 172px; min-height: 110px; border: 1px solid rgba(0, 217, 255, 0.32); border-radius: 14px; background: rgba(8, 20, 34, 0.82); padding: 12px; box-shadow: 0 0 16px rgba(0, 217, 255, 0.10); cursor: pointer; }
+    .swse-custom-tree-workbench__node-card:hover { border-color: rgba(0, 255, 136, 0.50); box-shadow: 0 0 18px rgba(0, 255, 136, 0.16); }
     .swse-custom-tree-workbench__node-card[data-source-type="custom"] { border-color: rgba(172, 130, 255, 0.46); box-shadow: 0 0 16px rgba(172, 130, 255, 0.12); }
     .swse-custom-tree-workbench__node-card strong { display: block; color: var(--swse-force-picker-text-light, #b5daff); font-size: 12px; }
     .swse-custom-tree-workbench__node-card small { display: block; margin-top: 5px; color: var(--swse-force-picker-text-secondary, #6a9dcd); font-size: 10px; line-height: 1.35; }
@@ -105,8 +108,10 @@ function option(value, label, selected) {
 
 function graphHtml(tree) {
   const nodes = Array.isArray(tree.nodes) ? tree.nodes : [];
+  const dropHint = '<span class="swse-custom-tree-workbench__drop-hint">Drop talent items here</span>';
   if (!nodes.length) {
     return `
+      ${dropHint}
       <div class="swse-custom-tree-workbench__toolbar">
         <button type="button" class="swse-custom-tree-workbench__tool swse-custom-tree-workbench__tool--primary" data-action="custom-tree-add-talent">+ Add Talent</button>
       </div>
@@ -114,17 +119,18 @@ function graphHtml(tree) {
         <button type="button" class="swse-custom-tree-workbench__plus-node" data-action="custom-tree-add-talent">
           <strong>+</strong>
           <span>Add Talent</span>
-          <small>Import or create</small>
+          <small>Import, create, or drop</small>
         </button>
       </div>`;
   }
   return `
+    ${dropHint}
     <div class="swse-custom-tree-workbench__toolbar">
       <button type="button" class="swse-custom-tree-workbench__tool swse-custom-tree-workbench__tool--primary" data-action="custom-tree-add-talent">+ Add Talent</button>
     </div>
     <div class="swse-custom-tree-workbench__node-list">
       ${nodes.map(node => `
-        <article class="swse-custom-tree-workbench__node-card" data-node-id="${escapeHtml(node.nodeId)}" data-source-type="${escapeHtml(node.sourceType || 'custom')}">
+        <article class="swse-custom-tree-workbench__node-card" data-node-id="${escapeHtml(node.nodeId)}" data-source-type="${escapeHtml(node.sourceType || 'custom')}" title="Open source talent">
           <strong>${escapeHtml(node.name)}</strong>
           <small>${escapeHtml(node.sourceTreeName || node.sourceType || 'custom')} · ${escapeHtml(node.importMode || 'custom')}</small>
           ${node.prerequisiteText ? `<em>Prereq: ${escapeHtml(node.prerequisiteText)}</em>` : ''}
@@ -145,7 +151,7 @@ function buildWorkbenchHtml(tree, context = {}) {
       <header class="swse-custom-tree-workbench__header">
         <div>
           <h2>Custom Talent Tree Workbench</h2>
-          <p>Edit the custom tree container, import existing talents, or create blank custom talent nodes for separate editing.</p>
+          <p>Edit the custom tree container, import existing talents, create blank custom talent nodes, or drop talent items directly into the graph.</p>
         </div>
         <span class="swse-custom-tree-workbench__badge">${escapeHtml(approval)}</span>
       </header>
@@ -183,7 +189,7 @@ function buildWorkbenchHtml(tree, context = {}) {
               <input type="text" name="id" value="${escapeHtml(tree.id || '')}" placeholder="auto-generated-from-name">
             </label>
           </div>
-          <p class="swse-custom-tree-workbench__phase-note">Phase 4 can import existing talents, import prerequisite chains, or create blank custom talent nodes. Pending player-created trees and custom talents do not grant access until GM approved.</p>
+          <p class="swse-custom-tree-workbench__phase-note">Phase 7 accepts dropped talent items from actors or compendiums. Pending player-created trees and custom talents do not grant access until GM approved.</p>
         </aside>
         <main class="swse-custom-tree-workbench__panel">
           <div class="swse-custom-tree-workbench__panel-title">
@@ -207,7 +213,7 @@ function renderGraph(root, tree, actor = null) {
   const count = root.querySelector?.('[data-node-count]');
   if (graph) graph.innerHTML = graphHtml(tree);
   if (count) count.textContent = `${Number(tree.nodes?.length || 0)} Nodes`;
-  bindAddTalentButtons(root, tree, actor);
+  bindGraphInteractions(root, tree, actor);
 }
 
 function edgeKey(edge = {}) {
@@ -377,6 +383,40 @@ function nodeFromCustomTalentItem(item, tree = {}) {
   };
 }
 
+function nodeFromDroppedTalentDocument(item, tree = {}) {
+  if (!item || item.type !== 'talent') return null;
+  const system = item.system || {};
+  const name = String(item.name || 'Dropped Talent').trim();
+  const sourceType = system.isCustom === true || item.parent?.documentName === 'Actor' ? 'custom' : 'official';
+  const treeLabel = system.talentTree || system.tree || system.talent_tree || tree.name || 'Dropped Talent';
+  const nodeId = slugifyCustomTalentTree(item.id || item.uuid || name);
+  return {
+    nodeId,
+    talentId: item.id || nodeId,
+    name,
+    sourceType,
+    sourceTreeId: system.talentTreeId || system.customTreeId || tree.id || null,
+    sourceTreeName: treeLabel,
+    sourceTalentId: item.id || null,
+    sourceName: system.source || item.pack || 'Dropped Talent',
+    uuid: item.uuid || null,
+    importMode: sourceType === 'custom' ? 'custom' : 'reference',
+    prerequisiteText: system.prerequisites || system.prerequisite || '',
+    prerequisites: [],
+    description: system.benefit || system.description || '',
+    x: null,
+    y: null,
+    customTalent: sourceType === 'custom' ? {
+      actorId: item.actor?.id || item.parent?.id || null,
+      itemId: item.id || null,
+      uuid: item.uuid || null,
+      editable: true
+    } : null,
+    approvalStatus: system.approvalStatus || null,
+    gmApproved: system.gmApproved ?? null
+  };
+}
+
 async function createCustomTalentNodePayload(actor, tree) {
   if (!actor?.isOwner) {
     ui?.notifications?.warn?.('You do not have permission to create a custom talent on this actor.');
@@ -421,6 +461,102 @@ async function resolveAddTalentPayload(actor, tree) {
   return openExistingTalentImportDialog(tree);
 }
 
+async function documentFromDropEvent(event) {
+  let data = null;
+  try {
+    data = TextEditor?.getDragEventData?.(event) || null;
+  } catch (_err) {
+    data = null;
+  }
+  if (!data) {
+    try { data = JSON.parse(event.dataTransfer?.getData('text/plain') || '{}'); }
+    catch (_err) { data = null; }
+  }
+  const uuid = data?.uuid || data?.documentUuid || null;
+  if (uuid && typeof fromUuid === 'function') return fromUuid(uuid);
+  if (data?.type === 'Item' && data?.id && data?.actorId) return game.actors?.get?.(data.actorId)?.items?.get?.(data.id) || null;
+  if (data?.type === 'Item' && data?.id) return game.items?.get?.(data.id) || null;
+  return null;
+}
+
+async function payloadFromDroppedTalent(event, tree) {
+  const item = await documentFromDropEvent(event);
+  if (!item || item.documentName !== 'Item' || item.type !== 'talent') {
+    ui?.notifications?.warn?.('Drop a talent item from an actor, item directory, or compendium.');
+    return null;
+  }
+  const node = nodeFromDroppedTalentDocument(item, tree);
+  if (!node) return null;
+  return {
+    nodes: [node],
+    edges: [],
+    selectedNodeId: node.nodeId,
+    selectedName: node.name,
+    importMode: node.importMode,
+    prerequisiteMode: 'drop',
+    importedNodeIds: [node.nodeId]
+  };
+}
+
+async function openNodeSource(node, actor = null) {
+  if (!node) return false;
+  let document = null;
+  if (node.uuid && typeof fromUuid === 'function') document = await fromUuid(node.uuid);
+  if (!document && node.customTalent?.itemId && actor?.items?.get) document = actor.items.get(node.customTalent.itemId);
+  if (!document && node.talentId && actor?.items?.get) document = actor.items.get(node.talentId);
+  if (!document?.sheet?.render) {
+    ui?.notifications?.info?.('This node has no editable source document yet.');
+    return false;
+  }
+  document.sheet.render(true);
+  return true;
+}
+
+function bindNodeCards(root, tree, actor = null) {
+  root.querySelectorAll('.swse-custom-tree-workbench__node-card').forEach(card => {
+    if (card.dataset.bound === 'true') return;
+    card.dataset.bound = 'true';
+    card.addEventListener('click', async event => {
+      event.preventDefault();
+      const node = (tree.nodes || []).find(entry => entry.nodeId === card.dataset.nodeId);
+      await openNodeSource(node, actor);
+    });
+  });
+}
+
+function bindDropTarget(root, tree, actor = null) {
+  const graph = root.querySelector?.('[data-custom-tree-graph]');
+  if (!graph || graph.dataset.dropBound === 'true') return;
+  graph.dataset.dropBound = 'true';
+  graph.addEventListener('dragover', event => {
+    event.preventDefault();
+    event.dataTransfer.dropEffect = 'copy';
+    graph.classList.add('is-drag-over');
+  });
+  graph.addEventListener('dragleave', event => {
+    if (!graph.contains(event.relatedTarget)) graph.classList.remove('is-drag-over');
+  });
+  graph.addEventListener('drop', async event => {
+    event.preventDefault();
+    graph.classList.remove('is-drag-over');
+    const payload = await payloadFromDroppedTalent(event, tree);
+    if (!payload) return;
+    const result = pushImportedPayload(tree, payload);
+    if (!result.added) {
+      ui?.notifications?.warn?.('That talent is already in this custom tree.');
+      return;
+    }
+    renderGraph(root, tree, actor);
+    ui?.notifications?.info?.(`Added ${payload.selectedName} from drop to the custom tree.`);
+  });
+}
+
+function bindGraphInteractions(root, tree, actor = null) {
+  bindAddTalentButtons(root, tree, actor);
+  bindNodeCards(root, tree, actor);
+  bindDropTarget(root, tree, actor);
+}
+
 function bindAddTalentButtons(root, tree, actor = null) {
   root.querySelectorAll('[data-action="custom-tree-add-talent"]').forEach(button => {
     if (button.dataset.bound === 'true') return;
@@ -448,7 +584,7 @@ function bindWorkbench(html, tree, actor = null) {
   const workbench = root.querySelector?.('[data-custom-tree-workbench]');
   if (!workbench || workbench.dataset.bound === 'true') return;
   workbench.dataset.bound = 'true';
-  bindAddTalentButtons(root, tree, actor);
+  bindGraphInteractions(root, tree, actor);
 }
 
 function treeFromForm(html, original = {}, context = {}) {
