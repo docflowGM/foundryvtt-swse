@@ -28,6 +28,14 @@ const TREE_TYPES = Object.freeze({
   GENERIC: 'generic'
 });
 
+const GRAPH_CARD_WIDTH = 196;
+const GRAPH_CARD_HEIGHT = 150;
+const GRAPH_GAP_X = 16;
+const GRAPH_GAP_Y = 22;
+const GRAPH_LEFT = 18;
+const GRAPH_TOP = 96;
+const GRAPH_COLUMNS = 3;
+
 function ensureWorkbenchStyles() {
   if (document.getElementById(STYLE_ID)) return;
   const style = document.createElement('style');
@@ -38,6 +46,7 @@ function ensureWorkbenchStyles() {
     .swse-custom-tree-workbench__header h2 { margin: 0 0 4px; color: var(--swse-force-picker-accent, #00d9ff); font-family: var(--swse-font-orbit, Orbitron, system-ui, sans-serif); font-size: 18px; }
     .swse-custom-tree-workbench__header p { margin: 0; color: var(--swse-force-picker-text-secondary, #6a9dcd); font-size: 12px; line-height: 1.45; }
     .swse-custom-tree-workbench__badge { flex: 0 0 auto; border: 1px solid rgba(172, 130, 255, 0.44); background: rgba(172, 130, 255, 0.10); color: #d7c2ff; border-radius: 999px; padding: 5px 9px; font-family: var(--swse-font-mono, ui-monospace, monospace); font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; }
+    .swse-custom-tree-workbench.is-dirty .swse-custom-tree-workbench__badge { border-color: rgba(255, 214, 107, 0.58); color: var(--swse-warning, #ffd66b); background: rgba(255, 214, 107, 0.10); }
     .swse-custom-tree-workbench__body { display: grid; grid-template-columns: 310px minmax(0, 1fr); gap: 14px; padding: 14px 18px 18px; min-height: 520px; }
     .swse-custom-tree-workbench__panel { border: 1px solid rgba(0, 170, 255, 0.20); border-radius: 10px; background: rgba(2, 9, 18, 0.50); box-shadow: inset 0 0 22px rgba(0, 170, 255, 0.06); overflow: hidden; }
     .swse-custom-tree-workbench__panel-title { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 10px 12px; border-bottom: 1px solid rgba(0, 170, 255, 0.18); color: var(--swse-force-picker-primary, #9ed0ff); font-family: var(--swse-font-mono, ui-monospace, monospace); font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; }
@@ -50,11 +59,11 @@ function ensureWorkbenchStyles() {
     .swse-custom-tree-node-prompt input,
     .swse-custom-tree-node-prompt textarea { width: 100%; box-sizing: border-box; border: 1px solid rgba(0, 170, 255, 0.28); border-radius: 6px; background: rgba(3, 10, 20, 0.72); color: var(--swse-force-picker-text-light, #b5daff); padding: 8px 10px; outline: none; }
     .swse-custom-tree-workbench__field textarea, .swse-custom-tree-node-prompt textarea { min-height: 96px; resize: vertical; }
-    .swse-custom-tree-workbench__graph { position: relative; min-height: 480px; overflow: hidden; background: radial-gradient(circle at 50% 40%, rgba(0, 217, 255, 0.10), transparent 38%), linear-gradient(90deg, rgba(0, 170, 255, 0.08) 1px, transparent 1px), linear-gradient(0deg, rgba(0, 170, 255, 0.08) 1px, transparent 1px); background-size: auto, 48px 48px, 48px 48px; }
+    .swse-custom-tree-workbench__graph { position: relative; min-height: 520px; overflow: auto; background: radial-gradient(circle at 50% 40%, rgba(0, 217, 255, 0.10), transparent 38%), linear-gradient(90deg, rgba(0, 170, 255, 0.08) 1px, transparent 1px), linear-gradient(0deg, rgba(0, 170, 255, 0.08) 1px, transparent 1px); background-size: auto, 48px 48px, 48px 48px; }
     .swse-custom-tree-workbench__graph::after { content: ''; position: absolute; inset: 0; pointer-events: none; box-shadow: inset 0 0 70px rgba(0, 0, 0, 0.54); }
     .swse-custom-tree-workbench__graph.is-drag-over { outline: 2px dashed rgba(0, 255, 136, 0.72); outline-offset: -8px; box-shadow: inset 0 0 42px rgba(0, 255, 136, 0.16); }
-    .swse-custom-tree-workbench__drop-hint { position: absolute; right: 14px; top: 14px; z-index: 2; border: 1px solid rgba(0, 255, 136, 0.35); border-radius: 999px; padding: 6px 10px; background: rgba(0, 0, 0, 0.42); color: var(--swse-success, #00ff88); font-family: var(--swse-font-mono, ui-monospace, monospace); font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; pointer-events: none; }
-    .swse-custom-tree-workbench__toolbar { position: absolute; top: 12px; left: 12px; z-index: 2; display: flex; gap: 8px; }
+    .swse-custom-tree-workbench__drop-hint { position: absolute; right: 14px; top: 14px; z-index: 4; border: 1px solid rgba(0, 255, 136, 0.35); border-radius: 999px; padding: 6px 10px; background: rgba(0, 0, 0, 0.42); color: var(--swse-success, #00ff88); font-family: var(--swse-font-mono, ui-monospace, monospace); font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; pointer-events: none; }
+    .swse-custom-tree-workbench__toolbar { position: absolute; top: 12px; left: 12px; z-index: 4; display: flex; gap: 8px; }
     .swse-custom-tree-workbench__tool, .swse-custom-tree-workbench__node-action { font-family: var(--swse-font-orbit, Orbitron, system-ui, sans-serif); font-size: 10px; letter-spacing: 0.04em; text-transform: uppercase; padding: 6px 9px; border-radius: 6px; cursor: pointer; border: 1px solid rgba(0, 170, 255, 0.36); background: rgba(10,16,26,.85); color: var(--swse-force-picker-text-light, #b5daff); }
     .swse-custom-tree-workbench__tool { font-size: 11px; letter-spacing: 0.06em; padding: 8px 13px; }
     .swse-custom-tree-workbench__tool--primary, .swse-custom-tree-workbench__node-action--primary { background: linear-gradient(135deg, var(--swse-success, #00ff88), var(--swse-secondary, #0af)); color: #071522; border-color: var(--swse-success, #00ff88); }
@@ -64,14 +73,22 @@ function ensureWorkbenchStyles() {
     .swse-custom-tree-workbench__plus-node strong { font-size: 48px; line-height: 1; color: var(--swse-success, #00ff88); text-shadow: 0 0 16px rgba(0, 255, 136, 0.55); }
     .swse-custom-tree-workbench__plus-node span { font-family: var(--swse-font-mono, ui-monospace, monospace); font-size: 11px; letter-spacing: 0.10em; text-transform: uppercase; }
     .swse-custom-tree-workbench__node-count { color: var(--swse-force-picker-text-muted, rgba(181,218,255,0.5)); font-size: 10px; }
-    .swse-custom-tree-workbench__node-list { position: relative; z-index: 1; display: flex; flex-wrap: wrap; gap: 16px; align-content: flex-start; padding: 70px 18px 18px; }
-    .swse-custom-tree-workbench__node-card { width: 196px; min-height: 132px; border: 1px solid rgba(0, 217, 255, 0.32); border-radius: 14px; background: rgba(8, 20, 34, 0.82); padding: 12px; box-shadow: 0 0 16px rgba(0, 217, 255, 0.10); cursor: default; }
+    .swse-custom-tree-workbench__graph-status { position: absolute; left: 12px; right: 12px; top: 48px; z-index: 4; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+    .swse-custom-tree-workbench__status-chip { border: 1px solid rgba(0,170,255,.24); background: rgba(0,0,0,.28); color: var(--swse-force-picker-text-secondary, #6a9dcd); border-radius: 999px; padding: 4px 8px; font-family: var(--swse-font-mono, ui-monospace, monospace); font-size: 9.5px; letter-spacing: .04em; }
+    .swse-custom-tree-workbench__status-chip--dirty { border-color: rgba(255,214,107,.42); color: var(--swse-warning, #ffd66b); }
+    .swse-custom-tree-workbench__status-chip--custom { border-color: rgba(172,130,255,.42); color: #d7c2ff; }
+    .swse-custom-tree-workbench__edge-layer { position: absolute; inset: 0; z-index: 1; min-width: 680px; pointer-events: none; overflow: visible; }
+    .swse-custom-tree-workbench__edge-layer path { fill: none; stroke: rgba(0, 217, 255, 0.44); stroke-width: 2; stroke-linecap: round; stroke-dasharray: 7 5; filter: drop-shadow(0 0 6px rgba(0,217,255,.35)); }
+    .swse-custom-tree-workbench__edge-layer marker path { fill: rgba(0, 217, 255, 0.64); stroke: none; filter: none; }
+    .swse-custom-tree-workbench__node-list { position: relative; z-index: 2; min-width: 680px; min-height: 360px; padding: 96px 18px 120px; }
+    .swse-custom-tree-workbench__node-card { position: absolute; width: 196px; min-height: 132px; border: 1px solid rgba(0, 217, 255, 0.32); border-radius: 14px; background: rgba(8, 20, 34, 0.92); padding: 12px; box-shadow: 0 0 16px rgba(0, 217, 255, 0.10); cursor: default; }
     .swse-custom-tree-workbench__node-card:hover { border-color: rgba(0, 255, 136, 0.50); box-shadow: 0 0 18px rgba(0, 255, 136, 0.16); }
     .swse-custom-tree-workbench__node-card[data-source-type="custom"] { border-color: rgba(172, 130, 255, 0.46); box-shadow: 0 0 16px rgba(172, 130, 255, 0.12); }
     .swse-custom-tree-workbench__node-card strong { display: block; color: var(--swse-force-picker-text-light, #b5daff); font-size: 12px; }
     .swse-custom-tree-workbench__node-card small { display: block; margin-top: 5px; color: var(--swse-force-picker-text-secondary, #6a9dcd); font-size: 10px; line-height: 1.35; }
     .swse-custom-tree-workbench__node-card em { display: block; margin-top: 6px; color: var(--swse-warning, #ffd66b); font-style: normal; font-size: 9.5px; }
     .swse-custom-tree-workbench__node-actions { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+    .swse-custom-tree-workbench__graph-plus { position: absolute; z-index: 3; width: 166px; height: 166px; }
     .swse-custom-tree-workbench__phase-note { padding: 10px 12px; color: var(--swse-force-picker-text-secondary, #6a9dcd); font-size: 11px; line-height: 1.45; border-top: 1px solid rgba(0, 170, 255, 0.16); }
     .swse-custom-tree-importer__hint { margin: 0 0 12px; color: var(--swse-force-picker-text-secondary, #6a9dcd); font-size: 12px; line-height: 1.45; }
     .swse-custom-tree-importer__layout { display: grid; grid-template-columns: 220px 1fr; gap: 0; border: 1px solid rgba(0,170,255,.2); border-radius: 8px; overflow: hidden; min-height: 430px; }
@@ -112,10 +129,79 @@ function nodeHasEffectPath(node = {}) {
   return node.sourceType === 'custom' || !!node.customTalent?.itemId || !!node.customTalent?.uuid;
 }
 
-function nodeCardHtml(node) {
-  const canOpenEffects = nodeHasEffectPath(node);
+function graphPositionForIndex(index = 0) {
+  const col = index % GRAPH_COLUMNS;
+  const row = Math.floor(index / GRAPH_COLUMNS);
+  const left = GRAPH_LEFT + (col * (GRAPH_CARD_WIDTH + GRAPH_GAP_X));
+  const top = GRAPH_TOP + (row * (GRAPH_CARD_HEIGHT + GRAPH_GAP_Y));
+  return {
+    left,
+    top,
+    centerX: left + (GRAPH_CARD_WIDTH / 2),
+    centerY: top + (GRAPH_CARD_HEIGHT / 2)
+  };
+}
+
+function graphNodeIndex(nodes = []) {
+  return new Map(nodes.map((node, index) => [node.nodeId, index]));
+}
+
+function graphSize(nodes = []) {
+  const rows = Math.max(1, Math.ceil(nodes.length / GRAPH_COLUMNS));
+  return {
+    width: Math.max(760, GRAPH_LEFT + (GRAPH_COLUMNS * GRAPH_CARD_WIDTH) + ((GRAPH_COLUMNS - 1) * GRAPH_GAP_X) + 80),
+    height: Math.max(520, GRAPH_TOP + (rows * GRAPH_CARD_HEIGHT) + ((rows - 1) * GRAPH_GAP_Y) + 120)
+  };
+}
+
+function edgeLayerHtml(tree = {}) {
+  const nodes = Array.isArray(tree.nodes) ? tree.nodes : [];
+  const edges = Array.isArray(tree.edges) ? tree.edges : [];
+  if (!nodes.length || !edges.length) return '';
+  const indexes = graphNodeIndex(nodes);
+  const { width, height } = graphSize(nodes);
+  const paths = edges.map(edge => {
+    const fromIndex = indexes.get(edge.from);
+    const toIndex = indexes.get(edge.to);
+    if (fromIndex === undefined || toIndex === undefined) return '';
+    const from = graphPositionForIndex(fromIndex);
+    const to = graphPositionForIndex(toIndex);
+    const c1x = from.centerX + 60;
+    const c2x = to.centerX - 60;
+    return `<path d="M ${from.centerX} ${from.centerY} C ${c1x} ${from.centerY}, ${c2x} ${to.centerY}, ${to.centerX} ${to.centerY}" marker-end="url(#swse-custom-tree-arrow)"></path>`;
+  }).filter(Boolean).join('');
+  if (!paths) return '';
   return `
-    <article class="swse-custom-tree-workbench__node-card" data-node-id="${escapeHtml(node.nodeId)}" data-source-type="${escapeHtml(node.sourceType || 'custom')}">
+    <svg class="swse-custom-tree-workbench__edge-layer" viewBox="0 0 ${width} ${height}" aria-hidden="true">
+      <defs>
+        <marker id="swse-custom-tree-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+          <path d="M 0 0 L 10 5 L 0 10 z"></path>
+        </marker>
+      </defs>
+      ${paths}
+    </svg>`;
+}
+
+function graphStatusHtml(tree = {}) {
+  const nodes = Array.isArray(tree.nodes) ? tree.nodes : [];
+  const edges = Array.isArray(tree.edges) ? tree.edges : [];
+  const customNodes = nodes.filter(node => node.sourceType === 'custom').length;
+  const officialNodes = nodes.length - customNodes;
+  return `
+    <div class="swse-custom-tree-workbench__graph-status" data-custom-tree-graph-status>
+      <span class="swse-custom-tree-workbench__status-chip">${nodes.length} nodes</span>
+      <span class="swse-custom-tree-workbench__status-chip">${edges.length} prerequisite links</span>
+      <span class="swse-custom-tree-workbench__status-chip">${officialNodes} imported</span>
+      <span class="swse-custom-tree-workbench__status-chip swse-custom-tree-workbench__status-chip--custom">${customNodes} custom</span>
+      <span class="swse-custom-tree-workbench__status-chip swse-custom-tree-workbench__status-chip--dirty" data-draft-state>Draft clean</span>
+    </div>`;
+}
+
+function nodeCardHtml(node, index = 0) {
+  const canOpenEffects = nodeHasEffectPath(node);
+  const pos = graphPositionForIndex(index);
+  return `
+    <article class="swse-custom-tree-workbench__node-card" style="left:${pos.left}px; top:${pos.top}px;" data-node-id="${escapeHtml(node.nodeId)}" data-source-type="${escapeHtml(node.sourceType || 'custom')}">
       <strong>${escapeHtml(node.name)}</strong>
       <small>${escapeHtml(node.sourceTreeName || node.sourceType || 'custom')} · ${escapeHtml(node.importMode || 'custom')}</small>
       ${node.prerequisiteText ? `<em>Prereq: ${escapeHtml(node.prerequisiteText)}</em>` : ''}
@@ -137,6 +223,7 @@ function graphHtml(tree) {
       <div class="swse-custom-tree-workbench__toolbar">
         <button type="button" class="swse-custom-tree-workbench__tool swse-custom-tree-workbench__tool--primary" data-action="custom-tree-add-talent">+ Add Talent</button>
       </div>
+      ${graphStatusHtml(tree)}
       <div class="swse-custom-tree-workbench__empty-graph">
         <button type="button" class="swse-custom-tree-workbench__plus-node" data-action="custom-tree-add-talent">
           <strong>+</strong>
@@ -145,14 +232,19 @@ function graphHtml(tree) {
         </button>
       </div>`;
   }
+  const size = graphSize(nodes);
+  const plusIndex = nodes.length;
+  const plusPos = graphPositionForIndex(plusIndex);
   return `
     ${dropHint}
     <div class="swse-custom-tree-workbench__toolbar">
       <button type="button" class="swse-custom-tree-workbench__tool swse-custom-tree-workbench__tool--primary" data-action="custom-tree-add-talent">+ Add Talent</button>
     </div>
-    <div class="swse-custom-tree-workbench__node-list">
-      ${nodes.map(nodeCardHtml).join('')}
-      <button type="button" class="swse-custom-tree-workbench__plus-node" data-action="custom-tree-add-talent">
+    ${graphStatusHtml(tree)}
+    <div class="swse-custom-tree-workbench__node-list" style="min-width:${size.width}px; min-height:${size.height}px;">
+      ${edgeLayerHtml(tree)}
+      ${nodes.map((node, index) => nodeCardHtml(node, index)).join('')}
+      <button type="button" class="swse-custom-tree-workbench__plus-node swse-custom-tree-workbench__graph-plus" style="left:${plusPos.left}px; top:${plusPos.top}px;" data-action="custom-tree-add-talent">
         <strong>+</strong>
         <span>Add Talent</span>
       </button>
@@ -169,7 +261,7 @@ function buildWorkbenchHtml(tree, context = {}) {
           <h2>Custom Talent Tree Workbench</h2>
           <p>Edit the custom tree container, import existing talents, create blank custom talent nodes, wire effects, or drop talent items directly into the graph.</p>
         </div>
-        <span class="swse-custom-tree-workbench__badge">${escapeHtml(approval)}</span>
+        <span class="swse-custom-tree-workbench__badge" data-approval-badge>${escapeHtml(approval)}</span>
       </header>
       <section class="swse-custom-tree-workbench__body">
         <aside class="swse-custom-tree-workbench__panel">
@@ -190,7 +282,7 @@ function buildWorkbenchHtml(tree, context = {}) {
             <label class="swse-custom-tree-workbench__field"><span>Granted By Tradition</span><input type="text" name="grantedByTraditions" value="${escapeHtml(attached)}" placeholder="custom:order-of-the-shattered-lens"></label>
             <label class="swse-custom-tree-workbench__field"><span>Internal ID</span><input type="text" name="id" value="${escapeHtml(tree.id || '')}" placeholder="auto-generated-from-name"></label>
           </div>
-          <p class="swse-custom-tree-workbench__phase-note">Custom talent nodes can now open their source item or jump straight to the Effect Wizard. Removing a node affects this draft only until Save Tree is clicked.</p>
+          <p class="swse-custom-tree-workbench__phase-note">The graph now renders prerequisite links between imported chain nodes. The draft badge turns yellow whenever unsaved changes are made.</p>
         </aside>
         <main class="swse-custom-tree-workbench__panel">
           <div class="swse-custom-tree-workbench__panel-title"><span>Talent Graph</span><span>Editor Preview</span></div>
@@ -204,12 +296,26 @@ function rootFromHtml(html) {
   return html?.[0] || html?.element || (html instanceof HTMLElement ? html : document);
 }
 
-function renderGraph(root, tree, actor = null) {
+function updateDraftState(root, dirty) {
+  const workbench = root?.querySelector?.('[data-custom-tree-workbench]');
+  const draftState = root?.querySelector?.('[data-draft-state]');
+  const badge = root?.querySelector?.('[data-approval-badge]');
+  if (workbench) workbench.classList.toggle('is-dirty', !!dirty);
+  if (draftState) draftState.textContent = dirty ? 'Unsaved draft' : 'Draft clean';
+  if (badge && dirty) badge.textContent = 'unsaved';
+}
+
+function markDirty(root) {
+  updateDraftState(root, true);
+}
+
+function renderGraph(root, tree, actor = null, { dirty = true } = {}) {
   const graph = root.querySelector?.('[data-custom-tree-graph]');
   const count = root.querySelector?.('[data-node-count]');
   if (graph) graph.innerHTML = graphHtml(tree);
   if (count) count.textContent = `${Number(tree.nodes?.length || 0)} Nodes`;
   bindGraphInteractions(root, tree, actor);
+  updateDraftState(root, dirty);
 }
 
 function edgeKey(edge = {}) {
@@ -256,6 +362,15 @@ function removeNodeFromTree(tree, nodeId) {
   tree.edges = (tree.edges || []).filter(edge => edge.from !== id && edge.to !== id);
   tree.talentCount = tree.nodes.length;
   return tree.nodes.length !== before;
+}
+
+async function confirmRemoveNode(node) {
+  return SWSEDialogV2.confirm({
+    title: 'Remove Talent Node?',
+    content: `<p>Remove <strong>${escapeHtml(node?.name || 'this talent')}</strong> from this custom tree draft?</p><p>This does not delete the source item. Save the tree to persist the graph change.</p>`,
+    yes: 'Remove Node',
+    no: 'Cancel'
+  });
 }
 
 async function openAddTalentModeDialog() {
@@ -470,11 +585,14 @@ function bindNodeActions(root, tree, actor = null) {
   root.querySelectorAll('[data-action="custom-tree-remove-node"]').forEach(button => {
     if (button.dataset.bound === 'true') return;
     button.dataset.bound = 'true';
-    button.addEventListener('click', event => {
+    button.addEventListener('click', async event => {
       event.preventDefault();
       event.stopPropagation();
+      const node = (tree.nodes || []).find(entry => entry.nodeId === button.dataset.nodeId);
+      const confirmed = await confirmRemoveNode(node);
+      if (!confirmed) return;
       if (!removeNodeFromTree(tree, button.dataset.nodeId)) return;
-      renderGraph(root, tree, actor);
+      renderGraph(root, tree, actor, { dirty: true });
       ui?.notifications?.info?.('Removed node from this custom tree draft. Save Tree to persist the removal.');
     });
   });
@@ -493,7 +611,7 @@ function bindDropTarget(root, tree, actor = null) {
     if (!payload) return;
     const result = pushImportedPayload(tree, payload);
     if (!result.added) { ui?.notifications?.warn?.('That talent is already in this custom tree.'); return; }
-    renderGraph(root, tree, actor);
+    renderGraph(root, tree, actor, { dirty: true });
     ui?.notifications?.info?.(`Added ${payload.selectedName} from drop to the custom tree.`);
   });
 }
@@ -509,7 +627,7 @@ function bindAddTalentButtons(root, tree, actor = null) {
       if (!imported) return;
       const result = pushImportedPayload(tree, imported);
       if (!result.added) { ui?.notifications?.warn?.('Those talents are already in this custom tree.'); return; }
-      renderGraph(root, tree, actor);
+      renderGraph(root, tree, actor, { dirty: true });
       const chainLabel = imported.prerequisiteMode === 'chain' ? ' with prerequisite chain' : '';
       const customLabel = imported.prerequisiteMode === 'custom' ? ' as a custom editable talent' : '';
       ui?.notifications?.info?.(`Added ${result.added} talent${result.added === 1 ? '' : 's'}${chainLabel}${customLabel} to the custom tree.`);
@@ -517,10 +635,20 @@ function bindAddTalentButtons(root, tree, actor = null) {
   });
 }
 
+function bindMetadataDirtyTracking(root) {
+  root.querySelectorAll?.('.swse-custom-tree-workbench__fields input, .swse-custom-tree-workbench__fields textarea, .swse-custom-tree-workbench__fields select').forEach(input => {
+    if (input.dataset.dirtyBound === 'true') return;
+    input.dataset.dirtyBound = 'true';
+    input.addEventListener('input', () => markDirty(root));
+    input.addEventListener('change', () => markDirty(root));
+  });
+}
+
 function bindGraphInteractions(root, tree, actor = null) {
   bindAddTalentButtons(root, tree, actor);
   bindNodeActions(root, tree, actor);
   bindDropTarget(root, tree, actor);
+  bindMetadataDirtyTracking(root);
 }
 
 function bindWorkbench(html, tree, actor = null) {
@@ -529,6 +657,7 @@ function bindWorkbench(html, tree, actor = null) {
   if (!workbench || workbench.dataset.bound === 'true') return;
   workbench.dataset.bound = 'true';
   bindGraphInteractions(root, tree, actor);
+  updateDraftState(root, false);
 }
 
 function treeFromForm(html, original = {}, context = {}) {
