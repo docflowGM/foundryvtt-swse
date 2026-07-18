@@ -176,7 +176,7 @@ export async function saveCustomTalentTree(actor, tree, { source = 'custom-talen
   }
 
   const existingTree = getCustomTalentTree(actor, tree?.id || tree?.name);
-  const approval = getCustomContentApprovalState('custom-talent-tree', existingTree || tree);
+  const approval = getCustomContentApprovalState('custom-talent-tree', existingTree || null);
   const normalized = normalizeCustomTalentTree({ ...tree, ...approval, updatedAt: Date.now() });
   const existing = getActorCustomTalentTrees(actor).filter(entry => entry.id !== normalized.id);
   const customTalentTrees = [...existing, normalized].sort((left, right) => String(left.name || '').localeCompare(String(right.name || '')));
