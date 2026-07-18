@@ -1,15 +1,131 @@
-<div class="swse-theme-picker">
-  <p class="swse-theme-picker__intro">
-    Choose your preferred Holopad interface theme. You can change this at any time from Holopad Settings.
-  </p>
-  <div class="swse-theme-picker__options">
-    {{#each themes}}
-    <button type="button" class="swse-theme-picker__option" data-theme="{{this.value}}">
-      <span class="swse-theme-picker__swatch swse-theme-{{this.value}}"></span>
-      <span class="swse-theme-picker__label">{{this.label}}</span>
-    </button>
+<link rel="stylesheet" href="systems/foundryvtt-swse/styles/apps/theme-picker-immersive.css">
+
+<div class="swse-theme-picker__stage" data-role="theme-stage" data-theme="{{selectedTheme.key}}" style="{{selectedTheme.style}}">
+  <header class="swse-theme-picker__head">
+    <h1 class="swse-theme-picker__title">
+      <span class="swse-theme-picker__glyph" aria-hidden="true">✦</span>
+      Choose Your Theme
+    </h1>
+    <p class="swse-theme-picker__sub">
+      Every theme reskins your Holopad surfaces with a unified palette, glow, and type treatment. Preview each one live, then confirm. You can change it later from Holopad Settings.
+    </p>
+  </header>
+
+  <section class="swse-theme-picker__feature" data-role="feature" data-theme="{{selectedTheme.key}}" style="{{selectedTheme.style}}">
+    <div class="swse-theme-picker__feature-frame">
+      <div class="swse-theme-preview">
+        <div class="swse-theme-preview__top">
+          <div class="swse-theme-preview__portrait" aria-hidden="true"></div>
+          <div>
+            <div class="swse-theme-preview__name">Kira Solari</div>
+            <div class="swse-theme-preview__class">Jedi Guardian · Level 6</div>
+          </div>
+        </div>
+        <div class="swse-theme-preview__body">
+          <div class="swse-theme-preview__defs">
+            <div class="swse-theme-preview__def">
+              <div class="swse-theme-preview__def-label">REF</div>
+              <div class="swse-theme-preview__def-value">24</div>
+            </div>
+            <div class="swse-theme-preview__def">
+              <div class="swse-theme-preview__def-label">FORT</div>
+              <div class="swse-theme-preview__def-value">22</div>
+            </div>
+            <div class="swse-theme-preview__def">
+              <div class="swse-theme-preview__def-label">WILL</div>
+              <div class="swse-theme-preview__def-value">26</div>
+            </div>
+          </div>
+          <div>
+            <div class="swse-theme-preview__bar-row"><span>HIT POINTS</span><span>78 / 104</span></div>
+            <div class="swse-theme-preview__track"><div class="swse-theme-preview__fill"></div></div>
+          </div>
+          <div class="swse-theme-preview__chips">
+            <span class="swse-theme-preview__chip">STR <b>14</b></span>
+            <span class="swse-theme-preview__chip">DEX <b>18</b></span>
+            <span class="swse-theme-preview__chip">WIS <b>16</b></span>
+            <span class="swse-theme-preview__chip">Force <b>8</b></span>
+          </div>
+          <div class="swse-theme-preview__actions">
+            <span class="swse-theme-preview__button">Use the Force</span>
+            <span class="swse-theme-preview__button swse-theme-preview__button--ghost">Rest</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="swse-theme-picker__feature-caption">
+      <span class="swse-theme-picker__feature-name" data-role="feature-name">{{selectedTheme.label}}</span>
+      <span class="swse-theme-picker__feature-desc" data-role="feature-description">{{selectedTheme.description}}</span>
+      <span class="swse-theme-picker__source" data-role="feature-source">{{selectedTheme.sourceLabel}}</span>
+    </div>
+  </section>
+
+  <section class="swse-theme-picker__gallery" data-role="theme-gallery" aria-label="Available themes">
+    {{#each themeGroups}}
+      <div class="swse-theme-picker__group-label">{{this.label}}</div>
+      <div class="swse-theme-picker__grid">
+        {{#each this.options}}
+          <button
+            type="button"
+            class="swse-theme-picker__tile {{#if this.selected}}is-selected{{/if}}"
+            data-theme="{{this.key}}"
+            aria-pressed="{{#if this.selected}}true{{else}}false{{/if}}"
+            aria-label="Select {{this.label}} theme"
+            style="{{this.style}}"
+          >
+            <span class="swse-theme-picker__check" aria-hidden="true">✓</span>
+            <span class="swse-theme-picker__tile-preview">
+              <span class="swse-theme-preview">
+                <span class="swse-theme-preview__top">
+                  <span class="swse-theme-preview__portrait" aria-hidden="true"></span>
+                  <span>
+                    <span class="swse-theme-preview__name">Kira Solari</span>
+                    <span class="swse-theme-preview__class">Jedi Guardian · Level 6</span>
+                  </span>
+                </span>
+                <span class="swse-theme-preview__body">
+                  <span class="swse-theme-preview__defs">
+                    <span class="swse-theme-preview__def">
+                      <span class="swse-theme-preview__def-label">REF</span>
+                      <span class="swse-theme-preview__def-value">24</span>
+                    </span>
+                    <span class="swse-theme-preview__def">
+                      <span class="swse-theme-preview__def-label">FORT</span>
+                      <span class="swse-theme-preview__def-value">22</span>
+                    </span>
+                    <span class="swse-theme-preview__def">
+                      <span class="swse-theme-preview__def-label">WILL</span>
+                      <span class="swse-theme-preview__def-value">26</span>
+                    </span>
+                  </span>
+                  <span>
+                    <span class="swse-theme-preview__bar-row"><span>HIT POINTS</span><span>78 / 104</span></span>
+                    <span class="swse-theme-preview__track"><span class="swse-theme-preview__fill"></span></span>
+                  </span>
+                </span>
+              </span>
+            </span>
+            <span class="swse-theme-picker__tile-caption">
+              <span class="swse-theme-picker__tile-name">{{this.label}}</span>
+              <span class="swse-theme-picker__dot" aria-hidden="true"></span>
+            </span>
+          </button>
+        {{/each}}
+      </div>
     {{else}}
-    <p class="swse-theme-picker__empty">No themes are currently available.</p>
+      <p>No themes are currently available.</p>
     {{/each}}
-  </div>
+  </section>
+
+  <footer class="swse-theme-picker__foot">
+    <div class="swse-theme-picker__hint">
+      Selected: <strong class="swse-theme-picker__selected-label" data-role="selected-label">{{selectedTheme.label}}</strong>
+    </div>
+    <div class="swse-theme-picker__actions">
+      <button type="button" class="swse-theme-picker__action swse-theme-picker__action--skip" data-action="skip-theme-picker">Skip for now</button>
+      <button type="button" class="swse-theme-picker__action swse-theme-picker__action--apply" data-action="apply-theme">
+        Apply Theme <span class="swse-theme-picker__action-name" data-role="confirm-name">· {{selectedTheme.label}}</span>
+      </button>
+    </div>
+  </footer>
 </div>
