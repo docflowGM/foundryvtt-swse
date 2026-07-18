@@ -16,6 +16,7 @@ import { SWSECombatDocument } from "./scripts/combat/swse-combat.js";
 import { SWSECombatant } from "./scripts/combat/swse-combatant.js";
 import { registerSystemSettings } from "./scripts/core/settings.js";
 import { registerForceTraditionHouseRuleSettings } from "./scripts/settings/force-tradition-house-rules.js";
+import { registerCustomContentApprovalSettings } from "./scripts/settings/custom-content-approval.js";
 import { UIManager } from "./scripts/ui/ui-manager.js";
 import { registerInitHooks } from "./scripts/infrastructure/hooks/init-hooks.js";
 import { registerStoreSheetHooks } from "./scripts/infrastructure/hooks/store-sheet-hooks.js";
@@ -172,6 +173,7 @@ Hooks.once("init", async () => {
   // -------------------------------
   registerSettings(); // Legacy swse namespace settings retained for compatibility.
   registerForceTraditionHouseRuleSettings();
+  registerCustomContentApprovalSettings();
   await registerSystemSettings();
 
   // -------------------------------
