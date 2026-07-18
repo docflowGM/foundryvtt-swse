@@ -1,6 +1,7 @@
 import { SWSEDialogV2 } from '/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js';
 import { ActorEngine } from '/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js';
 import { TalentTreeDB } from '/systems/foundryvtt-swse/scripts/data/talent-tree-db.js';
+import { openCustomTalentTreeWorkbench } from '/systems/foundryvtt-swse/scripts/apps/talent-tree-workbench/custom-talent-tree-workbench.js';
 
 /**
  * Custom Force Tradition Wizard
@@ -8,7 +9,7 @@ import { TalentTreeDB } from '/systems/foundryvtt-swse/scripts/data/talent-tree-
  * Three-step house-rule wizard:
  * 1. Name of tradition
  * 2. Background / purpose / philosophy
- * 3. Talent access from existing trees plus custom talent references
+ * 3. Talent access from existing trees, custom tree shells, plus custom talent references
  */
 
 const STYLE_ID = 'swse-custom-force-tradition-wizard-styles';
@@ -22,9 +23,11 @@ function ensureWizardStyles() {
     .swse-custom-tradition-wizard__steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; padding: 14px 18px; border-bottom: 1px solid rgba(0, 170, 255, 0.2); }
     .swse-custom-tradition-wizard__steps button,
     .swse-custom-tradition-wizard__footer button,
-    .swse-force-tradition-picker__create { border: 1px solid rgba(0, 170, 255, 0.28); border-radius: 6px; background: rgba(0, 0, 0, 0.24); color: var(--swse-force-picker-primary, #9ed0ff); padding: 8px 10px; cursor: pointer; font-family: var(--swse-font-mono, ui-monospace, monospace); font-size: 11px; letter-spacing: 0.04em; }
+    .swse-force-tradition-picker__create,
+    .swse-custom-tradition-wizard__create-tree { border: 1px solid rgba(0, 170, 255, 0.28); border-radius: 6px; background: rgba(0, 0, 0, 0.24); color: var(--swse-force-picker-primary, #9ed0ff); padding: 8px 10px; cursor: pointer; font-family: var(--swse-font-mono, ui-monospace, monospace); font-size: 11px; letter-spacing: 0.04em; }
     .swse-custom-tradition-wizard__steps button.is-active,
-    .swse-force-tradition-picker__create:hover { border-color: var(--swse-force-picker-border-active, #00baff); background: rgba(0, 170, 255, 0.14); box-shadow: 0 0 12px rgba(0, 170, 255, 0.28); }
+    .swse-force-tradition-picker__create:hover,
+    .swse-custom-tradition-wizard__create-tree:hover { border-color: var(--swse-force-picker-border-active, #00baff); background: rgba(0, 170, 255, 0.14); box-shadow: 0 0 12px rgba(0, 170, 255, 0.28); }
     .swse-custom-tradition-wizard__step { display: none; padding: 16px 18px; min-height: 360px; }
     .swse-custom-tradition-wizard__step.is-active { display: block; }
     .swse-custom-tradition-wizard__step h3 { margin: 0 0 6px; color: var(--swse-force-picker-accent, #00d9ff); font-family: var(--swse-font-orbit, Orbitron, system-ui, sans-serif); }
@@ -45,6 +48,11 @@ function ensureWizardStyles() {
     .swse-custom-tradition-wizard__tree small { display: block; color: var(--swse-force-picker-text-secondary, #6a9dcd); font-size: 10.5px; margin-top: 2px; }
     .swse-custom-tradition-wizard__tree[hidden] { display: none; }
     .swse-custom-tradition-wizard__empty { padding: 14px; border: 1px dashed rgba(0, 170, 255, 0.28); border-radius: 6px; color: var(--swse-force-picker-text-secondary, #6a9dcd); }
+    .swse-custom-tradition-wizard__custom-tree-band { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin: 0 0 12px; padding: 10px 12px; border: 1px solid rgba(172, 130, 255, 0.28); border-radius: 8px; background: rgba(172, 130, 255, 0.08); }
+    .swse-custom-tradition-wizard__custom-tree-band strong { display: block; color: #d7c2ff; font-size: 12px; }
+    .swse-custom-tradition-wizard__custom-tree-band small { display: block; color: var(--swse-force-picker-text-secondary, #6a9dcd); font-size: 10.5px; margin-top: 2px; }
+    .swse-custom-tradition-wizard__custom-tree-list { display: flex; flex-direction: column; gap: 7px; margin-bottom: 12px; }
+    .swse-custom-tradition-wizard__custom-tree-pill { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 8px 10px; border: 1px solid rgba(172, 130, 255, 0.34); border-radius: 8px; background: rgba(10, 20, 34, 0.62); color: #d7c2ff; }
     .swse-custom-tradition-wizard__footer { display: flex; justify-content: space-between; padding: 12px 18px; border-top: 1px solid rgba(0, 170, 255, 0.2); }
     .swse-custom-tradition-wizard__footer button:disabled { opacity: 0.45; cursor: not-allowed; }
     .swse-force-tradition-picker__toolbar { display: flex; justify-content: flex-end; padding: 10px 18px 0; }
@@ -77,6 +85,13 @@ function asArray(value) {
   if (Array.isArray(value)) return value;
   if (value instanceof Set) return Array.from(value);
   return [value];
+}
+
+function traditionValueFromForm(root) {
+  const name = String(root.querySelector?.('input[name="name"]')?.value || '').trim();
+  const alias = String(root.querySelector?.('input[name="alias"]')?.value || '').trim();
+  const id = slugify(name || alias || 'custom-force-tradition');
+  return id ? `custom:${id}` : '';
 }
 
 function existingCustomTraditions(actor) {
@@ -173,7 +188,15 @@ function buildWizardHtml() {
 
       <section class="swse-custom-tradition-wizard__step" data-wizard-step="3">
         <h3>Talents</h3>
-        <p>Grant access by choosing existing talent trees, then optionally list custom talents created elsewhere in the system.</p>
+        <p>Grant access by choosing existing talent trees, create custom talent tree shells, then optionally list custom talents created elsewhere in the system.</p>
+        <div class="swse-custom-tradition-wizard__custom-tree-band">
+          <div>
+            <strong>Custom Talent Trees</strong>
+            <small>Phase 1 creates the tree container and attaches it to this custom tradition.</small>
+          </div>
+          <button type="button" class="swse-custom-tradition-wizard__create-tree" data-action="create-custom-talent-tree">+ Custom Tree</button>
+        </div>
+        <div class="swse-custom-tradition-wizard__custom-tree-list" data-custom-talent-tree-list></div>
         <div class="swse-custom-tradition-wizard__tree-toolbar">
           <input type="text" name="treeSearch" placeholder="Filter existing talent trees…" autocomplete="off">
           <span class="swse-custom-tradition-wizard__tree-count"></span>
@@ -232,7 +255,23 @@ function wizardValue(root) {
   };
 }
 
-function bindWizard(html) {
+function appendCustomTreeSelection(wizard, tree) {
+  if (!wizard || !tree?.id) return;
+  const list = wizard.querySelector('[data-custom-talent-tree-list]');
+  const value = tree.value || `custom-tree:${tree.id}`;
+  if (wizard.querySelector(`input[name="grantedTalentTrees"][value="${CSS.escape(value)}"]`)) return;
+
+  const wrapper = document.createElement('div');
+  wrapper.className = 'swse-custom-tradition-wizard__custom-tree-pill';
+  wrapper.dataset.customTreeId = tree.id;
+  wrapper.innerHTML = `
+    <span><strong>${escapeHtml(tree.name)}</strong><small>${escapeHtml(tree.treeType || 'custom')}</small></span>
+    <span>Attached</span>
+    <input type="checkbox" name="grantedTalentTrees" value="${escapeHtml(value)}" checked hidden>`;
+  list?.appendChild(wrapper);
+}
+
+function bindWizard(html, actor = null) {
   const root = dialogRoot(html);
   const wizard = root.querySelector?.('.swse-custom-tradition-wizard');
   if (!wizard || wizard.dataset.bound === 'true') return;
@@ -244,6 +283,7 @@ function bindWizard(html) {
   const next = wizard.querySelector('[data-wizard-next]');
   const treeSearch = wizard.querySelector('input[name="treeSearch"]');
   const treeCount = wizard.querySelector('.swse-custom-tradition-wizard__tree-count');
+  const createTreeButton = wizard.querySelector('[data-action="create-custom-talent-tree"]');
   const trees = () => Array.from(wizard.querySelectorAll('.swse-custom-tradition-wizard__tree'));
   let step = 1;
 
@@ -274,6 +314,26 @@ function bindWizard(html) {
     for (const tree of trees()) tree.hidden = !!query && !String(tree.dataset.search || '').includes(query);
     updateTreeCount();
   });
+
+  createTreeButton?.addEventListener('click', async event => {
+    event.preventDefault();
+    event.stopPropagation();
+    if (!actor) {
+      ui?.notifications?.warn?.('Could not resolve actor for custom talent tree creation.');
+      return;
+    }
+    const attachToTradition = traditionValueFromForm(root);
+    if (!attachToTradition || attachToTradition === 'custom:custom-force-tradition') {
+      ui?.notifications?.warn?.('Name the custom Force tradition before creating an attached custom talent tree.');
+      return;
+    }
+    const tree = await openCustomTalentTreeWorkbench(actor, {
+      attachToTradition,
+      treeType: 'force-tradition',
+      name: `${String(root.querySelector?.('input[name="name"]')?.value || 'Custom')} Talent Tree`
+    });
+    if (tree) appendCustomTreeSelection(wizard, tree);
+  });
 }
 
 export async function openCustomForceTraditionWizard(actor, { renderSheet = null } = {}) {
@@ -300,7 +360,7 @@ export async function openCustomForceTraditionWizard(actor, { renderSheet = null
       }
     },
     default: 'ok',
-    render: bindWizard
+    render: (html) => bindWizard(html, actor)
   }, {
     width: 860,
     classes: ['swse-force-tradition-picker-dialog', 'swse-custom-tradition-wizard-dialog']
