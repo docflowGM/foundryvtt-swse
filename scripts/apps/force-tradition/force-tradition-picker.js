@@ -1,5 +1,6 @@
 import { SWSEDialogV2 } from '/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js';
 import { ActorEngine } from '/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js';
+import { getCustomForceTraditions, openCustomForceTraditionWizard } from '/systems/foundryvtt-swse/scripts/apps/force-tradition/custom-force-tradition-wizard.js';
 
 export const FORCE_TRADITION_OPTIONS = [
   { value: '', label: 'No Tradition', note: 'No Force tradition is currently selected.', none: true },
@@ -41,13 +42,30 @@ function normalizeTraditionValue(value) {
   return String(value ?? '').toLowerCase().trim();
 }
 
-function uniqueTraditions(values = []) {
-  const valid = new Set(FORCE_TRADITION_OPTIONS.map(option => option.value).filter(Boolean));
+function customTraditionValue(entry = {}) {
+  const id = normalizeTraditionValue(entry.value || entry.id || entry.key || entry.name || '').replace(/^custom:/, '');
+  return id ? `custom:${id}` : '';
+}
+
+function traditionOptionsForActor(actor) {
+  const customOptions = getCustomForceTraditions(actor).map(entry => ({
+    value: customTraditionValue(entry),
+    label: entry.name || entry.label || entry.id,
+    note: entry.background || entry.philosophy || 'Custom Force tradition created for this campaign.',
+    custom: true,
+    customTradition: entry
+  })).filter(option => option.value && option.label);
+  return [...FORCE_TRADITION_OPTIONS, ...customOptions];
+}
+
+function uniqueTraditions(values = [], options = null) {
+  const valid = options ? new Set(options.map(option => option.value).filter(Boolean)) : null;
   const out = [];
   const seen = new Set();
   for (const value of values) {
-    const normalized = normalizeTraditionValue(value);
-    if (!normalized || !valid.has(normalized) || seen.has(normalized)) continue;
+    const normalized = normalizeTraditionValue(typeof value === 'object' ? (value.value || value.tradition || value.id || value.key || value.name) : value);
+    if (!normalized || seen.has(normalized)) continue;
+    if (valid && !valid.has(normalized)) continue;
     seen.add(normalized);
     out.push(normalized);
   }
@@ -87,6 +105,7 @@ function getCurrentTradition(actor) {
 }
 
 function getActorForceTraditionMemberships(actor) {
+  const options = traditionOptionsForActor(actor);
   const values = [];
   addTraditionValues(getCurrentTradition(actor), values);
   addTraditionValues(actor?.system?.forceTraditions, values);
@@ -97,57 +116,63 @@ function getActorForceTraditionMemberships(actor) {
   addTraditionValues(actor?.flags?.['foundryvtt-swse']?.adoptedForceTraditions, values);
   addTraditionValues(actor?.flags?.swse?.forceTraditions, values);
   addTraditionValues(actor?.flags?.swse?.adoptedForceTraditions, values);
-  return uniqueTraditions(values);
+  return uniqueTraditions(values, options);
 }
 
-function getTraditionLabel(value) {
+function getTraditionLabel(value, actor = null) {
   const normalized = normalizeTraditionValue(value);
-  return FORCE_TRADITION_OPTIONS.find((option) => option.value === normalized)?.label || (value ? String(value) : 'No Tradition');
+  return traditionOptionsForActor(actor).find((option) => option.value === normalized)?.label || (value ? String(value).replace(/^custom:/, '') : 'No Tradition');
 }
 
-function getTraditionSummary(primary, memberships = []) {
+function getTraditionSummary(primary, memberships = [], actor = null) {
   if (!primary && !memberships.length) return 'No Tradition';
-  const labels = memberships.map(getTraditionLabel);
-  if (!primary) return `${labels.length} adopted`;
+  if (!primary) return `${memberships.length} adopted`;
   const secondary = memberships.filter(value => value !== primary);
-  return secondary.length ? `${getTraditionLabel(primary)} + ${secondary.length}` : getTraditionLabel(primary);
+  return secondary.length ? `${getTraditionLabel(primary, actor)} + ${secondary.length}` : getTraditionLabel(primary, actor);
 }
 
-function buildPickerHtml(currentValue, memberships = []) {
+function traditionOptionCard(option, current, membershipSet) {
+  const checked = option.value === current ? 'checked' : '';
+  const active = option.value === current ? ' is-selected is-primary' : '';
+  const adopted = option.value && membershipSet.has(option.value) ? ' is-adopted' : '';
+  const adoptedChecked = option.value && membershipSet.has(option.value) ? 'checked' : '';
+  const none = option.none ? ' data-none' : '';
+  const custom = option.custom ? ' data-custom' : '';
+  const search = `${option.label} ${option.note} ${option.value}`.toLowerCase();
+  const controls = option.none
+    ? '<span class="swse-force-tradition-picker__control-note">Clears primary and adopted traditions.</span>'
+    : `
+      <span class="swse-force-tradition-picker__control-pill swse-force-tradition-picker__control-pill--primary">Primary</span>
+      <label class="swse-force-tradition-picker__adopted-toggle">
+        <input type="checkbox" name="adoptedForceTraditions" value="${escapeHtml(option.value)}" ${adoptedChecked}>
+        <span>Adopted</span>
+      </label>${option.custom ? '<span class="swse-force-tradition-picker__custom-badge">Custom</span>' : ''}`;
+  return `
+    <div class="swse-force-tradition-picker__option${active}${adopted}"${none}${custom} data-value="${escapeHtml(option.value)}" data-search="${escapeHtml(search)}">
+      <input type="radio" data-role="primary" name="forceTradition" value="${escapeHtml(option.value)}" ${checked}>
+      <span class="swse-force-tradition-picker__copy">
+        <strong>${escapeHtml(option.label)}</strong>
+        <small>${escapeHtml(option.note)}</small>
+      </span>
+      <span class="swse-force-tradition-picker__controls">${controls}</span>
+    </div>`;
+}
+
+function buildPickerHtml(actor, currentValue, memberships = []) {
+  const options = traditionOptionsForActor(actor);
   const current = normalizeTraditionValue(currentValue);
-  const membershipSet = new Set(uniqueTraditions([current, ...memberships]));
-  const cards = FORCE_TRADITION_OPTIONS.map((option) => {
-    const checked = option.value === current ? 'checked' : '';
-    const active = option.value === current ? ' is-selected is-primary' : '';
-    const adopted = option.value && membershipSet.has(option.value) ? ' is-adopted' : '';
-    const adoptedChecked = option.value && membershipSet.has(option.value) ? 'checked' : '';
-    const none = option.none ? ' data-none' : '';
-    const search = `${option.label} ${option.note} ${option.value}`.toLowerCase();
-    const controls = option.none
-      ? '<span class="swse-force-tradition-picker__control-note">Clears primary and adopted traditions.</span>'
-      : `
-        <span class="swse-force-tradition-picker__control-pill swse-force-tradition-picker__control-pill--primary">Primary</span>
-        <label class="swse-force-tradition-picker__adopted-toggle">
-          <input type="checkbox" name="adoptedForceTraditions" value="${escapeHtml(option.value)}" ${adoptedChecked}>
-          <span>Adopted</span>
-        </label>`;
-    return `
-      <div class="swse-force-tradition-picker__option${active}${adopted}"${none} data-value="${escapeHtml(option.value)}" data-search="${escapeHtml(search)}">
-        <input type="radio" data-role="primary" name="forceTradition" value="${escapeHtml(option.value)}" ${checked}>
-        <span class="swse-force-tradition-picker__copy">
-          <strong>${escapeHtml(option.label)}</strong>
-          <small>${escapeHtml(option.note)}</small>
-        </span>
-        <span class="swse-force-tradition-picker__controls">${controls}</span>
-      </div>`;
-  }).join('');
+  const membershipSet = new Set(uniqueTraditions([current, ...memberships], options));
+  const cards = options.map(option => traditionOptionCard(option, current, membershipSet)).join('');
 
   return `
     <form class="swse-force-tradition-picker">
       <p class="swse-force-tradition-picker__hint">Choose the actor's primary Force tradition and optionally mark adopted traditions for house rules. This keeps <code>system.forceTradition</code> as the primary value and writes all memberships to <code>system.forceTraditions</code> for talent-tree access.</p>
       <div class="swse-force-tradition-picker__summary">
         <strong>Current Membership</strong>
-        <span>${escapeHtml(getTraditionSummary(current, Array.from(membershipSet)))}</span>
+        <span>${escapeHtml(getTraditionSummary(current, Array.from(membershipSet), actor))}</span>
+      </div>
+      <div class="swse-force-tradition-picker__toolbar">
+        <button type="button" class="swse-force-tradition-picker__create" data-action="create-custom-force-tradition">Create Your Own Tradition</button>
       </div>
       <div class="swse-force-tradition-picker__search">
         <input type="text" name="forceTraditionSearch" placeholder="Filter traditions…" autocomplete="off">
@@ -161,7 +186,7 @@ function getDialogRoot(html) {
   return html?.[0] || html?.element || (html instanceof HTMLElement ? html : document);
 }
 
-function bindPickerInteractions(html) {
+function bindPickerInteractions(html, actor) {
   const root = getDialogRoot(html);
   const picker = root.querySelector?.('.swse-force-tradition-picker');
   if (!picker || picker.dataset.forceTraditionPickerBound === 'true') return;
@@ -170,11 +195,12 @@ function bindPickerInteractions(html) {
   const search = picker.querySelector('input[name="forceTraditionSearch"]');
   const count = picker.querySelector('.swse-force-tradition-picker__count');
   const grid = picker.querySelector('.swse-force-tradition-picker__grid');
+  const create = picker.querySelector('[data-action="create-custom-force-tradition"]');
   const options = () => Array.from(grid?.querySelectorAll('.swse-force-tradition-picker__option') ?? []);
   const visibleOptions = () => options().filter(option => !option.hidden);
   const updateCount = () => {
     if (!count) return;
-    count.textContent = `${visibleOptions().length} / ${FORCE_TRADITION_OPTIONS.length}`;
+    count.textContent = `${visibleOptions().length} / ${options().length}`;
   };
   const updateStateClasses = () => {
     const selected = picker.querySelector('input[name="forceTradition"]:checked');
@@ -197,6 +223,21 @@ function bindPickerInteractions(html) {
       option.hidden = !!query && !String(option.dataset.search ?? '').includes(query);
     }
     updateCount();
+  });
+
+  create?.addEventListener('click', async event => {
+    event.preventDefault();
+    event.stopPropagation();
+    const result = await openCustomForceTraditionWizard(actor);
+    if (!result) return;
+    const current = normalizeTraditionValue(picker.querySelector('input[name="forceTradition"]:checked')?.value ?? '');
+    const selectedMemberships = Array.from(picker.querySelectorAll('input[name="adoptedForceTraditions"]:checked')).map(input => input.value);
+    const membershipSet = new Set(uniqueTraditions([current, ...selectedMemberships, result.value]));
+    grid?.insertAdjacentHTML('beforeend', traditionOptionCard({ value: result.value, label: result.name, note: result.background || 'Custom Force tradition created for this campaign.', custom: true }, current, membershipSet));
+    const newAdopted = grid?.querySelector?.(`input[name="adoptedForceTraditions"][value="${CSS.escape(result.value)}"]`);
+    if (newAdopted) newAdopted.checked = true;
+    updateCount();
+    updateStateClasses();
   });
 
   grid?.addEventListener('click', event => {
@@ -260,10 +301,10 @@ export async function openForceTraditionPicker(actor, { renderSheet = null } = {
 
   const result = await SWSEDialogV2.wait({
     title: 'Choose Force Tradition',
-    content: buildPickerHtml(current, memberships),
+    content: buildPickerHtml(actor, current, memberships),
     buttons,
     default: 'ok',
-    render: bindPickerInteractions
+    render: (html) => bindPickerInteractions(html, actor)
   }, {
     width: 820,
     classes: ['swse-force-tradition-picker-dialog']
@@ -295,7 +336,7 @@ export async function openForceTraditionPicker(actor, { renderSheet = null } = {
   });
 
   const notice = primary
-    ? `${getTraditionLabel(primary)}${adoptedNext.length ? ` plus ${adoptedNext.length} adopted` : ''}`
+    ? `${getTraditionLabel(primary, actor)}${adoptedNext.length ? ` plus ${adoptedNext.length} adopted` : ''}`
     : adoptedNext.length ? `${adoptedNext.length} adopted tradition${adoptedNext.length === 1 ? '' : 's'}` : 'No Tradition';
   ui.notifications?.info?.(`Force traditions set to ${notice}.`);
   if (typeof renderSheet === 'function') renderSheet();
@@ -307,7 +348,7 @@ function ensurePickerButton(root) {
   if (!select || select.dataset.forceTraditionPickerEnhanced === 'true') return;
 
   const actor = getActorFromSheetApp(globalThis.ui?.windows?.[root.closest?.('[data-appid]')?.dataset?.appid]);
-  const currentLabel = actor ? getTraditionSummary(getCurrentTradition(actor), getActorForceTraditionMemberships(actor)) : getTraditionLabel(select.value);
+  const currentLabel = actor ? getTraditionSummary(getCurrentTradition(actor), getActorForceTraditionMemberships(actor), actor) : getTraditionLabel(select.value);
   const button = document.createElement('button');
   button.type = 'button';
   button.className = 'mv fs-tradition-picker-btn';
@@ -327,7 +368,7 @@ function bindForceTraditionPicker(app, html) {
   if (!actor) return;
 
   ensurePickerButton(root);
-  const buttonLabel = getTraditionSummary(getCurrentTradition(actor), getActorForceTraditionMemberships(actor));
+  const buttonLabel = getTraditionSummary(getCurrentTradition(actor), getActorForceTraditionMemberships(actor), actor);
 
   root.querySelectorAll('[data-action="open-force-tradition-picker"]').forEach((button) => {
     button.textContent = buttonLabel === 'No Tradition' ? 'Choose Tradition' : buttonLabel;
