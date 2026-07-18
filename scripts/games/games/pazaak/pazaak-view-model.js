@@ -60,6 +60,7 @@ function initialForSeat(seat = {}) {
 
 function scoreStateClass(player = {}, score = 0) {
   if (player.bust) return 'is-bust';
+  if (player.bustRisk || Number(score || 0) > PAZAAK_TARGET) return 'is-bust-risk';
   if (Number(score || 0) === PAZAAK_TARGET) return 'is-twenty';
   if (player.stood || player.filledTable) return 'is-stand';
   return '';
@@ -83,7 +84,12 @@ function previewForSideCard(card = {}, player = {}) {
   const current = effectiveScore(player);
   const type = String(card.type || '');
   const baseValue = Number(card.value || 0) || 0;
-  if (current > PAZAAK_TARGET) return 'Busted: side cards cannot repair this set.';
+  if (current > PAZAAK_TARGET) {
+    if (type === 'minus') return `Repair preview: ${scoreLabel(current)} → ${scoreLabel(current - Math.abs(baseValue))}`;
+    if (type === 'plusMinus' || type === 'tiebreaker') return `Bust-risk: choose −${Math.abs(baseValue || 1)} to try to repair.`;
+    if (type === 'plusMinusRange') return 'Bust-risk: choose −1 or −2 to try to repair.';
+    return 'Bust-risk: this card probably cannot repair the total.';
+  }
   if (type === 'plus') return `Preview: ${scoreLabel(current)} → ${scoreLabel(current + Math.abs(baseValue))}`;
   if (type === 'minus') return `Preview: ${scoreLabel(current)} → ${scoreLabel(current - Math.abs(baseValue))}`;
   if (type === 'plusMinus' || type === 'tiebreaker') return `Choose +${Math.abs(baseValue || 1)} or −${Math.abs(baseValue || 1)} before play.`;
@@ -95,7 +101,8 @@ function previewForSideCard(card = {}, player = {}) {
 
 function mapHandCard(card = {}, player = {}, canAct = false) {
   const forms = choiceForms(card);
-  const status = playableSideCardStatus(player, card, forms.requiresChoice ? { sign: 'plus', value: 1 } : {});
+  const isBustRisk = scorePazaakPlayer(player) > PAZAAK_TARGET;
+  const status = playableSideCardStatus(player, card, forms.requiresChoice ? { sign: isBustRisk ? 'minus' : 'plus', value: 1 } : {});
   const label = card.shortLabel || card.label || card.id;
   const actionSpent = Boolean(player.sideCardPlayedThisTurn);
   return { ...card, id: card.instanceId, catalogId: card.catalogId || card.id, label: card.label || card.shortLabel || card.id, visualLabel: label, tone: cardTone(card), canPlay: Boolean(canAct && !actionSpent && (forms.requiresChoice || status.playable)), disabledReason: actionSpent ? 'You already used your one action this turn.' : status.reason, previewLabel: previewForSideCard(card, player), ...cardVisual(card, label), ...forms };
@@ -120,6 +127,7 @@ function mapSeat(session = {}, state = {}, seat = {}, currentSeatId = null) {
   const avatar = seat.avatar || '';
   const canChooseAction = Boolean(isViewer && isCurrent && state.phase === 'playing' && !player.stood && !player.bust && !player.filledTable && player.turnDrawn);
   const actionSpent = Boolean(player.sideCardPlayedThisTurn);
+  const bustRisk = Boolean(player.bustRisk || rawScore > PAZAAK_TARGET);
   return {
     seatId: seat.seatId,
     displayName,
@@ -151,6 +159,7 @@ function mapSeat(session = {}, state = {}, seat = {}, currentSeatId = null) {
     setPips: setPips(player.setsWon, PAZAAK_SETS_TO_WIN),
     stood: Boolean(player.stood),
     bust: Boolean(player.bust),
+    bustRisk,
     filledTable: Boolean(player.filledTable),
     tiebreakerUsed: Boolean(player.tiebreakerUsed),
     lastAction: player.lastAction || '',
@@ -171,8 +180,8 @@ function mapSeat(session = {}, state = {}, seat = {}, currentSeatId = null) {
     canAct: canChooseAction,
     canStand: canChooseAction,
     canEndTurn: canChooseAction && !actionSpent,
-    rulesHint: canChooseAction ? 'Choose one action: play one side card, stand, or end turn.' : '',
-    statusLabel: isThinking ? 'THINKING' : (player.bust ? 'BUST' : (player.filledTable ? 'FULL BOARD' : (player.stood ? 'STAND' : (isCurrent ? 'TURN' : 'WAIT'))))
+    rulesHint: bustRisk ? 'Over 20: play a negative side card now or bust when you end/stand.' : (canChooseAction ? 'Choose one action: play one side card, stand, or end turn.' : ''),
+    statusLabel: isThinking ? 'THINKING' : (player.bust ? 'BUST' : (bustRisk ? 'REPAIR OR BUST' : (player.filledTable ? 'FULL BOARD' : (player.stood ? 'STAND' : (isCurrent ? 'TURN' : 'WAIT')))))
   };
 }
 
@@ -208,13 +217,8 @@ export class PazaakViewModel {
     const deckSlots = buildSideDeckSlots(Array.from(effectiveSelected), catalogById);
     const selectedCount = effectiveSelected.size;
     const canLockDeck = currentSeatCanLock(session, state, currentSeat);
-    const waitingSeats = (session.seats || [])
-      .map(seat => ({ seat, player: state.players?.[seat.seatId] }))
-      .filter(entry => entry.seat.status !== 'declined' && entry.seat.status !== 'cancelled' && !entry.player?.sideDeckLocked)
-      .map(entry => entry.seat.displayName || entry.seat.seatId);
-    const seats = (session.seats || [])
-      .filter(seat => seat.status !== 'declined' && seat.status !== 'cancelled')
-      .map(seat => mapSeat(session, state, seat, currentSeatId));
+    const waitingSeats = (session.seats || []).map(seat => ({ seat, player: state.players?.[seat.seatId] })).filter(entry => entry.seat.status !== 'declined' && entry.seat.status !== 'cancelled' && !entry.player?.sideDeckLocked).map(entry => entry.seat.displayName || entry.seat.seatId);
+    const seats = (session.seats || []).filter(seat => seat.status !== 'declined' && seat.status !== 'cancelled').map(seat => mapSeat(session, state, seat, currentSeatId));
     const viewerSeat = seats.find(seat => seat.isViewer) ?? null;
     const opponentSeats = seats.filter(seat => !seat.isViewer);
     const opponentSeat = opponentSeats[0] || seats.find(seat => !seat.isViewer) || seats[0] || null;
@@ -222,13 +226,13 @@ export class PazaakViewModel {
     const winnerSeat = state.winnerSeatId ? seats.find(seat => seat.seatId === state.winnerSeatId) : null;
     const wager = GameCreditEscrowService.describe(session);
     const eventLog = (Array.isArray(state.eventLog) ? state.eventLog : []).filter(entry => !entry.gmOnly || game?.user?.isGM).slice(-12).reverse().map(mapEventLogEntry);
-    const tableChatter = eventLog.filter(entry => ['force', 'success', 'danger'].includes(entry.tone) || /AI|stood|bust|20|played|draw/i.test(entry.message)).slice(0, 3);
+    const tableChatter = eventLog.filter(entry => ['force', 'success', 'danger', 'warn'].includes(entry.tone) || /AI|stood|bust|repair|20|played|draw/i.test(entry.message)).slice(0, 3);
     const aiThinking = state.aiThinking?.active ? { ...state.aiThinking, delayLabel: formatDelay(state.aiThinking.delayMs), intensityLabel: state.aiThinking.intensity === 'hard' ? 'thinking hard' : (state.aiThinking.intensity === 'easy' ? 'thinking easy' : 'thinking') } : null;
 
     return {
       id: session.id,
       title: session.title,
-      rulesLabel: wager.enabled ? 'Wagered Credits' : 'Blackjack Pazaak: first to 20',
+      rulesLabel: wager.enabled ? 'Wagered Credits' : 'Blackjack Pazaak: repair to 20',
       wager,
       phase: state.phase,
       statusLabel: state.statusLabel || state.phase,
@@ -236,7 +240,7 @@ export class PazaakViewModel {
       showPlaying: state.phase === 'playing',
       showComplete: state.phase === 'complete',
       message: state.message || '',
-      rulesHint: 'Mandatory draw each turn, then choose one action: end turn, play one side card, or stand. Busts are final. Exact 20 auto-stands. Nine cards locks to 20.',
+      rulesHint: 'Mandatory draw each turn, then choose one action. If the draw puts you over 20, you may repair with one negative side card; ending/standing over 20 busts.',
       aiThinking,
       hasAiThinking: Boolean(aiThinking),
       canCancel: canCancelSession(session, currentSeat),
