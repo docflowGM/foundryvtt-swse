@@ -31,6 +31,10 @@
  */
 
 import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import {
+  isClassDataAuthorityReady,
+  waitForClassDataAuthority
+} from "/systems/foundryvtt-swse/scripts/engine/progression/utils/class-data-readiness.js";
 
 // SWSE Nonheroic BAB Progression (per nonheroic class level)
 const NONHEROIC_BAB_PROGRESSION = [
@@ -99,6 +103,13 @@ export class BABCalculator {
       this._classDataLoaderPromise = import("/systems/foundryvtt-swse/scripts/engine/progression/utils/class-data-loader.js");
     }
     return this._classDataLoaderPromise;
+  }
+
+  static _requiresClassAuthority(classLevels = []) {
+    return Array.isArray(classLevels) && classLevels.some(entry => {
+      const className = String(entry?.class || '').trim().toLowerCase();
+      return className && className !== 'nonheroic';
+    });
   }
 
   /**
@@ -184,7 +195,19 @@ export class BABCalculator {
     const cacheKey = this._classLevelsSignature(classLevels, adjustment);
     if (cacheKey && this._babCache.has(cacheKey)) return this._babCache.get(cacheKey);
 
-    // Lazy-load only when calculating, not at boot time
+    // Foundry runs Actor.prepareDerivedData during initializeDocuments, before
+    // compendium collections are guaranteed to exist. Do not ask the loader to
+    // classify a heroic class until the progression registry/pack is authoritative.
+    if (this._requiresClassAuthority(classLevels) && !isClassDataAuthorityReady()) {
+      const ready = await waitForClassDataAuthority();
+      if (!ready) {
+        throw new Error(
+          'BABCalculator: Class data authority did not become available during system initialization.'
+        );
+      }
+    }
+
+    // Lazy-load only when calculating, not at module evaluation time.
     const { getClassData } = await this._getClassDataLoader();
 
     let totalBAB = 0;
@@ -192,7 +215,7 @@ export class BABCalculator {
     for (const classLevel of classLevels) {
       const classData = await getClassData(classLevel.class);
 
-      // CRITICAL: Class data must exist. If missing, it's a configuration error, not a silent skip.
+      // Once authority is ready, absence is a genuine configuration error.
       if (!classData) {
         throw new Error(
           `BABCalculator: Unknown class "${classLevel.class}". ` +
