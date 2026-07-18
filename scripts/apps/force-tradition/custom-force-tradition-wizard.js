@@ -11,6 +11,50 @@ import { TalentTreeDB } from '/systems/foundryvtt-swse/scripts/data/talent-tree-
  * 3. Talent access from existing trees plus custom talent references
  */
 
+const STYLE_ID = 'swse-custom-force-tradition-wizard-styles';
+
+function ensureWizardStyles() {
+  if (document.getElementById(STYLE_ID)) return;
+  const style = document.createElement('style');
+  style.id = STYLE_ID;
+  style.textContent = `
+    .swse-custom-tradition-wizard { display: flex; flex-direction: column; min-height: 0; color: var(--swse-force-picker-text-light, #b5daff); }
+    .swse-custom-tradition-wizard__steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; padding: 14px 18px; border-bottom: 1px solid rgba(0, 170, 255, 0.2); }
+    .swse-custom-tradition-wizard__steps button,
+    .swse-custom-tradition-wizard__footer button,
+    .swse-force-tradition-picker__create { border: 1px solid rgba(0, 170, 255, 0.28); border-radius: 6px; background: rgba(0, 0, 0, 0.24); color: var(--swse-force-picker-primary, #9ed0ff); padding: 8px 10px; cursor: pointer; font-family: var(--swse-font-mono, ui-monospace, monospace); font-size: 11px; letter-spacing: 0.04em; }
+    .swse-custom-tradition-wizard__steps button.is-active,
+    .swse-force-tradition-picker__create:hover { border-color: var(--swse-force-picker-border-active, #00baff); background: rgba(0, 170, 255, 0.14); box-shadow: 0 0 12px rgba(0, 170, 255, 0.28); }
+    .swse-custom-tradition-wizard__step { display: none; padding: 16px 18px; min-height: 360px; }
+    .swse-custom-tradition-wizard__step.is-active { display: block; }
+    .swse-custom-tradition-wizard__step h3 { margin: 0 0 6px; color: var(--swse-force-picker-accent, #00d9ff); font-family: var(--swse-font-orbit, Orbitron, system-ui, sans-serif); }
+    .swse-custom-tradition-wizard__step p { margin: 0 0 14px; color: var(--swse-force-picker-text-secondary, #6a9dcd); line-height: 1.45; }
+    .swse-custom-tradition-wizard__field { display: flex; flex-direction: column; gap: 6px; margin: 0 0 12px; }
+    .swse-custom-tradition-wizard__field span { color: var(--swse-force-picker-primary, #9ed0ff); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; }
+    .swse-custom-tradition-wizard__field input,
+    .swse-custom-tradition-wizard__field textarea,
+    .swse-custom-tradition-wizard__tree-toolbar input { width: 100%; box-sizing: border-box; border: 1px solid rgba(0, 170, 255, 0.28); border-radius: 6px; background: rgba(3, 10, 20, 0.62); color: var(--swse-force-picker-text-light, #b5daff); padding: 9px 11px; outline: none; }
+    .swse-custom-tradition-wizard__field textarea { resize: vertical; min-height: 110px; }
+    .swse-custom-tradition-wizard__tree-toolbar { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+    .swse-custom-tradition-wizard__tree-count { white-space: nowrap; font-size: 11px; color: var(--swse-force-picker-text-muted, rgba(181,218,255,0.5)); font-family: var(--swse-font-mono, ui-monospace, monospace); }
+    .swse-custom-tradition-wizard__tree-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; max-height: 260px; overflow-y: auto; padding-right: 4px; margin-bottom: 14px; }
+    .swse-custom-tradition-wizard__tree { display: grid; grid-template-columns: 20px 1fr; gap: 8px; align-items: start; padding: 9px 10px; border: 1px solid rgba(0, 170, 255, 0.18); border-radius: 6px; background: rgba(10, 20, 34, 0.52); cursor: pointer; }
+    .swse-custom-tradition-wizard__tree:hover { border-color: rgba(0, 217, 255, 0.58); background: rgba(0, 170, 255, 0.10); }
+    .swse-custom-tradition-wizard__tree input { margin-top: 2px; accent-color: var(--swse-force-picker-accent, #00d9ff); }
+    .swse-custom-tradition-wizard__tree strong { display: block; color: var(--swse-force-picker-text-light, #b5daff); font-size: 12px; }
+    .swse-custom-tradition-wizard__tree small { display: block; color: var(--swse-force-picker-text-secondary, #6a9dcd); font-size: 10.5px; margin-top: 2px; }
+    .swse-custom-tradition-wizard__tree[hidden] { display: none; }
+    .swse-custom-tradition-wizard__empty { padding: 14px; border: 1px dashed rgba(0, 170, 255, 0.28); border-radius: 6px; color: var(--swse-force-picker-text-secondary, #6a9dcd); }
+    .swse-custom-tradition-wizard__footer { display: flex; justify-content: space-between; padding: 12px 18px; border-top: 1px solid rgba(0, 170, 255, 0.2); }
+    .swse-custom-tradition-wizard__footer button:disabled { opacity: 0.45; cursor: not-allowed; }
+    .swse-force-tradition-picker__toolbar { display: flex; justify-content: flex-end; padding: 10px 18px 0; }
+    .swse-force-tradition-picker__custom-badge { min-height: 23px; display: inline-flex; align-items: center; padding: 3px 8px; border-radius: 999px; border: 1px solid rgba(172, 130, 255, 0.44); background: rgba(172, 130, 255, 0.10); color: #d7c2ff; font-family: var(--swse-font-mono, ui-monospace, monospace); font-size: 10px; letter-spacing: 0.04em; }
+    .swse-force-tradition-picker__option[data-custom] { border-style: dashed; }
+    @media (max-width: 720px) { .swse-custom-tradition-wizard__tree-grid { grid-template-columns: 1fr; } }
+  `;
+  document.head.appendChild(style);
+}
+
 function escapeHtml(value) {
   const div = document.createElement('div');
   div.textContent = String(value ?? '');
@@ -237,6 +281,8 @@ export async function openCustomForceTraditionWizard(actor, { renderSheet = null
     ui.notifications?.warn?.('You do not have permission to edit this actor.');
     return null;
   }
+
+  ensureWizardStyles();
 
   const result = await SWSEDialogV2.wait({
     title: 'Create Custom Force Tradition',
