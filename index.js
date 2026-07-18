@@ -55,6 +55,7 @@ import { registerSithTalentActions } from "./scripts/engine/talent/sith-talent-a
 import { registerForceAdeptTalentActions } from "./scripts/engine/talent/force-adept-talent-actions.js";
 import { registerForceAlchemyWorkbench, openForceAlchemyWorkbench } from "./scripts/apps/force-alchemy/force-alchemy-workbench-app.js";
 import { registerForceTraditionPickerHooks } from "./scripts/apps/force-tradition/force-tradition-picker.js";
+import { registerCustomTalentTreeWorkbenchHooks } from "./scripts/apps/talent-tree-workbench/custom-talent-tree-workbench-hooks.js";
 import { registerLightsaberConstructionHooks } from "./scripts/applications/lightsaber/lightsaber-router.js";
 import { initializeConceptParityDiagnostics } from "./scripts/ui/concept-parity/concept-parity-diagnostics.js";
 import { initializeShellResponsiveObserver } from "./scripts/ui/shell/shell-responsive-observer.js";
@@ -194,6 +195,7 @@ Hooks.once("init", async () => {
   registerForceAdeptTalentActions();
   registerForceAlchemyWorkbench();
   registerForceTraditionPickerHooks();
+  registerCustomTalentTreeWorkbenchHooks();
   registerLightsaberConstructionHooks();
   initializeShellResponsiveObserver();
 
