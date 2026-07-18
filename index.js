@@ -59,6 +59,7 @@ import { registerForceTraditionPickerHooks } from "./scripts/apps/force-traditio
 import { registerCustomTalentTreeWorkbenchHooks } from "./scripts/apps/talent-tree-workbench/custom-talent-tree-workbench-hooks.js";
 import { registerCustomTalentTreeProgressionOverlay } from "./scripts/apps/talent-tree-workbench/custom-talent-tree-progression-overlay.js";
 import { registerCustomContentGmApprovalIntegration } from "./scripts/apps/talent-tree-workbench/custom-content-gm-approval-integration.js";
+import { registerCustomTalentEffectWizardIntegration } from "./scripts/apps/talent-tree-workbench/custom-talent-effect-wizard-integration.js";
 import { registerLightsaberConstructionHooks } from "./scripts/applications/lightsaber/lightsaber-router.js";
 import { initializeConceptParityDiagnostics } from "./scripts/ui/concept-parity/concept-parity-diagnostics.js";
 import { initializeShellResponsiveObserver } from "./scripts/ui/shell/shell-responsive-observer.js";
@@ -202,6 +203,7 @@ Hooks.once("init", async () => {
   registerCustomTalentTreeWorkbenchHooks();
   registerCustomTalentTreeProgressionOverlay();
   registerCustomContentGmApprovalIntegration();
+  registerCustomTalentEffectWizardIntegration();
   registerLightsaberConstructionHooks();
   initializeShellResponsiveObserver();
 
