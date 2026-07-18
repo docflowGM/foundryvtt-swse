@@ -1,3 +1,4 @@
+import { GMDatapad } from '/systems/foundryvtt-swse/scripts/apps/gm-datapad.js';
 import { GMApprovalsSurfaceService } from '/systems/foundryvtt-swse/scripts/ui/shell/gm/GMApprovalsSurfaceService.js';
 import { GMApprovalOperationsService } from '/systems/foundryvtt-swse/scripts/ui/shell/gm/GMApprovalOperationsService.js';
 import { CustomContentApprovalService } from '/systems/foundryvtt-swse/scripts/apps/talent-tree-workbench/custom-content-approval-service.js';
@@ -93,11 +94,26 @@ function patchApprovalOperations() {
   };
 }
 
+function patchGmDatapadBadges() {
+  const original = GMDatapad.prototype._getHomeBadgeCounts;
+  if (typeof original !== 'function') return;
+  GMDatapad.prototype._getHomeBadgeCounts = async function customContentBadgeCounts() {
+    const counts = await original.call(this);
+    const customContentApprovals = CustomContentApprovalService.countPending();
+    return {
+      ...counts,
+      customContentApprovals,
+      approvals: Number(counts.approvals ?? 0) + customContentApprovals
+    };
+  };
+}
+
 export function registerCustomContentGmApprovalIntegration() {
   if (globalThis[PATCH_FLAG]) return false;
   globalThis[PATCH_FLAG] = true;
   patchApprovalSurface();
   patchApprovalOperations();
+  patchGmDatapadBadges();
 
   globalThis.SWSE ??= {};
   globalThis.SWSE.customContentApprovals = CustomContentApprovalService;
