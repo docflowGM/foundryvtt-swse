@@ -9,6 +9,7 @@
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { TalentTreeDB } from "/systems/foundryvtt-swse/scripts/data/talent-tree-db.js";
 import { resolveClassModel, getClassTalentTreeLookupKeys } from "/systems/foundryvtt-swse/scripts/engine/progression/utils/class-resolution.js";
+import { restrictPrestigeForceTraditionsToMembership } from "/systems/foundryvtt-swse/scripts/settings/force-tradition-house-rules.js";
 
 const FORCE_GENERIC_TREE_KEYS = [
   'alter',
@@ -141,6 +142,10 @@ function resolveTalentTreeKeys(canonicalKeys = []) {
   return unique(keys);
 }
 
+function getAllForceTraditionTreeKeys() {
+  return resolveTalentTreeKeys(FORCE_TRADITION_TREE_RULES.map(([treeKey]) => treeKey));
+}
+
 export function actorHasForceSensitivity(actor, context = {}) {
   if (contextHasForceSensitivity(context)) return true;
   if (!actor) return false;
@@ -240,12 +245,29 @@ function getCustomForceTraditionTreeKeys(actor) {
   return resolveTalentTreeKeys(treeKeys);
 }
 
-export function getForceTalentTreeAccessKeys(actor, { includeGeneric = true, includeTraditions = true } = {}) {
+function getPrestigeClassForceTraditionTreeKeys(actor) {
+  if (restrictPrestigeForceTraditionsToMembership()) {
+    return unique([
+      ...getForceTraditionTreeKeys(actor),
+      ...getCustomForceTraditionTreeKeys(actor),
+    ]);
+  }
+
+  return unique([
+    ...getAllForceTraditionTreeKeys(),
+    ...getCustomForceTraditionTreeKeys(actor),
+  ]);
+}
+
+export function getForceTalentTreeAccessKeys(actor, { includeGeneric = true, includeTraditions = true, prestigeClassAccess = false } = {}) {
   const keys = [];
   if (includeGeneric) keys.push(...resolveTalentTreeKeys(FORCE_GENERIC_TREE_KEYS));
   if (includeTraditions) {
-    keys.push(...getForceTraditionTreeKeys(actor));
-    keys.push(...getCustomForceTraditionTreeKeys(actor));
+    if (prestigeClassAccess) keys.push(...getPrestigeClassForceTraditionTreeKeys(actor));
+    else {
+      keys.push(...getForceTraditionTreeKeys(actor));
+      keys.push(...getCustomForceTraditionTreeKeys(actor));
+    }
   }
   return unique(keys);
 }
@@ -254,6 +276,13 @@ function classGrantsAnyForceTreeAccess(classDoc) {
   const model = resolveClassModel(classDoc) || classDoc || {};
   const className = normalizeLabel(model.name || model.className || model.system?.class_name || classDoc?.name || '');
   return ANY_FORCE_TREE_CLASSES.has(className);
+}
+
+function actorHasAnyForceTreePrestigeClass(actor, classDocs = []) {
+  if (classDocs.some(classGrantsAnyForceTreeAccess)) return true;
+  const items = actor?.items?.contents || actor?.items || [];
+  const itemList = Array.isArray(items) ? items : Array.from(items || []);
+  return itemList.some(item => item?.type === 'class' && classGrantsAnyForceTreeAccess(item));
 }
 
 /**
@@ -311,7 +340,7 @@ export function getAllowedTalentTrees(actor, slot) {
     const keys = normalizeAccessKeys(classDoc);
 
     if (classGrantsAnyForceTreeAccess(classDoc) && actorHasForceSensitivity(actor, slot)) {
-      keys.push(...getForceTalentTreeAccessKeys(actor, { includeGeneric: true, includeTraditions: true }));
+      keys.push(...getForceTalentTreeAccessKeys(actor, { includeGeneric: true, includeTraditions: true, prestigeClassAccess: true }));
     }
 
     SWSELogger.log(
@@ -333,11 +362,12 @@ export function getAllowedTalentTrees(actor, slot) {
     }
 
     if (actorHasForceSensitivity(actor, slot)) {
-      const forceTreeKeys = getForceTalentTreeAccessKeys(actor, { includeGeneric: true, includeTraditions: true });
+      const prestigeClassAccess = actorHasAnyForceTreePrestigeClass(actor, ownedClassDocs);
+      const forceTreeKeys = getForceTalentTreeAccessKeys(actor, { includeGeneric: true, includeTraditions: true, prestigeClassAccess });
       if (forceTreeKeys.length) {
         allowedTrees.push(...forceTreeKeys);
         SWSELogger.log(
-          `[TreeAuthority] Heroic slot: Added ${forceTreeKeys.length} Force trees from Force Sensitivity/tradition access`
+          `[TreeAuthority] Heroic slot: Added ${forceTreeKeys.length} Force trees from Force Sensitivity/tradition access${prestigeClassAccess ? ' (prestige RAW/house-rule mode)' : ''}`
         );
       }
     }
