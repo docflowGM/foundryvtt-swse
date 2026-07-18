@@ -10,7 +10,22 @@ export class UIManager {
   static _themePicker = null;
 
   static init() {
+    Hooks.once("init", () => this._registerSettings());
     Hooks.once("ready", () => this._onReady());
+  }
+
+  static _registerSettings() {
+    const settingKey = `${SYSTEM_ID}.themePromptShown`;
+    if (game.settings.settings.has(settingKey)) return;
+
+    game.settings.register(SYSTEM_ID, 'themePromptShown', {
+      name: 'Theme Picker Completed',
+      hint: 'Tracks whether this client has completed or skipped the first-run Holopad theme picker.',
+      scope: 'client',
+      config: false,
+      type: Boolean,
+      default: false
+    });
   }
 
   static _onReady() {
