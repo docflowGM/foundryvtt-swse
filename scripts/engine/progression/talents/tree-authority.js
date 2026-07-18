@@ -253,10 +253,10 @@ function getPrestigeClassForceTraditionTreeKeys(actor) {
     ]);
   }
 
-  return unique([
-    ...getAllForceTraditionTreeKeys(),
-    ...getCustomForceTraditionTreeKeys(actor),
-  ]);
+  // RAW prestige access means every official/canon Force tradition tree only.
+  // Custom tradition trees remain explicit house-rule memberships and are not
+  // swept in by Jedi Master / Sith Lord / Force Disciple universal access.
+  return getAllForceTraditionTreeKeys();
 }
 
 export function getForceTalentTreeAccessKeys(actor, { includeGeneric = true, includeTraditions = true, prestigeClassAccess = false } = {}) {
