@@ -206,6 +206,7 @@ Hooks.once("init", async () => {
   registerCustomTalentEffectWizardIntegration();
   registerLightsaberConstructionHooks();
   initializeShellResponsiveObserver();
+  await initializeGames();
 
   // -------------------------------
   // Feat Effect Registry + lifecycle hooks
