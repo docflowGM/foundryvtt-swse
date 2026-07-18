@@ -8,13 +8,14 @@ import {
 } from '/systems/foundryvtt-swse/scripts/apps/talent-tree-workbench/custom-talent-tree-model.js';
 import { openExistingTalentImportDialog } from '/systems/foundryvtt-swse/scripts/apps/talent-tree-workbench/custom-talent-tree-importer.js';
 import { customContentApprovalNotice } from '/systems/foundryvtt-swse/scripts/settings/custom-content-approval.js';
+import { createSafeEmbeddedItem } from '/systems/foundryvtt-swse/scripts/engine/items/safe-item-factory.js';
 
 /**
  * Custom Talent Tree Workbench
  *
- * Phase 3 shell + existing-tree importer. The workbench owns metadata and graph
- * state; the importer reuses TalentTreeDB, membership authority, and the existing
- * dependency graph builder. This phase accepts prerequisite-chain payloads.
+ * Phase 4 shell + existing-tree importer + blank custom talent creation. The
+ * workbench owns metadata and graph state; the importer reuses TalentTreeDB,
+ * membership authority, and the existing dependency graph builder.
  */
 
 const STYLE_ID = 'swse-custom-talent-tree-workbench-styles';
@@ -44,8 +45,11 @@ function ensureWorkbenchStyles() {
     .swse-custom-tree-workbench__field span { color: var(--swse-force-picker-primary, #9ed0ff); font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; }
     .swse-custom-tree-workbench__field input,
     .swse-custom-tree-workbench__field textarea,
-    .swse-custom-tree-workbench__field select { width: 100%; box-sizing: border-box; border: 1px solid rgba(0, 170, 255, 0.28); border-radius: 6px; background: rgba(3, 10, 20, 0.72); color: var(--swse-force-picker-text-light, #b5daff); padding: 8px 10px; outline: none; }
-    .swse-custom-tree-workbench__field textarea { min-height: 96px; resize: vertical; }
+    .swse-custom-tree-workbench__field select,
+    .swse-custom-tree-node-prompt input,
+    .swse-custom-tree-node-prompt textarea { width: 100%; box-sizing: border-box; border: 1px solid rgba(0, 170, 255, 0.28); border-radius: 6px; background: rgba(3, 10, 20, 0.72); color: var(--swse-force-picker-text-light, #b5daff); padding: 8px 10px; outline: none; }
+    .swse-custom-tree-workbench__field textarea,
+    .swse-custom-tree-node-prompt textarea { min-height: 96px; resize: vertical; }
     .swse-custom-tree-workbench__graph { position: relative; min-height: 480px; overflow: hidden; background: radial-gradient(circle at 50% 40%, rgba(0, 217, 255, 0.10), transparent 38%), linear-gradient(90deg, rgba(0, 170, 255, 0.08) 1px, transparent 1px), linear-gradient(0deg, rgba(0, 170, 255, 0.08) 1px, transparent 1px); background-size: auto, 48px 48px, 48px 48px; }
     .swse-custom-tree-workbench__graph::after { content: ''; position: absolute; inset: 0; pointer-events: none; box-shadow: inset 0 0 70px rgba(0, 0, 0, 0.54); }
     .swse-custom-tree-workbench__toolbar { position: absolute; top: 12px; left: 12px; z-index: 2; display: flex; gap: 8px; }
@@ -58,6 +62,7 @@ function ensureWorkbenchStyles() {
     .swse-custom-tree-workbench__node-count { color: var(--swse-force-picker-text-muted, rgba(181,218,255,0.5)); font-size: 10px; }
     .swse-custom-tree-workbench__node-list { position: relative; z-index: 1; display: flex; flex-wrap: wrap; gap: 16px; align-content: flex-start; padding: 70px 18px 18px; }
     .swse-custom-tree-workbench__node-card { width: 172px; min-height: 110px; border: 1px solid rgba(0, 217, 255, 0.32); border-radius: 14px; background: rgba(8, 20, 34, 0.82); padding: 12px; box-shadow: 0 0 16px rgba(0, 217, 255, 0.10); }
+    .swse-custom-tree-workbench__node-card[data-source-type="custom"] { border-color: rgba(172, 130, 255, 0.46); box-shadow: 0 0 16px rgba(172, 130, 255, 0.12); }
     .swse-custom-tree-workbench__node-card strong { display: block; color: var(--swse-force-picker-text-light, #b5daff); font-size: 12px; }
     .swse-custom-tree-workbench__node-card small { display: block; margin-top: 5px; color: var(--swse-force-picker-text-secondary, #6a9dcd); font-size: 10px; line-height: 1.35; }
     .swse-custom-tree-workbench__node-card em { display: block; margin-top: 6px; color: var(--swse-warning, #ffd66b); font-style: normal; font-size: 9.5px; }
@@ -81,6 +86,8 @@ function ensureWorkbenchStyles() {
     .swse-custom-tree-importer__copy em { display: block; margin-top: 4px; color: var(--swse-warning, #ffd66b); font-style: normal; font-family: var(--swse-font-mono, ui-monospace, monospace); font-size: 9.5px; }
     .swse-custom-tree-importer__footer { display: flex; justify-content: flex-end; align-items: center; padding-top: 10px; color: var(--swse-force-picker-text-muted, rgba(181,218,255,.5)); font-family: var(--swse-font-mono, ui-monospace, monospace); font-size: 10px; }
     .swse-custom-tree-importer__footer select { margin-left: 6px; background: rgba(3,10,20,.65); color: var(--swse-force-picker-text-light, #b5daff); border: 1px solid rgba(0,170,255,.35); border-radius: 6px; padding: 5px 8px; }
+    .swse-custom-tree-node-prompt { display: flex; flex-direction: column; gap: 10px; }
+    .swse-custom-tree-node-prompt label { display: flex; flex-direction: column; gap: 5px; color: var(--swse-force-picker-primary, #9ed0ff); font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; }
     @media (max-width: 820px) { .swse-custom-tree-workbench__body, .swse-custom-tree-importer__layout { grid-template-columns: 1fr; } }
   `;
   document.head.appendChild(style);
@@ -107,7 +114,7 @@ function graphHtml(tree) {
         <button type="button" class="swse-custom-tree-workbench__plus-node" data-action="custom-tree-add-talent">
           <strong>+</strong>
           <span>Add Talent</span>
-          <small>Import from existing tree</small>
+          <small>Import or create</small>
         </button>
       </div>`;
   }
@@ -117,10 +124,11 @@ function graphHtml(tree) {
     </div>
     <div class="swse-custom-tree-workbench__node-list">
       ${nodes.map(node => `
-        <article class="swse-custom-tree-workbench__node-card" data-node-id="${escapeHtml(node.nodeId)}">
+        <article class="swse-custom-tree-workbench__node-card" data-node-id="${escapeHtml(node.nodeId)}" data-source-type="${escapeHtml(node.sourceType || 'custom')}">
           <strong>${escapeHtml(node.name)}</strong>
           <small>${escapeHtml(node.sourceTreeName || node.sourceType || 'custom')} · ${escapeHtml(node.importMode || 'custom')}</small>
           ${node.prerequisiteText ? `<em>Prereq: ${escapeHtml(node.prerequisiteText)}</em>` : ''}
+          ${node.approvalStatus ? `<em>${escapeHtml(node.approvalStatus)}</em>` : ''}
         </article>`).join('')}
       <button type="button" class="swse-custom-tree-workbench__plus-node" data-action="custom-tree-add-talent">
         <strong>+</strong>
@@ -137,7 +145,7 @@ function buildWorkbenchHtml(tree, context = {}) {
       <header class="swse-custom-tree-workbench__header">
         <div>
           <h2>Custom Talent Tree Workbench</h2>
-          <p>Edit the custom tree container and import existing talents into the graph. Drag/drop arrives later; prerequisite-chain import is active.</p>
+          <p>Edit the custom tree container, import existing talents, or create blank custom talent nodes for separate editing.</p>
         </div>
         <span class="swse-custom-tree-workbench__badge">${escapeHtml(approval)}</span>
       </header>
@@ -175,7 +183,7 @@ function buildWorkbenchHtml(tree, context = {}) {
               <input type="text" name="id" value="${escapeHtml(tree.id || '')}" placeholder="auto-generated-from-name">
             </label>
           </div>
-          <p class="swse-custom-tree-workbench__phase-note">Phase 3 can import the selected talent only or the prerequisite chain plus selected talent. Pending player-created trees do not grant access until GM approved.</p>
+          <p class="swse-custom-tree-workbench__phase-note">Phase 4 can import existing talents, import prerequisite chains, or create blank custom talent nodes. Pending player-created trees and custom talents do not grant access until GM approved.</p>
         </aside>
         <main class="swse-custom-tree-workbench__panel">
           <div class="swse-custom-tree-workbench__panel-title">
@@ -194,12 +202,12 @@ function rootFromHtml(html) {
   return html?.[0] || html?.element || (html instanceof HTMLElement ? html : document);
 }
 
-function renderGraph(root, tree) {
+function renderGraph(root, tree, actor = null) {
   const graph = root.querySelector?.('[data-custom-tree-graph]');
   const count = root.querySelector?.('[data-node-count]');
   if (graph) graph.innerHTML = graphHtml(tree);
   if (count) count.textContent = `${Number(tree.nodes?.length || 0)} Nodes`;
-  bindAddTalentButtons(root, tree);
+  bindAddTalentButtons(root, tree, actor);
 }
 
 function edgeKey(edge = {}) {
@@ -244,33 +252,203 @@ function pushImportedPayload(tree, payload) {
   return { added, skipped, edges: addedEdges };
 }
 
-function bindAddTalentButtons(root, tree) {
+async function openAddTalentModeDialog() {
+  return SWSEDialogV2.wait({
+    title: 'Add Talent to Custom Tree',
+    content: `
+      <form class="swse-custom-tree-importer" data-custom-tree-add-mode>
+        <p class="swse-custom-tree-importer__hint">Choose how to add the next node to this custom talent tree.</p>
+        <label class="swse-custom-tree-importer__talent is-selected">
+          <input type="radio" name="mode" value="existing" checked hidden>
+          <span class="swse-custom-tree-importer__mark"></span>
+          <span class="swse-custom-tree-importer__copy">
+            <strong>From Existing Tree</strong>
+            <small>Pick a talent from an official tree and optionally import its prerequisite chain.</small>
+          </span>
+        </label>
+        <label class="swse-custom-tree-importer__talent">
+          <input type="radio" name="mode" value="custom" hidden>
+          <span class="swse-custom-tree-importer__mark"></span>
+          <span class="swse-custom-tree-importer__copy">
+            <strong>Create Custom Talent</strong>
+            <small>Create a blank custom talent item, add it as a graph node, and open the item sheet for editing.</small>
+          </span>
+        </label>
+      </form>`,
+    buttons: {
+      cancel: {
+        icon: '<i class="fa-solid fa-times"></i>',
+        label: game?.i18n?.localize?.('Cancel') ?? 'Cancel',
+        callback: () => null
+      },
+      ok: {
+        icon: '<i class="fa-solid fa-plus"></i>',
+        label: 'Continue',
+        callback: html => rootFromHtml(html).querySelector?.('input[name="mode"]:checked')?.value || 'existing'
+      }
+    },
+    default: 'ok',
+    render: html => {
+      const root = rootFromHtml(html);
+      root.querySelectorAll?.('[data-custom-tree-add-mode] .swse-custom-tree-importer__talent').forEach(label => {
+        label.addEventListener('click', () => {
+          root.querySelectorAll('[data-custom-tree-add-mode] .swse-custom-tree-importer__talent').forEach(entry => entry.classList.remove('is-selected'));
+          label.classList.add('is-selected');
+          const input = label.querySelector('input[name="mode"]');
+          if (input) input.checked = true;
+        });
+      });
+    }
+  }, {
+    width: 620,
+    classes: ['swse-force-tradition-picker-dialog', 'swse-custom-talent-importer-dialog']
+  });
+}
+
+async function openCustomTalentPrompt(tree = {}) {
+  const defaultName = `New ${tree.name || 'Custom Tree'} Talent`;
+  return SWSEDialogV2.wait({
+    title: 'Create Custom Talent Node',
+    content: `
+      <form class="swse-custom-tree-node-prompt" data-custom-tree-node-prompt>
+        <p class="swse-custom-tree-importer__hint">Create a blank custom talent item. The item sheet will open after the node is added so the talent can be edited separately.</p>
+        <label>
+          Talent Name
+          <input type="text" name="name" value="${escapeHtml(defaultName)}" required>
+        </label>
+        <label>
+          Starting Description / Benefit
+          <textarea name="description" rows="4" placeholder="Describe the custom talent. You can edit this later on the item sheet."></textarea>
+        </label>
+      </form>`,
+    buttons: {
+      cancel: {
+        icon: '<i class="fa-solid fa-times"></i>',
+        label: game?.i18n?.localize?.('Cancel') ?? 'Cancel',
+        callback: () => null
+      },
+      ok: {
+        icon: '<i class="fa-solid fa-sparkles"></i>',
+        label: 'Create Talent',
+        callback: html => {
+          const root = rootFromHtml(html);
+          const name = String(root.querySelector?.('input[name="name"]')?.value || '').trim();
+          const description = String(root.querySelector?.('textarea[name="description"]')?.value || '').trim();
+          if (!name) return null;
+          return { name, description };
+        }
+      }
+    },
+    default: 'ok'
+  }, {
+    width: 620,
+    classes: ['swse-force-tradition-picker-dialog', 'swse-custom-talent-importer-dialog']
+  });
+}
+
+function nodeFromCustomTalentItem(item, tree = {}) {
+  const system = item?.system || {};
+  const name = String(item?.name || 'New Custom Talent').trim();
+  const nodeId = slugifyCustomTalentTree(item?.id || name);
+  return {
+    nodeId,
+    talentId: item?.id || nodeId,
+    name,
+    sourceType: 'custom',
+    sourceTreeId: tree.id || tree.value || null,
+    sourceTreeName: tree.name || 'Custom Talent Tree',
+    sourceTalentId: item?.id || null,
+    sourceName: 'Custom Talent',
+    uuid: item?.uuid || null,
+    importMode: 'custom',
+    prerequisiteText: system.prerequisites || system.prerequisite || '',
+    prerequisites: [],
+    description: system.benefit || system.description || '',
+    x: null,
+    y: null,
+    customTalent: {
+      actorId: item?.actor?.id || item?.parent?.id || null,
+      itemId: item?.id || null,
+      uuid: item?.uuid || null,
+      editable: true
+    },
+    approvalStatus: system.approvalStatus || null,
+    gmApproved: system.gmApproved ?? null
+  };
+}
+
+async function createCustomTalentNodePayload(actor, tree) {
+  if (!actor?.isOwner) {
+    ui?.notifications?.warn?.('You do not have permission to create a custom talent on this actor.');
+    return null;
+  }
+  const request = await openCustomTalentPrompt(tree);
+  if (!request?.name) return null;
+
+  const item = await createSafeEmbeddedItem(actor, 'talent', {
+    name: request.name,
+    source: 'custom-talent-tree-workbench',
+    system: {
+      tree: tree.name || 'Custom',
+      talentTree: tree.name || 'Custom',
+      talentTreeId: tree.id || null,
+      customTreeId: tree.value || (tree.id ? `custom-tree:${tree.id}` : null),
+      source: 'Custom Talent Tree Workbench',
+      description: request.description || '',
+      benefit: request.description || '',
+      isCustom: true
+    }
+  });
+
+  if (!item) return null;
+  item.sheet?.render?.(true);
+  const node = nodeFromCustomTalentItem(item, tree);
+  return {
+    nodes: [node],
+    edges: [],
+    selectedNodeId: node.nodeId,
+    selectedName: node.name,
+    importMode: 'custom',
+    prerequisiteMode: 'custom',
+    importedNodeIds: [node.nodeId]
+  };
+}
+
+async function resolveAddTalentPayload(actor, tree) {
+  const mode = await openAddTalentModeDialog();
+  if (!mode) return null;
+  if (mode === 'custom') return createCustomTalentNodePayload(actor, tree);
+  return openExistingTalentImportDialog(tree);
+}
+
+function bindAddTalentButtons(root, tree, actor = null) {
   root.querySelectorAll('[data-action="custom-tree-add-talent"]').forEach(button => {
     if (button.dataset.bound === 'true') return;
     button.dataset.bound = 'true';
     button.addEventListener('click', async event => {
       event.preventDefault();
       event.stopPropagation();
-      const imported = await openExistingTalentImportDialog(tree);
+      const imported = await resolveAddTalentPayload(actor, tree);
       if (!imported) return;
       const result = pushImportedPayload(tree, imported);
       if (!result.added) {
         ui?.notifications?.warn?.('Those talents are already in this custom tree.');
         return;
       }
-      renderGraph(root, tree);
+      renderGraph(root, tree, actor);
       const chainLabel = imported.prerequisiteMode === 'chain' ? ' with prerequisite chain' : '';
-      ui?.notifications?.info?.(`Added ${result.added} talent${result.added === 1 ? '' : 's'}${chainLabel} to the custom tree.`);
+      const customLabel = imported.prerequisiteMode === 'custom' ? ' as a custom editable talent' : '';
+      ui?.notifications?.info?.(`Added ${result.added} talent${result.added === 1 ? '' : 's'}${chainLabel}${customLabel} to the custom tree.`);
     });
   });
 }
 
-function bindWorkbench(html, tree) {
+function bindWorkbench(html, tree, actor = null) {
   const root = rootFromHtml(html);
   const workbench = root.querySelector?.('[data-custom-tree-workbench]');
   if (!workbench || workbench.dataset.bound === 'true') return;
   workbench.dataset.bound = 'true';
-  bindAddTalentButtons(root, tree);
+  bindAddTalentButtons(root, tree, actor);
 }
 
 function treeFromForm(html, original = {}, context = {}) {
@@ -334,7 +512,7 @@ export async function openCustomTalentTreeWorkbench(actor, options = {}) {
       }
     },
     default: 'ok',
-    render: (html) => bindWorkbench(html, initial)
+    render: (html) => bindWorkbench(html, initial, actor)
   }, {
     width: 1080,
     classes: ['swse-force-tradition-picker-dialog', 'swse-custom-talent-tree-workbench-dialog']
