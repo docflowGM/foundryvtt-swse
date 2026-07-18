@@ -12,9 +12,9 @@ import { customContentApprovalNotice } from '/systems/foundryvtt-swse/scripts/se
 /**
  * Custom Talent Tree Workbench
  *
- * Phase 2 shell + existing-tree importer. The workbench owns metadata and graph
+ * Phase 3 shell + existing-tree importer. The workbench owns metadata and graph
  * state; the importer reuses TalentTreeDB, membership authority, and the existing
- * dependency graph builder. Prerequisite-chain import arrives in Phase 3.
+ * dependency graph builder. This phase accepts prerequisite-chain payloads.
  */
 
 const STYLE_ID = 'swse-custom-talent-tree-workbench-styles';
@@ -137,7 +137,7 @@ function buildWorkbenchHtml(tree, context = {}) {
       <header class="swse-custom-tree-workbench__header">
         <div>
           <h2>Custom Talent Tree Workbench</h2>
-          <p>Edit the custom tree container and import existing talents into the graph. Drag/drop and prerequisite-chain import arrive next.</p>
+          <p>Edit the custom tree container and import existing talents into the graph. Drag/drop arrives later; prerequisite-chain import is active.</p>
         </div>
         <span class="swse-custom-tree-workbench__badge">${escapeHtml(approval)}</span>
       </header>
@@ -175,7 +175,7 @@ function buildWorkbenchHtml(tree, context = {}) {
               <input type="text" name="id" value="${escapeHtml(tree.id || '')}" placeholder="auto-generated-from-name">
             </label>
           </div>
-          <p class="swse-custom-tree-workbench__phase-note">Phase 2 imports selected existing talents as graph nodes. Pending player-created trees do not grant access until GM approved.</p>
+          <p class="swse-custom-tree-workbench__phase-note">Phase 3 can import the selected talent only or the prerequisite chain plus selected talent. Pending player-created trees do not grant access until GM approved.</p>
         </aside>
         <main class="swse-custom-tree-workbench__panel">
           <div class="swse-custom-tree-workbench__panel-title">
@@ -202,14 +202,46 @@ function renderGraph(root, tree) {
   bindAddTalentButtons(root, tree);
 }
 
-function pushImportedNode(tree, node) {
-  if (!node?.nodeId) return false;
+function edgeKey(edge = {}) {
+  return `${edge.from || ''}->${edge.to || ''}:${edge.type || 'prerequisite'}`;
+}
+
+function pushImportedPayload(tree, payload) {
+  const nodes = Array.isArray(payload?.nodes) ? payload.nodes : (payload?.nodeId ? [payload] : []);
+  const edges = Array.isArray(payload?.edges) ? payload.edges : [];
+  if (!nodes.length) return { added: 0, skipped: 0, edges: 0 };
+
   tree.nodes ??= [];
-  const exists = tree.nodes.some(existing => existing.nodeId === node.nodeId || existing.talentId === node.talentId);
-  if (exists) return false;
-  tree.nodes.push(node);
+  tree.edges ??= [];
+  let added = 0;
+  let skipped = 0;
+  for (const node of nodes) {
+    if (!node?.nodeId) {
+      skipped += 1;
+      continue;
+    }
+    const exists = tree.nodes.some(existing => existing.nodeId === node.nodeId || existing.talentId === node.talentId);
+    if (exists) {
+      skipped += 1;
+      continue;
+    }
+    tree.nodes.push(node);
+    added += 1;
+  }
+
+  const existingEdges = new Set(tree.edges.map(edgeKey));
+  let addedEdges = 0;
+  for (const edge of edges) {
+    if (!edge?.from || !edge?.to) continue;
+    const key = edgeKey(edge);
+    if (existingEdges.has(key)) continue;
+    tree.edges.push(edge);
+    existingEdges.add(key);
+    addedEdges += 1;
+  }
+
   tree.talentCount = tree.nodes.length;
-  return true;
+  return { added, skipped, edges: addedEdges };
 }
 
 function bindAddTalentButtons(root, tree) {
@@ -221,12 +253,14 @@ function bindAddTalentButtons(root, tree) {
       event.stopPropagation();
       const imported = await openExistingTalentImportDialog(tree);
       if (!imported) return;
-      if (!pushImportedNode(tree, imported)) {
-        ui?.notifications?.warn?.('That talent is already in this custom tree.');
+      const result = pushImportedPayload(tree, imported);
+      if (!result.added) {
+        ui?.notifications?.warn?.('Those talents are already in this custom tree.');
         return;
       }
       renderGraph(root, tree);
-      ui?.notifications?.info?.(`Added ${imported.name} to the custom tree.`);
+      const chainLabel = imported.prerequisiteMode === 'chain' ? ' with prerequisite chain' : '';
+      ui?.notifications?.info?.(`Added ${result.added} talent${result.added === 1 ? '' : 's'}${chainLabel} to the custom tree.`);
     });
   });
 }
