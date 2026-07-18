@@ -54,6 +54,7 @@ function normalizeAccessKey(value) {
   return String(value ?? '')
     .toLowerCase()
     .trim()
+    .replace(/^custom:/, '')
     .replace(/&/g, ' and ')
     .replace(/['’`]/g, '')
     .replace(/[^a-z0-9]+/g, '-')
@@ -154,27 +155,60 @@ export function actorHasForceSensitivity(actor, context = {}) {
   return itemList.some(item => item?.type === 'feat' && /force\s+sensitivity/i.test(item?.name || ''));
 }
 
+function addForceTraditionValue(value, values = []) {
+  if (!value) return values;
+  if (Array.isArray(value) || value instanceof Set) {
+    for (const entry of value) addForceTraditionValue(entry, values);
+    return values;
+  }
+  if (value && typeof value === 'object') {
+    values.push(value.value, value.name, value.label, value.id, value.key, value.tradition);
+    return values;
+  }
+  values.push(value);
+  return values;
+}
+
+export function getActorCustomForceTraditions(actor) {
+  const out = [];
+  const seen = new Set();
+  const sources = [
+    actor?.system?.customForceTraditions,
+    actor?.system?.progression?.customForceTraditions,
+    actor?.flags?.['foundryvtt-swse']?.customForceTraditions,
+    actor?.flags?.swse?.customForceTraditions,
+  ];
+
+  for (const source of sources) {
+    for (const entry of Array.isArray(source) ? source : source ? [source] : []) {
+      if (!entry || typeof entry !== 'object') continue;
+      const id = normalizeAccessKey(entry.id || entry.key || entry.value || entry.name);
+      if (!id || seen.has(id)) continue;
+      seen.add(id);
+      out.push({ ...entry, id, value: entry.value || `custom:${id}` });
+    }
+  }
+
+  return out;
+}
+
 export function getActorForceTraditions(actor) {
   const values = [];
-  const add = (value) => {
-    if (Array.isArray(value)) {
-      for (const item of value) add(item);
-      return;
-    }
-    if (value && typeof value === 'object') {
-      values.push(value.name, value.label, value.id, value.key, value.tradition);
-      return;
-    }
-    if (value) values.push(value);
-  };
-
-  add(actor?.system?.forceTradition);
-  add(actor?.system?.forceTraditions);
-  add(actor?.system?.progression?.forceTradition);
-  add(actor?.system?.progression?.forceTraditions);
-  add(actor?.system?.traditions);
-  add(actor?.flags?.swse?.forceTradition);
-  add(actor?.flags?.swse?.forceTraditions);
+  addForceTraditionValue(actor?.system?.forceTradition, values);
+  addForceTraditionValue(actor?.system?.forceTraditions, values);
+  addForceTraditionValue(actor?.system?.progression?.forceTradition, values);
+  addForceTraditionValue(actor?.system?.progression?.forceTraditions, values);
+  addForceTraditionValue(actor?.system?.progression?.adoptedForceTraditions, values);
+  addForceTraditionValue(actor?.system?.traditions, values);
+  addForceTraditionValue(actor?.flags?.['foundryvtt-swse']?.forceTradition, values);
+  addForceTraditionValue(actor?.flags?.['foundryvtt-swse']?.forceTraditions, values);
+  addForceTraditionValue(actor?.flags?.['foundryvtt-swse']?.adoptedForceTraditions, values);
+  addForceTraditionValue(actor?.flags?.swse?.forceTradition, values);
+  addForceTraditionValue(actor?.flags?.swse?.forceTraditions, values);
+  addForceTraditionValue(actor?.flags?.swse?.adoptedForceTraditions, values);
+  for (const custom of getActorCustomForceTraditions(actor)) {
+    addForceTraditionValue([custom.value, custom.name, custom.label], values);
+  }
 
   return unique(values.map(normalizeLabel).filter(Boolean));
 }
@@ -192,10 +226,27 @@ function getForceTraditionTreeKeys(actor) {
   return resolveTalentTreeKeys(treeKeys);
 }
 
+function getCustomForceTraditionTreeKeys(actor) {
+  const memberships = new Set(getActorForceTraditions(actor).map(normalizeAccessKey));
+  const treeKeys = [];
+  for (const tradition of getActorCustomForceTraditions(actor)) {
+    if (tradition.gmApproved === false || tradition.active === false) continue;
+    const customKeys = [tradition.value, tradition.id, tradition.name, tradition.label].map(normalizeAccessKey).filter(Boolean);
+    const isMembership = customKeys.some(key => memberships.has(key));
+    if (!isMembership && tradition.adopted !== true && tradition.primary !== true) continue;
+    const granted = Array.isArray(tradition.grantedTalentTrees) ? tradition.grantedTalentTrees : [];
+    treeKeys.push(...granted);
+  }
+  return resolveTalentTreeKeys(treeKeys);
+}
+
 export function getForceTalentTreeAccessKeys(actor, { includeGeneric = true, includeTraditions = true } = {}) {
   const keys = [];
   if (includeGeneric) keys.push(...resolveTalentTreeKeys(FORCE_GENERIC_TREE_KEYS));
-  if (includeTraditions) keys.push(...getForceTraditionTreeKeys(actor));
+  if (includeTraditions) {
+    keys.push(...getForceTraditionTreeKeys(actor));
+    keys.push(...getCustomForceTraditionTreeKeys(actor));
+  }
   return unique(keys);
 }
 
@@ -321,5 +372,6 @@ export default {
   getForceTalentTreeAccessKeys,
   actorHasForceSensitivity,
   getActorForceTraditions,
+  getActorCustomForceTraditions,
   isTreeAccessible
 };
