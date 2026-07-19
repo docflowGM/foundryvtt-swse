@@ -25,3 +25,5 @@ jobs:
           git add template.json packs/forcepowers.db docs/audits/generated/force-power-resolution-schema-audit.json docs/audits/generated/force-power-resolution-schema-audit.md
           git diff --cached --quiet || git commit -m "data: migrate Force powers to resolution schema"
           git push origin HEAD:feat/force-power-resolution-schema
+
+# Temporary generator; remove after the generated migration commit lands.
