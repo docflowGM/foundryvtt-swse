@@ -21,6 +21,23 @@ function defenseValue(actor, defense) {
   return 10;
 }
 
+function manualAdjudication(power, result, options = {}, details = {}) {
+  return {
+    ...result,
+    outcome: 'manual-adjudication',
+    outcomePlan: {
+      kind: 'manual-adjudication',
+      power: power?.name ?? 'Force power',
+      checkTotal: Number(result?.roll) || 0,
+      targetContext: options.targetContext ?? null,
+      reason: 'No actor target was selected. The roll is valid; resolve the target and effects manually.',
+      automation: 'manual',
+      sourceVerified: true,
+      ...details
+    }
+  };
+}
+
 export function getForceStunConditionSteps(checkTotal, willDefense, forcePointOption = false) {
   const margin = Number(checkTotal) - Number(willDefense);
   if (!Number.isFinite(margin) || margin < 0) return 0;
@@ -28,7 +45,7 @@ export function getForceStunConditionSteps(checkTotal, willDefense, forcePointOp
 }
 
 export function buildForceStunPlan({ checkTotal, target, forcePointOption = false } = {}) {
-  if (!target) throw new Error('Force Stun requires a target actor.');
+  if (!target) throw new Error('Force Stun requires a target actor for automated resolution.');
   const will = defenseValue(target, 'will');
   const steps = getForceStunConditionSteps(checkTotal, will, forcePointOption);
   return {
@@ -56,7 +73,7 @@ export async function applyForceStunPlan(target, plan) {
 }
 
 export function buildForceThrustPlan({ checkTotal, target, collision = null } = {}) {
-  if (!target) throw new Error('Force Thrust requires a target actor.');
+  if (!target) throw new Error('Force Thrust requires a target actor for automated resolution.');
   return {
     kind: 'opposed-movement',
     power: 'Force Thrust',
@@ -74,7 +91,7 @@ export function buildForceThrustPlan({ checkTotal, target, collision = null } = 
 }
 
 export function buildForceGripPlan({ checkTotal, target, maintain = false, forcePointOption = false } = {}) {
-  if (!target) throw new Error('Force Grip requires a target actor.');
+  if (!target) throw new Error('Force Grip requires a target actor for automated resolution.');
   return {
     kind: 'damage-and-action-restriction',
     power: 'Force Grip',
@@ -92,7 +109,7 @@ export function buildForceGripPlan({ checkTotal, target, maintain = false, force
 }
 
 export function buildMoveObjectPlan({ checkTotal, primaryTarget, secondaryTarget = null, unwilling = false, maintain = false, forcePointOption = false, destinyPointOption = false } = {}) {
-  if (!primaryTarget) throw new Error('Move Object requires a primary target.');
+  if (!primaryTarget) throw new Error('Move Object requires a primary target for automated resolution.');
   const total = Number(checkTotal) || 0;
   const sizeTier = total >= 35 ? 'colossal' : total >= 30 ? 'gargantuan' : total >= 25 ? 'huge' : total >= 20 ? 'large' : total >= 15 ? 'medium' : null;
   return {
@@ -134,28 +151,27 @@ export function installFinalForcePowerIntegration({ ForcePowerEffectsEngine, For
   ForceExecutor.executeForcePower = async function finalForcePowerExecutor(actor, powerId, options = {}) {
     const power = actor?.items?.get?.(powerId);
     const name = normalize(power?.name);
-    const target = options.target ?? options.targetActor;
-
-    if (name === 'force stun' && !target) return { success: false, error: 'Force Stun requires one target actor.' };
-    if (['force thrust', 'force grip', 'move object'].includes(name) && !target) {
-      return { success: false, error: `${power?.name ?? 'Force power'} requires an explicit target actor.` };
-    }
+    const target = options.target ?? options.targetActor ?? null;
 
     const result = await previous(actor, powerId, options);
     if (!result?.success) return result;
 
     if (name === 'force stun') {
+      if (!target) return manualAdjudication(power, result, options, { expectedTarget: 'one creature', defense: 'will' });
       const plan = buildForceStunPlan({ checkTotal: result.roll, target, forcePointOption: options.forcePointOption === true });
       const appliedPlan = await applyForceStunPlan(target, plan);
       return { ...result, outcome: 'condition-track', outcomePlan: appliedPlan };
     }
     if (name === 'force thrust') {
+      if (!target) return manualAdjudication(power, result, options, { expectedTarget: 'one creature or object', opposition: 'strength-check' });
       return { ...result, outcome: 'assisted-movement', outcomePlan: buildForceThrustPlan({ checkTotal: result.roll, target, collision: options.collision }) };
     }
     if (name === 'force grip') {
+      if (!target) return manualAdjudication(power, result, options, { expectedTarget: 'one creature', defense: 'fortitude' });
       return { ...result, outcome: 'assisted-sustained-damage', outcomePlan: buildForceGripPlan({ checkTotal: result.roll, target, maintain: options.maintain === true, forcePointOption: options.forcePointOption === true }) };
     }
     if (name === 'move object') {
+      if (!target) return manualAdjudication(power, result, options, { expectedTarget: 'one object or creature', optionalSecondaryTarget: true });
       return { ...result, outcome: 'assisted-multi-mode', outcomePlan: buildMoveObjectPlan({
         checkTotal: result.roll,
         primaryTarget: target,
