@@ -1,0 +1,19 @@
+name: Temporary NPC Force and bespoke checks
+
+on:
+  push:
+    branches:
+      - feat/npc-force-and-bespoke-fallbacks
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feat/npc-force-and-bespoke-fallbacks
+      - run: node --check scripts/engine/import/npc-statblock-bespoke-fallback.js
+      - run: node --check scripts/engine/import/npc-damage-hydration-hooks.js
