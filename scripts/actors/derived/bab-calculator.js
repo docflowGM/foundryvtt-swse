@@ -5,59 +5,14 @@
  * Async (loads class data), but called from prepareDerivedData (after mutation).
  *
  * Formula: Sum of BAB from each class at its current level.
- *
- * PHASE 10+ CORRECTNESS NOTE — Cumulative Integer BAB:
- * - Class compendium stores cumulative integer BAB at each class level
- * - NO fractional values exist in actual compendium data
- * - Slow/Medium/Fast metadata are class progression rate labels only
- * - Calculator reads levelProgression[level].bab for each class level (cumulative values)
- * - Sums these cumulative values across all classes
- * - Returns raw integer sum (no flooring per-level)
- *
- * Example (Multiclass):
- * - Scout level 5 (medium BAB): cumulative BAB = 3
- * - Soldier level 5 (fast BAB): cumulative BAB = 5
- * - Total BAB = 3 + 5 = 8
- *
- * Prestige Classes:
- * - Must have level_progression data in compendium or hardcoded fallback
- * - If missing, throws error (fail-fast instead of silent skip)
- * - Prestige classes included in BAB sum (not skipped)
- *
- * NONHEROIC CHARACTERS:
- * - Nonheroic classes use SWSE nonheroic BAB progression (not class-based)
- * - Nonheroic BAB: +0, +1, +2, +3, +3, +4, +5, +6, +6, +7, +8, +9, +9, +10, +11, +12, +12, +13, +14, +15 (levels 1-20)
- * - Heroic and nonheroic BAB stack: total BAB = heroic BAB + nonheroic BAB
  */
 
 import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
-import {
-  isClassDataAuthorityReady,
-  waitForClassDataAuthority
-} from "/systems/foundryvtt-swse/scripts/engine/progression/utils/class-data-readiness.js";
+import { isClassDataAuthorityReady } from "/systems/foundryvtt-swse/scripts/engine/progression/utils/class-data-readiness.js";
 
-// SWSE Nonheroic BAB Progression (per nonheroic class level)
 const NONHEROIC_BAB_PROGRESSION = [
-  0,  // Level 1
-  1,  // Level 2
-  2,  // Level 3
-  3,  // Level 4
-  3,  // Level 5
-  4,  // Level 6
-  5,  // Level 7
-  6,  // Level 8
-  6,  // Level 9
-  7,  // Level 10
-  8,  // Level 11
-  9,  // Level 12
-  9,  // Level 13
-  10, // Level 14
-  11, // Level 15
-  12, // Level 16
-  12, // Level 17
-  13, // Level 18
-  14, // Level 19
-  15  // Level 20
+  0, 1, 2, 3, 3, 4, 5, 6, 6, 7,
+  8, 9, 9, 10, 11, 12, 12, 13, 14, 15
 ];
 
 export class BABCalculator {
@@ -65,6 +20,7 @@ export class BABCalculator {
   static _babCacheOrder = [];
   static _babCacheMax = 160;
   static _classDataLoaderPromise = null;
+  static _startupDeferralLogged = false;
 
   static clearCaches() {
     this._babCache.clear();
@@ -112,29 +68,22 @@ export class BABCalculator {
     });
   }
 
-  /**
-   * Resolve class level progression from every supported class-data shape.
-   * During the canonical migration some callers receive loader data, some
-   * receive canonical ClassModel data, and older code still reads _raw.
-   * @param {Object} classData
-   * @returns {Array<Object>}
-   */
+  static _startupSafeBab(classLevels = [], adjustment = 0) {
+    let total = Number(adjustment) || 0;
+    for (const entry of classLevels) {
+      const className = String(entry?.class || '').trim().toLowerCase();
+      if (className !== 'nonheroic') continue;
+      const level = Math.max(1, Number(entry?.level || 1) || 1);
+      total += NONHEROIC_BAB_PROGRESSION[Math.min(level, NONHEROIC_BAB_PROGRESSION.length) - 1] ?? 0;
+    }
+    return total;
+  }
+
   static _resolveLevelProgression(classData) {
-    if (Array.isArray(classData?._raw?.level_progression)) {
-      return classData._raw.level_progression;
-    }
-
-    if (Array.isArray(classData?.levelProgressionArray)) {
-      return classData.levelProgressionArray;
-    }
-
-    if (Array.isArray(classData?._canonical?.levelProgression)) {
-      return classData._canonical.levelProgression;
-    }
-
-    if (Array.isArray(classData?.levelProgression)) {
-      return classData.levelProgression;
-    }
+    if (Array.isArray(classData?._raw?.level_progression)) return classData._raw.level_progression;
+    if (Array.isArray(classData?.levelProgressionArray)) return classData.levelProgressionArray;
+    if (Array.isArray(classData?._canonical?.levelProgression)) return classData._canonical.levelProgression;
+    if (Array.isArray(classData?.levelProgression)) return classData.levelProgression;
 
     if (classData?.levelProgression && typeof classData.levelProgression === 'object') {
       return Object.entries(classData.levelProgression)
@@ -145,77 +94,43 @@ export class BABCalculator {
     return [];
   }
 
-  /**
-   * Last-ditch progression fallback from BAB rate labels. This should only be
-   * used for malformed class data; normal class compendium rows include exact
-   * cumulative BAB by level.
-   * @param {Object} classData
-   * @param {number} level
-   * @returns {number|null}
-   */
   static _estimateBabFromProgression(classData, level) {
     const rate = classData?.babProgression || classData?.baseAttackBonus;
-    if (!rate || !Number.isFinite(level) || level <= 0) {
-      return null;
-    }
-
-    if (rate === 'fast' || rate === 'high') {
-      return level;
-    }
-
-    // SWSE heroic non-full BAB classes use the 3/4 progression.
-    if (rate === 'slow' || rate === 'medium' || rate === 'low') {
-      return Math.floor(level * 0.75);
-    }
-
+    if (!rate || !Number.isFinite(level) || level <= 0) return null;
+    if (rate === 'fast' || rate === 'high') return level;
+    if (rate === 'slow' || rate === 'medium' || rate === 'low') return Math.floor(level * 0.75);
     return null;
   }
 
   /**
    * Calculate total BAB from class levels.
-   * Async (loads compendium data), but only called during recalculation, not mutation.
    *
-   * Phase 0: Accepts modifier adjustments from ModifierEngine
-   *
-   * Handles both heroic and nonheroic classes:
-   * - Heroic: uses class-based progression from compendium
-   * - Nonheroic: uses SWSE nonheroic progression table
-   * - Stacking: total BAB = sum of all class BAB values
-   *
-   * @param {Array} classLevels - from actor.system.progression.classLevels
-   * @param {Object} options - { adjustment: number, actor: Actor } modifier adjustments and context
-   * @returns {Promise<number>} total BAB (adjusted)
+   * Foundry prepares actors before the ready hook and before compendium-backed
+   * registries are guaranteed to exist. Waiting for a ready-phase hook from
+   * prepareDerivedData deadlocks startup, so that early pass must be nonblocking.
+   * SystemInitHooks performs authoritative actor reconciliation after registries
+   * initialize, at which point this method uses exact class progression data.
    */
   static async calculate(classLevels, options = {}) {
-    if (!classLevels || classLevels.length === 0) {
-      return 0;
-    }
+    if (!classLevels || classLevels.length === 0) return 0;
 
     const adjustment = Number(options?.adjustment || 0) || 0;
     const cacheKey = this._classLevelsSignature(classLevels, adjustment);
     if (cacheKey && this._babCache.has(cacheKey)) return this._babCache.get(cacheKey);
 
-    // Foundry runs Actor.prepareDerivedData during initializeDocuments, before
-    // compendium collections are guaranteed to exist. Do not ask the loader to
-    // classify a heroic class until the progression registry/pack is authoritative.
     if (this._requiresClassAuthority(classLevels) && !isClassDataAuthorityReady()) {
-      const ready = await waitForClassDataAuthority();
-      if (!ready) {
-        throw new Error(
-          'BABCalculator: Class data authority did not become available during system initialization.'
-        );
+      if (!this._startupDeferralLogged) {
+        this._startupDeferralLogged = true;
+        swseLogger.debug('[BABCalculator] Deferring heroic BAB authority during initializeDocuments; authoritative recalculation will run after progression initialization.');
       }
+      return this._startupSafeBab(classLevels, adjustment);
     }
 
-    // Lazy-load only when calculating, not at module evaluation time.
     const { getClassData } = await this._getClassDataLoader();
-
     let totalBAB = 0;
 
     for (const classLevel of classLevels) {
       const classData = await getClassData(classLevel.class);
-
-      // Once authority is ready, absence is a genuine configuration error.
       if (!classData) {
         throw new Error(
           `BABCalculator: Unknown class "${classLevel.class}". ` +
@@ -224,45 +139,37 @@ export class BABCalculator {
       }
 
       const levelsInClass = classLevel.level || 1;
-
-      // Check if this is a nonheroic class
-      const isNonheroic = classData.isNonheroic === true;
-
-      if (isNonheroic) {
-        // Use SWSE nonheroic BAB progression table
+      if (classData.isNonheroic === true) {
         if (levelsInClass > 0 && levelsInClass <= NONHEROIC_BAB_PROGRESSION.length) {
           totalBAB += NONHEROIC_BAB_PROGRESSION[levelsInClass - 1];
         }
-      } else {
-        // Use heroic class progression. Exact cumulative BAB from compendium is
-        // preferred; progression-rate fallback only covers damaged/migrating data.
-        const levelProgression = this._resolveLevelProgression(classData);
+        continue;
+      }
 
-        if (levelsInClass > 0 && levelsInClass <= levelProgression.length) {
-          const finalLevelData = levelProgression[levelsInClass - 1];
-          if (Number.isFinite(Number(finalLevelData?.bab))) {
-            totalBAB += Number(finalLevelData.bab);
-            continue;
-          }
-        }
-
-        const estimatedBab = this._estimateBabFromProgression(classData, levelsInClass);
-        if (estimatedBab !== null) {
-          swseLogger.warn(
-            `[BABCalculator] Estimated BAB for "${classLevel.class}" level ${levelsInClass} because exact level_progression data was unavailable`
-          );
-          totalBAB += estimatedBab;
+      const levelProgression = this._resolveLevelProgression(classData);
+      if (levelsInClass > 0 && levelsInClass <= levelProgression.length) {
+        const finalLevelData = levelProgression[levelsInClass - 1];
+        if (Number.isFinite(Number(finalLevelData?.bab))) {
+          totalBAB += Number(finalLevelData.bab);
           continue;
         }
-
-        throw new Error(
-          `BABCalculator: Class "${classLevel.class}" has no usable level_progression data. ` +
-          `Verify class definition includes level progression.`
-        );
       }
+
+      const estimatedBab = this._estimateBabFromProgression(classData, levelsInClass);
+      if (estimatedBab !== null) {
+        swseLogger.warn(
+          `[BABCalculator] Estimated BAB for "${classLevel.class}" level ${levelsInClass} because exact level_progression data was unavailable`
+        );
+        totalBAB += estimatedBab;
+        continue;
+      }
+
+      throw new Error(
+        `BABCalculator: Class "${classLevel.class}" has no usable level_progression data. ` +
+        `Verify class definition includes level progression.`
+      );
     }
 
-    // Apply modifier adjustment (Phase 0)
     const result = totalBAB + adjustment;
     if (cacheKey) this._rememberBab(cacheKey, result);
     return result;
