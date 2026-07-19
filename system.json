@@ -1,13 +1,14 @@
 {
   "id": "foundryvtt-swse",
+  "type": "system",
   "title": "Star Wars Saga Edition",
-  "description": "Complete Star Wars Saga Edition implementation for FoundryVTT with automated character sheets, combat mechanics, Force powers, vehicles, and comprehensive game rules.",
+  "description": "Complete Star Wars Saga Edition implementation for Foundry Virtual Tabletop with automated character sheets, combat mechanics, Force powers, vehicles, and comprehensive game rules.",
   "version": "4.0.4",
   "compatibility": {
-    "minimum": "12",
-    "verified": "14"
+    "minimum": 14,
+    "verified": 14,
+    "maximum": 14
   },
-  "schemaVersion": 1,
   "authors": [
     {
       "name": "Doc Flow",
@@ -19,7 +20,6 @@
   "readme": "https://github.com/docflowGM/foundryvtt-swse/blob/main/README.md",
   "bugs": "https://github.com/docflowGM/foundryvtt-swse/issues",
   "changelog": "https://raw.githubusercontent.com/docflowGM/foundryvtt-swse/main/CHANGELOG.md",
-  "discord": "https://discord.gg/Sdwd7CgmaJ",
   "url": "https://github.com/docflowGM/foundryvtt-swse",
   "manifest": "https://raw.githubusercontent.com/docflowGM/foundryvtt-swse/main/system.json",
   "download": "https://github.com/docflowGM/foundryvtt-swse/releases/download/v4.0.4/swse.zip",
@@ -157,12 +157,12 @@
     },
     {
       "lang": "es",
-      "name": "Espa\u00f1ol",
+      "name": "Español",
       "path": "lang/es.json"
     },
     {
       "lang": "fr",
-      "name": "Fran\u00e7ais",
+      "name": "Français",
       "path": "lang/fr.json"
     },
     {
@@ -172,27 +172,27 @@
     },
     {
       "lang": "ja",
-      "name": "\u65e5\u672c\u8a9e",
+      "name": "日本語",
       "path": "lang/ja.json"
     },
     {
       "lang": "ru",
-      "name": "\u0420\u0443\u0441\u0441\u043a\u0438\u0439",
+      "name": "Русский",
       "path": "lang/ru.json"
     },
     {
       "lang": "pt-BR",
-      "name": "Portugu\u00eas (Brasil)",
+      "name": "Português (Brasil)",
       "path": "lang/pt-BR.json"
     },
     {
       "lang": "zh-CN",
-      "name": "\u7b80\u4f53\u4e2d\u6587",
+      "name": "简体中文",
       "path": "lang/zh-CN.json"
     },
     {
       "lang": "ko",
-      "name": "\ud55c\uad6d\uc5b4",
+      "name": "한국어",
       "path": "lang/ko.json"
     },
     {
@@ -212,12 +212,12 @@
     },
     {
       "lang": "hi",
-      "name": "\u0939\u093f\u0928\u094d\u0926\u0940",
+      "name": "हिन्दी",
       "path": "lang/hi.json"
     },
     {
       "lang": "ar",
-      "name": "\u0627\u0644\u0639\u0631\u0628\u064a\u0629",
+      "name": "العربية",
       "path": "lang/ar.json"
     },
     {
@@ -227,7 +227,7 @@
     },
     {
       "lang": "tr",
-      "name": "T\u00fcrk\u00e7e",
+      "name": "Türkçe",
       "path": "lang/tr.json"
     },
     {
@@ -242,22 +242,22 @@
     },
     {
       "lang": "vi",
-      "name": "Ti\u1ebfng Vi\u1ec7t",
+      "name": "Tiếng Việt",
       "path": "lang/vi.json"
     },
     {
       "lang": "th",
-      "name": "\u0e44\u0e17\u0e22",
+      "name": "ไทย",
       "path": "lang/th.json"
     },
     {
       "lang": "bn",
-      "name": "\u09ac\u09be\u0982\u09b2\u09be",
+      "name": "বাংলা",
       "path": "lang/bn.json"
     },
     {
       "lang": "ur",
-      "name": "\u0627\u0631\u062f\u0648",
+      "name": "اردو",
       "path": "lang/ur.json"
     },
     {
@@ -267,12 +267,12 @@
     },
     {
       "lang": "uk",
-      "name": "\u0423\u043a\u0440\u0430\u0457\u043d\u0441\u044c\u043a\u0430",
+      "name": "Українська",
       "path": "lang/uk.json"
     },
     {
       "lang": "he",
-      "name": "\u05e2\u05d1\u05e8\u05d9\u05ea",
+      "name": "עברית",
       "path": "lang/he.json"
     }
   ],
@@ -295,230 +295,225 @@
       "url": "assets/ui/swse-logo.png"
     }
   ],
-  "flagScopes": [
-    "foundryvtt-swse"
-  ],
   "packs": [
     {
       "name": "species",
       "label": "Species",
       "type": "Item",
-      "system": "foundryvtt-swse",
-      "path": "packs/species.db"
+      "path": "packs/species",
+      "system": "foundryvtt-swse"
     },
     {
       "name": "classes",
       "label": "Classes",
       "type": "Item",
-      "system": "foundryvtt-swse",
-      "path": "packs/classes.db"
+      "path": "packs/classes",
+      "system": "foundryvtt-swse"
     },
     {
       "name": "talent_trees",
       "label": "Talent Trees",
       "type": "Item",
-      "system": "foundryvtt-swse",
-      "path": "packs/talent_trees.db"
+      "path": "packs/talent_trees",
+      "system": "foundryvtt-swse"
     },
     {
       "name": "talents",
       "label": "Talents",
       "type": "Item",
-      "system": "foundryvtt-swse",
-      "path": "packs/talents.db"
+      "path": "packs/talents",
+      "system": "foundryvtt-swse"
     },
     {
       "name": "feats",
       "label": "Feats",
       "type": "Item",
+      "path": "packs/feats",
       "system": "foundryvtt-swse",
-      "path": "packs/feats.db",
       "ownership": {
         "PLAYER": "OBSERVER",
-        "ASSISTANT": "OBSERVER",
         "TRUSTED": "OBSERVER",
+        "ASSISTANT": "OBSERVER",
         "GAMEMASTER": "OWNER"
-      },
-      "private": false
+      }
     },
     {
       "name": "forcepowers",
       "label": "Force Powers",
       "type": "Item",
-      "system": "foundryvtt-swse",
-      "path": "packs/forcepowers.db"
+      "path": "packs/forcepowers",
+      "system": "foundryvtt-swse"
     },
     {
       "name": "forcesecrets",
       "label": "Force Secrets",
       "type": "Item",
-      "system": "foundryvtt-swse",
-      "path": "packs/forcesecrets.db"
+      "path": "packs/forcesecrets",
+      "system": "foundryvtt-swse"
     },
     {
       "name": "forcetechniques",
       "label": "Force Techniques",
       "type": "Item",
-      "system": "foundryvtt-swse",
-      "path": "packs/forcetechniques.db"
+      "path": "packs/forcetechniques",
+      "system": "foundryvtt-swse"
     },
     {
       "name": "medicalsecrets",
       "label": "Medical Secrets",
       "type": "Item",
-      "system": "foundryvtt-swse",
-      "path": "packs/medicalsecrets.db"
+      "path": "packs/medicalsecrets",
+      "system": "foundryvtt-swse"
     },
     {
       "name": "lightsaberformpowers",
       "label": "Lightsaber Form Powers",
       "type": "Item",
+      "path": "packs/lightsaberformpowers",
       "system": "foundryvtt-swse",
-      "path": "packs/lightsaberformpowers.db",
       "ownership": {
         "PLAYER": "OBSERVER",
-        "ASSISTANT": "OBSERVER",
         "TRUSTED": "OBSERVER",
+        "ASSISTANT": "OBSERVER",
         "GAMEMASTER": "OWNER"
-      },
-      "private": false
+      }
     },
     {
       "name": "forceregimens",
       "label": "Force Regimens",
       "type": "Item",
-      "system": "foundryvtt-swse",
-      "path": "packs/forceregimens.db"
+      "path": "packs/forceregimens",
+      "system": "foundryvtt-swse"
     },
     {
       "name": "lightsaber-accessories",
       "label": "Lightsaber Accessories",
       "type": "Item",
-      "system": "foundryvtt-swse",
-      "path": "packs/lightsaber-accessories.db"
+      "path": "packs/lightsaber-accessories",
+      "system": "foundryvtt-swse"
     },
     {
       "name": "lightsaber-crystals",
       "label": "Lightsaber Crystals",
       "type": "Item",
-      "system": "foundryvtt-swse",
-      "path": "packs/lightsaber-crystals.db"
+      "path": "packs/lightsaber-crystals",
+      "system": "foundryvtt-swse"
     },
     {
       "name": "skills",
       "label": "Skills",
       "type": "Item",
-      "system": "foundryvtt-swse",
-      "path": "packs/skills.db"
+      "path": "packs/skills",
+      "system": "foundryvtt-swse"
     },
     {
       "name": "backgrounds",
       "label": "Backgrounds",
       "type": "Item",
-      "system": "foundryvtt-swse",
-      "path": "packs/backgrounds.db"
+      "path": "packs/backgrounds",
+      "system": "foundryvtt-swse"
     },
     {
       "name": "languages",
       "label": "Languages",
       "type": "Item",
-      "system": "foundryvtt-swse",
-      "path": "packs/languages.db"
+      "path": "packs/languages",
+      "system": "foundryvtt-swse"
     },
     {
       "name": "weapons-pistols",
       "label": "Weapons - Pistols",
       "type": "Item",
-      "system": "foundryvtt-swse",
-      "path": "packs/weapons-pistols.db"
+      "path": "packs/weapons-pistols",
+      "system": "foundryvtt-swse"
     },
     {
       "name": "weapons-rifles",
       "label": "Weapons - Rifles",
       "type": "Item",
-      "system": "foundryvtt-swse",
-      "path": "packs/weapons-rifles.db"
+      "path": "packs/weapons-rifles",
+      "system": "foundryvtt-swse"
     },
     {
       "name": "weapons-heavy",
       "label": "Weapons - Heavy",
       "type": "Item",
-      "system": "foundryvtt-swse",
-      "path": "packs/weapons-heavy.db"
+      "path": "packs/weapons-heavy",
+      "system": "foundryvtt-swse"
     },
     {
       "name": "weapons-grenades",
       "label": "Weapons - Grenades & Explosives",
       "type": "Item",
-      "system": "foundryvtt-swse",
-      "path": "packs/weapons-grenades.db"
+      "path": "packs/weapons-grenades",
+      "system": "foundryvtt-swse"
     },
     {
       "name": "weapons-exotic",
       "label": "Weapons - Exotic",
       "type": "Item",
-      "system": "foundryvtt-swse",
-      "path": "packs/weapons-exotic.db"
+      "path": "packs/weapons-exotic",
+      "system": "foundryvtt-swse"
     },
     {
       "name": "weapons-simple",
       "label": "Weapons - Simple/Melee",
       "type": "Item",
-      "system": "foundryvtt-swse",
-      "path": "packs/weapons-simple.db"
+      "path": "packs/weapons-simple",
+      "system": "foundryvtt-swse"
     },
     {
       "name": "weapons-lightsabers",
       "label": "Weapons - Lightsabers",
       "type": "Item",
-      "system": "foundryvtt-swse",
-      "path": "packs/weapons-lightsabers.db"
+      "path": "packs/weapons-lightsabers",
+      "system": "foundryvtt-swse"
     },
     {
       "name": "weapons",
       "label": "Weapons (All)",
       "type": "Item",
-      "system": "foundryvtt-swse",
-      "path": "packs/weapons.db"
+      "path": "packs/weapons",
+      "system": "foundryvtt-swse"
     },
     {
       "name": "armor-light",
       "label": "Armor - Light",
       "type": "Item",
-      "system": "foundryvtt-swse",
-      "path": "packs/armor-light.db"
+      "path": "packs/armor-light",
+      "system": "foundryvtt-swse"
     },
     {
       "name": "armor-medium",
       "label": "Armor - Medium",
       "type": "Item",
-      "system": "foundryvtt-swse",
-      "path": "packs/armor-medium.db"
+      "path": "packs/armor-medium",
+      "system": "foundryvtt-swse"
     },
     {
       "name": "armor-heavy",
       "label": "Armor - Heavy",
       "type": "Item",
-      "system": "foundryvtt-swse",
-      "path": "packs/armor-heavy.db"
+      "path": "packs/armor-heavy",
+      "system": "foundryvtt-swse"
     },
     {
       "name": "armor",
       "label": "Armor (All)",
       "type": "Item",
-      "system": "foundryvtt-swse",
-      "path": "packs/armor.db"
+      "path": "packs/armor",
+      "system": "foundryvtt-swse"
     },
     {
       "name": "vehicles-speeders",
       "label": "Vehicles - Speeders",
       "type": "Actor",
+      "path": "packs/vehicles-speeders",
       "system": "foundryvtt-swse",
-      "path": "packs/vehicles-speeders.db",
       "ownership": {
         "PLAYER": "OBSERVER",
-        "ASSISTANT": "OBSERVER",
         "TRUSTED": "OBSERVER",
+        "ASSISTANT": "OBSERVER",
         "GAMEMASTER": "OWNER"
       }
     },
@@ -526,12 +521,12 @@
       "name": "vehicles-airspeeders",
       "label": "Vehicles - Airspeeders",
       "type": "Actor",
+      "path": "packs/vehicles-airspeeders",
       "system": "foundryvtt-swse",
-      "path": "packs/vehicles-airspeeders.db",
       "ownership": {
         "PLAYER": "OBSERVER",
-        "ASSISTANT": "OBSERVER",
         "TRUSTED": "OBSERVER",
+        "ASSISTANT": "OBSERVER",
         "GAMEMASTER": "OWNER"
       }
     },
@@ -539,12 +534,12 @@
       "name": "vehicles-tracked",
       "label": "Vehicles - Tracked Vehicles",
       "type": "Actor",
+      "path": "packs/vehicles-tracked",
       "system": "foundryvtt-swse",
-      "path": "packs/vehicles-tracked.db",
       "ownership": {
         "PLAYER": "OBSERVER",
-        "ASSISTANT": "OBSERVER",
         "TRUSTED": "OBSERVER",
+        "ASSISTANT": "OBSERVER",
         "GAMEMASTER": "OWNER"
       }
     },
@@ -552,12 +547,12 @@
       "name": "vehicles-walkers",
       "label": "Vehicles - Walkers",
       "type": "Actor",
+      "path": "packs/vehicles-walkers",
       "system": "foundryvtt-swse",
-      "path": "packs/vehicles-walkers.db",
       "ownership": {
         "PLAYER": "OBSERVER",
-        "ASSISTANT": "OBSERVER",
         "TRUSTED": "OBSERVER",
+        "ASSISTANT": "OBSERVER",
         "GAMEMASTER": "OWNER"
       }
     },
@@ -565,12 +560,12 @@
       "name": "vehicles-wheeled",
       "label": "Vehicles - Wheeled Vehicles",
       "type": "Actor",
+      "path": "packs/vehicles-wheeled",
       "system": "foundryvtt-swse",
-      "path": "packs/vehicles-wheeled.db",
       "ownership": {
         "PLAYER": "OBSERVER",
-        "ASSISTANT": "OBSERVER",
         "TRUSTED": "OBSERVER",
+        "ASSISTANT": "OBSERVER",
         "GAMEMASTER": "OWNER"
       }
     },
@@ -578,12 +573,12 @@
       "name": "vehicles-weapon-emplacements",
       "label": "Vehicles - Weapon Emplacements",
       "type": "Actor",
+      "path": "packs/vehicles-weapon-emplacements",
       "system": "foundryvtt-swse",
-      "path": "packs/vehicles-weapon-emplacements.db",
       "ownership": {
         "PLAYER": "OBSERVER",
-        "ASSISTANT": "OBSERVER",
         "TRUSTED": "OBSERVER",
+        "ASSISTANT": "OBSERVER",
         "GAMEMASTER": "OWNER"
       }
     },
@@ -591,12 +586,12 @@
       "name": "vehicles-starfighters",
       "label": "Vehicles - Starfighters",
       "type": "Actor",
+      "path": "packs/vehicles-starfighters",
       "system": "foundryvtt-swse",
-      "path": "packs/vehicles-starfighters.db",
       "ownership": {
         "PLAYER": "OBSERVER",
-        "ASSISTANT": "OBSERVER",
         "TRUSTED": "OBSERVER",
+        "ASSISTANT": "OBSERVER",
         "GAMEMASTER": "OWNER"
       }
     },
@@ -604,12 +599,12 @@
       "name": "vehicles-space-transports",
       "label": "Vehicles - Space Transports",
       "type": "Actor",
+      "path": "packs/vehicles-space-transports",
       "system": "foundryvtt-swse",
-      "path": "packs/vehicles-space-transports.db",
       "ownership": {
         "PLAYER": "OBSERVER",
-        "ASSISTANT": "OBSERVER",
         "TRUSTED": "OBSERVER",
+        "ASSISTANT": "OBSERVER",
         "GAMEMASTER": "OWNER"
       }
     },
@@ -617,12 +612,12 @@
       "name": "vehicles-capital-ships",
       "label": "Vehicles - Capital Ships",
       "type": "Actor",
+      "path": "packs/vehicles-capital-ships",
       "system": "foundryvtt-swse",
-      "path": "packs/vehicles-capital-ships.db",
       "ownership": {
         "PLAYER": "OBSERVER",
-        "ASSISTANT": "OBSERVER",
         "TRUSTED": "OBSERVER",
+        "ASSISTANT": "OBSERVER",
         "GAMEMASTER": "OWNER"
       }
     },
@@ -630,12 +625,12 @@
       "name": "vehicles-stations",
       "label": "Vehicles - Space Stations",
       "type": "Actor",
+      "path": "packs/vehicles-stations",
       "system": "foundryvtt-swse",
-      "path": "packs/vehicles-stations.db",
       "ownership": {
         "PLAYER": "OBSERVER",
-        "ASSISTANT": "OBSERVER",
         "TRUSTED": "OBSERVER",
+        "ASSISTANT": "OBSERVER",
         "GAMEMASTER": "OWNER"
       }
     },
@@ -643,12 +638,12 @@
       "name": "vehicles",
       "label": "Vehicles (All)",
       "type": "Actor",
+      "path": "packs/vehicles",
       "system": "foundryvtt-swse",
-      "path": "packs/vehicles.db",
       "ownership": {
         "PLAYER": "OBSERVER",
-        "ASSISTANT": "OBSERVER",
         "TRUSTED": "OBSERVER",
+        "ASSISTANT": "OBSERVER",
         "GAMEMASTER": "OWNER"
       }
     },
@@ -656,194 +651,190 @@
       "name": "vehicle-weapons",
       "label": "Vehicle Weapons",
       "type": "Item",
-      "system": "foundryvtt-swse",
-      "path": "packs/vehicle-weapons.db"
+      "path": "packs/vehicle-weapons",
+      "system": "foundryvtt-swse"
     },
     {
       "name": "vehicle-weapon-ranges",
       "label": "Vehicle Weapon Ranges",
       "type": "Item",
-      "system": "foundryvtt-swse",
-      "path": "packs/vehicle-weapon-ranges.db"
+      "path": "packs/vehicle-weapon-ranges",
+      "system": "foundryvtt-swse"
     },
     {
       "name": "equipment-comlinks",
       "label": "Equipment - Communications",
       "type": "Item",
-      "system": "foundryvtt-swse",
-      "path": "packs/equipment-comlinks.db"
+      "path": "packs/equipment-comlinks",
+      "system": "foundryvtt-swse"
     },
     {
       "name": "equipment-tools",
       "label": "Equipment - Tools & Kits",
       "type": "Item",
-      "system": "foundryvtt-swse",
-      "path": "packs/equipment-tools.db"
+      "path": "packs/equipment-tools",
+      "system": "foundryvtt-swse"
     },
     {
       "name": "equipment-survival",
       "label": "Equipment - Survival Gear",
       "type": "Item",
-      "system": "foundryvtt-swse",
-      "path": "packs/equipment-survival.db"
+      "path": "packs/equipment-survival",
+      "system": "foundryvtt-swse"
     },
     {
       "name": "equipment-medical",
       "label": "Equipment - Medical",
       "type": "Item",
-      "system": "foundryvtt-swse",
-      "path": "packs/equipment-medical.db"
+      "path": "packs/equipment-medical",
+      "system": "foundryvtt-swse"
     },
     {
       "name": "equipment-tech",
       "label": "Equipment - Technology",
       "type": "Item",
-      "system": "foundryvtt-swse",
-      "path": "packs/equipment-tech.db"
+      "path": "packs/equipment-tech",
+      "system": "foundryvtt-swse"
     },
     {
       "name": "equipment-security",
       "label": "Equipment - Security",
       "type": "Item",
-      "system": "foundryvtt-swse",
-      "path": "packs/equipment-security.db"
+      "path": "packs/equipment-security",
+      "system": "foundryvtt-swse"
     },
     {
       "name": "equipment-other",
       "label": "Equipment - Other",
       "type": "Item",
-      "system": "foundryvtt-swse",
-      "path": "packs/equipment-other.db"
+      "path": "packs/equipment-other",
+      "system": "foundryvtt-swse"
     },
     {
       "name": "equipment",
       "label": "Equipment (All)",
       "type": "Item",
-      "system": "foundryvtt-swse",
-      "path": "packs/equipment.db"
+      "path": "packs/equipment",
+      "system": "foundryvtt-swse"
     },
     {
       "name": "conditions",
       "label": "Conditions",
       "type": "Item",
-      "system": "foundryvtt-swse",
-      "path": "packs/conditions.db"
+      "path": "packs/conditions",
+      "system": "foundryvtt-swse"
     },
     {
       "name": "special-combat-condition",
       "label": "Combat Conditions",
       "type": "Item",
-      "system": "foundryvtt-swse",
-      "path": "packs/special-combat-condition.db"
+      "path": "packs/special-combat-condition",
+      "system": "foundryvtt-swse"
     },
     {
       "name": "attributes",
       "label": "Attributes",
       "type": "Item",
-      "system": "foundryvtt-swse",
-      "path": "packs/attributes.db"
+      "path": "packs/attributes",
+      "system": "foundryvtt-swse"
     },
     {
       "name": "extraskilluses",
       "label": "Extra Skill Uses",
       "type": "Item",
-      "system": "foundryvtt-swse",
-      "path": "packs/extraskilluses.db"
+      "path": "packs/extraskilluses",
+      "system": "foundryvtt-swse"
     },
     {
       "name": "combat-actions",
       "label": "Combat Actions",
       "type": "Item",
-      "system": "foundryvtt-swse",
-      "path": "packs/combat-actions.db"
+      "path": "packs/combat-actions",
+      "system": "foundryvtt-swse"
     },
     {
       "name": "special-abilities",
       "label": "Special Abilities",
       "type": "Item",
-      "system": "foundryvtt-swse",
-      "path": "packs/special-abilities.db"
+      "path": "packs/special-abilities",
+      "system": "foundryvtt-swse"
     },
     {
       "name": "ship-combat-actions",
       "label": "Ship Combat Actions",
       "type": "Item",
-      "system": "foundryvtt-swse",
-      "path": "packs/ship-combat-actions.db"
+      "path": "packs/ship-combat-actions",
+      "system": "foundryvtt-swse"
     },
     {
       "name": "talent-enhancements",
       "label": "Talent Enhancements",
       "type": "Item",
-      "system": "foundryvtt-swse",
-      "path": "packs/talent-enhancements.db"
+      "path": "packs/talent-enhancements",
+      "system": "foundryvtt-swse"
     },
     {
       "name": "armor-shields",
       "label": "Armor - Shields",
       "type": "Item",
-      "system": "foundryvtt-swse",
-      "path": "packs/armor-shields.db"
+      "path": "packs/armor-shields",
+      "system": "foundryvtt-swse"
     },
     {
       "name": "quick-locations",
       "label": "Locations - Quick Library",
       "type": "JournalEntry",
-      "system": "foundryvtt-swse",
-      "path": "packs/quick-locations.db",
+      "path": "packs/quick-locations",
       "ownership": {
         "PLAYER": "OBSERVER",
-        "ASSISTANT": "OBSERVER",
         "TRUSTED": "OBSERVER",
+        "ASSISTANT": "OBSERVER",
         "GAMEMASTER": "OWNER"
-      },
-      "private": false
+      }
     },
     {
       "name": "heroic",
       "label": "Heroic NPCs",
       "type": "Actor",
+      "path": "packs/heroic",
       "system": "foundryvtt-swse",
-      "path": "packs/heroic.db",
       "ownership": {
         "PLAYER": "OBSERVER",
-        "ASSISTANT": "OBSERVER",
         "TRUSTED": "OBSERVER",
+        "ASSISTANT": "OBSERVER",
         "GAMEMASTER": "OWNER"
-      },
-      "private": false
+      }
     },
     {
       "name": "nonheroic",
       "label": "Nonheroic NPCs",
       "type": "Actor",
+      "path": "packs/nonheroic",
       "system": "foundryvtt-swse",
-      "path": "packs/nonheroic.db",
       "ownership": {
         "PLAYER": "OBSERVER",
-        "ASSISTANT": "OBSERVER",
         "TRUSTED": "OBSERVER",
+        "ASSISTANT": "OBSERVER",
         "GAMEMASTER": "OWNER"
-      },
-      "private": false
+      }
     },
     {
       "name": "sample-active-abilities",
       "label": "Sample Active Abilities",
       "type": "Item",
-      "system": "foundryvtt-swse",
-      "path": "packs/sample-active-abilities.db"
+      "path": "packs/sample-active-abilities",
+      "system": "foundryvtt-swse"
     },
     {
       "name": "npc",
       "label": "NPCs",
       "type": "Actor",
+      "path": "packs/npc",
       "system": "foundryvtt-swse",
-      "path": "packs/npc.db",
       "ownership": {
         "PLAYER": "OBSERVER",
-        "ASSISTANT": "OBSERVER",
         "TRUSTED": "OBSERVER",
+        "ASSISTANT": "OBSERVER",
         "GAMEMASTER": "OWNER"
       }
     },
@@ -851,12 +842,12 @@
       "name": "droids",
       "label": "Droids",
       "type": "Actor",
+      "path": "packs/droids",
       "system": "foundryvtt-swse",
-      "path": "packs/droids.db",
       "ownership": {
         "PLAYER": "OBSERVER",
-        "ASSISTANT": "OBSERVER",
         "TRUSTED": "OBSERVER",
+        "ASSISTANT": "OBSERVER",
         "GAMEMASTER": "OWNER"
       }
     },
@@ -864,12 +855,12 @@
       "name": "beasts",
       "label": "Beasts & Mounts",
       "type": "Actor",
-      "path": "packs/beasts.db",
+      "path": "packs/beasts",
       "system": "foundryvtt-swse",
       "ownership": {
         "PLAYER": "OBSERVER",
-        "ASSISTANT": "OBSERVER",
         "TRUSTED": "OBSERVER",
+        "ASSISTANT": "OBSERVER",
         "GAMEMASTER": "OWNER"
       }
     },
@@ -877,205 +868,8 @@
       "name": "poisons",
       "label": "Poisons",
       "type": "Item",
-      "system": "foundryvtt-swse",
-      "path": "packs/poisons.db"
+      "path": "packs/poisons",
+      "system": "foundryvtt-swse"
     }
-  ],
-  "settings": {
-    "foundryvtt-swse.forceCompendiumsPopulation": {
-      "scope": "world",
-      "config": false,
-      "type": "Boolean",
-      "default": false
-    },
-    "foundryvtt-swse.talentEffectValidationMigration": {
-      "scope": "world",
-      "config": false,
-      "type": "String",
-      "default": ""
-    },
-    "foundryvtt-swse.speciesTraitsUpdate": {
-      "scope": "world",
-      "config": false,
-      "type": "String",
-      "default": ""
-    },
-    "foundryvtt-swse.useAurebesh": {
-      "scope": "client",
-      "config": true,
-      "type": "Boolean",
-      "default": true,
-      "name": "Use Aurebesh Typography",
-      "hint": "Render all interface text in Aurebesh fonts. Disable for Consolas/Courier (accessibility fallback)."
-    },
-    "foundryvtt-swse.storeSkipLoadingOverlay": {
-      "scope": "client",
-      "config": true,
-      "type": "Boolean",
-      "default": false,
-      "name": "Skip Store Loading Overlay",
-      "hint": "Disable the Rendarr loading overlay that appears when opening the Store. The store will load normally in the background."
-    },
-    "foundryvtt-swse.autoAcceptItemSales": {
-      "scope": "world",
-      "config": true,
-      "type": "Boolean",
-      "default": false,
-      "name": "Automatically Accept Item Sales",
-      "hint": "Automatically accept item sales without GM approval. Use the 'Automatic Sale Value' setting to control the percentage paid."
-    },
-    "foundryvtt-swse.automaticSalePercentage": {
-      "scope": "world",
-      "config": true,
-      "type": "Number",
-      "default": 50,
-      "name": "Automatic Sale Value (%)",
-      "hint": "Sets the percentage of an item's base price paid when automatic selling is enabled. (Saga RAW default is 50%. Range: 10\u2013100%)",
-      "range": {
-        "min": 10,
-        "max": 100,
-        "step": 5
-      }
-    },
-    "foundryvtt-swse.disallowAutoSellNoPrice": {
-      "scope": "world",
-      "config": true,
-      "type": "Boolean",
-      "default": true,
-      "name": "Disallow Auto-Selling Items with No Base Price",
-      "hint": "Items without a defined base price will always require GM approval, even when automatic selling is enabled."
-    },
-    "foundryvtt-swse.storeOpen": {
-      "scope": "world",
-      "config": true,
-      "type": "Boolean",
-      "default": true,
-      "name": "Store Open",
-      "hint": "Controls whether players can purchase items from the store. When disabled, the store becomes view-only."
-    },
-    "foundryvtt-swse.globalBuyModifier": {
-      "scope": "world",
-      "config": true,
-      "type": "Number",
-      "default": 0,
-      "name": "Global Buy Price Modifier (%)",
-      "hint": "Applies a global percentage modifier to all store purchase prices. Positive values increase prices; negative values reduce prices.",
-      "range": {
-        "min": -50,
-        "max": 200,
-        "step": 5
-      }
-    },
-    "foundryvtt-swse.visibleRarities": {
-      "scope": "world",
-      "config": false,
-      "type": "Object",
-      "default": {
-        "common": true,
-        "uncommon": true,
-        "rare": false,
-        "restricted": false,
-        "illegal": false,
-        "standard": true,
-        "licensed": true,
-        "military": false
-      }
-    },
-    "foundryvtt-swse.visibleItemTypes": {
-      "scope": "world",
-      "config": false,
-      "type": "Object",
-      "default": {
-        "weapons": true,
-        "armor": true,
-        "gear": true,
-        "droids": true,
-        "vehicles": true
-      }
-    },
-    "foundryvtt-swse.blacklistedItems": {
-      "scope": "world",
-      "config": false,
-      "type": "Array",
-      "default": []
-    },
-    "foundryvtt-swse.pendingSales": {
-      "scope": "world",
-      "config": false,
-      "type": "Array",
-      "default": []
-    },
-    "foundryvtt-swse.pendingCustomPurchases": {
-      "scope": "world",
-      "config": false,
-      "type": "Array",
-      "default": [],
-      "name": "Pending Custom Droid and Vehicle Purchases",
-      "hint": "Stores pending approvals for custom-built droids and vehicles awaiting GM review."
-    },
-    "foundryvtt-swse.activeTheme": {
-      "scope": "client",
-      "config": true,
-      "type": "String",
-      "default": "holo",
-      "name": "SWSE Theme",
-      "hint": "Choose your personal UI theme.",
-      "choices": {
-        "holo": "Holo (Default)",
-        "high-contrast": "High Contrast",
-        "starship": "Starship",
-        "sand-people": "Sand People",
-        "jedi": "Jedi",
-        "high-republic": "High Republic"
-      }
-    },
-    "foundryvtt-swse.themePromptShown": {
-      "scope": "client",
-      "config": false,
-      "type": "Boolean",
-      "default": false
-    },
-    "foundryvtt-swse.storeMarkup": {
-      "scope": "world",
-      "config": true,
-      "type": "Number",
-      "default": 0,
-      "name": "Store Markup (%)",
-      "hint": "Applies a positive percentage markup to store purchase prices. This is the pricing engine setting used by StoreEngine.",
-      "range": {
-        "min": 0,
-        "max": 200,
-        "step": 5
-      }
-    },
-    "foundryvtt-swse.storeDiscount": {
-      "scope": "world",
-      "config": true,
-      "type": "Number",
-      "default": 0,
-      "name": "Store Discount (%)",
-      "hint": "Applies a percentage discount after markup to store purchase prices.",
-      "range": {
-        "min": 0,
-        "max": 90,
-        "step": 5
-      }
-    },
-    "foundryvtt-swse.storeInventoryPolicies": {
-      "scope": "world",
-      "config": false,
-      "type": "Object",
-      "default": {},
-      "name": "Store Inventory Policies",
-      "hint": "GM per-item store policies such as visibility, availability, quantity, approval requirement, and price override."
-    }
-  },
-  "documents": {
-    "Actor": {
-      "documentClass": "scripts/actors/v2/base-actor.js"
-    },
-    "Item": {
-      "documentClass": "scripts/items/base/swse-item-base.js"
-    }
-  }
+  ]
 }

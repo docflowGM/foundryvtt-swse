@@ -44,9 +44,11 @@ for (const required of requiredPacks) {
 }
 
 if (manifest.socket !== true) errors.push('System socket support must remain enabled.');
-if (!manifest.settings?.['foundryvtt-swse.themePromptShown']) {
-  errors.push('Hidden themePromptShown setting is not declared.');
-}
+// NOTE: The Foundry v13/v14 system manifest does not define a manifest-level `settings` object.
+// All world/client settings (including themePromptShown) are registered in code via
+// game.settings.register (see scripts/core/settings.js and scripts/ui/ui-manager.js), which is the
+// authoritative mechanism. The manifest no longer carries a `settings` block, so this validator no
+// longer requires it. If a manifest `settings` block is reintroduced, re-add a declaration check here.
 
 if (errors.length) {
   console.error('System manifest validation failed:');

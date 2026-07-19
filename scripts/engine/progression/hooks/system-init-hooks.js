@@ -73,7 +73,7 @@ export const SystemInitHooks = {
             await StableKeyMigration.runFullMigration();
 
             // Step 0: Build SSOT Data Registries (CRITICAL - must run first)
-            await this._buildDataRegistries();
+            const registryStatus = await this._buildDataRegistries();
 
             // Step 1: Build feature index from compendiums
             await this._buildFeatureIndex();
@@ -106,12 +106,35 @@ export const SystemInitHooks = {
 
             const elapsed = (performance.now() - startTime).toFixed(2);
 
+            // Assess authoritative readiness. Empty registries / absent canonical packs are a
+            // DEGRADED state, not success. Downstream systems must not treat this as ready.
+            const degradedReasons = [];
+            if (registryStatus && registryStatus.ok === false) {
+                degradedReasons.push(`SSOT registry build failed at stage: ${registryStatus.stage}${registryStatus.error ? ` (${registryStatus.error})` : ''}`);
+            }
+            const requiredPacks = ['classes', 'talent_trees', 'talents', 'skills', 'feats', 'forcepowers'];
+            const missingPacks = requiredPacks.filter(n => !game.packs?.get(`foundryvtt-swse.${n}`));
+            if (missingPacks.length) {
+                degradedReasons.push(`canonical compendium packs not registered: ${missingPacks.join(', ')}`);
+            }
+            if ((TalentTreeDB.count?.() ?? 0) === 0) degradedReasons.push('TalentTreeDB is empty');
+            if ((ClassesDB.count?.() ?? 0) === 0) degradedReasons.push('ClassesDB is empty');
+
+            const degraded = degradedReasons.length > 0;
+
             SWSELogger.log('='.repeat(50));
-            SWSELogger.log(`Initialization Complete (${elapsed}ms)`);
+            if (degraded) {
+                SWSELogger.error(`Initialization DEGRADED (${elapsed}ms) - canonical authority unavailable:`);
+                degradedReasons.forEach(r => SWSELogger.error(`  - ${r}`));
+                SWSELogger.error('Progression/level-up may be non-functional until compendium packs register.');
+            } else {
+                SWSELogger.log(`Initialization Complete (${elapsed}ms)`);
+            }
             SWSELogger.log('='.repeat(50));
 
-            // Emit custom hook for dependent modules
-            Hooks.callAll('swse:progression:initialized');
+            // Emit custom hook for dependent modules with an explicit readiness payload.
+            // Backward-compatible: existing listeners that ignore the argument are unaffected.
+            Hooks.callAll('swse:progression:initialized', { ok: !degraded, degraded, reasons: degradedReasons });
 
             // Flush aggregated Sentinel diagnostics (prevents console spam)
             Sentinel.flushAggregates();
@@ -136,7 +159,7 @@ export const SystemInitHooks = {
             const treeSuccess = await TalentTreeDB.build();
             if (!treeSuccess) {
                 SWSELogger.error('TalentTreeDB build failed');
-                return;
+                return { ok: false, stage: 'TalentTreeDB' };
             }
 
             // 2. Build ClassesDB (requires TalentTreeDB for linking talent trees)
@@ -144,7 +167,7 @@ export const SystemInitHooks = {
             const classSuccess = await ClassesDB.build(TalentTreeDB);
             if (!classSuccess) {
                 SWSELogger.error('ClassesDB build failed');
-                return;
+                return { ok: false, stage: 'ClassesDB' };
             }
 
             // 3. Build TalentDB (requires TalentTreeDB for linking talents to trees)
@@ -152,7 +175,7 @@ export const SystemInitHooks = {
             const talentSuccess = await TalentDB.build(TalentTreeDB);
             if (!talentSuccess) {
                 SWSELogger.error('TalentDB build failed');
-                return;
+                return { ok: false, stage: 'TalentDB' };
             }
 
             // 4. Warm class prerequisite cache so UI and suggestion paths read the same legality layer.
@@ -198,8 +221,10 @@ export const SystemInitHooks = {
 
             SWSELogger.log(`SSOT registries built: ${TalentTreeDB.count()} trees, ${ClassesDB.count()} classes, ${TalentDB.count()} talents`);
 
+            return { ok: true };
         } catch (err) {
             SWSELogger.error('Failed to build SSOT registries:', err);
+            return { ok: false, stage: 'exception', error: err?.message };
         }
     },
 

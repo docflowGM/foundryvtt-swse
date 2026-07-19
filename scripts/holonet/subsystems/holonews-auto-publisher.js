@@ -276,24 +276,28 @@ export class HolonewsAutoPublisher {
       `<p class="holonews-wire-note">Filed by ${policy.sourceName || 'Galaxy News Net'}.</p>`
     ].join('\n');
 
-    return BulletinSource.toRecord({
+    // Build via the canonical BulletinSource factory (mirrors GMDatapad ambient HoloNews path).
+    // BulletinSource.createBulletinEvent applies sourceFamily/normalization; ambient-specific
+    // fields (seed id, sector, tags, channel, publishedAt) are preserved in metadata.
+    return BulletinSource.createBulletinEvent({
       title: seed.title,
       body,
-      tags: uniqueValues(['holonews', 'ambient', seed.category, seed.sector, seed.priority]),
-      channel: SURFACE_TYPE.HOLONEWS,
+      category: 'holonews',
       priority: 'normal',
       audience: HolonetAudience.PUBLIC,
-      publishedAt: now,
+      authorName: policy.sourceName || 'Galaxy News Net',
+      state: DELIVERY_STATE.PUBLISHED,
       metadata: {
         holonewsSeedId: seed.id,
         category: seed.category,
         sector: seed.sector,
         generated: true,
         generatedReason: reason,
-        ambient: true
-      },
-      sourceFamily: SOURCE_FAMILY.BULLETIN,
-      deliveryState: DELIVERY_STATE.PUBLISHED
+        ambient: true,
+        channel: SURFACE_TYPE.HOLONEWS,
+        tags: uniqueValues(['holonews', 'ambient', seed.category, seed.sector, seed.priority]),
+        publishedAt: now
+      }
     });
   }
 

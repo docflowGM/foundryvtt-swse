@@ -19,7 +19,6 @@ import { registerForceTraditionHouseRuleSettings } from "./scripts/settings/forc
 import { registerCustomContentApprovalSettings } from "./scripts/settings/custom-content-approval.js";
 import { UIManager } from "./scripts/ui/ui-manager.js";
 import { registerInitHooks } from "./scripts/infrastructure/hooks/init-hooks.js";
-import { registerStoreSheetHooks } from "./scripts/infrastructure/hooks/store-sheet-hooks.js";
 import { initializeSceneControls } from "./scripts/scene-controls/init.js";
 import { initializeDiscoverySystem, onDiscoveryReady } from "./scripts/ui/discovery/index.js";
 import { initializeSentinelGovernance } from "./scripts/governance/sentinel/sentinel-init.js";
@@ -143,7 +142,8 @@ Hooks.once("init", async () => {
   await registerSystemSettings();
 
   registerInitHooks();
-  registerStoreSheetHooks();
+  // NOTE: store-sheet header hook is registered by registerInitHooks() via ui-hooks.js (single owner).
+  // A direct call here previously double-registered the 'swse-store-sheet' hook ("already registered. Overwriting").
   SystemInitHooks.registerHooks();
   initializeSceneControls();
   initializeDiscoverySystem();
