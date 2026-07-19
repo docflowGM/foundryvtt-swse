@@ -12,6 +12,7 @@ import { ForceExecutor } from "/systems/foundryvtt-swse/scripts/engine/force/for
 import { installPhase3ForcePowerCorrections } from "/systems/foundryvtt-swse/scripts/engine/force/phase3-force-power-corrections.js";
 import { installPhase4ForceModifierAutomation } from "/systems/foundryvtt-swse/scripts/engine/force/phase4-force-modifier-automation.js";
 import { installPhase5ForceHealing } from "/systems/foundryvtt-swse/scripts/engine/force/phase5-force-healing-mitigation.js";
+import { installPhase6ForceDamage } from "/systems/foundryvtt-swse/scripts/engine/force/phase6-force-direct-damage.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 
 function isProgressionManagedForceMutation(itemOrActor, options = {}) {
@@ -44,6 +45,7 @@ export function initializeForcePowerHooks() {
   installPhase3ForcePowerCorrections(ForcePowerEffectsEngine);
   installPhase4ForceModifierAutomation(ForcePowerEffectsEngine);
   installPhase5ForceHealing(ForceExecutor);
+  installPhase6ForceDamage(ForceExecutor);
 
   Hooks.on('createItem', async (item, options, userId) => {
     if (game.user.id !== userId) {return;}
