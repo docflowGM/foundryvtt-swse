@@ -13,7 +13,12 @@ const PROFILE_FILES = Object.freeze([
   'data/nonheroic/nonheroic-weapon-damage-profiles.nh3-galaxy-of-intrigue.json',
   'data/nonheroic/nonheroic-weapon-damage-profiles.nh4-unknown-regions.json',
   'data/nonheroic/nonheroic-weapon-damage-profiles.nh4-unknown-regions-beasts.json',
-  'data/nonheroic/nonheroic-weapon-damage-profiles.nh5-scavengers-guide-droids.json'
+  'data/nonheroic/nonheroic-weapon-damage-profiles.nh5-scavengers-guide-droids.json',
+  'data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-1.json',
+  'data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-2.json',
+  'data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-3.json',
+  'data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-4.json',
+  'data/nonheroic/nonheroic-weapon-damage-profiles.bulk-lane-a-pass-5.json'
 ]);
 
 const WIREABLE_CONFIDENCE = new Set(['verified', 'sourcebookVerified']);
@@ -258,8 +263,42 @@ export function clearNonheroicDamageProfileCache() {
   profileCachePromise = null;
 }
 
+function isSafeBulkLaneAProfile(profile) {
+  const tags = new Set(asArray(profile?.tags).map((tag) => cleanText(tag).toLowerCase()));
+  const formulaMode = cleanText(profile?.formula?.mode);
+  const actorSlugs = asArray(profile?.match?.actorSlugs).map(slugifyStatblockName).filter(Boolean);
+  const rawIncludes = asArray(profile?.match?.rawIncludes).map(cleanText).filter(Boolean);
+  const components = asArray(profile?.components);
+  const riders = asArray(profile?.riders);
+  const attack = profile?.attack ?? {};
+  const area = profile?.area ?? {};
+
+  return profile?.confidence === 'manualRequired'
+    && tags.has('generated-candidate')
+    && profile?.source?.status === 'repo-raw-statblock-field; page review still required'
+    && actorSlugs.length > 0
+    && rawIncludes.length > 0
+    && !!cleanText(profile?.weapon?.uuid)
+    && ['melee', 'ranged'].includes(cleanText(profile?.weapon?.rowKind))
+    && !!cleanText(profile?.formula?.printed)
+    && ['base', 'base-plus-delta', 'base-plus-dice'].includes(formulaMode)
+    && profile?.delivery === 'weapon'
+    && profile?.attackShape === 'single-target'
+    && attack.isArea === false
+    && !area?.shape
+    && riders.length === 0
+    && components.length > 0
+    && components.every((component) => !!cleanText(component?.formula));
+}
+
+function hydrationPolicy(profile) {
+  if (WIREABLE_CONFIDENCE.has(profile?.confidence)) return 'source-verified';
+  if (isSafeBulkLaneAProfile(profile)) return 'safe-bulk-lane-a';
+  return null;
+}
+
 function isWireableProfile(profile) {
-  return WIREABLE_CONFIDENCE.has(profile?.confidence);
+  return hydrationPolicy(profile) !== null;
 }
 
 export async function findNonheroicDamageProfileMatch(raw, context = {}) {
@@ -333,6 +372,7 @@ function buildHydratedSystem(baseSystem = {}, profile, variant = null) {
     statblockSourceStatus: profile.sourceStatus ?? null,
     statblockHydrated: true,
     statblockHydrationConfidence: profile.confidence ?? null,
+    statblockHydrationPolicy: hydrationPolicy(profile),
     statblockPrintedFormula: formula?.printed ?? damageFormula ?? null,
     statblockFormulaMode: formula?.mode ?? null,
     statblockFormulaDelta: formula?.delta ?? null,
@@ -365,6 +405,7 @@ function buildHydratedFlags(baseFlags = {}, raw, profile, variant = null) {
           sourceBook: profile.sourceBook ?? null,
           sourceStatus: profile.sourceStatus ?? null,
           confidence: profile.confidence ?? null,
+          hydrationPolicy: hydrationPolicy(profile),
           reviewRequired: !!profile.reviewRequired,
           printedFormula: formula?.printed ?? null,
           formulaMode: formula?.mode ?? null,
@@ -384,6 +425,7 @@ function buildHydratedFlags(baseFlags = {}, raw, profile, variant = null) {
         sourceType: 'nonheroic-statblock',
         sourceBook: profile.sourceBook ?? null,
         confidence: profile.confidence ?? null,
+        hydrationPolicy: hydrationPolicy(profile),
         sourceWeaponUuid: weaponRef.uuid ?? null,
         printedFormula: formula?.printed ?? null,
         formulaMode: formula?.mode ?? null,
