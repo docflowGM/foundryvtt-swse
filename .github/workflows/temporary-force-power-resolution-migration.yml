@@ -1,0 +1,27 @@
+name: Temporary Force power resolution migration
+
+on:
+  push:
+    branches:
+      - feat/force-power-resolution-schema
+
+permissions:
+  contents: write
+
+jobs:
+  migrate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feat/force-power-resolution-schema
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - run: node --check tools/migrate-force-power-resolution-schema.mjs
+      - run: node tools/migrate-force-power-resolution-schema.mjs --write
+      - name: Commit generated migration
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add template.json packs/forcepowers.db docs/audits/generated/force-power-resolution-schema-audit.json docs/audits/generated/force-power-resolution-schema-audit.md
+          git diff --cached --quiet || git commit -m "data: migrate Force powers to resolution schema"
+          git push origin HEAD:feat/force-power-resolution-schema
