@@ -6,6 +6,7 @@ import { fileURLToPath } from 'node:url';
 const scriptDir = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.resolve(scriptDir, '..');
 const manifestPath = path.join(repoRoot, 'system.json');
+const gitAttributesPath = path.join(repoRoot, '.gitattributes');
 const errors = [];
 
 let manifest;
@@ -21,21 +22,64 @@ const requiredPacks = ['species', 'classes', 'talent_trees', 'talents', 'feats',
 const names = new Set();
 const paths = new Set();
 
+if (manifest.id !== 'foundryvtt-swse') errors.push(`Unexpected system id: ${manifest.id ?? '<missing>'}`);
+if (manifest.type !== 'system') errors.push('Manifest type must be "system".');
+if (manifest.socket !== true) errors.push('System socket support must remain enabled.');
+
+const minimum = Number(manifest.compatibility?.minimum);
+const verified = Number(manifest.compatibility?.verified);
+const maximum = Number(manifest.compatibility?.maximum);
+if (minimum !== 13) errors.push(`compatibility.minimum must be 13, found ${manifest.compatibility?.minimum ?? '<missing>'}.`);
+if (verified !== 14) errors.push(`compatibility.verified must be 14, found ${manifest.compatibility?.verified ?? '<missing>'}.`);
+if (maximum !== 14) errors.push(`compatibility.maximum must be 14, found ${manifest.compatibility?.maximum ?? '<missing>'}.`);
+
 if (packs.length < 60) {
   errors.push(`Expected the production compendium catalog (at least 60 packs), found ${packs.length}.`);
 }
 
 for (const pack of packs) {
+  const packName = pack?.name ?? '<unknown>';
   if (!pack?.name) errors.push('A pack is missing its name.');
-  if (!pack?.path) errors.push(`Pack ${pack?.name ?? '<unknown>'} is missing its path.`);
+  if (!pack?.path) errors.push(`Pack ${packName} is missing its path.`);
+  if (!pack?.type) errors.push(`Pack ${packName} is missing its document type.`);
 
   if (pack?.name && names.has(pack.name)) errors.push(`Duplicate pack name: ${pack.name}`);
   if (pack?.path && paths.has(pack.path)) errors.push(`Duplicate pack path: ${pack.path}`);
   if (pack?.name) names.add(pack.name);
   if (pack?.path) paths.add(pack.path);
 
-  if (pack?.path && !fs.existsSync(path.join(repoRoot, pack.path))) {
+  if (typeof pack?.path === 'string' && pack.path.endsWith('.db')) {
+    errors.push(`Legacy NeDB pack path is not supported by Foundry v13/v14: ${pack.path}`);
+  }
+
+  if (pack?.type === 'Actor' || pack?.type === 'Item') {
+    if (pack.system !== manifest.id) {
+      errors.push(`${pack.type} pack ${packName} must declare system: "${manifest.id}".`);
+    }
+  }
+
+  if (!pack?.path) continue;
+  const absolutePackPath = path.join(repoRoot, pack.path);
+  if (!fs.existsSync(absolutePackPath)) {
     errors.push(`Declared pack path does not exist: ${pack.path}`);
+    continue;
+  }
+  if (!fs.statSync(absolutePackPath).isDirectory()) {
+    errors.push(`Foundry v13/v14 pack path must be a directory: ${pack.path}`);
+    continue;
+  }
+
+  const currentPath = path.join(absolutePackPath, 'CURRENT');
+  if (!fs.existsSync(currentPath)) {
+    errors.push(`LevelDB pack is missing CURRENT: ${pack.path}`);
+    continue;
+  }
+
+  const manifestFile = fs.readFileSync(currentPath, 'utf8').trim();
+  if (!manifestFile) {
+    errors.push(`LevelDB CURRENT file is empty: ${pack.path}`);
+  } else if (!fs.existsSync(path.join(absolutePackPath, manifestFile))) {
+    errors.push(`LevelDB CURRENT points to a missing manifest (${manifestFile}): ${pack.path}`);
   }
 }
 
@@ -43,12 +87,22 @@ for (const required of requiredPacks) {
   if (!names.has(required)) errors.push(`Required pack is not declared: ${required}`);
 }
 
-if (manifest.socket !== true) errors.push('System socket support must remain enabled.');
-// NOTE: The Foundry v13/v14 system manifest does not define a manifest-level `settings` object.
-// All world/client settings (including themePromptShown) are registered in code via
-// game.settings.register (see scripts/core/settings.js and scripts/ui/ui-manager.js), which is the
-// authoritative mechanism. The manifest no longer carries a `settings` block, so this validator no
-// longer requires it. If a manifest `settings` block is reintroduced, re-add a declaration check here.
+const feats = packs.find(pack => pack?.name === 'feats');
+if (feats?.path !== 'packs/feats') {
+  errors.push(`Feats pack must resolve to packs/feats, found ${feats?.path ?? '<missing>'}.`);
+}
+
+try {
+  const gitAttributes = fs.readFileSync(gitAttributesPath, 'utf8');
+  if (!/^packs\/\*\*\s+binary\s*$/m.test(gitAttributes)) {
+    errors.push('.gitattributes must contain "packs/** binary" to prevent LevelDB corruption.');
+  }
+} catch (error) {
+  errors.push(`Unable to read .gitattributes: ${error.message}`);
+}
+
+// Foundry settings are registered through game.settings.register during init.
+// A non-standard manifest-level settings block is intentionally not required.
 
 if (errors.length) {
   console.error('System manifest validation failed:');
@@ -56,4 +110,4 @@ if (errors.length) {
   process.exit(1);
 }
 
-console.log(`System manifest OK: ${packs.length} packs declared and all pack paths exist.`);
+console.log(`System manifest OK: ${packs.length} LevelDB packs declared and structurally present.`);
