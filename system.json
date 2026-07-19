@@ -137,6 +137,8 @@
     "styles/layout/sheet-layout.css",
     "styles/components/discovery.css",
     "styles/apps/force-alchemy-workbench.css",
+    "styles/apps/force-tradition-picker.css",
+    "styles/apps/theme-picker-immersive.css",
     "styles/system/display-effects.css",
     "styles/system/concept-surface-contract.css",
     "styles/apps/gm-holopad-concept-phase2.css",
