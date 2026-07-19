@@ -1,0 +1,19 @@
+name: Temporary NPC fallback checks
+
+on:
+  push:
+    branches:
+      - feat/npc-exact-item-fallback
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feat/npc-exact-item-fallback
+      - run: node --check scripts/engine/import/npc-statblock-item-fallback.js
+      - run: node --check scripts/engine/import/npc-damage-hydration-hooks.js
