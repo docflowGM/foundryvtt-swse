@@ -65,6 +65,7 @@ import { initializeConceptParityDiagnostics } from "./scripts/ui/concept-parity/
 import { initializeShellResponsiveObserver } from "./scripts/ui/shell/shell-responsive-observer.js";
 import { registerTokenNameSyncHooks } from "./scripts/core/token-name-sync.js";
 import { installSwseFlagScopeCompatibility } from "./scripts/utils/flags/swse-flags.js";
+import { registerNpcDamageHydrationHooks } from "./scripts/engine/import/npc-damage-hydration-hooks.js";
 import "./scripts/talents/squad-actions-init.js";
 import "./scripts/talents/minion-actions-init.js";
 
@@ -189,6 +190,7 @@ Hooks.once("init", async () => {
   initializeDiscoverySystem();
   initializeSentinelGovernance();
   registerCompendiumDirectoryClickRepair();
+  registerNpcDamageHydrationHooks();
   registerForceExecutorChatHooks();
   registerActionEconomyHooks();
   registerFeatHousekeepingRuntimePatches();
