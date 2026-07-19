@@ -71,6 +71,146 @@ function fieldValue(html, name) {
   return null;
 }
 
+function defenseValue(actor, defense = 'reflex') {
+  const candidates = [
+    actor?.system?.derived?.defenses?.[defense]?.total,
+    actor?.system?.derived?.defenses?.[defense],
+    actor?.system?.defenses?.[defense]?.total,
+    actor?.system?.defenses?.[defense]
+  ];
+  for (const candidate of candidates) {
+    const value = Number(candidate);
+    if (Number.isFinite(value)) return value;
+  }
+  return 10;
+}
+
+function selectedTargetRows() {
+  return Array.from(game?.user?.targets ?? []).map(token => {
+    const targetActor = token?.actor ?? token?.document?.actor ?? null;
+    return {
+      tokenId: token?.id ?? token?.document?.id ?? '',
+      actorId: targetActor?.id ?? '',
+      name: token?.name ?? token?.document?.name ?? targetActor?.name ?? 'Target',
+      reflex: defenseValue(targetActor, 'reflex'),
+      fortitude: defenseValue(targetActor, 'fortitude'),
+      will: defenseValue(targetActor, 'will')
+    };
+  }).filter(row => row.tokenId);
+}
+
+function combatantRows() {
+  return Array.from(game?.combat?.combatants ?? [])
+    .filter(combatant => combatant?.actor)
+    .map(combatant => ({
+      actorId: combatant.actor.id,
+      name: combatant.name ?? combatant.actor.name,
+      reflex: defenseValue(combatant.actor, 'reflex'),
+      fortitude: defenseValue(combatant.actor, 'fortitude'),
+      will: defenseValue(combatant.actor, 'will')
+    }));
+}
+
+function inferredTargetDefense(power) {
+  const system = power?.system ?? {};
+  const haystack = [
+    system.targetDefense,
+    system.defense,
+    system.opposedBy,
+    system.check?.defense,
+    system.targeting?.defense,
+    power?.name
+  ].map(value => String(value ?? '').toLowerCase()).join(' ');
+  if (/will|force stun|mind trick|move object/.test(haystack)) return 'will';
+  if (/fortitude|force grip|force slam/.test(haystack)) return 'fortitude';
+  if (/reflex|force lightning/.test(haystack)) return 'reflex';
+  return 'dc';
+}
+
+function resolveTargetActor({ mode, tokenId, actorId } = {}) {
+  if (mode === 'token' && tokenId) {
+    const targeted = Array.from(game?.user?.targets ?? []).find(token => String(token?.id ?? token?.document?.id ?? '') === String(tokenId));
+    const canvasToken = canvas?.tokens?.get?.(tokenId) ?? null;
+    return targeted?.actor ?? targeted?.document?.actor ?? canvasToken?.actor ?? null;
+  }
+
+  if (mode === 'combatant' && actorId) {
+    const combatant = Array.from(game?.combat?.combatants ?? []).find(entry => String(entry?.actor?.id ?? '') === String(actorId));
+    return combatant?.actor ?? game?.actors?.get?.(actorId) ?? null;
+  }
+
+  return null;
+}
+
+function targetPanelHtml(power, baseDC) {
+  const targets = selectedTargetRows();
+  const combatants = combatantRows();
+  const defense = inferredTargetDefense(power);
+  const defaultDefense = targets[0]?.[defense] ?? baseDC;
+  const targetOptions = targets.map((target, index) => `<option value="${escapeHtml(target.tokenId)}" ${index === 0 ? 'selected' : ''}>${escapeHtml(target.name)} · Ref ${target.reflex} / Fort ${target.fortitude} / Will ${target.will}</option>`).join('');
+  const combatantOptions = combatants.map(target => `<option value="${escapeHtml(target.actorId)}">${escapeHtml(target.name)} · Ref ${target.reflex} / Fort ${target.fortitude} / Will ${target.will}</option>`).join('');
+
+  return `
+    <section class="swse-roll-config-panel swse-force-target-panel">
+      <h4>Target Context</h4>
+      <div class="swse-roll-config-grid swse-roll-config-grid--target">
+        <label>Mode
+          <select name="targetMode">
+            <option value="token" ${targets.length ? 'selected' : ''}>Selected token</option>
+            <option value="combatant">Pick from combatants</option>
+            <option value="manual" ${targets.length ? '' : 'selected'}>Manual defense / theater of mind</option>
+            <option value="none">No target · GM adjudication</option>
+          </select>
+        </label>
+        <label>Selected Token
+          <select name="targetTokenId"><option value="">None</option>${targetOptions}</select>
+        </label>
+        <label>Combatant
+          <select name="targetActorId"><option value="">None</option>${combatantOptions}</select>
+        </label>
+        <label>Defense
+          <select name="targetDefenseType">
+            <option value="reflex" ${defense === 'reflex' ? 'selected' : ''}>Reflex</option>
+            <option value="fortitude" ${defense === 'fortitude' ? 'selected' : ''}>Fortitude</option>
+            <option value="will" ${defense === 'will' ? 'selected' : ''}>Will</option>
+            <option value="dc" ${defense === 'dc' ? 'selected' : ''}>Static DC / opposed check</option>
+          </select>
+        </label>
+        <label>Manual Value
+          <input type="number" name="targetDefenseValue" value="${defaultDefense}" placeholder="e.g. 18">
+        </label>
+      </div>
+      <p class="swse-roll-config-note">Targeting is optional. With no actor target, the power still rolls and posts to chat; automated target effects are left for GM/player adjudication.</p>
+    </section>`;
+}
+
+function buildTargetOptions(html, power, baseDC) {
+  const mode = String(fieldValue(html, 'targetMode') || 'none');
+  const tokenId = String(fieldValue(html, 'targetTokenId') || '');
+  const requestedActorId = String(fieldValue(html, 'targetActorId') || '');
+  const defenseType = String(fieldValue(html, 'targetDefenseType') || inferredTargetDefense(power));
+  const rawDefense = fieldValue(html, 'targetDefenseValue');
+  const defenseValueManual = rawDefense === '' || rawDefense == null ? null : toNumber(rawDefense, baseDC);
+  const targetActor = resolveTargetActor({ mode, tokenId, actorId: requestedActorId });
+  const actorId = targetActor?.id ?? (mode === 'combatant' ? requestedActorId || null : null);
+  const label = targetActor?.name
+    ?? (mode === 'manual' ? 'Manual / theater-of-the-mind target' : mode === 'none' ? 'GM adjudication' : 'Unresolved target');
+
+  return {
+    target: targetActor,
+    targetActor,
+    targetContext: {
+      mode,
+      tokenId: tokenId || null,
+      actorId,
+      defenseType,
+      defenseValue: defenseValueManual,
+      label,
+      automated: Boolean(targetActor)
+    }
+  };
+}
+
 function dcRowsHtml(rows = []) {
   return rows.length ? `
     <div class="rcd-tiers">
@@ -132,6 +272,7 @@ export async function promptForcePowerRollOptions({ actor, power, sourceElement 
               <label>Target DC<input type="number" name="baseDC" value="${baseDC}" step="1"></label>
             </div>
           </section>
+          ${targetPanelHtml(power, baseDC)}
           <section class="swse-roll-config-panel swse-roll-config-panel--resources">
             <h4>Resources</h4>
             ${actorHasTalent(actor, 'Move Massive Object') && isMoveObjectPower(power) ? `<label class="rcd-resource ${fpValue <= 0 ? 'rcd-resource-disabled' : ''}">
@@ -148,7 +289,7 @@ export async function promptForcePowerRollOptions({ actor, power, sourceElement 
           ${projectedOutcomeHtml(baseBonus, baseDC, { label: 'D20 midpoint reference' })}
           <section class="rcd-rail-sec">
             <div class="rcd-rail-lbl">Execution</div>
-            <p class="swse-roll-config-note">The final roll is handled by the Force executor. This dialog collects bonuses, DC, and Force Point intent.</p>
+            <p class="swse-roll-config-note">The final roll is handled by the Force executor. Actor targets enable automated resolution; manual/no-target mode preserves theater-of-the-mind play.</p>
           </section>
         </aside>
       </div>
@@ -177,7 +318,8 @@ export async function promptForcePowerRollOptions({ actor, power, sourceElement 
             take10: false,
             forcePowerMastery: null,
             useForce: fieldValue(html, 'useForce') === true,
-            moveMassiveObject: fieldValue(html, 'moveMassiveObject') === true
+            moveMassiveObject: fieldValue(html, 'moveMassiveObject') === true,
+            ...buildTargetOptions(html, power, baseDC)
           })
         },
         cancel: {
@@ -191,8 +333,8 @@ export async function promptForcePowerRollOptions({ actor, power, sourceElement 
     }, {
       id: 'swse-force-roll-config',
       classes: ['swse-roll-config-dialog-v2', 'swse-force-roll-dialog-app'],
-      width: 900,
-      height: 640,
+      width: 940,
+      height: 720,
       resizable: true
     }).render(true);
   });
