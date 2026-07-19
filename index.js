@@ -38,7 +38,7 @@ import { DefenseCalculator } from "./scripts/actors/derived/defense-calculator.j
 import { initializeHolonet } from "./scripts/holonet/integration/holonet-init.js";
 import { initializeGames } from "./scripts/games/game-init.js";
 import { initSidebarIconFallback } from "./scripts/core/sidebar-icon-fallback.js";
-import { initSidebarIconDiagnostics, dumpSidebarIconState, watchSidebarIconMutations, auditSidebarIconCssRules, snapshotPhase } from "./scripts/core/sidebar-icon-diagnostics.js";
+import { initSidebarIconDiagnostics } from "./scripts/core/sidebar-icon-diagnostics.js";
 import { FeatRegistry } from "./scripts/registries/feat-registry.js";
 import { FeatEffectRegistry } from "./scripts/engine/features/feat-effect-registry.js";
 import { FeatEffectApplier, initializeFeatEffectsHooks } from "./scripts/engine/features/feat-effect-applier.js";
@@ -78,26 +78,21 @@ Hooks.once("init", async () => {
   console.log("SWSE | Initializing Star Wars Saga Edition system...");
   installSwseFlagScopeCompatibility();
   registerForceSuiteRuntimeRepairs();
-  // snapshotPhase('init:hook'); // LOGGING DISABLED
   installItemEditorTrace();
-  // Register SWSE.debug.defenses(actor) helper for defense breakdown diagnostics
+
   globalThis.SWSE ??= {};
   globalThis.SWSE.debug ??= {};
   globalThis.SWSE.debug.defenses = (actor) => DefenseCalculator.debugFor(actor);
   globalThis.SWSE.debug.featPacks = (options = {}) => FeatRegistry.diagnosePackRegistration({ reason: 'manual SWSE.debug.featPacks()', ...options });
   globalThis.SWSE.debug.seedFeatsPack = (options = {}) => FeatPackSeeder.seedIfEmpty({ reason: 'manual SWSE.debug.seedFeatsPack()', ...options });
 
-  // Foundry v13+ namespaced references
   const { Actors, Items } = foundry.documents.collections;
   const { ActorSheet, ItemSheet } = foundry.appv1.sheets;
 
-  // -------------------------------
-  // Global Config & Namespace
-  // -------------------------------
   CONFIG.SWSE = SWSE;
   game.swse = {
     data: SWSEData,
-    SWSE: SWSE,
+    SWSE,
     ActorEngine,
     ConditionTrackFeatActions,
     RollEngine,
@@ -106,59 +101,32 @@ Hooks.once("init", async () => {
     openForceAlchemyWorkbench
   };
 
-  globalThis.SWSE ??= {};
   globalThis.SWSE.ActorEngine = ActorEngine;
   globalThis.SWSE.ConditionTrackFeatActions = ConditionTrackFeatActions;
   globalThis.SWSE.RollEngine = RollEngine;
   globalThis.SWSE.EntityCreateBrowser = EntityCreateBrowser;
   globalThis.SWSE.openEntityCreateBrowser = openEntityCreateBrowser;
 
-  // -------------------------------
-  // Document Classes
-  // -------------------------------
   CONFIG.Actor.documentClass = SWSEV2BaseActor;
   CONFIG.Combat.documentClass = SWSECombatDocument;
   CONFIG.Combatant.documentClass = SWSECombatant;
   registerTokenNameSyncHooks();
 
-  // -------------------------------
-  // Sheet Registration
-  // -------------------------------
   Actors.unregisterSheet("core", ActorSheet);
   Items.unregisterSheet("core", ItemSheet);
 
-  Actors.registerSheet("swse", SWSEV2CharacterSheet, {
-    types: ["character"],
-    label: "SWSE Character Sheet v2",
-    makeDefault: true
-  });
-
-  // Droid actors intentionally use the same actor holopad/shell as characters.
-  // Droid-specific differences are layered inside the character sheet context/templates;
-  // the old droid-only shell is deprecated and no longer registered.
-  Actors.registerSheet("swse", SWSEV2CharacterSheet, {
-    types: ["droid"],
-    label: "SWSE Droid Actor Sheet v2 (Actor Shell)",
-    makeDefault: true
-  });
-
-  // NPC actors intentionally use the same actor holopad/shell as characters.
-  // Nonheroic/follower/minion/beast/mount NPCs render NPC concept content inside
-  // that shell; heroic-promoted NPCs render full actor content permanently.
-  Actors.registerSheet("swse", SWSEV2CharacterSheet, {
-    types: ["npc"],
-    label: "SWSE NPC Actor Sheet v2 (Actor Shell)",
-    makeDefault: true
-  });
-
-  // Vehicle actors intentionally use the same actor holopad/shell as characters, droids, and NPCs.
-  // Vehicle-specific systems remain vehicle-native inside a shared actor shell; the old
-  // vehicle-only shell is deprecated and no longer registered as the default.
-  Actors.registerSheet("swse", SWSEV2CharacterSheet, {
-    types: ["vehicle"],
-    label: "SWSE Vehicle Actor Sheet v2 (Actor Shell)",
-    makeDefault: true
-  });
+  for (const [type, label] of [
+    ["character", "SWSE Character Sheet v2"],
+    ["droid", "SWSE Droid Actor Sheet v2 (Actor Shell)"],
+    ["npc", "SWSE NPC Actor Sheet v2 (Actor Shell)"],
+    ["vehicle", "SWSE Vehicle Actor Sheet v2 (Actor Shell)"]
+  ]) {
+    Actors.registerSheet("swse", SWSEV2CharacterSheet, {
+      types: [type],
+      label,
+      makeDefault: true
+    });
+  }
 
   Items.registerSheet("swse", SWSEItemSheet, {
     types: SWSE.itemTypes,
@@ -166,23 +134,14 @@ Hooks.once("init", async () => {
     makeDefault: true
   });
 
-  // -------------------------------
-  // Register Handlebars Helpers
-  // -------------------------------
   registerLegacyHandlebarsHelpers();
   registerSystemHandlebarsHelpers();
 
-  // -------------------------------
-  // Register Game Settings
-  // -------------------------------
-  registerSettings(); // Legacy swse namespace settings retained for compatibility.
+  registerSettings();
   registerForceTraditionHouseRuleSettings();
   registerCustomContentApprovalSettings();
   await registerSystemSettings();
 
-  // -------------------------------
-  // Register Hook Infrastructure
-  // -------------------------------
   registerInitHooks();
   registerStoreSheetHooks();
   SystemInitHooks.registerHooks();
@@ -210,28 +169,147 @@ Hooks.once("init", async () => {
   initializeShellResponsiveObserver();
   await initializeGames();
 
-  // -------------------------------
-  // Feat Effect Registry + lifecycle hooks
-  // Mechanical effect definitions formerly embedded in feat compendium items
-  // now live in data/feat-effects.json. FeatRegistry owns feat identity;
-  // FeatEffectRegistry owns feat mechanics; the applier reconciles generated
-  // ActiveEffects on actors that own the corresponding feats.
-  // -------------------------------
   FeatEffectRegistry.initialize();
   initializeFeatEffectsHooks();
   globalThis.SWSE.FeatRegistry = FeatRegistry;
   globalThis.SWSE.FeatEffectRegistry = FeatEffectRegistry;
   globalThis.SWSE.FeatEffectApplier = FeatEffectApplier;
 
-  // -------------------------------
-  // Preload Templates
-  // -------------------------------
-  await preloadHandlebarsTemplates();
+  const templatesReady = await preloadHandlebarsTemplates();
+  if (!templatesReady) {
+    throw new Error('SWSE bootstrap failed: one or more required Handlebars templates could not be preloaded.');
+  }
 
-  // Boot-time diagnostic: verify required Handlebars helpers are registered
   const requiredHelpers = ["add", "div", "subtract", "multiply", "and", "or", "not", "arrayIncludes", "truncate", "range"];
   const missingHelpers = requiredHelpers.filter(h => !Handlebars.helpers[h]);
   if (missingHelpers.length) {
     console.error("SWSE | Missing required Handlebars helpers:", missingHelpers);
   }
+
+  console.log("SWSE | System initialization complete.");
 });
+
+// ============================================
+// READY HOOK
+// ============================================
+Hooks.once("ready", async () => {
+  console.log("SWSE | System ready. May the Force be with you.");
+
+  MutationInterceptor.initialize();
+  RecurringDamageEngine.initializeHooks();
+  PoisonEngine.initializeHooks();
+  SWSEGrappling.init();
+
+  await initializeHolonet();
+  initializeConceptParityDiagnostics();
+  initSidebarIconDiagnostics();
+  initSidebarIconFallback();
+
+  game.swse.openStore = actor => SWSEStore.open(actor ?? null);
+  game.swse.repairForcePowerAbilityMeta = async (actor = null, options = {}) => {
+    return actor
+      ? repairActorForcePowerAbilityMeta(actor, options)
+      : repairWorldForcePowerAbilityMeta(options);
+  };
+
+  onDiscoveryReady();
+
+  if (game.user.isGM) {
+    await WorldDataLoader.autoLoad();
+    repairWorldForcePowerAbilityMeta({ silent: true }).catch((err) => {
+      console.warn('SWSE | Force power abilityMeta backfill failed:', err);
+    });
+  }
+});
+
+// ============================================
+// HANDLEBARS HELPERS (LEGACY COMPATIBILITY)
+// ============================================
+function registerLegacyHandlebarsHelpers() {
+  const helpers = {
+    toUpperCase: str => typeof str === "string" ? str.toUpperCase() : "",
+    array: function () { return Array.prototype.slice.call(arguments, 0, -1); },
+    keys: obj => obj ? Object.keys(obj) : [],
+    eq: (a, b) => a === b,
+    lte: (a, b) => a <= b,
+    gt: (a, b) => Number(a) > Number(b),
+    capitalize: str => typeof str === "string" ? str.charAt(0).toUpperCase() + str.slice(1) : "",
+    json: context => JSON.stringify(context),
+    add: (a, b) => Number(a) + Number(b),
+    getCrewName: id => {
+      const actor = game.actors.get(id) || canvas.tokens.get(id)?.actor;
+      return actor ? actor.name : "";
+    },
+    calculateDamageThreshold: actor => {
+      if (!actor?.system) return 0;
+      const fortitude = actor.system.defenses?.fortitude?.total ?? 10;
+      const size = String(actor.system.size ?? "medium").toLowerCase();
+      const sizeMods = { tiny: -5, small: 0, medium: 0, large: 5, huge: 10, gargantuan: 20, colossal: 50 };
+      const featBonus = actor.items?.some(i => i.type === "feat" && i.name?.toLowerCase() === "improved damage threshold") ? 5 : 0;
+      return fortitude + (sizeMods[size] ?? 0) + featBonus;
+    },
+    getSkillMod: (skill, abilities, level, conditionTrack) => {
+      if (!skill || !abilities) return 0;
+      const penalties = { normal: 0, "-1": -1, "-2": -2, "-5": -5, "-10": -10, helpless: -100 };
+      return (abilities[skill.ability]?.mod || 0)
+        + (skill.trained ? 5 : 0)
+        + (skill.focus ? 1 : 0)
+        + Math.floor((level || 1) / 2)
+        + (penalties[conditionTrack] || 0);
+    }
+  };
+
+  for (const [name, helper] of Object.entries(helpers)) {
+    if (!Handlebars.helpers[name]) Handlebars.registerHelper(name, helper);
+  }
+}
+
+// ============================================
+// LEGACY SETTINGS
+// ============================================
+function registerSettings() {
+  const register = (key, data) => {
+    const fullKey = `swse.${key}`;
+    if (!game.settings.settings.has(fullKey)) game.settings.register("swse", key, data);
+  };
+
+  register("forcePointBonus", {
+    name: "Force Point Bonus",
+    hint: "Extra modifier applied when spending a Force Point on a power.",
+    scope: "world",
+    config: true,
+    type: Number,
+    default: 2
+  });
+
+  register("storeSettings", {
+    name: "Store Price Settings",
+    scope: "world",
+    config: false,
+    type: Object,
+    default: { buyMultiplier: 1.0, sellMultiplier: 0.5 }
+  });
+
+  register("storeMarkup", {
+    name: "Store Markup %",
+    scope: "world",
+    config: false,
+    type: Number,
+    default: 0
+  });
+
+  register("storeDiscount", {
+    name: "Store Discount %",
+    scope: "world",
+    config: false,
+    type: Number,
+    default: 0
+  });
+
+  register("dataLoaded", {
+    scope: "world",
+    config: false,
+    type: Boolean,
+    default: false
+  });
+}
