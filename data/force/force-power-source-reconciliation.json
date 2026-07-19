@@ -1,0 +1,242 @@
+{
+  "schemaVersion": 1,
+  "authority": "printed-sourcebooks",
+  "notes": [
+    "This file records source-reviewed reconciliation findings. Records absent from this file remain unverified and must not be treated as rules-authoritative.",
+    "Force Lightning retains its tiered damage progression; the confirmed drift is its damage type, which is Force damage.",
+    "The pack remains unchanged in Phase 2. Later phases will migrate source-reviewed records into system.resolution."
+  ],
+  "records": {
+    "battle-strike": {
+      "name": "Battle Strike",
+      "sourcebook": "Saga Edition Core Rulebook",
+      "page": 97,
+      "sourceVerified": true,
+      "driftSeverity": "major",
+      "primaryBehavior": "modifier",
+      "secondaryBehaviors": ["damage"],
+      "resolutionMethod": "fixed-dc",
+      "currentPackFinding": "Verify that the compendium record is named Battle Strike and preserves the tiered extra-damage dice.",
+      "runtimeFinding": "Current ForcePowerEffectsEngine contains a name-based Force Strike handler that models a flat damage bonus and may not match Battle Strike.",
+      "requiredCorrections": [
+        "Represent the +1 Force bonus to the next attack roll.",
+        "Represent tiered extra damage dice on that same attack if it hits.",
+        "Expire after the next qualifying attack.",
+        "Remove reliance on a mismatched Force Strike name handler."
+      ],
+      "implementationPhase": 4
+    },
+    "farseeing": {
+      "name": "Farseeing",
+      "sourcebook": "Saga Edition Core Rulebook",
+      "page": 97,
+      "sourceVerified": true,
+      "driftSeverity": "critical",
+      "primaryBehavior": "information",
+      "secondaryBehaviors": [],
+      "resolutionMethod": "defense",
+      "currentPackFinding": "Current text allows observing a known place or person like a remote camera. The printed power targets a known creature and provides limited information based on the check.",
+      "runtimeFinding": "No dedicated source-aligned information resolver exists.",
+      "requiredCorrections": [
+        "Target a creature rather than a place.",
+        "Compare Use the Force against Will Defense.",
+        "Represent failure, basic information, the 24-hour repeat restriction, and the Force Point improvement."
+      ],
+      "implementationPhase": 3
+    },
+    "force-disarm": {
+      "name": "Force Disarm",
+      "sourcebook": "Saga Edition Core Rulebook",
+      "page": 98,
+      "sourceVerified": true,
+      "driftSeverity": "critical",
+      "primaryBehavior": "control",
+      "secondaryBehaviors": ["damage"],
+      "resolutionMethod": "attack-substitution",
+      "currentPackFinding": "Current record describes an opposed Strength or Will contest. The printed rule substitutes Use the Force for the normal disarm attack roll.",
+      "runtimeFinding": "No disarm attack-substitution resolver exists.",
+      "requiredCorrections": [
+        "Use the Use the Force check in place of the normal disarm attack roll.",
+        "Preserve the rest of the disarm rules.",
+        "Represent the Force Point option that damages or destroys the weapon."
+      ],
+      "implementationPhase": 3
+    },
+    "force-grip": {
+      "name": "Force Grip",
+      "sourcebook": "Saga Edition Core Rulebook",
+      "page": 98,
+      "sourceVerified": true,
+      "driftSeverity": "major",
+      "primaryBehavior": "hybrid",
+      "secondaryBehaviors": ["damage", "control", "condition"],
+      "resolutionMethod": "defense",
+      "currentPackFinding": "Damage alone is insufficient; the power also restricts the target's next-turn actions and can be maintained.",
+      "runtimeFinding": "Current name-based immobilize handling returns no effect and direct Force damage is unwired.",
+      "requiredCorrections": [
+        "Compare against Fortitude Defense.",
+        "Preserve tiered damage.",
+        "Apply the successful-use action restriction.",
+        "Support concentration and a new check each maintained round.",
+        "Represent the Force Point damage increase."
+      ],
+      "implementationPhase": 7
+    },
+    "force-lightning": {
+      "name": "Force Lightning",
+      "sourcebook": "Saga Edition Core Rulebook",
+      "page": 98,
+      "sourceVerified": true,
+      "driftSeverity": "major",
+      "primaryBehavior": "damage",
+      "secondaryBehaviors": ["condition"],
+      "resolutionMethod": "fixed-dc",
+      "currentPackFinding": "The tiered damage progression is correct. The confirmed drift is that the damage must be typed as Force damage rather than electricity/lightning damage.",
+      "runtimeFinding": "Direct Force-power damage is not yet routed through the canonical damage pipeline.",
+      "requiredCorrections": [
+        "Keep the existing tiered damage progression.",
+        "Set damageType to force.",
+        "Keep condition or Force Point riders as separate structured outcomes.",
+        "Do not infer electricity damage from the power name."
+      ],
+      "implementationPhase": 6
+    },
+    "force-slam": {
+      "name": "Force Slam",
+      "sourcebook": "Saga Edition Core Rulebook",
+      "page": 98,
+      "sourceVerified": true,
+      "driftSeverity": "major",
+      "primaryBehavior": "damage",
+      "secondaryBehaviors": ["condition"],
+      "resolutionMethod": "defense",
+      "currentPackFinding": "Current damage profile infers kinetic damage and leaves area geometry unresolved. The printed power deals Force damage in a 6-square cone.",
+      "runtimeFinding": "No schema-driven area Force-damage resolver exists.",
+      "requiredCorrections": [
+        "Use a 6-square cone.",
+        "Compare one check against each target's Fortitude Defense.",
+        "Deal 4d6 Force damage on a hit and half on a miss.",
+        "Apply prone only on a hit.",
+        "Represent the Force Point +2d6 option."
+      ],
+      "implementationPhase": 6
+    },
+    "force-stun": {
+      "name": "Force Stun",
+      "sourcebook": "Saga Edition Core Rulebook",
+      "page": 99,
+      "sourceVerified": true,
+      "driftSeverity": "major",
+      "primaryBehavior": "condition",
+      "secondaryBehaviors": [],
+      "resolutionMethod": "margin",
+      "currentPackFinding": "A generic stunned condition does not represent the printed margin-based condition-track movement.",
+      "runtimeFinding": "No margin-of-success condition-track resolver exists.",
+      "requiredCorrections": [
+        "Compare against Will Defense.",
+        "Move the target down the condition track based on success margin.",
+        "Do not model the result as a fixed-duration stunned condition."
+      ],
+      "implementationPhase": 7
+    },
+    "force-thrust": {
+      "name": "Force Thrust",
+      "sourcebook": "Saga Edition Core Rulebook",
+      "page": 99,
+      "sourceVerified": true,
+      "driftSeverity": "major",
+      "primaryBehavior": "control",
+      "secondaryBehaviors": ["movement", "damage"],
+      "resolutionMethod": "opposed",
+      "currentPackFinding": "The power is primarily forced movement; HP damage occurs conditionally when the target collides with a larger object.",
+      "runtimeFinding": "Current immobilize handling does not implement forced movement or collision damage.",
+      "requiredCorrections": [
+        "Resolve the opposed Strength interaction.",
+        "Apply forced movement.",
+        "Create damage only when the collision condition is met.",
+        "Represent the Force Point option separately."
+      ],
+      "implementationPhase": 7
+    },
+    "move-object": {
+      "name": "Move Object",
+      "sourcebook": "Saga Edition Core Rulebook",
+      "page": 99,
+      "sourceVerified": true,
+      "driftSeverity": "critical",
+      "primaryBehavior": "hybrid",
+      "secondaryBehaviors": ["control", "movement", "damage"],
+      "resolutionMethod": "multi-mode",
+      "currentPackFinding": "Current record retains size tiers but omits the complete hurling damage and secondary-target resolution structure.",
+      "runtimeFinding": "Current Move Object effect handler intentionally returns no effect and has no mode selection.",
+      "requiredCorrections": [
+        "Represent move, hold, hurl-object, and hurl-creature modes independently.",
+        "Preserve size-based tiers and size-based damage.",
+        "Support unwilling-target resistance and secondary target defense.",
+        "Support damage to both hurling participants where applicable.",
+        "Support concentration, Force Point, Destiny Point, and flight/hover interactions."
+      ],
+      "implementationPhase": 8
+    },
+    "rebuke": {
+      "name": "Rebuke",
+      "sourcebook": "Saga Edition Core Rulebook",
+      "page": 100,
+      "sourceVerified": true,
+      "driftSeverity": "critical",
+      "primaryBehavior": "reaction",
+      "secondaryBehaviors": ["control"],
+      "resolutionMethod": "reaction-opposed",
+      "currentPackFinding": "Current compendium record describes an offensive daze power. The printed power is a reaction used to negate or redirect another Force power.",
+      "runtimeFinding": "No reaction-opposed negation and redirection resolver exists.",
+      "requiredCorrections": [
+        "Trigger when the user is targeted by a Force power.",
+        "Compare against the originating Force power check.",
+        "Negate on a matching or higher result.",
+        "Redirect when the result exceeds the originating check by the required margin.",
+        "Represent chaining and Force Point interactions."
+      ],
+      "implementationPhase": 3
+    },
+    "surge": {
+      "name": "Surge",
+      "sourcebook": "Saga Edition Core Rulebook",
+      "page": 100,
+      "sourceVerified": true,
+      "driftSeverity": "critical",
+      "primaryBehavior": "modifier",
+      "secondaryBehaviors": ["movement"],
+      "resolutionMethod": "fixed-dc",
+      "currentPackFinding": "Current record grants an additional move action. The printed power grants tiered Jump and speed bonuses.",
+      "runtimeFinding": "Current ForcePowerEffectsEngine incorrectly routes Surge to a damage bonus.",
+      "requiredCorrections": [
+        "Remove the extra move action description.",
+        "Represent tiered Jump bonuses.",
+        "Represent tiered speed increases.",
+        "Represent the Force Point improvement.",
+        "Remove the damage-bonus runtime behavior."
+      ],
+      "implementationPhase": 3
+    },
+    "vital-transfer": {
+      "name": "Vital Transfer",
+      "sourcebook": "Saga Edition Core Rulebook",
+      "page": 100,
+      "sourceVerified": true,
+      "driftSeverity": "critical",
+      "primaryBehavior": "healing",
+      "secondaryBehaviors": ["damage"],
+      "resolutionMethod": "fixed-dc",
+      "currentPackFinding": "Current record uses healing dice and invented condition-removal tiers. The printed power scales healing from the target's level and inflicts a cost on the user.",
+      "runtimeFinding": "Healing powers currently create no direct healing transaction.",
+      "requiredCorrections": [
+        "Replace healing dice with target-level multipliers.",
+        "Apply the user's self-damage cost separately from healing.",
+        "Represent the Force Point option that prevents the self-damage cost.",
+        "Represent the Destiny Point condition-track improvement.",
+        "Remove unsupported condition-removal tiers."
+      ],
+      "implementationPhase": 5
+    }
+  }
+}
