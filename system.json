@@ -5,7 +5,7 @@
   "description": "Complete Star Wars Saga Edition implementation for Foundry Virtual Tabletop with automated character sheets, combat mechanics, Force powers, vehicles, and comprehensive game rules.",
   "version": "4.0.4",
   "compatibility": {
-    "minimum": 14,
+    "minimum": 13,
     "verified": 14,
     "maximum": 14
   },

@@ -36,3 +36,9 @@
 *.webm   binary
 *.mp4    binary
 *.pdf    binary
+
+# LevelDB compendium packs (Foundry v11+ directory packs) are binary.
+# Line-ending normalization (CRLF<->LF) on CURRENT / MANIFEST-* / *.ldb / *.log
+# corrupts the database and makes Foundry silently skip the pack. This rule MUST
+# come last so it overrides the earlier `* text=auto` and `*.db text` rules.
+packs/** binary
