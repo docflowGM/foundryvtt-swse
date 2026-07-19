@@ -1,5 +1,6 @@
 import { hydrateImportedStatblockWeapon } from './nonheroic-damage-profile-hydrator.js';
 import { hydrateNpcWeaponFromStatblockFallback } from './npc-statblock-item-fallback.js';
+import { hydrateNpcWeaponFromForceOrBespokeFallback } from './npc-statblock-bespoke-fallback.js';
 
 const NPC_ACTOR_TYPES = new Set(['npc', 'droid']);
 const WEAPON_ITEM_TYPES = new Set(['weapon', 'meleeWeapon', 'rangedWeapon']);
@@ -97,7 +98,9 @@ export async function hydrateWorldNpcDamage(actor, { reason = 'manual' } = {}) {
   const updates = [];
   let checked = 0;
   let profileHydrated = 0;
-  let fallbackHydrated = 0;
+  let exactItemHydrated = 0;
+  let forcePowerHydrated = 0;
+  let bespokeWeaponHydrated = 0;
 
   for (const item of actor.items ?? []) {
     if (!WEAPON_ITEM_TYPES.has(item.type) || itemHasUsableDamage(item)) continue;
@@ -120,7 +123,21 @@ export async function hydrateWorldNpcDamage(actor, { reason = 'manual' } = {}) {
         raw,
         actorName: actor.name
       });
-      if (hydrated?.system?.statblockHydrated) fallbackHydrated += 1;
+      if (hydrated?.system?.statblockHydrated) {
+        exactItemHydrated += 1;
+      } else {
+        hydrated = await hydrateNpcWeaponFromForceOrBespokeFallback(itemData, {
+          raw,
+          actorName: actor.name
+        });
+        if (hydrated?.system?.statblockHydrated) {
+          if (hydrated.system.statblockHydrationPolicy === 'exact-force-power-printed-override') {
+            forcePowerHydrated += 1;
+          } else if (hydrated.system.statblockHydrationPolicy === 'bespoke-missing-weapon-printed-override') {
+            bespokeWeaponHydrated += 1;
+          }
+        }
+      }
     }
 
     if (!hydrated?.system?.statblockHydrated) continue;
@@ -148,7 +165,9 @@ export async function hydrateWorldNpcDamage(actor, { reason = 'manual' } = {}) {
     checked,
     updated: updates.length,
     profileHydrated,
-    fallbackHydrated
+    exactItemHydrated,
+    forcePowerHydrated,
+    bespokeWeaponHydrated
   };
 }
 
@@ -159,7 +178,9 @@ export async function hydrateExistingWorldNpcDamage({ notify = false } = {}) {
   let actorsUpdated = 0;
   let itemsUpdated = 0;
   let profileHydrated = 0;
-  let fallbackHydrated = 0;
+  let exactItemHydrated = 0;
+  let forcePowerHydrated = 0;
+  let bespokeWeaponHydrated = 0;
 
   for (const actor of actors) {
     try {
@@ -167,13 +188,23 @@ export async function hydrateExistingWorldNpcDamage({ notify = false } = {}) {
       if (result.updated > 0) actorsUpdated += 1;
       itemsUpdated += result.updated ?? 0;
       profileHydrated += result.profileHydrated ?? 0;
-      fallbackHydrated += result.fallbackHydrated ?? 0;
+      exactItemHydrated += result.exactItemHydrated ?? 0;
+      forcePowerHydrated += result.forcePowerHydrated ?? 0;
+      bespokeWeaponHydrated += result.bespokeWeaponHydrated ?? 0;
     } catch (error) {
       console.warn('[SWSE NPC Damage] Failed to hydrate actor', actor?.name, error);
     }
   }
 
-  const summary = { actorsChecked: actors.length, actorsUpdated, itemsUpdated, profileHydrated, fallbackHydrated };
+  const summary = {
+    actorsChecked: actors.length,
+    actorsUpdated,
+    itemsUpdated,
+    profileHydrated,
+    exactItemHydrated,
+    forcePowerHydrated,
+    bespokeWeaponHydrated
+  };
   if (notify && itemsUpdated > 0) {
     ui.notifications?.info?.(`SWSE hydrated ${itemsUpdated} NPC weapon${itemsUpdated === 1 ? '' : 's'} across ${actorsUpdated} actor${actorsUpdated === 1 ? '' : 's'}.`);
   }
