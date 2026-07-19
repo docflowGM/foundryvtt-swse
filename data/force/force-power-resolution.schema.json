@@ -1,0 +1,149 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "systems/foundryvtt-swse/data/force/force-power-resolution.schema.json",
+  "title": "SWSE Force Power Resolution",
+  "type": "object",
+  "required": ["version", "behavior", "check", "targeting", "outcomes", "duration", "automation"],
+  "additionalProperties": false,
+  "properties": {
+    "version": { "const": 1 },
+    "behavior": {
+      "type": "object",
+      "required": ["primary", "secondary"],
+      "additionalProperties": false,
+      "properties": {
+        "primary": {
+          "enum": ["damage", "healing", "modifier", "mitigation", "control", "movement", "condition", "information", "reaction", "hybrid", "utility", "manual"]
+        },
+        "secondary": {
+          "type": "array",
+          "items": {
+            "enum": ["damage", "healing", "modifier", "mitigation", "control", "movement", "condition", "information", "reaction", "utility"]
+          },
+          "uniqueItems": true,
+          "default": []
+        }
+      }
+    },
+    "check": {
+      "type": "object",
+      "required": ["mode", "skill", "baseDC", "defense", "opposedBy", "marginStep", "take10Allowed"],
+      "additionalProperties": false,
+      "properties": {
+        "mode": { "enum": ["none", "fixed-dc", "defense", "opposed", "margin", "attack-substitution", "reaction-opposed"] },
+        "skill": { "enum": ["useTheForce", null] },
+        "baseDC": { "type": ["number", "null"] },
+        "defense": { "enum": ["reflex", "fortitude", "will", null] },
+        "opposedBy": { "type": ["string", "null"] },
+        "marginStep": { "type": ["number", "null"], "minimum": 1 },
+        "take10Allowed": { "type": "boolean" }
+      }
+    },
+    "targeting": {
+      "type": "object",
+      "required": ["mode", "range", "shape", "size", "origin", "lineOfSight", "affectsSelf"],
+      "additionalProperties": false,
+      "properties": {
+        "mode": { "enum": ["self", "creature", "object", "creature-or-object", "area", "special", "none"] },
+        "range": { "type": ["string", "null"] },
+        "shape": { "enum": ["single", "cone", "burst", "line", "radius", "emanation", "special", null] },
+        "size": { "type": ["number", "string", "null"] },
+        "origin": { "enum": ["caster", "target", "point", "special", null] },
+        "lineOfSight": { "type": "boolean" },
+        "affectsSelf": { "type": "boolean" }
+      }
+    },
+    "outcomes": {
+      "type": "object",
+      "required": ["tiers", "onFailure", "onMiss"],
+      "additionalProperties": false,
+      "properties": {
+        "tiers": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/tier" }
+        },
+        "onFailure": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/outcome" }
+        },
+        "onMiss": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/outcome" }
+        }
+      }
+    },
+    "duration": {
+      "type": "object",
+      "required": ["type", "value", "maintainable", "maintenanceAction"],
+      "additionalProperties": false,
+      "properties": {
+        "type": { "enum": ["instant", "rounds", "turns", "minutes", "hours", "scene", "encounter", "concentration", "special"] },
+        "value": { "type": ["number", "string", "null"] },
+        "maintainable": { "type": "boolean" },
+        "maintenanceAction": { "enum": ["free", "reaction", "swift", "move", "standard", "full-round", null] }
+      }
+    },
+    "resourceOptions": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "forcePoint": { "type": "array", "items": { "$ref": "#/$defs/outcome" } },
+        "destinyPoint": { "type": "array", "items": { "$ref": "#/$defs/outcome" } }
+      }
+    },
+    "automation": {
+      "type": "object",
+      "required": ["status", "handler", "reviewRequired"],
+      "additionalProperties": false,
+      "properties": {
+        "status": { "enum": ["manual", "metadata", "partial", "ready"] },
+        "handler": { "type": ["string", "null"] },
+        "reviewRequired": { "type": "boolean" }
+      }
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "book": { "type": ["string", "null"] },
+        "page": { "type": ["number", "null"] },
+        "verified": { "type": "boolean" },
+        "notes": { "type": "array", "items": { "type": "string" } }
+      }
+    }
+  },
+  "$defs": {
+    "tier": {
+      "type": "object",
+      "required": ["minimum", "maximum", "label", "outcomes"],
+      "additionalProperties": false,
+      "properties": {
+        "minimum": { "type": ["number", "null"] },
+        "maximum": { "type": ["number", "null"] },
+        "label": { "type": "string" },
+        "outcomes": { "type": "array", "items": { "$ref": "#/$defs/outcome" }, "minItems": 1 }
+      }
+    },
+    "outcome": {
+      "type": "object",
+      "required": ["kind"],
+      "additionalProperties": true,
+      "properties": {
+        "kind": {
+          "enum": ["damage", "healing", "modifier", "mitigation", "shield-rating", "resistance", "negate-damage", "condition", "condition-track", "movement", "forced-movement", "action-economy", "concealment", "information", "disarm", "prone", "special"]
+        },
+        "formula": { "type": ["string", "null"] },
+        "damageType": { "type": ["string", "null"] },
+        "category": { "type": ["string", "null"] },
+        "target": { "type": ["string", "null"] },
+        "amount": { "type": ["number", "string", "null"] },
+        "bonusType": { "type": ["string", "null"] },
+        "condition": { "type": ["string", "null"] },
+        "duration": { "type": ["string", "number", "null"] },
+        "halfOnMiss": { "type": "boolean" },
+        "criticalEligible": { "type": "boolean" },
+        "notes": { "type": ["string", "null"] }
+      }
+    }
+  }
+}
