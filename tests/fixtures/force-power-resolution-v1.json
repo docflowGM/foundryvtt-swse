@@ -1,0 +1,55 @@
+{
+  "damageTiered": {
+    "version": 1,
+    "behavior": { "primary": "damage", "secondary": ["condition"] },
+    "check": { "mode": "fixed-dc", "skill": "useTheForce", "baseDC": 15, "defense": null, "opposedBy": null, "marginStep": null, "take10Allowed": true },
+    "targeting": { "mode": "creature", "range": "6 squares", "shape": "single", "size": null, "origin": "caster", "lineOfSight": true, "affectsSelf": false },
+    "outcomes": {
+      "tiers": [
+        { "minimum": 15, "maximum": 19, "label": "2d6 Force damage", "outcomes": [{ "kind": "damage", "formula": "2d6", "damageType": "force", "criticalEligible": false }] },
+        { "minimum": 20, "maximum": 24, "label": "4d6 Force damage", "outcomes": [{ "kind": "damage", "formula": "4d6", "damageType": "force", "criticalEligible": false }] },
+        { "minimum": 25, "maximum": 29, "label": "6d6 Force damage", "outcomes": [{ "kind": "damage", "formula": "6d6", "damageType": "force", "criticalEligible": false }] },
+        { "minimum": 30, "maximum": null, "label": "8d6 Force damage", "outcomes": [{ "kind": "damage", "formula": "8d6", "damageType": "force", "criticalEligible": false }] }
+      ],
+      "onFailure": [],
+      "onMiss": []
+    },
+    "duration": { "type": "instant", "value": null, "maintainable": false, "maintenanceAction": null },
+    "resourceOptions": { "forcePoint": [], "destinyPoint": [] },
+    "automation": { "status": "metadata", "handler": null, "reviewRequired": false },
+    "source": { "book": "Saga Edition Core Rulebook", "page": 96, "verified": true, "notes": ["Representative tiered Force-damage fixture."] }
+  },
+  "healing": {
+    "version": 1,
+    "behavior": { "primary": "healing", "secondary": [] },
+    "check": { "mode": "fixed-dc", "skill": "useTheForce", "baseDC": 15, "defense": null, "opposedBy": null, "marginStep": null, "take10Allowed": true },
+    "targeting": { "mode": "creature", "range": "touch", "shape": "single", "size": null, "origin": "caster", "lineOfSight": true, "affectsSelf": false },
+    "outcomes": { "tiers": [{ "minimum": 15, "maximum": null, "label": "Healing outcome", "outcomes": [{ "kind": "healing", "amount": "source-defined" }] }], "onFailure": [], "onMiss": [] },
+    "duration": { "type": "instant", "value": null, "maintainable": false, "maintenanceAction": null },
+    "resourceOptions": { "forcePoint": [], "destinyPoint": [] },
+    "automation": { "status": "metadata", "handler": null, "reviewRequired": true },
+    "source": { "book": null, "page": null, "verified": false, "notes": [] }
+  },
+  "modifier": {
+    "version": 1,
+    "behavior": { "primary": "modifier", "secondary": ["movement"] },
+    "check": { "mode": "fixed-dc", "skill": "useTheForce", "baseDC": 10, "defense": null, "opposedBy": null, "marginStep": null, "take10Allowed": true },
+    "targeting": { "mode": "self", "range": "personal", "shape": "single", "size": null, "origin": "caster", "lineOfSight": false, "affectsSelf": true },
+    "outcomes": { "tiers": [{ "minimum": 10, "maximum": null, "label": "Jump and speed bonuses", "outcomes": [{ "kind": "modifier", "category": "skill", "target": "jump", "amount": 10, "bonusType": "force" }, { "kind": "modifier", "category": "speed", "target": "walk", "amount": 2, "bonusType": "force" }] }], "onFailure": [], "onMiss": [] },
+    "duration": { "type": "turns", "value": 1, "maintainable": false, "maintenanceAction": null },
+    "resourceOptions": { "forcePoint": [], "destinyPoint": [] },
+    "automation": { "status": "metadata", "handler": null, "reviewRequired": false },
+    "source": { "book": "Saga Edition Core Rulebook", "page": 100, "verified": true, "notes": [] }
+  },
+  "reaction": {
+    "version": 1,
+    "behavior": { "primary": "reaction", "secondary": ["control"] },
+    "check": { "mode": "reaction-opposed", "skill": "useTheForce", "baseDC": null, "defense": null, "opposedBy": "originating Force power check", "marginStep": 5, "take10Allowed": false },
+    "targeting": { "mode": "special", "range": null, "shape": "single", "size": null, "origin": "caster", "lineOfSight": false, "affectsSelf": true },
+    "outcomes": { "tiers": [{ "minimum": 0, "maximum": 4, "label": "Negate", "outcomes": [{ "kind": "special", "notes": "Negate the incoming Force power." }] }, { "minimum": 5, "maximum": null, "label": "Redirect", "outcomes": [{ "kind": "special", "notes": "Redirect the incoming Force power." }] }], "onFailure": [], "onMiss": [] },
+    "duration": { "type": "instant", "value": null, "maintainable": false, "maintenanceAction": null },
+    "resourceOptions": { "forcePoint": [], "destinyPoint": [] },
+    "automation": { "status": "metadata", "handler": null, "reviewRequired": false },
+    "source": { "book": "Saga Edition Core Rulebook", "page": 100, "verified": true, "notes": [] }
+  }
+}
