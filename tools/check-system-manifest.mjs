@@ -37,6 +37,58 @@ if (packs.length < 60) {
   errors.push(`Expected the production compendium catalog (at least 60 packs), found ${packs.length}.`);
 }
 
+function validateLegacyNeDbPack(packName, absolutePackPath, declaredPath) {
+  const stat = fs.statSync(absolutePackPath);
+  if (!stat.isFile()) {
+    errors.push(`Legacy NeDB pack source must be a file: ${declaredPath}`);
+    return;
+  }
+  if (stat.size === 0) {
+    errors.push(`Legacy NeDB pack source is empty: ${declaredPath}`);
+    return;
+  }
+
+  // Foundry V11+ can migrate package-provided NeDB sources to a sibling
+  // LevelDB directory. Validate enough of the JSONL source to catch a wrong,
+  // empty, or corrupt manifest target without loading a potentially large pack.
+  const firstRecord = fs.readFileSync(absolutePackPath, 'utf8')
+    .split(/\r?\n/)
+    .find(line => line.trim().length > 0);
+  if (!firstRecord) {
+    errors.push(`Legacy NeDB pack source has no JSONL records: ${declaredPath}`);
+    return;
+  }
+  try {
+    const parsed = JSON.parse(firstRecord);
+    if (!parsed || typeof parsed !== 'object') {
+      errors.push(`Legacy NeDB pack source does not begin with an object record: ${declaredPath}`);
+    }
+  } catch (error) {
+    errors.push(`Legacy NeDB pack source begins with invalid JSON (${packName}): ${error.message}`);
+  }
+}
+
+function validateLevelDbPack(absolutePackPath, declaredPath) {
+  const stat = fs.statSync(absolutePackPath);
+  if (!stat.isDirectory()) {
+    errors.push(`LevelDB pack path must be a directory: ${declaredPath}`);
+    return;
+  }
+
+  const currentPath = path.join(absolutePackPath, 'CURRENT');
+  if (!fs.existsSync(currentPath)) {
+    errors.push(`LevelDB pack is missing CURRENT: ${declaredPath}`);
+    return;
+  }
+
+  const manifestFile = fs.readFileSync(currentPath, 'utf8').trim();
+  if (!manifestFile) {
+    errors.push(`LevelDB CURRENT file is empty: ${declaredPath}`);
+  } else if (!fs.existsSync(path.join(absolutePackPath, manifestFile))) {
+    errors.push(`LevelDB CURRENT points to a missing manifest (${manifestFile}): ${declaredPath}`);
+  }
+}
+
 for (const pack of packs) {
   const packName = pack?.name ?? '<unknown>';
   if (!pack?.name) errors.push('A pack is missing its name.');
@@ -47,10 +99,6 @@ for (const pack of packs) {
   if (pack?.path && paths.has(pack.path)) errors.push(`Duplicate pack path: ${pack.path}`);
   if (pack?.name) names.add(pack.name);
   if (pack?.path) paths.add(pack.path);
-
-  if (typeof pack?.path === 'string' && pack.path.endsWith('.db')) {
-    errors.push(`Legacy NeDB pack path is not supported by Foundry v13/v14: ${pack.path}`);
-  }
 
   if (pack?.type === 'Actor' || pack?.type === 'Item') {
     if (pack.system !== manifest.id) {
@@ -64,22 +112,11 @@ for (const pack of packs) {
     errors.push(`Declared pack path does not exist: ${pack.path}`);
     continue;
   }
-  if (!fs.statSync(absolutePackPath).isDirectory()) {
-    errors.push(`Foundry v13/v14 pack path must be a directory: ${pack.path}`);
-    continue;
-  }
 
-  const currentPath = path.join(absolutePackPath, 'CURRENT');
-  if (!fs.existsSync(currentPath)) {
-    errors.push(`LevelDB pack is missing CURRENT: ${pack.path}`);
-    continue;
-  }
-
-  const manifestFile = fs.readFileSync(currentPath, 'utf8').trim();
-  if (!manifestFile) {
-    errors.push(`LevelDB CURRENT file is empty: ${pack.path}`);
-  } else if (!fs.existsSync(path.join(absolutePackPath, manifestFile))) {
-    errors.push(`LevelDB CURRENT points to a missing manifest (${manifestFile}): ${pack.path}`);
+  if (pack.path.endsWith('.db')) {
+    validateLegacyNeDbPack(packName, absolutePackPath, pack.path);
+  } else {
+    validateLevelDbPack(absolutePackPath, pack.path);
   }
 }
 
@@ -88,8 +125,8 @@ for (const required of requiredPacks) {
 }
 
 const feats = packs.find(pack => pack?.name === 'feats');
-if (feats?.path !== 'packs/feats') {
-  errors.push(`Feats pack must resolve to packs/feats, found ${feats?.path ?? '<missing>'}.`);
+if (!['packs/feats', 'packs/feats.db'].includes(feats?.path)) {
+  errors.push(`Feats pack must resolve to packs/feats or packs/feats.db, found ${feats?.path ?? '<missing>'}.`);
 }
 
 try {
@@ -110,4 +147,4 @@ if (errors.length) {
   process.exit(1);
 }
 
-console.log(`System manifest OK: ${packs.length} LevelDB packs declared and structurally present.`);
+console.log(`System manifest OK: ${packs.length} compendium pack sources declared and structurally present.`);
