@@ -60,6 +60,7 @@ export const FOLLOWER_TALENT_CONFIG = {
     maxCount: 3,
     repeatable: true,
     additionalFeats: ["Skill Training (Perception)", "Skill Training (Stealth)"],
+    additionalSkills: ["Perception", "Stealth"],
     description: "This talent grants you a follower trained in Perception and Stealth. It may be selected up to three times."
   },
   "Inspire Loyalty": {
