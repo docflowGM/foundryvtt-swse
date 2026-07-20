@@ -9,6 +9,8 @@ import { registerProgressionFeatChainHotfix } from '/systems/foundryvtt-swse/scr
 import { registerFollowerSpeciesMaterializationHotfix } from '/systems/foundryvtt-swse/scripts/patches/follower-species-materialization-hotfix.js';
 import { registerFollowerSpeciesRepairHook } from '/systems/foundryvtt-swse/scripts/patches/follower-species-repair-hook.js';
 import { registerFollowerNpcSheetParityHotfix } from '/systems/foundryvtt-swse/scripts/patches/follower-npc-sheet-parity-hotfix.js';
+import { registerFollowerProgressionLiveStateHotfix } from '/systems/foundryvtt-swse/scripts/patches/follower-progression-live-state-hotfix.js';
+import { registerFollowerOrphanTransferHotfix } from '/systems/foundryvtt-swse/scripts/patches/follower-orphan-transfer-hotfix.js';
 import { registerCombatFeaturesPanelRenderer } from '/systems/foundryvtt-swse/scripts/engine/combat/features/combat-feature-panel-renderer.js';
 import { registerCombatFeatureActionRouter } from '/systems/foundryvtt-swse/scripts/engine/combat/features/combat-feature-action-router.js';
 import { registerCombatFeatureLegacyActionBridge } from '/systems/foundryvtt-swse/scripts/engine/combat/features/combat-feature-legacy-action-bridge.js';
@@ -25,5 +27,7 @@ registerProgressionFeatChainHotfix();
 registerFollowerSpeciesMaterializationHotfix();
 registerFollowerSpeciesRepairHook();
 registerFollowerNpcSheetParityHotfix();
+registerFollowerProgressionLiveStateHotfix();
+registerFollowerOrphanTransferHotfix();
 registerCombatFeaturesPanelRenderer();
 registerCombatFeatureActionRouter();
