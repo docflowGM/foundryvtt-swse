@@ -26,6 +26,18 @@ function escapeHtml(value = '') {
     ?? String(value ?? '').replace(/[&<>"]/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[ch]));
 }
 
+function normalizePowerName(power) {
+  return String(power?.name ?? power?.system?.slug ?? '')
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, ' ')
+    .trim();
+}
+
+function isNegateEnergyPower(power) {
+  return normalizePowerName(power) === 'negate energy';
+}
+
 function getUseTheForceTotal(actor) {
   const candidates = [
     actor?.system?.derived?.skillsByKey?.useTheForce?.total,
@@ -42,6 +54,7 @@ function getUseTheForceTotal(actor) {
 }
 
 function getBaseDc(power) {
+  if (isNegateEnergyPower(power)) return 0;
   const system = power?.system ?? {};
   const firstChartDc = Array.isArray(system.dcChart) ? system.dcChart.find(row => row?.dc != null)?.dc : null;
   return toNumber(system.useTheForce ?? system.dc ?? system.DC ?? firstChartDc, 10) || 10;
@@ -218,8 +231,18 @@ function dcRowsHtml(rows = []) {
     </div>` : '';
 }
 
-function projectedOutcomeHtml(baseBonus, baseDC, { label = 'Reference total' } = {}) {
+function projectedOutcomeHtml(baseBonus, baseDC, { label = 'Reference total', dynamicDc = false } = {}) {
   const referenceTotal = baseBonus + 10;
+  if (dynamicDc) {
+    return `
+      <section class="rcd-rail-sec rcd-rail-sec--preview">
+        <div class="rcd-rail-lbl">Negation Check</div>
+        <div class="rcd-preview-formula">1d20 + ${baseBonus}</div>
+        <div class="rcd-preview-total">${referenceTotal}</div>
+        <div class="rcd-preview-label">Reference Use the Force total</div>
+        <div class="rcd-preview-dc pending">DC equals the incoming Energy damage entered in the form.</div>
+      </section>`;
+  }
   return `
     <section class="rcd-rail-sec rcd-rail-sec--preview">
       <div class="rcd-rail-lbl">Projected Outcome</div>
@@ -230,15 +253,35 @@ function projectedOutcomeHtml(baseBonus, baseDC, { label = 'Reference total' } =
     </section>`;
 }
 
+function negateEnergyRulesPanel() {
+  return `
+    <section class="swse-roll-config-panel swse-negate-energy-panel">
+      <h4>Incoming Energy Attack</h4>
+      <p class="swse-roll-config-note"><strong>The DC is the incoming Energy damage.</strong> If the Use the Force result equals or exceeds that damage, the attack is negated and deals no damage. Otherwise, the attack deals damage normally.</p>
+      <div class="swse-roll-config-grid">
+        <label>Incoming Energy Damage (DC)
+          <input type="number" name="incomingDamage" value="" min="1" step="1" required placeholder="Enter rolled damage">
+        </label>
+      </div>
+      <label class="rcd-resource">
+        <span class="rcd-res-header"><input type="checkbox" name="negateEnergyEligible" checked> <span class="rcd-res-name">Aware of the attack and not Flat-Footed</span></span>
+        <span class="rcd-res-detail">Negate Energy cannot be used if you are unaware of the attack or Flat-Footed.</span>
+      </label>
+    </section>`;
+}
+
 export async function promptForcePowerRollOptions({ actor, power, sourceElement = null } = {}) {
   if (!actor || !power) return null;
 
+  const negateEnergy = isNegateEnergyPower(power);
   const baseBonus = getUseTheForceTotal(actor);
   const baseDC = getBaseDc(power);
   const fpValue = Number(actor?.system?.forcePoints?.value ?? actor?.system?.resources?.forcePoints?.value ?? 0) || 0;
+  const hpValue = Number(actor?.system?.hp?.value ?? 0) || 0;
+  const hpMax = Number(actor?.system?.hp?.max ?? hpValue) || hpValue;
   const boosted = !!sourceElement?.closest?.('.fcard')?.querySelector?.('[data-action="force-suite-toggle-fp-boost"].on');
   const summary = cleanText(power?.system?.effect || power?.system?.summary || power?.system?.description || '');
-  const dcRows = Array.isArray(power?.system?.dcChart) ? power.system.dcChart.slice(0, 4) : [];
+  const dcRows = negateEnergy ? [] : (Array.isArray(power?.system?.dcChart) ? power.system.dcChart.slice(0, 4) : []);
   const rowsHtml = dcRowsHtml(dcRows);
 
   const content = `
@@ -254,7 +297,7 @@ export async function promptForcePowerRollOptions({ actor, power, sourceElement 
       <div class="rcd-formula-strip">
         <span class="rcd-formula-text">1d20 + Use the Force</span>
         <span class="rcd-formula-base-mod">base +${baseBonus}</span>
-        <span class="rcd-formula-chips"><span class="rcd-fchip">power</span><span class="rcd-fchip">dc ${baseDC}</span></span>
+        <span class="rcd-formula-chips"><span class="rcd-fchip">power</span><span class="rcd-fchip">${negateEnergy ? 'reaction' : `dc ${baseDC}`}</span></span>
       </div>
       <div class="rcd-body">
         <form class="swse-force-roll-dialog rcd-main">
@@ -264,6 +307,7 @@ export async function promptForcePowerRollOptions({ actor, power, sourceElement 
             ${summary ? `<p class="swse-force-roll-dialog__summary">${escapeHtml(summary)}</p>` : ''}
             ${rowsHtml}
           </section>
+          ${negateEnergy ? negateEnergyRulesPanel() : `
           <section class="swse-roll-config-panel">
             <h4>Roll Inputs</h4>
             <div class="swse-roll-config-grid">
@@ -272,7 +316,15 @@ export async function promptForcePowerRollOptions({ actor, power, sourceElement 
               <label>Target DC<input type="number" name="baseDC" value="${baseDC}" step="1"></label>
             </div>
           </section>
-          ${targetPanelHtml(power, baseDC)}
+          ${targetPanelHtml(power, baseDC)}`}
+          ${negateEnergy ? `
+          <section class="swse-roll-config-panel">
+            <h4>Roll Inputs</h4>
+            <div class="swse-roll-config-grid">
+              <label>Use the Force Total<input type="number" name="baseBonus" value="${baseBonus}" step="1"></label>
+              <label>Situational Modifier<input type="number" name="customModifier" value="0" step="1"></label>
+            </div>
+          </section>` : ''}
           <section class="swse-roll-config-panel swse-roll-config-panel--resources">
             <h4>Resources</h4>
             ${actorHasTalent(actor, 'Move Massive Object') && isMoveObjectPower(power) ? `<label class="rcd-resource ${fpValue <= 0 ? 'rcd-resource-disabled' : ''}">
@@ -280,16 +332,22 @@ export async function promptForcePowerRollOptions({ actor, power, sourceElement 
               <span class="rcd-res-detail">Spend 1 Force Point to affect an area with a Large or larger object. Large 2x2, Huge 3x3, Gargantuan 4x4, Colossal+ 6x6.</span>
             </label>` : ''}
             <label class="rcd-resource ${boosted ? 'rcd-res-active' : ''} ${fpValue <= 0 ? 'rcd-resource-disabled' : ''}">
-              <span class="rcd-res-header"><input type="checkbox" name="useForce" ${boosted ? 'checked' : ''} ${fpValue <= 0 ? 'disabled' : ''}> <span class="rcd-res-icon">✦</span><span class="rcd-res-name">Spend Force Point</span></span>
+              <span class="rcd-res-header"><input type="checkbox" name="useForce" ${boosted ? 'checked' : ''} ${fpValue <= 0 ? 'disabled' : ''}> <span class="rcd-res-icon">✦</span><span class="rcd-res-name">Spend Force Point on the check</span></span>
               <span class="rcd-res-detail">${fpValue <= 0 ? 'No Force Points available.' : `${fpValue} Force Points available.`}</span>
             </label>
+            ${negateEnergy ? `<label class="rcd-resource ${fpValue <= 0 || hpValue >= hpMax ? 'rcd-resource-disabled' : ''}">
+              <span class="rcd-res-header"><input type="checkbox" name="negateEnergyHeal" ${fpValue <= 0 || hpValue >= hpMax ? 'disabled' : ''}> <span class="rcd-res-icon">✚</span><span class="rcd-res-name">On success, spend 1 Force Point to regain HP</span></span>
+              <span class="rcd-res-detail">Regain HP equal to the negated damage, up to ${hpMax} HP. Current HP: ${hpValue}/${hpMax}.</span>
+            </label>` : ''}
           </section>
         </form>
         <aside class="rcd-rail">
-          ${projectedOutcomeHtml(baseBonus, baseDC, { label: 'D20 midpoint reference' })}
+          ${projectedOutcomeHtml(baseBonus, baseDC, { label: 'D20 midpoint reference', dynamicDc: negateEnergy })}
           <section class="rcd-rail-sec">
             <div class="rcd-rail-lbl">Execution</div>
-            <p class="swse-roll-config-note">The final roll is handled by the Force executor. Actor targets enable automated resolution; manual/no-target mode preserves theater-of-the-mind play.</p>
+            <p class="swse-roll-config-note">${negateEnergy
+              ? 'Negate Energy is an instant reaction. It does not create Damage Reduction or a persistent Active Effect.'
+              : 'The final roll is handled by the Force executor. Actor targets enable automated resolution; manual/no-target mode preserves theater-of-the-mind play.'}</p>
           </section>
         </aside>
       </div>
@@ -310,17 +368,44 @@ export async function promptForcePowerRollOptions({ actor, power, sourceElement 
         roll: {
           icon: '<i class="fas fa-dice-d20"></i>',
           label: 'Roll / Use',
-          callback: html => finish({
-            baseBonus: toNumber(fieldValue(html, 'baseBonus'), baseBonus),
-            customModifier: toNumber(fieldValue(html, 'customModifier'), 0),
-            baseDC: toNumber(fieldValue(html, 'baseDC'), baseDC),
-            checkMode: 'roll',
-            take10: false,
-            forcePowerMastery: null,
-            useForce: fieldValue(html, 'useForce') === true,
-            moveMassiveObject: fieldValue(html, 'moveMassiveObject') === true,
-            ...buildTargetOptions(html, power, baseDC)
-          })
+          callback: html => {
+            const incomingDamage = negateEnergy ? toNumber(fieldValue(html, 'incomingDamage'), 0) : null;
+            if (negateEnergy && incomingDamage <= 0) {
+              ui?.notifications?.warn?.('Negate Energy requires the incoming Energy damage. That damage is the Use the Force DC.');
+              finish(null);
+              return;
+            }
+            if (negateEnergy && fieldValue(html, 'negateEnergyEligible') !== true) {
+              ui?.notifications?.warn?.('Negate Energy cannot be used while unaware of the attack or Flat-Footed.');
+              finish(null);
+              return;
+            }
+
+            finish({
+              baseBonus: toNumber(fieldValue(html, 'baseBonus'), baseBonus),
+              customModifier: toNumber(fieldValue(html, 'customModifier'), 0),
+              baseDC: negateEnergy ? incomingDamage : toNumber(fieldValue(html, 'baseDC'), baseDC),
+              incomingDamage,
+              checkMode: 'roll',
+              take10: false,
+              forcePowerMastery: null,
+              useForce: fieldValue(html, 'useForce') === true,
+              moveMassiveObject: fieldValue(html, 'moveMassiveObject') === true,
+              negateEnergyEligible: negateEnergy ? true : undefined,
+              negateEnergyHeal: negateEnergy ? fieldValue(html, 'negateEnergyHeal') === true : false,
+              ...(negateEnergy ? {
+                target: null,
+                targetActor: null,
+                targetContext: {
+                  mode: 'incoming-attack',
+                  defenseType: 'incoming-energy-damage',
+                  defenseValue: incomingDamage,
+                  label: 'Incoming Energy attack',
+                  automated: false
+                }
+              } : buildTargetOptions(html, power, baseDC))
+            });
+          }
         },
         cancel: {
           icon: '<i class="fas fa-times"></i>',
