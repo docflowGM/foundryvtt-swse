@@ -1,0 +1,186 @@
+/* ========================================================================== */
+/* Sabacc interaction, deal, shift, and reveal presentation                   */
+/* ========================================================================== */
+
+.swse-sabacc-table {
+  position: relative;
+}
+
+.swse-sabacc-deal-ghost {
+  position: fixed;
+  z-index: 10050;
+  pointer-events: none;
+  overflow: hidden;
+  border: 1px solid color-mix(in oklab, var(--swse-games-gold, #ffd166) 58%, transparent);
+  background:
+    linear-gradient(145deg, color-mix(in oklab, var(--swse-games-purple, #8a5cff) 30%, transparent), transparent 55%),
+    repeating-linear-gradient(45deg, color-mix(in oklab, var(--swse-games-cyan, #39f7ff) 13%, transparent) 0 4px, transparent 4px 8px),
+    color-mix(in oklab, black 82%, var(--swse-games-purple, #8a5cff) 18%);
+  box-shadow:
+    0 0 20px color-mix(in oklab, var(--swse-games-cyan, #39f7ff) 22%, transparent),
+    inset 0 0 18px color-mix(in oklab, var(--swse-games-purple, #8a5cff) 22%, transparent);
+  transform-origin: center;
+}
+
+.swse-sabacc-deal-ghost::before,
+.swse-sabacc-deal-ghost::after {
+  content: '';
+  position: absolute;
+  inset: 8%;
+  border: 1px solid color-mix(in oklab, var(--swse-games-cyan, #39f7ff) 36%, transparent);
+  clip-path: polygon(50% 0, 100% 50%, 50% 100%, 0 50%);
+}
+
+.swse-sabacc-deal-ghost::after {
+  inset: 28%;
+  border-color: color-mix(in oklab, var(--swse-games-gold, #ffd166) 46%, transparent);
+}
+
+.swse-sabacc-card-awaiting-deal {
+  opacity: 0 !important;
+}
+
+.swse-sabacc-card--arrived {
+  animation: swse-sabacc-card-arrive 280ms cubic-bezier(0.18, 0.84, 0.24, 1.08) both !important;
+}
+
+.swse-sabacc-card--reveal {
+  animation: swse-sabacc-card-reveal 520ms cubic-bezier(0.2, 0.76, 0.22, 1) both !important;
+  transform-style: preserve-3d;
+}
+
+.swse-sabacc-market-card--arrived {
+  animation: swse-sabacc-market-arrive 420ms cubic-bezier(0.18, 0.84, 0.24, 1.08) both !important;
+}
+
+.swse-sabacc-shift-row.is-new-roll b {
+  animation: swse-sabacc-die-roll 620ms cubic-bezier(0.2, 0.72, 0.2, 1) both;
+}
+
+.swse-sabacc-shift-row.is-new-roll b:nth-of-type(2) {
+  animation-delay: 90ms;
+}
+
+.swse-sabacc-shift-row.is-new-roll.matched {
+  animation: swse-sabacc-shift-pulse 880ms ease-out both;
+}
+
+.swse-sabacc-table form[aria-busy='true'] button,
+.swse-sabacc-table form[aria-busy='true'] input {
+  cursor: wait;
+  opacity: 0.58;
+}
+
+.swse-sabacc-table form.is-action-pending {
+  position: relative;
+}
+
+.swse-sabacc-table form.is-action-pending::after {
+  content: '';
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  right: -17px;
+  top: 50%;
+  margin-top: -6px;
+  border: 2px solid color-mix(in oklab, var(--swse-games-cyan, #39f7ff) 22%, transparent);
+  border-top-color: var(--swse-games-cyan, #39f7ff);
+  border-radius: 50%;
+  animation: swse-sabacc-action-spin 620ms linear infinite;
+}
+
+@keyframes swse-sabacc-card-arrive {
+  0% {
+    opacity: 0;
+    filter: brightness(1.8) saturate(1.5);
+    transform: translateY(-9px) rotateY(68deg) scale(0.82);
+  }
+  72% {
+    opacity: 1;
+    filter: brightness(1.22) saturate(1.18);
+    transform: translateY(2px) rotateY(-6deg) scale(1.04);
+  }
+  100% {
+    opacity: 1;
+    filter: none;
+    transform: none;
+  }
+}
+
+@keyframes swse-sabacc-card-reveal {
+  0% {
+    opacity: 0.45;
+    filter: brightness(0.65);
+    transform: rotateY(90deg) scale(0.86);
+  }
+  58% {
+    opacity: 1;
+    filter: brightness(1.55);
+    transform: rotateY(-8deg) scale(1.04);
+  }
+  100% {
+    opacity: 1;
+    filter: none;
+    transform: none;
+  }
+}
+
+@keyframes swse-sabacc-market-arrive {
+  0% {
+    opacity: 0;
+    filter: brightness(1.7);
+    transform: translateX(-32px) rotate(-8deg) scale(0.78);
+  }
+  70% {
+    opacity: 1;
+    transform: translateX(3px) rotate(1deg) scale(1.04);
+  }
+  100% {
+    opacity: 1;
+    filter: none;
+    transform: none;
+  }
+}
+
+@keyframes swse-sabacc-die-roll {
+  0% { opacity: 0.28; filter: blur(2px); transform: rotate(-180deg) scale(0.55); }
+  72% { opacity: 1; filter: blur(0) brightness(1.5); transform: rotate(12deg) scale(1.18); }
+  100% { opacity: 1; filter: none; transform: none; }
+}
+
+@keyframes swse-sabacc-shift-pulse {
+  0%, 100% { box-shadow: none; }
+  38% { box-shadow: 0 0 32px color-mix(in oklab, var(--swse-games-pink, #ff4fd8) 46%, transparent); }
+}
+
+@keyframes swse-sabacc-action-spin {
+  to { transform: rotate(360deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .swse-sabacc-card--arrived,
+  .swse-sabacc-card--reveal,
+  .swse-sabacc-market-card--arrived,
+  .swse-sabacc-shift-row.is-new-roll,
+  .swse-sabacc-shift-row.is-new-roll b,
+  .swse-sabacc-table form.is-action-pending::after {
+    animation-duration: 1ms !important;
+    animation-delay: 0ms !important;
+  }
+}
+
+[data-motion-style='off'] .swse-sabacc-card--arrived,
+[data-motion-style='off'] .swse-sabacc-card--reveal,
+[data-motion-style='off'] .swse-sabacc-market-card--arrived,
+[data-motion-style='off'] .swse-sabacc-shift-row.is-new-roll,
+[data-motion-style='off'] .swse-sabacc-shift-row.is-new-roll b,
+[data-motion-style='off'] .swse-sabacc-table form.is-action-pending::after,
+[data-motion-style='reduced'] .swse-sabacc-card--arrived,
+[data-motion-style='reduced'] .swse-sabacc-card--reveal,
+[data-motion-style='reduced'] .swse-sabacc-market-card--arrived,
+[data-motion-style='reduced'] .swse-sabacc-shift-row.is-new-roll,
+[data-motion-style='reduced'] .swse-sabacc-shift-row.is-new-roll b,
+[data-motion-style='reduced'] .swse-sabacc-table form.is-action-pending::after {
+  animation-duration: 1ms !important;
+  animation-delay: 0ms !important;
+}
