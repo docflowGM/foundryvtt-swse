@@ -9,11 +9,11 @@ import { ActorEngine } from '/systems/foundryvtt-swse/scripts/governance/actor-e
 import { getHeroicLevel } from '/systems/foundryvtt-swse/scripts/actors/derived/level-split.js';
 import { swseLogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
 
-const REGISTERED = Symbol.for('swse.followerNpcSheetParity.v2');
-const CONTEXT_PATCHED = Symbol.for('swse.followerNpcSheetParity.context.v2');
-const EVENTS_PATCHED = Symbol.for('swse.followerNpcSheetParity.events.v2');
-const DEFENSE_PATCHED = Symbol.for('swse.followerNpcSheetParity.defense.v2');
-const FEAT_PATCHED = Symbol.for('swse.followerNpcSheetParity.feats.v2');
+const REGISTERED = Symbol.for('swse.followerNpcSheetParity.v3');
+const CONTEXT_PATCHED = Symbol.for('swse.followerNpcSheetParity.context.v3');
+const EVENTS_PATCHED = Symbol.for('swse.followerNpcSheetParity.events.v3');
+const DEFENSE_PATCHED = Symbol.for('swse.followerNpcSheetParity.defense.v3');
+const FEAT_PATCHED = Symbol.for('swse.followerNpcSheetParity.feats.v3');
 
 const SKILLS = [
   ['acrobatics', 'Acrobatics', 'dex'],
@@ -55,6 +55,16 @@ function finite(value, fallback = 0) {
 function signed(value) {
   const number = finite(value, 0);
   return number >= 0 ? `+${number}` : String(number);
+}
+
+function listLikeValues(value) {
+  if (Array.isArray(value)) return value;
+  if (value instanceof Set) return Array.from(value);
+  if (typeof value === 'string') return value.trim() ? [value] : [];
+  if (!value || typeof value !== 'object') return [];
+  return Object.entries(value)
+    .filter(([, state]) => state !== false && state !== null && state !== undefined && state !== 0)
+    .map(([key, state]) => typeof state === 'string' ? state : key);
 }
 
 function truthyState(value) {
@@ -170,7 +180,7 @@ function skillRows(actor) {
   const level = followerLevel(actor);
   const halfLevel = Math.floor(level / 2);
   const penalty = conditionPenalty(actor);
-  const progressionTrained = new Set((actor?.system?.progression?.trainedSkills || []).map(normalize));
+  const progressionTrained = new Set(listLikeValues(actor?.system?.progression?.trainedSkills).map(normalize));
 
   return SKILLS.map(([key, label, defaultAbility]) => {
     const state = actor?.system?.skills?.[key] || {};
@@ -221,12 +231,13 @@ function applyFollowerContext(context, actor) {
   concept.skills = rows;
   concept.hasSkills = true;
   concept.trainedSkillCount = rows.filter(row => row.trained).length;
-  concept.initiative = rows.find(row => row.key === 'initiative')?.total || '+0';
+  concept.initiative = 'Acts with owner';
+  concept.canRollInitiative = false;
 
   const derivedDefenses = actor?.system?.derived?.defenses || {};
   const fallback = {
     reflex: 10 + followerLevel(actor) + abilityMod(actor, 'dex') + templateDefenseBonus(actor, 'reflex'),
-    fortitude: 10 + followerLevel(actor) + Math.max(abilityMod(actor, 'str'), abilityMod(actor, 'con')) + templateDefenseBonus(actor, 'fortitude'),
+    fortitude: 10 + followerLevel(actor) + abilityMod(actor, 'con') + templateDefenseBonus(actor, 'fortitude'),
     will: 10 + followerLevel(actor) + abilityMod(actor, 'wis') + templateDefenseBonus(actor, 'will'),
   };
   const valueFor = (key) => {
@@ -277,11 +288,9 @@ function patchFollowerDefenses() {
     if (!isFollower(actor) || !result) return result;
 
     const level = followerLevel(actor);
-    const str = abilityMod(actor, 'str');
     const con = abilityMod(actor, 'con');
     const dex = abilityMod(actor, 'dex');
     const wis = abilityMod(actor, 'wis');
-    const fortAbility = Math.max(str, con);
 
     const rebuild = (row, ability, templateBonus, {
       size = 0,
@@ -300,12 +309,10 @@ function patchFollowerDefenses() {
       return { ...row, base, total, heroicLevel: level, abilityMod: ability, levelContribution, templateBonus };
     };
 
-    result.fortitude = rebuild(result.fortitude, fortAbility, templateDefenseBonus(actor, 'fortitude'));
+    result.fortitude = rebuild(result.fortitude, con, templateDefenseBonus(actor, 'fortitude'));
     result.reflex = rebuild(result.reflex, dex, templateDefenseBonus(actor, 'reflex'), {
       size: finite(result.reflex?.sizeModifier, 0),
       levelContribution: finite(result.reflex?.levelContribution, level),
-      // Reflex armor is already represented by the original calculator's
-      // levelContribution substitution; adding armorBonus again double-counts it.
       includeArmorBonus: false,
     });
     result.will = rebuild(result.will, wis, templateDefenseBonus(actor, 'will'));
