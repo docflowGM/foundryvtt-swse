@@ -17,7 +17,9 @@ import { registerCanonicalAbilityPrerequisiteHotfix } from '/systems/foundryvtt-
 import { registerCombatFeaturesPanelRenderer } from '/systems/foundryvtt-swse/scripts/engine/combat/features/combat-feature-panel-renderer.js';
 import { registerCombatFeatureActionRouter } from '/systems/foundryvtt-swse/scripts/engine/combat/features/combat-feature-action-router.js';
 import { registerCombatFeatureLegacyActionBridge } from '/systems/foundryvtt-swse/scripts/engine/combat/features/combat-feature-legacy-action-bridge.js';
+import { registerDocumentDefaultAuthority } from '/systems/foundryvtt-swse/scripts/data-models/document-defaults.js';
 
+await registerDocumentDefaultAuthority();
 registerRuntimeBugfixHotfixes();
 registerProgressionLedgerReconciliationHotfix();
 registerArmorHydrationDefenseHotfix();
