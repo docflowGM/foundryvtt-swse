@@ -6,6 +6,7 @@ import { registerCombatUiBehaviorHotfixes } from '/systems/foundryvtt-swse/scrip
 import { registerForceSuiteRenderGuardHotfix } from '/systems/foundryvtt-swse/scripts/patches/force-suite-render-guard-hotfix.js';
 import { registerProgressionChoiceLanguageHotfix } from '/systems/foundryvtt-swse/scripts/patches/progression-choice-language-hotfix.js';
 import { registerFollowerSpeciesMaterializationHotfix } from '/systems/foundryvtt-swse/scripts/patches/follower-species-materialization-hotfix.js';
+import { registerFollowerSpeciesRepairHook } from '/systems/foundryvtt-swse/scripts/patches/follower-species-repair-hook.js';
 import { registerCombatFeaturesPanelRenderer } from '/systems/foundryvtt-swse/scripts/engine/combat/features/combat-feature-panel-renderer.js';
 import { registerCombatFeatureActionRouter } from '/systems/foundryvtt-swse/scripts/engine/combat/features/combat-feature-action-router.js';
 import { registerCombatFeatureLegacyActionBridge } from '/systems/foundryvtt-swse/scripts/engine/combat/features/combat-feature-legacy-action-bridge.js';
@@ -19,5 +20,6 @@ registerCombatUiBehaviorHotfixes();
 registerForceSuiteRenderGuardHotfix();
 registerProgressionChoiceLanguageHotfix();
 registerFollowerSpeciesMaterializationHotfix();
+registerFollowerSpeciesRepairHook();
 registerCombatFeaturesPanelRenderer();
 registerCombatFeatureActionRouter();
