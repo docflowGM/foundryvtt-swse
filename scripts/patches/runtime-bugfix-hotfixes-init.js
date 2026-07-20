@@ -14,6 +14,7 @@ import { registerFollowerOrphanTransferHotfix } from '/systems/foundryvtt-swse/s
 import { registerFollowerRepeatableEntitlementHotfix } from '/systems/foundryvtt-swse/scripts/patches/follower-repeatable-entitlement-hotfix.js';
 import { registerFollowerDroidGarageHotfix } from '/systems/foundryvtt-swse/scripts/patches/follower-droid-garage-hotfix.js';
 import { registerCanonicalAbilityPrerequisiteHotfix } from '/systems/foundryvtt-swse/scripts/patches/canonical-ability-prerequisite-hotfix.js';
+import { registerCustomizationFooterActionsHotfix } from '/systems/foundryvtt-swse/scripts/patches/customization-footer-actions-hotfix.js';
 import { registerCombatFeaturesPanelRenderer } from '/systems/foundryvtt-swse/scripts/engine/combat/features/combat-feature-panel-renderer.js';
 import { registerCombatFeatureActionRouter } from '/systems/foundryvtt-swse/scripts/engine/combat/features/combat-feature-action-router.js';
 import { registerCombatFeatureLegacyActionBridge } from '/systems/foundryvtt-swse/scripts/engine/combat/features/combat-feature-legacy-action-bridge.js';
@@ -37,5 +38,6 @@ registerFollowerOrphanTransferHotfix();
 registerFollowerRepeatableEntitlementHotfix();
 registerFollowerDroidGarageHotfix();
 registerCanonicalAbilityPrerequisiteHotfix();
+registerCustomizationFooterActionsHotfix();
 registerCombatFeaturesPanelRenderer();
 registerCombatFeatureActionRouter();
