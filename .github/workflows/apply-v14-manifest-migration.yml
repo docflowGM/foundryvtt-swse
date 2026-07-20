@@ -1,0 +1,45 @@
+name: Apply V14 Manifest Migration
+
+on:
+  push:
+    branches:
+      - fix/v14-system-data-model-manifest
+    paths:
+      - system.json
+      - data/document-type-defaults.json
+      - tools/migrate-v14-system-manifest.mjs
+      - .github/workflows/apply-v14-manifest-migration.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  migrate:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out compatibility branch
+        uses: actions/checkout@v4
+        with:
+          ref: fix/v14-system-data-model-manifest
+          fetch-depth: 0
+
+      - name: Apply manifest migration
+        run: node tools/migrate-v14-system-manifest.mjs
+
+      - name: Validate manifest
+        run: |
+          node -e "const fs=require('fs'); const m=JSON.parse(fs.readFileSync('system.json','utf8')); if (!m.documentTypes?.Actor || !m.documentTypes?.Item) throw new Error('documentTypes missing'); for (const key of ['schemaVersion','discord','flagScopes','settings','documents']) if (Object.hasOwn(m,key)) throw new Error('Unknown top-level key remains: '+key); if (fs.existsSync('template.json')) throw new Error('template.json still exists');"
+
+      - name: Commit migrated manifest
+        run: |
+          if git diff --quiet -- system.json; then
+            echo "system.json already migrated"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add system.json
+          git commit -m "Declare V14 document types in system manifest"
+          git push origin HEAD:fix/v14-system-data-model-manifest
