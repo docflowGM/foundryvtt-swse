@@ -7,9 +7,9 @@ import { DerivedCalculator } from '/systems/foundryvtt-swse/scripts/actors/deriv
 import { SWSE_RACES } from '/systems/foundryvtt-swse/scripts/core/races.js';
 import { swseLogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
 
-const REGISTERED = Symbol.for('swse.followerSpeciesMaterialization.v1');
-const REGISTRY_PATCHED = Symbol.for('swse.followerSpeciesMaterialization.registry.v1');
-const CREATOR_PATCHED = Symbol.for('swse.followerSpeciesMaterialization.creator.v1');
+const REGISTERED = Symbol.for('swse.followerSpeciesMaterialization.v2');
+const REGISTRY_PATCHED = Symbol.for('swse.followerSpeciesMaterialization.registry.v2');
+const CREATOR_PATCHED = Symbol.for('swse.followerSpeciesMaterialization.creator.v2');
 const ABILITY_KEYS = ['str', 'dex', 'con', 'int', 'wis', 'cha'];
 
 function clonePlain(value) {
@@ -27,34 +27,51 @@ function finite(value, fallback = 0) {
   return Number.isFinite(number) ? number : fallback;
 }
 
+function normalizeAbilityMods(raw = {}) {
+  return Object.fromEntries(ABILITY_KEYS.map(key => [key, finite(raw?.[key], 0)]));
+}
+
 function patchSpeciesRegistryCanonicalStats() {
   if (SpeciesRegistry[REGISTRY_PATCHED] || typeof SpeciesRegistry._normalizeEntry !== 'function') return;
   const originalNormalize = SpeciesRegistry._normalizeEntry.bind(SpeciesRegistry);
 
   SpeciesRegistry._normalizeEntry = function normalizeEntryWithCanonicalStats(doc) {
+    // Always normalize the real Foundry document first. Creating a pseudo-document
+    // with the DataModel prototype breaks Foundry v13 DocumentStatsField shimming
+    // because the pseudo-document has no valid _source/flags state.
+    const entry = originalNormalize(doc);
     const system = doc?.system || {};
     const canonical = system.canonicalStats && typeof system.canonicalStats === 'object'
       ? system.canonicalStats
       : null;
-    if (!canonical) return originalNormalize(doc);
+    if (!canonical) return entry;
 
-    const mergedSystem = {
-      ...system,
-      abilityMods: system.abilityMods ?? canonical.abilityMods,
-      abilities: system.abilities ?? canonical.abilities,
-      size: system.size ?? canonical.size,
-      speed: system.speed ?? canonical.speed,
-      movement: system.movement ?? canonical.movement,
-      languages: Array.isArray(system.languages) && system.languages.length ? system.languages : canonical.languages,
-      special: Array.isArray(system.special) && system.special.length ? system.special : canonical.special,
-      canonicalTraits: Array.isArray(system.canonicalTraits) && system.canonicalTraits.length
-        ? system.canonicalTraits
-        : canonical.traits,
-      variants: Array.isArray(system.variants) && system.variants.length ? system.variants : canonical.variants,
+    const canonicalMods = normalizeAbilityMods(canonical.abilityMods || canonical.abilityScores || {});
+    const hasCanonicalMods = Object.values(canonicalMods).some(value => value !== 0);
+    const canonicalMovement = canonical.movement && typeof canonical.movement === 'object'
+      ? clonePlain(canonical.movement)
+      : null;
+
+    return {
+      ...entry,
+      abilityScores: hasCanonicalMods ? canonicalMods : entry.abilityScores,
+      abilityMods: hasCanonicalMods ? { ...canonicalMods } : entry.abilityMods,
+      size: entry.size || canonical.size || null,
+      speed: Number.isFinite(Number(entry.speed)) ? Number(entry.speed) : finite(canonical.speed ?? canonicalMovement?.walk, 6),
+      movement: entry.movement && Object.keys(entry.movement).length ? entry.movement : (canonicalMovement || entry.movement),
+      languages: Array.isArray(entry.languages) && entry.languages.length
+        ? entry.languages
+        : (Array.isArray(canonical.languages) ? [...canonical.languages] : []),
+      abilities: Array.isArray(entry.abilities) && entry.abilities.length
+        ? entry.abilities
+        : (Array.isArray(canonical.special) ? [...canonical.special] : []),
+      canonicalTraits: Array.isArray(entry.canonicalTraits) && entry.canonicalTraits.length
+        ? entry.canonicalTraits
+        : (Array.isArray(canonical.traits) ? clonePlain(canonical.traits) : []),
+      variants: Array.isArray(entry.variants) && entry.variants.length
+        ? entry.variants
+        : (Array.isArray(canonical.variants) ? clonePlain(canonical.variants) : []),
     };
-    const proxy = Object.create(Object.getPrototypeOf(doc) || Object.prototype);
-    Object.assign(proxy, doc, { system: mergedSystem });
-    return originalNormalize(proxy);
   };
 
   Object.defineProperty(SpeciesRegistry, REGISTRY_PATCHED, { value: true });
@@ -68,7 +85,7 @@ function fallbackSpeciesMods(speciesName) {
 
 function contextSpeciesMods(context, speciesName) {
   const mods = context?.abilities || context?.ledger?.abilities || context?.identity?.doc?.abilityScores || {};
-  const normalized = Object.fromEntries(ABILITY_KEYS.map(key => [key, finite(mods?.[key], 0)]));
+  const normalized = normalizeAbilityMods(mods);
   return Object.values(normalized).some(value => value !== 0) ? normalized : fallbackSpeciesMods(speciesName);
 }
 
@@ -146,6 +163,10 @@ async function applyMutationItems(actor, mutations = {}) {
     return `${item.type}:${abilityId}`;
   }));
   const items = (Array.isArray(mutations.itemsToCreate) ? mutations.itemsToCreate : []).filter(item => {
+    // Followers receive species traits, natural weapons, and activated species
+    // abilities, but never species bonus feats. Canonical materialization only
+    // creates weapons/combat-actions here; this guard keeps that contract explicit.
+    if (item?.type === 'feat') return false;
     const abilityId = item.flags?.swse?.speciesAbilityId || item.flags?.swse?.sourceTrait || item.name;
     const key = `${item.type}:${abilityId}`;
     if (existingKeys.has(key)) return false;
@@ -177,8 +198,6 @@ async function materializeFollowerSpecies(follower, mutation = {}) {
     return;
   }
 
-  // Followers start at 10 in every ability. The selected follower template adds
-  // +2 to one legal ability; species adjustments remain racial modifiers.
   const cleanAbilities = templateBaseAbilities(mutation);
   const speciesMods = contextSpeciesMods(context, speciesName);
   context = clonePlain(context);
@@ -202,12 +221,8 @@ async function materializeFollowerSpecies(follower, mutation = {}) {
     if (path.startsWith('system.') || path.startsWith('flags.')) updateData[path] = value;
   }
 
-  const conTotal = cleanAbilities.con.base + speciesMods.con
-    + finite(updateData['system.attributes.con.enhancement'], 0)
-    + finite(updateData['system.attributes.con.temp'], 0);
-  const conMod = Math.floor((conTotal - 10) / 2);
   const level = Math.max(1, finite(mutation.targetHeroicLevel ?? mutation.followerState?.level ?? follower.system?.level, 1));
-  const newMax = Math.max(1, 10 + level + conMod);
+  const newMax = Math.max(1, 10 + level);
   const oldMax = Math.max(1, finite(follower.system?.hp?.max, newMax));
   const oldValue = Math.max(0, finite(follower.system?.hp?.value, oldMax));
   updateData['system.hp.max'] = newMax;
@@ -216,7 +231,14 @@ async function materializeFollowerSpecies(follower, mutation = {}) {
   const damageReduction = extractDamageReduction(context);
   if (damageReduction > 0) updateData['system.damageReduction'] = Math.max(finite(follower.system?.damageReduction, 0), damageReduction);
 
-  // Stored follower defense totals are only caches. DerivedCalculator owns totals.
+  // Followers have no Force Points, Destiny Points, Destinies, or species bonus
+  // feat entitlement, even though they still receive the species' actual traits.
+  updateData['flags.swse.speciesFeatsRequired'] = 0;
+  updateData['system.forcePoints.value'] = 0;
+  updateData['system.forcePoints.max'] = 0;
+  updateData['system.destinyPoints.value'] = 0;
+  updateData['system.destinyPoints.max'] = 0;
+
   for (const key of ['fortitude', 'reflex', 'will']) updateData[`system.defenses.${key}.total`] = 0;
 
   await ActorEngine.updateActor(follower, updateData, {
@@ -230,6 +252,7 @@ async function materializeFollowerSpecies(follower, mutation = {}) {
     follower: follower.name,
     species: speciesName,
     abilities: Object.fromEntries(ABILITY_KEYS.map(key => [key, cleanAbilities[key].base + speciesMods[key]])),
+    hp: newMax,
     damageReduction,
     speciesItemsCreated: mutations.itemsToCreate?.length || 0,
   });
