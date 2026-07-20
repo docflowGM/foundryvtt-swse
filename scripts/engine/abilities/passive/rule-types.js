@@ -46,8 +46,7 @@ export const RULE_TYPES = {
    * Note: Requires additional context (which skill).
    * Schema: { type: "TREAT_SKILL_AS_TRAINED", skill: "knowledge" }
    */
-  TREAT_SKILL_AS_TRAINED: 'TREAT_SKILL_AS_TRAINED'
-,
+  TREAT_SKILL_AS_TRAINED: 'TREAT_SKILL_AS_TRAINED',
 
   // ======================================================================
   // "Max enum now" additions (unconditional, boolean capability tokens)
@@ -111,6 +110,15 @@ export const RULE_TYPES = {
    * Params: { proficiency: string, bonus: number }
    */
   WEAPON_SPECIALIZATION: 'WEAPON_SPECIALIZATION',
+
+  /**
+   * Riflemaster weapon-rule family.
+   * Queried by: CombatOptionResolver.collectWeaponRuleModifiers
+   */
+  BRACE_AUTOFIRE_ALLOWED: 'BRACE_AUTOFIRE_ALLOWED',
+  WEAPON_PROPERTY_OVERRIDE: 'WEAPON_PROPERTY_OVERRIDE',
+  WEAPON_DAMAGE_DIE_SIZE_STEP: 'WEAPON_DAMAGE_DIE_SIZE_STEP',
+  EFFECTIVE_WEAPON_SIZE: 'EFFECTIVE_WEAPON_SIZE',
 
   /**
    * UNARMED_DOES_NOT_PROVOKE_AOO

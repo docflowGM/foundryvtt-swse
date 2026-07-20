@@ -30,17 +30,29 @@ export function installPhase5ForceHealing(ForceExecutor) {
   ForceExecutor.executeForcePower = async function phase5ExecuteForcePower(actor, powerId, options = {}) {
     const power = actor?.items?.get?.(powerId);
     const isVitalTransfer = String(power?.name ?? '').trim().toLowerCase() === 'vital transfer';
-
-    if (isVitalTransfer && !(options.target ?? options.targetActor)) {
-      ui?.notifications?.warn?.('Vital Transfer requires a target actor.');
-      return { success: false, error: 'Vital Transfer requires a target actor.' };
-    }
+    const target = options.target ?? options.targetActor ?? null;
 
     const result = await original(actor, powerId, options);
     if (!isVitalTransfer || !result?.success) return result;
 
+    if (!target) {
+      return {
+        ...result,
+        outcome: 'manual-adjudication',
+        outcomePlan: {
+          kind: 'manual-adjudication',
+          power: power?.name ?? 'Vital Transfer',
+          checkTotal: Number(result.roll) || 0,
+          targetContext: options.targetContext ?? null,
+          expectedTarget: 'one creature at touch range',
+          reason: 'No actor target was selected. The Use the Force check is valid, but healing and caster cost were not applied automatically.',
+          automation: 'manual',
+          sourceVerified: true
+        }
+      };
+    }
+
     try {
-      const target = options.target ?? options.targetActor;
       const transaction = await applyVitalTransfer({
         caster: actor,
         target,

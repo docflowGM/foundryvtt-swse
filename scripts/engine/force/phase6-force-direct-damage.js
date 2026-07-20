@@ -97,8 +97,26 @@ async function applyProne(target, sourceItem) {
   return created?.[0]?.id ?? null;
 }
 
+function manualDamageOutcome(power, result, options = {}, details = {}) {
+  return {
+    ...result,
+    outcome: 'manual-adjudication',
+    damageType: 'force',
+    damageOutcome: {
+      success: true,
+      manual: true,
+      power: power?.name ?? 'Force power',
+      checkTotal: Number(result?.roll) || 0,
+      targetContext: options.targetContext ?? null,
+      reason: 'No actor target was selected. Damage and target effects were not rolled or applied automatically.',
+      sourceVerified: true,
+      ...details
+    }
+  };
+}
+
 export async function resolveForceLightning({ caster, power, checkTotal, target } = {}) {
-  if (!target) throw new Error('Force Lightning requires one target actor.');
+  if (!target) throw new Error('Force Lightning requires one target actor for automated damage resolution.');
   const formula = getForceLightningFormula(checkTotal);
   if (!formula) return { success: false, reason: 'check-failed', damageType: 'force' };
 
@@ -118,7 +136,7 @@ export async function resolveForceLightning({ caster, power, checkTotal, target 
 
 export async function resolveForceSlam({ caster, power, checkTotal, targets = [], forcePointOption = false } = {}) {
   const actors = Array.from(targets).filter(Boolean);
-  if (!actors.length) throw new Error('Force Slam requires at least one target actor in the 6-square cone.');
+  if (!actors.length) throw new Error('Force Slam requires target actors for automated cone resolution.');
 
   const formula = forcePointOption ? '6d6' : '4d6';
   const damageRoll = await rollFormula(formula, caster);
@@ -154,21 +172,33 @@ export function installPhase6ForceDamage(ForceExecutor) {
     const name = normalize(power?.name);
     const isLightning = name === 'force lightning';
     const isSlam = name === 'force slam';
-
-    if (isLightning && !(options.target ?? options.targetActor)) {
-      return { success: false, error: 'Force Lightning requires one target actor.' };
-    }
-    if (isSlam && !(options.targets?.length || options.targetActors?.length)) {
-      return { success: false, error: 'Force Slam requires target actors in its 6-square cone.' };
-    }
+    const lightningTarget = options.target ?? options.targetActor ?? null;
+    const slamTargets = options.targets ?? options.targetActors ?? [];
 
     const result = await previous(actor, powerId, options);
     if (!result?.success || (!isLightning && !isSlam)) return result;
 
+    if (isLightning && !lightningTarget) {
+      return manualDamageOutcome(power, result, options, {
+        expectedTarget: 'one creature within 6 squares',
+        formula: getForceLightningFormula(result.roll),
+        defense: 'reflex/manual'
+      });
+    }
+
+    if (isSlam && !slamTargets.length) {
+      return manualDamageOutcome(power, result, options, {
+        expectedTargets: 'all creatures in a 6-square cone',
+        formula: options.forcePointOption === true ? '6d6' : '4d6',
+        defense: 'fortitude',
+        missEffect: 'half damage, no prone'
+      });
+    }
+
     try {
       const damageOutcome = isLightning
-        ? await resolveForceLightning({ caster: actor, power, checkTotal: result.roll, target: options.target ?? options.targetActor })
-        : await resolveForceSlam({ caster: actor, power, checkTotal: result.roll, targets: options.targets ?? options.targetActors, forcePointOption: options.forcePointOption === true });
+        ? await resolveForceLightning({ caster: actor, power, checkTotal: result.roll, target: lightningTarget })
+        : await resolveForceSlam({ caster: actor, power, checkTotal: result.roll, targets: slamTargets, forcePointOption: options.forcePointOption === true });
       return { ...result, outcome: 'damage', damageType: 'force', damageOutcome };
     } catch (error) {
       SWSELogger.error(`SWSE | Force Powers | ${power?.name ?? 'Force damage'} resolution failed`, error);

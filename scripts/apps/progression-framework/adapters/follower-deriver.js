@@ -124,10 +124,6 @@ async function resolveSpeciesRecord(speciesName) {
   }
 }
 
-function getNested(obj, path) {
-  return path.split('.').reduce((value, key) => value?.[key], obj);
-}
-
 function extractSpeciesAbilityMods(persistentChoices = {}, speciesRecord = null) {
   const candidates = [
     persistentChoices.speciesAbilityMods,
@@ -290,8 +286,10 @@ export async function deriveFollowerStats(targetHeroicLevel, speciesName, templa
   const abilities = await buildBaseAbilities(templateType, template, choices, speciesRecord);
   const speciesProfile = extractSpeciesMovement(choices, speciesRecord);
 
+  // RAW follower defenses use the relevant ability modifier plus the owner's
+  // heroic level. Fortitude uses Constitution, not the better of STR/CON.
   const defenses = {
-    fort: { base: 10 + Math.max(abilities.str.mod, abilities.con.mod) + level, bonus: 0 },
+    fort: { base: 10 + abilities.con.mod + level, bonus: 0 },
     ref: { base: 10 + abilities.dex.mod + level, bonus: 0 },
     will: { base: 10 + abilities.wis.mod + level, bonus: 0 }
   };
@@ -313,8 +311,9 @@ export async function deriveFollowerStats(targetHeroicLevel, speciesName, templa
     defense.total = defense.base + Number(defense.bonus || 0);
   }
 
-  const conMod = abilities.con?.mod || 0;
-  const hpValue = Math.max(1, 10 + level + conMod);
+  // RAW follower HP is exactly 10 + owner heroic level. Constitution does not
+  // increase or decrease follower HP.
+  const hpValue = Math.max(1, 10 + level);
   const hp = { max: hpValue, value: hpValue };
   const bab = getProfileBab(fixedProfile, level) ?? template.babProgression?.[Math.min(level - 1, 19)] ?? 0;
   const damageThreshold = defenses.fort.total + Number(template.damageThresholdBonus || 0) + Number(fixedProfile?.damageThresholdBonus || 0);

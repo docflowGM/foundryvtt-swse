@@ -5,10 +5,10 @@
  *
  * The deny list below was generated from exact name collisions between the
  * curated feat catalog and the curated talent corpus. These are SWSE talents
- * that had been scraped/migrated into data/feat-catalog.json and packs/feats.db
- * as fake feat records. Do not use the raw talents pack as the authority here:
- * that pack still contains a few known legacy contaminant rows for real feats
- * such as Mobility and Weapon Proficiency (Simple Weapons).
+ * that had been scraped/migrated into data/feat-catalog.json and the canonical
+ * feats compendium source as fake feat records. Do not use the raw talents pack
+ * as the authority here: that pack still contains a few known legacy contaminant
+ * rows for real feats such as Mobility and Weapon Proficiency (Simple Weapons).
  */
 
 export function normalizeContentName(value) {

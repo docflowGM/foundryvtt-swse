@@ -4,7 +4,7 @@
  * "Last 10%" hardening utilities:
  * - Mixed progression warnings (heroic + nonheroic)
  * - Complete statblock snapshot + rollback (system + embedded docs)
- * - AppV2 lifecycle guards (skip derived calc for statblock NPCs)
+ * - AppV2 lifecycle guards (skip derived calc for ordinary statblock NPCs)
  *
  * Snapshot is stored in flags.swse.npcLevelUp.snapshot (back-compat with existing UI).
  *
@@ -31,12 +31,28 @@ function _actorKey(actor) {
   return actor?.uuid ?? actor?.id ?? actor?.name ?? 'unknown';
 }
 
+function _isFollowerNpc(actor) {
+  if (!actor || actor.type !== 'npc') return false;
+  const profile = actor.system?.npcProfile ?? {};
+  return actor.system?.isFollower === true
+    || actor.system?.progression?.isFollower === true
+    || profile.kind === 'follower'
+    || profile.legalProfile === 'follower'
+    || actor.flags?.swse?.follower?.isFollower === true
+    || actor.getFlag?.(SYSTEM_SCOPE_COMPAT, 'isFollower') === true;
+}
+
 export function isStatblockNpc(actor) {
   if (!actor || actor.type !== 'npc') {return false;}
   return isNpcStatblockMode(actor);
 }
 
 export function shouldSkipDerivedData(actor) {
+  // Followers use the NPC document type and retain statblock-mode editing, but
+  // their defenses, skills, initiative, and other totals are derived from the
+  // owner's heroic level plus their live ability scores. Treating them as frozen
+  // statblocks prevents ability/species edits from ever reaching DerivedCalculator.
+  if (_isFollowerNpc(actor)) return false;
   return isStatblockNpc(actor);
 }
 
@@ -109,15 +125,12 @@ export async function rollbackNpcToStatblockSnapshot(actor) {
     return;
   }
 
-  // PHASE 7: All mutations routed through ActorEngine for atomic governance
-  // Restores complete actor state (root + items + effects) in single transaction
   const result = await ActorEngine.restoreFromSnapshot(actor, snap, {
     diff: false,
     [SYSTEM_SCOPE_COMPAT]: { skipProgression: true }
   });
 
   if (result.success) {
-    // Update flags after successful restoration
     await actor.setFlag(SYSTEM_SCOPE_COMPAT, FLAG_MODE, 'statblock');
     await actor.unsetFlag(SYSTEM_SCOPE_COMPAT, FLAG_TRACK);
     await actor.unsetFlag(SYSTEM_SCOPE_COMPAT, FLAG_STARTED_AT);

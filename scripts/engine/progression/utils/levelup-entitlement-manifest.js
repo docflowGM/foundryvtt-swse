@@ -16,6 +16,8 @@ import { resolveClassModel } from './class-resolution.js';
 import { ProgressionRules } from '../ProgressionRules.js';
 import { ProgressionContentAuthority } from '../content/progression-content-authority.js';
 import TalentCadenceEngine from '../talents/talent-cadence-engine.js';
+import { AbilityEngine } from '../../abilities/AbilityEngine.js';
+import { FeatEngine } from '../feats/feat-engine.js';
 
 const CHOICE_TYPES = Object.freeze({
   feat_choice: 'classFeatChoices',
@@ -239,6 +241,116 @@ function countChoices(features = []) {
   return counts;
 }
 
+function actorItems(actor) {
+  const items = actor?.items?.contents || actor?.items || [];
+  return Array.isArray(items) ? items : Array.from(items || []);
+}
+
+function isMulticlassStartingFeatSelection(entry) {
+  const source = normalizeName(
+    entry?.source
+    || entry?.slotType
+    || entry?.levelupGrantKind
+    || entry?.system?.sourceType
+    || ''
+  );
+  return entry?.system?.multiclassStartingFeat === true
+    || entry?.multiclassStartingFeat === true
+    || source.includes('multiclass')
+    || source.includes('starting feat');
+}
+
+function isRepeatableFeat(candidate) {
+  const system = candidate?.system || {};
+  if (candidate?.repeatable === true || system.repeatable === true || system.canRepeat === true || system.allowDuplicates === true) return true;
+  const key = normalizeName(candidate);
+  return (Array.isArray(FeatEngine.repeatables) ? FeatEngine.repeatables : [])
+    .some(name => normalizeName(name) === key);
+}
+
+function actorOwnsNonrepeatableFeat(actor, candidate) {
+  if (isRepeatableFeat(candidate)) return false;
+  const key = normalizeName(candidate);
+  return actorItems(actor).some(item => item?.type === 'feat' && normalizeName(item) === key);
+}
+
+function buildStartingFeatPendingContext(progressionSession, startingFeatOptions = []) {
+  const draft = progressionSession?.draftSelections || {};
+  const poolNames = new Set(startingFeatOptions.map(option => normalizeName(option)).filter(Boolean));
+  const selectedFeats = (Array.isArray(draft.feats) ? draft.feats : [])
+    .filter(entry => !isMulticlassStartingFeatSelection(entry) && !poolNames.has(normalizeName(entry)));
+
+  const rawSkills = draft.skills || {};
+  const selectedSkills = Array.isArray(rawSkills)
+    ? rawSkills
+    : Array.isArray(rawSkills?.trained)
+      ? rawSkills.trained.map(key => ({ key }))
+      : Object.entries(rawSkills || {})
+        .filter(([, value]) => value === true || value?.trained === true)
+        .map(([key]) => ({ key }));
+
+  return {
+    ...draft,
+    selectedClass: draft.class || progressionSession?.getSelection?.('class') || null,
+    selectedFeats,
+    selectedTalents: Array.isArray(draft.talents) ? draft.talents : [],
+    selectedSkills,
+    pendingSpeciesContext: draft.pendingSpeciesContext || null,
+  };
+}
+
+function evaluateStartingFeatOptions(actor, progressionSession, startingFeatOptions = []) {
+  const pending = buildStartingFeatPendingContext(progressionSession, startingFeatOptions);
+  const available = [];
+  const assessments = [];
+
+  for (const option of startingFeatOptions) {
+    const resolved = ProgressionContentAuthority.resolveFeat?.(option?.id || option?.name)
+      || ProgressionContentAuthority.resolveFeat?.(option?.name)
+      || null;
+    if (!resolved) {
+      assessments.push({
+        name: option?.name || option?.id || 'Unknown Feat',
+        legal: false,
+        reason: 'feat-catalog-entry-unavailable',
+      });
+      continue;
+    }
+
+    const candidate = {
+      ...option,
+      ...resolved,
+      type: 'feat',
+      system: {
+        ...(option?.system || {}),
+        ...(resolved?.system || {}),
+      },
+    };
+
+    if (actorOwnsNonrepeatableFeat(actor, candidate)) {
+      assessments.push({
+        name: candidate.name,
+        legal: false,
+        reason: 'already-owned',
+      });
+      continue;
+    }
+
+    const assessment = AbilityEngine.evaluateAcquisition(actor, candidate, pending) || {};
+    const legal = assessment.legal === true;
+    assessments.push({
+      name: candidate.name,
+      legal,
+      reason: legal
+        ? null
+        : (assessment.blockingReasons?.[0] || assessment.missingPrereqs?.[0] || 'prerequisites-not-met'),
+    });
+    if (legal) available.push(option);
+  }
+
+  return { available, assessments };
+}
+
 export function buildLevelUpEntitlementManifest(actor, progressionSession = null, options = {}) {
   const selectedClass = options.selectedClass || progressionSession?.getSelection?.('class') || progressionSession?.draftSelections?.class || null;
   const classModel = resolveClassModel(selectedClass) || selectedClass || null;
@@ -247,9 +359,20 @@ export function buildLevelUpEntitlementManifest(actor, progressionSession = null
   const features = Array.isArray(levelEntry.features) ? levelEntry.features : [];
   const choices = countChoices(features);
   const startingFeatOptions = getStartingFeatOptions(classModel);
-  const multiclassStartingFeatRequired = context.isNewBaseClass
+  const baseMulticlassStartingFeatRequired = context.isNewBaseClass
     && startingFeatOptions.length > 0
     && ProgressionRules.multiclassExtraStartingFeatsEnabled?.() !== true;
+  const selectedStartingFeat = (Array.isArray(progressionSession?.draftSelections?.feats)
+    ? progressionSession.draftSelections.feats
+    : []).find(isMulticlassStartingFeatSelection) || null;
+  const startingFeatEvaluation = baseMulticlassStartingFeatRequired
+    ? evaluateStartingFeatOptions(actor, progressionSession, startingFeatOptions)
+    : { available: [], assessments: [] };
+  const multiclassStartingFeatWaived = baseMulticlassStartingFeatRequired
+    && !selectedStartingFeat
+    && startingFeatEvaluation.available.length === 0;
+  const multiclassStartingFeatRequired = baseMulticlassStartingFeatRequired
+    && !multiclassStartingFeatWaived;
 
   const automaticClassFeatures = features
     .map(feature => normalizeAutomaticFeature(feature, classModel, context))
@@ -263,7 +386,7 @@ export function buildLevelUpEntitlementManifest(actor, progressionSession = null
 
   return {
     kind: 'swse-level-up-entitlement-manifest',
-    version: 2,
+    version: 3,
     context,
     classId: context.selectedClassId,
     className: context.selectedClassName,
@@ -293,6 +416,11 @@ export function buildLevelUpEntitlementManifest(actor, progressionSession = null
       required: multiclassStartingFeatRequired,
       count: multiclassStartingFeatRequired ? 1 : 0,
       options: startingFeatOptions,
+      availableOptions: startingFeatEvaluation.available,
+      optionAssessments: startingFeatEvaluation.assessments,
+      selected: selectedStartingFeat,
+      waived: multiclassStartingFeatWaived,
+      waiverReason: multiclassStartingFeatWaived ? 'no-legal-starting-feats' : null,
       source: startingFeatOptions.length ? 'raw-core-class-starting-feats' : null,
     },
     automaticClassFeatures,

@@ -8,6 +8,8 @@ import { SOURCE_FAMILY } from './contracts/enums.js';
 
 export class HolonetSourceRegistry {
   static #sources = new Map();
+  static #initializedAdapters = new WeakSet();
+  static #initializationPromises = new WeakMap();
 
   /**
    * Register a source family adapter
@@ -77,13 +79,42 @@ export class HolonetSourceRegistry {
   }
 
   /**
-   * Initialize all registered sources
+   * Initialize one adapter exactly once, even when the same adapter class is
+   * registered under several source-family aliases or initializeAll() is called
+   * more than once. Failed initialization is not cached and may be retried.
+   *
+   * @param {Object|Function} adapter
+   * @returns {Promise<void>}
+   */
+  static async #initializeAdapter(adapter) {
+    if (typeof adapter?.initialize !== 'function') return;
+    if (this.#initializedAdapters.has(adapter)) return;
+
+    let pending = this.#initializationPromises.get(adapter);
+    if (!pending) {
+      pending = Promise.resolve()
+        .then(() => adapter.initialize())
+        .then(() => {
+          this.#initializedAdapters.add(adapter);
+        })
+        .finally(() => {
+          this.#initializationPromises.delete(adapter);
+        });
+      this.#initializationPromises.set(adapter, pending);
+    }
+
+    await pending;
+  }
+
+  /**
+   * Initialize every unique registered source adapter once.
+   * Several Holonet source families intentionally alias the same adapter class
+   * (for example system/training/workbench/faction/games). Initializing by map
+   * entry caused duplicate hooks and repeated startup logging.
    */
   static async initializeAll() {
-    for (const [sourceFamily, adapter] of this.#sources) {
-      if (typeof adapter.initialize === 'function') {
-        await adapter.initialize();
-      }
+    for (const adapter of this.#sources.values()) {
+      await this.#initializeAdapter(adapter);
     }
   }
 }

@@ -43,7 +43,7 @@
           <div class="follower-template-ability-options">
             {{#each abilityOptions}}
               <label class="template-ability-option">
-                <input type="radio" name="templateAbility" value="{{this}}" {{#if (eq this ../../abilityChoice)}}checked{{/if}}>
+                <input type="radio" name="templateAbility" value="{{this}}" {{#if (eq this @root.abilityChoice)}}checked{{/if}}>
                 {{this}}
               </label>
             {{/each}}

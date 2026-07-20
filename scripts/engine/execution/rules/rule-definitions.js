@@ -257,6 +257,26 @@ export const RULE_DEFINITIONS = Object.freeze({
     description: "Adds flat damage bonus for weapon specialization (proficiency-gated)",
     required: ["proficiency", "bonus"]
   },
+
+  // === WEAPON PROPERTY & DAMAGE OVERRIDES ===
+  // These rules use top-level predicates/values because CombatOptionResolver
+  // consumes them directly from abilityMeta.rules.
+  [RULES.BRACE_AUTOFIRE_ALLOWED]: {
+    params: null,
+    description: "Allows the qualifying weapon to use the brace/autofire interaction"
+  },
+  [RULES.WEAPON_PROPERTY_OVERRIDE]: {
+    params: null,
+    description: "Overrides or grants a weapon property for qualifying attacks"
+  },
+  [RULES.WEAPON_DAMAGE_DIE_SIZE_STEP]: {
+    params: null,
+    description: "Increases the qualifying weapon's damage die size by the configured number of steps"
+  },
+  [RULES.EFFECTIVE_WEAPON_SIZE]: {
+    params: null,
+    description: "Treats the qualifying weapon as a different effective size"
+  },
 });
 
 /**

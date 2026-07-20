@@ -21,6 +21,119 @@ function defenseValue(actor, defense) {
   return 10;
 }
 
+function hpState(actor) {
+  const value = Number(actor?.system?.hp?.value ?? 0) || 0;
+  const max = Number(actor?.system?.hp?.max ?? value) || value;
+  return { value, max };
+}
+
+function availableForcePoints(actor) {
+  const candidates = [
+    actor?.system?.forcePoints?.value,
+    actor?.system?.resources?.forcePoints?.value
+  ];
+  for (const candidate of candidates) {
+    const value = Number(candidate);
+    if (Number.isFinite(value)) return Math.max(0, value);
+  }
+  return 0;
+}
+
+function manualAdjudication(power, result, options = {}, details = {}) {
+  return {
+    ...result,
+    outcome: 'manual-adjudication',
+    outcomePlan: {
+      kind: 'manual-adjudication',
+      power: power?.name ?? 'Force power',
+      checkTotal: Number(result?.roll) || 0,
+      targetContext: options.targetContext ?? null,
+      reason: 'No actor target was selected. The roll is valid; resolve the target and effects manually.',
+      automation: 'manual',
+      sourceVerified: true,
+      ...details
+    }
+  };
+}
+
+async function resolveNegateEnergy({ actor, power, result, options, ForcePowerEffectsEngine }) {
+  const incomingDamage = Math.max(0, Number(options.incomingDamage ?? options.baseDC ?? 0) || 0);
+  const checkTotal = Number(result?.roll) || 0;
+  const eligible = options.negateEnergyEligible !== false;
+  const negated = eligible && incomingDamage > 0 && checkTotal >= incomingDamage;
+
+  // Negate Energy is instantaneous. Older runtime code attempted to create a
+  // persistent energy-negation/DR effect; remove any effect created during this
+  // execution so the power never leaks into later damage packets.
+  try {
+    await ForcePowerEffectsEngine?.removePowerEffects?.(actor, power);
+  } catch (error) {
+    SWSELogger.warn('SWSE | Negate Energy | Failed to clear obsolete persistent effect', error);
+  }
+
+  let healed = 0;
+  let healingForcePointSpent = false;
+  let healingError = null;
+
+  if (negated && options.negateEnergyHeal === true) {
+    if (availableForcePoints(actor) <= 0) {
+      healingError = 'No Force Point remained for Negate Energy healing.';
+    } else {
+      const hp = hpState(actor);
+      healed = Math.max(0, Math.min(incomingDamage, hp.max - hp.value));
+      try {
+        await ActorEngine.spendForcePoints(actor, 1);
+        healingForcePointSpent = true;
+        if (healed > 0) {
+          await ActorEngine.updateActor(actor, {
+            'system.hp.value': Math.min(hp.max, hp.value + healed)
+          }, {
+            source: 'force-power-negate-energy-healing',
+            meta: { guardKey: 'force-power-negate-energy-healing' }
+          });
+        }
+      } catch (error) {
+        healed = 0;
+        healingForcePointSpent = false;
+        healingError = error?.message || 'Unable to spend the Force Point for healing.';
+        SWSELogger.error('SWSE | Negate Energy | Optional healing failed', error);
+      }
+    }
+  }
+
+  return {
+    ...result,
+    // A failed opposed check is still a successfully executed reaction roll.
+    // Keep the action successful so the sheet does not report a runtime error.
+    success: true,
+    checkSucceeded: negated,
+    outcome: 'negate-energy',
+    resolvedEffect: negated
+      ? `The incoming ${incomingDamage} Energy damage is negated.`
+      : `The Use the Force result did not equal or exceed ${incomingDamage}; the attack deals damage normally.`,
+    appliedEffects: [],
+    outcomePlan: {
+      kind: 'negate-damage',
+      power: power?.name ?? 'Negate Energy',
+      reaction: true,
+      eligible,
+      incomingDamage,
+      dc: incomingDamage,
+      checkTotal,
+      negated,
+      modifiedDamage: negated ? 0 : incomingDamage,
+      damageType: 'energy',
+      healingRequested: options.negateEnergyHeal === true,
+      healingForcePointSpent,
+      healed,
+      healingError,
+      requiresAwareness: true,
+      prohibitedWhileFlatFooted: true,
+      sourceVerified: true
+    }
+  };
+}
+
 export function getForceStunConditionSteps(checkTotal, willDefense, forcePointOption = false) {
   const margin = Number(checkTotal) - Number(willDefense);
   if (!Number.isFinite(margin) || margin < 0) return 0;
@@ -28,7 +141,7 @@ export function getForceStunConditionSteps(checkTotal, willDefense, forcePointOp
 }
 
 export function buildForceStunPlan({ checkTotal, target, forcePointOption = false } = {}) {
-  if (!target) throw new Error('Force Stun requires a target actor.');
+  if (!target) throw new Error('Force Stun requires a target actor for automated resolution.');
   const will = defenseValue(target, 'will');
   const steps = getForceStunConditionSteps(checkTotal, will, forcePointOption);
   return {
@@ -56,7 +169,7 @@ export async function applyForceStunPlan(target, plan) {
 }
 
 export function buildForceThrustPlan({ checkTotal, target, collision = null } = {}) {
-  if (!target) throw new Error('Force Thrust requires a target actor.');
+  if (!target) throw new Error('Force Thrust requires a target actor for automated resolution.');
   return {
     kind: 'opposed-movement',
     power: 'Force Thrust',
@@ -74,7 +187,7 @@ export function buildForceThrustPlan({ checkTotal, target, collision = null } = 
 }
 
 export function buildForceGripPlan({ checkTotal, target, maintain = false, forcePointOption = false } = {}) {
-  if (!target) throw new Error('Force Grip requires a target actor.');
+  if (!target) throw new Error('Force Grip requires a target actor for automated resolution.');
   return {
     kind: 'damage-and-action-restriction',
     power: 'Force Grip',
@@ -92,7 +205,7 @@ export function buildForceGripPlan({ checkTotal, target, maintain = false, force
 }
 
 export function buildMoveObjectPlan({ checkTotal, primaryTarget, secondaryTarget = null, unwilling = false, maintain = false, forcePointOption = false, destinyPointOption = false } = {}) {
-  if (!primaryTarget) throw new Error('Move Object requires a primary target.');
+  if (!primaryTarget) throw new Error('Move Object requires a primary target for automated resolution.');
   const total = Number(checkTotal) || 0;
   const sizeTier = total >= 35 ? 'colossal' : total >= 30 ? 'gargantuan' : total >= 25 ? 'huge' : total >= 20 ? 'large' : total >= 15 ? 'medium' : null;
   return {
@@ -119,7 +232,8 @@ export const FINAL_FORCE_POWER_COVERAGE = Object.freeze({
   'force stun': 'automatic-condition-track',
   'force thrust': 'assisted-opposed-movement',
   'force grip': 'assisted-sustained-damage',
-  'move object': 'assisted-multi-mode'
+  'move object': 'assisted-multi-mode',
+  'negate energy': 'instant-reaction-damage-negation'
 });
 
 export function installFinalForcePowerIntegration({ ForcePowerEffectsEngine, ForceExecutor } = {}) {
@@ -134,28 +248,35 @@ export function installFinalForcePowerIntegration({ ForcePowerEffectsEngine, For
   ForceExecutor.executeForcePower = async function finalForcePowerExecutor(actor, powerId, options = {}) {
     const power = actor?.items?.get?.(powerId);
     const name = normalize(power?.name);
-    const target = options.target ?? options.targetActor;
-
-    if (name === 'force stun' && !target) return { success: false, error: 'Force Stun requires one target actor.' };
-    if (['force thrust', 'force grip', 'move object'].includes(name) && !target) {
-      return { success: false, error: `${power?.name ?? 'Force power'} requires an explicit target actor.` };
-    }
+    const target = options.target ?? options.targetActor ?? null;
 
     const result = await previous(actor, powerId, options);
+
+    // Negate Energy must resolve even when its opposed check fails. The core
+    // executor reports check failure as success:false, but that is not a runtime
+    // error and the reaction was still rolled and expended correctly.
+    if (name === 'negate energy' && result?.roll != null) {
+      return resolveNegateEnergy({ actor, power, result, options, ForcePowerEffectsEngine });
+    }
+
     if (!result?.success) return result;
 
     if (name === 'force stun') {
+      if (!target) return manualAdjudication(power, result, options, { expectedTarget: 'one creature', defense: 'will' });
       const plan = buildForceStunPlan({ checkTotal: result.roll, target, forcePointOption: options.forcePointOption === true });
       const appliedPlan = await applyForceStunPlan(target, plan);
       return { ...result, outcome: 'condition-track', outcomePlan: appliedPlan };
     }
     if (name === 'force thrust') {
+      if (!target) return manualAdjudication(power, result, options, { expectedTarget: 'one creature or object', opposition: 'strength-check' });
       return { ...result, outcome: 'assisted-movement', outcomePlan: buildForceThrustPlan({ checkTotal: result.roll, target, collision: options.collision }) };
     }
     if (name === 'force grip') {
+      if (!target) return manualAdjudication(power, result, options, { expectedTarget: 'one creature', defense: 'fortitude' });
       return { ...result, outcome: 'assisted-sustained-damage', outcomePlan: buildForceGripPlan({ checkTotal: result.roll, target, maintain: options.maintain === true, forcePointOption: options.forcePointOption === true }) };
     }
     if (name === 'move object') {
+      if (!target) return manualAdjudication(power, result, options, { expectedTarget: 'one object or creature', optionalSecondaryTarget: true });
       return { ...result, outcome: 'assisted-multi-mode', outcomePlan: buildMoveObjectPlan({
         checkTotal: result.roll,
         primaryTarget: target,
