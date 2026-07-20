@@ -9,11 +9,11 @@ import { ActorEngine } from '/systems/foundryvtt-swse/scripts/governance/actor-e
 import { getHeroicLevel } from '/systems/foundryvtt-swse/scripts/actors/derived/level-split.js';
 import { swseLogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
 
-const REGISTERED = Symbol.for('swse.followerNpcSheetParity.v1');
-const CONTEXT_PATCHED = Symbol.for('swse.followerNpcSheetParity.context.v1');
-const EVENTS_PATCHED = Symbol.for('swse.followerNpcSheetParity.events.v1');
-const DEFENSE_PATCHED = Symbol.for('swse.followerNpcSheetParity.defense.v1');
-const FEAT_PATCHED = Symbol.for('swse.followerNpcSheetParity.feats.v1');
+const REGISTERED = Symbol.for('swse.followerNpcSheetParity.v2');
+const CONTEXT_PATCHED = Symbol.for('swse.followerNpcSheetParity.context.v2');
+const EVENTS_PATCHED = Symbol.for('swse.followerNpcSheetParity.events.v2');
+const DEFENSE_PATCHED = Symbol.for('swse.followerNpcSheetParity.defense.v2');
+const FEAT_PATCHED = Symbol.for('swse.followerNpcSheetParity.feats.v2');
 
 const SKILLS = [
   ['acrobatics', 'Acrobatics', 'dex'],
@@ -90,16 +90,31 @@ function followerLevel(actor) {
   return Math.max(1, finite(owner ? getHeroicLevel(owner) : 0, 0) || finite(actor?.system?.level, 1));
 }
 
+function abilityCandidate(raw = null) {
+  if (!raw || typeof raw !== 'object') return null;
+  const hasComponents = ['base', 'racial', 'species', 'enhancement', 'temp', 'temporary']
+    .some(key => raw[key] !== undefined && raw[key] !== null && raw[key] !== '');
+  const base = finite(raw.base, 10);
+  const racial = finite(raw.racial ?? raw.species, 0);
+  const enhancement = finite(raw.enhancement, 0);
+  const temp = finite(raw.temp ?? raw.temporary, 0);
+  const componentTotal = base + racial + enhancement + temp;
+  const explicit = Number(raw.total ?? raw.value ?? raw.score);
+  const score = hasComponents ? componentTotal : (Number.isFinite(explicit) ? explicit : 10);
+  return {
+    score,
+    meaningful: score !== 10 || racial !== 0 || enhancement !== 0 || temp !== 0,
+  };
+}
+
 function abilityScore(actor, key) {
-  const canonical = actor?.system?.attributes?.[key] || {};
-  const legacy = actor?.system?.abilities?.[key] || {};
-  const source = Object.keys(canonical).length ? canonical : legacy;
-  const explicit = Number(source.total ?? source.value ?? source.score);
-  if (Number.isFinite(explicit)) return explicit;
-  return finite(source.base, 10)
-    + finite(source.racial ?? source.species, 0)
-    + finite(source.enhancement, 0)
-    + finite(source.temp ?? source.temporary, 0);
+  const canonical = abilityCandidate(actor?.system?.attributes?.[key]);
+  const legacy = abilityCandidate(actor?.system?.abilities?.[key]);
+  const derived = abilityCandidate(actor?.system?.derived?.attributes?.[key]);
+  if (canonical?.meaningful) return canonical.score;
+  if (legacy?.meaningful) return legacy.score;
+  if (derived?.meaningful) return derived.score;
+  return canonical?.score ?? legacy?.score ?? derived?.score ?? 10;
 }
 
 function abilityMod(actor, key) {
@@ -214,7 +229,10 @@ function applyFollowerContext(context, actor) {
     fortitude: 10 + followerLevel(actor) + Math.max(abilityMod(actor, 'str'), abilityMod(actor, 'con')) + templateDefenseBonus(actor, 'fortitude'),
     will: 10 + followerLevel(actor) + abilityMod(actor, 'wis') + templateDefenseBonus(actor, 'will'),
   };
-  const valueFor = (key) => finite(derivedDefenses?.[key]?.total, fallback[key]);
+  const valueFor = (key) => {
+    const value = Number(derivedDefenses?.[key]?.total);
+    return Number.isFinite(value) && value >= 1 ? value : fallback[key];
+  };
   const fort = valueFor('fortitude');
   const ref = valueFor('reflex');
   const will = valueFor('will');
@@ -265,9 +283,13 @@ function patchFollowerDefenses() {
     const wis = abilityMod(actor, 'wis');
     const fortAbility = Math.max(str, con);
 
-    const rebuild = (row, ability, templateBonus, { size = 0, levelContribution = level } = {}) => {
+    const rebuild = (row, ability, templateBonus, {
+      size = 0,
+      levelContribution = level,
+      includeArmorBonus = true,
+    } = {}) => {
       const classBonus = finite(row?.classBonus, 0);
-      const armorBonus = finite(row?.armorBonus, 0);
+      const armorBonus = includeArmorBonus ? finite(row?.armorBonus, 0) : 0;
       const speciesBonus = finite(row?.speciesBonus, 0);
       const miscBonus = finite(row?.miscBonus, 0);
       const stateBonus = finite(row?.stateBonus, 0);
@@ -282,6 +304,9 @@ function patchFollowerDefenses() {
     result.reflex = rebuild(result.reflex, dex, templateDefenseBonus(actor, 'reflex'), {
       size: finite(result.reflex?.sizeModifier, 0),
       levelContribution: finite(result.reflex?.levelContribution, level),
+      // Reflex armor is already represented by the original calculator's
+      // levelContribution substitution; adding armorBonus again double-counts it.
+      includeArmorBonus: false,
     });
     result.will = rebuild(result.will, wis, templateDefenseBonus(actor, 'will'));
     result.flatFooted = {
@@ -305,6 +330,7 @@ function injectPortrait(sheet, root, signal) {
 
 function injectSkillControls(sheet, root, signal) {
   if (!isFollower(sheet.actor)) return;
+  const derivedRows = new Map(skillRows(sheet.actor).map(row => [row.key, row]));
   root.querySelectorAll('.swse-npc-skill-edit-row').forEach(row => {
     const rollButton = row.querySelector('[data-skill]');
     const key = rollButton?.dataset?.skill;
@@ -313,13 +339,13 @@ function injectSkillControls(sheet, root, signal) {
     const totalEditor = row.querySelector('.swse-npc-skill-edit-row__total');
     if (totalEditor) totalEditor.remove();
 
-    const state = sheet.actor.system?.skills?.[key] || {};
+    const state = derivedRows.get(key) || { trained: false, focused: false };
     const controls = document.createElement('div');
     controls.dataset.followerSkillControls = 'true';
     controls.className = 'skill-toggles swse-npc-skill-toggles';
     controls.innerHTML = `
-      <label class="skill-checkbox" title="Trained"><span>T</span><input type="checkbox" data-follower-skill-state="trained" ${state.trained === true ? 'checked' : ''}></label>
-      <label class="skill-checkbox" title="Focused"><span>F</span><input type="checkbox" data-follower-skill-state="focused" ${state.focused === true ? 'checked' : ''}></label>
+      <label class="skill-checkbox" title="Trained"><span>T</span><input type="checkbox" data-follower-skill-state="trained" ${state.trained ? 'checked' : ''}></label>
+      <label class="skill-checkbox" title="Focused"><span>F</span><input type="checkbox" data-follower-skill-state="focused" ${state.focused ? 'checked' : ''}></label>
     `;
     row.appendChild(controls);
 
@@ -344,6 +370,7 @@ function injectUnarmedAttack(sheet, root, signal) {
   if (sheet.actor?.type === 'vehicle') return;
   const list = root.querySelector('.swse-npc-attack-list');
   if (!list || list.querySelector('[data-virtual-unarmed]')) return;
+  list.querySelector('.swse-npc-empty-state')?.remove();
   const weapon = buildVirtualUnarmedWeapon(sheet.actor);
   const attackBonus = finite(sheet.actor.system?.baseAttackBonus, 0) + abilityMod(sheet.actor, 'str');
   const card = document.createElement('article');
@@ -370,7 +397,7 @@ function injectUnarmedAttack(sheet, root, signal) {
 }
 
 function injectGearControls(sheet, root, signal) {
-  const gearTab = root.querySelector('[data-tab="gear"]');
+  const gearTab = root.querySelector('section.tab[data-tab="gear"]');
   if (!gearTab) return;
   const header = gearTab.querySelector('.swse-npc-card__header');
   const badges = header?.querySelector('.swse-npc-badges') || header;
@@ -384,7 +411,11 @@ function injectGearControls(sheet, root, signal) {
     storeButton.addEventListener('click', async event => {
       event.preventDefault();
       event.stopPropagation();
-      await SWSEStore.open(sheet.actor, { entryOrigin: 'follower-npc-gear' });
+      await SWSEStore.open(sheet.actor, {
+        entryOrigin: 'follower-npc-gear',
+        onCheckoutComplete: async () => sheet.render(false),
+        onClose: async () => sheet.render(false),
+      });
     }, { signal });
   }
 
@@ -465,5 +496,5 @@ export function registerFollowerNpcSheetParityHotfix() {
   patchFollowerDefenses();
   patchEvents();
   patchFeatDeduplication();
-  Hooks.once('ready', () => repairFollowerDuplicateFeats());
+  Hooks.once('ready', () => globalThis.setTimeout?.(() => repairFollowerDuplicateFeats(), 1000));
 }
