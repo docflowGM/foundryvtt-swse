@@ -4,6 +4,7 @@ import { registerArmorHydrationDefenseHotfix } from '/systems/foundryvtt-swse/sc
 import { registerAttackDialogCombatCorrectionsHotfix } from '/systems/foundryvtt-swse/scripts/patches/attack-dialog-combat-corrections-hotfix.js';
 import { registerCombatUiBehaviorHotfixes } from '/systems/foundryvtt-swse/scripts/patches/combat-ui-behavior-hotfix.js';
 import { registerForceSuiteRenderGuardHotfix } from '/systems/foundryvtt-swse/scripts/patches/force-suite-render-guard-hotfix.js';
+import { registerProgressionChoiceLanguageHotfix } from '/systems/foundryvtt-swse/scripts/patches/progression-choice-language-hotfix.js';
 import { registerCombatFeaturesPanelRenderer } from '/systems/foundryvtt-swse/scripts/engine/combat/features/combat-feature-panel-renderer.js';
 import { registerCombatFeatureActionRouter } from '/systems/foundryvtt-swse/scripts/engine/combat/features/combat-feature-action-router.js';
 import { registerCombatFeatureLegacyActionBridge } from '/systems/foundryvtt-swse/scripts/engine/combat/features/combat-feature-legacy-action-bridge.js';
@@ -15,5 +16,6 @@ registerAttackDialogCombatCorrectionsHotfix();
 registerCombatFeatureLegacyActionBridge();
 registerCombatUiBehaviorHotfixes();
 registerForceSuiteRenderGuardHotfix();
+registerProgressionChoiceLanguageHotfix();
 registerCombatFeaturesPanelRenderer();
 registerCombatFeatureActionRouter();
