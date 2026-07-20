@@ -2,8 +2,8 @@ import { PrerequisiteChecker } from '/systems/foundryvtt-swse/scripts/data/prere
 import { AbilityEngine } from '/systems/foundryvtt-swse/scripts/engine/abilities/AbilityEngine.js';
 import { swseLogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
 
-const REGISTERED = Symbol.for('swse.canonicalAbilityPrerequisite.registered.v1');
-const PATCHED = Symbol.for('swse.canonicalAbilityPrerequisite.patched.v1');
+const REGISTERED = Symbol.for('swse.canonicalAbilityPrerequisite.registered.v2');
+const PATCHED = Symbol.for('swse.canonicalAbilityPrerequisite.patched.v2');
 
 const ABILITY_ALIASES = Object.freeze({
   str: 'str',
@@ -27,6 +27,15 @@ const ABILITY_LABELS = Object.freeze({
   int: 'Intelligence',
   wis: 'Wisdom',
   cha: 'Charisma',
+});
+
+const ABILITY_LONG_KEYS = Object.freeze({
+  str: 'strength',
+  dex: 'dexterity',
+  con: 'constitution',
+  int: 'intelligence',
+  wis: 'wisdom',
+  cha: 'charisma',
 });
 
 function finiteNumber(value) {
@@ -59,6 +68,16 @@ function resolveRequiredScore(prerequisite = {}, fallback = 10) {
     if (numeric !== null) return numeric;
   }
   return 10;
+}
+
+function keyedValue(container, key) {
+  if (!container || typeof container !== 'object' || !key) return null;
+  for (const candidateKey of [key, ABILITY_LONG_KEYS[key]]) {
+    if (!candidateKey) continue;
+    const value = finiteNumber(container[candidateKey]);
+    if (value !== null) return value;
+  }
+  return null;
 }
 
 function scoreFromCanonicalAttribute(actor, key) {
@@ -102,12 +121,98 @@ function scoreFromLegacyAbility(actor, key) {
   ].reduce((sum, value) => sum + (finiteNumber(value) ?? 0), 0);
 }
 
+function scoreFromDraftAttributes(attributes = {}, key) {
+  if (!attributes || typeof attributes !== 'object' || !key) return null;
+
+  // Chargen's attribute step writes an absolute post-species score here. This
+  // must outrank the not-yet-finalized Actor document, which legitimately still
+  // contains its template default of 10 while level-1 feats are being selected.
+  for (const source of [
+    attributes.finalValues,
+    attributes.finalScores,
+    attributes.totals,
+    attributes.scores,
+    attributes.resolvedValues,
+  ]) {
+    const value = keyedValue(source, key);
+    if (value !== null) return value;
+  }
+
+  const base = keyedValue(attributes.values, key)
+    ?? keyedValue(attributes.baseValues, key)
+    ?? keyedValue(attributes.base, key);
+  if (base !== null) {
+    const species = keyedValue(attributes.speciesMods, key)
+      ?? keyedValue(attributes.speciesModifiers, key)
+      ?? keyedValue(attributes.racialMods, key)
+      ?? keyedValue(attributes.racialModifiers, key)
+      ?? 0;
+    const misc = keyedValue(attributes.miscMods, key)
+      ?? keyedValue(attributes.modifiers, key)
+      ?? 0;
+    return base + species + misc;
+  }
+
+  const direct = keyedValue(attributes, key);
+  if (direct !== null) return direct;
+
+  const nested = attributes[key] ?? attributes[ABILITY_LONG_KEYS[key]];
+  if (nested && typeof nested === 'object') {
+    const total = finiteNumber(nested.total ?? nested.score ?? nested.final ?? nested.value);
+    if (total !== null) return total;
+  }
+
+  return null;
+}
+
+function activeProgressionDraft(actor) {
+  const shell = globalThis.game?.__swseActiveProgressionShell;
+  if (!shell) return null;
+
+  const shellActorId = shell?.actor?.id
+    ?? shell?.document?.id
+    ?? shell?.progressionSession?.actorId
+    ?? shell?.session?.actorId
+    ?? null;
+  if (actor?.id && shellActorId && shellActorId !== actor.id) return null;
+
+  return shell?.progressionSession?.draftSelections
+    ?? shell?.session?.draftSelections
+    ?? shell?.draftSelections
+    ?? shell?.state?.draftSelections
+    ?? shell?._state?.draftSelections
+    ?? null;
+}
+
+function resolveDraftAbilityScore(actor, pending = {}, key) {
+  const activeDraft = activeProgressionDraft(actor);
+  const candidates = [
+    pending?.attributes,
+    pending?.selectedAttributes,
+    pending?.pendingAttributes,
+    pending?.draftSelections?.attributes,
+    pending?.progressionSession?.draftSelections?.attributes,
+    activeDraft?.attributes,
+    activeDraft?.selectedAttributes,
+    activeDraft?.pendingAttributes,
+  ];
+
+  for (const candidate of candidates) {
+    const score = scoreFromDraftAttributes(candidate, key);
+    if (score !== null) return { score, source: 'progression-draft' };
+  }
+  return null;
+}
+
 function pendingAbilityIncrease(pending = {}, key) {
+  const activeDraft = activeProgressionDraft(null);
   const candidates = [
     pending?.attributes?.increases?.[key],
     pending?.abilityIncreases?.[key],
     pending?.selectedAttributes?.increases?.[key],
     pending?.pendingAttributes?.increases?.[key],
+    pending?.draftSelections?.attributes?.increases?.[key],
+    activeDraft?.attributes?.increases?.[key],
   ];
   for (const candidate of candidates) {
     const numeric = finiteNumber(candidate);
@@ -118,15 +223,22 @@ function pendingAbilityIncrease(pending = {}, key) {
 
 function resolveCanonicalAbilityScore(actor, pending = {}, key) {
   if (!key) return null;
+
+  const draft = resolveDraftAbilityScore(actor, pending, key);
+  if (draft) return draft;
+
   const canonical = scoreFromCanonicalAttribute(actor, key);
   const legacy = scoreFromLegacyAbility(actor, key);
 
-  // V2 character sheets and progression write system.attributes as the actor's
-  // canonical ability ledger. system.abilities remains on many migrated actors
-  // as a compatibility mirror and can be stale. Prefer the canonical ledger.
+  // V2 character sheets and finalized progression write system.attributes as
+  // the canonical ability ledger. system.abilities remains on many migrated
+  // actors as a compatibility mirror and can be stale.
   const score = canonical ?? legacy;
   if (score === null) return null;
-  return score + pendingAbilityIncrease(pending, key);
+  return {
+    score: score + pendingAbilityIncrease(pending, key),
+    source: canonical !== null ? 'system.attributes' : 'system.abilities',
+  };
 }
 
 function patchAbilityPrerequisiteAuthority() {
@@ -145,9 +257,10 @@ function patchAbilityPrerequisiteAuthority() {
   ) {
     const originalResult = original.call(this, prerequisite, actor, fallbackMinimum, pending);
     const key = resolveAbilityKey(prerequisite);
-    const actual = resolveCanonicalAbilityScore(actor, pending, key);
-    if (!key || actual === null) return originalResult;
+    const resolved = resolveCanonicalAbilityScore(actor, pending, key);
+    if (!key || !resolved) return originalResult;
 
+    const actual = resolved.score;
     const required = resolveRequiredScore(prerequisite, fallbackMinimum);
     const met = actual >= required;
     const label = ABILITY_LABELS[key] || key.toUpperCase();
@@ -158,7 +271,7 @@ function patchAbilityPrerequisiteAuthority() {
       actual,
       required,
       ability: key,
-      canonicalAbilitySource: actor?.system?.attributes?.[key] ? 'system.attributes' : 'system.abilities',
+      canonicalAbilitySource: resolved.source,
       message: met
         ? ''
         : `Requires ${label} ${required} (you have ${actual})`,
@@ -173,5 +286,5 @@ export function registerCanonicalAbilityPrerequisiteHotfix() {
   patchAbilityPrerequisiteAuthority();
   AbilityEngine.clearAcquisitionCache?.();
   Object.defineProperty(globalThis, REGISTERED, { value: true });
-  swseLogger.log('[CanonicalAbilityPrerequisite] Registered canonical system.attributes prerequisite authority');
+  swseLogger.log('[CanonicalAbilityPrerequisite] Registered chargen-draft-first ability prerequisite authority');
 }
