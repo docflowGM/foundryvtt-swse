@@ -1,0 +1,192 @@
+/* ========================================================================== */
+/* Pazaak interaction and dealing presentation                                */
+/* ========================================================================== */
+
+.swse-pazaak-board {
+  position: relative;
+}
+
+.swse-pazaak-draw-shoe {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  z-index: 7;
+  width: 52px;
+  height: 72px;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  border: 1px solid color-mix(in oklab, var(--swse-games-cyan, #39f7ff) 42%, transparent);
+  background:
+    linear-gradient(135deg, color-mix(in oklab, var(--swse-games-purple, #8a5cff) 25%, transparent), transparent 56%),
+    url('/systems/foundryvtt-swse/assets/cards/pazaak/card-back-template.svg') center / cover no-repeat,
+    color-mix(in oklab, black 74%, transparent);
+  box-shadow:
+    4px 4px 0 color-mix(in oklab, black 72%, transparent),
+    8px 8px 0 color-mix(in oklab, var(--swse-games-cyan, #39f7ff) 12%, black),
+    0 0 20px color-mix(in oklab, var(--swse-games-cyan, #39f7ff) 20%, transparent);
+  opacity: 0.74;
+}
+
+.swse-pazaak-draw-shoe::after {
+  content: 'MAIN';
+  position: absolute;
+  left: 50%;
+  bottom: -18px;
+  transform: translateX(-50%);
+  color: var(--swse-games-muted, #7fb8c4);
+  font-family: var(--font-mono, monospace);
+  font-size: 8px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.swse-pazaak-card--deal-viewer,
+.swse-pazaak-card--deal-opponent,
+.swse-pazaak-card--deal-side,
+.swse-pazaak-card--deal-hand {
+  animation-delay: var(--pazaak-deal-delay, 0ms) !important;
+  animation-duration: 560ms !important;
+  animation-fill-mode: both !important;
+  animation-timing-function: cubic-bezier(0.18, 0.84, 0.24, 1.08) !important;
+  will-change: transform, opacity, filter;
+}
+
+.swse-pazaak-card--deal-viewer {
+  animation-name: swse-pazaak-deal-viewer !important;
+}
+
+.swse-pazaak-card--deal-opponent {
+  animation-name: swse-pazaak-deal-opponent !important;
+}
+
+.swse-pazaak-card--deal-side {
+  animation-name: swse-pazaak-deal-side !important;
+}
+
+.swse-pazaak-card--deal-hand {
+  animation-name: swse-pazaak-deal-hand !important;
+}
+
+.swse-pazaak-hand-card.is-newly-dealt {
+  animation-delay: var(--pazaak-deal-delay, 0ms) !important;
+  animation-duration: 480ms !important;
+  animation-fill-mode: both !important;
+  animation-name: swse-pazaak-hand-card-arrive !important;
+  animation-timing-function: cubic-bezier(0.18, 0.84, 0.24, 1.08) !important;
+}
+
+@keyframes swse-pazaak-deal-viewer {
+  0% {
+    opacity: 0;
+    filter: brightness(1.8) blur(1px);
+    transform: translate(34px, -128px) rotate(13deg) scale(0.68);
+  }
+  62% {
+    opacity: 1;
+    filter: brightness(1.28) blur(0);
+    transform: translate(-3px, 4px) rotate(-2deg) scale(1.04);
+  }
+  100% {
+    opacity: 1;
+    filter: none;
+    transform: translate(0, 0) rotate(0) scale(1);
+  }
+}
+
+@keyframes swse-pazaak-deal-opponent {
+  0% {
+    opacity: 0;
+    filter: brightness(1.8) blur(1px);
+    transform: translate(-34px, 128px) rotate(-13deg) scale(0.68);
+  }
+  62% {
+    opacity: 1;
+    filter: brightness(1.28) blur(0);
+    transform: translate(3px, -4px) rotate(2deg) scale(1.04);
+  }
+  100% {
+    opacity: 1;
+    filter: none;
+    transform: translate(0, 0) rotate(0) scale(1);
+  }
+}
+
+@keyframes swse-pazaak-deal-side {
+  0% {
+    opacity: 0;
+    filter: saturate(1.8) brightness(1.7);
+    transform: translate(0, 92px) rotate(-9deg) scale(0.74);
+  }
+  70% {
+    opacity: 1;
+    transform: translate(0, -4px) rotate(1deg) scale(1.06);
+  }
+  100% {
+    opacity: 1;
+    filter: none;
+    transform: none;
+  }
+}
+
+@keyframes swse-pazaak-deal-hand {
+  0% {
+    opacity: 0;
+    transform: translate(0, -82px) rotate(7deg) scale(0.74);
+  }
+  100% {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes swse-pazaak-hand-card-arrive {
+  0% {
+    opacity: 0;
+    transform: translateY(-54px) rotate(5deg) scale(0.82);
+  }
+  76% {
+    opacity: 1;
+    transform: translateY(3px) rotate(-1deg) scale(1.03);
+  }
+  100% {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.swse-pazaak-side-builder label.is-selected {
+  filter: brightness(1.12);
+}
+
+.swse-pazaak-side-builder button[aria-busy='true'],
+.swse-pazaak-hand-card form[aria-busy='true'] button,
+.swse-pazaak-turn-actions form[aria-busy='true'] button {
+  cursor: wait;
+  opacity: 0.62;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .swse-pazaak-card--deal-viewer,
+  .swse-pazaak-card--deal-opponent,
+  .swse-pazaak-card--deal-side,
+  .swse-pazaak-card--deal-hand,
+  .swse-pazaak-hand-card.is-newly-dealt {
+    animation-duration: 1ms !important;
+    animation-delay: 0ms !important;
+  }
+}
+
+[data-motion-style='off'] .swse-pazaak-card--deal-viewer,
+[data-motion-style='off'] .swse-pazaak-card--deal-opponent,
+[data-motion-style='off'] .swse-pazaak-card--deal-side,
+[data-motion-style='off'] .swse-pazaak-card--deal-hand,
+[data-motion-style='off'] .swse-pazaak-hand-card.is-newly-dealt,
+[data-motion-style='reduced'] .swse-pazaak-card--deal-viewer,
+[data-motion-style='reduced'] .swse-pazaak-card--deal-opponent,
+[data-motion-style='reduced'] .swse-pazaak-card--deal-side,
+[data-motion-style='reduced'] .swse-pazaak-card--deal-hand,
+[data-motion-style='reduced'] .swse-pazaak-hand-card.is-newly-dealt {
+  animation-duration: 1ms !important;
+  animation-delay: 0ms !important;
+}
