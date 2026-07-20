@@ -38,6 +38,27 @@ export class CustomizationSurfaceAdapter {
     return null;
   }
 
+  /**
+   * Resolve the active inline controller by shell host. This is the authoritative
+   * fallback when an inline surface has been rendered with a target actor proxy,
+   * stale mode dataset, or another key that does not exactly match the registry.
+   */
+  static getForHost(shellHost, { actorId = null, mode = null } = {}) {
+    if (!shellHost) return null;
+
+    let hostFallback = null;
+    for (const adapter of this._registry.values()) {
+      if (adapter?._shellHost !== shellHost) continue;
+      hostFallback ??= adapter;
+
+      const actorMatches = !actorId || adapter.actor?.id === actorId;
+      const adapterMode = adapter.options?.bayMode || adapter.options?.mode || adapter._app?.mode || null;
+      const modeMatches = !mode || !adapterMode || adapterMode === mode;
+      if (actorMatches && modeMatches) return adapter;
+    }
+    return hostFallback;
+  }
+
   static getOrCreate(shellHost, actor, options = {}) {
     const mode = options.bayMode || options.mode || (actor?.type === 'vehicle' ? 'shipyard' : 'garage');
     const key = this.key(actor.id, mode);
@@ -80,14 +101,18 @@ export class CustomizationSurfaceAdapter {
         context
       );
 
+      const source = this.options.source || '';
+      const returnSurface = this.options.returnSurface
+        || (source === 'asset-bay' ? 'asset-bay' : source === 'allies' ? 'allies' : 'home');
+
       return {
         id: 'customization',
         title: context?.modeLabel || 'Customization Bay',
         actorId: this.actor.id,
         actorName: this.actor.name,
         ownerActorId: this.options.ownerActorId || '',
-        source: this.options.source || '',
-        returnSurface: this.options.returnSurface || (this.options.source === 'asset-bay' ? 'asset-bay' : 'home'),
+        source,
+        returnSurface,
         bayMode: context?.mode || this.options.mode || 'garage',
         contextMode: context?.contextMode || this.options.contextMode || 'modifyExisting',
         contentHtml,
@@ -107,16 +132,27 @@ export class CustomizationSurfaceAdapter {
   }
 
   async handleAction(action, target) {
+    if (!action) return false;
+    if (target?.disabled || target?.getAttribute?.('aria-disabled') === 'true') return false;
+
     const app = await this._getApp();
     if (typeof app.handleInlineAction !== 'function') {
       SWSELogger.warn('[CustomizationSurfaceAdapter] CustomizationBayApp has no inline action bridge');
-      return;
+      return false;
     }
+
+    SWSELogger.debug('[CustomizationSurfaceAdapter] Forwarding inline action', {
+      action,
+      actorId: this.actor?.id || null,
+      mode: app.mode || this.options.mode || this.options.bayMode || null
+    });
+
     await app.handleInlineAction(action, target);
     const nextMode = app.mode || this.options.mode || this.options.bayMode;
     if (this.actor?.id && nextMode) {
       this.constructor._registry.set(this.constructor.key(this.actor.id, nextMode), this);
     }
+    return true;
   }
 
   async _getApp() {
@@ -140,17 +176,22 @@ export class CustomizationSurfaceAdapter {
       return app;
     };
     app.close = async function() {
-      if (self.options?.returnSurface === 'asset-bay') {
-        await self._shellHost?.setSurface?.('asset-bay', {
-          source: 'customization',
-          bayMode: self.options.bayMode || self.options.mode,
-          mode: self.options.bayMode || self.options.mode,
-          contextMode: self.options.contextMode || 'modifyExisting'
-        });
-      } else {
-        await self._shellHost?.setSurface?.('home');
-      }
-      await requestShellRender(self._shellHost, { reason: 'customization-surface-close', surfaceId: self._shellHost?.shellSurface || 'home' });
+      const source = self.options?.source || '';
+      const returnSurface = self.options?.returnSurface
+        || (source === 'asset-bay' ? 'asset-bay' : source === 'allies' ? 'allies' : 'home');
+
+      const returnOptions = {
+        source: 'customization-return',
+        bayMode: self.options.bayMode || self.options.mode,
+        mode: self.options.bayMode || self.options.mode,
+        contextMode: self.options.contextMode || 'modifyExisting'
+      };
+
+      await self._shellHost?.setSurface?.(returnSurface, returnOptions);
+      await requestShellRender(self._shellHost, {
+        reason: 'customization-surface-close',
+        surfaceId: returnSurface
+      });
       return app;
     };
 
