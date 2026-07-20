@@ -58,22 +58,25 @@ export const FOLLOWER_TALENT_CONFIG = {
   "Reconnaissance Team Leader": {
     templateChoices: ["aggressive", "defensive", "utility"],
     maxCount: 3,
+    repeatable: true,
     additionalFeats: ["Skill Training (Perception)", "Skill Training (Stealth)"],
-    description: "This talent grants you a follower trained in Perception and Stealth."
+    description: "This talent grants you a follower trained in Perception and Stealth. It may be selected up to three times."
   },
   "Inspire Loyalty": {
     templateChoices: ["aggressive", "defensive", "utility"],
     maxCount: 3,
+    repeatable: true,
     additionalSkills: ["Perception"],
     armorProficiencyChoice: true,
-    description: "This talent grants you a follower with an Armor Proficiency feat of your choice and trained in Perception."
+    description: "This talent grants you a follower with an Armor Proficiency feat of your choice and trained in Perception. It may be selected up to three times."
   },
   "Commanding Officer": {
     templateChoices: ["aggressive", "defensive", "utility"],
     maxCount: 3,
+    repeatable: true,
     additionalFeats: ["Weapon Proficiency (Rifles)"],
     armorProficiencyChoice: true,
-    description: "This talent grants you a follower with Weapon Proficiency (Rifles) and one Armor Proficiency feat of your choice."
+    description: "This talent grants you a follower with Weapon Proficiency (Rifles) and one Armor Proficiency feat of your choice. It may be selected up to three times."
   },
   "Akk Dog Master": {
     templateChoices: ["aggressive", "defensive", "utility"],
