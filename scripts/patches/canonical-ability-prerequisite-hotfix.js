@@ -204,8 +204,8 @@ function resolveDraftAbilityScore(actor, pending = {}, key) {
   return null;
 }
 
-function pendingAbilityIncrease(pending = {}, key) {
-  const activeDraft = activeProgressionDraft(null);
+function pendingAbilityIncrease(actor, pending = {}, key) {
+  const activeDraft = activeProgressionDraft(actor);
   const candidates = [
     pending?.attributes?.increases?.[key],
     pending?.abilityIncreases?.[key],
@@ -236,7 +236,7 @@ function resolveCanonicalAbilityScore(actor, pending = {}, key) {
   const score = canonical ?? legacy;
   if (score === null) return null;
   return {
-    score: score + pendingAbilityIncrease(pending, key),
+    score: score + pendingAbilityIncrease(actor, pending, key),
     source: canonical !== null ? 'system.attributes' : 'system.abilities',
   };
 }
