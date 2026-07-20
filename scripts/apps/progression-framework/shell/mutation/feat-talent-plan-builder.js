@@ -129,12 +129,24 @@ function existingKeySet(actor) {
   return new Set((actor?.items || []).map((item) => `${String(item.type || '').toLowerCase()}::${String(item.name || '').toLowerCase()}`));
 }
 
-function existingSessionMarkerSet(actor) {
-  return new Set((actor?.items || []).map((item) => {
+function existingSessionMarkerSets(actor) {
+  const exact = new Set();
+  const legacy = new Set();
+  for (const item of actor?.items || []) {
     const meta = item.flags?.swse?.progression;
-    if (!meta?.sourceSession || !meta?.selectionKey || !meta?.selectionId) return null;
-    return `${meta.sourceSession}::${meta.selectionKey}::${meta.selectionId}::${meta.countIndex || 0}`;
-  }).filter(Boolean));
+    if (!meta?.sourceSession || !meta?.selectionKey || !meta?.selectionId) continue;
+    const legacyMarker = `${meta.sourceSession}::${meta.selectionKey}::${meta.selectionId}::${meta.countIndex || 0}`;
+    legacy.add(legacyMarker);
+    if (meta.selectionInstanceKey) {
+      exact.add(`${meta.sourceSession}::${meta.selectionKey}::${meta.selectionId}::${meta.selectionInstanceKey}::${meta.countIndex || 0}`);
+    }
+  }
+  return { exact, legacy };
+}
+
+function countExistingTalentCopies(actor, name) {
+  const wanted = normalizeNameKey(name);
+  return Array.from(actor?.items || []).filter(item => item?.type === 'talent' && normalizeNameKey(item?.name) === wanted).length;
 }
 
 async function resolveDomainDocument(domainKey, rawEntry) {
@@ -143,7 +155,7 @@ async function resolveDomainDocument(domainKey, rawEntry) {
   return null;
 }
 
-function acquisitionMetaFor(rawEntry, domainKey, sessionId, selectionIdentity) {
+function acquisitionMetaFor(rawEntry, domainKey, sessionId, selectionIdentity, selectionInstanceKey) {
   return {
     source: rawEntry?.source || rawEntry?.slotType || domainKey,
     slotType: rawEntry?.slotType || rawEntry?.source || null,
@@ -156,16 +168,18 @@ function acquisitionMetaFor(rawEntry, domainKey, sessionId, selectionIdentity) {
     sourceSession: sessionId,
     selectionKey: domainKey,
     selectionId: selectionIdentity,
+    selectionInstanceKey,
   };
 }
 
-function progressionFlagsFor(domainKey, rawEntry, sessionId, selectionIdentity, idx) {
+function progressionFlagsFor(domainKey, rawEntry, sessionId, selectionIdentity, selectionInstanceKey, idx, repeatableRank = null) {
   return {
     swse: {
       progression: {
         sourceSession: sessionId,
         selectionKey: domainKey,
         selectionId: selectionIdentity,
+        selectionInstanceKey,
         countIndex: idx,
         source: rawEntry?.source || rawEntry?.slotType || domainKey,
         slotType: rawEntry?.slotType || rawEntry?.source || null,
@@ -175,9 +189,25 @@ function progressionFlagsFor(domainKey, rawEntry, sessionId, selectionIdentity, 
         className: rawEntry?.className || rawEntry?.sourceClass || null,
         classLevel: rawEntry?.classLevel || rawEntry?.sourceClassLevel || rawEntry?.grantedClassLevel || null,
         characterLevel: rawEntry?.characterLevel || rawEntry?.sourceCharacterLevel || null,
+        repeatableRank,
       },
     },
   };
+}
+
+function selectionInstanceKeyFor(rawEntry, domainKey, valueIndex) {
+  const explicit = rawEntry?.selectionInstanceKey
+    || rawEntry?.slotInstanceKey
+    || rawEntry?.slotKey
+    || rawEntry?.sourceStep
+    || rawEntry?.stepId
+    || rawEntry?.characterLevel
+    || rawEntry?.sourceCharacterLevel
+    || rawEntry?.classLevel
+    || rawEntry?.sourceClassLevel
+    || domainKey;
+  const normalized = normalizeNameKey(explicit) || domainKey;
+  return `${normalized}-${valueIndex}`;
 }
 
 export class FeatTalentPlanBuilder {
@@ -194,7 +224,8 @@ export class FeatTalentPlanBuilder {
     const sessionId = sessionState.sessionId || 'unknown';
     const items = [];
     const existingByTypeAndName = existingKeySet(actor);
-    const existingBySessionMarker = existingSessionMarkerSet(actor);
+    const existingMarkers = existingSessionMarkerSets(actor);
+    const generatedRepeatableCounts = new Map();
 
     const domainConfig = [
       { key: 'feats', type: 'feat', allowDuplicates: false },
@@ -207,7 +238,7 @@ export class FeatTalentPlanBuilder {
         ? rawValues.flatMap((entry) => expandCombinedTalentGrantEntries(entry))
         : rawValues;
 
-      for (const rawEntry of valuesToProcess) {
+      for (const [valueIndex, rawEntry] of valuesToProcess.entries()) {
         const count = Math.max(0, Number(rawEntry?.count ?? 1) || 0);
         if (count <= 0) continue;
 
@@ -215,19 +246,24 @@ export class FeatTalentPlanBuilder {
         const resolvedData = resolvedDoc?.toObject ? resolvedDoc.toObject() : null;
         const resolvedName = resolvedData?.name || rawEntry?.name || rawEntry?.id || String(rawEntry);
         const selectionIdentity = rawEntry?.selectionId || rawEntry?.id || resolvedName;
+        const selectionInstanceKey = selectionInstanceKeyFor(rawEntry, domain.key, valueIndex);
 
         for (let idx = 0; idx < count; idx += 1) {
-          const sessionMarker = `${sessionId}::${domain.key}::${selectionIdentity}::${idx}`;
+          const sessionMarker = `${sessionId}::${domain.key}::${selectionIdentity}::${selectionInstanceKey}::${idx}`;
+          const legacyMarker = `${sessionId}::${domain.key}::${selectionIdentity}::${idx}`;
           const dedupeKey = `${domain.type}::${String(resolvedName || '').toLowerCase()}`;
           const allowDuplicateForEntry = domain.allowDuplicates
             || (domain.key === 'talents' && isRepeatableTalentEntry(rawEntry, resolvedData));
-          if (existingBySessionMarker.has(sessionMarker)) continue;
+          if (existingMarkers.exact.has(sessionMarker)) continue;
+          // Legacy acquisitions did not record a slot-instance key. Treat the first
+          // rank as already materialized while still allowing later repeatable ranks.
+          if (valueIndex === 0 && idx === 0 && existingMarkers.legacy.has(legacyMarker)) continue;
           if (!allowDuplicateForEntry && existingByTypeAndName.has(dedupeKey)) continue;
 
-          const baseItem = resolvedData || {
+          const baseItem = resolvedData ? clonePlainObject(resolvedData) : {
             name: resolvedName,
             type: domain.type,
-            system: rawEntry?.system || {},
+            system: clonePlainObject(rawEntry?.system || {}),
             img: rawEntry?.img || undefined,
           };
 
@@ -240,7 +276,7 @@ export class FeatTalentPlanBuilder {
           });
 
           const rawSlotType = String(rawEntry?.slotType || rawEntry?.source || '').trim().toLowerCase();
-          baseItem.system.acquisition = mergeObject(baseItem.system.acquisition || {}, acquisitionMetaFor(rawEntry, domain.key, sessionId, selectionIdentity), {
+          baseItem.system.acquisition = mergeObject(baseItem.system.acquisition || {}, acquisitionMetaFor(rawEntry, domain.key, sessionId, selectionIdentity, selectionInstanceKey), {
             inplace: false,
             recursive: true,
             overwrite: false,
@@ -256,13 +292,37 @@ export class FeatTalentPlanBuilder {
             }
           }
 
-          baseItem.flags = mergeObject(baseItem.flags || {}, progressionFlagsFor(domain.key, rawEntry, sessionId, selectionIdentity, idx), {
+          let repeatableRank = null;
+          if (allowDuplicateForEntry && domain.key === 'talents') {
+            const rankKey = normalizeNameKey(resolvedName);
+            const generated = generatedRepeatableCounts.get(rankKey) || 0;
+            repeatableRank = countExistingTalentCopies(actor, resolvedName) + generated + 1;
+            generatedRepeatableCounts.set(rankKey, generated + 1);
+            const followerConfig = getFollowerTalentConfig(resolvedName, rawEntry)
+              || getFollowerTalentConfig(resolvedName, resolvedData)
+              || null;
+            baseItem.system.repeatable = true;
+            baseItem.system.repeatableRank = repeatableRank;
+            if (Number(followerConfig?.maxCount || 0) > 0) {
+              baseItem.system.repeatableMax = Number(followerConfig.maxCount);
+            }
+          }
+
+          baseItem.flags = mergeObject(baseItem.flags || {}, progressionFlagsFor(
+            domain.key,
+            rawEntry,
+            sessionId,
+            selectionIdentity,
+            selectionInstanceKey,
+            idx,
+            repeatableRank,
+          ), {
             inplace: false,
             recursive: true,
           });
 
           items.push(baseItem);
-          existingBySessionMarker.add(sessionMarker);
+          existingMarkers.exact.add(sessionMarker);
           if (!allowDuplicateForEntry) existingByTypeAndName.add(dedupeKey);
         }
       }
