@@ -1,14 +1,18 @@
 import { LanguageStep } from '/systems/foundryvtt-swse/scripts/apps/progression-framework/steps/language-step.js';
 import { FollowerLanguageStep } from '/systems/foundryvtt-swse/scripts/apps/progression-framework/steps/follower-steps/follower-language-step.js';
 import { FollowerStepBase } from '/systems/foundryvtt-swse/scripts/apps/progression-framework/steps/follower-steps/follower-step-base.js';
+import { TalentStep } from '/systems/foundryvtt-swse/scripts/apps/progression-framework/steps/talent-step.js';
 import { LanguageRegistry } from '/systems/foundryvtt-swse/scripts/registries/language-registry.js';
+import { TalentRegistry } from '/systems/foundryvtt-swse/scripts/registries/talent-registry.js';
+import { getFollowerTalentConfig } from '/systems/foundryvtt-swse/scripts/engine/crew/follower-talent-config.js';
 import { ActorEngine } from '/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js';
 import { swseLogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
 
-const REGISTERED = Symbol.for('swse.progressionChoiceLanguageHotfix.v1');
+const REGISTERED = Symbol.for('swse.progressionChoiceLanguageHotfix.v2');
 const LANGUAGE_PATCHED = Symbol.for('swse.progressionChoiceLanguageHotfix.languages.v1');
 const FOLLOWER_LANGUAGE_PATCHED = Symbol.for('swse.progressionChoiceLanguageHotfix.followerLanguages.v1');
 const FOLLOWER_BASE_PATCHED = Symbol.for('swse.progressionChoiceLanguageHotfix.followerBase.v1');
+const FOLLOWER_TALENT_PATCHED = Symbol.for('swse.progressionChoiceLanguageHotfix.followerTalents.v1');
 const SKILL_FOCUS_GUARD_FLAG = 'resolvedSkillFocusChoiceGuard';
 const MASKED_SKILL_FOCUS_NAME = '__SWSE_RESOLVED_SKILL_FOCUS__';
 
@@ -140,6 +144,69 @@ function patchFollowerLanguageCatalogAccess() {
   Object.defineProperty(proto, FOLLOWER_BASE_PATCHED, { value: true });
 }
 
+function decorateFollowerTalentEntry(entry) {
+  if (!entry) return entry;
+  const cfg = getFollowerTalentConfig(entry.name, entry);
+  if (!cfg) return entry;
+
+  entry.system ??= {};
+  entry.system.followerGrantingTalent = true;
+  entry.system.followerMaxCount = Number(cfg.maxCount ?? 0);
+  if (cfg.repeatable === true || Number(cfg.maxCount ?? 0) > 1) {
+    entry.repeatable = true;
+    entry.system.repeatable = true;
+    entry.system.canRepeat = true;
+    entry.system.allowDuplicates = true;
+  }
+  if (!entry.description && cfg.description) entry.description = cfg.description;
+  return entry;
+}
+
+function patchFollowerGrantingTalentRepeatability() {
+  const proto = TalentStep?.prototype;
+  if (!proto || proto[FOLLOWER_TALENT_PATCHED]) return;
+
+  // Decorate registry results so every existing TalentStep repeatability check,
+  // including graph node state and suggestion filtering, sees the same rule.
+  const originalNormalize = TalentRegistry._normalizeEntry?.bind(TalentRegistry);
+  if (originalNormalize && !TalentRegistry._normalizeEntry.__swseFollowerRepeatabilityPatch) {
+    const patchedNormalize = function patchedNormalizeFollowerTalent(doc) {
+      return decorateFollowerTalentEntry(originalNormalize(doc));
+    };
+    patchedNormalize.__swseFollowerRepeatabilityPatch = true;
+    TalentRegistry._normalizeEntry = patchedNormalize;
+  }
+
+  for (const entry of TalentRegistry._entries || []) decorateFollowerTalentEntry(entry);
+
+  const originalTakenElsewhere = proto._isTalentAlreadyTakenElsewhere;
+  proto._isTalentAlreadyTakenElsewhere = function patchedFollowerTalentDuplicateCheck(talent, shell) {
+    const cfg = getFollowerTalentConfig(talent?.name, talent);
+    if (!cfg || !(cfg.repeatable === true || Number(cfg.maxCount ?? 0) > 1)) {
+      return originalTakenElsewhere.call(this, talent, shell);
+    }
+
+    const target = normalizeToken(talent?.name);
+    const actorCount = Array.from(shell?.actor?.items || [])
+      .filter(item => item?.type === 'talent' && normalizeToken(item?.name) === target)
+      .length;
+    const pendingCount = this._getCommittedTalentSelections(shell)
+      .filter(selection => !this._entryMatchesCurrentSlot(selection))
+      .filter(selection => normalizeToken(selection?.name) === target)
+      .length;
+    const currentCount = actorCount + pendingCount;
+    const max = Number(cfg.maxCount ?? 0);
+
+    if (max > 0 && currentCount >= max) {
+      ui?.notifications?.warn?.(`${talent.name} may be selected no more than ${max} times.`);
+      return true;
+    }
+    return false;
+  };
+
+  Object.defineProperty(proto, FOLLOWER_TALENT_PATCHED, { value: true });
+}
+
 function registerResolvedSkillFocusGuard() {
   Hooks.on('preCreateItem', (item, data, options, userId) => {
     if (game?.user?.id !== userId) return;
@@ -221,5 +288,6 @@ export function registerProgressionChoiceLanguageHotfix() {
   patchLanguageSelectionDeduplication();
   patchFollowerLanguageRestoration();
   patchFollowerLanguageCatalogAccess();
+  patchFollowerGrantingTalentRepeatability();
   registerResolvedSkillFocusGuard();
 }
