@@ -12,6 +12,7 @@ import { SWSEStore } from "./scripts/apps/store/store-main.js";
 import * as SWSEData from "./scripts/core/swse-data.js";
 import { WorldDataLoader } from "./scripts/core/world-data-loader.js";
 import { SWSEV2BaseActor } from "./scripts/actors/v2/base-actor.js";
+import { SWSEItemBase } from "./scripts/items/base/swse-item-base.js";
 import { SWSECombatDocument } from "./scripts/combat/swse-combat.js";
 import { SWSECombatant } from "./scripts/combat/swse-combatant.js";
 import { registerSystemSettings } from "./scripts/core/settings.js";
@@ -107,6 +108,7 @@ Hooks.once("init", async () => {
   globalThis.SWSE.openEntityCreateBrowser = openEntityCreateBrowser;
 
   CONFIG.Actor.documentClass = SWSEV2BaseActor;
+  CONFIG.Item.documentClass = SWSEItemBase;
   CONFIG.Combat.documentClass = SWSECombatDocument;
   CONFIG.Combatant.documentClass = SWSECombatant;
   registerTokenNameSyncHooks();
