@@ -10,6 +10,7 @@
  */
 
 import { ProgressionContentAuthority } from '/systems/foundryvtt-swse/scripts/engine/progression/content/progression-content-authority.js';
+import { getFollowerTalentConfig } from '/systems/foundryvtt-swse/scripts/engine/crew/follower-talent-config.js';
 
 function normalizeNameKey(value) {
   return String(value ?? '')
@@ -91,7 +92,20 @@ function expandCombinedTalentGrantEntries(entry) {
 
 function isRepeatableTalentEntry(entry = {}, resolvedData = null) {
   const system = entry?.system || resolvedData?.system || {};
+  const resolvedName = resolvedData?.name || entry?.name || entry?.label || '';
+  const followerConfig = getFollowerTalentConfig(resolvedName, entry)
+    || getFollowerTalentConfig(resolvedName, resolvedData)
+    || null;
+
+  if (followerConfig?.repeatable === true || Number(followerConfig?.maxCount ?? 0) > 1) return true;
   if (entry?.repeatable === true || resolvedData?.repeatable === true || system.repeatable === true || system.canRepeat === true || system.allowDuplicates === true) return true;
+
+  const companionRules = [
+    ...(Array.isArray(entry?.system?.abilityMeta?.companionRules) ? entry.system.abilityMeta.companionRules : []),
+    ...(Array.isArray(resolvedData?.system?.abilityMeta?.companionRules) ? resolvedData.system.abilityMeta.companionRules : []),
+  ];
+  if (companionRules.some(rule => Number(rule?.repeatableMax ?? 0) > 1 || rule?.repeatable === true)) return true;
+
   const text = [
     entry?.name, entry?.description, entry?.benefit, entry?.special,
     resolvedData?.name, resolvedData?.description, resolvedData?.benefit, resolvedData?.special,
@@ -101,11 +115,14 @@ function isRepeatableTalentEntry(entry = {}, resolvedData = null) {
     if (typeof value === 'object') return value.value || value.text || value.raw || value.label || value.name || '';
     return String(value);
   }).join(' ').toLowerCase();
+
   return /(?:can|may)\s+(?:select|take|choose)\s+this\s+talent\s+multiple\s+times/.test(text)
     || /may\s+be\s+taken\s+multiple\s+times/.test(text)
     || /can\s+be\s+taken\s+multiple\s+times/.test(text)
     || /may\s+be\s+selected\s+multiple\s+times/.test(text)
-    || /taken\s+multiple\s+times/.test(text);
+    || /taken\s+multiple\s+times/.test(text)
+    || /(?:can|may)\s+(?:select|take|choose)\s+this\s+talent\s+up\s+to\s+(?:\d+|one|two|three|four|five)\s+times/.test(text)
+    || /(?:can|may)\s+be\s+(?:selected|taken|chosen)\s+up\s+to\s+(?:\d+|one|two|three|four|five)\s+times/.test(text);
 }
 
 function existingKeySet(actor) {
