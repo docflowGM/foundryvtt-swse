@@ -5,6 +5,7 @@ import { registerAttackDialogCombatCorrectionsHotfix } from '/systems/foundryvtt
 import { registerCombatUiBehaviorHotfixes } from '/systems/foundryvtt-swse/scripts/patches/combat-ui-behavior-hotfix.js';
 import { registerForceSuiteRenderGuardHotfix } from '/systems/foundryvtt-swse/scripts/patches/force-suite-render-guard-hotfix.js';
 import { registerProgressionChoiceLanguageHotfix } from '/systems/foundryvtt-swse/scripts/patches/progression-choice-language-hotfix.js';
+import { registerProgressionFeatChainHotfix } from '/systems/foundryvtt-swse/scripts/patches/progression-feat-chain-hotfix.js';
 import { registerFollowerSpeciesMaterializationHotfix } from '/systems/foundryvtt-swse/scripts/patches/follower-species-materialization-hotfix.js';
 import { registerFollowerSpeciesRepairHook } from '/systems/foundryvtt-swse/scripts/patches/follower-species-repair-hook.js';
 import { registerFollowerNpcSheetParityHotfix } from '/systems/foundryvtt-swse/scripts/patches/follower-npc-sheet-parity-hotfix.js';
@@ -20,6 +21,7 @@ registerCombatFeatureLegacyActionBridge();
 registerCombatUiBehaviorHotfixes();
 registerForceSuiteRenderGuardHotfix();
 registerProgressionChoiceLanguageHotfix();
+registerProgressionFeatChainHotfix();
 registerFollowerSpeciesMaterializationHotfix();
 registerFollowerSpeciesRepairHook();
 registerFollowerNpcSheetParityHotfix();
