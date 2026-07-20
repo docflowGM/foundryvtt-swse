@@ -11,6 +11,8 @@ import { registerFollowerSpeciesRepairHook } from '/systems/foundryvtt-swse/scri
 import { registerFollowerNpcSheetParityHotfix } from '/systems/foundryvtt-swse/scripts/patches/follower-npc-sheet-parity-hotfix.js';
 import { registerFollowerProgressionLiveStateHotfix } from '/systems/foundryvtt-swse/scripts/patches/follower-progression-live-state-hotfix.js';
 import { registerFollowerOrphanTransferHotfix } from '/systems/foundryvtt-swse/scripts/patches/follower-orphan-transfer-hotfix.js';
+import { registerFollowerRepeatableEntitlementHotfix } from '/systems/foundryvtt-swse/scripts/patches/follower-repeatable-entitlement-hotfix.js';
+import { registerFollowerDroidGarageHotfix } from '/systems/foundryvtt-swse/scripts/patches/follower-droid-garage-hotfix.js';
 import { registerCombatFeaturesPanelRenderer } from '/systems/foundryvtt-swse/scripts/engine/combat/features/combat-feature-panel-renderer.js';
 import { registerCombatFeatureActionRouter } from '/systems/foundryvtt-swse/scripts/engine/combat/features/combat-feature-action-router.js';
 import { registerCombatFeatureLegacyActionBridge } from '/systems/foundryvtt-swse/scripts/engine/combat/features/combat-feature-legacy-action-bridge.js';
@@ -29,5 +31,7 @@ registerFollowerSpeciesRepairHook();
 registerFollowerNpcSheetParityHotfix();
 registerFollowerProgressionLiveStateHotfix();
 registerFollowerOrphanTransferHotfix();
+registerFollowerRepeatableEntitlementHotfix();
+registerFollowerDroidGarageHotfix();
 registerCombatFeaturesPanelRenderer();
 registerCombatFeatureActionRouter();
