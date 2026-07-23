@@ -38,7 +38,29 @@ const CONTROLLERS = Object.freeze({
   'skill-challenges': GMSkillChallengeSurfaceController
 });
 
+const SURFACE_SELECTORS = Object.freeze({
+  approvals: '.gm-datapad-approvals',
+  bulletin: '.gm-datapad-bulletin',
+  healing: '.gm-datapad-healing',
+  jobs: '.gm-datapad-jobs',
+  'house-rules': '.gm-datapad-house-rules',
+  settings: '[data-shell-region="surface-settings"]',
+  store: '.gm-datapad-store',
+  trade: '.gm-datapad-trade',
+  workspace: '.gm-datapad-workspace',
+  factions: '.gm-datapad-factions',
+  intel: '.gm-datapad-intel',
+  locations: '.gm-datapad-locations',
+  'skill-challenges': '.gm-datapad-skill-challenges'
+});
+
 const ACTIVE = new WeakMap();
+
+function hasRenderedSurface(root, surfaceId) {
+  const selector = SURFACE_SELECTORS[surfaceId];
+  if (!selector) return true;
+  return Boolean(root?.matches?.(selector) || root?.querySelector?.(selector));
+}
 
 export class GMSurfaceControllerRegistry {
   static async bind({ surfaceId, host, root } = {}) {
@@ -52,6 +74,17 @@ export class GMSurfaceControllerRegistry {
     const Controller = CONTROLLERS[surfaceId];
     if (!Controller) return false;
 
+    if (!hasRenderedSurface(root, surfaceId)) {
+      const message = `GM Datapad rendered ${surfaceId}, but its expected surface root is missing.`;
+      console.error(`[SWSE] ${message}`, {
+        surfaceId,
+        selector: SURFACE_SELECTORS[surfaceId],
+        currentPage: host?.currentPage
+      });
+      globalThis.ui?.notifications?.error?.(`${message} Reload the Datapad and check the console.`);
+      return false;
+    }
+
     GMInteractionRepairService.bind({ surfaceId, host, root });
     const controller = GMControllerCompatibilityService.prepare({
       surfaceId,
@@ -63,7 +96,8 @@ export class GMSurfaceControllerRegistry {
       const attached = await controller.attach(root);
       if (attached === false) {
         controller.destroy?.();
-        console.warn(`[SWSE] GM Datapad controller did not find its rendered surface: ${surfaceId}`);
+        console.error(`[SWSE] GM Datapad controller explicitly declined its rendered surface: ${surfaceId}`);
+        globalThis.ui?.notifications?.error?.(`GM Datapad ${surfaceId} controls could not attach.`);
         return false;
       }
       ACTIVE.set(host, { surfaceId, controller });
