@@ -10,6 +10,8 @@
  * rolls, duplicate dialogs, and repeated action execution.
  */
 
+import { bindCharacterResourceEditor } from '/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet/resource-editor.js';
+
 /**
  * Register all event listeners for the character sheet
  * @param {SWSEV2CharacterSheet} sheet - The character sheet instance
@@ -19,4 +21,5 @@
 export function registerListeners(sheet, html, { signal } = {}) {
   if (!sheet || !html) return;
   sheet._activateListenersInternal(html, { signal });
+  bindCharacterResourceEditor(sheet, html, { signal });
 }
