@@ -1,6 +1,7 @@
 import { HolonetMessengerService } from '/systems/foundryvtt-swse/scripts/holonet/subsystems/holonet-messenger-service.js';
 import { mutateShellOnly } from '/systems/foundryvtt-swse/scripts/ui/shell/mutate-and-repaint.js';
 import { requestShellRender } from '/systems/foundryvtt-swse/scripts/ui/shell/request-shell-render.js';
+import { GMSmartFormDropService } from '/systems/foundryvtt-swse/scripts/ui/shell/gm/utils/gm-smart-form-drop-service.js';
 
 /**
  * Temporary compatibility repairs for controller/service contracts that drifted
@@ -13,6 +14,7 @@ export class GMControllerCompatibilityService {
 
     if (surfaceId === 'factions') this._repairFactionMutationContract(host, controller);
     if (surfaceId === 'jobs') this._repairJobStatusContract(host, controller);
+    if (surfaceId === 'locations') this._repairLocationsInitialization(controller);
 
     return controller;
   }
@@ -28,6 +30,24 @@ export class GMControllerCompatibilityService {
         reason,
         surfaceId: 'factions'
       });
+    };
+  }
+
+  static _repairLocationsInitialization(controller) {
+    const originalAttach = controller.attach.bind(controller);
+    controller.attach = async (root) => {
+      const attached = await originalAttach(root);
+      const pageElement = root?.querySelector?.('.gm-datapad-locations');
+      if (!pageElement) return false;
+
+      // The Locations template contains the same guided modal and smart document
+      // drop zones used by Intel/Factions, but the extracted Locations controller
+      // never initialized the shared service. Without it, modal viewport state,
+      // item/actor/scene drops, and several wizard affordances appear inert.
+      GMSmartFormDropService.bind(pageElement, {
+        signal: controller._abort?.signal
+      });
+      return attached === false ? false : true;
     };
   }
 
