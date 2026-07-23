@@ -20,6 +20,7 @@ import { GMIntelSurfaceController } from './GMIntelSurfaceController.js';
 import { GMLocationsSurfaceController } from './GMLocationsSurfaceController.js';
 import { GMSkillChallengeSurfaceController } from './GMSkillChallengeSurfaceController.js';
 import { GMInteractionRepairService } from '../GMInteractionRepairService.js';
+import { GMControllerCompatibilityService } from '../GMControllerCompatibilityService.js';
 
 const CONTROLLERS = Object.freeze({
   approvals: GMApprovalsSurfaceController,
@@ -52,11 +53,17 @@ export class GMSurfaceControllerRegistry {
     if (!Controller) return false;
 
     GMInteractionRepairService.bind({ surfaceId, host, root });
-    const controller = new Controller(host);
+    const controller = GMControllerCompatibilityService.prepare({
+      surfaceId,
+      host,
+      controller: new Controller(host)
+    });
+
     try {
       const attached = await controller.attach(root);
       if (attached === false) {
         controller.destroy?.();
+        console.warn(`[SWSE] GM Datapad controller did not find its rendered surface: ${surfaceId}`);
         return false;
       }
       ACTIVE.set(host, { surfaceId, controller });
