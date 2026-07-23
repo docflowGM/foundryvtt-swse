@@ -19,6 +19,8 @@ import { GMFactionRelationshipSurfaceController } from './GMFactionRelationshipS
 import { GMIntelSurfaceController } from './GMIntelSurfaceController.js';
 import { GMLocationsSurfaceController } from './GMLocationsSurfaceController.js';
 import { GMSkillChallengeSurfaceController } from './GMSkillChallengeSurfaceController.js';
+import { GMInteractionRepairService } from '../GMInteractionRepairService.js';
+import { GMControllerCompatibilityService } from '../GMControllerCompatibilityService.js';
 
 const CONTROLLERS = Object.freeze({
   approvals: GMApprovalsSurfaceController,
@@ -36,7 +38,29 @@ const CONTROLLERS = Object.freeze({
   'skill-challenges': GMSkillChallengeSurfaceController
 });
 
+const SURFACE_SELECTORS = Object.freeze({
+  approvals: '.gm-datapad-approvals',
+  bulletin: '.gm-datapad-bulletin',
+  healing: '.gm-datapad-healing',
+  jobs: '.gm-datapad-jobs',
+  'house-rules': '.gm-datapad-house-rules',
+  settings: '[data-shell-region="surface-settings"]',
+  store: '.gm-datapad-store',
+  trade: '.gm-datapad-trade-console',
+  workspace: '.gm-datapad-workspace',
+  factions: '.gm-datapad-factions',
+  intel: '.gm-datapad-intel',
+  locations: '.gm-datapad-locations',
+  'skill-challenges': '.swse-skill-challenge-surface'
+});
+
 const ACTIVE = new WeakMap();
+
+function hasRenderedSurface(root, surfaceId) {
+  const selector = SURFACE_SELECTORS[surfaceId];
+  if (!selector) return true;
+  return Boolean(root?.matches?.(selector) || root?.querySelector?.(selector));
+}
 
 export class GMSurfaceControllerRegistry {
   static async bind({ surfaceId, host, root } = {}) {
@@ -44,24 +68,52 @@ export class GMSurfaceControllerRegistry {
 
     const previous = ACTIVE.get(host);
     previous?.controller?.destroy?.();
+    GMInteractionRepairService.destroy(host);
     ACTIVE.delete(host);
 
     const Controller = CONTROLLERS[surfaceId];
     if (!Controller) return false;
 
-    const controller = new Controller(host);
-    const attached = await controller.attach(root);
-    if (attached === false) {
-      controller.destroy?.();
+    if (!hasRenderedSurface(root, surfaceId)) {
+      const message = `GM Datapad rendered ${surfaceId}, but its expected surface root is missing.`;
+      console.error(`[SWSE] ${message}`, {
+        surfaceId,
+        selector: SURFACE_SELECTORS[surfaceId],
+        currentPage: host?.currentPage
+      });
+      globalThis.ui?.notifications?.error?.(`${message} Reload the Datapad and check the console.`);
       return false;
     }
-    ACTIVE.set(host, { surfaceId, controller });
-    return true;
+
+    GMInteractionRepairService.bind({ surfaceId, host, root });
+    const controller = GMControllerCompatibilityService.prepare({
+      surfaceId,
+      host,
+      controller: new Controller(host)
+    });
+
+    try {
+      const attached = await controller.attach(root);
+      if (attached === false) {
+        controller.destroy?.();
+        console.error(`[SWSE] GM Datapad controller explicitly declined its rendered surface: ${surfaceId}`);
+        globalThis.ui?.notifications?.error?.(`GM Datapad ${surfaceId} controls could not attach.`);
+        return false;
+      }
+      ACTIVE.set(host, { surfaceId, controller });
+      return true;
+    } catch (error) {
+      controller.destroy?.();
+      console.error(`[SWSE] Failed to bind GM Datapad surface controller: ${surfaceId}`, error);
+      globalThis.ui?.notifications?.error?.(`GM Datapad ${surfaceId} controls failed to initialize. Check the console for details.`);
+      return false;
+    }
   }
 
   static destroy(host) {
     const previous = ACTIVE.get(host);
     previous?.controller?.destroy?.();
+    GMInteractionRepairService.destroy(host);
     ACTIVE.delete(host);
   }
 }
