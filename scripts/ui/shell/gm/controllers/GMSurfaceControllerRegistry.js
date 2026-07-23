@@ -19,6 +19,7 @@ import { GMFactionRelationshipSurfaceController } from './GMFactionRelationshipS
 import { GMIntelSurfaceController } from './GMIntelSurfaceController.js';
 import { GMLocationsSurfaceController } from './GMLocationsSurfaceController.js';
 import { GMSkillChallengeSurfaceController } from './GMSkillChallengeSurfaceController.js';
+import { GMInteractionRepairService } from '../GMInteractionRepairService.js';
 
 const CONTROLLERS = Object.freeze({
   approvals: GMApprovalsSurfaceController,
@@ -44,24 +45,35 @@ export class GMSurfaceControllerRegistry {
 
     const previous = ACTIVE.get(host);
     previous?.controller?.destroy?.();
+    GMInteractionRepairService.destroy(host);
     ACTIVE.delete(host);
 
     const Controller = CONTROLLERS[surfaceId];
     if (!Controller) return false;
 
     const controller = new Controller(host);
-    const attached = await controller.attach(root);
-    if (attached === false) {
+    try {
+      const attached = await controller.attach(root);
+      if (attached === false) {
+        controller.destroy?.();
+        return false;
+      }
+      GMInteractionRepairService.bind({ surfaceId, host, root });
+      ACTIVE.set(host, { surfaceId, controller });
+      return true;
+    } catch (error) {
       controller.destroy?.();
+      GMInteractionRepairService.destroy(host);
+      console.error(`[SWSE] Failed to bind GM Datapad surface controller: ${surfaceId}`, error);
+      globalThis.ui?.notifications?.error?.(`GM Datapad ${surfaceId} controls failed to initialize. Check the console for details.`);
       return false;
     }
-    ACTIVE.set(host, { surfaceId, controller });
-    return true;
   }
 
   static destroy(host) {
     const previous = ACTIVE.get(host);
     previous?.controller?.destroy?.();
+    GMInteractionRepairService.destroy(host);
     ACTIVE.delete(host);
   }
 }
