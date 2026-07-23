@@ -8,6 +8,8 @@ import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-e
 import { DropResolutionEngine } from "/systems/foundryvtt-swse/scripts/engine/interactions/drop-resolution-engine.js";
 import { AdoptionEngine } from "/systems/foundryvtt-swse/scripts/engine/interactions/adoption-engine.js";
 import { AdoptOrAddDialog } from "/systems/foundryvtt-swse/scripts/apps/adopt-or-add-dialog.js";
+import { cloneDroppedItemData } from "/systems/foundryvtt-swse/scripts/engine/interactions/dropped-item-clone.js";
+import { isForcePowerItem } from "/systems/foundryvtt-swse/scripts/utils/item-classification.js";
 
 /**
  * Add actor as relationship (linked reference)
@@ -18,10 +20,7 @@ async function addActorRelationship(sheet, actor) {
   const relationships = sheet.actor.system?.relationships ?? [];
   const alreadyLinked = relationships.some(r => r.uuid === actor.uuid);
 
-  if (alreadyLinked) {
-    // console.debug(`Already linked: ${actor.name}`);
-    return;
-  }
+  if (alreadyLinked) return;
 
   const mutationPlan = {
     update: {
@@ -39,7 +38,6 @@ async function addActorRelationship(sheet, actor) {
   try {
     await ActorEngine.apply(sheet.actor, mutationPlan);
   } catch (err) {
-    // console.error('Failed to add actor relationship:', err);
     ui?.notifications?.error?.(`Failed to add relationship: ${err.message}`);
   }
 }
@@ -64,7 +62,6 @@ async function adoptActor(sheet, sourceActor) {
     await ActorEngine.apply(sheet.actor, mutationPlan);
     ui?.notifications?.info?.(`${sheet.actor.name} adopted stat block from ${sourceActor.name}`);
   } catch (err) {
-    // console.error('Adoption failed:', err);
     ui?.notifications?.error?.(`Adoption failed: ${err.message}`);
   }
 }
@@ -75,12 +72,10 @@ async function adoptActor(sheet, sourceActor) {
  * @param {Actor} droppedActor - The dropped actor
  */
 async function handleActorDrop(sheet, droppedActor) {
-  // Cross-type or player drop: only add (no adoption)
   if (droppedActor.type !== sheet.actor.type || !game.user.isGM) {
     return addActorRelationship(sheet, droppedActor);
   }
 
-  // Same type + GM: show modal
   new AdoptOrAddDialog(droppedActor, async (choice) => {
     if (choice === "add") {
       await addActorRelationship(sheet, droppedActor);
@@ -106,6 +101,26 @@ async function maybePromptForFeatTalentGrant(sheet, item) {
   }
 }
 
+async function addSemanticForcePower(sheet, item) {
+  const data = cloneDroppedItemData(item);
+  const mutationPlan = {
+    createEmbedded: [{
+      type: 'Item',
+      data
+    }]
+  };
+
+  try {
+    await ActorEngine.apply(sheet.actor, mutationPlan);
+    sheet._pulseTab?.('force');
+    ui?.notifications?.info?.(`${item.name} added to ${sheet.actor.name}'s Force suite.`);
+    return true;
+  } catch (err) {
+    ui?.notifications?.error?.(`Failed to add Force Power: ${err.message}`);
+    return false;
+  }
+}
+
 /**
  * Handle drop events on the character sheet
  * @param {SWSEV2CharacterSheet} sheet - The character sheet instance
@@ -114,11 +129,9 @@ async function maybePromptForFeatTalentGrant(sheet, item) {
 export async function onDrop(sheet, event) {
   event.preventDefault();
 
-  // Extract drag data
   const data = TextEditor.getDragEventData(event);
   if (!data) return;
 
-  // Resolve the dropped document once so sheet-level intercepts can inspect it.
   let droppedDocument = null;
   try {
     droppedDocument = await DropResolutionEngine.resolveDroppedDocument(data);
@@ -126,14 +139,19 @@ export async function onDrop(sheet, event) {
     // Not a resolvable Foundry document; treat as a normal item drop attempt.
   }
 
-  // ACTOR DROP: Check if GM can adopt
   if (droppedDocument && droppedDocument.documentName === 'Actor') {
     return handleActorDrop(sheet, droppedDocument);
   }
 
-  // ITEM DROP: optionally intercept GM feat/talent grants before standard resolution.
   let acquisition = null;
   if (droppedDocument && droppedDocument.documentName === 'Item') {
+    // Some legacy/imported powers are stored as generic Item types but carry
+    // canonical FORCE_POWER execution metadata. Route those semantically so
+    // they are embedded and immediately appear in the Force suite.
+    if (isForcePowerItem(droppedDocument)) {
+      return addSemanticForcePower(sheet, droppedDocument);
+    }
+
     acquisition = await maybePromptForFeatTalentGrant(sheet, droppedDocument);
     if (acquisition === false) return;
   }
@@ -144,21 +162,14 @@ export async function onDrop(sheet, event) {
     acquisition
   });
 
-  // If no plan (duplicate or invalid), silently skip
   if (!result || !result.mutationPlan) return;
 
-  // Apply mutations via sovereign ActorEngine
   try {
     await ActorEngine.apply(sheet.actor, result.mutationPlan);
-    // UI feedback: pulse the target tab
-    if (result.uiTargetTab) {
-      sheet._pulseTab(result.uiTargetTab);
-    }
+    if (result.uiTargetTab) sheet._pulseTab(result.uiTargetTab);
   } catch (err) {
-    // console.error('Drop application failed:', err);
     ui?.notifications?.error?.(`Failed to add dropped item: ${err.message}`);
   }
 }
 
-// Export helper functions for external use
 export { handleActorDrop, addActorRelationship, adoptActor };
