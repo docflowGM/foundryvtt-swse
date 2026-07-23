@@ -46,12 +46,12 @@ const SURFACE_SELECTORS = Object.freeze({
   'house-rules': '.gm-datapad-house-rules',
   settings: '[data-shell-region="surface-settings"]',
   store: '.gm-datapad-store',
-  trade: '.gm-datapad-trade',
+  trade: '.gm-datapad-trade-console',
   workspace: '.gm-datapad-workspace',
   factions: '.gm-datapad-factions',
   intel: '.gm-datapad-intel',
   locations: '.gm-datapad-locations',
-  'skill-challenges': '.gm-datapad-skill-challenges'
+  'skill-challenges': '.swse-skill-challenge-surface'
 });
 
 const ACTIVE = new WeakMap();
