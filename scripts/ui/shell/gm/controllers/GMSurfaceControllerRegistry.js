@@ -51,6 +51,7 @@ export class GMSurfaceControllerRegistry {
     const Controller = CONTROLLERS[surfaceId];
     if (!Controller) return false;
 
+    GMInteractionRepairService.bind({ surfaceId, host, root });
     const controller = new Controller(host);
     try {
       const attached = await controller.attach(root);
@@ -58,12 +59,10 @@ export class GMSurfaceControllerRegistry {
         controller.destroy?.();
         return false;
       }
-      GMInteractionRepairService.bind({ surfaceId, host, root });
       ACTIVE.set(host, { surfaceId, controller });
       return true;
     } catch (error) {
       controller.destroy?.();
-      GMInteractionRepairService.destroy(host);
       console.error(`[SWSE] Failed to bind GM Datapad surface controller: ${surfaceId}`, error);
       globalThis.ui?.notifications?.error?.(`GM Datapad ${surfaceId} controls failed to initialize. Check the console for details.`);
       return false;
