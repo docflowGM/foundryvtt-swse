@@ -221,12 +221,11 @@ export class ForceRegimenExecutor {
       const resolvedEffect = resolvedTier?.effect || (success ? text(regimen.system?.effect || regimen.system?.summary || '') : 'Regimen check failed. No effect resolved.');
 
       const forcePointBonus = Number(rollResult.forcePointBonus ?? rollResult.breakdown?.forcePointBonus ?? 0) || 0;
-      if (useForce && forcePointBonus > 0) {
-        const currentFP = SchemaAdapters.getForcePoints(actor);
-        await ActorEngine.updateActor(actor, SchemaAdapters.setForcePointsUpdate(Math.max(0, currentFP - 1)), {
-          source: 'force-regimen-force-point-spend'
-        });
-      }
+      // RollCore.execute() already spent the Force Point for the bonus die
+      // (via ForcePointSpendCoordinator/ActorEngine.spendForcePoints) before
+      // rolling above. Do not spend it again here — this used to be an ad hoc
+      // actor.update() compensating for RollCore not paying for its own
+      // bonus, and now double-spends.
 
       if (!resolvedTier) {
         await ActorEngine.updateEmbeddedDocuments(actor, 'Item', [{

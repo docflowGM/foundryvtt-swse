@@ -26,6 +26,7 @@ import {
   resolveArmorData
 } from "/systems/foundryvtt-swse/scripts/items/armor-data-resolver.js";
 import { EffectIntentEngine } from "/systems/foundryvtt-swse/scripts/dialogs/entity-dialog/effect-intent-engine.js";
+import { buildSourceBreakdown, buildModifierLedger } from "/systems/foundryvtt-swse/scripts/engine/effects/modifiers/modifier-breakdown-builder.js";
 
 export class ModifierEngine {
 
@@ -557,6 +558,101 @@ export class ModifierEngine {
       }
     });
     return ModifierUtils.calculateModifierTotal(applicableModifiers, target);
+  }
+
+  /**
+   * Resolve every modifier applicable to one target/domain in a single pass,
+   * returning the total together with the exact applied/suppressed modifier
+   * sets that produced it.
+   *
+   * PHASE 1 rolling-system alignment fix: RollCore previously computed
+   * modifierTotal via aggregateTarget() and a separately-filtered (and
+   * domain-blind) breakdown via its own _buildModifierBreakdown(), so the
+   * displayed breakdown could include modifiers that were never part of the
+   * total. This method is the single resolution pass both must be built
+   * from: total, breakdown, and ledger are all derived from the same
+   * `applied` array, so their sum is equal by construction.
+   *
+   * @param {Actor} actor
+   * @param {string} target - Domain key, e.g. "skill.acrobatics"
+   * @param {Object} options
+   * @param {Object} [options.context={}] - Roll/action context
+   * @returns {Promise<Object>} { total, applied, suppressed, breakdown, ledger, target, context }
+   */
+  static async resolveTarget(actor, target, options = {}) {
+    const context = options?.context ?? {};
+    const hasRuntimeContext = this._hasRuntimeContext(context);
+    const baseModifiers = await this.getAllModifiers(actor);
+    const contextualModifiers = hasRuntimeContext
+      ? this.getEffectIntentModifiersForContext(actor, { context, includeBroad: false })
+      : [];
+    const allModifiers = [...baseModifiers, ...contextualModifiers];
+    return this._resolveFromModifierList(actor, allModifiers, target, context);
+  }
+
+  /**
+   * Same single-pass resolution as resolveTarget(), but over a caller-supplied
+   * modifier list instead of re-collecting from the actor. Used by roll paths
+   * that skip static/sheet modifiers (skipStaticModifiers) and only want to
+   * resolve their already-collected contextual modifiers for one domain.
+   *
+   * @param {Actor} actor
+   * @param {Array<Object>} modifiers - Pre-collected modifiers to resolve.
+   * @param {string} target - Domain key
+   * @param {Object} [context={}]
+   * @returns {Object} { total, applied, suppressed, breakdown, ledger, target, context }
+   */
+  static resolveTargetFromModifiers(actor, modifiers, target, context = {}) {
+    return this._resolveFromModifierList(actor, modifiers ?? [], target, context);
+  }
+
+  /**
+   * @private
+   * Shared single-pass resolution: filter to target, apply context/condition
+   * rules, resolve stacking, then build total/breakdown/ledger from the exact
+   * same `applied` array. See resolveTarget()/resolveTargetFromModifiers().
+   */
+  static _resolveFromModifierList(actor, allModifiers, target, context = {}) {
+    const targetMatches = (allModifiers || []).filter(mod => mod && mod.target === target);
+    const enabledTargeted = targetMatches.filter(mod => mod.enabled);
+    const suppressed = targetMatches
+      .filter(mod => !mod.enabled)
+      .map(mod => ({ modifier: mod, reason: 'disabled' }));
+
+    const contextAllowed = [];
+    for (const mod of enabledTargeted) {
+      const isContextualIntent = mod?.source === ModifierSource.EFFECT && Array.isArray(mod?.conditions) && mod.conditions.some(cond => String(cond || '').includes(':'));
+      const allowed = isContextualIntent
+        ? this.isModifierAllowedInContext(actor, mod, context, { staticSheet: false })
+        : this.isModifierAllowedInContext(actor, mod, {}, { staticSheet: true });
+      if (!allowed) {
+        suppressed.push({ modifier: mod, reason: 'context' });
+        continue;
+      }
+      try {
+        const conditionsOk = ConditionEvaluator.evaluateAll(actor, mod.conditions, isContextualIntent ? context : undefined);
+        if (!conditionsOk) {
+          suppressed.push({ modifier: mod, reason: 'condition' });
+          continue;
+        }
+      } catch (_err) {
+        // Mirror aggregateTarget(): a failed condition evaluation does not
+        // suppress the modifier.
+      }
+      contextAllowed.push(mod);
+    }
+
+    const applied = ModifierUtils.resolveStacking(contextAllowed);
+    const appliedSet = new Set(applied);
+    for (const mod of contextAllowed) {
+      if (!appliedSet.has(mod)) suppressed.push({ modifier: mod, reason: 'stacking' });
+    }
+
+    const total = ModifierUtils.sumModifiers(applied);
+    const breakdown = buildSourceBreakdown(applied);
+    const ledger = buildModifierLedger(applied, suppressed, target);
+
+    return { total, applied, suppressed, breakdown, ledger, target, context };
   }
 
   /**

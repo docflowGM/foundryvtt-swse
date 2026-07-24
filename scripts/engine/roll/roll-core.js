@@ -1,17 +1,8 @@
 import { ModifierEngine } from "/systems/foundryvtt-swse/scripts/engine/effects/modifiers/ModifierEngine.js";
 import ModifierUtils from "/systems/foundryvtt-swse/scripts/engine/effects/modifiers/ModifierUtils.js";
-import { ForcePointsService } from "/systems/foundryvtt-swse/scripts/engine/force/force-points-service.js";
+import { buildSourceBreakdown, buildModifierLedger } from "/systems/foundryvtt-swse/scripts/engine/effects/modifiers/modifier-breakdown-builder.js";
+import { ForcePointSpendCoordinator } from "/systems/foundryvtt-swse/scripts/engine/force/force-point-spend-coordinator.js";
 import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
-
-const DIE_STEPS = Object.freeze(['d4', 'd6', 'd8', 'd10', 'd12']);
-
-function upgradeDieSize(dieSize = 'd6', steps = 0) {
-  const normalized = String(dieSize || 'd6').trim().toLowerCase();
-  const index = DIE_STEPS.indexOf(normalized);
-  if (index < 0) return normalized;
-  const offset = Math.max(0, Number(steps) || 0);
-  return DIE_STEPS[Math.min(DIE_STEPS.length - 1, index + offset)];
-}
 
 export class RollCore {
   static async execute(options = {}) {
@@ -34,22 +25,40 @@ export class RollCore {
 
     try {
       const skipStaticModifiers = rollOptions.skipStaticModifiers === true || context?.skipStaticModifiers === true;
-      const baseModifiers = skipStaticModifiers ? [] : await ModifierEngine.getAllModifiers(actor);
-      const contextualModifiers = ModifierEngine.getEffectIntentModifiersForContext(actor, {
-        context,
-        includeBroad: false
-      }).filter(modifier => ModifierEngine.isModifierAllowedInContext(actor, modifier, context, { staticSheet: false }));
-      const allModifiers = [...baseModifiers, ...contextualModifiers];
-      const modifierTotal = skipStaticModifiers
-        ? ModifierUtils.calculateModifierTotal(contextualModifiers, domain)
-        : await ModifierEngine.aggregateTarget(actor, domain, { context });
+
+      // Single resolution pass: modifierTotal, modifierBreakdown, and
+      // modifierLedger are always derived from the exact same applied
+      // modifier set, so the displayed breakdown can never disagree with
+      // the total that actually fed the roll formula (Phase 1 fix).
+      let modifierTotal;
+      let modifierBreakdown;
+      let modifierLedger;
+      let suppressedModifiers;
+      if (skipStaticModifiers) {
+        const contextualModifiers = ModifierEngine.getEffectIntentModifiersForContext(actor, {
+          context,
+          includeBroad: false
+        }).filter(modifier => ModifierEngine.isModifierAllowedInContext(actor, modifier, context, { staticSheet: false }));
+        modifierTotal = ModifierUtils.calculateModifierTotal(contextualModifiers, domain);
+        const domainFiltered = ModifierUtils.filterModifiers(contextualModifiers, domain, true);
+        const applied = ModifierUtils.resolveStacking(domainFiltered);
+        modifierBreakdown = buildSourceBreakdown(applied);
+        modifierLedger = buildModifierLedger(applied, [], domain);
+        suppressedModifiers = [];
+      } else {
+        const resolution = await ModifierEngine.resolveTarget(actor, domain, { context });
+        modifierTotal = resolution.total;
+        modifierBreakdown = resolution.breakdown;
+        modifierLedger = resolution.ledger;
+        suppressedModifiers = resolution.suppressed;
+      }
 
       const baseDice = rollOptions.baseDice || '1d20';
       const isTakeX = rollOptions.isTakeX || false;
       const takeXValue = rollOptions.takeXValue || 10;
 
       if (isTakeX) {
-        return this._handleTakeX({ actor, domain, baseDice, baseBonus, takeXValue, modifierTotal, allModifiers, context });
+        return this._handleTakeX({ actor, domain, baseDice, baseBonus, takeXValue, modifierTotal, modifierBreakdown, modifierLedger, suppressedModifiers, context });
       }
 
       let forcePointBonus = 0;
@@ -57,6 +66,9 @@ export class RollCore {
       let forcePointDetails = null;
       if (rollOptions.useForce) {
         const forceResult = await this.applyForcePointLogic(actor, rollOptions.forcePointCount || 1, {
+          reason: rollOptions.forcePointReason ?? domain,
+          domain,
+          context,
           dieUpgradeSteps: rollOptions.forcePointDieUpgradeSteps ?? context?.forcePointDieUpgrade?.steps ?? 0,
           dieUpgradeSource: rollOptions.forcePointDieUpgradeSource ?? context?.forcePointDieUpgrade?.source ?? null
         });
@@ -76,6 +88,12 @@ export class RollCore {
         roll = await this._executeRoll(formula, rollData);
       } catch (err) {
         swseLogger.error(`[RollCore] Roll execution failed for domain "${domain}":`, err);
+        // The Force Point (if any) was already spent to pay for forcePointBonus
+        // above; since this roll never happened, refund it rather than leaving
+        // the actor short a point for a bonus they never received.
+        if (forcePointDetails?.success && forcePointDetails.spent > 0) {
+          await this._refundForcePoints(actor, forcePointDetails.spent, 'main-roll-execution-failed');
+        }
         return { success: false, error: `Roll execution failed: ${err.message}`, domain, breakdown: {} };
       }
 
@@ -84,7 +102,9 @@ export class RollCore {
         baseRoll: baseRollResult,
         baseBonus,
         modifiers: modifierTotal,
-        modifierBreakdown: await this._buildModifierBreakdown(allModifiers, domain),
+        modifierBreakdown,
+        modifierLedger,
+        suppressedModifiers,
         forcePointBonus,
         forcePointDetails,
         total: roll.total
@@ -113,13 +133,15 @@ export class RollCore {
   }
 
   static async _handleTakeX(options) {
-    const { domain, takeXValue, baseBonus, modifierTotal, allModifiers, context } = options;
+    const { domain, takeXValue, baseBonus, modifierTotal, modifierBreakdown, modifierLedger, suppressedModifiers, context } = options;
     const result = takeXValue + baseBonus + modifierTotal;
     const breakdown = {
       baseRoll: takeXValue,
       baseBonus,
       modifiers: modifierTotal,
-      modifierBreakdown: await this._buildModifierBreakdown(allModifiers, domain),
+      modifierBreakdown,
+      modifierLedger,
+      suppressedModifiers,
       forcePointBonus: 0,
       total: result
     };
@@ -163,39 +185,62 @@ export class RollCore {
     }
   }
 
+  /**
+   * Roll and PAY FOR a Force Point bonus die as a single authoritative
+   * transaction (ForcePointSpendCoordinator). ActorEngine is the only code
+   * that ever mutates system.forcePoints.value; this method just asks the
+   * coordinator to validate, spend, and roll, then adapts the receipt to the
+   * shape RollCore.execute() consumes.
+   *
+   * `spent` only ever reflects Force Points actually deducted from the
+   * actor — never the requested amount — so callers cannot mistake a
+   * request for a payment.
+   */
   static async applyForcePointLogic(actor, pointsToSpend = 1, options = {}) {
-    if (!actor) return { success: false, bonus: 0, spent: 0, reason: 'No actor' };
+    const receipt = await ForcePointSpendCoordinator.rollAndSpend(actor, {
+      amount: pointsToSpend,
+      reason: options?.reason ?? 'roll',
+      domain: options?.domain ?? null,
+      context: options?.context ?? {},
+      dieUpgradeSteps: options?.dieUpgradeSteps ?? 0,
+      dieUpgradeSource: options?.dieUpgradeSource ?? null
+    });
 
-    if (!ForcePointsService.canSpend(actor, pointsToSpend)) {
-      const remaining = ForcePointsService.getRemaining(actor);
-      return { success: false, bonus: 0, spent: 0, reason: `Insufficient Force Points (have ${remaining}, need ${pointsToSpend})` };
+    if (!receipt.success) {
+      return {
+        success: false,
+        bonus: 0,
+        spent: receipt.spent,
+        requested: receipt.requested,
+        before: receipt.before,
+        after: receipt.after,
+        reason: receipt.reason
+      };
     }
 
-    const { diceCount, dieSize } = await ForcePointsService.getScalingDice(actor);
-    const dieUpgradeSteps = Math.max(0, Number(options?.dieUpgradeSteps ?? 0) || 0);
-    const finalDieSize = upgradeDieSize(dieSize, dieUpgradeSteps);
-    const forceDice = `${diceCount}${finalDieSize}`;
+    return {
+      success: true,
+      bonus: receipt.bonus,
+      spent: receipt.spent,
+      requested: receipt.requested,
+      before: receipt.before,
+      after: receipt.after,
+      diceUsed: receipt.diceUsed,
+      baseDieSize: receipt.baseDieSize,
+      dieSize: receipt.dieSize,
+      dieUpgradeSteps: receipt.dieUpgradeSteps,
+      dieUpgradeSource: receipt.dieUpgradeSource,
+      roll: receipt.roll
+    };
+  }
 
+  /** Refund Force Points already spent when a roll they paid for never completed. */
+  static async _refundForcePoints(actor, amount, refundReason) {
     try {
-      const fpRoll = new Roll(forceDice);
-      await fpRoll.evaluate();
-      const bonus = diceCount > 1
-        ? Math.max(...(fpRoll.dice?.[0]?.results ?? []).map(r => r.result))
-        : fpRoll.total;
-      return {
-        success: true,
-        bonus,
-        spent: pointsToSpend,
-        diceUsed: forceDice,
-        baseDieSize: dieSize,
-        dieSize: finalDieSize,
-        dieUpgradeSteps,
-        dieUpgradeSource: options?.dieUpgradeSource ?? null,
-        roll: fpRoll
-      };
+      const { ActorEngine } = await import("/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js");
+      await ActorEngine.gainForcePoints(actor, amount);
     } catch (err) {
-      swseLogger.error(`[RollCore] Force Point roll failed for die "${forceDice}":`, err);
-      return { success: false, bonus: 0, spent: 0, reason: `Force die roll failed: ${err.message}` };
+      swseLogger.error(`[RollCore] Failed to refund ${amount} Force Point(s) after ${refundReason}; actor may be short a point.`, err);
     }
   }
 
@@ -229,20 +274,6 @@ export class RollCore {
       swseLogger.warn('[RollCore] Could not extract base roll:', err);
       return 0;
     }
-  }
-
-  static async _buildModifierBreakdown(allModifiers, domain) {
-    const breakdown = {};
-    const bySource = {};
-    allModifiers.forEach(mod => {
-      if (!bySource[mod.source]) bySource[mod.source] = [];
-      bySource[mod.source].push(mod);
-    });
-    for (const [source, mods] of Object.entries(bySource)) {
-      const total = mods.reduce((sum, m) => sum + m.value, 0);
-      if (total !== 0) breakdown[source] = total;
-    }
-    return breakdown;
   }
 
   static async handleCriticalThreat(options = {}) {

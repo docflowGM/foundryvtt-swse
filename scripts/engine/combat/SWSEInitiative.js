@@ -11,7 +11,6 @@
  *   - Applying results to the Combat Tracker
  */
 
-import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { RollCore } from "/systems/foundryvtt-swse/scripts/engine/roll/roll-core.js";
 import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
 import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
@@ -241,14 +240,11 @@ export class SWSEInitiative {
     const forceBonus = rollResult.forcePointBonus || 0;
     const usedForce = forceBonus > 0;
 
-    if (usedForce) {
-      const fp = actor.system.forcePoints?.value ?? 0;
-      if (fp > 0) {
-        await ActorEngine.updateActor(actor, {
-          'system.forcePoints.value': Math.max(0, fp - 1)
-        });
-      }
-    }
+    // RollCore.execute() already spent the Force Point (via
+    // ForcePointSpendCoordinator/ActorEngine.spendForcePoints) as part of
+    // rolling the bonus die above. Do not spend it again here — this used to
+    // be a compensating ad hoc actor.update() that predated RollCore actually
+    // paying for its own bonus, and now double-spends.
 
     let chatRoll = rollResult.roll;
     if (!chatRoll && rollResult.isTakeX) {
