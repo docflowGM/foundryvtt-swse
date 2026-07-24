@@ -11,6 +11,7 @@
 import { EncounterUseTracker } from "/systems/foundryvtt-swse/scripts/engine/feats/encounter-use-tracker.js";
 import { isForcePowerItem } from "/systems/foundryvtt-swse/scripts/utils/item-classification.js";
 import { AttackOutcomeResolver } from "/systems/foundryvtt-swse/scripts/engine/combat/attack-outcome-resolver.js";
+import { AttackRollDiagnostics } from "/systems/foundryvtt-swse/scripts/engine/combat/attack-roll-diagnostics.js";
 function normalizeName(value) {
   return String(value ?? '').trim().toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
 }
@@ -572,7 +573,8 @@ export class MetaResourceFeatResolver {
         : newOutcome.hit
           ? 'Hit'
           : 'Miss';
-    await createChatMessage({
+    const revision = (Number(message?.getFlag?.('swse', 'revision')) || 0) + 1;
+    const newMessage = await createChatMessage({
       user: game.user?.id,
       speaker: ChatMessage.getSpeaker({ actor }),
       content: `
@@ -604,12 +606,43 @@ export class MetaResourceFeatResolver {
           // stale hit/critical data.
           attackOutcome: newOutcome,
           weaponId: button.dataset.weaponId || null,
-          sourceMessageId: message?.id ?? null
+          sourceMessageId: message?.id ?? null,
+          revision,
+          authoritative: true
         }
       }
     });
 
-    return { actor, message, sourceName, originalTotal, newRoll, finalTotal, outcome, attackOutcome: newOutcome };
+    // Mark the original attack message as superseded so it cannot be used
+    // as a second, independently-actionable outcome (Phase 3 rolling-system
+    // alignment). Best-effort: the new reroll result above is already
+    // created and returned regardless of whether this update succeeds.
+    if (message?.id && newMessage?.id) {
+      try {
+        await message.update({
+          'flags.swse.authoritative': false,
+          'flags.swse.superseded': true,
+          'flags.swse.supersededBy': newMessage.id,
+          'flags.swse.supersededReason': 'reroll',
+          content: `${message.content ?? ''}<div class="swse-superseded-banner"><i class="fa-solid fa-rotate"></i> Superseded by a reroll — see the newer message for the current result.</div>`
+        });
+      } catch (err) {
+        console.warn('[SWSE] Failed to mark original attack message as superseded after reroll; treat the newest reroll message as authoritative.', err);
+        ui?.notifications?.warn?.('Reroll succeeded, but the original attack card could not be updated. The reroll result above is authoritative.');
+      }
+    }
+
+    AttackRollDiagnostics.record({
+      domain: 'combat.attack.reroll',
+      attackType: actor?.type === 'vehicle' ? 'vehicle' : 'character',
+      actor,
+      naturalD20: finalNaturalD20,
+      finalTotal,
+      outcome: newOutcome,
+      transactions: { forcePointSpent: cost === 'forcePoint' }
+    });
+
+    return { actor, message, newMessage, sourceName, originalTotal, newRoll, finalTotal, outcome, attackOutcome: newOutcome, revision };
   }
 
   static getTemporaryDefenseRules(actor) {

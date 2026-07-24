@@ -306,7 +306,23 @@ export async function rollAttack(actor, weapon, options = {}) {
     roll,
     actor,
     flavor: `${weapon.name} Attack Roll (Bonus ${atkBonus >= 0 ? '+' : ''}${atkBonus})`,
-    flags: { swse: { attackRoll: true, weaponId: weapon.id, attackRerollOptions, workflowContext: damageWorkflowContext, targetEffectsOnHit: optionModifiers.targetEffectsOnHit || [], targetEffectsOnCritical: optionModifiers.targetEffectsOnCritical || [], actionOptionSpend } },
+    flags: { swse: {
+      attackRoll: true,
+      weaponId: weapon.id,
+      attackRerollOptions,
+      workflowContext: damageWorkflowContext,
+      targetEffectsOnHit: optionModifiers.targetEffectsOnHit || [],
+      targetEffectsOnCritical: optionModifiers.targetEffectsOnCritical || [],
+      actionOptionSpend,
+      // Reroll-supersession state (Phase 3 rolling-system alignment): a
+      // successful reroll (meta-resource-feat-resolver.js
+      // resolveAttackRerollButton) flips authoritative to false and stamps
+      // superseded/supersededBy here.
+      authoritative: true,
+      superseded: false,
+      supersededBy: null,
+      revision: 0
+    } },
     context: {
       type: 'attack',
       weaponId: weapon.id,
@@ -389,10 +405,17 @@ export async function rollAttack(actor, weapon, options = {}) {
 
   AttackRollDiagnostics.record({
     domain: 'combat.attack',
-    attackType: actor?.type === 'vehicle' ? 'vehicle' : 'character',
+    // A vehicle attack fired through a resolved crew member (Phase 3
+    // rolling-system alignment: scripts/sheets/v2/vehicle-sheet/crew-skill-router.js
+    // rollVehicleCrewSkill) passes `actor` as the operator, not the vehicle,
+    // so BAB/ability/proficiency are correctly sourced from the crew member.
+    // vehicleActor/crewStation are carried through rollOptions purely for
+    // diagnostics in that case.
+    attackType: actor?.type === 'vehicle' || rollOptions?.vehicleActor ? 'vehicle' : 'character',
     actor,
-    vehicleActor: actor?.type === 'vehicle' ? actor : null,
-    operator: rollOptions?.operator ?? rollOptions?.gunner ?? null,
+    vehicleActor: rollOptions?.vehicleActor ?? (actor?.type === 'vehicle' ? actor : null),
+    operator: rollOptions?.operator ?? rollOptions?.gunner ?? (actor?.type !== 'vehicle' ? actor : null),
+    crewStation: rollOptions?.crewStation ?? null,
     item: weapon,
     target,
     naturalD20: d20,
@@ -577,7 +600,18 @@ export async function rollAttackAndDamageWithNarration(actor, weapon, options = 
     roll: attackRoll,
     actor,
     flavor: `${weapon.name} Attack Roll (Bonus ${atkBonus >= 0 ? '+' : ''}${atkBonus})`,
-    flags: { swse: { attackRoll: true, weaponId: weapon.id, attackRerollOptions, targetEffectsOnHit: optionModifiers.targetEffectsOnHit || [], targetEffectsOnCritical: optionModifiers.targetEffectsOnCritical || [], actionOptionSpend } },
+    flags: { swse: {
+      attackRoll: true,
+      weaponId: weapon.id,
+      attackRerollOptions,
+      targetEffectsOnHit: optionModifiers.targetEffectsOnHit || [],
+      targetEffectsOnCritical: optionModifiers.targetEffectsOnCritical || [],
+      actionOptionSpend,
+      authoritative: true,
+      superseded: false,
+      supersededBy: null,
+      revision: 0
+    } },
     context: {
       type: 'attack',
       weaponId: weapon.id,

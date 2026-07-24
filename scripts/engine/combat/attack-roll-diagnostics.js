@@ -40,6 +40,7 @@ export const AttackRollDiagnostics = {
         vehicleActorId: snapshot.vehicleActor?.id ?? null,
         operator: snapshot.operator?.name ?? null,
         operatorId: snapshot.operator?.id ?? null,
+        crewStation: snapshot.crewStation ?? null,
         item: snapshot.item?.name ?? null,
         itemId: snapshot.item?.id ?? null,
         target: snapshot.target?.name ?? null,

@@ -4,7 +4,10 @@ import { rollAttack } from "/systems/foundryvtt-swse/scripts/combat/rolls/attack
 
 const STATION_SKILLS = {
   pilot: [
-    { key: 'pilot', label: 'Pilot', use: 'Maneuver' }
+    { key: 'pilot', label: 'Pilot', use: 'Maneuver' },
+    // Fixed-forward, pilot-operated weapon mounts (vehicle-weapon items with
+    // system.crewRole/crewPosition === 'pilot') fire from this station.
+    { key: 'attack', label: 'Attack', use: 'Fire Weapon' }
   ],
   copilot: [
     { key: 'pilot', label: 'Pilot', use: 'Aid Pilot' },
@@ -109,17 +112,38 @@ function getCrewEntry(vehicle, stationKey) {
   return owned.find((candidate) => candidate?.position === stationKey || candidate?.role === stationKey) ?? null;
 }
 
+/**
+ * Resolve the operator/crew actor for one vehicle crew station.
+ *
+ * `source` distinguishes three cases that Phase 2 audit work found were
+ * silently collapsed into one another:
+ * - 'actor': the station has an assigned crew reference and it resolved to
+ *   a real actor. Use this actor's own stats.
+ * - 'unassigned': the station has no crew reference at all. This is the
+ *   legitimate abstract Crew Quality case (SWSE vehicles with no named
+ *   gunner use a flat crew-quality bonus instead).
+ * - 'invalid': the station HAS a crew reference, but it failed to resolve
+ *   (e.g. the assigned actor was deleted, or the UUID/id is stale). This is
+ *   a data-integrity problem, not an intentional abstract-crew choice, and
+ *   must not be silently treated the same as 'unassigned' — callers should
+ *   warn rather than quietly rolling as generic crew quality under a
+ *   deleted actor's stale name.
+ *
+ * @param {Actor} vehicle
+ * @param {string} stationKey
+ * @returns {Promise<{actor: Actor|null, entry: Object|string|null, label: string, source: 'actor'|'unassigned'|'invalid'}>}
+ */
 export async function resolveVehicleCrewActor(vehicle, stationKey) {
   const entry = getCrewEntry(vehicle, stationKey);
   if (!entry) {
-    return { actor: null, entry: null, label: 'Crew Quality', source: 'fallback' };
+    return { actor: null, entry: null, label: 'Crew Quality', source: 'unassigned' };
   }
 
   if (typeof entry === 'string') {
     const fromDirectUuid = await actorFromUuid(entry);
     const fromDirectId = actorFromId(entry);
     const actor = fromDirectUuid || fromDirectId;
-    return { actor, entry, label: actor?.name || entry, source: actor ? 'actor' : 'fallback' };
+    return { actor, entry, label: actor?.name || entry, source: actor ? 'actor' : 'invalid' };
   }
 
   const actor = await actorFromUuid(entry.uuid) || actorFromId(entry.id) || actorFromId(entry.actorId);
@@ -127,7 +151,7 @@ export async function resolveVehicleCrewActor(vehicle, stationKey) {
     actor,
     entry,
     label: actor?.name || entry.name || entry.label || 'Crew Quality',
-    source: actor ? 'actor' : 'fallback'
+    source: actor ? 'actor' : 'invalid'
   };
 }
 
@@ -172,6 +196,15 @@ export async function rollVehicleCrewSkill(vehicle, stationKey, skillKey, option
   const actor = resolution.actor;
   const stationLabel = stationKey.charAt(0).toUpperCase() + stationKey.slice(1);
 
+  // An 'invalid' source means the station HAS an assignment that failed to
+  // resolve (e.g. a deleted actor) — a data-integrity problem, not the
+  // intentional abstract-crew-quality case ('unassigned'). Warn instead of
+  // silently rolling as generic crew quality under a stale reference.
+  if (resolution.source === 'invalid') {
+    ui?.notifications?.warn?.(`${stationLabel} assignment on ${vehicle.name} could not be resolved (the assigned crew member may have been deleted). Reassign crew before rolling, or clear the station to use Crew Quality.`);
+    return { actor: null, fallback: false, invalidCrew: true, stationKey, skillKey: normalizedSkill, resolution };
+  }
+
   if (normalizedSkill === 'attack') {
     const weaponId = options.weaponId;
     const weapon = weaponId ? getVehicleWeapon(vehicle, weaponId) : null;
@@ -180,7 +213,11 @@ export async function rollVehicleCrewSkill(vehicle, stationKey, skillKey, option
       return null;
     }
     if (actor) {
-      const roll = await rollAttack(actor, weapon);
+      // vehicleActor/operator are carried through purely for diagnostics
+      // (AttackRollDiagnostics) — rollAttack() itself always uses `actor`
+      // (the resolved crew member) as the attacking actor for BAB/ability/
+      // proficiency, never the vehicle.
+      const roll = await rollAttack(actor, weapon, { vehicleActor: vehicle, operator: actor, crewStation: stationKey });
       ui?.notifications?.info?.(`${actor.name} fires ${weapon.name} from ${vehicle.name}.`);
       return { roll, actor, fallback: false, stationKey, skillKey: normalizedSkill, weapon };
     }
