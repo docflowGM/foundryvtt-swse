@@ -244,6 +244,19 @@ export class SWSEVehicleCore {
 
   /**
    * Rolls weapon attack and (optional) damage.
+   *
+   * Phase 2 rolling-system alignment audit (docs/audits/rolling-system-alignment-phase-2.md):
+   * confirmed this method has no callers anywhere in the active codebase —
+   * vehicle weapon attacks from the live V2 vehicle sheet go through the same
+   * shared SWSERoll.rollAttack() -> attacks.js rollAttack() pipeline
+   * character attacks use (already aligned with AttackOutcomeResolver in
+   * Phase 1). This method predates that and uses a flat, pre-computed
+   * `system.combat.attack.bonus` with a manual "did it hit?" GM confirm
+   * dialog instead of comparing to a target's defense, so there is no
+   * automated hit/critical/natural-1/20 decision here to migrate — doing so
+   * would mean inventing target/defense handling this function was never
+   * given. Left in place as unused legacy code; do not wire new callers to
+   * it without first verifying it against the live vehicle attack pipeline.
    */
   static async rollWeapon(vehicle, weaponItem) {
     if (!vehicle) {

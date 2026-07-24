@@ -18,8 +18,6 @@ import {
   RollHistory,
   TalentBonusCache,
   showRollModifiersDialog,
-  analyzeCriticalThreat,
-  rollCriticalConfirmation,
   rollConcealmentCheck
 } from "/systems/foundryvtt-swse/scripts/rolls/roll-config.js";
 import {
@@ -34,6 +32,12 @@ import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
 import { MetaResourceFeatResolver } from "/systems/foundryvtt-swse/scripts/engine/feats/meta-resource-feat-resolver.js";
 import { ReactionEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/reactions/reaction-engine.js";
 import { rollSkillCheck as canonicalRollSkillCheck } from "/systems/foundryvtt-swse/scripts/rolls/skills.js";
+// Phase 2 rolling-system alignment: SWSE does not use a critical-confirmation
+// roll. AttackOutcomeResolver (Phase 1) is the single authority for natural-1/
+// natural-20/critical-threat interpretation; it replaces the old confirmation-
+// roll helpers formerly used by this file's rollAutofire()/rollFullAttack()
+// (see docs/audits/rolling-system-alignment-phase-2.md).
+import { AttackOutcomeResolver } from "/systems/foundryvtt-swse/scripts/engine/combat/attack-outcome-resolver.js";
 
 
 
@@ -599,27 +603,29 @@ export class SWSERoll {
       const roll = await this._safeRoll(formula);
       if (!roll) {return null;}
 
-      // Analyze critical threat (even for autofire)
-      const d20 = mode === "take10" ? 10 : roll.dice[0].results[0].result;
-      const critAnalysis = analyzeCriticalThreat(weapon, d20, roll.total);
-      let critConfirmed = false;
+      const d20 = roll.dice?.[0]?.results?.[0]?.result ?? null;
+      const critRange = getEffectiveCritRange(actor, weapon);
       const critMultiplier = getCriticalMultiplier(actor, weapon);
 
-      if (critAnalysis.isThreat && !critAnalysis.isNat20) {
-        critConfirmed = await rollCriticalConfirmation(actor, weapon, context.attackBonus);
-      } else if (critAnalysis.isNat20) {
-        critConfirmed = true;
-      }
-
-      // Process damage for each target
+      // Process damage for each target. One shared d20/attack roll, but each
+      // target gets its own AttackOutcomeResolver verdict against its own
+      // defense — SWSE does not use a critical-confirmation roll, and a
+      // natural 1/20 on the shared roll applies to every target uniformly.
       const targetResults = [];
 
       if (context.targets && context.targets.length > 0) {
         for (const target of context.targets) {
           const targetReflex = target.system?.defenses?.reflex?.total ?? 10;
 
-          // Determine if hit or miss
-          const isHit = roll.total >= targetReflex;
+          const outcome = AttackOutcomeResolver.resolve({
+            naturalD20: d20,
+            total: roll.total,
+            targetDefense: targetReflex,
+            criticalThreshold: critRange,
+            critMultiplier
+          });
+          const isHit = outcome.hit;
+          const critConfirmed = outcome.critical;
 
           // Roll damage
           let damageRoll = null;
@@ -689,6 +695,7 @@ export class SWSERoll {
             roll: roll.total,
             targetReflex,
             isHit,
+            outcome,
             damageRoll,
             finalDamage,
             damageType,
@@ -898,10 +905,8 @@ export class SWSERoll {
         const critRange = getEffectiveCritRange(actor, weapon);
         const critMultiplier = getCriticalMultiplier(actor, weapon);
 
-        // Analyze critical threat
-        const critAnalysis = analyzeCriticalThreat(d20, critRange);
-
-        // Check concealment
+        // Check concealment (a separate miss-chance mechanic, not a
+        // critical-confirmation roll — preserved as-is).
         let concealmentHit = true;
         const missChance = getConcealmentMissChance(options.concealment || 'none');
         if (missChance > 0) {
@@ -909,27 +914,19 @@ export class SWSERoll {
           concealmentHit = concealResult.hit;
         }
 
-        // Determine hit/miss
-        const isHit = targetReflex !== null
-          ? roll.total >= targetReflex && concealmentHit
-          : null;
-
-        // Handle critical confirmation
-        let critConfirmed = critAnalysis.autoConfirmed;
-        let confirmationRoll = null;
-
-        if (critAnalysis.needsConfirmation && isHit !== false && targetReflex !== null) {
-          const confirmResult = await rollCriticalConfirmation({
-            actor,
-            weapon,
-            attackBonus: totalBonus,
-            targetDefense: targetReflex,
-            fpBonus: 0, // FP already applied to main roll
-            originalD20: d20
-          });
-          confirmationRoll = confirmResult.roll;
-          critConfirmed = confirmResult.confirmed;
-        }
+        // AttackOutcomeResolver is the single authority for natural-1/
+        // natural-20/critical-threat interpretation — SWSE does not use a
+        // separate critical-confirmation roll. Concealment is layered on top
+        // as an independent miss-chance check, same as before.
+        const outcome = AttackOutcomeResolver.resolve({
+          naturalD20: d20,
+          total: roll.total,
+          targetDefense: targetReflex,
+          criticalThreshold: critRange,
+          critMultiplier
+        });
+        const isHit = outcome.hit === null ? null : (outcome.hit && concealmentHit);
+        const critConfirmed = outcome.critical;
 
         const attackResult = {
           roll,
@@ -942,11 +939,11 @@ export class SWSERoll {
           weapon,
           label: attack.label,
           source: attack.source,
-          isNat20: critAnalysis.isNat20,
-          isCritThreat: critAnalysis.isThreat,
+          isNat20: outcome.automaticHit,
+          isCritThreat: outcome.criticalThreat,
           critConfirmed,
           critMultiplier,
-          confirmationRoll,
+          outcome,
           targetReflex,
           isHit,
           concealmentMiss: !concealmentHit

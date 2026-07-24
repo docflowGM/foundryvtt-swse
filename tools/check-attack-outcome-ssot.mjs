@@ -46,14 +46,29 @@ const ALLOWLIST = new Set([
   'scripts/engine/combat/full-attack-executor.js' // consumes rollAttack()'s outcome-derived isHit/isCritical, does not compute them
 ]);
 
-// Pre-existing duplicate hit/critical logic, confirmed during the Phase 1
-// audit (docs/audits/rolling-system-alignment-phase-1.md) and intentionally
-// left out of this pass per the "do not rewrite the entire combat system"
-// constraint. Reported, not hidden — remove entries here only once a file is
-// migrated to AttackOutcomeResolver.
+// Pre-existing duplicate hit/critical logic. scripts/combat/rolls/enhanced-rolls.js
+// (Phase 1 known debt) was migrated to AttackOutcomeResolver in Phase 2 and
+// removed from this list. The remaining entries were confirmed during the
+// Phase 2 audit (docs/audits/rolling-system-alignment-phase-2.md) and
+// intentionally left out of that pass per the "do not rewrite the entire
+// combat system" constraint:
+//   - combat-executor.js#resolveHit(): independent isHit compare; caller
+//     liveness not traced yet.
+//   - swse-roll-engine.js: isCritical re-derivation for chat component
+//     formatting (display, not a hit/miss authority).
+//   - roll-companion.js: defensive fallback that already prefers an upstream
+//     authoritative flag before re-deriving from d20 === 20.
+//   - force-executor.js / force-regimen-executor.js: `isCritical = ... === 20`
+//     is Use-the-Force/Force-Regimen "critical success" flavor, not a weapon
+//     attack critical — a naming collision, not an attack-outcome duplicate.
+// Reported, not hidden — remove entries here only once a file is migrated to
+// (or confirmed unrelated to) AttackOutcomeResolver.
 const KNOWN_DEBT = new Set([
-  'scripts/combat/rolls/enhanced-rolls.js',
-  'scripts/rolls/roll-config.js'
+  'scripts/engine/combat/combat-executor.js',
+  'scripts/engine/rolls/swse-roll-engine.js',
+  'scripts/ui/shell/roll-companion.js',
+  'scripts/engine/force/force-executor.js',
+  'scripts/engine/force/force-regimen-executor.js'
 ]);
 
 const HIT_ASSIGNMENT = /\b(?:const|let)\s+(isHit|isCritical|hits|critConfirmed)\s*=\s*[^;]*(?:>=|===)\s*(?:targetReflex|targetDefense|target(?:'s)?[A-Za-z]*Defense|20)\b/;
