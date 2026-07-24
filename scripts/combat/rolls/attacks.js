@@ -21,6 +21,7 @@ import {
 import { AttackOutcomeResolver } from "/systems/foundryvtt-swse/scripts/engine/combat/attack-outcome-resolver.js";
 import { buildLedgerFromComponents, buildInvocationLedgerEntry } from "/systems/foundryvtt-swse/scripts/engine/effects/modifiers/modifier-breakdown-builder.js";
 import { AttackRollDiagnostics } from "/systems/foundryvtt-swse/scripts/engine/combat/attack-roll-diagnostics.js";
+import { resolveVehicleAttackBonus } from "/systems/foundryvtt-swse/scripts/engine/combat/vehicle-attack-math.js";
 
 // ============================================
 // FILE: rolls/attacks.js (Upgraded for SWSE v13+)
@@ -233,21 +234,45 @@ export async function rollAttack(actor, weapon, options = {}) {
   }
 
   const sequencePenalty = Number(rollOptions.sequencePenalty ?? 0);
-  // resolveAttackBonus provides the canonical total; roll-invocation-only
-  // modifiers (fightingDefensively, customModifier, situationalBonus,
-  // sequencePenalty) are intentionally added here, not inside the resolver.
-  const attackBonusResolution = resolveAttackBonus(actor, weapon, null, rollOptions);
+  // A vehicle attack (fired by a resolved crew member — see
+  // vehicle-sheet/crew-skill-router.js#rollVehicleCrewSkill) uses the
+  // authoritative vehicle formula (Gunner BAB + Vehicle INT modifier +
+  // Range modifier + individually-labeled misc components) instead of the
+  // generic character resolveAttackBonus(), whose "ability modifier"
+  // component defaults to the gunner's own Dex/Str — never the vehicle's
+  // Intelligence modifier.
+  const isVehicleAttack = Boolean(rollOptions.vehicleActor);
+  let attackBonusResolution;
+  if (isVehicleAttack) {
+    attackBonusResolution = await resolveVehicleAttackBonus(actor, rollOptions.vehicleActor, weapon, rollOptions);
+    for (const warning of attackBonusResolution.warnings ?? []) {
+      console.warn(`[SWSE] Vehicle attack formula: ${warning}`);
+    }
+    if (attackBonusResolution.error) {
+      if (ammoSpend?.spent) await AmmoSystem.rollbackSpend(actor, weapon, ammoSpend);
+      await actionOptionSpend?.rollback?.();
+      ui?.notifications?.error?.(attackBonusResolution.error === 'invalid-vehicle-actor'
+        ? 'Vehicle attack could not be resolved: the vehicle actor is missing or invalid, so its Intelligence modifier cannot be sourced.'
+        : 'Vehicle attack could not be resolved: no valid gunner/operator actor.');
+      return null;
+    }
+  } else {
+    attackBonusResolution = resolveAttackBonus(actor, weapon, null, rollOptions);
+  }
   const fightingDefensivelyPenalty = getFightingDefensivelyAttackPenalty(actor, rollOptions);
   const atkBonus = attackBonusResolution.total + fightingDefensivelyPenalty + Number(rollOptions.customModifier || 0) + Number(rollOptions.situationalBonus || 0) + sequencePenalty;
   // Component ledger: baseline (resolver) components plus invocation-only
   // additions, clearly separated so a tooltip never claims an invocation-only
-  // modifier is part of the static weapon baseline.
+  // modifier is part of the static weapon baseline. Vehicle attacks already
+  // arrive in full ledger shape from resolveVehicleAttackBonus(); character
+  // attacks are adapted from the legacy {label: value} map.
+  const attackLedgerDomain = isVehicleAttack ? 'vehicle.attack' : 'combat.attack';
   const attackComponentLedger = [
-    ...buildLedgerFromComponents(attackBonusResolution.components, 'combat.attack', 'baseline'),
-    buildInvocationLedgerEntry('fighting-defensively', 'Fighting Defensively', fightingDefensivelyPenalty, 'combat.attack'),
-    buildInvocationLedgerEntry('custom-modifier', 'Custom Modifier', rollOptions.customModifier, 'combat.attack'),
-    buildInvocationLedgerEntry('situational-bonus', 'Situational Bonus', rollOptions.situationalBonus, 'combat.attack'),
-    buildInvocationLedgerEntry('sequence-penalty', 'Sequence Penalty', sequencePenalty, 'combat.attack')
+    ...(isVehicleAttack ? attackBonusResolution.ledger : buildLedgerFromComponents(attackBonusResolution.components, 'combat.attack', 'baseline')),
+    buildInvocationLedgerEntry('fighting-defensively', 'Fighting Defensively', fightingDefensivelyPenalty, attackLedgerDomain),
+    buildInvocationLedgerEntry('custom-modifier', 'Custom Modifier', rollOptions.customModifier, attackLedgerDomain),
+    buildInvocationLedgerEntry('situational-bonus', 'Situational Bonus', rollOptions.situationalBonus, attackLedgerDomain),
+    buildInvocationLedgerEntry('sequence-penalty', 'Sequence Penalty', sequencePenalty, attackLedgerDomain)
   ].filter(Boolean);
 
   const rollFormula = `1d20 + ${atkBonus}`;

@@ -168,14 +168,28 @@ skill), regardless of who was actually assigned as gunner.
 
 ## Final aligned vehicle formula
 
-Unchanged math — `combat-roll-math.js#resolveAttackBonus()` was **not**
-rewritten (per the explicit "do not rewrite combat-roll-math.js" and "do
-not guess at SWSE vehicle rules" constraints). What changed is **which actor
-that same, already-correct formula is evaluated for**: the resolved crew
-member (gunner, or pilot for a pilot-operated mount) instead of the vehicle.
-This is a data-plumbing fix, not a new rule — the formula components (BAB +
-ability + enhancement + range penalty + proficiency + ...) are exactly the
-Phase 1-documented character formula, now fed the right actor.
+**Superseded by this addendum.** When this section was first written, the
+operator-resolution fix above (routing the attack through the resolved crew
+member instead of the vehicle actor) was believed sufficient, and this
+section originally claimed the underlying math was "unchanged" — i.e. that
+feeding `combat-roll-math.js#resolveAttackBonus()` the crew member instead
+of the vehicle actor was itself enough to make a vehicle weapon attack
+correct. **That claim was wrong**, and is corrected below rather than left
+standing: `resolveAttackBonus()`'s "ability modifier" component is computed
+by `getWeaponAttackAbility(actor, weapon)`, which has no vehicle/INT branch
+at all and defaults ranged weapons to the *attacking actor's own Dex*. Once
+the operator fix above made that `actor` the gunner (correctly, for BAB),
+the same call silently used the **gunner's own Dex modifier** as the
+weapon's ability-modifier component — never the vehicle's Intelligence
+modifier, which SWSE vehicle weapon rules require. This was not caught by
+the original numeric-result review because no fixture in that pass ever set
+a gunner Dex and vehicle INT to different values; the two would need to
+differ for the bug to be numerically visible, and this pass makes no claim
+of correctness based on a matching number rather than a verified source.
+
+See "Authoritative vehicle attack formula (formula correction)" immediately
+below for the corrected formula, the exact prior/corrected calculation, the
+required component ledger shape, and the tests proving the correction.
 
 **Not implemented, not guessed:** vehicle-specific additive modifiers that
 have no established source in this codebase — a vehicle size modifier, an
@@ -189,6 +203,180 @@ returns either a real actor OR a fallback marker, never both — but no
 explicit rule citation was verified this phase). These gaps are documented
 in "Suspected defects not confirmed" and "Remaining Phase 4 work", not
 invented.
+
+## Authoritative vehicle attack formula (formula correction)
+
+```
+Vehicle Attack Total = 1d20 + Gunner BAB + Vehicle INT modifier
+                        + Range modifier + applicable miscellaneous modifiers
+```
+
+This is a **hard constraint**, supplied directly rather than inferred: the
+gunner's own ability modifier (Dex or otherwise) is never substituted for
+the vehicle's Intelligence modifier; the vehicle actor's own BAB is never
+used; the pilot's BAB is used only when the pilot is the actual operator of
+that specific weapon (already true by construction — see
+"Operator-resolution precedence"); an assigned gunner's BAB is never stacked
+with the abstract Crew Quality bonus (already mutually exclusive — see
+"Crew-quality handling"); the vehicle's raw Intelligence score is never
+added directly, only its modifier, converted exactly once via
+`SchemaAdapters.getAbilityMod(vehicleActor, 'int')`; the range modifier
+keeps its sign and is computed exactly once; and every miscellaneous
+modifier is its own separately-labeled ledger component, never collapsed
+into one aggregate value.
+
+### Prior calculation (incorrect)
+
+For a vehicle attack after the operator-resolution fix but before this
+addendum:
+
+```
+attackBonus = resolveAttackBonus(gunnerActor, weapon, null, rollOptions).total
+            = gunnerBAB + getAbilityMod(gunnerActor, getWeaponAttackAbility(gunnerActor, weapon))
+              + weaponEnhancement + rangePenalty + ... (other gunner-scoped terms)
+```
+
+`getWeaponAttackAbility()` (`combat-stat-rules.js`) has no vehicle branch:
+
+```js
+const defaultAbility = isRangedWeapon(weapon) && !isMeleeWeapon(weapon) ? 'dex' : 'str';
+```
+
+So the "ability modifier" term above resolved to **the gunner's own Dex (or
+Str) modifier** — correct for a character firing a personal weapon, wrong
+for a gunner firing a vehicle-mounted weapon, whose ability-modifier
+component SWSE vehicle rules source from the *vehicle's* Intelligence, not
+the operator's own ability score.
+
+### Corrected calculation
+
+`scripts/engine/combat/vehicle-attack-math.js#resolveVehicleAttackBonus(gunnerActor, vehicleActor, weapon, context)`:
+
+```
+gunnerBab           = SchemaAdapters.getBAB(gunnerActor)                         // unchanged, was already correct
+vehicleIntModifier  = SchemaAdapters.getAbilityMod(vehicleActor, 'int')          // NEW — replaces the gunner-ability term
+rangeModifier       = getRangePenalty(weapon, context)                           // unchanged, was already correct
+miscComponents      = every other nonzero component resolveAttackBonus() already
+                       computed correctly for gunnerActor (enhancement, proficiency,
+                       condition/attack penalty, talents, combat options, feats,
+                       active-effect intents, scoped feats), reused verbatim, each
+                       as its own ledger entry
+                     + any modifier registered against the distinct 'vehicle.attack'
+                       domain via ModifierEngine.resolveTarget(gunnerActor, 'vehicle.attack', ...)
+
+finalAttackBonus = gunnerBab + vehicleIntModifier + rangeModifier + sum(applied miscComponents)
+finalAttackTotal = naturalD20 + finalAttackBonus
+```
+
+The gunner's own ability-modifier component (`Ability (DEX)` / `Ability
+(STR)` / whichever `getWeaponAttackAbility()` resolves) is explicitly
+excluded from the reused component set — it is not merely deprioritized, it
+is never added anywhere in the vehicle path.
+
+### Component ledger shape
+
+Every component is its own entry, matching
+`{id, label, value, category, sourceId, sourceName, domain, applied, reason}`
+(the same shape `modifier-breakdown-builder.js#buildLedgerFromComponents`
+already produces for the character path, extended with explicit
+`category`/`reason` semantics for the vehicle formula):
+
+```js
+[
+  { id: 'gunner-bab', label: 'Gunner BAB', value: 4, category: 'gunner',
+    sourceId: 'actorId', sourceName: 'Ace Gunner', domain: 'vehicle.attack',
+    applied: true, reason: 'SchemaAdapters.getBAB(gunnerActor) — the resolved crew member, never the vehicle actor or abstract crew.' },
+  { id: 'vehicle-int', label: 'Vehicle INT', value: 2, category: 'vehicle',
+    sourceId: 'vehicleActorId', sourceName: 'YT-1300', domain: 'vehicle.attack',
+    applied: true, reason: 'SchemaAdapters.getAbilityMod(vehicleActor, "int") — vehicle Intelligence, converted once, never the gunner\'s own ability modifier.' },
+  { id: 'range', label: 'Range', value: -5, category: 'range',
+    sourceId: 'weaponId', sourceName: 'Laser Cannon', domain: 'vehicle.attack',
+    applied: true, reason: 'getRangePenalty helper; range band: medium. Sign preserved; resolved once.' }
+  // ...one entry per nonzero misc component, individually labeled and categorized
+]
+```
+
+`finalAttackBonus` is computed as `ledger.filter(e => e.applied).reduce((sum, e) => sum + e.value, 0)` —
+by construction, equal to the sum of the entries shown, so removing any one
+applied entry changes the total by exactly that entry's value, and a
+suppressed entry (`applied: false`, e.g. a stacking-suppressed effect
+modifier from `ModifierEngine.resolveTarget()`) is visible in the ledger but
+never contributes to the total.
+
+### Formula component table
+
+| Component | Required Source | Actual Pre-Change Source (before this addendum) | Final Source (this addendum) | Status |
+|---|---|---|---|---|
+| d20 | `1d20` | `1d20` (unchanged, `RollEngine.safeRoll`) | `1d20` | correct |
+| Gunner BAB | `SchemaAdapters.getBAB(gunnerActor)` | `SchemaAdapters.getBAB(gunnerActor)` via `resolveAttackBonus()` (correct after the Phase 3 operator fix) | Reused verbatim from `resolveAttackBonus()`, labeled `gunner-bab` | correct |
+| Vehicle INT modifier | `SchemaAdapters.getAbilityMod(vehicleActor, 'int')` | `SchemaAdapters.getAbilityMod(gunnerActor, getWeaponAttackAbility(...))` — the **gunner's own** Dex/Str modifier, not vehicle INT | `SchemaAdapters.getAbilityMod(vehicleActor, 'int')`, labeled `vehicle-int` | **incorrect (pre-change) → fixed** |
+| Range modifier | `getRangePenalty(weapon, context)`, sign preserved, applied once | `getRangePenalty(weapon, context)` via `resolveAttackBonus()` (already correct and sign-preserving) | Same helper, reused, labeled `range`, still applied exactly once | correct |
+| Weapon enhancement | Weapon item flat attack bonus | `getWeaponFlatAttackBonus(weapon)` via `resolveAttackBonus()` | Reused verbatim as an individually-labeled misc entry (`category: 'weapon'`) | correct |
+| Proficiency penalty | Gunner's own weapon proficiency | `actorIsProficientForAttack(gunnerActor, weapon)` via `resolveAttackBonus()` | Reused verbatim (`category: 'operator'`) | correct |
+| Condition-track / attack penalty | Gunner's own condition track | `actor.system.derived.damage.conditionPenalty` for `gunnerActor` | Reused verbatim (`category: 'condition'`) | ambiguous — not verified whether SWSE vehicle combat should read the gunner's or the vehicle's condition track; preserved unchanged, not guessed |
+| Talents/feats/combat options/effect intents | Gunner-scoped, individually labeled | Computed correctly by `resolveAttackBonus()` but collapsed into that resolver's single `total` for the attack-bonus math (the character-path ledger already labels them individually via `buildLedgerFromComponents`) | Reused verbatim, each its own ledger entry (`category` per component taxonomy) | correct |
+| Registered `vehicle.attack`-domain modifiers | `ModifierEngine.resolveTarget(gunnerActor, 'vehicle.attack', ...)` | Did not exist — no domain-specific vehicle modifier resolution existed before this addendum | Added; resolved once against `gunnerActor` only (not also against `vehicleActor`, to avoid double-applying an effect registered on both) | missing (pre-change) → added |
+| Vehicle size modifier | Unknown — no rules text supplied | Not implemented | Not implemented | dead-path only / unresolved — no source, not guessed |
+| Fire-control/emplacement bonus | Unknown — no rules text supplied | Captured for display only (`vehicleMount.fireControl`), never read by any resolver | Unchanged — still display-only | dead-path only / unresolved |
+| Abstract Crew Quality bonus | Mutually exclusive with a named gunner's stats | `CREW_QUALITY_BONUS` flat bonus, only reached when no gunner is assigned (`rollFallback()`), bypasses this resolver entirely | Unchanged — still a separate, mutually exclusive code path; not decomposed into this formula (no evidence for how it should decompose) | dead-path only relative to this formula / unresolved by design |
+| NPC flat attack-bonus override | Unknown — no rules text supplied for combining with vehicle formula | `resolveAttackBonus()`'s `npc?.useFlat` branch returns a single flat total | Detected and passed through unchanged (`npc-flat-override` ledger entry), formula decomposition skipped | ambiguous — preserved, not guessed |
+
+**Plain statement, as required:** the live pre-change vehicle attack
+pathway (i.e. the code as it stood after this phase's operator-resolution
+fix but before this formula addendum) did **not** follow the required
+formula — its ability-modifier component was the gunner's own Dex/Str, not
+the vehicle's Intelligence modifier. This is now corrected in
+`vehicle-attack-math.js#resolveVehicleAttackBonus()`, wired into the live
+path at `scripts/combat/rolls/attacks.js#rollAttack()` (branches on
+`Boolean(rollOptions.vehicleActor)`, which is only ever set by
+`crew-skill-router.js#rollVehicleCrewSkill()`'s resolved-actor branch — the
+same call site the Phase 3 operator fix already wired).
+
+### Compatibility impact
+
+- Character (non-vehicle) attacks are untouched: `isVehicleAttack` is only
+  `true` when `rollOptions.vehicleActor` is present, which only
+  `rollVehicleCrewSkill()` ever sets.
+- Vehicle attack numeric totals **will change** for any existing
+  vehicle/gunner pairing where the gunner's Dex/Str modifier differs from
+  the vehicle's Intelligence modifier — this is the intended effect of the
+  fix, not a regression.
+- `rollAttackAndDamageWithNarration()` (a second `resolveAttackBonus()` call
+  site in the same file) is **not** branched — grepped and confirmed to have
+  zero callers anywhere in the codebase (dead code, consistent with the
+  Phase 2 dead-facade findings), so it cannot carry a live vehicle attack and
+  was left unchanged rather than edited for no reachable benefit.
+- Abstract Crew Quality attacks (`rollFallback()`) are unaffected — they
+  never reach `resolveVehicleAttackBonus()`.
+- The reroll path (`meta-resource-feat-resolver.js`) re-rolls
+  `1d20 + <already-resolved bonus>` from the captured formula string; it
+  does not recompute the vehicle formula, so a reroll of a vehicle attack
+  correctly reuses the corrected bonus rather than re-deriving it (or
+  silently reverting to the old gunner-ability computation).
+
+### Tests proving the correction
+
+`tests/phase3-vehicle-attack-formula.test.mjs` — 20 static assertions
+mapped one-to-one to the requested formula-validation properties: exact
+formula composition; gunner BAB (not vehicle BAB) sourced from
+`gunnerActor`; vehicle INT (not gunner INT) sourced from `vehicleActor` via
+`getAbilityMod` called exactly once; the gunner's own ability-modifier
+component explicitly excluded from the misc-component loop; pilot-BAB-only-
+when-pilot-operates enforced by `weapon.crewRole`-driven station resolution;
+no gunner/abstract-crew stacking (mutually exclusive `if (actor) {...}
+return rollFallback(...)` branches); range sign preserved and
+`getRangePenalty` called exactly once (not duplicated between the resolver
+and `attacks.js`); each misc component gets its own `ledger.push()`; the
+total is a `.filter(applied).reduce(sum)` over the ledger (so removing one
+component changes the total by exactly that value, and suppressed entries
+are excluded); invalid gunner/vehicle actors return a structured failure
+(`error: 'invalid-gunner-actor'` / `'invalid-vehicle-actor'`) with an empty
+ledger rather than a silent substitution, and `attacks.js` rolls back
+ammo/action-option spend on that failure exactly like the pre-existing
+ammo-failure branch; the roll formula, `AttackOutcomeResolver.resolve()`
+call, and `SWSEChat.postRoll()` call are each single, unbranched call sites
+downstream of the bonus resolution; and the reroll path reuses the captured
+formula string rather than calling `resolveVehicleAttackBonus()` again.
 
 ## Operator-resolution precedence
 
@@ -246,7 +434,7 @@ bypass in "Suspected defects not confirmed" below.
 | Component | Source (aligned pathway) | Notes |
 |---|---|---|
 | Base attack bonus (BAB) | `SchemaAdapters.getBAB(resolvedOperatorActor)` | Now the crew member's BAB, not the vehicle's (was always 0). |
-| Ability modifier | `SchemaAdapters.getAbilityMod(resolvedOperatorActor, ability)` | Now the crew member's ability score. |
+| Ability modifier | `SchemaAdapters.getAbilityMod(vehicleActor, 'int')` (vehicle Intelligence, **not** an operator ability score) | **Corrected by this addendum** — until "Authoritative vehicle attack formula" below, this row (and the live code) used the operator's own ability modifier via `getWeaponAttackAbility()`, which has no vehicle branch. See that section for the prior/corrected calculation and formula table. |
 | Weapon attack bonus (enhancement) | `combat-roll-math.js` `getWeaponFlatAttackBonus(weapon)` | Unchanged; reads the weapon item. |
 | Vehicle/starship size modifier | **Not implemented** | No existing source found in `combat-roll-math.js`; not guessed. |
 | Crew quality modifier | `crew-skill-router.js` `CREW_QUALITY_BONUS` | Only applied in the no-named-gunner fallback path, which bypasses `AttackOutcomeResolver` entirely (see above). |
@@ -428,6 +616,12 @@ already serves that role for the pieces implemented this phase.
    attack outcomes for the same declared attack. **Fixed** — the original
    is marked superseded, visibly banner-annotated (best-effort), and its
    damage actions now refuse to run.
+5. **This addendum:** even after defect #1's operator fix, a live vehicle
+   weapon attack's "ability modifier" component was the resolved gunner's
+   own Dex/Str modifier (via `getWeaponAttackAbility()`, which has no
+   vehicle branch), never the vehicle's Intelligence modifier required by
+   the authoritative vehicle attack formula. **Fixed** — see "Authoritative
+   vehicle attack formula (formula correction)" above.
 
 ## Suspected defects not confirmed
 
@@ -461,16 +655,31 @@ already serves that role for the pieces implemented this phase.
 
 ## Architecture decisions
 
-No new modules for operator resolution or vehicle attack math — extended
-the pre-existing, already-correct `resolveVehicleCrewActor()`/
-`rollVehicleCrewSkill()` in `crew-skill-router.js`, and simply **connected**
-it to the UI (a missing event listener), rather than building a parallel
-"vehicle attack context normalizer." This is a stronger fit for "use
-existing project conventions where equivalent structures already exist"
-than inventing new context-shape code would have been. `AttackOutcomeResolver`,
-`ModifierEngine.resolveTarget()`, `RollCore`, and `ForcePointSpendCoordinator`
-are unchanged and untouched — the vehicle fix works entirely by changing
-*which actor* the existing, unmodified pipeline is called with.
+No new modules for operator resolution — extended the pre-existing,
+already-correct `resolveVehicleCrewActor()`/`rollVehicleCrewSkill()` in
+`crew-skill-router.js`, and simply **connected** it to the UI (a missing
+event listener), rather than building a parallel "vehicle attack context
+normalizer." This is a stronger fit for "use existing project conventions
+where equivalent structures already exist" than inventing new context-shape
+code would have been. `AttackOutcomeResolver`, `ModifierEngine.resolveTarget()`,
+`RollCore`, and `ForcePointSpendCoordinator` are unchanged and untouched —
+the operator fix works entirely by changing *which actor* the existing,
+unmodified pipeline is called with.
+
+**One new module, for the formula addendum only:**
+`scripts/engine/combat/vehicle-attack-math.js#resolveVehicleAttackBonus()`.
+This is the one place in this phase's work where a new module was the
+right call rather than the wrong one, because the character formula
+(`combat-roll-math.js#resolveAttackBonus()`) is explicitly off-limits for a
+wholesale rewrite ("do not rewrite combat-roll-math.js"), and the vehicle
+formula is a hard constraint that genuinely differs from it in exactly one
+component. The new module does not reimplement attack math: it calls the
+unmodified `resolveAttackBonus()` for everything except the ability-modifier
+component, and only that one term is replaced and re-labeled. `attacks.js`
+branches to it solely on `Boolean(rollOptions.vehicleActor)` — the same
+signal the Phase 3 operator fix already threads through from
+`rollVehicleCrewSkill()` — so no new context-detection logic was invented
+either.
 
 Reroll supersession extends the existing `flags.swse` chat-message
 convention (no new schema-version field, no migration helper — the
@@ -532,6 +741,18 @@ Foundry's module loader — confirmed pre-existing, unrelated to this pass.
   `SWSE.debug.attackRolls`.
 - `tests/reroll-supersession-guard-check.test.mjs` — smoke-tests the new
   guard script in both report and `--strict` mode.
+- `tests/phase3-vehicle-attack-formula.test.mjs` — **this addendum.** 20
+  static assertions, one per requested formula-validation property (see
+  "Tests proving the correction" above for the full mapping): exact formula
+  composition, gunner-BAB-not-vehicle-BAB, vehicle-INT-not-gunner-ability,
+  gunner ability explicitly excluded, pilot-only-when-operator, no
+  gunner/abstract-crew stacking, INT converted exactly once, range sign
+  preserved and applied exactly once, individually-labeled misc components,
+  total-equals-sum-of-applied invariant, suppressed-entries-excluded,
+  structured failure on invalid gunner/vehicle actor with matching
+  ammo/action-option rollback, single unbranched downstream consumption by
+  `AttackOutcomeResolver`/`SWSEChat.postRoll`, and reroll reusing the
+  captured formula string instead of recomputing.
 
 Existing guards extended, not replaced: none of Phase 1/2's guard tools
 needed KNOWN_DEBT list changes this phase (re-ran all three; zero new
@@ -543,7 +764,10 @@ The Phase 3 brief requested 35 automated tests. Mapped against what this
 pass actually implemented (many requested tests target functionality
 explicitly out of this phase's narrowed scope — multi-target/full-attack
 reroll rebuilding, chat schema versioning/migration — and are not claimed
-as done):
+as done). The formula-correction addendum separately requested 20 formula-
+validation tests, all mapped 1:1 in `tests/phase3-vehicle-attack-formula.test.mjs`
+(see "Tests proving the correction" above) and not renumbered into this
+table:
 
 | # | Requested | Status |
 |---|---|---|
@@ -553,8 +777,8 @@ as done):
 | 4 | Real gunner stats and abstract crew bonus not double-counted | Covered (static — `resolveVehicleCrewActor` returns actor XOR fallback, never both) |
 | 5 | Missing required operator returns structured failure | Covered (static, the 'invalid' case) |
 | 6 | Ambiguous operator state does not silently select an actor | Covered (static — no target/controlled-token fallback in the new listener) |
-| 7-9 | Vehicle ledger identifies BAB/ability/vehicle-specific modifier sources | Not separately tested — the ledger itself is unchanged from Phase 1 (`buildLedgerFromComponents`); only *which actor* feeds it changed, already covered by test 1-2 |
-| 10 | Vehicle modifier total equals sum of applied components | Not re-tested — unchanged `ModifierEngine.resolveTarget()` invariant, already covered by Phase 1's `tests/modifier-breakdown-builder.test.mjs` |
+| 7-9 | Vehicle ledger identifies BAB/ability/vehicle-specific modifier sources | **Covered (static), this addendum** — `tests/phase3-vehicle-attack-formula.test.mjs` verifies distinct `gunner-bab`/`vehicle-int`/`range` ledger entries with correct `category`/`sourceId`/`sourceName` |
+| 10 | Vehicle modifier total equals sum of applied components | **Covered (static), this addendum** — `finalAttackBonus` is asserted to be a `.filter(applied).reduce(sum)` over the ledger |
 | 11-12 | Vehicle attack uses AttackOutcomeResolver / ModifierEngine.resolveTarget() | Covered transitively — the vehicle attack now calls the unmodified `attacks.js#rollAttack()`, already tested in Phase 1/2 |
 | 13-14 | Vehicle FP spend/refund | Not separately tested — attacks.js never wires Force Point bonus dice for any actor type (Phase 1 finding); no vehicle-specific FP path exists to test |
 | 15-22 | Reroll revision/supersession/damage-guard behavior | Covered (static, `phase3-reroll-supersession.test.mjs`) |
@@ -574,13 +798,14 @@ node tools/check-combat-math-ssot.mjs [--strict]
 node tools/check-attack-outcome-ssot.mjs [--strict]
 node tools/check-critical-confirmation-guard.mjs [--strict]
 node tools/check-reroll-supersession-guard.mjs [--strict]
-node tests/<each>.test.mjs   (all 27: 10 pre-Phase-1 + 7 Phase 1 + 6 Phase 2 + 4 Phase 3)
+node tests/<each>.test.mjs   (all 28: 10 pre-Phase-1 + 7 Phase 1 + 6 Phase 2 + 5 Phase 3)
 git diff --stat / grep for actor.update(/new Roll( in changed files
 ```
 
 ## Static results
 
-- All 7 changed files + 5 new files: `node --check` passes.
+- All changed/added files (`node --check`): passes, including this
+  addendum's `vehicle-attack-math.js` and the re-edited `attacks.js`.
 - `tools/ci-smoke-check.mjs`: same 2 pre-existing failures as the Phase
   1/2 baseline, unrelated files, unchanged.
 - `tools/check-combat-math-ssot.mjs`: passes, unchanged.
@@ -588,17 +813,20 @@ git diff --stat / grep for actor.update(/new Roll( in changed files
   Phase 2 end state, zero new findings.
 - `tools/check-critical-confirmation-guard.mjs`: passes, report and
   `--strict`, zero findings.
-- `tools/check-reroll-supersession-guard.mjs` (new): passes, report and
-  `--strict`, zero findings.
-- `tests/*.test.mjs`: **27 files total** (10 pre-Phase-1 + 7 Phase 1 + 6
-  Phase 2 + 4 Phase 3). **22 pass / 5 fail** — the same 5 pre-existing
-  `ERR_MODULE_NOT_FOUND` files from the Phase 1/2 baseline. **Zero new
-  failures.**
+- `tools/check-reroll-supersession-guard.mjs`: passes, report and
+  `--strict`, zero findings (re-confirmed after this addendum's edits).
+- `tests/*.test.mjs`: **28 files total** (10 pre-Phase-1 + 7 Phase 1 + 6
+  Phase 2 + 5 Phase 3, including this addendum's
+  `phase3-vehicle-attack-formula.test.mjs`). **23 pass / 5 fail** — the
+  same 5 pre-existing `ERR_MODULE_NOT_FOUND` files from the Phase 1/2
+  baseline. **Zero new failures.**
 - `git diff` review: no `actor.update(` or `new Roll(` introduced in any
-  changed file (grepped explicitly, see Commands run).
-- Diff is 7 files, 223 insertions / 37 deletions — reviewed in full, no
-  unrelated feats/talents/progression/chargen/workbench/GM-tool/compendium
-  changes.
+  changed file, including this addendum's new module (grepped explicitly,
+  see Commands run).
+- This addendum's diff: 1 new file (`vehicle-attack-math.js`), 1 changed
+  file (`attacks.js`, the vehicle-branch wiring in `rollAttack()` only) +
+  1 new test file + this audit doc — reviewed in full, no unrelated
+  feats/talents/progression/chargen/workbench/GM-tool/compendium changes.
 
 ## Preexisting failures (recorded before editing, matches Phase 1/2)
 
@@ -658,12 +886,12 @@ diagnostic snapshots (`SWSE.debug.attackRolls.events`) for each case.
 | 8 | Vehicle-to-character attack | No | Pending |
 | 9 | Vehicle-to-vehicle attack | No | Pending |
 | 10 | Character-to-vehicle attack | No | Pending |
-| 11 | Ordinary vehicle hit | No (formula fixed, not runtime-verified) | Pending |
-| 12 | Ordinary vehicle miss | No | Pending |
-| 13 | Vehicle natural 1 | No | Pending |
-| 14 | Vehicle natural 20 | No | Pending |
+| 11 | Ordinary vehicle hit | Yes (static, formula corrected and tested this addendum; not runtime-verified) | Pending |
+| 12 | Ordinary vehicle miss | Yes (static, formula corrected this addendum) | Pending |
+| 13 | Vehicle natural 1 | Partially (unchanged `AttackOutcomeResolver`, but now fed a correctly-sourced total) | Pending |
+| 14 | Vehicle natural 20 | Partially (same as above) | Pending |
 | 15 | Expanded vehicle critical range | No | Pending |
-| 16 | Vehicle range penalty | No | Pending |
+| 16 | Vehicle range penalty | Yes (static, this addendum — sign-preservation and single-application tested) | Pending |
 | 17 | Vehicle size modifier | **Not implemented** — no source found, see Component source table | N/A until implemented |
 | 18 | Vehicle active-effect modifier | No | Pending |
 | 19 | Vehicle Force Point use | No path exists (see FP row in Component source table) | N/A |
@@ -686,10 +914,14 @@ diagnostic snapshots (`SWSE.debug.attackRolls.events`) for each case.
    attacks should go through `AttackOutcomeResolver`/target-defense
    comparison, or whether the current manual-GM-adjudication design is
    intentional and should simply be documented as such.
-4. Vehicle size modifier and fire-control/emplacement bonus: find or obtain
-   an authoritative source, then wire them into `combat-roll-math.js` or a
-   genuinely-needed `resolveVehicleAttackBonus()` extension — not attempted
-   this phase per "do not guess at SWSE vehicle rules."
+4. ~~Vehicle size modifier and fire-control/emplacement bonus: find or
+   obtain an authoritative source, then wire them into `combat-roll-math.js`
+   or a genuinely-needed `resolveVehicleAttackBonus()` extension.~~
+   **Partially addressed:** `resolveVehicleAttackBonus()` now exists (this
+   addendum) and implements the authoritative Gunner BAB + Vehicle INT +
+   Range + misc formula. Vehicle size modifier and fire-control/emplacement
+   bonus specifically remain unimplemented — still no rules source was
+   supplied or found for either, so neither was guessed at.
 5. Guard "Apply Damage" buttons on already-created damage messages against
    a later reroll of their parent attack (currently only new damage-roll
    initiation is guarded, not application of already-rolled damage).
@@ -722,6 +954,13 @@ diagnostic snapshots (`SWSE.debug.attackRolls.events`) for each case.
 - A successful attack reroll now marks the original attack message
   superseded (flags + a visible banner, best-effort) and blocks its damage
   actions, instead of leaving two independently-actionable attack outcomes.
+- **This addendum:** vehicle weapon attacks now use the vehicle's own
+  Intelligence modifier as their ability-modifier component, not the
+  resolved gunner's own Dex/Str — the authoritative
+  `1d20 + Gunner BAB + Vehicle INT modifier + Range modifier + misc` formula
+  is implemented in `vehicle-attack-math.js#resolveVehicleAttackBonus()` and
+  wired into the live `attacks.js#rollAttack()` path, with every component
+  visible as its own labeled ledger entry.
 
 **Verified**
 - Force Point spend-once, modifier stacking/suppression, natural-1/20/
@@ -731,9 +970,12 @@ diagnostic snapshots (`SWSE.debug.attackRolls.events`) for each case.
   test with zero new findings.
 
 **Vehicle math**
-- Formula unchanged; operator now correctly sourced. Size modifier,
-  fire-control bonus, and vehicle-level active-effect interaction remain
-  unimplemented (no guessed rules added).
+- Operator correctly sourced (Phase 3 base) **and** the formula itself
+  corrected (this addendum): Gunner BAB + Vehicle INT modifier + Range
+  modifier + individually-labeled misc components, replacing the prior
+  gunner-own-ability-modifier bug. Size modifier, fire-control bonus, and
+  vehicle-level active-effect interaction remain unimplemented (no guessed
+  rules added).
 
 **Reroll synchronization**
 - Original message superseded, damage actions blocked on it, new message
@@ -743,10 +985,11 @@ diagnostic snapshots (`SWSE.debug.attackRolls.events`) for each case.
   implemented.
 
 **Tests**
-- 1 executable test (diagnostics harness), 3 static guard test files, 1 new
-  architecture guard (`check-reroll-supersession-guard.mjs`) with its own
-  smoke test. Zero regressions across 27 total test files and 4 static
-  guards.
+- 1 executable test (diagnostics harness), 4 static guard test files
+  (including this addendum's `phase3-vehicle-attack-formula.test.mjs`, 20
+  assertions), 1 new architecture guard
+  (`check-reroll-supersession-guard.mjs`) with its own smoke test. Zero
+  regressions across 28 total test files and 4 static guards.
 
 **Runtime results**
 - **None.** Foundry VTT v13 was not launched. Every runtime-matrix row is
@@ -755,14 +998,21 @@ diagnostic snapshots (`SWSE.debug.attackRolls.events`) for each case.
 
 **Remaining risks**
 - The generic attack button may still bypass vehicle operator resolution
-  entirely for vehicles (unconfirmed reachability).
-- Abstract-crew vehicle attacks still bypass `AttackOutcomeResolver`.
+  entirely for vehicles (unconfirmed reachability) — and, since it never
+  reaches `resolveVehicleAttackBonus()` either, would also bypass this
+  addendum's formula correction.
+- Abstract-crew vehicle attacks still bypass `AttackOutcomeResolver` and
+  this addendum's formula (they never resolve a named gunner actor).
 - No vehicle size/fire-control modifier exists.
+- Whether the gunner's or the vehicle's condition track should feed the
+  condition-track-penalty misc component is still unverified (reused
+  unchanged from the gunner, not decided against a rules source).
 - Reroll supersession doesn't yet protect an already-rolled damage
   message's own Apply-Damage button.
 - Multi-target/full-attack reroll rebuilding is unimplemented.
 
-This pass does not claim the rolling system is unified. It closes the two
-specific live-path gaps named for this phase (vehicle operator math,
-reroll-to-original synchronization) with evidence-based, surgical fixes,
-and is explicit about everything adjacent that remains open.
+This pass does not claim the rolling system is unified. It closes the three
+specific live-path gaps named for this phase (vehicle operator resolution,
+vehicle attack formula correction, reroll-to-original synchronization) with
+evidence-based, surgical fixes, and is explicit about everything adjacent
+that remains open.
