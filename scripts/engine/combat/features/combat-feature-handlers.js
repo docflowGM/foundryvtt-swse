@@ -238,9 +238,19 @@ export async function executeCombatFeatureMultiattack({ actor, element, featureI
   let spend = null;
   let rolled = 0;
 
+  // Full-attack sequence identity (Phase 4 rolling-system alignment): a
+  // stable id for the whole declared sequence plus one per attack in it, so
+  // each attack's chat message can be proven independent of its siblings —
+  // rerolling one message (via the existing Phase 3 reroll handler, which
+  // already operates per-message) never touches another attack's state,
+  // and that independence is now provable from the messages themselves
+  // rather than merely true by accident of each attack posting separately.
+  const sequenceId = foundry.utils?.randomID?.() ?? `seq-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+
   for (let index = 0; index < plan.attacks.length; index += 1) {
     const step = plan.attacks[index];
     const weapon = step.weapon;
+    const attackInstanceId = `${sequenceId}-${index}`;
     const options = await showRollModifiersDialog({
       title: `${actionName}: ${step.label}`,
       rollType: 'attack',
@@ -272,6 +282,10 @@ export async function executeCombatFeatureMultiattack({ actor, element, featureI
       sequencePenalty: Number(step.finalPenalty ?? 0) + Number(options.sequencePenalty ?? 0),
       actionId: spec.actionId,
       actionName,
+      sequenceId,
+      attackInstanceId,
+      sequenceIndex: index,
+      sequenceLength: plan.attacks.length,
       actionData: {
         packageType: spec.packageType,
         attackIndex: index + 1,
