@@ -70,7 +70,7 @@ import { buildNpcConceptAbilities, buildNpcConceptSheetContext, isNpcSheetWritab
 import { applyActorSheetModeClasses, buildActorSheetModeContext } from "/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet/actor-sheet-mode.js";
 import { buildVehicleSheetContext } from "/systems/foundryvtt-swse/scripts/sheets/v2/vehicle-sheet/vehicle-context-builder.js";
 import { VehicleRulesAdapter } from "/systems/foundryvtt-swse/scripts/sheets/v2/vehicle-sheet/vehicle-rules-adapter.js";
-import { rollVehicleCrewSkill } from "/systems/foundryvtt-swse/scripts/sheets/v2/vehicle-sheet/crew-skill-router.js";
+import { bindVehicleCrewAssignmentControls } from "/systems/foundryvtt-swse/scripts/sheets/v2/vehicle-sheet/vehicle-crew-assignment-controls.js";
 import { StarshipManeuversEngine } from "/systems/foundryvtt-swse/scripts/engine/StarshipManeuversEngine.js";
 import { SubsystemEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/starship/subsystem-engine.js";
 import { EnhancedShields } from "/systems/foundryvtt-swse/scripts/engine/combat/starship/enhanced-shields.js";
@@ -4984,6 +4984,13 @@ const forcePoints = [];
 
     this._activateVehicleTab(root, this._requestedVehicleTab());
 
+    // Crew-assignment buttons (assign/open/remove), station drag-and-drop,
+    // the weapon-mount/crew-skill Fire buttons, and generic weapon/cargo
+    // drop routing. This is the vehicle sheet's actual listener path
+    // (_onRender returns early for vehicles before activateListeners()), so
+    // it is bound here rather than in the character-mode listener path.
+    bindVehicleCrewAssignmentControls(this, root, { signal });
+
     root.querySelectorAll('.sheet-tabs .item').forEach(tabBtn => {
       tabBtn.addEventListener('click', (ev) => {
         ev.preventDefault();
@@ -6655,38 +6662,6 @@ const forcePoints = [];
           sheet: this,
           showRollCompanion: true
         });
-      }, { signal });
-    });
-
-    // Vehicle crew-station action button (weapon mount panel Fire/skill
-    // buttons). Phase 3 rolling-system alignment: this button and its
-    // data-station/data-skill/data-weapon-id attributes were already built
-    // by vehicle-context-builder.js/crew-skill-router.js, but had no click
-    // listener at all — vehicle weapon attacks fell through to the generic
-    // roll-attack handler above with the vehicle actor itself (no BAB/
-    // ability scores) instead of the assigned gunner/pilot. Wiring this to
-    // the existing rollVehicleCrewSkill() router resolves the crew actor
-    // (or abstract crew quality) deterministically instead of silently
-    // using the vehicle as its own gunner.
-    html.querySelectorAll('[data-action="vehicle-crew-skill"]').forEach(button => {
-      button.addEventListener("click", async (event) => {
-        event.preventDefault();
-        event.stopPropagation();
-        if (event.__swseVehicleCrewSkillHandled) return;
-        event.__swseVehicleCrewSkillHandled = true;
-
-        if (this.actor?.type !== 'vehicle') return;
-        const station = button.dataset.station;
-        const skill = button.dataset.skill;
-        const weaponId = button.dataset.weaponId;
-        if (!station || !skill) return;
-
-        button.disabled = true;
-        try {
-          await rollVehicleCrewSkill(this.actor, station, skill, { weaponId });
-        } finally {
-          button.disabled = false;
-        }
       }, { signal });
     });
 

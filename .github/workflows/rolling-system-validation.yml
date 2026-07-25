@@ -3,19 +3,20 @@ name: Rolling System Validation
 # Validates the rolling-system-alignment work (attack rolls, damage
 # routing, vehicle/abstract-crew formulas, full-attack sequences and
 # rerolls) — see docs/audits/rolling-system-alignment-phase-1.md through
-# -phase-5.md for the full history.
+# -phase-5.md and docs/audits/vehicle-crew-assignment-phase-6.md for the
+# full history.
 #
 # What this workflow DOES verify:
 #   - Every file under scripts/, tools/, tests/ (minus 2 documented
 #     pre-existing, unrelated syntax failures) parses as valid JavaScript.
-#   - Every rolling-system test file (33 of 38 in tests/ — 5 excluded,
-#     documented, pre-existing Force-power-track failures unrelated to
-#     this work) actually passes.
+#   - Every rolling-system test file in tests/ (5 excluded, documented,
+#     pre-existing Force-power-track failures unrelated to this work)
+#     actually passes.
 #   - The combat-math single-source-of-truth guard, the attack-outcome
 #     single-source-of-truth guard, the critical-confirmation-removal
 #     guard, the reroll/damage-supersession guard, the vehicle-attack
-#     routing guard, and the full-attack-reroll guard all pass in --strict
-#     (fail-on-finding) mode.
+#     routing guard, the full-attack-reroll guard, and the vehicle
+#     crew-assignment guard all pass in --strict (fail-on-finding) mode.
 #   - No new `actor.update(` or `new Roll(` bypass appears in the
 #     rolling-system source files this workflow tracks.
 #
@@ -96,6 +97,9 @@ jobs:
 
       - name: Guard — full-attack reroll (Phase 5)
         run: node tools/check-full-attack-reroll-guard.mjs --strict
+
+      - name: Guard — vehicle crew assignment (Phase 6)
+        run: node tools/check-vehicle-crew-assignment-guard.mjs --strict
 
       # Scoped to the exact files the rolling-system-alignment phases own
       # (see "Exact files changed" in each phase's audit doc) — NOT whole

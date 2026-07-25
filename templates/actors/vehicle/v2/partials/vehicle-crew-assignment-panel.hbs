@@ -9,7 +9,7 @@
       {{#each panel.stations as |station|}}
         <div class="swse-vehicle-station-row {{#if station.occupied}}swse-vehicle-station-row--occupied{{/if}}"
              data-crew-station="{{station.key}}"
-             data-drop-zone="crew-station">
+             {{#if station.dropzone}}data-drop-zone="crew-station"{{/if}}>
           <div class="swse-vehicle-station-meta">
             <div class="swse-vehicle-station-name">{{station.label}}</div>
             <div class="swse-vehicle-station-status">
@@ -25,6 +25,7 @@
             <div class="swse-vehicle-station-notes">{{station.notes}}</div>
           {{/if}}
 
+          {{#if station.editable}}
           <div class="swse-vehicle-station-controls">
             <button type="button"
                     class="swse-vehicle-action-btn swse-vehicle-action-btn--assign"
@@ -48,6 +49,16 @@
               </button>
             {{/if}}
           </div>
+          {{else if station.occupied}}
+          <div class="swse-vehicle-station-controls">
+            <button type="button"
+                    class="swse-vehicle-action-btn swse-vehicle-action-btn--open"
+                    data-action="vehicle-open-crew"
+                    data-station="{{station.key}}">
+              Open Sheet
+            </button>
+          </div>
+          {{/if}}
 
           {{#if station.actions}}
             <div class="swse-vehicle-station-actions">

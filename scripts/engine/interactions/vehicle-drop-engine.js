@@ -195,6 +195,16 @@ export class VehicleDropEngine {
       return null;
     }
 
+    // An actor dropped somewhere on the sheet that is NOT a specific crew
+    // station row has no target to assign to. Silently defaulting to pilot
+    // or the first empty station would surprise the user; the generic
+    // handler rejects instead so the caller can tell them to drop onto a
+    // station row (or open the crew picker).
+    if (!station) {
+      console.debug('Drop rejected: actor was not dropped on a specific crew station');
+      return null;
+    }
+
     // Route to crew assignment
     return this._assignCrew(vehicle, droppedActor, station);
   }
