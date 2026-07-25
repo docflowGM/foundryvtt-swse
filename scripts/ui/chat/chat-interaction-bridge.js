@@ -235,6 +235,42 @@ function warnSupersededDamageAttempt(message) {
   ui?.notifications?.warn?.('This attack was superseded by a reroll. Use the newer reroll message to roll or apply damage.');
 }
 
+// Phase 4 rolling-system alignment (docs/audits/rolling-system-alignment-phase-4.md,
+// "Damage-action routing behavior"): before this pass, "Apply Damage" had no
+// idempotency tracking at all — clicking it twice (double-click, accidental
+// re-click, a second GM clicking the same button) applied the same damage
+// packet to the same target's HP twice with no record. No existing
+// mechanism in this codebase explicitly permits re-applying the same
+// message's damage to the same target, so this defaults to a hard block
+// with a receipt, not a silent allowance — a GM who genuinely needs to
+// reapply can still adjust HP directly.
+function damageApplicationReceiptKey(weaponKey, targetId) {
+  return `${weaponKey || 'unknown-weapon'}:${targetId || 'selected'}`;
+}
+
+function findDamageApplicationReceipt(message, key) {
+  try {
+    const receipts = message?.getFlag?.('swse', 'damageApplications');
+    return Array.isArray(receipts) ? receipts.find(r => r?.key === key) ?? null : null;
+  } catch (_err) {
+    return null;
+  }
+}
+
+async function recordDamageApplicationReceipt(message, key, receipt) {
+  try {
+    const existing = message?.getFlag?.('swse', 'damageApplications');
+    const receipts = Array.isArray(existing) ? existing : [];
+    await message?.setFlag?.('swse', 'damageApplications', [...receipts, { key, ...receipt }]);
+  } catch (err) {
+    // Best-effort: a failed receipt write must never undo the damage that
+    // was already applied to the actor — it only means a future duplicate
+    // click won't be caught, which is a lesser failure than losing the
+    // player's already-applied damage.
+    console.warn('[SWSE Chat] Failed to record damage application receipt (damage was still applied).', err);
+  }
+}
+
 async function handleLegacyDamageRollButton(event, button, message) {
   event.preventDefault();
   event.stopPropagation();
@@ -313,12 +349,21 @@ async function handleApplyDamageButton(event, button, message) {
     return;
   }
 
+  const weaponKey = button.dataset.weapon || button.dataset.weaponId || combatContext?.weaponId || null;
+  const receiptKey = damageApplicationReceiptKey(weaponKey, target?.id ?? (target ? null : 'selected'));
+  const existingReceipt = findDamageApplicationReceipt(message, receiptKey);
+  if (existingReceipt) {
+    ui?.notifications?.warn?.('Damage from this attack has already been applied to this target. Roll a new attack/damage to apply more.');
+    return;
+  }
+
   const { DamageSystem } = await import('/systems/foundryvtt-swse/scripts/combat/damage-system.js');
   if (target) {
     await DamageSystem.applyPacketToActor(target, packet);
   } else {
     await DamageSystem.applyPacketToSelected(packet);
   }
+  await recordDamageApplicationReceipt(message, receiptKey, { targetId: target?.id ?? null, amount: packet.amount, appliedAt: Date.now() });
 }
 
 async function handleGrappleActionButton(event, button) {

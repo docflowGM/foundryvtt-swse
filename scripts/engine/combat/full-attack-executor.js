@@ -129,7 +129,7 @@ async function _spendFullAttackEconomy(actor, actionType, sequence, options = {}
  * @param {Array}  results  - array of attackResult objects from rollAttack()
  * @param {Actor|null} target
  */
-async function _postCombinedCard(actor, sequence, results, target) {
+async function _postCombinedCard(actor, sequence, results, target, sequenceId = null) {
   const pkgLabel = {
     [FULL_ATTACK_PACKAGES.NORMAL]:        'Full Attack',
     [FULL_ATTACK_PACKAGES.DOUBLE_ATTACK]: 'Double Attack',
@@ -261,10 +261,34 @@ async function _postCombinedCard(actor, sequence, results, target) {
       ${breakdownRows}
     </div>`;
 
+  // Message-state schema (Phase 4): one entry per attack in the sequence,
+  // each carrying its own stable attackInstanceId, revision, and outcome
+  // summary — foundational identity for Phase 5 to build interactive
+  // per-attack reroll on, not itself a reroll mechanism yet (see the
+  // comment at this function's call site).
+  const attackEntries = results.map((res, i) => ({
+    attackInstanceId: res.attackInstanceId ?? `${sequenceId ?? 'seq'}-${i}`,
+    sequenceIndex: i,
+    activeRevision: 0,
+    authoritative: true,
+    superseded: false,
+    weaponId: res.weaponId ?? res.weapon?.id ?? null,
+    naturalD20: res.d20 ?? null,
+    finalTotal: res.total ?? null,
+    isHit: res.isHit ?? null,
+    isCritical: res.isCritical ?? null,
+    critMultiplier: res.critMultiplier ?? null
+  }));
+
   await ChatMessage.create({
     speaker: ChatMessage.getSpeaker({ actor }),
     content,
-    flags: { swse: { fullAttack: true, packageType: sequence.packageType } },
+    flags: { swse: {
+      fullAttack: true,
+      packageType: sequence.packageType,
+      sequenceId,
+      attacks: attackEntries
+    } },
   });
 }
 
@@ -337,6 +361,18 @@ export class FullAttackExecutor {
       ?? null;
 
     // 5. Roll each attack — suppressChat so we post one combined card
+    // Full-attack sequence identity (Phase 4 rolling-system alignment):
+    // this path posts one COMBINED card rather than one message per attack
+    // (unlike combat-feature-handlers.js's Double/Triple Attack path), so
+    // there is no per-attack chat message to attach Phase 3's reroll/
+    // supersession flags to yet. sequenceId/attackInstanceId are still
+    // threaded through here and recorded on the combined card below so the
+    // versioned message-state schema (docs/audits/rolling-system-alignment-phase-4.md,
+    // "Message-state schema") has real per-attack identity to build
+    // interactive per-attack reroll on top of — that reroll UI/wiring is
+    // intentionally NOT implemented this phase (see "Full-attack reroll
+    // behavior" in the Phase 4 audit for why it's scoped to Phase 5).
+    const sequenceId = foundry.utils?.randomID?.() ?? `seq-${Date.now()}-${Math.random().toString(36).slice(2)}`;
     const rollOptions = {
       suppressChat:    true,
       target,
@@ -350,15 +386,19 @@ export class FullAttackExecutor {
       customModifier:  options.customModifier  ?? 0,
       situationalBonus: options.situationalBonus ?? 0,
       targetContext:   options.targetContext   ?? null,
+      sequenceId,
+      sequenceLength: sequence.attacks.length,
     };
 
     const results = [];
     const ammoSpends = [];
-    for (const attack of sequence.attacks) {
+    for (const [index, attack] of sequence.attacks.entries()) {
       try {
         const result = await rollAttack(actor, attack.weapon, {
           ...rollOptions,
           sequencePenalty: attack.finalPenalty,
+          attackInstanceId: `${sequenceId}-${index}`,
+          sequenceIndex: index,
         });
         if (!result) {
           await _rollbackFullAttackAmmo(actor, ammoSpends);
@@ -381,7 +421,7 @@ export class FullAttackExecutor {
     }
 
     // 6. Post combined chat card
-    await _postCombinedCard(actor, sequence, results, target);
+    await _postCombinedCard(actor, sequence, results, target, sequenceId);
 
     return results;
   }

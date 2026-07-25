@@ -1,6 +1,7 @@
 import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
 import { rollSkillCheck } from "/systems/foundryvtt-swse/scripts/rolls/skills.js";
 import { rollAttack } from "/systems/foundryvtt-swse/scripts/combat/rolls/attacks.js";
+import { CREW_QUALITY_BONUS } from "/systems/foundryvtt-swse/scripts/engine/combat/vehicle-attack-math.js";
 
 const STATION_SKILLS = {
   pilot: [
@@ -43,13 +44,12 @@ const SKILL_KEY_ALIASES = {
   attack: 'attack'
 };
 
-const CREW_QUALITY_BONUS = {
-  untrained: 0,
-  normal: 2,
-  skilled: 5,
-  expert: 8,
-  ace: 10
-};
+// CREW_QUALITY_BONUS is imported from vehicle-attack-math.js — the
+// authoritative vehicle-attack-formula module — rather than declared here,
+// so the abstract-crew attack formula and this file's non-attack skill-check
+// fallback (buildFallbackFormula, below) can never drift out of sync with
+// each other (Phase 4 stacked-PR integration finding: they were previously
+// two independent copies of the same table).
 
 function normalizeKey(value) {
   return String(value ?? '').trim().toLowerCase().replace(/[\s_-]+/g, '');
@@ -221,11 +221,25 @@ export async function rollVehicleCrewSkill(vehicle, stationKey, skillKey, option
       ui?.notifications?.info?.(`${actor.name} fires ${weapon.name} from ${vehicle.name}.`);
       return { roll, actor, fallback: false, stationKey, skillKey: normalizedSkill, weapon };
     }
-    return rollFallback(vehicle, stationKey, normalizedSkill, {
-      ...options,
-      skillLabel: `${weapon.name} Attack`,
-      attackBonus: weapon.system?.attackBonus ?? weapon.system?.bonus
+    // Abstract crew (no assigned actor at this station): Phase 4 routes this
+    // through the same rollAttack() pipeline as a named gunner — RollEngine
+    // dice execution, AttackOutcomeResolver, ModifierEngine.resolveTarget(),
+    // the same component-ledger/chat/reroll/damage-workflow machinery —
+    // instead of the standalone unflagged roll the non-attack skill checks
+    // below still use. `vehicle` is
+    // passed as both actor and (via abstractCrewQuality) the crew-quality
+    // signal; resolveAbstractCrewAttackBonus() in vehicle-attack-math.js
+    // resolves the formula. See docs/audits/rolling-system-alignment-phase-4.md
+    // "Abstract-crew formula authority" for why crew quality substitutes for
+    // Gunner BAB specifically rather than the whole formula.
+    const abstractRoll = await rollAttack(vehicle, weapon, {
+      abstractCrewQuality: vehicle.system?.crewQuality || 'normal',
+      crewStation: stationKey
     });
+    if (abstractRoll) {
+      ui?.notifications?.info?.(`${vehicle.name}'s ${stationLabel.toLowerCase()} crew fires ${weapon.name}.`);
+    }
+    return { roll: abstractRoll, actor: vehicle, fallback: false, abstractCrew: true, stationKey, skillKey: normalizedSkill, weapon };
   }
 
   if (actor) {

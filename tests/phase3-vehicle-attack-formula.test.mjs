@@ -55,16 +55,25 @@ assert.match(contextBuilder, /stationKey:\s*weapon\.crewRole \|\| 'gunner'/);
 
 // 6. No stacking of an assigned gunner's BAB with abstract crew quality:
 // rollVehicleCrewSkill's attack branch is a strict if(actor)/else split —
-// a resolved crew actor takes the rollAttack() path OR the unassigned
-// station takes the abstract crew-quality rollFallback() path, never both.
+// a resolved crew actor takes the rollAttack(actor, ...) path OR the
+// unassigned station takes the abstract-crew rollAttack(vehicle, ...
+// {abstractCrewQuality}) path (Phase 4 — formula-aligned, replacing the
+// pre-Phase-4 rollFallback() call for this specific skill), never both.
 const attackBranch = router.slice(router.indexOf("if (normalizedSkill === 'attack')"), router.indexOf('if (actor) {', router.indexOf("if (normalizedSkill === 'attack')") + 400));
 assert.match(attackBranch, /if \(actor\) \{[\s\S]*?rollAttack\(actor, weapon,/);
-assert.match(attackBranch, /return rollFallback\(vehicle, stationKey, normalizedSkill,/);
+assert.match(attackBranch, /rollAttack\(vehicle, weapon, \{\s*\n\s*abstractCrewQuality:/);
+assert.doesNotMatch(attackBranch, /rollFallback\(/);
 
-// 7. Vehicle INT score->modifier conversion happens exactly once (a single
-// getAbilityMod(vehicleActor, 'int') call site in the module).
+// 7. Vehicle INT score->modifier conversion happens exactly once PER
+// resolver function (resolveVehicleAttackBonus for a named gunner,
+// resolveAbstractCrewAttackBonus for abstract crew — Phase 4 adds the
+// second, distinct function; each must still source vehicle INT only once).
 const vehicleIntCalls = (math.match(/getAbilityMod\(vehicleActor, 'int'\)/g) || []).length;
-assert.equal(vehicleIntCalls, 1, 'SchemaAdapters.getAbilityMod(vehicleActor, "int") must be called exactly once.');
+assert.equal(vehicleIntCalls, 2, 'SchemaAdapters.getAbilityMod(vehicleActor, "int") must be called exactly once per resolver function (2 functions = 2 call sites).');
+const gunnerFnBody = math.slice(math.indexOf('export async function resolveVehicleAttackBonus'), math.indexOf('export async function resolveAbstractCrewAttackBonus'));
+const crewFnBody = math.slice(math.indexOf('export async function resolveAbstractCrewAttackBonus'));
+assert.equal((gunnerFnBody.match(/getAbilityMod\(vehicleActor, 'int'\)/g) || []).length, 1);
+assert.equal((crewFnBody.match(/getAbilityMod\(vehicleActor, 'int'\)/g) || []).length, 1);
 
 // 8. Range penalties retain their sign: getRangePenalty's return value is
 // assigned straight into the ledger with no Math.abs()/sign inversion.
@@ -72,12 +81,15 @@ assert.match(math, /const rangeModifier = getRangePenalty\(weapon, context\);/);
 assert.doesNotMatch(math, /Math\.abs\(rangeModifier\)/);
 assert.match(math, /id:\s*'range', label: 'Range', value: rangeModifier,/);
 
-// 9. Range is not double-applied: getRangePenalty is called exactly once in
-// the resolver, and attacks.js does not independently call getRangePenalty
-// for the vehicle attack path (it only consumes attackBonusResolution.total
-// / .ledger).
+// 9. Range is not double-applied: getRangePenalty is called exactly once per
+// resolver function (gunner and abstract-crew each resolve range
+// independently, once), and attacks.js does not independently call
+// getRangePenalty for either vehicle attack path (it only consumes
+// attackBonusResolution.total / .ledger).
 const rangeCalls = (math.match(/getRangePenalty\(/g) || []).length;
-assert.equal(rangeCalls, 1, 'getRangePenalty must be called exactly once.');
+assert.equal(rangeCalls, 2, 'getRangePenalty must be called exactly once per resolver function (2 functions = 2 call sites).');
+assert.equal((gunnerFnBody.match(/getRangePenalty\(/g) || []).length, 1);
+assert.equal((crewFnBody.match(/getRangePenalty\(/g) || []).length, 1);
 assert.doesNotMatch(attacks, /getRangePenalty/);
 
 // 10. Every misc modifier gets its own ledger entry (pushed individually in
@@ -113,7 +125,7 @@ assert.match(attacks, /ui\?\.notifications\?\.error\?\.\(attackBonusResolution\.
 // branch only changes how attackBonusResolution is computed, not how roll,
 // outcome, or chat posting consume it downstream.
 const rollAttackBody = attacks.slice(attacks.indexOf('export async function rollAttack('), attacks.indexOf('export async function rollDamage('));
-assert.match(rollAttackBody, /const isVehicleAttack = Boolean\(rollOptions\.vehicleActor\);/);
+assert.match(rollAttackBody, /const isVehicleAttack = attackDomain !== 'character';/);
 assert.match(rollAttackBody, /const outcome = AttackOutcomeResolver\.resolve\(\{\s*\n\s*naturalD20: d20,\s*\n\s*total: roll\.total,/);
 // Only one AttackOutcomeResolver.resolve call and one SWSEChat.postRoll call
 // exist in rollAttack — i.e. no vehicle-specific fork downstream of the
@@ -136,4 +148,12 @@ assert.doesNotMatch(resolver, /resolveVehicleAttackBonus/);
 // ammoSpend-failure branch.
 assert.match(rollAttackBody, /if \(attackBonusResolution\.error\) \{\s*\n\s*if \(ammoSpend\?\.spent\) await AmmoSystem\.rollbackSpend\(actor, weapon, ammoSpend\);\s*\n\s*await actionOptionSpend\?\.rollback\?\.\(\);/);
 
-console.log('Phase 3 vehicle attack formula guards passed (20/20 required properties mapped).');
+// 21 (Phase 4 addendum). attack-domain-router.js is the single place that
+// decides character vs vehicle-actor-gunner vs vehicle-abstract-crew — the
+// resolver dispatch in rollAttack() is driven by its result, not by
+// independently re-deriving vehicle-ness from rollOptions.
+assert.match(rollAttackBody, /const domainResolution = resolveAttackDomain\(\{/);
+assert.match(rollAttackBody, /if \(!domainResolution\.ok\) \{/);
+assert.match(attacks, /import \{ resolveAttackDomain \} from "\/systems\/foundryvtt-swse\/scripts\/engine\/combat\/attack-domain-router\.js";/);
+
+console.log('Phase 3 vehicle attack formula guards passed (20/20 required properties mapped; updated for Phase 4 abstract-crew/router changes).');

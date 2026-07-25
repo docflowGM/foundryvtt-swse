@@ -21,7 +21,8 @@ import {
 import { AttackOutcomeResolver } from "/systems/foundryvtt-swse/scripts/engine/combat/attack-outcome-resolver.js";
 import { buildLedgerFromComponents, buildInvocationLedgerEntry } from "/systems/foundryvtt-swse/scripts/engine/effects/modifiers/modifier-breakdown-builder.js";
 import { AttackRollDiagnostics } from "/systems/foundryvtt-swse/scripts/engine/combat/attack-roll-diagnostics.js";
-import { resolveVehicleAttackBonus } from "/systems/foundryvtt-swse/scripts/engine/combat/vehicle-attack-math.js";
+import { resolveVehicleAttackBonus, resolveAbstractCrewAttackBonus } from "/systems/foundryvtt-swse/scripts/engine/combat/vehicle-attack-math.js";
+import { resolveAttackDomain } from "/systems/foundryvtt-swse/scripts/engine/combat/attack-domain-router.js";
 
 // ============================================
 // FILE: rolls/attacks.js (Upgraded for SWSE v13+)
@@ -234,19 +235,44 @@ export async function rollAttack(actor, weapon, options = {}) {
   }
 
   const sequencePenalty = Number(rollOptions.sequencePenalty ?? 0);
-  // A vehicle attack (fired by a resolved crew member — see
-  // vehicle-sheet/crew-skill-router.js#rollVehicleCrewSkill) uses the
-  // authoritative vehicle formula (Gunner BAB + Vehicle INT modifier +
-  // Range modifier + individually-labeled misc components) instead of the
-  // generic character resolveAttackBonus(), whose "ability modifier"
-  // component defaults to the gunner's own Dex/Str — never the vehicle's
-  // Intelligence modifier.
-  const isVehicleAttack = Boolean(rollOptions.vehicleActor);
+  // attack-domain-router.js decides which existing math authority this
+  // attack belongs to (character / vehicle-actor-gunner / vehicle-abstract-
+  // crew) from normalized actor/item/context — not from which UI button
+  // fired it — so a generic or future attack initiator can't silently rout
+  // a vehicle actor through the character formula (the pre-Phase-3 defect)
+  // just because it didn't go through crew-skill-router.js. The router only
+  // selects an authority; the math still lives in combat-roll-math.js /
+  // vehicle-attack-math.js exactly as before.
+  const domainResolution = resolveAttackDomain({
+    actor,
+    item: weapon,
+    operator: rollOptions.operator ?? null,
+    vehicle: rollOptions.vehicleActor ?? null,
+    sourceContext: { vehicleActor: rollOptions.vehicleActor ?? null, abstractCrewQuality: rollOptions.abstractCrewQuality ?? null }
+  });
+  for (const warning of domainResolution.warnings ?? []) {
+    console.warn(`[SWSE] Attack domain routing: ${warning}`);
+  }
+  if (!domainResolution.ok) {
+    await actionOptionSpend?.rollback?.();
+    ui?.notifications?.error?.('Attack could not be resolved: no valid attack-domain context (' + domainResolution.reason + ').');
+    return null;
+  }
+  const attackDomain = domainResolution.domain;
+  const isVehicleAttack = attackDomain !== 'character';
   let attackBonusResolution;
+  if (attackDomain === 'vehicle-actor-gunner') {
+    const { gunnerActor, vehicleActor } = domainResolution.normalizedContext;
+    attackBonusResolution = await resolveVehicleAttackBonus(gunnerActor, vehicleActor, weapon, rollOptions);
+  } else if (attackDomain === 'vehicle-abstract-crew') {
+    const { vehicleActor, crewQuality } = domainResolution.normalizedContext;
+    attackBonusResolution = await resolveAbstractCrewAttackBonus(vehicleActor, weapon, crewQuality, rollOptions);
+  } else {
+    attackBonusResolution = resolveAttackBonus(actor, weapon, null, rollOptions);
+  }
   if (isVehicleAttack) {
-    attackBonusResolution = await resolveVehicleAttackBonus(actor, rollOptions.vehicleActor, weapon, rollOptions);
     for (const warning of attackBonusResolution.warnings ?? []) {
-      console.warn(`[SWSE] Vehicle attack formula: ${warning}`);
+      console.warn(`[SWSE] Vehicle attack formula (${attackDomain}): ${warning}`);
     }
     if (attackBonusResolution.error) {
       if (ammoSpend?.spent) await AmmoSystem.rollbackSpend(actor, weapon, ammoSpend);
@@ -256,15 +282,13 @@ export async function rollAttack(actor, weapon, options = {}) {
         : 'Vehicle attack could not be resolved: no valid gunner/operator actor.');
       return null;
     }
-  } else {
-    attackBonusResolution = resolveAttackBonus(actor, weapon, null, rollOptions);
   }
   const fightingDefensivelyPenalty = getFightingDefensivelyAttackPenalty(actor, rollOptions);
   const atkBonus = attackBonusResolution.total + fightingDefensivelyPenalty + Number(rollOptions.customModifier || 0) + Number(rollOptions.situationalBonus || 0) + sequencePenalty;
   // Component ledger: baseline (resolver) components plus invocation-only
   // additions, clearly separated so a tooltip never claims an invocation-only
   // modifier is part of the static weapon baseline. Vehicle attacks already
-  // arrive in full ledger shape from resolveVehicleAttackBonus(); character
+  // arrive in full ledger shape from the vehicle resolvers; character
   // attacks are adapted from the legacy {label: value} map.
   const attackLedgerDomain = isVehicleAttack ? 'vehicle.attack' : 'combat.attack';
   const attackComponentLedger = [
@@ -327,7 +351,7 @@ export async function rollAttack(actor, weapon, options = {}) {
     defense: resolvedTarget.defenseType ?? workflowContext?.attack?.defense ?? null
   });
 
-  if (!rollOptions.suppressChat) await SWSEChat.postRoll({
+  const attackMessage = rollOptions.suppressChat ? null : await SWSEChat.postRoll({
     roll,
     actor,
     flavor: `${weapon.name} Attack Roll (Bonus ${atkBonus >= 0 ? '+' : ''}${atkBonus})`,
@@ -346,7 +370,16 @@ export async function rollAttack(actor, weapon, options = {}) {
       authoritative: true,
       superseded: false,
       supersededBy: null,
-      revision: 0
+      revision: 0,
+      // Full-attack/multi-attack sequence identity (Phase 4). Present only
+      // when the caller declared a sequence (e.g. Double/Triple Attack via
+      // combat-feature-handlers.js); null for an ordinary single attack.
+      // Lets a reroll of one message in a sequence be proven independent of
+      // its siblings, which already post as separate messages on this path.
+      sequenceId: rollOptions.sequenceId ?? null,
+      attackInstanceId: rollOptions.attackInstanceId ?? null,
+      sequenceIndex: rollOptions.sequenceIndex ?? null,
+      sequenceLength: rollOptions.sequenceLength ?? null
     } },
     context: {
       type: 'attack',
@@ -385,6 +418,8 @@ export async function rollAttack(actor, weapon, options = {}) {
 
   const attackResult = {
     roll,
+    message: attackMessage,
+    attackDomain,
     total: roll.total,
     atkBonus,
     sequencePenalty,
@@ -408,6 +443,15 @@ export async function rollAttack(actor, weapon, options = {}) {
     workflowContext: damageWorkflowContext,
     actionId: rollOptions.actionId ?? damageWorkflowContext?.actionId ?? null,
     actionData: rollOptions.actionData ?? null,
+    // Full-attack/multi-attack sequence identity (Phase 4 rolling-system
+    // alignment): stable ids threaded through from the declaring caller
+    // (e.g. combat-feature-handlers.js#executeCombatFeatureMultiattack) so
+    // one attack in a sequence can be identified/rerolled independently of
+    // its siblings. Both are null for an ordinary single attack.
+    sequenceId: rollOptions.sequenceId ?? null,
+    attackInstanceId: rollOptions.attackInstanceId ?? null,
+    sequenceIndex: rollOptions.sequenceIndex ?? null,
+    sequenceLength: rollOptions.sequenceLength ?? null,
     targetEffectsOnHit: optionModifiers.targetEffectsOnHit || [],
     targetEffectsOnCritical: optionModifiers.targetEffectsOnCritical || [],
   };
@@ -430,13 +474,19 @@ export async function rollAttack(actor, weapon, options = {}) {
 
   AttackRollDiagnostics.record({
     domain: 'combat.attack',
-    // A vehicle attack fired through a resolved crew member (Phase 3
-    // rolling-system alignment: scripts/sheets/v2/vehicle-sheet/crew-skill-router.js
-    // rollVehicleCrewSkill) passes `actor` as the operator, not the vehicle,
-    // so BAB/ability/proficiency are correctly sourced from the crew member.
-    // vehicleActor/crewStation are carried through rollOptions purely for
-    // diagnostics in that case.
-    attackType: actor?.type === 'vehicle' || rollOptions?.vehicleActor ? 'vehicle' : 'character',
+    // attackType now mirrors attack-domain-router.js's own vocabulary
+    // ('character' | 'vehicle-actor-gunner' | 'vehicle-abstract-crew') so a
+    // diagnostics snapshot shows exactly which resolver was selected and,
+    // via domainReason/domainWarnings, why — rather than re-deriving a
+    // coarser vehicle/character guess independently here.
+    attackType: attackDomain,
+    resolverSelected: domainResolution.resolver,
+    domainReason: domainResolution.reason,
+    domainWarnings: domainResolution.warnings,
+    messageId: attackMessage?.id ?? null,
+    messageRevision: attackMessage?.getFlag?.('swse', 'revision') ?? 0,
+    messageAuthoritative: attackMessage?.getFlag?.('swse', 'authoritative') ?? null,
+    messageSuperseded: attackMessage?.getFlag?.('swse', 'superseded') ?? null,
     actor,
     vehicleActor: rollOptions?.vehicleActor ?? (actor?.type === 'vehicle' ? actor : null),
     operator: rollOptions?.operator ?? rollOptions?.gunner ?? (actor?.type !== 'vehicle' ? actor : null),
