@@ -66,6 +66,7 @@ import { initializeShellResponsiveObserver } from "./scripts/ui/shell/shell-resp
 import { registerTokenNameSyncHooks } from "./scripts/core/token-name-sync.js";
 import { installSwseFlagScopeCompatibility } from "./scripts/utils/flags/swse-flags.js";
 import { registerNpcDamageHydrationHooks } from "./scripts/engine/import/npc-damage-hydration-hooks.js";
+import { AttackRollDiagnostics } from "./scripts/engine/combat/attack-roll-diagnostics.js";
 import "./scripts/talents/squad-actions-init.js";
 import "./scripts/talents/minion-actions-init.js";
 
@@ -85,6 +86,11 @@ Hooks.once("init", async () => {
   globalThis.SWSE.debug.defenses = (actor) => DefenseCalculator.debugFor(actor);
   globalThis.SWSE.debug.featPacks = (options = {}) => FeatRegistry.diagnosePackRegistration({ reason: 'manual SWSE.debug.featPacks()', ...options });
   globalThis.SWSE.debug.seedFeatsPack = (options = {}) => FeatPackSeeder.seedIfEmpty({ reason: 'manual SWSE.debug.seedFeatsPack()', ...options });
+  // Phase 2 rolling-system alignment: opt-in attack-roll diagnostics.
+  // Enable with SWSE.debug.attackRolls.enabled = true, then inspect
+  // SWSE.debug.attackRolls.events after rolling an attack. Disabled (no-op,
+  // no logging) by default.
+  globalThis.SWSE.debug.attackRolls = AttackRollDiagnostics;
 
   const { Actors, Items } = foundry.documents.collections;
   const { ActorSheet, ItemSheet } = foundry.appv1.sheets;

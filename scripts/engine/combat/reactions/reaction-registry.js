@@ -757,7 +757,12 @@ async function swseResolveDeepSpaceGambit(context = {}) {
 
   let reroll = null;
   try {
-    reroll = await new Roll('1d20').evaluate({ async: true });
+    // Phase 2 rolling-system alignment: dice execution goes through
+    // RollEngine (-> RollCore) like other roll paths, even though this
+    // reaction is a genuine SWSE reroll mechanic (not a critical-confirmation
+    // roll) and is intentionally left out of AttackOutcomeResolver's scope.
+    const { RollEngine } = await import('/systems/foundryvtt-swse/scripts/engine/roll-engine.js');
+    reroll = await RollEngine.safeRoll('1d20', {}, { domain: 'reaction.deep-space-gambit' });
   } catch (err) {
     console.warn('[SWSE] Deep-Space Gambit reroll failed:', err);
   }

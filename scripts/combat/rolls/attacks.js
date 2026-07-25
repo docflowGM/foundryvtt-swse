@@ -20,6 +20,7 @@ import {
 } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-roll-math.js";
 import { AttackOutcomeResolver } from "/systems/foundryvtt-swse/scripts/engine/combat/attack-outcome-resolver.js";
 import { buildLedgerFromComponents, buildInvocationLedgerEntry } from "/systems/foundryvtt-swse/scripts/engine/effects/modifiers/modifier-breakdown-builder.js";
+import { AttackRollDiagnostics } from "/systems/foundryvtt-swse/scripts/engine/combat/attack-roll-diagnostics.js";
 
 // ============================================
 // FILE: rolls/attacks.js (Upgraded for SWSE v13+)
@@ -279,7 +280,12 @@ export async function rollAttack(actor, weapon, options = {}) {
     formula: rollFormula,
     weaponId: weapon.id,
     isHit,
-    target
+    target,
+    // Carried through so a reroll can build a fresh, non-merged
+    // AttackOutcomeResolver verdict instead of only replacing the total.
+    targetDefense: targetReflex,
+    criticalThreshold,
+    critMultiplier
   });
 
   const damageWorkflowContext = summarizeCombatWorkflowContext(workflowContext, {
@@ -380,6 +386,25 @@ export async function rollAttack(actor, weapon, options = {}) {
   };
   attackResult.ammoSpend = ammoSpend;
   attackResult.actionOptionSpend = actionOptionSpend;
+
+  AttackRollDiagnostics.record({
+    domain: 'combat.attack',
+    attackType: actor?.type === 'vehicle' ? 'vehicle' : 'character',
+    actor,
+    vehicleActor: actor?.type === 'vehicle' ? actor : null,
+    operator: rollOptions?.operator ?? rollOptions?.gunner ?? null,
+    item: weapon,
+    target,
+    naturalD20: d20,
+    finalTotal: roll.total,
+    formula: rollFormula,
+    componentLedger: attackComponentLedger,
+    forcePointReceipt: null,
+    transactions: { ammoSpend, actionOptionSpend },
+    outcome,
+    damageWorkflowMetadata: damageWorkflowContext
+  });
+
   return attackResult;
   } catch (err) {
     if (ammoSpend?.spent) {
@@ -542,7 +567,10 @@ export async function rollAttackAndDamageWithNarration(actor, weapon, options = 
     formula: rollFormula,
     weaponId: weapon.id,
     isHit,
-    target
+    target,
+    targetDefense: targetReflex,
+    criticalThreshold: attackCritThreshold,
+    critMultiplier: attackCritMultiplier
   });
 
   await SWSEChat.postRoll({

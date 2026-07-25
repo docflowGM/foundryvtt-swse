@@ -10,6 +10,7 @@
 
 import { EncounterUseTracker } from "/systems/foundryvtt-swse/scripts/engine/feats/encounter-use-tracker.js";
 import { isForcePowerItem } from "/systems/foundryvtt-swse/scripts/utils/item-classification.js";
+import { AttackOutcomeResolver } from "/systems/foundryvtt-swse/scripts/engine/combat/attack-outcome-resolver.js";
 function normalizeName(value) {
   return String(value ?? '').trim().toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
 }
@@ -441,6 +442,13 @@ export class MetaResourceFeatResolver {
         actorId: actor?.id ?? '',
         weaponId: weapon?.id ?? context.weaponId ?? '',
         originalTotal: roll.total,
+        // Carried through so resolveAttackRerollButton() can build a fresh
+        // AttackOutcomeResolver verdict for the reroll instead of only
+        // replacing the total and leaving stale hit/critical metadata.
+        originalNaturalD20: roll.dice?.[0]?.results?.[0]?.result ?? null,
+        targetDefense: Number.isFinite(Number(context.targetDefense)) ? Number(context.targetDefense) : null,
+        criticalThreshold: Number.isFinite(Number(context.criticalThreshold)) ? Number(context.criticalThreshold) : 20,
+        critMultiplier: Number.isFinite(Number(context.critMultiplier)) ? Number(context.critMultiplier) : 2,
         formula,
         outcomeLabel: rule.outcome === 'keepBetter' ? 'Keep better result' : 'Must accept reroll',
         canUse: rule.cost !== 'forcePoint' || actorForcePoints(actor) > 0,
@@ -502,6 +510,30 @@ export class MetaResourceFeatResolver {
     const finalTotal = outcome === 'keepBetter' ? Math.max(originalTotal, rerollTotal) : rerollTotal;
     const usedNew = finalTotal === rerollTotal;
 
+    // Build a completely fresh AttackOutcomeResolver verdict for whichever
+    // roll (original or reroll) backs finalTotal. This replaces the stale
+    // hit/critical/damage-multiplier metadata from the original attack
+    // entirely rather than merging any of its fields — a reroll that flips
+    // miss->hit (or hit->miss, or crit->normal, etc.) must not carry over
+    // the old verdict.
+    const originalNaturalD20Raw = Number(button.dataset.originalNaturalD20);
+    const originalNaturalD20 = Number.isFinite(originalNaturalD20Raw) ? originalNaturalD20Raw : null;
+    const rerollNaturalD20 = newRoll.dice?.[0]?.results?.[0]?.result ?? null;
+    const finalNaturalD20 = usedNew ? rerollNaturalD20 : originalNaturalD20;
+    const targetDefenseRaw = button.dataset.targetDefense;
+    const targetDefense = targetDefenseRaw !== undefined && targetDefenseRaw !== '' && targetDefenseRaw !== 'null'
+      ? Number(targetDefenseRaw)
+      : null;
+    const criticalThreshold = Number.isFinite(Number(button.dataset.criticalThreshold)) ? Number(button.dataset.criticalThreshold) : 20;
+    const critMultiplier = Number.isFinite(Number(button.dataset.critMultiplier)) ? Number(button.dataset.critMultiplier) : 2;
+    const newOutcome = AttackOutcomeResolver.resolve({
+      naturalD20: finalNaturalD20,
+      total: finalTotal,
+      targetDefense,
+      criticalThreshold,
+      critMultiplier
+    });
+
     // Apply reflex defense penalty if applicable (Desperate Gambit)
     if (cost === 'reflexDefensePenalty' && button.dataset.rule) {
       const ruleData = JSON.parse(button.dataset.rule);
@@ -533,6 +565,13 @@ export class MetaResourceFeatResolver {
 
     const { createChatMessage } = await import('/systems/foundryvtt-swse/scripts/core/document-api-v13.js');
     const rolls = buildRollJson(newRoll) ? [buildRollJson(newRoll)] : [];
+    const outcomeLabel = newOutcome.hit === null
+      ? ''
+      : newOutcome.critical
+        ? 'Critical Hit'
+        : newOutcome.hit
+          ? 'Hit'
+          : 'Miss';
     await createChatMessage({
       user: game.user?.id,
       speaker: ChatMessage.getSpeaker({ actor }),
@@ -546,14 +585,31 @@ export class MetaResourceFeatResolver {
             <div><strong>Original:</strong> ${originalTotal}</div>
             <div><strong>Reroll:</strong> ${rerollTotal}</div>
             <div><strong>Result:</strong> ${finalTotal} ${outcome === 'keepBetter' ? (usedNew ? '(reroll kept)' : '(original kept)') : '(must accept reroll)'}</div>
+            ${outcomeLabel ? `<div><strong>Outcome:</strong> ${outcomeLabel}</div>` : ''}
           </div>
         </div>
       `,
       rolls,
-      flags: { swse: { attackReroll: true, sourceName, outcome, originalTotal, rerollTotal, finalTotal, sourceMessageId: message?.id ?? null } }
+      flags: {
+        swse: {
+          attackReroll: true,
+          sourceName,
+          outcome,
+          originalTotal,
+          rerollTotal,
+          finalTotal,
+          // The full replacement AttackOutcomeResolver verdict — the
+          // authoritative source for any downstream consumer (damage
+          // workflow, GM review) instead of the original message's now-
+          // stale hit/critical data.
+          attackOutcome: newOutcome,
+          weaponId: button.dataset.weaponId || null,
+          sourceMessageId: message?.id ?? null
+        }
+      }
     });
 
-    return { actor, message, sourceName, originalTotal, newRoll, finalTotal, outcome };
+    return { actor, message, sourceName, originalTotal, newRoll, finalTotal, outcome, attackOutcome: newOutcome };
   }
 
   static getTemporaryDefenseRules(actor) {

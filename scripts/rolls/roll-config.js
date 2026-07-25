@@ -1397,19 +1397,32 @@ Hooks.on('updateActor', (actor) => {
 });
 
 /* ============================================================================
-   CRITICAL CONFIRMATION
+   CRITICAL CONFIRMATION (deprecated — see AttackOutcomeResolver)
    ============================================================================ */
 
 /**
- * SWSE Critical Hit Rules:
- * - Natural 20 ALWAYS hits and is an automatic critical (no confirmation needed)
- * - Natural 20 deals double damage and bypasses Reflex Defense
- * - Expanded threat ranges (e.g., 19-20 from Critical Strike feat) DO require confirmation
- * - Confirmation roll: roll attack again, if it beats target Reflex, crit is confirmed
- * - Unconfirmed crits from expanded ranges are treated as normal hits
+ * SWSE Critical Hit Rules (authoritative version — see
+ * scripts/engine/combat/attack-outcome-resolver.js):
+ * - Natural 20 ALWAYS hits and is an automatic critical. No confirmation roll.
+ * - Natural 1 is an automatic miss.
+ * - Expanded threat ranges (e.g., 19-20 from Critical Strike feat) crit
+ *   without a confirmation roll, but only when the roll is otherwise a hit —
+ *   an in-range natural roll that misses defense does not crit.
+ * - The two functions below predate that resolver and describe an incorrect
+ *   confirmation-roll mechanic that does not exist in SWSE. They are
+ *   deprecated and unused; do not add new callers.
  */
 
 /**
+ * @deprecated Phase 2 rolling-system alignment (docs/audits/rolling-system-alignment-phase-2.md):
+ * SWSE does not use a critical-confirmation roll — the doc comment above this
+ * function asserting that expanded threat ranges "DO require confirmation"
+ * does not match the authoritative rule. scripts/engine/combat/attack-outcome-resolver.js
+ * (AttackOutcomeResolver) is now the single authority for natural-1/natural-20/
+ * critical-threat interpretation and has no confirmation step. This function
+ * has no remaining callers in the active codebase; kept only for compatibility
+ * in case an external macro/module still references it. Do not add new callers.
+ *
  * Determine if a critical hit needs confirmation
  * @param {number} d20Result - The natural d20 result
  * @param {number} critRange - The weapon's threat range (default 20)
@@ -1432,6 +1445,12 @@ export function analyzeCriticalThreat(d20Result, critRange = 20) {
 }
 
 /**
+ * @deprecated Phase 2 rolling-system alignment (docs/audits/rolling-system-alignment-phase-2.md):
+ * SWSE does not use a critical-confirmation roll. This function has no
+ * remaining callers in the active codebase; kept only for compatibility in
+ * case an external macro/module still references it. Do not add new callers —
+ * route attack outcome interpretation through AttackOutcomeResolver instead.
+ *
  * Roll a critical hit confirmation (only for expanded threat ranges, NOT nat 20)
  * @param {Object} options
  * @param {Actor} options.actor - The attacking actor

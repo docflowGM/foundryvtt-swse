@@ -109,6 +109,16 @@ window.SWSEVehicleWeapons = SWSEVehicleWeapons;
 
 /**
  * Fire missile or torpedo (with lock-on capability)
+ *
+ * Phase 2 rolling-system alignment audit (docs/audits/rolling-system-alignment-phase-2.md):
+ * this entire module has no callers anywhere in the active codebase (the live
+ * vehicle attack pipeline goes through the shared SWSERoll.rollAttack() ->
+ * attacks.js rollAttack() path used by character attacks). The `rollAttack`
+ * callback below is never actually supplied by a live caller, so its outcome
+ * shape/authority cannot be verified from this module alone — do not assume
+ * it is the canonical attacks.js rollAttack(). Left in place as unused
+ * legacy/prototype code; trace real call sites before relying on it.
+ *
  * @param {Actor} vehicle - The firing vehicle
  * @param {Object} weapon - The missile/torpedo weapon
  * @param {Actor} target - The target vehicle
