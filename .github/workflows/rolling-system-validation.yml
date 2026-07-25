@@ -1,0 +1,137 @@
+name: Rolling System Validation
+
+# Validates the rolling-system-alignment work (attack rolls, damage
+# routing, vehicle/abstract-crew formulas, full-attack sequences and
+# rerolls) — see docs/audits/rolling-system-alignment-phase-1.md through
+# -phase-5.md for the full history.
+#
+# What this workflow DOES verify:
+#   - Every file under scripts/, tools/, tests/ (minus 2 documented
+#     pre-existing, unrelated syntax failures) parses as valid JavaScript.
+#   - Every rolling-system test file (33 of 38 in tests/ — 5 excluded,
+#     documented, pre-existing Force-power-track failures unrelated to
+#     this work) actually passes.
+#   - The combat-math single-source-of-truth guard, the attack-outcome
+#     single-source-of-truth guard, the critical-confirmation-removal
+#     guard, the reroll/damage-supersession guard, the vehicle-attack
+#     routing guard, and the full-attack-reroll guard all pass in --strict
+#     (fail-on-finding) mode.
+#   - No new `actor.update(` or `new Roll(` bypass appears in the
+#     rolling-system source files this workflow tracks.
+#
+# What this workflow does NOT verify:
+#   - Anything that requires a running Foundry VTT v13 instance (actual
+#     dice rolls, chat rendering, DOM click handling, live document
+#     mutation). This is a static/Node-only CI; see the Phase 1-5 audits'
+#     "Runtime matrix" sections for what remains runtime-only-verified.
+#   - The 5 Force-power-track tests excluded by
+#     tools/run-rolling-tests.mjs (KNOWN_EXCLUDED_TESTS) — pre-existing,
+#     confirmed via git history to predate the rolling-system-alignment
+#     commits and to import files no rolling-system-alignment commit has
+#     ever touched. Excluding them here is a documented, justified
+#     exclusion, not a silent one.
+#   - The 2 tools/*.mjs syntax failures excluded by
+#     tools/run-rolling-syntax-check.mjs (KNOWN_EXCLUDED_FILES) — unrelated
+#     audit-report generator scripts, pre-existing, not part of the attack/
+#     roll pipeline.
+#   - Anything outside scripts/, tools/, tests/ (this repo has no
+#     package.json/lockfile and zero npm dependencies in its test suite —
+#     every test imports only Node built-ins or relative source files, so
+#     there is no "npm install" step to run and no dependency-drift risk
+#     to cache).
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: rolling-validation-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  rolling-system-validation:
+    name: Rolling system validation
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # No package.json/lockfile exists in this repository, and every test
+      # under tests/*.test.mjs imports only Node built-ins (node:assert,
+      # node:fs, node:path, node:child_process) or relative source files —
+      # confirmed by grepping every test file's imports. There is
+      # therefore no dependency-install step to run and nothing to cache.
+      # Node version pinned to an actively-supported LTS since no
+      # engines field exists to read a required version from.
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Syntax check (scripts/, tools/, tests/)
+        run: node tools/run-rolling-syntax-check.mjs
+
+      - name: Rolling-system test suite
+        run: node tools/run-rolling-tests.mjs
+
+      - name: Guard — combat-math single-source-of-truth
+        run: node tools/check-combat-math-ssot.mjs --strict
+
+      - name: Guard — attack-outcome single-source-of-truth
+        run: node tools/check-attack-outcome-ssot.mjs --strict
+
+      - name: Guard — critical-confirmation removal
+        run: node tools/check-critical-confirmation-guard.mjs --strict
+
+      - name: Guard — reroll / damage supersession
+        run: node tools/check-reroll-supersession-guard.mjs --strict
+
+      - name: Guard — vehicle-attack routing
+        run: node tools/check-vehicle-attack-routing-guard.mjs --strict
+
+      - name: Guard — full-attack reroll (Phase 5)
+        run: node tools/check-full-attack-reroll-guard.mjs --strict
+
+      # Scoped to the exact files the rolling-system-alignment phases own
+      # (see "Exact files changed" in each phase's audit doc) — NOT whole
+      # directories. scripts/combat/ and scripts/engine/combat/ contain many
+      # pre-existing, unrelated files (enhanced-rolls.js's legacy dice
+      # facades, SWSEInitiative.js, recurring-damage-engine.js, etc.) with
+      # their own long-standing new Roll()/actor.update() usage that is
+      # explicitly out of this project's scope to police.
+      - name: Check for actor.update()/new Roll() bypasses in rolling-system files
+        run: |
+          set -e
+          PATTERN='actor\.update\(|new Roll\('
+          FILES="
+            scripts/combat/rolls/attacks.js
+            scripts/engine/combat/combat-roll-math.js
+            scripts/engine/combat/vehicle-attack-math.js
+            scripts/engine/combat/attack-domain-router.js
+            scripts/engine/combat/attack-outcome-resolver.js
+            scripts/engine/combat/attack-roll-diagnostics.js
+            scripts/engine/combat/full-attack-executor.js
+            scripts/engine/combat/full-attack-message-state.js
+            scripts/engine/combat/full-attack-card-renderer.js
+            scripts/engine/combat/features/combat-feature-handlers.js
+            scripts/engine/feats/meta-resource-feat-resolver.js
+            scripts/ui/chat/chat-interaction-bridge.js
+            scripts/sheets/v2/vehicle-sheet/crew-skill-router.js
+          "
+          # One documented pre-existing exception: rollFallback()'s
+          # non-attack skill-check fallback (crew-skill-router.js) uses
+          # new Roll() only when RollEngine is unavailable, and only for
+          # pilot/mechanics/etc checks — never for an attack roll. See the
+          # Phase 3/5 audits.
+          MATCHES=$(grep -Hn -E "$PATTERN" $FILES | grep -v 'crew-skill-router.js:.*new Roll(formula).evaluate()' || true)
+          if [ -n "$MATCHES" ]; then
+            echo "$MATCHES"
+            echo "Found a direct actor.update()/new Roll() bypass outside the one documented pre-existing exception."
+            exit 1
+          fi
+          echo "No unexpected actor.update()/new Roll() bypasses found in the rolling-system files this workflow tracks."

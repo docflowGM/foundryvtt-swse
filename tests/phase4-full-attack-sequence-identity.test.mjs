@@ -42,7 +42,10 @@ const executeFn = executor.slice(executor.indexOf('static async execute(actor, o
 assert.match(executor, /const sequenceId = foundry\.utils\?\.randomID\?\.\(\) \?\? `seq-/);
 assert.match(executor, /attackInstanceId: `\$\{sequenceId\}-\$\{index\}`,\s*\n\s*sequenceIndex: index,/);
 assert.match(executor, /async function _postCombinedCard\(actor, sequence, results, target, sequenceId = null\)/);
-assert.match(executor, /flags: \{ swse: \{\s*\n\s*fullAttack: true,\s*\n\s*packageType: sequence\.packageType,\s*\n\s*sequenceId,\s*\n\s*attacks: attackEntries\s*\n\s*\} \},/);
+// Phase 5 extended the combined-card schema (schemaVersion + breakdown +
+// per-attack revisions[] history, built via full-attack-message-state.js)
+// without dropping the Phase 4 identity fields this test guards.
+assert.match(executor, /flags: \{ swse: \{\s*\n\s*schemaVersion: FULL_ATTACK_SCHEMA_VERSION,\s*\n\s*fullAttack: true,\s*\n\s*packageType: sequence\.packageType,\s*\n\s*sequenceId,/);
 
 // 4. Sequence penalties are declared once in the plan (buildFullAttackSequence
 // / fallbackMultiAttackPlan) BEFORE the loop and passed as a literal number

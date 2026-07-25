@@ -20,13 +20,18 @@
  *   - This module never decides penalty math — that lives in buildFullAttackSequence().
  *   - Economy is spent AFTER dialog confirmation, BEFORE rolling.
  *   - Each attack uses the canonical rollAttack() from attacks.js with suppressChat:true.
- *   - One combined chat card is posted after all attacks resolve.
+ *   - One combined chat card is posted after all attacks resolve; each row's
+ *     HTML is rendered from stored, authoritative attack-entry state by
+ *     full-attack-card-renderer.js (also used to re-render a row after a
+ *     Phase 5 per-attack reroll — see meta-resource-feat-resolver.js
+ *     #resolveFullAttackRerollButton).
  */
 
 import { rollAttack } from "/systems/foundryvtt-swse/scripts/combat/rolls/attacks.js";
-import { encodeCombatWorkflowContext, summarizeCombatWorkflowContext } from "/systems/foundryvtt-swse/scripts/engine/combat/workflow/combat-context-serializer.js";
 import { AmmoSystem } from "/systems/foundryvtt-swse/scripts/engine/inventory/ammo-system.js";
 import { ActionEconomyConsumption } from "/systems/foundryvtt-swse/scripts/engine/combat/action/action-economy-consumption.js";
+import { buildInitialAttackEntry, FULL_ATTACK_SCHEMA_VERSION } from "/systems/foundryvtt-swse/scripts/engine/combat/full-attack-message-state.js";
+import { renderFullAttackCardContent } from "/systems/foundryvtt-swse/scripts/engine/combat/full-attack-card-renderer.js";
 import {
   buildFullAttackSequence,
   showFullAttackDialog,
@@ -39,23 +44,8 @@ import {
 } from "/systems/foundryvtt-swse/scripts/combat/multi-attack.js";
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Internal: combined chat card
+// Internal: cost/ammo helpers
 // ─────────────────────────────────────────────────────────────────────────────
-
-function _outcomeLabel(result) {
-  if (result.isCritical) {return 'Critical Hit';}
-  if (result.isHit === true) {return 'Hit';}
-  if (result.isHit === false) {return 'Miss';}
-  return '—';
-}
-
-function _outcomeColor(result) {
-  if (result.isCritical) {return '#c70;';}
-  if (result.isHit === true) {return '#2a7;';}
-  if (result.isHit === false) {return '#a33;';}
-  return '#666;';
-}
-
 
 function _weaponKey(weapon) {
   return weapon?.id ?? weapon?._id ?? weapon?.uuid ?? weapon?.name ?? '';
@@ -121,6 +111,10 @@ async function _spendFullAttackEconomy(actor, actionType, sequence, options = {}
   return ActionEconomyConsumption.spend(actor, actionType, metadata, options);
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
+// Internal: combined chat card
+// ─────────────────────────────────────────────────────────────────────────────
+
 /**
  * Post a single combined chat card for the full attack sequence.
  *
@@ -130,164 +124,70 @@ async function _spendFullAttackEconomy(actor, actionType, sequence, options = {}
  * @param {Actor|null} target
  */
 async function _postCombinedCard(actor, sequence, results, target, sequenceId = null) {
-  const pkgLabel = {
-    [FULL_ATTACK_PACKAGES.NORMAL]:        'Full Attack',
-    [FULL_ATTACK_PACKAGES.DOUBLE_ATTACK]: 'Double Attack',
-    [FULL_ATTACK_PACKAGES.TRIPLE_ATTACK]: 'Triple Attack',
-    [FULL_ATTACK_PACKAGES.TWO_WEAPON]:    'Two-Weapon Attack',
-    [FULL_ATTACK_PACKAGES.DOUBLE_WEAPON]: 'Double-Weapon Attack',
-  }[sequence.packageType] ?? 'Full Attack';
-
-  const targetLine = target
-    ? `<div style="font-size:0.85em;color:#555;margin-bottom:6px">Target: <b>${target.name}</b></div>`
-    : '';
-
-  const attackRows = results.map((res, i) => {
+  // Message-state schema (full-attack-v2, Phase 5): one entry per attack,
+  // each with its own revisions[] history — see
+  // full-attack-message-state.js for the schema authority. Built via the
+  // state service's buildInitialAttackEntry() rather than assembled ad hoc
+  // here, so the creation-time shape and the reroll-appended shape can
+  // never drift apart.
+  const reactionContextsByAttackInstanceId = new Map();
+  const attackEntries = results.map((res, i) => {
     const plan = sequence.attacks[i];
-    const label = plan?.label ?? `Attack ${i + 1}`;
-    const total = res.total ?? '?';
-    const outcome = _outcomeLabel(res);
-    const color = _outcomeColor(res);
-    const defLine = res.targetReflex != null
-      ? ` vs Reflex ${res.targetReflex}`
-      : '';
-    const penLine = (plan?.finalPenalty ?? 0) !== 0
-      ? `<span style="color:#888;font-size:0.8em"> (penalty ${plan.finalPenalty})</span>`
-      : '';
-
-    // Roll Damage button — shown for any hit or critical
-    const canRollDamage = res.isHit === true || res.isCritical === true;
-    const weaponId = res.weaponId ?? res.weapon?.id ?? plan?.weapon?.id ?? '';
-    const critMult = res.critMultiplier ?? 2;
-    const workflowSummary = summarizeCombatWorkflowContext(res.workflowContext ?? null, {
-      actor,
-      weapon: res.weapon ?? plan?.weapon ?? null,
-      target,
-      targetId: target?.id ?? null,
+    const weapon = res.weapon ?? plan?.weapon ?? null;
+    const attackInstanceId = res.attackInstanceId ?? `${sequenceId ?? 'seq'}-${i}`;
+    if (res.reactionContext) reactionContextsByAttackInstanceId.set(attackInstanceId, res.reactionContext);
+    const entry = buildInitialAttackEntry({
+      attackInstanceId,
+      order: i,
+      weaponUuid: weapon?.uuid ?? weapon?.id ?? null,
+      weaponName: weapon?.name ?? null,
+      targetUuid: target?.uuid ?? target?.id ?? null,
       targetName: target?.name ?? null,
-      isCritical: res.isCritical === true,
-      critMultiplier: critMult,
-      hit: res.isHit ?? null,
-      natural1: Number(res.d20) === 1,
-      natural20: Number(res.d20) === 20
-    }) ?? {};
-    const workflowAttack = workflowSummary.attack ?? {};
-    const workflowDamage = workflowSummary.damage ?? {};
-    const workflowResources = workflowSummary.resources ?? {};
-    const workflowTags = Array.isArray(workflowSummary.contextTags) ? workflowSummary.contextTags.join('|') : '';
-    const workflowContextEncoded = encodeCombatWorkflowContext(res.workflowContext ?? null, {
-      actor,
-      weapon: res.weapon ?? plan?.weapon ?? null,
-      target,
-      targetId: target?.id ?? null,
-      targetName: target?.name ?? null,
-      isCritical: res.isCritical === true,
-      critMultiplier: critMult,
-      hit: res.isHit ?? null
+      label: plan?.label ?? `Attack ${i + 1}`,
+      penaltyText: (plan?.finalPenalty ?? 0) !== 0 ? `(penalty ${plan.finalPenalty})` : '',
+      rollInstanceId: foundry.utils?.randomID?.() ?? null,
+      naturalD20: res.d20 ?? null,
+      total: res.total ?? null,
+      formula: res.roll?.formula ?? null,
+      outcome: {
+        hit: res.isHit ?? null,
+        critical: res.isCritical ?? null,
+        criticalThreat: res.outcome?.criticalThreat ?? null,
+        automaticHit: res.outcome?.automaticHit ?? null,
+        automaticMiss: res.outcome?.automaticMiss ?? null,
+        targetDefense: res.targetReflex ?? null,
+        critMultiplier: res.critMultiplier ?? 2
+      },
+      componentLedger: res.componentLedger,
+      // reactionContext is intentionally excluded (contains live Actor
+      // references — see full-attack-card-renderer.js's docs); workflowContext
+      // is already the same serializable shape combat-context-serializer.js
+      // guarantees for single-attack messages.
+      damageContext: { workflowContext: res.workflowContext ?? null },
+      attackRerollOptions: res.attackRerollOptions
     });
-    const damageBtn = canRollDamage && weaponId
-      ? `<button type="button" class="btn swse-roll-damage"
-                 data-actor-id="${actor.id}"
-                 data-weapon-id="${weaponId}"
-                 data-target="${target?.id ?? ''}"
-                 data-workflow-id="${workflowSummary.workflowId ?? ''}"
-                 data-action-id="${workflowSummary.actionId ?? ''}"
-                 data-attack-mode="${workflowAttack.mode ?? ''}"
-                 data-context-tags="${workflowTags}"
-                 data-hit="${workflowDamage.hit ?? ''}"
-                 data-natural-1="${workflowDamage.natural1 === true}"
-                 data-natural-20="${workflowDamage.natural20 === true}"
-                 data-area-attack="${workflowAttack.isArea === true}"
-                 data-burst-fire="${workflowAttack.isBurstFire === true}"
-                 data-autofire="${workflowAttack.isAutofire === true}"
-                 data-stun="${workflowAttack.isStun === true}"
-                 data-ion="${workflowAttack.isIon === true}"
-                 data-ammo-cost="${Number(workflowResources.ammoCost ?? 0) || 0}"
-                 data-workflow-context="${workflowContextEncoded}"
-                 data-is-crit="${res.isCritical === true}"
-                 data-crit-mult="${critMult}"
-                 style="margin-left:6px;padding:2px 7px;font-size:0.8em;cursor:pointer;
-                        background:#1a4a2a;border:1px solid #2a7;border-radius:3px;color:#2da">
-           ▸ Damage${res.isCritical ? ` ×${critMult}` : ''}
-         </button>`
-      : '';
+    // sequenceId/criticalThreshold aren't part of the persisted per-attack
+    // schema (sequenceId lives at the message level; criticalThreshold is
+    // re-derived per reroll from the button's own dataset) but the renderer
+    // reads them off the in-memory entry for convenience at initial-render
+    // time.
+    entry.sequenceId = sequenceId;
+    entry.criticalThreshold = res.outcome?.criticalThreshold ?? 20;
+    return entry;
+  });
 
-    // Reaction buttons — only if there's a target with available reactions for this attack
-    const rxnCtx = res.reactionContext;
-    const rxnBtns = (rxnCtx?.reactions?.length && rxnCtx.defenderId)
-      ? rxnCtx.reactions.map(rxn => `
-          <button type="button" class="btn swse-chat-reaction-pill"
-                  data-swse-reaction-key="${rxn.key}"
-                  data-swse-defender-id="${rxnCtx.defenderId}"
-                  data-swse-attacker-id="${actor.id}"
-                  data-swse-dc="${total}"
-                  data-swse-attack-total="${total}"
-                  data-swse-trigger="ON_ATTACK_DECLARED"
-                  style="margin-left:4px;padding:2px 7px;font-size:0.8em;cursor:pointer;
-                         background:#1a2a4a;border:1px solid #48f;border-radius:3px;color:#8af">
-            ${rxn.glyph ?? '↩'} ${rxn.label}
-          </button>`).join('')
-      : '';
-
-    return `
-      <div style="padding:4px 6px;border-bottom:1px solid #ddd">
-        <div style="display:flex;justify-content:space-between;align-items:center">
-          <span style="font-weight:bold">${label}${penLine}</span>
-          <span>
-            <b style="font-size:1.1em">${total}</b>${defLine}
-            &nbsp;<span style="color:${color};font-weight:bold">${outcome}</span>
-            ${damageBtn}
-          </span>
-        </div>
-        ${rxnBtns ? `<div style="margin-top:3px">${rxnBtns}</div>` : ''}
-      </div>`;
-  }).join('');
-
-  const breakdownRows = sequence.breakdown.length
-    ? `<div style="margin-top:6px;font-size:0.8em;color:#666">
-         ${sequence.breakdown.map(b => `<div>• ${b}</div>`).join('')}
-       </div>`
-    : '';
-
-  const content = `
-    <div class="swse-full-attack-card" style="font-family:var(--font-primary,sans-serif)">
-      <div style="font-size:1.05em;font-weight:bold;margin-bottom:4px">
-        ${actor.name} — ${pkgLabel}
-      </div>
-      ${targetLine}
-      <div style="border:1px solid #ccc;border-radius:4px;overflow:hidden">
-        ${attackRows}
-      </div>
-      ${breakdownRows}
-    </div>`;
-
-  // Message-state schema (Phase 4): one entry per attack in the sequence,
-  // each carrying its own stable attackInstanceId, revision, and outcome
-  // summary — foundational identity for Phase 5 to build interactive
-  // per-attack reroll on, not itself a reroll mechanism yet (see the
-  // comment at this function's call site).
-  const attackEntries = results.map((res, i) => ({
-    attackInstanceId: res.attackInstanceId ?? `${sequenceId ?? 'seq'}-${i}`,
-    sequenceIndex: i,
-    activeRevision: 0,
-    authoritative: true,
-    superseded: false,
-    weaponId: res.weaponId ?? res.weapon?.id ?? null,
-    naturalD20: res.d20 ?? null,
-    finalTotal: res.total ?? null,
-    isHit: res.isHit ?? null,
-    isCritical: res.isCritical ?? null,
-    critMultiplier: res.critMultiplier ?? null
-  }));
+  const content = renderFullAttackCardContent(actor, target, sequence.packageType, attackEntries, sequence.breakdown, reactionContextsByAttackInstanceId);
 
   await ChatMessage.create({
     speaker: ChatMessage.getSpeaker({ actor }),
     content,
     flags: { swse: {
+      schemaVersion: FULL_ATTACK_SCHEMA_VERSION,
       fullAttack: true,
       packageType: sequence.packageType,
       sequenceId,
-      attacks: attackEntries
+      breakdown: sequence.breakdown,
+      attacks: attackEntries.map(({ sequenceId: _s, criticalThreshold: _c, ...rest }) => rest)
     } },
   });
 }
@@ -360,18 +260,14 @@ export class FullAttackExecutor {
       ?? game.user?.targets?.first?.()?.actor
       ?? null;
 
-    // 5. Roll each attack — suppressChat so we post one combined card
-    // Full-attack sequence identity (Phase 4 rolling-system alignment):
-    // this path posts one COMBINED card rather than one message per attack
-    // (unlike combat-feature-handlers.js's Double/Triple Attack path), so
-    // there is no per-attack chat message to attach Phase 3's reroll/
-    // supersession flags to yet. sequenceId/attackInstanceId are still
-    // threaded through here and recorded on the combined card below so the
-    // versioned message-state schema (docs/audits/rolling-system-alignment-phase-4.md,
-    // "Message-state schema") has real per-attack identity to build
-    // interactive per-attack reroll on top of — that reroll UI/wiring is
-    // intentionally NOT implemented this phase (see "Full-attack reroll
-    // behavior" in the Phase 4 audit for why it's scoped to Phase 5).
+    // 5. Roll each attack — suppressChat so we post one combined card.
+    // sequenceId/attackInstanceId (Phase 4) are threaded through and
+    // recorded on the combined card, and — since Phase 5 — power the
+    // interactive per-attack reroll button rendered on each row (see
+    // full-attack-card-renderer.js / meta-resource-feat-resolver.js
+    // #resolveFullAttackRerollButton). Rerolling one attack updates only
+    // that attack's stored revision; siblings and the shared cost/ammo
+    // spends below are untouched.
     const sequenceId = foundry.utils?.randomID?.() ?? `seq-${Date.now()}-${Math.random().toString(36).slice(2)}`;
     const rollOptions = {
       suppressChat:    true,

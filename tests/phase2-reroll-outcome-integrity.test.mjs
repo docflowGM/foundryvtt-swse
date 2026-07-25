@@ -12,9 +12,14 @@ import { readFile } from 'node:fs/promises';
 const resolver = await readFile(new URL('../scripts/engine/feats/meta-resource-feat-resolver.js', import.meta.url), 'utf8');
 const attacks = await readFile(new URL('../scripts/combat/rolls/attacks.js', import.meta.url), 'utf8');
 
+// Sliced up to the next static method (resolveFullAttackRerollButton,
+// added directly after this one in Phase 5 for combined Full Attack card
+// rerolls) rather than getTemporaryDefenseRules, so this isolates exactly
+// resolveAttackRerollButton()'s own body regardless of what methods were
+// inserted between it and getTemporaryDefenseRules since Phase 2.
 const rerollBody = resolver.slice(
   resolver.indexOf('static async resolveAttackRerollButton('),
-  resolver.indexOf('static getTemporaryDefenseRules(')
+  resolver.indexOf('static async resolveFullAttackRerollButton(')
 );
 
 // 1. A reroll must build a brand new AttackOutcomeResolver result, not reuse
