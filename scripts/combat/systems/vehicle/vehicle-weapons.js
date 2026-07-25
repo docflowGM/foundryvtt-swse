@@ -11,6 +11,7 @@
 import { measureDistance, facingTowards } from "/systems/foundryvtt-swse/scripts/engine/combat/vehicles/utils/vehicle-shared.js";
 import { createChatMessage } from "/systems/foundryvtt-swse/scripts/core/document-api-v13.js";
 import { SWSERoll } from "/systems/foundryvtt-swse/scripts/combat/rolls/enhanced-rolls.js";
+import { AttackOutcomeResolver } from "/systems/foundryvtt-swse/scripts/engine/combat/attack-outcome-resolver.js";
 
 export class SWSEVehicleWeapons {
 
@@ -158,7 +159,16 @@ export async function missileSecondAttack(vehicle, missileState, rollDamage) {
   const roll = await globalThis.SWSE.RollEngine.safeRoll(`1d20 + ${attackBonus - 5}`, {}, { domain: 'vehicle.weapon.attack' });
 
   const targetReflex = getTargetReflexDefense(target);
-  const hits = roll.total >= targetReflex;
+  const naturalD20 = roll?.dice?.[0]?.results?.[0]?.result ?? null;
+  // Same AttackOutcomeResolver used by character attacks, so a locked-on
+  // missile's natural 1/20 is not silently ignored the way a bare
+  // `roll.total >= targetReflex` comparison would ignore it.
+  const outcome = AttackOutcomeResolver.resolve({
+    naturalD20,
+    total: roll.total,
+    targetDefense: targetReflex
+  });
+  const hits = outcome.hit;
 
   const result = {
     vehicle,
@@ -167,6 +177,7 @@ export async function missileSecondAttack(vehicle, missileState, rollDamage) {
     roll,
     total: roll.total,
     targetDefense: targetReflex,
+    outcome,
     hits
   };
 

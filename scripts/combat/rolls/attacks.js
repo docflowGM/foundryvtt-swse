@@ -18,6 +18,8 @@ import {
   rapidAlchemyState,
   weaponMatchesId
 } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-roll-math.js";
+import { AttackOutcomeResolver } from "/systems/foundryvtt-swse/scripts/engine/combat/attack-outcome-resolver.js";
+import { buildLedgerFromComponents, buildInvocationLedgerEntry } from "/systems/foundryvtt-swse/scripts/engine/effects/modifiers/modifier-breakdown-builder.js";
 
 // ============================================
 // FILE: rolls/attacks.js (Upgraded for SWSE v13+)
@@ -180,6 +182,16 @@ function stepDamageDieFormula(baseFormula, steps = 0) {
 
 /**
  * Roll an attack with a weapon using SWSE rules.
+ *
+ * Cost/commit stages for this workflow:
+ * - On declaration: core attack-option action costs (spendCoreAttackOptionCosts).
+ * - On declaration: ammunition (AmmoSystem.spendForWorkflow), after action costs.
+ * - On successful roll execution: both costs are kept; the catch block below
+ *   rolls both back if anything in the try block throws (including the
+ *   attack roll itself failing), so a formula/roll error cannot leave costs
+ *   spent for an attack that never happened.
+ * - Hit/damage resolution is a separate workflow (rollDamage) and is not
+ *   gated by this function's cost transaction.
  */
 export async function rollAttack(actor, weapon, options = {}) {
   const rollOptions = prepareCoreAttackOptionRollContext(mergeCombatWorkflowContextIntoRollOptions(options, options?.combatContext ?? options?.workflowContext ?? null));
@@ -223,7 +235,19 @@ export async function rollAttack(actor, weapon, options = {}) {
   // resolveAttackBonus provides the canonical total; roll-invocation-only
   // modifiers (fightingDefensively, customModifier, situationalBonus,
   // sequencePenalty) are intentionally added here, not inside the resolver.
-  const atkBonus = resolveAttackBonus(actor, weapon, null, rollOptions).total + getFightingDefensivelyAttackPenalty(actor, rollOptions) + Number(rollOptions.customModifier || 0) + Number(rollOptions.situationalBonus || 0) + sequencePenalty;
+  const attackBonusResolution = resolveAttackBonus(actor, weapon, null, rollOptions);
+  const fightingDefensivelyPenalty = getFightingDefensivelyAttackPenalty(actor, rollOptions);
+  const atkBonus = attackBonusResolution.total + fightingDefensivelyPenalty + Number(rollOptions.customModifier || 0) + Number(rollOptions.situationalBonus || 0) + sequencePenalty;
+  // Component ledger: baseline (resolver) components plus invocation-only
+  // additions, clearly separated so a tooltip never claims an invocation-only
+  // modifier is part of the static weapon baseline.
+  const attackComponentLedger = [
+    ...buildLedgerFromComponents(attackBonusResolution.components, 'combat.attack', 'baseline'),
+    buildInvocationLedgerEntry('fighting-defensively', 'Fighting Defensively', fightingDefensivelyPenalty, 'combat.attack'),
+    buildInvocationLedgerEntry('custom-modifier', 'Custom Modifier', rollOptions.customModifier, 'combat.attack'),
+    buildInvocationLedgerEntry('situational-bonus', 'Situational Bonus', rollOptions.situationalBonus, 'combat.attack'),
+    buildInvocationLedgerEntry('sequence-penalty', 'Sequence Penalty', sequencePenalty, 'combat.attack')
+  ].filter(Boolean);
 
   const rollFormula = `1d20 + ${atkBonus}`;
   const roll = await RollEngine.safeRoll(rollFormula, actor?.getRollData?.() ?? {}, { actor, domain: 'combat.attack', context: { weaponId: weapon?.id ?? null } });
@@ -234,10 +258,21 @@ export async function rollAttack(actor, weapon, options = {}) {
   const resolvedTarget = resolveTargetContext(targetContextOptions, getTargetActorFromOptions(rollOptions));
   const target = resolvedTarget.target;
   const targetReflex = resolvedTarget.defenseValue;
-  const isHit = targetReflex != null ? roll.total >= targetReflex : null;
   const d20 = roll?.dice?.[0]?.results?.[0]?.result ?? null;
   const criticalThreshold = Number(optionModifiers.criticalThreatNaturalMin ?? 20);
-  const isCritical = Number(d20) === 20 || (Number.isFinite(criticalThreshold) && criticalThreshold < 20 && Number(d20) >= criticalThreshold && isHit !== false);
+  const critMultiplier = Math.max(Number(weapon.system?.critMultiplier ?? weapon.system?.criticalMultiplier ?? 2) || 2, Number(optionModifiers.criticalMultiplierMin ?? 0) || 0);
+  // AttackOutcomeResolver is the single authority for hit/critical/natural-1/
+  // natural-20 interpretation — chat, damage workflow, rerolls, and reactions
+  // all read from this same outcome object rather than re-deriving it.
+  const outcome = AttackOutcomeResolver.resolve({
+    naturalD20: d20,
+    total: roll.total,
+    targetDefense: targetReflex,
+    criticalThreshold,
+    critMultiplier
+  });
+  const isHit = outcome.hit;
+  const isCritical = outcome.critical;
   const reactionContext = buildReactionContextForAttack(actor, target, weapon, roll.total);
   const attackRerollOptions = MetaResourceFeatResolver.buildAttackRerollChatOptions(actor, weapon, roll, {
     ...rollOptions,
@@ -254,10 +289,10 @@ export async function rollAttack(actor, weapon, options = {}) {
     targetId: target?.id ?? null,
     targetName: resolvedTarget.targetName ?? target?.name ?? '',
     isCritical,
-    critMultiplier: Math.max(Number(weapon.system?.critMultiplier ?? weapon.system?.criticalMultiplier ?? 2) || 2, Number(optionModifiers.criticalMultiplierMin ?? 0) || 0),
+    critMultiplier,
     hit: isHit,
-    natural1: Number(d20) === 1,
-    natural20: Number(d20) === 20,
+    natural1: outcome.automaticMiss,
+    natural20: outcome.automaticHit,
     defense: resolvedTarget.defenseType ?? workflowContext?.attack?.defense ?? null
   });
 
@@ -283,7 +318,7 @@ export async function rollAttack(actor, weapon, options = {}) {
       success: isHit,
       outcomeLabel: isCritical ? 'Critical Hit' : isHit === true ? 'Hit' : isHit === false ? 'Miss' : '',
       isCritical,
-      critMultiplier: Math.max(Number(weapon.system?.critMultiplier ?? weapon.system?.criticalMultiplier ?? 2) || 2, Number(optionModifiers.criticalMultiplierMin ?? 0) || 0),
+      critMultiplier,
       reactionContext,
       targetEffectsOnHit: optionModifiers.targetEffectsOnHit || [],
       targetEffectsOnCritical: optionModifiers.targetEffectsOnCritical || [],
@@ -294,10 +329,10 @@ export async function rollAttack(actor, weapon, options = {}) {
     }
   });
 
-  if (Number(d20) === 1) {
+  if (outcome.automaticMiss) {
     await ForceExecutor.handleForceFlowNaturalOne(actor, { source: weapon?.name ?? 'Attack', rollType: 'attack roll' });
   }
-  if (Number(d20) === 20) {
+  if (outcome.automaticHit) {
     await ForceExecutor.grantTelepathicInfluenceForcePoint(actor);
   }
 
@@ -309,6 +344,8 @@ export async function rollAttack(actor, weapon, options = {}) {
     isHit,
     isCritical,
     critThreat: isCritical,
+    outcome,
+    componentLedger: attackComponentLedger,
     concealmentMiss: false,
     concealmentMissChance: 0,
     confirmationRoll: null,
@@ -318,7 +355,7 @@ export async function rollAttack(actor, weapon, options = {}) {
     resolvedTarget,
     weaponId: weapon.id,
     weapon,
-    critMultiplier: Math.max(Number(weapon.system?.critMultiplier ?? weapon.system?.criticalMultiplier ?? 2) || 2, Number(optionModifiers.criticalMultiplierMin ?? 0) || 0),
+    critMultiplier,
     reactionContext,
     attackRerollOptions,
     workflowContext: damageWorkflowContext,
@@ -332,8 +369,8 @@ export async function rollAttack(actor, weapon, options = {}) {
     sequencePenalty,
     isHit,
     isCritical,
-    natural1: Number(d20) === 1,
-    natural20: Number(d20) === 20,
+    natural1: outcome.automaticMiss,
+    natural20: outcome.automaticHit,
     critMultiplier: attackResult.critMultiplier,
     targetDefenseValue: targetReflex,
     targetDefenseType: resolvedTarget.defenseType ?? null,
@@ -409,11 +446,11 @@ export async function rollFullAttack(actor, weapon, options = {}) {
 
   const result = { attack, damage: null };
 
-  // Crit threat detection
-  const critRange = weapon.system?.critRange ?? 20;
-  const isThreat = attack.dice[0]?.results?.some(r => r.result >= critRange);
-
-  if (isThreat) {
+  // AttackOutcomeResolver (inside rollAttack above) already determined
+  // critical threat from the natural d20; reuse that verdict instead of
+  // re-deriving it here (attack.dice does not exist on the attack result —
+  // this previously threw when this codepath ran).
+  if (attack.outcome?.criticalThreat) {
     ui.notifications.info('Critical Threat!');
   }
 
@@ -485,9 +522,20 @@ export async function rollAttackAndDamageWithNarration(actor, weapon, options = 
   // Post attack roll card
   const target = getTargetActorFromOptions(rollOptions);
   const targetReflex = getTargetReflex(target);
-  const isHit = targetReflex != null ? attackRoll.total >= targetReflex : null;
   const attackD20 = attackRoll?.dice?.[0]?.results?.[0]?.result ?? null;
-  const isCritical = Number(attackD20) === 20;
+  const attackCritThreshold = Number(optionModifiers.criticalThreatNaturalMin ?? 20);
+  const attackCritMultiplier = Math.max(Number(weapon.system?.critMultiplier ?? weapon.system?.criticalMultiplier ?? 2) || 2, Number(optionModifiers.criticalMultiplierMin ?? 0) || 0);
+  // Same AttackOutcomeResolver used by rollAttack(), so narration and this
+  // combined attack+damage path agree on natural-1/natural-20/critical rules.
+  const outcome = AttackOutcomeResolver.resolve({
+    naturalD20: attackD20,
+    total: attackRoll.total,
+    targetDefense: targetReflex,
+    criticalThreshold: attackCritThreshold,
+    critMultiplier: attackCritMultiplier
+  });
+  const isHit = outcome.hit;
+  const isCritical = outcome.critical;
   const reactionContext = buildReactionContextForAttack(actor, target, weapon, attackRoll.total);
   const attackRerollOptions = MetaResourceFeatResolver.buildAttackRerollChatOptions(actor, weapon, attackRoll, {
     ...rollOptions,
@@ -515,16 +563,16 @@ export async function rollAttackAndDamageWithNarration(actor, weapon, options = 
       success: isHit,
       outcomeLabel: isCritical ? 'Critical Hit' : isHit === true ? 'Hit' : isHit === false ? 'Miss' : '',
       isCritical,
-      critMultiplier: Math.max(Number(weapon.system?.critMultiplier ?? weapon.system?.criticalMultiplier ?? 2) || 2, Number(optionModifiers.criticalMultiplierMin ?? 0) || 0),
+      critMultiplier: attackCritMultiplier,
       reactionContext,
       targetEffectsOnHit: optionModifiers.targetEffectsOnHit || []
     }
   });
 
-  if (Number(attackD20) === 1) {
+  if (outcome.automaticMiss) {
     await ForceExecutor.handleForceFlowNaturalOne(actor, { source: weapon?.name ?? 'Attack', rollType: 'attack roll' });
   }
-  if (Number(attackD20) === 20) {
+  if (outcome.automaticHit) {
     await ForceExecutor.grantTelepathicInfluenceForcePoint(actor);
   }
 
@@ -546,7 +594,7 @@ export async function rollAttackAndDamageWithNarration(actor, weapon, options = 
     }
   }
 
-  return { attack: attackRoll, damage: damageRoll, ammoSpend, actionOptionSpend };
+  return { attack: attackRoll, damage: damageRoll, outcome, ammoSpend, actionOptionSpend };
   } catch (err) {
     if (ammoSpend?.spent) {
       await AmmoSystem.rollbackSpend(actor, weapon, ammoSpend);

@@ -292,11 +292,10 @@ export class ForceExecutor {
       const success = total >= baseDC;
       const forcePointBonus = Number(rollResult.forcePointBonus ?? rollResult.breakdown?.forcePointBonus ?? 0) || 0;
 
-      // Spend Force Points before post-roll temporary FP triggers are granted, so Force Flow
-      // cannot immediately pay for the same roll that created it.
-      if (useForce && forcePointBonus > 0) {
-        await ActorEngine.spendForcePoints(actor, 1);
-      }
+      // RollCore.execute() already spent the Force Point for the bonus die
+      // (via ForcePointSpendCoordinator/ActorEngine.spendForcePoints) before
+      // rolling above. Do not spend it again here — this used to compensate
+      // for RollCore not actually paying for its own bonus and now double-spends.
       if (options.moveMassiveObject === true) {
         await ActorEngine.spendForcePoints(actor, 1);
       }

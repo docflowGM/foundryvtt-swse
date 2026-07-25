@@ -27,7 +27,26 @@ import { ForceRules } from "/systems/foundryvtt-swse/scripts/engine/force/ForceR
 import { MetaResourceFeatResolver } from "/systems/foundryvtt-swse/scripts/engine/feats/meta-resource-feat-resolver.js";
 import { ForcePointFeatRules } from "/systems/foundryvtt-swse/scripts/engine/feats/force-point-feat-rules.js";
 
+const DIE_STEPS = Object.freeze(['d4', 'd6', 'd8', 'd10', 'd12']);
+
 export class ForcePointsService {
+
+  /**
+   * Upgrade a die size by a number of steps along the standard damage-die ladder.
+   * Pure helper — shared by any caller that needs to apply a die-size upgrade
+   * (e.g. Strong in the Force) to a Force Point bonus die.
+   *
+   * @param {string} dieSize - Starting die size, e.g. "d6"
+   * @param {number} steps - Number of steps to upgrade (0 = no change)
+   * @returns {string} Upgraded die size
+   */
+  static upgradeDieSize(dieSize = 'd6', steps = 0) {
+    const normalized = String(dieSize || 'd6').trim().toLowerCase();
+    const index = DIE_STEPS.indexOf(normalized);
+    if (index < 0) return normalized;
+    const offset = Math.max(0, Number(steps) || 0);
+    return DIE_STEPS[Math.min(DIE_STEPS.length - 1, index + offset)];
+  }
 
   /**
    * Calculate maximum Force Points for an actor
