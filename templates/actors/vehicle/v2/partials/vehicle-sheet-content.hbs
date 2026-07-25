@@ -146,6 +146,9 @@
         {{#if vehiclePanels.crewAssignmentPanel}}
           {{> "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/vehicle-crew-assignment-panel.hbs" panel=vehiclePanels.crewAssignmentPanel}}
         {{/if}}
+        {{#if vehiclePanels.customStationEditorPanel.editable}}
+          {{> "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/vehicle-custom-station-editor-panel.hbs" panel=vehiclePanels.customStationEditorPanel}}
+        {{/if}}
         {{#if vehiclePanels.commanderOrderPanel}}
           {{> "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/vehicle-commander-order-panel.hbs" panel=vehiclePanels.commanderOrderPanel}}
         {{else}}

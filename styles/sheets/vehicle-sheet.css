@@ -558,6 +558,28 @@
   line-height: 1.3;
 }
 
+/* Weapon-to-station operator mapping (Phase 7) */
+.swse-vehicle-weapon-operator-warning {
+  margin-top: 0.45rem;
+  padding: 0.35rem 0.5rem;
+  border-radius: 6px;
+  border: 1px solid rgba(242, 191, 92, 0.3);
+  background: rgba(242, 191, 92, 0.1);
+  color: var(--swse-vehicle-warning);
+  font-size: 0.72rem;
+}
+
+.swse-vehicle-weapon-operator-mapping {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-top: 0.45rem;
+}
+
+.swse-vehicle-weapon-operator-select {
+  flex: 1;
+}
+
 /* =========================================================
    CREW / STATIONS
    ========================================================= */
@@ -584,6 +606,59 @@
 
 .swse-vehicle-station-status {
   justify-self: end;
+}
+
+/* Custom station editor (Phase 7) */
+.swse-vehicle-custom-station-list {
+  display: grid;
+  gap: 0.5rem;
+  margin-bottom: 0.65rem;
+}
+
+.swse-vehicle-custom-station-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  padding: 0.5rem 0.6rem;
+  border: 1px solid var(--swse-vehicle-border-soft);
+  border-radius: 8px;
+}
+
+.swse-vehicle-custom-station-fields {
+  display: flex;
+  gap: 0.4rem;
+  flex: 1;
+  min-width: 220px;
+}
+
+.swse-vehicle-custom-station-label {
+  flex: 1;
+  min-width: 100px;
+}
+
+.swse-vehicle-custom-station-description {
+  flex: 1;
+  min-width: 120px;
+}
+
+.swse-vehicle-custom-station-controls {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.swse-vehicle-action-btn--icon {
+  padding: 0.1rem 0.4rem;
+}
+
+.swse-vehicle-custom-station-add {
+  display: flex;
+  gap: 0.4rem;
+  align-items: center;
+}
+
+.swse-vehicle-custom-station-add input[name="label"] {
+  flex: 1;
 }
 
 /* =========================================================

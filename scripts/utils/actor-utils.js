@@ -177,8 +177,21 @@ export async function applyActorUpdateAtomic(actor, changes, options = {}) {
     throw new Error(`applyActorUpdateAtomic: actor is not a valid Actor instance (id: ${actor.id}, updateFn: ${typeof actor.update})`);
   }
 
-  // RECOVERY: If actor appears to be synthetic/corrupted, refetch from world
-  if (actor.collection === null && actor.id) {
+  // RECOVERY: If actor appears to be detached/corrupted (not merely an
+  // unlinked token's synthetic actor — see the isToken guard below), refetch
+  // from world.
+  //
+  // Phase 7 (vehicle-crew-assignment-phase-7) finding: an unlinked token's
+  // synthetic actor (actor.isToken === true, actor.token set) legitimately
+  // has actor.collection === null — that is not corruption, it is how
+  // Foundry represents a token-delta actor that is not a member of the
+  // game.actors EmbeddedCollection. Before this guard, EVERY mutation to an
+  // unlinked vehicle token (crew assignment included) was silently
+  // redirected to game.actors.get(actor.id) — the BASE WORLD ACTOR sharing
+  // that id — instead of the token's own synthetic actor, so assignments
+  // made on an unlinked token vehicle would incorrectly write through to
+  // every other token of that same base actor.
+  if (actor.collection === null && actor.id && !actor.isToken) {
     swseLogger.warn('applyActorUpdateAtomic: actor collection is null, attempting to refetch from world', {
       actorId: actor.id,
       actorName: actor.name

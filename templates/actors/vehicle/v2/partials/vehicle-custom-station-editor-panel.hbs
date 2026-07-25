@@ -1,0 +1,81 @@
+<section class="swse-vehicle-panel swse-vehicle-panel--custom-stations">
+  <header class="swse-vehicle-panel-header">
+    <h3 class="swse-vehicle-panel-title">{{panel.title}}</h3>
+    <span class="swse-vehicle-panel-kicker">Create, edit, reorder, or remove custom crew stations.</span>
+  </header>
+
+  <div class="swse-vehicle-panel-body">
+    {{#if panel.hasStations}}
+      <div class="swse-vehicle-custom-station-list">
+        {{#each panel.stations as |station|}}
+          <div class="swse-vehicle-custom-station-row" data-custom-station-id="{{station.id}}">
+            <div class="swse-vehicle-custom-station-fields">
+              <input type="text"
+                     class="swse-vehicle-custom-station-label"
+                     data-action="vehicle-custom-station-rename"
+                     data-station-id="{{station.id}}"
+                     value="{{station.label}}"
+                     placeholder="Station label">
+
+              <select class="swse-vehicle-custom-station-role"
+                      data-action="vehicle-custom-station-role"
+                      data-station-id="{{station.id}}">
+                {{#each station.roleOptions as |option|}}
+                  <option value="{{option.key}}" {{#if option.selected}}selected{{/if}}>{{option.label}}</option>
+                {{/each}}
+              </select>
+
+              <input type="text"
+                     class="swse-vehicle-custom-station-description"
+                     data-action="vehicle-custom-station-description"
+                     data-station-id="{{station.id}}"
+                     value="{{station.description}}"
+                     placeholder="Description (optional)">
+            </div>
+
+            <div class="swse-vehicle-custom-station-status">
+              {{#if station.occupied}}
+                <span class="swse-vehicle-crew-status swse-vehicle-crew-status--assigned">{{station.occupantName}}</span>
+              {{else}}
+                <span class="swse-vehicle-crew-status swse-vehicle-crew-status--empty">Unassigned</span>
+              {{/if}}
+            </div>
+
+            <div class="swse-vehicle-custom-station-controls">
+              <button type="button"
+                      class="swse-vehicle-action-btn swse-vehicle-action-btn--icon"
+                      data-action="vehicle-custom-station-move-up"
+                      data-station-id="{{station.id}}"
+                      {{#if station.isFirst}}disabled{{/if}}
+                      title="Move up">↑</button>
+              <button type="button"
+                      class="swse-vehicle-action-btn swse-vehicle-action-btn--icon"
+                      data-action="vehicle-custom-station-move-down"
+                      data-station-id="{{station.id}}"
+                      {{#if station.isLast}}disabled{{/if}}
+                      title="Move down">↓</button>
+              <button type="button"
+                      class="swse-vehicle-action-btn swse-vehicle-action-btn--remove"
+                      data-action="vehicle-custom-station-remove"
+                      data-station-id="{{station.id}}">
+                Remove
+              </button>
+            </div>
+          </div>
+        {{/each}}
+      </div>
+    {{else}}
+      <p class="swse-vehicle-station-notes">No custom stations yet.</p>
+    {{/if}}
+
+    <form class="swse-vehicle-custom-station-add" data-action="vehicle-custom-station-add-form">
+      <input type="text" name="label" placeholder="New station label" required>
+      <select name="role">
+        {{#each panel.roleOptions as |option|}}
+          <option value="{{option.key}}">{{option.label}}</option>
+        {{/each}}
+      </select>
+      <button type="submit" class="swse-vehicle-action-btn swse-vehicle-action-btn--assign">Add Station</button>
+    </form>
+  </div>
+</section>
