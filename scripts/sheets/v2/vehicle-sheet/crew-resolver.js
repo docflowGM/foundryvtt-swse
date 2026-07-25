@@ -87,13 +87,20 @@ function weaponStations(system, weapons) {
   const count = Math.max(explicitGunners.length, weaponCount || 0);
   if (!count) return [];
 
-  return Array.from({ length: count }, (_, index) => ({
-    key: index === 0 ? "gunner" : `gunner-${index + 1}`,
-    role: "gunner",
-    sourceKey: index === 0 ? "gunner" : `gunner${index + 1}`,
-    label: count === 1 ? "Gunner" : `Gunner ${index + 1}`,
-    reason: "Vehicle weapons available"
-  }));
+  return Array.from({ length: count }, (_, index) => {
+    const key = index === 0 ? "gunner" : `gunner-${index + 1}`;
+    return {
+      key,
+      role: "gunner",
+      // sourceKey must match `key` exactly — this is the literal
+      // system.crewPositions storage key. A prior version diverged
+      // (`gunner-2` vs `gunner2`), which made stationCrew() look up the
+      // wrong storage key for every gunner past the first.
+      sourceKey: key,
+      label: count === 1 ? "Gunner" : `Gunner ${index + 1}`,
+      reason: "Vehicle weapons available"
+    };
+  });
 }
 
 function customStations(system) {
@@ -124,27 +131,46 @@ function shouldShowStation(station, facts) {
   return true;
 }
 
-function stationCrew(positions, station) {
+function stationCrew(positions, station, ownedActors) {
   const candidates = [station.sourceKey, station.key, station.role];
   for (const key of candidates) {
     if (!key) continue;
     const entry = positions[key];
     if (entry) return normalizeCrewEntry(entry);
   }
+  // Legacy-data compatibility: system.crewPositions is canonical, but older
+  // saves may only have a system.ownedActors entry tagged with this
+  // station's position/role. Read-only fallback — never written back here.
+  const legacy = ownedActors.find((candidate) => candidate?.position === station.key || candidate?.role === station.key);
+  if (legacy) return normalizeCrewEntry(legacy);
   return normalizeCrewEntry(station.storedCrew);
 }
 
-function stationState(station, positions, facts) {
-  const crew = stationCrew(positions, station);
+function stationSource(station) {
+  if (station.custom) return "custom";
+  if (station.role === "gunner") return "weapon";
+  return "base";
+}
+
+function stationState(station, positions, facts, ownedActors) {
+  const crew = stationCrew(positions, station, ownedActors);
   const skills = positionSkills(station.role);
   const assigned = Boolean(crew?.name || crew?.uuid || crew?.id);
   return {
     key: station.key,
+    // storageKey is the literal system.crewPositions key this station
+    // reads/writes. Today that is always identical to `key` — there is no
+    // separate storage-indirection layer — but callers should reference
+    // storageKey rather than assuming key === storage field.
+    storageKey: station.key,
     role: station.role,
     label: station.label || VehicleCrewPositions.getPositionDisplayName?.(station.role) || station.role,
     reason: station.reason,
+    source: stationSource(station),
     custom: Boolean(station.custom),
     required: station.always || station.role === "pilot",
+    assignable: true,
+    removable: assigned,
     assigned,
     empty: !assigned,
     occupant: assigned ? label(crew?.name ?? crew?.uuid ?? crew?.id) : "Unassigned",
@@ -158,6 +184,7 @@ function stationState(station, positions, facts) {
 export function resolveVehicleCrewStations({ system = {}, category = {}, weapons = {}, settings = {} } = {}) {
   const vehicle = object(system);
   const positions = object(vehicle.crewPositions);
+  const ownedActors = array(vehicle.ownedActors);
   const crewTotal = numberOrNull(vehicle.crew);
   const passengerTotal = numberOrNull(vehicle.passengers);
   const baseStations = [...BASE_STATIONS, ...weaponStations(vehicle, weapons), ...customStations(vehicle)];
@@ -174,9 +201,14 @@ export function resolveVehicleCrewStations({ system = {}, category = {}, weapons
     categoryLargeCrew: Boolean(category?.isLargeCrew)
   };
 
+  // Every base/weapon/custom station is always included. shouldShowStation()
+  // is kept available but intentionally unused here: the panel this feeds
+  // was previously hard-coded to always render all six base stations, and
+  // Phase 6 only unifies the station *set* (multi-gunner, custom stations) —
+  // it does not add new conditional hiding of stations that were always
+  // visible before.
   const stations = baseStations
-    .filter((station) => shouldShowStation(station, facts))
-    .map((station) => stationState(station, positions, facts));
+    .map((station) => stationState(station, positions, facts, ownedActors));
 
   const assignedCount = stations.filter((station) => station.assigned).length;
   const emptyCount = stations.length - assignedCount;

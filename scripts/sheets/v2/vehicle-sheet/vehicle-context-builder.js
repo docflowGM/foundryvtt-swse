@@ -8,6 +8,9 @@
 
 import { PanelContextBuilder } from "/systems/foundryvtt-swse/scripts/sheets/v2/context/PanelContextBuilder.js";
 import { getStationSkillActions } from "/systems/foundryvtt-swse/scripts/sheets/v2/vehicle-sheet/crew-skill-router.js";
+import { resolveVehicleCrewStations } from "/systems/foundryvtt-swse/scripts/sheets/v2/vehicle-sheet/crew-resolver.js";
+
+const VEHICLE_WEAPON_ITEM_TYPES = new Set(['weapon', 'vehicle-weapon', 'vehicleWeapon', 'vehicleWeaponRange']);
 
 /**
  * Safe numeric coercion.
@@ -695,64 +698,54 @@ export function buildVehicleCrewSummaryPanel(actor) {
  */
 export function buildVehicleCrewAssignmentPanel(actor) {
   const system = actor?.system ?? {};
-  const crewPositions = system.crewPositions ?? {};
-  const ownedActors = safeArray(system.ownedActors);
+  const items = safeArray(actor?.items);
+  const weaponCount = items.filter((item) => VEHICLE_WEAPON_ITEM_TYPES.has(item?.type)).length;
+  // Only vehicle owners can assign/remove crew (VehicleCrewAssignmentService
+  // enforces this too) — non-owners get a read-only panel: no mutation
+  // buttons, no interactive drop target.
+  const editable = actor?.isOwner === true;
 
-  const crewMap = {};
-  for (const entry of ownedActors) {
-    if (!entry) continue;
-    const id = entry.id || entry.actorId || entry.uuid;
-    if (!id) continue;
-    crewMap[id] = { id, uuid: entry.uuid || null, name: entry.name || entry.label || 'Unknown' };
-  }
+  // Single authoritative station descriptor source (crew-resolver.js) — see
+  // docs/audits/vehicle-crew-assignment-phase-6.md "Unify the station
+  // model". This panel used to hard-code its own independent 6-station
+  // array; that meant multi-gunner (gunner-2, gunner-3, ...) and custom
+  // (system.stations) stations were resolvable elsewhere in the codebase
+  // but never rendered or assignable on the actual sheet.
+  const resolved = resolveVehicleCrewStations({ system, weapons: { count: weaponCount } });
 
-  const stationKeys = ['pilot', 'copilot', 'gunner', 'engineer', 'shields', 'commander'];
-  const stations = stationKeys.map((key) => {
-    const entry = crewPositions[key];
-    let occupant = null;
-
-    if (entry) {
-      if (typeof entry === 'string') {
-        occupant = crewMap[entry] || { id: entry, uuid: entry.startsWith('Actor.') ? entry : null, name: entry };
-      } else {
-        const id = entry.id || entry.actorId || entry.uuid || null;
-        occupant = id && crewMap[id] ? crewMap[id] : {
-          id,
-          uuid: entry.uuid || null,
-          name: entry.name || entry.label || entry.roleName || 'Assigned Crew'
-        };
-      }
-    }
-
-    if (!occupant) {
-      const legacy = ownedActors.find((candidate) => candidate?.position === key || candidate?.role === key);
-      if (legacy) occupant = {
-        id: legacy.id || legacy.actorId || null,
-        uuid: legacy.uuid || null,
-        name: legacy.name || legacy.label || 'Assigned Crew'
-      };
-    }
-
-    const actions = getStationSkillActions(key).map((action) => ({
+  const stations = resolved.stations.map((station) => {
+    const crew = station.crew;
+    const occupied = station.assigned;
+    // STATION_SKILLS in crew-skill-router.js is keyed by role (pilot,
+    // copilot, gunner, ...), not by station identity, so gunner-2/gunner-3
+    // share the same Fire-weapon action set as gunner.
+    const actions = getStationSkillActions(station.role).map((action) => ({
       ...action,
-      stationKey: key,
+      stationKey: station.key,
       disabled: false
     }));
 
     return {
-      key,
-      label: key === 'copilot' ? 'Co-Pilot' : key.charAt(0).toUpperCase() + key.slice(1),
-      occupied: Boolean(occupant && (occupant.id || occupant.uuid || occupant.name)),
-      occupantName: occupant?.name ?? 'Unassigned',
-      occupantId: occupant?.id ?? null,
-      occupantUuid: occupant?.uuid ?? null,
-      notes: occupant ? 'Assigned crew actor controls this station.' : 'Fallback crew quality applies until a crew actor is assigned.',
+      key: station.key,
+      storageKey: station.storageKey,
+      role: station.role,
+      label: station.label,
+      custom: station.custom,
+      required: station.required,
+      occupied,
+      editable,
+      dropzone: editable,
+      occupantName: occupied ? safeString(crew?.name ?? crew?.uuid ?? crew?.id, 'Assigned Crew') : 'Unassigned',
+      occupantId: crew?.id ?? null,
+      occupantUuid: crew?.uuid ?? null,
+      notes: occupied ? 'Assigned crew actor controls this station.' : 'Fallback crew quality applies until a crew actor is assigned.',
       actions
     };
   });
 
   return {
     title: 'Crew Stations',
+    editable,
     stations
   };
 }
