@@ -20,6 +20,11 @@ import { VehicleCrewAssignmentService } from "/systems/foundryvtt-swse/scripts/e
 import { VehicleDropEngine } from "/systems/foundryvtt-swse/scripts/engine/interactions/vehicle-drop-engine.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { rollVehicleCrewSkill } from "/systems/foundryvtt-swse/scripts/sheets/v2/vehicle-sheet/crew-skill-router.js";
+import { VehicleWeaponStationService } from "/systems/foundryvtt-swse/scripts/engine/crew/vehicle-weapon-station-service.js";
+import { VehicleCustomStationService } from "/systems/foundryvtt-swse/scripts/engine/crew/vehicle-custom-station-service.js";
+import { SWSEDialogV2 } from "/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js";
+
+const CUSTOM_STATION_ROW_SELECTOR = '[data-custom-station-id]';
 
 // Matches the existing (previously unused) hover style in
 // styles/sheets/v2-vehicle-sheet.css.
@@ -80,6 +85,43 @@ function bindCrewSkillButtons(vehicle, root, signal) {
       if (!station || !skill) return;
       await rollVehicleCrewSkill(vehicle, station, skill, { weaponId });
     }), { signal });
+  });
+}
+
+// Resolve a weapon-mount's identity/role from its rendered weaponId, so the
+// station-select handler can call VehicleWeaponStationService without the
+// full panel context object (which the DOM event does not carry).
+function resolveMountByWeaponId(vehicle, weaponId) {
+  if (!weaponId) return null;
+  const systemMatch = /^system-weapons-(\d+)$/.exec(weaponId);
+  if (systemMatch) {
+    const index = Number(systemMatch[1]);
+    const weapon = vehicle?.system?.weapons?.[index];
+    if (!weapon) return null;
+    return { source: 'system', index, name: weapon.name, crewRole: weapon.crewRole || 'gunner' };
+  }
+  const item = vehicle?.items?.get?.(weaponId);
+  if (!item) return null;
+  return { source: 'item', id: item.id, name: item.name, crewRole: item.system?.vehicleMount?.crewRole || 'gunner' };
+}
+
+function bindWeaponStationMapping(vehicle, root, signal) {
+  root.querySelectorAll('[data-action="vehicle-weapon-station-select"]').forEach((select) => {
+    select.addEventListener('change', async () => {
+      const weaponId = select.dataset.weaponId;
+      const stationKey = select.value || null;
+      const mount = resolveMountByWeaponId(vehicle, weaponId);
+      if (!mount) {
+        ui?.notifications?.warn?.('Could not identify this weapon mount.');
+        return;
+      }
+      select.disabled = true;
+      try {
+        await VehicleWeaponStationService.setOperatorStation(vehicle, mount, stationKey);
+      } finally {
+        select.disabled = false;
+      }
+    }, { signal });
   });
 }
 
@@ -187,6 +229,94 @@ function bindGenericVehicleDrop(sheet, vehicle, root, signal) {
   }, { signal });
 }
 
+async function confirmRemoveOccupiedStation(label) {
+  return SWSEDialogV2.confirm({
+    title: 'Remove Occupied Station',
+    content: `<p>${label || 'This station'} is currently occupied. Remove the station and unassign its crew, or cancel?</p>`,
+    yes: () => true,
+    no: () => false,
+    defaultYes: false
+  });
+}
+
+function bindCustomStationEditor(vehicle, root, signal) {
+  root.querySelectorAll('[data-action="vehicle-custom-station-rename"]').forEach((input) => {
+    input.addEventListener('change', async () => {
+      const stationId = input.dataset.stationId;
+      if (!stationId) return;
+      await VehicleCustomStationService.renameCustomStation(vehicle, stationId, input.value);
+    }, { signal });
+  });
+
+  root.querySelectorAll('[data-action="vehicle-custom-station-role"]').forEach((select) => {
+    select.addEventListener('change', async () => {
+      const stationId = select.dataset.stationId;
+      if (!stationId) return;
+      await VehicleCustomStationService.setCustomStationRole(vehicle, stationId, select.value);
+    }, { signal });
+  });
+
+  root.querySelectorAll('[data-action="vehicle-custom-station-description"]').forEach((input) => {
+    input.addEventListener('change', async () => {
+      const stationId = input.dataset.stationId;
+      if (!stationId) return;
+      await VehicleCustomStationService.setCustomStationDescription(vehicle, stationId, input.value);
+    }, { signal });
+  });
+
+  function currentOrderedIds() {
+    return Array.from(root.querySelectorAll(CUSTOM_STATION_ROW_SELECTOR)).map((row) => row.dataset.customStationId);
+  }
+
+  root.querySelectorAll('[data-action="vehicle-custom-station-move-up"]').forEach((button) => {
+    button.addEventListener('click', withPendingButton(button, async () => {
+      const ids = currentOrderedIds();
+      const index = ids.indexOf(button.dataset.stationId);
+      if (index <= 0) return;
+      [ids[index - 1], ids[index]] = [ids[index], ids[index - 1]];
+      await VehicleCustomStationService.reorderCustomStations(vehicle, ids);
+    }), { signal });
+  });
+
+  root.querySelectorAll('[data-action="vehicle-custom-station-move-down"]').forEach((button) => {
+    button.addEventListener('click', withPendingButton(button, async () => {
+      const ids = currentOrderedIds();
+      const index = ids.indexOf(button.dataset.stationId);
+      if (index === -1 || index >= ids.length - 1) return;
+      [ids[index], ids[index + 1]] = [ids[index + 1], ids[index]];
+      await VehicleCustomStationService.reorderCustomStations(vehicle, ids);
+    }), { signal });
+  });
+
+  root.querySelectorAll('[data-action="vehicle-custom-station-remove"]').forEach((button) => {
+    button.addEventListener('click', withPendingButton(button, async () => {
+      const stationId = button.dataset.stationId;
+      if (!stationId) return;
+      const result = await VehicleCustomStationService.removeCustomStation(vehicle, stationId, { unassignCrew: false });
+      if (result.ok || !result.requiresConfirmation) return;
+      const confirmed = await confirmRemoveOccupiedStation(result.station?.label);
+      if (confirmed) {
+        await VehicleCustomStationService.removeCustomStation(vehicle, stationId, { unassignCrew: true });
+      }
+    }), { signal });
+  });
+
+  const addForm = root.querySelector('[data-action="vehicle-custom-station-add-form"]');
+  addForm?.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    if (addForm.dataset.pending === 'true') return;
+    const label = addForm.querySelector('[name="label"]')?.value;
+    const role = addForm.querySelector('[name="role"]')?.value;
+    addForm.dataset.pending = 'true';
+    try {
+      const result = await VehicleCustomStationService.createCustomStation(vehicle, { label, role });
+      if (result.ok) addForm.reset();
+    } finally {
+      addForm.dataset.pending = 'false';
+    }
+  }, { signal });
+}
+
 export function bindVehicleCrewAssignmentControls(sheet, root, { signal } = {}) {
   const vehicle = sheet?.actor;
   if (!(root instanceof HTMLElement) || !vehicle || vehicle.type !== 'vehicle') return;
@@ -195,4 +325,6 @@ export function bindVehicleCrewAssignmentControls(sheet, root, { signal } = {}) 
   bindCrewSkillButtons(vehicle, root, signal);
   bindStationDropZones(vehicle, root, signal);
   bindGenericVehicleDrop(sheet, vehicle, root, signal);
+  bindWeaponStationMapping(vehicle, root, signal);
+  bindCustomStationEditor(vehicle, root, signal);
 }

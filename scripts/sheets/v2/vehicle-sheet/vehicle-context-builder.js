@@ -9,8 +9,39 @@
 import { PanelContextBuilder } from "/systems/foundryvtt-swse/scripts/sheets/v2/context/PanelContextBuilder.js";
 import { getStationSkillActions } from "/systems/foundryvtt-swse/scripts/sheets/v2/vehicle-sheet/crew-skill-router.js";
 import { resolveVehicleCrewStations } from "/systems/foundryvtt-swse/scripts/sheets/v2/vehicle-sheet/crew-resolver.js";
+import { resolveWeaponOperatorStation } from "/systems/foundryvtt-swse/scripts/sheets/v2/vehicle-sheet/weapon-station-mapping.js";
 
 const VEHICLE_WEAPON_ITEM_TYPES = new Set(['weapon', 'vehicle-weapon', 'vehicleWeapon', 'vehicleWeaponRange']);
+
+/**
+ * Count only the GUNNER-role vehicle weapons — the number crew-resolver.js's
+ * weaponStations() uses to decide how many gunner stations (gunner,
+ * gunner-2, gunner-3, ...) a vehicle has. Both the crew-assignment panel and
+ * the weapon-mount panel must derive this the same way, or the two panels
+ * could disagree on how many gunner stations exist (e.g. a vehicle with one
+ * pilot-operated weapon and two gunner-operated weapons has 2 gunner
+ * stations, not 3 — counting ALL vehicle weapon items regardless of role
+ * would be wrong).
+ *
+ * @param {Actor} actor
+ * @returns {number}
+ */
+function countGunnerRoleWeapons(actor) {
+  const items = safeArray(actor?.items);
+  let count = 0;
+  for (const item of items) {
+    if (!VEHICLE_WEAPON_ITEM_TYPES.has(item?.type)) continue;
+    const role = item?.system?.vehicleMount?.crewRole || 'gunner';
+    if (role === 'gunner') count += 1;
+  }
+  const systemWeapons = safeArray(actor?.system?.weapons);
+  for (const weapon of systemWeapons) {
+    if (!weapon?.name) continue;
+    const role = weapon.crewRole || 'gunner';
+    if (role === 'gunner') count += 1;
+  }
+  return count;
+}
 
 /**
  * Safe numeric coercion.
@@ -106,6 +137,7 @@ function normalizeVehicleWeaponEntry(weapon = {}, index = 0, source = 'system') 
   const rangeSummary = safeString(firstPresent(weapon.rangeSummary, weapon.range, rangeProfileName, rangeProfileSlug, 'Range Profile Pending'), 'Range Profile Pending');
   return {
     key: weapon.key || weapon.id || weapon._id || `${source}-weapon-${index}`,
+    id: source === 'item' ? weapon.id : null,
     name,
     arc: safeString(firstPresent(weapon.arc, weapon.firingArc, 'Forward'), 'Forward'),
     linkedGroup: weapon.linkedGroup || null,
@@ -115,6 +147,10 @@ function normalizeVehicleWeaponEntry(weapon = {}, index = 0, source = 'system') 
     index,
     gunner: 'Unassigned',
     crewRole: weapon.crewRole || 'gunner',
+    // Explicit per-weapon operator-station mapping, if one has been set
+    // (Phase 7). Takes precedence over role-based resolution — see
+    // weapon-station-mapping.js#resolveWeaponOperatorStation.
+    explicitOperatorStation: weapon.operatorStation || null,
     attackSummary,
     attackBonus: attackSummary,
     damageSummary,
@@ -132,17 +168,19 @@ function normalizeVehicleWeaponEntry(weapon = {}, index = 0, source = 'system') 
     pointDefense: !!weapon.pointDefense,
     modifiers: safeArray(weapon.modifiers),
     notes: safeArray(weapon.notes ? [weapon.notes] : weapon.special ? [weapon.special] : []),
-    // Phase 3 rolling-system alignment: this mount already carried a
-    // crewRole (e.g. a pilot-operated fixed-forward gun), but the action
-    // button was unconditionally wired to the 'gunner' station regardless —
-    // so a pilot-operated weapon would ask the (usually empty) gunner
-    // station for an operator instead of the pilot. Use the mount's own
-    // crewRole for the correct station, and only surface that station's
-    // "fire weapon" action here (not its other non-weapon actions, e.g. a
-    // pilot's Maneuver skill).
-    actions: getStationSkillActions(weapon.crewRole || 'gunner')
-      .filter((action) => action.key === 'attack')
-      .map((action) => ({ ...action, stationKey: weapon.crewRole || 'gunner' })),
+    // Phase 3 rolling-system alignment fixed this mount's Fire action to use
+    // its own crewRole rather than always 'gunner'. Phase 7 goes further:
+    // for a multi-gunner vehicle, "the gunner station" is ambiguous by role
+    // alone (gunner vs gunner-2 vs gunner-3) — the actual resolved station
+    // key (or lack of one) is computed in buildVehicleWeaponMountPanel(),
+    // which has the vehicle's real station list, and patched onto this
+    // entry afterward (operatorStationKey/operatorSource/etc. below). The
+    // `actions` template still carries the skill definition (key/label/use)
+    // but NOT a stationKey yet — the panel builder fills it in only when
+    // resolution actually succeeds, so an unresolved mount never renders a
+    // Fire button that could route an undefined/guessed station into
+    // rollAttack().
+    fireAction: getStationSkillActions(weapon.crewRole || 'gunner').find((action) => action.key === 'attack') || null,
     rawSource: weapon.rawSource || null,
     parseConfidence: weapon.parseConfidence || (source === 'item' ? 'structured' : 'statblock')
   };
@@ -613,6 +651,7 @@ export function buildVehicleWeaponMountPanel(actor) {
   const system = actor?.system ?? {};
   const mounts = [];
   const items = safeArray(actor?.items);
+  const editable = actor?.isOwner === true;
 
   const embeddedWeapons = items.filter((item) => ['weapon', 'vehicle-weapon', 'vehicleWeapon', 'vehicleWeaponRange'].includes(item?.type));
 
@@ -631,7 +670,8 @@ export function buildVehicleWeaponMountPanel(actor) {
       notes: itemSystem.notes,
       rawSource: vehicleMount.rawSource,
       parseConfidence: vehicleMount.parseConfidence || 'structured',
-      crewRole: vehicleMount.crewRole || 'gunner'
+      crewRole: vehicleMount.crewRole || 'gunner',
+      operatorStation: vehicleMount.operatorStation || null
     }, mounts.length, 'item'));
   }
 
@@ -645,6 +685,43 @@ export function buildVehicleWeaponMountPanel(actor) {
 
   if (mounts.length === 0) {
     return null;
+  }
+
+  // Phase 7: resolve each mount's actual operator station against the
+  // vehicle's real (multi-gunner/custom-aware) station set, instead of the
+  // pre-Phase-7 assumption that a weapon's crewRole IS a station identity.
+  // A mount only gets a Fire button when resolution actually succeeds
+  // (explicit mapping, or exactly one station of that role) — an ambiguous
+  // or broken mapping gets a station-select control instead, never a guess.
+  const stations = resolveVehicleCrewStations({ system, weapons: { count: countGunnerRoleWeapons(actor) } }).stations;
+  const stationOptions = stations.map((station) => ({ key: station.storageKey, label: station.label }));
+
+  for (const mount of mounts) {
+    const resolution = resolveWeaponOperatorStation({
+      stations,
+      role: mount.crewRole || 'gunner',
+      explicitStationKey: mount.explicitOperatorStation || null
+    });
+    mount.operatorStationKey = resolution.stationKey;
+    mount.operatorSource = resolution.source;
+    mount.operatorReason = resolution.reason || null;
+    mount.operatorCandidates = resolution.candidates || [];
+    mount.operatorResolved = resolution.stationKey !== null;
+    mount.operatorAmbiguous = resolution.source === 'ambiguous';
+    mount.operatorBroken = resolution.source === 'broken';
+    mount.operatorUnmapped = resolution.source === 'unmapped';
+    // Precompute `selected` per option rather than relying on a template
+    // `eq` helper (only conditionally registered elsewhere in this
+    // codebase) to mark the current explicit mapping.
+    mount.stationOptions = stationOptions.map((option) => ({
+      ...option,
+      selected: option.key === mount.explicitOperatorStation
+    }));
+    mount.editable = editable;
+    mount.actions = (mount.operatorResolved && mount.fireAction)
+      ? [{ ...mount.fireAction, stationKey: resolution.stationKey }]
+      : [];
+    delete mount.fireAction;
   }
 
   return {
@@ -698,8 +775,7 @@ export function buildVehicleCrewSummaryPanel(actor) {
  */
 export function buildVehicleCrewAssignmentPanel(actor) {
   const system = actor?.system ?? {};
-  const items = safeArray(actor?.items);
-  const weaponCount = items.filter((item) => VEHICLE_WEAPON_ITEM_TYPES.has(item?.type)).length;
+  const weaponCount = countGunnerRoleWeapons(actor);
   // Only vehicle owners can assign/remove crew (VehicleCrewAssignmentService
   // enforces this too) — non-owners get a read-only panel: no mutation
   // buttons, no interactive drop target.
@@ -718,12 +794,24 @@ export function buildVehicleCrewAssignmentPanel(actor) {
     const occupied = station.assigned;
     // STATION_SKILLS in crew-skill-router.js is keyed by role (pilot,
     // copilot, gunner, ...), not by station identity, so gunner-2/gunner-3
-    // share the same Fire-weapon action set as gunner.
-    const actions = getStationSkillActions(station.role).map((action) => ({
-      ...action,
-      stationKey: station.key,
-      disabled: false
-    }));
+    // share the same non-weapon skill action set as gunner.
+    //
+    // Phase 6 flagged, and Phase 7 (vehicle-crew-runtime-and-ux-phase-7)
+    // resolves: STATION_SKILLS' 'attack' entry (pilot/gunner "Fire Weapon")
+    // has no weaponId here — this panel only knows the station, not which
+    // specific weapon to fire, so it could never do more than warn "no
+    // weapon found". The weapon-mount panel (buildVehicleWeaponMountPanel,
+    // below) is the correct, sole Fire-weapon affordance — every mount row
+    // there is built with a concrete weaponId. The crew-assignment panel
+    // therefore only surfaces non-weapon station duties (Maneuver, Aid
+    // Pilot, Mechanics, Use Computer, Knowledge (Tactics), Persuasion).
+    const actions = getStationSkillActions(station.role)
+      .filter((action) => action.key !== 'attack')
+      .map((action) => ({
+        ...action,
+        stationKey: station.key,
+        disabled: false
+      }));
 
     return {
       key: station.key,
@@ -747,6 +835,65 @@ export function buildVehicleCrewAssignmentPanel(actor) {
     title: 'Crew Stations',
     editable,
     stations
+  };
+}
+
+const CUSTOM_STATION_ROLE_OPTIONS = [
+  { key: 'custom', label: 'Custom (organizational only)' },
+  { key: 'gunner', label: 'Gunner' },
+  { key: 'engineer', label: 'Engineer' },
+  { key: 'shields', label: 'Shields' },
+  { key: 'commander', label: 'Commander' },
+  { key: 'communications', label: 'Communications' },
+  { key: 'sensor', label: 'Sensor' }
+];
+
+/**
+ * Build the narrow custom-station management panel (Phase 7): create,
+ * rename, re-role, re-describe, reorder, and remove system.stations
+ * records. Separate from buildVehicleCrewAssignmentPanel (which only
+ * displays/assigns whatever stations already exist) — this panel is the
+ * authoring surface, shown only to editable owners.
+ *
+ * @param {Actor} actor
+ * @returns {Object}
+ */
+export function buildVehicleCustomStationEditorPanel(actor) {
+  const editable = actor?.isOwner === true;
+  const crewPositions = actor?.system?.crewPositions ?? {};
+  const records = Array.isArray(actor?.system?.stations) ? actor.system.stations : [];
+
+  const stations = records
+    .slice()
+    .sort((a, b) => safeNumber(a?.order, 0) - safeNumber(b?.order, 0))
+    .map((record, position) => {
+      const current = crewPositions?.[record?.key];
+      const occupied = Boolean(current && (typeof current === 'string' ? current : (current.uuid || current.id || current.name)));
+      const occupantName = occupied ? safeString(typeof current === 'string' ? current : (current.name ?? current.uuid ?? current.id), 'Assigned Crew') : null;
+      const role = safeString(record?.role, 'custom');
+      return {
+        id: record?.id ?? null,
+        key: record?.key ?? null,
+        label: safeString(record?.label, 'Station'),
+        role,
+        // Precomputed per-station role options with `selected` already
+        // resolved — avoids depending on a template `eq` helper that is
+        // only conditionally registered elsewhere in this codebase.
+        roleOptions: CUSTOM_STATION_ROLE_OPTIONS.map((option) => ({ ...option, selected: option.key === role })),
+        description: safeString(record?.description, ''),
+        occupied,
+        occupantName,
+        isFirst: position === 0,
+        isLast: position === records.length - 1
+      };
+    });
+
+  return {
+    title: 'Custom Stations',
+    editable,
+    hasStations: stations.length > 0,
+    stations,
+    roleOptions: CUSTOM_STATION_ROLE_OPTIONS
   };
 }
 
@@ -1069,6 +1216,7 @@ export function buildVehicleSheetContext(actor, rawContext, options = {}) {
   const weaponMountPanel = buildVehicleWeaponMountPanel(actor);
   const crewSummaryPanel = buildVehicleCrewSummaryPanel(actor);
   const crewAssignmentPanel = buildVehicleCrewAssignmentPanel(actor);
+  const customStationEditorPanel = buildVehicleCustomStationEditorPanel(actor);
   const subsystemDetailPanel = buildVehicleSubsystemDetailPanel(actor, subsystemData, subsystemPenalties);
   const shieldManagementPanel = buildVehicleShieldManagementPanel(actor, shieldZones);
   const powerSummaryPanel = buildVehiclePowerSummaryPanel(actor, powerData);
@@ -1087,6 +1235,7 @@ export function buildVehicleSheetContext(actor, rawContext, options = {}) {
     weaponMountPanel,
     crewSummaryPanel,
     crewAssignmentPanel,
+    customStationEditorPanel,
     subsystemDetailPanel,
     shieldManagementPanel,
     powerSummaryPanel,
@@ -1133,6 +1282,7 @@ export function buildVehicleSheetContext(actor, rawContext, options = {}) {
       crew: {
         crewSummaryPanel,
         crewAssignmentPanel,
+        customStationEditorPanel,
         commanderOrderPanel
       },
       systems: {

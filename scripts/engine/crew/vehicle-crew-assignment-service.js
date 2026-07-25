@@ -2,6 +2,7 @@ import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-e
 import { SWSEDialogV2 } from "/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { resolveVehicleCrewStations } from "/systems/foundryvtt-swse/scripts/sheets/v2/vehicle-sheet/crew-resolver.js";
+import { recordAssignmentEvent, recordMutationReceipt } from "/systems/foundryvtt-swse/scripts/engine/crew/vehicle-crew-diagnostics-log.js";
 
 const CREW_ACTOR_TYPES = new Set(['character', 'npc', 'droid']);
 const VEHICLE_WEAPON_ITEM_TYPES = new Set(['weapon', 'vehicle-weapon', 'vehicleWeapon', 'vehicleWeaponRange']);
@@ -355,11 +356,15 @@ export class VehicleCrewAssignmentService {
         source: options.source || 'vehicle-crew-assignment'
       });
       ui?.notifications?.info?.(`${crewActor.name} assigned to ${this.labelForStation(vehicle, targetStation)}.`);
+      recordAssignmentEvent(vehicle?.id, { type: 'assign', station: targetStation, crewActorUuid: crewActor.uuid ?? null, ok: true, source: options.source || 'vehicle-crew-assignment' });
+      recordMutationReceipt(vehicle?.id, { ok: true, source: options.source || 'vehicle-crew-assignment' });
       return structuredResult({ ok: true, station: targetStation, crewActorUuid: crewActor.uuid ?? null, mutationReceipt });
     } catch (err) {
       SWSELogger.error('VehicleCrewAssignmentService.assignCrew failed', { err, vehicle: vehicle?.name, station: targetStation, crew: crewActor?.name });
       const error = err?.message || 'Failed to assign crew.';
       ui?.notifications?.error?.(`Failed to assign crew: ${error}`);
+      recordAssignmentEvent(vehicle?.id, { type: 'assign', station: targetStation, crewActorUuid: crewActor.uuid ?? null, ok: false, error });
+      recordMutationReceipt(vehicle?.id, { ok: false, error });
       return structuredResult({ ok: false, station: targetStation, crewActorUuid: crewActor.uuid ?? null, error });
     }
   }
@@ -400,11 +405,15 @@ export class VehicleCrewAssignmentService {
         source: options.source || 'vehicle-crew-removal'
       });
       ui?.notifications?.info?.(`${currentName || 'Crew'} removed from ${this.labelForStation(vehicle, targetStation)}.`);
+      recordAssignmentEvent(vehicle?.id, { type: 'remove', station: targetStation, crewActorUuid: currentUuid ?? null, ok: true, source: options.source || 'vehicle-crew-removal' });
+      recordMutationReceipt(vehicle?.id, { ok: true, source: options.source || 'vehicle-crew-removal' });
       return structuredResult({ ok: true, station: targetStation, crewActorUuid: currentUuid ?? null, mutationReceipt });
     } catch (err) {
       SWSELogger.error('VehicleCrewAssignmentService.removeCrew failed', { err, vehicle: vehicle?.name, station: targetStation });
       const error = err?.message || 'Failed to remove crew.';
       ui?.notifications?.error?.(`Failed to remove crew: ${error}`);
+      recordAssignmentEvent(vehicle?.id, { type: 'remove', station: targetStation, crewActorUuid: currentUuid ?? null, ok: false, error });
+      recordMutationReceipt(vehicle?.id, { ok: false, error });
       return structuredResult({ ok: false, station: targetStation, crewActorUuid: currentUuid ?? null, error });
     }
   }

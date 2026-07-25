@@ -49,9 +49,18 @@ assert.match(math, /if \(label === 'BAB' \|\| label === gunnerAbilityLabel\) con
 
 // 5 & 16 & 17. Pilot BAB only when the pilot is the valid operator of THAT
 // weapon: the crew-skill-router station is derived per-weapon from
-// weapon.crewRole, defaulting to 'gunner' — never a blanket pilot fallback.
+// weapon.crewRole (never a blanket pilot fallback), then — as of Phase 7
+// (docs/audits/vehicle-crew-runtime-and-ux-phase-7.md) — resolved against
+// the vehicle's REAL station set via weapon-station-mapping.js rather than
+// assumed to equal the role string. A multi-gunner vehicle has 'gunner',
+// 'gunner-2', etc., all sharing role 'gunner'; treating the role as the
+// station key would always target 'gunner' regardless of which gunner
+// station the crew member fired from, so the fully-resolved key is only
+// known once weapon-station-mapping.js's precedence (explicit mapping, or
+// exactly one station of that role) has run.
 assert.match(contextBuilder, /getStationSkillActions\(weapon\.crewRole \|\| 'gunner'\)/);
-assert.match(contextBuilder, /stationKey:\s*weapon\.crewRole \|\| 'gunner'/);
+assert.match(contextBuilder, /import \{ resolveWeaponOperatorStation \} from "\/systems\/foundryvtt-swse\/scripts\/sheets\/v2\/vehicle-sheet\/weapon-station-mapping\.js"/);
+assert.match(contextBuilder, /mount\.actions = \(mount\.operatorResolved && mount\.fireAction\)\s*\n\s*\? \[\{ \.\.\.mount\.fireAction, stationKey: resolution\.stationKey \}\]\s*\n\s*: \[\];/);
 
 // 6. No stacking of an assigned gunner's BAB with abstract crew quality:
 // rollVehicleCrewSkill's attack branch is a strict if(actor)/else split —

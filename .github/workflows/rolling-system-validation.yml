@@ -101,6 +101,9 @@ jobs:
       - name: Guard — vehicle crew assignment (Phase 6)
         run: node tools/check-vehicle-crew-assignment-guard.mjs --strict
 
+      - name: Guard — vehicle crew runtime/UX (Phase 7)
+        run: node tools/check-vehicle-crew-runtime-ux-guard.mjs --strict
+
       # Scoped to the exact files the rolling-system-alignment phases own
       # (see "Exact files changed" in each phase's audit doc) — NOT whole
       # directories. scripts/combat/ and scripts/engine/combat/ contain many

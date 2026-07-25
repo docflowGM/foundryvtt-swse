@@ -114,7 +114,9 @@ function customStations(system) {
         role: label(firstPresent(station.role, station.type, "custom"), "custom"),
         sourceKey: key,
         label: label(firstPresent(station.label, station.name, station.role), `Station ${index + 1}`),
-        reason: label(station.reason, "Custom station"),
+        // Phase 7 custom-station records use `description`; older/imported
+        // records may only have `reason`. Prefer the newer field.
+        reason: label(firstPresent(station.description, station.reason), "Custom station"),
         custom: true,
         storedCrew: station.crew ?? station.occupant ?? station.actor ?? null
       };

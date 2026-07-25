@@ -2,6 +2,7 @@ import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
 import { rollSkillCheck } from "/systems/foundryvtt-swse/scripts/rolls/skills.js";
 import { rollAttack } from "/systems/foundryvtt-swse/scripts/combat/rolls/attacks.js";
 import { CREW_QUALITY_BONUS } from "/systems/foundryvtt-swse/scripts/engine/combat/vehicle-attack-math.js";
+import { recordFireResult } from "/systems/foundryvtt-swse/scripts/engine/crew/vehicle-crew-diagnostics-log.js";
 
 const STATION_SKILLS = {
   pilot: [
@@ -210,6 +211,7 @@ export async function rollVehicleCrewSkill(vehicle, stationKey, skillKey, option
     const weapon = weaponId ? getVehicleWeapon(vehicle, weaponId) : null;
     if (!weapon) {
       ui?.notifications?.warn?.('No vehicle weapon found for this gunner action.');
+      recordFireResult(vehicle?.id, { stationKey, weaponId: weaponId ?? null, ok: false, reason: 'no-weapon' });
       return null;
     }
     if (actor) {
@@ -219,6 +221,7 @@ export async function rollVehicleCrewSkill(vehicle, stationKey, skillKey, option
       // proficiency, never the vehicle.
       const roll = await rollAttack(actor, weapon, { vehicleActor: vehicle, operator: actor, crewStation: stationKey });
       ui?.notifications?.info?.(`${actor.name} fires ${weapon.name} from ${vehicle.name}.`);
+      recordFireResult(vehicle?.id, { stationKey, weaponId, operatorName: actor.name, abstractCrew: false, ok: true });
       return { roll, actor, fallback: false, stationKey, skillKey: normalizedSkill, weapon };
     }
     // Abstract crew (no assigned actor at this station): Phase 4 routes this
@@ -239,6 +242,7 @@ export async function rollVehicleCrewSkill(vehicle, stationKey, skillKey, option
     if (abstractRoll) {
       ui?.notifications?.info?.(`${vehicle.name}'s ${stationLabel.toLowerCase()} crew fires ${weapon.name}.`);
     }
+    recordFireResult(vehicle?.id, { stationKey, weaponId, abstractCrew: true, ok: Boolean(abstractRoll) });
     return { roll: abstractRoll, actor: vehicle, fallback: false, abstractCrew: true, stationKey, skillKey: normalizedSkill, weapon };
   }
 

@@ -71,6 +71,10 @@ import { applyActorSheetModeClasses, buildActorSheetModeContext } from "/systems
 import { buildVehicleSheetContext } from "/systems/foundryvtt-swse/scripts/sheets/v2/vehicle-sheet/vehicle-context-builder.js";
 import { VehicleRulesAdapter } from "/systems/foundryvtt-swse/scripts/sheets/v2/vehicle-sheet/vehicle-rules-adapter.js";
 import { bindVehicleCrewAssignmentControls } from "/systems/foundryvtt-swse/scripts/sheets/v2/vehicle-sheet/vehicle-crew-assignment-controls.js";
+// Imported for its module-load side effect only: registers the GM-only,
+// non-mutating SWSE.debug.vehicleCrew.inspect(vehicleUuid) diagnostics
+// command (Phase 7). Not otherwise referenced from this file.
+import "/systems/foundryvtt-swse/scripts/engine/crew/vehicle-crew-diagnostics.js";
 import { StarshipManeuversEngine } from "/systems/foundryvtt-swse/scripts/engine/StarshipManeuversEngine.js";
 import { SubsystemEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/starship/subsystem-engine.js";
 import { EnhancedShields } from "/systems/foundryvtt-swse/scripts/engine/combat/starship/enhanced-shields.js";

@@ -68,6 +68,31 @@
             </div>
           {{/if}}
 
+          {{#if mount.operatorAmbiguous}}
+            <div class="swse-vehicle-weapon-operator-warning">Ambiguous operator: multiple gunner stations exist. Select which one operates this weapon.</div>
+          {{else if mount.operatorBroken}}
+            <div class="swse-vehicle-weapon-operator-warning">Mapped operator station no longer exists on this vehicle. Select a new one.</div>
+          {{else if mount.operatorUnmapped}}
+            <div class="swse-vehicle-weapon-operator-warning">No {{mount.crewRole}} station exists on this vehicle.</div>
+          {{/if}}
+
+          {{#if mount.editable}}
+            <div class="swse-vehicle-weapon-operator-mapping">
+              <label class="swse-vehicle-weapon-stat-label" for="operator-station-{{mount.weaponId}}">{{localize "SWSE.ActorUI.OperatorStation"}}</label>
+              <select id="operator-station-{{mount.weaponId}}"
+                      class="swse-vehicle-weapon-operator-select"
+                      data-action="vehicle-weapon-station-select"
+                      data-weapon-id="{{mount.weaponId}}">
+                <option value="">Auto ({{mount.crewRole}})</option>
+                {{#each mount.stationOptions as |option|}}
+                  <option value="{{option.key}}" {{#if option.selected}}selected{{/if}}>{{option.label}}</option>
+                {{/each}}
+              </select>
+            </div>
+          {{else if mount.operatorStationKey}}
+            <div class="swse-vehicle-weapon-chip">{{localize "SWSE.ActorUI.OperatorStation"}}: {{mount.operatorStationKey}}</div>
+          {{/if}}
+
           {{#if mount.linkedGroup}}
             <div style="margin-top: 0.45rem; padding-top: 0.45rem; border-top: 1px solid rgba(255,255,255,0.08); font-size: 0.72rem; color: var(--swse-vehicle-text-muted);">
               <span style="text-transform: uppercase; letter-spacing: 0.08em; font-weight: 700;">{{localize "SWSE.ActorUI.Linked"}}</span> {{mount.linkedGroup}}
