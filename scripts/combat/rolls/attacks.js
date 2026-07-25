@@ -21,6 +21,7 @@ import {
 import { AttackOutcomeResolver } from "/systems/foundryvtt-swse/scripts/engine/combat/attack-outcome-resolver.js";
 import { buildLedgerFromComponents, buildInvocationLedgerEntry } from "/systems/foundryvtt-swse/scripts/engine/effects/modifiers/modifier-breakdown-builder.js";
 import { AttackRollDiagnostics } from "/systems/foundryvtt-swse/scripts/engine/combat/attack-roll-diagnostics.js";
+import { resolveVehicleAttackBonus } from "/systems/foundryvtt-swse/scripts/engine/combat/vehicle-attack-math.js";
 
 // ============================================
 // FILE: rolls/attacks.js (Upgraded for SWSE v13+)
@@ -233,21 +234,45 @@ export async function rollAttack(actor, weapon, options = {}) {
   }
 
   const sequencePenalty = Number(rollOptions.sequencePenalty ?? 0);
-  // resolveAttackBonus provides the canonical total; roll-invocation-only
-  // modifiers (fightingDefensively, customModifier, situationalBonus,
-  // sequencePenalty) are intentionally added here, not inside the resolver.
-  const attackBonusResolution = resolveAttackBonus(actor, weapon, null, rollOptions);
+  // A vehicle attack (fired by a resolved crew member — see
+  // vehicle-sheet/crew-skill-router.js#rollVehicleCrewSkill) uses the
+  // authoritative vehicle formula (Gunner BAB + Vehicle INT modifier +
+  // Range modifier + individually-labeled misc components) instead of the
+  // generic character resolveAttackBonus(), whose "ability modifier"
+  // component defaults to the gunner's own Dex/Str — never the vehicle's
+  // Intelligence modifier.
+  const isVehicleAttack = Boolean(rollOptions.vehicleActor);
+  let attackBonusResolution;
+  if (isVehicleAttack) {
+    attackBonusResolution = await resolveVehicleAttackBonus(actor, rollOptions.vehicleActor, weapon, rollOptions);
+    for (const warning of attackBonusResolution.warnings ?? []) {
+      console.warn(`[SWSE] Vehicle attack formula: ${warning}`);
+    }
+    if (attackBonusResolution.error) {
+      if (ammoSpend?.spent) await AmmoSystem.rollbackSpend(actor, weapon, ammoSpend);
+      await actionOptionSpend?.rollback?.();
+      ui?.notifications?.error?.(attackBonusResolution.error === 'invalid-vehicle-actor'
+        ? 'Vehicle attack could not be resolved: the vehicle actor is missing or invalid, so its Intelligence modifier cannot be sourced.'
+        : 'Vehicle attack could not be resolved: no valid gunner/operator actor.');
+      return null;
+    }
+  } else {
+    attackBonusResolution = resolveAttackBonus(actor, weapon, null, rollOptions);
+  }
   const fightingDefensivelyPenalty = getFightingDefensivelyAttackPenalty(actor, rollOptions);
   const atkBonus = attackBonusResolution.total + fightingDefensivelyPenalty + Number(rollOptions.customModifier || 0) + Number(rollOptions.situationalBonus || 0) + sequencePenalty;
   // Component ledger: baseline (resolver) components plus invocation-only
   // additions, clearly separated so a tooltip never claims an invocation-only
-  // modifier is part of the static weapon baseline.
+  // modifier is part of the static weapon baseline. Vehicle attacks already
+  // arrive in full ledger shape from resolveVehicleAttackBonus(); character
+  // attacks are adapted from the legacy {label: value} map.
+  const attackLedgerDomain = isVehicleAttack ? 'vehicle.attack' : 'combat.attack';
   const attackComponentLedger = [
-    ...buildLedgerFromComponents(attackBonusResolution.components, 'combat.attack', 'baseline'),
-    buildInvocationLedgerEntry('fighting-defensively', 'Fighting Defensively', fightingDefensivelyPenalty, 'combat.attack'),
-    buildInvocationLedgerEntry('custom-modifier', 'Custom Modifier', rollOptions.customModifier, 'combat.attack'),
-    buildInvocationLedgerEntry('situational-bonus', 'Situational Bonus', rollOptions.situationalBonus, 'combat.attack'),
-    buildInvocationLedgerEntry('sequence-penalty', 'Sequence Penalty', sequencePenalty, 'combat.attack')
+    ...(isVehicleAttack ? attackBonusResolution.ledger : buildLedgerFromComponents(attackBonusResolution.components, 'combat.attack', 'baseline')),
+    buildInvocationLedgerEntry('fighting-defensively', 'Fighting Defensively', fightingDefensivelyPenalty, attackLedgerDomain),
+    buildInvocationLedgerEntry('custom-modifier', 'Custom Modifier', rollOptions.customModifier, attackLedgerDomain),
+    buildInvocationLedgerEntry('situational-bonus', 'Situational Bonus', rollOptions.situationalBonus, attackLedgerDomain),
+    buildInvocationLedgerEntry('sequence-penalty', 'Sequence Penalty', sequencePenalty, attackLedgerDomain)
   ].filter(Boolean);
 
   const rollFormula = `1d20 + ${atkBonus}`;
@@ -306,7 +331,23 @@ export async function rollAttack(actor, weapon, options = {}) {
     roll,
     actor,
     flavor: `${weapon.name} Attack Roll (Bonus ${atkBonus >= 0 ? '+' : ''}${atkBonus})`,
-    flags: { swse: { attackRoll: true, weaponId: weapon.id, attackRerollOptions, workflowContext: damageWorkflowContext, targetEffectsOnHit: optionModifiers.targetEffectsOnHit || [], targetEffectsOnCritical: optionModifiers.targetEffectsOnCritical || [], actionOptionSpend } },
+    flags: { swse: {
+      attackRoll: true,
+      weaponId: weapon.id,
+      attackRerollOptions,
+      workflowContext: damageWorkflowContext,
+      targetEffectsOnHit: optionModifiers.targetEffectsOnHit || [],
+      targetEffectsOnCritical: optionModifiers.targetEffectsOnCritical || [],
+      actionOptionSpend,
+      // Reroll-supersession state (Phase 3 rolling-system alignment): a
+      // successful reroll (meta-resource-feat-resolver.js
+      // resolveAttackRerollButton) flips authoritative to false and stamps
+      // superseded/supersededBy here.
+      authoritative: true,
+      superseded: false,
+      supersededBy: null,
+      revision: 0
+    } },
     context: {
       type: 'attack',
       weaponId: weapon.id,
@@ -389,10 +430,17 @@ export async function rollAttack(actor, weapon, options = {}) {
 
   AttackRollDiagnostics.record({
     domain: 'combat.attack',
-    attackType: actor?.type === 'vehicle' ? 'vehicle' : 'character',
+    // A vehicle attack fired through a resolved crew member (Phase 3
+    // rolling-system alignment: scripts/sheets/v2/vehicle-sheet/crew-skill-router.js
+    // rollVehicleCrewSkill) passes `actor` as the operator, not the vehicle,
+    // so BAB/ability/proficiency are correctly sourced from the crew member.
+    // vehicleActor/crewStation are carried through rollOptions purely for
+    // diagnostics in that case.
+    attackType: actor?.type === 'vehicle' || rollOptions?.vehicleActor ? 'vehicle' : 'character',
     actor,
-    vehicleActor: actor?.type === 'vehicle' ? actor : null,
-    operator: rollOptions?.operator ?? rollOptions?.gunner ?? null,
+    vehicleActor: rollOptions?.vehicleActor ?? (actor?.type === 'vehicle' ? actor : null),
+    operator: rollOptions?.operator ?? rollOptions?.gunner ?? (actor?.type !== 'vehicle' ? actor : null),
+    crewStation: rollOptions?.crewStation ?? null,
     item: weapon,
     target,
     naturalD20: d20,
@@ -577,7 +625,18 @@ export async function rollAttackAndDamageWithNarration(actor, weapon, options = 
     roll: attackRoll,
     actor,
     flavor: `${weapon.name} Attack Roll (Bonus ${atkBonus >= 0 ? '+' : ''}${atkBonus})`,
-    flags: { swse: { attackRoll: true, weaponId: weapon.id, attackRerollOptions, targetEffectsOnHit: optionModifiers.targetEffectsOnHit || [], targetEffectsOnCritical: optionModifiers.targetEffectsOnCritical || [], actionOptionSpend } },
+    flags: { swse: {
+      attackRoll: true,
+      weaponId: weapon.id,
+      attackRerollOptions,
+      targetEffectsOnHit: optionModifiers.targetEffectsOnHit || [],
+      targetEffectsOnCritical: optionModifiers.targetEffectsOnCritical || [],
+      actionOptionSpend,
+      authoritative: true,
+      superseded: false,
+      supersededBy: null,
+      revision: 0
+    } },
     context: {
       type: 'attack',
       weaponId: weapon.id,

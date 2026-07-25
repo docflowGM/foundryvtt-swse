@@ -181,9 +181,68 @@ function mergeDamageButtonWorkflowContext(button, decoded = null) {
   };
 }
 
+async function handleCombatDamageRollButton(event, button, message) {
+  event.preventDefault();
+  event.stopPropagation();
+
+  if (isAttackMessageSuperseded(message)) {
+    warnSupersededDamageAttempt(message);
+    return;
+  }
+
+  const attacker = actorFromId(button.dataset.attacker || button.dataset.actorId);
+  const target = actorFromId(button.dataset.target);
+  const weapon = itemFromActor(attacker, button.dataset.weapon);
+
+  if (!attacker || !weapon) {
+    ui?.notifications?.warn?.('Damage roll context could not be resolved.');
+    return;
+  }
+
+  const combatContext = mergeDamageButtonWorkflowContext(button, decodeCombatWorkflowContext(button.dataset.workflowContext));
+  const resolvedTarget = target || actorFromId(combatContext?.targetId) || null;
+  const { SWSERoll } = await import('/systems/foundryvtt-swse/scripts/combat/rolls/enhanced-rolls.js');
+  await SWSERoll.rollDamage(attacker, weapon, {
+    target: resolvedTarget,
+    isCritical: button.dataset.isCrit === 'true' || combatContext?.damage?.crit === true,
+    critMultiplier: Number.parseInt(button.dataset.critMult, 10) || combatContext?.damage?.critMultiplier || 2,
+    damageComponents: combatContext?.damage?.damageComponents ?? decodeDamageComponents(button.dataset.damageComponents || ''),
+    combatContext,
+    workflowContext: combatContext
+  });
+}
+
+/**
+ * Phase 3 rolling-system alignment: a successful attack reroll marks the
+ * original attack message `flags.swse.superseded = true` (see
+ * meta-resource-feat-resolver.js resolveAttackRerollButton). Damage actions
+ * on that original, now-stale card must not silently apply damage from
+ * before the reroll — the reroll's own message is authoritative instead.
+ */
+function isAttackMessageSuperseded(message) {
+  try {
+    return message?.getFlag?.('swse', 'superseded') === true;
+  } catch (_err) {
+    return false;
+  }
+}
+
+function warnSupersededDamageAttempt(message) {
+  const supersededBy = (() => {
+    try { return message?.getFlag?.('swse', 'supersededBy') ?? null; } catch (_err) { return null; }
+  })();
+  console.warn('[SWSE Chat] Damage action blocked: attack message has been superseded by a reroll.', { messageId: message?.id, supersededBy });
+  ui?.notifications?.warn?.('This attack was superseded by a reroll. Use the newer reroll message to roll or apply damage.');
+}
+
 async function handleLegacyDamageRollButton(event, button, message) {
   event.preventDefault();
   event.stopPropagation();
+
+  if (isAttackMessageSuperseded(message)) {
+    warnSupersededDamageAttempt(message);
+    return;
+  }
 
   const actor = actorFromId(button.dataset.actorId)
     || actorFromId(button.dataset.attacker)
@@ -213,35 +272,14 @@ async function handleLegacyDamageRollButton(event, button, message) {
   });
 }
 
-async function handleCombatDamageRollButton(event, button) {
+async function handleApplyDamageButton(event, button, message) {
   event.preventDefault();
   event.stopPropagation();
 
-  const attacker = actorFromId(button.dataset.attacker || button.dataset.actorId);
-  const target = actorFromId(button.dataset.target);
-  const weapon = itemFromActor(attacker, button.dataset.weapon);
-
-  if (!attacker || !weapon) {
-    ui?.notifications?.warn?.('Damage roll context could not be resolved.');
+  if (isAttackMessageSuperseded(message)) {
+    warnSupersededDamageAttempt(message);
     return;
   }
-
-  const combatContext = mergeDamageButtonWorkflowContext(button, decodeCombatWorkflowContext(button.dataset.workflowContext));
-  const resolvedTarget = target || actorFromId(combatContext?.targetId) || null;
-  const { SWSERoll } = await import('/systems/foundryvtt-swse/scripts/combat/rolls/enhanced-rolls.js');
-  await SWSERoll.rollDamage(attacker, weapon, {
-    target: resolvedTarget,
-    isCritical: button.dataset.isCrit === 'true' || combatContext?.damage?.crit === true,
-    critMultiplier: Number.parseInt(button.dataset.critMult, 10) || combatContext?.damage?.critMultiplier || 2,
-    damageComponents: combatContext?.damage?.damageComponents ?? decodeDamageComponents(button.dataset.damageComponents || ''),
-    combatContext,
-    workflowContext: combatContext
-  });
-}
-
-async function handleApplyDamageButton(event, button) {
-  event.preventDefault();
-  event.stopPropagation();
 
   const rawAmount = Number.parseInt(button.dataset.rawAmount || button.dataset.amount, 10);
   if (!Number.isFinite(rawAmount)) {

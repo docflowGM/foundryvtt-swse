@@ -129,7 +129,17 @@ function normalizeVehicleWeaponEntry(weapon = {}, index = 0, source = 'system') 
     pointDefense: !!weapon.pointDefense,
     modifiers: safeArray(weapon.modifiers),
     notes: safeArray(weapon.notes ? [weapon.notes] : weapon.special ? [weapon.special] : []),
-    actions: getStationSkillActions('gunner').map((action) => ({ ...action, stationKey: 'gunner' })),
+    // Phase 3 rolling-system alignment: this mount already carried a
+    // crewRole (e.g. a pilot-operated fixed-forward gun), but the action
+    // button was unconditionally wired to the 'gunner' station regardless —
+    // so a pilot-operated weapon would ask the (usually empty) gunner
+    // station for an operator instead of the pilot. Use the mount's own
+    // crewRole for the correct station, and only surface that station's
+    // "fire weapon" action here (not its other non-weapon actions, e.g. a
+    // pilot's Maneuver skill).
+    actions: getStationSkillActions(weapon.crewRole || 'gunner')
+      .filter((action) => action.key === 'attack')
+      .map((action) => ({ ...action, stationKey: weapon.crewRole || 'gunner' })),
     rawSource: weapon.rawSource || null,
     parseConfidence: weapon.parseConfidence || (source === 'item' ? 'structured' : 'statblock')
   };
