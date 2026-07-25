@@ -219,6 +219,34 @@ async function handleCombatDamageRollButton(event, button, message) {
  * on that original, now-stale card must not silently apply damage from
  * before the reroll — the reroll's own message is authoritative instead.
  */
+/**
+ * Phase 5 rolling-system alignment: a combined Full Attack card's damage
+ * button carries data-attack-instance-id/data-expected-revision (see
+ * full-attack-card-renderer.js). If a reroll advanced that ONE attack's
+ * stored revision since this button was rendered, the button is stale —
+ * refuse rather than applying damage from a superseded hit/critical after
+ * a reroll made it a miss (or changed its critical multiplier). Returns
+ * false (not stale) for any button without these attributes — an ordinary
+ * single-attack damage button, unaffected.
+ */
+async function isFullAttackRowStale(message, button) {
+  const attackInstanceId = button?.dataset?.attackInstanceId;
+  if (!attackInstanceId) return false;
+  try {
+    const { getAttackEntry } = await import('/systems/foundryvtt-swse/scripts/engine/combat/full-attack-message-state.js');
+    const entry = getAttackEntry(message, attackInstanceId);
+    if (!entry) return false;
+    const expectedRevision = Number(button.dataset.expectedRevision ?? 0);
+    return entry.activeRevision !== expectedRevision;
+  } catch (_err) {
+    return false;
+  }
+}
+
+function warnStaleFullAttackRow() {
+  ui?.notifications?.warn?.('This attack was rerolled after this card was rendered. Reopen the card to see the current result before rolling or applying damage.');
+}
+
 function isAttackMessageSuperseded(message) {
   try {
     return message?.getFlag?.('swse', 'superseded') === true;
@@ -279,6 +307,10 @@ async function handleLegacyDamageRollButton(event, button, message) {
     warnSupersededDamageAttempt(message);
     return;
   }
+  if (await isFullAttackRowStale(message, button)) {
+    warnStaleFullAttackRow();
+    return;
+  }
 
   const actor = actorFromId(button.dataset.actorId)
     || actorFromId(button.dataset.attacker)
@@ -314,6 +346,10 @@ async function handleApplyDamageButton(event, button, message) {
 
   if (isAttackMessageSuperseded(message)) {
     warnSupersededDamageAttempt(message);
+    return;
+  }
+  if (await isFullAttackRowStale(message, button)) {
+    warnStaleFullAttackRow();
     return;
   }
 
@@ -598,6 +634,26 @@ async function handleAttackRerollButton(event, button, message) {
   ui?.notifications?.warn?.('Attack reroll resolver is not available.');
 }
 
+// Phase 5 rolling-system alignment: interactive per-attack reroll for one
+// row of a combined Full Attack chat card. Distinct handler/button class
+// from the single-attack reroll above because it updates one attack's
+// stored revision within a shared message instead of creating a new
+// message + superseding the old one — see meta-resource-feat-resolver.js
+// #resolveFullAttackRerollButton for why a separate function was needed
+// rather than branching the existing one.
+async function handleFullAttackRerollButton(event, button, message) {
+  event.preventDefault();
+  if (button.disabled) return;
+
+  const { MetaResourceFeatResolver } = await import('/systems/foundryvtt-swse/scripts/engine/feats/meta-resource-feat-resolver.js');
+  if (typeof MetaResourceFeatResolver.resolveFullAttackRerollButton === 'function') {
+    await MetaResourceFeatResolver.resolveFullAttackRerollButton(button, { message });
+    return;
+  }
+
+  ui?.notifications?.warn?.('Full attack reroll resolver is not available.');
+}
+
 async function handleTemporaryDefenseButton(event, button) {
   event.preventDefault();
   const actor = actorFromId(button.dataset.actorId);
@@ -685,6 +741,7 @@ export class ChatInteractionBridge {
     bind(root, '.swse-skill-reroll-btn', 'SkillReroll', handleSkillRerollButton, message);
     bind(root, '[data-skill-challenge-chat-action]', 'SkillChallengeReview', handleSkillChallengeReviewButton, message);
     bind(root, '.swse-attack-reroll-btn', 'AttackReroll', handleAttackRerollButton, message);
+    bind(root, '.swse-full-attack-reroll-btn', 'FullAttackReroll', handleFullAttackRerollButton, message);
     bind(root, '.swse-temp-defense-btn', 'TemporaryDefense', handleTemporaryDefenseButton, message);
 
     return true;

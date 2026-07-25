@@ -12,6 +12,8 @@ import { EncounterUseTracker } from "/systems/foundryvtt-swse/scripts/engine/fea
 import { isForcePowerItem } from "/systems/foundryvtt-swse/scripts/utils/item-classification.js";
 import { AttackOutcomeResolver } from "/systems/foundryvtt-swse/scripts/engine/combat/attack-outcome-resolver.js";
 import { AttackRollDiagnostics } from "/systems/foundryvtt-swse/scripts/engine/combat/attack-roll-diagnostics.js";
+import { getAttackEntry, getActiveRevision, appendRevision } from "/systems/foundryvtt-swse/scripts/engine/combat/full-attack-message-state.js";
+import { renderFullAttackCardContent } from "/systems/foundryvtt-swse/scripts/engine/combat/full-attack-card-renderer.js";
 function normalizeName(value) {
   return String(value ?? '').trim().toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
 }
@@ -643,6 +645,225 @@ export class MetaResourceFeatResolver {
     });
 
     return { actor, message, newMessage, sourceName, originalTotal, newRoll, finalTotal, outcome, attackOutcome: newOutcome, revision };
+  }
+
+  /**
+   * Interactive per-attack reroll for one row of a combined Full Attack
+   * chat card (Phase 5 rolling-system alignment). Distinct from
+   * resolveAttackRerollButton() above (which creates a brand-new message
+   * and marks the whole original message superseded) because a combined
+   * card holds N independent attacks in ONE message — this updates only
+   * the ONE attack's stored revision (via full-attack-message-state.js's
+   * appendRevision(), which validates the expected revision before
+   * writing, so a stale card can't clobber a newer reroll) and leaves
+   * every sibling attack's state untouched.
+   *
+   * Reuses the same eligibility/policy authority as the single-attack
+   * path: the button's data attributes come from
+   * MetaResourceFeatResolver.buildAttackRerollChatOptions() (via
+   * full-attack-executor.js#_postCombinedCard, which stores that exact
+   * per-attack reroll-options array on the attack entry — see
+   * full-attack-card-renderer.js). Eligibility is re-validated here at
+   * execution time (feat still present, oncePer limit not yet consumed,
+   * Force Points still available), which is a stronger check than the
+   * single-attack path currently performs — an intentional Phase 5
+   * hardening, not an inconsistency introduced by accident.
+   *
+   * @param {HTMLElement} button
+   * @param {{message: ChatMessage}} context
+   * @returns {Promise<Object|null>}
+   */
+  static async resolveFullAttackRerollButton(button, { message = null } = {}) {
+    if (!(button instanceof HTMLElement) || !message) return null;
+    const actor = game.actors?.get?.(button.dataset.actorId);
+    if (!actor) {
+      ui?.notifications?.warn?.('Attack reroll actor could not be resolved.');
+      return null;
+    }
+    if (!actor.isOwner) {
+      ui?.notifications?.warn?.('You do not control this actor.');
+      return null;
+    }
+
+    const attackInstanceId = button.dataset.attackInstanceId;
+    const expectedRevision = Number(button.dataset.expectedRevision ?? 0);
+    if (!attackInstanceId) {
+      ui?.notifications?.warn?.('This reroll button is missing its attack reference.');
+      return null;
+    }
+
+    const sourceName = button.dataset.sourceName || 'Attack Reroll';
+    const ruleId = button.dataset.ruleId || '';
+    const cost = button.dataset.cost || 'forcePoint';
+    const outcome = this.normalizeRerollOutcome(button.dataset.outcome);
+
+    // Re-validate eligibility at execution time, not just at render time:
+    // the granting feat must still be on the actor, and any oncePer
+    // encounter-use limit must not have been consumed since the card was
+    // rendered (e.g. by a different attack's reroll in the same sequence
+    // using the same limited feature).
+    const currentRules = this.getAttackRerollRules(actor);
+    const stillEligible = currentRules.some(rule => rule.id === ruleId || rule.sourceId === button.dataset.sourceId);
+    if (!stillEligible) {
+      ui?.notifications?.warn?.(`${sourceName} is no longer available for this actor.`);
+      return null;
+    }
+    if (button.dataset.oncePer) {
+      const featureKey = `reroll-attack-${ruleId}`;
+      if (!EncounterUseTracker.canUse(actor, featureKey, { oncePer: button.dataset.oncePer })) {
+        ui?.notifications?.warn?.(`${sourceName} has already been used this encounter.`);
+        return null;
+      }
+    }
+    if (cost === 'forcePoint' && actorForcePoints(actor) <= 0) {
+      ui?.notifications?.warn?.(`${sourceName} requires a Force Point.`);
+      return null;
+    }
+
+    // Stale-card protection: read the CURRENTLY STORED state before
+    // spending anything. If a concurrent action (another reroll, a page
+    // from a different client) already advanced this attack past the
+    // revision this button was rendered for, refuse rather than silently
+    // overwriting a newer result.
+    const entry = getAttackEntry(message, attackInstanceId);
+    if (!entry) {
+      ui?.notifications?.warn?.('This attack could not be found on the current card.');
+      return null;
+    }
+    if (entry.activeRevision !== expectedRevision) {
+      ui?.notifications?.warn?.('This attack has already been updated by a newer action. Reopen the card to see the current result.');
+      return { ok: false, conflict: 'stale-revision' };
+    }
+    const activeRevision = getActiveRevision(entry);
+    // Damage applications are recorded in entry.damageApplications[] (via
+    // full-attack-message-state.js#recordDamageApplication), not as a flag
+    // on the revision's own damageContext — checking damageApplications
+    // directly, rather than a damageContext.applied flag nothing sets, is
+    // what actually detects "damage has already been applied for this
+    // attack."
+    if (Array.isArray(entry.damageApplications) && entry.damageApplications.length > 0) {
+      // No rule in this codebase permits rerolling an attack after its
+      // damage has already been applied — reject clearly rather than
+      // silently changing hit/critical state under already-resolved
+      // damage.
+      ui?.notifications?.warn?.('Damage has already been applied for this attack; it cannot be rerolled.');
+      return { ok: false, conflict: 'damage-already-applied' };
+    }
+
+    const formula = button.dataset.formula || activeRevision?.rollResult?.formula || '1d20';
+    const newRoll = await globalThis.SWSE?.RollEngine?.safeRoll?.(formula, actor.getRollData?.() ?? {}, {
+      actor,
+      domain: 'attack.reroll',
+      context: { rerollSource: sourceName, sequenceId: button.dataset.sequenceId ?? null, attackInstanceId, sourceMessageId: message?.id ?? null }
+    }) ?? await (await import('/systems/foundryvtt-swse/scripts/engine/roll-engine.js')).RollEngine.safeRoll(formula, actor.getRollData?.() ?? {});
+
+    if (!newRoll) {
+      ui?.notifications?.error?.('Attack reroll failed.');
+      return null;
+    }
+
+    if (cost === 'forcePoint') {
+      const { ActorEngine } = await import('/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js');
+      const spend = await ActorEngine.spendForcePoints(actor, 1);
+      if (!spend?.spent) {
+        ui?.notifications?.warn?.(`${sourceName} requires a Force Point.`);
+        return null;
+      }
+    }
+
+    const originalTotal = Number(button.dataset.originalTotal ?? activeRevision?.rollResult?.total ?? 0);
+    const rerollTotal = Number(newRoll.total ?? 0);
+    const finalTotal = outcome === 'keepBetter' ? Math.max(originalTotal, rerollTotal) : rerollTotal;
+    const usedNew = finalTotal === rerollTotal;
+
+    const originalNaturalD20Raw = Number(button.dataset.originalNaturalD20 ?? activeRevision?.rollResult?.naturalD20);
+    const originalNaturalD20 = Number.isFinite(originalNaturalD20Raw) ? originalNaturalD20Raw : null;
+    const rerollNaturalD20 = newRoll.dice?.[0]?.results?.[0]?.result ?? null;
+    const finalNaturalD20 = usedNew ? rerollNaturalD20 : originalNaturalD20;
+    const targetDefenseRaw = button.dataset.targetDefense;
+    const targetDefense = targetDefenseRaw !== undefined && targetDefenseRaw !== '' && targetDefenseRaw !== 'null'
+      ? Number(targetDefenseRaw)
+      : (activeRevision?.outcome?.targetDefense ?? null);
+    const criticalThreshold = Number.isFinite(Number(button.dataset.criticalThreshold)) ? Number(button.dataset.criticalThreshold) : 20;
+    const critMultiplier = Number.isFinite(Number(button.dataset.critMultiplier)) ? Number(button.dataset.critMultiplier) : (activeRevision?.outcome?.critMultiplier ?? 2);
+
+    // A completely fresh AttackOutcomeResolver verdict — never merges
+    // stale hit/critical fields from the previous revision.
+    const newOutcome = AttackOutcomeResolver.resolve({
+      naturalD20: finalNaturalD20,
+      total: finalTotal,
+      targetDefense,
+      criticalThreshold,
+      critMultiplier
+    });
+
+    const revisionData = {
+      rollInstanceId: foundry.utils?.randomID?.() ?? null,
+      rollResult: { naturalD20: finalNaturalD20, total: finalTotal, formula },
+      // Preserve the exact component ledger from the resolved attack —
+      // rerolling changes the die and (via AttackOutcomeResolver) the
+      // outcome, never the resolved formula components themselves (Phase
+      // 3/4's "reroll preserves resolved formula components" invariant,
+      // extended here to full-attack rows).
+      componentLedger: activeRevision?.componentLedger ?? [],
+      transactions: { forcePointSpent: cost === 'forcePoint' },
+      rerollSource: { ruleId, sourceId: button.dataset.sourceId ?? null, sourceName },
+      resultPolicy: outcome,
+      outcome: { ...newOutcome, targetDefense, critMultiplier },
+      damageContext: activeRevision?.damageContext ?? null
+    };
+
+    button.disabled = true;
+
+    let persisted;
+    try {
+      persisted = await appendRevision(message, attackInstanceId, expectedRevision, revisionData);
+      if (persisted?.ok) {
+        // Rebuild the whole card content from the message's OWN
+        // now-updated stored state (not from any in-memory HTML) so
+        // sibling rows are reproduced verbatim and only this row reflects
+        // the new revision.
+        const attacksFlag = message.getFlag('swse', 'attacks') ?? [];
+        const updatedAttacks = attacksFlag.map(a => (a.attackInstanceId === attackInstanceId ? { ...persisted.entry, sequenceId: button.dataset.sequenceId ?? null, criticalThreshold } : { ...a, sequenceId: button.dataset.sequenceId ?? null }));
+        const packageType = message.getFlag('swse', 'packageType');
+        const breakdown = message.getFlag('swse', 'breakdown') ?? [];
+        const target = updatedAttacks[0]?.targetUuid && typeof fromUuidSync === 'function' ? fromUuidSync(updatedAttacks[0].targetUuid) : null;
+        const content = renderFullAttackCardContent(actor, target, packageType, updatedAttacks, breakdown);
+        await message.update({ content });
+      }
+    } catch (err) {
+      console.warn('[SWSE] Full-attack reroll succeeded but the combined card could not be updated.', err);
+      ui?.notifications?.warn?.(`Reroll succeeded (new total ${finalTotal}), but the card could not be updated. The result was recorded in diagnostics.`);
+      AttackRollDiagnostics.record({
+        domain: 'combat.attack.fullAttackReroll',
+        attackType: 'character',
+        actor,
+        naturalD20: finalNaturalD20,
+        finalTotal,
+        outcome: newOutcome,
+        transactions: { forcePointSpent: cost === 'forcePoint' }
+      });
+      return { ok: false, conflict: 'render-failed', actor, attackInstanceId, finalTotal, outcome: newOutcome };
+    }
+
+    if (!persisted?.ok) {
+      if (persisted?.conflict === 'stale-revision') {
+        ui?.notifications?.warn?.('This attack was updated by another action while this reroll was in progress. The Force Point spent was not refunded automatically — check the card before spending another.');
+      }
+      return persisted ?? { ok: false, conflict: 'unknown' };
+    }
+
+    AttackRollDiagnostics.record({
+      domain: 'combat.attack.fullAttackReroll',
+      attackType: 'character',
+      actor,
+      naturalD20: finalNaturalD20,
+      finalTotal,
+      outcome: newOutcome,
+      transactions: { forcePointSpent: cost === 'forcePoint' }
+    });
+
+    return { ok: true, actor, message, attackInstanceId, revision: persisted.revision, finalTotal, outcome: newOutcome };
   }
 
   static getTemporaryDefenseRules(actor) {
