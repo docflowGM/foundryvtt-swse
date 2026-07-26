@@ -38,6 +38,7 @@ import { DroidSystemsResolver } from "/systems/foundryvtt-swse/scripts/sheets/v2
 import { buildUnarmedAttackContext } from "/systems/foundryvtt-swse/scripts/engine/combat/unarmed-attack-helper.js";
 import { ThemeResolutionService } from "/systems/foundryvtt-swse/scripts/ui/theme/theme-resolution-service.js";
 import { resolveArmorData } from "/systems/foundryvtt-swse/scripts/items/armor-data-resolver.js";
+import { isDroidStatblockMode } from "/systems/foundryvtt-swse/scripts/actors/droid/droid-mode-adapter.js";
 
 const ITEM_PROJECTION_KEYS = ["id", "name", "type", "img", "system"];
 
@@ -403,7 +404,12 @@ export class DroidSheetContextBuilder {
       validation: this.buildValidationPanel(),
       // Phase 3B: Stock droid provenance
       stockImport: this.actor?.flags?.swse?.stockDroidImport,
-      stockConversion: this.actor?.flags?.swse?.stockDroidConversionReport
+      stockConversion: this.actor?.flags?.swse?.stockDroidConversionReport,
+      // Droid Authority Consolidation Phase 3: whether this droid is still a
+      // frozen published statblock (derived recalculation intentionally
+      // skipped — see scripts/utils/hardening.js#shouldSkipDerivedData) and
+      // therefore eligible for the "Convert to Playable" action.
+      isStockStatblockMode: isDroidStatblockMode(this.actor)
     };
   }
 
