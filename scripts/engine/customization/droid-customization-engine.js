@@ -290,11 +290,32 @@ export class DroidCustomizationEngine {
       const installedSystems = { ...(actor.system.installedSystems ?? {}) };
       const droidSystems = foundry.utils.deepClone(actor.system?.droidSystems ?? {});
 
+      // PHASE 2 — Droid Authority Consolidation: embedded droid-part Items are
+      // not authoritative installation state (system.installedSystems is —
+      // see docs/audits/droid-authority-consolidation-phase-2.md). Resolve the
+      // actor's current components once so a removal can also delete any
+      // embedded Item representing the same canonical part; otherwise the
+      // Item would remain the highest-precedence source once its ledger
+      // entry is gone and the resolver would keep reporting the component as
+      // installed and active (the "Garage removal does not reconcile
+      // embedded Items" defect from docs/audits/droid-static-audit.md).
+      const preRemovalResolution = systemsToRemove.length
+        ? resolveInstalledDroidComponents(actor, {
+            normalizeId: normalizeDroidPartId,
+            getDefinition: (id) => getDroidPartDefinition(id)
+          })
+        : null;
+      const itemIdsToDelete = [];
+
       // Apply removals
       for (const systemId of systemsToRemove) {
         const normalized = normalizeDroidPartId(systemId);
         delete installedSystems[normalized];
         this.#applyRemovalToDroidSystems(droidSystems, normalized);
+        const component = preRemovalResolution?.components.find(c => c.canonicalId === normalized);
+        for (const source of component?.sources ?? []) {
+          if (source.kind === 'embeddedItem' && source.itemId) itemIdsToDelete.push(source.itemId);
+        }
       }
 
       // Apply additions
@@ -308,17 +329,25 @@ export class DroidCustomizationEngine {
       // Route credit movement + asset mutation through TransactionEngine so the
       // customization is atomic AND recorded in the credit audit trail. Wallet and
       // asset are the same droid actor; the transaction merges both legs into one
-      // snapshotted mutation and rolls back on failure.
+      // snapshotted mutation and rolls back on failure. The embedded-Item delete
+      // bucket rides in the same asset plan, so a failure anywhere in the
+      // transaction (insufficient funds, validation, mutation error) restores
+      // the actor's full pre-transaction snapshot — items included — via
+      // TransactionEngine's existing rollback, not a second ad hoc mechanism.
       const netCost = Number(preview.preview.netCost) || 0;
+      const assetMutationPlan = {
+        set: {
+          'system.installedSystems': installedSystems,
+          'system.droidSystems': droidSystems
+        }
+      };
+      if (itemIdsToDelete.length > 0) {
+        assetMutationPlan.delete = { items: [...new Set(itemIdsToDelete)] };
+      }
       const txn = await TransactionEngine.executeAssetCustomizationTransaction({
         actor,
         assetActor: actor,
-        assetMutationPlan: {
-          set: {
-            'system.installedSystems': installedSystems,
-            'system.droidSystems': droidSystems
-          }
-        },
+        assetMutationPlan,
         cost: Math.max(0, netCost),
         resaleCredit: Math.max(0, -netCost),
         transactionContext: 'owned-customization',
@@ -327,6 +356,7 @@ export class DroidCustomizationEngine {
           source: 'droid-customization',
           systemsAdded: preview.preview.systemsAdded,
           systemsRemoved: preview.preview.systemsRemoved,
+          itemsDeleted: itemIdsToDelete,
           assetActorId: actor.id
         }
       }, { source: 'DroidCustomizationEngine.applyDroidCustomization', validate: true, rederive: true });

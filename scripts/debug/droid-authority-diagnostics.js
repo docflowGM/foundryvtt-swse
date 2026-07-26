@@ -1,16 +1,20 @@
 /**
  * Droid Authority Diagnostics
  *
- * PHASE 1 — Droid Authority Consolidation developer utility.
+ * Phase 1/2 — Droid Authority Consolidation developer utility.
  *
  * Reports, for one droid Actor, exactly what
  * scripts/domain/droids/droid-installed-component-resolver.js resolved:
  * canonical component id, effective installed/enabled/active state, which
  * source won precedence, every persisted source record (so a GM/dev can see
  * *why* a component reads the way it does), any cross-source conflicts, and
- * the modifiers ModifierEngine would apply for each active component. This
- * does not create chat messages, UI, or recurring console output — it is
- * opt-in, call-it-when-you-need-it, same convention as
+ * the modifiers ModifierEngine would apply for each active component. Phase
+ * 2 adds pre-existing installation drift detection (see
+ * scripts/domain/droids/droid-installation-reconciler.js) — components that
+ * are mechanically active only because of a stray embedded Item left behind
+ * by a removal performed before Phase 2's embedded-Item reconciliation
+ * existed. This does not create chat messages, UI, or recurring console
+ * output — it is opt-in, call-it-when-you-need-it, same convention as
  * scripts/debug/actor-contract-inspector.js.
  *
  * Usage (from the console or a debug script):
@@ -20,10 +24,17 @@
  *   const report = diagnoseDroidAuthority(game.actors.get('...'));
  *   console.log(report.summary());
  *   console.table(report.components);
+ *   console.table(report.driftIssues);
+ *   // To repair a specific flagged issue (deletes the named embedded Item(s)):
+ *   const { repairDroidInstallationDrift } = await import(
+ *     '/systems/foundryvtt-swse/scripts/domain/droids/droid-installation-reconciler.js'
+ *   );
+ *   await repairDroidInstallationDrift(actor, [report.driftIssues[0]]);
  */
 
 import { getDroidPartDefinition, hydrateDroidPart, normalizeDroidPartId } from "/systems/foundryvtt-swse/scripts/data/droid-part-schema.js";
 import { resolveInstalledDroidComponents } from "/systems/foundryvtt-swse/scripts/domain/droids/droid-installed-component-resolver.js";
+import { diagnoseDroidInstallationDrift } from "/systems/foundryvtt-swse/scripts/domain/droids/droid-installation-reconciler.js";
 
 function describeModifiers(component, activeIds) {
   if (!component.active || !component.definition) return [];
@@ -74,20 +85,24 @@ export function diagnoseDroidAuthority(actor) {
     modifierCount: mod.modifiers.length
   }));
 
+  const driftIssues = diagnoseDroidInstallationDrift(resolution).issues;
+
   return {
     actorName: actor.name,
     components,
     legacyModifications,
     conflicts: resolution.conflicts,
     warnings: resolution.warnings,
+    driftIssues,
     summary() {
       const active = components.filter(c => c.active).length;
       const inactive = components.length - active;
       const lines = [
-        `[Droid Authority] ${actor.name}: ${components.length} component(s) resolved (${active} active, ${inactive} inactive/disabled), ${legacyModifications.length} freeform legacy mod(s), ${resolution.conflicts.length} conflict(s), ${resolution.warnings.length} warning(s).`
+        `[Droid Authority] ${actor.name}: ${components.length} component(s) resolved (${active} active, ${inactive} inactive/disabled), ${legacyModifications.length} freeform legacy mod(s), ${resolution.conflicts.length} conflict(s), ${resolution.warnings.length} warning(s), ${driftIssues.length} pre-existing drift issue(s).`
       ];
       for (const conflict of resolution.conflicts) lines.push(`  CONFLICT: ${conflict.message}`);
       for (const warning of resolution.warnings) lines.push(`  WARNING: ${warning}`);
+      for (const issue of driftIssues) lines.push(`  DRIFT: ${issue.message}`);
       return lines.join('\n');
     }
   };
