@@ -13,6 +13,12 @@
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { StockDroidNormalizer } from "/systems/foundryvtt-swse/scripts/domain/droids/stock-droid-normalizer.js";
 import { DroidTemplateDataLoader } from "/systems/foundryvtt-swse/scripts/core/droid-template-data-loader.js";
+import { DROID_CALCULATION_MODE } from "/systems/foundryvtt-swse/scripts/actors/droid/droid-mode-adapter.js";
+
+// PHASE 3 — Droid Stock-Statblock Authority: bump whenever the shape of
+// flags.swse.stockDroidImport changes, so DroidStatblockConversionService
+// and diagnostics can tell an old snapshot from a current one.
+const STOCK_IMPORT_SCHEMA_VERSION = 2;
 
 const ABILITY_KEYS = ['str', 'dex', 'con', 'int', 'wis', 'cha'];
 
@@ -106,8 +112,23 @@ function buildWeaponItemsFromAttacks(totals = {}) {
       flags: {
         swse: {
           integrated: true,
-          stockDroidAttack: true,
-          droidPartId: slug(name)
+          droidPartId: slug(name),
+          // PHASE 3 — Droid Stock-Statblock Authority: structured stock
+          // attack contract (see resolveAttackBonus() in
+          // scripts/engine/combat/combat-roll-math.js, which reads
+          // sourceStatblock/publishedAttackTotal to use this as the whole
+          // attack bonus instead of adding it on top of BAB). Kept as an
+          // object (previously a bare `true`) specifically so the roll
+          // pipeline has the published total available without re-deriving
+          // it from system.attackBonus, and so a converted (playable-mode)
+          // droid's weapon can have this flag stripped/ignored without
+          // losing system.attackBonus itself.
+          stockDroidAttack: {
+            publishedAttackTotal: profile.attackBonus,
+            publishedDamage: profile.damage,
+            mode,
+            sourceStatblock: true
+          }
         }
       }
     });
@@ -165,55 +186,64 @@ export class StockDroidImporterEngine {
     const droidSystems = deepClone(totals.droidSystems || {}) || {};
     const weaponItems = buildWeaponItemsFromAttacks(totals);
 
+    const systemData = {
+      droidDegree: identity.degree || '',
+      degree: identity.degree || '',
+      droidDegreeKey: identity.degreeKey || '',
+      droidRole: identity.role || '',
+      droidRoleLabel: identity.roleLabel || '',
+      race: 'Droid',
+      species: 'Droid',
+      size: String(identity.size || 'medium').toLowerCase(),
+      category: 'Droid',
+      cost: identity.cost || 0,
+      costNumeric: identity.cost || 0,
+      cl: identity.challengeLevel ?? null,
+      challengeLevel: identity.challengeLevel ?? null,
+
+      // PHASE 3 — Droid Stock-Statblock Authority: explicit calculation
+      // mode, written once at import time. This is the authoritative
+      // signal resolveDroidCalculationMode() checks first — see
+      // scripts/actors/droid/droid-mode-adapter.js. Only
+      // DroidStatblockConversionService may change it after this.
+      droidCalculationMode: DROID_CALCULATION_MODE.STOCK_STATBLOCK,
+
+      hp: {
+        value: totals.hp?.value ?? totals.hp?.max ?? 1,
+        max: totals.hp?.max ?? totals.hp?.value ?? 1,
+        temp: 0,
+        bonus: 0
+      },
+      attributes,
+      abilities,
+      speed: totals.speed || 6,
+      initiative: totals.initiative || 0,
+      bab: totals.bab || 0,
+      baseAttackBonus: totals.bab || 0,
+      damageThreshold: totals.threshold || totals.defenses?.fortitude || 10,
+      damageReduction: totals.damageReduction || 0,
+      defenses: {
+        fortitude: { base: 10, misc: 0, total: totals.defenses?.fortitude || 10, ability: 0, class: 0, armorMastery: 0, modifier: 0 },
+        reflex: { base: 10, misc: 0, total: totals.defenses?.reflex || 10, ability: 0, class: 0, armorMastery: 0, armor: 0, modifier: 0 },
+        will: { base: 10, misc: 0, total: totals.defenses?.will || 10, ability: 0, class: 0, armorMastery: 0, modifier: 0 },
+        flatFooted: { total: totals.defenses?.flatFooted || totals.defenses?.reflex || 10 }
+      },
+      skills: deepClone(totals.skills || {}),
+      droidSystems,
+      stockAttacks: deepClone(totals.attacks || { melee: [], ranged: [] }),
+      languages: deepClone(totals.languages || []),
+      forcePoints: { value: totals.forcePoints || 0, max: totals.forcePoints || 0, die: '1d6', diceType: 'd6' },
+      destinyPoints: { value: 0, max: 0 },
+      darkSideScore: totals.darkSideScore || 0,
+      credits: 0,
+      biography: this._buildBiography(customData, normalized)
+    };
+
     const actorData = {
       type: 'droid',
       name: customData?.name || source.name || 'Stock Droid',
       img: customData?.portrait || source.img || 'icons/svg/upgrade.svg',
-      system: {
-        droidDegree: identity.degree || '',
-        degree: identity.degree || '',
-        droidDegreeKey: identity.degreeKey || '',
-        droidRole: identity.role || '',
-        droidRoleLabel: identity.roleLabel || '',
-        race: 'Droid',
-        species: 'Droid',
-        size: String(identity.size || 'medium').toLowerCase(),
-        category: 'Droid',
-        cost: identity.cost || 0,
-        costNumeric: identity.cost || 0,
-        cl: identity.challengeLevel ?? null,
-        challengeLevel: identity.challengeLevel ?? null,
-
-        hp: {
-          value: totals.hp?.value ?? totals.hp?.max ?? 1,
-          max: totals.hp?.max ?? totals.hp?.value ?? 1,
-          temp: 0,
-          bonus: 0
-        },
-        attributes,
-        abilities,
-        speed: totals.speed || 6,
-        initiative: totals.initiative || 0,
-        bab: totals.bab || 0,
-        baseAttackBonus: totals.bab || 0,
-        damageThreshold: totals.threshold || totals.defenses?.fortitude || 10,
-        damageReduction: totals.damageReduction || 0,
-        defenses: {
-          fortitude: { base: 10, misc: 0, total: totals.defenses?.fortitude || 10, ability: 0, class: 0, armorMastery: 0, modifier: 0 },
-          reflex: { base: 10, misc: 0, total: totals.defenses?.reflex || 10, ability: 0, class: 0, armorMastery: 0, armor: 0, modifier: 0 },
-          will: { base: 10, misc: 0, total: totals.defenses?.will || 10, ability: 0, class: 0, armorMastery: 0, modifier: 0 },
-          flatFooted: { total: totals.defenses?.flatFooted || totals.defenses?.reflex || 10 }
-        },
-        skills: deepClone(totals.skills || {}),
-        droidSystems,
-        stockAttacks: deepClone(totals.attacks || { melee: [], ranged: [] }),
-        languages: deepClone(totals.languages || []),
-        forcePoints: { value: totals.forcePoints || 0, max: totals.forcePoints || 0, die: '1d6', diceType: 'd6' },
-        destinyPoints: { value: 0, max: 0 },
-        darkSideScore: totals.darkSideScore || 0,
-        credits: 0,
-        biography: this._buildBiography(customData, normalized)
-      },
+      system: systemData,
       items: weaponItems,
       prototypeToken: {
         name: customData?.name || source.name || 'Stock Droid',
@@ -224,6 +254,9 @@ export class StockDroidImporterEngine {
       flags: {
         swse: {
           stockDroidImport: {
+            // PHASE 3 — Droid Stock-Statblock Authority: bump
+            // STOCK_IMPORT_SCHEMA_VERSION whenever this shape changes.
+            schemaVersion: STOCK_IMPORT_SCHEMA_VERSION,
             sourceId: source.compendiumId,
             sourceName: source.name,
             sourcePack: source.sourcePack || '',
@@ -231,6 +264,12 @@ export class StockDroidImporterEngine {
             confidence: normalized.confidence,
             importedAt: timestamp,
             warnings: normalized.warnings || [],
+            // Full constructed system-data snapshot at import time, for
+            // DroidStatblockConversionService's inspect/rollback to compare
+            // against and restore from — distinct from publishedTotals
+            // below, which is the normalized/compact form several
+            // consumers already read directly.
+            originalActorSnapshot: deepClone(systemData),
             publishedTotals: {
               hp: deepClone(totals.hp),
               abilities: deepClone(totals.abilities),

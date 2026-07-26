@@ -19,6 +19,7 @@
 import { evaluateStatePredicates } from "/systems/foundryvtt-swse/scripts/engine/abilities/passive/passive-state.js";
 import { SchemaAdapters } from "/systems/foundryvtt-swse/scripts/utils/schema-adapters.js";
 import { isNpcStatblockMode } from "/systems/foundryvtt-swse/scripts/actors/npc/npc-mode-adapter.js";
+import { getStockAttackFlatBonus } from "/systems/foundryvtt-swse/scripts/actors/droid/droid-mode-adapter.js";
 import {
   getDamageAbilityContribution,
   getHalfLevelDamageBonus,
@@ -384,6 +385,26 @@ export function resolveAttackBonus(actor, weapon, actionId = null, context = {})
       const flat = Number(npc.flatAttackBonus) || 0;
       return { total: flat, components: { 'NPC Flat': flat }, flags: { npcFlat: true } };
     }
+  }
+
+  // PHASE 3 — Droid Stock-Statblock Authority: a stock-imported droid's
+  // integrated weapon Items carry their PUBLISHED attack total in
+  // system.attackBonus (see scripts/engine/import/stock-droid-importer-engine.js).
+  // getWeaponFlatAttackBonus() below reads that same field as an ordinary
+  // flat/enhancement bonus meant to be ADDED to BAB — for a stock droid that
+  // would double-count the entire published total on top of BAB. Mirrors
+  // the NPC statblock-flat pattern immediately above: bypass the normal
+  // BAB+ability+misc composition entirely and use the published total as
+  // the whole answer, exactly once. Temporary/runtime attack modifiers
+  // (talents, combat options, conditions, etc.) still apply on top of it
+  // through the normal breakdown path — see
+  // docs/audits/droid-stock-statblock-authority-phase-3.md's stock attack
+  // contract for the full policy. Decision logic lives in
+  // getStockAttackFlatBonus() (droid-mode-adapter.js) so it stays a single,
+  // unit-testable authority instead of duplicated inline here.
+  const stockAttackFlat = getStockAttackFlatBonus(actor, weapon);
+  if (stockAttackFlat !== null) {
+    return { total: stockAttackFlat, components: { 'Published Statblock Total': stockAttackFlat }, flags: { stockDroidFlat: true } };
   }
 
   const bab = SchemaAdapters.getBAB(actor);

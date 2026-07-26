@@ -5573,6 +5573,36 @@ const forcePoints = [];
         const item = itemId ? this.actor?.items?.get?.(itemId) : null;
         if (item?.sheet) item.sheet.render(true);
       }
+
+      // PHASE 3 — Droid Stock-Statblock Authority controls. Distinct action
+      // names from the legacy "convert-to-custom-droid" CTA elsewhere on
+      // this same card — see droid-build-status-card.hbs's comment.
+      const inspectBtn = ev.target.closest("[data-action='inspect-droid-conversion']");
+      if (inspectBtn) {
+        ev.preventDefault();
+        await this._inspectDroidConversion();
+        return;
+      }
+
+      const convertBtn = ev.target.closest("[data-action='convert-droid-to-playable']");
+      if (convertBtn) {
+        ev.preventDefault();
+        await this._convertDroidToPlayable();
+        return;
+      }
+
+      const viewOriginalBtn = ev.target.closest("[data-action='view-original-droid-statblock']");
+      if (viewOriginalBtn) {
+        ev.preventDefault();
+        await this._viewOriginalDroidStatblock();
+        return;
+      }
+
+      const rollbackBtn = ev.target.closest("[data-action='rollback-droid-conversion']");
+      if (rollbackBtn) {
+        ev.preventDefault();
+        await this._rollbackDroidConversion();
+      }
     }, { signal });
 
     // DELEGATED: Toggle Abilities Panel - Show/Hide Expanded Views
@@ -8524,6 +8554,86 @@ const forcePoints = [];
 
     await postDroidPartChat(this.actor, part);
     return null;
+  }
+
+  /**
+   * PHASE 3 — Droid Stock-Statblock Authority controls. Thin sheet-side
+   * wrappers around scripts/domain/droids/droid-statblock-conversion-service.js
+   * — all permission checks and mutation logic live in the service; these
+   * only format its results for the actor sheet.
+   */
+  async _inspectDroidConversion() {
+    if (!this.actor || this.actor.type !== 'droid') return;
+    const { inspectConversion } = await import('/systems/foundryvtt-swse/scripts/domain/droids/droid-statblock-conversion-service.js');
+    const report = await inspectConversion(this.actor);
+    const lines = [
+      `<p><strong>Mode:</strong> ${report.calculationMode?.mode ?? 'unknown'}</p>`,
+      `<p><strong>Source:</strong> ${report.stockImportSource?.sourceName ?? 'Unknown'}</p>`,
+      report.discrepancies?.length
+        ? `<p><strong>Discrepancies vs. classless-derived math:</strong></p><ul>${report.discrepancies.map(d => `<li>${d.field}: published ${d.published}, derived would be ${d.reproducedDerived}</li>`).join('')}</ul>`
+        : `<p>No discrepancies computed against classless-derived math.</p>`,
+      report.warnings?.length ? `<p><strong>Warnings:</strong></p><ul>${report.warnings.map(w => `<li>${w}</li>`).join('')}</ul>` : ''
+    ];
+    await SWSEDialogV2.prompt({
+      title: `Inspect Conversion — ${this.actor.name}`,
+      content: lines.join(''),
+      label: 'Close'
+    });
+  }
+
+  async _convertDroidToPlayable() {
+    if (!this.actor || this.actor.type !== 'droid') return;
+    const confirmed = await SWSEDialogV2.confirm({
+      title: 'Convert to Playable Mode',
+      content: `<p>Convert <strong>${this.actor.name}</strong> from its published statblock to normal playable-derived rules?</p><p>This does not add classes, levels, feats, or talents — it only stops the published totals from being protected from derived recalculation. A snapshot is taken first and can be rolled back.</p>`,
+      defaultYes: false
+    });
+    if (!confirmed) return;
+    const { convertToPlayableDerived } = await import('/systems/foundryvtt-swse/scripts/domain/droids/droid-statblock-conversion-service.js');
+    const result = await convertToPlayableDerived(this.actor);
+    if (result.success) {
+      ui.notifications?.info?.(`${this.actor.name} converted to playable-derived mode.`);
+    } else {
+      ui.notifications?.error?.(`Conversion failed: ${result.error}`);
+    }
+  }
+
+  async _viewOriginalDroidStatblock() {
+    if (!this.actor || this.actor.type !== 'droid') return;
+    const importState = this.actor.flags?.swse?.stockDroidImport;
+    if (!importState) {
+      ui.notifications?.warn?.('No original statblock snapshot found on this droid.');
+      return;
+    }
+    const totals = importState.publishedTotals ?? {};
+    const content = `
+      <p><strong>Source:</strong> ${importState.sourceName ?? 'Unknown'}</p>
+      <p><strong>BAB:</strong> ${totals.bab ?? '—'} | <strong>Damage Threshold:</strong> ${totals.threshold ?? '—'}</p>
+      <p><strong>Defenses:</strong> Fort ${totals.defenses?.fortitude ?? '—'} / Ref ${totals.defenses?.reflex ?? '—'} / Will ${totals.defenses?.will ?? '—'}</p>
+      <p><strong>HP:</strong> ${totals.hp?.max ?? '—'} | <strong>Initiative:</strong> ${totals.initiative ?? '—'}</p>
+    `;
+    await SWSEDialogV2.prompt({
+      title: `Original Statblock — ${this.actor.name}`,
+      content,
+      label: 'Close'
+    });
+  }
+
+  async _rollbackDroidConversion() {
+    if (!this.actor || this.actor.type !== 'droid') return;
+    const confirmed = await SWSEDialogV2.confirm({
+      title: 'Roll Back Conversion',
+      content: `<p>Restore <strong>${this.actor.name}</strong> to its pre-conversion published statblock? Any changes made since converting will be lost.</p>`,
+      defaultYes: false
+    });
+    if (!confirmed) return;
+    const { rollbackConversion } = await import('/systems/foundryvtt-swse/scripts/domain/droids/droid-statblock-conversion-service.js');
+    const result = await rollbackConversion(this.actor);
+    if (result.success) {
+      ui.notifications?.info?.(`${this.actor.name} rolled back to its published statblock.`);
+    } else {
+      ui.notifications?.error?.(`Rollback failed: ${result.error}`);
+    }
   }
 
   /* ============================================================

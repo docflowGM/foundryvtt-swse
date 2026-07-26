@@ -35,6 +35,7 @@
 import { getDroidPartDefinition, hydrateDroidPart, normalizeDroidPartId } from "/systems/foundryvtt-swse/scripts/data/droid-part-schema.js";
 import { resolveInstalledDroidComponents } from "/systems/foundryvtt-swse/scripts/domain/droids/droid-installed-component-resolver.js";
 import { diagnoseDroidInstallationDrift } from "/systems/foundryvtt-swse/scripts/domain/droids/droid-installation-reconciler.js";
+import { resolveDroidCalculationMode } from "/systems/foundryvtt-swse/scripts/actors/droid/droid-mode-adapter.js";
 
 function describeModifiers(component, activeIds) {
   if (!component.active || !component.definition) return [];
@@ -87,6 +88,27 @@ export function diagnoseDroidAuthority(actor) {
 
   const driftIssues = diagnoseDroidInstallationDrift(resolution).issues;
 
+  // PHASE 3 — Droid Stock-Statblock Authority. Cheap, synchronous fields
+  // only (calculation mode, stored published totals, stock attack
+  // contracts, conversion snapshot status) so diagnoseDroidAuthority() stays
+  // synchronous for existing callers. For a full discrepancy report against
+  // a live recomputation of playable-derived math, use
+  // scripts/domain/droids/droid-statblock-conversion-service.js's
+  // (async) inspectConversion(actor) instead.
+  const calculationMode = resolveDroidCalculationMode(actor);
+  const importState = actor.flags?.swse?.stockDroidImport ?? null;
+  const conversionState = actor.flags?.swse?.stockDroidConversion ?? null;
+  const itemList = typeof actor.items?.contents !== 'undefined' ? actor.items.contents : Array.from(actor.items ?? []);
+  const stockAttackContracts = itemList
+    .filter(item => item?.flags?.swse?.stockDroidAttack)
+    .map(item => ({
+      itemId: item.id,
+      name: item.name,
+      publishedAttackTotal: item.flags.swse.stockDroidAttack.publishedAttackTotal ?? null,
+      mode: item.flags.swse.stockDroidAttack.mode ?? null,
+      sourceStatblock: item.flags.swse.stockDroidAttack.sourceStatblock === true
+    }));
+
   return {
     actorName: actor.name,
     components,
@@ -94,15 +116,24 @@ export function diagnoseDroidAuthority(actor) {
     conflicts: resolution.conflicts,
     warnings: resolution.warnings,
     driftIssues,
+    stockStatblock: {
+      calculationMode,
+      importSource: importState ? { sourceId: importState.sourceId, sourceName: importState.sourceName, schemaVersion: importState.schemaVersion, importedAt: importState.importedAt } : null,
+      publishedTotals: importState?.publishedTotals ?? null,
+      conversionRecord: conversionState ? { convertedAt: conversionState.convertedAt, snapshotTimestamp: conversionState.snapshotTimestamp, sourceName: conversionState.sourceName } : null,
+      stockAttackContracts
+    },
     summary() {
       const active = components.filter(c => c.active).length;
       const inactive = components.length - active;
       const lines = [
-        `[Droid Authority] ${actor.name}: ${components.length} component(s) resolved (${active} active, ${inactive} inactive/disabled), ${legacyModifications.length} freeform legacy mod(s), ${resolution.conflicts.length} conflict(s), ${resolution.warnings.length} warning(s), ${driftIssues.length} pre-existing drift issue(s).`
+        `[Droid Authority] ${actor.name}: ${components.length} component(s) resolved (${active} active, ${inactive} inactive/disabled), ${legacyModifications.length} freeform legacy mod(s), ${resolution.conflicts.length} conflict(s), ${resolution.warnings.length} warning(s), ${driftIssues.length} pre-existing drift issue(s).`,
+        `[Droid Authority] Calculation mode: ${calculationMode.mode} (${calculationMode.explicit ? 'explicit' : calculationMode.inferred ? 'inferred' : 'default'}, reason: ${calculationMode.reason}).`
       ];
       for (const conflict of resolution.conflicts) lines.push(`  CONFLICT: ${conflict.message}`);
       for (const warning of resolution.warnings) lines.push(`  WARNING: ${warning}`);
       for (const issue of driftIssues) lines.push(`  DRIFT: ${issue.message}`);
+      for (const warning of calculationMode.warnings) lines.push(`  MODE WARNING: ${warning}`);
       return lines.join('\n');
     }
   };

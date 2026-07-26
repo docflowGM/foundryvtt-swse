@@ -21,6 +21,7 @@ import { ProgressionDocumentTargetPolicy } from "./policies/progression-document
 import { ActorAbilityBridge } from "/systems/foundryvtt-swse/scripts/adapters/ActorAbilityBridge.js";
 import { ShellRouter } from "/systems/foundryvtt-swse/scripts/ui/shell/ShellRouter.js";
 import { getNpcProfileState } from "/systems/foundryvtt-swse/scripts/actors/npc/npc-mode-adapter.js";
+import { resolveDroidCalculationMode, DROID_CALCULATION_MODE } from "/systems/foundryvtt-swse/scripts/actors/droid/droid-mode-adapter.js";
 
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 
@@ -235,6 +236,22 @@ export async function launchProgression(actor, options = {}) {
   if (!isChargenIncomplete && _isOwnerSyncedMinion(actor)) {
     ui?.notifications?.info?.('Minions do not level up manually. They automatically sync as nonheroic NPCs at owner heroic level - 2.');
     SWSELogger.log('[Progression Entry] Blocked manual minion level-up; minions are owner-synced.');
+    return;
+  }
+
+  // PHASE 3 — Droid Stock-Statblock Authority: a stock-imported droid's
+  // BAB/defenses/Damage Threshold/Initiative are its published statblock
+  // totals, deliberately protected from derived recalculation (see
+  // scripts/actors/droid/droid-mode-adapter.js). Progression/level-up
+  // exists to award classes/feats/talents that feed that same derived
+  // recalculation — letting a stock droid enter it would silently put the
+  // actor on a path toward normal derivation without ever having made an
+  // explicit decision to leave statblock mode. Require conversion first via
+  // scripts/domain/droids/droid-statblock-conversion-service.js instead of
+  // scattering this check through every progression step.
+  if (actor.type === 'droid' && resolveDroidCalculationMode(actor).mode === DROID_CALCULATION_MODE.STOCK_STATBLOCK) {
+    ui?.notifications?.warn?.(`${actor.name} is a published stock statblock. Convert it to a playable droid (Droid Systems tab) before starting progression.`);
+    SWSELogger.log('[Progression Entry] Blocked progression for stock-statblock droid; conversion required first.', { actor: actor.id });
     return;
   }
 

@@ -1,81 +1,153 @@
 import assert from 'node:assert/strict';
 import {
+  DROID_CALCULATION_MODE,
+  resolveDroidCalculationMode,
   isDroidStatblockMode,
   isStockImportedDroid,
-  buildConvertDroidToPlayableModeUpdate,
-  computeStatblockDerivedOverrides
+  buildRepairLegacyCalculationModeUpdate,
+  computeStatblockDerivedOverrides,
+  getStockAttackFlatBonus
 } from '../scripts/actors/droid/droid-mode-adapter.js';
 
-// Phase 3 — Droid Authority Consolidation. A stock-imported droid has no
+// Phase 3 — Droid Stock-Statblock Authority. A stock-imported droid has no
 // class levels, so the normal derived pipeline would compute BAB 0 and base
 // (10) defenses and silently replace the published statblock's displayed
-// totals on every sheet render. isDroidStatblockMode()/shouldSkipDerivedData()
-// stop that recalculation from running at all; computeStatblockDerivedOverrides()
-// supplies the actual published values the sheet should show instead.
+// totals on every sheet render. resolveDroidCalculationMode()/
+// isDroidStatblockMode() stop that recalculation from running at all;
+// computeStatblockDerivedOverrides() supplies the actual published values
+// the sheet should show instead; getStockAttackFlatBonus() stops the same
+// published total from being double-counted on top of BAB in attack rolls.
 
-function statblockDroid(overrides = {}) {
+function explicitStockDroid(overrides = {}) {
+  return { type: 'droid', system: { droidCalculationMode: 'stock-statblock', ...overrides } };
+}
+
+function explicitPlayableDroid(overrides = {}) {
+  return { type: 'droid', system: { droidCalculationMode: 'playable-derived', ...overrides } };
+}
+
+function legacyStatblockDroid(overrides = {}) {
   return {
     type: 'droid',
     flags: { swse: { stockDroidImport: { importMode: 'statblock', sourceId: 'abc', ...overrides } } }
   };
 }
 
-// isDroidStatblockMode
+// ── resolveDroidCalculationMode — explicit field wins (Tests 1-2) ──────────
 
 {
-  assert.equal(isDroidStatblockMode(statblockDroid()), true);
+  const resolution = resolveDroidCalculationMode(explicitStockDroid());
+  assert.equal(resolution.mode, DROID_CALCULATION_MODE.STOCK_STATBLOCK);
+  assert.equal(resolution.explicit, true);
+  assert.equal(resolution.inferred, false);
+  assert.equal(resolution.reason, 'explicit-system-field');
 }
 
 {
-  const playable = statblockDroid({ importMode: 'playable' });
-  assert.equal(isDroidStatblockMode(playable), false);
+  const resolution = resolveDroidCalculationMode(explicitPlayableDroid());
+  assert.equal(resolution.mode, DROID_CALCULATION_MODE.PLAYABLE_DERIVED);
+  assert.equal(resolution.explicit, true);
+  assert.equal(resolution.inferred, false);
+}
+
+// Explicit field wins even when a contradicting legacy flag is also present.
+{
+  const actor = explicitPlayableDroid();
+  actor.flags = { swse: { stockDroidImport: { importMode: 'statblock' } } };
+  const resolution = resolveDroidCalculationMode(actor);
+  assert.equal(resolution.mode, DROID_CALCULATION_MODE.PLAYABLE_DERIVED);
+  assert.equal(resolution.explicit, true);
+}
+
+// Test 3: malformed/unknown explicit value fails safely to playable-derived,
+// not by throwing, and surfaces a warning.
+{
+  const actor = explicitStockDroid({ droidCalculationMode: 'garbage-value' });
+  const resolution = resolveDroidCalculationMode(actor);
+  assert.equal(resolution.mode, DROID_CALCULATION_MODE.PLAYABLE_DERIVED);
+  assert.equal(resolution.explicit, false);
+  assert.equal(resolution.reason, 'malformed-explicit-value');
+  assert.equal(resolution.warnings.length, 1);
+}
+
+// Tests 4-5: legacy flag inference when no explicit field is present.
+{
+  const resolution = resolveDroidCalculationMode(legacyStatblockDroid());
+  assert.equal(resolution.mode, DROID_CALCULATION_MODE.STOCK_STATBLOCK);
+  assert.equal(resolution.explicit, false);
+  assert.equal(resolution.inferred, true);
+  assert.equal(resolution.reason, 'legacy-stock-import-flag');
+  assert.equal(resolution.warnings.length, 1);
 }
 
 {
-  // Non-droid actor types are never statblock-mode droids, even with the flag present.
-  const npc = statblockDroid();
+  const resolution = resolveDroidCalculationMode(legacyStatblockDroid({ importMode: 'playable' }));
+  assert.equal(resolution.mode, DROID_CALCULATION_MODE.PLAYABLE_DERIVED);
+  assert.equal(resolution.explicit, false);
+  assert.equal(resolution.inferred, true);
+  assert.equal(resolution.reason, 'legacy-playable-conversion-flag');
+}
+
+// Test 6: default — an ordinary hand-built droid (no signal at all) is
+// never classified as stock merely for being type "droid".
+{
+  const resolution = resolveDroidCalculationMode({ type: 'droid', flags: {} });
+  assert.equal(resolution.mode, DROID_CALCULATION_MODE.PLAYABLE_DERIVED);
+  assert.equal(resolution.explicit, false);
+  assert.equal(resolution.inferred, false);
+  assert.equal(resolution.reason, 'default-no-stock-signal');
+}
+
+// Test 7: non-droid actors (and null/undefined) always resolve playable,
+// regardless of stray flags.
+{
+  const npc = legacyStatblockDroid();
   npc.type = 'npc';
-  assert.equal(isDroidStatblockMode(npc), false);
+  const resolution = resolveDroidCalculationMode(npc);
+  assert.equal(resolution.mode, DROID_CALCULATION_MODE.PLAYABLE_DERIVED);
+  assert.equal(resolution.reason, 'not-a-droid-actor');
+  assert.equal(resolveDroidCalculationMode(null).mode, DROID_CALCULATION_MODE.PLAYABLE_DERIVED);
+  assert.equal(resolveDroidCalculationMode(undefined).mode, DROID_CALCULATION_MODE.PLAYABLE_DERIVED);
 }
 
-{
-  // A droid follower (chargen/follower-creator built) never has the stock
-  // import flag at all, so it is never mistaken for a frozen statblock.
-  const follower = { type: 'droid', flags: {} };
-  assert.equal(isDroidStatblockMode(follower), false);
-}
+// ── isDroidStatblockMode — thin predicate over the resolver ────────────────
 
 {
+  assert.equal(isDroidStatblockMode(explicitStockDroid()), true);
+  assert.equal(isDroidStatblockMode(explicitPlayableDroid()), false);
+  assert.equal(isDroidStatblockMode(legacyStatblockDroid()), true);
+  assert.equal(isDroidStatblockMode({ type: 'droid', flags: {} }), false);
   assert.equal(isDroidStatblockMode(null), false);
-  assert.equal(isDroidStatblockMode(undefined), false);
 }
 
-// isStockImportedDroid — true regardless of current mode, false if never imported
+// ── isStockImportedDroid — true regardless of current mode ─────────────────
 
 {
-  assert.equal(isStockImportedDroid(statblockDroid()), true);
-  assert.equal(isStockImportedDroid(statblockDroid({ importMode: 'playable' })), true);
+  assert.equal(isStockImportedDroid(explicitStockDroid()), true);
+  assert.equal(isStockImportedDroid(explicitPlayableDroid()), true);
+  assert.equal(isStockImportedDroid(legacyStatblockDroid()), true);
   assert.equal(isStockImportedDroid({ type: 'droid', flags: {} }), false);
+  assert.equal(isStockImportedDroid(null), false);
 }
 
-// buildConvertDroidToPlayableModeUpdate
+// ── buildRepairLegacyCalculationModeUpdate ──────────────────────────────────
 
 {
-  const actor = statblockDroid();
-  const update = buildConvertDroidToPlayableModeUpdate(actor);
-  assert.equal(update.set['flags.swse.stockDroidImport.importMode'], 'playable');
-  assert.equal(typeof update.set['flags.swse.stockDroidImport.convertedAt'], 'number');
+  const update = buildRepairLegacyCalculationModeUpdate(legacyStatblockDroid());
+  assert.deepEqual(update, { set: { 'system.droidCalculationMode': 'stock-statblock' } });
 }
 
 {
-  // Refuses to build a conversion update for an actor that isn't currently
-  // in statblock mode (already converted, not a droid, or never imported).
-  assert.throws(() => buildConvertDroidToPlayableModeUpdate(statblockDroid({ importMode: 'playable' })));
-  assert.throws(() => buildConvertDroidToPlayableModeUpdate({ type: 'droid', flags: {} }));
-  assert.throws(() => buildConvertDroidToPlayableModeUpdate(null));
+  const update = buildRepairLegacyCalculationModeUpdate(legacyStatblockDroid({ importMode: 'playable' }));
+  assert.deepEqual(update, { set: { 'system.droidCalculationMode': 'playable-derived' } });
 }
 
-// computeStatblockDerivedOverrides
+{
+  // Refuses to "repair" an actor whose mode is already explicit — nothing to do.
+  assert.throws(() => buildRepairLegacyCalculationModeUpdate(explicitStockDroid()));
+}
+
+// ── computeStatblockDerivedOverrides (Tests covering BAB/defenses/DT/Init) ──
 
 {
   const system = {
@@ -86,12 +158,14 @@ function statblockDroid(overrides = {}) {
       will: { total: 12 },
       flatFooted: { total: 11 }
     },
-    damageThreshold: 20
+    damageThreshold: 20,
+    initiative: 6
   };
   const overrides = computeStatblockDerivedOverrides(system);
   assert.equal(overrides.bab, 4);
   assert.deepEqual(overrides.defenses, { fortitude: 15, reflex: 13, will: 12, flatFooted: 11 });
   assert.equal(overrides.damageThreshold, 20);
+  assert.equal(overrides.initiative, 6);
 }
 
 {
@@ -108,6 +182,7 @@ function statblockDroid(overrides = {}) {
   assert.equal(overrides.bab, null);
   assert.deepEqual(overrides.defenses, {});
   assert.equal(overrides.damageThreshold, null);
+  assert.equal(overrides.initiative, null);
 }
 
 {
@@ -119,11 +194,62 @@ function statblockDroid(overrides = {}) {
 }
 
 {
+  // A published initiative of exactly 0 is preserved, not treated as "absent".
+  const overrides = computeStatblockDerivedOverrides({ initiative: 0 });
+  assert.equal(overrides.initiative, 0);
+}
+
+{
   // Pure: does not mutate its input.
-  const system = { bab: 4, defenses: { fortitude: { total: 15 } }, damageThreshold: 20 };
+  const system = { bab: 4, defenses: { fortitude: { total: 15 } }, damageThreshold: 20, initiative: 3 };
   const before = JSON.parse(JSON.stringify(system));
   computeStatblockDerivedOverrides(system);
   assert.deepEqual(system, before);
 }
 
-console.log('Droid mode adapter (statblock/playable) guards passed.');
+// ── getStockAttackFlatBonus (Tests 24, 26, 31) ──────────────────────────────
+
+function stockWeapon(overrides = {}) {
+  return { flags: { swse: { stockDroidAttack: { publishedAttackTotal: 9, publishedDamage: '2d6+3', mode: 'playable-derived', sourceStatblock: true, ...overrides } } } };
+}
+
+{
+  // Test 24: a stock-mode droid with a properly-flagged weapon uses the
+  // published total, exactly, instead of any BAB/ability composition.
+  const bonus = getStockAttackFlatBonus(explicitStockDroid(), stockWeapon());
+  assert.equal(bonus, 9);
+}
+
+{
+  // Test 26: playable-derived mode never uses the flat override, even if a
+  // weapon still happens to carry a stockDroidAttack contract (e.g. right
+  // after conversion, before the contract is neutralized).
+  const bonus = getStockAttackFlatBonus(explicitPlayableDroid(), stockWeapon());
+  assert.equal(bonus, null);
+}
+
+{
+  // Test 31: sourceStatblock: false (neutralized by conversion) must fall
+  // through to normal composition even if the actor is somehow still in
+  // stock mode.
+  const bonus = getStockAttackFlatBonus(explicitStockDroid(), stockWeapon({ sourceStatblock: false }));
+  assert.equal(bonus, null);
+}
+
+{
+  // A weapon with no stock attack contract at all falls through.
+  assert.equal(getStockAttackFlatBonus(explicitStockDroid(), { flags: {} }), null);
+  assert.equal(getStockAttackFlatBonus(explicitStockDroid(), null), null);
+}
+
+{
+  // Non-finite publishedAttackTotal is rejected rather than coerced to 0/NaN.
+  const bonus = getStockAttackFlatBonus(explicitStockDroid(), stockWeapon({ publishedAttackTotal: 'not-a-number' }));
+  assert.equal(bonus, null);
+}
+
+{
+  // Non-droid actors never get the flat override even with a stock-shaped weapon.
+  const npc = { type: 'npc', system: { droidCalculationMode: 'stock-statblock' } };
+  assert.equal(getStockAttackFlatBonus(npc, stockWeapon()), null);
+}

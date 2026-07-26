@@ -38,7 +38,7 @@ import { DroidSystemsResolver } from "/systems/foundryvtt-swse/scripts/sheets/v2
 import { buildUnarmedAttackContext } from "/systems/foundryvtt-swse/scripts/engine/combat/unarmed-attack-helper.js";
 import { ThemeResolutionService } from "/systems/foundryvtt-swse/scripts/ui/theme/theme-resolution-service.js";
 import { resolveArmorData } from "/systems/foundryvtt-swse/scripts/items/armor-data-resolver.js";
-import { isDroidStatblockMode } from "/systems/foundryvtt-swse/scripts/actors/droid/droid-mode-adapter.js";
+import { isDroidStatblockMode, resolveDroidCalculationMode, DROID_CALCULATION_MODE } from "/systems/foundryvtt-swse/scripts/actors/droid/droid-mode-adapter.js";
 
 const ITEM_PROJECTION_KEYS = ["id", "name", "type", "img", "system"];
 
@@ -202,7 +202,8 @@ export class DroidSheetContextBuilder {
         resolvedSystems,
         garage,
         flags,
-        sourceStatus
+        sourceStatus,
+        stockStatblockControls: this.buildStockStatblockControlsPanel()
       },
       user: {
         id: game.user?.id,
@@ -410,6 +411,42 @@ export class DroidSheetContextBuilder {
       // skipped — see scripts/utils/hardening.js#shouldSkipDerivedData) and
       // therefore eligible for the "Convert to Playable" action.
       isStockStatblockMode: isDroidStatblockMode(this.actor)
+    };
+  }
+
+  /**
+   * PHASE 3 — Droid Stock-Statblock Authority. Deliberately a separate,
+   * distinctly-labeled control set from droid.garage.canConvert /
+   * droid.sourceStatus (which target the older, unreachable legacy Droid
+   * Builder "convert into a full custom Garage build" workflow — see
+   * docs/audits/droid-stock-statblock-authority-phase-3.md). This governs
+   * only the lightweight calculation-mode flip
+   * (scripts/domain/droids/droid-statblock-conversion-service.js): does the
+   * droid use its published statblock totals, or normal derived math.
+   */
+  buildStockStatblockControlsPanel() {
+    const resolution = resolveDroidCalculationMode(this.actor);
+    const isOwner = this.actor?.isOwner === true;
+    const isGM = Boolean(game.user?.isGM);
+    const canAct = isOwner || isGM;
+    const importState = this.actor?.flags?.swse?.stockDroidImport ?? null;
+    const conversionState = this.actor?.flags?.swse?.stockDroidConversion ?? null;
+
+    return {
+      visible: Boolean(importState),
+      mode: resolution.mode,
+      modeLabel: resolution.mode === DROID_CALCULATION_MODE.STOCK_STATBLOCK ? 'Published Statblock Mode' : 'Playable (Derived)',
+      isStock: resolution.mode === DROID_CALCULATION_MODE.STOCK_STATBLOCK,
+      isConverted: resolution.mode === DROID_CALCULATION_MODE.PLAYABLE_DERIVED && Boolean(conversionState),
+      modeInferred: resolution.inferred,
+      modeReason: resolution.reason,
+      isOwner,
+      canAct,
+      canConvert: canAct && resolution.mode === DROID_CALCULATION_MODE.STOCK_STATBLOCK,
+      canRollback: canAct && resolution.mode === DROID_CALCULATION_MODE.PLAYABLE_DERIVED && Number.isFinite(conversionState?.snapshotTimestamp),
+      sourceName: importState?.sourceName ?? null,
+      importedAt: importState?.importedAt ?? null,
+      convertedAt: conversionState?.convertedAt ?? null
     };
   }
 
