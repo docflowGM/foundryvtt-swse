@@ -104,5 +104,48 @@
       {{/if}}
     </div>
   {{/if}}
+
+  {{!--
+    PHASE 4 — Converted-System Reconciliation.
+    Separate from the calculation-mode card above: this governs mapping a
+    stock-imported droid's published system.droidSystems source records
+    into the canonical, Garage-editable system.installedSystems ledger
+    (docs/audits/droid-converted-system-reconciliation-phase-4.md). Only
+    ever mutates a droid already in playable-derived mode — the
+    "Reconcile Systems" button itself is gated on isPlayable in the
+    context builder, not just permission.
+  --}}
+  {{#if droid.reconciliationControls.visible}}
+    <div class="swse-droid-reconciliation-card">
+      <div class="swse-droid-status-header">
+        <span class="swse-droid-source-badge">
+          {{#if droid.reconciliationControls.reconciledAt}}Systems Reconciled{{else}}Published Systems Unreconciled{{/if}}
+        </span>
+        {{#if droid.reconciliationControls.isPlayable}}
+          <span class="swse-droid-status-origin">{{droid.reconciliationControls.unreconciledCount}} unreconciled candidate(s)</span>
+        {{else}}
+          <span class="swse-droid-status-origin">Convert to Playable to enable reconciliation</span>
+        {{/if}}
+      </div>
+
+      {{#if droid.reconciliationControls.canAct}}
+        <div class="swse-droid-statblock-actions">
+          <button type="button" class="holo-btn small" data-action="inspect-droid-reconciliation" aria-label="Inspect this droid's published systems and how they would map to canonical parts">
+            <i class="fa-solid fa-magnifying-glass-chart"></i> Inspect Published Systems
+          </button>
+          {{#if droid.reconciliationControls.canReconcile}}
+            <button type="button" class="holo-btn small" data-action="reconcile-droid-systems" aria-label="Reconcile this droid's published systems into the canonical installation ledger">
+              <i class="fa-solid fa-diagram-project"></i> Reconcile Systems
+            </button>
+          {{/if}}
+          {{#if droid.reconciliationControls.canRollback}}
+            <button type="button" class="holo-btn small" data-action="rollback-droid-reconciliation" aria-label="Roll back the last systems reconciliation">
+              <i class="fa-solid fa-clock-rotate-left"></i> Roll Back Reconciliation
+            </button>
+          {{/if}}
+        </div>
+      {{/if}}
+    </div>
+  {{/if}}
 </div>
 {{/if}}

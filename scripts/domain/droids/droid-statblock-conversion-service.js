@@ -225,6 +225,23 @@ export async function convertToPlayableDerived(actor, options = {}) {
  * stock-statblock state, restoring published totals, stock attack
  * behavior, and calculation mode via the snapshot taken at conversion time.
  *
+ * PHASE 4 — Converted-System Reconciliation audited this rollback against
+ * the actual restore implementation (scripts/governance/snapshot/snapshot-service.js#restoreFromSnapshot,
+ * not assumed): it fully replaces `system` (so `system.droidCalculationMode`,
+ * the canonical ledger, and every published field are correctly restored)
+ * and fully deletes+recreates every Item and ActiveEffect (so stock attack
+ * flags and conversion-time weapon neutralization are correctly undone
+ * too) — this was already a genuine full-actor restore, not a narrow
+ * snapshot pointer, so no new rollback mechanism was needed. It confirmed
+ * one real gap: `restoreFromSnapshot` never touches `actor.flags` at all,
+ * so `flags.swse.stockDroidConversion`'s own record would otherwise keep
+ * showing a stale "converted at" timestamp for a droid that this call just
+ * put back into stock-statblock mode — cosmetic only (resolveDroidCalculationMode()
+ * never reads this flag; only `system.droidCalculationMode`, which IS
+ * correctly restored), but confusing for diagnostics/sheet history. Fixed
+ * by stamping `rolledBackAt` afterward through the same ActorEngine
+ * authority, rather than leaving stale conversion metadata in place.
+ *
  * @param {Actor} actor
  * @returns {Promise<{success: boolean, error?: string}>}
  */
@@ -245,6 +262,12 @@ export async function rollbackConversion(actor) {
     if (!restored) {
       return { success: false, error: 'Conversion snapshot could not be found or restored.' };
     }
+    // restoreSnapshot() replaces `system`/items/effects but never touches
+    // `actor.flags` — stamp the rollback explicitly so stale conversion
+    // metadata doesn't linger (see doc comment above).
+    await ActorEngine.applyMutationPlan(actor, {
+      set: { 'flags.swse.stockDroidConversion.rolledBackAt': Date.now() }
+    }, { source: 'DroidStatblockConversionService.rollbackConversion', validate: false, rederive: true });
     SWSELogger.log(`[DroidStatblockConversionService] Rolled back conversion for ${actor.name}.`);
     return { success: true };
   } catch (err) {

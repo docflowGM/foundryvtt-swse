@@ -1543,6 +1543,7 @@ export class ModifierEngine {
     try {
       const { resolveInstalledDroidComponents } = await import("/systems/foundryvtt-swse/scripts/domain/droids/droid-installed-component-resolver.js");
       const { getDroidPartDefinition, hydrateDroidPart, normalizeDroidPartId } = await import("/systems/foundryvtt-swse/scripts/data/droid-part-schema.js");
+      const { shouldSuppressComponentModifiers } = await import("/systems/foundryvtt-swse/scripts/actors/droid/droid-mode-adapter.js");
 
       const canonicalTarget = (target) => {
         const raw = String(target || '').trim();
@@ -1578,6 +1579,12 @@ export class ModifierEngine {
           swseLogger.warn(`[ModifierEngine] Unresolvable droid component "${component.canonicalId}" (active in ${component.primarySource?.kind}); skipping its modifiers.`);
           continue;
         }
+        // PHASE 4 — Converted-System Reconciliation: see
+        // shouldSuppressComponentModifiers()'s own doc comment
+        // (scripts/actors/droid/droid-mode-adapter.js) for the confirmed
+        // double-count risk this closes and why the decision lives there
+        // instead of inline here.
+        if (shouldSuppressComponentModifiers(actor, component)) continue;
 
         const hydrated = hydrateDroidPart({ id: component.canonicalId }, { installedIds: activeIds, actor });
         const modArray = Array.isArray(hydrated.modifiers) ? hydrated.modifiers : [];

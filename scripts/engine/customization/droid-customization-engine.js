@@ -390,6 +390,20 @@ export class DroidCustomizationEngine {
       slot: entry.slot,
       cost: entry.cost,
       installedAt: Date.now(),
+      // PHASE 4 — Converted-System Reconciliation: every ordinary Garage/
+      // Workshop install (through this engine) is, by definition, added
+      // AFTER whatever the droid's published statblock totals already were
+      // — never baked into them. This is the "post-import-modification"
+      // provenance docs/audits/droid-converted-system-reconciliation-phase-4.md
+      // and the reconciliation classifier rely on to tell an ordinary
+      // Garage-installed part apart from a reconciled stock-import
+      // component whose bonus is already accounted for in the published
+      // totals. A caller may override via `extra.provenance`/`extra.mechanicalState`
+      // (used only by DroidConvertedSystemReconciliationService itself,
+      // which is the sole other writer of these fields — enforced by
+      // tools/check-droid-reconciliation-authority.mjs).
+      provenance: { origin: 'post-import-customization', bakedIntoPublishedTotals: false },
+      mechanicalState: { applyModifiers: true },
       ...extra
     };
   }

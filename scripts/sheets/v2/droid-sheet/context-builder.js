@@ -39,6 +39,9 @@ import { buildUnarmedAttackContext } from "/systems/foundryvtt-swse/scripts/engi
 import { ThemeResolutionService } from "/systems/foundryvtt-swse/scripts/ui/theme/theme-resolution-service.js";
 import { resolveArmorData } from "/systems/foundryvtt-swse/scripts/items/armor-data-resolver.js";
 import { isDroidStatblockMode, resolveDroidCalculationMode, DROID_CALCULATION_MODE } from "/systems/foundryvtt-swse/scripts/actors/droid/droid-mode-adapter.js";
+import { getDroidPartDefinition, getAllDroidPartDefinitions, normalizeDroidPartId } from "/systems/foundryvtt-swse/scripts/data/droid-part-schema.js";
+import { classifyStockSystemSources, annotateWeaponCandidatesAgainstExistingItems, RECONCILIATION_CLASSIFICATION } from "/systems/foundryvtt-swse/scripts/domain/droids/droid-converted-system-reconciliation-classifier.js";
+import { DROID_SYSTEMS_SOURCE_FIELDS } from "/systems/foundryvtt-swse/scripts/domain/droids/droid-installed-component-resolver.js";
 
 const ITEM_PROJECTION_KEYS = ["id", "name", "type", "img", "system"];
 
@@ -203,7 +206,8 @@ export class DroidSheetContextBuilder {
         garage,
         flags,
         sourceStatus,
-        stockStatblockControls: this.buildStockStatblockControlsPanel()
+        stockStatblockControls: this.buildStockStatblockControlsPanel(),
+        reconciliationControls: this.buildReconciliationControlsPanel()
       },
       user: {
         id: game.user?.id,
@@ -447,6 +451,67 @@ export class DroidSheetContextBuilder {
       sourceName: importState?.sourceName ?? null,
       importedAt: importState?.importedAt ?? null,
       convertedAt: conversionState?.convertedAt ?? null
+    };
+  }
+
+  /**
+   * PHASE 4 — Converted-System Reconciliation. Cheap, synchronous
+   * candidate-count preview for the sheet badge — mirrors
+   * scripts/domain/droids/droid-converted-system-reconciliation-service.js's
+   * inspectReconciliation() classification exactly (same classifier, same
+   * inputs) but stays synchronous since sheet context preparation is not
+   * async here. For the full inspection report (with reasons/warnings),
+   * the sheet's "Inspect Published Systems" button calls the async service
+   * directly — see scripts/sheets/v2/character-sheet.js.
+   */
+  buildReconciliationControlsPanel() {
+    const importState = this.actor?.flags?.swse?.stockDroidImport ?? null;
+    if (!importState) return { visible: false };
+
+    const resolution = resolveDroidCalculationMode(this.actor);
+    const isOwner = this.actor?.isOwner === true;
+    const isGM = Boolean(game.user?.isGM);
+    const canAct = isOwner || isGM;
+
+    const publishedDroidSystems = importState.publishedTotals?.droidSystems ?? {};
+    const sourceEntries = [];
+    for (const field of DROID_SYSTEMS_SOURCE_FIELDS.single) {
+      const entry = publishedDroidSystems[field];
+      if (entry && typeof entry === 'object' && (entry.id || entry.name)) sourceEntries.push({ sourcePath: field, entry });
+    }
+    for (const field of DROID_SYSTEMS_SOURCE_FIELDS.array) {
+      const list = Array.isArray(publishedDroidSystems[field]) ? publishedDroidSystems[field] : [];
+      list.forEach((entry, index) => {
+        if (entry && typeof entry === 'object' && (entry.id || entry.name)) sourceEntries.push({ sourcePath: `${field}.${index}`, entry });
+      });
+    }
+
+    const existingWeaponIds = this.actor?.items
+      ? Array.from(this.actor.items).filter(i => i?.flags?.swse?.stockDroidAttack).map(i => normalizeDroidPartId(i.system?.droidPartId ?? i.name)).filter(Boolean)
+      : [];
+
+    let candidates = classifyStockSystemSources(sourceEntries, {
+      normalizeId: normalizeDroidPartId,
+      getDefinition: (id) => getDroidPartDefinition(id),
+      allDefinitions: getAllDroidPartDefinitions(),
+      existingLedger: this.actor?.system?.installedSystems ?? {}
+    });
+    candidates = annotateWeaponCandidatesAgainstExistingItems(candidates, existingWeaponIds);
+
+    const unreconciled = candidates.filter(c => !c.alreadyInstalled);
+    const reconciliationState = this.actor?.flags?.swse?.stockDroidReconciliation ?? null;
+
+    return {
+      visible: true,
+      isPlayable: resolution.mode === DROID_CALCULATION_MODE.PLAYABLE_DERIVED,
+      canAct,
+      canReconcile: canAct && resolution.mode === DROID_CALCULATION_MODE.PLAYABLE_DERIVED && unreconciled.length > 0,
+      canRollback: canAct && Number.isFinite(reconciliationState?.snapshotTimestamp),
+      unreconciledCount: unreconciled.length,
+      autoApplicableCount: unreconciled.filter(c => c.selectedByDefault).length,
+      needsReviewCount: unreconciled.filter(c => c.classification === RECONCILIATION_CLASSIFICATION.AMBIGUOUS_MATCH).length,
+      descriptiveOnlyCount: unreconciled.filter(c => c.classification === RECONCILIATION_CLASSIFICATION.DESCRIPTIVE_ONLY).length,
+      reconciledAt: reconciliationState?.reconciledAt ?? null
     };
   }
 

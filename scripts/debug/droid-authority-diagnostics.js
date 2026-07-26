@@ -98,6 +98,8 @@ export function diagnoseDroidAuthority(actor) {
   const calculationMode = resolveDroidCalculationMode(actor);
   const importState = actor.flags?.swse?.stockDroidImport ?? null;
   const conversionState = actor.flags?.swse?.stockDroidConversion ?? null;
+  // PHASE 4 — Converted-System Reconciliation.
+  const reconciliationState = actor.flags?.swse?.stockDroidReconciliation ?? null;
   const itemList = typeof actor.items?.contents !== 'undefined' ? actor.items.contents : Array.from(actor.items ?? []);
   const stockAttackContracts = itemList
     .filter(item => item?.flags?.swse?.stockDroidAttack)
@@ -120,7 +122,8 @@ export function diagnoseDroidAuthority(actor) {
       calculationMode,
       importSource: importState ? { sourceId: importState.sourceId, sourceName: importState.sourceName, schemaVersion: importState.schemaVersion, importedAt: importState.importedAt } : null,
       publishedTotals: importState?.publishedTotals ?? null,
-      conversionRecord: conversionState ? { convertedAt: conversionState.convertedAt, snapshotTimestamp: conversionState.snapshotTimestamp, sourceName: conversionState.sourceName } : null,
+      conversionRecord: conversionState ? { convertedAt: conversionState.convertedAt, snapshotTimestamp: conversionState.snapshotTimestamp, sourceName: conversionState.sourceName, rolledBackAt: conversionState.rolledBackAt ?? null } : null,
+      reconciliationRecord: reconciliationState ? { reconciledAt: reconciliationState.reconciledAt, snapshotTimestamp: reconciliationState.snapshotTimestamp, reconciledIds: reconciliationState.reconciledIds ?? [], rolledBackAt: reconciliationState.rolledBackAt ?? null } : null,
       stockAttackContracts
     },
     summary() {

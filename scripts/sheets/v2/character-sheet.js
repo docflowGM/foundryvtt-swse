@@ -5602,6 +5602,28 @@ const forcePoints = [];
       if (rollbackBtn) {
         ev.preventDefault();
         await this._rollbackDroidConversion();
+        return;
+      }
+
+      // PHASE 4 — Converted-System Reconciliation controls.
+      const inspectReconciliationBtn = ev.target.closest("[data-action='inspect-droid-reconciliation']");
+      if (inspectReconciliationBtn) {
+        ev.preventDefault();
+        await this._inspectDroidReconciliation();
+        return;
+      }
+
+      const reconcileBtn = ev.target.closest("[data-action='reconcile-droid-systems']");
+      if (reconcileBtn) {
+        ev.preventDefault();
+        await this._reconcileDroidSystems();
+        return;
+      }
+
+      const rollbackReconciliationBtn = ev.target.closest("[data-action='rollback-droid-reconciliation']");
+      if (rollbackReconciliationBtn) {
+        ev.preventDefault();
+        await this._rollbackDroidReconciliation();
       }
     }, { signal });
 
@@ -8631,6 +8653,77 @@ const forcePoints = [];
     const result = await rollbackConversion(this.actor);
     if (result.success) {
       ui.notifications?.info?.(`${this.actor.name} rolled back to its published statblock.`);
+    } else {
+      ui.notifications?.error?.(`Rollback failed: ${result.error}`);
+    }
+  }
+
+  /**
+   * PHASE 4 — Converted-System Reconciliation controls. Thin sheet-side
+   * wrappers around scripts/domain/droids/droid-converted-system-reconciliation-service.js
+   * — all classification, permission checks, and mutation logic live in
+   * the service; these only format its results for the actor sheet.
+   */
+  async _inspectDroidReconciliation() {
+    if (!this.actor || this.actor.type !== 'droid') return;
+    const { inspectReconciliation } = await import('/systems/foundryvtt-swse/scripts/domain/droids/droid-converted-system-reconciliation-service.js');
+    const report = await inspectReconciliation(this.actor);
+    const rows = (report.candidates ?? []).map(c => {
+      const label = c.canonicalId ?? c.sourcePaths?.[0] ?? 'unknown';
+      return `<li><strong>${label}</strong> — ${c.classification}${c.alreadyInstalled ? ' (already represented)' : ''}${c.selectedByDefault ? ' (auto-applicable)' : ''}</li>`;
+    });
+    const content = `
+      <p><strong>Mode:</strong> ${report.calculationMode?.mode ?? 'unknown'}</p>
+      ${rows.length ? `<ul>${rows.join('')}</ul>` : '<p>No unresolved published systems found.</p>'}
+      ${report.warnings?.length ? `<p><strong>Warnings:</strong></p><ul>${report.warnings.map(w => `<li>${w}</li>`).join('')}</ul>` : ''}
+    `;
+    await SWSEDialogV2.prompt({
+      title: `Inspect Published Systems — ${this.actor.name}`,
+      content,
+      label: 'Close'
+    });
+  }
+
+  async _reconcileDroidSystems() {
+    if (!this.actor || this.actor.type !== 'droid') return;
+    const { inspectReconciliation, buildReconciliationPlan, applyReconciliation } = await import('/systems/foundryvtt-swse/scripts/domain/droids/droid-converted-system-reconciliation-service.js');
+    const inspection = await inspectReconciliation(this.actor);
+    const autoApplicable = (inspection.candidates ?? []).filter(c => c.selectedByDefault && !c.alreadyInstalled);
+    if (autoApplicable.length === 0) {
+      ui.notifications?.info?.(`${this.actor.name} has no auto-applicable published systems to reconcile. Ambiguous or descriptive-only entries require manual review and are not reconciled from this button.`);
+      return;
+    }
+    const confirmed = await SWSEDialogV2.confirm({
+      title: 'Reconcile Published Systems',
+      content: `<p>Reconcile ${autoApplicable.length} published system(s) into <strong>${this.actor.name}</strong>'s canonical installation ledger?</p><p>This only applies unambiguous canonical/alias matches. Ambiguous or purely descriptive entries are left untouched. A snapshot is taken first and can be rolled back.</p>`,
+      defaultYes: false
+    });
+    if (!confirmed) return;
+    const built = await buildReconciliationPlan(this.actor, [], { selectDefaults: true });
+    if (!built.success) {
+      ui.notifications?.error?.(`Could not build a reconciliation plan: ${built.error}`);
+      return;
+    }
+    const result = await applyReconciliation(this.actor, built);
+    if (result.success) {
+      ui.notifications?.info?.(`${this.actor.name}: reconciled ${result.applied.length} system(s).`);
+    } else {
+      ui.notifications?.error?.(`Reconciliation failed: ${result.error}`);
+    }
+  }
+
+  async _rollbackDroidReconciliation() {
+    if (!this.actor || this.actor.type !== 'droid') return;
+    const confirmed = await SWSEDialogV2.confirm({
+      title: 'Roll Back Reconciliation',
+      content: `<p>Restore <strong>${this.actor.name}</strong> to its pre-reconciliation state? Any changes made since reconciling will be lost.</p>`,
+      defaultYes: false
+    });
+    if (!confirmed) return;
+    const { rollbackReconciliation } = await import('/systems/foundryvtt-swse/scripts/domain/droids/droid-converted-system-reconciliation-service.js');
+    const result = await rollbackReconciliation(this.actor);
+    if (result.success) {
+      ui.notifications?.info?.(`${this.actor.name} rolled back to its pre-reconciliation state.`);
     } else {
       ui.notifications?.error?.(`Rollback failed: ${result.error}`);
     }

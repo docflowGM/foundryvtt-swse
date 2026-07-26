@@ -230,3 +230,47 @@ export function getStockAttackFlatBonus(actor, weapon) {
   }
   return null;
 }
+
+/**
+ * PHASE 4 — Converted-System Reconciliation. The single decision point for
+ * "should this installed droid component's modifiers be withheld from
+ * ModifierEngine.collectModifiers()". Extracted from
+ * scripts/engine/effects/modifiers/ModifierEngine.js#_getDroidModModifiers
+ * for the same reason getStockAttackFlatBonus() was extracted from
+ * combat-roll-math.js in Phase 3: ModifierEngine.js itself has a large
+ * Foundry-dependent import graph and cannot be loaded under plain Node, but
+ * the actual suppression decision is pure and needs its own coverage.
+ *
+ * Confirmed (not assumed) double-count risk this closes: for a droid still
+ * in stock-statblock mode,
+ * scripts/domain/droids/droid-installed-component-resolver.js already
+ * reports every raw system.droidSystems record (the stock importer's own
+ * display blob — see scripts/domain/droids/stock-droid-normalizer.js) as an
+ * "active" component even though none of them were ever written to
+ * system.installedSystems, the canonical ledger. Those components' bonuses
+ * are already baked into the droid's preserved published totals (see
+ * docs/audits/droid-stock-statblock-authority-phase-3.md); applying their
+ * ModifierEngine bonuses too — which happened unconditionally before this
+ * phase, at every roll that calls collectModifiers() — silently
+ * double-counted them.
+ *
+ * A component only escapes stock-mode suppression once it actually has a
+ * system.installedSystems ledger entry: either a genuine post-import
+ * Garage/Workshop addition (a GM modifying a still-unconverted stock droid
+ * — a legitimate new bonus, not a published one), or a component
+ * DroidConvertedSystemReconciliationService reconciled onto an
+ * already-playable-derived droid (which never runs while a droid is still
+ * in stock mode — see
+ * docs/audits/droid-converted-system-reconciliation-phase-4.md).
+ *
+ * @param {Actor} actor
+ * @param {{sources: {kind: string}[], mechanicalState: {applyModifiers?: boolean}|null}} component -
+ *   one entry from resolveInstalledDroidComponents(actor, ...).components.
+ * @returns {boolean} true if this component's modifiers must be withheld.
+ */
+export function shouldSuppressComponentModifiers(actor, component) {
+  if (component?.mechanicalState?.applyModifiers === false) return true;
+  if (!isDroidStatblockMode(actor)) return false;
+  const sources = Array.isArray(component?.sources) ? component.sources : [];
+  return !sources.some(s => s?.kind === 'installedLedger');
+}

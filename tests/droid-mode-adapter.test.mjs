@@ -6,7 +6,8 @@ import {
   isStockImportedDroid,
   buildRepairLegacyCalculationModeUpdate,
   computeStatblockDerivedOverrides,
-  getStockAttackFlatBonus
+  getStockAttackFlatBonus,
+  shouldSuppressComponentModifiers
 } from '../scripts/actors/droid/droid-mode-adapter.js';
 
 // Phase 3 — Droid Stock-Statblock Authority. A stock-imported droid has no
@@ -252,4 +253,46 @@ function stockWeapon(overrides = {}) {
   // Non-droid actors never get the flat override even with a stock-shaped weapon.
   const npc = { type: 'npc', system: { droidCalculationMode: 'stock-statblock' } };
   assert.equal(getStockAttackFlatBonus(npc, stockWeapon()), null);
+}
+
+// ── shouldSuppressComponentModifiers (PHASE 4) ──────────────────────────────
+
+{
+  // Explicit per-component suppression always wins, in either mode.
+  const suppressed = { sources: [{ kind: 'installedLedger' }], mechanicalState: { applyModifiers: false } };
+  assert.equal(shouldSuppressComponentModifiers(explicitStockDroid(), suppressed), true);
+  assert.equal(shouldSuppressComponentModifiers(explicitPlayableDroid(), suppressed), true);
+}
+
+{
+  // Stock mode: a component with no installedLedger source at all (i.e.
+  // it only ever came from the raw published droidSystems blob) is
+  // suppressed — its bonus is already baked into the preserved published
+  // totals. Confirmed via droid-installed-component-resolver.js, which
+  // reports these as "active" even with zero ledger entries.
+  const droidSystemsOnly = { sources: [{ kind: 'droidSystemsRecord' }] };
+  assert.equal(shouldSuppressComponentModifiers(explicitStockDroid(), droidSystemsOnly), true);
+}
+
+{
+  // Stock mode: a component that DOES have an installedLedger source (a
+  // genuine post-import Garage/Workshop addition, or an already-reconciled
+  // component) is never suppressed by the broad stock-mode rule.
+  const ledgerBacked = { sources: [{ kind: 'installedLedger' }] };
+  assert.equal(shouldSuppressComponentModifiers(explicitStockDroid(), ledgerBacked), false);
+}
+
+{
+  // Playable-derived mode: the broad stock-mode suppression never applies,
+  // regardless of source shape — published totals are no longer
+  // authoritative once converted.
+  const droidSystemsOnly = { sources: [{ kind: 'droidSystemsRecord' }] };
+  assert.equal(shouldSuppressComponentModifiers(explicitPlayableDroid(), droidSystemsOnly), false);
+}
+
+{
+  // Missing/malformed sources array is treated as "no ledger source" —
+  // fails toward suppression (safer default) rather than throwing.
+  assert.equal(shouldSuppressComponentModifiers(explicitStockDroid(), {}), true);
+  assert.equal(shouldSuppressComponentModifiers(explicitStockDroid(), null), true);
 }
