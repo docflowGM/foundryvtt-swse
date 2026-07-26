@@ -1,14 +1,27 @@
 import { DROID_PART_DEFINITION_MAP, resolveDroidSystemIdentity } from "/systems/foundryvtt-swse/scripts/domain/droids/droid-part-schema.js";
 
 /**
- * DROID SYSTEM DEFINITIONS — Canonical Registry
- * PHASE 4: Single source of truth for droid modification costs and properties
+ * DROID SYSTEM DEFINITIONS — compatibility registry, NOT canonical.
  *
- * Architecture:
- * - All costs defined here (never in UI, never in DOM, never in actor data)
- * - All compatibility rules defined here
- * - All effects defined here
- * - No mutation is allowed to this registry (immutable configuration)
+ * PHASE 1 — Droid Authority Consolidation update: this module (and the
+ * private LEGACY_DROID_SYSTEM_DEFINITIONS catalog below, a *third*
+ * independent droid-part id scheme alongside scripts/data/droid-part-schema.js
+ * and scripts/domain/droids/droid-part-schema.js) is no longer used to
+ * resolve droid modifiers. ModifierEngine._getDroidModModifiers() now
+ * resolves installed components through
+ * scripts/domain/droids/droid-installed-component-resolver.js against the
+ * canonical registry in scripts/data/droid-part-schema.js. See
+ * docs/audits/droid-authority-consolidation-phase-1.md for the full
+ * authority graph and why scripts/data/droid-part-schema.js was selected as
+ * canonical instead of this module.
+ *
+ * This file is retained only because scripts/domain/droids/
+ * droid-slot-governance.js and droid-modification-factory.js still import
+ * it, and those two are themselves only reachable through
+ * droid-transaction-service.js, which nothing in the codebase currently
+ * imports (verified dead at Phase 1 time). Do not add new consumers of
+ * LEGACY_DROID_SYSTEM_DEFINITIONS or DROID_SYSTEM_DEFINITIONS — route new
+ * droid-part rules through scripts/data/droid-part-schema.js instead.
  */
 
 const LEGACY_DROID_SYSTEM_DEFINITIONS = {

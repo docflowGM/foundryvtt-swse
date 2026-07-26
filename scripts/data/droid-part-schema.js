@@ -1,5 +1,26 @@
 /**
- * Droid Part Rules Schema
+ * Droid Part Rules Schema — CANONICAL droid-part registry.
+ *
+ * PHASE 1 — Droid Authority Consolidation: this is the canonical droid-part
+ * definition authority (category, slot, cost, description, modifiers,
+ * weaponProfile, features, restrictions, self-destruct math). It was
+ * selected over scripts/domain/droids/droid-part-schema.js because it is
+ * the module the live write/consume paths already depend on: Garage
+ * pricing and installation (DroidCustomizationEngine), the Droid Systems
+ * sheet tab (DroidSystemsResolver), virtual droid-part weapon
+ * reconstruction (runtime-bugfix-hotfixes.js, chat-interaction-bridge.js),
+ * and character-sheet.js's self-destruct UI all resolve parts through
+ * getDroidPartDefinition/hydrateDroidPart here. See
+ * docs/audits/droid-authority-consolidation-phase-1.md for the full
+ * authority graph.
+ *
+ * scripts/domain/droids/droid-part-schema.js is NOT a second copy of this
+ * registry to keep in sync by hand — it solves a different problem
+ * (uuid/alias/trait-based identity resolution for feat/talent prerequisite
+ * checking, via resolveDroidSystemIdentity/actorMeetsDroidSystemRequirement)
+ * and is intentionally left alone in Phase 1 to avoid regressing
+ * prerequisite behavior. Do not add new modifier, cost, or weapon-profile
+ * logic there — add it here instead.
  *
  * This module is intentionally an overlay/normalizer, not a second Garage.
  * It reuses scripts/data/droid-systems.js as the broad source of names,

@@ -1530,153 +1530,113 @@ export class ModifierEngine {
       return modifiers;
     }
 
+    // PHASE 1 — Droid Authority Consolidation: this used to run three
+    // independent passes (system.droidSystems.mods, system.installedSystems
+    // resolved against scripts/domain/droids/droid-system-definitions.js, and
+    // embedded Items resolved against scripts/data/droid-part-schema.js)
+    // with no shared identity, so a single physical component installed
+    // through more than one of those surfaces could contribute its modifier
+    // more than once. It now resolves every source once through the shared
+    // canonical component resolver and emits exactly one modifier per
+    // (active component, modifier target) pair. See
+    // docs/audits/droid-authority-consolidation-phase-1.md.
     try {
-      // PHASE 4 STEP 7: Support both legacy (droidSystems.mods) and new (installedSystems) structures
-      const droidSystems = actor?.system?.droidSystems;
-      const installedSystems = actor?.system?.installedSystems;
+      const { resolveInstalledDroidComponents } = await import("/systems/foundryvtt-swse/scripts/domain/droids/droid-installed-component-resolver.js");
+      const { getDroidPartDefinition, hydrateDroidPart, normalizeDroidPartId } = await import("/systems/foundryvtt-swse/scripts/data/droid-part-schema.js");
 
-      // Legacy path: droidSystems.mods (builder system)
-      if (droidSystems) {
-        const mods = Array.isArray(droidSystems.mods) ? droidSystems.mods : [];
+      const canonicalTarget = (target) => {
+        const raw = String(target || '').trim();
+        if (!raw) return '';
+        if (raw.startsWith('skill.')) {
+          const [, skill] = raw.split('.');
+          return skill ? `skill.${skill}` : '';
+        }
+        if (raw === 'defense.damageThreshold') return raw;
+        if (raw.startsWith('defense.')) return raw;
+        if (raw === 'hp.max') return raw;
+        if (raw.startsWith('speed.')) return raw;
+        if (raw === 'initiative.total') return raw;
+        if (raw === 'bab.total') return raw;
+        return '';
+      };
+      const canonicalType = (type) => {
+        const key = String(type || '').toLowerCase();
+        if (['competence', 'enhancement', 'morale', 'insight', 'circumstance', 'penalty', 'dodge'].includes(key)) return key;
+        return ModifierType.UNTYPED;
+      };
 
-        for (const mod of mods) {
-          // Skip disabled modifications
-          if (mod.enabled === false) {
-            continue;
-          }
+      const resolution = resolveInstalledDroidComponents(actor, {
+        normalizeId: normalizeDroidPartId,
+        getDefinition: (id) => getDroidPartDefinition(id)
+      });
 
-          const modName = mod.name || `Droid Mod ${mod.id}`;
-          const modId = mod.id;
-          const modArray = Array.isArray(mod.modifiers) ? mod.modifiers : [];
+      const activeIds = resolution.components.filter(c => c.active).map(c => c.canonicalId);
 
-          // Convert each modifier in the modification
-          for (const modifierData of modArray) {
-            if (!modifierData || typeof modifierData !== 'object') continue;
+      for (const component of resolution.components) {
+        if (!component.active) continue;
+        if (!component.definition) {
+          swseLogger.warn(`[ModifierEngine] Unresolvable droid component "${component.canonicalId}" (active in ${component.primarySource?.kind}); skipping its modifiers.`);
+          continue;
+        }
 
-            const target = String(modifierData.target || '').trim();
-            const type = String(modifierData.type || 'untyped').trim().toLowerCase();
-            const value = Number(modifierData.value) || 0;
-
-            if (!target) continue;
-
-            try {
-              modifiers.push(createModifier({
-                source: ModifierSource.DROID_MOD,
-                sourceId: modId,
-                sourceName: modName,
-                target: target,
-                type: type,
-                value: value,
-                enabled: true,
-                description: `${modName}: ${target} ${value > 0 ? '+' : ''}${value}`
-              }));
-            } catch (err) {
-              swseLogger.warn(`Failed to create modifier for droid mod ${modName}:`, err);
-            }
+        const hydrated = hydrateDroidPart({ id: component.canonicalId }, { installedIds: activeIds, actor });
+        const modArray = Array.isArray(hydrated.modifiers) ? hydrated.modifiers : [];
+        for (const modifierData of modArray) {
+          if (!modifierData || modifierData.active === false) continue;
+          const target = canonicalTarget(modifierData.target);
+          const value = Number(modifierData.value) || 0;
+          if (!target || value === 0) continue;
+          try {
+            modifiers.push(createModifier({
+              source: ModifierSource.DROID_MOD,
+              sourceId: `droid-part:${component.canonicalId}:${target}`,
+              sourceName: hydrated.name || component.canonicalId,
+              target,
+              type: canonicalType(modifierData.type),
+              value,
+              enabled: true,
+              description: `${hydrated.name || component.canonicalId}: ${target} ${value > 0 ? '+' : ''}${value}`
+            }));
+          } catch (err) {
+            swseLogger.warn(`Failed to create modifier for droid part ${hydrated.name}:`, err);
           }
         }
       }
 
-      // PHASE 4 STEP 7: New path - installedSystems from DROID_SYSTEM_DEFINITIONS
-      if (installedSystems && typeof installedSystems === 'object') {
-        try {
-          const { DROID_SYSTEM_DEFINITIONS, getDroidSystemDefinition } = await import("/systems/foundryvtt-swse/scripts/domain/droids/droid-system-definitions.js");
-
-          for (const [systemId, installed] of Object.entries(installedSystems)) {
-            const def = getDroidSystemDefinition(systemId);
-            if (!def) {
-              continue; // System definition not found
-            }
-
-            const systemName = def.name || systemId;
-            const effects = Array.isArray(def.effects) ? def.effects : [];
-
-            // Convert system effects into modifiers
-            for (const effect of effects) {
-              if (!effect || typeof effect !== 'object') continue;
-
-              const target = String(effect.target || '').trim();
-              const type = String(effect.type || 'untyped').trim().toLowerCase();
-              const value = Number(effect.value) || 0;
-
-              if (!target) continue;
-
-              try {
-                modifiers.push(createModifier({
-                  source: ModifierSource.DROID_MOD,
-                  sourceId: systemId,
-                  sourceName: systemName,
-                  target: target,
-                  type: type,
-                  value: value,
-                  enabled: true,
-                  description: `${systemName}: ${target} ${value > 0 ? '+' : ''}${value}`
-                }));
-              } catch (err) {
-                swseLogger.warn(`Failed to create modifier for system ${systemName}:`, err);
-              }
-            }
+      // Freeform droidSystems.mods entries with no canonical catalog
+      // identity (the resolver could not fold them into a component above)
+      // still apply their raw modifiers directly, same as before.
+      for (const legacyMod of resolution.legacyModifications) {
+        if (legacyMod.enabled === false) continue;
+        const modName = legacyMod.name;
+        for (const modifierData of legacyMod.modifiers) {
+          if (!modifierData || typeof modifierData !== 'object') continue;
+          const target = String(modifierData.target || '').trim();
+          const type = String(modifierData.type || 'untyped').trim().toLowerCase();
+          const value = Number(modifierData.value) || 0;
+          if (!target) continue;
+          try {
+            modifiers.push(createModifier({
+              source: ModifierSource.DROID_MOD,
+              sourceId: legacyMod.id ?? modName,
+              sourceName: modName,
+              target,
+              type,
+              value,
+              enabled: true,
+              description: `${modName}: ${target} ${value > 0 ? '+' : ''}${value}`
+            }));
+          } catch (err) {
+            swseLogger.warn(`Failed to create modifier for droid mod ${modName}:`, err);
           }
-        } catch (err) {
-          swseLogger.warn(`[ModifierEngine] Error processing installed droid systems:`, err);
         }
       }
 
-      // Droid sheet v2/Garage-installed items can be plain actor Items with droid part
-      // metadata rather than entries in system.droidSystems.mods. Hydrate them through the
-      // shared part schema so skill/defense/HP bonuses are applied by the normal modifier
-      // pipeline instead of duplicated in sheet code.
-      try {
-        const { hydrateDroidPart, normalizeDroidPartId } = await import("/systems/foundryvtt-swse/scripts/data/droid-part-schema.js");
-        const itemList = typeof actor.items?.contents !== 'undefined' ? actor.items.contents : Array.from(actor.items ?? []);
-        const installedIds = itemList.map(item => normalizeDroidPartId(item?.system?.droidPartId || item?.flags?.swse?.droidPartId || item?.name));
-        const canonicalTarget = (target) => {
-          const raw = String(target || '').trim();
-          if (!raw) return '';
-          if (raw.startsWith('skill.')) {
-            const [, skill] = raw.split('.');
-            return skill ? `skill.${skill}` : '';
-          }
-          if (raw === 'defense.damageThreshold') return raw;
-          if (raw.startsWith('defense.')) return raw;
-          if (raw === 'hp.max') return raw;
-          if (raw.startsWith('speed.')) return raw;
-          if (raw === 'initiative.total') return raw;
-          if (raw === 'bab.total') return raw;
-          return '';
-        };
-        const canonicalType = (type) => {
-          const key = String(type || '').toLowerCase();
-          if (['competence', 'enhancement', 'morale', 'insight', 'circumstance', 'penalty', 'dodge'].includes(key)) return key;
-          return ModifierType.UNTYPED;
-        };
-
-        for (const item of itemList) {
-          const hydrated = hydrateDroidPart(item, { installedIds });
-          const modArray = Array.isArray(hydrated.modifiers) ? hydrated.modifiers : [];
-          for (const modifierData of modArray) {
-            if (!modifierData || modifierData.active === false) continue;
-            const target = canonicalTarget(modifierData.target);
-            const value = Number(modifierData.value) || 0;
-            if (!target || value === 0) continue;
-            try {
-              modifiers.push(createModifier({
-                source: ModifierSource.DROID_MOD,
-                sourceId: `${item.id ?? hydrated.ruleId}:${target}`,
-                sourceName: hydrated.name || item.name || 'Droid System',
-                target,
-                type: canonicalType(modifierData.type),
-                value,
-                enabled: true,
-                description: `${hydrated.name || item.name}: ${target} ${value > 0 ? '+' : ''}${value}`
-              }));
-            } catch (err) {
-              swseLogger.warn(`Failed to create modifier for droid part ${hydrated.name}:`, err);
-            }
-          }
-        }
-      } catch (err) {
-        swseLogger.warn(`[ModifierEngine] Error hydrating droid item modifiers:`, err);
+      if (resolution.conflicts.length) {
+        swseLogger.warn(`[ModifierEngine] Droid component conflicts for ${actor.name}:`, resolution.conflicts.map(c => c.message));
+      }
+      if (resolution.warnings.length) {
+        swseLogger.warn(`[ModifierEngine] Droid component warnings for ${actor.name}:`, resolution.warnings);
       }
 
       swseLogger.debug(`[ModifierEngine] Collected ${modifiers.length} modifiers from droid modifications`);

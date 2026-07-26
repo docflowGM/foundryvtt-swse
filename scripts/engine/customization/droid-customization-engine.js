@@ -23,7 +23,8 @@
 
 import { SWSELogger } from '/systems/foundryvtt-swse/scripts/core/logger.js';
 import { DROID_SYSTEMS } from '/systems/foundryvtt-swse/scripts/data/droid-systems.js';
-import { computeDroidPartCost, getAllDroidPartDefinitions, getDroidCostFactor, hydrateDroidPart, normalizeDroidPartId } from '/systems/foundryvtt-swse/scripts/data/droid-part-schema.js';
+import { computeDroidPartCost, getAllDroidPartDefinitions, getDroidCostFactor, getDroidPartDefinition, hydrateDroidPart, normalizeDroidPartId } from '/systems/foundryvtt-swse/scripts/data/droid-part-schema.js';
+import { resolveInstalledDroidComponents } from '/systems/foundryvtt-swse/scripts/domain/droids/droid-installed-component-resolver.js';
 import { TransactionEngine } from '/systems/foundryvtt-swse/scripts/engine/store/transaction-engine.js';
 
 
@@ -44,19 +45,22 @@ function normalizedCredits(actor) {
   return Number(actor?.system?.credits ?? actor?.system?.currency?.credits ?? actor?.system?.wealth?.credits ?? 0) || 0;
 }
 
+/**
+ * Canonical ids of every component the shared resolver considers physically
+ * present on this droid — regardless of enabled/active state, since a
+ * disabled or reserve part is still occupying a slot and must not be
+ * eligible for purchase again. Sourced from
+ * scripts/domain/droids/droid-installed-component-resolver.js instead of
+ * this function's own id/name matching so the Garage's "already installed"
+ * check agrees with the sheet and with ModifierEngine (PHASE 1 — Droid
+ * Authority Consolidation).
+ */
 function collectInstalledDroidPartIds(actor) {
-  const systems = actor?.system?.droidSystems ?? {};
-  const installed = new Set(Object.keys(actor?.system?.installedSystems ?? {}).map(normalizeDroidPartId));
-  const add = (value) => { const id = normalizeDroidPartId(value); if (id) installed.add(id); };
-  add(systems.processor?.id); add(systems.processor?.name);
-  add(systems.backupProcessor?.id); add(systems.backupProcessor?.name);
-  add(systems.processorSlots?.backup?.id); add(systems.processorSlots?.backup?.name);
-  add(systems.locomotion?.id); add(systems.locomotion?.name);
-  for (const key of ['appendages', 'locomotionSystems', 'secondaryLocomotion', 'sensors', 'weapons', 'accessories', 'integratedSystems']) {
-    for (const entry of asArray(systems[key])) { add(entry?.id); add(entry?.name); }
-  }
-  for (const item of asArray(actor?.items)) { add(item?.system?.droidPartId); add(item?.flags?.swse?.droidPartId); add(item?.name); }
-  return installed;
+  const resolution = resolveInstalledDroidComponents(actor, {
+    normalizeId: normalizeDroidPartId,
+    getDefinition: (id) => getDroidPartDefinition(id)
+  });
+  return new Set(resolution.components.filter(c => c.installed).map(c => c.canonicalId));
 }
 
 function hasBackupProcessorSlot(actor) {
