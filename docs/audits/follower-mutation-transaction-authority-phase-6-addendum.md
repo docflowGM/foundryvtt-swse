@@ -359,3 +359,255 @@ readiness cannot become READY while live Foundry v13 runtime verification
 remains blocked by this environment's lack of a Foundry installation —
 unrelated to and unaffected by this addendum's work. PR #937 remains a
 draft.
+
+## Correction pass
+
+A review of the addendum above found a critical, production-blocking
+regression it introduced, plus several real hierarchy/atomicity gaps left
+open by the first pass. This section documents both, and is explicit about
+which claims below are backed by tests that execute real production code,
+which are backed by pure orchestration/builder tests using mock steps, and
+which are verified by direct code inspection only — the distinction the
+correction review specifically asked this report to stop blurring.
+
+### CRITICAL: undeclared `actorData` — every follower creation was broken
+
+`createFollowerFromMutation`'s preflight block assigned to `actorData = {`
+with no `const`/`let`/`var`. `.mjs` files are always-strict ES modules, so
+this assignment threw `ReferenceError: actorData is not defined` on every
+single call, immediately caught by the preflight's own `catch` and
+returned as `null`. **Reproduced directly** (a two-line repro script
+throwing the exact same error) before touching any code. No test in the
+first pass could have caught this: every test exercised the pure
+transaction *coordinator* with mock steps, never the actual
+preflight-building logic — and that logic lives inside
+`follower-creator.js`, which cannot be loaded through the Node Foundry-shim
+at all (confirmed again this session: it transitively imports
+`scripts/apps/base/swse-application-v2.js` via `SWSEDialogV2`, which needs
+the full `foundry.applications.api` surface the shim does not model).
+
+**The fix is not only the missing declaration.** The entire preflight —
+building the follower's `actorData` payload from a mutation bundle, plus
+every pure helper it depends on (`_getFixedFollowerProfileFromChoices`,
+`_resolveFollowerDroidSystems`, `_resolveFollowerName`, etc.) — moved into
+a new module with **zero Foundry-adjacent imports**:
+`scripts/apps/progression-framework/adapters/follower-mutation-planning.js`.
+`FollowerCreator`'s own static methods became one-line delegates to these
+functions, so none of their ~50 existing call sites elsewhere in the file
+needed to change. `buildFollowerCreationPreflight(owner, followerMutation)`
+is the exact code `createFollowerFromMutation` now calls — not a
+reimplementation — so `tests/follower-mutation-planning.test.mjs` directly
+imports and executes the real production preflight path.
+
+**Verified the fix closes the actual bug class**, not just this one
+instance: temporarily reverted `const actorData = {` back to a bare
+`actorData = {` in the new module and re-ran the test suite — it failed
+immediately with the same `ReferenceError`, uncaught, crashing the test
+run. Reverted and confirmed a clean pass again. This is a genuine
+regression test, not a coincidental pass.
+
+### Hierarchy/atomicity gaps closed
+
+1. **Follower-slot mutation moved into the creation transaction.**
+   `FollowerShell` used to call a separate, error-swallowing
+   `_updateFollowerSlot()` *after* `createFollowerFromMutation` already
+   returned success — so a slot-write failure could never surface; the UI
+   would report success while the slot's `createdActorId` stayed unset.
+   `_updateFollowerSlot()` is deleted entirely (not left as unreachable
+   dead code). The slot now commits inside
+   `FollowerCreator._linkFollowerToOwner`'s single owner-relationship
+   write, alongside `flags.foundryvtt-swse.followers` and
+   `system.ownedActors` — all three in one governed `ActorEngine.updateActor`
+   call.
+2. **`FollowerShell` now respects `updateFollowerFromMutation`'s boolean.**
+   The update branch previously called the method and always returned
+   `{success: true}` regardless of the result. It now captures the
+   boolean and returns `{success: false, error: 'Failed to update follower'}`
+   when it is `false`.
+3. **Required species materialization is now transactional.** The
+   materialize step used to catch a species Item creation failure, log a
+   warning, and continue — contradicting the documented guarantee that a
+   species failure rolls back creation. For an ordinary species-based
+   follower (a species name is present and not suppressed), a missing or
+   unresolvable species document now `throw`s, which fails the
+   `materialize` step and triggers the `create-actor` step's rollback
+   (deleting the follower). The only documented, legitimate skip remains a
+   fixed follower profile's `noSpeciesSelection` flag; no other
+   "source-only species identity" exception exists anywhere in this
+   codebase's data model today.
+4. **Removal/unlink now covers all five relationship projections, not
+   two.** `removeFollower` previously touched only
+   `flags.foundryvtt-swse.followers` and `system.ownedActors`. It now
+   also: clears the matching follower slot's `createdActorId` (via the new
+   `clearFollowerSlotByActorId`, matched by Actor id since removal doesn't
+   necessarily know the slot id); and, on the **unlink-only** path (the
+   follower Actor survives), clears the follower's own
+   `flags.swse.follower.ownerId` and `system.npcProfile.owner.actorId` so
+   a surviving, no-longer-linked follower stops claiming its former owner.
+   Both the owner-unlink commit and the second step (delete, or clear
+   follower metadata) now run through `runFollowerMutationTransaction`,
+   with the owner's complete prior state (all three projections) restored
+   if the second step fails.
+5. **Owner-linkage rollback is now an explicit, visible coordinator step**
+   instead of hidden inside `_linkFollowerToOwner`'s own ad-hoc try/catch.
+   `_linkFollowerToOwner` runs two named steps —
+   `owner-relationship-commit` (all three owner projections together) and
+   `follower-ownership-commit` — through the same
+   `runFollowerMutationTransaction` coordinator used everywhere else. On
+   failure it throws an `Error` carrying a `.transactionResult` property
+   with the full structured result (`failedStep`, `rollbackFailed`,
+   `rollbackErrors`), so a caller (e.g. `createFollowerFromMutation`'s own
+   "link" step) can inspect exactly what happened instead of only a
+   flattened message.
+6. **Flag-restoration rollback now deletes newly-introduced keys, not just
+   overwrites existing ones.** The prior rollback called
+   `ActorEngine.updateActor(follower, {flags: preUpdateFlags})` directly;
+   Foundry's `Document#update()` recursively *merges* nested objects by
+   default, so passing the complete previous `flags` object only
+   overwrites keys present in it — it does not remove a key the failed
+   update introduced for the first time (e.g. `flags.foundryvtt-swse.isDroid`
+   newly set right before materialization threw). New
+   `buildFlagRestorationPatch(previousFlags, currentFlags)` computes an
+   explicit patch: restore every previously-existing value, and delete
+   every key that's new since the snapshot via Foundry's established
+   `'-=key'` deletion-key convention (already used elsewhere in this
+   codebase, e.g. `scripts/migrations/phase5-compendium-heal.js` — not
+   invented here). **Verified with a test that introduces a brand-new
+   nested flag key, rolls back, and asserts the key is `undefined`
+   afterward** — using the existing Foundry-shim fake `ActorEngine`,
+   narrowly extended (its `setPath` helper now honors the same `'-=key'`
+   convention the real `ActorEngine`/Foundry does) to make that assertion
+   meaningful rather than passing vacuously.
+7. **Idempotency tightened**: stale-token repair and a runtime in-flight
+   guard.
+   - `buildFollowerLinkOwnerUpdate` now supersedes any existing link
+     carrying the **same `finalizationToken`**, not just the same Actor
+     id. Without this, recreating a follower for a token whose original
+     Actor no longer exists would produce a *new* Actor id, so an id-only
+     dedup would leave the stale, orphaned link record in place alongside
+     the new one — two records bearing the same token. Verified with a
+     test asserting exactly one record survives.
+   - `createFollowerFromMutation` now wraps the real creation logic
+     (renamed `_createFollowerFromMutationInternal`) with a
+     process-local, runtime-only guard keyed by
+     `buildFollowerFinalizationGuardKey(ownerActorId, finalizationToken)`:
+     a second concurrent call for the same owner/token awaits the first
+     call's in-flight promise instead of starting a second creation. This
+     is explicitly **not** a persisted lock — the persisted deduplication
+     mechanism remains the owner link's `finalizationToken` field, checked
+     inside the guarded method exactly as before.
+
+### Droid canonical ledger — deferred, documented, not silently assumed safe
+
+Follower droid creation still seeds only `system.droidSystems` (a
+generated projection), never `system.installedSystems` (the Phase 1/2
+canonical installation ledger). This remains an already-reviewed, narrow,
+explicitly-allowlisted exception in
+`tools/check-droid-installation-write-authority.mjs`
+(`"one-time follower-creation writer — same reasoning as chargen
+finalization"`) — re-verified this pass, not newly added. Unifying this
+into one canonical seed planner (`installedSystems` first, `droidSystems`
+derived from it) was **not** attempted in this correction pass: doing so
+safely would require re-deriving `resolveFollowerDroidSystems`/
+`resolveFollowerDroidCredits` against the real installed-systems ledger
+shape and re-verifying every consumer of the current projection-only
+shape (sheets, `deriveFollowerStats`, `FollowerConfirmStep`), which is a
+larger, riskier change than this pass's scope. This is recorded here as
+**deferred debt, not resolved** — no diagnostic proving or disproving
+whether follower-droid modifiers currently resolve correctly under the
+projection-only seed was added either; that remains an open question for
+a future pass, not a claim made one way or the other here.
+
+### Coverage, separated by tier
+
+**Direct automated production-path coverage** (imports and executes the
+actual code that ships, not a mock or reimplementation):
+- `tests/follower-mutation-planning.test.mjs` — `buildFollowerCreationPreflight`
+  and every pure helper it depends on, including the exact regression case
+  (undeclared-variable class of bug) described above.
+- The `-=` flag-deletion assertion in `tests/follower-mutation-transaction.test.mjs`
+  (Case 16), which exercises the real `buildFlagRestorationPatch` output
+  applied through a shim `ActorEngine` extended to honor the same
+  deletion convention the real one does.
+
+**Pure coordinator/builder coverage** (executes real orchestration/builder
+logic — `runFollowerMutationTransaction`, `buildFollowerLinkOwnerUpdate`,
+`buildFollowerUnlinkOwnerUpdate`, `clearFollowerSlotByActorId`,
+`buildFollowerSlotUpdate`, `buildFollowerFinalizationGuardKey`,
+`resolveFollowerFinalizationToken`/`findFollowerLinkForToken` — but through
+mock `commit`/`rollback` steps or a simulated call sequence shaped exactly
+like the real `_linkFollowerToOwner`/`removeFollower`/`createFollowerFromMutation`
+code, not the real Foundry-heavy methods themselves):
+- `tests/follower-mutation-transaction.test.mjs` (111 assertions) —
+  including `simulateLinkFollowerToOwner`/`simulateRemoveFollower` helpers
+  that mirror the real methods' exact step names, payload shapes (all
+  three owner projections together), and rollback behavior.
+- `tests/follower-mutation-planning.test.mjs` (53 assertions total,
+  including the direct production-path cases above).
+
+**Source-inspection verification only** (no test executes this; confirmed
+by reading the code):
+- Chassis-step selection and cancelled chargen perform no Actor mutation
+  (unchanged since Phase 6; no chargen step file was touched this pass).
+- Natural-weapon materialization's existing per-weapon catch-and-continue
+  policy (unchanged, pre-existing, not part of this pass's required/
+  optional species distinction).
+- Enhancement-application commit policy (unchanged try/catch, runs after
+  the link is already committed).
+- Droid systems/credits resolved exactly once per finalization path
+  (`_resolveFollowerDroidSystems`/`_resolveFollowerDroidCredits` each
+  called once); no owner-credit mutation exists anywhere in
+  `follower-creator.js` for a droid follower's chassis budget.
+- Synthetic-token owner/follower Actor targeting — unchanged, already
+  covered by Phase 5's own tests; no synthetic-token code touched this
+  pass.
+
+**Live Foundry v13 runtime coverage:** none. Unchanged from every prior
+phase's finding — no Foundry installation exists in this repository or
+container. Every claim above is exactly as strong as its tier states, no
+stronger.
+
+### Static guard: 6 → 10 checks
+
+`check-follower-mutation-authority.mjs` gained four checks for this
+correction pass: (7) `_updateFollowerSlot()` must not be reintroduced in
+`follower-shell.js`; (8) every `system.ownedActors` assignment must also
+assign `flags.foundryvtt-swse.followerSlots` in the same literal; (9)
+every `updateFollowerFromMutation()` call site in `follower-shell.js` must
+capture its boolean result; (10) `follower-creator.js` must contain the
+required-species-throws guard and must not contain a swallowed
+species-application catch block. All four were verified by injecting the
+exact corresponding violation, confirming detection, then reverting and
+confirming a clean pass again — same as the original six checks,
+re-verified unchanged.
+
+### Validation performed (Node-only — exact counts)
+
+- `node tools/run-rolling-syntax-check.mjs` — 2120 files, all pass (2
+  pre-existing, documented, unrelated exclusions).
+- `node tools/run-rolling-tests.mjs` — 51 passed, 0 failed, 5 excluded
+  (pre-existing, documented, unrelated).
+- `node tests/follower-mutation-transaction.test.mjs` — pass (111
+  assertions).
+- `node tests/follower-mutation-planning.test.mjs` — pass (53 assertions,
+  including the real production-path preflight test).
+- `node tools/check-follower-mutation-authority.mjs --strict` — 0
+  violations across 10 checks (up from 6).
+- `node tools/check-follower-droid-chassis-authority.mjs --strict` — 0
+  violations (8 checks, unaffected by this pass).
+- `node tools/check-progression-integrity.mjs` — **44 violations** —
+  identical to the recorded baseline.
+- `node tools/check-architecture-boundaries.mjs` — **37 violations** —
+  identical to the recorded baseline.
+
+### Runtime status and merge readiness (unchanged reasoning, corrected verdict)
+
+No live Foundry VTT v13 testing occurred, for the same unchanged
+environmental reason as every prior phase. **Before this correction pass,
+the branch was NOT READY** — the undeclared-variable bug meant every
+follower creation via the mutation path was completely broken in
+production, a strictly worse state than "untested." With that fixed and
+verified via a real regression test, and the hierarchy gaps above closed,
+merge readiness returns to **CONDITIONALLY READY** — blocked only by the
+same, unrelated, unchanged lack-of-live-Foundry constraint. PR #937
+remains a draft.

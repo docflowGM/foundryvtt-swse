@@ -36,7 +36,17 @@ function setPath(target, dotPath, value) {
     if (typeof node[key] !== 'object' || node[key] === null) node[key] = {};
     node = node[key];
   }
-  node[parts[parts.length - 1]] = value;
+  const lastKey = parts[parts.length - 1];
+  // Mirror real Foundry Document#update()'s deletion-key convention: a
+  // final path segment prefixed with '-=' deletes that property instead of
+  // setting a literal '-=name' key (see e.g.
+  // scripts/migrations/phase5-compendium-heal.js for an existing,
+  // production use of this exact convention).
+  if (lastKey.startsWith('-=')) {
+    delete node[lastKey.slice(2)];
+    return;
+  }
+  node[lastKey] = value;
 }
 
 export const fakeActorEngineCallLog = [];

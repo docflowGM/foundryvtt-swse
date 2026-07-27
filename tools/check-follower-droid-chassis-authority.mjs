@@ -64,10 +64,18 @@ const APPLICABILITY_ENGINE = path.join(ROOT, 'scripts/apps/progression-framework
 const REMOVED_DEAD_STEP = path.join(ROOT, 'scripts/apps/progression-framework/steps/follower-steps/follower-droid-step.js');
 const FOLLOWER_CREATOR = path.join(ROOT, 'scripts/apps/follower-creator.js');
 const FOLLOWER_DROID_CONTEXT = path.join(ROOT, 'scripts/apps/progression-framework/steps/follower-steps/follower-droid-context.js');
+// CORRECTION (mutation-governance pass) — follower-creator.js's preflight
+// logic (buildFollowerCreationPreflight and its pure helpers, including
+// resolveFollowerDroidSystems/resolveFollowerDroidCredits) moved into this
+// module specifically so it can be unit-tested without a Foundry shim.
+// This is the SAME finalization authority relocated, not a second,
+// competing consumer of the droidConfig payload — follower-creator.js
+// delegates to it via thin static-method wrappers.
+const FOLLOWER_MUTATION_PLANNING = path.join(ROOT, 'scripts/apps/progression-framework/adapters/follower-mutation-planning.js');
 
 const CHASSIS_STEP_FILES = [FOLLOWER_SHELL, FOLLOWER_SPECIES_STEP, FOLLOWER_DROID_BUILDER_STEP, FOLLOWER_ORIGIN_STEP];
 const APPLICABILITY_CALL_ALLOWLIST = new Set([DROID_BUILDER_STEP, APPLICABILITY_ENGINE]);
-const DROID_CONFIG_FINALIZATION_READ_ALLOWLIST = new Set([FOLLOWER_CREATOR]);
+const DROID_CONFIG_FINALIZATION_READ_ALLOWLIST = new Set([FOLLOWER_CREATOR, FOLLOWER_MUTATION_PLANNING]);
 
 function walk(dir, out = []) {
   for (const name of fs.readdirSync(dir)) {

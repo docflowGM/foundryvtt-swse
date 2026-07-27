@@ -2,10 +2,13 @@ import assert from 'node:assert/strict';
 import {
   runFollowerMutationTransaction,
   resolveFollowerFinalizationToken,
+  buildFollowerFinalizationGuardKey,
   findFollowerLinkForToken,
   buildFollowerLinkOwnerUpdate,
   buildFollowerUnlinkOwnerUpdate,
-  buildFollowerSlotUpdate
+  buildFollowerSlotUpdate,
+  clearFollowerSlotByActorId,
+  buildFlagRestorationPatch
 } from '../scripts/apps/progression-framework/adapters/follower-mutation-transaction.js';
 import { ActorEngine as FakeActorEngine, resetFakeActorEngine, fakeActorEngineCallLog } from './helpers/foundry-shim/fakes/actor-engine.fake.mjs';
 
@@ -197,6 +200,29 @@ import { ActorEngine as FakeActorEngine, resetFakeActorEngine, fakeActorEngineCa
   assert.equal(findFollowerLinkForToken(undefined, 'slot:1'), null);
 }
 
+// buildFollowerFinalizationGuardKey: the runtime-only in-flight guard key
+// createFollowerFromMutation uses to coalesce two concurrent finalization
+// calls for the same owner/token into one actual attempt.
+{
+  assert.equal(buildFollowerFinalizationGuardKey('owner-1', 'slot:42'), 'owner-1:slot:42');
+  assert.equal(buildFollowerFinalizationGuardKey('owner-1', null), null, 'no token -> cannot guard');
+  assert.equal(buildFollowerFinalizationGuardKey(null, 'slot:42'), null, 'no owner id -> cannot guard');
+  assert.equal(buildFollowerFinalizationGuardKey(undefined, undefined), null);
+}
+
+{
+  // Two different owners with the same token get different keys; the same
+  // owner with two different tokens also gets different keys.
+  assert.notEqual(
+    buildFollowerFinalizationGuardKey('owner-1', 'slot:1'),
+    buildFollowerFinalizationGuardKey('owner-2', 'slot:1')
+  );
+  assert.notEqual(
+    buildFollowerFinalizationGuardKey('owner-1', 'slot:1'),
+    buildFollowerFinalizationGuardKey('owner-1', 'slot:2')
+  );
+}
+
 // --- Owner-projection builders: dedup and shape ---
 
 // Case 13 — a successful link produces exactly one follower entry and one
@@ -231,6 +257,37 @@ import { ActorEngine as FakeActorEngine, resetFakeActorEngine, fakeActorEngineCa
 
 {
   assert.throws(() => buildFollowerLinkOwnerUpdate({ currentFollowers: [], currentOwnedActors: [], followerLink: {} }));
+}
+
+// CORRECTION — stale-token repair: if a finalization token's original
+// follower Actor no longer exists and finalization recreates a follower
+// under a NEW Actor id but the SAME token, the stale record (different id,
+// same token) must be superseded, not left alongside the new one.
+{
+  const staleLink = { id: 'follower-old-deleted', name: 'Old Follower', finalizationToken: 'slot:7' };
+  const newLink = { id: 'follower-new', name: 'New Follower', finalizationToken: 'slot:7' };
+
+  const { followers, ownedActors } = buildFollowerLinkOwnerUpdate({
+    currentFollowers: [staleLink],
+    currentOwnedActors: [staleLink],
+    followerLink: newLink
+  });
+
+  assert.equal(followers.length, 1, 'the stale token-bearing record must be replaced, not left alongside the new one');
+  assert.equal(followers[0].id, 'follower-new');
+  assert.equal(ownedActors.length, 1);
+  assert.equal(ownedActors[0].id, 'follower-new');
+}
+
+{
+  // A link with no token never supersedes anything by token — only by id —
+  // so two distinct, token-less followers are never conflated.
+  const { followers } = buildFollowerLinkOwnerUpdate({
+    currentFollowers: [{ id: 'follower-a', finalizationToken: null }],
+    currentOwnedActors: [],
+    followerLink: { id: 'follower-b', finalizationToken: null }
+  });
+  assert.equal(followers.length, 2);
 }
 
 // Case 17 — unlinking removes exactly the target follower from both
@@ -274,50 +331,128 @@ import { ActorEngine as FakeActorEngine, resetFakeActorEngine, fakeActorEngineCa
   assert.deepEqual(buildFollowerSlotUpdate([], 'slot-1', 'follower-9'), []);
 }
 
-// --- Case 11 — follower-ownership failure restores both owner projections ---
-//
-// This exercises the exact shape of FollowerCreator._linkFollowerToOwner's
-// rollback path (owner projections commit in one call, then a follower
-// ownership grant fails, then the owner projections are restored to their
-// pre-link values) using the Foundry-shim's existing fake ActorEngine, which
-// already implements updateActor(actor, data) by writing dot-paths onto a
-// plain object — the same contract the real ActorEngine.updateActor honors.
+// clearFollowerSlotByActorId: used by follower removal so a removed
+// follower's slot does not keep pointing at it. Matches by createdActorId
+// (not slotId, since removeFollower doesn't necessarily know the slot id),
+// dedup-safe, never mutates its input, no-op for an unmatched actor id.
 {
-  resetFakeActorEngine();
-  const owner = { id: 'owner-1', flags: { 'foundryvtt-swse': { followers: [] } }, system: { ownedActors: [] } };
-  const currentFollowers = owner.flags['foundryvtt-swse'].followers;
-  const currentOwnedActors = owner.system.ownedActors;
-  const followerLink = { id: 'follower-6', name: 'Gonk' };
+  const slots = [{ id: 'slot-1', createdActorId: 'follower-9' }, { id: 'slot-2', createdActorId: 'follower-10' }];
+  const cleared = clearFollowerSlotByActorId(slots, 'follower-9');
+  assert.equal(cleared.find(s => s.id === 'slot-1').createdActorId, null);
+  assert.equal(cleared.find(s => s.id === 'slot-2').createdActorId, 'follower-10', 'a slot pointing at a different follower is untouched');
+  assert.equal(slots.find(s => s.id === 'slot-1').createdActorId, 'follower-9', 'the input array is never mutated');
+}
+
+{
+  const slots = [{ id: 'slot-1', createdActorId: 'follower-9' }];
+  assert.deepEqual(clearFollowerSlotByActorId(slots, 'not-present'), slots);
+  assert.deepEqual(clearFollowerSlotByActorId(slots, null), slots);
+  assert.deepEqual(clearFollowerSlotByActorId([], 'follower-9'), []);
+}
+
+// --- Case 5/9/11 — FollowerCreator._linkFollowerToOwner's real shape,
+// simulated end-to-end via runFollowerMutationTransaction + the fake
+// ActorEngine ---
+//
+// This mirrors _linkFollowerToOwner's actual two named steps
+// ('owner-relationship-commit', 'follower-ownership-commit') exactly,
+// including the requirement that the owner-relationship commit writes all
+// three projections (followers, followerSlots, ownedActors) in one call.
+function simulateLinkFollowerToOwner({ owner, followerLink, slotId, ownershipShouldFail }) {
+  const currentFollowers = owner.flags['foundryvtt-swse']?.followers || [];
+  const currentOwnedActors = owner.system?.ownedActors || [];
+  const currentSlots = owner.flags['foundryvtt-swse']?.followerSlots || [];
 
   const { followers: nextFollowers, ownedActors: nextOwnedActors } = buildFollowerLinkOwnerUpdate({
-    currentFollowers,
-    currentOwnedActors,
-    followerLink
+    currentFollowers, currentOwnedActors, followerLink
+  });
+  const nextSlots = slotId ? buildFollowerSlotUpdate(currentSlots, slotId, followerLink.id) : currentSlots;
+
+  return runFollowerMutationTransaction([
+    {
+      name: 'owner-relationship-commit',
+      commit: async () => {
+        await FakeActorEngine.updateActor(owner, {
+          'flags.foundryvtt-swse.followers': nextFollowers,
+          'flags.foundryvtt-swse.followerSlots': nextSlots,
+          'system.ownedActors': nextOwnedActors
+        });
+        return { followers: currentFollowers, ownedActors: currentOwnedActors, slots: currentSlots };
+      },
+      rollback: async (priorState) => {
+        await FakeActorEngine.updateActor(owner, {
+          'flags.foundryvtt-swse.followers': priorState.followers,
+          'flags.foundryvtt-swse.followerSlots': priorState.slots,
+          'system.ownedActors': priorState.ownedActors
+        });
+      }
+    },
+    {
+      name: 'follower-ownership-commit',
+      commit: async () => {
+        if (ownershipShouldFail) throw new Error('ownership grant failed');
+      }
+    }
+  ]);
+}
+
+// Case 5 — the owner-relationship commit writes followers, followerSlots,
+// AND ownedActors together in one call, and the slot's createdActorId is
+// correctly set.
+{
+  resetFakeActorEngine();
+  const owner = {
+    id: 'owner-1',
+    flags: { 'foundryvtt-swse': { followers: [], followerSlots: [{ id: 'slot-1', createdActorId: null }] } },
+    system: { ownedActors: [] }
+  };
+
+  const result = await simulateLinkFollowerToOwner({
+    owner,
+    followerLink: { id: 'follower-6', name: 'Gonk', finalizationToken: 'slot:slot-1' },
+    slotId: 'slot-1',
+    ownershipShouldFail: false
   });
 
-  await FakeActorEngine.updateActor(owner, {
-    'flags.foundryvtt-swse.followers': nextFollowers,
-    'system.ownedActors': nextOwnedActors
-  });
+  assert.equal(result.ok, true);
   assert.equal(owner.flags['foundryvtt-swse'].followers.length, 1);
+  assert.equal(owner.system.ownedActors.length, 1);
+  assert.equal(owner.flags['foundryvtt-swse'].followerSlots[0].createdActorId, 'follower-6', 'slot updates in the SAME commit as the followers/ownedActors projections');
 
-  let ownershipError = null;
-  try {
-    throw new Error('ownership grant failed');
-  } catch (err) {
-    ownershipError = err;
-    // Roll back to the pre-link projections, exactly as
-    // FollowerCreator._linkFollowerToOwner does in its catch block.
-    await FakeActorEngine.updateActor(owner, {
-      'flags.foundryvtt-swse.followers': currentFollowers,
-      'system.ownedActors': currentOwnedActors
-    });
-  }
+  const commitCalls = fakeActorEngineCallLog.filter(c => c.method === 'updateActor');
+  assert.equal(commitCalls.length, 1, 'exactly one ActorEngine.updateActor call for the whole owner-relationship commit');
+  assert.ok('flags.foundryvtt-swse.followers' in commitCalls[0].data);
+  assert.ok('flags.foundryvtt-swse.followerSlots' in commitCalls[0].data);
+  assert.ok('system.ownedActors' in commitCalls[0].data);
+}
 
-  assert.ok(ownershipError);
-  assert.deepEqual(owner.flags['foundryvtt-swse'].followers, [], 'owner followers flag restored to its pre-link value');
-  assert.deepEqual(owner.system.ownedActors, [], 'owner ownedActors restored to its pre-link value');
-  assert.equal(fakeActorEngineCallLog.filter(c => c.method === 'updateActor').length, 2, 'exactly one commit write and one rollback write, no more');
+// Case 9/11 — a follower-ownership failure rolls back the owner-relationship
+// commit (all three projections, including the slot) via the SAME
+// coordinator used elsewhere, and the thrown error exposes the full
+// structured transaction result (which step failed, whether rollback
+// failed) rather than a single flattened message.
+{
+  resetFakeActorEngine();
+  const owner = {
+    id: 'owner-1',
+    flags: { 'foundryvtt-swse': { followers: [], followerSlots: [{ id: 'slot-1', createdActorId: null }] } },
+    system: { ownedActors: [] }
+  };
+
+  const result = await simulateLinkFollowerToOwner({
+    owner,
+    followerLink: { id: 'follower-6', name: 'Gonk', finalizationToken: 'slot:slot-1' },
+    slotId: 'slot-1',
+    ownershipShouldFail: true
+  });
+
+  assert.equal(result.ok, false);
+  assert.equal(result.failedStep, 'follower-ownership-commit');
+  assert.equal(result.rollbackFailed, false);
+  assert.deepEqual(owner.flags['foundryvtt-swse'].followers, [], 'owner followers flag restored');
+  assert.deepEqual(owner.system.ownedActors, [], 'owner ownedActors restored');
+  assert.equal(owner.flags['foundryvtt-swse'].followerSlots[0].createdActorId, null, 'the slot is restored too, not just followers/ownedActors');
+  assert.equal(fakeActorEngineCallLog.filter(c => c.method === 'updateActor').length, 2, 'one commit write, one rollback write');
 }
 
 // Note on case 10 (owner ownedActors failure restores the owner flag): in
@@ -330,7 +465,7 @@ import { ActorEngine as FakeActorEngine, resetFakeActorEngine, fakeActorEngineCa
 
 // --- Case 16 — existing-follower update failure restores the complete
 // follower snapshot (system/items/effects via restoreFromSnapshot, flags
-// via a follow-up updateActor call) ---
+// via buildFlagRestorationPatch) ---
 {
   resetFakeActorEngine();
   const follower = {
@@ -348,58 +483,164 @@ import { ActorEngine as FakeActorEngine, resetFakeActorEngine, fakeActorEngineCa
   const preUpdateSnapshot = follower.toObject(true);
   const preUpdateFlags = JSON.parse(JSON.stringify(follower.flags));
 
-  // Simulate FollowerCreator.updateFollowerFromMutation's core-state commit...
+  // Simulate FollowerCreator.updateFollowerFromMutation's core-state
+  // commit — this is also where a droid-follower update would newly
+  // introduce flags.foundryvtt-swse.isDroid, a key that did not exist in
+  // the snapshot at all.
   await FakeActorEngine.updateActor(follower, {
     'system.level': 4,
-    'flags.swse.follower.templateType': 'defensive'
+    'flags.swse.follower.templateType': 'defensive',
+    'flags.foundryvtt-swse.isDroid': true
   });
   assert.equal(follower.system.level, 4);
   assert.equal(follower.flags.swse.follower.templateType, 'defensive');
+  assert.equal(follower.flags['foundryvtt-swse'].isDroid, true);
 
   // ...then simulate _applyFollowerProgressionMaterial throwing partway
-  // through, and the rollback path FollowerCreator's catch block runs.
+  // through, and the rollback path FollowerCreator's catch block runs:
+  // restoreFromSnapshot for system/items/effects, then
+  // buildFlagRestorationPatch + one governed updateActor call for flags.
   await FakeActorEngine.restoreFromSnapshot(follower, preUpdateSnapshot);
-  await FakeActorEngine.updateActor(follower, { flags: preUpdateFlags });
+  const flagRestorationPatch = buildFlagRestorationPatch(preUpdateFlags, follower.flags);
+  assert.ok(Object.keys(flagRestorationPatch).some(key => key.includes('-=isDroid')), 'the patch must contain a deletion marker for the newly-introduced key');
+  await FakeActorEngine.updateActor(follower, flagRestorationPatch);
 
   assert.equal(follower.system.level, 3, 'system reverted via restoreFromSnapshot');
   assert.equal(follower.name, 'Old Name');
   assert.deepEqual(follower.items, [{ _id: 'item-1', name: 'Weapon Proficiency (Simple Weapons)' }]);
-  assert.equal(follower.flags.swse.follower.templateType, 'aggressive', 'flags reverted via the follow-up updateActor call, since restoreFromSnapshot deliberately does not touch flags');
+  assert.equal(follower.flags.swse.follower.templateType, 'aggressive', 'existing flag key reverted to its prior value');
+  assert.equal(follower.flags['foundryvtt-swse']?.isDroid, undefined, 'a flag key that did not exist before the failed update must be ABSENT after rollback, not merely left at its new value');
 }
 
-// --- Case 18 — failed Actor deletion restores owner linkage ---
+// --- buildFlagRestorationPatch: pure diff/deletion-marker behavior ---
+
 {
-  resetFakeActorEngine();
-  const owner = { id: 'owner-2', flags: { 'foundryvtt-swse': { followers: [{ id: 'follower-8' }] } }, system: { ownedActors: [{ id: 'follower-8' }] } };
-  const currentFollowers = owner.flags['foundryvtt-swse'].followers;
-  const currentOwnedActors = owner.system.ownedActors;
+  // No changes at all -> empty patch (nothing to restore or delete).
+  const same = { swse: { follower: { templateType: 'aggressive' } } };
+  assert.deepEqual(buildFlagRestorationPatch(same, same), { 'flags.swse.follower.templateType': 'aggressive' });
+}
+
+{
+  // A brand-new top-level scope introduced since the snapshot is fully
+  // removable via per-leaf deletion markers.
+  const previous = {};
+  const current = { 'foundryvtt-swse': { isDroid: true } };
+  const patch = buildFlagRestorationPatch(previous, current);
+  assert.deepEqual(patch, { 'flags.foundryvtt-swse.-=isDroid': null });
+}
+
+{
+  // A value that changed (not newly introduced) is restored by overwrite,
+  // not by a deletion marker.
+  const previous = { swse: { follower: { ownerId: 'owner-1' } } };
+  const current = { swse: { follower: { ownerId: 'owner-2' } } };
+  const patch = buildFlagRestorationPatch(previous, current);
+  assert.deepEqual(patch, { 'flags.swse.follower.ownerId': 'owner-1' });
+}
+
+{
+  assert.deepEqual(buildFlagRestorationPatch({}, {}), {});
+  assert.deepEqual(buildFlagRestorationPatch(undefined, undefined), {});
+}
+
+// --- FollowerCreator.removeFollower's real shape, simulated end-to-end ---
+//
+// Mirrors removeFollower's actual two named steps ('owner-unlink-commit',
+// then either 'delete-follower-commit' or 'follower-metadata-clear-commit'),
+// including all THREE owner-side projections (followers, followerSlots,
+// ownedActors) and, for the unlink-only path, the follower's own
+// owner-pointing metadata.
+function simulateRemoveFollower({ owner, follower, shouldDelete, deletionShouldFail }) {
+  const currentFollowers = owner.flags['foundryvtt-swse']?.followers || [];
+  const currentOwnedActors = owner.system?.ownedActors || [];
+  const currentSlots = owner.flags['foundryvtt-swse']?.followerSlots || [];
 
   const { followers: updatedFollowers, ownedActors: updatedOwnedActors } = buildFollowerUnlinkOwnerUpdate({
-    currentFollowers,
-    currentOwnedActors,
-    followerId: 'follower-8'
+    currentFollowers, currentOwnedActors, followerId: follower.id
   });
+  const updatedSlots = clearFollowerSlotByActorId(currentSlots, follower.id);
 
-  await FakeActorEngine.updateActor(owner, {
-    'flags.foundryvtt-swse.followers': updatedFollowers,
-    'system.ownedActors': updatedOwnedActors
-  });
+  return runFollowerMutationTransaction([
+    {
+      name: 'owner-unlink-commit',
+      commit: async () => {
+        await FakeActorEngine.updateActor(owner, {
+          'flags.foundryvtt-swse.followers': updatedFollowers,
+          'flags.foundryvtt-swse.followerSlots': updatedSlots,
+          'system.ownedActors': updatedOwnedActors
+        });
+        return { followers: currentFollowers, ownedActors: currentOwnedActors, slots: currentSlots };
+      },
+      rollback: async (priorState) => {
+        await FakeActorEngine.updateActor(owner, {
+          'flags.foundryvtt-swse.followers': priorState.followers,
+          'flags.foundryvtt-swse.followerSlots': priorState.slots,
+          'system.ownedActors': priorState.ownedActors
+        });
+      }
+    },
+    shouldDelete
+      ? {
+        name: 'delete-follower-commit',
+        commit: async () => {
+          if (deletionShouldFail) throw new Error('deleteActor failed');
+        }
+      }
+      : {
+        name: 'follower-metadata-clear-commit',
+        commit: async () => {
+          await FakeActorEngine.updateActor(follower, {
+            'flags.swse.follower.ownerId': null,
+            'system.npcProfile.owner.actorId': null
+          });
+        }
+      }
+  ]);
+}
+
+// Case 9 (removal variant) — unlink-only clears all three owner
+// projections (including the slot) AND the surviving follower's own
+// owner-pointing metadata, in one coordinated sequence.
+{
+  resetFakeActorEngine();
+  const owner = {
+    id: 'owner-2',
+    flags: { 'foundryvtt-swse': { followers: [{ id: 'follower-8' }], followerSlots: [{ id: 'slot-8', createdActorId: 'follower-8' }] } },
+    system: { ownedActors: [{ id: 'follower-8' }] }
+  };
+  const follower = {
+    id: 'follower-8',
+    flags: { swse: { follower: { ownerId: 'owner-2' } } },
+    system: { npcProfile: { owner: { actorId: 'owner-2' } } }
+  };
+
+  const result = await simulateRemoveFollower({ owner, follower, shouldDelete: false, deletionShouldFail: false });
+
+  assert.equal(result.ok, true);
   assert.deepEqual(owner.flags['foundryvtt-swse'].followers, []);
+  assert.deepEqual(owner.system.ownedActors, []);
+  assert.equal(owner.flags['foundryvtt-swse'].followerSlots[0].createdActorId, null, 'the slot no longer claims the unlinked follower');
+  assert.equal(follower.flags.swse.follower.ownerId, null, "the surviving follower's own owner metadata is cleared");
+  assert.equal(follower.system.npcProfile.owner.actorId, null);
+}
 
-  let deletionError = null;
-  try {
-    throw new Error('deleteActor failed');
-  } catch (err) {
-    deletionError = err;
-    await FakeActorEngine.updateActor(owner, {
-      'flags.foundryvtt-swse.followers': currentFollowers,
-      'system.ownedActors': currentOwnedActors
-    });
-  }
+// Case 18 — failed Actor deletion restores owner linkage, including the slot.
+{
+  resetFakeActorEngine();
+  const owner = {
+    id: 'owner-2',
+    flags: { 'foundryvtt-swse': { followers: [{ id: 'follower-8' }], followerSlots: [{ id: 'slot-8', createdActorId: 'follower-8' }] } },
+    system: { ownedActors: [{ id: 'follower-8' }] }
+  };
+  const follower = { id: 'follower-8', flags: {}, system: {} };
 
-  assert.ok(deletionError);
+  const result = await simulateRemoveFollower({ owner, follower, shouldDelete: true, deletionShouldFail: true });
+
+  assert.equal(result.ok, false);
+  assert.equal(result.failedStep, 'delete-follower-commit');
   assert.deepEqual(owner.flags['foundryvtt-swse'].followers, [{ id: 'follower-8' }], 'owner linkage restored after failed deletion');
   assert.deepEqual(owner.system.ownedActors, [{ id: 'follower-8' }]);
+  assert.equal(owner.flags['foundryvtt-swse'].followerSlots[0].createdActorId, 'follower-8', 'the slot is restored too, not left cleared for a follower that still exists');
 }
 
 console.log('Follower mutation transaction tests passed.');

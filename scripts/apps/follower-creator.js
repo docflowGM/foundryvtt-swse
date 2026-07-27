@@ -25,12 +25,36 @@ import { getFollowerTalentConfig } from "/systems/foundryvtt-swse/scripts/engine
 import {
     runFollowerMutationTransaction,
     resolveFollowerFinalizationToken,
+    buildFollowerFinalizationGuardKey,
     findFollowerLinkForToken,
     buildFollowerLinkOwnerUpdate,
-    buildFollowerUnlinkOwnerUpdate
+    buildFollowerUnlinkOwnerUpdate,
+    buildFollowerSlotUpdate,
+    clearFollowerSlotByActorId,
+    buildFlagRestorationPatch
 } from "/systems/foundryvtt-swse/scripts/apps/progression-framework/adapters/follower-mutation-transaction.js";
+import {
+    choiceArray,
+    uniqueList,
+    clonePlain,
+    getGrantingTalentNameFromMutation,
+    getGrantingTalentItemIdFromMutation,
+    getGrantingTalentTreeIdFromMutation,
+    getFollowerGrantConfig,
+    getFixedFollowerProfileFromChoices,
+    usesNoStartingCredits,
+    resolveFollowerName,
+    resolveFollowerDroidSystems,
+    resolveFollowerDroidCredits,
+    buildFollowerCreationPreflight
+} from "/systems/foundryvtt-swse/scripts/apps/progression-framework/adapters/follower-mutation-planning.js";
 
 export class FollowerCreator {
+
+    // CORRECTION — runtime-only in-flight guard for concurrent duplicate
+    // follower finalization; see createFollowerFromMutation's own doc
+    // comment. Keyed by `${ownerActorId}:${finalizationToken}`.
+    static _inFlightFollowerFinalizations = new Map();
 
     /**
      * Load follower template data
@@ -610,81 +634,47 @@ static async createFollower(owner, templateType, grantingTalent = null) {
         }
     }
 
+    // MUTATION-GOVERNANCE ADDENDUM (correction pass) — these were converted
+    // to thin delegates onto scripts/apps/progression-framework/adapters/follower-mutation-planning.js,
+    // a plain-function module with zero Foundry-adjacent imports. That move
+    // is what makes createFollowerFromMutation's preflight (which calls
+    // several of these) directly Node-testable without a Foundry shim — see
+    // that module's own header comment for the full reasoning. Every
+    // existing call site in this file (`this._xxx(...)`) is unchanged.
     static _choiceArray(value) {
-        if (Array.isArray(value)) return value.filter(Boolean).map(v => String(v).trim()).filter(Boolean);
-        if (value === null || value === undefined || value === '') return [];
-        return [String(value).trim()].filter(Boolean);
+        return choiceArray(value);
     }
 
     static _uniqueList(values) {
-        return Array.from(new Set((values || []).filter(Boolean).map(v => String(v).trim()).filter(Boolean)));
+        return uniqueList(values);
     }
 
     static _getGrantingTalentNameFromMutation(followerMutation = {}) {
-        return followerMutation.grantingTalentName
-            || followerMutation.slotTalentName
-            || followerMutation.persistentChoices?.grantingTalentName
-            || null;
+        return getGrantingTalentNameFromMutation(followerMutation);
     }
 
     static _getGrantingTalentItemIdFromMutation(followerMutation = {}) {
-        return followerMutation.grantingTalentItemId
-            || followerMutation.slotTalentItemId
-            || followerMutation.persistentChoices?.grantingTalentItemId
-            || null;
+        return getGrantingTalentItemIdFromMutation(followerMutation);
     }
 
     static _getGrantingTalentTreeIdFromMutation(followerMutation = {}) {
-        return followerMutation.talentTreeId
-            || followerMutation.slotTalentTreeId
-            || followerMutation.grantingTalentTreeId
-            || followerMutation.persistentChoices?.talentTreeId
-            || followerMutation.persistentChoices?.slotTalentTreeId
-            || followerMutation.persistentChoices?.grantingTalentTreeId
-            || null;
+        return getGrantingTalentTreeIdFromMutation(followerMutation);
     }
 
     static _clonePlain(value) {
-        if (value === null || value === undefined) return value;
-        try {
-            return structuredClone(value);
-        } catch (_err) {
-            try {
-                return JSON.parse(JSON.stringify(value));
-            } catch (_jsonErr) {
-                return value;
-            }
-        }
+        return clonePlain(value);
     }
 
     static _getFollowerGrantConfig(followerMutation = {}, persistentChoices = {}) {
-        const grantingTalentName = this._getGrantingTalentNameFromMutation(followerMutation)
-            || persistentChoices?.grantingTalentName
-            || null;
-        if (!grantingTalentName) return null;
-        const treeId = this._getGrantingTalentTreeIdFromMutation(followerMutation)
-            || persistentChoices?.slotTalentTreeId
-            || persistentChoices?.talentTreeId
-            || persistentChoices?.grantingTalentTreeId
-            || null;
-        return getFollowerTalentConfig(grantingTalentName, { treeId })
-            || getFollowerTalentConfig(grantingTalentName, persistentChoices)
-            || null;
+        return getFollowerGrantConfig(followerMutation, persistentChoices);
     }
 
     static _getFixedFollowerProfileFromChoices(persistentChoices = {}, followerMutation = {}) {
-        const profile = persistentChoices?.fixedFollowerProfile
-            || followerMutation?.followerState?.fixedFollowerProfile
-            || followerMutation?.fixedFollowerProfile
-            || this._getFollowerGrantConfig(followerMutation, persistentChoices)?.fixedFollowerProfile
-            || null;
-        return profile && typeof profile === 'object' ? profile : null;
+        return getFixedFollowerProfileFromChoices(persistentChoices, followerMutation);
     }
 
     static _usesNoStartingCredits(persistentChoices = {}, followerMutation = {}) {
-        const profile = this._getFixedFollowerProfileFromChoices(persistentChoices, followerMutation);
-        const cfg = this._getFollowerGrantConfig(followerMutation, persistentChoices);
-        return profile?.noStartingCredits === true || cfg?.noStartingCredits === true;
+        return usesNoStartingCredits(persistentChoices, followerMutation);
     }
 
     static _resolveProfileAbilityModifier(follower, profile = null, abilityKey = 'str') {
@@ -810,20 +800,7 @@ static async createFollower(owner, templateType, grantingTalent = null) {
     }
 
     static _resolveFollowerName(owner, templateType, persistentChoices = {}) {
-        const explicitName = String(persistentChoices?.followerName || '').trim();
-        if (explicitName) return explicitName.replace(/\s+/g, ' ');
-
-        const ownerName = String(owner?.name || 'Owner').trim().replace(/\s+/g, ' ') || 'Owner';
-        const templateKey = String(templateType || 'follower').trim().toLowerCase();
-        const templateLabels = {
-            aggressive: 'Aggressive Follower',
-            defensive: 'Defensive Follower',
-            utility: 'Utility Follower'
-        };
-        const fallbackTemplateLabel = templateKey
-            ? `${templateKey.charAt(0).toUpperCase()}${templateKey.slice(1)} Follower`
-            : 'Follower';
-        return `${ownerName}'s ${templateLabels[templateKey] || fallbackTemplateLabel}`;
+        return resolveFollowerName(owner, templateType, persistentChoices);
     }
 
     static async _applyFollowerProgressionMaterial(owner, follower, templateType, persistentChoices = {}, followerMutation = {}) {
@@ -968,22 +945,37 @@ static async createFollower(owner, templateType, grantingTalent = null) {
     /**
      * Link follower to owner.
      *
-     * ADDENDUM — this used to be three independently-persisted writes (owner
-     * follower flag, owner ownedActors, follower ownership) with no rollback
-     * if a later write failed after an earlier one succeeded. The two
-     * owner-side projections (`flags.foundryvtt-swse.followers` and
-     * `system.ownedActors`) now commit in ONE governed ActorEngine call, and
-     * if the follower-ownership grant that follows fails, that single owner
-     * write is rolled back to its pre-link state rather than left partially
-     * applied. Enhancement application remains a documented, deliberately
-     * best-effort post-commit step — see the "commit policy for enhancement
-     * application" note below.
+     * CORRECTION — previously used its own inline try/catch for rollback,
+     * hidden from whatever outer transaction called it: a failure here was
+     * always reported to the caller as a single rethrown Error with no way
+     * to tell which internal step failed or whether the internal rollback
+     * itself failed. It now runs its two steps —
+     * `owner-relationship-commit` (both owner projections AND, when a
+     * follower slot id is supplied, the matching slot's `createdActorId`,
+     * all three in ONE governed ActorEngine call) and
+     * `follower-ownership-commit` — through the SAME
+     * `runFollowerMutationTransaction` coordinator used elsewhere, rather
+     * than a second, ad-hoc transaction mechanism. On failure it throws an
+     * Error with a `.transactionResult` property carrying the coordinator's
+     * full structured result (`failedStep`, `rollbackFailed`,
+     * `rollbackErrors`), so an outer caller (e.g. `createFollowerFromMutation`'s
+     * own "link" step) can inspect exactly what happened rather than only a
+     * flattened message.
      *
+     * Enhancement application remains a documented, deliberately
+     * best-effort post-commit step — see the "commit policy for
+     * enhancement application" note below.
+     *
+     * @param {Actor} owner
+     * @param {Actor} follower
+     * @param {object|string|null} grantingTalent
+     * @param {{finalizationToken?: string, slotId?: string}} [options]
      * @private
      */
     static async _linkFollowerToOwner(owner, follower, grantingTalent, options = {}) {
         const currentFollowers = owner.getFlag('foundryvtt-swse', 'followers') || [];
         const currentOwnedActors = Array.isArray(owner.system?.ownedActors) ? owner.system.ownedActors : [];
+        const currentSlots = owner.getFlag('foundryvtt-swse', 'followerSlots') || [];
 
         const followerLink = {
             id: follower.id,
@@ -1000,31 +992,57 @@ static async createFollower(owner, templateType, grantingTalent = null) {
             currentOwnedActors,
             followerLink
         });
+        const nextSlots = options.slotId ? buildFollowerSlotUpdate(currentSlots, options.slotId, follower.id) : currentSlots;
 
-        // Both owner-side projections of the follower relationship commit in
-        // one governed call. A failure here touches neither, so there is
-        // nothing to roll back for this write alone.
-        await ActorEngine.updateActor(owner, {
-            'flags.foundryvtt-swse.followers': nextFollowers,
-            'system.ownedActors': nextOwnedActors
-        }, { source: 'FollowerCreator.linkFollowerToOwner.ownerProjections' });
-
-        try {
-            // Set ownership permissions to match owner
-            const ownerUser = game.users.find(u => u.character?.id === owner.id);
-            if (ownerUser) {
-                await ActorEngine.updateActor(follower, {
-                    ownership: {
-                        [ownerUser.id]: CONST.DOCUMENT_OWNERSHIP_LEVELS.OWNER
+        const linkResult = await runFollowerMutationTransaction([
+            {
+                name: 'owner-relationship-commit',
+                commit: async () => {
+                    // All three owner-side relationship projections commit in
+                    // ONE governed call: the canonical followers link list,
+                    // the ownedActors display mirror, and (when a slot id is
+                    // known) the follower slot's createdActorId — so a slot
+                    // can never be left pointing at "no Actor created" while
+                    // the follower/ownedActors links already exist.
+                    await ActorEngine.updateActor(owner, {
+                        'flags.foundryvtt-swse.followers': nextFollowers,
+                        'flags.foundryvtt-swse.followerSlots': nextSlots,
+                        'system.ownedActors': nextOwnedActors
+                    }, { source: 'FollowerCreator.linkFollowerToOwner.ownerProjections' });
+                    return { followers: currentFollowers, ownedActors: currentOwnedActors, slots: currentSlots };
+                },
+                rollback: async (priorState) => {
+                    await ActorEngine.updateActor(owner, {
+                        'flags.foundryvtt-swse.followers': priorState.followers,
+                        'flags.foundryvtt-swse.followerSlots': priorState.slots,
+                        'system.ownedActors': priorState.ownedActors
+                    }, { source: 'FollowerCreator.linkFollowerToOwner.rollback' });
+                }
+            },
+            {
+                name: 'follower-ownership-commit',
+                commit: async () => {
+                    const ownerUser = game.users.find(u => u.character?.id === owner.id);
+                    if (ownerUser) {
+                        await ActorEngine.updateActor(follower, {
+                            ownership: {
+                                [ownerUser.id]: CONST.DOCUMENT_OWNERSHIP_LEVELS.OWNER
+                            }
+                        }, { source: 'FollowerCreator.linkFollowerToOwner' });
                     }
-                }, { source: 'FollowerCreator.linkFollowerToOwner' });
+                }
+                // No rollback needed at this step itself — a failure here
+                // rolls back "owner-relationship-commit" via the
+                // coordinator's reverse-order unwind.
             }
-        } catch (err) {
-            swseLogger.warn('[FollowerCreator] Follower ownership grant failed; rolling back owner link projections:', err);
-            await ActorEngine.updateActor(owner, {
-                'flags.foundryvtt-swse.followers': currentFollowers,
-                'system.ownedActors': currentOwnedActors
-            }, { source: 'FollowerCreator.linkFollowerToOwner.rollback' });
+        ]);
+
+        if (!linkResult.ok) {
+            const err = new Error(`Follower-owner link failed at step "${linkResult.failedStep}": ${linkResult.error?.message || linkResult.error}`);
+            err.transactionResult = linkResult;
+            if (linkResult.rollbackFailed) {
+                swseLogger.error('[FollowerCreator] Owner-link rollback did not fully complete; manual review may be required.', linkResult.rollbackErrors);
+            }
             throw err;
         }
 
@@ -1086,13 +1104,23 @@ static async createFollower(owner, templateType, grantingTalent = null) {
     /**
      * Remove a follower.
      *
-     * ADDENDUM — unlink and (optional) deletion are now each internally
-     * atomic and coordinated with each other: both owner-side projections
-     * unlink in one governed call, deletion goes through the approved
-     * world-document lifecycle wrapper (not a direct `Actor#delete()`), and
-     * if deletion fails after the owner was already unlinked, the owner's
-     * prior projections are restored so no stale unlink survives a follower
-     * that still exists.
+     * CORRECTION — this now covers all five relationship projections the
+     * follower/owner relationship touches, not just two: owner
+     * `flags.foundryvtt-swse.followers`, owner `flags.foundryvtt-swse.followerSlots`
+     * (the matching slot's `createdActorId` is cleared, not left pointing
+     * at a deleted/unlinked Actor), owner `system.ownedActors`, and — for
+     * the unlink-only path, where the follower Actor survives in the world
+     * — the follower's own `flags.swse.follower.ownerId` and
+     * `system.npcProfile.owner.actorId`, cleared so a surviving,
+     * no-longer-linked follower does not keep claiming its former owner.
+     *
+     * The three owner-side projections still commit in ONE governed call.
+     * The second step (delete the follower, or clear the follower's own
+     * owner metadata) runs through the same `runFollowerMutationTransaction`
+     * coordinator used elsewhere; if it fails, the owner's prior
+     * projections are restored rather than left unlinked from a follower
+     * that either still exists (failed deletion) or never had its own
+     * metadata cleared (failed follower-metadata write).
      *
      * @param {Actor} owner - The owner actor
      * @param {Actor} follower - The follower to remove
@@ -1100,19 +1128,17 @@ static async createFollower(owner, templateType, grantingTalent = null) {
     static async removeFollower(owner, follower) {
         const currentFollowers = owner.getFlag('foundryvtt-swse', 'followers') || [];
         const currentOwnedActors = Array.isArray(owner.system?.ownedActors) ? owner.system.ownedActors : [];
+        const currentSlots = owner.getFlag('foundryvtt-swse', 'followerSlots') || [];
 
         const { followers: updatedFollowers, ownedActors: updatedOwnedActors } = buildFollowerUnlinkOwnerUpdate({
             currentFollowers,
             currentOwnedActors,
             followerId: follower.id
         });
+        const updatedSlots = clearFollowerSlotByActorId(currentSlots, follower.id);
 
-        await ActorEngine.updateActor(owner, {
-            'flags.foundryvtt-swse.followers': updatedFollowers,
-            'system.ownedActors': updatedOwnedActors
-        }, { source: 'FollowerCreator.removeFollower.unlink' });
-
-        // Optionally delete the follower actor
+        // Ask about deletion before committing anything, exactly as before —
+        // this only decides which second step runs.
         const shouldDelete = await SWSEDialogV2.confirm({
             title: 'Delete Follower?',
             content: `<p>Do you want to permanently delete ${follower.name}?</p>`,
@@ -1120,17 +1146,52 @@ static async createFollower(owner, templateType, grantingTalent = null) {
             no: () => false
         });
 
-        if (shouldDelete) {
-            try {
-                await deleteActor(follower);
-            } catch (err) {
-                swseLogger.error('[FollowerCreator] Follower deletion failed; restoring owner link projections:', err);
-                await ActorEngine.updateActor(owner, {
-                    'flags.foundryvtt-swse.followers': currentFollowers,
-                    'system.ownedActors': currentOwnedActors
-                }, { source: 'FollowerCreator.removeFollower.rollback' });
-                throw err;
+        const removalResult = await runFollowerMutationTransaction([
+            {
+                name: 'owner-unlink-commit',
+                commit: async () => {
+                    await ActorEngine.updateActor(owner, {
+                        'flags.foundryvtt-swse.followers': updatedFollowers,
+                        'flags.foundryvtt-swse.followerSlots': updatedSlots,
+                        'system.ownedActors': updatedOwnedActors
+                    }, { source: 'FollowerCreator.removeFollower.unlink' });
+                    return { followers: currentFollowers, ownedActors: currentOwnedActors, slots: currentSlots };
+                },
+                rollback: async (priorState) => {
+                    await ActorEngine.updateActor(owner, {
+                        'flags.foundryvtt-swse.followers': priorState.followers,
+                        'flags.foundryvtt-swse.followerSlots': priorState.slots,
+                        'system.ownedActors': priorState.ownedActors
+                    }, { source: 'FollowerCreator.removeFollower.rollback' });
+                }
+            },
+            shouldDelete
+                ? {
+                    name: 'delete-follower-commit',
+                    commit: async () => {
+                        await deleteActor(follower);
+                    }
+                }
+                : {
+                    name: 'follower-metadata-clear-commit',
+                    commit: async () => {
+                        // The follower survives in the world with no owner —
+                        // clear its own owner-pointing metadata so it does
+                        // not keep claiming the owner it is no longer linked
+                        // to.
+                        await ActorEngine.updateActor(follower, {
+                            'flags.swse.follower.ownerId': null,
+                            'system.npcProfile.owner.actorId': null
+                        }, { source: 'FollowerCreator.removeFollower.clearFollowerOwnerMetadata' });
+                    }
+                }
+        ]);
+
+        if (!removalResult.ok) {
+            if (removalResult.rollbackFailed) {
+                swseLogger.error('[FollowerCreator] Follower removal rollback did not fully complete; manual review may be required.', removalResult.rollbackErrors);
             }
+            throw removalResult.error;
         }
     }
 
@@ -1143,72 +1204,75 @@ static async createFollower(owner, templateType, grantingTalent = null) {
      * @private
      */
     static _resolveFollowerDroidSystems(droidConfig = {}) {
-        const systems = droidConfig.droidSystems && typeof droidConfig.droidSystems === 'object'
-            ? structuredClone(droidConfig.droidSystems)
-            : null;
-
-        const baseSystems = Array.isArray(droidConfig.baseSystems) ? structuredClone(droidConfig.baseSystems) : [];
-        const optionalSystems = Array.isArray(droidConfig.optionalSystems) ? structuredClone(droidConfig.optionalSystems) : [];
-        const allowedOptionalCategories = Array.isArray(droidConfig.allowedOptionalCategories)
-            ? Array.from(droidConfig.allowedOptionalCategories)
-            : [];
-
-        if (systems) {
-            systems.baseSystems = Array.isArray(systems.baseSystems) ? systems.baseSystems : baseSystems;
-            systems.optionalSystems = Array.isArray(systems.optionalSystems) ? systems.optionalSystems : optionalSystems;
-            systems.allowedOptionalCategories = Array.isArray(systems.allowedOptionalCategories)
-                ? systems.allowedOptionalCategories
-                : allowedOptionalCategories;
-            return systems;
-        }
-
-        return { baseSystems, optionalSystems, allowedOptionalCategories };
+        return resolveFollowerDroidSystems(droidConfig);
     }
 
     /** @private */
     static _resolveFollowerDroidCredits(persistentChoices = {}, droidConfig = {}) {
-        const builderCredits = droidConfig.droidCredits && typeof droidConfig.droidCredits === 'object'
-            ? structuredClone(droidConfig.droidCredits)
-            : {};
-        const base = Number(
-            builderCredits.base
-            ?? builderCredits.budget
-            ?? persistentChoices.startingCredits
-            ?? 0
-        );
-        const spent = Number(builderCredits.spent ?? droidConfig.spentCredits ?? 0);
-        const remaining = Number.isFinite(Number(builderCredits.remaining))
-            ? Number(builderCredits.remaining)
-            : Math.max(0, base - spent);
-        const lost = Number(builderCredits.lost ?? droidConfig.lostCredits ?? Math.max(0, base - spent));
-
-        return {
-            ...builderCredits,
-            base,
-            budget: Number(builderCredits.budget ?? base),
-            spent,
-            remaining,
-            lost,
-            unspentCreditsLost: true,
-            allowOverflow: false
-        };
+        return resolveFollowerDroidCredits(persistentChoices, droidConfig);
     }
 
     /**
      * Create a follower from a mutation bundle (from the progression spine).
      * Phase 3: Called by FollowerShell after progression completes.
      *
+     * CORRECTION — wraps the real creation logic with a runtime-only,
+     * in-flight guard keyed by `ownerActorId:finalizationToken`. Two
+     * concurrent finalization attempts for the same follower slot (e.g. a
+     * rapid double-click) would otherwise both read "no existing link for
+     * this token yet" before either had written one, and both proceed to
+     * create a follower. This guard is intentionally NOT a persisted lock —
+     * the persisted deduplication mechanism remains the owner link's
+     * `finalizationToken` field, checked inside the internal method below.
+     * This only prevents two concurrent calls IN THIS PROCESS from racing
+     * past that check simultaneously, by having the second caller await the
+     * first call's in-flight promise instead of starting a second one.
+     *
      * @param {Actor} owner - The owner actor
      * @param {Object} followerMutation - Mutation bundle from FollowerSubtypeAdapter
      * @returns {Promise<Actor|null>} Created follower actor or null on error
      */
     static async createFollowerFromMutation(owner, followerMutation) {
-        // ADDENDUM — idempotency: if this exact follower slot/session has
+        const finalizationToken = resolveFollowerFinalizationToken(followerMutation);
+        const guardKey = buildFollowerFinalizationGuardKey(owner?.id, finalizationToken);
+
+        if (guardKey && this._inFlightFollowerFinalizations.has(guardKey)) {
+            swseLogger.log('[FollowerCreator] Duplicate concurrent finalization detected for the same owner/token; awaiting the in-flight attempt instead of starting a second one.', { finalizationToken });
+            return this._inFlightFollowerFinalizations.get(guardKey);
+        }
+
+        const creationPromise = this._createFollowerFromMutationInternal(owner, followerMutation, finalizationToken);
+
+        if (guardKey) {
+            this._inFlightFollowerFinalizations.set(guardKey, creationPromise);
+            creationPromise.finally(() => {
+                if (this._inFlightFollowerFinalizations.get(guardKey) === creationPromise) {
+                    this._inFlightFollowerFinalizations.delete(guardKey);
+                }
+            });
+        }
+
+        return creationPromise;
+    }
+
+    /**
+     * The real follower-creation logic, run under createFollowerFromMutation's
+     * in-flight guard.
+     *
+     * @private
+     */
+    static async _createFollowerFromMutationInternal(owner, followerMutation, finalizationToken) {
+        // CORRECTION — idempotency: if this exact follower slot/session has
         // already produced a follower (e.g. a retry after a transient
         // failure, or a duplicate finalization event), return the existing
         // follower instead of creating a second Actor or appending a second
-        // owner link.
-        const finalizationToken = resolveFollowerFinalizationToken(followerMutation);
+        // owner link. If the link record survives but its Actor does not
+        // (e.g. the follower was deleted out from under a stale link), the
+        // stale record is NOT left in place: buildFollowerLinkOwnerUpdate
+        // (called from _linkFollowerToOwner below) removes any existing
+        // entry carrying the SAME finalizationToken — regardless of Actor
+        // id — before adding the new link, so recreation never results in
+        // two token-bearing records.
         if (finalizationToken) {
             const existingLink = findFollowerLinkForToken(owner.getFlag('foundryvtt-swse', 'followers') || [], finalizationToken);
             if (existingLink?.id) {
@@ -1220,103 +1284,23 @@ static async createFollower(owner, templateType, grantingTalent = null) {
                     });
                     return existingFollower;
                 }
-                swseLogger.warn('[FollowerCreator] Finalization token has a link record but the follower Actor no longer exists; proceeding to recreate.', { finalizationToken });
+                swseLogger.warn('[FollowerCreator] Finalization token has a link record but the follower Actor no longer exists; the stale record will be superseded when the new link commits.', { finalizationToken });
             }
         }
 
+        // CORRECTION — the preflight (building the follower's actorData
+        // payload from the mutation bundle) is now the exact same code that
+        // ships in follower-mutation-planning.js and is directly imported
+        // and unit-tested there (see buildFollowerCreationPreflight's own
+        // header comment for why: the previous inline version here
+        // assigned to an undeclared `actorData`, which threw a
+        // ReferenceError in this always-strict ES module on every single
+        // follower creation, and no test caught it because the only tests
+        // written exercised the pure transaction coordinator with mock
+        // steps, never this actual preflight logic).
         let preflight;
         try {
-            const {
-                speciesName,
-                templateType,
-                persistentChoices,
-                followerState,
-                targetHeroicLevel
-            } = followerMutation;
-            const grantingTalentName = this._getGrantingTalentNameFromMutation(followerMutation);
-            const grantingTalentItemId = this._getGrantingTalentItemIdFromMutation(followerMutation);
-            const fixedProfile = this._getFixedFollowerProfileFromChoices(persistentChoices, followerMutation);
-            const noStartingCredits = this._usesNoStartingCredits(persistentChoices, followerMutation);
-            const resolvedSpeciesName = fixedProfile?.speciesName || speciesName;
-            const droidConfig = persistentChoices?.droidConfig?.isDroid ? persistentChoices.droidConfig : null;
-            const isDroidFollower = !!droidConfig;
-            const droidSystems = isDroidFollower ? this._resolveFollowerDroidSystems(droidConfig) : undefined;
-            const droidCredits = isDroidFollower ? this._resolveFollowerDroidCredits(persistentChoices, droidConfig) : undefined;
-            const followerName = this._resolveFollowerName(owner, templateType, persistentChoices);
-
-            // ADDENDUM — preflight: build the complete actor payload before
-            // any persisted mutation occurs. If this throws, nothing has
-            // been created yet, so there is nothing to roll back.
-            actorData = {
-                name: followerName,
-                type: 'npc',
-                system: {
-                    level: targetHeroicLevel ?? followerState.level,
-                    race: resolvedSpeciesName,
-                    isFollower: true,
-                    isDroid: isDroidFollower,
-                    noConstitution: isDroidFollower,
-                    droidSize: droidConfig?.size || null,
-                    size: droidConfig?.size || fixedProfile?.size || followerState.size || undefined,
-                    speed: droidConfig?.speed || fixedProfile?.speed || followerState.speed || undefined,
-                    movement: isDroidFollower ? { walk: droidConfig?.speed || 6 } : (fixedProfile?.movement || followerState.movement || undefined),
-                    attributes: followerState.abilities,
-                    abilities: followerState.abilities,
-                    hp: followerState.hp,
-                    credits: (isDroidFollower || noStartingCredits) ? 0 : Number(persistentChoices?.startingCredits || 0),
-                    droidSystems,
-                    droidCredits,
-                    baseAttackBonus: followerState.baseAttackBonus ?? followerState.bab,
-                    progression: {
-                        followerChoices: persistentChoices,
-                        followerTemplate: templateType,
-                        followerName,
-                        fixedFollowerProfile: fixedProfile ? this._clonePlain(fixedProfile) : null,
-                        creatureKind: fixedProfile?.creatureKind || null,
-                        noStartingCredits,
-                        isFollower: true
-                    },
-                    npcProfile: {
-                        kind: 'follower',
-                        creatureKind: fixedProfile?.creatureKind || null,
-                        speciesType: fixedProfile?.speciesType || null,
-                        fixedProfileId: fixedProfile?.id || null,
-                        traitNotes: Array.isArray(fixedProfile?.ruleNotes) ? Array.from(fixedProfile.ruleNotes) : [],
-                        owner: {
-                            actorId: owner.id,
-                            talent: grantingTalentName ? { id: grantingTalentItemId, name: grantingTalentName } : null
-                        },
-                        template: templateType,
-                        displayName: followerName
-                    }
-                },
-                flags: {
-                    swse: {
-                        follower: {
-                            ownerId: owner.id,
-                            templateType: templateType,
-                            followerName,
-                            grantingTalent: grantingTalentName,
-                            grantingTalentItemId,
-                            isFollower: true,
-                            fixedFollowerProfileId: fixedProfile?.id || null,
-                            fixedSpeciesName: fixedProfile?.speciesName || null,
-                            creatureKind: fixedProfile?.creatureKind || null,
-                            noStartingCredits
-                        }
-                    },
-                    'foundryvtt-swse': {
-                        isFollower: true,
-                        isDroid: isDroidFollower,
-                        fixedFollowerProfile: fixedProfile ? this._clonePlain(fixedProfile) : null,
-                        npcLevelUp: {
-                            mode: 'statblock'
-                        }
-                    }
-                }
-            };
-
-            preflight = { actorData, speciesName, templateType, persistentChoices, followerState, targetHeroicLevel, fixedProfile };
+            preflight = buildFollowerCreationPreflight(owner, followerMutation);
         } catch (err) {
             // Nothing has been persisted yet — building the creation payload
             // failed before any mutation, so there is nothing to roll back.
@@ -1358,17 +1342,25 @@ static async createFollower(owner, templateType, grantingTalent = null) {
                 commit: async (context) => {
                     const created = context['create-actor'];
 
-                    // Apply species (if needed)
+                    // CORRECTION — species materialization is REQUIRED for
+                    // an ordinary species-based follower and must abort the
+                    // whole transaction on failure, not log a warning and
+                    // continue. The only documented, legitimate skip is a
+                    // fixed follower profile explicitly suppressing species
+                    // selection (e.g. Akk Dog and similar fixed-profile
+                    // followers, whose species identity comes entirely from
+                    // the profile rather than a species Item). No other
+                    // "species identity is source-only, no Item" exception
+                    // currently exists anywhere in this codebase's data
+                    // model; if one is ever added, it must be threaded
+                    // through as an equally explicit, named condition here —
+                    // not folded back into a blanket catch.
                     if (speciesName && !fixedProfile?.noSpeciesSelection) {
-                        try {
-                            const speciesDoc = await SpeciesRegistry.getDocumentByRef?.(speciesName);
-                            if (speciesDoc) {
-                                await ActorEngine.createEmbeddedDocuments(created, 'Item', [speciesDoc.toObject()]);
-                            }
-                        } catch (err) {
-                            swseLogger.warn('[FollowerCreator] Could not apply species:', err);
-                            // Non-fatal — continue even if species application fails
+                        const speciesDoc = await SpeciesRegistry.getDocumentByRef?.(speciesName);
+                        if (!speciesDoc) {
+                            throw new Error(`Required species document not found for follower species "${speciesName}"`);
                         }
+                        await ActorEngine.createEmbeddedDocuments(created, 'Item', [speciesDoc.toObject()]);
                     }
 
                     // Materialize template/granting-talent feats, trained skills, and languages.
@@ -1395,7 +1387,7 @@ static async createFollower(owner, templateType, grantingTalent = null) {
                 name: 'link',
                 commit: async (context) => {
                     const created = context['create-actor'];
-                    await this._linkFollowerToOwner(owner, created, null, { finalizationToken });
+                    await this._linkFollowerToOwner(owner, created, null, { finalizationToken, slotId: followerMutation.slotId || null });
                     return created;
                 }
                 // _linkFollowerToOwner rolls back the owner's projection
@@ -1564,9 +1556,22 @@ static async createFollower(owner, templateType, grantingTalent = null) {
                     await ActorEngine.restoreFromSnapshot(follower, preUpdateSnapshot, {
                         source: 'FollowerCreator.updateFromMutation.rollback'
                     });
-                    await ActorEngine.updateActor(follower, { flags: preUpdateFlags }, {
-                        source: 'FollowerCreator.updateFromMutation.rollback.flags'
-                    });
+                    // CORRECTION — a bare `{flags: preUpdateFlags}` update
+                    // relies on Foundry's default recursive merge, which
+                    // only overwrites keys present in preUpdateFlags — it
+                    // does not remove a flag key the failed update
+                    // introduced for the first time (e.g. a follower newly
+                    // marked isDroid right before materialization threw).
+                    // buildFlagRestorationPatch computes an explicit patch
+                    // that both restores prior values and deletes
+                    // newly-introduced keys via Foundry's '-=key' deletion
+                    // syntax.
+                    const flagRestorationPatch = buildFlagRestorationPatch(preUpdateFlags, follower?.flags || {});
+                    if (Object.keys(flagRestorationPatch).length > 0) {
+                        await ActorEngine.updateActor(follower, flagRestorationPatch, {
+                            source: 'FollowerCreator.updateFromMutation.rollback.flags'
+                        });
+                    }
                     swseLogger.warn('[FollowerCreator] Rolled back follower to its pre-update snapshot after a failed update.', {
                         followerId: follower?.id ?? null
                     });

@@ -15,8 +15,6 @@ import { ChargenRules } from '/systems/foundryvtt-swse/scripts/engine/chargen/Ch
 import { getFollowerTalentConfig } from '/systems/foundryvtt-swse/scripts/engine/crew/follower-talent-config.js';
 import { isFollowerDroidDraft } from './steps/follower-steps/follower-droid-context.js';
 import { shouldSkipFollowerStep, computeApplicableFollowerSteps, resolvePreservedFollowerStepIndex, followerStepListsAreEqual } from './steps/follower-steps/follower-step-visibility.js';
-import { buildFollowerSlotUpdate } from './adapters/follower-mutation-transaction.js';
-import { ActorEngine } from '/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js';
 
 import { FollowerOriginStep } from './steps/follower-steps/follower-origin-step.js';
 import { FollowerSpeciesStep } from './steps/follower-steps/follower-species-step.js';
@@ -569,7 +567,17 @@ export class FollowerShell extends ProgressionShell {
           return { success: false, error: 'Failed to create follower actor' };
         }
 
-        await this._updateFollowerSlot(followerMutation.slotId, followerActor.id);
+        // CORRECTION — the follower slot's `createdActorId` now commits as
+        // part of the SAME owner-relationship transaction step that writes
+        // `flags.foundryvtt-swse.followers`/`system.ownedActors`
+        // (FollowerCreator._linkFollowerToOwner, given `followerMutation.slotId`),
+        // not as a separate post-creation write here. A prior version of
+        // this method called a follow-up `_updateFollowerSlot()` after
+        // `createFollowerFromMutation` already returned success; that
+        // method swallowed its own errors, so a slot-write failure could
+        // never surface — the shell would report success while the slot
+        // still had no `createdActorId`. Removed entirely rather than kept
+        // as unreachable dead code.
         swseLogger.log('[FollowerShell] Follower created:', followerActor.id);
         return { success: true, result: { followerId: followerActor.id } };
       }
@@ -583,7 +591,14 @@ export class FollowerShell extends ProgressionShell {
           return { success: false, error: 'Existing follower actor not found' };
         }
 
-        await FollowerCreator.updateFollowerFromMutation(followerActor, followerMutation);
+        // CORRECTION — updateFollowerFromMutation() returns a boolean; a
+        // prior version of this method ignored it and always reported
+        // success, so a failed (and internally rolled-back) update could
+        // still close the finalization workflow as if it had succeeded.
+        const updated = await FollowerCreator.updateFollowerFromMutation(followerActor, followerMutation);
+        if (!updated) {
+          return { success: false, error: 'Failed to update follower' };
+        }
         swseLogger.log('[FollowerShell] Follower updated:', followerId);
         return { success: true, result: { followerId } };
       }
@@ -592,23 +607,6 @@ export class FollowerShell extends ProgressionShell {
     } catch (err) {
       swseLogger.error('[FollowerShell] Error applying follower mutation:', err);
       return { success: false, error: err.message };
-    }
-  }
-
-  async _updateFollowerSlot(slotId, followerActorId) {
-    try {
-      const slots = this.ownerActor.getFlag('foundryvtt-swse', 'followerSlots') || [];
-      if (!slots.some(s => s?.id === slotId)) return;
-
-      const nextSlots = buildFollowerSlotUpdate(slots, slotId, followerActorId);
-
-      // ADDENDUM — governed via ActorEngine instead of a direct setFlag().
-      await ActorEngine.updateActor(this.ownerActor, {
-        'flags.foundryvtt-swse.followerSlots': nextSlots
-      }, { source: 'FollowerShell.updateFollowerSlot' });
-      swseLogger.log('[FollowerShell] Slot updated with follower actor ID:', followerActorId);
-    } catch (err) {
-      swseLogger.error('[FollowerShell] Error updating follower slot:', err);
     }
   }
 }

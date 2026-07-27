@@ -133,6 +133,22 @@ export function resolveFollowerFinalizationToken(followerMutation = {}) {
 }
 
 /**
+ * Derive the runtime-only in-flight finalization guard key used to
+ * coalesce two concurrent finalization attempts for the same owner/slot
+ * into one actual creation attempt. Pure — a null owner id or token
+ * produces null (no guard possible), which callers must treat as "cannot
+ * guard," matching resolveFollowerFinalizationToken's own contract.
+ *
+ * @param {string|null|undefined} ownerActorId
+ * @param {string|null|undefined} finalizationToken
+ * @returns {string|null}
+ */
+export function buildFollowerFinalizationGuardKey(ownerActorId, finalizationToken) {
+  if (!ownerActorId || !finalizationToken) return null;
+  return `${ownerActorId}:${finalizationToken}`;
+}
+
+/**
  * Find an existing follower link record carrying a given finalization
  * token, so repeated finalization of the same slot/session returns the
  * already-created follower instead of creating a duplicate Actor.
@@ -150,11 +166,18 @@ export function findFollowerLinkForToken(followerLinks = [], token) {
 
 /**
  * Build the owner-side projection update for linking (or re-linking) a
- * follower. Deduplicates both `followers` and `ownedActors` by follower id
- * so re-running link (e.g. after a retry) never appends a second entry.
- * Pure — does not mutate its inputs or touch any Actor.
+ * follower. Deduplicates both `followers` and `ownedActors` by follower id,
+ * so re-running link (e.g. after a retry) never appends a second entry —
+ * AND, when `followerLink.finalizationToken` is set, also removes any
+ * existing entry carrying that SAME token even if its Actor id differs.
+ * That second rule matters for stale-token repair: if a finalization
+ * token's original follower Actor no longer exists, recreating a follower
+ * for the same token produces a new Actor with a NEW id, so an id-only
+ * dedup would leave the stale, now-orphaned link record in place alongside
+ * the new one — two records bearing the same token. Pure — does not
+ * mutate its inputs or touch any Actor.
  *
- * @param {{currentFollowers?: object[], currentOwnedActors?: object[], followerLink: {id: string}}} params
+ * @param {{currentFollowers?: object[], currentOwnedActors?: object[], followerLink: {id: string, finalizationToken?: string|null}}} params
  * @returns {{followers: object[], ownedActors: object[]}}
  */
 export function buildFollowerLinkOwnerUpdate({ currentFollowers = [], currentOwnedActors = [], followerLink } = {}) {
@@ -162,10 +185,16 @@ export function buildFollowerLinkOwnerUpdate({ currentFollowers = [], currentOwn
     throw new Error('buildFollowerLinkOwnerUpdate requires followerLink.id');
   }
 
-  const followers = (currentFollowers || []).filter(entry => entry?.id !== followerLink.id);
+  const isSuperseded = (entry) => {
+    if (entry?.id === followerLink.id) return true;
+    if (followerLink.finalizationToken && entry?.finalizationToken === followerLink.finalizationToken) return true;
+    return false;
+  };
+
+  const followers = (currentFollowers || []).filter(entry => !isSuperseded(entry));
   followers.push(followerLink);
 
-  const ownedActors = (currentOwnedActors || []).filter(entry => entry?.id !== followerLink.id);
+  const ownedActors = (currentOwnedActors || []).filter(entry => !isSuperseded(entry));
   ownedActors.push(followerLink);
 
   return { followers, ownedActors };
@@ -195,11 +224,90 @@ export function buildFollowerUnlinkOwnerUpdate({ currentFollowers = [], currentO
  * @param {string} followerActorId
  * @returns {object[]}
  */
+function flattenWithPaths(value, prefix, out) {
+  if (value === null || typeof value !== 'object' || Array.isArray(value)) {
+    out[prefix] = value;
+    return out;
+  }
+  const keys = Object.keys(value);
+  if (keys.length === 0) {
+    out[prefix] = value;
+    return out;
+  }
+  for (const key of keys) {
+    flattenWithPaths(value[key], prefix ? `${prefix}.${key}` : key, out);
+  }
+  return out;
+}
+
+/**
+ * CORRECTION — build a flag-restoration patch that correctly deletes flag
+ * keys introduced since a snapshot was taken, not just overwrites keys
+ * that already existed. A previous rollback path called
+ * `ActorEngine.updateActor(follower, {flags: preUpdateFlags})` directly;
+ * Foundry's `Document#update()` recursively MERGES nested objects by
+ * default, so passing the complete previous `flags` object only overwrites
+ * keys present in that object — it does not remove a key that exists now
+ * but did not exist in the snapshot (e.g. a failed update that newly set
+ * `flags.foundryvtt-swse.isDroid` before throwing later). Foundry's
+ * supported mechanism for a governed deletion is prefixing the final path
+ * segment with `-=` (e.g. `'flags.foundryvtt-swse.-=isDroid': null`).
+ *
+ * This is pure and deterministic: given a "before" and "after" flags
+ * object, it returns a flat dot-path patch that, applied via
+ * `ActorEngine.updateActor(actor, patch)`, restores every previously
+ * existing value and deletes every key that is new since the snapshot.
+ *
+ * @param {object} previousFlags - the flags object captured before mutation.
+ * @param {object} currentFlags - the actor's live flags object at rollback time.
+ * @returns {Object<string, any>} a dot-path patch, keys prefixed with `flags.`.
+ */
+export function buildFlagRestorationPatch(previousFlags = {}, currentFlags = {}) {
+  const previousFlat = flattenWithPaths(previousFlags || {}, '', {});
+  const currentFlat = flattenWithPaths(currentFlags || {}, '', {});
+  const patch = {};
+
+  for (const [path, value] of Object.entries(previousFlat)) {
+    if (!path) continue;
+    patch[`flags.${path}`] = value;
+  }
+
+  for (const path of Object.keys(currentFlat)) {
+    if (!path || Object.prototype.hasOwnProperty.call(previousFlat, path)) continue;
+    const segments = path.split('.');
+    const leafKey = segments.pop();
+    const parentPath = segments.join('.');
+    const deletionKey = parentPath ? `flags.${parentPath}.-=${leafKey}` : `flags.-=${leafKey}`;
+    patch[deletionKey] = null;
+  }
+
+  return patch;
+}
+
 export function buildFollowerSlotUpdate(slots = [], slotId, followerActorId) {
   const list = Array.isArray(slots) ? slots : [];
   if (!slotId) return list;
 
   return list.map(slot => (slot?.id === slotId
     ? { ...slot, createdActorId: followerActorId, updatedAt: new Date().toISOString() }
+    : slot));
+}
+
+/**
+ * Clear `createdActorId` on whichever follower slot(s) currently point at a
+ * given follower Actor id — used when removing/unlinking a follower so its
+ * slot does not keep claiming an Actor that is being deleted or unlinked.
+ * Pure, never mutates its input, and is a no-op if no slot matches.
+ *
+ * @param {object[]} slots
+ * @param {string|null|undefined} followerActorId
+ * @returns {object[]}
+ */
+export function clearFollowerSlotByActorId(slots = [], followerActorId) {
+  const list = Array.isArray(slots) ? slots : [];
+  if (!followerActorId) return list;
+
+  return list.map(slot => (slot?.createdActorId === followerActorId
+    ? { ...slot, createdActorId: null, updatedAt: new Date().toISOString() }
     : slot));
 }

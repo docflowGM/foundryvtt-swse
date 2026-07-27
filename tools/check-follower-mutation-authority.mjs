@@ -8,10 +8,18 @@
  * linkage — while mostly routing individual writes through ActorEngine —
  * were not transactionally atomic, and several call sites still bypassed
  * ActorEngine entirely with direct `setFlag()`/`actor.update()`/`.delete()`
- * calls. This guard is the narrow static enforcement for that finding. Six
- * checks, scoped to follower mutation service files only (this is
- * deliberately NOT a repository-wide ban — direct Actor mutation is
- * legitimate in many other parts of the system with their own governance):
+ * calls. This guard is the narrow static enforcement for that finding.
+ *
+ * A CORRECTION pass on this same addendum found four more gaps a first
+ * version of this guard did not catch: a follower-slot write reintroduced
+ * as an unguarded post-creation side channel, an owner-relationship commit
+ * that omitted the follower-slot projection, a shell call site that
+ * ignored `updateFollowerFromMutation`'s boolean result, and required
+ * species materialization silently swallowed instead of aborting the
+ * transaction. Ten checks total, scoped to follower mutation service files
+ * only (this is deliberately NOT a repository-wide ban — direct Actor
+ * mutation is legitimate in many other parts of the system with their own
+ * governance):
  *
  *   1. No `.setFlag(` / `.unsetFlag(` call in a follower mutation service —
  *      every flag write must route through ActorEngine.updateActor()
@@ -32,6 +40,27 @@
  *      through the transaction coordinator (runFollowerMutationTransaction)
  *      rather than calling multiple independent commit helpers with no
  *      shared rollback.
+ *   7. CORRECTION — `_updateFollowerSlot()` must not exist in
+ *      follower-shell.js. It was a post-creation side channel that
+ *      swallowed its own failures, so follower creation could report
+ *      success while the slot never recorded its Actor id; the slot now
+ *      commits inside `_linkFollowerToOwner`'s single owner-relationship
+ *      write and must not be reintroduced as a separate step.
+ *   8. CORRECTION — every object literal assigning `'system.ownedActors'`
+ *      must also assign `'flags.foundryvtt-swse.followerSlots'` in the
+ *      same literal (in addition to check 5's `followers` requirement) —
+ *      all three owner-side relationship projections commit together.
+ *   9. CORRECTION — every `FollowerCreator.updateFollowerFromMutation(...)`
+ *      call in follower-shell.js must capture its boolean result (an
+ *      assignment on the same line) rather than ignore it — a failed,
+ *      internally-rolled-back update must not be reported as a successful
+ *      finalization.
+ *   10. CORRECTION — follower-creator.js must contain the required-species
+ *       guard that throws when a resolvable species document is missing,
+ *       and must not contain a catch block that logs a species-application
+ *       warning without rethrowing — species materialization for an
+ *       ordinary species-based follower must abort the creation
+ *       transaction on failure, not be silently skipped.
  *
  * Allowed everywhere: session/draft object mutation (plain property sets on
  * progressionSession.draftSelections and friends — these are not Actor
@@ -172,12 +201,73 @@ function main() {
         });
       }
     }
+
+    // Check 7 (CORRECTION): _updateFollowerSlot() must not be reintroduced
+    // in follower-shell.js as a post-creation side channel.
+    if (relPath.endsWith('follower-shell.js') && /_updateFollowerSlot\s*\(/.test(source)) {
+      violations.push({
+        check: '7: no post-creation follower-slot side channel',
+        file: relPath,
+        detail: "_updateFollowerSlot() must not be reintroduced — the follower slot's createdActorId commits inside FollowerCreator._linkFollowerToOwner's single owner-relationship-commit step (alongside followers/ownedActors), not as a separate post-creation write whose failure can be silently swallowed"
+      });
+    }
+
+    // Check 8 (CORRECTION): owner projection coordination must also cover
+    // followerSlots, not just followers.
+    for (const match of ownedActorsAssignments) {
+      const literalBody = match[1];
+      if (!/'flags\.foundryvtt-swse\.followerSlots'/.test(literalBody)) {
+        violations.push({
+          check: '8: owner projections must include followerSlots',
+          file: relPath,
+          detail: "found an object literal assigning 'system.ownedActors' without also assigning 'flags.foundryvtt-swse.followerSlots' in the same call — all three owner-side relationship projections (followers, followerSlots, ownedActors) must commit together"
+        });
+      }
+    }
+
+    // Check 9 (CORRECTION): every updateFollowerFromMutation() call in
+    // follower-shell.js must capture its boolean result.
+    if (relPath.endsWith('follower-shell.js')) {
+      const lines = rawSource.split('\n');
+      lines.forEach((line, idx) => {
+        if (!/FollowerCreator\.updateFollowerFromMutation\s*\(/.test(line)) return;
+        const capturesResult = /(?:const|let|var)\s+\w+\s*=\s*(?:await\s+)?FollowerCreator\.updateFollowerFromMutation\s*\(/.test(line);
+        if (!capturesResult) {
+          violations.push({
+            check: '9: updateFollowerFromMutation() result must be checked',
+            file: relPath,
+            detail: `line ${idx + 1}: call does not capture the returned boolean — a failed (and internally rolled-back) update must not be reported as a successful finalization`
+          });
+        }
+      });
+    }
+
+    // Check 10 (CORRECTION): required species materialization must throw
+    // on failure, not be silently swallowed.
+    if (relPath.endsWith('follower-creator.js')) {
+      const hasRequiredSpeciesGuard = /Required species document not found/.test(source);
+      if (!hasRequiredSpeciesGuard) {
+        violations.push({
+          check: '10: required species materialization must throw',
+          file: relPath,
+          detail: 'expected a guard that throws when a required, resolvable species document is missing — species materialization for an ordinary species-based follower must not be silently skipped'
+        });
+      }
+      const hasSwallowedSpeciesCatch = /catch\s*\([^)]*\)\s*\{\s*swseLogger\.warn\(['"`]\[FollowerCreator\] Could not apply species/.test(source);
+      if (hasSwallowedSpeciesCatch) {
+        violations.push({
+          check: '10: required species materialization must throw',
+          file: relPath,
+          detail: 'found a catch block that logs a species-application warning without rethrowing — a required species Item creation failure must abort the creation transaction, not be swallowed'
+        });
+      }
+    }
   }
 
   console.log('='.repeat(72));
   console.log('  FOLLOWER MUTATION AUTHORITY GUARD');
   console.log('='.repeat(72));
-  console.log(`\nScanned ${scanned.length} follower mutation service file(s) against 6 checks.\n`);
+  console.log(`\nScanned ${scanned.length} follower mutation service file(s) against 10 checks.\n`);
 
   if (violations.length === 0) {
     console.log('No violations found — follower lifecycle mutations remain governed and coordinated.');
