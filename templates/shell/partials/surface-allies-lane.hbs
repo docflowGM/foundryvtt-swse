@@ -40,6 +40,9 @@
       {{#if this.canBuildBeast}}
       <button type="button" data-allies-action="build-beast" data-slot-id="{{this.id}}">{{localize "SWSE.ShellUI.AddBeast2"}}</button>
       {{/if}}
+      {{#if this.canRemoveManualSlot}}
+      <button type="button" class="is-danger" data-allies-action="remove-follower-slot" data-slot-id="{{this.id}}">Remove Slot</button>
+      {{/if}}
     </div>
   </article>
   {{/each}}

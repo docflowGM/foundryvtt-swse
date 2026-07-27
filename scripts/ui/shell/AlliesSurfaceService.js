@@ -13,6 +13,7 @@ import { getHeroicLevel } from '/systems/foundryvtt-swse/scripts/actors/derived/
 import { FactionRegistryService } from '/systems/foundryvtt-swse/scripts/allies/faction-registry-service.js';
 import { HolonetIntelService, INTEL_REVEAL_STATE } from '/systems/foundryvtt-swse/scripts/holonet/subsystems/holonet-intel-service.js';
 import { createActor } from '/systems/foundryvtt-swse/scripts/core/document-api-v13.js';
+import { FollowerSlotService, isEligibleFollowerSlotOwner } from '/systems/foundryvtt-swse/scripts/engine/crew/follower-slot-service.js';
 
 const SYSTEM_ID = 'foundryvtt-swse';
 const TAB_IDS = new Set(['companions', 'factions', 'contacts', 'intel', 'bases', 'organizations']);
@@ -142,6 +143,7 @@ function slotLabel(slot = {}) {
 }
 
 function sourceTalentLabel(record = {}) {
+  if (record.sourceType === 'gm-grant') return record.sourceLabel || 'GM Granted';
   return record.sourceTalent || record.talentName || record.grantingTalent || record.talent || record.source || 'Unknown source';
 }
 
@@ -160,23 +162,26 @@ function isOpenCompanionSlot(slot = {}) {
   return !slotLiveActor(slot);
 }
 
-function mapPendingSlot(slot = {}) {
+function mapPendingSlot(slot = {}, options = {}) {
   const kind = slotKind(slot);
   const label = slotLabel(slot);
   const staleActorId = slotCreatedActorId(slot);
   const staleAssignment = Boolean(staleActorId && !slotLiveActor(slot));
+  const isManualSlot = slot.sourceType === 'gm-grant';
   return {
     id: slot.id || slot.slotId || `${kind}-${sourceTalentLabel(slot)}`,
     kind,
     label,
     title: staleAssignment ? `Rebuild ${label} Slot` : `Open ${label} Slot`,
     sourceTalent: sourceTalentLabel(slot),
+    sourceType: slot.sourceType || null,
     description: slot.description || (staleAssignment
       ? `${sourceTalentLabel(slot)} has a missing linked actor. Rebuild or refill this ${label.toLowerCase()} slot.`
       : `${sourceTalentLabel(slot)} has granted an unfilled ${label.toLowerCase()} slot.`),
     canBuildFollower: kind === 'follower',
     canBuildMinion: kind === 'minion' || kind === 'privateer' || kind === 'assigned-nonheroic',
     canBuildBeast: kind === 'beast',
+    canRemoveManualSlot: isManualSlot && !staleActorId && options.isGM === true,
     status: staleAssignment ? 'ACTOR MISSING' : 'OPEN SLOT'
   };
 }
@@ -840,6 +845,9 @@ export class AlliesSurfaceService {
       showHistory,
       tabs: visibleTabs.map(tab => ({ ...tab, active: activeTab === tab.id })),
       counts,
+      canGrantManualFollowerSlot: game.user?.isGM === true && isEligibleFollowerSlotOwner(actor),
+      manualFollowerSlotLabel: 'Add Follower Slot',
+      manualFollowerSlotHelp: 'Grant this character one follower slot without requiring a talent.',
       companions,
       factions,
       contacts,
@@ -872,7 +880,8 @@ export class AlliesSurfaceService {
     const FollowerCreator = await loadFollowerCreator();
     const MinionCreator = await loadMinionCreator();
     const followerSlots = asArray(actor.getFlag?.(SYSTEM_ID, 'followerSlots'));
-    const pendingSlots = followerSlots.filter(isOpenCompanionSlot).map(mapPendingSlot);
+    const isGM = game.user?.isGM === true;
+    const pendingSlots = followerSlots.filter(isOpenCompanionSlot).map(slot => mapPendingSlot(slot, { isGM }));
 
     const followerActors = uniqueActors(FollowerCreator?.getFollowers?.(actor) || []);
     const minionActors = uniqueActors(MinionCreator?.getMinions?.(actor) || []);
@@ -1016,6 +1025,22 @@ export class AlliesSurfaceService {
     });
     if (changed) await updateActorFlag(actor, SYSTEM_ID, 'followerSlots', updated, { meta: { guardKey: 'allies-reopen-slot' } });
     return changed;
+  }
+
+  /**
+   * Grant one GM-manual follower slot to `ownerActor`. This service does
+   * NOT construct or persist the slot itself — it delegates entirely to
+   * FollowerSlotService, which independently re-enforces the GM-only
+   * permission check and is the sole writer of followerSlots for this
+   * grant path.
+   */
+  static async addManualFollowerSlot(ownerActor) {
+    return FollowerSlotService.grantManualFollowerSlot(ownerActor, { source: 'allies' });
+  }
+
+  /** Remove an empty, GM-manual follower slot. See addManualFollowerSlot. */
+  static async removeManualFollowerSlot(ownerActor, slotId) {
+    return FollowerSlotService.revokeManualFollowerSlot(ownerActor, slotId, { source: 'allies' });
   }
 
   static async _buildFactions(actor, context = {}) {

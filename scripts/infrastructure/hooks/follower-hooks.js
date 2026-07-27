@@ -42,7 +42,13 @@ function _getSlots(actor) {
 }
 
 async function _setSlots(actor, slots) {
-  await actor.setFlag('foundryvtt-swse', 'followerSlots', slots);
+  // GM-MANUAL-FOLLOWER-SLOT — governed via ActorEngine instead of a direct
+  // setFlag(), so this file's writes to followerSlots are enforced by the
+  // same authority FollowerSlotService uses for manual (GM-granted) slots.
+  const { ActorEngine } = await import('/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js');
+  await ActorEngine.updateActor(actor, {
+    'flags.foundryvtt-swse.followerSlots': slots
+  }, { source: 'FollowerHooks.setSlots' });
 }
 
 function _slotsForTalent(slots, talentName) {
@@ -208,6 +214,12 @@ export async function reconcileFollowerSlotsForActor(actor) {
   const validTalentItemIds = new Set(talents.map(t => t.id));
   const filtered = slots.filter(slot => {
     if (slot.createdActorId) return true;
+    // GM-MANUAL-FOLLOWER-SLOT — a manually-granted slot has no talent
+    // provenance at all (talentItemId is always null) and must never be
+    // removed, capped, or otherwise governed by talent reconciliation; it
+    // is explicitly out of scope for this loop regardless of maxCount or
+    // whether any follower-granting talent currently exists on the owner.
+    if (slot.sourceType === 'gm-grant') return true;
     if (!slot.talentItemId) return true;
     return validTalentItemIds.has(slot.talentItemId);
   });

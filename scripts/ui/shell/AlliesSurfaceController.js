@@ -127,6 +127,10 @@ export class AlliesSurfaceController {
           return this._buildMinion(target.dataset.slotId);
         case 'build-beast':
           return this._buildBeast(target.dataset.slotId);
+        case 'add-follower-slot':
+          return this._addFollowerSlot();
+        case 'remove-follower-slot':
+          return this._removeFollowerSlot(target.dataset.slotId);
         case 'manage-ally':
         case 'open-actor':
         case 'open-contact-actor':
@@ -233,6 +237,40 @@ export class AlliesSurfaceController {
       beast.sheet?.render?.(true);
     }
     this._requestRender('allies-build-beast');
+  }
+
+  /**
+   * GM-only: add one empty, GM-granted follower slot to this Holopad's
+   * actor. The check below is defense-in-depth for a hidden/removed
+   * button only — FollowerSlotService independently re-checks
+   * game.user.isGM and rejects a forged call from a non-GM regardless of
+   * what this controller does.
+   */
+  async _addFollowerSlot() {
+    if (game.user?.isGM !== true) return this._notify('Only a GM can add a follower slot.');
+    await AlliesSurfaceService.addManualFollowerSlot(this._actor);
+    ui?.notifications?.info?.('Follower slot added.');
+    this._requestRender('allies-add-follower-slot');
+  }
+
+  /**
+   * GM-only: remove an empty, GM-granted follower slot. FollowerSlotService
+   * independently rejects removal of talent-granted or occupied slots.
+   */
+  async _removeFollowerSlot(slotId) {
+    if (game.user?.isGM !== true) return this._notify('Only a GM can remove a follower slot.');
+    if (!slotId) return this._notify('That follower slot could not be found.');
+    const shouldRemove = await Dialog.confirm({
+      title: 'Remove Follower Slot?',
+      content: '<p>This removes the empty, GM-granted follower slot. It cannot be used to remove an occupied slot or a slot granted by a talent.</p>',
+      yes: () => true,
+      no: () => false,
+      defaultYes: false
+    });
+    if (!shouldRemove) return;
+    await AlliesSurfaceService.removeManualFollowerSlot(this._actor, slotId);
+    ui?.notifications?.info?.('Follower slot removed.');
+    this._requestRender('allies-remove-follower-slot');
   }
 
   _openActor(actorId) {

@@ -41,6 +41,13 @@
 
   <main class="swse-allies-body">
     {{#if (eq vm.activeTab "companions")}}
+    {{#if vm.canGrantManualFollowerSlot}}
+    <div class="swse-allies-section-actions">
+      <button type="button" class="swse-allies-history-toggle" data-allies-action="add-follower-slot" title="{{vm.manualFollowerSlotHelp}}">
+        + {{vm.manualFollowerSlotLabel}}
+      </button>
+    </div>
+    {{/if}}
     {{#if vm.companions.hasAny}}
     <section class="swse-allies-companions">
       <div class="swse-allies-section-head">
