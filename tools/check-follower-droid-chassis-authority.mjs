@@ -7,7 +7,7 @@
  *
  * Enforces that the bug this phase fixed — two independently-reachable
  * droid-related follower steps, one real and one a hand-rolled duplicate —
- * cannot silently reappear. Six checks:
+ * cannot silently reappear. Eight checks:
  *
  *   1. FollowerShell registers exactly one droid-chassis-capable step
  *      descriptor (`droid-builder`), and FollowerSpeciesStep no longer
@@ -31,6 +31,16 @@
  *      category/id/subcategory only — never by matching a display name
  *      substring, which would silently turn descriptive text into a
  *      mechanical decision.
+ *   7. ADDENDUM — the droid-follower ability-bonus rule
+ *      (FOLLOWER_DROID_DEGREE_ABILITY / resolveFollowerDroidAbilityChoice)
+ *      is defined only in follower-droid-context.js — guards against a
+ *      second, independent degree-to-ability mapping reappearing (e.g. in
+ *      a reintroduced species-step free-choice branch).
+ *   8. ADDENDUM — FollowerOriginStep seeds only a minimal droid identity
+ *      marker on selecting "Droid" ({isDroid: true}) — guards against the
+ *      original bug where it pre-seeded a full chassis
+ *      (size/locomotion/speed/ability) before the user ever visited the
+ *      real Droid Chassis step.
  *
  * Report-only by default; --strict exits non-zero on any violation.
  */
@@ -48,12 +58,14 @@ const STRICT = process.argv.includes('--strict');
 const FOLLOWER_SHELL = path.join(ROOT, 'scripts/apps/progression-framework/follower-shell.js');
 const FOLLOWER_SPECIES_STEP = path.join(ROOT, 'scripts/apps/progression-framework/steps/follower-steps/follower-species-step.js');
 const FOLLOWER_DROID_BUILDER_STEP = path.join(ROOT, 'scripts/apps/progression-framework/steps/follower-steps/follower-droid-builder-step.js');
+const FOLLOWER_ORIGIN_STEP = path.join(ROOT, 'scripts/apps/progression-framework/steps/follower-steps/follower-origin-step.js');
 const DROID_BUILDER_STEP = path.join(ROOT, 'scripts/apps/progression-framework/steps/droid-builder-step.js');
 const APPLICABILITY_ENGINE = path.join(ROOT, 'scripts/apps/progression-framework/steps/follower-droid-chassis-applicability.js');
 const REMOVED_DEAD_STEP = path.join(ROOT, 'scripts/apps/progression-framework/steps/follower-steps/follower-droid-step.js');
 const FOLLOWER_CREATOR = path.join(ROOT, 'scripts/apps/follower-creator.js');
+const FOLLOWER_DROID_CONTEXT = path.join(ROOT, 'scripts/apps/progression-framework/steps/follower-steps/follower-droid-context.js');
 
-const CHASSIS_STEP_FILES = [FOLLOWER_SHELL, FOLLOWER_SPECIES_STEP, FOLLOWER_DROID_BUILDER_STEP];
+const CHASSIS_STEP_FILES = [FOLLOWER_SHELL, FOLLOWER_SPECIES_STEP, FOLLOWER_DROID_BUILDER_STEP, FOLLOWER_ORIGIN_STEP];
 const APPLICABILITY_CALL_ALLOWLIST = new Set([DROID_BUILDER_STEP, APPLICABILITY_ENGINE]);
 const DROID_CONFIG_FINALIZATION_READ_ALLOWLIST = new Set([FOLLOWER_CREATOR]);
 
@@ -156,10 +168,43 @@ function main() {
     }
   }
 
+  // Check 7 (ADDENDUM): single droid-follower ability-bonus authority.
+  const abilityMappingDefinitionPattern = /export\s+const\s+FOLLOWER_DROID_DEGREE_ABILITY\b|export\s+function\s+resolveFollowerDroidAbilityChoice\s*\(/;
+  for (const file of files) {
+    if (file === FOLLOWER_DROID_CONTEXT) continue;
+    if (abilityMappingDefinitionPattern.test(read(file))) {
+      violations.push({ check: '7: single droid-follower ability authority', file: path.relative(ROOT, file), detail: 'defines FOLLOWER_DROID_DEGREE_ABILITY/resolveFollowerDroidAbilityChoice outside follower-droid-context.js — a second, competing degree-to-ability mapping may have been introduced' });
+    }
+  }
+  // A local const named the same way (not exported) would also silently
+  // reintroduce a second table; flag any other file that declares its own
+  // degree-keyed ability map literal.
+  const localDegreeAbilityLiteral = /(?:const|let)\s+\w*DEGREE_ABILITY\w*\s*=\s*Object\.freeze\(\{/;
+  for (const file of files) {
+    if (file === FOLLOWER_DROID_CONTEXT) continue;
+    if (localDegreeAbilityLiteral.test(read(file))) {
+      violations.push({ check: '7: single droid-follower ability authority', file: path.relative(ROOT, file), detail: 'declares a local degree-to-ability mapping literal — must import resolveFollowerDroidAbilityChoice from follower-droid-context.js instead' });
+    }
+  }
+
+  // Check 8 (ADDENDUM): FollowerOriginStep must seed only a minimal droid
+  // identity marker, never a full pre-made chassis.
+  if (fs.existsSync(FOLLOWER_ORIGIN_STEP)) {
+    const originSource = read(FOLLOWER_ORIGIN_STEP);
+    const fullChassisSeedMarkers = ["locomotion: 'walking'", "speed: 6", "abilityChoice: 'int'", "size: 'medium'"];
+    const found = fullChassisSeedMarkers.filter(marker => originSource.includes(marker));
+    if (found.length > 0) {
+      violations.push({ check: '8: origin step seeds minimal droid identity only', file: path.relative(ROOT, FOLLOWER_ORIGIN_STEP), detail: `FollowerOriginStep must not pre-seed chassis defaults before the Droid Chassis step runs; found: ${found.join(', ')}` });
+    }
+    if (!originSource.includes('seedMinimalFollowerDroidIdentity')) {
+      violations.push({ check: '8: origin step seeds minimal droid identity only', file: path.relative(ROOT, FOLLOWER_ORIGIN_STEP), detail: 'expected FollowerOriginStep to seed droid identity via the canonical seedMinimalFollowerDroidIdentity() helper' });
+    }
+  }
+
   console.log('='.repeat(72));
   console.log('  FOLLOWER DROID CHASSIS AUTHORITY GUARD');
   console.log('='.repeat(72));
-  console.log(`\nScanned ${files.length} script file(s) against 6 checks.\n`);
+  console.log(`\nScanned ${files.length} script file(s) against 8 checks.\n`);
 
   if (violations.length === 0) {
     console.log('No violations found — the follower droid chassis step remains a single authority.');

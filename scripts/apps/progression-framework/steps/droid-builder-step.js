@@ -1936,9 +1936,21 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
 
       // Get suggestions from SuggestionService
       // PHASE D: Pass DROID_SYSTEMS as available systems and include budget info
+      // ADDENDUM (Phase 6 follow-up): a follower droid's constraint
+      // (speciesDroidBuilder — see FollowerDroidBuilderStep#_getFollowerConstraint)
+      // must gate suggestions the same way it already gates presentation
+      // (_applySpeciesDroidConstraintsToPresentation) and purchase actions
+      // (_systemAllowedBySpeciesConstraints) — otherwise the mentor could
+      // suggest a system a follower is not actually allowed to buy.
+      // Non-follower (ordinary PC droid chargen) callers have no
+      // constraint object, so this is a no-op passthrough for them.
+      const constrainedAvailableSystems = getApplicableFollowerDroidChassisOptions(
+        { locomotion: DROID_SYSTEMS.locomotion, processors: DROID_SYSTEMS.processors, appendages: DROID_SYSTEMS.appendages, accessories: DROID_SYSTEMS.accessories, locomotionEnhancements: DROID_SYSTEMS.locomotionEnhancements, appendageEnhancements: DROID_SYSTEMS.appendageEnhancements },
+        this._droidState?.speciesDroidBuilder || null
+      );
       const suggested = await SuggestionService.getSuggestions(actor, 'chargen', {
         domain: 'droid-systems',
-        available: DROID_SYSTEMS,  // Pass available droid systems
+        available: { ...DROID_SYSTEMS, ...constrainedAvailableSystems },  // Constrained where a follower/species restriction applies
         pendingData: {
           ...SuggestionContextBuilder.buildPendingData(actor, characterData),
           droidDegree,

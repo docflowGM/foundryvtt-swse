@@ -341,3 +341,186 @@ by this environment's lack of a Foundry installation — that constraint is
 unrelated to and unaffected by this phase's work, and remains true
 regardless of how much additional Node-level coverage is added. PR #937
 remains a draft.
+
+## Addendum — verified current structure and follow-up hardening
+
+A follow-up review traced the branch as it stood after the Phase 6 commit
+above and confirmed the core structural fix (single `droid-builder` step
+labeled "Droid Chassis", `FollowerSpeciesStep` fully organic-only, dead
+`follower-droid-step.js` removed) was already correct. It identified six
+narrower gaps in the surrounding session/summary/finalization behavior
+that the structural fix alone didn't close. Each is fixed below.
+
+### 1. `FollowerOriginStep` pre-seeded a fake chassis
+
+Selecting "Droid" on the origin step used to seed a full partial
+`droidConfig` (`{isDroid:true, size:'medium', locomotion:'walking',
+speed:6, abilityChoice:'int'}`) before the user ever visited the real
+Droid Chassis step, making its choices look pre-made. `FollowerOriginStep
+._selectKind` now seeds only `{isDroid: true}` via the new
+`seedMinimalFollowerDroidIdentity()` helper (`follower-droid-context.js`)
+— a genuine prior build (real `droidSystems` from an earlier visit) is
+preserved as-is rather than discarded. Switching from Droid back to Living
+now clears the full droid-construction footprint (`draftSelections.droid`,
+`draftSelections.droidConfig`, `session.droidContext`, and any
+`droidBuilder` metadata mirrored into `pendingSpeciesContext`) via the new
+`clearFollowerDroidConstructionState()` helper, not just `droidConfig`
+alone.
+
+### 2. Droid-follower ability choice had two competing sources
+
+The removed pre-Phase-6 species-step branch let the user freely pick a
+non-CON ability; `FollowerDroidBuilderStep` independently derives the
+ability from chassis degree
+(`FOLLOWER_DROID_DEGREE_ABILITY`: 1st/2nd → INT, 3rd → CHA, 4th → DEX, 5th
+→ STR). No repository rule/documentation supports an independent free
+ability choice for droid followers — living followers have a genuinely
+separate, template-driven 2-option mechanic
+(`TEMPLATE_ABILITY_OPTIONS` in `follower-step-base.js`), confirmed
+structurally distinct, not a parallel case for droids. The degree-derived
+rule is now the sole source: the `existingConfig.abilityChoice ||` /
+`draft.droidConfig?.abilityChoice ||` fallbacks that could let a stale
+legacy value override it have been removed, and the mapping itself was
+extracted to `resolveFollowerDroidAbilityChoice()` /
+`FOLLOWER_DROID_DEGREE_ABILITY` in `follower-droid-context.js` (the
+authority guard's new check 7 enforces no second copy of this mapping can
+reappear elsewhere).
+
+### 3. Droid-system suggestions weren't constraint-filtered
+
+`DroidBuilderStep._getSuggestedSystems` passed the full, unconstrained
+`DROID_SYSTEMS` catalog to `SuggestionService.getSuggestions`, with no
+follower-constraint filtering anywhere in the chain — a follower could be
+suggested a processor/locomotion upgrade or an out-of-category accessory
+it isn't actually allowed to purchase, even though rendering, purchase
+actions, and validation were already correctly gated by
+`_systemAllowedBySpeciesConstraints`. Fixed by computing a
+constraint-filtered view via the existing
+`getApplicableFollowerDroidChassisOptions()` and merging it into the
+`available` payload — a no-op passthrough for non-follower (null
+constraint) callers, so ordinary PC droid chargen is unaffected.
+
+Constraint enforcement was verified at every boundary the addendum
+specified: `purchaseSystem`/`removeSystem` already gate on
+`_systemAllowedBySpeciesConstraints` before proceeding (real enforcement,
+not just presentation — satisfies "forged purchase actions for illegal
+components are rejected" with no code change needed); the rendered
+component list and suggestions are now both filtered; resumed illegal
+selections are already handled by the Phase 6 legacy classification.
+
+### 4. Applicability seam: confirmed no relocation needed
+
+Investigated whether follower step applicability
+(`FollowerShell._recomputeFollowerSteps`/`_shouldSkipFollowerStep`) should
+instead route through the shared `ActiveStepComputer`/
+`ConditionalStepResolver` seam. Traced both files directly:
+`progression-node-registry.js` has zero follower-mode entries;
+`ConditionalStepResolver.resolveForContext` explicitly returns `[]` for
+any mode other than `'chargen'` (levelup is now owned by
+`ActiveStepComputer`/node registry per its own comment); and
+`ChargenShell._getCanonicalDescriptors()` is the actual per-shell
+customization seam the base `ProgressionShell` documents subclasses as
+overriding — chargen/levelup implement it via `ActiveStepComputer` + the
+node registry, `FollowerShell` implements it via its own static descriptor
+list, because follower steps were never modeled in that registry at all.
+**Conclusion: the current `FollowerShell`-local approach is correct and
+was left unchanged** — it populates the same `this.steps`/`this
+.stepPlugins` structures every shell uses, via the same customization
+seam, rather than inventing a second navigation mechanism.
+
+### 5. Legacy session compatibility: expanded to the full 6-point precedence
+
+`classifyFollowerDroidChassisSelection` (Phase 6) only classified a single
+`droidConfig` shape; it didn't reconcile `draftSelections.droid` (the
+canonical builder state) against `droidConfig.droidBuild` (its mirrored
+compatibility projection) when both exist. Added
+`resolveFollowerDroidChassisPrecedence(draft)` to
+`follower-droid-chassis-compat.js`, implementing the full precedence
+chain:
+
+1. `draft.droid` wins if it holds a real build (`droidSystems` present)
+   and the legacy mirror doesn't, or both agree.
+2. If only the legacy `droidConfig.droidBuild` mirror is real, it is
+   restored into `draft.droid` (a stub/empty `draft.droid` does not
+   silently win over a real legacy build).
+3. If only the old Species-step shape exists, only the safe fields
+   (degree, size) are translated into a provisional state — the
+   disconnected `baseSystems`/`optionalSystems` arrays are never mapped to
+   fabricated `droidSystems`.
+4. If both are real and disagree, the result is `CONFLICT` — never
+   resolved by picking a side.
+5. Disagreeing builds are never combined.
+6. The function only classifies; it never mutates the session or an
+   Actor.
+
+`FollowerDroidBuilderStep.onStepEnter` now consults this precedence first;
+on a genuine conflict it sets `this._chassisConflict`, skips seeding
+entirely, and `getBlockingIssues()`/`validate()` surface a specific
+"requires manual review" message instead of the generic "construction
+state is not available" fallback.
+
+### 6. Summary: two follower droid steps, but no other duplication
+
+`FollowerConfirmStep`'s "Selected Options" list unconditionally pushed a
+`Species` row (showing "Droid") and, for droid followers, a separate
+`Droid Ability` row — both redundant with the dedicated `Droid Chassis`
+identity row (`droidConfig.size` / speed / ability) already shown earlier
+in the same summary. `_formatSelectedOptions` now skips the `Species` row
+for droid followers and no longer emits the `Droid Ability` row at all
+(the canonical chassis row already carries that information); the
+`follower-summary-work-surface.hbs` identity card hides its generic
+`Species` row when `droidConfig` is present and its `Droid Chassis` row
+now also states the degree. `follower-creator.js` finalization was
+re-verified: its three call sites
+(`_applyFollowerProgressionMaterial`, `createFollowerFromMutation`,
+`updateFollowerFromMutation`) are three distinct lifecycle events, not
+redundant loops within one finalization — each calls the single
+`_resolveFollowerDroidSystems`/`_resolveFollowerDroidCredits` helper
+exactly once, reading only `persistentChoices.droidConfig`; no code path
+separately consumes `draft.droid` or `droidConfig.droidBuild` at
+finalization time.
+
+### Addendum test/guard additions
+
+- `tests/follower-droid-chassis-compat.test.mjs` — 7 new blocks covering
+  `resolveFollowerDroidChassisPrecedence` (all 6 precedence points plus the
+  no-chassis-configured case).
+- `tests/follower-droid-context.test.mjs` — new blocks for
+  `hasRealFollowerDroidBuild`, `seedMinimalFollowerDroidIdentity`,
+  `clearFollowerDroidConstructionState`, and
+  `resolveFollowerDroidAbilityChoice`/`FOLLOWER_DROID_DEGREE_ABILITY`.
+- 48 new assertions total across both files (all pass).
+- `tools/check-follower-droid-chassis-authority.mjs` — extended from 6 to
+  8 checks: (7) no second droid-follower ability-mapping definition
+  outside `follower-droid-context.js`; (8) `FollowerOriginStep` seeds only
+  the minimal droid identity marker and calls
+  `seedMinimalFollowerDroidIdentity()`, never a full pre-made chassis.
+  Both new checks were verified by injecting a fake violation, confirming
+  detection, then reverting and confirming a clean pass again.
+
+### Addendum validation (Node-only — exact counts)
+
+- `node tools/run-rolling-tests.mjs` — 49 passed, 0 failed (unchanged from
+  the Phase 6 run; the addendum's new assertions live in the follower test
+  files, which are run individually, not through this rolling suite —
+  consistent with the existing Phase 6 tests).
+- `node tests/follower-droid-context.test.mjs`,
+  `node tests/follower-step-visibility.test.mjs`,
+  `node tests/follower-droid-chassis-applicability.test.mjs`,
+  `node tests/follower-droid-chassis-compat.test.mjs` — all pass.
+- `node tools/check-follower-droid-chassis-authority.mjs --strict` — 0
+  violations across 8 checks (up from 6).
+- `node tools/check-progression-integrity.mjs` — **44 violations**
+  (`progression-registry-bypass`: 21, `draft-write-bypass`: 23) —
+  **still identical to the recorded baseline.**
+- `node tools/check-architecture-boundaries.mjs` — **37 violations**
+  (`direct-actor-mutation`: 6, `progression-registry-bypass`: 31) —
+  **still identical to the recorded baseline.**
+
+### Addendum runtime status and merge readiness
+
+Unchanged from the base Phase 6 assessment: no live Foundry VTT v13
+testing occurred (no Foundry installation exists in this environment),
+and merge readiness remains **CONDITIONALLY READY** for the same
+environmental reason, unrelated to and unaffected by this addendum's
+work. PR #937 remains a draft.
