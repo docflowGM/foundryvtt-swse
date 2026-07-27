@@ -358,7 +358,9 @@ export class FollowerManager {
         const currentBonuses = owner.getFlag('foundryvtt-swse', 'followerSpeedBonuses') || {};
         const key = talent?.name || 'Get Into Position';
         currentBonuses[key] = bonus;
-        await owner.setFlag('foundryvtt-swse', 'followerSpeedBonuses', currentBonuses);
+        await ActorEngine.updateActor(owner, {
+            'flags.foundryvtt-swse.followerSpeedBonuses': currentBonuses
+        }, { source: 'FollowerManager.addSpeedBonusToFollowers' });
 
         if (!options.silent) {
             ui.notifications.info(`You can now use ${key} to move a follower +${bonus} squares.`);
@@ -371,10 +373,8 @@ export class FollowerManager {
      */
     static async addTacticalAbility(owner, talent, enhancement, options = {}) {
         const tacticalAbilities = owner.getFlag('foundryvtt-swse', 'followerTacticalAbilities') || [];
-
         if (!tacticalAbilities.includes(talent.name)) {
             tacticalAbilities.push(talent.name);
-            await owner.setFlag('foundryvtt-swse', 'followerTacticalAbilities', tacticalAbilities);
         }
 
         const details = owner.getFlag('foundryvtt-swse', 'followerTacticalAbilityDetails') || {};
@@ -390,7 +390,16 @@ export class FollowerManager {
             description: enhancement?.description || existing.description || '',
             grantedAt: existing.grantedAt || Date.now()
         };
-        await owner.setFlag('foundryvtt-swse', 'followerTacticalAbilityDetails', details);
+
+        // ADDENDUM — both flags are one logical "grant a tactical ability"
+        // action; write them in a single governed call rather than two
+        // separately-persisted setFlag() calls that could leave the ability
+        // name listed with no matching detail record (or vice versa) if one
+        // write succeeded and the other failed.
+        await ActorEngine.updateActor(owner, {
+            'flags.foundryvtt-swse.followerTacticalAbilities': tacticalAbilities,
+            'flags.foundryvtt-swse.followerTacticalAbilityDetails': details
+        }, { source: 'FollowerManager.addTacticalAbility' });
 
         if (!options.silent) {
             ui.notifications.info(`Gained tactical ability: ${talent.name}!`);
@@ -423,7 +432,9 @@ export class FollowerManager {
             case 'speed-bonus': {
                 const currentBonuses = owner.getFlag('foundryvtt-swse', 'followerSpeedBonuses') || {};
                 delete currentBonuses[talent.name];
-                await owner.setFlag('foundryvtt-swse', 'followerSpeedBonuses', currentBonuses);
+                await ActorEngine.updateActor(owner, {
+                    'flags.foundryvtt-swse.followerSpeedBonuses': currentBonuses
+                }, { source: 'FollowerManager.removeEnhancement.speedBonus' });
                 break;
             }
 
@@ -444,12 +455,16 @@ export class FollowerManager {
             case 'akk-dog-protective-reaction': {
                 const tacticalAbilities = owner.getFlag('foundryvtt-swse', 'followerTacticalAbilities') || [];
                 const nextAbilities = tacticalAbilities.filter(name => name !== talent.name);
-                await owner.setFlag('foundryvtt-swse', 'followerTacticalAbilities', nextAbilities);
                 const details = owner.getFlag('foundryvtt-swse', 'followerTacticalAbilityDetails') || {};
-                if (details[talent.name]) {
-                    delete details[talent.name];
-                    await owner.setFlag('foundryvtt-swse', 'followerTacticalAbilityDetails', details);
-                }
+                if (details[talent.name]) delete details[talent.name];
+
+                // ADDENDUM — one governed call for both projections of
+                // "remove this tactical ability," same reasoning as
+                // addTacticalAbility above.
+                await ActorEngine.updateActor(owner, {
+                    'flags.foundryvtt-swse.followerTacticalAbilities': nextAbilities,
+                    'flags.foundryvtt-swse.followerTacticalAbilityDetails': details
+                }, { source: 'FollowerManager.removeEnhancement.tacticalAbility' });
                 break;
             }
         }
@@ -495,15 +510,10 @@ export class FollowerManager {
                 speedChanged = true;
             }
         }
-        if (speedChanged) {
-            await owner.setFlag('foundryvtt-swse', 'followerSpeedBonuses', speedBonuses);
-        }
 
         const tacticalAbilities = owner.getFlag('foundryvtt-swse', 'followerTacticalAbilities') || [];
         const nextTacticalAbilities = tacticalAbilities.filter(name => !this.isEnhancementTalent(name) || ownedNames.has(name));
-        if (nextTacticalAbilities.length !== tacticalAbilities.length) {
-            await owner.setFlag('foundryvtt-swse', 'followerTacticalAbilities', nextTacticalAbilities);
-        }
+        const tacticalAbilitiesChanged = nextTacticalAbilities.length !== tacticalAbilities.length;
 
         const details = owner.getFlag('foundryvtt-swse', 'followerTacticalAbilityDetails') || {};
         let detailsChanged = false;
@@ -513,8 +523,17 @@ export class FollowerManager {
                 detailsChanged = true;
             }
         }
-        if (detailsChanged) {
-            await owner.setFlag('foundryvtt-swse', 'followerTacticalAbilityDetails', details);
+
+        // ADDENDUM — collect every changed projection into ONE governed
+        // call instead of up to three independently-persisted setFlag()
+        // calls.
+        const updates = {};
+        if (speedChanged) updates['flags.foundryvtt-swse.followerSpeedBonuses'] = speedBonuses;
+        if (tacticalAbilitiesChanged) updates['flags.foundryvtt-swse.followerTacticalAbilities'] = nextTacticalAbilities;
+        if (detailsChanged) updates['flags.foundryvtt-swse.followerTacticalAbilityDetails'] = details;
+
+        if (Object.keys(updates).length > 0) {
+            await ActorEngine.updateActor(owner, updates, { source: 'FollowerManager.removeStaleOwnerEnhancementFlags' });
         }
     }
 

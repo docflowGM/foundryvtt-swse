@@ -17,11 +17,18 @@ import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { SWSEDialogV2 } from "/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { resolveSkillKey, resolveSkillName } from "/systems/foundryvtt-swse/scripts/utils/skill-resolver.js";
-import { createActor } from "/systems/foundryvtt-swse/scripts/core/document-api-v13.js";
+import { createActor, deleteActor } from "/systems/foundryvtt-swse/scripts/core/document-api-v13.js";
 import { getHeroicLevel } from "/systems/foundryvtt-swse/scripts/actors/derived/level-split.js";
 import { SpeciesRegistry } from "/systems/foundryvtt-swse/scripts/engine/registries/species-registry.js";
 import { FeatRegistry } from "/systems/foundryvtt-swse/scripts/registries/feat-registry.js";
 import { getFollowerTalentConfig } from "/systems/foundryvtt-swse/scripts/engine/crew/follower-talent-config.js";
+import {
+    runFollowerMutationTransaction,
+    resolveFollowerFinalizationToken,
+    findFollowerLinkForToken,
+    buildFollowerLinkOwnerUpdate,
+    buildFollowerUnlinkOwnerUpdate
+} from "/systems/foundryvtt-swse/scripts/apps/progression-framework/adapters/follower-mutation-transaction.js";
 
 export class FollowerCreator {
 
@@ -455,8 +462,11 @@ static async createFollower(owner, templateType, grantingTalent = null) {
      */
     static async _applyDroidTraits(follower) {
         // Droids have special traits that should be handled by the species item
-        // But we can add any additional droid-specific flags here
-        await follower.setFlag('foundryvtt-swse', 'isDroid', true);
+        // But we can add any additional droid-specific flags here.
+        // ADDENDUM — governed via ActorEngine instead of a direct setFlag().
+        await ActorEngine.updateActor(follower, {
+            'flags.foundryvtt-swse.isDroid': true
+        }, { source: 'FollowerCreator.applyDroidTraits' });
     }
 
     /**
@@ -956,39 +966,75 @@ static async createFollower(owner, templateType, grantingTalent = null) {
     }
 
     /**
-     * Link follower to owner
+     * Link follower to owner.
+     *
+     * ADDENDUM — this used to be three independently-persisted writes (owner
+     * follower flag, owner ownedActors, follower ownership) with no rollback
+     * if a later write failed after an earlier one succeeded. The two
+     * owner-side projections (`flags.foundryvtt-swse.followers` and
+     * `system.ownedActors`) now commit in ONE governed ActorEngine call, and
+     * if the follower-ownership grant that follows fails, that single owner
+     * write is rolled back to its pre-link state rather than left partially
+     * applied. Enhancement application remains a documented, deliberately
+     * best-effort post-commit step — see the "commit policy for enhancement
+     * application" note below.
+     *
      * @private
      */
-    static async _linkFollowerToOwner(owner, follower, grantingTalent) {
-        // Add/update follower link on the owner's canonical follower flag.
+    static async _linkFollowerToOwner(owner, follower, grantingTalent, options = {}) {
         const currentFollowers = owner.getFlag('foundryvtt-swse', 'followers') || [];
+        const currentOwnedActors = Array.isArray(owner.system?.ownedActors) ? owner.system.ownedActors : [];
+
         const followerLink = {
             id: follower.id,
             name: follower.name,
             type: follower.type,
             img: follower.img,
             talent: grantingTalent?.name || follower.system?.npcProfile?.owner?.talent || null,
-            templateType: follower.system?.progression?.followerTemplate || follower.flags?.swse?.follower?.templateType || null
+            templateType: follower.system?.progression?.followerTemplate || follower.flags?.swse?.follower?.templateType || null,
+            finalizationToken: options.finalizationToken || null
         };
-        const nextFollowers = currentFollowers.filter(entry => entry.id !== follower.id);
-        nextFollowers.push(followerLink);
-        await owner.setFlag('foundryvtt-swse', 'followers', nextFollowers);
 
-        // Keep the general ownedActors display list in sync for sheet relationship panels.
-        const ownedActors = Array.isArray(owner.system?.ownedActors) ? owner.system.ownedActors.filter(entry => entry.id !== follower.id) : [];
-        ownedActors.push(followerLink);
-        await ActorEngine.updateActor(owner, { 'system.ownedActors': ownedActors }, { source: 'FollowerCreator.linkFollowerToOwner.ownedActors' });
+        const { followers: nextFollowers, ownedActors: nextOwnedActors } = buildFollowerLinkOwnerUpdate({
+            currentFollowers,
+            currentOwnedActors,
+            followerLink
+        });
 
-        // Set ownership permissions to match owner
-        const ownerUser = game.users.find(u => u.character?.id === owner.id);
-        if (ownerUser) {
-            await ActorEngine.updateActor(follower, {
-                ownership: {
-                    [ownerUser.id]: CONST.DOCUMENT_OWNERSHIP_LEVELS.OWNER
-                }
-            }, { source: 'FollowerCreator.linkFollowerToOwner' });
+        // Both owner-side projections of the follower relationship commit in
+        // one governed call. A failure here touches neither, so there is
+        // nothing to roll back for this write alone.
+        await ActorEngine.updateActor(owner, {
+            'flags.foundryvtt-swse.followers': nextFollowers,
+            'system.ownedActors': nextOwnedActors
+        }, { source: 'FollowerCreator.linkFollowerToOwner.ownerProjections' });
+
+        try {
+            // Set ownership permissions to match owner
+            const ownerUser = game.users.find(u => u.character?.id === owner.id);
+            if (ownerUser) {
+                await ActorEngine.updateActor(follower, {
+                    ownership: {
+                        [ownerUser.id]: CONST.DOCUMENT_OWNERSHIP_LEVELS.OWNER
+                    }
+                }, { source: 'FollowerCreator.linkFollowerToOwner' });
+            }
+        } catch (err) {
+            swseLogger.warn('[FollowerCreator] Follower ownership grant failed; rolling back owner link projections:', err);
+            await ActorEngine.updateActor(owner, {
+                'flags.foundryvtt-swse.followers': currentFollowers,
+                'system.ownedActors': currentOwnedActors
+            }, { source: 'FollowerCreator.linkFollowerToOwner.rollback' });
+            throw err;
         }
 
+        // Commit policy for enhancement application: by this point the
+        // follower link itself (both owner projections + follower ownership)
+        // is already fully and successfully committed. Enhancement
+        // application (owner talents such as "Undying Loyalty" granting a
+        // feat to the follower) is intentionally NOT part of that atomic
+        // unit — it is a best-effort convenience applied after a valid link
+        // already exists, and its failure must not unwind that valid link.
         try {
             const { FollowerManager } = await import("/systems/foundryvtt-swse/scripts/apps/follower-manager.js");
             await FollowerManager.applyExistingEnhancementsToFollower(owner, follower, { silent: true });
@@ -1038,15 +1084,33 @@ static async createFollower(owner, templateType, grantingTalent = null) {
     }
 
     /**
-     * Remove a follower
+     * Remove a follower.
+     *
+     * ADDENDUM — unlink and (optional) deletion are now each internally
+     * atomic and coordinated with each other: both owner-side projections
+     * unlink in one governed call, deletion goes through the approved
+     * world-document lifecycle wrapper (not a direct `Actor#delete()`), and
+     * if deletion fails after the owner was already unlinked, the owner's
+     * prior projections are restored so no stale unlink survives a follower
+     * that still exists.
+     *
      * @param {Actor} owner - The owner actor
      * @param {Actor} follower - The follower to remove
      */
     static async removeFollower(owner, follower) {
         const currentFollowers = owner.getFlag('foundryvtt-swse', 'followers') || [];
-        const updatedFollowers = currentFollowers.filter(f => f.id !== follower.id);
+        const currentOwnedActors = Array.isArray(owner.system?.ownedActors) ? owner.system.ownedActors : [];
 
-        await owner.setFlag('foundryvtt-swse', 'followers', updatedFollowers);
+        const { followers: updatedFollowers, ownedActors: updatedOwnedActors } = buildFollowerUnlinkOwnerUpdate({
+            currentFollowers,
+            currentOwnedActors,
+            followerId: follower.id
+        });
+
+        await ActorEngine.updateActor(owner, {
+            'flags.foundryvtt-swse.followers': updatedFollowers,
+            'system.ownedActors': updatedOwnedActors
+        }, { source: 'FollowerCreator.removeFollower.unlink' });
 
         // Optionally delete the follower actor
         const shouldDelete = await SWSEDialogV2.confirm({
@@ -1057,7 +1121,16 @@ static async createFollower(owner, templateType, grantingTalent = null) {
         });
 
         if (shouldDelete) {
-            await follower.delete();
+            try {
+                await deleteActor(follower);
+            } catch (err) {
+                swseLogger.error('[FollowerCreator] Follower deletion failed; restoring owner link projections:', err);
+                await ActorEngine.updateActor(owner, {
+                    'flags.foundryvtt-swse.followers': currentFollowers,
+                    'system.ownedActors': currentOwnedActors
+                }, { source: 'FollowerCreator.removeFollower.rollback' });
+                throw err;
+            }
         }
     }
 
@@ -1130,7 +1203,28 @@ static async createFollower(owner, templateType, grantingTalent = null) {
      * @returns {Promise<Actor|null>} Created follower actor or null on error
      */
     static async createFollowerFromMutation(owner, followerMutation) {
-        let follower = null;
+        // ADDENDUM — idempotency: if this exact follower slot/session has
+        // already produced a follower (e.g. a retry after a transient
+        // failure, or a duplicate finalization event), return the existing
+        // follower instead of creating a second Actor or appending a second
+        // owner link.
+        const finalizationToken = resolveFollowerFinalizationToken(followerMutation);
+        if (finalizationToken) {
+            const existingLink = findFollowerLinkForToken(owner.getFlag('foundryvtt-swse', 'followers') || [], finalizationToken);
+            if (existingLink?.id) {
+                const existingFollower = game.actors?.get(existingLink.id);
+                if (existingFollower) {
+                    swseLogger.log('[FollowerCreator] Finalization token already produced a follower; skipping duplicate creation.', {
+                        finalizationToken,
+                        followerId: existingLink.id
+                    });
+                    return existingFollower;
+                }
+                swseLogger.warn('[FollowerCreator] Finalization token has a link record but the follower Actor no longer exists; proceeding to recreate.', { finalizationToken });
+            }
+        }
+
+        let preflight;
         try {
             const {
                 speciesName,
@@ -1150,8 +1244,10 @@ static async createFollower(owner, templateType, grantingTalent = null) {
             const droidCredits = isDroidFollower ? this._resolveFollowerDroidCredits(persistentChoices, droidConfig) : undefined;
             const followerName = this._resolveFollowerName(owner, templateType, persistentChoices);
 
-            // Create actor from derived state
-            const actorData = {
+            // ADDENDUM — preflight: build the complete actor payload before
+            // any persisted mutation occurs. If this throws, nothing has
+            // been created yet, so there is nothing to roll back.
+            actorData = {
                 name: followerName,
                 type: 'npc',
                 system: {
@@ -1220,67 +1316,116 @@ static async createFollower(owner, templateType, grantingTalent = null) {
                 }
             };
 
-            // Create the actor
-            follower = await createActor(actorData);
-            if (!follower) {
-                swseLogger.error('[FollowerCreator] Failed to create follower actor from mutation');
-                return null;
-            }
-
-            // Apply species (if needed)
-            if (speciesName && !fixedProfile?.noSpeciesSelection) {
-                try {
-                    const speciesDoc = await SpeciesRegistry.getDocumentByRef?.(speciesName);
-                    if (speciesDoc) {
-                        await ActorEngine.createEmbeddedDocuments(follower, 'Item', [speciesDoc.toObject()]);
-                    }
-                } catch (err) {
-                    swseLogger.warn('[FollowerCreator] Could not apply species:', err);
-                    // Non-fatal — continue even if species application fails
-                }
-            }
-
-            // Materialize template/granting-talent feats, trained skills, and languages.
-            await this._applyFollowerProgressionMaterial(owner, follower, templateType, persistentChoices, followerMutation);
-
-            // Apply defenses from derived state
-            if (followerState.defenses) {
-                const defenseUpdates = {};
-                const defenseKeyMap = { fort: 'fortitude', fortitude: 'fortitude', ref: 'reflex', reflex: 'reflex', will: 'will' };
-                for (const [defType, defData] of Object.entries(followerState.defenses)) {
-                    const defenseKey = defenseKeyMap[defType] || defType;
-                    defenseUpdates[`system.defenses.${defenseKey}.total`] = defData.total;
-                }
-                await ActorEngine.updateActor(follower, defenseUpdates, { source: 'FollowerCreator.createFromMutation.defenses' });
-            }
-
-            // Link to owner
-            await this._linkFollowerToOwner(owner, follower, null);
-
-            swseLogger.log('[FollowerCreator] Follower created from mutation:', {
-                followerId: follower.id,
-                ownerId: owner.id,
-                templateType: templateType,
-                level: targetHeroicLevel ?? followerState.level
-            });
-
-            return follower;
+            preflight = { actorData, speciesName, templateType, persistentChoices, followerState, targetHeroicLevel, fixedProfile };
         } catch (err) {
-            swseLogger.error('[FollowerCreator] Error creating follower from mutation:', err);
-            if (follower?.id) {
-                const partialFollowerId = follower.id;
-                try {
-                    await follower.delete();
+            // Nothing has been persisted yet — building the creation payload
+            // failed before any mutation, so there is nothing to roll back.
+            swseLogger.error('[FollowerCreator] Error building follower creation payload:', err);
+            return null;
+        }
+
+        const { actorData, speciesName, templateType, persistentChoices, followerState, targetHeroicLevel, fixedProfile } = preflight;
+
+        // ADDENDUM — commit: create the follower Actor, materialize its
+        // content, then link it to the owner, as one coordinated sequence.
+        // A failure at any step rolls back everything already committed, in
+        // reverse order (delete the follower Actor undoes both the
+        // "materialize" step's Item/field writes — they live entirely on
+        // that Actor — and, if reached, the "link" step's owner projection
+        // changes are separately restored by _linkFollowerToOwner itself
+        // before it rethrows).
+        const transactionResult = await runFollowerMutationTransaction([
+            {
+                name: 'create-actor',
+                commit: async () => {
+                    const created = await createActor(actorData);
+                    if (!created) {
+                        throw new Error('Failed to create follower actor from mutation');
+                    }
+                    return created;
+                },
+                rollback: async (created) => {
+                    if (!created?.id) return;
+                    await deleteActor(created);
                     swseLogger.warn('[FollowerCreator] Rolled back partially created follower after failed mutation apply', {
-                        followerId: partialFollowerId,
+                        followerId: created.id,
                         ownerId: owner?.id ?? null
                     });
-                } catch (cleanupErr) {
-                    swseLogger.warn('[FollowerCreator] Failed to delete partially created follower after mutation error:', cleanupErr);
                 }
+            },
+            {
+                name: 'materialize',
+                commit: async (context) => {
+                    const created = context['create-actor'];
+
+                    // Apply species (if needed)
+                    if (speciesName && !fixedProfile?.noSpeciesSelection) {
+                        try {
+                            const speciesDoc = await SpeciesRegistry.getDocumentByRef?.(speciesName);
+                            if (speciesDoc) {
+                                await ActorEngine.createEmbeddedDocuments(created, 'Item', [speciesDoc.toObject()]);
+                            }
+                        } catch (err) {
+                            swseLogger.warn('[FollowerCreator] Could not apply species:', err);
+                            // Non-fatal — continue even if species application fails
+                        }
+                    }
+
+                    // Materialize template/granting-talent feats, trained skills, and languages.
+                    await this._applyFollowerProgressionMaterial(owner, created, templateType, persistentChoices, followerMutation);
+
+                    // Apply defenses from derived state
+                    if (followerState.defenses) {
+                        const defenseUpdates = {};
+                        const defenseKeyMap = { fort: 'fortitude', fortitude: 'fortitude', ref: 'reflex', reflex: 'reflex', will: 'will' };
+                        for (const [defType, defData] of Object.entries(followerState.defenses)) {
+                            const defenseKey = defenseKeyMap[defType] || defType;
+                            defenseUpdates[`system.defenses.${defenseKey}.total`] = defData.total;
+                        }
+                        await ActorEngine.updateActor(created, defenseUpdates, { source: 'FollowerCreator.createFromMutation.defenses' });
+                    }
+
+                    return created;
+                }
+                // No rollback: any partial write here lives entirely on the
+                // follower Actor created in "create-actor", whose rollback
+                // deletes the whole Actor.
+            },
+            {
+                name: 'link',
+                commit: async (context) => {
+                    const created = context['create-actor'];
+                    await this._linkFollowerToOwner(owner, created, null, { finalizationToken });
+                    return created;
+                }
+                // _linkFollowerToOwner rolls back the owner's projection
+                // writes itself if follower-ownership fails after they
+                // commit; if "link" fails before that point, the owner has
+                // not been mutated, so only "create-actor"'s rollback
+                // (deleting the follower) is needed.
+            }
+        ]);
+
+        if (!transactionResult.ok) {
+            swseLogger.error('[FollowerCreator] Error creating follower from mutation:', transactionResult.error);
+            if (transactionResult.rollbackFailed) {
+                swseLogger.error('[FollowerCreator] Rollback after failed follower creation did not fully complete; the follower Actor and/or owner link state may need manual review.', {
+                    failedStep: transactionResult.failedStep,
+                    rollbackErrors: transactionResult.rollbackErrors
+                });
             }
             return null;
         }
+
+        const follower = transactionResult.context['create-actor'];
+        swseLogger.log('[FollowerCreator] Follower created from mutation:', {
+            followerId: follower.id,
+            ownerId: owner.id,
+            templateType: templateType,
+            level: targetHeroicLevel ?? followerState.level
+        });
+
+        return follower;
     }
 
     /**
@@ -1292,6 +1437,18 @@ static async createFollower(owner, templateType, grantingTalent = null) {
      * @returns {Promise<boolean>} True if successful, false otherwise
      */
     static async updateFollowerFromMutation(follower, followerMutation) {
+        // ADDENDUM — snapshot the follower before any mutation so a failure
+        // partway through (core state committed via ActorEngine.updateActor,
+        // then _applyFollowerProgressionMaterial throwing) can be fully
+        // reverted instead of leaving the core-state write persisted with no
+        // rollback. `ActorEngine.restoreFromSnapshot` (used below) is a real,
+        // already-production SnapshotService entry point, but it
+        // deliberately does not restore `flags` (a documented limitation of
+        // the underlying restore contract), so flags are snapshotted and
+        // restored separately here.
+        const preUpdateSnapshot = follower?.toObject ? follower.toObject(true) : null;
+        const preUpdateFlags = this._clonePlain(follower?.flags || {});
+
         try {
             const {
                 speciesName,
@@ -1401,6 +1558,26 @@ static async createFollower(owner, templateType, grantingTalent = null) {
             return true;
         } catch (err) {
             swseLogger.error('[FollowerCreator] Error updating follower from mutation:', err);
+
+            if (preUpdateSnapshot) {
+                try {
+                    await ActorEngine.restoreFromSnapshot(follower, preUpdateSnapshot, {
+                        source: 'FollowerCreator.updateFromMutation.rollback'
+                    });
+                    await ActorEngine.updateActor(follower, { flags: preUpdateFlags }, {
+                        source: 'FollowerCreator.updateFromMutation.rollback.flags'
+                    });
+                    swseLogger.warn('[FollowerCreator] Rolled back follower to its pre-update snapshot after a failed update.', {
+                        followerId: follower?.id ?? null
+                    });
+                } catch (restoreErr) {
+                    swseLogger.error('[FollowerCreator] Rollback to pre-update snapshot FAILED; follower may be in a partial state and requires manual review.', {
+                        followerId: follower?.id ?? null,
+                        restoreErr
+                    });
+                }
+            }
+
             return false;
         }
     }

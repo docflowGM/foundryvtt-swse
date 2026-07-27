@@ -15,6 +15,8 @@ import { ChargenRules } from '/systems/foundryvtt-swse/scripts/engine/chargen/Ch
 import { getFollowerTalentConfig } from '/systems/foundryvtt-swse/scripts/engine/crew/follower-talent-config.js';
 import { isFollowerDroidDraft } from './steps/follower-steps/follower-droid-context.js';
 import { shouldSkipFollowerStep, computeApplicableFollowerSteps, resolvePreservedFollowerStepIndex, followerStepListsAreEqual } from './steps/follower-steps/follower-step-visibility.js';
+import { buildFollowerSlotUpdate } from './adapters/follower-mutation-transaction.js';
+import { ActorEngine } from '/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js';
 
 import { FollowerOriginStep } from './steps/follower-steps/follower-origin-step.js';
 import { FollowerSpeciesStep } from './steps/follower-steps/follower-species-step.js';
@@ -596,14 +598,15 @@ export class FollowerShell extends ProgressionShell {
   async _updateFollowerSlot(slotId, followerActorId) {
     try {
       const slots = this.ownerActor.getFlag('foundryvtt-swse', 'followerSlots') || [];
-      const slot = slots.find(s => s.id === slotId);
+      if (!slots.some(s => s?.id === slotId)) return;
 
-      if (slot) {
-        slot.createdActorId = followerActorId;
-        slot.updatedAt = new Date().toISOString();
-        await this.ownerActor.setFlag('foundryvtt-swse', 'followerSlots', slots);
-        swseLogger.log('[FollowerShell] Slot updated with follower actor ID:', followerActorId);
-      }
+      const nextSlots = buildFollowerSlotUpdate(slots, slotId, followerActorId);
+
+      // ADDENDUM — governed via ActorEngine instead of a direct setFlag().
+      await ActorEngine.updateActor(this.ownerActor, {
+        'flags.foundryvtt-swse.followerSlots': nextSlots
+      }, { source: 'FollowerShell.updateFollowerSlot' });
+      swseLogger.log('[FollowerShell] Slot updated with follower actor ID:', followerActorId);
     } catch (err) {
       swseLogger.error('[FollowerShell] Error updating follower slot:', err);
     }
