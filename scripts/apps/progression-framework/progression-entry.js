@@ -21,7 +21,7 @@ import { ProgressionDocumentTargetPolicy } from "./policies/progression-document
 import { ActorAbilityBridge } from "/systems/foundryvtt-swse/scripts/adapters/ActorAbilityBridge.js";
 import { ShellRouter } from "/systems/foundryvtt-swse/scripts/ui/shell/ShellRouter.js";
 import { getNpcProfileState } from "/systems/foundryvtt-swse/scripts/actors/npc/npc-mode-adapter.js";
-import { resolveDroidCalculationMode, DROID_CALCULATION_MODE } from "/systems/foundryvtt-swse/scripts/actors/droid/droid-mode-adapter.js";
+import { evaluateProgressionGuard } from "/systems/foundryvtt-swse/scripts/actors/droid/droid-mode-adapter.js";
 
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 
@@ -248,10 +248,15 @@ export async function launchProgression(actor, options = {}) {
   // actor on a path toward normal derivation without ever having made an
   // explicit decision to leave statblock mode. Require conversion first via
   // scripts/domain/droids/droid-statblock-conversion-service.js instead of
-  // scattering this check through every progression step.
-  if (actor.type === 'droid' && resolveDroidCalculationMode(actor).mode === DROID_CALCULATION_MODE.STOCK_STATBLOCK) {
-    ui?.notifications?.warn?.(`${actor.name} is a published stock statblock. Convert it to a playable droid (Droid Systems tab) before starting progression.`);
-    SWSELogger.log('[Progression Entry] Blocked progression for stock-statblock droid; conversion required first.', { actor: actor.id });
+  // scattering this check through every progression step. Decision logic
+  // lives in evaluateProgressionGuard() (droid-mode-adapter.js) — PHASE 5
+  // extracted it so it stays unit-testable without progression-entry.js's
+  // own much larger Foundry-dependent import graph (confirmed too heavy
+  // even for the Phase 4 Foundry-shim harness).
+  const droidProgressionGuard = evaluateProgressionGuard(actor);
+  if (droidProgressionGuard.blocked) {
+    ui?.notifications?.warn?.(droidProgressionGuard.message);
+    SWSELogger.log('[Progression Entry] Blocked progression for stock-statblock droid; conversion required first.', { actor: actor.id, reason: droidProgressionGuard.reason });
     return;
   }
 

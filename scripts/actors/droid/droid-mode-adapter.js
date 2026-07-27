@@ -274,3 +274,36 @@ export function shouldSuppressComponentModifiers(actor, component) {
   const sources = Array.isArray(component?.sources) ? component.sources : [];
   return !sources.some(s => s?.kind === 'installedLedger');
 }
+
+/**
+ * PHASE 5 — Live Foundry VTT v13 Validation and Surgical Runtime Fixes.
+ * The single decision point for "must progression/level-up refuse to
+ * launch for this actor because it is a droid still in stock-statblock
+ * mode". Extracted from
+ * scripts/apps/progression-framework/progression-entry.js#launchProgression
+ * for the same reason getStockAttackFlatBonus()/shouldSuppressComponentModifiers()
+ * were extracted from their own Foundry-heavy call sites in Phases 3-4:
+ * progression-entry.js's own transitive imports (ShellRouter,
+ * ActorAbilityBridge, etc.) reach for Foundry surface well beyond what
+ * even the Phase 4 Foundry-shim harness provides — confirmed during Phase
+ * 4 by attempting the import directly and getting `Cannot read properties
+ * of undefined (reading 'api')` — so the guard's own decision logic had
+ * zero automated coverage of any kind before this phase. This function is
+ * pure and needs none of that surface, so it can be tested directly.
+ *
+ * Non-droid actors (ordinary characters, ordinary NPCs, vehicles) always
+ * return `blocked: false` — this guard only ever concerns droids.
+ *
+ * @param {Actor} actor
+ * @returns {{blocked: boolean, reason?: string, message?: string}}
+ */
+export function evaluateProgressionGuard(actor) {
+  if (!actor || actor.type !== 'droid') return { blocked: false };
+  const resolution = resolveDroidCalculationMode(actor);
+  if (resolution.mode !== DROID_CALCULATION_MODE.STOCK_STATBLOCK) return { blocked: false };
+  return {
+    blocked: true,
+    reason: 'stock-statblock-mode',
+    message: `${actor.name ?? 'This droid'} is a published stock statblock. Convert it to a playable droid (Droid Systems tab) before starting progression.`
+  };
+}

@@ -21,17 +21,47 @@ function deepCloneJSON(value) {
   return value === undefined ? value : JSON.parse(JSON.stringify(value));
 }
 
+/**
+ * Narrow reimplementation of Foundry's `foundry.utils.flattenObject` —
+ * plain nested objects collapse into dot-path keys; arrays and non-plain
+ * objects (class instances) stay as leaf values, matching the real
+ * behavior `scripts/utils/actor-utils.js#toFoundryDotPathPayload` relies
+ * on. Added in PHASE 5 so `applyActorUpdateAtomic` (the real function
+ * ActorEngine delegates every actor mutation to, including droid
+ * conversion/reconciliation/Garage installs) can be loaded and exercised
+ * for real through this harness.
+ */
+function flattenObject(obj, parentPath = '') {
+  const out = {};
+  for (const [key, value] of Object.entries(obj ?? {})) {
+    const path = parentPath ? `${parentPath}.${key}` : key;
+    if (value && typeof value === 'object' && !Array.isArray(value) && value.constructor === Object) {
+      Object.assign(out, flattenObject(value, path));
+    } else {
+      out[path] = value;
+    }
+  }
+  return out;
+}
+
 function buildDefaultShim() {
   return {
     foundry: {
       utils: {
         deepClone: deepCloneJSON,
-        mergeObject: (target = {}, source = {}) => ({ ...target, ...source })
+        mergeObject: (target = {}, source = {}) => ({ ...target, ...source }),
+        flattenObject
       }
     },
     game: {
       user: { isGM: false, id: 'test-gm-user', name: 'Test User' },
-      settings: { get: () => undefined }
+      settings: { get: () => undefined },
+      // A real Map, not a plain object — tests that need
+      // game.actors.get(id) to recover a world actor (the synthetic-token
+      // targeting fix in scripts/utils/actor-utils.js) call
+      // `game.actors.set(id, actor)` directly rather than through
+      // installFoundryShimGlobals()'s shallow-merge overrides parameter.
+      actors: new Map()
     },
     ui: {
       notifications: { info: () => {}, warn: () => {}, error: () => {} }

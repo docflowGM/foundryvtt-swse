@@ -7,7 +7,8 @@ import {
   buildRepairLegacyCalculationModeUpdate,
   computeStatblockDerivedOverrides,
   getStockAttackFlatBonus,
-  shouldSuppressComponentModifiers
+  shouldSuppressComponentModifiers,
+  evaluateProgressionGuard
 } from '../scripts/actors/droid/droid-mode-adapter.js';
 
 // Phase 3 — Droid Stock-Statblock Authority. A stock-imported droid has no
@@ -295,4 +296,89 @@ function stockWeapon(overrides = {}) {
   // fails toward suppression (safer default) rather than throwing.
   assert.equal(shouldSuppressComponentModifiers(explicitStockDroid(), {}), true);
   assert.equal(shouldSuppressComponentModifiers(explicitStockDroid(), null), true);
+}
+
+// ── evaluateProgressionGuard (PHASE 5) ──────────────────────────────────────
+//
+// Extracted from scripts/apps/progression-framework/progression-entry.js's
+// launchProgression() — that file's own transitive imports could not be
+// loaded even through the Phase 4 Foundry-shim harness (confirmed by
+// attempting it directly: "Cannot read properties of undefined (reading
+// 'api')"), so this decision had zero automated coverage before Phase 5.
+
+// Test 1: a stock-statblock droid is blocked with a clear, actor-named message.
+{
+  const actor = explicitStockDroid({ name: 'R2-Unit' });
+  actor.name = 'R2-Unit';
+  const result = evaluateProgressionGuard(actor);
+  assert.equal(result.blocked, true);
+  assert.equal(result.reason, 'stock-statblock-mode');
+  assert.match(result.message, /R2-Unit/);
+  assert.match(result.message, /published stock statblock/i);
+  assert.match(result.message, /Convert it to a playable droid/i);
+}
+
+// Test 2: a playable-derived droid is never blocked.
+{
+  const actor = explicitPlayableDroid({ name: 'Custom Unit' });
+  actor.name = 'Custom Unit';
+  assert.equal(evaluateProgressionGuard(actor).blocked, false);
+}
+
+// Test 3: an ordinary character actor is entirely unaffected (short-circuits
+// before any droid-specific logic runs).
+{
+  const character = { type: 'character', name: 'Jax Trooper', system: { droidCalculationMode: 'stock-statblock' } };
+  assert.equal(evaluateProgressionGuard(character).blocked, false);
+}
+
+// Test 4: an ordinary NPC actor is entirely unaffected, even one that
+// happens to carry a droid-shaped flag from a data-entry mistake.
+{
+  const npc = { type: 'npc', name: 'Some NPC', flags: { swse: { stockDroidImport: { importMode: 'statblock' } } } };
+  assert.equal(evaluateProgressionGuard(npc).blocked, false);
+}
+
+// Test 5: legacy inferred stock mode (no explicit system.droidCalculationMode,
+// only the pre-Phase-3 legacy import flag) is still blocked.
+{
+  const actor = { type: 'droid', name: 'Legacy Unit', flags: { swse: { stockDroidImport: { importMode: 'statblock' } } } };
+  const result = evaluateProgressionGuard(actor);
+  assert.equal(result.blocked, true);
+  assert.equal(result.reason, 'stock-statblock-mode');
+}
+
+// Test 6: a malformed explicit mode value fails safely — resolves to
+// playable-derived (per resolveDroidCalculationMode's own fail-safe
+// behavior) rather than throwing or blocking on garbage data.
+{
+  const actor = explicitStockDroid({ droidCalculationMode: 'not-a-real-mode' });
+  assert.doesNotThrow(() => evaluateProgressionGuard(actor));
+  assert.equal(evaluateProgressionGuard(actor).blocked, false);
+}
+
+// Test 7: warning text is clear regardless of a missing actor name.
+{
+  const actor = { type: 'droid', system: { droidCalculationMode: 'stock-statblock' } };
+  const result = evaluateProgressionGuard(actor);
+  assert.equal(result.blocked, true);
+  assert.equal(typeof result.message, 'string');
+  assert.ok(result.message.length > 0);
+}
+
+// Test 10: conversion allows progression afterward — flipping the mode
+// (as DroidStatblockConversionService's convertToPlayableDerived() does)
+// is enough on its own to unblock the guard, with no other state needed.
+{
+  const actor = explicitStockDroid({ name: 'Convertible Unit' });
+  actor.name = 'Convertible Unit';
+  assert.equal(evaluateProgressionGuard(actor).blocked, true);
+  actor.system.droidCalculationMode = DROID_CALCULATION_MODE.PLAYABLE_DERIVED;
+  assert.equal(evaluateProgressionGuard(actor).blocked, false);
+}
+
+{
+  // null/undefined actors never throw.
+  assert.equal(evaluateProgressionGuard(null).blocked, false);
+  assert.equal(evaluateProgressionGuard(undefined).blocked, false);
 }
