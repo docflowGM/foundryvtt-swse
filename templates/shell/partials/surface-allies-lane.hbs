@@ -97,6 +97,9 @@
       {{#if this.canOpenGarage}}
       <button type="button" data-allies-action="open-garage" data-actor-id="{{this.id}}">{{localize "SWSE.ShellUI.Garage"}}</button>
       {{/if}}
+      {{#if this.canUnassignAlly}}
+      <button type="button" class="is-danger" data-allies-action="unassign-ally" data-actor-id="{{this.id}}">Unassign</button>
+      {{/if}}
       {{#if this.canFire}}
       <button type="button" class="is-danger" data-allies-action="fire-ally" data-actor-id="{{this.id}}">{{localize "SWSE.ShellUI.Fire"}}</button>
       {{/if}}

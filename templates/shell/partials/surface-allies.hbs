@@ -41,11 +41,18 @@
 
   <main class="swse-allies-body">
     {{#if (eq vm.activeTab "companions")}}
-    {{#if vm.canGrantManualFollowerSlot}}
+    {{#if (or vm.canGrantManualFollowerSlot vm.canAssignExistingNpc)}}
     <div class="swse-allies-section-actions">
+      {{#if vm.canGrantManualFollowerSlot}}
       <button type="button" class="swse-allies-history-toggle" data-allies-action="add-follower-slot" title="{{vm.manualFollowerSlotHelp}}">
         + {{vm.manualFollowerSlotLabel}}
       </button>
+      {{/if}}
+      {{#if vm.canAssignExistingNpc}}
+      <button type="button" class="swse-allies-history-toggle" data-allies-action="assign-existing-npc" title="{{vm.assignExistingNpcHelp}}">
+        + {{vm.assignExistingNpcLabel}}
+      </button>
+      {{/if}}
     </div>
     {{/if}}
     {{#if vm.companions.hasAny}}

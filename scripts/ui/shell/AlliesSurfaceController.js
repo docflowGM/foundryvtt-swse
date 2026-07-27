@@ -131,6 +131,10 @@ export class AlliesSurfaceController {
           return this._addFollowerSlot();
         case 'remove-follower-slot':
           return this._removeFollowerSlot(target.dataset.slotId);
+        case 'assign-existing-npc':
+          return this._assignExistingNpc();
+        case 'unassign-ally':
+          return this._unassignAlly(target.dataset.actorId);
         case 'manage-ally':
         case 'open-actor':
         case 'open-contact-actor':
@@ -734,9 +738,134 @@ export class AlliesSurfaceController {
       return;
     }
 
-    const ok = await AlliesSurfaceService.assignDroppedActor(this._actor, actor);
-    if (ok) ui?.notifications?.info?.(`${actor.name} assigned to ${this._actor.name}'s Allies.`);
-    this._requestRender('allies-drop-assign');
+    if (game.user?.isGM !== true) {
+      ui?.notifications?.warn?.('Only a GM can assign an existing NPC ally by drag-and-drop.');
+      return;
+    }
+    // GM-EXISTING-NPC-ASSIGNMENT — no mutation happens until the GM
+    // confirms a choice in the dialog; dropping an Actor only opens it.
+    await this._openAssignmentChoiceDialog(actor);
+  }
+
+  /** GM-only: open the picker for assigning an existing world NPC. */
+  async _assignExistingNpc() {
+    if (game.user?.isGM !== true) return this._notify('Only a GM can assign an existing NPC.');
+    const candidates = AlliesSurfaceService.getAssignableNpcActors(this._actor);
+    if (!candidates.length) return this._notify('No eligible world NPC Actors were found to assign.');
+
+    const options = candidates.map(c => `<option value="${c.id}">${c.name} (${c.type}${c.alreadyAssignedToThisOwner ? ' — already assigned' : ''})</option>`).join('');
+    const content = `<form><div class="form-group"><label>Choose an existing NPC Actor</label><select name="targetActorId">${options}</select></div></form>`;
+
+    const targetActorId = await new Promise(resolve => {
+      new Dialog({
+        title: 'Assign Existing NPC',
+        content,
+        buttons: {
+          continue: {
+            icon: '<i class="fas fa-arrow-right"></i>',
+            label: 'Continue',
+            callback: (html) => {
+              const form = html?.[0]?.querySelector?.('form') ?? html?.querySelector?.('form');
+              resolve(new FormData(form).get('targetActorId'));
+            }
+          },
+          cancel: { label: 'Cancel', callback: () => resolve(null) }
+        },
+        default: 'continue'
+      }).render(true);
+    });
+
+    const targetActor = targetActorId ? game.actors?.get?.(String(targetActorId)) : null;
+    if (!targetActor) return;
+    await this._openAssignmentChoiceDialog(targetActor);
+  }
+
+  /**
+   * GM-only: show the Assign as Ally / Convert to Follower choice for a
+   * resolved target Actor. Read-only until a button is pressed — mirrors
+   * the same evaluation the service itself will independently re-check.
+   */
+  async _openAssignmentChoiceDialog(targetActor) {
+    if (game.user?.isGM !== true || !targetActor) return;
+    const evaluation = AlliesSurfaceService.evaluateNpcAssignment(this._actor, targetActor);
+    if (!evaluation.eligible) {
+      ui?.notifications?.warn?.(evaluation.reasons.join(' '));
+      return;
+    }
+
+    const slotOptions = evaluation.openFollowerSlots.map(s => `<option value="${s.id}">${s.label}</option>`).join('');
+    const convertNote = evaluation.canConvertToFollower
+      ? `<div class="form-group"><label>Follower slot to consume</label><select name="slotId">${slotOptions}</select></div>`
+      : `<p><em>Convert to Follower is unavailable: ${evaluation.droidBlockedReason || 'no open follower slot.'}</em></p>`;
+
+    const content = `
+      <div>
+        <p><strong>${targetActor.name}</strong> (${targetActor.type}, detected as ${evaluation.detectedKind})</p>
+        <p><strong>Assign as Ally</strong> links this NPC to the Allies app without changing its statistics or consuming a follower slot.</p>
+        <p><strong>Convert to Follower</strong> consumes a follower slot and migrates this NPC into follower progression — its level-derived stats may change.</p>
+        ${convertNote}
+      </div>`;
+
+    await new Promise(resolve => {
+      const buttons = {
+        assign: {
+          icon: '<i class="fas fa-user-friends"></i>',
+          label: 'Assign as Ally',
+          callback: async () => {
+            try {
+              await AlliesSurfaceService.assignExistingNpcAsAlly(this._actor, targetActor);
+              ui?.notifications?.info?.(`${targetActor.name} assigned as an ally.`);
+              this._requestRender('allies-assign-existing-npc');
+            } catch (err) {
+              ui?.notifications?.error?.(err?.message || 'Assignment failed.');
+            }
+            resolve();
+          }
+        },
+        cancel: { label: 'Cancel', callback: () => resolve() }
+      };
+      if (evaluation.canConvertToFollower) {
+        buttons.convert = {
+          icon: '<i class="fas fa-user-plus"></i>',
+          label: 'Convert to Follower',
+          callback: async (html) => {
+            try {
+              const form = html?.[0]?.querySelector?.('form') ?? html?.querySelector?.('form');
+              const slotId = form ? new FormData(form).get('slotId') : evaluation.openFollowerSlots[0]?.id;
+              await AlliesSurfaceService.convertExistingNpcToFollower(this._actor, targetActor, slotId);
+              ui?.notifications?.info?.(`${targetActor.name} converted to a follower.`);
+              this._requestRender('allies-convert-existing-npc');
+            } catch (err) {
+              ui?.notifications?.error?.(err?.message || 'Conversion failed.');
+            }
+            resolve();
+          }
+        };
+      }
+      new Dialog({ title: `Assign ${targetActor.name}`, content, buttons, default: 'assign' }).render(true);
+    });
+  }
+
+  /** GM-only: remove an assigned-ally relationship. Preserves the NPC entirely. */
+  async _unassignAlly(actorId) {
+    if (game.user?.isGM !== true) return this._notify('Only a GM can unassign an ally.');
+    const ally = game.actors?.get?.(actorId);
+    if (!ally) return this._notify('That ally actor could not be found.');
+    const shouldUnassign = await Dialog.confirm({
+      title: `Unassign ${ally.name}?`,
+      content: `<p>${ally.name} will be unlinked from this character's Allies. ${ally.name}'s stats, Items, and token are not affected.</p>`,
+      yes: () => true,
+      no: () => false,
+      defaultYes: false
+    });
+    if (!shouldUnassign) return;
+    try {
+      await AlliesSurfaceService.unassignExistingNpcAlly(this._actor, ally);
+      ui?.notifications?.info?.(`${ally.name} unassigned.`);
+    } catch (err) {
+      ui?.notifications?.error?.(err?.message || 'Unassign failed.');
+    }
+    this._requestRender('allies-unassign-ally');
   }
 }
 
