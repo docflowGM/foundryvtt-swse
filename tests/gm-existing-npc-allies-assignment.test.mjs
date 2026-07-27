@@ -2,21 +2,27 @@ import assert from 'node:assert/strict';
 import { registerFoundryPathLoader } from './helpers/foundry-shim/register.mjs';
 import { installFoundryShimGlobals } from './helpers/foundry-shim/globals.mjs';
 
-// GM Existing NPC Assignment — required test suite.
+// GM Existing NPC Assignment — required test suite, including the
+// atomicity correction pass (commit "fix(allies): make NPC follower
+// conversion atomic").
 //
 // Coverage tiers (see docs/audits/gm-existing-npc-allies-assignment.md):
-//   (a) DIRECT PRODUCTION-PATH — both scripts/engine/crew/ally-assignment-service.js
-//       and scripts/ui/shell/AlliesSurfaceService.js load and execute for
-//       real through the Foundry-shim harness. Every assertion below runs
-//       shipped code, not a reimplementation.
-//   (c) SOURCE-INSPECTION ONLY — a handful of named requirements
-//       (full droid-ledger seeding during conversion, follower-derivation
-//       recalculation itself, AlliesSurfaceController's dialog flow) are
-//       verified by direct code reading only, documented in the audit doc,
-//       because they transitively require SWSEDialogV2/progression-entry.js
-//       — the same "un-loadable through the shim" wall this branch has
-//       documented since Phase 4. This file does not fabricate assertions
-//       for those.
+//   (a) DIRECT PRODUCTION-PATH — scripts/engine/crew/ally-assignment-service.js,
+//       scripts/ui/shell/AlliesSurfaceService.js, and
+//       scripts/engine/progression/utils/snapshot-manager.js all load and
+//       execute for real through the Foundry-shim harness. Every assertion
+//       below runs shipped code, not a reimplementation.
+//   (c) SOURCE-INSPECTION ONLY — a handful of named requirements (the REAL
+//       follower-creator.js derivation call itself, AlliesSurfaceController's
+//       dialog flow) are verified by direct code reading only, because they
+//       transitively require SWSEDialogV2/progression-entry.js — the same
+//       "un-loadable through the shim" wall this branch has documented
+//       since Phase 4. convertToFollower()'s required derivation step
+//       accepts an injectable `applyFollowerDerivation` override
+//       specifically so the TRANSACTION's success/failure/rollback behavior
+//       around that step is still real production-path tested here, even
+//       though the default (real) derivation implementation cannot load in
+//       this harness.
 
 registerFoundryPathLoader();
 
@@ -27,13 +33,16 @@ const {
   isEligibleAssignmentTargetType,
   detectAssignmentKindFromFacts,
   detectAssignmentKind,
+  detectPriorAssignment,
   evaluateAssignmentEligibilityFacts,
   evaluateNpcAssignmentEligibility,
   buildAllyAssignmentLink,
   buildAssignmentTargetFlagPatch,
+  buildAssignmentClearPatch,
   buildOwnerAssignmentUpdate,
   buildOwnerUnassignmentUpdate,
   validateFollowerConversionSlot,
+  planExistingNpcFollowerConversion,
   buildFollowerConversionMetadata,
   evaluateDroidConversionGate
 } = await import('../scripts/engine/crew/ally-assignment-service.js');
@@ -41,16 +50,27 @@ const {
 const { fakeActorEngineCallLog, resetFakeActorEngine } = await import('./helpers/foundry-shim/fakes/actor-engine.fake.mjs');
 
 const SYSTEM_ID = 'foundryvtt-swse';
+const OK_DERIVATION = { applyFollowerDerivation: async () => true };
 
 function makeFakeActor(overrides = {}) {
   const flags = { [SYSTEM_ID]: {}, swse: {}, ...(overrides.flags || {}) };
-  return {
+  const actor = {
     id: 'actor-1', name: 'Test Actor', type: 'npc', uuid: 'Actor.actor-1', isOwner: false,
-    system: {}, img: 'icons/x.png', items: [],
+    system: {}, img: 'icons/x.png', items: [], effects: [],
     ...overrides,
     flags,
-    getFlag(scope, key) { return this.flags?.[scope]?.[key]; }
+    getFlag(scope, key) { return this.flags?.[scope]?.[key]; },
+    // Required by SnapshotManager.createSnapshot/restoreSnapshot (used by
+    // convertToFollower's real target-snapshot rollback path).
+    toObject(_source) {
+      return JSON.parse(JSON.stringify({
+        system: actor.system, name: actor.name, img: actor.img,
+        prototypeToken: actor.prototypeToken, items: actor.items,
+        effects: actor.effects, flags: actor.flags
+      }));
+    }
   };
+  return actor;
 }
 
 function asGM() {
@@ -59,6 +79,10 @@ function asGM() {
 
 function asPlayer() {
   installFoundryShimGlobals({ game: { user: { isGM: false, id: 'player-1', name: 'Player' }, actors: new Map(), users: [] } });
+}
+
+function slotsOf(owner) {
+  return owner.flags[SYSTEM_ID].followerSlots;
 }
 
 // ---------------------------------------------------------------------
@@ -156,7 +180,7 @@ function asPlayer() {
   const npc = makeFakeActor({ id: 'npc-1', type: 'npc', flags: { [SYSTEM_ID]: { assignedAllyOwnerId: 'owner-1', assignedAllyMode: 'ally' } } });
   const evaluation = evaluateNpcAssignmentEligibility(owner, npc, 'ally');
   assert.equal(evaluation.eligible, false);
-  assert.ok(evaluation.reasons.some(r => r.includes('already assigned')));
+  assert.ok(evaluation.reasons.some(r => r.includes('already assigned to this owner')));
 }
 
 // 10. Assigning the same Actor twice does not duplicate the owner-side
@@ -171,14 +195,17 @@ function asPlayer() {
   assert.equal(second['system.ownedActors'].length, 1, 'must not duplicate the same Actor id in ownedActors');
 }
 
-// 11. An Actor already assigned to a DIFFERENT owner may still be assigned
-// to this owner (the eligibility check only compares against THIS owner's id).
+// 11. CORRECTED — exclusive-owner policy: an Actor already assigned to a
+// DIFFERENT owner is now BLOCKED, not silently allowed. The reciprocal
+// target schema stores only one assignedAllyOwnerId, so allowing a second
+// owner to claim it would strand the first owner's relationship record.
 {
   asGM();
   const owner = makeFakeActor({ id: 'owner-2', type: 'character' });
   const npc = makeFakeActor({ id: 'npc-1', type: 'npc', flags: { [SYSTEM_ID]: { assignedAllyOwnerId: 'owner-1', assignedAllyMode: 'ally' } } });
   const evaluation = evaluateNpcAssignmentEligibility(owner, npc, 'ally');
-  assert.equal(evaluation.eligible, true);
+  assert.equal(evaluation.eligible, false);
+  assert.ok(evaluation.reasons.some(r => r.includes('already assigned to a different owner')));
 }
 
 // ---------------------------------------------------------------------
@@ -322,7 +349,13 @@ function asPlayer() {
 }
 
 // ---------------------------------------------------------------------
-// 24-36: Convert to Follower (slot-consuming migration)
+// 24-36: Convert to Follower (slot-consuming migration) — now genuinely
+// atomic: every "success" case below supplies a stub
+// applyFollowerDerivation that returns true, since the REAL derivation
+// pipeline (follower-creator.js) cannot load in this Node harness. This is
+// a deliberate, documented dependency-injection seam (see the file header),
+// not a workaround — the transaction's real commit/rollback sequencing
+// around that step is exercised for real either way.
 // ---------------------------------------------------------------------
 
 // 24. Conversion requires a real slot — a missing slot is rejected.
@@ -354,8 +387,8 @@ function asPlayer() {
   const slotB = { id: 'slot-b', dependentKind: 'follower', createdActorId: null };
   const owner = makeFakeActor({ id: 'owner-1', type: 'character', flags: { [SYSTEM_ID]: { followerSlots: [slotA, slotB] } } });
   const npc = makeFakeActor({ id: 'npc-1', type: 'npc' });
-  await AllyAssignmentService.convertToFollower(owner, npc, 'slot-b', { source: 'test' });
-  const slots = owner.flags[SYSTEM_ID].followerSlots;
+  await AllyAssignmentService.convertToFollower(owner, npc, 'slot-b', { source: 'test', ...OK_DERIVATION });
+  const slots = slotsOf(owner);
   assert.equal(slots.find(s => s.id === 'slot-b').createdActorId, 'npc-1');
   assert.equal(slots.find(s => s.id === 'slot-a').createdActorId, null, 'the non-selected slot must be untouched');
 }
@@ -368,11 +401,9 @@ function asPlayer() {
   assert.equal(JSON.stringify(slot), before);
 }
 
-// 29. Original owner state is fully recoverable if conversion fails after
-// the owner step committed (compensating rollback, since Foundry cannot
-// commit multiple documents atomically — see the audit doc's "snapshot
-// policy" section for why this is a compensating-update rollback rather
-// than a SnapshotManager-based restore).
+// 29. Original owner state is fully recoverable if conversion fails at the
+// very first (target-conversion-commit) step, before derivation or the
+// owner-side commit ever run.
 {
   resetFakeActorEngine();
   asGM();
@@ -380,19 +411,21 @@ function asPlayer() {
   const owner = makeFakeActor({ id: 'owner-1', type: 'character', flags: { [SYSTEM_ID]: { followerSlots: [slot] } } });
   const npc = makeFakeActor({ id: 'npc-1', type: 'npc' });
   Object.freeze(npc.system); // forces the target-conversion-commit step's write to throw
-  await assert.rejects(() => AllyAssignmentService.convertToFollower(owner, npc, 'slot-1', { source: 'test' }));
-  assert.equal(owner.flags[SYSTEM_ID].followerSlots[0].createdActorId, null, 'slot must be restored to unfilled');
+  await assert.rejects(() => AllyAssignmentService.convertToFollower(owner, npc, 'slot-1', { source: 'test', ...OK_DERIVATION }));
+  assert.equal(slotsOf(owner)[0].createdActorId, null, 'slot must be restored to unfilled');
 }
 
-// 30. Conversion writes the standard follower metadata fields.
+// 30. Conversion writes the standard follower metadata fields, including
+// canonical followerChoices from the conversion plan.
 {
   resetFakeActorEngine();
   asGM();
   const owner = makeFakeActor({ id: 'owner-1', type: 'character', flags: { [SYSTEM_ID]: { followerSlots: [{ id: 's1', dependentKind: 'follower', createdActorId: null }] } } });
   const npc = makeFakeActor({ id: 'npc-1', type: 'npc' });
-  const converted = await AllyAssignmentService.convertToFollower(owner, npc, 's1', { source: 'test' });
+  const converted = await AllyAssignmentService.convertToFollower(owner, npc, 's1', { source: 'test', ...OK_DERIVATION });
   assert.equal(converted.system.isFollower, true);
   assert.equal(converted.system.progression.isFollower, true);
+  assert.ok(converted.system.progression.followerChoices, 'canonical followerChoices must be present, not omitted');
   assert.equal(converted.flags.swse.follower.isFollower, true);
   assert.equal(converted.flags.swse.follower.convertedFromExistingNpc, true);
 }
@@ -403,8 +436,8 @@ function asPlayer() {
   asGM();
   const owner = makeFakeActor({ id: 'owner-1', type: 'character', flags: { [SYSTEM_ID]: { followerSlots: [{ id: 's1', dependentKind: 'follower', createdActorId: null }] } } });
   const npc = makeFakeActor({ id: 'npc-1', type: 'npc' });
-  await AllyAssignmentService.convertToFollower(owner, npc, 's1', { source: 'test' });
-  assert.equal(owner.flags[SYSTEM_ID].followerSlots[0].createdActorId, 'npc-1');
+  await AllyAssignmentService.convertToFollower(owner, npc, 's1', { source: 'test', ...OK_DERIVATION });
+  assert.equal(slotsOf(owner)[0].createdActorId, 'npc-1');
 }
 
 // 32. Owner relationship projections (followers, followerSlots, ownedActors)
@@ -414,7 +447,7 @@ function asPlayer() {
   asGM();
   const owner = makeFakeActor({ id: 'owner-1', type: 'character', flags: { [SYSTEM_ID]: { followerSlots: [{ id: 's1', dependentKind: 'follower', createdActorId: null }] } } });
   const npc = makeFakeActor({ id: 'npc-1', type: 'npc' });
-  await AllyAssignmentService.convertToFollower(owner, npc, 's1', { source: 'test' });
+  await AllyAssignmentService.convertToFollower(owner, npc, 's1', { source: 'test', ...OK_DERIVATION });
   const ownerCommits = fakeActorEngineCallLog.filter(c => c.actorId === 'owner-1');
   assert.equal(ownerCommits.length, 1, 'the owner side must commit exactly once for this conversion');
   const keys = Object.keys(ownerCommits[0].data);
@@ -423,47 +456,45 @@ function asPlayer() {
   assert.ok(keys.includes('system.ownedActors'));
 }
 
-// 33. Conversion does not throw even when the best-effort derived-stat
-// sync step cannot run (follower-creator.js is not loadable in this Node
-// harness) — the conversion itself must still have committed successfully.
+// 33. CORRECTED — conversion is now genuinely mechanical: if follower
+// derivation is unavailable/fails, the conversion must NOT be reported as
+// successful, and none of its metadata may remain applied.
 {
   resetFakeActorEngine();
   asGM();
   const owner = makeFakeActor({ id: 'owner-1', type: 'character', flags: { [SYSTEM_ID]: { followerSlots: [{ id: 's1', dependentKind: 'follower', createdActorId: null }] } } });
   const npc = makeFakeActor({ id: 'npc-1', type: 'npc' });
-  const converted = await AllyAssignmentService.convertToFollower(owner, npc, 's1', { source: 'test' });
-  assert.equal(converted.id, 'npc-1');
-  assert.equal(converted.system.isFollower, true, 'conversion must have committed even though the best-effort level-sync step could not run here');
+  await assert.rejects(
+    () => AllyAssignmentService.convertToFollower(owner, npc, 's1', { source: 'test', applyFollowerDerivation: async () => false }),
+    /derivation could not be applied/
+  );
+  assert.equal(npc.system.isFollower, undefined, 'no partial/metadata-only conversion may remain applied');
+  assert.equal(slotsOf(owner)[0].createdActorId, null, 'slot must remain open');
 }
 
 // 34. Converting the same NPC into the same slot twice does not duplicate
-// the owner's followers link list.
+// the owner's followers link list — the second attempt is rejected by slot
+// validation (already occupied).
 {
   resetFakeActorEngine();
   asGM();
   const owner = makeFakeActor({ id: 'owner-1', type: 'character', flags: { [SYSTEM_ID]: { followerSlots: [{ id: 's1', dependentKind: 'follower', createdActorId: null }] } } });
   const npc = makeFakeActor({ id: 'npc-1', type: 'npc' });
-  await AllyAssignmentService.convertToFollower(owner, npc, 's1', { source: 'test' });
-  // slot is now occupied; a second attempt at the SAME slot must be rejected
-  // by validateFollowerConversionSlot rather than silently duplicating.
-  await assert.rejects(() => AllyAssignmentService.convertToFollower(owner, npc, 's1', { source: 'test' }), /already occupied/);
+  await AllyAssignmentService.convertToFollower(owner, npc, 's1', { source: 'test', ...OK_DERIVATION });
+  await assert.rejects(() => AllyAssignmentService.convertToFollower(owner, npc, 's1', { source: 'test', ...OK_DERIVATION }), /already occupied/);
   assert.equal(owner.flags[SYSTEM_ID].followers.length, 1);
 }
 
-// 35. Conversion failure restores both the NPC's follower flags being
-// never applied and the owner's slot/follower list.
+// 35. Conversion failure (derivation declines) restores the owner's slot
+// and follower list, and the target shows no partial follower metadata.
 {
   resetFakeActorEngine();
   asGM();
   const slot = { id: 's1', dependentKind: 'follower', createdActorId: null };
   const owner = makeFakeActor({ id: 'owner-1', type: 'character', flags: { [SYSTEM_ID]: { followerSlots: [slot] } } });
   const npc = makeFakeActor({ id: 'npc-1', type: 'npc' });
-  // Force the target-conversion-commit step's write to throw, without
-  // relying on getFlag (the fake ActorEngine.updateActor never calls it —
-  // it writes via direct property assignment).
-  Object.defineProperty(npc.system, 'isFollower', { set() { throw new Error('target-write-fails'); }, get() { return undefined; }, configurable: true });
-  await assert.rejects(() => AllyAssignmentService.convertToFollower(owner, npc, 's1', { source: 'test' }));
-  assert.equal(owner.flags[SYSTEM_ID].followerSlots[0].createdActorId, null);
+  await assert.rejects(() => AllyAssignmentService.convertToFollower(owner, npc, 's1', { source: 'test', applyFollowerDerivation: async () => { throw new Error('derivation-blew-up'); } }));
+  assert.equal(slotsOf(owner)[0].createdActorId, null);
   assert.deepEqual(owner.flags[SYSTEM_ID].followers ?? [], []);
   assert.equal(npc.system.isFollower, undefined, 'target must never show partially-applied follower metadata');
 }
@@ -475,8 +506,10 @@ function asPlayer() {
   asGM();
   const owner = makeFakeActor({ id: 'owner-1', type: 'character', flags: { [SYSTEM_ID]: { followerSlots: [{ id: 's1', dependentKind: 'follower', createdActorId: null }] } } });
   const npc = makeFakeActor({ id: 'npc-1', type: 'npc' });
-  Object.defineProperty(npc.system, 'isFollower', { set() { throw new Error('specific-failure-message'); }, get() { return undefined; }, configurable: true });
-  await assert.rejects(() => AllyAssignmentService.convertToFollower(owner, npc, 's1', { source: 'test' }), /specific-failure-message/);
+  await assert.rejects(
+    () => AllyAssignmentService.convertToFollower(owner, npc, 's1', { source: 'test', applyFollowerDerivation: async () => { throw new Error('specific-failure-message'); } }),
+    /specific-failure-message/
+  );
 }
 
 // ---------------------------------------------------------------------
@@ -499,7 +532,7 @@ function asPlayer() {
   asGM();
   const owner = makeFakeActor({ id: 'owner-1', type: 'character', flags: { [SYSTEM_ID]: { followerSlots: [{ id: 's1', dependentKind: 'follower', createdActorId: null }] } } });
   const droid = makeFakeActor({ id: 'droid-1', type: 'droid', flags: { swse: { stockDroidImport: { importMode: 'statblock' } } } });
-  await assert.rejects(() => AllyAssignmentService.convertToFollower(owner, droid, 's1', { source: 'test' }), /stock-statblock/);
+  await assert.rejects(() => AllyAssignmentService.convertToFollower(owner, droid, 's1', { source: 'test', ...OK_DERIVATION }), /stock-statblock/);
   assert.equal(fakeActorEngineCallLog.length, 0, 'a blocked stock-droid conversion must never reach ActorEngine');
 }
 
@@ -529,7 +562,7 @@ function asPlayer() {
   asGM();
   const owner = makeFakeActor({ id: 'owner-1', type: 'character', flags: { [SYSTEM_ID]: { followerSlots: [{ id: 's1', dependentKind: 'follower', createdActorId: null }] } } });
   const akkDogNamed = makeFakeActor({ id: 'beast-1', name: 'Akk Dog', type: 'npc', system: { npcProfile: { kind: 'beast' }, race: 'Akk Dog' } });
-  const converted = await AllyAssignmentService.convertToFollower(owner, akkDogNamed, 's1', { source: 'test' });
+  const converted = await AllyAssignmentService.convertToFollower(owner, akkDogNamed, 's1', { source: 'test', ...OK_DERIVATION });
   assert.equal(converted.flags.swse.follower.fixedFollowerProfileId, undefined);
   assert.equal(converted.system.race, 'Akk Dog', 'species must be preserved, not replaced by a fixed profile');
 }
@@ -541,7 +574,7 @@ function asPlayer() {
   asGM();
   const owner = makeFakeActor({ id: 'owner-1', type: 'character', flags: { [SYSTEM_ID]: { followerSlots: [{ id: 's1', dependentKind: 'follower', createdActorId: null }] } } });
   const beast = makeFakeActor({ id: 'beast-1', type: 'npc', system: { npcProfile: { kind: 'beast' } } });
-  const converted = await AllyAssignmentService.convertToFollower(owner, beast, 's1', { source: 'test' });
+  const converted = await AllyAssignmentService.convertToFollower(owner, beast, 's1', { source: 'test', ...OK_DERIVATION });
   assert.equal(converted.system.isFollower, true);
 }
 
@@ -573,6 +606,233 @@ function asPlayer() {
   const talentSlot = { id: 's1', dependentKind: 'follower', createdActorId: null, talentItemId: 'item-1', talentName: 'Undying Loyalty' };
   const result = validateFollowerConversionSlot(talentSlot);
   assert.equal(result.valid, true);
+}
+
+// =======================================================================
+// ATOMICITY CORRECTION PASS — commit "fix(allies): make NPC follower
+// conversion atomic". Cases 51-65 below correspond directly to the
+// review's 15 required tests.
+// =======================================================================
+
+// 51. Derived follower application failure leaves the slot open.
+{
+  resetFakeActorEngine();
+  asGM();
+  const owner = makeFakeActor({ id: 'owner-1', type: 'character', flags: { [SYSTEM_ID]: { followerSlots: [{ id: 's1', dependentKind: 'follower', createdActorId: null }] } } });
+  const npc = makeFakeActor({ id: 'npc-1', type: 'npc' });
+  await assert.rejects(() => AllyAssignmentService.convertToFollower(owner, npc, 's1', { source: 'test', applyFollowerDerivation: async () => false }));
+  assert.equal(slotsOf(owner)[0].createdActorId, null, 'slot must remain open after a derivation failure');
+}
+
+// 52. Derived follower application failure restores owner projections
+// (followers list back to empty, ownedActors back to empty).
+{
+  resetFakeActorEngine();
+  asGM();
+  const owner = makeFakeActor({ id: 'owner-1', type: 'character', system: { ownedActors: [] }, flags: { [SYSTEM_ID]: { followerSlots: [{ id: 's1', dependentKind: 'follower', createdActorId: null }] } } });
+  const npc = makeFakeActor({ id: 'npc-1', type: 'npc' });
+  await assert.rejects(() => AllyAssignmentService.convertToFollower(owner, npc, 's1', { source: 'test', applyFollowerDerivation: async () => false }));
+  assert.deepEqual(owner.flags[SYSTEM_ID].followers ?? [], []);
+  assert.deepEqual(owner.system.ownedActors ?? [], []);
+}
+
+// 53. Derived follower application failure restores the target (via the
+// real SnapshotManager + flag-restoration patch, not just a partial undo).
+{
+  resetFakeActorEngine();
+  asGM();
+  const owner = makeFakeActor({ id: 'owner-1', type: 'character', flags: { [SYSTEM_ID]: { followerSlots: [{ id: 's1', dependentKind: 'follower', createdActorId: null }] } } });
+  const npc = makeFakeActor({ id: 'npc-1', type: 'npc', system: { level: 3, race: 'Human' } });
+  await assert.rejects(() => AllyAssignmentService.convertToFollower(owner, npc, 's1', { source: 'test', applyFollowerDerivation: async () => false }));
+  assert.equal(npc.system.isFollower, undefined);
+  assert.equal(npc.system.progression, undefined);
+  assert.equal(npc.system.level, 3, 'unrelated pre-existing fields must survive the snapshot restore unchanged');
+  assert.equal(npc.system.race, 'Human');
+  // buildFlagRestorationPatch deletes each individual new leaf key
+  // (flags.swse.follower.-=isFollower, etc.) but — an inherent limitation
+  // of dot-path deletion — cannot remove the now-empty parent `follower`
+  // object itself when the entire branch was new. This is benign: nothing
+  // in the codebase treats an empty `{}` object as "is a follower" (every
+  // check tests `isFollower === true`), only the actual leaf values matter.
+  assert.equal(Object.keys(npc.flags.swse.follower || {}).length, 0, 'no follower flag values may remain set after restore');
+  assert.notEqual(npc.flags.swse.follower?.isFollower, true);
+}
+
+// 54. Successful conversion produces canonical follower choices (from the
+// planner, not an empty object).
+{
+  resetFakeActorEngine();
+  asGM();
+  const owner = makeFakeActor({ id: 'owner-1', type: 'character', flags: { [SYSTEM_ID]: { followerSlots: [{ id: 's1', dependentKind: 'follower', createdActorId: null }] } } });
+  const npc = makeFakeActor({ id: 'npc-1', type: 'npc' });
+  const converted = await AllyAssignmentService.convertToFollower(owner, npc, 's1', { source: 'test', choices: { templateType: 'aggressive' }, ...OK_DERIVATION });
+  assert.equal(converted.system.progression.followerTemplate, 'aggressive');
+  assert.equal(converted.flags.swse.follower.templateType, 'aggressive');
+}
+
+// 55. Successful conversion appears exactly once in Allies — ownedActors
+// contains a single entry for the target (the follower link superseding
+// any prior link), not two.
+{
+  resetFakeActorEngine();
+  asGM();
+  const owner = makeFakeActor({ id: 'owner-1', type: 'character', flags: { [SYSTEM_ID]: { followerSlots: [{ id: 's1', dependentKind: 'follower', createdActorId: null }] } } });
+  const npc = makeFakeActor({ id: 'npc-1', type: 'npc' });
+  await AllyAssignmentService.assignAsAlly(owner, npc, { source: 'test' });
+  await AllyAssignmentService.convertToFollower(owner, npc, 's1', { source: 'test', ...OK_DERIVATION });
+  const entries = owner.system.ownedActors.filter(e => e.id === 'npc-1');
+  assert.equal(entries.length, 1, 'the Actor must appear exactly once in ownedActors after conversion');
+}
+
+// 56. Assigned-ally projections are removed during conversion (the target
+// no longer appears in assignedAllies, and its assignedAlly* flags are
+// cleared).
+{
+  resetFakeActorEngine();
+  asGM();
+  const owner = makeFakeActor({ id: 'owner-1', type: 'character', flags: { [SYSTEM_ID]: { followerSlots: [{ id: 's1', dependentKind: 'follower', createdActorId: null }] } } });
+  const npc = makeFakeActor({ id: 'npc-1', type: 'npc' });
+  await AllyAssignmentService.assignAsAlly(owner, npc, { source: 'test' });
+  assert.equal(owner.flags[SYSTEM_ID].assignedAllies.length, 1);
+  const converted = await AllyAssignmentService.convertToFollower(owner, npc, 's1', { source: 'test', ...OK_DERIVATION });
+  assert.deepEqual(owner.flags[SYSTEM_ID].assignedAllies, []);
+  assert.equal(converted.flags[SYSTEM_ID].assignedAllyOwnerId, undefined);
+  assert.equal(converted.flags[SYSTEM_ID].assignedAllyKind, undefined);
+}
+
+// 56b. Same cleanup applies when the prior assignment was a beast (removed
+// from the `beasts` array, not `assignedAllies`).
+{
+  resetFakeActorEngine();
+  asGM();
+  const owner = makeFakeActor({ id: 'owner-1', type: 'character', flags: { [SYSTEM_ID]: { followerSlots: [{ id: 's1', dependentKind: 'follower', createdActorId: null }] } } });
+  const beast = makeFakeActor({ id: 'beast-1', type: 'npc', system: { npcProfile: { kind: 'beast' } } });
+  await AllyAssignmentService.assignAsAlly(owner, beast, { source: 'test' });
+  assert.equal(owner.flags[SYSTEM_ID].beasts.length, 1);
+  await AllyAssignmentService.convertToFollower(owner, beast, 's1', { source: 'test', ...OK_DERIVATION });
+  assert.deepEqual(owner.flags[SYSTEM_ID].beasts, []);
+}
+
+// 57. currentOwnedActors rollback uses the pre-mutation snapshot, not a
+// live re-read of the (already-mutated) actor state — this is the specific
+// bug fix: capture via clonePlain BEFORE the transaction runs, reuse that
+// captured reference in the rollback closure.
+{
+  resetFakeActorEngine();
+  asGM();
+  const existingOtherLink = { id: 'other-actor', name: 'Someone Else' };
+  const owner = makeFakeActor({ id: 'owner-1', type: 'character', system: { ownedActors: [existingOtherLink] }, flags: { [SYSTEM_ID]: { followerSlots: [{ id: 's1', dependentKind: 'follower', createdActorId: null }] } } });
+  const npc = makeFakeActor({ id: 'npc-1', type: 'npc' });
+  await assert.rejects(() => AllyAssignmentService.convertToFollower(owner, npc, 's1', { source: 'test', applyFollowerDerivation: async () => false }));
+  assert.deepEqual(owner.system.ownedActors, [existingOtherLink], 'rollback must restore the EXACT pre-mutation array, including unrelated pre-existing entries, not the post-mutation (with target added) array');
+}
+
+// 58. Unassign target failure restores owner relationship state exactly.
+{
+  resetFakeActorEngine();
+  asGM();
+  const owner = makeFakeActor({ id: 'owner-1', type: 'character' });
+  const npc = makeFakeActor({ id: 'npc-1', type: 'npc' });
+  await AllyAssignmentService.assignAsAlly(owner, npc, { source: 'test' });
+  const priorAssignedAllies = JSON.stringify(owner.flags[SYSTEM_ID].assignedAllies);
+  Object.defineProperty(npc.flags[SYSTEM_ID], 'assignedAllyOwnerId', { value: 'owner-1', configurable: false });
+  await assert.rejects(() => AllyAssignmentService.unassignAlly(owner, npc, { source: 'test' }));
+  assert.equal(JSON.stringify(owner.flags[SYSTEM_ID].assignedAllies), priorAssignedAllies, 'owner projections must be restored to their exact pre-removal state');
+}
+
+// 59. Ownership-grant failure follows the documented transactional policy:
+// the whole assignment (owner + target) rolls back, not just the grant.
+{
+  resetFakeActorEngine();
+  asGM();
+  const owner = makeFakeActor({ id: 'owner-1', type: 'character' });
+  const npc = makeFakeActor({ id: 'npc-1', type: 'npc' });
+  installFoundryShimGlobals({
+    game: {
+      user: { isGM: true, id: 'gm-1', name: 'GM Tester' },
+      actors: new Map(),
+      users: { find: () => { throw new Error('ownership-grant-lookup-fails'); } }
+    }
+  });
+  await assert.rejects(() => AllyAssignmentService.assignAsAlly(owner, npc, { source: 'test', grantOwnership: true }));
+  assert.deepEqual(owner.flags[SYSTEM_ID].assignedAllies ?? [], [], 'a failed ownership grant must roll back the whole assignment, not leave it half-committed');
+  assert.equal(npc.flags[SYSTEM_ID].assignedAllyOwnerId, undefined);
+}
+
+// 60. An NPC already assigned to a different owner is blocked (exclusive
+// assignment policy), both for Assign as Ally and for Convert to Follower.
+{
+  asGM();
+  const ownerA = makeFakeActor({ id: 'owner-A', type: 'character' });
+  const ownerB = makeFakeActor({ id: 'owner-B', type: 'character', flags: { [SYSTEM_ID]: { followerSlots: [{ id: 's1', dependentKind: 'follower', createdActorId: null }] } } });
+  const npc = makeFakeActor({ id: 'npc-1', type: 'npc', flags: { [SYSTEM_ID]: { assignedAllyOwnerId: 'owner-A', assignedAllyMode: 'ally' } } });
+
+  await assert.rejects(() => AllyAssignmentService.assignAsAlly(ownerB, npc, { source: 'test' }), /already assigned to a different owner/);
+  await assert.rejects(() => AllyAssignmentService.convertToFollower(ownerB, npc, 's1', { source: 'test', ...OK_DERIVATION }), /assigned to a different owner/);
+}
+
+// 61. No conversion success is ever returned when follower derivation
+// fails — the promise rejects; there is no "partial success" return value.
+{
+  resetFakeActorEngine();
+  asGM();
+  const owner = makeFakeActor({ id: 'owner-1', type: 'character', flags: { [SYSTEM_ID]: { followerSlots: [{ id: 's1', dependentKind: 'follower', createdActorId: null }] } } });
+  const npc = makeFakeActor({ id: 'npc-1', type: 'npc' });
+  let resolvedValue = 'NOT_SET';
+  try {
+    resolvedValue = await AllyAssignmentService.convertToFollower(owner, npc, 's1', { source: 'test', applyFollowerDerivation: async () => false });
+  } catch { /* expected */ }
+  assert.equal(resolvedValue, 'NOT_SET', 'convertToFollower must never resolve on a derivation failure');
+}
+
+// 62. A converted beast does not receive an unrelated fixed beast profile
+// even when explicit conversion choices are supplied without one.
+{
+  resetFakeActorEngine();
+  asGM();
+  const owner = makeFakeActor({ id: 'owner-1', type: 'character', flags: { [SYSTEM_ID]: { followerSlots: [{ id: 's1', dependentKind: 'follower', createdActorId: null }] } } });
+  const beast = makeFakeActor({ id: 'beast-1', name: 'Random Beast', type: 'npc', system: { npcProfile: { kind: 'beast' }, race: 'Gizka' } });
+  const converted = await AllyAssignmentService.convertToFollower(owner, beast, 's1', { source: 'test', choices: { templateType: 'utility' }, ...OK_DERIVATION });
+  assert.equal(converted.system.progression.followerChoices.fixedFollowerProfileId, undefined);
+  assert.equal(converted.system.race, 'Gizka');
+}
+
+// 63. A converted playable-derived droid retains its canonical droid state
+// (droidSystems passed through read-only, calculation mode untouched).
+{
+  resetFakeActorEngine();
+  asGM();
+  const owner = makeFakeActor({ id: 'owner-1', type: 'character', flags: { [SYSTEM_ID]: { followerSlots: [{ id: 's1', dependentKind: 'follower', createdActorId: null }] } } });
+  const droid = makeFakeActor({ id: 'droid-1', type: 'droid', system: { droidSystems: { locomotion: { id: 'walking' } }, droidSize: 'small' } });
+  const converted = await AllyAssignmentService.convertToFollower(owner, droid, 's1', { source: 'test', ...OK_DERIVATION });
+  assert.deepEqual(converted.system.progression.followerChoices.droidConfig.droidSystems, { locomotion: { id: 'walking' } });
+  assert.equal(converted.system.droidCalculationMode, undefined, 'conversion must never seed/alter the droid calculation mode itself');
+}
+
+// 64. A stock droid remains blocked from conversion (re-confirmed after the
+// atomicity rewrite — the gate runs during preflight, before any snapshot
+// or transaction step).
+{
+  resetFakeActorEngine();
+  asGM();
+  const owner = makeFakeActor({ id: 'owner-1', type: 'character', flags: { [SYSTEM_ID]: { followerSlots: [{ id: 's1', dependentKind: 'follower', createdActorId: null }] } } });
+  const stockDroid = makeFakeActor({ id: 'droid-2', type: 'droid', flags: { swse: { stockDroidImport: { importMode: 'statblock' } } } });
+  await assert.rejects(() => AllyAssignmentService.convertToFollower(owner, stockDroid, 's1', { source: 'test', ...OK_DERIVATION }), /stock-statblock/);
+}
+
+// 65. Retry after a failed conversion does not duplicate follower records
+// or leave the slot double-claimed — a fresh attempt with working
+// derivation succeeds cleanly to exactly one follower entry.
+{
+  resetFakeActorEngine();
+  asGM();
+  const owner = makeFakeActor({ id: 'owner-1', type: 'character', flags: { [SYSTEM_ID]: { followerSlots: [{ id: 's1', dependentKind: 'follower', createdActorId: null }] } } });
+  const npc = makeFakeActor({ id: 'npc-1', type: 'npc' });
+  await assert.rejects(() => AllyAssignmentService.convertToFollower(owner, npc, 's1', { source: 'test', applyFollowerDerivation: async () => false }));
+  assert.equal(slotsOf(owner)[0].createdActorId, null);
+  await AllyAssignmentService.convertToFollower(owner, npc, 's1', { source: 'test', ...OK_DERIVATION });
+  assert.equal(owner.flags[SYSTEM_ID].followers.length, 1, 'retry must not duplicate the follower record');
+  assert.equal(slotsOf(owner)[0].createdActorId, 'npc-1');
 }
 
 console.log('GM existing NPC allies assignment tests passed.');

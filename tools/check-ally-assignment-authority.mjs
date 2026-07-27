@@ -42,6 +42,17 @@
  *   10. buildOwnerAssignmentUpdate must de-duplicate by Actor id (no
  *       duplicate owner relationship records for the same target).
  *
+ * ATOMICITY CORRECTION PASS additions:
+ *   11. convertToFollower's follower-derivation step must be REQUIRED, not
+ *       best-effort — its result must be checked and a failure must THROW
+ *       (aborting/rolling back the transaction), never merely logged.
+ *   12. unassignAlly must run through runFollowerMutationTransaction, not
+ *       two independent bare ActorEngine.updateActor() calls.
+ *   13. convertToFollower's owner-relationship-commit rollback must restore
+ *       a captured pre-mutation snapshot, not re-read the live Actor's
+ *       ownedActors/flags inside the rollback closure itself (guards
+ *       against reintroducing the exact stale-snapshot bug this pass fixed).
+ *
  * Report-only by default; --strict exits non-zero on any violation.
  */
 
@@ -248,12 +259,54 @@ function main() {
         detail: 'expected buildOwnerAssignmentUpdate to de-duplicate by Actor id (appendUnique) — a second assignment of the same Actor must not create a duplicate owner-side record'
       });
     }
+
+    // Check 11 (ATOMICITY): the follower-derivation step must be required,
+    // not best-effort — its result must be checked and a failure must throw.
+    // Anchored on the CALL site (`await applyFollowerDerivation(`), not the
+    // earlier `const applyFollowerDerivation = options...` assignment.
+    const derivationCallMatch = convertBody.match(/await\s+applyFollowerDerivation\s*\([\s\S]{0,200}/);
+    if (!convertMatch || !derivationCallMatch || !/throw new Error/.test(derivationCallMatch[0])) {
+      violations.push({
+        check: '11: follower derivation must be a required transaction step',
+        file: relPath,
+        detail: 'expected convertToFollower to call applyFollowerDerivation and throw when it does not return true — a derivation failure must never be silently logged while the conversion is still reported as successful'
+      });
+    }
+    if (/catch[\s\S]{0,120}Post-conversion derived-stat sync failed/.test(source)) {
+      violations.push({
+        check: '11: follower derivation must be a required transaction step',
+        file: relPath,
+        detail: 'found the old best-effort post-commit derivation pattern (caught-and-logged failure) — derivation must be a required transaction step, not a best-effort afterthought'
+      });
+    }
+
+    // Check 12 (ATOMICITY): unassignAlly must be transactional.
+    const unassignMatch = source.match(/static\s+async\s+unassignAlly[\s\S]*?\n  \}/);
+    if (!unassignMatch || !/runFollowerMutationTransaction\s*\(/.test(unassignMatch[0])) {
+      violations.push({
+        check: '12: unassignAlly must be transactional',
+        file: relPath,
+        detail: 'expected unassignAlly to run its owner-removal and target-cleanup writes through runFollowerMutationTransaction — two independent bare ActorEngine.updateActor() calls can leave the owner and target relationship state inconsistent if the second call fails'
+      });
+    }
+
+    // Check 13 (ATOMICITY): convertToFollower's owner-side rollback must
+    // restore a captured pre-mutation snapshot, not re-read the live Actor
+    // inside the rollback closure (the exact bug this pass fixed).
+    const ownerRollbackMatch = convertBody.match(/name:\s*'owner-relationship-commit'[\s\S]*?rollback:\s*async[\s\S]*?\}\s*\}/);
+    if (!ownerRollbackMatch || /ownerActor\.system\?\.\s*ownedActors/.test(ownerRollbackMatch[0])) {
+      violations.push({
+        check: '13: owner rollback must use a captured pre-mutation snapshot',
+        file: relPath,
+        detail: "expected the owner-relationship-commit rollback closure to write a pre-captured snapshot variable, not re-read ownerActor.system?.ownedActors live — reading the actor's current state inside a rollback closure returns the already-mutated value, not the original"
+      });
+    }
   }
 
   console.log('='.repeat(72));
   console.log('  GM EXISTING NPC ASSIGNMENT AUTHORITY GUARD');
   console.log('='.repeat(72));
-  console.log(`\nScanned ${scanned.length} file(s) against 10 checks.\n`);
+  console.log(`\nScanned ${scanned.length} file(s) against 13 checks.\n`);
 
   if (violations.length === 0) {
     console.log('No violations found — existing-NPC assignment remains governed, GM-only, and correctly separates relationship-only assignment from mechanical conversion.');
