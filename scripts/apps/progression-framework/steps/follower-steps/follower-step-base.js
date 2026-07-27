@@ -9,6 +9,7 @@
 import { ProgressionStepPlugin } from '../step-plugin-base.js';
 import { swseLogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
 import { getFollowerTalentConfig } from '/systems/foundryvtt-swse/scripts/engine/crew/follower-talent-config.js';
+import { isFollowerDroidDraft } from './follower-droid-context.js';
 
 const TEMPLATE_ABILITY_OPTIONS = Object.freeze({
   aggressive: ['str', 'con'],
@@ -190,8 +191,7 @@ export class FollowerStepBase extends ProgressionStepPlugin {
   }
 
   isDroidFollowerChoice(choices) {
-    return choices?.followerKind === 'droid'
-      || choices?.droidConfig?.isDroid === true
+    return isFollowerDroidDraft(choices)
       || this.isDroidSpeciesRecord({ name: choices?.speciesName, system: choices?.speciesSystem || {} });
   }
 

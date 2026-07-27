@@ -10,6 +10,8 @@
 
 import { DroidBuilderStep } from '../droid-builder-step.js';
 import { swseLogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
+import { isFollowerDroidDraft } from './follower-droid-context.js';
+import { classifyFollowerDroidChassisSelection, FOLLOWER_DROID_CHASSIS_SESSION_STATE } from './follower-droid-chassis-compat.js';
 
 const FOLLOWER_DROID_ALLOWED_CATEGORIES = Object.freeze([
   'appendage',
@@ -48,6 +50,20 @@ export class FollowerDroidBuilderStep extends DroidBuilderStep {
       return;
     }
 
+    // PHASE 6 — Consolidate Follower Droid Chargen into One Chassis Step:
+    // an in-progress session created before this phase may still carry a
+    // droidConfig written by the now-removed species-step droid branch —
+    // a hardcoded {baseSystems, optionalSystems} shape disconnected from
+    // the real droid-part catalog, never a genuine chassis selection. Log
+    // it explicitly (surfaced, not silently discarded) so it's visible in
+    // diagnostics; _seedFollowerDroidSession below already re-seeds a real
+    // chassis build whenever no canonical droidSystems object is present,
+    // which self-heals this case on this step's next entry.
+    const legacyClassification = classifyFollowerDroidChassisSelection(draft.droidConfig);
+    if (legacyClassification.state === FOLLOWER_DROID_CHASSIS_SESSION_STATE.LEGACY_NEEDS_RECONFIGURATION) {
+      swseLogger.warn('[FollowerDroidBuilderStep] Legacy pre-consolidation chassis selection found; reconfiguring from the canonical catalog.', legacyClassification.reasons);
+    }
+
     await this._ensureFollowerStartingCredits(shell);
     this._seedFollowerDroidSession(shell);
     await super.onStepEnter(shell);
@@ -59,9 +75,7 @@ export class FollowerDroidBuilderStep extends DroidBuilderStep {
   }
 
   _isDroidFollowerDraft(draft = {}) {
-    return draft.followerKind === 'droid'
-      || draft.droidConfig?.isDroid === true
-      || String(draft.speciesName || '').toLowerCase() === 'droid';
+    return isFollowerDroidDraft(draft);
   }
 
   _getFollowerConstraint() {

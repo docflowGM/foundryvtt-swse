@@ -28,6 +28,7 @@ import {
   getDroidSizeCostFactor
 } from '../../../engine/progression/droids/droid-trait-rules.js';
 import { DroidBuilderViewModelAdapter } from './droid-builder-view-model.js';
+import { isFollowerDroidChassisApplicable, getApplicableFollowerDroidChassisOptions } from './follower-droid-chassis-applicability.js';
 
 export class DroidBuilderStep extends ProgressionStepPlugin {
   constructor(descriptor) {
@@ -597,52 +598,20 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
   }
 
 
+  // PHASE 6 — Consolidate Follower Droid Chargen into One Chassis Step:
+  // these two methods are now thin delegates to
+  // follower-droid-chassis-applicability.js's pure functions, extracted so
+  // the actual filtering decision is unit-testable without instantiating
+  // this class. Behavior is unchanged for every existing caller (PC droid
+  // chargen passes no constraint object; follower droid chargen passes the
+  // follower category/subcategory constraint from
+  // FollowerDroidBuilderStep#_getFollowerConstraint).
   _applySpeciesDroidConstraintsToPresentation(available, enhanceSystemsWithSuggestions = systems => systems) {
-    const constraints = this._droidState?.speciesDroidBuilder || null;
-    if (!constraints) {
-      return {
-        ...available,
-        accessories: Object.fromEntries(Object.entries(available.accessories || {}).map(([key, systems]) => [key, enhanceSystemsWithSuggestions(systems)])),
-      };
-    }
-
-    const allowedCategories = new Set(constraints.allowedCategories || []);
-    const allowedAccessorySubcategories = new Set(constraints.allowedAccessorySubcategories || []);
-    const allowedAccessoryIds = new Set(constraints.allowedAccessoryIds || []);
-
-    const shouldShowCategory = (category) => allowedCategories.size === 0 || allowedCategories.has(category);
-    const constrainedAccessories = {};
-    for (const [subcategory, systems] of Object.entries(available.accessories || {})) {
-      if (allowedAccessorySubcategories.size && !allowedAccessorySubcategories.has(subcategory)) continue;
-      const filtered = (systems || []).filter(system => allowedAccessoryIds.size === 0 || allowedAccessoryIds.has(system.id));
-      if (filtered.length) constrainedAccessories[subcategory] = enhanceSystemsWithSuggestions(filtered);
-    }
-
-    return {
-      locomotion: shouldShowCategory('locomotion') ? available.locomotion : [],
-      processors: shouldShowCategory('processor') ? available.processors : [],
-      appendages: shouldShowCategory('appendage') ? available.appendages : [],
-      accessories: constrainedAccessories,
-      locomotionEnhancements: shouldShowCategory('locomotionEnhancements') ? available.locomotionEnhancements : [],
-      appendageEnhancements: shouldShowCategory('appendageEnhancements') ? available.appendageEnhancements : [],
-      constraintNote: constraints.notes || null,
-    };
+    return getApplicableFollowerDroidChassisOptions(available, this._droidState?.speciesDroidBuilder || null, enhanceSystemsWithSuggestions);
   }
 
   _systemAllowedBySpeciesConstraints(category, id, subcategory = null) {
-    const constraints = this._droidState?.speciesDroidBuilder || null;
-    if (!constraints) return true;
-    const allowedCategories = new Set(constraints.allowedCategories || []);
-    if (allowedCategories.size && !allowedCategories.has(category) && !allowedCategories.has(subcategory)) {
-      return false;
-    }
-    if (category === 'accessory') {
-      const allowedAccessorySubcategories = new Set(constraints.allowedAccessorySubcategories || []);
-      const allowedAccessoryIds = new Set(constraints.allowedAccessoryIds || []);
-      if (allowedAccessorySubcategories.size && !allowedAccessorySubcategories.has(subcategory)) return false;
-      if (allowedAccessoryIds.size && !allowedAccessoryIds.has(id)) return false;
-    }
-    return true;
+    return isFollowerDroidChassisApplicable(this._droidState?.speciesDroidBuilder || null, { category, id, subcategory });
   }
 
   /**
