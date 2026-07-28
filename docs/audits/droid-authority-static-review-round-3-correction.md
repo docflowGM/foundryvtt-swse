@@ -165,11 +165,171 @@ to track `publishedDamage` the same way it already tracked
   read, out of scope for this narrow fix)
 - `tests/droid-mode-adapter.test.mjs`: 2 new cases added (P2-1)
 
+## Round 4 correction pass
+
+**Trigger:** A fourth-round static review at exact commit
+`3b4c5fe9f51022a15962371fa3349354b2b7ce62` (the head this document's Round 3
+section was written against) found 5 newly-verified defects in the Round-3
+fixes themselves, 2 explicitly merge-blocking. This section documents that
+correction pass. Same methodology note applies: static review of the
+changed-file set and its highest-risk production paths, not live-Foundry
+execution.
+
+### R4-1: Follower auto-detach was not atomic (merge-blocking)
+The `deleteItem` hook's auto-detach block (`follower-hooks.js`) ran embedded
+Item deletion and owner-registry cleanup as a single opaque step with no
+rollback for a mid-step failure, and skipped owner-registry cleanup entirely
+when the follower Actor could not be found — while still removing the slot.
+Extracted the pure data logic (which granted-Item ids to delete, what the
+owner-registry patch/rollback should look like, what the slot list should
+become) into a new zero-dependency module,
+`scripts/domain/followers/follower-talent-detach-plan.js`
+(`computeGrantedItemIdsForTalent`, `buildOwnerRegistryDetachPatch`,
+`buildSlotRemovalPatch`). The hook now builds 1-2 independently
+rollback-capable `runFollowerMutationTransaction` steps
+(`delete-granted-items`, `detach-owner-registries` — the latter built
+unconditionally, not gated on the follower Actor being found) that always
+run before `remove-slot`, so a failure at any point rolls back everything
+already committed, and the missing-follower-actor case still detaches the
+owner registries instead of leaving a dangling slot.
+Coverage: 8 production-path tests
+(`tests/follower-talent-detach-plan.test.mjs`) for the pure module; 8
+structural tests (`tests/follower-hooks-governed-cleanup.test.mjs`,
+rewritten) confirming step ordering, unconditional registry-detach
+construction, and rollback wiring in the unloadable hook file.
+
+### R4-2: Assign-as-Ally target-flag rollback dropped pre-existing flags (merge-blocking)
+`assignAsAlly()`'s `target-metadata-commit` rollback used
+`buildAssignmentClearPatch()`, which only clears the *new* assignment keys —
+it does not restore whatever the target's flags looked like before this
+call (e.g. a pre-existing `dismissedAlly: true`). A failure later in the
+same transaction (e.g. the ownership-grant step) left the target with its
+prior flags erased rather than restored. Now captures
+`previousTargetFlags` before any mutation and, on rollback, computes an
+exact restoration patch via the already-established
+`buildFlagRestorationPatch()` (the same helper `unassignAlly()` already
+used in this file) instead of a generic clear.
+Coverage: 2 new production-path tests added to
+`tests/ally-assignment-rollback-exactness.test.mjs` (now 5 total), forcing
+the pre-existing "no matching player User" ownership-grant failure as the
+trigger and asserting exact flag restoration, with and without a
+pre-existing `dismissedAlly` flag.
+
+### R4-3: Follower-slot occupancy SSOT was incomplete
+Several call sites still read the raw `slot.createdActorId` field directly
+instead of going through the P1-1 `resolveFollowerSlotActorId()`/
+`isFollowerSlotOccupied()` helpers, so a slot occupied via a non-canonical
+alias field could still be misread as empty (or vice versa) at these sites:
+`AlliesSurfaceService.js` (`slotCreatedActorId`,
+`getOpenFollowerSlotsForConversion`, `dismissCompanion`),
+`follower-creator.js` (`getFollowers`), `follower-slot-service.js`
+(`validateManualFollowerSlotRevocation`), and two patch/hotfix modules
+(`follower-orphan-transfer-hotfix.js`, `follower-repeatable-entitlement-hotfix.js`
+— read sites only; their own separate pre-existing direct-`setFlag` issues
+are out of scope for this finding). All migrated to the canonical helpers.
+Separately, `findExistingFollowerRelationship()` was missing two follower
+sources present elsewhere in the codebase's own world-graph scans:
+`targetActor.system?.npcProfile?.owner?.actorId`, and owner
+`system.ownedActors` entries with no `kind` (or `kind: 'follower'`) —
+added, using the same conservative kind-based classification
+`getFollowers()` already established (verified safe: `ASSIGNMENT_KIND`
+values are all `assigned-*`, never `'follower'`, so relationship-only
+allies are not misclassified).
+Coverage: 5 new production-path tests added to
+`tests/follower-slot-occupancy-alignment.test.mjs` (now 19 total).
+Guard: `tools/check-follower-slot-occupancy-authority.mjs` (new) — flags
+narrow single-field `createdActorId` occupancy decisions in
+follower-slot-related files outside an explicit, reviewed allowlist
+(`minion-creator.js`, `follower-mutation-transaction.js`,
+`HomeSurfaceService.js`, `AssetBaySurfaceService.js`, and the occupancy
+module itself); inject→detect→revert verified, byte-identical diff after
+revert. Also required a one-line update to the pre-existing
+`tools/check-follower-slot-authority.mjs` Check 6 (its occupied-slot
+regex only recognized the raw `slot.createdActorId` pattern; extended to
+also accept `isFollowerSlotOccupied(slot)` as satisfying the same
+requirement) — re-verified via its own inject→detect→revert pass that the
+check still catches a genuine regression.
+
+### R4-4: Stock-droid die-based combat options silently dropped their damage benefit
+The P0-4 fix correctly stopped double-counting half-level/ability/
+enhancement damage against a stock droid's published formula, but went too
+far: it also discarded every die-based situational modifier (Rapid Shot/
+Rapid Strike's extra-dice bonus, Deadeye/Burst Fire/Mighty Swing's extra
+weapon dice, and critical-only die-size stepping), so a stock droid using
+those combat options paid the attack penalty/ammunition cost with none of
+the damage benefit. Added
+`scripts/domain/droids/stock-droid-damage-formula.js` (pure;
+`parseDamageFormula`/`stepDieSides`/`buildStockDroidDamageFormula`) and
+wired it into `resolveStockDroidDamageContract()`
+(`combat-roll-math.js`): die-size-step modifiers step the formula's die
+SIZE (not its dice count), extra-weapon-dice modifiers add a die at the
+already-stepped size as a separate addend, and critical-only die-step
+bonuses are gated by the same `context.critical`/`isCritical` check
+`attacks.js`'s own call sites already use. No changes needed at the
+`damage.js`/`attacks.js` call sites — they already consume
+`flags.stockDamageFormula` transparently.
+Coverage: 8 production-path tests (`tests/stock-droid-damage-formula.test.mjs`)
+for the pure formula module; 5 new production-path tests added to
+`tests/stock-droid-damage-math.test.mjs` (now 12 total), exercising the
+real `WEAPON_DAMAGE_DIE_SIZE_STEP`/`WEAPON_DAMAGE_DIE_STEP`/
+`CRITICAL_DAMAGE_DIE_STEP` rule types through `resolveDamageBonus()`.
+
+### R4-5: Follower deletion failure was silently reported as success
+`FollowerCreator.removeFollower()`'s `delete-follower-commit` step awaited
+`deleteActor()` without checking its return value.
+`deleteActor()` (`document-api-v13.js`) returns `null` on failure (invalid
+input, or `Actor.deleteDocuments()` throwing internally, caught and
+logged) rather than throwing — so a failed deletion previously committed
+as a success, unlinking the owner from a follower Actor that still exists
+in the world. The step now checks the result and throws on a falsy/empty
+return, which triggers the pre-existing `owner-unlink-commit` step's
+rollback (already present in the same transaction array; no new
+compensation mechanism needed).
+Coverage: 3 structural tests
+(`tests/follower-deletion-failure-propagation.test.mjs` —
+`follower-creator.js` cannot load in the Node shim) verifying the result
+check, the throw, and that `owner-unlink-commit` (with its rollback)
+still runs before `delete-follower-commit` in the same step array.
+
+### Validation run this pass
+
+- `node --check` on every changed file: clean.
+- Full test suite: 69 files, 5 pre-existing failures (the same
+  `tests/*force-power*.test.mjs` files as every prior pass — unrelated
+  missing-damage-system module). Zero regressions.
+- `tools/check-progression-integrity.mjs --strict`: **44** (unchanged).
+- `tools/check-architecture-boundaries.mjs --strict`: **37** (unchanged).
+- `tools/check-droid-calculation-mode-authority.mjs --strict`: clean (a
+  doc-comment mention of `publishedDamage` in the new pure formula module
+  briefly tripped Check 3's literal-substring match — the module never
+  actually reads that flag, so the comment was reworded rather than
+  expanding the allowlist for a file with no runtime reference).
+- `tools/check-droid-customization-validation-authority.mjs --strict`: clean.
+- `tools/check-follower-slot-occupancy-authority.mjs --strict` (new): clean;
+  inject→detect→revert verified, byte-identical diff after revert.
+- `tools/check-follower-mutation-authority.mjs --strict`: clean.
+- `tools/check-follower-slot-authority.mjs --strict`: clean after the Check
+  6 acceptance-pattern extension described above; inject→detect→revert
+  verified on the updated check, byte-identical diff after revert.
+- `tools/check-ally-assignment-authority.mjs --strict`: clean.
+
+### New/changed test files this pass
+
+- `tests/follower-talent-detach-plan.test.mjs` (new, 8 tests, production-path)
+- `tests/follower-hooks-governed-cleanup.test.mjs` (rewritten, 8 checks, structural)
+- `tests/ally-assignment-rollback-exactness.test.mjs` (+2 tests, now 5, production-path)
+- `tests/follower-slot-occupancy-alignment.test.mjs` (+5 tests, now 19, production-path)
+- `tests/stock-droid-damage-formula.test.mjs` (new, 8 tests, production-path)
+- `tests/stock-droid-damage-math.test.mjs` (+5 tests, now 12; 1 existing
+  literal updated for the new canonical re-rendering spacing)
+- `tests/follower-deletion-failure-propagation.test.mjs` (new, 3 checks, structural)
+
 ## Merge readiness
 
-All 4 P0 defects are fixed and tested. This branch is closer to mergeable
-than the prior round, but is **still not unconditionally merge-ready**: P1-5,
-P1-6, P1-7, and P2-3 remain open, and no live Foundry v13 validation has been
-performed at any point in this branch's history — that remains a hard
-precondition for removing draft status, independent of static fix
+All 4 P0 defects (Round 3) and all 5 Round-4 defects (2 of them
+merge-blocking) are fixed and tested. This branch is closer to mergeable
+than either prior round, but is **still not unconditionally merge-ready**:
+P1-5, P1-6, P1-7, and P2-3 remain open, and no live Foundry v13 validation
+has been performed at any point in this branch's history — that remains a
+hard precondition for removing draft status, independent of static fix
 completeness.
