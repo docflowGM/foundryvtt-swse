@@ -14,6 +14,7 @@ import { getHeroicLevel } from "/systems/foundryvtt-swse/scripts/actors/derived/
 import { SpeciesRegistry } from "/systems/foundryvtt-swse/scripts/engine/registries/species-registry.js";
 import { FeatRegistry } from "/systems/foundryvtt-swse/scripts/registries/feat-registry.js";
 import { getFollowerTalentConfig } from "/systems/foundryvtt-swse/scripts/engine/crew/follower-talent-config.js";
+import { isFollowerSlotOccupied, resolveFollowerSlotActorId } from "/systems/foundryvtt-swse/scripts/domain/followers/follower-slot-occupancy.js";
 
 const SYSTEM_ID = 'foundryvtt-swse';
 
@@ -125,7 +126,7 @@ export class MinionCreator {
     if (!ownerActor) return [];
     const slots = ownerActor.getFlag(SYSTEM_ID, 'followerSlots') || [];
     return slots.filter(slot => {
-      if (slot.createdActorId) return false;
+      if (isFollowerSlotOccupied(slot)) return false;
       const kind = _minionKindFromSlot(slot);
       if (!_isMinionKind(kind)) return false;
       return !kindFilter || kind === kindFilter;
@@ -140,7 +141,8 @@ export class MinionCreator {
       if (entry?.id) ids.add(entry.id);
     }
     for (const slot of ownerActor.getFlag(SYSTEM_ID, 'followerSlots') || []) {
-      if (slot?.createdActorId && this.isMinionSlot(slot)) ids.add(slot.createdActorId);
+      const occupantId = resolveFollowerSlotActorId(slot);
+      if (occupantId && this.isMinionSlot(slot)) ids.add(occupantId);
     }
     for (const entry of ownerActor.system?.ownedActors || []) {
       const kind = entry?.kind || entry?.dependentKind || entry?.npcKind || entry?.typeLabel;
@@ -177,7 +179,7 @@ export class MinionCreator {
       ? allSlots.find(slot => slot.id === options.slotId && this.isMinionSlot(slot))
       : this.getAvailableMinionSlots(ownerActor, options.kind)[0];
 
-    if (!targetSlot || targetSlot.createdActorId) {
+    if (!targetSlot || isFollowerSlotOccupied(targetSlot)) {
       ui?.notifications?.warn?.(`${ownerActor.name} has no available minion/privateer slots. Gain Attract Minion or Attract Privateer first.`);
       return null;
     }

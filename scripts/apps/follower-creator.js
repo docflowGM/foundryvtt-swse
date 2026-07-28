@@ -1608,7 +1608,7 @@ static async createFollower(owner, templateType, grantingTalent = null) {
         const speciesName = follower.system?.race || follower.system?.species?.name || follower.name;
         const persistentChoices = follower.system?.progression?.followerChoices || {};
         const followerState = await deriveFollowerStateForApply(ownerLevel, speciesName, templateType, persistentChoices);
-        await this.updateFollowerFromMutation(follower, {
+        const updated = await this.updateFollowerFromMutation(follower, {
             ownerActorId: owner.id,
             speciesName,
             templateType,
@@ -1616,6 +1616,10 @@ static async createFollower(owner, templateType, grantingTalent = null) {
             followerState,
             targetHeroicLevel: ownerLevel
         });
+        if (updated !== true) {
+            swseLogger.warn(`FollowerCreator: Follower derivation/materialization failed for "${follower.name}" — updateFollowerFromMutation did not return true.`);
+            return false;
+        }
         swseLogger.log(`FollowerCreator: Updated follower "${follower.name}" to owner heroic level ${ownerLevel}`);
         return true;
     }
@@ -1624,7 +1628,10 @@ static async createFollower(owner, templateType, grantingTalent = null) {
         const followers = this.getFollowers(owner);
         for (const follower of followers) {
             try {
-                await this.updateFollowerForOwnerLevel(owner, follower);
+                const updated = await this.updateFollowerForOwnerLevel(owner, follower);
+                if (updated !== true) {
+                    swseLogger.warn(`FollowerCreator: Follower "${follower.name}" was not updated for level-up (updateFollowerForOwnerLevel returned ${updated}).`);
+                }
             } catch (err) {
                 swseLogger.warn(`FollowerCreator: Could not update follower "${follower.name}" for level-up:`, err);
             }

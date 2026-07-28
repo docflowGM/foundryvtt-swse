@@ -13,6 +13,7 @@
  */
 
 import { PanelContextValidator } from './PanelContextValidator.js';
+import { isFollowerSlotOccupied } from '/systems/foundryvtt-swse/scripts/domain/followers/follower-slot-occupancy.js';
 import { RowTransformers } from './RowTransformers.js';
 import { captureHydrationSnapshot, emitHydrationError, emitHydrationWarning, getRecentHydrationMutation, summarizeBiographyPanel, summarizeDefensePanel } from '/systems/foundryvtt-swse/scripts/utils/hydration-diagnostics.js';
 import { validatePanel } from './PanelValidators.js';
@@ -1341,7 +1342,7 @@ export class PanelContextBuilder {
     ].map(toRelationship).filter(Boolean);
 
     const dependentSlots = this.actor.getFlag?.('foundryvtt-swse', 'followerSlots') || [];
-    const hasAvailableFollowerSlots = dependentSlots.some(slot => !slot.createdActorId);
+    const hasAvailableFollowerSlots = dependentSlots.some(slot => !isFollowerSlotOccupied(slot));
 
     const panel = {
       relationships,

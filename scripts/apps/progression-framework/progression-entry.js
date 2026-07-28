@@ -406,18 +406,21 @@ export async function launchFollowerProgression(ownerActor, options = {}) {
     const { getAvailableFollowerSlots } = await import(
       './adapters/follower-session-seeder.js'
     );
+    const { resolveFollowerSlotActorId, isFollowerSlotOccupied } = await import(
+      '/systems/foundryvtt-swse/scripts/domain/followers/follower-slot-occupancy.js'
+    );
 
     const allSlots = (ownerActor.getFlag('foundryvtt-swse', 'followerSlots') || [])
       .filter(slot => !slot.dependentKind || slot.dependentKind === 'follower');
     const availableSlots = getAvailableFollowerSlots(ownerActor);
     const existingSlot = options.existingFollowerId
-      ? allSlots.find(slot => slot.createdActorId === options.existingFollowerId)
+      ? allSlots.find(slot => resolveFollowerSlotActorId(slot) === options.existingFollowerId)
       : null;
     const targetSlot = options.slotId
       ? allSlots.find(slot => slot.id === options.slotId)
       : existingSlot || availableSlots[0];
 
-    if (!targetSlot || (!options.existingFollowerId && targetSlot.createdActorId)) {
+    if (!targetSlot || (!options.existingFollowerId && isFollowerSlotOccupied(targetSlot))) {
       ui?.notifications?.warn?.(
         `${ownerActor.name} has no available follower slots. Gain a follower-granting talent first.`
       );

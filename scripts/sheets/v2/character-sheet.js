@@ -15,6 +15,7 @@ import { LightsaberConstructionEngine } from "/systems/foundryvtt-swse/scripts/e
 import { openItemCustomization } from "/systems/foundryvtt-swse/scripts/apps/customization/item-customization-router.js";
 import { openForceAlchemyWorkbench } from "/systems/foundryvtt-swse/scripts/apps/force-alchemy/force-alchemy-workbench-app.js";
 import { launchFollowerProgression, launchMinionCreation } from "/systems/foundryvtt-swse/scripts/apps/progression-framework/progression-entry.js";
+import { isFollowerSlotOccupied, resolveFollowerSlotActorId } from "/systems/foundryvtt-swse/scripts/domain/followers/follower-slot-occupancy.js";
 import { SWSEStore } from "/systems/foundryvtt-swse/scripts/apps/store/store-main.js";
 import { initiateItemSale } from "/systems/foundryvtt-swse/scripts/apps/item-selling-system.js";
 import { MentorNotesApp } from "/systems/foundryvtt-swse/scripts/apps/mentor-notes/mentor-notes-app.js";
@@ -3860,7 +3861,7 @@ const forcePoints = [];
           const cfg = FOLLOWER_TALENT_CONFIG[slot.talentName];
           const filled = followerSlots
             .filter(s => s.talentName === slot.talentName)
-            .filter(s => !!s.createdActorId).length;
+            .filter(isFollowerSlotOccupied).length;
 
           followerTalentBadges.push({
             talentName: slot.talentName,
@@ -3875,7 +3876,8 @@ const forcePoints = [];
 
     // Enrich follower slots with actor data
     const enrichedFollowerSlots = followerSlots.map(slot => {
-      const actorData = slot.createdActorId ? ownedActorMap[slot.createdActorId] : null;
+      const slotActorId = resolveFollowerSlotActorId(slot);
+      const actorData = slotActorId ? ownedActorMap[slotActorId] : null;
       return {
         ...slot,
         actor: actorData ? { id: actorData.id, name: actorData.name, type: actorData.type } : null,
@@ -3889,8 +3891,8 @@ const forcePoints = [];
     });
 
     // Phase 3.5: Check if owner has available (unfilled) follower slots for UI visibility
-    const hasAvailableFollowerSlots = followerSlots.some(slot => !slot.createdActorId && (!slot.dependentKind || slot.dependentKind === 'follower'));
-    const hasAvailableMinionSlots = followerSlots.some(slot => !slot.createdActorId && ['minion', 'privateer'].includes(slot.dependentKind));
+    const hasAvailableFollowerSlots = followerSlots.some(slot => !isFollowerSlotOccupied(slot) && (!slot.dependentKind || slot.dependentKind === 'follower'));
+    const hasAvailableMinionSlots = followerSlots.some(slot => !isFollowerSlotOccupied(slot) && ['minion', 'privateer'].includes(slot.dependentKind));
     const hasAvailableDependentSlots = hasAvailableFollowerSlots || hasAvailableMinionSlots;
 
     // Calculate total talent count for ledger display
