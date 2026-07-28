@@ -756,30 +756,43 @@ export class AlliesSurfaceController {
    */
   async _assignExistingNpc(preselectedActorId = null) {
     if (game.user?.isGM !== true) return this._notify('Only a GM can assign an existing NPC.');
+
+    // The modal owns submission orchestration via this injected callback —
+    // it performs the actual mutation (through this controller/service, as
+    // always; the modal file itself still never touches ActorEngine or
+    // AllyAssignmentService) and reports success/failure back. On failure
+    // the modal stays open with the GM's selections intact and the error
+    // shown, instead of closing and forcing a full re-selection.
     const result = await AllyAssignmentModal.wait({
       ownerActor: this._actor,
-      preselectedActorId
+      preselectedActorId,
+      onSubmit: async (candidateResult) => {
+        const targetActor = game.actors?.get?.(candidateResult.targetActorId);
+        if (!targetActor) return { ok: false, error: 'That NPC Actor could not be found.' };
+        try {
+          if (candidateResult.assignmentMode === 'follower') {
+            await AlliesSurfaceService.convertExistingNpcToFollower(this._actor, targetActor, candidateResult.followerSlotId, {
+              grantOwnership: candidateResult.grantOwnership,
+              template: candidateResult.templateType || undefined
+            });
+          } else {
+            await AlliesSurfaceService.assignExistingNpcAsAlly(this._actor, targetActor, { grantOwnership: candidateResult.grantOwnership });
+          }
+          return { ok: true };
+        } catch (err) {
+          return { ok: false, error: err?.message || 'Assignment failed.' };
+        }
+      }
     });
     if (!result) return;
 
     const targetActor = game.actors?.get?.(result.targetActorId);
-    if (!targetActor) return this._notify('That NPC Actor could not be found.');
-
-    try {
-      if (result.assignmentMode === 'follower') {
-        await AlliesSurfaceService.convertExistingNpcToFollower(this._actor, targetActor, result.followerSlotId, {
-          grantOwnership: result.grantOwnership,
-          template: result.templateType || undefined
-        });
-        ui?.notifications?.info?.(`${targetActor.name} converted to a follower.`);
-        this._requestRender('allies-convert-existing-npc');
-      } else {
-        await AlliesSurfaceService.assignExistingNpcAsAlly(this._actor, targetActor, { grantOwnership: result.grantOwnership });
-        ui?.notifications?.info?.(`${targetActor.name} assigned as an ally.`);
-        this._requestRender('allies-assign-existing-npc');
-      }
-    } catch (err) {
-      ui?.notifications?.error?.(err?.message || 'Assignment failed.');
+    if (result.assignmentMode === 'follower') {
+      ui?.notifications?.info?.(`${targetActor?.name || 'The NPC'} converted to a follower.`);
+      this._requestRender('allies-convert-existing-npc');
+    } else {
+      ui?.notifications?.info?.(`${targetActor?.name || 'The NPC'} assigned as an ally.`);
+      this._requestRender('allies-assign-existing-npc');
     }
   }
 

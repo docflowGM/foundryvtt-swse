@@ -125,6 +125,35 @@
   font-size: 13px;
 }
 
+.swse-ally-assignment-modal__selected-summary-hidden {
+  color: var(--swse-npcmodal-warning, #e0a030);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.swse-ally-assignment-modal__link-button {
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  color: var(--swse-npcmodal-primary);
+  text-decoration: underline;
+  cursor: pointer;
+  font: inherit;
+  font-size: 11.5px;
+}
+
+.swse-ally-assignment-modal__error {
+  flex: 0 0 auto;
+  padding: 8px 10px;
+  border: 1px solid var(--swse-npcmodal-danger, #c0392b);
+  border-radius: 8px;
+  background: rgba(192, 57, 43, 0.12);
+  color: var(--swse-npcmodal-danger, #c0392b);
+  font-size: 12px;
+}
+
 /* Only the NPC list scrolls — the campaign world Actor list can be long,
    while the assignment-type/slot/ownership controls below it must stay
    visible without a second nested scrollbar. */

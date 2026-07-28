@@ -166,6 +166,52 @@ export function isTargetAlreadyFollower(targetActor) {
 }
 
 /**
+ * Canonical existing-follower detection. Checks every field family
+ * isTargetAlreadyFollower already checks (the target's OWN flags), then —
+ * because those flags can be absent or stale relative to the actual
+ * registries (a slot can still reference an Actor whose own flags were
+ * never written, or were cleared by an unrelated data edit) — scans every
+ * world Actor's `followerSlots[].createdActorId` and `flags.*.followers`
+ * list for a reference to this target. This is the check the service
+ * boundary uses so a target cannot be converted into (or occupy) a second
+ * follower slot merely because its own flags are inconsistent with the
+ * registries that actually track it.
+ *
+ * @param {Actor} targetActor
+ * @returns {{isFollower: boolean, ownerId: string|null, ownerName: string|null, source: string|null}}
+ */
+export function findExistingFollowerRelationship(targetActor) {
+  if (!targetActor) return { isFollower: false, ownerId: null, ownerName: null, source: null };
+
+  if (isTargetAlreadyFollower(targetActor)) {
+    const ownerId = targetActor.flags?.swse?.follower?.ownerId
+      ?? targetActor.getFlag?.(SYSTEM_ID, 'followerOwnerId')
+      ?? null;
+    const ownerActor = ownerId ? game.actors?.get?.(ownerId) ?? null : null;
+    return { isFollower: true, ownerId, ownerName: ownerActor?.name ?? null, source: 'target-flags' };
+  }
+
+  // game.actors is a real Foundry Collection (iterable, not an Array) in
+  // production and in this repo's Foundry-shim test fakes alike — iterate
+  // it directly rather than through asArray() (which only recognizes true
+  // Arrays and would silently treat any Collection/Map-like as empty).
+  const targetId = targetActor.id;
+  for (const owner of (game.actors ? Array.from(game.actors) : [])) {
+    if (!owner || owner.id === targetId) continue;
+    const slots = asArray(owner.getFlag?.(SYSTEM_ID, FOLLOWER_SLOTS_FLAG));
+    if (slots.some(slot => slot?.createdActorId === targetId)) {
+      return { isFollower: true, ownerId: owner.id, ownerName: owner.name, source: 'follower-slot-registry' };
+    }
+    const followers = asArray(owner.getFlag?.(SYSTEM_ID, 'followers'));
+    if (followers.some(entry => (entry?.id || entry?.actorId) === targetId)) {
+      return { isFollower: true, ownerId: owner.id, ownerName: owner.name, source: 'owner-followers-registry' };
+    }
+  }
+
+  return { isFollower: false, ownerId: null, ownerName: null, source: null };
+}
+
+/**
  * Whether a target Actor is an active player character rather than a
  * GM-authored NPC that merely uses the `character` Actor type — checked
  * three ways: assigned as any User's primary `character`; owned at OWNER
@@ -215,7 +261,7 @@ export function evaluateAssignmentEligibilityFacts({
   alreadyAssignedMode,
   ownerId,
   mode,
-  alreadyFollower,
+  existingFollowerRelationship,
   isActivePlayerCharacter
 } = {}) {
   const reasons = [];
@@ -232,7 +278,11 @@ export function evaluateAssignmentEligibilityFacts({
       reasons.push('This Actor is already assigned to a different owner. Unassign it from that owner first.');
     }
   }
-  if (alreadyFollower) reasons.push('This Actor is already a mechanical follower and cannot also be assigned as a relationship-only ally.');
+  if (existingFollowerRelationship?.isFollower) {
+    reasons.push(existingFollowerRelationship.ownerName
+      ? `This Actor is already a follower of ${existingFollowerRelationship.ownerName} and cannot also be assigned as a relationship-only ally.`
+      : 'This Actor is already a mechanical follower and cannot also be assigned as a relationship-only ally.');
+  }
   if (isActivePlayerCharacter) reasons.push('This Actor is an active player character and cannot be assigned through this tool.');
   return { eligible: reasons.length === 0, reasons };
 }
@@ -258,7 +308,7 @@ export function evaluateNpcAssignmentEligibility(ownerActor, targetActor, mode =
     alreadyAssignedOwnerId: targetActor?.getFlag?.(SYSTEM_ID, 'assignedAllyOwnerId') ?? null,
     alreadyAssignedMode: targetActor?.getFlag?.(SYSTEM_ID, 'assignedAllyMode') ?? null,
     mode,
-    alreadyFollower: isTargetAlreadyFollower(targetActor),
+    existingFollowerRelationship: findExistingFollowerRelationship(targetActor),
     isActivePlayerCharacter: isActivePlayerCharacter(targetActor, { users: game.users })
   });
   return { ...facts, detectedKind: targetActor ? detectAssignmentKind(targetActor) : null };
@@ -286,7 +336,7 @@ export function evaluateFollowerConversionEligibilityFacts({
   sameActor,
   alreadyAssignedOwnerId,
   ownerId,
-  alreadyFollower,
+  existingFollowerRelationship,
   isActivePlayerCharacter
 } = {}) {
   const reasons = [];
@@ -299,7 +349,11 @@ export function evaluateFollowerConversionEligibilityFacts({
   if (alreadyAssignedOwnerId && ownerId && alreadyAssignedOwnerId !== ownerId) {
     reasons.push('This Actor is assigned to a different owner. Unassign it from that owner before converting it.');
   }
-  if (alreadyFollower) reasons.push('This Actor is already a mechanical follower and cannot be converted again into a second follower slot.');
+  if (existingFollowerRelationship?.isFollower) {
+    reasons.push(existingFollowerRelationship.ownerName
+      ? `This Actor is already a follower of ${existingFollowerRelationship.ownerName} and cannot be converted again into a second follower slot.`
+      : 'This Actor is already a mechanical follower and cannot be converted again into a second follower slot.');
+  }
   if (isActivePlayerCharacter) reasons.push('This Actor is an active player character and cannot be converted through this tool.');
   return { eligible: reasons.length === 0, reasons };
 }
@@ -325,7 +379,7 @@ export function evaluateFollowerConversionEligibility(ownerActor, targetActor) {
     targetType: targetActor?.type ?? null,
     sameActor: Boolean(ownerActor && targetActor && ownerActor.id === targetActor.id),
     alreadyAssignedOwnerId: targetActor?.getFlag?.(SYSTEM_ID, 'assignedAllyOwnerId') ?? null,
-    alreadyFollower: isTargetAlreadyFollower(targetActor),
+    existingFollowerRelationship: findExistingFollowerRelationship(targetActor),
     isActivePlayerCharacter: isActivePlayerCharacter(targetActor, { users: game.users })
   });
   return { ...facts, detectedKind: targetActor ? detectAssignmentKind(targetActor) : null };
@@ -434,6 +488,80 @@ export function validateFollowerConversionSlot(slot) {
     return { valid: false, error: 'Only a follower slot may be used for Convert to Follower — minion/beast-only slots are not valid here.' };
   }
   return { valid: true, error: null };
+}
+
+/** Canonical follower template ids — the same set ordinary follower chargen offers. */
+export const FOLLOWER_TEMPLATE_CHOICE_IDS = Object.freeze(['aggressive', 'defensive', 'utility']);
+
+/**
+ * Canonical policy for which follower templates a slot allows. A slot
+ * record predating the `templateChoices` field (missing entirely) falls
+ * back to the full set for backward compatibility with older data. A slot
+ * record that DOES carry `templateChoices` but as an explicitly empty
+ * array is treated as a real "zero templates configured" state — the slot
+ * is not usable for conversion until its configuration is corrected. This
+ * is the single source of truth both the picker view model and the
+ * service-boundary preflight consult, so the UI and the service can never
+ * silently disagree about which templates a slot allows.
+ *
+ * @param {object|null} slot
+ * @returns {string[]}
+ */
+export function resolveAllowedFollowerTemplates(slot) {
+  if (!slot) return [];
+  if (!Array.isArray(slot.templateChoices)) return [...FOLLOWER_TEMPLATE_CHOICE_IDS];
+  return slot.templateChoices.filter(id => FOLLOWER_TEMPLATE_CHOICE_IDS.includes(id));
+}
+
+/**
+ * One canonical, read-only conversion-preflight result combining every
+ * fact Convert to Follower depends on beyond GM/existence/slot-lookup
+ * (which the caller has already resolved into a concrete `slot` record).
+ * Used by convertToFollower() itself as its actual eligibility gate, and
+ * exported so the modal's confirm-time revalidation can ask the exact same
+ * question the service will ask, without weakening the service's own
+ * independent re-check — the service always calls this again itself; that
+ * the modal calls it too is a UX convenience, not a trust boundary.
+ *
+ * @param {Actor} ownerActor
+ * @param {Actor} targetActor
+ * @param {object|null} slot the already-fetched raw slot record (or null)
+ * @param {{templateType?: string|null}} [context]
+ * @returns {{eligible: boolean, reasons: string[], slot: object|null, allowedTemplates: string[], resolvedTemplate: string|null, existingFollowerRelationship: object, priorAssignment: object, droidGate: object}}
+ */
+export function buildFollowerConversionPreflight(ownerActor, targetActor, slot, { templateType = null } = {}) {
+  const eligibility = evaluateFollowerConversionEligibility(ownerActor, targetActor);
+  const droidGate = evaluateDroidConversionGate(targetActor);
+  const slotValidation = validateFollowerConversionSlot(slot);
+  const allowedTemplates = resolveAllowedFollowerTemplates(slot);
+
+  let templateReason = null;
+  let resolvedTemplate = null;
+  if (allowedTemplates.length === 0) {
+    templateReason = 'No follower template is configured for this slot.';
+  } else if (allowedTemplates.length === 1) {
+    resolvedTemplate = (templateType && allowedTemplates.includes(templateType)) ? templateType : allowedTemplates[0];
+  } else if (templateType && allowedTemplates.includes(templateType)) {
+    resolvedTemplate = templateType;
+  } else {
+    templateReason = 'A valid follower template must be selected for this slot.';
+  }
+
+  const reasons = [...eligibility.reasons];
+  if (!slotValidation.valid) reasons.push(slotValidation.error);
+  if (droidGate.blocked) reasons.push(droidGate.reason);
+  if (templateReason) reasons.push(templateReason);
+
+  return {
+    eligible: eligibility.eligible && slotValidation.valid && !droidGate.blocked && !templateReason,
+    reasons,
+    slot,
+    allowedTemplates,
+    resolvedTemplate,
+    existingFollowerRelationship: findExistingFollowerRelationship(targetActor),
+    priorAssignment: detectPriorAssignment(targetActor),
+    droidGate
+  };
 }
 
 /**
@@ -588,6 +716,13 @@ export async function applyDefaultFollowerDerivation(ownerActor, targetActor) {
  * mutable state) so a LATER step's failure restores the exact prior
  * ownership level rather than merely leaving the grant in place.
  *
+ * If the GM checked "grant ownership" but no player User has `ownerActor`
+ * as their assigned character, this THROWS rather than silently completing
+ * without granting anything — a requested-but-unfulfilled ownership grant
+ * must never be reported as a successful assignment/conversion (the whole
+ * transaction rolls back, matching the same policy an ownership-grant
+ * FAILURE already follows).
+ *
  * @param {Actor} ownerActor
  * @param {Actor} targetActor
  * @param {string} sourceTag
@@ -598,7 +733,9 @@ function buildOwnershipGrantStep(ownerActor, targetActor, sourceTag) {
     name: 'ownership-commit',
     commit: async () => {
       const ownerUser = game.users?.find?.(u => u.character?.id === ownerActor.id);
-      if (!ownerUser) return null;
+      if (!ownerUser) {
+        throw new Error(`Ownership could not be granted: no player User has ${ownerActor.name} assigned as their character.`);
+      }
       const previousOwnership = clonePlain(targetActor.ownership || {});
       await ActorEngine.updateActor(targetActor, {
         ownership: { [ownerUser.id]: CONST.DOCUMENT_OWNERSHIP_LEVELS.OWNER }
@@ -788,20 +925,27 @@ export class AllyAssignmentService {
     // Independently re-checked HERE (not only by the UI's picker eligibility)
     // so a forged/direct call is rejected the same way: GM status, owner/
     // target type, self-conversion, cross-owner assignment, an already-
-    // mechanical-follower target, and an active player character. A target
-    // already assigned to THIS SAME owner as a relationship-only ally is
-    // deliberately NOT rejected here — conversion is the explicit path that
-    // migrates that exact relationship, cleaning up the prior assignment as
-    // part of the same atomic transaction (see step 4 below). Runs after
-    // slot validation so re-converting the same Actor into the SAME
-    // already-occupied slot still surfaces the more specific "slot occupied"
-    // diagnosis rather than the coarser "already a follower" one.
-    const eligibility = evaluateFollowerConversionEligibility(ownerActor, targetActor);
-    if (!eligibility.eligible) {
-      throw new Error(eligibility.reasons.join(' '));
+    // mechanical-follower target (checked via the canonical, registry-scanning
+    // findExistingFollowerRelationship — not just the target's own, possibly
+    // stale, flags), an active player character, and (new) that any REQUESTED
+    // follower template is actually one this slot allows. A target already
+    // assigned to THIS SAME owner as a relationship-only ally is deliberately
+    // NOT rejected here — conversion is the explicit path that migrates that
+    // exact relationship, cleaning up the prior assignment as part of the
+    // same atomic transaction (see step 4 below). Runs after slot validation
+    // so re-converting the same Actor into the SAME already-occupied slot
+    // still surfaces the more specific "slot occupied" diagnosis rather than
+    // the coarser "already a follower" one. buildFollowerConversionPreflight
+    // is the SAME function the modal calls for its own confirm-time
+    // revalidation — this call is what actually enforces it; the modal's
+    // call is a UX convenience, never a substitute for this one.
+    const requestedTemplate = options.choices?.templateType ?? options.template ?? null;
+    const preflight = buildFollowerConversionPreflight(ownerActor, targetActor, slot, { templateType: requestedTemplate });
+    if (!preflight.eligible) {
+      throw new Error(preflight.reasons.join(' '));
     }
 
-    const plan = planExistingNpcFollowerConversion(ownerActor, targetActor, slot, options.choices || { templateType: options.template });
+    const plan = planExistingNpcFollowerConversion(ownerActor, targetActor, slot, { ...(options.choices || {}), templateType: preflight.resolvedTemplate || requestedTemplate });
     const applyFollowerDerivation = options.applyFollowerDerivation || applyDefaultFollowerDerivation;
     const sourceTag = options.source ? `AllyAssignmentService.convertToFollower:${options.source}` : 'AllyAssignmentService.convertToFollower';
 

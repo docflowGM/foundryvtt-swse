@@ -59,10 +59,14 @@ const {
 } = await import('../scripts/ui/shell/AlliesSurfaceService.js');
 
 const {
+  AllyAssignmentService,
   evaluateNpcAssignmentEligibility,
   evaluateFollowerConversionEligibility,
   isTargetAlreadyFollower,
-  isActivePlayerCharacter
+  isActivePlayerCharacter,
+  findExistingFollowerRelationship,
+  resolveAllowedFollowerTemplates,
+  buildFollowerConversionPreflight
 } = await import('../scripts/engine/crew/ally-assignment-service.js');
 
 const { fakeActorEngineCallLog, resetFakeActorEngine } = await import('./helpers/foundry-shim/fakes/actor-engine.fake.mjs');
@@ -274,7 +278,7 @@ function asPlayer(actors = []) {
   const card = vm.candidates.find(c => c.id === 'droid-1');
   assert.equal(card.canConvertToFollower, false, 'Convert to Follower must stay disabled for a stock-statblock droid');
   assert.match(card.convertBlockedReason || '', /stock-statblock/);
-  assert.equal(card.eligible, true, 'Assign as Ally must remain enabled for a stock-statblock droid');
+  assert.equal(card.canAssignAsAlly, true, 'Assign as Ally must remain enabled for a stock-statblock droid');
   assert.equal(isAllyAssignmentModeAvailable(card, 'ally'), true);
   assert.equal(isAllyAssignmentModeAvailable(card, 'follower'), false);
 }
@@ -337,11 +341,18 @@ function asPlayer(actors = []) {
 
 // 19. Escape mutates nothing — Foundry's native ApplicationV2 Escape
 // handling calls close(), which is covered by test 18; confirm there is no
-// separate keydown/Escape event handler that could bypass close()'s
+// Escape-key branch anywhere in the modal that could bypass close()'s
 // settle-with-null contract (only prose documentation may mention Escape).
+// A search-input-scoped `keydown` listener DOES exist as of the eligibility/
+// ownership correction pass (IME-composition guard so a composed Enter
+// doesn't also trigger form submit) — that is unrelated to Escape/close()
+// and is asserted separately (see the IME-composition test), so this test
+// now checks the specific thing it always cared about: no Escape branch.
 {
-  assert.doesNotMatch(MODAL_JS, /addEventListener\(\s*['"]keydown['"]/, 'no custom keydown handler exists that could bypass close()');
   assert.doesNotMatch(MODAL_JS, /key\s*===\s*['"]Escape['"]/, 'no custom Escape-key branch exists that could bypass close()');
+  const keydownMatch = MODAL_JS.match(/searchInput\?\.addEventListener\(\s*['"]keydown['"][\s\S]{0,240}/);
+  assert.ok(keydownMatch, 'the only keydown listener must be scoped to the search input');
+  assert.doesNotMatch(keydownMatch[0], /\.close\s*\(|_settle\s*\(/, 'the search-input keydown listener must never call close()/settle — it only guards IME-composed Enter from also submitting');
 }
 
 // ---------------------------------------------------------------------
@@ -414,13 +425,14 @@ function asPlayer(actors = []) {
   assert.match(assignMatch[0], /AlliesSurfaceService\.assignExistingNpcAsAlly\(/);
   assert.doesNotMatch(assignMatch[0], /AllyAssignmentService\.|ActorEngine\./, 'the controller must delegate through AlliesSurfaceService, never call the lower-level service or ActorEngine directly');
 
-  const convertCallMatch = assignMatch[0].match(/AlliesSurfaceService\.convertExistingNpcToFollower\([\s\S]{0,220}?\)/);
+  const convertCallMatch = assignMatch[0].match(/AlliesSurfaceService\.convertExistingNpcToFollower\([\s\S]{0,320}?\)/);
   assert.ok(convertCallMatch, 'convertExistingNpcToFollower call site must exist');
-  assert.match(convertCallMatch[0], /grantOwnership:\s*result\.grantOwnership/, 'the conversion call must forward result.grantOwnership — it must never be silently dropped');
+  assert.match(convertCallMatch[0], /grantOwnership:\s*\w+\.grantOwnership/, 'the conversion call must forward <result>.grantOwnership — it must never be silently dropped');
+  assert.match(convertCallMatch[0], /template:\s*\w+\.templateType/, 'the conversion call must forward <result>.templateType — it must never be silently dropped');
 
   const assignCallMatch = assignMatch[0].match(/AlliesSurfaceService\.assignExistingNpcAsAlly\([\s\S]{0,160}?\)/);
   assert.ok(assignCallMatch);
-  assert.match(assignCallMatch[0], /grantOwnership:\s*result\.grantOwnership/);
+  assert.match(assignCallMatch[0], /grantOwnership:\s*\w+\.grantOwnership/);
 }
 
 // 27. Modal contains no direct ActorEngine calls (the bare word appears
@@ -471,19 +483,19 @@ function asPlayer(actors = []) {
   asGM([owner, elsewhereOwner, npc]);
   const vm = AlliesSurfaceService.buildNpcAssignmentPickerViewModel(owner);
   const card = vm.candidates.find(c => c.id === 'npc-1');
-  assert.equal(card.eligible, false);
+  assert.equal(card.canAssignAsAlly, false);
   assert.equal(card.canConvertToFollower, false);
-  assert.equal(card.selectable, false, 'a card ineligible for both modes must be marked not-selectable');
+  assert.equal(card.canSelect, false, 'a card ineligible for both modes must be marked not-selectable');
 }
 {
   // A card eligible for at least one mode remains selectable.
-  const eligibleCard = { eligible: true, canConvertToFollower: false };
-  const bothBlockedCard = { eligible: false, canConvertToFollower: false };
-  // Mirrors the modal's own selectable computation (view model field is
+  const eligibleCard = { canAssignAsAlly: true, canConvertToFollower: false };
+  const bothBlockedCard = { canAssignAsAlly: false, canConvertToFollower: false };
+  // Mirrors the modal's own canSelect computation (view model field is
   // asserted directly above; this documents the template's consumption of
-  // it via radioDisabled = selectable === false).
-  assert.equal(eligibleCard.eligible || eligibleCard.canConvertToFollower, true);
-  assert.equal(bothBlockedCard.eligible || bothBlockedCard.canConvertToFollower, false);
+  // it via radioDisabled = canSelect === false).
+  assert.equal(eligibleCard.canAssignAsAlly || eligibleCard.canConvertToFollower, true);
+  assert.equal(bothBlockedCard.canAssignAsAlly || bothBlockedCard.canConvertToFollower, false);
 }
 
 // ---------------------------------------------------------------------
@@ -586,8 +598,8 @@ function asPlayer(actors = []) {
   assert.equal(followerTemplateLabel('utility'), 'Utility Follower');
 
   assert.match(MODAL_HBS, /<input\s+type="radio"\s+name="templateType"/);
-  const convertCallMatch = CONTROLLER_JS.match(/AlliesSurfaceService\.convertExistingNpcToFollower\([\s\S]{0,220}?\)/);
-  assert.match(convertCallMatch[0], /template:\s*result\.templateType/, 'the controller must forward the chosen template to the conversion call');
+  const convertCallMatch = CONTROLLER_JS.match(/AlliesSurfaceService\.convertExistingNpcToFollower\([\s\S]{0,320}?\)/);
+  assert.match(convertCallMatch[0], /template:\s*\w+\.templateType/, 'the controller must forward the chosen template to the conversion call');
 }
 
 // ---------------------------------------------------------------------
@@ -601,7 +613,7 @@ function asPlayer(actors = []) {
 {
   const { AllyAssignmentService } = await import('../scripts/engine/crew/ally-assignment-service.js');
   resetFakeActorEngine();
-  const owner = makeFakeActor({ id: 'owner-1', type: 'character', flags: { [SYSTEM_ID]: { followerSlots: [{ id: 's1', dependentKind: 'follower', createdActorId: null }] } } });
+  const owner = makeFakeActor({ id: 'owner-1', type: 'character', flags: { [SYSTEM_ID]: { followerSlots: [{ id: 's1', dependentKind: 'follower', createdActorId: null, templateChoices: ['utility'] }] } } });
   const npc = makeFakeActor({ id: 'npc-1', type: 'npc' });
   const ownerUser = { id: 'player-1', character: { id: 'owner-1' }, isGM: false };
   asGM([owner, npc], { users: { find: (fn) => [ownerUser].find(fn) } }, { CONST: { DOCUMENT_OWNERSHIP_LEVELS: OWNERSHIP_LEVELS } });
@@ -611,7 +623,7 @@ function asPlayer(actors = []) {
 {
   const { AllyAssignmentService } = await import('../scripts/engine/crew/ally-assignment-service.js');
   resetFakeActorEngine();
-  const owner = makeFakeActor({ id: 'owner-1', type: 'character', flags: { [SYSTEM_ID]: { followerSlots: [{ id: 's1', dependentKind: 'follower', createdActorId: null }] } } });
+  const owner = makeFakeActor({ id: 'owner-1', type: 'character', flags: { [SYSTEM_ID]: { followerSlots: [{ id: 's1', dependentKind: 'follower', createdActorId: null, templateChoices: ['utility'] }] } } });
   const npc = makeFakeActor({ id: 'npc-1', type: 'npc' });
   asGM([owner, npc], { users: { find: () => { throw new Error('ownership-grant-lookup-fails'); } } });
   await assert.rejects(() => AllyAssignmentService.convertToFollower(owner, npc, 's1', { source: 'test', applyFollowerDerivation: async () => true, grantOwnership: true }));
@@ -662,7 +674,7 @@ function asPlayer(actors = []) {
   asGM([owner, npc]);
   const vm = AlliesSurfaceService.buildNpcAssignmentPickerViewModel(owner);
   const card = vm.candidates.find(c => c.id === 'npc-1');
-  assert.equal(card.eligible, false, 'already-assigned-to-this-owner blocks a second Assign as Ally');
+  assert.equal(card.canAssignAsAlly, false, 'already-assigned-to-this-owner blocks a second Assign as Ally');
   assert.equal(card.canConvertToFollower, true, 'but does NOT block Convert to Follower — the prior assignment is cleaned up as part of the conversion transaction');
 }
 
@@ -762,9 +774,9 @@ function asPlayer(actors = []) {
   asGM([owner, playerPc], { users: [playerUser] });
   const vm = AlliesSurfaceService.buildNpcAssignmentPickerViewModel(owner);
   const card = vm.candidates.find(c => c.id === 'pc-1');
-  assert.equal(card.eligible, false, 'an active player character must be ineligible for Assign as Ally');
+  assert.equal(card.canAssignAsAlly, false, 'an active player character must be ineligible for Assign as Ally');
   assert.equal(card.canConvertToFollower, false, 'and ineligible for Convert to Follower');
-  assert.match(card.blockedReason || '', /active player character/);
+  assert.match(card.assignBlockedReason || '', /active player character/);
 
   const { AllyAssignmentService } = await import('../scripts/engine/crew/ally-assignment-service.js');
   await assert.rejects(
@@ -793,6 +805,298 @@ function asPlayer(actors = []) {
     /cannot be converted/
   );
   assert.equal(fakeActorEngineCallLog.length, 0);
+}
+
+// ---------------------------------------------------------------------
+// 51-70: ELIGIBILITY/OWNERSHIP CORRECTION PASS ROUND 2 — deeper
+// eligibility (canonical existing-follower registry scan), template
+// validation at the service boundary, ownership-grant hard-fail, confirm-
+// time revalidation, IME-composition safety, and the onSubmit-callback
+// resubmission pattern.
+// ---------------------------------------------------------------------
+
+// 51. findExistingFollowerRelationship: the target's OWN flags catch the
+// common case (fast path, unchanged from isTargetAlreadyFollower).
+{
+  const follower = makeFakeActor({ id: 'f-1', type: 'npc', flags: { swse: { follower: { isFollower: true, ownerId: 'owner-9' } } } });
+  const rel = findExistingFollowerRelationship(follower);
+  assert.equal(rel.isFollower, true);
+  assert.equal(rel.source, 'target-flags');
+}
+
+// 52. findExistingFollowerRelationship: canonical registry scan catches a
+// target whose OWN flags are clean but which is still referenced by
+// ANOTHER owner's followerSlots[].createdActorId — a real-world data-
+// consistency gap the narrower isTargetAlreadyFollower flag read misses.
+{
+  const target = makeFakeActor({ id: 'npc-1', type: 'npc' });
+  assert.equal(isTargetAlreadyFollower(target), false, 'the target\'s own flags are clean');
+  const otherOwner = makeFakeActor({
+    id: 'owner-other', type: 'character',
+    flags: { [SYSTEM_ID]: { followerSlots: [{ id: 's1', dependentKind: 'follower', createdActorId: 'npc-1' }] } }
+  });
+  asGM([target, otherOwner]);
+  const rel = findExistingFollowerRelationship(target);
+  assert.equal(rel.isFollower, true, 'a slot elsewhere pointing at this Actor must be caught even though its own flags are clean');
+  assert.equal(rel.ownerId, 'owner-other');
+  assert.equal(rel.source, 'follower-slot-registry');
+}
+
+// 53. findExistingFollowerRelationship: canonical registry scan also
+// catches a target listed in another owner's flags.*.followers array
+// (createdActorId absent, but the followers projection still names it).
+{
+  const target = makeFakeActor({ id: 'npc-2', type: 'npc' });
+  const otherOwner = makeFakeActor({
+    id: 'owner-other', type: 'character',
+    flags: { [SYSTEM_ID]: { followers: [{ id: 'npc-2', name: 'Npc 2' }] } }
+  });
+  asGM([target, otherOwner]);
+  const rel = findExistingFollowerRelationship(target);
+  assert.equal(rel.isFollower, true);
+  assert.equal(rel.source, 'owner-followers-registry');
+}
+
+// 54. Both eligibility gates reject via the canonical registry-scan path,
+// not just the target's-own-flags path — production-path through the
+// picker view model AND the service boundary.
+{
+  resetFakeActorEngine();
+  const owner = makeFakeActor({ id: 'owner-1', type: 'character', flags: { [SYSTEM_ID]: { followerSlots: [{ id: 's1', dependentKind: 'follower', createdActorId: null }] } } });
+  const target = makeFakeActor({ id: 'npc-3', type: 'npc' });
+  const otherOwner = makeFakeActor({
+    id: 'owner-other', type: 'character',
+    flags: { [SYSTEM_ID]: { followerSlots: [{ id: 's-other', dependentKind: 'follower', createdActorId: 'npc-3' }] } }
+  });
+  asGM([owner, target, otherOwner]);
+  const vm = AlliesSurfaceService.buildNpcAssignmentPickerViewModel(owner);
+  const card = vm.candidates.find(c => c.id === 'npc-3');
+  assert.equal(card.canAssignAsAlly, false, 'a registry-referenced existing follower must be blocked from Assign as Ally too');
+  assert.equal(card.canConvertToFollower, false, 'a registry-referenced existing follower must be blocked from Convert to Follower');
+
+  await assert.rejects(
+    () => AllyAssignmentService.convertToFollower(owner, target, 's1', { source: 'test', applyFollowerDerivation: async () => true }),
+    /already a follower/,
+    'the service boundary must independently catch this too, not just the picker'
+  );
+  assert.equal(fakeActorEngineCallLog.length, 0, 'no mutation may occur once the canonical follower check rejects the conversion');
+}
+
+// 55. resolveAllowedFollowerTemplates: missing templateChoices field
+// (legacy record) falls back to the full canonical set.
+{
+  assert.deepEqual(resolveAllowedFollowerTemplates({ id: 's1' }), ['aggressive', 'defensive', 'utility']);
+}
+
+// 56. resolveAllowedFollowerTemplates: an explicit, non-empty
+// templateChoices array is filtered to known ids and returned as-is.
+{
+  assert.deepEqual(resolveAllowedFollowerTemplates({ templateChoices: ['aggressive'] }), ['aggressive']);
+  assert.deepEqual(resolveAllowedFollowerTemplates({ templateChoices: ['aggressive', 'bogus-id'] }), ['aggressive']);
+}
+
+// 57. resolveAllowedFollowerTemplates: an explicit EMPTY templateChoices
+// array is zero allowed templates — never silently defaulted to the full
+// set (the exact gap the round-2 review flagged).
+{
+  assert.deepEqual(resolveAllowedFollowerTemplates({ templateChoices: [] }), []);
+  assert.equal(resolveAllowedFollowerTemplates(null).length, 0);
+}
+
+// 58. buildFollowerConversionPreflight rejects an invalid (not-in-the-
+// slot's-allowed-set) template at the fact-evaluator level.
+{
+  const owner = makeFakeActor({ id: 'owner-1', type: 'character' });
+  const target = makeFakeActor({ id: 'npc-4', type: 'npc' });
+  asGM([owner, target]);
+  const slot = { id: 's1', dependentKind: 'follower', createdActorId: null, templateChoices: ['aggressive', 'defensive'] };
+  const preflight = buildFollowerConversionPreflight(owner, target, slot, { templateType: 'utility' });
+  assert.equal(preflight.eligible, false);
+  assert.match(preflight.reasons.join(' '), /valid follower template must be selected/);
+}
+
+// 59. convertToFollower independently rejects an invalid template at the
+// SERVICE boundary — a forged call cannot smuggle an out-of-range
+// template past the UI picker, which already constrains the radio group
+// to the slot's real choices.
+{
+  resetFakeActorEngine();
+  const owner = makeFakeActor({ id: 'owner-1', type: 'character', flags: { [SYSTEM_ID]: { followerSlots: [{ id: 's1', dependentKind: 'follower', createdActorId: null, templateChoices: ['aggressive', 'defensive'] }] } } });
+  const npc = makeFakeActor({ id: 'npc-5', type: 'npc' });
+  asGM([owner, npc]);
+  await assert.rejects(
+    () => AllyAssignmentService.convertToFollower(owner, npc, 's1', { source: 'test', applyFollowerDerivation: async () => true, choices: { templateType: 'utility' } }),
+    /valid follower template must be selected/
+  );
+  assert.equal(fakeActorEngineCallLog.length, 0);
+}
+
+// 60. convertToFollower rejects conversion into a slot with ZERO
+// configured templates (an explicit empty templateChoices array) rather
+// than silently proceeding with an undefined template.
+{
+  resetFakeActorEngine();
+  const owner = makeFakeActor({ id: 'owner-1', type: 'character', flags: { [SYSTEM_ID]: { followerSlots: [{ id: 's1', dependentKind: 'follower', createdActorId: null, templateChoices: [] }] } } });
+  const npc = makeFakeActor({ id: 'npc-6', type: 'npc' });
+  asGM([owner, npc]);
+  await assert.rejects(
+    () => AllyAssignmentService.convertToFollower(owner, npc, 's1', { source: 'test', applyFollowerDerivation: async () => true }),
+    /No follower template is configured/
+  );
+}
+
+// 61. The picker view model's zero-template case is reachable in
+// canConfirmAllyAssignment: even a candidate marked canConvertToFollower
+// cannot actually be confirmed once that specific slot has zero choices.
+{
+  const owner = makeFakeActor({ id: 'owner-1', type: 'character' });
+  asGM([owner]);
+  const viewModel = {
+    candidates: [{ id: 'npc-1', canAssignAsAlly: false, canConvertToFollower: true }],
+    followerSlots: [{ id: 's1', templateChoices: [] }]
+  };
+  const state = { targetActorId: 'npc-1', assignmentMode: 'follower', followerSlotId: 's1', templateType: null, submitting: false };
+  assert.equal(canConfirmAllyAssignment(viewModel, state), false, 'a zero-template slot must never be confirmable');
+}
+
+// 62. Ownership-grant hard-fail (issue 14): grantOwnership: true with NO
+// matching player User (not a thrown lookup — an empty/no-match result)
+// must reject the whole assignment, not silently succeed without granting
+// anything.
+{
+  resetFakeActorEngine();
+  const owner = makeFakeActor({ id: 'owner-1', type: 'character' });
+  const npc = makeFakeActor({ id: 'npc-7', type: 'npc' });
+  asGM([owner, npc], { users: { find: () => undefined } });
+  await assert.rejects(
+    () => AllyAssignmentService.assignAsAlly(owner, npc, { source: 'test', grantOwnership: true }),
+    /Ownership could not be granted/
+  );
+  assert.deepEqual(owner.flags[SYSTEM_ID].assignedAllies ?? [], [], 'the owner-side write must have rolled back too — this is a whole-transaction failure, not a partial one');
+}
+
+// 63. Same ownership-grant hard-fail policy applies to convertToFollower.
+{
+  resetFakeActorEngine();
+  const owner = makeFakeActor({ id: 'owner-1', type: 'character', flags: { [SYSTEM_ID]: { followerSlots: [{ id: 's1', dependentKind: 'follower', createdActorId: null, templateChoices: ['utility'] }] } } });
+  const npc = makeFakeActor({ id: 'npc-8', type: 'npc' });
+  asGM([owner, npc], { users: { find: () => undefined } });
+  await assert.rejects(
+    () => AllyAssignmentService.convertToFollower(owner, npc, 's1', { source: 'test', applyFollowerDerivation: async () => true, grantOwnership: true }),
+    /Ownership could not be granted/
+  );
+  assert.equal(npc.system?.isFollower, undefined, 'a failed ownership grant must roll back the conversion, not leave a half-converted follower');
+}
+
+// 64. An ordinary character-type NPC (GM-authored, no player User assigned
+// as their primary character, no non-GM Owner-level ownership) is NOT
+// flagged as an active player character — isActivePlayerCharacter must not
+// produce false positives for the common "character-typed NPC" case.
+{
+  const gmAuthoredNpc = makeFakeActor({ id: 'npc-9', type: 'character', ownership: { 'gm-1': 3 } });
+  const users = [{ id: 'gm-1', isGM: true, character: null }, { id: 'player-1', isGM: false, character: { id: 'someone-else' } }];
+  assert.equal(isActivePlayerCharacter(gmAuthoredNpc, { users }), false, 'GM-level ownership and no player character-assignment must not trigger the active-PC exclusion');
+}
+
+// 65. Selected-target summary stays resolvable even when the current
+// search filters it out of the visible list — this is exactly the
+// mechanism the modal's selectedHiddenBySearch/persistent-summary panel
+// depends on: findNpcAssignmentCandidate always resolves from the FULL
+// (unfiltered) view model, independent of what filterNpcAssignmentCandidates
+// currently returns.
+{
+  const owner = makeFakeActor({ id: 'owner-1', type: 'character' });
+  const npc = makeFakeActor({ id: 'npc-10', name: 'Zorlan the Hutt', type: 'npc' });
+  asGM([owner, npc]);
+  const viewModel = AlliesSurfaceService.buildNpcAssignmentPickerViewModel(owner);
+  const filtered = filterNpcAssignmentCandidates(viewModel.candidates, 'nonmatching-search-text');
+  assert.equal(filtered.length, 0, 'the search filter hides the candidate from the visible list');
+  const resolved = findNpcAssignmentCandidate(viewModel, 'npc-10');
+  assert.ok(resolved, 'the FULL view model must still resolve the selected candidate regardless of the active search filter');
+  assert.equal(resolved.name, 'Zorlan the Hutt');
+}
+
+// 66. Confirm-time revalidation mechanism: a fresh view model rebuilt
+// after external state changed (here: the slot got filled by another
+// process between when the modal's cached view model was built and when
+// the GM confirms) correctly reports the selection as no longer
+// confirmable — this is exactly what AllyAssignmentModal._onConfirm's
+// _revalidateAgainstFreshViewModel relies on before ever calling onSubmit.
+{
+  const owner = makeFakeActor({ id: 'owner-1', type: 'character', flags: { [SYSTEM_ID]: { followerSlots: [{ id: 's1', dependentKind: 'follower', createdActorId: null, templateChoices: ['utility'] }] } } });
+  const npc = makeFakeActor({ id: 'npc-11', type: 'npc' });
+  asGM([owner, npc]);
+  const staleViewModel = AlliesSurfaceService.buildNpcAssignmentPickerViewModel(owner);
+  const state = { targetActorId: 'npc-11', assignmentMode: 'follower', followerSlotId: 's1', templateType: 'utility', submitting: false };
+  assert.equal(canConfirmAllyAssignment(staleViewModel, state), true, 'confirmable against the state the modal originally cached');
+
+  // Simulate the slot filling elsewhere while the modal sat open.
+  owner.flags[SYSTEM_ID].followerSlots[0].createdActorId = 'someone-else';
+  const freshViewModel = AlliesSurfaceService.buildNpcAssignmentPickerViewModel(owner);
+  assert.equal(canConfirmAllyAssignment(freshViewModel, state), false, 'a fresh view model must reflect the slot no longer being open — this is what confirm-time revalidation catches before submitting');
+}
+
+// 67. Modal source: _onConfirm rebuilds the view model fresh (bypassing
+// the per-session cache) and re-checks canConfirmAllyAssignment BEFORE
+// ever invoking the onSubmit callback — the structural proof that confirm-
+// time revalidation is actually wired into the confirm path, not just a
+// standalone helper method that nothing calls.
+{
+  const confirmMatch = MODAL_JS.match(/async _onConfirm\(\) \{[\s\S]*?\n  \}/);
+  assert.ok(confirmMatch, '_onConfirm must exist');
+  assert.match(confirmMatch[0], /_revalidateAgainstFreshViewModel\s*\(\s*\)/, '_onConfirm must call the fresh-view-model revalidation before submitting');
+  const revalidateMatch = MODAL_JS.match(/_revalidateAgainstFreshViewModel\(\) \{[\s\S]*?\n  \}/);
+  assert.ok(revalidateMatch, '_revalidateAgainstFreshViewModel must exist');
+  assert.match(revalidateMatch[0], /AlliesSurfaceService\.buildNpcAssignmentPickerViewModel\s*\(/, 'revalidation must rebuild the view model fresh, not reuse the cached one');
+}
+
+// 68. Modal source: the onSubmit-callback resubmission pattern (issue 15)
+// — _onConfirm awaits an injected onSubmit, and on a non-ok outcome it
+// does NOT close/settle: submitting is cleared, the error is stored, and
+// the view model is refreshed, so the GM's selections remain intact for a
+// retry instead of the modal closing and forcing a full re-selection.
+{
+  assert.match(MODAL_JS, /this\._onSubmit\s*=\s*typeof onSubmit === 'function'/, 'the constructor must accept and store an onSubmit callback');
+  const confirmMatch = MODAL_JS.match(/async _onConfirm\(\) \{[\s\S]*?\n  \}/);
+  assert.ok(confirmMatch);
+  assert.match(confirmMatch[0], /outcome\s*=\s*await this\._onSubmit\s*\(\s*result\s*\)/, '_onConfirm must await the injected onSubmit callback with the normalized result');
+  assert.match(confirmMatch[0], /outcome\.ok\s*!==\s*true/, '_onConfirm must branch on the outcome\'s ok flag');
+  // On failure, the code path before the next _settle call must NOT reach
+  // _settle in the same branch — verified by confirming a `return;` sits
+  // between the failure branch and the trailing `await this._settle(result);`.
+  const failureBranch = confirmMatch[0].match(/if \(!outcome \|\| outcome\.ok !== true\) \{[\s\S]*?\n      \}/);
+  assert.ok(failureBranch, 'a distinct failure branch must exist');
+  assert.match(failureBranch[0], /submitting:\s*false/, 'failure must clear submitting so controls re-enable');
+  assert.match(failureBranch[0], /return;/, 'failure must return before reaching _settle — the modal must not close on a failed submission');
+}
+
+// 69. Controller source: _assignExistingNpc passes an onSubmit callback
+// into AllyAssignmentModal.wait — the controller (not the modal) still
+// performs every mutation, but submission orchestration is now owned by
+// the modal via this injected callback rather than the old "resolve, then
+// mutate after close" sequence.
+{
+  const waitCallMatch = CONTROLLER_JS.match(/AllyAssignmentModal\.wait\(\{[\s\S]{0,1400}/);
+  assert.ok(waitCallMatch, 'AllyAssignmentModal.wait(...) call must exist');
+  assert.match(waitCallMatch[0], /onSubmit\s*:\s*async/, 'the controller must pass an onSubmit callback into the modal');
+  assert.match(waitCallMatch[0], /\{\s*ok:\s*true\s*\}/, 'the callback must report success as { ok: true }');
+  assert.match(waitCallMatch[0], /ok:\s*false,\s*error/, 'the callback must report failure as { ok: false, error }');
+}
+
+// 70. IME-composition safety (issue 9's Enter-to-submit correction, round
+// 2): the search input's input/compositionstart/compositionend wiring
+// exists, and the debounced update helper is what actually re-renders —
+// this is the source-level proof that a mid-composition rerender (which
+// can drop in-progress IME state) is avoided.
+{
+  assert.match(MODAL_JS, /addEventListener\(\s*['"]compositionstart['"]/, 'compositionstart must be wired');
+  assert.match(MODAL_JS, /addEventListener\(\s*['"]compositionend['"]/, 'compositionend must be wired');
+  const inputListenerMatch = MODAL_JS.match(/searchInput\?\.addEventListener\(\s*['"]input['"][\s\S]{0,160}/);
+  assert.ok(inputListenerMatch);
+  assert.match(inputListenerMatch[0], /_composingSearch/, 'the plain input listener must check the composing flag before queuing an update');
+  const queueFnMatch = MODAL_JS.match(/_queueSearchUpdate\(value\) \{[\s\S]*?\n  \}/);
+  assert.ok(queueFnMatch, '_queueSearchUpdate must exist');
+  assert.match(queueFnMatch[0], /setTimeout/, 'search updates must be debounced, not applied synchronously on every keystroke');
 }
 
 console.log('GM NPC assignment modal tests passed.');

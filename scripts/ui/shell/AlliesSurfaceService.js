@@ -14,7 +14,17 @@ import { FactionRegistryService } from '/systems/foundryvtt-swse/scripts/allies/
 import { HolonetIntelService, INTEL_REVEAL_STATE } from '/systems/foundryvtt-swse/scripts/holonet/subsystems/holonet-intel-service.js';
 import { createActor } from '/systems/foundryvtt-swse/scripts/core/document-api-v13.js';
 import { FollowerSlotService, isEligibleFollowerSlotOwner } from '/systems/foundryvtt-swse/scripts/engine/crew/follower-slot-service.js';
-import { AllyAssignmentService, ASSIGNMENT_KIND, ASSIGNMENT_MODE, evaluateNpcAssignmentEligibility, evaluateFollowerConversionEligibility, evaluateDroidConversionGate, isEligibleAssignmentTargetType } from '/systems/foundryvtt-swse/scripts/engine/crew/ally-assignment-service.js';
+import {
+  AllyAssignmentService,
+  ASSIGNMENT_KIND,
+  ASSIGNMENT_MODE,
+  evaluateNpcAssignmentEligibility,
+  evaluateFollowerConversionEligibility,
+  evaluateDroidConversionGate,
+  isEligibleAssignmentTargetType,
+  resolveAllowedFollowerTemplates,
+  buildFollowerConversionPreflight
+} from '/systems/foundryvtt-swse/scripts/engine/crew/ally-assignment-service.js';
 
 const SYSTEM_ID = 'foundryvtt-swse';
 const TAB_IDS = new Set(['companions', 'factions', 'contacts', 'intel', 'bases', 'organizations']);
@@ -39,12 +49,11 @@ const ORGANIZATION_SCALE_MIN = 1;
 const ORGANIZATION_SCALE_MAX = 20;
 const ORGANIZATION_GM_FIELDS = new Set(['scale', 'score', 'benefits', 'bases', 'statistics']);
 
-// Same default a manual (GM-granted) follower slot is built with
-// (FollowerSlotService's DEFAULT_TEMPLATE_CHOICES) — used as the fallback
-// when a talent-derived slot record predates templateChoices being
-// populated, so the conversion modal always has a concrete, bounded set of
-// template options to offer rather than silently defaulting to Utility.
-const DEFAULT_FOLLOWER_TEMPLATE_CHOICES = Object.freeze(['aggressive', 'defensive', 'utility']);
+// Display labels only — the canonical policy for WHICH templates a slot
+// allows (including the "explicitly zero choices configured" case) lives
+// in ally-assignment-service.js's resolveAllowedFollowerTemplates, the
+// single source of truth this file and the service both consult so the UI
+// and the service-boundary preflight can never silently disagree.
 const FOLLOWER_TEMPLATE_LABELS = Object.freeze({
   aggressive: 'Aggressive Follower',
   defensive: 'Defensive Follower',
@@ -351,7 +360,7 @@ export function findNpcAssignmentCandidate(viewModel, targetActorId) {
 /** Whether `mode` is currently choosable for the given candidate card. */
 export function isAllyAssignmentModeAvailable(candidate, mode) {
   if (!candidate) return false;
-  if (mode === 'ally') return candidate.eligible === true;
+  if (mode === 'ally') return candidate.canAssignAsAlly === true;
   if (mode === 'follower') return candidate.canConvertToFollower === true;
   return false;
 }
@@ -414,13 +423,16 @@ export function canConfirmAllyAssignment(viewModel, state) {
   if (!state || state.submitting === true) return false;
   const candidate = findNpcAssignmentCandidate(viewModel, state.targetActorId);
   if (!candidate) return false;
-  if (state.assignmentMode === 'ally') return candidate.eligible === true;
+  if (state.assignmentMode === 'ally') return candidate.canAssignAsAlly === true;
   if (state.assignmentMode === 'follower') {
     if (candidate.canConvertToFollower !== true) return false;
     if (!state.followerSlotId) return false;
     const slot = findFollowerSlotById(viewModel, state.followerSlotId);
     if (!slot) return false;
     const choices = Array.isArray(slot.templateChoices) ? slot.templateChoices : [];
+    // A slot with zero configured templates can never be confirmed — there
+    // is no valid choice to submit, not even implicitly.
+    if (choices.length === 0) return false;
     if (choices.length > 1) return Boolean(state.templateType) && choices.includes(state.templateType);
     return true;
   }
@@ -1300,8 +1312,11 @@ export class AlliesSurfaceService {
         detectedKind: allyEvaluation.detectedKind,
         kindLabel: npcAssignmentKindLabel(allyEvaluation.detectedKind),
         detailLabel: npcAssignmentDetailLabel(candidate, allyEvaluation.detectedKind, droidGate),
-        eligible: allyEvaluation.eligible,
-        blockedReason: allyEvaluation.eligible ? null : allyEvaluation.reasons.join(' '),
+        // Deliberately separate fields per mode — never one generic
+        // "eligible" boolean reused for both Assign as Ally and Convert to
+        // Follower. An Actor can be eligible for exactly one of the two.
+        canAssignAsAlly: allyEvaluation.eligible,
+        assignBlockedReason: allyEvaluation.eligible ? null : allyEvaluation.reasons.join(' '),
         alreadyAssignedOwnerId,
         alreadyAssignedToThisOwner: alreadyAssignedOwnerId === ownerActor.id,
         alreadyAssignedOwnerName: alreadyAssignedOwnerId && alreadyAssignedOwnerId !== ownerActor.id
@@ -1313,8 +1328,9 @@ export class AlliesSurfaceService {
           : (droidGate.blocked ? droidGate.reason : (followerSlots.length === 0 ? 'No open follower slot is available.' : null)),
         // A card is entirely inert (no action possible in either mode) —
         // used by the modal to disable the Actor radio itself rather than
-        // leaving it selectable with no reachable confirm state.
-        selectable: allyEvaluation.eligible || canConvertToFollower
+        // leaving it selectable with no reachable confirm state. An Actor
+        // blocked for one mode but valid for the other remains selectable.
+        canSelect: allyEvaluation.eligible || canConvertToFollower
       };
       card.searchText = npcAssignmentSearchText(card);
       candidates.push(card);
@@ -1362,20 +1378,31 @@ export class AlliesSurfaceService {
     };
   }
 
-  /** Open (unfilled) follower-dependentKind slots eligible for Convert to Follower. */
+  /**
+   * Open (unfilled) follower-dependentKind slots eligible for Convert to
+   * Follower. Returns full slot metadata (not just a display label) so the
+   * modal can show provenance and template restrictions, and so
+   * findFollowerSlotById/resolveAllowedFollowerTemplates-consuming callers
+   * have the real underlying fields — internal ids (talentItemId) are
+   * retained in the view model even though the template never renders them
+   * directly as a visible label.
+   */
   static getOpenFollowerSlotsForConversion(ownerActor) {
     const slots = asArray(ownerActor?.getFlag?.(SYSTEM_ID, 'followerSlots'));
     return slots
       .filter(slot => !slot.createdActorId && (!slot.dependentKind || slot.dependentKind === 'follower'))
       .map(slot => {
-        const templateChoices = Array.isArray(slot.templateChoices) && slot.templateChoices.length
-          ? slot.templateChoices.filter(id => FOLLOWER_TEMPLATE_LABELS[id])
-          : [...DEFAULT_FOLLOWER_TEMPLATE_CHOICES];
+        const sourceType = slot.sourceType === 'gm-grant' ? 'gm-grant' : 'talent';
+        const sourceLabel = sourceType === 'gm-grant' ? (slot.sourceLabel || 'GM Granted') : (slot.talentName || 'Follower Slot');
         return {
           id: slot.id,
-          label: slot.sourceType === 'gm-grant' ? (slot.sourceLabel || 'GM Granted') : (slot.talentName || 'Follower Slot'),
-          sourceType: slot.sourceType === 'gm-grant' ? 'gm-grant' : 'talent',
-          templateChoices: templateChoices.length ? templateChoices : [...DEFAULT_FOLLOWER_TEMPLATE_CHOICES]
+          label: sourceLabel,
+          sourceType,
+          sourceLabel,
+          dependentKind: slot.dependentKind || 'follower',
+          talentName: slot.talentName || null,
+          talentItemId: slot.talentItemId || null,
+          templateChoices: resolveAllowedFollowerTemplates(slot)
         };
       });
   }

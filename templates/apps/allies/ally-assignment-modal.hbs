@@ -7,12 +7,31 @@
   </header>
 
   <div class="swse-ally-assignment-modal__body">
+    {{#if submitError}}
+      <div class="swse-ally-assignment-modal__error" role="alert">{{submitError}}</div>
+    {{/if}}
+
     {{#if hasSelection}}
       <div class="swse-ally-assignment-modal__selected-summary">
         <img src="{{selectedCandidate.img}}" alt="" class="swse-ally-assignment-modal__selected-summary-portrait" />
         <span class="swse-ally-assignment-modal__selected-summary-body">
           <strong>Selected: {{selectedCandidate.name}}</strong>
           <span>{{selectedCandidate.kindLabel}} · {{selectedCandidate.levelLabel}} · {{selectedCandidate.detailLabel}}</span>
+          {{#if selectedCandidate.alreadyAssignedOwnerName}}
+            <span>Already assigned to {{selectedCandidate.alreadyAssignedOwnerName}}</span>
+          {{/if}}
+          <span>
+            Assign as Ally: {{#if selectedCandidate.canAssignAsAlly}}Available{{else}}{{selectedCandidate.assignBlockedReason}}{{/if}}
+          </span>
+          <span>
+            Convert to Follower: {{#if selectedCandidate.canConvertToFollower}}Available{{else}}{{selectedCandidate.convertBlockedReason}}{{/if}}
+          </span>
+          {{#if selectedHiddenBySearch}}
+            <span class="swse-ally-assignment-modal__selected-summary-hidden">
+              Selected NPC is hidden by the current search.
+              <button type="button" class="swse-ally-assignment-modal__link-button" data-button="clear-search">Clear Search</button>
+            </span>
+          {{/if}}
         </span>
       </div>
     {{/if}}
@@ -33,7 +52,7 @@
     <div class="swse-ally-assignment-modal__list-region" role="radiogroup" aria-label="Existing NPC Actors">
       {{#if hasCandidates}}
         {{#each candidates}}
-          <label class="swse-assignment-actor-card{{#if this.isSelected}} is-selected{{/if}}{{#unless this.eligible}} has-warning{{/unless}}{{#if this.radioDisabled}} is-disabled{{/if}}">
+          <label class="swse-assignment-actor-card{{#if this.isSelected}} is-selected{{/if}}{{#unless this.canAssignAsAlly}} has-warning{{/unless}}{{#if this.radioDisabled}} is-disabled{{/if}}">
             <input
               type="radio"
               name="targetActorId"
@@ -50,8 +69,8 @@
               {{#if this.alreadyAssignedOwnerName}}
                 <span class="swse-assignment-actor-card__flag">Already assigned to {{this.alreadyAssignedOwnerName}}</span>
               {{/if}}
-              {{#unless this.eligible}}
-                <span class="swse-assignment-actor-card__flag is-blocked">{{this.blockedReason}}</span>
+              {{#unless this.canAssignAsAlly}}
+                <span class="swse-assignment-actor-card__flag is-blocked">{{this.assignBlockedReason}}</span>
               {{/unless}}
               {{#if this.radioDisabled}}
                 <span class="swse-assignment-actor-card__flag is-blocked">No action is available for this Actor.</span>
@@ -170,6 +189,11 @@
           <p class="swse-ally-assignment-modal__toggle-desc">
             Determines the converted follower's derived stats, feats, and skills. This choice is never made silently.
           </p>
+        </div>
+      {{else if noValidTemplateForSlot}}
+        <div class="swse-ally-assignment-modal__template-section">
+          <h3 class="swse-ally-assignment-modal__section-title">Follower Template</h3>
+          <p class="swse-ally-assignment-modal__empty">No follower template is configured for this slot. Choose a different slot, or correct this slot's configuration before converting.</p>
         </div>
       {{/if}}
     {{/if}}

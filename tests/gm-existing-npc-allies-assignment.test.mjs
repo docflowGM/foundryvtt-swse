@@ -320,7 +320,7 @@ function slotsOf(owner) {
 {
   resetFakeActorEngine();
   asGM();
-  const owner = makeFakeActor({ id: 'owner-1', type: 'character', flags: { [SYSTEM_ID]: { followerSlots: [{ id: 'slot-1', dependentKind: 'follower', createdActorId: null }] } } });
+  const owner = makeFakeActor({ id: 'owner-1', type: 'character', flags: { [SYSTEM_ID]: { followerSlots: [{ id: 'slot-1', dependentKind: 'follower', createdActorId: null, templateChoices: ['utility'] }] } } });
   const npc = makeFakeActor({ id: 'npc-1', type: 'npc' });
   await AllyAssignmentService.assignAsAlly(owner, npc, { source: 'test' });
   assert.equal(owner.flags[SYSTEM_ID].followerSlots[0].createdActorId, null);
@@ -383,8 +383,8 @@ function slotsOf(owner) {
 {
   resetFakeActorEngine();
   asGM();
-  const slotA = { id: 'slot-a', dependentKind: 'follower', createdActorId: null };
-  const slotB = { id: 'slot-b', dependentKind: 'follower', createdActorId: null };
+  const slotA = { id: 'slot-a', dependentKind: 'follower', createdActorId: null, templateChoices: ['utility'] };
+  const slotB = { id: 'slot-b', dependentKind: 'follower', createdActorId: null, templateChoices: ['utility'] };
   const owner = makeFakeActor({ id: 'owner-1', type: 'character', flags: { [SYSTEM_ID]: { followerSlots: [slotA, slotB] } } });
   const npc = makeFakeActor({ id: 'npc-1', type: 'npc' });
   await AllyAssignmentService.convertToFollower(owner, npc, 'slot-b', { source: 'test', ...OK_DERIVATION });
@@ -395,7 +395,7 @@ function slotsOf(owner) {
 
 // 28. Preflight (slot validation) is pure and performs no mutation.
 {
-  const slot = { id: 's1', dependentKind: 'follower', createdActorId: null };
+  const slot = { id: 's1', dependentKind: 'follower', createdActorId: null, templateChoices: ['utility'] };
   const before = JSON.stringify(slot);
   validateFollowerConversionSlot(slot);
   assert.equal(JSON.stringify(slot), before);
@@ -407,7 +407,7 @@ function slotsOf(owner) {
 {
   resetFakeActorEngine();
   asGM();
-  const slot = { id: 'slot-1', dependentKind: 'follower', createdActorId: null };
+  const slot = { id: 'slot-1', dependentKind: 'follower', createdActorId: null, templateChoices: ['utility'] };
   const owner = makeFakeActor({ id: 'owner-1', type: 'character', flags: { [SYSTEM_ID]: { followerSlots: [slot] } } });
   const npc = makeFakeActor({ id: 'npc-1', type: 'npc' });
   Object.freeze(npc.system); // forces the target-conversion-commit step's write to throw
@@ -420,7 +420,7 @@ function slotsOf(owner) {
 {
   resetFakeActorEngine();
   asGM();
-  const owner = makeFakeActor({ id: 'owner-1', type: 'character', flags: { [SYSTEM_ID]: { followerSlots: [{ id: 's1', dependentKind: 'follower', createdActorId: null }] } } });
+  const owner = makeFakeActor({ id: 'owner-1', type: 'character', flags: { [SYSTEM_ID]: { followerSlots: [{ id: 's1', dependentKind: 'follower', createdActorId: null, templateChoices: ['utility'] }] } } });
   const npc = makeFakeActor({ id: 'npc-1', type: 'npc' });
   const converted = await AllyAssignmentService.convertToFollower(owner, npc, 's1', { source: 'test', ...OK_DERIVATION });
   assert.equal(converted.system.isFollower, true);
@@ -434,7 +434,7 @@ function slotsOf(owner) {
 {
   resetFakeActorEngine();
   asGM();
-  const owner = makeFakeActor({ id: 'owner-1', type: 'character', flags: { [SYSTEM_ID]: { followerSlots: [{ id: 's1', dependentKind: 'follower', createdActorId: null }] } } });
+  const owner = makeFakeActor({ id: 'owner-1', type: 'character', flags: { [SYSTEM_ID]: { followerSlots: [{ id: 's1', dependentKind: 'follower', createdActorId: null, templateChoices: ['utility'] }] } } });
   const npc = makeFakeActor({ id: 'npc-1', type: 'npc' });
   await AllyAssignmentService.convertToFollower(owner, npc, 's1', { source: 'test', ...OK_DERIVATION });
   assert.equal(slotsOf(owner)[0].createdActorId, 'npc-1');
@@ -445,7 +445,7 @@ function slotsOf(owner) {
 {
   resetFakeActorEngine();
   asGM();
-  const owner = makeFakeActor({ id: 'owner-1', type: 'character', flags: { [SYSTEM_ID]: { followerSlots: [{ id: 's1', dependentKind: 'follower', createdActorId: null }] } } });
+  const owner = makeFakeActor({ id: 'owner-1', type: 'character', flags: { [SYSTEM_ID]: { followerSlots: [{ id: 's1', dependentKind: 'follower', createdActorId: null, templateChoices: ['utility'] }] } } });
   const npc = makeFakeActor({ id: 'npc-1', type: 'npc' });
   await AllyAssignmentService.convertToFollower(owner, npc, 's1', { source: 'test', ...OK_DERIVATION });
   const ownerCommits = fakeActorEngineCallLog.filter(c => c.actorId === 'owner-1');
@@ -462,7 +462,7 @@ function slotsOf(owner) {
 {
   resetFakeActorEngine();
   asGM();
-  const owner = makeFakeActor({ id: 'owner-1', type: 'character', flags: { [SYSTEM_ID]: { followerSlots: [{ id: 's1', dependentKind: 'follower', createdActorId: null }] } } });
+  const owner = makeFakeActor({ id: 'owner-1', type: 'character', flags: { [SYSTEM_ID]: { followerSlots: [{ id: 's1', dependentKind: 'follower', createdActorId: null, templateChoices: ['utility'] }] } } });
   const npc = makeFakeActor({ id: 'npc-1', type: 'npc' });
   await assert.rejects(
     () => AllyAssignmentService.convertToFollower(owner, npc, 's1', { source: 'test', applyFollowerDerivation: async () => false }),
@@ -478,7 +478,7 @@ function slotsOf(owner) {
 {
   resetFakeActorEngine();
   asGM();
-  const owner = makeFakeActor({ id: 'owner-1', type: 'character', flags: { [SYSTEM_ID]: { followerSlots: [{ id: 's1', dependentKind: 'follower', createdActorId: null }] } } });
+  const owner = makeFakeActor({ id: 'owner-1', type: 'character', flags: { [SYSTEM_ID]: { followerSlots: [{ id: 's1', dependentKind: 'follower', createdActorId: null, templateChoices: ['utility'] }] } } });
   const npc = makeFakeActor({ id: 'npc-1', type: 'npc' });
   await AllyAssignmentService.convertToFollower(owner, npc, 's1', { source: 'test', ...OK_DERIVATION });
   await assert.rejects(() => AllyAssignmentService.convertToFollower(owner, npc, 's1', { source: 'test', ...OK_DERIVATION }), /already occupied/);
@@ -490,7 +490,7 @@ function slotsOf(owner) {
 {
   resetFakeActorEngine();
   asGM();
-  const slot = { id: 's1', dependentKind: 'follower', createdActorId: null };
+  const slot = { id: 's1', dependentKind: 'follower', createdActorId: null, templateChoices: ['utility'] };
   const owner = makeFakeActor({ id: 'owner-1', type: 'character', flags: { [SYSTEM_ID]: { followerSlots: [slot] } } });
   const npc = makeFakeActor({ id: 'npc-1', type: 'npc' });
   await assert.rejects(() => AllyAssignmentService.convertToFollower(owner, npc, 's1', { source: 'test', applyFollowerDerivation: async () => { throw new Error('derivation-blew-up'); } }));
@@ -504,7 +504,7 @@ function slotsOf(owner) {
 {
   resetFakeActorEngine();
   asGM();
-  const owner = makeFakeActor({ id: 'owner-1', type: 'character', flags: { [SYSTEM_ID]: { followerSlots: [{ id: 's1', dependentKind: 'follower', createdActorId: null }] } } });
+  const owner = makeFakeActor({ id: 'owner-1', type: 'character', flags: { [SYSTEM_ID]: { followerSlots: [{ id: 's1', dependentKind: 'follower', createdActorId: null, templateChoices: ['utility'] }] } } });
   const npc = makeFakeActor({ id: 'npc-1', type: 'npc' });
   await assert.rejects(
     () => AllyAssignmentService.convertToFollower(owner, npc, 's1', { source: 'test', applyFollowerDerivation: async () => { throw new Error('specific-failure-message'); } }),
@@ -530,7 +530,7 @@ function slotsOf(owner) {
 
   resetFakeActorEngine();
   asGM();
-  const owner = makeFakeActor({ id: 'owner-1', type: 'character', flags: { [SYSTEM_ID]: { followerSlots: [{ id: 's1', dependentKind: 'follower', createdActorId: null }] } } });
+  const owner = makeFakeActor({ id: 'owner-1', type: 'character', flags: { [SYSTEM_ID]: { followerSlots: [{ id: 's1', dependentKind: 'follower', createdActorId: null, templateChoices: ['utility'] }] } } });
   const droid = makeFakeActor({ id: 'droid-1', type: 'droid', flags: { swse: { stockDroidImport: { importMode: 'statblock' } } } });
   await assert.rejects(() => AllyAssignmentService.convertToFollower(owner, droid, 's1', { source: 'test', ...OK_DERIVATION }), /stock-statblock/);
   assert.equal(fakeActorEngineCallLog.length, 0, 'a blocked stock-droid conversion must never reach ActorEngine');
@@ -560,7 +560,7 @@ function slotsOf(owner) {
 {
   resetFakeActorEngine();
   asGM();
-  const owner = makeFakeActor({ id: 'owner-1', type: 'character', flags: { [SYSTEM_ID]: { followerSlots: [{ id: 's1', dependentKind: 'follower', createdActorId: null }] } } });
+  const owner = makeFakeActor({ id: 'owner-1', type: 'character', flags: { [SYSTEM_ID]: { followerSlots: [{ id: 's1', dependentKind: 'follower', createdActorId: null, templateChoices: ['utility'] }] } } });
   const akkDogNamed = makeFakeActor({ id: 'beast-1', name: 'Akk Dog', type: 'npc', system: { npcProfile: { kind: 'beast' }, race: 'Akk Dog' } });
   const converted = await AllyAssignmentService.convertToFollower(owner, akkDogNamed, 's1', { source: 'test', ...OK_DERIVATION });
   assert.equal(converted.flags.swse.follower.fixedFollowerProfileId, undefined);
@@ -572,7 +572,7 @@ function slotsOf(owner) {
 {
   resetFakeActorEngine();
   asGM();
-  const owner = makeFakeActor({ id: 'owner-1', type: 'character', flags: { [SYSTEM_ID]: { followerSlots: [{ id: 's1', dependentKind: 'follower', createdActorId: null }] } } });
+  const owner = makeFakeActor({ id: 'owner-1', type: 'character', flags: { [SYSTEM_ID]: { followerSlots: [{ id: 's1', dependentKind: 'follower', createdActorId: null, templateChoices: ['utility'] }] } } });
   const beast = makeFakeActor({ id: 'beast-1', type: 'npc', system: { npcProfile: { kind: 'beast' } } });
   const converted = await AllyAssignmentService.convertToFollower(owner, beast, 's1', { source: 'test', ...OK_DERIVATION });
   assert.equal(converted.system.isFollower, true);
@@ -595,7 +595,7 @@ function slotsOf(owner) {
 // Convert to Follower targets — validateFollowerConversionSlot does not
 // discriminate by sourceType, only by occupancy/dependentKind.
 {
-  const manualSlot = { id: 's1', dependentKind: 'follower', createdActorId: null, sourceType: 'gm-grant', talentItemId: null };
+  const manualSlot = { id: 's1', dependentKind: 'follower', createdActorId: null, templateChoices: ['utility'], sourceType: 'gm-grant', talentItemId: null };
   const result = validateFollowerConversionSlot(manualSlot);
   assert.equal(result.valid, true);
 }
@@ -603,7 +603,7 @@ function slotsOf(owner) {
 // 50. Talent-granted follower slots (legacy shape — no sourceType, real
 // talentItemId) remain equally valid Convert to Follower targets.
 {
-  const talentSlot = { id: 's1', dependentKind: 'follower', createdActorId: null, talentItemId: 'item-1', talentName: 'Undying Loyalty' };
+  const talentSlot = { id: 's1', dependentKind: 'follower', createdActorId: null, templateChoices: ['utility'], talentItemId: 'item-1', talentName: 'Undying Loyalty' };
   const result = validateFollowerConversionSlot(talentSlot);
   assert.equal(result.valid, true);
 }
@@ -618,7 +618,7 @@ function slotsOf(owner) {
 {
   resetFakeActorEngine();
   asGM();
-  const owner = makeFakeActor({ id: 'owner-1', type: 'character', flags: { [SYSTEM_ID]: { followerSlots: [{ id: 's1', dependentKind: 'follower', createdActorId: null }] } } });
+  const owner = makeFakeActor({ id: 'owner-1', type: 'character', flags: { [SYSTEM_ID]: { followerSlots: [{ id: 's1', dependentKind: 'follower', createdActorId: null, templateChoices: ['utility'] }] } } });
   const npc = makeFakeActor({ id: 'npc-1', type: 'npc' });
   await assert.rejects(() => AllyAssignmentService.convertToFollower(owner, npc, 's1', { source: 'test', applyFollowerDerivation: async () => false }));
   assert.equal(slotsOf(owner)[0].createdActorId, null, 'slot must remain open after a derivation failure');
@@ -629,7 +629,7 @@ function slotsOf(owner) {
 {
   resetFakeActorEngine();
   asGM();
-  const owner = makeFakeActor({ id: 'owner-1', type: 'character', system: { ownedActors: [] }, flags: { [SYSTEM_ID]: { followerSlots: [{ id: 's1', dependentKind: 'follower', createdActorId: null }] } } });
+  const owner = makeFakeActor({ id: 'owner-1', type: 'character', system: { ownedActors: [] }, flags: { [SYSTEM_ID]: { followerSlots: [{ id: 's1', dependentKind: 'follower', createdActorId: null, templateChoices: ['utility'] }] } } });
   const npc = makeFakeActor({ id: 'npc-1', type: 'npc' });
   await assert.rejects(() => AllyAssignmentService.convertToFollower(owner, npc, 's1', { source: 'test', applyFollowerDerivation: async () => false }));
   assert.deepEqual(owner.flags[SYSTEM_ID].followers ?? [], []);
@@ -641,7 +641,7 @@ function slotsOf(owner) {
 {
   resetFakeActorEngine();
   asGM();
-  const owner = makeFakeActor({ id: 'owner-1', type: 'character', flags: { [SYSTEM_ID]: { followerSlots: [{ id: 's1', dependentKind: 'follower', createdActorId: null }] } } });
+  const owner = makeFakeActor({ id: 'owner-1', type: 'character', flags: { [SYSTEM_ID]: { followerSlots: [{ id: 's1', dependentKind: 'follower', createdActorId: null, templateChoices: ['utility'] }] } } });
   const npc = makeFakeActor({ id: 'npc-1', type: 'npc', system: { level: 3, race: 'Human' } });
   await assert.rejects(() => AllyAssignmentService.convertToFollower(owner, npc, 's1', { source: 'test', applyFollowerDerivation: async () => false }));
   assert.equal(npc.system.isFollower, undefined);
@@ -676,7 +676,7 @@ function slotsOf(owner) {
 {
   resetFakeActorEngine();
   asGM();
-  const owner = makeFakeActor({ id: 'owner-1', type: 'character', flags: { [SYSTEM_ID]: { followerSlots: [{ id: 's1', dependentKind: 'follower', createdActorId: null }] } } });
+  const owner = makeFakeActor({ id: 'owner-1', type: 'character', flags: { [SYSTEM_ID]: { followerSlots: [{ id: 's1', dependentKind: 'follower', createdActorId: null, templateChoices: ['utility'] }] } } });
   const npc = makeFakeActor({ id: 'npc-1', type: 'npc' });
   await AllyAssignmentService.assignAsAlly(owner, npc, { source: 'test' });
   await AllyAssignmentService.convertToFollower(owner, npc, 's1', { source: 'test', ...OK_DERIVATION });
@@ -690,7 +690,7 @@ function slotsOf(owner) {
 {
   resetFakeActorEngine();
   asGM();
-  const owner = makeFakeActor({ id: 'owner-1', type: 'character', flags: { [SYSTEM_ID]: { followerSlots: [{ id: 's1', dependentKind: 'follower', createdActorId: null }] } } });
+  const owner = makeFakeActor({ id: 'owner-1', type: 'character', flags: { [SYSTEM_ID]: { followerSlots: [{ id: 's1', dependentKind: 'follower', createdActorId: null, templateChoices: ['utility'] }] } } });
   const npc = makeFakeActor({ id: 'npc-1', type: 'npc' });
   await AllyAssignmentService.assignAsAlly(owner, npc, { source: 'test' });
   assert.equal(owner.flags[SYSTEM_ID].assignedAllies.length, 1);
@@ -705,7 +705,7 @@ function slotsOf(owner) {
 {
   resetFakeActorEngine();
   asGM();
-  const owner = makeFakeActor({ id: 'owner-1', type: 'character', flags: { [SYSTEM_ID]: { followerSlots: [{ id: 's1', dependentKind: 'follower', createdActorId: null }] } } });
+  const owner = makeFakeActor({ id: 'owner-1', type: 'character', flags: { [SYSTEM_ID]: { followerSlots: [{ id: 's1', dependentKind: 'follower', createdActorId: null, templateChoices: ['utility'] }] } } });
   const beast = makeFakeActor({ id: 'beast-1', type: 'npc', system: { npcProfile: { kind: 'beast' } } });
   await AllyAssignmentService.assignAsAlly(owner, beast, { source: 'test' });
   assert.equal(owner.flags[SYSTEM_ID].beasts.length, 1);
@@ -721,7 +721,7 @@ function slotsOf(owner) {
   resetFakeActorEngine();
   asGM();
   const existingOtherLink = { id: 'other-actor', name: 'Someone Else' };
-  const owner = makeFakeActor({ id: 'owner-1', type: 'character', system: { ownedActors: [existingOtherLink] }, flags: { [SYSTEM_ID]: { followerSlots: [{ id: 's1', dependentKind: 'follower', createdActorId: null }] } } });
+  const owner = makeFakeActor({ id: 'owner-1', type: 'character', system: { ownedActors: [existingOtherLink] }, flags: { [SYSTEM_ID]: { followerSlots: [{ id: 's1', dependentKind: 'follower', createdActorId: null, templateChoices: ['utility'] }] } } });
   const npc = makeFakeActor({ id: 'npc-1', type: 'npc' });
   await assert.rejects(() => AllyAssignmentService.convertToFollower(owner, npc, 's1', { source: 'test', applyFollowerDerivation: async () => false }));
   assert.deepEqual(owner.system.ownedActors, [existingOtherLink], 'rollback must restore the EXACT pre-mutation array, including unrelated pre-existing entries, not the post-mutation (with target added) array');
@@ -764,7 +764,7 @@ function slotsOf(owner) {
 {
   asGM();
   const ownerA = makeFakeActor({ id: 'owner-A', type: 'character' });
-  const ownerB = makeFakeActor({ id: 'owner-B', type: 'character', flags: { [SYSTEM_ID]: { followerSlots: [{ id: 's1', dependentKind: 'follower', createdActorId: null }] } } });
+  const ownerB = makeFakeActor({ id: 'owner-B', type: 'character', flags: { [SYSTEM_ID]: { followerSlots: [{ id: 's1', dependentKind: 'follower', createdActorId: null, templateChoices: ['utility'] }] } } });
   const npc = makeFakeActor({ id: 'npc-1', type: 'npc', flags: { [SYSTEM_ID]: { assignedAllyOwnerId: 'owner-A', assignedAllyMode: 'ally' } } });
 
   await assert.rejects(() => AllyAssignmentService.assignAsAlly(ownerB, npc, { source: 'test' }), /already assigned to a different owner/);
@@ -776,7 +776,7 @@ function slotsOf(owner) {
 {
   resetFakeActorEngine();
   asGM();
-  const owner = makeFakeActor({ id: 'owner-1', type: 'character', flags: { [SYSTEM_ID]: { followerSlots: [{ id: 's1', dependentKind: 'follower', createdActorId: null }] } } });
+  const owner = makeFakeActor({ id: 'owner-1', type: 'character', flags: { [SYSTEM_ID]: { followerSlots: [{ id: 's1', dependentKind: 'follower', createdActorId: null, templateChoices: ['utility'] }] } } });
   const npc = makeFakeActor({ id: 'npc-1', type: 'npc' });
   let resolvedValue = 'NOT_SET';
   try {
@@ -790,7 +790,7 @@ function slotsOf(owner) {
 {
   resetFakeActorEngine();
   asGM();
-  const owner = makeFakeActor({ id: 'owner-1', type: 'character', flags: { [SYSTEM_ID]: { followerSlots: [{ id: 's1', dependentKind: 'follower', createdActorId: null }] } } });
+  const owner = makeFakeActor({ id: 'owner-1', type: 'character', flags: { [SYSTEM_ID]: { followerSlots: [{ id: 's1', dependentKind: 'follower', createdActorId: null, templateChoices: ['utility'] }] } } });
   const beast = makeFakeActor({ id: 'beast-1', name: 'Random Beast', type: 'npc', system: { npcProfile: { kind: 'beast' }, race: 'Gizka' } });
   const converted = await AllyAssignmentService.convertToFollower(owner, beast, 's1', { source: 'test', choices: { templateType: 'utility' }, ...OK_DERIVATION });
   assert.equal(converted.system.progression.followerChoices.fixedFollowerProfileId, undefined);
@@ -802,7 +802,7 @@ function slotsOf(owner) {
 {
   resetFakeActorEngine();
   asGM();
-  const owner = makeFakeActor({ id: 'owner-1', type: 'character', flags: { [SYSTEM_ID]: { followerSlots: [{ id: 's1', dependentKind: 'follower', createdActorId: null }] } } });
+  const owner = makeFakeActor({ id: 'owner-1', type: 'character', flags: { [SYSTEM_ID]: { followerSlots: [{ id: 's1', dependentKind: 'follower', createdActorId: null, templateChoices: ['utility'] }] } } });
   const droid = makeFakeActor({ id: 'droid-1', type: 'droid', system: { droidSystems: { locomotion: { id: 'walking' } }, droidSize: 'small' } });
   const converted = await AllyAssignmentService.convertToFollower(owner, droid, 's1', { source: 'test', ...OK_DERIVATION });
   assert.deepEqual(converted.system.progression.followerChoices.droidConfig.droidSystems, { locomotion: { id: 'walking' } });
@@ -815,7 +815,7 @@ function slotsOf(owner) {
 {
   resetFakeActorEngine();
   asGM();
-  const owner = makeFakeActor({ id: 'owner-1', type: 'character', flags: { [SYSTEM_ID]: { followerSlots: [{ id: 's1', dependentKind: 'follower', createdActorId: null }] } } });
+  const owner = makeFakeActor({ id: 'owner-1', type: 'character', flags: { [SYSTEM_ID]: { followerSlots: [{ id: 's1', dependentKind: 'follower', createdActorId: null, templateChoices: ['utility'] }] } } });
   const stockDroid = makeFakeActor({ id: 'droid-2', type: 'droid', flags: { swse: { stockDroidImport: { importMode: 'statblock' } } } });
   await assert.rejects(() => AllyAssignmentService.convertToFollower(owner, stockDroid, 's1', { source: 'test', ...OK_DERIVATION }), /stock-statblock/);
 }
@@ -826,7 +826,7 @@ function slotsOf(owner) {
 {
   resetFakeActorEngine();
   asGM();
-  const owner = makeFakeActor({ id: 'owner-1', type: 'character', flags: { [SYSTEM_ID]: { followerSlots: [{ id: 's1', dependentKind: 'follower', createdActorId: null }] } } });
+  const owner = makeFakeActor({ id: 'owner-1', type: 'character', flags: { [SYSTEM_ID]: { followerSlots: [{ id: 's1', dependentKind: 'follower', createdActorId: null, templateChoices: ['utility'] }] } } });
   const npc = makeFakeActor({ id: 'npc-1', type: 'npc' });
   await assert.rejects(() => AllyAssignmentService.convertToFollower(owner, npc, 's1', { source: 'test', applyFollowerDerivation: async () => false }));
   assert.equal(slotsOf(owner)[0].createdActorId, null);

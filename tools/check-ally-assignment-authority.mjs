@@ -113,6 +113,32 @@
  *       restore the target's prior ownership level, not merely leave an
  *       ownership grant in place while reporting the transaction failed.
  *
+ * ELIGIBILITY/OWNERSHIP CORRECTION PASS ROUND 2 additions (deeper eligibility,
+ * template validation, and modal-resilience review):
+ *   28. The controller's conversion call must forward BOTH
+ *       `grantOwnership:` and `template:` from the modal's result — neither
+ *       may be silently dropped on the Convert to Follower path.
+ *   29. convertToFollower must route its eligibility/template/droid check
+ *       through buildFollowerConversionPreflight, and that function's own
+ *       body must call evaluateFollowerConversionEligibility (never
+ *       evaluateNpcAssignmentEligibility) — the service boundary must never
+ *       trust a UI-only eligibility check.
+ *   30. Both evaluateNpcAssignmentEligibility and
+ *       evaluateFollowerConversionEligibility must call
+ *       findExistingFollowerRelationship — the canonical, registry-scanning
+ *       existing-follower check — not merely the narrower
+ *       isTargetAlreadyFollower flag read.
+ *   31. resolveAllowedFollowerTemplates must treat an explicit, empty
+ *       `templateChoices` array as zero allowed templates (checked via
+ *       `Array.isArray`, not a truthy-length check) — it must not silently
+ *       default-fill a slot that really has no valid templates configured.
+ *   32. The ownership-grant step's commit must capture `previousOwnership`
+ *       BEFORE writing the new ownership grant — capturing it after (or not
+ *       at all) would let rollback restore already-mutated state.
+ *   33. The modal template root must be a real `<form>` (Enter-to-submit
+ *       requires real form semantics), and the modal script must wire a
+ *       `submit` listener that calls `preventDefault()`.
+ *
  * Report-only by default; --strict exits non-zero on any violation.
  */
 
@@ -201,16 +227,27 @@ function main() {
       });
     }
 
-    // Check 22: the controller's conversion call must forward
-    // grantOwnership — the modal's ownership checkbox must never be
-    // silently discarded on the Convert to Follower path.
+    // Check 22 / 28: the controller's conversion call must forward BOTH
+    // grantOwnership and template — the modal's ownership checkbox and
+    // template choice must never be silently discarded on the Convert to
+    // Follower path. Not anchored to a specific local variable name inside
+    // the onSubmit callback (it may be `result`, `candidateResult`, etc.) —
+    // anchored on the *.grantOwnership / *.templateType member-access
+    // pattern instead, which is what actually matters.
     const assignFlowMatch = source.match(/async\s+_assignExistingNpc\s*\([\s\S]*?\n  \}/);
-    const convertCallMatch = assignFlowMatch?.[0]?.match(/AlliesSurfaceService\s*\.\s*convertExistingNpcToFollower\s*\([\s\S]{0,240}?\)/);
-    if (!assignFlowMatch || !convertCallMatch || !/grantOwnership\s*:\s*result\.grantOwnership/.test(convertCallMatch[0])) {
+    const convertCallMatch = assignFlowMatch?.[0]?.match(/AlliesSurfaceService\s*\.\s*convertExistingNpcToFollower\s*\([\s\S]{0,320}?\)/);
+    if (!assignFlowMatch || !convertCallMatch || !/grantOwnership\s*:\s*\w+\.grantOwnership/.test(convertCallMatch[0])) {
       violations.push({
         check: '22: conversion call must forward grantOwnership',
         file: relPath,
-        detail: 'expected the convertExistingNpcToFollower call inside _assignExistingNpc to pass grantOwnership: result.grantOwnership — the modal ownership checkbox must not be silently discarded when converting'
+        detail: 'expected the convertExistingNpcToFollower call inside _assignExistingNpc to pass grantOwnership: <result>.grantOwnership — the modal ownership checkbox must not be silently discarded when converting'
+      });
+    }
+    if (!assignFlowMatch || !convertCallMatch || !/template\s*:\s*\w+\.templateType/.test(convertCallMatch[0])) {
+      violations.push({
+        check: '28: conversion call must forward templateType',
+        file: relPath,
+        detail: 'expected the convertExistingNpcToFollower call inside _assignExistingNpc to pass template: <result>.templateType — the modal template choice must not be silently discarded when converting'
       });
     }
   }
@@ -245,6 +282,17 @@ function main() {
           detail: `expected a <label class="${group.label}"...> to contain <input type="radio" name="${group.name}"> — a fake, click-only card is not keyboard-accessible`
         });
       }
+    }
+
+    // Check 33 (template half): the modal root must be a real <form> —
+    // Enter-to-submit requires real HTML form semantics, not a plain <div>
+    // with a synthesized keydown handler.
+    if (!/^<form\b/.test(templateSource.trim())) {
+      violations.push({
+        check: '33: modal template root must be a real <form>',
+        file: relTemplatePath,
+        detail: 'expected the modal template to start with a <form ...> root element so Enter-to-submit works via native HTML form semantics'
+      });
     }
 
     // Check 26: an Actor card the view model marks not-selectable must
@@ -298,6 +346,16 @@ function main() {
         check: '17: modal must not call AllyAssignmentService directly',
         file: relModalPath,
         detail: 'the modal must never call the lower-level mutation service — only AlliesSurfaceController does, through AlliesSurfaceService, after the modal resolves'
+      });
+    }
+
+    // Check 33 (script half): a submit listener that calls preventDefault
+    // must be wired — a <form> alone does nothing without this.
+    if (!/addEventListener\s*\(\s*['"]submit['"][\s\S]{0,160}preventDefault\s*\(\s*\)/.test(modalSource)) {
+      violations.push({
+        check: '33: modal must wire a submit listener that calls preventDefault',
+        file: relModalPath,
+        detail: "expected an addEventListener('submit', ...) handler that calls event.preventDefault() before invoking _onConfirm — otherwise the browser's default form submission (a full navigation) would fire"
       });
     }
   }
@@ -531,41 +589,81 @@ function main() {
       });
     }
 
-    // Check 23: convertToFollower must evaluate target eligibility via
-    // evaluateFollowerConversionEligibility, not evaluateNpcAssignmentEligibility
-    // — the two eligibility gates are deliberately distinct (see the
-    // function's own doc comment).
-    if (!convertMatch || !/evaluateFollowerConversionEligibility\s*\(/.test(convertBody)) {
+    // Check 23 / 29: convertToFollower must route eligibility (and, since
+    // the eligibility/ownership round-2 pass, template validation and the
+    // droid gate) through buildFollowerConversionPreflight — never through
+    // evaluateNpcAssignmentEligibility, and never by re-deriving its own
+    // parallel eligibility logic that could drift from the canonical gate.
+    if (!convertMatch || !/buildFollowerConversionPreflight\s*\(/.test(convertBody)) {
       violations.push({
-        check: '23: convertToFollower must use the conversion-specific eligibility gate',
+        check: '23: convertToFollower must use the conversion-specific preflight',
         file: relPath,
-        detail: 'expected convertToFollower to call evaluateFollowerConversionEligibility — reusing evaluateNpcAssignmentEligibility would re-reject a same-owner assigned ally, making the prior-assignment migration path unreachable'
+        detail: 'expected convertToFollower to call buildFollowerConversionPreflight — this is the single canonical fact-gate for conversion eligibility, template validity, and the droid gate; the service must never trust a UI-only check'
       });
     }
     if (convertMatch && /evaluateNpcAssignmentEligibility\s*\(/.test(convertBody)) {
       violations.push({
         check: '23: convertToFollower must not reuse the Assign-as-Ally eligibility gate',
         file: relPath,
-        detail: 'found a call to evaluateNpcAssignmentEligibility inside convertToFollower — conversion eligibility must come from evaluateFollowerConversionEligibility only'
+        detail: 'found a call to evaluateNpcAssignmentEligibility inside convertToFollower — conversion eligibility must come from buildFollowerConversionPreflight/evaluateFollowerConversionEligibility only'
       });
     }
 
-    // Check 25: both eligibility wrappers must check isTargetAlreadyFollower
-    // and isActivePlayerCharacter — an existing mechanical follower or an
-    // active player character must be blocked from both assignment paths.
+    // Check 29: buildFollowerConversionPreflight itself — the function
+    // convertToFollower now delegates to — must call
+    // evaluateFollowerConversionEligibility, not evaluateNpcAssignmentEligibility.
+    const preflightFnMatch = source.match(/function\s+buildFollowerConversionPreflight\s*\([\s\S]*?\n\}/);
+    if (!preflightFnMatch || !/evaluateFollowerConversionEligibility\s*\(/.test(preflightFnMatch[0])) {
+      violations.push({
+        check: '29: buildFollowerConversionPreflight must use the conversion-specific eligibility gate',
+        file: relPath,
+        detail: 'expected buildFollowerConversionPreflight to call evaluateFollowerConversionEligibility'
+      });
+    }
+    if (preflightFnMatch && /evaluateNpcAssignmentEligibility\s*\(/.test(preflightFnMatch[0])) {
+      violations.push({
+        check: '29: buildFollowerConversionPreflight must not reuse the Assign-as-Ally eligibility gate',
+        file: relPath,
+        detail: 'found a call to evaluateNpcAssignmentEligibility inside buildFollowerConversionPreflight'
+      });
+    }
+
+    // Check 25 / 30: both eligibility wrappers must check the CANONICAL,
+    // registry-scanning existing-follower relationship
+    // (findExistingFollowerRelationship) — not merely the narrower
+    // isTargetAlreadyFollower flag read, which misses a target whose own
+    // flags are stale relative to a slot/registry that still claims it —
+    // and isActivePlayerCharacter.
     const allyEligibilityWrapperMatch = source.match(/function\s+evaluateNpcAssignmentEligibility\s*\([\s\S]*?\n\}/);
     const conversionEligibilityWrapperMatch = source.match(/function\s+evaluateFollowerConversionEligibility\s*\([\s\S]*?\n\}/);
     for (const [label, match] of [['evaluateNpcAssignmentEligibility', allyEligibilityWrapperMatch], ['evaluateFollowerConversionEligibility', conversionEligibilityWrapperMatch]]) {
-      if (!match || !/isTargetAlreadyFollower\s*\(/.test(match[0]) || !/isActivePlayerCharacter\s*\(/.test(match[0])) {
+      if (!match || !/findExistingFollowerRelationship\s*\(/.test(match[0]) || !/isActivePlayerCharacter\s*\(/.test(match[0])) {
         violations.push({
-          check: '25: eligibility must reject an existing follower and an active player character',
+          check: '25/30: eligibility must reject an existing follower (canonical check) and an active player character',
           file: relPath,
-          detail: `expected ${label} to call both isTargetAlreadyFollower(...) and isActivePlayerCharacter(...)`
+          detail: `expected ${label} to call both findExistingFollowerRelationship(...) and isActivePlayerCharacter(...)`
         });
       }
     }
 
-    // Check 27: the shared ownership-grant step must define a rollback.
+    // Check 31: resolveAllowedFollowerTemplates must treat an explicit,
+    // empty templateChoices array as zero allowed templates — checked via
+    // Array.isArray (missing-field fallback), not a truthy-length check
+    // that would also swallow a real "zero configured" slot into the
+    // default 3-choice set.
+    const resolveTemplatesFnMatch = source.match(/function\s+resolveAllowedFollowerTemplates\s*\([\s\S]*?\n\}/);
+    if (!resolveTemplatesFnMatch || !/!Array\.isArray\s*\(\s*slot\.templateChoices\s*\)/.test(resolveTemplatesFnMatch[0])) {
+      violations.push({
+        check: '31: resolveAllowedFollowerTemplates must not default-fill an explicit empty templateChoices array',
+        file: relPath,
+        detail: 'expected the missing-field fallback to be gated on !Array.isArray(slot.templateChoices) — a slot record that DOES carry templateChoices as [] must be treated as zero allowed templates, not silently defaulted to the full set'
+      });
+    }
+
+    // Check 27 / 32: the shared ownership-grant step must define a
+    // rollback, AND its commit must capture previousOwnership BEFORE
+    // writing the new grant (capturing after, or not at all, would let
+    // rollback restore already-mutated state).
     const ownershipStepMatch = source.match(/function\s+buildOwnershipGrantStep[\s\S]*?\n\}/);
     if (!ownershipStepMatch || !/rollback\s*:\s*async/.test(ownershipStepMatch[0])) {
       violations.push({
@@ -574,12 +672,20 @@ function main() {
         detail: 'expected buildOwnershipGrantStep to return a step object with a rollback function, not just commit — a later transaction-step failure must restore the target\'s prior ownership level'
       });
     }
+    const ownershipCommitMatch = ownershipStepMatch?.[0]?.match(/commit:\s*async[\s\S]*?rollback:/);
+    if (!ownershipCommitMatch || !/previousOwnership\s*=[\s\S]*?ActorEngine\s*\.\s*updateActor/.test(ownershipCommitMatch[0])) {
+      violations.push({
+        check: '32: ownership-grant commit must capture previousOwnership before writing the new grant',
+        file: relPath,
+        detail: 'expected the commit closure to assign previousOwnership BEFORE its ActorEngine.updateActor call — capturing it afterward would snapshot the already-mutated ownership map'
+      });
+    }
   }
 
   console.log('='.repeat(72));
   console.log('  GM EXISTING NPC ASSIGNMENT AUTHORITY GUARD');
   console.log('='.repeat(72));
-  console.log(`\nScanned ${scanned.length} file(s) against 27 checks.\n`);
+  console.log(`\nScanned ${scanned.length} file(s) against 33 checks.\n`);
 
   if (violations.length === 0) {
     console.log('No violations found — existing-NPC assignment remains governed, GM-only, and correctly separates relationship-only assignment from mechanical conversion.');
