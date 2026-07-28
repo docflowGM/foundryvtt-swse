@@ -53,6 +53,36 @@
  *       ownedActors/flags inside the rollback closure itself (guards
  *       against reintroducing the exact stale-snapshot bug this pass fixed).
  *
+ * STYLED ASSIGNMENT MODAL additions (UI addendum — feat(allies): add styled
+ * NPC assignment modal):
+ *   14. Neither the controller nor the modal template may contain a plain
+ *       `<select name="targetActorId">`/`<select name="slotId">` in the
+ *       normal assignment flow — the styled radio-card modal replaces the
+ *       old picker/choice Dialogs entirely.
+ *   15. The modal (ally-assignment-modal.js) must not construct an
+ *       assignment link/relationship object itself (no
+ *       `assignedAllyKind:`/`ASSIGNMENT_KIND` reference) — it only builds a
+ *       normalized selection result for the controller to hand to
+ *       AlliesSurfaceService.
+ *   16. The modal must not import or call ActorEngine.
+ *   17. The modal must not perform direct Actor mutation (`.update(`,
+ *       `.setFlag(`, `.unsetFlag(`) or call AllyAssignmentService directly —
+ *       it resolves a result; only the controller, after the modal closes,
+ *       calls AlliesSurfaceService.
+ *   18. Every radio-card block in the modal template (Actor cards,
+ *       assignment-mode cards, follower-slot cards) must contain a real
+ *       `<input type="radio">`, not a clickable element with no form control.
+ *   19. The controller's drag/drop handler (_handleDrop) must never call an
+ *       assignment/conversion service directly — it must route through the
+ *       same modal-opening flow as the button, never bypassing GM
+ *       confirmation of Assign as Ally / Convert to Follower.
+ *   20. The modal's default assignment-mode state must be 'ally' — a drop
+ *       or open must never default into a mechanical conversion without an
+ *       explicit GM choice.
+ *   21. The follower-slot auto-selection helper must never pick a slot by
+ *       array position when more than one open slot exists — auto-select is
+ *       only permitted when there is EXACTLY one candidate slot.
+ *
  * Report-only by default; --strict exits non-zero on any violation.
  */
 
@@ -68,6 +98,8 @@ const STRICT = process.argv.includes('--strict');
 const SERVICE_FILE = path.join(ROOT, 'scripts/engine/crew/ally-assignment-service.js');
 const SURFACE_SERVICE_FILE = path.join(ROOT, 'scripts/ui/shell/AlliesSurfaceService.js');
 const CONTROLLER_FILE = path.join(ROOT, 'scripts/ui/shell/AlliesSurfaceController.js');
+const MODAL_FILE = path.join(ROOT, 'scripts/apps/allies/ally-assignment-modal.js');
+const MODAL_TEMPLATE_FILE = path.join(ROOT, 'templates/apps/allies/ally-assignment-modal.hbs');
 
 function read(file) {
   return fs.readFileSync(file, 'utf8');
@@ -110,6 +142,108 @@ function main() {
         detail: 'found a direct ActorEngine reference in the controller — all assignment mutation must route through AllyAssignmentService'
       });
     }
+
+    // Check 14: no plain <select> picker for the target Actor or follower
+    // slot in the normal assignment flow — the styled modal replaces both.
+    if (/<select[^>]*name="targetActorId"/.test(source) || /<select[^>]*name="slotId"/.test(source)) {
+      violations.push({
+        check: '14: no plain <select> picker in the normal assignment flow',
+        file: relPath,
+        detail: 'found a <select name="targetActorId"|"slotId"> in the controller — the styled AllyAssignmentModal radio-card picker must be used instead'
+      });
+    }
+
+    // Check 19: drag/drop must never call an assignment/conversion service
+    // directly — it must open the same modal the button flow uses so the
+    // GM still confirms Assign as Ally / Convert to Follower explicitly.
+    const dropMatch = source.match(/async\s+_handleDrop\s*\([\s\S]*?\n  \}/);
+    if (!dropMatch) {
+      violations.push({
+        check: '19: _handleDrop must exist',
+        file: relPath,
+        detail: 'expected an async _handleDrop(ev) method on the controller'
+      });
+    } else if (/AlliesSurfaceService\s*\.\s*(assignExistingNpcAsAlly|convertExistingNpcToFollower)\s*\(/.test(dropMatch[0])) {
+      violations.push({
+        check: '19: drag/drop must not bypass the assignment modal',
+        file: relPath,
+        detail: '_handleDrop calls an assignment/conversion service directly — it must route through the modal-opening flow (_assignExistingNpc) so the GM still confirms a mode before anything is mutated'
+      });
+    }
+  }
+
+  if (fs.existsSync(MODAL_TEMPLATE_FILE)) {
+    scanned.push(MODAL_TEMPLATE_FILE);
+    const templateSource = read(MODAL_TEMPLATE_FILE);
+    const relTemplatePath = path.relative(ROOT, MODAL_TEMPLATE_FILE);
+
+    // Check 14 (template half): no plain <select> for the Actor/slot pickers.
+    if (/<select[^>]*name="(targetActorId|followerSlotId|slotId)"/.test(templateSource)) {
+      violations.push({
+        check: '14: no plain <select> picker in the modal template',
+        file: relTemplatePath,
+        detail: 'found a <select> for targetActorId/followerSlotId/slotId — these must be real radio-card inputs'
+      });
+    }
+
+    // Check 18: every radio-card block must contain a real radio input, not
+    // a clickable element with no underlying form control.
+    const cardGroups = [
+      { name: 'targetActorId', label: 'swse-assignment-actor-card' },
+      { name: 'assignmentMode', label: 'swse-assignment-mode-card' },
+      { name: 'followerSlotId', label: 'swse-assignment-slot-card' }
+    ];
+    for (const group of cardGroups) {
+      const cardPattern = new RegExp(`class="${group.label}[^"]*"[\\s\\S]{0,400}?<input\\s+type="radio"\\s+name="${group.name}"`);
+      if (!cardPattern.test(templateSource)) {
+        violations.push({
+          check: `18: ${group.label} must wrap a real radio input`,
+          file: relTemplatePath,
+          detail: `expected a <label class="${group.label}"...> to contain <input type="radio" name="${group.name}"> — a fake, click-only card is not keyboard-accessible`
+        });
+      }
+    }
+  }
+
+  if (fs.existsSync(MODAL_FILE)) {
+    scanned.push(MODAL_FILE);
+    const rawModalSource = read(MODAL_FILE);
+    const modalSource = stripCommentsAndStrings(rawModalSource);
+    const relModalPath = path.relative(ROOT, MODAL_FILE);
+
+    // Check 15: the modal must not construct an assignment link itself.
+    if (/\bassignedAllyKind\s*:/.test(modalSource) || /\bASSIGNMENT_KIND\b/.test(modalSource)) {
+      violations.push({
+        check: '15: modal must not construct assignment links',
+        file: relModalPath,
+        detail: 'found an assignedAllyKind:/ASSIGNMENT_KIND reference in the modal — it must only resolve a normalized selection result, never build a relationship record itself'
+      });
+    }
+
+    // Check 16: the modal must not import or call ActorEngine.
+    if (/^\s*import\b[\s\S]{0,120}ActorEngine/m.test(rawModalSource) || /\bActorEngine\s*\.\s*\w+\s*\(/.test(modalSource)) {
+      violations.push({
+        check: '16: modal must not import or call ActorEngine',
+        file: relModalPath,
+        detail: 'the modal must never touch ActorEngine — it only reads a read-only view model and resolves a result'
+      });
+    }
+
+    // Check 17: no direct Actor mutation or AllyAssignmentService call.
+    if (/\.\s*(update|setFlag|unsetFlag)\s*\(/.test(modalSource)) {
+      violations.push({
+        check: '17: modal must not mutate an Actor directly',
+        file: relModalPath,
+        detail: 'found a direct .update()/.setFlag()/.unsetFlag() call in the modal — the modal must only resolve a result; AlliesSurfaceController performs the mutation after the modal closes'
+      });
+    }
+    if (/\bAllyAssignmentService\s*\./.test(modalSource)) {
+      violations.push({
+        check: '17: modal must not call AllyAssignmentService directly',
+        file: relModalPath,
+        detail: 'the modal must never call the lower-level mutation service — only AlliesSurfaceController does, through AlliesSurfaceService, after the modal resolves'
+      });
+    }
   }
 
   if (fs.existsSync(SURFACE_SERVICE_FILE)) {
@@ -123,7 +257,7 @@ function main() {
     // methods (not the whole file) — createBareBeastCompanion's inline
     // actorData flags for a NEWLY CREATED beast Actor are a separate,
     // pre-existing, unrelated mechanism this check must not flag.
-    const delegateMethodNames = ['assignExistingNpcAsAlly', 'unassignExistingNpcAlly', 'convertExistingNpcToFollower', 'assignDroppedActor'];
+    const delegateMethodNames = ['assignExistingNpcAsAlly', 'unassignExistingNpcAlly', 'convertExistingNpcToFollower'];
     for (const methodName of delegateMethodNames) {
       const methodMatch = source.match(new RegExp(`static\\s+async\\s+${methodName}[\\s\\S]*?\\n  \\}`));
       if (methodMatch && /assignedAllyOwnerId\s*:/.test(methodMatch[0])) {
@@ -153,6 +287,29 @@ function main() {
         check: '9: assigned allies must not enter minion level sync',
         file: relPath,
         detail: "expected mapActorCard's canSyncMinion to remain scoped to 'minion'/'privateer' kinds only"
+      });
+    }
+
+    // Check 20: buildDefaultAllyAssignmentModalState must default
+    // assignmentMode to 'ally' — a drop or open must never default into a
+    // mechanical conversion without an explicit GM choice.
+    const defaultStateFnMatch = source.match(/function\s+buildDefaultAllyAssignmentModalState[\s\S]*?\n\}/);
+    if (!defaultStateFnMatch || !/assignmentMode\s*:\s*initial\.assignmentMode\s*===\s*['"]follower['"]\s*\?\s*['"]follower['"]\s*:\s*['"]ally['"]/.test(defaultStateFnMatch[0])) {
+      violations.push({
+        check: '20: modal state must default to Assign as Ally',
+        file: relPath,
+        detail: "expected buildDefaultAllyAssignmentModalState to fall back to assignmentMode: 'ally' unless the caller explicitly passed 'follower'"
+      });
+    }
+
+    // Check 21: follower-slot auto-selection must never pick a slot by
+    // array position when more than one open slot exists.
+    const slotPolicyMatch = source.match(/function\s+resolveFollowerSlotSelectionOnModeChange[\s\S]*?\n\}/);
+    if (!slotPolicyMatch || !/\.length\s*===\s*1/.test(slotPolicyMatch[0])) {
+      violations.push({
+        check: '21: follower-slot auto-selection must require exactly one open slot',
+        file: relPath,
+        detail: 'expected resolveFollowerSlotSelectionOnModeChange to gate auto-selection on followerSlots.length === 1 — with multiple open slots, the GM must choose explicitly'
       });
     }
   }
@@ -306,7 +463,7 @@ function main() {
   console.log('='.repeat(72));
   console.log('  GM EXISTING NPC ASSIGNMENT AUTHORITY GUARD');
   console.log('='.repeat(72));
-  console.log(`\nScanned ${scanned.length} file(s) against 13 checks.\n`);
+  console.log(`\nScanned ${scanned.length} file(s) against 21 checks.\n`);
 
   if (violations.length === 0) {
     console.log('No violations found — existing-NPC assignment remains governed, GM-only, and correctly separates relationship-only assignment from mechanical conversion.');
