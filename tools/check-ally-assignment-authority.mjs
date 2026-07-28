@@ -83,6 +83,36 @@
  *       array position when more than one open slot exists — auto-select is
  *       only permitted when there is EXACTLY one candidate slot.
  *
+ * ELIGIBILITY/OWNERSHIP CORRECTION PASS additions (fix(allies): harden NPC
+ * assignment modal eligibility):
+ *   22. The controller's conversion call must forward
+ *       `grantOwnership: result.grantOwnership` — the modal's ownership
+ *       checkbox must never be silently discarded on the Convert to
+ *       Follower path.
+ *   23. convertToFollower must evaluate target eligibility via
+ *       evaluateFollowerConversionEligibility, not
+ *       evaluateNpcAssignmentEligibility — the two must remain distinct so
+ *       an Actor already assigned to THIS owner as a relationship-only ally
+ *       stays convertible (the migration path), while a different owner's
+ *       assignment, an existing follower, or an active player character
+ *       stays blocked at the service boundary, not just in the UI picker.
+ *   24. The picker view model (buildNpcAssignmentPickerViewModel) must
+ *       compute canConvertToFollower from evaluateFollowerConversionEligibility,
+ *       not by reusing the Assign-as-Ally evaluation.
+ *   25. Both evaluateNpcAssignmentEligibility and
+ *       evaluateFollowerConversionEligibility must check isTargetAlreadyFollower
+ *       and isActivePlayerCharacter — an existing mechanical follower or an
+ *       active PC must be blocked from both relationship-only assignment
+ *       and conversion.
+ *   26. Every Actor radio card in the modal template must carry a real
+ *       `disabled` attribute when the view model marks it not-selectable
+ *       (radioDisabled) — an Actor ineligible for both modes must not be
+ *       selectable into a dead-end state.
+ *   27. The shared ownership-grant transaction step must define a
+ *       `rollback`, not only a `commit` — a later step's failure must
+ *       restore the target's prior ownership level, not merely leave an
+ *       ownership grant in place while reporting the transaction failed.
+ *
  * Report-only by default; --strict exits non-zero on any violation.
  */
 
@@ -170,6 +200,19 @@ function main() {
         detail: '_handleDrop calls an assignment/conversion service directly — it must route through the modal-opening flow (_assignExistingNpc) so the GM still confirms a mode before anything is mutated'
       });
     }
+
+    // Check 22: the controller's conversion call must forward
+    // grantOwnership — the modal's ownership checkbox must never be
+    // silently discarded on the Convert to Follower path.
+    const assignFlowMatch = source.match(/async\s+_assignExistingNpc\s*\([\s\S]*?\n  \}/);
+    const convertCallMatch = assignFlowMatch?.[0]?.match(/AlliesSurfaceService\s*\.\s*convertExistingNpcToFollower\s*\([\s\S]{0,240}?\)/);
+    if (!assignFlowMatch || !convertCallMatch || !/grantOwnership\s*:\s*result\.grantOwnership/.test(convertCallMatch[0])) {
+      violations.push({
+        check: '22: conversion call must forward grantOwnership',
+        file: relPath,
+        detail: 'expected the convertExistingNpcToFollower call inside _assignExistingNpc to pass grantOwnership: result.grantOwnership — the modal ownership checkbox must not be silently discarded when converting'
+      });
+    }
   }
 
   if (fs.existsSync(MODAL_TEMPLATE_FILE)) {
@@ -202,6 +245,19 @@ function main() {
           detail: `expected a <label class="${group.label}"...> to contain <input type="radio" name="${group.name}"> — a fake, click-only card is not keyboard-accessible`
         });
       }
+    }
+
+    // Check 26: an Actor card the view model marks not-selectable must
+    // carry a real disabled attribute on its radio input, not just a CSS
+    // class — an ineligible-for-both-modes Actor must not be selectable
+    // into a dead-end state.
+    const actorRadioMatch = templateSource.match(/<input\s+type="radio"\s+name="targetActorId"[\s\S]{0,200}/);
+    if (!actorRadioMatch || !/\{\{#if this\.radioDisabled\}\}disabled/.test(actorRadioMatch[0])) {
+      violations.push({
+        check: '26: inert Actor cards must be disabled, not just styled',
+        file: relTemplatePath,
+        detail: 'expected the Actor card radio input to carry {{#if this.radioDisabled}}disabled{{/if}} — a card ineligible for every mode must not remain selectable'
+      });
     }
   }
 
@@ -310,6 +366,22 @@ function main() {
         check: '21: follower-slot auto-selection must require exactly one open slot',
         file: relPath,
         detail: 'expected resolveFollowerSlotSelectionOnModeChange to gate auto-selection on followerSlots.length === 1 — with multiple open slots, the GM must choose explicitly'
+      });
+    }
+
+    // Check 24: the picker view model must compute canConvertToFollower
+    // from evaluateFollowerConversionEligibility's OWN result, not by
+    // reusing the Assign-as-Ally evaluation — anchored on the actual
+    // assignment line, not merely "is the function called somewhere in
+    // this method" (which would still pass if the result were computed
+    // but never used for gating).
+    const pickerVmMatch = source.match(/static\s+buildNpcAssignmentPickerViewModel[\s\S]*?\n  \}/);
+    const canConvertLineMatch = pickerVmMatch?.[0]?.match(/const\s+canConvertToFollower\s*=[^;]+;/);
+    if (!pickerVmMatch || !/evaluateFollowerConversionEligibility\s*\(/.test(pickerVmMatch[0]) || !canConvertLineMatch || !/conversionEvaluation\.eligible/.test(canConvertLineMatch[0])) {
+      violations.push({
+        check: '24: picker view model must use the conversion-specific eligibility gate',
+        file: relPath,
+        detail: 'expected the canConvertToFollower assignment to read conversionEvaluation.eligible (from evaluateFollowerConversionEligibility) — reusing the ally evaluation would make same-owner conversion appear blocked in the UI even though the service allows it'
       });
     }
   }
@@ -458,12 +530,56 @@ function main() {
         detail: "expected the owner-relationship-commit rollback closure to write a pre-captured snapshot variable, not re-read ownerActor.system?.ownedActors live — reading the actor's current state inside a rollback closure returns the already-mutated value, not the original"
       });
     }
+
+    // Check 23: convertToFollower must evaluate target eligibility via
+    // evaluateFollowerConversionEligibility, not evaluateNpcAssignmentEligibility
+    // — the two eligibility gates are deliberately distinct (see the
+    // function's own doc comment).
+    if (!convertMatch || !/evaluateFollowerConversionEligibility\s*\(/.test(convertBody)) {
+      violations.push({
+        check: '23: convertToFollower must use the conversion-specific eligibility gate',
+        file: relPath,
+        detail: 'expected convertToFollower to call evaluateFollowerConversionEligibility — reusing evaluateNpcAssignmentEligibility would re-reject a same-owner assigned ally, making the prior-assignment migration path unreachable'
+      });
+    }
+    if (convertMatch && /evaluateNpcAssignmentEligibility\s*\(/.test(convertBody)) {
+      violations.push({
+        check: '23: convertToFollower must not reuse the Assign-as-Ally eligibility gate',
+        file: relPath,
+        detail: 'found a call to evaluateNpcAssignmentEligibility inside convertToFollower — conversion eligibility must come from evaluateFollowerConversionEligibility only'
+      });
+    }
+
+    // Check 25: both eligibility wrappers must check isTargetAlreadyFollower
+    // and isActivePlayerCharacter — an existing mechanical follower or an
+    // active player character must be blocked from both assignment paths.
+    const allyEligibilityWrapperMatch = source.match(/function\s+evaluateNpcAssignmentEligibility\s*\([\s\S]*?\n\}/);
+    const conversionEligibilityWrapperMatch = source.match(/function\s+evaluateFollowerConversionEligibility\s*\([\s\S]*?\n\}/);
+    for (const [label, match] of [['evaluateNpcAssignmentEligibility', allyEligibilityWrapperMatch], ['evaluateFollowerConversionEligibility', conversionEligibilityWrapperMatch]]) {
+      if (!match || !/isTargetAlreadyFollower\s*\(/.test(match[0]) || !/isActivePlayerCharacter\s*\(/.test(match[0])) {
+        violations.push({
+          check: '25: eligibility must reject an existing follower and an active player character',
+          file: relPath,
+          detail: `expected ${label} to call both isTargetAlreadyFollower(...) and isActivePlayerCharacter(...)`
+        });
+      }
+    }
+
+    // Check 27: the shared ownership-grant step must define a rollback.
+    const ownershipStepMatch = source.match(/function\s+buildOwnershipGrantStep[\s\S]*?\n\}/);
+    if (!ownershipStepMatch || !/rollback\s*:\s*async/.test(ownershipStepMatch[0])) {
+      violations.push({
+        check: '27: the ownership-grant step must define a rollback',
+        file: relPath,
+        detail: 'expected buildOwnershipGrantStep to return a step object with a rollback function, not just commit — a later transaction-step failure must restore the target\'s prior ownership level'
+      });
+    }
   }
 
   console.log('='.repeat(72));
   console.log('  GM EXISTING NPC ASSIGNMENT AUTHORITY GUARD');
   console.log('='.repeat(72));
-  console.log(`\nScanned ${scanned.length} file(s) against 21 checks.\n`);
+  console.log(`\nScanned ${scanned.length} file(s) against 27 checks.\n`);
 
   if (violations.length === 0) {
     console.log('No violations found — existing-NPC assignment remains governed, GM-only, and correctly separates relationship-only assignment from mechanical conversion.');

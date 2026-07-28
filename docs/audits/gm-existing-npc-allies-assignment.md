@@ -24,10 +24,35 @@ the plain `<select>`-in-a-`Dialog` picker and the follow-up generic-`Dialog`
 Assign/Convert choice prompt are replaced by one styled `ApplicationV2`
 modal (`AllyAssignmentModal`) with portrait radio cards for the target
 Actor, radio cards for Assign as Ally / Convert to Follower, and radio
-cards for the follower slot when converting. This is a UI/UX refinement
-only — `AllyAssignmentService`, `AlliesSurfaceService`'s assign/convert/
-unassign delegates, and the underlying transactional mutation behavior
-described above are all unchanged. See "Styled Assignment Modal" below.
+cards for the follower slot when converting. See "Styled Assignment Modal"
+below.
+
+**ELIGIBILITY/OWNERSHIP CORRECTION PASS** (commit "fix(allies): harden NPC
+assignment modal eligibility"): an independent review of the styled-modal
+addendum found it was NOT purely a UI refinement — it exposed and, in one
+case, introduced real service-level defects: (1) the modal's ownership
+checkbox was silently discarded on the Convert to Follower path; (2) the
+picker reused Assign-as-Ally eligibility for Convert to Follower, making
+the already-implemented "convert a same-owner assigned ally" migration
+path unreachable from the UI; (3) nothing prevented selecting an
+already-mechanical-follower Actor into a second follower slot; (4) nothing
+excluded active player characters from the picker, exposing a live PC to
+relationship assignment or mechanical conversion; (5) `convertToFollower`
+never independently checked target-type eligibility at the service
+boundary, weaker than `assignAsAlly`'s; (6) the ownership-grant transaction
+step had no rollback; plus several UI/accessibility gaps (ineligible Actor
+cards remained selectable, the assignment-type grid was not a real
+`radiogroup`, no Enter-to-submit support, the picker view model was
+rebuilt on every keystroke, a selected candidate could scroll out of view
+under search with no persistent indicator, and Convert to Follower always
+silently defaulted to the Utility template with no GM choice). This pass
+adds `evaluateFollowerConversionEligibility` as a deliberately distinct
+eligibility gate from `evaluateNpcAssignmentEligibility`, adds
+`isTargetAlreadyFollower`/`isActivePlayerCharacter` checks to BOTH gates,
+makes ownership-grant transactional with rollback in both `assignAsAlly`
+and (newly) `convertToFollower`, and reworks the modal's template/state
+machine for the UI fixes. See "Styled Assignment Modal" and "Eligibility"
+below for the corrected design.
 
 ## The crucial rule
 
@@ -278,7 +303,7 @@ on this result, delegating to `AlliesSurfaceService.assignExistingNpcAsAlly`/
 `.update()`/`.setFlag()`/`.unsetFlag()` on any Actor — enforced by static
 guard checks 16–17.
 
-**Actor radio-card selection.** Each eligible candidate renders as a real
+**Actor radio-card selection.** Each candidate renders as a real
 `<label class="swse-assignment-actor-card">` wrapping a real
 `<input type="radio" name="targetActorId">` (not a clickable `<div>` with
 no underlying form control — static guard check 18 verifies every
@@ -291,17 +316,40 @@ candidate. This data comes from `AlliesSurfaceService.buildNpcAssignmentPickerVi
 (see "Allies surface wiring") — the modal never re-derives eligibility
 itself.
 
+**CORRECTED — ineligible-for-both-modes cards are no longer selectable.**
+The original implementation rendered every candidate's radio input as
+enabled regardless of eligibility — a card with a visible blocked-reason
+flag could still be clicked and selected, leaving the confirm button
+disabled with no indication why. The picker view model now computes a
+per-card `selectable: allyEvaluation.eligible || canConvertToFollower`
+boolean (`AlliesSurfaceService.buildNpcAssignmentPickerViewModel`); the
+modal maps this to `radioDisabled: candidate.selectable === false` in
+`_prepareContext`, and the template renders a real `disabled
+aria-disabled="true"` attribute on that card's radio input plus a visible
+"No action is available for this Actor." flag (static guard check 26,
+anchored on the small window immediately following the Actor radio
+input). An Actor eligible for only ONE of the two modes (e.g. eligible to
+convert but not to assign as a plain ally) remains selectable — only the
+zero-eligible-modes case is disabled.
+
 **Assignment-mode radio-card selection.** Assign as Ally and Convert to
 Follower render as two large radio cards
 (`name="assignmentMode"`, values `"ally"`/`"follower"`) in a responsive
-2-column grid (`.swse-assignment-choice-grid`, collapsing to 1 column under
-640px). Convert to Follower is disabled (`disabled` attribute, not just a
-CSS class — check 18/30) whenever the selected candidate's
-`canConvertToFollower` is false (no open slot, droid-blocked, or otherwise
-ineligible), with the specific blocking reason shown beneath the card.
-Assign as Ally defaults selected (`buildDefaultAllyAssignmentModalState()`
-always returns `assignmentMode: 'ally'` unless a caller explicitly passes
-`'follower'` — static guard check 20).
+2-column grid. **CORRECTED — the grid is now a real `radiogroup`.** The
+original markup wrapped the two mode cards in a plain `<div>` with no ARIA
+role, so assistive technology had no way to announce them as a
+mutually-exclusive group. The wrapper now carries
+`role="radiogroup" aria-labelledby="swse-ally-assignment-mode-heading"`,
+pointing at the section's own `<h3 id="swse-ally-assignment-mode-heading">`
+(static guard check 26's companion structural assertion — see "Tests").
+Convert to Follower is disabled (`disabled` attribute, not just a CSS
+class) whenever the selected candidate's `canConvertToFollower` is false
+(no open slot, droid-blocked, already a follower, an active player
+character, or otherwise ineligible — see "Eligibility" below), with the
+specific blocking reason shown beneath the card. Assign as Ally defaults
+selected (`buildDefaultAllyAssignmentModalState()` always returns
+`assignmentMode: 'ally'` unless a caller explicitly passes `'follower'` —
+static guard check 20).
 
 **Follower-slot radio-card selection.** Revealed only when
 `assignmentMode === 'follower'`. Each open slot renders as a
@@ -315,8 +363,63 @@ slots, the GM must choose explicitly — the function never falls back to
 `followerSlots[0]` merely because an array has entries. Switching back to
 Assign as Ally preserves the prior slot selection in modal state (so
 switching forward again doesn't lose it) but `buildAllyAssignmentResult`
-always nulls `followerSlotId` when `assignmentMode !== 'follower'`, so it
-is never submitted while in ally mode.
+always nulls `followerSlotId`/`templateType` when `assignmentMode !==
+'follower'`, so neither is ever submitted while in ally mode.
+
+**CORRECTED — explicit follower-template selection (was a silent
+default).** The original implementation always converted through
+`FollowerCreator`'s default template with no GM-visible choice — Convert
+to Follower silently defaulted to the Utility template every time,
+regardless of what the GM might have wanted. Each follower slot record
+already carries a `templateChoices` array (an existing, narrower concept
+from ordinary follower chargen, `follower-slot-service.js`; canonical
+values `aggressive`/`defensive`/`utility`, defaulting to all three when a
+slot doesn't constrain them — `DEFAULT_FOLLOWER_TEMPLATE_CHOICES`). The
+modal now surfaces that slot's `templateChoices` as a third radio-card
+group (`name="templateType"`, `role="radiogroup" aria-label="Follower
+template"`), rendered once a follower slot is selected. When a slot's
+`templateChoices` has exactly one entry, `resolveFollowerTemplateSelectionForSlot`
+auto-selects it (mirroring the single-slot auto-select policy above) and
+the template section is hidden (`templateOptions.length` is 0 in that
+case — nothing left to choose); when a slot allows more than one template,
+the GM must pick explicitly and `canConfirmAllyAssignment` blocks confirm
+until `state.templateType` is one of that slot's `templateChoices`.
+Switching to a differently-constrained slot re-resolves the template
+selection via `resolveFollowerSlotSelection` rather than carrying over a
+now-invalid choice. The chosen `templateType` flows through
+`buildAllyAssignmentResult` → the controller → `AlliesSurfaceService.convertExistingNpcToFollower`
+as `options.template`, replacing the previous unconditional default.
+
+**CORRECTED — Enter-to-submit and a persistent selected-Actor summary.**
+The modal root is now a real `<form class="swse-ally-assignment-modal">`
+(was a plain `<div>`) with the confirm button as `type="submit"` (cancel
+stays `type="button"`); `_onRender` attaches a `submit` listener that
+calls `event.preventDefault()` and then `this._onConfirm()`, so pressing
+Enter while focused anywhere in the form submits it like any ordinary HTML
+form, rather than doing nothing (the original `<div>`-rooted modal had no
+form semantics at all). Separately, because the Actor list can be filtered
+by search, a selection could previously scroll out of view with no
+indication of who was selected. `_prepareContext` now always resolves
+`selectedCandidate` from the FULL, unfiltered view model (via
+`findNpcAssignmentCandidate`), independent of the search-filtered
+`candidates` list, and the template renders a fixed
+`.swse-ally-assignment-modal__selected-summary` panel (portrait, name,
+kind/level/detail) above the search box whenever `hasSelection` is true —
+so the current selection is always visible regardless of what the search
+box currently filters to.
+
+**CORRECTED — the picker view model is now built once per modal session,
+not on every render.** `buildNpcAssignmentPickerViewModel` performs a
+full world-Actor eligibility scan; the original `_prepareContext` called
+it on every `render()` — including every keystroke in the search box —
+recomputing eligibility for every world Actor on each character typed. The
+modal constructor now sets `this._viewModelLoaded = false`, and
+`_prepareContext` only calls `buildNpcAssignmentPickerViewModel` when that
+flag is still false, setting it `true` immediately after — so the
+expensive scan runs exactly once per modal open, and all subsequent
+renders (search filtering, mode switching, slot/template selection) reuse
+the cached `this._viewModel` and only recompute the cheap, already-pure
+filter/selection functions.
 
 **Drag/drop integration.** `AlliesSurfaceController._handleDrop` resolves
 the dropped Actor, then calls `this._assignExistingNpc(actor.id)` — the
@@ -339,18 +442,33 @@ click rather than DOM-patching in place); the search input's focus and
 cursor position are explicitly restored after each re-render
 (`_focusSearchAfterRender`) so typing is not interrupted.
 
-**Accessibility.** `role="dialog"` with `aria-labelledby`/`aria-describedby`
-pointing at the modal's title/description; the Actor list and follower-slot
-list are each `role="radiogroup"` with an `aria-label`; every radio card is
-a real `<label>`/`<input type="radio">` pair (native keyboard arrow-key
+**Accessibility — CORRECTED, and reported honestly rather than as
+"complete."** `role="dialog"` with `aria-labelledby`/`aria-describedby`
+pointing at the modal's title/description; the Actor list, follower-slot
+list, assignment-mode grid (fixed this pass — see above), and follower-
+template grid (new this pass) are each a real `role="radiogroup"` with an
+`aria-label` or `aria-labelledby`; every radio card is a real
+`<label>`/`<input type="radio">` pair (native keyboard arrow-key
 navigation and `:focus-visible` styling both come for free from using real
-form controls, not synthesized); disabled cards carry a real `disabled`
-attribute on their `<input>` (not merely a CSS class) plus visible reason
-text; portrait `<img>` tags use `alt=""` (decorative — the name is already
-in adjacent text); Escape closes via Foundry's native AppV2 handling and
-resolves `null` through the same `close()` override as the `[X]` button
-(static guard checks 15–17 also cover this: `close()` never references
-`AlliesSurfaceService`/`ActorEngine`).
+form controls, not synthesized); disabled cards — now including
+ineligible-for-both-modes Actor cards, fixed this pass — carry a real
+`disabled` attribute on their `<input>` (not merely a CSS class) plus
+visible reason text; the form now supports Enter-to-submit (fixed this
+pass — see above); portrait `<img>` tags use `alt=""` (decorative — the
+name is already in adjacent text); Escape closes via Foundry's native
+AppV2 handling and resolves `null` through the same `close()` override as
+the `[X]` button (static guard checks 15–17 also cover this: `close()`
+never references `AlliesSurfaceService`/`ActorEngine`).
+
+What this claim does NOT cover, stated explicitly per the reviewer's
+"Report corrections" request: none of the above has been exercised with a
+real screen reader, real keyboard-only navigation, or real focus-order
+verification inside a live Foundry window — every ARIA attribute, `role`,
+and `disabled` state listed above is a template/source structural
+assertion (tier (d): the exact markup that ships was read back and
+checked against these invariants), not a runtime accessibility audit. "Has
+correct ARIA roles and real form controls" and "has been verified
+accessible" are different claims; only the first is made here.
 
 **Viewport/scroll behavior.** The modal content is a CSS grid
 (`grid-template-rows: auto minmax(0, 1fr) auto`, `max-height: min(80vh, 760px)`,
@@ -371,23 +489,62 @@ and never calls `AllyAssignmentService` directly — the ONLY thing that
 crosses the modal/controller boundary is the single normalized result
 object described above.
 
-**Tests.** `tests/gm-npc-assignment-modal.test.mjs` (30 required cases —
-see "Tests" and "Coverage tiers" below for the exact tier breakdown per
-case).
+**Tests.** `tests/gm-npc-assignment-modal.test.mjs` (50 required cases,
+up from 30 in the UI addendum — 20 added in this correction pass — see
+"Tests" and "Coverage tiers" below for the exact tier breakdown per case;
+many of the 50 are source-structure assertions, not runtime/DOM proof —
+see "Coverage tiers" tier (d) and the accessibility caveat above).
 
 **Live Foundry status.** Not clicked through in a live Foundry world —
 same standing limitation as every other UI surface in this branch (see
-"Runtime status"). The modal's entire decision logic is production-path
-tested via the Foundry-shim harness (the pure exports it is built from);
-only the AppV2 rendering/DOM-event-wiring layer itself is unverified live.
+"Runtime status"). The modal's entire decision logic (view-model caching,
+search filtering, mode/slot/template selection, confirm gating, result
+normalization) is production-path tested via the Foundry-shim harness (the
+pure exports it is built from); the AppV2 rendering/DOM-event-wiring layer
+itself — including real focus behavior, real keyboard navigation, and the
+new `<form>` submit wiring — remains unverified live. This is the one
+thing this pass could not close: the production `ApplicationV2`
+interaction is still unexecuted.
 
 ## Eligibility
+
+**CORRECTED — two deliberately distinct eligibility gates, not one shared
+by both modes.** The UI addendum introduced Convert to Follower into the
+picker but computed its availability by reusing
+`evaluateNpcAssignmentEligibility` — the SAME gate used for Assign as
+Ally, including its same-owner-same-mode duplicate rejection. This was a
+real service-contract bug, not a UI polish issue: a target already
+Assigned as Ally to the SAME owner is exactly the intended case for the
+already-implemented "convert an assigned ally to a follower" migration
+(`convertToFollower`'s prior-assignment cleanup, see "Convert to Follower"
+below) — but reusing the ally gate made that path structurally
+unreachable from the UI, since the ally gate rejects same-owner duplicates
+outright. This pass adds `evaluateFollowerConversionEligibility` /
+`evaluateFollowerConversionEligibilityFacts` as their own exported
+functions, mirroring `evaluateNpcAssignmentEligibility` /
+`evaluateAssignmentEligibilityFacts`'s shape exactly but WITHOUT the
+same-owner-same-mode rejection, so the two "shapes" of eligibility can
+never regress into each other through a shared code path. The picker view
+model (`buildNpcAssignmentPickerViewModel`) now evaluates BOTH gates per
+candidate — `allyEvaluation` drives the Assign as Ally card and the Actor
+card's `eligible`/`blockedReason` fields; `conversionEvaluation` drives
+`canConvertToFollower` and `convertBlockedReason` — and `convertToFollower`
+itself independently re-checks `evaluateFollowerConversionEligibility` at
+the service boundary (not just the ally gate) so a forged direct call is
+rejected the same way the UI's picker already prevents.
 
 `evaluateNpcAssignmentEligibility` rejects: a non-GM caller; a missing
 owner or target; an ineligible owner type (only `character`/`droid`); an
 ineligible target type (only `npc`/`character`/`droid` — vehicles,
-starships, hazards excluded); self-assignment; and an Actor already
-assigned to THIS owner in the SAME mode.
+starships, hazards excluded); self-assignment; an Actor already assigned
+to THIS owner in the SAME mode; an Actor that is already a mechanical
+follower (new this pass — see below); and an Actor that is an active
+player character (new this pass — see below).
+
+`evaluateFollowerConversionEligibility` rejects the same non-GM/missing/
+type/self-assignment/different-owner/already-follower/active-PC cases, but
+does **not** reject a target already assigned to THIS owner as an ally —
+that is the intended, explicit migration path, not a duplicate.
 
 **CORRECTED — exclusive-owner policy.** The reciprocal target schema
 stores only one `assignedAllyOwnerId` — the original implementation only
@@ -401,6 +558,31 @@ assigned to a **different** owner is rejected with a message directing the
 GM to unassign it first, regardless of mode. `convertToFollower` enforces
 the same policy independently (a target assigned to a different owner
 cannot be converted by this owner either).
+
+**CORRECTED — already-a-follower and active-player-character exclusion.**
+Two gaps found in this pass, both fixed identically in BOTH eligibility
+gates via two new shared, pure, exported guard functions:
+
+- `isTargetAlreadyFollower(targetActor)` — true if the Actor is already a
+  mechanical follower by any of the four field families the codebase uses
+  to mark that (`system.isFollower`, `system.progression.isFollower`,
+  `flags.swse.follower.isFollower`, or the `getFlag(SYSTEM_ID,
+  'isFollower')` accessor). Previously nothing stopped an already-follower
+  Actor from being selected into a SECOND follower slot through this
+  picker — it would have collided with (or duplicated on top of) its
+  existing follower registration.
+- `isActivePlayerCharacter(targetActor, {users})` — true if any user's
+  assigned primary character is this Actor, OR any non-GM user holds
+  Owner-level ownership on it (GM-held Owner ownership does not count —
+  every Actor is GM-owned by default). Previously nothing excluded a live
+  player character from the picker at all — a GM could relationship-assign
+  or mechanically convert another player's active PC through this tool,
+  which was never an intended use case.
+
+Both checks are wired into `evaluateAssignmentEligibilityFacts` and
+`evaluateFollowerConversionEligibilityFacts` identically, and both are
+re-derived independently inside the service layer (not trusted from a
+caller-supplied flag), matching the existing `isGM` re-derivation pattern.
 
 ## Assign as Ally
 
@@ -439,10 +621,47 @@ Requires and validates a real open follower slot (`validateFollowerConversionSlo
 before any mutation — rejects a missing slot, an occupied slot, and a
 non-`'follower'`-dependentKind slot (minion/beast-only slots). Both
 talent-derived and GM-manual (`sourceType: 'gm-grant'`) slots are equally
-valid (tests 49–50) — no discrimination by provenance. Preflight also
-independently re-checks the exclusive-owner policy (`detectPriorAssignment`)
-so a target already assigned to a **different** owner cannot be converted
-by this owner either (test 60).
+valid (tests 49–50) — no discrimination by provenance. Preflight order is:
+GM check → basic argument existence → the droid conversion gate → slot
+fetch and validation → the full `evaluateFollowerConversionEligibility`
+call (exclusive-owner policy, already-a-follower, active-player-character,
+and — see below — target-type). Eligibility is deliberately checked AFTER
+slot validation so re-converting an Actor into an already-occupied slot
+still surfaces the more specific "slot occupied" diagnosis rather than the
+coarser "already a follower" one.
+
+**CORRECTED — target-type eligibility is now independently enforced at
+the service boundary, matching `assignAsAlly`.** The original
+`convertToFollower` never called `isEligibleAssignmentTargetType` itself —
+it relied entirely on the picker UI already filtering out vehicles,
+starships, and hazards, which meant a forged direct call (e.g. from a
+player's console, or a future caller that skips the picker) could attempt
+to convert an ineligible Actor type with no service-level rejection.
+`evaluateFollowerConversionEligibility` now checks target type exactly
+like `evaluateNpcAssignmentEligibility` already did, so `convertToFollower`
+rejects a vehicle-type target at the service boundary regardless of what
+called it (test 50).
+
+**CORRECTED — the ownership grant is now available on, and transactional
+within, the conversion path (it previously only worked for Assign as
+Ally).** The modal's `grantOwnership` checkbox result was always computed
+by `buildAllyAssignmentResult`, but the controller only forwarded
+`grantOwnership` to `AlliesSurfaceService.assignExistingNpcAsAlly` — the
+Convert to Follower call site silently dropped it, so checking "Grant the
+player control of this NPC" and choosing Convert to Follower produced a
+converted follower the player still could not open or control, with no
+error and no indication anything was skipped. `convertToFollower` now
+accepts the same `options.grantOwnership: boolean` `assignAsAlly` does; a
+shared `buildOwnershipGrantStep(ownerActor, targetActor, sourceTag)`
+builder (used by both methods — see "Transaction hierarchy" below)
+constructs the ownership step, and it is pushed as a fourth, conditional
+transaction step whenever `grantOwnership === true` (test 39: the
+converted Actor's ownership map contains the owning player at
+`CONST.DOCUMENT_OWNERSHIP_LEVELS.OWNER`; a forced ownership-grant failure
+rolls back the ENTIRE conversion — the target's follower fields, the
+owner's projections, and the ownership grant all revert together, not just
+the grant). The controller now forwards `grantOwnership: result.grantOwnership`
+at both call sites (guard check 22).
 
 **CORRECTED — derivation is now a required transaction step, not a
 best-effort side effect after commit.** The original implementation
@@ -492,8 +711,15 @@ GM choices) BEFORE any write happens:
    `currentBeasts`, each snapshotted via `clonePlain` before any step
    runs) — not a live re-read of `ownerActor.system` at rollback time.
 
-`convertToFollower` never returns success unless all three steps commit.
-There is no metadata-only success path.
+4. **`ownership-commit`** (conditional — only when `options.grantOwnership
+   === true`, see above) — the shared `buildOwnershipGrantStep`, identical
+   to the step `assignAsAlly` uses: grants the owning player Owner-level
+   ownership on the target, capturing the target's pre-grant ownership map
+   so rollback restores it exactly rather than resetting to a hardcoded
+   "no ownership" state.
+
+`convertToFollower` never returns success unless every included step
+commits. There is no metadata-only success path.
 
 **CORRECTED — stale-snapshot rollback bug.** The original owner-side
 rollback read `ownerActor.system?.ownedActors` (and the equivalent
@@ -586,6 +812,25 @@ controller never mutates an Actor or constructs a relationship record
 directly (checks 1–2) — the chain is strictly Allies button/drag-drop →
 `AlliesSurfaceController` → `AlliesSurfaceService` → `AllyAssignmentService` →
 `ActorEngine`.
+
+**CORRECTED — the ownership-grant transaction step now has a real
+rollback.** Both `assignAsAlly` and `convertToFollower` build their
+ownership-grant step from the same shared `buildOwnershipGrantStep(owner,
+target, sourceTag)` (see "Convert to Follower" above). Its `commit`
+captures the target's pre-grant ownership map (`clonePlain(targetActor.ownership
+|| {})`) before writing the new Owner-level grant, returning
+`{userId, previousOwnership}`; its `rollback(result)` restores the exact
+prior level for that user (or `CONST.DOCUMENT_OWNERSHIP_LEVELS.NONE ?? -1`
+if the user had no explicit prior entry) rather than leaving the grant in
+place or clearing ownership to a hardcoded default. Note that
+`runFollowerMutationTransaction` never calls a step's own rollback if that
+SAME step's commit is what threw — only previously-completed steps unwind
+— so this rollback exists specifically for defense-in-depth against future
+step reordering (ownership is currently always the last step in both
+flows) and is verified directly (test 40: source assertion that the step
+has both `commit` and `rollback`, and that rollback references
+`previousOwnership`; test 39's failure case exercises the full-transaction
+unwind end-to-end).
 
 ## Unassign behavior
 
@@ -707,10 +952,17 @@ Run: `node tests/gm-existing-npc-allies-assignment.test.mjs` →
 `GM existing NPC allies assignment tests passed.` (exit 0). Auto-discovered
 and passing under `node tools/run-rolling-tests.mjs`.
 
-### Modal tests (30 named cases) — `tests/gm-npc-assignment-modal.test.mjs`
+### Modal tests (50 named cases) — `tests/gm-npc-assignment-modal.test.mjs`
 
-All 30 required cases are direct, executable assertions, split honestly
-across tiers (a) and (d) (see "Coverage tiers"):
+All 50 required cases are direct, executable assertions, split honestly
+across tiers (a) and (d) (see "Coverage tiers"). **Reported honestly per
+the reviewer's "Report corrections" request: a majority of these are
+source-structure assertions (tier (d) — the exact markup/source that ships
+is read back and checked against an invariant), not runtime/DOM
+verification.** "50 required cases pass" means each of the 50 stated,
+specific claims is true of the shipped code; it does not mean the modal
+has been driven through a live DOM, and is not reported as such anywhere
+in this document.
 
 - **Tier (a), direct production-path** (the modal's pure decision logic,
   loaded and executed for real): 1–2 (GM gating via
@@ -719,13 +971,37 @@ across tiers (a) and (d) (see "Coverage tiers"):
   availability, including the stock-statblock-droid case), 15–17
   (multi-slot/single-slot auto-select policy, and that pure state
   transitions never touch `ActorEngine`), 22–25 (confirm gating, double-
-  submit-blocked via `submitting`, and normalized-result construction).
+  submit-blocked via `submitting`, and normalized-result construction),
+  34 (`_prepareContext` gates view-model rebuild behind
+  `this._viewModelLoaded`), 35 (search filtering never affects
+  `selectedCandidate` resolution), 36–38 (template-selection gating,
+  single-choice auto-select, template reset on slot change), 39
+  (`convertToFollower` with `grantOwnership: true` — success and rollback-
+  on-failure, both against the real ownership map), 41–43 (the ally-vs-
+  conversion eligibility split: same-owner conversion eligible where ally
+  assignment is not; picker reflects the split; cross-owner blocks both),
+  44 (`isTargetAlreadyFollower` across all four field families), 45–46
+  (existing-follower exclusion in the picker and at the service boundary),
+  47–49 (`isActivePlayerCharacter` primary-character and OWNER-ownership
+  detection, including the full picker-and-service-boundary exclusion
+  case), 50 (`convertToFollower` rejects a vehicle-type target at the
+  service boundary).
 - **Tier (d), template/source structural assertions**: 3–7 and 30 (radio
   inputs, no plain `<select>`, ARIA), 14 (follower-slot section
   conditionally rendered), 18–19 (`close()`/no custom Escape handler),
   20–21 (drag/drop preselects and never bypasses the modal), 26–28
   (controller delegation, no `ActorEngine`/Actor-mutation access from the
-  modal), 29 (scrollable list region CSS).
+  modal), 29 (scrollable list region CSS), 31 (ineligible-for-both-modes
+  card has `selectable: false` — a view-model-level, not DOM-level,
+  assertion; genuinely tier (a) at the data layer but the resulting
+  `disabled` attribute's actual effect on user interaction is unverified
+  live), 32 (assignment-mode grid has a real `radiogroup` + `aria-labelledby`
+  wired to a stable heading id), 33 (real `<form>`, submit-type confirm
+  button, button-type cancel, a submit listener calling `preventDefault`
+  and `_onConfirm` — proves the wiring exists in source, not that Enter
+  actually submits in a live browser), 40 (`buildOwnershipGrantStep`
+  source assertion: has both `commit` and `rollback`, rollback references
+  `previousOwnership`).
 
 Run: `node tests/gm-npc-assignment-modal.test.mjs` →
 `GM NPC assignment modal tests passed.` (exit 0). Auto-discovered and
@@ -736,7 +1012,7 @@ passing under `node tools/run-rolling-tests.mjs`.
 Scoped to five files (`ally-assignment-service.js`,
 `AlliesSurfaceService.js`, `AlliesSurfaceController.js`,
 `ally-assignment-modal.js`, `ally-assignment-modal.hbs`) — not a
-repository-wide ban. Twenty-one checks (enumerated in the file's own
+repository-wide ban. Twenty-seven checks (enumerated in the file's own
 header comment).
 
 Checks 1–10 (original): controller must not construct links or call
@@ -787,7 +1063,35 @@ Checks 14–21 (added in the STYLED ASSIGNMENT MODAL pass):
   auto-selection on `followerSlots.length === 1` — never pick a slot by
   array position when more than one open slot exists.
 
-**Verification ritual performed** for every one of the 21 checks (inject →
+Checks 22–27 (added in the ELIGIBILITY/OWNERSHIP CORRECTION PASS):
+
+- **22** — the controller's `_assignExistingNpc`'s call to
+  `AlliesSurfaceService.convertExistingNpcToFollower(...)` must forward
+  `grantOwnership: result.grantOwnership` (the fix for issue 1 — the
+  silently-discarded ownership checkbox on the conversion path).
+- **23** — `convertToFollower`'s body must call
+  `evaluateFollowerConversionEligibility(` and must NOT call
+  `evaluateNpcAssignmentEligibility(` (the fix for issue 2 — the reused-
+  eligibility-gate bug that made same-owner conversion unreachable).
+- **24** — `buildNpcAssignmentPickerViewModel`'s `const canConvertToFollower
+  = ...` assignment line itself must reference `conversionEvaluation.eligible`
+  (anchored on that exact line, not merely on whether the conversion
+  evaluator is called anywhere in the method — see "Errors and fixes" note
+  below on why the looser anchor produced a false negative during
+  development).
+- **25** — both `evaluateNpcAssignmentEligibility`'s and
+  `evaluateFollowerConversionEligibility`'s wrapper bodies must call both
+  `isTargetAlreadyFollower(` and `isActivePlayerCharacter(` (the fix for
+  issues 3 and 4).
+- **26** — the Actor radio card's template markup, in the small window
+  immediately following `<input type="radio" name="targetActorId"`, must
+  contain `{{#if this.radioDisabled}}disabled` (the fix for issue 5 —
+  ineligible cards remaining selectable).
+- **27** — `buildOwnershipGrantStep`'s body must contain `rollback: async`
+  (the fix for issue 11 — the ownership-grant transaction step previously
+  having no rollback).
+
+**Verification ritual performed** for every one of the 27 checks (inject →
 detect → revert → clean pass). Checks 1–10 were verified when the guard
 was first written, including one deliberately harder case (check 8's
 "hollow delegation" — removing the GM check from
@@ -810,15 +1114,39 @@ with a direct `AlliesSurfaceService.assignExistingNpcAsAlly(` call fired
 check 19; hard-coding `assignmentMode: 'follower'` into
 `buildDefaultAllyAssignmentModalState` fired check 20; relaxing
 `resolveFollowerSlotSelectionOnModeChange`'s guard from `.length === 1` to
-`.length > 0` fired check 21. Final diff against pre-injection backups of
-all five touched files, after every injection: byte-identical.
+`.length > 0` fired check 21. Checks 22–27 were verified in this
+ELIGIBILITY/OWNERSHIP CORRECTION PASS: removing `grantOwnership:
+result.grantOwnership` from the controller's conversion call site fired
+check 22; swapping `convertToFollower`'s eligibility call to
+`evaluateNpcAssignmentEligibility` fired check 23 (both the "must call
+conversion" and "must not call ally" sub-checks were independently
+verified); changing `canConvertToFollower`'s source expression to
+`allyEvaluation.eligible` fired check 24 (this required fixing the check's
+own regex first — see below); removing the `isActivePlayerCharacter(`
+call from either eligibility wrapper fired check 25 independently for
+each; removing `{{#if this.radioDisabled}}disabled` from the Actor radio
+card template fired check 26 (this also required fixing the check's own
+match window first — see below); removing `buildOwnershipGrantStep`'s
+`rollback` function fired check 27. Two of these checks needed their own
+regex corrected mid-development after an initial false negative — both
+documented here for anyone extending this guard further: check 24's first
+draft matched "is `evaluateFollowerConversionEligibility(` called anywhere
+in the method," which stayed true even after the injected regression
+(the call still existed, just assigned to an unused variable) — fixed by
+anchoring on the `canConvertToFollower` assignment line itself; check 26's
+first draft tried to match the entire ~1558-character Actor card block
+within a 500-character window and never matched at all — fixed by
+anchoring on a small window immediately after the radio input instead.
+Final diff against pre-injection backups of all five touched files, after
+every injection across all 27 checks: byte-identical.
 
 Report-only by default; `--strict` exits non-zero on any violation.
 
 ## Validation performed (exact counts)
 
-Re-run in full after the styled-modal UI addendum (all counts confirmed
-unchanged from the pre-addendum baseline):
+Re-run in full after the ELIGIBILITY/OWNERSHIP CORRECTION PASS (all
+baseline counts confirmed unchanged; the ally-assignment guard's check
+count is now 27, up from 21):
 
 ```
 node tools/run-rolling-syntax-check.mjs            → 2128 file(s) checked, all pass (2 documented pre-existing exclusions)
@@ -826,14 +1154,16 @@ node tools/check-progression-integrity.mjs         → 44 violations (documented
 node tools/check-architecture-boundaries.mjs       → 37 violations (documented baseline, unchanged)
 node tools/check-follower-mutation-authority.mjs --strict   → 0 violations (10 checks)
 node tools/check-follower-slot-authority.mjs --strict       → 0 violations (6 checks)
-node tools/check-ally-assignment-authority.mjs --strict     → 0 violations (21 checks — 10 original + 3 atomicity + 8 styled-modal)
+node tools/check-ally-assignment-authority.mjs --strict     → 0 violations (27 checks — 10 original + 3 atomicity + 8 styled-modal + 6 eligibility/ownership correction)
 node tools/check-droid-authority-ssot.mjs --strict           → 0 violations
 node tools/check-droid-calculation-mode-authority.mjs --strict → 0 violations (7 checks)
 node tools/check-droid-installation-write-authority.mjs --strict → 0 violations
 node tools/check-droid-reconciliation-authority.mjs --strict → 0 violations (8 checks)
 node tools/check-follower-droid-chassis-authority.mjs --strict → 0 violations (8 checks)
 bash tools/check-mutation-paths.sh                 → PASSED, no mutation-path regressions
-node tools/run-rolling-tests.mjs                   → 54 passed, 0 failed (of 54 run; 5 excluded as documented pre-existing Force-power-track failures); 59 test files discovered (up from 58 — this addendum's new gm-npc-assignment-modal.test.mjs)
+node tests/gm-existing-npc-allies-assignment.test.mjs → GM existing NPC allies assignment tests passed. (65 named cases)
+node tests/gm-npc-assignment-modal.test.mjs          → GM NPC assignment modal tests passed. (50 named cases, up from 30)
+node tools/run-rolling-tests.mjs                   → 54 passed, 0 failed (of 54 run; 5 excluded as documented pre-existing Force-power-track failures); both ally-assignment test files auto-discovered and passing within this run
 ```
 
 ## Runtime status
@@ -844,12 +1174,27 @@ either (a) direct production-path Node execution through the Foundry-shim
 harness, (b) the documented derivation dependency-injection seam, (c)
 source inspection, or (d) template/source structural assertions, as broken
 down above under "Coverage tiers". The styled Assign Existing NPC modal
-(radio-card selection, search, drag/drop preselection, the confirm/cancel
-buttons) has NOT been clicked through in a live Foundry world; nor has a
-real invocation of `FollowerCreator.updateFollowerForOwnerLevel` inside the
+(radio-card selection, search, drag/drop preselection, the new `<form>`
+submit wiring, the new selected-summary panel, the new template-selection
+cards, the now-disabled ineligible cards, the confirm/cancel buttons) has
+NOT been clicked through in a live Foundry world; nor has a real
+invocation of `FollowerCreator.updateFollowerForOwnerLevel` inside the
 corrected transaction — the transaction's handling of that call's
 success/failure is production-path tested via the injection seam, but the
 real function's own behavior against a live world Actor is not.
+
+**Stated plainly, per the reviewer's request:** every fix in this pass is
+proven correct as a service-boundary contract and, where the logic lives
+in a pure exported function, as executed production-path code. None of it
+has been proven correct as a live user-facing interaction — real focus
+order, real screen-reader announcement of the new `radiogroup`/`disabled`
+states, real Enter-key submission from a focused form field, and real
+click-through of the template-selection cards are all still unverified.
+The gap between "the code that ships has the right shape" and "a GM
+clicking through this in Foundry works as designed" remains open, exactly
+as before this pass — this pass narrowed WHAT is unverified (five service-
+contract bugs are now closed and directly tested), not WHETHER it has been
+run live.
 
 ## Merge readiness
 
@@ -881,30 +1226,61 @@ This pass adds a fifth, separately-tracked claim the UI addendum
 introduced:
 
 - **Styled selection UI** (`AllyAssignmentModal` — radio-card Actor/mode/
-  slot selection, search, drag/drop preselection, the no-mutation modal
-  boundary) — READY at the decision-logic level: the modal's entire state
-  machine (defaults, search filtering, mode/slot availability, the
-  single-vs-multiple-slot auto-select policy, confirm gating, result
-  normalization) is production-path tested as real, shipped code. The
-  AppV2 rendering/DOM-event-wiring layer itself is verified only by
-  template/source structural assertions (tier (d)) and has NOT been
-  clicked through live — this is a narrower, more honest claim than
-  "the modal works," and is reported as such rather than folded into the
-  broader "Live Foundry validation — NOT PERFORMED" line above.
+  slot/template selection, search, drag/drop preselection, the no-mutation
+  modal boundary) — READY at the decision-logic level: the modal's entire
+  state machine (defaults, search filtering, mode/slot/template
+  availability, the single-vs-multiple-slot and single-vs-multiple-template
+  auto-select policies, confirm gating, result normalization, the cached-
+  view-model optimization) is production-path tested as real, shipped
+  code. The AppV2 rendering/DOM-event-wiring layer itself — including the
+  new `<form>`/Enter-submit wiring — is verified only by template/source
+  structural assertions (tier (d)) and has NOT been clicked through live —
+  this is a narrower, more honest claim than "the modal works," and is
+  reported as such rather than folded into the broader "Live Foundry
+  validation — NOT PERFORMED" line above.
 
-**Overall: CONDITIONALLY READY**, unchanged posture from the atomicity
-correction pass — the mechanical-derivation requirement is enforced in
-production code (a conversion can no longer report success on metadata
-alone), and the styled modal is a UI/UX refinement with no change to the
-underlying transactional mutation behavior. Static guards clean (21
-checks across 5 scoped files), baselines unchanged (44/37), the full
-required test suite passing as real production-path code (65 + 30 = 95
-named cases across the two test files for this feature), and the paths
-this shim cannot reach (Unassign's `Dialog.confirm`, the AppV2 rendering
-layer, the real follower-derivation function body) remain
-inspection-verified or structurally-asserted against the exact code that
-ships. Scope boundaries not addressed by this pass (droid ledger
-reimplementation, beast fixed-profile matching, and whether a bounded
-"Restore Pre-Conversion NPC" GM action is later wanted now that a real
-snapshot is taken) remain explicitly documented, follow-up-eligible
-decisions rather than silent gaps.
+**CORRECTED — the prior version of this section overstated accessibility
+and coverage confidence; both claims are restated here.** The prior
+"Overall: CONDITIONALLY READY" verdict below described the modal as "a
+UI/UX refinement with no change to the underlying transactional mutation
+behavior." An independent review found that framing was wrong: the styled
+modal exposed, and in one case (the ownership-grant transaction step
+having no rollback) introduced, real service-level defects — not merely
+UI polish. The reviewer's verdict, reproduced here rather than
+paraphrased, was: *"Functional readiness: not ready until at least these
+are fixed: 1. ownership checkbox behavior during conversion; 2. same-owner
+assigned ally conversion eligibility; 3. existing-follower duplicate-slot
+prevention; 4. active player-character exclusion; 5. explicit
+follower-template selection. The first two are direct UI/service contract
+bugs, not polish."* All five are now fixed in this pass (issues 1–5 above;
+see "Eligibility" and "Convert to Follower" for 1–4, and "Styled
+Assignment Modal" for 5) and each has a dedicated static guard check
+(22–26) and dedicated production-path or structural test coverage (see
+"Tests"). Likewise, the accessibility claim is restated: this document
+does **not** claim complete accessibility. The modal has real radio
+controls and correctly disables ineligible/unavailable choices at the
+`<input>` level, the assignment-mode grid is now a real `radiogroup`, and
+Enter-to-submit now works at the source-wiring level — but none of live
+focus order, live keyboard navigation, or live screen-reader behavior has
+been tested in Foundry, and is not claimed as tested anywhere in this
+document.
+
+**Overall: CONDITIONALLY READY.** The mechanical-derivation requirement
+remains enforced in production code (a conversion can no longer report
+success on metadata alone); the reviewer's five functional-readiness
+blockers are now closed, independently guarded, and independently tested;
+and the ownership-grant transaction step now has a real rollback in both
+`assignAsAlly` and `convertToFollower`. Static guards clean (27 checks
+across 5 scoped files, up from 21), baselines unchanged (44/37), the full
+required test suite passing as real production-path or structural code
+(65 + 50 = 115 named cases across the two test files for this feature,
+up from 95), and the paths this shim cannot reach (Unassign's
+`Dialog.confirm`, the AppV2 rendering layer, the real follower-derivation
+function body, and — new this pass — the modal's live focus/keyboard/
+screen-reader behavior) remain inspection-verified or structurally-
+asserted against the exact code that ships, never claimed as live-tested.
+Scope boundaries not addressed by this pass (droid ledger reimplementation,
+beast fixed-profile matching, whether a bounded "Restore Pre-Conversion
+NPC" GM action is later wanted now that a real snapshot is taken, and live
+Foundry click-through of the entire modal) remain explicitly documented,
+follow-up-eligible decisions rather than silent gaps.

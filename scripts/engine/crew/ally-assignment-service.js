@@ -145,6 +145,53 @@ export function detectAssignmentKind(targetActor) {
 }
 
 /**
+ * Whether a target Actor is already a mechanical follower, checked across
+ * every field family the follower model itself writes over its lifecycle
+ * (canonical progression fields plus both the legacy `flags.swse.follower`
+ * namespace and this system's own `flags.foundryvtt-swse.isFollower`
+ * provenance flag). Used to block an existing follower from being
+ * assigned as a second, conflicting relationship-only ally OR converted
+ * again into a second follower slot.
+ *
+ * @param {Actor} targetActor
+ * @returns {boolean}
+ */
+export function isTargetAlreadyFollower(targetActor) {
+  if (!targetActor) return false;
+  if (targetActor.system?.isFollower === true) return true;
+  if (targetActor.system?.progression?.isFollower === true) return true;
+  if (targetActor.flags?.swse?.follower?.isFollower === true) return true;
+  if (targetActor.getFlag?.(SYSTEM_ID, 'isFollower') === true) return true;
+  return false;
+}
+
+/**
+ * Whether a target Actor is an active player character rather than a
+ * GM-authored NPC that merely uses the `character` Actor type — checked
+ * three ways: assigned as any User's primary `character`; owned at OWNER
+ * level (or above) by any non-GM User; or the sameActor check elsewhere
+ * already covers self-assignment. A GM-authored `character`-type NPC with
+ * no player owner and no User assignment passes this check.
+ *
+ * @param {Actor} targetActor
+ * @param {{users?: Iterable<object>}} [context]
+ * @returns {boolean}
+ */
+export function isActivePlayerCharacter(targetActor, { users } = {}) {
+  if (!targetActor) return false;
+  const userList = users ? Array.from(users) : [];
+  if (userList.some(u => u?.character?.id === targetActor.id)) return true;
+  const ownerLevel = CONST?.DOCUMENT_OWNERSHIP_LEVELS?.OWNER ?? 3;
+  const ownership = targetActor.ownership || {};
+  for (const user of userList) {
+    if (user?.isGM) continue;
+    const level = ownership[user?.id];
+    if (typeof level === 'number' && level >= ownerLevel) return true;
+  }
+  return false;
+}
+
+/**
  * Pure eligibility gate for assigning targetActor to ownerActor. Takes
  * plain extracted values, not live Foundry objects, so every branch is
  * directly testable.
@@ -167,7 +214,9 @@ export function evaluateAssignmentEligibilityFacts({
   alreadyAssignedOwnerId,
   alreadyAssignedMode,
   ownerId,
-  mode
+  mode,
+  alreadyFollower,
+  isActivePlayerCharacter
 } = {}) {
   const reasons = [];
   if (isGM !== true) reasons.push('Only a GM can assign an existing NPC.');
@@ -183,6 +232,8 @@ export function evaluateAssignmentEligibilityFacts({
       reasons.push('This Actor is already assigned to a different owner. Unassign it from that owner first.');
     }
   }
+  if (alreadyFollower) reasons.push('This Actor is already a mechanical follower and cannot also be assigned as a relationship-only ally.');
+  if (isActivePlayerCharacter) reasons.push('This Actor is an active player character and cannot be assigned through this tool.');
   return { eligible: reasons.length === 0, reasons };
 }
 
@@ -206,7 +257,76 @@ export function evaluateNpcAssignmentEligibility(ownerActor, targetActor, mode =
     sameActor: Boolean(ownerActor && targetActor && ownerActor.id === targetActor.id),
     alreadyAssignedOwnerId: targetActor?.getFlag?.(SYSTEM_ID, 'assignedAllyOwnerId') ?? null,
     alreadyAssignedMode: targetActor?.getFlag?.(SYSTEM_ID, 'assignedAllyMode') ?? null,
-    mode
+    mode,
+    alreadyFollower: isTargetAlreadyFollower(targetActor),
+    isActivePlayerCharacter: isActivePlayerCharacter(targetActor, { users: game.users })
+  });
+  return { ...facts, detectedKind: targetActor ? detectAssignmentKind(targetActor) : null };
+}
+
+/**
+ * Pure eligibility gate for CONVERTING targetActor into ownerActor's
+ * follower. Deliberately separate from evaluateAssignmentEligibilityFacts:
+ * an Actor already assigned to THIS SAME owner as a relationship-only ally
+ * is NOT rejected here (conversion is the one, explicit path that migrates
+ * exactly that relationship into a mechanical follower, cleaning up the
+ * prior assignment as part of the same atomic transaction) — only a
+ * DIFFERENT owner's assignment blocks conversion. An Actor that is already
+ * a mechanical follower, or an active player character, is blocked from
+ * conversion the same way it is blocked from assignment.
+ *
+ * @returns {{eligible: boolean, reasons: string[]}}
+ */
+export function evaluateFollowerConversionEligibilityFacts({
+  isGM,
+  ownerExists,
+  ownerType,
+  targetExists,
+  targetType,
+  sameActor,
+  alreadyAssignedOwnerId,
+  ownerId,
+  alreadyFollower,
+  isActivePlayerCharacter
+} = {}) {
+  const reasons = [];
+  if (isGM !== true) reasons.push('Only a GM can convert an existing NPC to a follower.');
+  if (!ownerExists) reasons.push('No owner Actor was provided.');
+  else if (!isEligibleFollowerSlotOwnerType(ownerType)) reasons.push(`Actor type "${ownerType}" is not eligible to receive a follower.`);
+  if (!targetExists) reasons.push('No target Actor was provided.');
+  else if (!isEligibleAssignmentTargetType(targetType)) reasons.push(`Actor type "${targetType}" cannot be converted — vehicles, starships, and hazards are not supported.`);
+  if (sameActor) reasons.push('An Actor cannot be converted into its own follower.');
+  if (alreadyAssignedOwnerId && ownerId && alreadyAssignedOwnerId !== ownerId) {
+    reasons.push('This Actor is assigned to a different owner. Unassign it from that owner before converting it.');
+  }
+  if (alreadyFollower) reasons.push('This Actor is already a mechanical follower and cannot be converted again into a second follower slot.');
+  if (isActivePlayerCharacter) reasons.push('This Actor is an active player character and cannot be converted through this tool.');
+  return { eligible: reasons.length === 0, reasons };
+}
+
+/**
+ * Evaluate whether targetActor may be CONVERTED into ownerActor's
+ * follower. Thin wrapper around evaluateFollowerConversionEligibilityFacts —
+ * the pure function is what's directly unit-tested. Does not check the
+ * droid stock-conversion gate or slot validity — those remain separate,
+ * orthogonal checks (evaluateDroidConversionGate / validateFollowerConversionSlot).
+ *
+ * @param {Actor} ownerActor
+ * @param {Actor} targetActor
+ * @returns {{eligible: boolean, reasons: string[], detectedKind: string}}
+ */
+export function evaluateFollowerConversionEligibility(ownerActor, targetActor) {
+  const facts = evaluateFollowerConversionEligibilityFacts({
+    isGM: game.user?.isGM === true,
+    ownerExists: Boolean(ownerActor),
+    ownerType: ownerActor?.type ?? null,
+    ownerId: ownerActor?.id ?? null,
+    targetExists: Boolean(targetActor),
+    targetType: targetActor?.type ?? null,
+    sameActor: Boolean(ownerActor && targetActor && ownerActor.id === targetActor.id),
+    alreadyAssignedOwnerId: targetActor?.getFlag?.(SYSTEM_ID, 'assignedAllyOwnerId') ?? null,
+    alreadyFollower: isTargetAlreadyFollower(targetActor),
+    isActivePlayerCharacter: isActivePlayerCharacter(targetActor, { users: game.users })
   });
   return { ...facts, detectedKind: targetActor ? detectAssignmentKind(targetActor) : null };
 }
@@ -460,6 +580,44 @@ export async function applyDefaultFollowerDerivation(ownerActor, targetActor) {
   return FollowerCreator.updateFollowerForOwnerLevel(ownerActor, targetActor);
 }
 
+/**
+ * Shared, transactional ownership-grant step used by both assignAsAlly and
+ * convertToFollower's optional `grantOwnership` option. Captures the
+ * target's pre-grant ownership level for the granted user (via the
+ * commit's own return value, read back by rollback — no closure-captured
+ * mutable state) so a LATER step's failure restores the exact prior
+ * ownership level rather than merely leaving the grant in place.
+ *
+ * @param {Actor} ownerActor
+ * @param {Actor} targetActor
+ * @param {string} sourceTag
+ * @returns {{name: string, commit: Function, rollback: Function}}
+ */
+function buildOwnershipGrantStep(ownerActor, targetActor, sourceTag) {
+  return {
+    name: 'ownership-commit',
+    commit: async () => {
+      const ownerUser = game.users?.find?.(u => u.character?.id === ownerActor.id);
+      if (!ownerUser) return null;
+      const previousOwnership = clonePlain(targetActor.ownership || {});
+      await ActorEngine.updateActor(targetActor, {
+        ownership: { [ownerUser.id]: CONST.DOCUMENT_OWNERSHIP_LEVELS.OWNER }
+      }, { source: `${sourceTag}:ownership` });
+      return { userId: ownerUser.id, previousOwnership };
+    },
+    rollback: async (result) => {
+      if (!result?.userId) return;
+      const noneLevel = CONST?.DOCUMENT_OWNERSHIP_LEVELS?.NONE ?? -1;
+      const restoreLevel = Object.prototype.hasOwnProperty.call(result.previousOwnership || {}, result.userId)
+        ? result.previousOwnership[result.userId]
+        : noneLevel;
+      await ActorEngine.updateActor(targetActor, {
+        ownership: { [result.userId]: restoreLevel }
+      }, { source: `${sourceTag}:ownership:rollback` });
+    }
+  };
+}
+
 export class AllyAssignmentService {
   /**
    * Assign an existing world NPC Actor to ownerActor as a non-mechanical
@@ -509,17 +667,7 @@ export class AllyAssignmentService {
     ];
 
     if (options.grantOwnership === true) {
-      steps.push({
-        name: 'ownership-commit',
-        commit: async () => {
-          const ownerUser = game.users?.find?.(u => u.character?.id === ownerActor.id);
-          if (!ownerUser) return null;
-          await ActorEngine.updateActor(targetActor, {
-            ownership: { [ownerUser.id]: CONST.DOCUMENT_OWNERSHIP_LEVELS.OWNER }
-          }, { source: `${sourceTag}:ownership` });
-          return ownerUser.id;
-        }
-      });
+      steps.push(buildOwnershipGrantStep(ownerActor, targetActor, sourceTag));
     }
 
     const transaction = await runFollowerMutationTransaction(steps);
@@ -618,7 +766,7 @@ export class AllyAssignmentService {
    * @param {Actor} ownerActor
    * @param {Actor} targetActor
    * @param {string} slotId
-   * @param {{template?: string, choices?: object, source?: string, applyFollowerDerivation?: Function}} [options]
+   * @param {{template?: string, choices?: object, source?: string, applyFollowerDerivation?: Function, grantOwnership?: boolean}} [options]
    * @returns {Promise<object>} the target Actor
    * @throws {Error} on GM/eligibility/slot/droid-mode/derivation failure
    */
@@ -626,12 +774,8 @@ export class AllyAssignmentService {
     // --- 1. Preflight ---
     if (game.user?.isGM !== true) throw new Error('Only a GM can convert an existing NPC to a follower.');
     if (!ownerActor || !targetActor || !slotId) throw new Error('An owner Actor, a target Actor, and a slot id are required.');
-    if (ownerActor.id === targetActor.id) throw new Error('An Actor cannot be converted into its own follower.');
 
     const priorAssignment = detectPriorAssignment(targetActor);
-    if (priorAssignment.assigned && priorAssignment.ownerId !== ownerActor.id) {
-      throw new Error('This Actor is assigned to a different owner. Unassign it from that owner before converting it.');
-    }
 
     const droidGate = evaluateDroidConversionGate(targetActor);
     if (droidGate.blocked) throw new Error(droidGate.reason);
@@ -640,6 +784,22 @@ export class AllyAssignmentService {
     const slot = currentSlots.find(s => s?.id === slotId) ?? null;
     const slotValidation = validateFollowerConversionSlot(slot);
     if (!slotValidation.valid) throw new Error(slotValidation.error);
+
+    // Independently re-checked HERE (not only by the UI's picker eligibility)
+    // so a forged/direct call is rejected the same way: GM status, owner/
+    // target type, self-conversion, cross-owner assignment, an already-
+    // mechanical-follower target, and an active player character. A target
+    // already assigned to THIS SAME owner as a relationship-only ally is
+    // deliberately NOT rejected here — conversion is the explicit path that
+    // migrates that exact relationship, cleaning up the prior assignment as
+    // part of the same atomic transaction (see step 4 below). Runs after
+    // slot validation so re-converting the same Actor into the SAME
+    // already-occupied slot still surfaces the more specific "slot occupied"
+    // diagnosis rather than the coarser "already a follower" one.
+    const eligibility = evaluateFollowerConversionEligibility(ownerActor, targetActor);
+    if (!eligibility.eligible) {
+      throw new Error(eligibility.reasons.join(' '));
+    }
 
     const plan = planExistingNpcFollowerConversion(ownerActor, targetActor, slot, options.choices || { templateType: options.template });
     const applyFollowerDerivation = options.applyFollowerDerivation || applyDefaultFollowerDerivation;
@@ -708,7 +868,7 @@ export class AllyAssignmentService {
     // updateFollowerForOwnerLevel's own isFollower check) but BEFORE the
     // owner-side commit, so a derivation failure never touches the owner or
     // the slot at all. ---
-    const transaction = await runFollowerMutationTransaction([
+    const conversionSteps = [
       {
         name: 'target-conversion-commit',
         commit: async () => {
@@ -740,7 +900,18 @@ export class AllyAssignmentService {
           await ActorEngine.updateActor(ownerActor, ownerRollbackUpdate, { source: `${sourceTag}:rollback` });
         }
       }
-    ]);
+    ];
+
+    // Ownership grant is part of the SAME atomic transaction as the
+    // relationship metadata/derivation/owner-linkage steps above — a
+    // conversion that requested ownership but failed to grant it must not
+    // be reported as a successful conversion (same policy assignAsAlly
+    // already enforces for Assign as Ally).
+    if (options.grantOwnership === true) {
+      conversionSteps.push(buildOwnershipGrantStep(ownerActor, targetActor, sourceTag));
+    }
+
+    const transaction = await runFollowerMutationTransaction(conversionSteps);
 
     if (!transaction.ok) {
       swseLogger.warn('[AllyAssignmentService] convertToFollower failed and was rolled back', { owner: ownerActor.name, target: targetActor.name, error: transaction.error });

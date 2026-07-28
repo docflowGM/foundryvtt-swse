@@ -14,7 +14,7 @@ import { FactionRegistryService } from '/systems/foundryvtt-swse/scripts/allies/
 import { HolonetIntelService, INTEL_REVEAL_STATE } from '/systems/foundryvtt-swse/scripts/holonet/subsystems/holonet-intel-service.js';
 import { createActor } from '/systems/foundryvtt-swse/scripts/core/document-api-v13.js';
 import { FollowerSlotService, isEligibleFollowerSlotOwner } from '/systems/foundryvtt-swse/scripts/engine/crew/follower-slot-service.js';
-import { AllyAssignmentService, ASSIGNMENT_KIND, ASSIGNMENT_MODE, evaluateNpcAssignmentEligibility, evaluateDroidConversionGate, isEligibleAssignmentTargetType } from '/systems/foundryvtt-swse/scripts/engine/crew/ally-assignment-service.js';
+import { AllyAssignmentService, ASSIGNMENT_KIND, ASSIGNMENT_MODE, evaluateNpcAssignmentEligibility, evaluateFollowerConversionEligibility, evaluateDroidConversionGate, isEligibleAssignmentTargetType } from '/systems/foundryvtt-swse/scripts/engine/crew/ally-assignment-service.js';
 
 const SYSTEM_ID = 'foundryvtt-swse';
 const TAB_IDS = new Set(['companions', 'factions', 'contacts', 'intel', 'bases', 'organizations']);
@@ -38,6 +38,18 @@ const BASE_ACCOMMODATIONS = [
 const ORGANIZATION_SCALE_MIN = 1;
 const ORGANIZATION_SCALE_MAX = 20;
 const ORGANIZATION_GM_FIELDS = new Set(['scale', 'score', 'benefits', 'bases', 'statistics']);
+
+// Same default a manual (GM-granted) follower slot is built with
+// (FollowerSlotService's DEFAULT_TEMPLATE_CHOICES) — used as the fallback
+// when a talent-derived slot record predates templateChoices being
+// populated, so the conversion modal always has a concrete, bounded set of
+// template options to offer rather than silently defaulting to Utility.
+const DEFAULT_FOLLOWER_TEMPLATE_CHOICES = Object.freeze(['aggressive', 'defensive', 'utility']);
+const FOLLOWER_TEMPLATE_LABELS = Object.freeze({
+  aggressive: 'Aggressive Follower',
+  defensive: 'Defensive Follower',
+  utility: 'Utility Follower'
+});
 
 function asArray(value) {
   if (Array.isArray(value)) return value;
@@ -305,10 +317,20 @@ export function buildDefaultAllyAssignmentModalState(initial = {}) {
     targetActorId: initial.targetActorId ?? null,
     assignmentMode: initial.assignmentMode === 'follower' ? 'follower' : 'ally',
     followerSlotId: initial.followerSlotId ?? null,
+    templateType: initial.templateType ?? null,
     search: '',
     grantOwnership: false,
     submitting: false
   };
+}
+
+export function findFollowerSlotById(viewModel, slotId) {
+  return (viewModel?.followerSlots || []).find(slot => slot.id === slotId) || null;
+}
+
+/** Label lookup for a follower template id (aggressive/defensive/utility). */
+export function followerTemplateLabel(templateId) {
+  return FOLLOWER_TEMPLATE_LABELS[templateId] || templateId;
 }
 
 export function normalizeAllyAssignmentSearchQuery(query) {
@@ -335,19 +357,56 @@ export function isAllyAssignmentModeAvailable(candidate, mode) {
 }
 
 /**
+ * Resolve template-type selection state for a given (possibly newly
+ * selected) follower slot. Mirrors the slot auto-select policy at one
+ * level down: a slot offering exactly one template choice auto-selects
+ * it; a slot offering multiple requires the GM to choose explicitly. If
+ * the currently-held templateType is not among the new slot's choices
+ * (e.g. the GM switched to a differently-constrained slot), it is reset
+ * rather than silently carried over into an invalid selection.
+ */
+export function resolveFollowerTemplateSelectionForSlot(slot, currentTemplateType) {
+  const choices = Array.isArray(slot?.templateChoices) ? slot.templateChoices : [];
+  if (currentTemplateType && choices.includes(currentTemplateType)) return currentTemplateType;
+  if (choices.length === 1) return choices[0];
+  return null;
+}
+
+/**
  * Apply an assignment-mode change to modal state. Per the documented slot
  * policy: a single open follower slot may be auto-selected, but ONLY at the
  * moment the GM switches into Convert to Follower mode (never eagerly, and
  * never when multiple slots exist — those always require explicit choice).
- * Switching back to Assign as Ally preserves any prior slot selection in
- * state without submitting it.
+ * Switching back to Assign as Ally preserves any prior slot/template
+ * selection in state without submitting it. When a slot ends up selected
+ * (auto or already-held), its template selection is resolved the same way.
  */
 export function resolveFollowerSlotSelectionOnModeChange(viewModel, state, nextMode) {
   const next = { ...state, assignmentMode: nextMode === 'follower' ? 'follower' : 'ally' };
-  if (next.assignmentMode === 'follower' && !next.followerSlotId && (viewModel?.followerSlots || []).length === 1) {
-    next.followerSlotId = viewModel.followerSlots[0].id;
+  if (next.assignmentMode === 'follower') {
+    if (!next.followerSlotId && (viewModel?.followerSlots || []).length === 1) {
+      next.followerSlotId = viewModel.followerSlots[0].id;
+    }
+    if (next.followerSlotId) {
+      const slot = findFollowerSlotById(viewModel, next.followerSlotId);
+      next.templateType = resolveFollowerTemplateSelectionForSlot(slot, next.templateType);
+    }
   }
   return next;
+}
+
+/**
+ * Apply a follower-slot selection to modal state, resolving template-type
+ * selection for the newly selected slot in the same step (see
+ * resolveFollowerTemplateSelectionForSlot).
+ */
+export function resolveFollowerSlotSelection(viewModel, state, slotId) {
+  const slot = findFollowerSlotById(viewModel, slotId);
+  return {
+    ...state,
+    followerSlotId: slotId,
+    templateType: resolveFollowerTemplateSelectionForSlot(slot, state.templateType)
+  };
 }
 
 /** Pure confirm-button-enabled predicate — mirrors the modal's own gating. */
@@ -359,7 +418,11 @@ export function canConfirmAllyAssignment(viewModel, state) {
   if (state.assignmentMode === 'follower') {
     if (candidate.canConvertToFollower !== true) return false;
     if (!state.followerSlotId) return false;
-    return (viewModel?.followerSlots || []).some(slot => slot.id === state.followerSlotId);
+    const slot = findFollowerSlotById(viewModel, state.followerSlotId);
+    if (!slot) return false;
+    const choices = Array.isArray(slot.templateChoices) ? slot.templateChoices : [];
+    if (choices.length > 1) return Boolean(state.templateType) && choices.includes(state.templateType);
+    return true;
   }
   return false;
 }
@@ -370,6 +433,7 @@ export function buildAllyAssignmentResult(state) {
     targetActorId: state.targetActorId,
     assignmentMode: state.assignmentMode === 'follower' ? 'follower' : 'ally',
     followerSlotId: state.assignmentMode === 'follower' ? (state.followerSlotId || null) : null,
+    templateType: state.assignmentMode === 'follower' ? (state.templateType || null) : null,
     grantOwnership: state.grantOwnership === true
   };
 }
@@ -1213,11 +1277,18 @@ export class AlliesSurfaceService {
     for (const candidate of game.actors) {
       if (!candidate || candidate.id === ownerActor.id) continue;
       if (!isEligibleAssignmentTargetType(candidate.type)) continue;
-      const evaluation = evaluateNpcAssignmentEligibility(ownerActor, candidate, ASSIGNMENT_MODE.ALLY);
+      // Deliberately TWO separate eligibility evaluations, not one reused
+      // for both modes: an Actor already assigned to THIS owner as a
+      // relationship-only ally is ineligible for a SECOND ally assignment
+      // but must remain eligible for conversion (that is the one path that
+      // migrates the existing relationship). Reusing ally eligibility for
+      // canConvertToFollower made that migration unreachable from the UI.
+      const allyEvaluation = evaluateNpcAssignmentEligibility(ownerActor, candidate, ASSIGNMENT_MODE.ALLY);
+      const conversionEvaluation = evaluateFollowerConversionEligibility(ownerActor, candidate);
       const droidGate = evaluateDroidConversionGate(candidate);
       const alreadyAssignedOwnerId = candidate.getFlag?.(SYSTEM_ID, 'assignedAllyOwnerId') || null;
       const alreadyAssignedOwner = alreadyAssignedOwnerId ? game.actors?.get?.(alreadyAssignedOwnerId) : null;
-      const canConvertToFollower = evaluation.eligible && followerSlots.length > 0 && !droidGate.blocked;
+      const canConvertToFollower = conversionEvaluation.eligible && followerSlots.length > 0 && !droidGate.blocked;
       const level = safeLevel(candidate);
       const card = {
         id: candidate.id,
@@ -1226,20 +1297,24 @@ export class AlliesSurfaceService {
         type: candidate.type,
         level,
         levelLabel: level ? `Level ${level}` : 'Level —',
-        detectedKind: evaluation.detectedKind,
-        kindLabel: npcAssignmentKindLabel(evaluation.detectedKind),
-        detailLabel: npcAssignmentDetailLabel(candidate, evaluation.detectedKind, droidGate),
-        eligible: evaluation.eligible,
-        blockedReason: evaluation.eligible ? null : evaluation.reasons.join(' '),
+        detectedKind: allyEvaluation.detectedKind,
+        kindLabel: npcAssignmentKindLabel(allyEvaluation.detectedKind),
+        detailLabel: npcAssignmentDetailLabel(candidate, allyEvaluation.detectedKind, droidGate),
+        eligible: allyEvaluation.eligible,
+        blockedReason: allyEvaluation.eligible ? null : allyEvaluation.reasons.join(' '),
         alreadyAssignedOwnerId,
         alreadyAssignedToThisOwner: alreadyAssignedOwnerId === ownerActor.id,
         alreadyAssignedOwnerName: alreadyAssignedOwnerId && alreadyAssignedOwnerId !== ownerActor.id
           ? (alreadyAssignedOwner?.name || 'another owner')
           : null,
         canConvertToFollower,
-        convertBlockedReason: !evaluation.eligible
-          ? evaluation.reasons.join(' ')
-          : (droidGate.blocked ? droidGate.reason : (followerSlots.length === 0 ? 'No open follower slot is available.' : null))
+        convertBlockedReason: !conversionEvaluation.eligible
+          ? conversionEvaluation.reasons.join(' ')
+          : (droidGate.blocked ? droidGate.reason : (followerSlots.length === 0 ? 'No open follower slot is available.' : null)),
+        // A card is entirely inert (no action possible in either mode) —
+        // used by the modal to disable the Actor radio itself rather than
+        // leaving it selectable with no reachable confirm state.
+        selectable: allyEvaluation.eligible || canConvertToFollower
       };
       card.searchText = npcAssignmentSearchText(card);
       candidates.push(card);
@@ -1292,11 +1367,17 @@ export class AlliesSurfaceService {
     const slots = asArray(ownerActor?.getFlag?.(SYSTEM_ID, 'followerSlots'));
     return slots
       .filter(slot => !slot.createdActorId && (!slot.dependentKind || slot.dependentKind === 'follower'))
-      .map(slot => ({
-        id: slot.id,
-        label: slot.sourceType === 'gm-grant' ? (slot.sourceLabel || 'GM Granted') : (slot.talentName || 'Follower Slot'),
-        sourceType: slot.sourceType === 'gm-grant' ? 'gm-grant' : 'talent'
-      }));
+      .map(slot => {
+        const templateChoices = Array.isArray(slot.templateChoices) && slot.templateChoices.length
+          ? slot.templateChoices.filter(id => FOLLOWER_TEMPLATE_LABELS[id])
+          : [...DEFAULT_FOLLOWER_TEMPLATE_CHOICES];
+        return {
+          id: slot.id,
+          label: slot.sourceType === 'gm-grant' ? (slot.sourceLabel || 'GM Granted') : (slot.talentName || 'Follower Slot'),
+          sourceType: slot.sourceType === 'gm-grant' ? 'gm-grant' : 'talent',
+          templateChoices: templateChoices.length ? templateChoices : [...DEFAULT_FOLLOWER_TEMPLATE_CHOICES]
+        };
+      });
   }
 
   static async _buildFactions(actor, context = {}) {

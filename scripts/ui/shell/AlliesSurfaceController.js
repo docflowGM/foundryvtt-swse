@@ -767,7 +767,10 @@ export class AlliesSurfaceController {
 
     try {
       if (result.assignmentMode === 'follower') {
-        await AlliesSurfaceService.convertExistingNpcToFollower(this._actor, targetActor, result.followerSlotId);
+        await AlliesSurfaceService.convertExistingNpcToFollower(this._actor, targetActor, result.followerSlotId, {
+          grantOwnership: result.grantOwnership,
+          template: result.templateType || undefined
+        });
         ui?.notifications?.info?.(`${targetActor.name} converted to a follower.`);
         this._requestRender('allies-convert-existing-npc');
       } else {
