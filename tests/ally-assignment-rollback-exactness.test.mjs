@@ -164,4 +164,57 @@ function asGM(users = []) {
   );
 }
 
+// ---------------------------------------------------------------------
+// R4-2: assignAsAlly target-flag rollback must restore an exact
+// pre-mutation flag snapshot (dismissedAlly), not just delete the newly
+// introduced assignedAlly* keys.
+// ---------------------------------------------------------------------
+
+// 4. Target has a pre-existing dismissedAlly=true flag. assignAsAlly is
+// called with grantOwnership: true but no matching player User exists, so
+// the ownership-commit step throws. Both owner-projection-commit and
+// target-metadata-commit must roll back: the owner's ownedActors/
+// assignment-kind arrays return to their pre-mutation state, AND the
+// target's dismissedAlly flag is restored (not left deleted) while the
+// newly-introduced assignedAlly* flags are gone.
+{
+  resetFakeActorEngine();
+  const owner = makeFakeActor({ id: 'owner-4', type: 'character', system: { ownedActors: [] } });
+  const target = makeFakeActor({
+    id: 'target-4', type: 'npc',
+    flags: { [SYSTEM_ID]: { dismissedAlly: true } }
+  });
+  asGM([]); // no users -> ownership grant step will throw "no player User has ... assigned"
+
+  await assert.rejects(
+    () => AllyAssignmentService.assignAsAlly(owner, target, { grantOwnership: true }),
+    /Ownership could not be granted/
+  );
+
+  assert.deepEqual(owner.system.ownedActors, [], 'owner-projection rollback must restore the exact pre-mutation ownedActors array');
+  assert.equal(target.flags[SYSTEM_ID].dismissedAlly, true, 'dismissedAlly must be restored on rollback, not left deleted');
+  assert.equal(target.flags[SYSTEM_ID].assignedAllyOwnerId, undefined, 'the newly-introduced assignedAlly* flags must not survive rollback');
+  assert.equal(target.flags[SYSTEM_ID].assignedAllyKind, undefined);
+  assert.equal(target.flags[SYSTEM_ID].assignedAllyMode, undefined);
+}
+
+// 5. Same scenario, but the target had NO dismissedAlly flag at all before
+// assignment — rollback must not introduce one; the flags object should
+// return to being empty (only the temporarily-added assignedAlly* keys
+// removed), proving buildFlagRestorationPatch's deletion side works too.
+{
+  resetFakeActorEngine();
+  const owner = makeFakeActor({ id: 'owner-5', type: 'character', system: { ownedActors: [] } });
+  const target = makeFakeActor({ id: 'target-5', type: 'npc' });
+  asGM([]);
+
+  await assert.rejects(
+    () => AllyAssignmentService.assignAsAlly(owner, target, { grantOwnership: true }),
+    /Ownership could not be granted/
+  );
+
+  assert.equal(target.flags[SYSTEM_ID].dismissedAlly, undefined, 'no dismissedAlly flag must be introduced where none existed');
+  assert.equal(target.flags[SYSTEM_ID].assignedAllyOwnerId, undefined);
+}
+
 console.log('Ally assignment rollback exactness tests passed.');

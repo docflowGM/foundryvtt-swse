@@ -14,6 +14,7 @@ import { FactionRegistryService } from '/systems/foundryvtt-swse/scripts/allies/
 import { HolonetIntelService, INTEL_REVEAL_STATE } from '/systems/foundryvtt-swse/scripts/holonet/subsystems/holonet-intel-service.js';
 import { createActor } from '/systems/foundryvtt-swse/scripts/core/document-api-v13.js';
 import { FollowerSlotService, isEligibleFollowerSlotOwner } from '/systems/foundryvtt-swse/scripts/engine/crew/follower-slot-service.js';
+import { isFollowerSlotOccupied, resolveFollowerSlotActorId } from '/systems/foundryvtt-swse/scripts/domain/followers/follower-slot-occupancy.js';
 import {
   AllyAssignmentService,
   ASSIGNMENT_KIND,
@@ -170,7 +171,12 @@ function sourceTalentLabel(record = {}) {
 }
 
 function slotCreatedActorId(slot = {}) {
-  return cleanString(slot.createdActorId ?? slot.actorId ?? slot.assignedActorId ?? slot.dependentActorId ?? slot.npcActorId);
+  // Delegates to the canonical alias-aware occupancy resolver (R4-3) rather
+  // than maintaining a second copy of the same occupant-field alias list —
+  // this file previously had its own independent list here, which is
+  // exactly the kind of split authority that let getOpenFollowerSlotsForConversion()
+  // (below) drift to a narrower, non-alias-aware check.
+  return cleanString(resolveFollowerSlotActorId(slot) ?? '');
 }
 
 function slotLiveActor(slot = {}) {
@@ -1390,7 +1396,7 @@ export class AlliesSurfaceService {
   static getOpenFollowerSlotsForConversion(ownerActor) {
     const slots = asArray(ownerActor?.getFlag?.(SYSTEM_ID, 'followerSlots'));
     return slots
-      .filter(slot => !slot.createdActorId && (!slot.dependentKind || slot.dependentKind === 'follower'))
+      .filter(slot => !isFollowerSlotOccupied(slot) && (!slot.dependentKind || slot.dependentKind === 'follower'))
       .map(slot => {
         const sourceType = slot.sourceType === 'gm-grant' ? 'gm-grant' : 'talent';
         const sourceLabel = sourceType === 'gm-grant' ? (slot.sourceLabel || 'GM Granted') : (slot.talentName || 'Follower Slot');
@@ -1884,7 +1890,7 @@ export class AlliesSurfaceService {
     if (!ally) return false;
     const kind = this._kindForAlly(ownerActor, ally);
     const slots = asArray(ownerActor.getFlag?.(SYSTEM_ID, 'followerSlots'));
-    const slot = slots.find(entry => entry?.createdActorId === actorId) || null;
+    const slot = slots.find(entry => resolveFollowerSlotActorId(entry) === actorId) || null;
     const sourceTalent = ally.flags?.swse?.follower?.grantingTalent
       || ally.flags?.swse?.minion?.talentName
       || slot?.talentName

@@ -201,6 +201,12 @@ export function findExistingFollowerRelationship(targetActor) {
   if (isTargetAlreadyFollower(targetActor)) {
     const ownerId = targetActor.flags?.swse?.follower?.ownerId
       ?? targetActor.getFlag?.(SYSTEM_ID, 'followerOwnerId')
+      // R4-3: the target's own npcProfile owner-metadata is the other field
+      // family getFollowers()'s world-scan already treats as follower
+      // ownership evidence (paired with an isFollower flag) — checked here
+      // too so the two lookups can never disagree about a target whose own
+      // metadata uses this field instead of flags.swse.follower.ownerId.
+      ?? targetActor.system?.npcProfile?.owner?.actorId
       ?? null;
     const ownerActor = ownerId ? game.actors?.get?.(ownerId) ?? null : null;
     matches.push({ ownerId, ownerName: ownerActor?.name ?? null, slotId: null, source: 'target-flags' });
@@ -221,6 +227,25 @@ export function findExistingFollowerRelationship(targetActor) {
     const followers = asArray(owner.getFlag?.(SYSTEM_ID, 'followers'));
     if (followers.some(entry => (entry?.id || entry?.actorId) === targetId)) {
       matches.push({ ownerId: owner.id, ownerName: owner.name, slotId: null, source: 'owner-followers-registry' });
+    }
+    // R4-3: system.ownedActors entries are shared by BOTH relationship-only
+    // assigned allies (kind always one of ASSIGNMENT_KIND's 'assigned-*'
+    // values, never 'follower') and genuine followers (no kind field at
+    // all, or kind/dependentKind/npcKind === 'follower' — the same
+    // convention FollowerCreator.getFollowers()'s own ownedActors scan
+    // already relies on). Filtering on that convention here means an
+    // assigned-only ally is never misclassified as a follower, while a
+    // stale/legacy follower entry with no local target flags is still
+    // caught — closing the gap where getFollowers() and this canonical
+    // conflict detector could disagree about the same Actor.
+    const ownedActors = asArray(owner.system?.ownedActors);
+    const ownedActorFollowerEntry = ownedActors.find(entry => {
+      if (entry?.id !== targetId) return false;
+      const kind = entry?.kind || entry?.dependentKind || entry?.npcKind;
+      return !kind || kind === 'follower';
+    });
+    if (ownedActorFollowerEntry) {
+      matches.push({ ownerId: owner.id, ownerName: owner.name, slotId: null, source: 'owner-ownedactors-registry' });
     }
   }
 
@@ -837,6 +862,16 @@ export class AllyAssignmentService {
     };
     const targetFlagPatch = buildAssignmentTargetFlagPatch({ ownerActor, detectedKind, mode: ASSIGNMENT_MODE.ALLY });
     const sourceTag = options.source ? `AllyAssignmentService.assignAsAlly:${options.source}` : 'AllyAssignmentService.assignAsAlly';
+    // Captured BEFORE any mutation, same reasoning as the owner arrays
+    // above: buildAssignmentTargetFlagPatch() deletes `dismissedAlly` (via
+    // its `-=dismissedAlly` key), and the prior rollback shape here
+    // (buildAssignmentClearPatch()) only deletes the NEW assignedAlly*
+    // keys — it never restores a pre-existing `dismissedAlly` value a
+    // later step's failure (e.g. a requested ownership grant) would
+    // otherwise permanently lose. buildFlagRestorationPatch() restores
+    // every key that existed before and deletes only keys this commit
+    // newly introduced, matching unassignAlly()'s own rollback pattern.
+    const previousTargetFlags = clonePlain(targetActor.flags || {});
 
     const steps = [
       {
@@ -859,7 +894,10 @@ export class AllyAssignmentService {
           return targetFlagPatch;
         },
         rollback: async () => {
-          await ActorEngine.updateActor(targetActor, buildAssignmentClearPatch(), { source: `${sourceTag}:rollback` });
+          const restorePatch = buildFlagRestorationPatch(previousTargetFlags, targetActor.flags || {});
+          if (Object.keys(restorePatch).length) {
+            await ActorEngine.updateActor(targetActor, restorePatch, { source: `${sourceTag}:rollback` });
+          }
         }
       }
     ];

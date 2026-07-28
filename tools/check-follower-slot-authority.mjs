@@ -166,7 +166,8 @@ function main() {
       const validatorBody = validatorMatch ? validatorMatch[0] : '';
       const rejectsNonManual = /sourceType\s*!==\s*MANUAL_SLOT_SOURCE_TYPE/.test(validatorBody)
         || /sourceType\s*!==\s*['"]gm-grant['"]/.test(validatorBody);
-      const rejectsOccupied = /slot\.createdActorId/.test(validatorBody);
+      const rejectsOccupied = /slot\.createdActorId/.test(validatorBody)
+        || /isFollowerSlotOccupied\(\s*slot\s*\)/.test(validatorBody);
       if (!validatorMatch || !rejectsNonManual) {
         violations.push({
           check: '6: revocation must reject talent-derived slots',

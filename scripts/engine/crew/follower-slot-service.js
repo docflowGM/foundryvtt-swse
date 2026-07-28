@@ -20,6 +20,7 @@
 
 import { ActorEngine } from '/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js';
 import { swseLogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
+import { isFollowerSlotOccupied } from '/systems/foundryvtt-swse/scripts/domain/followers/follower-slot-occupancy.js';
 
 const SYSTEM_ID = 'foundryvtt-swse';
 const FOLLOWER_SLOTS_FLAG = 'followerSlots';
@@ -130,7 +131,7 @@ export function validateManualFollowerSlotRevocation({ isGM, slot } = {}) {
   if (slot.sourceType !== MANUAL_SLOT_SOURCE_TYPE) {
     return { valid: false, error: 'Only a GM-granted manual slot can be removed this way — talent-granted slots are governed by their talent.' };
   }
-  if (slot.createdActorId) {
+  if (isFollowerSlotOccupied(slot)) {
     return { valid: false, error: 'An occupied follower slot cannot be removed directly. Dismiss or fire the follower first.' };
   }
   return { valid: true, error: null };

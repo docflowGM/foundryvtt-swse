@@ -169,4 +169,58 @@ function asGM(actors = []) {
   assert.match(result.error, /already occupied/);
 }
 
+// ---------------------------------------------------------------------
+// R4-3 — findExistingFollowerRelationship() alignment with the
+// projections FollowerCreator.getFollowers() already treats as follower
+// evidence (system.ownedActors, target npcProfile owner metadata).
+// ---------------------------------------------------------------------
+
+// 16. A follower-kind system.ownedActors entry (no `kind` field at all —
+// the legacy shape FollowerCreator writes) is detected even with no
+// followerSlots/flags.followers entry at all.
+{
+  const target = makeActor('target-6');
+  const owner = makeActor('owner-6', { system: { ownedActors: [{ id: 'target-6' }] } });
+  asGM([target, owner]);
+  const result = findExistingFollowerRelationship(target);
+  assert.equal(result.isFollower, true);
+  assert.equal(result.ownerActorId, 'owner-6');
+  assert.deepEqual(result.sources, ['owner-ownedactors-registry']);
+}
+
+// 17. An explicit kind: 'follower' ownedActors entry is also detected.
+{
+  const target = makeActor('target-7');
+  const owner = makeActor('owner-7', { system: { ownedActors: [{ id: 'target-7', kind: 'follower' }] } });
+  asGM([target, owner]);
+  const result = findExistingFollowerRelationship(target);
+  assert.equal(result.isFollower, true);
+  assert.equal(result.ownerActorId, 'owner-7');
+}
+
+// 18. A relationship-only ASSIGNED ALLY (ownedActors kind 'assigned-npc',
+// 'assigned-beast', etc. — never 'follower') must NOT be misclassified as
+// a follower — this is the conservative-classification requirement.
+{
+  const target = makeActor('target-8');
+  const owner = makeActor('owner-8', { system: { ownedActors: [{ id: 'target-8', kind: 'assigned-npc' }] } });
+  asGM([target, owner]);
+  const result = findExistingFollowerRelationship(target);
+  assert.equal(result.isFollower, false, 'a relationship-only assigned ally must not read as an existing follower');
+  assert.deepEqual(result.sources, []);
+}
+
+// 19. The target's own system.npcProfile.owner.actorId (paired with its
+// own isFollower flag) is recognized as an alternate ownerId source,
+// matching FollowerCreator.getFollowers()'s own world-scan check.
+{
+  const target = makeActor('target-9', { system: { isFollower: true, npcProfile: { owner: { actorId: 'owner-9' } } } });
+  const owner = makeActor('owner-9');
+  asGM([target, owner]);
+  const result = findExistingFollowerRelationship(target);
+  assert.equal(result.isFollower, true);
+  assert.equal(result.ownerActorId, 'owner-9');
+  assert.deepEqual(result.sources, ['target-flags']);
+}
+
 console.log('Follower slot occupancy alignment tests passed.');

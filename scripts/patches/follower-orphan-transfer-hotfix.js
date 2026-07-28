@@ -5,6 +5,7 @@ import { deriveFollowerStateForApply } from '/systems/foundryvtt-swse/scripts/ap
 import { getAvailableFollowerSlots } from '/systems/foundryvtt-swse/scripts/apps/progression-framework/adapters/follower-session-seeder.js';
 import { getHeroicLevel } from '/systems/foundryvtt-swse/scripts/actors/derived/level-split.js';
 import { swseLogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
+import { resolveFollowerSlotActorId } from '/systems/foundryvtt-swse/scripts/domain/followers/follower-slot-occupancy.js';
 
 const REGISTERED = Symbol.for('swse.followerOrphanTransfer.registered.v1');
 const PROCESSING_OWNERS = new Set();
@@ -57,7 +58,8 @@ function followerIdsForOwner(owner) {
     if (entry?.id) ids.add(entry.id);
   }
   for (const slot of owner?.getFlag?.('foundryvtt-swse', 'followerSlots') || []) {
-    if (slot?.createdActorId) ids.add(slot.createdActorId);
+    const occupantId = resolveFollowerSlotActorId(slot);
+    if (occupantId) ids.add(occupantId);
   }
   for (const entry of owner?.system?.ownedActors || []) {
     if (entry?.id) ids.add(entry.id);
@@ -83,7 +85,7 @@ function followerLink(follower, slot = null) {
 async function clearOwnerRegistries(owner, followerId, { clearSlot = true } = {}) {
   if (!owner) return;
   const slots = (owner.getFlag('foundryvtt-swse', 'followerSlots') || []).map(slot => {
-    if (!clearSlot || slot.createdActorId !== followerId) return slot;
+    if (!clearSlot || resolveFollowerSlotActorId(slot) !== followerId) return slot;
     return {
       ...slot,
       createdActorId: null,
@@ -168,7 +170,7 @@ function isOrphanFollower(follower) {
 }
 
 function slotSupportsFollower(slot, follower) {
-  if (!slot || slot.createdActorId) return false;
+  if (!slot || resolveFollowerSlotActorId(slot)) return false;
   if (slot.dependentKind && slot.dependentKind !== 'follower') return false;
 
   const templateType = follower.system?.progression?.followerTemplate
