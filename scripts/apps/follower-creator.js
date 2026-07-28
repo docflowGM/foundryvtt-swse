@@ -22,6 +22,7 @@ import { getHeroicLevel } from "/systems/foundryvtt-swse/scripts/actors/derived/
 import { SpeciesRegistry } from "/systems/foundryvtt-swse/scripts/engine/registries/species-registry.js";
 import { FeatRegistry } from "/systems/foundryvtt-swse/scripts/registries/feat-registry.js";
 import { getFollowerTalentConfig } from "/systems/foundryvtt-swse/scripts/engine/crew/follower-talent-config.js";
+import { resolveFollowerSlotActorId } from "/systems/foundryvtt-swse/scripts/domain/followers/follower-slot-occupancy.js";
 import {
     runFollowerMutationTransaction,
     resolveFollowerFinalizationToken,
@@ -1074,7 +1075,8 @@ static async createFollower(owner, templateType, grantingTalent = null) {
             if (entry?.id) ids.add(entry.id);
         }
         for (const slot of actor.getFlag('foundryvtt-swse', 'followerSlots') || []) {
-            if (slot?.createdActorId) ids.add(slot.createdActorId);
+            const occupantId = resolveFollowerSlotActorId(slot);
+            if (occupantId) ids.add(occupantId);
         }
         for (const entry of actor.system?.ownedActors || []) {
             const kind = entry?.kind || entry?.dependentKind || entry?.npcKind;
@@ -1169,7 +1171,19 @@ static async createFollower(owner, templateType, grantingTalent = null) {
                 ? {
                     name: 'delete-follower-commit',
                     commit: async () => {
-                        await deleteActor(follower);
+                        // deleteActor() returns null on failure (invalid
+                        // input, or Actor.deleteDocuments() throwing) rather
+                        // than throwing itself — awaiting it without
+                        // checking the result let a failed deletion commit
+                        // as if it had succeeded, leaving the owner unlinked
+                        // from a follower Actor that still exists in the
+                        // world. Throwing here on a falsy/empty result makes
+                        // the transaction coordinator roll back the
+                        // owner-unlink step instead.
+                        const deleted = await deleteActor(follower);
+                        if (!deleted || (Array.isArray(deleted) && deleted.length === 0)) {
+                            throw new Error(`Failed to delete follower Actor "${follower.name}" — owner unlink has been rolled back.`);
+                        }
                     }
                 }
                 : {
