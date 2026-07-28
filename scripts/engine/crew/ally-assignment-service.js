@@ -34,6 +34,7 @@
 import { ActorEngine } from '/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js';
 import { swseLogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
 import { isDroidStatblockMode } from '/systems/foundryvtt-swse/scripts/actors/droid/droid-mode-adapter.js';
+import { resolveFollowerSlotActorId, isFollowerSlotOccupied } from '/systems/foundryvtt-swse/scripts/domain/followers/follower-slot-occupancy.js';
 import { SnapshotManager } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/snapshot-manager.js';
 import {
   runFollowerMutationTransaction,
@@ -177,18 +178,32 @@ export function isTargetAlreadyFollower(targetActor) {
  * follower slot merely because its own flags are inconsistent with the
  * registries that actually track it.
  *
+ * Uses resolveFollowerSlotActorId() (the same alias-aware occupant
+ * resolver AlliesSurfaceService's rehire/beast-conversion paths write
+ * through — createdActorId, actorId, assignedActorId, dependentActorId,
+ * npcActorId) rather than checking `slot.createdActorId` directly, so a
+ * slot occupied via any of those alternate fields is still detected here
+ * instead of reading as "open" and allowing a second conversion into it.
+ * Scans every owner (not just the first match) so a target referenced by
+ * more than one owner's registry — a genuine data inconsistency — is
+ * reported as a conflict instead of silently returning whichever owner
+ * happened to be visited first.
+ *
  * @param {Actor} targetActor
- * @returns {{isFollower: boolean, ownerId: string|null, ownerName: string|null, source: string|null}}
+ * @returns {{isFollower: boolean, ownerId: string|null, ownerActorId: string|null, ownerName: string|null, slotId: string|null, source: string|null, sources: string[], conflicts: Array<{ownerId: string, ownerName: string|null, source: string}>}}
  */
 export function findExistingFollowerRelationship(targetActor) {
-  if (!targetActor) return { isFollower: false, ownerId: null, ownerName: null, source: null };
+  const empty = { isFollower: false, ownerId: null, ownerActorId: null, ownerName: null, slotId: null, source: null, sources: [], conflicts: [] };
+  if (!targetActor) return empty;
+
+  const matches = [];
 
   if (isTargetAlreadyFollower(targetActor)) {
     const ownerId = targetActor.flags?.swse?.follower?.ownerId
       ?? targetActor.getFlag?.(SYSTEM_ID, 'followerOwnerId')
       ?? null;
     const ownerActor = ownerId ? game.actors?.get?.(ownerId) ?? null : null;
-    return { isFollower: true, ownerId, ownerName: ownerActor?.name ?? null, source: 'target-flags' };
+    matches.push({ ownerId, ownerName: ownerActor?.name ?? null, slotId: null, source: 'target-flags' });
   }
 
   // game.actors is a real Foundry Collection (iterable, not an Array) in
@@ -199,16 +214,34 @@ export function findExistingFollowerRelationship(targetActor) {
   for (const owner of (game.actors ? Array.from(game.actors) : [])) {
     if (!owner || owner.id === targetId) continue;
     const slots = asArray(owner.getFlag?.(SYSTEM_ID, FOLLOWER_SLOTS_FLAG));
-    if (slots.some(slot => slot?.createdActorId === targetId)) {
-      return { isFollower: true, ownerId: owner.id, ownerName: owner.name, source: 'follower-slot-registry' };
+    const occupiedSlot = slots.find(slot => resolveFollowerSlotActorId(slot) === targetId);
+    if (occupiedSlot) {
+      matches.push({ ownerId: owner.id, ownerName: owner.name, slotId: occupiedSlot.id ?? null, source: 'follower-slot-registry' });
     }
     const followers = asArray(owner.getFlag?.(SYSTEM_ID, 'followers'));
     if (followers.some(entry => (entry?.id || entry?.actorId) === targetId)) {
-      return { isFollower: true, ownerId: owner.id, ownerName: owner.name, source: 'owner-followers-registry' };
+      matches.push({ ownerId: owner.id, ownerName: owner.name, slotId: null, source: 'owner-followers-registry' });
     }
   }
 
-  return { isFollower: false, ownerId: null, ownerName: null, source: null };
+  if (!matches.length) return empty;
+
+  const [primary] = matches;
+  const distinctOwners = new Set(matches.map(m => m.ownerId));
+  const conflicts = distinctOwners.size > 1
+    ? matches.filter(m => m.ownerId !== primary.ownerId)
+    : [];
+
+  return {
+    isFollower: true,
+    ownerId: primary.ownerId,
+    ownerActorId: primary.ownerId,
+    ownerName: primary.ownerName,
+    slotId: primary.slotId,
+    source: primary.source,
+    sources: matches.map(m => m.source),
+    conflicts
+  };
 }
 
 /**
@@ -460,11 +493,14 @@ export function buildOwnerAssignmentUpdate({ ownerActor, link, detectedKind }) {
 }
 
 /**
- * Pure builder for the owner-side write when unassigning an ally. Reads the
- * owner's CURRENT state — safe here because this is only ever used to
- * recompute a symmetric add/remove immediately, either as the forward
- * unassign commit or as assignAsAlly's own rollback (where "current" at
- * rollback time is the just-mutated state with exactly one entry added).
+ * Pure builder for the owner-side write that removes one target from an
+ * owner's ownedActors/assignment-kind arrays, given whatever arrays are
+ * passed in. Retained as a standalone, independently-testable helper;
+ * unassignAlly() and assignAsAlly()'s rollback both capture their own
+ * pre-mutation array snapshots inline instead of calling this against
+ * live Actor state, so a rollback restores the exact prior arrays rather
+ * than recomputing "current minus target" against whatever the passed-in
+ * Actor object happens to reflect at rollback time.
  *
  * @returns {object} an ActorEngine.updateActor() data payload
  */
@@ -483,7 +519,7 @@ export function buildOwnerUnassignmentUpdate({ ownerActor, targetActorId, detect
  */
 export function validateFollowerConversionSlot(slot) {
   if (!slot) return { valid: false, error: 'That follower slot could not be found.' };
-  if (slot.createdActorId) return { valid: false, error: 'That follower slot is already occupied.' };
+  if (isFollowerSlotOccupied(slot)) return { valid: false, error: 'That follower slot is already occupied.' };
   if (slot.dependentKind && slot.dependentKind !== 'follower') {
     return { valid: false, error: 'Only a follower slot may be used for Convert to Follower — minion/beast-only slots are not valid here.' };
   }
@@ -728,7 +764,7 @@ export async function applyDefaultFollowerDerivation(ownerActor, targetActor) {
  * @param {string} sourceTag
  * @returns {{name: string, commit: Function, rollback: Function}}
  */
-function buildOwnershipGrantStep(ownerActor, targetActor, sourceTag) {
+export function buildOwnershipGrantStep(ownerActor, targetActor, sourceTag) {
   return {
     name: 'ownership-commit',
     commit: async () => {
@@ -744,13 +780,20 @@ function buildOwnershipGrantStep(ownerActor, targetActor, sourceTag) {
     },
     rollback: async (result) => {
       if (!result?.userId) return;
-      const noneLevel = CONST?.DOCUMENT_OWNERSHIP_LEVELS?.NONE ?? -1;
-      const restoreLevel = Object.prototype.hasOwnProperty.call(result.previousOwnership || {}, result.userId)
-        ? result.previousOwnership[result.userId]
-        : noneLevel;
-      await ActorEngine.updateActor(targetActor, {
-        ownership: { [result.userId]: restoreLevel }
-      }, { source: `${sourceTag}:ownership:rollback` });
+      const hadPriorEntry = Object.prototype.hasOwnProperty.call(result.previousOwnership || {}, result.userId);
+      // A user with no PRIOR ownership entry was relying on `ownership.default`
+      // for their access level (or had none at all). Writing an explicit
+      // NONE/0 entry for them here would not restore that prior state — it
+      // would ADD a new per-user override that shadows `ownership.default`,
+      // which can be MORE restrictive than what the user had before this
+      // grant (e.g. a `default` of OBSERVER would be overridden to NONE).
+      // The exact prior state is "no entry for this user at all", so the
+      // rollback must DELETE the key via Foundry's `-=key` deletion syntax
+      // instead of overwriting it with NONE.
+      const patch = hadPriorEntry
+        ? { ownership: { [result.userId]: result.previousOwnership[result.userId] } }
+        : { [`ownership.-=${result.userId}`]: null };
+      await ActorEngine.updateActor(targetActor, patch, { source: `${sourceTag}:ownership:rollback` });
     }
   };
 }
@@ -776,7 +819,22 @@ export class AllyAssignmentService {
 
     const detectedKind = evaluation.detectedKind;
     const link = buildAllyAssignmentLink({ targetActor, detectedKind });
-    const ownerUpdate = buildOwnerAssignmentUpdate({ ownerActor, link, detectedKind });
+    const flagKey = assignmentFlagKeyForKind(detectedKind);
+    // Captured BEFORE any mutation — matches unassignAlly's and
+    // convertToFollower's own rollback pattern in this same file, restoring
+    // the EXACT pre-commit arrays rather than recomputing "current minus
+    // target" from ownerActor's live state at rollback time (the previous
+    // shape here, buildOwnerUnassignmentUpdate, assumed the passed-in
+    // ownerActor object would reflect the just-committed write by the time
+    // rollback runs — an assumption this file no longer relies on anywhere
+    // else, since it's fragile against transaction steps that end up not
+    // mutating ownerActor's local reference in place).
+    const currentOwnedActors = clonePlain(asArray(ownerActor.system?.ownedActors));
+    const currentFlagList = clonePlain(asArray(ownerActor.getFlag?.(SYSTEM_ID, flagKey)));
+    const ownerUpdate = {
+      'system.ownedActors': appendUnique(currentOwnedActors, link),
+      [`flags.${SYSTEM_ID}.${flagKey}`]: appendUnique(currentFlagList, link)
+    };
     const targetFlagPatch = buildAssignmentTargetFlagPatch({ ownerActor, detectedKind, mode: ASSIGNMENT_MODE.ALLY });
     const sourceTag = options.source ? `AllyAssignmentService.assignAsAlly:${options.source}` : 'AllyAssignmentService.assignAsAlly';
 
@@ -788,7 +846,10 @@ export class AllyAssignmentService {
           return ownerUpdate;
         },
         rollback: async () => {
-          await ActorEngine.updateActor(ownerActor, buildOwnerUnassignmentUpdate({ ownerActor, targetActorId: targetActor.id, detectedKind }), { source: `${sourceTag}:rollback` });
+          await ActorEngine.updateActor(ownerActor, {
+            'system.ownedActors': currentOwnedActors,
+            [`flags.${SYSTEM_ID}.${flagKey}`]: currentFlagList
+          }, { source: `${sourceTag}:rollback` });
         }
       },
       {
