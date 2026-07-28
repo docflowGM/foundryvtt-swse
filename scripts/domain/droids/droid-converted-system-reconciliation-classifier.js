@@ -270,6 +270,66 @@ export function annotateWeaponCandidatesAgainstExistingItems(candidates, existin
   });
 }
 
+/**
+ * Validate a caller's selected canonical ids against a freshly-classified
+ * candidate list (P1-5 — Intent-Based Reconciliation Apply Boundary).
+ * Never trusts the selection blindly: normalizes/trims each id, rejects
+ * anything empty, dedupes, and rejects any id that is not present in
+ * `candidates` as an auto-applicable (canonical-match/alias-match),
+ * not-already-installed entry — this is what keeps a stale, unknown,
+ * blocked, or already-reconciled selection from being silently accepted
+ * or silently dropped. Fails the WHOLE selection closed on the first
+ * problem rather than partially applying the rest, so a GM is never
+ * surprised by which subset of their selection actually took effect.
+ *
+ * @param {unknown} selectedCanonicalIds - caller-supplied raw id list.
+ * @param {object[]} candidates - output of classifyStockSystemSources()/
+ *   annotateWeaponCandidatesAgainstExistingItems(), from a FRESH
+ *   inspection taken at validation time — not a cached/stale list.
+ * @param {object} [context]
+ * @param {(value: unknown) => string} [context.normalizeId]
+ * @returns {{success: true, canonicalIds: string[]}|{success: false, code: string, error: string}}
+ */
+export function validateReconciliationSelection(selectedCanonicalIds, candidates, context = {}) {
+  const normalizeId = typeof context.normalizeId === 'function' ? context.normalizeId : (v) => String(v ?? '').trim().toLowerCase();
+  const rawList = Array.isArray(selectedCanonicalIds) ? selectedCanonicalIds : [];
+
+  if (rawList.length === 0) {
+    return { success: false, code: 'RECONCILIATION_INVALID_SELECTION', error: 'No systems were selected to reconcile.' };
+  }
+
+  const byCanonicalId = new Map((Array.isArray(candidates) ? candidates : []).map(c => [c.canonicalId, c]));
+  const seen = new Set();
+  const canonicalIds = [];
+
+  for (const raw of rawList) {
+    const id = normalizeId(raw);
+    if (!id) {
+      return { success: false, code: 'RECONCILIATION_INVALID_SELECTION', error: `Selected system id "${raw}" is empty or invalid.` };
+    }
+    if (seen.has(id)) continue;
+    seen.add(id);
+
+    const candidate = byCanonicalId.get(id);
+    if (!candidate) {
+      return { success: false, code: 'RECONCILIATION_INVALID_SELECTION', error: `"${id}" is not one of this droid's current reconciliation candidates. Refresh the review before applying changes.` };
+    }
+    if (candidate.alreadyInstalled) {
+      return { success: false, code: 'RECONCILIATION_INVALID_SELECTION', error: `"${id}" is already installed or reconciled and can no longer be selected. Refresh the review before applying changes.` };
+    }
+    if (candidate.classification !== RECONCILIATION_CLASSIFICATION.CANONICAL_MATCH && candidate.classification !== RECONCILIATION_CLASSIFICATION.ALIAS_MATCH) {
+      return { success: false, code: 'RECONCILIATION_INVALID_SELECTION', error: `"${id}" requires manual resolution (classification: ${candidate.classification}) and cannot be auto-applied.` };
+    }
+    canonicalIds.push(id);
+  }
+
+  if (canonicalIds.length === 0) {
+    return { success: false, code: 'RECONCILIATION_INVALID_SELECTION', error: 'No selected system was eligible for reconciliation.' };
+  }
+
+  return { success: true, canonicalIds };
+}
+
 export function classifyStockSystemSources(sourceEntries, context = {}) {
   const list = Array.isArray(sourceEntries) ? sourceEntries : [];
   const byKey = new Map();

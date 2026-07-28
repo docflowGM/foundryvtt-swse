@@ -8688,7 +8688,12 @@ const forcePoints = [];
 
   async _reconcileDroidSystems() {
     if (!this.actor || this.actor.type !== 'droid') return;
-    const { inspectReconciliation, buildReconciliationPlan, applyReconciliation } = await import('/systems/foundryvtt-swse/scripts/domain/droids/droid-converted-system-reconciliation-service.js');
+    // P1-5 — this sheet handler submits INTENT (actorId/selectedCanonicalIds/
+    // inspectionRevision) only. It never builds or holds a mutation plan;
+    // applyReconciliation() rereads the actor's current state and rebuilds
+    // the plan itself, using this call's inspectionRevision only to detect
+    // whether anything changed since inspection ran a moment ago.
+    const { inspectReconciliation, applyReconciliation } = await import('/systems/foundryvtt-swse/scripts/domain/droids/droid-converted-system-reconciliation-service.js');
     const inspection = await inspectReconciliation(this.actor);
     const autoApplicable = (inspection.candidates ?? []).filter(c => c.selectedByDefault && !c.alreadyInstalled);
     if (autoApplicable.length === 0) {
@@ -8701,14 +8706,18 @@ const forcePoints = [];
       defaultYes: false
     });
     if (!confirmed) return;
-    const built = await buildReconciliationPlan(this.actor, [], { selectDefaults: true });
-    if (!built.success) {
-      ui.notifications?.error?.(`Could not build a reconciliation plan: ${built.error}`);
-      return;
-    }
-    const result = await applyReconciliation(this.actor, built);
+    const intent = {
+      actorId: this.actor.id,
+      selectedCanonicalIds: autoApplicable.map(c => c.canonicalId),
+      inspectionRevision: inspection.inspectionRevision
+    };
+    const result = await applyReconciliation(this.actor, intent);
     if (result.success) {
-      ui.notifications?.info?.(`${this.actor.name}: reconciled ${result.applied.length} system(s).`);
+      ui.notifications?.info?.(`${this.actor.name}: reconciled ${result.appliedCanonicalIds.length} system(s).`);
+    } else if (result.code === 'RECONCILIATION_STALE') {
+      // Never silently retry with the stale selection — force a fresh
+      // review instead.
+      ui.notifications?.warn?.(result.error);
     } else {
       ui.notifications?.error?.(`Reconciliation failed: ${result.error}`);
     }

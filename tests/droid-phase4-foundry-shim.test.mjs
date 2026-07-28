@@ -33,6 +33,14 @@ const { inspectReconciliation, buildReconciliationPlan, applyReconciliation, rol
   '/systems/foundryvtt-swse/scripts/domain/droids/droid-converted-system-reconciliation-service.js'
 );
 
+// P1-5 — applyReconciliation() now takes INTENT, not a caller-held plan.
+// This helper mirrors exactly what the real sheet caller does: inspect,
+// then submit only {actorId, selectedCanonicalIds, inspectionRevision}.
+async function intentFor(actor, selectedCanonicalIds) {
+  const inspection = await inspectReconciliation(actor);
+  return { actorId: actor.id, selectedCanonicalIds, inspectionRevision: inspection.inspectionRevision };
+}
+
 function stockDroidFixture(overrides = {}) {
   return createFakeDroidActor({
     system: {
@@ -189,8 +197,11 @@ function stockDroidFixture(overrides = {}) {
   assert.equal(built.success, true);
   assert.deepEqual(built.applied.map(a => a.canonicalId), ['improved-sensor-package']);
 
-  const applied = await applyReconciliation(actor, built);
+  const intent = await intentFor(actor, ['improved-sensor-package']);
+  const applied = await applyReconciliation(actor, intent);
   assert.equal(applied.success, true);
+  assert.deepEqual(applied.appliedCanonicalIds, ['improved-sensor-package']);
+  assert.notEqual(applied.resultingRevision, applied.previousRevision, 'revision must change after a successful apply');
   assert.ok(actor.system.installedSystems['improved-sensor-package'], 'ledger entry created');
   assert.equal(actor.system.installedSystems['improved-sensor-package'].provenance.origin, 'stock-import');
   assert.equal(actor.system.installedSystems['improved-sensor-package'].mechanicalState.applyModifiers, true);
@@ -211,8 +222,8 @@ function stockDroidFixture(overrides = {}) {
   resetFakeActorEngine();
   const actor = stockDroidFixture();
   await convertToPlayableDerived(actor);
-  const built1 = await buildReconciliationPlan(actor, [], { selectDefaults: true });
-  await applyReconciliation(actor, built1);
+  const intent1 = await intentFor(actor, ['improved-sensor-package']);
+  await applyReconciliation(actor, intent1);
 
   const built2 = await buildReconciliationPlan(actor, [], { selectDefaults: true });
   // Already-installed candidate is no longer offered as auto-applicable.
@@ -226,14 +237,15 @@ function stockDroidFixture(overrides = {}) {
   resetFakeActorEngine();
   const actor = stockDroidFixture();
   await convertToPlayableDerived(actor);
-  const built = await buildReconciliationPlan(actor, [], { selectDefaults: true });
+  const intent = await intentFor(actor, ['improved-sensor-package']);
 
   const { ActorEngine } = await import('/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js');
   const originalApply = ActorEngine.applyMutationPlan;
   ActorEngine.applyMutationPlan = async () => { throw new Error('simulated reconciliation failure'); };
   try {
-    const result = await applyReconciliation(actor, built);
+    const result = await applyReconciliation(actor, intent);
     assert.equal(result.success, false);
+    assert.equal(result.code, 'RECONCILIATION_APPLY_FAILED');
     assert.equal(actor.system.installedSystems['improved-sensor-package'], undefined, 'no partial mutation after rollback');
   } finally {
     ActorEngine.applyMutationPlan = originalApply;
@@ -278,17 +290,18 @@ function stockDroidFixture(overrides = {}) {
 }
 {
   // Nonowner, non-GM: applyReconciliation must reject even with a
-  // perfectly valid plan (built is permission-agnostic; enforcement is
-  // applyReconciliation's own job — test 38: direct invocation enforces it).
+  // perfectly valid, correctly-addressed intent — enforcement is
+  // applyReconciliation's own job — test 38: direct invocation enforces it.
   installFoundryShimGlobals({ game: { user: { isGM: false } } });
   resetFakeActorEngine();
   const ownerActor = stockDroidFixture({ isOwner: true });
   await convertToPlayableDerived(ownerActor);
-  const built = await buildReconciliationPlan(ownerActor, [], { selectDefaults: true });
+  const intent = await intentFor(ownerActor, ['improved-sensor-package']);
 
   const nonownerActor = { ...ownerActor, isOwner: false };
-  const result = await applyReconciliation(nonownerActor, built);
+  const result = await applyReconciliation(nonownerActor, intent);
   assert.equal(result.success, false);
+  assert.equal(result.code, 'RECONCILIATION_PERMISSION_DENIED');
   assert.match(result.error, /Only the GM or an owner/);
 }
 {
@@ -297,8 +310,8 @@ function stockDroidFixture(overrides = {}) {
   resetFakeActorEngine();
   const actor = stockDroidFixture({ isOwner: false });
   await convertToPlayableDerived(actor);
-  const built = await buildReconciliationPlan(actor, [], { selectDefaults: true });
-  const result = await applyReconciliation(actor, built);
+  const intent = await intentFor(actor, ['improved-sensor-package']);
+  const result = await applyReconciliation(actor, intent);
   assert.equal(result.success, true);
 }
 {
@@ -307,8 +320,8 @@ function stockDroidFixture(overrides = {}) {
   resetFakeActorEngine();
   const actor = stockDroidFixture({ isOwner: true });
   await convertToPlayableDerived(actor);
-  const built = await buildReconciliationPlan(actor, [], { selectDefaults: true });
-  const result = await applyReconciliation(actor, built);
+  const intent = await intentFor(actor, ['improved-sensor-package']);
+  const result = await applyReconciliation(actor, intent);
   assert.equal(result.success, true);
 }
 

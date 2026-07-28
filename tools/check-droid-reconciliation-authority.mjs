@@ -9,7 +9,8 @@
  * docs/audits/droid-converted-system-reconciliation-phase-4.md stays a
  * single, narrow authority — the same discipline
  * tools/check-droid-calculation-mode-authority.mjs already enforces for
- * Phase 3's calculation-mode field. Eight checks:
+ * Phase 3's calculation-mode field. Eight checks, plus a four-check P1-5
+ * addendum below:
  *
  *   1. applyReconciliation()/rollbackReconciliation() are only called from
  *      the approved sheet handler and the service itself — never from the
@@ -41,6 +42,26 @@
  *   8. No file under scripts/ (production code) imports anything from
  *      tests/helpers/foundry-shim/ — the shim is test-only scaffolding and
  *      must never become a runtime dependency.
+ *
+ * P1-5 addendum (Intent-Based Reconciliation Apply Boundary) — four more
+ * checks, narrowly scoped to the reconciliation trust boundary itself
+ * (not a repository-wide ban on any object named "plan"):
+ *
+ *   9. applyReconciliation() must independently verify the caller's
+ *      intent.actorId matches the target Actor's own id — guards against
+ *      someone quietly removing the cross-Actor identity check.
+ *  10. applyReconciliation() must compute a current revision fingerprint
+ *      (buildDroidReconciliationRevision) and compare it against
+ *      intent.inspectionRevision before mutating — guards against
+ *      re-introducing a stale-plan trust gap.
+ *  11. applyReconciliation() must explicitly reject an old-API,
+ *      plan-shaped second argument (a `plan`/`mutationPlan` property) —
+ *      guards against silently resurrecting the old
+ *      "apply(actor, builtPlan)" contract.
+ *  12. No production call site outside the reconciliation service may
+ *      call applyReconciliation() with a caller-held `built`/`plan`
+ *      identifier — every call site must pass an intent literal
+ *      containing `selectedCanonicalIds` and `inspectionRevision`.
  *
  * Report-only by default; --strict exits non-zero on any violation.
  */
@@ -173,10 +194,48 @@ function main() {
     }
   }
 
+  // P1-5 Check 9: applyReconciliation() must verify intent.actorId against
+  // the target Actor's own id.
+  const applyReconciliationBody = (() => {
+    const match = reconciliationSource.match(/export\s+async\s+function\s+applyReconciliation\s*\([\s\S]*?\n}/);
+    return match ? match[0] : '';
+  })();
+  if (!/intent\.actorId\s*!==\s*actor\.id/.test(applyReconciliationBody)) {
+    violations.push({ check: '9: cross-Actor identity verification', file: path.relative(ROOT, RECONCILIATION_SERVICE), detail: 'applyReconciliation() must independently verify intent.actorId === actor.id before mutating' });
+  }
+
+  // P1-5 Check 10: applyReconciliation() must compute and compare a
+  // revision fingerprint before mutating.
+  if (!/buildDroidReconciliationRevision\s*\(\s*actor\s*\)/.test(applyReconciliationBody) || !/intent\.inspectionRevision/.test(applyReconciliationBody)) {
+    violations.push({ check: '10: revision/staleness validation', file: path.relative(ROOT, RECONCILIATION_SERVICE), detail: 'applyReconciliation() must recompute the actor\'s current reconciliation revision and compare it against intent.inspectionRevision' });
+  }
+
+  // P1-5 Check 11: applyReconciliation() must reject an old-API,
+  // plan-shaped second argument.
+  if (!/'plan'\s*in\s*intent/.test(applyReconciliationBody) && !/'mutationPlan'\s*in\s*intent/.test(applyReconciliationBody)) {
+    violations.push({ check: '11: old plan-based API rejected', file: path.relative(ROOT, RECONCILIATION_SERVICE), detail: 'applyReconciliation() must explicitly detect and reject a caller-supplied plan/mutationPlan-shaped second argument' });
+  }
+
+  // P1-5 Check 12: no production call site outside the reconciliation
+  // service may call applyReconciliation() with a caller-held plan
+  // identifier instead of an intent literal.
+  const applyCallSitePattern = /applyReconciliation\s*\(\s*[\w.]+\s*,\s*([\w.]+)\s*\)/g;
+  for (const file of files) {
+    if (file === RECONCILIATION_SERVICE) continue;
+    const source = read(file);
+    let match;
+    while ((match = applyCallSitePattern.exec(source)) !== null) {
+      const secondArg = match[1];
+      if (/^(built|plan|mutationPlan)$/i.test(secondArg)) {
+        violations.push({ check: '12: intent literal at call sites', file: path.relative(ROOT, file), detail: `applyReconciliation() called with a caller-held "${secondArg}" identifier — pass an intent literal ({actorId, selectedCanonicalIds, inspectionRevision}), never a pre-built plan` });
+      }
+    }
+  }
+
   console.log('='.repeat(72));
   console.log('  DROID CONVERTED-SYSTEM RECONCILIATION AUTHORITY GUARD');
   console.log('='.repeat(72));
-  console.log(`\nScanned ${files.length} script file(s) against 8 checks.\n`);
+  console.log(`\nScanned ${files.length} script file(s) against 12 checks.\n`);
 
   if (violations.length === 0) {
     console.log('No violations found — droid converted-system reconciliation remains a single authority.');

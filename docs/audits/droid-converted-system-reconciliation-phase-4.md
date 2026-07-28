@@ -288,3 +288,151 @@ Recommendation: merge-ready pending a maintainer's own judgment on whether Node-
 - A granular reconciliation-selection UI (per-candidate accept/reject, explicit disambiguation for ambiguous matches) instead of the current "auto-apply canonical/alias matches only" button.
 - Extend the Foundry-shim harness (or accept the live-runtime gap) to cover `progression-entry.js`'s stock-mode guard, the one piece of Phase 3/4 behavior with zero automated coverage of any kind.
 - Investigate (not fix, unless trivial) the pre-existing `check-progression-integrity.mjs`/`check-architecture-boundaries.mjs` violation counts, which predate this entire droid-stabilization effort and touch the wider progression/chargen system.
+
+## P1-5 — Intent-Based Reconciliation Apply Boundary (correction pass)
+
+**Trigger:** a static review flagged that `applyReconciliation()` accepted a
+caller-held mutation plan (the result of `buildReconciliationPlan()`) with
+no verification that it belonged to the target Actor, reflected current
+ledger state, was unmodified, or was actually produced by this service —
+enabling cross-Actor plan application, stale-preview overwrites, and
+silent loss of concurrent installation changes if a caller held a `built`
+result across an await boundary.
+
+### Former vulnerability
+`applyReconciliation(actor, built)` trusted `built.plan`/`built.applied`
+verbatim. Nothing tied `built` to `actor`, nothing checked whether the
+actor's `installedSystems`/`droidSystems`/embedded Items had changed since
+`built` was constructed, and a `built` object built for one Actor could be
+handed to `applyReconciliation()` for a different Actor with no rejection.
+
+### New intent contract
+`applyReconciliation(actor, intent)` now takes
+`{actorId, selectedCanonicalIds, inspectionRevision}` only. The caller may
+never submit `installedSystems`/`droidSystems` payloads, a mutation plan,
+embedded-Item delete ids, `mechanicalState`, provenance, or cost values —
+the service rereads the actor's current state and rebuilds everything
+itself.
+
+### Actor identity enforcement
+`intent.actorId` is compared against `actor.id`; a missing or mismatched
+id is rejected (`RECONCILIATION_ACTOR_MISMATCH`) before anything else
+happens, independent of any UI-side gating. Actor existence, `type ===
+'droid'`, GM/owner permission, and calculation mode
+(`playable-derived` required) are all independently re-verified inside
+`applyReconciliation()` itself.
+
+### Revision/fingerprint design
+`scripts/domain/droids/droid-reconciliation-revision.js`'s
+`buildDroidReconciliationRevision(actor)` builds a deterministic FNV-1a
+fingerprint over: the actor id, resolved calculation mode,
+`installedSystems` ledger, `droidSystems` projection, embedded
+droid-part-relevant Item identities (id/canonicalId/`sourceStatblock`),
+stock-import provenance identity (schema version/source id/import
+timestamp), and reconciliation metadata (reconciled-at/ids/snapshot/
+rolled-back-at). Volatile fields (HP, token position, chat/window state)
+are excluded by construction — the module simply never reads them.
+`inspectReconciliation()` returns this fingerprint as `inspectionRevision`;
+`applyReconciliation()` recomputes it fresh and rejects a mismatch as
+stale (`RECONCILIATION_STALE`, with the exact message "The droid's
+installed systems changed after this reconciliation review was opened.
+Refresh the review before applying changes.") rather than attempting any
+automatic merge.
+
+### Selection validation
+`scripts/domain/droids/droid-converted-system-reconciliation-classifier.js`'s
+new `validateReconciliationSelection()` normalizes/trims each selected id,
+rejects empty entries, dedupes exact duplicates, and rejects (failing the
+whole request closed, not partially) any id that is not present in a
+freshly-classified candidate set as an eligible (canonical-match/
+alias-match), not-already-installed entry — covering unknown ids, blocked
+classifications (ambiguous/descriptive-only/unsupported/post-import-
+modification), and already-reconciled/no-longer-eligible ids.
+
+### Plan rebuilding from current state
+`applyReconciliation()` calls `inspectReconciliation(actor)` and
+`buildReconciliationPlan(actor, validatedIds, {})` itself, immediately
+after validating intent — never using a caller-held result. Since
+`buildReconciliationPlan()` already derived its new ledger from
+`{...actor.system?.installedSystems}` (the actor's current live ledger),
+so a concurrent Garage install/removal made after the review was opened
+is preserved automatically once the caller re-inspects and submits a
+fresh `inspectionRevision`.
+
+### Ledger preservation / provenance authority
+Unchanged from the original design: `installedSystems` is the canonical
+ledger, `droidSystems` is a derived projection, embedded Items are
+evidence only. Provenance and `mechanicalState` for each newly-reconciled
+entry remain entirely service-constructed from the canonical part
+definition and inspection data — the caller cannot influence them via
+`intent`, which carries no such fields at all.
+
+### ActorEngine mutation path
+Unchanged: validate intent → reread state → confirm revision → rebuild
+plan → `SnapshotManager.createSnapshot()` → `ActorEngine.applyMutationPlan()`
+→ structured result. No new transaction engine was introduced.
+
+### Structured result shape
+Success: `{success: true, actorId, appliedCanonicalIds, skippedCanonicalIds,
+previousRevision, resultingRevision, mutationSummary, snapshotTimestamp}`.
+Failure: `{success: false, code, error, actorId}` with codes
+`RECONCILIATION_ACTOR_MISMATCH`, `RECONCILIATION_PERMISSION_DENIED`,
+`RECONCILIATION_MODE_CHANGED`, `RECONCILIATION_STALE`,
+`RECONCILIATION_INVALID_SELECTION`, `RECONCILIATION_APPLY_FAILED`,
+`RECONCILIATION_ROLLBACK_FAILED`.
+
+### UI caller migration
+`character-sheet.js`'s `_reconcileDroidSystems()` now inspects, selects
+auto-applicable candidates, and submits
+`{actorId, selectedCanonicalIds, inspectionRevision}` directly — it no
+longer imports or calls `buildReconciliationPlan()` at all. On a stale
+result it warns the GM and does not retry; it never silently reuses the
+old selection.
+
+### Test coverage tiers
+- (a) production-path, zero-Foundry-dependency: pure
+  `buildDroidReconciliationRevision()`/`validateReconciliationSelection()`
+  tests (`tests/droid-reconciliation-intent-boundary.test.mjs`, tests 1-8).
+- (a) production-path through the Foundry-shim harness: the real
+  `applyReconciliation()`/`inspectReconciliation()`/`buildReconciliationPlan()`
+  executing end-to-end (same file, tests 9-30, plus the updated
+  `tests/droid-phase4-foundry-shim.test.mjs`) — covering valid apply,
+  actor-mismatch (missing/wrong id, cross-Actor), non-droid/permission/
+  mode rejection, staleness from ledger/Item/reconciliation-metadata
+  changes and from a second reconciliation, duplicate/unknown/blocked/
+  already-reconciled/removed selections, old-API plan rejection, forged
+  extra intent fields being ignored, concurrent-install preservation,
+  partial-selection isolation, revision change on success, empty
+  selection, and honest mutation/rollback failure reporting.
+- (c) structural: `character-sheet.js`'s handler is confirmed (via source
+  inspection — the file cannot load in the Node shim harness) to submit
+  an intent literal and never call `buildReconciliationPlan()`.
+
+### P1-7 snapshot/rollback limitation (still deferred)
+This pass does not change snapshot/rollback fidelity — `rollbackReconciliation()`
+still restores via `SnapshotManager.restoreSnapshot()`'s existing full-actor
+replace, whose exactness limits remain the separately-deferred P1-7 concern
+(non-atomic multi-field write sequence, recreated-Item-id drift). P1-5's
+fix is scoped to the apply-time trust boundary, not snapshot fidelity.
+
+### Static guard
+`tools/check-droid-reconciliation-authority.mjs` gained 4 new checks
+(9-12): `applyReconciliation()` must verify `intent.actorId === actor.id`;
+must recompute and compare `buildDroidReconciliationRevision(actor)`
+against `intent.inspectionRevision`; must explicitly detect and reject an
+old-API plan-shaped second argument; and no call site outside the service
+may pass a caller-held `built`/`plan`/`mutationPlan` identifier instead of
+an intent literal. All 4 verified via inject→detect→revert with
+byte-identical diffs after revert. Deliberately narrowly scoped to the
+reconciliation trust boundary — no repository-wide ban on objects named
+`plan`.
+
+### Live Foundry status
+No live Foundry v13 environment was available in this session. Nothing in
+this pass was validated by execution in a running Foundry client.
+
+Removing P1-5 from the remaining limitations list above reflects that the
+production path and its one caller are now fully migrated to the intent
+contract — it does not claim live-runtime validation, which remains a
+separate, still-open precondition documented under "Merge readiness
+assessment" and "Remaining risks" above.

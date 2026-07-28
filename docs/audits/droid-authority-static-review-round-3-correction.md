@@ -89,7 +89,7 @@ to track `publishedDamage` the same way it already tracked
 | P1-2 | `findExistingFollowerRelationship` world-graph scan used the narrow occupancy definition, returned only the first match | **Fixed** — now uses the P1-1 helper, scans every owner (not just the first match), and returns `{isFollower, ownerActorId, slotId, sources, conflicts}` (multi-owner conflicts surfaced, not silently collapsed). |
 | P1-3 | Follower-template restriction enforced only by UI | **Verified already fixed** in a prior phase (`buildFollowerConversionPreflight`/Fix 13, tasks #173/#181) — `convertToFollower()` throws before ever building the mutation plan if `!preflight.eligible`, and `preflight.resolvedTemplate` is always non-null by the time the plan is built, so the planner's `\|\| 'utility'` default is unreachable via the only production caller. No code change; confirmed by reading the actual gate and the existing 40-test suite's single-template-slot coverage. |
 | P1-4 | `follower-hooks.js` bypassed ActorEngine with direct `setFlag()`; removed the slot before cleanup completed | **Fixed** — `followers`/`minions`/`pendingFollowerDetachment` writes now route through `ActorEngine.updateActor()`; the auto-detach path in the `deleteItem` hook now uses `runFollowerMutationTransaction()` with named, ordered steps (`remove-granted-items-and-detach` before `remove-slot`, with rollback), closing the "slot gone before cleanup finished" gap. |
-| P1-5 | Reconciliation apply trusts caller-supplied plan with no cross-Actor/staleness check | **Not fixed this pass** — deferred, see Remaining Limitations. |
+| P1-5 | Reconciliation apply trusts caller-supplied plan with no cross-Actor/staleness check | **Fixed** (see "P1-5 — Intent-Based Reconciliation Apply Boundary" below and `docs/audits/droid-converted-system-reconciliation-phase-4.md`'s matching section for full detail). |
 | P1-6 | Drift repair trusts caller-supplied embedded Item ids (arbitrary-deletion risk) | **Not fixed this pass** — deferred, see Remaining Limitations. |
 | P1-7 | Snapshot restoration is non-atomic, omits flags/ownership, changes recreated Item ids | **Not fixed this pass** — deferred, see Remaining Limitations. |
 | P1-8 | Ownership rollback wrote NONE instead of deleting the key; Assign-as-Ally rollback recomputed from live state | **Fixed** — `buildOwnershipGrantStep`'s rollback now deletes the ownership key (`ownership.-=${userId}`) via Foundry's deletion convention when there was no prior entry, restores the exact prior value when there was one; `assignAsAlly`'s owner-array rollback now captures `currentOwnedActors`/`currentFlagList` before mutation and restores those exact captured arrays (matching the pattern already used by `unassignAlly`/`convertToFollower` in the same file) instead of recomputing "current minus target" from `ownerActor`'s live state at rollback time. |
@@ -104,6 +104,10 @@ to track `publishedDamage` the same way it already tracked
 | P2-3 | `AllyAssignmentModal` fixed global Application id; no slot-reservation guard against concurrent conversions | **Not fixed this pass** — deferred, see Remaining Limitations. |
 
 ## Remaining Limitations (explicitly deferred, not fixed this pass)
+
+*(Historical record of what Round 3 deferred. P1-5 was subsequently fixed
+— see the "P1-5 — Intent-Based Reconciliation Apply Boundary" section
+below. P1-6 and P1-7 remain open as described here.)*
 
 - **P1-5 / P1-6** (reconciliation-apply and drift-repair trust boundaries) and
   **P1-7** (snapshot restoration exactness) touch `SnapshotManager`,
@@ -324,12 +328,64 @@ still runs before `delete-follower-commit` in the same step array.
   literal updated for the new canonical re-rendering spacing)
 - `tests/follower-deletion-failure-propagation.test.mjs` (new, 3 checks, structural)
 
+## P1-5 — Intent-Based Reconciliation Apply Boundary
+
+**Trigger:** `DroidConvertedSystemReconciliationService.applyReconciliation()`
+accepted a caller-held mutation plan (`buildReconciliationPlan()`'s
+result) with no verification that it belonged to the target Actor,
+reflected current ledger state, was unmodified, or was actually produced
+by this service — enabling cross-Actor plan application, stale-preview
+overwrites, and silent loss of concurrent installation changes.
+
+**Fix summary** (full detail in
+`docs/audits/droid-converted-system-reconciliation-phase-4.md`'s matching
+"P1-5" section):
+- New intent contract: `applyReconciliation(actor, {actorId,
+  selectedCanonicalIds, inspectionRevision})` — never a mutation plan.
+  The old plan-based call shape is explicitly detected and rejected
+  ("Caller-supplied reconciliation plans are no longer accepted. Submit
+  reconciliation intent instead.").
+- `intent.actorId` is independently verified against `actor.id`, GM/owner
+  permission and playable-derived calculation mode are re-checked inside
+  `applyReconciliation()` itself, regardless of any UI-side gating.
+- New `scripts/domain/droids/droid-reconciliation-revision.js` builds a
+  deterministic fingerprint over every actor field a reconciliation
+  decision depends on (ledger, droidSystems projection, embedded
+  droid-part Item identities, stock-import/reconciliation provenance,
+  calculation mode) excluding volatile fields (HP, token position, chat/
+  window state). `inspectReconciliation()` returns it as
+  `inspectionRevision`; a mismatch at apply time is rejected as stale
+  rather than merged.
+- New `validateReconciliationSelection()` (classifier module) rejects
+  empty/unknown/blocked/already-installed selected ids against a
+  freshly-classified candidate set, failing the whole request closed
+  rather than partially applying a subset.
+- `applyReconciliation()` rebuilds the mutation plan itself via
+  `buildReconciliationPlan()`, immediately after validating intent — which
+  already derives the new ledger from the actor's CURRENT
+  `installedSystems`, so concurrent Garage installs/removals since the
+  review was opened are preserved once the caller re-inspects.
+- `character-sheet.js`'s `_reconcileDroidSystems()` migrated to submit
+  intent only; it no longer imports or calls `buildReconciliationPlan()`.
+- `tools/check-droid-reconciliation-authority.mjs` gained 4 new checks
+  (identity verification, revision validation, old-API rejection, no
+  caller-held plan identifiers at call sites), inject→detect→revert
+  verified with byte-identical diffs.
+- Coverage: 8 pure production-path tests + 22 Foundry-shim production-path
+  tests (`tests/droid-reconciliation-intent-boundary.test.mjs`) exercising
+  the real service end-to-end, plus updates to the pre-existing
+  `tests/droid-phase4-foundry-shim.test.mjs` service tests, plus 1
+  structural test confirming the sheet caller's migration.
+- P1-7 (snapshot/rollback exactness) remains separately deferred and
+  unchanged by this fix — `rollbackReconciliation()`'s restore mechanism
+  was not touched.
+
 ## Merge readiness
 
-All 4 P0 defects (Round 3) and all 5 Round-4 defects (2 of them
-merge-blocking) are fixed and tested. This branch is closer to mergeable
-than either prior round, but is **still not unconditionally merge-ready**:
-P1-5, P1-6, P1-7, and P2-3 remain open, and no live Foundry v13 validation
-has been performed at any point in this branch's history — that remains a
-hard precondition for removing draft status, independent of static fix
-completeness.
+All 4 P0 defects (Round 3), all 5 Round-4 defects (2 of them
+merge-blocking), and P1-5 are fixed and tested. This branch is closer to
+mergeable than any prior round, but is **still not unconditionally
+merge-ready**: P1-6, P1-7, and P2-3 remain open, and no live Foundry v13
+validation has been performed at any point in this branch's history —
+that remains a hard precondition for removing draft status, independent
+of static fix completeness.

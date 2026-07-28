@@ -47,8 +47,10 @@ import { getDroidPartDefinition, getAllDroidPartDefinitions, normalizeDroidPartI
 import {
   classifyStockSystemSources,
   annotateWeaponCandidatesAgainstExistingItems,
+  validateReconciliationSelection,
   RECONCILIATION_CLASSIFICATION
 } from "/systems/foundryvtt-swse/scripts/domain/droids/droid-converted-system-reconciliation-classifier.js";
+import { buildDroidReconciliationRevision } from "/systems/foundryvtt-swse/scripts/domain/droids/droid-reconciliation-revision.js";
 
 const RECONCILIATION_SNAPSHOT_LABEL = 'Pre-reconciliation snapshot (Droid Converted-System Reconciliation)';
 
@@ -120,7 +122,7 @@ export async function inspectReconciliation(actor) {
   const calculationMode = resolveDroidCalculationMode(actor);
 
   if (!actor || actor.type !== 'droid') {
-    return { actorId: actor?.id ?? null, calculationMode, candidates: [], conflicts: [], warnings: ['Not a droid actor'], canApply: false };
+    return { actorId: actor?.id ?? null, calculationMode, candidates: [], conflicts: [], warnings: ['Not a droid actor'], canApply: false, inspectionRevision: null };
   }
 
   const stockImport = actor.flags?.swse?.stockDroidImport ?? null;
@@ -134,7 +136,8 @@ export async function inspectReconciliation(actor) {
       candidates: [],
       conflicts: [],
       warnings: ['This droid was never stock-imported; there is nothing to reconcile.'],
-      canApply: false
+      canApply: false,
+      inspectionRevision: buildDroidReconciliationRevision(actor)
     };
   }
 
@@ -173,16 +176,35 @@ export async function inspectReconciliation(actor) {
     candidates,
     conflicts: [],
     warnings,
-    canApply: calculationMode.mode === DROID_CALCULATION_MODE.PLAYABLE_DERIVED
+    canApply: calculationMode.mode === DROID_CALCULATION_MODE.PLAYABLE_DERIVED,
+    // P1-5 — a fingerprint of every actor field this inspection depended
+    // on. applyReconciliation() recomputes this at apply time and rejects
+    // a mismatch as a stale review rather than silently trusting a
+    // possibly-outdated candidate list.
+    inspectionRevision: buildDroidReconciliationRevision(actor)
   };
 }
 
 /**
  * Build a mutation plan for a caller-selected subset of reconciliation
- * candidates. Never invoked implicitly by applyReconciliation() with
- * "everything selectedByDefault" unless the caller explicitly asks for
- * that (options.selectDefaults) — ambiguous/descriptive/unsupported
- * candidates are never included regardless.
+ * candidates, entirely from the actor's CURRENT live state — reruns
+ * inspectReconciliation(actor) itself and derives the new
+ * `installedSystems` ledger from `actor.system?.installedSystems` as it
+ * is right now, never from a cached/caller-held copy. Never invoked
+ * implicitly by applyReconciliation() with "everything selectedByDefault"
+ * unless the caller explicitly asks for that (options.selectDefaults) —
+ * ambiguous/descriptive/unsupported candidates are never included
+ * regardless.
+ *
+ * P1-5 — this function is an internal rebuilding primitive, not a plan
+ * for a caller to hold and submit later: applyReconciliation() calls it
+ * itself, immediately after validating the caller's intent, so the plan
+ * it returns is always built from state no older than the current call.
+ * It remains exported (and used directly by tests) because it is pure
+ * with respect to trust — it never accepts a plan, only a selection of
+ * ids to re-derive against current state — but no production caller
+ * should hold onto its return value across an await boundary and later
+ * hand it to applyReconciliation().
  *
  * @param {Actor} actor
  * @param {string[]} selections - canonical ids to reconcile (must appear
@@ -263,31 +285,94 @@ export async function buildReconciliationPlan(actor, selections = [], options = 
 }
 
 /**
- * Apply a previously-built reconciliation plan. Snapshots first
- * (SnapshotManager, same store conversion/level-up already use), applies
- * through ActorEngine.applyMutationPlan(), and rolls back on failure.
- * Requires GM or owner permission — re-checked here independent of any
- * sheet-side gating.
+ * Apply reconciliation from caller-submitted INTENT — never a
+ * caller-supplied mutation plan (P1-5 — Intent-Based Reconciliation Apply
+ * Boundary; see docs/audits/droid-converted-system-reconciliation-phase-4.md's
+ * P1-5 section for the full rationale). The caller submits only which
+ * droid, which canonical ids, and which inspection they reviewed —
+ * `{actorId, selectedCanonicalIds, inspectionRevision}` — and this
+ * function independently rereads the actor's current state, re-verifies
+ * every trust boundary, and rebuilds the mutation plan itself:
+ *
+ *   1. Reject a caller-supplied plan object outright (old-API shape).
+ *   2. Verify the actor exists, is type droid, and its id matches
+ *      intent.actorId (a plan cannot be silently redirected to another
+ *      Actor).
+ *   3. Verify the current user has GM/owner permission on THIS actor.
+ *   4. Verify the actor is still in playable-derived mode.
+ *   5. Recompute the actor's current reconciliation-revision fingerprint
+ *      and compare it to intent.inspectionRevision — a mismatch means the
+ *      droid's installed systems changed since the review was opened
+ *      (another reconciliation, a Garage install/removal, a mode change),
+ *      and is rejected rather than merged; the caller must re-open the
+ *      review with fresh candidates.
+ *   6. Validate the selected canonical ids against a FRESH classification
+ *      of the actor's current candidates (not anything cached).
+ *   7. Rebuild the mutation plan via buildReconciliationPlan(), which
+ *      itself re-derives installedSystems from the actor's current live
+ *      ledger — so any unrelated, concurrent installs/removals since the
+ *      review was opened are preserved rather than overwritten.
+ *
+ * Snapshots first (SnapshotManager, same store conversion/level-up
+ * already use), applies through ActorEngine.applyMutationPlan(), and
+ * rolls back on failure.
  *
  * @param {Actor} actor
- * @param {{plan: object, applied: object[]}} built - the result of
- *   buildReconciliationPlan().
+ * @param {{actorId: string, selectedCanonicalIds: string[], inspectionRevision: string}} intent
  * @param {object} [options]
- * @returns {Promise<{success: boolean, error?: string, snapshotTimestamp?: number, applied?: object[]}>}
+ * @returns {Promise<{success: boolean, code?: string, error?: string, actorId?: string, appliedCanonicalIds?: string[], skippedCanonicalIds?: string[], previousRevision?: string, resultingRevision?: string, mutationSummary?: object, snapshotTimestamp?: number}>}
  */
-export async function applyReconciliation(actor, built, options = {}) {
+export async function applyReconciliation(actor, intent = {}, options = {}) {
+  const actorId = actor?.id ?? null;
+
+  // Fail closed on the old plan-based call shape rather than silently
+  // applying it — a full mutation plan (or anything shaped like the old
+  // buildReconciliationPlan() result) is never an acceptable second
+  // argument here.
+  if (intent && typeof intent === 'object' && ('plan' in intent || 'mutationPlan' in intent)) {
+    return { success: false, code: 'RECONCILIATION_INVALID_SELECTION', error: 'Caller-supplied reconciliation plans are no longer accepted. Submit reconciliation intent instead.', actorId };
+  }
+
   if (!actor || actor.type !== 'droid') {
-    return { success: false, error: 'Not a droid actor' };
+    return { success: false, code: 'RECONCILIATION_ACTOR_MISMATCH', error: 'Not a droid actor', actorId };
   }
+
+  if (!intent || typeof intent !== 'object' || !intent.actorId || intent.actorId !== actor.id) {
+    return { success: false, code: 'RECONCILIATION_ACTOR_MISMATCH', error: 'This reconciliation intent does not match the target Actor.', actorId: actor.id };
+  }
+
   if (!canActOnReconciliation(actor)) {
-    return { success: false, error: 'Only the GM or an owner may reconcile this droid.' };
+    return { success: false, code: 'RECONCILIATION_PERMISSION_DENIED', error: 'Only the GM or an owner may reconcile this droid.', actorId: actor.id };
   }
-  if (!built?.success || !built.plan) {
-    return { success: false, error: built?.error ?? 'No valid reconciliation plan was supplied.' };
-  }
+
   const calculationMode = resolveDroidCalculationMode(actor);
   if (calculationMode.mode !== DROID_CALCULATION_MODE.PLAYABLE_DERIVED) {
-    return { success: false, error: 'Reconciliation can only be applied to a droid already in playable-derived mode.' };
+    return { success: false, code: 'RECONCILIATION_MODE_CHANGED', error: 'Reconciliation can only be applied to a droid already in playable-derived mode.', actorId: actor.id };
+  }
+
+  const previousRevision = buildDroidReconciliationRevision(actor);
+  if (typeof intent.inspectionRevision !== 'string' || intent.inspectionRevision !== previousRevision) {
+    return {
+      success: false,
+      code: 'RECONCILIATION_STALE',
+      error: "The droid's installed systems changed after this reconciliation review was opened. Refresh the review before applying changes.",
+      actorId: actor.id
+    };
+  }
+
+  const freshInspection = await inspectReconciliation(actor);
+  if (!freshInspection.canApply) {
+    return { success: false, code: 'RECONCILIATION_MODE_CHANGED', error: 'Reconciliation cannot be applied to this droid right now.', actorId: actor.id };
+  }
+
+  const selectionResult = validateReconciliationSelection(intent.selectedCanonicalIds, freshInspection.candidates, { normalizeId: normalizeDroidPartId });
+  if (!selectionResult.success) {
+    return { success: false, code: 'RECONCILIATION_INVALID_SELECTION', error: selectionResult.error, actorId: actor.id };
+  }
+
+  const built = await buildReconciliationPlan(actor, selectionResult.canonicalIds, {});
+  if (!built.success) {
+    return { success: false, code: 'RECONCILIATION_INVALID_SELECTION', error: built.error, actorId: actor.id };
   }
 
   let snapshot = null;
@@ -299,6 +384,11 @@ export async function applyReconciliation(actor, built, options = {}) {
       ...built.plan,
       set: {
         ...(built.plan.set ?? {}),
+        // Provenance/mechanicalState for each new ledger entry are already
+        // constructed inside buildReconciliationPlan() from canonical part
+        // definitions and the current inspection — never from anything in
+        // `intent`. These reconciliation-level flags are likewise entirely
+        // service-constructed.
         'flags.swse.stockDroidReconciliation.reconciledAt': timestamp,
         'flags.swse.stockDroidReconciliation.snapshotTimestamp': snapshot.timestamp,
         'flags.swse.stockDroidReconciliation.reconciledIds': built.applied.map(a => a.canonicalId)
@@ -312,16 +402,25 @@ export async function applyReconciliation(actor, built, options = {}) {
     });
 
     SWSELogger.log(`[DroidConvertedSystemReconciliationService] Reconciled ${built.applied.length} system(s) for ${actor.name}.`);
-    return { success: true, snapshotTimestamp: snapshot.timestamp, applied: built.applied };
+    return {
+      success: true,
+      actorId: actor.id,
+      appliedCanonicalIds: built.applied.map(a => a.canonicalId),
+      skippedCanonicalIds: built.skipped.map(s => s.canonicalId),
+      previousRevision,
+      resultingRevision: buildDroidReconciliationRevision(actor),
+      mutationSummary: { applied: built.applied, skipped: built.skipped },
+      snapshotTimestamp: snapshot.timestamp
+    };
   } catch (err) {
     SWSELogger.error('[DroidConvertedSystemReconciliationService] Reconciliation failed; attempting rollback:', err);
     try {
       if (snapshot) await SnapshotManager.restoreSnapshot(actor, snapshot.timestamp);
     } catch (restoreErr) {
       SWSELogger.error('[DroidConvertedSystemReconciliationService] Rollback after failed reconciliation ALSO failed:', restoreErr);
-      return { success: false, error: `Reconciliation failed and rollback failed: ${err.message}` };
+      return { success: false, code: 'RECONCILIATION_ROLLBACK_FAILED', error: `Reconciliation failed and rollback failed: ${err.message}`, actorId: actor.id };
     }
-    return { success: false, error: err.message };
+    return { success: false, code: 'RECONCILIATION_APPLY_FAILED', error: err.message, actorId: actor.id };
   }
 }
 
