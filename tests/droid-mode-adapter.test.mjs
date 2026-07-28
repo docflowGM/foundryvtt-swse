@@ -72,6 +72,32 @@ function legacyStatblockDroid(overrides = {}) {
   assert.equal(resolution.warnings.length, 1);
 }
 
+// P2-1: malformed explicit value on an actor with legacy stock-import
+// provenance (importMode: 'statblock') falls back to STOCK-STATBLOCK, not
+// playable-derived — a corrupted field must never be a way to unfreeze a
+// stock droid and lose its published totals.
+{
+  const actor = explicitStockDroid({ droidCalculationMode: 'garbage-value' });
+  actor.flags = { swse: { stockDroidImport: { importMode: 'statblock', sourceId: 'abc' } } };
+  const resolution = resolveDroidCalculationMode(actor);
+  assert.equal(resolution.mode, DROID_CALCULATION_MODE.STOCK_STATBLOCK);
+  assert.equal(resolution.explicit, false);
+  assert.equal(resolution.inferred, true);
+  assert.equal(resolution.reason, 'malformed-explicit-value-stock-provenance');
+  assert.equal(resolution.warnings.length, 1);
+}
+
+// P2-1: malformed explicit value on an actor whose legacy provenance says
+// 'playable' (already converted) still falls back to playable-derived —
+// the conservative fallback only protects genuine stock provenance.
+{
+  const actor = explicitStockDroid({ droidCalculationMode: 'garbage-value' });
+  actor.flags = { swse: { stockDroidImport: { importMode: 'playable', sourceId: 'abc' } } };
+  const resolution = resolveDroidCalculationMode(actor);
+  assert.equal(resolution.mode, DROID_CALCULATION_MODE.PLAYABLE_DERIVED);
+  assert.equal(resolution.reason, 'malformed-explicit-value');
+}
+
 // Tests 4-5: legacy flag inference when no explicit field is present.
 {
   const resolution = resolveDroidCalculationMode(legacyStatblockDroid());

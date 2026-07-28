@@ -538,12 +538,22 @@ export async function rollDamage(actor, weapon, options = {}) {
   // damageExtraWeaponDice, criticalDamageDieStepBonus). The flat dmgBonus comes
   // from the canonical resolver which already incorporates optionModifiers.damageBonus.
   const optionModifiers = CombatOptionResolver.collectAttackModifiers(actor, weapon, rollOptions);
-  const dmgBonus = resolveDamageBonus(actor, weapon, rollOptions).total;
+  const dmgResult = resolveDamageBonus(actor, weapon, rollOptions);
+  const dmgBonus = dmgResult.total;
 
-  const criticalStepBonus = (rollOptions?.critical === true || rollOptions?.isCritical === true) ? Number(optionModifiers.criticalDamageDieStepBonus || 0) : 0;
-  const base = stepDamageDieFormula(weapon.system?.damage ?? weapon.damage ?? '1d6', (optionModifiers.damageDieStepIncreases ?? 0) + criticalStepBonus);
-  const extraDiceFormula = buildExtraWeaponDiceFormula(base, optionModifiers.damageExtraWeaponDice ?? optionModifiers.damageDiceStepBonus ?? 0);
-  const formula = `${base}${extraDiceFormula} + ${dmgBonus}`;
+  // A stock-statblock droid's published damage formula already includes its
+  // own dice and REPLACES weapon.system.damage (see
+  // resolveStockDroidDamageContract() in combat-roll-math.js) — it is a
+  // fixed printed value, not subject to die-count/step increases.
+  let formula;
+  if (dmgResult.flags?.stockDamageFormula) {
+    formula = dmgBonus !== 0 ? `${dmgResult.flags.stockDamageFormula} + ${dmgBonus}` : dmgResult.flags.stockDamageFormula;
+  } else {
+    const criticalStepBonus = (rollOptions?.critical === true || rollOptions?.isCritical === true) ? Number(optionModifiers.criticalDamageDieStepBonus || 0) : 0;
+    const base = stepDamageDieFormula(weapon.system?.damage ?? weapon.damage ?? '1d6', (optionModifiers.damageDieStepIncreases ?? 0) + criticalStepBonus);
+    const extraDiceFormula = buildExtraWeaponDiceFormula(base, optionModifiers.damageExtraWeaponDice ?? optionModifiers.damageDiceStepBonus ?? 0);
+    formula = `${base}${extraDiceFormula} + ${dmgBonus}`;
+  }
 
   const roll = await RollEngine.safeRoll(formula, actor?.getRollData?.() ?? {}, { actor, domain: 'combat.damage', context: { weaponId: weapon?.id ?? null } });
 
@@ -610,7 +620,8 @@ export async function rollAttackAndDamageWithNarration(actor, weapon, options = 
   const atkBonus = resolveAttackBonus(actor, weapon, null, rollOptions).total;
   // optionModifiers still needed for die-formula and effect modifiers below.
   const optionModifiers = CombatOptionResolver.collectAttackModifiers(actor, weapon, rollOptions);
-  const dmgBonus = resolveDamageBonus(actor, weapon, rollOptions).total;
+  const dmgResult = resolveDamageBonus(actor, weapon, rollOptions);
+  const dmgBonus = dmgResult.total;
   const workflowContext = summarizeCombatWorkflowContext(rollOptions.combatContext ?? rollOptions.workflowContext ?? null, { actor, weapon });
   const actionOptionSpend = await spendCoreAttackOptionCosts(actor, weapon, rollOptions);
   if (actionOptionSpend?.allowed === false || actionOptionSpend?.permitted === false) {
@@ -632,9 +643,16 @@ export async function rollAttackAndDamageWithNarration(actor, weapon, options = 
   }
 
   const rollFormula = `1d20 + ${atkBonus}`;
-  const dmgBase = stepDamageDieFormula(weapon.system?.damage ?? weapon.damage ?? '1d6', optionModifiers.damageDieStepIncreases ?? 0);
-  const dmgExtraDice = buildExtraWeaponDiceFormula(dmgBase, optionModifiers.damageExtraWeaponDice ?? optionModifiers.damageDiceStepBonus ?? 0);
-  const dmgFormula = `${dmgBase}${dmgExtraDice} + ${dmgBonus}`;
+  // See rollDamage() above: a stock-statblock droid's published damage
+  // formula replaces weapon.system.damage rather than adding to it.
+  let dmgFormula;
+  if (dmgResult.flags?.stockDamageFormula) {
+    dmgFormula = dmgBonus !== 0 ? `${dmgResult.flags.stockDamageFormula} + ${dmgBonus}` : dmgResult.flags.stockDamageFormula;
+  } else {
+    const dmgBase = stepDamageDieFormula(weapon.system?.damage ?? weapon.damage ?? '1d6', optionModifiers.damageDieStepIncreases ?? 0);
+    const dmgExtraDice = buildExtraWeaponDiceFormula(dmgBase, optionModifiers.damageExtraWeaponDice ?? optionModifiers.damageDiceStepBonus ?? 0);
+    dmgFormula = `${dmgBase}${dmgExtraDice} + ${dmgBonus}`;
+  }
 
   const attackRoll = await RollEngine.safeRoll(rollFormula, actor?.getRollData?.() ?? {}, { actor, domain: 'combat.attack', context: { weaponId: weapon?.id ?? null } });
   const damageRoll = await RollEngine.safeRoll(dmgFormula, actor?.getRollData?.() ?? {}, { actor, domain: 'combat.damage' });

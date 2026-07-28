@@ -70,9 +70,20 @@ export function resolveDroidCalculationMode(actor) {
       return { mode: explicitMode, explicit: true, inferred: false, reason: 'explicit-system-field', warnings };
     }
     // Malformed/unknown explicit value — fail safely rather than throwing or
-    // silently treating garbage as either mode. Default to playable-derived
-    // (the safer assumption: it does not suppress derived recalculation for
-    // an actor that may not actually be a frozen statblock) and surface it.
+    // silently treating garbage as either mode. Consult legacy stock-import
+    // provenance FIRST: an actor with flags.swse.stockDroidImport.importMode
+    // === 'statblock' has real published-statblock data (BAB/defenses/
+    // Initiative/Damage Threshold/attack totals) that playable-derived
+    // recalculation would silently discard — corrupting the explicit field
+    // must not be a way to unfreeze a stock droid and lose that data. Only
+    // when there is no such provenance does this fall back to
+    // playable-derived (the safer assumption for an actor that was never
+    // stock-imported at all).
+    const malformedLegacy = legacyImportState(actor);
+    if (malformedLegacy && malformedLegacy.importMode === 'statblock') {
+      warnings.push(`system.droidCalculationMode has an unrecognized value ("${explicitMode}"); falling back to stock-statblock per legacy stock-import provenance rather than unfreezing this droid.`);
+      return { mode: DROID_CALCULATION_MODE.STOCK_STATBLOCK, explicit: false, inferred: true, reason: 'malformed-explicit-value-stock-provenance', warnings };
+    }
     warnings.push(`system.droidCalculationMode has an unrecognized value ("${explicitMode}"); defaulting to playable-derived.`);
     return { mode: DROID_CALCULATION_MODE.PLAYABLE_DERIVED, explicit: false, inferred: false, reason: 'malformed-explicit-value', warnings };
   }
@@ -229,6 +240,42 @@ export function getStockAttackFlatBonus(actor, weapon) {
     return Number(stockAttack.publishedAttackTotal) || 0;
   }
   return null;
+}
+
+/**
+ * The damage-side counterpart to getStockAttackFlatBonus(): the single
+ * decision point for "should this weapon's damage roll use its published
+ * statblock damage formula instead of the normal half-level/ability/
+ * enhancement composition, and if so, what is that formula". Extracted for
+ * the same reason getStockAttackFlatBonus() was — combat-roll-math.js's
+ * resolveDamageBonus()/resolveStockDroidDamageContract() need exactly one
+ * place to ask this question, and it must stay unit-testable without
+ * combat-roll-math.js's larger Foundry-dependent import graph.
+ *
+ * Mirrors getStockAttackFlatBonus()'s gating exactly (same
+ * stockDroidAttack flag, same isDroidStatblockMode()/sourceStatblock
+ * requirement) so an attack and its paired damage roll can never disagree
+ * about whether a given weapon is still "stock" — see
+ * tools/check-droid-calculation-mode-authority.mjs Check 3, which will be
+ * extended alongside this to track publishedDamage the same way it already
+ * tracks publishedAttackTotal.
+ *
+ * Returns null whenever the published formula should NOT be used
+ * (playable-derived mode, non-droid actor, or a weapon with no stock
+ * attack contract, or a contract with no usable damage formula) — the
+ * caller then falls through to normal damage-bonus composition.
+ *
+ * @param {Actor} actor
+ * @param {Item} weapon
+ * @returns {string|null}
+ */
+export function getStockDamageFormula(actor, weapon) {
+  if (!isDroidStatblockMode(actor)) return null;
+  const stockAttack = weapon?.flags?.swse?.stockDroidAttack;
+  if (stockAttack?.sourceStatblock !== true) return null;
+  const formula = stockAttack.publishedDamage;
+  if (typeof formula !== 'string' || !formula.trim()) return null;
+  return formula.trim();
 }
 
 /**

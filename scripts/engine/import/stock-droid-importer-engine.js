@@ -14,6 +14,7 @@ import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { StockDroidNormalizer } from "/systems/foundryvtt-swse/scripts/domain/droids/stock-droid-normalizer.js";
 import { DroidTemplateDataLoader } from "/systems/foundryvtt-swse/scripts/core/droid-template-data-loader.js";
 import { DROID_CALCULATION_MODE } from "/systems/foundryvtt-swse/scripts/actors/droid/droid-mode-adapter.js";
+import { createActor } from "/systems/foundryvtt-swse/scripts/core/document-api-v13.js";
 
 // PHASE 3 — Droid Stock-Statblock Authority: bump whenever the shape of
 // flags.swse.stockDroidImport changes, so DroidStatblockConversionService
@@ -157,7 +158,11 @@ export class StockDroidImporterEngine {
 
       const normalized = StockDroidNormalizer.normalizeStockDroidRecord(rawRecord);
       const newActorData = this.buildActorDataFromNormalized(normalized, customData);
-      const actor = await Actor.create(newActorData);
+      const actor = await createActor(newActorData);
+      if (!actor) {
+        SWSELogger.error(`[StockDroidImporterEngine] Actor creation returned no document for: ${droidId}`);
+        return null;
+      }
 
       SWSELogger.log(`[StockDroidImporterEngine] Stock droid imported successfully: ${actor.name} (${actor.id})`);
       return actor;

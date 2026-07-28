@@ -176,11 +176,15 @@ export async function rollDamage(actor, weapon, context = {}) {
   }
 
 
-  const baseFormula = weapon.system?.damage ?? '1d6';
-  const dmgBonus = resolveDamageBonus(actor, weapon, {
+  const dmgResult = resolveDamageBonus(actor, weapon, {
     ...rollContext,
     forceTwoHanded: rollContext.twoHanded || false
-  }).total;
+  });
+  // A stock-statblock droid's published damage formula already includes its
+  // own dice — it REPLACES weapon.system.damage rather than being added on
+  // top of it (see resolveStockDroidDamageContract() in combat-roll-math.js).
+  const baseFormula = dmgResult.flags?.stockDamageFormula ?? (weapon.system?.damage ?? '1d6');
+  const dmgBonus = dmgResult.total;
 
   // Calculate talent-based damage bonuses
   const talentContext = { ...rollContext, weapon };

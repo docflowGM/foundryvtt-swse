@@ -73,7 +73,7 @@ function isPrimaryProcessor(def) {
 }
 
 function droidPartEntry(def, actor, extra = {}) {
-  const hydrated = hydrateDroidPart(def, { actor, installedIds: collectInstalledDroidPartIds(actor) });
+  const hydrated = hydrateDroidPart(def, { actor, installedIds: Array.from(collectInstalledDroidPartIds(actor)) });
   const cost = computeDroidPartCost(actor, hydrated, extra);
   return {
     id: normalizeDroidPartId(hydrated.ruleId ?? hydrated.id),
@@ -96,6 +96,47 @@ function droidPartEntry(def, actor, extra = {}) {
     rules: hydrated.rules ?? {},
     ...extra
   };
+}
+
+/**
+ * Normalize and validate a proposed droid customization change set BEFORE
+ * any pricing is computed. Closes the resale exploit where a caller could
+ * request removal of a system never actually installed (paying resale for
+ * nothing), repeat the same removal id to multiply resale, or request the
+ * same id in both `add` and `remove`.
+ *
+ * @param {Actor} actor
+ * @param {{add?: string[], remove?: string[]}} changeSet
+ * @returns {{success: boolean, error?: string, blockingReason?: string, add: string[], remove: string[]}}
+ */
+function normalizeDroidCustomizationChangeSet(actor, changeSet = {}) {
+  const rawAdd = Array.isArray(changeSet.add) ? changeSet.add : [];
+  const rawRemove = Array.isArray(changeSet.remove) ? changeSet.remove : [];
+
+  // Deduplicate each list independently (order-preserving) before any
+  // cross-list or installed-state check runs.
+  const add = [...new Set(rawAdd.map(id => normalizeDroidPartId(id)))];
+  const remove = [...new Set(rawRemove.map(id => normalizeDroidPartId(id)))];
+
+  const overlap = add.find(id => remove.includes(id));
+  if (overlap) {
+    return { success: false, error: `"${overlap}" cannot be both added and removed in the same request.`, blockingReason: 'Conflicting add/remove request', add: [], remove: [] };
+  }
+
+  const installed = collectInstalledDroidPartIds(actor);
+
+  for (const id of add) {
+    if (installed.has(id)) {
+      return { success: false, error: `${humanize(id)} is already installed and cannot be purchased again.`, blockingReason: 'Already installed', add: [], remove: [] };
+    }
+  }
+  for (const id of remove) {
+    if (!installed.has(id)) {
+      return { success: false, error: `${humanize(id)} is not currently installed and cannot be removed.`, blockingReason: 'Not installed', add: [], remove: [] };
+    }
+  }
+
+  return { success: true, add, remove };
 }
 
 export class DroidCustomizationEngine {
@@ -196,7 +237,11 @@ export class DroidCustomizationEngine {
       return { success: false, error: 'Failed to get droid profile' };
     }
 
-    const { add: systemsToAdd = [], remove: systemsToRemove = [] } = changeSet;
+    const normalized = normalizeDroidCustomizationChangeSet(actor, changeSet);
+    if (!normalized.success) {
+      return { success: false, error: normalized.error, blockingReason: normalized.blockingReason };
+    }
+    const { add: systemsToAdd, remove: systemsToRemove } = normalized;
     const currentCredits = normalizedCredits(actor);
     let totalAddCost = 0;
     let totalRemoveSale = 0;
@@ -285,8 +330,20 @@ export class DroidCustomizationEngine {
       return preview;
     }
 
+    // Re-validate against the ACTOR'S CURRENT state immediately before
+    // mutating — never trust the preview object (or the raw, possibly
+    // duplicate-laden changeSet) as the source of truth for what actually
+    // gets removed/added. This is a fresh, independent revalidation, not a
+    // reuse of `preview`'s own (also-fresh) normalization — it exists so a
+    // future refactor that lets `preview` be caller-supplied can't silently
+    // reintroduce the exploit this closes.
+    const revalidated = normalizeDroidCustomizationChangeSet(actor, changeSet);
+    if (!revalidated.success) {
+      return { success: false, error: revalidated.error, blockingReason: revalidated.blockingReason };
+    }
+
     try {
-      const { add: systemsToAdd = [], remove: systemsToRemove = [] } = changeSet;
+      const { add: systemsToAdd, remove: systemsToRemove } = revalidated;
       const installedSystems = { ...(actor.system.installedSystems ?? {}) };
       const droidSystems = foundry.utils.deepClone(actor.system?.droidSystems ?? {});
 

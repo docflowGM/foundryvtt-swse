@@ -19,7 +19,10 @@
  *   3. Only scripts/engine/combat/combat-roll-math.js's resolveAttackBonus()
  *      may special-case flags.swse.stockDroidAttack.publishedAttackTotal as
  *      a complete attack total; every other reference must be read-only
- *      (display/inspection/import), not a second attack-math path.
+ *      (display/inspection/import), not a second attack-math path. The same
+ *      allowlist applies to publishedDamage — combat-roll-math.js's
+ *      resolveStockDroidDamageContract() is the only function allowed to
+ *      special-case it as a complete damage formula.
  *   4. scripts/actors/v2/droid-actor.js must still call both
  *      isDroidStatblockMode() and computeStatblockDerivedOverrides() (the
  *      preservation seam) — guards against someone quietly deleting the
@@ -113,12 +116,15 @@ function main() {
     }
   }
 
-  // Check 3: stockDroidAttack.publishedAttackTotal usage.
+  // Check 3: stockDroidAttack.publishedAttackTotal / publishedDamage usage.
   for (const file of files) {
     const source = read(file);
-    if (!source.includes('publishedAttackTotal')) continue;
+    const referencesAttackTotal = source.includes('publishedAttackTotal');
+    const referencesDamage = source.includes('publishedDamage');
+    if (!referencesAttackTotal && !referencesDamage) continue;
     if (STOCK_ATTACK_TOTAL_READ_ALLOWLIST.has(file)) continue;
-    violations.push({ check: '3: stock attack routing', file: path.relative(ROOT, file), detail: 'references stockDroidAttack.publishedAttackTotal outside the approved read/write sites — a second attack-math path may have been introduced' });
+    const field = referencesAttackTotal ? 'publishedAttackTotal' : 'publishedDamage';
+    violations.push({ check: '3: stock attack routing', file: path.relative(ROOT, file), detail: `references stockDroidAttack.${field} outside the approved read/write sites — a second attack/damage-math path may have been introduced` });
   }
 
   // Check 4: droid-actor.js still calls the preservation seam.

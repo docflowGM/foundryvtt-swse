@@ -34,6 +34,34 @@
  * - A source that disagrees with the effective (precedence-selected) state
  *   is never discarded — it is recorded in `sources` and, if it disagrees
  *   on active state, surfaced in `conflicts`.
+ *
+ * SSOT POLICY (P1-9 — explicit, single statement; nothing outside this
+ * module decides component identity/precedence):
+ *   - system.installedSystems is the CANONICAL post-creation installed-
+ *     component ledger. It is the only source a mutation authority
+ *     (DroidCustomizationEngine, UpgradeService, the drift-repair/
+ *     reconciliation services) writes to when installing or removing a
+ *     component, and it is this resolver's highest-precedence source.
+ *   - system.droidSystems is NOT a competing "canonical" store. It is the
+ *     raw stock-import/chassis-build blob — the stock importer's own
+ *     display snapshot (see scripts/domain/droids/stock-droid-normalizer.js)
+ *     and, during in-progress chargen/follower-droid-building sessions, the
+ *     WORKFLOW DRAFT state (an entirely different layer that only exists
+ *     until finalization writes its result into installedSystems/embedded
+ *     Items — never itself read back as installed-component authority by
+ *     this resolver or by any governed mutation path). Any file whose own
+ *     doc comment or code lists `droidSystems` as a "priority 1" READ
+ *     source (e.g. scripts/sheets/v2/droid-sheet/droid-systems-resolver.js,
+ *     for display-only regions like size/degree/locomotion that genuinely
+ *     have no installedSystems equivalent) is describing a DISPLAY
+ *     fallback, not asserting installed-component authority — component
+ *     identity/dedup/precedence for those same files already delegates to
+ *     resolveInstalledDroidComponents() below, per SOURCE_KIND's own
+ *     DROID_SYSTEMS_RECORD entry sitting below INSTALLED_LEDGER and
+ *     EMBEDDED_ITEM.
+ *   - Embedded Items (weapons/equipment flagged integrated) and the legacy
+ *     `mods` array are read-only compatibility sources, lower precedence
+ *     still, exactly as SOURCE_KIND's declaration order states.
  */
 
 const SOURCE_KIND = Object.freeze({
