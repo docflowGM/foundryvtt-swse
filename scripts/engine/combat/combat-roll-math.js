@@ -20,6 +20,7 @@ import { evaluateStatePredicates } from "/systems/foundryvtt-swse/scripts/engine
 import { SchemaAdapters } from "/systems/foundryvtt-swse/scripts/utils/schema-adapters.js";
 import { isNpcStatblockMode } from "/systems/foundryvtt-swse/scripts/actors/npc/npc-mode-adapter.js";
 import { getStockAttackFlatBonus, getStockDamageFormula } from "/systems/foundryvtt-swse/scripts/actors/droid/droid-mode-adapter.js";
+import { buildStockDroidDamageFormula } from "/systems/foundryvtt-swse/scripts/domain/droids/stock-droid-damage-formula.js";
 import {
   getDamageAbilityContribution,
   getHalfLevelDamageBonus,
@@ -523,8 +524,8 @@ export function resolveAttackBonus(actor, weapon, actionId = null, context = {})
 // derived mode, non-droid actor, or a weapon with no stock damage
 // contract) — callers then fall through to normal damage composition.
 export function resolveStockDroidDamageContract(actor, weapon, context = {}) {
-  const formula = getStockDamageFormula(actor, weapon);
-  if (formula === null) return null;
+  const publishedFormula = getStockDamageFormula(actor, weapon);
+  if (publishedFormula === null) return null;
 
   const optionModifiers = CombatOptionResolver.collectAttackModifiers(actor, weapon, context);
   const rageMod = RageEngine.collectAttackModifiers(actor, weapon, context).damageBonus || 0;
@@ -532,6 +533,24 @@ export function resolveStockDroidDamageContract(actor, weapon, context = {}) {
   const basicEffectBonus = getBasicEffectIntentBonus(actor, 'global.damage', weapon, context, { rollType: 'damage' });
   const combatOptionDamage = optionModifiers.damageBonus || 0;
   const scopedFeatDamage = ScopedCombatFeatResolver.getBonus(actor, weapon, 'damage', context);
+
+  // R4-4 — die-based situational modifiers (Rapid Shot/Rapid Strike's
+  // damageDieStepBonus, Deadeye/Burst Fire/Mighty Swing's
+  // damageExtraWeaponDice, and — on a confirmed critical hit only —
+  // criticalDamageDieStepBonus) must still adjust the published formula's
+  // DICE portion, exactly as they adjust an ordinary weapon's dice. Only
+  // half-level/ability/enhancement (never die-based) are what the
+  // published total already bakes in and must be withheld. Mirrors
+  // attacks.js's own criticalStepBonus gating: the critical die-step only
+  // applies when this roll is a confirmed critical (context.critical/
+  // context.isCritical), the same flag attacks.js's rollDamage()/
+  // rollAttackAndDamageWithNarration() already pass through as part of
+  // rollOptions.
+  const isCriticalRoll = context?.critical === true || context?.isCritical === true;
+  const dieStepIncreases = Number(optionModifiers.damageDieStepIncreases || 0)
+    + (isCriticalRoll ? Number(optionModifiers.criticalDamageDieStepBonus || 0) : 0);
+  const extraWeaponDice = Number(optionModifiers.damageExtraWeaponDice ?? optionModifiers.damageDiceStepBonus ?? 0);
+  const formula = buildStockDroidDamageFormula(publishedFormula, { dieStepIncreases, extraWeaponDice });
 
   const situationalTotal = rageMod + rapidAlchemyMod + basicEffectBonus + combatOptionDamage + scopedFeatDamage;
 

@@ -84,12 +84,17 @@ function stockWeapon(overrides = {}) {
 {
   const result = resolveDamageBonus(explicitStockDroid(), stockWeapon(), {});
   assert.equal(result.total, 0);
-  assert.equal(result.components['Published Statblock Formula'], '2d6+3');
+  // R4-4: the published formula is now re-rendered through
+  // buildStockDroidDamageFormula() (canonical spacing) even with zero
+  // die-based modifiers, rather than passed through as a raw literal —
+  // this proves the same builder always runs, not just when a die-based
+  // combat option is active.
+  assert.equal(result.components['Published Statblock Formula'], '2d6 + 3');
   assert.equal(result.components['½ Level'], undefined);
   assert.equal(result.components['Ability'], undefined);
   assert.equal(result.components['Enhancement'], undefined);
   assert.equal(result.flags.stockDroidFlat, true);
-  assert.equal(result.flags.stockDamageFormula, '2d6+3');
+  assert.equal(result.flags.stockDamageFormula, '2d6 + 3');
 }
 
 // 4. No half-level/ability/enhancement double count: even though the
@@ -138,6 +143,77 @@ function stockWeapon(overrides = {}) {
   );
   const stockFormulaRefs = (attacksSource.match(/dmgResult\.flags\?\.stockDamageFormula/g) || []).length;
   assert.equal(stockFormulaRefs, 2, 'attacks.js must consult stockDamageFormula in both rollDamage() and rollAttackAndDamageWithNarration()');
+}
+
+// ---------------------------------------------------------------------
+// R4-4 — die-based situational modifiers (Rapid Shot/Rapid Strike/
+// Mighty Swing's die-step, Deadeye/Burst Fire's extra weapon dice, and
+// critical-only die-step increases) must still adjust the published
+// formula's dice portion. Exercised here via the underlying weapon-rule
+// types (WEAPON_DAMAGE_DIE_SIZE_STEP / WEAPON_DAMAGE_DIE_STEP /
+// CRITICAL_DAMAGE_DIE_STEP) every one of those five named combat options
+// ultimately funnels through in CombatOptionResolver — this proves the
+// wiring for the two mechanisms (die-size stepping, extra dice) and the
+// critical-only gating, rather than fixturing all five toggle-based
+// combat options individually (which would additionally require
+// per-option requiresAim/requiresAutofire/weapon-type context — the same
+// arithmetic path, just reached a different way).
+// ---------------------------------------------------------------------
+
+function actorWithRule(rule, overrides = {}) {
+  return explicitStockDroid({
+    items: [{ id: 'feat-1', type: 'feat', name: 'Test Combat Feat', system: { abilityMeta: { rules: [rule] } } }],
+    ...overrides
+  });
+}
+
+// 8. A die-SIZE step rule (the mechanism Rapid Shot/Rapid Strike/Mighty
+// Swing use) steps the published formula's die size, not its dice count.
+{
+  const droid = actorWithRule({ type: 'WEAPON_DAMAGE_DIE_SIZE_STEP', value: 1 });
+  const result = resolveDamageBonus(droid, stockWeapon(), {});
+  assert.equal(result.components['Published Statblock Formula'], '2d8 + 3', 'a die-size-step rule must step 2d6 -> 2d8, not add dice');
+  assert.equal(result.flags.stockDamageFormula, '2d8 + 3');
+}
+
+// 9. An extra-weapon-dice rule (the mechanism Deadeye/Burst Fire use) adds
+// a die at the (unstepped, here) size as a separate addend.
+{
+  const droid = actorWithRule({ type: 'WEAPON_DAMAGE_DIE_STEP', value: 1 });
+  const result = resolveDamageBonus(droid, stockWeapon(), {});
+  assert.equal(result.components['Published Statblock Formula'], '2d6 + 1d6 + 3');
+}
+
+// 10. A critical-only die-step rule does NOT affect a non-critical roll.
+{
+  const droid = actorWithRule({ type: 'CRITICAL_DAMAGE_DIE_STEP', value: 1 });
+  const result = resolveDamageBonus(droid, stockWeapon(), { critical: false });
+  assert.equal(result.components['Published Statblock Formula'], '2d6 + 3', 'a critical-only die-step must not apply to a non-critical roll');
+}
+
+// 11. The SAME critical-only die-step rule DOES apply when the roll
+// context confirms a critical hit (context.critical === true) — proving
+// resolveStockDroidDamageContract() reads the same critical flag
+// attacks.js's rollDamage()/rollAttackAndDamageWithNarration() already
+// pass through as part of rollOptions, mirroring attacks.js's own
+// criticalStepBonus gating for ordinary weapons.
+{
+  const droid = actorWithRule({ type: 'CRITICAL_DAMAGE_DIE_STEP', value: 1 });
+  const result = resolveDamageBonus(droid, stockWeapon(), { critical: true });
+  assert.equal(result.components['Published Statblock Formula'], '2d8 + 3', 'a critical-only die-step must apply on a confirmed critical hit');
+}
+
+// 12. Die-size step and extra weapon dice compose together correctly:
+// extra dice are added at the ALREADY-stepped size.
+{
+  const droid = actorWithRule({ type: 'WEAPON_DAMAGE_DIE_SIZE_STEP', value: 1 }, {
+    items: [
+      { id: 'feat-1', type: 'feat', name: 'Size Step', system: { abilityMeta: { rules: [{ type: 'WEAPON_DAMAGE_DIE_SIZE_STEP', value: 1 }] } } },
+      { id: 'feat-2', type: 'feat', name: 'Extra Dice', system: { abilityMeta: { rules: [{ type: 'WEAPON_DAMAGE_DIE_STEP', value: 1 }] } } }
+    ]
+  });
+  const result = resolveDamageBonus(droid, stockWeapon(), {});
+  assert.equal(result.components['Published Statblock Formula'], '2d8 + 1d8 + 3');
 }
 
 console.log('Stock-droid damage math tests passed.');
