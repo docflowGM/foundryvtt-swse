@@ -25,11 +25,19 @@
  *   console.log(report.summary());
  *   console.table(report.components);
  *   console.table(report.driftIssues);
- *   // To repair a specific flagged issue (deletes the named embedded Item(s)):
- *   const { repairDroidInstallationDrift } = await import(
+ *   // P1-6 — to repair drift, submit INTENT (actor id + selected issue ids
+ *   // + the inspection revision you just read), never the raw driftIssues
+ *   // entries themselves — the repair service rereads current state and
+ *   // derives every deleted embedded Item id internally:
+ *   const { inspectDroidInstallationDrift, repairDroidInstallationDrift } = await import(
  *     '/systems/foundryvtt-swse/scripts/domain/droids/droid-installation-reconciler.js'
  *   );
- *   await repairDroidInstallationDrift(actor, [report.driftIssues[0]]);
+ *   const inspection = inspectDroidInstallationDrift(actor);
+ *   await repairDroidInstallationDrift(actor, {
+ *     actorId: actor.id,
+ *     selectedIssueIds: [inspection.issues[0].issueId],
+ *     inspectionRevision: inspection.inspectionRevision
+ *   });
  */
 
 import { getDroidPartDefinition, hydrateDroidPart, normalizeDroidPartId } from "/systems/foundryvtt-swse/scripts/data/droid-part-schema.js";

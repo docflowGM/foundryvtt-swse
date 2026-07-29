@@ -90,7 +90,7 @@ to track `publishedDamage` the same way it already tracked
 | P1-3 | Follower-template restriction enforced only by UI | **Verified already fixed** in a prior phase (`buildFollowerConversionPreflight`/Fix 13, tasks #173/#181) — `convertToFollower()` throws before ever building the mutation plan if `!preflight.eligible`, and `preflight.resolvedTemplate` is always non-null by the time the plan is built, so the planner's `\|\| 'utility'` default is unreachable via the only production caller. No code change; confirmed by reading the actual gate and the existing 40-test suite's single-template-slot coverage. |
 | P1-4 | `follower-hooks.js` bypassed ActorEngine with direct `setFlag()`; removed the slot before cleanup completed | **Fixed** — `followers`/`minions`/`pendingFollowerDetachment` writes now route through `ActorEngine.updateActor()`; the auto-detach path in the `deleteItem` hook now uses `runFollowerMutationTransaction()` with named, ordered steps (`remove-granted-items-and-detach` before `remove-slot`, with rollback), closing the "slot gone before cleanup finished" gap. |
 | P1-5 | Reconciliation apply trusts caller-supplied plan with no cross-Actor/staleness check | **Fixed** (see "P1-5 — Intent-Based Reconciliation Apply Boundary" below and `docs/audits/droid-converted-system-reconciliation-phase-4.md`'s matching section for full detail). |
-| P1-6 | Drift repair trusts caller-supplied embedded Item ids (arbitrary-deletion risk) | **Not fixed this pass** — deferred, see Remaining Limitations. |
+| P1-6 | Drift repair trusts caller-supplied embedded Item ids (arbitrary-deletion risk) | **Fixed** (see "P1-6 — Intent-Based Installation Drift Repair Boundary" below and `docs/audits/droid-authority-consolidation-phase-2.md`'s matching section for full detail). |
 | P1-7 | Snapshot restoration is non-atomic, omits flags/ownership, changes recreated Item ids | **Not fixed this pass** — deferred, see Remaining Limitations. |
 | P1-8 | Ownership rollback wrote NONE instead of deleting the key; Assign-as-Ally rollback recomputed from live state | **Fixed** — `buildOwnershipGrantStep`'s rollback now deletes the ownership key (`ownership.-=${userId}`) via Foundry's deletion convention when there was no prior entry, restores the exact prior value when there was one; `assignAsAlly`'s owner-array rollback now captures `currentOwnedActors`/`currentFlagList` before mutation and restores those exact captured arrays (matching the pattern already used by `unassignAlly`/`convertToFollower` in the same file) instead of recomputing "current minus target" from `ownerActor`'s live state at rollback time. |
 | P1-9 | Contradictory installedSystems/droidSystems SSOT claims | **Verified + documented, not a functional change** — `droid-installed-component-resolver.js` already implements the correct precedence (`INSTALLED_LEDGER > EMBEDDED_ITEM > DROID_SYSTEMS_RECORD > LEGACY_MOD`) and `droid-systems-resolver.js` already delegates dedup/precedence to it; added one explicit SSOT policy block to the canonical resolver's header clarifying that `droidSystems` readers elsewhere are display fallbacks, not competing authority claims. `droidSystems` in `scripts/apps/progression-framework/**` is a separate, unrelated concern (in-progress chargen/follower-build DRAFT state, not actor authority). |
@@ -105,9 +105,10 @@ to track `publishedDamage` the same way it already tracked
 
 ## Remaining Limitations (explicitly deferred, not fixed this pass)
 
-*(Historical record of what Round 3 deferred. P1-5 was subsequently fixed
-— see the "P1-5 — Intent-Based Reconciliation Apply Boundary" section
-below. P1-6 and P1-7 remain open as described here.)*
+*(Historical record of what Round 3 deferred. P1-5 and P1-6 were
+subsequently fixed — see the "P1-5 — Intent-Based Reconciliation Apply
+Boundary" and "P1-6 — Intent-Based Installation Drift Repair Boundary"
+sections below. P1-7 remains open as described here.)*
 
 - **P1-5 / P1-6** (reconciliation-apply and drift-repair trust boundaries) and
   **P1-7** (snapshot restoration exactness) touch `SnapshotManager`,
@@ -380,12 +381,61 @@ overwrites, and silent loss of concurrent installation changes.
   unchanged by this fix — `rollbackReconciliation()`'s restore mechanism
   was not touched.
 
+## P1-6 — Intent-Based Installation Drift Repair Boundary
+
+**Trigger:** `DroidInstallationReconciler.repairDroidInstallationDrift()`
+accepted a caller-held array of issue objects, each carrying authoritative
+embedded Item ids, and deleted exactly those ids with no verification
+that they belonged to the target Actor, were still diagnosed as drift, or
+came from a fresh diagnosis at all — a potentially arbitrary embedded-Item
+deletion endpoint.
+
+**Fix summary** (full detail in
+`docs/audits/droid-authority-consolidation-phase-2.md`'s matching "P1-6"
+section):
+- New intent contract: `repairDroidInstallationDrift(actor, {actorId,
+  selectedIssueIds, inspectionRevision})` — never a caller-held Item-id
+  list. The old shape (`itemIds`/`embeddedItemIds`/`itemUuids`/`uuids`
+  arrays, a `mutationPlan`, a `delete` bucket, or
+  `installedSystems`/`droidSystems`) is explicitly detected and rejected.
+- New `buildDroidDriftIssueId()` builds deterministic issue ids from issue
+  type + canonical component id, never from embedded Item ids.
+- `intent.actorId` is independently verified against `actor.id`; actor
+  type/GM-owner permission are re-checked inside the function itself.
+- New `scripts/domain/droids/droid-installation-drift-revision.js`
+  builds a fingerprint (reusing P1-5's newly-extracted
+  `droid-revision-hash.js` primitive rather than duplicating it) over
+  ledger/projection/embedded-Item-identity/diagnosed-issue-id state; a
+  mismatch at apply time is rejected as stale rather than merged.
+- New `validateDriftRepairSelection()` rejects empty/unknown/no-longer-
+  present issue ids against a freshly-diagnosed issue set, failing the
+  whole request closed.
+- New `deriveRepairItemIds()` independently re-verifies every embedded
+  Item id a diagnosed issue names directly against the actor's current
+  `actor.items` before anything is deleted — a mismatch aborts the whole
+  repair.
+- Adds a TOCTOU re-check (reread the Actor from `game.actors`, rerun
+  diagnosis) immediately before mutating, closing the gap opened by the
+  snapshot-creation `await`.
+- The one production reference (a console usage-doc comment in
+  `droid-authority-diagnostics.js` — no sheet/controller ever called it)
+  was migrated to submit intent.
+- New `tools/check-droid-drift-repair-authority.mjs` (8 checks),
+  inject→detect→revert verified with byte-identical diffs.
+- Coverage: 10 pure production-path tests + 33 Foundry-shim production-
+  path tests (`tests/droid-installation-drift-repair-intent-boundary.test.mjs`)
+  exercising the real service end-to-end, plus 1 structural test
+  confirming the console usage-doc migration.
+- P1-7 (snapshot/rollback exactness) remains separately deferred; the
+  snapshot/rollback added here gives real rollback-on-failure behavior
+  bounded by the same pre-existing, imperfect restore mechanism.
+
 ## Merge readiness
 
 All 4 P0 defects (Round 3), all 5 Round-4 defects (2 of them
-merge-blocking), and P1-5 are fixed and tested. This branch is closer to
-mergeable than any prior round, but is **still not unconditionally
-merge-ready**: P1-6, P1-7, and P2-3 remain open, and no live Foundry v13
-validation has been performed at any point in this branch's history —
-that remains a hard precondition for removing draft status, independent
-of static fix completeness.
+merge-blocking), P1-5, and P1-6 are fixed and tested. This branch is
+closer to mergeable than any prior round, but is **still not
+unconditionally merge-ready**: P1-7 and P2-3 remain open, and no live
+Foundry v13 validation has been performed at any point in this branch's
+history — that remains a hard precondition for removing draft status,
+independent of static fix completeness.

@@ -1,5 +1,16 @@
 import assert from 'node:assert/strict';
-import { diagnoseDroidInstallationDrift, DROID_INSTALLATION_DRIFT_ISSUE } from '../scripts/domain/droids/droid-installation-reconciler.js';
+import { registerFoundryPathLoader } from './helpers/foundry-shim/register.mjs';
+
+// P1-6 — droid-installation-reconciler.js now also defines actor-level
+// orchestration (inspectDroidInstallationDrift/repairDroidInstallationDrift)
+// alongside the pure diagnoseDroidInstallationDrift() this file has always
+// tested, and imports its sibling domain modules via absolute
+// "/systems/foundryvtt-swse/..." specifiers — the path loader must be
+// registered before importing it, even though this file's own tests below
+// only exercise the pure, fixture-driven diagnosis function.
+registerFoundryPathLoader();
+
+const { diagnoseDroidInstallationDrift, DROID_INSTALLATION_DRIFT_ISSUE } = await import('../scripts/domain/droids/droid-installation-reconciler.js');
 
 // Phase 2 — Droid Authority Consolidation. Before this phase, removing a
 // droid system through the Upgrade Workshop deleted the

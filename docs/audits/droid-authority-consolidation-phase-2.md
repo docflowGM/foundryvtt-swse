@@ -146,11 +146,15 @@ New module `scripts/domain/droids/droid-installation-reconciler.js`:
   a pre-Phase-2 Upgrade Workshop removal (or any other historical path)
   would have left behind: the ledger key was deleted, but the Item wasn't,
   so the Item became the new highest-precedence source.
-- `repairDroidInstallationDrift(actor, issuesToRepair)` — deletes only the
-  exact embedded Item ids named by the caller-selected issues, via
-  `ActorEngine.applyMutationPlan(actor, { delete: { items: [...] } })`.
-  Never a blanket sweep; never applied without the caller (a GM, or
-  debug tooling) explicitly choosing which issues to act on for one actor.
+- `repairDroidInstallationDrift(actor, intent)` — **updated by the P1-6
+  correction pass below**; originally took a caller-supplied
+  `issuesToRepair` array carrying authoritative embedded Item ids
+  directly, now takes intent (`{actorId, selectedIssueIds,
+  inspectionRevision}`) and derives every deleted Item id internally.
+  Still deletes only via `ActorEngine.applyMutationPlan(actor, { delete:
+  { items: [...] } })`. Never a blanket sweep; never applied without the
+  caller (a GM, or debug tooling) explicitly choosing which issues to act
+  on for one actor.
 
 This is deliberately not automatic and does not migrate every world actor —
 consistent with Phase 1's "do not migrate every world Actor automatically
@@ -158,6 +162,180 @@ in this phase" constraint, which is treated as still in force. It is wired
 into `scripts/debug/droid-authority-diagnostics.js`'s report as
 `report.driftIssues`, following the same opt-in, call-it-when-you-need-it
 convention as the rest of that module.
+
+### P1-6 — Intent-Based Installation Drift Repair Boundary (correction pass)
+
+**Trigger:** a static review found that `repairDroidInstallationDrift()`
+accepted a caller-held array of issue objects, each carrying authoritative
+embedded Item ids, and deleted exactly those ids with no verification
+that they belonged to the target Actor, were still diagnosed as drift, or
+came from a fresh diagnosis at all — turning the repair boundary into a
+potentially arbitrary embedded-Item deletion endpoint (a caller could
+submit fabricated, stale, or cross-Actor Item ids).
+
+**Former vulnerability:** `repairDroidInstallationDrift(actor,
+issuesToRepair)` flattened `issuesToRepair[].itemIds` and deleted them
+directly. Nothing tied the ids to `actor`, nothing checked whether the
+actor's installation state had changed since the issues were diagnosed,
+and an issue object built against one Actor could be handed to the
+function for a different Actor with no rejection.
+
+**New intent contract:** `repairDroidInstallationDrift(actor,
+{actorId, selectedIssueIds, inspectionRevision})`. The caller may submit
+only these three fields — never `itemIds`/`embeddedItemIds`/`itemUuids`/
+`uuids` arrays, a mutation plan, a `delete` bucket, or
+`installedSystems`/`droidSystems` payloads. Any of those shapes is
+detected and rejected outright: "Caller-supplied drift-repair Item IDs
+and mutation plans are no longer accepted. Submit repair intent instead."
+
+**Issue-ID design:** new `buildDroidDriftIssueId(issue)` builds a
+deterministic id from issue type + canonical component id (e.g.
+`orphaned-embedded-item:improved-sensor-package`) — never from embedded
+Item ids, so the same unrepaired drift problem always produces the same
+issue id across repeated inspections.
+
+**Actor identity enforcement:** `intent.actorId` is compared against
+`actor.id` and rejected on mismatch (`DRIFT_REPAIR_ACTOR_MISMATCH`)
+before anything else. Actor existence, `type === 'droid'`
+(`DRIFT_REPAIR_WRONG_ACTOR_TYPE`), and GM/owner permission
+(`DRIFT_REPAIR_PERMISSION_DENIED`) are all independently re-verified
+inside the function itself, regardless of any UI-side gating. Unlike
+reconciliation (P1-5), drift repair carries no calculation-mode
+restriction — it never had one, and none was invented; a mode change
+between inspection and apply is still caught because calculation mode is
+one of the revision fingerprint's fields.
+
+**Revision/fingerprint design:** new
+`scripts/domain/droids/droid-installation-drift-revision.js` —
+`buildDroidInstallationDriftRevision(actor, resolution, diagnosis,
+buildIssueId)` builds a deterministic fingerprint over: actor id,
+resolved calculation mode, `installedSystems` ledger, `droidSystems`
+projection, embedded droid-part Item identities, diagnosed issue ids, and
+a repair schema version. Volatile fields (HP, token position, chat/window
+state, temporary UI selection) are excluded by construction. Reuses new
+`scripts/domain/droids/droid-revision-hash.js` (the stable-serialize-
+then-hash primitive extracted from P1-5's
+`droid-reconciliation-revision.js`) rather than duplicating the hashing
+mechanism — the two revision modules' field sets are different, but the
+underlying mechanism is identical and now shared.
+
+**Current-state diagnosis:** `inspectDroidInstallationDrift(actor)`
+reruns `resolveInstalledDroidComponents()`/`diagnoseDroidInstallationDrift()`
+fresh and returns a public view model
+(`{actorId, actorName, inspectionRevision, calculationMode, issues, warnings}`)
+that never exposes embedded Item ids at all. `repairDroidInstallationDrift()`
+reruns this same fresh diagnosis twice: once to validate the caller's
+selection against current issues, and again immediately before mutating
+(after rereading the Actor from `game.actors`, closing the gap opened by
+the snapshot-creation `await`) — a change at either point is rejected as
+stale (`DRIFT_REPAIR_STALE`, message: "The droid's installation state
+changed after this repair review was opened. Refresh the drift report
+before applying repairs.").
+
+**Selection validation:** new `validateDriftRepairSelection()` rejects an
+empty selection, unknown issue ids, and anything not present in the fresh
+diagnosis — failing the whole request closed rather than silently
+dropping invalid entries (`DRIFT_REPAIR_INVALID_SELECTION`).
+
+**Internal Item-id derivation:** new `deriveRepairItemIds(issue, actor)`
+independently re-verifies every embedded Item id a diagnosed issue names
+directly against the actor's CURRENT `actor.items` — an id only survives
+if an Item with that id currently exists on THIS actor and its own
+resolved canonical id still matches the issue's canonical id. A mismatch
+between the diagnosed count and the verified count aborts the whole
+repair (`DRIFT_REPAIR_ITEM_VALIDATION_FAILED`) rather than deleting a
+partial, unverified set.
+
+**Repair strategies by issue type:** one narrow internal strategy
+function (`buildRepairStepsForIssue`) dispatches on issue type; only one
+issue type exists today (`orphaned-active-item-without-ledger-entry`),
+whose strategy deletes only the independently-verified orphaned Item(s)
+and touches no ledger/projection field. An issue type this switch does
+not recognize deletes nothing — there is no "delete everything the issue
+mentions" fallback.
+
+**Canonical-ledger policy:** unchanged — `installedSystems` remains the
+canonical ledger, `droidSystems` a derived projection, embedded Items
+evidence only. Drift repair never accepts caller-supplied
+`installedSystems`/`droidSystems` and, for its one existing issue type,
+never writes either field (the orphaned-Item issue has no ledger entry to
+correct — that absence is exactly what makes it "orphaned").
+
+**ActorEngine mutation path:** validate intent → reread state → confirm
+revision → validate selection → reread the Actor from `game.actors`
+(TOCTOU) → re-diagnose → independently re-verify derived Item ids →
+`SnapshotManager.createSnapshot()` → `ActorEngine.applyMutationPlan(actor,
+{delete: {items: [...]}})` → structured result. No new transaction engine
+was introduced. P1-7 (snapshot restoration exactness) remains separately
+deferred and unchanged by this fix — the snapshot/rollback added here
+gives real rollback-on-failure behavior, but its exactness is bounded by
+the same full-actor-replace `SnapshotManager.restoreSnapshot()` P1-7
+already documents as imperfect; nothing here claims otherwise.
+
+**Structured result shape:** success —
+`{success: true, actorId, appliedIssueIds, deletedItemIds,
+repairedCanonicalIds, previousRevision, resultingRevision,
+mutationSummary}` (or `{success: true, noOp: true, ...}` for a validated
+selection resolving to zero deletions, which cannot currently happen for
+the one supported issue type). Failure — `{success: false, code, error,
+actorId}` with codes `DRIFT_REPAIR_ACTOR_MISMATCH`,
+`DRIFT_REPAIR_WRONG_ACTOR_TYPE`, `DRIFT_REPAIR_PERMISSION_DENIED`,
+`DRIFT_REPAIR_STALE`, `DRIFT_REPAIR_INVALID_SELECTION`,
+`DRIFT_REPAIR_ITEM_VALIDATION_FAILED`, `DRIFT_REPAIR_APPLY_FAILED`,
+`DRIFT_REPAIR_ROLLBACK_FAILED`.
+
+**UI/caller migration:** the only production reference to
+`repairDroidInstallationDrift()` was a console usage-doc comment in
+`scripts/debug/droid-authority-diagnostics.js` (no sheet/controller ever
+called it) — updated to submit `{actorId, selectedIssueIds,
+inspectionRevision}` via `inspectDroidInstallationDrift()`'s
+`issue.issueId`, never `report.driftIssues[0]` (the old shape) or any
+Item id.
+
+**Test coverage tiers:**
+- (a) pure production-path, zero Foundry dependency:
+  `buildDroidDriftIssueId`/`buildDroidInstallationDriftRevision`/
+  `normalizeDriftRepairIntent`/`validateDriftRepairSelection`/
+  `deriveRepairItemIds` (`tests/droid-installation-drift-repair-intent-boundary.test.mjs`,
+  tests 1-10), plus the pre-existing `diagnoseDroidInstallationDrift`
+  suite (`tests/droid-installation-reconciler.test.mjs`, unaffected).
+- (a) production-path through the Foundry-shim harness: the real
+  `inspectDroidInstallationDrift()`/`repairDroidInstallationDrift()`
+  executing end-to-end (same file, tests 11-43) — covering valid repair,
+  actor-mismatch, non-droid/permission rejection, staleness from ledger/
+  projection/Item changes and mode changes, duplicate/unknown/already-
+  resolved selections, every old-API rejected shape (`itemIds`,
+  `embeddedItemIds`, `itemUuids`, mutation plan, delete bucket,
+  `installedSystems`, `droidSystems`), unrelated-Item and cross-Actor
+  deletion resistance, concurrent-install/removal staleness, TOCTOU
+  re-fetch and "Actor no longer in the world" rejection, revision change
+  on success and stale-replay rejection, empty-selection rejection, and
+  honest mutation/rollback failure reporting.
+- (c) structural: the console usage-doc comment in
+  `droid-authority-diagnostics.js` is confirmed (via source inspection —
+  the file cannot load in the Node shim harness) to submit intent, not
+  raw `driftIssues` entries or Item ids.
+
+**Static guard:** new `tools/check-droid-drift-repair-authority.mjs` (8
+checks: identity verification, revision/staleness validation, old-API
+rejection, single-API authority, no direct embedded-document deletion,
+no caller-held plan/array-literal at call sites, inspection view model
+never treated as an Item-id source, no test-shim import in production
+code). All 8 verified via inject→detect→revert with byte-identical diffs
+after each revert. Deliberately narrow — does not ban `itemIds`
+repository-wide (it remains legitimate in `ActorEngine`'s own mutation-
+plan shape); the prohibition applies only to the public drift-repair
+trust boundary and its callers.
+
+**Live Foundry status:** no live Foundry v13 environment was available in
+this session. Nothing in this pass was validated by execution in a
+running Foundry client.
+
+P1-6 is removed from any "remaining limitations" note precisely because
+the production path (`repairDroidInstallationDrift()`) and its one
+caller (a console usage-doc example, now updated) are fully migrated to
+the intent contract — no production caller can submit or apply a
+ready-made Item-id list anymore.
 
 ## Progression/chargen and stock-droid paths — verified, left unchanged
 

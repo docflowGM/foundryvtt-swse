@@ -20,40 +20,12 @@
  */
 
 import { resolveDroidCalculationMode } from "/systems/foundryvtt-swse/scripts/actors/droid/droid-mode-adapter.js";
+import { hashRevisionFields } from "/systems/foundryvtt-swse/scripts/domain/droids/droid-revision-hash.js";
 
 function toItemsArray(items) {
   if (!items) return [];
   if (typeof items.contents !== 'undefined') return items.contents;
   return Array.isArray(items) ? items : Array.from(items);
-}
-
-function sortedClone(value) {
-  if (Array.isArray(value)) return value.map(sortedClone);
-  if (value && typeof value === 'object') {
-    return Object.keys(value).sort().reduce((acc, key) => {
-      acc[key] = sortedClone(value[key]);
-      return acc;
-    }, {});
-  }
-  return value;
-}
-
-function stableStringify(value) {
-  return JSON.stringify(sortedClone(value ?? null));
-}
-
-// FNV-1a, 32-bit. Not cryptographic — this only needs to be deterministic
-// and collision-unlikely for a single actor's own state changes, not
-// resistant to deliberate forgery (the actorId/permission/mode checks in
-// the reconciliation service's apply entry point are what carry the
-// actual trust boundary).
-function fnv1aHash(text) {
-  let hash = 0x811c9dc5;
-  for (let i = 0; i < text.length; i += 1) {
-    hash ^= text.charCodeAt(i);
-    hash = Math.imul(hash, 0x01000193);
-  }
-  return (hash >>> 0).toString(16).padStart(8, '0');
 }
 
 /**
@@ -105,5 +77,5 @@ export function buildDroidReconciliationRevision(actor) {
       : null
   };
 
-  return fnv1aHash(stableStringify(fields));
+  return hashRevisionFields(fields);
 }
