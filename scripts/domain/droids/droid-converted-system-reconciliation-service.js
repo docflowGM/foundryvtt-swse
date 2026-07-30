@@ -416,13 +416,12 @@ export async function applyReconciliation(actor, intent = {}, options = {}) {
     SWSELogger.error('[DroidConvertedSystemReconciliationService] Reconciliation failed; attempting rollback:', err);
     try {
       if (snapshot) {
-        const restored = await SnapshotManager.restoreSnapshotExact(actor, snapshot.timestamp);
+        // ROUND-2 CORRECTION: requireExact: true — an inexact restore
+        // must be treated as a rollback failure, not silently accepted.
+        const restored = await SnapshotManager.restoreSnapshotExact(actor, snapshot.timestamp, { requireExact: true });
         if (!restored.success) {
-          SWSELogger.error('[DroidConvertedSystemReconciliationService] Rollback after failed reconciliation ALSO failed:', restored);
+          SWSELogger.error('[DroidConvertedSystemReconciliationService] Rollback after failed reconciliation ALSO failed or was not identity-exact:', restored);
           return { success: false, code: 'RECONCILIATION_ROLLBACK_FAILED', error: `Reconciliation failed and rollback failed: ${err.message}`, actorId: actor.id };
-        }
-        if (!restored.exact) {
-          SWSELogger.warn('[DroidConvertedSystemReconciliationService] Rollback after failed reconciliation restored but is not identity-exact — manual review recommended.', restored);
         }
       }
     } catch (restoreErr) {
@@ -475,13 +474,12 @@ export async function rollbackReconciliation(actor) {
     : null;
 
   try {
-    const restored = await SnapshotManager.restoreSnapshotExact(actor, snapshotTimestamp);
+    // ROUND-2 CORRECTION: requireExact: true — an inexact restore is now
+    // treated as a rollback failure, not silently accepted with a warning.
+    const restored = await SnapshotManager.restoreSnapshotExact(actor, snapshotTimestamp, { requireExact: true });
     if (!restored.success) {
       SWSELogger.error(`[DroidConvertedSystemReconciliationService] Rollback restore failed for ${actor.name} at step "${restored.failedStep}".`, restored);
-      return { success: false, error: restored.error || 'Reconciliation snapshot could not be found or restored.' };
-    }
-    if (!restored.exact) {
-      SWSELogger.warn(`[DroidConvertedSystemReconciliationService] Rollback for ${actor.name} restored but is not identity-exact.`, restored);
+      return { success: false, error: restored.error || 'Reconciliation snapshot could not be found or restored, or the restore was not identity-exact.' };
     }
     await ActorEngine.applyMutationPlan(actor, {
       set: {

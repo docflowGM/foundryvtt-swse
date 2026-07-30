@@ -212,13 +212,16 @@ export async function convertToPlayableDerived(actor, options = {}) {
     SWSELogger.error('[DroidStatblockConversionService] Conversion failed; attempting rollback:', err);
     try {
       if (snapshot) {
-        const restored = await SnapshotManager.restoreSnapshotExact(actor, snapshot.timestamp);
+        // ROUND-2 CORRECTION: requireExact: true — an inexact rollback
+        // (a partial-identity or root-mismatch restore) must be treated
+        // as a FAILED rollback, not silently accepted with only a log
+        // line. restoreSnapshotExact() itself now fails closed (running
+        // its own bounded compensation) whenever requireExact is set and
+        // the restore comes back inexact.
+        const restored = await SnapshotManager.restoreSnapshotExact(actor, snapshot.timestamp, { requireExact: true });
         if (!restored.success) {
-          SWSELogger.error('[DroidStatblockConversionService] Rollback after failed conversion ALSO failed:', restored);
+          SWSELogger.error('[DroidStatblockConversionService] Rollback after failed conversion ALSO failed or was not identity-exact:', restored);
           return { success: false, code: 'CONVERSION_ROLLBACK_FAILED', error: `Conversion failed and rollback failed: ${err.message}`, actorId: actor.id };
-        }
-        if (!restored.exact) {
-          SWSELogger.warn('[DroidStatblockConversionService] Rollback after failed conversion restored but is not identity-exact — manual review recommended.', restored);
         }
       }
     } catch (restoreErr) {
@@ -286,13 +289,14 @@ export async function rollbackConversion(actor) {
     : null;
 
   try {
-    const restored = await SnapshotManager.restoreSnapshotExact(actor, snapshotTimestamp);
+    // ROUND-2 CORRECTION: requireExact: true — an inexact restore (a
+    // root/content mismatch, or Foundry failing to honor keepId on a
+    // recreated Item) is now treated as a rollback FAILURE, not silently
+    // accepted as success with only a warning logged.
+    const restored = await SnapshotManager.restoreSnapshotExact(actor, snapshotTimestamp, { requireExact: true });
     if (!restored.success) {
       SWSELogger.error(`[DroidStatblockConversionService] Rollback restore failed for ${actor.name} at step "${restored.failedStep}".`, restored);
-      return { success: false, error: restored.error || 'Conversion snapshot could not be found or restored.' };
-    }
-    if (!restored.exact) {
-      SWSELogger.warn(`[DroidStatblockConversionService] Rollback for ${actor.name} restored but is not identity-exact.`, restored);
+      return { success: false, error: restored.error || 'Conversion snapshot could not be found or restored, or the restore was not identity-exact.' };
     }
     // restoreSnapshotExact() restores flags to their pre-conversion state,
     // which deletes `flags.swse.stockDroidConversion` outright — reapply

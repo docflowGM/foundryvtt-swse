@@ -475,13 +475,12 @@ export async function repairDroidInstallationDrift(actor, intent = {}, options =
     SWSELogger.error('[DroidInstallationReconciler] Drift repair failed; attempting rollback:', err);
     try {
       if (snapshot) {
-        const restored = await SnapshotManager.restoreSnapshotExact(liveActor, snapshot.timestamp);
+        // ROUND-2 CORRECTION: requireExact: true — an inexact restore
+        // must be treated as a rollback failure, not silently accepted.
+        const restored = await SnapshotManager.restoreSnapshotExact(liveActor, snapshot.timestamp, { requireExact: true });
         if (!restored.success) {
-          SWSELogger.error('[DroidInstallationReconciler] Rollback after failed drift repair ALSO failed:', restored);
+          SWSELogger.error('[DroidInstallationReconciler] Rollback after failed drift repair ALSO failed or was not identity-exact:', restored);
           return { success: false, code: 'DRIFT_REPAIR_ROLLBACK_FAILED', error: `Drift repair failed and rollback failed: ${err.message}`, actorId: actor.id };
-        }
-        if (!restored.exact) {
-          SWSELogger.warn('[DroidInstallationReconciler] Rollback after failed drift repair restored but is not identity-exact — manual review recommended.', restored);
         }
       }
     } catch (restoreErr) {
