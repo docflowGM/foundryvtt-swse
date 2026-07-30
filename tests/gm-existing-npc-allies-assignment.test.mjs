@@ -939,4 +939,165 @@ function slotsOf(owner) {
   assert.equal(slotsOf(owner)[0].createdActorId, null, 'a lost reservation must abort the conversion, never claim the slot');
 }
 
+// ---------------------------------------------------------------------
+// P2-3 ROUND-2 CORRECTION — target-reservation lifetime, dual-token
+// re-verification before every destructive phase, reservation-aware slot
+// rollback, and same-token idempotent retry.
+// ---------------------------------------------------------------------
+
+// 70. A losing/rolled-back conversion's OWN target-snapshot restore must
+// never delete a DIFFERENT, later request's live target reservation —
+// the reservation flag is a PROTECTED path in the snapshot-restoration
+// authority, so this request's rollback can never touch it either way,
+// and this request's own (token-conditional) release attempt at the end
+// must not clear a reservation it does not recognize as its own.
+{
+  resetFakeActorEngine();
+  asGM();
+  const owner = makeFakeActor({ id: 'owner-1', type: 'character', flags: { [SYSTEM_ID]: { followerSlots: [{ id: 's1', dependentKind: 'follower', createdActorId: null, templateChoices: ['utility'] }] } } });
+  const npc = makeFakeActor({ id: 'npc-1', type: 'npc' });
+  const { buildTargetConversionReservation } = await import('../scripts/domain/followers/follower-slot-occupancy.js');
+  const laterReservation = buildTargetConversionReservation({ token: 'later-request-token', ownerActorId: 'owner-2', slotId: 's9', userId: 'gm-2' });
+  const failingDerivation = async () => {
+    // Simulate a completely different, later request acquiring this same
+    // target's reservation while THIS request is still mid-flight (e.g.
+    // this request's own reservation lapsed by a path unrelated to this
+    // test) — the point under test is that THIS request's own rollback
+    // must never delete it.
+    npc.flags[SYSTEM_ID].followerConversionReservation = laterReservation;
+    return false;
+  };
+  await assert.rejects(() => AllyAssignmentService.convertToFollower(owner, npc, 's1', { source: 'test', applyFollowerDerivation: failingDerivation }));
+  assert.deepEqual(npc.flags[SYSTEM_ID].followerConversionReservation, laterReservation, 'a losing/rolled-back request must never delete a different, later request\'s live target reservation');
+}
+
+// 71. Losing the reservation BEFORE the target-conversion-commit step
+// (the very first destructive phase) aborts before the target is ever
+// mutated at all — dual-token verification runs at the START of every
+// destructive phase, not only once at acquisition time.
+{
+  resetFakeActorEngine();
+  asGM();
+  const owner = makeFakeActor({ id: 'owner-1', type: 'character', flags: { [SYSTEM_ID]: { followerSlots: [{ id: 's1', dependentKind: 'follower', createdActorId: null, templateChoices: ['utility'] }] } } });
+  const npc = makeFakeActor({ id: 'npc-1', type: 'npc' });
+  const { FollowerSlotService } = await import('../scripts/engine/crew/follower-slot-service.js');
+  const originalVerify = FollowerSlotService.verifyFollowerConversionReservations;
+  let callCount = 0;
+  FollowerSlotService.verifyFollowerConversionReservations = async (params) => {
+    callCount += 1;
+    if (callCount === 1) return { success: false, slotOk: false, targetOk: true, code: 'FOLLOWER_SLOT_RESERVATION_LOST' };
+    return originalVerify(params);
+  };
+  try {
+    await assert.rejects(
+      () => AllyAssignmentService.convertToFollower(owner, npc, 's1', { source: 'test', ...OK_DERIVATION }),
+      /target metadata mutation/
+    );
+    assert.equal(npc.system?.isFollower, undefined, 'target metadata must never be written once the FIRST dual-token check fails');
+    assert.equal(callCount, 1, 'the conversion must abort at the first verification failure rather than proceeding to later phases');
+  } finally {
+    FollowerSlotService.verifyFollowerConversionReservations = originalVerify;
+  }
+}
+
+// 72. Losing the reservation between the target-metadata mutation and the
+// follower-derivation step prevents derivation from ever running.
+{
+  resetFakeActorEngine();
+  asGM();
+  const owner = makeFakeActor({ id: 'owner-1', type: 'character', flags: { [SYSTEM_ID]: { followerSlots: [{ id: 's1', dependentKind: 'follower', createdActorId: null, templateChoices: ['utility'] }] } } });
+  const npc = makeFakeActor({ id: 'npc-1', type: 'npc' });
+  const { FollowerSlotService } = await import('../scripts/engine/crew/follower-slot-service.js');
+  const originalVerify = FollowerSlotService.verifyFollowerConversionReservations;
+  let callCount = 0;
+  let derivationCalled = false;
+  FollowerSlotService.verifyFollowerConversionReservations = async (params) => {
+    callCount += 1;
+    if (callCount === 2) return { success: false, slotOk: true, targetOk: false, code: 'FOLLOWER_TARGET_RESERVATION_LOST' };
+    return originalVerify(params);
+  };
+  try {
+    await assert.rejects(
+      () => AllyAssignmentService.convertToFollower(owner, npc, 's1', { source: 'test', applyFollowerDerivation: async () => { derivationCalled = true; return true; } }),
+      /follower derivation/
+    );
+    assert.equal(derivationCalled, false, 'derivation must never run once the SECOND dual-token check fails');
+    assert.equal(npc.system.isFollower, undefined, 'the already-committed target-metadata step must be rolled back too, once a later step aborts the whole transaction');
+  } finally {
+    FollowerSlotService.verifyFollowerConversionReservations = originalVerify;
+  }
+}
+
+// 73. A rollback of THIS conversion's own owner-side commit never
+// replaces the whole followerSlots array with a stale pre-transaction
+// snapshot — a concurrent, unrelated slot change committed by a
+// DIFFERENT request during this transaction's derivation window survives
+// this request's own rollback (defect #13).
+{
+  resetFakeActorEngine();
+  asGM();
+  const owner = makeFakeActor({
+    id: 'owner-1', type: 'character',
+    flags: {
+      [SYSTEM_ID]: {
+        followerSlots: [
+          { id: 's1', dependentKind: 'follower', createdActorId: null, templateChoices: ['utility'] },
+          { id: 's2', dependentKind: 'follower', createdActorId: null, templateChoices: ['utility'] }
+        ]
+      }
+    }
+  });
+  const npc = makeFakeActor({ id: 'npc-1', type: 'npc' });
+  const derivation = async () => {
+    // Simulate a completely different, concurrent conversion committing
+    // its own occupant into slot s2 while THIS conversion is still
+    // mid-flight (between derivation and owner-relationship-commit).
+    owner.flags[SYSTEM_ID].followerSlots = owner.flags[SYSTEM_ID].followerSlots.map(s =>
+      s.id === 's2' ? { ...s, createdActorId: 'other-npc' } : s
+    );
+    return true;
+  };
+  // grantOwnership: true with no game.users configured fails the
+  // ownership-grant step AFTER owner-relationship-commit has already
+  // succeeded, forcing owner-relationship-commit's OWN rollback to run.
+  await assert.rejects(() => AllyAssignmentService.convertToFollower(owner, npc, 's1', { source: 'test', applyFollowerDerivation: derivation, grantOwnership: true }));
+  assert.equal(slotsOf(owner).find(s => s.id === 's1').createdActorId, null, 'this request\'s own slot must be reverted');
+  assert.equal(slotsOf(owner).find(s => s.id === 's2').createdActorId, 'other-npc', 'a concurrent, unrelated slot change must survive this request\'s own rollback');
+  assert.equal(owner.flags[SYSTEM_ID].followers.length, 0, 'this request\'s own follower link must be reverted');
+}
+
+// 74. A same-token retry after a successful conversion returns the
+// existing conversion directly instead of reprocessing — derivation is
+// never re-invoked and no duplicate follower record is created.
+{
+  resetFakeActorEngine();
+  asGM();
+  const owner = makeFakeActor({ id: 'owner-1', type: 'character', flags: { [SYSTEM_ID]: { followerSlots: [{ id: 's1', dependentKind: 'follower', createdActorId: null, templateChoices: ['utility'] }] } } });
+  const npc = makeFakeActor({ id: 'npc-1', type: 'npc' });
+  let derivationCallCount = 0;
+  const countingDerivation = async () => { derivationCallCount += 1; return true; };
+
+  const first = await AllyAssignmentService.convertToFollower(owner, npc, 's1', { source: 'test', requestToken: 'retry-token', applyFollowerDerivation: countingDerivation });
+  assert.equal(derivationCallCount, 1);
+  assert.equal(owner.flags[SYSTEM_ID].followers.length, 1);
+
+  const retry = await AllyAssignmentService.convertToFollower(owner, npc, 's1', { source: 'test', requestToken: 'retry-token', applyFollowerDerivation: countingDerivation });
+  assert.equal(retry.id, npc.id, 'the idempotent retry must return the same converted Actor');
+  assert.equal(derivationCallCount, 1, 'a same-token retry must never re-run derivation/materialization');
+  assert.equal(owner.flags[SYSTEM_ID].followers.length, 1, 'a same-token retry must never create a duplicate follower record');
+}
+
+// 75. A DIFFERENT token calling convertToFollower for the same
+// owner/target/slot after a successful conversion is rejected normally
+// (the slot is occupied / the target is already a follower) — it is
+// never mistaken for a matching retry.
+{
+  resetFakeActorEngine();
+  asGM();
+  const owner = makeFakeActor({ id: 'owner-1', type: 'character', flags: { [SYSTEM_ID]: { followerSlots: [{ id: 's1', dependentKind: 'follower', createdActorId: null, templateChoices: ['utility'] }] } } });
+  const npc = makeFakeActor({ id: 'npc-1', type: 'npc' });
+  await AllyAssignmentService.convertToFollower(owner, npc, 's1', { source: 'test', requestToken: 'token-A', ...OK_DERIVATION });
+  await assert.rejects(() => AllyAssignmentService.convertToFollower(owner, npc, 's1', { source: 'test', requestToken: 'token-B', ...OK_DERIVATION }));
+}
+
 console.log('GM existing NPC allies assignment tests passed.');
