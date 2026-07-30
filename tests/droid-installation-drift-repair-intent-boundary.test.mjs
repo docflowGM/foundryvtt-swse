@@ -601,9 +601,9 @@ async function intentFor(actor, selectedIssueIds) {
   const { ActorEngine } = await import('/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js');
   const { SnapshotManager } = await import('/systems/foundryvtt-swse/scripts/engine/progression/utils/snapshot-manager.js');
   const originalApply = ActorEngine.applyMutationPlan;
-  const originalRestore = SnapshotManager.restoreSnapshot;
+  const originalRestore = SnapshotManager.restoreSnapshotExact;
   ActorEngine.applyMutationPlan = async () => { throw new Error('simulated drift-repair mutation failure'); };
-  SnapshotManager.restoreSnapshot = async () => { throw new Error('simulated rollback failure'); };
+  SnapshotManager.restoreSnapshotExact = async () => { throw new Error('simulated rollback failure'); };
   try {
     const result = await repairDroidInstallationDrift(actor, intent);
     assert.equal(result.success, false);
@@ -611,7 +611,7 @@ async function intentFor(actor, selectedIssueIds) {
     assert.match(result.error, /rollback failed/);
   } finally {
     ActorEngine.applyMutationPlan = originalApply;
-    SnapshotManager.restoreSnapshot = originalRestore;
+    SnapshotManager.restoreSnapshotExact = originalRestore;
   }
 }
 

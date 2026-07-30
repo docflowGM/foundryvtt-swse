@@ -415,7 +415,16 @@ export async function applyReconciliation(actor, intent = {}, options = {}) {
   } catch (err) {
     SWSELogger.error('[DroidConvertedSystemReconciliationService] Reconciliation failed; attempting rollback:', err);
     try {
-      if (snapshot) await SnapshotManager.restoreSnapshot(actor, snapshot.timestamp);
+      if (snapshot) {
+        const restored = await SnapshotManager.restoreSnapshotExact(actor, snapshot.timestamp);
+        if (!restored.success) {
+          SWSELogger.error('[DroidConvertedSystemReconciliationService] Rollback after failed reconciliation ALSO failed:', restored);
+          return { success: false, code: 'RECONCILIATION_ROLLBACK_FAILED', error: `Reconciliation failed and rollback failed: ${err.message}`, actorId: actor.id };
+        }
+        if (!restored.exact) {
+          SWSELogger.warn('[DroidConvertedSystemReconciliationService] Rollback after failed reconciliation restored but is not identity-exact — manual review recommended.', restored);
+        }
+      }
     } catch (restoreErr) {
       SWSELogger.error('[DroidConvertedSystemReconciliationService] Rollback after failed reconciliation ALSO failed:', restoreErr);
       return { success: false, code: 'RECONCILIATION_ROLLBACK_FAILED', error: `Reconciliation failed and rollback failed: ${err.message}`, actorId: actor.id };
@@ -428,14 +437,21 @@ export async function applyReconciliation(actor, intent = {}, options = {}) {
  * Roll back a previous reconciliation using the snapshot taken at
  * reconciliation time. Restores the canonical ledger, droidSystems
  * projection, embedded Items, and reconciliation metadata to their exact
- * pre-reconciliation state via SnapshotManager's full-actor restore (see
- * scripts/engine/progression/utils/snapshot-manager.js and
- * scripts/governance/snapshot/snapshot-service.js — restoreFromSnapshot()
- * replaces root actor data AND deletes/recreates every Item/effect from
- * the snapshot, not a narrow field patch).
+ * pre-reconciliation state via SnapshotManager's exact, deletion-aware,
+ * id-preserving restore (see scripts/engine/progression/utils/snapshot-manager.js
+ * and scripts/governance/snapshot/snapshot-service.js).
+ *
+ * PHASE 10 ADDENDUM (P1-7): migrated to `restoreSnapshotExact()`. Exact
+ * flags restoration deletes `flags.swse.stockDroidReconciliation`
+ * entirely (it didn't exist pre-reconciliation), so the previous record
+ * is captured before the restore and reapplied in full — with
+ * `rolledBackAt` stamped on top — rather than re-stamping a bare new key,
+ * which would drop `snapshotTimestamp` and break a second rollback
+ * attempt (see the matching note in
+ * droid-statblock-conversion-service.js#rollbackConversion).
  *
  * @param {Actor} actor
- * @returns {Promise<{success: boolean, error?: string}>}
+ * @returns {Promise<{success: boolean, error?: string, exact?: boolean}>}
  */
 export async function rollbackReconciliation(actor) {
   if (!actor || actor.type !== 'droid') {
@@ -448,22 +464,35 @@ export async function rollbackReconciliation(actor) {
   if (!Number.isFinite(snapshotTimestamp)) {
     return { success: false, error: 'No reconciliation snapshot found on this actor — nothing to roll back.' };
   }
+  // Deep-cloned: root restoration mutates `actor.flags.swse.stockDroidReconciliation`
+  // in place (deleting individual leaf keys off the live object) when the
+  // pre-reconciliation snapshot's `flags.swse` branch already existed with
+  // other content — a bare reference here would observe itself stripped
+  // down to `{}` by the time it's read below (see the matching note in
+  // droid-statblock-conversion-service.js#rollbackConversion).
+  const previousReconciliationRecord = actor.flags?.swse?.stockDroidReconciliation
+    ? foundry.utils.deepClone(actor.flags.swse.stockDroidReconciliation)
+    : null;
 
   try {
-    const restored = await SnapshotManager.restoreSnapshot(actor, snapshotTimestamp);
-    if (!restored) {
-      return { success: false, error: 'Reconciliation snapshot could not be found or restored.' };
+    const restored = await SnapshotManager.restoreSnapshotExact(actor, snapshotTimestamp);
+    if (!restored.success) {
+      SWSELogger.error(`[DroidConvertedSystemReconciliationService] Rollback restore failed for ${actor.name} at step "${restored.failedStep}".`, restored);
+      return { success: false, error: restored.error || 'Reconciliation snapshot could not be found or restored.' };
     }
-    // restoreFromSnapshot() replaces system/items/effects but never
-    // touches actor.flags (confirmed by reading
-    // scripts/governance/snapshot/snapshot-service.js — see the matching
-    // note in droid-statblock-conversion-service.js#rollbackConversion) —
-    // stamp the rollback so stale reconciliation metadata doesn't linger.
+    if (!restored.exact) {
+      SWSELogger.warn(`[DroidConvertedSystemReconciliationService] Rollback for ${actor.name} restored but is not identity-exact.`, restored);
+    }
     await ActorEngine.applyMutationPlan(actor, {
-      set: { 'flags.swse.stockDroidReconciliation.rolledBackAt': Date.now() }
+      set: {
+        'flags.swse.stockDroidReconciliation': {
+          ...(previousReconciliationRecord ?? {}),
+          rolledBackAt: Date.now()
+        }
+      }
     }, { source: 'DroidConvertedSystemReconciliationService.rollbackReconciliation', validate: false, rederive: true });
-    SWSELogger.log(`[DroidConvertedSystemReconciliationService] Rolled back reconciliation for ${actor.name}.`);
-    return { success: true };
+    SWSELogger.log(`[DroidConvertedSystemReconciliationService] Rolled back reconciliation for ${actor.name}.`, { exact: restored.exact });
+    return { success: true, exact: restored.exact };
   } catch (err) {
     SWSELogger.error('[DroidConvertedSystemReconciliationService] Rollback failed:', err);
     return { success: false, error: err.message };

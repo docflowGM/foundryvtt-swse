@@ -211,10 +211,19 @@ export async function convertToPlayableDerived(actor, options = {}) {
   } catch (err) {
     SWSELogger.error('[DroidStatblockConversionService] Conversion failed; attempting rollback:', err);
     try {
-      if (snapshot) await SnapshotManager.restoreSnapshot(actor, snapshot.timestamp);
+      if (snapshot) {
+        const restored = await SnapshotManager.restoreSnapshotExact(actor, snapshot.timestamp);
+        if (!restored.success) {
+          SWSELogger.error('[DroidStatblockConversionService] Rollback after failed conversion ALSO failed:', restored);
+          return { success: false, code: 'CONVERSION_ROLLBACK_FAILED', error: `Conversion failed and rollback failed: ${err.message}`, actorId: actor.id };
+        }
+        if (!restored.exact) {
+          SWSELogger.warn('[DroidStatblockConversionService] Rollback after failed conversion restored but is not identity-exact — manual review recommended.', restored);
+        }
+      }
     } catch (restoreErr) {
       SWSELogger.error('[DroidStatblockConversionService] Rollback after failed conversion ALSO failed:', restoreErr);
-      return { success: false, error: `Conversion failed and rollback failed: ${err.message}` };
+      return { success: false, code: 'CONVERSION_ROLLBACK_FAILED', error: `Conversion failed and rollback failed: ${err.message}`, actorId: actor.id };
     }
     return { success: false, error: err.message };
   }
@@ -233,17 +242,28 @@ export async function convertToPlayableDerived(actor, options = {}) {
  * flags and conversion-time weapon neutralization are correctly undone
  * too) — this was already a genuine full-actor restore, not a narrow
  * snapshot pointer, so no new rollback mechanism was needed. It confirmed
- * one real gap: `restoreFromSnapshot` never touches `actor.flags` at all,
+ * one real gap: `restoreFromSnapshot` never touched `actor.flags` at all,
  * so `flags.swse.stockDroidConversion`'s own record would otherwise keep
  * showing a stale "converted at" timestamp for a droid that this call just
  * put back into stock-statblock mode — cosmetic only (resolveDroidCalculationMode()
  * never reads this flag; only `system.droidCalculationMode`, which IS
- * correctly restored), but confusing for diagnostics/sheet history. Fixed
- * by stamping `rolledBackAt` afterward through the same ActorEngine
- * authority, rather than leaving stale conversion metadata in place.
+ * correctly restored), but confusing for diagnostics/sheet history.
+ *
+ * PHASE 10 ADDENDUM (P1-7): snapshot restoration is now exact and
+ * deletion-aware (see snapshot-service.js), which means restoring flags
+ * to their pre-conversion state DELETES `flags.swse.stockDroidConversion`
+ * entirely (it didn't exist before the conversion snapshot was taken).
+ * Re-stamping only `rolledBackAt` afterward on a bare object would
+ * therefore silently drop `snapshotTimestamp`, breaking a second,
+ * idempotent rollback attempt (it reads `snapshotTimestamp` to find the
+ * snapshot again). The record is captured before the restore and
+ * reapplied in full, with `rolledBackAt` stamped on top, so repeated
+ * rollback stays stable. Migrated to `restoreSnapshotExact()` so a
+ * partial/inexact restore is reported honestly instead of silently
+ * treated as full success.
  *
  * @param {Actor} actor
- * @returns {Promise<{success: boolean, error?: string}>}
+ * @returns {Promise<{success: boolean, error?: string, exact?: boolean}>}
  */
 export async function rollbackConversion(actor) {
   if (!actor || actor.type !== 'droid') {
@@ -256,20 +276,39 @@ export async function rollbackConversion(actor) {
   if (!Number.isFinite(snapshotTimestamp)) {
     return { success: false, error: 'No conversion snapshot found on this actor — nothing to roll back.' };
   }
+  // Deep-cloned: root restoration mutates `actor.flags.swse.stockDroidConversion`
+  // in place (deleting individual leaf keys off the live object) when the
+  // pre-conversion snapshot's `flags.swse` branch already existed with
+  // other content (e.g. `stockDroidImport`) — a bare reference here would
+  // observe itself stripped down to `{}` by the time it's read below.
+  const previousConversionRecord = actor.flags?.swse?.stockDroidConversion
+    ? foundry.utils.deepClone(actor.flags.swse.stockDroidConversion)
+    : null;
 
   try {
-    const restored = await SnapshotManager.restoreSnapshot(actor, snapshotTimestamp);
-    if (!restored) {
-      return { success: false, error: 'Conversion snapshot could not be found or restored.' };
+    const restored = await SnapshotManager.restoreSnapshotExact(actor, snapshotTimestamp);
+    if (!restored.success) {
+      SWSELogger.error(`[DroidStatblockConversionService] Rollback restore failed for ${actor.name} at step "${restored.failedStep}".`, restored);
+      return { success: false, error: restored.error || 'Conversion snapshot could not be found or restored.' };
     }
-    // restoreSnapshot() replaces `system`/items/effects but never touches
-    // `actor.flags` — stamp the rollback explicitly so stale conversion
-    // metadata doesn't linger (see doc comment above).
+    if (!restored.exact) {
+      SWSELogger.warn(`[DroidStatblockConversionService] Rollback for ${actor.name} restored but is not identity-exact.`, restored);
+    }
+    // restoreSnapshotExact() restores flags to their pre-conversion state,
+    // which deletes `flags.swse.stockDroidConversion` outright — reapply
+    // the full previous record (not just a bare new key) with
+    // `rolledBackAt` stamped on top so a subsequent rollback attempt can
+    // still find `snapshotTimestamp` (see doc comment above).
     await ActorEngine.applyMutationPlan(actor, {
-      set: { 'flags.swse.stockDroidConversion.rolledBackAt': Date.now() }
+      set: {
+        'flags.swse.stockDroidConversion': {
+          ...(previousConversionRecord ?? {}),
+          rolledBackAt: Date.now()
+        }
+      }
     }, { source: 'DroidStatblockConversionService.rollbackConversion', validate: false, rederive: true });
-    SWSELogger.log(`[DroidStatblockConversionService] Rolled back conversion for ${actor.name}.`);
-    return { success: true };
+    SWSELogger.log(`[DroidStatblockConversionService] Rolled back conversion for ${actor.name}.`, { exact: restored.exact });
+    return { success: true, exact: restored.exact };
   } catch (err) {
     SWSELogger.error('[DroidStatblockConversionService] Rollback failed:', err);
     return { success: false, error: err.message };

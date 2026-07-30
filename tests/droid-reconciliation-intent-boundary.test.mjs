@@ -507,9 +507,9 @@ async function intentFor(actor, selectedCanonicalIds) {
   const { ActorEngine } = await import('/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js');
   const { SnapshotManager } = await import('/systems/foundryvtt-swse/scripts/engine/progression/utils/snapshot-manager.js');
   const originalApply = ActorEngine.applyMutationPlan;
-  const originalRestore = SnapshotManager.restoreSnapshot;
+  const originalRestore = SnapshotManager.restoreSnapshotExact;
   ActorEngine.applyMutationPlan = async () => { throw new Error('simulated mutation failure'); };
-  SnapshotManager.restoreSnapshot = async () => { throw new Error('simulated rollback failure'); };
+  SnapshotManager.restoreSnapshotExact = async () => { throw new Error('simulated rollback failure'); };
   try {
     const result = await applyReconciliation(actor, intent);
     assert.equal(result.success, false);
