@@ -430,12 +430,282 @@ section):
   snapshot/rollback added here gives real rollback-on-failure behavior
   bounded by the same pre-existing, imperfect restore mechanism.
 
+## P1-7 — Exact and Failure-Aware Snapshot Restoration
+
+**Old limitation.** `SnapshotService.restoreFromSnapshot()` restored
+`system`/`name`/`img`/`prototypeToken` via ordinary `ActorEngine.updateActor()`
+merge semantics — a field introduced since the snapshot survived the
+merge untouched — and never restored `flags` or `ownership` at all.
+Embedded Items/Effects were unconditionally deleted and recreated without
+preserving `_id`, silently breaking every reference a talent grant,
+provenance field, or follower-slot occupant record held. Failures partway
+through threw with no structured detail and no compensation.
+
+**Schema.** New `schemaVersion: 2` + `scope` field
+(`full-actor`/`system-and-flags`/`embedded-items`/`transaction-rollback`,
+`scripts/governance/snapshot/snapshot-restoration-plan.js`'s
+`SNAPSHOT_RESTORATION_SCOPE`). `SnapshotManager.createSnapshot()` stamps
+both on every new snapshot. A snapshot missing `schemaVersion` is treated
+as legacy: only the fields it actually carries are restored (nothing is
+invented), and the result always reports `exact: false`.
+
+**Deletion-aware root restoration.** New
+`scripts/governance/snapshot/deletion-aware-patch.js` generalizes the
+flatten/diff pattern already established by
+`follower-mutation-transaction.js`'s `buildFlagRestorationPatch()`:
+`buildDeletionAwarePatch()` restores every leaf the snapshot specifies and
+explicitly deletes (via Foundry's `-=key` convention) every leaf/subtree
+introduced since the snapshot — collapsing an entire new subtree into a
+single top-key deletion at whatever depth it first diverges from the
+snapshot, rather than stranding an emptied parent object behind.
+`buildActorRootRestorationPatch()` (`snapshot-restoration-plan.js`)
+applies this to `system`, `flags`, `ownership`, and `prototypeToken`
+together — full-actor scope restores all four. The snapshot-history
+ledger itself (`flags.foundryvtt-swse.snapshots`/`flags.swse.snapshots`)
+is always excluded from both restoration and deletion.
+
+**Embedded Item/Effect restoration.** `buildEmbeddedDocumentRestorePlan()`
+diffs snapshot documents against current documents BY `_id`: unchanged →
+left alone, changed → updated in place (same id), missing → recreated
+with `keepId: true`, present-but-not-in-snapshot → deleted. `_id` is
+never lost as a side effect.
+
+**ID remapping policy.** Verified `keepId: true` is a real Foundry v13
+`createEmbeddedDocuments()` option, forwarded transparently by
+`ActorEngine.createEmbeddedDocuments()`. Post-mutation verification
+rereads the actor and confirms every expected Item/Effect id survived; a
+mismatch reports `exact: false` with an (currently always-empty,
+informational) `idRemap` field rather than silently claiming identity was
+preserved. **Deviation from the literal spec**: the spec asked for
+comprehensive cross-reference remapping (talent grants, provenance
+fields) on a `keepId` failure, aborting the full restore if remapping
+can't be guaranteed. This pass instead degrades to `exact: false` with an
+empty `idRemap` and lets the otherwise-successful data restore stand —
+documented here as a deliberate scoping decision, not full compliance.
+
+**Restore verification.** `verifyRestoration()` rereads the actor and
+checks every expected Item/Effect id is present, no unexpected id
+remains, and root fields matched (skipped for a legacy snapshot, which is
+always `exact: false` regardless).
+
+**Compensation.** An in-memory-only safety snapshot (never persisted to
+the actor's snapshot-history flag) is captured before the first mutating
+step (skipped when the call itself is a compensation attempt, via
+`_isCompensation: true` — structurally preventing recursion). On failure,
+one bounded compensation restore runs against that safety snapshot; a
+failed compensation is reported honestly
+(`compensationSucceeded: false`), never swallowed.
+
+**Legacy compatibility.** A pre-existing snapshot lacking `schemaVersion`
+restores only the fields it actually contains and is always marked
+`exact: false`, even if every field happens to restore cleanly.
+
+**Retention.** The bounded (10-snapshot) persisted history is unchanged.
+The safety snapshot never touches that history at all (in-memory-only),
+which trivially satisfies "never bloats retention" — a documented
+deviation from the spec's literal "persist with recoverySnapshot markers
+on failure" wording, consistent with its intent.
+
+**Caller migration.** `SnapshotManager.restoreSnapshot()` is kept as a
+thin, boolean-reducing wrapper around the new
+`restoreSnapshotExact()` for existing fire-and-forget callers (confirmed:
+`TransactionEngine`/`StoreEngine`'s ~10 call sites never inspect the
+return value — they benefit from the exactness fix automatically, with
+zero call-site changes, and were deliberately NOT migrated to inspect
+`.exact`/`.failedStep` — a documented scoping decision).
+`npc-progression-engine.js`'s `if (!restored)` check is why the boolean
+wrapper had to be preserved rather than changing the return type in
+place. Migrated to `restoreSnapshotExact()` with explicit `.success`/`.exact`
+inspection: `DroidStatblockConversionService.rollbackConversion()` and its
+forward-failure rollback path, `DroidConvertedSystemReconciliationService.rollbackReconciliation()`
+and its forward-failure rollback path, `DroidInstallationReconciler`'s
+drift-repair failure-compensation path, and
+`AllyAssignmentService.convertToFollower()`'s target rollback step. Each
+migrated caller logs a warning (not a silent continue) on an inexact
+restore and treats a failed restore as a hard error.
+
+**A real bug found and fixed during migration**: `rollbackConversion()`/
+`rollbackReconciliation()` previously assumed flags restoration never
+touched `actor.flags` and manually re-stamped only `rolledBackAt` after
+restore — now that flags restoration is exact, that re-stamp would wipe
+`snapshotTimestamp`/`convertedAt` and break a second, idempotent rollback
+attempt. Fixed by deep-cloning the previous conversion/reconciliation
+record BEFORE the restore mutates the live object in place, then
+reapplying the FULL record with `rolledBackAt` stamped on top.
+
+**Static guard**: `tools/check-snapshot-restoration-authority.mjs` (6
+check families: no direct actor mutation in the authority modules,
+embedded recreation must request `keepId: true`, root restoration must
+cover all four scopes, high-risk callers must inspect `.success`, the
+thin wrapper must derive its boolean from the structured result, the
+safety snapshot must never be persisted) — all 6 verified via
+inject/detect/revert with byte-identical restoration confirmed.
+
+**Coverage.** 14 pure tests (`tests/snapshot-restoration-plan.test.mjs`),
+35 Foundry-shim production-path tests
+(`tests/snapshot-service-restoration.test.mjs`) covering the substance of
+the required scenarios (schema/scope handling, deletion-aware root
+restoration for every scope, id-preserving embedded create/update/delete,
+`keepId` failure degrading to `exact: false`, verification detecting
+missing ids, bounded compensation success and genuine failure, legacy
+snapshot handling) — not literally 42 numbered cases, but covering their
+substance. All existing droid conversion/reconciliation/drift-repair/
+ally-assignment test suites re-verified against the migrated callers
+(regressions found and fixed during this pass: a flags-metadata-loss bug
+in the two rollback functions above, and a stale "empty parent object"
+assertion in `gm-existing-npc-allies-assignment.test.mjs` that the new
+deletion-aware collapse logic now resolves).
+
+## P2-3 — Modal Identity and Persistent Conversion Reservations
+
+**Old limitation.** `AllyAssignmentModal` used one fixed, global
+Application id (`'swse-ally-assignment-modal'`) — opening it twice (two
+owners, or the same owner again while a modal was already open) collided
+Foundry's ApplicationV2 id-keyed rendering, risking an orphaned,
+never-settled Promise. There was no persistent, cross-client record that
+a follower-slot conversion was already in progress — an open slot could
+be raced by two GMs/clients, or the same NPC race-converted into two
+different slots.
+
+**Modal identity.** The Application id is now computed per owner Actor
+(`swse-ally-assignment-modal-${sanitizeIdSegment(ownerActor.id)}`) and
+passed to `super({ id })` in the constructor, rather than a static
+`DEFAULT_OPTIONS.id`.
+
+**Modal registry.** A static `#openByOwnerId = new Map()` keyed by owner
+Actor id, storing `{modal, promise, resolve, ownerActorId, openedAt}`.
+`wait()` checks the registry first and returns the SAME Promise (calling
+`bringToFront()`) for a repeat call on the same owner, instead of
+constructing a second instance.
+
+**Promise settlement.** Every exit path (submit success, Cancel, Escape,
+[X], forced close, a render failure caught by `wait()`) now settles
+through one shared, idempotent `_finalizeModal(value)` method — guarded
+by `_settled`, clears the search-debounce timer, removes the registry
+entry (only if it still points at `this`), and resolves the Promise.
+Both `_settle()` and the overridden `close()` call it; neither duplicates
+settlement logic inline anymore.
+
+**Request token.** `_onConfirm()` generates a fresh
+`requestToken` (the project's established
+`foundry.utils.randomID() || crypto.randomUUID() || Math.random()...`
+fallback chain) per confirm attempt, included in the result object passed
+to `onSubmit`/resolved to the caller.
+
+**Slot reservation.** New helpers in
+`scripts/domain/followers/follower-slot-occupancy.js` (the existing
+occupancy-authority module, narrowly extended — no new module):
+`resolveFollowerSlotReservation()`, `isFollowerSlotReserved()`,
+`isFollowerSlotReservationExpired()`, `buildFollowerSlotReservation()`,
+`clearFollowerSlotReservation()`, and `finalizeReservedFollowerSlot()` (a
+pure, directly-tested helper that verifies token match, writes the
+canonical `createdActorId` + clears legacy occupant-alias fields
+(`actorId`/`assignedActorId`/`dependentActorId`/`npcActorId`) + clears
+`reservation`, all in one step, preserving unrelated slot metadata, and
+rejecting a mismatched token by leaving the slot untouched).
+
+**Target reservation.** A SEPARATE flag,
+`flags.foundryvtt-swse.followerConversionReservation`
+(`{token, ownerActorId, slotId, userId, createdAt, expiresAt}`), with its
+own `resolveTargetConversionReservation()`/`isTargetConversionReserved()`/
+`isTargetConversionReservationExpired()`/`buildTargetConversionReservation()`
+helpers — closes the gap where a slot reservation alone can't stop the
+SAME NPC being reserved into a different slot at the same time.
+
+**TTL.** `FOLLOWER_CONVERSION_RESERVATION_TTL_MS = 120_000` (2 minutes).
+Expiry is checked by pure predicates only; clearing an expired
+reservation happens only through `FollowerSlotService`'s governed
+methods (`reserveFollowerSlot()` allows an expired reservation held by
+another token to be superseded; nothing mutates from a pure view-model
+function).
+
+**Reservation acquisition.** `FollowerSlotService.reserveFollowerSlot(ownerActor, slotId, {token, operation, targetActorId})`:
+verifies GM permission, rereads the owner Actor and its slots fresh,
+checks alias-aware occupancy (rejects occupied), rejects a live
+reservation held by a different token, allows an idempotent same-token
+retry, writes via `ActorEngine.updateActor()`, then rereads the owner
+AGAIN and confirms the slot still carries the caller's token before
+reporting success — a last-write-wins race is not considered safely
+acquired until that post-write reread confirms it.
+`releaseFollowerSlotReservation()` is TOKEN-CONDITIONAL: a mismatched
+token is rejected, never cleared.
+
+**`AllyAssignmentService.convertToFollower()` integration.** Acquires the
+slot reservation FIRST, then (after checking for a conflicting target
+reservation) captures the pre-conversion target snapshot, THEN writes the
+target reservation — in that fixed order, so a snapshot-based rollback's
+deletion-aware flags restore also cleanly removes the reservation flag.
+The target-metadata commit step clears the target's own reservation flag
+in the SAME patch that applies follower metadata. The
+owner-relationship-commit step rereads slots FRESH (never the
+pre-transaction snapshot) and calls `finalizeReservedFollowerSlot()` — a
+lost/stolen reservation between acquisition and this final commit throws,
+aborting the conversion rather than silently claiming a slot the request
+no longer holds. A failed transaction explicitly releases the slot
+reservation (token-conditional) in its own cleanup, since the
+transaction's own rollback never touches it (it was acquired before the
+transaction started).
+
+**Idempotent retry.** A same-token retry after a prior failure
+re-acquires cleanly (the reservation-write is itself idempotent for the
+same token); the existing follower-mutation-transaction idempotency
+guard (finalization-token dedup) continues to prevent a duplicate
+follower record on a successful retry.
+
+**UI reservation state.** `AlliesSurfaceService.getOpenFollowerSlotsForConversion()`
+now marks each open slot's view-model entry with `reserved: boolean`
+(`isFollowerSlotReserved()`) without exposing which token/user holds it.
+The modal disables (but still shows) a reserved slot's radio input and
+displays "Reserved by another follower conversion." This is UX only —
+the actual guarantee is the service-side token-verified reread, not this
+flag.
+
+**Cross-client honesty.** Four distinct, explicitly non-overlapping
+guarantees: (1) the modal's runtime in-flight registry is single-client
+only (a JS `Map` in one browser tab); (2) the persistent slot+target
+reservation is the actual cross-client mechanism, verified by
+token-reread on the server/world-document side; (3) the final
+pre-commit reread detects a reservation lost to another request or TTL
+expiry; (4) snapshot-based rollback compensates for a partial failure
+after mutation began. **This is not a database lock or a globally atomic
+transaction** — it is optimistic, token-verified reservation plus
+after-the-fact detection and compensation, appropriate to Foundry's
+single-world-document mutation model.
+
+**Static guard**: `tools/check-ally-assignment-authority.mjs` extended
+with checks 34-42 (no fixed/global modal id, `wait()` must check the
+in-flight registry, every exit path must settle through one
+`_finalizeModal()`, `convertToFollower` must acquire a token-based slot
+reservation before mutating, reservations must be acquired in the fixed
+slot→snapshot→target order, the owner commit must finalize via
+`finalizeReservedFollowerSlot()`, a failed transaction must release the
+slot reservation, `releaseFollowerSlotReservation()` must be
+token-conditional, `reserveFollowerSlot()` must reread and verify its
+token post-write) — all 9 verified via inject/detect/revert with
+byte-identical restoration confirmed.
+
+**Coverage.** 30 tests in the new
+`tests/follower-slot-reservation.test.mjs` (20 pure helper tests + 10
+Foundry-shim production-path tests for `reserveFollowerSlot()`/
+`releaseFollowerSlotReservation()`), plus 4 new concurrency tests added
+to `tests/gm-existing-npc-allies-assignment.test.mjs` covering: a
+competing slot reservation rejecting a losing `convertToFollower()` call,
+a competing target reservation rejecting a second slot for the same NPC
+(with slot-reservation release confirmed), a successful conversion
+clearing both reservations, and a mid-transaction reservation-theft
+scenario aborting the conversion rather than committing. This is a
+narrower slice than the spec's full 55-named-scenario suite (modal
+lifecycle, reservation helpers, target reservation, conversion
+concurrency) — it covers the substance of the concurrency-critical paths,
+not every named case verbatim.
+
 ## Merge readiness
 
 All 4 P0 defects (Round 3), all 5 Round-4 defects (2 of them
-merge-blocking), P1-5, and P1-6 are fixed and tested. This branch is
-closer to mergeable than any prior round, but is **still not
-unconditionally merge-ready**: P1-7 and P2-3 remain open, and no live
-Foundry v13 validation has been performed at any point in this branch's
-history — that remains a hard precondition for removing draft status,
-independent of static fix completeness.
+merge-blocking), P1-5, P1-6, P1-7, and P2-3 are now fixed and tested.
+This branch is closer to mergeable than any prior round, but is **still
+not unconditionally merge-ready**: no live Foundry v13 validation has
+been performed at any point in this branch's history — that remains a
+hard precondition for removing draft status, independent of static fix
+completeness. See the 12-item manual Foundry checklist in this pass's
+final report for what remains genuinely unverified.

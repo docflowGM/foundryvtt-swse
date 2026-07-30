@@ -465,3 +465,29 @@ All of Phase 1's runtime test matrix still applies. Additionally:
 
 No live Foundry v13 instance was launched. Everything above is Node-only
 static/unit verification, same posture as Phase 1.
+
+## P1-7 / P2-3 addendum
+
+This phase-2 branch's final correction pass added two further items, on
+top of everything documented above — see
+`docs/audits/droid-authority-static-review-round-3-correction.md`'s
+"P1-7 — Exact and Failure-Aware Snapshot Restoration" and "P2-3 — Modal
+Identity and Persistent Conversion Reservations" sections for the full
+detail. In short:
+
+- **P1-7** replaced this phase's original (already-improved-over-Phase-1)
+  snapshot restore with an exact, deletion-aware, id-preserving,
+  failure-aware version (`scripts/governance/snapshot/snapshot-service.js`,
+  `snapshot-restoration-plan.js`, `deletion-aware-patch.js`), migrated the
+  4 highest-risk droid/ally-assignment rollback callers to inspect its
+  structured result, and added
+  `tools/check-snapshot-restoration-authority.mjs`.
+- **P2-3** made the Allies "assign existing NPC" modal's Application id
+  and Promise settlement collision-safe, and added persistent,
+  token-verified follower-slot/target conversion reservations to
+  `AllyAssignmentService.convertToFollower()` so two concurrent
+  conversion requests can no longer race the same slot or the same
+  target NPC.
+
+Both baselines (progression-integrity 44, architecture-boundaries 37)
+remain unchanged after this addendum.

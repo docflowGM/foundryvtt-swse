@@ -1627,3 +1627,36 @@ whether a bounded "Restore Pre-Conversion NPC" GM action is later wanted
 now that a real snapshot is taken, and live Foundry click-through of the
 entire modal) remain explicitly documented, follow-up-eligible decisions
 rather than silent gaps.
+
+## P1-7 / P2-3 addendum
+
+Two further correction items land in this same feature area — full
+detail lives in
+`docs/audits/droid-authority-static-review-round-3-correction.md`'s
+"P1-7" and "P2-3" sections; summarized here since both touch
+`convertToFollower()` directly:
+
+- **P1-7** made `SnapshotManager.restoreSnapshotExact()`'s Actor snapshot
+  restoration exact (deletion-aware root restoration covering
+  system/flags/ownership/prototypeToken, id-preserving embedded
+  Item/Effect restoration, structured success/failure results with
+  bounded compensation on failure). `convertToFollower()`'s target
+  rollback step was migrated to it, and now inspects `.success`/`.exact`
+  rather than treating the old boolean-ish `restoreSnapshot()` result as
+  sufficient.
+- **P2-3** added persistent, token-verified follower-slot and target
+  conversion reservations to `convertToFollower()` (acquired in a fixed
+  slot→snapshot→target order, verified again immediately before the
+  final owner commit, released token-conditionally on failure), and made
+  `AllyAssignmentModal`'s Application id and Promise settlement
+  collision-safe across repeat/concurrent `wait()` calls for different
+  (or the same) owner Actor.
+
+Both are covered by dedicated new tests
+(`tests/snapshot-restoration-plan.test.mjs`,
+`tests/snapshot-service-restoration.test.mjs`,
+`tests/follower-slot-reservation.test.mjs`) plus new concurrency cases
+added directly to this feature's own
+`tests/gm-existing-npc-allies-assignment.test.mjs`, and by static guard
+extensions to `tools/check-snapshot-restoration-authority.mjs` (new) and
+`tools/check-ally-assignment-authority.mjs` (checks 34-42).
