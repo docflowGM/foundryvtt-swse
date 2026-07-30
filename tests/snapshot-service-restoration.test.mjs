@@ -520,5 +520,272 @@ function snapshotOf(actor, overrides = {}) {
   assert.equal(result.code, 'SNAPSHOT_NOT_FOUND');
 }
 
+// --- ROUND-2 CORRECTION tests (exact-head audit findings) ---
+// The tests above all predate the round-2 correction pass; they exercise
+// forward/backward restoration mechanics but never proved that a
+// SILENT (non-throwing) root or content divergence is actually detected,
+// that scopes are genuinely enforced on mutation (not merely on paper),
+// or that Actor identity/schema/scope are validated. These do.
+
+// 36. A root update that "succeeds" (no throw) but leaves the actor's
+// root state genuinely different from what the patch itself should have
+// produced is caught by real verification — not a boolean copy of
+// "was root in scope" — and downgrades exact to false.
+{
+  const SnapshotService = await freshService();
+  const actor = actorLike();
+  const snapshot = snapshotOf(actor);
+  actor.system.hp.value = 999;
+  const { ActorEngine } = await import('/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js');
+  const original = ActorEngine.updateActor;
+  // Simulate Foundry accepting the update call but not actually applying it.
+  ActorEngine.updateActor = async (a) => a;
+  try {
+    const result = await SnapshotService.restoreFromSnapshot(actor, snapshot);
+    assert.equal(result.success, true, 'no error was thrown, so this is a "successful" restore per the old (buggy) contract');
+    assert.equal(result.verification.rootMatched, false, 'root state must be genuinely compared, not assumed');
+    assert.equal(result.verification.systemMatched, false);
+    assert.equal(result.exact, false, 'a root update that silently failed to apply must never report exact: true');
+  } finally {
+    ActorEngine.updateActor = original;
+  }
+}
+
+// 37. Ownership/flags/prototypeToken drift is independently detected —
+// each *Matched field reflects an actual comparison, not a shared boolean.
+{
+  const SnapshotService = await freshService();
+  const actor = actorLike({ ownership: { default: 0, userA: 3 }, prototypeToken: { name: 'Original' } });
+  const snapshot = snapshotOf(actor);
+  const { ActorEngine } = await import('/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js');
+  const original = ActorEngine.updateActor;
+  // Root patch is computed and "applied," but the fake silently drops
+  // ownership/prototypeToken writes specifically.
+  ActorEngine.updateActor = async (a, data) => {
+    for (const [path, value] of Object.entries(data)) {
+      if (path.startsWith('ownership') || path.startsWith('prototypeToken')) continue;
+      const parts = path.split('.');
+      let node = a;
+      for (let i = 0; i < parts.length - 1; i++) node = node[parts[i]] ??= {};
+      node[parts[parts.length - 1]] = value;
+    }
+    return a;
+  };
+  actor.ownership.userA = 1;
+  actor.prototypeToken.name = 'Drifted';
+  try {
+    const result = await SnapshotService.restoreFromSnapshot(actor, snapshot);
+    assert.equal(result.verification.ownershipMatched, false);
+    assert.equal(result.verification.prototypeTokenMatched, false);
+    assert.equal(result.verification.nameMatched, true, 'fields that DID apply correctly must independently report matched');
+    assert.equal(result.exact, false);
+  } finally {
+    ActorEngine.updateActor = original;
+  }
+}
+
+// 38. An Item update that "succeeds" (no throw) but does not actually
+// change the Item's content is detected via CONTENT comparison, not just
+// id-set presence.
+{
+  const SnapshotService = await freshService();
+  const actor = actorLike({ items: [{ _id: 'item-1', id: 'item-1', name: 'Blaster', system: { damage: '3d8' } }] });
+  const snapshot = snapshotOf(actor);
+  actor.items[0].system.damage = '1d4';
+  const { ActorEngine } = await import('/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js');
+  const original = ActorEngine.updateEmbeddedDocuments;
+  ActorEngine.updateEmbeddedDocuments = async (a, embeddedName, updates) => updates; // no-op: id stays, content does not change
+  try {
+    const result = await SnapshotService.restoreFromSnapshot(actor, snapshot);
+    assert.equal(result.success, true);
+    assert.equal(actor.items[0].system.damage, '1d4', 'the fake genuinely left the content unchanged');
+    assert.deepEqual(result.verification.itemContentMismatches, ['item-1']);
+    assert.equal(result.verification.itemsMatched, false, 'id presence alone must not be enough to report items matched');
+    assert.equal(result.exact, false);
+  } finally {
+    ActorEngine.updateEmbeddedDocuments = original;
+  }
+}
+
+// 39. An Active Effect content mismatch is detected the same way.
+{
+  const SnapshotService = await freshService();
+  const actor = actorLike({ effects: [{ _id: 'effect-1', id: 'effect-1', label: 'Buff', changes: [{ value: 1 }] }] });
+  const snapshot = snapshotOf(actor);
+  actor.effects[0].changes = [{ value: 99 }];
+  const { ActorEngine } = await import('/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js');
+  const original = ActorEngine.updateEmbeddedDocuments;
+  ActorEngine.updateEmbeddedDocuments = async (a, embeddedName, updates) => updates;
+  try {
+    const result = await SnapshotService.restoreFromSnapshot(actor, snapshot);
+    assert.deepEqual(result.verification.effectContentMismatches, ['effect-1']);
+    assert.equal(result.verification.effectsMatched, false);
+    assert.equal(result.exact, false);
+  } finally {
+    ActorEngine.updateEmbeddedDocuments = original;
+  }
+}
+
+// 40. A '_stats'-only difference (Foundry-managed bookkeeping) is
+// deliberately excluded from content comparison and does not, by itself,
+// downgrade exactness.
+{
+  const SnapshotService = await freshService();
+  const actor = actorLike({ items: [{ _id: 'item-1', id: 'item-1', name: 'Blaster', _stats: { modifiedTime: 1 } }] });
+  const snapshot = snapshotOf(actor);
+  actor.items[0]._stats = { modifiedTime: 999 };
+  const result = await SnapshotService.restoreFromSnapshot(actor, snapshot);
+  assert.equal(result.verification.itemContentMismatches.length, 0);
+  assert.equal(result.verification.itemsMatched, true);
+}
+
+// 41. scope: 'system-and-flags' never touches Items or Active Effects,
+// even though the snapshot's own item/effect arrays differ from the
+// actor's current ones — verified both by absence of mutation AND by
+// the ActorEngine call log never invoking an Item/Effect mutation method.
+{
+  const SnapshotService = await freshService();
+  const actor = actorLike({
+    items: [{ _id: 'item-1', id: 'item-1', name: 'Live Item' }],
+    effects: [{ _id: 'effect-1', id: 'effect-1', label: 'Live Effect' }]
+  });
+  const snapshot = snapshotOf(actor, { scope: 'system-and-flags', items: [], effects: [] });
+  actor.system.hp.value = 999;
+  const { fakeActorEngineCallLog } = await import('./helpers/foundry-shim/fakes/actor-engine.fake.mjs');
+  const result = await SnapshotService.restoreFromSnapshot(actor, snapshot);
+  assert.equal(result.success, true);
+  assert.equal(actor.system.hp.value, 10, 'system IS in scope and must still be restored');
+  assert.equal(actor.items.length, 1, 'Items must be completely untouched by a system-and-flags scope');
+  assert.equal(actor.effects.length, 1, 'Active Effects must be completely untouched by a system-and-flags scope');
+  const embeddedCalls = fakeActorEngineCallLog.filter(c => c.method !== 'updateActor');
+  assert.equal(embeddedCalls.length, 0, 'no embedded-document mutation call may be issued at all for this scope');
+  assert.equal(result.verification.itemsMatched, true, 'items are outside this scope, so they trivially "match" (never checked, never touched)');
+}
+
+// 42. scope: 'embedded-items' never touches root fields, flags, or
+// Active Effects.
+{
+  const SnapshotService = await freshService();
+  const actor = actorLike({
+    flags: { swse: { live: true } },
+    effects: [{ _id: 'effect-1', id: 'effect-1', label: 'Live Effect' }]
+  });
+  const snapshot = snapshotOf(actor, { scope: 'embedded-items', flags: { swse: { snapshotted: true } }, effects: [] });
+  actor.name = 'Renamed Live';
+  const result = await SnapshotService.restoreFromSnapshot(actor, snapshot);
+  assert.equal(result.success, true);
+  assert.equal(actor.name, 'Renamed Live', 'root fields are outside this scope and must never be touched');
+  assert.equal(actor.flags.swse.live, true, 'flags are outside this scope and must never be touched');
+  assert.equal(actor.effects.length, 1, 'Active Effects are outside this scope and must never be touched');
+}
+
+// 43. An unsupported/forged scope value is rejected outright, before any
+// mutation, rather than silently falling through to full-actor behavior.
+{
+  const SnapshotService = await freshService();
+  const actor = actorLike();
+  const snapshot = snapshotOf(actor, { scope: 'not-a-real-scope' });
+  actor.system.hp.value = 999;
+  const result = await SnapshotService.restoreFromSnapshot(actor, snapshot);
+  assert.equal(result.success, false);
+  assert.equal(result.code, 'SNAPSHOT_SCOPE_UNSUPPORTED');
+  assert.equal(actor.system.hp.value, 999, 'no mutation may occur once the scope is rejected');
+}
+
+// 44. A snapshot captured for a DIFFERENT Actor is rejected before any
+// mutation, never silently applied to this one.
+{
+  const SnapshotService = await freshService();
+  const actor = actorLike({ id: 'actor-1' });
+  const snapshot = snapshotOf(actor, { actorId: 'actor-999' });
+  actor.system.hp.value = 999;
+  const result = await SnapshotService.restoreFromSnapshot(actor, snapshot);
+  assert.equal(result.success, false);
+  assert.equal(result.code, 'SNAPSHOT_ACTOR_MISMATCH');
+  assert.equal(actor.system.hp.value, 999, 'no mutation may occur once Actor identity is rejected');
+}
+
+// 45. A matching actorId is accepted (identity check is not overbroad).
+{
+  const SnapshotService = await freshService();
+  const actor = actorLike({ id: 'actor-1' });
+  const snapshot = snapshotOf(actor, { actorId: 'actor-1' });
+  actor.system.hp.value = 999;
+  const result = await SnapshotService.restoreFromSnapshot(actor, snapshot);
+  assert.equal(result.success, true);
+  assert.equal(actor.system.hp.value, 10);
+}
+
+// 46. An unsupported schemaVersion is rejected outright.
+{
+  const SnapshotService = await freshService();
+  const actor = actorLike();
+  const snapshot = snapshotOf(actor, { schemaVersion: 999 });
+  actor.system.hp.value = 999;
+  const result = await SnapshotService.restoreFromSnapshot(actor, snapshot);
+  assert.equal(result.success, false);
+  assert.equal(result.code, 'SNAPSHOT_SCHEMA_UNSUPPORTED');
+  assert.equal(actor.system.hp.value, 999, 'no mutation may occur once schema is rejected');
+}
+
+// 47. options.requireExact fails an inexact restore CLOSED — running the
+// same bounded compensation pass a thrown error gets — instead of
+// returning a soft {success: true, exact: false}.
+{
+  const SnapshotService = await freshService();
+  const actor = actorLike({ items: [{ _id: 'item-1', id: 'item-1', name: 'Original' }] });
+  const snapshot = snapshotOf(actor);
+  snapshot.items[0]._forceIdConflict = true;
+  actor.items = [];
+  const result = await SnapshotService.restoreFromSnapshot(actor, snapshot, { requireExact: true });
+  assert.equal(result.success, false, 'requireExact must convert an inexact-but-otherwise-successful outcome into a failure');
+  assert.equal(result.exact, false);
+  assert.equal(result.code, 'SNAPSHOT_IDENTITY_MISMATCH');
+  assert.equal(result.compensationAttempted, true, 'the fail-closed path must run the SAME compensation logic a thrown mutation error gets');
+}
+
+// 48. Without requireExact, the exact same inexact scenario still reports
+// a soft success (existing, non-rollback-purpose callers are unaffected).
+{
+  const SnapshotService = await freshService();
+  const actor = actorLike({ items: [{ _id: 'item-1', id: 'item-1', name: 'Original' }] });
+  const snapshot = snapshotOf(actor);
+  snapshot.items[0]._forceIdConflict = true;
+  actor.items = [];
+  const result = await SnapshotService.restoreFromSnapshot(actor, snapshot);
+  assert.equal(result.success, true);
+  assert.equal(result.exact, false);
+  assert.equal(result.usable, false);
+  assert.equal(result.requiresManualReview, true);
+}
+
+// 49. Compensation itself must be exact to be reported as succeeded — a
+// compensation restore that "succeeds" (no throw) but is itself
+// identity-inexact (e.g. it can't reacquire the exact original Item id
+// either) is reported honestly as compensationSucceeded: false, never as
+// a clean recovery.
+{
+  const SnapshotService = await freshService();
+  const actor = actorLike({ items: [{ _id: 'item-1', id: 'item-1', name: 'Original' }] });
+  // Forward restore: snapshot has no items (deletes item-1), then fails on effects.
+  const snapshot = snapshotOf(actor, { items: [], effects: [{ _id: 'effect-1', id: 'effect-1' }] });
+  const { ActorEngine } = await import('/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js');
+  const originalCreate = ActorEngine.createEmbeddedDocuments;
+  ActorEngine.createEmbeddedDocuments = async (a, embeddedName, data, options) => {
+    if (embeddedName === 'ActiveEffect') throw new Error('simulated late failure to trigger compensation');
+    // Compensation will try to recreate 'item-1' with keepId — force Foundry to refuse it.
+    return originalCreate(a, embeddedName, data.map(d => ({ ...d, _forceIdConflict: true })), options);
+  };
+  try {
+    const result = await SnapshotService.restoreFromSnapshot(actor, snapshot);
+    assert.equal(result.success, false);
+    assert.equal(result.compensationAttempted, true);
+    assert.equal(result.compensationSucceeded, false, 'compensation "succeeded" at the data level but was not identity-exact, so it must not be reported as a clean recovery');
+    assert.equal(result.compensationExact, false);
+  } finally {
+    ActorEngine.createEmbeddedDocuments = originalCreate;
+  }
+}
+
 resetFoundryShimGlobals();
 console.log('SnapshotService exact restoration (P1-7) production-path tests passed.');
