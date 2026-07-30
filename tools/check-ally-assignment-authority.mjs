@@ -139,6 +139,38 @@
  *       requires real form semantics), and the modal script must wire a
  *       `submit` listener that calls `preventDefault()`.
  *
+ * P2-3 additions (persistent follower-slot/target conversion reservations,
+ * collision-safe modal identity):
+ *   34. The modal must not use a fixed/global static Application id — no
+ *       literal `id: '...'` in DEFAULT_OPTIONS; the id must be computed
+ *       per owner Actor.
+ *   35. The modal must maintain a static in-flight registry keyed by owner
+ *       Actor id (`#openByOwnerId`), and `wait()` must consult it before
+ *       constructing a new instance.
+ *   36. Every modal exit path must settle its Promise through ONE shared,
+ *       idempotent `_finalizeModal()` method — both `_settle()` and
+ *       `close()` must call it, never duplicate settlement logic inline.
+ *   37. convertToFollower must acquire a request token and reserve the
+ *       follower slot via `FollowerSlotService.reserveFollowerSlot()`
+ *       before any target/owner mutation.
+ *   38. Reservations must be acquired in a fixed order: slot reservation,
+ *       then the pre-conversion target snapshot, then the target-side
+ *       conversion reservation — never the reverse.
+ *   39. The owner-relationship-commit step must finalize the slot via
+ *       `finalizeReservedFollowerSlot()` (token-verified), never the plain,
+ *       non-reservation-aware slot-update builder.
+ *   40. A failed conversion transaction must release the slot reservation
+ *       explicitly (the transaction's own rollback never touches it, since
+ *       it was acquired before the transaction started).
+ *   41. `FollowerSlotService.releaseFollowerSlotReservation()` must be
+ *       token-conditional — comparing the live reservation's token against
+ *       the caller's and rejecting a mismatch, never clearing
+ *       unconditionally.
+ *   42. `FollowerSlotService.reserveFollowerSlot()` must reread the owner
+ *       Actor after writing the reservation and verify the token survived
+ *       before reporting success — a last-write-wins race is not
+ *       considered safely acquired otherwise.
+ *
  * Report-only by default; --strict exits non-zero on any violation.
  */
 
@@ -357,6 +389,63 @@ function main() {
         file: relModalPath,
         detail: "expected an addEventListener('submit', ...) handler that calls event.preventDefault() before invoking _onConfirm — otherwise the browser's default form submission (a full navigation) would fire"
       });
+    }
+
+    // Check 34: the modal must NOT use a fixed/global static Application id
+    // — `DEFAULT_OPTIONS` (or its static class field) must not contain a
+    // literal `id: 'swse-ally-assignment-modal'` (or any other bare string
+    // literal for `id`). Scoping the id per owner Actor is what lets two
+    // owners each have an open modal at once without one instance's DOM
+    // element/render lifecycle colliding with the other's.
+    if (/id\s*:\s*['"][^'"]*['"]/.test(modalSource)) {
+      violations.push({
+        check: '34: modal must not use a fixed/global static Application id',
+        file: relModalPath,
+        detail: 'found a literal id: "..." string — the Application id must be computed per owner Actor (e.g. in the constructor, passed to super()), never a single fixed id shared by every instance'
+      });
+    }
+
+    // Check 35: a static in-flight registry keyed by owner Actor id must
+    // exist, and wait() must consult it BEFORE constructing a new
+    // instance — otherwise a second wait() call for the same owner while
+    // one modal is already open creates a second, independent Promise
+    // that can go permanently unsettled.
+    if (!/static\s+#openByOwnerId\s*=\s*new\s+Map\s*\(\s*\)/.test(modalSource)) {
+      violations.push({
+        check: '35: modal must maintain a static in-flight registry keyed by owner Actor id',
+        file: relModalPath,
+        detail: 'expected a `static #openByOwnerId = new Map()` field — required to detect and reuse an already-open modal for the same owner'
+      });
+    }
+    const waitMethodMatch = modalSource.match(/static\s+async\s+wait\s*\([\s\S]*?\n  \}/);
+    if (!waitMethodMatch || !/#openByOwnerId\s*\.\s*get\s*\(/.test(waitMethodMatch[0])) {
+      violations.push({
+        check: '35: wait() must check the in-flight registry before creating a new modal',
+        file: relModalPath,
+        detail: 'expected wait() to read #openByOwnerId for the owner Actor id and return the existing Promise/refocus the existing modal instead of constructing a second instance'
+      });
+    }
+
+    // Check 36: every exit path (submit success, Cancel, Escape, [X],
+    // forced close) must settle the modal's Promise through ONE shared,
+    // idempotent method — never duplicate settlement logic inline in both
+    // _settle() and close(), which is exactly what let a Promise go
+    // unsettled (or get double-resolved) on some exit paths historically.
+    if (!/_finalizeModal\s*\(/.test(modalSource)) {
+      violations.push({
+        check: '36: modal must settle its Promise through one shared _finalizeModal() method',
+        file: relModalPath,
+        detail: 'expected a _finalizeModal(value) method, called by BOTH _settle() and close(), guarded by _settled — every exit path must funnel through the same settlement logic'
+      });
+    } else {
+      const closeMethodMatch = modalSource.match(/async\s+close\s*\([\s\S]*?\n  \}/);
+      if (!closeMethodMatch || !/_finalizeModal\s*\(/.test(closeMethodMatch[0])) {
+        violations.push({
+          check: '36: close() must call _finalizeModal()',
+          file: relModalPath,
+          detail: 'expected close() (the Escape/[X]/forced-close path) to call _finalizeModal(null) rather than duplicating its own independent settlement logic'
+        });
+      }
     }
   }
 
@@ -680,12 +769,106 @@ function main() {
         detail: 'expected the commit closure to assign previousOwnership BEFORE its ActorEngine.updateActor call — capturing it afterward would snapshot the already-mutated ownership map'
       });
     }
+
+    // PHASE 10 ADDENDUM (P2-3) — persistent slot/target conversion
+    // reservations.
+    //
+    // Check 37: convertToFollower must acquire a request token and reserve
+    // the follower slot via FollowerSlotService.reserveFollowerSlot BEFORE
+    // any target/owner mutation — never proceed on a bare eligibility
+    // check alone.
+    if (!convertMatch || !/requestToken\s*=[\s\S]*?FollowerSlotService\s*\.\s*reserveFollowerSlot\s*\(/.test(convertBody)) {
+      violations.push({
+        check: '37: convertToFollower must acquire a slot reservation with a request token before mutating',
+        file: relPath,
+        detail: 'expected convertToFollower to generate/accept a requestToken and call FollowerSlotService.reserveFollowerSlot(...) before any target/owner ActorEngine mutation'
+      });
+    }
+
+    // Check 38: the slot reservation must be acquired BEFORE the target
+    // reservation (fixed order — slot first, then target), and the target
+    // reservation write must happen AFTER the pre-conversion snapshot is
+    // captured (so restoreSnapshotExact's deletion-aware flags restore
+    // also cleanly removes the reservation flag on rollback).
+    const slotReserveIdx = convertBody.indexOf('FollowerSlotService.reserveFollowerSlot');
+    // Anchored on the constant reference used at the ACQUISITION write
+    // site specifically (`[TARGET_CONVERSION_RESERVATION_FLAG_PATH]:`) —
+    // not the bare string 'followerConversionReservation', which also
+    // appears later in the function's own cleanup deletion key
+    // (`flags.${SYSTEM_ID}.-=followerConversionReservation`) and would
+    // otherwise match the wrong occurrence.
+    const targetReserveIdx = convertBody.indexOf('TARGET_CONVERSION_RESERVATION_FLAG_PATH]:');
+    const snapshotIdx = convertBody.indexOf('createSnapshot');
+    if (slotReserveIdx === -1 || targetReserveIdx === -1 || snapshotIdx === -1 ||
+        !(slotReserveIdx < targetReserveIdx && snapshotIdx < targetReserveIdx)) {
+      violations.push({
+        check: '38: reservations must be acquired in a fixed order (slot, then snapshot, then target)',
+        file: relPath,
+        detail: 'expected the slot reservation to be acquired first, the pre-conversion target snapshot captured next, and only then the target-side conversion reservation written — never the reverse order'
+      });
+    }
+
+    // Check 39: the owner-relationship-commit step must finalize the slot
+    // via finalizeReservedFollowerSlot() (token-verified), never write the
+    // occupant with the plain, non-reservation-aware buildFollowerSlotUpdate.
+    const ownerCommitStepMatch = convertBody.match(/name:\s*['"]owner-relationship-commit['"][\s\S]*?rollback:/);
+    if (!ownerCommitStepMatch || !/finalizeReservedFollowerSlot\s*\(/.test(ownerCommitStepMatch[0])) {
+      violations.push({
+        check: '39: the owner-relationship-commit step must finalize the slot via finalizeReservedFollowerSlot()',
+        file: relPath,
+        detail: 'expected the owner-relationship-commit step to call finalizeReservedFollowerSlot(...) so a lost/stolen reservation aborts the conversion instead of silently committing an occupant the request no longer holds the reservation for'
+      });
+    }
+
+    // Check 40: on a failed transaction, the slot reservation must be
+    // released — but only the release call itself is required here;
+    // whether it is actually token-conditional is enforced by check 41 on
+    // follower-slot-service.js (releaseFollowerSlotReservation's own body).
+    if (!/transaction\.ok[\s\S]{0,400}releaseFollowerSlotReservation\s*\(/.test(convertBody)) {
+      violations.push({
+        check: '40: a failed conversion transaction must release the slot reservation',
+        file: relPath,
+        detail: 'expected the `if (!transaction.ok)` failure branch to call FollowerSlotService.releaseFollowerSlotReservation(...) — the transaction\'s own rollback never touches the slot reservation, since it was acquired before the transaction started'
+      });
+    }
+  }
+
+  const FOLLOWER_SLOT_SERVICE_FILE = path.join(ROOT, 'scripts/engine/crew/follower-slot-service.js');
+  if (fs.existsSync(FOLLOWER_SLOT_SERVICE_FILE)) {
+    scanned.push(FOLLOWER_SLOT_SERVICE_FILE);
+    const rawSlotServiceSource = read(FOLLOWER_SLOT_SERVICE_FILE);
+    const slotServiceSource = stripCommentsAndStrings(rawSlotServiceSource);
+    const relSlotServicePath = path.relative(ROOT, FOLLOWER_SLOT_SERVICE_FILE);
+
+    // Check 41: releaseFollowerSlotReservation must be TOKEN-CONDITIONAL —
+    // it must compare the live reservation's token against the caller's
+    // token and reject a mismatch, never clear a reservation unconditionally.
+    const releaseMethodMatch = slotServiceSource.match(/static\s+async\s+releaseFollowerSlotReservation\s*\([\s\S]*?\n  \}/);
+    if (!releaseMethodMatch || !/reservation\.token\s*!==\s*token/.test(releaseMethodMatch[0])) {
+      violations.push({
+        check: '41: releaseFollowerSlotReservation must be token-conditional',
+        file: relSlotServicePath,
+        detail: 'expected releaseFollowerSlotReservation to compare reservation.token !== token and reject a mismatch — a losing request must never clear the winning request\'s reservation'
+      });
+    }
+
+    // Check 42: reserveFollowerSlot must reread the owner AFTER writing the
+    // reservation and verify the token survived — a last-write-wins race
+    // is not safely acquired until this post-write reread confirms it.
+    const reserveMethodMatch = slotServiceSource.match(/static\s+async\s+reserveFollowerSlot\s*\([\s\S]*?\n  \}/);
+    if (!reserveMethodMatch || !/rereadOwner|rereadReservation/.test(reserveMethodMatch[0])) {
+      violations.push({
+        check: '42: reserveFollowerSlot must reread and verify its token after writing',
+        file: relSlotServicePath,
+        detail: 'expected reserveFollowerSlot to reread the owner Actor after the reservation write and confirm the slot still carries the caller\'s token before reporting success'
+      });
+    }
   }
 
   console.log('='.repeat(72));
   console.log('  GM EXISTING NPC ASSIGNMENT AUTHORITY GUARD');
   console.log('='.repeat(72));
-  console.log(`\nScanned ${scanned.length} file(s) against 33 checks.\n`);
+  console.log(`\nScanned ${scanned.length} file(s) against 42 checks.\n`);
 
   if (violations.length === 0) {
     console.log('No violations found — existing-NPC assignment remains governed, GM-only, and correctly separates relationship-only assignment from mechanical conversion.');

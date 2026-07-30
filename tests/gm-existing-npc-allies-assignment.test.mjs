@@ -441,16 +441,21 @@ function slotsOf(owner) {
 }
 
 // 32. Owner relationship projections (followers, followerSlots, ownedActors)
-// commit in ONE governed ActorEngine.updateActor call.
+// commit in ONE governed ActorEngine.updateActor call — the FINAL
+// relationship commit, distinct from the P2-3 slot-reservation write that
+// now legitimately precedes it (see follower-slot-service.js#reserveFollowerSlot,
+// which itself commits through ActorEngine against the SAME owner Actor to
+// persist the reservation before any target/owner mutation begins).
 {
   resetFakeActorEngine();
   asGM();
   const owner = makeFakeActor({ id: 'owner-1', type: 'character', flags: { [SYSTEM_ID]: { followerSlots: [{ id: 's1', dependentKind: 'follower', createdActorId: null, templateChoices: ['utility'] }] } } });
   const npc = makeFakeActor({ id: 'npc-1', type: 'npc' });
   await AllyAssignmentService.convertToFollower(owner, npc, 's1', { source: 'test', ...OK_DERIVATION });
-  const ownerCommits = fakeActorEngineCallLog.filter(c => c.actorId === 'owner-1');
-  assert.equal(ownerCommits.length, 1, 'the owner side must commit exactly once for this conversion');
-  const keys = Object.keys(ownerCommits[0].data);
+  const ownerCommits = fakeActorEngineCallLog.filter(c => c.actorId === 'owner-1' && c.method === 'updateActor');
+  const finalCommits = ownerCommits.filter(c => Object.keys(c.data).includes('system.ownedActors'));
+  assert.equal(finalCommits.length, 1, 'the owner side must commit its final relationship update exactly once for this conversion');
+  const keys = Object.keys(finalCommits[0].data);
   assert.ok(keys.some(k => k.includes('followers')));
   assert.ok(keys.some(k => k.includes('followerSlots')));
   assert.ok(keys.includes('system.ownedActors'));
@@ -833,6 +838,105 @@ function slotsOf(owner) {
   await AllyAssignmentService.convertToFollower(owner, npc, 's1', { source: 'test', ...OK_DERIVATION });
   assert.equal(owner.flags[SYSTEM_ID].followers.length, 1, 'retry must not duplicate the follower record');
   assert.equal(slotsOf(owner)[0].createdActorId, 'npc-1');
+}
+
+// ---------------------------------------------------------------------
+// P2-3 — persistent follower-slot/target conversion reservations
+// ---------------------------------------------------------------------
+
+// 66. Two concurrent conversion attempts for the SAME owner/slot: the
+// second one is rejected as reserved, and the winner's conversion still
+// succeeds cleanly (this simulates a two-client race by calling
+// reserveFollowerSlot directly with a competing token BEFORE the first
+// convertToFollower call's own internal reservation acquisition runs, so
+// convertToFollower must see its own token lose).
+{
+  resetFakeActorEngine();
+  asGM();
+  const owner = makeFakeActor({ id: 'owner-1', type: 'character', flags: { [SYSTEM_ID]: { followerSlots: [{ id: 's1', dependentKind: 'follower', createdActorId: null, templateChoices: ['utility'] }] } } });
+  const npc = makeFakeActor({ id: 'npc-1', type: 'npc' });
+  const { FollowerSlotService } = await import('../scripts/engine/crew/follower-slot-service.js');
+  const competingReservation = await FollowerSlotService.reserveFollowerSlot(owner, 's1', { token: 'other-client-token' });
+  assert.equal(competingReservation.success, true);
+
+  await assert.rejects(
+    () => AllyAssignmentService.convertToFollower(owner, npc, 's1', { source: 'test', requestToken: 'losing-token', ...OK_DERIVATION }),
+    /reserved/
+  );
+  assert.equal(slotsOf(owner)[0].createdActorId, null, 'the losing request must not claim the slot');
+  assert.equal(slotsOf(owner)[0].reservation.token, 'other-client-token', 'the winning reservation must survive the losing request\'s failed attempt');
+  assert.equal(npc.system.isFollower, undefined, 'the losing request must never mutate the target');
+}
+
+// 67. Two concurrent conversion attempts targeting the SAME NPC into
+// DIFFERENT slots: the second must be rejected by the target-side
+// reservation even though its own slot is open.
+{
+  resetFakeActorEngine();
+  asGM();
+  const owner = makeFakeActor({
+    id: 'owner-1', type: 'character',
+    flags: {
+      [SYSTEM_ID]: {
+        followerSlots: [
+          { id: 's1', dependentKind: 'follower', createdActorId: null, templateChoices: ['utility'] },
+          { id: 's2', dependentKind: 'follower', createdActorId: null, templateChoices: ['utility'] }
+        ]
+      }
+    }
+  });
+  const npc = makeFakeActor({ id: 'npc-1', type: 'npc' });
+  const { TARGET_CONVERSION_RESERVATION_FLAG_PATH, buildTargetConversionReservation } = await import('../scripts/domain/followers/follower-slot-occupancy.js');
+  // Simulate another in-flight request having already reserved this same
+  // target for slot s1.
+  npc.flags[SYSTEM_ID].followerConversionReservation = buildTargetConversionReservation({ token: 'other-client-token', ownerActorId: 'owner-1', slotId: 's1', userId: 'gm-2' });
+
+  await assert.rejects(
+    () => AllyAssignmentService.convertToFollower(owner, npc, 's2', { source: 'test', requestToken: 'losing-token', ...OK_DERIVATION }),
+    /already reserved/
+  );
+  assert.equal(slotsOf(owner).find(s => s.id === 's2').createdActorId, null, 'the second slot must remain open — never mutated when the target reservation is lost');
+  assert.equal(slotsOf(owner).find(s => s.id === 's2').reservation, undefined, 'losing the target race must release the just-acquired slot reservation for s2');
+  assert.equal(npc.flags[SYSTEM_ID].followerConversionReservation.token, 'other-client-token', 'the winning target reservation must be untouched');
+}
+
+// 68. A successful conversion clears both the slot reservation and the
+// target reservation as part of its normal commit — no leaked reservation
+// survives a successful conversion.
+{
+  resetFakeActorEngine();
+  asGM();
+  const owner = makeFakeActor({ id: 'owner-1', type: 'character', flags: { [SYSTEM_ID]: { followerSlots: [{ id: 's1', dependentKind: 'follower', createdActorId: null, templateChoices: ['utility'] }] } } });
+  const npc = makeFakeActor({ id: 'npc-1', type: 'npc' });
+  await AllyAssignmentService.convertToFollower(owner, npc, 's1', { source: 'test', ...OK_DERIVATION });
+  assert.equal(slotsOf(owner)[0].reservation, undefined, 'slot reservation must be cleared on success');
+  assert.equal(npc.flags[SYSTEM_ID].followerConversionReservation, undefined, 'target reservation must be cleared on success');
+  assert.equal(slotsOf(owner)[0].createdActorId, 'npc-1');
+}
+
+// 69. If the slot reservation is somehow lost between acquisition and the
+// final owner commit (simulated by another actor stealing the slot's
+// reservation with a different token mid-transaction), the conversion
+// aborts rather than silently claiming a slot it no longer holds.
+{
+  resetFakeActorEngine();
+  asGM();
+  const owner = makeFakeActor({ id: 'owner-1', type: 'character', flags: { [SYSTEM_ID]: { followerSlots: [{ id: 's1', dependentKind: 'follower', createdActorId: null, templateChoices: ['utility'] }] } } });
+  const npc = makeFakeActor({ id: 'npc-1', type: 'npc' });
+  // A derivation stub that, mid-transaction, steals the slot's reservation
+  // out from under the in-progress conversion by overwriting it with a
+  // different token — this simulates a lost-reservation race window.
+  const stealingDerivation = async () => {
+    owner.flags[SYSTEM_ID].followerSlots = owner.flags[SYSTEM_ID].followerSlots.map(s =>
+      s.id === 's1' ? { ...s, reservation: { token: 'thief-token', expiresAt: Date.now() + 60000 } } : s
+    );
+    return true;
+  };
+  await assert.rejects(
+    () => AllyAssignmentService.convertToFollower(owner, npc, 's1', { source: 'test', applyFollowerDerivation: stealingDerivation }),
+    /reservation was lost/
+  );
+  assert.equal(slotsOf(owner)[0].createdActorId, null, 'a lost reservation must abort the conversion, never claim the slot');
 }
 
 console.log('GM existing NPC allies assignment tests passed.');
