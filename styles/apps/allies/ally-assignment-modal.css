@@ -396,6 +396,17 @@
   box-shadow: 0 0 0 1px var(--swse-npcmodal-border-active), 0 0 12px rgba(0, 170, 255, 0.3);
 }
 
+.swse-assignment-slot-card.is-reserved {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.swse-assignment-slot-card__reserved-notice {
+  font-size: 10.5px;
+  font-style: italic;
+  color: var(--swse-npcmodal-muted, #9aa0a6);
+}
+
 .swse-assignment-slot-card input[type="radio"] {
   position: absolute;
   opacity: 0;

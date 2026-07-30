@@ -145,12 +145,13 @@
         {{#if hasFollowerSlots}}
           <div class="swse-assignment-slot-grid">
             {{#each followerSlots}}
-              <label class="swse-assignment-slot-card{{#if this.isSelected}} is-selected{{/if}}">
+              <label class="swse-assignment-slot-card{{#if this.isSelected}} is-selected{{/if}}{{#if this.reserved}} is-reserved{{/if}}">
                 <input
                   type="radio"
                   name="followerSlotId"
                   value="{{this.id}}"
                   {{checked this.isSelected}}
+                  {{#if this.radioDisabled}}disabled{{/if}}
                   {{#if ../submitting}}disabled{{/if}}
                 />
                 <span class="swse-assignment-slot-card__body">
@@ -158,6 +159,9 @@
                   <span class="swse-assignment-slot-card__badge{{#if (eq this.sourceType 'gm-grant')}} is-manual{{else}} is-talent{{/if}}">
                     {{#if (eq this.sourceType 'gm-grant')}}GM GRANTED{{else}}TALENT{{/if}}
                   </span>
+                  {{#if this.reserved}}
+                    <span class="swse-assignment-slot-card__reserved-notice">Reserved by another follower conversion</span>
+                  {{/if}}
                 </span>
                 <span class="swse-assignment-radio-indicator" aria-hidden="true"></span>
               </label>

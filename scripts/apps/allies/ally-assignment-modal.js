@@ -33,10 +33,30 @@ function getAppRoot(app) {
   return document.getElementById?.(app?.id) || null;
 }
 
+/** DOM/CSS-id-safe projection of an Actor id (Foundry ids are already safe, this is defense-in-depth). */
+function sanitizeIdSegment(value) {
+  return String(value ?? '').replace(/[^a-zA-Z0-9]/g, '');
+}
+
 export class AllyAssignmentModal extends SWSEApplicationV2 {
+  // PHASE 10 ADDENDUM (P2-3) — one in-flight modal per owner Actor.
+  //
+  // A single fixed Application id ('swse-ally-assignment-modal') meant
+  // opening the modal for a second owner Actor (or a second time for the
+  // same owner) while one was already open collided with Foundry's
+  // ApplicationV2 id-keyed rendering — the second `wait()` call created a
+  // NEW Promise that could go permanently unsettled once the two
+  // instances fought over the same DOM element, silently orphaning a
+  // caller that was `await`-ing it. `#openByOwnerId` tracks the one
+  // in-flight modal per owner Actor id; `wait()` re-focuses and returns
+  // the SAME Promise for a repeat call on the same owner instead of
+  // constructing a second one, and every exit path settles that Promise
+  // exactly once via `_finalizeModal()` before removing the registry
+  // entry.
+  static #openByOwnerId = new Map();
+
   static DEFAULT_OPTIONS = {
     ...SWSEApplicationV2.DEFAULT_OPTIONS,
-    id: 'swse-ally-assignment-modal',
     classes: [
       ...(SWSEApplicationV2.DEFAULT_OPTIONS?.classes || []),
       'swse-ally-assignment-modal-app'
@@ -61,7 +81,10 @@ export class AllyAssignmentModal extends SWSEApplicationV2 {
   };
 
   constructor({ ownerActor = null, preselectedActorId = null, resolve = null, onSubmit = null } = {}) {
-    super({});
+    // Scoped per owner Actor (not the old fixed 'swse-ally-assignment-modal')
+    // so two owners can each have an open modal at once without one
+    // instance's DOM element/render lifecycle colliding with the other's.
+    super({ id: `swse-ally-assignment-modal-${sanitizeIdSegment(ownerActor?.id) || 'unknown'}` });
     this.ownerActor = ownerActor;
     this.state = buildDefaultAllyAssignmentModalState({ targetActorId: preselectedActorId || null });
     this._viewModel = { candidates: [], followerSlots: [], hasOpenFollowerSlots: false };
@@ -91,20 +114,49 @@ export class AllyAssignmentModal extends SWSEApplicationV2 {
   /**
    * Open the modal for `ownerActor`, optionally preselecting a target Actor
    * (used by drag/drop). Resolves with a normalized
-   * `{ targetActorId, assignmentMode, followerSlotId, templateType, grantOwnership }`
+   * `{ targetActorId, assignmentMode, followerSlotId, templateType, grantOwnership, requestToken }`
    * result, or `null` on cancel/close without a mutation.
    *
    * `onSubmit`, if supplied, is called with that same result object when the
    * GM confirms; the modal awaits it and only closes if it resolves
    * `{ok: true}` — a `{ok: false, error}` result reopens the same modal
    * state with `error` displayed instead of losing the GM's selections.
+   *
+   * A repeat call for the SAME owner Actor while its modal is still open
+   * re-focuses that modal and returns its existing Promise rather than
+   * constructing a second instance — see `#openByOwnerId`'s doc comment.
    */
   static async wait({ ownerActor = null, preselectedActorId = null, onSubmit = null } = {}) {
     if (!ownerActor) return null;
-    return new Promise((resolve) => {
-      const modal = new this({ ownerActor, preselectedActorId, resolve, onSubmit });
-      modal.render(true);
+
+    const existing = this.#openByOwnerId.get(ownerActor.id);
+    if (existing) {
+      existing.modal.bringToFront?.();
+      return existing.promise;
+    }
+
+    let resolveFn;
+    const promise = new Promise((resolve) => { resolveFn = resolve; });
+    const modal = new this({ ownerActor, preselectedActorId, resolve: resolveFn, onSubmit });
+    this.#openByOwnerId.set(ownerActor.id, {
+      modal,
+      promise,
+      resolve: resolveFn,
+      ownerActorId: ownerActor.id,
+      openedAt: Date.now()
     });
+
+    try {
+      await modal.render(true);
+    } catch (err) {
+      // A render failure must not leave an orphaned registry entry that
+      // blocks every future wait() call for this owner — finalize(null)
+      // both settles the Promise and removes the entry.
+      modal._finalizeModal(null);
+      throw err;
+    }
+
+    return promise;
   }
 
   async _prepareContext(options) {
@@ -131,9 +183,17 @@ export class AllyAssignmentModal extends SWSEApplicationV2 {
       && !visibleCandidates.some(c => c.id === selectedCandidate.id);
     const allyModeAvailable = isAllyAssignmentModeAvailable(selectedCandidate, 'ally');
     const followerModeAvailable = isAllyAssignmentModeAvailable(selectedCandidate, 'follower');
+    // A reserved-but-open slot (another in-progress conversion) is shown,
+    // not hidden — the GM can see it exists — but its radio input is
+    // disabled so it can't be selected into a request that the service
+    // would just reject at commit time anyway. This is UX only; the real
+    // guarantee is FollowerSlotService.reserveFollowerSlot()'s own
+    // token-verified reread, not this flag (see AlliesSurfaceService's
+    // getOpenFollowerSlotsForConversion() doc comment).
     const followerSlotCards = (viewModel.followerSlots || []).map(slot => ({
       ...slot,
-      isSelected: slot.id === this.state.followerSlotId
+      isSelected: slot.id === this.state.followerSlotId,
+      radioDisabled: slot.reserved === true
     }));
 
     const selectedSlot = findFollowerSlotById(viewModel, this.state.followerSlotId);
@@ -350,7 +410,12 @@ export class AllyAssignmentModal extends SWSEApplicationV2 {
     this._submitError = null;
     this.state = { ...this.state, submitting: true };
     this._lockControls();
-    const result = buildAllyAssignmentResult(this.state);
+    // A fresh token per confirm attempt — carried through to
+    // FollowerSlotService.reserveFollowerSlot()/AllyAssignmentService so a
+    // retried submission (after a transient failure) never gets confused
+    // with a different attempt's in-flight slot/target reservation.
+    const requestToken = foundry?.utils?.randomID?.() || globalThis.crypto?.randomUUID?.() || Math.random().toString(36).slice(2);
+    const result = { ...buildAllyAssignmentResult(this.state), requestToken };
 
     if (this._onSubmit) {
       let outcome = null;
@@ -375,26 +440,42 @@ export class AllyAssignmentModal extends SWSEApplicationV2 {
     await this._settle(result);
   }
 
-  async _settle(value) {
+  /**
+   * Settle this modal's Promise exactly once and remove it from the
+   * in-flight owner registry, regardless of which exit path triggered it
+   * (submit, Cancel, Escape, the window's [X], a forced close, or a
+   * render failure caught by `wait()`). Idempotent — a second call after
+   * the first is a no-op, so `_settle()` and `close()` can each call this
+   * unconditionally without double-resolving the Promise or double-
+   * deleting a DIFFERENT (newer) registry entry for the same owner.
+   */
+  _finalizeModal(value) {
     if (this._settled) return;
     this._settled = true;
+
+    if (this._searchDebounceTimer) {
+      clearTimeout(this._searchDebounceTimer);
+      this._searchDebounceTimer = null;
+    }
+
+    const ownerId = this.ownerActor?.id;
+    if (ownerId && AllyAssignmentModal.#openByOwnerId.get(ownerId)?.modal === this) {
+      AllyAssignmentModal.#openByOwnerId.delete(ownerId);
+    }
+
     const resolver = this._resolve;
     this._resolve = null;
-    try {
-      resolver?.(value);
-    } finally {
-      await this.close({ force: true });
-    }
+    resolver?.(value);
+  }
+
+  async _settle(value) {
+    this._finalizeModal(value);
+    await this.close({ force: true });
   }
 
   /** Escape / [X] close without a prior confirm resolves null and mutates nothing. */
   async close(options = {}) {
-    if (!this._settled) {
-      this._settled = true;
-      const resolver = this._resolve;
-      this._resolve = null;
-      resolver?.(null);
-    }
+    this._finalizeModal(null);
     return super.close(options);
   }
 }
