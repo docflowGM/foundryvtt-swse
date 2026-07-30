@@ -3,12 +3,35 @@
  * Saves and restores complete actor states for rollback/undo functionality.
  * Essential safety mechanism for level-up and character creation.
  * PHASE 10: All mutations route through ActorEngine for governance.
+ *
+ * PHASE 10 ADDENDUM (P1-7) — Exact, Failure-Aware Snapshot Restoration.
+ * `createSnapshot()` now stamps every new snapshot with `schemaVersion: 2`
+ * and `scope: 'full-actor'` — `actor.toObject(false)` already captured
+ * flags/ownership/prototypeToken/embedded-document source data before
+ * this change; the gap was entirely in the restore path never reading
+ * them (see snapshot-service.js's doc comment for the full story). A
+ * snapshot recorded before this change (or from any other caller
+ * constructing its own ad-hoc snapshot shape) has no `schemaVersion` and
+ * is treated as legacy by the restore path: only the fields it actually
+ * contains are restored, and the result always reports `exact: false`.
+ *
+ * `restoreSnapshot()` keeps its original boolean-ish return contract
+ * unchanged for existing callers that only ever check truthiness — it
+ * now internally delegates to `restoreSnapshotExact()`, so every caller
+ * gets deletion-aware root restoration and id-preserving embedded-
+ * document restoration "for free," with zero call-site changes required.
+ * `restoreSnapshotExact()` is new: it returns the FULL structured result
+ * (`success`, `exact`, `failedStep`, `compensationAttempted`, etc.) — use
+ * it for any caller that must honestly distinguish a partial/inexact
+ * restore from a full one (see docs/audits/droid-authority-consolidation-phase-2.md's
+ * "P1-7" section for the list of high-risk callers migrated to it).
  */
 
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 
 const SYSTEM_ID = 'foundryvtt-swse';
+const SNAPSHOT_SCHEMA_VERSION = 2;
 
 function stripNestedSnapshots(actorData = {}) {
     const data = foundry.utils.deepClone(actorData || {});
@@ -32,6 +55,8 @@ export class SnapshotManager {
     static async createSnapshot(actor, label = 'Character Snapshot') {
         try {
             const snapshot = {
+                schemaVersion: SNAPSHOT_SCHEMA_VERSION,
+                scope: 'full-actor',
                 timestamp: Date.now(),
                 label,
                 actorId: actor.id,
@@ -104,50 +129,89 @@ export class SnapshotManager {
     }
 
     /**
-     * Restore actor to a previous snapshot
-     * PHASE 10: Routes through ActorEngine.restoreFromSnapshot() for atomic governance
+     * Restore actor to a previous snapshot, exactly and honestly.
+     * PHASE 10 ADDENDUM (P1-7): delegates to SnapshotService.restoreFromSnapshot()
+     * directly (not through ActorEngine.restoreFromSnapshot()'s indirection —
+     * ActorEngine's own version of that method exists for OTHER direct
+     * callers and still delegates to the same SnapshotService), and returns
+     * the FULL structured result: `{success, exact, failedStep,
+     * compensationAttempted, compensationSucceeded, verification, ...}`.
+     * The snapshot-history ledger itself is never at risk of being touched
+     * — SnapshotService's restoration plan always excludes
+     * `flags.foundryvtt-swse.snapshots`/`flags.swse.snapshots` from both
+     * restoration and deletion, regardless of what a given snapshot's own
+     * (already-history-stripped) `actorData.flags` contains.
+     *
+     * @param {Actor} actor - The actor
+     * @param {number|string} identifier - Timestamp or array index
+     * @returns {Promise<object>} the structured restoration result — see
+     *   scripts/governance/snapshot/snapshot-service.js's doc comment for
+     *   the full shape.
+     */
+    static async restoreSnapshotExact(actor, identifier) {
+        const snapshot = this.getSnapshot(actor, identifier);
+
+        if (!snapshot) {
+            SWSELogger.warn(`Snapshot not found for actor ${actor.name}`);
+            return { success: false, code: 'SNAPSHOT_NOT_FOUND', exact: false, actorId: actor?.id ?? null, error: 'Snapshot not found.' };
+        }
+
+        const actorDataToRestore = foundry.utils.deepClone(snapshot.actorData ?? {});
+        const restoreSnapshotShape = {
+            schemaVersion: snapshot.schemaVersion,
+            scope: snapshot.scope ?? 'full-actor',
+            name: actorDataToRestore.name,
+            img: actorDataToRestore.img,
+            system: actorDataToRestore.system,
+            flags: actorDataToRestore.flags,
+            ownership: actorDataToRestore.ownership,
+            prototypeToken: actorDataToRestore.prototypeToken,
+            items: actorDataToRestore.items,
+            effects: actorDataToRestore.effects
+        };
+
+        // Dynamic import avoids a static circular dependency the same way
+        // ActorEngine.restoreFromSnapshot() already does.
+        const { SnapshotService } = await import('/systems/foundryvtt-swse/scripts/governance/snapshot/snapshot-service.js');
+        const result = await SnapshotService.restoreFromSnapshot(actor, restoreSnapshotShape, {
+            meta: { guardKey: 'snapshot-restore' }
+        });
+
+        if (result.success) {
+            const dateStr = new Date(snapshot.timestamp).toLocaleString();
+            SWSELogger.log(`Restored snapshot: "${snapshot.label}" (${dateStr})`, { exact: result.exact });
+        } else {
+            SWSELogger.error(`Failed to restore snapshot "${snapshot.label}" for ${actor.name}`, result);
+        }
+
+        return { ...result, snapshotId: snapshot.timestamp };
+    }
+
+    /**
+     * Restore actor to a previous snapshot.
+     * PHASE 10: Routes through restoreSnapshotExact() for exact,
+     * deletion-aware, id-preserving restoration. Kept as a thin
+     * boolean-returning wrapper for existing callers that only ever check
+     * truthiness — every one of them benefits from the exactness fix
+     * automatically, with zero call-site changes required. Callers that
+     * need to honestly distinguish a partial/inexact restore from a full
+     * one must use `restoreSnapshotExact()` instead and inspect its
+     * structured result — see docs/audits/droid-authority-consolidation-phase-2.md's
+     * "P1-7" section for the migrated high-risk callers.
      * @param {Actor} actor - The actor
      * @param {number|string} identifier - Timestamp or array index
      * @returns {Promise<boolean>} True if restored, false otherwise
      */
     static async restoreSnapshot(actor, identifier) {
         try {
-            const snapshot = this.getSnapshot(actor, identifier);
+            const result = await this.restoreSnapshotExact(actor, identifier);
 
-            if (!snapshot) {
-                SWSELogger.warn(`Snapshot not found for actor ${actor.name}`);
-                ui.notifications?.error('Snapshot not found.');
+            if (!result.success) {
+                ui.notifications?.error(result.error ? `Failed to restore: ${result.error}` : 'Snapshot not found.');
                 return false;
             }
 
-            // Full restore - replace actor data with snapshot
-            // This resets: items, system, flags (except snapshots themselves)
-            const actorDataToRestore = foundry.utils.deepClone(snapshot.actorData);
-
-            // Preserve the snapshots flag so we don't lose history
-            const preservedSnapshots = actor.getFlag('foundryvtt-swse', 'snapshots');
-
-            // PHASE 10: Route through ActorEngine with snapshot metadata
-            // ActorEngine.restoreFromSnapshot() handles atomic restoration
-            if (ActorEngine?.restoreFromSnapshot) {
-                await ActorEngine.restoreFromSnapshot(actor, actorDataToRestore, {
-                    meta: { guardKey: 'snapshot-restore' }
-                });
-            } else {
-                throw new Error('ActorEngine.restoreFromSnapshot is required for snapshot restoration. Ensure ActorEngine is initialized before snapshot restore.');
-            }
-
-            // Restore snapshots flag
-            if (preservedSnapshots) {
-                // Route through ActorEngine for mutation authority
-                await ActorEngine.updateActor(actor, {
-                  'flags.foundryvtt-swse.snapshots': preservedSnapshots
-                }, { source: 'snapshot-restore', skipValidation: true });
-            }
-
-            const dateStr = new Date(snapshot.timestamp).toLocaleString();
-            SWSELogger.log(`Restored snapshot: "${snapshot.label}" (${dateStr})`);
-            ui.notifications?.info(`✓ Restored to: ${snapshot.label}`);
+            ui.notifications?.info(`✓ Restored to: ${this.getSnapshot(actor, identifier)?.label ?? 'previous snapshot'}`);
 
             return true;
         } catch (err) {
