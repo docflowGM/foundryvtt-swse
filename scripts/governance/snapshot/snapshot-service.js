@@ -24,6 +24,49 @@
  * partway through were reported as thrown errors with no structured
  * detail and no compensation.
  *
+ * ROUND-2 CORRECTION PASS (exact-head audit findings). The first version
+ * of this exactness fix had its own gaps, found and closed here:
+ *
+ *   - `verifyRestoration()` used to copy a `verifyRoot` BOOLEAN straight
+ *     into `rootMatched`/`ownershipMatched`/`flagsMatched` — it never
+ *     actually compared anything. `exact` was computed WITHOUT those
+ *     fields at all, so a root update that silently failed, was
+ *     normalized differently by Foundry, or left stale nested data could
+ *     still report `exact: true`. Fixed: after mutating, the actor is
+ *     rereread and its root state is compared against
+ *     `applyFlatPatch(preMutationRoot, rootPatch)` — the state the patch
+ *     ITSELF claims to produce — via `deepEqualPlain()`. `exact` now
+ *     requires `rootMatched` (when the scope includes root fields).
+ *   - Embedded-document verification used to compare ID SETS only, never
+ *     content. Fixed: `documentsMatch()` (deep-equal, excluding only
+ *     Foundry-managed `_stats` bookkeeping) compares every restored/
+ *     updated Item/Effect's actual source against the snapshot's. `exact`
+ *     now requires content equality, not just id presence.
+ *   - Every scope unconditionally restored BOTH Items and Active Effects,
+ *     regardless of what the scope actually promised — a
+ *     `system-and-flags`/`embedded-items` restore silently mutated
+ *     embedded documents it was never supposed to touch. Fixed:
+ *     `scopeIncludesItems()`/`scopeIncludesEffects()` gate both the
+ *     mutation AND the verification for each document family.
+ *   - Neither Actor identity nor schema/scope were validated — a snapshot
+ *     recorded for one Actor could be applied to a different one with no
+ *     rejection. Fixed: `snapshot.actorId` (when present) must match
+ *     `actor.id`, `schemaVersion` must be the current version or absent
+ *     (legacy), and `scope` must be one of `SUPPORTED_SNAPSHOT_SCOPES` —
+ *     each violation fails immediately, before any mutation is attempted.
+ *   - An inexact (partial-identity) restore always returned
+ *     `{success: true, exact: false}`, with no way for a rollback caller
+ *     to make it fail closed. Fixed: `options.requireExact === true`
+ *     converts an inexact-but-otherwise-successful outcome into a FAILURE
+ *     that runs the same bounded compensation pass a thrown error gets —
+ *     high-risk rollback callers pass this. Callers that don't request it
+ *     still get `usable`/`requiresManualReview` fields on an inexact
+ *     result, rather than an unqualified `success: true`.
+ *   - Compensation used to consider `compResult.success === true`
+ *     sufficient. Fixed: `compensationSucceeded` now also requires
+ *     `compResult.exact === true` — a compensation restore that succeeds
+ *     but is itself inexact is reported honestly, not as a clean recovery.
+ *
  * This version:
  *   - restores `name`/`img`/`system`/`flags`/`ownership`/`prototypeToken`
  *     via a single deletion-aware patch (see snapshot-restoration-plan.js)
@@ -37,17 +80,20 @@
  *     one is recreated with `keepId: true` (preserving its original id
  *     whenever Foundry honors that option), and an Item/Effect absent
  *     from the snapshot is deleted. `_id` is never lost as a side effect
- *     of restoring the objects that reference it.
+ *     of restoring the objects that reference it. Only for scopes that
+ *     actually include that document family.
  *   - verifies the result after mutating: rereads the actor and confirms
  *     every expected Item/Effect id is present, no unexpected extra id
- *     remains, and (for embedded documents) content matches the
- *     snapshot. If any expected id came back with a NEW id instead (i.e.
- *     Foundry did not honor `keepId`), the result reports `exact: false`
- *     with an `idRemap` entry rather than silently claiming identity was
- *     preserved. No cross-system reference remapping (talent grants,
- *     provenance fields, etc.) is attempted — that remains a documented
- *     limitation; a mismatch degrades exactness rather than aborting the
- *     already-otherwise-successful data restore.
+ *     remains, root state genuinely matches what the patch should have
+ *     produced, and embedded-document CONTENT matches the snapshot — not
+ *     merely that ids exist. If any expected id came back with a NEW id
+ *     instead (i.e. Foundry did not honor `keepId`), the result reports
+ *     `exact: false` with an `idRemap` entry rather than silently claiming
+ *     identity was preserved. No cross-system reference remapping (talent
+ *     grants, provenance fields, etc.) is attempted — that remains a
+ *     documented limitation; `options.requireExact` fails the whole
+ *     restore closed (with compensation) rather than let an unremapped,
+ *     inexact rollback stand.
  *   - is failure-aware: if any step throws, the exact failing step is
  *     recorded, and (unless this call IS itself a compensation attempt —
  *     see below) a single, bounded compensation pass restores the
@@ -56,8 +102,8 @@
  *     `_isCompensation: true`, which disables taking a further safety
  *     snapshot — this makes recursion structurally impossible, not just
  *     unlikely. A failed restore NEVER returns `{success: true}`, and a
- *     failed compensation is reported honestly (`compensationSucceeded:
- *     false`) rather than swallowed.
+ *     failed (or inexact) compensation is reported honestly
+ *     (`compensationSucceeded: false`) rather than swallowed.
  *   - the in-memory safety snapshot is never persisted to the actor's
  *     snapshot-history flag — it exists only as a local variable for the
  *     duration of this call, so it cannot bloat or disturb the bounded,
@@ -75,7 +121,19 @@
 
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/core/logger.js";
-import { buildActorRootRestorationPatch, buildEmbeddedDocumentRestorePlan, SNAPSHOT_RESTORATION_SCOPE } from "/systems/foundryvtt-swse/scripts/governance/snapshot/snapshot-restoration-plan.js";
+import {
+  buildActorRootRestorationPatch,
+  buildEmbeddedDocumentRestorePlan,
+  SNAPSHOT_RESTORATION_SCOPE,
+  SUPPORTED_SNAPSHOT_SCOPES,
+  scopeIncludesItems,
+  scopeIncludesEffects,
+  scopeIncludesRootFields,
+  scopeIncludesSystemAndFlags,
+  documentsMatch,
+  deepEqualPlain
+} from "/systems/foundryvtt-swse/scripts/governance/snapshot/snapshot-restoration-plan.js";
+import { applyFlatPatch } from "/systems/foundryvtt-swse/scripts/governance/snapshot/deletion-aware-patch.js";
 
 const CURRENT_SCHEMA_VERSION = 2;
 
@@ -112,40 +170,126 @@ function currentActorRoot(actor) {
 
 function captureSafetySnapshot(actor) {
   return {
+    // ROUND-2 CORRECTION: stamped with actorId/schemaVersion/scope so the
+    // compensation restore (which restores FROM this object) is treated
+    // as a real, non-legacy, identity-checked snapshot rather than
+    // silently falling into "legacy" handling (which unconditionally
+    // reports exact: false regardless of how faithfully it actually
+    // restores) — compensation's own exactness must be able to be
+    // genuinely true when it genuinely is.
+    actorId: actor.id,
+    schemaVersion: CURRENT_SCHEMA_VERSION,
+    scope: SNAPSHOT_RESTORATION_SCOPE.FULL_ACTOR,
     ...currentActorRoot(actor),
     items: itemsArray(actor).map(toSource),
     effects: effectsArray(actor).map(toSource)
   };
 }
 
-/**
- * Reread the actor and verify the restore actually took: every expected
- * Item/Effect id is present, no unexpected id remains, and ids that were
- * supposed to be recreated with their original id actually kept it.
- */
-function verifyRestoration(actor, { expectedItemIds, expectedEffectIds, verifyRoot }) {
-  const currentItemIds = new Set(itemsArray(actor).map(documentId).filter(Boolean));
-  const currentEffectIds = new Set(effectsArray(actor).map(documentId).filter(Boolean));
-
-  const itemsMatched = expectedItemIds.every(id => currentItemIds.has(id)) && currentItemIds.size === expectedItemIds.length;
-  const effectsMatched = expectedEffectIds.every(id => currentEffectIds.has(id)) && currentEffectIds.size === expectedEffectIds.length;
-
-  const missingItemIds = expectedItemIds.filter(id => !currentItemIds.has(id));
-  const missingEffectIds = expectedEffectIds.filter(id => !currentEffectIds.has(id));
-
-  return {
-    rootMatched: verifyRoot,
-    itemsMatched,
-    effectsMatched,
-    ownershipMatched: verifyRoot,
-    flagsMatched: verifyRoot,
-    missingItemIds,
-    missingEffectIds
-  };
-}
-
 function documentId(doc) {
   return doc?._id ?? doc?.id ?? null;
+}
+
+/**
+ * ROUND-2 CORRECTION — build a map of embedded-document content, keyed by
+ * id, restricted to a known id set. Used to verify CONTENT, not just
+ * presence.
+ */
+function bySourceId(docs) {
+  const map = new Map();
+  for (const doc of docs) {
+    const id = documentId(doc);
+    if (id) map.set(id, doc);
+  }
+  return map;
+}
+
+/**
+ * ROUND-2 CORRECTION — reread the actor and verify the restore actually
+ * took: every expected Item/Effect id is present with matching content,
+ * no unexpected id remains, and (when the scope includes root fields)
+ * the actor's root state genuinely matches what the applied patch should
+ * have produced — never a boolean copied from "was verification
+ * requested."
+ *
+ * @param {Actor} actor - the actor, REREAD after all mutations.
+ * @param {object} params
+ * @param {object} params.expectedRoot - `applyFlatPatch(preMutationRoot, rootPatch)`.
+ * @param {boolean} params.checkRoot - whether scope includes root fields.
+ * @param {boolean} params.checkSystemAndFlags - whether scope includes system/flags.
+ * @param {boolean} params.checkItems - whether scope includes Items.
+ * @param {boolean} params.checkEffects - whether scope includes Active Effects.
+ * @param {string[]} params.expectedItemIds
+ * @param {string[]} params.expectedEffectIds
+ * @param {object[]} params.snapshotItems - snapshot source objects, for content comparison.
+ * @param {object[]} params.snapshotEffects
+ */
+function verifyRestoration(actor, {
+  expectedRoot,
+  checkRoot,
+  checkSystemAndFlags,
+  checkItems,
+  checkEffects,
+  expectedItemIds,
+  expectedEffectIds,
+  snapshotItems,
+  snapshotEffects
+}) {
+  const actualRoot = currentActorRoot(actor);
+
+  const nameMatched = !checkRoot || deepEqualPlain(expectedRoot.name, actualRoot.name);
+  const imgMatched = !checkRoot || deepEqualPlain(expectedRoot.img, actualRoot.img);
+  const ownershipMatched = !checkRoot || deepEqualPlain(expectedRoot.ownership, actualRoot.ownership);
+  const prototypeTokenMatched = !checkRoot || deepEqualPlain(expectedRoot.prototypeToken, actualRoot.prototypeToken);
+  const systemMatched = !checkSystemAndFlags || deepEqualPlain(expectedRoot.system, actualRoot.system);
+  const flagsMatched = !checkSystemAndFlags || deepEqualPlain(expectedRoot.flags, actualRoot.flags);
+
+  const rootMatched = nameMatched && imgMatched && ownershipMatched && prototypeTokenMatched && systemMatched && flagsMatched;
+
+  const currentItems = bySourceId(itemsArray(actor).map(toSource));
+  const currentEffects = bySourceId(effectsArray(actor).map(toSource));
+  const snapshotItemsById = bySourceId(snapshotItems);
+  const snapshotEffectsById = bySourceId(snapshotEffects);
+
+  const currentItemIds = new Set(currentItems.keys());
+  const currentEffectIds = new Set(currentEffects.keys());
+
+  const missingItemIds = checkItems ? expectedItemIds.filter(id => !currentItemIds.has(id)) : [];
+  const missingEffectIds = checkEffects ? expectedEffectIds.filter(id => !currentEffectIds.has(id)) : [];
+  const unexpectedItemIds = checkItems ? [...currentItemIds].filter(id => !expectedItemIds.includes(id)) : [];
+  const unexpectedEffectIds = checkEffects ? [...currentEffectIds].filter(id => !expectedEffectIds.includes(id)) : [];
+
+  const itemContentMismatches = checkItems
+    ? expectedItemIds.filter(id => currentItemIds.has(id) && !documentsMatch(snapshotItemsById.get(id), currentItems.get(id)))
+    : [];
+  const effectContentMismatches = checkEffects
+    ? expectedEffectIds.filter(id => currentEffectIds.has(id) && !documentsMatch(snapshotEffectsById.get(id), currentEffects.get(id)))
+    : [];
+
+  const itemsMatched = !checkItems || (
+    missingItemIds.length === 0 && unexpectedItemIds.length === 0 && itemContentMismatches.length === 0
+  );
+  const effectsMatched = !checkEffects || (
+    missingEffectIds.length === 0 && unexpectedEffectIds.length === 0 && effectContentMismatches.length === 0
+  );
+
+  return {
+    rootMatched,
+    nameMatched,
+    imgMatched,
+    ownershipMatched,
+    prototypeTokenMatched,
+    systemMatched,
+    flagsMatched,
+    itemsMatched,
+    effectsMatched,
+    missingItemIds,
+    missingEffectIds,
+    unexpectedItemIds,
+    unexpectedEffectIds,
+    itemContentMismatches,
+    effectContentMismatches
+  };
 }
 
 export class SnapshotService {
@@ -154,22 +298,56 @@ export class SnapshotService {
    * restoration. See the module doc comment above for the full contract.
    *
    * @param {Actor} actor - target actor
-   * @param {object} snapshot - `{name?, img?, system?, flags?, ownership?,
-   *   prototypeToken?, items?, effects?, scope?, schemaVersion?}`. Fields
-   *   the snapshot omits are simply not restored (never invented); a
-   *   missing `schemaVersion` marks the snapshot legacy.
-   * @param {object} [options={}]
+   * @param {object} snapshot - `{actorId?, name?, img?, system?, flags?,
+   *   ownership?, prototypeToken?, items?, effects?, scope?, schemaVersion?}`.
+   *   Fields the snapshot omits are simply not restored (never invented);
+   *   a missing `schemaVersion` marks the snapshot legacy.
+   * @param {object} [options={}] - `requireExact: true` fails the whole
+   *   restore closed (running bounded compensation) rather than return an
+   *   inexact success — pass this from any rollback-purpose caller.
    * @returns {Promise<object>} structured result — see the module doc
    *   comment for the full success/failure shape.
    */
   static async restoreFromSnapshot(actor, snapshot, options = {}) {
     const actorId = actor?.id ?? null;
-    if (!actor) return { success: false, code: 'SNAPSHOT_ACTOR_MISMATCH', error: 'restoreFromSnapshot() requires actor', actorId };
-    if (!snapshot) return { success: false, code: 'SNAPSHOT_NOT_FOUND', error: 'restoreFromSnapshot() requires snapshot', actorId };
+    if (!actor) return { success: false, code: 'SNAPSHOT_ACTOR_MISMATCH', exact: false, error: 'restoreFromSnapshot() requires actor', actorId };
+    if (!snapshot) return { success: false, code: 'SNAPSHOT_NOT_FOUND', exact: false, error: 'restoreFromSnapshot() requires snapshot', actorId };
+
+    // ROUND-2 CORRECTION — Actor identity and schema/scope validation,
+    // BEFORE any mutation is attempted. A snapshot's own `actorId` (when
+    // present — legacy snapshots may lack it) must match the actor it is
+    // being applied to; a schema version this code doesn't recognize, or
+    // a scope outside the known set, is rejected rather than silently
+    // treated as `full-actor`.
+    if (snapshot.actorId !== undefined && snapshot.actorId !== null && String(snapshot.actorId) !== String(actorId)) {
+      return {
+        success: false, code: 'SNAPSHOT_ACTOR_MISMATCH', exact: false, actorId,
+        error: `Snapshot was captured for Actor "${snapshot.actorId}", not "${actorId}".`
+      };
+    }
+    if (snapshot.schemaVersion !== undefined && snapshot.schemaVersion !== null && snapshot.schemaVersion !== CURRENT_SCHEMA_VERSION) {
+      return {
+        success: false, code: 'SNAPSHOT_SCHEMA_UNSUPPORTED', exact: false, actorId,
+        error: `Unsupported snapshot schemaVersion "${snapshot.schemaVersion}" (expected ${CURRENT_SCHEMA_VERSION} or legacy/absent).`
+      };
+    }
 
     const scope = snapshot.scope ?? SNAPSHOT_RESTORATION_SCOPE.FULL_ACTOR;
+    if (!SUPPORTED_SNAPSHOT_SCOPES.has(scope)) {
+      return {
+        success: false, code: 'SNAPSHOT_SCOPE_UNSUPPORTED', exact: false, actorId,
+        error: `Unsupported restoration scope "${scope}".`
+      };
+    }
+
     const isLegacy = !snapshot.schemaVersion;
     const isCompensation = options._isCompensation === true;
+    const requireExact = options.requireExact === true;
+
+    const checkRoot = scopeIncludesRootFields(scope);
+    const checkSystemAndFlags = scopeIncludesSystemAndFlags(scope);
+    const checkItems = scopeIncludesItems(scope);
+    const checkEffects = scopeIncludesEffects(scope);
 
     let safety = null;
     if (!isCompensation) {
@@ -177,14 +355,16 @@ export class SnapshotService {
         safety = captureSafetySnapshot(actor);
       } catch (err) {
         SWSELogger.error(`SnapshotService.restoreFromSnapshot: failed to capture pre-restore safety snapshot for ${actor.name}`, err);
-        return { success: false, code: 'SNAPSHOT_ROOT_RESTORE_FAILED', actorId, error: `Could not capture a pre-restore safety snapshot: ${err.message}`, failedStep: 'safety-capture', partialMutation: false, compensationAttempted: false };
+        return { success: false, code: 'SNAPSHOT_ROOT_RESTORE_FAILED', exact: false, actorId, error: `Could not capture a pre-restore safety snapshot: ${err.message}`, failedStep: 'safety-capture', partialMutation: false, compensationAttempted: false };
       }
     }
 
     let failedStep = null;
     try {
+      const preMutationRoot = currentActorRoot(actor);
+
       failedStep = 'root';
-      const rootPatch = buildActorRootRestorationPatch({ snapshotActor: snapshot, currentActor: currentActorRoot(actor), scope });
+      const rootPatch = buildActorRootRestorationPatch({ snapshotActor: snapshot, currentActor: preMutationRoot, scope });
       if (Object.keys(rootPatch).length) {
         await ActorEngine.updateActor(actor, rootPatch, {
           ...options,
@@ -192,41 +372,70 @@ export class SnapshotService {
           isRecomputeHPCall: true
         });
       }
+      const expectedRoot = applyFlatPatch(preMutationRoot, rootPatch);
 
       failedStep = 'items';
-      const itemPlan = buildEmbeddedDocumentRestorePlan({
-        snapshotDocuments: snapshot.items ?? [],
-        currentDocuments: itemsArray(actor).map(toSource)
-      });
-      if (itemPlan.deleteIds.length) await ActorEngine.deleteEmbeddedDocuments(actor, 'Item', itemPlan.deleteIds, options);
-      if (itemPlan.update.length) await ActorEngine.updateEmbeddedDocuments(actor, 'Item', itemPlan.update, options);
-      if (itemPlan.create.length) await ActorEngine.createEmbeddedDocuments(actor, 'Item', itemPlan.create, { ...options, keepId: true });
+      const snapshotItems = checkItems ? (snapshot.items ?? []) : [];
+      const itemPlan = checkItems
+        ? buildEmbeddedDocumentRestorePlan({ snapshotDocuments: snapshotItems, currentDocuments: itemsArray(actor).map(toSource) })
+        : { create: [], update: [], deleteIds: [], expectedIds: [] };
+      if (checkItems) {
+        if (itemPlan.deleteIds.length) await ActorEngine.deleteEmbeddedDocuments(actor, 'Item', itemPlan.deleteIds, options);
+        if (itemPlan.update.length) await ActorEngine.updateEmbeddedDocuments(actor, 'Item', itemPlan.update, options);
+        if (itemPlan.create.length) await ActorEngine.createEmbeddedDocuments(actor, 'Item', itemPlan.create, { ...options, keepId: true });
+      }
 
       failedStep = 'effects';
-      const effectPlan = buildEmbeddedDocumentRestorePlan({
-        snapshotDocuments: snapshot.effects ?? [],
-        currentDocuments: effectsArray(actor).map(toSource)
-      });
-      if (effectPlan.deleteIds.length) await ActorEngine.deleteEmbeddedDocuments(actor, 'ActiveEffect', effectPlan.deleteIds, options);
-      if (effectPlan.update.length) await ActorEngine.updateEmbeddedDocuments(actor, 'ActiveEffect', effectPlan.update, options);
-      if (effectPlan.create.length) await ActorEngine.createEmbeddedDocuments(actor, 'ActiveEffect', effectPlan.create, { ...options, keepId: true });
+      const snapshotEffects = checkEffects ? (snapshot.effects ?? []) : [];
+      const effectPlan = checkEffects
+        ? buildEmbeddedDocumentRestorePlan({ snapshotDocuments: snapshotEffects, currentDocuments: effectsArray(actor).map(toSource) })
+        : { create: [], update: [], deleteIds: [], expectedIds: [] };
+      if (checkEffects) {
+        if (effectPlan.deleteIds.length) await ActorEngine.deleteEmbeddedDocuments(actor, 'ActiveEffect', effectPlan.deleteIds, options);
+        if (effectPlan.update.length) await ActorEngine.updateEmbeddedDocuments(actor, 'ActiveEffect', effectPlan.update, options);
+        if (effectPlan.create.length) await ActorEngine.createEmbeddedDocuments(actor, 'ActiveEffect', effectPlan.create, { ...options, keepId: true });
+      }
 
       failedStep = 'verification';
       const verification = verifyRestoration(actor, {
+        expectedRoot,
+        checkRoot,
+        checkSystemAndFlags,
+        checkItems,
+        checkEffects,
         expectedItemIds: itemPlan.expectedIds,
         expectedEffectIds: effectPlan.expectedIds,
-        verifyRoot: !isLegacy
+        snapshotItems,
+        snapshotEffects
       });
 
-      const idsPreserved = verification.missingItemIds.length === 0 && verification.missingEffectIds.length === 0;
+      const idsPreserved = verification.missingItemIds.length === 0 && verification.missingEffectIds.length === 0
+        && verification.unexpectedItemIds.length === 0 && verification.unexpectedEffectIds.length === 0;
       if (!idsPreserved) {
         SWSELogger.warn(`SnapshotService.restoreFromSnapshot: some ids were not preserved for ${actor.name}`, {
           missingItemIds: verification.missingItemIds,
-          missingEffectIds: verification.missingEffectIds
+          missingEffectIds: verification.missingEffectIds,
+          unexpectedItemIds: verification.unexpectedItemIds,
+          unexpectedEffectIds: verification.unexpectedEffectIds
         });
       }
 
-      const exact = !isLegacy && idsPreserved && verification.itemsMatched && verification.effectsMatched;
+      const exact = !isLegacy && idsPreserved && verification.rootMatched && verification.itemsMatched && verification.effectsMatched;
+
+      if (requireExact && !exact && !isLegacy) {
+        // ROUND-2 CORRECTION — fail closed. A rollback-purpose caller
+        // asked for `requireExact`; an inexact restore is treated exactly
+        // like a thrown mutation error, running the same bounded
+        // compensation pass rather than returning a soft
+        // `{success: true, exact: false}`.
+        const mismatchCode = !idsPreserved
+          ? 'SNAPSHOT_IDENTITY_MISMATCH'
+          : (!verification.rootMatched ? 'SNAPSHOT_ROOT_VERIFICATION_FAILED' : 'SNAPSHOT_CONTENT_VERIFICATION_FAILED');
+        const mismatchError = new Error(`Snapshot restoration for ${actor.name} did not verify as exact (requireExact was set): ${mismatchCode}.`);
+        mismatchError.code = mismatchCode;
+        mismatchError.verification = verification;
+        throw mismatchError;
+      }
 
       SWSELogger.log(`[SNAPSHOT] Restoration complete for ${actor.name}`, {
         scope, exact,
@@ -237,6 +446,8 @@ export class SnapshotService {
       return {
         success: true,
         exact,
+        usable: exact,
+        requiresManualReview: !exact,
         actorId,
         restoredScope: scope,
         restoredItemIds: itemPlan.expectedIds,
@@ -259,7 +470,7 @@ export class SnapshotService {
           success: false,
           exact: false,
           actorId,
-          code: 'SNAPSHOT_COMPENSATION_FAILED',
+          code: err.code ?? 'SNAPSHOT_COMPENSATION_FAILED',
           failedStep,
           error: err.message,
           partialMutation: true,
@@ -268,11 +479,15 @@ export class SnapshotService {
       }
 
       let compensationSucceeded = false;
+      let compensationExact = false;
       const compensationErrors = [];
       try {
-        const compResult = await this.restoreFromSnapshot(actor, safety, { ...options, _isCompensation: true });
-        compensationSucceeded = compResult.success === true;
-        if (!compResult.success) compensationErrors.push(compResult.error);
+        const compResult = await this.restoreFromSnapshot(actor, safety, { ...options, requireExact: false, _isCompensation: true });
+        compensationSucceeded = compResult.success === true && compResult.exact === true;
+        compensationExact = compResult.exact === true;
+        if (!compensationSucceeded) {
+          compensationErrors.push(compResult.error ?? (compResult.success ? 'Compensation restored data but was not identity-exact.' : 'Compensation failed.'));
+        }
       } catch (compErr) {
         compensationErrors.push(compErr.message);
       }
@@ -288,15 +503,16 @@ export class SnapshotService {
         success: false,
         exact: false,
         actorId,
-        code: stepCodeMap[failedStep] ?? 'SNAPSHOT_ROOT_RESTORE_FAILED',
+        code: err.code ?? stepCodeMap[failedStep] ?? 'SNAPSHOT_ROOT_RESTORE_FAILED',
         failedStep,
         error: err.message,
         partialMutation: true,
         compensationAttempted: true,
         compensationSucceeded,
+        compensationExact,
         compensationErrors,
         idRemap: {},
-        verification: {}
+        verification: err.verification ?? {}
       };
     }
   }

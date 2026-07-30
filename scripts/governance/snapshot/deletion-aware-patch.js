@@ -146,3 +146,53 @@ export function buildDeletionAwarePatch({ previous = {}, current = {}, rootPath,
 
   return patch;
 }
+
+/**
+ * ROUND-2 CORRECTION (P1-7 exact-verification pass).
+ *
+ * Apply a flat dot-path patch (the same shape `buildDeletionAwarePatch()`
+ * produces — dotted keys, `-=key` deletion convention) to a plain-data
+ * object, returning a NEW object; never mutates `base`.
+ *
+ * This is the pure counterpart of what `ActorEngine.updateActor()` is
+ * expected to do to a real Foundry document, and is used ONLY for
+ * verification: after the real mutation runs, restoration compares the
+ * actor's ACTUAL post-mutation state against `applyFlatPatch(preMutationState,
+ * patch)` — the state the patch itself claims to produce — rather than
+ * assuming the mutation succeeded just because `ActorEngine.updateActor()`
+ * didn't throw. A prior version of this module had no such check: a root
+ * update could be silently normalized, partially applied, or otherwise
+ * diverge from the patch, and restoration would still report `exact: true`.
+ *
+ * @param {object} base
+ * @param {Record<string, unknown>} patch
+ * @returns {object}
+ */
+export function applyFlatPatch(base, patch = {}) {
+  const result = (base && typeof base === 'object' && !Array.isArray(base))
+    ? JSON.parse(JSON.stringify(base))
+    : {};
+
+  for (const [dotPath, value] of Object.entries(patch)) {
+    const segments = dotPath.split('.');
+    const lastKey = segments[segments.length - 1];
+    const isDeletion = lastKey.startsWith('-=');
+
+    let node = result;
+    for (let i = 0; i < segments.length - 1; i++) {
+      const key = segments[i];
+      if (typeof node[key] !== 'object' || node[key] === null || Array.isArray(node[key])) {
+        node[key] = {};
+      }
+      node = node[key];
+    }
+
+    if (isDeletion) {
+      delete node[lastKey.slice(2)];
+    } else {
+      node[lastKey] = value;
+    }
+  }
+
+  return result;
+}

@@ -144,11 +144,16 @@ export class SnapshotManager {
      *
      * @param {Actor} actor - The actor
      * @param {number|string} identifier - Timestamp or array index
+     * @param {{requireExact?: boolean}} [options] - ROUND-2 CORRECTION:
+     *   `requireExact: true` fails the whole restore closed (with bounded
+     *   compensation) rather than returning `{success: true, exact: false}`
+     *   — pass this from any rollback-purpose caller. See
+     *   snapshot-service.js's doc comment for the full policy.
      * @returns {Promise<object>} the structured restoration result — see
      *   scripts/governance/snapshot/snapshot-service.js's doc comment for
      *   the full shape.
      */
-    static async restoreSnapshotExact(actor, identifier) {
+    static async restoreSnapshotExact(actor, identifier, options = {}) {
         const snapshot = this.getSnapshot(actor, identifier);
 
         if (!snapshot) {
@@ -158,6 +163,10 @@ export class SnapshotManager {
 
         const actorDataToRestore = foundry.utils.deepClone(snapshot.actorData ?? {});
         const restoreSnapshotShape = {
+            // ROUND-2 CORRECTION: actorId is now carried through so
+            // SnapshotService can reject a snapshot being applied to the
+            // wrong Actor instead of silently restoring it anyway.
+            actorId: snapshot.actorId,
             schemaVersion: snapshot.schemaVersion,
             scope: snapshot.scope ?? 'full-actor',
             name: actorDataToRestore.name,
@@ -174,7 +183,8 @@ export class SnapshotManager {
         // ActorEngine.restoreFromSnapshot() already does.
         const { SnapshotService } = await import('/systems/foundryvtt-swse/scripts/governance/snapshot/snapshot-service.js');
         const result = await SnapshotService.restoreFromSnapshot(actor, restoreSnapshotShape, {
-            meta: { guardKey: 'snapshot-restore' }
+            meta: { guardKey: 'snapshot-restore' },
+            requireExact: options.requireExact === true
         });
 
         if (result.success) {
@@ -192,22 +202,32 @@ export class SnapshotManager {
      * PHASE 10: Routes through restoreSnapshotExact() for exact,
      * deletion-aware, id-preserving restoration. Kept as a thin
      * boolean-returning wrapper for existing callers that only ever check
-     * truthiness — every one of them benefits from the exactness fix
-     * automatically, with zero call-site changes required. Callers that
-     * need to honestly distinguish a partial/inexact restore from a full
-     * one must use `restoreSnapshotExact()` instead and inspect its
-     * structured result — see docs/audits/droid-authority-consolidation-phase-2.md's
-     * "P1-7" section for the migrated high-risk callers.
+     * truthiness.
+     *
+     * ROUND-2 CORRECTION: this used to return `true` whenever
+     * `result.success` was true, REGARDLESS of `result.exact` — a
+     * `{success: true, exact: false}` inexact restore (e.g. Foundry
+     * failed to honor `keepId` on a recreated Item) collapsed into a bare
+     * `true`, and every legacy caller that only checks truthiness had no
+     * way to know the restore wasn't identity-exact. Fixed: this now
+     * requires BOTH `success` and `exact` before reporting success. A
+     * legacy snapshot (always `exact: false` by design) is therefore
+     * always reported as a failed restore here — callers that must
+     * accept a legacy snapshot's partial restore need
+     * `restoreSnapshotExact()` and its structured result instead.
      * @param {Actor} actor - The actor
      * @param {number|string} identifier - Timestamp or array index
-     * @returns {Promise<boolean>} True if restored, false otherwise
+     * @returns {Promise<boolean>} True only if restored AND identity-exact
      */
     static async restoreSnapshot(actor, identifier) {
         try {
             const result = await this.restoreSnapshotExact(actor, identifier);
 
-            if (!result.success) {
-                ui.notifications?.error(result.error ? `Failed to restore: ${result.error}` : 'Snapshot not found.');
+            if (!result.success || result.exact !== true) {
+                const message = !result.success
+                    ? (result.error ? `Failed to restore: ${result.error}` : 'Snapshot not found.')
+                    : 'Restore completed but was not identity-exact — manual review recommended.';
+                ui.notifications?.error(message);
                 return false;
             }
 

@@ -48,6 +48,41 @@
  * explicit, reviewed allowlist of high-risk callers, not every file that
  * happens to mention `restoreSnapshotExact`.
  *
+ * ROUND-2 CORRECTION checks (7-13) — added after the exact-head audit
+ * found that the first exactness pass verified nothing real: a
+ * `verifyRoot` boolean was copied straight into `rootMatched`/
+ * `ownershipMatched`/`flagsMatched` without ever comparing state, `exact`
+ * was computed without those fields, embedded-document verification
+ * compared id sets only (never content), scopes were not enforced on
+ * mutation, Actor identity/schema/scope were never validated, and
+ * compensation only checked `.success`, never `.exact`.
+ *
+ *   7. `verifyRestoration()`'s per-field `*Matched` results must each be
+ *      derived from an actual comparison (`deepEqualPlain(...)`), never a
+ *      bare assignment from a `checkRoot`/`checkSystemAndFlags` gate
+ *      boolean.
+ *   8. The `exact` computation must include `rootMatched` (not only
+ *      id-preservation) — a root update that silently failed or drifted
+ *      must not still report `exact: true`.
+ *   9. Embedded Item/ActiveEffect mutation calls
+ *      (create/update/deleteEmbeddedDocuments) must be gated by the
+ *      scope's own `checkItems`/`checkEffects` predicates — a narrow
+ *      scope (`system-and-flags`, `embedded-items`) must never
+ *      unconditionally restore a document family it didn't ask for.
+ *  10. Actor identity (`snapshot.actorId` vs `actor.id`) and schema/scope
+ *      validity must be checked and rejected BEFORE any mutation is
+ *      attempted.
+ *  11. The thin boolean wrapper (`SnapshotManager.restoreSnapshot()`) must
+ *      branch on `result.exact`, not merely `result.success` — an
+ *      identity-inexact rollback must not collapse to a bare `true`.
+ *  12. Compensation success must require `compResult.exact === true`, not
+ *      merely `compResult.success === true` — a compensation restore that
+ *      "succeeds" but is itself inexact must be reported honestly.
+ *  13. The `exact` computation must include id-preservation
+ *      (`idsPreserved`) so that an unremapped, `keepId`-refused embedded
+ *      document forces `exact: false` — this is the documented
+ *      fail-closed choice in place of full cross-reference id remapping.
+ *
  * Report-only by default; --strict exits non-zero on any violation.
  */
 
@@ -269,6 +304,199 @@ function checkSafetySnapshotNeverPersisted(violations) {
   }
 }
 
+/** Check 7: verifyRestoration()'s *Matched fields are real comparisons. */
+function checkVerificationFieldsAreRealComparisons(violations) {
+  if (!fs.existsSync(SNAPSHOT_SERVICE)) return;
+  const source = stripComments(read(SNAPSHOT_SERVICE));
+  const startIdx = source.search(/function\s+verifyRestoration\s*\(/);
+  const endIdx = source.indexOf('\nexport class SnapshotService');
+  if (startIdx === -1 || endIdx === -1 || endIdx <= startIdx) {
+    violations.push({
+      file: relative(SNAPSHOT_SERVICE),
+      check: 'verification-fields-real-comparisons',
+      detail: 'could not locate verifyRestoration() to confirm its *Matched fields are derived from real comparisons'
+    });
+    return;
+  }
+  const body = source.slice(startIdx, endIdx);
+  const requiredMatchedFields = ['rootMatched', 'ownershipMatched', 'flagsMatched', 'systemMatched', 'prototypeTokenMatched'];
+  for (const field of requiredMatchedFields) {
+    // A bare "const X = checkY;" or "X = checkY;" assignment (no comparison
+    // call anywhere on the same statement) is the exact pre-round-2 defect:
+    // the field was a copy of "was this verification requested", not an
+    // actual comparison result.
+    const bareAssignmentPattern = new RegExp(`${field}\\s*=\\s*(!?check\\w+)\\s*;`);
+    const bareMatch = body.match(bareAssignmentPattern);
+    if (bareMatch) {
+      violations.push({
+        file: relative(SNAPSHOT_SERVICE),
+        check: 'verification-fields-real-comparisons',
+        detail: `${field} is assigned directly from "${bareMatch[1]}" with no comparison call on the same statement — this reintroduces the pre-round-2 bug where a requested-verification boolean was copied straight into the result instead of comparing actual state`
+      });
+    }
+  }
+  if (!/deepEqualPlain\s*\(\s*expectedRoot\./.test(body)) {
+    violations.push({
+      file: relative(SNAPSHOT_SERVICE),
+      check: 'verification-fields-real-comparisons',
+      detail: 'verifyRestoration() no longer calls deepEqualPlain(expectedRoot..., ...) — root-field verification must compare the actor\'s rereread state against the state the patch itself should have produced, not merely trust the mutation succeeded'
+    });
+  }
+}
+
+/** Check 8: `exact` must include rootMatched, not only id-preservation. */
+function checkExactIncludesRootAndContent(violations) {
+  if (!fs.existsSync(SNAPSHOT_SERVICE)) return;
+  const source = stripComments(read(SNAPSHOT_SERVICE));
+  const exactMatch = source.match(/const\s+exact\s*=\s*([^;]+);/);
+  if (!exactMatch) {
+    violations.push({
+      file: relative(SNAPSHOT_SERVICE),
+      check: 'exact-includes-root-and-content',
+      detail: 'could not locate the `const exact = ...` computation'
+    });
+    return;
+  }
+  const expr = exactMatch[1];
+  for (const requiredTerm of ['rootMatched', 'itemsMatched', 'effectsMatched', 'idsPreserved']) {
+    if (!expr.includes(requiredTerm)) {
+      violations.push({
+        file: relative(SNAPSHOT_SERVICE),
+        check: 'exact-includes-root-and-content',
+        detail: `the \`exact\` computation ("${expr.trim()}") does not include "${requiredTerm}" — a restore that silently failed to verify this dimension could still report exact: true`
+      });
+    }
+  }
+}
+
+/** Check 9: embedded Item/Effect mutation calls are gated by scope predicates. */
+function checkEmbeddedMutationGatedByScope(violations) {
+  if (!fs.existsSync(SNAPSHOT_SERVICE)) return;
+  const source = stripComments(read(SNAPSHOT_SERVICE));
+  const restoreFnMatch = source.match(/static async restoreFromSnapshot\s*\([\s\S]*?\n  \}\n\}/);
+  const body = restoreFnMatch ? restoreFnMatch[0] : source;
+
+  const itemMutationPattern = /ActorEngine\.(?:create|update|delete)EmbeddedDocuments\(\s*actor,\s*['"]Item['"]/g;
+  const effectMutationPattern = /ActorEngine\.(?:create|update|delete)EmbeddedDocuments\(\s*actor,\s*['"]ActiveEffect['"]/g;
+
+  // A narrow-window heuristic: every Item/ActiveEffect mutation call must be
+  // preceded, within the same guarded block, by an `if (checkItems)` /
+  // `if (checkEffects)` line closer than any intervening `failedStep =`
+  // step-boundary marker (a cheap proxy for "still inside that step's own
+  // scope-gated conditional").
+  function everyCallIsGated(pattern, gateName) {
+    const calls = [...body.matchAll(pattern)];
+    for (const call of calls) {
+      const preceding = body.slice(0, call.index);
+      const lastGate = preceding.lastIndexOf(`if (${gateName})`);
+      const lastStepBoundary = Math.max(preceding.lastIndexOf("failedStep = 'items'"), preceding.lastIndexOf("failedStep = 'effects'"));
+      if (lastGate === -1 || lastGate < lastStepBoundary) return false;
+    }
+    return true;
+  }
+
+  if (!everyCallIsGated(itemMutationPattern, 'checkItems')) {
+    violations.push({
+      file: relative(SNAPSHOT_SERVICE),
+      check: 'embedded-mutation-gated-by-scope',
+      detail: 'an Item mutation call (create/update/deleteEmbeddedDocuments) is not gated by `if (checkItems)` — a narrow scope (e.g. system-and-flags) must never unconditionally restore Items'
+    });
+  }
+  if (!everyCallIsGated(effectMutationPattern, 'checkEffects')) {
+    violations.push({
+      file: relative(SNAPSHOT_SERVICE),
+      check: 'embedded-mutation-gated-by-scope',
+      detail: 'an ActiveEffect mutation call (create/update/deleteEmbeddedDocuments) is not gated by `if (checkEffects)` — a narrow scope (e.g. embedded-items) must never unconditionally restore Active Effects'
+    });
+  }
+}
+
+/** Check 10: Actor identity and schema/scope validated before any mutation. */
+function checkActorIdentityValidatedBeforeMutation(violations) {
+  if (!fs.existsSync(SNAPSHOT_SERVICE)) return;
+  const source = stripComments(read(SNAPSHOT_SERVICE));
+  const restoreFnMatch = source.match(/static async restoreFromSnapshot\s*\([\s\S]*?\n  \}\n\}/);
+  if (!restoreFnMatch) {
+    violations.push({
+      file: relative(SNAPSHOT_SERVICE),
+      check: 'actor-identity-validated-before-mutation',
+      detail: 'could not locate restoreFromSnapshot() to confirm identity/schema validation'
+    });
+    return;
+  }
+  const body = restoreFnMatch[0];
+  const actorIdCheckIdx = body.search(/snapshot\.actorId[\s\S]{0,40}actorId/);
+  const schemaCheckIdx = body.search(/snapshot\.schemaVersion[\s\S]{0,60}CURRENT_SCHEMA_VERSION/);
+  const scopeCheckIdx = body.search(/SUPPORTED_SNAPSHOT_SCOPES\.has\s*\(\s*scope\s*\)/);
+  const firstMutationIdx = body.search(/ActorEngine\.(?:updateActor|createEmbeddedDocuments|updateEmbeddedDocuments|deleteEmbeddedDocuments)\(/);
+
+  if (actorIdCheckIdx === -1) {
+    violations.push({
+      file: relative(SNAPSHOT_SERVICE),
+      check: 'actor-identity-validated-before-mutation',
+      detail: 'no check comparing snapshot.actorId against the target actor\'s id — a snapshot captured for one Actor could be silently applied to a different one'
+    });
+  } else if (firstMutationIdx !== -1 && actorIdCheckIdx > firstMutationIdx) {
+    violations.push({
+      file: relative(SNAPSHOT_SERVICE),
+      check: 'actor-identity-validated-before-mutation',
+      detail: 'the Actor-identity check appears AFTER the first ActorEngine mutation call — identity must be rejected before any mutation is attempted'
+    });
+  }
+  if (schemaCheckIdx === -1) {
+    violations.push({
+      file: relative(SNAPSHOT_SERVICE),
+      check: 'actor-identity-validated-before-mutation',
+      detail: 'no check comparing snapshot.schemaVersion against CURRENT_SCHEMA_VERSION — an unsupported/future schema snapshot could be restored as if it were the current shape'
+    });
+  }
+  if (scopeCheckIdx === -1) {
+    violations.push({
+      file: relative(SNAPSHOT_SERVICE),
+      check: 'actor-identity-validated-before-mutation',
+      detail: 'no check that scope is a member of SUPPORTED_SNAPSHOT_SCOPES — an unrecognized scope value could silently fall through to full-actor behavior'
+    });
+  }
+}
+
+/** Check 11: the thin boolean wrapper branches on result.exact, not just result.success. */
+function checkThinWrapperHonorsExact(violations) {
+  if (!fs.existsSync(SNAPSHOT_MANAGER)) return;
+  const source = stripComments(read(SNAPSHOT_MANAGER));
+  const methodMatch = source.match(/static async restoreSnapshot\s*\([^)]*\)\s*\{([\s\S]*?)\n    \}/);
+  if (!methodMatch) return; // already reported by check 5
+  const body = methodMatch[1];
+  if (!/result\.exact\s*!==\s*true/.test(body) && !/!result\.exact\b/.test(body) && !/result\.exact\s*===\s*true/.test(body)) {
+    violations.push({
+      file: relative(SNAPSHOT_MANAGER),
+      check: 'thin-wrapper-honors-exact',
+      detail: 'restoreSnapshot() branches on result.success but not result.exact — an identity-inexact-but-"successful" restore would still collapse to a bare `true`, letting ~10 legacy TransactionEngine/StoreEngine callers treat an inexact rollback as a clean success'
+    });
+  }
+}
+
+/** Check 12: compensation success requires compResult.exact === true. */
+function checkCompensationRequiresExact(violations) {
+  if (!fs.existsSync(SNAPSHOT_SERVICE)) return;
+  const source = stripComments(read(SNAPSHOT_SERVICE));
+  const assignMatch = source.match(/compensationSucceeded\s*=\s*(compResult\.[^;]+);/);
+  if (!assignMatch) {
+    violations.push({
+      file: relative(SNAPSHOT_SERVICE),
+      check: 'compensation-requires-exact',
+      detail: 'could not locate the `compensationSucceeded = ...` assignment'
+    });
+    return;
+  }
+  if (!/\.exact\s*===\s*true/.test(assignMatch[1])) {
+    violations.push({
+      file: relative(SNAPSHOT_SERVICE),
+      check: 'compensation-requires-exact',
+      detail: `compensationSucceeded ("${assignMatch[1].trim()}") does not require compResult.exact === true — a compensation restore that "succeeds" but is itself identity-inexact must not be reported as a clean recovery`
+    });
+  }
+}
+
 function main() {
   const violations = [];
 
@@ -278,6 +506,12 @@ function main() {
   checkHighRiskCallersInspectResult(violations);
   checkThinWrapperNotBareBoolean(violations);
   checkSafetySnapshotNeverPersisted(violations);
+  checkVerificationFieldsAreRealComparisons(violations);
+  checkExactIncludesRootAndContent(violations);
+  checkEmbeddedMutationGatedByScope(violations);
+  checkActorIdentityValidatedBeforeMutation(violations);
+  checkThinWrapperHonorsExact(violations);
+  checkCompensationRequiresExact(violations);
 
   console.log('='.repeat(72));
   console.log('  SNAPSHOT RESTORATION AUTHORITY GUARD (P1-7)');

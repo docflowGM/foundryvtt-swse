@@ -11,6 +11,7 @@
  */
 
 import { buildDeletionAwarePatch } from "/systems/foundryvtt-swse/scripts/governance/snapshot/deletion-aware-patch.js";
+import { TARGET_CONVERSION_RESERVATION_PROTECTED_FLAG_PATH } from "/systems/foundryvtt-swse/scripts/domain/followers/follower-slot-occupancy.js";
 
 export const SNAPSHOT_RESTORATION_SCOPE = Object.freeze({
   FULL_ACTOR: 'full-actor',
@@ -19,9 +20,28 @@ export const SNAPSHOT_RESTORATION_SCOPE = Object.freeze({
   EMBEDDED_ITEMS: 'embedded-items'
 });
 
+/**
+ * ROUND-2 CORRECTION — the set of scope values `restoreFromSnapshot()`
+ * actually knows how to honor. A snapshot carrying anything outside this
+ * set (a typo, a future scope this code hasn't been taught yet, a forged
+ * value) must be rejected outright (`SNAPSHOT_SCOPE_UNSUPPORTED`) rather
+ * than silently falling through to `full-actor` behavior.
+ */
+export const SUPPORTED_SNAPSHOT_SCOPES = Object.freeze(new Set(Object.values(SNAPSHOT_RESTORATION_SCOPE)));
+
 // Never let a restore touch the snapshot history ledger itself, regardless
 // of what a (possibly stale) snapshot's own flags happen to contain.
-const PROTECTED_FLAG_PATHS = Object.freeze(['foundryvtt-swse.snapshots', 'swse.snapshots']);
+// ROUND-2 CORRECTION (P2-3 concurrency-race audit): the follower-slot
+// target conversion-reservation flag is ALSO protected — its lifecycle is
+// exclusively managed by FollowerSlotService's token-conditional
+// reserve/release methods, never by snapshot restoration, so a rollback
+// can never delete a live reservation (including one belonging to a
+// different, later request) as an unintended side effect.
+const PROTECTED_FLAG_PATHS = Object.freeze([
+  'foundryvtt-swse.snapshots',
+  'swse.snapshots',
+  TARGET_CONVERSION_RESERVATION_PROTECTED_FLAG_PATH
+]);
 
 function includesRootFields(scope) {
   return scope === SNAPSHOT_RESTORATION_SCOPE.FULL_ACTOR || scope === SNAPSHOT_RESTORATION_SCOPE.TRANSACTION_ROLLBACK;
@@ -30,6 +50,36 @@ function includesRootFields(scope) {
 function includesSystemAndFlags(scope) {
   return includesRootFields(scope) || scope === SNAPSHOT_RESTORATION_SCOPE.SYSTEM_AND_FLAGS;
 }
+
+/**
+ * ROUND-2 CORRECTION — before this pass, `SnapshotService.restoreFromSnapshot()`
+ * restored embedded Items/Active Effects UNCONDITIONALLY regardless of
+ * `scope`, so a caller asking for the narrow `system-and-flags` or
+ * `embedded-items` scope still got destructive Item/Effect delete/update/
+ * create it never asked for. These predicates are the single source of
+ * truth both the restoration plan AND its verification step consult, so
+ * the two can never disagree about which document families a given scope
+ * covers.
+ *
+ * @param {string} scope
+ * @returns {boolean}
+ */
+export function scopeIncludesItems(scope) {
+  return scope === SNAPSHOT_RESTORATION_SCOPE.FULL_ACTOR
+    || scope === SNAPSHOT_RESTORATION_SCOPE.TRANSACTION_ROLLBACK
+    || scope === SNAPSHOT_RESTORATION_SCOPE.EMBEDDED_ITEMS;
+}
+
+/**
+ * @param {string} scope
+ * @returns {boolean}
+ */
+export function scopeIncludesEffects(scope) {
+  return scope === SNAPSHOT_RESTORATION_SCOPE.FULL_ACTOR
+    || scope === SNAPSHOT_RESTORATION_SCOPE.TRANSACTION_ROLLBACK;
+}
+
+export { includesRootFields as scopeIncludesRootFields, includesSystemAndFlags as scopeIncludesSystemAndFlags };
 
 /**
  * Build a single flat, deletion-aware dot-path patch that restores an
@@ -99,8 +149,61 @@ function documentId(doc) {
   return doc?._id ?? doc?.id ?? null;
 }
 
-function deepEqualPlain(a, b) {
-  return JSON.stringify(a) === JSON.stringify(b);
+/**
+ * Order-independent, plain-data deep-equality check. Exported (not just a
+ * private helper) so `snapshot-service.js`'s verification step and this
+ * module's own restoration-plan logic share exactly one equality
+ * definition — they can never quietly disagree about what "matches"
+ * means.
+ *
+ * @param {unknown} a
+ * @param {unknown} b
+ * @returns {boolean}
+ */
+export function deepEqualPlain(a, b) {
+  if (a === b) return true;
+  if (typeof a !== typeof b) return false;
+  if (a === null || b === null || typeof a !== 'object') return a === b;
+  if (Array.isArray(a) !== Array.isArray(b)) return false;
+  if (Array.isArray(a)) {
+    if (a.length !== b.length) return false;
+    return a.every((value, index) => deepEqualPlain(value, b[index]));
+  }
+  const aKeys = Object.keys(a).sort();
+  const bKeys = Object.keys(b).sort();
+  if (aKeys.length !== bKeys.length) return false;
+  return aKeys.every((key, index) => key === bKeys[index] && deepEqualPlain(a[key], b[key]));
+}
+
+/**
+ * ROUND-2 CORRECTION — embedded-document fields Foundry itself manages
+ * (modification bookkeeping) that a restore is never expected to
+ * reproduce byte-for-byte, even after an otherwise fully faithful
+ * restoration. Deliberately narrow: everything else on an Item/Effect
+ * IS compared, including `system`, `flags`, `name`, `img`, `disabled`,
+ * `origin`, and `changes` — a prior version of this module verified only
+ * that the expected IDs existed, never that their CONTENT matched the
+ * snapshot.
+ */
+export const EXCLUDED_DOCUMENT_VERIFICATION_FIELDS = Object.freeze(['_stats']);
+
+function stripExcludedFields(doc) {
+  if (!doc || typeof doc !== 'object') return doc;
+  const clone = { ...doc };
+  for (const field of EXCLUDED_DOCUMENT_VERIFICATION_FIELDS) delete clone[field];
+  return clone;
+}
+
+/**
+ * Whether a restored embedded document's CONTENT matches the snapshot's
+ * source for the same id — not merely that both ids exist. Pure.
+ *
+ * @param {object} expected - the snapshot's own source object for this id.
+ * @param {object} actual - the actor's current source object for this id.
+ * @returns {boolean}
+ */
+export function documentsMatch(expected, actual) {
+  return deepEqualPlain(stripExcludedFields(expected), stripExcludedFields(actual));
 }
 
 /**
