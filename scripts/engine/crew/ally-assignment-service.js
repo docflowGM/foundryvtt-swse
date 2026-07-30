@@ -38,16 +38,15 @@ import {
   resolveFollowerSlotActorId,
   isFollowerSlotOccupied,
   finalizeReservedFollowerSlot,
-  resolveTargetConversionReservation,
-  isTargetConversionReservationExpired,
-  buildTargetConversionReservation,
   TARGET_CONVERSION_RESERVATION_FLAG_PATH
 } from '/systems/foundryvtt-swse/scripts/domain/followers/follower-slot-occupancy.js';
 import { SnapshotManager } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/snapshot-manager.js';
 import {
   runFollowerMutationTransaction,
   buildFollowerLinkOwnerUpdate,
-  buildFlagRestorationPatch
+  buildFollowerUnlinkOwnerUpdate,
+  buildFlagRestorationPatch,
+  findFollowerLinkForToken
 } from '/systems/foundryvtt-swse/scripts/apps/progression-framework/adapters/follower-mutation-transaction.js';
 import { isEligibleFollowerSlotOwnerType, FollowerSlotService } from './follower-slot-service.js';
 
@@ -1024,6 +1023,32 @@ export class AllyAssignmentService {
     if (game.user?.isGM !== true) throw new Error('Only a GM can convert an existing NPC to a follower.');
     if (!ownerActor || !targetActor || !slotId) throw new Error('An owner Actor, a target Actor, and a slot id are required.');
 
+    const requestToken = options.requestToken || randomId();
+
+    // ROUND-2 CORRECTION (defect #14) — idempotent retry. A conversion
+    // already recorded a follower link carrying this SAME
+    // caller-supplied requestToken means this call is a retry of an
+    // already-completed conversion (e.g. the caller's own prior response
+    // was lost) — return the existing follower Actor directly rather
+    // than re-running derivation/materialization or acquiring
+    // reservations a second time. Only an EXPLICIT options.requestToken
+    // can ever match here: an auto-generated token is freshly random per
+    // call and can never coincide with a prior one, so a genuinely new
+    // conversion request is never short-circuited by accident.
+    if (options.requestToken) {
+      const existingFollowerLink = findFollowerLinkForToken(
+        asArray(ownerActor.getFlag?.(SYSTEM_ID, 'followers')),
+        options.requestToken
+      );
+      if (existingFollowerLink) {
+        const existingFollowerActor = game.actors?.get?.(existingFollowerLink.id) ?? targetActor;
+        swseLogger.log('[AllyAssignmentService] convertToFollower idempotent retry — returning existing conversion without reprocessing', {
+          owner: ownerActor.name, target: existingFollowerActor?.name ?? existingFollowerLink.id, requestToken: options.requestToken
+        });
+        return existingFollowerActor;
+      }
+    }
+
     const priorAssignment = detectPriorAssignment(targetActor);
 
     const droidGate = evaluateDroidConversionGate(targetActor);
@@ -1070,7 +1095,7 @@ export class AllyAssignmentService {
     // the target reservation fails, the just-acquired slot reservation is
     // released (token-conditional) before this method throws — never
     // acquired in the opposite order elsewhere in this codebase.
-    const requestToken = options.requestToken || randomId();
+    // (requestToken was resolved above, before the idempotent-retry check.)
 
     const slotReservation = await FollowerSlotService.reserveFollowerSlot(ownerActor, slotId, {
       token: requestToken,
@@ -1081,10 +1106,23 @@ export class AllyAssignmentService {
       throw new Error(slotReservation.error || 'That follower slot could not be reserved for this conversion.');
     }
 
-    const existingTargetReservation = resolveTargetConversionReservation(targetActor);
-    if (existingTargetReservation && !isTargetConversionReservationExpired(targetActor) && existingTargetReservation.token !== requestToken) {
+    // ROUND-2 CORRECTION: target reservation is now acquired through
+    // FollowerSlotService.reserveFollowerConversionTarget() — a governed
+    // method that rereads fresh, rejects a live reservation held by a
+    // DIFFERENT token, writes via ActorEngine, and then rereads AGAIN to
+    // confirm the token actually survived, exactly mirroring
+    // reserveFollowerSlot()'s own acquisition discipline. A prior version
+    // wrote this reservation with a single unchecked ActorEngine call and
+    // never rereread — two concurrent requests could both believe they
+    // held it.
+    const targetReservationResult = await FollowerSlotService.reserveFollowerConversionTarget(targetActor, {
+      token: requestToken,
+      ownerActorId: ownerActor.id,
+      slotId
+    });
+    if (!targetReservationResult.success) {
       await FollowerSlotService.releaseFollowerSlotReservation(ownerActor, slotId, requestToken, { source: sourceTag });
-      throw new Error('This NPC is already reserved by another in-progress conversion.');
+      throw new Error(targetReservationResult.error || 'This NPC is already reserved by another in-progress conversion.');
     }
 
     // --- 2. Snapshot owner relationship state (captured BEFORE any mutation —
@@ -1095,23 +1133,24 @@ export class AllyAssignmentService {
     const currentBeasts = clonePlain(asArray(ownerActor.getFlag?.(SYSTEM_ID, BEASTS_FLAG)));
 
     // --- 3. Snapshot target (real ActorEngine snapshot authority) ---
-    // Captured BEFORE the target reservation write below — so rolling
-    // back to this snapshot (restoreSnapshotExact's deletion-aware flags
-    // restore) also cleanly removes the reservation flag itself, rather
-    // than restoring TO a state that still carries it.
+    // Captured AFTER the target reservation is acquired — this is
+    // deliberate now (ROUND-2 CORRECTION): the target-conversion
+    // reservation flag is a PROTECTED path in the snapshot-restoration
+    // authority (see snapshot-restoration-plan.js's PROTECTED_FLAG_PATHS),
+    // so restoring to this snapshot NEVER touches it either way — its
+    // lifecycle is exclusively managed by FollowerSlotService's
+    // token-conditional reserve/release methods, never by snapshot
+    // rollback. This is what stops a losing request's rollback from ever
+    // deleting a different, later request's live target reservation.
     const previousTargetFlags = clonePlain(targetActor.flags || {});
-    const targetSnapshot = await SnapshotManager.createSnapshot(targetActor, 'Pre-conversion snapshot (Existing NPC → Follower)');
-
+    let targetSnapshot;
     try {
-      await ActorEngine.updateActor(targetActor, {
-        [TARGET_CONVERSION_RESERVATION_FLAG_PATH]: buildTargetConversionReservation({
-          token: requestToken,
-          ownerActorId: ownerActor.id,
-          slotId,
-          userId: game.user?.id ?? null
-        })
-      }, { source: sourceTag });
+      targetSnapshot = await SnapshotManager.createSnapshot(targetActor, 'Pre-conversion snapshot (Existing NPC → Follower)');
     } catch (err) {
+      // Both reservations were already acquired above — release them
+      // (token-conditionally) before propagating, so a snapshot-creation
+      // failure never leaves either reservation dangling.
+      await FollowerSlotService.releaseFollowerConversionTargetReservation(targetActor, requestToken, { source: sourceTag });
       await FollowerSlotService.releaseFollowerSlotReservation(ownerActor, slotId, requestToken, { source: sourceTag });
       throw err;
     }
@@ -1124,7 +1163,13 @@ export class AllyAssignmentService {
       img: targetActor.img,
       talent: 'GM Conversion',
       templateType: plan.templateType,
-      convertedFromExistingNpc: true
+      convertedFromExistingNpc: true,
+      // ROUND-2 CORRECTION (defect #14): recorded so a same-token retry
+      // of this exact conversion request is detected via
+      // findFollowerLinkForToken() at the top of this method, instead of
+      // re-running derivation/materialization or creating a duplicate
+      // relationship record.
+      finalizationToken: requestToken
     };
     const { followers: nextFollowers, ownedActors: nextOwnedActors } = buildFollowerLinkOwnerUpdate({
       currentFollowers,
@@ -1138,25 +1183,54 @@ export class AllyAssignmentService {
       ? removeById(currentBeasts, targetActor.id)
       : currentBeasts;
 
+    // ROUND-2 CORRECTION (defect #13) — the exact prior-assignment entry
+    // (if any) this conversion is about to remove, captured so the
+    // owner-relationship-commit rollback below can re-add back that ONE
+    // entry rather than restoring the whole pre-transaction array.
+    const priorAssignedAllyEntry = priorAssignment.assigned && priorAssignment.kind !== ASSIGNMENT_KIND.BEAST
+      ? currentAssignedAllies.find(entry => (entry?.id || entry?.actorId) === targetActor.id) ?? null
+      : null;
+    const priorBeastEntry = priorAssignment.assigned && priorAssignment.kind === ASSIGNMENT_KIND.BEAST
+      ? currentBeasts.find(entry => (entry?.id || entry?.actorId) === targetActor.id) ?? null
+      : null;
+
     // Slot occupant + reservation are finalized TOGETHER (see the
     // owner-relationship-commit step below, which rereads slots fresh
     // rather than trusting this pre-transaction snapshot) — never built
     // here, so a stale slot array can never be committed.
-    const ownerRollbackUpdate = {
-      [`flags.${SYSTEM_ID}.followers`]: currentFollowers,
-      [`flags.${SYSTEM_ID}.${FOLLOWER_SLOTS_FLAG}`]: currentSlots,
-      'system.ownedActors': currentOwnedActors,
-      [`flags.${SYSTEM_ID}.${ASSIGNED_ALLIES_FLAG}`]: currentAssignedAllies,
-      [`flags.${SYSTEM_ID}.${BEASTS_FLAG}`]: currentBeasts
-    };
 
     // --- 5. Target metadata patch (follower fields + clears any prior
-    // assignedAlly* flags AND this conversion's own target reservation, all
-    // in the SAME patch). ---
+    // assignedAlly* flags). ROUND-2 CORRECTION: this patch no longer
+    // clears the target's own conversion reservation — the reservation
+    // must stay LIVE through the entire conversion (derivation, owner
+    // commit) so a second request can't acquire this same target while
+    // this one is still mid-flight. It is cleared explicitly, once, only
+    // after the whole transaction has actually succeeded (see below). ---
     const conversionMetadata = {
       ...buildFollowerConversionMetadata({ plan }),
-      ...(priorAssignment.assigned ? buildAssignmentClearPatch() : {}),
-      [`flags.${SYSTEM_ID}.-=followerConversionReservation`]: null
+      ...(priorAssignment.assigned ? buildAssignmentClearPatch() : {})
+    };
+
+    // ROUND-2 CORRECTION — dual-token verification immediately before
+    // EVERY destructive phase (target mutation, derivation, owner/slot
+    // finalization), not just once at acquisition. Foundry's
+    // Document#update() has no compare-and-swap this codebase can rely
+    // on, so a single acquisition-time check is only provisional; two
+    // concurrent requests can each observe their own token as "acquired"
+    // in the brief window before a later write supersedes the earlier
+    // one. Reverifying right before each step closes that window down to
+    // the gap between this check and the next mutation, rather than
+    // trusting one check for the whole multi-step conversion. This is an
+    // HONEST, OPTIMISTIC protocol — repeated verification plus
+    // after-the-fact compensation — NOT a database lock or a globally
+    // atomic transaction.
+    const verifyReservationsOrAbort = async (phaseLabel) => {
+      const verification = await FollowerSlotService.verifyFollowerConversionReservations({
+        ownerActor, targetActor, slotId, token: requestToken
+      });
+      if (!verification.success) {
+        throw new Error(`Conversion aborted before ${phaseLabel}: ${verification.code === 'FOLLOWER_TARGET_RESERVATION_LOST' ? 'the target reservation' : 'the follower-slot reservation'} was lost.`);
+      }
     };
 
     // --- 6-9. Run the atomic transaction: target metadata, then required
@@ -1170,6 +1244,7 @@ export class AllyAssignmentService {
       {
         name: 'target-conversion-commit',
         commit: async () => {
+          await verifyReservationsOrAbort('target metadata mutation');
           await ActorEngine.updateActor(targetActor, conversionMetadata, { source: sourceTag });
         },
         rollback: async () => {
@@ -1178,19 +1253,42 @@ export class AllyAssignmentService {
           // a failed or inexact restore must not be silently treated as a
           // successful rollback (the transaction coordinator's
           // rollbackFailed/rollbackErrors reporting depends on this
-          // throwing rather than swallowing the failure). The follow-up
-          // buildFlagRestorationPatch() pass is kept as a defense-in-depth
-          // no-op for any flags the exact restore's own scope doesn't
-          // cover (it restores nothing new when the exact restore already
-          // matched `previousTargetFlags`).
-          const restored = await SnapshotManager.restoreSnapshotExact(targetActor, targetSnapshot.timestamp);
+          // throwing rather than swallowing the failure). ROUND-2
+          // CORRECTION: requireExact: true — an inexact restore now
+          // throws here too (instead of only logging a warning), so the
+          // transaction coordinator reports the rollback itself as
+          // failed rather than silently accepting a partial-identity
+          // target restore. The follow-up buildFlagRestorationPatch()
+          // pass is kept as a defense-in-depth no-op for any flags the
+          // exact restore's own scope doesn't cover (it restores nothing
+          // new when the exact restore already matched
+          // `previousTargetFlags`).
+          const restored = await SnapshotManager.restoreSnapshotExact(targetActor, targetSnapshot.timestamp, { requireExact: true });
           if (!restored.success) {
-            throw new Error(`Target rollback failed: snapshot restore did not succeed (${restored.error || restored.code || 'unknown error'}).`);
+            throw new Error(`Target rollback failed: snapshot restore did not succeed or was not identity-exact (${restored.error || restored.code || 'unknown error'}).`);
           }
-          if (!restored.exact) {
-            swseLogger.warn('[AllyAssignmentService] convertToFollower rollback restored target but is not identity-exact — manual review recommended.', { target: targetActor.name, restored });
-          }
+          // ROUND-2 CORRECTION — buildFlagRestorationPatch() has no
+          // knowledge of PROTECTED_FLAG_PATHS, so any patch key it
+          // computes for the reservation subtree must be discarded
+          // before this fallback patch is applied — the reservation's
+          // lifecycle belongs exclusively to FollowerSlotService's
+          // token-conditional reserve/release methods, never to this (or
+          // any) rollback path. Filtering the COMPUTED patch (rather
+          // than pre-stripping the reservation key from the cloned flags
+          // objects passed in) matters: stripping the only key out of an
+          // otherwise-empty `flags.foundryvtt-swse` container would make
+          // that container look empty to buildFlagRestorationPatch's own
+          // flatten step, which treats an empty object as a single leaf
+          // value — producing a `flags.foundryvtt-swse` patch key whose
+          // value is `{}`, wholesale-overwriting (not merging into) the
+          // ENTIRE foundryvtt-swse flag scope and erasing the reservation
+          // (and anything else already restored there) as a side effect.
           const restorePatch = buildFlagRestorationPatch(previousTargetFlags, targetActor.flags || {});
+          for (const patchKey of Object.keys(restorePatch)) {
+            if (patchKey === TARGET_CONVERSION_RESERVATION_FLAG_PATH || patchKey.startsWith(`${TARGET_CONVERSION_RESERVATION_FLAG_PATH}.`)) {
+              delete restorePatch[patchKey];
+            }
+          }
           if (Object.keys(restorePatch).length) {
             await ActorEngine.updateActor(targetActor, restorePatch, { source: `${sourceTag}:rollback` });
           }
@@ -1199,6 +1297,7 @@ export class AllyAssignmentService {
       {
         name: 'follower-derivation-commit',
         commit: async () => {
+          await verifyReservationsOrAbort('follower derivation');
           const applied = await applyFollowerDerivation(ownerActor, targetActor);
           if (applied !== true) {
             throw new Error('Follower derivation could not be applied to the converted NPC — conversion aborted.');
@@ -1208,6 +1307,7 @@ export class AllyAssignmentService {
       {
         name: 'owner-relationship-commit',
         commit: async () => {
+          await verifyReservationsOrAbort('owner/slot finalization');
           // Slots are rereread FRESH here (never the pre-transaction
           // `currentSlots` snapshot) and the reservation is verified and
           // cleared in the SAME write that sets the occupant — a slot
@@ -1237,7 +1337,45 @@ export class AllyAssignmentService {
           }, { source: sourceTag });
         },
         rollback: async () => {
-          await ActorEngine.updateActor(ownerActor, ownerRollbackUpdate, { source: `${sourceTag}:rollback` });
+          // ROUND-2 CORRECTION (defect #13) — reread the owner FRESH at
+          // rollback time and reverse only THIS conversion's own
+          // changes: this slot's occupant entry back to what it was
+          // before this conversion touched it, and this target's own
+          // followers/ownedActors/assignedAllies/beasts entries added or
+          // removed by this conversion. The whole pre-transaction
+          // `currentSlots`/`currentFollowers`/etc. arrays are
+          // deliberately never written back wholesale — a stale
+          // full-array rollback could silently overwrite a DIFFERENT,
+          // unrelated slot/follower change some other request committed
+          // in the window between this transaction's start and this
+          // rollback running (e.g. owner-relationship-commit succeeded,
+          // then the optional ownership-grant step failed).
+          const freshOwner = game.actors?.get?.(ownerActor.id) ?? ownerActor;
+          const freshSlots = Array.isArray(freshOwner.getFlag?.(SYSTEM_ID, FOLLOWER_SLOTS_FLAG))
+            ? freshOwner.getFlag(SYSTEM_ID, FOLLOWER_SLOTS_FLAG)
+            : [];
+          const revertedSlots = freshSlots.map(freshSlot => (freshSlot?.id === slotId ? clonePlain(slot) : freshSlot));
+
+          const freshFollowers = clonePlain(asArray(freshOwner.getFlag?.(SYSTEM_ID, 'followers')));
+          const freshOwnedActors = clonePlain(asArray(freshOwner.system?.ownedActors));
+          const freshAssignedAllies = clonePlain(asArray(freshOwner.getFlag?.(SYSTEM_ID, ASSIGNED_ALLIES_FLAG)));
+          const freshBeasts = clonePlain(asArray(freshOwner.getFlag?.(SYSTEM_ID, BEASTS_FLAG)));
+
+          const { followers: revertedFollowers, ownedActors: revertedOwnedActors } = buildFollowerUnlinkOwnerUpdate({
+            currentFollowers: freshFollowers,
+            currentOwnedActors: freshOwnedActors,
+            followerId: targetActor.id
+          });
+          const revertedAssignedAllies = priorAssignedAllyEntry ? appendUnique(freshAssignedAllies, priorAssignedAllyEntry) : freshAssignedAllies;
+          const revertedBeasts = priorBeastEntry ? appendUnique(freshBeasts, priorBeastEntry) : freshBeasts;
+
+          await ActorEngine.updateActor(ownerActor, {
+            [`flags.${SYSTEM_ID}.followers`]: revertedFollowers,
+            [`flags.${SYSTEM_ID}.${FOLLOWER_SLOTS_FLAG}`]: revertedSlots,
+            'system.ownedActors': revertedOwnedActors,
+            [`flags.${SYSTEM_ID}.${ASSIGNED_ALLIES_FLAG}`]: revertedAssignedAllies,
+            [`flags.${SYSTEM_ID}.${BEASTS_FLAG}`]: revertedBeasts
+          }, { source: `${sourceTag}:rollback` });
         }
       }
     ];
@@ -1254,12 +1392,22 @@ export class AllyAssignmentService {
     const transaction = await runFollowerMutationTransaction(conversionSteps);
 
     if (!transaction.ok) {
-      // The slot reservation was acquired BEFORE this transaction even
+      // Both reservations were acquired BEFORE this transaction even
       // started (never one of `conversionSteps`), so the transaction's
-      // own rollback never touches it — release it here explicitly,
+      // own rollback never touches either — release them here explicitly,
       // TOKEN-CONDITIONALLY (a losing/expired request's own token no
       // longer matching the live reservation is reported, not treated as
-      // a rollback failure that masks the real conversion error).
+      // a rollback failure that masks the real conversion error). The
+      // target reservation is released even though the target itself may
+      // already have been restored to its pre-conversion snapshot — the
+      // reservation flag is PROTECTED from that restore (see
+      // snapshot-restoration-plan.js), so it can still be carrying our
+      // token and must be released explicitly.
+      try {
+        await FollowerSlotService.releaseFollowerConversionTargetReservation(targetActor, requestToken, { source: `${sourceTag}:rollback` });
+      } catch (releaseErr) {
+        swseLogger.warn('[AllyAssignmentService] Failed to release target conversion reservation during conversion rollback cleanup.', { target: targetActor.name, error: releaseErr });
+      }
       try {
         await FollowerSlotService.releaseFollowerSlotReservation(ownerActor, slotId, requestToken, { source: `${sourceTag}:rollback` });
       } catch (releaseErr) {
@@ -1267,6 +1415,17 @@ export class AllyAssignmentService {
       }
       swseLogger.warn('[AllyAssignmentService] convertToFollower failed and was rolled back', { owner: ownerActor.name, target: targetActor.name, error: transaction.error });
       throw transaction.error;
+    }
+
+    // The conversion fully succeeded (including an optional ownership
+    // grant) — release the target reservation now, token-conditionally,
+    // the same governed way every other reservation exit path does. The
+    // slot's own reservation was already cleared atomically inside
+    // owner-relationship-commit's finalizeReservedFollowerSlot() call.
+    try {
+      await FollowerSlotService.releaseFollowerConversionTargetReservation(targetActor, requestToken, { source: sourceTag });
+    } catch (releaseErr) {
+      swseLogger.warn('[AllyAssignmentService] Failed to release target conversion reservation after a successful conversion.', { target: targetActor.name, error: releaseErr });
     }
 
     swseLogger.log('[AllyAssignmentService] Converted existing NPC to follower', { owner: ownerActor.name, target: targetActor.name, slotId });

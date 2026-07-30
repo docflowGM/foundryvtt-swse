@@ -786,25 +786,20 @@ function main() {
     }
 
     // Check 38: the slot reservation must be acquired BEFORE the target
-    // reservation (fixed order — slot first, then target), and the target
-    // reservation write must happen AFTER the pre-conversion snapshot is
-    // captured (so restoreSnapshotExact's deletion-aware flags restore
-    // also cleanly removes the reservation flag on rollback).
-    const slotReserveIdx = convertBody.indexOf('FollowerSlotService.reserveFollowerSlot');
-    // Anchored on the constant reference used at the ACQUISITION write
-    // site specifically (`[TARGET_CONVERSION_RESERVATION_FLAG_PATH]:`) —
-    // not the bare string 'followerConversionReservation', which also
-    // appears later in the function's own cleanup deletion key
-    // (`flags.${SYSTEM_ID}.-=followerConversionReservation`) and would
-    // otherwise match the wrong occurrence.
-    const targetReserveIdx = convertBody.indexOf('TARGET_CONVERSION_RESERVATION_FLAG_PATH]:');
-    const snapshotIdx = convertBody.indexOf('createSnapshot');
-    if (slotReserveIdx === -1 || targetReserveIdx === -1 || snapshotIdx === -1 ||
-        !(slotReserveIdx < targetReserveIdx && snapshotIdx < targetReserveIdx)) {
+    // reservation — a fixed order (slot first, then target) — never the
+    // reverse. ROUND-2 CORRECTION: the target-conversion reservation flag
+    // is now a PROTECTED path in the snapshot-restoration authority (see
+    // snapshot-restoration-plan.js's PROTECTED_FLAG_PATHS), so the
+    // pre-conversion snapshot's capture point relative to the target
+    // reservation no longer matters for correctness — only the
+    // slot-before-target acquisition order does.
+    const slotReserveIdx = convertBody.indexOf('FollowerSlotService.reserveFollowerSlot(');
+    const targetReserveIdx = convertBody.indexOf('FollowerSlotService.reserveFollowerConversionTarget(');
+    if (slotReserveIdx === -1 || targetReserveIdx === -1 || !(slotReserveIdx < targetReserveIdx)) {
       violations.push({
-        check: '38: reservations must be acquired in a fixed order (slot, then snapshot, then target)',
+        check: '38: reservations must be acquired in a fixed order (slot, then target)',
         file: relPath,
-        detail: 'expected the slot reservation to be acquired first, the pre-conversion target snapshot captured next, and only then the target-side conversion reservation written — never the reverse order'
+        detail: 'expected FollowerSlotService.reserveFollowerSlot(...) to be called before FollowerSlotService.reserveFollowerConversionTarget(...) — never the reverse order'
       });
     }
 
@@ -820,15 +815,18 @@ function main() {
       });
     }
 
-    // Check 40: on a failed transaction, the slot reservation must be
-    // released — but only the release call itself is required here;
-    // whether it is actually token-conditional is enforced by check 41 on
-    // follower-slot-service.js (releaseFollowerSlotReservation's own body).
-    if (!/transaction\.ok[\s\S]{0,400}releaseFollowerSlotReservation\s*\(/.test(convertBody)) {
+    // Check 40: on a failed transaction, BOTH the slot AND target
+    // reservations must be released — but only the release calls
+    // themselves are required here; whether they are actually
+    // token-conditional is enforced by check 41 on follower-slot-service.js
+    // (releaseFollowerSlotReservation's/releaseFollowerConversionTargetReservation's
+    // own bodies).
+    const transactionFailureBranchMatch = convertBody.match(/if\s*\(\s*!transaction\.ok\s*\)\s*\{[\s\S]*?\n    \}/);
+    if (!transactionFailureBranchMatch || !/releaseFollowerSlotReservation\s*\(/.test(transactionFailureBranchMatch[0]) || !/releaseFollowerConversionTargetReservation\s*\(/.test(transactionFailureBranchMatch[0])) {
       violations.push({
-        check: '40: a failed conversion transaction must release the slot reservation',
+        check: '40: a failed conversion transaction must release both the slot and target reservations',
         file: relPath,
-        detail: 'expected the `if (!transaction.ok)` failure branch to call FollowerSlotService.releaseFollowerSlotReservation(...) — the transaction\'s own rollback never touches the slot reservation, since it was acquired before the transaction started'
+        detail: 'expected the `if (!transaction.ok)` failure branch to call BOTH FollowerSlotService.releaseFollowerSlotReservation(...) AND FollowerSlotService.releaseFollowerConversionTargetReservation(...) — the transaction\'s own rollback never touches either reservation, since both were acquired before the transaction started'
       });
     }
   }
