@@ -699,13 +699,250 @@ lifecycle, reservation helpers, target reservation, conversion
 concurrency) — it covers the substance of the concurrency-critical paths,
 not every named case verbatim.
 
+## Round-2 correction pass (exact-head audit, PR #937)
+
+An exact-head audit of this branch (head `cea7519fd412326d267aec37ad52dba572b4e8d8`)
+found that the P1-7 and P2-3 sections above, while green under CI, had
+their own gaps: P1-7's verification step never actually compared
+anything (it echoed a "was this in scope" boolean straight into the
+result), and P2-3's target reservation could be cleared before the
+conversion it protected had actually finished. Both are corrected here.
+**Do not merge on the strength of the P1-7/P2-3 sections above alone —
+read this section too.**
+
+### P1-7 round-2 defects and fixes
+
+1. **`verifyRestoration()` did not verify.** `rootMatched`/
+   `ownershipMatched`/`flagsMatched`/etc. were assigned directly from the
+   `checkRoot`/`checkSystemAndFlags` scope-gate booleans — a root update
+   that silently failed, was normalized differently by Foundry, or left
+   stale nested data still reported `exact: true`, because `exact` was
+   computed WITHOUT those fields at all. **Fixed**: each `*Matched` field
+   is now `!checkX || deepEqualPlain(expectedRoot.field, actualRoot.field)`,
+   where `expectedRoot = applyFlatPatch(preMutationRoot, rootPatch)` — the
+   state the patch ITSELF claims to produce, computed by a new pure
+   `applyFlatPatch()` (`deletion-aware-patch.js`) — compared against the
+   actor REREAD after mutation. `exact` now requires `rootMatched`.
+2. **Embedded-document verification checked ID SETS only.** The module's
+   own doc comment claimed content was verified; it was not — a
+   `updateEmbeddedDocuments()` call that "succeeded" but silently left
+   content unchanged would still report `exact: true` as long as the id
+   was present. **Fixed**: a new `documentsMatch()`
+   (`snapshot-restoration-plan.js`) deep-compares each restored Item/Effect
+   against the snapshot's own source for that id (excluding only
+   Foundry-managed `_stats`). `itemsMatched`/`effectsMatched` now also
+   require zero `itemContentMismatches`/`effectContentMismatches`.
+3. **Scopes were not enforced on mutation.** Every scope unconditionally
+   restored BOTH Items and Active Effects regardless of what it promised —
+   a `system-and-flags`/`embedded-items` restore silently mutated document
+   families it was never supposed to touch. **Fixed**: new
+   `scopeIncludesItems()`/`scopeIncludesEffects()` predicates gate BOTH the
+   mutation calls in `restoreFromSnapshot()` AND the verification step, so
+   the two can never disagree about what a scope covers.
+4. **No Actor identity or schema/scope validation.** A snapshot captured
+   for one Actor could be silently applied to a different one; an
+   unrecognized `schemaVersion`/`scope` fell through to `full-actor`
+   behavior. **Fixed**: `restoreFromSnapshot()` now rejects, BEFORE any
+   mutation, a mismatched `snapshot.actorId`
+   (`SNAPSHOT_ACTOR_MISMATCH`), an unsupported `schemaVersion`
+   (`SNAPSHOT_SCHEMA_UNSUPPORTED`), and a `scope` outside the new
+   `SUPPORTED_SNAPSHOT_SCOPES` set (`SNAPSHOT_SCOPE_UNSUPPORTED`).
+   `SnapshotManager.restoreSnapshotExact()` now carries `snapshot.actorId`
+   through instead of stripping it.
+5. **An inexact restore always returned `{success: true}`.** No
+   rollback-purpose caller had a way to fail closed on partial identity.
+   **Fixed**: `options.requireExact === true` converts an
+   inexact-but-otherwise-successful outcome into a synthetic thrown error
+   (with its own `.code`/`.verification`), caught by the SAME try/catch
+   that handles genuine mutation failures — running the SAME bounded
+   compensation pass, not a parallel failure path. All four high-risk
+   rollback callers (`DroidStatblockConversionService`,
+   `DroidConvertedSystemReconciliationService`,
+   `DroidInstallationReconciler`, `AllyAssignmentService.convertToFollower`)
+   now pass `requireExact: true` and no longer have a separate
+   warn-only-on-inexact branch (folded into the exact/fail-closed path).
+6. **The boolean wrapper collapsed `exact: false` into `true`.**
+   `SnapshotManager.restoreSnapshot()` used to report `true` whenever
+   `result.success` was true, regardless of `result.exact` — silently
+   handing ~10 never-migrated `TransactionEngine`/`StoreEngine` call sites
+   (still true after this pass — see below) an inexact rollback dressed as
+   a clean success, on any caller that DID check it. **Fixed**:
+   `restoreSnapshot()` now requires `result.success === true && result.exact === true`.
+7. **`idRemap` fail-closed choice confirmed, not changed.** Per explicit
+   guidance for this branch, a `keepId` refusal still does not attempt
+   cross-reference remapping — it degrades `exact` to `false` (now via the
+   corrected `idsPreserved` term inside the `exact` computation, verified
+   by test) rather than fabricating a remap. `idRemap` stays an honest,
+   always-empty placeholder.
+8. **Compensation only checked `.success`.** `compensationSucceeded` used
+   to be `compResult.success === true` alone — a compensation restore that
+   "succeeded" but was itself identity-inexact was reported as a clean
+   recovery. **Fixed**: `compensationSucceeded = compResult.success === true && compResult.exact === true`,
+   with a new `compensationExact` field tracked separately.
+
+**Legacy-caller migration status (unchanged, re-confirmed by direct
+source inspection this pass).** `scripts/engine/store/transaction-engine.js`
+still has multiple `SnapshotManager.restoreSnapshot()` call sites that do
+not inspect the boolean result at all — they log "rollback successful"
+unconditionally. This pass does not migrate them (redesigning each
+transaction's own failure-reporting contract is a larger, separate change
+than fixing exactness); what it guarantees is that the WRAPPER those call
+sites depend on now answers correctly the moment any of them is migrated
+to check it — proven directly in
+`tests/transaction-engine-snapshot-restoration-migration.test.mjs`. This
+is an accepted, explicitly documented gap, not an oversight.
+
+**New/extended static guard checks** (`tools/check-snapshot-restoration-authority.mjs`,
+now 12 check families, all 6 new ones verified via inject/detect/revert
+with byte-identical restoration confirmed): `verifyRestoration()`'s
+`*Matched` fields must be real comparisons, not bare boolean copies; the
+`exact` computation must include `rootMatched`/`itemsMatched`/
+`effectsMatched`/`idsPreserved`; embedded Item/Effect mutation calls must
+be gated by `checkItems`/`checkEffects`; Actor identity and
+schema/scope must be validated before any mutation; the boolean wrapper
+must branch on `.exact`, not only `.success`; compensation success must
+require `.exact`.
+
+**New tests**: 14 additional Foundry-shim production-path tests appended
+to `tests/snapshot-service-restoration.test.mjs` (tests 36-49) covering:
+silent root-drift detection, per-field independent mismatch detection,
+Item/Effect content-mismatch detection (distinct from id-presence),
+`_stats` exclusion, `system-and-flags` scope never touching Items/Effects,
+`embedded-items` scope never touching root/flags/Effects, unsupported
+scope/actorId/schemaVersion rejection before mutation, `requireExact`
+fail-closed behavior (with and without the flag), and compensation
+honestly reporting `compensationSucceeded: false` on an inexact
+compensation. Plus 3 new tests in
+`tests/transaction-engine-snapshot-restoration-migration.test.mjs`
+covering the boolean wrapper's corrected contract directly.
+
+### P2-3 round-2 defects and fixes
+
+9. **No post-write verification on the target reservation.** Unlike slot
+   reservation (which already rereads after writing), the target
+   reservation was written and trusted without a reread — two clients
+   converting the same target into different slots could both believe
+   they had reserved it. **Fixed**: `FollowerSlotService.reserveFollowerConversionTarget()`
+   is new (`follower-slot-service.js`) and mirrors `reserveFollowerSlot()`'s
+   full discipline: reread fresh, reject a live different-token
+   reservation, write, reread AGAIN, verify the token survived.
+10. **The target reservation was cleared too early.** It used to be
+    cleared in the FIRST transaction step's own patch — protected only
+    until conversion actually began, not through derivation/finalization.
+    **Fixed**: `conversionMetadata` no longer clears it; it now stays live
+    through the ENTIRE transaction and is released, token-conditionally,
+    only after genuine success, or in every failure/exception exit path
+    (snapshot-creation failure before the transaction starts, and the
+    `!transaction.ok` branch) — three separate, explicit release call
+    sites.
+11. **Rollback could delete a newer, different request's reservation.**
+    The reservation flag was treated as ordinary restorable actor data —
+    a losing request's own rollback could delete a completely different,
+    later request's live reservation as a side effect. **Fixed**,
+    structurally: `TARGET_CONVERSION_RESERVATION_PROTECTED_FLAG_PATH` is
+    now a member of `snapshot-restoration-plan.js`'s `PROTECTED_FLAG_PATHS`
+    — no snapshot restoration (exact or not, this caller or any other) can
+    ever restore or delete it. **A second, related bug found and fixed
+    during this pass**: the target-conversion-commit rollback's own
+    "defense-in-depth" `buildFlagRestorationPatch()` fallback pass (a
+    generic, pre-existing flag-diff helper with no knowledge of
+    `PROTECTED_FLAG_PATHS`) could still corrupt or delete a different
+    request's live reservation, because it diffs the FULL previous vs.
+    current flags objects independently of the exact-restore's own
+    exclusion. Fixed by filtering the reservation path out of the
+    COMPUTED patch before it is applied (not by pre-stripping the cloned
+    flags objects passed in — an earlier attempt at that fix
+    accidentally left an empty `{foundryvtt-swse: {}}` container behind,
+    which the generic flatten helper treats as a single leaf and
+    overwrites wholesale, a strictly worse failure mode caught by this
+    pass's own new test).
+12. **The read/write/reread sequence is not a true compare-and-swap.**
+    Confirmed and left as an explicit, documented limitation per this
+    round's guidance: Foundry's `Document#update()` has no CAS primitive
+    this codebase can rely on. Rather than building a full arbiter/
+    serialized-mutation queue, this pass implements the "honest,
+    optimistic protocol" option: `FollowerSlotService.verifyFollowerConversionReservations()`
+    is called immediately before EVERY destructive phase of the
+    conversion transaction (target-metadata mutation, follower
+    derivation, owner/slot finalization) via a shared
+    `verifyReservationsOrAbort()` helper — narrowing the race window to
+    "between this check and the next mutation" rather than trusting one
+    acquisition-time check for the whole multi-step operation. Code
+    comments explicitly state this is NOT a lock or a globally atomic
+    transaction. A new controlled-interleaving test
+    (`tests/follower-conversion-reservation-race.test.mjs`) uses real
+    deferred-Promise barriers to force two concurrent
+    `reserveFollowerConversionTarget()` calls to interleave, and confirms
+    directly that (a) this can produce a genuine "both callers believed
+    they won" outcome — the honest limitation, not hidden — and (b) the
+    SUBSEQUENT `verifyFollowerConversionReservations()` check the real
+    transaction relies on correctly detects the loser's stale token before
+    any destructive mutation, which is what actually closes the practical
+    exposure.
+13. **`ownerRollbackUpdate` restored the WHOLE pre-reservation slots
+    array.** If owner commit succeeded but a later step (e.g. an optional
+    ownership grant) failed, the owner-relationship-commit rollback used
+    to write back the entire pre-transaction `currentSlots`/`currentFollowers`/
+    `currentOwnedActors`/`assignedAllies`/`beasts` arrays wholesale —
+    silently overwriting any unrelated, concurrent slot/relationship
+    change a DIFFERENT request committed during this transaction's
+    derivation window. **Fixed**: the rollback now rereads the owner
+    FRESH at rollback time and reverses only THIS conversion's own
+    changes — this slot's occupant entry back to its pre-conversion state
+    (via `clonePlain(slot)`, the specific slot object captured before
+    mutation), and this target's own follower/ownedActors/assignedAllies/
+    beasts entries added or removed by this conversion (via
+    `buildFollowerUnlinkOwnerUpdate()` and re-adding the specific captured
+    prior entry, never the whole array).
+14. **No same-token idempotency record on the follower link.** A
+    same-token retry after a successful conversion had no way to detect
+    the existing conversion without re-running derivation/materialization.
+    **Fixed**: `convertToFollower()` now stamps `finalizationToken:
+    requestToken` on the follower link, and checks — BEFORE acquiring any
+    reservation or mutating anything — whether an existing follower link
+    already carries the caller-supplied `options.requestToken` (via the
+    pre-existing `findFollowerLinkForToken()` helper); if so, it returns
+    the existing follower Actor directly. A DIFFERENT token is never
+    treated as a match (only an EXPLICIT, caller-supplied token can ever
+    match a prior one — an auto-generated token is freshly random per
+    call), so a genuinely new conversion request is never
+    short-circuited by accident.
+
+**New/extended static guard checks** (`tools/check-ally-assignment-authority.mjs`,
+checks 38 and 40 rewritten to match the corrected acquisition order and
+dual-release requirement — both re-verified via inject/detect/revert with
+byte-identical restoration confirmed).
+
+**New tests**: 6 additional production-path scenarios appended to
+`tests/gm-existing-npc-allies-assignment.test.mjs` (tests 70-75) covering:
+rollback preserving a different, later request's reservation; dual-token
+verification aborting before the first destructive phase; dual-token
+verification preventing derivation after the metadata step already
+committed (and that step being rolled back too); a concurrent, unrelated
+slot change surviving this request's own rollback; same-token idempotent
+retry; different-token retry rejected normally. Plus 4 new tests in
+`tests/follower-conversion-reservation-race.test.mjs` using real
+deferred-Promise barriers for genuine two-writer interleaving (not
+pre-seeded static flags), per this round's explicit requirement that
+source-regex tests are insufficient for these core concurrency
+guarantees.
+
 ## Merge readiness
 
 All 4 P0 defects (Round 3), all 5 Round-4 defects (2 of them
-merge-blocking), P1-5, P1-6, P1-7, and P2-3 are now fixed and tested.
+merge-blocking), P1-5, P1-6, P1-7, P2-3, and this round-2 correction pass
+(8 P1-7 defects + 6 P2-3 defects, all fixed and tested, plus one
+additional bug found and fixed DURING this correction pass itself — the
+`buildFlagRestorationPatch()` reservation-corruption issue in defect #11
+above) are now fixed and tested. Progression-integrity (44) and
+architecture-boundary (37) static baselines are unchanged.
+
 This branch is closer to mergeable than any prior round, but is **still
 not unconditionally merge-ready**: no live Foundry v13 validation has
 been performed at any point in this branch's history — that remains a
 hard precondition for removing draft status, independent of static fix
 completeness. See the 12-item manual Foundry checklist in this pass's
-final report for what remains genuinely unverified.
+final report for what remains genuinely unverified. The legacy
+`TransactionEngine`/`StoreEngine` caller-migration gap documented above
+under P1-7 round-2 is also an accepted, explicit limitation, not
+something this pass claims to have closed.
