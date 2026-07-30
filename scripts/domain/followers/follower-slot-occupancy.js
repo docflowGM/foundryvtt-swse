@@ -225,6 +225,29 @@ const TARGET_RESERVATION_FLAG_KEY = 'followerConversionReservation';
 export const TARGET_CONVERSION_RESERVATION_FLAG_PATH = `flags.${TARGET_RESERVATION_FLAG_SCOPE}.${TARGET_RESERVATION_FLAG_KEY}`;
 
 /**
+ * ROUND-2 CORRECTION (P2-3 concurrency-race audit) — the dot-path used to
+ * DELETE the target reservation flag via Foundry's `-=key` convention,
+ * for FollowerSlotService's own token-conditional release path.
+ */
+export const TARGET_CONVERSION_RESERVATION_DELETION_PATH = `flags.${TARGET_RESERVATION_FLAG_SCOPE}.-=${TARGET_RESERVATION_FLAG_KEY}`;
+
+/**
+ * ROUND-2 CORRECTION — the target reservation flag's path RELATIVE to
+ * `flags.` (i.e. without the `flags.` prefix), for registering it as a
+ * PROTECTED path with the snapshot-restoration authority
+ * (scripts/governance/snapshot/snapshot-restoration-plan.js). A prior
+ * version of this reservation let a target's own conversion snapshot
+ * rollback silently delete a LIVE reservation — including one belonging
+ * to a completely different, later request — because the reservation
+ * flag was treated as ordinary restorable actor data. Its lifecycle is
+ * exclusively managed by FollowerSlotService's token-conditional
+ * reserve/release methods below; snapshot restoration must never
+ * restore OR delete it, the same way it never touches the snapshot
+ * history ledger itself.
+ */
+export const TARGET_CONVERSION_RESERVATION_PROTECTED_FLAG_PATH = `${TARGET_RESERVATION_FLAG_SCOPE}.${TARGET_RESERVATION_FLAG_KEY}`;
+
+/**
  * Read a target Actor's live conversion-reservation record, if any. Pure.
  *
  * @param {Actor|object|null|undefined} targetActor

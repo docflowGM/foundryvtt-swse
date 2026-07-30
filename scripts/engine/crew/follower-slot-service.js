@@ -24,7 +24,12 @@ import {
   isFollowerSlotOccupied,
   resolveFollowerSlotReservation,
   isFollowerSlotReservationExpired,
-  buildFollowerSlotReservation
+  buildFollowerSlotReservation,
+  resolveTargetConversionReservation,
+  isTargetConversionReservationExpired,
+  buildTargetConversionReservation,
+  TARGET_CONVERSION_RESERVATION_FLAG_PATH,
+  TARGET_CONVERSION_RESERVATION_DELETION_PATH
 } from '/systems/foundryvtt-swse/scripts/domain/followers/follower-slot-occupancy.js';
 
 const SYSTEM_ID = 'foundryvtt-swse';
@@ -393,5 +398,135 @@ export class FollowerSlotService {
 
     swseLogger.log('[FollowerSlotService] Released follower slot reservation', { owner: freshOwner.name, slotId });
     return { success: true };
+  }
+
+  /**
+   * ROUND-2 CORRECTION (P2-3 concurrency-race audit) — reserve a
+   * conversion TARGET (the existing NPC being converted), governed the
+   * same way slot reservation is: reread fresh, reject a live
+   * reservation held by a different token, write via ActorEngine, THEN
+   * reread AGAIN and verify the token survived before reporting success.
+   *
+   * A prior version of this reservation was written with a single,
+   * unchecked `ActorEngine.updateActor()` call directly in
+   * `AllyAssignmentService.convertToFollower()` and never rereread —
+   * two concurrent requests could both believe they held the target
+   * reservation. This method is now the ONLY way the target reservation
+   * is written or read for acquisition purposes.
+   *
+   * @param {Actor} targetActor
+   * @param {{token: string, ownerActorId?: string|null, slotId: string}} params
+   * @returns {Promise<object>} `{success: true, reservation}` or
+   *   `{success: false, code, error, reservedByAnotherRequest?: true}`
+   */
+  static async reserveFollowerConversionTarget(targetActor, { token, ownerActorId = null, slotId } = {}) {
+    if (!targetActor || !token || !slotId) {
+      return { success: false, code: 'FOLLOWER_TARGET_RESERVATION_INVALID_REQUEST', error: 'reserveFollowerConversionTarget requires a target Actor, a token, and a slot id.' };
+    }
+    if (game.user?.isGM !== true) {
+      return { success: false, code: 'FOLLOWER_TARGET_RESERVATION_FORBIDDEN', error: 'Only a GM can reserve a conversion target.' };
+    }
+
+    const freshTarget = game.actors?.get?.(targetActor.id) ?? targetActor;
+    const now = Date.now();
+    const existingReservation = resolveTargetConversionReservation(freshTarget);
+    if (existingReservation && !isTargetConversionReservationExpired(freshTarget, now) && existingReservation.token !== token) {
+      return { success: false, code: 'FOLLOWER_TARGET_RESERVED', reservedByAnotherRequest: true, error: 'This NPC is already reserved by another in-progress conversion.' };
+    }
+
+    const reservation = buildTargetConversionReservation({ token, ownerActorId, slotId, userId: game.user?.id ?? null, now });
+    await ActorEngine.updateActor(freshTarget, {
+      [TARGET_CONVERSION_RESERVATION_FLAG_PATH]: reservation
+    }, { source: 'FollowerSlotService.reserveFollowerConversionTarget' });
+
+    const rereadTarget = game.actors?.get?.(freshTarget.id) ?? freshTarget;
+    const rereadReservation = resolveTargetConversionReservation(rereadTarget);
+    if (!rereadReservation || rereadReservation.token !== token) {
+      return { success: false, code: 'FOLLOWER_TARGET_RESERVED', reservedByAnotherRequest: true, error: 'Another request won the race for this conversion target.' };
+    }
+
+    swseLogger.log('[FollowerSlotService] Reserved conversion target', { target: freshTarget.name, slotId, token });
+    return { success: true, reservation: rereadReservation };
+  }
+
+  /**
+   * Release a target conversion reservation — TOKEN-CONDITIONAL only,
+   * same policy as `releaseFollowerSlotReservation()`.
+   *
+   * @param {Actor} targetActor
+   * @param {string} token
+   * @param {{source?: string}} [options]
+   * @returns {Promise<object>}
+   */
+  static async releaseFollowerConversionTargetReservation(targetActor, token, options = {}) {
+    if (!targetActor || !token) {
+      return { success: false, code: 'FOLLOWER_TARGET_RESERVATION_INVALID_REQUEST', error: 'releaseFollowerConversionTargetReservation requires a target Actor and a token.' };
+    }
+
+    const freshTarget = game.actors?.get?.(targetActor.id) ?? targetActor;
+    const reservation = resolveTargetConversionReservation(freshTarget);
+    if (!reservation) {
+      return { success: true, alreadyCleared: true };
+    }
+    if (reservation.token !== token) {
+      return { success: false, code: 'FOLLOWER_TARGET_RESERVATION_TOKEN_MISMATCH', error: 'Cannot release a target reservation held by a different request.' };
+    }
+
+    await ActorEngine.updateActor(freshTarget, {
+      [TARGET_CONVERSION_RESERVATION_DELETION_PATH]: null
+    }, { source: options.source ? `FollowerSlotService.releaseFollowerConversionTargetReservation:${options.source}` : 'FollowerSlotService.releaseFollowerConversionTargetReservation' });
+
+    swseLogger.log('[FollowerSlotService] Released target conversion reservation', { target: freshTarget.name });
+    return { success: true };
+  }
+
+  /**
+   * ROUND-2 CORRECTION — dual-token verification, meant to be called
+   * immediately before EVERY destructive phase of a conversion (target
+   * metadata mutation, follower derivation, final slot/owner commit) —
+   * not just once at acquisition time. Foundry's `Document#update()` has
+   * no compare-and-swap primitive this codebase can rely on, so
+   * acquisition alone is provisional: two concurrent requests can both
+   * observe their own token as "acquired" in the brief window before a
+   * later write overwrites the earlier one. Rereading and reverifying
+   * BOTH tokens right before each destructive step closes that window
+   * down to the time between this check and the next mutation, rather
+   * than trusting a single acquisition-time check for the whole
+   * multi-step conversion.
+   *
+   * This is an HONEST, OPTIMISTIC protocol — repeated verification plus
+   * after-the-fact compensation — NOT a database lock or a globally
+   * atomic transaction. It cannot guarantee only one of two truly
+   * simultaneous requests ever begins mutating; it guarantees that a
+   * request whose token has been superseded is detected before its NEXT
+   * destructive step and aborts (with compensation) rather than
+   * finishing silently.
+   *
+   * @param {object} params
+   * @param {Actor} params.ownerActor
+   * @param {Actor} params.targetActor
+   * @param {string} params.slotId
+   * @param {string} params.token
+   * @returns {Promise<{success: boolean, slotOk: boolean, targetOk: boolean, code: string|null}>}
+   */
+  static async verifyFollowerConversionReservations({ ownerActor, targetActor, slotId, token }) {
+    const freshOwner = game.actors?.get?.(ownerActor?.id) ?? ownerActor;
+    const slots = Array.isArray(freshOwner?.getFlag?.(SYSTEM_ID, FOLLOWER_SLOTS_FLAG))
+      ? freshOwner.getFlag(SYSTEM_ID, FOLLOWER_SLOTS_FLAG)
+      : [];
+    const slot = slots.find(s => s?.id === slotId) ?? null;
+    const slotReservation = resolveFollowerSlotReservation(slot);
+    const slotOk = Boolean(slotReservation) && !isFollowerSlotReservationExpired(slot) && slotReservation.token === token;
+
+    const freshTarget = game.actors?.get?.(targetActor?.id) ?? targetActor;
+    const targetReservation = resolveTargetConversionReservation(freshTarget);
+    const targetOk = Boolean(targetReservation) && !isTargetConversionReservationExpired(freshTarget) && targetReservation.token === token;
+
+    return {
+      success: slotOk && targetOk,
+      slotOk,
+      targetOk,
+      code: !slotOk ? 'FOLLOWER_SLOT_RESERVATION_LOST' : (!targetOk ? 'FOLLOWER_TARGET_RESERVATION_LOST' : null)
+    };
   }
 }
