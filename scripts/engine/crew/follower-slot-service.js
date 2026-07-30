@@ -20,7 +20,12 @@
 
 import { ActorEngine } from '/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js';
 import { swseLogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
-import { isFollowerSlotOccupied } from '/systems/foundryvtt-swse/scripts/domain/followers/follower-slot-occupancy.js';
+import {
+  isFollowerSlotOccupied,
+  resolveFollowerSlotReservation,
+  isFollowerSlotReservationExpired,
+  buildFollowerSlotReservation
+} from '/systems/foundryvtt-swse/scripts/domain/followers/follower-slot-occupancy.js';
 
 const SYSTEM_ID = 'foundryvtt-swse';
 const FOLLOWER_SLOTS_FLAG = 'followerSlots';
@@ -262,5 +267,131 @@ export class FollowerSlotService {
 
     swseLogger.log('[FollowerSlotService] Revoked manual follower slot', { owner: ownerActor.name, slotId });
     return true;
+  }
+
+  /**
+   * PHASE 10 ADDENDUM (P2-3) — reserve a follower slot for an in-progress
+   * conversion request, so a second concurrent request (a second GM
+   * client, or a double-fired action) cannot also start converting an NPC
+   * into the SAME slot before the first request finishes.
+   *
+   * Rereads the owner Actor and its slots fresh (never trusts a
+   * caller-held, possibly-stale `ownerActor`/slot array), rejects an
+   * occupied slot outright, rejects a slot already carrying a LIVE
+   * reservation held by a DIFFERENT token, and allows an idempotent
+   * same-token retry (a caller reattempting its own in-flight request)
+   * to refresh its own reservation rather than being rejected by itself.
+   * After writing the reservation, rereads the owner AGAIN and confirms
+   * the slot's reservation still carries this token — a last-write-wins
+   * race between two concurrent reservation attempts is not considered
+   * safely acquired until this post-write reread confirms the caller
+   * actually won it.
+   *
+   * @param {Actor} ownerActor
+   * @param {string} slotId
+   * @param {{token: string, operation?: string, targetActorId?: string|null}} params
+   * @returns {Promise<object>} `{success: true, slotId, reservation}` or
+   *   `{success: false, code, error, reservedByAnotherRequest?: true}`
+   */
+  static async reserveFollowerSlot(ownerActor, slotId, { token, operation = 'existing-npc-follower-conversion', targetActorId = null } = {}) {
+    if (!ownerActor || !slotId || !token) {
+      return { success: false, code: 'FOLLOWER_SLOT_RESERVATION_INVALID_REQUEST', error: 'reserveFollowerSlot requires an owner Actor, a slot id, and a token.' };
+    }
+    if (game.user?.isGM !== true) {
+      return { success: false, code: 'FOLLOWER_SLOT_RESERVATION_FORBIDDEN', error: 'Only a GM can reserve a follower slot.' };
+    }
+
+    const freshOwner = game.actors?.get?.(ownerActor.id) ?? ownerActor;
+    const now = Date.now();
+    const currentSlots = Array.isArray(freshOwner.getFlag?.(SYSTEM_ID, FOLLOWER_SLOTS_FLAG))
+      ? freshOwner.getFlag(SYSTEM_ID, FOLLOWER_SLOTS_FLAG)
+      : [];
+    const slot = currentSlots.find(s => s?.id === slotId) ?? null;
+    if (!slot) {
+      return { success: false, code: 'FOLLOWER_SLOT_NOT_FOUND', error: 'That follower slot could not be found.' };
+    }
+    if (isFollowerSlotOccupied(slot)) {
+      return { success: false, code: 'FOLLOWER_SLOT_OCCUPIED', error: 'That follower slot is already occupied.' };
+    }
+
+    const existingReservation = resolveFollowerSlotReservation(slot);
+    const hasLiveReservation = existingReservation && !isFollowerSlotReservationExpired(slot, now);
+    if (hasLiveReservation && existingReservation.token !== token) {
+      return { success: false, code: 'FOLLOWER_SLOT_RESERVED', reservedByAnotherRequest: true, error: 'That follower slot is already reserved by another in-progress conversion.' };
+    }
+
+    const reservation = buildFollowerSlotReservation({
+      token,
+      operation,
+      userId: game.user?.id ?? null,
+      ownerActorId: freshOwner.id,
+      targetActorId,
+      slotId,
+      now
+    });
+    const nextSlots = currentSlots.map(s => (s?.id === slotId ? { ...s, reservation } : s));
+
+    await ActorEngine.updateActor(freshOwner, {
+      [`flags.${SYSTEM_ID}.${FOLLOWER_SLOTS_FLAG}`]: nextSlots
+    }, { source: 'FollowerSlotService.reserveFollowerSlot' });
+
+    const rereadOwner = game.actors?.get?.(freshOwner.id) ?? freshOwner;
+    const rereadSlots = Array.isArray(rereadOwner.getFlag?.(SYSTEM_ID, FOLLOWER_SLOTS_FLAG))
+      ? rereadOwner.getFlag(SYSTEM_ID, FOLLOWER_SLOTS_FLAG)
+      : [];
+    const rereadSlot = rereadSlots.find(s => s?.id === slotId) ?? null;
+    const rereadReservation = resolveFollowerSlotReservation(rereadSlot);
+    if (!rereadReservation || rereadReservation.token !== token) {
+      return { success: false, code: 'FOLLOWER_SLOT_RESERVED', reservedByAnotherRequest: true, error: 'Another request won the race for that follower slot.' };
+    }
+
+    swseLogger.log('[FollowerSlotService] Reserved follower slot for conversion', { owner: freshOwner.name, slotId, token });
+    return { success: true, slotId, reservation: rereadReservation };
+  }
+
+  /**
+   * Release a follower-slot reservation — TOKEN-CONDITIONAL only. A
+   * caller can only clear a reservation carrying its OWN token; a
+   * mismatched or already-cleared reservation is reported, never treated
+   * as an error that masks the real cause of a failed conversion, but
+   * this method NEVER clears a different request's live reservation.
+   *
+   * @param {Actor} ownerActor
+   * @param {string} slotId
+   * @param {string} token
+   * @param {{source?: string}} [options]
+   * @returns {Promise<object>} `{success: true}`, `{success: true, alreadyCleared: true}`,
+   *   or `{success: false, code: 'FOLLOWER_SLOT_RESERVATION_TOKEN_MISMATCH', error}`
+   */
+  static async releaseFollowerSlotReservation(ownerActor, slotId, token, options = {}) {
+    if (!ownerActor || !slotId || !token) {
+      return { success: false, code: 'FOLLOWER_SLOT_RESERVATION_INVALID_REQUEST', error: 'releaseFollowerSlotReservation requires an owner Actor, a slot id, and a token.' };
+    }
+
+    const freshOwner = game.actors?.get?.(ownerActor.id) ?? ownerActor;
+    const currentSlots = Array.isArray(freshOwner.getFlag?.(SYSTEM_ID, FOLLOWER_SLOTS_FLAG))
+      ? freshOwner.getFlag(SYSTEM_ID, FOLLOWER_SLOTS_FLAG)
+      : [];
+    const slot = currentSlots.find(s => s?.id === slotId) ?? null;
+    const reservation = resolveFollowerSlotReservation(slot);
+    if (!reservation) {
+      return { success: true, alreadyCleared: true };
+    }
+    if (reservation.token !== token) {
+      return { success: false, code: 'FOLLOWER_SLOT_RESERVATION_TOKEN_MISMATCH', error: 'Cannot release a follower-slot reservation held by a different request.' };
+    }
+
+    const nextSlots = currentSlots.map(s => {
+      if (s?.id !== slotId) return s;
+      const { reservation: _reservation, ...rest } = s;
+      return rest;
+    });
+
+    await ActorEngine.updateActor(freshOwner, {
+      [`flags.${SYSTEM_ID}.${FOLLOWER_SLOTS_FLAG}`]: nextSlots
+    }, { source: options.source ? `FollowerSlotService.releaseFollowerSlotReservation:${options.source}` : 'FollowerSlotService.releaseFollowerSlotReservation' });
+
+    swseLogger.log('[FollowerSlotService] Released follower slot reservation', { owner: freshOwner.name, slotId });
+    return { success: true };
   }
 }

@@ -14,7 +14,7 @@ import { FactionRegistryService } from '/systems/foundryvtt-swse/scripts/allies/
 import { HolonetIntelService, INTEL_REVEAL_STATE } from '/systems/foundryvtt-swse/scripts/holonet/subsystems/holonet-intel-service.js';
 import { createActor } from '/systems/foundryvtt-swse/scripts/core/document-api-v13.js';
 import { FollowerSlotService, isEligibleFollowerSlotOwner } from '/systems/foundryvtt-swse/scripts/engine/crew/follower-slot-service.js';
-import { isFollowerSlotOccupied, resolveFollowerSlotActorId } from '/systems/foundryvtt-swse/scripts/domain/followers/follower-slot-occupancy.js';
+import { isFollowerSlotOccupied, resolveFollowerSlotActorId, isFollowerSlotReserved } from '/systems/foundryvtt-swse/scripts/domain/followers/follower-slot-occupancy.js';
 import {
   AllyAssignmentService,
   ASSIGNMENT_KIND,
@@ -1400,6 +1400,13 @@ export class AlliesSurfaceService {
       .map(slot => {
         const sourceType = slot.sourceType === 'gm-grant' ? 'gm-grant' : 'talent';
         const sourceLabel = sourceType === 'gm-grant' ? (slot.sourceLabel || 'GM Granted') : (slot.talentName || 'Follower Slot');
+        // PHASE 10 ADDENDUM (P2-3): an open (unoccupied) slot can still be
+        // temporarily claimed by another in-progress conversion request —
+        // shown here so the picker doesn't offer it as freely selectable,
+        // WITHOUT exposing which user/token holds it (that stays server-
+        // side, verified again by FollowerSlotService.reserveFollowerSlot()
+        // at commit time regardless of what the UI shows — this flag is
+        // UX only, never the actual concurrency guarantee).
         return {
           id: slot.id,
           label: sourceLabel,
@@ -1408,7 +1415,8 @@ export class AlliesSurfaceService {
           dependentKind: slot.dependentKind || 'follower',
           talentName: slot.talentName || null,
           talentItemId: slot.talentItemId || null,
-          templateChoices: resolveAllowedFollowerTemplates(slot)
+          templateChoices: resolveAllowedFollowerTemplates(slot),
+          reserved: isFollowerSlotReserved(slot)
         };
       });
   }
