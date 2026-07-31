@@ -4,12 +4,24 @@
  *
  * Data sources:
  *   1. actor.system.droidSystems — Garage/builder configured state
- *   2. actor.items               — actor-owned items and integrated gear
- *   3. scripts/data/droid-part-schema.js — read-only rules/description overlay
+ *   2. actor.system.installedSystems — Garage/Upgrade Workshop installation ledger
+ *   3. actor.items               — actor-owned items and integrated gear
+ *   4. scripts/data/droid-part-schema.js — CANONICAL read-only rules/description
+ *      overlay (see docs/audits/droid-authority-consolidation-phase-1.md for why
+ *      this module, and not scripts/domain/droids/droid-part-schema.js, is the
+ *      canonical droid-part registry).
+ *
+ * Cross-source deduplication and installed/enabled/active state now come from
+ * the shared scripts/domain/droids/droid-installed-component-resolver.js read
+ * model instead of this file's own id/name matching, so a component installed
+ * via the Garage, the Upgrade Workshop, or an embedded Item is never read as
+ * more than one logical component.
  */
 
-import { computeDroidPartCost, hydrateDroidPart, isWeaponizedDroidPart, normalizeDroidPartId } from "/systems/foundryvtt-swse/scripts/data/droid-part-schema.js";
+import { computeDroidPartCost, getDroidPartDefinition, hydrateDroidPart, normalizeDroidPartId } from "/systems/foundryvtt-swse/scripts/data/droid-part-schema.js";
 import { buildUnarmedAttackContext } from "/systems/foundryvtt-swse/scripts/engine/combat/unarmed-attack-helper.js";
+import { resolveInstalledDroidComponents } from "/systems/foundryvtt-swse/scripts/domain/droids/droid-installed-component-resolver.js";
+import { isIntegratedWeaponItem, isIntegratedEquipmentItem, partitionWeaponizedParts, matchesDroidPartTypeHint } from "/systems/foundryvtt-swse/scripts/domain/droids/droid-item-classification.js";
 
 const DEFAULT_APPENDAGE_SLOTS = [
   { id: 'left-arm', label: 'Left Arm', defaultName: 'Droid Arm / Hand' },
@@ -48,13 +60,18 @@ function humanize(value) {
  *
  * No actor mutations. No item mutations. No UI dependencies.
  *
- * Integration classification contract:
- *   Integrated weapon  = item.type === 'weapon'
+ * Integration classification contract (scripts/domain/droids/droid-item-classification.js):
+ *   Integrated weapon  = item.type in ('weapon', 'lightsaber')
  *                        AND (item.system.integrated === true OR flags.swse.integrated === true)
- *   Integrated equip   = (item.type === 'integratedSystem' OR item.system.integrated === true)
- *                        AND item.type !== 'weapon'
+ *   Integrated equip   = item.type NOT in ('weapon', 'lightsaber')
+ *                        AND (item.type === 'integratedSystem' OR item.system.integrated === true
+ *                             OR flags.swse.integrated === true OR the hydrated part resolves a category/slot)
  *   Handheld weapon    = item.type === 'weapon' AND NOT integrated → inventory/combat only
  *   Standard armor     = item.type === 'armor'  AND NOT integrated → gear tab only
+ *
+ * An integrated lightsaber is classified as a weapon only — it used to also
+ * satisfy the equipment predicate (which excluded only 'weapon', not
+ * 'lightsaber') and render in both panels.
  */
 
 const REGION_META = {
@@ -122,16 +139,39 @@ export class DroidSystemsResolver {
     this.system = actor?.system ?? {};
     this.droidSystems = this.system.droidSystems ?? {};
     this.items = asArray(actor?.items);
+    // Single normalized read of installedSystems + droidSystems + items,
+    // deduplicated by canonical part id with installed/enabled/active state
+    // already resolved. Used to (a) fold in components that exist only in
+    // system.installedSystems — e.g. installed through the Upgrade Workshop,
+    // which never writes a system.droidSystems mirror — and (b) know which
+    // ids are genuinely active for hydrateDroidPart()'s combo-modifier checks.
+    this.componentResolution = resolveInstalledDroidComponents(actor, {
+      normalizeId: normalizeDroidPartId,
+      getDefinition: (id) => getDroidPartDefinition(id)
+    });
     this.installedIds = this._collectInstalledIds();
   }
 
   resolve() {
-    const processor = this._resolveProcessor();
-    const locomotion = this._resolveLocomotion();
-    const armor = this._resolveArmor();
-    const appendages = this._resolveAppendages();
-    const sensors = this._resolveSensors();
-    const integratedEquipment = this._resolveIntegratedEquipment();
+    const ledgerByCategory = this._ledgerOnlyEntriesByCategory();
+
+    const processor = this._mergeLedgerOnly(this._resolveProcessor(), ledgerByCategory, ['processor']);
+    const locomotion = this._mergeLedgerOnly(this._resolveLocomotion(), ledgerByCategory, ['locomotion']);
+    const armor = this._mergeLedgerOnly(this._resolveArmor(), ledgerByCategory, ['armor']);
+    const appendages = this._mergeLedgerOnly(this._resolveAppendages(), ledgerByCategory, ['appendage']);
+    const sensors = this._mergeLedgerOnly(this._resolveSensors(), ledgerByCategory, ['sensor']);
+
+    let integratedEquipment = this._resolveIntegratedEquipment();
+    const equipmentExtras = [...(ledgerByCategory.get('communication') ?? []), ...(ledgerByCategory.get('shield') ?? []), ...(ledgerByCategory.get('accessory') ?? []), ...(ledgerByCategory.get('weapon') ?? [])];
+    if (equipmentExtras.length) {
+      // Ledger-only entries (e.g. installed exclusively through the Upgrade
+      // Workshop) may themselves be weaponized, so re-partition after
+      // merging rather than assuming they belong in the equipment bucket.
+      const merged = this._mergeDedupe([...integratedEquipment.items, ...integratedEquipment.weaponized, ...equipmentExtras]);
+      const { weaponized, nonWeaponized } = partitionWeaponizedParts(merged);
+      integratedEquipment = { ...integratedEquipment, items: nonWeaponized, weaponized, isConfigured: nonWeaponized.length > 0, isEmpty: nonWeaponized.length === 0 };
+    }
+
     const integratedWeapons = this._resolveIntegratedWeapons({ appendages, locomotion, integratedEquipment });
     const skillModifiers = this._collectSkillModifiers([processor, locomotion, armor, appendages, sensors, integratedEquipment, integratedWeapons]);
     const unarmedAttack = buildUnarmedAttackContext(this.actor);
@@ -168,7 +208,57 @@ export class DroidSystemsResolver {
     for (const item of this.items) {
       add(item?.system?.droidPartId); add(item?.flags?.swse?.droidPartId); add(item?.name);
     }
+    // Fold in canonical ids the normalized resolver found (e.g. entries that
+    // exist only in system.installedSystems) so combo-modifier checks like
+    // Magnetic Feet + Magnetic Hands see them regardless of which surface
+    // installed them.
+    for (const component of this.componentResolution?.components ?? []) {
+      if (component.installed) add(component.canonicalId);
+    }
     return new Set(ids);
+  }
+
+  /**
+   * Active canonical components that the normalized resolver found in
+   * system.installedSystems but that this._collectInstalledIds() cannot
+   * already trace back to a system.droidSystems record or an actor Item.
+   * Without this, a component installed only through the Upgrade Workshop
+   * (which writes installedSystems directly and never mirrors
+   * droidSystems) would be mechanically active but invisible on the sheet.
+   */
+  _installedLedgerOnlyEntries() {
+    const knownIds = new Set();
+    const add = (value) => { const key = slug(value); if (key) knownIds.add(key); };
+    add(this.droidSystems.processor?.id); add(this.droidSystems.processor?.name);
+    add(this.droidSystems.locomotion?.id); add(this.droidSystems.locomotion?.name);
+    add(this.droidSystems.armor?.id); add(this.droidSystems.armor?.name);
+    for (const key of ['appendages', 'sensors', 'weapons', 'accessories', 'integratedSystems', 'processorEnhancements', 'locomotionSystems', 'secondaryLocomotion']) {
+      for (const entry of Array.isArray(this.droidSystems[key]) ? this.droidSystems[key] : []) { add(entry?.id); add(entry?.name); }
+    }
+    for (const item of this.items) { add(item?.system?.droidPartId); add(item?.flags?.swse?.droidPartId); add(item?.name); }
+
+    return (this.componentResolution?.components ?? [])
+      .filter(component => component.active && component.primarySource?.kind === 'installedLedger' && !knownIds.has(component.canonicalId))
+      .map(component => this._fromBuilder({ id: component.canonicalId, name: component.definition?.name ?? component.canonicalId }, { cost: computeDroidPartCost(this.actor, component.canonicalId) }));
+  }
+
+  _ledgerOnlyEntriesByCategory() {
+    if (this._ledgerOnlyByCategoryCache) return this._ledgerOnlyByCategoryCache;
+    const byCategory = new Map();
+    for (const entry of this._installedLedgerOnlyEntries()) {
+      const category = slug(entry.category) || 'accessory';
+      if (!byCategory.has(category)) byCategory.set(category, []);
+      byCategory.get(category).push(entry);
+    }
+    this._ledgerOnlyByCategoryCache = byCategory;
+    return byCategory;
+  }
+
+  _mergeLedgerOnly(region, byCategoryMap, categories) {
+    const extras = categories.flatMap(category => byCategoryMap.get(category) ?? []);
+    if (!extras.length) return region;
+    const items = this._mergeDedupe([...region.items, ...extras]);
+    return { ...region, items, isConfigured: items.length > 0, isEmpty: items.length === 0 };
   }
 
   _hydrate(data) {
@@ -178,16 +268,12 @@ export class DroidSystemsResolver {
   // ── Classification predicates ──────────────────────────────────────
 
   _isIntegratedWeapon(item) {
-    return (
-      ['weapon', 'lightsaber'].includes(item?.type) &&
-      (item.system?.integrated === true || Boolean(item.flags?.swse?.integrated))
-    );
+    return isIntegratedWeaponItem(item);
   }
 
   _isIntegratedEquipment(item) {
-    if (item?.type === 'weapon') return false;
     const part = this._hydrate({ id: item?.system?.droidPartId ?? item?.flags?.swse?.droidPartId ?? item?.name, name: item?.name });
-    return item?.type === 'integratedSystem' || item?.system?.integrated === true || Boolean(item?.flags?.swse?.integrated) || Boolean(part.category || part.slot);
+    return isIntegratedEquipmentItem(item, { hasCategoryOrSlot: Boolean(part.category || part.slot) });
   }
 
   // ── Item projection helpers ────────────────────────────────────────
@@ -256,7 +342,11 @@ export class DroidSystemsResolver {
       .map(i => ({ ...this._fromActorItem(i), rating: i.system?.rating ?? null }));
     const primaryBuilder = hasBuilderProcessor ? this._fromBuilder(builderData, { cost: computeDroidPartCost(this.actor, builderData), bonus: Number(builderData.bonus ?? 0) }) : null;
     const backupBuilder = (backupData.id || backupData.name) ? this._fromBuilder(backupData, { cost: computeDroidPartCost(this.actor, backupData), backup: true }) : null;
-    const items = this._mergeDedupe([...(primaryBuilder ? [primaryBuilder] : itemProcessors), ...(backupBuilder ? [backupBuilder] : [])]);
+    // Merge the builder-configured processor with any embedded processor
+    // Items instead of dropping the Items whenever a builder record exists —
+    // the old code discarded itemProcessors entirely once hasBuilderProcessor
+    // was true, which hid backup/alternate/legacy processor Items.
+    const items = this._mergeDedupe([...(primaryBuilder ? [primaryBuilder] : []), ...itemProcessors, ...(backupBuilder ? [backupBuilder] : [])]);
     const hasBackupProcessor = items.some(p => p.rules?.unlocksBackupProcessorSlot || slug(p.name).includes('backup-processor') || slug(p.ruleId).includes('backup-processor'))
       || this.items.some(i => slug(i.name).includes('backup-processor'));
     const primary = items.find(i => i.backup !== true && i.rules?.unlocksBackupProcessorSlot !== true) ?? items[0] ?? null;
@@ -291,8 +381,15 @@ export class DroidSystemsResolver {
     for (const key of ['locomotionSystems', 'secondaryLocomotion']) {
       for (const entry of Array.isArray(this.droidSystems[key]) ? this.droidSystems[key] : []) extras.push(this._fromBuilder(entry, { cost: computeDroidPartCost(this.actor, entry) }));
     }
-    const items = primary ? [primary, ...extras] : extras;
-    return { ...meta, items, active: primary, isConfigured: items.length > 0, isDefault: items.length === 0, isEmpty: items.length === 0, warning: items.length === 0 ? 'No locomotion system installed — baseline Walking locomotion shown.' : null, name, speed };
+    // Actor-owned locomotion Items were previously ignored entirely by this
+    // region (unlike armor/sensors/appendages, which all read from
+    // this.items too), so an Item-installed locomotion component could
+    // contribute mechanically but never appear here.
+    const itemLocomotion = this.items
+      .filter(i => matchesDroidPartTypeHint(i, 'locomotion'))
+      .map(i => this._fromActorItem(i));
+    const items = this._mergeDedupe([...(primary ? [primary] : []), ...extras, ...itemLocomotion]);
+    return { ...meta, items, active: primary ?? items[0] ?? null, isConfigured: items.length > 0, isDefault: items.length === 0, isEmpty: items.length === 0, warning: items.length === 0 ? 'No locomotion system installed — baseline Walking locomotion shown.' : null, name, speed };
   }
 
   _resolveArmor() {
@@ -343,16 +440,24 @@ export class DroidSystemsResolver {
     const builderAccessories = Array.isArray(this.droidSystems.accessories) ? this.droidSystems.accessories.map(a => this._fromBuilder(a, { cost: computeDroidPartCost(this.actor, a) })) : [];
     const builderIntegrated = Array.isArray(this.droidSystems.integratedSystems) ? this.droidSystems.integratedSystems.map(a => this._fromBuilder(a, { cost: computeDroidPartCost(this.actor, a) })) : [];
     const actorItems = this.items.filter(i => this._isIntegratedEquipment(i)).map(i => this._fromActorItem(i));
-    const items = this._mergeDedupe([...builderAccessories, ...builderIntegrated, ...actorItems]).filter(item => !isWeaponizedDroidPart(item));
-    return { ...meta, items, isConfigured: items.length > 0, isDefault: false, isEmpty: items.length === 0, warning: null };
+    const deduped = this._mergeDedupe([...builderAccessories, ...builderIntegrated, ...actorItems]);
+    // Weaponized accessories (taser, cutting torch, etc.) are routed to the
+    // Integrated Weapons region instead of being dropped: the old code
+    // filtered them OUT here and then _resolveIntegratedWeapons() tried to
+    // read them back FROM this already-filtered list, so they vanished from
+    // both regions. `weaponized` is exposed on the returned region object so
+    // _resolveIntegratedWeapons() can pick it up directly.
+    const { weaponized, nonWeaponized } = partitionWeaponizedParts(deduped);
+    return { ...meta, items: nonWeaponized, weaponized, isConfigured: nonWeaponized.length > 0, isDefault: false, isEmpty: nonWeaponized.length === 0, warning: null };
   }
 
   _resolveIntegratedWeapons({ appendages, locomotion, integratedEquipment }) {
     const meta = REGION_META.integratedWeapons;
     const builderWeapons = Array.isArray(this.droidSystems.weapons) ? this.droidSystems.weapons.map(w => this._fromBuilder(w, { cost: computeDroidPartCost(this.actor, w), weaponType: w.type ?? 'built-in' })) : [];
     const actorWeapons = this.items.filter(i => this._isIntegratedWeapon(i)).map(i => this._fromActorItem(i));
-    const weaponizedParts = [...(appendages?.items ?? []), ...(locomotion?.items ?? []), ...(integratedEquipment?.items ?? [])]
-      .filter(item => Boolean(item.weaponProfile));
+    const { weaponized: weaponizedAppendages } = partitionWeaponizedParts(appendages?.items ?? []);
+    const { weaponized: weaponizedLocomotion } = partitionWeaponizedParts(locomotion?.items ?? []);
+    const weaponizedParts = [...weaponizedAppendages, ...weaponizedLocomotion, ...(integratedEquipment?.weaponized ?? [])];
     const items = this._mergeDedupe([...builderWeapons, ...actorWeapons, ...weaponizedParts]).map(item => ({
       ...item,
       canRoll: Boolean(item.id && item.source === 'item') || Boolean(item.weaponProfile),
@@ -379,10 +484,17 @@ export class DroidSystemsResolver {
   // ── Utilities ──────────────────────────────────────────────────────
 
   _mergeDedupe(entries) {
+    // Dedupe by canonical part identity (ruleId), not by local document id —
+    // a Garage/builder record and an embedded Item representing the same
+    // canonical droid part normally have different `id`s (a canonical string
+    // vs. a Foundry document id), so `id`-based dedup let both survive as
+    // separate entries. Only fall back to id/name when no canonical ruleId
+    // was resolved (e.g. a wholly custom, non-catalog entry).
     const seen = new Set();
     const out = [];
     for (const entry of entries.filter(Boolean)) {
-      const key = entry.id ? `id:${entry.id}` : `name:${slug(entry.name)}`;
+      const canonical = slug(entry.ruleId);
+      const key = canonical ? `rule:${canonical}` : (entry.id ? `id:${entry.id}` : `name:${slug(entry.name)}`);
       if (seen.has(key)) continue;
       seen.add(key);
       out.push(entry);

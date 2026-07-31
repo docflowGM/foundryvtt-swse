@@ -1,11 +1,30 @@
 /**
- * Canonical Droid Part Schema Adapter
+ * Droid Part Schema Adapter — prerequisite/identity compatibility module,
+ * NOT the canonical droid-part registry.
  *
- * This layer gives droid systems one large shared schema contract without
- * replacing the existing Garage, droid builder, item models, or compendium
- * data. It consumes the existing DROID_SYSTEMS authority and overlays the
- * additional rules metadata needed by the Droid Sheet v2, Garage, modifier
- * engine, and chat-use affordances.
+ * PHASE 1 — Droid Authority Consolidation: despite the historical name of
+ * this file, scripts/data/droid-part-schema.js (not this module) is the
+ * canonical droid-part definition authority for cost, modifiers, and
+ * weapon profiles — see that file's header and
+ * docs/audits/droid-authority-consolidation-phase-1.md. This module's live
+ * production consumer is scripts/data/prerequisite-checker.js, which uses
+ * resolveDroidSystemIdentity/actorMeetsDroidSystemRequirement to check
+ * feat/talent prerequisites like "requires Heuristic Processor" against a
+ * droid's installed parts by uuid/id/name/alias/trait. That identity space
+ * (short ids like 'heuristic', 'walking') is a different, independently
+ * maintained id scheme from the canonical registry's ids (e.g.
+ * 'heuristic-processor') — the two agree today only because the alias
+ * tables in both files are kept in sync by hand. Do not add new modifier,
+ * cost, or weapon-profile logic here; add it to
+ * scripts/data/droid-part-schema.js instead. This module is left otherwise
+ * unchanged in Phase 1 specifically to avoid regressing feat/talent
+ * prerequisite behavior, which is out of this phase's scope.
+ *
+ * ModifierEngine no longer resolves installed-system modifiers through this
+ * module (or through droid-system-definitions.js, which merges this
+ * module's DROID_PART_DEFINITION_MAP with its own private
+ * LEGACY_DROID_SYSTEM_DEFINITIONS catalog) — see
+ * scripts/domain/droids/droid-installed-component-resolver.js.
  *
  * Non-goals:
  * - no actor mutation
