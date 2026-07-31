@@ -927,15 +927,122 @@ pre-seeded static flags), per this round's explicit requirement that
 source-regex tests are insufficient for these core concurrency
 guarantees.
 
+## Round-3 correction pass (second exact-head audit, PR #937)
+
+A second exact-head audit of this branch (head `e2e76cc7fff1aa3c007ae780db04b233b99c70a0`)
+found three narrower, but still merge-blocking, edge cases the round-2
+pass had not closed: `requireExact`'s fail-closed check exempted legacy
+snapshots, schema-v2 identity enforcement only caught a mismatched
+`actorId`, never a missing one, and reservation-cleanup failures on both
+the success and failure exit paths of `convertToFollower()` were
+try/caught but never actually inspected. All three are fixed here.
+
+### Defect 1 — `requireExact` exempted legacy snapshots
+
+`if (requireExact && !exact && !isLegacy)` let a legacy snapshot (always
+`exact: false` by definition) slip through `requireExact: true` as a soft
+`{success: true, exact: false}` — several high-risk rollback callers
+check only `.success` on the assumption `requireExact: true` guarantees
+exactness. **Fixed**: the condition is now `if (requireExact && !exact)`
+with no exemption; a legacy snapshot under `requireExact: true` now fails
+closed with a new `SNAPSHOT_LEGACY_INEXACT` code and runs the same
+bounded compensation pass. `requireExact: false` is unaffected — a legacy
+snapshot still restores its own fields and reports `usable: false,
+requiresManualReview: true` honestly.
+
+### Defect 2 — schema-v2 snapshots could omit `actorId` entirely
+
+The identity check only rejected a *mismatched* `actorId`
+(`snapshot.actorId !== actor.id`); a schema-v2 snapshot that omitted
+`actorId` altogether bypassed identity enforcement completely rather than
+being rejected. **Fixed**: `isLegacy` is now determined FIRST; a
+non-legacy snapshot missing `actorId` (undefined, null, or empty string)
+is rejected with `SNAPSHOT_ACTOR_MISMATCH` before any mutation. A legacy
+snapshot (no `schemaVersion` at all) is still permitted to omit
+`actorId` — the new requirement applies only to schema-v2.
+
+### Defect 3 — reservation-cleanup results were swallowed
+
+Neither `releaseFollowerConversionTargetReservation()` nor
+`releaseFollowerSlotReservation()` throws on a token mismatch or an
+unverified release — both RETURN `{success: false, code, error}`.
+`convertToFollower()`'s cleanup call sites only wrapped each call in
+try/catch and logged a warning if it threw, silently discarding the
+structured failure otherwise. Consequences: a successful conversion
+could leave the NPC's target reservation live until TTL expiry with no
+indication; a failed conversion's rollback could report "rolled back"
+even when cleanup left a reservation dangling; a token-mismatch
+(indicating a real concurrency conflict) was discarded entirely.
+
+**Fixed** in three parts:
+
+1. **Release-write verification.** Both release methods
+   (`follower-slot-service.js`) now reread and verify their own
+   deletion actually took effect, mirroring the acquisition side's
+   existing post-write reread discipline — a write that "succeeds" per
+   `ActorEngine` but leaves the token present returns a new
+   `*_RELEASE_UNVERIFIED` failure code instead of a bare success.
+2. **A shared, authoritative cleanup helper.** New
+   `releaseConversionReservations({ targetActor, ownerActor, slotId,
+   token, source })` (`ally-assignment-service.js`) calls both release
+   methods, inspects BOTH structured results explicitly (never relying on
+   try/catch alone), and returns `{success, targetRelease, slotRelease,
+   errors}`. Used at all three `convertToFollower()` exit points
+   (snapshot-creation failure, transaction failure, transaction success).
+3. **Cleanup failure is surfaced, not swallowed.** On the FAILURE path,
+   the cleanup result is attached to the propagated conversion error as
+   `.reservationCleanup` (the original error message is never replaced),
+   and the log wording/severity now reflects reality:
+   `transaction.rollbackFailed !== true && reservationCleanup.success ===
+   true` is required before logging "rolled back successfully" (warn
+   level); otherwise an error-level "rollback incomplete, manual review
+   required" log is used instead. On the SUCCESS path, a cleanup failure
+   now throws a distinct `FOLLOWER_CONVERSION_RESERVATION_CLEANUP_FAILED`
+   error (with `.committed = true` and `.actor` attached) rather than
+   returning the target Actor as though nothing went wrong — the
+   mechanical conversion is NOT automatically rolled back solely because
+   cleanup failed (that would need its own deliberate design), but the
+   caller is told cleanup failed rather than receiving a silent success.
+
+**New/extended static guard checks** (`tools/check-snapshot-restoration-authority.mjs`,
+now 15 check families; `tools/check-ally-assignment-authority.mjs`, now
+46 checks — all 6 new checks across both files verified via
+inject/detect/revert with byte-identical restoration confirmed):
+`requireExact`'s fail-closed condition must not exempt `isLegacy`; a
+non-legacy snapshot missing `actorId` must be rejected before mutation;
+`releaseFollowerConversionTargetReservation()`'s and
+`releaseFollowerSlotReservation()`'s structured results must be
+inspected (not merely try/caught); a successful conversion must not
+swallow a cleanup failure; rollback logging must consult
+`transaction.rollbackFailed`.
+
+**New tests**: 6 additional tests appended to
+`tests/snapshot-service-restoration.test.mjs` (tests 50-55: legacy +
+`requireExact: false`/`true` contrast, non-legacy `requireExact: true`
+re-confirmed, schema-v2 missing/present/mismatched `actorId`, legacy
+snapshot still permitted to omit `actorId`). 2 additional tests in
+`tests/transaction-engine-snapshot-restoration-migration.test.mjs`
+(`restoreSnapshotExact()`-level legacy fail-closed propagation, plus
+source-inspection confirming all four high-risk callers check `.success`
+near their `requireExact: true` call sites). 7 additional production-path
+tests appended to `tests/gm-existing-npc-allies-assignment.test.mjs`
+(tests 76-82: success-path cleanup failure surfaces as a rejection
+without rolling back the already-committed conversion; failure-path
+cleanup failure preserves the original conversion error while attaching
+the structured cleanup result — for target-only, slot-only, and
+both-failing cases; release-write verification at the `FollowerSlotService`
+level for both target and slot reservations; rollback-logging wording
+contrasted between a fully clean rollback and one with a cleanup
+failure, verified by intercepting the real `swseLogger`).
+
 ## Merge readiness
 
 All 4 P0 defects (Round 3), all 5 Round-4 defects (2 of them
-merge-blocking), P1-5, P1-6, P1-7, P2-3, and this round-2 correction pass
-(8 P1-7 defects + 6 P2-3 defects, all fixed and tested, plus one
-additional bug found and fixed DURING this correction pass itself — the
-`buildFlagRestorationPatch()` reservation-corruption issue in defect #11
-above) are now fixed and tested. Progression-integrity (44) and
-architecture-boundary (37) static baselines are unchanged.
+merge-blocking), P1-5, P1-6, P1-7, P2-3, the round-2 correction pass (8
+P1-7 defects + 6 P2-3 defects), and this round-3 correction pass (3
+narrower edge-case defects, all fixed and tested) are now fixed and
+tested. Progression-integrity (44) and architecture-boundary (37) static
+baselines are unchanged across all three rounds.
 
 This branch is closer to mergeable than any prior round, but is **still
 not unconditionally merge-ready**: no live Foundry v13 validation has
