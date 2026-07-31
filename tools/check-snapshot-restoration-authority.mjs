@@ -83,6 +83,19 @@
  *      document forces `exact: false` — this is the documented
  *      fail-closed choice in place of full cross-reference id remapping.
  *
+ * ROUND-3 CORRECTION checks (14-15) — added after a SECOND exact-head
+ * audit found the round-2 fail-closed/identity checks still had two
+ * edge-case gaps: `requireExact` exempted legacy snapshots from its
+ * fail-closed behavior, and schema-v2 identity enforcement only caught a
+ * MISMATCHED actorId, never a MISSING one.
+ *
+ *  14. `requireExact`'s fail-closed condition must not exempt legacy
+ *      snapshots via `!isLegacy` — every inexact result (legacy or not)
+ *      must fail closed under `requireExact: true`.
+ *  15. A non-legacy (schema-v2) snapshot missing `actorId` entirely must
+ *      be rejected before any mutation, not merely a snapshot whose
+ *      `actorId` mismatches the target Actor's.
+ *
  * Report-only by default; --strict exits non-zero on any violation.
  */
 
@@ -497,6 +510,70 @@ function checkCompensationRequiresExact(violations) {
   }
 }
 
+/**
+ * Check 14 (ROUND-3) — requireExact must fail closed for EVERY inexact
+ * result, with no `!isLegacy` exemption. The second exact-head audit
+ * found `if (requireExact && !exact && !isLegacy)` — a legacy snapshot
+ * (always `exact: false` by definition) could slip through
+ * `requireExact: true` as a soft `{success: true, exact: false}`, which
+ * several high-risk rollback callers (checking only `.success` on the
+ * assumption `requireExact: true` guarantees exactness) would have
+ * silently accepted.
+ */
+function checkRequireExactDoesNotExemptLegacy(violations) {
+  if (!fs.existsSync(SNAPSHOT_SERVICE)) return;
+  const source = stripComments(read(SNAPSHOT_SERVICE));
+  const conditionMatch = source.match(/if\s*\(\s*requireExact\s*&&\s*!exact[^)]*\)\s*\{/);
+  if (!conditionMatch) {
+    violations.push({
+      file: relative(SNAPSHOT_SERVICE),
+      check: 'require-exact-no-legacy-exemption',
+      detail: 'could not locate the `if (requireExact && !exact ...)` fail-closed condition'
+    });
+    return;
+  }
+  if (/!isLegacy/.test(conditionMatch[0])) {
+    violations.push({
+      file: relative(SNAPSHOT_SERVICE),
+      check: 'require-exact-no-legacy-exemption',
+      detail: `the requireExact fail-closed condition ("${conditionMatch[0]}") exempts legacy snapshots via "!isLegacy" — a legacy snapshot must fail closed under requireExact: true exactly like any other inexact result, never return a soft {success: true, exact: false}`
+    });
+  }
+}
+
+/**
+ * Check 15 (ROUND-3) — a schema-v2 (non-legacy) snapshot MUST carry
+ * `actorId`. The second exact-head audit found the identity check only
+ * rejected a MISMATCHED actorId, never a MISSING one — a forged or
+ * malformed schema-v2 snapshot with no actorId at all bypassed identity
+ * enforcement entirely rather than being rejected.
+ */
+function checkSchemaV2ActorIdMandatory(violations) {
+  if (!fs.existsSync(SNAPSHOT_SERVICE)) return;
+  const source = stripComments(read(SNAPSHOT_SERVICE));
+  const restoreFnMatch = source.match(/static async restoreFromSnapshot\s*\([\s\S]*?\n  \}\n\}/);
+  if (!restoreFnMatch) return; // already reported by check 10
+  const body = restoreFnMatch[0];
+  // Looks for a rejection gated on "!isLegacy" that also inspects
+  // snapshot.actorId being absent (undefined/null/empty), appearing
+  // BEFORE any ActorEngine mutation call.
+  const mandatoryActorIdCheckIdx = body.search(/!isLegacy\s*&&\s*\(\s*snapshot\.actorId[\s\S]{0,80}(undefined|null)/);
+  const firstMutationIdx = body.search(/ActorEngine\.(?:updateActor|createEmbeddedDocuments|updateEmbeddedDocuments|deleteEmbeddedDocuments)\(/);
+  if (mandatoryActorIdCheckIdx === -1) {
+    violations.push({
+      file: relative(SNAPSHOT_SERVICE),
+      check: 'schema-v2-actor-id-mandatory',
+      detail: 'no check rejecting a non-legacy (schema-v2) snapshot that is missing actorId entirely — the existing check only catches a MISMATCHED actorId, not a MISSING one, letting a malformed schema-v2 snapshot bypass identity enforcement'
+    });
+  } else if (firstMutationIdx !== -1 && mandatoryActorIdCheckIdx > firstMutationIdx) {
+    violations.push({
+      file: relative(SNAPSHOT_SERVICE),
+      check: 'schema-v2-actor-id-mandatory',
+      detail: 'the schema-v2 missing-actorId check appears AFTER the first ActorEngine mutation call — it must run before any mutation is attempted'
+    });
+  }
+}
+
 function main() {
   const violations = [];
 
@@ -512,6 +589,8 @@ function main() {
   checkActorIdentityValidatedBeforeMutation(violations);
   checkThinWrapperHonorsExact(violations);
   checkCompensationRequiresExact(violations);
+  checkRequireExactDoesNotExemptLegacy(violations);
+  checkSchemaV2ActorIdMandatory(violations);
 
   console.log('='.repeat(72));
   console.log('  SNAPSHOT RESTORATION AUTHORITY GUARD (P1-7)');

@@ -116,7 +116,20 @@
  * restored (nothing is invented), and the result is always reported as
  * `exact: false` — a legacy snapshot is never claimed to provide a full
  * exact rollback, even if, incidentally, every field it happens to carry
- * restores cleanly.
+ * restores cleanly. A schema-v2 (non-legacy) snapshot MUST carry
+ * `actorId` — one that omits it is rejected (`SNAPSHOT_ACTOR_MISMATCH`)
+ * before any mutation, rather than silently falling through to legacy
+ * handling and bypassing identity enforcement.
+ *
+ * ROUND-3 CORRECTION — `options.requireExact === true` fails closed for
+ * EVERY inexact result, legacy included: a legacy snapshot is always
+ * `exact: false` by definition, so `requireExact: true` against a legacy
+ * snapshot always fails closed (`SNAPSHOT_LEGACY_INEXACT`) and runs
+ * bounded compensation if mutation began. `requireExact: false` still
+ * permits a legacy snapshot's partial restore to stand, reported
+ * honestly via `usable: false, requiresManualReview: true`. No
+ * rollback-purpose caller can ever receive `{success: true, exact: false}`
+ * from a `requireExact: true` call, regardless of legacy status.
  */
 
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
@@ -313,12 +326,21 @@ export class SnapshotService {
     if (!actor) return { success: false, code: 'SNAPSHOT_ACTOR_MISMATCH', exact: false, error: 'restoreFromSnapshot() requires actor', actorId };
     if (!snapshot) return { success: false, code: 'SNAPSHOT_NOT_FOUND', exact: false, error: 'restoreFromSnapshot() requires snapshot', actorId };
 
-    // ROUND-2 CORRECTION — Actor identity and schema/scope validation,
-    // BEFORE any mutation is attempted. A snapshot's own `actorId` (when
-    // present — legacy snapshots may lack it) must match the actor it is
-    // being applied to; a schema version this code doesn't recognize, or
-    // a scope outside the known set, is rejected rather than silently
-    // treated as `full-actor`.
+    // ROUND-3 CORRECTION — Actor identity and schema/scope validation,
+    // BEFORE any mutation is attempted. `isLegacy` is now determined
+    // FIRST (a snapshot with no `schemaVersion` at all is legacy — the
+    // only case permitted to omit `actorId`), because a schema-v2
+    // snapshot's identity guarantee is only as strong as its weakest
+    // check: a forged or malformed schema-v2 snapshot with no `actorId`
+    // must never be treated as if it were an untouchable legacy record
+    // and allowed to silently bypass identity enforcement.
+    const isLegacy = !snapshot.schemaVersion;
+    if (!isLegacy && (snapshot.actorId === undefined || snapshot.actorId === null || snapshot.actorId === '')) {
+      return {
+        success: false, code: 'SNAPSHOT_ACTOR_MISMATCH', exact: false, actorId,
+        error: 'Schema-v2 snapshots must include actorId — a schema-v2 snapshot missing actorId cannot have its identity verified and is rejected rather than treated as legacy.'
+      };
+    }
     if (snapshot.actorId !== undefined && snapshot.actorId !== null && String(snapshot.actorId) !== String(actorId)) {
       return {
         success: false, code: 'SNAPSHOT_ACTOR_MISMATCH', exact: false, actorId,
@@ -340,7 +362,6 @@ export class SnapshotService {
       };
     }
 
-    const isLegacy = !snapshot.schemaVersion;
     const isCompensation = options._isCompensation === true;
     const requireExact = options.requireExact === true;
 
@@ -422,15 +443,23 @@ export class SnapshotService {
 
       const exact = !isLegacy && idsPreserved && verification.rootMatched && verification.itemsMatched && verification.effectsMatched;
 
-      if (requireExact && !exact && !isLegacy) {
-        // ROUND-2 CORRECTION — fail closed. A rollback-purpose caller
-        // asked for `requireExact`; an inexact restore is treated exactly
-        // like a thrown mutation error, running the same bounded
-        // compensation pass rather than returning a soft
-        // `{success: true, exact: false}`.
-        const mismatchCode = !idsPreserved
-          ? 'SNAPSHOT_IDENTITY_MISMATCH'
-          : (!verification.rootMatched ? 'SNAPSHOT_ROOT_VERIFICATION_FAILED' : 'SNAPSHOT_CONTENT_VERIFICATION_FAILED');
+      if (requireExact && !exact) {
+        // ROUND-3 CORRECTION — fail closed for EVERY inexact result, with
+        // no `!isLegacy` exemption. The prior condition let a legacy
+        // snapshot (always `exact: false` by definition) slip through
+        // `requireExact: true` as a soft `{success: true, exact: false}`
+        // — several high-risk rollback callers only check `.success` on
+        // the assumption that `requireExact: true` guarantees every
+        // success is exact; a legacy snapshot broke that assumption. A
+        // rollback-purpose caller asked for `requireExact`; an inexact
+        // restore (legacy OR non-legacy) is treated exactly like a
+        // thrown mutation error, running the same bounded compensation
+        // pass rather than returning a soft `{success: true, exact: false}`.
+        const mismatchCode = isLegacy
+          ? 'SNAPSHOT_LEGACY_INEXACT'
+          : (!idsPreserved
+            ? 'SNAPSHOT_IDENTITY_MISMATCH'
+            : (!verification.rootMatched ? 'SNAPSHOT_ROOT_VERIFICATION_FAILED' : 'SNAPSHOT_CONTENT_VERIFICATION_FAILED'));
         const mismatchError = new Error(`Snapshot restoration for ${actor.name} did not verify as exact (requireExact was set): ${mismatchCode}.`);
         mismatchError.code = mismatchCode;
         mismatchError.verification = verification;
