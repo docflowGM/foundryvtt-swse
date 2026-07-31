@@ -8,6 +8,7 @@
 import { FollowerStepBase } from './follower-step-base.js';
 import { HouseRuleService } from '/systems/foundryvtt-swse/scripts/engine/system/HouseRuleService.js';
 import { swseLogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
+import { seedMinimalFollowerDroidIdentity, clearFollowerDroidConstructionState } from './follower-droid-context.js';
 
 export class FollowerOriginStep extends FollowerStepBase {
   constructor(descriptor) {
@@ -74,17 +75,21 @@ export class FollowerOriginStep extends FollowerStepBase {
       this.saveFollowerChoice(shell, 'speciesName', 'Droid');
       this.saveFollowerChoice(shell, 'speciesId', null);
       this.saveFollowerChoice(shell, 'humanTemplateBonus', null);
-      const current = this.getFollowerChoices(shell).droidConfig || {};
-      this.saveFollowerChoice(shell, 'droidConfig', {
-        ...current,
-        isDroid: true,
-        size: current.size || 'medium',
-        locomotion: current.locomotion || 'walking',
-        speed: current.speed || 6,
-        abilityChoice: current.abilityChoice || 'int'
-      });
+      // Seed only the minimal identity marker needed to route into the
+      // Droid Chassis step — size/locomotion/speed/ability bonus are that
+      // step's job, not this one's, so this step never makes choices
+      // appear pre-made before the user has visited the real chassis
+      // builder. A genuine prior build (droidConfig.droidSystems already
+      // populated from an earlier visit) is preserved as-is.
+      const current = this.getFollowerChoices(shell).droidConfig || null;
+      this.saveFollowerChoice(shell, 'droidConfig', seedMinimalFollowerDroidIdentity(current));
     } else {
-      this.saveFollowerChoice(shell, 'droidConfig', null);
+      // Switching to Living clears ALL droid-construction state, not just
+      // droidConfig — draftSelections.droid, session.droidContext, and any
+      // droidBuilder metadata FollowerDroidBuilderStep seeded into
+      // pendingSpeciesContext — so no stale chassis/budget/constraint
+      // state survives into the organic path.
+      clearFollowerDroidConstructionState(shell.progressionSession);
       if (this.getFollowerChoices(shell).speciesName === 'Droid') {
         this.saveFollowerChoice(shell, 'speciesName', null);
       }

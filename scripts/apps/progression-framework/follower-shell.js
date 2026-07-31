@@ -13,6 +13,8 @@ import { createStepDescriptor, StepCategory, StepType } from './steps/step-descr
 import { swseLogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
 import { ChargenRules } from '/systems/foundryvtt-swse/scripts/engine/chargen/ChargenRules.js';
 import { getFollowerTalentConfig } from '/systems/foundryvtt-swse/scripts/engine/crew/follower-talent-config.js';
+import { isFollowerDroidDraft } from './steps/follower-steps/follower-droid-context.js';
+import { shouldSkipFollowerStep, computeApplicableFollowerSteps, resolvePreservedFollowerStepIndex, followerStepListsAreEqual } from './steps/follower-steps/follower-step-visibility.js';
 
 import { FollowerOriginStep } from './steps/follower-steps/follower-origin-step.js';
 import { FollowerSpeciesStep } from './steps/follower-steps/follower-species-step.js';
@@ -40,15 +42,24 @@ export class FollowerShell extends ProgressionShell {
       }),
       createStepDescriptor({
         stepId: 'species',
-        label: 'Species / Chassis',
+        label: 'Species',
         icon: 'fa-dna',
         category: StepCategory.CANONICAL,
         type: StepType.IDENTITY,
         pluginClass: FollowerSpeciesStep,
       }),
+      // PHASE 6 — Consolidate Follower Droid Chargen into One Chassis Step:
+      // this is the ONE canonical droid-specific follower step. It used to
+      // compete with a hand-rolled, catalog-disconnected droid branch
+      // embedded in FollowerSpeciesStep (both always present in `this.steps`
+      // and both independently reachable via rail back-navigation, since
+      // neither the rail nor _onJumpStep respected _shouldSkipFollowerStep —
+      // see docs/audits/follower-droid-chassis-step-consolidation-phase-6.md).
+      // FollowerSpeciesStep is now organic-only; droid followers never see
+      // it at all (see _recomputeFollowerSteps below).
       createStepDescriptor({
         stepId: 'droid-builder',
-        label: 'Droid Systems',
+        label: 'Droid Chassis',
         icon: 'fa-robot',
         category: StepCategory.CATEGORY_SPECIFIC,
         type: StepType.BUILD,
@@ -253,6 +264,11 @@ export class FollowerShell extends ProgressionShell {
   }
 
   async _prepareContext(options) {
+    // PHASE 6 — Consolidate Follower Droid Chargen into One Chassis Step:
+    // must run before super._prepareContext(), which computes and renders
+    // the progress-rail HTML from `this.steps` — see _recomputeFollowerSteps
+    // for why this can't be filtered after the fact.
+    this._recomputeFollowerSteps();
     const context = await super._prepareContext(options);
     if (this.ownerActor) {
       context.title = `${this.ownerActor.name}'s Follower`;
@@ -270,29 +286,8 @@ export class FollowerShell extends ProgressionShell {
     const templateType = String(draft.templateType || '').toLowerCase();
     const fixedProfile = this._getFixedFollowerProfile();
     const cfg = this._getFollowerTalentConfig();
-    const isDroid = draft.followerKind === 'droid'
-      || draft.droidConfig?.isDroid === true
-      || String(draft.speciesName || '').toLowerCase() === 'droid';
-
-    if (fixedProfile) {
-      if (stepId === 'follower-origin') return cfg?.skipOriginSelection !== false;
-      if (stepId === 'species') return true;
-      if (stepId === 'droid-builder') return true;
-      if (stepId === 'background') return fixedProfile.skipBackground !== false;
-      if (stepId === 'languages') return fixedProfile.skipLanguages !== false;
-    }
-
-    // Droid followers do not use the organic species browser. They route into
-    // the shared droid systems builder instead.
-    if (stepId === 'species' && isDroid) return true;
-    if (stepId === 'droid-builder' && !isDroid) return true;
-
-    // Utility followers choose one broad practical skill. Aggressive and
-    // Defensive followers get their template skill package automatically, so
-    // there is no player-facing Skills step to show.
-    if (stepId === 'skills' && templateType !== 'utility') return true;
-
-    return false;
+    const isDroid = isFollowerDroidDraft(draft);
+    return shouldSkipFollowerStep(stepId, { isDroid, templateType, fixedProfile, cfg });
   }
 
   _findNextApplicableStep(startIndex) {
@@ -311,6 +306,94 @@ export class FollowerShell extends ProgressionShell {
       return i;
     }
     return -1;
+  }
+
+  /**
+   * PHASE 6 — Consolidate Follower Droid Chargen into One Chassis Step.
+   *
+   * Root cause of the duplicate-step bug: `_shouldSkipFollowerStep()` was
+   * only ever consulted by forward/backward Next/Back auto-advance
+   * (`_findNextApplicableStep`/`_findPreviousApplicableStep`). The progress
+   * rail (`stepProgress`, computed from `this.steps` inside
+   * ProgressionShell._prepareContext) and rail-click navigation
+   * (`_onJumpStep`, base class) both iterate `this.steps` directly with no
+   * applicability filter at all — so a step this method says should be
+   * skipped still rendered as a clickable rail row, and clicking it still
+   * navigated there and re-entered its plugin. For droid followers this
+   * meant BOTH the organic species step (whose droid branch this phase also
+   * removes — see FollowerSpeciesStep) and the real droid-builder step were
+   * always visible and reachable at once.
+   *
+   * `this.steps` cannot simply be computed once at `_initializeSteps()`
+   * time, because `followerKind` (the field `_shouldSkipFollowerStep`
+   * depends on) is not chosen until the very first step
+   * (`follower-origin`) commits — the applicable step list only becomes
+   * knowable partway through the session, and can change again if the user
+   * changes their earlier answer. So this recomputes `this.steps` from the
+   * full canonical descriptor list on every render, filtered by the exact
+   * same `_shouldSkipFollowerStep()` predicate Next/Back already trusts,
+   * and repairs `currentStepIndex`/plugin instances if the shape changed.
+   * This does NOT reintroduce the dynamic ActiveStepComputer recompute
+   * `_recomputeActiveStepsIfNeeded()` deliberately opts out of above — the
+   * canonical descriptor *list* here is still the fixed, hand-authored
+   * follower spine; only which of its fixed entries are currently
+   * applicable is re-evaluated.
+   */
+  _recomputeFollowerSteps() {
+    const descriptors = this._getCanonicalDescriptors();
+    const nextSteps = descriptors.filter(d => !this._shouldSkipFollowerStep(d.stepId));
+
+    if (followerStepListsAreEqual(this.steps, nextSteps)) return;
+
+    const currentStepId = this.steps?.[this.currentStepIndex]?.stepId ?? null;
+    this.steps = nextSteps;
+
+    for (const descriptor of this.steps) {
+      if (descriptor.pluginClass && !this.stepPlugins.has(descriptor.stepId)) {
+        try {
+          this.stepPlugins.set(descriptor.stepId, new descriptor.pluginClass(descriptor));
+        } catch (err) {
+          swseLogger.error(`[FollowerShell] Failed to instantiate plugin for step ${descriptor.stepId}:`, err);
+        }
+      }
+    }
+    // Drop plugin instances for steps no longer applicable, so a step that
+    // becomes applicable again later (e.g. droid -> living -> droid)
+    // re-seeds cleanly from draftSelections via onStepEnter rather than
+    // reusing stale in-memory plugin state.
+    for (const stepId of Array.from(this.stepPlugins.keys())) {
+      if (!this.steps.some(d => d.stepId === stepId)) this.stepPlugins.delete(stepId);
+    }
+
+    const fallbackIndex = Math.max(0, this._findNextApplicableStep(0));
+    this.currentStepIndex = resolvePreservedFollowerStepIndex(this.steps, currentStepId, fallbackIndex);
+    this._repairCurrentStep?.();
+    if (this.progressionSession) {
+      this.progressionSession.currentStepId = this.steps[this.currentStepIndex]?.stepId ?? null;
+    }
+  }
+
+  /**
+   * Jump backward to a completed step via a footer step-chip click.
+   * PHASE 6: adds an explicit applicability check on top of the base
+   * class's index/bounds check — defense in depth against a stale-DOM
+   * click racing a step-list change, since `this.steps` (and therefore the
+   * rendered rail) is kept in sync with `_shouldSkipFollowerStep()` by
+   * `_recomputeFollowerSteps()` on every render. Direct handler invocation
+   * (e.g. from a test, or a crafted event) is rejected the same way UI
+   * clicks are, per the requirement that a hidden step can never be
+   * force-opened.
+   */
+  async _onJumpStep(event, target) {
+    this._cancelAutoAdvance('jump-step');
+    if (this.isProcessing) return;
+    const stepId = target?.dataset?.stepId;
+    if (!stepId) return;
+    this._recomputeFollowerSteps();
+    if (this._shouldSkipFollowerStep(stepId)) return;
+    const stepIndex = this.steps.findIndex(d => d.stepId === stepId);
+    if (stepIndex < 0 || stepIndex >= this.currentStepIndex) return;
+    await this.navigateToStep(stepIndex, { source: 'footer-chip' });
   }
 
   /**
@@ -334,7 +417,7 @@ export class FollowerShell extends ProgressionShell {
     const draft = this._getFollowerDraftSelections();
     const missing = [];
     const fixedProfile = this._getFixedFollowerProfile();
-    const isDroid = draft.followerKind === 'droid' || draft.droidConfig?.isDroid === true || String(draft.speciesName || '').toLowerCase() === 'droid';
+    const isDroid = isFollowerDroidDraft(draft);
 
     if (!fixedProfile && !draft.followerKind) missing.push('Choose Living Being or Droid.');
     if (isDroid) {
@@ -484,7 +567,17 @@ export class FollowerShell extends ProgressionShell {
           return { success: false, error: 'Failed to create follower actor' };
         }
 
-        await this._updateFollowerSlot(followerMutation.slotId, followerActor.id);
+        // CORRECTION — the follower slot's `createdActorId` now commits as
+        // part of the SAME owner-relationship transaction step that writes
+        // `flags.foundryvtt-swse.followers`/`system.ownedActors`
+        // (FollowerCreator._linkFollowerToOwner, given `followerMutation.slotId`),
+        // not as a separate post-creation write here. A prior version of
+        // this method called a follow-up `_updateFollowerSlot()` after
+        // `createFollowerFromMutation` already returned success; that
+        // method swallowed its own errors, so a slot-write failure could
+        // never surface — the shell would report success while the slot
+        // still had no `createdActorId`. Removed entirely rather than kept
+        // as unreachable dead code.
         swseLogger.log('[FollowerShell] Follower created:', followerActor.id);
         return { success: true, result: { followerId: followerActor.id } };
       }
@@ -498,7 +591,14 @@ export class FollowerShell extends ProgressionShell {
           return { success: false, error: 'Existing follower actor not found' };
         }
 
-        await FollowerCreator.updateFollowerFromMutation(followerActor, followerMutation);
+        // CORRECTION — updateFollowerFromMutation() returns a boolean; a
+        // prior version of this method ignored it and always reported
+        // success, so a failed (and internally rolled-back) update could
+        // still close the finalization workflow as if it had succeeded.
+        const updated = await FollowerCreator.updateFollowerFromMutation(followerActor, followerMutation);
+        if (!updated) {
+          return { success: false, error: 'Failed to update follower' };
+        }
         swseLogger.log('[FollowerShell] Follower updated:', followerId);
         return { success: true, result: { followerId } };
       }
@@ -507,22 +607,6 @@ export class FollowerShell extends ProgressionShell {
     } catch (err) {
       swseLogger.error('[FollowerShell] Error applying follower mutation:', err);
       return { success: false, error: err.message };
-    }
-  }
-
-  async _updateFollowerSlot(slotId, followerActorId) {
-    try {
-      const slots = this.ownerActor.getFlag('foundryvtt-swse', 'followerSlots') || [];
-      const slot = slots.find(s => s.id === slotId);
-
-      if (slot) {
-        slot.createdActorId = followerActorId;
-        slot.updatedAt = new Date().toISOString();
-        await this.ownerActor.setFlag('foundryvtt-swse', 'followerSlots', slots);
-        swseLogger.log('[FollowerShell] Slot updated with follower actor ID:', followerActorId);
-      }
-    } catch (err) {
-      swseLogger.error('[FollowerShell] Error updating follower slot:', err);
     }
   }
 }

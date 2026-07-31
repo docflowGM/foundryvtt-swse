@@ -181,12 +181,17 @@ export class FollowerConfirmStep extends FollowerStepBase {
 
   _formatSelectedOptions(choices = {}) {
     const rows = [];
+    const isDroid = choices.droidConfig?.isDroid === true;
     const fixedProfile = this._fixedProfile || choices.fixedFollowerProfile || null;
     if (fixedProfile) rows.push({ label: 'Fixed Profile', value: `${fixedProfile.speciesName || 'Fixed follower'}${fixedProfile.speciesType ? ` (${fixedProfile.speciesType})` : ''}`, icon: 'fa-paw' });
-    if (choices.speciesName) rows.push({ label: 'Species', value: choices.speciesName, icon: 'fa-dna' });
+    // ADDENDUM — a droid follower's identity/ability already appear exactly
+    // once, in the dedicated "Droid Chassis" summary row (see
+    // getStepData()'s droidConfig/droidBudget and the identity card in
+    // follower-summary-work-surface.hbs). Species/Droid-Ability entries here
+    // would restate the same chassis result a second time.
+    if (choices.speciesName && !isDroid) rows.push({ label: 'Species', value: choices.speciesName, icon: 'fa-dna' });
     if (choices.templateType) rows.push({ label: 'Template', value: choices.templateType.charAt(0).toUpperCase() + choices.templateType.slice(1), icon: 'fa-id-card' });
     if (choices.abilityChoice) rows.push({ label: 'Template Ability', value: `+2 ${String(choices.abilityChoice).toUpperCase()}`, icon: 'fa-dumbbell' });
-    if (choices.droidConfig?.abilityChoice) rows.push({ label: 'Droid Ability', value: `+2 ${String(choices.droidConfig.abilityChoice).toUpperCase()}`, icon: 'fa-robot' });
     if (choices.backgroundChoice) rows.push({ label: 'Background', value: choices.backgroundChoice, icon: 'fa-book' });
     if (Array.isArray(choices.skillChoices) && choices.skillChoices.length) rows.push({ label: 'Trained Skills', value: choices.skillChoices.join(', '), icon: 'fa-book-open' });
     if (Array.isArray(choices.languageChoices) && choices.languageChoices.length) rows.push({ label: 'Languages', value: choices.languageChoices.join(', '), icon: 'fa-language' });
@@ -221,11 +226,11 @@ export class FollowerConfirmStep extends FollowerStepBase {
 
         <div class="confirm-section follower-identity">
           <h4>Follower Identity</h4>
-          <div class="confirm-row"><span class="label">Species:</span><span class="value">${choices.speciesName}</span></div>
+          ${droidConfig ? '' : `<div class="confirm-row"><span class="label">Species:</span><span class="value">${choices.speciesName}</span></div>`}
           <div class="confirm-row"><span class="label">Template:</span><span class="value">${templateDisplay}</span></div>
           ${choices.backgroundChoice ? `<div class="confirm-row"><span class="label">Background:</span><span class="value">${choices.backgroundChoice}</span></div>` : ''}
           ${choices.humanTemplateBonus ? `<div class="confirm-row"><span class="label">Human Bonus:</span><span class="value">${this._displayHumanBonus(choices.humanTemplateBonus)}</span></div>` : ''}
-          ${droidConfig ? `<div class="confirm-row"><span class="label">Droid Chassis:</span><span class="value">${droidConfig.size || 'medium'}, ${droidConfig.locomotion || 'walking'} speed 6, +2 ${(droidConfig.abilityChoice || 'int').toUpperCase()}</span></div>` : ''}
+          ${droidConfig ? `<div class="confirm-row"><span class="label">Droid Chassis:</span><span class="value">Degree ${droidConfig.droidDegree || '2nd-degree'}, ${droidConfig.size || 'medium'}, speed ${droidConfig.speed ?? 6}, +2 ${(droidConfig.abilityChoice || 'int').toUpperCase()}</span></div>` : ''}
         </div>
 
         <div class="confirm-section follower-owner">

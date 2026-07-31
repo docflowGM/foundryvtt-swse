@@ -259,6 +259,7 @@ export const SWSE_TEMPLATES = [
   // ==============================
   'systems/foundryvtt-swse/templates/apps/npc-levelup-entry.hbs',
   'systems/foundryvtt-swse/templates/apps/choices/feat-choice-dialog.hbs',
+  'systems/foundryvtt-swse/templates/apps/allies/ally-assignment-modal.hbs',
 
   // ==============================
   // Progression Framework (New Shell System)

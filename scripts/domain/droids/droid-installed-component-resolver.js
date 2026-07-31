@@ -34,6 +34,34 @@
  * - A source that disagrees with the effective (precedence-selected) state
  *   is never discarded — it is recorded in `sources` and, if it disagrees
  *   on active state, surfaced in `conflicts`.
+ *
+ * SSOT POLICY (P1-9 — explicit, single statement; nothing outside this
+ * module decides component identity/precedence):
+ *   - system.installedSystems is the CANONICAL post-creation installed-
+ *     component ledger. It is the only source a mutation authority
+ *     (DroidCustomizationEngine, UpgradeService, the drift-repair/
+ *     reconciliation services) writes to when installing or removing a
+ *     component, and it is this resolver's highest-precedence source.
+ *   - system.droidSystems is NOT a competing "canonical" store. It is the
+ *     raw stock-import/chassis-build blob — the stock importer's own
+ *     display snapshot (see scripts/domain/droids/stock-droid-normalizer.js)
+ *     and, during in-progress chargen/follower-droid-building sessions, the
+ *     WORKFLOW DRAFT state (an entirely different layer that only exists
+ *     until finalization writes its result into installedSystems/embedded
+ *     Items — never itself read back as installed-component authority by
+ *     this resolver or by any governed mutation path). Any file whose own
+ *     doc comment or code lists `droidSystems` as a "priority 1" READ
+ *     source (e.g. scripts/sheets/v2/droid-sheet/droid-systems-resolver.js,
+ *     for display-only regions like size/degree/locomotion that genuinely
+ *     have no installedSystems equivalent) is describing a DISPLAY
+ *     fallback, not asserting installed-component authority — component
+ *     identity/dedup/precedence for those same files already delegates to
+ *     resolveInstalledDroidComponents() below, per SOURCE_KIND's own
+ *     DROID_SYSTEMS_RECORD entry sitting below INSTALLED_LEDGER and
+ *     EMBEDDED_ITEM.
+ *   - Embedded Items (weapons/equipment flagged integrated) and the legacy
+ *     `mods` array are read-only compatibility sources, lower precedence
+ *     still, exactly as SOURCE_KIND's declaration order states.
  */
 
 const SOURCE_KIND = Object.freeze({
@@ -157,6 +185,15 @@ function collectCandidates(actor, { normalizeId, getDefinition, warnings }) {
           active: installed && enabled && active,
           category: value.category ?? null,
           slot: value.slot ?? null,
+          // PHASE 4 — Converted-System Reconciliation: explicit provenance/
+          // mechanicalState carried by the ledger entry itself (written by
+          // DroidCustomizationEngine for post-import installs and by
+          // DroidConvertedSystemReconciliationService for reconciled stock
+          // components — see docs/audits/droid-converted-system-reconciliation-phase-4.md).
+          // Only the installedLedger source carries this — it is the only
+          // source precedence tier this phase treats as authoritative for it.
+          provenance: (value.provenance && typeof value.provenance === 'object') ? value.provenance : null,
+          mechanicalState: (value.mechanicalState && typeof value.mechanicalState === 'object') ? value.mechanicalState : null,
           raw: value
         });
         continue;
@@ -394,6 +431,13 @@ export function resolveInstalledDroidComponents(actor, options = {}) {
     const category = definition?.category ?? sorted.find(s => s.category)?.category ?? null;
     const slot = definition?.slot ?? sorted.find(s => s.slot)?.slot ?? null;
     const legacy = sorted.every(s => s.kind === SOURCE_KIND.LEGACY_MOD);
+    // PHASE 4 — Converted-System Reconciliation: provenance/mechanicalState
+    // only ever come from the installedLedger source (the only tier this
+    // phase writes them to) — never invented for embedded-Item/droidSystems/
+    // legacy-mod-only components, which predate this concept entirely.
+    const ledgerSource = sorted.find(s => s.kind === SOURCE_KIND.INSTALLED_LEDGER);
+    const provenance = ledgerSource?.provenance ?? null;
+    const mechanicalState = ledgerSource?.mechanicalState ?? null;
 
     components.push({
       canonicalId,
@@ -403,6 +447,8 @@ export function resolveInstalledDroidComponents(actor, options = {}) {
       active: Boolean(primary.installed && primary.enabled && primary.active),
       category,
       slot,
+      provenance,
+      mechanicalState,
       sources: sorted.map(s => ({
         kind: s.kind,
         rawId: s.rawId ?? null,
@@ -425,3 +471,13 @@ export function resolveInstalledDroidComponents(actor, options = {}) {
 }
 
 export const DROID_COMPONENT_SOURCE_KIND = SOURCE_KIND;
+
+// PHASE 4 — Converted-System Reconciliation: exported so
+// droid-converted-system-reconciliation-service.js can enumerate every
+// system.droidSystems source record using the exact same field list this
+// resolver already reads, instead of maintaining a second, driftable copy
+// of "which droidSystems fields hold installable records".
+export const DROID_SYSTEMS_SOURCE_FIELDS = Object.freeze({
+  single: DROID_SYSTEMS_SINGLE_FIELDS.map(f => f.field),
+  array: DROID_SYSTEMS_ARRAY_FIELDS
+});

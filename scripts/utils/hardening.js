@@ -4,7 +4,9 @@
  * "Last 10%" hardening utilities:
  * - Mixed progression warnings (heroic + nonheroic)
  * - Complete statblock snapshot + rollback (system + embedded docs)
- * - AppV2 lifecycle guards (skip derived calc for ordinary statblock NPCs)
+ * - AppV2 lifecycle guards (skip derived calc for ordinary statblock NPCs
+ *   and, as of Phase 3 droid authority consolidation, stock-imported droids
+ *   still in statblock mode)
  *
  * Snapshot is stored in flags.swse.npcLevelUp.snapshot (back-compat with existing UI).
  *
@@ -13,6 +15,7 @@
 
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { isNpcStatblockMode } from "/systems/foundryvtt-swse/scripts/actors/npc/npc-mode-adapter.js";
+import { isDroidStatblockMode } from "/systems/foundryvtt-swse/scripts/actors/droid/droid-mode-adapter.js";
 
 const SYSTEM_SCOPE_COMPAT = 'foundryvtt-swse';
 const FLAG_SNAPSHOT = 'npcLevelUp.snapshot';
@@ -53,7 +56,17 @@ export function shouldSkipDerivedData(actor) {
   // owner's heroic level plus their live ability scores. Treating them as frozen
   // statblocks prevents ability/species edits from ever reaching DerivedCalculator.
   if (_isFollowerNpc(actor)) return false;
-  return isStatblockNpc(actor);
+  if (isStatblockNpc(actor)) return true;
+
+  // PHASE 3 — Droid Authority Consolidation: a stock-imported droid has no
+  // class levels, so DerivedCalculator.computeAll() would compute BAB 0 and
+  // base (10) defenses and overwrite the published totals' displayed
+  // system.derived.* mirror on every render — the sheet reads system.derived
+  // per the V2 contract, so the practical effect was indistinguishable from
+  // losing the published statblock even though the underlying system.bab/
+  // system.defenses/etc. fields were never actually touched. See
+  // docs/audits/droid-authority-consolidation-phase-3.md.
+  return isDroidStatblockMode(actor);
 }
 
 /**

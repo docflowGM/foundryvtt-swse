@@ -15,6 +15,7 @@ import { LightsaberConstructionEngine } from "/systems/foundryvtt-swse/scripts/e
 import { openItemCustomization } from "/systems/foundryvtt-swse/scripts/apps/customization/item-customization-router.js";
 import { openForceAlchemyWorkbench } from "/systems/foundryvtt-swse/scripts/apps/force-alchemy/force-alchemy-workbench-app.js";
 import { launchFollowerProgression, launchMinionCreation } from "/systems/foundryvtt-swse/scripts/apps/progression-framework/progression-entry.js";
+import { isFollowerSlotOccupied, resolveFollowerSlotActorId } from "/systems/foundryvtt-swse/scripts/domain/followers/follower-slot-occupancy.js";
 import { SWSEStore } from "/systems/foundryvtt-swse/scripts/apps/store/store-main.js";
 import { initiateItemSale } from "/systems/foundryvtt-swse/scripts/apps/item-selling-system.js";
 import { MentorNotesApp } from "/systems/foundryvtt-swse/scripts/apps/mentor-notes/mentor-notes-app.js";
@@ -3860,7 +3861,7 @@ const forcePoints = [];
           const cfg = FOLLOWER_TALENT_CONFIG[slot.talentName];
           const filled = followerSlots
             .filter(s => s.talentName === slot.talentName)
-            .filter(s => !!s.createdActorId).length;
+            .filter(isFollowerSlotOccupied).length;
 
           followerTalentBadges.push({
             talentName: slot.talentName,
@@ -3875,7 +3876,8 @@ const forcePoints = [];
 
     // Enrich follower slots with actor data
     const enrichedFollowerSlots = followerSlots.map(slot => {
-      const actorData = slot.createdActorId ? ownedActorMap[slot.createdActorId] : null;
+      const slotActorId = resolveFollowerSlotActorId(slot);
+      const actorData = slotActorId ? ownedActorMap[slotActorId] : null;
       return {
         ...slot,
         actor: actorData ? { id: actorData.id, name: actorData.name, type: actorData.type } : null,
@@ -3889,8 +3891,8 @@ const forcePoints = [];
     });
 
     // Phase 3.5: Check if owner has available (unfilled) follower slots for UI visibility
-    const hasAvailableFollowerSlots = followerSlots.some(slot => !slot.createdActorId && (!slot.dependentKind || slot.dependentKind === 'follower'));
-    const hasAvailableMinionSlots = followerSlots.some(slot => !slot.createdActorId && ['minion', 'privateer'].includes(slot.dependentKind));
+    const hasAvailableFollowerSlots = followerSlots.some(slot => !isFollowerSlotOccupied(slot) && (!slot.dependentKind || slot.dependentKind === 'follower'));
+    const hasAvailableMinionSlots = followerSlots.some(slot => !isFollowerSlotOccupied(slot) && ['minion', 'privateer'].includes(slot.dependentKind));
     const hasAvailableDependentSlots = hasAvailableFollowerSlots || hasAvailableMinionSlots;
 
     // Calculate total talent count for ledger display
@@ -5572,6 +5574,58 @@ const forcePoints = [];
         const itemId = openChip.dataset.itemId;
         const item = itemId ? this.actor?.items?.get?.(itemId) : null;
         if (item?.sheet) item.sheet.render(true);
+      }
+
+      // PHASE 3 — Droid Stock-Statblock Authority controls. Distinct action
+      // names from the legacy "convert-to-custom-droid" CTA elsewhere on
+      // this same card — see droid-build-status-card.hbs's comment.
+      const inspectBtn = ev.target.closest("[data-action='inspect-droid-conversion']");
+      if (inspectBtn) {
+        ev.preventDefault();
+        await this._inspectDroidConversion();
+        return;
+      }
+
+      const convertBtn = ev.target.closest("[data-action='convert-droid-to-playable']");
+      if (convertBtn) {
+        ev.preventDefault();
+        await this._convertDroidToPlayable();
+        return;
+      }
+
+      const viewOriginalBtn = ev.target.closest("[data-action='view-original-droid-statblock']");
+      if (viewOriginalBtn) {
+        ev.preventDefault();
+        await this._viewOriginalDroidStatblock();
+        return;
+      }
+
+      const rollbackBtn = ev.target.closest("[data-action='rollback-droid-conversion']");
+      if (rollbackBtn) {
+        ev.preventDefault();
+        await this._rollbackDroidConversion();
+        return;
+      }
+
+      // PHASE 4 — Converted-System Reconciliation controls.
+      const inspectReconciliationBtn = ev.target.closest("[data-action='inspect-droid-reconciliation']");
+      if (inspectReconciliationBtn) {
+        ev.preventDefault();
+        await this._inspectDroidReconciliation();
+        return;
+      }
+
+      const reconcileBtn = ev.target.closest("[data-action='reconcile-droid-systems']");
+      if (reconcileBtn) {
+        ev.preventDefault();
+        await this._reconcileDroidSystems();
+        return;
+      }
+
+      const rollbackReconciliationBtn = ev.target.closest("[data-action='rollback-droid-reconciliation']");
+      if (rollbackReconciliationBtn) {
+        ev.preventDefault();
+        await this._rollbackDroidReconciliation();
       }
     }, { signal });
 
@@ -8524,6 +8578,166 @@ const forcePoints = [];
 
     await postDroidPartChat(this.actor, part);
     return null;
+  }
+
+  /**
+   * PHASE 3 — Droid Stock-Statblock Authority controls. Thin sheet-side
+   * wrappers around scripts/domain/droids/droid-statblock-conversion-service.js
+   * — all permission checks and mutation logic live in the service; these
+   * only format its results for the actor sheet.
+   */
+  async _inspectDroidConversion() {
+    if (!this.actor || this.actor.type !== 'droid') return;
+    const { inspectConversion } = await import('/systems/foundryvtt-swse/scripts/domain/droids/droid-statblock-conversion-service.js');
+    const report = await inspectConversion(this.actor);
+    const lines = [
+      `<p><strong>Mode:</strong> ${report.calculationMode?.mode ?? 'unknown'}</p>`,
+      `<p><strong>Source:</strong> ${report.stockImportSource?.sourceName ?? 'Unknown'}</p>`,
+      report.discrepancies?.length
+        ? `<p><strong>Discrepancies vs. classless-derived math:</strong></p><ul>${report.discrepancies.map(d => `<li>${d.field}: published ${d.published}, derived would be ${d.reproducedDerived}</li>`).join('')}</ul>`
+        : `<p>No discrepancies computed against classless-derived math.</p>`,
+      report.warnings?.length ? `<p><strong>Warnings:</strong></p><ul>${report.warnings.map(w => `<li>${w}</li>`).join('')}</ul>` : ''
+    ];
+    await SWSEDialogV2.prompt({
+      title: `Inspect Conversion — ${this.actor.name}`,
+      content: lines.join(''),
+      label: 'Close'
+    });
+  }
+
+  async _convertDroidToPlayable() {
+    if (!this.actor || this.actor.type !== 'droid') return;
+    const confirmed = await SWSEDialogV2.confirm({
+      title: 'Convert to Playable Mode',
+      content: `<p>Convert <strong>${this.actor.name}</strong> from its published statblock to normal playable-derived rules?</p><p>This does not add classes, levels, feats, or talents — it only stops the published totals from being protected from derived recalculation. A snapshot is taken first and can be rolled back.</p>`,
+      defaultYes: false
+    });
+    if (!confirmed) return;
+    const { convertToPlayableDerived } = await import('/systems/foundryvtt-swse/scripts/domain/droids/droid-statblock-conversion-service.js');
+    const result = await convertToPlayableDerived(this.actor);
+    if (result.success) {
+      ui.notifications?.info?.(`${this.actor.name} converted to playable-derived mode.`);
+    } else {
+      ui.notifications?.error?.(`Conversion failed: ${result.error}`);
+    }
+  }
+
+  async _viewOriginalDroidStatblock() {
+    if (!this.actor || this.actor.type !== 'droid') return;
+    const importState = this.actor.flags?.swse?.stockDroidImport;
+    if (!importState) {
+      ui.notifications?.warn?.('No original statblock snapshot found on this droid.');
+      return;
+    }
+    const totals = importState.publishedTotals ?? {};
+    const content = `
+      <p><strong>Source:</strong> ${importState.sourceName ?? 'Unknown'}</p>
+      <p><strong>BAB:</strong> ${totals.bab ?? '—'} | <strong>Damage Threshold:</strong> ${totals.threshold ?? '—'}</p>
+      <p><strong>Defenses:</strong> Fort ${totals.defenses?.fortitude ?? '—'} / Ref ${totals.defenses?.reflex ?? '—'} / Will ${totals.defenses?.will ?? '—'}</p>
+      <p><strong>HP:</strong> ${totals.hp?.max ?? '—'} | <strong>Initiative:</strong> ${totals.initiative ?? '—'}</p>
+    `;
+    await SWSEDialogV2.prompt({
+      title: `Original Statblock — ${this.actor.name}`,
+      content,
+      label: 'Close'
+    });
+  }
+
+  async _rollbackDroidConversion() {
+    if (!this.actor || this.actor.type !== 'droid') return;
+    const confirmed = await SWSEDialogV2.confirm({
+      title: 'Roll Back Conversion',
+      content: `<p>Restore <strong>${this.actor.name}</strong> to its pre-conversion published statblock? Any changes made since converting will be lost.</p>`,
+      defaultYes: false
+    });
+    if (!confirmed) return;
+    const { rollbackConversion } = await import('/systems/foundryvtt-swse/scripts/domain/droids/droid-statblock-conversion-service.js');
+    const result = await rollbackConversion(this.actor);
+    if (result.success) {
+      ui.notifications?.info?.(`${this.actor.name} rolled back to its published statblock.`);
+    } else {
+      ui.notifications?.error?.(`Rollback failed: ${result.error}`);
+    }
+  }
+
+  /**
+   * PHASE 4 — Converted-System Reconciliation controls. Thin sheet-side
+   * wrappers around scripts/domain/droids/droid-converted-system-reconciliation-service.js
+   * — all classification, permission checks, and mutation logic live in
+   * the service; these only format its results for the actor sheet.
+   */
+  async _inspectDroidReconciliation() {
+    if (!this.actor || this.actor.type !== 'droid') return;
+    const { inspectReconciliation } = await import('/systems/foundryvtt-swse/scripts/domain/droids/droid-converted-system-reconciliation-service.js');
+    const report = await inspectReconciliation(this.actor);
+    const rows = (report.candidates ?? []).map(c => {
+      const label = c.canonicalId ?? c.sourcePaths?.[0] ?? 'unknown';
+      return `<li><strong>${label}</strong> — ${c.classification}${c.alreadyInstalled ? ' (already represented)' : ''}${c.selectedByDefault ? ' (auto-applicable)' : ''}</li>`;
+    });
+    const content = `
+      <p><strong>Mode:</strong> ${report.calculationMode?.mode ?? 'unknown'}</p>
+      ${rows.length ? `<ul>${rows.join('')}</ul>` : '<p>No unresolved published systems found.</p>'}
+      ${report.warnings?.length ? `<p><strong>Warnings:</strong></p><ul>${report.warnings.map(w => `<li>${w}</li>`).join('')}</ul>` : ''}
+    `;
+    await SWSEDialogV2.prompt({
+      title: `Inspect Published Systems — ${this.actor.name}`,
+      content,
+      label: 'Close'
+    });
+  }
+
+  async _reconcileDroidSystems() {
+    if (!this.actor || this.actor.type !== 'droid') return;
+    // P1-5 — this sheet handler submits INTENT (actorId/selectedCanonicalIds/
+    // inspectionRevision) only. It never builds or holds a mutation plan;
+    // applyReconciliation() rereads the actor's current state and rebuilds
+    // the plan itself, using this call's inspectionRevision only to detect
+    // whether anything changed since inspection ran a moment ago.
+    const { inspectReconciliation, applyReconciliation } = await import('/systems/foundryvtt-swse/scripts/domain/droids/droid-converted-system-reconciliation-service.js');
+    const inspection = await inspectReconciliation(this.actor);
+    const autoApplicable = (inspection.candidates ?? []).filter(c => c.selectedByDefault && !c.alreadyInstalled);
+    if (autoApplicable.length === 0) {
+      ui.notifications?.info?.(`${this.actor.name} has no auto-applicable published systems to reconcile. Ambiguous or descriptive-only entries require manual review and are not reconciled from this button.`);
+      return;
+    }
+    const confirmed = await SWSEDialogV2.confirm({
+      title: 'Reconcile Published Systems',
+      content: `<p>Reconcile ${autoApplicable.length} published system(s) into <strong>${this.actor.name}</strong>'s canonical installation ledger?</p><p>This only applies unambiguous canonical/alias matches. Ambiguous or purely descriptive entries are left untouched. A snapshot is taken first and can be rolled back.</p>`,
+      defaultYes: false
+    });
+    if (!confirmed) return;
+    const intent = {
+      actorId: this.actor.id,
+      selectedCanonicalIds: autoApplicable.map(c => c.canonicalId),
+      inspectionRevision: inspection.inspectionRevision
+    };
+    const result = await applyReconciliation(this.actor, intent);
+    if (result.success) {
+      ui.notifications?.info?.(`${this.actor.name}: reconciled ${result.appliedCanonicalIds.length} system(s).`);
+    } else if (result.code === 'RECONCILIATION_STALE') {
+      // Never silently retry with the stale selection — force a fresh
+      // review instead.
+      ui.notifications?.warn?.(result.error);
+    } else {
+      ui.notifications?.error?.(`Reconciliation failed: ${result.error}`);
+    }
+  }
+
+  async _rollbackDroidReconciliation() {
+    if (!this.actor || this.actor.type !== 'droid') return;
+    const confirmed = await SWSEDialogV2.confirm({
+      title: 'Roll Back Reconciliation',
+      content: `<p>Restore <strong>${this.actor.name}</strong> to its pre-reconciliation state? Any changes made since reconciling will be lost.</p>`,
+      defaultYes: false
+    });
+    if (!confirmed) return;
+    const { rollbackReconciliation } = await import('/systems/foundryvtt-swse/scripts/domain/droids/droid-converted-system-reconciliation-service.js');
+    const result = await rollbackReconciliation(this.actor);
+    if (result.success) {
+      ui.notifications?.info?.(`${this.actor.name} rolled back to its pre-reconciliation state.`);
+    } else {
+      ui.notifications?.error?.(`Rollback failed: ${result.error}`);
+    }
   }
 
   /* ============================================================

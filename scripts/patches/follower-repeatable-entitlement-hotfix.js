@@ -1,6 +1,7 @@
 import { ActorEngine } from '/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js';
 import { getFollowerTalentConfig } from '/systems/foundryvtt-swse/scripts/engine/crew/follower-talent-config.js';
 import { swseLogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
+import { resolveFollowerSlotActorId } from '/systems/foundryvtt-swse/scripts/domain/followers/follower-slot-occupancy.js';
 
 const REGISTERED = Symbol.for('swse.followerRepeatableEntitlement.registered.v1');
 const QUEUES = new Map();
@@ -126,8 +127,9 @@ export async function repairRepeatableFollowerEntitlements(actor, { reason = 'ma
 
       // Preserve every distinct, valid filled link first.
       for (const slot of matchingSlots) {
-        if (slot.createdActorId && matchingFollowers.some(follower => follower.id === slot.createdActorId) && !claimedFollowerIds.has(slot.createdActorId)) {
-          claimedFollowerIds.add(slot.createdActorId);
+        const occupantId = resolveFollowerSlotActorId(slot);
+        if (occupantId && matchingFollowers.some(follower => follower.id === occupantId) && !claimedFollowerIds.has(occupantId)) {
+          claimedFollowerIds.add(occupantId);
         }
       }
       const unclaimedFollowers = matchingFollowers.filter(follower => !claimedFollowerIds.has(follower.id));
@@ -140,11 +142,13 @@ export async function repairRepeatableFollowerEntitlements(actor, { reason = 'ma
           || null;
         const slot = buildSlot(item, group.cfg, rank, existing);
 
-        if (!slot.createdActorId || claimedFollowerIds.has(slot.createdActorId) && nextSlots.some(entry => entry.createdActorId === slot.createdActorId)) {
+        const slotOccupantId = resolveFollowerSlotActorId(slot);
+        if (!slotOccupantId || claimedFollowerIds.has(slotOccupantId) && nextSlots.some(entry => resolveFollowerSlotActorId(entry) === slotOccupantId)) {
           const follower = unclaimedFollowers.shift();
           if (follower) slot.createdActorId = follower.id;
         }
-        if (slot.createdActorId) claimedFollowerIds.add(slot.createdActorId);
+        const finalOccupantId = resolveFollowerSlotActorId(slot);
+        if (finalOccupantId) claimedFollowerIds.add(finalOccupantId);
         nextSlots.push(slot);
       }
 
@@ -169,7 +173,7 @@ export async function repairRepeatableFollowerEntitlements(actor, { reason = 'ma
         reason,
         before: currentSlots.length,
         after: nextSlots.length,
-        filled: nextSlots.filter(slot => slot.createdActorId).length,
+        filled: nextSlots.filter(slot => resolveFollowerSlotActorId(slot)).length,
       });
     }
     return nextSlots;

@@ -10,6 +10,8 @@
 
 import { DroidBuilderStep } from '../droid-builder-step.js';
 import { swseLogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
+import { isFollowerDroidDraft, resolveFollowerDroidAbilityChoice } from './follower-droid-context.js';
+import { classifyFollowerDroidChassisSelection, resolveFollowerDroidChassisPrecedence, FOLLOWER_DROID_CHASSIS_SESSION_STATE } from './follower-droid-chassis-compat.js';
 
 const FOLLOWER_DROID_ALLOWED_CATEGORIES = Object.freeze([
   'appendage',
@@ -27,29 +29,50 @@ const FOLLOWER_DROID_ALLOWED_ACCESSORY_SUBCATEGORIES = Object.freeze([
   'translator'
 ]);
 
-const FOLLOWER_DROID_DEGREE_ABILITY = Object.freeze({
-  '1st-degree': 'int',
-  '2nd-degree': 'int',
-  '3rd-degree': 'cha',
-  '4th-degree': 'dex',
-  '5th-degree': 'str'
-});
-
 export class FollowerDroidBuilderStep extends DroidBuilderStep {
   constructor(descriptor) {
     super(descriptor);
     this._creditModel = null;
+    this._chassisConflict = null;
   }
 
   async onStepEnter(shell) {
     const draft = shell?.progressionSession?.draftSelections || {};
     if (!this._isDroidFollowerDraft(draft)) {
       this._droidState = null;
+      this._chassisConflict = null;
       return;
     }
 
+    // ADDENDUM — full 6-point legacy session compatibility precedence (see
+    // resolveFollowerDroidChassisPrecedence). A disagreeing conflict between
+    // draftSelections.droid and the legacy droidConfig.droidBuild mirror
+    // must block this step rather than silently picking a side.
+    const precedence = resolveFollowerDroidChassisPrecedence(draft);
+    if (precedence.state === FOLLOWER_DROID_CHASSIS_SESSION_STATE.CONFLICT) {
+      this._chassisConflict = precedence;
+      this._droidState = null;
+      swseLogger.warn('[FollowerDroidBuilderStep] Conflicting droid chassis selections; manual review required.', precedence.reasons);
+      return;
+    }
+    this._chassisConflict = null;
+
+    // PHASE 6 — Consolidate Follower Droid Chargen into One Chassis Step:
+    // an in-progress session created before this phase may still carry a
+    // droidConfig written by the now-removed species-step droid branch —
+    // a hardcoded {baseSystems, optionalSystems} shape disconnected from
+    // the real droid-part catalog, never a genuine chassis selection. Log
+    // it explicitly (surfaced, not silently discarded) so it's visible in
+    // diagnostics; _seedFollowerDroidSession below already re-seeds a real
+    // chassis build whenever no canonical droidSystems object is present,
+    // which self-heals this case on this step's next entry.
+    const legacyClassification = classifyFollowerDroidChassisSelection(draft.droidConfig);
+    if (legacyClassification.state === FOLLOWER_DROID_CHASSIS_SESSION_STATE.LEGACY_NEEDS_RECONFIGURATION) {
+      swseLogger.warn('[FollowerDroidBuilderStep] Legacy pre-consolidation chassis selection found; reconfiguring from the canonical catalog.', legacyClassification.reasons);
+    }
+
     await this._ensureFollowerStartingCredits(shell);
-    this._seedFollowerDroidSession(shell);
+    this._seedFollowerDroidSession(shell, precedence);
     await super.onStepEnter(shell);
 
     if (this._droidState) {
@@ -58,10 +81,31 @@ export class FollowerDroidBuilderStep extends DroidBuilderStep {
     }
   }
 
+  /**
+   * ADDENDUM — surface a chassis-selection conflict (see
+   * resolveFollowerDroidChassisPrecedence, point 4) as a specific blocking
+   * issue rather than the generic "construction state is not available"
+   * message the base class returns for a null `_droidState`.
+   */
+  getBlockingIssues() {
+    if (this._chassisConflict) {
+      return [
+        'This follower has two disagreeing droid chassis selections and requires manual review before the chassis step can be completed.',
+        ...this._chassisConflict.reasons
+      ];
+    }
+    return super.getBlockingIssues();
+  }
+
+  validate() {
+    if (this._chassisConflict) {
+      return { isValid: false, errors: this.getBlockingIssues(), warnings: [] };
+    }
+    return super.validate();
+  }
+
   _isDroidFollowerDraft(draft = {}) {
-    return draft.followerKind === 'droid'
-      || draft.droidConfig?.isDroid === true
-      || String(draft.speciesName || '').toLowerCase() === 'droid';
+    return isFollowerDroidDraft(draft);
   }
 
   _getFollowerConstraint() {
@@ -75,13 +119,20 @@ export class FollowerDroidBuilderStep extends DroidBuilderStep {
     };
   }
 
-  _seedFollowerDroidSession(shell) {
+  _seedFollowerDroidSession(shell, precedence = null) {
     const session = shell?.progressionSession;
     if (!session) return;
 
     const draft = session.draftSelections || (session.draftSelections = {});
     const existingConfig = draft.droidConfig || {};
-    const existingDroid = draft.droid || existingConfig.droidBuild || {};
+    // ADDENDUM — use the full 6-point precedence resolution (see
+    // resolveFollowerDroidChassisPrecedence) rather than a plain
+    // `draft.droid || existingConfig.droidBuild || {}` fallback, so a
+    // real legacy droidConfig.droidBuild is only restored into draft.droid
+    // when draft.droid itself is not already a real build (a stub/empty
+    // draft.droid must not silently "win" over a real legacy build).
+    const resolved = precedence || resolveFollowerDroidChassisPrecedence(draft);
+    const existingDroid = resolved.resolvedBuild || {};
     const budget = Number(draft.startingCredits ?? existingConfig.droidCredits?.base ?? existingDroid.droidCredits?.base ?? 0);
     const degree = String(existingConfig.droidDegree || existingDroid.droidDegree || '2nd-degree').toLowerCase();
     const size = String(existingConfig.size || existingConfig.droidSize || existingDroid.droidSize || 'medium').toLowerCase();
@@ -144,7 +195,16 @@ export class FollowerDroidBuilderStep extends DroidBuilderStep {
       droidDegree: degree,
       size,
       droidSize: size,
-      abilityChoice: existingConfig.abilityChoice || FOLLOWER_DROID_DEGREE_ABILITY[degree] || 'int',
+      // ADDENDUM — degree-derived ability is the sole rule for droid
+      // followers (no repository documentation supports an independent
+      // free ability choice for droids the way living followers get one
+      // from their template — see TEMPLATE_ABILITY_OPTIONS in
+      // follower-step-base.js, a genuinely different, template-driven
+      // mechanic). A stray existingConfig.abilityChoice from a
+      // pre-Phase-6 session (the removed species-step branch let the
+      // user pick freely) is intentionally NOT trusted here, so it can't
+      // silently override the correct degree-derived value.
+      abilityChoice: resolveFollowerDroidAbilityChoice(degree),
       droidCredits: draft.droid.droidCredits,
       droidBuild: draft.droid,
       allowedOptionalCategories: Array.from(FOLLOWER_DROID_ALLOWED_ACCESSORY_SUBCATEGORIES),
@@ -193,7 +253,10 @@ export class FollowerDroidBuilderStep extends DroidBuilderStep {
       droidSize: draft.droid.droidSize || 'medium',
       speed: droidSystems.locomotion?.speed || 6,
       movement: { walk: droidSystems.locomotion?.speed || 6 },
-      abilityChoice: draft.droidConfig?.abilityChoice || FOLLOWER_DROID_DEGREE_ABILITY[degree] || 'int',
+      // See the matching note in _seedFollowerDroidSession — degree-derived
+      // is the sole ability rule; a stale draft.droidConfig.abilityChoice
+      // is never trusted over it.
+      abilityChoice: resolveFollowerDroidAbilityChoice(degree),
       baseSystems: this._formatBaseSystems(droidSystems),
       optionalSystems,
       droidSystems: JSON.parse(JSON.stringify(droidSystems)),

@@ -13,6 +13,19 @@ import { getHeroicLevel } from '/systems/foundryvtt-swse/scripts/actors/derived/
 import { FactionRegistryService } from '/systems/foundryvtt-swse/scripts/allies/faction-registry-service.js';
 import { HolonetIntelService, INTEL_REVEAL_STATE } from '/systems/foundryvtt-swse/scripts/holonet/subsystems/holonet-intel-service.js';
 import { createActor } from '/systems/foundryvtt-swse/scripts/core/document-api-v13.js';
+import { FollowerSlotService, isEligibleFollowerSlotOwner } from '/systems/foundryvtt-swse/scripts/engine/crew/follower-slot-service.js';
+import { isFollowerSlotOccupied, resolveFollowerSlotActorId, isFollowerSlotReserved } from '/systems/foundryvtt-swse/scripts/domain/followers/follower-slot-occupancy.js';
+import {
+  AllyAssignmentService,
+  ASSIGNMENT_KIND,
+  ASSIGNMENT_MODE,
+  evaluateNpcAssignmentEligibility,
+  evaluateFollowerConversionEligibility,
+  evaluateDroidConversionGate,
+  isEligibleAssignmentTargetType,
+  resolveAllowedFollowerTemplates,
+  buildFollowerConversionPreflight
+} from '/systems/foundryvtt-swse/scripts/engine/crew/ally-assignment-service.js';
 
 const SYSTEM_ID = 'foundryvtt-swse';
 const TAB_IDS = new Set(['companions', 'factions', 'contacts', 'intel', 'bases', 'organizations']);
@@ -36,6 +49,17 @@ const BASE_ACCOMMODATIONS = [
 const ORGANIZATION_SCALE_MIN = 1;
 const ORGANIZATION_SCALE_MAX = 20;
 const ORGANIZATION_GM_FIELDS = new Set(['scale', 'score', 'benefits', 'bases', 'statistics']);
+
+// Display labels only — the canonical policy for WHICH templates a slot
+// allows (including the "explicitly zero choices configured" case) lives
+// in ally-assignment-service.js's resolveAllowedFollowerTemplates, the
+// single source of truth this file and the service both consult so the UI
+// and the service-boundary preflight can never silently disagree.
+const FOLLOWER_TEMPLATE_LABELS = Object.freeze({
+  aggressive: 'Aggressive Follower',
+  defensive: 'Defensive Follower',
+  utility: 'Utility Follower'
+});
 
 function asArray(value) {
   if (Array.isArray(value)) return value;
@@ -142,11 +166,17 @@ function slotLabel(slot = {}) {
 }
 
 function sourceTalentLabel(record = {}) {
+  if (record.sourceType === 'gm-grant') return record.sourceLabel || 'GM Granted';
   return record.sourceTalent || record.talentName || record.grantingTalent || record.talent || record.source || 'Unknown source';
 }
 
 function slotCreatedActorId(slot = {}) {
-  return cleanString(slot.createdActorId ?? slot.actorId ?? slot.assignedActorId ?? slot.dependentActorId ?? slot.npcActorId);
+  // Delegates to the canonical alias-aware occupancy resolver (R4-3) rather
+  // than maintaining a second copy of the same occupant-field alias list —
+  // this file previously had its own independent list here, which is
+  // exactly the kind of split authority that let getOpenFollowerSlotsForConversion()
+  // (below) drift to a narrower, non-alias-aware check.
+  return cleanString(resolveFollowerSlotActorId(slot) ?? '');
 }
 
 function slotLiveActor(slot = {}) {
@@ -160,23 +190,26 @@ function isOpenCompanionSlot(slot = {}) {
   return !slotLiveActor(slot);
 }
 
-function mapPendingSlot(slot = {}) {
+function mapPendingSlot(slot = {}, options = {}) {
   const kind = slotKind(slot);
   const label = slotLabel(slot);
   const staleActorId = slotCreatedActorId(slot);
   const staleAssignment = Boolean(staleActorId && !slotLiveActor(slot));
+  const isManualSlot = slot.sourceType === 'gm-grant';
   return {
     id: slot.id || slot.slotId || `${kind}-${sourceTalentLabel(slot)}`,
     kind,
     label,
     title: staleAssignment ? `Rebuild ${label} Slot` : `Open ${label} Slot`,
     sourceTalent: sourceTalentLabel(slot),
+    sourceType: slot.sourceType || null,
     description: slot.description || (staleAssignment
       ? `${sourceTalentLabel(slot)} has a missing linked actor. Rebuild or refill this ${label.toLowerCase()} slot.`
       : `${sourceTalentLabel(slot)} has granted an unfilled ${label.toLowerCase()} slot.`),
     canBuildFollower: kind === 'follower',
     canBuildMinion: kind === 'minion' || kind === 'privateer' || kind === 'assigned-nonheroic',
     canBuildBeast: kind === 'beast',
+    canRemoveManualSlot: isManualSlot && !staleActorId && options.isGM === true,
     status: staleAssignment ? 'ACTOR MISSING' : 'OPEN SLOT'
   };
 }
@@ -239,6 +272,11 @@ function mapActorCard(actor, kind = 'follower', owner = null, options = {}) {
     canRequestBeastLevelUp: kind === 'beast' && !beastLevelRequested,
     beastLevelRequested,
     canFire: true,
+    // GM-EXISTING-NPC-ASSIGNMENT — presence of assignedAllyOwnerId (not the
+    // display `kind`) is what marks a card as coming from AllyAssignmentService
+    // rather than ordinary slot-based follower/minion/beast creation, so an
+    // assigned beast gets this control while a slot-created beast does not.
+    canUnassignAlly: game.user?.isGM === true && Boolean(actor?.getFlag?.(SYSTEM_ID, 'assignedAllyOwnerId')),
     status: kind === 'follower'
       ? (canLevelUp ? 'LEVEL UP' : 'SYNCED')
       : kind === 'beast'
@@ -246,6 +284,175 @@ function mapActorCard(actor, kind = 'follower', owner = null, options = {}) {
         : (canLevelUp ? 'SYNC NEEDED' : 'SYNCED'),
     isStale: canLevelUp,
     showHistory: options.showHistory === true
+  };
+}
+
+const ASSIGNMENT_KIND_LABELS = {
+  'assigned-beast': 'Beast',
+  'assigned-nonheroic': 'Nonheroic',
+  'assigned-droid': 'Droid',
+  'assigned-heroic-npc': 'Heroic NPC',
+  'assigned-npc': 'NPC'
+};
+
+function npcAssignmentKindLabel(detectedKind) {
+  return ASSIGNMENT_KIND_LABELS[detectedKind] || 'NPC';
+}
+
+function npcAssignmentSpeciesLabel(actor) {
+  const species = actor?.system?.species?.name || actor?.system?.race || null;
+  return species ? titleCase(species) : null;
+}
+
+function npcAssignmentDetailLabel(actor, detectedKind, droidGate) {
+  if (detectedKind === ASSIGNMENT_KIND.DROID) {
+    return droidGate?.blocked ? 'Stock Statblock — Conversion Blocked' : 'Playable-Derived';
+  }
+  return npcAssignmentSpeciesLabel(actor) || 'Unknown species';
+}
+
+function npcAssignmentSearchText(candidate) {
+  return [
+    candidate.name,
+    candidate.type,
+    candidate.kindLabel,
+    candidate.detailLabel,
+    candidate.levelLabel,
+    candidate.alreadyAssignedOwnerName
+  ].filter(Boolean).join(' ').toLowerCase();
+}
+
+/**
+ * Build the modal's default local selection state. Never persisted onto any
+ * Actor — the modal keeps this in memory only and hands a normalized result
+ * back to its caller on confirm.
+ */
+export function buildDefaultAllyAssignmentModalState(initial = {}) {
+  return {
+    targetActorId: initial.targetActorId ?? null,
+    assignmentMode: initial.assignmentMode === 'follower' ? 'follower' : 'ally',
+    followerSlotId: initial.followerSlotId ?? null,
+    templateType: initial.templateType ?? null,
+    search: '',
+    grantOwnership: false,
+    submitting: false
+  };
+}
+
+export function findFollowerSlotById(viewModel, slotId) {
+  return (viewModel?.followerSlots || []).find(slot => slot.id === slotId) || null;
+}
+
+/** Label lookup for a follower template id (aggressive/defensive/utility). */
+export function followerTemplateLabel(templateId) {
+  return FOLLOWER_TEMPLATE_LABELS[templateId] || templateId;
+}
+
+export function normalizeAllyAssignmentSearchQuery(query) {
+  return String(query || '').trim().toLowerCase();
+}
+
+/** Pure search filter over a picker view model's candidate cards. */
+export function filterNpcAssignmentCandidates(candidates = [], query = '') {
+  const normalized = normalizeAllyAssignmentSearchQuery(query);
+  if (!normalized) return candidates;
+  return candidates.filter(candidate => String(candidate?.searchText || '').includes(normalized));
+}
+
+export function findNpcAssignmentCandidate(viewModel, targetActorId) {
+  return (viewModel?.candidates || []).find(candidate => candidate.id === targetActorId) || null;
+}
+
+/** Whether `mode` is currently choosable for the given candidate card. */
+export function isAllyAssignmentModeAvailable(candidate, mode) {
+  if (!candidate) return false;
+  if (mode === 'ally') return candidate.canAssignAsAlly === true;
+  if (mode === 'follower') return candidate.canConvertToFollower === true;
+  return false;
+}
+
+/**
+ * Resolve template-type selection state for a given (possibly newly
+ * selected) follower slot. Mirrors the slot auto-select policy at one
+ * level down: a slot offering exactly one template choice auto-selects
+ * it; a slot offering multiple requires the GM to choose explicitly. If
+ * the currently-held templateType is not among the new slot's choices
+ * (e.g. the GM switched to a differently-constrained slot), it is reset
+ * rather than silently carried over into an invalid selection.
+ */
+export function resolveFollowerTemplateSelectionForSlot(slot, currentTemplateType) {
+  const choices = Array.isArray(slot?.templateChoices) ? slot.templateChoices : [];
+  if (currentTemplateType && choices.includes(currentTemplateType)) return currentTemplateType;
+  if (choices.length === 1) return choices[0];
+  return null;
+}
+
+/**
+ * Apply an assignment-mode change to modal state. Per the documented slot
+ * policy: a single open follower slot may be auto-selected, but ONLY at the
+ * moment the GM switches into Convert to Follower mode (never eagerly, and
+ * never when multiple slots exist — those always require explicit choice).
+ * Switching back to Assign as Ally preserves any prior slot/template
+ * selection in state without submitting it. When a slot ends up selected
+ * (auto or already-held), its template selection is resolved the same way.
+ */
+export function resolveFollowerSlotSelectionOnModeChange(viewModel, state, nextMode) {
+  const next = { ...state, assignmentMode: nextMode === 'follower' ? 'follower' : 'ally' };
+  if (next.assignmentMode === 'follower') {
+    if (!next.followerSlotId && (viewModel?.followerSlots || []).length === 1) {
+      next.followerSlotId = viewModel.followerSlots[0].id;
+    }
+    if (next.followerSlotId) {
+      const slot = findFollowerSlotById(viewModel, next.followerSlotId);
+      next.templateType = resolveFollowerTemplateSelectionForSlot(slot, next.templateType);
+    }
+  }
+  return next;
+}
+
+/**
+ * Apply a follower-slot selection to modal state, resolving template-type
+ * selection for the newly selected slot in the same step (see
+ * resolveFollowerTemplateSelectionForSlot).
+ */
+export function resolveFollowerSlotSelection(viewModel, state, slotId) {
+  const slot = findFollowerSlotById(viewModel, slotId);
+  return {
+    ...state,
+    followerSlotId: slotId,
+    templateType: resolveFollowerTemplateSelectionForSlot(slot, state.templateType)
+  };
+}
+
+/** Pure confirm-button-enabled predicate — mirrors the modal's own gating. */
+export function canConfirmAllyAssignment(viewModel, state) {
+  if (!state || state.submitting === true) return false;
+  const candidate = findNpcAssignmentCandidate(viewModel, state.targetActorId);
+  if (!candidate) return false;
+  if (state.assignmentMode === 'ally') return candidate.canAssignAsAlly === true;
+  if (state.assignmentMode === 'follower') {
+    if (candidate.canConvertToFollower !== true) return false;
+    if (!state.followerSlotId) return false;
+    const slot = findFollowerSlotById(viewModel, state.followerSlotId);
+    if (!slot) return false;
+    const choices = Array.isArray(slot.templateChoices) ? slot.templateChoices : [];
+    // A slot with zero configured templates can never be confirmed — there
+    // is no valid choice to submit, not even implicitly.
+    if (choices.length === 0) return false;
+    if (choices.length > 1) return Boolean(state.templateType) && choices.includes(state.templateType);
+    return true;
+  }
+  return false;
+}
+
+/** Pure builder for the modal's single normalized result payload. */
+export function buildAllyAssignmentResult(state) {
+  return {
+    targetActorId: state.targetActorId,
+    assignmentMode: state.assignmentMode === 'follower' ? 'follower' : 'ally',
+    followerSlotId: state.assignmentMode === 'follower' ? (state.followerSlotId || null) : null,
+    templateType: state.assignmentMode === 'follower' ? (state.templateType || null) : null,
+    grantOwnership: state.grantOwnership === true
   };
 }
 
@@ -566,14 +773,6 @@ function hasNaturalLeader(actor) {
   return hasActorFeat(actor, 'Natural Leader');
 }
 
-function isNonheroicActor(actor) {
-  if (!actor) return false;
-  if (actor.system?.isMinion === true || actor.system?.progression?.isMinion === true) return true;
-  if (String(actor.system?.class || actor.system?.className || '').toLowerCase().includes('nonheroic')) return true;
-  if (asArray(actor.system?.progression?.classLevels).some(c => normalizeText(c.classId || c.class || c.name).includes('nonheroic'))) return true;
-  return Array.from(actor.items || []).some(item => item.type === 'class' && normalizeText(item.name).includes('nonheroic'));
-}
-
 async function loadFollowerCreator() {
   try {
     const mod = await import('/systems/foundryvtt-swse/scripts/apps/follower-creator.js');
@@ -840,6 +1039,12 @@ export class AlliesSurfaceService {
       showHistory,
       tabs: visibleTabs.map(tab => ({ ...tab, active: activeTab === tab.id })),
       counts,
+      canGrantManualFollowerSlot: game.user?.isGM === true && isEligibleFollowerSlotOwner(actor),
+      manualFollowerSlotLabel: 'Add Follower Slot',
+      manualFollowerSlotHelp: 'Grant this character one follower slot without requiring a talent.',
+      canAssignExistingNpc: game.user?.isGM === true && isEligibleFollowerSlotOwner(actor),
+      assignExistingNpcLabel: 'Assign Existing NPC',
+      assignExistingNpcHelp: 'Link an existing world NPC to this character as an ally, or convert it into a real follower.',
       companions,
       factions,
       contacts,
@@ -872,7 +1077,8 @@ export class AlliesSurfaceService {
     const FollowerCreator = await loadFollowerCreator();
     const MinionCreator = await loadMinionCreator();
     const followerSlots = asArray(actor.getFlag?.(SYSTEM_ID, 'followerSlots'));
-    const pendingSlots = followerSlots.filter(isOpenCompanionSlot).map(mapPendingSlot);
+    const isGM = game.user?.isGM === true;
+    const pendingSlots = followerSlots.filter(isOpenCompanionSlot).map(slot => mapPendingSlot(slot, { isGM }));
 
     const followerActors = uniqueActors(FollowerCreator?.getFollowers?.(actor) || []);
     const minionActors = uniqueActors(MinionCreator?.getMinions?.(actor) || []);
@@ -882,7 +1088,7 @@ export class AlliesSurfaceService {
     const followers = followerActors.map(a => mapActorCard(a, 'follower', actor, options));
     const minions = [
       ...minionActors.map(a => mapActorCard(a, a?.system?.npcProfile?.kind === 'privateer' ? 'privateer' : 'minion', actor, options)),
-      ...assignedActors.map(a => mapActorCard(a, 'assigned-nonheroic', actor, options))
+      ...assignedActors.map(a => mapActorCard(a, a?.getFlag?.(SYSTEM_ID, 'assignedAllyKind') || 'assigned-nonheroic', actor, options))
     ];
     const beasts = beastActors.map(a => mapActorCard(a, 'beast', actor, options));
 
@@ -966,7 +1172,11 @@ export class AlliesSurfaceService {
       for (const candidate of game.actors) {
         const ownerId = candidate?.getFlag?.(SYSTEM_ID, 'assignedAllyOwnerId');
         const kind = candidate?.getFlag?.(SYSTEM_ID, 'assignedAllyKind');
-        if (ownerId === actor.id && kind === 'assigned-nonheroic') ids.add(candidate.id);
+        // GM-EXISTING-NPC-ASSIGNMENT — every non-beast ASSIGNMENT_KIND
+        // (nonheroic, droid, heroic-npc, generic npc) shares this owner-side
+        // "assignedAllies" discovery path; beast-kind assignments are
+        // discovered separately by _findLinkedBeasts below.
+        if (ownerId === actor.id && kind && kind !== ASSIGNMENT_KIND.BEAST) ids.add(candidate.id);
       }
     }
     return Array.from(ids).map(id => game.actors.get(id)).filter(Boolean);
@@ -988,6 +1198,14 @@ export class AlliesSurfaceService {
         const ownerId = candidate?.flags?.swse?.beast?.ownerId || candidate?.system?.npcProfile?.owner?.actorId;
         const kind = normalizeText(candidate?.system?.npcProfile?.kind || candidate?.flags?.swse?.beast?.kind || candidate?.system?.kind);
         if (ownerId === actor.id && kind === 'beast') ids.add(candidate.id);
+        // GM-EXISTING-NPC-ASSIGNMENT — an assigned-ally beast uses the same
+        // reciprocal flags.foundryvtt-swse.assignedAllyOwnerId/Kind pathway
+        // every other assigned kind uses, discovered here (rather than the
+        // legacy flags.swse.beast.* namespace above) so it displays in the
+        // existing Beasts lane without a parallel beast registry.
+        const assignedOwnerId = candidate?.getFlag?.(SYSTEM_ID, 'assignedAllyOwnerId');
+        const assignedKind = candidate?.getFlag?.(SYSTEM_ID, 'assignedAllyKind');
+        if (assignedOwnerId === actor.id && assignedKind === ASSIGNMENT_KIND.BEAST) ids.add(candidate.id);
       }
     }
     return Array.from(ids).map(id => game.actors.get(id)).filter(Boolean);
@@ -1016,6 +1234,191 @@ export class AlliesSurfaceService {
     });
     if (changed) await updateActorFlag(actor, SYSTEM_ID, 'followerSlots', updated, { meta: { guardKey: 'allies-reopen-slot' } });
     return changed;
+  }
+
+  /**
+   * Grant one GM-manual follower slot to `ownerActor`. This service does
+   * NOT construct or persist the slot itself — it delegates entirely to
+   * FollowerSlotService, which independently re-enforces the GM-only
+   * permission check and is the sole writer of followerSlots for this
+   * grant path.
+   */
+  static async addManualFollowerSlot(ownerActor) {
+    return FollowerSlotService.grantManualFollowerSlot(ownerActor, { source: 'allies' });
+  }
+
+  /** Remove an empty, GM-manual follower slot. See addManualFollowerSlot. */
+  static async removeManualFollowerSlot(ownerActor, slotId) {
+    return FollowerSlotService.revokeManualFollowerSlot(ownerActor, slotId, { source: 'allies' });
+  }
+
+  /**
+   * List world Actors an existing-NPC-assignment picker should offer for
+   * `ownerActor` — GM-only, eligible target types, excludes the owner
+   * itself, and flags any candidate already assigned to this owner.
+   */
+  static getAssignableNpcActors(ownerActor) {
+    if (game.user?.isGM !== true || !ownerActor || !game.actors) return [];
+    const results = [];
+    for (const candidate of game.actors) {
+      if (!candidate || candidate.id === ownerActor.id) continue;
+      if (!isEligibleAssignmentTargetType(candidate.type)) continue;
+      const evaluation = evaluateNpcAssignmentEligibility(ownerActor, candidate);
+      results.push({
+        id: candidate.id,
+        name: candidate.name,
+        img: actorPortrait(candidate),
+        type: candidate.type,
+        level: safeLevel(candidate),
+        detectedKind: evaluation.detectedKind,
+        alreadyAssignedOwnerId: candidate.getFlag?.(SYSTEM_ID, 'assignedAllyOwnerId') || null,
+        alreadyAssignedToThisOwner: candidate.getFlag?.(SYSTEM_ID, 'assignedAllyOwnerId') === ownerActor.id
+      });
+    }
+    return results;
+  }
+
+  /**
+   * Build the full read-only view model the styled NPC-assignment modal
+   * consumes: every eligible candidate Actor as a display-ready card (with
+   * ally/follower eligibility, already-assigned status, and a search index
+   * pre-computed) plus the owner's open follower slots. Pure from the
+   * modal's perspective — this never mutates anything, and the modal never
+   * re-derives eligibility itself; it only renders and filters this.
+   */
+  static buildNpcAssignmentPickerViewModel(ownerActor) {
+    const followerSlots = this.getOpenFollowerSlotsForConversion(ownerActor);
+    if (game.user?.isGM !== true || !ownerActor || !game.actors) {
+      return { candidates: [], followerSlots, hasOpenFollowerSlots: followerSlots.length > 0 };
+    }
+    const candidates = [];
+    for (const candidate of game.actors) {
+      if (!candidate || candidate.id === ownerActor.id) continue;
+      if (!isEligibleAssignmentTargetType(candidate.type)) continue;
+      // Deliberately TWO separate eligibility evaluations, not one reused
+      // for both modes: an Actor already assigned to THIS owner as a
+      // relationship-only ally is ineligible for a SECOND ally assignment
+      // but must remain eligible for conversion (that is the one path that
+      // migrates the existing relationship). Reusing ally eligibility for
+      // canConvertToFollower made that migration unreachable from the UI.
+      const allyEvaluation = evaluateNpcAssignmentEligibility(ownerActor, candidate, ASSIGNMENT_MODE.ALLY);
+      const conversionEvaluation = evaluateFollowerConversionEligibility(ownerActor, candidate);
+      const droidGate = evaluateDroidConversionGate(candidate);
+      const alreadyAssignedOwnerId = candidate.getFlag?.(SYSTEM_ID, 'assignedAllyOwnerId') || null;
+      const alreadyAssignedOwner = alreadyAssignedOwnerId ? game.actors?.get?.(alreadyAssignedOwnerId) : null;
+      const canConvertToFollower = conversionEvaluation.eligible && followerSlots.length > 0 && !droidGate.blocked;
+      const level = safeLevel(candidate);
+      const card = {
+        id: candidate.id,
+        name: candidate.name,
+        img: actorPortrait(candidate),
+        type: candidate.type,
+        level,
+        levelLabel: level ? `Level ${level}` : 'Level —',
+        detectedKind: allyEvaluation.detectedKind,
+        kindLabel: npcAssignmentKindLabel(allyEvaluation.detectedKind),
+        detailLabel: npcAssignmentDetailLabel(candidate, allyEvaluation.detectedKind, droidGate),
+        // Deliberately separate fields per mode — never one generic
+        // "eligible" boolean reused for both Assign as Ally and Convert to
+        // Follower. An Actor can be eligible for exactly one of the two.
+        canAssignAsAlly: allyEvaluation.eligible,
+        assignBlockedReason: allyEvaluation.eligible ? null : allyEvaluation.reasons.join(' '),
+        alreadyAssignedOwnerId,
+        alreadyAssignedToThisOwner: alreadyAssignedOwnerId === ownerActor.id,
+        alreadyAssignedOwnerName: alreadyAssignedOwnerId && alreadyAssignedOwnerId !== ownerActor.id
+          ? (alreadyAssignedOwner?.name || 'another owner')
+          : null,
+        canConvertToFollower,
+        convertBlockedReason: !conversionEvaluation.eligible
+          ? conversionEvaluation.reasons.join(' ')
+          : (droidGate.blocked ? droidGate.reason : (followerSlots.length === 0 ? 'No open follower slot is available.' : null)),
+        // A card is entirely inert (no action possible in either mode) —
+        // used by the modal to disable the Actor radio itself rather than
+        // leaving it selectable with no reachable confirm state. An Actor
+        // blocked for one mode but valid for the other remains selectable.
+        canSelect: allyEvaluation.eligible || canConvertToFollower
+      };
+      card.searchText = npcAssignmentSearchText(card);
+      candidates.push(card);
+    }
+    return { candidates, followerSlots, hasOpenFollowerSlots: followerSlots.length > 0 };
+  }
+
+  /**
+   * Assign an existing world NPC Actor to ownerActor as a non-mechanical
+   * ally. Delegates entirely to AllyAssignmentService — this service does
+   * not construct or persist the relationship itself.
+   */
+  static async assignExistingNpcAsAlly(ownerActor, targetActor, options = {}) {
+    return AllyAssignmentService.assignAsAlly(ownerActor, targetActor, { source: 'allies', ...options });
+  }
+
+  /** Remove an assigned-ally relationship. See assignExistingNpcAsAlly. */
+  static async unassignExistingNpcAlly(ownerActor, targetActor, options = {}) {
+    return AllyAssignmentService.unassignAlly(ownerActor, targetActor, { source: 'allies', ...options });
+  }
+
+  /**
+   * Convert an existing world NPC Actor into a real follower, consuming an
+   * open follower slot. Delegates entirely to AllyAssignmentService.
+   */
+  static async convertExistingNpcToFollower(ownerActor, targetActor, slotId, options = {}) {
+    return AllyAssignmentService.convertToFollower(ownerActor, targetActor, slotId, { source: 'allies', ...options });
+  }
+
+  /**
+   * Read-only eligibility + summary evaluation for the assignment-choice
+   * dialog. Never mutates anything — used to decide what the dialog shows
+   * (warnings, whether Convert to Follower is available) before the GM
+   * confirms an action.
+   */
+  static evaluateNpcAssignment(ownerActor, targetActor) {
+    const evaluation = evaluateNpcAssignmentEligibility(ownerActor, targetActor, ASSIGNMENT_MODE.ALLY);
+    const openSlots = this.getOpenFollowerSlotsForConversion(ownerActor);
+    const droidGate = evaluateDroidConversionGate(targetActor);
+    return {
+      ...evaluation,
+      openFollowerSlots: openSlots,
+      canConvertToFollower: evaluation.eligible && openSlots.length > 0 && !droidGate.blocked,
+      droidBlockedReason: droidGate.reason
+    };
+  }
+
+  /**
+   * Open (unfilled) follower-dependentKind slots eligible for Convert to
+   * Follower. Returns full slot metadata (not just a display label) so the
+   * modal can show provenance and template restrictions, and so
+   * findFollowerSlotById/resolveAllowedFollowerTemplates-consuming callers
+   * have the real underlying fields — internal ids (talentItemId) are
+   * retained in the view model even though the template never renders them
+   * directly as a visible label.
+   */
+  static getOpenFollowerSlotsForConversion(ownerActor) {
+    const slots = asArray(ownerActor?.getFlag?.(SYSTEM_ID, 'followerSlots'));
+    return slots
+      .filter(slot => !isFollowerSlotOccupied(slot) && (!slot.dependentKind || slot.dependentKind === 'follower'))
+      .map(slot => {
+        const sourceType = slot.sourceType === 'gm-grant' ? 'gm-grant' : 'talent';
+        const sourceLabel = sourceType === 'gm-grant' ? (slot.sourceLabel || 'GM Granted') : (slot.talentName || 'Follower Slot');
+        // PHASE 10 ADDENDUM (P2-3): an open (unoccupied) slot can still be
+        // temporarily claimed by another in-progress conversion request —
+        // shown here so the picker doesn't offer it as freely selectable,
+        // WITHOUT exposing which user/token holds it (that stays server-
+        // side, verified again by FollowerSlotService.reserveFollowerSlot()
+        // at commit time regardless of what the UI shows — this flag is
+        // UX only, never the actual concurrency guarantee).
+        return {
+          id: slot.id,
+          label: sourceLabel,
+          sourceType,
+          sourceLabel,
+          dependentKind: slot.dependentKind || 'follower',
+          talentName: slot.talentName || null,
+          talentItemId: slot.talentItemId || null,
+          templateChoices: resolveAllowedFollowerTemplates(slot),
+          reserved: isFollowerSlotReserved(slot)
+        };
+      });
   }
 
   static async _buildFactions(actor, context = {}) {
@@ -1495,7 +1898,7 @@ export class AlliesSurfaceService {
     if (!ally) return false;
     const kind = this._kindForAlly(ownerActor, ally);
     const slots = asArray(ownerActor.getFlag?.(SYSTEM_ID, 'followerSlots'));
-    const slot = slots.find(entry => entry?.createdActorId === actorId) || null;
+    const slot = slots.find(entry => resolveFollowerSlotActorId(entry) === actorId) || null;
     const sourceTalent = ally.flags?.swse?.follower?.grantingTalent
       || ally.flags?.swse?.minion?.talentName
       || slot?.talentName
@@ -1580,46 +1983,16 @@ export class AlliesSurfaceService {
     return true;
   }
 
-  static async assignDroppedActor(ownerActor, droppedActor) {
-    if (!ownerActor || !droppedActor) return false;
-    if (!game.user?.isGM) {
-      ui?.notifications?.warn?.('Only a GM can assign an existing NPC ally by drag-and-drop.');
-      return false;
-    }
-    if (!['npc', 'character'].includes(droppedActor.type) || !isNonheroicActor(droppedActor)) {
-      ui?.notifications?.warn?.('Only nonheroic NPC actors can be assigned into Allies this way.');
-      return false;
-    }
-
-    const kind = 'assigned-nonheroic';
-    const link = {
-      id: droppedActor.id,
-      uuid: droppedActor.uuid,
-      name: droppedActor.name,
-      type: droppedActor.type,
-      kind,
-      dependentKind: kind,
-      img: droppedActor.img,
-      talent: 'GM Assignment',
-      syncMode: 'manual'
-    };
-
-    await this._addActiveLink(ownerActor, link, kind);
-    await updateActorFlag(droppedActor, SYSTEM_ID, 'assignedAllyOwnerId', ownerActor.id, { meta: { guardKey: 'allies-assignment' } });
-    await updateActorFlag(droppedActor, SYSTEM_ID, 'assignedAllyKind', kind, { meta: { guardKey: 'allies-assignment' } });
-    await updateActorFlag(droppedActor, SYSTEM_ID, 'assignedAllySource', 'GM Assignment', { meta: { guardKey: 'allies-assignment' } });
-    await updateActorFlag(droppedActor, SYSTEM_ID, 'assignedAllySyncMode', 'manual', { meta: { guardKey: 'allies-assignment' } });
-    await unsetActorFlag(droppedActor, SYSTEM_ID, 'dismissedAlly', { meta: { guardKey: 'allies-assignment' } });
-
-    const ownerUser = game.users?.find?.(u => u.character?.id === ownerActor.id);
-    if (ownerUser) {
-      await updateActor(droppedActor, {
-        ownership: { [ownerUser.id]: CONST.DOCUMENT_OWNERSHIP_LEVELS.OWNER }
-      }, { source: 'Allies.assignDroppedActor.ownership' });
-    }
-    return true;
-  }
-
+  /**
+   * Legacy direct-assign entry point (drag/drop previously called this
+   * immediately on drop). GM-EXISTING-NPC-ASSIGNMENT generalizes this to
+   * delegate to AllyAssignmentService.assignAsAlly (any eligible target
+   * type, not just nonheroic NPCs) instead of constructing the relationship
+   * inline — preserving this method's own signature/return contract
+   * (boolean) for any existing caller. The Allies drag/drop handler itself
+   * no longer calls this directly; it opens the assignment-choice dialog
+   * first (see AlliesSurfaceController._handleDrop).
+   */
   static async createBareBeastCompanion(ownerActor, { slotId = null, name = null } = {}) {
     if (!ownerActor) throw new Error('No owner actor selected for beast companion creation.');
     const slots = asArray(ownerActor.getFlag?.(SYSTEM_ID, 'followerSlots'));

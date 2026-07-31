@@ -40,6 +40,9 @@
       {{#if this.canBuildBeast}}
       <button type="button" data-allies-action="build-beast" data-slot-id="{{this.id}}">{{localize "SWSE.ShellUI.AddBeast2"}}</button>
       {{/if}}
+      {{#if this.canRemoveManualSlot}}
+      <button type="button" class="is-danger" data-allies-action="remove-follower-slot" data-slot-id="{{this.id}}">Remove Slot</button>
+      {{/if}}
     </div>
   </article>
   {{/each}}
@@ -93,6 +96,9 @@
       <button type="button" data-allies-action="manage-ally" data-actor-id="{{this.id}}">{{localize "SWSE.ShellUI.Manage"}}</button>
       {{#if this.canOpenGarage}}
       <button type="button" data-allies-action="open-garage" data-actor-id="{{this.id}}">{{localize "SWSE.ShellUI.Garage"}}</button>
+      {{/if}}
+      {{#if this.canUnassignAlly}}
+      <button type="button" class="is-danger" data-allies-action="unassign-ally" data-actor-id="{{this.id}}">Unassign</button>
       {{/if}}
       {{#if this.canFire}}
       <button type="button" class="is-danger" data-allies-action="fire-ally" data-actor-id="{{this.id}}">{{localize "SWSE.ShellUI.Fire"}}</button>

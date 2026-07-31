@@ -13,6 +13,7 @@ import { DroidCustomizationEngine } from '/systems/foundryvtt-swse/scripts/engin
 import { VehicleCustomizationEngine } from '/systems/foundryvtt-swse/scripts/engine/customization/vehicle-customization-engine.js';
 import { LedgerService } from '/systems/foundryvtt-swse/scripts/engine/store/ledger-service.js';
 import { ActorEngine } from '/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js';
+import { swseLogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
 
 const CATEGORY_LABELS = {
   weapons: 'Weapons',
@@ -610,11 +611,16 @@ export class UpgradeService {
   // ─── Mutations (routed through ActorEngine) ───────────────────────────────────
 
   static async applyUpgrade({ actor, itemId, upgradeId }) {
-    // Droid actor upgrade
+    // Droid actor upgrade — PHASE 2 (Droid Authority Consolidation): route
+    // through DroidCustomizationEngine, the same authority the Garage uses,
+    // instead of writing installedSystems directly. This used to bypass the
+    // Garage's cost/credit transaction entirely (a droid system installed
+    // through the Upgrade Workshop was free) and never wrote the
+    // system.droidSystems mirror other consumers read. See
+    // docs/audits/droid-authority-consolidation-phase-2.md.
     if (itemId?.startsWith('droid-actor-')) {
-      const installedSystems = { ...(actor.system?.installedSystems ?? {}) };
-      installedSystems[upgradeId] = true;
-      await ActorEngine.applyMutationPlan(actor, { set: { 'system.installedSystems': installedSystems } });
+      const result = await DroidCustomizationEngine.applyDroidCustomization(actor, { add: [upgradeId] });
+      if (!result.success) throw new Error(result.error || `Failed to install ${upgradeId}`);
       return { success: true };
     }
 
@@ -673,8 +679,33 @@ export class UpgradeService {
   }
 
   static async removeUpgrade({ actor, itemId, upgradeIndex }) {
-    // Droid actor system removal
-    if (itemId?.startsWith('droid-actor-') || itemId?.startsWith('vehicle-actor-')) {
+    // Droid actor system removal — PHASE 2: route through
+    // DroidCustomizationEngine so removal also refunds resale credit,
+    // updates the system.droidSystems mirror, and deletes any embedded Item
+    // representing the same canonical part (previously none of that
+    // happened for a Workshop-driven removal). Falls back to a raw ledger
+    // delete only if the stored key does not resolve against the canonical
+    // registry at all (e.g. malformed/legacy data pre-dating Phase 1) so a
+    // GM can still clear an entry that DroidCustomizationEngine itself
+    // cannot make sense of.
+    if (itemId?.startsWith('droid-actor-')) {
+      const keys = Object.keys(actor.system?.installedSystems ?? {});
+      const targetId = keys[upgradeIndex];
+      if (targetId === undefined) return { success: true };
+
+      const result = await DroidCustomizationEngine.applyDroidCustomization(actor, { remove: [targetId] });
+      if (result.success) return { success: true };
+
+      swseLogger.warn(`[UpgradeService] Droid system "${targetId}" did not resolve through DroidCustomizationEngine (${result.error}); falling back to raw ledger removal.`);
+      const installedSystems = { ...(actor.system?.installedSystems ?? {}) };
+      delete installedSystems[targetId];
+      await ActorEngine.applyMutationPlan(actor, { set: { 'system.installedSystems': installedSystems } });
+      return { success: true };
+    }
+
+    // Vehicle actor system removal (unchanged — out of scope for droid
+    // authority consolidation).
+    if (itemId?.startsWith('vehicle-actor-')) {
       const installedSystems = { ...(actor.system?.installedSystems ?? {}) };
       const keys = Object.keys(installedSystems);
       if (keys[upgradeIndex] !== undefined) {

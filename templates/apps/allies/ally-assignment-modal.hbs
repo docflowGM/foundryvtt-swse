@@ -1,0 +1,224 @@
+<form class="swse-ally-assignment-modal" role="dialog" aria-labelledby="swse-ally-assignment-modal-title" aria-describedby="swse-ally-assignment-modal-desc">
+  <header class="swse-ally-assignment-modal__header">
+    <h2 id="swse-ally-assignment-modal-title" class="swse-ally-assignment-modal__title">Assign Existing NPC</h2>
+    <p id="swse-ally-assignment-modal-desc" class="swse-ally-assignment-modal__desc">
+      Choose an existing world Actor and how it should be linked to {{ownerName}}.
+    </p>
+  </header>
+
+  <div class="swse-ally-assignment-modal__body">
+    {{#if submitError}}
+      <div class="swse-ally-assignment-modal__error" role="alert">{{submitError}}</div>
+    {{/if}}
+
+    {{#if hasSelection}}
+      <div class="swse-ally-assignment-modal__selected-summary">
+        <img src="{{selectedCandidate.img}}" alt="" class="swse-ally-assignment-modal__selected-summary-portrait" />
+        <span class="swse-ally-assignment-modal__selected-summary-body">
+          <strong>Selected: {{selectedCandidate.name}}</strong>
+          <span>{{selectedCandidate.kindLabel}} · {{selectedCandidate.levelLabel}} · {{selectedCandidate.detailLabel}}</span>
+          {{#if selectedCandidate.alreadyAssignedOwnerName}}
+            <span>Already assigned to {{selectedCandidate.alreadyAssignedOwnerName}}</span>
+          {{/if}}
+          <span>
+            Assign as Ally: {{#if selectedCandidate.canAssignAsAlly}}Available{{else}}{{selectedCandidate.assignBlockedReason}}{{/if}}
+          </span>
+          <span>
+            Convert to Follower: {{#if selectedCandidate.canConvertToFollower}}Available{{else}}{{selectedCandidate.convertBlockedReason}}{{/if}}
+          </span>
+          {{#if selectedHiddenBySearch}}
+            <span class="swse-ally-assignment-modal__selected-summary-hidden">
+              Selected NPC is hidden by the current search.
+              <button type="button" class="swse-ally-assignment-modal__link-button" data-button="clear-search">Clear Search</button>
+            </span>
+          {{/if}}
+        </span>
+      </div>
+    {{/if}}
+
+    <div class="swse-ally-assignment-modal__search-row">
+      <label class="swse-ally-assignment-modal__search-label" for="swse-ally-assignment-search">Search</label>
+      <input
+        type="search"
+        id="swse-ally-assignment-search"
+        name="search"
+        value="{{search}}"
+        placeholder="Name, type, species, or owner…"
+        autocomplete="off"
+        {{#if submitting}}disabled{{/if}}
+      />
+    </div>
+
+    <div class="swse-ally-assignment-modal__list-region" role="radiogroup" aria-label="Existing NPC Actors">
+      {{#if hasCandidates}}
+        {{#each candidates}}
+          <label class="swse-assignment-actor-card{{#if this.isSelected}} is-selected{{/if}}{{#unless this.canAssignAsAlly}} has-warning{{/unless}}{{#if this.radioDisabled}} is-disabled{{/if}}">
+            <input
+              type="radio"
+              name="targetActorId"
+              value="{{this.id}}"
+              {{checked this.isSelected}}
+              {{#if ../submitting}}disabled{{/if}}
+              {{#if this.radioDisabled}}disabled aria-disabled="true"{{/if}}
+            />
+            <img src="{{this.img}}" alt="" class="swse-assignment-actor-card__portrait" />
+            <span class="swse-assignment-actor-card__body">
+              <strong>{{this.name}}</strong>
+              <span class="swse-assignment-actor-card__meta">{{this.kindLabel}} · {{this.levelLabel}}</span>
+              <span class="swse-assignment-actor-card__meta">{{this.detailLabel}}</span>
+              {{#if this.alreadyAssignedOwnerName}}
+                <span class="swse-assignment-actor-card__flag">Already assigned to {{this.alreadyAssignedOwnerName}}</span>
+              {{/if}}
+              {{#unless this.canAssignAsAlly}}
+                <span class="swse-assignment-actor-card__flag is-blocked">{{this.assignBlockedReason}}</span>
+              {{/unless}}
+              {{#if this.radioDisabled}}
+                <span class="swse-assignment-actor-card__flag is-blocked">No action is available for this Actor.</span>
+              {{/if}}
+            </span>
+            <span class="swse-assignment-radio-indicator" aria-hidden="true"></span>
+          </label>
+        {{/each}}
+      {{else}}
+        <p class="swse-ally-assignment-modal__empty">
+          {{#if totalCandidateCount}}No Actors match this search.{{else}}No eligible world NPC Actors were found to assign.{{/if}}
+        </p>
+      {{/if}}
+    </div>
+
+    <div class="swse-ally-assignment-modal__mode-section">
+      <h3 id="swse-ally-assignment-mode-heading" class="swse-ally-assignment-modal__section-title">Assignment Type</h3>
+      <div class="swse-assignment-choice-grid" role="radiogroup" aria-labelledby="swse-ally-assignment-mode-heading">
+        <label class="swse-assignment-mode-card{{#if isAllyMode}} is-selected{{/if}}{{#unless allyModeAvailable}} is-disabled{{/unless}}">
+          <input
+            type="radio"
+            name="assignmentMode"
+            value="ally"
+            {{checked isAllyMode}}
+            {{#if submitting}}disabled{{/if}}
+            {{#unless allyModeAvailable}}disabled{{/unless}}
+          />
+          <span class="swse-assignment-mode-card__icon" aria-hidden="true"><i class="fas fa-user-group"></i></span>
+          <span class="swse-assignment-mode-card__body">
+            <strong>Assign as Ally</strong>
+            <span class="swse-assignment-mode-card__desc">Adds this NPC to the character's Allies without changing its statistics, level, Items, or calculation mode.</span>
+            <ul class="swse-assignment-mode-card__list">
+              <li>Does not consume a follower slot</li>
+              <li>Does not change the NPC</li>
+              <li>Can be reversed later</li>
+            </ul>
+            {{#if allyModeBlockedReason}}
+              <span class="swse-assignment-mode-card__blocked">Unavailable: {{allyModeBlockedReason}}</span>
+            {{/if}}
+          </span>
+        </label>
+
+        <label class="swse-assignment-mode-card{{#if isFollowerMode}} is-selected{{/if}}{{#unless followerModeAvailable}} is-disabled{{/unless}}">
+          <input
+            type="radio"
+            name="assignmentMode"
+            value="follower"
+            {{checked isFollowerMode}}
+            {{#if submitting}}disabled{{/if}}
+            {{#unless followerModeAvailable}}disabled{{/unless}}
+          />
+          <span class="swse-assignment-mode-card__icon" aria-hidden="true"><i class="fas fa-arrows-rotate"></i></span>
+          <span class="swse-assignment-mode-card__body">
+            <strong>Convert to Follower</strong>
+            <span class="swse-assignment-mode-card__desc">Consumes an open follower slot and converts this NPC into the character's mechanical follower progression.</span>
+            <ul class="swse-assignment-mode-card__list">
+              <li>May change HP, BAB, defenses, skills, and progression data</li>
+              <li>Requires an open follower slot</li>
+              <li>Uses follower level synchronization</li>
+            </ul>
+            {{#if followerModeBlockedReason}}
+              <span class="swse-assignment-mode-card__blocked">Unavailable: {{followerModeBlockedReason}}</span>
+            {{/if}}
+          </span>
+        </label>
+      </div>
+    </div>
+
+    {{#if isFollowerMode}}
+      <div class="swse-ally-assignment-modal__slot-section" role="radiogroup" aria-label="Follower slot">
+        <h3 class="swse-ally-assignment-modal__section-title">Follower Slot</h3>
+        {{#if hasFollowerSlots}}
+          <div class="swse-assignment-slot-grid">
+            {{#each followerSlots}}
+              <label class="swse-assignment-slot-card{{#if this.isSelected}} is-selected{{/if}}{{#if this.reserved}} is-reserved{{/if}}">
+                <input
+                  type="radio"
+                  name="followerSlotId"
+                  value="{{this.id}}"
+                  {{checked this.isSelected}}
+                  {{#if this.radioDisabled}}disabled{{/if}}
+                  {{#if ../submitting}}disabled{{/if}}
+                />
+                <span class="swse-assignment-slot-card__body">
+                  <strong>{{this.label}}</strong>
+                  <span class="swse-assignment-slot-card__badge{{#if (eq this.sourceType 'gm-grant')}} is-manual{{else}} is-talent{{/if}}">
+                    {{#if (eq this.sourceType 'gm-grant')}}GM GRANTED{{else}}TALENT{{/if}}
+                  </span>
+                  {{#if this.reserved}}
+                    <span class="swse-assignment-slot-card__reserved-notice">Reserved by another follower conversion</span>
+                  {{/if}}
+                </span>
+                <span class="swse-assignment-radio-indicator" aria-hidden="true"></span>
+              </label>
+            {{/each}}
+          </div>
+        {{else}}
+          <p class="swse-ally-assignment-modal__empty">No open follower slots are available.</p>
+        {{/if}}
+      </div>
+
+      {{#if templateOptions.length}}
+        <div class="swse-ally-assignment-modal__template-section" role="radiogroup" aria-label="Follower template">
+          <h3 class="swse-ally-assignment-modal__section-title">Follower Template</h3>
+          <div class="swse-assignment-template-grid">
+            {{#each templateOptions}}
+              <label class="swse-assignment-template-card{{#if this.isSelected}} is-selected{{/if}}">
+                <input
+                  type="radio"
+                  name="templateType"
+                  value="{{this.id}}"
+                  {{checked this.isSelected}}
+                  {{#if ../submitting}}disabled{{/if}}
+                />
+                <span class="swse-assignment-template-card__label">{{this.label}}</span>
+                <span class="swse-assignment-radio-indicator" aria-hidden="true"></span>
+              </label>
+            {{/each}}
+          </div>
+          <p class="swse-ally-assignment-modal__toggle-desc">
+            Determines the converted follower's derived stats, feats, and skills. This choice is never made silently.
+          </p>
+        </div>
+      {{else if noValidTemplateForSlot}}
+        <div class="swse-ally-assignment-modal__template-section">
+          <h3 class="swse-ally-assignment-modal__section-title">Follower Template</h3>
+          <p class="swse-ally-assignment-modal__empty">No follower template is configured for this slot. Choose a different slot, or correct this slot's configuration before converting.</p>
+        </div>
+      {{/if}}
+    {{/if}}
+
+    <div class="swse-ally-assignment-modal__ownership-row">
+      <label class="swse-ally-assignment-modal__toggle">
+        <input type="checkbox" name="grantOwnership" {{checked grantOwnership}} {{#if submitting}}disabled{{/if}} />
+        <span>Grant the player control of this NPC</span>
+      </label>
+      <p class="swse-ally-assignment-modal__toggle-desc">
+        Updates Foundry ownership so the player controlling {{ownerName}} can open and control the assigned NPC — applies to both Assign as Ally and Convert to Follower.
+      </p>
+    </div>
+  </div>
+
+  <footer class="swse-ally-assignment-modal__footer">
+    <button type="button" class="swse-ally-assignment-modal__btn swse-ally-assignment-modal__btn--ghost" data-button="cancel" {{#if submitting}}disabled{{/if}}>
+      Cancel
+    </button>
+    <button type="submit" class="swse-ally-assignment-modal__btn swse-ally-assignment-modal__btn--primary" data-button="confirm" {{#unless canConfirm}}disabled{{/unless}}>
+      {{#if isFollowerMode}}Convert to Follower{{else}}Assign Existing NPC{{/if}}
+    </button>
+  </footer>
+</form>

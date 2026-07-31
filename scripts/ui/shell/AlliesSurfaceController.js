@@ -6,6 +6,7 @@ import { SWSELogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
 import { AlliesSurfaceService } from '/systems/foundryvtt-swse/scripts/ui/shell/AlliesSurfaceService.js';
 import { requestShellRender } from '/systems/foundryvtt-swse/scripts/ui/shell/request-shell-render.js';
 import { ShellRouter } from '/systems/foundryvtt-swse/scripts/ui/shell/ShellRouter.js';
+import { AllyAssignmentModal } from '/systems/foundryvtt-swse/scripts/apps/allies/ally-assignment-modal.js';
 
 export class AlliesSurfaceController {
   constructor(host, actor) {
@@ -127,6 +128,14 @@ export class AlliesSurfaceController {
           return this._buildMinion(target.dataset.slotId);
         case 'build-beast':
           return this._buildBeast(target.dataset.slotId);
+        case 'add-follower-slot':
+          return this._addFollowerSlot();
+        case 'remove-follower-slot':
+          return this._removeFollowerSlot(target.dataset.slotId);
+        case 'assign-existing-npc':
+          return this._assignExistingNpc();
+        case 'unassign-ally':
+          return this._unassignAlly(target.dataset.actorId);
         case 'manage-ally':
         case 'open-actor':
         case 'open-contact-actor':
@@ -233,6 +242,40 @@ export class AlliesSurfaceController {
       beast.sheet?.render?.(true);
     }
     this._requestRender('allies-build-beast');
+  }
+
+  /**
+   * GM-only: add one empty, GM-granted follower slot to this Holopad's
+   * actor. The check below is defense-in-depth for a hidden/removed
+   * button only — FollowerSlotService independently re-checks
+   * game.user.isGM and rejects a forged call from a non-GM regardless of
+   * what this controller does.
+   */
+  async _addFollowerSlot() {
+    if (game.user?.isGM !== true) return this._notify('Only a GM can add a follower slot.');
+    await AlliesSurfaceService.addManualFollowerSlot(this._actor);
+    ui?.notifications?.info?.('Follower slot added.');
+    this._requestRender('allies-add-follower-slot');
+  }
+
+  /**
+   * GM-only: remove an empty, GM-granted follower slot. FollowerSlotService
+   * independently rejects removal of talent-granted or occupied slots.
+   */
+  async _removeFollowerSlot(slotId) {
+    if (game.user?.isGM !== true) return this._notify('Only a GM can remove a follower slot.');
+    if (!slotId) return this._notify('That follower slot could not be found.');
+    const shouldRemove = await Dialog.confirm({
+      title: 'Remove Follower Slot?',
+      content: '<p>This removes the empty, GM-granted follower slot. It cannot be used to remove an occupied slot or a slot granted by a talent.</p>',
+      yes: () => true,
+      no: () => false,
+      defaultYes: false
+    });
+    if (!shouldRemove) return;
+    await AlliesSurfaceService.removeManualFollowerSlot(this._actor, slotId);
+    ui?.notifications?.info?.('Follower slot removed.');
+    this._requestRender('allies-remove-follower-slot');
   }
 
   _openActor(actorId) {
@@ -696,9 +739,83 @@ export class AlliesSurfaceController {
       return;
     }
 
-    const ok = await AlliesSurfaceService.assignDroppedActor(this._actor, actor);
-    if (ok) ui?.notifications?.info?.(`${actor.name} assigned to ${this._actor.name}'s Allies.`);
-    this._requestRender('allies-drop-assign');
+    if (game.user?.isGM !== true) {
+      ui?.notifications?.warn?.('Only a GM can assign an existing NPC ally by drag-and-drop.');
+      return;
+    }
+    // GM-EXISTING-NPC-ASSIGNMENT — no mutation happens until the GM
+    // confirms a choice in the modal; dropping an Actor only preselects it.
+    await this._assignExistingNpc(actor.id);
+  }
+
+  /**
+   * GM-only: open the styled NPC-assignment modal. `preselectedActorId`
+   * (set by drag/drop) preselects that Actor's radio card but still
+   * requires the GM to confirm Assign as Ally / Convert to Follower —
+   * dropping an Actor never assigns it immediately.
+   */
+  async _assignExistingNpc(preselectedActorId = null) {
+    if (game.user?.isGM !== true) return this._notify('Only a GM can assign an existing NPC.');
+
+    // The modal owns submission orchestration via this injected callback —
+    // it performs the actual mutation (through this controller/service, as
+    // always; the modal file itself still never touches ActorEngine or
+    // AllyAssignmentService) and reports success/failure back. On failure
+    // the modal stays open with the GM's selections intact and the error
+    // shown, instead of closing and forcing a full re-selection.
+    const result = await AllyAssignmentModal.wait({
+      ownerActor: this._actor,
+      preselectedActorId,
+      onSubmit: async (candidateResult) => {
+        const targetActor = game.actors?.get?.(candidateResult.targetActorId);
+        if (!targetActor) return { ok: false, error: 'That NPC Actor could not be found.' };
+        try {
+          if (candidateResult.assignmentMode === 'follower') {
+            await AlliesSurfaceService.convertExistingNpcToFollower(this._actor, targetActor, candidateResult.followerSlotId, {
+              grantOwnership: candidateResult.grantOwnership,
+              template: candidateResult.templateType || undefined
+            });
+          } else {
+            await AlliesSurfaceService.assignExistingNpcAsAlly(this._actor, targetActor, { grantOwnership: candidateResult.grantOwnership });
+          }
+          return { ok: true };
+        } catch (err) {
+          return { ok: false, error: err?.message || 'Assignment failed.' };
+        }
+      }
+    });
+    if (!result) return;
+
+    const targetActor = game.actors?.get?.(result.targetActorId);
+    if (result.assignmentMode === 'follower') {
+      ui?.notifications?.info?.(`${targetActor?.name || 'The NPC'} converted to a follower.`);
+      this._requestRender('allies-convert-existing-npc');
+    } else {
+      ui?.notifications?.info?.(`${targetActor?.name || 'The NPC'} assigned as an ally.`);
+      this._requestRender('allies-assign-existing-npc');
+    }
+  }
+
+  /** GM-only: remove an assigned-ally relationship. Preserves the NPC entirely. */
+  async _unassignAlly(actorId) {
+    if (game.user?.isGM !== true) return this._notify('Only a GM can unassign an ally.');
+    const ally = game.actors?.get?.(actorId);
+    if (!ally) return this._notify('That ally actor could not be found.');
+    const shouldUnassign = await Dialog.confirm({
+      title: `Unassign ${ally.name}?`,
+      content: `<p>${ally.name} will be unlinked from this character's Allies. ${ally.name}'s stats, Items, and token are not affected.</p>`,
+      yes: () => true,
+      no: () => false,
+      defaultYes: false
+    });
+    if (!shouldUnassign) return;
+    try {
+      await AlliesSurfaceService.unassignExistingNpcAlly(this._actor, ally);
+      ui?.notifications?.info?.(`${ally.name} unassigned.`);
+    } catch (err) {
+      ui?.notifications?.error?.(err?.message || 'Unassign failed.');
+    }
+    this._requestRender('allies-unassign-ally');
   }
 }
 

@@ -1,0 +1,562 @@
+.swse-ally-assignment-modal-app {
+  --swse-npcmodal-bg-dark: var(--swse-bg-dark, #0a0f1a);
+  --swse-npcmodal-bg-mid: var(--swse-bg-mid, #0f1420);
+  --swse-npcmodal-bg-light: var(--swse-bg-light, #1a2030);
+  --swse-npcmodal-bg-panel: var(--swse-bg-panel, rgba(6, 18, 32, 0.72));
+  --swse-npcmodal-border: var(--swse-border-default, #1c4b8e);
+  --swse-npcmodal-border-active: var(--swse-border-active, #00baff);
+  --swse-npcmodal-border-subtle: var(--swse-border-subtle, rgba(0, 170, 255, 0.2));
+  --swse-npcmodal-accent: var(--swse-accent, #00d9ff);
+  --swse-npcmodal-primary: var(--swse-primary, #9ed0ff);
+  --swse-npcmodal-text-light: var(--swse-text-light, #b5daff);
+  --swse-npcmodal-text-muted: var(--swse-text-muted, rgba(181, 218, 255, 0.5));
+  --swse-npcmodal-text-secondary: var(--swse-text-secondary, #6a9dcd);
+  --swse-npcmodal-warning: var(--swse-warning, #ffd66b);
+  --swse-npcmodal-danger: var(--swse-danger, #ff6b6b);
+  --swse-npcmodal-font-body: var(--swse-font-body, system-ui, sans-serif);
+  --swse-npcmodal-font-display: var(--swse-font-display, monospace);
+}
+
+.swse-ally-assignment-modal-app .window-content {
+  padding: 0;
+  min-height: 0;
+  background: linear-gradient(135deg, var(--swse-npcmodal-bg-dark), var(--swse-npcmodal-bg-mid));
+}
+
+.swse-ally-assignment-modal {
+  font-family: var(--swse-npcmodal-font-body);
+  color: var(--swse-npcmodal-text-light);
+  max-height: min(80vh, 760px);
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  overflow: hidden;
+}
+
+.swse-ally-assignment-modal__header {
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--swse-npcmodal-border-subtle);
+  background: linear-gradient(90deg, rgba(0, 170, 255, 0.10), transparent 70%);
+}
+
+.swse-ally-assignment-modal__title {
+  margin: 0 0 4px;
+  font-family: var(--swse-npcmodal-font-display);
+  letter-spacing: 0.04em;
+  color: var(--swse-npcmodal-accent);
+  font-size: 20px;
+}
+
+.swse-ally-assignment-modal__desc {
+  margin: 0;
+  font-size: 12.5px;
+  color: var(--swse-npcmodal-text-muted);
+}
+
+.swse-ally-assignment-modal__body {
+  min-height: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 14px 18px;
+}
+
+.swse-ally-assignment-modal__search-row {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.swse-ally-assignment-modal__search-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--swse-npcmodal-text-secondary);
+}
+
+.swse-ally-assignment-modal__search-row input[type="search"] {
+  background: var(--swse-npcmodal-bg-panel);
+  border: 1px solid var(--swse-npcmodal-border);
+  border-radius: 6px;
+  color: var(--swse-npcmodal-text-light);
+  padding: 6px 10px;
+  font-family: inherit;
+}
+
+.swse-ally-assignment-modal__search-row input[type="search"]:focus-visible {
+  outline: 2px solid var(--swse-npcmodal-accent);
+  outline-offset: 1px;
+}
+
+/* Persistent selection summary — the Actor list is filtered by search, so
+   the currently selected candidate can scroll out of view. This stays
+   visible regardless of the search filter, always resolved from the
+   full (unfiltered) view model. */
+.swse-ally-assignment-modal__selected-summary {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border: 1px solid var(--swse-npcmodal-border-active);
+  border-radius: 8px;
+  background: rgba(0, 170, 255, 0.08);
+}
+
+.swse-ally-assignment-modal__selected-summary-portrait {
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  object-fit: cover;
+  border: 1px solid var(--swse-npcmodal-border-subtle);
+}
+
+.swse-ally-assignment-modal__selected-summary-body {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  font-size: 11.5px;
+  color: var(--swse-npcmodal-text-muted);
+}
+
+.swse-ally-assignment-modal__selected-summary-body strong {
+  color: var(--swse-npcmodal-primary);
+  font-size: 13px;
+}
+
+.swse-ally-assignment-modal__selected-summary-hidden {
+  color: var(--swse-npcmodal-warning, #e0a030);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.swse-ally-assignment-modal__link-button {
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  color: var(--swse-npcmodal-primary);
+  text-decoration: underline;
+  cursor: pointer;
+  font: inherit;
+  font-size: 11.5px;
+}
+
+.swse-ally-assignment-modal__error {
+  flex: 0 0 auto;
+  padding: 8px 10px;
+  border: 1px solid var(--swse-npcmodal-danger, #c0392b);
+  border-radius: 8px;
+  background: rgba(192, 57, 43, 0.12);
+  color: var(--swse-npcmodal-danger, #c0392b);
+  font-size: 12px;
+}
+
+/* Only the NPC list scrolls — the campaign world Actor list can be long,
+   while the assignment-type/slot/ownership controls below it must stay
+   visible without a second nested scrollbar. */
+.swse-ally-assignment-modal__list-region {
+  flex: 1 1 auto;
+  min-height: 120px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-right: 4px;
+}
+
+.swse-ally-assignment-modal__empty {
+  color: var(--swse-npcmodal-text-muted);
+  font-size: 12.5px;
+  padding: 10px 4px;
+}
+
+.swse-assignment-actor-card {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border: 1px solid var(--swse-npcmodal-border);
+  border-radius: 8px;
+  background: var(--swse-npcmodal-bg-panel);
+  cursor: pointer;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.swse-assignment-actor-card:hover {
+  border-color: var(--swse-npcmodal-border-active);
+}
+
+.swse-assignment-actor-card:has(input:focus-visible) {
+  outline: 2px solid var(--swse-npcmodal-accent);
+  outline-offset: 1px;
+}
+
+.swse-assignment-actor-card.is-selected {
+  border-color: var(--swse-npcmodal-border-active);
+  box-shadow: 0 0 0 1px var(--swse-npcmodal-border-active), 0 0 16px rgba(0, 170, 255, 0.3);
+}
+
+.swse-assignment-actor-card.has-warning {
+  border-color: var(--swse-npcmodal-warning);
+}
+
+.swse-assignment-actor-card.is-disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.swse-assignment-actor-card input[type="radio"] {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+  pointer-events: none;
+}
+
+.swse-assignment-actor-card__portrait {
+  width: 40px;
+  height: 40px;
+  border-radius: 6px;
+  object-fit: cover;
+  border: 1px solid var(--swse-npcmodal-border-subtle);
+}
+
+.swse-assignment-actor-card__body {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
+
+.swse-assignment-actor-card__body strong {
+  color: var(--swse-npcmodal-primary);
+  font-size: 13.5px;
+}
+
+.swse-assignment-actor-card__meta {
+  font-size: 11px;
+  color: var(--swse-npcmodal-text-muted);
+}
+
+.swse-assignment-actor-card__flag {
+  font-size: 11px;
+  color: var(--swse-npcmodal-warning);
+}
+
+.swse-assignment-actor-card__flag.is-blocked {
+  color: var(--swse-npcmodal-danger);
+}
+
+.swse-assignment-radio-indicator {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 2px solid var(--swse-npcmodal-border);
+  background: rgba(0, 0, 0, 0.35);
+  flex: none;
+  transition: all 0.15s ease;
+}
+
+.is-selected .swse-assignment-radio-indicator {
+  border-color: var(--swse-npcmodal-accent);
+  box-shadow: inset 0 0 0 3px var(--swse-npcmodal-accent), 0 0 8px var(--swse-npcmodal-accent);
+}
+
+.swse-ally-assignment-modal__section-title {
+  margin: 0 0 6px;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--swse-npcmodal-text-secondary);
+}
+
+.swse-ally-assignment-modal__mode-section,
+.swse-ally-assignment-modal__slot-section,
+.swse-ally-assignment-modal__ownership-row {
+  flex: 0 0 auto;
+}
+
+.swse-assignment-choice-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.swse-assignment-mode-card {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 8px;
+  align-items: start;
+  padding: 10px;
+  border: 1px solid var(--swse-npcmodal-border);
+  border-radius: 8px;
+  background: var(--swse-npcmodal-bg-panel);
+  cursor: pointer;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.swse-assignment-mode-card:hover {
+  border-color: var(--swse-npcmodal-border-active);
+}
+
+.swse-assignment-mode-card:has(input:focus-visible) {
+  outline: 2px solid var(--swse-npcmodal-accent);
+  outline-offset: 1px;
+}
+
+.swse-assignment-mode-card.is-selected {
+  border-color: var(--swse-npcmodal-border-active);
+  box-shadow: 0 0 0 1px var(--swse-npcmodal-border-active), 0 0 16px rgba(0, 170, 255, 0.3);
+}
+
+.swse-assignment-mode-card.is-disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.swse-assignment-mode-card input[type="radio"] {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+  pointer-events: none;
+}
+
+.swse-assignment-mode-card__icon {
+  font-size: 18px;
+  color: var(--swse-npcmodal-accent);
+}
+
+.swse-assignment-mode-card__body {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.swse-assignment-mode-card__body strong {
+  color: var(--swse-npcmodal-primary);
+  font-size: 13px;
+}
+
+.swse-assignment-mode-card__desc {
+  font-size: 11px;
+  color: var(--swse-npcmodal-text-muted);
+}
+
+.swse-assignment-mode-card__list {
+  margin: 2px 0 0;
+  padding-left: 16px;
+  font-size: 10.5px;
+  color: var(--swse-npcmodal-text-secondary);
+}
+
+.swse-assignment-mode-card__blocked {
+  margin-top: 2px;
+  font-size: 11px;
+  color: var(--swse-npcmodal-warning);
+}
+
+.swse-assignment-slot-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 0.5rem;
+}
+
+.swse-assignment-slot-card {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 8px 10px;
+  border: 1px solid var(--swse-npcmodal-border);
+  border-radius: 8px;
+  background: var(--swse-npcmodal-bg-panel);
+  cursor: pointer;
+}
+
+.swse-assignment-slot-card:hover {
+  border-color: var(--swse-npcmodal-border-active);
+}
+
+.swse-assignment-slot-card:has(input:focus-visible) {
+  outline: 2px solid var(--swse-npcmodal-accent);
+  outline-offset: 1px;
+}
+
+.swse-assignment-slot-card.is-selected {
+  border-color: var(--swse-npcmodal-border-active);
+  box-shadow: 0 0 0 1px var(--swse-npcmodal-border-active), 0 0 12px rgba(0, 170, 255, 0.3);
+}
+
+.swse-assignment-slot-card.is-reserved {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.swse-assignment-slot-card__reserved-notice {
+  font-size: 10.5px;
+  font-style: italic;
+  color: var(--swse-npcmodal-muted, #9aa0a6);
+}
+
+.swse-assignment-slot-card input[type="radio"] {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+  pointer-events: none;
+}
+
+.swse-assignment-slot-card__body {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.swse-assignment-slot-card__body strong {
+  font-size: 12.5px;
+  color: var(--swse-npcmodal-primary);
+}
+
+.swse-assignment-slot-card__badge {
+  font-size: 9.5px;
+  letter-spacing: 0.06em;
+  color: var(--swse-npcmodal-text-secondary);
+}
+
+.swse-assignment-slot-card__badge.is-manual {
+  color: var(--swse-npcmodal-warning);
+}
+
+.swse-assignment-slot-card__badge.is-talent {
+  color: var(--swse-npcmodal-accent);
+}
+
+.swse-ally-assignment-modal__template-section {
+  flex: 0 0 auto;
+}
+
+.swse-assignment-template-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 0.5rem;
+}
+
+.swse-assignment-template-card {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 7px 10px;
+  border: 1px solid var(--swse-npcmodal-border);
+  border-radius: 8px;
+  background: var(--swse-npcmodal-bg-panel);
+  cursor: pointer;
+  font-size: 12px;
+  color: var(--swse-npcmodal-primary);
+}
+
+.swse-assignment-template-card:hover {
+  border-color: var(--swse-npcmodal-border-active);
+}
+
+.swse-assignment-template-card:has(input:focus-visible) {
+  outline: 2px solid var(--swse-npcmodal-accent);
+  outline-offset: 1px;
+}
+
+.swse-assignment-template-card.is-selected {
+  border-color: var(--swse-npcmodal-border-active);
+  box-shadow: 0 0 0 1px var(--swse-npcmodal-border-active), 0 0 12px rgba(0, 170, 255, 0.3);
+}
+
+.swse-assignment-template-card input[type="radio"] {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+  pointer-events: none;
+}
+
+.swse-ally-assignment-modal__ownership-row {
+  border-top: 1px solid var(--swse-npcmodal-border-subtle);
+  padding-top: 10px;
+}
+
+.swse-ally-assignment-modal__toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12.5px;
+  color: var(--swse-npcmodal-text-light);
+  cursor: pointer;
+}
+
+.swse-ally-assignment-modal__toggle input[type="checkbox"]:focus-visible {
+  outline: 2px solid var(--swse-npcmodal-accent);
+  outline-offset: 1px;
+}
+
+.swse-ally-assignment-modal__toggle-desc {
+  margin: 2px 0 0;
+  font-size: 10.5px;
+  color: var(--swse-npcmodal-text-muted);
+}
+
+.swse-ally-assignment-modal__footer {
+  flex: 0 0 auto;
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 12px 18px;
+  border-top: 1px solid var(--swse-npcmodal-border-subtle);
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.swse-ally-assignment-modal__btn {
+  font-family: inherit;
+  font-size: 12.5px;
+  padding: 7px 16px;
+  border-radius: 6px;
+  border: 1px solid var(--swse-npcmodal-border);
+  background: var(--swse-npcmodal-bg-panel);
+  color: var(--swse-npcmodal-text-light);
+  cursor: pointer;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.swse-ally-assignment-modal__btn:hover:not(:disabled) {
+  border-color: var(--swse-npcmodal-border-active);
+}
+
+.swse-ally-assignment-modal__btn:focus-visible {
+  outline: 2px solid var(--swse-npcmodal-accent);
+  outline-offset: 1px;
+}
+
+.swse-ally-assignment-modal__btn--primary {
+  border-color: var(--swse-npcmodal-accent);
+  color: var(--swse-npcmodal-accent);
+  box-shadow: 0 0 10px rgba(0, 217, 255, 0.2);
+}
+
+.swse-ally-assignment-modal__btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+@media (max-width: 640px) {
+  .swse-assignment-choice-grid {
+    grid-template-columns: 1fr;
+  }
+}

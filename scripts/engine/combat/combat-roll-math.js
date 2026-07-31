@@ -19,6 +19,8 @@
 import { evaluateStatePredicates } from "/systems/foundryvtt-swse/scripts/engine/abilities/passive/passive-state.js";
 import { SchemaAdapters } from "/systems/foundryvtt-swse/scripts/utils/schema-adapters.js";
 import { isNpcStatblockMode } from "/systems/foundryvtt-swse/scripts/actors/npc/npc-mode-adapter.js";
+import { getStockAttackFlatBonus, getStockDamageFormula } from "/systems/foundryvtt-swse/scripts/actors/droid/droid-mode-adapter.js";
+import { buildStockDroidDamageFormula } from "/systems/foundryvtt-swse/scripts/domain/droids/stock-droid-damage-formula.js";
 import {
   getDamageAbilityContribution,
   getHalfLevelDamageBonus,
@@ -386,19 +388,44 @@ export function resolveAttackBonus(actor, weapon, actionId = null, context = {})
     }
   }
 
-  const bab = SchemaAdapters.getBAB(actor);
+  // PHASE 3 — Droid Stock-Statblock Authority: a stock-imported droid's
+  // integrated weapon Items carry their PUBLISHED attack total in
+  // system.attackBonus (see scripts/engine/import/stock-droid-importer-engine.js).
+  // getWeaponFlatAttackBonus() below reads that same field as an ordinary
+  // flat/enhancement bonus meant to be ADDED to BAB — for a stock droid that
+  // would double-count the entire published total on top of BAB. Mirrors
+  // the NPC statblock-flat pattern immediately above: the published total
+  // REPLACES the BAB + ability + enhancement + proficiency composition
+  // (those are already baked into the printed number), never the whole
+  // roll — every situational/runtime modifier below (range, firing into
+  // melee, condition track, attack penalty, combat options, rage, talents,
+  // state effects, and every scoped/effect-intent bonus) still applies on
+  // top of it, exactly as it would for a normal attack roll. This was
+  // previously an unconditional early `return` that skipped every
+  // situational modifier below it — the doc comment claimed they "still
+  // apply on top of it" while the code did the opposite; this is the
+  // correction. Decision logic for WHETHER a weapon uses the flat total
+  // lives in getStockAttackFlatBonus() (droid-mode-adapter.js) so it stays
+  // a single, unit-testable authority instead of duplicated inline here.
+  const stockAttackFlat = getStockAttackFlatBonus(actor, weapon);
+  const isStockDroidFlat = stockAttackFlat !== null;
+
+  const bab = isStockDroidFlat ? 0 : SchemaAdapters.getBAB(actor);
   const attackOptionModifiers = CombatOptionResolver.collectAttackModifiers(actor, weapon, context);
   const abilityKey = getWeaponAttackAbility(actor, weapon);
-  const abilityMod = SchemaAdapters.getAbilityMod(actor, abilityKey) + Number(attackOptionModifiers.attackAbilityBonus || 0);
+  const abilityMod = isStockDroidFlat ? 0 : (SchemaAdapters.getAbilityMod(actor, abilityKey) + Number(attackOptionModifiers.attackAbilityBonus || 0));
 
-  const miscBonus = getWeaponFlatAttackBonus(weapon);
+  const miscBonus = isStockDroidFlat ? 0 : getWeaponFlatAttackBonus(weapon);
   const rangePenalty = getRangePenalty(weapon, context);
   const firingIntoMeleePenalty = shootingIntoMeleePenalty(actor, context);
   const rageModifiers = RageEngine.collectAttackModifiers(actor, weapon, context);
   const ctPenalty = actor.system?.derived?.damage?.conditionPenalty ?? actor.system?.conditionTrack?.penalty ?? 0;
   const attackPenalty = actor.system?.attackPenalty ?? 0;
   const proficient = actorIsProficientForAttack(actor, weapon);
-  const proficiencyPenalty = proficient ? 0 : -5;
+  // A stock-statblock droid's published total already assumes proficiency
+  // with its own integrated weapons — a proficiency penalty must not be
+  // layered on top of it.
+  const proficiencyPenalty = isStockDroidFlat ? 0 : (proficient ? 0 : -5);
 
   let talentBonus = 0;
   const TalentActionLinker = window.SWSE?.TalentActionLinker;
@@ -440,13 +467,19 @@ export function resolveAttackBonus(actor, weapon, actionId = null, context = {})
   const scopedFeatBonus = ScopedCombatFeatResolver.getBonus(actor, weapon, 'attack', context);
 
   const total =
+    (isStockDroidFlat ? stockAttackFlat : 0) +
     bab + abilityMod + miscBonus + rangePenalty + firingIntoMeleePenalty + attackPenalty + ctPenalty +
     proficiencyPenalty + talentBonus + stateBonus + combatOptionBonus + rageBonus +
     sithMod + inquisitionMod + unsettlingMod + rapidAlchemyMod + forceItemMod + basicEffectBonus + scopedFeatBonus;
 
-  const components = { 'BAB': bab };
-  components[`Ability (${abilityKey.toUpperCase()})`] = abilityMod;
-  if (miscBonus !== 0) components['Enhancement'] = miscBonus;
+  const components = {};
+  if (isStockDroidFlat) {
+    components['Published Statblock Total'] = stockAttackFlat;
+  } else {
+    components['BAB'] = bab;
+    components[`Ability (${abilityKey.toUpperCase()})`] = abilityMod;
+    if (miscBonus !== 0) components['Enhancement'] = miscBonus;
+  }
   if (rangePenalty !== 0) components['Range Penalty'] = rangePenalty;
   if (firingIntoMeleePenalty !== 0) components['Firing Into Melee'] = firingIntoMeleePenalty;
   if (attackPenalty !== 0) components['Attack Penalty'] = attackPenalty;
@@ -464,10 +497,79 @@ export function resolveAttackBonus(actor, weapon, actionId = null, context = {})
   if (basicEffectBonus !== 0) components['Effect Intent'] = basicEffectBonus;
   if (scopedFeatBonus !== 0) components['Scoped Feat'] = scopedFeatBonus;
 
-  return { total, components, flags: {} };
+  return { total, components, flags: isStockDroidFlat ? { stockDroidFlat: true } : {} };
+}
+
+// PHASE — Stock-Droid Damage Contract. The damage-side counterpart to the
+// stock-attack flat-bonus branch above: a stock-imported droid's integrated
+// weapon Items carry their PUBLISHED damage formula in
+// flags.swse.stockDroidAttack.publishedDamage (see
+// scripts/engine/import/stock-droid-importer-engine.js), but until this
+// function existed nothing ever consumed it — resolveDamageBonus() applied
+// the normal half-level/ability/enhancement composition on top of the
+// weapon's base dice for every actor, droid or not, silently double-
+// counting damage that was already baked into the published formula.
+// Mirrors getStockAttackFlatBonus()'s pattern: gated by the same
+// isDroidStatblockMode()/stockDroidAttack.sourceStatblock contract (see
+// getStockDamageFormula() in droid-mode-adapter.js), so an attack and its
+// paired damage roll can never disagree about whether a weapon is still
+// "stock". Only situational damage modifiers (rage, Rapid Alchemy, effect
+// intents, combat options, scoped feats) still apply on top of the
+// published formula — half-level, ability, and weapon enhancement are
+// withheld exactly like resolveAttackBonus() withholds BAB/ability/
+// enhancement for stock attack rolls, because those are already baked into
+// the printed damage.
+//
+// Returns null when the published formula should NOT be used (playable-
+// derived mode, non-droid actor, or a weapon with no stock damage
+// contract) — callers then fall through to normal damage composition.
+export function resolveStockDroidDamageContract(actor, weapon, context = {}) {
+  const publishedFormula = getStockDamageFormula(actor, weapon);
+  if (publishedFormula === null) return null;
+
+  const optionModifiers = CombatOptionResolver.collectAttackModifiers(actor, weapon, context);
+  const rageMod = RageEngine.collectAttackModifiers(actor, weapon, context).damageBonus || 0;
+  const rapidAlchemyMod = rapidAlchemyDamageBonusInternal(actor, weapon);
+  const basicEffectBonus = getBasicEffectIntentBonus(actor, 'global.damage', weapon, context, { rollType: 'damage' });
+  const combatOptionDamage = optionModifiers.damageBonus || 0;
+  const scopedFeatDamage = ScopedCombatFeatResolver.getBonus(actor, weapon, 'damage', context);
+
+  // R4-4 — die-based situational modifiers (Rapid Shot/Rapid Strike's
+  // damageDieStepBonus, Deadeye/Burst Fire/Mighty Swing's
+  // damageExtraWeaponDice, and — on a confirmed critical hit only —
+  // criticalDamageDieStepBonus) must still adjust the published formula's
+  // DICE portion, exactly as they adjust an ordinary weapon's dice. Only
+  // half-level/ability/enhancement (never die-based) are what the
+  // published total already bakes in and must be withheld. Mirrors
+  // attacks.js's own criticalStepBonus gating: the critical die-step only
+  // applies when this roll is a confirmed critical (context.critical/
+  // context.isCritical), the same flag attacks.js's rollDamage()/
+  // rollAttackAndDamageWithNarration() already pass through as part of
+  // rollOptions.
+  const isCriticalRoll = context?.critical === true || context?.isCritical === true;
+  const dieStepIncreases = Number(optionModifiers.damageDieStepIncreases || 0)
+    + (isCriticalRoll ? Number(optionModifiers.criticalDamageDieStepBonus || 0) : 0);
+  const extraWeaponDice = Number(optionModifiers.damageExtraWeaponDice ?? optionModifiers.damageDiceStepBonus ?? 0);
+  const formula = buildStockDroidDamageFormula(publishedFormula, { dieStepIncreases, extraWeaponDice });
+
+  const situationalTotal = rageMod + rapidAlchemyMod + basicEffectBonus + combatOptionDamage + scopedFeatDamage;
+
+  const components = { 'Published Statblock Formula': formula };
+  if (rageMod !== 0) components['Rage'] = rageMod;
+  if (rapidAlchemyMod !== 0) components['Rapid Alchemy'] = rapidAlchemyMod;
+  if (basicEffectBonus !== 0) components['Effect Intent'] = basicEffectBonus;
+  if (combatOptionDamage !== 0) components['Combat Option'] = combatOptionDamage;
+  if (scopedFeatDamage !== 0) components['Scoped Feat'] = scopedFeatDamage;
+
+  return { formula, total: situationalTotal, components, flags: { stockDroidFlat: true, stockDamageFormula: formula } };
 }
 
 export function resolveDamageBonus(actor, weapon, context = {}) {
+  const stockContract = resolveStockDroidDamageContract(actor, weapon, context);
+  if (stockContract) {
+    return { total: stockContract.total, components: stockContract.components, flags: stockContract.flags };
+  }
+
   const optionModifiers = CombatOptionResolver.collectAttackModifiers(actor, weapon, context);
 
   if (optionModifiers?.flags?.damageBaseOnly === true) {

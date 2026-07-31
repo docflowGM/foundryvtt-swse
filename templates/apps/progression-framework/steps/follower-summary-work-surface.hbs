@@ -13,11 +13,11 @@
         <div class="prog-summary-delta-row"><span>Name if blank</span><strong>{{fallbackFollowerName}}</strong></div>
         <div class="prog-summary-delta-row"><span>Owner</span><strong>{{ownerName}}</strong></div>
         <div class="prog-summary-delta-row"><span>Owner Heroic Level</span><strong>{{ownerHeroicLevel}}</strong></div>
-        <div class="prog-summary-delta-row"><span>Species / Chassis</span><strong>{{choices.speciesName}}</strong></div>
+        {{#unless droidConfig}}<div class="prog-summary-delta-row"><span>Species</span><strong>{{choices.speciesName}}</strong></div>{{/unless}}
         {{#if fixedProfile}}<div class="prog-summary-delta-row"><span>Fixed Profile</span><strong>{{fixedProfile.speciesName}} • {{fixedProfile.speciesType}}</strong></div>{{/if}}
         <div class="prog-summary-delta-row"><span>Template</span><strong>{{templateDisplay}}</strong></div>
         {{#if choices.abilityChoice}}<div class="prog-summary-delta-row"><span>Template Ability</span><strong>+2 {{abilityChoiceLabel}}</strong></div>{{/if}}
-        {{#if droidConfig}}<div class="prog-summary-delta-row"><span>Droid Chassis</span><strong>{{droidConfig.size}} • Speed {{droidConfig.speed}} • +2 {{droidAbilityChoiceLabel}}</strong></div>{{/if}}
+        {{#if droidConfig}}<div class="prog-summary-delta-row"><span>Droid Chassis</span><strong>Degree {{droidConfig.droidDegree}} • {{droidConfig.size}} • Speed {{droidConfig.speed}} • +2 {{droidAbilityChoiceLabel}}</strong></div>{{/if}}
         {{#if choices.backgroundChoice}}<div class="prog-summary-delta-row"><span>Background</span><strong>{{choices.backgroundChoice}}</strong></div>{{/if}}
       </div>
     </div>

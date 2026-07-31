@@ -2,7 +2,13 @@ import { getFollowerTalentConfig } from "/systems/foundryvtt-swse/scripts/engine
 import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { FollowerManager } from "/systems/foundryvtt-swse/scripts/apps/follower-manager.js";
 import { MinionManager } from "/systems/foundryvtt-swse/scripts/apps/minion-manager.js";
-import { getSwseFlag } from "/systems/foundryvtt-swse/scripts/utils/flags/swse-flags.js";
+import { runFollowerMutationTransaction } from "/systems/foundryvtt-swse/scripts/apps/progression-framework/adapters/follower-mutation-transaction.js";
+import { isFollowerSlotOccupied, resolveFollowerSlotActorId } from "/systems/foundryvtt-swse/scripts/domain/followers/follower-slot-occupancy.js";
+import { computeGrantedItemIdsForTalent, buildOwnerRegistryDetachPatch, buildSlotRemovalPatch } from "/systems/foundryvtt-swse/scripts/domain/followers/follower-talent-detach-plan.js";
+
+function _clonePlain(value) {
+  return value === undefined ? value : JSON.parse(JSON.stringify(value));
+}
 
 /**
  * Follower Hooks (AppV2-safe)
@@ -42,7 +48,13 @@ function _getSlots(actor) {
 }
 
 async function _setSlots(actor, slots) {
-  await actor.setFlag('foundryvtt-swse', 'followerSlots', slots);
+  // GM-MANUAL-FOLLOWER-SLOT — governed via ActorEngine instead of a direct
+  // setFlag(), so this file's writes to followerSlots are enforced by the
+  // same authority FollowerSlotService uses for manual (GM-granted) slots.
+  const { ActorEngine } = await import('/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js');
+  await ActorEngine.updateActor(actor, {
+    'flags.foundryvtt-swse.followerSlots': slots
+  }, { source: 'FollowerHooks.setSlots' });
 }
 
 function _slotsForTalent(slots, talentName) {
@@ -50,7 +62,7 @@ function _slotsForTalent(slots, talentName) {
 }
 
 function _filledSlotsForTalent(slots, talentName) {
-  return _slotsForTalent(slots, talentName).filter(s => !!s.createdActorId);
+  return _slotsForTalent(slots, talentName).filter(isFollowerSlotOccupied);
 }
 
 function _buildSlot(talentItem, cfg) {
@@ -73,41 +85,79 @@ function _buildSlot(talentItem, cfg) {
 }
 
 /**
- * PHASE 2: Remove granted items from follower and detach from owner.
+ * PHASE 2 / ROUND 4: Build the individually-compensatable transaction steps
+ * for detaching a follower from its granting talent — deleting the items
+ * that talent granted, and detaching the follower from every owner-side
+ * dependent registry that can reference it.
  *
- * Both mutations now route through ActorEngine to ensure:
- * - MutationInterceptor authorization
- * - Proper recomputation and integrity
- * - No silent fallback bypasses
+ * Previously this was ONE opaque step that did both an Item deletion and an
+ * owner-registry write internally: if the Item deletion succeeded but the
+ * owner write failed, the step's commit() threw and runFollowerMutationTransaction
+ * could not compensate the already-deleted Items, because a step that never
+ * finishes committing is never added to the completed list it rolls back.
+ * Splitting into two named steps — each fully committed or fully rolled
+ * back — closes that gap. A missing follower Actor (already deleted by some
+ * other path) still yields the owner-registry-detach step, so stale
+ * followers/minions/ownedActors entries pointing at it are still cleaned up
+ * even though there are no Items left to delete.
+ *
+ * @param {Actor} ownerActor
+ * @param {string} followerActorId
+ * @param {string} talentItemId
+ * @returns {Array<{name: string, commit: Function, rollback?: Function}>}
  */
-async function _removeGrantedItemsFromFollower(ownerActor, followerActorId, talentItemId) {
-  const follower = game.actors.get(followerActorId);
-  if (!follower) return;
+function _buildFollowerDetachSteps(ownerActor, followerActorId, talentItemId) {
+  const follower = game.actors.get(followerActorId) ?? null;
+  const steps = [];
 
-  // PHASE 2: Import ActorEngine at function start to fail fast
-  const { ActorEngine } = await import("/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js");
-
-  const toDelete = follower.items
-    .filter(i => getSwseFlag(i, 'grantedByTalent')?.talentItemId === talentItemId)
-    .map(i => i.id);
-
-  if (toDelete.length) {
-    // PHASE 2: Route through ActorEngine.deleteEmbeddedDocuments
-    await ActorEngine.deleteEmbeddedDocuments(follower, 'Item', toDelete);
+  if (follower) {
+    const grantedItemIds = computeGrantedItemIdsForTalent(Array.from(follower.items ?? []), talentItemId);
+    if (grantedItemIds.length) {
+      const grantedItemData = grantedItemIds
+        .map(id => follower.items.get(id)?.toObject())
+        .filter(Boolean);
+      steps.push({
+        name: 'delete-granted-items',
+        commit: async () => {
+          const { ActorEngine } = await import("/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js");
+          await ActorEngine.deleteEmbeddedDocuments(follower, 'Item', grantedItemIds);
+        },
+        rollback: async () => {
+          // Best-effort compensation: Foundry does not let a deleted
+          // embedded document be un-deleted with its original _id intact,
+          // so this recreates equivalent Items rather than restoring the
+          // exact prior ones. Documented limitation, matching this
+          // branch's existing snapshot-recreation caveats (see P1-7).
+          const { ActorEngine } = await import("/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js");
+          await ActorEngine.createEmbeddedDocuments(follower, 'Item', grantedItemData);
+        }
+      });
+    }
   }
 
-  // PHASE 2: Route through ActorEngine with guard key for owner update.
-  // Detach from every owner-side dependent registry that can point at this actor.
-  const owned = (ownerActor.system.ownedActors || []).filter(o => o.id !== followerActorId);
-  await ActorEngine.updateActor(ownerActor, { 'system.ownedActors': owned }, {
-    meta: { guardKey: 'follower-cleanup' }
+  const currentOwnedActors = _clonePlain(ownerActor.system?.ownedActors ?? []);
+  const currentFollowers = _clonePlain(ownerActor.getFlag('foundryvtt-swse', 'followers') ?? []);
+  const currentMinions = _clonePlain(ownerActor.getFlag('foundryvtt-swse', 'minions') ?? []);
+  const { commitPatch, rollbackPatch } = buildOwnerRegistryDetachPatch({
+    ownedActors: currentOwnedActors,
+    followers: currentFollowers,
+    minions: currentMinions,
+    followerActorId
   });
 
-  const followers = (ownerActor.getFlag('foundryvtt-swse', 'followers') || []).filter(o => o.id !== followerActorId);
-  await ownerActor.setFlag('foundryvtt-swse', 'followers', followers);
+  steps.push({
+    name: 'detach-owner-registries',
+    commit: async () => {
+      const { ActorEngine } = await import("/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js");
+      await ActorEngine.updateActor(ownerActor, commitPatch, { meta: { guardKey: 'follower-cleanup' } });
+    },
+    rollback: async () => {
+      const { ActorEngine } = await import("/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js");
+      await ActorEngine.updateActor(ownerActor, rollbackPatch, { meta: { guardKey: 'follower-cleanup' } });
+    }
+  });
 
-  const minions = (ownerActor.getFlag('foundryvtt-swse', 'minions') || []).filter(o => o.id !== followerActorId);
-  await ownerActor.setFlag('foundryvtt-swse', 'minions', minions);
+  return steps;
 }
 
 /**
@@ -120,7 +170,10 @@ async function _setPendingDetachment(ownerActor, talentItem, filledFollowerIds) 
     talentItemId: talentItem.id,
     candidateActorIds: filledFollowerIds
   };
-  await ownerActor.setFlag('foundryvtt-swse', 'pendingFollowerDetachment', payload);
+  const { ActorEngine } = await import('/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js');
+  await ActorEngine.updateActor(ownerActor, {
+    'flags.foundryvtt-swse.pendingFollowerDetachment': payload
+  }, { source: 'FollowerHooks.setPendingDetachment' });
   ui.notifications?.warn?.(
     `Follower slots reduced for ${talentItem.name}. Open your character sheet > Other tab to choose which follower to detach.`
   );
@@ -207,7 +260,13 @@ export async function reconcileFollowerSlotsForActor(actor) {
 
   const validTalentItemIds = new Set(talents.map(t => t.id));
   const filtered = slots.filter(slot => {
-    if (slot.createdActorId) return true;
+    if (isFollowerSlotOccupied(slot)) return true;
+    // GM-MANUAL-FOLLOWER-SLOT — a manually-granted slot has no talent
+    // provenance at all (talentItemId is always null) and must never be
+    // removed, capped, or otherwise governed by talent reconciliation; it
+    // is explicitly out of scope for this loop regardless of maxCount or
+    // whether any follower-granting talent currently exists on the owner.
+    if (slot.sourceType === 'gm-grant') return true;
     if (!slot.talentItemId) return true;
     return validTalentItemIds.has(slot.talentItemId);
   });
@@ -286,24 +345,42 @@ export function initializeFollowerHooks() {
     const slot = slots[idx];
 
     // If the slot is empty, remove it immediately.
-    if (!slot.createdActorId) {
+    if (!isFollowerSlotOccupied(slot)) {
       slots.splice(idx, 1);
       await _setSlots(actor, slots);
       return;
     }
 
     // If exactly one filled follower exists for this talent, detach automatically.
-    const filled = _filledSlotsForTalent(slots, item.name).map(s => s.createdActorId).filter(Boolean);
+    const filled = _filledSlotsForTalent(slots, item.name).map(resolveFollowerSlotActorId).filter(Boolean);
     const uniqueFilled = Array.from(new Set(filled));
 
     if (uniqueFilled.length === 1) {
       const followerId = uniqueFilled[0];
-      // Clear slot linkage and remove granted items provenance-safely.
-      slot.createdActorId = null;
-      slot.detachedAt = Date.now();
-      slots.splice(idx, 1); // rank removed -> slot removed
-      await _setSlots(actor, slots);
-      await _removeGrantedItemsFromFollower(actor, followerId, item.id);
+      // Run cleanup BEFORE the slot is removed/persisted, not after — a
+      // mid-cleanup failure must not leave the slot already gone while the
+      // follower's granted items and owner-side registries are still
+      // attached (the slot is the only remaining record that a cleanup is
+      // owed). Every persisted mutation here is now its own named,
+      // individually-compensatable step (item deletion, owner-registry
+      // detach, slot removal) rather than one opaque step that could
+      // partially apply with nothing to roll it back — see
+      // _buildFollowerDetachSteps()'s doc comment for the exact defect this
+      // closes.
+      const { remainingSlots, rollbackSlots } = buildSlotRemovalPatch(slots, slot.id);
+      const detachSteps = _buildFollowerDetachSteps(actor, followerId, item.id);
+      const transaction = await runFollowerMutationTransaction([
+        ...detachSteps,
+        {
+          name: 'remove-slot',
+          commit: () => _setSlots(actor, remainingSlots),
+          rollback: () => _setSlots(actor, rollbackSlots)
+        }
+      ], { source: 'FollowerHooks.deleteItem.autoDetach' });
+
+      if (!transaction.ok) {
+        swseLogger?.warn?.(`[FollowerHooks] Auto-detach cleanup failed for ${item.name}; owner and follower state may need manual review.`, transaction.error);
+      }
       return;
     }
 

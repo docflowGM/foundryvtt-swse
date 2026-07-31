@@ -38,6 +38,10 @@ import { DroidSystemsResolver } from "/systems/foundryvtt-swse/scripts/sheets/v2
 import { buildUnarmedAttackContext } from "/systems/foundryvtt-swse/scripts/engine/combat/unarmed-attack-helper.js";
 import { ThemeResolutionService } from "/systems/foundryvtt-swse/scripts/ui/theme/theme-resolution-service.js";
 import { resolveArmorData } from "/systems/foundryvtt-swse/scripts/items/armor-data-resolver.js";
+import { isDroidStatblockMode, resolveDroidCalculationMode, DROID_CALCULATION_MODE } from "/systems/foundryvtt-swse/scripts/actors/droid/droid-mode-adapter.js";
+import { getDroidPartDefinition, getAllDroidPartDefinitions, normalizeDroidPartId } from "/systems/foundryvtt-swse/scripts/data/droid-part-schema.js";
+import { classifyStockSystemSources, annotateWeaponCandidatesAgainstExistingItems, RECONCILIATION_CLASSIFICATION } from "/systems/foundryvtt-swse/scripts/domain/droids/droid-converted-system-reconciliation-classifier.js";
+import { DROID_SYSTEMS_SOURCE_FIELDS } from "/systems/foundryvtt-swse/scripts/domain/droids/droid-installed-component-resolver.js";
 
 const ITEM_PROJECTION_KEYS = ["id", "name", "type", "img", "system"];
 
@@ -201,7 +205,9 @@ export class DroidSheetContextBuilder {
         resolvedSystems,
         garage,
         flags,
-        sourceStatus
+        sourceStatus,
+        stockStatblockControls: this.buildStockStatblockControlsPanel(),
+        reconciliationControls: this.buildReconciliationControlsPanel()
       },
       user: {
         id: game.user?.id,
@@ -403,7 +409,109 @@ export class DroidSheetContextBuilder {
       validation: this.buildValidationPanel(),
       // Phase 3B: Stock droid provenance
       stockImport: this.actor?.flags?.swse?.stockDroidImport,
-      stockConversion: this.actor?.flags?.swse?.stockDroidConversionReport
+      stockConversion: this.actor?.flags?.swse?.stockDroidConversionReport,
+      // Droid Authority Consolidation Phase 3: whether this droid is still a
+      // frozen published statblock (derived recalculation intentionally
+      // skipped — see scripts/utils/hardening.js#shouldSkipDerivedData) and
+      // therefore eligible for the "Convert to Playable" action.
+      isStockStatblockMode: isDroidStatblockMode(this.actor)
+    };
+  }
+
+  /**
+   * PHASE 3 — Droid Stock-Statblock Authority. Deliberately a separate,
+   * distinctly-labeled control set from droid.garage.canConvert /
+   * droid.sourceStatus (which target the older, unreachable legacy Droid
+   * Builder "convert into a full custom Garage build" workflow — see
+   * docs/audits/droid-stock-statblock-authority-phase-3.md). This governs
+   * only the lightweight calculation-mode flip
+   * (scripts/domain/droids/droid-statblock-conversion-service.js): does the
+   * droid use its published statblock totals, or normal derived math.
+   */
+  buildStockStatblockControlsPanel() {
+    const resolution = resolveDroidCalculationMode(this.actor);
+    const isOwner = this.actor?.isOwner === true;
+    const isGM = Boolean(game.user?.isGM);
+    const canAct = isOwner || isGM;
+    const importState = this.actor?.flags?.swse?.stockDroidImport ?? null;
+    const conversionState = this.actor?.flags?.swse?.stockDroidConversion ?? null;
+
+    return {
+      visible: Boolean(importState),
+      mode: resolution.mode,
+      modeLabel: resolution.mode === DROID_CALCULATION_MODE.STOCK_STATBLOCK ? 'Published Statblock Mode' : 'Playable (Derived)',
+      isStock: resolution.mode === DROID_CALCULATION_MODE.STOCK_STATBLOCK,
+      isConverted: resolution.mode === DROID_CALCULATION_MODE.PLAYABLE_DERIVED && Boolean(conversionState),
+      modeInferred: resolution.inferred,
+      modeReason: resolution.reason,
+      isOwner,
+      canAct,
+      canConvert: canAct && resolution.mode === DROID_CALCULATION_MODE.STOCK_STATBLOCK,
+      canRollback: canAct && resolution.mode === DROID_CALCULATION_MODE.PLAYABLE_DERIVED && Number.isFinite(conversionState?.snapshotTimestamp),
+      sourceName: importState?.sourceName ?? null,
+      importedAt: importState?.importedAt ?? null,
+      convertedAt: conversionState?.convertedAt ?? null
+    };
+  }
+
+  /**
+   * PHASE 4 — Converted-System Reconciliation. Cheap, synchronous
+   * candidate-count preview for the sheet badge — mirrors
+   * scripts/domain/droids/droid-converted-system-reconciliation-service.js's
+   * inspectReconciliation() classification exactly (same classifier, same
+   * inputs) but stays synchronous since sheet context preparation is not
+   * async here. For the full inspection report (with reasons/warnings),
+   * the sheet's "Inspect Published Systems" button calls the async service
+   * directly — see scripts/sheets/v2/character-sheet.js.
+   */
+  buildReconciliationControlsPanel() {
+    const importState = this.actor?.flags?.swse?.stockDroidImport ?? null;
+    if (!importState) return { visible: false };
+
+    const resolution = resolveDroidCalculationMode(this.actor);
+    const isOwner = this.actor?.isOwner === true;
+    const isGM = Boolean(game.user?.isGM);
+    const canAct = isOwner || isGM;
+
+    const publishedDroidSystems = importState.publishedTotals?.droidSystems ?? {};
+    const sourceEntries = [];
+    for (const field of DROID_SYSTEMS_SOURCE_FIELDS.single) {
+      const entry = publishedDroidSystems[field];
+      if (entry && typeof entry === 'object' && (entry.id || entry.name)) sourceEntries.push({ sourcePath: field, entry });
+    }
+    for (const field of DROID_SYSTEMS_SOURCE_FIELDS.array) {
+      const list = Array.isArray(publishedDroidSystems[field]) ? publishedDroidSystems[field] : [];
+      list.forEach((entry, index) => {
+        if (entry && typeof entry === 'object' && (entry.id || entry.name)) sourceEntries.push({ sourcePath: `${field}.${index}`, entry });
+      });
+    }
+
+    const existingWeaponIds = this.actor?.items
+      ? Array.from(this.actor.items).filter(i => i?.flags?.swse?.stockDroidAttack).map(i => normalizeDroidPartId(i.system?.droidPartId ?? i.name)).filter(Boolean)
+      : [];
+
+    let candidates = classifyStockSystemSources(sourceEntries, {
+      normalizeId: normalizeDroidPartId,
+      getDefinition: (id) => getDroidPartDefinition(id),
+      allDefinitions: getAllDroidPartDefinitions(),
+      existingLedger: this.actor?.system?.installedSystems ?? {}
+    });
+    candidates = annotateWeaponCandidatesAgainstExistingItems(candidates, existingWeaponIds);
+
+    const unreconciled = candidates.filter(c => !c.alreadyInstalled);
+    const reconciliationState = this.actor?.flags?.swse?.stockDroidReconciliation ?? null;
+
+    return {
+      visible: true,
+      isPlayable: resolution.mode === DROID_CALCULATION_MODE.PLAYABLE_DERIVED,
+      canAct,
+      canReconcile: canAct && resolution.mode === DROID_CALCULATION_MODE.PLAYABLE_DERIVED && unreconciled.length > 0,
+      canRollback: canAct && Number.isFinite(reconciliationState?.snapshotTimestamp),
+      unreconciledCount: unreconciled.length,
+      autoApplicableCount: unreconciled.filter(c => c.selectedByDefault).length,
+      needsReviewCount: unreconciled.filter(c => c.classification === RECONCILIATION_CLASSIFICATION.AMBIGUOUS_MATCH).length,
+      descriptiveOnlyCount: unreconciled.filter(c => c.classification === RECONCILIATION_CLASSIFICATION.DESCRIPTIVE_ONLY).length,
+      reconciledAt: reconciliationState?.reconciledAt ?? null
     };
   }
 

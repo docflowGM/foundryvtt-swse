@@ -73,7 +73,7 @@ function isPrimaryProcessor(def) {
 }
 
 function droidPartEntry(def, actor, extra = {}) {
-  const hydrated = hydrateDroidPart(def, { actor, installedIds: collectInstalledDroidPartIds(actor) });
+  const hydrated = hydrateDroidPart(def, { actor, installedIds: Array.from(collectInstalledDroidPartIds(actor)) });
   const cost = computeDroidPartCost(actor, hydrated, extra);
   return {
     id: normalizeDroidPartId(hydrated.ruleId ?? hydrated.id),
@@ -96,6 +96,47 @@ function droidPartEntry(def, actor, extra = {}) {
     rules: hydrated.rules ?? {},
     ...extra
   };
+}
+
+/**
+ * Normalize and validate a proposed droid customization change set BEFORE
+ * any pricing is computed. Closes the resale exploit where a caller could
+ * request removal of a system never actually installed (paying resale for
+ * nothing), repeat the same removal id to multiply resale, or request the
+ * same id in both `add` and `remove`.
+ *
+ * @param {Actor} actor
+ * @param {{add?: string[], remove?: string[]}} changeSet
+ * @returns {{success: boolean, error?: string, blockingReason?: string, add: string[], remove: string[]}}
+ */
+function normalizeDroidCustomizationChangeSet(actor, changeSet = {}) {
+  const rawAdd = Array.isArray(changeSet.add) ? changeSet.add : [];
+  const rawRemove = Array.isArray(changeSet.remove) ? changeSet.remove : [];
+
+  // Deduplicate each list independently (order-preserving) before any
+  // cross-list or installed-state check runs.
+  const add = [...new Set(rawAdd.map(id => normalizeDroidPartId(id)))];
+  const remove = [...new Set(rawRemove.map(id => normalizeDroidPartId(id)))];
+
+  const overlap = add.find(id => remove.includes(id));
+  if (overlap) {
+    return { success: false, error: `"${overlap}" cannot be both added and removed in the same request.`, blockingReason: 'Conflicting add/remove request', add: [], remove: [] };
+  }
+
+  const installed = collectInstalledDroidPartIds(actor);
+
+  for (const id of add) {
+    if (installed.has(id)) {
+      return { success: false, error: `${humanize(id)} is already installed and cannot be purchased again.`, blockingReason: 'Already installed', add: [], remove: [] };
+    }
+  }
+  for (const id of remove) {
+    if (!installed.has(id)) {
+      return { success: false, error: `${humanize(id)} is not currently installed and cannot be removed.`, blockingReason: 'Not installed', add: [], remove: [] };
+    }
+  }
+
+  return { success: true, add, remove };
 }
 
 export class DroidCustomizationEngine {
@@ -196,7 +237,11 @@ export class DroidCustomizationEngine {
       return { success: false, error: 'Failed to get droid profile' };
     }
 
-    const { add: systemsToAdd = [], remove: systemsToRemove = [] } = changeSet;
+    const normalized = normalizeDroidCustomizationChangeSet(actor, changeSet);
+    if (!normalized.success) {
+      return { success: false, error: normalized.error, blockingReason: normalized.blockingReason };
+    }
+    const { add: systemsToAdd, remove: systemsToRemove } = normalized;
     const currentCredits = normalizedCredits(actor);
     let totalAddCost = 0;
     let totalRemoveSale = 0;
@@ -285,16 +330,49 @@ export class DroidCustomizationEngine {
       return preview;
     }
 
+    // Re-validate against the ACTOR'S CURRENT state immediately before
+    // mutating — never trust the preview object (or the raw, possibly
+    // duplicate-laden changeSet) as the source of truth for what actually
+    // gets removed/added. This is a fresh, independent revalidation, not a
+    // reuse of `preview`'s own (also-fresh) normalization — it exists so a
+    // future refactor that lets `preview` be caller-supplied can't silently
+    // reintroduce the exploit this closes.
+    const revalidated = normalizeDroidCustomizationChangeSet(actor, changeSet);
+    if (!revalidated.success) {
+      return { success: false, error: revalidated.error, blockingReason: revalidated.blockingReason };
+    }
+
     try {
-      const { add: systemsToAdd = [], remove: systemsToRemove = [] } = changeSet;
+      const { add: systemsToAdd, remove: systemsToRemove } = revalidated;
       const installedSystems = { ...(actor.system.installedSystems ?? {}) };
       const droidSystems = foundry.utils.deepClone(actor.system?.droidSystems ?? {});
+
+      // PHASE 2 — Droid Authority Consolidation: embedded droid-part Items are
+      // not authoritative installation state (system.installedSystems is —
+      // see docs/audits/droid-authority-consolidation-phase-2.md). Resolve the
+      // actor's current components once so a removal can also delete any
+      // embedded Item representing the same canonical part; otherwise the
+      // Item would remain the highest-precedence source once its ledger
+      // entry is gone and the resolver would keep reporting the component as
+      // installed and active (the "Garage removal does not reconcile
+      // embedded Items" defect from docs/audits/droid-static-audit.md).
+      const preRemovalResolution = systemsToRemove.length
+        ? resolveInstalledDroidComponents(actor, {
+            normalizeId: normalizeDroidPartId,
+            getDefinition: (id) => getDroidPartDefinition(id)
+          })
+        : null;
+      const itemIdsToDelete = [];
 
       // Apply removals
       for (const systemId of systemsToRemove) {
         const normalized = normalizeDroidPartId(systemId);
         delete installedSystems[normalized];
         this.#applyRemovalToDroidSystems(droidSystems, normalized);
+        const component = preRemovalResolution?.components.find(c => c.canonicalId === normalized);
+        for (const source of component?.sources ?? []) {
+          if (source.kind === 'embeddedItem' && source.itemId) itemIdsToDelete.push(source.itemId);
+        }
       }
 
       // Apply additions
@@ -308,17 +386,25 @@ export class DroidCustomizationEngine {
       // Route credit movement + asset mutation through TransactionEngine so the
       // customization is atomic AND recorded in the credit audit trail. Wallet and
       // asset are the same droid actor; the transaction merges both legs into one
-      // snapshotted mutation and rolls back on failure.
+      // snapshotted mutation and rolls back on failure. The embedded-Item delete
+      // bucket rides in the same asset plan, so a failure anywhere in the
+      // transaction (insufficient funds, validation, mutation error) restores
+      // the actor's full pre-transaction snapshot — items included — via
+      // TransactionEngine's existing rollback, not a second ad hoc mechanism.
       const netCost = Number(preview.preview.netCost) || 0;
+      const assetMutationPlan = {
+        set: {
+          'system.installedSystems': installedSystems,
+          'system.droidSystems': droidSystems
+        }
+      };
+      if (itemIdsToDelete.length > 0) {
+        assetMutationPlan.delete = { items: [...new Set(itemIdsToDelete)] };
+      }
       const txn = await TransactionEngine.executeAssetCustomizationTransaction({
         actor,
         assetActor: actor,
-        assetMutationPlan: {
-          set: {
-            'system.installedSystems': installedSystems,
-            'system.droidSystems': droidSystems
-          }
-        },
+        assetMutationPlan,
         cost: Math.max(0, netCost),
         resaleCredit: Math.max(0, -netCost),
         transactionContext: 'owned-customization',
@@ -327,6 +413,7 @@ export class DroidCustomizationEngine {
           source: 'droid-customization',
           systemsAdded: preview.preview.systemsAdded,
           systemsRemoved: preview.preview.systemsRemoved,
+          itemsDeleted: itemIdsToDelete,
           assetActorId: actor.id
         }
       }, { source: 'DroidCustomizationEngine.applyDroidCustomization', validate: true, rederive: true });
@@ -360,6 +447,20 @@ export class DroidCustomizationEngine {
       slot: entry.slot,
       cost: entry.cost,
       installedAt: Date.now(),
+      // PHASE 4 — Converted-System Reconciliation: every ordinary Garage/
+      // Workshop install (through this engine) is, by definition, added
+      // AFTER whatever the droid's published statblock totals already were
+      // — never baked into them. This is the "post-import-modification"
+      // provenance docs/audits/droid-converted-system-reconciliation-phase-4.md
+      // and the reconciliation classifier rely on to tell an ordinary
+      // Garage-installed part apart from a reconciled stock-import
+      // component whose bonus is already accounted for in the published
+      // totals. A caller may override via `extra.provenance`/`extra.mechanicalState`
+      // (used only by DroidConvertedSystemReconciliationService itself,
+      // which is the sole other writer of these fields — enforced by
+      // tools/check-droid-reconciliation-authority.mjs).
+      provenance: { origin: 'post-import-customization', bakedIntoPublishedTotals: false },
+      mechanicalState: { applyModifiers: true },
       ...extra
     };
   }
