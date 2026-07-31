@@ -128,5 +128,58 @@ async function freshManager() {
   assert.equal(actor.system.hp.value, 10, 'the legacy snapshot\'s own fields are still genuinely restored, even though the boolean wrapper honestly reports false');
 }
 
+// 4. ROUND-3 CORRECTION — SnapshotManager.restoreSnapshotExact(..., {
+// requireExact: true }) propagates FAILURE for a legacy snapshot, not a
+// soft {success: true, exact: false}. The prior `&& !isLegacy` exemption
+// in SnapshotService's fail-closed check meant a legacy snapshot could
+// slip through requireExact: true entirely — this is the structured
+// (non-boolean) contract every one of the four migrated high-risk
+// rollback callers (droid statblock conversion, converted-system
+// reconciliation, installation drift repair, NPC follower conversion)
+// actually depends on.
+{
+  const SnapshotManager = await freshManager();
+  const actor = actorLike();
+  const legacySnapshot = { timestamp: 54321, label: 'Legacy', actorId: actor.id, level: 1, actorData: { system: JSON.parse(JSON.stringify(actor.system)), name: actor.name, img: actor.img, items: [], effects: [] } };
+  actor.flags['foundryvtt-swse'] = { snapshots: [legacySnapshot] };
+  actor.system.hp.value = 999;
+  const result = await SnapshotManager.restoreSnapshotExact(actor, legacySnapshot.timestamp, { requireExact: true });
+  assert.equal(result.success, false, 'requireExact: true must fail closed for a legacy snapshot at the restoreSnapshotExact() level too, not only inside SnapshotService directly');
+  assert.equal(result.exact, false);
+  assert.equal(result.code, 'SNAPSHOT_LEGACY_INEXACT');
+}
+
+// 5. Source-inspection: every one of the four high-risk rollback callers
+// migrated to restoreSnapshotExact() checks `.success` (not `.exact`
+// alone) on a requireExact: true call — meaning each one automatically
+// treats a legacy-inexact restore as a rollback FAILURE now that the
+// underlying wrapper fixed in this pass reports `success: false` for
+// that case. This proves "NPC follower rollback treats the result as
+// rollback failure" and "droid conversion/reconciliation/drift-repair do
+// the same" without needing to reload each heavy module through the
+// shim a second time — each caller's own dedicated test suite
+// (droid-phase4-foundry-shim.test.mjs, gm-existing-npc-allies-assignment.test.mjs)
+// already exercises its requireExact: true call site for real; this
+// confirms none of them silently narrowed their check to `.exact` only
+// (which would have masked this exact class of regression).
+{
+  const highRiskCallerFiles = [
+    '../scripts/domain/droids/droid-statblock-conversion-service.js',
+    '../scripts/domain/droids/droid-converted-system-reconciliation-service.js',
+    '../scripts/domain/droids/droid-installation-reconciler.js',
+    '../scripts/engine/crew/ally-assignment-service.js'
+  ];
+  for (const relPath of highRiskCallerFiles) {
+    const source = await readFile(new URL(relPath, import.meta.url), 'utf8');
+    const requireExactCallSites = [...source.matchAll(/restoreSnapshotExact\([^)]*requireExact:\s*true[^)]*\)/gs)];
+    assert.ok(requireExactCallSites.length >= 1, `${relPath} should have at least one restoreSnapshotExact(..., { requireExact: true }) call site`);
+    for (const call of requireExactCallSites) {
+      const windowEnd = Math.min(source.length, call.index + call[0].length + 400);
+      const window = source.slice(call.index, windowEnd);
+      assert.match(window, /\.success\b/, `${relPath}: a requireExact: true restoreSnapshotExact() call must check .success nearby, so a legacy-inexact (now correctly failing) result is treated as a rollback failure, not silently accepted`);
+    }
+  }
+}
+
 resetFoundryShimGlobals();
 console.log('TransactionEngine/StoreEngine legacy-caller snapshot-restoration migration coverage passed.');

@@ -44,6 +44,7 @@ async function freshService() {
 
 function snapshotOf(actor, overrides = {}) {
   return {
+    actorId: actor.id,
     schemaVersion: 2,
     scope: 'full-actor',
     name: actor.name,
@@ -785,6 +786,107 @@ function snapshotOf(actor, overrides = {}) {
   } finally {
     ActorEngine.createEmbeddedDocuments = originalCreate;
   }
+}
+
+// --- ROUND-3 CORRECTION tests (second exact-head audit findings) ---
+// The `requireExact` fail-closed path used to exempt legacy snapshots
+// (`&& !isLegacy`), and schema-v2 identity enforcement only rejected a
+// MISMATCHED actorId, never a MISSING one — a malformed schema-v2
+// snapshot with no actorId at all silently bypassed identity checking
+// entirely. These tests prove both gaps are closed.
+
+// 50. A legacy snapshot with requireExact: false still returns an
+// explicitly inexact, manual-review result — unchanged from before,
+// confirmed here alongside the requireExact: true case below so the two
+// policies are directly contrasted.
+{
+  const SnapshotService = await freshService();
+  const actor = actorLike({ flags: { swse: { livePreserved: true } } });
+  const legacySnapshot = { system: JSON.parse(JSON.stringify(actor.system)), name: actor.name, img: actor.img, items: [], effects: [] };
+  actor.system.hp.value = 999;
+  const result = await SnapshotService.restoreFromSnapshot(actor, legacySnapshot);
+  assert.equal(result.success, true);
+  assert.equal(result.exact, false);
+  assert.equal(result.usable, false, 'a legacy restore must never be reported usable');
+  assert.equal(result.requiresManualReview, true);
+}
+
+// 51. A legacy snapshot with requireExact: true now fails CLOSED — the
+// prior `&& !isLegacy` exemption let this slip through as
+// {success: true, exact: false}, which several high-risk rollback
+// callers (checking only `.success` on the assumption requireExact
+// guarantees exactness) would have silently accepted as a completed
+// rollback.
+{
+  const SnapshotService = await freshService();
+  const actor = actorLike({ items: [{ _id: 'item-1', id: 'item-1', name: 'Original' }] });
+  const legacySnapshot = { system: JSON.parse(JSON.stringify(actor.system)), name: actor.name, img: actor.img, items: [{ _id: 'item-1', id: 'item-1', name: 'Original' }], effects: [] };
+  actor.items[0].name = 'Changed';
+  const result = await SnapshotService.restoreFromSnapshot(actor, legacySnapshot, { requireExact: true });
+  assert.equal(result.success, false, 'requireExact: true must fail closed for a legacy snapshot, not return a soft success');
+  assert.equal(result.exact, false);
+  assert.equal(result.code, 'SNAPSHOT_LEGACY_INEXACT');
+  assert.equal(result.compensationAttempted, true, 'mutation began (the legacy restore itself mutated the actor), so bounded compensation must run');
+}
+
+// 52. requireExact: true also fails closed for a non-legacy, otherwise
+// mundane inexact result — re-confirms the `!isLegacy` exemption is
+// fully gone, not merely bypassed for the legacy case specifically.
+{
+  const SnapshotService = await freshService();
+  const actor = actorLike({ items: [{ _id: 'item-1', id: 'item-1', name: 'Original' }] });
+  const snapshot = snapshotOf(actor);
+  snapshot.items[0]._forceIdConflict = true;
+  actor.items = [];
+  const result = await SnapshotService.restoreFromSnapshot(actor, snapshot, { requireExact: true });
+  assert.equal(result.success, false);
+  assert.equal(result.code, 'SNAPSHOT_IDENTITY_MISMATCH');
+}
+
+// 53. A schema-v2 snapshot MISSING actorId entirely is rejected before
+// any mutation — the prior check only rejected a MISMATCHED actorId,
+// silently accepting a schema-v2 snapshot that omitted actorId
+// altogether (bypassing identity enforcement for a forged/malformed
+// snapshot rather than falling back to the (also identity-blind, but at
+// least explicitly documented) legacy path).
+{
+  const SnapshotService = await freshService();
+  const actor = actorLike({ id: 'actor-1' });
+  const snapshot = snapshotOf(actor);
+  delete snapshot.actorId;
+  actor.system.hp.value = 999;
+  const result = await SnapshotService.restoreFromSnapshot(actor, snapshot);
+  assert.equal(result.success, false);
+  assert.equal(result.code, 'SNAPSHOT_ACTOR_MISMATCH');
+  assert.equal(actor.system.hp.value, 999, 'no mutation may occur for a malformed schema-v2 snapshot missing actorId');
+}
+
+// 54. A schema-v2 snapshot with a correct, present actorId is still
+// accepted normally (re-confirms the new missing-actorId check is not
+// overbroad).
+{
+  const SnapshotService = await freshService();
+  const actor = actorLike({ id: 'actor-1' });
+  const snapshot = snapshotOf(actor);
+  actor.system.hp.value = 999;
+  const result = await SnapshotService.restoreFromSnapshot(actor, snapshot);
+  assert.equal(result.success, true);
+  assert.equal(actor.system.hp.value, 10);
+}
+
+// 55. A legacy snapshot (no schemaVersion at all) is still permitted to
+// omit actorId — the new requirement applies ONLY to schema-v2
+// snapshots, never to legacy ones (which have their own, separate,
+// always-inexact policy).
+{
+  const SnapshotService = await freshService();
+  const actor = actorLike({ id: 'actor-1' });
+  const legacySnapshot = { system: JSON.parse(JSON.stringify(actor.system)), name: actor.name, img: actor.img, items: [], effects: [] };
+  actor.system.hp.value = 999;
+  const result = await SnapshotService.restoreFromSnapshot(actor, legacySnapshot);
+  assert.equal(result.success, true, 'a legacy snapshot missing actorId must still restore normally, not be rejected as malformed schema-v2');
+  assert.equal(actor.system.hp.value, 10);
+  assert.equal(result.exact, false);
 }
 
 resetFoundryShimGlobals();
