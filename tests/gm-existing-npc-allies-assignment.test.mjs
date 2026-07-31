@@ -1100,4 +1100,224 @@ function slotsOf(owner) {
   await assert.rejects(() => AllyAssignmentService.convertToFollower(owner, npc, 's1', { source: 'test', requestToken: 'token-B', ...OK_DERIVATION }));
 }
 
+// ---------------------------------------------------------------------
+// ROUND-3 CORRECTION — reservation-cleanup results must be authoritative
+// (inspected, not merely try/caught), on both the success and failure
+// exit paths of convertToFollower().
+// ---------------------------------------------------------------------
+
+// 76. A successful conversion whose target-reservation release reports a
+// structured failure (token mismatch — which does NOT throw) must not be
+// reported as an ordinary clean success. The mechanical conversion
+// itself is NOT rolled back solely because of a cleanup failure — it is
+// already committed — but the caller must be told cleanup failed.
+{
+  resetFakeActorEngine();
+  asGM();
+  const owner = makeFakeActor({ id: 'owner-1', type: 'character', flags: { [SYSTEM_ID]: { followerSlots: [{ id: 's1', dependentKind: 'follower', createdActorId: null, templateChoices: ['utility'] }] } } });
+  const npc = makeFakeActor({ id: 'npc-1', type: 'npc' });
+  const { FollowerSlotService } = await import('../scripts/engine/crew/follower-slot-service.js');
+  const originalRelease = FollowerSlotService.releaseFollowerConversionTargetReservation;
+  FollowerSlotService.releaseFollowerConversionTargetReservation = async () => ({ success: false, code: 'FOLLOWER_TARGET_RESERVATION_TOKEN_MISMATCH', error: 'simulated token mismatch' });
+  try {
+    let thrown = null;
+    try {
+      await AllyAssignmentService.convertToFollower(owner, npc, 's1', { source: 'test', ...OK_DERIVATION });
+    } catch (err) {
+      thrown = err;
+    }
+    assert.ok(thrown, 'a cleanup failure on the success path must surface as a rejection, not a silent success');
+    assert.equal(thrown.code, 'FOLLOWER_CONVERSION_RESERVATION_CLEANUP_FAILED');
+    assert.equal(thrown.committed, true, 'the mechanical conversion is already committed and must not be reported as never having happened');
+    assert.equal(thrown.actor?.id, npc.id);
+    assert.equal(thrown.reservationCleanup.success, false);
+    assert.equal(thrown.reservationCleanup.targetRelease.success, false);
+    // The conversion itself DID commit — this is not a rollback failure.
+    assert.equal(owner.flags[SYSTEM_ID].followers.length, 1, 'the conversion must remain committed despite the cleanup failure');
+  } finally {
+    FollowerSlotService.releaseFollowerConversionTargetReservation = originalRelease;
+  }
+}
+
+// 77. A failed/rolled-back conversion whose target-reservation cleanup
+// ALSO fails preserves the ORIGINAL conversion error (never replaced by
+// the cleanup failure) while attaching the structured cleanup result.
+{
+  resetFakeActorEngine();
+  asGM();
+  const owner = makeFakeActor({ id: 'owner-1', type: 'character', flags: { [SYSTEM_ID]: { followerSlots: [{ id: 's1', dependentKind: 'follower', createdActorId: null, templateChoices: ['utility'] }] } } });
+  const npc = makeFakeActor({ id: 'npc-1', type: 'npc' });
+  const { FollowerSlotService } = await import('../scripts/engine/crew/follower-slot-service.js');
+  const originalRelease = FollowerSlotService.releaseFollowerConversionTargetReservation;
+  FollowerSlotService.releaseFollowerConversionTargetReservation = async () => ({ success: false, code: 'FOLLOWER_TARGET_RESERVATION_TOKEN_MISMATCH', error: 'simulated token mismatch' });
+  try {
+    let thrown = null;
+    try {
+      await AllyAssignmentService.convertToFollower(owner, npc, 's1', { source: 'test', applyFollowerDerivation: async () => false });
+    } catch (err) {
+      thrown = err;
+    }
+    assert.ok(thrown);
+    assert.match(thrown.message, /Follower derivation could not be applied/, 'the ORIGINAL conversion error must survive, never replaced by the cleanup failure');
+    assert.equal(thrown.reservationCleanup.success, false);
+    assert.equal(thrown.reservationCleanup.targetRelease.success, false);
+  } finally {
+    FollowerSlotService.releaseFollowerConversionTargetReservation = originalRelease;
+  }
+}
+
+// 78. Same as 77, but the SLOT reservation release is the one that fails
+// — the attached cleanup result must identify the slot release, not the
+// target release, as the failure.
+{
+  resetFakeActorEngine();
+  asGM();
+  const owner = makeFakeActor({ id: 'owner-1', type: 'character', flags: { [SYSTEM_ID]: { followerSlots: [{ id: 's1', dependentKind: 'follower', createdActorId: null, templateChoices: ['utility'] }] } } });
+  const npc = makeFakeActor({ id: 'npc-1', type: 'npc' });
+  const { FollowerSlotService } = await import('../scripts/engine/crew/follower-slot-service.js');
+  const originalRelease = FollowerSlotService.releaseFollowerSlotReservation;
+  FollowerSlotService.releaseFollowerSlotReservation = async () => ({ success: false, code: 'FOLLOWER_SLOT_RESERVATION_TOKEN_MISMATCH', error: 'simulated slot token mismatch' });
+  try {
+    let thrown = null;
+    try {
+      await AllyAssignmentService.convertToFollower(owner, npc, 's1', { source: 'test', applyFollowerDerivation: async () => false });
+    } catch (err) {
+      thrown = err;
+    }
+    assert.ok(thrown);
+    assert.match(thrown.message, /Follower derivation could not be applied/);
+    assert.equal(thrown.reservationCleanup.success, false);
+    assert.equal(thrown.reservationCleanup.slotRelease.success, false);
+    assert.equal(thrown.reservationCleanup.targetRelease.success, true, 'the target release itself succeeded — only the slot release failed');
+  } finally {
+    FollowerSlotService.releaseFollowerSlotReservation = originalRelease;
+  }
+}
+
+// 79. When BOTH releases fail on a rolled-back conversion, both failures
+// are captured in the attached cleanup result's `errors` array.
+{
+  resetFakeActorEngine();
+  asGM();
+  const owner = makeFakeActor({ id: 'owner-1', type: 'character', flags: { [SYSTEM_ID]: { followerSlots: [{ id: 's1', dependentKind: 'follower', createdActorId: null, templateChoices: ['utility'] }] } } });
+  const npc = makeFakeActor({ id: 'npc-1', type: 'npc' });
+  const { FollowerSlotService } = await import('../scripts/engine/crew/follower-slot-service.js');
+  const originalTargetRelease = FollowerSlotService.releaseFollowerConversionTargetReservation;
+  const originalSlotRelease = FollowerSlotService.releaseFollowerSlotReservation;
+  FollowerSlotService.releaseFollowerConversionTargetReservation = async () => ({ success: false, code: 'FOLLOWER_TARGET_RESERVATION_TOKEN_MISMATCH', error: 'simulated target mismatch' });
+  FollowerSlotService.releaseFollowerSlotReservation = async () => ({ success: false, code: 'FOLLOWER_SLOT_RESERVATION_TOKEN_MISMATCH', error: 'simulated slot mismatch' });
+  try {
+    let thrown = null;
+    try {
+      await AllyAssignmentService.convertToFollower(owner, npc, 's1', { source: 'test', applyFollowerDerivation: async () => false });
+    } catch (err) {
+      thrown = err;
+    }
+    assert.ok(thrown);
+    assert.equal(thrown.reservationCleanup.errors.length, 2, 'both release failures must be captured, not just the first');
+  } finally {
+    FollowerSlotService.releaseFollowerConversionTargetReservation = originalTargetRelease;
+    FollowerSlotService.releaseFollowerSlotReservation = originalSlotRelease;
+  }
+}
+
+// 80. releaseFollowerConversionTargetReservation() itself verifies its
+// own write: a deletion that "succeeds" per ActorEngine but does not
+// actually take effect (the token is still present on reread) must
+// report failure, not success — mirroring the acquisition side's own
+// post-write reread discipline.
+{
+  resetFakeActorEngine();
+  asGM();
+  const npc = makeFakeActor({ id: 'npc-1', type: 'npc' });
+  const { FollowerSlotService } = await import('../scripts/engine/crew/follower-slot-service.js');
+  const { buildTargetConversionReservation } = await import('../scripts/domain/followers/follower-slot-occupancy.js');
+  npc.flags[SYSTEM_ID].followerConversionReservation = buildTargetConversionReservation({ token: 'token-A', ownerActorId: 'owner-1', slotId: 's1' });
+  const { ActorEngine } = await import('/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js');
+  const original = ActorEngine.updateActor;
+  ActorEngine.updateActor = async () => npc; // simulates a write that reports success but does not actually delete the flag
+  try {
+    const result = await FollowerSlotService.releaseFollowerConversionTargetReservation(npc, 'token-A');
+    assert.equal(result.success, false, 'a release write that does not verifiably take effect must not report success');
+    assert.equal(result.code, 'FOLLOWER_TARGET_RESERVATION_RELEASE_UNVERIFIED');
+  } finally {
+    ActorEngine.updateActor = original;
+  }
+}
+
+// 81. releaseFollowerSlotReservation() has the same release-verification
+// discipline for the slot side.
+{
+  resetFakeActorEngine();
+  asGM();
+  const owner = makeFakeActor({ id: 'owner-1', type: 'character', flags: { [SYSTEM_ID]: { followerSlots: [{ id: 's1', dependentKind: 'follower', createdActorId: null, reservation: { token: 'token-A', expiresAt: Date.now() + 60000 } }] } } });
+  const { FollowerSlotService } = await import('../scripts/engine/crew/follower-slot-service.js');
+  const { ActorEngine } = await import('/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js');
+  const original = ActorEngine.updateActor;
+  ActorEngine.updateActor = async () => owner; // simulates a write that reports success but does not actually clear the reservation
+  try {
+    const result = await FollowerSlotService.releaseFollowerSlotReservation(owner, 's1', 'token-A');
+    assert.equal(result.success, false);
+    assert.equal(result.code, 'FOLLOWER_SLOT_RESERVATION_RELEASE_UNVERIFIED');
+  } finally {
+    ActorEngine.updateActor = original;
+  }
+}
+
+// 82. Rollback logging reflects reality: when the transaction's own
+// rollback fully succeeded AND cleanup succeeded, a warn-level "rolled
+// back successfully" is logged; when either is incomplete, an
+// error-level "rollback incomplete" is logged instead. Verified by
+// intercepting swseLogger directly (the real, shipped logger — not a
+// stub), since this is a wording/severity correctness requirement, not
+// a return-value one.
+{
+  resetFakeActorEngine();
+  asGM();
+  const owner = makeFakeActor({ id: 'owner-1', type: 'character', flags: { [SYSTEM_ID]: { followerSlots: [{ id: 's1', dependentKind: 'follower', createdActorId: null, templateChoices: ['utility'] }] } } });
+  const npc = makeFakeActor({ id: 'npc-1', type: 'npc' });
+  const { swseLogger } = await import('../scripts/utils/logger.js');
+  const { FollowerSlotService } = await import('../scripts/engine/crew/follower-slot-service.js');
+  const originalError = swseLogger.error;
+  const originalWarn = swseLogger.warn;
+  const errorCalls = [];
+  const warnCalls = [];
+  swseLogger.error = (...args) => { errorCalls.push(args); };
+  swseLogger.warn = (...args) => { warnCalls.push(args); };
+  try {
+    await assert.rejects(() => AllyAssignmentService.convertToFollower(owner, npc, 's1', { source: 'test', applyFollowerDerivation: async () => false }));
+    const rolledBackCleanly = warnCalls.some(args => /rolled back successfully/.test(args[0]));
+    const rollbackIncomplete = errorCalls.some(args => /rollback incomplete/.test(args[0]));
+    assert.equal(rolledBackCleanly, true, 'a fully clean rollback (no rollbackFailed, cleanup succeeded) must log the "rolled back successfully" wording');
+    assert.equal(rollbackIncomplete, false, 'a fully clean rollback must never ALSO log "rollback incomplete"');
+  } finally {
+    swseLogger.error = originalError;
+    swseLogger.warn = originalWarn;
+  }
+
+  // Now force an incomplete rollback via a cleanup failure and confirm
+  // the wording flips to the honest, non-success framing.
+  resetFakeActorEngine();
+  asGM();
+  const owner2 = makeFakeActor({ id: 'owner-1', type: 'character', flags: { [SYSTEM_ID]: { followerSlots: [{ id: 's1', dependentKind: 'follower', createdActorId: null, templateChoices: ['utility'] }] } } });
+  const npc2 = makeFakeActor({ id: 'npc-1', type: 'npc' });
+  const originalRelease = FollowerSlotService.releaseFollowerConversionTargetReservation;
+  FollowerSlotService.releaseFollowerConversionTargetReservation = async () => ({ success: false, code: 'FOLLOWER_TARGET_RESERVATION_TOKEN_MISMATCH', error: 'simulated' });
+  const errorCalls2 = [];
+  const warnCalls2 = [];
+  swseLogger.error = (...args) => { errorCalls2.push(args); };
+  swseLogger.warn = (...args) => { warnCalls2.push(args); };
+  try {
+    await assert.rejects(() => AllyAssignmentService.convertToFollower(owner2, npc2, 's1', { source: 'test', applyFollowerDerivation: async () => false }));
+    const claimedCleanRollback = warnCalls2.some(args => /rolled back successfully/.test(args[0]));
+    const flaggedIncomplete = errorCalls2.some(args => /rollback incomplete/.test(args[0]));
+    assert.equal(claimedCleanRollback, false, 'a rollback with a cleanup failure must never claim it was rolled back successfully');
+    assert.equal(flaggedIncomplete, true, 'a rollback with a cleanup failure must be logged as incomplete, at error severity');
+  } finally {
+    FollowerSlotService.releaseFollowerConversionTargetReservation = originalRelease;
+    swseLogger.error = originalError;
+    swseLogger.warn = originalWarn;
+  }
+}
+
 console.log('GM existing NPC allies assignment tests passed.');
