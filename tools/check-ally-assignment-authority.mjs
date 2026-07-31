@@ -820,13 +820,81 @@ function main() {
     // themselves are required here; whether they are actually
     // token-conditional is enforced by check 41 on follower-slot-service.js
     // (releaseFollowerSlotReservation's/releaseFollowerConversionTargetReservation's
-    // own bodies).
+    // own bodies). ROUND-3 CORRECTION: the release calls may now be made
+    // either directly within the failure branch, or via a shared helper
+    // function the branch calls — extracting a shared release helper
+    // (so its structured result can be inspected once, in one place) is
+    // legitimate; silently dropping one of the two release calls, inline
+    // or inside a helper, is not.
     const transactionFailureBranchMatch = convertBody.match(/if\s*\(\s*!transaction\.ok\s*\)\s*\{[\s\S]*?\n    \}/);
-    if (!transactionFailureBranchMatch || !/releaseFollowerSlotReservation\s*\(/.test(transactionFailureBranchMatch[0]) || !/releaseFollowerConversionTargetReservation\s*\(/.test(transactionFailureBranchMatch[0])) {
+    function releasesBothReservations(branchSource, fullSource) {
+      const hasSlotCall = /releaseFollowerSlotReservation\s*\(/.test(branchSource);
+      const hasTargetCall = /releaseFollowerConversionTargetReservation\s*\(/.test(branchSource);
+      if (hasSlotCall && hasTargetCall) return true;
+      const helperCallNames = [...branchSource.matchAll(/\b(\w+)\s*\(\s*\{/g)].map(m => m[1]);
+      for (const helperName of helperCallNames) {
+        const helperDefMatch = fullSource.match(new RegExp(`(?:async\\s+)?function\\s+${helperName}\\s*\\([\\s\\S]*?\\n\\}`));
+        if (helperDefMatch && /releaseFollowerSlotReservation\s*\(/.test(helperDefMatch[0]) && /releaseFollowerConversionTargetReservation\s*\(/.test(helperDefMatch[0])) {
+          return true;
+        }
+      }
+      return false;
+    }
+    if (!transactionFailureBranchMatch || !releasesBothReservations(transactionFailureBranchMatch[0], source)) {
       violations.push({
         check: '40: a failed conversion transaction must release both the slot and target reservations',
         file: relPath,
-        detail: 'expected the `if (!transaction.ok)` failure branch to call BOTH FollowerSlotService.releaseFollowerSlotReservation(...) AND FollowerSlotService.releaseFollowerConversionTargetReservation(...) — the transaction\'s own rollback never touches either reservation, since both were acquired before the transaction started'
+        detail: 'expected the `if (!transaction.ok)` failure branch to call BOTH FollowerSlotService.releaseFollowerSlotReservation(...) AND FollowerSlotService.releaseFollowerConversionTargetReservation(...) — directly, or via a shared helper function that itself calls both — the transaction\'s own rollback never touches either reservation, since both were acquired before the transaction started'
+      });
+    }
+
+    // Check 43 (ROUND-3): releaseFollowerConversionTargetReservation()'s
+    // STRUCTURED result must be inspected — neither release method
+    // throws on a token mismatch or an unverified release, both RETURN
+    // `{success: false, ...}`, so a caller that only try/catches and
+    // never reads `.success` silently discards that failure.
+    const releaseHelperMatch = source.match(/(?:async\s+)?function\s+releaseConversionReservations\s*\([\s\S]*?\n\}/);
+    if (!releaseHelperMatch || !/targetRelease\.success/.test(releaseHelperMatch[0])) {
+      violations.push({
+        check: '43: releaseFollowerConversionTargetReservation()\'s structured result must be inspected',
+        file: relPath,
+        detail: 'expected the reservation-cleanup helper to check targetRelease.success explicitly — releaseFollowerConversionTargetReservation() returns {success: false, ...} on a token mismatch or unverified release rather than throwing, and a try/catch alone silently discards that outcome'
+      });
+    }
+
+    // Check 44 (ROUND-3): releaseFollowerSlotReservation()'s structured
+    // result must likewise be inspected during conversion cleanup, not
+    // only caught if it happens to throw.
+    if (!releaseHelperMatch || !/slotRelease\.success/.test(releaseHelperMatch[0])) {
+      violations.push({
+        check: '44: releaseFollowerSlotReservation()\'s structured result must be inspected in conversion cleanup',
+        file: relPath,
+        detail: 'expected the reservation-cleanup helper to check slotRelease.success explicitly — releaseFollowerSlotReservation() returns {success: false, ...} on a token mismatch or unverified release rather than throwing, and a try/catch alone silently discards that outcome'
+      });
+    }
+
+    // Check 45 (ROUND-3): a successful conversion whose reservation
+    // cleanup fails must NOT be reported as an ordinary clean success —
+    // the success path (after the `if (!transaction.ok)` block, before
+    // the final `return targetActor`) must inspect the cleanup result
+    // and throw a distinct error when cleanup did not succeed.
+    const successPathMatch = convertBody.match(/\n    \}\n\n([\s\S]*?)return targetActor;/);
+    if (!successPathMatch || !/cleanupResult\.success/.test(successPathMatch[1]) || !/throw\s+cleanupError/.test(successPathMatch[1])) {
+      violations.push({
+        check: '45: a successful conversion must not swallow a reservation-cleanup failure',
+        file: relPath,
+        detail: 'expected the success path (after the failed-transaction branch, before `return targetActor`) to inspect the cleanup result\'s .success and throw a distinct cleanup-failure error when it is false — the mechanical conversion is already committed, so this does not roll it back, but the caller must be told cleanup failed rather than receiving an ordinary silent success'
+      });
+    }
+
+    // Check 46 (ROUND-3): rollback logging must not unconditionally claim
+    // a clean rollback — it must consult transaction.rollbackFailed (and
+    // the cleanup result) before choosing its wording/severity.
+    if (!transactionFailureBranchMatch || !/rollbackFailed/.test(transactionFailureBranchMatch[0])) {
+      violations.push({
+        check: '46: rollback logging must check transaction.rollbackFailed before claiming success',
+        file: relPath,
+        detail: 'expected the `if (!transaction.ok)` failure branch to reference transaction.rollbackFailed when deciding its log wording/severity — logging "rolled back" unconditionally would misreport an incomplete rollback (rollbackFailed: true, or a reservation-cleanup failure) as a clean one'
       });
     }
   }
@@ -866,7 +934,7 @@ function main() {
   console.log('='.repeat(72));
   console.log('  GM EXISTING NPC ASSIGNMENT AUTHORITY GUARD');
   console.log('='.repeat(72));
-  console.log(`\nScanned ${scanned.length} file(s) against 42 checks.\n`);
+  console.log(`\nScanned ${scanned.length} file(s) against 46 checks.\n`);
 
   if (violations.length === 0) {
     console.log('No violations found — existing-NPC assignment remains governed, GM-only, and correctly separates relationship-only assignment from mechanical conversion.');

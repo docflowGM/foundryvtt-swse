@@ -835,6 +835,49 @@ export function buildOwnershipGrantStep(ownerActor, targetActor, sourceTag) {
   };
 }
 
+/**
+ * ROUND-3 CORRECTION — release BOTH conversion reservations and return
+ * their STRUCTURED results, never relying on try/catch alone. Neither
+ * `FollowerSlotService.releaseFollowerConversionTargetReservation()` nor
+ * `releaseFollowerSlotReservation()` throws on a token mismatch or an
+ * unverified release — both RETURN `{success: false, code, error}` — so
+ * a caller that only wraps each call in try/catch and logs on a thrown
+ * exception silently discards that structured failure. This helper
+ * inspects both results explicitly and reports the caller an
+ * authoritative combined outcome. Calling both unconditionally is safe
+ * even when the slot reservation was already cleared elsewhere (e.g.
+ * atomically inside `finalizeReservedFollowerSlot()` on a successful
+ * conversion) — `alreadyCleared: true` is a success outcome.
+ *
+ * @param {{targetActor: Actor, ownerActor: Actor, slotId: string, token: string, source: string}} params
+ * @returns {Promise<{success: boolean, targetRelease: object, slotRelease: object, errors: string[]}>}
+ */
+async function releaseConversionReservations({ targetActor, ownerActor, slotId, token, source }) {
+  const errors = [];
+
+  let targetRelease;
+  try {
+    targetRelease = await FollowerSlotService.releaseFollowerConversionTargetReservation(targetActor, token, { source });
+  } catch (err) {
+    targetRelease = { success: false, code: 'FOLLOWER_TARGET_RESERVATION_RELEASE_THREW', error: err?.message ?? String(err) };
+  }
+  if (targetRelease.success !== true) {
+    errors.push(`target reservation release: ${targetRelease.error || targetRelease.code || 'unknown error'}`);
+  }
+
+  let slotRelease;
+  try {
+    slotRelease = await FollowerSlotService.releaseFollowerSlotReservation(ownerActor, slotId, token, { source });
+  } catch (err) {
+    slotRelease = { success: false, code: 'FOLLOWER_SLOT_RESERVATION_RELEASE_THREW', error: err?.message ?? String(err) };
+  }
+  if (slotRelease.success !== true) {
+    errors.push(`slot reservation release: ${slotRelease.error || slotRelease.code || 'unknown error'}`);
+  }
+
+  return { success: targetRelease.success === true && slotRelease.success === true, targetRelease, slotRelease, errors };
+}
+
 export class AllyAssignmentService {
   /**
    * Assign an existing world NPC Actor to ownerActor as a non-mechanical
@@ -1149,9 +1192,19 @@ export class AllyAssignmentService {
     } catch (err) {
       // Both reservations were already acquired above — release them
       // (token-conditionally) before propagating, so a snapshot-creation
-      // failure never leaves either reservation dangling.
-      await FollowerSlotService.releaseFollowerConversionTargetReservation(targetActor, requestToken, { source: sourceTag });
-      await FollowerSlotService.releaseFollowerSlotReservation(ownerActor, slotId, requestToken, { source: sourceTag });
+      // failure never leaves either reservation dangling. ROUND-3
+      // CORRECTION: the structured cleanup result is attached to the
+      // propagated error rather than discarded, same as the transaction
+      // failure path below.
+      const cleanupResult = await releaseConversionReservations({
+        targetActor, ownerActor, slotId, token: requestToken, source: sourceTag
+      });
+      if (!cleanupResult.success) {
+        err.reservationCleanup = cleanupResult;
+        swseLogger.error('[AllyAssignmentService] convertToFollower snapshot-creation failure — reservation cleanup also failed, manual review required.', {
+          owner: ownerActor.name, target: targetActor.name, reservationCleanup: cleanupResult
+        });
+      }
       throw err;
     }
 
@@ -1403,29 +1456,62 @@ export class AllyAssignmentService {
       // reservation flag is PROTECTED from that restore (see
       // snapshot-restoration-plan.js), so it can still be carrying our
       // token and must be released explicitly.
-      try {
-        await FollowerSlotService.releaseFollowerConversionTargetReservation(targetActor, requestToken, { source: `${sourceTag}:rollback` });
-      } catch (releaseErr) {
-        swseLogger.warn('[AllyAssignmentService] Failed to release target conversion reservation during conversion rollback cleanup.', { target: targetActor.name, error: releaseErr });
+      //
+      // ROUND-3 CORRECTION — the structured cleanup result is now
+      // INSPECTED, not merely try/caught: a token-mismatch or
+      // unverified-release outcome (neither of which throws) is attached
+      // to the thrown transaction error as `.reservationCleanup`, and the
+      // log wording reflects what actually happened rather than
+      // unconditionally claiming a clean rollback.
+      const cleanupResult = await releaseConversionReservations({
+        targetActor, ownerActor, slotId, token: requestToken, source: `${sourceTag}:rollback`
+      });
+      if (!cleanupResult.success) {
+        transaction.error.reservationCleanup = cleanupResult;
       }
-      try {
-        await FollowerSlotService.releaseFollowerSlotReservation(ownerActor, slotId, requestToken, { source: `${sourceTag}:rollback` });
-      } catch (releaseErr) {
-        swseLogger.warn('[AllyAssignmentService] Failed to release follower-slot reservation during conversion rollback cleanup.', { owner: ownerActor.name, slotId, error: releaseErr });
+      const rollbackFullyClean = transaction.rollbackFailed !== true && cleanupResult.success === true;
+      if (rollbackFullyClean) {
+        swseLogger.warn('[AllyAssignmentService] convertToFollower failed and was rolled back successfully', { owner: ownerActor.name, target: targetActor.name, error: transaction.error });
+      } else {
+        swseLogger.error('[AllyAssignmentService] convertToFollower failed — rollback incomplete, manual review required', {
+          owner: ownerActor.name, target: targetActor.name, error: transaction.error,
+          rollbackFailed: transaction.rollbackFailed === true, rollbackErrors: transaction.rollbackErrors,
+          reservationCleanupFailed: !cleanupResult.success, reservationCleanup: cleanupResult
+        });
       }
-      swseLogger.warn('[AllyAssignmentService] convertToFollower failed and was rolled back', { owner: ownerActor.name, target: targetActor.name, error: transaction.error });
       throw transaction.error;
     }
 
     // The conversion fully succeeded (including an optional ownership
-    // grant) — release the target reservation now, token-conditionally,
-    // the same governed way every other reservation exit path does. The
-    // slot's own reservation was already cleared atomically inside
-    // owner-relationship-commit's finalizeReservedFollowerSlot() call.
-    try {
-      await FollowerSlotService.releaseFollowerConversionTargetReservation(targetActor, requestToken, { source: sourceTag });
-    } catch (releaseErr) {
-      swseLogger.warn('[AllyAssignmentService] Failed to release target conversion reservation after a successful conversion.', { target: targetActor.name, error: releaseErr });
+    // grant) — release both reservations now, the same governed way
+    // every other reservation exit path does. The slot's own reservation
+    // was already cleared atomically inside owner-relationship-commit's
+    // finalizeReservedFollowerSlot() call, so releasing it again here is
+    // a defense-in-depth double-check (an `alreadyCleared: true` result
+    // is a success outcome), not redundant work.
+    //
+    // ROUND-3 CORRECTION — cleanup failure is no longer swallowed behind
+    // a warn log while still reporting an ordinary clean success. If
+    // either reservation could not be verifiably released, this throws a
+    // distinct post-commit cleanup error (the mechanical conversion
+    // itself is NOT rolled back solely because of a cleanup failure —
+    // that would require its own deliberate design/testing — but the
+    // caller must be told the NPC may remain reserved until TTL expiry).
+    const cleanupResult = await releaseConversionReservations({
+      targetActor, ownerActor, slotId, token: requestToken, source: sourceTag
+    });
+    if (!cleanupResult.success) {
+      const cleanupError = new Error(
+        `Conversion of ${targetActor.name} to a follower for ${ownerActor.name} committed successfully, but reservation cleanup failed (${cleanupResult.errors.join('; ')}) — the reservation will still expire via its own TTL, but manual review is recommended.`
+      );
+      cleanupError.code = 'FOLLOWER_CONVERSION_RESERVATION_CLEANUP_FAILED';
+      cleanupError.committed = true;
+      cleanupError.actor = targetActor;
+      cleanupError.reservationCleanup = cleanupResult;
+      swseLogger.error('[AllyAssignmentService] convertToFollower committed but reservation cleanup failed — manual review required.', {
+        owner: ownerActor.name, target: targetActor.name, reservationCleanup: cleanupResult
+      });
+      throw cleanupError;
     }
 
     swseLogger.log('[AllyAssignmentService] Converted existing NPC to follower', { owner: ownerActor.name, target: targetActor.name, slotId });

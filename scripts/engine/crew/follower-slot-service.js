@@ -396,6 +396,21 @@ export class FollowerSlotService {
       [`flags.${SYSTEM_ID}.${FOLLOWER_SLOTS_FLAG}`]: nextSlots
     }, { source: options.source ? `FollowerSlotService.releaseFollowerSlotReservation:${options.source}` : 'FollowerSlotService.releaseFollowerSlotReservation' });
 
+    // ROUND-3 CORRECTION — reread and verify the write actually landed,
+    // mirroring reserveFollowerSlot()'s own post-write discipline. A
+    // write that reports success but leaves this token's reservation
+    // still present (e.g. a concurrent write raced it) must not be
+    // reported as a clean release.
+    const rereadOwner = game.actors?.get?.(freshOwner.id) ?? freshOwner;
+    const rereadSlots = Array.isArray(rereadOwner.getFlag?.(SYSTEM_ID, FOLLOWER_SLOTS_FLAG))
+      ? rereadOwner.getFlag(SYSTEM_ID, FOLLOWER_SLOTS_FLAG)
+      : [];
+    const rereadSlot = rereadSlots.find(s => s?.id === slotId) ?? null;
+    const rereadReservation = resolveFollowerSlotReservation(rereadSlot);
+    if (rereadReservation && rereadReservation.token === token) {
+      return { success: false, code: 'FOLLOWER_SLOT_RESERVATION_RELEASE_UNVERIFIED', error: 'Follower-slot reservation release did not verify — the token is still present after the write.' };
+    }
+
     swseLogger.log('[FollowerSlotService] Released follower slot reservation', { owner: freshOwner.name, slotId });
     return { success: true };
   }
@@ -475,6 +490,17 @@ export class FollowerSlotService {
     await ActorEngine.updateActor(freshTarget, {
       [TARGET_CONVERSION_RESERVATION_DELETION_PATH]: null
     }, { source: options.source ? `FollowerSlotService.releaseFollowerConversionTargetReservation:${options.source}` : 'FollowerSlotService.releaseFollowerConversionTargetReservation' });
+
+    // ROUND-3 CORRECTION — reread and verify the deletion actually
+    // landed, mirroring reserveFollowerConversionTarget()'s own
+    // post-write discipline. A write that reports success but leaves
+    // this token's reservation still present must not be reported as a
+    // clean release.
+    const rereadTarget = game.actors?.get?.(freshTarget.id) ?? freshTarget;
+    const rereadReservation = resolveTargetConversionReservation(rereadTarget);
+    if (rereadReservation && rereadReservation.token === token) {
+      return { success: false, code: 'FOLLOWER_TARGET_RESERVATION_RELEASE_UNVERIFIED', error: 'Target conversion reservation release did not verify — the token is still present after the write.' };
+    }
 
     swseLogger.log('[FollowerSlotService] Released target conversion reservation', { target: freshTarget.name });
     return { success: true };
