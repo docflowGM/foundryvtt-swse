@@ -239,7 +239,7 @@ export class StockDroidImporterEngine {
       languages: deepClone(totals.languages || []),
       forcePoints: { value: totals.forcePoints || 0, max: totals.forcePoints || 0, die: '1d6', diceType: 'd6' },
       destinyPoints: { value: 0, max: 0 },
-      darkSideScore: totals.darkSideScore || 0,
+      darkSide: { value: totals.darkSideScore || 0, max: 0 },
       credits: 0,
       biography: this._buildBiography(customData, normalized)
     };

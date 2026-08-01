@@ -32,6 +32,7 @@ import { PoisonEngine } from "./scripts/engine/poison/poison-engine.js";
 import { RecurringDamageEngine } from "./scripts/engine/combat/recurring-damage-engine.js";
 import { SWSEGrappling } from "./scripts/combat/systems/grappling-system.js";
 import { repairActorForcePowerAbilityMeta, repairWorldForcePowerAbilityMeta } from "./scripts/engine/abilities/force-power/force-power-ability-meta.js";
+import { migrateDarkSidePoints } from "./scripts/migration/dark-side-points-migration.js";
 import { installItemEditorTrace } from "./scripts/debug/item-editor-trace.js";
 import { registerCompendiumDirectoryClickRepair } from "./scripts/core/compendium-directory-click-repair.js";
 import { DefenseCalculator } from "./scripts/actors/derived/defense-calculator.js";
@@ -226,6 +227,9 @@ Hooks.once("ready", async () => {
     await WorldDataLoader.autoLoad();
     repairWorldForcePowerAbilityMeta({ silent: true }).catch((err) => {
       console.warn('SWSE | Force power abilityMeta backfill failed:', err);
+    });
+    migrateDarkSidePoints({ silent: true }).catch((err) => {
+      console.warn('SWSE | Dark Side Points migration failed:', err);
     });
   }
 });

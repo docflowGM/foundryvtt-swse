@@ -23,6 +23,7 @@ import { TalentEffectEngine } from "/systems/foundryvtt-swse/scripts/engine/tale
 import { createEffectOnActor } from "/systems/foundryvtt-swse/scripts/core/document-api-v13.js";
 import { RollEngine } from "/systems/foundryvtt-swse/scripts/engine/roll-engine.js";
 import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
+import { DSPEngine } from "/systems/foundryvtt-swse/scripts/engine/darkside/dsp-engine.js";
 
 export class LightSideTalentMechanics {
 
@@ -514,7 +515,7 @@ export class LightSideTalentMechanics {
     }
 
     // Check if target has Dark Side Points
-    const targetDSP = target.system?.darkSideScore || target.system?.dsp || 0;
+    const targetDSP = DSPEngine.getValue(target);
 
     if (targetDSP < 1) {
       return baseDamage; // No bonus damage
@@ -539,7 +540,7 @@ export class LightSideTalentMechanics {
       return false;
     }
 
-    const targetDSP = target.system?.darkSideScore || target.system?.dsp || 0;
+    const targetDSP = DSPEngine.getValue(target);
     return targetDSP >= 1;
   }
 

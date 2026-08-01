@@ -404,7 +404,6 @@ async function applyResourceCosts(actor, detail) {
   if (fpCost > 0) updates['system.forcePoints.value'] = Math.max(0, before.forcePoints - fpCost);
   if (dspCost > 0) {
     updates['system.darkSide.value'] = before.darkSideScore + dspCost;
-    updates['system.darkSideScore'] = before.darkSideScore + dspCost;
   }
   if (creditCost > 0) {
     updates[creditUpdatePath(actor)] = Math.max(0, before.credits - creditCost);
@@ -427,7 +426,6 @@ async function revertResourceCosts(actor, resourceChanges) {
   if (Object.hasOwn(before, 'forcePoints')) updates['system.forcePoints.value'] = before.forcePoints;
   if (Object.hasOwn(before, 'darkSideScore')) {
     updates['system.darkSide.value'] = before.darkSideScore;
-    updates['system.darkSideScore'] = before.darkSideScore;
   }
   if (Object.hasOwn(before, 'credits')) updates[creditUpdatePath(actor)] = before.credits;
   if (Object.keys(updates).length) {

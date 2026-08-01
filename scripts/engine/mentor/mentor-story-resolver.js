@@ -139,7 +139,7 @@ export class MentorStoryResolver {
    * Uses DSP Engine for authoritative calculation
    */
   static _calculatePlayerDspPercent(actor) {
-    return DSPEngine.calculateSaturationByWisdom(actor);
+    return DSPEngine.getSaturationByWisdom(actor);
   }
 
   /**

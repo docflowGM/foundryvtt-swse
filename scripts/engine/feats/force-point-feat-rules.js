@@ -1,3 +1,5 @@
+import { DSPEngine } from "/systems/foundryvtt-swse/scripts/engine/darkside/dsp-engine.js";
+
 function normalizeName(value) {
   return String(value ?? '').trim().toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
 }
@@ -106,13 +108,7 @@ function stepDieSize(current, steps = 0, maxDie = 12) {
 }
 
 function darkSideScore(actor) {
-  const value = actor?.system?.darkSide?.value
-    ?? actor?.system?.darkSideScore?.value
-    ?? actor?.system?.darkSide
-    ?? actor?.system?.dss
-    ?? 0;
-  const number = Number(value);
-  return Number.isFinite(number) ? Math.max(0, number) : 0;
+  return DSPEngine.getValue(actor);
 }
 
 function isUseTheForceContext(context = {}) {

@@ -4,6 +4,7 @@ import { ForcePointsService } from "/systems/foundryvtt-swse/scripts/engine/forc
 import { createChatMessage } from "/systems/foundryvtt-swse/scripts/core/document-api-v13.js";
 import { DSPEngine } from "/systems/foundryvtt-swse/scripts/engine/darkside/dsp-engine.js";
 import { HouseRuleService } from "/systems/foundryvtt-swse/scripts/engine/system/HouseRuleService.js";
+import { SchemaAdapters } from "/systems/foundryvtt-swse/scripts/utils/schema-adapters.js";
 /**
  * Force Points utility functions for rolling and spending Force Points
  */
@@ -94,7 +95,7 @@ export class ForcePointsUtil {
     if (darkSideTemptation === 'narrative') {return false;}
 
     // Check if Dark Side Score <= half Wisdom
-    const wisdomScore = actor.system.attributes?.wis?.total || 10;
+    const wisdomScore = SchemaAdapters.getAbilityScore(actor, 'wis');
     const halfWisdom = Math.floor(wisdomScore / 2);
 
     return DSPEngine.getValue(actor) <= halfWisdom;

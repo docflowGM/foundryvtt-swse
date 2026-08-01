@@ -1,4 +1,5 @@
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
+import { DSPEngine } from "/systems/foundryvtt-swse/scripts/engine/darkside/dsp-engine.js";
 import { createEffectOnActor } from "/systems/foundryvtt-swse/scripts/core/document-api-v13.js";
 import { SWSEDialogV2 } from "/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js";
 import { showRollModifiersDialog } from "/systems/foundryvtt-swse/scripts/rolls/roll-config.js";
@@ -89,19 +90,7 @@ function getDefense(actor, key) {
 }
 
 function getDarkSideScore(actor) {
-  const candidates = [
-    actor?.system?.darkSideScore?.value,
-    actor?.system?.darkSide?.score,
-    actor?.system?.darkSide?.value,
-    actor?.system?.details?.darkSideScore,
-    actor?.system?.force?.darkSideScore,
-    actor?.system?.resources?.darkSide?.value
-  ];
-  for (const candidate of candidates) {
-    const n = Number(candidate);
-    if (Number.isFinite(n)) return n;
-  }
-  return 0;
+  return DSPEngine.getValue(actor);
 }
 
 function actorTokens() {

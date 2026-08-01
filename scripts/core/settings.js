@@ -75,37 +75,51 @@ game.settings.register('foundryvtt-swse', 'performanceDiagnostics', {
   });
 
   game.settings.register("foundryvtt-swse", "sithApprenticeMinimumDSP", {
-    name: "Sith Apprentice Minimum DSP Requirement",
+    name: "Sith Apprentice Dark Side Score Requirement",
     hint: "Determines the Dark Side Score requirement to qualify for Sith Apprentice prestige class.",
     scope: "world",
     config: true,
     type: String,
     choices: {
-      "minimum": "At least 1 DSP",
+      "minimum": "At least 1 (Dark Side Score)",
       "10percent": "10% of Wisdom",
       "25percent": "25% of Wisdom",
       "50percent": "50% of Wisdom",
       "75percent": "75% of Wisdom",
-      "100percent": "100% of Wisdom (Default - DSP = Wisdom)"
+      "100percent": "100% of Wisdom (Default - Dark Side Score = Wisdom)"
     },
     default: "100percent"
   });
 
   game.settings.register("foundryvtt-swse", "sithLordMinimumDSP", {
-    name: "Sith Lord Minimum DSP Requirement",
+    name: "Sith Lord Dark Side Score Requirement",
     hint: "Determines the Dark Side Score requirement to qualify for Sith Lord prestige class.",
     scope: "world",
     config: true,
     type: String,
     choices: {
-      "100percent": "100% of Wisdom (Default - DSP = Wisdom, RAW)",
+      "100percent": "100% of Wisdom (Default - Dark Side Score = Wisdom, RAW)",
       "75percent": "75% of Wisdom",
       "50percent": "50% of Wisdom",
       "25percent": "25% of Wisdom",
       "10percent": "10% of Wisdom",
-      "minimum": "At least 1 DSP"
+      "minimum": "At least 1 (Dark Side Score)"
     },
     default: "100percent"
+  });
+
+  // Dark Side Score edit-permission policy (Phase 3)
+  game.settings.register("foundryvtt-swse", "darkSideScoreEditPolicy", {
+    name: "Dark Side Score Editing",
+    hint: "Controls who may edit a character's Dark Side Score from the sheet.",
+    scope: "world",
+    config: true,
+    type: String,
+    choices: {
+      gmOnly: "Gamemaster Only",
+      ownerOrGM: "Actor Owners and Gamemasters"
+    },
+    default: "gmOnly"
   });
 
   SWSELogger.log('SWSE | Registering settings...');
@@ -352,6 +366,16 @@ game.settings.register('foundryvtt-swse', 'performanceDiagnostics', {
   game.settings.register('foundryvtt-swse', 'jsonBackedIdsMigration', {
     name: 'JSON-backed IDs Migration Version',
     hint: 'Tracks the version of the JSON-backed ID migration that has been run',
+    scope: 'world',
+    config: false,
+    type: String,
+    default: ''
+  });
+
+  // Dark Side Points canonical-storage migration tracking (Phase 2)
+  game.settings.register('foundryvtt-swse', 'darkSidePointsPhase2Migration', {
+    name: 'Dark Side Points Migration Version',
+    hint: 'Tracks the version of the Dark Side Points canonical-storage migration (Phase 2) that has been run',
     scope: 'world',
     config: false,
     type: String,

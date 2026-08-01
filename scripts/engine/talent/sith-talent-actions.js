@@ -3,6 +3,7 @@ import { SWSEDialogV2 } from "/systems/foundryvtt-swse/scripts/apps/dialogs/swse
 import { RollEngine } from "/systems/foundryvtt-swse/scripts/engine/roll-engine.js";
 import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
 import { getClassLevel, getTotalLevel } from "/systems/foundryvtt-swse/scripts/actors/derived/level-split.js";
+import { DSPEngine } from "/systems/foundryvtt-swse/scripts/engine/darkside/dsp-engine.js";
 import { openForceAlchemyWorkbench } from "/systems/foundryvtt-swse/scripts/apps/force-alchemy/force-alchemy-workbench-app.js";
 
 const NS = 'swse';
@@ -206,11 +207,10 @@ function forcePointLog(actor, reason) {
 async function increaseDarkSideScore(actor, amount = 1, reason = 'Dark Side talent use') {
   const delta = Math.max(0, Number(amount) || 0);
   if (!actor || delta <= 0) return { before: 0, after: 0, delta: 0 };
-  const before = Number(actor?.system?.darkSide?.value ?? actor?.system?.darkSideScore ?? 0) || 0;
-  const after = before + delta;
+  const before = DSPEngine.getValue(actor);
+  const after = DSPEngine.getNextValue(actor, delta);
   await ActorEngine.updateActor(actor, {
     'system.darkSide.value': after,
-    'system.darkSideScore': after,
     'system.dspLog': forcePointLog(actor, reason)
   }, { meta: { guardKey: 'sith-talent-dark-side-score' } });
   return { before, after, delta };

@@ -25,6 +25,7 @@ import { CANONICAL_SKILL_DEFS, canonicalizeSkillKey } from '/systems/foundryvtt-
 import { isFeatLikeItem, isForcePowerItem, isPlaceholderSheetItem, isTalentLikeItem } from '/systems/foundryvtt-swse/scripts/utils/item-classification.js';
 import { addItemEditorTrace, summarizeActorItems } from '/systems/foundryvtt-swse/scripts/debug/item-editor-trace.js';
 import { ImplantRules } from '/systems/foundryvtt-swse/scripts/engine/implants/ImplantRules.js';
+import { buildDarkSidePanelContext } from '/systems/foundryvtt-swse/scripts/sheets/v2/context/dark-side-panel-context.js';
 
 function safePanelNumber(value, fallback = 0) {
   let candidate = value;
@@ -945,67 +946,27 @@ export class PanelContextBuilder {
   }
 
   /**
-   * Build the dark side points panel context
+   * Build the Dark Side Score panel context
    *
    * Contract: darkSidePanel
-   * - value: number (current dark side points)
+   * - value: number (current Dark Side Score)
    * - max: number (maximum possible)
-   * - segments: [ { index, filled, color } ]
+   * - segments: [ { index, filled, current, color } ]
+   * - danger: boolean
    * - canEdit: boolean
+   * - readOnlyReason: string ('' when canEdit is true)
+   *
+   * Segment building and edit-authorization logic live in
+   * dark-side-panel-context.js — a shared production helper both this
+   * builder and tests use directly, not a test-only mirror.
    */
   buildDarkSidePanel() {
-    const dspValue = Number(this.system.darkSide?.value) || 0;
-    const dspMax = Number(this.system.darkSide?.max) || 20;
-
-    // Build segment array (each index is a clickable point)
-    const segments = [];
-    for (let i = 1; i <= dspMax; i++) {
-      segments.push({
-        index: i,
-        filled: i <= dspValue,
-        color: this._getDSPColor(i, dspMax)
-      });
-    }
-
-    // Danger state: when DSP is within 2 of max
-    const isDanger = dspValue >= dspMax - 2;
-
-    const panel = {
-      value: dspValue,
-      max: dspMax,
-      segments,
-      danger: isDanger,
-      canEdit: this.sheet.isEditable
-    };
+    const panel = buildDarkSidePanelContext(this.actor, { sheetEditable: this.sheet.isEditable });
 
     // Validate contract (strict mode throws, dev mode warns)
     this._validatePanelContext('darkSidePanel', panel);
 
     return panel;
-  }
-
-  /**
-   * Generate DSP color based on gradient from dark green (0) to dark red (max)
-   * Uses HSL for smooth color transition through the spectrum
-   *
-   * @private
-   * @param {number} index - Current segment index (1-based)
-   * @param {number} maxDSP - Maximum DSP value
-   * @returns {string} HSL color string
-   */
-  _getDSPColor(index, maxDSP) {
-    const ratio = index / maxDSP;
-
-    // Hue goes from green (120) to red (0)
-    const hue = 120 - (120 * ratio);
-
-    // Saturation stays high for vibrancy
-    const saturation = 80;
-
-    // Lightness: starts moderate (45%) and darkens toward max
-    const lightness = 45 - (ratio * 20);
-
-    return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
   }
 
   /**

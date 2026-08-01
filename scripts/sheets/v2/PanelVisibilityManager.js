@@ -38,6 +38,17 @@ export class PanelVisibilityManager extends BasePanelVisibilityManager {
       starshipManeuversPanel: {
         condition: (actor) => actor.type === 'vehicle' || actor.system?.isVehicle === true,
         reason: 'not a vehicle'
+      },
+      // Defensive — vehicles already never reach this panel-building path
+      // today (the sheet's vehicle-mode context short-circuits before
+      // PanelContextBuilder is instantiated), but this documents intent
+      // explicitly and guards against a future refactor merging that path
+      // back into the standard concept-context flow. Not gated on Force
+      // sensitivity — Dark Side Score is not limited to Force-sensitive
+      // actors.
+      darkSidePanel: {
+        condition: (actor) => actor?.type !== 'vehicle' && actor?.system?.isVehicle !== true,
+        reason: 'vehicle actors do not use Dark Side Score'
       }
     };
 

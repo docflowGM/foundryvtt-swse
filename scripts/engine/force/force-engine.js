@@ -5,6 +5,7 @@
 
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { SchemaAdapters } from "/systems/foundryvtt-swse/scripts/utils/schema-adapters.js";
+import { DSPEngine } from "/systems/foundryvtt-swse/scripts/engine/darkside/dsp-engine.js";
 
 export class ForceEngine {
   /**
@@ -61,8 +62,8 @@ export class ForceEngine {
    */
   static async gainDarkSidePoint(actor, reason = '') {
     // Read current value from canonical location
-    const currentValue = actor.system.darkSide?.value || 0;
-    const newValue = currentValue + 1;
+    const currentValue = DSPEngine.getValue(actor);
+    const newValue = DSPEngine.getNextValue(actor, 1);
 
     // Audit log
     const log = actor.system.dspLog || [];
@@ -75,7 +76,6 @@ export class ForceEngine {
     // Write to canonical location via ActorEngine
     await ActorEngine.updateActor(actor, {
       'system.darkSide.value': newValue,
-      'system.darkSideScore': newValue,
       'system.dspLog': log
     });
 

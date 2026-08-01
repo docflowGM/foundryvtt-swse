@@ -1,3 +1,5 @@
+import { SchemaAdapters } from "/systems/foundryvtt-swse/scripts/utils/schema-adapters.js";
+
 /**
  * Dark Side Points (DSP) Engine
  * PURE EVALUATION - Authoritative source for all dark side calculations
@@ -62,10 +64,35 @@ const DSP_CONFIG = {
   SATURATION_CAP: 1.0,      // Saturation never exceeds 100%
 };
 
+/**
+ * Check whether a dotted path exists as an own property chain on obj.
+ * Used to distinguish "field was actually persisted" from "field was
+ * filled in by template defaults at data-prep time" — template.json
+ * hydrates system.darkSide.value to 0 for every actor, so a truthiness
+ * check on the prepared value can never tell those two cases apart.
+ * No Foundry-global dependency, so this works identically at runtime
+ * and under plain-Node tests.
+ */
+export function hasOwnPath(obj, path) {
+  if (!obj || typeof obj !== 'object') return false;
+  let cur = obj;
+  for (const part of path.split('.')) {
+    if (cur == null || typeof cur !== 'object' || !Object.prototype.hasOwnProperty.call(cur, part)) {
+      return false;
+    }
+    cur = cur[part];
+  }
+  return true;
+}
+
 export const DSPEngine = {
   /**
    * Get current DSP value for actor
-   * Reads from canonical location: system.darkSide.value
+   * Canonical: system.darkSide.value, but only when that field was
+   * actually persisted (checked via actor._source, the raw pre-hydration
+   * document data). Falls back to legacy system.darkSideScore only when
+   * canonical data was never written — a persisted canonical 0 always
+   * wins over a stale legacy value.
    * PURE READ - NO MUTATION
    *
    * @param {Actor} actor - The character
@@ -73,13 +100,40 @@ export const DSPEngine = {
    */
   getValue(actor) {
     if (!actor) return 0;
-    return actor.system?.darkSide?.value ?? 0;
+
+    const sourceSystem = actor._source?.system ?? actor.system ?? {};
+    const canonicalPersisted = hasOwnPath(sourceSystem, 'darkSide.value');
+    if (canonicalPersisted) {
+      const canonical = Number(actor.system?.darkSide?.value);
+      return Number.isFinite(canonical) ? Math.max(0, canonical) : 0;
+    }
+
+    const legacy = Number(sourceSystem.darkSideScore ?? actor.system?.darkSideScore);
+    return Number.isFinite(legacy) ? Math.max(0, legacy) : 0;
+  },
+
+  /**
+   * Compute the DSP value that would result from applying a delta.
+   * Pure calculation only — callers still write the result through
+   * ActorEngine themselves. Single source of truth for "before + delta"
+   * so increment/decrement call sites never recompute this by hand.
+   * PURE MATH - NO MUTATION
+   *
+   * @param {Actor} actor - The character
+   * @param {number} delta - Amount to add (may be negative)
+   * @returns {number} Resulting DSP value, clamped to 0+
+   */
+  getNextValue(actor, delta = 1) {
+    return Math.max(0, this.getValue(actor) + (Number(delta) || 0));
   },
 
   /**
    * Get maximum DSP capacity for actor
    * Reads from canonical location: system.darkSide.max
    * Falls back to house rule calculation: wisdom × darkSideMaxMultiplier
+   * Always returns a positive integer — the numbered DSP track cannot
+   * represent a fractional maximum, and darkSideMaxMultiplier allows
+   * half-step values.
    * PURE READ - NO MUTATION
    *
    * House Rule Integration:
@@ -87,21 +141,21 @@ export const DSPEngine = {
    * - Formula: max = wisdom × multiplier
    *
    * @param {Actor} actor - The character
-   * @returns {number} Maximum DSP value
+   * @returns {number} Maximum DSP value (integer)
    */
   getMax(actor) {
     if (!actor) return DSP_CONFIG.DEFAULT_MAX;
 
     // Check for explicit storage
-    const explicit = actor.system?.darkSide?.max;
-    if (explicit && explicit > 0) {
-      return explicit;
+    const explicit = Number(actor.system?.darkSide?.max);
+    if (Number.isFinite(explicit) && explicit > 0) {
+      return Math.max(1, Math.ceil(explicit));
     }
 
     // Fall back to house rule calculation
-    const wisdom = actor.system?.attributes?.wis?.base ?? 10;
-    const multiplier = this._getHouseRuleMultiplier();
-    return Math.max(1, wisdom * multiplier);
+    const wisdom = SchemaAdapters.getAbilityScore(actor, 'wis');
+    const multiplier = Number(this._getHouseRuleMultiplier()) || 1;
+    return Math.max(1, Math.ceil(wisdom * multiplier));
   },
 
   /**
@@ -155,7 +209,7 @@ export const DSPEngine = {
     if (!actor) return 0;
 
     const value = this.getValue(actor);
-    const wisdom = actor.system?.attributes?.wis?.base ?? 10;
+    const wisdom = SchemaAdapters.getAbilityScore(actor, 'wis');
 
     if (wisdom === 0) return 0;
 
@@ -290,7 +344,7 @@ export const DSPEngine = {
 
     try {
       const setting = game?.settings?.get('foundryvtt-swse', 'sithApprenticeMinimumDSP') ?? '100percent';
-      const wisdom = actor.system?.attributes?.wis?.base ?? 10;
+      const wisdom = SchemaAdapters.getAbilityScore(actor, 'wis');
 
       switch (setting) {
         case 'minimum':
@@ -326,7 +380,7 @@ export const DSPEngine = {
 
     try {
       const setting = game?.settings?.get('foundryvtt-swse', 'sithLordMinimumDSP') ?? '100percent';
-      const wisdom = actor.system?.attributes?.wis?.base ?? 10;
+      const wisdom = SchemaAdapters.getAbilityScore(actor, 'wis');
 
       switch (setting) {
         case 'minimum':

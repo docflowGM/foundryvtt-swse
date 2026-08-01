@@ -335,7 +335,7 @@ export class NPCTemplateImporterEngine {
         damageThreshold: damageThreshold ?? hpValue,
         forcePoints: numberOrNull(statblock['Force Points']) ?? 0,
         destinyPoints: numberOrNull(statblock['Destiny Points']) ?? 0,
-        darkSideScore: numberOrNull(statblock['Dark Side Points']) ?? 0,
+        darkSide: { value: numberOrNull(statblock['Dark Side Points']) ?? 0, max: 0 },
         languages: normalizeLanguages(statblock.Languages),
         source: {
           mode: 'play',

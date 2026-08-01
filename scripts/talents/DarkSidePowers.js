@@ -15,6 +15,7 @@ import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-e
 import { createChatMessage, createEffectOnActor, createItemInActor } from "/systems/foundryvtt-swse/scripts/core/document-api-v13.js";
 import { getClassLevel } from "/systems/foundryvtt-swse/scripts/actors/derived/level-split.js";
 import { TalentEffectEngine } from "/systems/foundryvtt-swse/scripts/engine/talent/talent-effect-engine.js";
+import { DSPEngine } from "/systems/foundryvtt-swse/scripts/engine/darkside/dsp-engine.js";
 
 export class DarkSidePowers {
 
@@ -1983,12 +1984,12 @@ export async function _spendFP(actor, amount = 1) {
 }
 
 export function _getDSP(actor) {
-  return Number(actor?.system?.darkSide?.value ?? 0);
+  return DSPEngine.getValue(actor);
 }
 
 export async function _increaseDSP(actor, amount = 1) {
   const dsp = _getDSP(actor);
-  const next = dsp + amount;
+  const next = DSPEngine.getNextValue(actor, amount);
   await ActorEngine.updateActor(actor, { 'system.darkSide.value': next });
   return { before: dsp, after: next };
 }

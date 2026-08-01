@@ -44,13 +44,37 @@ function flattenObject(obj, parentPath = '') {
   return out;
 }
 
+/**
+ * Narrow reimplementation of Foundry's `foundry.utils.expandObject` —
+ * the inverse of flattenObject above. Dot-path keys (including a
+ * '-='-prefixed last segment, Foundry's deletion-key convention) expand
+ * into nested objects; the '-=' prefix is preserved literally as part of
+ * the key, matching real Foundry behavior (deletion is interpreted later,
+ * by Document#update() itself, not by expandObject).
+ */
+function expandObject(flatObj) {
+  const result = {};
+  for (const [key, value] of Object.entries(flatObj ?? {})) {
+    const parts = String(key).split('.');
+    let node = result;
+    for (let i = 0; i < parts.length - 1; i++) {
+      const part = parts[i];
+      if (typeof node[part] !== 'object' || node[part] === null) node[part] = {};
+      node = node[part];
+    }
+    node[parts[parts.length - 1]] = value;
+  }
+  return result;
+}
+
 function buildDefaultShim() {
   return {
     foundry: {
       utils: {
         deepClone: deepCloneJSON,
         mergeObject: (target = {}, source = {}) => ({ ...target, ...source }),
-        flattenObject
+        flattenObject,
+        expandObject
       }
     },
     game: {
