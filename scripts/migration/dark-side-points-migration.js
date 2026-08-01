@@ -2,7 +2,7 @@ import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { HouseRuleService } from "/systems/foundryvtt-swse/scripts/engine/system/HouseRuleService.js";
 import { SettingsHelper } from "/systems/foundryvtt-swse/scripts/utils/settings-helper.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
-import { hasOwnPath } from "/systems/foundryvtt-swse/scripts/engine/darkside/dsp-engine.js";
+import { hasOwnPath, parseLegacyDarkSideValue } from "/systems/foundryvtt-swse/scripts/engine/darkside/dsp-engine.js";
 
 /**
  * Dark Side Points canonical-storage migration (Phase 2).
@@ -33,16 +33,16 @@ function isMalformedLegacyObject(value) {
   return isPlainObject(value) && Number.isFinite(Number(value.value));
 }
 
-/** Recover a finite numeric DSP value from either a scalar or the malformed object shape. */
+/**
+ * Recover a finite numeric DSP value from either a scalar or the malformed
+ * object shape. Delegates the actual numeric parsing to the shared
+ * DSPEngine helper so the migration and the runtime read path never
+ * maintain two independent implementations of the same recovery logic;
+ * this function stays only for the migration-specific naming/shape
+ * classification callers here already rely on.
+ */
 function recoverLegacyValue(persistedDarkSideScore) {
-  if (isMalformedLegacyObject(persistedDarkSideScore)) {
-    return Number(persistedDarkSideScore.value);
-  }
-  if (!isPlainObject(persistedDarkSideScore)) {
-    const numeric = Number(persistedDarkSideScore);
-    if (Number.isFinite(numeric)) return numeric;
-  }
-  return null;
+  return parseLegacyDarkSideValue(persistedDarkSideScore);
 }
 
 function isFiniteNonNegativeInteger(persisted, target) {
@@ -64,6 +64,26 @@ function isFiniteNonNegativeInteger(persisted, target) {
  */
 export function computeDarkSidePointsMigration(actor) {
   const src = actor._source?.system ?? actor.system ?? {};
+
+  // Actors with neither persisted canonical nor legacy DSP data are out of
+  // scope entirely — this migration targets actors that contain legacy or
+  // canonical DSP data, not every actor in the world. Checked against the
+  // raw persisted source (never the template-hydrated prepared data) via
+  // the same hasOwnPath presence-check used everywhere else in this file.
+  const hasCanonicalData = hasOwnPath(src, 'darkSide')
+    || hasOwnPath(src, 'darkSide.value')
+    || hasOwnPath(src, 'darkSide.max');
+  const hasLegacyData = hasOwnPath(src, 'darkSideScore');
+  if (!hasCanonicalData && !hasLegacyData) {
+    return {
+      needsUpdate: false,
+      update: {},
+      malformedCanonicalRepaired: false,
+      legacyObjectRecovered: false,
+      legacyShapeCleaned: false,
+      skippedNoDSPData: true
+    };
+  }
 
   const canonicalValuePersisted = hasOwnPath(src, 'darkSide.value');
   const persistedValue = canonicalValuePersisted ? src.darkSide.value : undefined;
@@ -133,7 +153,7 @@ export function computeDarkSidePointsMigration(actor) {
     update['system.-=darkSideScore'] = null;
   }
 
-  return { needsUpdate, update, malformedCanonicalRepaired, legacyObjectRecovered, legacyShapeCleaned };
+  return { needsUpdate, update, malformedCanonicalRepaired, legacyObjectRecovered, legacyShapeCleaned, skippedNoDSPData: false };
 }
 
 /**
@@ -165,6 +185,7 @@ export async function migrateDarkSidePoints({ silent = false } = {}) {
     legacyObjectRecovered: 0,
     legacyShapeCleaned: 0,
     skipped: 0,
+    skippedNoDSPData: 0,
     failures: [],
     versionAdvanced: false
   };
@@ -173,6 +194,7 @@ export async function migrateDarkSidePoints({ silent = false } = {}) {
     const decision = computeDarkSidePointsMigration(actor);
     if (!decision.needsUpdate) {
       summary.skipped += 1;
+      if (decision.skippedNoDSPData) summary.skippedNoDSPData += 1;
       continue;
     }
 

@@ -10,6 +10,7 @@
 
 import { RollEngine } from "/systems/foundryvtt-swse/scripts/engine/roll-engine.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { DSPEngine } from "/systems/foundryvtt-swse/scripts/engine/darkside/dsp-engine.js";
 
 export class TalentEffectEngine {
 
@@ -2504,8 +2505,7 @@ export class TalentEffectEngine {
     }
 
     // --- Compute DSP change ---
-    const currentDSP = sourceActor.system.darkSide?.value ?? 0;
-    const newDSP = currentDSP + 1;
+    const newDSP = DSPEngine.getNextValue(sourceActor, 1);
 
     // --- Build talisman info ---
     const talismantInfo = {

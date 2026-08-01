@@ -85,4 +85,31 @@ assert.match(migration, /await HouseRuleService\.set\(SETTING_KEY, MIGRATION_VER
 //    just numeric-equality — guards against the numeric-string regression.
 assert.match(migration, /Number\.isInteger\(persisted\)/);
 
+// 9. Round 2: the migration's legacy-value recovery delegates to the
+//    shared DSPEngine helper instead of maintaining an independent
+//    numeric-parsing implementation, and DSPEngine.getValue() recovers
+//    the same malformed-object shape the migration already knew about.
+assert.match(dspEngine, /export function parseLegacyDarkSideValue\(/);
+assert.match(migration, /import \{ hasOwnPath, parseLegacyDarkSideValue \}/);
+assert.match(migration, /return parseLegacyDarkSideValue\(persistedDarkSideScore\);/);
+assert.match(dspEngine, /const legacy = parseLegacyDarkSideValue\(sourceSystem\.darkSideScore \?\? actor\.system\?\.darkSideScore\);/);
+
+// 10. Round 2: actors with neither canonical nor legacy DSP data in
+//     _source are out of the migration's scope entirely — no update, no
+//     ActorEngine call. Real behavioral coverage lives in
+//     tests/dsp-migration-behavior.test.mjs; this just confirms the guard
+//     clause and its summary counter exist in the shipped source.
+assert.match(migration, /const hasCanonicalData = hasOwnPath\(src, 'darkSide'\)/);
+assert.match(migration, /const hasLegacyData = hasOwnPath\(src, 'darkSideScore'\);/);
+assert.match(migration, /skippedNoDSPData: true/);
+assert.match(migration, /skippedNoDSPData: 0,/);
+
+// 11. Round 2: the two GM-gated ready-hook world passes are sequenced
+//     (awaited, independent try/catch each), not fired concurrently as
+//     unawaited .catch() chains. Full ordering/awaited coverage lives in
+//     tests/dsp-ready-hook-sequencing.test.mjs.
+assert.match(indexJs, /await repairWorldForcePowerAbilityMeta\(\{ silent: true \}\);/);
+assert.match(indexJs, /await migrateDarkSidePoints\(\{ silent: true \}\);/);
+assert.doesNotMatch(indexJs, /migrateDarkSidePoints\(\{ silent: true \}\)\.catch\(/);
+
 console.log('DSP migration consolidation static guards passed.');

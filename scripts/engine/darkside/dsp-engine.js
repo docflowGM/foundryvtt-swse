@@ -85,6 +85,28 @@ export function hasOwnPath(obj, path) {
   return true;
 }
 
+/**
+ * Parse a legacy darkSideScore value into a finite, non-negative number.
+ * Supports a plain numeric scalar (including numeric strings, matching
+ * existing compatibility policy) and the malformed poison-engine object
+ * shape ({ value: N }) the Phase 2 migration already knows how to repair —
+ * shared here so DSPEngine.getValue() recovers the same data the migration
+ * would, even before an actor has been migrated. Returns null when no
+ * usable value can be recovered (never guesses a default; callers decide
+ * the 0 fallback).
+ *
+ * @param {*} raw
+ * @returns {number|null}
+ */
+export function parseLegacyDarkSideValue(raw) {
+  if (raw !== null && typeof raw === 'object' && !Array.isArray(raw)) {
+    const fromObject = Number(raw.value);
+    return Number.isFinite(fromObject) ? Math.max(0, fromObject) : null;
+  }
+  const numeric = Number(raw);
+  return Number.isFinite(numeric) ? Math.max(0, numeric) : null;
+}
+
 export const DSPEngine = {
   /**
    * Get current DSP value for actor
@@ -108,8 +130,8 @@ export const DSPEngine = {
       return Number.isFinite(canonical) ? Math.max(0, canonical) : 0;
     }
 
-    const legacy = Number(sourceSystem.darkSideScore ?? actor.system?.darkSideScore);
-    return Number.isFinite(legacy) ? Math.max(0, legacy) : 0;
+    const legacy = parseLegacyDarkSideValue(sourceSystem.darkSideScore ?? actor.system?.darkSideScore);
+    return legacy !== null ? legacy : 0;
   },
 
   /**

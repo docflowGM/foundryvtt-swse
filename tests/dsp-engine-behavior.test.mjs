@@ -77,6 +77,43 @@ function settingsShim(values = {}) {
   assert.equal(DSPEngine.getValue(plainActor), 7, 'actors without _source use system directly for the presence check');
 }
 
+// ── getValue: malformed legacy object shape {value:N} is now recoverable ──
+// External review round 2: the old poison-engine bug persisted
+// darkSideScore as { value: N } instead of a plain scalar. Number({value:4})
+// is NaN, so before this fix getValue() silently returned 0 for such an
+// actor until the Phase 2 migration ran. parseLegacyDarkSideValue() shares
+// the same object-recovery logic the migration already had.
+{
+  installFoundryShimGlobals();
+  const malformedLegacyActor = {
+    _source: { system: { darkSideScore: { value: 4 } } },
+    system: { darkSideScore: { value: 4 }, darkSide: { value: 0, max: 0 } }
+  };
+  assert.equal(DSPEngine.getValue(malformedLegacyActor), 4, 'malformed legacy object {value:4} must be recovered, not read as 0');
+}
+
+// ── getValue: persisted canonical 0 still wins over a malformed legacy object ──
+{
+  installFoundryShimGlobals();
+  const actor = {
+    _source: { system: { darkSide: { value: 0 }, darkSideScore: { value: 4 } } },
+    system: { darkSide: { value: 0, max: 0 }, darkSideScore: { value: 4 } }
+  };
+  assert.equal(DSPEngine.getValue(actor), 0, 'canonical 0 still wins even when legacy is a malformed object');
+}
+
+// ── getNextValue: increment from a malformed legacy object starts from the
+//    recovered value, not 0 — proves a live writer using the fixed
+//    accessor would no longer regress a legacy actor's score ──
+{
+  installFoundryShimGlobals();
+  const malformedLegacyActor = {
+    _source: { system: { darkSideScore: { value: 4 } } },
+    system: { darkSideScore: { value: 4 }, darkSide: { value: 0, max: 0 } }
+  };
+  assert.equal(DSPEngine.getNextValue(malformedLegacyActor, 1), 5, 'must increment from the recovered 4, not from 0');
+}
+
 // ── getNextValue: real increment correctness for a legacy-only actor ────
 // This is what force-engine.js / sith-talent-actions.js / force-adept
 // -talent-actions.js now delegate to for their before/after computation —

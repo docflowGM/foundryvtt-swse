@@ -225,12 +225,16 @@ Hooks.once("ready", async () => {
 
   if (game.user.isGM) {
     await WorldDataLoader.autoLoad();
-    repairWorldForcePowerAbilityMeta({ silent: true }).catch((err) => {
+    try {
+      await repairWorldForcePowerAbilityMeta({ silent: true });
+    } catch (err) {
       console.warn('SWSE | Force power abilityMeta backfill failed:', err);
-    });
-    migrateDarkSidePoints({ silent: true }).catch((err) => {
+    }
+    try {
+      await migrateDarkSidePoints({ silent: true });
+    } catch (err) {
       console.warn('SWSE | Dark Side Points migration failed:', err);
-    });
+    }
   }
 });
 

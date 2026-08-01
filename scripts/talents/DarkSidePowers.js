@@ -1670,10 +1670,10 @@ export class DarkSidePowers {
     });
 
     // Get Dark Side Score (from canonical storage)
-    const dspBonus = actor.system.darkSide?.value || 0;
+    const dspBonus = DSPEngine.getValue(actor);
 
     // Increase DSP by 1 (write to canonical storage)
-    const newDSP = dspBonus + 1;
+    const newDSP = DSPEngine.getNextValue(actor, 1);
     await ActorEngine.updateActor(actor, {
       'system.darkSide.value': newDSP
     });

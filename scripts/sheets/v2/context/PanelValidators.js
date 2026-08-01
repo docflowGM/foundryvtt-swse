@@ -392,6 +392,11 @@ export function validateDarkSidePanel(panelData) {
     errors.push('darkSidePanel.readOnlyReason must be string');
   }
 
+  // Danger flag — a required registry key that was never actually validated
+  if (typeof panelData.danger !== 'boolean') {
+    errors.push('darkSidePanel.danger must be boolean');
+  }
+
   return {
     valid: errors.length === 0,
     errors

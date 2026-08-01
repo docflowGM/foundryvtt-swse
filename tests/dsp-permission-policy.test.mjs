@@ -146,5 +146,66 @@ function withGm(gm) {
   resetFoundryShimGlobals();
 }
 
+// getReadOnlyReason: sheetEditable:false returns the sheet-lock-specific
+// message regardless of policy or GM status — a GM viewing a locked sheet
+// should not be told "only the GM can edit this," since that's misleading
+// (the GM *can* edit DSP in general; this specific sheet is locked).
+{
+  installFoundryShimGlobals(settingsShim('gmOnly'));
+  assert.equal(
+    DarkSideScoreAccessPolicy.getReadOnlyReason(actor(), { ...withGm(true), sheetEditable: false }),
+    'This sheet is read-only.'
+  );
+  resetFoundryShimGlobals();
+}
+{
+  installFoundryShimGlobals(settingsShim('ownerOrGM'));
+  assert.equal(
+    DarkSideScoreAccessPolicy.getReadOnlyReason(actor({ isOwner: true }), { user: { isGM: false }, sheetEditable: false }),
+    'This sheet is read-only.'
+  );
+  resetFoundryShimGlobals();
+}
+
+// canEdit: an explicit testUserPermission() check on the actor is consulted
+// over the raw isOwner flag when present — proves the policy isn't fooled
+// by a caller-supplied user whose ownership only testUserPermission can
+// correctly determine (isOwner alone always reflects the *current* client
+// session, not the passed-in user).
+{
+  installFoundryShimGlobals(settingsShim('ownerOrGM'));
+  const grantingActor = actor({
+    isOwner: false, // the current session is NOT the owner
+    testUserPermission: (user, level) => level === 'OWNER' && user.id === 'other-user'
+  });
+  assert.equal(
+    DarkSideScoreAccessPolicy.canEdit(grantingActor, { user: { id: 'other-user', isGM: false }, sheetEditable: true }),
+    true,
+    'testUserPermission granting OWNER for the supplied user must be honored even though isOwner is false'
+  );
+  const denyingActor = actor({
+    isOwner: true, // the current session IS the owner, but the supplied user is a different one
+    testUserPermission: (user, level) => level === 'OWNER' && user.id === 'other-user'
+  });
+  assert.equal(
+    DarkSideScoreAccessPolicy.canEdit(denyingActor, { user: { id: 'someone-else', isGM: false }, sheetEditable: true }),
+    false,
+    'testUserPermission denying OWNER for the supplied user must be honored even though isOwner is true'
+  );
+  resetFoundryShimGlobals();
+}
+
+// canEdit: a lightweight test double with no testUserPermission function
+// still falls back to isOwner, unchanged from before this fix.
+{
+  installFoundryShimGlobals(settingsShim('ownerOrGM'));
+  assert.equal(
+    DarkSideScoreAccessPolicy.canEdit(actor({ isOwner: true }), { user: { isGM: false }, sheetEditable: true }),
+    true,
+    'actors without testUserPermission must still work via the isOwner fallback'
+  );
+  resetFoundryShimGlobals();
+}
+
 resetFoundryShimGlobals();
 console.log('DSP permission policy tests passed.');

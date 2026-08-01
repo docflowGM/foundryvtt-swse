@@ -9,6 +9,21 @@ import { HouseRuleService } from "/systems/foundryvtt-swse/scripts/engine/system
  * panel-context builder nor the click handler re-implements this logic
  * independently.
  */
+
+/**
+ * Determine ownership for the given user. Prefers Foundry's real
+ * permission check (actor.testUserPermission(user, 'OWNER')), which
+ * respects a caller-supplied `user` rather than the current client
+ * session; falls back to actor.isOwner for lightweight test doubles that
+ * don't implement testUserPermission.
+ */
+function isOwnerFor(actor, user) {
+  if (typeof actor?.testUserPermission === 'function' && user) {
+    return actor.testUserPermission(user, 'OWNER') === true;
+  }
+  return actor?.isOwner === true;
+}
+
 export const DarkSideScoreAccessPolicy = {
   /**
    * @param {Actor} actor
@@ -25,7 +40,7 @@ export const DarkSideScoreAccessPolicy = {
 
     const resolvedPolicy = policy ?? HouseRuleService.getString('darkSideScoreEditPolicy', 'gmOnly');
     const validPolicy = resolvedPolicy === 'ownerOrGM' ? 'ownerOrGM' : 'gmOnly';
-    return validPolicy === 'ownerOrGM' && actor.isOwner === true;
+    return validPolicy === 'ownerOrGM' && isOwnerFor(actor, user);
   },
 
   /**
@@ -35,6 +50,10 @@ export const DarkSideScoreAccessPolicy = {
    */
   getReadOnlyReason(actor, options = {}) {
     if (this.canEdit(actor, options)) return '';
+
+    if (options.sheetEditable === false) {
+      return 'This sheet is read-only.';
+    }
 
     const resolvedPolicy = options.policy ?? HouseRuleService.getString('darkSideScoreEditPolicy', 'gmOnly');
     const validPolicy = resolvedPolicy === 'ownerOrGM' ? 'ownerOrGM' : 'gmOnly';

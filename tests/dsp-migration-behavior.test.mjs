@@ -178,18 +178,48 @@ function freshGm(actors) {
 
 // ── migrateDarkSidePoints: full world-pass behavioral coverage ──────────
 
-// 13. mixed collection: only actors requiring migration are updated
+// 12b. no persisted DSP data at all (neither canonical nor legacy) → skipped,
+//      not migrated to {value:0, max:0} — the migration's stated scope is
+//      "actors that contain legacy or canonical DSP data," not every actor.
+{
+  const actor = actorWithSource({});
+  const d = computeDarkSidePointsMigration(actor);
+  assert.equal(d.needsUpdate, false, 'an actor with no darkSide and no darkSideScore in _source must be skipped');
+  assert.equal(d.skippedNoDSPData, true);
+  assert.deepEqual(d.update, {});
+}
+
+// 13. mixed collection: only actors requiring migration are updated; a
+//     third actor with no DSP data at all is counted under
+//     skippedNoDSPData and never receives an ActorEngine call
 {
   const needsWork = actorWithSource({ darkSideScore: 5 });
   const alreadyClean = actorWithSource({ darkSide: { value: 2, max: 10 } });
-  freshGm([needsWork, alreadyClean]);
+  const noData = actorWithSource({});
+  freshGm([needsWork, alreadyClean, noData]);
   const summary = await migrateDarkSidePoints({ silent: true });
   assert.equal(summary.migrated, 1);
-  assert.equal(summary.skipped, 1);
+  assert.equal(summary.skipped, 2);
+  assert.equal(summary.skippedNoDSPData, 1);
   assert.equal(needsWork.system.darkSide.value, 5);
   const updateCalls = fakeActorEngineCallLog.filter(c => c.method === 'updateActor');
-  assert.equal(updateCalls.length, 1);
+  assert.equal(updateCalls.length, 1, 'the no-data actor must never generate an ActorEngine call');
   assert.equal(updateCalls[0].actorId, needsWork.id);
+  resetFoundryShimGlobals();
+}
+
+// 13b. second run stays a no-op for the no-data actor too
+{
+  const needsWork = actorWithSource({ darkSideScore: 5 });
+  const noData = actorWithSource({});
+  freshGm([needsWork, noData]);
+  await migrateDarkSidePoints({ silent: true });
+  syncSourceFromSystem(needsWork);
+
+  resetFakeActorEngine();
+  const summary2 = await migrateDarkSidePoints({ silent: true });
+  assert.equal(summary2, null, 'already-migrated version short-circuits the whole pass');
+  assert.equal(fakeActorEngineCallLog.length, 0);
   resetFoundryShimGlobals();
 }
 

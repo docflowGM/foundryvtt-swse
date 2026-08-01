@@ -70,8 +70,10 @@ assert.doesNotMatch(darkSidePanelContext, /\|\| 20/);
 assert.match(darkSidePanelContext, /for \(let i = 0; i <= max; i\+\+\)/);
 
 // 5. PanelValidators' segment-count invariant accounts for the added
-//    zero segment (max + 1 entries, not max).
+//    zero segment (max + 1 entries, not max). Round 2: danger is a
+//    required registry key that was never actually validated as boolean.
 assert.match(panelValidators, /panelData\.segments\.length !== panelData\.max \+ 1/);
+assert.match(panelValidators, /typeof panelData\.danger !== 'boolean'/);
 
 // 6. character-sheet.js: dead duplicate DSP calc removed; click handler
 //    delegates to the extracted, independently-tested dsp-click-handler.js
@@ -87,6 +89,10 @@ assert.match(handlerBody, /event\.currentTarget\?\.dataset\?\.index/);
 assert.match(handlerBody, /handleSetDarkSideScore\(this\.actor,/);
 assert.doesNotMatch(handlerBody, /prompt\(/);
 assert.match(characterSheet, /import \{ handleSetDarkSideScore \} from/);
+// Round 2 cleanup: the DSPEngine import became dead after the handler
+// extraction (the only remaining occurrence of the name was the import
+// itself) — must stay removed, not just unused.
+assert.doesNotMatch(characterSheet, /DSPEngine/, 'character-sheet.js must not reference DSPEngine at all — the handler extraction moved that logic to dsp-click-handler.js');
 
 // 7. Importers populate the canonical nested field, not just the legacy
 //    flat mirror; the droid normalizer prefers canonical when re-reading.
@@ -117,9 +123,12 @@ assert.doesNotMatch(forcePoints, /attributes\?\.wis\?\.total/);
 
 // 11. Dual-writers compute before/after through DSPEngine instead of
 //     reimplementing the canonical-zero-vs-legacy fallback inline.
+// Round 2 cleanup: gainDarkSidePoint() no longer computes a separate
+// "before" value at all (it was unused dead code) — only getNextValue()
+// is called, so getValue() is no longer expected to appear here.
 assert.match(forceEngine, /import \{ DSPEngine \}/);
-assert.match(forceEngine, /DSPEngine\.getValue\(actor\)/);
 assert.match(forceEngine, /DSPEngine\.getNextValue\(actor, 1\)/);
+assert.doesNotMatch(forceEngine, /const currentValue = DSPEngine\.getValue\(actor\);/, 'the unused currentValue local must stay removed');
 assert.match(sithTalentActions, /import \{ DSPEngine \}/);
 assert.match(sithTalentActions, /DSPEngine\.getNextValue\(actor, delta\)/);
 assert.doesNotMatch(sithTalentActions, /actor\?\.system\?\.darkSide\?\.value \?\? actor\?\.system\?\.darkSideScore/);

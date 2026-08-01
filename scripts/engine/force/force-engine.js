@@ -61,8 +61,7 @@ export class ForceEngine {
    * Routes through ActorEngine for audit log + validation
    */
   static async gainDarkSidePoint(actor, reason = '') {
-    // Read current value from canonical location
-    const currentValue = DSPEngine.getValue(actor);
+    // Compute next value from canonical location
     const newValue = DSPEngine.getNextValue(actor, 1);
 
     // Audit log
