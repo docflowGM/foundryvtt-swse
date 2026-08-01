@@ -13,7 +13,7 @@ import { installFoundryShimGlobals, resetFoundryShimGlobals } from './helpers/fo
 
 registerFoundryPathLoader();
 
-const { DSPEngine, parseLegacyDarkSideValue } = await import('/systems/foundryvtt-swse/scripts/engine/darkside/dsp-engine.js');
+const { DSPEngine, parseLegacyDarkSideValue, parseCanonicalDarkSideNumber } = await import('/systems/foundryvtt-swse/scripts/engine/darkside/dsp-engine.js');
 
 function settingsShim(values = {}) {
   return {
@@ -173,6 +173,78 @@ function settingsShim(values = {}) {
   assert.equal(DSPEngine.getValue(actor), 0);
 }
 
+// ── getValue: round 4 — every broad-coercion trap Number(x) would have
+//    silently accepted as "valid" canonical data (null -> 0, '' -> 0,
+//    true -> 1, [4] -> 4, {} -> NaN-ish) must instead be treated as
+//    malformed and fall through to the legacy value, not win as if it
+//    were a real persisted 0/1/4. Each case below is paired with a
+//    legacy scalar of 7 and must return 7. ────────────────────────────
+{
+  const malformedCanonicalShapes = [
+    null,
+    '',
+    '   ',
+    true,
+    false,
+    [4],
+    {}
+  ];
+  for (const malformed of malformedCanonicalShapes) {
+    installFoundryShimGlobals();
+    const actor = {
+      _source: { system: { darkSide: { value: malformed }, darkSideScore: 7 } },
+      system: { darkSide: { value: 0, max: 0 }, darkSideScore: 7 }
+    };
+    assert.equal(
+      DSPEngine.getValue(actor),
+      7,
+      `malformed canonical ${JSON.stringify(malformed)} must not block legacy 7`
+    );
+  }
+
+  // A persisted-object canonical (not one of the above scalar traps) must
+  // also fall through to legacy — an object was never a valid canonical
+  // shape to begin with.
+  installFoundryShimGlobals();
+  const objectCanonicalActor = {
+    _source: { system: { darkSide: { value: { value: 4 } }, darkSideScore: 7 } },
+    system: { darkSide: { value: 0, max: 0 }, darkSideScore: 7 }
+  };
+  assert.equal(DSPEngine.getValue(objectCanonicalActor), 7, 'an object as the canonical value itself must fall through to legacy');
+}
+
+// canonical numeric string "4" + legacy 7 -> 4 (numeric strings remain
+// readable for compatibility, unlike the other coercion traps above)
+{
+  installFoundryShimGlobals();
+  const actor = {
+    _source: { system: { darkSide: { value: '4' }, darkSideScore: 7 } },
+    system: { darkSide: { value: '4', max: 0 }, darkSideScore: 7 }
+  };
+  assert.equal(DSPEngine.getValue(actor), 4);
+}
+
+// canonical negative -1 + legacy 7 -> 7 (negative canonical is malformed, not clamped)
+{
+  installFoundryShimGlobals();
+  const actor = {
+    _source: { system: { darkSide: { value: -1 }, darkSideScore: 7 } },
+    system: { darkSide: { value: -1, max: 0 }, darkSideScore: 7 }
+  };
+  assert.equal(DSPEngine.getValue(actor), 7);
+}
+
+// prepared value malformed but persisted canonical valid (4) -> safely
+// falls back to the persisted numeric value, not the malformed prepared one
+{
+  installFoundryShimGlobals();
+  const actor = {
+    _source: { system: { darkSide: { value: 4 } } },
+    system: { darkSide: { value: 'somehow-corrupted-during-prep', max: 0 } }
+  };
+  assert.equal(DSPEngine.getValue(actor), 4, 'a malformed prepared value must not override a valid persisted canonical value');
+}
+
 // ── parseLegacyDarkSideValue: direct parser contract tests — round 3 ────
 {
   const cases = [
@@ -206,6 +278,52 @@ function settingsShim(values = {}) {
   // policy this helper commits to (matches DSP's "cannot go below 0").
   assert.equal(parseLegacyDarkSideValue(-3), 0);
   assert.equal(parseLegacyDarkSideValue({ value: -3 }), 0);
+}
+
+// ── parseLegacyDarkSideValue: nested object values are rejected — round 4 ──
+// The contract is "exactly one layer of plain-object wrapping." The
+// object's own `value` must itself be a scalar (number or numeric
+// string); a nested object under `value` is not unwrapped recursively.
+{
+  assert.equal(parseLegacyDarkSideValue({ value: { value: 4 } }), null, 'a nested object value must not be recursively unwrapped');
+  assert.equal(parseLegacyDarkSideValue({ value: { value: '4' } }), null);
+  assert.equal(parseLegacyDarkSideValue({ value: [4] }), null, 'an array as the value must also be rejected, not coerced');
+}
+
+// ── parseCanonicalDarkSideNumber: direct parser contract tests — round 4 ──
+// Canonical parsing is stricter than legacy parsing in one respect:
+// negative values are rejected outright (null), not clamped to 0 — a
+// negative persisted canonical value is malformed data that must fall
+// through to legacy recovery in getValue(), not be silently zeroed here.
+{
+  const cases = [
+    [4, 4],
+    [0, 0],
+    ['4', 4],
+    [' 4 ', 4],
+    ['0', 0],
+    ['', null],
+    ['   ', null],
+    [null, null],
+    [undefined, null],
+    [true, null],
+    [false, null],
+    [[4], null],
+    [{}, null],
+    [{ value: 4 }, null, 'canonical parsing does not unwrap objects at all — that is a legacy-only compatibility shape'],
+    [-1, null, 'canonical parsing rejects negative values outright, unlike the legacy parser'],
+    [-0.5, null],
+    [NaN, null],
+    [Infinity, null],
+    [-Infinity, null]
+  ];
+  for (const [input, expected, msg] of cases) {
+    assert.equal(
+      parseCanonicalDarkSideNumber(input),
+      expected,
+      msg ?? `parseCanonicalDarkSideNumber(${JSON.stringify(input)}) should be ${expected}`
+    );
+  }
 }
 
 // ── getNextValue: real increment correctness for a legacy-only actor ────

@@ -2,7 +2,7 @@ import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { HouseRuleService } from "/systems/foundryvtt-swse/scripts/engine/system/HouseRuleService.js";
 import { SettingsHelper } from "/systems/foundryvtt-swse/scripts/utils/settings-helper.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
-import { hasOwnPath, parseLegacyDarkSideValue } from "/systems/foundryvtt-swse/scripts/engine/darkside/dsp-engine.js";
+import { hasOwnPath, parseLegacyDarkSideValue, parseCanonicalDarkSideNumber } from "/systems/foundryvtt-swse/scripts/engine/darkside/dsp-engine.js";
 
 /**
  * Dark Side Points canonical-storage migration (Phase 2).
@@ -68,15 +68,21 @@ export function computeDarkSidePointsMigration(actor) {
     };
   }
 
+  // parseCanonicalDarkSideNumber() rejects the broad Number(x) coercion
+  // traps (null -> 0, '' -> 0, true -> 1, [4] -> 4) that would otherwise
+  // let malformed canonical data masquerade as valid — the same strict
+  // parser DSPEngine.getValue() uses, so "what counts as a valid
+  // canonical number" is one decision shared by the runtime read path
+  // and the migration, not two independently-drifting checks.
   const canonicalValuePersisted = hasOwnPath(src, 'darkSide.value');
   const persistedValue = canonicalValuePersisted ? src.darkSide.value : undefined;
-  const canonicalValueNumeric = Number(persistedValue);
-  const canonicalValueFiniteNonNegative = Number.isFinite(canonicalValueNumeric) && canonicalValueNumeric >= 0;
+  const canonicalValueParsed = parseCanonicalDarkSideNumber(persistedValue);
+  const canonicalValueValid = canonicalValueParsed !== null;
 
   const canonicalMaxPersisted = hasOwnPath(src, 'darkSide.max');
   const persistedMax = canonicalMaxPersisted ? src.darkSide.max : undefined;
-  const canonicalMaxNumeric = Number(persistedMax);
-  const canonicalMaxFiniteNonNegative = Number.isFinite(canonicalMaxNumeric) && canonicalMaxNumeric >= 0;
+  const canonicalMaxParsed = parseCanonicalDarkSideNumber(persistedMax);
+  const canonicalMaxValid = canonicalMaxParsed !== null;
 
   const persistedDarkSideScore = hasOwnPath(src, 'darkSideScore') ? src.darkSideScore : undefined;
 
@@ -94,15 +100,16 @@ export function computeDarkSidePointsMigration(actor) {
   let targetValue;
   let malformedCanonicalRepaired = false;
 
-  if (canonicalValuePersisted && canonicalValueFiniteNonNegative) {
+  if (canonicalValuePersisted && canonicalValueValid) {
     // Valid persisted canonical value — preserve it (nearest-integer
     // normalization only; never overwritten by legacy data, even a
     // persisted 0 wins over a nonzero legacy scalar).
-    targetValue = Math.max(0, Math.round(canonicalValueNumeric));
+    targetValue = Math.max(0, Math.round(canonicalValueParsed));
   } else {
-    // Either canonical is absent, or it's present but malformed
-    // (negative/NaN/Infinity/non-numeric) — in both cases, use the
-    // already-computed legacy recovery result, falling back to 0.
+    // Either canonical is absent, or it's present but malformed (null,
+    // blank string, boolean, array, object, negative/NaN/Infinity) — in
+    // both cases, use the already-computed legacy recovery result,
+    // falling back to 0.
     targetValue = recoveredLegacy !== null ? Math.max(0, Math.round(recoveredLegacy)) : 0;
     if (canonicalValuePersisted) malformedCanonicalRepaired = true;
   }
@@ -110,8 +117,8 @@ export function computeDarkSidePointsMigration(actor) {
   // Missing/malformed max always normalizes to 0 — the sentinel
   // DSPEngine.getMax() already treats as "derive from Wisdom x
   // multiplier." Never persist a Wisdom-derived snapshot here.
-  const targetMax = (canonicalMaxPersisted && canonicalMaxFiniteNonNegative)
-    ? Math.max(0, Math.ceil(canonicalMaxNumeric))
+  const targetMax = (canonicalMaxPersisted && canonicalMaxValid)
+    ? Math.max(0, Math.ceil(canonicalMaxParsed))
     : 0;
 
   // Idempotency is type/shape-sensitive, not just numeric-equality —

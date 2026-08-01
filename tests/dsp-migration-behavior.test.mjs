@@ -173,11 +173,65 @@ function freshGm(actors) {
   assert.equal(d.update['system.darkSide.value'], 0);
 }
 
+// 7b. Round 4: every broad-coercion trap (null/''/true/[4]/{}) that a
+//     bare Number(x) would have silently accepted as a "valid" canonical
+//     value must instead migrate to the legacy value — the same strict
+//     parseCanonicalDarkSideNumber() rule getValue() now follows.
+{
+  const malformedCanonicalShapes = [null, '', '   ', true, false, [4], {}];
+  for (const malformed of malformedCanonicalShapes) {
+    const actor = actorWithSource({ darkSide: { value: malformed }, darkSideScore: 7 });
+    const d = computeDarkSidePointsMigration(actor);
+    assert.equal(
+      d.update['system.darkSide.value'],
+      7,
+      `malformed canonical ${JSON.stringify(malformed)} must migrate to legacy 7`
+    );
+    assert.equal(d.malformedCanonicalRepaired, true);
+  }
+}
+
+// 7c. canonical numeric string "4" is still read numerically for
+//     compatibility, but migrates to the NUMBER 4, not to legacy 7 — a
+//     numeric-string canonical value is valid data, just malformed
+//     *storage type*, so it wins over legacy exactly like a real number
+//     would, while still needing the type-normalizing rewrite.
+{
+  const actor = actorWithSource({ darkSide: { value: '4' }, darkSideScore: 7 });
+  const d = computeDarkSidePointsMigration(actor);
+  assert.equal(d.update['system.darkSide.value'], 4, 'a numeric-string canonical value wins over legacy, unlike a truly malformed shape');
+  assert.equal(typeof d.update['system.darkSide.value'], 'number', 'must be rewritten as a real Number, not left as a string');
+  assert.equal(d.malformedCanonicalRepaired, false, 'a numeric-string canonical value is not "malformed" in the recovery sense — it is valid data needing a type rewrite');
+}
+
 // 8. missing max → 0
 {
   const actor = actorWithSource({ darkSide: { value: 2 } });
   const d = computeDarkSidePointsMigration(actor);
   assert.equal(d.update['system.darkSide.max'], 0);
+}
+
+// 8b. Round 4: strict canonical max normalization — the same
+//     coercion-trap shapes, applied to darkSide.max instead of .value,
+//     must all normalize to 0 (the "derive from Wisdom x multiplier"
+//     sentinel), not be silently accepted via Number(x) coercion.
+{
+  const malformedMaxShapes = [null, '', true, [12]];
+  for (const malformed of malformedMaxShapes) {
+    const actor = actorWithSource({ darkSide: { value: 2, max: malformed } });
+    const d = computeDarkSidePointsMigration(actor);
+    assert.equal(
+      d.update['system.darkSide.max'],
+      0,
+      `malformed max ${JSON.stringify(malformed)} must normalize to 0`
+    );
+  }
+  // A numeric-string max is still read numerically and rewritten as a
+  // real Number, same policy as the value field.
+  const stringMaxActor = actorWithSource({ darkSide: { value: 2, max: '12' } });
+  const stringMaxDecision = computeDarkSidePointsMigration(stringMaxActor);
+  assert.equal(stringMaxDecision.update['system.darkSide.max'], 12);
+  assert.equal(typeof stringMaxDecision.update['system.darkSide.max'], 'number');
 }
 
 // 9. valid explicit max → preserved

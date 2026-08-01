@@ -90,7 +90,7 @@ assert.match(migration, /Number\.isInteger\(persisted\)/);
 //    numeric-parsing implementation, and DSPEngine.getValue() recovers
 //    the same malformed-object shape the migration already knew about.
 assert.match(dspEngine, /export function parseLegacyDarkSideValue\(/);
-assert.match(migration, /import \{ hasOwnPath, parseLegacyDarkSideValue \}/);
+assert.match(migration, /import \{ hasOwnPath, parseLegacyDarkSideValue, parseCanonicalDarkSideNumber \}/);
 assert.match(migration, /const recoveredLegacy = parseLegacyDarkSideValue\(persistedDarkSideScore\);/);
 assert.match(dspEngine, /const legacy = parseLegacyDarkSideValue\(sourceSystem\.darkSideScore \?\? actor\.system\?\.darkSideScore\);/);
 
@@ -103,6 +103,15 @@ assert.match(migration, /const legacyIsObject = isPlainObject\(persistedDarkSide
 assert.match(migration, /const legacyObjectRecovered = legacyIsObject && recoveredLegacy !== null;/);
 assert.match(migration, /const legacyShapeCleaned = legacyIsObject;/);
 assert.doesNotMatch(migration, /isMalformedLegacyObject/, 'the old combined recover+classify helper must stay removed, replaced by the independent legacyIsObject/recoveredLegacy decisions');
+
+// 9c. Round 4: canonical value/max parsing uses the shared strict parser
+//     (parseCanonicalDarkSideNumber), not a bare Number(x) coercion that
+//     would accept null/''/true/[4] as if they were valid canonical data.
+assert.match(dspEngine, /export function parseCanonicalDarkSideNumber\(/);
+assert.match(migration, /const canonicalValueParsed = parseCanonicalDarkSideNumber\(persistedValue\);/);
+assert.match(migration, /const canonicalMaxParsed = parseCanonicalDarkSideNumber\(persistedMax\);/);
+assert.doesNotMatch(migration, /const canonicalValueNumeric = Number\(persistedValue\);/, 'canonical value parsing must not use the old broad Number(x) coercion');
+assert.doesNotMatch(migration, /const canonicalMaxNumeric = Number\(persistedMax\);/, 'canonical max parsing must not use the old broad Number(x) coercion');
 
 // 10. Round 2: actors with neither canonical nor legacy DSP data in
 //     _source are out of the migration's scope entirely — no update, no
