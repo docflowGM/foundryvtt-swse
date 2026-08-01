@@ -296,10 +296,20 @@ export class PanelContextBuilder {
         ? (Number(derivedDefense?.implantWillPenalty ?? this.derived?.implants?.willPenalty ?? 0) || 0)
         : 0;
       const implantWillPenaltyClass = implantWillPenalty > 0 ? 'mod--positive' : implantWillPenalty < 0 ? 'mod--negative' : 'mod--zero';
+      const psychicCitadelBonus = systemKey === 'will'
+        ? (Number(derivedDefense?.psychicCitadelBonus ?? 0) || 0)
+        : 0;
       // Reflex levelContribution already represents the SWSE heroic/armor
       // replacement term. Fortitude/Will armor bonuses are still additive.
       const armorTotalTerm = systemKey === 'reflex' ? 0 : armorBonus;
-      const computedTotal = 10
+      // Diagnostic-only reconstruction of the total from the individual
+      // components shown on the sheet. This must NEVER be the displayed
+      // total (PHASE 8/Phase 4 combat-display-parity fix) — the canonical
+      // engine total (system.derived.defenses.<type>.total, produced by
+      // DefenseCalculator) is the single source of truth. This sum only
+      // exists to catch a component the panel forgot to surface; a mismatch
+      // means the breakdown is incomplete, not that the total is wrong.
+      const componentSum = 10
         + levelContribution
         + armorTotalTerm
         + abilityMod
@@ -309,12 +319,13 @@ export class PanelContextBuilder {
         + sizeModifier
         + miscMod
         + conditionPenalty
-        + implantWillPenalty;
-      // The sheet displays the same total as the player-facing formula.  Some
-      // older derived defense payloads miss species/rules penalties even though
-      // the breakdown has them, so do not let a stale cached total contradict
-      // the visible math.
-      const total = Number.isFinite(computedTotal) ? computedTotal : (Number(defenseViewModel?.total ?? derivedDefense?.total ?? 10) || 10);
+        + implantWillPenalty
+        + psychicCitadelBonus;
+      const canonicalTotal = Number(derivedDefense?.total ?? defenseViewModel?.total);
+      const total = Number.isFinite(canonicalTotal) ? canonicalTotal : (Number.isFinite(componentSum) ? componentSum : 10);
+      if (Number.isFinite(canonicalTotal) && Number.isFinite(componentSum) && canonicalTotal !== componentSum) {
+        console.debug(`[SWSE] Defense panel component sum (${componentSum}) does not match the canonical ${label} total (${canonicalTotal}) for ${this.actor?.name ?? 'actor'} — the displayed total is still the canonical one; the breakdown may be missing a component.`);
+      }
       const abilityModClass = abilityMod > 0 ? 'mod--positive' : abilityMod < 0 ? 'mod--negative' : 'mod--zero';
       const miscModClass = miscMod > 0 ? 'mod--positive' : miscMod < 0 ? 'mod--negative' : 'mod--zero';
       const speciesBonusClass = speciesBonus > 0 ? 'mod--positive' : speciesBonus < 0 ? 'mod--negative' : 'mod--zero';
@@ -351,6 +362,8 @@ export class PanelContextBuilder {
         implantWillPenalty,
         implantWillPenaltyClass,
         hasImplantWillPenalty: implantWillPenalty !== 0,
+        psychicCitadelBonus,
+        hasPsychicCitadel: psychicCitadelBonus !== 0,
         canEdit: this.sheet.isEditable
       };
     });

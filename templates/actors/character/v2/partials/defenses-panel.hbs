@@ -74,6 +74,20 @@
                 </div>
               {{/if}}
 
+              {{#if def.sizeModifier}}
+                <div class="defense-breakdown-row">
+                  <span class="defense-breakdown-label">Size</span>
+                  <span class="defense-breakdown-value {{def.sizeModClass}}">{{numberFormat def.sizeModifier decimals=0 sign=true}}</span>
+                </div>
+              {{/if}}
+
+              {{#if def.hasPsychicCitadel}}
+                <div class="defense-breakdown-row">
+                  <span class="defense-breakdown-label">Psychic Citadel</span>
+                  <span class="defense-breakdown-value mod--positive">{{numberFormat def.psychicCitadelBonus decimals=0 sign=true}}</span>
+                </div>
+              {{/if}}
+
               {{#if def.hasImplantWillPenalty}}
                 <div class="defense-breakdown-row">
                   <span class="defense-breakdown-label">Implant Penalty</span>

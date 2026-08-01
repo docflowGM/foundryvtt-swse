@@ -106,7 +106,15 @@ assert.doesNotMatch(domainRouter, /new Roll\(|RollEngine\.|RollCore\./);
 const rollAttackBody = attacks.slice(attacks.indexOf('export async function rollAttack('), attacks.indexOf('export async function rollDamage('));
 assert.match(rollAttackBody, /if \(attackDomain === 'vehicle-actor-gunner'\) \{/);
 assert.match(rollAttackBody, /\} else if \(attackDomain === 'vehicle-abstract-crew'\) \{/);
-assert.match(rollAttackBody, /attackBonusResolution = resolveAttackBonus\(actor, weapon, null, rollOptions\);/);
+// Combat-display-parity Phase 2 fix: the character branch now threads a
+// resolvedActionId (rollOptions.actionId ?? workflowContext.actionId ??
+// null) instead of a hardcoded null literal, so action-linked talent
+// bonuses can be resolved when a real actionId is available — see
+// tests/attack-action-id-threading.test.mjs for the dedicated coverage.
+// The invariant this file cares about (character domain still calls
+// resolveAttackBonus with rollOptions as its context argument, as opposed
+// to a vehicle resolver) is unchanged.
+assert.match(rollAttackBody, /attackBonusResolution = resolveAttackBonus\(actor, weapon, resolvedActionId, rollOptions\);/);
 
 // 17 (generic routing list): a vehicle weapon never falls back to the
 // vehicle actor's own BAB or the gunner's Dex/Str merely because domain

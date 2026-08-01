@@ -11,6 +11,8 @@ import { InventoryEngine } from "/systems/foundryvtt-swse/scripts/engine/invento
 import { DSPEngine } from "/systems/foundryvtt-swse/scripts/engine/darkside/dsp-engine.js";
 import { normalizeSkillMap } from "/systems/foundryvtt-swse/scripts/utils/skill-normalization.js";
 import { collectKnownForceSecrets, collectKnownForceTechniques } from "/systems/foundryvtt-swse/scripts/utils/force-knowledge.js";
+import { resolveAttackBonus, resolveDamageBonus } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-roll-math.js";
+import { buildLedgerFromComponents } from "/systems/foundryvtt-swse/scripts/engine/effects/modifiers/modifier-breakdown-builder.js";
 
 /**
  * Compute the minimal v2-derived fields for Characters.
@@ -199,6 +201,15 @@ function normalizeDamageFormula(value, fallback = '1d6') {
     );
   }
   return candidate !== undefined && candidate !== null && candidate !== '' ? String(candidate) : fallback;
+}
+
+// Combines the weapon's base damage dice (item configuration) with the
+// canonical static damage bonus from resolveDamageBonus() (engine
+// calculation) — never recomputes the bonus itself.
+function formatDamageFormulaWithBonus(baseDice, bonus) {
+  const numericBonus = Number(bonus) || 0;
+  if (numericBonus === 0) return baseDice;
+  return numericBonus > 0 ? `${baseDice}+${numericBonus}` : `${baseDice}${numericBonus}`;
 }
 
 function hasWeaponDamageProfile(item) {
@@ -478,7 +489,7 @@ function normalizeAttackEntry(attack = {}, actor = null) {
   };
 }
 
-function mirrorAttacks(actor, system) {
+export function mirrorAttacks(actor, system) {
   const weapons = (actor?.items ?? []).filter(i => isAttackItem(i));
   const list = [];
 
@@ -505,6 +516,29 @@ function mirrorAttacks(actor, system) {
       data.meleeOrRanged === 'ranged' ? 'Ranged' : null
     ) ?? 'Melee';
 
+    // Sheet totals must be the same canonical resolver output the actual
+    // roll uses (attacks.js), not stored item fields — those fields can
+    // drift from the live roll. actionId is null here to match the
+    // resting-baseline (no target/dialog context) that attacks.js itself
+    // resolves with for a plain, no-options attack; context is left empty
+    // so invocation-only modifiers (range, firing-into-melee, custom
+    // modifiers, sequence penalties) never get baked into the resting total.
+    let attackResolution;
+    let damageResolution;
+    try {
+      attackResolution = resolveAttackBonus(actor, w, null, {});
+    } catch (err) {
+      console.error(`[SWSE] resolveAttackBonus failed for ${w.name}:`, err);
+      attackResolution = { total: 0, components: {} };
+    }
+    try {
+      damageResolution = resolveDamageBonus(actor, w, {});
+    } catch (err) {
+      console.error(`[SWSE] resolveDamageBonus failed for ${w.name}:`, err);
+      damageResolution = { total: 0, components: {} };
+    }
+    const staticDamageFormula = formatDamageFormulaWithBonus(damageFormula, damageResolution.total);
+
     const rawAttack = {
       id: w.id,
       itemId: w.id,
@@ -514,8 +548,8 @@ function mirrorAttacks(actor, system) {
       name: w.name,
       weaponName: w.name,
       img: w.img ?? '',
-      damage: damageFormula,
-      damageFormula,
+      damage: staticDamageFormula,
+      damageFormula: staticDamageFormula,
       range: rangeValue,
       type: firstDefined(data.weaponType, data.weaponCategory, data.weaponGroup, data.category, w.type, 'weapon'),
       weaponType: firstDefined(data.weaponType, data.weaponCategory, data.weaponGroup, data.category, w.type, 'weapon'),
@@ -536,14 +570,10 @@ function mirrorAttacks(actor, system) {
         : Array.isArray(data.properties)
         ? data.properties
         : [],
-      attackTotal:
-        data.attackTotal ??
-        data.attackBonus ??
-        data.toHit ??
-        0,
+      attackTotal: attackResolution.total,
       breakdown: {
-        attack: data.attackBreakdown ?? '',
-        damage: data.damageBreakdown ?? ''
+        attack: buildLedgerFromComponents(attackResolution.components, 'combat.attack', 'baseline'),
+        damage: buildLedgerFromComponents(damageResolution.components, 'combat.damage', 'baseline')
       },
       ammo: data.ammo ?? data.ammunition ?? null,
       actionType: data.actionType ?? data.cost ?? 'standard'

@@ -144,6 +144,46 @@ export class DefenseTooltip {
       });
     }
 
+    if (data.speciesBonus) {
+      rows.push({
+        label: 'Species',
+        value: data.speciesBonus,
+        semantic: data.speciesBonus > 0 ? 'positive' : 'negative'
+      });
+    }
+
+    if (data.rulesBonus) {
+      rows.push({
+        label: 'Rules',
+        value: data.rulesBonus,
+        semantic: data.rulesBonus > 0 ? 'positive' : 'negative'
+      });
+    }
+
+    if (data.conditionPenalty) {
+      rows.push({
+        label: 'Condition Track',
+        value: data.conditionPenalty,
+        semantic: 'negative'
+      });
+    }
+
+    if (data.psychicCitadelBonus) {
+      rows.push({
+        label: 'Psychic Citadel',
+        value: data.psychicCitadelBonus,
+        semantic: 'positive'
+      });
+    }
+
+    if (data.implantWillPenalty) {
+      rows.push({
+        label: 'Implant Penalty',
+        value: data.implantWillPenalty,
+        semantic: 'negative'
+      });
+    }
+
     // Active modifiers (from derived data)
     if (data.modifiers && data.modifiers.length > 0) {
       data.modifiers.forEach(mod => {
@@ -191,6 +231,11 @@ export class DefenseTooltip {
     if (data.abilityMod) lines.push(`  Ability: ${data.abilityMod > 0 ? '+' : ''}${data.abilityMod}`);
     if (data.classBonus) lines.push(`  Class: +${data.classBonus}`);
     if (data.miscMod) lines.push(`  Misc: ${data.miscMod > 0 ? '+' : ''}${data.miscMod}`);
+    if (data.speciesBonus) lines.push(`  Species: ${data.speciesBonus > 0 ? '+' : ''}${data.speciesBonus}`);
+    if (data.rulesBonus) lines.push(`  Rules: ${data.rulesBonus > 0 ? '+' : ''}${data.rulesBonus}`);
+    if (data.conditionPenalty) lines.push(`  Condition Track: ${data.conditionPenalty}`);
+    if (data.psychicCitadelBonus) lines.push(`  Psychic Citadel: +${data.psychicCitadelBonus}`);
+    if (data.implantWillPenalty) lines.push(`  Implant Penalty: ${data.implantWillPenalty}`);
     lines.push(`  Subtotal: ${data.subtotal}`);
 
     // Modifiers
@@ -238,8 +283,15 @@ export class DefenseTooltip {
     const canonicalKey = defenseKey === 'flatfooted' ? 'flatFooted' :
       (defenseKey === 'fort' ? 'fortitude' : defenseKey);
     const defense = system.derived?.defenses?.[canonicalKey] || system.derived?.defenses?.[defenseKey] || {};
+    // Flat-footed removes a POSITIVE Dexterity bonus but never a Dexterity
+    // penalty (SWSE RAW: lose Dex bonus, not Dex penalty) — mirrors
+    // DefenseCalculator's flatFootedTotal = reflexTotal - max(0, reflexAbilityMod).
+    // DefenseCalculator's own flatFooted.abilityMod field is hardcoded to 0
+    // (it isn't used to derive flatFootedTotal, which is computed directly
+    // from reflexTotal), so the true Dex mod to react to has to come from
+    // the reflex defense entry, not flatFooted's own.
     const abilityMod = defenseKey === 'flatfooted'
-      ? 0
+      ? Math.min(0, Number(system.derived?.defenses?.reflex?.abilityMod ?? SchemaAdapters.getAbilityMod(actor, 'dex')) || 0)
       : (defense.abilityMod ?? SchemaAdapters.getAbilityMod(actor, defenseInfo.abilityKey));
     const heroicLevel = getHeroicLevel(actor) || Number(system.derived?.heroicLevel ?? system.heroicLevel ?? system.level ?? 0) || 0;
     const levelContribution = Number(defense.levelContribution ?? defense.armorContribution ?? heroicLevel) || 0;
@@ -248,11 +300,21 @@ export class DefenseTooltip {
     const sizeModifier = defense.sizeModifier ?? 0;
     const armorBonus = defense.armorBonus ?? 0;
     const armorSubtotalTerm = canonicalKey === 'reflex' || canonicalKey === 'flatFooted' ? 0 : armorBonus;
+    const speciesBonus = defense.speciesBonus ?? 0;
+    const conditionPenalty = defense.conditionPenalty ?? 0;
+    const rulesBonus = (Number(defense.stateBonus ?? 0) || 0) + (Number(defense.adjustment ?? 0) || 0);
+    const psychicCitadelBonus = canonicalKey === 'will' ? (defense.psychicCitadelBonus ?? 0) : 0;
+    const implantWillPenalty = canonicalKey === 'will' ? (defense.implantWillPenalty ?? 0) : 0;
 
     // Calculate subtotal from the same terms used by DefenseCalculator. Reflex
     // stores the SWSE heroic/armor replacement as levelContribution, so do not
-    // add armorBonus a second time in the tooltip.
-    const subtotal = 10 + levelContribution + abilityMod + classBonus + miscMod + sizeModifier + armorSubtotalTerm;
+    // add armorBonus a second time in the tooltip. Every numeric term
+    // DefenseCalculator folds into the canonical total must appear here too,
+    // so the rows shown always reconcile to the displayed Final Defense —
+    // otherwise the tooltip can show a Subtotal/modifier list that doesn't
+    // add up to Final Defense for a character with e.g. Psychic Citadel.
+    const subtotal = 10 + levelContribution + abilityMod + classBonus + miscMod + sizeModifier
+      + armorSubtotalTerm + speciesBonus + conditionPenalty + rulesBonus + psychicCitadelBonus + implantWillPenalty;
 
     // Get modifiers from ModifierEngine
     const modifierTarget = `defense.${defenseInfo.key}`;
@@ -268,6 +330,11 @@ export class DefenseTooltip {
       levelContribution,
       abilityMod,
       classBonus,
+      speciesBonus,
+      conditionPenalty,
+      rulesBonus,
+      psychicCitadelBonus,
+      implantWillPenalty,
       miscMod,
       sizeModifier,
       armorBonus,
