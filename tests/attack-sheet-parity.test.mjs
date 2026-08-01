@@ -18,6 +18,7 @@ const { mirrorAttacks } = await import('../scripts/actors/v2/character-actor.js'
 const { resolveAttackBonus, resolveDamageBonus } = await import('../scripts/engine/combat/combat-roll-math.js');
 
 function weaponItem(overrides = {}) {
+  const { system: systemOverrides, ...rest } = overrides;
   return {
     id: 'w1', name: 'Vibrosword', type: 'weapon', img: '',
     system: {
@@ -30,20 +31,21 @@ function weaponItem(overrides = {}) {
       attackTotal: 999,
       attackBonus: 999,
       toHit: 999,
-      ...overrides.system
+      ...systemOverrides
     },
-    ...overrides
+    ...rest
   };
 }
 
 function characterActor(items = [weaponItem()], overrides = {}) {
+  const { system: systemOverrides, ...rest } = overrides;
   return {
     id: 'pc-1', type: 'character', name: 'Test Character',
     items,
     flags: {},
-    system: { bab: 3, abilities: { str: { mod: 2 }, dex: { mod: 1 } }, ...overrides.system },
+    system: { bab: 3, abilities: { str: { mod: 2 }, dex: { mod: 1 } }, ...systemOverrides },
     getFlag() { return undefined; },
-    ...overrides
+    ...rest
   };
 }
 
@@ -97,6 +99,58 @@ function characterActor(items = [weaponItem()], overrides = {}) {
   const system = { derived: { attacks: {} } };
   mirrorAttacks(actor, system);
   assert.equal(system.derived.attacks.list.length, 0);
+}
+
+// 5. A negative static damage bonus is displayed as "2d6-1", never
+// "2d6+-1" — cheap but easy to get wrong when concatenating a signed number.
+{
+  const actor = characterActor([weaponItem({ system: {
+    // No STR/proficiency bonus and a negative ability mod, so
+    // resolveDamageBonus() nets negative from the ability contribution alone.
+    attackAttribute: 'str', damage: '2d6'
+  } })], { system: { bab: 3, abilities: { str: { mod: -3 }, dex: { mod: 1 } } } });
+  const system = { derived: { attacks: {} } };
+  mirrorAttacks(actor, system);
+
+  const canonicalDamage = resolveDamageBonus(actor, actor.items[0], {});
+  assert.ok(canonicalDamage.total < 0, 'test fixture must actually exercise a negative damage bonus');
+  const entry = system.derived.attacks.list[0];
+  assert.equal(entry.damageFormula, `2d6${canonicalDamage.total}`);
+  assert.ok(!entry.damageFormula.includes('+-'), 'negative bonus must never render as "+-N"');
+}
+
+// 6. Stock-statblock droid weapons: the sheet must show the droid's
+// PUBLISHED damage formula (from stockDroidAttack.publishedDamage, which the
+// importer also mirrors onto system.damage — see
+// stock-droid-importer-engine.js) rather than reapplying half-level/ability/
+// enhancement composition on top of it a second time.
+{
+  const droidActor = {
+    id: 'droid-1', type: 'droid', name: 'Test Droid',
+    items: [],
+    flags: {},
+    system: { droidCalculationMode: 'stock-statblock' },
+    getFlag() { return undefined; },
+  };
+  const stockWeapon = {
+    id: 'w-stock', name: 'Integrated Blaster', type: 'weapon', img: '',
+    system: { equipped: true, integrated: true, damage: '2d6+3', attackBonus: 9 },
+    flags: { swse: { stockDroidAttack: { publishedAttackTotal: 9, publishedDamage: '2d6+3', mode: 'ranged', sourceStatblock: true } } }
+  };
+  droidActor.items = [stockWeapon];
+
+  const system = { derived: { attacks: {} } };
+  mirrorAttacks(droidActor, system);
+
+  const canonicalDamage = resolveDamageBonus(droidActor, stockWeapon, {});
+  assert.equal(canonicalDamage.total, 0, 'no situational modifiers active, so the stock contract contributes nothing extra at baseline');
+  const entry = system.derived.attacks.list[0];
+  assert.ok(entry, 'integrated stock-droid weapon must be mirrored (auto-equipped)');
+  assert.equal(entry.damageFormula, '2d6+3', 'sheet must show the published formula unchanged — half-level/ability/enhancement must not be re-added');
+
+  const canonicalAttack = resolveAttackBonus(droidActor, stockWeapon, null, {});
+  assert.equal(canonicalAttack.total, 9, 'stock attack total must be the published total, not BAB+ability+enhancement layered on top');
+  assert.equal(entry.attackTotal, 9);
 }
 
 console.log('attack-sheet-parity.test.mjs OK');

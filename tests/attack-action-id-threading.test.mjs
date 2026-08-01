@@ -49,21 +49,23 @@ installFoundryShimGlobals({ game: { user: { isGM: true, id: 'gm-1' }, combat: nu
 const { resolveAttackBonus } = await import('../scripts/engine/combat/combat-roll-math.js');
 
 function testActor(overrides = {}) {
+  const { system: systemOverrides, ...rest } = overrides;
   return {
     id: 'pc-1', type: 'character', name: 'Test Character',
     items: [{ type: 'talent', name: 'Linked Talent' }],
     flags: {},
-    system: { bab: 3, abilities: { str: { mod: 2 }, dex: { mod: 1 } }, ...overrides.system },
+    system: { bab: 3, abilities: { str: { mod: 2 }, dex: { mod: 1 } }, ...systemOverrides },
     getFlag() { return undefined; },
-    ...overrides
+    ...rest
   };
 }
 
 function testWeapon(overrides = {}) {
+  const { system: systemOverrides, ...rest } = overrides;
   return {
     id: 'w1', name: 'Vibrosword', type: 'weapon',
-    system: { attackAttribute: 'str', damage: '2d6', proficient: true, ...overrides.system },
-    ...overrides
+    system: { attackAttribute: 'str', damage: '2d6', proficient: true, ...systemOverrides },
+    ...rest
   };
 }
 
