@@ -113,6 +113,43 @@ function freshGm(actors) {
   assert.equal(d.update['system.-=darkSideScore'], null);
 }
 
+// 4c. unrecoverable legacy object {value:'broken'}, no canonical → canonical
+//     falls back to 0, but the object is still deleted (round 3: recovery
+//     and shape-cleanup are independent decisions — an object doesn't need
+//     to be recoverable to need deleting, since the field is meant to be
+//     numeric).
+{
+  const actor = actorWithSource({ darkSideScore: { value: 'broken' } });
+  const d = computeDarkSidePointsMigration(actor);
+  assert.equal(d.update['system.darkSide.value'], 0);
+  assert.equal(d.legacyObjectRecovered, false, 'nothing usable was recovered');
+  assert.equal(d.legacyShapeCleaned, true, 'the object must still be deleted');
+  assert.equal(d.update['system.-=darkSideScore'], null);
+}
+
+// 4d. legacy object with no usable "value" key at all {foo:'bar'} → same:
+//     canonical falls back to 0, object still deleted.
+{
+  const actor = actorWithSource({ darkSideScore: { foo: 'bar' } });
+  const d = computeDarkSidePointsMigration(actor);
+  assert.equal(d.update['system.darkSide.value'], 0);
+  assert.equal(d.legacyObjectRecovered, false);
+  assert.equal(d.legacyShapeCleaned, true);
+  assert.equal(d.update['system.-=darkSideScore'], null);
+}
+
+// 4e. valid canonical 3 + an UNRECOVERABLE legacy object → canonical 3 is
+//     preserved (never touched) and the object is still deleted, even
+//     though nothing was recovered from it.
+{
+  const actor = actorWithSource({ darkSide: { value: 3, max: 0 }, darkSideScore: { value: 'broken' } });
+  const d = computeDarkSidePointsMigration(actor);
+  assert.equal('system.darkSide.value' in d.update, false, 'valid canonical 3 must not be touched');
+  assert.equal(d.legacyObjectRecovered, false);
+  assert.equal(d.legacyShapeCleaned, true);
+  assert.equal(d.update['system.-=darkSideScore'], null);
+}
+
 // 5. template-hydrated-zero (no persisted canonical) + real legacy 5 → migration writes canonical 5
 {
   const actor = actorWithSource({ darkSideScore: 5 }, { darkSide: { value: 0, max: 0 } });

@@ -87,34 +87,62 @@ export function hasOwnPath(obj, path) {
 
 /**
  * Parse a legacy darkSideScore value into a finite, non-negative number.
- * Supports a plain numeric scalar (including numeric strings, matching
- * existing compatibility policy) and the malformed poison-engine object
- * shape ({ value: N }) the Phase 2 migration already knows how to repair —
- * shared here so DSPEngine.getValue() recovers the same data the migration
- * would, even before an actor has been migrated. Returns null when no
- * usable value can be recovered (never guesses a default; callers decide
- * the 0 fallback).
+ * Accepts only:
+ *   - a finite number
+ *   - a non-empty string that parses to a finite number (whitespace-only
+ *     and empty strings are rejected, not silently coerced to 0)
+ *   - a plain, non-array object whose own `value` property satisfies one
+ *     of the above (the malformed poison-engine shape, { value: N }, the
+ *     Phase 2 migration already knows how to repair)
+ * Everything else — null/undefined, booleans, arrays, NaN/Infinity, plain
+ * objects with no usable own `value` — returns null. A negative-but-finite
+ * result is clamped to 0 rather than rejected, matching DSP's "cannot go
+ * below 0" invariant elsewhere in this module; this is the one documented
+ * policy both DSPEngine and the migration rely on via this shared helper.
+ * Returns null when no usable value can be recovered (never guesses a
+ * default; callers decide the 0 fallback).
  *
  * @param {*} raw
  * @returns {number|null}
  */
 export function parseLegacyDarkSideValue(raw) {
-  if (raw !== null && typeof raw === 'object' && !Array.isArray(raw)) {
-    const fromObject = Number(raw.value);
-    return Number.isFinite(fromObject) ? Math.max(0, fromObject) : null;
+  if (typeof raw === 'number') {
+    return Number.isFinite(raw) ? Math.max(0, raw) : null;
   }
-  const numeric = Number(raw);
-  return Number.isFinite(numeric) ? Math.max(0, numeric) : null;
+  if (typeof raw === 'string') {
+    const trimmed = raw.trim();
+    if (trimmed === '') return null;
+    const numeric = Number(trimmed);
+    return Number.isFinite(numeric) ? Math.max(0, numeric) : null;
+  }
+  if (raw !== null && typeof raw === 'object' && !Array.isArray(raw)
+    && Object.prototype.hasOwnProperty.call(raw, 'value')) {
+    return parseLegacyDarkSideValue(raw.value);
+  }
+  return null;
 }
 
 export const DSPEngine = {
   /**
-   * Get current DSP value for actor
-   * Canonical: system.darkSide.value, but only when that field was
+   * Get current DSP value for actor.
+   *
+   * Canonical: system.darkSide.value, but only when that field was both
    * actually persisted (checked via actor._source, the raw pre-hydration
-   * document data). Falls back to legacy system.darkSideScore only when
-   * canonical data was never written — a persisted canonical 0 always
-   * wins over a stale legacy value.
+   * document data — never the template-hydrated prepared value) AND
+   * valid (finite, non-negative — a numeric string is read numerically
+   * for compatibility, but a negative/NaN/Infinity/non-numeric persisted
+   * value does not count). A persisted canonical 0 always wins over a
+   * stale legacy value; a persisted-but-malformed canonical value does
+   * NOT win — it falls through to legacy recovery instead of silently
+   * returning 0, matching what the Phase 2 migration itself already does.
+   * When canonical is valid, the prepared numeric value is preferred
+   * (post data-prep) and the persisted numeric value is used only as a
+   * safety fallback if the prepared value were somehow invalid.
+   *
+   * Falls back to legacy system.darkSideScore (scalar or the malformed
+   * poison-engine { value: N } object shape, via parseLegacyDarkSideValue)
+   * only when canonical data was never persisted, or was persisted but
+   * invalid.
    * PURE READ - NO MUTATION
    *
    * @param {Actor} actor - The character
@@ -125,9 +153,18 @@ export const DSPEngine = {
 
     const sourceSystem = actor._source?.system ?? actor.system ?? {};
     const canonicalPersisted = hasOwnPath(sourceSystem, 'darkSide.value');
+
     if (canonicalPersisted) {
-      const canonical = Number(actor.system?.darkSide?.value);
-      return Number.isFinite(canonical) ? Math.max(0, canonical) : 0;
+      const persistedNumeric = Number(sourceSystem.darkSide?.value);
+      const persistedValid = Number.isFinite(persistedNumeric) && persistedNumeric >= 0;
+
+      if (persistedValid) {
+        const prepared = Number(actor.system?.darkSide?.value);
+        const preparedValid = Number.isFinite(prepared) && prepared >= 0;
+        return preparedValid ? Math.max(0, prepared) : Math.max(0, persistedNumeric);
+      }
+      // Canonical was persisted but malformed (negative/NaN/Infinity/
+      // non-numeric) — it does not win; fall through to legacy recovery.
     }
 
     const legacy = parseLegacyDarkSideValue(sourceSystem.darkSideScore ?? actor.system?.darkSideScore);

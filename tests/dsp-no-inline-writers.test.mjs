@@ -10,13 +10,25 @@ import { fileURLToPath } from 'node:url';
 // actor.system.darkSide.value directly with a raw fallback and computed
 // their own increment/decrement instead of delegating to
 // DSPEngine.getValue()/getNextValue(). This test replaces the hand-curated
-// list with an exhaustive walk of every production script, flagging a file
-// only when it BOTH (1) contains a raw read-with-fallback or direct
-// arithmetic pattern AND (2) contains a literal write target for the
-// canonical field — i.e. it's a file that computes its own write value
-// from a raw read, not merely a read-only consumer (export/presentation/
-// suggestion code, which naturally fails condition 2 and needs no
-// allowlist entry).
+// list with an exhaustive WALK OF EVERY FILE under scripts/ (no file is
+// skipped by name or location), flagging a file only when it BOTH
+// (1) contains a raw read-with-fallback or direct arithmetic pattern AND
+// (2) contains a literal write target for the canonical field — i.e. it's
+// a file that computes its own write value from a raw read, not merely a
+// read-only consumer (export/presentation/suggestion code, which naturally
+// fails condition 2 and needs no allowlist entry).
+//
+// IMPORTANT SCOPE NOTE (external review round 3): this is an exhaustive
+// FILE walk with TARGETED PATTERN detection, not an exhaustive SEMANTIC
+// proof. The two regexes below match a specific, known shape of the bug
+// (a `|| 0`/`?? 0`-guarded read or literal `+N`/`-N` arithmetic on
+// `darkSide.value`, in the same file as a literal canonical write-key
+// string) — they cannot detect an aliased reference (e.g. destructuring
+// `system.darkSide` into a local first), a differently-formatted
+// arithmetic expression, or a write routed through a helper in another
+// file. This guard is a regression net for the exact defect class already
+// found twice, meant to be paired with manual source review on any new
+// DSP-mutating code — not a substitute for it.
 
 const RAW_READ_PATTERN = /darkSide\??\.value\s*(\|\|\s*0|\?\?\s*0)/;
 const RAW_ARITHMETIC_PATTERN = /darkSide\.value\s*[+-]\s*\d/;

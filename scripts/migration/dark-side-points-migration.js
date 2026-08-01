@@ -28,23 +28,6 @@ function isPlainObject(value) {
   return value !== null && typeof value === 'object' && !Array.isArray(value);
 }
 
-/** The shape the old poison-engine bug produced: darkSideScore = { value: N }. */
-function isMalformedLegacyObject(value) {
-  return isPlainObject(value) && Number.isFinite(Number(value.value));
-}
-
-/**
- * Recover a finite numeric DSP value from either a scalar or the malformed
- * object shape. Delegates the actual numeric parsing to the shared
- * DSPEngine helper so the migration and the runtime read path never
- * maintain two independent implementations of the same recovery logic;
- * this function stays only for the migration-specific naming/shape
- * classification callers here already rely on.
- */
-function recoverLegacyValue(persistedDarkSideScore) {
-  return parseLegacyDarkSideValue(persistedDarkSideScore);
-}
-
 function isFiniteNonNegativeInteger(persisted, target) {
   return typeof persisted === 'number'
     && Number.isFinite(persisted)
@@ -97,9 +80,19 @@ export function computeDarkSidePointsMigration(actor) {
 
   const persistedDarkSideScore = hasOwnPath(src, 'darkSideScore') ? src.darkSideScore : undefined;
 
+  // Legacy recovery and legacy-shape cleanup are independent decisions:
+  // a persisted legacy value that is a plain object is always migration
+  // debris (the compatibility field is meant to be numeric), whether or
+  // not a usable number can be recovered from it — { value: 'broken' }
+  // and { foo: 'bar' } must both be deleted, they just can't both be
+  // recovered from.
+  const legacyIsObject = isPlainObject(persistedDarkSideScore);
+  const recoveredLegacy = parseLegacyDarkSideValue(persistedDarkSideScore);
+  const legacyObjectRecovered = legacyIsObject && recoveredLegacy !== null;
+  const legacyShapeCleaned = legacyIsObject;
+
   let targetValue;
   let malformedCanonicalRepaired = false;
-  let legacyObjectRecovered = false;
 
   if (canonicalValuePersisted && canonicalValueFiniteNonNegative) {
     // Valid persisted canonical value — preserve it (nearest-integer
@@ -108,15 +101,9 @@ export function computeDarkSidePointsMigration(actor) {
     targetValue = Math.max(0, Math.round(canonicalValueNumeric));
   } else {
     // Either canonical is absent, or it's present but malformed
-    // (negative/NaN/Infinity/non-numeric) — in both cases, try to
-    // recover a value from legacy storage before falling back to 0.
-    const recovered = recoverLegacyValue(persistedDarkSideScore);
-    if (recovered !== null) {
-      targetValue = Math.max(0, Math.round(recovered));
-      if (isMalformedLegacyObject(persistedDarkSideScore)) legacyObjectRecovered = true;
-    } else {
-      targetValue = 0;
-    }
+    // (negative/NaN/Infinity/non-numeric) — in both cases, use the
+    // already-computed legacy recovery result, falling back to 0.
+    targetValue = recoveredLegacy !== null ? Math.max(0, Math.round(recoveredLegacy)) : 0;
     if (canonicalValuePersisted) malformedCanonicalRepaired = true;
   }
 
@@ -132,11 +119,6 @@ export function computeDarkSidePointsMigration(actor) {
   // merely because Number("5") === 5.
   const valueAlreadyValid = isFiniteNonNegativeInteger(persistedValue, targetValue);
   const maxAlreadyValid = isFiniteNonNegativeInteger(persistedMax, targetMax);
-
-  // Independent of whether canonical value/max themselves need to
-  // change — a valid canonical value alongside a malformed legacy
-  // object still needs the legacy object cleaned up.
-  const legacyShapeCleaned = isMalformedLegacyObject(persistedDarkSideScore);
 
   const needsCanonicalValueUpdate = !valueAlreadyValid;
   const needsCanonicalMaxUpdate = !maxAlreadyValid;

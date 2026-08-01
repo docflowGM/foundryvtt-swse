@@ -13,7 +13,7 @@ import { installFoundryShimGlobals, resetFoundryShimGlobals } from './helpers/fo
 
 registerFoundryPathLoader();
 
-const { DSPEngine } = await import('/systems/foundryvtt-swse/scripts/engine/darkside/dsp-engine.js');
+const { DSPEngine, parseLegacyDarkSideValue } = await import('/systems/foundryvtt-swse/scripts/engine/darkside/dsp-engine.js');
 
 function settingsShim(values = {}) {
   return {
@@ -112,6 +112,100 @@ function settingsShim(values = {}) {
     system: { darkSideScore: { value: 4 }, darkSide: { value: 0, max: 0 } }
   };
   assert.equal(DSPEngine.getNextValue(malformedLegacyActor, 1), 5, 'must increment from the recovered 4, not from 0');
+}
+
+// ── getValue: malformed CANONICAL data must not block a valid legacy
+//    fallback — external review round 3. Persisted canonical *presence*
+//    alone used to make it authoritative even when the persisted value
+//    itself was garbage (a corrupt string, negative, NaN), silently
+//    returning 0 instead of recovering the real legacy value. This can
+//    happen for real: a partial migration failure, an old actor imported
+//    after the world's migration version already advanced, or any actor
+//    encountered before migration finishes. ─────────────────────────────
+
+// persisted canonical 0 + legacy 7 -> 0 (valid canonical, including zero, still wins)
+{
+  installFoundryShimGlobals();
+  const actor = {
+    _source: { system: { darkSide: { value: 0 }, darkSideScore: 7 } },
+    system: { darkSide: { value: 0, max: 0 }, darkSideScore: 7 }
+  };
+  assert.equal(DSPEngine.getValue(actor), 0);
+}
+
+// persisted canonical 3 + legacy 7 -> 3 (valid canonical wins)
+{
+  installFoundryShimGlobals();
+  const actor = {
+    _source: { system: { darkSide: { value: 3 }, darkSideScore: 7 } },
+    system: { darkSide: { value: 3, max: 0 }, darkSideScore: 7 }
+  };
+  assert.equal(DSPEngine.getValue(actor), 3);
+}
+
+// malformed persisted canonical (corrupt string) + legacy scalar 7 -> 7
+{
+  installFoundryShimGlobals();
+  const actor = {
+    _source: { system: { darkSide: { value: 'corrupt' }, darkSideScore: 7 } },
+    system: { darkSide: { value: 0, max: 0 }, darkSideScore: 7 }
+  };
+  assert.equal(DSPEngine.getValue(actor), 7, 'malformed canonical must not block a valid legacy scalar');
+}
+
+// malformed persisted canonical (negative) + legacy {value:4} -> 4
+{
+  installFoundryShimGlobals();
+  const actor = {
+    _source: { system: { darkSide: { value: -5 }, darkSideScore: { value: 4 } } },
+    system: { darkSide: { value: 0, max: 0 }, darkSideScore: { value: 4 } }
+  };
+  assert.equal(DSPEngine.getValue(actor), 4, 'malformed (negative) canonical must not block a valid legacy object');
+}
+
+// malformed persisted canonical + no valid legacy -> 0
+{
+  installFoundryShimGlobals();
+  const actor = {
+    _source: { system: { darkSide: { value: NaN } } },
+    system: { darkSide: { value: 0, max: 0 } }
+  };
+  assert.equal(DSPEngine.getValue(actor), 0);
+}
+
+// ── parseLegacyDarkSideValue: direct parser contract tests — round 3 ────
+{
+  const cases = [
+    [4, 4],
+    ['4', 4],
+    [' 4 ', 4],
+    ['', null],
+    ['   ', null],
+    [null, null],
+    [undefined, null],
+    [true, null],
+    [false, null],
+    [[4], null],
+    [{ value: 4 }, 4],
+    [{ value: '4' }, 4],
+    [{ value: null }, null],
+    [{ value: 'broken' }, null],
+    [{}, null],
+    [NaN, null],
+    [Infinity, null],
+    [-Infinity, null]
+  ];
+  for (const [input, expected] of cases) {
+    assert.equal(
+      parseLegacyDarkSideValue(input),
+      expected,
+      `parseLegacyDarkSideValue(${JSON.stringify(input)}) should be ${expected}`
+    );
+  }
+  // Negative finite input is clamped to 0, not rejected — the documented
+  // policy this helper commits to (matches DSP's "cannot go below 0").
+  assert.equal(parseLegacyDarkSideValue(-3), 0);
+  assert.equal(parseLegacyDarkSideValue({ value: -3 }), 0);
 }
 
 // ── getNextValue: real increment correctness for a legacy-only actor ────

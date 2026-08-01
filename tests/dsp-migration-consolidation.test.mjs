@@ -85,14 +85,24 @@ assert.match(migration, /await HouseRuleService\.set\(SETTING_KEY, MIGRATION_VER
 //    just numeric-equality — guards against the numeric-string regression.
 assert.match(migration, /Number\.isInteger\(persisted\)/);
 
-// 9. Round 2: the migration's legacy-value recovery delegates to the
+// 9. Round 2/3: the migration's legacy-value recovery delegates to the
 //    shared DSPEngine helper instead of maintaining an independent
 //    numeric-parsing implementation, and DSPEngine.getValue() recovers
 //    the same malformed-object shape the migration already knew about.
 assert.match(dspEngine, /export function parseLegacyDarkSideValue\(/);
 assert.match(migration, /import \{ hasOwnPath, parseLegacyDarkSideValue \}/);
-assert.match(migration, /return parseLegacyDarkSideValue\(persistedDarkSideScore\);/);
+assert.match(migration, /const recoveredLegacy = parseLegacyDarkSideValue\(persistedDarkSideScore\);/);
 assert.match(dspEngine, /const legacy = parseLegacyDarkSideValue\(sourceSystem\.darkSideScore \?\? actor\.system\?\.darkSideScore\);/);
+
+// 9b. Round 3: legacy recovery and legacy-shape cleanup are independent
+//     decisions — a persisted plain-object darkSideScore is always
+//     migration debris (deleted) whether or not a usable value could be
+//     recovered from it. legacyObjectRecovered is only set true when a
+//     value was actually recoverable.
+assert.match(migration, /const legacyIsObject = isPlainObject\(persistedDarkSideScore\);/);
+assert.match(migration, /const legacyObjectRecovered = legacyIsObject && recoveredLegacy !== null;/);
+assert.match(migration, /const legacyShapeCleaned = legacyIsObject;/);
+assert.doesNotMatch(migration, /isMalformedLegacyObject/, 'the old combined recover+classify helper must stay removed, replaced by the independent legacyIsObject/recoveredLegacy decisions');
 
 // 10. Round 2: actors with neither canonical nor legacy DSP data in
 //     _source are out of the migration's scope entirely — no update, no
