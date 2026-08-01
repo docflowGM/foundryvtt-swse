@@ -4,6 +4,7 @@ import { RollEngine } from "/systems/foundryvtt-swse/scripts/engine/roll-engine.
 import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
 import { rollAttack, rollDamage } from "/systems/foundryvtt-swse/scripts/combat/rolls/attacks.js";
 import { getClassLevel, getTotalLevel } from "/systems/foundryvtt-swse/scripts/actors/derived/level-split.js";
+import { DSPEngine } from "/systems/foundryvtt-swse/scripts/engine/darkside/dsp-engine.js";
 import { openForceAlchemyWorkbench } from "/systems/foundryvtt-swse/scripts/apps/force-alchemy/force-alchemy-workbench-app.js";
 
 const NS = 'swse';
@@ -273,13 +274,12 @@ async function grantBonusForcePoint(actor, source) {
 async function increaseDarkSideScore(actor, amount, reason) {
   const delta = Math.max(0, Number(amount) || 0);
   if (!actor || delta <= 0) return null;
-  const before = Number(actor?.system?.darkSide?.value ?? actor?.system?.darkSideScore ?? 0) || 0;
-  const after = before + delta;
+  const before = DSPEngine.getValue(actor);
+  const after = DSPEngine.getNextValue(actor, delta);
   const log = Array.isArray(actor?.system?.dspLog) ? [...actor.system.dspLog] : [];
   log.push({ reason, delta, before, after, round: game?.combat?.round || 0, timestamp: Date.now() });
   await ActorEngine.updateActor(actor, {
     'system.darkSide.value': after,
-    'system.darkSideScore': after,
     'system.dspLog': log
   }, { meta: { guardKey: 'force-adept-dark-side-score' } });
   return { before, after, delta };

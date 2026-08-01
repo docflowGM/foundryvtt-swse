@@ -1,4 +1,5 @@
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
+import { DSPEngine } from "/systems/foundryvtt-swse/scripts/engine/darkside/dsp-engine.js";
 import { DamageEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/damage-engine.js";
 import { RecurringDamageEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/recurring-damage-engine.js";
 import { ConditionEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/ConditionEngine.js";
@@ -557,8 +558,9 @@ export class PoisonEngine {
     const darkSideIncrease = Number(poison.damage?.darkSideScore || poison.special?.recurrenceDarkSideScore || 0);
     const recurrenceOnly = poison.special?.recurrenceEffect === 'darkSideScoreIncrease';
     if (darkSideIncrease && (!recurrenceOnly || instance?.initialResolved === true)) {
-      const current = Number(targetActor.system?.darkSideScore?.value ?? targetActor.system?.darkSide ?? 0) || 0;
-      await ActorEngine.updateActor(targetActor, { 'system.darkSideScore.value': current + darkSideIncrease });
+      await ActorEngine.updateActor(targetActor, {
+        'system.darkSide.value': DSPEngine.getValue(targetActor) + darkSideIncrease
+      });
       effects.push('darkSideScore');
     }
     if (poison.special?.endTrackEffect) {

@@ -4,7 +4,7 @@ import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import MobileMode from "/systems/foundryvtt-swse/scripts/ui/mobile-mode-manager.js";
 import { InventoryEngine } from "/systems/foundryvtt-swse/scripts/engine/inventory/InventoryEngine.js";
 import { AmmoSystem } from "/systems/foundryvtt-swse/scripts/engine/inventory/ammo-system.js";
-import { DSPEngine } from "/systems/foundryvtt-swse/scripts/engine/darkside/dsp-engine.js";
+import { handleSetDarkSideScore } from "/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet/dsp-click-handler.js";
 // CombatRollConfigDialog (Tactical Targeting Console) intentionally removed — deprecated, orphaned, pending deletion.
 import { MentorChatDialog } from "/systems/foundryvtt-swse/scripts/mentor/mentor-chat-dialog.js";
 import { DropResolutionEngine } from "/systems/foundryvtt-swse/scripts/engine/interactions/drop-resolution-engine.js";
@@ -3425,18 +3425,6 @@ const forcePoints = [];
     const lightsaberHasSelfBuilt = LightsaberConstructionEngine.hasSelfBuiltLightsaber(actor);
     const lightsaberConstructionDeferred = actor.getFlag?.('foundryvtt-swse', 'lightsaberConstructionDeferred') === true;
     const lightsaberConstructionAvailable = !lightsaberHasSelfBuilt && !!lightsaberConstructionEligibility?.eligible;
-
-    // Dark Side Points context (via DSPEngine for house rule support)
-    const dspValue = Number(DSPEngine.getValue(actor) ?? 0) || 0;
-    const dspMax = Number(DSPEngine.getMax(actor) ?? 0) || 0;
-    const dspSegments = [];
-    for (let i = 1; i <= dspMax; i++) {
-      dspSegments.push({
-        index: i,
-        filled: i <= dspValue,
-        color: i <= dspValue ? '#E74C3C' : '#4A90E2'
-      });
-    }
 
     // Build mode (free build = prerequisites not enforced, typically set during chargen)
     const buildMode = actor.system?.buildMode ?? "normal";
@@ -8025,28 +8013,16 @@ const forcePoints = [];
       }
     }, { signal, capture: false });
 
-    // Set dark side score button
+    // Set dark side score button — authorization is recomputed fresh on
+    // every click inside handleSetDarkSideScore; never trust the DOM's
+    // disabled attribute or cached render context.
     html.querySelectorAll('[data-action="set-dark-side-score"]').forEach(button => {
       button.addEventListener("click", async (event) => {
         event.preventDefault();
-        const currentDSP = DSPEngine.getValue(this.actor);
-        const newValue = prompt(`Current Dark Side Points: ${currentDSP}\n\nEnter new value:`, String(currentDSP));
-
-        if (newValue !== null) {
-          const value = Math.max(0, Math.min(Number(newValue) || 0, DSPEngine.getMax(this.actor)));
-          const plan = {
-            update: {
-              "system.darkSide.value": value
-            }
-          };
-
-          try {
-            await ActorEngine.apply(this.actor, plan);
-          } catch (err) {
-            // console.error("Failed to set DSP:", err);
-            ui?.notifications?.error?.(`Failed to set DSP: ${err.message}`);
-          }
-        }
+        await handleSetDarkSideScore(this.actor, event.currentTarget?.dataset?.index, {
+          sheetEditable: this.isEditable,
+          user: game.user
+        });
       }, { signal });
     });
 

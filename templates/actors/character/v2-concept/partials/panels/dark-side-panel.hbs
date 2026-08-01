@@ -12,10 +12,13 @@
   <div class="swse-concept-dsp-track {{#if darkSidePanel.danger}}is-danger{{/if}}">
     {{#each darkSidePanel.segments as |segment|}}
       <button type="button"
-              class="swse-concept-dsp-track__segment {{#if segment.filled}}filled{{/if}}"
+              class="swse-concept-dsp-track__segment {{#if segment.filled}}filled{{/if}} {{#if segment.current}}is-current{{/if}} {{#unless ../darkSidePanel.canEdit}}swse-concept-dsp-track__segment--readonly{{/unless}}"
               data-action="set-dark-side-score"
               data-index="{{segment.index}}"
-              title="Set Dark Side Points to {{segment.index}}">
+              aria-label="{{#if ../darkSidePanel.canEdit}}Set Dark Side Score to {{segment.index}}{{else}}Dark Side Score {{segment.index}}{{/if}}"
+              {{#if segment.current}}aria-current="true"{{/if}}
+              title="{{#if ../darkSidePanel.canEdit}}Set Dark Side Score to {{segment.index}}{{else}}{{../darkSidePanel.readOnlyReason}}{{/if}}"
+              {{#unless ../darkSidePanel.canEdit}}disabled aria-disabled="true"{{/unless}}>
         <span>{{segment.index}}</span>
       </button>
     {{/each}}

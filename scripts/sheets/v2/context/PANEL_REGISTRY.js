@@ -558,27 +558,25 @@ export const PANEL_REGISTRY = {
   },
 
   darkSidePanel: {
-    name: 'Dark Side Points',
+    name: 'Dark Side Score',
     type: 'control',
-    svgBacked: true,
-    structure: 'frame + content + SVG-backed numbered track',
-    template: 'systems/foundryvtt-swse/templates/actors/character/v2/partials/dark-side-panel.hbs',
+    svgBacked: false,
+    structure: 'concept control panel with numbered DSP track',
+    template: 'systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/panels/dark-side-panel.hbs',
     builder: 'buildDarkSidePanel',
     validator: 'validateDarkSidePanel',
     requiredKeys: [
       'value',
       'max',
       'segments',
-      'canEdit'
+      'danger',
+      'canEdit',
+      'readOnlyReason'
     ],
     optionalKeys: [],
     postRenderAssertions: {
       critical: false,
-      rootSelector: '.swse-panel--dark-side',
-      expectedElements: {
-        '.dsp-numbered-track': 1,
-        '.dsp-track-box': '1..20'  // 1 to max possible (20)
-      }
+      rootSelector: '.swse-concept-dsp-track'
     }
   },
 

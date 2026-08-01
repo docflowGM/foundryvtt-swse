@@ -92,6 +92,22 @@ export const ActorEngine = {
   },
 
   /**
+   * Minimal faithful mirror of the real ActorEngine.apply()'s PHASE 4
+   * (plain `{update: {...}}` mutation plan, non-adoption) — the real
+   * implementation just delegates that bucket straight to updateActor()
+   * (actor-engine.js:1292-1304). Only that bucket is implemented here;
+   * createEmbedded/updateEmbedded/deleteEmbedded/replaceSystem plans are
+   * out of scope for the callers currently using this fake's apply().
+   */
+  async apply(actor, mutationPlan = {}, options = {}) {
+    fakeActorEngineCallLog.push({ method: 'apply', actorId: actor?.id, mutationPlan: deepCloneJSON(mutationPlan), options: { ...options } });
+    if (mutationPlan.update && Object.keys(mutationPlan.update).length > 0) {
+      return this.updateActor(actor, mutationPlan.update, options);
+    }
+    return actor;
+  },
+
+  /**
    * P1-7 — faithful-enough reimplementation of the real
    * ActorEngine.createEmbeddedDocuments()'s id-preservation behavior for
    * testing SnapshotService's real production restoration logic (which

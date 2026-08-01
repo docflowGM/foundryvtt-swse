@@ -352,7 +352,7 @@ export class StockDroidNormalizer {
       skills: normalizeSkills(system.skills),
       droidSystems: normalizeDroidSystems(system.droidSystems, system.droidSystemText || rawRecord.flags?.swse?.droidSystemText || '', system),
       languages: Array.isArray(system.languages) ? system.languages : [],
-      darkSideScore: numberOrDefault(system.darkSideScore, 0),
+      darkSideScore: numberOrDefault(system.darkSide?.value ?? system.darkSideScore, 0),
       forcePoints: numberOrDefault(system.forcePoints?.max ?? system.forcePoints?.value ?? system.forcePoints, 0)
     };
   }

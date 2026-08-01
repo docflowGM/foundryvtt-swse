@@ -1744,6 +1744,10 @@
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(44px, 1fr));
   gap: 8px;
+  /* Large house-rule maximums (Wisdom x multiplier can exceed 20+) must
+     stay within the panel rather than growing the sheet unboundedly. */
+  max-height: 220px;
+  overflow-y: auto;
 }
 
 .swse-concept-dsp-track__segment {
@@ -1758,6 +1762,16 @@
   border-color: rgba(255, 116, 116, 0.34);
   color: #ffd3d3;
   box-shadow: inset 0 0 0 1px rgba(255, 116, 116, 0.14);
+}
+
+.swse-concept-dsp-track__segment.is-current {
+  outline: 2px solid #ffe08a;
+  outline-offset: 1px;
+}
+
+.swse-concept-dsp-track__segment--readonly {
+  opacity: 0.55;
+  cursor: not-allowed;
 }
 
 .swse-concept-dsp-track.is-danger .swse-concept-dsp-track__segment.filled {

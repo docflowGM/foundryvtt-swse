@@ -11,6 +11,7 @@ import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
 import { RollEngine } from "/systems/foundryvtt-swse/scripts/engine/roll-engine.js";
 import { createChatMessage } from "/systems/foundryvtt-swse/scripts/core/document-api-v13.js";
 import { EncounterUseTracker } from "/systems/foundryvtt-swse/scripts/engine/feats/encounter-use-tracker.js";
+import { DSPEngine } from "/systems/foundryvtt-swse/scripts/engine/darkside/dsp-engine.js";
 
 const SKILL_ALIASES = Object.freeze({
   acrobatics: 'acrobatics',
@@ -570,12 +571,7 @@ export class SkillFeatResolver {
 
     switch (rule.valueFormula) {
       case 'halfDarkSideScore': {
-        const dsp = Number(
-          actor?.system?.darkSide?.value
-          ?? actor?.system?.darkSideScore
-          ?? actor?.system?.details?.darkSideScore
-          ?? 0
-        );
+        const dsp = DSPEngine.getValue(actor);
         return clamp(Math.floor(Math.max(0, dsp) / 2));
       }
       case 'abilityModifier': {

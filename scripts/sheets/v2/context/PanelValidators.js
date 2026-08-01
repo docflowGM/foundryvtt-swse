@@ -366,16 +366,35 @@ export function validateDarkSidePanel(panelData) {
     errors.push('darkSidePanel.max must be number');
   }
 
-  // Segments array
+  // Segments array — one entry per integer from 0 to max inclusive, so
+  // DSP can be reset to zero via a track click, hence max + 1 entries.
   if (!Array.isArray(panelData.segments)) {
     errors.push('darkSidePanel.segments must be an array');
-  } else if (panelData.max && panelData.segments.length !== panelData.max) {
-    errors.push(`segments array length (${panelData.segments.length}) must match max (${panelData.max})`);
+  } else {
+    if (panelData.max && panelData.segments.length !== panelData.max + 1) {
+      errors.push(`segments array length (${panelData.segments.length}) must match max + 1 (${panelData.max + 1})`);
+    }
+    panelData.segments.forEach((segment, i) => {
+      if (typeof segment?.index !== 'number') errors.push(`darkSidePanel.segments[${i}].index must be number`);
+      if (typeof segment?.filled !== 'boolean') errors.push(`darkSidePanel.segments[${i}].filled must be boolean`);
+      if (typeof segment?.current !== 'boolean') errors.push(`darkSidePanel.segments[${i}].current must be boolean`);
+      if (typeof segment?.color !== 'string') errors.push(`darkSidePanel.segments[${i}].color must be string`);
+    });
   }
 
   // Edit flag
   if (typeof panelData.canEdit !== 'boolean') {
     errors.push('canEdit must be boolean');
+  }
+
+  // Read-only reason: always present, empty string when editable
+  if (typeof panelData.readOnlyReason !== 'string') {
+    errors.push('darkSidePanel.readOnlyReason must be string');
+  }
+
+  // Danger flag — a required registry key that was never actually validated
+  if (typeof panelData.danger !== 'boolean') {
+    errors.push('darkSidePanel.danger must be boolean');
   }
 
   return {

@@ -4,6 +4,7 @@ import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-e
 import { ForceTrainingEngine } from "/systems/foundryvtt-swse/scripts/engine/force/ForceTrainingEngine.js";
 import { ForceEnhancementDetector } from "/systems/foundryvtt-swse/scripts/utils/force-enhancement-detector.js";
 import { ActorAbilityBridge } from "/systems/foundryvtt-swse/scripts/adapters/ActorAbilityBridge.js";
+import { DSPEngine } from "/systems/foundryvtt-swse/scripts/engine/darkside/dsp-engine.js";
 
 /**
  * Force Suite Component (RAW SWSE Accurate)
@@ -275,8 +276,7 @@ export class ForceSuiteComponent {
     }
 
     // Increase DSP by 1
-    const currentDSP = actor.system.darkSide?.value || 0;
-    const newDSP = currentDSP + 1;
+    const newDSP = DSPEngine.getNextValue(actor, 1);
     await ActorEngine.updateActor(actor, { 'system.darkSide.value': newDSP });
   }
 

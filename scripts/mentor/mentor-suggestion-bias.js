@@ -74,7 +74,7 @@ export function calculateMentorBias(actor, mentorId, suggestionType) {
   }
 
   // 4. DSP dark-side bias
-  bias.darkSideBias = DSPEngine.getSuggestionBiasMultiplier(actor);
+  bias.darkSideBias = DSPEngine.getBiasMultiplier(actor);
 
   // 5. Calculate total bias (conservative - no single effect > 25%)
   const totalRoleBias = Math.max(...Object.values(bias.roleBias), 1.0);

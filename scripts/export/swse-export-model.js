@@ -101,7 +101,7 @@ function buildForce(sys) {
 function buildCondition(sys) {
   return {
     state: sys.conditionTrack || 'normal',
-    darkSideScore: Number(sys.darkSideScore || 0)
+    darkSideScore: Number(sys.darkSide?.value ?? sys.darkSideScore ?? 0)
   };
 }
 

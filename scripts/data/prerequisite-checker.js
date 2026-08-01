@@ -5,6 +5,7 @@
 
 import { DSPEngine } from "/systems/foundryvtt-swse/scripts/engine/darkside/dsp-engine.js";
 import { HouseRuleService } from "/systems/foundryvtt-swse/scripts/engine/system/HouseRuleService.js";
+import { SchemaAdapters } from "/systems/foundryvtt-swse/scripts/utils/schema-adapters.js";
 import { ActorAbilityBridge } from "/systems/foundryvtt-swse/scripts/adapters/ActorAbilityBridge.js";
 //
 // THE CANONICAL PREREQUISITE ENGINE
@@ -3797,7 +3798,7 @@ function checkDarkSideScore(actor, requirement, className = null) {
     if (!actor) {return { met: true };}
 
     const darkSideScore = DSPEngine.getValue(actor);
-    let required = actor.system?.attributes?.wis?.base || 10;
+    let required = SchemaAdapters.getAbilityScore(actor, 'wis');
 
     // Use house rule setting for Sith Apprentice or Sith Lord
     if (className === 'Sith Apprentice') {
