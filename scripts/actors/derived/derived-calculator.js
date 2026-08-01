@@ -384,7 +384,9 @@ export class DerivedCalculator {
           armorBonus: defenses.will.armorBonus ?? 0,
           abilityKey: defenses.will.abilityKey ?? 'wis',
           abilityMod: defenses.will.abilityMod ?? 0,
-          conditionPenalty: defenses.will.conditionPenalty ?? 0
+          conditionPenalty: defenses.will.conditionPenalty ?? 0,
+          psychicCitadelBonus: defenses.will.psychicCitadelBonus ?? 0,
+          implantWillPenalty: defenses.will.implantWillPenalty ?? 0
         };
       }
       if (defenses.flatFooted) {

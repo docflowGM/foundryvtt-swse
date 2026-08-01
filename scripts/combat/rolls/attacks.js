@@ -70,10 +70,14 @@ function getFightingDefensivelyAttackPenalty(actor, options = {}) {
   return preparedPenalty <= -5 ? 0 : -5;
 }
 
-function getTargetReflex(actor = null) {
+export function getTargetReflex(actor = null) {
   if (!actor) return null;
-  const value = actor.system?.defenses?.reflex?.total
-    ?? actor.system?.derived?.defenses?.reflex?.total
+  // Canonical derived total first — system.defenses.* is legacy/stored
+  // configuration (may retain a stale total from a previous sheet version
+  // or an import) and must only be used as a compatibility fallback when no
+  // derived total exists yet.
+  const value = actor.system?.derived?.defenses?.reflex?.total
+    ?? actor.system?.defenses?.reflex?.total
     ?? actor.system?.defenses?.reflex?.value
     ?? null;
   const number = Number(value);
@@ -88,13 +92,13 @@ function normalizeDefenseKey(value = 'reflex') {
   return 'reflex';
 }
 
-function getTargetDefense(actor = null, defenseType = 'reflex') {
+export function getTargetDefense(actor = null, defenseType = 'reflex') {
   if (!actor) return null;
   const key = normalizeDefenseKey(defenseType);
   if (key === 'dc') return null;
   if (key === 'reflex') return getTargetReflex(actor);
-  const value = actor.system?.defenses?.[key]?.total
-    ?? actor.system?.derived?.defenses?.[key]?.total
+  const value = actor.system?.derived?.defenses?.[key]?.total
+    ?? actor.system?.defenses?.[key]?.total
     ?? actor.system?.defenses?.[key]?.value
     ?? null;
   const n = Number(value);
@@ -268,7 +272,14 @@ export async function rollAttack(actor, weapon, options = {}) {
     const { vehicleActor, crewQuality } = domainResolution.normalizedContext;
     attackBonusResolution = await resolveAbstractCrewAttackBonus(vehicleActor, weapon, crewQuality, rollOptions);
   } else {
-    attackBonusResolution = resolveAttackBonus(actor, weapon, null, rollOptions);
+    // Action-linked talent bonuses (TalentActionLinker) are keyed off the
+    // action ID — prefer the caller-supplied actionId, falling back to the
+    // one already derived onto workflowContext, so an attack fired through a
+    // real action-card/full-attack-sequence path picks up its linked talent
+    // bonus. A plain "Roll Attack" click with no options still resolves to
+    // null here, unchanged from before.
+    const resolvedActionId = rollOptions.actionId ?? workflowContext?.actionId ?? null;
+    attackBonusResolution = resolveAttackBonus(actor, weapon, resolvedActionId, rollOptions);
   }
   if (isVehicleAttack) {
     for (const warning of attackBonusResolution.warnings ?? []) {
@@ -617,12 +628,15 @@ export async function rollAttackAndDamageWithNarration(actor, weapon, options = 
   }
 
   const targetName = _firstTargetName();
-  const atkBonus = resolveAttackBonus(actor, weapon, null, rollOptions).total;
+  const workflowContext = summarizeCombatWorkflowContext(rollOptions.combatContext ?? rollOptions.workflowContext ?? null, { actor, weapon });
+  // See rollAttack()'s identical actionId authority order — a plain call
+  // with no options still resolves to null here, unchanged from before.
+  const resolvedActionId = rollOptions.actionId ?? workflowContext?.actionId ?? null;
+  const atkBonus = resolveAttackBonus(actor, weapon, resolvedActionId, rollOptions).total;
   // optionModifiers still needed for die-formula and effect modifiers below.
   const optionModifiers = CombatOptionResolver.collectAttackModifiers(actor, weapon, rollOptions);
   const dmgResult = resolveDamageBonus(actor, weapon, rollOptions);
   const dmgBonus = dmgResult.total;
-  const workflowContext = summarizeCombatWorkflowContext(rollOptions.combatContext ?? rollOptions.workflowContext ?? null, { actor, weapon });
   const actionOptionSpend = await spendCoreAttackOptionCosts(actor, weapon, rollOptions);
   if (actionOptionSpend?.allowed === false || actionOptionSpend?.permitted === false) {
     ui?.notifications?.warn?.(actionOptionSpend.reason || 'Selected attack option action cost could not be paid.');
