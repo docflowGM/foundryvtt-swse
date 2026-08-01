@@ -184,13 +184,18 @@ export class DefenseTooltip {
       });
     }
 
-    // Active modifiers (from derived data)
+    // Active modifiers (from derived data) — these are the itemized sources
+    // that ADD UP TO data.rulesBonus above (both come from the same
+    // ModifierEngine defense.<type> aggregate). They are informational only:
+    // do not sum them as additional additive rows, or the displayed total
+    // would exceed the canonical total by double-counting the aggregate.
     if (data.modifiers && data.modifiers.length > 0) {
       data.modifiers.forEach(mod => {
         rows.push({
-          label: mod.sourceName,
+          label: `${mod.sourceName} (included in Rules)`,
           value: mod.value,
-          semantic: mod.value > 0 ? 'positive' : (mod.value < 0 ? 'negative' : 'neutral')
+          semantic: 'informational',
+          informational: true
         });
       });
     }
@@ -238,10 +243,11 @@ export class DefenseTooltip {
     if (data.implantWillPenalty) lines.push(`  Implant Penalty: ${data.implantWillPenalty}`);
     lines.push(`  Subtotal: ${data.subtotal}`);
 
-    // Modifiers
+    // Modifiers — informational breakdown of the "Rules" line above (same
+    // ModifierEngine defense.<type> aggregate); not additional additive terms.
     if (data.modifiers && data.modifiers.length > 0) {
       lines.push('');
-      lines.push(`Active Modifiers (${data.modifiers.length}):`);
+      lines.push(`Rules Modifiers (${data.modifiers.length}, already included in Rules above):`);
       data.modifiers.forEach(mod => {
         lines.push(`  ${mod.sourceName}: ${mod.value > 0 ? '+' : ''}${mod.value}`);
       });
@@ -317,11 +323,19 @@ export class DefenseTooltip {
       + armorSubtotalTerm + speciesBonus + conditionPenalty + rulesBonus + psychicCitadelBonus + implantWillPenalty;
 
     // Get modifiers from ModifierEngine
-    const modifierTarget = `defense.${defenseInfo.key}`;
+    // Must match the canonical ModifierEngine target keys DerivedCalculator
+    // aggregates against ('defense.fortitude'/'defense.reflex'/'defense.will'
+    // — see derived-calculator.js's allTargets), not defenseInfo.key's short
+    // 'fort'/'ref' forms, or this lookup silently finds nothing.
+    const modifierTarget = `defense.${canonicalKey === 'flatFooted' ? 'reflex' : canonicalKey}`;
     const modifiers = this.getModifiersForTarget(actor, modifierTarget);
 
-    // Get total from canonical derived defenses when available.
-    const totalValue = defense.total || subtotal;
+    // Get total from canonical derived defenses when available. Use
+    // Number.isFinite rather than truthiness so a canonical total of 0
+    // (not expected in practice, but not impossible for a malformed actor)
+    // is not mistaken for "unset" and silently replaced by the subtotal.
+    const canonicalTotalValue = Number(defense.total);
+    const totalValue = Number.isFinite(canonicalTotalValue) ? canonicalTotalValue : subtotal;
 
     return {
       label: defenseInfo.label,
@@ -364,11 +378,14 @@ export class DefenseTooltip {
    * @private
    */
   static getModifiersForTarget(actor, target) {
-    // Try to get modifiers from derived data if available
-    const breakdown = actor.system.derived?.modifiers?.[target];
-    if (breakdown && breakdown.modifiers) {
-      return breakdown.modifiers.map(mod => ({
-        sourceName: mod.description || mod.source,
+    // system.derived.modifiers is { all, breakdown }, and breakdown[target]
+    // (built by ModifierUtils.buildModifierBreakdown -> getModifierDetail) is
+    // { total, applied, breakdown } — the per-modifier list lives at
+    // .applied, not a nonexistent top-level modifiers[target].modifiers.
+    const detail = actor.system.derived?.modifiers?.breakdown?.[target];
+    if (detail && Array.isArray(detail.applied)) {
+      return detail.applied.map(mod => ({
+        sourceName: mod.sourceName ?? mod.description ?? mod.source,
         source: mod.source,
         type: mod.type,
         value: mod.value,

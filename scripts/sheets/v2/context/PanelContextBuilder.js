@@ -47,6 +47,12 @@ function isTruthyEquipState(value) {
   return Number(value) === 1;
 }
 
+// Dedupes the defense-panel component-sum diagnostic (below) so a
+// persistent mismatch (e.g. a component the panel doesn't yet surface)
+// logs once per distinct actor/defense/values combination instead of every
+// render — a sheet re-renders very frequently in a live session.
+const _loggedDefensePanelMismatches = new Set();
+
 export class PanelContextBuilder {
   constructor(actor, sheetInstance) {
     this.actor = actor;
@@ -324,7 +330,11 @@ export class PanelContextBuilder {
       const canonicalTotal = Number(derivedDefense?.total ?? defenseViewModel?.total);
       const total = Number.isFinite(canonicalTotal) ? canonicalTotal : (Number.isFinite(componentSum) ? componentSum : 10);
       if (Number.isFinite(canonicalTotal) && Number.isFinite(componentSum) && canonicalTotal !== componentSum) {
-        console.debug(`[SWSE] Defense panel component sum (${componentSum}) does not match the canonical ${label} total (${canonicalTotal}) for ${this.actor?.name ?? 'actor'} — the displayed total is still the canonical one; the breakdown may be missing a component.`);
+        const mismatchKey = `${this.actor?.id ?? 'unknown'}:${systemKey}:${canonicalTotal}:${componentSum}`;
+        if (!_loggedDefensePanelMismatches.has(mismatchKey)) {
+          _loggedDefensePanelMismatches.add(mismatchKey);
+          console.debug(`[SWSE] Defense panel component sum (${componentSum}) does not match the canonical ${label} total (${canonicalTotal}) for ${this.actor?.name ?? 'actor'} — the displayed total is still the canonical one; the breakdown may be missing a component.`);
+        }
       }
       const abilityModClass = abilityMod > 0 ? 'mod--positive' : abilityMod < 0 ? 'mod--negative' : 'mod--zero';
       const miscModClass = miscMod > 0 ? 'mod--positive' : miscMod < 0 ? 'mod--negative' : 'mod--zero';

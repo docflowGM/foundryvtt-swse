@@ -102,4 +102,50 @@ function actorWithWillDefense(overrides = {}) {
   assert.equal(data.abilityMod, 0, 'flat-footed must remove a positive Dex bonus');
 }
 
+// 4. Regression: getModifiersForTarget() used to read
+// actor.system.derived.modifiers[target].modifiers, but DerivedCalculator
+// actually stores { all, breakdown } where breakdown[target] = { total,
+// applied, breakdown } (ModifierUtils.getModifierDetail) — so the lookup
+// always silently returned []. It also used the short 'defense.will'/
+// 'defense.fort'/'defense.ref' keys for fort/reflex where DerivedCalculator
+// aggregates under 'defense.fortitude'/'defense.reflex'. This proves the
+// lookup now finds real entries under the canonical target key, AND that
+// those entries are marked informational so they are never double-counted
+// against `rulesBonus` (both come from the same ModifierEngine aggregate).
+{
+  const actor = actorWithWillDefense();
+  actor.system.derived.modifiers = {
+    all: [],
+    breakdown: {
+      'defense.will': {
+        total: 1,
+        applied: [{ id: 'm1', source: 'feat', sourceName: 'Iron Will', value: 1 }]
+      }
+    }
+  };
+  const structure = DefenseTooltip.getBreakdownStructure(actor, 'will');
+  const modifierRow = structure.rows.find(r => r.label.includes('Iron Will'));
+  assert.ok(modifierRow, 'a real modifier entry under the canonical "defense.will" key must be found');
+  assert.equal(modifierRow.informational, true, 'modifier rows must be marked informational — they explain rulesBonus, not add to it');
+
+  // The canonical total is unaffected by how many informational rows exist.
+  assert.equal(structure.total, 22);
+}
+
+// 5. Fortitude/Reflex use the canonical 'defense.fortitude'/'defense.reflex'
+// target keys (not the short 'fort'/'ref' forms) to match how
+// DerivedCalculator actually aggregates ModifierEngine modifiers.
+{
+  const actor = actorWithWillDefense();
+  actor.system.derived.defenses.fortitude = { total: 15, abilityMod: 1, levelContribution: 5, classBonus: 2 };
+  actor.system.derived.modifiers = {
+    all: [],
+    breakdown: {
+      'defense.fortitude': { total: 2, applied: [{ id: 'm2', source: 'feat', sourceName: 'Toughness Bonus', value: 2 }] }
+    }
+  };
+  const structure = DefenseTooltip.getBreakdownStructure(actor, 'fort');
+  assert.ok(structure.rows.some(r => r.label.includes('Toughness Bonus')), 'Fortitude must look up modifiers under "defense.fortitude", not "defense.fort"');
+}
+
 console.log('defense-tooltip-parity.test.mjs OK');

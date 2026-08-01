@@ -394,7 +394,7 @@ function mirrorSkills(system) {
 }
 
 
-function normalizeAttackEntry(attack = {}, actor = null) {
+export function normalizeAttackEntry(attack = {}, actor = null) {
   const attackBonus = Number(
     attack.attackTotal ??
     attack.attackBonus ??
@@ -472,6 +472,8 @@ function normalizeAttackEntry(attack = {}, actor = null) {
     weaponType,
     attackTotal: attackBonus,
     attackBonus,
+    attackUnavailable: attack.attackUnavailable === true,
+    damageUnavailable: attack.damageUnavailable === true,
     damageFormula,
     damage: damageFormula,
     critRange,
@@ -523,21 +525,27 @@ export function mirrorAttacks(actor, system) {
     // resolves with for a plain, no-options attack; context is left empty
     // so invocation-only modifiers (range, firing-into-melee, custom
     // modifiers, sequence penalties) never get baked into the resting total.
+    // A resolver failure must never present as a confident "+0" — a real
+    // weapon essentially never has a true +0 baseline, so silently
+    // displaying one would read as a fabricated combat value rather than an
+    // error. unavailable:true lets the template show "—" instead.
     let attackResolution;
     let damageResolution;
     try {
       attackResolution = resolveAttackBonus(actor, w, null, {});
     } catch (err) {
       console.error(`[SWSE] resolveAttackBonus failed for ${w.name}:`, err);
-      attackResolution = { total: 0, components: {} };
+      attackResolution = { total: 0, components: {}, unavailable: true };
     }
     try {
       damageResolution = resolveDamageBonus(actor, w, {});
     } catch (err) {
       console.error(`[SWSE] resolveDamageBonus failed for ${w.name}:`, err);
-      damageResolution = { total: 0, components: {} };
+      damageResolution = { total: 0, components: {}, unavailable: true };
     }
-    const staticDamageFormula = formatDamageFormulaWithBonus(damageFormula, damageResolution.total);
+    const staticDamageFormula = damageResolution.unavailable
+      ? (damageFormula || '—')
+      : formatDamageFormulaWithBonus(damageFormula, damageResolution.total);
 
     const rawAttack = {
       id: w.id,
@@ -571,6 +579,8 @@ export function mirrorAttacks(actor, system) {
         ? data.properties
         : [],
       attackTotal: attackResolution.total,
+      attackUnavailable: attackResolution.unavailable === true,
+      damageUnavailable: damageResolution.unavailable === true,
       breakdown: {
         attack: buildLedgerFromComponents(attackResolution.components, 'combat.attack', 'baseline'),
         damage: buildLedgerFromComponents(damageResolution.components, 'combat.damage', 'baseline')

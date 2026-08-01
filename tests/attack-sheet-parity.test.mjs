@@ -14,7 +14,7 @@ globalThis.window = globalThis.window || {};
 registerFoundryPathLoader();
 installFoundryShimGlobals({ game: { user: { isGM: true, id: 'gm-1' }, combat: null } });
 
-const { mirrorAttacks } = await import('../scripts/actors/v2/character-actor.js');
+const { mirrorAttacks, normalizeAttackEntry } = await import('../scripts/actors/v2/character-actor.js');
 const { resolveAttackBonus, resolveDamageBonus } = await import('../scripts/engine/combat/combat-roll-math.js');
 
 function weaponItem(overrides = {}) {
@@ -151,6 +151,48 @@ function characterActor(items = [weaponItem()], overrides = {}) {
   const canonicalAttack = resolveAttackBonus(droidActor, stockWeapon, null, {});
   assert.equal(canonicalAttack.total, 9, 'stock attack total must be the published total, not BAB+ability+enhancement layered on top');
   assert.equal(entry.attackTotal, 9);
+}
+
+// 7. Regression: a resolver failure must never present as a confident "+0".
+// Before this fix, mirrorAttacks()'s catch block substituted
+// { total: 0, components: {} } — indistinguishable on the sheet from a real
+// weapon that genuinely has a +0 baseline. It must now be flagged
+// unavailable so the template can show "—" instead of a fabricated number.
+//
+// isAttackItem() short-circuits on item.type === 'weapon' without touching
+// `system` at all, and isItemEquipped()/mirrorAttacks's own pre-resolver
+// reads only need system.equipped/system.damage — so a weapon whose
+// system.attackAttribute getter throws passes both filters normally and
+// only fails once resolveAttackBonus() (via getWeaponAttackAbility) reads
+// that specific field deep inside the resolver, isolating "equipped check
+// passes but resolver fails" without needing to duplicate or guess at
+// character-actor.js's own filter internals.
+{
+  const throwingWeapon = weaponItem();
+  Object.defineProperty(throwingWeapon.system, 'attackAttribute', {
+    get() { throw new Error('simulated resolver-time failure'); },
+    configurable: true
+  });
+
+  const actor = characterActor([throwingWeapon]);
+  const system = { derived: { attacks: {} } };
+  assert.doesNotThrow(() => mirrorAttacks(actor, system), 'a single malformed weapon item must not crash actor data preparation for the whole actor');
+
+  const entry = system.derived.attacks.list[0];
+  assert.ok(entry, 'the weapon is still mirrored (equipped/type checks never touched the broken field)');
+  assert.equal(entry.attackUnavailable, true, 'a resolver failure must be flagged unavailable, not silently shown as a number');
+  assert.notEqual(entry.attackTotal, undefined, 'a numeric fallback must still exist for any code that expects a number');
+}
+
+// 8. Direct contract test: normalizeAttackEntry() must pass the
+// unavailable flags through unchanged rather than losing them in its own
+// field-normalization fallback chains (attackTotal ?? attackBonus ?? ...).
+{
+  const entry = normalizeAttackEntry({
+    id: 'w1', name: 'Test', attackTotal: 0, attackUnavailable: true, damageUnavailable: false
+  });
+  assert.equal(entry.attackUnavailable, true);
+  assert.equal(entry.damageUnavailable, false);
 }
 
 console.log('attack-sheet-parity.test.mjs OK');
