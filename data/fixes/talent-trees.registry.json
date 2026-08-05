@@ -2206,9 +2206,15 @@
   {
     "id": "superior-skills",
     "displayName": "Superior Skills",
-    "talentCount": 1,
+    "talentCount": 7,
     "talents": [
-      "Critical Skill Success"
+      "Assured Skill",
+      "Critical Skill Success",
+      "Exceptional Skill",
+      "Reliable Boon",
+      "Skill Boon",
+      "Skill Confidence",
+      "Skillful Recovery"
     ]
   },
   {

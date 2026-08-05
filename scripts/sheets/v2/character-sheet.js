@@ -125,6 +125,7 @@ import { ShellSurfaceRegistry } from "/systems/foundryvtt-swse/scripts/ui/shell/
 import { ThemeResolutionService } from "/systems/foundryvtt-swse/scripts/ui/theme/theme-resolution-service.js";
 import { activateCustomSkillsUI } from "/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet/custom-skills-ui.js";
 import { FeatChoiceDialog } from "/systems/foundryvtt-swse/scripts/apps/choices/feat-choice-dialog.js";
+import { FeatChoiceResolver } from "/systems/foundryvtt-swse/scripts/engine/progression/feats/feat-choice-resolver.js";
 import { isForcePowerItem } from "/systems/foundryvtt-swse/scripts/utils/item-classification.js";
 import { registerCustomSkillsHelpers } from "/systems/foundryvtt-swse/scripts/sheets/v2/custom-skills-helpers.js";
 import { CapabilityRegistry } from "/systems/foundryvtt-swse/scripts/engine/capabilities/capability-registry.js";
@@ -7652,11 +7653,11 @@ const forcePoints = [];
 
   _showItemSelectionModal(itemType) {
     const root = this.element;
-    if (!root) return;
+    if (!root) return false;
     const modal = root.querySelector('#item-selection-modal');
     const titleEl = root.querySelector('#modal-title');
     const messageEl = root.querySelector('#modal-message');
-    if (!modal || !titleEl || !messageEl) return;
+    if (!modal || !titleEl || !messageEl) return false;
 
     const capitalType = itemType.charAt(0).toUpperCase() + itemType.slice(1);
     titleEl.textContent = `Add ${capitalType}`;
@@ -7673,6 +7674,8 @@ const forcePoints = [];
       });
       overlay._clickHandlerAttached = true;
     }
+
+    return true;
   }
 
   _hideItemSelectionModal() {
@@ -7685,29 +7688,96 @@ const forcePoints = [];
   }
 
   async _handleModalYes() {
-    if (!this._currentItemType) return;
+    const itemType = this._currentItemType;
+    if (!itemType) return;
 
     this._hideItemSelectionModal();
 
-    const registry = this._currentItemType === 'feat' ? FeatRegistry : TalentRegistry;
-    await registry.initialize?.();
-    const sample = registry.getAll?.()?.[0];
-    const packName = sample?.pack || (this._currentItemType === 'feat' ? 'foundryvtt-swse.feats' : 'foundryvtt-swse.talents');
-    const pack = game.packs.get(packName);
+    await this._addAbilityItemFromCompendium(itemType);
+  }
 
-    if (!pack || !sample) {
-      ui.notifications.error(`${this._currentItemType} registry/compendium not available!`);
-      return;
+  /**
+   * Search/browse the canonical feat or talent compendium and create a full owned copy
+   * of the selected document on this actor.
+   *
+   * The list is driven by the canonical registries (FeatRegistry / TalentRegistry) and the
+   * created item is cloned from the real compendium document, so the owned item keeps its
+   * description, benefit, prerequisites, source, page, tree identity, and choice metadata.
+   *
+   * @param {string} itemType - "feat" or "talent"
+   * @returns {Promise<Item|null>} The created owned item, or null when cancelled/failed.
+   */
+  async _addAbilityItemFromCompendium(itemType) {
+    const registry = itemType === 'feat' ? FeatRegistry : TalentRegistry;
+    await registry.initialize?.();
+
+    const entries = (registry.getAll?.() || [])
+      .filter(entry => entry?.id && entry?.name)
+      .sort((a, b) => String(a.name).localeCompare(String(b.name)));
+
+    if (!entries.length) {
+      ui?.notifications?.error?.(`${itemType} registry/compendium not available!`);
+      return null;
     }
 
-    // Open the compendium in a sidebar/window view
-    // In Foundry, you can open a compendium and let the user drag items
-    // This is the standard approach for item selection
-    pack.render(true);
+    const label = itemType === 'feat' ? 'Feat' : 'Talent';
+    const listId = `swse-${itemType}-pick-list`;
+    const fieldName = `swse-${itemType}-pick`;
+    const escape = (value) => foundry.utils.escapeHTML(String(value ?? ''));
+    const optionsMarkup = entries.map((entry) => {
+      const group = entry.treeName || entry.talentTree || entry.category || entry.source || '';
+      return `<option value="${escape(entry.name)}"${group ? ` label="${escape(group)}"` : ''}></option>`;
+    }).join('');
 
-    ui.notifications.info(
-      `Drag a ${this._currentItemType} from the compendium panel onto your sheet or click to add it.`
-    );
+    const content = `
+      <div class="swse-ability-pick">
+        <p>Search the ${escape(label)} compendium and pick the entry to add to ${escape(this.actor?.name || 'this character')}.</p>
+        <input type="text" name="${fieldName}" list="${listId}" placeholder="Type to search ${entries.length} ${escape(label.toLowerCase())}s…" autofocus />
+        <datalist id="${listId}">${optionsMarkup}</datalist>
+      </div>`;
+
+    const chosenName = await SWSEDialogV2.prompt({
+      title: `Add ${label} from Compendium`,
+      content,
+      label: `Add ${label}`,
+      callback: (html) => String(html?.find?.(`[name="${fieldName}"]`)?.val?.() ?? '').trim()
+    });
+
+    if (!chosenName) return null;
+
+    const entry = registry.getByName?.(chosenName) || registry.getById?.(chosenName) || null;
+    if (!entry) {
+      ui?.notifications?.warn?.(`No ${itemType} named "${chosenName}" exists in the compendium.`);
+      return null;
+    }
+
+    const doc = await registry.getDocumentById?.(entry.id);
+    if (!doc) {
+      ui?.notifications?.error?.(`Could not load the "${entry.name}" ${itemType} document from the compendium.`);
+      return null;
+    }
+
+    try {
+      const source = doc.toObject ? doc.toObject() : foundry.utils.deepClone(doc);
+      delete source._id;
+      const [created] = await ActorEngine.createEmbeddedDocuments(this.actor, 'Item', [source], {
+        source: `character-sheet-compendium-add-${itemType}`
+      });
+
+      // Repeatable, choice-bearing abilities (Exceptional Skill, Weapon Focus, ...) resolve
+      // their selection through the existing choice dialog rather than a bespoke prompt.
+      if (created && FeatChoiceResolver.requiresChoice?.(created)) {
+        await FeatChoiceDialog.promptAndApply?.(this.actor, created);
+      }
+
+      await this.requestSurfaceRender({ reason: 'embedded-item-created' });
+      ui?.notifications?.info?.(`Added ${entry.name} to ${this.actor?.name ?? 'the actor'}.`);
+      return created ?? null;
+    } catch (err) {
+      swseLogger.error(`[CharacterSheet] Failed to add ${itemType} from compendium:`, err);
+      ui?.notifications?.error?.(`Failed to add ${entry.name}: ${err?.message ?? err}`);
+      return null;
+    }
   }
 
   async _handleModalNo() {

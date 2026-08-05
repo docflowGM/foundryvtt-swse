@@ -132,7 +132,7 @@ convention.
   during migration." Three copies of the same truth is the classic drift surface; the finalizer
   already ignores the mirrors, so they are removable once no reader remains.
 - **`progression-finalizer-force-knowledge-patch.js`, `choice-resolution-finalization-patch.js`,
-  `reconciliation-and-superior-skills-hotfix.js`** — named as patches/hotfixes layered onto the
+  `reconciliation-remediation-hotfix.js`** — named as patches/hotfixes layered onto the
   shell. Functioning, but flagged as consolidation candidates.
 
 ---
