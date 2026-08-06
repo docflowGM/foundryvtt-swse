@@ -107,7 +107,13 @@ export class GMDatapad extends BaseSWSEAppV2 {
       existing._shouldCenterOnRender = false;
       existing._gmTabletHasManualPlacement = true;
       if (existing._gmTabletMinimized) existing._setGmDatapadMinimized(false);
-      existing.render(false);
+      // Re-opening repaints through the datapad's own guarded seam, so the
+      // scroll/UI state of the surface being brought to front is preserved and
+      // repeated re-opens in one task coalesce into a single render.
+      void existing.requestSurfaceRender({
+        reason: 'gm-datapad-reopen',
+        surfaceId: existing.currentPage
+      });
       existing.bringToFront?.();
       return existing;
     }

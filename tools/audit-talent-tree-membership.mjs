@@ -55,7 +55,6 @@ const treeSideClaimsByTalent = new Map();
 for (const talent of talents) {
   talentsById.set(talent._id, talent);
   pushToMap(talentIdMap, talent._id, { id: talent._id, name: talent.name, line: talent.line });
-  pushToMap(talentNameMap, normalizeKey(talent.name), { id: talent._id, name: talent.name, line: talent.line });
 }
 
 for (const tree of trees) {
@@ -70,9 +69,37 @@ for (const tree of trees) {
   }
 }
 
+// Talent names are unique *within a tree*, not across the whole system: SAGA
+// reuses a name across unrelated trees on purpose (Armor Mastery in both Armor
+// Specialist and Knight's Armor; Multiattack Proficiency (rifles) in both
+// Weapon Master and Carbineer; Ruthless in both Assassin and Mercenary; and so
+// on). Keying this check on the name alone flagged every one of those as a
+// duplicate, which can only be "fixed" by deleting correct documents. Keying it
+// on tree + name still catches the real defect this check exists for — two
+// documents with the same name competing inside one tree — which is exactly how
+// the corrupt Force Meld copy and the mis-filed Provocateur "Seize the Moment"
+// were found.
+function treeKeyForTalent(talent) {
+  const claim = treeSideClaimsByTalent.get(talent._id)?.[0];
+  if (claim) return normalizeKey(claim.treeId);
+  for (const ref of [talent.system?.treeId, talent.system?.talent_tree, talent.system?.talentTree, talent.system?.tree]) {
+    const key = normalizeKey(ref);
+    if (key && treesByKey.has(key)) return treesByKey.get(key)._id;
+  }
+  return '(unclaimed)';
+}
+
+for (const talent of talents) {
+  pushToMap(talentNameMap, `${treeKeyForTalent(talent)}::${normalizeKey(talent.name)}`, {
+    id: talent._id,
+    name: talent.name,
+    line: talent.line,
+  });
+}
+
 const hardFailures = {
   duplicateTalentIds: getDuplicates(talentIdMap),
-  duplicateTalentNames: getDuplicates(talentNameMap),
+  duplicateTalentNamesWithinTree: getDuplicates(talentNameMap),
   treeClaimsMissingTalents: [],
   duplicateTreeSideTalentClaims: [],
   talentsUnclaimedByTree: [],

@@ -10,6 +10,7 @@ import { FactionJobBridgeService } from '/systems/foundryvtt-swse/scripts/ui/she
 import { FactionIntelBridgeService } from '/systems/foundryvtt-swse/scripts/ui/shell/gm/FactionIntelBridgeService.js';
 import { DossierDragDropService } from '/systems/foundryvtt-swse/scripts/ui/dragdrop/dossier-drag-drop-service.js';
 import { requestShellRender } from '/systems/foundryvtt-swse/scripts/ui/shell/request-shell-render.js';
+import { SWSELogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
 import { LocationRegistryService } from '/systems/foundryvtt-swse/scripts/locations/location-registry-service.js';
 import { mutateShellOnly } from '/systems/foundryvtt-swse/scripts/ui/shell/mutate-and-repaint.js';
 import { confirmGmDatapadModal } from '/systems/foundryvtt-swse/scripts/ui/shell/gm/utils/gm-datapad-modal.js';
@@ -123,15 +124,27 @@ export class GMFactionRelationshipSurfaceController {
     return operation();
   }
 
-  async _refresh() {
+  /**
+   * Repaint through the shell's coordinated render seam.
+   *
+   * The controller is not the Application, so the request is routed to the
+   * owning GM Datapad surface rather than rendering independently. Requests
+   * coalesce in the host scheduler, and a rejected render is reported instead
+   * of latching, so the next request still runs.
+   *
+   * @returns {Promise<boolean>} true when a repaint was requested.
+   */
+  async _refresh(reason = 'gm-faction-surface-refresh') {
+    if (!this.host) {
+      SWSELogger.warn('[GMFactionRelationship] No shell host available to repaint.');
+      return false;
+    }
     try {
-      if (typeof requestShellRender === 'function') {
-        await requestShellRender(this.host, { reason: 'gm-faction-surface-refresh' });
-        return;
-      }
-      await this.host?.render?.(false);
-    } catch (_err) {
-      this.host?.render?.(false);
+      await requestShellRender(this.host, { reason });
+      return true;
+    } catch (err) {
+      SWSELogger.error('[GMFactionRelationship] Surface repaint failed.', err);
+      return false;
     }
   }
 

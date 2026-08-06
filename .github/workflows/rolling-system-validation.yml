@@ -31,10 +31,6 @@ name: Rolling System Validation
 #     commits and to import files no rolling-system-alignment commit has
 #     ever touched. Excluding them here is a documented, justified
 #     exclusion, not a silent one.
-#   - The 2 tools/*.mjs syntax failures excluded by
-#     tools/run-rolling-syntax-check.mjs (KNOWN_EXCLUDED_FILES) — unrelated
-#     audit-report generator scripts, pre-existing, not part of the attack/
-#     roll pipeline.
 #   - Anything outside scripts/, tools/, tests/ (this repo has no
 #     package.json/lockfile and zero npm dependencies in its test suite —
 #     every test imports only Node built-ins or relative source files, so
@@ -79,6 +75,21 @@ jobs:
 
       - name: Rolling-system test suite
         run: node tools/run-rolling-tests.mjs
+
+      - name: Guard — shell/GM surface mutation contract
+        run: node tools/check-shell-mutation-contract.mjs --strict
+
+      - name: Guard — talent/tree membership
+        run: node tools/audit-talent-tree-membership.mjs
+
+      - name: Guard — system manifest and declared packs
+        run: node tools/check-system-manifest.mjs
+
+      - name: Guard — generated packs are current
+        run: |
+          set -e
+          node tools/build-poisons-pack.mjs --check
+          node tools/build-talent-enhancements-pack.mjs --check
 
       - name: Guard — combat-math single-source-of-truth
         run: node tools/check-combat-math-ssot.mjs --strict

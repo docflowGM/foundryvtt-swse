@@ -1,5 +1,6 @@
 import { HolonetIntelService } from '/systems/foundryvtt-swse/scripts/holonet/subsystems/holonet-intel-service.js';
 import { SWSELogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
+import { requestShellRender } from '/systems/foundryvtt-swse/scripts/ui/shell/request-shell-render.js';
 
 function cleanString(value, fallback = '') {
   const text = String(value ?? '').trim();
@@ -204,13 +205,29 @@ export class TransmissionDecryptionSurfaceController {
     return cleanString(surface?.dataset?.currentCipher || surface?.querySelector('[data-current-cipher]')?.dataset?.currentCipher);
   }
 
+  /**
+   * Repaint through the shell's coordinated render seam.
+   *
+   * The controller is not the Application, so the request is routed to the
+   * owning host rather than rendering independently. Requests coalesce in the
+   * host scheduler, and a rejected render is reported instead of latching, so
+   * the next request still runs.
+   *
+   * @returns {Promise<boolean>} true when a repaint was requested.
+   */
   async _render(reason = 'transmission-surface-render', surfaceId = 'transmission-decryption') {
     this._host?.patchSurfaceState?.('transmission-decryption', { lastRequestId: this._lastRequestId }, { render: false });
-    if (typeof this._host?.requestSurfaceRender === 'function') {
-      await this._host.requestSurfaceRender({ reason, surfaceId });
-      return;
+    if (!this._host) {
+      SWSELogger.warn('[TransmissionDecryption] No shell host available to repaint.');
+      return false;
     }
-    this._host?.render?.(false);
+    try {
+      await requestShellRender(this._host, { reason, surfaceId });
+      return true;
+    } catch (err) {
+      SWSELogger.error('[TransmissionDecryption] Surface repaint failed.', err);
+      return false;
+    }
   }
 }
 

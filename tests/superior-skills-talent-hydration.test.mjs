@@ -124,13 +124,12 @@ const talentsByName = new Map(talentDocs.map(doc => [doc.name.toLowerCase(), doc
     assert.equal(doc.system.followerTalent?.targetFilter, 'akk-dog');
   }
 
-  // Krath: the phantom reference is gone. The tree legitimately has no talent
-  // document in this repository, which is a recorded content gap, not a
-  // dangling reference.
+  // Krath: hydrated as its full canonical four-talent tree. See
+  // tests/krath-talent-tree-hydration.test.mjs for the detailed coverage.
   const krath = treeDocs.find(doc => doc._id === 'd29a7261c1be4b83');
   assert.ok(krath, 'Krath tree is missing');
-  assert.deepEqual(krath.system.talentIds, [], 'Krath still claims a talent that does not exist');
-  assert.ok(krath.system.contentGap?.reason, 'the Krath content gap is undocumented');
+  assert.equal(krath.system.talentIds.length, 4, 'Krath is not a four-talent tree');
+  assert.equal(krath.system.contentGap, undefined, 'the Krath content gap should be resolved, not recorded');
 }
 
 /* ------------------------------------------------------------------ *

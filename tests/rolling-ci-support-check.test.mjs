@@ -1,5 +1,8 @@
 import assert from 'node:assert/strict';
-import { readFile } from 'node:fs/promises';
+import { readFile, writeFile, rm } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 // Smoke test for the Phase 5 CI support scripts and workflow file
 // (docs/audits/rolling-system-alignment-phase-5.md, "CI architecture").
@@ -41,19 +44,56 @@ import { readFile } from 'node:fs/promises';
   assert.match(source, /looksLikeModule|import\|export/);
 }
 
-// 3. The exclusion lists in both scripts only ever shrink defensively
-// (both scripts self-check that every excluded name still exists in the
-// repo and hard-fail otherwise — already exercised by the runs above
-// since neither script printed a missing-exclusion warning/error), and
-// stay a small, explicitly reasoned set rather than growing unbounded.
+// 3. The syntax gate has no exclusion list at all: every discovered source
+// file is parsed, and the two audit generators that were once excluded are
+// repaired and swept like everything else. The test-runner exclusion list
+// still exists and only ever shrinks defensively (it self-checks that every
+// excluded name exists in the repo and hard-fails otherwise — already
+// exercised by the runs above).
 {
   const { KNOWN_EXCLUDED_TESTS } = await import('../tools/run-rolling-tests.mjs');
-  const { KNOWN_EXCLUDED_FILES } = await import('../tools/run-rolling-syntax-check.mjs');
   assert.equal(KNOWN_EXCLUDED_TESTS.length, 5);
-  // Back to 2 after the five ESM-only syntax defects the hardened module-goal
-  // check surfaced were fixed rather than baselined. Raise this only alongside
-  // written justification in KNOWN_EXCLUDED_FILES.
-  assert.equal(KNOWN_EXCLUDED_FILES.length, 2);
+
+  const syntaxCheck = await import('../tools/run-rolling-syntax-check.mjs');
+  assert.equal(
+    syntaxCheck.KNOWN_EXCLUDED_FILES,
+    undefined,
+    'the syntax gate must not carry an exclusion list'
+  );
+
+  const syntaxSource = await readFile(
+    new URL('../tools/run-rolling-syntax-check.mjs', import.meta.url),
+    'utf8'
+  );
+  assert.doesNotMatch(syntaxSource, /KNOWN_EXCLUDED_FILES/);
+  assert.doesNotMatch(syntaxSource, /non-excluded/);
+
+  // The two previously excluded audit generators parse with a module goal.
+  const repaired = [
+    'tools/audit-nonheroic-weapon-damage.mjs',
+    'tools/audit-npc-source-attribution.mjs',
+  ];
+  for (const rel of repaired) {
+    const result = syntaxCheck.checkFile(
+      fileURLToPath(new URL(`../${rel}`, import.meta.url))
+    );
+    assert.equal(result.status, 0, `${rel} must parse: ${(result.stderr || '').trim()}`);
+  }
+
+  // A malformed ES module is still rejected — the gate did not go blind.
+  const fixture = join(tmpdir(), `swse-syntax-fixture-${process.pid}.mjs`);
+  await writeFile(fixture, 'export const broken = `unterminated ${ [\\n ] }`;\n');
+  try {
+    assert.notEqual(syntaxCheck.checkFile(fixture).status, 0);
+  } finally {
+    await rm(fixture, { force: true });
+  }
+
+  // The sweep actually reaches both repaired files.
+  const sweep = syntaxCheck.runSyntaxSweep();
+  assert.equal(sweep.failures.length, 0, JSON.stringify(sweep.failures, null, 2));
+  for (const rel of repaired) assert.ok(sweep.checkedFiles.includes(rel), `${rel} not swept`);
+  assert.equal(sweep.checked, sweep.checkedFiles.length);
 }
 
 // 4. The workflow file exists and declares the required triggers,

@@ -558,17 +558,18 @@ exactly which check broke):
    unrelated files with their own long-standing, out-of-scope `new Roll()`/
    `actor.update()` usage that this workflow does not police)
 
-**Second documented, pre-existing exclusion (syntax check):**
+**Second exclusion (syntax check) — resolved, no longer exists:**
 `tools/audit-nonheroic-weapon-damage.mjs` and
-`tools/audit-npc-source-attribution.mjs` fail `node --check` (a template-
-literal syntax issue) and have failed since before Phase 1 — confirmed via
-`git log` showing no rolling-system-alignment commit ever touched either
-file. They are audit-report generator scripts, unrelated to the attack/
-roll pipeline. `tools/run-rolling-syntax-check.mjs`'s
-`KNOWN_EXCLUDED_FILES` documents both by name with this reasoning, mirroring
-`KNOWN_EXCLUDED_TESTS`'s pattern for the Force-power tests — the same
-honesty principle applied consistently to both exclusion classes the brief
-anticipated.
+`tools/audit-npc-source-attribution.mjs` used to fail `node --check` and
+were excluded by name. Both have since been repaired: each file's report
+template literal had been flattened onto a single line, which escaped the
+newlines inside its `${...}` interpolations as literal `\n` sequences —
+valid inside the string parts, a stray backslash in code position inside
+the interpolations. Restoring real newlines there fixed both, and both now
+run end to end and emit their intended JSON + Markdown reports.
+`tools/run-rolling-syntax-check.mjs` no longer has a `KNOWN_EXCLUDED_FILES`
+list at all: it sweeps every discovered `.js`/`.mjs` file under `scripts/`,
+`tools/`, and `tests/` and reports the total it checked.
 
 **What this CI explicitly does NOT verify** (stated in the workflow file's
 own header comment, not just this doc): anything requiring a running
@@ -596,14 +597,13 @@ verified to pass on this branch.
 ## CI limitations
 
 - No Foundry runtime verification (see "Runtime matrix" below).
-- The 5 Force-power-track tests and 2 `tools/*.mjs` syntax failures are
-  excluded by name, not fixed — a future contributor changing one of the
-  excluded files' underlying causes (e.g. giving `logger.js`/
+- The 5 Force-power-track tests are excluded by name, not fixed — a future
+  contributor changing their underlying cause (e.g. giving `logger.js`/
   `actor-engine.js` a non-Foundry-absolute import path) would need to
-  update `KNOWN_EXCLUDED_TESTS`/`KNOWN_EXCLUDED_FILES` accordingly; both
-  scripts hard-fail if an excluded name no longer exists in the repo (a
-  built-in staleness check), but neither can detect "this exclusion is no
-  longer necessary" automatically.
+  update `KNOWN_EXCLUDED_TESTS` accordingly; the runner hard-fails if an
+  excluded name no longer exists in the repo (a built-in staleness check),
+  but it cannot detect "this exclusion is no longer necessary"
+  automatically. The syntax gate has no exclusions left to go stale.
 - No coverage/lint step exists in this repository to add to CI (none was
   found during the audit; not invented).
 

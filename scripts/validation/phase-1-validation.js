@@ -125,7 +125,7 @@ function validateEmptyPacks() {
 
   const emptyPacks = [
     { name: 'npc.db', path: 'packs/npc.db', classification: 'EMPTY - should remain as Actor pack placeholder' },
-    { name: 'talent-enhancements.db', path: 'packs/talent-enhancements.db', classification: 'EMPTY - dev/placeholder' },
+    { name: 'talent-enhancements.db', path: 'packs/talent-enhancements.db', classification: 'GENERATED - tools/build-talent-enhancements-pack.mjs' },
     { name: 'sample-active-abilities.db', path: 'packs/sample-active-abilities.db', classification: 'DEV/SAMPLE - 5 test items' }
   ];
 
