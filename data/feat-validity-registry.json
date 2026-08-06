@@ -1,0 +1,75 @@
+{
+  "schemaVersion": 1,
+  "purpose": "Single authoritative source-validity enum for feat entries. Generated reports and eligibility gates should consume this registry instead of independently re-adjudicating whether a feat name is a real SWSE feat.",
+  "statusEnum": [
+    "verified_primary_source",
+    "verified_special_source",
+    "source_unavailable",
+    "source_conflict",
+    "invalid_not_swse_feat",
+    "class_feature_not_feat"
+  ],
+  "defaultStatusForUnlistedEntries": "unclassified",
+  "notes": [
+    "Absence from this registry means a feat has not yet been run through a dedicated validity audit — it is NOT an implicit claim that the entry is verified.",
+    "Entries below were adjudicated in docs/audits/strict-combat-bucket-feat-validity-audit-2026-07-03.json, which records explicit user confirmation (see that file's inputs.manualAdjudication) that these names are not legal SWSE feats, or in Delay Damage's case, are a class feature rather than a feat.",
+    "invalid_not_swse_feat / class_feature_not_feat entries remain present as compendium documents in data/feat-catalog.json and packs/feats.db as of this registry's creation. They must be excluded from implementation queues, readiness reports, and chargen eligibility going forward; removing them from the shipped compendium is a separate follow-up decision, not made by this registry."
+  ],
+  "entries": [
+    {
+      "name": "Spring Attack",
+      "status": "invalid_not_swse_feat",
+      "source": "docs/audits/strict-combat-bucket-feat-validity-audit-2026-07-03.json"
+    },
+    {
+      "name": "Reckless Charge",
+      "status": "invalid_not_swse_feat",
+      "source": "docs/audits/strict-combat-bucket-feat-validity-audit-2026-07-03.json"
+    },
+    {
+      "name": "Wounding Strike",
+      "status": "invalid_not_swse_feat",
+      "source": "docs/audits/strict-combat-bucket-feat-validity-audit-2026-07-03.json"
+    },
+    {
+      "name": "Friendly Fire Avoidance",
+      "status": "invalid_not_swse_feat",
+      "source": "docs/audits/strict-combat-bucket-feat-validity-audit-2026-07-03.json"
+    },
+    {
+      "name": "Heroic Surge",
+      "status": "invalid_not_swse_feat",
+      "source": "docs/audits/strict-combat-bucket-feat-validity-audit-2026-07-03.json"
+    },
+    {
+      "name": "Grappling Strike",
+      "status": "invalid_not_swse_feat",
+      "source": "docs/audits/strict-combat-bucket-feat-validity-audit-2026-07-03.json"
+    },
+    {
+      "name": "Improved Knock Prone",
+      "status": "invalid_not_swse_feat",
+      "source": "docs/audits/strict-combat-bucket-feat-validity-audit-2026-07-03.json"
+    },
+    {
+      "name": "Knock Prone",
+      "status": "invalid_not_swse_feat",
+      "source": "docs/audits/strict-combat-bucket-feat-validity-audit-2026-07-03.json"
+    },
+    {
+      "name": "Hew",
+      "status": "invalid_not_swse_feat",
+      "source": "docs/audits/strict-combat-bucket-feat-validity-audit-2026-07-03.json"
+    },
+    {
+      "name": "Improved Stun",
+      "status": "invalid_not_swse_feat",
+      "source": "docs/audits/strict-combat-bucket-feat-validity-audit-2026-07-03.json"
+    },
+    {
+      "name": "Delay Damage",
+      "status": "class_feature_not_feat",
+      "source": "docs/audits/strict-combat-bucket-feat-validity-audit-2026-07-03.json"
+    }
+  ]
+}

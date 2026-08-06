@@ -3,26 +3,27 @@
   "phase": "9A-core-rulebook-implementation-accuracy",
   "scope": "Saga Edition Core Rulebook feats only. This audit separates implementation presence from implementation correctness.",
   "totals": {
-    "featsAudited": 80,
-    "reviewQueue": 8,
+    "featsAudited": 74,
+    "excludedInvalid": 6,
+    "reviewQueue": 7,
     "errors": 0,
     "warnings": 0
   },
   "byAccuracy": {
     "implemented_partial": 35,
-    "implemented_correct": 30,
-    "source_review_required": 8,
+    "implemented_correct": 26,
+    "source_review_required": 7,
     "metadata_correct": 3,
-    "not_implemented": 4
+    "not_implemented": 3
   },
   "byMode": {
     "scoped_choice_static": 14,
-    "attack_option": 17,
-    "conditional_roll_modifier": 11,
+    "attack_option": 13,
+    "conditional_roll_modifier": 10,
     "reaction_prompt": 6,
     "skill_action_option": 3,
     "procedure_metadata": 2,
-    "resource_rule": 3,
+    "resource_rule": 2,
     "force_point_rule": 2,
     "force_power_selection": 2,
     "static_sheet_math": 8,
@@ -50,14 +51,10 @@
     "Far Shot",
     "Great Fortitude",
     "Heavy Weapon Proficiency",
-    "Hew",
     "Improved Charge",
     "Improved Damage Threshold",
     "Improved Defenses",
     "Improved Disarm",
-    "Improved Knock Prone",
-    "Improved Stun",
-    "Knock Prone",
     "Lightning Reflexes",
     "Martial Arts I",
     "Martial Arts II",
@@ -73,7 +70,6 @@
     "Saber Throw",
     "Skill Focus",
     "Skill Training",
-    "Spring Attack",
     "Toughness",
     "Triple Attack",
     "Two-Weapon Fighting",
@@ -147,13 +143,6 @@
       "reason": "Contextual action/reaction mechanics require book-context confirmation and in-world workflow testing before marking complete."
     },
     {
-      "name": "Hew",
-      "proposedBucket": "Combat",
-      "proposedSubbucket": "Damage & Threshold",
-      "proposedImplementationMode": "conditional_roll_modifier",
-      "reason": "Contextual action/reaction mechanics require book-context confirmation and in-world workflow testing before marking complete."
-    },
-    {
       "name": "Mounted Combat",
       "proposedBucket": "Starship & Vehicle",
       "proposedSubbucket": "Pilot & Maneuvers",
@@ -180,6 +169,32 @@
       "proposedSubbucket": "Area & Explosives",
       "proposedImplementationMode": "attack_option",
       "reason": "Contextual action/reaction mechanics require book-context confirmation and in-world workflow testing before marking complete."
+    }
+  ],
+  "excludedInvalidEntries": [
+    {
+      "name": "Heroic Surge",
+      "status": "invalid_not_swse_feat"
+    },
+    {
+      "name": "Hew",
+      "status": "invalid_not_swse_feat"
+    },
+    {
+      "name": "Improved Knock Prone",
+      "status": "invalid_not_swse_feat"
+    },
+    {
+      "name": "Improved Stun",
+      "status": "invalid_not_swse_feat"
+    },
+    {
+      "name": "Knock Prone",
+      "status": "invalid_not_swse_feat"
+    },
+    {
+      "name": "Spring Attack",
+      "status": "invalid_not_swse_feat"
     }
   ],
   "warnings": [],

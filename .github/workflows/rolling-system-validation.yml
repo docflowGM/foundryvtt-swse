@@ -19,6 +19,10 @@ name: Rolling System Validation
 #     crew-assignment guard all pass in --strict (fail-on-finding) mode.
 #   - No new `actor.update(` or `new Roll(` bypass appears in the
 #     rolling-system source files this workflow tracks.
+#   - packs/feats.db is non-empty and has exact ID-set and content-hash
+#     parity with data/feat-catalog.json (tools/verify-feats-pack-source.mjs)
+#     — see docs/audits/generated/feat-inventory-report.md for the current
+#     reconciliation of the feats compendium.
 #
 # What this workflow does NOT verify:
 #   - Anything that requires a running Foundry VTT v13 instance (actual
@@ -90,6 +94,9 @@ jobs:
           set -e
           node tools/build-poisons-pack.mjs --check
           node tools/build-talent-enhancements-pack.mjs --check
+
+      - name: Guard — feats pack source integrity
+        run: node tools/verify-feats-pack-source.mjs
 
       - name: Guard — combat-math single-source-of-truth
         run: node tools/check-combat-math-ssot.mjs --strict

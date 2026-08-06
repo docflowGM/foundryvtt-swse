@@ -6,6 +6,7 @@ import process from 'node:process';
 const ROOT = process.cwd();
 const backlogPath = path.join(ROOT, 'data/feat-implementation/core-rulebook-feat-implementation-backlog.json');
 const reviewPath = path.join(ROOT, 'data/feat-implementation/core-rulebook-feat-implementation-review-list.json');
+const validityRegistryPath = path.join(ROOT, 'data/feat-validity-registry.json');
 const reportJsonPath = path.join(ROOT, 'docs/audits/generated/core-rulebook-feat-implementation-readiness-report.json');
 const reportMdPath = path.join(ROOT, 'docs/audits/generated/core-rulebook-feat-implementation-readiness-report.md');
 
@@ -19,6 +20,13 @@ function ensureDir(file) {
 
 const backlog = readJson(backlogPath);
 const review = readJson(reviewPath);
+const validityRegistry = readJson(validityRegistryPath);
+const invalidStatuses = new Set(['invalid_not_swse_feat', 'class_feature_not_feat']);
+const invalidByName = new Map(
+  validityRegistry.entries
+    .filter(e => invalidStatuses.has(e.status))
+    .map(e => [e.name, e.status])
+);
 const errors = [];
 const warnings = [];
 const entries = Array.isArray(backlog.entries) ? backlog.entries : [];
@@ -88,25 +96,33 @@ for (const item of review.entries) {
   }
 }
 
-const byAccuracy = entries.reduce((acc, entry) => {
+const excludedInvalidEntries = entries
+  .filter(e => invalidByName.has(e.name))
+  .map(e => ({ name: e.name, status: invalidByName.get(e.name) }))
+  .sort((a, b) => a.name.localeCompare(b.name));
+const validEntries = entries.filter(e => !invalidByName.has(e.name));
+
+const byAccuracy = validEntries.reduce((acc, entry) => {
   acc[entry.accuracy.status] = (acc[entry.accuracy.status] || 0) + 1;
   return acc;
 }, {});
-const byMode = entries.reduce((acc, entry) => {
+const byMode = validEntries.reduce((acc, entry) => {
   acc[entry.expected.mode] = (acc[entry.expected.mode] || 0) + 1;
   return acc;
 }, {});
-const highPriority = entries.filter(e => e.priority === 'high').map(e => e.name).sort();
-const incorrect = entries.filter(e => e.accuracy.status === 'implemented_incorrect').map(e => e.name).sort();
-const partial = entries.filter(e => e.accuracy.status === 'implemented_partial').map(e => e.name).sort();
+const highPriority = validEntries.filter(e => e.priority === 'high').map(e => e.name).sort();
+const incorrect = validEntries.filter(e => e.accuracy.status === 'implemented_incorrect').map(e => e.name).sort();
+const partial = validEntries.filter(e => e.accuracy.status === 'implemented_partial').map(e => e.name).sort();
+const validReviewEntries = review.entries.filter(e => !invalidByName.has(e.name));
 
 const report = {
   schemaVersion: 1,
   phase: backlog.phase,
   scope: backlog.scope,
   totals: {
-    featsAudited: entries.length,
-    reviewQueue: review.entries.length,
+    featsAudited: validEntries.length,
+    excludedInvalid: excludedInvalidEntries.length,
+    reviewQueue: validReviewEntries.length,
     errors: errors.length,
     warnings: warnings.length
   },
@@ -115,13 +131,14 @@ const report = {
   highPriority,
   implementedIncorrect: incorrect,
   implementedPartial: partial,
-  reviewQueue: review.entries.map(e => ({
+  reviewQueue: validReviewEntries.map(e => ({
     name: e.name,
     proposedBucket: e.proposedBucket,
     proposedSubbucket: e.proposedSubbucket,
     proposedImplementationMode: e.proposedImplementationMode,
     reason: e.reason
   })),
+  excludedInvalidEntries,
   warnings,
   errors
 };
@@ -136,8 +153,9 @@ md.push(`Scope: ${backlog.scope}`);
 md.push('');
 md.push('## Totals');
 md.push('');
-md.push(`- Feats audited: ${entries.length}`);
-md.push(`- Source-review queue: ${review.entries.length}`);
+md.push(`- Feats audited: ${validEntries.length}`);
+md.push(`- Excluded as invalid (see data/feat-validity-registry.json): ${excludedInvalidEntries.length}`);
+md.push(`- Source-review queue: ${validReviewEntries.length}`);
 md.push(`- Warnings: ${warnings.length}`);
 md.push(`- Errors: ${errors.length}`);
 md.push('');
@@ -157,10 +175,20 @@ md.push('## Partial implementations');
 md.push('');
 if (partial.length) partial.forEach(name => md.push(`- ${name}`)); else md.push('- None');
 md.push('');
+md.push('## Excluded as invalid');
+md.push('');
+md.push('These names were audited in an earlier pass but are not legal SWSE feats (or, for Delay Damage, are a class feature) per data/feat-validity-registry.json. They are excluded from every count and queue above.');
+md.push('');
+if (excludedInvalidEntries.length) {
+  excludedInvalidEntries.forEach(e => md.push(`- ${e.name} (${e.status})`));
+} else {
+  md.push('- None');
+}
+md.push('');
 md.push('## Source-review queue');
 md.push('');
-if (review.entries.length) {
-  for (const item of review.entries) {
+if (validReviewEntries.length) {
+  for (const item of validReviewEntries) {
     md.push(`### ${item.name}`);
     md.push('');
     md.push(`Description: ${item.description}`);
@@ -186,4 +214,4 @@ if (errors.length && process.argv.includes('--strict')) {
   process.exit(1);
 }
 
-console.log(`Core Rulebook feat implementation audit: ${entries.length} feats, ${warnings.length} warnings, ${errors.length} errors.`);
+console.log(`Core Rulebook feat implementation audit: ${validEntries.length} feats (${excludedInvalidEntries.length} excluded as invalid), ${warnings.length} warnings, ${errors.length} errors.`);
