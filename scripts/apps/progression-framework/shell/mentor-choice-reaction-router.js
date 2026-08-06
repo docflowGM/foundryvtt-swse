@@ -1024,6 +1024,12 @@ export class MentorChoiceReactionRouter {
   async _speak(text, mood) {
     const rail = this.shell?.mentorRail;
     if (!rail || !text) return;
+
+    // A reaction bark takes the rail away from the current build
+    // recommendation. Tell its owner, so the next recommendation is not
+    // suppressed as "unchanged" and left invisible behind this bark.
+    this.shell?.mentorRecommendations?.noteExternalDisplay?.('choice-reaction');
+
     rail.queueSpeak?.(text, mood, { bypassSuppression: true, source: 'choice-reaction' })
       ?? void rail.speak?.(text, mood, { bypassSuppression: true, source: 'choice-reaction' });
     this._flashRail(mood);

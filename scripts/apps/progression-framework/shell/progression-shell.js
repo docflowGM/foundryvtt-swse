@@ -29,6 +29,7 @@ import { RecoverySessionDialog } from '/systems/foundryvtt-swse/scripts/apps/pro
 import { centerApplicationDuringStartup } from '/systems/foundryvtt-swse/scripts/utils/sheet-position.js';
 import { ConditionalStepResolver } from './conditional-step-resolver.js';
 import { ProgressionRenderScheduler } from './progression-render-scheduler.js';
+import { MentorRecommendationController, buildMentorContext } from './mentor-recommendation-controller.js';
 import { ProgressionFinalizer } from './progression-finalizer.js';
 import { ProgressionSession } from './progression-session.js';
 import { ActiveStepComputer } from './active-step-computer.js';
@@ -318,6 +319,9 @@ export class ProgressionShell extends SWSEApplicationV2 {
     this.mentorChoiceReactions = new MentorChoiceReactionRouter(this);
     registerMentorReactionDebug(this);
     this._suppressLegacyMentorSpeech = false;
+    // Sole owner of the mentor's current build recommendation. It reads shell
+    // state and talks to MentorRail; it has no access to the render pipeline.
+    this.mentorRecommendations = new MentorRecommendationController(this);
     this.progressRail = new ProgressRail(this);
     this.utilityBar = new UtilityBar(this);
     if (typeof game !== 'undefined') game.__swseActiveProgressionShell = this;
@@ -626,10 +630,13 @@ export class ProgressionShell extends SWSEApplicationV2 {
     if (!(root instanceof HTMLElement)) return false;
 
     if (region === 'details') return this._updateDetailsRegion(root);
-    if (region === 'mentor') return this._updateMentorRegion(root);
 
-    // Remaining scopes (work-surface, summary, utility, footer, progress) are
-    // produced inline by the shell template and have no independent render
+    // 'mentor' is deliberately absent: mentor dialogue, mood, portrait, and
+    // collapse are all applied straight to the mounted rail by MentorRail, so
+    // the mentor never needs — and must never take — a render seam.
+    //
+    // The remaining scopes (work-surface, summary, utility, footer, progress)
+    // are produced inline by the shell template and have no independent render
     // seam yet, so they still require a structural repaint.
     return false;
   }
@@ -675,47 +682,6 @@ export class ProgressionShell extends SWSEApplicationV2 {
 
     this._markFocusedRow(root);
     return true;
-  }
-
-  /**
-   * Re-render only the mentor rail region (identity/portrait changes). Dialogue
-   * text never comes through here — MentorRail writes it straight to the DOM.
-   * @private
-   */
-  async _updateMentorRegion(root) {
-    const host = root.querySelector('[data-region="mentor-rail"]');
-    if (!(host instanceof HTMLElement)) return false;
-
-    let html = '';
-    try {
-      const context = await this._prepareMentorRailContext();
-      html = await foundry.applications.handlebars.renderTemplate(
-        'systems/foundryvtt-swse/templates/apps/progression-framework/mentor-rail.hbs',
-        context
-      );
-    } catch (err) {
-      swseLogger.warn('[ProgressionShell] scoped mentor update failed', err);
-      return false;
-    }
-
-    host.innerHTML = html;
-    host.setAttribute('data-collapsed', String(!!this.mentorCollapsed));
-    host.setAttribute('data-mood', this.mentor?.mood ?? 'neutral');
-    this.mentorRail.afterRender(host);
-    return true;
-  }
-
-  /**
-   * Minimal context for a standalone mentor-rail region render.
-   * Deliberately does not run _prepareContext — a mentor identity swap must not
-   * rebuild the work surface, rails, or footer.
-   * @private
-   */
-  async _prepareMentorRailContext() {
-    return {
-      mentor: { ...(this.mentor || {}) },
-      mentorCollapsed: !!this.mentorCollapsed,
-    };
   }
 
   /**
@@ -1459,6 +1425,12 @@ export class ProgressionShell extends SWSEApplicationV2 {
     try {
       await plugin.onStepEnter(this);
       this._syncLegacyCommittedSelectionsFromSession();
+
+      // A new step is a new advice context. Clear the previous step's cached
+      // recommendation so its signature cannot suppress the new one, then ask
+      // exactly once. This is not awaited — navigation never waits on advice.
+      this.mentorRecommendations?.reset?.();
+      this.requestMentorRecommendation(`step-enter:${descriptor.stepId}`);
 
       if (!this.progressionSession.visitedStepIds.includes(descriptor.stepId)) {
         this.progressionSession.visitedStepIds.push(descriptor.stepId);
@@ -2342,6 +2314,29 @@ export class ProgressionShell extends SWSEApplicationV2 {
   }
 
   /**
+   * Ask the mentor controller to re-evaluate build advice.
+   *
+   * Fire-and-forget on purpose: player control returns immediately and never
+   * waits on suggestion work or narration. Call this only after a *meaningful*
+   * context change (a committed selection, entering a step) — never from focus,
+   * hover, scroll, resize, animation frames, or render callbacks. The controller
+   * additionally drops any request whose context signature is unchanged, so an
+   * accidental extra call costs nothing but is still a contract violation.
+   *
+   * @param {string} reason - Diagnostic label for the triggering change.
+   */
+  requestMentorRecommendation(reason = 'unspecified') {
+    try {
+      const context = buildMentorContext(this);
+      void this.mentorRecommendations?.requestRecommendation?.(context);
+      swseLogger.debug('[ProgressionShell] mentor recommendation requested', { reason, stepId: context.stepId });
+    } catch (err) {
+      // Advice is advisory: a failure here must never affect progression.
+      swseLogger.debug('[ProgressionShell] mentor recommendation request failed', { reason, error: err?.message });
+    }
+  }
+
+  /**
    * True when this step's onDataReady has not yet run for the current
    * step-activation / data-revision token.
    * @param {string} stepId
@@ -2386,6 +2381,11 @@ export class ProgressionShell extends SWSEApplicationV2 {
 
     // Wire subsystem after-render hooks
     this.mentorRail.afterRender(html.querySelector('[data-region="mentor-rail"]'));
+
+    // A structural render replaces the mentor rail node. Re-present the current
+    // recommendation once against the new DOM. reconnect() never evaluates, so
+    // a render can never feed back into more recommendation work.
+    this.mentorRecommendations?.reconnect?.();
     this.progressRail.afterRender(html.querySelector('[data-region="progress-rail"]'));
     this.utilityBar.afterRender(html.querySelector('[data-region="utility-bar"]'));
 
@@ -3655,6 +3655,10 @@ export class ProgressionShell extends SWSEApplicationV2 {
         target: row || element,
       });
 
+      // A committed selection is a meaningful context change, so the mentor
+      // re-evaluates. Not awaited: the player keeps control immediately.
+      this.requestMentorRecommendation(`commit:${stepId}`);
+
       // Auto-advance is now intentionally immediate. Check it before repainting
       // the just-completed step so the UI does not feel like it lagged or ignored
       // the click. If the step is not ready, fall back to the normal local render.
@@ -4352,6 +4356,7 @@ export class ProgressionShell extends SWSEApplicationV2 {
   async close(options = {}) {
     // Drop any frame-pending repaint so a closing shell cannot paint again.
     this.renderScheduler?.dispose?.();
+    this.mentorRecommendations?.dispose?.();
 
     // Cleanup centering state
     this._cancelAutoAdvance('close');

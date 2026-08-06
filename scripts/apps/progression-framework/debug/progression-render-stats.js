@@ -16,6 +16,10 @@
  *   reasons                   histogram of request reasons
  *   maxUpdatesPerInteraction  worst-case updates produced by one interaction
  *   log                       recent per-request trace (verbose mode only)
+ *
+ * SWSE.debug.mentorRecommendationStats() reports the mentor recommendation
+ * lifecycle separately, so recommendation work is never confused with shell
+ * rendering. fullShellRendersCausedByMentor must always read 0.
  */
 
 function resolveShell() {
@@ -69,12 +73,55 @@ export function progressionRenderStats({ reset = false, quiet = false } = {}) {
   return summary;
 }
 
-/** Register the helper on the SWSE debug namespace. */
+/**
+ * Mentor recommendation lifecycle counters.
+ *
+ * @param {Object} [options]
+ * @param {boolean} [options.reset]
+ * @param {boolean} [options.quiet]
+ * @returns {Object|null}
+ */
+export function mentorRecommendationStats({ reset = false, quiet = false } = {}) {
+  const shell = resolveShell();
+  const controller = shell?.mentorRecommendations ?? null;
+
+  if (!controller) {
+    if (!quiet) console.warn('[SWSE] No active progression shell — open chargen or level-up first.');
+    return null;
+  }
+
+  const stats = controller.stats();
+
+  if (!quiet) {
+    console.group('[MENTOR-RECOMMENDATION]');
+    console.log('context revision      :', stats.contextRevision);
+    console.log('context signature     :', stats.contextSignature);
+    console.log('winner                :', stats.currentRecommendation ?? '(none)');
+    console.log('result                :', stats.lastTrace?.result ?? '(none)');
+    console.log('shell render requested: false');
+    console.log('---');
+    console.log('context requests      :', stats.contextRequests);
+    console.log('deduplicated          :', stats.deduplicatedRequests);
+    console.log('aborted               :', stats.abortedRequests);
+    console.log('stale discarded       :', stats.staleResultsDiscarded);
+    console.log('unchanged skipped     :', stats.unchangedRecommendationsSkipped);
+    console.log('displayed             :', stats.recommendationsDisplayed);
+    console.log('mentor DOM updates    :', stats.mentorDomUpdates);
+    console.log('full renders by mentor:', stats.fullShellRendersCausedByMentor);
+    console.groupEnd();
+  }
+
+  if (reset) controller.resetStats();
+  return stats;
+}
+
+/** Register the helpers on the SWSE debug namespace. */
 export function registerProgressionRenderStats() {
   const root = globalThis;
   root.SWSE ??= {};
   root.SWSE.debug ??= {};
   root.SWSE.debug.progressionRenderStats = progressionRenderStats;
+  root.SWSE.debug.mentorRecommendationStats = mentorRecommendationStats;
 }
 
 registerProgressionRenderStats();

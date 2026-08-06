@@ -311,6 +311,80 @@ export class SuggestionService {
     return focusFiltered;
   }
 
+  /**
+   * Single-winner UI boundary for mentor build advice.
+   *
+   * The engine still ranks internally, but only the winner crosses into the UI:
+   * the mentor must never see a stream of candidates or a "best so far" result,
+   * because each one it saw used to become a spoken line.
+   *
+   * @param {Object} context - Immutable mentor context snapshot (see
+   *   MentorRecommendationController.buildContext). Never a live shell.
+   * @param {Object} [options]
+   * @param {Actor} [options.actor] - Actor document to score against.
+   * @param {string} [options.domain] - Suggestion domain for the current step.
+   * @param {Object} [options.pendingData] - Draft selections.
+   * @param {AbortSignal} [options.signal] - Cancels an in-flight request.
+   * @returns {Promise<Object|null>} One normalized recommendation, or null.
+   */
+  static async getBestRecommendation(context = {}, options = {}) {
+    const { signal = null, actor = null, domain = null, pendingData = null } = options;
+    if (signal?.aborted) return null;
+
+    const resolvedDomain = domain ?? context.domain ?? null;
+    if (!resolvedDomain) return null;
+
+    const suggestions = await this.getSuggestions(actor, context.mode || 'chargen', {
+      domain: resolvedDomain,
+      pendingData: pendingData ?? context.pendingData ?? {},
+      stepId: context.stepId ?? null,
+      step: context.stepId ?? null,
+      limit: 12,
+    });
+
+    // The caller's revision guard is the real staleness check; this only avoids
+    // pointless normalization work after an abort.
+    if (signal?.aborted) return null;
+
+    const ranked = this.sortBySuggestion(Array.isArray(suggestions) ? suggestions : []);
+    const winner = ranked.find(entry => entry && (entry.id || entry.name)) ?? null;
+    if (!winner) return null;
+
+    return this.normalizeRecommendation(winner, { context, domain: resolvedDomain });
+  }
+
+  /**
+   * Reduce a scored suggestion to the flat DTO the mentor UI consumes.
+   * @param {Object} suggestion
+   * @param {Object} [meta]
+   * @returns {Object|null}
+   */
+  static normalizeRecommendation(suggestion, { context = {}, domain = null } = {}) {
+    if (!suggestion) return null;
+
+    const block = suggestion.suggestion || {};
+    const targetId = suggestion.id ?? suggestion._id ?? suggestion.key ?? null;
+    const name = suggestion.name ?? suggestion.label ?? 'this option';
+    const confidence = Number(block.confidence ?? suggestion.confidence ?? 0) || 0;
+    const tier = Number(block.tier ?? suggestion.tier ?? 0) || 0;
+    const reason = block.reason
+      ?? suggestion.reasonSummary
+      ?? suggestion.reasonText
+      ?? null;
+
+    return Object.freeze({
+      id: `${domain ?? 'any'}:${targetId ?? name}`,
+      targetId,
+      targetType: domain,
+      title: `Recommended: ${name}`,
+      dialogue: reason ? `${name} — ${reason}` : `${name} fits the path taking shape.`,
+      mood: tier >= 4 || confidence >= 0.7 ? 'encouraging' : 'neutral',
+      confidenceBand: confidence >= 0.7 ? 'high' : confidence >= 0.4 ? 'medium' : 'low',
+      reasonCode: suggestion.reasonCode ?? suggestion.reason?.code ?? block.reasonCode ?? 'RECOMMENDED_CHOICE',
+      stepId: context.stepId ?? null,
+    });
+  }
+
   static async getSuggestionDiff(actor, context = 'levelup', suggestions = null) {
     const state = await actor.getFlag('foundryvtt-swse', 'suggestionState') || {};
     const prev = state?.lastShown?.[context]?.ids ?? [];

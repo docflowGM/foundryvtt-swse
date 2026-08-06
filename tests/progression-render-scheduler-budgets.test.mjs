@@ -312,7 +312,15 @@ const regionUpdates = (host) => host.jobs.filter(job => !job.structural);
     !/shell\.render\(/.test(mentorRail),
     'MentorRail still calls shell.render() directly'
   );
-  assert.match(mentorRail, /regions: \['mentor'\]/, 'mentor updates are not region-scoped');
+  // Tightened by the mentor-recommendation work: mentor updates are no longer
+  // merely region-scoped, they never enter the render pipeline at all. There is
+  // deliberately no 'mentor' render seam left to request.
+  assert.ok(
+    !/regions: \['mentor'\]/.test(mentorRail),
+    'mentor updates must be DOM-only, not region renders'
+  );
+  assert.match(mentorRail, /presentRecommendation\(/, 'mentor rail is missing the presentation path');
+  assert.match(mentorRail, /_applyIdentityToDom\(/, 'mentor identity changes are not DOM-only');
 
   // Reaction router re-checks its sequence token after every await.
   const router = read('scripts/apps/progression-framework/shell/mentor-choice-reaction-router.js');

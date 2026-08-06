@@ -274,6 +274,49 @@ export class MentorRail {
   }
 
   /**
+   * The one presentation path for a build recommendation.
+   *
+   * Touches only nodes inside the mounted mentor rail: the mood attribute and
+   * the dialogue container. It never renders, never asks the shell to render,
+   * and never blocks the caller on the typewriter animation.
+   *
+   * Equality suppression happens upstream in MentorRecommendationController, so
+   * reaching this method already means the advice genuinely changed.
+   *
+   * @param {Object} recommendation - Normalized recommendation DTO.
+   * @param {Object} [options]
+   * @param {boolean} [options.replay] - Re-presenting after a structural render.
+   * @returns {boolean} false when the rail is not mounted (queued instead).
+   */
+  presentRecommendation(recommendation, { replay = false } = {}) {
+    const dialogue = String(recommendation?.dialogue ?? '').trim();
+    if (!dialogue) return false;
+
+    const mood = recommendation?.mood ?? 'neutral';
+    const container = this._resolveDialogueContainer();
+
+    if (!(container instanceof HTMLElement)) {
+      // Not mounted yet (pre-render, or mid step transition). Queue it; the
+      // rail replays queued dialogue from afterRender().
+      this._queuePendingDialogue(dialogue, mood);
+      return false;
+    }
+
+    // Mood is a paint-only attribute swap on the mounted rail.
+    this.setMood(mood);
+
+    // queueSpeak aborts any line still animating and returns immediately, so a
+    // new recommendation cleanly supersedes the previous one and the player is
+    // never waiting on narration.
+    this.queueSpeak(dialogue, mood, {
+      bypassSuppression: true,
+      source: replay ? 'recommendation-replay' : 'recommendation',
+    });
+
+    return true;
+  }
+
+  /**
    * Speak step-appropriate guidance for the given descriptor.
    * @param {StepDescriptor} descriptor
    * @returns {Promise<void>}
@@ -375,12 +418,38 @@ export class MentorRail {
       portrait: resolveMentorPortraitPath(data.portrait),
     });
 
-    // Identity/portrait changes are a mentor-region update, not a shell repaint.
-    return this.shell.requestRender({
-      reason: 'mentor-identity',
-      regions: ['mentor'],
-      preserveScroll: true,
-    });
+    // Identity/portrait changes patch the mounted rail directly. Mentor code is
+    // never a render owner — not even for a region-scoped update.
+    return this._applyIdentityToDom();
+  }
+
+  /**
+   * Write the current mentor identity into the mounted rail without rendering.
+   * @returns {boolean} false when the rail is not mounted.
+   * @private
+   */
+  _applyIdentityToDom() {
+    const region = this.shell.getRootElement?.()?.querySelector?.('[data-region="mentor-rail"]')
+      ?? this.shell.element?.querySelector?.('[data-region="mentor-rail"]');
+    if (!(region instanceof HTMLElement)) return false;
+
+    const root = region.querySelector('.prog-mentor-rail') || region;
+    const nameEl = root.querySelector('.prog-mentor__name');
+    if (nameEl?.lastChild) nameEl.lastChild.textContent = this.shell.mentor.name || 'Mentor';
+    const titleEl = root.querySelector('.prog-mentor__title');
+    if (titleEl) titleEl.textContent = this.shell.mentor.title || '';
+
+    const portraitWrap = root.querySelector('[data-mentor-portrait]');
+    if (portraitWrap) portraitWrap.setAttribute('data-mentor-portrait', this.shell.mentor.mentorId || '');
+    const img = root.querySelector('.prog-mentor__portrait-image');
+    const portrait = this.shell.mentor.portrait;
+    if (img instanceof HTMLImageElement && portrait && img.getAttribute('src') !== portrait) {
+      img.setAttribute('src', portrait);
+      img.setAttribute('title', this.shell.mentor.name || 'Mentor');
+    }
+
+    this.shell.renderScheduler?.noteDomOnlyMentorUpdate?.();
+    return true;
   }
 
   /**
@@ -394,20 +463,19 @@ export class MentorRail {
     shell.mentorCollapsed = !shell.mentorCollapsed;
     shell.mentor.collapsed = shell.mentorCollapsed;
 
+    // Collapse is expressed entirely through the data-collapsed attribute the
+    // stylesheet already keys off, so this needs no render of any kind.
     const region = shell.getRootElement?.()?.querySelector?.('[data-region="mentor-rail"]')
       ?? shell.element?.querySelector?.('[data-region="mentor-rail"]');
+    let applied = false;
     if (region instanceof HTMLElement) {
       region.setAttribute('data-collapsed', String(shell.mentorCollapsed));
       shell.renderScheduler?.noteDomOnlyMentorUpdate?.();
+      applied = true;
     }
 
     await game.user.setFlag('foundryvtt-swse', 'mentorRailCollapsed', shell.mentorCollapsed);
-
-    return shell.requestRender({
-      reason: 'mentor-collapse',
-      regions: ['mentor'],
-      preserveScroll: true,
-    });
+    return applied;
   }
 
   /**
