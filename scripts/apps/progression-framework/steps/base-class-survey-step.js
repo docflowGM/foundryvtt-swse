@@ -191,7 +191,7 @@ export class BaseClassSurveyStep extends L1SurveyStep {
     const question = this._getRenderableQuestions()?.[this._activeQuestionIndex] || null;
     const clarification = question?.mentorClarification
       || 'This survey is here to understand what this new class means for your character. I can clarify the question, but the answer should remain yours.';
-    shell?.mentorRail?.queueSpeak?.(clarification, 'encouraging', { source: 'base-class-survey' }) ?? void shell?.mentorRail?.speak?.(clarification, 'encouraging');
+    shell?.mentorRecommendations?.presentGuidance({ text: clarification, mood: 'encouraging', stepId: 'base-class-survey' });
   }
 
   async getStepData(context) {

@@ -792,7 +792,7 @@ export class L1SurveyStep extends ProgressionStepPlugin {
     const mentor = getStepMentorObject(shell?.actor ?? null, shell);
     const clarification = this._buildQuestionClarification(mentor);
     if (clarification && shell?.mentorRail) {
-      shell.mentorRail.queueSpeak?.(clarification, 'encouraging', { source: 'l1-survey-clarification' }) ?? void shell.mentorRail.speak?.(clarification, 'encouraging');
+      shell.mentorRecommendations?.presentGuidance({ text: clarification, mood: 'encouraging', stepId: 'l1-survey' });
     }
   }
 
@@ -896,7 +896,7 @@ export class L1SurveyStep extends ProgressionStepPlugin {
     if (!mentorDialogue) return;
     if (!force && mentorDialogue === this._lastPromptSpoken) return;
     this._lastPromptSpoken = mentorDialogue;
-    shell?.mentorRail?.queueSpeak?.(mentorDialogue, 'encouraging', { source: 'l1-survey' }) ?? void shell?.mentorRail?.speak?.(mentorDialogue, 'encouraging');
+    shell?.mentorRecommendations?.presentGuidance({ text: mentorDialogue, mood: 'encouraging', stepId: 'l1-survey' });
   }
 
   _getCurrentMentorDialogue() {

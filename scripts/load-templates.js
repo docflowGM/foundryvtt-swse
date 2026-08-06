@@ -474,6 +474,38 @@ export const SWSE_TEMPLATES = [
   'systems/foundryvtt-swse/templates/shell/partials/concept/empty-state.hbs',
 
 
+  // ==============================
+  // Referenced partials that were never registered
+  //
+  // Each of these is reached by a {{> ...}} in another template but was
+  // absent from this manifest, so rendering the parent would throw a
+  // missing-partial error at runtime. Found by
+  // tools/check-runtime-template-preload.mjs.
+  // ==============================
+  'systems/foundryvtt-swse/templates/actors/character/v2/partials/combat-actions-panel.hbs',
+  'systems/foundryvtt-swse/templates/actors/character/v2/partials/combat-status-panel.hbs',
+  'systems/foundryvtt-swse/templates/actors/character/v2/partials/effective-defenses-panel.hbs',
+  'systems/foundryvtt-swse/templates/actors/character/v2/partials/gear/implants-panel.hbs',
+  'systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/vehicle-custom-station-editor-panel.hbs',
+  'systems/foundryvtt-swse/templates/apps/gm/skill-challenges/skill-challenge-surface.hbs',
+  'systems/foundryvtt-swse/templates/dialogs/entity/parts/effect-builder-wizard.hbs',
+  'systems/foundryvtt-swse/templates/sheets/_sheet-skeleton.hbs',
+  'systems/foundryvtt-swse/templates/v2/npc/npc-sheet-body.hbs',
+  'systems/foundryvtt-swse/templates/v2/npc/npc-sheet-header.hbs',
+  'systems/foundryvtt-swse/templates/v2/npc/npc-sheet-tabs.hbs',
+  'systems/foundryvtt-swse/templates/v2/npc/panels/abilities-panel.hbs',
+  'systems/foundryvtt-swse/templates/v2/npc/panels/biography-panel.hbs',
+  'systems/foundryvtt-swse/templates/v2/npc/panels/combat-notes-panel.hbs',
+  'systems/foundryvtt-swse/templates/v2/npc/panels/combat-panel.hbs',
+  'systems/foundryvtt-swse/templates/v2/npc/panels/defense-panel.hbs',
+  'systems/foundryvtt-swse/templates/v2/npc/panels/feats-panel.hbs',
+  'systems/foundryvtt-swse/templates/v2/npc/panels/health-panel.hbs',
+  'systems/foundryvtt-swse/templates/v2/npc/panels/inventory-panel.hbs',
+  'systems/foundryvtt-swse/templates/v2/npc/panels/languages-panel.hbs',
+  'systems/foundryvtt-swse/templates/v2/npc/panels/portrait-panel.hbs',
+  'systems/foundryvtt-swse/templates/v2/npc/panels/skills-panel.hbs',
+  'systems/foundryvtt-swse/templates/v2/npc/panels/talents-panel.hbs',
+
 ];
 
 

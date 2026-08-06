@@ -275,8 +275,8 @@ async onStepExit(shell) {
     // Mentor reaction on focus should not block right-rail detail hydration.
     const flavorText = this._getMentorFlavorForBackground(background);
     if (flavorText) {
-      void shell.mentorRail.speak(flavorText, 'neutral').catch(error => {
-        console.error('[BackgroundStep] Non-blocking mentor speak failed:', error);
+      shell.mentorRecommendations?.presentFocusReaction({
+        text: flavorText, mood: 'neutral', stepId: 'background', targetId: id,
       });
     }
     // The shell owns the repaint for shell-routed focus: it folds this
@@ -1186,7 +1186,7 @@ _getCategoryChips(shell = null) {
     await this.onItemCommitted(id, shell);
 
     const flavorText = `A custom homeworld then: ${planetName}. That gives you 2 class skills from ${relevantSkills.join(', ')} and ${bonusLanguage} as its language.`;
-    void shell.mentorRail?.speak?.(flavorText, 'neutral');
+    shell.mentorRecommendations?.presentGuidance({ text: flavorText, mood: 'neutral', stepId: 'background' });
   }
 
   getAutoAdvanceConfig(shell) {

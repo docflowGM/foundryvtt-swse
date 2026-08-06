@@ -4836,7 +4836,7 @@ const forcePoints = [];
           ui?.notifications?.info?.(result?.applied
             ? `NPC Review & Repair applied ${result.updateCount} safe normalization update(s).`
             : 'No safe NPC normalization updates were needed.');
-          await this.render(false);
+          await this.requestSurfaceRender({ reason: 'npc-review-repair' });
         } catch (err) {
           ui?.notifications?.error?.(`NPC Review & Repair failed: ${err.message}`);
         }
@@ -4859,7 +4859,7 @@ const forcePoints = [];
           const { NpcReviewRepairEngine } = await import('/systems/foundryvtt-swse/scripts/engine/npc-legal-review/NpcReviewRepairEngine.js');
           await NpcReviewRepairEngine.markGmApproved(this.actor);
           ui?.notifications?.info?.('NPC marked GM-approved with overrides.');
-          await this.render(false);
+          await this.requestSurfaceRender({ reason: 'npc-gm-approval' });
         } catch (err) {
           ui?.notifications?.error?.(`NPC GM approval failed: ${err.message}`);
         }

@@ -376,7 +376,7 @@ if (typeof Hooks !== "undefined") {
   Hooks.once("ready", () => {
     const diagnosticMode =
       globalThis.SWSE?.diagnosticMode === true ||
-      game.settings.get?.("foundryvtt-swse", "sentinelLayoutDebugger") ?? false;
+      (game.settings.get?.("foundryvtt-swse", "sentinelLayoutDebugger") ?? false);
 
     if (!diagnosticMode) {
       return;

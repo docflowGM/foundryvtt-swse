@@ -836,7 +836,7 @@ export class PrestigeSurveyStep extends ProgressionStepPlugin {
     } else if (question?.id === 'profileReading') {
       clarification = 'I am checking whether the pattern I see in your past choices still feels true. Your answer tells me how much old metadata to preserve or prune.';
     }
-    shell?.mentorRail?.queueSpeak?.(clarification, 'focused', { source: 'prestige-survey-clarification' }) ?? void shell?.mentorRail?.speak?.(clarification, 'focused');
+    shell?.mentorRecommendations?.presentGuidance({ text: clarification, mood: 'focused', stepId: 'prestige-survey' });
   }
 
   getMentorContext() {
@@ -1063,7 +1063,7 @@ export class PrestigeSurveyStep extends ProgressionStepPlugin {
     if (!mentorDialogue) return;
     if (!force && mentorDialogue === this._lastPromptSpoken) return;
     this._lastPromptSpoken = mentorDialogue;
-    shell?.mentorRail?.queueSpeak?.(mentorDialogue, 'focused', { source: 'prestige-survey' }) ?? void shell?.mentorRail?.speak?.(mentorDialogue, 'focused');
+    shell?.mentorRecommendations?.presentGuidance({ text: mentorDialogue, mood: 'focused', stepId: 'prestige-survey' });
   }
 
   _getCurrentMentorDialogue() {

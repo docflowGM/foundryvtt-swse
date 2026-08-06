@@ -328,9 +328,12 @@ export class ProgressionStepPlugin {
    */
   async onAskMentor(shell) {
     const guidance = this.getMentorContext(shell);
-    if (guidance && shell?.mentorRail) {
-      shell.mentorRail.queueSpeak?.(guidance, 'encouraging', { source: 'step-plugin-base' }) ?? void shell.mentorRail.speak?.(guidance, 'encouraging');
-    }
+    if (!guidance) return;
+    shell?.mentorRecommendations?.presentAskMentor({
+      text: guidance,
+      mood: 'encouraging',
+      stepId: this.descriptor?.stepId ?? shell?.progressionSession?.currentStepId ?? null,
+    });
   }
 
   /**

@@ -369,7 +369,7 @@ export class ConfirmStep extends ProgressionStepPlugin {
   async onAskMentor(shell) {
     // Mentor provides summary guidance
     const text = this.getMentorContext(shell);
-    shell.mentorRail.queueSpeak?.(text, 'encouraging', { source: 'confirm-step' }) ?? void shell.mentorRail.speak?.(text, 'encouraging');
+    shell.mentorRecommendations?.presentGuidance({ text, mood: 'encouraging', stepId: 'confirm' });
   }
 
   getMentorMode() {

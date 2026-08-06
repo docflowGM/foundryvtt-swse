@@ -522,7 +522,7 @@ export class MentorChoiceReactionRouter {
       text = this._shapeFinalLine({ text, action, item, suggestion: normalizedSuggestion });
       if (!text || this._isStale(token)) return;
 
-      await this._speak(text, this._moodFor(atoms, action, intensity));
+      await this._speak(text, this._moodFor(atoms, action, intensity), { stepId, action, itemId: resolvedItemId });
       this._recordReactionBreadcrumb({ stepId, action, item, mentorId, atoms, intensity, importance, source: suggestion ? textSource : 'metadata', textSource });
     } catch (err) {
       swseLogger.warn('[MentorChoiceReactionRouter] Mentor reaction failed', {
@@ -1026,7 +1026,7 @@ export class MentorChoiceReactionRouter {
     return VALID_MOODS.has('neutral') ? 'neutral' : null;
   }
 
-  async _speak(text, mood) {
+  async _speak(text, mood, context = {}) {
     const rail = this.shell?.mentorRail;
     if (!rail || !text) return;
 
@@ -1035,8 +1035,16 @@ export class MentorChoiceReactionRouter {
     // suppressed as "unchanged" and left invisible behind this bark.
     this.shell?.mentorRecommendations?.noteExternalDisplay?.('choice-reaction');
 
-    rail.queueSpeak?.(text, mood, { bypassSuppression: true, source: 'choice-reaction' })
-      ?? void rail.speak?.(text, mood, { bypassSuppression: true, source: 'choice-reaction' });
+    // Route through the arbiter so a bark cannot displace a recommendation or
+    // an Ask Mentor line, and cannot speak for a step the player has left.
+    const controller = this.shell?.mentorRecommendations;
+    if (controller) {
+      const payload = { text, mood, stepId: context?.stepId ?? null, targetId: context?.itemId ?? null };
+      if (context?.action === 'commit' || context?.action === 'uncommit') controller.presentCommitReaction(payload);
+      else controller.presentFocusReaction(payload);
+    } else {
+      rail.queueSpeak?.(text, mood, { bypassSuppression: true, source: 'choice-reaction' });
+    }
     this._flashRail(mood);
   }
 

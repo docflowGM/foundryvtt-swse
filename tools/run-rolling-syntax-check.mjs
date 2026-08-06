@@ -33,26 +33,7 @@ const SKIP_SUFFIXES = [".bak", ".phase1bak", ".phase2bak", ".phase2v2bak", ".pha
 // commits.
 export const KNOWN_EXCLUDED_FILES = [
   "tools/audit-nonheroic-weapon-damage.mjs",
-  "tools/audit-npc-source-attribution.mjs",
-
-  // Surfaced when this checker started parsing ES modules with an explicit
-  // module goal (see checkFile below). `node --check <file>` had been passing
-  // these silently, so they are NOT new breakage — each one is a genuine,
-  // pre-existing syntax error that would throw the moment the module is
-  // imported at runtime. They are unrelated to the progression render work and
-  // are recorded here rather than fixed in that pass:
-  //   droid-slot-governance.js      — class body closes early, so a `#private`
-  //                                   method call lands outside its class
-  //   sentinel-layout-debugger.js   — malformed expression before a `??`
-  //   houserule-condition-track.js  — `Number(level or 0)`, Python syntax
-  //   skill-uses.js                 — unterminated template literal
-  //   hardpoint-audit.js            — unescaped apostrophe in a single-quoted
-  //                                   string ("they're")
-  "scripts/domain/droids/droid-slot-governance.js",
-  "scripts/governance/sentinel/sentinel-layout-debugger.js",
-  "scripts/houserules/houserule-condition-track.js",
-  "scripts/skills/skill-uses.js",
-  "scripts/ui/discovery/hardpoint-audit.js"
+  "tools/audit-npc-source-attribution.mjs"
 ];
 
 function shouldSkip(path) {

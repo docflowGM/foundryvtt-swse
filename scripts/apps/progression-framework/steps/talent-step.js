@@ -703,7 +703,7 @@ export class TalentStep extends ProgressionStepPlugin {
 
     shell.mentor.currentDialogue = mentorRead.text;
     try {
-      shell.mentorRail?.speak?.(mentorRead.text, mentorRead.tone || 'thoughtful');
+      shell.mentorRecommendations?.presentGuidance({ text: mentorRead.text, mood: mentorRead.tone || 'thoughtful' });
     } catch (_err) {
       // Mentor speech is presentation-only. The detail rail still displays the read.
     }

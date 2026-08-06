@@ -3453,7 +3453,11 @@ export class ProgressionShell extends SWSEApplicationV2 {
     }
 
     const fallback = plugin?.getMentorContext?.(this) || this.mentor?.currentDialogue || 'Ask what this choice means for your training.';
-    this.mentorRail?.queueSpeak?.(fallback, 'encouraging', { source: 'ask-mentor-fallback' }) ?? void this.mentorRail?.speak?.(fallback, 'encouraging');
+    this.mentorRecommendations?.presentAskMentor({
+      text: fallback,
+      mood: 'encouraging',
+      stepId: this.steps[this.currentStepIndex]?.stepId ?? null,
+    });
   }
 
   _onExitTree(event, target) {
@@ -4234,8 +4238,7 @@ export class ProgressionShell extends SWSEApplicationV2 {
     // straight into the live rail (aborting any line still animating), so a new
     // mentor line never rebuilds the work surface, details rail, or footer.
     this.mentor.mood = mood;
-    this.mentorRail?.queueSpeak?.(text, mood, { bypassSuppression: true, source: 'shell-speak-mentor' })
-      ?? void this.mentorRail?.speak?.(text, mood, { bypassSuppression: true, source: 'shell-speak-mentor' });
+    this.mentorRecommendations?.presentGuidance({ text, mood });
   }
 
   /**

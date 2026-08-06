@@ -331,9 +331,9 @@ export class MentorRecommendationController {
     const priority = message.priority ?? MESSAGE_PRIORITY[message.source] ?? 0;
     const revision = message.revision ?? this.currentRevision;
 
-    if (revision < this.currentRevision) {
+    if (this._isStale({ ...message, revision })) {
       this._stats.staleResultsDiscarded += 1;
-      this._trace({ result: 'discarded-stale', source: message.source, revision });
+      this._trace({ result: 'discarded-stale', source: message.source, revision, stepId: message.stepId });
       return false;
     }
 
@@ -421,6 +421,80 @@ export class MentorRecommendationController {
     });
 
     this._trace({ ...trace, result: 'displayed', winner: recommendation.targetId ?? recommendation.id });
+  }
+
+  /**
+   * Public entry points, one per message kind.
+   *
+   * These accept already-composed text — composition stays in
+   * MentorChoiceLineComposer and the voice overlay. Their only job is to stamp
+   * the source, priority, revision, and step identity that the arbiter needs,
+   * so no caller has to remember the policy.
+   */
+
+  /** Step-entry guidance. Temporary: a recommendation supersedes it. */
+  presentStepGuidance({ text, mood = 'neutral', stepId, revision = this.currentRevision } = {}) {
+    return this.present({
+      source: 'stepGuidance', priority: MESSAGE_PRIORITY.stepGuidance,
+      revision, stepId, targetId: null, text, mood, temporary: true,
+    });
+  }
+
+  /** Brief reaction to a focused option. */
+  presentFocusReaction({ text, mood = 'neutral', stepId, targetId = null, revision = this.currentRevision } = {}) {
+    return this.present({
+      source: 'focusReaction', priority: MESSAGE_PRIORITY.focusReaction,
+      revision, stepId, targetId, text, mood, temporary: true,
+    });
+  }
+
+  /** Acknowledgement of a committed (or uncommitted) choice. */
+  presentCommitReaction({ text, mood = 'encouraging', stepId, targetId = null, revision = this.currentRevision } = {}) {
+    return this.present({
+      source: 'commitReaction', priority: MESSAGE_PRIORITY.commitReaction,
+      revision, stepId, targetId, text, mood, temporary: true,
+    });
+  }
+
+  /** Ask Mentor rail text. Outranks everything for the current context. */
+  presentAskMentor({ text, mood = 'encouraging', stepId, targetId = null, revision = this.currentRevision } = {}) {
+    return this.present({
+      source: 'askMentor', priority: MESSAGE_PRIORITY.askMentor,
+      revision, stepId, targetId, text, mood, temporary: true,
+    });
+  }
+
+  /**
+   * Generic step-local guidance that is not tied to step entry — survey
+   * clarifications, per-option flavour. Treated as step guidance so it cannot
+   * displace a recommendation or an Ask Mentor line.
+   */
+  presentGuidance({ text, mood = 'neutral', stepId = null, targetId = null, revision = this.currentRevision } = {}) {
+    return this.present({
+      source: 'stepGuidance', priority: MESSAGE_PRIORITY.stepGuidance,
+      revision, stepId: stepId ?? this._currentStepId(), targetId, text, mood, temporary: true,
+    });
+  }
+
+  /** The step id the shell is actually on right now. */
+  _currentStepId() {
+    return this.shell?.progressionSession?.currentStepId
+      ?? this.shell?.steps?.[this.shell?.currentStepIndex]?.stepId
+      ?? null;
+  }
+
+  /**
+   * A message is stale when it belongs to an older revision *or* to a step the
+   * player has already left. Priority must not rescue a message from the
+   * previous step — an Ask Mentor line for step A speaking on step B is exactly
+   * the failure a priority-only check would allow.
+   * @private
+   */
+  _isStale(message) {
+    if (Number.isFinite(message.revision) && message.revision < this.currentRevision) return true;
+    const currentStepId = this._currentStepId();
+    if (message.stepId && currentStepId && message.stepId !== currentStepId) return true;
+    return false;
   }
 
   /**

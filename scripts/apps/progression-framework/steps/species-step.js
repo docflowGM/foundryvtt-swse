@@ -182,7 +182,7 @@ export class SpeciesStep extends ProgressionStepPlugin {
     // This ensures Ol' Salty appears and speaks when entering Species
     const initialDialogue = "Species selection, eh? Choose wisely — your ancestry shapes everything ahead. Browse the options and pick what calls to you.";
     if (shell.mentorRail) {
-      shell.mentorRail.queueSpeak?.(initialDialogue, 'neutral', { source: 'species-step-enter' }) ?? void shell.mentorRail.speak?.(initialDialogue, 'neutral');
+      shell.mentorRecommendations?.presentStepGuidance({ text: initialDialogue, mood: 'neutral', stepId: 'species' });
     }
   }
 
@@ -728,7 +728,9 @@ export class SpeciesStep extends ProgressionStepPlugin {
         mentor_currentDialogue_before: shell.mentor?.currentDialogue?.slice?.(0, 30) ?? '(null)',
       });
 
-      void shell.mentorRail.speak(dialogue, 'encouraging')
+      void Promise.resolve(shell.mentorRecommendations?.presentFocusReaction({
+        text: dialogue, mood: 'encouraging', stepId: 'species', targetId: entry.id,
+      }))
         .then(() => {
           console.log(`[SWSE Species Debug] [Click #${clickNum}] shell.mentorRail.speak() completed`);
 

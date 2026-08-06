@@ -37,20 +37,12 @@ const SUPERIOR_SKILLS = Object.freeze({
   '323cc243fef47675': 'Skillful Recovery',
 });
 
-// Pre-existing, unrelated content defects that predate this repair. They are
-// pinned here (rather than ignored) so the broad checks below still fail the
-// moment a NEW dangling tree reference or unresolvable registry name appears.
-const KNOWN_UNRESOLVED_TREE_TALENT_IDS = Object.freeze([
-  '8793a955bce166d2',   // Krath
-  'ad7fd3e1a2b04c30',   // Korunnai Adept
-  'ad7fd3e1a2b04c31',   // Korunnai Adept
-  'ad7fd3e1a2b04c32',   // Korunnai Adept
-]);
-const KNOWN_UNRESOLVED_REGISTRY_NAMES = Object.freeze([
-  'Akk Dog Attack Training',      // korunnai-adept
-  "Akk Dog Trainer's Actions",    // korunnai-adept
-  'Protective Reaction',          // korunnai-adept
-]);
+// Every talent-tree reference now resolves. The Korunnai Adept talents were
+// hydrated from the repository's own authority data (follower-manager.js +
+// talent-prerequisites.json) and the Krath tree's phantom id was removed, so
+// there is no baseline of tolerated dangling references left.
+const KNOWN_UNRESOLVED_TREE_TALENT_IDS = Object.freeze([]);
+const KNOWN_UNRESOLVED_REGISTRY_NAMES = Object.freeze([]);
 
 function readPack(name) {
   return fs.readFileSync(path.join(ROOT, 'packs', name), 'utf8')
@@ -108,6 +100,37 @@ const talentsByName = new Map(talentDocs.map(doc => [doc.name.toLowerCase(), doc
     [...KNOWN_UNRESOLVED_REGISTRY_NAMES].sort(),
     'generated talent-tree registry lists talent names with no compendium document'
   );
+}
+
+/* ------------------------------------------------------------------ *
+ * 2b. Korunnai Adept and Krath are canonically resolved, not baselined.
+ * ------------------------------------------------------------------ */
+{
+  const korunnai = treeDocs.find(doc => doc._id === '46d03bab0cf74a14');
+  assert.ok(korunnai, 'Korunnai Adept tree is missing');
+  assert.deepEqual(
+    korunnai.system.talentIds.map(id => talentsById.get(id)?.name ?? `MISSING(${id})`).sort(),
+    ['Akk Dog Attack Training', 'Akk Dog Master', "Akk Dog Trainer's Actions", 'Protective Reaction'],
+    'Korunnai Adept membership does not resolve to real documents'
+  );
+  for (const id of ['ad7fd3e1a2b04c30', 'ad7fd3e1a2b04c31', 'ad7fd3e1a2b04c32']) {
+    const doc = talentsById.get(id);
+    assert.ok(doc, `Korunnai talent ${id} was not hydrated`);
+    assert.equal(doc.system.treeId, '46d03bab0cf74a14');
+    assert.equal(doc.system.talent_tree, 'Korunnai Adept');
+    assert.equal(doc.system.prerequisites, 'Akk Dog Master');
+    assert.ok(String(doc.system.benefit || '').length > 40, `${doc.name} has no benefit text`);
+    // Follower semantics come from follower-manager.js and must survive.
+    assert.equal(doc.system.followerTalent?.targetFilter, 'akk-dog');
+  }
+
+  // Krath: the phantom reference is gone. The tree legitimately has no talent
+  // document in this repository, which is a recorded content gap, not a
+  // dangling reference.
+  const krath = treeDocs.find(doc => doc._id === 'd29a7261c1be4b83');
+  assert.ok(krath, 'Krath tree is missing');
+  assert.deepEqual(krath.system.talentIds, [], 'Krath still claims a talent that does not exist');
+  assert.ok(krath.system.contentGap?.reason, 'the Krath content gap is undocumented');
 }
 
 /* ------------------------------------------------------------------ *

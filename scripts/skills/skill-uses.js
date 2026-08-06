@@ -593,7 +593,7 @@ export class MechanicsUses {
     await SWSEChat.postRoll({
       roll,
       actor: actor,
-      flavor: `<strong>Jury-Rig</strong> - Temporary Repairs<br>Base DC: 25<br>${hasToolKit ? 'Tool Kit Bonus: -5<br>' : ''}Final DC: ${dc}<br>Mechanics Check: ${checkResult}${success ? ' ✓' : ' ✗'}<br>Action: Full-Round Action${success ? `
+      flavor: `<strong>Jury-Rig</strong> - Temporary Repairs<br>Base DC: 25<br>${hasToolKit ? 'Tool Kit Bonus: -5<br>' : ''}Final DC: ${dc}<br>Mechanics Check: ${checkResult}${success ? ' ✓' : ' ✗'}<br>Action: Full-Round Action${success ? `<br>HP Restored: ${hpRestored}<br>Condition Track: +2 steps` : ''}`
     });
 
     SWSELogger.log(
@@ -654,7 +654,7 @@ export class MechanicsUses {
     await SWSEChat.postRoll({
       roll,
       actor: actor,
-      flavor: `<strong>Repair</strong> - ${targetType}<br>Time Required: 1 hour<br>DC: ${dc}<br>${penalty !== 0 ? `
+      flavor: `<strong>Repair</strong> - ${targetType}<br>Time Required: 1 hour<br>DC: ${dc}<br>${penalty !== 0 ? `Condition Penalty: ${penalty}<br>` : ''}Mechanics Check: ${checkResult}${success ? ' ✓' : ' ✗'}${success ? `<br>HP Restored: ${hpRestored}<br>Persistent Conditions Removed` : ''}`
     });
 
     SWSELogger.log(
@@ -857,7 +857,7 @@ export class PerceptionUses {
     await SWSEChat.postRoll({
       roll,
       actor: actor,
-      flavor: `<strong>Search</strong> - ${areaSize} area<br>Search Type: ${searchType}<br>DC: ${dc}<br>${penalty !== 0 ? `
+      flavor: `<strong>Search</strong> - ${areaSize} area<br>Search Type: ${searchType}<br>DC: ${dc}<br>`
     });
 
     SWSELogger.log(
@@ -1135,7 +1135,7 @@ export class PersuasionUses {
     await SWSEChat.postRoll({
       roll,
       actor: actor,
-      flavor: `<strong>Intimidate</strong><br>Target: ${target.name}<br>Will Defense: ${dc}<br>${situationMod !== 0 ? `
+      flavor: `<strong>Intimidate</strong><br>Target: ${target.name}<br>Will Defense: ${dc}<br>`
     });
 
     SWSELogger.log(
@@ -1351,7 +1351,7 @@ export class PilotUses {
     await SWSEChat.postRoll({
       roll,
       actor: actor,
-      flavor: `<strong>Increase Vehicle Speed</strong> - Boost Speed<br>Vehicle Size: ${vehicleSize}<br>DC: ${dc}<br>Pilot Check: ${checkResult}${success ? ' ✓' : ' ✗'}<br>Action: Swift Action${success ? `
+      flavor: `<strong>Increase Vehicle Speed</strong> - Boost Speed<br>Vehicle Size: ${vehicleSize}<br>DC: ${dc}<br>Pilot Check: ${checkResult}${success ? ' ✓' : ' ✗'}<br>Action: Swift Action`
     });
 
     SWSELogger.log(
@@ -1653,7 +1653,7 @@ export class RideUses {
     await SWSEChat.postRoll({
       roll,
       actor: actor,
-      flavor: `<strong>Soft Fall</strong> - Avoid Falling Damage<br>Mount: ${mountName}<br>DC: ${dc}<br>Ride Check: ${checkResult}${success ? ' ✓' : ' ✗'}<br>Action: Reaction${!success ? `
+      flavor: `<strong>Soft Fall</strong> - Avoid Falling Damage<br>Mount: ${mountName}<br>DC: ${dc}<br>Ride Check: ${checkResult}${success ? ' ✓' : ' ✗'}<br>Action: Reaction`
     });
 
     SWSELogger.log(
@@ -1788,7 +1788,7 @@ export class RideUses {
     await SWSEChat.postRoll({
       roll,
       actor: actor,
-      flavor: `<strong>Fast ${action.charAt(0).toUpperCase() + action.slice(1)}</strong> - Quick Action<br>DC: ${dc}<br>${armorCheckPenalty !== 0 ? `
+      flavor: `<strong>Fast ${action.charAt(0).toUpperCase() + action.slice(1)}</strong> - Quick Action<br>DC: ${dc}<br>`
     });
 
     SWSELogger.log(
@@ -1852,7 +1852,7 @@ export class SurvivalUses {
     await SWSEChat.postRoll({
       roll,
       actor: actor,
-      flavor: `<strong>Basic Survival</strong> - Hunt and Forage<br>DC: ${dc}<br>Survival Check: ${checkResult}${success ? ' ✓' : ' ✗'}<br>Duration: 24 hours${success ? `
+      flavor: `<strong>Basic Survival</strong> - Hunt and Forage<br>DC: ${dc}<br>Survival Check: ${checkResult}${success ? ' ✓' : ' ✗'}<br>Duration: 24 hours`
     });
 
     SWSELogger.log(
@@ -2278,7 +2278,7 @@ export class TreatInjuryUses {
     await SWSEChat.postRoll({
       roll,
       actor: actor,
-      flavor: `<strong>First Aid</strong> - Emergency Treatment<br>Target: ${target.name}<br>DC: ${dc}<br>${hasMedpac ? 'Medpac Bonus: +2<br>' : ''}Treat Injury Check: ${checkResult}${success ? ' ✓' : ' ✗'}${success ? `
+      flavor: `<strong>First Aid</strong> - Emergency Treatment<br>Target: ${target.name}<br>DC: ${dc}<br>${hasMedpac ? 'Medpac Bonus: +2<br>' : ''}Treat Injury Check: ${checkResult}${success ? ' ✓' : ' ✗'}`
     });
 
     SWSELogger.log(
@@ -2363,7 +2363,7 @@ export class TreatInjuryUses {
     await SWSEChat.postRoll({
       roll,
       actor: actor,
-      flavor: `<strong>Perform Surgery</strong> - ${surgeryType === 'heal' ? 'Heal Damage' : 'Remove Condition/Install Prosthesis'}<br>Time: 1 hour uninterrupted<br>DC: ${dc}<br>Treat Injury Check: ${checkResult}${success ? ' ✓' : ' ✗'}${success ? `
+      flavor: `<strong>Perform Surgery</strong> - ${surgeryType === 'heal' ? 'Heal Damage' : 'Remove Condition/Install Prosthesis'}<br>Time: 1 hour uninterrupted<br>DC: ${dc}<br>Treat Injury Check: ${checkResult}${success ? ' ✓' : ' ✗'}`
     });
 
     SWSELogger.log(
@@ -2821,7 +2821,7 @@ export class UseTheForceUses {
     await SWSEChat.postRoll({
       roll,
       actor: actor,
-      flavor: `<strong>Move Light Object</strong> - Telekinesis${asProjectile ? ' (Projectile)' : ''}<br>Object Weight: ${weight} kg<br>Distance: ${distance} squares<br>DC: ${dc}<br>Use the Force Check: ${checkResult}${success ? ' ✓' : ' ✗'}<br>Action: ${asProjectile ? 'Standard Action' : 'Move Action'}${success && asProjectile ? `
+      flavor: `<strong>Move Light Object</strong> - Telekinesis${asProjectile ? ' (Projectile)' : ''}<br>Object Weight: ${weight} kg<br>Distance: ${distance} squares<br>DC: ${dc}<br>Use the Force Check: ${checkResult}${success ? ' ✓' : ' ✗'}<br>Action: ${asProjectile ? 'Standard Action' : 'Move Action'}`
     });
 
     SWSELogger.log(

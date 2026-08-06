@@ -610,6 +610,133 @@ const rec = (targetId, dialogue = `${targetId} suits this build.`) => Object.fre
 }
 
 /* ------------------------------------------------------------------ *
+ * 17. Static ownership guard — the low-level rail sink has one caller.
+ *
+ * "Single message owner" is only real if it is enforced. This fails the build
+ * when ordinary progression code speaks directly instead of going through the
+ * arbiter, which is exactly how step guidance and Ask Mentor drifted out of the
+ * policy while the docs claimed otherwise.
+ * ------------------------------------------------------------------ */
+{
+  // Files permitted to touch MentorRail.queueSpeak()/speak() directly.
+  const ALLOWED = new Map([
+    // The arbiter itself: this IS the owner.
+    ['scripts/apps/progression-framework/shell/mentor-recommendation-controller.js',
+     'the message arbiter — the single legitimate caller'],
+    // The rail's own internals: pending pre-mount dialogue, post-remount replay,
+    // and the plain-text error fallback cannot participate in message ordering
+    // because they run when there is no live message to order.
+    ['scripts/apps/progression-framework/shell/mentor-rail.js',
+     'internal pending-DOM recovery and presentMessage sink'],
+    // Documented last-resort path used only when no controller exists on the
+    // shell (older embedded hosts); see mentor-choice-reaction-router._speak.
+    ['scripts/apps/progression-framework/shell/mentor-choice-reaction-router.js',
+     'documented emergency fallback when no controller is attached'],
+  ]);
+
+  const sinkCall = /(?<![\w.])(?:\w+\??\.)*(?:queueSpeak|speak)\??\.?\(/;
+  const offenders = [];
+
+  const walk = (dir) => {
+    for (const name of fs.readdirSync(dir)) {
+      const full = path.join(dir, name);
+      if (fs.statSync(full).isDirectory()) { walk(full); continue; }
+      if (!full.endsWith('.js')) continue;
+      const rel = path.relative(ROOT, full).replaceAll('\\', '/');
+      if (ALLOWED.has(rel)) continue;
+
+      for (const [index, line] of fs.readFileSync(full, 'utf8').split('\n').entries()) {
+        const trimmed = line.trim();
+        // Comments and log statements are not calls.
+        if (trimmed.startsWith('*') || trimmed.startsWith('//') || trimmed.startsWith('/*')) continue;
+        if (/console\.(log|warn|error|debug)/.test(line)) continue;
+        if (!/mentorRail|\brail\b/.test(line)) continue;
+        if (sinkCall.test(line)) offenders.push(`${rel}:${index + 1}  ${trimmed.slice(0, 90)}`);
+      }
+    }
+  };
+  walk(path.join(ROOT, 'scripts/apps/progression-framework'));
+
+  assert.deepEqual(
+    offenders,
+    [],
+    'mentor messages must go through MentorRecommendationController, not MentorRail directly:\n  ' + offenders.join('\n  ')
+  );
+
+  // And the arbiter really is wired to the sink.
+  const controller = fs.readFileSync(
+    path.join(ROOT, 'scripts/apps/progression-framework/shell/mentor-recommendation-controller.js'), 'utf8');
+  for (const method of ['presentStepGuidance', 'presentFocusReaction', 'presentCommitReaction', 'presentAskMentor']) {
+    assert.match(controller, new RegExp(`${method}\\(`), `controller is missing ${method}()`);
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ * 18. Step identity is part of staleness.
+ * ------------------------------------------------------------------ */
+{
+  const shell = makeShell({ stepId: 'general-feat' });
+  const c = shell.controller;
+
+  assert.equal(c.presentStepGuidance({ text: 'Pick a feat.', stepId: 'general-feat' }), true);
+  assert.equal(shell.mentorRail.calls.length, 1);
+
+  // The player moves on; a late message for the previous step must not speak,
+  // even at the highest priority.
+  shell.steps = [{ stepId: 'general-talent' }];
+  shell.progressionSession.currentStepId = 'general-talent';
+
+  assert.equal(c.presentStepGuidance({ text: 'Late guidance for the old step.', stepId: 'general-feat' }), false);
+  assert.equal(c.presentAskMentor({ text: 'Late Ask Mentor for the old step.', stepId: 'general-feat' }), false);
+  assert.equal(shell.mentorRail.calls.length, 1, 'a message from the previous step spoke');
+
+  // The new step can speak.
+  assert.equal(c.presentStepGuidance({ text: 'Pick a talent.', stepId: 'general-talent' }), true);
+  assert.equal(shell.mentorRail.calls.length, 2);
+}
+
+/* ------------------------------------------------------------------ *
+ * 19. Delayed guidance cannot overwrite a recommendation, and Ask Mentor
+ *     outranks a same-revision recommendation.
+ * ------------------------------------------------------------------ */
+{
+  const shell = makeShell({ stepId: 'general-feat' });
+  const c = shell.controller;
+  const revision = c.currentRevision;
+
+  // Guidance starts, recommendation lands first.
+  c.present({ source: 'recommendation', text: 'Exceptional Skill is the strongest fit.',
+              stepId: 'general-feat', targetId: 'exceptional-skill', revision, temporary: false });
+  assert.equal(shell.mentorRail.calls.length, 1);
+
+  // The slow guidance now resolves — lower priority, same revision.
+  assert.equal(
+    c.presentStepGuidance({ text: 'Choose a feat that fits your build.', stepId: 'general-feat', revision }),
+    false,
+    'delayed step guidance overwrote a live recommendation'
+  );
+  assert.equal(shell.mentorRail.calls.length, 1);
+
+  // Ask Mentor outranks the recommendation at the same revision.
+  assert.equal(
+    c.presentAskMentor({ text: 'Here are your strongest options.', stepId: 'general-feat', revision }),
+    true
+  );
+  assert.equal(shell.mentorRail.calls.length, 2);
+
+  // And an older recommendation cannot take the rail back from Ask Mentor.
+  assert.equal(
+    c.present({ source: 'recommendation', text: 'A different recommendation.',
+                stepId: 'general-feat', targetId: 'other', revision: revision - 1, temporary: false }),
+    false,
+    'a stale recommendation displaced an Ask Mentor message'
+  );
+  assert.equal(shell.mentorRail.calls.length, 2);
+  assert.equal(shell.renderCalls.length, 0);
+  assert.equal(shell.requestRenderCalls.length, 0);
+}
+
+/* ------------------------------------------------------------------ *
  * Static contract: mentor code is never a render owner.
  * ------------------------------------------------------------------ */
 {

@@ -57,7 +57,7 @@ export class ConditionTrackMechanics {
       criticalConditions: ['Normal', '-1 Step', '-2 Steps', '-5 Steps', '-10 Steps', 'Helpless']
     };
     const list = descriptions[variant] || descriptions.swseStandard;
-    return list[Math.max(0, Math.min(Number(level or 0), list.length - 1))]
+    return list[Math.max(0, Math.min(Number(level) || 0, list.length - 1))];
   }
 
   static async removeTrackEffects(_actor, _oldLevel, _newLevel) {
