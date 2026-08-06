@@ -7,6 +7,7 @@
  */
 
 import { ProgressionStepPlugin } from './step-plugin-base.js';
+import { buildOptionCardAction } from '../shell/option-card-action.js';
 import { SpeciesRegistry } from '/systems/foundryvtt-swse/scripts/engine/registries/species-registry.js';
 import { normalizeSpecies } from './step-normalizers.js';
 import { getStepMentorObject, getStepGuidance, handleAskMentor, handleAskMentorWithPicker, STEP_TO_CHOICE_TYPE } from './mentor-step-integration.js';
@@ -182,7 +183,7 @@ export class SpeciesStep extends ProgressionStepPlugin {
     // This ensures Ol' Salty appears and speaks when entering Species
     const initialDialogue = "Species selection, eh? Choose wisely — your ancestry shapes everything ahead. Browse the options and pick what calls to you.";
     if (shell.mentorRail) {
-      shell.mentorRail.queueSpeak?.(initialDialogue, 'neutral', { source: 'species-step-enter' }) ?? void shell.mentorRail.speak?.(initialDialogue, 'neutral');
+      shell.mentorRecommendations?.presentStepGuidance({ text: initialDialogue, mood: 'neutral', stepId: 'species' });
     }
   }
 
@@ -198,18 +199,18 @@ export class SpeciesStep extends ProgressionStepPlugin {
     const onSearch = e => {
       this._searchQuery = e.detail.query;
       this._applyFilters();
-      shell.render();
+      shell.requestRender({ preserveScroll: true, reason: 'species-step:onSearch' });
     };
     const onFilter = e => {
       const { filterId, value } = e.detail;
       this._filters[filterId] = value;
       this._applyFilters();
-      shell.render();
+      shell.requestRender({ preserveScroll: true, reason: 'species-step:onFilter' });
     };
     const onSort = e => {
       this._sortBy = e.detail.sortId;
       this._applyFilters();
-      shell.render();
+      shell.requestRender({ preserveScroll: true, reason: 'species-step:onSort' });
     };
 
     root.addEventListener('prog:utility:search', onSearch, { signal });
@@ -229,19 +230,10 @@ export class SpeciesStep extends ProgressionStepPlugin {
       return;
     }
 
-    // Wire up double-click to commit species directly
-    const rows = workSurfaceEl?.querySelectorAll('.prog-species-row');
-    if (rows) {
-      rows.forEach(row => {
-        row.addEventListener('dblclick', async (e) => {
-          e.preventDefault();
-          const itemId = row.dataset.itemId;
-          if (itemId) {
-            await this.onItemCommitted(itemId, shell);
-          }
-        });
-      });
-    }
+    // Double-click is handled once, shell-wide, by
+    // ProgressionShell._wireDoubleClickSelection(). A step-local listener here
+    // duplicated that path — and now that every species card carries a visible
+    // SELECT button, it would also commit a second time for one gesture.
   }
 
   async handleAction(action, event, target, shell) {
@@ -349,7 +341,22 @@ export class SpeciesStep extends ProgressionStepPlugin {
 
   async getStepData(context) {
     const { suggestedIds, hasSuggestions, confidenceMap } = this.formatSuggestionsForDisplay(this._suggestedSpecies);
-    const cards = this._filteredSpecies.map(s => this._formatSpeciesCard(s, suggestedIds, confidenceMap));
+    const committedSpeciesId = context.committedSelections?.get('species')?.speciesId ?? null;
+    // The species surface renders the same card through a flat search list and a
+    // three-deep category tree, so the control's committed check used to be
+    // written twice — `../committedSpeciesId` in one place and
+    // `../../../committedSpeciesId` in the other. Either count is wrong the
+    // moment the grouping changes; the card now carries the decision.
+    const cards = this._filteredSpecies
+      .map(s => this._formatSpeciesCard(s, suggestedIds, confidenceMap))
+      .map(card => ({
+        ...card,
+        cardAction: buildOptionCardAction({
+          selected: committedSpeciesId != null && String(card.id) === String(committedSpeciesId),
+          name: card?.name || '',
+          title: 'Choose this species',
+        }),
+      }));
     const recommendedSpecies = this._getRecommendedSpeciesCards(cards);
     const hasSearchQuery = !!String(this._searchQuery || '').trim();
 
@@ -376,7 +383,7 @@ export class SpeciesStep extends ProgressionStepPlugin {
       activeAbilityCategory: this._activeAbilityCategory,
       categorySidebarCollapsed: this._categorySidebarCollapsed,
       focusedSpeciesId: context.focusedItem?.id ?? null,
-      committedSpeciesId: context.committedSelections?.get('species')?.speciesId ?? null,
+      committedSpeciesId,
       nearHuman: this._nearHumanBuilder.getBuilderData(),
       hasSuggestions,
       suggestedSpeciesIds: Array.from(suggestedIds),
@@ -707,31 +714,32 @@ export class SpeciesStep extends ProgressionStepPlugin {
       dialogue_first_30: typeof dialogue === 'string' ? dialogue.slice(0, 30) : null,
     });
 
-    console.log('[SpeciesStep] Triggering shell.render() to update detail panel');
+    console.log('[SpeciesStep] Requesting a details-region update for the focused species');
     console.log('[SpeciesStep] shell.focusedItem is now:', shell.focusedItem);
 
     // [DEBUG] Log before render
-    console.log(`[SWSE Species Debug] [Click #${clickNum}] About to call shell.render()`, {
+    console.log(`[SWSE Species Debug] [Click #${clickNum}] About to request a details-region update`, {
       focusedItem_id: shell.focusedItem?.id,
       focusedItem_name: shell.focusedItem?.name,
     });
 
     console.debug(`[SWSE Species Hydration Debug] [Click #${clickNum}] Requesting rerender for species hydration | selected: ${entry.name} (${entry.id}) | focusedItem: ${shell.focusedItem?.id ?? '(null)'}`);
-    shell.render();
     console.debug(`[SWSE Species Hydration Debug] [Click #${clickNum}] Rerender requested | focusedItem: ${shell.focusedItem?.id ?? '(null)'}`);
 
     if (dialogue) {
       console.log('[SpeciesStep] ✓ Found mentor dialogue for', entry.name);
 
       // [DEBUG] Log before non-blocking speak call
-      console.log(`[SWSE Species Debug] [Click #${clickNum}] About to call shell.mentorRail.speak() non-blocking`, {
+      console.log(`[SWSE Species Debug] [Click #${clickNum}] About to present a focus reaction through the mentor arbiter (non-blocking)`, {
         mentor_isAnimating_before: shell.mentor?.isAnimating ?? '(null)',
         mentor_currentDialogue_before: shell.mentor?.currentDialogue?.slice?.(0, 30) ?? '(null)',
       });
 
-      void shell.mentorRail.speak(dialogue, 'encouraging')
+      void Promise.resolve(shell.mentorRecommendations?.presentFocusReaction({
+        text: dialogue, mood: 'encouraging', stepId: 'species', targetId: entry.id,
+      }))
         .then(() => {
-          console.log(`[SWSE Species Debug] [Click #${clickNum}] shell.mentorRail.speak() completed`);
+          console.log(`[SWSE Species Debug] [Click #${clickNum}] mentor focus reaction presented`);
 
           // GUARD: Keep stale completion from re-touching UI state if focus moved on.
           if (this._focusVersion !== focusVersion) {
@@ -739,7 +747,7 @@ export class SpeciesStep extends ProgressionStepPlugin {
           }
         })
         .catch(speakErr => {
-          console.error(`[SWSE Species Debug] [Click #${clickNum}] shell.mentorRail.speak() threw:`, speakErr);
+          console.error(`[SWSE Species Debug] [Click #${clickNum}] mentor focus reaction threw:`, speakErr);
           console.error(`[SWSE Species Debug] [Click #${clickNum}] Speak error details:`, {
             message: speakErr.message,
             stack: speakErr.stack?.split('\n').slice(0, 4).join(' | '),
@@ -751,6 +759,9 @@ export class SpeciesStep extends ProgressionStepPlugin {
     }
 
     console.log(`[SWSE Species Debug] [Click #${clickNum}] onItemFocused COMPLETE`);
+    // The shell owns the repaint for shell-routed focus: it folds this
+    // declaration into the single update it already schedules.
+    return { handled: true, dirty: ['details'], structural: false, recommendationRelevant: false };
   }
 
   async onItemCommitted(id, shell) {
@@ -843,7 +854,9 @@ export class SpeciesStep extends ProgressionStepPlugin {
     this._committedSpeciesId   = id;
     this._committedSpeciesName = entry.name;
     shell.focusedItem = null;
-    shell.render();
+    // The shell owns the repaint for this interaction; describing the scope
+    // here lets it fold this into the one update it already schedules.
+    return { handled: true, dirty: [], structural: true, recommendationRelevant: true };
   }
 
   // ---------------------------------------------------------------------------
@@ -853,14 +866,14 @@ export class SpeciesStep extends ProgressionStepPlugin {
   async enterNearHumanMode(shell) {
     this._mode = 'near-human-builder';
     await this._nearHumanBuilder.loadData();
-    shell.render();
+    shell.requestRender({ preserveScroll: true, reason: 'species-step:enterNearHumanMode' });
   }
 
   async exitNearHumanMode(shell) {
     this._nearHumanBuilder.exitBuilderMode(false);  // false = don't reset, may re-enter
     this._mode = 'browse';
     shell.focusedItem = null;
-    shell.render();
+    shell.requestRender({ preserveScroll: true, reason: 'species-step:exitNearHumanMode' });
   }
 
   async confirmNearHuman(shell) {
@@ -913,7 +926,7 @@ export class SpeciesStep extends ProgressionStepPlugin {
     this._committedSpeciesId = 'near-human';
     this._committedSpeciesName = 'Near-Human';
     this._mode = 'browse';
-    shell.render();
+    shell.requestRender({ preserveScroll: true, reason: 'species-step:confirmNearHuman' });
   }
 
   // ---------------------------------------------------------------------------
@@ -1001,9 +1014,9 @@ export class SpeciesStep extends ProgressionStepPlugin {
           return;
         }
 
-        await this.onItemFocused(entry.id, shell);
-        await this.onItemCommitted(entry.id, shell);
-        shell.render();
+        // One canonical commit through the shell: the old focus + commit +
+        // render triple repainted twice for a single choice.
+        await shell.commitSuggestionFromMentor({ stepId: 'species', itemId: entry.id, source: 'ask-mentor' });
       });
       return;
     }

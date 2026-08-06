@@ -371,3 +371,72 @@
     -webkit-line-clamp: 1;
   }
 }
+
+/* ---------------------------------------------------------------------------
+ * Universal option-card action
+ *
+ * Every selectable progression candidate carries a visible SELECT control so a
+ * player who already knows what they want never has to go through the detail
+ * rail first. The card body stays the inspection surface; this is the commit
+ * surface. Deliberately always visible — hover-only would strand touch users
+ * and keyboard users.
+ * ------------------------------------------------------------------------- */
+
+.progression-option-card {
+  position: relative;
+  display: flex;
+  align-items: stretch;
+  gap: 0.35rem;
+  min-width: 0;
+}
+
+/* The focus surface takes the space; the action keeps a stable width so names,
+   badges, prerequisites and quantities are never covered. */
+.progression-option-card > .progression-option-card__focus {
+  flex: 1 1 auto;
+  min-width: 0;
+  text-align: left;
+}
+
+.progression-option-card__select {
+  flex: 0 0 auto;
+  align-self: center;
+  margin-left: auto;
+  white-space: nowrap;
+  letter-spacing: 0.04em;
+  font-size: 0.72rem;
+  padding: 0.2rem 0.55rem;
+}
+
+/* Cards that are grids/stacks rather than rows put the action on its own line. */
+.prog-force-regimen-card > .progression-option-card__select,
+.prog-force-secret-card > .progression-option-card__select,
+.prog-medical-secret-card > .progression-option-card__select,
+.prog-force-power-card > .progression-option-card__select,
+.prog-starship-maneuver-card > .progression-option-card__select {
+  margin: 0.4rem 0.5rem 0.5rem auto;
+}
+
+.progression-option-card__select[data-card-action-state="selected"],
+.progression-option-card__select[data-card-action-state="deselect"] {
+  opacity: 0.92;
+}
+
+.progression-option-card__select[disabled] {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+/* Keyboard reachability must stay obvious for both halves of the card. */
+.progression-option-card__focus:focus-visible,
+.progression-option-card__select:focus-visible {
+  outline: 2px solid var(--prog-accent, #4dc9ff);
+  outline-offset: 1px;
+}
+
+@media (max-width: 720px) {
+  .progression-option-card__select {
+    font-size: 0.66rem;
+    padding: 0.18rem 0.4rem;
+  }
+}

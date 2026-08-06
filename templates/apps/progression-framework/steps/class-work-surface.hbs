@@ -11,23 +11,25 @@
   {{/if}}
   <div class="prog-class-grid" role="listbox" aria-label="Class">
     {{#each classes}}
-      <button class="swse-option-card prog-class-card prog-class-card--visual
+      <article class="progression-option-card prog-class-card-wrap{{#if this.cardAction.selected}} progression-option-card--selected{{/if}}{{#if this.isLocked}} progression-option-card--locked{{/if}}"
+               data-item-id="{{this.id}}"
+               role="option"
+               {{#if this.cardAction.selected}}aria-selected="true"{{/if}}>
+        <button class="progression-option-card__focus swse-option-card prog-class-card prog-class-card--visual
                      {{#if (eq id ../focusedClassId)}}swse-option-card--focused prog-class-card--focused{{/if}}
-                     {{#if (eq id ../committedClassId)}}swse-option-card--selected prog-class-card--selected{{/if}}
+                     {{#if this.cardAction.selected}}swse-option-card--selected prog-class-card--selected{{/if}}
                      {{#if this.isLocked}}prog-class-card--locked swse-option-card--locked{{/if}}
                      {{#if this.isPrestige}}prog-class-card--prestige{{/if}}
                      {{#if this.isSuggested}}prog-class-card--suggested prog-class-card--suggested-{{this.confidenceLevel}}{{/if}}"
               data-action="focus-item"
               data-item-id="{{this.id}}"
-              data-selected="{{#if (eq id ../committedClassId)}}true{{else}}false{{/if}}"
+              data-selected="{{#if this.cardAction.selected}}true{{else}}false{{/if}}"
               data-focused="{{#if (eq id ../focusedClassId)}}true{{else}}false{{/if}}"
               data-recommended="{{#if this.isSuggested}}true{{/if}}"
               data-locked="{{#if this.isLocked}}true{{else}}false{{/if}}"
               data-confidence-level="{{this.confidenceLevel}}"
               type="button"
-              role="option"
-              aria-label="{{this.name}} class"
-              {{#if (eq id ../committedClassId)}}aria-selected="true"{{/if}}>
+              aria-label="{{this.name}} class">
 
         <div class="prog-class-card__visual-wrap prog-holo-media prog-holo-media--wide">
           {{#if this.img}}
@@ -59,12 +61,21 @@
           {{#if this.mentorName}}
             <span class="swse-option-card__badge"><i class="fas fa-user-circle"></i> {{this.mentorName}}</span>
           {{/if}}
-          {{#if (eq id ../committedClassId)}}
+          {{#if this.cardAction.selected}}
             <span class="swse-option-card__badge"><i class="fas fa-check"></i> Selected</span>
           {{/if}}
         </div>
 
-      </button>
+        </button>
+        {{> "systems/foundryvtt-swse/templates/apps/progression-framework/partials/option-card-action.hbs"
+           itemId=this.id
+           name=this.name
+           selected=this.cardAction.selected
+           state=this.cardAction.state
+           disabled=this.cardAction.disabled
+           title=this.cardAction.title
+        }}
+      </article>
     {{else}}
       <div class="prog-class-browse__empty">No classes found. Adjust your search or filters.</div>
     {{/each}}

@@ -228,7 +228,9 @@ export class ConfirmStep extends ProgressionStepPlugin {
     // Focus on a summary section (e.g. "feats", "languages")
     // This can update details panel to show more about that section
     shell.focusedItem = { sectionId: summaryId, type: 'summary-section' };
-    shell.render();
+    // The shell owns the repaint for shell-routed focus: it folds this
+    // declaration into the single update it already schedules.
+    return { handled: true, dirty: ['details'], structural: false, recommendationRelevant: false };
   }
 
   async onItemHovered(summaryId, shell) {
@@ -367,7 +369,7 @@ export class ConfirmStep extends ProgressionStepPlugin {
   async onAskMentor(shell) {
     // Mentor provides summary guidance
     const text = this.getMentorContext(shell);
-    shell.mentorRail.queueSpeak?.(text, 'encouraging', { source: 'confirm-step' }) ?? void shell.mentorRail.speak?.(text, 'encouraging');
+    shell.mentorRecommendations?.presentGuidance({ text, mood: 'encouraging', stepId: 'confirm' });
   }
 
   getMentorMode() {
@@ -535,7 +537,7 @@ export class ConfirmStep extends ProgressionStepPlugin {
         if (settled) return;
         settled = true;
         if (shell?.render) {
-          shell.render();
+          shell.requestRender({ preserveScroll: true, reason: 'confirm-step:settle' });
         }
         resolve();
       };

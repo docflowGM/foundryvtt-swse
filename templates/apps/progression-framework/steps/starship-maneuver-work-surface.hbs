@@ -117,6 +117,18 @@
               Available
             </div>
           {{/if}}
+          {{> "systems/foundryvtt-swse/templates/apps/progression-framework/partials/option-card-action.hbs"
+             action="increment-quantity"
+             itemId=this.stateId
+             idAttr="data-maneuver-id"
+             idValue=this.stateId
+             name=this.name
+             selected=this.cardAction.selected
+             state=this.cardAction.state
+             disabled=this.cardAction.disabled
+             title=this.cardAction.title
+             verb="Add"
+          }}
         </div>
       {{/each}}
     </div>

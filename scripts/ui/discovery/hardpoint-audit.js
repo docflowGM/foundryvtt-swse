@@ -285,7 +285,7 @@ export function printAuditReport(audit) {
   }
 
   if (audit.findings.unusedGlossaryEntries.length > 0) {
-    console.group('ℹ️ Unused Glossary Entries (OK, they're added in advance)');
+    console.group("ℹ️ Unused Glossary Entries (OK, they're added in advance)");
     console.log(audit.findings.unusedGlossaryEntries.join(', '));
     console.groupEnd();
   }

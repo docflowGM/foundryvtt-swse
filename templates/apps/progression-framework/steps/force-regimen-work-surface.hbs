@@ -42,6 +42,15 @@
               <div class="prog-force-regimen-card__state">
                 {{#if (lookup ../../committedCounts regimen.id)}}Selected{{else}}Available{{/if}}
               </div>
+              {{> "systems/foundryvtt-swse/templates/apps/progression-framework/partials/option-card-action.hbs"
+                 itemId=regimen.id
+                 name=regimen.name
+                 selected=regimen.cardAction.selected
+                 state=regimen.cardAction.state
+                 disabled=regimen.cardAction.disabled
+                 title=regimen.cardAction.title
+                 verb="Add"
+              }}
             </article>
           {{/each}}
         </div>

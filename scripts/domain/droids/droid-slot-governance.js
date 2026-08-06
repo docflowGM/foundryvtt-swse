@@ -218,6 +218,32 @@ export class DroidSlotGovernanceEngine {
     return { valid: true };
   }
 
+  /**
+   * How many processor systems may be physically installed.
+   *
+   * Base capacity is one. Backup Processor unlocks a single reserve processor
+   * slot, so a droid carrying it may hold two — only one of which is active at
+   * a time, which the sheet/Garage context enforces separately.
+   *
+   * This declaration was missing entirely, which made the whole module fail to
+   * parse ("Private field '#getProcessorSlotCapacity' must be declared in an
+   * enclosing class") even though its call site at validateConfiguration() was
+   * intact. Semantics restored from that call site's comment and from
+   * droid-customization-engine.js's 'backup-processor' identity.
+   *
+   * @param {Array<Object>} usedSystems - Resolved system definitions in use.
+   * @returns {number}
+   * @private
+   */
+  static #getProcessorSlotCapacity(usedSystems) {
+    const hasBackupProcessor = (usedSystems ?? []).some((system) => {
+      const id = String(system?.id ?? system ?? '').toLowerCase();
+      return id === 'backup-processor'
+        || system?.rules?.unlocksBackupProcessorSlot === true;
+    });
+    return hasBackupProcessor ? 2 : 1;
+  }
+
   static #validateCombinations(usedSystems) {
     const violations = [];
 

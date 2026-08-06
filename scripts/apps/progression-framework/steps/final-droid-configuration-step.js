@@ -414,7 +414,7 @@ export class FinalDroidConfigurationStep extends ProgressionStepPlugin {
       ui.notifications.info('Droid configuration confirmed. Ready to complete chargen.');
       // Commit the finalized state
       await this._commitFinalDroidBuild(shell);
-      shell.render();
+      shell.requestRender({ preserveScroll: true, reason: 'final-droid-configuration-step:_onConfirmDroidBuild' });
     } else {
       ui.notifications.warn('Unable to confirm droid build');
     }

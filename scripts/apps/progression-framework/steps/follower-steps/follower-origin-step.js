@@ -96,7 +96,7 @@ export class FollowerOriginStep extends FollowerStepBase {
     }
 
     swseLogger.log('[FollowerOriginStep] Selected follower kind:', kind);
-    shell.render();
+    shell.requestRender({ preserveScroll: true, reason: 'follower-origin-step:_selectKind' });
   }
 
   async onStepCommit(shell) {

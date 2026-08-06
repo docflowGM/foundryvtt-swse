@@ -12,6 +12,7 @@
  */
 
 import { ProgressionStepPlugin } from './step-plugin-base.js';
+import { buildOptionCardAction } from '../shell/option-card-action.js';
 import { ManeuverAuthorityEngine } from '../../../engine/progression/engine/maneuver-authority-engine.js';
 import { StarshipManeuverEngine } from '../../../engine/progression/engine/starship-maneuver-engine.js';
 import { StarshipManeuverManager } from '../../../utils/starship-maneuver-manager.js';
@@ -292,7 +293,7 @@ export class StarshipManeuverStep extends ProgressionStepPlugin {
     const onSearch = e => {
       this._searchQuery = e.detail.query;
       this._applyFilters();
-      shell.render();
+      shell.requestRender({ preserveScroll: true, reason: 'starship-maneuver-step:onSearch' });
     };
 
     shell.element.addEventListener('prog:utility:search', onSearch, { signal });
@@ -313,6 +314,9 @@ export class StarshipManeuverStep extends ProgressionStepPlugin {
     const removedTotal = this._sumCounts(removedCounts);
     const effectiveBudget = this._getEffectiveSelectionBudget();
     const remainingPicks = Math.max(0, effectiveBudget - pendingTotal);
+    // Budget decision for the cards' visible SELECT control, taken here rather
+    // than re-derived in the template.
+    const canAddMore = pendingTotal < effectiveBudget || removedTotal > 0;
 
     const { suggestedIds, hasSuggestions, confidenceMap } = this.formatSuggestionsForDisplay(this._suggestedManeuvers);
     const formattedManeuvers = this._filteredManeuvers.map(m => this._formatManeuverCard(m, suggestedIds, confidenceMap));
@@ -353,6 +357,26 @@ export class StarshipManeuverStep extends ProgressionStepPlugin {
       });
     }
 
+    // Per-card action DTO, derived from the same cardStates the surface already
+    // renders. The template used to reach `../canAddMore` and
+    // `(lookup ../pendingCounts ...)`, both of which broke whenever the list was
+    // regrouped; a card now carries its own budget decision.
+    const cardsWithActions = formattedManeuvers.map((maneuver) => {
+      const stateId = maneuver.stateId || maneuver.id;
+      const state = cardStates.get(stateId);
+      return {
+        ...maneuver,
+        cardAction: buildOptionCardAction({
+          canSelect: state ? state.canIncrement : canAddMore,
+          selected: !!state?.isPending,
+          state: state?.isCommitted && !state?.isPending ? 'again' : null,
+          name: maneuver?.name || '',
+          verb: 'Add',
+          title: 'Add this Starship Maneuver',
+        }),
+      };
+    });
+
     const committedSummary = [];
     for (const [id, count] of committedCounts.entries()) {
       const removedCount = removedCounts.get(id) ?? 0;
@@ -368,7 +392,7 @@ export class StarshipManeuverStep extends ProgressionStepPlugin {
     }
 
     return {
-      maneuvers: formattedManeuvers,
+      maneuvers: cardsWithActions,
       focusedManeuverID: this._focusedManeuverID,
       pendingCounts: Object.fromEntries(pendingCounts),
       committedCounts: Object.fromEntries(committedCounts),
@@ -376,6 +400,7 @@ export class StarshipManeuverStep extends ProgressionStepPlugin {
       cardStates: Object.fromEntries(cardStates),
       committedSummary,
       remainingPicks,
+      canAddMore,
       selectionBudget: effectiveBudget,
       totalManeuverTraining: this._totalManeuverTraining,
       selectedManeuverTraining: Math.min(effectiveBudget, Math.max(this._selectedManeuverTraining, pendingTotal)),
@@ -420,7 +445,7 @@ export class StarshipManeuverStep extends ProgressionStepPlugin {
 
   async onIncrementQuantity(maneuverId, shell, options = {}) {
     const maneuver = this._resolveManeuver(maneuverId);
-    if (!maneuver) return;
+    if (!maneuver) return { handled: true, changed: false, dirty: [], structural: false, recommendationRelevant: false, reason: 'unknown-item' };
 
     const resolvedId = this._normalizeManeuverId(maneuver);
     const removedCount = this._removedManeuverCounts.get(resolvedId) ?? 0;
@@ -435,18 +460,19 @@ export class StarshipManeuverStep extends ProgressionStepPlugin {
       const currentCount = this._committedManeuverCounts.get(resolvedId) ?? 0;
       this._committedManeuverCounts.set(resolvedId, currentCount + 1);
     } else {
-      return;
+      return { handled: true, changed: false, dirty: [], structural: false, recommendationRelevant: false, reason: 'budget-exhausted' };
     }
 
     await this._commitManeuverSelection(shell);
     this._focusedManeuverID = resolvedId;
     shell.focusedItem = this._formatManeuverCard(maneuver);
-    if (options.render !== false) shell.render();
+    // The shell owns the repaint for shell-routed quantity changes.
+    return { handled: true, changed: true, dirty: [], structural: true, recommendationRelevant: true };
   }
 
   async onDecrementQuantity(maneuverId, shell) {
     const maneuver = this._resolveManeuver(maneuverId);
-    if (!maneuver) return;
+    if (!maneuver) return { handled: true, changed: false, dirty: [], structural: false, recommendationRelevant: false, reason: 'unknown-item' };
 
     const resolvedId = this._normalizeManeuverId(maneuver);
     const currentPending = this._committedManeuverCounts.get(resolvedId) ?? 0;
@@ -465,7 +491,8 @@ export class StarshipManeuverStep extends ProgressionStepPlugin {
     await this._commitManeuverSelection(shell);
     this._focusedManeuverID = resolvedId;
     shell.focusedItem = this._formatManeuverCard(maneuver);
-    shell.render();
+    // The shell owns the repaint for shell-routed quantity changes.
+    return { handled: true, changed: true, dirty: [], structural: true, recommendationRelevant: true };
   }
 
 
@@ -584,9 +611,9 @@ export class StarshipManeuverStep extends ProgressionStepPlugin {
       }, async (selected) => {
         const id = selected?.id || selected?._id || selected?.maneuverId;
         if (!id) return;
-        await this.onItemFocused(id, shell);
-        await this.onItemCommitted(id, shell);
-        shell.render();
+        // One canonical commit through the shell: the old focus + commit +
+        // render triple repainted twice for a single choice.
+        await shell.commitSuggestionFromMentor({ stepId: 'starship-maneuvers', itemId: id, source: 'ask-mentor' });
       });
     } else {
       // Fallback to standard guidance if no suggestions

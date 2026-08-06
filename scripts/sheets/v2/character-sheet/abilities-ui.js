@@ -69,21 +69,20 @@ export function activateAbilitiesUI(sheet, html, { signal } = {}) {
     }, { signal });
   });
 
-  // Add feat button
-  html.querySelectorAll('[data-action="add-feat"]').forEach(button => {
-    button.addEventListener("click", async (event) => {
-      event.preventDefault();
-      event.stopPropagation();
-      await sheet._createAndOpenBlankItem?.('feat');
-    }, { signal });
-  });
+  // Add feat / add talent buttons. These open the existing two-path selection modal
+  // (compendium pick vs. custom item) instead of silently creating a blank document,
+  // falling back to the blank-item factory only when the modal markup is absent.
+  const wireAddAbilityButton = (action, itemType) => {
+    html.querySelectorAll(`[data-action="${action}"]`).forEach(button => {
+      button.addEventListener("click", async (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        if (sheet._showItemSelectionModal?.(itemType)) return;
+        await sheet._createAndOpenBlankItem?.(itemType);
+      }, { signal });
+    });
+  };
 
-  // Add talent button
-  html.querySelectorAll('[data-action="add-talent"]').forEach(button => {
-    button.addEventListener("click", async (event) => {
-      event.preventDefault();
-      event.stopPropagation();
-      await sheet._createAndOpenBlankItem?.('talent');
-    }, { signal });
-  });
+  wireAddAbilityButton('add-feat', 'feat');
+  wireAddAbilityButton('add-talent', 'talent');
 }

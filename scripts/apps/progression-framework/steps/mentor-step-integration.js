@@ -751,8 +751,8 @@ export async function handleAskMentor(actor, stepId, shell) {
   const mentor = getStepMentorObject(actor, shell);
   const guidance = getStepGuidance(actor, stepId, shell);
 
-  if (guidance && shell?.mentorRail) {
-    shell.mentorRail.queueSpeak?.(guidance, 'encouraging', { source: 'mentor-step-integration' }) ?? void shell.mentorRail.speak?.(guidance, 'encouraging');
+  if (guidance) {
+    shell?.mentorRecommendations?.presentAskMentor({ text: guidance, mood: 'encouraging', stepId });
   }
 }
 
@@ -778,7 +778,7 @@ export function getStepMentorContext(actor, stepId, fallback = '', shell = null)
  * Steps call this instead of handleAskMentor when they have _suggestedXXX data.
  *
  * Flow: suggestions → MentorAdvisoryCoordinator.generateSuggestionAdvisory()
- *       → mentor advisory object → mentorRail.speak()
+ *       → mentor advisory object → MentorRecommendationController.presentAskMentor()
  *
  * @param {Actor} actor - The actor being created
  * @param {string} stepId - The step ID (for context/fallback)
@@ -816,7 +816,7 @@ export async function handleAskMentorWithSuggestions(actor, stepId, suggestions,
       // Speak the advisory through mentor rail with mood based on confidence
       const advisoryText = `${advisory.observation} ${advisory.impact} ${advisory.guidance}`;
       const mood = advisory.mood || 'encouraging'; // Use confidence-based mood from advisor
-      shell.mentorRail.queueSpeak?.(advisoryText, mood, { source: 'mentor-advisory' }) ?? void shell.mentorRail.speak?.(advisoryText, mood);
+      shell?.mentorRecommendations?.presentAskMentor({ text: advisoryText, mood, stepId });
 
       swseLogger.log(
         `[MentorStepIntegration] Spoke suggestion advisory for ${stepId} (${suggestions.length} suggestions, mood: ${mood})`
@@ -825,15 +825,15 @@ export async function handleAskMentorWithSuggestions(actor, stepId, suggestions,
       // Fallback to standard guidance if no advisory generated
       const guidance = getStepGuidance(actor, stepId, shell);
       if (guidance) {
-        shell.mentorRail.queueSpeak?.(guidance, 'encouraging', { source: 'mentor-step-integration' }) ?? void shell.mentorRail.speak?.(guidance, 'encouraging');
+        shell?.mentorRecommendations?.presentAskMentor({ text: guidance, mood: 'encouraging', stepId });
       }
     }
   } catch (err) {
     swseLogger.warn('[MentorStepIntegration] Error in handleAskMentorWithSuggestions:', err);
     // Fallback to standard guidance on error
     const guidance = getStepGuidance(actor, stepId, shell);
-    if (guidance && shell?.mentorRail) {
-      shell.mentorRail.queueSpeak?.(guidance, 'encouraging', { source: 'mentor-step-integration' }) ?? void shell.mentorRail.speak?.(guidance, 'encouraging');
+    if (guidance) {
+      shell?.mentorRecommendations?.presentAskMentor({ text: guidance, mood: 'encouraging', stepId });
     }
   }
 }

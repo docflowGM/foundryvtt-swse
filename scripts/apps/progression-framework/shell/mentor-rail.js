@@ -2,6 +2,7 @@ import { getMentorGuidance, MENTORS, resolveMentorData, resolveMentorPortraitPat
 import { MentorTranslationIntegration } from '../../../mentor/mentor-translation-integration.js';
 import { ProgressionDebugCapture } from '../debug/progression-debug-capture.js';
 import { getStepMentorObject, resolveStepMentorContext, resolveStepMentorGuidance, setSessionMentorContext } from '../steps/mentor-step-integration.js';
+import { isArbitratedMessage } from './mentor-recommendation-controller.js';
 
 /**
  * Maps step ID to mentor guidance choice type for getMentorGuidance().
@@ -46,7 +47,6 @@ export class MentorRail {
   constructor(shell) {
     this.shell = shell;
     this._animationAbort = null; // AbortController for in-flight animations
-    this._pendingFlushQueued = false;
   }
 
   /**
@@ -82,32 +82,13 @@ export class MentorRail {
    */
   _queuePendingDialogue(text, mood = null) {
     if (!text) return;
+    // Plain-text fallback only. This records what the template should show if it
+    // renders before the animation runs; it is NOT a replay queue. The
+    // controller owns replay, so nothing here re-reveals a message on its own.
     this.shell.mentor.currentDialogue = text;
-    this.shell.mentor.pendingDialogue = { text, mood };
+    this.shell.mentor.pendingDialogue = null;
     this.shell.mentor.animationState = 'pending';
     this.shell.mentor.isAnimating = false;
-  }
-
-  /**
-   * Replay queued dialogue once the mentor rail has been rendered.
-   * @param {HTMLElement|null} regionEl
-   * @private
-   */
-  _flushPendingDialogue(regionEl = null) {
-    const pending = this.shell.mentor?.pendingDialogue;
-    if (!pending?.text || this._pendingFlushQueued) return;
-
-    const container = regionEl?.querySelector?.('[data-mentor-dialogue]') ?? this._resolveDialogueContainer();
-    if (!(container instanceof HTMLElement)) return;
-
-    this._pendingFlushQueued = true;
-    queueMicrotask(() => {
-      this._pendingFlushQueued = false;
-      const active = this.shell.mentor?.pendingDialogue;
-      if (!active?.text) return;
-      this.shell.mentor.pendingDialogue = null;
-      void this.speak(active.text, active.mood ?? null, { bypassSuppression: true, source: 'pending-flush' });
-    });
   }
 
   /**
@@ -176,6 +157,10 @@ export class MentorRail {
     shell.mentor.animationState = 'typing';
     shell.mentor.isAnimating = true;
 
+    // Dialogue is DOM state, never render state: from here on the line is
+    // written straight into the live rail and never schedules a shell update.
+    shell.renderScheduler?.noteDomOnlyMentorUpdate?.();
+
     this._animationAbort = new AbortController();
     const { signal } = this._animationAbort;
 
@@ -207,6 +192,9 @@ export class MentorRail {
         text: dialogueText,
         container: container.querySelector('[data-mentor-text]') ?? container,
         mentor: shell.mentor.name || shell.mentor.mentorId,
+        // The abort signal now reaches the reveal loop itself, so a superseded
+        // line stops animating instead of merely having its completion ignored.
+        signal,
         onComplete: () => {
           // [DEBUG] Callback execution logging
           mentorTrace(`[SWSE Mentor Debug] [Speak #${speakNum}] onComplete callback fired`, {
@@ -270,15 +258,112 @@ export class MentorRail {
   }
 
   /**
-   * Speak step-appropriate guidance for the given descriptor.
-   * @param {StepDescriptor} descriptor
-   * @returns {Promise<void>}
+   * The one presentation path for a build recommendation.
+   *
+   * Touches only nodes inside the mounted mentor rail: the mood attribute and
+   * the dialogue container. It never renders, never asks the shell to render,
+   * and never blocks the caller on the typewriter animation.
+   *
+   * Equality suppression happens upstream in MentorRecommendationController, so
+   * reaching this method already means the advice genuinely changed.
+   *
+   * @param {Object} recommendation - Normalized recommendation DTO.
+   * @param {Object} [options]
+   * @param {boolean} [options.replay] - Re-presenting after a structural render.
+   * @returns {boolean} false when the rail is not mounted (queued instead).
    */
-  async speakForStep(descriptor) {
-    if (!descriptor) return;
+  presentRecommendation(recommendation, { replay = false } = {}) {
+    // Kept for callers that still hold a recommendation DTO. It builds an
+    // unauthorized message on purpose: the arbiter is the only thing that can
+    // authorize one, so this now fails closed like any other direct write.
+    return this.presentMessage({
+      source: replay ? 'recommendation-replay' : 'recommendation',
+      text: recommendation?.dialogue,
+      mood: recommendation?.mood ?? 'neutral',
+      targetId: recommendation?.targetId ?? null,
+    });
+  }
+
+  /**
+   * The single DOM write for any arbitrated mentor message.
+   *
+   * Whatever the source — step guidance, a reaction, a recommendation, Ask
+   * Mentor — it lands here, and only here. Touches the mood attribute and the
+   * dialogue container; never renders, never blocks on the typewriter.
+   *
+   * @param {Object} message
+   * @param {string} message.text
+   * @param {string} [message.mood]
+   * @param {string} [message.source]
+   * @returns {boolean} false when the rail is not mounted (queued instead).
+   */
+  presentMessage(message) {
+    const text = String(message?.text ?? '').trim();
+    if (!text) return false;
+
+    // Ownership is proven, not trusted.
+    //
+    // Everything the player sees here must have been ordered by
+    // MentorRecommendationController, which stamps an unforgeable token. A
+    // message without it reached the sink some other way — that is the exact
+    // regression this split exists to prevent, so it is counted and reported
+    // rather than quietly rendered.
+    if (!isArbitratedMessage(message)) {
+      this.shell?.mentorRecommendations?.noteDirectBypass?.({
+        source: message?.source ?? 'unknown',
+        textPreview: text.slice(0, 60),
+      });
+      console.warn('[MentorRail] a mentor message reached the rail without passing through '
+        + 'MentorRecommendationController; it skipped priority, staleness and equality checks.',
+      { source: message?.source ?? 'unknown' });
+      // Fail closed. The first version counted the violation and then rendered
+      // the message anyway, which detected the intruder and opened the door.
+      // Nothing is queued, animated, or written to shell state.
+      return 'unauthorized';
+    }
+
+    const mood = message?.mood ?? 'neutral';
+    const container = this._resolveDialogueContainer();
+
+    if (!(container instanceof HTMLElement)) {
+      // Not mounted yet (pre-render, or mid step transition). Queue it; the
+      // rail replays queued dialogue from afterRender().
+      this._queuePendingDialogue(text, mood);
+      return false;
+    }
+
+    // Mood is a paint-only attribute swap on the mounted rail.
+    this.setMood(mood);
+
+    // queueSpeak aborts the previous reveal — now all the way into the
+    // translator's animation loop — and returns immediately, so a new line
+    // cleanly supersedes the old one and the player never waits on narration.
+    this.queueSpeak(text, mood, {
+      bypassSuppression: true,
+      source: message?.source ?? 'mentor-message',
+    });
+
+    return true;
+  }
+
+  /**
+   * Resolve step-appropriate guidance for the given descriptor, and sync the
+   * mentor identity it implies.
+   *
+   * This deliberately does NOT speak. Step guidance used to call queueSpeak()
+   * straight from here, which meant it never passed through priority, revision,
+   * or step-identity checks — a slow step-entry lookup could land after the
+   * player had already moved on, or overwrite a live recommendation. The caller
+   * routes the returned text through MentorRecommendationController instead.
+   *
+   * @param {StepDescriptor} descriptor
+   * @returns {Promise<{text: string, mood: string|null, stepId: string}|null>}
+   */
+  async resolveStepGuidance(descriptor) {
+    if (!descriptor) return null;
 
     // [DEBUG] speakForStep entry
-    mentorTrace('[SWSE Translation Debug] speakForStep() called', {
+    mentorTrace('[SWSE Translation Debug] resolveStepGuidance() called', {
       descriptor_stepId: descriptor.stepId,
       descriptor_label: descriptor.label,
     });
@@ -291,8 +376,8 @@ export class MentorRail {
     );
     const mentorObj = guidance?.mentor || getStepMentorObject(this.shell?.actor ?? null, this.shell) || this._getMentorObject();
     if (!mentorObj) {
-      mentorTrace('[SWSE Translation Debug] speakForStep() early return — no mentor object');
-      return;
+      mentorTrace('[SWSE Translation Debug] resolveStepGuidance() early return — no mentor object');
+      return null;
     }
 
     const mentorKey = guidance?.mentorContext?.mentorKey || guidance?.mentorContext?.mentorId || getMentorKey(mentorObj);
@@ -309,7 +394,7 @@ export class MentorRail {
       || `You are at the ${descriptor.label} step.`;
 
     // [DEBUG] Text resolution
-    mentorTrace('[SWSE Translation Debug] speakForStep() resolved text', {
+    mentorTrace('[SWSE Translation Debug] resolveStepGuidance() resolved text', {
       choiceType: guidance?.choiceType,
       textSource: guidance?.textSource,
       mentorId: mentorKey,
@@ -320,13 +405,12 @@ export class MentorRail {
       will_call_speak: !!text,
     });
 
-    if (text) {
-      mentorTrace('[SWSE Translation Debug] speakForStep() queueing speak() with text');
-      this.queueSpeak(text, null, { source: 'step-enter' });
-      mentorTrace('[SWSE Translation Debug] speakForStep() speech queued');
-    } else {
-      mentorTrace('[SWSE Translation Debug] speakForStep() skipping speak() — no text');
+    if (!text) {
+      mentorTrace('[SWSE Translation Debug] resolveStepGuidance() produced no text');
+      return null;
     }
+
+    return { text, mood: null, stepId: descriptor.stepId };
   }
 
   /**
@@ -371,20 +455,64 @@ export class MentorRail {
       portrait: resolveMentorPortraitPath(data.portrait),
     });
 
-    this.shell.render({ parts: ['mentorRail'] });
+    // Identity/portrait changes patch the mounted rail directly. Mentor code is
+    // never a render owner — not even for a region-scoped update.
+    return this._applyIdentityToDom();
   }
 
   /**
-   * Toggle collapse. Updates DOM data-collapsed directly (no re-render).
+   * Write the current mentor identity into the mounted rail without rendering.
+   * @returns {boolean} false when the rail is not mounted.
+   * @private
+   */
+  _applyIdentityToDom() {
+    const region = this.shell.getRootElement?.()?.querySelector?.('[data-region="mentor-rail"]')
+      ?? this.shell.element?.querySelector?.('[data-region="mentor-rail"]');
+    if (!(region instanceof HTMLElement)) return false;
+
+    const root = region.querySelector('.prog-mentor-rail') || region;
+    const nameEl = root.querySelector('.prog-mentor__name');
+    if (nameEl?.lastChild) nameEl.lastChild.textContent = this.shell.mentor.name || 'Mentor';
+    const titleEl = root.querySelector('.prog-mentor__title');
+    if (titleEl) titleEl.textContent = this.shell.mentor.title || '';
+
+    const portraitWrap = root.querySelector('[data-mentor-portrait]');
+    if (portraitWrap) portraitWrap.setAttribute('data-mentor-portrait', this.shell.mentor.mentorId || '');
+    const img = root.querySelector('.prog-mentor__portrait-image');
+    const portrait = this.shell.mentor.portrait;
+    if (img instanceof HTMLImageElement && portrait && img.getAttribute('src') !== portrait) {
+      img.setAttribute('src', portrait);
+      img.setAttribute('title', this.shell.mentor.name || 'Mentor');
+    }
+
+    this.shell.renderScheduler?.noteDomOnlyMentorUpdate?.();
+    return true;
+  }
+
+  /**
+   * Toggle collapse. Applies the collapsed state to the live DOM and only asks
+   * for a mentor-region update — collapsing the rail must not rebuild the work
+   * surface, details rail, or footer.
    * @returns {Promise<void>}
    */
   async toggle() {
     const shell = this.shell;
     shell.mentorCollapsed = !shell.mentorCollapsed;
     shell.mentor.collapsed = shell.mentorCollapsed;
-    await game.user.setFlag('foundryvtt-swse', 'mentorRailCollapsed', shell.mentorCollapsed);
 
-    return shell.render({ force: true });
+    // Collapse is expressed entirely through the data-collapsed attribute the
+    // stylesheet already keys off, so this needs no render of any kind.
+    const region = shell.getRootElement?.()?.querySelector?.('[data-region="mentor-rail"]')
+      ?? shell.element?.querySelector?.('[data-region="mentor-rail"]');
+    let applied = false;
+    if (region instanceof HTMLElement) {
+      region.setAttribute('data-collapsed', String(shell.mentorCollapsed));
+      shell.renderScheduler?.noteDomOnlyMentorUpdate?.();
+      applied = true;
+    }
+
+    await game.user.setFlag('foundryvtt-swse', 'mentorRailCollapsed', shell.mentorCollapsed);
+    return applied;
   }
 
   /**
@@ -450,11 +578,16 @@ export class MentorRail {
     // animation against the live DOM instead of leaving the panel blank.
     if (textEl && currentDialogue && animationState === 'complete') {
       textEl.textContent = currentDialogue;
-    } else if (textEl && currentDialogue && animationState === 'typing' && !textEl.querySelector('.aurebesh-dialogue-wrapper')) {
-      this._queuePendingDialogue(currentDialogue, this.shell.mentor?.mood ?? null);
     }
 
-    this._flushPendingDialogue(regionEl);
+    // Replay is NOT done here.
+    //
+    // The rail used to keep its own pendingDialogue and flush it from a
+    // microtask, while MentorRecommendationController separately replayed its
+    // accepted message from reconnect(). Two owners meant one message could be
+    // revealed twice, or restart mid-animation. The controller is the single
+    // owner: ProgressionShell calls reconnect() immediately after this, and the
+    // controller performs exactly one authorized write per new mount.
 
     // Apply message-length class for responsive text scaling
     if (textEl && currentDialogue) {

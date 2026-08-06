@@ -100,6 +100,14 @@
                   </div>
                 </div>
                 <i class="fa-solid fa-chevron-right"></i>
+                {{> "systems/foundryvtt-swse/templates/apps/progression-framework/partials/option-card-action.hbs"
+                   itemId=technique.id
+                   name=technique.name
+                   selected=technique.isSelected
+                   state=technique.cardActionState
+                   disabled=technique.cardActionDisabled
+                   title=technique.cardActionTitle
+                }}
               </div>
             {{/each}}
           </div>
@@ -145,6 +153,14 @@
                   </div>
                 </div>
                 <i class="fa-solid fa-chevron-right"></i>
+                {{> "systems/foundryvtt-swse/templates/apps/progression-framework/partials/option-card-action.hbs"
+                   itemId=technique.id
+                   name=technique.name
+                   selected=technique.isSelected
+                   state=technique.cardActionState
+                   disabled=technique.cardActionDisabled
+                   title=technique.cardActionTitle
+                }}
               </div>
             {{/each}}
           </div>

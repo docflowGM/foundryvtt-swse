@@ -438,10 +438,24 @@ export class MentorChoiceReactionRouter {
     return ACTION_TO_REACTION[actionName] || null;
   }
 
+  /**
+   * True once a newer interaction has been queued. Every await inside a
+   * reaction is a supersession point, so this is checked after each one.
+   * @param {number} token
+   * @returns {boolean}
+   * @private
+   */
+  _isStale(token) {
+    return token !== this._sequence;
+  }
+
   async _runReaction(context) {
     try {
       const { token, stepId, action, plugin, item, itemId: resolvedItemId, target } = context;
-      if (token !== this._sequence && action === 'focus') return;
+      // A newer interaction has already been queued; this reaction is stale.
+      // This applies to every action, not just focus — a commit whose async
+      // suggestion resolves after the player has moved on must not speak.
+      if (this._isStale(token)) return;
 
       const mentorContext = resolveStepMentorContext(this.shell?.actor ?? null, this.shell, {
         stepId,
@@ -451,6 +465,9 @@ export class MentorChoiceReactionRouter {
       const mentorName = mentorContext?.mentor?.name || this.shell?.mentor?.name || mentorId;
 
       const suggestion = await this._resolveStepSuggestion(plugin, item, resolvedItemId, action, stepId);
+      // Re-check after the async suggestion resolve — this is the window where
+      // rapid focus changes previously let an old line overwrite a newer one.
+      if (this._isStale(token)) return;
 
       const isSuggested = !!suggestion || this._targetLooksSuggested(target);
       const atoms = this._collectAtoms({ suggestion, item, action, stepId, isSuggested });
@@ -503,9 +520,9 @@ export class MentorChoiceReactionRouter {
       }
 
       text = this._shapeFinalLine({ text, action, item, suggestion: normalizedSuggestion });
-      if (!text || token !== this._sequence && action === 'focus') return;
+      if (!text || this._isStale(token)) return;
 
-      await this._speak(text, this._moodFor(atoms, action, intensity));
+      await this._speak(text, this._moodFor(atoms, action, intensity), { stepId, action, itemId: resolvedItemId });
       this._recordReactionBreadcrumb({ stepId, action, item, mentorId, atoms, intensity, importance, source: suggestion ? textSource : 'metadata', textSource });
     } catch (err) {
       swseLogger.warn('[MentorChoiceReactionRouter] Mentor reaction failed', {
@@ -579,7 +596,12 @@ export class MentorChoiceReactionRouter {
         limit: action === 'focus' ? 12 : 24,
       });
       const list = asArray(suggestions);
-      return this._matchSuggestion(list, item, itemIdValue) || list[0] || null;
+      // A reaction is about the item the player just touched. Falling back to
+      // list[0] meant clicking option B could speak option A's reasoning —
+      // the mentor confidently explaining a choice the player did not make.
+      // No match means no borrowed reasoning: the composer falls back to the
+      // clicked item's own metadata instead.
+      return this._matchSuggestion(list, item, itemIdValue) || null;
     } catch (err) {
       swseLogger.debug('[MentorChoiceReactionRouter] SuggestionService lookup skipped', {
         stepId,
@@ -1004,11 +1026,37 @@ export class MentorChoiceReactionRouter {
     return VALID_MOODS.has('neutral') ? 'neutral' : null;
   }
 
-  async _speak(text, mood) {
+  async _speak(text, mood, context = {}) {
     const rail = this.shell?.mentorRail;
     if (!rail || !text) return;
-    rail.queueSpeak?.(text, mood, { bypassSuppression: true, source: 'choice-reaction' })
-      ?? void rail.speak?.(text, mood, { bypassSuppression: true, source: 'choice-reaction' });
+
+    // Route through the arbiter so a bark cannot displace a recommendation or
+    // an Ask Mentor line, and cannot speak for a step the player has left.
+    //
+    // noteExternalDisplay() used to run FIRST, which cleared the active
+    // recommendation and its signature before the reaction was submitted — so
+    // the bark never actually competed at priority 20 against a priority-40
+    // recommendation, it emptied the room and walked in. Arbitration now sees
+    // the real board, and only an accepted reaction reports that it took over.
+    const controller = this.shell?.mentorRecommendations;
+    if (controller) {
+      const payload = { text, mood, stepId: context?.stepId ?? null, targetId: context?.itemId ?? null };
+      const outcome = (context?.action === 'commit' || context?.action === 'uncommit')
+        ? controller.presentCommitReaction(payload)
+        : controller.presentFocusReaction(payload);
+
+      // Rejected reactions must not flash the rail or claim the recommendation.
+      if (outcome !== 'displayed' && outcome !== 'queued') {
+        this.shell?.progressionSession?._recordMentorDiagnostic?.('skippedReactions', {
+          reason: `arbitration:${outcome}`,
+          action: context?.action ?? null,
+          stepId: context?.stepId ?? null,
+        });
+        return;
+      }
+    } else {
+      rail.queueSpeak?.(text, mood, { bypassSuppression: true, source: 'choice-reaction' });
+    }
     this._flashRail(mood);
   }
 

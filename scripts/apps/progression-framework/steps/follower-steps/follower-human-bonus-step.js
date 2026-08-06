@@ -80,7 +80,7 @@ export class FollowerHumanBonusStep extends FollowerStepBase {
           value: button.dataset.value || null
         };
         this.saveFollowerChoice(shell, 'humanTemplateBonus', this._selected);
-        shell.render();
+        shell.requestRender({ preserveScroll: true, reason: 'follower-human-bonus-step:optionHtml' });
       });
     });
   }

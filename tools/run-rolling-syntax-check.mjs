@@ -5,35 +5,22 @@
  * (Phase 5 rolling-system alignment).
  *
  * Same walk logic as the project's existing tools/ci-smoke-check.mjs
- * (scripts/, tools/, tests/, skipping .bak-style suffixes), but with a
- * documented exclusion list for 2 pre-existing syntax failures that
- * predate every rolling-system-alignment commit and are unrelated to this
- * work (audit-only report generators, not part of the attack/roll
- * pipeline — see docs/audits/rolling-system-alignment-phase-5.md). This
- * script does not replace ci-smoke-check.mjs; it exists only so CI can be
- * honestly green for files the rolling-system track actually owns without
- * either hiding these 2 known issues or blocking on unrelated,
- * pre-existing ones every run.
+ * (scripts/, tools/, tests/, skipping .bak-style suffixes), but parsing every
+ * file with an unambiguous module goal (see checkFile). There is no exclusion
+ * list: every discovered source file is checked, and any parse failure fails
+ * the run. This script does not replace ci-smoke-check.mjs.
  */
 
 import { readdirSync, statSync } from "node:fs";
 import { join, extname, relative, resolve } from "node:path";
 import { spawnSync } from "node:child_process";
+import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 
 const ROOT = fileURLToPath(new URL("..", import.meta.url));
 const ROOTS = ["scripts", "tools", "tests"];
 const ALLOWED_EXT = new Set([".js", ".mjs"]);
 const SKIP_SUFFIXES = [".bak", ".phase1bak", ".phase2bak", ".phase2v2bak", ".phase3bak", ".phase4bak", ".phase5bak", ".phase8bak", ".phase11bak", ".pre_phase_b", ".pre_phase_f", ".pre_phase_h2"];
-
-// Pre-existing, verified-unrelated syntax failures (audit-report generator
-// scripts with template-literal issues, not rolling-system code). See the
-// Phase 5 audit for confirmation these predate the rolling-system-alignment
-// commits.
-export const KNOWN_EXCLUDED_FILES = [
-  "tools/audit-nonheroic-weapon-damage.mjs",
-  "tools/audit-npc-source-attribution.mjs"
-];
 
 function shouldSkip(path) {
   return SKIP_SUFFIXES.some((suffix) => path.endsWith(suffix));
@@ -50,25 +37,51 @@ function* walk(dir) {
   }
 }
 
-function main() {
-  const excludedSet = new Set(KNOWN_EXCLUDED_FILES);
-  const failures = [];
-  let checked = 0;
+/**
+ * Parse one file and report whether it is syntactically valid.
+ *
+ * `node --check <file>` alone is not a reliable gate for this repo: for a .js
+ * file that Node has to guess the module goal for, a file containing an ESM-only
+ * syntax error can still exit 0. Every file under scripts/ here is an ES module,
+ * so anything using ESM syntax is re-checked explicitly with
+ * `--input-type=module` over stdin, which parses with a single, unambiguous goal.
+ *
+ * @param {string} file - Absolute path.
+ * @returns {{status: number, stderr: string}}
+ */
+export function checkFile(file) {
+  let source = null;
+  try {
+    source = readFileSync(file, "utf8");
+  } catch (_err) {
+    source = null;
+  }
 
-  console.log("=".repeat(72));
-  console.log("  ROLLING-SYSTEM SYNTAX CHECK (node --check)");
-  console.log("=".repeat(72));
-  console.log(`\nExcluding ${KNOWN_EXCLUDED_FILES.length} documented pre-existing failure(s):`);
-  for (const f of KNOWN_EXCLUDED_FILES) console.log(`  - ${f}`);
-  console.log("");
+  if (source !== null && /^\s*(?:import|export)[\s{]/m.test(source)) {
+    return spawnSync(process.execPath, ["--input-type=module", "--check"], {
+      encoding: "utf8",
+      input: source,
+    });
+  }
+
+  return spawnSync(process.execPath, ["--check", file], { encoding: "utf8" });
+}
+
+/**
+ * Sweep every discovered source file under ROOTS.
+ *
+ * @returns {{checked: number, checkedFiles: string[], failures: Array<{file: string, stderr: string}>}}
+ */
+export function runSyntaxSweep() {
+  const failures = [];
+  const checkedFiles = [];
 
   for (const root of ROOTS) {
     try {
       for (const file of walk(join(ROOT, root))) {
         const rel = relative(ROOT, file).replaceAll("\\", "/");
-        if (excludedSet.has(rel)) continue;
-        checked += 1;
-        const result = spawnSync(process.execPath, ["--check", file], { encoding: "utf8" });
+        checkedFiles.push(rel);
+        const result = checkFile(file);
         if (result.status !== 0) {
           failures.push({ file: rel, stderr: (result.stderr || "").trim() });
         }
@@ -77,6 +90,17 @@ function main() {
       // Missing root is acceptable in partial environments.
     }
   }
+
+  return { checked: checkedFiles.length, checkedFiles, failures };
+}
+
+function main() {
+  console.log("=".repeat(72));
+  console.log("  ROLLING-SYSTEM SYNTAX CHECK (node --check)");
+  console.log("=".repeat(72));
+  console.log("");
+
+  const { checked, failures } = runSyntaxSweep();
 
   console.log(`Checked ${checked} file(s).\n`);
 
@@ -89,7 +113,7 @@ function main() {
     process.exit(1);
   }
 
-  console.log("All non-excluded files pass node --check.");
+  console.log(`All ${checked} discovered source file(s) pass node --check.`);
   console.log("=".repeat(72));
   process.exit(0);
 }

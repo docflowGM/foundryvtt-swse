@@ -110,6 +110,7 @@
     "styles/progression-framework/option-cards.css",
     "styles/progression-framework/splash/splash.css",
     "styles/progression-framework/chargen-stabilization.css",
+    "styles/progression-framework/mentor-rail-stability.css",
     "styles/swse-holo-ui.css",
     "styles/core/first-run-experience.css",
     "styles/ui/character-sheet-svg-panels.css",

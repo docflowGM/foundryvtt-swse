@@ -8,6 +8,7 @@ import { initSidebarSentinelTrace } from "/systems/foundryvtt-swse/scripts/core/
 import { initSidebarIconComparison } from "/systems/foundryvtt-swse/scripts/core/sidebar-icon-comparison.js";
 import { initSidebarIconClassAudit } from "/systems/foundryvtt-swse/scripts/core/sidebar-icon-class-audit.js";
 import { initSidebarIconFallback } from "/systems/foundryvtt-swse/scripts/core/sidebar-icon-fallback.js";
+import { resolveOptionCardAction } from "/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/option-card-action.js";
 
 Hooks.once('init', () => {
   console.log('[SWSE] Init hook fired - starting sidebar diagnostics initialization');
@@ -121,6 +122,24 @@ if (!Handlebars.helpers.count) {
     if (value && typeof value === "object") return Object.keys(value).length;
     if (typeof value === "string") return value.length;
     return 0;
+  });
+}
+
+// Option-card action label + accessible name.
+//
+// Both come from resolveOptionCardAction() so the button face and the announced
+// text can never disagree: a card reading LOCKED used to announce "Select X".
+// Usage: {{optionCardLabel state=... selected=... deselect=... label=...}}
+//        {{optionCardAria  state=... selected=... deselect=... name=... verb=...}}
+if (!Handlebars.helpers.optionCardLabel) {
+  Handlebars.registerHelper("optionCardLabel", function(options) {
+    return resolveOptionCardAction(options?.hash ?? {}).label;
+  });
+}
+
+if (!Handlebars.helpers.optionCardAria) {
+  Handlebars.registerHelper("optionCardAria", function(options) {
+    return resolveOptionCardAction(options?.hash ?? {}).ariaLabel;
   });
 }
 

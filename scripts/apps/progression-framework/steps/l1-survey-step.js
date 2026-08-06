@@ -259,7 +259,7 @@ export class L1SurveyStep extends ProgressionStepPlugin {
     this._activeQuestionIndex = this._findNextQuestionIndex();
     await this._saveSurveyDraft(shell);
     await this._speakCurrentPhase(shell, true);
-    shell.render();
+    shell.requestRender({ preserveScroll: true, reason: 'l1-survey-step:_startSurvey' });
   }
 
   async _chooseSurveyAnswer(shell, target) {
@@ -275,7 +275,7 @@ export class L1SurveyStep extends ProgressionStepPlugin {
     this._surveyPhase = 'response';
     await this._saveSurveyDraft(shell);
     await this._speakCurrentPhase(shell, true);
-    shell.render();
+    shell.requestRender({ preserveScroll: true, reason: 'l1-survey-step:option' });
   }
 
   async _continueSurvey(shell) {
@@ -290,7 +290,7 @@ export class L1SurveyStep extends ProgressionStepPlugin {
     }
     await this._saveSurveyDraft(shell);
     await this._speakCurrentPhase(shell, true);
-    shell.render();
+    shell.requestRender({ preserveScroll: true, reason: 'l1-survey-step:nextIndex' });
   }
 
   async _finishSurvey(shell) {
@@ -317,7 +317,7 @@ export class L1SurveyStep extends ProgressionStepPlugin {
     this._surveyPhase = 'question';
     await this._saveSurveyDraft(shell);
     await this._speakCurrentPhase(shell, true);
-    shell.render();
+    shell.requestRender({ preserveScroll: true, reason: 'l1-survey-step:_changeCurrentAnswer' });
 
     console.log('[L1SurveyStep] Changed answer for question', question.id);
   }
@@ -339,7 +339,7 @@ export class L1SurveyStep extends ProgressionStepPlugin {
         this._surveyFinalized = false;
         await this._saveSurveyDraft(shell);
         await this._speakCurrentPhase(shell, true);
-        shell.render();
+        shell.requestRender({ preserveScroll: true, reason: 'l1-survey-step:_goToPreviousQuestion' });
         console.log('[L1SurveyStep] Moved to previous question at index', i);
         return;
       }
@@ -389,7 +389,7 @@ export class L1SurveyStep extends ProgressionStepPlugin {
 
     await this._clearSurveyDraft(shell);
     await this._speakCurrentPhase(shell, true);
-    shell.render();
+    shell.requestRender({ preserveScroll: true, reason: 'l1-survey-step:_retakeSurvey' });
 
     console.log('[L1SurveyStep] Survey retaken - all answers cleared');
   }
@@ -792,7 +792,7 @@ export class L1SurveyStep extends ProgressionStepPlugin {
     const mentor = getStepMentorObject(shell?.actor ?? null, shell);
     const clarification = this._buildQuestionClarification(mentor);
     if (clarification && shell?.mentorRail) {
-      shell.mentorRail.queueSpeak?.(clarification, 'encouraging', { source: 'l1-survey-clarification' }) ?? void shell.mentorRail.speak?.(clarification, 'encouraging');
+      shell.mentorRecommendations?.presentGuidance({ text: clarification, mood: 'encouraging', stepId: 'l1-survey' });
     }
   }
 
@@ -896,7 +896,7 @@ export class L1SurveyStep extends ProgressionStepPlugin {
     if (!mentorDialogue) return;
     if (!force && mentorDialogue === this._lastPromptSpoken) return;
     this._lastPromptSpoken = mentorDialogue;
-    shell?.mentorRail?.queueSpeak?.(mentorDialogue, 'encouraging', { source: 'l1-survey' }) ?? void shell?.mentorRail?.speak?.(mentorDialogue, 'encouraging');
+    shell?.mentorRecommendations?.presentGuidance({ text: mentorDialogue, mood: 'encouraging', stepId: 'l1-survey' });
   }
 
   _getCurrentMentorDialogue() {

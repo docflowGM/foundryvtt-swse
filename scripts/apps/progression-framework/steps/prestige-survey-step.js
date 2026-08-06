@@ -504,7 +504,10 @@ export class PrestigeSurveyStep extends ProgressionStepPlugin {
     if (mentor) {
       const mentorKey = getMentorKey(this._selectedClass?.name);
       shell.mentorRail?.setMentor?.(mentorKey);
-      shell.mentor.currentDialogue = getTransitionIntroOverride(this._prestigeTransition, this._selectedClass?.name) || getMentorIntroText(mentor, this._selectedClass?.name);
+      shell.mentorRecommendations?.presentGuidance?.({
+        text: getTransitionIntroOverride(this._prestigeTransition, this._selectedClass?.name)
+          || getMentorIntroText(mentor, this._selectedClass?.name),
+      });
       shell.mentor.mood = 'focused';
       shell.mentor.mentorId = mentorKey;
       shell.mentor.name = mentor.name;
@@ -594,7 +597,7 @@ export class PrestigeSurveyStep extends ProgressionStepPlugin {
     this._surveyPhase = 'question';
     this._activeQuestionIndex = this._findNextQuestionIndex();
     await this._speakCurrentPhase(shell, true);
-    shell.render();
+    shell.requestRender({ preserveScroll: true, reason: 'prestige-survey-step:_startSurvey' });
   }
 
   async _chooseSurveyAnswer(shell, target) {
@@ -609,7 +612,7 @@ export class PrestigeSurveyStep extends ProgressionStepPlugin {
     this._surveyPhase = 'response';
     this._saveDraft(shell);
     await this._speakCurrentPhase(shell, true);
-    shell.render();
+    shell.requestRender({ preserveScroll: true, reason: 'prestige-survey-step:option' });
   }
 
   async _continueSurvey(shell) {
@@ -624,7 +627,7 @@ export class PrestigeSurveyStep extends ProgressionStepPlugin {
     }
     this._saveDraft(shell);
     await this._speakCurrentPhase(shell, true);
-    shell.render();
+    shell.requestRender({ preserveScroll: true, reason: 'prestige-survey-step:nextIndex' });
   }
 
   async _finishSurvey(shell) {
@@ -641,7 +644,7 @@ export class PrestigeSurveyStep extends ProgressionStepPlugin {
     this._surveyPhase = 'question';
     this._saveDraft(shell);
     await this._speakCurrentPhase(shell, true);
-    shell.render();
+    shell.requestRender({ preserveScroll: true, reason: 'prestige-survey-step:_changeCurrentAnswer' });
   }
 
   async _goToPreviousQuestion(shell) {
@@ -653,13 +656,13 @@ export class PrestigeSurveyStep extends ProgressionStepPlugin {
         this._activeQuestionIndex = i;
         this._surveyPhase = 'response';
         await this._speakCurrentPhase(shell, true);
-        shell.render();
+        shell.requestRender({ preserveScroll: true, reason: 'prestige-survey-step:_goToPreviousQuestion' });
         return;
       }
     }
     this._surveyPhase = 'intro';
     await this._speakCurrentPhase(shell, true);
-    shell.render();
+    shell.requestRender({ preserveScroll: true, reason: 'prestige-survey-step:_goToPreviousQuestion' });
   }
 
   async _retakeSurvey(shell) {
@@ -669,7 +672,7 @@ export class PrestigeSurveyStep extends ProgressionStepPlugin {
     this._lastPromptSpoken = null;
     this._saveDraft(shell);
     await this._speakCurrentPhase(shell, true);
-    shell.render();
+    shell.requestRender({ preserveScroll: true, reason: 'prestige-survey-step:_retakeSurvey' });
   }
 
   async onStepExit(shell, { direction } = {}) {
@@ -836,7 +839,7 @@ export class PrestigeSurveyStep extends ProgressionStepPlugin {
     } else if (question?.id === 'profileReading') {
       clarification = 'I am checking whether the pattern I see in your past choices still feels true. Your answer tells me how much old metadata to preserve or prune.';
     }
-    shell?.mentorRail?.queueSpeak?.(clarification, 'focused', { source: 'prestige-survey-clarification' }) ?? void shell?.mentorRail?.speak?.(clarification, 'focused');
+    shell?.mentorRecommendations?.presentGuidance({ text: clarification, mood: 'focused', stepId: 'prestige-survey' });
   }
 
   getMentorContext() {
@@ -1063,7 +1066,7 @@ export class PrestigeSurveyStep extends ProgressionStepPlugin {
     if (!mentorDialogue) return;
     if (!force && mentorDialogue === this._lastPromptSpoken) return;
     this._lastPromptSpoken = mentorDialogue;
-    shell?.mentorRail?.queueSpeak?.(mentorDialogue, 'focused', { source: 'prestige-survey' }) ?? void shell?.mentorRail?.speak?.(mentorDialogue, 'focused');
+    shell?.mentorRecommendations?.presentGuidance({ text: mentorDialogue, mood: 'focused', stepId: 'prestige-survey' });
   }
 
   _getCurrentMentorDialogue() {

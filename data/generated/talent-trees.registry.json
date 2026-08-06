@@ -202,11 +202,12 @@
   {
     "id": "beastwarden",
     "displayName": "Beastwarden",
-    "talentCount": 7,
+    "talentCount": 8,
     "talents": [
       "Animal Companion",
       "Bonded Mount",
       "Calming Aura",
+      "Charm Beast",
       "Entreat Beast",
       "Nature Sense",
       "Soothing Presence",
@@ -553,22 +554,29 @@
   {
     "id": "duelist",
     "displayName": "Duelist",
-    "talentCount": 14,
+    "talentCount": 10,
     "talents": [
       "Force Fortification",
-      "Greater Weapon Focus (lightsabers)",
-      "Greater Weapon Specialization (lightsabers)",
+      "Greater Weapon Focus (Lightsabers)",
+      "Greater Weapon Specialization (Lightsabers)",
       "Improved Lightsaber Throw",
       "Improved Redirect",
       "Improved Riposte",
       "Lightsaber Form Savant",
-      "Lightsaber Throw",
-      "Multiattack Proficiency (lightsabers)",
-      "Riposte",
       "Severing Strike",
       "Shoto Master",
-      "Thrown Lightsaber Mastery",
-      "Weapon Specialization (Lightsabers)"
+      "Thrown Lightsaber Mastery"
+    ]
+  },
+  {
+    "id": "elite-droid",
+    "displayName": "Elite Droid",
+    "talentCount": 4,
+    "talents": [
+      "Break Program",
+      "Heuristic Mastery",
+      "Scripted Routines",
+      "Ultra Resilient"
     ]
   },
   {
@@ -633,9 +641,8 @@
   {
     "id": "felucian-shaman",
     "displayName": "Felucian Shaman",
-    "talentCount": 2,
+    "talentCount": 1,
     "talents": [
-      "Charm Beast",
       "Infused Weapon"
     ]
   },
@@ -1104,13 +1111,13 @@
     "talents": [
       "Acrobatic Recovery",
       "Battle Meditation",
-      "Elusive Target",
-      "Force Intuition",
-      "Resilience",
       "Close Maneuvering",
       "Cover Escape",
       "Defensive Acuity",
+      "Elusive Target",
       "Exposing Strike",
+      "Force Intuition",
+      "Force Meld",
       "Forceful Warrior",
       "Grenade Defense",
       "Guardian Strike",
@@ -1118,7 +1125,7 @@
       "Immovable",
       "Improved Battle Meditation",
       "Mobile Combatant",
-      "Force Meld"
+      "Resilience"
     ]
   },
   {
@@ -1179,7 +1186,7 @@
   {
     "id": "jedi-sentinel",
     "displayName": "Jedi Sentinel",
-    "talentCount": 15,
+    "talentCount": 17,
     "talents": [
       "Clear Mind",
       "Dampen Presence",
@@ -1191,8 +1198,10 @@
       "Gradual Resistance",
       "Master of the Great Hunt",
       "Persistent Haze",
+      "Prime Targets",
       "Reap Retribution",
       "Resist the Dark Side",
+      "Sense Primal Force",
       "Sentinel's Observation",
       "Steel Resolve",
       "Unseen Eyes"
@@ -1303,6 +1312,18 @@
     ]
   },
   {
+    "id": "knights-armor",
+    "displayName": "Knight's Armor",
+    "talentCount": 5,
+    "talents": [
+      "Armor Mastery",
+      "Armored Augmentation I",
+      "Armored Augmentation II",
+      "Cortosis Defense",
+      "Cortosis Retaliation"
+    ]
+  },
+  {
     "id": "korunnai-adept",
     "displayName": "Korunnai Adept",
     "talentCount": 4,
@@ -1311,6 +1332,17 @@
       "Akk Dog Trainer's Actions",
       "Akk Dog Attack Training",
       "Protective Reaction"
+    ]
+  },
+  {
+    "id": "krath",
+    "displayName": "Krath",
+    "talentCount": 4,
+    "talents": [
+      "Dark Side Manipulation",
+      "Krath Illusions",
+      "Krath Intuition",
+      "Krath Surge"
     ]
   },
   {
@@ -1345,16 +1377,16 @@
     "talentCount": 11,
     "talents": [
       "Block",
+      "Cortosis Gauntlet Block",
       "Deflect",
       "Lightsaber Defense",
-      "Weapon Specialization (Lightsabers)",
       "Lightsaber Throw",
-      "Redirect Shot",
-      "Cortosis Gauntlet Block",
       "Precise Redirect",
       "Precision",
+      "Redirect Shot",
       "Riposte",
-      "Shoto Focus"
+      "Shoto Focus",
+      "Weapon Specialization (Lightsabers)"
     ]
   },
   {
@@ -1691,14 +1723,13 @@
   {
     "id": "outlaw",
     "displayName": "Outlaw",
-    "talentCount": 9,
+    "talentCount": 8,
     "talents": [
       "Confounding Attack",
       "Double Up",
       "Find an Opening",
       "Opportunistic Defense",
       "Preternatural Senses",
-      "Seize the Moment",
       "Seize the Moment",
       "Tangle Up",
       "Uncanny Instincts"
@@ -1822,11 +1853,12 @@
   {
     "id": "provocateur",
     "displayName": "Provocateur",
-    "talentCount": 5,
+    "talentCount": 6,
     "talents": [
       "Cast Suspicion",
       "Distress to Discord",
       "Friend or Foe",
+      "Seize the Moment",
       "Stolen Advantage",
       "True Betrayal"
     ]
@@ -1947,12 +1979,9 @@
   {
     "id": "sense",
     "displayName": "Sense",
-    "talentCount": 16,
+    "talentCount": 12,
     "talents": [
-      "Battle Meditation",
-      "Dark Side Sense",
       "Feel the Force",
-      "Force Meld",
       "Force Perception",
       "Force Pilot",
       "Force Reflexes",
@@ -1963,8 +1992,7 @@
       "Motion of the Future",
       "Psychometry",
       "Reference Book: Star Wars Saga Edition Starships of the Galaxy",
-      "Shift Sense",
-      "Visions"
+      "Shift Sense"
     ]
   },
   {
@@ -2009,7 +2037,7 @@
   {
     "id": "sith",
     "displayName": "Sith",
-    "talentCount": 13,
+    "talentCount": 12,
     "talents": [
       "Affliction",
       "Dark Healing",
@@ -2022,16 +2050,14 @@
       "Improved Dark Healing",
       "Sith Alchemy (create)",
       "Stolen Form",
-      "Weapon Specialization (Lightsabers)",
       "Wicked Strike"
     ]
   },
   {
     "id": "sith-alchemy",
     "displayName": "Sith Alchemy",
-    "talentCount": 6,
+    "talentCount": 5,
     "talents": [
-      "Block",
       "Cause Mutation",
       "Rapid Alchemy",
       "Sith Alchemy",
@@ -2206,9 +2232,15 @@
   {
     "id": "superior-skills",
     "displayName": "Superior Skills",
-    "talentCount": 1,
+    "talentCount": 7,
     "talents": [
-      "Critical Skill Success"
+      "Assured Skill",
+      "Critical Skill Success",
+      "Exceptional Skill",
+      "Reliable Boon",
+      "Skill Boon",
+      "Skill Confidence",
+      "Skillful Recovery"
     ]
   },
   {

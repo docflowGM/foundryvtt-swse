@@ -118,7 +118,7 @@ export class NearHumanBuilder {
     if (customNameInput) {
       const fn = (e) => {
         this._state.customName = e.target.value.trim();
-        shell.render();
+        shell.requestRender({ preserveScroll: true, reason: 'near-human-builder:fn' });
       };
       customNameInput.addEventListener('input', fn);
       this._handlers.push({ el: customNameInput, event: 'input', fn });
@@ -128,7 +128,7 @@ export class NearHumanBuilder {
     workSurfaceEl.querySelectorAll('.nh-sacrifice-radio').forEach(radio => {
       const fn = (e) => {
         this._state.sacrifice = e.target.value;
-        shell.render();
+        shell.requestRender({ preserveScroll: true, reason: 'near-human-builder:fn' });
       };
       radio.addEventListener('change', fn);
       this._handlers.push({ el: radio, event: 'change', fn });
@@ -142,7 +142,7 @@ export class NearHumanBuilder {
         this._state.traitId = this._state.traitId === id ? null : id;
         // Reset secondary choices when trait changes
         this._state.traitChoices = {};
-        shell.render();
+        shell.requestRender({ preserveScroll: true, reason: 'near-human-builder:fn' });
       };
       btn.addEventListener('click', fn);
       this._handlers.push({ el: btn, event: 'click', fn });
@@ -158,7 +158,7 @@ export class NearHumanBuilder {
         } else if (this._state.variants.length < 3) {
           this._state.variants.push(id);
         }
-        shell.render();
+        shell.requestRender({ preserveScroll: true, reason: 'near-human-builder:fn' });
       };
       chip.addEventListener('click', fn);
       this._handlers.push({ el: chip, event: 'click', fn });
@@ -170,7 +170,7 @@ export class NearHumanBuilder {
         const choiceName = select.dataset.choiceName;
         const choiceValue = e.target.value;
         this.setTraitChoice(choiceName, choiceValue);
-        shell.render();
+        shell.requestRender({ preserveScroll: true, reason: 'near-human-builder:fn' });
       };
       select.addEventListener('change', fn);
       this._handlers.push({ el: select, event: 'change', fn });
@@ -203,7 +203,7 @@ export class NearHumanBuilder {
           }
 
           this._state.abilityAdjustments[ability] = newVal;
-          shell.render();
+          shell.requestRender({ preserveScroll: true, reason: 'near-human-builder:fn' });
         };
         btn.addEventListener('click', fn);
         this._handlers.push({ el: btn, event: 'click', fn });

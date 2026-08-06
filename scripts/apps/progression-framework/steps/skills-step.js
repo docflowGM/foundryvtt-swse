@@ -70,6 +70,16 @@ export class SkillsStep extends ProgressionStepPlugin {
   // Lifecycle
   // ---------------------------------------------------------------------------
 
+  /**
+   * Ranked suggestions this step already hydrated and sorted.
+   * Lets the mentor reuse the same ordering the cards show instead of
+   * asking SuggestionService to recompute the top entry.
+   * @returns {Array|null}
+   */
+  getRankedSuggestions() {
+    return Array.isArray(this._suggestedSkills) && this._suggestedSkills.length ? this._suggestedSkills : null;
+  }
+
   async onStepEnter(shell) {
     const character = shell.actor?.system || {};
 
@@ -279,7 +289,7 @@ try {
 
         this._toggleSkill(skillKey, checked);
         await this._refreshSkillSuggestions(shell);
-        shell.render();
+        shell.requestRender({ preserveScroll: true, reason: 'skills-step:onDataReady' });
       }, { signal });
     });
 
@@ -291,7 +301,7 @@ try {
         const skillKey = btn.dataset.skill;
         this._trainSkill(skillKey);
         await this._refreshSkillSuggestions(shell);
-        shell.render();
+        shell.requestRender({ preserveScroll: true, reason: 'skills-step:onDataReady' });
       }, { signal });
     });
 
@@ -303,7 +313,7 @@ try {
         const skillKey = btn.dataset.skill;
         this._untrainSkill(skillKey);
         await this._refreshSkillSuggestions(shell);
-        shell.render();
+        shell.requestRender({ preserveScroll: true, reason: 'skills-step:onDataReady' });
       }, { signal });
     });
 
@@ -314,7 +324,7 @@ try {
         e.stopPropagation();
         this._resetAllSkills();
         await this._refreshSkillSuggestions(shell);
-        shell.render();
+        shell.requestRender({ preserveScroll: true, reason: 'skills-step:onDataReady' });
       }, { signal });
     }
   }
@@ -702,7 +712,7 @@ renderDetailsPanel(focusedItem) {
         const focused = this._availableSkills.find(skill => skill.key === skillKey || skill.id === skillKey || skill._id === skillKey || skill.name === skillKey);
         if (focused) shell.focusedItem = focused;
         await this._refreshSkillSuggestions(shell);
-        shell.render();
+        shell.requestRender({ preserveScroll: true, reason: 'skills-step:focused' });
       });
       return;
     }

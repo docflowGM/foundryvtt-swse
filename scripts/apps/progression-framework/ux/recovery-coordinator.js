@@ -268,7 +268,7 @@ export class RecoveryCoordinator {
       recovery.warnings.push({
         type: 'unresolved-changes',
         message: `${savedSession.dirtyNodes.size} choices need review`,
-        hint: 'You'll be prompted to review these when you resume.',
+        hint: "You'll be prompted to review these when you resume.",
       });
     }
 

@@ -32,7 +32,14 @@ export class UtilityBar {
     shell.utilityBarCollapsed = !shell.utilityBarCollapsed;
     await game.user.setFlag('foundryvtt-swse', 'utilityBarCollapsed', shell.utilityBarCollapsed);
 
-    return shell.render({ force: true });
+    // The scheduler owns repaint timing; a raw render here bypassed coalescing
+    // and could produce two full renders for one toggle.
+    return shell.requestRender({
+      preserveScroll: true,
+      reason: 'toggle-utility-bar',
+      structural: true,
+      force: true,
+    });
   }
 
   /**
@@ -168,8 +175,12 @@ export class UtilityBar {
         rememberSearchFocus(e.target);
         const detail = { query: this._searchQuery };
         const handledByStepHook = this._notifyActiveStepUtilityChange('search', detail);
-        regionEl.dispatchEvent(new CustomEvent('prog:utility:search',
-          { bubbles: true, detail: { ...detail, handledByStepHook } }));
+        if (!handledByStepHook) {
+
+          regionEl.dispatchEvent(new CustomEvent('prog:utility:search',
+            { bubbles: true, detail: { ...detail, handledByStepHook } }));
+
+        }
       });
       track(searchEl, 'focus', e => rememberSearchFocus(e.target));
     }
@@ -183,8 +194,12 @@ export class UtilityBar {
         chip.classList.toggle('prog-utility-bar__filter-chip--active', this._filterState[id]);
         const detail = { filterId: id, value: this._filterState[id] };
         const handledByStepHook = this._notifyActiveStepUtilityChange('filter', detail);
-        regionEl.dispatchEvent(new CustomEvent('prog:utility:filter',
-          { bubbles: true, detail: { ...detail, handledByStepHook } }));
+        if (!handledByStepHook) {
+
+          regionEl.dispatchEvent(new CustomEvent('prog:utility:filter',
+            { bubbles: true, detail: { ...detail, handledByStepHook } }));
+
+        }
       });
     });
 
@@ -195,8 +210,12 @@ export class UtilityBar {
         this._sortValue = e.target.value;
         const detail = { sortId: this._sortValue };
         const handledByStepHook = this._notifyActiveStepUtilityChange('sort', detail);
-        regionEl.dispatchEvent(new CustomEvent('prog:utility:sort',
-          { bubbles: true, detail: { ...detail, handledByStepHook } }));
+        if (!handledByStepHook) {
+
+          regionEl.dispatchEvent(new CustomEvent('prog:utility:sort',
+            { bubbles: true, detail: { ...detail, handledByStepHook } }));
+
+        }
       });
     }
 
@@ -208,8 +227,12 @@ export class UtilityBar {
         this._filterState[id] = value;
         const detail = { filterId: id, value: value };
         const handledByStepHook = this._notifyActiveStepUtilityChange('filter', detail);
-        regionEl.dispatchEvent(new CustomEvent('prog:utility:filter',
-          { bubbles: true, detail: { ...detail, handledByStepHook } }));
+        if (!handledByStepHook) {
+
+          regionEl.dispatchEvent(new CustomEvent('prog:utility:filter',
+            { bubbles: true, detail: { ...detail, handledByStepHook } }));
+
+        }
       });
     });
 
@@ -246,17 +269,50 @@ export class UtilityBar {
         {
           const detail = { query: '' };
           const handledByStepHook = this._notifyActiveStepUtilityChange('search', detail);
-          regionEl.dispatchEvent(new CustomEvent('prog:utility:search', { bubbles: true, detail: { ...detail, handledByStepHook } }));
+
+          // One route per change. Firing the legacy event as well meant a step
+
+          // implementing both onUtilityChange() and a prog:utility:* listener
+
+          // handled one keystroke twice and requested two renders.
+
+          if (!handledByStepHook) {
+
+            regionEl.dispatchEvent(new CustomEvent('prog:utility:search', { bubbles: true, detail: { ...detail, handledByStepHook } }));
+
+          }
         }
         for (const [id, value] of Object.entries(this._filterState)) {
           const detail = { filterId: id, value };
           const handledByStepHook = this._notifyActiveStepUtilityChange('filter', detail);
-          regionEl.dispatchEvent(new CustomEvent('prog:utility:filter', { bubbles: true, detail: { ...detail, handledByStepHook } }));
+
+          // One route per change. Firing the legacy event as well meant a step
+
+          // implementing both onUtilityChange() and a prog:utility:* listener
+
+          // handled one keystroke twice and requested two renders.
+
+          if (!handledByStepHook) {
+
+            regionEl.dispatchEvent(new CustomEvent('prog:utility:filter', { bubbles: true, detail: { ...detail, handledByStepHook } }));
+
+          }
         }
         {
           const detail = { sortId: this._sortValue };
           const handledByStepHook = this._notifyActiveStepUtilityChange('sort', detail);
-          regionEl.dispatchEvent(new CustomEvent('prog:utility:sort', { bubbles: true, detail: { ...detail, handledByStepHook } }));
+
+          // One route per change. Firing the legacy event as well meant a step
+
+          // implementing both onUtilityChange() and a prog:utility:* listener
+
+          // handled one keystroke twice and requested two renders.
+
+          if (!handledByStepHook) {
+
+            regionEl.dispatchEvent(new CustomEvent('prog:utility:sort', { bubbles: true, detail: { ...detail, handledByStepHook } }));
+
+          }
         }
       });
     });

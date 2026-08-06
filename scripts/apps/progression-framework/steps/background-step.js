@@ -133,7 +133,7 @@ async onDataReady(shell) {
 
   const onSearch = (e) => {
     this._searchQuery = String(e.detail?.query || '');
-    shell.render();
+    shell.requestRender({ preserveScroll: true, reason: 'background-step:onSearch' });
   };
 
   const onFilter = (e) => {
@@ -146,13 +146,13 @@ async onDataReady(shell) {
         shell.utilityBar._filterState.occupation = value && filterId === 'occupation';
         shell.utilityBar._filterState.planet = value && filterId === 'planet';
       }
-      shell.render();
+      shell.requestRender({ preserveScroll: true, reason: 'background-step:onFilter' });
     }
   };
 
   const onSort = (e) => {
     this._sortBy = e.detail?.sortId || 'alpha';
-    shell.render();
+    shell.requestRender({ preserveScroll: true, reason: 'background-step:onSort' });
   };
 
   shell.element.addEventListener('prog:utility:search', onSearch, { signal });
@@ -271,15 +271,17 @@ async onStepExit(shell) {
     if (!background) return;
 
     this._focusedBackgroundId = id;
-    shell.render();
 
     // Mentor reaction on focus should not block right-rail detail hydration.
     const flavorText = this._getMentorFlavorForBackground(background);
     if (flavorText) {
-      void shell.mentorRail.speak(flavorText, 'neutral').catch(error => {
-        console.error('[BackgroundStep] Non-blocking mentor speak failed:', error);
+      shell.mentorRecommendations?.presentFocusReaction({
+        text: flavorText, mood: 'neutral', stepId: 'background', targetId: id,
       });
     }
+    // The shell owns the repaint for shell-routed focus: it folds this
+    // declaration into the single update it already schedules.
+    return { handled: true, dirty: ['details'], structural: false, recommendationRelevant: false };
   }
 
   async onItemCommitted(id, shell) {
@@ -389,7 +391,7 @@ async onStepExit(shell) {
       pendingContext: pendingBackgroundContext
     });
 
-    shell.render();
+    return { handled: true, dirty: [], structural: true, recommendationRelevant: true };
   }
 
   // ---------------------------------------------------------------------------
@@ -536,8 +538,8 @@ getUtilityBarConfig() {
       }, async (selected) => {
         const id = selected?.id || selected?._id || selected?.backgroundId;
         if (!id) return;
-        await this.onItemCommitted(id, shell);
-        shell.render();
+        // One canonical commit through the shell, which owns the repaint.
+        await shell.commitSuggestionFromMentor({ stepId: 'background', itemId: id, source: 'ask-mentor' });
       });
     } else {
       // Fallback to standard guidance if no suggestions
@@ -1184,7 +1186,7 @@ _getCategoryChips(shell = null) {
     await this.onItemCommitted(id, shell);
 
     const flavorText = `A custom homeworld then: ${planetName}. That gives you 2 class skills from ${relevantSkills.join(', ')} and ${bonusLanguage} as its language.`;
-    void shell.mentorRail?.speak?.(flavorText, 'neutral');
+    shell.mentorRecommendations?.presentGuidance({ text: flavorText, mood: 'neutral', stepId: 'background' });
   }
 
   getAutoAdvanceConfig(shell) {

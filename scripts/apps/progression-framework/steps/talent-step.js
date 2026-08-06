@@ -701,9 +701,9 @@ export class TalentStep extends ProgressionStepPlugin {
     const mentorRead = this._buildMentorTreeCommentary(tree, shell, recommendation);
     if (!mentorRead?.text) return;
 
-    shell.mentor.currentDialogue = mentorRead.text;
+    shell.mentorRecommendations?.presentGuidance?.({ text: mentorRead.text });
     try {
-      shell.mentorRail?.speak?.(mentorRead.text, mentorRead.tone || 'thoughtful');
+      shell.mentorRecommendations?.presentGuidance({ text: mentorRead.text, mood: mentorRead.tone || 'thoughtful' });
     } catch (_err) {
       // Mentor speech is presentation-only. The detail rail still displays the read.
     }
@@ -2971,6 +2971,16 @@ export class TalentStep extends ProgressionStepPlugin {
     };
   }
 
+  /**
+   * Ranked suggestions this step already hydrated and sorted.
+   * Lets the mentor reuse the same ordering the cards show instead of
+   * asking SuggestionService to recompute the top entry.
+   * @returns {Array|null}
+   */
+  getRankedSuggestions() {
+    return Array.isArray(this._suggestedTrees) && this._suggestedTrees.length ? this._suggestedTrees : null;
+  }
+
   async onItemFocused(item, shell = null) {
     if (this._stage === 'browser') {
       const treeId = item?.id || item?._id || item?.treeId || item;
@@ -3181,8 +3191,12 @@ export class TalentStep extends ProgressionStepPlugin {
         const id = selected?.id || selected?._id || selected?.name;
         if (!id) return;
         this._focusedTalentId = id;
-        await this.onItemCommitted(id, shell);
-        this._renderPreservingScroll(shell);
+        // One canonical commit through the shell, which owns the repaint.
+        await shell.commitSuggestionFromMentor({
+          stepId: shell.steps?.[shell.currentStepIndex]?.stepId ?? 'general-talent',
+          itemId: id,
+          source: 'ask-mentor',
+        });
       });
       return;
     }
@@ -3196,9 +3210,13 @@ export class TalentStep extends ProgressionStepPlugin {
         const id = selected?.id || selected?._id || selected?.treeId;
         if (!id) return;
         this._stage = 'browser';
-        await this.onItemFocused(id);
-        await this.onItemCommitted(id, shell);
-        this._renderPreservingScroll(shell);
+        // One canonical commit through the shell, which focuses the chosen tree
+        // and owns the repaint.
+        await shell.commitSuggestionFromMentor({
+          stepId: shell.steps?.[shell.currentStepIndex]?.stepId ?? 'general-talent',
+          itemId: id,
+          source: 'ask-mentor',
+        });
       });
       return;
     }

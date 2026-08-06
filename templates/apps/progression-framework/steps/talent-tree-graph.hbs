@@ -80,7 +80,8 @@
                 {{/if}}
               {{/if}}
             </div>
-            <button class="talent-choice-card__choose" data-action="commit-item" data-item-id="{{id}}" type="button">
+            <button class="talent-choice-card__choose progression-option-card__select" data-action="commit-item" data-item-id="{{id}}" type="button"
+                    data-card-action="true" data-card-action-state="select" aria-label="Select {{name}}">
               {{#if isSelected}}{{localize "SWSE.Progression.Common.Deselect"}}{{else}}{{localize "SWSE.Progression.Common.Activate"}}{{/if}}
             </button>
           </article>
@@ -107,7 +108,8 @@
                 <span class="talent-choice-badge talent-choice-badge--locked">{{localize "SWSE.Progression.Common.Locked"}}</span>
               </div>
             </div>
-            <button class="talent-choice-card__choose" data-action="commit-item" data-item-id="{{id}}" type="button" disabled>
+            <button class="talent-choice-card__choose progression-option-card__select" data-action="commit-item" data-item-id="{{id}}" type="button" disabled
+                    data-card-action="true" data-card-action-state="locked" aria-disabled="true" aria-label="Select {{name}}">
               {{localize "SWSE.Progression.Common.Locked"}}
             </button>
           </article>

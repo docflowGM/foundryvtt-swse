@@ -8,6 +8,26 @@ import { TRANSLATION_PRESETS } from "/systems/foundryvtt-swse/scripts/ui/dialogu
 
 export class AurebeshTranslator {
   /**
+   * Container -> current reveal generation. A WeakMap so detached dialogue
+   * nodes do not keep entries alive after a shell render replaces them.
+   * @type {WeakMap<HTMLElement, number>}
+   * @private
+   */
+  static _generations = new WeakMap();
+
+  /**
+   * Diagnostics only. supersededFramesAfterAbort counts DOM writes that
+   * happened *after* a reveal lost its claim — the number that proved the
+   * old cancellation was nominal. It must stay at zero.
+   */
+  static _stats = {
+    animationsStarted: 0,
+    animationsCompleted: 0,
+    animationsAborted: 0,
+    supersededFramesAfterAbort: 0,
+  };
+
+  /**
    * Render translated dialogue with Aurebesh → English animation
    * @param {Object} options
    * @param {string} options.text - English text to reveal
@@ -23,13 +43,24 @@ export class AurebeshTranslator {
       container,
       preset = 'mentor',
       onComplete = () => {},
-      enableSkip = true
+      enableSkip = true,
+      signal = null
     } = options;
 
     if (!text || !container) {
       console.warn('AurebeshTranslator: missing text or container');
       return;
     }
+
+    if (signal?.aborted) return;
+
+    // Generation token. Clearing the container was never enough to stop an
+    // in-flight reveal: the old loop kept ticking and kept writing into its own
+    // wrapper, so two lines could animate over each other. Every render claims
+    // the container, and any loop whose claim has been taken over stops.
+    const generation = (this._generations.get(container) ?? 0) + 1;
+    this._generations.set(container, generation);
+    this._stats.animationsStarted += 1;
 
     const config = TRANSLATION_PRESETS[preset] || TRANSLATION_PRESETS.mentor;
 
@@ -62,16 +93,29 @@ export class AurebeshTranslator {
       // Run animation (returns promise). The animation starts as full Aurebesh,
       // then sweeps into Basic. After completion, replace the source entirely
       // so stale Aurebesh never remains beside the translated text.
-      animationPromise = this._animateReveal(wrapper, text, config, isSkippedRef);
+      animationPromise = this._animateReveal(wrapper, text, config, isSkippedRef, {
+        signal,
+        generation,
+        container,
+      });
       await animationPromise;
+
+      // Superseded while revealing: leave the DOM to whoever owns it now.
+      if (this._isSuperseded(container, generation, signal)) {
+        this._stats.animationsAborted += 1;
+        wrapper.remove();
+        return wrapper;
+      }
 
       wrapper.innerHTML = this._buildFinalMarkup(text, config);
       wrapper.classList.add('aurebesh-dialogue-wrapper--complete');
 
+      this._stats.animationsCompleted += 1;
       onComplete();
       return wrapper;
     } catch (err) {
       console.error('AurebeshTranslator error:', err);
+      if (this._isSuperseded(container, generation, signal)) return wrapper;
       wrapper.innerHTML = text; // Fallback to plain text
       onComplete();
       return wrapper;
@@ -82,35 +126,88 @@ export class AurebeshTranslator {
    * Animate character-by-character reveal
    * @private
    */
-  static async _animateReveal(container, text, config, skipRef) {
+  static async _animateReveal(container, text, config, skipRef, cancellation = {}) {
+    const { signal = null, generation = null, container: owner = null } = cancellation;
     const speed = config.speed || 25; // ms per character
     const chars = text.split('');
+
+    const superseded = () => this._isSuperseded(owner, generation, signal);
+
+    if (superseded()) return;
 
     // First frame: pure Aurebesh/source text. This avoids the old behavior where
     // the first rendered frame already contained English.
     container.innerHTML = this._buildMarkup('', text, config);
-    await this._delay(Math.max(140, speed * 6));
+    await this._delay(Math.max(140, speed * 6), signal);
 
     for (let i = 0; i < chars.length; i++) {
+      // Stop the moment a newer line claims this container or the caller aborts.
+      // Checked before writing so a superseded loop never touches the DOM again.
+      if (superseded()) return;
+
       // If skipped, stop animating and let parent handle reveal
       if (skipRef?.value) {break;}
 
-      const char = chars[i];
       const revealed = chars.slice(0, i + 1).join('');
 
       // Build markup: unrevealed in Aurebesh, revealed in English
       container.innerHTML = this._buildMarkup(revealed, chars.slice(i + 1).join(''), config);
 
+      // Real measurement, not a formality: if the claim was lost between the
+      // pre-write check and the write itself, that frame reached the DOM after
+      // this reveal was superseded. This is the number that was ~75 before the
+      // generation token existed; it must stay at zero.
+      if (superseded()) AurebeshTranslator._stats.supersededFramesAfterAbort += 1;
+
       // Wait for animation frame + speed interval
-      await this._delay(speed);
+      await this._delay(speed, signal);
     }
   }
 
-  static _delay(ms) {
+  /**
+   * True when this reveal no longer owns its container, or the caller aborted.
+   * @param {HTMLElement|null} container
+   * @param {number|null} generation
+   * @param {AbortSignal|null} signal
+   * @returns {boolean}
+   * @private
+   */
+  static _isSuperseded(container, generation, signal) {
+    if (signal?.aborted) return true;
+    if (!container || generation == null) return false;
+    return this._generations.get(container) !== generation;
+  }
+
+  /**
+   * Frame-aligned delay that resolves immediately on abort.
+   *
+   * Without the signal, a superseded reveal still sat through its full
+   * per-character delay before noticing it had been replaced — so cancelling a
+   * long line left its loop ticking for as long as the line would have taken.
+   *
+   * @param {number} ms
+   * @param {AbortSignal|null} [signal]
+   * @returns {Promise<void>}
+   */
+  static _delay(ms, signal = null) {
+    if (signal?.aborted) return Promise.resolve();
+
     return new Promise(resolve => {
-      setTimeout(() => {
-        requestAnimationFrame(resolve);
+      let onAbort = null;
+      const finish = () => {
+        if (onAbort) signal?.removeEventListener?.('abort', onAbort);
+        resolve();
+      };
+
+      const timer = setTimeout(() => {
+        if (typeof requestAnimationFrame === 'function') requestAnimationFrame(finish);
+        else finish();
       }, ms);
+
+      if (signal) {
+        onAbort = () => { clearTimeout(timer); finish(); };
+        signal.addEventListener?.('abort', onAbort, { once: true });
+      }
     });
   }
 
@@ -172,9 +269,11 @@ export class AurebeshTranslator {
    * @param {HTMLElement} container - Container with animation
    */
   static cancel(container) {
-    if (container) {
-      container.innerHTML = ''; // Clear to stop animation
-    }
+    if (!container) return;
+    // Invalidate the current generation first: clearing innerHTML alone never
+    // stopped the reveal loop, it just removed what the loop had written so far.
+    this._generations.set(container, (this._generations.get(container) ?? 0) + 1);
+    container.innerHTML = '';
   }
 
   /**

@@ -126,7 +126,7 @@ export class NonheroicStartingFeatsStep extends ProgressionStepPlugin {
     if (searchInput) {
       searchInput.addEventListener('input', (e) => {
         this._searchQuery = e.target.value;
-        shell.render();
+        shell.requestRender({ preserveScroll: true, reason: 'nonheroic-starting-feats-step:onDataReady' });
       }, { signal });
     }
 
@@ -226,7 +226,7 @@ export class NonheroicStartingFeatsStep extends ProgressionStepPlugin {
 
     this._focusedFeatId = null;
     await this._commitSelectedFeats(shell);
-    shell.render();
+    shell.requestRender({ preserveScroll: true, reason: 'nonheroic-starting-feats-step:_onFeatClicked' });
   }
 
   async _onFeatRemoved(featId, shell) {
@@ -235,7 +235,7 @@ export class NonheroicStartingFeatsStep extends ProgressionStepPlugin {
       this._selectedFeatIds.splice(index, 1);
     }
     await this._commitSelectedFeats(shell);
-    shell.render();
+    shell.requestRender({ preserveScroll: true, reason: 'nonheroic-starting-feats-step:_onFeatRemoved' });
   }
 
   // ---------------------------------------------------------------------------

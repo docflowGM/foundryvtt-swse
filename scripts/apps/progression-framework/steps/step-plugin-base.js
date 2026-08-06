@@ -24,6 +24,35 @@ import { ProjectionEngine } from '../shell/projection-engine.js';
 import { swseLogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
 
 /**
+ * What a step plugin tells the shell it changed.
+ *
+ * One shape, everywhere. Interaction callbacks (`onItemFocused`,
+ * `onItemCommitted`) may return this instead of repainting themselves, so the
+ * shell can fold the plugin's scope into the single update it already schedules.
+ *
+ * `dirty` is the canonical field name. An older `{ changed, regions }` spelling
+ * is still read by ProgressionShell._normalizePluginDirtyResult() for migration
+ * safety only — new code must not use it.
+ *
+ * @typedef {Object} PluginDirtyResult
+ * @property {boolean} handled - The plugin recognised the operation.
+ * @property {boolean} changed - Progression state actually mutated. A locked,
+ *   duplicate, over-budget or cancelled operation is `handled: true,
+ *   changed: false` — the shell then skips the projection rebuild, the mentor
+ *   reaction, the recommendation request and auto-advance, because none of
+ *   those are true of a refusal. Omitting it is read as `changed: handled`,
+ *   which is how producers written before the split behaved.
+ * @property {string} [reason] - Diagnostic reason for a handled no-op.
+ * @property {string[]} dirty - Render regions that need updating, e.g. ['details'].
+ * @property {boolean} structural - The change needs a full-shell repaint.
+ * @property {boolean} recommendationRelevant - The change alters the inputs the
+ *   mentor's build advice is computed from. Focus and filtering are NOT
+ *   recommendation-relevant; committing a selection is. The shell only asks the
+ *   mentor to re-evaluate when this is true, so a plugin that sets it
+ *   incorrectly causes either stale advice or needless evaluation.
+ */
+
+/**
  * Sentinel error thrown by all unimplemented methods.
  */
 class NotImplementedError extends Error {
@@ -79,6 +108,34 @@ export class ProgressionStepPlugin {
     // Default: no-op. Subclasses load lists, populate options, etc.
   }
 
+  /**
+   * Return this step's already-ranked suggestions, best first.
+   *
+   * Steps hydrate and sort their suggestions during onStepEnter/onDataReady.
+   * The mentor should reuse that result rather than asking SuggestionService to
+   * rediscover the same top entry — recomputing it is both slower and a chance
+   * for the rail to disagree with the cards on screen.
+   *
+   * Returning null means "I have nothing hydrated"; the caller then falls back
+   * to the service. Steps are not required to implement this.
+   *
+   * @param {import('../shell/progression-shell.js').ProgressionShell} shell
+   * @returns {Array|null}
+   */
+  getRankedSuggestions(shell) {
+    return null;
+  }
+
+  /**
+   * Convenience accessor for the single strongest suggestion.
+   * @param {import('../shell/progression-shell.js').ProgressionShell} shell
+   * @returns {Object|null}
+   */
+  getTopSuggestion(shell) {
+    const ranked = this.getRankedSuggestions(shell);
+    return Array.isArray(ranked) && ranked.length ? ranked[0] : null;
+  }
+
   // ---------------------------------------------------------------------------
   // Data
   // ---------------------------------------------------------------------------
@@ -102,9 +159,18 @@ export class ProgressionStepPlugin {
 
   /**
    * Called when a user focuses an item (single click — details panel updates, no commit).
+   *
+   * The shell owns the repaint for shell-orchestrated focus and commit. A plugin
+   * mutates its own step state and *describes* what it dirtied; it must not call
+   * `shell.render()` or `shell.requestRender()` from these callbacks, or the one
+   * interaction acquires two render owners whose ordering depends on frame timing.
+   *
+   * The canonical return shape is {@link PluginDirtyResult}. Returning nothing
+   * is fine and means "shell, you decide the scope".
+   *
    * @param {string} itemId
    * @param {import('../shell/progression-shell.js').ProgressionShell} shell
-   * @returns {Promise<void>}
+   * @returns {Promise<PluginDirtyResult|void>}
    */
   async onItemFocused(itemId, shell) {
     // Default: no-op. Subclasses update focusedItem on shell.
@@ -300,9 +366,12 @@ export class ProgressionStepPlugin {
    */
   async onAskMentor(shell) {
     const guidance = this.getMentorContext(shell);
-    if (guidance && shell?.mentorRail) {
-      shell.mentorRail.queueSpeak?.(guidance, 'encouraging', { source: 'step-plugin-base' }) ?? void shell.mentorRail.speak?.(guidance, 'encouraging');
-    }
+    if (!guidance) return;
+    shell?.mentorRecommendations?.presentAskMentor({
+      text: guidance,
+      mood: 'encouraging',
+      stepId: this.descriptor?.stepId ?? shell?.progressionSession?.currentStepId ?? null,
+    });
   }
 
   /**

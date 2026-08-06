@@ -137,17 +137,17 @@ export class ForcePowerStep extends ProgressionStepPlugin {
     const onSearch = e => {
       this._searchQuery = e.detail.query;
       this._applyFilters();
-      shell.render();
+      shell.requestRender({ preserveScroll: true, reason: 'force-power-step:onSearch' });
     };
     const onFilter = e => {
       // planned (Wave 10+): implement power-level filtering
       this._applyFilters();
-      shell.render();
+      shell.requestRender({ preserveScroll: true, reason: 'force-power-step:onFilter' });
     };
     const onSort = e => {
       // planned (Wave 10+): implement sorting
       this._applyFilters();
-      shell.render();
+      shell.requestRender({ preserveScroll: true, reason: 'force-power-step:onSort' });
     };
 
     shell.element.addEventListener('prog:utility:search', onSearch, { signal });
@@ -225,6 +225,12 @@ export class ForcePowerStep extends ProgressionStepPlugin {
         removedCount,
         effectiveOwnedCount,
         totalCount,
+        // State for the card's visible SELECT control. Force Powers are a
+        // quantity selection, so SELECT means "add one more copy through the
+        // existing increment path", never a binary commit.
+        cardActionState: (pendingSelectedTotal >= effectiveBudget && removedCount <= 0)
+          ? 'maximum'
+          : (pendingCount > 0 ? 'again' : null),
         isPending: pendingCount > 0,
         isCommitted: effectiveOwnedCount > 0,
         isRemoved: removedCount > 0,
@@ -302,6 +308,16 @@ export class ForcePowerStep extends ProgressionStepPlugin {
   /**
    * Single click = focus. Display in details panel, mentor reacts.
    */
+  /**
+   * Ranked suggestions this step already hydrated and sorted.
+   * Lets the mentor reuse the same ordering the cards show instead of
+   * asking SuggestionService to recompute the top entry.
+   * @returns {Array|null}
+   */
+  getRankedSuggestions() {
+    return Array.isArray(this._suggestedPowers) && this._suggestedPowers.length ? this._suggestedPowers : null;
+  }
+
   async onItemFocused(powerId, shell) {
     const power = this._resolvePower(powerId);
     if (!power) {
@@ -337,7 +353,7 @@ export class ForcePowerStep extends ProgressionStepPlugin {
    */
   async onIncrementQuantity(powerId, shell, options = {}) {
     const power = this._resolvePower(powerId);
-    if (!power) return;
+    if (!power) return { handled: true, changed: false, dirty: [], structural: false, recommendationRelevant: false, reason: 'unknown-item' };
 
     const resolvedPowerId = this._normalizePowerId(power);
     const removedCount = this._removedPowerCounts.get(resolvedPowerId) ?? 0;
@@ -353,18 +369,19 @@ export class ForcePowerStep extends ProgressionStepPlugin {
       const spendingOnlyProdigySlot = totalSelected >= baseBudget && this._getTelekineticProdigyBonusSlots(shell?.actor ?? this._currentActor) > 0;
       if (spendingOnlyProdigySlot && !this._isTelekineticPower(resolvedPowerId)) {
         ui?.notifications?.warn?.('Telekinetic Prodigy bonus slot can only select a [Telekinetic] Force Power.');
-        return;
+        return { handled: true, changed: false, dirty: [], structural: false, recommendationRelevant: false, reason: 'budget-exhausted' };
       }
       const currentCount = this._committedPowerCounts.get(resolvedPowerId) ?? 0;
       this._committedPowerCounts.set(resolvedPowerId, currentCount + 1);
     } else {
-      return;
+      return { handled: true, changed: false, dirty: [], structural: false, recommendationRelevant: false, reason: 'budget-exhausted' };
     }
 
     await this._commitPowerSelection(shell);
     this._focusedPowerId = resolvedPowerId;
     shell.focusedItem = this._formatPowerCard(power);
-    if (options.render !== false) shell.render();
+    // The shell owns the repaint for shell-routed quantity changes.
+    return { handled: true, changed: true, dirty: [], structural: true, recommendationRelevant: true };
   }
 
   /**
@@ -374,7 +391,7 @@ export class ForcePowerStep extends ProgressionStepPlugin {
    */
   async onDecrementQuantity(powerId, shell) {
     const power = this._resolvePower(powerId);
-    if (!power) return;
+    if (!power) return { handled: true, changed: false, dirty: [], structural: false, recommendationRelevant: false, reason: 'unknown-item' };
 
     const resolvedPowerId = this._normalizePowerId(power);
     const currentPending = this._committedPowerCounts.get(resolvedPowerId) ?? 0;
@@ -393,7 +410,8 @@ export class ForcePowerStep extends ProgressionStepPlugin {
     await this._commitPowerSelection(shell);
     this._focusedPowerId = resolvedPowerId;
     shell.focusedItem = this._formatPowerCard(power);
-    shell.render();
+    // The shell owns the repaint for shell-routed quantity changes.
+    return { handled: true, changed: true, dirty: [], structural: true, recommendationRelevant: true };
   }
 
   async handleAction(action, event, target, shell) {
@@ -634,9 +652,9 @@ export class ForcePowerStep extends ProgressionStepPlugin {
       }, async (selected) => {
         const id = selected?.id || selected?._id || selected?.powerId;
         if (!id) return;
-        await this.onItemFocused(id, shell);
-        await this.onItemCommitted(id, shell);
-        shell.render();
+        // One canonical commit through the shell: the old focus + commit +
+        // render triple repainted twice for a single choice.
+        await shell.commitSuggestionFromMentor({ stepId: 'force-powers', itemId: id, source: 'ask-mentor' });
       });
     } else {
       // Fallback to standard guidance if no suggestions

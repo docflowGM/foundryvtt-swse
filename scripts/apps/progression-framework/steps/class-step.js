@@ -8,6 +8,7 @@
  */
 
 import { ProgressionStepPlugin } from './step-plugin-base.js';
+import { buildOptionCardAction } from '../shell/option-card-action.js';
 import { ClassesRegistry } from '/systems/foundryvtt-swse/scripts/engine/registries/classes-registry.js';
 import { normalizeClass } from './step-normalizers.js';
 import { getStepMentorObject, getStepGuidance, handleAskMentor, handleAskMentorWithSuggestions, handleAskMentorWithPicker, setSessionMentorContext } from './mentor-step-integration.js';
@@ -188,10 +189,25 @@ export class ClassStep extends ProgressionStepPlugin {
 
   async getStepData(context) {
     const { suggestedIds, hasSuggestions, confidenceMap } = this.formatSuggestionsForDisplay(this._suggestedClasses);
+    const committedClassId = context.committedSelections?.get('class')?.classId ?? null;
     return {
-      classes: this._filteredClasses.map(c => this._formatClassCard(c, suggestedIds, confidenceMap)),
+      // Each card carries its own committed/locked decision rather than the
+      // surface reaching back up through `../committedClassId`.
+      classes: this._filteredClasses.map((c) => {
+        const card = this._formatClassCard(c, suggestedIds, confidenceMap);
+        return {
+          ...card,
+          cardAction: buildOptionCardAction({
+            selected: committedClassId != null && String(card.id) === String(committedClassId),
+            state: card.isLocked ? 'locked' : null,
+            disabled: !!card.isLocked,
+            name: card?.name || '',
+            title: card.isLocked ? (card.lockedReasonText || 'Prerequisites not met') : 'Choose this class',
+          }),
+        };
+      }),
       focusedClassId: context.focusedItem?.id ?? null,
-      committedClassId: context.committedSelections?.get('class')?.classId ?? null,
+      committedClassId,
       suggestedClassIds: Array.from(suggestedIds),
       suggestedClasses: this._suggestedClasses,
       hasSuggestions,
@@ -428,17 +444,29 @@ export class ClassStep extends ProgressionStepPlugin {
   // Interaction: Focus vs Commit
   // ---------------------------------------------------------------------------
 
+  /**
+   * Ranked suggestions this step already hydrated and sorted.
+   * Lets the mentor reuse the same ordering the cards show instead of
+   * asking SuggestionService to recompute the top entry.
+   * @returns {Array|null}
+   */
+  getRankedSuggestions() {
+    return Array.isArray(this._suggestedClasses) && this._suggestedClasses.length ? this._suggestedClasses : null;
+  }
+
   async onItemFocused(id, shell) {
     const entry = this._allClasses.find(c => c.id === id);
     if (!entry) return;
 
     this._focusedClassId = id;
     shell.focusedItem = entry;
-    shell.render();
 
     // MentorChoiceReactionRouter now owns focus reactions for class cards so the
     // rail can use suggestion/prerequisite metadata instead of generic flavor.
     // Keep this silent to avoid double-speaking and focus lag.
+    // The shell owns the repaint for shell-routed focus: it folds this
+    // declaration into the single update it already schedules.
+    return { handled: true, dirty: ['details'], structural: false, recommendationRelevant: false };
   }
 
   async onItemCommitted(id, shell) {
@@ -454,8 +482,7 @@ export class ClassStep extends ProgressionStepPlugin {
       });
       this._focusedClassId = id;
       shell.focusedItem = entry;
-      shell.render();
-      return;
+      return { handled: true, dirty: [], structural: true, recommendationRelevant: true };
     }
 
     // Load full class data from ClassesRegistry; Nonheroic is synthetic and may
@@ -520,7 +547,10 @@ export class ClassStep extends ProgressionStepPlugin {
         fallback: false,
       }, { force: true });
       shell.mentorRail?.setMentor?.(mentorKey);
-      shell.mentor.currentDialogue = getMentorIntroText(resolvedMentor, entry.name);
+      shell.mentorRecommendations?.presentGuidance?.({
+        text: getMentorIntroText(resolvedMentor, entry.name),
+        stepId: 'class',
+      });
       shell.mentor.mood = 'encouraging';
       shell.mentor.mentorId = mentorKey;
       shell.mentor.name = resolvedMentor.name || mentor.name;
@@ -530,7 +560,7 @@ export class ClassStep extends ProgressionStepPlugin {
 
     this._focusedClassId = id;
     shell.focusedItem = entry;
-    shell.render();
+    return { handled: true, dirty: [], structural: true, recommendationRelevant: true };
   }
 
   // ---------------------------------------------------------------------------
@@ -612,9 +642,9 @@ export class ClassStep extends ProgressionStepPlugin {
       }, async (selected) => {
         const id = selected?.id || selected?._id || selected?.classId;
         if (!id) return;
-        await this.onItemFocused(id, shell);
-        await this.onItemCommitted(id, shell);
-        shell.render();
+        // One canonical commit through the shell: the old focus + commit +
+        // render triple repainted twice for a single choice.
+        await shell.commitSuggestionFromMentor({ stepId: 'class', itemId: id, source: 'ask-mentor' });
       });
     } else {
       // Fallback to standard guidance if no suggestions

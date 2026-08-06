@@ -1,0 +1,69 @@
+{{!--
+  Progression option-card action.
+
+  Every conventional candidate card carries this control, so a player who
+  already knows what they want never has to route through the detail rail
+  first. The card body stays the inspection control (focus-item); this is the
+  commit control.
+
+  Presentation only. It renders a button carrying the step's OWN canonical
+  action — `action` defaults to commit-item because that is what every detail
+  rail already uses, and steps with a specialised canonical action
+  (increment-quantity, select-language, enter-tree) pass theirs instead. There
+  is therefore exactly one commit route per step, not a parallel one.
+
+  It decides NOTHING about legality. Whether a feat, talent, power, technique,
+  secret or maneuver may be taken is the owning step's judgement; this renders
+  the state that step supplies. Adding a prerequisite check here would create a
+  second, silently diverging copy of the rules.
+
+  Label and accessible name both come from the optionCardLabel/optionCardAria
+  helpers, which share one resolver. They used to be derived independently, so a
+  card showing LOCKED, OWNED, GRANTED or MAXIMUM still announced "Select <name>"
+  to a screen reader. Labels are localized there, with the shipped English as
+  the fallback.
+
+  Steps pass a per-card DTO (`cardAction`) rather than a step-level flag reached
+  through Handlebars parent paths. `../canAddMore` and `../../../committedId`
+  depended on how many {{#each}} blocks a surface happened to nest, so
+  re-grouping a list resolved them to undefined and every card rendered as
+  freely selectable.
+
+  Bespoke interaction steps — Attributes, Skills — keep their purpose-built
+  controls and deliberately do not use this partial.
+
+  The shell's double-click handler prefers a card's marked action, which makes
+  this control the single source of truth for what double-clicking a card does.
+
+  Parameters:
+    action     canonical data-action (default: commit-item)
+    itemId     value for data-item-id
+    idAttr     optional extra identity attribute name (e.g. "data-power-id")
+    idValue    value for idAttr
+    name       candidate name, used to build the accessible name
+    verb       commit verb for the actionable state only (e.g. "Add")
+    label      explicit visible-label override
+    title      tooltip carrying the step-specific meaning
+    state      owned | granted | locked | unavailable | maximum | again
+               (drives label, accessible name, and the state class)
+    selected   currently chosen
+    deselect   selected AND removable through the same action
+    disabled   render disabled
+    useEnabled pass with `enabled` when the step supplies a can-act flag
+    enabled    when useEnabled is set, falsy renders the control disabled
+    icon       optional Font Awesome class
+    compact    tighter styling for dense rows
+--}}
+<button type="button"
+        class="prog-btn prog-btn--small progression-option-card__select{{#if compact}} progression-option-card__select--compact{{/if}}{{#if selected}} prog-btn--selected{{/if}}{{#if state}} progression-option-card__select--{{state}}{{/if}}"
+        data-action="{{#if action}}{{action}}{{else}}commit-item{{/if}}"
+        {{#if itemId}}data-item-id="{{itemId}}"{{/if}}
+        {{#if idAttr}}{{idAttr}}="{{idValue}}"{{/if}}
+        data-card-action="true"
+        data-card-action-state="{{#if state}}{{state}}{{else}}{{#if deselect}}deselect{{else}}{{#if selected}}selected{{else}}select{{/if}}{{/if}}{{/if}}"
+        {{#if title}}title="{{title}}"{{/if}}
+        aria-label="{{optionCardAria state=state selected=selected deselect=deselect name=name verb=verb}}"
+        {{#if disabled}}disabled aria-disabled="true"{{else}}{{#if useEnabled}}{{#unless enabled}}disabled aria-disabled="true"{{/unless}}{{/if}}{{/if}}>
+  {{~#if icon}}<i class="{{icon}}" aria-hidden="true"></i> {{/if~}}
+  {{optionCardLabel state=state selected=selected deselect=deselect label=label}}
+</button>

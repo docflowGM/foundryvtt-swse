@@ -63,6 +63,15 @@
           {{/if}}
           <span class="feat-state-indicator">{{#if feat.isSelected}}<i class="fa-solid fa-check-circle selected-icon"></i>{{/if}}</span>
         </div>
+        {{> "systems/foundryvtt-swse/templates/apps/progression-framework/partials/option-card-action.hbs"
+           itemId=feat.id
+           name=feat.name
+           selected=feat.isSelected
+           state=feat.cardAction.state
+           deselect=feat.cardAction.deselect
+           disabled=feat.cardAction.disabled
+           title=feat.cardAction.title
+        }}
       </div>
       {{/each}}
     </div>
@@ -178,6 +187,15 @@
           <div class="feat-compact-row__state">
             {{#if feat.isSelected}}<i class="fa-solid fa-check-circle selected-icon"></i>{{else}}<i class="fa-solid fa-chevron-right"></i>{{/if}}
           </div>
+          {{> "systems/foundryvtt-swse/templates/apps/progression-framework/partials/option-card-action.hbs"
+             itemId=feat.id
+             name=feat.name
+             selected=feat.isSelected
+             state=feat.cardAction.state
+             deselect=feat.cardAction.deselect
+             disabled=feat.cardAction.disabled
+             title=feat.cardAction.title
+          }}
         </div>
         {{/each}}
       </div>
@@ -221,6 +239,15 @@
           <div class="feat-compact-row__state">
             {{#if feat.isSelected}}<i class="fa-solid fa-check-circle selected-icon"></i>{{else}}<i class="fa-solid fa-chevron-right"></i>{{/if}}
           </div>
+          {{> "systems/foundryvtt-swse/templates/apps/progression-framework/partials/option-card-action.hbs"
+             itemId=feat.id
+             name=feat.name
+             selected=feat.isSelected
+             state=feat.cardAction.state
+             deselect=feat.cardAction.deselect
+             disabled=feat.cardAction.disabled
+             title=feat.cardAction.title
+          }}
         </div>
         {{/each}}
       </div>

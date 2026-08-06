@@ -64,8 +64,11 @@ export class MentorTranslationIntegration {
       mentor = 'default',
       topic = 'default',
       onComplete = () => {},
-      force = false
+      force = false,
+      signal = null
     } = options;
+
+    if (signal?.aborted) return container;
 
     // [DEBUG] Translation render tracking
     mentorTrace('[SWSE Translation Debug] MentorTranslationIntegration.render() called', {
@@ -110,13 +113,20 @@ export class MentorTranslationIntegration {
       mentorTrace('[SWSE Translation Debug] Translation DISABLED — rendering plain text', {
         text_length: text.length,
       });
+      if (signal?.aborted) return container;
+      this.cancel(container);
       container.textContent = text;
       onComplete();
       return container;
     }
 
-    // Clear any previously rendered plain text or stale translation wrapper before animating.
+    // Cancel before clearing: replaceChildren() removed the previous wrapper but
+    // left its reveal loop running, so the superseded line kept animating into a
+    // detached node and racing the new one.
+    this.cancel(container);
     container.replaceChildren();
+
+    if (signal?.aborted) return container;
 
     // Get preset for this mentor
     const preset = this._getPresetForMentor(mentor);
@@ -136,6 +146,7 @@ export class MentorTranslationIntegration {
       text,
       container,
       preset,
+      signal,
       onComplete: () => {
         // Add data attributes for tracking
         container.dataset.mentor = mentor;

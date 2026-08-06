@@ -1,0 +1,124 @@
+/* =============================================================================
+ * MENTOR RAIL — LAYOUT STABILITY
+ *
+ * Changing mentor dialogue must never move the progression workspace.
+ *
+ * The rail already declares a fixed 160px block in progression-shell.css, but
+ * the dialogue box inside it was free to size to its content: a long reaction
+ * line grew the box, an empty state between animation frames collapsed it, and
+ * the typewriter/Aurebesh wrapper swapped nodes mid-animation. The result was a
+ * visible vertical twitch on every mentor line.
+ *
+ * These rules pin the dialogue block, contain overflow inside the mentor region,
+ * and keep the portrait and buttons dimensionally constant. Loaded last so it
+ * wins over the earlier progression sheets without editing them.
+ *
+ * This deliberately does NOT truncate mentor content — long lines scroll inside
+ * the dialogue box instead of pushing the work surface down.
+ * ========================================================================== */
+
+.progression-shell {
+  /* Single source for the rail's block size, so the desktop rail, the dialogue
+     box, and the reduced-motion/mobile overrides below cannot drift apart. */
+  --prog-mentor-rail-height: 160px;
+  --prog-mentor-dialogue-min-height: 96px;
+}
+
+/* --- Rail block: fixed, never content-sized ------------------------------- */
+
+.progression-shell [data-region="mentor-rail"]:not([data-collapsed="true"]) {
+  height: var(--prog-mentor-rail-height);
+  min-height: var(--prog-mentor-rail-height);
+  max-height: var(--prog-mentor-rail-height);
+  overflow: hidden;
+  /* Isolate the rail's internal layout from the rest of the shell so a reflow
+     inside it cannot propagate outward. */
+  contain: layout paint;
+}
+
+/* --- Dialogue box: bounded, internally scrollable ------------------------- */
+
+.progression-shell [data-region="mentor-rail"] .prog-mentor__dialogue {
+  /* Bounded block: stable between the empty, typing, and complete states. */
+  min-height: var(--prog-mentor-dialogue-min-height);
+  max-height: 100%;
+  height: 100%;
+  box-sizing: border-box;
+
+  /* Long lines scroll here rather than growing the rail. */
+  overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior: contain;
+}
+
+.progression-shell [data-region="mentor-rail"] .prog-mentor__dialogue-content {
+  /* Never collapse to zero between animation states — an empty text node
+     mid-swap used to briefly shrink the box and snap it back. */
+  min-height: 1.5em;
+  display: block;
+}
+
+.progression-shell [data-region="mentor-rail"] .prog-mentor__text,
+.progression-shell [data-region="mentor-rail"] .aurebesh-dialogue-wrapper {
+  display: block;
+  min-height: 1.5em;
+  margin: 0;
+  /* Wrapping stays inside the mentor region. */
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  /* Message-length classes may restyle text, but not its line box rhythm —
+     otherwise short/long lines change the block height on every reaction. */
+  font-size: 0.95rem;
+  line-height: 1.45;
+}
+
+/* --- Fixed furniture ----------------------------------------------------- */
+
+.progression-shell [data-region="mentor-rail"] .prog-mentor__portrait-zone,
+.progression-shell [data-region="mentor-rail"] .prog-mentor__portrait {
+  flex: 0 0 auto;
+  height: 100%;
+}
+
+.progression-shell [data-region="mentor-rail"] .prog-mentor__identity {
+  flex: 0 0 auto;
+  overflow: hidden;
+}
+
+.progression-shell [data-region="mentor-rail"] .prog-mentor__ask,
+.progression-shell [data-region="mentor-rail"] .prog-mentor__collapse {
+  flex: 0 0 auto;
+  align-self: center;
+}
+
+/* The mood flash is a paint-only effect. Keeping it off layout properties is
+   what lets the mentor react without nudging anything. */
+.progression-shell [data-region="mentor-rail"] .prog-mentor-rail[data-choice-reaction="true"] {
+  will-change: filter, transform;
+}
+
+/* --- Responsive ---------------------------------------------------------- */
+
+@media (max-width: 768px) {
+  /* The rail becomes a full-height overlay drawer on narrow viewports, so the
+     fixed desktop block height must not apply. It still contains its own
+     overflow and still cannot move the work surface, because it is positioned
+     out of flow by progression-shell.css. */
+  .progression-shell [data-region="mentor-rail"]:not([data-collapsed="true"]) {
+    height: 100%;
+    min-height: 0;
+    max-height: 100%;
+  }
+
+  .progression-shell [data-region="mentor-rail"] .prog-mentor__dialogue {
+    min-height: var(--prog-mentor-dialogue-min-height);
+    max-height: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .progression-shell [data-region="mentor-rail"] .prog-mentor__dialogue {
+    animation: none;
+  }
+}

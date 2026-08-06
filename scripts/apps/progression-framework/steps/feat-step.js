@@ -459,7 +459,7 @@ export class FeatStep extends ProgressionStepPlugin {
           if (cb.checked) this._selectedTags.add(cb.value);
           else            this._selectedTags.delete(cb.value);
         }
-        shell.render();
+        shell.requestRender({ preserveScroll: true, reason: 'feat-step:onSort' });
       }, { signal });
     });
 
@@ -1593,8 +1593,45 @@ export class FeatStep extends ProgressionStepPlugin {
       shortSummary: feat?.shortSummary || '',
       uiBroadTags: feat?.uiBroadTags || [],
       iconPath: resolveFeatIconPath(feat) || feat?.iconPath || feat?.img || '',
+      cardAction: this._buildFeatCardAction(feat, featId),
       ...extra,
     };
+  }
+
+  /**
+   * State for the card's visible SELECT control.
+   *
+   * The legality decision belongs here, next to the flags it is derived from —
+   * not in the shared Handlebars partial, which only renders what it is given.
+   * Otherwise the card would carry a second, silently diverging copy of the
+   * rules the detail rail already applies.
+   *
+   * @param {Object} feat
+   * @param {string} featId
+   * @returns {{state: string|null, disabled: boolean, deselect: boolean, title: string}}
+   * @private
+   */
+  _buildFeatCardAction(feat, featId) {
+    if (feat?.isGranted) {
+      return { state: 'granted', disabled: true, deselect: false, title: 'Granted by another source' };
+    }
+    if (feat?.isOwned) {
+      return { state: 'owned', disabled: true, deselect: false, title: 'Already known' };
+    }
+    if (this._isFeatSelected(feat)) {
+      // The detail rail offers removal for a pending selection, so the card
+      // offers the same operation through the same action.
+      return { state: null, disabled: false, deselect: true, title: 'Remove this selection' };
+    }
+    if (feat?.isAvailable === false) {
+      return {
+        state: 'unavailable',
+        disabled: true,
+        deselect: false,
+        title: feat?.unavailabilityReason || 'Prerequisites not met',
+      };
+    }
+    return { state: null, disabled: false, deselect: false, title: 'Choose this feat' };
   }
 
   _getSearchResultFeats() {
@@ -1978,6 +2015,16 @@ export class FeatStep extends ProgressionStepPlugin {
   // ---------------------------------------------------------------------------
   // Focus/Commit
   // ---------------------------------------------------------------------------
+
+  /**
+   * Ranked suggestions this step already hydrated and sorted.
+   * Lets the mentor reuse the same ordering the cards show instead of
+   * asking SuggestionService to recompute the top entry.
+   * @returns {Array|null}
+   */
+  getRankedSuggestions() {
+    return Array.isArray(this._suggestedFeats) && this._suggestedFeats.length ? this._suggestedFeats : null;
+  }
 
   async onItemFocused(item) {
     this._focusedFeatId = item?._id || item?.id || item;
@@ -2384,9 +2431,13 @@ export class FeatStep extends ProgressionStepPlugin {
       }, async (selected) => {
         const item = selected?.id || selected?._id ? selected : (selected?.name ? selected : null);
         if (!item) return;
-        await this.onItemFocused(item);
-        await this.onItemCommitted(item, shell);
-        shell.render();
+        // One canonical commit through the shell: the old focus + commit +
+        // render triple repainted twice for a single choice.
+        await shell.commitSuggestionFromMentor({
+          stepId: shell.steps?.[shell.currentStepIndex]?.stepId ?? 'general-feat',
+          itemId: item,
+          source: 'ask-mentor',
+        });
       });
       return;
     }

@@ -300,7 +300,10 @@ function buildTalentMath(plugin) {
 
 function buildForceMath(plugin, stepId) {
   const label = STEP_LABELS[stepId] || 'Force Choice';
-  const total = Math.max(0, Number(plugin?._remainingPicks || 0));
+  // The Force choice steps expose a total budget (_selectionBudget); the
+  // maneuver-style steps still expose a pre-reduced _remainingPicks. This
+  // block subtracts the selected count itself, so it needs the total.
+  const total = Math.max(0, Number(plugin?._selectionBudget ?? plugin?._remainingPicks ?? 0));
   const selected = stepId === 'force-secrets'
     ? countMapValues(plugin?._committedSecretCounts)
     : stepId === 'force-techniques'

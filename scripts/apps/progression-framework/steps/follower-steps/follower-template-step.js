@@ -102,7 +102,7 @@ export class FollowerTemplateStep extends FollowerStepBase {
         this._abilityChoice = value;
         this.saveFollowerChoice(shell, 'abilityChoice', value);
         this._focusTemplate(shell, this._selectedTemplate, { render: false });
-        shell.render();
+        shell.requestRender({ preserveScroll: true, reason: 'follower-template-step:afterRender' });
       });
     });
   }
@@ -146,7 +146,7 @@ export class FollowerTemplateStep extends FollowerStepBase {
     this._focusedTemplate = templateType;
     const template = this._formatTemplateCards().find(t => t.id === templateType);
     shell.focusedItem = template || null;
-    if (render) shell.render();
+    if (render) shell.requestRender({ preserveScroll: true, reason: 'follower-template-step:_focusTemplate' });
   }
 
   _selectTemplate(shell, templateType) {
@@ -179,7 +179,7 @@ export class FollowerTemplateStep extends FollowerStepBase {
     }
 
     swseLogger.log('[FollowerTemplateStep] Selected template:', { templateType, abilityChoice: this._abilityChoice, automaticSkills });
-    shell.render();
+    shell.requestRender({ preserveScroll: true, reason: 'follower-template-step:_selectTemplate' });
   }
 
   renderDetailsPanel(focusedItem) {

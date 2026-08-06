@@ -1,0 +1,739 @@
+{
+  "generatedAt": "2026-08-06",
+  "authority": {
+    "primary": "data/fixes/talents.fixed.json (mirrored by data/generated/talents.fixed.json)",
+    "secondary": "packs/talents.db system.treeId / system.talent_tree",
+    "treeExistence": "data/talent_tree_class_map.json + data/talent-tree-descriptions.json",
+    "note": "No SWSE sourcebook PDF is present in this environment; every resolution below is derived from repository authority only."
+  },
+  "findings": [
+    {
+      "category": "classRefsMissingTrees",
+      "ref": "elite_droid",
+      "references": [
+        {
+          "classId": "3b1ed5f1038d49fb",
+          "className": "Independent Droid"
+        }
+      ],
+      "resolution": "restored-tree-document",
+      "treeId": "b968ecab63bc4cf4",
+      "reason": "Elite Droid is declared by packs/classes.db, data/talent_tree_class_map.json, data/talent-tree-descriptions.json and scripts/mentor/mentor-survey/prestige-survey-profiles.js. Only the compendium document was absent, so the class reference was restored rather than deleted. Its talent documents are genuinely missing and are recorded as a content gap."
+    },
+    {
+      "category": "classRefsMissingTrees",
+      "ref": "master_of_teräs_käsi",
+      "references": [
+        {
+          "classId": "480a290aa128f683",
+          "className": "Martial Arts Master"
+        },
+        {
+          "classId": "c4dbedcf989cb6b2",
+          "className": "Elite Trooper"
+        }
+      ],
+      "resolution": "restored-canonical-tree-name",
+      "treeId": "ba726f623e42f849",
+      "before": "Master of Teras Kasi",
+      "after": "Master of Teräs Käsi",
+      "reason": "data/talent_tree_class_map.json and data/talent-tree-descriptions.json both spell this tree \"Master of Teräs Käsi\". Both classes already reference the tree by id in talentTreeSourceIds, so no membership changed — only the de-accented compendium name was corrected so the slug resolves."
+    },
+    {
+      "category": "duplicateTalentNames",
+      "talentId": "7f47394dfbc94269",
+      "talentName": "Force Meld",
+      "documentTree": {
+        "treeId": "10c843cef8ce2798",
+        "talent_tree": null
+      },
+      "registryClaims": [],
+      "duplicateCandidates": [
+        "816ac9cc1e6c413b"
+      ],
+      "resolution": "retired-obsolete-duplicate",
+      "reason": "Same tree (Jedi Guardian) as the canonical 816ac9cc1e6c413b, which the Jedi Guardian tree actually claims. Its prerequisites field (\"Prerequisites: Dual Weapon Mastery I, ...\") and its benefit text belong to other talents entirely. No tree, class, actor, registry or data file references this id — only two dated audit snapshots under docs/, which are records of the previous state and were left as-is."
+    },
+    {
+      "category": "duplicateTalentNames",
+      "talentId": "ec12ce36ff7048f2",
+      "talentName": "Seize the Moment",
+      "documentTree": {
+        "before": "3caa80f6bef04200",
+        "after": "da34105c875650ae"
+      },
+      "duplicateCandidates": [
+        "e19c06b6dfc7a703"
+      ],
+      "resolution": "retargeted-to-canonical-tree",
+      "reason": "data/fixes/talents.fixed.json gives this document talent_tree \"Provocateur\", class Noble and prerequisite \"Distress to Discord\" — matching the prerequisitesStructured already on the pack document. e19c06b6dfc7a703 is the Outlaw talent of the same name. They are two different talents in two different trees, not a duplicate, so both are retained and this one was moved to the tree its authority names."
+    },
+    {
+      "category": "duplicateTreeSideTalentClaims",
+      "talentId": "5d4a63123e5a5eb4",
+      "talentName": "Acrobatic Recovery",
+      "documentTree": {
+        "treeId": "jedi-guardian",
+        "talent_tree": "Jedi Guardian"
+      },
+      "registryClaimsBefore": [
+        {
+          "treeId": "10c843cef8ce2798",
+          "treeName": "Jedi Guardian"
+        },
+        {
+          "treeId": "2bc2572e852832e4",
+          "treeName": "Lightsaber Forms"
+        }
+      ],
+      "registryClaimsAfter": [
+        {
+          "treeId": "10c843cef8ce2798",
+          "treeName": "Jedi Guardian"
+        }
+      ],
+      "resolution": "reconciled-tree-index-to-document-authority",
+      "authority": "data/fixes/talents.fixed.json",
+      "reason": "data/fixes/talents.fixed.json names exactly one tree for this talent (Jedi Guardian). No repository authority declares multi-tree access for it, so the extra tree-side claims were stale index entries and were dropped; the canonical tree now claims it."
+    },
+    {
+      "category": "duplicateTreeSideTalentClaims",
+      "talentId": "9461c7aa79dd07c6",
+      "talentName": "Battle Meditation",
+      "documentTree": {
+        "treeId": "jedi-guardian",
+        "talent_tree": "Jedi Guardian"
+      },
+      "registryClaimsBefore": [
+        {
+          "treeId": "10c843cef8ce2798",
+          "treeName": "Jedi Guardian"
+        },
+        {
+          "treeId": "d6b4331c0e31f7e3",
+          "treeName": "Sense"
+        }
+      ],
+      "registryClaimsAfter": [
+        {
+          "treeId": "10c843cef8ce2798",
+          "treeName": "Jedi Guardian"
+        }
+      ],
+      "resolution": "reconciled-tree-index-to-document-authority",
+      "authority": "data/fixes/talents.fixed.json",
+      "reason": "data/fixes/talents.fixed.json names exactly one tree for this talent (Jedi Guardian). No repository authority declares multi-tree access for it, so the extra tree-side claims were stale index entries and were dropped; the canonical tree now claims it."
+    },
+    {
+      "category": "duplicateTreeSideTalentClaims",
+      "talentId": "816ac9cc1e6c413b",
+      "talentName": "Force Meld",
+      "documentTree": {
+        "treeId": "jedi-guardian",
+        "talent_tree": "Jedi Guardian"
+      },
+      "registryClaimsBefore": [
+        {
+          "treeId": "10c843cef8ce2798",
+          "treeName": "Jedi Guardian"
+        },
+        {
+          "treeId": "d6b4331c0e31f7e3",
+          "treeName": "Sense"
+        }
+      ],
+      "registryClaimsAfter": [
+        {
+          "treeId": "10c843cef8ce2798",
+          "treeName": "Jedi Guardian"
+        }
+      ],
+      "resolution": "reconciled-tree-index-to-document-authority",
+      "authority": "packs/talents.db system.treeId",
+      "reason": "packs/talents.db system.treeId names exactly one tree for this talent (Jedi Guardian). No repository authority declares multi-tree access for it, so the extra tree-side claims were stale index entries and were dropped; the canonical tree now claims it."
+    },
+    {
+      "category": "duplicateTreeSideTalentClaims",
+      "talentId": "4c236343b01ea763",
+      "talentName": "Armored Defense",
+      "documentTree": {
+        "treeId": "17cec542331cb4e4",
+        "talent_tree": null
+      },
+      "registryClaimsBefore": [
+        {
+          "treeId": "17cec542331cb4e4",
+          "treeName": "Armor Specialist"
+        },
+        {
+          "treeId": "ea01d740c91888b3",
+          "treeName": "Knight's Armor"
+        }
+      ],
+      "registryClaimsAfter": [
+        {
+          "treeId": "17cec542331cb4e4",
+          "treeName": "Armor Specialist"
+        }
+      ],
+      "resolution": "reconciled-tree-index-to-document-authority",
+      "authority": "data/fixes/talents.fixed.json",
+      "reason": "data/fixes/talents.fixed.json names exactly one tree for this talent (Armor Specialist). No repository authority declares multi-tree access for it, so the extra tree-side claims were stale index entries and were dropped; the canonical tree now claims it."
+    },
+    {
+      "category": "duplicateTreeSideTalentClaims",
+      "talentId": "9379daa94a228c04",
+      "talentName": "Block",
+      "documentTree": {
+        "treeId": "lightsaber-combat",
+        "talent_tree": "Lightsaber Combat"
+      },
+      "registryClaimsBefore": [
+        {
+          "treeId": "2359c05ff13f3feb",
+          "treeName": "Lightsaber Combat"
+        },
+        {
+          "treeId": "a67faf2ae089ab5d",
+          "treeName": "Sith Alchemy"
+        }
+      ],
+      "registryClaimsAfter": [
+        {
+          "treeId": "2359c05ff13f3feb",
+          "treeName": "Lightsaber Combat"
+        }
+      ],
+      "resolution": "reconciled-tree-index-to-document-authority",
+      "authority": "data/fixes/talents.fixed.json",
+      "reason": "data/fixes/talents.fixed.json names exactly one tree for this talent (Lightsaber Combat). No repository authority declares multi-tree access for it, so the extra tree-side claims were stale index entries and were dropped; the canonical tree now claims it."
+    },
+    {
+      "category": "duplicateTreeSideTalentClaims",
+      "talentId": "72c644f7a09b1186",
+      "talentName": "Deflect",
+      "documentTree": {
+        "treeId": "lightsaber-combat",
+        "talent_tree": "Lightsaber Combat"
+      },
+      "registryClaimsBefore": [
+        {
+          "treeId": "2359c05ff13f3feb",
+          "treeName": "Lightsaber Combat"
+        },
+        {
+          "treeId": "2bc2572e852832e4",
+          "treeName": "Lightsaber Forms"
+        }
+      ],
+      "registryClaimsAfter": [
+        {
+          "treeId": "2359c05ff13f3feb",
+          "treeName": "Lightsaber Combat"
+        }
+      ],
+      "resolution": "reconciled-tree-index-to-document-authority",
+      "authority": "data/fixes/talents.fixed.json",
+      "reason": "data/fixes/talents.fixed.json names exactly one tree for this talent (Lightsaber Combat). No repository authority declares multi-tree access for it, so the extra tree-side claims were stale index entries and were dropped; the canonical tree now claims it."
+    },
+    {
+      "category": "duplicateTreeSideTalentClaims",
+      "talentId": "e8bf1222fd6289e4",
+      "talentName": "Lightsaber Defense",
+      "documentTree": {
+        "treeId": "lightsaber-combat",
+        "talent_tree": "Lightsaber Combat"
+      },
+      "registryClaimsBefore": [
+        {
+          "treeId": "2359c05ff13f3feb",
+          "treeName": "Lightsaber Combat"
+        },
+        {
+          "treeId": "2bc2572e852832e4",
+          "treeName": "Lightsaber Forms"
+        }
+      ],
+      "registryClaimsAfter": [
+        {
+          "treeId": "2359c05ff13f3feb",
+          "treeName": "Lightsaber Combat"
+        }
+      ],
+      "resolution": "reconciled-tree-index-to-document-authority",
+      "authority": "data/fixes/talents.fixed.json",
+      "reason": "data/fixes/talents.fixed.json names exactly one tree for this talent (Lightsaber Combat). No repository authority declares multi-tree access for it, so the extra tree-side claims were stale index entries and were dropped; the canonical tree now claims it."
+    },
+    {
+      "category": "duplicateTreeSideTalentClaims",
+      "talentId": "bcd9981b3c6a46dc",
+      "talentName": "Weapon Specialization (Lightsabers)",
+      "documentTree": {
+        "treeId": "lightsaber-combat",
+        "talent_tree": "Lightsaber Combat"
+      },
+      "registryClaimsBefore": [
+        {
+          "treeId": "2359c05ff13f3feb",
+          "treeName": "Lightsaber Combat"
+        },
+        {
+          "treeId": "2bc2572e852832e4",
+          "treeName": "Lightsaber Forms"
+        },
+        {
+          "treeId": "b3c5d90b5036f39b",
+          "treeName": "Duelist"
+        },
+        {
+          "treeId": "d1037bc7a08ea80b",
+          "treeName": "Sith"
+        }
+      ],
+      "registryClaimsAfter": [
+        {
+          "treeId": "2359c05ff13f3feb",
+          "treeName": "Lightsaber Combat"
+        }
+      ],
+      "resolution": "reconciled-tree-index-to-document-authority",
+      "authority": "packs/talents.db system.treeId",
+      "reason": "packs/talents.db system.treeId names exactly one tree for this talent (Lightsaber Combat). No repository authority declares multi-tree access for it, so the extra tree-side claims were stale index entries and were dropped; the canonical tree now claims it."
+    },
+    {
+      "category": "duplicateTreeSideTalentClaims",
+      "talentId": "e54ecc0ff06e61f3",
+      "talentName": "Lightsaber Throw",
+      "documentTree": {
+        "treeId": "lightsaber-combat",
+        "talent_tree": "Lightsaber Combat"
+      },
+      "registryClaimsBefore": [
+        {
+          "treeId": "2359c05ff13f3feb",
+          "treeName": "Lightsaber Combat"
+        },
+        {
+          "treeId": "b3c5d90b5036f39b",
+          "treeName": "Duelist"
+        }
+      ],
+      "registryClaimsAfter": [
+        {
+          "treeId": "2359c05ff13f3feb",
+          "treeName": "Lightsaber Combat"
+        }
+      ],
+      "resolution": "reconciled-tree-index-to-document-authority",
+      "authority": "data/fixes/talents.fixed.json",
+      "reason": "data/fixes/talents.fixed.json names exactly one tree for this talent (Lightsaber Combat). No repository authority declares multi-tree access for it, so the extra tree-side claims were stale index entries and were dropped; the canonical tree now claims it."
+    },
+    {
+      "category": "duplicateTreeSideTalentClaims",
+      "talentId": "941c1dfd00e697da",
+      "talentName": "Redirect Shot",
+      "documentTree": {
+        "treeId": "lightsaber-combat",
+        "talent_tree": "Lightsaber Combat"
+      },
+      "registryClaimsBefore": [
+        {
+          "treeId": "2359c05ff13f3feb",
+          "treeName": "Lightsaber Combat"
+        },
+        {
+          "treeId": "2bc2572e852832e4",
+          "treeName": "Lightsaber Forms"
+        }
+      ],
+      "registryClaimsAfter": [
+        {
+          "treeId": "2359c05ff13f3feb",
+          "treeName": "Lightsaber Combat"
+        }
+      ],
+      "resolution": "reconciled-tree-index-to-document-authority",
+      "authority": "data/fixes/talents.fixed.json",
+      "reason": "data/fixes/talents.fixed.json names exactly one tree for this talent (Lightsaber Combat). No repository authority declares multi-tree access for it, so the extra tree-side claims were stale index entries and were dropped; the canonical tree now claims it."
+    },
+    {
+      "category": "duplicateTreeSideTalentClaims",
+      "talentId": "b788095a71a47be7",
+      "talentName": "Riposte",
+      "documentTree": {
+        "treeId": "lightsaber-combat",
+        "talent_tree": "Lightsaber Combat"
+      },
+      "registryClaimsBefore": [
+        {
+          "treeId": "2359c05ff13f3feb",
+          "treeName": "Lightsaber Combat"
+        },
+        {
+          "treeId": "b3c5d90b5036f39b",
+          "treeName": "Duelist"
+        }
+      ],
+      "registryClaimsAfter": [
+        {
+          "treeId": "2359c05ff13f3feb",
+          "treeName": "Lightsaber Combat"
+        }
+      ],
+      "resolution": "reconciled-tree-index-to-document-authority",
+      "authority": "data/fixes/talents.fixed.json",
+      "reason": "data/fixes/talents.fixed.json names exactly one tree for this talent (Lightsaber Combat). No repository authority declares multi-tree access for it, so the extra tree-side claims were stale index entries and were dropped; the canonical tree now claims it."
+    },
+    {
+      "category": "selfClaimOrUnclaimed",
+      "talentId": "a1355dcae60772f5",
+      "talentName": "Sense Primal Force",
+      "documentTree": {
+        "treeId": "jedi-sentinel",
+        "talent_tree": "Jedi Sentinel"
+      },
+      "registryClaimsBefore": [],
+      "registryClaimsAfter": [
+        {
+          "treeId": "36f18f3e974feb33",
+          "treeName": "Jedi Sentinel"
+        }
+      ],
+      "resolution": "reconciled-tree-index-to-document-authority",
+      "authority": "data/fixes/talents.fixed.json",
+      "reason": "data/fixes/talents.fixed.json names exactly one tree for this talent (Jedi Sentinel). No repository authority declares multi-tree access for it, so the extra tree-side claims were stale index entries and were dropped; the canonical tree now claims it."
+    },
+    {
+      "category": "selfClaimOrUnclaimed",
+      "talentId": "ce151ce88fd55934",
+      "talentName": "Prime Targets",
+      "documentTree": {
+        "treeId": "jedi-sentinel",
+        "talent_tree": "Jedi Sentinel"
+      },
+      "registryClaimsBefore": [],
+      "registryClaimsAfter": [
+        {
+          "treeId": "36f18f3e974feb33",
+          "treeName": "Jedi Sentinel"
+        }
+      ],
+      "resolution": "reconciled-tree-index-to-document-authority",
+      "authority": "data/fixes/talents.fixed.json",
+      "reason": "data/fixes/talents.fixed.json names exactly one tree for this talent (Jedi Sentinel). No repository authority declares multi-tree access for it, so the extra tree-side claims were stale index entries and were dropped; the canonical tree now claims it."
+    },
+    {
+      "category": "selfClaimOrUnclaimed",
+      "talentId": "bab9a1ce285f98b9",
+      "talentName": "Charm Beast",
+      "documentTree": {
+        "treeId": "beastwarden",
+        "talent_tree": "Beastwarden"
+      },
+      "registryClaimsBefore": [
+        {
+          "treeId": "8a61bf426391431b",
+          "treeName": "Felucian Shaman"
+        }
+      ],
+      "registryClaimsAfter": [
+        {
+          "treeId": "ed899f9f41fc1391",
+          "treeName": "Beastwarden"
+        }
+      ],
+      "resolution": "reconciled-tree-index-to-document-authority",
+      "authority": "data/fixes/talents.fixed.json",
+      "reason": "data/fixes/talents.fixed.json names exactly one tree for this talent (Beastwarden). No repository authority declares multi-tree access for it, so the extra tree-side claims were stale index entries and were dropped; the canonical tree now claims it."
+    },
+    {
+      "category": "selfClaimOrUnclaimed",
+      "talentId": "ec12ce36ff7048f2",
+      "talentName": "Seize the Moment",
+      "documentTree": {
+        "treeId": "da34105c875650ae",
+        "talent_tree": "Provocateur"
+      },
+      "registryClaimsBefore": [
+        {
+          "treeId": "3caa80f6bef04200",
+          "treeName": "Outlaw"
+        }
+      ],
+      "registryClaimsAfter": [
+        {
+          "treeId": "da34105c875650ae",
+          "treeName": "Provocateur"
+        }
+      ],
+      "resolution": "reconciled-tree-index-to-document-authority",
+      "authority": "data/fixes/talents.fixed.json",
+      "reason": "data/fixes/talents.fixed.json names exactly one tree for this talent (Provocateur). No repository authority declares multi-tree access for it, so the extra tree-side claims were stale index entries and were dropped; the canonical tree now claims it."
+    },
+    {
+      "category": "duplicateTalentNames",
+      "talentName": "Adept Spellcaster",
+      "documents": [
+        {
+          "talentId": "12b7eb5d32bd440e",
+          "name": "Adept Spellcaster",
+          "treeId": "ad16f3e5f4f7441b",
+          "treeName": "Dathomiri Witch",
+          "fixesTree": null,
+          "sourcebook": null,
+          "page": null
+        },
+        {
+          "talentId": "5e4a7f98b1e74326",
+          "name": "Adept Spellcaster",
+          "treeId": "cfd358ef61fb47bd",
+          "treeName": "Sorcerer Of Tund",
+          "fixesTree": null,
+          "sourcebook": null,
+          "page": null
+        }
+      ],
+      "duplicateCandidates": [
+        "12b7eb5d32bd440e",
+        "5e4a7f98b1e74326"
+      ],
+      "resolution": "retained-both-distinct-trees",
+      "reason": "Both documents are canonical: they are class-specific/tree-specific talents that share a display name across two unrelated trees (Dathomiri Witch and Sorcerer Of Tund), which SAGA does deliberately. Neither was deleted. The audit's duplicate-name rule was keyed on the name alone, which cannot distinguish this from a real in-tree collision, so the rule was rescoped to tree + name."
+    },
+    {
+      "category": "duplicateTalentNames",
+      "talentName": "Force Treatment",
+      "documents": [
+        {
+          "talentId": "181da7f36b9fba9d",
+          "name": "Force Treatment",
+          "treeId": "e35ee41362604227",
+          "treeName": "Force Adept",
+          "fixesTree": "Force Adept",
+          "sourcebook": null,
+          "page": null
+        },
+        {
+          "talentId": "a6ad65c1275faa33",
+          "name": "Force Treatment",
+          "treeId": "a2a7a376e4905da9",
+          "treeName": "Jedi Healer",
+          "fixesTree": "Jedi Healer",
+          "sourcebook": null,
+          "page": null
+        }
+      ],
+      "duplicateCandidates": [
+        "181da7f36b9fba9d",
+        "a6ad65c1275faa33"
+      ],
+      "resolution": "retained-both-distinct-trees",
+      "reason": "Both documents are canonical: they are class-specific/tree-specific talents that share a display name across two unrelated trees (Force Adept and Jedi Healer), which SAGA does deliberately. Neither was deleted. The audit's duplicate-name rule was keyed on the name alone, which cannot distinguish this from a real in-tree collision, so the rule was rescoped to tree + name."
+    },
+    {
+      "category": "duplicateTalentNames",
+      "talentName": "Armor Mastery",
+      "documents": [
+        {
+          "talentId": "4fc3fe4c1e7f9ba0",
+          "name": "Armor Mastery",
+          "treeId": "armor-specialist",
+          "treeName": null,
+          "fixesTree": "Armor Specialist",
+          "sourcebook": null,
+          "page": null
+        },
+        {
+          "talentId": "d9e707f23fffc2af",
+          "name": "Armor Mastery",
+          "treeId": "ea01d740c91888b3",
+          "treeName": "Knight's Armor",
+          "fixesTree": "Knight's Armor",
+          "sourcebook": null,
+          "page": null
+        }
+      ],
+      "duplicateCandidates": [
+        "4fc3fe4c1e7f9ba0",
+        "d9e707f23fffc2af"
+      ],
+      "resolution": "retained-both-distinct-trees",
+      "reason": "Both documents are canonical: they are class-specific/tree-specific talents that share a display name across two unrelated trees (null and Knight's Armor), which SAGA does deliberately. Neither was deleted. The audit's duplicate-name rule was keyed on the name alone, which cannot distinguish this from a real in-tree collision, so the rule was rescoped to tree + name."
+    },
+    {
+      "category": "duplicateTalentNames",
+      "talentName": "Multiattack Proficiency (rifles)",
+      "documents": [
+        {
+          "talentId": "5ec84c7e500601e4",
+          "name": "Multiattack Proficiency (rifles)",
+          "treeId": "2f720d8b061f9bd0",
+          "treeName": "Weapon Master",
+          "fixesTree": "Weapon Master",
+          "sourcebook": null,
+          "page": null
+        },
+        {
+          "talentId": "ecb678c47bb2cb43",
+          "name": "Multiattack Proficiency (rifles)",
+          "treeId": "1933731cc59f8463",
+          "treeName": "Carbineer",
+          "fixesTree": "Carbineer",
+          "sourcebook": null,
+          "page": null
+        }
+      ],
+      "duplicateCandidates": [
+        "5ec84c7e500601e4",
+        "ecb678c47bb2cb43"
+      ],
+      "resolution": "retained-both-distinct-trees",
+      "reason": "Both documents are canonical: they are class-specific/tree-specific talents that share a display name across two unrelated trees (Weapon Master and Carbineer), which SAGA does deliberately. Neither was deleted. The audit's duplicate-name rule was keyed on the name alone, which cannot distinguish this from a real in-tree collision, so the rule was rescoped to tree + name."
+    },
+    {
+      "category": "duplicateTalentNames",
+      "talentName": "Multiattack Proficiency (advanced melee)",
+      "documents": [
+        {
+          "talentId": "6021056231839e7c",
+          "name": "Multiattack Proficiency (advanced melee)",
+          "treeId": "df6678946610c554",
+          "treeName": "Privateer",
+          "fixesTree": "Privateer",
+          "sourcebook": null,
+          "page": null
+        },
+        {
+          "talentId": "f0851e0e5a1ac771",
+          "name": "Multiattack Proficiency (advanced melee)",
+          "treeId": "1381bb8c9a838279",
+          "treeName": "Melee Duelist",
+          "fixesTree": "Melee Duelist",
+          "sourcebook": null,
+          "page": null
+        }
+      ],
+      "duplicateCandidates": [
+        "6021056231839e7c",
+        "f0851e0e5a1ac771"
+      ],
+      "resolution": "retained-both-distinct-trees",
+      "reason": "Both documents are canonical: they are class-specific/tree-specific talents that share a display name across two unrelated trees (Privateer and Melee Duelist), which SAGA does deliberately. Neither was deleted. The audit's duplicate-name rule was keyed on the name alone, which cannot distinguish this from a real in-tree collision, so the rule was rescoped to tree + name."
+    },
+    {
+      "category": "duplicateTalentNames",
+      "talentName": "Ruthless",
+      "documents": [
+        {
+          "talentId": "7aa4ca13a96d8770",
+          "name": "Ruthless",
+          "treeId": "186daeee7bd65a69",
+          "treeName": "Assassin",
+          "fixesTree": "Assassin",
+          "sourcebook": null,
+          "page": null
+        },
+        {
+          "talentId": "adfb725d20faade5",
+          "name": "Ruthless",
+          "treeId": "4007fa87192b5884",
+          "treeName": "Mercenary",
+          "fixesTree": "Mercenary",
+          "sourcebook": null,
+          "page": null
+        }
+      ],
+      "duplicateCandidates": [
+        "7aa4ca13a96d8770",
+        "adfb725d20faade5"
+      ],
+      "resolution": "retained-both-distinct-trees",
+      "reason": "Both documents are canonical: they are class-specific/tree-specific talents that share a display name across two unrelated trees (Assassin and Mercenary), which SAGA does deliberately. Neither was deleted. The audit's duplicate-name rule was keyed on the name alone, which cannot distinguish this from a real in-tree collision, so the rule was rescoped to tree + name."
+    },
+    {
+      "category": "duplicateTalentNames",
+      "talentName": "Keep it Together",
+      "documents": [
+        {
+          "talentId": "9211e3f6268b3413",
+          "name": "Keep it Together",
+          "treeId": "7c47d36dc1f77d9c",
+          "treeName": "Fringer",
+          "fixesTree": "Fringer",
+          "sourcebook": null,
+          "page": null
+        },
+        {
+          "talentId": "b7d5a1bc3d40b964",
+          "name": "Keep It Together",
+          "treeId": "b17c1515c06361d6",
+          "treeName": "Expert Pilot",
+          "fixesTree": "Expert Pilot",
+          "sourcebook": null,
+          "page": null
+        }
+      ],
+      "duplicateCandidates": [
+        "9211e3f6268b3413",
+        "b7d5a1bc3d40b964"
+      ],
+      "resolution": "retained-both-distinct-trees",
+      "reason": "Both documents are canonical: they are class-specific/tree-specific talents that share a display name across two unrelated trees (Fringer and Expert Pilot), which SAGA does deliberately. Neither was deleted. The audit's duplicate-name rule was keyed on the name alone, which cannot distinguish this from a real in-tree collision, so the rule was rescoped to tree + name."
+    },
+    {
+      "category": "duplicateTalentNames",
+      "talentName": "Akk Dog Master",
+      "documents": [
+        {
+          "talentId": "b265aa9dd35c4c5b",
+          "name": "Akk Dog Master",
+          "treeId": "46d03bab0cf74a14",
+          "treeName": "Korunnai Adept",
+          "fixesTree": null,
+          "sourcebook": null,
+          "page": null
+        },
+        {
+          "talentId": "e6055a514a784387",
+          "name": "Akk Dog Master",
+          "treeId": "37f3554a2f30425a",
+          "treeName": "Exceptional Followers",
+          "fixesTree": null,
+          "sourcebook": null,
+          "page": null
+        }
+      ],
+      "duplicateCandidates": [
+        "b265aa9dd35c4c5b",
+        "e6055a514a784387"
+      ],
+      "resolution": "retained-both-distinct-trees",
+      "reason": "Both documents are canonical: they are class-specific/tree-specific talents that share a display name across two unrelated trees (Korunnai Adept and Exceptional Followers), which SAGA does deliberately. Neither was deleted. The audit's duplicate-name rule was keyed on the name alone, which cannot distinguish this from a real in-tree collision, so the rule was rescoped to tree + name."
+    },
+    {
+      "category": "checkerCorrection",
+      "target": "tools/audit-talent-tree-membership.mjs",
+      "resolution": "rescoped-duplicate-name-rule-to-tree-plus-name",
+      "reason": "Keyed on the name alone, duplicateTalentNames flagged nine canonical cross-tree name reuses whose only possible \"fix\" was deleting correct documents. Keyed on tree + name it still fails on two same-name documents inside one tree, which is the defect the rule exists to catch: run against the pre-repair packs it reports exactly the corrupt Force Meld copy and the mis-filed Provocateur \"Seize the Moment\", and zero against the repaired packs. tests/talent-membership-and-pack-completion.test.mjs pins that behaviour with a synthetic same-tree fixture.",
+      "verification": {
+        "prePackagesFlagged": [
+          "10c843cef8ce2798::force-meld",
+          "3caa80f6bef04200::seize-the-moment"
+        ],
+        "postRepairFlagged": []
+      }
+    }
+  ],
+  "summary": {
+    "originalHardFailures": 31,
+    "byOriginalCategory": {
+      "duplicateTalentNames": 10,
+      "duplicateTreeSideTalentClaims": 11,
+      "talentsSelfClaimTreeThatDoesNotClaimThem": 4,
+      "talentsUnclaimedByTree": 3,
+      "classRefsMissingTrees": 3
+    },
+    "remainingHardFailures": 0,
+    "note": "talentsUnclaimedByTree and talentsSelfClaimTreeThatDoesNotClaimThem overlap on the same four documents, which is why the resolutions for them are recorded once each under selfClaimOrUnclaimed plus the retired Force Meld duplicate."
+  }
+}
