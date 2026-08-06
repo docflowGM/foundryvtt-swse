@@ -571,8 +571,13 @@
   {
     "id": "elite-droid",
     "displayName": "Elite Droid",
-    "talentCount": 0,
-    "talents": []
+    "talentCount": 4,
+    "talents": [
+      "Break Program",
+      "Heuristic Mastery",
+      "Scripted Routines",
+      "Ultra Resilient"
+    ]
   },
   {
     "id": "ember-of-vahl",

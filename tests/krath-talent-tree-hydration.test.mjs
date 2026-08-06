@@ -139,6 +139,59 @@ const krathTree = treeDocs.find(doc => doc._id === TREE_ID);
 }
 
 /* ------------------------------------------------------------------ *
+ * 3b. Source fidelity — the mechanical clauses, not just the names.
+ *
+ * Each assertion below is one qualification that a paraphrase could
+ * silently drop: the frequency limit, the trigger, the cost, the
+ * rounding rule, the floor, the scope of the effect.
+ * ------------------------------------------------------------------ */
+{
+  const darkSide = talentsById.get('eaaecdfd7a538975');
+  assert.match(darkSide.system.benefit, /^Once per encounter/, 'the frequency limit was dropped');
+  assert.match(darkSide.system.benefit, /spend a Force Point/, 'the Force Point cost was dropped');
+  assert.match(
+    darkSide.system.benefit,
+    /act that would increase your Dark Side Score/,
+    'the Dark Side Score trigger was dropped — the talent is not a general Force Point maximizer'
+  );
+  assert.match(darkSide.system.benefit, /maximum result/);
+
+  const illusions = talentsById.get('90820963f87dd268');
+  assert.match(illusions.system.benefit, /^As a Swift Action/, 'the action type was dropped');
+  assert.match(illusions.system.benefit, /penalty for a large Illusion/, 'the large-Illusion scope was dropped');
+  assert.match(illusions.system.benefit, /by one-half \(rounded down\)/, 'the rounding instruction was dropped');
+  assert.match(illusions.system.benefit, /minimum penalty of -1/, 'the minimum penalty was dropped');
+  // The reduction must never be modelled as a standing Illusion modifier.
+  assert.equal(illusions.system.abilityMeta.applicationScope, 'large_illusion_penalty_reduction');
+  assert.doesNotMatch(illusions.system.benefit, /Use the Force check/);
+
+  const surge = talentsById.get('ca30265867f3dcb1');
+  const intuition = talentsById.get('ed0304eebd82042b');
+  assert.match(intuition.system.benefit, /^Once per encounter/, 'the frequency limit was dropped');
+  assert.match(intuition.system.benefit, /spend a Force Point/, 'the Force Point cost was dropped');
+  assert.match(
+    intuition.system.benefit,
+    /Sith alchemical weapon/,
+    'the alchemical-weapon limitation was dropped'
+  );
+  assert.match(intuition.system.benefit, /damage dice as though they had rolled their maximum result/);
+
+  assert.match(surge.system.benefit, /^Once per encounter, as a Swift Action/);
+  assert.match(surge.system.benefit, /a single use of a Force Power/, 'the single-use scope was dropped');
+  assert.match(surge.system.benefit, /Either add one die of damage/, 'the damage branch was dropped');
+  assert.match(surge.system.benefit, /extend its range by 6 squares/, 'the 6-square range extension was dropped');
+  assert.match(
+    surge.system.benefit,
+    /range beyond the user or a single target/,
+    'the qualification on which powers can be extended was dropped'
+  );
+  // The two benefits are exclusive, and neither applies globally.
+  assert.equal(surge.system.activationChoiceMeta.required, true);
+  assert.equal(surge.system.activationChoiceMeta.options.length, 2);
+  assert.deepEqual(surge.system.abilityMeta.modifiers, []);
+}
+
+/* ------------------------------------------------------------------ *
  * 4. Both talent-tree registries report the tree identically.
  * ------------------------------------------------------------------ */
 {
