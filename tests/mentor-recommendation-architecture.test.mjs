@@ -737,6 +737,51 @@ const rec = (targetId, dialogue = `${targetId} suits this build.`) => Object.fre
 }
 
 /* ------------------------------------------------------------------ *
+ * 20. The audit harness exposes the three invariants and mutates nothing.
+ * ------------------------------------------------------------------ */
+{
+  const src = fs.readFileSync(
+    path.join(ROOT, 'scripts/apps/progression-framework/debug/progression-render-stats.js'), 'utf8');
+
+  assert.match(src, /export function progressionMentorAudit\(/);
+  assert.match(src, /export function resetProgressionMentorAudit\(/);
+  assert.match(src, /SWSE\.debug\.progressionMentorAudit = progressionMentorAudit/);
+  assert.match(src, /SWSE\.debug\.resetProgressionMentorAudit = resetProgressionMentorAudit/);
+
+  // Every field the audit is specified to report.
+  for (const field of [
+    'stepId', 'activationToken', 'fullRenders', 'partialRenders', 'queuedRenderFlushes',
+    'duplicateRenderRequestsCoalesced', 'onDataReadyCalls',
+    'revision', 'activeSource', 'activeStepId', 'activeTargetId', 'activeSignature',
+    'persistentRecommendationTarget', 'staleMessagesDiscarded', 'unchangedMessagesSkipped',
+    'directBypassCount', 'fullShellRendersCausedByMentor',
+    'currentContextKey', 'cacheHits', 'cacheMisses', 'inFlightJoins',
+    'animationsStarted', 'animationsCompleted', 'animationsAborted',
+    'supersededFramesAfterAbort', 'activeWrapperCount',
+  ]) {
+    assert.match(src, new RegExp(`${field}:`), `audit is missing field: ${field}`);
+  }
+
+  // It reads counters; it must not write actor/session state.
+  assert.ok(!/actor\.update|setFlag|commitSelection|createEmbeddedDocuments/.test(src),
+    'the audit must be read-only');
+
+  // The counters it reads actually exist at their sources.
+  const service = fs.readFileSync(path.join(ROOT, 'scripts/engine/suggestion/SuggestionService.js'), 'utf8');
+  assert.match(service, /_stats = \{ cacheHits: 0, cacheMisses: 0, inFlightJoins: 0 \}/);
+  assert.match(service, /this\._stats\.inFlightJoins \+= 1/);
+  assert.match(service, /this\._stats\.cacheHits \+= 1/);
+
+  const translator = fs.readFileSync(path.join(ROOT, 'scripts/ui/dialogue/aurebesh-translator.js'), 'utf8');
+  assert.match(translator, /supersededFramesAfterAbort: 0/);
+  // The superseded-frame counter must be measured after the DOM write, or it
+  // would be a formality that can never trip.
+  assert.match(translator,
+    /container\.innerHTML = this\._buildMarkup\(revealed[\s\S]{0,400}supersededFramesAfterAbort \+= 1/,
+    'supersededFramesAfterAbort must be measured after the write it guards');
+}
+
+/* ------------------------------------------------------------------ *
  * Static contract: mentor code is never a render owner.
  * ------------------------------------------------------------------ */
 {

@@ -149,6 +149,9 @@ async function _ensureActorDoc(actorOrData) {
 export class SuggestionService {
   static _cache = new Map(); // key -> {rev, suggestions, meta}
   static _inFlight = new Map(); // `${key}::${rev}` -> Promise, collapses concurrent identical work
+  // Diagnostics only. Read by SWSE.debug.progressionMentorAudit(); never
+  // consulted by scoring or caching decisions.
+  static _stats = { cacheHits: 0, cacheMisses: 0, inFlightJoins: 0 };
   static _cacheStats = new Map(); // key -> {accessTime}
   static MAX_CACHE_SIZE = 500; // PHASE B: Limit cache to prevent unbounded growth
   static _initialized = false;
@@ -202,7 +205,10 @@ export class SuggestionService {
     if (!requestKey) return this._computeSuggestions(actor, context, options);
 
     const existing = this._inFlight.get(requestKey);
-    if (existing) return existing;
+    if (existing) {
+      this._stats.inFlightJoins += 1;
+      return existing;
+    }
 
     const promise = this._computeSuggestions(actor, context, options)
       .finally(() => { this._inFlight.delete(requestKey); });
@@ -256,8 +262,10 @@ export class SuggestionService {
     if (cached?.rev === revision) {
       // Update access time for LRU tracking
       this._cacheStats.set(key, { accessTime: Date.now() });
+      this._stats.cacheHits += 1;
       return cached.suggestions;
     }
+    this._stats.cacheMisses += 1;
 
     let trace = false;
     try {

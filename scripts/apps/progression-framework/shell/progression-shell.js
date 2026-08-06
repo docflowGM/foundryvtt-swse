@@ -331,6 +331,9 @@ export class ProgressionShell extends SWSEApplicationV2 {
     // runs once per token, not once per paint.
     this._stepDataRevision = 0;
     this._dataReadyToken = new Map();
+    // Diagnostics: proves onDataReady is activation-scoped, not paint-scoped.
+    this._onDataReadyCalls = 0;
+    this._stepActivationToken = 0;
 
     // Position centering tracking — initialize EARLY so first render knows this is a new open
     this._didStartupCenter = false;
@@ -1386,6 +1389,7 @@ export class ProgressionShell extends SWSEApplicationV2 {
     this.focusedItem = null;
     // Entering a step is exactly the moment its data must be (re)hydrated, so
     // release the onDataReady gate for the paint that follows onStepEnter.
+    this._stepActivationToken += 1;
     this.invalidateStepData(descriptor.stepId ?? null);
     this.progressionSession.currentStepId = descriptor.stepId ?? null;
     this._syncLegacyCommittedSelectionsFromSession();
@@ -2440,6 +2444,7 @@ export class ProgressionShell extends SWSEApplicationV2 {
         if (typeof plugin.onDataReady === 'function' && this._shouldRunDataReady(descriptor.stepId)) {
           try {
             this._dataReadyToken.set(descriptor.stepId, this._stepDataRevision);
+            this._onDataReadyCalls += 1;
             await Promise.resolve(plugin.onDataReady(this));
           } catch (err) {
             // Allow a retry on the next paint rather than stranding the step

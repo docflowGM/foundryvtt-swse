@@ -16,6 +16,18 @@ export class AurebeshTranslator {
   static _generations = new WeakMap();
 
   /**
+   * Diagnostics only. supersededFramesAfterAbort counts DOM writes that
+   * happened *after* a reveal lost its claim — the number that proved the
+   * old cancellation was nominal. It must stay at zero.
+   */
+  static _stats = {
+    animationsStarted: 0,
+    animationsCompleted: 0,
+    animationsAborted: 0,
+    supersededFramesAfterAbort: 0,
+  };
+
+  /**
    * Render translated dialogue with Aurebesh → English animation
    * @param {Object} options
    * @param {string} options.text - English text to reveal
@@ -48,6 +60,7 @@ export class AurebeshTranslator {
     // the container, and any loop whose claim has been taken over stops.
     const generation = (this._generations.get(container) ?? 0) + 1;
     this._generations.set(container, generation);
+    this._stats.animationsStarted += 1;
 
     const config = TRANSLATION_PRESETS[preset] || TRANSLATION_PRESETS.mentor;
 
@@ -89,6 +102,7 @@ export class AurebeshTranslator {
 
       // Superseded while revealing: leave the DOM to whoever owns it now.
       if (this._isSuperseded(container, generation, signal)) {
+        this._stats.animationsAborted += 1;
         wrapper.remove();
         return wrapper;
       }
@@ -96,6 +110,7 @@ export class AurebeshTranslator {
       wrapper.innerHTML = this._buildFinalMarkup(text, config);
       wrapper.classList.add('aurebesh-dialogue-wrapper--complete');
 
+      this._stats.animationsCompleted += 1;
       onComplete();
       return wrapper;
     } catch (err) {
@@ -137,6 +152,12 @@ export class AurebeshTranslator {
 
       // Build markup: unrevealed in Aurebesh, revealed in English
       container.innerHTML = this._buildMarkup(revealed, chars.slice(i + 1).join(''), config);
+
+      // Real measurement, not a formality: if the claim was lost between the
+      // pre-write check and the write itself, that frame reached the DOM after
+      // this reveal was superseded. This is the number that was ~75 before the
+      // generation token existed; it must stay at zero.
+      if (superseded()) AurebeshTranslator._stats.supersededFramesAfterAbort += 1;
 
       // Wait for animation frame + speed interval
       await this._delay(speed, signal);
