@@ -28,7 +28,7 @@ import { SWSEPerf } from '/systems/foundryvtt-swse/scripts/utils/performance-uti
 import { RecoverySessionDialog } from '/systems/foundryvtt-swse/scripts/apps/progression-framework/dialogs/recovery-session-dialog.js';
 import { centerApplicationDuringStartup } from '/systems/foundryvtt-swse/scripts/utils/sheet-position.js';
 import { ConditionalStepResolver } from './conditional-step-resolver.js';
-import { ProgressionRenderScheduler } from './progression-render-scheduler.js';
+import { ProgressionRenderScheduler, INDEPENDENT_REGIONS } from './progression-render-scheduler.js';
 import { MentorRecommendationController, buildMentorContext } from './mentor-recommendation-controller.js';
 import { ProgressionFinalizer } from './progression-finalizer.js';
 import { ProgressionSession } from './progression-session.js';
@@ -548,8 +548,45 @@ export class ProgressionShell extends SWSEApplicationV2 {
         ...snapshots,
       ];
     }
+    // Render causality for the mentor is measured, not asserted. If a repaint is
+    // requested while mentor presentation is on the stack, the mentor caused it —
+    // which is the thing the whole ownership split exists to prevent, so it is
+    // counted and surfaced by progressionMentorAudit() rather than assumed zero.
+    if (this.mentorRecommendations?.isPresenting?.()) {
+      this.mentorRecommendations.noteShellRenderAttempt?.(reason);
+    }
+
     swseLogger.debug('[ProgressionShell] requestRender', { preserveScroll, reason, force, regions, structural });
     return this.renderScheduler.request({ reason, regions, structural, preserveScroll, force, dedupe });
+  }
+
+  /**
+   * Queue exactly one follow-up repaint for updates that arrived mid-render.
+   *
+   * The scheduler already coalesces, so repeated calls during one render merge
+   * into a single request. The flag is cleared when the deferred request is
+   * issued, and the request itself is made *after* the active render completes
+   * so `_onRender` lifecycle work cannot drive a feedback loop.
+   *
+   * @param {string} reason
+   * @private
+   */
+  _queueFollowUpRender(reason = 'deferred-render') {
+    if (this._followUpRenderQueued) return;
+    this._followUpRenderQueued = true;
+    this._followUpRenderReason = reason;
+  }
+
+  /**
+   * Issue the deferred follow-up, if one was requested during the render.
+   * @private
+   */
+  _flushFollowUpRender() {
+    if (!this._followUpRenderQueued) return;
+    this._followUpRenderQueued = false;
+    const reason = this._followUpRenderReason ?? 'deferred-render';
+    this._followUpRenderReason = null;
+    void this.requestRender({ preserveScroll: true, reason, structural: true });
   }
 
   /**
@@ -589,17 +626,35 @@ export class ProgressionShell extends SWSEApplicationV2 {
       return this.render({ force });
     }
 
+    // Preflight the whole set before touching anything.
+    //
+    // The old code applied regions one at a time and only fell back when
+    // *nothing* applied. For a mixed job like ['details', 'summary', 'footer']
+    // that meant details repainted, summary and footer silently did not, and no
+    // fallback ran — the user's change was half-drawn. A scoped job is only
+    // valid when every region in it has an independent seam; otherwise the whole
+    // job becomes one structural render.
+    const unsupported = regions.filter(region => !INDEPENDENT_REGIONS.has(region));
+    if (unsupported.length) {
+      swseLogger.debug('[ProgressionShell] scoped update needs a structural render', {
+        regions, unsupported, reasons,
+      });
+      return this.render({ force });
+    }
+
     let applied = 0;
     for (const region of regions) {
       // eslint-disable-next-line no-await-in-loop
       if (await this._updateRegion(region)) applied += 1;
     }
 
-    // A scoped update that could not be applied (region not mounted, no live
-    // root yet) must not silently drop the user's change — fall back to a full
-    // repaint rather than leaving stale content on screen.
-    if (applied === 0) {
-      swseLogger.debug('[ProgressionShell] scoped update fell back to structural render', { regions, reasons });
+    // Every region passed preflight, so a failure here is unexpected (the region
+    // was not mounted, or its template threw). Repaint structurally rather than
+    // leaving part of the change on screen.
+    if (applied !== regions.length) {
+      swseLogger.debug('[ProgressionShell] scoped update failed after preflight; repainting', {
+        regions, applied, reasons,
+      });
       return this.render({ force });
     }
 
@@ -1178,7 +1233,13 @@ export class ProgressionShell extends SWSEApplicationV2 {
 
   // ═══ AUDIT INSTRUMENTATION + RENDER GUARD ═══
   async render(...args) {
-    // Render loop prevention: block recursive render calls during active render
+    // Render loop prevention: never recurse into a render that is already running.
+    //
+    // Returning here is not enough on its own. A legitimate update arriving
+    // mid-render (a suggestion resolving, a reconciler pass, a plugin's async
+    // hydration) was simply dropped, so the change never appeared. The request is
+    // now deferred instead: one follow-up is queued after the active render
+    // finishes, and further requests during the same render coalesce into it.
     if (this._isRendering) {
       SWSEPerf.mark('ProgressionShell.render blocked while rendering', {
         actorId: this.actor?.id,
@@ -1187,8 +1248,9 @@ export class ProgressionShell extends SWSEApplicationV2 {
         stepId: this.currentStep?.id ?? this.steps?.[this.currentStepIndex]?.id ?? null
       });
       if (SWSEPerf.enabled()) {
-        console.warn("[ProgressionShell] ⚠️ Render called while already rendering — BLOCKED (loop prevention)");
+        console.warn("[ProgressionShell] ⚠️ Render called while already rendering — deferred to one follow-up");
       }
+      this._queueFollowUpRender('render-during-render');
       return this;
     }
 
@@ -1334,6 +1396,9 @@ export class ProgressionShell extends SWSEApplicationV2 {
     renderTimer.end({ snapshots: scrollSnapshots.length });
 
     this._isRendering = false;
+    // Anything that asked to repaint while this render was running gets exactly
+    // one follow-up, issued now that the guard is clear.
+    this._flushFollowUpRender();
     return result;
   }
 
@@ -1425,7 +1490,7 @@ export class ProgressionShell extends SWSEApplicationV2 {
       }
 
       this._syncMentorForStep(descriptor);
-      this.mentor.currentDialogue = plugin.getMentorContext(this);
+      this._presentStepPluginGuidance(plugin, descriptor?.stepId);
       this._syncAskMentorState(plugin, descriptor);
       this.utilityBar.setConfig(plugin.getUtilityBarConfig());
       this._activeStepEnterContext = null;
@@ -1444,7 +1509,7 @@ export class ProgressionShell extends SWSEApplicationV2 {
         if (fallbackPlugin) {
           try {
             this._syncMentorForStep(this.steps[fallbackIndex]);
-            this.mentor.currentDialogue = fallbackPlugin.getMentorContext(this);
+            this._presentStepPluginGuidance(fallbackPlugin, this.steps?.[fallbackIndex]?.stepId ?? null);
             this._syncAskMentorState(fallbackPlugin, this.steps[fallbackIndex]);
             this.utilityBar.setConfig(fallbackPlugin.getUtilityBarConfig());
           } catch (fallbackErr) {
@@ -1764,7 +1829,7 @@ export class ProgressionShell extends SWSEApplicationV2 {
     const currentPlugin = this.stepPlugins.get(this.steps[this.currentStepIndex]?.stepId);
     if (currentPlugin) {
       this.utilityBar.setConfig(currentPlugin.getUtilityBarConfig());
-      this.mentor.currentDialogue = currentPlugin.getMentorContext(this);
+      this._presentStepPluginGuidance(currentPlugin, this.steps?.[this.currentStepIndex]?.stepId ?? null);
     }
 
     // Re-render with new step sequence
@@ -2330,17 +2395,30 @@ export class ProgressionShell extends SWSEApplicationV2 {
 
     this.renderScheduler.beginInteraction(`${source}:${stepId}`);
 
-    // Focus so the details rail reflects what was chosen, but without letting
-    // the plugin's focus pass schedule anything of its own — the commit below
-    // owns the single repaint.
-    this.focusedItem = this.focusedItem ?? null;
-    const result = await this._withSuppressedLegacyMentorSpeech(
-      () => plugin.onItemCommitted(itemId, this, { source })
+    // Focus the chosen item for real. This line used to be
+    // `this.focusedItem = this.focusedItem ?? null`, a no-op that left the
+    // details rail showing whatever the player had been looking at before,
+    // while the comment claimed the choice was focused.
+    //
+    // The focus pass runs inside the shell-owned bracket, so it updates state
+    // and reports its dirty regions without scheduling anything of its own —
+    // the single commit repaint below covers both.
+    const focusDeclared = await this._focusItemWithoutRender(plugin, itemId, source);
+
+    const result = await this._withShellOwnedInteraction(
+      () => this._withSuppressedLegacyMentorSpeech(
+        () => plugin.onItemCommitted(itemId, this, { source })
+      )
     );
 
     this._rebuildProjection();
 
-    const declared = this._normalizePluginDirtyResult(result);
+    const committed = this._normalizePluginDirtyResult(result);
+    const declared = {
+      ...committed,
+      regions: [...new Set([...focusDeclared.regions, ...committed.regions])],
+      structural: committed.structural || focusDeclared.structural,
+    };
     await this.requestRender({
       preserveScroll: true,
       reason: `${source}:commit`,
@@ -2365,6 +2443,76 @@ export class ProgressionShell extends SWSEApplicationV2 {
    *
    * @param {string} reason - Diagnostic label for the triggering change.
    */
+  /**
+   * Resolve and apply focus for an item without scheduling a repaint.
+   *
+   * Preference order: a dedicated `resolveItemForFocus()` when the plugin has
+   * one, otherwise the normal focus callback run inside the shell-owned bracket.
+   * Either way the caller owns the render.
+   *
+   * @param {Object} plugin
+   * @param {string} itemId
+   * @param {string} source
+   * @returns {Promise<{regions: string[], structural: boolean}>}
+   * @private
+   */
+  async _focusItemWithoutRender(plugin, itemId, source) {
+    const empty = { regions: [], structural: false };
+    if (!plugin) return empty;
+
+    try {
+      if (typeof plugin.resolveItemForFocus === 'function') {
+        const item = await plugin.resolveItemForFocus(itemId, this);
+        if (item) {
+          this.setFocusedItem(item, { render: false });
+          return { regions: ['details'], structural: false };
+        }
+      }
+
+      if (typeof plugin.onItemFocused === 'function') {
+        const result = await this._withShellOwnedInteraction(
+          () => this._withSuppressedLegacyMentorSpeech(
+            () => plugin.onItemFocused(itemId, this, { render: false, source })
+          )
+        );
+        const declared = this._normalizePluginDirtyResult(result);
+        return {
+          regions: declared.regions.length ? declared.regions : ['details'],
+          structural: declared.structural,
+        };
+      }
+    } catch (err) {
+      swseLogger.debug('[ProgressionShell] mentor-applied focus failed', { itemId, source, error: err?.message });
+    }
+
+    return empty;
+  }
+
+  /**
+   * Route a step plugin's own guidance line through the arbiter.
+   *
+   * This used to be `this.mentor.currentDialogue = plugin.getMentorContext(this)`,
+   * which installed the plugin's text as though it had won arbitration: it
+   * skipped priority (so it could sit on top of an Ask Mentor line), staleness
+   * (so a line for the step being left could speak on the step being entered),
+   * and equality (so it restarted the typewriter for identical text).
+   *
+   * @param {Object} plugin
+   * @param {string|null} stepId
+   * @private
+   */
+  _presentStepPluginGuidance(plugin, stepId = null) {
+    let text = '';
+    try {
+      text = plugin?.getMentorContext?.(this) ?? '';
+    } catch (err) {
+      swseLogger.debug('[ProgressionShell] plugin guidance lookup failed', { stepId, error: err?.message });
+      return false;
+    }
+    if (!text) return false;
+    return this.mentorRecommendations?.presentStepGuidance?.({ text, stepId }) ?? false;
+  }
+
   requestMentorRecommendation(reason = 'unspecified') {
     try {
       const context = buildMentorContext(this);
@@ -2482,11 +2630,25 @@ export class ProgressionShell extends SWSEApplicationV2 {
     // IMPORTANT: do not await this animation path. Blocking here prevents
     // the player from clicking items or seeing hydrated details until the
     // mentor finishes talking.
+    //
+    // Guidance is resolved by the rail but spoken by nobody until the arbiter
+    // says so. Resolution is async, so by the time it returns the player may
+    // already be on another step or a recommendation may have arrived — both of
+    // which the arbiter's revision and step-identity checks handle. Speaking
+    // directly from here is what let a stale step-entry line win.
     if (descriptor && descriptor.stepId !== this._lastSpokenStepId) {
       this._lastSpokenStepId = descriptor.stepId;
-      void this.mentorRail.speakForStep(descriptor)
+      void this.mentorRail.resolveStepGuidance(descriptor)
+        .then(guidance => {
+          if (!guidance?.text) return;
+          this.mentorRecommendations?.presentStepGuidance?.({
+            text: guidance.text,
+            mood: guidance.mood ?? 'neutral',
+            stepId: guidance.stepId ?? descriptor.stepId,
+          });
+        })
         .catch(err => {
-          swseLogger.error('ProgressionShell: mentorRail.speakForStep failed', { err });
+          swseLogger.error('ProgressionShell: mentorRail.resolveStepGuidance failed', { err });
         });
     }
   }
@@ -3431,7 +3593,9 @@ export class ProgressionShell extends SWSEApplicationV2 {
     event?.stopPropagation?.();
     this.progressRailCollapsed = !this.progressRailCollapsed;
     await game?.user?.setFlag?.('foundryvtt-swse', 'progressRailCollapsed', this.progressRailCollapsed);
-    return this.render({ force: true });
+    // A user interaction goes through the scheduler like every other one, so a
+    // double-click cannot produce two full repaints.
+    return this.requestRender({ preserveScroll: true, reason: 'toggle-progress-rail', structural: true, force: true });
   }
 
   async _onToggleUtilityBar(event, target) {
@@ -3445,7 +3609,9 @@ export class ProgressionShell extends SWSEApplicationV2 {
     event?.stopPropagation?.();
     this.summaryPanelCollapsed = !this.summaryPanelCollapsed;
     await game?.user?.setFlag?.('foundryvtt-swse', 'summaryPanelCollapsed', this.summaryPanelCollapsed);
-    return this.render({ force: true });
+    // A user interaction goes through the scheduler like every other one, so a
+    // double-click cannot produce two full repaints.
+    return this.requestRender({ preserveScroll: true, reason: 'toggle-summary-panel', structural: true, force: true });
   }
 
   async _onAskMentor(event, target) {
@@ -3598,7 +3764,9 @@ export class ProgressionShell extends SWSEApplicationV2 {
 
       try {
         this.renderScheduler.beginInteraction(`focus:${stepId}`);
-        const focusResult = await this._withSuppressedLegacyMentorSpeech(() => plugin.onItemFocused(itemId, this));
+        const focusResult = await this._withShellOwnedInteraction(
+          () => this._withSuppressedLegacyMentorSpeech(() => plugin.onItemFocused(itemId, this))
+        );
 
         // Update the detail rail for the newly focused item. Focus changes only
         // the details panel and the focused row's visual state — rebuilding the
@@ -3616,6 +3784,11 @@ export class ProgressionShell extends SWSEApplicationV2 {
           regions: declared.structural ? null : [...new Set(['details', ...declared.regions])],
           structural: declared.structural,
         });
+
+        // Focus is not normally recommendation-relevant — that is the whole
+        // reason focusing a card does not re-run suggestion work. A plugin that
+        // says otherwise (its focus genuinely changes the advice inputs) opts in.
+        if (declared.recommendationRelevant) this.requestMentorRecommendation(`focus:${stepId}`);
 
         this.mentorChoiceReactions?.reactToInteraction({
           stepId,
@@ -3655,13 +3828,24 @@ export class ProgressionShell extends SWSEApplicationV2 {
    */
   _normalizePluginDirtyResult(result) {
     if (!result || typeof result !== 'object') {
-      return { regions: [], structural: false, handled: false };
+      return { regions: [], structural: false, handled: false, recommendationRelevant: false };
     }
-    const dirty = Array.isArray(result.dirty) ? result.dirty : (result.dirty ? [result.dirty] : []);
+
+    // Canonical field is `dirty`. `regions` is read only so the plugins that
+    // shipped with the older `{ changed, regions }` shape keep working during
+    // migration — every in-tree plugin has been converted, and
+    // tests/progression-render-scheduler-budgets.test.mjs fails the build if a
+    // new one reintroduces it. Remove this branch once that risk is gone.
+    const raw = Array.isArray(result.dirty) ? result.dirty
+      : (result.dirty ? [result.dirty]
+        : (Array.isArray(result.regions) ? result.regions : (result.regions ? [result.regions] : [])));
+
     return {
-      regions: dirty.map(region => String(region || '').trim()).filter(Boolean),
+      regions: raw.map(region => String(region || '').trim()).filter(Boolean),
       structural: result.structural === true,
-      handled: result.handled === true,
+      // `changed` was the old spelling of "I handled this".
+      handled: result.handled === true || result.changed === true,
+      recommendationRelevant: result.recommendationRelevant === true,
     };
   }
 
@@ -3687,7 +3871,9 @@ export class ProgressionShell extends SWSEApplicationV2 {
     const plugin = this.stepPlugins.get(stepId);
     if (plugin) {
       this.renderScheduler.beginInteraction(`commit:${stepId}`);
-      await this._withSuppressedLegacyMentorSpeech(() => plugin.onItemCommitted(itemId, this));
+      const commitResult = await this._withShellOwnedInteraction(
+        () => this._withSuppressedLegacyMentorSpeech(() => plugin.onItemCommitted(itemId, this))
+      );
       // Rebuild projection after selection committed to update selected rail
       this._rebuildProjection();
       this.mentorChoiceReactions?.reactToInteraction({
@@ -3709,7 +3895,13 @@ export class ProgressionShell extends SWSEApplicationV2 {
       // the click. If the step is not ready, fall back to the normal local render.
       const advanced = await this._maybeScheduleAutoAdvance({ source: 'commit-item', event });
       if (!advanced) {
-        await this.requestRender({ preserveScroll: true, reason: 'commit-item' });
+        const declared = this._normalizePluginDirtyResult(commitResult);
+        await this.requestRender({
+          preserveScroll: true,
+          reason: 'commit-item',
+          regions: declared.structural ? null : declared.regions,
+          structural: declared.structural || declared.regions.length === 0,
+        });
       }
     }
   }
@@ -3987,8 +4179,39 @@ export class ProgressionShell extends SWSEApplicationV2 {
     // and recompute the active step list if needed
     await this._recomputeActiveStepsIfNeeded();
 
-    this.requestRender({ preserveScroll: true, reason: `commit-selection:${stepId}` });
+    // When this runs inside a shell-orchestrated commit, the shell already
+    // schedules exactly one repaint for the interaction. Requesting a second one
+    // here left two render owners whose ordering depended on both landing in the
+    // same animation frame — true most of the time, which is worse than never.
+    if (!this.isShellOwnedInteraction()) {
+      this.requestRender({ preserveScroll: true, reason: `commit-selection:${stepId}` });
+    }
     void this._maybeScheduleAutoAdvance({ source: `commit-selection:${stepId}` });
+  }
+
+  /** True while the shell is orchestrating an interaction and owns its repaint. */
+  isShellOwnedInteraction() {
+    return (this._shellOwnedInteractionDepth ?? 0) > 0;
+  }
+
+  /**
+   * Run a plugin callback with the shell declared as the render owner.
+   *
+   * Inside this, plugin helpers that would normally schedule their own repaint
+   * (commitSelection) stand down, because the caller schedules the single update
+   * for the whole interaction.
+   * @template T
+   * @param {() => (T|Promise<T>)} fn
+   * @returns {Promise<T>}
+   * @private
+   */
+  async _withShellOwnedInteraction(fn) {
+    this._shellOwnedInteractionDepth = (this._shellOwnedInteractionDepth ?? 0) + 1;
+    try {
+      return await fn();
+    } finally {
+      this._shellOwnedInteractionDepth -= 1;
+    }
   }
 
   /**
@@ -4304,7 +4527,7 @@ export class ProgressionShell extends SWSEApplicationV2 {
     const result = this.validateBuild();
 
     if (result.isValid && result.warnings.length === 0 && result.conflicts.length === 0) {
-      this.mentor.currentDialogue = '✓ Your build looks solid. Ready to proceed!';
+      this.mentorRecommendations?.presentGuidance?.({ text: '✓ Your build looks solid. Ready to proceed!' });
       this.mentor.mood = 'encouraging';
       return;
     }

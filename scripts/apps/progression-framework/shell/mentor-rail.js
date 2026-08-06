@@ -2,6 +2,7 @@ import { getMentorGuidance, MENTORS, resolveMentorData, resolveMentorPortraitPat
 import { MentorTranslationIntegration } from '../../../mentor/mentor-translation-integration.js';
 import { ProgressionDebugCapture } from '../debug/progression-debug-capture.js';
 import { getStepMentorObject, resolveStepMentorContext, resolveStepMentorGuidance, setSessionMentorContext } from '../steps/mentor-step-integration.js';
+import { ARBITER_TOKEN } from './mentor-recommendation-controller.js';
 
 /**
  * Maps step ID to mentor guidance choice type for getMentorGuidance().
@@ -291,12 +292,13 @@ export class MentorRail {
    * @param {boolean} [options.replay] - Re-presenting after a structural render.
    * @returns {boolean} false when the rail is not mounted (queued instead).
    */
-  presentRecommendation(recommendation, { replay = false } = {}) {
+  presentRecommendation(recommendation, { replay = false, [ARBITER_TOKEN]: token = false } = {}) {
     return this.presentMessage({
       source: replay ? 'recommendation-replay' : 'recommendation',
       text: recommendation?.dialogue,
       mood: recommendation?.mood ?? 'neutral',
       targetId: recommendation?.targetId ?? null,
+      [ARBITER_TOKEN]: token,
     });
   }
 
@@ -316,6 +318,23 @@ export class MentorRail {
   presentMessage(message) {
     const text = String(message?.text ?? '').trim();
     if (!text) return false;
+
+    // Ownership is proven, not trusted.
+    //
+    // Everything the player sees here must have been ordered by
+    // MentorRecommendationController, which stamps an unforgeable token. A
+    // message without it reached the sink some other way — that is the exact
+    // regression this split exists to prevent, so it is counted and reported
+    // rather than quietly rendered.
+    if (message?.[ARBITER_TOKEN] !== true) {
+      this.shell?.mentorRecommendations?.noteDirectBypass?.({
+        source: message?.source ?? 'unknown',
+        textPreview: text.slice(0, 60),
+      });
+      console.warn('[MentorRail] a mentor message reached the rail without passing through '
+        + 'MentorRecommendationController; it skipped priority, staleness and equality checks.',
+      { source: message?.source ?? 'unknown' });
+    }
 
     const mood = message?.mood ?? 'neutral';
     const container = this._resolveDialogueContainer();
@@ -342,15 +361,23 @@ export class MentorRail {
   }
 
   /**
-   * Speak step-appropriate guidance for the given descriptor.
+   * Resolve step-appropriate guidance for the given descriptor, and sync the
+   * mentor identity it implies.
+   *
+   * This deliberately does NOT speak. Step guidance used to call queueSpeak()
+   * straight from here, which meant it never passed through priority, revision,
+   * or step-identity checks — a slow step-entry lookup could land after the
+   * player had already moved on, or overwrite a live recommendation. The caller
+   * routes the returned text through MentorRecommendationController instead.
+   *
    * @param {StepDescriptor} descriptor
-   * @returns {Promise<void>}
+   * @returns {Promise<{text: string, mood: string|null, stepId: string}|null>}
    */
-  async speakForStep(descriptor) {
-    if (!descriptor) return;
+  async resolveStepGuidance(descriptor) {
+    if (!descriptor) return null;
 
     // [DEBUG] speakForStep entry
-    mentorTrace('[SWSE Translation Debug] speakForStep() called', {
+    mentorTrace('[SWSE Translation Debug] resolveStepGuidance() called', {
       descriptor_stepId: descriptor.stepId,
       descriptor_label: descriptor.label,
     });
@@ -363,8 +390,8 @@ export class MentorRail {
     );
     const mentorObj = guidance?.mentor || getStepMentorObject(this.shell?.actor ?? null, this.shell) || this._getMentorObject();
     if (!mentorObj) {
-      mentorTrace('[SWSE Translation Debug] speakForStep() early return — no mentor object');
-      return;
+      mentorTrace('[SWSE Translation Debug] resolveStepGuidance() early return — no mentor object');
+      return null;
     }
 
     const mentorKey = guidance?.mentorContext?.mentorKey || guidance?.mentorContext?.mentorId || getMentorKey(mentorObj);
@@ -381,7 +408,7 @@ export class MentorRail {
       || `You are at the ${descriptor.label} step.`;
 
     // [DEBUG] Text resolution
-    mentorTrace('[SWSE Translation Debug] speakForStep() resolved text', {
+    mentorTrace('[SWSE Translation Debug] resolveStepGuidance() resolved text', {
       choiceType: guidance?.choiceType,
       textSource: guidance?.textSource,
       mentorId: mentorKey,
@@ -392,13 +419,12 @@ export class MentorRail {
       will_call_speak: !!text,
     });
 
-    if (text) {
-      mentorTrace('[SWSE Translation Debug] speakForStep() queueing speak() with text');
-      this.queueSpeak(text, null, { source: 'step-enter' });
-      mentorTrace('[SWSE Translation Debug] speakForStep() speech queued');
-    } else {
-      mentorTrace('[SWSE Translation Debug] speakForStep() skipping speak() — no text');
+    if (!text) {
+      mentorTrace('[SWSE Translation Debug] resolveStepGuidance() produced no text');
+      return null;
     }
+
+    return { text, mood: null, stepId: descriptor.stepId };
   }
 
   /**

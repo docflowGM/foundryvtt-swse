@@ -723,7 +723,7 @@ export class SpeciesStep extends ProgressionStepPlugin {
       console.log('[SpeciesStep] ✓ Found mentor dialogue for', entry.name);
 
       // [DEBUG] Log before non-blocking speak call
-      console.log(`[SWSE Species Debug] [Click #${clickNum}] About to call shell.mentorRail.speak() non-blocking`, {
+      console.log(`[SWSE Species Debug] [Click #${clickNum}] About to present a focus reaction through the mentor arbiter (non-blocking)`, {
         mentor_isAnimating_before: shell.mentor?.isAnimating ?? '(null)',
         mentor_currentDialogue_before: shell.mentor?.currentDialogue?.slice?.(0, 30) ?? '(null)',
       });
@@ -732,7 +732,7 @@ export class SpeciesStep extends ProgressionStepPlugin {
         text: dialogue, mood: 'encouraging', stepId: 'species', targetId: entry.id,
       }))
         .then(() => {
-          console.log(`[SWSE Species Debug] [Click #${clickNum}] shell.mentorRail.speak() completed`);
+          console.log(`[SWSE Species Debug] [Click #${clickNum}] mentor focus reaction presented`);
 
           // GUARD: Keep stale completion from re-touching UI state if focus moved on.
           if (this._focusVersion !== focusVersion) {
@@ -740,7 +740,7 @@ export class SpeciesStep extends ProgressionStepPlugin {
           }
         })
         .catch(speakErr => {
-          console.error(`[SWSE Species Debug] [Click #${clickNum}] shell.mentorRail.speak() threw:`, speakErr);
+          console.error(`[SWSE Species Debug] [Click #${clickNum}] mentor focus reaction threw:`, speakErr);
           console.error(`[SWSE Species Debug] [Click #${clickNum}] Speak error details:`, {
             message: speakErr.message,
             stack: speakErr.stack?.split('\n').slice(0, 4).join(' | '),
@@ -754,7 +754,7 @@ export class SpeciesStep extends ProgressionStepPlugin {
     console.log(`[SWSE Species Debug] [Click #${clickNum}] onItemFocused COMPLETE`);
     // The shell owns the repaint for shell-routed focus: it folds this
     // declaration into the single update it already schedules.
-    return { changed: true, regions: ['details'], recommendationRelevant: false };
+    return { handled: true, dirty: ['details'], structural: false, recommendationRelevant: false };
   }
 
   async onItemCommitted(id, shell) {
@@ -847,7 +847,9 @@ export class SpeciesStep extends ProgressionStepPlugin {
     this._committedSpeciesId   = id;
     this._committedSpeciesName = entry.name;
     shell.focusedItem = null;
-    shell.requestRender({ preserveScroll: true, reason: 'species-step:onItemCommitted' });
+    // The shell owns the repaint for this interaction; describing the scope
+    // here lets it fold this into the one update it already schedules.
+    return { handled: true, dirty: [], structural: true, recommendationRelevant: true };
   }
 
   // ---------------------------------------------------------------------------
@@ -1005,9 +1007,9 @@ export class SpeciesStep extends ProgressionStepPlugin {
           return;
         }
 
-        await this.onItemFocused(entry.id, shell);
-        await this.onItemCommitted(entry.id, shell);
-        shell.requestRender({ preserveScroll: true, reason: 'species-step:onAskMentor' });
+        // One canonical commit through the shell: the old focus + commit +
+        // render triple repainted twice for a single choice.
+        await shell.commitSuggestionFromMentor({ stepId: 'species', itemId: entry.id, source: 'ask-mentor' });
       });
       return;
     }

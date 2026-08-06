@@ -281,7 +281,7 @@ async onStepExit(shell) {
     }
     // The shell owns the repaint for shell-routed focus: it folds this
     // declaration into the single update it already schedules.
-    return { changed: true, regions: ['details'], recommendationRelevant: false };
+    return { handled: true, dirty: ['details'], structural: false, recommendationRelevant: false };
   }
 
   async onItemCommitted(id, shell) {
@@ -391,7 +391,7 @@ async onStepExit(shell) {
       pendingContext: pendingBackgroundContext
     });
 
-    shell.requestRender({ preserveScroll: true, reason: 'background-step:pendingBackgroundRefs' });
+    return { handled: true, dirty: [], structural: true, recommendationRelevant: true };
   }
 
   // ---------------------------------------------------------------------------
@@ -538,8 +538,8 @@ getUtilityBarConfig() {
       }, async (selected) => {
         const id = selected?.id || selected?._id || selected?.backgroundId;
         if (!id) return;
-        await this.onItemCommitted(id, shell);
-        shell.requestRender({ preserveScroll: true, reason: 'background-step:onAskMentor' });
+        // One canonical commit through the shell, which owns the repaint.
+        await shell.commitSuggestionFromMentor({ stepId: 'background', itemId: id, source: 'ask-mentor' });
       });
     } else {
       // Fallback to standard guidance if no suggestions

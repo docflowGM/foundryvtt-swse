@@ -230,7 +230,7 @@ export class ConfirmStep extends ProgressionStepPlugin {
     shell.focusedItem = { sectionId: summaryId, type: 'summary-section' };
     // The shell owns the repaint for shell-routed focus: it folds this
     // declaration into the single update it already schedules.
-    return { changed: true, regions: ['details'], recommendationRelevant: false };
+    return { handled: true, dirty: ['details'], structural: false, recommendationRelevant: false };
   }
 
   async onItemHovered(summaryId, shell) {

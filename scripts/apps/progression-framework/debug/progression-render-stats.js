@@ -111,6 +111,7 @@ export function mentorRecommendationStats({ reset = false, quiet = false } = {})
     console.log('displayed             :', stats.recommendationsDisplayed);
     console.log('mentor DOM updates    :', stats.mentorDomUpdates);
     console.log('full renders by mentor:', stats.fullShellRendersCausedByMentor);
+    console.log('direct bypasses       :', stats.directBypassCount);
     console.groupEnd();
   }
 
@@ -126,6 +127,7 @@ export function mentorRecommendationStats({ reset = false, quiet = false } = {})
  *   mentor.fullShellRendersCausedByMentor === 0
  *   mentor.directBypassCount              === 0
  *   translator.supersededFramesAfterAbort === 0
+ *   shell.forbiddenRegionRequests         === 0
  *
  * @returns {Object|null}
  */
@@ -155,6 +157,7 @@ export function progressionMentorAudit({ quiet = false } = {}) {
       duplicateRenderRequestsCoalesced: scheduler.coalesced ?? 0,
       skippedIdenticalRenders: scheduler.skippedIdentical ?? 0,
       maxUpdatesPerInteraction: scheduler.maxUpdatesPerInteraction ?? 0,
+      forbiddenRegionRequests: scheduler.forbiddenRegionRequests ?? 0,
       onDataReadyCalls: shell._onDataReadyCalls ?? 0,
     },
     mentor: {
@@ -168,9 +171,14 @@ export function progressionMentorAudit({ quiet = false } = {}) {
       unchangedMessagesSkipped: mentor.unchangedRecommendationsSkipped ?? 0,
       recommendationsDisplayed: mentor.recommendationsDisplayed ?? 0,
       mentorDomUpdates: mentor.mentorDomUpdates ?? 0,
-      // Structurally zero: mentor code has no render seam to reach.
-      directBypassCount: 0,
+      // Measured, not asserted. MentorRail counts every message that reaches its
+      // sink without the arbiter's token; the shell counts every repaint
+      // requested while mentor presentation is on the stack. Both are expected
+      // to stay at zero, and both can now actually move if they don't.
+      directBypassCount: mentor.directBypassCount ?? 0,
       fullShellRendersCausedByMentor: mentor.fullShellRendersCausedByMentor ?? 0,
+      reconnectReplays: mentor.reconnectReplays ?? 0,
+      reconnectsSkipped: mentor.reconnectsSkipped ?? 0,
       lastTrace: mentor.lastTrace ?? null,
     },
     suggestion: {
@@ -193,6 +201,7 @@ export function progressionMentorAudit({ quiet = false } = {}) {
     const failures = [];
     if (snapshot.mentor.fullShellRendersCausedByMentor !== 0) failures.push('fullShellRendersCausedByMentor');
     if (snapshot.mentor.directBypassCount !== 0) failures.push('directBypassCount');
+    if (snapshot.shell.forbiddenRegionRequests) failures.push('forbiddenRegionRequests');
     if (snapshot.translator.supersededFramesAfterAbort) failures.push('supersededFramesAfterAbort');
 
     console.group('[SWSE] Progression + mentor audit');

@@ -48,7 +48,7 @@ async function advanceFrame() {
   await new Promise(resolve => setTimeout(resolve, 0));
 }
 
-const { ProgressionRenderScheduler, RENDER_REGIONS } = await import(
+const { ProgressionRenderScheduler, RENDER_REGIONS, INDEPENDENT_REGIONS, FORBIDDEN_REGIONS } = await import(
   '/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/progression-render-scheduler.js'
 );
 
@@ -72,9 +72,37 @@ const regionUpdates = (host) => host.jobs.filter(job => !job.structural);
  * Scope vocabulary
  * ------------------------------------------------------------------ */
 {
-  for (const region of ['mentor', 'details', 'work-surface', 'summary', 'utility', 'footer', 'progress', 'structural']) {
+  for (const region of ['details', 'work-surface', 'summary', 'utility', 'footer', 'progress', 'structural']) {
     assert.ok(RENDER_REGIONS.has(region), `missing render scope: ${region}`);
   }
+
+  // 'mentor' is not a scope. It used to be, and because the shell had no seam
+  // for it, every mentor-scoped request fell through to a structural repaint —
+  // the exact "mentor dialogue repaints the shell" behaviour the split exists to
+  // prevent.
+  assert.ok(!RENDER_REGIONS.has('mentor'), 'mentor is still a valid render region');
+  assert.ok(FORBIDDEN_REGIONS.has('mentor'), 'mentor is not marked forbidden');
+  assert.ok(INDEPENDENT_REGIONS.has('details'), 'details lost its independent seam');
+  assert.ok(!INDEPENDENT_REGIONS.has('footer'), 'footer claims a seam the shell does not implement');
+}
+
+/* ------------------------------------------------------------------ *
+ * A mentor-region request produces zero renders of any kind.
+ * ------------------------------------------------------------------ */
+{
+  const host = makeHost();
+  await host.scheduler.request({ reason: 'mentor-dialogue', regions: ['mentor'] });
+  await advanceFrame();
+
+  assert.equal(host.jobs.length, 0, 'a mentor-region request reached the render executor');
+  assert.equal(fullRenders(host), 0, 'a mentor-region request caused a structural repaint');
+  assert.equal(host.scheduler.stats().forbiddenRegionRequests, 1, 'the violation was not counted');
+
+  // Strict mode turns it into a hard failure instead of a warning.
+  const strict = makeHost();
+  strict.isStrictMode = () => true;
+  assert.throws(() => strict.scheduler.request({ reason: 'mentor-dialogue', regions: ['mentor'] }),
+    /not a shell render region/);
 }
 
 /* ------------------------------------------------------------------ *
@@ -343,8 +371,14 @@ const regionUpdates = (host) => host.jobs.filter(job => !job.structural);
     );
     assert.match(
       body,
-      /return \{ changed: true, regions: \['details'\], recommendationRelevant: false \};/,
-      `${step}.onItemFocused must declare its dirty region`
+      /return \{ handled: true, dirty: \['details'\], structural: false, recommendationRelevant: false \};/,
+      `${step}.onItemFocused must declare its dirty region in the canonical shape`
+    );
+    // `regions:`/`changed:` was the pre-migration spelling. The normalizer still
+    // reads it so nothing breaks mid-migration, but no in-tree plugin may use it.
+    assert.ok(
+      !/return \{[^}]*\bregions:/.test(body),
+      `${step}.onItemFocused uses the legacy regions: key; the canonical field is dirty:`
     );
   }
 }
@@ -427,7 +461,7 @@ const regionUpdates = (host) => host.jobs.filter(job => !job.structural);
     !/regions: \['mentor'\]/.test(mentorRail),
     'mentor updates must be DOM-only, not region renders'
   );
-  assert.match(mentorRail, /presentRecommendation\(/, 'mentor rail is missing the presentation path');
+  assert.match(mentorRail, /presentMessage\(message\) \{/, 'mentor rail is missing the presentation sink');
   assert.match(mentorRail, /_applyIdentityToDom\(/, 'mentor identity changes are not DOM-only');
 
   // Reaction router re-checks its sequence token after every await.
@@ -472,7 +506,7 @@ const regionUpdates = (host) => host.jobs.filter(job => !job.structural);
   // Focus handlers in plugins are details-scoped.
   const classStep = read('scripts/apps/progression-framework/steps/class-step.js');
   const focusBody = classStep.slice(classStep.indexOf('async onItemFocused'));
-  assert.match(focusBody.slice(0, 600), /regions: \['details'\]/, 'class-step focus is not details-scoped');
+  assert.match(focusBody.slice(0, 600), /dirty: \['details'\]/, 'class-step focus is not details-scoped');
 }
 
 /* ------------------------------------------------------------------ *
@@ -490,6 +524,175 @@ const regionUpdates = (host) => host.jobs.filter(job => !job.structural);
   assert.ok(
     manifest.styles.indexOf(cssPath) > manifest.styles.indexOf('styles/progression-framework/progression-shell.css'),
     'mentor stability stylesheet must load after progression-shell.css to win the cascade'
+  );
+}
+
+/* ------------------------------------------------------------------ *
+ * Mixed-region jobs are preflighted, so no requested region is silently
+ * left stale.
+ *
+ * _executeScheduledRender used to fall back to a structural render only when
+ * *nothing* applied. For ['details', 'summary', 'footer'] that meant details
+ * repainted, the other two silently did not, and no fallback ran.
+ * ------------------------------------------------------------------ */
+{
+  // A shell-shaped executor with the real preflight logic, driven directly.
+  function makeShellExecutor({ failing = new Set() } = {}) {
+    const calls = { structural: 0, regions: [] };
+    const executor = async ({ regions, structural, force }) => {
+      if (structural) { calls.structural += 1; return 'structural'; }
+      const unsupported = regions.filter(region => !INDEPENDENT_REGIONS.has(region));
+      if (unsupported.length) { calls.structural += 1; return 'structural'; }
+      let applied = 0;
+      for (const region of regions) {
+        if (failing.has(region)) continue;
+        calls.regions.push(region);
+        applied += 1;
+      }
+      if (applied !== regions.length) { calls.structural += 1; return 'structural'; }
+      return 'scoped';
+    };
+    return { calls, executor };
+  }
+
+  // details only -> partial update, no structural repaint.
+  {
+    const { calls, executor } = makeShellExecutor();
+    assert.equal(await executor({ regions: ['details'], structural: false }), 'scoped');
+    assert.deepEqual(calls.regions, ['details']);
+    assert.equal(calls.structural, 0);
+  }
+
+  // details + unsupported footer -> ONE structural render, and details is not
+  // partially painted first.
+  {
+    const { calls, executor } = makeShellExecutor();
+    assert.equal(await executor({ regions: ['details', 'footer'], structural: false }), 'structural');
+    assert.equal(calls.structural, 1);
+    assert.deepEqual(calls.regions, [], 'details was painted before the fallback decision');
+  }
+
+  // unsupported region only -> one structural render.
+  {
+    const { calls, executor } = makeShellExecutor();
+    assert.equal(await executor({ regions: ['summary'], structural: false }), 'structural');
+    assert.equal(calls.structural, 1);
+  }
+
+  // An unknown region name is not treated as success.
+  {
+    const { calls, executor } = makeShellExecutor();
+    assert.equal(await executor({ regions: ['not-a-region'], structural: false }), 'structural');
+    assert.equal(calls.structural, 1);
+  }
+
+  // A runtime failure after preflight falls back safely.
+  {
+    const { calls, executor } = makeShellExecutor({ failing: new Set(['details']) });
+    assert.equal(await executor({ regions: ['details'], structural: false }), 'structural');
+    assert.equal(calls.structural, 1);
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ * Updates arriving during an active render are queued into ONE follow-up,
+ * never dropped and never recursive.
+ * ------------------------------------------------------------------ */
+{
+  // Mirrors ProgressionShell's guard + _queueFollowUpRender/_flushFollowUpRender.
+  const shell = {
+    _isRendering: false,
+    _followUpRenderQueued: false,
+    _followUpRenderReason: null,
+    followUps: [],
+    renders: 0,
+    _queueFollowUpRender(reason) {
+      if (this._followUpRenderQueued) return;
+      this._followUpRenderQueued = true;
+      this._followUpRenderReason = reason;
+    },
+    _flushFollowUpRender() {
+      if (!this._followUpRenderQueued) return;
+      this._followUpRenderQueued = false;
+      const reason = this._followUpRenderReason;
+      this._followUpRenderReason = null;
+      this.followUps.push(reason);
+    },
+    async render(duringRender = () => {}) {
+      if (this._isRendering) { this._queueFollowUpRender('render-during-render'); return this; }
+      this._isRendering = true;
+      this.renders += 1;
+      await duringRender();
+      this._isRendering = false;
+      this._flushFollowUpRender();
+      return this;
+    },
+  };
+
+  await shell.render(async () => {
+    // Three legitimate updates arrive mid-render.
+    await shell.render();
+    await shell.render();
+    await shell.render();
+  });
+
+  assert.equal(shell.renders, 1, 'a mid-render request recursed into a second render');
+  assert.equal(shell.followUps.length, 1, 'mid-render requests must coalesce into exactly one follow-up');
+  assert.notEqual(shell.followUps.length, 0, 'a mid-render request was silently dropped');
+
+  // A render callback that itself renders does not schedule endlessly.
+  shell.followUps.length = 0;
+  await shell.render(async () => { await shell.render(); });
+  assert.equal(shell.followUps.length, 1);
+}
+
+/* ------------------------------------------------------------------ *
+ * Single render ownership: plugin interaction callbacks describe, the shell
+ * paints.
+ * ------------------------------------------------------------------ */
+{
+  const read = (rel) => fs.readFileSync(path.join(ROOT, rel), 'utf8');
+  const stepsDir = path.join(ROOT, 'scripts/apps/progression-framework/steps');
+  const offenders = [];
+
+  for (const name of fs.readdirSync(stepsDir)) {
+    if (!name.endsWith('.js')) continue;
+    const src = fs.readFileSync(path.join(stepsDir, name), 'utf8');
+    for (const method of ['onItemFocused', 'onItemCommitted']) {
+      let index = src.indexOf(`async ${method}(`);
+      while (index !== -1) {
+        const body = src.slice(index, src.indexOf('\n  }', index));
+        if (/shell\??\.requestRender\(|shell\??\.render\(/.test(body)) {
+          offenders.push(`${name}.${method}`);
+        }
+        index = src.indexOf(`async ${method}(`, index + 1);
+      }
+    }
+  }
+
+  assert.deepEqual(offenders, [],
+    'shell-orchestrated callbacks must return dirty metadata instead of rendering:\n  ' + offenders.join('\n  '));
+
+  // commitSelection stands down when the shell owns the interaction.
+  const shellSrc = read('scripts/apps/progression-framework/shell/progression-shell.js');
+  assert.match(shellSrc, /isShellOwnedInteraction\(\)/, 'the shell-owned interaction bracket is missing');
+  assert.match(shellSrc, /if \(!this\.isShellOwnedInteraction\(\)\) \{\n\s+this\.requestRender\(\{ preserveScroll: true, reason: `commit-selection/,
+    'commitSelection still repaints unconditionally inside a shell-owned commit');
+
+  // Ask Mentor commits really focus the chosen item rather than no-opping.
+  // The comment may quote the old no-op (that is how the defect is documented);
+  // what must not exist is the statement itself.
+  const shellCode = shellSrc.split('\n').filter(line => !/^\s*(\*|\/\/)/.test(line)).join('\n');
+  assert.ok(
+    !shellCode.includes('this.focusedItem = this.focusedItem ?? null'),
+    'commitSuggestionFromMentor still contains the no-op focus assignment'
+  );
+  assert.match(shellSrc, /_focusItemWithoutRender\(plugin, itemId, source\)/,
+    'commitSuggestionFromMentor does not focus the chosen item');
+  const helper = shellSrc.slice(shellSrc.indexOf('async _focusItemWithoutRender'));
+  assert.ok(
+    !/requestRender\(/.test(helper.slice(0, 1600)),
+    'the mentor focus helper schedules a render of its own'
   );
 }
 

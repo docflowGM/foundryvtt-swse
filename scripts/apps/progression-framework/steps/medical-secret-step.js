@@ -136,7 +136,7 @@ export class MedicalSecretStep extends ProgressionStepPlugin {
     await handleAskMentor(shell.actor, 'medical-secrets', shell);
     // The shell owns the repaint for shell-routed focus: it folds this
     // declaration into the single update it already schedules.
-    return { changed: true, regions: ['details'], recommendationRelevant: false };
+    return { handled: true, dirty: ['details'], structural: false, recommendationRelevant: false };
   }
 
   async onItemCommitted(secretId, shell) {
@@ -168,7 +168,7 @@ export class MedicalSecretStep extends ProgressionStepPlugin {
 
     this._focusedSecretId = secretId;
     shell.focusedItem = secret;
-    shell.requestRender({ preserveScroll: true, reason: 'medical-secret-step:selected' });
+    return { handled: true, dirty: [], structural: true, recommendationRelevant: true };
   }
 
   renderWorkSurface(stepData) {

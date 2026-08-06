@@ -136,7 +136,7 @@ export class ForceRegimenStep extends ProgressionStepPlugin {
     shell.focusedItem = regimen;
     // The shell owns the repaint for shell-routed focus: it folds this
     // declaration into the single update it already schedules.
-    return { changed: true, regions: ['details'], recommendationRelevant: false };
+    return { handled: true, dirty: ['details'], structural: false, recommendationRelevant: false };
   }
 
   async onItemCommitted(regimenId, shell) {
@@ -156,7 +156,9 @@ export class ForceRegimenStep extends ProgressionStepPlugin {
     }
     this._focusedRegimenId = regimenId;
     shell.focusedItem = regimen;
-    shell.requestRender({ preserveScroll: true, reason: 'force-regimen-step:onItemCommitted' });
+    // The shell owns the repaint for this interaction; describing the scope
+    // here lets it fold this into the one update it already schedules.
+    return { handled: true, dirty: [], structural: true, recommendationRelevant: true };
   }
 
   renderWorkSurface(stepData) {

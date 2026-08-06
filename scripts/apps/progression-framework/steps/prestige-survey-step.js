@@ -504,7 +504,10 @@ export class PrestigeSurveyStep extends ProgressionStepPlugin {
     if (mentor) {
       const mentorKey = getMentorKey(this._selectedClass?.name);
       shell.mentorRail?.setMentor?.(mentorKey);
-      shell.mentor.currentDialogue = getTransitionIntroOverride(this._prestigeTransition, this._selectedClass?.name) || getMentorIntroText(mentor, this._selectedClass?.name);
+      shell.mentorRecommendations?.presentGuidance?.({
+        text: getTransitionIntroOverride(this._prestigeTransition, this._selectedClass?.name)
+          || getMentorIntroText(mentor, this._selectedClass?.name),
+      });
       shell.mentor.mood = 'focused';
       shell.mentor.mentorId = mentorKey;
       shell.mentor.name = mentor.name;

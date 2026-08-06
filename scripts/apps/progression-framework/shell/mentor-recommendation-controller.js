@@ -162,6 +162,37 @@ export function createMessageSignature(message) {
   });
 }
 
+/**
+ * What happened to a message handed to the arbiter.
+ *
+ * `present()` used to return a bare boolean, which conflated two very different
+ * outcomes: "arbitration rejected this" and "the rail is not mounted yet, so it
+ * is queued and will appear". Callers could not tell a discarded message from a
+ * deferred one, and the displayed counter counted both as failures.
+ * @readonly
+ */
+export const PRESENTATION = Object.freeze({
+  DISPLAYED: 'displayed',
+  QUEUED: 'queued',
+  REJECTED_STALE: 'rejected-stale',
+  REJECTED_PRIORITY: 'rejected-priority',
+  REJECTED_DUPLICATE: 'rejected-duplicate',
+  UNAVAILABLE: 'unavailable',
+});
+
+/** Outcomes where the message did reach the player, now or shortly. */
+const ACCEPTED = new Set([PRESENTATION.DISPLAYED, PRESENTATION.QUEUED]);
+
+/**
+ * Token proving a message came through this arbiter.
+ *
+ * MentorRail refuses — and counts — any message arriving at its sink without
+ * it. A string like `source: 'recommendation'` would be trivially forgeable by
+ * the very call sites this is meant to catch, so ownership is carried by an
+ * unexported symbol instead.
+ */
+export const ARBITER_TOKEN = Symbol('swse.mentor.arbitrated');
+
 export class MentorRecommendationController {
   /**
    * @param {Object} shell - ProgressionShell. Used only to read state and to
@@ -184,6 +215,12 @@ export class MentorRecommendationController {
 
     this._inFlightByContext = new Map();
 
+    // Depth rather than a boolean: presentation can nest through a queued replay.
+    this._presentDepth = 0;
+    // Monotonic id of the mounted mentor DOM node the rail last replayed onto,
+    // so a remount replays once and a repeated reconnect() does nothing.
+    this._replayedMountId = null;
+
     this._stats = {
       contextRequests: 0,
       deduplicatedRequests: 0,
@@ -193,6 +230,9 @@ export class MentorRecommendationController {
       recommendationsDisplayed: 0,
       mentorDomUpdates: 0,
       fullShellRendersCausedByMentor: 0,
+      directBypassCount: 0,
+      reconnectReplays: 0,
+      reconnectsSkipped: 0,
     };
     this._lastTrace = null;
   }
@@ -207,33 +247,46 @@ export class MentorRecommendationController {
    * @returns {Promise<void>}
    */
   async requestRecommendation(context) {
-    const revision = ++this.currentRevision;
     const contextSignature = createContextSignature(context);
+
+    // The revision is deliberately NOT advanced yet.
+    //
+    // It used to be bumped on entry, before the unchanged/in-flight checks. Two
+    // identical concurrent requests then raced: A started at revision 1, B bumped
+    // to 2 and returned early as a duplicate, and A's result was discarded as
+    // stale — so the evaluation ran and nothing was ever displayed. A revision is
+    // a statement that the context genuinely changed, so only a genuinely changed
+    // context may create one.
 
     // Nothing relevant to advice changed.
     if (contextSignature === this.lastContextSignature) {
       this._stats.deduplicatedRequests += 1;
-      this._trace({ revision, contextSignature, result: 'context-unchanged' });
-      return;
+      this._trace({ revision: this.currentRevision, contextSignature, result: 'context-unchanged' });
+      // Join the evaluation already running for this same context, if any, so
+      // callers still settle when it does.
+      return this._inFlightByContext.get(contextSignature)?.then(() => undefined, () => undefined);
     }
 
     // Steps without build advice are a no-op, not a generic fallback line.
     if (!context?.domain) {
       this.lastContextSignature = contextSignature;
-      this._trace({ revision, contextSignature, result: 'no-domain' });
+      this._trace({ revision: this.currentRevision, contextSignature, result: 'no-domain' });
       return;
     }
 
-    this.lastContextSignature = contextSignature;
-    this._stats.contextRequests += 1;
-
-    // Collapse identical concurrent work.
+    // Collapse identical concurrent work before minting a revision.
     const inFlight = this._inFlightByContext.get(contextSignature);
     if (inFlight) {
+      this.lastContextSignature = contextSignature;
       this._stats.deduplicatedRequests += 1;
-      this._trace({ revision, contextSignature, result: 'deduplicated' });
+      this._trace({ revision: this.currentRevision, contextSignature, result: 'deduplicated' });
       return inFlight.then(() => undefined, () => undefined);
     }
+
+    // Genuinely new context: now supersede whatever came before.
+    const revision = ++this.currentRevision;
+    this.lastContextSignature = contextSignature;
+    this._stats.contextRequests += 1;
 
     this._abortPending();
     const request = this._createRequest();
@@ -326,7 +379,7 @@ export class MentorRecommendationController {
    * @returns {boolean} true when the message reached the rail.
    */
   present(message) {
-    if (!message?.text) return false;
+    if (!message?.text) return PRESENTATION.UNAVAILABLE;
 
     const priority = message.priority ?? MESSAGE_PRIORITY[message.source] ?? 0;
     const revision = message.revision ?? this.currentRevision;
@@ -334,14 +387,14 @@ export class MentorRecommendationController {
     if (this._isStale({ ...message, revision })) {
       this._stats.staleResultsDiscarded += 1;
       this._trace({ result: 'discarded-stale', source: message.source, revision, stepId: message.stepId });
-      return false;
+      return PRESENTATION.REJECTED_STALE;
     }
 
     const signature = createMessageSignature(message);
     if (signature === this.activeSignature) {
       this._stats.unchangedRecommendationsSkipped += 1;
       this._trace({ result: 'discarded-unchanged', source: message.source });
-      return false;
+      return PRESENTATION.REJECTED_DUPLICATE;
     }
 
     // A less important message cannot displace a more important one unless it
@@ -351,7 +404,7 @@ export class MentorRecommendationController {
       && priority < this.activeMessage.priority
       && revision <= this.activeMessage.revision) {
       this._trace({ result: 'discarded-lower-priority', source: message.source, priority });
-      return false;
+      return PRESENTATION.REJECTED_PRIORITY;
     }
 
     // A temporary line (a focus or commit bark) borrows the rail; it must not
@@ -361,14 +414,67 @@ export class MentorRecommendationController {
       this.persistentRecommendation = { ...message, priority, revision };
     }
 
-    this.activeMessage = { ...message, priority, revision };
+    const accepted = { ...message, priority, revision };
+    this.activeMessage = accepted;
     this.activeSignature = signature;
 
-    const presented = this.shell?.mentorRail?.presentMessage?.(this.activeMessage);
-    if (presented !== false) this._stats.mentorDomUpdates += 1;
+    const outcome = this._writeToRail(accepted);
+    if (outcome === PRESENTATION.DISPLAYED) this._stats.mentorDomUpdates += 1;
 
-    this._trace({ result: 'presented', source: message.source, priority, revision });
-    return presented !== false;
+    this._trace({ result: outcome, source: message.source, priority, revision });
+    return outcome;
+  }
+
+  /**
+   * The only place that touches MentorRail's message sink.
+   *
+   * The arbitration token is attached here and nowhere else, so any other route
+   * into the rail is observable rather than merely discouraged. Presentation is
+   * also bracketed with an ownership flag: if mentor code manages to request a
+   * shell repaint while this is on the stack, the shell attributes that render
+   * to the mentor instead of leaving the counter at a hardcoded zero.
+   *
+   * @param {Object} accepted
+   * @returns {string} PRESENTATION outcome
+   * @private
+   */
+  _writeToRail(accepted) {
+    this._presentDepth += 1;
+    try {
+      const presented = this.shell?.mentorRail?.presentMessage?.({ ...accepted, [ARBITER_TOKEN]: true });
+      if (presented === undefined) return PRESENTATION.UNAVAILABLE;
+      // false means "rail not mounted; queued and replayed on mount", which is
+      // a deferral, not a rejection.
+      return presented === false ? PRESENTATION.QUEUED : PRESENTATION.DISPLAYED;
+    } finally {
+      this._presentDepth -= 1;
+    }
+  }
+
+  /** True while a mentor message is being written to the rail. */
+  isPresenting() {
+    return this._presentDepth > 0;
+  }
+
+  /**
+   * Record that a shell repaint was requested while the mentor held the stack.
+   * Called by ProgressionShell.requestRender(); expected never to fire.
+   * @param {string} reason
+   */
+  noteShellRenderAttempt(reason = 'unknown') {
+    this._stats.fullShellRendersCausedByMentor += 1;
+    this._trace({ result: 'mentor-caused-shell-render', reason });
+    SWSELogger.warn('[MentorRecommendation] mentor presentation requested a shell render', { reason });
+  }
+
+  /**
+   * Record a message that reached MentorRail without passing through here.
+   * Called by MentorRail itself; expected never to fire.
+   * @param {Object} info
+   */
+  noteDirectBypass(info = {}) {
+    this._stats.directBypassCount += 1;
+    this._trace({ result: 'direct-bypass', ...info });
   }
 
   /**
@@ -403,16 +509,15 @@ export class MentorRecommendationController {
       return;
     }
 
-    this.lastRecommendationSignature = signature;
     this.currentRecommendation = recommendation;
 
     if (!recommendation) {
+      this.lastRecommendationSignature = signature;
       this._trace({ ...trace, result: 'cleared' });
-      return;
+      return PRESENTATION.UNAVAILABLE;
     }
 
-    this._stats.recommendationsDisplayed += 1;
-    this.present({
+    const outcome = this.present({
       source: 'recommendation',
       text: recommendation.dialogue,
       mood: recommendation.mood ?? 'neutral',
@@ -420,7 +525,48 @@ export class MentorRecommendationController {
       revision: trace.revision ?? this.currentRevision,
     });
 
-    this._trace({ ...trace, result: 'displayed', winner: recommendation.targetId ?? recommendation.id });
+    // Only what the player actually got counts, and only what is actually on
+    // screen may claim the equality signature. Setting either before asking the
+    // arbiter meant a recommendation rejected behind an Ask Mentor line was
+    // counted as displayed AND suppressed itself forever after.
+    if (ACCEPTED.has(outcome)) {
+      this.lastRecommendationSignature = signature;
+      this._stats.recommendationsDisplayed += 1;
+      this._trace({ ...trace, result: outcome, winner: recommendation.targetId ?? recommendation.id });
+      return outcome;
+    }
+
+    // Rejected behind a higher-priority temporary message. The advice itself is
+    // still valid and stays available as the persistent candidate, so it can be
+    // restored later without re-evaluating anything.
+    this.persistentRecommendation = {
+      source: 'recommendation',
+      priority: MESSAGE_PRIORITY.recommendation,
+      revision: trace.revision ?? this.currentRevision,
+      text: recommendation.dialogue,
+      mood: recommendation.mood ?? 'neutral',
+      targetId: recommendation.targetId ?? recommendation.id ?? null,
+    };
+    this._trace({ ...trace, result: outcome });
+    return outcome;
+  }
+
+  /**
+   * Put the persistent build recommendation back on the rail after a temporary
+   * message (a bark, an Ask Mentor line) has had its turn.
+   *
+   * Never evaluates: it replays advice that was already computed.
+   * @returns {string} PRESENTATION outcome
+   */
+  restorePersistentRecommendation() {
+    const candidate = this.persistentRecommendation;
+    if (!candidate?.text) return PRESENTATION.UNAVAILABLE;
+
+    this.activeMessage = null;
+    this.activeSignature = null;
+    const outcome = this.present({ ...candidate, revision: this.currentRevision });
+    if (ACCEPTED.has(outcome)) this._stats.recommendationsDisplayed += 1;
+    return outcome;
   }
 
   /**
@@ -518,23 +664,75 @@ export class MentorRecommendationController {
 
   /**
    * Re-attach after a legitimate structural render replaced the mentor rail.
-   * Presents the current recommendation once; never starts a new evaluation,
-   * so a render can never feed back into more work.
+   *
+   * Restores whatever legitimately owned the rail before the remount — the
+   * accepted active message if it is still current, otherwise the persistent
+   * recommendation — and does so at most once per mounted node. The old version
+   * called `mentorRail.presentRecommendation(..., { replay: true })` directly,
+   * which bypassed arbitration entirely: every reconnect restarted the
+   * typewriter, and a structural render during an Ask Mentor line silently
+   * replaced it with the lower-priority recommendation.
+   *
+   * Never evaluates suggestions, so a render can never feed back into more work.
+   *
+   * @returns {string} PRESENTATION outcome
    */
   reconnect() {
-    if (!this.currentRecommendation) return;
-    // The rail node was destroyed by a structural render, so what is on screen
-    // is nothing. Clear the arbiter's signature or the replay would be dropped
-    // as "unchanged" against a message that no longer exists in the DOM.
+    const mountId = this._currentMountId();
+    if (mountId !== null && mountId === this._replayedMountId) {
+      this._stats.reconnectsSkipped += 1;
+      this._trace({ result: 'reconnect-already-replayed' });
+      return PRESENTATION.REJECTED_DUPLICATE;
+    }
+
+    // Prefer the message that was actually on screen; fall back to the advice
+    // it was covering. Both go back through the arbiter, so a stale message for
+    // a step the player has left is dropped rather than restored.
+    const candidate = this.activeMessage ?? this.persistentRecommendation;
+    if (!candidate?.text) {
+      this._trace({ result: 'reconnect-nothing-to-restore' });
+      return PRESENTATION.UNAVAILABLE;
+    }
+
+    // The rail node was destroyed, so nothing is on screen: clear the equality
+    // signature or the replay would be dropped as "unchanged" against a message
+    // that no longer exists in the DOM.
     this.activeSignature = null;
-    const presented = this.shell?.mentorRail?.presentRecommendation?.(this.currentRecommendation, { replay: true });
-    if (presented !== false) this._stats.mentorDomUpdates += 1;
-    this._trace({ result: 'reconnected' });
+    this.activeMessage = null;
+
+    const outcome = this.present({ ...candidate, revision: this.currentRevision });
+    if (ACCEPTED.has(outcome)) {
+      this._replayedMountId = mountId;
+      this._stats.reconnectReplays += 1;
+    }
+    this._trace({ result: `reconnect:${outcome}`, source: candidate.source });
+    return outcome;
+  }
+
+  /**
+   * Identity of the currently mounted mentor dialogue node.
+   *
+   * A replay is "once per new DOM node", not "once per call", so the node itself
+   * carries the marker. Returns null when nothing is mounted, which keeps the
+   * pre-mount queueing path working.
+   * @returns {number|null}
+   * @private
+   */
+  _currentMountId() {
+    const node = this.shell?.mentorRail?._resolveDialogueContainer?.();
+    if (!node) return null;
+    if (!node.__swseMentorMountId) {
+      MentorRecommendationController._mountSeq = (MentorRecommendationController._mountSeq ?? 0) + 1;
+      node.__swseMentorMountId = MentorRecommendationController._mountSeq;
+    }
+    return node.__swseMentorMountId;
   }
 
   /** Drop cached state when the step or actor changes materially. */
   reset() {
     this._abortPending();
+    this._replayedMountId = null;
+    this.persistentRecommendation = null;
     this.lastContextSignature = null;
     this.lastRecommendationSignature = null;
     this.currentRecommendation = null;
@@ -586,6 +784,9 @@ export class MentorRecommendationController {
     for (const key of Object.keys(this._stats)) this._stats[key] = 0;
     this._lastTrace = null;
   }
+
+  /** Monotonic source for mentor DOM mount ids. @private */
+  static _mountSeq = 0;
 }
 
 export default MentorRecommendationController;

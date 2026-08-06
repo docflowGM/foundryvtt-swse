@@ -450,7 +450,7 @@ export class ClassStep extends ProgressionStepPlugin {
     // Keep this silent to avoid double-speaking and focus lag.
     // The shell owns the repaint for shell-routed focus: it folds this
     // declaration into the single update it already schedules.
-    return { changed: true, regions: ['details'], recommendationRelevant: false };
+    return { handled: true, dirty: ['details'], structural: false, recommendationRelevant: false };
   }
 
   async onItemCommitted(id, shell) {
@@ -466,8 +466,7 @@ export class ClassStep extends ProgressionStepPlugin {
       });
       this._focusedClassId = id;
       shell.focusedItem = entry;
-      shell.requestRender({ preserveScroll: true, reason: 'class-step:entry' });
-      return;
+      return { handled: true, dirty: [], structural: true, recommendationRelevant: true };
     }
 
     // Load full class data from ClassesRegistry; Nonheroic is synthetic and may
@@ -532,7 +531,10 @@ export class ClassStep extends ProgressionStepPlugin {
         fallback: false,
       }, { force: true });
       shell.mentorRail?.setMentor?.(mentorKey);
-      shell.mentor.currentDialogue = getMentorIntroText(resolvedMentor, entry.name);
+      shell.mentorRecommendations?.presentGuidance?.({
+        text: getMentorIntroText(resolvedMentor, entry.name),
+        stepId: 'class',
+      });
       shell.mentor.mood = 'encouraging';
       shell.mentor.mentorId = mentorKey;
       shell.mentor.name = resolvedMentor.name || mentor.name;
@@ -542,7 +544,7 @@ export class ClassStep extends ProgressionStepPlugin {
 
     this._focusedClassId = id;
     shell.focusedItem = entry;
-    shell.requestRender({ preserveScroll: true, reason: 'class-step:entry' });
+    return { handled: true, dirty: [], structural: true, recommendationRelevant: true };
   }
 
   // ---------------------------------------------------------------------------

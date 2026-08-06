@@ -25,10 +25,16 @@
 
 /**
  * Canonical update scopes. `structural` is the full-shell repaint.
+ *
+ * `mentor` is deliberately NOT a region. The mentor rail is written straight to
+ * the DOM by MentorRail and owns no render seam, so a mentor-scoped request had
+ * nowhere to land — it fell through to a structural repaint, which is precisely
+ * the "mentor dialogue repaints the shell" behaviour this work exists to stop.
+ * Requesting it is an ownership violation, handled in `request()`.
+ *
  * @type {ReadonlySet<string>}
  */
 export const RENDER_REGIONS = Object.freeze(new Set([
-  'mentor',
   'details',
   'work-surface',
   'summary',
@@ -38,17 +44,30 @@ export const RENDER_REGIONS = Object.freeze(new Set([
   'structural',
 ]));
 
+/**
+ * Regions the shell can genuinely update on their own. Anything outside this
+ * set has no independent seam yet and must be satisfied structurally, decided
+ * up front rather than discovered halfway through a partial update.
+ * @type {ReadonlySet<string>}
+ */
+export const INDEPENDENT_REGIONS = Object.freeze(new Set(['details']));
+
+/** Regions that are never valid to request. Requesting one is a bug, not a repaint. */
+export const FORBIDDEN_REGIONS = Object.freeze(new Set(['mentor']));
+
 const STRUCTURAL = 'structural';
 
 function normalizeRegions(regions) {
   const list = Array.isArray(regions) ? regions : (regions ? [regions] : []);
   const out = new Set();
+  const forbidden = [];
   for (const region of list) {
     const key = String(region ?? '').trim().toLowerCase();
     if (!key) continue;
+    if (FORBIDDEN_REGIONS.has(key)) { forbidden.push(key); continue; }
     out.add(RENDER_REGIONS.has(key) ? key : STRUCTURAL);
   }
-  return out;
+  return { regions: out, forbidden };
 }
 
 export class ProgressionRenderScheduler {
@@ -81,6 +100,7 @@ export class ProgressionRenderScheduler {
       maxUpdatesPerInteraction: 0,
       lastDurationMs: 0,
       totalDurationMs: 0,
+      forbiddenRegionRequests: 0,
     };
     this._interactionUpdateCount = 0;
     this._log = [];
@@ -133,11 +153,26 @@ export class ProgressionRenderScheduler {
     force = false,
     dedupe = false,
   } = {}) {
+    const { regions: requested, forbidden } = normalizeRegions(regions);
+
+    // A forbidden region has no seam to paint. Falling through to structural is
+    // what let mentor dialogue repaint the whole shell, so this is reported as
+    // the ownership violation it is and the request is dropped, not upgraded.
+    if (forbidden.length) {
+      this._stats.forbiddenRegionRequests += forbidden.length;
+      this._record({ reason, outcome: 'forbidden-region', regions: forbidden, structural: false });
+      const message = `[ProgressionRenderScheduler] "${forbidden.join(', ')}" is not a shell render region — `
+        + 'that surface owns its own DOM. Requesting it would force a structural repaint.';
+      if (this.host.isStrictMode?.()) throw new Error(message);
+      // eslint-disable-next-line no-console
+      console.warn(message, { reason });
+      if (requested.size === 0 && !structural) return Promise.resolve(undefined);
+    }
+
     this._stats.requested += 1;
     this._stats.reasons[reason] = (this._stats.reasons[reason] || 0) + 1;
     this._revision += 1;
 
-    const requested = normalizeRegions(regions);
     // No declared regions means the caller does not know what changed, so the
     // only safe interpretation is a full repaint.
     const isStructural = structural || requested.size === 0 || requested.has(STRUCTURAL);
@@ -331,6 +366,7 @@ export class ProgressionRenderScheduler {
       executed: this._stats.executed,
       coalesced: this._stats.coalesced,
       skippedIdentical: this._stats.skippedIdentical,
+      forbiddenRegionRequests: this._stats.forbiddenRegionRequests,
       reasons: { ...this._stats.reasons },
       maxUpdatesPerInteraction: Math.max(this._stats.maxUpdatesPerInteraction, this._interactionUpdateCount),
       lastDurationMs: Math.round(this._stats.lastDurationMs * 100) / 100,
@@ -355,6 +391,7 @@ export class ProgressionRenderScheduler {
       maxUpdatesPerInteraction: 0,
       lastDurationMs: 0,
       totalDurationMs: 0,
+      forbiddenRegionRequests: 0,
     };
     this._interactionUpdateCount = 0;
     this._log = [];

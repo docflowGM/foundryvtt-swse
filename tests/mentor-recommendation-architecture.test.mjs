@@ -47,6 +47,8 @@ const {
   buildMentorContext,
   createContextSignature,
   createRecommendationSignature,
+  PRESENTATION,
+  ARBITER_TOKEN,
 } = await import(
   '/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/mentor-recommendation-controller.js'
 );
@@ -60,13 +62,19 @@ const { SuggestionService } = await import(
  * write and presentRecommendation delegates to it, so the tests exercise the
  * same path production does.
  */
-function makeRail() {
+function makeRail(shellRef = null) {
   const calls = [];
   const rail = {
     calls,
+    mounted: true,
+    shell: shellRef,
+    // Mirrors MentorRail: an unarbitrated message is counted, not trusted.
     presentMessage(message) {
+      if (message?.[ARBITER_TOKEN] !== true) {
+        rail.shell?.mentorRecommendations?.noteDirectBypass?.({ source: message?.source ?? 'unknown' });
+      }
       calls.push(message);
-      return true;
+      return rail.mounted;
     },
     presentRecommendation(recommendation, { replay = false } = {}) {
       return rail.presentMessage({
@@ -104,6 +112,9 @@ function makeShell({ draftSelections = {}, stepId = 'general-feat' } = {}) {
     requestRenderCalls,
   };
   shell.controller = new MentorRecommendationController(shell);
+  // The rail reaches the controller the same way production does.
+  shell.mentorRecommendations = shell.controller;
+  shell.mentorRail.shell = shell;
   return shell;
 }
 
@@ -360,26 +371,65 @@ const rec = (targetId, dialogue = `${targetId} suits this build.`) => Object.fre
 }
 
 /* ------------------------------------------------------------------ *
- * 10. Step remount — reconnect presents once and starts no new work.
+ * 10. Step remount — reconnect restores once per mounted node, through the
+ *     arbiter, and starts no new work.
+ *
+ * The previous version of this test asserted three rail writes after two
+ * reconnects, which encoded the defect: reconnect() called the rail directly and
+ * replayed on every call, restarting the typewriter each time.
  * ------------------------------------------------------------------ */
 {
   const shell = makeShell();
   let evaluations = 0;
+
+  // A mounted node whose identity the controller can pin the replay to.
+  let node = {};
+  shell.mentorRail._resolveDialogueContainer = () => node;
 
   await withStubbedService(async () => { evaluations += 1; return rec('force-training'); }, async () => {
     await shell.controller.requestRecommendation(buildMentorContext(shell));
     assert.equal(shell.mentorRail.calls.length, 1);
 
     // A legitimate structural render replaced the rail node.
-    shell.controller.reconnect();
-    shell.controller.reconnect();
+    node = {};
+    assert.equal(shell.controller.reconnect(), PRESENTATION.DISPLAYED);
+    // Calling it again against the SAME node must not touch the DOM.
+    assert.equal(shell.controller.reconnect(), PRESENTATION.REJECTED_DUPLICATE);
   });
 
   assert.equal(evaluations, 1, 'reconnect started a new evaluation (render feedback loop)');
-  assert.equal(shell.mentorRail.calls.length, 3, 'reconnect did not re-present the current recommendation');
-  assert.equal(shell.mentorRail.calls[1].source, 'recommendation-replay');
+  assert.equal(shell.mentorRail.calls.length, 2, 'reconnect must replay exactly once per new mount');
+  assert.equal(shell.controller.stats().reconnectsSkipped, 1);
   assert.equal(shell.renderCalls.length, 0);
   assert.equal(shell.requestRenderCalls.length, 0);
+  // The replay went through the arbiter, so it carries the ownership token.
+  assert.equal(shell.mentorRail.calls[1][ARBITER_TOKEN], true);
+  assert.equal(shell.controller.stats().directBypassCount, 0);
+}
+
+/* ------------------------------------------------------------------ *
+ * 10b. Reconnect preserves the higher-priority message that owned the rail.
+ *
+ * A structural render must not silently demote a live Ask Mentor line back to
+ * the build recommendation underneath it.
+ * ------------------------------------------------------------------ */
+{
+  const shell = makeShell();
+  let node = {};
+  shell.mentorRail._resolveDialogueContainer = () => node;
+  const c = shell.controller;
+
+  await withStubbedService(async () => rec('force-training'), async () => {
+    await c.requestRecommendation(buildMentorContext(shell));
+  });
+  assert.equal(c.present({ source: 'askMentor', text: 'Here are your options.' }), PRESENTATION.DISPLAYED);
+
+  node = {};
+  assert.equal(c.reconnect(), PRESENTATION.DISPLAYED);
+
+  const restored = shell.mentorRail.calls.at(-1);
+  assert.equal(restored.source, 'askMentor', 'reconnect replaced Ask Mentor with the recommendation');
+  assert.equal(restored.text, 'Here are your options.');
 }
 
 /* ------------------------------------------------------------------ *
@@ -420,28 +470,32 @@ const rec = (targetId, dialogue = `${targetId} suits this build.`) => Object.fre
   const c = shell.controller;
 
   // A recommendation is showing.
-  assert.equal(c.present({ source: 'recommendation', text: 'Exceptional Skill fits.', mood: 'encouraging' }), true);
+  assert.equal(c.present({ source: 'recommendation', text: 'Exceptional Skill fits.', mood: 'encouraging' }), PRESENTATION.DISPLAYED);
   assert.equal(shell.mentorRail.calls.length, 1);
 
-  // A lower-priority focus bark from the same context cannot displace it.
-  assert.equal(c.present({ source: 'focusReaction', text: 'Hmm.' }), false);
+  // A lower-priority focus bark from the same context cannot displace it, and
+  // the reason it lost is reported rather than folded into a bare false.
+  assert.equal(c.present({ source: 'focusReaction', text: 'Hmm.' }), PRESENTATION.REJECTED_PRIORITY);
   assert.equal(shell.mentorRail.calls.length, 1);
 
   // The identical message is dropped, so nothing re-animates.
-  assert.equal(c.present({ source: 'recommendation', text: 'Exceptional Skill fits.', mood: 'encouraging' }), false);
+  assert.equal(
+    c.present({ source: 'recommendation', text: 'Exceptional Skill fits.', mood: 'encouraging' }),
+    PRESENTATION.REJECTED_DUPLICATE
+  );
   assert.equal(shell.mentorRail.calls.length, 1);
 
   // Ask Mentor outranks everything and gets through.
-  assert.equal(c.present({ source: 'askMentor', text: 'Here are your options.' }), true);
+  assert.equal(c.present({ source: 'askMentor', text: 'Here are your options.' }), PRESENTATION.DISPLAYED);
   assert.equal(shell.mentorRail.calls.length, 2);
 
   // A newer context lets a lower-priority message back in.
   c.currentRevision += 1;
-  assert.equal(c.present({ source: 'commitReaction', text: 'An unconventional choice.' }), true);
+  assert.equal(c.present({ source: 'commitReaction', text: 'An unconventional choice.' }), PRESENTATION.DISPLAYED);
   assert.equal(shell.mentorRail.calls.length, 3);
 
   // A message older than the current revision is discarded outright.
-  assert.equal(c.present({ source: 'recommendation', text: 'Stale advice.', revision: 0 }), false);
+  assert.equal(c.present({ source: 'recommendation', text: 'Stale advice.', revision: 0 }), PRESENTATION.REJECTED_STALE);
   assert.equal(shell.mentorRail.calls.length, 3);
 
   assert.ok(MESSAGE_PRIORITY.askMentor > MESSAGE_PRIORITY.recommendation);
@@ -678,7 +732,7 @@ const rec = (targetId, dialogue = `${targetId} suits this build.`) => Object.fre
   const shell = makeShell({ stepId: 'general-feat' });
   const c = shell.controller;
 
-  assert.equal(c.presentStepGuidance({ text: 'Pick a feat.', stepId: 'general-feat' }), true);
+  assert.equal(c.presentStepGuidance({ text: 'Pick a feat.', stepId: 'general-feat' }), PRESENTATION.DISPLAYED);
   assert.equal(shell.mentorRail.calls.length, 1);
 
   // The player moves on; a late message for the previous step must not speak,
@@ -686,12 +740,12 @@ const rec = (targetId, dialogue = `${targetId} suits this build.`) => Object.fre
   shell.steps = [{ stepId: 'general-talent' }];
   shell.progressionSession.currentStepId = 'general-talent';
 
-  assert.equal(c.presentStepGuidance({ text: 'Late guidance for the old step.', stepId: 'general-feat' }), false);
-  assert.equal(c.presentAskMentor({ text: 'Late Ask Mentor for the old step.', stepId: 'general-feat' }), false);
+  assert.notEqual(c.presentStepGuidance({ text: 'Late guidance for the old step.', stepId: 'general-feat' }), PRESENTATION.DISPLAYED);
+  assert.notEqual(c.presentAskMentor({ text: 'Late Ask Mentor for the old step.', stepId: 'general-feat' }), PRESENTATION.DISPLAYED);
   assert.equal(shell.mentorRail.calls.length, 1, 'a message from the previous step spoke');
 
   // The new step can speak.
-  assert.equal(c.presentStepGuidance({ text: 'Pick a talent.', stepId: 'general-talent' }), true);
+  assert.equal(c.presentStepGuidance({ text: 'Pick a talent.', stepId: 'general-talent' }), PRESENTATION.DISPLAYED);
   assert.equal(shell.mentorRail.calls.length, 2);
 }
 
@@ -710,9 +764,7 @@ const rec = (targetId, dialogue = `${targetId} suits this build.`) => Object.fre
   assert.equal(shell.mentorRail.calls.length, 1);
 
   // The slow guidance now resolves — lower priority, same revision.
-  assert.equal(
-    c.presentStepGuidance({ text: 'Choose a feat that fits your build.', stepId: 'general-feat', revision }),
-    false,
+  assert.notEqual(c.presentStepGuidance({ text: 'Choose a feat that fits your build.', stepId: 'general-feat', revision }), PRESENTATION.DISPLAYED,
     'delayed step guidance overwrote a live recommendation'
   );
   assert.equal(shell.mentorRail.calls.length, 1);
@@ -720,7 +772,7 @@ const rec = (targetId, dialogue = `${targetId} suits this build.`) => Object.fre
   // Ask Mentor outranks the recommendation at the same revision.
   assert.equal(
     c.presentAskMentor({ text: 'Here are your strongest options.', stepId: 'general-feat', revision }),
-    true
+    PRESENTATION.DISPLAYED
   );
   assert.equal(shell.mentorRail.calls.length, 2);
 
@@ -728,7 +780,7 @@ const rec = (targetId, dialogue = `${targetId} suits this build.`) => Object.fre
   assert.equal(
     c.present({ source: 'recommendation', text: 'A different recommendation.',
                 stepId: 'general-feat', targetId: 'other', revision: revision - 1, temporary: false }),
-    false,
+    PRESENTATION.REJECTED_STALE,
     'a stale recommendation displaced an Ask Mentor message'
   );
   assert.equal(shell.mentorRail.calls.length, 2);
@@ -791,12 +843,23 @@ const rec = (targetId, dialogue = `${targetId} suits this build.`) => Object.fre
   for (const forbidden of ['shell.render(', 'this.render(', 'requestRender(']) {
     assert.ok(!rail.includes(forbidden), `MentorRail must not call ${forbidden}`);
   }
-  assert.match(rail, /presentRecommendation\(recommendation, \{ replay = false \} = \{\}\)/,
-    'MentorRail is missing the single presentation path');
+  assert.match(rail, /presentMessage\(message\) \{/, 'MentorRail is missing the single presentation sink');
+  // The sink proves ownership rather than trusting a source string.
+  assert.match(rail, /message\?\.\[ARBITER_TOKEN\] !== true/, 'MentorRail no longer checks the arbitration token');
+  assert.match(rail, /noteDirectBypass/, 'MentorRail no longer reports unarbitrated messages');
+  // Step guidance resolves text; it does not speak it.
+  assert.match(rail, /async resolveStepGuidance\(descriptor\)/, 'speakForStep was not converted to a resolver');
+  assert.ok(!rail.includes('async speakForStep('), 'speakForStep still exists as a message producer');
 
   const controller = read('scripts/apps/progression-framework/shell/mentor-recommendation-controller.js');
+  // Comments may *name* the render seam (that is how the ownership boundary is
+  // documented); what must not exist is a call to it.
+  const controllerCode = controller
+    .split('\n')
+    .filter(line => !/^\s*(\*|\/\/|\/\*)/.test(line))
+    .join('\n');
   for (const forbidden of ['shell.render(', 'requestRender(', '_prepareContext']) {
-    assert.ok(!controller.includes(forbidden), `MentorRecommendationController must not reference ${forbidden}`);
+    assert.ok(!controllerCode.includes(forbidden), `MentorRecommendationController must not call ${forbidden}`);
   }
   assert.match(controller, /revision !== this\.currentRevision/, 'revision guard is missing');
   assert.match(controller, /request !== this\.pendingRequest/, 'pending-request guard is missing');
@@ -809,8 +872,20 @@ const rec = (targetId, dialogue = `${targetId} suits this build.`) => Object.fre
   assert.ok(triggers.length >= 2, 'expected step-entry and commit triggers');
   for (const trigger of triggers) {
     assert.ok(
-      /^(commit|step-enter)/.test(trigger),
+      /^(commit|step-enter|focus)/.test(trigger),
       `recommendations may only be requested on meaningful changes, found: ${trigger}`
+    );
+  }
+  // Focus is only allowed to trigger evaluation when the plugin explicitly says
+  // its focus changed the advice inputs. An unguarded focus trigger is the
+  // render-storm-era behaviour and must not come back.
+  const focusTrigger = shellSrc.indexOf("this.requestMentorRecommendation(`focus:");
+  if (focusTrigger !== -1) {
+    const guardWindow = shellSrc.slice(Math.max(0, focusTrigger - 200), focusTrigger);
+    assert.match(
+      guardWindow,
+      /if \(declared\.recommendationRelevant\)/,
+      'focus requests build advice without the recommendationRelevant guard'
     );
   }
 
@@ -818,12 +893,186 @@ const rec = (targetId, dialogue = `${targetId} suits this build.`) => Object.fre
   assert.ok(!shellSrc.includes('_updateMentorRegion'), 'a mentor render seam still exists');
   assert.ok(!shellSrc.includes("regions: ['mentor']"), 'something still requests a mentor region render');
 
-  // Focus must not request build advice.
+  // 'mentor' is not a render region at all, so a request for it can never be
+  // silently upgraded into a structural repaint.
+  const scheduler = read('scripts/apps/progression-framework/shell/progression-render-scheduler.js');
+  assert.match(scheduler, /FORBIDDEN_REGIONS = Object\.freeze\(new Set\(\['mentor'\]\)\)/);
+  const regionSet = scheduler.slice(scheduler.indexOf('RENDER_REGIONS = Object.freeze'), scheduler.indexOf('INDEPENDENT_REGIONS'));
+  assert.ok(!regionSet.includes("'mentor'"), 'mentor is still a valid render region');
+
+  // Focus must not request build advice unconditionally — only behind the
+  // plugin's explicit recommendationRelevant opt-in, checked above.
   const focusBlock = shellSrc.slice(shellSrc.indexOf('async _onFocusItem'), shellSrc.indexOf('async _onCommitItem'));
-  assert.ok(
-    !focusBlock.includes('requestMentorRecommendation'),
-    'focus must not trigger build-recommendation work'
-  );
+  for (const [index, line] of focusBlock.split('\n').entries()) {
+    if (!line.includes('requestMentorRecommendation')) continue;
+    const guard = focusBlock.split('\n').slice(Math.max(0, index - 3), index + 1).join('\n');
+    assert.match(
+      guard,
+      /if \(declared\.recommendationRelevant\)/,
+      'focus triggers build-recommendation work without the recommendationRelevant guard'
+    );
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ * 21. Identical concurrent requests share one evaluation and display it.
+ *
+ * The revision used to be bumped on entry, before the duplicate check. Two
+ * identical requests then raced: A started at revision 1, B bumped to 2 and
+ * returned as a duplicate, and A's result was thrown away as stale — the
+ * evaluation ran and the player saw nothing.
+ * ------------------------------------------------------------------ */
+{
+  const shell = makeShell();
+  let evaluations = 0;
+  let release;
+  const gate = new Promise(resolve => { release = resolve; });
+
+  await withStubbedService(async () => { evaluations += 1; await gate; return rec('exceptional-skill'); }, async () => {
+    const context = buildMentorContext(shell);
+    const a = shell.controller.requestRecommendation(context);
+    const b = shell.controller.requestRecommendation(context);
+    release();
+    await Promise.all([a, b]);
+  });
+
+  assert.equal(evaluations, 1, 'identical concurrent requests evaluated twice');
+  assert.equal(shell.mentorRail.calls.length, 1, 'the joined evaluation was never displayed');
+  assert.equal(shell.controller.currentRecommendation.targetId, 'exceptional-skill');
+  assert.equal(shell.controller.stats().staleResultsDiscarded, 0,
+    'a duplicate request invalidated the evaluation it joined');
+}
+
+/* ------------------------------------------------------------------ *
+ * 22. A genuinely changed context still supersedes the earlier one, and a
+ *     failed evaluation releases its in-flight entry.
+ * ------------------------------------------------------------------ */
+{
+  const shell = makeShell();
+  let calls = 0;
+
+  await withStubbedService(async (context) => {
+    calls += 1;
+    return rec(context.availableIds?.[0] ?? `pick-${calls}`);
+  }, async () => {
+    await shell.controller.requestRecommendation(buildMentorContext(shell, { available: [{ id: 'a' }] }));
+    await shell.controller.requestRecommendation(buildMentorContext(shell, { available: [{ id: 'b' }] }));
+  });
+
+  assert.equal(calls, 2, 'a changed context reused the previous evaluation');
+  assert.equal(shell.controller.currentRecommendation.targetId, 'b');
+
+  // A rejected evaluation must not leave its context permanently "in flight".
+  const failing = makeShell();
+  await withStubbedService(async () => { throw new Error('service down'); }, async () => {
+    await failing.controller.requestRecommendation(buildMentorContext(failing, { available: [{ id: 'x' }] }));
+  });
+  assert.equal(failing.controller._inFlightByContext.size, 0, 'a failed request stranded its in-flight entry');
+}
+
+/* ------------------------------------------------------------------ *
+ * 23. A rejected recommendation is not counted as displayed, stays available,
+ *     and can be restored later without re-evaluating.
+ * ------------------------------------------------------------------ */
+{
+  const shell = makeShell();
+  const c = shell.controller;
+
+  assert.equal(c.presentAskMentor({ text: 'Here are your options.', stepId: 'general-feat' }), PRESENTATION.DISPLAYED);
+  const displayedAfterAsk = c.stats().recommendationsDisplayed;
+
+  // Same revision, lower priority: the player never sees this.
+  const outcome = c.applyRecommendation(rec('exceptional-skill'), { revision: c.currentRevision });
+  assert.equal(outcome, PRESENTATION.REJECTED_PRIORITY);
+  assert.equal(c.stats().recommendationsDisplayed, displayedAfterAsk,
+    'a recommendation the player never saw was counted as displayed');
+  assert.equal(shell.mentorRail.calls.length, 1);
+
+  // It is still the advice on file, so restoring it needs no evaluation.
+  assert.equal(c.persistentRecommendation?.targetId, 'exceptional-skill');
+  assert.equal(c.restorePersistentRecommendation(), PRESENTATION.DISPLAYED);
+  assert.equal(shell.mentorRail.calls.length, 2);
+  assert.equal(shell.mentorRail.calls[1].targetId, 'exceptional-skill');
+  assert.equal(c.stats().recommendationsDisplayed, displayedAfterAsk + 1);
+}
+
+/* ------------------------------------------------------------------ *
+ * 24. A queued pre-mount message is a deferral, not a rejection.
+ * ------------------------------------------------------------------ */
+{
+  const shell = makeShell();
+  shell.mentorRail.mounted = false;
+  const c = shell.controller;
+
+  const outcome = c.present({ source: 'recommendation', text: 'Pre-mount advice.', temporary: false });
+  assert.equal(outcome, PRESENTATION.QUEUED, 'an unmounted rail reported a rejection');
+  assert.notEqual(outcome, PRESENTATION.REJECTED_PRIORITY);
+  assert.equal(shell.mentorRail.calls.length, 1, 'the queued message never reached the rail');
+  assert.equal(c.stats().mentorDomUpdates, 0, 'a queued message was counted as a DOM update');
+}
+
+/* ------------------------------------------------------------------ *
+ * 25. Bypass instrumentation is real: a forbidden direct write increments it,
+ *     and the ordinary arbitrated path leaves it at zero.
+ * ------------------------------------------------------------------ */
+{
+  const shell = makeShell();
+  const c = shell.controller;
+
+  c.presentAskMentor({ text: 'Arbitrated line.', stepId: 'general-feat' });
+  assert.equal(c.stats().directBypassCount, 0, 'the normal path was counted as a bypass');
+  assert.equal(c.stats().fullShellRendersCausedByMentor, 0);
+
+  // Now do the forbidden thing: speak straight to the sink.
+  shell.mentorRail.presentMessage({ source: 'stepGuidance', text: 'Smuggled line.' });
+  assert.equal(c.stats().directBypassCount, 1, 'a direct rail write was not detected');
+
+  // And a repaint requested while the mentor holds the stack is attributed to it.
+  assert.equal(c.isPresenting(), false);
+  let seenWhilePresenting = null;
+  shell.mentorRail.presentMessage = (message) => {
+    seenWhilePresenting = c.isPresenting();
+    if (message?.[ARBITER_TOKEN] !== true) c.noteDirectBypass({ source: message?.source });
+    return true;
+  };
+  c.presentAskMentor({ text: 'Another line.', stepId: 'general-feat' });
+  assert.equal(seenWhilePresenting, true, 'presentation is not observable to the shell');
+  c.noteShellRenderAttempt('mentor-caused');
+  assert.equal(c.stats().fullShellRendersCausedByMentor, 1);
+}
+
+/* ------------------------------------------------------------------ *
+ * 26. Ask Mentor commit is one canonical path across every picker-backed step.
+ *
+ * Paired with the behavioural budget test in
+ * tests/progression-render-scheduler-budgets.test.mjs; this half proves no step
+ * still hand-rolls focus -> commit -> render.
+ * ------------------------------------------------------------------ */
+{
+  const stepsDir = path.join(ROOT, 'scripts/apps/progression-framework/steps');
+  const offenders = [];
+  const migrated = [];
+
+  for (const name of fs.readdirSync(stepsDir)) {
+    if (!name.endsWith('.js')) continue;
+    const src = fs.readFileSync(path.join(stepsDir, name), 'utf8');
+    if (src.includes('commitSuggestionFromMentor')) migrated.push(name);
+
+    const askBlocks = [...src.matchAll(/handleAskMentorWithPicker\([\s\S]*?\n\s{0,6}\}\);/g)].map(m => m[0]);
+    for (const block of askBlocks) {
+      const hasFocus = /this\.onItemFocused\(/.test(block);
+      const hasCommit = /this\.onItemCommitted\(/.test(block);
+      const hasRender = /requestRender\(|shell\.render\(/.test(block);
+      if (hasFocus && hasCommit) offenders.push(`${name}: focus+commit triple in the Ask Mentor callback`);
+      else if (hasCommit && hasRender) offenders.push(`${name}: commit+render in the Ask Mentor callback`);
+    }
+  }
+
+  assert.deepEqual(offenders, [],
+    'Ask Mentor commits must go through shell.commitSuggestionFromMentor():\n  ' + offenders.join('\n  '));
+  for (const expected of ['species-step.js', 'class-step.js', 'feat-step.js']) {
+    assert.ok(migrated.includes(expected), `${expected} has not migrated to commitSuggestionFromMentor()`);
+  }
 }
 
 console.log('mentor-recommendation-architecture: all assertions passed');

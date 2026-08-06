@@ -206,7 +206,7 @@ export class ForceSecretStep extends ProgressionStepPlugin {
     await handleAskMentor(shell.actor, 'force-secrets', shell);
     // The shell owns the repaint for shell-routed focus: it folds this
     // declaration into the single update it already schedules.
-    return { changed: true, regions: ['details'], recommendationRelevant: false };
+    return { handled: true, dirty: ['details'], structural: false, recommendationRelevant: false };
   }
 
   async onItemHovered(secretId, shell) {
@@ -246,7 +246,7 @@ export class ForceSecretStep extends ProgressionStepPlugin {
 
     this._focusedSecretId = secretId;
     shell.focusedItem = secret;
-    shell.requestRender({ preserveScroll: true, reason: 'force-secret-step:secret' });
+    return { handled: true, dirty: [], structural: true, recommendationRelevant: true };
   }
 
 

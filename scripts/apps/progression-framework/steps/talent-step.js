@@ -701,7 +701,7 @@ export class TalentStep extends ProgressionStepPlugin {
     const mentorRead = this._buildMentorTreeCommentary(tree, shell, recommendation);
     if (!mentorRead?.text) return;
 
-    shell.mentor.currentDialogue = mentorRead.text;
+    shell.mentorRecommendations?.presentGuidance?.({ text: mentorRead.text });
     try {
       shell.mentorRecommendations?.presentGuidance({ text: mentorRead.text, mood: mentorRead.tone || 'thoughtful' });
     } catch (_err) {
@@ -3191,8 +3191,12 @@ export class TalentStep extends ProgressionStepPlugin {
         const id = selected?.id || selected?._id || selected?.name;
         if (!id) return;
         this._focusedTalentId = id;
-        await this.onItemCommitted(id, shell);
-        this._renderPreservingScroll(shell);
+        // One canonical commit through the shell, which owns the repaint.
+        await shell.commitSuggestionFromMentor({
+          stepId: shell.steps?.[shell.currentStepIndex]?.stepId ?? 'general-talent',
+          itemId: id,
+          source: 'ask-mentor',
+        });
       });
       return;
     }
@@ -3206,9 +3210,13 @@ export class TalentStep extends ProgressionStepPlugin {
         const id = selected?.id || selected?._id || selected?.treeId;
         if (!id) return;
         this._stage = 'browser';
-        await this.onItemFocused(id);
-        await this.onItemCommitted(id, shell);
-        this._renderPreservingScroll(shell);
+        // One canonical commit through the shell, which focuses the chosen tree
+        // and owns the repaint.
+        await shell.commitSuggestionFromMentor({
+          stepId: shell.steps?.[shell.currentStepIndex]?.stepId ?? 'general-talent',
+          itemId: id,
+          source: 'ask-mentor',
+        });
       });
       return;
     }

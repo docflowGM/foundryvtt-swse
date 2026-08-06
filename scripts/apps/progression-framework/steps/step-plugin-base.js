@@ -24,6 +24,28 @@ import { ProjectionEngine } from '../shell/projection-engine.js';
 import { swseLogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
 
 /**
+ * What a step plugin tells the shell it changed.
+ *
+ * One shape, everywhere. Interaction callbacks (`onItemFocused`,
+ * `onItemCommitted`) may return this instead of repainting themselves, so the
+ * shell can fold the plugin's scope into the single update it already schedules.
+ *
+ * `dirty` is the canonical field name. An older `{ changed, regions }` spelling
+ * is still read by ProgressionShell._normalizePluginDirtyResult() for migration
+ * safety only — new code must not use it.
+ *
+ * @typedef {Object} PluginDirtyResult
+ * @property {boolean} handled - The plugin applied the state change itself.
+ * @property {string[]} dirty - Render regions that need updating, e.g. ['details'].
+ * @property {boolean} structural - The change needs a full-shell repaint.
+ * @property {boolean} recommendationRelevant - The change alters the inputs the
+ *   mentor's build advice is computed from. Focus and filtering are NOT
+ *   recommendation-relevant; committing a selection is. The shell only asks the
+ *   mentor to re-evaluate when this is true, so a plugin that sets it
+ *   incorrectly causes either stale advice or needless evaluation.
+ */
+
+/**
  * Sentinel error thrown by all unimplemented methods.
  */
 class NotImplementedError extends Error {
@@ -130,9 +152,18 @@ export class ProgressionStepPlugin {
 
   /**
    * Called when a user focuses an item (single click — details panel updates, no commit).
+   *
+   * The shell owns the repaint for shell-orchestrated focus and commit. A plugin
+   * mutates its own step state and *describes* what it dirtied; it must not call
+   * `shell.render()` or `shell.requestRender()` from these callbacks, or the one
+   * interaction acquires two render owners whose ordering depends on frame timing.
+   *
+   * The canonical return shape is {@link PluginDirtyResult}. Returning nothing
+   * is fine and means "shell, you decide the scope".
+   *
    * @param {string} itemId
    * @param {import('../shell/progression-shell.js').ProgressionShell} shell
-   * @returns {Promise<void>}
+   * @returns {Promise<PluginDirtyResult|void>}
    */
   async onItemFocused(itemId, shell) {
     // Default: no-op. Subclasses update focusedItem on shell.

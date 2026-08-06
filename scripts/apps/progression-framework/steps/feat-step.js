@@ -2394,9 +2394,13 @@ export class FeatStep extends ProgressionStepPlugin {
       }, async (selected) => {
         const item = selected?.id || selected?._id ? selected : (selected?.name ? selected : null);
         if (!item) return;
-        await this.onItemFocused(item);
-        await this.onItemCommitted(item, shell);
-        shell.requestRender({ preserveScroll: true, reason: 'feat-step:onAskMentor' });
+        // One canonical commit through the shell: the old focus + commit +
+        // render triple repainted twice for a single choice.
+        await shell.commitSuggestionFromMentor({
+          stepId: shell.steps?.[shell.currentStepIndex]?.stepId ?? 'general-feat',
+          itemId: item,
+          source: 'ask-mentor',
+        });
       });
       return;
     }

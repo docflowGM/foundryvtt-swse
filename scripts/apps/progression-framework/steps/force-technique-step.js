@@ -389,7 +389,7 @@ export class ForceTechniqueStep extends ProgressionStepPlugin {
     await handleAskMentor(shell.actor, 'force-techniques', shell);
     // The shell owns the repaint for shell-routed focus: it folds this
     // declaration into the single update it already schedules.
-    return { changed: true, regions: ['details'], recommendationRelevant: false };
+    return { handled: true, dirty: ['details'], structural: false, recommendationRelevant: false };
   }
 
   async onItemHovered(techniqueId, shell) {}
@@ -403,16 +403,14 @@ export class ForceTechniqueStep extends ProgressionStepPlugin {
       this._focusedTechniqueId = techniqueId;
       shell.focusedItem = technique;
       ui?.notifications?.warn?.(availability.reason || 'This Force Technique requires a Force Power that is not in your suite.');
-      shell.requestRender({ preserveScroll: true, reason: 'force-technique-step:technique' });
-      return;
+      return { handled: true, dirty: [], structural: true, recommendationRelevant: true };
     }
 
     const totalSelected = Array.from(this._committedTechniqueCounts.values()).reduce((sum, c) => sum + c, 0);
     if (totalSelected >= this._remainingPicks) {
       this._focusedTechniqueId = techniqueId;
       shell.focusedItem = technique;
-      shell.requestRender({ preserveScroll: true, reason: 'force-technique-step:technique' });
-      return;
+      return { handled: true, dirty: [], structural: true, recommendationRelevant: true };
     }
 
     if (isForcePowerMasteryTechniqueDoc(technique)) {
@@ -441,7 +439,7 @@ export class ForceTechniqueStep extends ProgressionStepPlugin {
 
     this._focusedTechniqueId = techniqueId;
     shell.focusedItem = technique;
-    shell.requestRender({ preserveScroll: true, reason: 'force-technique-step:technique' });
+    return { handled: true, dirty: [], structural: true, recommendationRelevant: true };
   }
 
 
