@@ -213,7 +213,7 @@ const rec = (targetId, dialogue = `${targetId} suits this build.`) => Object.fre
     gateA.resolve(rec('toughness'));
     await runA;
     assert.equal(shell.mentorRail.calls.length, 1, 'a stale result overwrote a newer recommendation');
-    assert.equal(shell.controller.currentRecommendation.targetId, 'exceptional-skill');
+    assert.equal(shell.controller.evaluatedRecommendation.targetId, 'exceptional-skill');
     assert.ok(shell.controller.stats().staleResultsDiscarded >= 1, 'stale discard was not counted');
   });
 }
@@ -367,7 +367,7 @@ const rec = (targetId, dialogue = `${targetId} suits this build.`) => Object.fre
     await stale;
   });
 
-  assert.equal(shell.controller.currentRecommendation.targetId, 'exceptional-skill',
+  assert.equal(shell.controller.evaluatedRecommendation.targetId, 'exceptional-skill',
     'an older evaluation overwrote the current recommendation');
   assert.equal(shell.mentorRail.calls.length, 1);
 }
@@ -804,9 +804,14 @@ const rec = (targetId, dialogue = `${targetId} suits this build.`) => Object.fre
 
   // Every field the audit is specified to report.
   for (const field of [
-    'stepId', 'activationToken', 'fullRenders', 'partialRenders', 'queuedRenderFlushes',
+    'stepId', 'activationToken', 'fullRenders', 'partialRenders',
+    // Renamed to what it actually counts: total scheduler executions, plus a
+    // real deferred-flush counter alongside it.
+    'schedulerExecutions', 'deferredRenderFlushes',
     'duplicateRenderRequestsCoalesced', 'onDataReadyCalls',
     'revision', 'activeSource', 'activeStepId', 'activeTargetId', 'activeSignature',
+    // Evaluated, displayed and persistent are three different things.
+    'evaluatedRecommendationTarget', 'displayedRecommendationTarget',
     'persistentRecommendationTarget', 'staleMessagesDiscarded', 'unchangedMessagesSkipped',
     'directBypassCount', 'fullShellRendersCausedByMentor',
     'currentContextKey', 'cacheHits', 'cacheMisses', 'inFlightJoins',
@@ -819,6 +824,16 @@ const rec = (targetId, dialogue = `${targetId} suits this build.`) => Object.fre
   // It reads counters; it must not write actor/session state.
   assert.ok(!/actor\.update|setFlag|commitSelection|createEmbeddedDocuments/.test(src),
     'the audit must be read-only');
+
+  // No field may be a hardcoded literal pretending to be a measurement.
+  assert.ok(!/shell render requested: false/.test(src),
+    'the audit still prints a hardcoded invariant instead of the counter');
+  assert.ok(!/directBypassCount: 0,/.test(src),
+    'directBypassCount is hardcoded rather than read from the controller');
+
+  // Node-importable: the translator block must not touch a bare `document`.
+  assert.ok(!/[^.]\bdocument\?\./.test(src) || /globalThis\.document\?\./.test(src),
+    'diagnostics reference a bare document, which breaks under Node tests');
 
   // The counters it reads actually exist at their sources.
   const service = fs.readFileSync(path.join(ROOT, 'scripts/engine/suggestion/SuggestionService.js'), 'utf8');
@@ -941,7 +956,7 @@ const rec = (targetId, dialogue = `${targetId} suits this build.`) => Object.fre
 
   assert.equal(evaluations, 1, 'identical concurrent requests evaluated twice');
   assert.equal(shell.mentorRail.calls.length, 1, 'the joined evaluation was never displayed');
-  assert.equal(shell.controller.currentRecommendation.targetId, 'exceptional-skill');
+  assert.equal(shell.controller.evaluatedRecommendation.targetId, 'exceptional-skill');
   assert.equal(shell.controller.stats().staleResultsDiscarded, 0,
     'a duplicate request invalidated the evaluation it joined');
 }
@@ -963,7 +978,7 @@ const rec = (targetId, dialogue = `${targetId} suits this build.`) => Object.fre
   });
 
   assert.equal(calls, 2, 'a changed context reused the previous evaluation');
-  assert.equal(shell.controller.currentRecommendation.targetId, 'b');
+  assert.equal(shell.controller.evaluatedRecommendation.targetId, 'b');
 
   // A rejected evaluation must not leave its context permanently "in flight".
   const failing = makeShell();

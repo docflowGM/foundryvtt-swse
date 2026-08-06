@@ -35,7 +35,14 @@ import { swseLogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
  * safety only — new code must not use it.
  *
  * @typedef {Object} PluginDirtyResult
- * @property {boolean} handled - The plugin applied the state change itself.
+ * @property {boolean} handled - The plugin recognised the operation.
+ * @property {boolean} changed - Progression state actually mutated. A locked,
+ *   duplicate, over-budget or cancelled operation is `handled: true,
+ *   changed: false` — the shell then skips the projection rebuild, the mentor
+ *   reaction, the recommendation request and auto-advance, because none of
+ *   those are true of a refusal. Omitting it is read as `changed: handled`,
+ *   which is how producers written before the split behaved.
+ * @property {string} [reason] - Diagnostic reason for a handled no-op.
  * @property {string[]} dirty - Render regions that need updating, e.g. ['details'].
  * @property {boolean} structural - The change needs a full-shell repaint.
  * @property {boolean} recommendationRelevant - The change alters the inputs the

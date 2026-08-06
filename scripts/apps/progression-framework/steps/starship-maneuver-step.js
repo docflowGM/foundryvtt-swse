@@ -424,7 +424,7 @@ export class StarshipManeuverStep extends ProgressionStepPlugin {
 
   async onIncrementQuantity(maneuverId, shell, options = {}) {
     const maneuver = this._resolveManeuver(maneuverId);
-    if (!maneuver) return;
+    if (!maneuver) return { handled: true, changed: false, dirty: [], structural: false, recommendationRelevant: false, reason: 'unknown-item' };
 
     const resolvedId = this._normalizeManeuverId(maneuver);
     const removedCount = this._removedManeuverCounts.get(resolvedId) ?? 0;
@@ -439,18 +439,19 @@ export class StarshipManeuverStep extends ProgressionStepPlugin {
       const currentCount = this._committedManeuverCounts.get(resolvedId) ?? 0;
       this._committedManeuverCounts.set(resolvedId, currentCount + 1);
     } else {
-      return;
+      return { handled: true, changed: false, dirty: [], structural: false, recommendationRelevant: false, reason: 'budget-exhausted' };
     }
 
     await this._commitManeuverSelection(shell);
     this._focusedManeuverID = resolvedId;
     shell.focusedItem = this._formatManeuverCard(maneuver);
-    if (options.render !== false) shell.requestRender({ preserveScroll: true, reason: 'starship-maneuver-step:onIncrementQuantity' });
+    // The shell owns the repaint for shell-routed quantity changes.
+    return { handled: true, changed: true, dirty: [], structural: true, recommendationRelevant: true };
   }
 
   async onDecrementQuantity(maneuverId, shell) {
     const maneuver = this._resolveManeuver(maneuverId);
-    if (!maneuver) return;
+    if (!maneuver) return { handled: true, changed: false, dirty: [], structural: false, recommendationRelevant: false, reason: 'unknown-item' };
 
     const resolvedId = this._normalizeManeuverId(maneuver);
     const currentPending = this._committedManeuverCounts.get(resolvedId) ?? 0;
@@ -469,7 +470,8 @@ export class StarshipManeuverStep extends ProgressionStepPlugin {
     await this._commitManeuverSelection(shell);
     this._focusedManeuverID = resolvedId;
     shell.focusedItem = this._formatManeuverCard(maneuver);
-    shell.requestRender({ preserveScroll: true, reason: 'starship-maneuver-step:onDecrementQuantity' });
+    // The shell owns the repaint for shell-routed quantity changes.
+    return { handled: true, changed: true, dirty: [], structural: true, recommendationRelevant: true };
   }
 
 

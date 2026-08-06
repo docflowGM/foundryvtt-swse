@@ -99,7 +99,9 @@ export function mentorRecommendationStats({ reset = false, quiet = false } = {})
     console.group('[MENTOR-RECOMMENDATION]');
     console.log('context revision      :', stats.contextRevision);
     console.log('context signature     :', stats.contextSignature);
-    console.log('winner                :', stats.currentRecommendation ?? '(none)');
+    console.log('evaluated             :', stats.evaluatedRecommendationTarget ?? '(none)');
+    console.log('displayed             :', stats.displayedRecommendationTarget ?? '(none)');
+    console.log('persistent candidate  :', stats.persistentRecommendationTarget ?? '(none)');
     console.log('result                :', stats.lastTrace?.result ?? '(none)');
     console.log('shell renders by mentor:', stats.fullShellRendersCausedByMentor);
     console.log('---');
@@ -153,7 +155,10 @@ export function progressionMentorAudit({ quiet = false } = {}) {
       fullRenders: scheduler.fullRenders ?? 0,
       partialRenders: partialRenders,
       partialRendersByRegion: { ...regionUpdates },
-      queuedRenderFlushes: scheduler.executed ?? 0,
+      // Renamed: this was never a queued-flush count, it is the total number of
+      // scheduler executions.
+      schedulerExecutions: scheduler.executed ?? 0,
+      deferredRenderFlushes: shell._deferredRenderFlushes ?? 0,
       duplicateRenderRequestsCoalesced: scheduler.coalesced ?? 0,
       skippedIdenticalRenders: scheduler.skippedIdentical ?? 0,
       maxUpdatesPerInteraction: scheduler.maxUpdatesPerInteraction ?? 0,
@@ -166,7 +171,9 @@ export function progressionMentorAudit({ quiet = false } = {}) {
       activeStepId: shell.mentorRecommendations?.activeMessage?.stepId ?? null,
       activeTargetId: shell.mentorRecommendations?.activeMessage?.targetId ?? null,
       activeSignature: shell.mentorRecommendations?.activeSignature ?? null,
-      persistentRecommendationTarget: shell.mentorRecommendations?.persistentRecommendation?.targetId ?? null,
+      evaluatedRecommendationTarget: mentor.evaluatedRecommendationTarget ?? null,
+      displayedRecommendationTarget: mentor.displayedRecommendationTarget ?? null,
+      persistentRecommendationTarget: mentor.persistentRecommendationTarget ?? null,
       staleMessagesDiscarded: mentor.staleResultsDiscarded ?? 0,
       unchangedMessagesSkipped: mentor.unchangedRecommendationsSkipped ?? 0,
       recommendationsDisplayed: mentor.recommendationsDisplayed ?? 0,
@@ -193,7 +200,7 @@ export function progressionMentorAudit({ quiet = false } = {}) {
       animationsCompleted: translatorStats?.animationsCompleted ?? null,
       animationsAborted: translatorStats?.animationsAborted ?? null,
       supersededFramesAfterAbort: translatorStats?.supersededFramesAfterAbort ?? null,
-      activeWrapperCount: document?.querySelectorAll?.('[data-mentor-dialogue] .aurebesh-dialogue-wrapper')?.length ?? null,
+      activeWrapperCount: globalThis.document?.querySelectorAll?.('[data-mentor-dialogue] .aurebesh-dialogue-wrapper')?.length ?? null,
     },
   };
 

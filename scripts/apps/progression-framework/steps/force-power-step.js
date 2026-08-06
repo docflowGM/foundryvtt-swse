@@ -353,7 +353,7 @@ export class ForcePowerStep extends ProgressionStepPlugin {
    */
   async onIncrementQuantity(powerId, shell, options = {}) {
     const power = this._resolvePower(powerId);
-    if (!power) return;
+    if (!power) return { handled: true, changed: false, dirty: [], structural: false, recommendationRelevant: false, reason: 'unknown-item' };
 
     const resolvedPowerId = this._normalizePowerId(power);
     const removedCount = this._removedPowerCounts.get(resolvedPowerId) ?? 0;
@@ -369,18 +369,19 @@ export class ForcePowerStep extends ProgressionStepPlugin {
       const spendingOnlyProdigySlot = totalSelected >= baseBudget && this._getTelekineticProdigyBonusSlots(shell?.actor ?? this._currentActor) > 0;
       if (spendingOnlyProdigySlot && !this._isTelekineticPower(resolvedPowerId)) {
         ui?.notifications?.warn?.('Telekinetic Prodigy bonus slot can only select a [Telekinetic] Force Power.');
-        return;
+        return { handled: true, changed: false, dirty: [], structural: false, recommendationRelevant: false, reason: 'budget-exhausted' };
       }
       const currentCount = this._committedPowerCounts.get(resolvedPowerId) ?? 0;
       this._committedPowerCounts.set(resolvedPowerId, currentCount + 1);
     } else {
-      return;
+      return { handled: true, changed: false, dirty: [], structural: false, recommendationRelevant: false, reason: 'budget-exhausted' };
     }
 
     await this._commitPowerSelection(shell);
     this._focusedPowerId = resolvedPowerId;
     shell.focusedItem = this._formatPowerCard(power);
-    if (options.render !== false) shell.requestRender({ preserveScroll: true, reason: 'force-power-step:onIncrementQuantity' });
+    // The shell owns the repaint for shell-routed quantity changes.
+    return { handled: true, changed: true, dirty: [], structural: true, recommendationRelevant: true };
   }
 
   /**
@@ -390,7 +391,7 @@ export class ForcePowerStep extends ProgressionStepPlugin {
    */
   async onDecrementQuantity(powerId, shell) {
     const power = this._resolvePower(powerId);
-    if (!power) return;
+    if (!power) return { handled: true, changed: false, dirty: [], structural: false, recommendationRelevant: false, reason: 'unknown-item' };
 
     const resolvedPowerId = this._normalizePowerId(power);
     const currentPending = this._committedPowerCounts.get(resolvedPowerId) ?? 0;
@@ -409,7 +410,8 @@ export class ForcePowerStep extends ProgressionStepPlugin {
     await this._commitPowerSelection(shell);
     this._focusedPowerId = resolvedPowerId;
     shell.focusedItem = this._formatPowerCard(power);
-    shell.requestRender({ preserveScroll: true, reason: 'force-power-step:onDecrementQuantity' });
+    // The shell owns the repaint for shell-routed quantity changes.
+    return { handled: true, changed: true, dirty: [], structural: true, recommendationRelevant: true };
   }
 
   async handleAction(action, event, target, shell) {

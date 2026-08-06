@@ -218,7 +218,11 @@ export class MentorRecommendationController {
     this.pendingRequest = null;
     this.lastContextSignature = null;
     this.lastRecommendationSignature = null;
-    this.currentRecommendation = null;
+    // Three distinct things, deliberately named apart. Calling all of them
+    // "current" is how a recommendation the player never saw was reported as
+    // the one on screen.
+    this.evaluatedRecommendation = null;   // newest evaluation result
+    this.displayedRecommendation = null;   // what arbitration actually showed
 
     // Arbiter state: what is on screen right now, from any source, and the
     // last non-temporary message (the advice a bark is covering up).
@@ -227,6 +231,10 @@ export class MentorRecommendationController {
     this.persistentRecommendation = null;
 
     this._inFlightByContext = new Map();
+
+    // Bumped by reset()/dispose(). Work started under an older generation is
+    // stale regardless of how the revision counter happens to line up later.
+    this._generation = 0;
 
     // Depth rather than a boolean: presentation can nest through a queued replay.
     this._presentDepth = 0;
@@ -305,7 +313,19 @@ export class MentorRecommendationController {
     const request = this._createRequest();
     this.pendingRequest = request;
 
-    const work = (async () => {
+    const generation = this._generation;
+    let work;
+    work = (async () => {
+      // Yield once before doing anything.
+      //
+      // _localTopSuggestion() is synchronous, so without this the whole body —
+      // including the finally that deletes the in-flight entry — ran to
+      // completion BEFORE `_inFlightByContext.set(..., work)` below. The delete
+      // found nothing, and the already-settled promise was then inserted and
+      // stranded forever, so every later request for that context joined a
+      // promise that would never do anything again.
+      await Promise.resolve();
+
       let result = null;
       try {
         // Prefer the ranking the step already hydrated and sorted. Asking the
@@ -332,7 +352,19 @@ export class MentorRecommendationController {
         });
         return;
       } finally {
-        this._inFlightByContext.delete(contextSignature);
+        // Delete only if the map still holds THIS promise. An older request
+        // settling late must not evict a newer one that reused the same key.
+        if (this._inFlightByContext.get(contextSignature) === work) {
+          this._inFlightByContext.delete(contextSignature);
+        }
+      }
+
+      // reset()/dispose() bump the generation, so work started before them is
+      // stale even when its numeric revision happens to match again.
+      if (generation !== this._generation) {
+        this._stats.staleResultsDiscarded += 1;
+        this._trace({ revision, contextSignature, result: 'stale-generation' });
+        return;
       }
 
       // Revision guard is mandatory even when the service cannot be aborted:
@@ -525,20 +557,29 @@ export class MentorRecommendationController {
       return;
     }
 
-    this.currentRecommendation = recommendation;
+    // Evaluated is not displayed. Assigning "current" here, before arbitration,
+    // is what made a rejected recommendation report itself as the live one.
+    this.evaluatedRecommendation = recommendation;
 
     if (!recommendation) {
       this.lastRecommendationSignature = signature;
+      this.displayedRecommendation = null;
       this._trace({ ...trace, result: 'cleared' });
       return PRESENTATION.UNAVAILABLE;
     }
 
+    const revision = trace.revision ?? this.currentRevision;
+    const stepId = trace.stepId ?? this._currentStepId();
     const outcome = this.present({
       source: 'recommendation',
       text: recommendation.dialogue,
       mood: recommendation.mood ?? 'neutral',
       targetId: recommendation.targetId ?? recommendation.id ?? null,
-      revision: trace.revision ?? this.currentRevision,
+      // Step identity travels with the message. Without it, a recommendation
+      // evaluated for step A could not be recognised as stale on step B.
+      stepId,
+      revision,
+      contextSignature: trace.contextSignature ?? null,
     });
 
     // Only what the player actually got counts, and only what is actually on
@@ -547,6 +588,7 @@ export class MentorRecommendationController {
     // counted as displayed AND suppressed itself forever after.
     if (ACCEPTED.has(outcome)) {
       this.lastRecommendationSignature = signature;
+      this.displayedRecommendation = recommendation;
       this._stats.recommendationsDisplayed += 1;
       this._trace({ ...trace, result: outcome, winner: recommendation.targetId ?? recommendation.id });
       return outcome;
@@ -558,7 +600,11 @@ export class MentorRecommendationController {
     this.persistentRecommendation = {
       source: 'recommendation',
       priority: MESSAGE_PRIORITY.recommendation,
-      revision: trace.revision ?? this.currentRevision,
+      // The candidate keeps its ORIGINAL revision and step. Restamping it with
+      // the current revision on restore is what turned stale advice into
+      // current advice.
+      revision,
+      stepId,
       text: recommendation.dialogue,
       mood: recommendation.mood ?? 'neutral',
       targetId: recommendation.targetId ?? recommendation.id ?? null,
@@ -580,8 +626,13 @@ export class MentorRecommendationController {
 
     this.activeMessage = null;
     this.activeSignature = null;
-    const outcome = this.present({ ...candidate, revision: this.currentRevision });
-    if (ACCEPTED.has(outcome)) this._stats.recommendationsDisplayed += 1;
+    // Replay the candidate as it was. Rewriting its revision would let advice
+    // from an older context pass the staleness check it should fail.
+    const outcome = this.present(candidate);
+    if (ACCEPTED.has(outcome)) {
+      this.displayedRecommendation = this.evaluatedRecommendation;
+      this._stats.recommendationsDisplayed += 1;
+    }
     return outcome;
   }
 
@@ -716,7 +767,9 @@ export class MentorRecommendationController {
     this.activeSignature = null;
     this.activeMessage = null;
 
-    const outcome = this.present({ ...candidate, revision: this.currentRevision });
+    // Replayed as-is: a candidate from a previous step or an older revision
+    // must still fail the staleness check during a remount.
+    const outcome = this.present(candidate);
     if (ACCEPTED.has(outcome)) {
       this._replayedMountId = mountId;
       this._stats.reconnectReplays += 1;
@@ -746,16 +799,24 @@ export class MentorRecommendationController {
 
   /** Drop cached state when the step or actor changes materially. */
   reset() {
+    // Everything the step owned goes, including what is on screen. Leaving
+    // activeMessage/activeSignature behind let a previous step's line be
+    // restored by the next reconnect().
+    this._generation += 1;
     this._abortPending();
     this._replayedMountId = null;
     this.persistentRecommendation = null;
     this.lastContextSignature = null;
     this.lastRecommendationSignature = null;
-    this.currentRecommendation = null;
+    this.evaluatedRecommendation = null;
+    this.displayedRecommendation = null;
+    this.activeMessage = null;
+    this.activeSignature = null;
     this._inFlightByContext.clear();
   }
 
   dispose() {
+    this._generation += 1;
     this._abortPending();
     this._inFlightByContext.clear();
   }
@@ -791,7 +852,9 @@ export class MentorRecommendationController {
       ...this._stats,
       contextRevision: this.currentRevision,
       contextSignature: this.lastContextSignature,
-      currentRecommendation: this.currentRecommendation?.targetId ?? null,
+      evaluatedRecommendationTarget: this.evaluatedRecommendation?.targetId ?? null,
+      displayedRecommendationTarget: this.displayedRecommendation?.targetId ?? null,
+      persistentRecommendationTarget: this.persistentRecommendation?.targetId ?? null,
       lastTrace: this._lastTrace,
     };
   }

@@ -47,7 +47,6 @@ export class MentorRail {
   constructor(shell) {
     this.shell = shell;
     this._animationAbort = null; // AbortController for in-flight animations
-    this._pendingFlushQueued = false;
   }
 
   /**
@@ -83,32 +82,13 @@ export class MentorRail {
    */
   _queuePendingDialogue(text, mood = null) {
     if (!text) return;
+    // Plain-text fallback only. This records what the template should show if it
+    // renders before the animation runs; it is NOT a replay queue. The
+    // controller owns replay, so nothing here re-reveals a message on its own.
     this.shell.mentor.currentDialogue = text;
-    this.shell.mentor.pendingDialogue = { text, mood };
+    this.shell.mentor.pendingDialogue = null;
     this.shell.mentor.animationState = 'pending';
     this.shell.mentor.isAnimating = false;
-  }
-
-  /**
-   * Replay queued dialogue once the mentor rail has been rendered.
-   * @param {HTMLElement|null} regionEl
-   * @private
-   */
-  _flushPendingDialogue(regionEl = null) {
-    const pending = this.shell.mentor?.pendingDialogue;
-    if (!pending?.text || this._pendingFlushQueued) return;
-
-    const container = regionEl?.querySelector?.('[data-mentor-dialogue]') ?? this._resolveDialogueContainer();
-    if (!(container instanceof HTMLElement)) return;
-
-    this._pendingFlushQueued = true;
-    queueMicrotask(() => {
-      this._pendingFlushQueued = false;
-      const active = this.shell.mentor?.pendingDialogue;
-      if (!active?.text) return;
-      this.shell.mentor.pendingDialogue = null;
-      void this.speak(active.text, active.mood ?? null, { bypassSuppression: true, source: 'pending-flush' });
-    });
   }
 
   /**
@@ -598,11 +578,16 @@ export class MentorRail {
     // animation against the live DOM instead of leaving the panel blank.
     if (textEl && currentDialogue && animationState === 'complete') {
       textEl.textContent = currentDialogue;
-    } else if (textEl && currentDialogue && animationState === 'typing' && !textEl.querySelector('.aurebesh-dialogue-wrapper')) {
-      this._queuePendingDialogue(currentDialogue, this.shell.mentor?.mood ?? null);
     }
 
-    this._flushPendingDialogue(regionEl);
+    // Replay is NOT done here.
+    //
+    // The rail used to keep its own pendingDialogue and flush it from a
+    // microtask, while MentorRecommendationController separately replayed its
+    // accepted message from reconnect(). Two owners meant one message could be
+    // revealed twice, or restart mid-animation. The controller is the single
+    // owner: ProgressionShell calls reconnect() immediately after this, and the
+    // controller performs exactly one authorized write per new mount.
 
     // Apply message-length class for responsive text scaling
     if (textEl && currentDialogue) {

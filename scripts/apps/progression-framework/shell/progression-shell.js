@@ -587,6 +587,7 @@ export class ProgressionShell extends SWSEApplicationV2 {
     this._followUpRenderQueued = false;
     const reason = this._followUpRenderReason ?? 'deferred-render';
     this._followUpRenderReason = null;
+    this._deferredRenderFlushes = (this._deferredRenderFlushes ?? 0) + 1;
     void this.requestRender({ preserveScroll: true, reason, structural: true });
   }
 
@@ -3866,7 +3867,15 @@ export class ProgressionShell extends SWSEApplicationV2 {
    */
   _normalizePluginDirtyResult(result) {
     if (!result || typeof result !== 'object') {
-      return { regions: [], structural: false, handled: false, recommendationRelevant: false };
+      // No result at all: the plugin predates the contract. Legacy callbacks
+      // only ever ran to completion on a successful mutation, so this must NOT
+      // be read as "changed: false" — doing so would block every commit whose
+      // plugin has not been migrated yet. `reported: false` tells the caller
+      // the plugin made no claim either way.
+      return {
+        reported: false, regions: [], structural: false,
+        handled: false, changed: true, recommendationRelevant: false, reason: null,
+      };
     }
 
     // Canonical field is `dirty`. `regions` is read only so the plugins that
@@ -3878,12 +3887,23 @@ export class ProgressionShell extends SWSEApplicationV2 {
       : (result.dirty ? [result.dirty]
         : (Array.isArray(result.regions) ? result.regions : (result.regions ? [result.regions] : [])));
 
+    const handled = result.handled === true || result.changed === true;
     return {
+      reported: true,
       regions: raw.map(region => String(region || '').trim()).filter(Boolean),
       structural: result.structural === true,
-      // `changed` was the old spelling of "I handled this".
-      handled: result.handled === true || result.changed === true,
+      handled,
+      // `handled` means "the plugin recognised this"; `changed` means
+      // progression state actually mutated. Conflating them let a locked,
+      // duplicate, over-budget or cancelled operation trigger a projection
+      // rebuild, a mentor reaction, a recommendation request and auto-advance.
+      //
+      // Producers that predate the split only ever returned a result on a
+      // successful mutation, so a missing `changed` is read as true; a producer
+      // that says `changed: false` is believed.
+      changed: result.changed === undefined ? handled : result.changed === true,
       recommendationRelevant: result.recommendationRelevant === true,
+      reason: result.reason ?? null,
     };
   }
 
@@ -3912,6 +3932,25 @@ export class ProgressionShell extends SWSEApplicationV2 {
       const commitResult = await this._withShellOwnedInteraction(
         () => this._withSuppressedLegacyMentorSpeech(() => plugin.onItemCommitted(itemId, this))
       );
+      const declared = this._normalizePluginDirtyResult(commitResult);
+
+      // A locked, duplicate, over-budget or cancelled commit is *handled* but
+      // changed nothing. Rebuilding the projection, barking a reaction,
+      // re-evaluating advice and auto-advancing for it treated a refusal as a
+      // selection. Only a real mutation earns those.
+      if (declared.reported && !declared.changed) {
+        swseLogger.debug('[ProgressionShell] commit made no change', { stepId, itemId, reason: declared.reason });
+        if (declared.regions.length || declared.structural) {
+          await this.requestRender({
+            preserveScroll: true,
+            reason: 'commit-item:no-change',
+            regions: declared.structural ? null : declared.regions,
+            structural: declared.structural,
+          });
+        }
+        return;
+      }
+
       // Rebuild projection after selection committed to update selected rail
       this._rebuildProjection();
       this.mentorChoiceReactions?.reactToInteraction({
@@ -3933,7 +3972,6 @@ export class ProgressionShell extends SWSEApplicationV2 {
       // the click. If the step is not ready, fall back to the normal local render.
       const advanced = await this._maybeScheduleAutoAdvance({ source: 'commit-item', event });
       if (!advanced) {
-        const declared = this._normalizePluginDirtyResult(commitResult);
         await this.requestRender({
           preserveScroll: true,
           reason: 'commit-item',
@@ -3962,7 +4000,33 @@ export class ProgressionShell extends SWSEApplicationV2 {
     const stepId = this.steps[this.currentStepIndex]?.stepId;
     const plugin = this.stepPlugins.get(stepId);
     if (plugin?.onIncrementQuantity) {
-      await this._withSuppressedLegacyMentorSpeech(() => plugin.onIncrementQuantity(itemId, this));
+      // Same ownership model as _onCommitItem: the shell begins the interaction,
+      // the plugin mutates and reports, and the shell schedules the one update.
+      this.renderScheduler.beginInteraction(`increment-quantity:${stepId}`);
+      const result = await this._withShellOwnedInteraction(
+        () => this._withSuppressedLegacyMentorSpeech(
+          () => plugin.onIncrementQuantity(itemId, this, { render: false })
+        )
+      );
+      const declared = this._normalizePluginDirtyResult(result);
+
+      // A blocked quantity change (budget exhausted, already zero) is handled
+      // but changed nothing. Reacting, re-evaluating advice, auto-advancing and
+      // repainting for it treated a refusal as a selection.
+      if (declared.reported && !declared.changed) {
+        swseLogger.debug('[ProgressionShell] increment-quantity made no change', { itemId, reason: declared.reason });
+        if (declared.regions.length || declared.structural) {
+          await this.requestRender({
+            preserveScroll: true,
+            reason: 'increment-quantity:no-change',
+            regions: declared.structural ? null : declared.regions,
+            structural: declared.structural,
+          });
+        }
+        return;
+      }
+
+      this._rebuildProjection();
       this.mentorChoiceReactions?.reactToInteraction({
         stepId,
         action: 'commit',
@@ -3972,7 +4036,16 @@ export class ProgressionShell extends SWSEApplicationV2 {
         event,
         target: row || element,
       });
-      await this._maybeScheduleAutoAdvance({ source: 'increment-quantity', event });
+      this.requestMentorRecommendation(`commit:${stepId}`);
+      const advanced = await this._maybeScheduleAutoAdvance({ source: 'increment-quantity', event });
+      if (!advanced) {
+        await this.requestRender({
+          preserveScroll: true,
+          reason: 'increment-quantity',
+          regions: declared.structural ? null : declared.regions,
+          structural: declared.structural || declared.regions.length === 0,
+        });
+      }
     }
   }
 
@@ -3994,7 +4067,33 @@ export class ProgressionShell extends SWSEApplicationV2 {
     const stepId = this.steps[this.currentStepIndex]?.stepId;
     const plugin = this.stepPlugins.get(stepId);
     if (plugin?.onDecrementQuantity) {
-      await this._withSuppressedLegacyMentorSpeech(() => plugin.onDecrementQuantity(itemId, this));
+      // Same ownership model as _onCommitItem: the shell begins the interaction,
+      // the plugin mutates and reports, and the shell schedules the one update.
+      this.renderScheduler.beginInteraction(`decrement-quantity:${stepId}`);
+      const result = await this._withShellOwnedInteraction(
+        () => this._withSuppressedLegacyMentorSpeech(
+          () => plugin.onDecrementQuantity(itemId, this, { render: false })
+        )
+      );
+      const declared = this._normalizePluginDirtyResult(result);
+
+      // A blocked quantity change (budget exhausted, already zero) is handled
+      // but changed nothing. Reacting, re-evaluating advice, auto-advancing and
+      // repainting for it treated a refusal as a selection.
+      if (declared.reported && !declared.changed) {
+        swseLogger.debug('[ProgressionShell] decrement-quantity made no change', { itemId, reason: declared.reason });
+        if (declared.regions.length || declared.structural) {
+          await this.requestRender({
+            preserveScroll: true,
+            reason: 'decrement-quantity:no-change',
+            regions: declared.structural ? null : declared.regions,
+            structural: declared.structural,
+          });
+        }
+        return;
+      }
+
+      this._rebuildProjection();
       this.mentorChoiceReactions?.reactToInteraction({
         stepId,
         action: 'uncommit',
@@ -4004,7 +4103,14 @@ export class ProgressionShell extends SWSEApplicationV2 {
         event,
         target: row || element,
       });
+      this.requestMentorRecommendation(`commit:${stepId}`);
       this._cancelAutoAdvance('decrement-quantity');
+      await this.requestRender({
+        preserveScroll: true,
+        reason: 'decrement-quantity',
+        regions: declared.structural ? null : declared.regions,
+        structural: declared.structural || declared.regions.length === 0,
+      });
     }
   }
 
