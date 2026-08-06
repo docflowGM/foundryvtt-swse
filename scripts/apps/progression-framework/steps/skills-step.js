@@ -70,6 +70,16 @@ export class SkillsStep extends ProgressionStepPlugin {
   // Lifecycle
   // ---------------------------------------------------------------------------
 
+  /**
+   * Ranked suggestions this step already hydrated and sorted.
+   * Lets the mentor reuse the same ordering the cards show instead of
+   * asking SuggestionService to recompute the top entry.
+   * @returns {Array|null}
+   */
+  getRankedSuggestions() {
+    return Array.isArray(this._suggestedSkills) && this._suggestedSkills.length ? this._suggestedSkills : null;
+  }
+
   async onStepEnter(shell) {
     const character = shell.actor?.system || {};
 

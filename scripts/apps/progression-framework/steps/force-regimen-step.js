@@ -134,7 +134,9 @@ export class ForceRegimenStep extends ProgressionStepPlugin {
     if (!regimen) return;
     this._focusedRegimenId = regimenId;
     shell.focusedItem = regimen;
-    shell.requestRender({ preserveScroll: true, regions: ['details'], reason: 'force-regimen-step:onItemFocused' });
+    // The shell owns the repaint for shell-routed focus: it folds this
+    // declaration into the single update it already schedules.
+    return { changed: true, regions: ['details'], recommendationRelevant: false };
   }
 
   async onItemCommitted(regimenId, shell) {

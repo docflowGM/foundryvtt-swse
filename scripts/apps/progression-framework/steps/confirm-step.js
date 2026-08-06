@@ -228,7 +228,9 @@ export class ConfirmStep extends ProgressionStepPlugin {
     // Focus on a summary section (e.g. "feats", "languages")
     // This can update details panel to show more about that section
     shell.focusedItem = { sectionId: summaryId, type: 'summary-section' };
-    shell.requestRender({ preserveScroll: true, regions: ['details'], reason: 'confirm-step:onItemFocused' });
+    // The shell owns the repaint for shell-routed focus: it folds this
+    // declaration into the single update it already schedules.
+    return { changed: true, regions: ['details'], recommendationRelevant: false };
   }
 
   async onItemHovered(summaryId, shell) {

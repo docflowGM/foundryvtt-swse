@@ -270,6 +270,114 @@ const regionUpdates = (host) => host.jobs.filter(job => !job.structural);
 }
 
 /* ------------------------------------------------------------------ *
+ * 11. Full render supersedes a partial request in the same batch.
+ * ------------------------------------------------------------------ */
+{
+  const host = makeHost();
+  host.scheduler.request({ reason: 'plugin-focus', regions: ['details'] });
+  host.scheduler.request({ reason: 'summary-refresh', regions: ['summary'] });
+  host.scheduler.request({ reason: 'structure-changed', structural: true });
+  await advanceFrame();
+
+  assert.equal(host.jobs.length, 1, 'mixed requests did not coalesce');
+  assert.equal(host.jobs[0].structural, true, 'a full request must win over partials');
+  assert.deepEqual(host.jobs[0].regions, ['structural']);
+}
+
+/* ------------------------------------------------------------------ *
+ * 12. Forced render supersedes a non-forced one, and merged partials
+ *     keep every requested region.
+ * ------------------------------------------------------------------ */
+{
+  const host = makeHost();
+  host.scheduler.request({ reason: 'a', regions: ['details'] });
+  host.scheduler.request({ reason: 'b', regions: ['summary'], force: true });
+  await advanceFrame();
+
+  assert.equal(host.jobs.length, 1);
+  assert.equal(host.jobs[0].force, true, 'force did not propagate through coalescing');
+  assert.deepEqual([...host.jobs[0].regions].sort(), ['details', 'summary']);
+}
+
+/* ------------------------------------------------------------------ *
+ * 13. Ask Mentor commits through one canonical shell path.
+ * ------------------------------------------------------------------ */
+{
+  const read = (rel) => fs.readFileSync(path.join(ROOT, rel), 'utf8');
+  const shell = read('scripts/apps/progression-framework/shell/progression-shell.js');
+  assert.match(shell, /async commitSuggestionFromMentor\(\{ stepId, itemId, source = 'ask-mentor' \} = \{\}\)/);
+
+  // The focus + commit + render triple must be gone from every step.
+  const offenders = [];
+  const walk = (dir) => {
+    for (const name of fs.readdirSync(dir)) {
+      const full = path.join(dir, name);
+      if (fs.statSync(full).isDirectory()) { walk(full); continue; }
+      if (!full.endsWith('.js')) continue;
+      const src = fs.readFileSync(full, 'utf8');
+      if (/await this\.onItemFocused\(id, shell\);\s*\n\s*await this\.onItemCommitted\(id, shell\);/.test(src)) {
+        offenders.push(path.relative(ROOT, full));
+      }
+    }
+  };
+  walk(path.join(ROOT, 'scripts/apps/progression-framework/steps'));
+  assert.deepEqual(offenders, [],
+    `Ask Mentor must commit through the shell, not focus+commit+render: ${offenders.join(', ')}`);
+}
+
+/* ------------------------------------------------------------------ *
+ * 14. Focus handlers declare what they dirtied instead of rendering.
+ * ------------------------------------------------------------------ */
+{
+  const steps = ['class-step', 'species-step', 'background-step', 'confirm-step',
+                 'force-secret-step', 'force-regimen-step', 'force-technique-step',
+                 'medical-secret-step'];
+  for (const step of steps) {
+    const src = fs.readFileSync(path.join(ROOT, `scripts/apps/progression-framework/steps/${step}.js`), 'utf8');
+    const start = src.indexOf('onItemFocused');
+    assert.ok(start > 0, `${step} has no onItemFocused`);
+    const body = src.slice(start, src.indexOf('\n  }', start));
+    assert.ok(
+      !/requestRender\(/.test(body),
+      `${step}.onItemFocused must not render — the shell owns the repaint`
+    );
+    assert.match(
+      body,
+      /return \{ changed: true, regions: \['details'\], recommendationRelevant: false \};/,
+      `${step}.onItemFocused must declare its dirty region`
+    );
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ * 15. High-value steps expose their hydrated ranking to the mentor.
+ * ------------------------------------------------------------------ */
+{
+  for (const step of ['class-step', 'feat-step', 'talent-step', 'force-power-step', 'skills-step']) {
+    const src = fs.readFileSync(path.join(ROOT, `scripts/apps/progression-framework/steps/${step}.js`), 'utf8');
+    assert.match(src, /getRankedSuggestions\(\)/, `${step} does not expose its ranked suggestions`);
+  }
+  const base = fs.readFileSync(path.join(ROOT, 'scripts/apps/progression-framework/steps/step-plugin-base.js'), 'utf8');
+  assert.match(base, /getRankedSuggestions\(shell\)/, 'the base plugin is missing the ranking accessor');
+  assert.match(base, /getTopSuggestion\(shell\)/, 'the base plugin is missing the top-suggestion accessor');
+}
+
+/* ------------------------------------------------------------------ *
+ * 16. No TEMP AUDIT logging survives in progression paths.
+ * ------------------------------------------------------------------ */
+{
+  for (const rel of [
+    'scripts/apps/progression-framework/shell/progression-shell.js',
+    'scripts/apps/progression-framework/chargen-shell.js',
+    'scripts/infrastructure/hooks/levelup-sheet-hooks.js',
+    'scripts/infrastructure/hooks/chargen-sheet-hooks.js',
+  ]) {
+    const src = fs.readFileSync(path.join(ROOT, rel), 'utf8');
+    assert.ok(!src.includes('TEMP AUDIT'), `${rel} still contains TEMP AUDIT logging`);
+  }
+}
+
+/* ------------------------------------------------------------------ *
  * Ownership contract — static checks the scheduler cannot enforce alone.
  * ------------------------------------------------------------------ */
 {

@@ -509,6 +509,56 @@ const rec = (targetId, dialogue = `${targetId} suits this build.`) => Object.fre
 }
 
 /* ------------------------------------------------------------------ *
+ * 15b. In-flight deduplication actually collapses concurrent work,
+ *      and different revisions do not join.
+ * ------------------------------------------------------------------ */
+{
+  const actor = { id: 'dedupe-actor', documentName: 'Actor', system: { level: 1, abilities: {} }, items: [] };
+  const original = SuggestionService._computeSuggestions;
+  let computations = 0;
+
+  SuggestionService._computeSuggestions = async () => {
+    computations += 1;
+    await new Promise(resolve => setTimeout(resolve, 20));
+    return [{ id: 'force-training', name: 'Force Training', suggestion: { tier: 5, confidence: 0.9 } }];
+  };
+
+  try {
+    SuggestionService._cache.clear();
+    SuggestionService._inFlight.clear();
+
+    // Two identical uncached requests issued concurrently.
+    const [a, b] = await Promise.all([
+      SuggestionService.getSuggestions(actor, 'chargen', { domain: 'feats', pendingData: {} }),
+      SuggestionService.getSuggestions(actor, 'chargen', { domain: 'feats', pendingData: {} }),
+    ]);
+
+    assert.equal(computations, 1, 'identical concurrent requests ran the evaluation twice');
+    assert.equal(a, b, 'joined callers did not receive the same result');
+    assert.equal(SuggestionService._inFlight.size, 0, 'the in-flight entry was never released');
+
+    // A different pending selection is a different revision and must not join.
+    SuggestionService._cache.clear();
+    await Promise.all([
+      SuggestionService.getSuggestions(actor, 'chargen', { domain: 'feats', pendingData: {} }),
+      SuggestionService.getSuggestions(actor, 'chargen', { domain: 'feats', pendingData: { feats: [{ id: 'point-blank-shot' }] } }),
+    ]);
+    assert.equal(computations, 3, 'a changed selection incorrectly joined an in-flight request');
+
+    // A failing computation must still release its slot.
+    SuggestionService._cache.clear();
+    SuggestionService._inFlight.clear();
+    SuggestionService._computeSuggestions = async () => { throw new Error('boom'); };
+    await assert.rejects(() => SuggestionService.getSuggestions(actor, 'chargen', { domain: 'talents', pendingData: {} }));
+    assert.equal(SuggestionService._inFlight.size, 0, 'a failed request left a stale in-flight entry');
+  } finally {
+    SuggestionService._computeSuggestions = original;
+    SuggestionService._cache.clear();
+    SuggestionService._inFlight.clear();
+  }
+}
+
+/* ------------------------------------------------------------------ *
  * 16. SnapshotBuilder sees progression draftSelections.
  *
  * It only read chargen's `selectedFeats`-style keys, so every selection made

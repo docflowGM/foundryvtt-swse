@@ -1979,6 +1979,16 @@ export class FeatStep extends ProgressionStepPlugin {
   // Focus/Commit
   // ---------------------------------------------------------------------------
 
+  /**
+   * Ranked suggestions this step already hydrated and sorted.
+   * Lets the mentor reuse the same ordering the cards show instead of
+   * asking SuggestionService to recompute the top entry.
+   * @returns {Array|null}
+   */
+  getRankedSuggestions() {
+    return Array.isArray(this._suggestedFeats) && this._suggestedFeats.length ? this._suggestedFeats : null;
+  }
+
   async onItemFocused(item) {
     this._focusedFeatId = item?._id || item?.id || item;
     emitFeatStepTrace('ITEM_FOCUSED', {

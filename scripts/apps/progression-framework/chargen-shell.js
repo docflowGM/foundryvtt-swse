@@ -118,8 +118,6 @@ export class ChargenShell extends ProgressionShell {
   }
 
   static async open(actor, options = {}) {
-    // TEMP AUDIT: Log shell open call
-    console.log('[TEMP AUDIT] ChargenShell.open called for actor:', actor?.name, actor?.type);
 
     // PHASE 4 STEP 2: Check if unified chargen is allowed in current rollout mode
     const rolloutMode = RolloutSettings.getRolloutMode();

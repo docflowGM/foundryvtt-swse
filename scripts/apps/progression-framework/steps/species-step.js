@@ -717,7 +717,6 @@ export class SpeciesStep extends ProgressionStepPlugin {
     });
 
     console.debug(`[SWSE Species Hydration Debug] [Click #${clickNum}] Requesting rerender for species hydration | selected: ${entry.name} (${entry.id}) | focusedItem: ${shell.focusedItem?.id ?? '(null)'}`);
-    shell.requestRender({ preserveScroll: true, regions: ['details'], reason: 'species-step:onItemFocused' });
     console.debug(`[SWSE Species Hydration Debug] [Click #${clickNum}] Rerender requested | focusedItem: ${shell.focusedItem?.id ?? '(null)'}`);
 
     if (dialogue) {
@@ -751,6 +750,9 @@ export class SpeciesStep extends ProgressionStepPlugin {
     }
 
     console.log(`[SWSE Species Debug] [Click #${clickNum}] onItemFocused COMPLETE`);
+    // The shell owns the repaint for shell-routed focus: it folds this
+    // declaration into the single update it already schedules.
+    return { changed: true, regions: ['details'], recommendationRelevant: false };
   }
 
   async onItemCommitted(id, shell) {

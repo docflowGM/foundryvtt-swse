@@ -11,8 +11,6 @@ import { launchProgression } from "/systems/foundryvtt-swse/scripts/apps/progres
 import { ActorAbilityBridge } from "/systems/foundryvtt-swse/scripts/adapters/ActorAbilityBridge.js";
 
 function onClickChargen(app) {
-  // TEMP AUDIT: Log handler entry
-  console.log('[TEMP AUDIT] onClickChargen called', app?.constructor?.name);
 
   const actor = app?.actor ?? app?.document;
   if (!actor) {
@@ -26,13 +24,10 @@ function onClickChargen(app) {
   }
 
   SWSELogger.log(`[Chargen Header] Opening Chargen for: ${actor.name}`);
-  // TEMP AUDIT: Log before calling launchProgression
-  console.log('[TEMP AUDIT] Calling launchProgression from onClickChargen');
 
   // Launch progression asynchronously without await
   // The handler should not block the UI
   launchProgression(actor).catch(err => {
-    console.log('[TEMP AUDIT] launchProgression rejected with error:', err);
     SWSELogger.error('[Chargen Header] Error launching progression:', err);
     ui?.notifications?.error?.(`Failed to open chargen: ${err.message}`);
   });
@@ -66,10 +61,6 @@ function isChargenIncomplete(actor) {
 
 export function registerChargenSheetHooks() {
   HooksRegistry.register('getHeaderControlsApplicationV2', (app, controls) => {
-    // TEMP AUDIT: Log hook execution
-    console.log('[TEMP AUDIT] getHeaderControlsApplicationV2 fired for chargen');
-    console.log('[TEMP AUDIT] App class:', app?.constructor?.name);
-    console.log('[TEMP AUDIT] Controls array before mutation:', controls?.length || 0, controls);
 
     const actor = app?.actor ?? app?.document;
     if (!actor || actor.documentName !== 'Actor') {
@@ -96,15 +87,10 @@ export function registerChargenSheetHooks() {
       // Show chargen button ONLY if character is incomplete (hasn't finished chargen yet)
       visible: () => isChargenIncomplete(actor),
       handler: () => {
-        // TEMP AUDIT: Log handler execution
-        console.log('[TEMP AUDIT] Chargen handler fired for actor:', actor.name, actor.type);
         onClickChargen(app);
       }
     });
 
-    // TEMP AUDIT: Log after mutation
-    console.log('[TEMP AUDIT] Controls array after mutation:', controls?.length || 0, controls);
-    console.log('[TEMP AUDIT] Chargen button pushed to controls for:', actor.name);
   }, { id: 'swse-chargen-sheet' });
 
   SWSELogger.log('Chargen header controls registered (V2)');

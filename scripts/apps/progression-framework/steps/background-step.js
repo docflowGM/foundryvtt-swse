@@ -271,7 +271,6 @@ async onStepExit(shell) {
     if (!background) return;
 
     this._focusedBackgroundId = id;
-    shell.requestRender({ preserveScroll: true, regions: ['details'], reason: 'background-step:background' });
 
     // Mentor reaction on focus should not block right-rail detail hydration.
     const flavorText = this._getMentorFlavorForBackground(background);
@@ -280,6 +279,9 @@ async onStepExit(shell) {
         console.error('[BackgroundStep] Non-blocking mentor speak failed:', error);
       });
     }
+    // The shell owns the repaint for shell-routed focus: it folds this
+    // declaration into the single update it already schedules.
+    return { changed: true, regions: ['details'], recommendationRelevant: false };
   }
 
   async onItemCommitted(id, shell) {

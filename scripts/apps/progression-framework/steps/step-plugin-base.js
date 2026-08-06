@@ -79,6 +79,34 @@ export class ProgressionStepPlugin {
     // Default: no-op. Subclasses load lists, populate options, etc.
   }
 
+  /**
+   * Return this step's already-ranked suggestions, best first.
+   *
+   * Steps hydrate and sort their suggestions during onStepEnter/onDataReady.
+   * The mentor should reuse that result rather than asking SuggestionService to
+   * rediscover the same top entry — recomputing it is both slower and a chance
+   * for the rail to disagree with the cards on screen.
+   *
+   * Returning null means "I have nothing hydrated"; the caller then falls back
+   * to the service. Steps are not required to implement this.
+   *
+   * @param {import('../shell/progression-shell.js').ProgressionShell} shell
+   * @returns {Array|null}
+   */
+  getRankedSuggestions(shell) {
+    return null;
+  }
+
+  /**
+   * Convenience accessor for the single strongest suggestion.
+   * @param {import('../shell/progression-shell.js').ProgressionShell} shell
+   * @returns {Object|null}
+   */
+  getTopSuggestion(shell) {
+    const ranked = this.getRankedSuggestions(shell);
+    return Array.isArray(ranked) && ranked.length ? ranked[0] : null;
+  }
+
   // ---------------------------------------------------------------------------
   // Data
   // ---------------------------------------------------------------------------

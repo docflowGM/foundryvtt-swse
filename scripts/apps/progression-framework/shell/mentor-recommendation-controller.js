@@ -176,9 +176,11 @@ export class MentorRecommendationController {
     this.lastRecommendationSignature = null;
     this.currentRecommendation = null;
 
-    // Arbiter state: what is on screen right now, from any source.
+    // Arbiter state: what is on screen right now, from any source, and the
+    // last non-temporary message (the advice a bark is covering up).
     this.activeMessage = null;
     this.activeSignature = null;
+    this.persistentRecommendation = null;
 
     this._inFlightByContext = new Map();
 
@@ -240,12 +242,18 @@ export class MentorRecommendationController {
     const work = (async () => {
       let result = null;
       try {
-        result = await SuggestionService.getBestRecommendation(context, {
-          actor: this.shell?.actor ?? null,
-          domain: context.domain,
-          pendingData: this.shell?.progressionSession?.draftSelections ?? {},
-          signal: request.signal,
-        });
+        // Prefer the ranking the step already hydrated and sorted. Asking the
+        // service to rediscover the same winner is slower and lets the rail
+        // disagree with the cards on screen.
+        const local = this._localTopSuggestion(context);
+        result = local
+          ? SuggestionService.normalizeRecommendation(local, { context, domain: context.domain })
+          : await SuggestionService.getBestRecommendation(context, {
+            actor: this.shell?.actor ?? null,
+            domain: context.domain,
+            pendingData: this.shell?.progressionSession?.draftSelections ?? {},
+            signal: request.signal,
+          });
       } catch (error) {
         if (this._isAbortError(error)) {
           this._stats.abortedRequests += 1;
@@ -279,6 +287,26 @@ export class MentorRecommendationController {
 
     this._inFlightByContext.set(contextSignature, work);
     return work;
+  }
+
+  /**
+   * Top suggestion from the current step, if it has one hydrated.
+   * @param {Object} context
+   * @returns {Object|null}
+   * @private
+   */
+  _localTopSuggestion(context) {
+    const plugin = this.shell?.stepPlugins?.get?.(context.stepId);
+    if (!plugin) return null;
+    try {
+      const top = plugin.getTopSuggestion?.(this.shell);
+      if (top) return top;
+      const ranked = plugin.getRankedSuggestions?.(this.shell);
+      return Array.isArray(ranked) && ranked.length ? ranked[0] : null;
+    } catch (err) {
+      SWSELogger.debug('[MentorRecommendation] local suggestion lookup failed', { error: err?.message });
+      return null;
+    }
   }
 
   /**
@@ -324,6 +352,13 @@ export class MentorRecommendationController {
       && revision <= this.activeMessage.revision) {
       this._trace({ result: 'discarded-lower-priority', source: message.source, priority });
       return false;
+    }
+
+    // A temporary line (a focus or commit bark) borrows the rail; it must not
+    // become the thing we consider "the current advice", or restoring after it
+    // would replay the bark instead of the recommendation.
+    if (message.temporary !== true) {
+      this.persistentRecommendation = { ...message, priority, revision };
     }
 
     this.activeMessage = { ...message, priority, revision };

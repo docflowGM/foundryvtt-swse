@@ -302,6 +302,16 @@ export class ForcePowerStep extends ProgressionStepPlugin {
   /**
    * Single click = focus. Display in details panel, mentor reacts.
    */
+  /**
+   * Ranked suggestions this step already hydrated and sorted.
+   * Lets the mentor reuse the same ordering the cards show instead of
+   * asking SuggestionService to recompute the top entry.
+   * @returns {Array|null}
+   */
+  getRankedSuggestions() {
+    return Array.isArray(this._suggestedPowers) && this._suggestedPowers.length ? this._suggestedPowers : null;
+  }
+
   async onItemFocused(powerId, shell) {
     const power = this._resolvePower(powerId);
     if (!power) {
@@ -634,9 +644,9 @@ export class ForcePowerStep extends ProgressionStepPlugin {
       }, async (selected) => {
         const id = selected?.id || selected?._id || selected?.powerId;
         if (!id) return;
-        await this.onItemFocused(id, shell);
-        await this.onItemCommitted(id, shell);
-        shell.requestRender({ preserveScroll: true, reason: 'force-power-step:onAskMentor' });
+        // One canonical commit through the shell: the old focus + commit +
+        // render triple repainted twice for a single choice.
+        await shell.commitSuggestionFromMentor({ stepId: 'force-powers', itemId: id, source: 'ask-mentor' });
       });
     } else {
       // Fallback to standard guidance if no suggestions

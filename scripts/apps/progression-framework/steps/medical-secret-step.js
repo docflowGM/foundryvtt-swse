@@ -134,7 +134,9 @@ export class MedicalSecretStep extends ProgressionStepPlugin {
     this._focusedSecretId = secretId;
     shell.focusedItem = secret;
     await handleAskMentor(shell.actor, 'medical-secrets', shell);
-    shell.requestRender({ preserveScroll: true, regions: ['details'], reason: 'medical-secret-step:secret' });
+    // The shell owns the repaint for shell-routed focus: it folds this
+    // declaration into the single update it already schedules.
+    return { changed: true, regions: ['details'], recommendationRelevant: false };
   }
 
   async onItemCommitted(secretId, shell) {
@@ -258,9 +260,9 @@ export class MedicalSecretStep extends ProgressionStepPlugin {
       }, async (selected) => {
         const id = selected?.id || selected?._id || selected?.secretId;
         if (!id) return;
-        await this.onItemFocused(id, shell);
-        await this.onItemCommitted(id, shell);
-        shell.requestRender({ preserveScroll: true, reason: 'medical-secret-step:onAskMentor' });
+        // One canonical commit through the shell: the old focus + commit +
+        // render triple repainted twice for a single choice.
+        await shell.commitSuggestionFromMentor({ stepId: 'medical-secrets', itemId: id, source: 'ask-mentor' });
       });
       return;
     }

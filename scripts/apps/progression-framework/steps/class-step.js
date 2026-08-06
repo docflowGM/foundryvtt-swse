@@ -428,17 +428,29 @@ export class ClassStep extends ProgressionStepPlugin {
   // Interaction: Focus vs Commit
   // ---------------------------------------------------------------------------
 
+  /**
+   * Ranked suggestions this step already hydrated and sorted.
+   * Lets the mentor reuse the same ordering the cards show instead of
+   * asking SuggestionService to recompute the top entry.
+   * @returns {Array|null}
+   */
+  getRankedSuggestions() {
+    return Array.isArray(this._suggestedClasses) && this._suggestedClasses.length ? this._suggestedClasses : null;
+  }
+
   async onItemFocused(id, shell) {
     const entry = this._allClasses.find(c => c.id === id);
     if (!entry) return;
 
     this._focusedClassId = id;
     shell.focusedItem = entry;
-    shell.requestRender({ preserveScroll: true, regions: ['details'], reason: 'class-step:entry' });
 
     // MentorChoiceReactionRouter now owns focus reactions for class cards so the
     // rail can use suggestion/prerequisite metadata instead of generic flavor.
     // Keep this silent to avoid double-speaking and focus lag.
+    // The shell owns the repaint for shell-routed focus: it folds this
+    // declaration into the single update it already schedules.
+    return { changed: true, regions: ['details'], recommendationRelevant: false };
   }
 
   async onItemCommitted(id, shell) {
@@ -612,9 +624,9 @@ export class ClassStep extends ProgressionStepPlugin {
       }, async (selected) => {
         const id = selected?.id || selected?._id || selected?.classId;
         if (!id) return;
-        await this.onItemFocused(id, shell);
-        await this.onItemCommitted(id, shell);
-        shell.requestRender({ preserveScroll: true, reason: 'class-step:onAskMentor' });
+        // One canonical commit through the shell: the old focus + commit +
+        // render triple repainted twice for a single choice.
+        await shell.commitSuggestionFromMentor({ stepId: 'class', itemId: id, source: 'ask-mentor' });
       });
     } else {
       // Fallback to standard guidance if no suggestions

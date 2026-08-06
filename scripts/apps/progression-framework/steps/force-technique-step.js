@@ -387,7 +387,9 @@ export class ForceTechniqueStep extends ProgressionStepPlugin {
     this._focusedTechniqueId = techniqueId;
     shell.focusedItem = technique;
     await handleAskMentor(shell.actor, 'force-techniques', shell);
-    shell.requestRender({ preserveScroll: true, regions: ['details'], reason: 'force-technique-step:technique' });
+    // The shell owns the repaint for shell-routed focus: it folds this
+    // declaration into the single update it already schedules.
+    return { changed: true, regions: ['details'], recommendationRelevant: false };
   }
 
   async onItemHovered(techniqueId, shell) {}
@@ -604,9 +606,9 @@ export class ForceTechniqueStep extends ProgressionStepPlugin {
       }, async (selected) => {
         const id = selected?.id || selected?._id || selected?.techniqueId;
         if (!id) return;
-        await this.onItemFocused(id, shell);
-        await this.onItemCommitted(id, shell);
-        shell.requestRender({ preserveScroll: true, reason: 'force-technique-step:onAskMentor' });
+        // One canonical commit through the shell: the old focus + commit +
+        // render triple repainted twice for a single choice.
+        await shell.commitSuggestionFromMentor({ stepId: 'force-techniques', itemId: id, source: 'ask-mentor' });
       });
     } else {
       // Fallback to standard guidance if no suggestions

@@ -165,12 +165,6 @@ export class ProgressionShell extends SWSEApplicationV2 {
    * @returns {Promise<ProgressionShell>}
    */
   static async open(actor, mode = 'chargen', options = {}) {
-    // TEMP AUDIT: Log open entry
-    console.log('[TEMP AUDIT] ProgressionShell.open called:', {
-      actor: actor?.name,
-      mode,
-      this: this.name
-    });
 
     if (!actor) {
       ui.notifications.error('No actor selected');
@@ -181,31 +175,21 @@ export class ProgressionShell extends SWSEApplicationV2 {
     // ChargenShell.open() → new ChargenShell()  → _getCanonicalDescriptors() on ChargenShell
     // LevelupShell.open() → new LevelupShell()  → _getCanonicalDescriptors() on LevelupShell
     // ProgressionShell.open() → new ProgressionShell() → base returns []
-    console.log('[TEMP AUDIT] Creating app instance of class:', this.name);
     const app = new this(actor, mode, options);
-    console.log('[TEMP AUDIT] App instance created:', app?.constructor?.name);
 
     // Phase 1: Attempt session recovery before initializing steps
-    console.log('[TEMP AUDIT] Attempting session recovery...');
     await app._attemptSessionRecovery();
-    console.log('[TEMP AUDIT] Session recovery complete');
 
-    console.log('[TEMP AUDIT] Calling _initializeSteps...');
     await app._initializeSteps();
-    console.log('[TEMP AUDIT] Steps initialized, count:', app.steps?.length || 0);
     app.mentorChoiceReactions?.validateReactionCoverage?.();
 
     // Initialize the first step (critical for post-splash Species entry)
-    console.log('[TEMP AUDIT] Calling _initializeFirstStep...');
     await app._initializeFirstStep().catch(err => {
       swseLogger.error('[ProgressionShell] Error initializing first step:', err);
       ui?.notifications?.error?.('Failed to initialize progression. Please try again.');
     });
-    console.log('[TEMP AUDIT] First step initialized');
 
-    console.log('[TEMP AUDIT] Calling app.render()...');
     app.render({ force: true });
-    console.log('[TEMP AUDIT] Render called on app');
 
     // CRITICAL: Bring the shell to front immediately after render.
     // Ensures the chargen window is visible and cannot be hidden behind other windows.
@@ -2311,6 +2295,58 @@ export class ProgressionShell extends SWSEApplicationV2 {
     const top  = Math.max(20, Math.floor((viewportH - h) / 6));
 
     return { width: w, height: h, left, top };
+  }
+
+  /**
+   * Canonical path for applying a suggestion the player picked in Ask Mentor.
+   *
+   * Every step previously did this by hand as
+   * `onItemFocused(); onItemCommitted(); shell.render();` — a focus pass whose
+   * only job was to render, a commit, and then a third repaint. The focus pass
+   * is redundant: committing sets the selection, and the shell already knows how
+   * to repaint once for a commit.
+   *
+   * @param {Object} options
+   * @param {string} options.stepId - Step the suggestion belongs to.
+   * @param {string} options.itemId
+   * @param {string} [options.source] - Diagnostic label.
+   * @returns {Promise<boolean>} false when the step is no longer current.
+   */
+  async commitSuggestionFromMentor({ stepId, itemId, source = 'ask-mentor' } = {}) {
+    if (!itemId) return false;
+
+    // The player may have navigated away while the picker was open.
+    if (this.steps[this.currentStepIndex]?.stepId !== stepId) {
+      swseLogger.debug('[ProgressionShell] Ask Mentor selection ignored; step changed', { stepId, itemId });
+      return false;
+    }
+
+    const plugin = this.stepPlugins.get(stepId);
+    if (!plugin?.onItemCommitted) return false;
+
+    this.renderScheduler.beginInteraction(`${source}:${stepId}`);
+
+    // Focus so the details rail reflects what was chosen, but without letting
+    // the plugin's focus pass schedule anything of its own — the commit below
+    // owns the single repaint.
+    this.focusedItem = this.focusedItem ?? null;
+    const result = await this._withSuppressedLegacyMentorSpeech(
+      () => plugin.onItemCommitted(itemId, this, { source })
+    );
+
+    this._rebuildProjection();
+
+    const declared = this._normalizePluginDirtyResult(result);
+    await this.requestRender({
+      preserveScroll: true,
+      reason: `${source}:commit`,
+      regions: declared.structural ? null : declared.regions,
+      structural: declared.structural || declared.regions.length === 0,
+    });
+
+    // A mentor-applied commit is still a meaningful context change.
+    this.requestMentorRecommendation(`commit:${stepId}`);
+    return true;
   }
 
   /**

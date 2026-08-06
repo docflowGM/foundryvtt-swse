@@ -123,7 +123,7 @@ export class AurebeshTranslator {
     // First frame: pure Aurebesh/source text. This avoids the old behavior where
     // the first rendered frame already contained English.
     container.innerHTML = this._buildMarkup('', text, config);
-    await this._delay(Math.max(140, speed * 6));
+    await this._delay(Math.max(140, speed * 6), signal);
 
     for (let i = 0; i < chars.length; i++) {
       // Stop the moment a newer line claims this container or the caller aborts.
@@ -139,7 +139,7 @@ export class AurebeshTranslator {
       container.innerHTML = this._buildMarkup(revealed, chars.slice(i + 1).join(''), config);
 
       // Wait for animation frame + speed interval
-      await this._delay(speed);
+      await this._delay(speed, signal);
     }
   }
 
@@ -157,11 +157,36 @@ export class AurebeshTranslator {
     return this._generations.get(container) !== generation;
   }
 
-  static _delay(ms) {
+  /**
+   * Frame-aligned delay that resolves immediately on abort.
+   *
+   * Without the signal, a superseded reveal still sat through its full
+   * per-character delay before noticing it had been replaced — so cancelling a
+   * long line left its loop ticking for as long as the line would have taken.
+   *
+   * @param {number} ms
+   * @param {AbortSignal|null} [signal]
+   * @returns {Promise<void>}
+   */
+  static _delay(ms, signal = null) {
+    if (signal?.aborted) return Promise.resolve();
+
     return new Promise(resolve => {
-      setTimeout(() => {
-        requestAnimationFrame(resolve);
+      let onAbort = null;
+      const finish = () => {
+        if (onAbort) signal?.removeEventListener?.('abort', onAbort);
+        resolve();
+      };
+
+      const timer = setTimeout(() => {
+        if (typeof requestAnimationFrame === 'function') requestAnimationFrame(finish);
+        else finish();
       }, ms);
+
+      if (signal) {
+        onAbort = () => { clearTimeout(timer); finish(); };
+        signal.addEventListener?.('abort', onAbort, { once: true });
+      }
     });
   }
 

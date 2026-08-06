@@ -2971,6 +2971,16 @@ export class TalentStep extends ProgressionStepPlugin {
     };
   }
 
+  /**
+   * Ranked suggestions this step already hydrated and sorted.
+   * Lets the mentor reuse the same ordering the cards show instead of
+   * asking SuggestionService to recompute the top entry.
+   * @returns {Array|null}
+   */
+  getRankedSuggestions() {
+    return Array.isArray(this._suggestedTrees) && this._suggestedTrees.length ? this._suggestedTrees : null;
+  }
+
   async onItemFocused(item, shell = null) {
     if (this._stage === 'browser') {
       const treeId = item?.id || item?._id || item?.treeId || item;
