@@ -217,7 +217,7 @@ export class ForceTechniqueStep extends ProgressionStepPlugin {
     this._committedTechniqueCounts = new Map();
     this._committedTechniqueEntries = new Map();
     this._ownedTechniqueIds = new Set();
-    this._remainingPicks = 0;
+    this._selectionBudget = 0;
     this._suggestedTechniques = [];  // Suggested force techniques
     this._renderAbort = null;
     this._utilityUnlisteners = [];
@@ -236,7 +236,11 @@ export class ForceTechniqueStep extends ProgressionStepPlugin {
       this._hydrateOwnedTechniques(shell?.actor);
       // PHASE 3: Resolve from class progression features + engine choice budget
       const entitlements = await this._resolveTechniqueEntitlements(shell);
-      this._remainingPicks = entitlements.remaining;
+      // entitlements.remaining is total minus the pending draft selections, and
+      // every use site below subtracts the selected count again — storing it
+      // here made a two-pick entitlement with one draft pick look complete and
+      // blocked the second legal choice. The budget is the total.
+      this._selectionBudget = Number(entitlements.total ?? 0);
 
       // PHASE 3.1: Pass shell to access pending class grants
       await this._computeLegalTechniques(shell.actor, shell);
@@ -357,7 +361,8 @@ export class ForceTechniqueStep extends ProgressionStepPlugin {
       focusedTechniqueId: this._focusedTechniqueId,
       committedCounts: Object.fromEntries(this._committedTechniqueCounts),
       committedSummary,
-      remainingPicks: this._remainingPicks,
+      remainingPicks: Math.max(0, this._selectionBudget - Array.from(this._committedTechniqueCounts.values()).reduce((sum, c) => sum + c, 0)),
+      selectionBudget: this._selectionBudget,
       showAllTechniques: this._showAllTechniques,
       legalTechniqueCount: this._legalTechniques.length,
       totalTechniqueCount: this._allTechniques.length,
@@ -376,7 +381,7 @@ export class ForceTechniqueStep extends ProgressionStepPlugin {
     return {
       selected: Array.from(this._committedTechniqueCounts.keys()),
       count: totalSelected,
-      isComplete: totalSelected >= this._remainingPicks,
+      isComplete: totalSelected >= this._selectionBudget,
     };
   }
 
@@ -386,7 +391,11 @@ export class ForceTechniqueStep extends ProgressionStepPlugin {
 
     this._focusedTechniqueId = techniqueId;
     shell.focusedItem = technique;
-    await handleAskMentor(shell.actor, 'force-techniques', shell);
+    // Focus inspects; it does not speak at Ask Mentor priority. This used to
+    // call handleAskMentor(), which presents at priority 50 — so merely
+    // clicking a card overrode the build recommendation exactly as though
+    // the player had pressed Ask Mentor. MentorChoiceReactionRouter still
+    // composes a focus reaction at focusReaction priority.
     // The shell owns the repaint for shell-routed focus: it folds this
     // declaration into the single update it already schedules.
     return { handled: true, dirty: ['details'], structural: false, recommendationRelevant: false };
@@ -407,7 +416,7 @@ export class ForceTechniqueStep extends ProgressionStepPlugin {
     }
 
     const totalSelected = Array.from(this._committedTechniqueCounts.values()).reduce((sum, c) => sum + c, 0);
-    if (totalSelected >= this._remainingPicks) {
+    if (totalSelected >= this._selectionBudget) {
       this._focusedTechniqueId = techniqueId;
       shell.focusedItem = technique;
       return { handled: true, dirty: [], structural: true, recommendationRelevant: true };
@@ -505,7 +514,7 @@ export class ForceTechniqueStep extends ProgressionStepPlugin {
       ? masterySelections.reduce((sum, entry) => sum + Math.max(0, Number(entry?.count ?? 1) || 0), 0)
       : (this._committedTechniqueCounts.get(focusedItem.id) ?? 0);
     const totalSelected = Array.from(this._committedTechniqueCounts.values()).reduce((sum, c) => sum + c, 0);
-    const canAddMore = totalSelected < this._remainingPicks;
+    const canAddMore = totalSelected < this._selectionBudget;
 
     // Normalize detail panel data for canonical display (no fabrication)
     const normalized = normalizeDetailPanelData(focusedItem, 'force_technique');
@@ -541,14 +550,14 @@ export class ForceTechniqueStep extends ProgressionStepPlugin {
 
   validate() {
     const totalSelected = Array.from(this._committedTechniqueCounts.values()).reduce((sum, c) => sum + c, 0);
-    const isValid = totalSelected >= this._remainingPicks;
-    const errors = isValid ? [] : [`Select ${this._remainingPicks - totalSelected} more Technique(s).`];
+    const isValid = totalSelected >= this._selectionBudget;
+    const errors = isValid ? [] : [`Select ${this._selectionBudget - totalSelected} more Technique(s).`];
     return { isValid, errors, warnings: [] };
   }
 
   getBlockingIssues() {
     const totalSelected = Array.from(this._committedTechniqueCounts.values()).reduce((sum, c) => sum + c, 0);
-    const remaining = this._remainingPicks - totalSelected;
+    const remaining = this._selectionBudget - totalSelected;
     if (remaining <= 0) return [];
     return [`${remaining} Technique(s) remaining`];
   }
@@ -557,7 +566,7 @@ export class ForceTechniqueStep extends ProgressionStepPlugin {
 
   getRemainingPicks() {
     const totalSelected = Array.from(this._committedTechniqueCounts.values()).reduce((sum, c) => sum + c, 0);
-    const remaining = this._remainingPicks - totalSelected;
+    const remaining = this._selectionBudget - totalSelected;
 
     if (remaining <= 0) {
       const summaryParts = this._buildCommittedTechniqueList().map((entry) => {
@@ -570,10 +579,10 @@ export class ForceTechniqueStep extends ProgressionStepPlugin {
       const label = summaryParts.length > 0
         ? `✓ ${summaryParts.join(', ')}`
         : `✓ ${totalSelected} Selected`;
-      return [{ label, count: 0, total: Math.max(0, Number(this._remainingPicks || 0)), selected: Math.max(0, totalSelected), isWarning: false }];
+      return [{ label, count: 0, total: Math.max(0, Number(this._selectionBudget || 0)), selected: Math.max(0, totalSelected), isWarning: false }];
     }
 
-    return [{ label: 'Technique(s)', count: Math.max(0, remaining), total: Math.max(0, Number(this._remainingPicks || 0)), selected: Math.max(0, totalSelected), isWarning: true }];
+    return [{ label: 'Technique(s)', count: Math.max(0, remaining), total: Math.max(0, Number(this._selectionBudget || 0)), selected: Math.max(0, totalSelected), isWarning: true }];
   }
 
   getUtilityBarConfig() {

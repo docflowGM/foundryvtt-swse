@@ -118,7 +118,8 @@
             </div>
           {{/if}}
           {{> "systems/foundryvtt-swse/templates/apps/progression-framework/partials/option-card-action.hbs"
-             itemId=this.lookupId
+             action="increment-quantity"
+             itemId=this.stateId
              idAttr="data-maneuver-id"
              idValue=this.stateId
              name=this.name

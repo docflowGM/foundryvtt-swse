@@ -1030,18 +1030,30 @@ export class MentorChoiceReactionRouter {
     const rail = this.shell?.mentorRail;
     if (!rail || !text) return;
 
-    // A reaction bark takes the rail away from the current build
-    // recommendation. Tell its owner, so the next recommendation is not
-    // suppressed as "unchanged" and left invisible behind this bark.
-    this.shell?.mentorRecommendations?.noteExternalDisplay?.('choice-reaction');
-
     // Route through the arbiter so a bark cannot displace a recommendation or
     // an Ask Mentor line, and cannot speak for a step the player has left.
+    //
+    // noteExternalDisplay() used to run FIRST, which cleared the active
+    // recommendation and its signature before the reaction was submitted — so
+    // the bark never actually competed at priority 20 against a priority-40
+    // recommendation, it emptied the room and walked in. Arbitration now sees
+    // the real board, and only an accepted reaction reports that it took over.
     const controller = this.shell?.mentorRecommendations;
     if (controller) {
       const payload = { text, mood, stepId: context?.stepId ?? null, targetId: context?.itemId ?? null };
-      if (context?.action === 'commit' || context?.action === 'uncommit') controller.presentCommitReaction(payload);
-      else controller.presentFocusReaction(payload);
+      const outcome = (context?.action === 'commit' || context?.action === 'uncommit')
+        ? controller.presentCommitReaction(payload)
+        : controller.presentFocusReaction(payload);
+
+      // Rejected reactions must not flash the rail or claim the recommendation.
+      if (outcome !== 'displayed' && outcome !== 'queued') {
+        this.shell?.progressionSession?._recordMentorDiagnostic?.('skippedReactions', {
+          reason: `arbitration:${outcome}`,
+          action: context?.action ?? null,
+          stepId: context?.stepId ?? null,
+        });
+        return;
+      }
     } else {
       rail.queueSpeak?.(text, mood, { bypassSuppression: true, source: 'choice-reaction' });
     }

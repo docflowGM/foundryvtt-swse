@@ -101,7 +101,7 @@ export function mentorRecommendationStats({ reset = false, quiet = false } = {})
     console.log('context signature     :', stats.contextSignature);
     console.log('winner                :', stats.currentRecommendation ?? '(none)');
     console.log('result                :', stats.lastTrace?.result ?? '(none)');
-    console.log('shell render requested: false');
+    console.log('shell renders by mentor:', stats.fullShellRendersCausedByMentor);
     console.log('---');
     console.log('context requests      :', stats.contextRequests);
     console.log('deduplicated          :', stats.deduplicatedRequests);

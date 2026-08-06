@@ -73,7 +73,7 @@ export class ForceSecretStep extends ProgressionStepPlugin {
     // Stacking model: secret -> count (same as Force Powers)
     this._committedSecretCounts = new Map();
 
-    this._remainingPicks = 0;
+    this._selectionBudget = 0;
     this._suggestedSecrets = [];  // Suggested force secrets
     this._renderAbort = null;
     this._utilityUnlisteners = [];
@@ -92,7 +92,11 @@ export class ForceSecretStep extends ProgressionStepPlugin {
 
       // PHASE 3: Determine picks available using class progression features + engine choice budget
       const entitlements = await this._resolveSecretEntitlements(shell);
-      this._remainingPicks = entitlements.remaining;
+      // entitlements.remaining is total minus the pending draft selections, and
+      // every use site below subtracts the selected count again — storing it
+      // here made a two-pick entitlement with one draft pick look complete and
+      // blocked the second legal choice. The budget is the total.
+      this._selectionBudget = Number(entitlements.total ?? 0);
 
       // PHASE 3.1: Pass shell to access pending class grants
       await this._computeLegalSecrets(shell.actor, shell);
@@ -104,12 +108,12 @@ export class ForceSecretStep extends ProgressionStepPlugin {
       shell.mentor.askMentorEnabled = true;
 
       swseLogger.debug(
-        `[ForceSecretStep] Entered: ${this._allSecrets.length} total, ${this._legalSecrets.length} legal, ${this._remainingPicks} picks`
+        `[ForceSecretStep] Entered: ${this._allSecrets.length} total, ${this._legalSecrets.length} legal, ${this._selectionBudget} picks`
       );
     } catch (e) {
       swseLogger.error('[ForceSecretStep.onStepEnter]', e);
       this._allSecrets = [];
-      this._remainingPicks = 0;
+      this._selectionBudget = 0;
     }
   }
 
@@ -177,9 +181,10 @@ export class ForceSecretStep extends ProgressionStepPlugin {
       focusedSecretId: this._focusedSecretId,
       committedCounts: Object.fromEntries(this._committedSecretCounts),
       committedSummary,
-      remainingPicks: this._remainingPicks,
+      remainingPicks: Math.max(0, this._selectionBudget - Array.from(this._committedSecretCounts.values()).reduce((sum, c) => sum + c, 0)),
+      selectionBudget: this._selectionBudget,
       // Budget decision for the cards' visible SELECT control.
-      canAddMore: Array.from(this._committedSecretCounts.values()).reduce((sum, c) => sum + c, 0) < this._remainingPicks,
+      canAddMore: Array.from(this._committedSecretCounts.values()).reduce((sum, c) => sum + c, 0) < this._selectionBudget,
       hasSuggestions,
       suggestedSecretIds: Array.from(suggestedIds),
       confidenceMap: Array.from(confidenceMap.entries()).reduce((acc, [id, data]) => {
@@ -195,7 +200,7 @@ export class ForceSecretStep extends ProgressionStepPlugin {
     return {
       selected: Array.from(this._committedSecretCounts.keys()),
       count: totalSelected,
-      isComplete: totalSelected >= this._remainingPicks,
+      isComplete: totalSelected >= this._selectionBudget,
     };
   }
 
@@ -205,7 +210,11 @@ export class ForceSecretStep extends ProgressionStepPlugin {
 
     this._focusedSecretId = secretId;
     shell.focusedItem = secret;
-    await handleAskMentor(shell.actor, 'force-secrets', shell);
+    // Focus inspects; it does not speak at Ask Mentor priority. This used to
+    // call handleAskMentor(), which presents at priority 50 — so merely
+    // clicking a card overrode the build recommendation exactly as though
+    // the player had pressed Ask Mentor. MentorChoiceReactionRouter still
+    // composes a focus reaction at focusReaction priority.
     // The shell owns the repaint for shell-routed focus: it folds this
     // declaration into the single update it already schedules.
     return { handled: true, dirty: ['details'], structural: false, recommendationRelevant: false };
@@ -222,7 +231,7 @@ export class ForceSecretStep extends ProgressionStepPlugin {
     const currentCount = this._committedSecretCounts.get(secretId) ?? 0;
     const totalSelected = Array.from(this._committedSecretCounts.values()).reduce((sum, c) => sum + c, 0);
 
-    if (totalSelected < this._remainingPicks) {
+    if (totalSelected < this._selectionBudget) {
       this._committedSecretCounts.set(secretId, currentCount + 1);
     }
 
@@ -299,7 +308,7 @@ export class ForceSecretStep extends ProgressionStepPlugin {
 
     const currentCount = this._committedSecretCounts.get(focusedItem.id) ?? 0;
     const totalSelected = Array.from(this._committedSecretCounts.values()).reduce((sum, c) => sum + c, 0);
-    const canAddMore = totalSelected < this._remainingPicks;
+    const canAddMore = totalSelected < this._selectionBudget;
 
     // Normalize detail panel data for canonical display (no fabrication)
     const normalized = normalizeDetailPanelData(focusedItem, 'force_secret');
@@ -333,16 +342,16 @@ export class ForceSecretStep extends ProgressionStepPlugin {
 
   validate() {
     const totalSelected = Array.from(this._committedSecretCounts.values()).reduce((sum, c) => sum + c, 0);
-    const isValid = totalSelected >= this._remainingPicks;
+    const isValid = totalSelected >= this._selectionBudget;
     const errors = isValid ? [] : [
-      `Select ${this._remainingPicks - totalSelected} more Force Secret(s).`,
+      `Select ${this._selectionBudget - totalSelected} more Force Secret(s).`,
     ];
     return { isValid, errors, warnings: [] };
   }
 
   getBlockingIssues() {
     const totalSelected = Array.from(this._committedSecretCounts.values()).reduce((sum, c) => sum + c, 0);
-    const remaining = this._remainingPicks - totalSelected;
+    const remaining = this._selectionBudget - totalSelected;
     if (remaining <= 0) return [];
     return [`${remaining} Force Secret(s) remaining`];
   }
@@ -353,7 +362,7 @@ export class ForceSecretStep extends ProgressionStepPlugin {
 
   getRemainingPicks() {
     const totalSelected = Array.from(this._committedSecretCounts.values()).reduce((sum, c) => sum + c, 0);
-    const remaining = this._remainingPicks - totalSelected;
+    const remaining = this._selectionBudget - totalSelected;
 
     if (remaining <= 0) {
       const summaryParts = Array.from(this._committedSecretCounts.entries()).map(([id, count]) => {
@@ -364,10 +373,10 @@ export class ForceSecretStep extends ProgressionStepPlugin {
       const label = summaryParts.length > 0
         ? `✓ ${summaryParts.join(', ')}`
         : `✓ ${totalSelected} Selected`;
-      return [{ label, count: 0, total: Math.max(0, Number(this._remainingPicks || 0)), selected: Math.max(0, totalSelected), isWarning: false }];
+      return [{ label, count: 0, total: Math.max(0, Number(this._selectionBudget || 0)), selected: Math.max(0, totalSelected), isWarning: false }];
     }
 
-    return [{ label: 'Force Secret(s)', count: Math.max(0, remaining), total: Math.max(0, Number(this._remainingPicks || 0)), selected: Math.max(0, totalSelected), isWarning: true }];
+    return [{ label: 'Force Secret(s)', count: Math.max(0, remaining), total: Math.max(0, Number(this._selectionBudget || 0)), selected: Math.max(0, totalSelected), isWarning: true }];
   }
 
   getUtilityBarConfig() {

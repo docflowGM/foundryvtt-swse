@@ -253,6 +253,36 @@ export class SnapshotBuilder {
    * Build pending selections snapshot
    * @private
    */
+  /**
+   * Merge every alias for one pending collection into a single sorted list.
+   *
+   * Quantities are preserved as `id×n` so changing Move Object from one copy to
+   * two changes the hash — selecting the same power again is a real change to
+   * the advice inputs.
+   *
+   * @param {...*} sources
+   * @returns {string[]}
+   * @private
+   */
+  static _mergePendingIds(...sources) {
+    // Aliases are alternate views of the same collection, not additive lists:
+    // take the highest count any single alias reports for an id, so a duplicated
+    // alias cannot inflate a quantity while a genuine second copy still counts.
+    const counts = new Map();
+    for (const source of sources) {
+      const perSource = new Map();
+      for (const id of this._pendingIds(source)) {
+        perSource.set(id, (perSource.get(id) || 0) + 1);
+      }
+      for (const [id, count] of perSource) {
+        counts.set(id, Math.max(counts.get(id) || 0, count));
+      }
+    }
+    return [...counts.entries()]
+      .map(([id, count]) => (count > 1 ? `${id}\u00d7${count}` : id))
+      .sort();
+  }
+
   static _buildPendingSnapshot(pendingData) {
     if (!pendingData || typeof pendingData !== 'object') {
       return {
@@ -278,10 +308,16 @@ export class SnapshotBuilder {
     // made selections, and cached advice went stale within a step. Accept both.
     return {
       selectedClass: pendingData.selectedClass?.id ?? pendingData.class?.id ?? pendingData.class ?? null,
-      selectedFeats: this._pendingIds(pendingData.selectedFeats || pendingData.feats).sort(),
-      selectedTalents: this._pendingIds(pendingData.selectedTalents || pendingData.talents).sort(),
-      selectedSkills: this._pendingIds(pendingData.selectedSkills || pendingData.skills).sort(),
-      selectedPowers: this._pendingIds(pendingData.selectedPowers || pendingData.selectedForcePowers || pendingData.forcePowers).sort(),
+      // Aliases are merged, not chosen with `||`. An empty legacy array is
+      // truthy, so `pendingData.feats || pendingData.selectedFeats` returned []
+      // and hid a populated canonical array — the snapshot hash then failed to
+      // change when the player's selections did.
+      selectedFeats: this._mergePendingIds(pendingData.selectedFeats, pendingData.feats),
+      selectedTalents: this._mergePendingIds(pendingData.selectedTalents, pendingData.talents),
+      selectedSkills: this._mergePendingIds(pendingData.selectedSkills, pendingData.skills),
+      selectedPowers: this._mergePendingIds(
+        pendingData.selectedPowers, pendingData.selectedForcePowers, pendingData.forcePowers
+      ),
       selectedForceSecrets: this._pendingIds(pendingData.selectedForceSecrets || pendingData.forceSecrets).sort(),
       selectedForceTechniques: this._pendingIds(pendingData.selectedForceTechniques || pendingData.forceTechniques).sort(),
       selectedSpecies: pendingData.selectedSpecies?.id ?? pendingData.species?.id ?? pendingData.species ?? null,

@@ -29,6 +29,7 @@ import { RecoverySessionDialog } from '/systems/foundryvtt-swse/scripts/apps/pro
 import { centerApplicationDuringStartup } from '/systems/foundryvtt-swse/scripts/utils/sheet-position.js';
 import { ConditionalStepResolver } from './conditional-step-resolver.js';
 import { ProgressionRenderScheduler, INDEPENDENT_REGIONS } from './progression-render-scheduler.js';
+import { resolveCardGesture } from './card-gesture-resolver.js';
 import { MentorRecommendationController, buildMentorContext } from './mentor-recommendation-controller.js';
 import { ProgressionFinalizer } from './progression-finalizer.js';
 import { ProgressionSession } from './progression-session.js';
@@ -1387,19 +1388,29 @@ export class ProgressionShell extends SWSEApplicationV2 {
     });
 
     if (SWSEPerf.enabled()) console.log(`[ProgressionShell] RENDER START (#${this._renderCount}) position:`, this.position);
-    const result = await super.render(...args);
-    const restoreAfterRender = () => this._restoreProgressionScrollSnapshots(scrollSnapshots, this.getRootElement?.() ?? this.element);
-    restoreAfterRender();
-    await new Promise(resolve => requestAnimationFrame(resolve));
-    restoreAfterRender();
-    if (SWSEPerf.enabled()) console.log(`[ProgressionShell] RENDER COMPLETE (#${this._renderCount}) position:`, this.position);
-    renderTimer.end({ snapshots: scrollSnapshots.length });
-
-    this._isRendering = false;
-    // Anything that asked to repaint while this render was running gets exactly
-    // one follow-up, issued now that the guard is clear.
-    this._flushFollowUpRender();
-    return result;
+    // try/finally is load-bearing: without it a throw anywhere below left
+    // _isRendering true forever and the shell could never repaint again.
+    try {
+      const result = await super.render(...args);
+      const restoreAfterRender = () => this._restoreProgressionScrollSnapshots(scrollSnapshots, this.getRootElement?.() ?? this.element);
+      restoreAfterRender();
+      await new Promise(resolve => requestAnimationFrame(resolve));
+      restoreAfterRender();
+      if (SWSEPerf.enabled()) console.log(`[ProgressionShell] RENDER COMPLETE (#${this._renderCount}) position:`, this.position);
+      return result;
+    } finally {
+      try {
+        renderTimer.end({ snapshots: scrollSnapshots.length });
+      } catch (_err) {
+        // Instrumentation must never mask the original failure.
+      }
+      this._isRendering = false;
+      // Anything that asked to repaint while this render was running gets
+      // exactly one follow-up, issued now that the guard is clear. A failed
+      // render still flushes it, so a transient error does not strand the
+      // update that arrived during it.
+      this._flushFollowUpRender();
+    }
   }
 
   setPosition(position) {
@@ -2744,40 +2755,14 @@ export class ProgressionShell extends SWSEApplicationV2 {
     this._doubleClickSelectionAbort = new AbortController();
     const signal = this._doubleClickSelectionAbort.signal;
 
-    // One physical double-click must produce exactly one logical action.
-    //
-    // Two listeners are needed (see below), so without a token both the second
-    // `click` and the native `dblclick` can reach the commit path for the same
-    // gesture. The token is the event's own timestamp bucket plus the row it
-    // landed on: the paired click/dblclick of one gesture share a timeStamp
-    // within a few milliseconds, while a genuine second double-click does not.
-    let lastGesture = { key: null, at: 0 };
-    let gestureSeq = 0;
-    const isRepeatGesture = (event, row) => {
-      // Identity must be per-row, never shared. A row with no identity
-      // attributes gets its own sticky marker rather than collapsing into a
-      // common empty key, or two different such cards would suppress each other.
-      const identity = row?.dataset?.itemId || row?.dataset?.featId || row?.dataset?.treeId
-        || row?.dataset?.nodeId || row?.dataset?.powerId || row?.dataset?.maneuverId;
-      if (!identity && row) {
-        row.dataset.gestureKey ??= `row-${(gestureSeq += 1)}`;
-      }
-      const key = identity || row?.dataset?.gestureKey || 'unknown';
-      const now = Number(event?.timeStamp) || Date.now();
-      if (lastGesture.key === key && now - lastGesture.at < 400) return true;
-      lastGesture = { key, at: now };
-      return false;
-    };
+    // Gesture resolution lives in card-gesture-resolver.js so the shell and its
+    // tests run the same code rather than a hand-copied duplicate.
+    const gestureState = { key: null, at: 0, seq: 0 };
 
     const commitFromEvent = async (event, { requireDoubleClick = false } = {}) => {
       if (requireDoubleClick && Number(event?.detail || 0) < 2) return;
       const rawTarget = event?.target;
       if (!(rawTarget instanceof Element)) return;
-
-      // A click that landed on a card's own action button (SELECT, +, −, Remove)
-      // is already a single deliberate action. Double-clicking it must not add a
-      // second commit on top.
-      if (rawTarget.closest('[data-card-action="true"], .prog-quantity-btn')) return;
 
       const focusRowControl = rawTarget.closest('[data-action="focus-item"][data-item-id], [data-action="focus-item"][data-id]');
 
@@ -2812,22 +2797,37 @@ export class ProgressionShell extends SWSEApplicationV2 {
       ].join(','));
 
       if (!row || !html.contains(row)) return;
-      if (isRepeatGesture(event, row)) return;
+
+      const { outcome, action } = resolveCardGesture({
+        row,
+        target: rawTarget,
+        timeStamp: event?.timeStamp,
+        state: gestureState,
+      });
+
+      if (outcome === 'ignored' || outcome === 'ignored-control' || outcome === 'deduplicated') return;
 
       event.preventDefault?.();
       event.stopPropagation?.();
       event.stopImmediatePropagation?.();
 
-      // The card's visible SELECT button is the source of truth for what this
-      // card does, so double-click resolves to it rather than to a second
-      // hardcoded list of step types. Falls back to any other nested action
-      // button (skills, language add, custom component selectors).
-      const cardAction = row.querySelector('[data-card-action="true"]:not([disabled]):not([aria-disabled="true"])');
-      if (cardAction instanceof HTMLElement) {
-        cardAction.click();
+      // A disabled card action means the option cannot be taken. Doing nothing
+      // is the whole point — falling through to the commit path here is how a
+      // locked card could still be selected by double-click.
+      if (outcome === 'blocked-disabled') {
+        swseLogger.debug('[ProgressionShell] double-click ignored; card action is disabled', {
+          itemId: row.dataset?.itemId ?? null,
+        });
         return;
       }
 
+      if (outcome === 'card-action' && action instanceof HTMLElement) {
+        action.click();
+        return;
+      }
+
+      // Legacy rows with no marked action: fall back to the step's own nested
+      // control, then to the generic commit path.
       const nestedAction = row.querySelector([
         'button[data-action]:not([data-action="focus-item"]):not([disabled])',
         '[role="button"][data-action]:not([data-action="focus-item"]):not([aria-disabled="true"])'

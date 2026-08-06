@@ -25,7 +25,7 @@ export class MedicalSecretStep extends ProgressionStepPlugin {
     this._searchQuery = '';
     this._focusedSecretId = null;
     this._committedSecretIds = new Set();
-    this._remainingPicks = 0;
+    this._selectionBudget = 0;
     this._suggestedSecrets = [];
     this._renderAbort = null;
     this._utilityUnlisteners = [];
@@ -39,7 +39,11 @@ export class MedicalSecretStep extends ProgressionStepPlugin {
       this._allSecrets = MedicalSecretRegistry.getAll() || [];
 
       const entitlements = resolveMedicalSecretEntitlements(shell?.progressionSession || shell, null, shell?.actor);
-      this._remainingPicks = entitlements.remaining;
+      // entitlements.remaining is total minus the pending draft selections, and
+      // every use site below subtracts the selected count again — storing it
+      // here made a two-pick entitlement with one draft pick look complete and
+      // blocked the second legal choice. The budget is the total.
+      this._selectionBudget = Number(entitlements.total ?? 0);
 
       this._hydrateCommitted(shell);
       this._computeLegalSecrets(shell?.actor);
@@ -50,7 +54,8 @@ export class MedicalSecretStep extends ProgressionStepPlugin {
       swseLogger.debug('[MedicalSecretStep] Entered', {
         total: this._allSecrets.length,
         legal: this._legalSecrets.length,
-        remainingPicks: this._remainingPicks,
+        remainingPicks: Math.max(0, this._selectionBudget - this._committedSecretIds.size),
+      selectionBudget: this._selectionBudget,
         reasons: entitlements.reasons,
       });
     } catch (err) {
@@ -58,7 +63,7 @@ export class MedicalSecretStep extends ProgressionStepPlugin {
       this._allSecrets = [];
       this._legalSecrets = [];
       this._filteredSecrets = [];
-      this._remainingPicks = 0;
+      this._selectionBudget = 0;
     }
   }
 
@@ -110,9 +115,10 @@ export class MedicalSecretStep extends ProgressionStepPlugin {
       focusedSecretId: this._focusedSecretId,
       committedIds: Array.from(this._committedSecretIds),
       committedSummary,
-      remainingPicks: this._remainingPicks,
+      remainingPicks: Math.max(0, this._selectionBudget - this._committedSecretIds.size),
+      selectionBudget: this._selectionBudget,
       // Budget decision for the cards' visible SELECT control.
-      canAddMore: this._committedSecretIds.size < this._remainingPicks,
+      canAddMore: this._committedSecretIds.size < this._selectionBudget,
       hasSuggestions,
       suggestedSecretIds: Array.from(suggestedIds),
       confidenceMap: Array.from(confidenceMap.entries()).reduce((acc, [id, data]) => {
@@ -126,7 +132,7 @@ export class MedicalSecretStep extends ProgressionStepPlugin {
     return {
       selected: Array.from(this._committedSecretIds),
       count: this._committedSecretIds.size,
-      isComplete: this._committedSecretIds.size >= this._remainingPicks,
+      isComplete: this._committedSecretIds.size >= this._selectionBudget,
     };
   }
 
@@ -135,7 +141,11 @@ export class MedicalSecretStep extends ProgressionStepPlugin {
     if (!secret) return;
     this._focusedSecretId = secretId;
     shell.focusedItem = secret;
-    await handleAskMentor(shell.actor, 'medical-secrets', shell);
+    // Focus inspects; it does not speak at Ask Mentor priority. This used to
+    // call handleAskMentor(), which presents at priority 50 — so merely
+    // clicking a card overrode the build recommendation exactly as though
+    // the player had pressed Ask Mentor. MentorChoiceReactionRouter still
+    // composes a focus reaction at focusReaction priority.
     // The shell owns the repaint for shell-routed focus: it folds this
     // declaration into the single update it already schedules.
     return { handled: true, dirty: ['details'], structural: false, recommendationRelevant: false };
@@ -145,7 +155,7 @@ export class MedicalSecretStep extends ProgressionStepPlugin {
     const secret = this._allSecrets.find((entry) => entry.id === secretId);
     if (!secret) return;
     if (this._committedSecretIds.has(secretId)) return;
-    if (this._committedSecretIds.size >= this._remainingPicks) return;
+    if (this._committedSecretIds.size >= this._selectionBudget) return;
 
     this._committedSecretIds.add(secretId);
     const secretsList = Array.from(this._committedSecretIds).map((id) => {
@@ -184,7 +194,7 @@ export class MedicalSecretStep extends ProgressionStepPlugin {
     if (!focusedItem) return this.renderDetailsPanelEmptyState();
 
     const selected = this._committedSecretIds.has(focusedItem.id);
-    const canAddMore = !selected && this._committedSecretIds.size < this._remainingPicks;
+    const canAddMore = !selected && this._committedSecretIds.size < this._selectionBudget;
     const normalized = normalizeDetailPanelData(focusedItem, 'medical_secret');
 
     return {
@@ -213,7 +223,7 @@ export class MedicalSecretStep extends ProgressionStepPlugin {
   }
 
   validate() {
-    const remaining = this._remainingPicks - this._committedSecretIds.size;
+    const remaining = this._selectionBudget - this._committedSecretIds.size;
     return {
       isValid: remaining <= 0,
       errors: remaining <= 0 ? [] : [`Select ${remaining} more Medical Secret(s).`],
@@ -222,14 +232,14 @@ export class MedicalSecretStep extends ProgressionStepPlugin {
   }
 
   getBlockingIssues() {
-    const remaining = this._remainingPicks - this._committedSecretIds.size;
+    const remaining = this._selectionBudget - this._committedSecretIds.size;
     return remaining <= 0 ? [] : [`${remaining} Medical Secret(s) remaining`];
   }
 
   getWarnings() { return []; }
 
   getRemainingPicks() {
-    const remaining = this._remainingPicks - this._committedSecretIds.size;
+    const remaining = this._selectionBudget - this._committedSecretIds.size;
     if (remaining <= 0) {
       const names = Array.from(this._committedSecretIds).map((id) => this._allSecrets.find((entry) => entry.id === id)?.name || id);
       return [{ label: names.length ? `✓ ${names.join(', ')}` : '✓ Medical Secret selected', isWarning: false }];

@@ -2,7 +2,7 @@ import { getMentorGuidance, MENTORS, resolveMentorData, resolveMentorPortraitPat
 import { MentorTranslationIntegration } from '../../../mentor/mentor-translation-integration.js';
 import { ProgressionDebugCapture } from '../debug/progression-debug-capture.js';
 import { getStepMentorObject, resolveStepMentorContext, resolveStepMentorGuidance, setSessionMentorContext } from '../steps/mentor-step-integration.js';
-import { ARBITER_TOKEN } from './mentor-recommendation-controller.js';
+import { isArbitratedMessage } from './mentor-recommendation-controller.js';
 
 /**
  * Maps step ID to mentor guidance choice type for getMentorGuidance().
@@ -292,13 +292,15 @@ export class MentorRail {
    * @param {boolean} [options.replay] - Re-presenting after a structural render.
    * @returns {boolean} false when the rail is not mounted (queued instead).
    */
-  presentRecommendation(recommendation, { replay = false, [ARBITER_TOKEN]: token = false } = {}) {
+  presentRecommendation(recommendation, { replay = false } = {}) {
+    // Kept for callers that still hold a recommendation DTO. It builds an
+    // unauthorized message on purpose: the arbiter is the only thing that can
+    // authorize one, so this now fails closed like any other direct write.
     return this.presentMessage({
       source: replay ? 'recommendation-replay' : 'recommendation',
       text: recommendation?.dialogue,
       mood: recommendation?.mood ?? 'neutral',
       targetId: recommendation?.targetId ?? null,
-      [ARBITER_TOKEN]: token,
     });
   }
 
@@ -326,7 +328,7 @@ export class MentorRail {
     // message without it reached the sink some other way — that is the exact
     // regression this split exists to prevent, so it is counted and reported
     // rather than quietly rendered.
-    if (message?.[ARBITER_TOKEN] !== true) {
+    if (!isArbitratedMessage(message)) {
       this.shell?.mentorRecommendations?.noteDirectBypass?.({
         source: message?.source ?? 'unknown',
         textPreview: text.slice(0, 60),
@@ -334,6 +336,10 @@ export class MentorRail {
       console.warn('[MentorRail] a mentor message reached the rail without passing through '
         + 'MentorRecommendationController; it skipped priority, staleness and equality checks.',
       { source: message?.source ?? 'unknown' });
+      // Fail closed. The first version counted the violation and then rendered
+      // the message anyway, which detected the intruder and opened the door.
+      // Nothing is queued, animated, or written to shell state.
+      return 'unauthorized';
     }
 
     const mood = message?.mood ?? 'neutral';

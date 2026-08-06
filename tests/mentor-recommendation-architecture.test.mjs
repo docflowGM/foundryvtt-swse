@@ -48,7 +48,7 @@ const {
   createContextSignature,
   createRecommendationSignature,
   PRESENTATION,
-  ARBITER_TOKEN,
+  isArbitratedMessage,
 } = await import(
   '/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/mentor-recommendation-controller.js'
 );
@@ -69,9 +69,11 @@ function makeRail(shellRef = null) {
     mounted: true,
     shell: shellRef,
     // Mirrors MentorRail: an unarbitrated message is counted, not trusted.
+    // Mirrors MentorRail: unauthorized messages are counted and REFUSED.
     presentMessage(message) {
-      if (message?.[ARBITER_TOKEN] !== true) {
+      if (!isArbitratedMessage(message)) {
         rail.shell?.mentorRecommendations?.noteDirectBypass?.({ source: message?.source ?? 'unknown' });
+        return 'unauthorized';
       }
       calls.push(message);
       return rail.mounted;
@@ -403,7 +405,7 @@ const rec = (targetId, dialogue = `${targetId} suits this build.`) => Object.fre
   assert.equal(shell.renderCalls.length, 0);
   assert.equal(shell.requestRenderCalls.length, 0);
   // The replay went through the arbiter, so it carries the ownership token.
-  assert.equal(shell.mentorRail.calls[1][ARBITER_TOKEN], true);
+  assert.ok(isArbitratedMessage(shell.mentorRail.calls[1]), 'the replay was not authorized by the arbiter');
   assert.equal(shell.controller.stats().directBypassCount, 0);
 }
 
@@ -845,7 +847,8 @@ const rec = (targetId, dialogue = `${targetId} suits this build.`) => Object.fre
   }
   assert.match(rail, /presentMessage\(message\) \{/, 'MentorRail is missing the single presentation sink');
   // The sink proves ownership rather than trusting a source string.
-  assert.match(rail, /message\?\.\[ARBITER_TOKEN\] !== true/, 'MentorRail no longer checks the arbitration token');
+  assert.match(rail, /!isArbitratedMessage\(message\)/, 'MentorRail no longer checks authorization');
+  assert.match(rail, /return 'unauthorized';/, 'MentorRail no longer fails closed on an unauthorized message');
   assert.match(rail, /noteDirectBypass/, 'MentorRail no longer reports unarbitrated messages');
   // Step guidance resolves text; it does not speak it.
   assert.match(rail, /async resolveStepGuidance\(descriptor\)/, 'speakForStep was not converted to a resolver');
@@ -1032,7 +1035,7 @@ const rec = (targetId, dialogue = `${targetId} suits this build.`) => Object.fre
   let seenWhilePresenting = null;
   shell.mentorRail.presentMessage = (message) => {
     seenWhilePresenting = c.isPresenting();
-    if (message?.[ARBITER_TOKEN] !== true) c.noteDirectBypass({ source: message?.source });
+    if (!isArbitratedMessage(message)) { c.noteDirectBypass({ source: message?.source }); return 'unauthorized'; }
     return true;
   };
   c.presentAskMentor({ text: 'Another line.', stepId: 'general-feat' });
@@ -1073,6 +1076,83 @@ const rec = (targetId, dialogue = `${targetId} suits this build.`) => Object.fre
   for (const expected of ['species-step.js', 'class-step.js', 'feat-step.js']) {
     assert.ok(migrated.includes(expected), `${expected} has not migrated to commitSuggestionFromMentor()`);
   }
+}
+
+/* ------------------------------------------------------------------ *
+ * 27. A reaction competes for the rail; it does not clear the board first.
+ *
+ * MentorChoiceReactionRouter used to call noteExternalDisplay() BEFORE
+ * submitting the reaction, which wiped the active recommendation and its
+ * signature — so a priority-20 focus bark never actually lost to a priority-40
+ * recommendation, it emptied the room and walked in.
+ * ------------------------------------------------------------------ */
+{
+  const router = fs.readFileSync(
+    path.join(ROOT, 'scripts/apps/progression-framework/shell/mentor-choice-reaction-router.js'), 'utf8');
+
+  const speakStart = router.indexOf('async _speak(');
+  const speak = router.slice(speakStart, router.indexOf('\n  _flashRail(', speakStart));
+  // The comment explains the old ordering; only executable lines are checked.
+  const speakCode = speak.split('\n').filter(line => !/^\s*(\/\/|\*)/.test(line)).join('\n');
+  const clearIndex = speakCode.indexOf('noteExternalDisplay');
+  const presentIndex = speakCode.search(/present(Commit|Focus)Reaction/);
+  assert.ok(presentIndex !== -1, 'the router no longer routes reactions through the arbiter');
+  assert.ok(
+    clearIndex === -1 || clearIndex > presentIndex,
+    'the router clears the active recommendation before arbitration'
+  );
+  assert.match(speakCode, /outcome !== 'displayed' && outcome !== 'queued'/,
+    'the router no longer checks the arbitration outcome');
+  assert.match(speakCode, /return;/, 'a rejected reaction still falls through to the rail flash');
+
+  // Behavioural: a same-revision focus reaction loses to a live recommendation.
+  const shell = makeShell();
+  const c = shell.controller;
+  await withStubbedService(async () => rec('exceptional-skill'), async () => {
+    await c.requestRecommendation(buildMentorContext(shell));
+  });
+  assert.equal(shell.mentorRail.calls.length, 1);
+
+  const focusOutcome = c.presentFocusReaction({ text: 'Interesting.', stepId: 'general-feat' });
+  assert.equal(focusOutcome, PRESENTATION.REJECTED_PRIORITY,
+    'a focus reaction displaced a live recommendation');
+  assert.equal(shell.mentorRail.calls.length, 1, 'the rejected reaction still wrote to the rail');
+
+  const commitOutcome = c.presentCommitReaction({ text: 'Good pick.', stepId: 'general-feat' });
+  assert.equal(commitOutcome, PRESENTATION.REJECTED_PRIORITY,
+    'a same-revision commit reaction displaced a live recommendation');
+
+  // Ask Mentor outranks both.
+  assert.equal(c.presentAskMentor({ text: 'Here are your options.', stepId: 'general-feat' }), PRESENTATION.DISPLAYED);
+  assert.equal(c.presentFocusReaction({ text: 'Hmm.', stepId: 'general-feat' }), PRESENTATION.REJECTED_PRIORITY);
+}
+
+/* ------------------------------------------------------------------ *
+ * 28. Focus never speaks at Ask Mentor priority.
+ * ------------------------------------------------------------------ */
+{
+  const stepsDir = path.join(ROOT, 'scripts/apps/progression-framework/steps');
+  const offenders = [];
+  for (const name of fs.readdirSync(stepsDir)) {
+    if (!name.endsWith('.js')) continue;
+    const src = fs.readFileSync(path.join(stepsDir, name), 'utf8');
+    for (const match of src.matchAll(/async onItemFocused\(/g)) {
+      const body = src.slice(match.index, src.indexOf('\n  }', match.index));
+      for (const line of body.split('\n')) {
+        const trimmed = line.trim();
+        if (trimmed.startsWith('//') || trimmed.startsWith('*')) continue;
+        if (/\b(handleAskMentor|presentAskMentor|onAskMentor)\s*\(/.test(line)) {
+          offenders.push(`${name}: ${trimmed.slice(0, 70)}`);
+        }
+      }
+    }
+  }
+  assert.deepEqual(
+    offenders,
+    [],
+    'focus must not speak at Ask Mentor priority — that lets card inspection '
+    + 'override the build recommendation:\n  ' + offenders.join('\n  ')
+  );
 }
 
 console.log('mentor-recommendation-architecture: all assertions passed');

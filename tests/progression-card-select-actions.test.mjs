@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 
 // Universal option-card SELECT action.
 //
@@ -45,7 +45,7 @@ const SELECTABLE_SURFACES = [
   { file: 'medical-secret-work-surface.hbs', cards: 1, action: 'commit-item' },
   { file: 'force-regimen-work-surface.hbs', cards: 1, action: 'commit-item' },
   { file: 'nonheroic-starting-feats-work-surface.hbs', cards: 1, action: 'commit-item' },
-  { file: 'starship-maneuver-work-surface.hbs', cards: 1, action: 'commit-item' },
+  { file: 'starship-maneuver-work-surface.hbs', cards: 1, action: 'increment-quantity' },
   { file: 'force-power-work-surface.hbs', cards: 2, action: 'increment-quantity' },
   { file: 'language-work-surface.hbs', cards: 1, action: 'select-language' },
 ];
@@ -221,116 +221,129 @@ const PRE_EXISTING_CONTROLS = [
 }
 
 /* ------------------------------------------------------------------ *
- * 6. Double-click resolves to the card's own action and never fires twice.
+ * 6. Double-click resolution — driven through the PRODUCTION helper.
  *
- * Behavioural, against the resolution contract the shell implements: a DOM
- * double stands in for the row, and the gesture token is exercised with the
- * click/dblclick pair one physical double-click actually produces.
+ * This block used to keep a hand-copied "faithful" duplicate of the shell's
+ * logic. It drifted, and it asserted that a locked card falls through to the
+ * generic commit path — encoding the defect instead of catching it.
  * ------------------------------------------------------------------ */
 {
-  function makeElement({ dataset = {}, children = [], disabled = false, cardAction = false }) {
+  const { resolveCardGesture, findCardAction, isDisabledControl, rowGestureKey, GESTURE_WINDOW_MS } =
+    await import(pathToFileURL(
+      path.join(ROOT, 'scripts/apps/progression-framework/shell/card-gesture-resolver.js')
+    ).href);
+
+  const makeEl = ({ dataset = {}, cardAction = false, disabled = false, aria = null, children = [] } = {}) => {
     const el = {
-      dataset,
-      disabled,
-      clicks: 0,
-      children,
-      matchesCardAction: cardAction,
+      dataset, disabled, clicks: 0, children,
+      _cardAction: cardAction,
+      getAttribute: (name) => (name === 'aria-disabled' ? aria : null),
       click() { this.clicks += 1; },
+      closest(selector) {
+        if (selector.includes('data-card-action') && el._isControl) return el;
+        return null;
+      },
       querySelector(selector) {
-        if (selector.includes('data-card-action')) {
-          return children.find(c => c.matchesCardAction && !c.disabled) ?? null;
-        }
-        return children.find(c => c.dataset.action && c.dataset.action !== 'focus-item' && !c.disabled) ?? null;
+        if (!selector.includes('data-card-action')) return null;
+        return children.find(c => c._cardAction) ?? null;
       },
     };
-    for (const child of children) child.parent = el;
     return el;
-  }
+  };
 
-  // Faithful copy of the shell's gesture resolution, including the token.
-  function makeResolver({ onCommit }) {
-    let lastGesture = { key: null, at: 0 };
-    const isRepeatGesture = (event, row) => {
-      const key = `${row?.dataset?.itemId ?? ''}|${row?.dataset?.featId ?? ''}|${row?.dataset?.treeId ?? ''}`;
-      const now = Number(event?.timeStamp) || Date.now();
-      if (lastGesture.key === key && now - lastGesture.at < 400) return true;
-      lastGesture = { key, at: now };
-      return false;
-    };
-    return (event, row, { requireDoubleClick = false, onCardAction = false } = {}) => {
-      if (requireDoubleClick && Number(event?.detail || 0) < 2) return 'ignored';
-      if (onCardAction) return 'ignored-card-action';
-      if (isRepeatGesture(event, row)) return 'deduplicated';
-      const cardAction = row.querySelector('[data-card-action="true"]:not([disabled])');
-      if (cardAction) { cardAction.click(); return 'card-action'; }
-      onCommit(row);
-      return 'commit';
-    };
-  }
+  const freshState = () => ({ key: null, at: 0, seq: 0 });
 
-  // A card with a SELECT button: double-click clicks that button, once.
+  // An enabled card action is invoked once for one gesture.
   {
-    const select = makeElement({ dataset: { action: 'commit-item', itemId: 'human' }, cardAction: true });
-    const row = makeElement({ dataset: { itemId: 'human' }, children: [select] });
-    let commits = 0;
-    const resolve = makeResolver({ onCommit: () => { commits += 1; } });
-
-    // The two events one physical double-click produces.
-    assert.equal(resolve({ detail: 2, timeStamp: 1000 }, row, { requireDoubleClick: true }), 'card-action');
-    assert.equal(resolve({ detail: 2, timeStamp: 1004 }, row, { requireDoubleClick: false }), 'deduplicated');
-
-    assert.equal(select.clicks, 1, 'one double-click produced more than one action');
-    assert.equal(commits, 0, 'double-click bypassed the card action and committed directly');
+    const action = makeEl({ dataset: { action: 'commit-item' }, cardAction: true });
+    const row = makeEl({ dataset: { itemId: 'human' }, children: [action] });
+    const state = freshState();
+    const first = resolveCardGesture({ row, target: row, timeStamp: 1000, state });
+    assert.equal(first.outcome, 'card-action');
+    first.action.click();
+    const second = resolveCardGesture({ row, target: row, timeStamp: 1005, state });
+    assert.equal(second.outcome, 'deduplicated', 'the click/dblclick pair produced two actions');
+    assert.equal(action.clicks, 1);
   }
 
-  // A genuine second double-click, later, does act again.
+  // A DISABLED card action does nothing. It must NOT fall through to commit.
   {
-    const select = makeElement({ dataset: { action: 'commit-item', itemId: 'human' }, cardAction: true });
-    const row = makeElement({ dataset: { itemId: 'human' }, children: [select] });
-    const resolve = makeResolver({ onCommit: () => {} });
-    resolve({ detail: 2, timeStamp: 1000 }, row, { requireDoubleClick: true });
-    resolve({ detail: 2, timeStamp: 1004 }, row, { requireDoubleClick: false });
-    resolve({ detail: 2, timeStamp: 2000 }, row, { requireDoubleClick: true });
-    assert.equal(select.clicks, 2, 'a later double-click was wrongly deduplicated');
+    const action = makeEl({ dataset: { action: 'commit-item' }, cardAction: true, disabled: true });
+    const row = makeEl({ dataset: { itemId: 'locked' }, children: [action] });
+    const result = resolveCardGesture({ row, target: row, timeStamp: 1, state: freshState() });
+    assert.equal(result.outcome, 'blocked-disabled',
+      'a locked card still reached the generic commit path');
+    assert.notEqual(result.outcome, 'fallback-commit');
+    assert.equal(action.clicks, 0);
   }
 
-  // A row without a card action still reaches the commit path.
+  // aria-disabled counts too.
   {
-    const row = makeElement({ dataset: { itemId: 'legacy' }, children: [] });
-    let commits = 0;
-    const resolve = makeResolver({ onCommit: () => { commits += 1; } });
-    assert.equal(resolve({ detail: 2, timeStamp: 1 }, row, { requireDoubleClick: true }), 'commit');
-    assert.equal(commits, 1);
-  }
-
-  // Clicking the SELECT button itself never adds a second commit.
-  {
-    const select = makeElement({ dataset: { action: 'commit-item', itemId: 'human' }, cardAction: true });
-    const row = makeElement({ dataset: { itemId: 'human' }, children: [select] });
-    let commits = 0;
-    const resolve = makeResolver({ onCommit: () => { commits += 1; } });
+    const action = makeEl({ dataset: { action: 'commit-item' }, cardAction: true, aria: 'true' });
+    const row = makeEl({ dataset: { itemId: 'locked-aria' }, children: [action] });
+    assert.equal(isDisabledControl(action), true);
     assert.equal(
-      resolve({ detail: 2, timeStamp: 5 }, row, { requireDoubleClick: true, onCardAction: true }),
-      'ignored-card-action'
+      resolveCardGesture({ row, target: row, timeStamp: 1, state: freshState() }).outcome,
+      'blocked-disabled'
     );
-    assert.equal(commits, 0);
-    assert.equal(select.clicks, 0);
   }
 
-  // A disabled card action is not clickable and does not fall through to commit
-  // — a locked option must do nothing.
+  // Legacy rows with no marked action still reach the commit fallback.
   {
-    const select = makeElement({
-      dataset: { action: 'commit-item', itemId: 'locked' }, cardAction: true, disabled: true,
-    });
-    const row = makeElement({ dataset: { itemId: 'locked' }, children: [select] });
-    let commits = 0;
-    const resolve = makeResolver({ onCommit: () => { commits += 1; } });
-    resolve({ detail: 2, timeStamp: 9 }, row, { requireDoubleClick: true });
-    assert.equal(select.clicks, 0, 'a disabled card action was clicked');
-    // The row itself has no other nested action, so it falls back to the plugin
-    // commit path, which applies its own legality check.
-    assert.equal(commits, 1);
+    const row = makeEl({ dataset: { itemId: 'legacy' } });
+    assert.equal(findCardAction(row), null);
+    assert.equal(
+      resolveCardGesture({ row, target: row, timeStamp: 1, state: freshState() }).outcome,
+      'fallback-commit'
+    );
+  }
+
+  // A click on the card's own control never enters the row gesture path.
+  {
+    const action = makeEl({ dataset: { action: 'commit-item' }, cardAction: true });
+    action._isControl = true;
+    const row = makeEl({ dataset: { itemId: 'human' }, children: [action] });
+    assert.equal(
+      resolveCardGesture({ row, target: action, timeStamp: 1, state: freshState() }).outcome,
+      'ignored-control'
+    );
+  }
+
+  // A genuine later double-click acts again.
+  {
+    const action = makeEl({ dataset: { action: 'commit-item' }, cardAction: true });
+    const row = makeEl({ dataset: { itemId: 'human' }, children: [action] });
+    const state = freshState();
+    resolveCardGesture({ row, target: row, timeStamp: 1000, state });
+    resolveCardGesture({ row, target: row, timeStamp: 1005, state });
+    assert.equal(
+      resolveCardGesture({ row, target: row, timeStamp: 1000 + GESTURE_WINDOW_MS + 10, state }).outcome,
+      'card-action'
+    );
+  }
+
+  // Two identity-less rows never share a gesture key.
+  {
+    const state = freshState();
+    const a = makeEl({ dataset: {} });
+    const b = makeEl({ dataset: {} });
+    const seq = { next: () => (state.seq = (state.seq ?? 0) + 1) };
+    const keyA = rowGestureKey(a, seq);
+    const keyB = rowGestureKey(b, seq);
+    assert.notEqual(keyA, keyB, 'two identity-less rows shared a deduplication key');
+
+    assert.equal(resolveCardGesture({ row: a, target: a, timeStamp: 3000, state }).outcome, 'fallback-commit');
+    assert.equal(resolveCardGesture({ row: b, target: b, timeStamp: 3005, state }).outcome, 'fallback-commit',
+      'one row suppressed a different row');
+  }
+
+  // Different cards do not suppress each other.
+  {
+    const state = freshState();
+    const rowA = makeEl({ dataset: { itemId: 'a' } });
+    const rowB = makeEl({ dataset: { itemId: 'b' } });
+    assert.equal(resolveCardGesture({ row: rowA, target: rowA, timeStamp: 1000, state }).outcome, 'fallback-commit');
+    assert.equal(resolveCardGesture({ row: rowB, target: rowB, timeStamp: 1005, state }).outcome, 'fallback-commit');
   }
 }
 
@@ -339,18 +352,13 @@ const PRE_EXISTING_CONTROLS = [
  * ------------------------------------------------------------------ */
 {
   const shell = read('scripts/apps/progression-framework/shell/progression-shell.js');
-  assert.match(shell, /const isRepeatGesture = \(event, row\)/, 'the gesture token is missing');
-  assert.match(shell, /now - lastGesture\.at < 400/, 'the gesture dedup window is missing');
-  assert.match(
-    shell,
-    /const cardAction = row\.querySelector\('\[data-card-action="true"\]/,
-    'double-click no longer resolves to the card action'
-  );
-  assert.match(
-    shell,
-    /rawTarget\.closest\('\[data-card-action="true"\], \.prog-quantity-btn'\)/,
-    'double-clicking a card control can still add a second commit'
-  );
+  assert.match(shell, /import \{ resolveCardGesture \} from '\.\/card-gesture-resolver\.js'/,
+    'the shell no longer uses the shared gesture resolver');
+  assert.match(shell, /resolveCardGesture\(\{\n\s*row,/, 'the shell does not call the resolver');
+  assert.match(shell, /outcome === 'blocked-disabled'/,
+    'the shell no longer stops on a disabled card action');
+  assert.ok(!shell.includes('const isRepeatGesture = (event, row)'),
+    'the shell still keeps its own copy of the gesture logic');
 
   // No new render seam and no new per-step listener was introduced.
   const wiring = shell.slice(shell.indexOf('_wireDoubleClickSelection(html, plugin)'));
@@ -481,46 +489,5 @@ const PRE_EXISTING_CONTROLS = [
   }
 }
 
-/* ------------------------------------------------------------------ *
- * 12. Gesture deduplication is per-row, and one row cannot suppress another.
- * ------------------------------------------------------------------ */
-{
-  let gestureSeq = 0;
-  let lastGesture = { key: null, at: 0 };
-  const isRepeatGesture = (event, row) => {
-    const identity = row?.dataset?.itemId || row?.dataset?.featId || row?.dataset?.treeId
-      || row?.dataset?.nodeId || row?.dataset?.powerId || row?.dataset?.maneuverId;
-    if (!identity && row) {
-      row.dataset.gestureKey ??= `row-${(gestureSeq += 1)}`;
-    }
-    const key = identity || row?.dataset?.gestureKey || 'unknown';
-    const now = Number(event?.timeStamp) || Date.now();
-    if (lastGesture.key === key && now - lastGesture.at < 400) return true;
-    lastGesture = { key, at: now };
-    return false;
-  };
-
-  const rowA = { dataset: { itemId: 'a' } };
-  const rowB = { dataset: { itemId: 'b' } };
-
-  // click(detail=2) + dblclick of one gesture -> one action.
-  assert.equal(isRepeatGesture({ timeStamp: 1000 }, rowA), false);
-  assert.equal(isRepeatGesture({ timeStamp: 1005 }, rowA), true);
-
-  // A different card is never suppressed by the previous one.
-  assert.equal(isRepeatGesture({ timeStamp: 1010 }, rowB), false);
-
-  // Two genuine double-clicks beyond the window both act.
-  assert.equal(isRepeatGesture({ timeStamp: 2000 }, rowB), false);
-
-  // Identity-less rows get their own sticky key rather than colliding on ''.
-  const bareA = { dataset: {} };
-  const bareB = { dataset: {} };
-  assert.equal(isRepeatGesture({ timeStamp: 3000 }, bareA), false);
-  assert.equal(isRepeatGesture({ timeStamp: 3005 }, bareB), false,
-    'two identity-less rows shared a deduplication key');
-  assert.equal(isRepeatGesture({ timeStamp: 3010 }, bareB), true);
-  assert.notEqual(bareA.dataset.gestureKey, bareB.dataset.gestureKey);
-}
 
 console.log('progression-card-select-actions: all assertions passed');

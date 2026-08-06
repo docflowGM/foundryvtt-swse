@@ -184,14 +184,27 @@ export const PRESENTATION = Object.freeze({
 const ACCEPTED = new Set([PRESENTATION.DISPLAYED, PRESENTATION.QUEUED]);
 
 /**
- * Token proving a message came through this arbiter.
+ * Authorization for a mentor message.
  *
- * MentorRail refuses — and counts — any message arriving at its sink without
- * it. A string like `source: 'recommendation'` would be trivially forgeable by
- * the very call sites this is meant to catch, so ownership is carried by an
- * unexported symbol instead.
+ * The first version of this was an exported Symbol, which any module could
+ * import and stamp — it documented itself as unforgeable while being exactly as
+ * forgeable as the `source: 'recommendation'` string it replaced.
+ *
+ * This is a private capability instead: the controller adds the exact message
+ * object it accepted to a module-private WeakSet, and MentorRail can only *ask*
+ * whether a given object is in it. There is nothing to import and no way to add
+ * an entry from outside this module.
  */
-export const ARBITER_TOKEN = Symbol('swse.mentor.arbitrated');
+const AUTHORIZED_MESSAGES = new WeakSet();
+
+/**
+ * Is this exact message object one the arbiter accepted?
+ * @param {Object} message
+ * @returns {boolean}
+ */
+export function isArbitratedMessage(message) {
+  return !!message && typeof message === 'object' && AUTHORIZED_MESSAGES.has(message);
+}
 
 export class MentorRecommendationController {
   /**
@@ -441,7 +454,10 @@ export class MentorRecommendationController {
   _writeToRail(accepted) {
     this._presentDepth += 1;
     try {
-      const presented = this.shell?.mentorRail?.presentMessage?.({ ...accepted, [ARBITER_TOKEN]: true });
+      // Authorize the exact object handed to the rail — not a copy, and not a
+      // shape the rail has to trust.
+      AUTHORIZED_MESSAGES.add(accepted);
+      const presented = this.shell?.mentorRail?.presentMessage?.(accepted);
       if (presented === undefined) return PRESENTATION.UNAVAILABLE;
       // false means "rail not mounted; queued and replayed on mount", which is
       // a deferral, not a rejection.
