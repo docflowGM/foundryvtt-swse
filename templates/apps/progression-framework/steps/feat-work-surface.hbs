@@ -67,8 +67,10 @@
            itemId=feat.id
            name=feat.name
            selected=feat.isSelected
-           disabled=feat.isUnavailable
-           title="Choose this feat"
+           state=feat.cardAction.state
+           deselect=feat.cardAction.deselect
+           disabled=feat.cardAction.disabled
+           title=feat.cardAction.title
         }}
       </div>
       {{/each}}
@@ -189,8 +191,10 @@
              itemId=feat.id
              name=feat.name
              selected=feat.isSelected
-             disabled=feat.isUnavailable
-             title="Choose this feat"
+             state=feat.cardAction.state
+             deselect=feat.cardAction.deselect
+             disabled=feat.cardAction.disabled
+             title=feat.cardAction.title
           }}
         </div>
         {{/each}}
@@ -239,8 +243,10 @@
              itemId=feat.id
              name=feat.name
              selected=feat.isSelected
-             disabled=feat.isUnavailable
-             title="Choose this feat"
+             state=feat.cardAction.state
+             deselect=feat.cardAction.deselect
+             disabled=feat.cardAction.disabled
+             title=feat.cardAction.title
           }}
         </div>
         {{/each}}

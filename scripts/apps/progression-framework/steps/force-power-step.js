@@ -225,6 +225,12 @@ export class ForcePowerStep extends ProgressionStepPlugin {
         removedCount,
         effectiveOwnedCount,
         totalCount,
+        // State for the card's visible SELECT control. Force Powers are a
+        // quantity selection, so SELECT means "add one more copy through the
+        // existing increment path", never a binary commit.
+        cardActionState: (pendingSelectedTotal >= effectiveBudget && removedCount <= 0)
+          ? 'maximum'
+          : (pendingCount > 0 ? 'again' : null),
         isPending: pendingCount > 0,
         isCommitted: effectiveOwnedCount > 0,
         isRemoved: removedCount > 0,

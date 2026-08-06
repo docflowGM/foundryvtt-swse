@@ -2752,8 +2752,17 @@ export class ProgressionShell extends SWSEApplicationV2 {
     // landed on: the paired click/dblclick of one gesture share a timeStamp
     // within a few milliseconds, while a genuine second double-click does not.
     let lastGesture = { key: null, at: 0 };
+    let gestureSeq = 0;
     const isRepeatGesture = (event, row) => {
-      const key = `${row?.dataset?.itemId ?? ''}|${row?.dataset?.featId ?? ''}|${row?.dataset?.treeId ?? ''}`;
+      // Identity must be per-row, never shared. A row with no identity
+      // attributes gets its own sticky marker rather than collapsing into a
+      // common empty key, or two different such cards would suppress each other.
+      const identity = row?.dataset?.itemId || row?.dataset?.featId || row?.dataset?.treeId
+        || row?.dataset?.nodeId || row?.dataset?.powerId || row?.dataset?.maneuverId;
+      if (!identity && row) {
+        row.dataset.gestureKey ??= `row-${(gestureSeq += 1)}`;
+      }
+      const key = identity || row?.dataset?.gestureKey || 'unknown';
       const now = Number(event?.timeStamp) || Date.now();
       if (lastGesture.key === key && now - lastGesture.at < 400) return true;
       lastGesture = { key, at: now };

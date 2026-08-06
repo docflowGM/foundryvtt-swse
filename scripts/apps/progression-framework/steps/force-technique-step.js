@@ -1021,6 +1021,16 @@ export class ForceTechniqueStep extends ProgressionStepPlugin {
       availabilityLabel: availability.label || null,
       missingRelatedPower: availability.missingRelatedPower || null,
       unavailableReason: availability.reason || null,
+      // State for the card's visible SELECT control. Owned techniques and those
+      // blocked by a missing related Force Power stay disabled with the reason
+      // the step already computed — the card must not re-derive legality.
+      cardActionState: this._isTechniqueOwned(id, technique)
+        ? 'owned'
+        : (!availability.selectable ? 'unavailable' : null),
+      cardActionTitle: this._isTechniqueOwned(id, technique)
+        ? 'Already known'
+        : (availability.reason || 'Choose this Force Technique'),
+      cardActionDisabled: this._isTechniqueOwned(id, technique) || !availability.selectable,
       shortSummary: this._stripHtml(technique?.description || technique?.system?.description || technique?.system?.benefit || ''),
       badgeLabel: isSuggested ? 'Recommended' : null,
       badgeCssClass: isSuggested ? 'prog-badge--suggested' : null,

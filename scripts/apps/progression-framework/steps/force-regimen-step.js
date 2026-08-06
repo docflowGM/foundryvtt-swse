@@ -115,6 +115,8 @@ export class ForceRegimenStep extends ProgressionStepPlugin {
       selectedCount: totalSelected,
       selectionBudget: this._totalBudget,
       remainingPicks: remaining,
+      // Budget decision for the cards' visible SELECT control.
+      canAddMore: totalSelected < this._totalBudget,
       hasSelectionBudget: this._totalBudget > 0,
       categoryGroups: this._buildCategoryGroups(this._filteredRegimens),
     };

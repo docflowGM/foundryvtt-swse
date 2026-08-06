@@ -47,9 +47,16 @@ const SELECTABLE_SURFACES = [
   { file: 'nonheroic-starting-feats-work-surface.hbs', cards: 1, action: 'commit-item' },
   { file: 'starship-maneuver-work-surface.hbs', cards: 1, action: 'commit-item' },
   { file: 'force-power-work-surface.hbs', cards: 2, action: 'increment-quantity' },
-  { file: 'skills-work-surface.hbs', cards: 1, action: 'skill-train' },
   { file: 'language-work-surface.hbs', cards: 1, action: 'select-language' },
 ];
+
+// Bespoke interaction steps. These are deliberately NOT part of the generic
+// card contract: their controls encode an interaction, not a candidate choice,
+// and flattening them into SELECT would lose meaning the player relies on.
+const BESPOKE_STEPS = new Map([
+  ['skills-work-surface.hbs', 'Train/Untrain carries the rules meaning; training limits and class-skill legality are step-specific'],
+  ['attribute-work-surface.hbs', 'ability dice, point-buy and array assignment are an interaction, not a candidate list'],
+]);
 
 // Surfaces whose canonical control already existed and was tagged rather than
 // duplicated — adding a second button there would create two commit routes.
@@ -88,6 +95,26 @@ const PRE_EXISTING_CONTROLS = [
 }
 
 /* ------------------------------------------------------------------ *
+ * 1b. Bespoke steps keep their purpose-built controls.
+ *
+ * The accurate claim is "every conventional candidate-card step has a visible
+ * card-level SELECT", not "every progression step uses the generic partial".
+ * ------------------------------------------------------------------ */
+{
+  for (const [file, reason] of BESPOKE_STEPS) {
+    const src = step(file);
+    assert.ok(
+      !src.includes('option-card-action.hbs'),
+      `${file} was flattened into the generic SELECT contract, but it is bespoke: ${reason}`
+    );
+  }
+  // Skills keeps its own vocabulary and actions.
+  const skills = step('skills-work-surface.hbs');
+  assert.match(skills, /data-action="skill-train"/, 'skills lost its Train action');
+  assert.match(skills, /data-action="skill-untrain"/, 'skills lost its Untrain action');
+}
+
+/* ------------------------------------------------------------------ *
  * 2. Each card action carries the step's own canonical action, not a new one,
  *    and every action it names is one the shell or a plugin already handles.
  * ------------------------------------------------------------------ */
@@ -98,7 +125,7 @@ const PRE_EXISTING_CONTROLS = [
   );
   // Actions handled by plugins rather than the shell action map.
   const knownPluginActions = new Set([
-    'skill-train', 'skill-untrain', 'select-language', 'remove-bonus-language',
+    'select-language', 'remove-bonus-language',
     'increment-quantity', 'decrement-quantity', 'enter-tree', 'remove-feat',
   ]);
 
@@ -366,6 +393,134 @@ const PRE_EXISTING_CONTROLS = [
   ]) {
     assert.ok(commitRails.includes(expected), `${expected} no longer commits through commit-item`);
   }
+}
+
+/* ------------------------------------------------------------------ *
+ * 9. Legality lives in the step, never in the shared partial.
+ *
+ * A prerequisite check inside the partial would be a second copy of the rules
+ * the detail rail already applies, free to diverge silently.
+ * ------------------------------------------------------------------ */
+{
+  const partial = read(`templates/apps/progression-framework/${PARTIAL}`);
+  // The doc comment may name the rules it deliberately does not apply; the
+  // markup below it must not touch them.
+  const partialMarkup = partial.slice(partial.indexOf('--}}') + 4);
+  for (const rule of [
+    'prerequisite', 'missingPrereq', 'meetsPrereqs', 'isAvailable',
+    'remainingPicks', 'budget', 'canIncrement', 'canAddMore',
+  ]) {
+    assert.ok(
+      !partialMarkup.includes(rule),
+      `the shared partial's markup references "${rule}" — legality belongs to the owning step`
+    );
+  }
+
+  // The steps that gained a state decision keep it in the view model.
+  const featStep = read('scripts/apps/progression-framework/steps/feat-step.js');
+  assert.match(featStep, /_buildFeatCardAction\(feat, featId\)/, 'feat card state is not computed in the plugin');
+  for (const state of ['granted', 'owned', 'unavailable']) {
+    assert.ok(featStep.includes(`state: '${state}'`), `feat card state is missing ${state}`);
+  }
+
+  const techniqueStep = read('scripts/apps/progression-framework/steps/force-technique-step.js');
+  assert.match(techniqueStep, /cardActionState:/, 'technique card state is not computed in the plugin');
+  assert.match(techniqueStep, /cardActionDisabled:/, 'technique card disabled state is not computed');
+
+  const powerStep = read('scripts/apps/progression-framework/steps/force-power-step.js');
+  assert.match(powerStep, /cardActionState:/, 'force power quantity state is not computed in the plugin');
+  assert.ok(powerStep.includes("'maximum'") && powerStep.includes("'again'"),
+    'force power card state does not distinguish "add another" from "at maximum"');
+}
+
+/* ------------------------------------------------------------------ *
+ * 10. Feat cards render the state the step decided, and never a bare
+ *     `disabled` flag the plugin does not set.
+ *
+ * The first cut passed `disabled=feat.isUnavailable`, a field no plugin ever
+ * sets, so an unavailable feat still offered an enabled SELECT.
+ * ------------------------------------------------------------------ */
+{
+  const feats = step('feat-work-surface.hbs');
+  assert.ok(!feats.includes('disabled=feat.isUnavailable'),
+    'feat cards still key their disabled state on a field the plugin never sets');
+  const calls = [...feats.matchAll(/option-card-action\.hbs"([\s\S]{0,400}?)\}\}/g)].map(m => m[1]);
+  assert.equal(calls.length, 3);
+  for (const call of calls) {
+    assert.match(call, /state=feat\.cardAction\.state/);
+    assert.match(call, /disabled=feat\.cardAction\.disabled/);
+    assert.match(call, /deselect=feat\.cardAction\.deselect/);
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ * 11. Quantity steps use increment semantics and a real budget flag.
+ * ------------------------------------------------------------------ */
+{
+  const powers = step('force-power-work-surface.hbs');
+  const calls = [...powers.matchAll(/option-card-action\.hbs"([\s\S]{0,400}?)\}\}/g)].map(m => m[1]);
+  assert.equal(calls.length, 2);
+  for (const call of calls) {
+    assert.match(call, /action="increment-quantity"/, 'force power SELECT must not imitate commit-item');
+    assert.match(call, /enabled=canIncrement/, 'force power SELECT ignores the budget');
+    assert.match(call, /state=cardActionState/);
+  }
+  // The +/- controls survive.
+  assert.match(powers, /data-action="increment-quantity"[\s\S]{0,400}?prog-quantity-btn|prog-quantity-btn[\s\S]{0,400}?data-action="increment-quantity"/);
+  assert.match(powers, /data-action="decrement-quantity"/);
+
+  for (const [file, flag] of [
+    ['force-secret-work-surface.hbs', '../canAddMore'],
+    ['medical-secret-work-surface.hbs', '../canAddMore'],
+    ['force-regimen-work-surface.hbs', '../../canAddMore'],
+    ['starship-maneuver-work-surface.hbs', '../canAddMore'],
+  ]) {
+    const src = step(file);
+    assert.ok(src.includes(`enabled=${flag}`), `${file} SELECT ignores the step's budget (${flag})`);
+    assert.ok(src.includes('useEnabled=true'), `${file} SELECT has no enable gate`);
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ * 12. Gesture deduplication is per-row, and one row cannot suppress another.
+ * ------------------------------------------------------------------ */
+{
+  let gestureSeq = 0;
+  let lastGesture = { key: null, at: 0 };
+  const isRepeatGesture = (event, row) => {
+    const identity = row?.dataset?.itemId || row?.dataset?.featId || row?.dataset?.treeId
+      || row?.dataset?.nodeId || row?.dataset?.powerId || row?.dataset?.maneuverId;
+    if (!identity && row) {
+      row.dataset.gestureKey ??= `row-${(gestureSeq += 1)}`;
+    }
+    const key = identity || row?.dataset?.gestureKey || 'unknown';
+    const now = Number(event?.timeStamp) || Date.now();
+    if (lastGesture.key === key && now - lastGesture.at < 400) return true;
+    lastGesture = { key, at: now };
+    return false;
+  };
+
+  const rowA = { dataset: { itemId: 'a' } };
+  const rowB = { dataset: { itemId: 'b' } };
+
+  // click(detail=2) + dblclick of one gesture -> one action.
+  assert.equal(isRepeatGesture({ timeStamp: 1000 }, rowA), false);
+  assert.equal(isRepeatGesture({ timeStamp: 1005 }, rowA), true);
+
+  // A different card is never suppressed by the previous one.
+  assert.equal(isRepeatGesture({ timeStamp: 1010 }, rowB), false);
+
+  // Two genuine double-clicks beyond the window both act.
+  assert.equal(isRepeatGesture({ timeStamp: 2000 }, rowB), false);
+
+  // Identity-less rows get their own sticky key rather than colliding on ''.
+  const bareA = { dataset: {} };
+  const bareB = { dataset: {} };
+  assert.equal(isRepeatGesture({ timeStamp: 3000 }, bareA), false);
+  assert.equal(isRepeatGesture({ timeStamp: 3005 }, bareB), false,
+    'two identity-less rows shared a deduplication key');
+  assert.equal(isRepeatGesture({ timeStamp: 3010 }, bareB), true);
+  assert.notEqual(bareA.dataset.gestureKey, bareB.dataset.gestureKey);
 }
 
 console.log('progression-card-select-actions: all assertions passed');

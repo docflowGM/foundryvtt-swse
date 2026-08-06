@@ -104,8 +104,9 @@
                    itemId=technique.id
                    name=technique.name
                    selected=technique.isSelected
-                   disabled=technique.isUnavailable
-                   title="Choose this Force Technique"
+                   state=technique.cardActionState
+                   disabled=technique.cardActionDisabled
+                   title=technique.cardActionTitle
                 }}
               </div>
             {{/each}}
@@ -156,8 +157,9 @@
                    itemId=technique.id
                    name=technique.name
                    selected=technique.isSelected
-                   disabled=technique.isUnavailable
-                   title="Choose this Force Technique"
+                   state=technique.cardActionState
+                   disabled=technique.cardActionDisabled
+                   title=technique.cardActionTitle
                 }}
               </div>
             {{/each}}

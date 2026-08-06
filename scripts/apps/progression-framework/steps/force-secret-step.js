@@ -178,6 +178,8 @@ export class ForceSecretStep extends ProgressionStepPlugin {
       committedCounts: Object.fromEntries(this._committedSecretCounts),
       committedSummary,
       remainingPicks: this._remainingPicks,
+      // Budget decision for the cards' visible SELECT control.
+      canAddMore: Array.from(this._committedSecretCounts.values()).reduce((sum, c) => sum + c, 0) < this._remainingPicks,
       hasSuggestions,
       suggestedSecretIds: Array.from(suggestedIds),
       confidenceMap: Array.from(confidenceMap.entries()).reduce((acc, [id, data]) => {

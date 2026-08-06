@@ -111,6 +111,8 @@ export class MedicalSecretStep extends ProgressionStepPlugin {
       committedIds: Array.from(this._committedSecretIds),
       committedSummary,
       remainingPicks: this._remainingPicks,
+      // Budget decision for the cards' visible SELECT control.
+      canAddMore: this._committedSecretIds.size < this._remainingPicks,
       hasSuggestions,
       suggestedSecretIds: Array.from(suggestedIds),
       confidenceMap: Array.from(confidenceMap.entries()).reduce((acc, [id, data]) => {

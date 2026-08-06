@@ -313,6 +313,9 @@ export class StarshipManeuverStep extends ProgressionStepPlugin {
     const removedTotal = this._sumCounts(removedCounts);
     const effectiveBudget = this._getEffectiveSelectionBudget();
     const remainingPicks = Math.max(0, effectiveBudget - pendingTotal);
+    // Budget decision for the cards' visible SELECT control, taken here rather
+    // than re-derived in the template.
+    const canAddMore = pendingTotal < effectiveBudget || removedTotal > 0;
 
     const { suggestedIds, hasSuggestions, confidenceMap } = this.formatSuggestionsForDisplay(this._suggestedManeuvers);
     const formattedManeuvers = this._filteredManeuvers.map(m => this._formatManeuverCard(m, suggestedIds, confidenceMap));
@@ -376,6 +379,7 @@ export class StarshipManeuverStep extends ProgressionStepPlugin {
       cardStates: Object.fromEntries(cardStates),
       committedSummary,
       remainingPicks,
+      canAddMore,
       selectionBudget: effectiveBudget,
       totalManeuverTraining: this._totalManeuverTraining,
       selectedManeuverTraining: Math.min(effectiveBudget, Math.max(this._selectedManeuverTraining, pendingTotal)),
