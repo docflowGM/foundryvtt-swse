@@ -108,11 +108,11 @@
           {{#if searchResults.length}}
             <div class="prog-species-compact-list feat-search-results-list" role="listbox" aria-label="Species search results">
               {{#each searchResults as |species|}}
-                <article class="progression-option-card prog-species-compact-row-wrap{{#if (eq species.id ../committedSpeciesId)}} progression-option-card--selected{{/if}}"
+                <article class="progression-option-card prog-species-compact-row-wrap{{#if species.cardAction.selected}} progression-option-card--selected{{/if}}"
                          data-item-id="{{species.id}}"
                          role="option"
-                         {{#if (eq species.id ../committedSpeciesId)}}aria-selected="true"{{/if}}>
-                  <button class="progression-option-card__focus prog-species-compact-row {{#if (eq species.id ../focusedSpeciesId)}}focused{{/if}} {{#if (eq species.id ../committedSpeciesId)}}selected{{/if}} {{#if species.isSuggested}}suggested{{/if}}"
+                         {{#if species.cardAction.selected}}aria-selected="true"{{/if}}>
+                  <button class="progression-option-card__focus prog-species-compact-row {{#if (eq species.id ../focusedSpeciesId)}}focused{{/if}} {{#if species.cardAction.selected}}selected{{/if}} {{#if species.isSuggested}}suggested{{/if}}"
                         data-action="focus-item"
                         data-item-id="{{species.id}}"
                         data-recommended="{{#if species.isSuggested}}true{{/if}}"
@@ -120,13 +120,13 @@
                         type="button">
                   <span class="prog-species-compact-row__name">{{species.name}}</span>
                   <span class="prog-species-compact-row__mods">{{species.abilityModLine}}</span>
-                  <span class="prog-species-compact-row__state">{{#if (eq species.id ../committedSpeciesId)}}<i class="fa-solid fa-check-circle selected-icon"></i>{{else}}<i class="fa-solid fa-chevron-right"></i>{{/if}}</span>
+                  <span class="prog-species-compact-row__state">{{#if species.cardAction.selected}}<i class="fa-solid fa-check-circle selected-icon"></i>{{else}}<i class="fa-solid fa-chevron-right"></i>{{/if}}</span>
                   </button>
                   {{> "systems/foundryvtt-swse/templates/apps/progression-framework/partials/option-card-action.hbs"
                      itemId=species.id
                      name=species.name
-                     selected=(eq species.id ../committedSpeciesId)
-                     title="Choose this species"
+                     selected=species.cardAction.selected
+                     title=species.cardAction.title
                   }}
                 </article>
               {{/each}}
@@ -152,11 +152,11 @@
                   <h4 class="prog-species-ability-group__title">{{abilityGroup.label}}</h4>
                   <div class="prog-species-compact-list" role="listbox" aria-label="{{sizeGroup.label}} {{abilityGroup.label}} species">
                     {{#each abilityGroup.species as |species|}}
-                      <article class="progression-option-card prog-species-compact-row-wrap{{#if (eq species.id ../../../committedSpeciesId)}} progression-option-card--selected{{/if}}"
+                      <article class="progression-option-card prog-species-compact-row-wrap{{#if species.cardAction.selected}} progression-option-card--selected{{/if}}"
                                data-item-id="{{species.id}}"
                                role="option"
-                               {{#if (eq species.id ../../../committedSpeciesId)}}aria-selected="true"{{/if}}>
-                        <button class="progression-option-card__focus prog-species-compact-row {{#if (eq species.id ../../../focusedSpeciesId)}}focused{{/if}} {{#if (eq species.id ../../../committedSpeciesId)}}selected{{/if}} {{#if species.isSuggested}}suggested{{/if}}"
+                               {{#if species.cardAction.selected}}aria-selected="true"{{/if}}>
+                        <button class="progression-option-card__focus prog-species-compact-row {{#if (eq species.id ../../../focusedSpeciesId)}}focused{{/if}} {{#if species.cardAction.selected}}selected{{/if}} {{#if species.isSuggested}}suggested{{/if}}"
                               data-action="focus-item"
                               data-item-id="{{species.id}}"
                               data-recommended="{{#if species.isSuggested}}true{{/if}}"
@@ -164,13 +164,13 @@
                               type="button">
                         <span class="prog-species-compact-row__name">{{species.name}}</span>
                         <span class="prog-species-compact-row__mods">{{species.abilityModLine}}</span>
-                        <span class="prog-species-compact-row__state">{{#if (eq species.id ../../../committedSpeciesId)}}<i class="fa-solid fa-check-circle selected-icon"></i>{{else}}<i class="fa-solid fa-chevron-right"></i>{{/if}}</span>
+                        <span class="prog-species-compact-row__state">{{#if species.cardAction.selected}}<i class="fa-solid fa-check-circle selected-icon"></i>{{else}}<i class="fa-solid fa-chevron-right"></i>{{/if}}</span>
                         </button>
                         {{> "systems/foundryvtt-swse/templates/apps/progression-framework/partials/option-card-action.hbs"
                            itemId=species.id
                            name=species.name
-                           selected=(eq species.id ../../../committedSpeciesId)
-                           title="Choose this species"
+                           selected=species.cardAction.selected
+                           title=species.cardAction.title
                         }}
                       </article>
                     {{/each}}

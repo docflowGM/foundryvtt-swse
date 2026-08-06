@@ -101,6 +101,7 @@ export class ProgressionRenderScheduler {
       lastDurationMs: 0,
       totalDurationMs: 0,
       forbiddenRegionRequests: 0,
+      structuralFallbacks: 0,
     };
     this._interactionUpdateCount = 0;
     this._log = [];
@@ -273,6 +274,18 @@ export class ProgressionRenderScheduler {
     const epoch = ++this._epoch;
     const started = this._now();
 
+    // Scroll state belongs to the job that actually renders.
+    //
+    // Capturing at request time meant a request that was then skipped as
+    // identical, or dropped as a forbidden region, still left a snapshot behind
+    // for whichever render came next — restoring scroll positions belonging to
+    // an interaction that never repainted. Both of those decisions are already
+    // made by the time we get here, so this snapshot has exactly one owner: the
+    // accepted job below.
+    const scrollSnapshots = pending.preserveScroll
+      ? (this.host.captureScrollSnapshots?.() ?? null)
+      : null;
+
     this._running = (async () => {
       try {
         const result = await this.host.executeRender({
@@ -280,6 +293,7 @@ export class ProgressionRenderScheduler {
           structural: pending.structural,
           reasons,
           preserveScroll: pending.preserveScroll,
+          scrollSnapshots,
           force: pending.force,
           epoch,
         });
@@ -294,11 +308,22 @@ export class ProgressionRenderScheduler {
           this._interactionUpdateCount
         );
 
-        if (pending.structural) {
+        // Account for what the executor DID, not what the caller asked for.
+        //
+        // A region-scoped request whose regions have no independent seam is
+        // satisfied by a full repaint. Counting it as a region update made the
+        // diagnostics claim partial renders that never happened — precisely the
+        // number this work exists to drive down. The executor reports its own
+        // outcome; the requested scope is only a fallback for an executor that
+        // does not.
+        const outcome = this._normalizeOutcome(result, { regions, structural: pending.structural });
+
+        if (outcome.kind === 'structural') {
           this._stats.fullRenders += 1;
+          if (outcome.fallbackReason) this._stats.structuralFallbacks += 1;
           this._lastSignature = this._signature();
         } else {
-          for (const region of regions) {
+          for (const region of outcome.appliedRegions) {
             this._stats.regionUpdates[region] = (this._stats.regionUpdates[region] || 0) + 1;
           }
         }
@@ -306,8 +331,12 @@ export class ProgressionRenderScheduler {
         this._record({
           reason: reasons.join(','),
           outcome: 'executed',
+          kind: outcome.kind,
           regions,
-          structural: pending.structural,
+          appliedRegions: outcome.appliedRegions,
+          fallbackReason: outcome.fallbackReason,
+          structural: outcome.kind === 'structural',
+          requestedStructural: pending.structural,
           durationMs: Math.round(duration * 100) / 100,
           epoch,
         });
@@ -328,6 +357,37 @@ export class ProgressionRenderScheduler {
     } catch (_err) {
       // Already surfaced to the caller through pending.reject.
     }
+  }
+
+  /**
+   * Interpret an executor result as a render outcome.
+   *
+   * A conforming executor returns a `RenderOutcome`
+   * (`{ kind, requestedRegions, appliedRegions, fallbackReason, structuralReason }`).
+   * Anything else — including the shell itself, which ApplicationV2's render
+   * returns — is accounted at the requested scope, which is the old behaviour
+   * and the best that can be said about a result that reports nothing.
+   *
+   * @param {*} result
+   * @param {{regions: string[], structural: boolean}} requested
+   * @returns {{kind: string, appliedRegions: string[], fallbackReason: string|null}}
+   * @private
+   */
+  _normalizeOutcome(result, requested) {
+    const kind = result?.kind;
+    if (kind === 'structural' || kind === 'partial') {
+      const applied = Array.isArray(result.appliedRegions) ? result.appliedRegions : [];
+      return {
+        kind: kind === 'partial' ? 'partial' : 'structural',
+        appliedRegions: kind === 'partial' ? applied : [],
+        fallbackReason: result.fallbackReason ?? null,
+      };
+    }
+    return {
+      kind: requested.structural ? 'structural' : 'partial',
+      appliedRegions: requested.structural ? [] : requested.regions,
+      fallbackReason: null,
+    };
   }
 
   /** Count a mentor update that never touched the render pipeline at all. */
@@ -367,6 +427,10 @@ export class ProgressionRenderScheduler {
       coalesced: this._stats.coalesced,
       skippedIdentical: this._stats.skippedIdentical,
       forbiddenRegionRequests: this._stats.forbiddenRegionRequests,
+      // Region-scoped jobs that had to be satisfied by a full repaint. Counted
+      // as full renders above; surfaced separately so the gap between what was
+      // requested and what happened is visible rather than inferred.
+      structuralFallbacks: this._stats.structuralFallbacks,
       reasons: { ...this._stats.reasons },
       maxUpdatesPerInteraction: Math.max(this._stats.maxUpdatesPerInteraction, this._interactionUpdateCount),
       lastDurationMs: Math.round(this._stats.lastDurationMs * 100) / 100,
@@ -392,6 +456,7 @@ export class ProgressionRenderScheduler {
       lastDurationMs: 0,
       totalDurationMs: 0,
       forbiddenRegionRequests: 0,
+      structuralFallbacks: 0,
     };
     this._interactionUpdateCount = 0;
     this._log = [];

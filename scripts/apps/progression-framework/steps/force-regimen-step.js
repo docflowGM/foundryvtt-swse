@@ -8,6 +8,7 @@
  */
 
 import { ProgressionStepPlugin } from './step-plugin-base.js';
+import { buildOptionCardAction } from '../shell/option-card-action.js';
 import { ForceRegistry } from '../../../engine/registries/force-registry.js';
 import { FeatGrantEntitlementResolver } from '/systems/foundryvtt-swse/scripts/engine/progression/feats/feat-grant-entitlement-resolver.js';
 import { normalizeDetailPanelData } from '../detail-rail-normalizer.js';
@@ -99,26 +100,56 @@ export class ForceRegimenStep extends ProgressionStepPlugin {
     ];
   }
 
+  /**
+   * Per-card action DTO.
+   *
+   * The surface nests category bands around its regimen list, so the control
+   * used to reach the step-level budget flag through `../../canAddMore` — a
+   * depth that changes whenever the grouping does. The decision now travels on
+   * the card.
+   *
+   * @param {Object} regimen
+   * @param {boolean} canAddMore
+   * @returns {Object}
+   * @private
+   */
+  _decorateRegimenCard(regimen, canAddMore) {
+    const count = this._committedRegimenCounts.get(regimen?.id) ?? 0;
+    return {
+      ...regimen,
+      cardAction: buildOptionCardAction({
+        canSelect: canAddMore,
+        selected: count > 0,
+        state: count > 0 ? 'again' : null,
+        name: regimen?.name || '',
+        title: 'Add this Force Regimen',
+      }),
+    };
+  }
+
   async getStepData(context) {
     const totalSelected = sumCounts(this._committedRegimenCounts);
     const remaining = Math.max(0, this._totalBudget - totalSelected);
+    const canAddMore = totalSelected < this._totalBudget;
+    const regimenCards = this._filteredRegimens.map((regimen) => this._decorateRegimenCard(regimen, canAddMore));
     const committedSummary = Array.from(this._committedRegimenCounts.entries()).map(([id, count]) => {
       const regimen = this._resolveRegimen(id);
       return { id, name: regimen?.name || id, count };
     });
 
     return {
-      regimens: this._filteredRegimens,
+      regimens: regimenCards,
       committedCounts: Object.fromEntries(this._committedRegimenCounts),
       committedSummary,
       focusedRegimenId: this._focusedRegimenId,
       selectedCount: totalSelected,
       selectionBudget: this._totalBudget,
       remainingPicks: remaining,
-      // Budget decision for the cards' visible SELECT control.
-      canAddMore: totalSelected < this._totalBudget,
+      // Retained for the footer and summary copy. The cards' SELECT control
+      // reads the per-card cardAction DTO instead.
+      canAddMore,
       hasSelectionBudget: this._totalBudget > 0,
-      categoryGroups: this._buildCategoryGroups(this._filteredRegimens),
+      categoryGroups: this._buildCategoryGroups(regimenCards),
     };
   }
 

@@ -74,6 +74,24 @@ import { PROGRESSION_NODE_REGISTRY, InvalidationBehavior } from '../../../engine
  * }
  */
 
+/**
+ * Class names that mean "this row is the focused one".
+ *
+ * Two vocabularies grew up side by side: `is-focused` on skill rows, attribute
+ * cells and talent cards, and bare `focused` on the feat, force-power, species
+ * and background compact rows. Both are styled. The shell's scoped focus patch
+ * only toggled `is-focused`, so on every step using the other spelling the patch
+ * changed nothing and the row appeared focused only after the next full repaint.
+ *
+ * The shell now owns the whole vocabulary and applies all of it. Adding a class
+ * a given template does not style is inert; failing to add the one it does style
+ * is the defect. A template introducing a third spelling must add it here — the
+ * focus-vocabulary test reads the templates and fails if one drifts.
+ *
+ * @type {ReadonlyArray<string>}
+ */
+export const FOCUSED_ROW_CLASSES = Object.freeze(['is-focused', 'focused']);
+
 export class ProgressionShell extends SWSEApplicationV2 {
   static DEFAULT_OPTIONS = {
     ...SWSEApplicationV2.DEFAULT_OPTIONS,
@@ -324,6 +342,9 @@ export class ProgressionShell extends SWSEApplicationV2 {
     // into one paint instead of a render train.
     this.renderScheduler = new ProgressionRenderScheduler({
       executeRender: (job) => this._executeScheduledRender(job),
+      // Scroll is captured for the accepted job only, so a skipped or dropped
+      // request cannot leave a snapshot behind for a later, unrelated render.
+      captureScrollSnapshots: () => this._captureProgressionScrollSnapshots(),
       computeStateSignature: () => this._computeRenderStateSignature(),
       isDebugEnabled: () => SWSEPerf.enabled?.() === true,
     });
@@ -542,13 +563,15 @@ export class ProgressionShell extends SWSEApplicationV2 {
     structural = false,
     dedupe = false,
   } = {}) {
-    if (preserveScroll) {
-      const snapshots = this._captureProgressionScrollSnapshots();
-      this._pendingScrollSnapshots = [
-        ...(Array.isArray(this._pendingScrollSnapshots) ? this._pendingScrollSnapshots : []),
-        ...snapshots,
-      ];
-    }
+    // Scroll capture deliberately does NOT happen here.
+    //
+    // The scheduler has not yet decided whether this request will run. A request
+    // it then skips as identical, or drops as a forbidden region, used to leave
+    // its snapshot in the shell-level bucket for whichever render came next —
+    // which restored scroll positions belonging to an interaction that never
+    // repainted. The snapshot is now taken by the scheduler for the job it
+    // accepts, via the captureScrollSnapshots hook.
+
     // Render causality for the mentor is measured, not asserted. If a repaint is
     // requested while mentor presentation is on the stack, the mentor caused it —
     // which is the thing the whole ownership split exists to prevent, so it is
@@ -623,9 +646,24 @@ export class ProgressionShell extends SWSEApplicationV2 {
    * ApplicationV2 render; scoped jobs replace only the regions that changed.
    * @private
    */
-  async _executeScheduledRender({ regions, structural, reasons, force }) {
+  async _executeScheduledRender({ regions, structural, reasons, force, scrollSnapshots = null }) {
+    const requestedRegions = Array.isArray(regions) ? [...regions] : [];
+
+    // What the scheduler records must be what happened, not what was asked for.
+    // A region-scoped job that ends in a full repaint is a structural render
+    // with a fallback reason attached, and says so.
+    const outcome = (kind, extra = {}) => ({
+      kind,
+      requestedRegions,
+      appliedRegions: [],
+      fallbackReason: null,
+      structuralReason: null,
+      ...extra,
+    });
+
     if (structural) {
-      return this.render({ force });
+      const result = await this.render({ force, scrollSnapshots });
+      return outcome('structural', { structuralReason: 'requested', result });
     }
 
     // Preflight the whole set before touching anything.
@@ -636,31 +674,41 @@ export class ProgressionShell extends SWSEApplicationV2 {
     // fallback ran — the user's change was half-drawn. A scoped job is only
     // valid when every region in it has an independent seam; otherwise the whole
     // job becomes one structural render.
-    const unsupported = regions.filter(region => !INDEPENDENT_REGIONS.has(region));
+    const unsupported = requestedRegions.filter(region => !INDEPENDENT_REGIONS.has(region));
     if (unsupported.length) {
       swseLogger.debug('[ProgressionShell] scoped update needs a structural render', {
-        regions, unsupported, reasons,
+        regions: requestedRegions, unsupported, reasons,
       });
-      return this.render({ force });
+      const result = await this.render({ force, scrollSnapshots });
+      return outcome('structural', {
+        fallbackReason: `no-independent-seam:${unsupported.join(',')}`,
+        structuralReason: 'preflight-fallback',
+        result,
+      });
     }
 
-    let applied = 0;
-    for (const region of regions) {
+    const appliedRegions = [];
+    for (const region of requestedRegions) {
       // eslint-disable-next-line no-await-in-loop
-      if (await this._updateRegion(region)) applied += 1;
+      if (await this._updateRegion(region)) appliedRegions.push(region);
     }
 
     // Every region passed preflight, so a failure here is unexpected (the region
     // was not mounted, or its template threw). Repaint structurally rather than
     // leaving part of the change on screen.
-    if (applied !== regions.length) {
+    if (appliedRegions.length !== requestedRegions.length) {
       swseLogger.debug('[ProgressionShell] scoped update failed after preflight; repainting', {
-        regions, applied, reasons,
+        regions: requestedRegions, applied: appliedRegions.length, reasons,
       });
-      return this.render({ force });
+      const result = await this.render({ force, scrollSnapshots });
+      return outcome('structural', {
+        fallbackReason: `region-update-failed:${appliedRegions.length}/${requestedRegions.length}`,
+        structuralReason: 'post-update-fallback',
+        result,
+      });
     }
 
-    return this;
+    return outcome('partial', { appliedRegions, result: this });
   }
 
   /**
@@ -739,7 +787,7 @@ export class ProgressionShell extends SWSEApplicationV2 {
 
     for (const row of surface.querySelectorAll('[data-item-id]')) {
       const isFocused = focusedId != null && row.dataset.itemId === String(focusedId);
-      row.classList.toggle('is-focused', isFocused);
+      for (const className of FOCUSED_ROW_CLASSES) row.classList.toggle(className, isFocused);
       if (isFocused) row.setAttribute('aria-current', 'true');
       else row.removeAttribute('aria-current');
     }
@@ -1371,9 +1419,15 @@ export class ProgressionShell extends SWSEApplicationV2 {
     };
 
     const renderRoot = this.getRootElement?.() ?? this.element;
+    // A scheduled render arrives with the snapshot taken for its own accepted
+    // job; capturing again here would read the DOM a frame later than the
+    // decision that owns it. Direct render() calls still capture for themselves.
+    const jobSnapshots = Array.isArray(args[0]?.scrollSnapshots) ? args[0].scrollSnapshots : null;
     const scrollSnapshots = [
+      // Gesture-time captures, taken by the interaction that is about to change
+      // the DOM. Owned by that interaction and consumed by the next render.
       ...(Array.isArray(this._pendingScrollSnapshots) ? this._pendingScrollSnapshots : []),
-      ...this._captureProgressionScrollSnapshots(renderRoot),
+      ...(jobSnapshots ?? this._captureProgressionScrollSnapshots(renderRoot)),
     ];
     this._pendingScrollSnapshots = null;
 
@@ -1392,7 +1446,12 @@ export class ProgressionShell extends SWSEApplicationV2 {
     // try/finally is load-bearing: without it a throw anywhere below left
     // _isRendering true forever and the shell could never repaint again.
     try {
-      const result = await super.render(...args);
+      // scrollSnapshots is a shell-internal job field, not an ApplicationV2
+      // render option; it never reaches the framework.
+      const forwarded = jobSnapshots
+        ? [{ ...args[0], scrollSnapshots: undefined }, ...args.slice(1)]
+        : args;
+      const result = await super.render(...forwarded);
       const restoreAfterRender = () => this._restoreProgressionScrollSnapshots(scrollSnapshots, this.getRootElement?.() ?? this.element);
       restoreAfterRender();
       await new Promise(resolve => requestAnimationFrame(resolve));

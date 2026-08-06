@@ -559,9 +559,17 @@ const rec = (targetId, dialogue = `${targetId} suits this build.`) => Object.fre
   assert.match(service, /this\._inFlight\.get\(requestKey\)/, 'in-flight requests are not reused');
   assert.match(service, /this\._inFlight\.delete\(requestKey\)/, 'in-flight entries are never released');
   // invalidate() must drop in-flight work too, or it would repopulate the cache
-  // it just cleared.
-  const invalidate = service.slice(service.indexOf('static invalidate(actorId)'));
-  assert.match(invalidate.slice(0, 500), /_inFlight/, 'invalidate() does not clear in-flight requests');
+  // it just cleared. Read the whole method body rather than a fixed character
+  // window, which a comment could push the assertion out of.
+  const invalidateStart = service.indexOf('static invalidate(actorId)');
+  assert.ok(invalidateStart > -1, 'invalidate() is gone');
+  const invalidate = service.slice(
+    invalidateStart,
+    service.indexOf('\n  }', invalidateStart)
+  );
+  assert.match(invalidate, /_inFlight/, 'invalidate() does not clear in-flight requests');
+  assert.match(invalidate, /this\._generation \+= 1/,
+    'invalidate() does not bump the generation, so a request already running can still cache its pre-invalidation result');
 }
 
 /* ------------------------------------------------------------------ *
@@ -837,7 +845,10 @@ const rec = (targetId, dialogue = `${targetId} suits this build.`) => Object.fre
 
   // The counters it reads actually exist at their sources.
   const service = fs.readFileSync(path.join(ROOT, 'scripts/engine/suggestion/SuggestionService.js'), 'utf8');
-  assert.match(service, /_stats = \{ cacheHits: 0, cacheMisses: 0, inFlightJoins: 0 \}/);
+  for (const counter of ['cacheHits', 'cacheMisses', 'inFlightJoins']) {
+    assert.match(service, new RegExp(`_stats = \\{[^}]*\\b${counter}: 0`),
+      `SuggestionService no longer initializes the ${counter} counter the audit reads`);
+  }
   assert.match(service, /this\._stats\.inFlightJoins \+= 1/);
   assert.match(service, /this\._stats\.cacheHits \+= 1/);
 

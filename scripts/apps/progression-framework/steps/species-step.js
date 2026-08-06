@@ -7,6 +7,7 @@
  */
 
 import { ProgressionStepPlugin } from './step-plugin-base.js';
+import { buildOptionCardAction } from '../shell/option-card-action.js';
 import { SpeciesRegistry } from '/systems/foundryvtt-swse/scripts/engine/registries/species-registry.js';
 import { normalizeSpecies } from './step-normalizers.js';
 import { getStepMentorObject, getStepGuidance, handleAskMentor, handleAskMentorWithPicker, STEP_TO_CHOICE_TYPE } from './mentor-step-integration.js';
@@ -340,7 +341,22 @@ export class SpeciesStep extends ProgressionStepPlugin {
 
   async getStepData(context) {
     const { suggestedIds, hasSuggestions, confidenceMap } = this.formatSuggestionsForDisplay(this._suggestedSpecies);
-    const cards = this._filteredSpecies.map(s => this._formatSpeciesCard(s, suggestedIds, confidenceMap));
+    const committedSpeciesId = context.committedSelections?.get('species')?.speciesId ?? null;
+    // The species surface renders the same card through a flat search list and a
+    // three-deep category tree, so the control's committed check used to be
+    // written twice — `../committedSpeciesId` in one place and
+    // `../../../committedSpeciesId` in the other. Either count is wrong the
+    // moment the grouping changes; the card now carries the decision.
+    const cards = this._filteredSpecies
+      .map(s => this._formatSpeciesCard(s, suggestedIds, confidenceMap))
+      .map(card => ({
+        ...card,
+        cardAction: buildOptionCardAction({
+          selected: committedSpeciesId != null && String(card.id) === String(committedSpeciesId),
+          name: card?.name || '',
+          title: 'Choose this species',
+        }),
+      }));
     const recommendedSpecies = this._getRecommendedSpeciesCards(cards);
     const hasSearchQuery = !!String(this._searchQuery || '').trim();
 
@@ -367,7 +383,7 @@ export class SpeciesStep extends ProgressionStepPlugin {
       activeAbilityCategory: this._activeAbilityCategory,
       categorySidebarCollapsed: this._categorySidebarCollapsed,
       focusedSpeciesId: context.focusedItem?.id ?? null,
-      committedSpeciesId: context.committedSelections?.get('species')?.speciesId ?? null,
+      committedSpeciesId,
       nearHuman: this._nearHumanBuilder.getBuilderData(),
       hasSuggestions,
       suggestedSpeciesIds: Array.from(suggestedIds),

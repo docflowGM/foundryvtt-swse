@@ -209,10 +209,18 @@ const PRE_EXISTING_CONTROLS = [
   const partial = read(`templates/apps/progression-framework/${PARTIAL}`);
   assert.match(partial, /data-action="\{\{#if action\}\}\{\{action\}\}\{\{else\}\}commit-item\{\{\/if\}\}"/);
   assert.match(partial, /data-card-action="true"/);
-  for (const word of ['SELECT', 'SELECTED', 'DESELECT']) {
-    assert.ok(partial.includes(word), `the shared vocabulary is missing ${word}`);
+  // The vocabulary now lives in the resolver, not the markup, so the button
+  // face and the announced text come from one place.
+  const resolver = read('scripts/apps/progression-framework/shell/option-card-action.js');
+  for (const word of ['SELECT', 'SELECTED', 'DESELECT', 'LOCKED', 'OWNED', 'GRANTED', 'MAXIMUM']) {
+    assert.ok(resolver.includes(`'${word}'`), `the shared vocabulary is missing ${word}`);
   }
-  assert.match(partial, /aria-label="/, 'the card action has no aria-label');
+  assert.ok(
+    !/SELECTED|DESELECT|UNAVAILABLE/.test(partial),
+    'the partial hardcodes labels again, so the visible text can diverge from the announced text'
+  );
+  assert.match(partial, /aria-label="\{\{optionCardAria /, 'the card action does not derive its accessible name from the resolver');
+  assert.match(partial, /\{\{optionCardLabel /, 'the card action does not derive its visible label from the resolver');
   assert.match(partial, /disabled aria-disabled="true"/, 'disabled state is not announced');
   // Presentation only: it must not reach into shell or plugin internals.
   for (const forbidden of ['onItemCommitted', 'requestRender', 'commitSelection']) {
@@ -477,15 +485,51 @@ const PRE_EXISTING_CONTROLS = [
   assert.match(powers, /data-action="increment-quantity"[\s\S]{0,400}?prog-quantity-btn|prog-quantity-btn[\s\S]{0,400}?data-action="increment-quantity"/);
   assert.match(powers, /data-action="decrement-quantity"/);
 
-  for (const [file, flag] of [
-    ['force-secret-work-surface.hbs', '../canAddMore'],
-    ['medical-secret-work-surface.hbs', '../canAddMore'],
-    ['force-regimen-work-surface.hbs', '../../canAddMore'],
-    ['starship-maneuver-work-surface.hbs', '../canAddMore'],
+  // The budget still gates these cards, but it now travels ON the card.
+  //
+  // It used to be reached through a Handlebars parent path whose depth was a
+  // property of the surface's {{#each}} nesting rather than of the data:
+  // `../canAddMore` in a flat list, `../../canAddMore` under a category band.
+  // Adding or removing a grouping level silently resolved the flag to undefined
+  // and every card in that list rendered as freely selectable. A per-card DTO
+  // cannot be missed by nesting.
+  for (const [file, plugin] of [
+    ['force-secret-work-surface.hbs', 'force-secret-step.js'],
+    ['medical-secret-work-surface.hbs', 'medical-secret-step.js'],
+    ['force-regimen-work-surface.hbs', 'force-regimen-step.js'],
+    ['starship-maneuver-work-surface.hbs', 'starship-maneuver-step.js'],
   ]) {
     const src = step(file);
-    assert.ok(src.includes(`enabled=${flag}`), `${file} SELECT ignores the step's budget (${flag})`);
-    assert.ok(src.includes('useEnabled=true'), `${file} SELECT has no enable gate`);
+    assert.ok(!/\.\.\/(\.\.\/)*canAddMore/.test(src),
+      `${file} still reaches the step budget through a Handlebars parent path`);
+
+    const calls = [...src.matchAll(/option-card-action\.hbs"([\s\S]{0,400}?)\}\}/g)].map(m => m[1]);
+    assert.ok(calls.length > 0, `${file} no longer renders the shared card action`);
+    for (const call of calls) {
+      assert.match(call, /disabled=[A-Za-z_.]*cardAction\.disabled/,
+        `${file} SELECT ignores the per-card budget decision`);
+    }
+
+    const src2 = read(`scripts/apps/progression-framework/steps/${plugin}`);
+    assert.match(src2, /buildOptionCardAction\(/,
+      `${plugin} does not build the per-card action DTO`);
+    assert.match(src2, /canSelect:/,
+      `${plugin} builds a card action that carries no budget decision`);
+  }
+
+  // Species and class carry the committed decision on the card for the same
+  // reason: the species surface renders one card through both a flat search
+  // list and a three-deep category tree.
+  for (const [file, plugin] of [
+    ['species-work-surface.hbs', 'species-step.js'],
+    ['class-work-surface.hbs', 'class-step.js'],
+  ]) {
+    const src = step(file);
+    assert.ok(!/\.\.\/(\.\.\/)*committed(Species|Class)Id/.test(src),
+      `${file} still reaches the committed id through a Handlebars parent path`);
+    assert.match(src, /cardAction\.selected/, `${file} does not read the per-card committed decision`);
+    assert.match(read(`scripts/apps/progression-framework/steps/${plugin}`), /buildOptionCardAction\(/,
+      `${plugin} does not build the per-card action DTO`);
   }
 }
 

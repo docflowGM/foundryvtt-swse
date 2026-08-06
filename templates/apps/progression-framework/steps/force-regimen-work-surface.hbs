@@ -45,10 +45,11 @@
               {{> "systems/foundryvtt-swse/templates/apps/progression-framework/partials/option-card-action.hbs"
                  itemId=regimen.id
                  name=regimen.name
-                 selected=(lookup ../../committedCounts regimen.id)
-                 useEnabled=true
-                 enabled=../../canAddMore
-                 title="Add this Force Regimen"
+                 selected=regimen.cardAction.selected
+                 state=regimen.cardAction.state
+                 disabled=regimen.cardAction.disabled
+                 title=regimen.cardAction.title
+                 verb="Add"
               }}
             </article>
           {{/each}}

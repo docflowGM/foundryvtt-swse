@@ -8,6 +8,7 @@
  */
 
 import { ProgressionStepPlugin } from './step-plugin-base.js';
+import { buildOptionCardAction } from '../shell/option-card-action.js';
 import { ClassesRegistry } from '/systems/foundryvtt-swse/scripts/engine/registries/classes-registry.js';
 import { normalizeClass } from './step-normalizers.js';
 import { getStepMentorObject, getStepGuidance, handleAskMentor, handleAskMentorWithSuggestions, handleAskMentorWithPicker, setSessionMentorContext } from './mentor-step-integration.js';
@@ -188,10 +189,25 @@ export class ClassStep extends ProgressionStepPlugin {
 
   async getStepData(context) {
     const { suggestedIds, hasSuggestions, confidenceMap } = this.formatSuggestionsForDisplay(this._suggestedClasses);
+    const committedClassId = context.committedSelections?.get('class')?.classId ?? null;
     return {
-      classes: this._filteredClasses.map(c => this._formatClassCard(c, suggestedIds, confidenceMap)),
+      // Each card carries its own committed/locked decision rather than the
+      // surface reaching back up through `../committedClassId`.
+      classes: this._filteredClasses.map((c) => {
+        const card = this._formatClassCard(c, suggestedIds, confidenceMap);
+        return {
+          ...card,
+          cardAction: buildOptionCardAction({
+            selected: committedClassId != null && String(card.id) === String(committedClassId),
+            state: card.isLocked ? 'locked' : null,
+            disabled: !!card.isLocked,
+            name: card?.name || '',
+            title: card.isLocked ? (card.lockedReasonText || 'Prerequisites not met') : 'Choose this class',
+          }),
+        };
+      }),
       focusedClassId: context.focusedItem?.id ?? null,
-      committedClassId: context.committedSelections?.get('class')?.classId ?? null,
+      committedClassId,
       suggestedClassIds: Array.from(suggestedIds),
       suggestedClasses: this._suggestedClasses,
       hasSuggestions,

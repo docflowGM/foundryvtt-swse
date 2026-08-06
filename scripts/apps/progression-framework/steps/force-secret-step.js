@@ -17,6 +17,7 @@ import { swseLogger } from '../../../utils/logger.js';
 import { SuggestionService } from '/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionService.js';
 import { SuggestionContextBuilder } from '/systems/foundryvtt-swse/scripts/engine/progression/suggestion/suggestion-context-builder.js';
 import { normalizeDetailPanelData } from '../detail-rail-normalizer.js';
+import { buildOptionCardAction } from '../shell/option-card-action.js';
 import { buildClassGrantLedger, mergeLedgerIntoPending } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/class-grant-ledger-builder.js';
 
 
@@ -183,8 +184,9 @@ export class ForceSecretStep extends ProgressionStepPlugin {
       committedSummary,
       remainingPicks: Math.max(0, this._selectionBudget - Array.from(this._committedSecretCounts.values()).reduce((sum, c) => sum + c, 0)),
       selectionBudget: this._selectionBudget,
-      // Budget decision for the cards' visible SELECT control.
-      canAddMore: Array.from(this._committedSecretCounts.values()).reduce((sum, c) => sum + c, 0) < this._selectionBudget,
+      // Retained for the footer and summary copy. The cards' SELECT control
+      // reads the per-card cardAction DTO instead.
+      canAddMore: this._canSelectMoreSecrets(),
       hasSuggestions,
       suggestedSecretIds: Array.from(suggestedIds),
       confidenceMap: Array.from(confidenceMap.entries()).reduce((acc, [id, data]) => {
@@ -593,11 +595,30 @@ export class ForceSecretStep extends ProgressionStepPlugin {
       isSuggested,
       isFocused: this._focusedSecretId && String(id) === String(this._focusedSecretId),
       isSelected: this._committedSecretCounts.has(id),
+      // Per-card budget decision. The template used to reach the step-level
+      // flag through `../canAddMore`, whose depth depended on how the surface
+      // grouped its lists.
+      cardAction: buildOptionCardAction({
+        canSelect: this._canSelectMoreSecrets(),
+        selected: this._committedSecretCounts.has(id),
+        name: secret?.name || '',
+        title: 'Choose this Force Secret',
+      }),
       shortSummary: this._stripHtml(secret?.description || secret?.system?.description || secret?.system?.benefit || ''),
       badgeLabel: isSuggested ? 'Recommended' : null,
       badgeCssClass: isSuggested ? 'prog-badge--suggested' : null,
       confidenceLevel: confidenceData?.confidenceLevel || null,
     };
+  }
+
+  /**
+   * Whether the step's entitlement still admits another Force Secret.
+   * @returns {boolean}
+   * @private
+   */
+  _canSelectMoreSecrets() {
+    const total = Array.from(this._committedSecretCounts.values()).reduce((sum, c) => sum + c, 0);
+    return total < this._selectionBudget;
   }
 
   _normalizeSearchText(value) {

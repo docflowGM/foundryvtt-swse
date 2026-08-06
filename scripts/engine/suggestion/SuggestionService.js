@@ -151,7 +151,10 @@ export class SuggestionService {
   static _inFlight = new Map(); // `${key}::${rev}` -> Promise, collapses concurrent identical work
   // Diagnostics only. Read by SWSE.debug.progressionMentorAudit(); never
   // consulted by scoring or caching decisions.
-  static _stats = { cacheHits: 0, cacheMisses: 0, inFlightJoins: 0 };
+  static _stats = { cacheHits: 0, cacheMisses: 0, inFlightJoins: 0, staleResultsDiscarded: 0 };
+  // Bumped by every invalidation. A computation that started under an older
+  // generation still returns its result to its own caller, but may not cache it.
+  static _generation = 0;
   static _cacheStats = new Map(); // key -> {accessTime}
   static MAX_CACHE_SIZE = 500; // PHASE B: Limit cache to prevent unbounded growth
   static _initialized = false;
@@ -164,21 +167,145 @@ export class SuggestionService {
   }
 
   static invalidate(actorId) {
+    // Invalidation is generation-owned, not key-owned. Deleting map entries is
+    // not enough: a request that started before the invalidation is still
+    // running, and when it settles it would write its pre-invalidation result
+    // into the cache we just cleared. Bumping the generation makes that result
+    // uncacheable without having to reach into a promise we cannot cancel.
+    this._generation += 1;
     for (const key of this._cache.keys()) {
       if (key.startsWith(`${actorId}::`)) {this._cache.delete(key);}
     }
-    // Drop in-flight entries too, otherwise a request started against the old
-    // state would repopulate the cache we just cleared.
+    // Drop in-flight entries too, so a new caller starts fresh work rather than
+    // joining the request that was made against the old state.
     for (const key of this._inFlight.keys()) {
       if (key.startsWith(`${actorId}::`)) {this._inFlight.delete(key);}
     }
   }
 
   /**
+   * Canonical identity of a suggestion request.
+   *
+   * Every field that can change the answer belongs here, and nothing else does.
+   * The snapshot revision covers actor state, focus and pending selections; the
+   * three fields below are supplied by the caller and are just as decisive:
+   *
+   * - `available` — the legal candidate pool. Two steps can ask for the same
+   *   domain at the same revision while offering different candidates (a class
+   *   feat list versus a bonus-feat list). Without the pool in the identity they
+   *   collapse onto one entry and the second caller receives suggestions drawn
+   *   from a pool it never offered.
+   * - `engineOptions` — scoring inputs. Canonicalized rather than stringified so
+   *   key insertion order does not fork the identity.
+   * - `className` — selects the default feat pool when `available` is omitted,
+   *   so two classes at one revision are two different questions.
+   *
+   * The leading segment stays `${actorId}::` because invalidate() matches on it.
+   *
+   * @param {Actor} actor
+   * @param {string} context
+   * @param {Object} options
+   * @returns {{key: string, revision: string}}
+   */
+  static describeRequest(actor, context = 'sheet', options = {}) {
+    const revision = actor?.id
+      ? SnapshotBuilder.hashFromActor(actor, options.focus ?? null, options.pendingData ?? {})
+      : `${Date.now()}`;
+
+    const key = [
+      actor?.id ?? 'temp',
+      context ?? 'sheet',
+      options.domain ?? 'all',
+      revision,
+      `focus:${options.focus ?? ''}`,
+      `class:${options.className ?? ''}`,
+      `pool:${this._candidatePoolIdentity(options.available)}`,
+      `engine:${this._canonicalizeEngineOptions(options.engineOptions)}`,
+    ].join('::');
+
+    return { key, revision };
+  }
+
+  /**
+   * Stable identity for a candidate pool.
+   *
+   * Only identities are read, never whole documents: an item document graph is
+   * deep and can be cyclic, and pool membership is the only thing that changes
+   * the answer. Ordering does not, so identities are sorted.
+   * @private
+   */
+  static _candidatePoolIdentity(available) {
+    if (available === undefined || available === null) return 'default';
+
+    if (Array.isArray(available)) {
+      const ids = available
+        .map(entry => {
+          if (!entry) return '';
+          if (typeof entry === 'object') {
+            return String(entry.id ?? entry._id ?? entry.key ?? entry.name ?? '');
+          }
+          return String(entry);
+        })
+        .filter(Boolean)
+        .sort();
+      return `${ids.length}:${_hashString(ids.join('|'))}`;
+    }
+
+    if (typeof available === 'object') {
+      // Grouped pools (droid systems) are a map of category -> candidate array.
+      const parts = Object.keys(available).sort().map((groupKey) => {
+        const value = available[groupKey];
+        return Array.isArray(value)
+          ? `${groupKey}=${this._candidatePoolIdentity(value)}`
+          : `${groupKey}=${typeof value}`;
+      });
+      return `group:${_hashString(parts.join('|'))}`;
+    }
+
+    return `raw:${_hashString(String(available))}`;
+  }
+
+  /**
+   * Canonical, order-independent encoding of engine options.
+   *
+   * Depth-bounded and structure-only for anything that is not a plain value, so
+   * a live document or a callback handed through engineOptions cannot make the
+   * identity unstable or throw.
+   * @private
+   */
+  static _canonicalizeEngineOptions(engineOptions, depth = 0) {
+    if (engineOptions === undefined || engineOptions === null) return 'none';
+    if (depth > 4) return '[deep]';
+
+    const encode = (value) => {
+      if (value === null) return 'null';
+      if (value === undefined) return 'undefined';
+      const type = typeof value;
+      if (type === 'string') return `s:${value}`;
+      if (type === 'number' || type === 'bigint') return `n:${value}`;
+      if (type === 'boolean') return `b:${value}`;
+      if (type === 'function') return 'fn';
+      if (Array.isArray(value)) {
+        return `[${value.map(v => this._canonicalizeEngineOptions(v, depth + 1)).join(',')}]`;
+      }
+      if (type === 'object') {
+        const proto = Object.getPrototypeOf(value);
+        if (proto !== Object.prototype && proto !== null) return `obj:${value.constructor?.name ?? 'unknown'}`;
+        return `{${Object.keys(value).sort()
+          .map(k => `${k}=${this._canonicalizeEngineOptions(value[k], depth + 1)}`)
+          .join(',')}}`;
+      }
+      return `?:${String(value)}`;
+    };
+
+    return depth === 0 ? _hashString(encode(engineOptions)) : encode(engineOptions);
+  }
+
+  /**
    * Public entry point. Collapses concurrent identical requests.
    *
-   * The completed-result cache is keyed by snapshot revision, so two callers
-   * asking for the same uncached snapshot at nearly the same moment both used to
+   * The completed-result cache is keyed by request identity, so two callers
+   * asking the same uncached question at nearly the same moment both used to
    * run the full evaluation before either populated it. Progression does exactly
    * that: a step hydrates suggestions while the mentor asks for advice on the
    * same state. This shares one promise instead.
@@ -188,16 +315,11 @@ export class SuggestionService {
   static async getSuggestions(actorOrData, context = 'sheet', options = {}) {
     const actor = await _ensureActorDoc(actorOrData);
 
-    // Reuse the exact cache identity the calculation itself uses, so an in-flight
+    // Reuse the exact identity the calculation itself uses, so an in-flight
     // request and its cached result can never disagree about what they are.
     let requestKey = null;
     try {
-      const revision = actor?.id
-        ? SnapshotBuilder.hashFromActor(actor, options.focus ?? null, options.pendingData ?? {})
-        : null;
-      if (revision) {
-        requestKey = `${actor.id}::${context}::${options.domain ?? 'all'}::${revision}`;
-      }
+      requestKey = actor?.id ? this.describeRequest(actor, context, options).key : null;
     } catch (_err) {
       requestKey = null;
     }
@@ -210,8 +332,15 @@ export class SuggestionService {
       return existing;
     }
 
+    // Cleanup must not outlive ownership. An invalidation between start and
+    // settle can drop this entry and a newer request can take the same key;
+    // an unconditional delete here would then evict work that is still running.
     const promise = this._computeSuggestions(actor, context, options)
-      .finally(() => { this._inFlight.delete(requestKey); });
+      .finally(() => {
+        if (this._inFlight.get(requestKey) === promise) {
+          this._inFlight.delete(requestKey);
+        }
+      });
 
     this._inFlight.set(requestKey, promise);
     return promise;
@@ -249,13 +378,15 @@ export class SuggestionService {
     const epicAdvisory = isEpicActor(actor, plannedHeroicLevel);
     options.epicAdvisory = epicAdvisory;
 
-    // Build canonical snapshot and compute stable hash
-    // Hash includes: level, abilities, items, focus, and pending selections
-    const revision = actor?.id
-      ? SnapshotBuilder.hashFromActor(actor, focus, pendingData)
-      : `${Date.now()}`;
+    // The generation in force when this computation started. Anything that
+    // invalidates the actor while the evaluation is running makes the result
+    // uncacheable — the caller still receives it, the cache does not keep it.
+    const generation = this._generation;
 
-    const key = `${actor?.id ?? 'temp'}::${context}::${options.domain ?? 'all'}`;
+    // One identity function for the in-flight map and the completed cache, so
+    // the two can never disagree about what a request is. Includes the snapshot
+    // revision plus the caller-supplied pool, engine options and class.
+    const { key, revision } = this.describeRequest(actor, context, options);
 
     // PHASE B: Track cache access for LRU eviction
     const cached = this._cache.get(key);
@@ -338,6 +469,27 @@ export class SuggestionService {
     await this._recordSuggestionsShown(actor, context, focusFiltered, options);
 
     this.validateSuggestionDTO(focusFiltered, { context, domain: options.domain });
+
+    // The actor changed underneath this evaluation. The caller asked for advice
+    // about the state it saw and still gets it, but storing it would hand that
+    // superseded answer to every later caller.
+    if (generation !== this._generation) {
+      this._stats.staleResultsDiscarded += 1;
+      return focusFiltered;
+    }
+
+    // The identity now carries the snapshot revision, so a new revision writes a
+    // new key rather than overwriting the old one. Retire the superseded entries
+    // for this actor/context/domain instead of leaving them for the LRU.
+    const revisionPrefix = `${actor?.id ?? 'temp'}::${context}::${options.domain ?? 'all'}::`;
+    for (const existingKey of this._cache.keys()) {
+      if (existingKey !== key
+        && existingKey.startsWith(revisionPrefix)
+        && !existingKey.startsWith(`${revisionPrefix}${revision}::`)) {
+        this._cache.delete(existingKey);
+        this._cacheStats.delete(existingKey);
+      }
+    }
 
     // PHASE B: LRU eviction when cache exceeds MAX_CACHE_SIZE
     if (this._cache.size >= this.MAX_CACHE_SIZE) {

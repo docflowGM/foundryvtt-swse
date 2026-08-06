@@ -1274,6 +1274,26 @@
           "ReflexAbbrev": "Ref",
           "WillAbbrev": "Will"
         }
+      },
+      "CardAction": {
+        "Select": "SELECT",
+        "Select.Announce": "Select {name}",
+        "Selected": "SELECTED",
+        "Selected.Announce": "{name} is selected",
+        "Deselect": "DESELECT",
+        "Deselect.Announce": "Remove {name}",
+        "Again": "SELECT AGAIN",
+        "Again.Announce": "Select {name} again",
+        "Owned": "OWNED",
+        "Owned.Announce": "{name} is already known",
+        "Granted": "GRANTED",
+        "Granted.Announce": "{name} is granted by another source",
+        "Locked": "LOCKED",
+        "Locked.Announce": "{name} is locked",
+        "Unavailable": "UNAVAILABLE",
+        "Unavailable.Announce": "{name} is unavailable",
+        "Maximum": "MAXIMUM",
+        "Maximum.Announce": "{name} is at its maximum"
       }
     },
     "MentorDialogues": {

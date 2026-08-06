@@ -8,6 +8,7 @@
  */
 
 import { ProgressionStepPlugin } from './step-plugin-base.js';
+import { buildOptionCardAction } from '../shell/option-card-action.js';
 import { MedicalSecretRegistry } from '/systems/foundryvtt-swse/scripts/engine/progression/medical/medical-secret-registry.js';
 import { resolveMedicalSecretEntitlements } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/medical-secret-resolution.js';
 import { normalizeDetailPanelData } from '../detail-rail-normalizer.js';
@@ -117,8 +118,9 @@ export class MedicalSecretStep extends ProgressionStepPlugin {
       committedSummary,
       remainingPicks: Math.max(0, this._selectionBudget - this._committedSecretIds.size),
       selectionBudget: this._selectionBudget,
-      // Budget decision for the cards' visible SELECT control.
-      canAddMore: this._committedSecretIds.size < this._selectionBudget,
+      // Retained for the footer and summary copy. The cards' SELECT control
+      // reads the per-card cardAction DTO instead.
+      canAddMore: this._canSelectMoreSecrets(),
       hasSuggestions,
       suggestedSecretIds: Array.from(suggestedIds),
       confidenceMap: Array.from(confidenceMap.entries()).reduce((acc, [id, data]) => {
@@ -334,12 +336,30 @@ export class MedicalSecretStep extends ProgressionStepPlugin {
     }
   }
 
+  /**
+   * Whether the step's entitlement still admits another Medical Secret.
+   * @returns {boolean}
+   * @private
+   */
+  _canSelectMoreSecrets() {
+    return this._committedSecretIds.size < this._selectionBudget;
+  }
+
   _formatSecretCard(secret, suggestedIds = new Set(), confidenceMap = new Map()) {
     const isSuggested = this.isSuggestedItem(secret.id, suggestedIds);
     const confidenceData = confidenceMap.get ? confidenceMap.get(secret.id) : confidenceMap[secret.id];
+    const isSelected = this._committedSecretIds.has(secret.id);
     return {
       ...secret,
-      isSelected: this._committedSecretIds.has(secret.id),
+      isSelected,
+      // Per-card budget decision, so the control no longer depends on how many
+      // {{#each}} blocks the surface nests around it.
+      cardAction: buildOptionCardAction({
+        canSelect: this._canSelectMoreSecrets(),
+        selected: isSelected,
+        name: secret?.name || '',
+        title: 'Choose this Medical Secret',
+      }),
       isSuggested,
       badgeLabel: isSuggested ? 'Recommended' : null,
       badgeCssClass: isSuggested ? 'prog-badge--suggested' : null,

@@ -123,10 +123,10 @@
              idAttr="data-maneuver-id"
              idValue=this.stateId
              name=this.name
-             selected=(lookup ../pendingCounts this.stateId)
-             useEnabled=true
-             enabled=../canAddMore
-             title="Add this Starship Maneuver"
+             selected=this.cardAction.selected
+             state=this.cardAction.state
+             disabled=this.cardAction.disabled
+             title=this.cardAction.title
              verb="Add"
           }}
         </div>

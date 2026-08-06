@@ -12,6 +12,7 @@
  */
 
 import { ProgressionStepPlugin } from './step-plugin-base.js';
+import { buildOptionCardAction } from '../shell/option-card-action.js';
 import { ManeuverAuthorityEngine } from '../../../engine/progression/engine/maneuver-authority-engine.js';
 import { StarshipManeuverEngine } from '../../../engine/progression/engine/starship-maneuver-engine.js';
 import { StarshipManeuverManager } from '../../../utils/starship-maneuver-manager.js';
@@ -356,6 +357,26 @@ export class StarshipManeuverStep extends ProgressionStepPlugin {
       });
     }
 
+    // Per-card action DTO, derived from the same cardStates the surface already
+    // renders. The template used to reach `../canAddMore` and
+    // `(lookup ../pendingCounts ...)`, both of which broke whenever the list was
+    // regrouped; a card now carries its own budget decision.
+    const cardsWithActions = formattedManeuvers.map((maneuver) => {
+      const stateId = maneuver.stateId || maneuver.id;
+      const state = cardStates.get(stateId);
+      return {
+        ...maneuver,
+        cardAction: buildOptionCardAction({
+          canSelect: state ? state.canIncrement : canAddMore,
+          selected: !!state?.isPending,
+          state: state?.isCommitted && !state?.isPending ? 'again' : null,
+          name: maneuver?.name || '',
+          verb: 'Add',
+          title: 'Add this Starship Maneuver',
+        }),
+      };
+    });
+
     const committedSummary = [];
     for (const [id, count] of committedCounts.entries()) {
       const removedCount = removedCounts.get(id) ?? 0;
@@ -371,7 +392,7 @@ export class StarshipManeuverStep extends ProgressionStepPlugin {
     }
 
     return {
-      maneuvers: formattedManeuvers,
+      maneuvers: cardsWithActions,
       focusedManeuverID: this._focusedManeuverID,
       pendingCounts: Object.fromEntries(pendingCounts),
       committedCounts: Object.fromEntries(committedCounts),
