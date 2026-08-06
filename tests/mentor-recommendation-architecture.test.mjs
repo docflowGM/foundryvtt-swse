@@ -55,16 +55,29 @@ const { SuggestionService } = await import(
   '/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionService.js'
 );
 
-/** Fake mentor rail that records presentation calls instead of touching the DOM. */
+/**
+ * Fake mentor rail. Mirrors the real contract: presentMessage is the single DOM
+ * write and presentRecommendation delegates to it, so the tests exercise the
+ * same path production does.
+ */
 function makeRail() {
   const calls = [];
-  return {
+  const rail = {
     calls,
-    presentRecommendation(recommendation, options = {}) {
-      calls.push({ recommendation, options });
+    presentMessage(message) {
+      calls.push(message);
       return true;
     },
+    presentRecommendation(recommendation, { replay = false } = {}) {
+      return rail.presentMessage({
+        source: replay ? 'recommendation-replay' : 'recommendation',
+        text: recommendation?.dialogue,
+        mood: recommendation?.mood ?? 'neutral',
+        targetId: recommendation?.targetId ?? null,
+      });
+    },
   };
+  return rail;
 }
 
 /** Minimal shell stand-in. Render methods are spies that must never be called. */
@@ -181,7 +194,7 @@ const rec = (targetId, dialogue = `${targetId} suits this build.`) => Object.fre
     gateB.resolve(rec('exceptional-skill'));
     await runB;
     assert.equal(shell.mentorRail.calls.length, 1, 'the newer recommendation was not displayed');
-    assert.equal(shell.mentorRail.calls[0].recommendation.targetId, 'exceptional-skill');
+    assert.equal(shell.mentorRail.calls[0].targetId, 'exceptional-skill');
 
     // A finishes later and must be discarded.
     gateA.resolve(rec('toughness'));
@@ -364,7 +377,7 @@ const rec = (targetId, dialogue = `${targetId} suits this build.`) => Object.fre
 
   assert.equal(evaluations, 1, 'reconnect started a new evaluation (render feedback loop)');
   assert.equal(shell.mentorRail.calls.length, 3, 'reconnect did not re-present the current recommendation');
-  assert.equal(shell.mentorRail.calls[1].options.replay, true);
+  assert.equal(shell.mentorRail.calls[1].source, 'recommendation-replay');
   assert.equal(shell.renderCalls.length, 0);
   assert.equal(shell.requestRenderCalls.length, 0);
 }
@@ -394,6 +407,135 @@ const rec = (targetId, dialogue = `${targetId} suits this build.`) => Object.fre
     'an identical recommendation was suppressed after a reaction bark took the rail');
   assert.equal(shell.renderCalls.length, 0);
   assert.equal(shell.requestRenderCalls.length, 0);
+}
+
+/* ------------------------------------------------------------------ *
+ * 12. Message arbitration across sources.
+ * ------------------------------------------------------------------ */
+{
+  const { MESSAGE_PRIORITY } = await import(
+    '/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/mentor-recommendation-controller.js'
+  );
+  const shell = makeShell();
+  const c = shell.controller;
+
+  // A recommendation is showing.
+  assert.equal(c.present({ source: 'recommendation', text: 'Exceptional Skill fits.', mood: 'encouraging' }), true);
+  assert.equal(shell.mentorRail.calls.length, 1);
+
+  // A lower-priority focus bark from the same context cannot displace it.
+  assert.equal(c.present({ source: 'focusReaction', text: 'Hmm.' }), false);
+  assert.equal(shell.mentorRail.calls.length, 1);
+
+  // The identical message is dropped, so nothing re-animates.
+  assert.equal(c.present({ source: 'recommendation', text: 'Exceptional Skill fits.', mood: 'encouraging' }), false);
+  assert.equal(shell.mentorRail.calls.length, 1);
+
+  // Ask Mentor outranks everything and gets through.
+  assert.equal(c.present({ source: 'askMentor', text: 'Here are your options.' }), true);
+  assert.equal(shell.mentorRail.calls.length, 2);
+
+  // A newer context lets a lower-priority message back in.
+  c.currentRevision += 1;
+  assert.equal(c.present({ source: 'commitReaction', text: 'An unconventional choice.' }), true);
+  assert.equal(shell.mentorRail.calls.length, 3);
+
+  // A message older than the current revision is discarded outright.
+  assert.equal(c.present({ source: 'recommendation', text: 'Stale advice.', revision: 0 }), false);
+  assert.equal(shell.mentorRail.calls.length, 3);
+
+  assert.ok(MESSAGE_PRIORITY.askMentor > MESSAGE_PRIORITY.recommendation);
+  assert.ok(MESSAGE_PRIORITY.recommendation > MESSAGE_PRIORITY.commitReaction);
+  assert.ok(MESSAGE_PRIORITY.commitReaction > MESSAGE_PRIORITY.focusReaction);
+  assert.ok(MESSAGE_PRIORITY.focusReaction > MESSAGE_PRIORITY.stepGuidance);
+
+  assert.equal(shell.renderCalls.length, 0);
+  assert.equal(shell.requestRenderCalls.length, 0);
+}
+
+/* ------------------------------------------------------------------ *
+ * 13. Reaction accuracy — a mismatched item must not borrow another
+ *     item's reasoning.
+ * ------------------------------------------------------------------ */
+{
+  const router = fs.readFileSync(
+    path.join(ROOT, 'scripts/apps/progression-framework/shell/mentor-choice-reaction-router.js'),
+    'utf8'
+  );
+  assert.ok(
+    !/_matchSuggestion\(list, item, itemIdValue\) \|\| list\[0\]/.test(router),
+    'a reaction can still fall back to the top-ranked suggestion for a different item'
+  );
+  assert.match(
+    router,
+    /return this\._matchSuggestion\(list, item, itemIdValue\) \|\| null;/,
+    'the item-reaction lookup must return only a matching suggestion'
+  );
+}
+
+/* ------------------------------------------------------------------ *
+ * 14. Animation cancellation reaches the reveal loop.
+ * ------------------------------------------------------------------ */
+{
+  const translator = fs.readFileSync(path.join(ROOT, 'scripts/ui/dialogue/aurebesh-translator.js'), 'utf8');
+  assert.match(translator, /static _generations = new WeakMap\(\)/, 'no generation token on the translator');
+  assert.match(translator, /_isSuperseded\(/, 'the reveal loop has no supersession check');
+  // The check must happen inside the per-character loop, not only around it.
+  const loop = translator.slice(translator.indexOf('for (let i = 0; i < chars.length'));
+  assert.match(loop.slice(0, 400), /if \(superseded\(\)\) return;/,
+    'the per-character reveal loop does not stop when superseded');
+
+  const integration = fs.readFileSync(path.join(ROOT, 'scripts/mentor/mentor-translation-integration.js'), 'utf8');
+  assert.match(integration, /signal,/, 'the abort signal is not forwarded to the translator');
+  assert.match(integration, /this\.cancel\(container\);/, 'the previous reveal is not cancelled before replacing content');
+
+  const rail = fs.readFileSync(path.join(ROOT, 'scripts/apps/progression-framework/shell/mentor-rail.js'), 'utf8');
+  const renderCall = rail.slice(rail.indexOf('MentorTranslationIntegration.render({'));
+  assert.match(renderCall.slice(0, 500), /signal,/, 'MentorRail does not pass its abort signal down');
+}
+
+/* ------------------------------------------------------------------ *
+ * 15. SuggestionService collapses concurrent identical requests.
+ * ------------------------------------------------------------------ */
+{
+  const service = fs.readFileSync(path.join(ROOT, 'scripts/engine/suggestion/SuggestionService.js'), 'utf8');
+  assert.match(service, /static _inFlight = new Map\(\)/, 'no in-flight request map');
+  assert.match(service, /this\._inFlight\.get\(requestKey\)/, 'in-flight requests are not reused');
+  assert.match(service, /this\._inFlight\.delete\(requestKey\)/, 'in-flight entries are never released');
+  // invalidate() must drop in-flight work too, or it would repopulate the cache
+  // it just cleared.
+  const invalidate = service.slice(service.indexOf('static invalidate(actorId)'));
+  assert.match(invalidate.slice(0, 500), /_inFlight/, 'invalidate() does not clear in-flight requests');
+}
+
+/* ------------------------------------------------------------------ *
+ * 16. SnapshotBuilder sees progression draftSelections.
+ *
+ * It only read chargen's `selectedFeats`-style keys, so every selection made
+ * through ProgressionSession was invisible to the cache revision and advice
+ * went stale within a step.
+ * ------------------------------------------------------------------ */
+{
+  const { SnapshotBuilder } = await import(
+    '/systems/foundryvtt-swse/scripts/engine/suggestion/SnapshotBuilder.js'
+  );
+  const actor = { id: 'a1', system: { level: 1, abilities: {} }, items: [] };
+  const empty = SnapshotBuilder.hashFromActor(actor, 'feats', {});
+
+  for (const [label, pending] of [
+    ['draftSelections.feats', { feats: [{ id: 'point-blank-shot' }] }],
+    ['draftSelections.talents', { talents: [{ id: 'exceptional-skill' }] }],
+    ['draftSelections.skills', { skills: [{ id: 'perception' }] }],
+    ['draftSelections.forcePowers', { forcePowers: [{ id: 'battle-strike' }] }],
+    ['draftSelections.species', { species: { id: 'human' } }],
+    ['chargen selectedFeats', { selectedFeats: [{ id: 'point-blank-shot' }] }],
+  ]) {
+    assert.notEqual(
+      SnapshotBuilder.hashFromActor(actor, 'feats', pending),
+      empty,
+      `${label} does not change the snapshot hash`
+    );
+  }
 }
 
 /* ------------------------------------------------------------------ *

@@ -148,6 +148,7 @@ async function _ensureActorDoc(actorOrData) {
 
 export class SuggestionService {
   static _cache = new Map(); // key -> {rev, suggestions, meta}
+  static _inFlight = new Map(); // `${key}::${rev}` -> Promise, collapses concurrent identical work
   static _cacheStats = new Map(); // key -> {accessTime}
   static MAX_CACHE_SIZE = 500; // PHASE B: Limit cache to prevent unbounded growth
   static _initialized = false;
@@ -163,9 +164,54 @@ export class SuggestionService {
     for (const key of this._cache.keys()) {
       if (key.startsWith(`${actorId}::`)) {this._cache.delete(key);}
     }
+    // Drop in-flight entries too, otherwise a request started against the old
+    // state would repopulate the cache we just cleared.
+    for (const key of this._inFlight.keys()) {
+      if (key.startsWith(`${actorId}::`)) {this._inFlight.delete(key);}
+    }
   }
 
+  /**
+   * Public entry point. Collapses concurrent identical requests.
+   *
+   * The completed-result cache is keyed by snapshot revision, so two callers
+   * asking for the same uncached snapshot at nearly the same moment both used to
+   * run the full evaluation before either populated it. Progression does exactly
+   * that: a step hydrates suggestions while the mentor asks for advice on the
+   * same state. This shares one promise instead.
+   *
+   * Scoring is untouched — this only decides who runs the calculation.
+   */
   static async getSuggestions(actorOrData, context = 'sheet', options = {}) {
+    const actor = await _ensureActorDoc(actorOrData);
+
+    // Reuse the exact cache identity the calculation itself uses, so an in-flight
+    // request and its cached result can never disagree about what they are.
+    let requestKey = null;
+    try {
+      const revision = actor?.id
+        ? SnapshotBuilder.hashFromActor(actor, options.focus ?? null, options.pendingData ?? {})
+        : null;
+      if (revision) {
+        requestKey = `${actor.id}::${context}::${options.domain ?? 'all'}::${revision}`;
+      }
+    } catch (_err) {
+      requestKey = null;
+    }
+
+    if (!requestKey) return this._computeSuggestions(actor, context, options);
+
+    const existing = this._inFlight.get(requestKey);
+    if (existing) return existing;
+
+    const promise = this._computeSuggestions(actor, context, options)
+      .finally(() => { this._inFlight.delete(requestKey); });
+
+    this._inFlight.set(requestKey, promise);
+    return promise;
+  }
+
+  static async _computeSuggestions(actorOrData, context = 'sheet', options = {}) {
     const actor = await _ensureActorDoc(actorOrData);
     const pendingData = options.pendingData ?? {};
     const focus = options.focus ?? null;

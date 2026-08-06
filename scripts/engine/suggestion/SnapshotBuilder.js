@@ -263,20 +263,30 @@ export class SnapshotBuilder {
         selectedPowers: [],
         selectedForceSecrets: [],
         selectedForceTechniques: [],
+        selectedSpecies: null,
+        selectedBackground: null,
         selectedAttributes: {},
         activeSlotContext: {}
       };
     }
 
+    // Two namings reach this method. Chargen passes `selectedFeats`-style keys;
+    // the progression framework passes ProgressionSession.draftSelections, whose
+    // keys are `feats`, `talents`, `skills`, `forcePowers`, `class`. Only the
+    // first was read, so every progression selection was invisible to the hash —
+    // which meant the suggestion cache revision did not change as the player
+    // made selections, and cached advice went stale within a step. Accept both.
     return {
-      selectedClass: pendingData.selectedClass?.id ?? null,
-      selectedFeats: this._pendingIds(pendingData.selectedFeats).sort(),
-      selectedTalents: this._pendingIds(pendingData.selectedTalents).sort(),
-      selectedSkills: this._pendingIds(pendingData.selectedSkills).sort(),
-      selectedPowers: this._pendingIds(pendingData.selectedPowers || pendingData.selectedForcePowers).sort(),
-      selectedForceSecrets: this._pendingIds(pendingData.selectedForceSecrets).sort(),
-      selectedForceTechniques: this._pendingIds(pendingData.selectedForceTechniques).sort(),
-      selectedAttributes: this._stablePlainObject(pendingData.attributeIncreases || pendingData.selectedAttributes || pendingData.attributeChoices || {}),
+      selectedClass: pendingData.selectedClass?.id ?? pendingData.class?.id ?? pendingData.class ?? null,
+      selectedFeats: this._pendingIds(pendingData.selectedFeats || pendingData.feats).sort(),
+      selectedTalents: this._pendingIds(pendingData.selectedTalents || pendingData.talents).sort(),
+      selectedSkills: this._pendingIds(pendingData.selectedSkills || pendingData.skills).sort(),
+      selectedPowers: this._pendingIds(pendingData.selectedPowers || pendingData.selectedForcePowers || pendingData.forcePowers).sort(),
+      selectedForceSecrets: this._pendingIds(pendingData.selectedForceSecrets || pendingData.forceSecrets).sort(),
+      selectedForceTechniques: this._pendingIds(pendingData.selectedForceTechniques || pendingData.forceTechniques).sort(),
+      selectedSpecies: pendingData.selectedSpecies?.id ?? pendingData.species?.id ?? pendingData.species ?? null,
+      selectedBackground: pendingData.selectedBackground?.id ?? pendingData.background?.id ?? pendingData.background ?? null,
+      selectedAttributes: this._stablePlainObject(pendingData.attributeIncreases || pendingData.selectedAttributes || pendingData.attributeChoices || pendingData.attributes || {}),
       activeSlotContext: this._stablePlainObject(pendingData.activeSlotContext || pendingData.slotContext || {})
     };
   }

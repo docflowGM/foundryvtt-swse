@@ -211,6 +211,9 @@ export class MentorRail {
         text: dialogueText,
         container: container.querySelector('[data-mentor-text]') ?? container,
         mentor: shell.mentor.name || shell.mentor.mentorId,
+        // The abort signal now reaches the reveal loop itself, so a superseded
+        // line stops animating instead of merely having its completion ignored.
+        signal,
         onComplete: () => {
           // [DEBUG] Callback execution logging
           mentorTrace(`[SWSE Mentor Debug] [Speak #${speakNum}] onComplete callback fired`, {
@@ -289,28 +292,50 @@ export class MentorRail {
    * @returns {boolean} false when the rail is not mounted (queued instead).
    */
   presentRecommendation(recommendation, { replay = false } = {}) {
-    const dialogue = String(recommendation?.dialogue ?? '').trim();
-    if (!dialogue) return false;
+    return this.presentMessage({
+      source: replay ? 'recommendation-replay' : 'recommendation',
+      text: recommendation?.dialogue,
+      mood: recommendation?.mood ?? 'neutral',
+      targetId: recommendation?.targetId ?? null,
+    });
+  }
 
-    const mood = recommendation?.mood ?? 'neutral';
+  /**
+   * The single DOM write for any arbitrated mentor message.
+   *
+   * Whatever the source — step guidance, a reaction, a recommendation, Ask
+   * Mentor — it lands here, and only here. Touches the mood attribute and the
+   * dialogue container; never renders, never blocks on the typewriter.
+   *
+   * @param {Object} message
+   * @param {string} message.text
+   * @param {string} [message.mood]
+   * @param {string} [message.source]
+   * @returns {boolean} false when the rail is not mounted (queued instead).
+   */
+  presentMessage(message) {
+    const text = String(message?.text ?? '').trim();
+    if (!text) return false;
+
+    const mood = message?.mood ?? 'neutral';
     const container = this._resolveDialogueContainer();
 
     if (!(container instanceof HTMLElement)) {
       // Not mounted yet (pre-render, or mid step transition). Queue it; the
       // rail replays queued dialogue from afterRender().
-      this._queuePendingDialogue(dialogue, mood);
+      this._queuePendingDialogue(text, mood);
       return false;
     }
 
     // Mood is a paint-only attribute swap on the mounted rail.
     this.setMood(mood);
 
-    // queueSpeak aborts any line still animating and returns immediately, so a
-    // new recommendation cleanly supersedes the previous one and the player is
-    // never waiting on narration.
-    this.queueSpeak(dialogue, mood, {
+    // queueSpeak aborts the previous reveal — now all the way into the
+    // translator's animation loop — and returns immediately, so a new line
+    // cleanly supersedes the old one and the player never waits on narration.
+    this.queueSpeak(text, mood, {
       bypassSuppression: true,
-      source: replay ? 'recommendation-replay' : 'recommendation',
+      source: message?.source ?? 'mentor-message',
     });
 
     return true;

@@ -24,6 +24,7 @@
 
 import { SWSELogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
 import { SuggestionService } from '/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionService.js';
+import { SnapshotBuilder } from '/systems/foundryvtt-swse/scripts/engine/suggestion/SnapshotBuilder.js';
 
 /**
  * Progression steps that have build advice, mapped to their suggestion domain.
@@ -51,39 +52,25 @@ export const STEP_RECOMMENDATION_DOMAIN = Object.freeze({
   'starship-maneuvers': 'starship-maneuvers',
 });
 
-function idsOf(value) {
-  if (!value) return [];
-  const list = Array.isArray(value) ? value : [value];
-  return list
-    .map(entry => (typeof entry === 'string' ? entry : entry?.id ?? entry?._id ?? entry?.name ?? null))
-    .filter(Boolean)
-    .map(String)
-    .sort();
-}
-
-function idOf(value) {
-  if (!value) return null;
-  if (typeof value === 'string') return value;
-  return value.id ?? value._id ?? value.name ?? null;
-}
-
-/** Stable, order-independent fingerprint of a context snapshot. */
+/**
+ * Stable fingerprint of a context snapshot.
+ *
+ * The rules-relevant part is delegated to SnapshotBuilder, which already
+ * captures actor + pending progression state, sorts collections deterministically,
+ * hashes stably, and deliberately excludes UI state. Only the identity the
+ * mentor adds on top — which step is open, which domain it maps to, and which
+ * options are legal right now — is appended here.
+ */
 export function createContextSignature(context) {
   if (!context) return 'none';
   return [
-    `mode:${context.mode ?? ''}`,
-    `step:${context.stepId ?? ''}`,
-    `actor:${context.actorId ?? ''}`,
-    `species:${context.speciesId ?? ''}`,
-    `background:${context.backgroundId ?? ''}`,
-    `classes:${(context.classIds || []).join(',')}`,
-    `skills:${(context.trainedSkillIds || []).join(',')}`,
-    `feats:${(context.selectedFeatIds || []).join(',')}`,
-    `talents:${(context.selectedTalentIds || []).join(',')}`,
-    `powers:${(context.selectedPowerIds || []).join(',')}`,
-    `attrs:${context.attributeSignature ?? ''}`,
-    `rev:${context.progressionRevision ?? 0}`,
-  ].join('|');
+    context.mode ?? '',
+    context.stepId ?? '',
+    context.domain ?? '',
+    context.actorId ?? '',
+    context.snapshotHash ?? '',
+    (context.availableIds || []).join(','),
+  ].join('::');
 }
 
 /** Stable fingerprint of a recommendation, used to suppress re-presentation. */
@@ -99,41 +86,79 @@ export function createRecommendationSignature(recommendation) {
 }
 
 /**
- * Build the immutable snapshot the suggestion engine evaluates.
+ * Build the immutable context the recommendation is evaluated against.
  *
- * Deliberately does NOT pass the shell, the plugin, the actor document, or live
- * session state into async work — the snapshot must not mutate mid-evaluation.
+ * This is intentionally thin. The rules-relevant state already has a canonical
+ * home in SnapshotBuilder, so this adds only what the mentor needs on top of it:
+ * the open step, its suggestion domain, and the identity of the options that are
+ * currently legal — because the same character state can yield different advice
+ * when the candidate pool changes.
+ *
+ * Nothing cosmetic is included, so scroll, hover, filtering, rail resizing, and
+ * translator frames cannot produce a new signature.
  *
  * @param {Object} shell - ProgressionShell
+ * @param {Object} [options]
+ * @param {Array} [options.available] - Currently legal options for the step.
  * @returns {Object} frozen snapshot
  */
-export function buildMentorContext(shell) {
+export function buildMentorContext(shell, { available = null } = {}) {
   const session = shell?.progressionSession ?? null;
   const draft = session?.draftSelections ?? {};
   const stepId = shell?.steps?.[shell?.currentStepIndex]?.stepId ?? session?.currentStepId ?? null;
+  const domain = STEP_RECOMMENDATION_DOMAIN[stepId] ?? null;
 
-  const attributes = draft.attributes ?? null;
-  let attributeSignature = '';
+  let snapshotHash = '';
   try {
-    attributeSignature = attributes ? JSON.stringify(attributes) : '';
-  } catch (_err) {
-    attributeSignature = '';
+    snapshotHash = shell?.actor
+      ? SnapshotBuilder.hashFromActor(shell.actor, domain, draft)
+      : '';
+  } catch (err) {
+    SWSELogger.debug('[MentorRecommendation] snapshot hash failed', { error: err?.message });
+    snapshotHash = '';
   }
+
+  const availableIds = Array.isArray(available)
+    ? [...new Set(available.map(entry => String(entry?.id ?? entry?._id ?? entry?.name ?? '')).filter(Boolean))].sort()
+    : [];
 
   return Object.freeze({
     mode: shell?.mode ?? 'chargen',
     stepId,
-    domain: STEP_RECOMMENDATION_DOMAIN[stepId] ?? null,
+    domain,
     actorId: shell?.actor?.id ?? null,
-    speciesId: idOf(draft.species),
-    backgroundId: idOf(draft.background),
-    classIds: idsOf(draft.class),
-    trainedSkillIds: idsOf(draft.skills),
-    selectedFeatIds: idsOf(draft.feats),
-    selectedTalentIds: idsOf(draft.talents),
-    selectedPowerIds: idsOf(draft.forcePowers),
-    attributeSignature,
-    progressionRevision: session?.getSelectionRevision?.() ?? 0,
+    snapshotHash,
+    availableIds: Object.freeze(availableIds),
+  });
+}
+
+/**
+ * Who wins the dialogue box when two sources want it at once.
+ *
+ * Several systems legitimately write to the same box — step guidance on entry,
+ * focus and commit reactions, the build recommendation, Ask Mentor. They each
+ * had throttling of their own but no traffic control between them, so the last
+ * writer won regardless of importance or age.
+ *
+ * The absolute numbers do not matter; the ordering does.
+ * @type {Readonly<Object<string, number>>}
+ */
+export const MESSAGE_PRIORITY = Object.freeze({
+  stepGuidance: 10,
+  focusReaction: 20,
+  commitReaction: 30,
+  recommendation: 40,
+  askMentor: 50,
+});
+
+/** Stable fingerprint of any mentor message, whatever its source. */
+export function createMessageSignature(message) {
+  if (!message) return 'none';
+  return JSON.stringify({
+    source: message.source ?? null,
+    targetId: message.targetId ?? null,
+    text: String(message.text ?? '').replace(/\s+/g, ' ').trim().toLowerCase(),
+    mood: message.mood ?? 'neutral',
   });
 }
 
@@ -150,6 +175,10 @@ export class MentorRecommendationController {
     this.lastContextSignature = null;
     this.lastRecommendationSignature = null;
     this.currentRecommendation = null;
+
+    // Arbiter state: what is on screen right now, from any source.
+    this.activeMessage = null;
+    this.activeSignature = null;
 
     this._inFlightByContext = new Map();
 
@@ -253,6 +282,61 @@ export class MentorRecommendationController {
   }
 
   /**
+   * The one arbiter for the dialogue box.
+   *
+   * Every mentor message source routes through here. A message is dropped when
+   * it is stale (older than the current revision), identical to what is already
+   * showing, or lower priority than a message of the same or newer age.
+   *
+   * @param {Object} message
+   * @param {string} message.source - Key from MESSAGE_PRIORITY.
+   * @param {string} message.text
+   * @param {string} [message.mood]
+   * @param {number} [message.priority]
+   * @param {number} [message.revision] - Defaults to the current revision.
+   * @param {string} [message.targetId]
+   * @returns {boolean} true when the message reached the rail.
+   */
+  present(message) {
+    if (!message?.text) return false;
+
+    const priority = message.priority ?? MESSAGE_PRIORITY[message.source] ?? 0;
+    const revision = message.revision ?? this.currentRevision;
+
+    if (revision < this.currentRevision) {
+      this._stats.staleResultsDiscarded += 1;
+      this._trace({ result: 'discarded-stale', source: message.source, revision });
+      return false;
+    }
+
+    const signature = createMessageSignature(message);
+    if (signature === this.activeSignature) {
+      this._stats.unchangedRecommendationsSkipped += 1;
+      this._trace({ result: 'discarded-unchanged', source: message.source });
+      return false;
+    }
+
+    // A less important message cannot displace a more important one unless it
+    // belongs to a newer context — that is what lets a fresh recommendation
+    // replace a stale Ask Mentor line, while a focus bark cannot.
+    if (this.activeMessage
+      && priority < this.activeMessage.priority
+      && revision <= this.activeMessage.revision) {
+      this._trace({ result: 'discarded-lower-priority', source: message.source, priority });
+      return false;
+    }
+
+    this.activeMessage = { ...message, priority, revision };
+    this.activeSignature = signature;
+
+    const presented = this.shell?.mentorRail?.presentMessage?.(this.activeMessage);
+    if (presented !== false) this._stats.mentorDomUpdates += 1;
+
+    this._trace({ result: 'presented', source: message.source, priority, revision });
+    return presented !== false;
+  }
+
+  /**
    * Present a recommendation, unless it is the one already on screen.
    *
    * Called two ways:
@@ -293,8 +377,13 @@ export class MentorRecommendationController {
     }
 
     this._stats.recommendationsDisplayed += 1;
-    const presented = this.shell?.mentorRail?.presentRecommendation?.(recommendation);
-    if (presented !== false) this._stats.mentorDomUpdates += 1;
+    this.present({
+      source: 'recommendation',
+      text: recommendation.dialogue,
+      mood: recommendation.mood ?? 'neutral',
+      targetId: recommendation.targetId ?? recommendation.id ?? null,
+      revision: trace.revision ?? this.currentRevision,
+    });
 
     this._trace({ ...trace, result: 'displayed', winner: recommendation.targetId ?? recommendation.id });
   }
@@ -313,6 +402,8 @@ export class MentorRecommendationController {
    */
   noteExternalDisplay(reason = 'external') {
     this.lastRecommendationSignature = null;
+    this.activeSignature = null;
+    this.activeMessage = null;
     this._trace({ result: 'superseded-by-external', reason });
   }
 
@@ -323,6 +414,10 @@ export class MentorRecommendationController {
    */
   reconnect() {
     if (!this.currentRecommendation) return;
+    // The rail node was destroyed by a structural render, so what is on screen
+    // is nothing. Clear the arbiter's signature or the replay would be dropped
+    // as "unchanged" against a message that no longer exists in the DOM.
+    this.activeSignature = null;
     const presented = this.shell?.mentorRail?.presentRecommendation?.(this.currentRecommendation, { replay: true });
     if (presented !== false) this._stats.mentorDomUpdates += 1;
     this._trace({ result: 'reconnected' });

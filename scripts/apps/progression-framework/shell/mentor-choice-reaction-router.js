@@ -596,7 +596,12 @@ export class MentorChoiceReactionRouter {
         limit: action === 'focus' ? 12 : 24,
       });
       const list = asArray(suggestions);
-      return this._matchSuggestion(list, item, itemIdValue) || list[0] || null;
+      // A reaction is about the item the player just touched. Falling back to
+      // list[0] meant clicking option B could speak option A's reasoning —
+      // the mentor confidently explaining a choice the player did not make.
+      // No match means no borrowed reasoning: the composer falls back to the
+      // clicked item's own metadata instead.
+      return this._matchSuggestion(list, item, itemIdValue) || null;
     } catch (err) {
       swseLogger.debug('[MentorChoiceReactionRouter] SuggestionService lookup skipped', {
         stepId,
