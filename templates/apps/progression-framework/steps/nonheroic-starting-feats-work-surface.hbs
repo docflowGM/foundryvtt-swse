@@ -74,6 +74,12 @@
             {{#if this.isSelected}}<i class="fa-solid fa-check-circle selected-icon"></i>{{else}}<i class="fa-regular fa-circle"></i>{{/if}}
           </span>
         </div>
+        {{> "systems/foundryvtt-swse/templates/apps/progression-framework/partials/option-card-action.hbs"
+           itemId=this.id
+           name=this.name
+           selected=this.isSelected
+           title="Choose this feat"
+        }}
       </div>
       {{/each}}
     </div>

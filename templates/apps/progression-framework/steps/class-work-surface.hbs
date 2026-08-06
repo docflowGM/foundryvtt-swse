@@ -11,7 +11,11 @@
   {{/if}}
   <div class="prog-class-grid" role="listbox" aria-label="Class">
     {{#each classes}}
-      <button class="swse-option-card prog-class-card prog-class-card--visual
+      <article class="progression-option-card prog-class-card-wrap{{#if (eq id ../committedClassId)}} progression-option-card--selected{{/if}}{{#if this.isLocked}} progression-option-card--locked{{/if}}"
+               data-item-id="{{this.id}}"
+               role="option"
+               {{#if (eq id ../committedClassId)}}aria-selected="true"{{/if}}>
+        <button class="progression-option-card__focus swse-option-card prog-class-card prog-class-card--visual
                      {{#if (eq id ../focusedClassId)}}swse-option-card--focused prog-class-card--focused{{/if}}
                      {{#if (eq id ../committedClassId)}}swse-option-card--selected prog-class-card--selected{{/if}}
                      {{#if this.isLocked}}prog-class-card--locked swse-option-card--locked{{/if}}
@@ -25,9 +29,7 @@
               data-locked="{{#if this.isLocked}}true{{else}}false{{/if}}"
               data-confidence-level="{{this.confidenceLevel}}"
               type="button"
-              role="option"
-              aria-label="{{this.name}} class"
-              {{#if (eq id ../committedClassId)}}aria-selected="true"{{/if}}>
+              aria-label="{{this.name}} class">
 
         <div class="prog-class-card__visual-wrap prog-holo-media prog-holo-media--wide">
           {{#if this.img}}
@@ -64,7 +66,15 @@
           {{/if}}
         </div>
 
-      </button>
+        </button>
+        {{> "systems/foundryvtt-swse/templates/apps/progression-framework/partials/option-card-action.hbs"
+           itemId=this.id
+           name=this.name
+           selected=(eq id ../committedClassId)
+           disabled=this.isLocked
+           title="Choose this class"
+        }}
+      </article>
     {{else}}
       <div class="prog-class-browse__empty">No classes found. Adjust your search or filters.</div>
     {{/each}}

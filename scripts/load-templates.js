@@ -290,6 +290,7 @@ export const SWSE_TEMPLATES = [
   'systems/foundryvtt-swse/templates/apps/progression-framework/steps/l1-survey-work-surface.hbs',
   'systems/foundryvtt-swse/templates/apps/progression-framework/steps/language-work-surface.hbs',
   'systems/foundryvtt-swse/templates/apps/progression-framework/steps/near-human-work-surface.hbs',
+  'systems/foundryvtt-swse/templates/apps/progression-framework/partials/option-card-action.hbs',
   'systems/foundryvtt-swse/templates/apps/progression-framework/steps/species-work-surface.hbs',
   'systems/foundryvtt-swse/templates/apps/progression-framework/steps/starship-maneuver-work-surface.hbs',
   'systems/foundryvtt-swse/templates/apps/progression-framework/steps/talent-tree-browser.hbs',

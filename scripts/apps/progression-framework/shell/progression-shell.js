@@ -2744,10 +2744,31 @@ export class ProgressionShell extends SWSEApplicationV2 {
     this._doubleClickSelectionAbort = new AbortController();
     const signal = this._doubleClickSelectionAbort.signal;
 
+    // One physical double-click must produce exactly one logical action.
+    //
+    // Two listeners are needed (see below), so without a token both the second
+    // `click` and the native `dblclick` can reach the commit path for the same
+    // gesture. The token is the event's own timestamp bucket plus the row it
+    // landed on: the paired click/dblclick of one gesture share a timeStamp
+    // within a few milliseconds, while a genuine second double-click does not.
+    let lastGesture = { key: null, at: 0 };
+    const isRepeatGesture = (event, row) => {
+      const key = `${row?.dataset?.itemId ?? ''}|${row?.dataset?.featId ?? ''}|${row?.dataset?.treeId ?? ''}`;
+      const now = Number(event?.timeStamp) || Date.now();
+      if (lastGesture.key === key && now - lastGesture.at < 400) return true;
+      lastGesture = { key, at: now };
+      return false;
+    };
+
     const commitFromEvent = async (event, { requireDoubleClick = false } = {}) => {
       if (requireDoubleClick && Number(event?.detail || 0) < 2) return;
       const rawTarget = event?.target;
       if (!(rawTarget instanceof Element)) return;
+
+      // A click that landed on a card's own action button (SELECT, +, −, Remove)
+      // is already a single deliberate action. Double-clicking it must not add a
+      // second commit on top.
+      if (rawTarget.closest('[data-card-action="true"], .prog-quantity-btn')) return;
 
       const focusRowControl = rawTarget.closest('[data-action="focus-item"][data-item-id], [data-action="focus-item"][data-id]');
 
@@ -2782,14 +2803,22 @@ export class ProgressionShell extends SWSEApplicationV2 {
       ].join(','));
 
       if (!row || !html.contains(row)) return;
+      if (isRepeatGesture(event, row)) return;
 
       event.preventDefault?.();
       event.stopPropagation?.();
       event.stopImmediatePropagation?.();
 
-      // Some rows select through a nested action button rather than
-      // onItemCommitted (skills, language add, custom component selectors). Use
-      // that existing button path first when present and enabled.
+      // The card's visible SELECT button is the source of truth for what this
+      // card does, so double-click resolves to it rather than to a second
+      // hardcoded list of step types. Falls back to any other nested action
+      // button (skills, language add, custom component selectors).
+      const cardAction = row.querySelector('[data-card-action="true"]:not([disabled]):not([aria-disabled="true"])');
+      if (cardAction instanceof HTMLElement) {
+        cardAction.click();
+        return;
+      }
+
       const nestedAction = row.querySelector([
         'button[data-action]:not([data-action="focus-item"]):not([disabled])',
         '[role="button"][data-action]:not([data-action="focus-item"]):not([aria-disabled="true"])'

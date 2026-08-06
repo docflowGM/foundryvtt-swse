@@ -121,6 +121,17 @@
                   </div>
                 {{/if}}
               </div>
+              {{> "systems/foundryvtt-swse/templates/apps/progression-framework/partials/option-card-action.hbs"
+                 action="skill-train"
+                 itemId=this.id
+                 idAttr="data-skill-key"
+                 idValue=this.key
+                 name=this.name
+                 selected=this.isTrained
+                 disabled=this.isLocked
+                 title="Train this skill"
+                 verb="Train"
+              }}
             </div>
           {{/if}}
         {{/each}}

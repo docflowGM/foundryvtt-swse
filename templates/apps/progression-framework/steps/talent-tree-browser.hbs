@@ -79,7 +79,10 @@
         </div>
         {{/if}}
 
-        <button type="button" class="talent-tree-card__enter-btn" data-action="enter-tree" data-tree-id="{{id}}">
+        <button type="button" class="talent-tree-card__enter-btn progression-option-card__select"
+                data-action="enter-tree" data-tree-id="{{id}}"
+                data-card-action="true" data-card-action-state="select"
+                aria-label="Open {{name}}">
           <span>{{localize "SWSE.Progression.Talent.Actions.ExploreHolomap"}}</span>
           <i class="fa-solid fa-arrow-right"></i>
         </button>

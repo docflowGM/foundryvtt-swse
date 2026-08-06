@@ -124,6 +124,16 @@
     </div>
     <div class="force-power-compact-row__controls">
       {{#with (lookup ../cardStates power.stateId)}}
+        {{> "systems/foundryvtt-swse/templates/apps/progression-framework/partials/option-card-action.hbs"
+           action="increment-quantity"
+           itemId=powerId
+           name=../power.name
+           verb="Add"
+           title="Add this Force Power"
+           selected=isPending
+           useEnabled=true
+           enabled=canIncrement
+        }}
         <button class="prog-quantity-btn prog-quantity-btn--decrement"
                 data-action="decrement-quantity"
                 data-item-id="{{powerId}}"
@@ -191,6 +201,16 @@
     </div>
     <div class="force-power-compact-row__controls">
       {{#with (lookup ../cardStates power.stateId)}}
+        {{> "systems/foundryvtt-swse/templates/apps/progression-framework/partials/option-card-action.hbs"
+           action="increment-quantity"
+           itemId=powerId
+           name=../power.name
+           verb="Add"
+           title="Add this Force Power"
+           selected=isPending
+           useEnabled=true
+           enabled=canIncrement
+        }}
         <button class="prog-quantity-btn prog-quantity-btn--decrement"
                 data-action="decrement-quantity"
                 data-item-id="{{powerId}}"

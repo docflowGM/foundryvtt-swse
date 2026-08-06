@@ -117,6 +117,15 @@
               Available
             </div>
           {{/if}}
+          {{> "systems/foundryvtt-swse/templates/apps/progression-framework/partials/option-card-action.hbs"
+             itemId=this.lookupId
+             idAttr="data-maneuver-id"
+             idValue=this.stateId
+             name=this.name
+             selected=(lookup ../pendingCounts this.stateId)
+             title="Add this Starship Maneuver"
+             verb="Add"
+          }}
         </div>
       {{/each}}
     </div>

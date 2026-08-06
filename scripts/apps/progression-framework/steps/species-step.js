@@ -229,19 +229,10 @@ export class SpeciesStep extends ProgressionStepPlugin {
       return;
     }
 
-    // Wire up double-click to commit species directly
-    const rows = workSurfaceEl?.querySelectorAll('.prog-species-row');
-    if (rows) {
-      rows.forEach(row => {
-        row.addEventListener('dblclick', async (e) => {
-          e.preventDefault();
-          const itemId = row.dataset.itemId;
-          if (itemId) {
-            await this.onItemCommitted(itemId, shell);
-          }
-        });
-      });
-    }
+    // Double-click is handled once, shell-wide, by
+    // ProgressionShell._wireDoubleClickSelection(). A step-local listener here
+    // duplicated that path — and now that every species card carries a visible
+    // SELECT button, it would also commit a second time for one gesture.
   }
 
   async handleAction(action, event, target, shell) {

@@ -90,11 +90,17 @@
           </span>
           <span class="language-category-badge {{this.category}}">{{this.categoryLabel}}</span>
         </div>
-        {{#if this.canSelect}}
-        <button class="language-add-btn" data-action="select-language" data-language-id="{{this.id}}" title="Select this language">
-          <i class="fa-solid fa-plus"></i>
-        </button>
-        {{/if}}
+        {{> "systems/foundryvtt-swse/templates/apps/progression-framework/partials/option-card-action.hbs"
+           action="select-language"
+           itemId=this.id
+           idAttr="data-language-id"
+           idValue=this.id
+           name=this.name
+           verb="Add"
+           title="Add this language"
+           useEnabled=true
+           enabled=this.canSelect
+        }}
       </div>
       {{/each}}
     </div>
