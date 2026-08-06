@@ -387,7 +387,7 @@ export class ForceTechniqueStep extends ProgressionStepPlugin {
     this._focusedTechniqueId = techniqueId;
     shell.focusedItem = technique;
     await handleAskMentor(shell.actor, 'force-techniques', shell);
-    shell.render();
+    shell.requestRender({ preserveScroll: true, regions: ['details'], reason: 'force-technique-step:technique' });
   }
 
   async onItemHovered(techniqueId, shell) {}
@@ -401,7 +401,7 @@ export class ForceTechniqueStep extends ProgressionStepPlugin {
       this._focusedTechniqueId = techniqueId;
       shell.focusedItem = technique;
       ui?.notifications?.warn?.(availability.reason || 'This Force Technique requires a Force Power that is not in your suite.');
-      shell.render();
+      shell.requestRender({ preserveScroll: true, reason: 'force-technique-step:technique' });
       return;
     }
 
@@ -409,7 +409,7 @@ export class ForceTechniqueStep extends ProgressionStepPlugin {
     if (totalSelected >= this._remainingPicks) {
       this._focusedTechniqueId = techniqueId;
       shell.focusedItem = technique;
-      shell.render();
+      shell.requestRender({ preserveScroll: true, reason: 'force-technique-step:technique' });
       return;
     }
 
@@ -439,7 +439,7 @@ export class ForceTechniqueStep extends ProgressionStepPlugin {
 
     this._focusedTechniqueId = techniqueId;
     shell.focusedItem = technique;
-    shell.render();
+    shell.requestRender({ preserveScroll: true, reason: 'force-technique-step:technique' });
   }
 
 
@@ -606,7 +606,7 @@ export class ForceTechniqueStep extends ProgressionStepPlugin {
         if (!id) return;
         await this.onItemFocused(id, shell);
         await this.onItemCommitted(id, shell);
-        shell.render();
+        shell.requestRender({ preserveScroll: true, reason: 'force-technique-step:onAskMentor' });
       });
     } else {
       // Fallback to standard guidance if no suggestions

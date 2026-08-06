@@ -594,7 +594,7 @@ export class PrestigeSurveyStep extends ProgressionStepPlugin {
     this._surveyPhase = 'question';
     this._activeQuestionIndex = this._findNextQuestionIndex();
     await this._speakCurrentPhase(shell, true);
-    shell.render();
+    shell.requestRender({ preserveScroll: true, reason: 'prestige-survey-step:_startSurvey' });
   }
 
   async _chooseSurveyAnswer(shell, target) {
@@ -609,7 +609,7 @@ export class PrestigeSurveyStep extends ProgressionStepPlugin {
     this._surveyPhase = 'response';
     this._saveDraft(shell);
     await this._speakCurrentPhase(shell, true);
-    shell.render();
+    shell.requestRender({ preserveScroll: true, reason: 'prestige-survey-step:option' });
   }
 
   async _continueSurvey(shell) {
@@ -624,7 +624,7 @@ export class PrestigeSurveyStep extends ProgressionStepPlugin {
     }
     this._saveDraft(shell);
     await this._speakCurrentPhase(shell, true);
-    shell.render();
+    shell.requestRender({ preserveScroll: true, reason: 'prestige-survey-step:nextIndex' });
   }
 
   async _finishSurvey(shell) {
@@ -641,7 +641,7 @@ export class PrestigeSurveyStep extends ProgressionStepPlugin {
     this._surveyPhase = 'question';
     this._saveDraft(shell);
     await this._speakCurrentPhase(shell, true);
-    shell.render();
+    shell.requestRender({ preserveScroll: true, reason: 'prestige-survey-step:_changeCurrentAnswer' });
   }
 
   async _goToPreviousQuestion(shell) {
@@ -653,13 +653,13 @@ export class PrestigeSurveyStep extends ProgressionStepPlugin {
         this._activeQuestionIndex = i;
         this._surveyPhase = 'response';
         await this._speakCurrentPhase(shell, true);
-        shell.render();
+        shell.requestRender({ preserveScroll: true, reason: 'prestige-survey-step:_goToPreviousQuestion' });
         return;
       }
     }
     this._surveyPhase = 'intro';
     await this._speakCurrentPhase(shell, true);
-    shell.render();
+    shell.requestRender({ preserveScroll: true, reason: 'prestige-survey-step:_goToPreviousQuestion' });
   }
 
   async _retakeSurvey(shell) {
@@ -669,7 +669,7 @@ export class PrestigeSurveyStep extends ProgressionStepPlugin {
     this._lastPromptSpoken = null;
     this._saveDraft(shell);
     await this._speakCurrentPhase(shell, true);
-    shell.render();
+    shell.requestRender({ preserveScroll: true, reason: 'prestige-survey-step:_retakeSurvey' });
   }
 
   async onStepExit(shell, { direction } = {}) {

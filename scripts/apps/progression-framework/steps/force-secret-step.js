@@ -140,15 +140,15 @@ export class ForceSecretStep extends ProgressionStepPlugin {
     const onSearch = e => {
       this._searchQuery = e.detail.query;
       this._applyFilters();
-      shell.render();
+      shell.requestRender({ preserveScroll: true, reason: 'force-secret-step:onSearch' });
     };
     const onFilter = e => {
       this._applyFilters();
-      shell.render();
+      shell.requestRender({ preserveScroll: true, reason: 'force-secret-step:onFilter' });
     };
     const onSort = e => {
       this._applyFilters();
-      shell.render();
+      shell.requestRender({ preserveScroll: true, reason: 'force-secret-step:onSort' });
     };
 
     shell.element.addEventListener('prog:utility:search', onSearch, { signal });
@@ -204,7 +204,7 @@ export class ForceSecretStep extends ProgressionStepPlugin {
     this._focusedSecretId = secretId;
     shell.focusedItem = secret;
     await handleAskMentor(shell.actor, 'force-secrets', shell);
-    shell.render();
+    shell.requestRender({ preserveScroll: true, regions: ['details'], reason: 'force-secret-step:secret' });
   }
 
   async onItemHovered(secretId, shell) {
@@ -244,7 +244,7 @@ export class ForceSecretStep extends ProgressionStepPlugin {
 
     this._focusedSecretId = secretId;
     shell.focusedItem = secret;
-    shell.render();
+    shell.requestRender({ preserveScroll: true, reason: 'force-secret-step:secret' });
   }
 
 
@@ -401,7 +401,7 @@ export class ForceSecretStep extends ProgressionStepPlugin {
         if (!id) return;
         await this.onItemFocused(id, shell);
         await this.onItemCommitted(id, shell);
-        shell.render();
+        shell.requestRender({ preserveScroll: true, reason: 'force-secret-step:onAskMentor' });
       });
     } else {
       // Fallback to standard guidance if no suggestions

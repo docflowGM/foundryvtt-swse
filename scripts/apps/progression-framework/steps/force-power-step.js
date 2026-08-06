@@ -137,17 +137,17 @@ export class ForcePowerStep extends ProgressionStepPlugin {
     const onSearch = e => {
       this._searchQuery = e.detail.query;
       this._applyFilters();
-      shell.render();
+      shell.requestRender({ preserveScroll: true, reason: 'force-power-step:onSearch' });
     };
     const onFilter = e => {
       // planned (Wave 10+): implement power-level filtering
       this._applyFilters();
-      shell.render();
+      shell.requestRender({ preserveScroll: true, reason: 'force-power-step:onFilter' });
     };
     const onSort = e => {
       // planned (Wave 10+): implement sorting
       this._applyFilters();
-      shell.render();
+      shell.requestRender({ preserveScroll: true, reason: 'force-power-step:onSort' });
     };
 
     shell.element.addEventListener('prog:utility:search', onSearch, { signal });
@@ -364,7 +364,7 @@ export class ForcePowerStep extends ProgressionStepPlugin {
     await this._commitPowerSelection(shell);
     this._focusedPowerId = resolvedPowerId;
     shell.focusedItem = this._formatPowerCard(power);
-    if (options.render !== false) shell.render();
+    if (options.render !== false) shell.requestRender({ preserveScroll: true, reason: 'force-power-step:onIncrementQuantity' });
   }
 
   /**
@@ -393,7 +393,7 @@ export class ForcePowerStep extends ProgressionStepPlugin {
     await this._commitPowerSelection(shell);
     this._focusedPowerId = resolvedPowerId;
     shell.focusedItem = this._formatPowerCard(power);
-    shell.render();
+    shell.requestRender({ preserveScroll: true, reason: 'force-power-step:onDecrementQuantity' });
   }
 
   async handleAction(action, event, target, shell) {
@@ -636,7 +636,7 @@ export class ForcePowerStep extends ProgressionStepPlugin {
         if (!id) return;
         await this.onItemFocused(id, shell);
         await this.onItemCommitted(id, shell);
-        shell.render();
+        shell.requestRender({ preserveScroll: true, reason: 'force-power-step:onAskMentor' });
       });
     } else {
       // Fallback to standard guidance if no suggestions

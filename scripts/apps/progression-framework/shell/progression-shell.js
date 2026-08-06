@@ -28,6 +28,7 @@ import { SWSEPerf } from '/systems/foundryvtt-swse/scripts/utils/performance-uti
 import { RecoverySessionDialog } from '/systems/foundryvtt-swse/scripts/apps/progression-framework/dialogs/recovery-session-dialog.js';
 import { centerApplicationDuringStartup } from '/systems/foundryvtt-swse/scripts/utils/sheet-position.js';
 import { ConditionalStepResolver } from './conditional-step-resolver.js';
+import { ProgressionRenderScheduler } from './progression-render-scheduler.js';
 import { ProgressionFinalizer } from './progression-finalizer.js';
 import { ProgressionSession } from './progression-session.js';
 import { ActiveStepComputer } from './active-step-computer.js';
@@ -48,6 +49,7 @@ import { RolloutController } from '../rollout/rollout-controller.js';
 import { SelectedRailContext } from './selected-rail-context.js';
 import { ProjectionEngine } from './projection-engine.js';
 import { ProgressionDebugCapture } from '../debug/progression-debug-capture.js';
+import '../debug/progression-render-stats.js';
 import { ThemeResolutionService } from '/systems/foundryvtt-swse/scripts/ui/theme/theme-resolution-service.js';
 import { resolveMentorData, resolveMentorPortraitPath, getMentorKey } from '/systems/foundryvtt-swse/scripts/engine/mentor/mentor-dialogues.js';
 import { getStepMentorObject, resolveStepMentorContext } from '../steps/mentor-step-integration.js';
@@ -327,6 +329,21 @@ export class ProgressionShell extends SWSEApplicationV2 {
     this._isRendering = false;
     this._renderCount = 0;
 
+    // Single owner of *when* the shell repaints. Every requestRender() goes
+    // through here so requests raised in the same frame — a plugin updating its
+    // state, the shell's own follow-up, an async suggestion landing — collapse
+    // into one paint instead of a render train.
+    this.renderScheduler = new ProgressionRenderScheduler({
+      executeRender: (job) => this._executeScheduledRender(job),
+      computeStateSignature: () => this._computeRenderStateSignature(),
+      isDebugEnabled: () => SWSEPerf.enabled?.() === true,
+    });
+
+    // Bumped whenever a step is activated or its data is refreshed. onDataReady
+    // runs once per token, not once per paint.
+    this._stepDataRevision = 0;
+    this._dataReadyToken = new Map();
+
     // Position centering tracking — initialize EARLY so first render knows this is a new open
     this._didStartupCenter = false;
     this._openedAt = Date.now();
@@ -506,7 +523,33 @@ export class ProgressionShell extends SWSEApplicationV2 {
     }
   }
 
-  requestRender({ preserveScroll = true, reason = 'unspecified', force = false } = {}) {
+  /**
+   * Ask the shell to update. This is the ONLY entry point plugins and
+   * subsystems should use — it coalesces, deduplicates, and scopes the work.
+   *
+   * Callers that know what changed should say so via `regions`; a request with
+   * no declared region is treated as structural because the caller has not told
+   * us what is safe to leave alone.
+   *
+   * @param {Object} options
+   * @param {boolean} [options.preserveScroll]
+   * @param {string} [options.reason]
+   * @param {boolean} [options.force] - Bypass the identical-state skip.
+   * @param {string[]|string} [options.regions] - e.g. ['details'], ['mentor']
+   * @param {boolean} [options.structural] - Force a full repaint.
+   * @param {boolean} [options.dedupe] - Opt in to skipping when shell state is
+   *   unchanged. Only safe when the request's inputs are fully described by
+   *   _computeRenderStateSignature() — step-local plugin state is not.
+   * @returns {Promise<*>}
+   */
+  requestRender({
+    preserveScroll = true,
+    reason = 'unspecified',
+    force = false,
+    regions = null,
+    structural = false,
+    dedupe = false,
+  } = {}) {
     if (preserveScroll) {
       const snapshots = this._captureProgressionScrollSnapshots();
       this._pendingScrollSnapshots = [
@@ -514,8 +557,182 @@ export class ProgressionShell extends SWSEApplicationV2 {
         ...snapshots,
       ];
     }
-    swseLogger.debug('[ProgressionShell] requestRender', { preserveScroll, reason, force });
-    return this.render({ force });
+    swseLogger.debug('[ProgressionShell] requestRender', { preserveScroll, reason, force, regions, structural });
+    return this.renderScheduler.request({ reason, regions, structural, preserveScroll, force, dedupe });
+  }
+
+  /**
+   * Cheap fingerprint of everything a structural repaint actually reads. When it
+   * is unchanged, a queued full render is redundant and gets skipped.
+   * @returns {string|null}
+   * @private
+   */
+  _computeRenderStateSignature() {
+    try {
+      const descriptor = this.steps?.[this.currentStepIndex] ?? null;
+      const session = this.progressionSession;
+      return JSON.stringify({
+        step: descriptor?.stepId ?? null,
+        index: this.currentStepIndex,
+        stepCount: this.steps?.length ?? 0,
+        focused: this.focusedItem?.id ?? this.focusedItem?.name ?? null,
+        selections: session?.getSelectionRevision?.() ?? session?._revision ?? null,
+        mentorCollapsed: !!this.mentorCollapsed,
+        mentorId: this.mentor?.mentorId ?? null,
+        processing: !!this.isProcessing,
+        error: this.lastError?.message ?? null,
+        dataRevision: this._stepDataRevision,
+      });
+    } catch (_err) {
+      return null;
+    }
+  }
+
+  /**
+   * Executor handed to the scheduler. Structural jobs go through the normal
+   * ApplicationV2 render; scoped jobs replace only the regions that changed.
+   * @private
+   */
+  async _executeScheduledRender({ regions, structural, reasons, force }) {
+    if (structural) {
+      return this.render({ force });
+    }
+
+    let applied = 0;
+    for (const region of regions) {
+      // eslint-disable-next-line no-await-in-loop
+      if (await this._updateRegion(region)) applied += 1;
+    }
+
+    // A scoped update that could not be applied (region not mounted, no live
+    // root yet) must not silently drop the user's change — fall back to a full
+    // repaint rather than leaving stale content on screen.
+    if (applied === 0) {
+      swseLogger.debug('[ProgressionShell] scoped update fell back to structural render', { regions, reasons });
+      return this.render({ force });
+    }
+
+    return this;
+  }
+
+  /**
+   * Shell-owned region replacement. Plugins never touch the root themselves.
+   * @param {string} region
+   * @returns {Promise<boolean>} true when the region was updated in place.
+   * @private
+   */
+  async _updateRegion(region) {
+    const root = this.getRootElement?.() ?? this.element;
+    if (!(root instanceof HTMLElement)) return false;
+
+    if (region === 'details') return this._updateDetailsRegion(root);
+    if (region === 'mentor') return this._updateMentorRegion(root);
+
+    // Remaining scopes (work-surface, summary, utility, footer, progress) are
+    // produced inline by the shell template and have no independent render
+    // seam yet, so they still require a structural repaint.
+    return false;
+  }
+
+  /**
+   * Re-render only the details rail for the currently focused item.
+   * This is the hot path: focusing a card must not rebuild the work surface,
+   * rails, or footer.
+   * @private
+   */
+  async _updateDetailsRegion(root) {
+    const host = root.querySelector('[data-region="details-panel"]');
+    if (!(host instanceof HTMLElement)) return false;
+
+    const descriptor = this.steps?.[this.currentStepIndex] ?? null;
+    const plugin = descriptor ? this.stepPlugins.get(descriptor.stepId) : null;
+    if (!plugin || typeof plugin.renderDetailsPanel !== 'function') return false;
+
+    let spec = null;
+    try {
+      spec = await plugin.renderDetailsPanel(this.focusedItem, this);
+    } catch (err) {
+      swseLogger.warn('[ProgressionShell] scoped details update failed; deferring to full render', err);
+      return false;
+    }
+    if (!spec?.template) return false;
+
+    let html = '';
+    try {
+      html = await foundry.applications.handlebars.renderTemplate(spec.template, spec.data || {});
+    } catch (err) {
+      swseLogger.warn('[ProgressionShell] scoped details template render failed', err);
+      return false;
+    }
+
+    // Swapping innerHTML is safe here: every interactive control in the details
+    // templates is a [data-action] element, and both the plugin-action and
+    // double-click handlers are delegated from the shell root rather than bound
+    // to individual nodes, so they keep working across the swap.
+    const scrollTop = host.scrollTop;
+    host.innerHTML = html;
+    host.scrollTop = scrollTop;
+
+    this._markFocusedRow(root);
+    return true;
+  }
+
+  /**
+   * Re-render only the mentor rail region (identity/portrait changes). Dialogue
+   * text never comes through here — MentorRail writes it straight to the DOM.
+   * @private
+   */
+  async _updateMentorRegion(root) {
+    const host = root.querySelector('[data-region="mentor-rail"]');
+    if (!(host instanceof HTMLElement)) return false;
+
+    let html = '';
+    try {
+      const context = await this._prepareMentorRailContext();
+      html = await foundry.applications.handlebars.renderTemplate(
+        'systems/foundryvtt-swse/templates/apps/progression-framework/mentor-rail.hbs',
+        context
+      );
+    } catch (err) {
+      swseLogger.warn('[ProgressionShell] scoped mentor update failed', err);
+      return false;
+    }
+
+    host.innerHTML = html;
+    host.setAttribute('data-collapsed', String(!!this.mentorCollapsed));
+    host.setAttribute('data-mood', this.mentor?.mood ?? 'neutral');
+    this.mentorRail.afterRender(host);
+    return true;
+  }
+
+  /**
+   * Minimal context for a standalone mentor-rail region render.
+   * Deliberately does not run _prepareContext — a mentor identity swap must not
+   * rebuild the work surface, rails, or footer.
+   * @private
+   */
+  async _prepareMentorRailContext() {
+    return {
+      mentor: { ...(this.mentor || {}) },
+      mentorCollapsed: !!this.mentorCollapsed,
+    };
+  }
+
+  /**
+   * Reflect the focused item in the work surface without repainting it.
+   * @private
+   */
+  _markFocusedRow(root) {
+    const focusedId = this.focusedItem?.id ?? null;
+    const surface = root.querySelector('[data-region="work-surface"]');
+    if (!(surface instanceof HTMLElement)) return;
+
+    for (const row of surface.querySelectorAll('[data-item-id]')) {
+      const isFocused = focusedId != null && row.dataset.itemId === String(focusedId);
+      row.classList.toggle('is-focused', isFocused);
+      if (isFocused) row.setAttribute('aria-current', 'true');
+      else row.removeAttribute('aria-current');
+    }
   }
 
   /**
@@ -1217,6 +1434,9 @@ export class ProgressionShell extends SWSEApplicationV2 {
 
     this.currentStepIndex = stepIndex;
     this.focusedItem = null;
+    // Entering a step is exactly the moment its data must be (re)hydrated, so
+    // release the onDataReady gate for the paint that follows onStepEnter.
+    this.invalidateStepData(descriptor.stepId ?? null);
     this.progressionSession.currentStepId = descriptor.stepId ?? null;
     this._syncLegacyCommittedSelectionsFromSession();
     this._activeStepEnterContext = {
@@ -1588,7 +1808,10 @@ export class ProgressionShell extends SWSEApplicationV2 {
     }
 
     // Re-render with new step sequence
-    this.requestRender({ preserveScroll: true, reason: 'reconcile-conditional-steps' });
+    // Reconciliation is idempotent and its inputs (step list, selection
+    // revision) are fully described by the shell state signature, so a repeat
+    // pass over unchanged state can safely be skipped instead of repainted.
+    this.requestRender({ preserveScroll: true, reason: 'reconcile-conditional-steps', dedupe: true });
   }
 
 
@@ -2118,6 +2341,28 @@ export class ProgressionShell extends SWSEApplicationV2 {
     return { width: w, height: h, left, top };
   }
 
+  /**
+   * True when this step's onDataReady has not yet run for the current
+   * step-activation / data-revision token.
+   * @param {string} stepId
+   * @returns {boolean}
+   * @private
+   */
+  _shouldRunDataReady(stepId) {
+    return this._dataReadyToken.get(stepId) !== this._stepDataRevision;
+  }
+
+  /**
+   * Advance the data-revision token so the next paint re-runs onDataReady.
+   * Call this when a step is activated or its underlying data genuinely changes.
+   * @param {string|null} [stepId] - Limit invalidation to one step when given.
+   */
+  invalidateStepData(stepId = null) {
+    this._stepDataRevision += 1;
+    if (stepId) this._dataReadyToken.delete(stepId);
+    else this._dataReadyToken.clear();
+  }
+
   async _onRender(context, options) {
     // POSITIONING: Center the progression shell during startup window (first 5 seconds)
     // Foundry V13 persists window positions and restores them on each render, which can
@@ -2151,10 +2396,19 @@ export class ProgressionShell extends SWSEApplicationV2 {
     if (descriptor) {
       const plugin = this.stepPlugins.get(descriptor.stepId);
       if (plugin) {
-        if (typeof plugin.onDataReady === 'function') {
+        // onDataReady is step-activation / data-revision work, not per-paint
+        // work. Running it on every repaint re-ran hydration and re-wired
+        // utility listeners each time, and those listeners then requested more
+        // renders. Gate it on a token that only advances when the step is
+        // (re-)activated or its data is explicitly invalidated.
+        if (typeof plugin.onDataReady === 'function' && this._shouldRunDataReady(descriptor.stepId)) {
           try {
+            this._dataReadyToken.set(descriptor.stepId, this._stepDataRevision);
             await Promise.resolve(plugin.onDataReady(this));
           } catch (err) {
+            // Allow a retry on the next paint rather than stranding the step
+            // with half-hydrated data.
+            this._dataReadyToken.delete(descriptor.stepId);
             swseLogger.error('ProgressionShell: plugin.onDataReady failed', { err });
           }
         }
@@ -2450,7 +2704,7 @@ export class ProgressionShell extends SWSEApplicationV2 {
     if (!entered) return;
 
     void this._persistSessionSnapshot(this.progressionSession.currentStepId);
-    this.render();
+    this.requestRender({ preserveScroll: false, reason: 'step-navigation', structural: true, force: true });
   }
 
   /**
@@ -2960,7 +3214,7 @@ export class ProgressionShell extends SWSEApplicationV2 {
     }
 
     void this._persistSessionSnapshot(this.progressionSession.currentStepId);
-    this.render();
+    this.requestRender({ preserveScroll: false, reason: 'step-navigation', structural: true, force: true });
   }
 
   async _onPreviousStep(event, target) {
@@ -2999,7 +3253,7 @@ export class ProgressionShell extends SWSEApplicationV2 {
     }
 
     void this._persistSessionSnapshot(this.progressionSession.currentStepId);
-    this.render();
+    this.requestRender({ preserveScroll: false, reason: 'step-navigation', structural: true, force: true });
   }
 
   async _onConfirmStep(event, target) {
@@ -3168,7 +3422,7 @@ export class ProgressionShell extends SWSEApplicationV2 {
 
   _onExitTree(event, target) {
     this.talentTreeStage = 'browser';
-    this.render();
+    this.requestRender({ preserveScroll: true, reason: 'shell-structural', structural: true });
   }
 
   // ---------------------------------------------------------------------------
@@ -3298,12 +3552,25 @@ export class ProgressionShell extends SWSEApplicationV2 {
       swseLogger.debug(`[ProgressionShell] _onFocusItem calling plugin.onItemFocused(${itemId})`);
 
       try {
-        await this._withSuppressedLegacyMentorSpeech(() => plugin.onItemFocused(itemId, this));
+        this.renderScheduler.beginInteraction(`focus:${stepId}`);
+        const focusResult = await this._withSuppressedLegacyMentorSpeech(() => plugin.onItemFocused(itemId, this));
 
-        // Re-render to update the detail panel with the newly focused item.
-        // Preserve scroll even when a plugin already requested a render internally.
+        // Update the detail rail for the newly focused item. Focus changes only
+        // the details panel and the focused row's visual state — rebuilding the
+        // work surface, rails, and footer here is what produced the render storm.
+        //
+        // A plugin may declare what it dirtied by returning
+        // { handled, dirty: [...], structural } from onItemFocused(); anything
+        // it already declared is merged into this one scheduled update rather
+        // than causing a second pass.
         this._pendingScrollSnapshots = this._pendingScrollSnapshots?.length ? this._pendingScrollSnapshots : captureInteractionScroll();
-        await this.requestRender({ preserveScroll: true, reason: `focus-item:${stepId}` });
+        const declared = this._normalizePluginDirtyResult(focusResult);
+        await this.requestRender({
+          preserveScroll: true,
+          reason: `focus-item:${stepId}`,
+          regions: declared.structural ? null : [...new Set(['details', ...declared.regions])],
+          structural: declared.structural,
+        });
 
         this.mentorChoiceReactions?.reactToInteraction({
           stepId,
@@ -3329,6 +3596,30 @@ export class ProgressionShell extends SWSEApplicationV2 {
     }
   }
 
+  /**
+   * Interpret an optional dirty-region contract returned by a step plugin.
+   *
+   * Plugins are not required to return anything — a plain undefined return keeps
+   * the historical behavior (the shell decides the scope). When a plugin does
+   * return `{ handled, dirty, structural }` the shell folds those regions into
+   * the single scheduled update instead of issuing a second one.
+   *
+   * @param {*} result
+   * @returns {{regions: string[], structural: boolean, handled: boolean}}
+   * @private
+   */
+  _normalizePluginDirtyResult(result) {
+    if (!result || typeof result !== 'object') {
+      return { regions: [], structural: false, handled: false };
+    }
+    const dirty = Array.isArray(result.dirty) ? result.dirty : (result.dirty ? [result.dirty] : []);
+    return {
+      regions: dirty.map(region => String(region || '').trim()).filter(Boolean),
+      structural: result.structural === true,
+      handled: result.handled === true,
+    };
+  }
+
   async _onCommitItem(event, target) {
     event?.preventDefault?.();
     const captureInteractionScroll = () => this._captureProgressionScrollSnapshots();
@@ -3350,6 +3641,7 @@ export class ProgressionShell extends SWSEApplicationV2 {
     const stepId = this.steps[this.currentStepIndex]?.stepId;
     const plugin = this.stepPlugins.get(stepId);
     if (plugin) {
+      this.renderScheduler.beginInteraction(`commit:${stepId}`);
       await this._withSuppressedLegacyMentorSpeech(() => plugin.onItemCommitted(itemId, this));
       // Rebuild projection after selection committed to update selected rail
       this._rebuildProjection();
@@ -3466,7 +3758,7 @@ export class ProgressionShell extends SWSEApplicationV2 {
     if (plugin?.rollCredits) {
       await plugin.rollCredits(this.actor, this);
       await this._maybeScheduleAutoAdvance({ source: 'roll-credits', event });
-      this.render();
+      this.requestRender({ preserveScroll: true, reason: 'shell-structural', structural: true });
     }
   }
 
@@ -3476,7 +3768,7 @@ export class ProgressionShell extends SWSEApplicationV2 {
     if (plugin?.useMaximumCredits) {
       await plugin.useMaximumCredits(this.actor, this);
       await this._maybeScheduleAutoAdvance({ source: 'use-max-credits', event });
-      this.render();
+      this.requestRender({ preserveScroll: true, reason: 'shell-structural', structural: true });
     }
   }
 
@@ -3487,7 +3779,7 @@ export class ProgressionShell extends SWSEApplicationV2 {
     if (plugin?.useAverageCredits) {
       await plugin.useAverageCredits(this.actor, this);
       await this._maybeScheduleAutoAdvance({ source: 'use-average-credits', event });
-      this.render();
+      this.requestRender({ preserveScroll: true, reason: 'shell-structural', structural: true });
     }
   }
   async _onRollHP(event, target) {
@@ -3496,7 +3788,7 @@ export class ProgressionShell extends SWSEApplicationV2 {
     if (plugin?.rollHPGain) {
       await plugin.rollHPGain(this.actor, this);
       await this._maybeScheduleAutoAdvance({ source: 'roll-hp', event });
-      this.render();
+      this.requestRender({ preserveScroll: true, reason: 'shell-structural', structural: true });
     }
   }
 
@@ -3506,7 +3798,7 @@ export class ProgressionShell extends SWSEApplicationV2 {
     if (plugin?.useMaximumHPGain) {
       await plugin.useMaximumHPGain(this.actor, this);
       await this._maybeScheduleAutoAdvance({ source: 'use-max-hp', event });
-      this.render();
+      this.requestRender({ preserveScroll: true, reason: 'shell-structural', structural: true });
     }
   }
 
@@ -3515,7 +3807,7 @@ export class ProgressionShell extends SWSEApplicationV2 {
     const plugin = this.stepPlugins.get(this.steps[this.currentStepIndex]?.stepId);
     if (plugin?.enterStore) {
       await plugin.enterStore(this.actor, this);
-      this.render();
+      this.requestRender({ preserveScroll: true, reason: 'shell-structural', structural: true });
     }
   }
 
@@ -3524,7 +3816,7 @@ export class ProgressionShell extends SWSEApplicationV2 {
     const plugin = this.stepPlugins.get(this.steps[this.currentStepIndex]?.stepId);
     if (plugin?.skipStore) {
       plugin.skipStore();
-      this.render();
+      this.requestRender({ preserveScroll: true, reason: 'shell-structural', structural: true });
     }
   }
 
@@ -3544,7 +3836,7 @@ export class ProgressionShell extends SWSEApplicationV2 {
       this.talentTreeStage = 'browser';
       await this.clearCheckpoints?.();
       await this.navigateToStep(0, { source: 'start-over' });
-      this.render();
+      this.requestRender({ preserveScroll: true, reason: 'shell-structural', structural: true });
     } catch (error) {
       swseLogger.error('[ProgressionShell._onStartOver] Failed to reset chargen session', error);
       ui.notifications.error('Unable to start over. See console for details.');
@@ -3898,10 +4190,12 @@ export class ProgressionShell extends SWSEApplicationV2 {
    * @param {'neutral' | 'encouraging' | 'cautionary' | 'celebratory'} mood
    */
   speakMentor(text, mood = 'neutral') {
-    this.mentor.currentDialogue = text;
+    // Mentor dialogue is DOM state, not render state. MentorRail writes it
+    // straight into the live rail (aborting any line still animating), so a new
+    // mentor line never rebuilds the work surface, details rail, or footer.
     this.mentor.mood = mood;
-    // AurebeshTranslator integration happens in mentor-rail.js
-    this.render();
+    this.mentorRail?.queueSpeak?.(text, mood, { bypassSuppression: true, source: 'shell-speak-mentor' })
+      ?? void this.mentorRail?.speak?.(text, mood, { bypassSuppression: true, source: 'shell-speak-mentor' });
   }
 
   /**
@@ -3911,7 +4205,7 @@ export class ProgressionShell extends SWSEApplicationV2 {
   enterTalentTree(treeId) {
     this.talentTreeStage = 'graph';
     this.activeTalentTreeId = treeId;
-    this.render();
+    this.requestRender({ preserveScroll: true, reason: 'shell-structural', structural: true });
   }
 
   // ---------------------------------------------------------------------------
@@ -3994,9 +4288,7 @@ export class ProgressionShell extends SWSEApplicationV2 {
       }
     }
 
-    this.mentor.currentDialogue = messages.join('\n');
-    this.mentor.mood = result.errors.length > 0 ? 'cautionary' : 'neutral';
-    this.render();
+    this.speakMentor(messages.join('\n'), result.errors.length > 0 ? 'cautionary' : 'neutral');
   }
 
   // ---------------------------------------------------------------------------
@@ -4058,6 +4350,9 @@ export class ProgressionShell extends SWSEApplicationV2 {
   // ---------------------------------------------------------------------------
 
   async close(options = {}) {
+    // Drop any frame-pending repaint so a closing shell cannot paint again.
+    this.renderScheduler?.dispose?.();
+
     // Cleanup centering state
     this._cancelAutoAdvance('close');
     clearTimeout(this._centerTimer);

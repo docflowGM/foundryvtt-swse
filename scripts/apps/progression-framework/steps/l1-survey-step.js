@@ -259,7 +259,7 @@ export class L1SurveyStep extends ProgressionStepPlugin {
     this._activeQuestionIndex = this._findNextQuestionIndex();
     await this._saveSurveyDraft(shell);
     await this._speakCurrentPhase(shell, true);
-    shell.render();
+    shell.requestRender({ preserveScroll: true, reason: 'l1-survey-step:_startSurvey' });
   }
 
   async _chooseSurveyAnswer(shell, target) {
@@ -275,7 +275,7 @@ export class L1SurveyStep extends ProgressionStepPlugin {
     this._surveyPhase = 'response';
     await this._saveSurveyDraft(shell);
     await this._speakCurrentPhase(shell, true);
-    shell.render();
+    shell.requestRender({ preserveScroll: true, reason: 'l1-survey-step:option' });
   }
 
   async _continueSurvey(shell) {
@@ -290,7 +290,7 @@ export class L1SurveyStep extends ProgressionStepPlugin {
     }
     await this._saveSurveyDraft(shell);
     await this._speakCurrentPhase(shell, true);
-    shell.render();
+    shell.requestRender({ preserveScroll: true, reason: 'l1-survey-step:nextIndex' });
   }
 
   async _finishSurvey(shell) {
@@ -317,7 +317,7 @@ export class L1SurveyStep extends ProgressionStepPlugin {
     this._surveyPhase = 'question';
     await this._saveSurveyDraft(shell);
     await this._speakCurrentPhase(shell, true);
-    shell.render();
+    shell.requestRender({ preserveScroll: true, reason: 'l1-survey-step:_changeCurrentAnswer' });
 
     console.log('[L1SurveyStep] Changed answer for question', question.id);
   }
@@ -339,7 +339,7 @@ export class L1SurveyStep extends ProgressionStepPlugin {
         this._surveyFinalized = false;
         await this._saveSurveyDraft(shell);
         await this._speakCurrentPhase(shell, true);
-        shell.render();
+        shell.requestRender({ preserveScroll: true, reason: 'l1-survey-step:_goToPreviousQuestion' });
         console.log('[L1SurveyStep] Moved to previous question at index', i);
         return;
       }
@@ -389,7 +389,7 @@ export class L1SurveyStep extends ProgressionStepPlugin {
 
     await this._clearSurveyDraft(shell);
     await this._speakCurrentPhase(shell, true);
-    shell.render();
+    shell.requestRender({ preserveScroll: true, reason: 'l1-survey-step:_retakeSurvey' });
 
     console.log('[L1SurveyStep] Survey retaken - all answers cleared');
   }

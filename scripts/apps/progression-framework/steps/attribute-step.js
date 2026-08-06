@@ -344,7 +344,7 @@ export class AttributeStep extends ProgressionStepPlugin {
       [ability]: Number(this._attributes[ability] ?? this._getSpeciesFixedScores(shell)?.[ability] ?? 0) + Number(delta || 0),
     };
     this._focusedAbility = ability;
-    shell.render();
+    shell.requestRender({ preserveScroll: true, reason: 'attribute-step:_handleSpeciesFixedDelta' });
   }
 
   async _requestSpeciesFixedOverride(shell) {
@@ -948,13 +948,13 @@ export class AttributeStep extends ProgressionStepPlugin {
     if (this._method === 'point-buy') {
       this._attributes = { ...build.baseScores };
       this._committed = false;
-      shell.render();
+      shell.requestRender({ preserveScroll: true, reason: 'attribute-step:_applyMentorBuild' });
       return;
     }
 
     if (build.assignment) {
       this._applyPooledAssignmentPlan(build.assignment, shell, this._method === 'organic' ? 'organic' : 'standard');
-      shell.render();
+      shell.requestRender({ preserveScroll: true, reason: 'attribute-step:_applyMentorBuild' });
     }
   }
 
@@ -1232,7 +1232,7 @@ export class AttributeStep extends ProgressionStepPlugin {
           this._assignSelectedPoolToAbility(abilityKey, shell);
         }
         shell?.setFocusedItem?.(this._buildFocusedAbilityDetail(abilityKey, shell));
-        shell.render();
+        shell.requestRender({ preserveScroll: true, reason: 'attribute-step:afterRender' });
       }, { signal });
     });
 
@@ -1248,7 +1248,7 @@ export class AttributeStep extends ProgressionStepPlugin {
         ev.stopPropagation();
         if (this._committed) return;
         this._setSelectedPoolItem(btn.dataset.scorePoolId);
-        shell.render();
+        shell.requestRender({ preserveScroll: true, reason: 'attribute-step:afterRender' });
       }, { signal });
 
       btn.addEventListener('dragstart', ev => {
@@ -1278,7 +1278,7 @@ export class AttributeStep extends ProgressionStepPlugin {
         if (!poolId) return;
         this._setSelectedPoolItem(poolId);
         this._assignSelectedPoolToAbility(row.dataset.abilityRow, shell);
-        shell.render();
+        shell.requestRender({ preserveScroll: true, reason: 'attribute-step:afterRender' });
       }, { signal });
     });
 
@@ -1286,7 +1286,7 @@ export class AttributeStep extends ProgressionStepPlugin {
       btn.addEventListener('click', ev => {
         ev.stopPropagation();
         this._clearAbilityAssignment(btn.dataset.clearAbility, shell);
-        shell.render();
+        shell.requestRender({ preserveScroll: true, reason: 'attribute-step:afterRender' });
       }, { signal });
     });
 
@@ -1296,7 +1296,7 @@ export class AttributeStep extends ProgressionStepPlugin {
 
     workSurfaceEl.querySelector('[data-attr-auto-assign]')?.addEventListener('click', () => {
       this._autoAssignCurrent(shell);
-      shell.render();
+      shell.requestRender({ preserveScroll: true, reason: 'attribute-step:afterRender' });
     }, { signal });
 
   }
@@ -1318,7 +1318,7 @@ export class AttributeStep extends ProgressionStepPlugin {
       attributes: this._attributes,
       scorePool: this._scorePool
     });
-    shell.render();
+    shell.requestRender({ preserveScroll: true, reason: 'attribute-step:_handleMethodChange' });
   }
 
   _handleArrayTypeChange(arrayType, shell) {
@@ -1332,7 +1332,7 @@ export class AttributeStep extends ProgressionStepPlugin {
       attributes: this._attributes,
       scorePool: this._scorePool
     });
-    shell.render();
+    shell.requestRender({ preserveScroll: true, reason: 'attribute-step:_handleArrayTypeChange' });
   }
 
   _handlePointBuyDelta(key, delta, shell) {
@@ -1353,7 +1353,7 @@ export class AttributeStep extends ProgressionStepPlugin {
       this._attributes = { ...current, [ability]: nextValue };
       this._focusedAbility = ability;
       shell?.setFocusedItem?.(this._buildFocusedAbilityDetail(ability, shell));
-      shell.render();
+      shell.requestRender({ preserveScroll: true, reason: 'attribute-step:_handlePointBuyDelta' });
       return;
     }
     if (this._isSpeciesFixedMode()) {
@@ -1368,7 +1368,7 @@ export class AttributeStep extends ProgressionStepPlugin {
     this._attributes = { ...this._attributes, [key]: Number(this._attributes[key] ?? POINT_BUY_BASE) + delta };
     this._focusedAbility = key;
     shell?.setFocusedItem?.(this._buildFocusedAbilityDetail(key, shell));
-    shell.render();
+    shell.requestRender({ preserveScroll: true, reason: 'attribute-step:_handlePointBuyDelta' });
   }
 
   _rerollCurrent(shell) {
@@ -1388,7 +1388,7 @@ export class AttributeStep extends ProgressionStepPlugin {
       scorePool: this._scorePool
     });
 
-    shell.render();
+    shell.requestRender({ preserveScroll: true, reason: 'attribute-step:_rerollCurrent' });
   }
 
   async onAskMentor(shell) {

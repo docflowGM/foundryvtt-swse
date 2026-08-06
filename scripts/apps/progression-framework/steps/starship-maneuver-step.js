@@ -292,7 +292,7 @@ export class StarshipManeuverStep extends ProgressionStepPlugin {
     const onSearch = e => {
       this._searchQuery = e.detail.query;
       this._applyFilters();
-      shell.render();
+      shell.requestRender({ preserveScroll: true, reason: 'starship-maneuver-step:onSearch' });
     };
 
     shell.element.addEventListener('prog:utility:search', onSearch, { signal });
@@ -441,7 +441,7 @@ export class StarshipManeuverStep extends ProgressionStepPlugin {
     await this._commitManeuverSelection(shell);
     this._focusedManeuverID = resolvedId;
     shell.focusedItem = this._formatManeuverCard(maneuver);
-    if (options.render !== false) shell.render();
+    if (options.render !== false) shell.requestRender({ preserveScroll: true, reason: 'starship-maneuver-step:onIncrementQuantity' });
   }
 
   async onDecrementQuantity(maneuverId, shell) {
@@ -465,7 +465,7 @@ export class StarshipManeuverStep extends ProgressionStepPlugin {
     await this._commitManeuverSelection(shell);
     this._focusedManeuverID = resolvedId;
     shell.focusedItem = this._formatManeuverCard(maneuver);
-    shell.render();
+    shell.requestRender({ preserveScroll: true, reason: 'starship-maneuver-step:onDecrementQuantity' });
   }
 
 
@@ -586,7 +586,7 @@ export class StarshipManeuverStep extends ProgressionStepPlugin {
         if (!id) return;
         await this.onItemFocused(id, shell);
         await this.onItemCommitted(id, shell);
-        shell.render();
+        shell.requestRender({ preserveScroll: true, reason: 'starship-maneuver-step:onAskMentor' });
       });
     } else {
       // Fallback to standard guidance if no suggestions

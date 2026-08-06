@@ -76,15 +76,15 @@ export class MedicalSecretStep extends ProgressionStepPlugin {
     const onSearch = (event) => {
       this._searchQuery = event.detail.query;
       this._applyFilters();
-      shell.render();
+      shell.requestRender({ preserveScroll: true, reason: 'medical-secret-step:onSearch' });
     };
     const onFilter = () => {
       this._applyFilters();
-      shell.render();
+      shell.requestRender({ preserveScroll: true, reason: 'medical-secret-step:onFilter' });
     };
     const onSort = () => {
       this._applyFilters();
-      shell.render();
+      shell.requestRender({ preserveScroll: true, reason: 'medical-secret-step:onSort' });
     };
 
     shell.element.addEventListener('prog:utility:search', onSearch, { signal });
@@ -134,7 +134,7 @@ export class MedicalSecretStep extends ProgressionStepPlugin {
     this._focusedSecretId = secretId;
     shell.focusedItem = secret;
     await handleAskMentor(shell.actor, 'medical-secrets', shell);
-    shell.render();
+    shell.requestRender({ preserveScroll: true, regions: ['details'], reason: 'medical-secret-step:secret' });
   }
 
   async onItemCommitted(secretId, shell) {
@@ -166,7 +166,7 @@ export class MedicalSecretStep extends ProgressionStepPlugin {
 
     this._focusedSecretId = secretId;
     shell.focusedItem = secret;
-    shell.render();
+    shell.requestRender({ preserveScroll: true, reason: 'medical-secret-step:selected' });
   }
 
   renderWorkSurface(stepData) {
@@ -260,7 +260,7 @@ export class MedicalSecretStep extends ProgressionStepPlugin {
         if (!id) return;
         await this.onItemFocused(id, shell);
         await this.onItemCommitted(id, shell);
-        shell.render();
+        shell.requestRender({ preserveScroll: true, reason: 'medical-secret-step:onAskMentor' });
       });
       return;
     }

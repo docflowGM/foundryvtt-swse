@@ -459,7 +459,7 @@ export class FeatStep extends ProgressionStepPlugin {
           if (cb.checked) this._selectedTags.add(cb.value);
           else            this._selectedTags.delete(cb.value);
         }
-        shell.render();
+        shell.requestRender({ preserveScroll: true, reason: 'feat-step:onSort' });
       }, { signal });
     });
 
@@ -2386,7 +2386,7 @@ export class FeatStep extends ProgressionStepPlugin {
         if (!item) return;
         await this.onItemFocused(item);
         await this.onItemCommitted(item, shell);
-        shell.render();
+        shell.requestRender({ preserveScroll: true, reason: 'feat-step:onAskMentor' });
       });
       return;
     }

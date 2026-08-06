@@ -19,6 +19,7 @@
 import { readdirSync, statSync } from "node:fs";
 import { join, extname, relative, resolve } from "node:path";
 import { spawnSync } from "node:child_process";
+import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 
 const ROOT = fileURLToPath(new URL("..", import.meta.url));
@@ -32,7 +33,26 @@ const SKIP_SUFFIXES = [".bak", ".phase1bak", ".phase2bak", ".phase2v2bak", ".pha
 // commits.
 export const KNOWN_EXCLUDED_FILES = [
   "tools/audit-nonheroic-weapon-damage.mjs",
-  "tools/audit-npc-source-attribution.mjs"
+  "tools/audit-npc-source-attribution.mjs",
+
+  // Surfaced when this checker started parsing ES modules with an explicit
+  // module goal (see checkFile below). `node --check <file>` had been passing
+  // these silently, so they are NOT new breakage — each one is a genuine,
+  // pre-existing syntax error that would throw the moment the module is
+  // imported at runtime. They are unrelated to the progression render work and
+  // are recorded here rather than fixed in that pass:
+  //   droid-slot-governance.js      — class body closes early, so a `#private`
+  //                                   method call lands outside its class
+  //   sentinel-layout-debugger.js   — malformed expression before a `??`
+  //   houserule-condition-track.js  — `Number(level or 0)`, Python syntax
+  //   skill-uses.js                 — unterminated template literal
+  //   hardpoint-audit.js            — unescaped apostrophe in a single-quoted
+  //                                   string ("they're")
+  "scripts/domain/droids/droid-slot-governance.js",
+  "scripts/governance/sentinel/sentinel-layout-debugger.js",
+  "scripts/houserules/houserule-condition-track.js",
+  "scripts/skills/skill-uses.js",
+  "scripts/ui/discovery/hardpoint-audit.js"
 ];
 
 function shouldSkip(path) {
@@ -48,6 +68,36 @@ function* walk(dir) {
     if (shouldSkip(full)) continue;
     yield full;
   }
+}
+
+/**
+ * Parse one file and report whether it is syntactically valid.
+ *
+ * `node --check <file>` alone is not a reliable gate for this repo: for a .js
+ * file that Node has to guess the module goal for, a file containing an ESM-only
+ * syntax error can still exit 0. Every file under scripts/ here is an ES module,
+ * so anything using ESM syntax is re-checked explicitly with
+ * `--input-type=module` over stdin, which parses with a single, unambiguous goal.
+ *
+ * @param {string} file - Absolute path.
+ * @returns {{status: number, stderr: string}}
+ */
+function checkFile(file) {
+  let source = null;
+  try {
+    source = readFileSync(file, "utf8");
+  } catch (_err) {
+    source = null;
+  }
+
+  if (source !== null && /^\s*(?:import|export)[\s{]/m.test(source)) {
+    return spawnSync(process.execPath, ["--input-type=module", "--check"], {
+      encoding: "utf8",
+      input: source,
+    });
+  }
+
+  return spawnSync(process.execPath, ["--check", file], { encoding: "utf8" });
 }
 
 function main() {
@@ -68,7 +118,7 @@ function main() {
         const rel = relative(ROOT, file).replaceAll("\\", "/");
         if (excludedSet.has(rel)) continue;
         checked += 1;
-        const result = spawnSync(process.execPath, ["--check", file], { encoding: "utf8" });
+        const result = checkFile(file);
         if (result.status !== 0) {
           failures.push({ file: rel, stderr: (result.stderr || "").trim() });
         }

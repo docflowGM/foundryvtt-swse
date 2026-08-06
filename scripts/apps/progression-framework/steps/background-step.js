@@ -133,7 +133,7 @@ async onDataReady(shell) {
 
   const onSearch = (e) => {
     this._searchQuery = String(e.detail?.query || '');
-    shell.render();
+    shell.requestRender({ preserveScroll: true, reason: 'background-step:onSearch' });
   };
 
   const onFilter = (e) => {
@@ -146,13 +146,13 @@ async onDataReady(shell) {
         shell.utilityBar._filterState.occupation = value && filterId === 'occupation';
         shell.utilityBar._filterState.planet = value && filterId === 'planet';
       }
-      shell.render();
+      shell.requestRender({ preserveScroll: true, reason: 'background-step:onFilter' });
     }
   };
 
   const onSort = (e) => {
     this._sortBy = e.detail?.sortId || 'alpha';
-    shell.render();
+    shell.requestRender({ preserveScroll: true, reason: 'background-step:onSort' });
   };
 
   shell.element.addEventListener('prog:utility:search', onSearch, { signal });
@@ -271,7 +271,7 @@ async onStepExit(shell) {
     if (!background) return;
 
     this._focusedBackgroundId = id;
-    shell.render();
+    shell.requestRender({ preserveScroll: true, regions: ['details'], reason: 'background-step:background' });
 
     // Mentor reaction on focus should not block right-rail detail hydration.
     const flavorText = this._getMentorFlavorForBackground(background);
@@ -389,7 +389,7 @@ async onStepExit(shell) {
       pendingContext: pendingBackgroundContext
     });
 
-    shell.render();
+    shell.requestRender({ preserveScroll: true, reason: 'background-step:pendingBackgroundRefs' });
   }
 
   // ---------------------------------------------------------------------------
@@ -537,7 +537,7 @@ getUtilityBarConfig() {
         const id = selected?.id || selected?._id || selected?.backgroundId;
         if (!id) return;
         await this.onItemCommitted(id, shell);
-        shell.render();
+        shell.requestRender({ preserveScroll: true, reason: 'background-step:onAskMentor' });
       });
     } else {
       // Fallback to standard guidance if no suggestions

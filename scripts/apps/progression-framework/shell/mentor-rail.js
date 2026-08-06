@@ -176,6 +176,10 @@ export class MentorRail {
     shell.mentor.animationState = 'typing';
     shell.mentor.isAnimating = true;
 
+    // Dialogue is DOM state, never render state: from here on the line is
+    // written straight into the live rail and never schedules a shell update.
+    shell.renderScheduler?.noteDomOnlyMentorUpdate?.();
+
     this._animationAbort = new AbortController();
     const { signal } = this._animationAbort;
 
@@ -371,20 +375,39 @@ export class MentorRail {
       portrait: resolveMentorPortraitPath(data.portrait),
     });
 
-    this.shell.render({ parts: ['mentorRail'] });
+    // Identity/portrait changes are a mentor-region update, not a shell repaint.
+    return this.shell.requestRender({
+      reason: 'mentor-identity',
+      regions: ['mentor'],
+      preserveScroll: true,
+    });
   }
 
   /**
-   * Toggle collapse. Updates DOM data-collapsed directly (no re-render).
+   * Toggle collapse. Applies the collapsed state to the live DOM and only asks
+   * for a mentor-region update — collapsing the rail must not rebuild the work
+   * surface, details rail, or footer.
    * @returns {Promise<void>}
    */
   async toggle() {
     const shell = this.shell;
     shell.mentorCollapsed = !shell.mentorCollapsed;
     shell.mentor.collapsed = shell.mentorCollapsed;
+
+    const region = shell.getRootElement?.()?.querySelector?.('[data-region="mentor-rail"]')
+      ?? shell.element?.querySelector?.('[data-region="mentor-rail"]');
+    if (region instanceof HTMLElement) {
+      region.setAttribute('data-collapsed', String(shell.mentorCollapsed));
+      shell.renderScheduler?.noteDomOnlyMentorUpdate?.();
+    }
+
     await game.user.setFlag('foundryvtt-swse', 'mentorRailCollapsed', shell.mentorCollapsed);
 
-    return shell.render({ force: true });
+    return shell.requestRender({
+      reason: 'mentor-collapse',
+      regions: ['mentor'],
+      preserveScroll: true,
+    });
   }
 
   /**

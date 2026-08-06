@@ -83,10 +83,10 @@ export class ForceRegimenStep extends ProgressionStepPlugin {
     const onSearch = e => {
       this._searchQuery = e.detail.query;
       this._applyFilters();
-      shell.render();
+      shell.requestRender({ preserveScroll: true, reason: 'force-regimen-step:onSearch' });
     };
-    const onFilter = () => { this._applyFilters(); shell.render(); };
-    const onSort = () => { this._applyFilters(); shell.render(); };
+    const onFilter = () => { this._applyFilters(); shell.requestRender({ preserveScroll: true, reason: 'force-regimen-step:onFilter' }); };
+    const onSort = () => { this._applyFilters(); shell.requestRender({ preserveScroll: true, reason: 'force-regimen-step:onSort' }); };
 
     shell.element.addEventListener('prog:utility:search', onSearch, { signal });
     shell.element.addEventListener('prog:utility:filter', onFilter, { signal });
@@ -134,7 +134,7 @@ export class ForceRegimenStep extends ProgressionStepPlugin {
     if (!regimen) return;
     this._focusedRegimenId = regimenId;
     shell.focusedItem = regimen;
-    shell.render();
+    shell.requestRender({ preserveScroll: true, regions: ['details'], reason: 'force-regimen-step:onItemFocused' });
   }
 
   async onItemCommitted(regimenId, shell) {
@@ -154,7 +154,7 @@ export class ForceRegimenStep extends ProgressionStepPlugin {
     }
     this._focusedRegimenId = regimenId;
     shell.focusedItem = regimen;
-    shell.render();
+    shell.requestRender({ preserveScroll: true, reason: 'force-regimen-step:onItemCommitted' });
   }
 
   renderWorkSurface(stepData) {

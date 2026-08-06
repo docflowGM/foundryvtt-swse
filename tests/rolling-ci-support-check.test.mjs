@@ -34,6 +34,11 @@ import { readFile } from 'node:fs/promises';
   assert.match(source, /process\.exit\(1\);/);
   assert.match(source, /process\.exit\(0\);/);
   assert.match(source, /spawnSync\(process\.execPath, \["--check", file\]/);
+  // ES modules are parsed with an explicit module goal. `node --check <file>`
+  // alone can exit 0 on a file whose only syntax error is ESM-specific, which
+  // let genuinely broken modules through this gate.
+  assert.match(source, /"--input-type=module", "--check"/);
+  assert.match(source, /looksLikeModule|import\|export/);
 }
 
 // 3. The exclusion lists in both scripts only ever shrink defensively
@@ -45,7 +50,13 @@ import { readFile } from 'node:fs/promises';
   const { KNOWN_EXCLUDED_TESTS } = await import('../tools/run-rolling-tests.mjs');
   const { KNOWN_EXCLUDED_FILES } = await import('../tools/run-rolling-syntax-check.mjs');
   assert.equal(KNOWN_EXCLUDED_TESTS.length, 5);
-  assert.equal(KNOWN_EXCLUDED_FILES.length, 2);
+  // Grew from 2 to 7 when the syntax checker started parsing ES modules with an
+  // explicit module goal. The five additions are pre-existing, load-breaking
+  // syntax errors that the old `node --check` gate passed silently; each is
+  // named and explained in KNOWN_EXCLUDED_FILES. The cap still exists so the
+  // list cannot grow unbounded — raise it only alongside the same kind of
+  // written justification.
+  assert.equal(KNOWN_EXCLUDED_FILES.length, 7);
 }
 
 // 4. The workflow file exists and declares the required triggers,

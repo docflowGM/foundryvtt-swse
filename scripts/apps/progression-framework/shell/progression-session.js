@@ -270,6 +270,15 @@ export class ProgressionSession {
   }
 
   /**
+   * Monotonic counter advanced by every accepted selection change.
+   * Read by the shell's render scheduler to skip redundant repaints.
+   * @returns {number}
+   */
+  getSelectionRevision() {
+    return this._selectionRevision || 0;
+  }
+
+  /**
    * Return a snapshot of the canonical mentor identity context.
    * @returns {Object|null}
    */
@@ -436,6 +445,7 @@ export class ProgressionSession {
    * Clear all selections (for session reset).
    */
   reset() {
+    this._selectionRevision = (this._selectionRevision || 0) + 1;
     this.draftSelections = {
       species: null,
       class: null,
@@ -856,6 +866,11 @@ export class ProgressionSession {
    */
   _triggerWatchers(selectionKey, newValue, oldValue = undefined) {
     if (oldValue === undefined) oldValue = this.draftSelections[selectionKey];
+
+    // Every accepted commit/clear advances the selection revision. The shell's
+    // render scheduler uses this to tell a genuinely new state from a repeated
+    // request for the state already on screen.
+    this._selectionRevision = (this._selectionRevision || 0) + 1;
 
     if (this._watchers.has(selectionKey)) {
       this._watchers.get(selectionKey).forEach(callback => {

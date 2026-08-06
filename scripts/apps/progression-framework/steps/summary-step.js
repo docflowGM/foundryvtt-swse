@@ -138,7 +138,7 @@ export class SummaryStep extends ProgressionStepPlugin {
         }, { signal });
         nameInput.addEventListener('change', () => {
           this._syncBusinessItemsFromDom(shell, { commit: true });
-          shell?.requestRender?.({ preserveScroll: true, reason: 'summary-name-change' }) ?? shell.render();
+          shell?.requestRender?.({ preserveScroll: true, reason: 'summary-name-change' }) ?? shell.requestRender({ preserveScroll: true, reason: 'summary-step:onDataReady' });
         }, { signal });
       }
 
@@ -155,7 +155,7 @@ export class SummaryStep extends ProgressionStepPlugin {
         }, { signal });
         levelInput.addEventListener('change', () => {
           this._commitBusinessItems(shell);
-          shell.render();
+          shell.requestRender({ preserveScroll: true, reason: 'summary-step:onDataReady' });
         }, { signal });
       }
 
@@ -168,7 +168,7 @@ export class SummaryStep extends ProgressionStepPlugin {
           const randomName = await this._generateRandomName(shell.actor);
           if (randomName) {
             this._setCharacterName(randomName, shell, { commit: true });
-            shell?.requestRender?.({ preserveScroll: true, reason: 'generate-name' }) ?? shell.render();
+            shell?.requestRender?.({ preserveScroll: true, reason: 'generate-name' }) ?? shell.requestRender({ preserveScroll: true, reason: 'summary-step:onDataReady' });
           }
         }, { signal });
       }
@@ -182,7 +182,7 @@ export class SummaryStep extends ProgressionStepPlugin {
           const randomName = await this._generateRandomDroidName(shell.actor);
           if (randomName) {
             this._setCharacterName(randomName, shell, { commit: true });
-            shell?.requestRender?.({ preserveScroll: true, reason: 'generate-droid-name' }) ?? shell.render();
+            shell?.requestRender?.({ preserveScroll: true, reason: 'generate-droid-name' }) ?? shell.requestRender({ preserveScroll: true, reason: 'summary-step:onDataReady' });
           }
         }, { signal });
       }

@@ -78,9 +78,37 @@ export class ProgressionDebugCapture {
   }
 
   /**
-   * Log structured debug info
+   * True when verbose progression tracing is switched on.
+   *
+   * The per-render/per-click trace below is genuinely useful while diagnosing a
+   * render storm and genuinely unreadable the rest of the time — every
+   * _prepareContext cycle emitted several unconditional console.log lines. It is
+   * now gated behind the same switch the rest of the progression instrumentation
+   * uses, so normal sessions stay quiet.
+   *
+   * Enable with any of:
+   *   SWSE_PROGRESSION_TRACE = true
+   *   CONFIG.SWSE.debug.progressionTrace = true
+   *   the system's performance/debug flag (SWSEPerf)
+   *
+   * @returns {boolean}
+   */
+  static isVerbose() {
+    if (globalThis.SWSE_PROGRESSION_TRACE === true) return true;
+    if (globalThis.CONFIG?.SWSE?.debug?.progressionTrace === true) return true;
+    try {
+      return globalThis.game?.settings?.get?.('foundryvtt-swse', 'performanceDiagnostics') === true
+        || globalThis.game?.settings?.get?.('foundryvtt-swse', 'debugMode') === true;
+    } catch (_err) {
+      return false;
+    }
+  }
+
+  /**
+   * Log structured debug info. No-op unless verbose tracing is enabled.
    */
   static log(category, message, data = {}) {
+    if (!this.isVerbose()) return;
     console.log(`[SWSE ${category}] ${message}`, data);
   }
 

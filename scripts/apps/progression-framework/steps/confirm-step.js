@@ -228,7 +228,7 @@ export class ConfirmStep extends ProgressionStepPlugin {
     // Focus on a summary section (e.g. "feats", "languages")
     // This can update details panel to show more about that section
     shell.focusedItem = { sectionId: summaryId, type: 'summary-section' };
-    shell.render();
+    shell.requestRender({ preserveScroll: true, regions: ['details'], reason: 'confirm-step:onItemFocused' });
   }
 
   async onItemHovered(summaryId, shell) {
@@ -535,7 +535,7 @@ export class ConfirmStep extends ProgressionStepPlugin {
         if (settled) return;
         settled = true;
         if (shell?.render) {
-          shell.render();
+          shell.requestRender({ preserveScroll: true, reason: 'confirm-step:settle' });
         }
         resolve();
       };

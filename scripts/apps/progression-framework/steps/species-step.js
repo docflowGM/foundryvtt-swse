@@ -198,18 +198,18 @@ export class SpeciesStep extends ProgressionStepPlugin {
     const onSearch = e => {
       this._searchQuery = e.detail.query;
       this._applyFilters();
-      shell.render();
+      shell.requestRender({ preserveScroll: true, reason: 'species-step:onSearch' });
     };
     const onFilter = e => {
       const { filterId, value } = e.detail;
       this._filters[filterId] = value;
       this._applyFilters();
-      shell.render();
+      shell.requestRender({ preserveScroll: true, reason: 'species-step:onFilter' });
     };
     const onSort = e => {
       this._sortBy = e.detail.sortId;
       this._applyFilters();
-      shell.render();
+      shell.requestRender({ preserveScroll: true, reason: 'species-step:onSort' });
     };
 
     root.addEventListener('prog:utility:search', onSearch, { signal });
@@ -707,17 +707,17 @@ export class SpeciesStep extends ProgressionStepPlugin {
       dialogue_first_30: typeof dialogue === 'string' ? dialogue.slice(0, 30) : null,
     });
 
-    console.log('[SpeciesStep] Triggering shell.render() to update detail panel');
+    console.log('[SpeciesStep] Requesting a details-region update for the focused species');
     console.log('[SpeciesStep] shell.focusedItem is now:', shell.focusedItem);
 
     // [DEBUG] Log before render
-    console.log(`[SWSE Species Debug] [Click #${clickNum}] About to call shell.render()`, {
+    console.log(`[SWSE Species Debug] [Click #${clickNum}] About to request a details-region update`, {
       focusedItem_id: shell.focusedItem?.id,
       focusedItem_name: shell.focusedItem?.name,
     });
 
     console.debug(`[SWSE Species Hydration Debug] [Click #${clickNum}] Requesting rerender for species hydration | selected: ${entry.name} (${entry.id}) | focusedItem: ${shell.focusedItem?.id ?? '(null)'}`);
-    shell.render();
+    shell.requestRender({ preserveScroll: true, regions: ['details'], reason: 'species-step:onItemFocused' });
     console.debug(`[SWSE Species Hydration Debug] [Click #${clickNum}] Rerender requested | focusedItem: ${shell.focusedItem?.id ?? '(null)'}`);
 
     if (dialogue) {
@@ -843,7 +843,7 @@ export class SpeciesStep extends ProgressionStepPlugin {
     this._committedSpeciesId   = id;
     this._committedSpeciesName = entry.name;
     shell.focusedItem = null;
-    shell.render();
+    shell.requestRender({ preserveScroll: true, reason: 'species-step:onItemCommitted' });
   }
 
   // ---------------------------------------------------------------------------
@@ -853,14 +853,14 @@ export class SpeciesStep extends ProgressionStepPlugin {
   async enterNearHumanMode(shell) {
     this._mode = 'near-human-builder';
     await this._nearHumanBuilder.loadData();
-    shell.render();
+    shell.requestRender({ preserveScroll: true, reason: 'species-step:enterNearHumanMode' });
   }
 
   async exitNearHumanMode(shell) {
     this._nearHumanBuilder.exitBuilderMode(false);  // false = don't reset, may re-enter
     this._mode = 'browse';
     shell.focusedItem = null;
-    shell.render();
+    shell.requestRender({ preserveScroll: true, reason: 'species-step:exitNearHumanMode' });
   }
 
   async confirmNearHuman(shell) {
@@ -913,7 +913,7 @@ export class SpeciesStep extends ProgressionStepPlugin {
     this._committedSpeciesId = 'near-human';
     this._committedSpeciesName = 'Near-Human';
     this._mode = 'browse';
-    shell.render();
+    shell.requestRender({ preserveScroll: true, reason: 'species-step:confirmNearHuman' });
   }
 
   // ---------------------------------------------------------------------------
@@ -1003,7 +1003,7 @@ export class SpeciesStep extends ProgressionStepPlugin {
 
         await this.onItemFocused(entry.id, shell);
         await this.onItemCommitted(entry.id, shell);
-        shell.render();
+        shell.requestRender({ preserveScroll: true, reason: 'species-step:onAskMentor' });
       });
       return;
     }

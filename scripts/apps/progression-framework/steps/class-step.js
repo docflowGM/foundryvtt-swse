@@ -434,7 +434,7 @@ export class ClassStep extends ProgressionStepPlugin {
 
     this._focusedClassId = id;
     shell.focusedItem = entry;
-    shell.render();
+    shell.requestRender({ preserveScroll: true, regions: ['details'], reason: 'class-step:entry' });
 
     // MentorChoiceReactionRouter now owns focus reactions for class cards so the
     // rail can use suggestion/prerequisite metadata instead of generic flavor.
@@ -454,7 +454,7 @@ export class ClassStep extends ProgressionStepPlugin {
       });
       this._focusedClassId = id;
       shell.focusedItem = entry;
-      shell.render();
+      shell.requestRender({ preserveScroll: true, reason: 'class-step:entry' });
       return;
     }
 
@@ -530,7 +530,7 @@ export class ClassStep extends ProgressionStepPlugin {
 
     this._focusedClassId = id;
     shell.focusedItem = entry;
-    shell.render();
+    shell.requestRender({ preserveScroll: true, reason: 'class-step:entry' });
   }
 
   // ---------------------------------------------------------------------------
@@ -614,7 +614,7 @@ export class ClassStep extends ProgressionStepPlugin {
         if (!id) return;
         await this.onItemFocused(id, shell);
         await this.onItemCommitted(id, shell);
-        shell.render();
+        shell.requestRender({ preserveScroll: true, reason: 'class-step:onAskMentor' });
       });
     } else {
       // Fallback to standard guidance if no suggestions

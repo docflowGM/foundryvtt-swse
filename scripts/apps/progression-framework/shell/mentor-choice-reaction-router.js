@@ -438,10 +438,24 @@ export class MentorChoiceReactionRouter {
     return ACTION_TO_REACTION[actionName] || null;
   }
 
+  /**
+   * True once a newer interaction has been queued. Every await inside a
+   * reaction is a supersession point, so this is checked after each one.
+   * @param {number} token
+   * @returns {boolean}
+   * @private
+   */
+  _isStale(token) {
+    return token !== this._sequence;
+  }
+
   async _runReaction(context) {
     try {
       const { token, stepId, action, plugin, item, itemId: resolvedItemId, target } = context;
-      if (token !== this._sequence && action === 'focus') return;
+      // A newer interaction has already been queued; this reaction is stale.
+      // This applies to every action, not just focus — a commit whose async
+      // suggestion resolves after the player has moved on must not speak.
+      if (this._isStale(token)) return;
 
       const mentorContext = resolveStepMentorContext(this.shell?.actor ?? null, this.shell, {
         stepId,
@@ -451,6 +465,9 @@ export class MentorChoiceReactionRouter {
       const mentorName = mentorContext?.mentor?.name || this.shell?.mentor?.name || mentorId;
 
       const suggestion = await this._resolveStepSuggestion(plugin, item, resolvedItemId, action, stepId);
+      // Re-check after the async suggestion resolve — this is the window where
+      // rapid focus changes previously let an old line overwrite a newer one.
+      if (this._isStale(token)) return;
 
       const isSuggested = !!suggestion || this._targetLooksSuggested(target);
       const atoms = this._collectAtoms({ suggestion, item, action, stepId, isSuggested });
@@ -503,7 +520,7 @@ export class MentorChoiceReactionRouter {
       }
 
       text = this._shapeFinalLine({ text, action, item, suggestion: normalizedSuggestion });
-      if (!text || token !== this._sequence && action === 'focus') return;
+      if (!text || this._isStale(token)) return;
 
       await this._speak(text, this._moodFor(atoms, action, intensity));
       this._recordReactionBreadcrumb({ stepId, action, item, mentorId, atoms, intensity, importance, source: suggestion ? textSource : 'metadata', textSource });

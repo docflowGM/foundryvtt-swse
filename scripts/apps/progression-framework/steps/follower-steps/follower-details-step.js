@@ -223,7 +223,7 @@ export class FollowerDetailsStep extends FollowerStepBase {
           value: button.dataset.value || null
         };
         this.saveFollowerChoice(shell, 'humanTemplateBonus', this._selectedHumanBonus);
-        shell.render();
+        shell.requestRender({ preserveScroll: true, reason: 'follower-details-step:_attachListeners' });
       });
     });
 
@@ -232,14 +232,14 @@ export class FollowerDetailsStep extends FollowerStepBase {
         event.preventDefault();
         this._selectedBackground = button.dataset.background;
         this.saveFollowerChoice(shell, 'backgroundChoice', this._selectedBackground);
-        shell.render();
+        shell.requestRender({ preserveScroll: true, reason: 'follower-details-step:_attachListeners' });
       });
     });
     container.querySelector('.clear-background-btn')?.addEventListener('click', event => {
       event.preventDefault();
       this._selectedBackground = null;
       this.saveFollowerChoice(shell, 'backgroundChoice', null);
-      shell.render();
+      shell.requestRender({ preserveScroll: true, reason: 'follower-details-step:_attachListeners' });
     });
 
     container.querySelectorAll('.skill-checkbox').forEach(checkbox => {
@@ -247,7 +247,7 @@ export class FollowerDetailsStep extends FollowerStepBase {
         const skill = checkbox.dataset.skill;
         this._selectedSkills = checkbox.checked ? [skill] : this._selectedSkills.filter(value => value !== skill);
         this.saveFollowerChoice(shell, 'skillChoices', this._selectedSkills);
-        shell.render();
+        shell.requestRender({ preserveScroll: true, reason: 'follower-details-step:_attachListeners' });
       });
     });
 
@@ -265,7 +265,7 @@ export class FollowerDetailsStep extends FollowerStepBase {
           this._selectedLanguages = this._selectedLanguages.filter(lang => lang !== language);
         }
         this.saveFollowerChoice(shell, 'languageChoices', this._allChosenLanguages());
-        shell.render();
+        shell.requestRender({ preserveScroll: true, reason: 'follower-details-step:_attachListeners' });
       });
     });
   }

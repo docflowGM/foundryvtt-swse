@@ -159,7 +159,7 @@ export class BaseClassSurveyStep extends L1SurveyStep {
     this._lastPromptSpoken = null;
     this._clearDraft(shell);
     await this._speakCurrentPhase(shell, true);
-    shell.render();
+    shell.requestRender({ preserveScroll: true, reason: 'base-class-survey-step:_retakeSurvey' });
   }
 
   async _finishSurvey(shell) {

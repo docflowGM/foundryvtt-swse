@@ -58,7 +58,7 @@ export class NameStep extends ProgressionStepPlugin {
         this._characterName = e.target.value;
       }, { signal });
       nameInput.addEventListener('change', () => {
-        shell.render();
+        shell.requestRender({ preserveScroll: true, reason: 'name-step:onDataReady' });
       }, { signal });
     }
 
@@ -72,7 +72,7 @@ export class NameStep extends ProgressionStepPlugin {
         }
       }, { signal });
       levelInput.addEventListener('change', () => {
-        shell.render();
+        shell.requestRender({ preserveScroll: true, reason: 'name-step:onDataReady' });
       }, { signal });
     }
 
@@ -84,7 +84,7 @@ export class NameStep extends ProgressionStepPlugin {
         const randomName = await this._generateRandomName(shell.actor);
         if (randomName) {
           this._characterName = randomName;
-          shell.render();
+          shell.requestRender({ preserveScroll: true, reason: 'name-step:onDataReady' });
         }
       }, { signal });
     }
@@ -97,7 +97,7 @@ export class NameStep extends ProgressionStepPlugin {
         const randomName = await this._generateRandomDroidName(shell.actor);
         if (randomName) {
           this._characterName = randomName;
-          shell.render();
+          shell.requestRender({ preserveScroll: true, reason: 'name-step:onDataReady' });
         }
       }, { signal });
     }

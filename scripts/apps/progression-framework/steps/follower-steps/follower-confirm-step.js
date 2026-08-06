@@ -328,14 +328,14 @@ export class FollowerConfirmStep extends FollowerStepBase {
       event.preventDefault();
       const value = Number(this._creditModel?.max || 0);
       this._saveCredits(shell, value, 'max');
-      shell.render();
+      shell.requestRender({ preserveScroll: true, reason: 'follower-confirm-step:_attachCreditListeners' });
     });
 
     container.querySelector('.roll-credits-btn')?.addEventListener('click', async event => {
       event.preventDefault();
       const value = await this._rollCredits();
       this._saveCredits(shell, value, 'rolled');
-      shell.render();
+      shell.requestRender({ preserveScroll: true, reason: 'follower-confirm-step:_attachCreditListeners' });
     });
   }
 
