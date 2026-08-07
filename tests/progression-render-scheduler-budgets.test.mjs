@@ -782,12 +782,15 @@ const regionUpdates = (host) => host.jobs.filter(job => !job.structural);
  * ------------------------------------------------------------------ */
 {
   // file path (relative to ROOT) -> justification. Both current entries are
-  // progression-entry.js's initial-mount bootstrap: the module-level entry
-  // point that constructs/opens the shell for the first time, before any
-  // scheduler-owned render loop exists to route through. This is the same
-  // class of call as ProgressionShell.open()/FollowerShell.open() calling
-  // `app.render()` directly on first mount (those use the `app` local, not
-  // a `shell`-named reference, so they fall outside this regex already).
+  // in progression-entry.js, and both name a variable called `shell` — but
+  // it is `const shell = ShellRouter.getShell(actor.id)`, the HOSTING
+  // character-sheet shell that owns the holopad surface, not a
+  // ProgressionShell/ChargenShell/LevelupShell/FollowerShell instance. These
+  // calls render that host shell so it repaints with the inline
+  // chargen/progression surface now attached (`shell.setSurface(...)`);
+  // they are not a step plugin or shell method reaching into
+  // ProgressionShell.render(), so ProgressionRenderScheduler never owned
+  // them and there is nothing here to route through requestRender().
   const ALLOWLIST = new Map([
     ['scripts/apps/progression-framework/progression-entry.js', 2],
   ]);
@@ -827,6 +830,90 @@ const regionUpdates = (host) => host.jobs.filter(job => !job.structural);
   }
   assert.deepEqual(staleAllowlistEntries, [],
     `allowlist is stale — update ALLOWLIST counts (and their justification) to match the current source:\n  ${staleAllowlistEntries.join('\n  ')}`);
+}
+
+/* ------------------------------------------------------------------ *
+ * Phase 1.1 closure: this.render() self-calls are the same ownership
+ * violation as shell.render() from a plugin's perspective, just spelled
+ * from inside the shell class itself. SHELL_RENDER_CALL_RE only matches
+ * identifiers *ending in* "shell" — it does not, and structurally cannot,
+ * match a bare `this`. That gap let a real direct `this.render();` sit
+ * inside FollowerShell._onFinalizeProgression until the Phase 1 commit
+ * removed it (an interaction-guard branch, not the scheduler's own executor
+ * callback) — nothing would have caught a reintroduction of that line, or
+ * one like it in ChargenShell or LevelupShell.
+ * ------------------------------------------------------------------ */
+{
+  // Catches this.render(), this.render(false), this?.render?.(), awaited or
+  // not. Deliberately does NOT match `app.render(...)`: a freshly constructed
+  // instance mounting itself for the first time (`const app = new this(...);
+  // app.render(...)` in a static open()) is a different, legitimate call
+  // shape, carved out below by method scope rather than by narrowing this
+  // regex to stay blind to it.
+  const SELF_RENDER_CALL_RE = /\bthis\??\.\s*render(?:\?\.)?\s*\(/;
+
+  {
+    const mustMatch = [
+      'this.render();',
+      'this.render(false);',
+      'this?.render?.();',
+      'await this.render({ force: true });',
+      'this.render({ force, scrollSnapshots });',
+    ];
+    const mustNotMatch = [
+      'app.render({ force: true });',
+      'this.requestRender({ reason: "x" });',
+      'this?.requestRender?.({ reason: "x" });',
+      'shell.render();', // a different receiver — SHELL_RENDER_CALL_RE's job, not this one
+    ];
+    for (const line of mustMatch) {
+      assert.ok(SELF_RENDER_CALL_RE.test(line), `self-render detector failed to catch: ${line}`);
+    }
+    for (const line of mustNotMatch) {
+      assert.ok(!SELF_RENDER_CALL_RE.test(line), `self-render detector false-positived on: ${line}`);
+    }
+  }
+
+  // ProgressionShell plus every subclass under progression-framework/. A
+  // future subclass added anywhere in this tree is exactly the case this
+  // list exists to not silently miss — add it here when it appears.
+  const SHELL_CLASS_FILES = [
+    'scripts/apps/progression-framework/shell/progression-shell.js',
+    'scripts/apps/progression-framework/chargen-shell.js',
+    'scripts/apps/progression-framework/levelup-shell.js',
+    'scripts/apps/progression-framework/follower-shell.js',
+  ];
+
+  // The scheduler's executor callback is the one place a `this.render()`
+  // self-call is not an ownership violation — it IS the paint the scheduler
+  // asked for, wired at `executeRender: (job) => this._executeScheduledRender(job)`.
+  // Every other this.render() anywhere in these four files is a bypass.
+  const shellSrcForScope = fs.readFileSync(
+    path.join(ROOT, 'scripts/apps/progression-framework/shell/progression-shell.js'), 'utf8');
+  const executorStart = shellSrcForScope.indexOf('async _executeScheduledRender(');
+  assert.ok(executorStart > 0, '_executeScheduledRender not found — allowlist scope cannot be computed');
+  const executorEnd = shellSrcForScope.indexOf('\n  }', executorStart);
+  assert.ok(executorEnd > executorStart, '_executeScheduledRender body end not found');
+  const executorStartLine = shellSrcForScope.slice(0, executorStart).split('\n').length;
+  const executorEndLine = shellSrcForScope.slice(0, executorEnd).split('\n').length;
+
+  const selfRenderOffenders = [];
+  for (const rel of SHELL_CLASS_FILES) {
+    const full = path.join(ROOT, rel);
+    const src = fs.readFileSync(full, 'utf8');
+    src.split('\n').forEach((line, i) => {
+      const trimmed = line.trim();
+      if (trimmed.startsWith('*') || trimmed.startsWith('//')) return;
+      if (!SELF_RENDER_CALL_RE.test(line)) return;
+      const lineNo = i + 1;
+      const insideExecutor = rel.endsWith('shell/progression-shell.js')
+        && lineNo >= executorStartLine && lineNo <= executorEndLine;
+      if (!insideExecutor) selfRenderOffenders.push(`${rel}:${lineNo}: ${trimmed}`);
+    });
+  }
+
+  assert.deepEqual(selfRenderOffenders, [],
+    `direct this.render() self-call outside the scheduler's own executor callback — route through this.requestRender() instead:\n  ${selfRenderOffenders.join('\n  ')}`);
 }
 
 console.log('progression-render-scheduler-budgets: all assertions passed');
