@@ -199,18 +199,18 @@ export class SpeciesStep extends ProgressionStepPlugin {
     const onSearch = e => {
       this._searchQuery = e.detail.query;
       this._applyFilters();
-      shell.requestRender({ preserveScroll: true, reason: 'species-step:onSearch' });
+      shell.requestRender({ preserveScroll: true, reason: 'species-step:onSearch', regions: ['work-surface', 'utility'] });
     };
     const onFilter = e => {
       const { filterId, value } = e.detail;
       this._filters[filterId] = value;
       this._applyFilters();
-      shell.requestRender({ preserveScroll: true, reason: 'species-step:onFilter' });
+      shell.requestRender({ preserveScroll: true, reason: 'species-step:onFilter', regions: ['work-surface', 'utility'] });
     };
     const onSort = e => {
       this._sortBy = e.detail.sortId;
       this._applyFilters();
-      shell.requestRender({ preserveScroll: true, reason: 'species-step:onSort' });
+      shell.requestRender({ preserveScroll: true, reason: 'species-step:onSort', regions: ['work-surface', 'utility'] });
     };
 
     root.addEventListener('prog:utility:search', onSearch, { signal });

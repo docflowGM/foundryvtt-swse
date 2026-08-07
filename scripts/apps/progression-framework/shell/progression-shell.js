@@ -980,6 +980,37 @@ export class ProgressionShell extends SWSEApplicationV2 {
   }
 
   /**
+   * The full .prog-summary-panel__body content — summaryPanelHtml wrapped
+   * in the SAME summary-panel-body.hbs partial the structural template
+   * includes, so a scoped summary repaint produces byte-identical output to
+   * a structural one, placeholder included. _prepareContext() does not call
+   * this: its structural render already includes that partial directly from
+   * progression-shell.hbs, so rendering it here too would be a second copy
+   * of the same evaluation, not a shared one. Only the scoped updater below
+   * needs to render the partial itself, since a DOM mount has no Handlebars
+   * template evaluation of its own to do it automatically.
+   * @param {Object|null} currentPlugin
+   * @param {Object|null} currentDescriptor
+   * @param {Object} stepData
+   * @param {Object} pluginContext
+   * @returns {Promise<string|null>} null only on genuine failure — a
+   *   "nothing selected" state still returns the rendered placeholder HTML.
+   * @private
+   */
+  async _renderSummaryPanelBodyHtml(currentPlugin, currentDescriptor, stepData, pluginContext) {
+    const summaryPanelHtml = await this._renderSummaryPanelHtml(currentPlugin, currentDescriptor, stepData, pluginContext);
+    try {
+      return await foundry.applications.handlebars.renderTemplate(
+        'systems/foundryvtt-swse/templates/apps/progression-framework/summary-panel/summary-panel-body.hbs',
+        { summaryPanelHtml, currentDescriptor }
+      );
+    } catch (err) {
+      console.error('[ProgressionShell] Failed to render summary-panel-body:', err);
+      return null;
+    }
+  }
+
+  /**
    * The utility-bar config for the given plugin. A one-line, pure,
    * synchronous read of plugin state — cheap enough that both
    * _prepareContext() and the scoped utility updater compute it directly
@@ -1184,17 +1215,22 @@ export class ProgressionShell extends SWSEApplicationV2 {
     let html = null;
     try {
       const stepData = await job.getStepData();
-      html = await this._renderSummaryPanelHtml(job.plugin, job.descriptor, stepData, job.pluginContext);
+      // Renders the SAME summary-panel-body.hbs partial the structural
+      // template includes, so "nothing selected yet" mounts the canonical
+      // placeholder here too, instead of an empty body a structural render
+      // would never have produced.
+      html = await this._renderSummaryPanelBodyHtml(job.plugin, job.descriptor, stepData, job.pluginContext);
     } catch (err) {
       swseLogger.warn('[ProgressionShell] scoped summary update failed; deferring to full render', err);
       return false;
     }
+    // A genuine render failure (template engine down) is reported as null
+    // by _renderSummaryPanelBodyHtml — that must fall back to structural,
+    // not silently mount an empty body.
+    if (!html) return false;
 
-    // A null summary is a legitimate "nothing selected yet" state — the
-    // template's placeholder icon markup lives outside this body host, so
-    // mount an empty body rather than treat null as failure.
     const snapshots = this._captureProgressionScrollSnapshots(host);
-    host.innerHTML = html || '';
+    host.innerHTML = html;
     this._restoreProgressionScrollSnapshots(snapshots, host);
     return true;
   }

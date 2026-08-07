@@ -293,7 +293,7 @@ export class StarshipManeuverStep extends ProgressionStepPlugin {
     const onSearch = e => {
       this._searchQuery = e.detail.query;
       this._applyFilters();
-      shell.requestRender({ preserveScroll: true, reason: 'starship-maneuver-step:onSearch' });
+      shell.requestRender({ preserveScroll: true, reason: 'starship-maneuver-step:onSearch', regions: ['work-surface', 'utility'] });
     };
 
     shell.element.addEventListener('prog:utility:search', onSearch, { signal });

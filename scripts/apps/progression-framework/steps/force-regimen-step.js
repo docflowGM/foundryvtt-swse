@@ -84,10 +84,10 @@ export class ForceRegimenStep extends ProgressionStepPlugin {
     const onSearch = e => {
       this._searchQuery = e.detail.query;
       this._applyFilters();
-      shell.requestRender({ preserveScroll: true, reason: 'force-regimen-step:onSearch' });
+      shell.requestRender({ preserveScroll: true, reason: 'force-regimen-step:onSearch', regions: ['work-surface', 'utility'] });
     };
-    const onFilter = () => { this._applyFilters(); shell.requestRender({ preserveScroll: true, reason: 'force-regimen-step:onFilter' }); };
-    const onSort = () => { this._applyFilters(); shell.requestRender({ preserveScroll: true, reason: 'force-regimen-step:onSort' }); };
+    const onFilter = () => { this._applyFilters(); shell.requestRender({ preserveScroll: true, reason: 'force-regimen-step:onFilter', regions: ['work-surface', 'utility'] }); };
+    const onSort = () => { this._applyFilters(); shell.requestRender({ preserveScroll: true, reason: 'force-regimen-step:onSort', regions: ['work-surface', 'utility'] }); };
 
     shell.element.addEventListener('prog:utility:search', onSearch, { signal });
     shell.element.addEventListener('prog:utility:filter', onFilter, { signal });

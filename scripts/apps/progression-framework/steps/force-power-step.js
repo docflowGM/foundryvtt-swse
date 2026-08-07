@@ -137,17 +137,17 @@ export class ForcePowerStep extends ProgressionStepPlugin {
     const onSearch = e => {
       this._searchQuery = e.detail.query;
       this._applyFilters();
-      shell.requestRender({ preserveScroll: true, reason: 'force-power-step:onSearch' });
+      shell.requestRender({ preserveScroll: true, reason: 'force-power-step:onSearch', regions: ['work-surface', 'utility'] });
     };
     const onFilter = e => {
       // planned (Wave 10+): implement power-level filtering
       this._applyFilters();
-      shell.requestRender({ preserveScroll: true, reason: 'force-power-step:onFilter' });
+      shell.requestRender({ preserveScroll: true, reason: 'force-power-step:onFilter', regions: ['work-surface', 'utility'] });
     };
     const onSort = e => {
       // planned (Wave 10+): implement sorting
       this._applyFilters();
-      shell.requestRender({ preserveScroll: true, reason: 'force-power-step:onSort' });
+      shell.requestRender({ preserveScroll: true, reason: 'force-power-step:onSort', regions: ['work-surface', 'utility'] });
     };
 
     shell.element.addEventListener('prog:utility:search', onSearch, { signal });
@@ -422,7 +422,7 @@ export class ForcePowerStep extends ProgressionStepPlugin {
       if (!category) return true;
       this._activeCategory = category;
       this._searchQuery = '';
-      await shell?.requestRender?.({ preserveScroll: true, reason: 'force-power-category' });
+      await shell?.requestRender?.({ preserveScroll: true, reason: 'force-power-category', regions: ['work-surface', 'utility'] });
       return true;
     }
 
@@ -430,7 +430,7 @@ export class ForcePowerStep extends ProgressionStepPlugin {
       event?.preventDefault?.();
       event?.stopPropagation?.();
       this._categorySidebarCollapsed = !this._categorySidebarCollapsed;
-      await shell?.requestRender?.({ preserveScroll: true, reason: 'force-power-category-sidebar' });
+      await shell?.requestRender?.({ preserveScroll: true, reason: 'force-power-category-sidebar', regions: ['work-surface', 'utility'] });
       return true;
     }
 
@@ -440,7 +440,7 @@ export class ForcePowerStep extends ProgressionStepPlugin {
       this._searchQuery = '';
       this._activeCategory = 'force-all';
       this._categorySidebarCollapsed = false;
-      await shell?.requestRender?.({ preserveScroll: true, reason: 'force-power-browser-reset' });
+      await shell?.requestRender?.({ preserveScroll: true, reason: 'force-power-browser-reset', regions: ['work-surface', 'utility'] });
       return true;
     }
 

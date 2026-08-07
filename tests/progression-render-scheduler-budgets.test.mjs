@@ -1113,12 +1113,19 @@ function makeFakeShell({ plugin, steps } = {}) {
   return shell;
 }
 
-const footerTemplateResponder = (template) => {
+// Mirrors summary-panel-body.hbs's own {{#if summaryPanelHtml}}...{{else}}
+// <placeholder>{{/if}} branching, so tests exercise the real fallback
+// contract _renderSummaryPanelBodyHtml() depends on, not a stand-in for it.
+const SUMMARY_PLACEHOLDER_HTML = '<div class="prog-summary-placeholder">PLACEHOLDER</div>';
+const footerTemplateResponder = (template, data) => {
   if (template === 'work-surface-template') return '<div class="new-ws">WS</div>';
   if (template === 'summary-template') return '<div class="new-summary">SUM</div>';
   if (String(template).endsWith('action-footer.hbs')) return '<div class="new-footer">FOOTER</div>';
   if (String(template).endsWith('progress-rail.hbs')) return '<div class="new-progress">PROGRESS</div>';
   if (String(template).endsWith('utility-bar.hbs')) return '<div class="new-utility">UTILITY</div>';
+  if (String(template).endsWith('summary-panel-body.hbs')) {
+    return data?.summaryPanelHtml ? data.summaryPanelHtml : SUMMARY_PLACEHOLDER_HTML;
+  }
   return '';
 };
 
@@ -1387,6 +1394,43 @@ const footerTemplateResponder = (template) => {
 }
 
 /* ------------------------------------------------------------------ *
+ * 10.5. PHASE 2.1 CLOSURE — summary empty-state parity.
+ *
+ * Commit 15492f6's _updateSummaryRegion() mounted `host.innerHTML = html
+ * || ''` on the (false) assumption that the placeholder markup lived
+ * outside .prog-summary-panel__body. It does not — progression-shell.hbs
+ * puts it INSIDE that body, so a scoped summary update with nothing
+ * selected produced a truly blank panel where a structural render would
+ * have shown the canonical placeholder icon. This test drives a real
+ * "nothing selected" summary through both the real renderSummaryPanel-less
+ * plugin path and the real SelectedRailContext.buildSnapshot() fallback
+ * (short-circuited safely by the absence of shell.progressionSession, per
+ * SelectedRailContext.buildSnapshot's own null-guard) and asserts the
+ * scoped result contains the same placeholder markup a structural render's
+ * summary-panel-body.hbs include would have produced.
+ * ------------------------------------------------------------------ */
+{
+  const fixture = buildRegionFixture();
+  const plugin = makePlugin(); // no renderSummaryPanel -> falls to SelectedRailContext
+  plugin.renderSummaryPanel = async () => null; // explicit "no custom summary for this step"
+  const shell = makeFakeShell({ plugin });
+  // No shell.progressionSession set -> SelectedRailContext.buildSnapshot's
+  // own guard returns an empty snapshot (snapshotSections: []) rather than
+  // touching ProjectionEngine, exactly like a real chargen actor with
+  // nothing selected in the current step yet.
+  const job = shell._createRegionRenderJob();
+
+  const applied = await withRenderTemplateStub(footerTemplateResponder,
+    () => shell._updateSummaryRegion(fixture.root, job));
+
+  assert.equal(applied, true, 'a legitimate empty summary must not be treated as a render failure');
+  assert.notEqual(fixture.summaryBodyEl.innerHTML, '',
+    'a scoped summary update with nothing selected mounted a blank body instead of the canonical placeholder — the exact 15492f6 defect');
+  assert.ok(fixture.summaryBodyEl.innerHTML.includes('prog-summary-placeholder'),
+    'the scoped empty-summary body must contain the same placeholder structural rendering shows');
+}
+
+/* ------------------------------------------------------------------ *
  * 11. Static contract: no region updater calls the full _prepareContext()
  *     to get a fragment of it back out — each shares only the extracted
  *     render helper it actually needs, and _prepareContext() itself calls
@@ -1405,7 +1449,12 @@ const footerTemplateResponder = (template) => {
 
   const updaterExpectations = [
     ['async _updateWorkSurfaceRegion', '_renderWorkSurfaceHtml'],
-    ['async _updateSummaryRegion', '_renderSummaryPanelHtml'],
+    // _updateSummaryRegion renders the FULL body (summary content + the
+    // canonical placeholder fallback) via _renderSummaryPanelBodyHtml(),
+    // which itself wraps _renderSummaryPanelHtml() — checked separately
+    // below so a scoped summary repaint can never mount a bare '' where a
+    // structural render would have shown the placeholder (Phase 2.1 fix).
+    ['async _updateSummaryRegion', '_renderSummaryPanelBodyHtml'],
     ['async _updateUtilityRegion', '_renderUtilityBarHtml'],
     ['async _updateProgressRegion', '_renderProgressRailHtml'],
     ['async _updateFooterRegion', '_renderFooterHtml'],
@@ -1418,8 +1467,20 @@ const footerTemplateResponder = (template) => {
       `${methodDecl} must call the shared ${sharedHelper}() helper`);
   }
 
+  // _renderSummaryPanelBodyHtml() must itself call _renderSummaryPanelHtml()
+  // — one implementation of "what is this step's summary content," not a
+  // third copy alongside _prepareContext()'s and the old _updateSummaryRegion's.
+  const summaryBodyHelperBody = sliceMethod('async _renderSummaryPanelBodyHtml');
+  assert.ok(summaryBodyHelperBody.includes('this._renderSummaryPanelHtml('),
+    '_renderSummaryPanelBodyHtml must call the shared _renderSummaryPanelHtml() helper');
+  assert.match(summaryBodyHelperBody, /summary-panel-body\.hbs/,
+    '_renderSummaryPanelBodyHtml must render the canonical summary-panel-body.hbs partial');
+
   // _prepareContext() itself must call the same shared helpers, not a
-  // second inline copy of the same rendering logic.
+  // second inline copy of the same rendering logic. It calls
+  // _renderSummaryPanelHtml() directly (not the *Body* wrapper) because its
+  // own template include of summary-panel-body.hbs already supplies the
+  // placeholder fallback — see progression-shell.hbs.
   const prepareContextBody = sliceMethod('async _prepareContext');
   for (const helper of [
     '_computeStepProgress', '_renderWorkSurfaceHtml', '_renderSummaryPanelHtml',
@@ -1463,6 +1524,134 @@ const footerTemplateResponder = (template) => {
   const loadTemplatesSrc = fs.readFileSync(path.join(ROOT, 'scripts/load-templates.js'), 'utf8');
   assert.ok(loadTemplatesSrc.includes("templates/apps/progression-framework/action-footer.hbs'"),
     'action-footer.hbs is not registered in the template preload manifest');
+
+  // Phase 2.1: summary-panel-body.hbs — the placeholder fallback must live
+  // in exactly one file, included by the structural template and rendered
+  // directly by the scoped summary updater, never duplicated inline.
+  const summaryBodyPartialPath = 'templates/apps/progression-framework/summary-panel/summary-panel-body.hbs';
+  assert.ok(fs.existsSync(path.join(ROOT, summaryBodyPartialPath)), 'summary-panel-body.hbs partial was not created');
+  const summaryBodyPartialSrc = fs.readFileSync(path.join(ROOT, summaryBodyPartialPath), 'utf8');
+  assert.match(summaryBodyPartialSrc, /prog-summary-placeholder/,
+    'summary-panel-body.hbs must contain the canonical placeholder markup');
+  assert.match(shellHbs, /\{\{>\s*"systems\/foundryvtt-swse\/templates\/apps\/progression-framework\/summary-panel\/summary-panel-body\.hbs"\s*\}\}/,
+    'progression-shell.hbs must include the extracted summary-panel-body partial rather than inlining the placeholder twice');
+  assert.ok(!shellHbs.includes('prog-summary-placeholder'),
+    'progression-shell.hbs still has an inline copy of the summary placeholder markup');
+  assert.ok(loadTemplatesSrc.includes("templates/apps/progression-framework/summary-panel/summary-panel-body.hbs'"),
+    'summary-panel-body.hbs is not registered in the template preload manifest');
+}
+
+/* ==================================================================== *
+ * PHASE 2.1 CLOSURE — real caller region-contract audit.
+ *
+ * Phase 2 proved the scheduler treats ['work-surface', 'utility'] as a
+ * cheap partial. It did not prove every real search/filter/sort caller
+ * actually asks for that scope — several genuinely called requestRender()
+ * with no regions and no structural: true, which the scheduler correctly
+ * (if silently) treats as structural. This section closes that gap two
+ * ways: exact coverage of the explicitly known defects, and a broader
+ * scan across every step file known to wire prog:utility:* / onUtilityChange
+ * so a FUTURE regionless utility handler fails loudly instead of quietly
+ * reverting to structural rendering.
+ * ==================================================================== */
+
+/* ------------------------------------------------------------------ *
+ * 13. Exact coverage of the known defects: Species search/filter/sort and
+ *     the Feat filter-checkbox path must declare real dirty regions, not
+ *     fall through to an implicit structural render.
+ * ------------------------------------------------------------------ */
+{
+  const speciesSrc = fs.readFileSync(
+    path.join(ROOT, 'scripts/apps/progression-framework/steps/species-step.js'), 'utf8');
+  for (const reason of ['species-step:onSearch', 'species-step:onFilter', 'species-step:onSort']) {
+    const idx = speciesSrc.indexOf(`reason: '${reason}'`);
+    assert.ok(idx > 0, `species-step.js: ${reason} call not found`);
+    const callStart = speciesSrc.lastIndexOf('requestRender', idx);
+    const callEnd = speciesSrc.indexOf(');', idx);
+    const callText = speciesSrc.slice(callStart, callEnd);
+    assert.match(callText, /regions\s*:\s*\[/,
+      `species-step.js: ${reason} must declare regions — this is the known Phase 2.1 defect`);
+  }
+
+  const featSrc = fs.readFileSync(
+    path.join(ROOT, 'scripts/apps/progression-framework/steps/feat-step.js'), 'utf8');
+  assert.ok(!featSrc.includes("reason: 'feat-step:onSort'"),
+    "feat-step.js still has the misleading 'feat-step:onSort' reason on the filter-checkbox path");
+  const checkboxIdx = featSrc.indexOf("reason: 'feat-filter-checkbox'");
+  assert.ok(checkboxIdx > 0, 'feat-step.js: feat-filter-checkbox call not found');
+  const checkboxCallStart = featSrc.lastIndexOf('requestRender', checkboxIdx);
+  const checkboxCallEnd = featSrc.indexOf(');', checkboxIdx);
+  assert.match(featSrc.slice(checkboxCallStart, checkboxCallEnd), /regions\s*:\s*\[/,
+    'feat-step.js: the filter-checkbox path must declare regions — this is the known Phase 2.1 defect');
+}
+
+/* ------------------------------------------------------------------ *
+ * 14. Broader scan: every step file that wires prog:utility:search/
+ *     filter/sort listeners, or implements onUtilityChange(), must have
+ *     every requestRender() call reached from onDataReady()/
+ *     onUtilityChange() declare either regions: or structural: true.
+ *     A future handler that omits both silently reverts to structural
+ *     and must fail this test.
+ * ------------------------------------------------------------------ */
+{
+  const stepsDir = path.join(ROOT, 'scripts/apps/progression-framework/steps');
+  const stepFiles = [];
+  const walk = (dir) => {
+    for (const name of fs.readdirSync(dir)) {
+      const full = path.join(dir, name);
+      if (fs.statSync(full).isDirectory()) { walk(full); continue; }
+      if (full.endsWith('.js')) stepFiles.push(full);
+    }
+  };
+  walk(stepsDir);
+
+  const extractBalanced = (src, openIdx) => {
+    let depth = 0, i = openIdx;
+    while (i < src.length) {
+      if (src[i] === '{') depth++;
+      else if (src[i] === '}') { depth -= 1; if (depth === 0) return src.slice(openIdx, i + 1); }
+      i++;
+    }
+    return src.slice(openIdx);
+  };
+
+  const checkRequestRenderScopes = (body) => {
+    const offenders = [];
+    const re = /requestRender\??\.?\(\{/g;
+    let m;
+    while ((m = re.exec(body))) {
+      const braceIdx = body.indexOf('{', m.index + (m[0].length - 1));
+      const argObj = extractBalanced(body, braceIdx);
+      if (!/regions\s*:/.test(argObj) && !/structural\s*:/.test(argObj)) {
+        offenders.push(argObj.replace(/\s+/g, ' ').trim().slice(0, 120));
+      }
+    }
+    return offenders;
+  };
+
+  const utilityDrivenOffenders = [];
+  for (const file of stepFiles) {
+    const rel = path.relative(ROOT, file);
+    const src = fs.readFileSync(file, 'utf8');
+    if (!/prog:utility:(search|filter|sort)|onUtilityChange\(/.test(src)) continue;
+
+    // onDataReady() is where every audited file wires its prog:utility:*
+    // listeners inline; onUtilityChange() is the alternate direct-call
+    // contract a few steps (class-step, feat-step) implement instead.
+    for (const methodDecl of ['async onDataReady(', 'onDataReady(', 'async onUtilityChange(', 'onUtilityChange(']) {
+      const start = src.indexOf(methodDecl);
+      if (start < 0) continue;
+      const braceIdx = src.indexOf('{', start);
+      if (braceIdx < 0) continue;
+      const body = extractBalanced(src, braceIdx);
+      for (const offender of checkRequestRenderScopes(body)) {
+        utilityDrivenOffenders.push(`${rel} [${methodDecl.replace('(', '')}]: ${offender}`);
+      }
+    }
+  }
+
+  assert.deepEqual(utilityDrivenOffenders, [],
+    `utility-driven requestRender() call(s) with neither regions: nor structural: true — these silently revert to a full structural render:\n  ${utilityDrivenOffenders.join('\n  ')}`);
 }
 
 console.log('progression-render-scheduler-budgets: all assertions passed');

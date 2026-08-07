@@ -133,7 +133,7 @@ async onDataReady(shell) {
 
   const onSearch = (e) => {
     this._searchQuery = String(e.detail?.query || '');
-    shell.requestRender({ preserveScroll: true, reason: 'background-step:onSearch' });
+    shell.requestRender({ preserveScroll: true, reason: 'background-step:onSearch', regions: ['work-surface', 'utility'] });
   };
 
   const onFilter = (e) => {
@@ -146,13 +146,13 @@ async onDataReady(shell) {
         shell.utilityBar._filterState.occupation = value && filterId === 'occupation';
         shell.utilityBar._filterState.planet = value && filterId === 'planet';
       }
-      shell.requestRender({ preserveScroll: true, reason: 'background-step:onFilter' });
+      shell.requestRender({ preserveScroll: true, reason: 'background-step:onFilter', regions: ['work-surface', 'utility'] });
     }
   };
 
   const onSort = (e) => {
     this._sortBy = e.detail?.sortId || 'alpha';
-    shell.requestRender({ preserveScroll: true, reason: 'background-step:onSort' });
+    shell.requestRender({ preserveScroll: true, reason: 'background-step:onSort', regions: ['work-surface', 'utility'] });
   };
 
   shell.element.addEventListener('prog:utility:search', onSearch, { signal });

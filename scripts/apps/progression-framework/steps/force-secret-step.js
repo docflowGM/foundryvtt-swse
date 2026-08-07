@@ -145,15 +145,15 @@ export class ForceSecretStep extends ProgressionStepPlugin {
     const onSearch = e => {
       this._searchQuery = e.detail.query;
       this._applyFilters();
-      shell.requestRender({ preserveScroll: true, reason: 'force-secret-step:onSearch' });
+      shell.requestRender({ preserveScroll: true, reason: 'force-secret-step:onSearch', regions: ['work-surface', 'utility'] });
     };
     const onFilter = e => {
       this._applyFilters();
-      shell.requestRender({ preserveScroll: true, reason: 'force-secret-step:onFilter' });
+      shell.requestRender({ preserveScroll: true, reason: 'force-secret-step:onFilter', regions: ['work-surface', 'utility'] });
     };
     const onSort = e => {
       this._applyFilters();
-      shell.requestRender({ preserveScroll: true, reason: 'force-secret-step:onSort' });
+      shell.requestRender({ preserveScroll: true, reason: 'force-secret-step:onSort', regions: ['work-surface', 'utility'] });
     };
 
     shell.element.addEventListener('prog:utility:search', onSearch, { signal });
@@ -271,7 +271,7 @@ export class ForceSecretStep extends ProgressionStepPlugin {
       if (!category) return true;
       this._activeCategory = category;
       this._searchQuery = '';
-      await shell?.requestRender?.({ preserveScroll: true, reason: 'force-secret-category' });
+      await shell?.requestRender?.({ preserveScroll: true, reason: 'force-secret-category', regions: ['work-surface', 'utility'] });
       return true;
     }
 
@@ -279,7 +279,7 @@ export class ForceSecretStep extends ProgressionStepPlugin {
       event?.preventDefault?.();
       event?.stopPropagation?.();
       this._categorySidebarCollapsed = !this._categorySidebarCollapsed;
-      await shell?.requestRender?.({ preserveScroll: true, reason: 'force-secret-category-sidebar' });
+      await shell?.requestRender?.({ preserveScroll: true, reason: 'force-secret-category-sidebar', regions: ['work-surface', 'utility'] });
       return true;
     }
 
@@ -289,7 +289,7 @@ export class ForceSecretStep extends ProgressionStepPlugin {
       this._searchQuery = '';
       this._activeCategory = 'recommended';
       this._categorySidebarCollapsed = false;
-      await shell?.requestRender?.({ preserveScroll: true, reason: 'force-secret-browser-reset' });
+      await shell?.requestRender?.({ preserveScroll: true, reason: 'force-secret-browser-reset', regions: ['work-surface', 'utility'] });
       return true;
     }
 

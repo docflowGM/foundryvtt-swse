@@ -459,7 +459,7 @@ export class FeatStep extends ProgressionStepPlugin {
           if (cb.checked) this._selectedTags.add(cb.value);
           else            this._selectedTags.delete(cb.value);
         }
-        shell.requestRender({ preserveScroll: true, reason: 'feat-step:onSort' });
+        shell.requestRender({ preserveScroll: true, reason: 'feat-filter-checkbox', regions: ['work-surface', 'utility'] });
       }, { signal });
     });
 

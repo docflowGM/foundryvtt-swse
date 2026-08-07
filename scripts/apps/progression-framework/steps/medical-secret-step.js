@@ -82,15 +82,15 @@ export class MedicalSecretStep extends ProgressionStepPlugin {
     const onSearch = (event) => {
       this._searchQuery = event.detail.query;
       this._applyFilters();
-      shell.requestRender({ preserveScroll: true, reason: 'medical-secret-step:onSearch' });
+      shell.requestRender({ preserveScroll: true, reason: 'medical-secret-step:onSearch', regions: ['work-surface', 'utility'] });
     };
     const onFilter = () => {
       this._applyFilters();
-      shell.requestRender({ preserveScroll: true, reason: 'medical-secret-step:onFilter' });
+      shell.requestRender({ preserveScroll: true, reason: 'medical-secret-step:onFilter', regions: ['work-surface', 'utility'] });
     };
     const onSort = () => {
       this._applyFilters();
-      shell.requestRender({ preserveScroll: true, reason: 'medical-secret-step:onSort' });
+      shell.requestRender({ preserveScroll: true, reason: 'medical-secret-step:onSort', regions: ['work-surface', 'utility'] });
     };
 
     shell.element.addEventListener('prog:utility:search', onSearch, { signal });
