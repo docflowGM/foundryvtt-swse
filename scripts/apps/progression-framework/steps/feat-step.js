@@ -2125,13 +2125,16 @@ export class FeatStep extends ProgressionStepPlugin {
           return;
         }
 
+        // Route through the same canonical writer FeatChoiceDialog.promptAndApply
+        // uses (FeatChoiceResolver.buildChoicePatch) instead of hand-rolling the
+        // same three system.* fields a second time — see
+        // docs/audits/feat-choice-integrity-current-state.md §2.
+        const choicePatch = FeatChoiceResolver.buildChoicePatch(feat, selectedChoice) || {};
         nextSelection = {
           ...nextSelection,
           system: {
             ...(nextSelection.system || {}),
-            selectedChoice,
-            choiceResolved: true,
-            choiceResolvedAt: new Date().toISOString()
+            ...(choicePatch.system || {})
           }
         };
       }

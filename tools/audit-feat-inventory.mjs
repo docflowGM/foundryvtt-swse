@@ -25,6 +25,7 @@ const repoRoot = path.resolve(scriptDir, '..');
 const catalogPath = path.join(repoRoot, 'data', 'feat-catalog.json');
 const packPath = path.join(repoRoot, 'packs', 'feats.db');
 const registryPath = path.join(repoRoot, 'data', 'feat-validity-registry.json');
+const choiceOptionsPath = path.join(repoRoot, 'data', 'feat-choice-options.json');
 const outJsonPath = path.join(repoRoot, 'docs', 'audits', 'generated', 'feat-inventory-report.json');
 const outMdPath = path.join(repoRoot, 'docs', 'audits', 'generated', 'feat-inventory-report.md');
 
@@ -89,6 +90,44 @@ function authorityHasFeat(name, slug) {
   return Boolean(byName);
 }
 
+// --- choice-metadata integrity (feat-choice-persistence task, Phase 12) ---
+// Catalog-level validation: every feat's choiceMeta must be structurally
+// sound (registered choiceKind, sane storagePath, boolean `required`) so a
+// malformed entry is caught here rather than silently becoming a feat with
+// universal/unscoped behavior at runtime.
+const choiceOptions = JSON.parse(fs.readFileSync(choiceOptionsPath, 'utf8'));
+const knownChoiceKinds = new Set(Object.keys(choiceOptions.choiceKinds || {}));
+
+// Two resolution mechanisms legitimately don't route through
+// feat-choice-options.json's choiceKinds registry, so their choiceKind is
+// exempt from the "must be registered" check:
+//   - already_resolved_static_variant: a pre-baked per-value catalog item
+//     (e.g. "Armor Proficiency (Light)") with no live choice to resolve.
+//   - grantPool choiceSource (e.g. Force Regimen Mastery): resolved through
+//     a named grant registry (choiceMeta.grantRegistry), not an
+//     optionRegistry entry.
+function choiceKindRegistrationExempt(meta) {
+  return meta.resolution === 'already_resolved_static_variant' || meta.choiceSource === 'grantPool';
+}
+
+function validateChoiceMeta(doc) {
+  const meta = doc.system?.choiceMeta;
+  if (!meta) return [];
+  const issues = [];
+  if (!meta.choiceKind) {
+    issues.push({ name: doc.name, id: doc._id, reason: 'choiceMeta has no choiceKind' });
+  } else if (!knownChoiceKinds.has(meta.choiceKind) && !choiceKindRegistrationExempt(meta)) {
+    issues.push({ name: doc.name, id: doc._id, reason: `choiceKind "${meta.choiceKind}" is not registered in data/feat-choice-options.json` });
+  }
+  if (meta.required !== undefined && typeof meta.required !== 'boolean') {
+    issues.push({ name: doc.name, id: doc._id, reason: `choiceMeta.required must be boolean, got ${typeof meta.required}` });
+  }
+  if (meta.storagePath !== undefined && typeof meta.storagePath !== 'string') {
+    issues.push({ name: doc.name, id: doc._id, reason: `choiceMeta.storagePath must be a string, got ${typeof meta.storagePath}` });
+  }
+  return issues;
+}
+
 // --- identity mismatches -----------------------------------------------
 const seenIds = new Map();
 const seenNames = new Map();
@@ -130,6 +169,8 @@ const invalidEntriesPresent = catalogDocs
 const sourceConflicts = [...registryByName.values()]
   .filter((entry) => entry.status === 'source_conflict')
   .map((entry) => entry.name);
+
+const malformedChoiceMeta = catalogDocs.flatMap(validateChoiceMeta);
 
 // Sourcebooks cited by catalog entries that are not part of this task's
 // available source set (no PDF/text for either exists anywhere in this
@@ -217,6 +258,7 @@ const report = {
     invalidEntriesPresent,
     sourceConflicts,
     nonFeatRecords,
+    malformedChoiceMeta,
   },
   removalAndRestorationHistory: [
     {
@@ -284,6 +326,7 @@ lines.push(`- Content drift (catalog vs pack): ${contentDrift.length}`);
 lines.push(`- Invalid entries present in catalog: ${invalidEntriesPresent.length}${invalidEntriesPresent.length ? ` (${invalidEntriesPresent.join(', ')})` : ''}`);
 lines.push(`- Source conflicts: ${sourceConflicts.length}`);
 lines.push(`- Non-feat records in catalog: ${nonFeatRecords.length}`);
+lines.push(`- Malformed choiceMeta: ${malformedChoiceMeta.length}${malformedChoiceMeta.length ? ` (${malformedChoiceMeta.map((i) => `${i.name}: ${i.reason}`).join('; ')})` : ''}`);
 lines.push('');
 lines.push('## Removal and restoration history');
 lines.push('');
@@ -317,6 +360,7 @@ if (process.argv.includes('--strict')) {
   if (missingFromPack.length) hardFailures.push(`${missingFromPack.length} catalog id(s) missing from packs/feats.db`);
   if (missingFromCatalog.length) hardFailures.push(`${missingFromCatalog.length} pack id(s) missing from data/feat-catalog.json`);
   if (contentDrift.length) hardFailures.push(`${contentDrift.length} id(s) with catalog/pack content drift`);
+  if (malformedChoiceMeta.length) hardFailures.push(`${malformedChoiceMeta.length} feat(s) with malformed choiceMeta: ${malformedChoiceMeta.map((i) => `${i.name} (${i.reason})`).join('; ')}`);
 
   if (hardFailures.length) {
     console.error('FAIL (--strict): ' + hardFailures.join('; '));

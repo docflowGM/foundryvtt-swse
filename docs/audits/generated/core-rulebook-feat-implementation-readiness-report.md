@@ -1,7 +1,7 @@
 # Core Rulebook Feat Implementation Accuracy Report
 
-Generated: 2026-08-07T00:22:29.907Z
-Git commit: fb7dd11449f9dabcd6cfce4382ba18981aa17e5f
+Generated: 2026-08-07T01:53:11.672Z
+Git commit: b093d893c427f6a1c3a889653c86dbacf81cbec3
 
 Scope: Saga Edition Core Rulebook feats only. This audit separates implementation presence from implementation correctness.
 

@@ -8,6 +8,7 @@ import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { NPCTemplateDataLoader } from "/systems/foundryvtt-swse/scripts/core/npc-template-data-loader.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { hydrateImportedStatblockWeapon } from "/systems/foundryvtt-swse/scripts/engine/import/nonheroic-damage-profile-hydrator.js";
+import { FeatRegistry } from "/systems/foundryvtt-swse/scripts/registries/feat-registry.js";
 
 
 const NPC_IMPORT_NAMESPACE = 'swse';
@@ -590,10 +591,42 @@ export class NPCTemplateImporterEngine {
   }
 
   /**
-   * Create a feat item
+   * Create a feat item.
+   *
+   * A statblock feat row is a bare name, sometimes with a scoped choice in
+   * parentheses (e.g. "Weapon Focus (Rifles)"). Previously this built an
+   * item with no choiceMeta/selectedChoice at all — any scoped choice
+   * existed only inside the display name, forcing every runtime consumer
+   * onto the last-resort name-parenthetical fallback (see
+   * docs/audits/feat-choice-integrity-current-state.md §5). When the
+   * canonical feat registry has a matching entry, attach its choiceMeta
+   * and, if a parenthetical choice was given, populate system.selectedChoice
+   * so consumers can read structured data first.
    * @private
    */
   static _createFeatItem(featName) {
+    const trimmedFeatName = cleanText(featName);
+    const parenMatch = trimmedFeatName.match(/^(.*?)\s*\(([^)]+)\)\s*$/);
+    const baseName = parenMatch ? parenMatch[1].trim() : trimmedFeatName;
+    const parenthesizedChoice = parenMatch ? parenMatch[2].trim() : '';
+
+    let choiceMeta = null;
+    try {
+      choiceMeta = FeatRegistry.getByName(baseName)?.system?.choiceMeta || null;
+    } catch (_err) {
+      choiceMeta = null;
+    }
+
+    const choiceFields = {};
+    if (choiceMeta) {
+      choiceFields.choiceMeta = foundry?.utils?.deepClone ? foundry.utils.deepClone(choiceMeta) : JSON.parse(JSON.stringify(choiceMeta));
+      if (choiceMeta.required && parenthesizedChoice) {
+        choiceFields.selectedChoice = parenthesizedChoice;
+        choiceFields.choiceResolved = true;
+        choiceFields.choiceResolvedAt = new Date().toISOString();
+      }
+    }
+
     return {
       name: featName,
       type: 'feat',
@@ -602,7 +635,8 @@ export class NPCTemplateImporterEngine {
         description: `Imported from NPC template: ${featName}`,
         rarity: 'common',
         sourceAuthority: 'statblock',
-        playModeReference: true
+        playModeReference: true,
+        ...choiceFields
       },
       flags: {
         swse: { import: { sourceAuthority: 'statblock', raw: featName } }
