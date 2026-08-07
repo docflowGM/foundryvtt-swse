@@ -32,10 +32,80 @@
 
 import { swseLogger } from '../../../utils/logger.js';
 
+/**
+ * PHASE 4: write-behind autosave debounce window. Long enough to collapse
+ * one interaction burst (a handful of commits from one player action) into
+ * a single actor flag write; short enough that a player closing right after
+ * a commit still gets a durable save via flushSession()/close(), not a lost
+ * window.
+ */
+const AUTOSAVE_DEBOUNCE_MS = 100;
+
+/**
+ * PHASE 4: per actor+mode write-behind queue state.
+ *
+ * key = `${actorId}:${mode}` -> {
+ *   pendingSnapshot: plain session-data object awaiting write, or null
+ *   pendingActor: the actor that snapshot belongs to
+ *   timer: debounce timer handle, or null
+ *   writeInFlight: Promise<boolean> of the write currently running, or null
+ * }
+ *
+ * This is a transient, in-memory, per-process queue — not a persisted
+ * cache of session STATUS or data. It never survives past the actual
+ * actor.setFlag() write it exists to serialize/coalesce.
+ */
+const pendingWrites = new Map();
+
+function queueKey(actorId, mode) {
+  return `${actorId}:${mode}`;
+}
+
+function getQueueEntry(key) {
+  let entry = pendingWrites.get(key);
+  if (!entry) {
+    entry = { pendingSnapshot: null, pendingActor: null, timer: null, writeInFlight: null };
+    pendingWrites.set(key, entry);
+  }
+  return entry;
+}
+
 export class SessionStorage {
   /**
-   * Save session state to actor flags.
-   * Called after each commit to ensure recovery capability.
+   * Write-behind autosave: compile a snapshot now and schedule it to be
+   * written after a short debounce window, replacing any snapshot already
+   * queued for this actor+mode (latest wins). Does not wait for the actor
+   * flag write — normal commit persistence must never block player
+   * interaction on it. Use saveSession() when the caller needs a durable
+   * awaited write, or flushSession() to drain whatever is currently queued.
+   *
+   * @param {Actor} actor
+   * @param {ProgressionSession} session
+   * @param {string} [mode]
+   */
+  static queueSessionSave(actor, session, mode = 'chargen') {
+    if (!actor || !session) return;
+    const key = queueKey(actor.id, mode);
+    const entry = getQueueEntry(key);
+    entry.pendingSnapshot = this._compileSessionData(session, mode);
+    entry.pendingActor = actor;
+    if (entry.timer) clearTimeout(entry.timer);
+    entry.timer = setTimeout(() => {
+      entry.timer = null;
+      void this._drain(key);
+    }, AUTOSAVE_DEBOUNCE_MS);
+  }
+
+  /**
+   * Durable, serialized save. Compiles a snapshot now, cancels any pending
+   * debounce window for this actor+mode, and drains the queue immediately.
+   * Still participates in the SAME per-actor+mode serialization as
+   * queueSessionSave() — a write already in flight is awaited first, so
+   * this can never race a debounced autosave for the same actor+mode.
+   *
+   * Resolves only once the requested snapshot (or a newer one that
+   * superseded it before this could run) has completed its actor flag
+   * write, or been proven semantically identical to what's already stored.
    *
    * @param {Actor} actor - The actor
    * @param {ProgressionSession} session - The session to save
@@ -48,14 +118,104 @@ export class SessionStorage {
       return false;
     }
 
+    const key = queueKey(actor.id, mode);
+    const entry = getQueueEntry(key);
+    entry.pendingSnapshot = this._compileSessionData(session, mode);
+    entry.pendingActor = actor;
+    if (entry.timer) {
+      clearTimeout(entry.timer);
+      entry.timer = null;
+    }
+    return this._drain(key);
+  }
+
+  /**
+   * Durability boundary: write whatever is currently queued for this
+   * actor+mode (waiting behind any write already in flight), then resolve.
+   * A no-op — resolves immediately true — when nothing is queued and
+   * nothing is in flight. Call this before an irreversible operation
+   * (finalization) or on close, so a debounce window that has not fired
+   * yet cannot silently drop the latest draft.
+   *
+   * @param {Actor} actor
+   * @param {string} [mode]
+   * @returns {Promise<boolean>}
+   */
+  static async flushSession(actor, mode = 'chargen') {
+    if (!actor) return true;
+    const key = queueKey(actor.id, mode);
+    const entry = pendingWrites.get(key);
+    if (!entry) return true;
+    if (entry.timer) {
+      clearTimeout(entry.timer);
+      entry.timer = null;
+    }
+    return this._drain(key);
+  }
+
+  /**
+   * Core write-behind worker for one actor+mode key. Serializes behind any
+   * write already in flight (max concurrent setFlag per actor+mode = 1),
+   * then writes the latest queued snapshot. If a newer snapshot arrived
+   * while that write was running, drains again — so "latest wins" holds
+   * even under a continuous burst, without ever running two writes at once.
+   * @param {string} key
+   * @returns {Promise<boolean>}
+   * @private
+   */
+  static async _drain(key) {
+    const entry = pendingWrites.get(key);
+    if (!entry) return true;
+
+    if (entry.writeInFlight) {
+      try {
+        await entry.writeInFlight;
+      } catch (_err) {
+        // Already logged by _writeSnapshot(); this drain continues regardless.
+      }
+    }
+
+    if (!entry.pendingSnapshot) return true;
+
+    const snapshot = entry.pendingSnapshot;
+    const actor = entry.pendingActor;
+    entry.pendingSnapshot = null;
+
+    const writePromise = this._writeSnapshot(actor, snapshot);
+    entry.writeInFlight = writePromise;
+    let result;
     try {
-      const sessionData = this._compileSessionData(session, mode);
-      const flagPath = `progression.${mode}.session`;
+      result = await writePromise;
+    } finally {
+      if (entry.writeInFlight === writePromise) entry.writeInFlight = null;
+    }
+
+    // A newer snapshot queued itself while we were writing (or while we
+    // were waiting our turn above) — drain again so it becomes durable too.
+    if (entry.pendingSnapshot) {
+      return this._drain(key);
+    }
+    return result;
+  }
+
+  /**
+   * Write one compiled snapshot to actor flags, honoring the existing
+   * semantic-dedupe contract (a snapshot identical to what's already stored
+   * except for its timestamp is never re-written).
+   * @param {Actor} actor
+   * @param {Object} sessionData
+   * @returns {Promise<boolean>}
+   * @private
+   */
+  static async _writeSnapshot(actor, sessionData) {
+    if (!actor || !sessionData) return false;
+    try {
+      const flagPath = `progression.${sessionData.mode}.session`;
       const existing = actor.getFlag?.('foundryvtt-swse', flagPath);
       if (existing && this._isSemanticallySameSession(existing, sessionData)) {
         swseLogger.debug('[SessionStorage] Session save skipped; state unchanged', {
           actorId: actor.id,
-          mode,
+          mode: sessionData.mode,
           sessionId: existing.sessionId || sessionData.sessionId,
         });
         return true;
@@ -65,7 +225,7 @@ export class SessionStorage {
 
       swseLogger.debug('[SessionStorage] Session saved', {
         actorId: actor.id,
-        mode,
+        mode: sessionData.mode,
         sessionId: sessionData.sessionId,
       });
 
@@ -256,6 +416,33 @@ export class SessionStorage {
    */
   static async clearSession(actor, mode = 'chargen') {
     if (!actor) return false;
+
+    // PHASE 4: hard barrier against the write-behind queue. A pending
+    // debounced (or already-queued-for-flush) autosave for this actor+mode
+    // must never land AFTER a clear and resurrect the session it just
+    // cleared. Cancel/drop what's queued, then wait for any write already
+    // physically in flight to finish before the unset below runs — so the
+    // unset is always the LAST thing to happen for this key.
+    const key = queueKey(actor.id, mode);
+    const entry = pendingWrites.get(key);
+    if (entry) {
+      if (entry.timer) {
+        clearTimeout(entry.timer);
+        entry.timer = null;
+      }
+      entry.pendingSnapshot = null;
+      if (entry.writeInFlight) {
+        try {
+          await entry.writeInFlight;
+        } catch (_err) {
+          // Already logged by _writeSnapshot().
+        }
+      }
+      // Anything that queued itself while we awaited the in-flight write
+      // above is pre-clear intent too — drop it rather than let it write
+      // after this unset.
+      entry.pendingSnapshot = null;
+    }
 
     try {
       if (typeof actor.unsetFlag === 'function') {

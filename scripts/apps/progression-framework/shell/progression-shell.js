@@ -1337,12 +1337,23 @@ export class ProgressionShell extends SWSEApplicationV2 {
   /**
    * Register persistence hook to auto-save session after each commit.
    * Phase 1: Session persistence and recovery.
+   *
+   * PHASE 4: write-behind. ProgressionSession fires this hook synchronously
+   * and does not await it (_triggerPersistenceHooks()), so this must not
+   * itself await an actor flag write — queueSessionSave() compiles a
+   * snapshot immediately and schedules the actual write on a short debounce,
+   * collapsing a rapid commit burst into one write instead of one per
+   * commit. Step navigation (_persistSessionSnapshot()) and durability
+   * boundaries (finalization, close) still go through the durable,
+   * immediately-drained saveSession()/flushSession() — both share the same
+   * per-actor+mode serialization queue in SessionStorage, so a queued
+   * autosave and an explicit durable save can never race each other.
    * @private
    */
   _registerPersistenceHook() {
-    this.progressionSession.onPersist(async (session, stepId, selectionKey) => {
+    this.progressionSession.onPersist((session, stepId, selectionKey) => {
       if (this.actor && this.persistenceEnabled) {
-        await SessionStorage.saveSession(this.actor, session, this.mode);
+        SessionStorage.queueSessionSave(this.actor, session, this.mode);
       }
     });
   }
@@ -4043,6 +4054,21 @@ export class ProgressionShell extends SWSEApplicationV2 {
         selectionsCount: this.committedSelections.size,
       });
 
+      // PHASE 4: durable flush before the irreversible mutation. Ordinary
+      // commit autosaves are write-behind (queueSessionSave(), a short
+      // debounce) so a queued-but-not-yet-written draft could otherwise
+      // still be sitting there when finalization begins. If finalization
+      // throws/fails below, the latest draft must remain recoverable from
+      // actor flags rather than depending on a debounce window that may
+      // never fire.
+      if (this.actor && this.persistenceEnabled) {
+        try {
+          await SessionStorage.flushSession(this.actor, this.mode);
+        } catch (err) {
+          swseLogger.warn('[ProgressionShell] Failed to flush session before finalization:', err);
+        }
+      }
+
       // PHASE 4 STEP 4: Check for blocking issues in current step (usually summary)
       const currentDescriptor = this.steps[this.currentStepIndex];
       if (currentDescriptor) {
@@ -5293,6 +5319,20 @@ export class ProgressionShell extends SWSEApplicationV2 {
   // ---------------------------------------------------------------------------
 
   async close(options = {}) {
+    // PHASE 4: durable close. Flush any pending write-behind autosave before
+    // tearing down, so an unfinished session's latest draft is never lost
+    // to a debounce window that never got to fire. A no-op when nothing is
+    // queued -- e.g. finalization already flushed and drained the queue
+    // before this runs, so the draft it intentionally superseded is not
+    // resurrected.
+    if (this.actor && this.persistenceEnabled) {
+      try {
+        await SessionStorage.flushSession(this.actor, this.mode);
+      } catch (err) {
+        swseLogger.warn('[ProgressionShell] Failed to flush session on close:', err);
+      }
+    }
+
     // Drop any frame-pending repaint so a closing shell cannot paint again.
     this.renderScheduler?.dispose?.();
     this.mentorRecommendations?.dispose?.();

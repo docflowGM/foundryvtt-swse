@@ -193,7 +193,19 @@ export class ProgressionSurfaceAdapter {
       const plugin = descriptor ? this._app.stepPlugins?.get?.(descriptor.stepId) : null;
       if (!descriptor || !plugin) return;
 
-      if (typeof plugin.onDataReady === 'function') {
+      // PHASE 4: route through the shell's own (stepId, _stepDataRevision)
+      // gate instead of calling onDataReady() unconditionally. Every inline
+      // structural repaint (search/filter/sort included, since Track A's
+      // direct replacement calls afterInlineRender() again each time) was
+      // re-running full hydration on every paint; the standalone shell has
+      // never had this bug because _onRender()/the scoped work-surface
+      // updater both already go through _maybeRunOnDataReady(). Reusing that
+      // canonical authority (rather than a separate inline revision counter)
+      // means a step activation or an explicit invalidateStepData() call
+      // still runs it — nothing else does.
+      if (typeof this._app._maybeRunOnDataReady === 'function') {
+        await this._app._maybeRunOnDataReady(descriptor, plugin);
+      } else if (typeof plugin.onDataReady === 'function') {
         try {
           await Promise.resolve(plugin.onDataReady(this._app));
         } catch (err) {
@@ -261,7 +273,14 @@ export class ProgressionSurfaceAdapter {
 
       const event = { preventDefault: () => {}, stopPropagation: () => {} };
       await this._app._onNextStep(event, null);
-      await requestShellRender(this._shellHost, { reason: 'progression-surface-refresh', surfaceId: this.mode === 'chargen' ? 'chargen' : 'progression' });
+      // PHASE 4: route through the shell's own scheduler (_app.requestRender())
+      // instead of requesting a host render directly. If _onNextStep()'s own
+      // queued render (fired but not yet flushed) is still pending, this
+      // coalesces into that same paint; the scheduler -> app.render()
+      // interception then picks inline-vs-host itself, so bootstrap (no
+      // mounted host yet) is still handled correctly by that one decision
+      // point rather than needing a second one here.
+      await this._app.requestRender({ reason: 'progression-surface-refresh', structural: true, force: true, preserveScroll: true });
       return true;
     } catch (err) {
       SWSELogger.error('[ProgressionSurfaceAdapter] Failed to advance past intro:', err);
@@ -310,6 +329,206 @@ export class ProgressionSurfaceAdapter {
       SWSELogger.error('[ProgressionSurfaceAdapter] canonical shell render failed:', err);
       return '';
     }
+  }
+
+  /**
+   * PHASE 4: direct inline structural render.
+   *
+   * When the inline progression surface is already mounted, a progression
+   * structural change does not need the hosting character sheet to run its
+   * own full ApplicationV2 render() -> _prepareContext() ->
+   * ShellSurfaceRegistry -> buildViewModel() round trip just to replace the
+   * inline progression HTML. This reuses the exact same pieces that round
+   * trip ends at (buildViewModel() -> _prepareContext() +
+   * _renderCanonicalShellHtml(), the same canonical
+   * progression-shell.hbs template every path renders) and swaps only the
+   * mounted [data-inline-progression-host] contents directly.
+   *
+   * Returns false (never throws) whenever a direct replacement is not safe —
+   * stale surface, host not mounted yet, or the build itself did not
+   * produce ready HTML — so the caller can fall back to exactly one
+   * coordinated host render. This is a bootstrap/failure fallback, not the
+   * normal path.
+   * @returns {Promise<boolean>}
+   * @private
+   */
+  async _renderMountedInlineProgression() {
+    if (!this._app || !this._ready) return false;
+
+    const expectedSurface = this.mode === 'chargen' ? 'chargen' : 'progression';
+    if (this._shellHost?.shellSurface && this._shellHost.shellSurface !== expectedSurface) {
+      return false;
+    }
+
+    const region = this.mode === 'chargen' ? 'surface-chargen' : 'surface-progression';
+    const regionRoot = this._shellHost?.element?.querySelector?.(`[data-shell-region="${region}"]`);
+    if (!(regionRoot instanceof HTMLElement) || !regionRoot.isConnected) return false;
+    const hostEl = regionRoot.querySelector('[data-inline-progression-host]');
+    if (!(hostEl instanceof HTMLElement)) return false;
+
+    let viewModel = null;
+    try {
+      // Same seam the bootstrap/fallback path builds its HTML from — one
+      // canonical template, one buildViewModel() implementation, whichever
+      // path ends up calling it.
+      viewModel = await this.buildViewModel();
+    } catch (err) {
+      SWSELogger.warn('[ProgressionSurfaceAdapter] Direct inline structural render failed to build view model', err);
+      return false;
+    }
+    if (!viewModel?.isReady || !viewModel?.shellHtml) return false;
+
+    try {
+      hostEl.innerHTML = viewModel.shellHtml;
+      regionRoot.dataset.stepId = viewModel?.vm?.currentDescriptor?.stepId ?? '';
+      await this.afterInlineRender(regionRoot);
+      return true;
+    } catch (err) {
+      SWSELogger.warn('[ProgressionSurfaceAdapter] Direct inline structural render failed after HTML build', err);
+      return false;
+    }
+  }
+
+  /**
+   * Install the render() interception on a freshly-constructed app instance.
+   * Re-renders the character sheet (or, PHASE 4, replaces the mounted inline
+   * progression shell directly) instead of opening a standalone
+   * ApplicationV2 window, while preserving the exact inline progression
+   * scroll position. requestRender() queues deep snapshots on the app;
+   * direct shell.render() calls are also captured here so old step plugins
+   * cannot snap the player back to the top.
+   *
+   * Broken out of _initialize() so it can be exercised directly in a test
+   * against a lightweight app double, without the full (actor/session/step)
+   * bootstrap _initialize() otherwise requires.
+   * @param {object} app - The ProgressionShell/ChargenShell/LevelupShell/
+   *   FollowerShell instance (or an equivalent test double).
+   * @private
+   */
+  _installInlineRenderOverride(app) {
+    const self = this;
+    app.render = async function (...args) {
+      SWSELogger.debug('[ProgressionSurfaceAdapter] Intercepted render() — redirecting to shell');
+
+      const expectedSurface = self.mode === 'chargen' ? 'chargen' : 'progression';
+      if (self._shellHost?.shellSurface && self._shellHost.shellSurface !== expectedSurface) {
+        SWSELogger.debug('[ProgressionSurfaceAdapter] Dropping stale inline render outside active progression surface', {
+          expectedSurface,
+          currentSurface: self._shellHost.shellSurface,
+          mode: self.mode
+        });
+        return app;
+      }
+
+      const region = self.mode === 'chargen' ? 'surface-chargen' : 'surface-progression';
+      const captureNow = () => {
+        const currentRoot = self._shellHost?.element?.querySelector?.(`[data-shell-region="${region}"]`);
+        return typeof app._captureProgressionScrollSnapshots === 'function'
+          ? app._captureProgressionScrollSnapshots(currentRoot)
+          : [];
+      };
+
+      // Several step plugins still call shell.render() directly and do not await it.
+      // Without serialization, a second focus/commit render can capture the transient
+      // top-of-list DOM from the first render and permanently overwrite the real scroll.
+      if (app._inlineRenderPromise) {
+        app._pendingScrollSnapshots = [
+          ...(Array.isArray(app._pendingScrollSnapshots) ? app._pendingScrollSnapshots : []),
+          ...captureNow(),
+        ];
+        app._inlineRenderQueued = true;
+        return app;
+      }
+
+      const runInlineRenderPass = async () => {
+        const currentRoot = self._shellHost?.element?.querySelector?.(`[data-shell-region="${region}"]`);
+        const queuedSnapshots = Array.isArray(app._pendingScrollSnapshots) ? app._pendingScrollSnapshots : [];
+        const liveSnapshots = typeof app._captureProgressionScrollSnapshots === 'function'
+          ? app._captureProgressionScrollSnapshots(currentRoot)
+          : [];
+        const progressionScrollSnapshots = [...queuedSnapshots, ...liveSnapshots];
+        app._pendingScrollSnapshots = null;
+
+        // Keep host-level scroll as a fallback for sheet/chrome scroll containers
+        // outside the canonical progression root.
+        const scrollState = self._captureScrollState(currentRoot);
+        const focusedElement = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+        const focusedId = focusedElement?.id || null;
+        const focusedName = focusedElement?.getAttribute?.('name') || null;
+        const focusedAction = focusedElement?.dataset?.action || null;
+
+        // PHASE 4: try a direct inline replacement of the already-mounted
+        // progression shell first. This is the normal path once the
+        // holopad surface exists — it avoids rebuilding the whole hosting
+        // character sheet just to repaint progression-internal structural
+        // changes. Bootstrap (no mounted host yet), a stale/switched
+        // surface, or a build/render failure all report false and fall
+        // through to exactly one coordinated host render, same as before.
+        const inlineHandled = await self._renderMountedInlineProgression().catch(err => {
+          SWSELogger.warn('[ProgressionSurfaceAdapter] Direct inline structural render threw; falling back to host render', err);
+          return false;
+        });
+
+        let root;
+        if (inlineHandled) {
+          root = self._shellHost?.element?.querySelector?.(`[data-shell-region="${region}"]`);
+        } else {
+          await requestShellRender(self._shellHost, { reason: 'progression-surface-refresh', surfaceId: self.mode === 'chargen' ? 'chargen' : 'progression' });
+
+          // After a shell-host render, immediately rebind the inline progression DOM.
+          // Intro splash stages call shell.render() during the animation; without this
+          // rebind, translation can target stale DOM from the previous stage.
+          root = self._shellHost?.element?.querySelector?.(`[data-shell-region="${region}"]`);
+          if (root?.isConnected) await self.afterInlineRender(root);
+        }
+
+        const restoreAll = () => {
+          if (!root?.isConnected) return;
+          app._restoreProgressionScrollSnapshots?.(progressionScrollSnapshots, root);
+          self._restoreScrollState(root, scrollState);
+
+          let restored = null;
+          if (focusedId) restored = document.getElementById(focusedId);
+          if (!restored && focusedName) restored = root.querySelector(`[name="${CSS.escape(focusedName)}"]`);
+          if (!restored && focusedAction) restored = root.querySelector(`[data-action="${CSS.escape(focusedAction)}"]`);
+          if (restored instanceof HTMLElement && typeof restored.focus === 'function') {
+            restored.focus({ preventScroll: true });
+          }
+        };
+
+        // Restore once synchronously before this render promise resolves. This is
+        // important because several commit paths call render twice; the second render
+        // must capture the user's restored position, not a transient top-of-list DOM.
+        restoreAll();
+        await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+        restoreAll();
+        setTimeout(restoreAll, 0);
+        setTimeout(restoreAll, 75);
+        setTimeout(restoreAll, 175);
+      };
+
+      app._inlineRenderPromise = (async () => {
+        let passes = 0;
+        do {
+          app._inlineRenderQueued = false;
+          await runInlineRenderPass();
+          passes += 1;
+          if (passes >= 4 && app._inlineRenderQueued) {
+            SWSELogger.warn('[ProgressionSurfaceAdapter] Inline render queue exceeded safety pass limit; dropping extra rerender');
+            app._inlineRenderQueued = false;
+          }
+        } while (app._inlineRenderQueued);
+      })();
+
+      try {
+        await app._inlineRenderPromise;
+      } finally {
+        app._inlineRenderPromise = null;
+        app._inlineRenderQueued = false;
+      }
+
+      return app;
+    };
   }
 
   _scheduleIntroWatchdog(plugin) {
@@ -541,7 +760,10 @@ export class ProgressionSurfaceAdapter {
         });
       }
       this._app.progressionSession.currentStepId = this._app.steps?.[this._app.currentStepIndex]?.stepId ?? targetStep;
-      await requestShellRender(this._shellHost, { reason: 'progression-surface-refresh', surfaceId: this.mode === 'chargen' ? 'chargen' : 'progression' });
+      // PHASE 4: route through the scheduler (see advancePastIntro() for why) —
+      // the very first call during _initialize() legitimately has no mounted
+      // inline host yet, which app.render()'s own fallback already handles.
+      await this._app.requestRender({ reason: 'progression-surface-refresh', structural: true, force: true, preserveScroll: true });
       return true;
     } catch (err) {
       SWSELogger.error('[ProgressionSurfaceAdapter] Failed to navigate to requested step:', err);
@@ -645,116 +867,10 @@ export class ProgressionSurfaceAdapter {
       };
 
       // CRITICAL: Override render() to prevent standalone window.
-      // Re-render the character sheet instead, while preserving the exact inline
-      // progression scroll position.  requestRender() queues deep snapshots on the
-      // app; direct shell.render() calls are also captured here so old step plugins
-      // cannot snap the player back to the top.
-      const self = this;
-      app.render = async function(...args) {
-        SWSELogger.debug('[ProgressionSurfaceAdapter] Intercepted render() — redirecting to shell');
-
-        const expectedSurface = self.mode === 'chargen' ? 'chargen' : 'progression';
-        if (self._shellHost?.shellSurface && self._shellHost.shellSurface !== expectedSurface) {
-          SWSELogger.debug('[ProgressionSurfaceAdapter] Dropping stale inline render outside active progression surface', {
-            expectedSurface,
-            currentSurface: self._shellHost.shellSurface,
-            mode: self.mode
-          });
-          return app;
-        }
-
-        const region = self.mode === 'chargen' ? 'surface-chargen' : 'surface-progression';
-        const captureNow = () => {
-          const currentRoot = self._shellHost?.element?.querySelector?.(`[data-shell-region="${region}"]`);
-          return typeof app._captureProgressionScrollSnapshots === 'function'
-            ? app._captureProgressionScrollSnapshots(currentRoot)
-            : [];
-        };
-
-        // Several step plugins still call shell.render() directly and do not await it.
-        // Without serialization, a second focus/commit render can capture the transient
-        // top-of-list DOM from the first render and permanently overwrite the real scroll.
-        if (app._inlineRenderPromise) {
-          app._pendingScrollSnapshots = [
-            ...(Array.isArray(app._pendingScrollSnapshots) ? app._pendingScrollSnapshots : []),
-            ...captureNow(),
-          ];
-          app._inlineRenderQueued = true;
-          return app;
-        }
-
-        const runInlineRenderPass = async () => {
-          const currentRoot = self._shellHost?.element?.querySelector?.(`[data-shell-region="${region}"]`);
-          const queuedSnapshots = Array.isArray(app._pendingScrollSnapshots) ? app._pendingScrollSnapshots : [];
-          const liveSnapshots = typeof app._captureProgressionScrollSnapshots === 'function'
-            ? app._captureProgressionScrollSnapshots(currentRoot)
-            : [];
-          const progressionScrollSnapshots = [...queuedSnapshots, ...liveSnapshots];
-          app._pendingScrollSnapshots = null;
-
-          // Keep host-level scroll as a fallback for sheet/chrome scroll containers
-          // outside the canonical progression root.
-          const scrollState = self._captureScrollState(currentRoot);
-          const focusedElement = document.activeElement instanceof HTMLElement ? document.activeElement : null;
-          const focusedId = focusedElement?.id || null;
-          const focusedName = focusedElement?.getAttribute?.('name') || null;
-          const focusedAction = focusedElement?.dataset?.action || null;
-
-          await requestShellRender(self._shellHost, { reason: 'progression-surface-refresh', surfaceId: self.mode === 'chargen' ? 'chargen' : 'progression' });
-
-          // After a shell-host render, immediately rebind the inline progression DOM.
-          // Intro splash stages call shell.render() during the animation; without this
-          // rebind, translation can target stale DOM from the previous stage.
-          const root = self._shellHost?.element?.querySelector?.(`[data-shell-region="${region}"]`);
-          if (root?.isConnected) await self.afterInlineRender(root);
-
-          const restoreAll = () => {
-            if (!root?.isConnected) return;
-            app._restoreProgressionScrollSnapshots?.(progressionScrollSnapshots, root);
-            self._restoreScrollState(root, scrollState);
-
-            let restored = null;
-            if (focusedId) restored = document.getElementById(focusedId);
-            if (!restored && focusedName) restored = root.querySelector(`[name="${CSS.escape(focusedName)}"]`);
-            if (!restored && focusedAction) restored = root.querySelector(`[data-action="${CSS.escape(focusedAction)}"]`);
-            if (restored instanceof HTMLElement && typeof restored.focus === 'function') {
-              restored.focus({ preventScroll: true });
-            }
-          };
-
-          // Restore once synchronously before this render promise resolves. This is
-          // important because several commit paths call render twice; the second render
-          // must capture the user's restored position, not a transient top-of-list DOM.
-          restoreAll();
-          await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
-          restoreAll();
-          setTimeout(restoreAll, 0);
-          setTimeout(restoreAll, 75);
-          setTimeout(restoreAll, 175);
-        };
-
-        app._inlineRenderPromise = (async () => {
-          let passes = 0;
-          do {
-            app._inlineRenderQueued = false;
-            await runInlineRenderPass();
-            passes += 1;
-            if (passes >= 4 && app._inlineRenderQueued) {
-              SWSELogger.warn('[ProgressionSurfaceAdapter] Inline render queue exceeded safety pass limit; dropping extra rerender');
-              app._inlineRenderQueued = false;
-            }
-          } while (app._inlineRenderQueued);
-        })();
-
-        try {
-          await app._inlineRenderPromise;
-        } finally {
-          app._inlineRenderPromise = null;
-          app._inlineRenderQueued = false;
-        }
-
-        return app;
-      };
+      // Extracted to _installInlineRenderOverride() so it can be exercised
+      // directly against a lightweight test double instead of requiring the
+      // full (heavy) bootstrap this method runs through.
+      this._installInlineRenderOverride(app);
 
       // Initialize steps (same as ProgressionShell.open() but without render).
       // Sheet free-add and reconciliation launches are targeted maintenance flows;
