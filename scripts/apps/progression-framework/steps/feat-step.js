@@ -1638,11 +1638,15 @@ export class FeatStep extends ProgressionStepPlugin {
   /**
    * Ranked search results, name-priority tiers first (exact/starts-with/
    * includes \u2014 unchanged from before, including diacritic-safe name
-   * normalization via _normalizeSearchText), then the canonical rich
-   * matcher (Boolean AND/OR/NOT, wildcards, quoted phrases \u2014 see
-   * utils/progression-search.js) against tags/prerequisites/description,
-   * and finally against the name itself for Boolean/wildcard name queries
-   * the plain tiers above would not catch (e.g. "skill* focus").
+   * normalization via _normalizeSearchText). Everything after that is
+   * gated by _searchMatchesFeat()'s whole-item combined text \u2014 name +
+   * tags + prerequisites + description together \u2014 so a cross-field
+   * Boolean query like "shadow AND stealth" (name has "shadow", description
+   * has "stealth") is satisfied by the feat as a whole even though neither
+   * field alone contains both terms. The per-field checks below only run
+   * once that gate has passed, and exist purely to rank matches for display
+   * order (tags before prerequisites before description); they never decide
+   * inclusion on their own.
    */
   _getSearchResultFeats() {
     const rawQuery = String(this._searchQuery || '').trim();
@@ -1660,6 +1664,13 @@ export class FeatStep extends ProgressionStepPlugin {
       if (nameQuery && name === nameQuery) return 0;
       if (nameQuery && name.startsWith(nameQuery)) return 1;
       if (nameQuery && name.includes(nameQuery)) return 2;
+
+      // Canonical inclusion gate: does the query hold against this feat's
+      // COMPLETE searchable text? Must pass before any ranking tier below
+      // is allowed to place (or, wrongly, exclude) this feat.
+      if (!this._searchMatchesFeat(feat, compiled)) return 999;
+
+      if (compiled.test(buildProgressionSearchText({ name: feat?.name }))) return 2.5;
       const tagsText = buildProgressionSearchText(null, [feat?.subcategory, ...(feat?.uiBroadTags || [])]);
       if (compiled.test(tagsText)) return 3;
       const prereqText = buildProgressionSearchText(null, [
@@ -1668,8 +1679,10 @@ export class FeatStep extends ProgressionStepPlugin {
       if (compiled.test(prereqText)) return 4;
       const descText = buildProgressionSearchText(null, [this._getFeatDescription(feat)]);
       if (compiled.test(descText)) return 5;
-      if (compiled.test(buildProgressionSearchText({ name: feat?.name }))) return 2.5;
-      return 999;
+      // Matched only against the combined whole-item text (e.g. a
+      // cross-field Boolean expression spanning name+description together)
+      // \u2014 no single field above satisfied the query on its own.
+      return 6;
     };
 
     return [...(source || [])]

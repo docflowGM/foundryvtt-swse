@@ -25,11 +25,11 @@
  * call, so prefer the two-layer form above inside a filter loop).
  */
 
-import { extractDescriptionText } from '../detail-rail-normalizer.js';
+import { normalizeDescriptionCandidate } from '../detail-rail-normalizer.js';
 
 /**
- * Strip HTML/entities from a raw supplemental field. extractDescriptionText()
- * already does this for the description/benefit shapes it recognizes;
+ * Strip HTML/entities from a raw supplemental field. normalizeDescriptionCandidate()
+ * already does this for the description/benefit/summary shapes it recognizes;
  * extraFields are step-supplied values (tags, prerequisite text, source
  * names, ...) that may or may not be HTML, so the same light cleanup is
  * applied defensively here.
@@ -65,9 +65,9 @@ function normalizeWhitespace(text) {
 
 /**
  * Build normalized, player-facing searchable text for a progression
- * catalog item: name + description/benefit (via extractDescriptionText,
- * which already knows every system.description/benefit shape this catalog
- * uses) + any narrow supplemental fields the calling step opts into.
+ * catalog item: name + EVERY description/benefit/summary field it carries
+ * (aggregated, not just the first one found — see buildAggregatedDescriptionText())
+ * + any narrow supplemental fields the calling step opts into.
  *
  * Deliberately excludes: ids, uuids, sourcebook/internal metadata,
  * execution/mechanics-mode flags, prerequisite *engine* state. A step that
@@ -76,16 +76,71 @@ function normalizeWhitespace(text) {
  * it on its own.
  *
  * @param {Object} item - A catalog item, or any object with a `name` and/or
- *   description-shaped fields extractDescriptionText() recognizes.
+ *   description-shaped fields collectDescriptionFieldCandidates() recognizes.
  * @param {Array<*>} [extraFields] - Additional player-facing text this step
  *   wants searchable (tags, short summary, prerequisite line, ...). Each
  *   entry is stringified, HTML-stripped, and folded in.
  * @returns {string} Normalized (lowercase, whitespace-collapsed) text.
  */
+/**
+ * Every description/benefit/summary-shaped field an item might carry.
+ * Unlike extractDescriptionText() (a *display* resolver that intentionally
+ * stops at the first usable candidate — description OR benefit, whichever
+ * comes first, never both), search must aggregate ALL of them: an item whose
+ * description says one thing and whose benefit says another must be
+ * searchable by either. Each candidate is normalized independently via
+ * normalizeDescriptionCandidate() (shared with the display resolver, so HTML
+ * stripping/entity decoding never diverges between the two), then deduped.
+ */
+function collectDescriptionFieldCandidates(item) {
+  return [
+    item?.system?.description?.value,
+    item?.system?.description?.long,
+    item?.system?.description?.short,
+    item?.system?.description?.text,
+    item?.system?.description?.html,
+    item?.system?.description?.plain,
+    item?.system?.description,
+    item?.system?.benefit?.value,
+    item?.system?.benefit,
+    item?.system?.details?.description?.value,
+    item?.system?.details?.description,
+    item?.system?.summary,
+    item?.system?.shortSummary,
+    item?.description?.value,
+    item?.description?.long,
+    item?.description?.short,
+    item?.description?.text,
+    item?.description?.html,
+    item?.description?.plain,
+    item?.description,
+    item?.narrativeDescription,
+    item?.fantasy,
+    item?.text?.description,
+    item?.benefit?.value,
+    item?.benefit,
+    item?.summary,
+    item?.shortSummary,
+  ];
+}
+
+function buildAggregatedDescriptionText(item) {
+  const seen = new Set();
+  const parts = [];
+  for (const candidate of collectDescriptionFieldCandidates(item)) {
+    const normalized = normalizeDescriptionCandidate(candidate);
+    if (normalized && !seen.has(normalized)) {
+      seen.add(normalized);
+      parts.push(normalized);
+    }
+  }
+  return parts.join(' ');
+}
+
 export function buildProgressionSearchText(item, extraFields = []) {
   const parts = [
     item?.name,
-    extractDescriptionText(item),
+    buildAggregatedDescriptionText(item),
     ...(Array.isArray(extraFields) ? extraFields : [extraFields]),
   ]
     .map(stripMarkup)

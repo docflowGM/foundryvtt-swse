@@ -64,6 +64,36 @@ const { buildProgressionSearchText, compileProgressionSearchQuery, matchesProgre
 }
 
 /* ------------------------------------------------------------------ *
+ * 1b. Field AGGREGATION: description and benefit are not first-match-wins.
+ *     An item with BOTH a description and a benefit must be searchable by
+ *     either — the display resolver (extractDescriptionText) intentionally
+ *     stops at the first usable field, but search must not inherit that.
+ * ------------------------------------------------------------------ */
+{
+  const item = {
+    name: 'Covert Assault',
+    system: {
+      description: { value: 'You may make an attack after moving.' },
+      benefit: { value: 'You may make a Stealth check before the attack.' },
+    },
+  };
+  assert.ok(matchesProgressionSearch(item, 'attack'), 'description field lost when benefit is also present');
+  assert.ok(matchesProgressionSearch(item, 'stealth'), 'benefit field lost when description came first — first-match-wins regression');
+  assert.ok(matchesProgressionSearch(item, 'attack AND stealth'), 'combined description+benefit Boolean match failed');
+
+  // summary / shortSummary / system.shortSummary are canonical defaults now —
+  // no extraFields required to reach them.
+  const summaryItem = { name: 'Danger Sense', summary: 'Grants a bonus to Perception checks.' };
+  assert.ok(matchesProgressionSearch(summaryItem, 'perception'), 'summary is not a canonical default searchable field');
+
+  const shortSummaryItem = { name: 'Quick Draw', shortSummary: 'Draw and fire in one motion.' };
+  assert.ok(matchesProgressionSearch(shortSummaryItem, 'draw'), 'shortSummary is not a canonical default searchable field');
+
+  const systemShortSummaryItem = { name: 'Evasive Maneuvers', system: { shortSummary: 'Improves starfighter dodging.' } };
+  assert.ok(matchesProgressionSearch(systemShortSummaryItem, 'dodging'), 'system.shortSummary is not a canonical default searchable field');
+}
+
+/* ------------------------------------------------------------------ *
  * 2. Internal metadata is never searched by default.
  * ------------------------------------------------------------------ */
 {
@@ -289,6 +319,60 @@ const { TalentStep } = await import(
   const boolResults = step._getSearchResultFeats().map(f => f.name);
   assert.ok(boolResults.includes('Shadow Striker'));
   assert.ok(!boolResults.includes('Armor Mastery'), 'FeatStep Boolean AND NOT query did not exclude the negated feat');
+
+  // Cross-field Boolean: a term in the NAME and a term in the DESCRIPTION
+  // together, where neither field alone satisfies the whole expression.
+  // "Shadow Strike" contains "shadow" but not "stealth"; its description
+  // contains "stealth" but not "shadow" — only the combined whole-item text
+  // has both. _getSearchResultFeats() must gate on that combined text, not
+  // score name/tags/prerequisites/description as independent all-or-nothing
+  // matches (the pre-fix defect: none of those isolated fields individually
+  // contains both terms, so the feat was wrongly dropped).
+  step._allFeats = [
+    { id: 'f4', name: 'Shadow Strike', system: { description: { value: 'You may use Stealth before attacking.' } } },
+    { id: 'f5', name: 'Loud Strike', system: { description: { value: 'A noisy, direct attack with no finesse.' } } },
+  ];
+  step._legalFeats = step._allFeats;
+
+  for (const q of ['shadow stealth', 'shadow AND stealth']) {
+    step._searchQuery = q;
+    const names = step._getSearchResultFeats().map(f => f.name);
+    assert.ok(names.includes('Shadow Strike'), `cross-field whole-item match failed for query "${q}"`);
+  }
+
+  step._searchQuery = 'shadow AND NOT armor';
+  assert.ok(step._getSearchResultFeats().map(f => f.name).includes('Shadow Strike'),
+    'cross-field "shadow AND NOT armor" incorrectly excluded a legitimate match');
+
+  step._searchQuery = 'shadow AND armor';
+  assert.ok(!step._getSearchResultFeats().map(f => f.name).includes('Shadow Strike'),
+    '"shadow AND armor" incorrectly matched a feat with no "armor" anywhere in its searchable text');
+
+  // One term in prerequisite text, another in the name — proves the match is
+  // truly whole-item, not just name+description.
+  step._allFeats = [
+    {
+      id: 'f6', name: 'Zealous Riposte',
+      prerequisiteText: 'Requires Weapon Focus (Vibroswords)',
+      system: { description: { value: 'A defensive counter-attack technique.' } },
+    },
+  ];
+  step._legalFeats = step._allFeats;
+  step._searchQuery = 'zealous AND vibroswords';
+  assert.ok(step._getSearchResultFeats().map(f => f.name).includes('Zealous Riposte'),
+    'whole-item match failed across name + prerequisite text');
+
+  // Restore the original fixtures for the assertions below (name-priority
+  // ranking must still hold for simple literal queries).
+  step._allFeats = [
+    { id: 'f1', name: 'Shadow Striker', system: { description: { value: 'Gain a bonus when using Stealth to approach a target.' } } },
+    { id: 'f2', name: 'Armor Mastery', system: { description: { value: 'You gain a bonus to armor.' } } },
+    { id: 'f3', name: 'Skill Focus (Stealth)', system: { description: { value: 'You are exceptionally skilled.' } } },
+  ];
+  step._legalFeats = step._allFeats;
+  step._searchQuery = 'stealth';
+  assert.equal(step._getSearchResultFeats().map(f => f.name)[0], 'Skill Focus (Stealth)',
+    'FeatStep name-priority ranking regressed after the whole-item gate change');
 
   // Static contract: the file actually imports and calls the canonical module.
   const src = read('scripts/apps/progression-framework/steps/feat-step.js');
