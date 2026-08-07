@@ -2,8 +2,17 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import process from 'node:process';
+import { execFileSync } from 'node:child_process';
 
 const ROOT = process.cwd();
+
+function gitCommit() {
+  try {
+    return execFileSync('git', ['rev-parse', 'HEAD'], { cwd: ROOT }).toString().trim();
+  } catch {
+    return null;
+  }
+}
 const backlogPath = path.join(ROOT, 'data/feat-implementation/core-rulebook-feat-implementation-backlog.json');
 const reviewPath = path.join(ROOT, 'data/feat-implementation/core-rulebook-feat-implementation-review-list.json');
 const validityRegistryPath = path.join(ROOT, 'data/feat-validity-registry.json');
@@ -21,7 +30,7 @@ function ensureDir(file) {
 const backlog = readJson(backlogPath);
 const review = readJson(reviewPath);
 const validityRegistry = readJson(validityRegistryPath);
-const invalidStatuses = new Set(['invalid_not_swse_feat', 'class_feature_not_feat']);
+const invalidStatuses = new Set(['invalid_not_swse_feat', 'class_feature_not_feat', 'talent_domain_not_feat']);
 const invalidByName = new Map(
   validityRegistry.entries
     .filter(e => invalidStatuses.has(e.status))
@@ -117,6 +126,8 @@ const validReviewEntries = review.entries.filter(e => !invalidByName.has(e.name)
 
 const report = {
   schemaVersion: 1,
+  generatedAt: new Date().toISOString(),
+  gitCommit: gitCommit(),
   phase: backlog.phase,
   scope: backlog.scope,
   totals: {
@@ -148,6 +159,9 @@ fs.writeFileSync(reportJsonPath, `${JSON.stringify(report, null, 2)}\n`);
 
 const md = [];
 md.push('# Core Rulebook Feat Implementation Accuracy Report');
+md.push('');
+md.push(`Generated: ${report.generatedAt}`);
+md.push(`Git commit: ${report.gitCommit ?? 'unknown'}`);
 md.push('');
 md.push(`Scope: ${backlog.scope}`);
 md.push('');

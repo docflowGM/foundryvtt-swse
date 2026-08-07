@@ -20,9 +20,21 @@ name: Rolling System Validation
 #   - No new `actor.update(` or `new Roll(` bypass appears in the
 #     rolling-system source files this workflow tracks.
 #   - packs/feats.db is non-empty and has exact ID-set and content-hash
-#     parity with data/feat-catalog.json (tools/verify-feats-pack-source.mjs)
-#     — see docs/audits/generated/feat-inventory-report.md for the current
-#     reconciliation of the feats compendium.
+#     parity with data/feat-catalog.json (tools/verify-feats-pack-source.mjs
+#     and, in --strict mode, tools/audit-feat-inventory.mjs, which also
+#     fails on duplicate ids/names, non-feat records, or a known-invalid
+#     feat name reappearing in the canonical catalog) — see
+#     docs/audits/generated/feat-inventory-report.md for the current
+#     reconciliation of the feats compendium and
+#     docs/audits/feat-integrity-current-state.md for how the prerequisite
+#     architecture (AbilityEngine -> PrerequisiteChecker) was verified.
+#   - The rolling-system test suite above also covers
+#     tests/feat-catalog-validity-regression.test.mjs (known-invalid feats
+#     can't silently return), tests/ability-engine-acquisition.test.mjs
+#     (representative AbilityEngine.evaluateAcquisition legality scenarios),
+#     and tests/prerequisite-authority-boundary-regression.test.mjs (the
+#     existing authority-boundary and prerequisite-identity dev audits, run
+#     as an automated gate instead of manually).
 #
 # What this workflow does NOT verify:
 #   - Anything that requires a running Foundry VTT v13 instance (actual
@@ -97,6 +109,9 @@ jobs:
 
       - name: Guard — feats pack source integrity
         run: node tools/verify-feats-pack-source.mjs
+
+      - name: Guard — feat inventory (strict)
+        run: node tools/audit-feat-inventory.mjs --strict
 
       - name: Guard — combat-math single-source-of-truth
         run: node tools/check-combat-math-ssot.mjs --strict

@@ -7,13 +7,14 @@
     "source_unavailable",
     "source_conflict",
     "invalid_not_swse_feat",
-    "class_feature_not_feat"
+    "class_feature_not_feat",
+    "talent_domain_not_feat"
   ],
   "defaultStatusForUnlistedEntries": "unclassified",
   "notes": [
     "Absence from this registry means a feat has not yet been run through a dedicated validity audit — it is NOT an implicit claim that the entry is verified.",
-    "Entries below were adjudicated in docs/audits/strict-combat-bucket-feat-validity-audit-2026-07-03.json, which records explicit user confirmation (see that file's inputs.manualAdjudication) that these names are not legal SWSE feats, or in Delay Damage's case, are a class feature rather than a feat.",
-    "invalid_not_swse_feat / class_feature_not_feat entries remain present as compendium documents in data/feat-catalog.json and packs/feats.db as of this registry's creation. They must be excluded from implementation queues, readiness reports, and chargen eligibility going forward; removing them from the shipped compendium is a separate follow-up decision, not made by this registry."
+    "invalid_not_swse_feat / class_feature_not_feat entries below were adjudicated in docs/audits/strict-combat-bucket-feat-validity-audit-2026-07-03.json, which records explicit user confirmation (see that file's inputs.manualAdjudication) that these names are not legal SWSE feats, or in Delay Damage's case, are a class feature rather than a feat. They remain present as compendium documents in data/feat-catalog.json and packs/feats.db as of this registry's creation. They must be excluded from implementation queues, readiness reports, and chargen eligibility going forward; removing them from the shipped compendium is a separate follow-up decision, not made by this registry.",
+    "talent_domain_not_feat entries are correctly ABSENT from data/feat-catalog.json / packs/feats.db as of this registry's creation. scripts/data/feat-domain-guard.js (TALENT_ONLY_FEAT_CONTAMINANTS) is the current-repo authority: these names are real SWSE talents that had been scraped into the feat catalog as fabricated feat records with plausible-but-invented mechanical text distinct from the real talent text. The mechanically-distinct 'feat' record for each of these names still exists as a leftover, unreferenced artifact in packs/feat-catalog.db (an orphaned file not declared by system.json) — that file must NOT be used to 'restore' these names into the canonical catalog. See docs/audits/feat-inventory-history-reconciliation.md."
   ],
   "entries": [
     {
@@ -70,6 +71,71 @@
       "name": "Delay Damage",
       "status": "class_feature_not_feat",
       "source": "docs/audits/strict-combat-bucket-feat-validity-audit-2026-07-03.json"
+    },
+    {
+      "name": "Indomitable Will",
+      "status": "talent_domain_not_feat",
+      "source": "scripts/data/feat-domain-guard.js"
+    },
+    {
+      "name": "Lucky Shot",
+      "status": "talent_domain_not_feat",
+      "source": "scripts/data/feat-domain-guard.js"
+    },
+    {
+      "name": "Stunning Strike",
+      "status": "talent_domain_not_feat",
+      "source": "scripts/data/feat-domain-guard.js"
+    },
+    {
+      "name": "Noble Fencing Style",
+      "status": "talent_domain_not_feat",
+      "source": "scripts/data/feat-domain-guard.js"
+    },
+    {
+      "name": "Greater Weapon Specialization",
+      "status": "talent_domain_not_feat",
+      "source": "scripts/data/feat-domain-guard.js"
+    },
+    {
+      "name": "Force Focus",
+      "status": "talent_domain_not_feat",
+      "source": "scripts/data/feat-domain-guard.js"
+    },
+    {
+      "name": "Educated",
+      "status": "talent_domain_not_feat",
+      "source": "scripts/data/feat-domain-guard.js"
+    },
+    {
+      "name": "Greater Weapon Focus",
+      "status": "talent_domain_not_feat",
+      "source": "scripts/data/feat-domain-guard.js"
+    },
+    {
+      "name": "Weapon Specialization",
+      "status": "talent_domain_not_feat",
+      "source": "scripts/data/feat-domain-guard.js"
+    },
+    {
+      "name": "Recall",
+      "status": "talent_domain_not_feat",
+      "source": "scripts/data/feat-domain-guard.js"
+    },
+    {
+      "name": "Harm’s Way",
+      "status": "talent_domain_not_feat",
+      "source": "scripts/data/feat-domain-guard.js"
+    },
+    {
+      "name": "Forceful Warrior",
+      "status": "talent_domain_not_feat",
+      "source": "scripts/data/feat-domain-guard.js"
+    },
+    {
+      "name": "Redirect Shot",
+      "status": "talent_domain_not_feat",
+      "source": "scripts/data/feat-domain-guard.js"
     }
   ]
 }

@@ -1,0 +1,1656 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-08-07T00:22:29.837Z",
+  "purpose": "Prerequisite INPUT integrity for the canonical feat catalog: does each feat supply data the existing prerequisite architecture (FEAT_PREREQUISITE_AUTHORITY + prerequisite-normalizer.js) can consume consistently? Does not evaluate or decide legality. IMPORTANT: normalizeFeatPrerequisites (progression/prerequisites/prerequisite-normalizer.js) is NOT the runtime legality path for feat acquisition — AbilityEngine.evaluateAcquisition calls PrerequisiteChecker.checkFeatPrerequisites (scripts/data/prerequisite-checker.js), which has its own independent legacy-string parser and was not exercised by this script. Findings here describe normalizer-INPUT/fallback-classification quality on a real but currently orphaned pipeline, not confirmed live chargen breakage. See docs/audits/feat-integrity-current-state.md.",
+  "totals": {
+    "catalogDocCount": 390,
+    "clean": 270,
+    "warnings": 120,
+    "errors": 0
+  },
+  "clean": [
+    "Wary Sentries",
+    "Resurgence",
+    "Spray Shot",
+    "Improved Charge",
+    "Battering Attack",
+    "Expert Droid Repair",
+    "Galactic Alliance Military Training",
+    "Slippery Maneuver",
+    "Flurry",
+    "Point-Blank Shot",
+    "Fast Surge",
+    "Grapple Resistance",
+    "Unstoppable Force",
+    "Conditioning",
+    "Burst Fire",
+    "Zero Range",
+    "Mounted Regiment",
+    "Toughness",
+    "Grazing Shot",
+    "Ascension Specialists",
+    "Rapid Reaction",
+    "Channel Rage",
+    "Skill Focus",
+    "Accelerated Strike",
+    "Technical Experts",
+    "Logic Upgrade: Self-Defense",
+    "Medical Team",
+    "K'tara Training",
+    "Force Regimen Mastery",
+    "Tumble Defense",
+    "Exotic Weapon Proficiency",
+    "Close Combat Escape",
+    "Vehicular Combat",
+    "Damage Conversion",
+    "Lightning Draw",
+    "Deft Charge",
+    "Riflemaster",
+    "Weapon Finesse",
+    "Predictive Defense",
+    "Disturbing Presence",
+    "Adaptable Talent",
+    "Poison Resistance",
+    "Dive for Cover",
+    "Advantageous Cover",
+    "Fortifying Recovery",
+    "Flèche",
+    "Tactical Advantage",
+    "Hideous Visage",
+    "Cut the Red Tape",
+    "Republic Military Training",
+    "Skill Challenge: Catastrophic Avoidance",
+    "Impersonate",
+    "Dreadful Countenance",
+    "Hold Together",
+    "Shake It Off",
+    "Relentless Attack",
+    "Signature Device",
+    "Moving Target",
+    "Improved Bantha Rush",
+    "Double Attack",
+    "Starship Tactics",
+    "Bad Feeling",
+    "Melee Defense",
+    "Gearhead",
+    "Triple Crit",
+    "Throw",
+    "Power Attack",
+    "Hasty Modification",
+    "Acrobatic Strike",
+    "Destructive Force",
+    "Tech Specialist",
+    "Maniacal Charge",
+    "Quick Draw",
+    "Duck and Cover",
+    "Dodge",
+    "Opportunistic Shooter",
+    "Separatist Military Training",
+    "Stay Up",
+    "Pinpoint Accuracy",
+    "Rapid Assault",
+    "Collateral Damage",
+    "Running Attack",
+    "Extra Second Wind",
+    "Blaster Barrage",
+    "Opportunistic Retreat",
+    "Stand Tall",
+    "Sith Military Training",
+    "Attack Combo (Fire and Strike)",
+    "Force Boon",
+    "Unwavering Resolve",
+    "Recurring Success",
+    "Aquatic Specialists",
+    "Sniper",
+    "Improved Sleight of Hand",
+    "Leader of Droids",
+    "Linguist",
+    "Recovering Surge",
+    "Wicked Strike",
+    "Droid Hunter",
+    "Experienced Medic",
+    "Vehicular Surge",
+    "Attack Combo (Melee)",
+    "Whirlwind Attack",
+    "Nikto Survival",
+    "Knife Trick",
+    "Forceful Recovery",
+    "Flood of Fire",
+    "Impulsive Flight",
+    "Resolute Stance",
+    "Swarm",
+    "Triple Attack",
+    "Distracting Droid",
+    "Mandalorian Training",
+    "Demoralizing Strike",
+    "Tae-Jitsu Training",
+    "Scavenger",
+    "Hijkata Training",
+    "Crossfire",
+    "Deadeye",
+    "Risk Taker",
+    "Deadly Sniper",
+    "Gunnery Specialist",
+    "Combat Reflexes",
+    "Strong in the Force",
+    "Grand Army of the Republic Training",
+    "Unhindered Approach",
+    "Returning Bug",
+    "Nimble Team",
+    "Deceptive Drop",
+    "Covert Operatives",
+    "Armor Proficiency (light)",
+    "Slicer Team",
+    "Biotech Surgery",
+    "Crush",
+    "Trench Warrior",
+    "Imperial Military Training",
+    "Overwhelming Attack",
+    "Aiming Accuracy",
+    "Return Fire",
+    "Multi-Grab",
+    "Stava Training",
+    "Dual Weapon Mastery I",
+    "Sport Hunter",
+    "Halt",
+    "Force Readiness",
+    "Never Surrender",
+    "Steadying Position",
+    "Frightening Cleave",
+    "Desperate Gambit",
+    "Pall of the Dark Side",
+    "Cunning Attack",
+    "Silver Tongue",
+    "Dreadful Rage",
+    "Martial Arts I",
+    "Rancor Crush",
+    "Power Blast",
+    "Disabler",
+    "Rapid Shot",
+    "Sniper Shot",
+    "Quick Skill",
+    "Coordinated Attack",
+    "Improved Damage Threshold",
+    "Martial Arts III",
+    "Bantha Herder",
+    "Unswerving Resolve",
+    "Mighty Throw",
+    "Combat Trickery",
+    "Feat of Strength",
+    "Targeted Area",
+    "Advantageous Attack",
+    "Vitality Surge",
+    "Flash and Clear",
+    "Heavy Hitter",
+    "Rapport",
+    "Fight Through Pain",
+    "Resilient Strength",
+    "Expert Briber",
+    "Logic Upgrade: Tactician",
+    "Trip",
+    "Charging Fire",
+    "Skill Training",
+    "Savage Attack",
+    "Mounted Defense",
+    "Sadistic Strike",
+    "Assured Attack",
+    "Droidcraft",
+    "Mounted Combat",
+    "K'thri Training",
+    "Teräs Käsi Training",
+    "Unified Squadron",
+    "Cybernetic Surgery",
+    "Suppression Fire",
+    "A Few Maneuvers",
+    "Rebel Military Training",
+    "Master of Disguise",
+    "Attack Combo (Ranged)",
+    "Far Shot",
+    "Long Haft Strike",
+    "Tireless Squad",
+    "Improvised Weapon Mastery",
+    "Mission Specialist",
+    "Mechanical Martial Arts",
+    "Force of Personality",
+    "Mon Calamari Shipwright",
+    "Improved Opportunistic Trickery",
+    "Increased Agility",
+    "Biotech Specialist",
+    "Extra Rage",
+    "Angled Throw",
+    "Controlled Rage",
+    "Precise Shot",
+    "Pin",
+    "Forceful Blast",
+    "Focused Rage",
+    "Weapon Focus",
+    "Coordinated Barrage",
+    "Autofire Assault",
+    "Withdrawal Strike",
+    "Hyperblazer",
+    "Improved Rapid Strike",
+    "Burst of Speed",
+    "Rapid Strike",
+    "Improved Disarm",
+    "Multi-Targeting",
+    "Momentum Strike",
+    "Natural Leader",
+    "Wary Defender",
+    "Indomitable Personality",
+    "Officer Candidacy Training",
+    "Critical Strike",
+    "Pistoleer",
+    "Tactical Genius",
+    "Wilderness Specialists",
+    "Skill Challenge: Last Resort",
+    "Mighty Swing",
+    "Wookiee Grip",
+    "Prime Shot",
+    "Brilliant Defense",
+    "Friends in Low Places",
+    "Grab Back",
+    "Shield Surge",
+    "Trample",
+    "Meat Shield",
+    "Fleet-Footed",
+    "Cornered",
+    "Starship Designer",
+    "Sensor Link",
+    "Powerful Rage",
+    "Fatal Hit",
+    "Weapon Proficiency",
+    "Bone Crusher",
+    "Skill Challenge: Recovery",
+    "Intimidator",
+    "Follow Through",
+    "Informer",
+    "Echani Training",
+    "Impetuous Move",
+    "Strafe",
+    "Brink of Death",
+    "Droid Focus",
+    "Metamorph",
+    "Improved Defenses",
+    "Gungan Weapon Master",
+    "Surgical Expertise",
+    "Unstoppable Combatant",
+    "Artillery Shot",
+    "Autofire Sweep",
+    "Bantha Rush",
+    "Jedi Familiarity",
+    "Mobility"
+  ],
+  "warnings": [
+    {
+      "name": "Unwavering Focus",
+      "id": "0214e9586b6c8bb5",
+      "issues": [
+        {
+          "severity": "warning",
+          "kind": "species_prerequisite_misclassified_as_feat",
+          "detail": "\"Zabrak\" is a real species (packs/species.db) but the normalizer's fallback string parser typed this clause as type:\"feat\"."
+        }
+      ]
+    },
+    {
+      "name": "Forceful Strike",
+      "id": "02ac414f546a539a",
+      "issues": [
+        {
+          "severity": "warning",
+          "kind": "missing_authority_entry",
+          "detail": "No FEAT_PREREQUISITE_AUTHORITY entry for this feat name/slug."
+        }
+      ]
+    },
+    {
+      "name": "Increased Resistance",
+      "id": "0365722a629eed1f",
+      "issues": [
+        {
+          "severity": "warning",
+          "kind": "species_prerequisite_misclassified_as_feat",
+          "detail": "\"Gamorrean\" is a real species (packs/species.db) but the normalizer's fallback string parser typed this clause as type:\"feat\"."
+        }
+      ]
+    },
+    {
+      "name": "Primitive Warrior",
+      "id": "047f06ec480d841f",
+      "issues": [
+        {
+          "severity": "warning",
+          "kind": "species_prerequisite_misclassified_as_feat",
+          "detail": "\"Gamorrean\" is a real species (packs/species.db) but the normalizer's fallback string parser typed this clause as type:\"feat\"."
+        }
+      ]
+    },
+    {
+      "name": "Low Profile",
+      "id": "058de949e909d9ae",
+      "issues": [
+        {
+          "severity": "warning",
+          "kind": "missing_authority_entry",
+          "detail": "No FEAT_PREREQUISITE_AUTHORITY entry for this feat name/slug."
+        }
+      ]
+    },
+    {
+      "name": "Pitiless Warrior",
+      "id": "08896a9f860ebca9",
+      "issues": [
+        {
+          "severity": "warning",
+          "kind": "species_prerequisite_misclassified_as_feat",
+          "detail": "\"Trandoshan\" is a real species (packs/species.db) but the normalizer's fallback string parser typed this clause as type:\"feat\"."
+        }
+      ]
+    },
+    {
+      "name": "Scion of Dorin",
+      "id": "08a15012d82f0d16",
+      "issues": [
+        {
+          "severity": "warning",
+          "kind": "species_prerequisite_misclassified_as_feat",
+          "detail": "\"Kel Dor\" is a real species (packs/species.db) but the normalizer's fallback string parser typed this clause as type:\"feat\"."
+        }
+      ]
+    },
+    {
+      "name": "Saber Throw",
+      "id": "08dbd76457db101f",
+      "issues": [
+        {
+          "severity": "warning",
+          "kind": "missing_authority_entry",
+          "detail": "No FEAT_PREREQUISITE_AUTHORITY entry for this feat name/slug."
+        }
+      ]
+    },
+    {
+      "name": "Pincer",
+      "id": "09d4eedfce05c6a3",
+      "issues": [
+        {
+          "severity": "warning",
+          "kind": "catalog_authority_text_disagreement",
+          "detail": "catalog=\"Droid, Claw or Hand Appendage, Base Attack Bonus +1, Pin, Crush\" authority=\"Droid with Claw or Hand Appendage, Base Attack Bonus +1, Pin, Crush\""
+        }
+      ]
+    },
+    {
+      "name": "Stealthy",
+      "id": "0c53cb8b7c29d865",
+      "issues": [
+        {
+          "severity": "warning",
+          "kind": "missing_authority_entry",
+          "detail": "No FEAT_PREREQUISITE_AUTHORITY entry for this feat name/slug."
+        }
+      ]
+    },
+    {
+      "name": "Forceful Throw",
+      "id": "10a017a020aa4a9c",
+      "issues": [
+        {
+          "severity": "warning",
+          "kind": "missing_authority_entry",
+          "detail": "No FEAT_PREREQUISITE_AUTHORITY entry for this feat name/slug."
+        }
+      ]
+    },
+    {
+      "name": "Confident Success",
+      "id": "139a80972fc3b8ee",
+      "issues": [
+        {
+          "severity": "warning",
+          "kind": "species_prerequisite_misclassified_as_feat",
+          "detail": "\"Bothan\" is a real species (packs/species.db) but the normalizer's fallback string parser typed this clause as type:\"feat\"."
+        }
+      ]
+    },
+    {
+      "name": "Wilderness First Aid",
+      "id": "171f0d8d997c8bbc",
+      "issues": [
+        {
+          "severity": "warning",
+          "kind": "catalog_authority_text_disagreement",
+          "detail": "catalog=\"Trained in Survival.\" authority=\"Trained in Survival\""
+        }
+      ]
+    },
+    {
+      "name": "Forceful Will",
+      "id": "17e317292814e13e",
+      "issues": [
+        {
+          "severity": "warning",
+          "kind": "missing_authority_entry",
+          "detail": "No FEAT_PREREQUISITE_AUTHORITY entry for this feat name/slug."
+        }
+      ]
+    },
+    {
+      "name": "Reactive Awareness",
+      "id": "17f4a0850e94dc7d",
+      "issues": [
+        {
+          "severity": "warning",
+          "kind": "missing_authority_entry",
+          "detail": "No FEAT_PREREQUISITE_AUTHORITY entry for this feat name/slug."
+        }
+      ]
+    },
+    {
+      "name": "Staggering Attack",
+      "id": "192923f60db38831",
+      "issues": [
+        {
+          "severity": "warning",
+          "kind": "catalog_authority_text_disagreement",
+          "detail": "catalog=\"Base Attack Bonus +1\" authority=\"Sneak Attack or Rapid Shot or Rapid Strike\""
+        }
+      ]
+    },
+    {
+      "name": "Strong Bellow",
+      "id": "1a9091174116f6ff",
+      "issues": [
+        {
+          "severity": "warning",
+          "kind": "species_prerequisite_misclassified_as_feat",
+          "detail": "\"Ithorian\" is a real species (packs/species.db) but the normalizer's fallback string parser typed this clause as type:\"feat\"."
+        }
+      ]
+    },
+    {
+      "name": "Wrruushi Training",
+      "id": "1d0291d930abda15",
+      "issues": [
+        {
+          "severity": "warning",
+          "kind": "species_prerequisite_misclassified_as_feat",
+          "detail": "\"Wookiee\" is a real species (packs/species.db) but the normalizer's fallback string parser typed this clause as type:\"feat\"."
+        }
+      ]
+    },
+    {
+      "name": "Tool Frenzy",
+      "id": "203f7fa521105d0b",
+      "issues": [
+        {
+          "severity": "warning",
+          "kind": "catalog_authority_text_disagreement",
+          "detail": "catalog=\"Droid, Small size or larger, 2+ Tool Appendages\" authority=\"Small or larger Droid with 2+ Tool Appendages\""
+        }
+      ]
+    },
+    {
+      "name": "Quick Comeback",
+      "id": "21a0af5ef58172a0",
+      "issues": [
+        {
+          "severity": "warning",
+          "kind": "species_prerequisite_misclassified_as_feat",
+          "detail": "\"Gamorrean\" is a real species (packs/species.db) but the normalizer's fallback string parser typed this clause as type:\"feat\"."
+        }
+      ]
+    },
+    {
+      "name": "Ample Foraging",
+      "id": "223a5c14f2ea4737",
+      "issues": [
+        {
+          "severity": "warning",
+          "kind": "species_prerequisite_misclassified_as_feat",
+          "detail": "\"Ewok\" is a real species (packs/species.db) but the normalizer's fallback string parser typed this clause as type:\"feat\"."
+        }
+      ]
+    },
+    {
+      "name": "Sharp Senses",
+      "id": "2357f4a68fe571fb",
+      "issues": [
+        {
+          "severity": "warning",
+          "kind": "species_prerequisite_misclassified_as_feat",
+          "detail": "\"Mon Calamari\" is a real species (packs/species.db) but the normalizer's fallback string parser typed this clause as type:\"feat\"."
+        }
+      ]
+    },
+    {
+      "name": "Weapon Proficiency (Simple Weapons)",
+      "id": "2d680cc46a7972da",
+      "issues": [
+        {
+          "severity": "warning",
+          "kind": "missing_authority_entry",
+          "detail": "No FEAT_PREREQUISITE_AUTHORITY entry for this feat name/slug."
+        }
+      ]
+    },
+    {
+      "name": "Wroshyr Rage",
+      "id": "2ed1a3257175feb9",
+      "issues": [
+        {
+          "severity": "warning",
+          "kind": "species_prerequisite_misclassified_as_feat",
+          "detail": "\"Wookiee\" is a real species (packs/species.db) but the normalizer's fallback string parser typed this clause as type:\"feat\"."
+        }
+      ]
+    },
+    {
+      "name": "Triple Crit Specialist",
+      "id": "2f2fa438a6fb54a0",
+      "issues": [
+        {
+          "severity": "warning",
+          "kind": "missing_authority_entry",
+          "detail": "No FEAT_PREREQUISITE_AUTHORITY entry for this feat name/slug."
+        }
+      ]
+    },
+    {
+      "name": "Cleave",
+      "id": "32d1cd4b09ec0d3b",
+      "issues": [
+        {
+          "severity": "warning",
+          "kind": "catalog_authority_text_disagreement",
+          "detail": "catalog=\"Strength 13, Power Attack Feat\" authority=\"Strength 13, Power Attack\""
+        },
+        {
+          "severity": "warning",
+          "kind": "feat_reference_has_spurious_suffix",
+          "detail": "Prerequisite text references \"Power Attack Feat\" but the real catalog feat name is \"power attack\" — the trailing \"Feat\" word breaks exact-name matching."
+        }
+      ]
+    },
+    {
+      "name": "Binary Mind",
+      "id": "33905755bbb1ca10",
+      "issues": [
+        {
+          "severity": "warning",
+          "kind": "species_prerequisite_misclassified_as_feat",
+          "detail": "\"Cerean\" is a real species (packs/species.db) but the normalizer's fallback string parser typed this clause as type:\"feat\"."
+        }
+      ]
+    },
+    {
+      "name": "Justice Seeker",
+      "id": "3595086bb17d4303",
+      "issues": [
+        {
+          "severity": "warning",
+          "kind": "species_prerequisite_misclassified_as_feat",
+          "detail": "\"Kel Dor\" is a real species (packs/species.db) but the normalizer's fallback string parser typed this clause as type:\"feat\"."
+        }
+      ]
+    },
+    {
+      "name": "Forceful Saber Throw",
+      "id": "37cb4455a70876ad",
+      "issues": [
+        {
+          "severity": "warning",
+          "kind": "missing_authority_entry",
+          "detail": "No FEAT_PREREQUISITE_AUTHORITY entry for this feat name/slug."
+        }
+      ]
+    },
+    {
+      "name": "Reactive Stealth",
+      "id": "3cd647b126f1d171",
+      "issues": [
+        {
+          "severity": "warning",
+          "kind": "missing_authority_entry",
+          "detail": "No FEAT_PREREQUISITE_AUTHORITY entry for this feat name/slug."
+        }
+      ]
+    },
+    {
+      "name": "Heavy Weapon Proficiency",
+      "id": "41a9ce755ecffb5b",
+      "issues": [
+        {
+          "severity": "warning",
+          "kind": "missing_authority_entry",
+          "detail": "No FEAT_PREREQUISITE_AUTHORITY entry for this feat name/slug."
+        }
+      ]
+    },
+    {
+      "name": "Veteran Spacer",
+      "id": "423c5fffe7abe449",
+      "issues": [
+        {
+          "severity": "warning",
+          "kind": "species_prerequisite_misclassified_as_feat",
+          "detail": "\"Duros\" is a real species (packs/species.db) but the normalizer's fallback string parser typed this clause as type:\"feat\"."
+        }
+      ]
+    },
+    {
+      "name": "Ion Shielding",
+      "id": "43a4b873d9a9984d",
+      "issues": [
+        {
+          "severity": "warning",
+          "kind": "catalog_authority_text_disagreement",
+          "detail": "catalog=\"(Droid and Strength 13) or (Cyborg Hybrid and Constitution 13)\" authority=\"Droid with Strength 13 or Cyborg Hybrid with Constitution 13\""
+        }
+      ]
+    },
+    {
+      "name": "Forceful Grip",
+      "id": "465434fb7b44aee1",
+      "issues": [
+        {
+          "severity": "warning",
+          "kind": "missing_authority_entry",
+          "detail": "No FEAT_PREREQUISITE_AUTHORITY entry for this feat name/slug."
+        }
+      ]
+    },
+    {
+      "name": "Keen Scent",
+      "id": "46d70ac7db6872f6",
+      "issues": [
+        {
+          "severity": "warning",
+          "kind": "species_prerequisite_misclassified_as_feat",
+          "detail": "\"Ewok\" is a real species (packs/species.db) but the normalizer's fallback string parser typed this clause as type:\"feat\"."
+        }
+      ]
+    },
+    {
+      "name": "Resurgent Vitality",
+      "id": "47f21e32233bb910",
+      "issues": [
+        {
+          "severity": "warning",
+          "kind": "species_prerequisite_misclassified_as_feat",
+          "detail": "\"Wookiee\" is a real species (packs/species.db) but the normalizer's fallback string parser typed this clause as type:\"feat\"."
+        }
+      ]
+    },
+    {
+      "name": "Anointed Hunter",
+      "id": "4dc36deda6faf597",
+      "issues": [
+        {
+          "severity": "warning",
+          "kind": "species_prerequisite_misclassified_as_feat",
+          "detail": "\"Nelvaanian\" is a real species (packs/species.db) but the normalizer's fallback string parser typed this clause as type:\"feat\"."
+        }
+      ]
+    },
+    {
+      "name": "Headstrong",
+      "id": "54d6201340a6757f",
+      "issues": [
+        {
+          "severity": "warning",
+          "kind": "missing_authority_entry",
+          "detail": "No FEAT_PREREQUISITE_AUTHORITY entry for this feat name/slug."
+        }
+      ]
+    },
+    {
+      "name": "Improved Grapple",
+      "id": "5824e2360feb505a",
+      "issues": [
+        {
+          "severity": "warning",
+          "kind": "missing_authority_entry",
+          "detail": "No FEAT_PREREQUISITE_AUTHORITY entry for this feat name/slug."
+        },
+        {
+          "severity": "warning",
+          "kind": "special_clause_misclassified_as_feat",
+          "detail": "\"Grapple\" does not match any catalog feat, species, or talent name. Likely a freeform/special prerequisite clause (e.g. \"Cannot be a Droid\", GM approval) that the normalizer's fallback string parser typed as type:\"feat\" instead of a special/unresolved type."
+        }
+      ]
+    },
+    {
+      "name": "Perfect Intuition",
+      "id": "5a2ba2f28bc5ee01",
+      "issues": [
+        {
+          "severity": "warning",
+          "kind": "species_prerequisite_misclassified_as_feat",
+          "detail": "\"Cerean\" is a real species (packs/species.db) but the normalizer's fallback string parser typed this clause as type:\"feat\"."
+        }
+      ]
+    },
+    {
+      "name": "Martial Arts II",
+      "id": "5bedd71f0eead6b9",
+      "issues": [
+        {
+          "severity": "warning",
+          "kind": "catalog_authority_text_disagreement",
+          "detail": "catalog=\"Martial Arts I, Base Attack Bonus +3.\" authority=\"Martial Arts I, Base Attack Bonus +3\""
+        }
+      ]
+    },
+    {
+      "name": "Careful Shot",
+      "id": "62fdf44c56b24507",
+      "issues": [
+        {
+          "severity": "warning",
+          "kind": "catalog_authority_text_disagreement",
+          "detail": "catalog=\"Point-Blank Shot Feat, Base Attack Bonus +2\" authority=\"Point-Blank Shot, Base Attack Bonus +2\""
+        }
+      ]
+    },
+    {
+      "name": "Turn and Burn",
+      "id": "6342effd242f0b61",
+      "issues": [
+        {
+          "severity": "warning",
+          "kind": "catalog_authority_text_disagreement",
+          "detail": "catalog=\"Droid; Hovering, Flying, Wheeled, or Tracked Locomotion; Dexterity 13\" authority=\"Droid with Hovering, Flying, Wheeled, or Tracked Locomotion; Dexterity 13\""
+        }
+      ]
+    },
+    {
+      "name": "Keen Force Mind",
+      "id": "647d77a8f5ab9af3",
+      "issues": [
+        {
+          "severity": "warning",
+          "kind": "missing_authority_entry",
+          "detail": "No FEAT_PREREQUISITE_AUTHORITY entry for this feat name/slug."
+        }
+      ]
+    },
+    {
+      "name": "Forceful Slam",
+      "id": "6673cd53493a9d6c",
+      "issues": [
+        {
+          "severity": "warning",
+          "kind": "missing_authority_entry",
+          "detail": "No FEAT_PREREQUISITE_AUTHORITY entry for this feat name/slug."
+        }
+      ]
+    },
+    {
+      "name": "Elder's Knowledge",
+      "id": "6ba02f4dd4c3bfe5",
+      "issues": [
+        {
+          "severity": "warning",
+          "kind": "catalog_authority_text_disagreement",
+          "detail": "catalog=\"Skill Focus (Knowledge (Galactic Lore)) or Skill Focus (Knowledge (Social Sciences))\" authority=\"Skill Focus (Knowledge (Social Sciences)) or Skill Focus (Knowledge (Galactic Lore))\""
+        }
+      ]
+    },
+    {
+      "name": "Trustworthy",
+      "id": "6d8ce2807c579289",
+      "issues": [
+        {
+          "severity": "warning",
+          "kind": "missing_authority_entry",
+          "detail": "No FEAT_PREREQUISITE_AUTHORITY entry for this feat name/slug."
+        }
+      ]
+    },
+    {
+      "name": "Perfect Swimmer",
+      "id": "70c842436bbb6330",
+      "issues": [
+        {
+          "severity": "warning",
+          "kind": "species_prerequisite_misclassified_as_feat",
+          "detail": "\"Gungan\" is a real species (packs/species.db) but the normalizer's fallback string parser typed this clause as type:\"feat\"."
+        }
+      ]
+    },
+    {
+      "name": "Instinctive Attack",
+      "id": "70f27646ad28816a",
+      "issues": [
+        {
+          "severity": "warning",
+          "kind": "catalog_authority_text_disagreement",
+          "detail": "catalog=\"Cannot be a Droid\" authority=\"Non-Droid\""
+        },
+        {
+          "severity": "warning",
+          "kind": "special_clause_misclassified_as_feat",
+          "detail": "\"Cannot be a Droid\" does not match any catalog feat, species, or talent name. Likely a freeform/special prerequisite clause (e.g. \"Cannot be a Droid\", GM approval) that the normalizer's fallback string parser typed as type:\"feat\" instead of a special/unresolved type."
+        }
+      ]
+    },
+    {
+      "name": "Acrobatic Ally",
+      "id": "723563f70bd7f28f",
+      "issues": [
+        {
+          "severity": "warning",
+          "kind": "catalog_authority_text_disagreement",
+          "detail": "catalog=\"Strength 13, Dexterity 13, Trained in Acrobatics\" authority=\"Dexterity 13, Strength 13, Trained in Acrobatics\""
+        }
+      ]
+    },
+    {
+      "name": "Weapon Proficiency (Rifles)",
+      "id": "765ff8a34e58acac",
+      "issues": [
+        {
+          "severity": "warning",
+          "kind": "missing_authority_entry",
+          "detail": "No FEAT_PREREQUISITE_AUTHORITY entry for this feat name/slug."
+        }
+      ]
+    },
+    {
+      "name": "Weapon Proficiency (Heavy Weapons)",
+      "id": "8329a353aa3899be",
+      "issues": [
+        {
+          "severity": "warning",
+          "kind": "missing_authority_entry",
+          "detail": "No FEAT_PREREQUISITE_AUTHORITY entry for this feat name/slug."
+        }
+      ]
+    },
+    {
+      "name": "Intimidating Presence",
+      "id": "83abd1c384b58c3c",
+      "issues": [
+        {
+          "severity": "warning",
+          "kind": "missing_authority_entry",
+          "detail": "No FEAT_PREREQUISITE_AUTHORITY entry for this feat name/slug."
+        }
+      ]
+    },
+    {
+      "name": "Forceful Telekinesis",
+      "id": "8566edcae3a2f18c",
+      "issues": [
+        {
+          "severity": "warning",
+          "kind": "missing_authority_entry",
+          "detail": "No FEAT_PREREQUISITE_AUTHORITY entry for this feat name/slug."
+        }
+      ]
+    },
+    {
+      "name": "Armor Proficiency (heavy)",
+      "id": "859d6b9f49118499",
+      "issues": [
+        {
+          "severity": "warning",
+          "kind": "catalog_authority_text_disagreement",
+          "detail": "catalog=\"Armor Proficiency (Light) Feat, Armor Proficiency (Medium) Feat\" authority=\"Armor Proficiency (Light), Armor Proficiency (Medium)\""
+        },
+        {
+          "severity": "warning",
+          "kind": "feat_reference_has_spurious_suffix",
+          "detail": "Prerequisite text references \"Armor Proficiency (Light) Feat\" but the real catalog feat name is \"armor proficiency (light)\" — the trailing \"Feat\" word breaks exact-name matching."
+        },
+        {
+          "severity": "warning",
+          "kind": "feat_reference_has_spurious_suffix",
+          "detail": "Prerequisite text references \"Armor Proficiency (Medium) Feat\" but the real catalog feat name is \"armor proficiency (medium)\" — the trailing \"Feat\" word breaks exact-name matching."
+        }
+      ]
+    },
+    {
+      "name": "Flawless Pilot",
+      "id": "87969fb8b12ff507",
+      "issues": [
+        {
+          "severity": "warning",
+          "kind": "species_prerequisite_misclassified_as_feat",
+          "detail": "\"Duros\" is a real species (packs/species.db) but the normalizer's fallback string parser typed this clause as type:\"feat\"."
+        }
+      ]
+    },
+    {
+      "name": "Two-Weapon Fighting",
+      "id": "88cdedff38b610c0",
+      "issues": [
+        {
+          "severity": "warning",
+          "kind": "missing_authority_entry",
+          "detail": "No FEAT_PREREQUISITE_AUTHORITY entry for this feat name/slug."
+        }
+      ]
+    },
+    {
+      "name": "Great Cleave",
+      "id": "8a5cb28f625d6f02",
+      "issues": [
+        {
+          "severity": "warning",
+          "kind": "catalog_authority_text_disagreement",
+          "detail": "catalog=\"Strength 13, Cleave, Power Attack, Base Attack Bonus +4.\" authority=\"Strength 13, Power Attack, Cleave, Base Attack Bonus +4\""
+        }
+      ]
+    },
+    {
+      "name": "Opportunistic Trickery",
+      "id": "8cf12d528b0d0478",
+      "issues": [
+        {
+          "severity": "warning",
+          "kind": "talent_prerequisite_misclassified_as_feat",
+          "detail": "\"Sneak Attack\" is a real talent (packs/talents.db), not a feat, but the normalizer's fallback string parser typed this clause as type:\"feat\"."
+        }
+      ]
+    },
+    {
+      "name": "Survivor of Ryloth",
+      "id": "90a258aae2583994",
+      "issues": [
+        {
+          "severity": "warning",
+          "kind": "species_prerequisite_misclassified_as_feat",
+          "detail": "\"Twi'lek\" is a real species (packs/species.db) but the normalizer's fallback string parser typed this clause as type:\"feat\"."
+        }
+      ]
+    },
+    {
+      "name": "Disarming Charm",
+      "id": "9567c9e2fe8416e6",
+      "issues": [
+        {
+          "severity": "warning",
+          "kind": "species_prerequisite_misclassified_as_feat",
+          "detail": "\"Sullustan\" is a real species (packs/species.db) but the normalizer's fallback string parser typed this clause as type:\"feat\"."
+        }
+      ]
+    },
+    {
+      "name": "Fast Talk",
+      "id": "9768963c7a36237d",
+      "issues": [
+        {
+          "severity": "warning",
+          "kind": "missing_authority_entry",
+          "detail": "No FEAT_PREREQUISITE_AUTHORITY entry for this feat name/slug."
+        }
+      ]
+    },
+    {
+      "name": "Mind of Reason",
+      "id": "987bdca14576cf2f",
+      "issues": [
+        {
+          "severity": "warning",
+          "kind": "species_prerequisite_misclassified_as_feat",
+          "detail": "\"Cerean\" is a real species (packs/species.db) but the normalizer's fallback string parser typed this clause as type:\"feat\"."
+        }
+      ]
+    },
+    {
+      "name": "Erratic Target",
+      "id": "99e4f98cbcbdd9e1",
+      "issues": [
+        {
+          "severity": "warning",
+          "kind": "catalog_authority_text_disagreement",
+          "detail": "catalog=\"Droid, Hovering or Flying Locomotion, Dexterity 13, Dodge\" authority=\"Droid with Hovering or Flying Locomotion, Dexterity 13, Dodge\""
+        }
+      ]
+    },
+    {
+      "name": "Great Fortitude",
+      "id": "9a89576b3cc1347e",
+      "issues": [
+        {
+          "severity": "warning",
+          "kind": "missing_authority_entry",
+          "detail": "No FEAT_PREREQUISITE_AUTHORITY entry for this feat name/slug."
+        }
+      ]
+    },
+    {
+      "name": "Force Training",
+      "id": "9b7b869a86f39190",
+      "issues": [
+        {
+          "severity": "warning",
+          "kind": "catalog_authority_text_disagreement",
+          "detail": "catalog=\"Force Sensitivity, Trained in Use the Force.\" authority=\"Force Sensitivity\""
+        }
+      ]
+    },
+    {
+      "name": "Slammer",
+      "id": "9c9e98a70538855c",
+      "issues": [
+        {
+          "severity": "warning",
+          "kind": "catalog_authority_text_disagreement",
+          "detail": "catalog=\"Droid, Small size or larger, 2+ Appendages, Strength 13\" authority=\"Small or larger Droid with 2+ Appendages, Strength 13\""
+        }
+      ]
+    },
+    {
+      "name": "Inborn Resilience",
+      "id": "9d70c309eb95da5e",
+      "issues": [
+        {
+          "severity": "warning",
+          "kind": "species_prerequisite_misclassified_as_feat",
+          "detail": "\"Zabrak\" is a real species (packs/species.db) but the normalizer's fallback string parser typed this clause as type:\"feat\"."
+        }
+      ]
+    },
+    {
+      "name": "Devastating Bellow",
+      "id": "9f1305cc6ada5d7a",
+      "issues": [
+        {
+          "severity": "warning",
+          "kind": "species_prerequisite_misclassified_as_feat",
+          "detail": "\"Ithorian\" is a real species (packs/species.db) but the normalizer's fallback string parser typed this clause as type:\"feat\"."
+        }
+      ]
+    },
+    {
+      "name": "Superior Tech",
+      "id": "a717435c8094e7fb",
+      "issues": [
+        {
+          "severity": "warning",
+          "kind": "catalog_authority_text_disagreement",
+          "detail": "catalog=\"Intelligence 17, Tech Specialist, 9th Character Level\" authority=\"Intelligence 17, Tech Specialist, 9th level\""
+        }
+      ]
+    },
+    {
+      "name": "Warrior Heritage",
+      "id": "a9a59c85cddbda1f",
+      "issues": [
+        {
+          "severity": "warning",
+          "kind": "species_prerequisite_misclassified_as_feat",
+          "detail": "\"Gungan\" is a real species (packs/species.db) but the normalizer's fallback string parser typed this clause as type:\"feat\"."
+        }
+      ]
+    },
+    {
+      "name": "Lasting Influence",
+      "id": "ad740c563485664d",
+      "issues": [
+        {
+          "severity": "warning",
+          "kind": "species_prerequisite_misclassified_as_feat",
+          "detail": "\"Bothan\" is a real species (packs/species.db) but the normalizer's fallback string parser typed this clause as type:\"feat\"."
+        }
+      ]
+    },
+    {
+      "name": "Intuitive Initiative",
+      "id": "ae5c34d352d6dff7",
+      "issues": [
+        {
+          "severity": "warning",
+          "kind": "missing_authority_entry",
+          "detail": "No FEAT_PREREQUISITE_AUTHORITY entry for this feat name/slug."
+        }
+      ]
+    },
+    {
+      "name": "Fringe Benefits",
+      "id": "b1299c242802a260",
+      "issues": [
+        {
+          "severity": "warning",
+          "kind": "species_prerequisite_misclassified_as_feat",
+          "detail": "\"Rodian\" is a real species (packs/species.db) but the normalizer's fallback string parser typed this clause as type:\"feat\"."
+        }
+      ]
+    },
+    {
+      "name": "Frightful Presence",
+      "id": "b2296a4d5cef8a61",
+      "issues": [
+        {
+          "severity": "warning",
+          "kind": "missing_authority_entry",
+          "detail": "No FEAT_PREREQUISITE_AUTHORITY entry for this feat name/slug."
+        }
+      ]
+    },
+    {
+      "name": "Instinctive Defense",
+      "id": "b26497554169ac38",
+      "issues": [
+        {
+          "severity": "warning",
+          "kind": "catalog_authority_text_disagreement",
+          "detail": "catalog=\"Cannot be a Droid\" authority=\"Non-Droid\""
+        },
+        {
+          "severity": "warning",
+          "kind": "special_clause_misclassified_as_feat",
+          "detail": "\"Cannot be a Droid\" does not match any catalog feat, species, or talent name. Likely a freeform/special prerequisite clause (e.g. \"Cannot be a Droid\", GM approval) that the normalizer's fallback string parser typed as type:\"feat\" instead of a special/unresolved type."
+        }
+      ]
+    },
+    {
+      "name": "Unleashed",
+      "id": "bcc7f3fe56008a28",
+      "issues": [
+        {
+          "severity": "warning",
+          "kind": "catalog_authority_text_disagreement",
+          "detail": "catalog=\"Have a Destiny, Receive the Gamemaster's Approval\" authority=\"Have a Destiny, Gamemaster's Approval\""
+        },
+        {
+          "severity": "warning",
+          "kind": "special_clause_misclassified_as_feat",
+          "detail": "\"Receive the Gamemaster's Approval\" does not match any catalog feat, species, or talent name. Likely a freeform/special prerequisite clause (e.g. \"Cannot be a Droid\", GM approval) that the normalizer's fallback string parser typed as type:\"feat\" instead of a special/unresolved type."
+        }
+      ]
+    },
+    {
+      "name": "Regenerative Healing",
+      "id": "be1346b0cfb5ea78",
+      "issues": [
+        {
+          "severity": "warning",
+          "kind": "species_prerequisite_misclassified_as_feat",
+          "detail": "\"Trandoshan\" is a real species (packs/species.db) but the normalizer's fallback string parser typed this clause as type:\"feat\"."
+        }
+      ]
+    },
+    {
+      "name": "Lightning Reflexes",
+      "id": "bee76d01da40677d",
+      "issues": [
+        {
+          "severity": "warning",
+          "kind": "missing_authority_entry",
+          "detail": "No FEAT_PREREQUISITE_AUTHORITY entry for this feat name/slug."
+        }
+      ]
+    },
+    {
+      "name": "Instinctive Perception",
+      "id": "bf71e5f4171547ef",
+      "issues": [
+        {
+          "severity": "warning",
+          "kind": "species_prerequisite_misclassified_as_feat",
+          "detail": "\"Zabrak\" is a real species (packs/species.db) but the normalizer's fallback string parser typed this clause as type:\"feat\"."
+        }
+      ]
+    },
+    {
+      "name": "Knock Heads",
+      "id": "c0bd186e6fb23619",
+      "issues": [
+        {
+          "severity": "warning",
+          "kind": "catalog_authority_text_disagreement",
+          "detail": "catalog=\"Strength 13, Dexterity 13, Multi-Grab\" authority=\"Dexterity 13, Strength 13, Multi-Grab\""
+        }
+      ]
+    },
+    {
+      "name": "Dual Weapon Mastery II",
+      "id": "c7c99a77ebee1c0c",
+      "issues": [
+        {
+          "severity": "warning",
+          "kind": "catalog_authority_text_disagreement",
+          "detail": "catalog=\"Dexterity 15, Dual Weapon Mastery I, Base Attack Bonus +6\" authority=\"Dexterity 15, Base Attack Bonus +6, Dual Weapon Mastery I\""
+        }
+      ]
+    },
+    {
+      "name": "Hobbling Strike",
+      "id": "ccc7a6e191e811a4",
+      "issues": [
+        {
+          "severity": "warning",
+          "kind": "catalog_authority_text_disagreement",
+          "detail": "catalog=\"Sneak Attack or Rapid Shot or Rapid Strike.\" authority=\"Sneak Attack or Rapid Shot or Rapid Strike\""
+        }
+      ]
+    },
+    {
+      "name": "Acrobatic Dodge",
+      "id": "cda6cb7b58f96a2f",
+      "issues": [
+        {
+          "severity": "warning",
+          "kind": "catalog_authority_text_disagreement",
+          "detail": "catalog=\"Dexterity 13, Dodge, Mobility, Skill Focus (Acrobatics)\" authority=\"Dexterity 13, Mobility, Skill Focus (Acrobatics)\""
+        }
+      ]
+    },
+    {
+      "name": "Implant Training",
+      "id": "ce009e054ef1681f",
+      "issues": [
+        {
+          "severity": "warning",
+          "kind": "catalog_authority_text_disagreement",
+          "detail": "catalog=\"Must possess an Implant\" authority=\"Possess an Implant\""
+        },
+        {
+          "severity": "warning",
+          "kind": "special_clause_misclassified_as_feat",
+          "detail": "\"Must possess an Implant\" does not match any catalog feat, species, or talent name. Likely a freeform/special prerequisite clause (e.g. \"Cannot be a Droid\", GM approval) that the normalizer's fallback string parser typed as type:\"feat\" instead of a special/unresolved type."
+        }
+      ]
+    },
+    {
+      "name": "Advanced Melee Weapon Proficiency",
+      "id": "cf28ec45cabaff59",
+      "issues": [
+        {
+          "severity": "warning",
+          "kind": "missing_authority_entry",
+          "detail": "No FEAT_PREREQUISITE_AUTHORITY entry for this feat name/slug."
+        }
+      ]
+    },
+    {
+      "name": "Master Tracker",
+      "id": "d133d3fad058c35f",
+      "issues": [
+        {
+          "severity": "warning",
+          "kind": "species_prerequisite_misclassified_as_feat",
+          "detail": "\"Rodian\" is a real species (packs/species.db) but the normalizer's fallback string parser typed this clause as type:\"feat\"."
+        }
+      ]
+    },
+    {
+      "name": "Hunter's Instincts",
+      "id": "d2e86b15327ae544",
+      "issues": [
+        {
+          "severity": "warning",
+          "kind": "species_prerequisite_misclassified_as_feat",
+          "detail": "\"Rodian\" is a real species (packs/species.db) but the normalizer's fallback string parser typed this clause as type:\"feat\"."
+        }
+      ]
+    },
+    {
+      "name": "Jedi Heritage",
+      "id": "d3c4ae9f793b8573",
+      "issues": [
+        {
+          "severity": "warning",
+          "kind": "species_prerequisite_misclassified_as_feat",
+          "detail": "\"Twi'lek\" is a real species (packs/species.db) but the normalizer's fallback string parser typed this clause as type:\"feat\"."
+        }
+      ]
+    },
+    {
+      "name": "Bothan Will",
+      "id": "d40dea327376ec90",
+      "issues": [
+        {
+          "severity": "warning",
+          "kind": "species_prerequisite_misclassified_as_feat",
+          "detail": "\"Bothan\" is a real species (packs/species.db) but the normalizer's fallback string parser typed this clause as type:\"feat\"."
+        }
+      ]
+    },
+    {
+      "name": "Armor Proficiency (medium)",
+      "id": "d445051370a88a7f",
+      "issues": [
+        {
+          "severity": "warning",
+          "kind": "catalog_authority_text_disagreement",
+          "detail": "catalog=\"Armor Proficiency (Light) Feat\" authority=\"Armor Proficiency (Light)\""
+        },
+        {
+          "severity": "warning",
+          "kind": "feat_reference_has_spurious_suffix",
+          "detail": "Prerequisite text references \"Armor Proficiency (Light) Feat\" but the real catalog feat name is \"armor proficiency (light)\" — the trailing \"Feat\" word breaks exact-name matching."
+        }
+      ]
+    },
+    {
+      "name": "Logic Upgrade: Skill Swap",
+      "id": "d48614f7ae500a5b",
+      "issues": [
+        {
+          "severity": "warning",
+          "kind": "unresolved_normalization",
+          "detail": "{\"type\":\"unknown\",\"key\":\"basic-processor\",\"raw\":\"Basic Processor\",\"source\":\"legacy-string\",\"severity\":\"advisory\"}"
+        }
+      ]
+    },
+    {
+      "name": "Droid Shield Mastery",
+      "id": "d518e8c1220af930",
+      "issues": [
+        {
+          "severity": "warning",
+          "kind": "unresolved_normalization",
+          "detail": "{\"type\":\"unknown\",\"key\":\"shield-generator-droid-accessory\",\"raw\":\"Shield Generator (Droid Accessory)\",\"source\":\"legacy-string\",\"severity\":\"advisory\"}"
+        }
+      ]
+    },
+    {
+      "name": "Frightening Presence",
+      "id": "d612e7a708edf75b",
+      "issues": [
+        {
+          "severity": "warning",
+          "kind": "missing_authority_entry",
+          "detail": "No FEAT_PREREQUISITE_AUTHORITY entry for this feat name/slug."
+        }
+      ]
+    },
+    {
+      "name": "Vehicle Systems Expertise",
+      "id": "d7736c072de9b86c",
+      "issues": [
+        {
+          "severity": "warning",
+          "kind": "catalog_authority_text_disagreement",
+          "detail": "catalog=\"Tech Specialist, Trained in Mechanics.\" authority=\"Tech Specialist, Trained in Mechanics\""
+        }
+      ]
+    },
+    {
+      "name": "Fast Swimmer",
+      "id": "d874a33284de77e4",
+      "issues": [
+        {
+          "severity": "warning",
+          "kind": "species_prerequisite_misclassified_as_feat",
+          "detail": "\"Mon Calamari\" is a real species (packs/species.db) but the normalizer's fallback string parser typed this clause as type:\"feat\"."
+        }
+      ]
+    },
+    {
+      "name": "Forceful Weapon",
+      "id": "db564cc6f9879ec8",
+      "issues": [
+        {
+          "severity": "warning",
+          "kind": "missing_authority_entry",
+          "detail": "No FEAT_PREREQUISITE_AUTHORITY entry for this feat name/slug."
+        }
+      ]
+    },
+    {
+      "name": "Bowcaster Marksman",
+      "id": "db82e1df17c3110b",
+      "issues": [
+        {
+          "severity": "warning",
+          "kind": "species_prerequisite_misclassified_as_feat",
+          "detail": "\"Wookiee\" is a real species (packs/species.db) but the normalizer's fallback string parser typed this clause as type:\"feat\"."
+        }
+      ]
+    },
+    {
+      "name": "Spacer's Surge",
+      "id": "dd6ad0e712e9a314",
+      "issues": [
+        {
+          "severity": "warning",
+          "kind": "species_prerequisite_misclassified_as_feat",
+          "detail": "\"Duros\" is a real species (packs/species.db) but the normalizer's fallback string parser typed this clause as type:\"feat\"."
+        }
+      ]
+    },
+    {
+      "name": "Force Sensitivity",
+      "id": "ddbeb23013d9e917",
+      "issues": [
+        {
+          "severity": "warning",
+          "kind": "catalog_authority_text_disagreement",
+          "detail": "catalog=\"Cannot be a Droid\" authority=\"Non-Droid\""
+        },
+        {
+          "severity": "warning",
+          "kind": "special_clause_misclassified_as_feat",
+          "detail": "\"Cannot be a Droid\" does not match any catalog feat, species, or talent name. Likely a freeform/special prerequisite clause (e.g. \"Cannot be a Droid\", GM approval) that the normalizer's fallback string parser typed as type:\"feat\" instead of a special/unresolved type."
+        }
+      ]
+    },
+    {
+      "name": "Shrewd Bargainer",
+      "id": "df58db54c4b53539",
+      "issues": [
+        {
+          "severity": "warning",
+          "kind": "species_prerequisite_misclassified_as_feat",
+          "detail": "\"Quarren\" is a real species (packs/species.db) but the normalizer's fallback string parser typed this clause as type:\"feat\"."
+        }
+      ]
+    },
+    {
+      "name": "Deep Sight",
+      "id": "e4de79f4993a6690",
+      "issues": [
+        {
+          "severity": "warning",
+          "kind": "species_prerequisite_misclassified_as_feat",
+          "detail": "\"Quarren\" is a real species (packs/species.db) but the normalizer's fallback string parser typed this clause as type:\"feat\"."
+        }
+      ]
+    },
+    {
+      "name": "Resilient Reflexes",
+      "id": "e5ab9392378400ec",
+      "issues": [
+        {
+          "severity": "warning",
+          "kind": "missing_authority_entry",
+          "detail": "No FEAT_PREREQUISITE_AUTHORITY entry for this feat name/slug."
+        }
+      ]
+    },
+    {
+      "name": "Weapon Proficiency (Pistols)",
+      "id": "e5d361d01d1b44e4",
+      "issues": [
+        {
+          "severity": "warning",
+          "kind": "missing_authority_entry",
+          "detail": "No FEAT_PREREQUISITE_AUTHORITY entry for this feat name/slug."
+        }
+      ]
+    },
+    {
+      "name": "Powerful Charge",
+      "id": "e73873cdc77a6451",
+      "issues": [
+        {
+          "severity": "warning",
+          "kind": "catalog_authority_text_disagreement",
+          "detail": "catalog=\"Medium or larger size, Base Attack Bonus +1\" authority=\"Medium or larger sized, Base Attack Bonus +1\""
+        }
+      ]
+    },
+    {
+      "name": "Thick Skin",
+      "id": "e97cc5c5128a55ce",
+      "issues": [
+        {
+          "severity": "warning",
+          "kind": "species_prerequisite_misclassified_as_feat",
+          "detail": "\"Trandoshan\" is a real species (packs/species.db) but the normalizer's fallback string parser typed this clause as type:\"feat\"."
+        }
+      ]
+    },
+    {
+      "name": "Conditioned",
+      "id": "e99d9284a73cf505",
+      "issues": [
+        {
+          "severity": "warning",
+          "kind": "missing_authority_entry",
+          "detail": "No FEAT_PREREQUISITE_AUTHORITY entry for this feat name/slug."
+        }
+      ]
+    },
+    {
+      "name": "Dual Weapon Mastery III",
+      "id": "ea684defcd3222ca",
+      "issues": [
+        {
+          "severity": "warning",
+          "kind": "catalog_authority_text_disagreement",
+          "detail": "catalog=\"Dexterity 17, Dual Weapon Mastery I, Dual Weapon Mastery II, Base Attack Bonus +11\" authority=\"Dexterity 17, Base Attack Bonus +11, Dual Weapon Mastery I, Dual Weapon Mastery II\""
+        }
+      ]
+    },
+    {
+      "name": "Darkness Dweller",
+      "id": "eaf7079b977d60b7",
+      "issues": [
+        {
+          "severity": "warning",
+          "kind": "species_prerequisite_misclassified_as_feat",
+          "detail": "\"Sullustan\" is a real species (packs/species.db) but the normalizer's fallback string parser typed this clause as type:\"feat\"."
+        }
+      ]
+    },
+    {
+      "name": "Surgical Precision",
+      "id": "eb33f5e4b5f6318c",
+      "issues": [
+        {
+          "severity": "warning",
+          "kind": "missing_authority_entry",
+          "detail": "No FEAT_PREREQUISITE_AUTHORITY entry for this feat name/slug."
+        }
+      ]
+    },
+    {
+      "name": "Imperceptible Liar",
+      "id": "ec8b6bb889f65dea",
+      "issues": [
+        {
+          "severity": "warning",
+          "kind": "species_prerequisite_misclassified_as_feat",
+          "detail": "\"Twi'lek\" is a real species (packs/species.db) but the normalizer's fallback string parser typed this clause as type:\"feat\"."
+        }
+      ]
+    },
+    {
+      "name": "Clawed Subspecies",
+      "id": "edd8bb64c18d9a8a",
+      "issues": [
+        {
+          "severity": "warning",
+          "kind": "species_prerequisite_misclassified_as_feat",
+          "detail": "\"Quarren\" is a real species (packs/species.db) but the normalizer's fallback string parser typed this clause as type:\"feat\"."
+        }
+      ]
+    },
+    {
+      "name": "Read the Winds",
+      "id": "f5be1207aa6b1817",
+      "issues": [
+        {
+          "severity": "warning",
+          "kind": "species_prerequisite_misclassified_as_feat",
+          "detail": "\"Kel Dor\" is a real species (packs/species.db) but the normalizer's fallback string parser typed this clause as type:\"feat\"."
+        }
+      ]
+    },
+    {
+      "name": "Resilient Will",
+      "id": "f82323ee06f59735",
+      "issues": [
+        {
+          "severity": "warning",
+          "kind": "missing_authority_entry",
+          "detail": "No FEAT_PREREQUISITE_AUTHORITY entry for this feat name/slug."
+        }
+      ]
+    },
+    {
+      "name": "Sure Climber",
+      "id": "f8748ba7993b6b17",
+      "issues": [
+        {
+          "severity": "warning",
+          "kind": "species_prerequisite_misclassified_as_feat",
+          "detail": "\"Sullustan\" is a real species (packs/species.db) but the normalizer's fallback string parser typed this clause as type:\"feat\"."
+        }
+      ]
+    },
+    {
+      "name": "Nature Specialist",
+      "id": "f965ca153bb13aaf",
+      "issues": [
+        {
+          "severity": "warning",
+          "kind": "species_prerequisite_misclassified_as_feat",
+          "detail": "\"Ithorian\" is a real species (packs/species.db) but the normalizer's fallback string parser typed this clause as type:\"feat\"."
+        }
+      ]
+    },
+    {
+      "name": "Resilient Talent",
+      "id": "fda012e3b2b1e55f",
+      "issues": [
+        {
+          "severity": "warning",
+          "kind": "missing_authority_entry",
+          "detail": "No FEAT_PREREQUISITE_AUTHORITY entry for this feat name/slug."
+        }
+      ]
+    },
+    {
+      "name": "Forest Stalker",
+      "id": "febbb0f05c8a0883",
+      "issues": [
+        {
+          "severity": "warning",
+          "kind": "species_prerequisite_misclassified_as_feat",
+          "detail": "\"Ewok\" is a real species (packs/species.db) but the normalizer's fallback string parser typed this clause as type:\"feat\"."
+        }
+      ]
+    },
+    {
+      "name": "Forceful Stun",
+      "id": "ff76bea42641ca5b",
+      "issues": [
+        {
+          "severity": "warning",
+          "kind": "missing_authority_entry",
+          "detail": "No FEAT_PREREQUISITE_AUTHORITY entry for this feat name/slug."
+        }
+      ]
+    },
+    {
+      "name": "Forceful Vitality",
+      "id": "ffd5fecab0550bb6",
+      "issues": [
+        {
+          "severity": "warning",
+          "kind": "missing_authority_entry",
+          "detail": "No FEAT_PREREQUISITE_AUTHORITY entry for this feat name/slug."
+        }
+      ]
+    }
+  ],
+  "errors": []
+}
