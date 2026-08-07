@@ -1732,6 +1732,17 @@ export class FeatStep extends ProgressionStepPlugin {
    * and display are different concerns, and the feat's real underlying
    * text (unsubstituted) is exactly what the canonical aggregator should
    * see.
+   *
+   * No Feat-specific fallback here for accented names ("Flèche", "Teräs
+   * Käsi Training") — progression-search.js's own normalizeWhitespace()
+   * diacritic-folds both the searchable text AND every parsed query
+   * term/phrase identically, so plain-ASCII and accented spellings are
+   * equivalent under the SAME comparison for positive matches, NOT,
+   * wildcards, and everything else. A one-sided per-item fallback here
+   * (fold the text only, after a Boolean match already failed) previously
+   * made positive and NOT queries disagree with each other; that can only
+   * be correct if it lives in the canonical normalization both sides go
+   * through, not bolted onto one feat-specific call site.
    * @param {Object} feat
    * @param {{test(text:string):boolean}} [compiled] - reuse across a loop
    *   via compileProgressionSearchQuery(this._searchQuery) instead of
@@ -1748,19 +1759,7 @@ export class FeatStep extends ProgressionStepPlugin {
       feat?.system?.prerequisites,
       ...(feat?.uiBroadTags || []),
     ]);
-    if (compiled.test(text)) return true;
-    // Diacritic-folded fallback: a handful of real catalog feats carry
-    // accented names ("Flèche", "Teräs Käsi Training") that a player will
-    // normally type in plain ASCII. The canonical matcher's own
-    // normalization does not diacritic-fold (that contract is shared by
-    // every progression catalog, not feat-specific), so re-run the SAME
-    // compiled matcher against a diacritic-folded copy of the SAME text —
-    // no second comparison path, no inspection of the query itself, so
-    // Boolean/NOT/wildcard semantics are identical either way. This only
-    // ever widens a match that already failed; it cannot un-exclude a term
-    // a NOT clause correctly rejected; a negated word present in the text
-    // stays present after diacritic folding.
-    return compiled.test(this._normalizeSearchText(text));
+    return compiled.test(text);
   }
 
   _expandMatchingCategoriesForSearch() {

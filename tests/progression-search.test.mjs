@@ -227,6 +227,32 @@ const { buildProgressionSearchText, compileProgressionSearchQuery, matchesProgre
 }
 
 /* ------------------------------------------------------------------ *
+ * Diacritic folding: canonical normalization, not a per-caller fallback.
+ * Positive and NOT queries MUST agree with each other — if the plain-ASCII
+ * spelling matches, NOT that same spelling must exclude, for both simple
+ * and compound Boolean expressions. This is what a one-sided fallback
+ * (fold the searchable text only, after a failed match) cannot guarantee:
+ * a NOT clause is evaluated against the UN-folded text first and can
+ * "succeed" (wrongly) before the folded fallback is ever reached.
+ * ------------------------------------------------------------------ */
+{
+  const fleche = { name: 'Flèche', system: { description: { value: 'A fencing lunge.' } } };
+  assert.ok(matchesProgressionSearch(fleche, 'fleche'), 'plain-ASCII query did not match an accented name');
+  assert.ok(matchesProgressionSearch(fleche, 'flèche'), 'accented query did not match its own accented spelling');
+  assert.ok(!matchesProgressionSearch(fleche, 'NOT fleche'),
+    'NOT excluded inconsistently with the positive match — diacritic folding is not symmetric between text and query');
+  assert.ok(matchesProgressionSearch(fleche, 'fencing AND fleche'), 'compound AND with an accented term failed');
+  assert.ok(!matchesProgressionSearch(fleche, 'fencing AND NOT fleche'),
+    'compound AND NOT wrongly included an accented match — NOT was evaluated before diacritic folding');
+
+  const teras = { name: 'Teräs Käsi Training', system: { description: { value: 'A brutal unarmed combat style.' } } };
+  assert.ok(matchesProgressionSearch(teras, 'teras'), 'plain-ASCII query did not match an accented multi-word name');
+  assert.ok(matchesProgressionSearch(teras, '"kasi training"'), 'quoted phrase did not match across accented + plain words');
+  assert.ok(matchesProgressionSearch(teras, 'teras AND training'), 'implicit AND across accented + plain terms failed');
+  assert.ok(!matchesProgressionSearch(teras, 'NOT teras'), 'NOT failed to exclude an item its positive spelling matches');
+}
+
+/* ------------------------------------------------------------------ *
  * 12. Invalid / incomplete queries never throw and remain usable.
  * ------------------------------------------------------------------ */
 {
@@ -415,16 +441,29 @@ const { TalentStep } = await import(
     'FeatStep name-priority ranking regressed after the whole-item gate change');
 
   // Accented catalog names (real data: "Flèche", "Teräs Käsi Training") must
-  // stay findable by the plain-ASCII text a player would actually type, even
-  // though the canonical gate now runs first and the canonical matcher's own
-  // text comparison does not diacritic-fold.
+  // stay findable by the plain-ASCII text a player would actually type, AND
+  // must obey NOT/Boolean semantics consistently with that plain spelling —
+  // both directions, through the real _getSearchResultFeats() path.
   step._allFeats = [
     { id: 'f9', name: 'Flèche', system: { description: { value: 'A fencing lunge.' } } },
   ];
   step._legalFeats = step._allFeats;
+
   step._searchQuery = 'fleche';
   assert.ok(step._getSearchResultFeats().map(f => f.name).includes('Flèche'),
     'accented feat name became unfindable by its plain-ASCII spelling after the gate-first reorder');
+
+  step._searchQuery = 'fencing AND fleche';
+  assert.ok(step._getSearchResultFeats().map(f => f.name).includes('Flèche'),
+    'compound AND with an accented term failed through the real step');
+
+  step._searchQuery = 'NOT fleche';
+  assert.ok(!step._getSearchResultFeats().map(f => f.name).includes('Flèche'),
+    'NOT failed to exclude an accented feat matched by its own positive plain-ASCII query — diacritic folding is not symmetric');
+
+  step._searchQuery = 'fencing AND NOT fleche';
+  assert.ok(!step._getSearchResultFeats().map(f => f.name).includes('Flèche'),
+    'compound AND NOT wrongly included an accented feat through the real step');
 
   // Static contract: the file actually imports and calls the canonical module.
   const src = read('scripts/apps/progression-framework/steps/feat-step.js');

@@ -53,14 +53,24 @@ function stripMarkup(value) {
 }
 
 /**
- * Collapse whitespace and lowercase. The one normalization every piece of
- * searchable text and every query term passes through, so matching is
- * always comparing like to like.
+ * Fold diacritics, collapse whitespace, and lowercase. The one normalization
+ * every piece of searchable text AND every parsed query term/phrase passes
+ * through, so matching is always comparing like to like — including for
+ * Boolean/NOT expressions. Diacritic folding must live here, not in a
+ * one-sided per-item fallback: NOT only produces a coherent result if the
+ * text it's evaluated against and the term it's evaluated for went through
+ * the identical normalization. ("Flèche" must match both "fleche" and
+ * "NOT fleche" must exclude it — not one but not the other.)
  * @param {string} text
  * @returns {string}
  */
 function normalizeWhitespace(text) {
-  return String(text || '').replace(/\s+/g, ' ').trim().toLowerCase();
+  return String(text || '')
+    .normalize('NFKD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .toLowerCase();
 }
 
 /**
