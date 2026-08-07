@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-08-07T01:49:22.271Z",
-  "gitCommit": "b093d893c427f6a1c3a889653c86dbacf81cbec3",
+  "generatedAt": "2026-08-07T02:35:53.134Z",
+  "gitCommit": "214d9fe27a3e25c01bd23eb5a66c813fc41a0fee",
   "canonicalSource": "data/feat-catalog.json",
   "catalog": {
     "path": "data/feat-catalog.json",
