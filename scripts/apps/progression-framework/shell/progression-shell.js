@@ -742,7 +742,7 @@ export class ProgressionShell extends SWSEApplicationV2 {
     if (region === 'work-surface') return this._updateWorkSurfaceRegion(root, renderJob);
     if (region === 'summary') return this._updateSummaryRegion(root, renderJob);
     if (region === 'utility') return this._updateUtilityRegion(root, renderJob);
-    if (region === 'progress') return this._updateProgressRegion(root);
+    if (region === 'progress') return this._updateProgressRegion(root, renderJob);
     if (region === 'footer') return this._updateFooterRegion(root, renderJob);
 
     // An unrecognized region name is not a scope this shell knows how to
@@ -830,16 +830,24 @@ export class ProgressionShell extends SWSEApplicationV2 {
 
   /**
    * Per-step progress entries for the progress rail and the footer step
-   * chips. Iterates every step and calls _evaluateStepStatus() once each —
-   * shared so a mixed job needing both 'progress' and structural context
-   * does not run this twice.
+   * chips. Iterates every step and evaluates its status once each — shared
+   * so a mixed job needing both 'progress' and structural context does not
+   * run this twice.
+   *
+   * PHASE 3: normalization and the per-step map below now share ONE
+   * evaluator, so a completed step is not evaluated once during
+   * normalization and again for its progress entry. Pass an evaluator
+   * created upstream (structural _prepareContext, a scoped 'progress'
+   * region job) to extend that sharing across the whole render/job;
+   * otherwise a fresh one is created for this call alone.
+   * @param {{get(stepId: string, stepIndex: number): Object}} [evaluator]
    * @returns {Array<Object>}
    * @private
    */
-  _computeStepProgress() {
-    this._normalizeCompletedStepIds();
+  _computeStepProgress(evaluator = this._createStepStatusEvaluator()) {
+    this._normalizeCompletedStepIds(evaluator);
     return this.steps.map((descriptor, idx) => {
-      const status = this._evaluateStepStatus(descriptor.stepId, idx);
+      const status = evaluator.get(descriptor.stepId, idx);
       return {
         descriptor,
         index: idx,
@@ -1138,11 +1146,17 @@ export class ProgressionShell extends SWSEApplicationV2 {
     const descriptor = this.steps?.[this.currentStepIndex] ?? null;
     const plugin = descriptor ? this.stepPlugins.get(descriptor.stepId) : null;
     const pluginContext = this._buildStepPluginContext();
+    // PHASE 3: lazy, job-scoped canonical-status evaluator. Creating it is
+    // cheap (an empty Map) — no step is actually evaluated until something
+    // in this job calls .get()/.getAll(), and the cache never outlives this
+    // job object.
+    const statusEvaluator = this._createStepStatusEvaluator();
     let stepDataPromise = null;
     return {
       descriptor,
       plugin,
       pluginContext,
+      statusEvaluator,
       getStepData: () => {
         if (!stepDataPromise) {
           stepDataPromise = (async () => {
@@ -1266,15 +1280,21 @@ export class ProgressionShell extends SWSEApplicationV2 {
   /**
    * Replace the progress-rail region and rehydrate ProgressRail's own step
    * click handlers / active-step scroll behavior.
+   * @param {HTMLElement} root
+   * @param {Object|null} [job] - PHASE 3: when this region update is part of
+   *   a mixed job (_createRegionRenderJob()), reuse its statusEvaluator so a
+   *   step already evaluated elsewhere in the same job is not evaluated
+   *   again here. A standalone/job-less call (existing test callers) still
+   *   works — _computeStepProgress() falls back to its own evaluator.
    * @private
    */
-  async _updateProgressRegion(root) {
+  async _updateProgressRegion(root, job = null) {
     const host = root.querySelector('[data-region="progress-rail"]');
     if (!(host instanceof HTMLElement)) return false;
 
     let html = null;
     try {
-      const stepProgress = this._computeStepProgress();
+      const stepProgress = this._computeStepProgress(job?.statusEvaluator);
       const currentDescriptor = this.steps[this.currentStepIndex] ?? null;
       html = await this._renderProgressRailHtml(stepProgress, currentDescriptor);
     } catch (err) {
@@ -1558,13 +1578,21 @@ export class ProgressionShell extends SWSEApplicationV2 {
     }, 0);
   }
 
-  _normalizeCompletedStepIds() {
+  /**
+   * @param {{get(stepId: string, stepIndex: number): Object}} [evaluator] -
+   *   PHASE 3: a caller that has already created a render/job-scoped
+   *   evaluator (e.g. _computeStepProgress()) passes it through so a step
+   *   already evaluated for THIS pass is not evaluated a second time just
+   *   for normalization. Defaults to a fresh (unshared) evaluator so this
+   *   remains safe to call on its own.
+   */
+  _normalizeCompletedStepIds(evaluator = this._createStepStatusEvaluator()) {
     if (!Array.isArray(this.progressionSession?.completedStepIds)) return false;
     let changed = false;
 
     this.progressionSession.completedStepIds = this.progressionSession.completedStepIds.filter(stepId => {
       const stepIndex = this.steps.findIndex(descriptor => descriptor.stepId === stepId);
-      const status = stepIndex >= 0 ? this._evaluateStepStatus(stepId, stepIndex) : null;
+      const status = stepIndex >= 0 ? evaluator.get(stepId, stepIndex) : null;
       const keep = status?.canonical === 'complete';
       if (!keep) changed = true;
       return keep;
@@ -2538,7 +2566,14 @@ export class ProgressionShell extends SWSEApplicationV2 {
     // Step progress for progress rail — derived from canonical status evaluator.
     // Shared with the scoped progress-rail updater via _computeStepProgress()
     // so there is one implementation of "what does the rail look like now."
-    const stepProgress = this._computeStepProgress();
+    //
+    // PHASE 3: one evaluator for this whole structural context. Any other
+    // status-dependent context data built below reuses it (via stepProgress
+    // or statusEvaluator directly) rather than calling _evaluateStepStatus()
+    // independently, so a structural render evaluates each step's status at
+    // most once.
+    const statusEvaluator = this._createStepStatusEvaluator();
+    const stepProgress = this._computeStepProgress(statusEvaluator);
 
     // Transform stepProgress for stepper component (label, active, done)
     const stepsTrans = stepProgress.map(step => ({
@@ -2760,37 +2795,15 @@ export class ProgressionShell extends SWSEApplicationV2 {
       footerStatus: this._buildFooterStatus(footerData),
       footerStatusState: this._buildFooterStatusState(footerData),
 
-      // Step chips for footer: visible (non-hidden) steps with canonical status
-      visibleSteps: this.steps
-        .filter(d => !d.hidden)
-        .map((descriptor, chipIdx) => {
-          const realIdx    = this.steps.indexOf(descriptor);
-          const isCurrent  = realIdx === this.currentStepIndex;
-          const status     = this._evaluateStepStatus(descriptor.stepId, realIdx);
-          const isComplete = status.canonical === 'complete';
-          const isError    = status.canonical === 'error';
-          const isCaution  = status.canonical === 'caution';
-          const isInProgress = status.canonical === 'in_progress';
-          const isNeutral  = status.canonical === 'neutral';
-          const isLocked   = realIdx > this.currentStepIndex && !isComplete;
-          const plugin     = this.stepPlugins.get(descriptor.stepId);
-          const hasWarning = !isCurrent && (plugin?.getWarnings?.()?.length ?? 0) > 0;
-          return {
-            id:          descriptor.stepId,
-            index:       chipIdx + 1,       // 1-based display number
-            label:       descriptor.label,
-            isCurrent,
-            isComplete,
-            isError,
-            isCaution,
-            isInProgress,
-            isNeutral,
-            isLocked,
-            isWarning:   hasWarning || isCaution,
-            canNavigate: isCurrent || realIdx < this.currentStepIndex,
-            status:      status.canonical,
-          };
-        }),
+      // PHASE 3: `visibleSteps` (a second per-step canonical-status pass —
+      // step chips for footer) was removed here. It had zero consumers:
+      // no template, script, or test in this branch reads context.visibleSteps
+      // (confirmed by repo-wide search before removal) — the footer no
+      // longer renders step chips and the progress rail uses stepProgress
+      // instead. Keeping it would mean structural rendering ran
+      // _evaluateStepStatus() a second time per visible step, plus a
+      // redundant plugin.getWarnings() call, purely to populate a context
+      // field nothing reads.
 
       // Font mode: 'standard' | 'aurabesh' — controls label font via data-font-mode attr
       fontMode: this._getFooterFontMode(),
@@ -3559,6 +3572,42 @@ export class ProgressionShell extends SWSEApplicationV2 {
   }
 
   /**
+   * PHASE 3: Render/job-scoped memoization for _evaluateStepStatus().
+   *
+   * The canonical evaluator itself calls several plugin contracts
+   * (validate/getBlockingIssues/getWarnings/getRemainingPicks/getSelection)
+   * per visited step — not free. Within a single structural render or a
+   * single scheduler job, the same step can otherwise be asked for more
+   * than once (completed-step normalization followed by the stepProgress
+   * build; a structural context asking for stepProgress and then a second
+   * independent pass for something else). This returns a small evaluator
+   * whose cache lives ONLY in this closure — nothing is attached to the
+   * shell instance, so it cannot outlive the render/job that created it and
+   * there is no cross-render invalidation problem to solve.
+   *
+   * Deliberately NOT here: a persistent status-cache field on the shell
+   * instance, any revision-keyed invalidation, or reuse across scheduler
+   * jobs. Call this again to get a fresh, empty evaluator for the next
+   * render/job.
+   * @returns {{get(stepId: string, stepIndex: number): Object, getAll(): Array<Object>}}
+   * @private
+   */
+  _createStepStatusEvaluator() {
+    const cache = new Map();
+    const get = (stepId, stepIndex) => {
+      const key = `${stepIndex}:${stepId}`;
+      if (!cache.has(key)) {
+        cache.set(key, this._evaluateStepStatus(stepId, stepIndex));
+      }
+      return cache.get(key);
+    };
+    return {
+      get,
+      getAll: () => this.steps.map((descriptor, index) => get(descriptor.stepId, index)),
+    };
+  }
+
+  /**
    * Evaluate canonical status for a step.
    * Status is determined by: visited, completion, validation, staleness.
    *
@@ -3568,6 +3617,15 @@ export class ProgressionShell extends SWSEApplicationV2 {
    * - complete: visited, no remaining choices, no issues
    * - in_progress: visited, but still has required choices
    * - neutral: visible but not yet visited
+   *
+   * Callers that need this step's status MORE THAN ONCE within one
+   * render/job (structural _prepareContext, a scoped 'progress' update, ...)
+   * should go through _createStepStatusEvaluator() instead of calling this
+   * directly, so the (validate/getBlockingIssues/getWarnings/
+   * getRemainingPicks/getSelection) contracts run at most once per step.
+   * Action-boundary callers that need a guaranteed-live result at the exact
+   * instant of a mutation (_markStepCompleted) call this directly on
+   * purpose — that is correctness, not a missed optimization.
    *
    * @param {string} stepId - Step ID to evaluate
    * @param {number} stepIndex - Current index of step in this.steps

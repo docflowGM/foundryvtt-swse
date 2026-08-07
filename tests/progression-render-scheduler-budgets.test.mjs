@@ -1654,4 +1654,371 @@ const footerTemplateResponder = (template, data) => {
     `utility-driven requestRender() call(s) with neither regions: nor structural: true — these silently revert to a full structural render:\n  ${utilityDrivenOffenders.join('\n  ')}`);
 }
 
+/* ==================================================================== *
+ * PHASE 3: Single-pass canonical status evaluation.
+ *
+ * _evaluateStepStatus() itself calls several plugin contracts per visited
+ * step (validate/getBlockingIssues/getWarnings/getRemainingPicks/
+ * getSelection) — not free. These tests drive the REAL evaluation logic
+ * (not a stubbed _evaluateStepStatus, unlike the region-updater fixtures
+ * above) through a minimal but real ProgressionShell instance, with
+ * counting/throwing plugins standing in for the expensive contracts, to
+ * prove a step's canonical status is computed at most once per
+ * render/job — and that unvisited steps stay cheap.
+ * ==================================================================== */
+
+/** A step plugin whose status-contract methods count their own calls and
+ * can optionally throw, so a test can assert exact call counts and prove
+ * an unvisited step's expensive methods are never touched. */
+function makeStatusCountingPlugin({
+  blockingIssues = [],
+  warnings = [],
+  remainingPicks = [],
+  selection = null,
+  throwOnCall = false,
+} = {}) {
+  const calls = { validate: 0, getBlockingIssues: 0, getWarnings: 0, getRemainingPicks: 0, getSelection: 0 };
+  const guard = (name) => {
+    calls[name] += 1;
+    if (throwOnCall) throw new Error(`${name}() should not have been called for an unvisited step`);
+  };
+  return {
+    calls,
+    validate() { guard('validate'); return { isValid: blockingIssues.length === 0 && warnings.length === 0, errors: [], warnings: [] }; },
+    getBlockingIssues() { guard('getBlockingIssues'); return blockingIssues; },
+    getWarnings() { guard('getWarnings'); return warnings; },
+    getRemainingPicks() { guard('getRemainingPicks'); return remainingPicks; },
+    getSelection() { guard('getSelection'); return selection; },
+  };
+}
+
+/** A REAL ProgressionShell instance (Object.create(ProgressionShell.prototype),
+ * not a stand-in) with the minimal state _evaluateStepStatus()/
+ * _hasCommittedSelectionForStep()/_normalizeCompletedStepIds() actually
+ * read, so these tests exercise the production evaluation logic itself. */
+function makeStatusTestShell({ steps, visitedStepIds = [], invalidatedStepIds = [], completedStepIds = [], currentStepIndex = 0 } = {}) {
+  const shell = Object.create(ProgressionShell.prototype);
+  const stepPlugins = new Map(steps.map(({ descriptor, plugin }) => [descriptor.stepId, plugin]));
+  Object.assign(shell, {
+    steps: steps.map(({ descriptor }) => descriptor),
+    stepPlugins,
+    currentStepIndex,
+    actor: null,
+    mode: 'chargen',
+    buildIntent: null,
+    focusedItem: null,
+    progressRailCollapsed: false,
+    progressRail: { afterRender() {} },
+    committedSelections: new Map(),
+    progressionSession: {
+      visitedStepIds: [...visitedStepIds],
+      invalidatedStepIds: [...invalidatedStepIds],
+      completedStepIds: [...completedStepIds],
+      draftSelections: {},
+      lastModifiedAt: 0,
+    },
+  });
+  return shell;
+}
+
+/* ------------------------------------------------------------------ *
+ * TEST 1 + 2 — one evaluation per step for progress, and completed-step
+ * normalization reuses that SAME evaluation rather than evaluating a
+ * completed step a second time. Fixture matches the addendum's spec:
+ * 'a' is genuinely canonical-complete and must survive normalization;
+ * 'b' is listed in completedStepIds but is NOT actually complete (still
+ * has a remaining pick) and must be dropped — proving normalization's
+ * verdict on 'b' came from a real (shared) evaluation, not a rubber stamp.
+ * ------------------------------------------------------------------ */
+{
+  const completePlugin = makeStatusCountingPlugin({ selection: { isComplete: true } });
+  const inProgressPlugin = makeStatusCountingPlugin({ remainingPicks: [{ label: 'Picks', count: 2 }] });
+  const errorPlugin = makeStatusCountingPlugin({ blockingIssues: ['Something is wrong'] });
+
+  const steps = [
+    { descriptor: { stepId: 'a', label: 'A' }, plugin: completePlugin },
+    { descriptor: { stepId: 'b', label: 'B' }, plugin: inProgressPlugin },
+    { descriptor: { stepId: 'c', label: 'C' }, plugin: errorPlugin },
+  ];
+  const shell = makeStatusTestShell({
+    steps,
+    visitedStepIds: ['a', 'b', 'c'],
+    completedStepIds: ['a', 'b'],
+  });
+
+  const stepProgress = shell._computeStepProgress();
+
+  for (const [label, plugin] of [['complete', completePlugin], ['in-progress', inProgressPlugin], ['error', errorPlugin]]) {
+    assert.equal(plugin.calls.getBlockingIssues, 1, `${label}-step plugin.getBlockingIssues() was called ${plugin.calls.getBlockingIssues} times, expected 1 — completed-step normalization re-evaluated it separately from the stepProgress build`);
+    assert.equal(plugin.calls.getWarnings, 1, `${label}-step plugin.getWarnings() was called ${plugin.calls.getWarnings} times, expected 1`);
+    assert.equal(plugin.calls.getRemainingPicks, 1, `${label}-step plugin.getRemainingPicks() was called ${plugin.calls.getRemainingPicks} times, expected 1`);
+    assert.equal(plugin.calls.validate, 1, `${label}-step plugin.validate() was called ${plugin.calls.validate} times, expected 1`);
+  }
+
+  assert.deepEqual(shell.progressionSession.completedStepIds, ['a'],
+    'completedStepIds normalization did not correctly keep the genuinely-complete step and drop the non-complete one');
+  assert.ok(shell.progressionSession.lastModifiedAt > 0, 'lastModifiedAt was not updated when completedStepIds changed');
+
+  assert.equal(stepProgress.length, 3);
+  assert.equal(stepProgress[0].status, 'complete');
+  assert.equal(stepProgress[1].status, 'in_progress');
+  assert.equal(stepProgress[2].status, 'error');
+}
+
+/* ------------------------------------------------------------------ *
+ * TEST 3 — structural status consumers do not re-evaluate.
+ *
+ * `visibleSteps` (a second full per-step _evaluateStepStatus() pass,
+ * plus a redundant plugin.getWarnings() call) was confirmed dead — no
+ * template, script, or test on this branch reads context.visibleSteps —
+ * and was removed rather than rebuilt from the shared evaluator. This is
+ * a static guard: the ONLY places `this._evaluateStepStatus(` may appear
+ * as a literal call are _createStepStatusEvaluator() itself (the one
+ * canonical entry point every other consumer goes through) and
+ * _markStepCompleted() (an explicit action-boundary call that
+ * deliberately wants a guaranteed-live result, not a cached one — see the
+ * "explicit mutation/completion checks" classification). Any THIRD call
+ * site is exactly the kind of reintroduced duplicate pass Phase 3 exists
+ * to prevent.
+ * ------------------------------------------------------------------ */
+{
+  const src = fs.readFileSync(
+    path.join(ROOT, 'scripts/apps/progression-framework/shell/progression-shell.js'), 'utf8'
+  );
+  const callSites = [...src.matchAll(/this\._evaluateStepStatus\(/g)];
+  assert.equal(callSites.length, 2,
+    `expected exactly 2 direct this._evaluateStepStatus( call sites (inside _createStepStatusEvaluator() and _markStepCompleted()), found ${callSites.length} — a new direct caller should go through _createStepStatusEvaluator() instead`);
+  assert.doesNotMatch(src, /visibleSteps\s*:/,
+    'visibleSteps context field was reintroduced — it was confirmed to have zero consumers (no template/script/test reads it) and removed to eliminate its independent per-step _evaluateStepStatus() + getWarnings() pass');
+}
+
+/* ------------------------------------------------------------------ *
+ * TEST — job-scoped evaluator memoizes across multiple consumers within
+ * ONE job, order-independent (Map lookup by (stepIndex, stepId) is
+ * inherently order-independent, but this proves it directly rather than
+ * assuming it).
+ * ------------------------------------------------------------------ */
+{
+  const plugin = makeStatusCountingPlugin({ selection: { isComplete: true } });
+  const steps = [{ descriptor: { stepId: 'x', label: 'X' }, plugin }];
+  const shell = makeStatusTestShell({ steps, visitedStepIds: ['x'] });
+  const job = shell._createRegionRenderJob();
+
+  assert.equal(plugin.calls.getBlockingIssues, 0, 'creating a job eagerly evaluated a step — the evaluator must be lazy');
+
+  const first = job.statusEvaluator.get('x', 0);
+  const second = job.statusEvaluator.get('x', 0);
+  assert.equal(first, second, 'job.statusEvaluator.get() did not return the SAME cached evaluation object on a second call for the same step');
+  assert.equal(plugin.calls.getBlockingIssues, 1, 'job-scoped evaluator re-evaluated the same step on a second get()');
+
+  // A DIFFERENT job gets a fresh, empty cache — no persistence across jobs.
+  const secondJob = shell._createRegionRenderJob();
+  secondJob.statusEvaluator.get('x', 0);
+  assert.equal(plugin.calls.getBlockingIssues, 2, 'a new job did not evaluate independently — evaluator state leaked across jobs');
+}
+
+/* ------------------------------------------------------------------ *
+ * TEST — real _updateProgressRegion(root, job) reuses a job's evaluator:
+ * pre-warming the evaluator for one step (as if something else in the
+ * same job had already asked for it) means the progress-rail update does
+ * not evaluate that step again.
+ * ------------------------------------------------------------------ */
+{
+  const pluginA = makeStatusCountingPlugin({ selection: { isComplete: true } });
+  const pluginB = makeStatusCountingPlugin({ remainingPicks: [{ label: 'Picks', count: 1 }] });
+  const steps = [
+    { descriptor: { stepId: 'a', label: 'A' }, plugin: pluginA },
+    { descriptor: { stepId: 'b', label: 'B' }, plugin: pluginB },
+  ];
+  const shell = makeStatusTestShell({ steps, visitedStepIds: ['a', 'b'] });
+  const job = shell._createRegionRenderJob();
+
+  // Simulate another consumer in the same job already having asked for 'a'.
+  job.statusEvaluator.get('a', 0);
+  assert.equal(pluginA.calls.getBlockingIssues, 1);
+
+  const fixture = buildRegionFixture();
+  await withRenderTemplateStub(
+    (template) => (String(template).endsWith('progress-rail.hbs') ? '<div class="new-progress">PROGRESS</div>' : ''),
+    () => shell._updateProgressRegion(fixture.root, job)
+  );
+
+  assert.equal(pluginA.calls.getBlockingIssues, 1, '_updateProgressRegion() re-evaluated a step the job had already evaluated');
+  assert.equal(pluginB.calls.getBlockingIssues, 1, '_updateProgressRegion() did not evaluate a step nothing had evaluated yet');
+  assert.equal(fixture.progressEl.innerHTML, '<div class="new-progress">PROGRESS</div>');
+
+  // A standalone call with no job still works (existing callers pass none).
+  const pluginC = makeStatusCountingPlugin({ selection: { isComplete: true } });
+  const soloShell = makeStatusTestShell({ steps: [{ descriptor: { stepId: 'c', label: 'C' }, plugin: pluginC }], visitedStepIds: ['c'] });
+  const soloFixture = buildRegionFixture();
+  await withRenderTemplateStub(
+    (template) => (String(template).endsWith('progress-rail.hbs') ? '<div class="solo-progress">P</div>' : ''),
+    () => soloShell._updateProgressRegion(soloFixture.root)
+  );
+  assert.equal(soloFixture.progressEl.innerHTML, '<div class="solo-progress">P</div>', '_updateProgressRegion() without a job argument regressed');
+}
+
+/* ------------------------------------------------------------------ *
+ * TEST 5 (footer-only lazy-evaluation anti-regression) — a footer-only
+ * scoped update must not evaluate ANY step's canonical status. The
+ * action footer intentionally does NOT read job.statusEvaluator (see the
+ * deliverable report: ActionFooter.build() calls plugin getters with the
+ * shell argument, e.g. getBlockingIssues(shell), while
+ * _evaluateStepStatus() calls them with none — at least 3 real step
+ * plugins (attribute-step, reconciliation-overview-step, summary-step)
+ * behave differently depending on that argument, so reusing
+ * _evaluateStepStatus()'s cached values for the footer would silently
+ * change footer output for those steps). This test locks in that the
+ * job's canonical-status evaluator therefore stays completely untouched
+ * by a footer-only update — proving footer-only really is lazy, not just
+ * "lazy for other steps."
+ * ------------------------------------------------------------------ */
+{
+  const currentPlugin = makeStatusCountingPlugin({ remainingPicks: [{ label: 'Picks', count: 1 }] });
+  const otherPlugin = makeStatusCountingPlugin({ throwOnCall: true });
+  const steps = [
+    { descriptor: { stepId: 'current', label: 'Current' }, plugin: currentPlugin },
+    { descriptor: { stepId: 'other', label: 'Other' }, plugin: otherPlugin },
+  ];
+  const shell = makeStatusTestShell({ steps, visitedStepIds: ['current', 'other'], currentStepIndex: 0 });
+  const job = shell._createRegionRenderJob();
+
+  const fixture = buildRegionFixture();
+  await withRenderTemplateStub(
+    (template) => (String(template).endsWith('action-footer.hbs') ? '<div class="new-footer">FOOTER</div>' : ''),
+    () => shell._updateFooterRegion(fixture.root, job)
+  );
+
+  assert.equal(fixture.footerEl.innerHTML, '<div class="new-footer">FOOTER</div>');
+  // ActionFooter.build() calls the CURRENT plugin's own getters directly
+  // (unchanged, existing behavior) — that is expected and fine.
+  assert.equal(currentPlugin.calls.getBlockingIssues, 1);
+  // But the canonical evaluator itself must never have been touched: no
+  // step's _evaluateStepStatus() ran, for the current step OR any other.
+  assert.equal(otherPlugin.calls.getBlockingIssues, 0, 'footer-only update evaluated a non-current step\'s canonical status');
+  assert.equal(otherPlugin.calls.validate, 0, 'footer-only update evaluated a non-current step\'s canonical status');
+}
+
+/* ------------------------------------------------------------------ *
+ * TEST 6 — unvisited steps remain cheap: a step outside visitedStepIds
+ * must resolve to 'neutral' WITHOUT ever calling validate/
+ * getBlockingIssues/getWarnings/getRemainingPicks. Fixture plugin throws
+ * if any of them are invoked, so any regression fails loudly.
+ * ------------------------------------------------------------------ */
+{
+  const unvisitedPlugin = makeStatusCountingPlugin({ throwOnCall: true });
+  const steps = [{ descriptor: { stepId: 'future', label: 'Future' }, plugin: unvisitedPlugin }];
+  const shell = makeStatusTestShell({ steps, visitedStepIds: [] });
+
+  const evaluator = shell._createStepStatusEvaluator();
+  const status = evaluator.get('future', 0);
+
+  assert.equal(status.canonical, 'neutral', 'an unvisited step did not resolve to neutral status');
+  assert.equal(unvisitedPlugin.calls.validate, 0, 'unvisited step called validate() — lazy evaluation regressed');
+  assert.equal(unvisitedPlugin.calls.getBlockingIssues, 0, 'unvisited step called getBlockingIssues() — lazy evaluation regressed');
+  assert.equal(unvisitedPlugin.calls.getWarnings, 0, 'unvisited step called getWarnings() — lazy evaluation regressed');
+  assert.equal(unvisitedPlugin.calls.getRemainingPicks, 0, 'unvisited step called getRemainingPicks() — lazy evaluation regressed');
+}
+
+/* ------------------------------------------------------------------ *
+ * TEST 7 — status parity: representative states produce exactly the
+ * canonical precedence documented on _evaluateStepStatus() —
+ * error > caution > complete > in_progress > neutral — unchanged by the
+ * Phase 3 memoization work.
+ * ------------------------------------------------------------------ */
+{
+  const cases = [
+    {
+      name: 'neutral (unvisited)', visited: false,
+      plugin: makeStatusCountingPlugin({ throwOnCall: true }),
+      expect: 'neutral',
+    },
+    {
+      name: 'in_progress (positive remaining count)', visited: true,
+      plugin: makeStatusCountingPlugin({ remainingPicks: [{ label: 'Picks', count: 3 }] }),
+      expect: 'in_progress',
+    },
+    {
+      name: 'complete', visited: true,
+      plugin: makeStatusCountingPlugin({ selection: { isComplete: true } }),
+      expect: 'complete',
+    },
+    {
+      name: 'caution due to warning', visited: true,
+      plugin: makeStatusCountingPlugin({ warnings: ['Heads up'], selection: { isComplete: true } }),
+      expect: 'caution',
+    },
+    {
+      name: 'error due to blocking issue', visited: true,
+      plugin: makeStatusCountingPlugin({ blockingIssues: ['Blocked'] }),
+      expect: 'error',
+    },
+    {
+      name: 'explicit selectionState.isComplete false falls back to in_progress', visited: true,
+      plugin: makeStatusCountingPlugin({ selection: { isComplete: false } }),
+      expect: 'in_progress',
+    },
+    {
+      name: 'zero-count getRemainingPicks row does not block completion', visited: true,
+      plugin: makeStatusCountingPlugin({ remainingPicks: [{ label: 'Picks', count: 0 }], selection: { isComplete: true } }),
+      expect: 'complete',
+    },
+  ];
+
+  for (const { name, visited, plugin, expect } of cases) {
+    const steps = [{ descriptor: { stepId: 's', label: 'S' }, plugin }];
+    const shell = makeStatusTestShell({ steps, visitedStepIds: visited ? ['s'] : [] });
+    const status = shell._evaluateStepStatus('s', 0);
+    assert.equal(status.canonical, expect, `status parity case "${name}" — expected ${expect}, got ${status.canonical}`);
+  }
+
+  // Caution due to staleness (invalidatedStepIds), independent of warnings.
+  {
+    const plugin = makeStatusCountingPlugin({ selection: { isComplete: true } });
+    const steps = [{ descriptor: { stepId: 's', label: 'S' }, plugin }];
+    const shell = makeStatusTestShell({ steps, visitedStepIds: ['s'], invalidatedStepIds: ['s'] });
+    const status = shell._evaluateStepStatus('s', 0);
+    assert.equal(status.canonical, 'caution', 'stale (invalidated) step did not resolve to caution');
+    assert.equal(status.isStale, true);
+  }
+
+  // error due to a validation error (not a blocking issue) is still 'error'.
+  {
+    const plugin = {
+      validate: () => ({ isValid: false, errors: ['Validation failed'], warnings: [] }),
+      getBlockingIssues: () => [],
+      getWarnings: () => [],
+      getRemainingPicks: () => [],
+      getSelection: () => null,
+    };
+    const steps = [{ descriptor: { stepId: 's', label: 'S' }, plugin }];
+    const shell = makeStatusTestShell({ steps, visitedStepIds: ['s'] });
+    const status = shell._evaluateStepStatus('s', 0);
+    assert.equal(status.canonical, 'error', 'a validation error (distinct from a blocking issue) did not produce error status');
+    assert.deepEqual(status.errors, ['Validation failed']);
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ * TEST 9 — no persistent cross-render/job status cache: the cache lives
+ * only inside the closure _createStepStatusEvaluator() returns. Static
+ * guard against a shell-instance field reintroducing persistence.
+ * ------------------------------------------------------------------ */
+{
+  const src = fs.readFileSync(
+    path.join(ROOT, 'scripts/apps/progression-framework/shell/progression-shell.js'), 'utf8'
+  );
+  const forbiddenPatterns = [/this\._statusCache\b/, /this\._statusSnapshot\b/, /this\._stepStatusCache\b/];
+  for (const pattern of forbiddenPatterns) {
+    assert.doesNotMatch(src, pattern,
+      `found ${pattern} — status memoization must live inside _createStepStatusEvaluator()'s closure, not on the shell instance (that would persist across renders/jobs)`);
+  }
+  // The evaluator's cache is a local const, not assigned to `this`.
+  const evaluatorSrc = src.slice(src.indexOf('_createStepStatusEvaluator() {'), src.indexOf('_createStepStatusEvaluator() {') + 800);
+  assert.match(evaluatorSrc, /const cache = new Map\(\)/,
+    '_createStepStatusEvaluator() no longer creates a local (non-persistent) cache');
+}
+
+console.log('progression-render-scheduler-budgets (phase 3): all assertions passed');
+
 console.log('progression-render-scheduler-budgets: all assertions passed');
