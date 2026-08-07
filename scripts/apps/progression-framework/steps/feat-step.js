@@ -1636,17 +1636,19 @@ export class FeatStep extends ProgressionStepPlugin {
   }
 
   /**
-   * Ranked search results, name-priority tiers first (exact/starts-with/
-   * includes \u2014 unchanged from before, including diacritic-safe name
-   * normalization via _normalizeSearchText). Everything after that is
-   * gated by _searchMatchesFeat()'s whole-item combined text \u2014 name +
-   * tags + prerequisites + description together \u2014 so a cross-field
-   * Boolean query like "shadow AND stealth" (name has "shadow", description
-   * has "stealth") is satisfied by the feat as a whole even though neither
-   * field alone contains both terms. The per-field checks below only run
-   * once that gate has passed, and exist purely to rank matches for display
-   * order (tags before prerequisites before description); they never decide
-   * inclusion on their own.
+   * Ranked search results. _searchMatchesFeat()'s whole-item combined text \u2014
+   * name + tags + prerequisites + description together \u2014 is the inclusion
+   * gate and runs FIRST, before any ranking. That closes two ways a feat
+   * could otherwise slip past canonical Boolean/wildcard/NOT semantics:
+   * a cross-field query like "shadow AND stealth" (name has "shadow",
+   * description has "stealth" \u2014 neither field alone satisfies it, only the
+   * whole item does), and a coincidental full-phrase name match on a query
+   * the ranking tiers don't understand as Boolean (e.g. a feat literally
+   * named "Armor Not Shadow" must NOT be admitted by the plain-text
+   * name-priority tiers when the actual query is "armor NOT shadow" and the
+   * feat's own name contains the negated term). Everything below the gate
+   * exists purely to rank an already-included match for display order; it
+   * never decides inclusion.
    */
   _getSearchResultFeats() {
     const rawQuery = String(this._searchQuery || '').trim();
@@ -1660,15 +1662,12 @@ export class FeatStep extends ProgressionStepPlugin {
     const source = this._allFeats?.length ? this._allFeats : this._legalFeats;
     const seen = new Set();
     const scoreMatch = (feat) => {
+      if (!this._searchMatchesFeat(feat, compiled)) return 999;
+
       const name = this._normalizeSearchText(feat?.name);
       if (nameQuery && name === nameQuery) return 0;
       if (nameQuery && name.startsWith(nameQuery)) return 1;
       if (nameQuery && name.includes(nameQuery)) return 2;
-
-      // Canonical inclusion gate: does the query hold against this feat's
-      // COMPLETE searchable text? Must pass before any ranking tier below
-      // is allowed to place (or, wrongly, exclude) this feat.
-      if (!this._searchMatchesFeat(feat, compiled)) return 999;
 
       if (compiled.test(buildProgressionSearchText({ name: feat?.name }))) return 2.5;
       const tagsText = buildProgressionSearchText(null, [feat?.subcategory, ...(feat?.uiBroadTags || [])]);
@@ -1720,6 +1719,19 @@ export class FeatStep extends ProgressionStepPlugin {
 
   /**
    * Whole-item yes/no match via the canonical rich search contract.
+   *
+   * Passes the actual feat object (not a synthetic `{name}` stand-in) to
+   * buildProgressionSearchText() so its own field-aggregation picks up
+   * every description/benefit/summary field the feat carries. Previously
+   * this passed `{ name: feat?.name }` plus `_getFeatDescription(feat)` as
+   * an extraField — but _getFeatDescription() is a *display* helper built
+   * on extractDescriptionText(), the first-match-wins resolver, so a feat
+   * with both a description and a benefit could lose one of them from
+   * search. _getFeatDescription()'s Force Training attribute-substitution
+   * stays display-only and is intentionally NOT reproduced here — search
+   * and display are different concerns, and the feat's real underlying
+   * text (unsubstituted) is exactly what the canonical aggregator should
+   * see.
    * @param {Object} feat
    * @param {{test(text:string):boolean}} [compiled] - reuse across a loop
    *   via compileProgressionSearchQuery(this._searchQuery) instead of
@@ -1727,7 +1739,7 @@ export class FeatStep extends ProgressionStepPlugin {
    */
   _searchMatchesFeat(feat, compiled = compileProgressionSearchQuery(this._searchQuery)) {
     if (!String(this._searchQuery || '').trim()) return false;
-    const text = buildProgressionSearchText({ name: feat?.name }, [
+    const text = buildProgressionSearchText(feat, [
       feat?.subcategory,
       feat?.featTypeLabel,
       feat?.prerequisiteLine,
@@ -1735,9 +1747,20 @@ export class FeatStep extends ProgressionStepPlugin {
       feat?.system?.prerequisite,
       feat?.system?.prerequisites,
       ...(feat?.uiBroadTags || []),
-      this._getFeatDescription(feat),
     ]);
-    return compiled.test(text);
+    if (compiled.test(text)) return true;
+    // Diacritic-folded fallback: a handful of real catalog feats carry
+    // accented names ("Flèche", "Teräs Käsi Training") that a player will
+    // normally type in plain ASCII. The canonical matcher's own
+    // normalization does not diacritic-fold (that contract is shared by
+    // every progression catalog, not feat-specific), so re-run the SAME
+    // compiled matcher against a diacritic-folded copy of the SAME text —
+    // no second comparison path, no inspection of the query itself, so
+    // Boolean/NOT/wildcard semantics are identical either way. This only
+    // ever widens a match that already failed; it cannot un-exclude a term
+    // a NOT clause correctly rejected; a negated word present in the text
+    // stays present after diacritic folding.
+    return compiled.test(this._normalizeSearchText(text));
   }
 
   _expandMatchingCategoriesForSearch() {

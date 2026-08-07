@@ -362,6 +362,46 @@ const { TalentStep } = await import(
   assert.ok(step._getSearchResultFeats().map(f => f.name).includes('Zealous Riposte'),
     'whole-item match failed across name + prerequisite text');
 
+  // Real Feat description + benefit: proves _searchMatchesFeat() passes the
+  // WHOLE feat object to the canonical aggregator (buildProgressionSearchText(feat, ...))
+  // rather than a synthetic { name } stand-in plus the display-only
+  // _getFeatDescription() extraField, which collapses back to first-usable-
+  // field-wins via extractDescriptionText() and can silently lose the
+  // benefit when a description is also present. Exercises FeatStep's real
+  // _getSearchResultFeats(), not matchesProgressionSearch() directly.
+  step._allFeats = [
+    {
+      id: 'f7', name: 'Covert Assault',
+      system: {
+        description: { value: 'You may make an attack after moving.' },
+        benefit: { value: 'You may make a Stealth check before the attack.' },
+      },
+    },
+  ];
+  step._legalFeats = step._allFeats;
+  for (const q of ['attack', 'stealth', 'attack AND stealth']) {
+    step._searchQuery = q;
+    assert.ok(step._getSearchResultFeats().map(f => f.name).includes('Covert Assault'),
+      `FeatStep lost the description or benefit field for query "${q}"`);
+  }
+
+  // Canonical gate precedes name-priority ranking: a feat whose name is a
+  // verbatim, full-phrase match for the plain-text (non-Boolean-aware) form
+  // of the query must still be EXCLUDED when the canonical Boolean
+  // expression itself rejects it. "Armor Not Shadow" contains the word
+  // "shadow" in its own name — so a query of "armor NOT shadow" must reject
+  // it (NOT shadow fails, since the name itself contains "shadow"), even
+  // though the plain-text exact/starts-with/includes tiers, run in isolation
+  // without Boolean awareness, would otherwise rank it a perfect name match.
+  // This only holds if the canonical gate is checked BEFORE those tiers.
+  step._allFeats = [
+    { id: 'f8', name: 'Armor Not Shadow', system: { description: { value: 'A defensive stance.' } } },
+  ];
+  step._legalFeats = step._allFeats;
+  step._searchQuery = 'armor NOT shadow';
+  assert.ok(!step._getSearchResultFeats().map(f => f.name).includes('Armor Not Shadow'),
+    'canonical NOT semantics were bypassed by a coincidental full-phrase name-priority match — gate is not running before ranking');
+
   // Restore the original fixtures for the assertions below (name-priority
   // ranking must still hold for simple literal queries).
   step._allFeats = [
@@ -373,6 +413,18 @@ const { TalentStep } = await import(
   step._searchQuery = 'stealth';
   assert.equal(step._getSearchResultFeats().map(f => f.name)[0], 'Skill Focus (Stealth)',
     'FeatStep name-priority ranking regressed after the whole-item gate change');
+
+  // Accented catalog names (real data: "Flèche", "Teräs Käsi Training") must
+  // stay findable by the plain-ASCII text a player would actually type, even
+  // though the canonical gate now runs first and the canonical matcher's own
+  // text comparison does not diacritic-fold.
+  step._allFeats = [
+    { id: 'f9', name: 'Flèche', system: { description: { value: 'A fencing lunge.' } } },
+  ];
+  step._legalFeats = step._allFeats;
+  step._searchQuery = 'fleche';
+  assert.ok(step._getSearchResultFeats().map(f => f.name).includes('Flèche'),
+    'accented feat name became unfindable by its plain-ASCII spelling after the gate-first reorder');
 
   // Static contract: the file actually imports and calls the canonical module.
   const src = read('scripts/apps/progression-framework/steps/feat-step.js');
