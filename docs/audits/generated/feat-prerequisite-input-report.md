@@ -1,6 +1,6 @@
 # Feat Prerequisite Input Report
 
-Generated: 2026-08-07T00:22:29.837Z
+Generated: 2026-08-07T00:38:41.974Z
 
 This audits prerequisite **inputs** (catalog text, FEAT_PREREQUISITE_AUTHORITY text, choice metadata) against the real `normalizeFeatPrerequisites` from `scripts/engine/progression/prerequisites/prerequisite-normalizer.js`, loaded and executed for real under Node via `tests/helpers/foundry-shim`. It does not evaluate legality — see docs/audits/feat-integrity-current-state.md for why `prerequisite-checker.js`, not this normalizer, is the live legality path.
 

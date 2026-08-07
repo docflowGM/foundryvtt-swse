@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-08-07T00:22:29.837Z",
+  "generatedAt": "2026-08-07T00:38:41.974Z",
   "purpose": "Prerequisite INPUT integrity for the canonical feat catalog: does each feat supply data the existing prerequisite architecture (FEAT_PREREQUISITE_AUTHORITY + prerequisite-normalizer.js) can consume consistently? Does not evaluate or decide legality. IMPORTANT: normalizeFeatPrerequisites (progression/prerequisites/prerequisite-normalizer.js) is NOT the runtime legality path for feat acquisition — AbilityEngine.evaluateAcquisition calls PrerequisiteChecker.checkFeatPrerequisites (scripts/data/prerequisite-checker.js), which has its own independent legacy-string parser and was not exercised by this script. Findings here describe normalizer-INPUT/fallback-classification quality on a real but currently orphaned pipeline, not confirmed live chargen breakage. See docs/audits/feat-integrity-current-state.md.",
   "totals": {
     "catalogDocCount": 390,
