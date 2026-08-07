@@ -48,9 +48,25 @@ export const RENDER_REGIONS = Object.freeze(new Set([
  * Regions the shell can genuinely update on their own. Anything outside this
  * set has no independent seam yet and must be satisfied structurally, decided
  * up front rather than discovered halfway through a partial update.
+ *
+ * Phase 2: work-surface, summary, utility, footer, and progress joined
+ * 'details' once ProgressionShell grew a real updater + lifecycle rehydration
+ * for each (see _updateWorkSurfaceRegion / _updateSummaryRegion /
+ * _updateUtilityRegion / _updateProgressRegion / _updateFooterRegion in
+ * progression-shell.js). Do not add a region here before its updater exists —
+ * this set is what lets a scoped request skip the preflight-to-structural
+ * fallback, so listing one prematurely would silently corrupt that region's
+ * DOM instead of safely falling back.
  * @type {ReadonlySet<string>}
  */
-export const INDEPENDENT_REGIONS = Object.freeze(new Set(['details']));
+export const INDEPENDENT_REGIONS = Object.freeze(new Set([
+  'details',
+  'work-surface',
+  'summary',
+  'utility',
+  'footer',
+  'progress',
+]));
 
 /** Regions that are never valid to request. Requesting one is a bug, not a repaint. */
 export const FORBIDDEN_REGIONS = Object.freeze(new Set(['mentor']));

@@ -129,8 +129,18 @@ const regionUpdates = (host) => host.jobs.filter(job => !job.structural);
   // prevent.
   assert.ok(!RENDER_REGIONS.has('mentor'), 'mentor is still a valid render region');
   assert.ok(FORBIDDEN_REGIONS.has('mentor'), 'mentor is not marked forbidden');
-  assert.ok(INDEPENDENT_REGIONS.has('details'), 'details lost its independent seam');
-  assert.ok(!INDEPENDENT_REGIONS.has('footer'), 'footer claims a seam the shell does not implement');
+
+  // Phase 2: every named region vocabulary except 'structural' itself now
+  // has a real independent seam (ProgressionShell grew an updater and
+  // lifecycle rehydration for each — see _updateWorkSurfaceRegion /
+  // _updateSummaryRegion / _updateUtilityRegion / _updateProgressRegion /
+  // _updateFooterRegion). 'structural' is the full-shell path, not a seam,
+  // and is correctly excluded from this set.
+  for (const region of ['details', 'work-surface', 'summary', 'utility', 'footer', 'progress']) {
+    assert.ok(INDEPENDENT_REGIONS.has(region), `${region} lost its independent seam`);
+  }
+  assert.ok(!INDEPENDENT_REGIONS.has('structural'), '"structural" is a fallback path, not an independent seam');
+  assert.ok(!INDEPENDENT_REGIONS.has('mentor'), 'mentor must never claim an independent seam — it is DOM-owned');
 }
 
 /* ------------------------------------------------------------------ *
@@ -639,20 +649,32 @@ const regionUpdates = (host) => host.jobs.filter(job => !job.structural);
     assert.equal(calls.structural, 0);
   }
 
-  // details + unsupported footer -> ONE structural render, and details is not
-  // partially painted first.
+  // Phase 2: 'footer' now has a real seam, so a mixed job naming it must
+  // paint scoped, not fall back — this used to be the "unsupported footer"
+  // regression case; that scenario is retested below with a genuinely
+  // unimplemented region name instead.
   {
     const { calls, executor } = makeShellExecutor();
-    assert.equal(await executor({ regions: ['details', 'footer'], structural: false }), 'structural');
-    assert.equal(calls.structural, 1);
-    assert.deepEqual(calls.regions, [], 'details was painted before the fallback decision');
+    assert.equal(await executor({ regions: ['details', 'footer'], structural: false }), 'scoped');
+    assert.equal(calls.structural, 0);
+    assert.deepEqual(calls.regions, ['details', 'footer']);
   }
 
-  // unsupported region only -> one structural render.
+  // summary alone -> partial update, no structural repaint (Phase 2 seam).
   {
     const { calls, executor } = makeShellExecutor();
-    assert.equal(await executor({ regions: ['summary'], structural: false }), 'structural');
+    assert.equal(await executor({ regions: ['summary'], structural: false }), 'scoped');
+    assert.equal(calls.structural, 0);
+    assert.deepEqual(calls.regions, ['summary']);
+  }
+
+  // details + a genuinely unsupported region -> ONE structural render, and
+  // details is not partially painted first.
+  {
+    const { calls, executor } = makeShellExecutor();
+    assert.equal(await executor({ regions: ['details', 'not-a-real-region'], structural: false }), 'structural');
     assert.equal(calls.structural, 1);
+    assert.deepEqual(calls.regions, [], 'details was painted before the fallback decision');
   }
 
   // An unknown region name is not treated as success.
@@ -752,8 +774,26 @@ const regionUpdates = (host) => host.jobs.filter(job => !job.structural);
   // commitSelection stands down when the shell owns the interaction.
   const shellSrc = read('scripts/apps/progression-framework/shell/progression-shell.js');
   assert.match(shellSrc, /isShellOwnedInteraction\(\)/, 'the shell-owned interaction bracket is missing');
-  assert.match(shellSrc, /if \(!this\.isShellOwnedInteraction\(\)\) \{\n\s+this\.requestRender\(\{ preserveScroll: true, reason: `commit-selection/,
-    'commitSelection still repaints unconditionally inside a shell-owned commit');
+  assert.match(
+    shellSrc,
+    /if \(!this\.isShellOwnedInteraction\(\)\) \{[\s\S]{0,800}?this\.requestRender\(\{[\s\S]{0,200}?reason: `commit-selection/,
+    'commitSelection still repaints unconditionally inside a shell-owned commit'
+  );
+
+  // Phase 2: a commit that actually rebuilt the active-step list (a step
+  // unlocked/became inapplicable) must stay structural — declaring
+  // work-surface/summary/footer/progress there would silently skip
+  // repainting whatever changed about the step list itself.
+  const commitSelectionBody = shellSrc.slice(
+    shellSrc.indexOf('async commitSelection('),
+    shellSrc.indexOf('\n  }', shellSrc.indexOf('async commitSelection('))
+  );
+  assert.match(commitSelectionBody, /const stepsChanged = await this\._recomputeActiveStepsIfNeeded\(\)/,
+    'commitSelection must know whether the active-step list actually changed');
+  assert.match(commitSelectionBody, /structural: stepsChanged/,
+    'commitSelection must force a structural render when the step list changed');
+  assert.match(commitSelectionBody, /regions: stepsChanged \? null : \[/,
+    'commitSelection must declare real dirty regions for the ordinary (no step-list-change) case');
 
   // Ask Mentor commits really focus the chosen item rather than no-opping.
   // The comment may quote the old no-op (that is how the defect is documented);
@@ -914,6 +954,515 @@ const regionUpdates = (host) => host.jobs.filter(job => !job.structural);
 
   assert.deepEqual(selfRenderOffenders, [],
     `direct this.render() self-call outside the scheduler's own executor callback — route through this.requestRender() instead:\n  ${selfRenderOffenders.join('\n  ')}`);
+}
+
+/* ==================================================================== *
+ * PHASE 2 — Independent region rendering.
+ *
+ * These tests drive the REAL ProgressionShell.prototype region updaters —
+ * not a reimplementation — via Object.create(ProgressionShell.prototype)
+ * plus a minimal instance fixture. A call from inside one real prototype
+ * method into another (_updateWorkSurfaceRegion -> this._renderWorkSurfaceHtml,
+ * this._captureProgressionScrollSnapshots, this._createRegionRenderJob, ...)
+ * resolves to the real implementation exactly as it does in production,
+ * because `this` is a genuine (if minimally populated) instance of the
+ * class, not a hand-rolled stand-in for its methods.
+ *
+ * Full ApplicationV2 construction is not attempted — several unrelated
+ * modules in ProgressionShell's import graph touch window/document/
+ * localStorage at module load time (progression-debug-capture.js,
+ * runtime-contract.js), so a minimal browser-global shim exists ONLY to
+ * satisfy those load-time side effects. No test below depends on real
+ * DOM/CSS-selector behavior: the fake DOM nodes resolve querySelector()
+ * from an explicit fixture map, not by parsing selector syntax, so this
+ * is a control-flow/contract test of the real methods, not a selector-
+ * engine test. Static assertions further down check the selector strings
+ * themselves match between the JS and the .hbs templates.
+ * ==================================================================== */
+
+// Additive-only browser-global shim, layered on top of what
+// installFoundryShimGlobals() already provides (foundry.utils/game/ui/...).
+globalThis.window = globalThis.window ?? {
+  addEventListener: () => {}, removeEventListener: () => {}, __SWSE_CONTRACT_INITIALIZED__: false,
+};
+globalThis.localStorage = globalThis.localStorage ?? { getItem: () => null, setItem: () => {}, removeItem: () => {} };
+globalThis.document = globalThis.document ?? {
+  readyState: 'complete', addEventListener: () => {}, removeEventListener: () => {}, activeElement: null,
+};
+
+/** Minimal HTMLElement stand-in — exists only so `x instanceof HTMLElement`
+ * (used throughout ProgressionShell's DOM helpers) resolves true for our
+ * fixture nodes, exactly the way it would for a real Element in a browser. */
+class FakeElement {
+  constructor({ selectors = {}, html = '' } = {}) {
+    this._selectors = selectors;
+    this._html = html;
+    this.dataset = {};
+    this.scrollTop = 0;
+    this.scrollLeft = 0;
+    this.classList = { add() {}, remove() {}, toggle() {}, contains: () => false };
+  }
+  get innerHTML() { return this._html; }
+  set innerHTML(v) { this._html = v; }
+  querySelector(sel) { return this._selectors[sel] ?? null; }
+  querySelectorAll() { return []; }
+  closest() { return null; }
+  contains() { return false; }
+  matches() { return false; }
+}
+globalThis.HTMLElement = globalThis.HTMLElement ?? FakeElement;
+
+globalThis.foundry.applications = globalThis.foundry.applications ?? {
+  api: {
+    ApplicationV2: class ApplicationV2Stub {},
+    HandlebarsApplicationMixin: (Base) => class extends Base {},
+    DocumentSheetV2: class DocumentSheetV2Stub {},
+    DialogV2: class DialogV2Stub {},
+  },
+  handlebars: { renderTemplate: async () => '' },
+  ux: { TextEditor: { implementation: { enrichHTML: async (v) => v } } },
+};
+
+const { ProgressionShell } = await import(
+  '/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/progression-shell.js'
+);
+
+async function withRenderTemplateStub(responder, fn) {
+  const original = globalThis.foundry.applications.handlebars.renderTemplate;
+  globalThis.foundry.applications.handlebars.renderTemplate = async (template, data) => responder(template, data);
+  try { return await fn(); } finally { globalThis.foundry.applications.handlebars.renderTemplate = original; }
+}
+
+/** [data-region="work-surface"] + its nested body wrapper, sibling utility
+ * bar, summary/progress/footer hosts — the fixture every updater test below
+ * mounts against. */
+function buildRegionFixture() {
+  const bodyEl = new FakeElement({ html: '<div class="old-ws">old</div>' });
+  const regionEl = new FakeElement({ selectors: { ':scope > [data-prog-region-body="work-surface"]': bodyEl } });
+  const utilityEl = new FakeElement({ html: '<div class="old-utility"></div>' });
+  const summaryBodyEl = new FakeElement({ html: '<div class="old-summary"></div>' });
+  const progressEl = new FakeElement({ html: '<div class="old-progress"></div>' });
+  const footerEl = new FakeElement({ html: '<div class="old-footer"></div>' });
+  const detailsEl = new FakeElement({ html: '' });
+  const root = new FakeElement({
+    selectors: {
+      '[data-region="work-surface"]': regionEl,
+      '[data-region="utility-bar"]': utilityEl,
+      '.prog-summary-panel__body': summaryBodyEl,
+      '[data-region="progress-rail"]': progressEl,
+      '[data-region="action-footer"]': footerEl,
+      '[data-region="details-panel"]': detailsEl,
+    },
+  });
+  return { root, regionEl, bodyEl, utilityEl, summaryBodyEl, progressEl, footerEl, detailsEl };
+}
+
+function makePlugin({ summaryHtml = undefined, utilityConfig = { mode: 'rich' } } = {}) {
+  const calls = { getStepData: 0, renderWorkSurface: 0, afterRender: 0, onDataReady: 0 };
+  return {
+    calls,
+    async getStepData() { calls.getStepData += 1; return { items: [] }; },
+    renderWorkSurface(stepData) {
+      calls.renderWorkSurface += 1;
+      return { template: 'work-surface-template', data: { stepData } };
+    },
+    ...(summaryHtml === undefined ? {} : {
+      async renderSummaryPanel() { return { template: 'summary-template', data: {} }; },
+    }),
+    getUtilityBarConfig() { return utilityConfig; },
+    getBlockingIssues() { return []; },
+    async afterRender() { calls.afterRender += 1; },
+    async onDataReady() { calls.onDataReady += 1; },
+  };
+}
+
+/** Object.create(ProgressionShell.prototype) + the minimal instance state
+ * the region updaters actually read. Every method NOT explicitly stubbed
+ * here (getStepData hydration path, scroll capture/restore, footer data
+ * building, step-progress computation, ...) is the real prototype method. */
+function makeFakeShell({ plugin, steps } = {}) {
+  const shell = Object.create(ProgressionShell.prototype);
+  const stepList = steps ?? [{ stepId: 'feats', label: 'Feats', icon: 'fa-star' }];
+  Object.assign(shell, {
+    steps: stepList,
+    currentStepIndex: 0,
+    stepPlugins: new Map([[stepList[0].stepId, plugin]]),
+    actor: { id: 'actor-1' },
+    mode: 'chargen',
+    buildIntent: null,
+    focusedItem: null,
+    utilityBarCollapsed: false,
+    progressRailCollapsed: false,
+    summaryPanelCollapsed: false,
+    committedSelections: new Map(),
+    _dataReadyToken: new Map(),
+    _stepDataRevision: 0,
+    _onDataReadyCalls: 0,
+    _normalizeCompletedStepIds: () => {},
+    _evaluateStepStatus: () => ({
+      canonical: 'neutral', isVisited: false, errors: [], warnings: [], remainingChoices: [],
+    }),
+    utilityBar: {
+      setConfig() {},
+      afterRender(node) { shell._utilityAfterRenderCalls = (shell._utilityAfterRenderCalls || 0) + 1; shell._utilityAfterRenderNode = node; },
+    },
+    progressRail: {
+      afterRender(node) { shell._progressAfterRenderCalls = (shell._progressAfterRenderCalls || 0) + 1; shell._progressAfterRenderNode = node; },
+    },
+  });
+  return shell;
+}
+
+const footerTemplateResponder = (template) => {
+  if (template === 'work-surface-template') return '<div class="new-ws">WS</div>';
+  if (template === 'summary-template') return '<div class="new-summary">SUM</div>';
+  if (String(template).endsWith('action-footer.hbs')) return '<div class="new-footer">FOOTER</div>';
+  if (String(template).endsWith('progress-rail.hbs')) return '<div class="new-progress">PROGRESS</div>';
+  if (String(template).endsWith('utility-bar.hbs')) return '<div class="new-utility">UTILITY</div>';
+  return '';
+};
+
+/* ------------------------------------------------------------------ *
+ * 1. Individual region partials: each real updater mounts into its own
+ *    host and leaves every sibling untouched.
+ * ------------------------------------------------------------------ */
+{
+  const fixture = buildRegionFixture();
+  const plugin = makePlugin({ summaryHtml: true });
+  const shell = makeFakeShell({ plugin });
+  const job = shell._createRegionRenderJob();
+
+  await withRenderTemplateStub(footerTemplateResponder, async () => {
+    assert.equal(await shell._updateWorkSurfaceRegion(fixture.root, job), true);
+    assert.equal(await shell._updateSummaryRegion(fixture.root, job), true);
+    assert.equal(await shell._updateUtilityRegion(fixture.root, job), true);
+    assert.equal(await shell._updateProgressRegion(fixture.root), true);
+    assert.equal(await shell._updateFooterRegion(fixture.root, job), true);
+  });
+
+  assert.equal(fixture.bodyEl.innerHTML, '<div class="new-ws">WS</div>');
+  assert.equal(fixture.summaryBodyEl.innerHTML, '<div class="new-summary">SUM</div>');
+  assert.equal(fixture.utilityEl.innerHTML, '<div class="new-utility">UTILITY</div>');
+  assert.equal(fixture.progressEl.innerHTML, '<div class="new-progress">PROGRESS</div>');
+  assert.equal(fixture.footerEl.innerHTML, '<div class="new-footer">FOOTER</div>');
+
+  assert.equal(plugin.calls.afterRender, 1, 'work-surface update did not call plugin.afterRender');
+  assert.equal(shell._utilityAfterRenderCalls, 1, 'utility update did not call UtilityBar.afterRender');
+  assert.equal(shell._utilityAfterRenderNode, fixture.utilityEl);
+  assert.equal(shell._progressAfterRenderCalls, 1, 'progress update did not call ProgressRail.afterRender');
+  assert.equal(shell._progressAfterRenderNode, fixture.progressEl);
+}
+
+/* ------------------------------------------------------------------ *
+ * 2. Work-surface replacement does not destroy the nested utility-bar
+ *    region or the step-context banner sibling — only the body wrapper
+ *    is mutated.
+ * ------------------------------------------------------------------ */
+{
+  const fixture = buildRegionFixture();
+  const plugin = makePlugin();
+  const shell = makeFakeShell({ plugin });
+  const job = shell._createRegionRenderJob();
+
+  await withRenderTemplateStub(footerTemplateResponder, () => shell._updateWorkSurfaceRegion(fixture.root, job));
+
+  assert.equal(fixture.bodyEl.innerHTML, '<div class="new-ws">WS</div>');
+  assert.equal(fixture.utilityEl.innerHTML, '<div class="old-utility"></div>',
+    'a work-surface-only update touched the nested utility-bar sibling');
+}
+
+/* ------------------------------------------------------------------ *
+ * 3. Utility replacement does not touch the work-surface body sibling.
+ * ------------------------------------------------------------------ */
+{
+  const fixture = buildRegionFixture();
+  const plugin = makePlugin();
+  const shell = makeFakeShell({ plugin });
+  const job = shell._createRegionRenderJob();
+
+  await withRenderTemplateStub(footerTemplateResponder, () => shell._updateUtilityRegion(fixture.root, job));
+
+  assert.equal(fixture.utilityEl.innerHTML, '<div class="new-utility">UTILITY</div>');
+  assert.equal(fixture.bodyEl.innerHTML, '<div class="old-ws">old</div>',
+    'a utility-only update touched the work-surface body sibling');
+}
+
+/* ------------------------------------------------------------------ *
+ * 4. Job-scoped stepData is hydrated once, not once per region. This is
+ *    the specific defect Phase 2 exists to avoid: a mixed job needing
+ *    stepData for both work-surface and summary must call
+ *    plugin.getStepData() exactly once.
+ * ------------------------------------------------------------------ */
+{
+  const fixture = buildRegionFixture();
+  const plugin = makePlugin({ summaryHtml: true });
+  const shell = makeFakeShell({ plugin });
+  const job = shell._createRegionRenderJob();
+
+  await withRenderTemplateStub(footerTemplateResponder, async () => {
+    await shell._updateWorkSurfaceRegion(fixture.root, job);
+    await shell._updateSummaryRegion(fixture.root, job);
+  });
+
+  assert.equal(plugin.calls.getStepData, 1,
+    'stepData was hydrated more than once for two regions in the same job');
+}
+
+/* ------------------------------------------------------------------ *
+ * 5. Footer and progress regions never call getStepData at all — neither
+ *    needs it, and a job requesting only those must not hydrate it.
+ * ------------------------------------------------------------------ */
+{
+  const fixture = buildRegionFixture();
+  const plugin = makePlugin();
+  const shell = makeFakeShell({ plugin });
+  const job = shell._createRegionRenderJob();
+
+  await withRenderTemplateStub(footerTemplateResponder, async () => {
+    await shell._updateFooterRegion(fixture.root, job);
+    await shell._updateProgressRegion(fixture.root);
+  });
+
+  assert.equal(plugin.calls.getStepData, 0,
+    'footer/progress updates hydrated stepData they do not need');
+}
+
+/* ------------------------------------------------------------------ *
+ * 6. A genuine render failure (template engine throws for every template,
+ *    including the work-surface error-surface fallback) returns false —
+ *    the caller falls back to structural — and never touches the DOM.
+ * ------------------------------------------------------------------ */
+{
+  const fixture = buildRegionFixture();
+  const plugin = makePlugin();
+  const shell = makeFakeShell({ plugin });
+  const job = shell._createRegionRenderJob();
+
+  const applied = await withRenderTemplateStub(
+    () => { throw new Error('template engine unavailable'); },
+    () => shell._updateWorkSurfaceRegion(fixture.root, job)
+  );
+
+  assert.equal(applied, false, 'a genuine render failure must fall back to structural, not succeed silently');
+  assert.equal(fixture.bodyEl.innerHTML, '<div class="old-ws">old</div>', 'DOM was mutated despite the failure');
+}
+
+/* ------------------------------------------------------------------ *
+ * 7. Missing mount point (the intro-mode work-surface variant has no
+ *    [data-prog-region-body="work-surface"] wrapper) fails safe instead
+ *    of guessing where to mount.
+ * ------------------------------------------------------------------ */
+{
+  const regionEl = new FakeElement({}); // no wrapper registered
+  const root = new FakeElement({ selectors: { '[data-region="work-surface"]': regionEl } });
+  const plugin = makePlugin();
+  const shell = makeFakeShell({ plugin });
+  const job = shell._createRegionRenderJob();
+
+  assert.equal(await shell._updateWorkSurfaceRegion(root, job), false);
+}
+
+/* ------------------------------------------------------------------ *
+ * 8. _maybeRunOnDataReady is activation/revision-scoped: two scoped
+ *    work-surface repaints in the same activation (the search/filter hot
+ *    path) call onDataReady at most once, but afterRender every time.
+ * ------------------------------------------------------------------ */
+{
+  const fixture = buildRegionFixture();
+  const plugin = makePlugin();
+  const shell = makeFakeShell({ plugin });
+
+  await withRenderTemplateStub(footerTemplateResponder, async () => {
+    await shell._updateWorkSurfaceRegion(fixture.root, shell._createRegionRenderJob());
+    await shell._updateWorkSurfaceRegion(fixture.root, shell._createRegionRenderJob());
+  });
+
+  assert.equal(plugin.calls.onDataReady, 1,
+    'a same-activation scoped work-surface repaint re-ran onDataReady');
+  assert.equal(plugin.calls.afterRender, 2,
+    'afterRender must still run on every scoped work-surface paint');
+
+  shell._stepDataRevision += 1; // simulates invalidateStepData() on step (re-)activation
+  await withRenderTemplateStub(footerTemplateResponder,
+    () => shell._updateWorkSurfaceRegion(fixture.root, shell._createRegionRenderJob()));
+  assert.equal(plugin.calls.onDataReady, 2, 'invalidateStepData did not release the onDataReady gate');
+}
+
+/* ------------------------------------------------------------------ *
+ * 9. An unrecognized region name still fails safe through the real
+ *    _updateRegion dispatcher.
+ * ------------------------------------------------------------------ */
+{
+  const fixture = buildRegionFixture();
+  const plugin = makePlugin();
+  const shell = makeFakeShell({ plugin });
+  shell.getRootElement = () => fixture.root;
+
+  assert.equal(await shell._updateRegion('not-a-real-region'), false);
+}
+
+/* ------------------------------------------------------------------ *
+ * 10. PERFORMANCE CONTRACT — full requestRender()->scheduler->
+ *     _executeScheduledRender()->real region updaters round trip.
+ *
+ * Before Phase 2: ['work-surface', 'utility'] had no independent seam, so
+ * this always structurally re-rendered the whole shell. After Phase 2:
+ * both regions are real seams, so the SAME request produces zero
+ * structural renders. `shell.render` is stubbed here (the one piece that
+ * needs full ApplicationV2) purely to COUNT whether it was called, not to
+ * fake region behavior — every region updater invoked below is the real
+ * prototype method.
+ * ------------------------------------------------------------------ */
+{
+  const fixture = buildRegionFixture();
+  const plugin = makePlugin({ summaryHtml: true });
+  const shell = makeFakeShell({ plugin });
+  shell.getRootElement = () => fixture.root;
+  shell.element = fixture.root;
+  shell._structuralRenderCalls = 0;
+  shell.render = async () => { shell._structuralRenderCalls += 1; return shell; };
+  shell.renderScheduler = new ProgressionRenderScheduler({
+    executeRender: (job) => shell._executeScheduledRender(job),
+    computeStateSignature: () => 'sig',
+    isDebugEnabled: () => false,
+  });
+  shell.requestRender = ProgressionShell.prototype.requestRender.bind(shell);
+
+  // The scheduler defers its flush to requestAnimationFrame; this file's rAF
+  // stub only fires queued callbacks when advanceFrame() is called (see top
+  // of file), so every requestRender() below is paired with one.
+  const requestAndFlush = async (opts) => {
+    const pending = shell.requestRender(opts);
+    await advanceFrame();
+    return pending;
+  };
+
+  // 10a. Feat-search shape: ['work-surface', 'utility'].
+  await withRenderTemplateStub(footerTemplateResponder,
+    () => requestAndFlush({ preserveScroll: true, reason: 'feat-search', regions: ['work-surface', 'utility'] }));
+  assert.equal(shell._structuralRenderCalls, 0, 'a supported-region search request fell back to structural');
+  assert.equal(fixture.bodyEl.innerHTML, '<div class="new-ws">WS</div>');
+  assert.equal(fixture.utilityEl.innerHTML, '<div class="new-utility">UTILITY</div>');
+
+  // 10b. Standard commit shape: ['work-surface', 'summary', 'footer', 'progress'],
+  // one scheduler execution, all four regions applied, stepData hydrated once.
+  plugin.calls.getStepData = 0;
+  await withRenderTemplateStub(footerTemplateResponder, () => requestAndFlush({
+    preserveScroll: true,
+    reason: 'commit-selection:feats',
+    regions: ['work-surface', 'summary', 'footer', 'progress'],
+  }));
+  assert.equal(shell._structuralRenderCalls, 0, 'a supported-region commit request fell back to structural');
+  assert.equal(fixture.summaryBodyEl.innerHTML, '<div class="new-summary">SUM</div>');
+  assert.equal(fixture.footerEl.innerHTML, '<div class="new-footer">FOOTER</div>');
+  assert.equal(fixture.progressEl.innerHTML, '<div class="new-progress">PROGRESS</div>');
+  assert.equal(plugin.calls.getStepData, 1, 'the mixed commit job hydrated stepData more than once');
+
+  // 10c. Search/filter burst — three requests inside one frame coalesce
+  // into ONE scheduler execution and zero structural renders.
+  plugin.calls.getStepData = 0;
+  await withRenderTemplateStub(footerTemplateResponder, async () => {
+    const p1 = shell.requestRender({ preserveScroll: true, reason: 'search-1', regions: ['work-surface', 'utility'] });
+    const p2 = shell.requestRender({ preserveScroll: true, reason: 'search-2', regions: ['work-surface', 'utility'] });
+    const p3 = shell.requestRender({ preserveScroll: true, reason: 'search-3', regions: ['work-surface', 'utility'] });
+    await advanceFrame();
+    await Promise.all([p1, p2, p3]);
+  });
+  assert.equal(shell._structuralRenderCalls, 0, 'a coalesced search burst fell back to structural');
+  assert.equal(plugin.calls.getStepData, 1, 'a coalesced search burst hydrated stepData more than once');
+
+  // 10d. A genuinely unsupported region still forces exactly one structural
+  // render through the same real dispatch path.
+  shell._structuralRenderCalls = 0;
+  await withRenderTemplateStub(footerTemplateResponder,
+    () => requestAndFlush({ preserveScroll: true, reason: 'unknown-region', regions: ['not-a-real-region'] }));
+  assert.equal(shell._structuralRenderCalls, 1, 'an unsupported region did not fall back to structural');
+
+  // 10e. An explicit structural request (step navigation) always renders
+  // structurally, never through a region updater — the goal is zero
+  // *unnecessary* structural renders, not zero structural renders.
+  shell._structuralRenderCalls = 0;
+  await requestAndFlush({ preserveScroll: false, reason: 'step-navigation', structural: true, force: true });
+  assert.equal(shell._structuralRenderCalls, 1, 'an explicit structural request did not render structurally');
+}
+
+/* ------------------------------------------------------------------ *
+ * 11. Static contract: no region updater calls the full _prepareContext()
+ *     to get a fragment of it back out — each shares only the extracted
+ *     render helper it actually needs, and _prepareContext() itself calls
+ *     the exact same helpers rather than keeping a second copy of the
+ *     rendering logic inline.
+ * ------------------------------------------------------------------ */
+{
+  const shellSrc = fs.readFileSync(
+    path.join(ROOT, 'scripts/apps/progression-framework/shell/progression-shell.js'), 'utf8');
+
+  const sliceMethod = (name) => {
+    const start = shellSrc.indexOf(`${name}(`);
+    assert.ok(start > 0, `${name} not found`);
+    return shellSrc.slice(start, shellSrc.indexOf('\n  }', start));
+  };
+
+  const updaterExpectations = [
+    ['async _updateWorkSurfaceRegion', '_renderWorkSurfaceHtml'],
+    ['async _updateSummaryRegion', '_renderSummaryPanelHtml'],
+    ['async _updateUtilityRegion', '_renderUtilityBarHtml'],
+    ['async _updateProgressRegion', '_renderProgressRailHtml'],
+    ['async _updateFooterRegion', '_renderFooterHtml'],
+  ];
+  for (const [methodDecl, sharedHelper] of updaterExpectations) {
+    const body = sliceMethod(methodDecl);
+    assert.ok(!/_prepareContext\(/.test(body),
+      `${methodDecl} must not call the full _prepareContext() to render its fragment`);
+    assert.ok(body.includes(`this.${sharedHelper}(`),
+      `${methodDecl} must call the shared ${sharedHelper}() helper`);
+  }
+
+  // _prepareContext() itself must call the same shared helpers, not a
+  // second inline copy of the same rendering logic.
+  const prepareContextBody = sliceMethod('async _prepareContext');
+  for (const helper of [
+    '_computeStepProgress', '_renderWorkSurfaceHtml', '_renderSummaryPanelHtml',
+    '_renderUtilityBarHtml', '_renderProgressRailHtml',
+  ]) {
+    assert.ok(prepareContextBody.includes(`this.${helper}(`),
+      `_prepareContext must call the shared ${helper}() helper, not a duplicated inline implementation`);
+  }
+
+  // The work-surface updater mounts into the stable body wrapper, not the
+  // outer region (which would delete the sibling utility-bar).
+  const workSurfaceBody = sliceMethod('async _updateWorkSurfaceRegion');
+  assert.match(workSurfaceBody, /data-prog-region-body="work-surface"/,
+    '_updateWorkSurfaceRegion must mount into the stable body wrapper');
+
+  // onDataReady stays activation/revision-scoped from the scoped path too.
+  assert.ok(workSurfaceBody.includes('this._maybeRunOnDataReady('),
+    '_updateWorkSurfaceRegion must use the shared, gated onDataReady helper');
+}
+
+/* ------------------------------------------------------------------ *
+ * 12. Template seam: progression-shell.hbs actually has the wrapper the
+ *     JS updater depends on, and the extracted action-footer partial
+ *     exists and is included by the main template (not duplicated).
+ * ------------------------------------------------------------------ */
+{
+  const shellHbs = fs.readFileSync(
+    path.join(ROOT, 'templates/apps/progression-framework/progression-shell.hbs'), 'utf8');
+  assert.match(shellHbs, /data-prog-region-body="work-surface"/,
+    'progression-shell.hbs is missing the work-surface body wrapper the JS updater targets');
+
+  const footerPartialPath = 'templates/apps/progression-framework/action-footer.hbs';
+  assert.ok(fs.existsSync(path.join(ROOT, footerPartialPath)), 'action-footer.hbs partial was not created');
+  assert.match(shellHbs, /\{\{>\s*"systems\/foundryvtt-swse\/templates\/apps\/progression-framework\/action-footer\.hbs"\s*\}\}/,
+    'progression-shell.hbs must include the extracted action-footer partial rather than inlining the footer twice');
+
+  // No duplicate footer markup left inline in the main template.
+  assert.ok(!shellHbs.includes('data-action="previous-step"'),
+    'progression-shell.hbs still has an inline copy of the footer markup');
+
+  const loadTemplatesSrc = fs.readFileSync(path.join(ROOT, 'scripts/load-templates.js'), 'utf8');
+  assert.ok(loadTemplatesSrc.includes("templates/apps/progression-framework/action-footer.hbs'"),
+    'action-footer.hbs is not registered in the template preload manifest');
 }
 
 console.log('progression-render-scheduler-budgets: all assertions passed');
