@@ -119,7 +119,7 @@ export class LanguageStep extends ProgressionStepPlugin {
   _renderPreservingScroll(shell) {
     if (shell) {
       shell._pendingScrollSnapshots = this._captureStepScroll(shell);
-      shell.render?.();
+      shell.requestRender?.({ preserveScroll: true, reason: 'language-step:render-preserving-scroll', regions: ['work-surface', 'utility'] });
     }
   }
 

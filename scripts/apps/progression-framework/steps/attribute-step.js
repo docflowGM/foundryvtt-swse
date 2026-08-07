@@ -1133,7 +1133,7 @@ export class AttributeStep extends ProgressionStepPlugin {
       this._scorePool = [];
       this._selectedPoolId = null;
       this._committed = false;
-      shell?.render?.();
+      shell?.requestRender?.({ preserveScroll: true, reason: 'attribute-species-fixed-override', regions: ['work-surface', 'summary', 'footer', 'progress'] });
       return true;
     }
 
@@ -1148,7 +1148,7 @@ export class AttributeStep extends ProgressionStepPlugin {
     if (this._committed) {
       // Unlock
       this._committed = false;
-      shell?.render?.();
+      shell?.requestRender?.({ preserveScroll: true, reason: 'attribute-unlock', regions: ['work-surface', 'summary', 'footer', 'progress'] });
     } else {
       // Lock
       await this._performLock(shell);
@@ -1176,7 +1176,7 @@ export class AttributeStep extends ProgressionStepPlugin {
         return;
       }
       await this.onItemCommitted(increases, shell);
-      shell?.render?.();
+      shell?.requestRender?.({ preserveScroll: true, reason: 'attribute-lock-level-up-increase', regions: ['work-surface', 'summary', 'footer', 'progress'] });
       return;
     }
 
@@ -1205,7 +1205,7 @@ export class AttributeStep extends ProgressionStepPlugin {
     }
 
     await this.onItemCommitted(normalized, shell);
-    shell?.render?.();
+    shell?.requestRender?.({ preserveScroll: true, reason: 'attribute-lock', regions: ['work-surface', 'summary', 'footer', 'progress'] });
   }
 
   async afterRender(shell, workSurfaceEl) {

@@ -428,19 +428,19 @@ export class FeatStep extends ProgressionStepPlugin {
       if (e.detail?.handledByStepHook) return;
       this._searchQuery = e.detail.query || '';
       this._syncSidebarForSearch();
-      shell?.requestRender?.({ preserveScroll: true, reason: 'feat-search' }) ?? shell?.render?.();
+      shell?.requestRender?.({ preserveScroll: true, reason: 'feat-search', regions: ['work-surface', 'utility'] });
     };
     const onFilter = e => {
       if (e.detail?.handledByStepHook) return;
       const { filterId, value } = e.detail || {};
       this._filters = this._filters || {};
       this._filters[filterId] = value;
-      shell?.requestRender?.({ preserveScroll: true, reason: 'feat-filter' }) ?? shell?.render?.();
+      shell?.requestRender?.({ preserveScroll: true, reason: 'feat-filter', regions: ['work-surface', 'utility'] });
     };
     const onSort = e => {
       if (e.detail?.handledByStepHook) return;
       this._sortBy = e.detail?.sortId || 'alpha-asc';
-      shell?.requestRender?.({ preserveScroll: true, reason: 'feat-sort' }) ?? shell?.render?.();
+      shell?.requestRender?.({ preserveScroll: true, reason: 'feat-sort', regions: ['work-surface', 'utility'] });
     };
 
     shell.element.addEventListener('prog:utility:search', onSearch, { signal });
@@ -469,13 +469,13 @@ export class FeatStep extends ProgressionStepPlugin {
     if (type === 'search') {
       this._searchQuery = detail.query || '';
       this._syncSidebarForSearch();
-      await (shell?.requestRender?.({ preserveScroll: true, reason: 'feat-search' }) ?? shell?.render?.());
+      await shell?.requestRender?.({ preserveScroll: true, reason: 'feat-search', regions: ['work-surface', 'utility'] });
       return true;
     }
 
     if (type === 'sort') {
       this._sortBy = detail.sortId || 'alpha-asc';
-      await (shell?.requestRender?.({ preserveScroll: true, reason: 'feat-sort' }) ?? shell?.render?.());
+      await shell?.requestRender?.({ preserveScroll: true, reason: 'feat-sort', regions: ['work-surface', 'utility'] });
       return true;
     }
 
@@ -483,7 +483,7 @@ export class FeatStep extends ProgressionStepPlugin {
       const { filterId, value } = detail;
       this._filters = this._filters || {};
       if (filterId) this._filters[filterId] = value;
-      await (shell?.requestRender?.({ preserveScroll: true, reason: 'feat-filter' }) ?? shell?.render?.());
+      await shell?.requestRender?.({ preserveScroll: true, reason: 'feat-filter', regions: ['work-surface', 'utility'] });
       return true;
     }
 
@@ -500,7 +500,7 @@ export class FeatStep extends ProgressionStepPlugin {
       } else {
         this._expandedCategories.add(category);
       }
-      shell?.render?.();
+      shell?.requestRender?.({ preserveScroll: true, reason: 'feat-toggle-category', regions: ['work-surface', 'utility'] });
       return true;
     }
 
@@ -512,13 +512,13 @@ export class FeatStep extends ProgressionStepPlugin {
         this._showAll = false;
         this._noChoicesAvailable = true;
         ui?.notifications?.warn?.(localizeProgressionText('SWSE.Progression.Feat.Messages.CatalogUnavailableWarning'));
-        await (shell?.requestRender?.({ preserveScroll: true, reason: 'feat-show-all-catalog-unavailable' }) ?? shell?.render?.());
+        await shell?.requestRender?.({ preserveScroll: true, reason: 'feat-show-all-catalog-unavailable', regions: ['work-surface', 'utility'] });
         return true;
       }
       this._showAll = !this._showAll;
       this._refreshGroupedFeats();
       this._ensureActiveCategory();
-      await (shell?.requestRender?.({ preserveScroll: true, reason: 'feat-show-all-toggle' }) ?? shell?.render?.());
+      await shell?.requestRender?.({ preserveScroll: true, reason: 'feat-show-all-toggle', regions: ['work-surface', 'utility'] });
       return true;
     }
 
@@ -526,7 +526,7 @@ export class FeatStep extends ProgressionStepPlugin {
       event?.preventDefault?.();
       const panelId = target?.dataset?.panel;
       this._openFilterPanel = this._openFilterPanel === panelId ? null : panelId;
-      shell?.render?.();
+      shell?.requestRender?.({ preserveScroll: true, reason: 'feat-open-filter-panel', regions: ['work-surface', 'utility'] });
       return true;
     }
 
@@ -537,14 +537,14 @@ export class FeatStep extends ProgressionStepPlugin {
       this._activeCategory = category;
       this._searchQuery = '';
       this._expandedCategories.add(category);
-      shell?.render?.();
+      shell?.requestRender?.({ preserveScroll: true, reason: 'feat-select-category', regions: ['work-surface', 'utility'] });
       return true;
     }
 
     if (action === 'toggle-feat-category-sidebar') {
       event?.preventDefault?.();
       this._categorySidebarCollapsed = !this._categorySidebarCollapsed;
-      shell?.render?.();
+      shell?.requestRender?.({ preserveScroll: true, reason: 'feat-toggle-category-sidebar', regions: ['work-surface', 'utility'] });
       return true;
     }
 
@@ -557,7 +557,7 @@ export class FeatStep extends ProgressionStepPlugin {
       this._categorySidebarCollapsed = false;
       this._prereqNavigationBanner = null;
       this._ensureActiveCategory();
-      shell?.render?.();
+      shell?.requestRender?.({ preserveScroll: true, reason: 'feat-reset-browser', regions: ['work-surface', 'utility'] });
       return true;
     }
 
@@ -1494,7 +1494,7 @@ export class FeatStep extends ProgressionStepPlugin {
         : `Showing prerequisite feat: ${target.name}.`,
     };
     shell?.setFocusedItem?.({ id: targetId, _id: targetId, name: target.name, type: 'feat' });
-    shell?.requestRender?.({ preserveScroll: true, reason: 'feat-prerequisite-jump' }) ?? shell?.render?.();
+    shell?.requestRender?.({ preserveScroll: true, reason: 'feat-prerequisite-jump', regions: ['work-surface', 'utility', 'details'] });
   }
 
   // ---------------------------------------------------------------------------

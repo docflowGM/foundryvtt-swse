@@ -976,7 +976,7 @@ export class IntroStep extends ProgressionStepPlugin {
     this._state = INTRO_STATE.ANIMATING;
     this._animationSequenceStarted = false;
     this._sessionToken = Math.random();
-    await this._shell?.render?.(false);
+    await this._shell?.requestRender?.({ preserveScroll: false, reason: 'intro-replay-sequence', structural: true });
   }
 
   // ---------------------------------------------------------------------------
@@ -1090,16 +1090,16 @@ export class IntroStep extends ProgressionStepPlugin {
 
       try {
         console.log('[IntroStep.startIntroSequence] About to render with complete=true, state=', this._state);
-        swseLogger.debug('[IntroStep.startIntroSequence] About to call shell.render()');
-        await shell.render(false);
-        console.log('[IntroStep.startIntroSequence] Shell.render() completed successfully');
+        swseLogger.debug('[IntroStep.startIntroSequence] About to call shell.requestRender()');
+        await shell.requestRender?.({ preserveScroll: false, reason: 'intro-sequence-complete', structural: true });
+        console.log('[IntroStep.startIntroSequence] Shell render completed successfully');
         swseLogger.debug('[IntroStep.startIntroSequence] Shell rendered after completion', {
           complete: this._complete,
           newState: this._state,
         });
       } catch (error) {
-        console.error('[IntroStep.startIntroSequence] ERROR during shell.render():', error);
-        swseLogger.error('[IntroStep.startIntroSequence] ERROR during shell.render()', {
+        console.error('[IntroStep.startIntroSequence] ERROR during shell.requestRender():', error);
+        swseLogger.error('[IntroStep.startIntroSequence] ERROR during shell.requestRender()', {
           error: error.message,
           stack: error.stack,
         });
@@ -1380,7 +1380,7 @@ export class IntroStep extends ProgressionStepPlugin {
   /**
    * Actor-v2 boot sequence animation.
    * Progresses through 8 stages, updating context via buildActorSplashV2Context.
-   * Calls shell.render() for each stage to update the UI.
+   * Updates the UI via direct DOM mutation for each stage (no shell render).
    * Runs Aurebesh translation at stage 6 (the 'translation' stage).
    * Respects cancellation and session invalidation.
    */

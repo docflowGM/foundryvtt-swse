@@ -302,17 +302,17 @@ export class ForceTechniqueStep extends ProgressionStepPlugin {
       this._searchQuery = e?.detail?.query || '';
       this._categorySidebarCollapsed = Boolean(this._searchQuery);
       this._applyFilters();
-      shell?.requestRender?.({ preserveScroll: true, reason: 'force-technique-search' }) ?? shell?.render?.();
+      shell?.requestRender?.({ preserveScroll: true, reason: 'force-technique-search' });
     };
     const onFilter = e => {
       if (e?.detail?.handledByStepHook) return;
       this._applyFilters();
-      shell?.requestRender?.({ preserveScroll: true, reason: 'force-technique-filter' }) ?? shell?.render?.();
+      shell?.requestRender?.({ preserveScroll: true, reason: 'force-technique-filter' });
     };
     const onSort = e => {
       if (e?.detail?.handledByStepHook) return;
       this._applyFilters();
-      shell?.requestRender?.({ preserveScroll: true, reason: 'force-technique-sort' }) ?? shell?.render?.();
+      shell?.requestRender?.({ preserveScroll: true, reason: 'force-technique-sort' });
     };
 
     shell.element.addEventListener('prog:utility:search', onSearch, { signal });
@@ -332,13 +332,13 @@ export class ForceTechniqueStep extends ProgressionStepPlugin {
       this._searchQuery = detail?.query || '';
       this._categorySidebarCollapsed = Boolean(this._searchQuery);
       this._applyFilters();
-      await (shell?.requestRender?.({ preserveScroll: true, reason: 'force-technique-search' }) ?? shell?.render?.());
+      await shell?.requestRender?.({ preserveScroll: true, reason: 'force-technique-search' });
       return true;
     }
 
     if (type === 'filter' || type === 'sort') {
       this._applyFilters();
-      await (shell?.requestRender?.({ preserveScroll: true, reason: `force-technique-${type}` }) ?? shell?.render?.());
+      await shell?.requestRender?.({ preserveScroll: true, reason: `force-technique-${type}` });
       return true;
     }
 
@@ -460,7 +460,7 @@ export class ForceTechniqueStep extends ProgressionStepPlugin {
       if (!category) return true;
       this._activeCategory = category;
       this._searchQuery = '';
-      await (shell?.requestRender?.({ preserveScroll: true, reason: 'force-technique-category' }) ?? shell?.render?.());
+      await shell?.requestRender?.({ preserveScroll: true, reason: 'force-technique-category' });
       return true;
     }
 
@@ -468,7 +468,7 @@ export class ForceTechniqueStep extends ProgressionStepPlugin {
       event?.preventDefault?.();
       event?.stopPropagation?.();
       this._categorySidebarCollapsed = !this._categorySidebarCollapsed;
-      await (shell?.requestRender?.({ preserveScroll: true, reason: 'force-technique-category-sidebar' }) ?? shell?.render?.());
+      await shell?.requestRender?.({ preserveScroll: true, reason: 'force-technique-category-sidebar' });
       return true;
     }
 
@@ -477,7 +477,7 @@ export class ForceTechniqueStep extends ProgressionStepPlugin {
       event?.stopPropagation?.();
       this._showAllTechniques = !this._showAllTechniques;
       this._applyFilters();
-      await (shell?.requestRender?.({ preserveScroll: true, reason: 'force-technique-show-all-toggle' }) ?? shell?.render?.());
+      await shell?.requestRender?.({ preserveScroll: true, reason: 'force-technique-show-all-toggle' });
       return true;
     }
 
@@ -489,7 +489,7 @@ export class ForceTechniqueStep extends ProgressionStepPlugin {
       this._categorySidebarCollapsed = false;
       this._showAllTechniques = false;
       this._applyFilters();
-      await (shell?.requestRender?.({ preserveScroll: true, reason: 'force-technique-browser-reset' }) ?? shell?.render?.());
+      await shell?.requestRender?.({ preserveScroll: true, reason: 'force-technique-browser-reset' });
       return true;
     }
 

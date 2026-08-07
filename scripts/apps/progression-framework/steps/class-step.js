@@ -684,11 +684,7 @@ export class ClassStep extends ProgressionStepPlugin {
   }
 
   _requestStepRender(shell, reason = 'class-step-update') {
-    if (typeof shell?.requestRender === 'function') {
-      shell.requestRender({ preserveScroll: true, reason });
-      return;
-    }
-    shell?.render?.();
+    shell?.requestRender?.({ preserveScroll: true, reason, regions: ['work-surface', 'utility'] });
   }
 
   _applyUtilityChange(type, detail = {}, shell = null, utilityBar = null) {

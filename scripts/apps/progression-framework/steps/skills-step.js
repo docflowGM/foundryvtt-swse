@@ -591,7 +591,7 @@ try {
         if (skillKey) {
           this._trainSkill(skillKey);
           await this._refreshSkillSuggestions(shell);
-          shell?.requestRender?.({ preserveScroll: true, reason: 'skill-train' }) ?? shell?.render?.();
+          shell?.requestRender?.({ preserveScroll: true, reason: 'skill-train' });
         }
         return true;
       }
@@ -600,7 +600,7 @@ try {
         if (skillKey) {
           this._untrainSkill(skillKey);
           await this._refreshSkillSuggestions(shell);
-          shell?.requestRender?.({ preserveScroll: true, reason: 'skill-untrain' }) ?? shell?.render?.();
+          shell?.requestRender?.({ preserveScroll: true, reason: 'skill-untrain' });
         }
         return true;
       }
@@ -608,7 +608,7 @@ try {
       case 'skill-reset': {
         this._resetAllSkills();
         await this._refreshSkillSuggestions(shell);
-        shell?.requestRender?.({ preserveScroll: true, reason: 'skill-reset' }) ?? shell?.render?.();
+        shell?.requestRender?.({ preserveScroll: true, reason: 'skill-reset' });
         return true;
       }
 

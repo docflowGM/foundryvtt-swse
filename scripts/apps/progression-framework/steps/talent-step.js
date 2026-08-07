@@ -284,8 +284,14 @@ export class TalentStep extends ProgressionStepPlugin {
 
   _renderPreservingScroll(shell) {
     if (shell) {
+      // Scroll capture stays step-local (this._captureStepScroll knows about
+      // talent-specific region/class selectors); only the repaint trigger
+      // routes through the scheduler now instead of calling shell.render()
+      // directly. shell.render() itself already reads _pendingScrollSnapshots
+      // (progression-shell.js), so the scroll-restoration data path is
+      // unchanged — only render ownership moved to requestRender().
       shell._pendingScrollSnapshots = this._captureStepScroll(shell);
-      shell.render?.();
+      shell.requestRender?.({ preserveScroll: true, reason: 'talent-step:render-preserving-scroll', regions: ['work-surface', 'utility'] });
     }
   }
 
@@ -2001,7 +2007,7 @@ export class TalentStep extends ProgressionStepPlugin {
     };
 
     shell?.setFocusedItem?.({ id: targetId, _id: targetId, name: target.name, type: 'talent' });
-    shell?.requestRender?.({ preserveScroll: true, reason: 'talent-prerequisite-jump' }) ?? shell?.render?.();
+    shell?.requestRender?.({ preserveScroll: true, reason: 'talent-prerequisite-jump', regions: ['work-surface', 'utility', 'details'] });
   }
 
   /**

@@ -271,7 +271,7 @@ export class ForceSecretStep extends ProgressionStepPlugin {
       if (!category) return true;
       this._activeCategory = category;
       this._searchQuery = '';
-      await (shell?.requestRender?.({ preserveScroll: true, reason: 'force-secret-category' }) ?? shell?.render?.());
+      await shell?.requestRender?.({ preserveScroll: true, reason: 'force-secret-category' });
       return true;
     }
 
@@ -279,7 +279,7 @@ export class ForceSecretStep extends ProgressionStepPlugin {
       event?.preventDefault?.();
       event?.stopPropagation?.();
       this._categorySidebarCollapsed = !this._categorySidebarCollapsed;
-      await (shell?.requestRender?.({ preserveScroll: true, reason: 'force-secret-category-sidebar' }) ?? shell?.render?.());
+      await shell?.requestRender?.({ preserveScroll: true, reason: 'force-secret-category-sidebar' });
       return true;
     }
 
@@ -289,7 +289,7 @@ export class ForceSecretStep extends ProgressionStepPlugin {
       this._searchQuery = '';
       this._activeCategory = 'recommended';
       this._categorySidebarCollapsed = false;
-      await (shell?.requestRender?.({ preserveScroll: true, reason: 'force-secret-browser-reset' }) ?? shell?.render?.());
+      await shell?.requestRender?.({ preserveScroll: true, reason: 'force-secret-browser-reset' });
       return true;
     }
 

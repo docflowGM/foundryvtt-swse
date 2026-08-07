@@ -390,7 +390,7 @@ class GalacticProfileBaseStep extends ProgressionStepPlugin {
     }
 
     await syncProfileMentor(shell, group.name, phase);
-    await shell?.render?.();
+    await shell?.requestRender?.({ preserveScroll: true, reason: 'galactic-profile-select-class', structural: true });
     return true;
   }
 
@@ -404,7 +404,7 @@ class GalacticProfileBaseStep extends ProgressionStepPlugin {
     state.templateId = template.id;
     state.classId = classKeyForTemplate(template);
     await syncProfileMentor(shell, classNameForTemplate(template), phase);
-    await shell?.render?.();
+    await shell?.requestRender?.({ preserveScroll: true, reason: 'galactic-profile-select-template', structural: true });
     return true;
   }
 
@@ -663,7 +663,7 @@ export class ProfileReviewStep extends GalacticProfileBaseStep {
         await shell._activateStep?.(index, { source: 'galactic-profile-business', restoreIndex: shell.currentStepIndex });
       }
       await shell._persistSessionSnapshot?.(shell.progressionSession.currentStepId || 'galactic-profile-business');
-      shell.render?.();
+      shell.requestRender?.({ preserveScroll: false, reason: 'galactic-profile-business-activate', structural: true });
     } else {
       await shell._persistSessionSnapshot?.('galactic-profile');
     }

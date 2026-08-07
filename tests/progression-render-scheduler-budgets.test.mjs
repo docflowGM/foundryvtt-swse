@@ -52,6 +52,53 @@ const { ProgressionRenderScheduler, RENDER_REGIONS, INDEPENDENT_REGIONS, FORBIDD
   '/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/progression-render-scheduler.js'
 );
 
+// Detects a direct call into the shell's own render() — in any of its escape
+// forms: `shell.render()`, `shell?.render()`, `shell?.render?.()`,
+// `this._shell?.render?.(false)`, awaited or not. The previous version of this
+// check (`/shell\.render\(\)/`) only matched the unguarded literal spelling,
+// so a plugin could route around the ownership contract just by adding a `?`
+// before the call — an actual escape found in this codebase (feat-step.js's
+// `?? shell?.render?.()` fallback) that this regex must never miss again.
+// Matches any `<word ending in "shell">` reference — optionally
+// `?.`-chained — followed by `render(`, itself optionally `?.`-chained
+// before the call parens (optional-chained *calls* spell that `render?.(`,
+// not `render?(` — the `.` before the paren is part of the operator, not a
+// separate member access, and is easy to under-match if you forget it).
+const SHELL_RENDER_CALL_RE = /\b\w*[Ss]hell\??\.\s*render(?:\?\.)?\s*\(/;
+
+// Self-check: prove the hardened regex actually catches every escape shape
+// before relying on it below. If this block itself fails, the detector is
+// the thing that regressed, not the production code it scans.
+{
+  const mustMatch = [
+    'shell.render();',
+    'shell.render(false);',
+    'shell?.render();',
+    'shell?.render?.();',
+    'await shell.render();',
+    'await shell?.render?.(false);',
+    "shell?.requestRender?.({ reason: 'x' }) ?? shell?.render?.();",
+    'this._shell?.render?.(false);',
+    'this.shell?.render?.();',
+    '  shell . render ( ) ;'.replace(/ (?=[.(])| (?=\))/g, ''), // sanity: still a literal call
+  ];
+  const mustNotMatch = [
+    'shell.requestRender({ reason: "x" });',
+    'shell?.requestRender?.({ reason: "x" });',
+    'shellRouter.render();', // different identifier ("shellRouter"), not a "*shell" reference
+    'renderScheduler.request();',
+  ];
+  // The regex is line-content-only and intentionally comment-agnostic — every
+  // call site below strips `*`/`//`-prefixed lines itself before testing, so
+  // that responsibility is proven at the call sites, not asserted here.
+  for (const line of mustMatch) {
+    assert.ok(SHELL_RENDER_CALL_RE.test(line), `hardened render-call detector failed to catch: ${line}`);
+  }
+  for (const line of mustNotMatch) {
+    assert.ok(!SHELL_RENDER_CALL_RE.test(line), `hardened render-call detector false-positived on: ${line}`);
+  }
+}
+
 /** Minimal host recording what the scheduler asked it to paint. */
 function makeHost({ signature = () => 'stable' } = {}) {
   const jobs = [];
@@ -451,8 +498,8 @@ const regionUpdates = (host) => host.jobs.filter(job => !job.structural);
 
   const mentorRail = read('scripts/apps/progression-framework/shell/mentor-rail.js');
   assert.ok(
-    !/shell\.render\(/.test(mentorRail),
-    'MentorRail still calls shell.render() directly'
+    !SHELL_RENDER_CALL_RE.test(mentorRail),
+    'MentorRail still calls shell.render() directly (including optional-chained forms)'
   );
   // Tightened by the mentor-recommendation work: mentor updates are no longer
   // merely region-scoped, they never enter the render pipeline at all. There is
@@ -476,7 +523,15 @@ const regionUpdates = (host) => host.jobs.filter(job => !job.structural);
     'router still only guards focus reactions against staleness'
   );
 
-  // No step plugin calls the raw shell renderer any more.
+  // No step plugin calls the raw shell renderer any more. Zero exceptions:
+  // intro-step.js used to be excluded here on the strength of its own doc
+  // comments ("NO shell.render() calls during animation"), but inspection
+  // during the Phase 1 render-ownership sweep found it DID call
+  // `this._shell?.render?.(false)` and `shell.render(false)` at two
+  // deliberate, non-per-frame completion points — exactly the kind of call
+  // the old literal-only regex (`shell\.render\(\)`) could not see past its
+  // `?` chaining. Both were converted to requestRender(); the exemption did
+  // not hold up and is not reinstated here.
   const stepFiles = [];
   const walk = (dir) => {
     for (const name of fs.readdirSync(dir)) {
@@ -489,19 +544,40 @@ const regionUpdates = (host) => host.jobs.filter(job => !job.structural);
 
   const offenders = [];
   for (const file of stepFiles) {
-    // intro-step drives its own animation sequence and is documented as
-    // deliberately rendering only at completion.
-    if (file.endsWith('intro-step.js')) continue;
     const src = fs.readFileSync(file, 'utf8');
     for (const [index, line] of src.split('\n').entries()) {
       const trimmed = line.trim();
       if (trimmed.startsWith('*') || trimmed.startsWith('//')) continue;
-      if (/(?<![\w.])shell\.render\(\)/.test(line)) {
-        offenders.push(`${path.relative(ROOT, file)}:${index + 1}`);
+      if (SHELL_RENDER_CALL_RE.test(line)) {
+        offenders.push(`${path.relative(ROOT, file)}:${index + 1}: ${trimmed}`);
       }
     }
   }
-  assert.deepEqual(offenders, [], `step plugins must schedule renders, not call shell.render(): ${offenders.join(', ')}`);
+  assert.deepEqual(offenders, [],
+    `step plugins must schedule renders via requestRender(), not call shell.render() in any optional-chained form:\n  ${offenders.join('\n  ')}`);
+
+  // The same zero-tolerance check extends to shell orchestration helpers
+  // outside steps/ that plugins and dialogs route through — build-intent.js's
+  // legacy commit facade, the recovery manager, and the rail resizer all had
+  // a bare or fallback `shell.render()`/`app.render()` before this phase.
+  const orchestrationFiles = [
+    'scripts/apps/progression-framework/shell/build-intent.js',
+    'scripts/apps/progression-framework/ux/progression-recovery-manager.js',
+    'scripts/apps/progression-framework/shell/progression-rail-resizer.js',
+  ];
+  const orchestrationOffenders = [];
+  for (const rel of orchestrationFiles) {
+    const src = read(rel);
+    for (const [index, line] of src.split('\n').entries()) {
+      const trimmed = line.trim();
+      if (trimmed.startsWith('*') || trimmed.startsWith('//')) continue;
+      if (SHELL_RENDER_CALL_RE.test(line)) {
+        orchestrationOffenders.push(`${rel}:${index + 1}: ${trimmed}`);
+      }
+    }
+  }
+  assert.deepEqual(orchestrationOffenders, [],
+    `shell orchestration helpers must schedule renders via requestRender(), not call render() directly:\n  ${orchestrationOffenders.join('\n  ')}`);
 
   // Focus handlers in plugins are details-scoped.
   const classStep = read('scripts/apps/progression-framework/steps/class-step.js');
@@ -662,7 +738,7 @@ const regionUpdates = (host) => host.jobs.filter(job => !job.structural);
       let index = src.indexOf(`async ${method}(`);
       while (index !== -1) {
         const body = src.slice(index, src.indexOf('\n  }', index));
-        if (/shell\??\.requestRender\(|shell\??\.render\(/.test(body)) {
+        if (/shell\??\.\s*requestRender\??\s*\(/.test(body) || SHELL_RENDER_CALL_RE.test(body)) {
           offenders.push(`${name}.${method}`);
         }
         index = src.indexOf(`async ${method}(`, index + 1);
@@ -694,6 +770,63 @@ const regionUpdates = (host) => host.jobs.filter(job => !job.structural);
     !/requestRender\(/.test(helper.slice(0, 1600)),
     'the mentor focus helper schedules a render of its own'
   );
+}
+
+/* ------------------------------------------------------------------ *
+ * Full-tree closure: every `*shell.render(...)` reference anywhere under
+ * progression-framework/, in any optional-chained spelling, is either gone
+ * or on this explicit, justified allowlist. New files or new call sites
+ * cannot silently reintroduce a direct render — they show up as an
+ * `unexpectedOffenders` failure below, and a removed exception shows up as
+ * a `staleAllowlistEntries` failure so this list cannot go stale unnoticed.
+ * ------------------------------------------------------------------ */
+{
+  // file path (relative to ROOT) -> justification. Both current entries are
+  // progression-entry.js's initial-mount bootstrap: the module-level entry
+  // point that constructs/opens the shell for the first time, before any
+  // scheduler-owned render loop exists to route through. This is the same
+  // class of call as ProgressionShell.open()/FollowerShell.open() calling
+  // `app.render()` directly on first mount (those use the `app` local, not
+  // a `shell`-named reference, so they fall outside this regex already).
+  const ALLOWLIST = new Map([
+    ['scripts/apps/progression-framework/progression-entry.js', 2],
+  ]);
+
+  const root = path.join(ROOT, 'scripts/apps/progression-framework');
+  const counts = new Map();
+  const unexpectedOffenders = [];
+  const walkAll = (dir) => {
+    for (const name of fs.readdirSync(dir)) {
+      const full = path.join(dir, name);
+      if (fs.statSync(full).isDirectory()) { walkAll(full); continue; }
+      if (!full.endsWith('.js')) continue;
+      const rel = path.relative(ROOT, full);
+      const src = fs.readFileSync(full, 'utf8');
+      let fileCount = 0;
+      for (const [index, line] of src.split('\n').entries()) {
+        const trimmed = line.trim();
+        if (trimmed.startsWith('*') || trimmed.startsWith('//')) continue;
+        if (!SHELL_RENDER_CALL_RE.test(line)) continue;
+        fileCount += 1;
+        if (!ALLOWLIST.has(rel)) unexpectedOffenders.push(`${rel}:${index + 1}: ${trimmed}`);
+      }
+      if (fileCount) counts.set(rel, fileCount);
+    }
+  };
+  walkAll(root);
+
+  assert.deepEqual(unexpectedOffenders, [],
+    `direct shell.render() call outside the documented allowlist (route through requestRender() instead):\n  ${unexpectedOffenders.join('\n  ')}`);
+
+  const staleAllowlistEntries = [];
+  for (const [rel, expectedCount] of ALLOWLIST) {
+    const actualCount = counts.get(rel) || 0;
+    if (actualCount !== expectedCount) {
+      staleAllowlistEntries.push(`${rel}: expected ${expectedCount}, found ${actualCount}`);
+    }
+  }
+  assert.deepEqual(staleAllowlistEntries, [],
+    `allowlist is stale — update ALLOWLIST counts (and their justification) to match the current source:\n  ${staleAllowlistEntries.join('\n  ')}`);
 }
 
 console.log('progression-render-scheduler-budgets: all assertions passed');

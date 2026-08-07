@@ -252,7 +252,7 @@ export class SpeciesStep extends ProgressionStepPlugin {
           mods: choice.mods,
         });
       }
-      shell?.render?.();
+      shell?.requestRender?.({ preserveScroll: true, reason: 'species-select-ability-choice', regions: ['work-surface', 'utility'] });
       return true;
     }
 
@@ -266,7 +266,7 @@ export class SpeciesStep extends ProgressionStepPlugin {
       } else {
         this._selectedVariantBySpeciesId.set(speciesId, variantId);
       }
-      shell?.render?.();
+      shell?.requestRender?.({ preserveScroll: true, reason: 'species-select-variant', regions: ['work-surface', 'utility'] });
       return true;
     }
 
@@ -281,7 +281,7 @@ export class SpeciesStep extends ProgressionStepPlugin {
       if (['medium', 'small', 'large'].includes(this._activeSizeCategory)) {
         this._expandedSizeCategories.add(this._activeSizeCategory);
       }
-      shell?.render?.();
+      shell?.requestRender?.({ preserveScroll: true, reason: 'species-select-category', regions: ['work-surface', 'utility'] });
       return true;
     }
 
@@ -296,14 +296,14 @@ export class SpeciesStep extends ProgressionStepPlugin {
           this._expandedSizeCategories.add(size);
         }
       }
-      shell?.render?.();
+      shell?.requestRender?.({ preserveScroll: true, reason: 'species-toggle-size-accordion', regions: ['work-surface', 'utility'] });
       return true;
     }
 
     if (action === 'toggle-species-category-sidebar') {
       event?.preventDefault?.();
       this._categorySidebarCollapsed = !this._categorySidebarCollapsed;
-      shell?.render?.();
+      shell?.requestRender?.({ preserveScroll: true, reason: 'species-toggle-category-sidebar', regions: ['work-surface', 'utility'] });
       return true;
     }
 
@@ -324,7 +324,7 @@ export class SpeciesStep extends ProgressionStepPlugin {
       };
       this._applyFilters();
       if (shell?.utilityBar?._searchQuery !== undefined) shell.utilityBar._searchQuery = '';
-      shell?.render?.();
+      shell?.requestRender?.({ preserveScroll: true, reason: 'species-reset-browser', regions: ['work-surface', 'utility'] });
       return true;
     }
     return false;

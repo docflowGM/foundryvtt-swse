@@ -423,7 +423,7 @@ export class L1SurveyStep extends ProgressionStepPlugin {
 
     await this._saveSurveyDraft(shell);
     await this._speakCurrentPhase(shell, true);
-    shell?.render?.();
+    shell?.requestRender?.({ preserveScroll: true, reason: 'l1-survey-back', regions: ['work-surface', 'utility'] });
   }
 
   _canSurveyBack() {

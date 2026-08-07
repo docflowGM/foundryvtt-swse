@@ -100,8 +100,8 @@ export class BuildIntent {
 
       // Re-render shell to reflect direct legacy commits. For already-committed
       // calls, the canonical commit path is already handling render/reconcile.
-      if (success && !alreadyCommitted && this.shell?.render) {
-        this.shell.render();
+      if (success && !alreadyCommitted) {
+        this.shell?.requestRender?.({ preserveScroll: true, reason: `build-intent-commit:${canonicalKey}`, structural: true });
       }
 
       return success ?? false;
