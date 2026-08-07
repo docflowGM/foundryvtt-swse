@@ -22,6 +22,7 @@ import SkillRegistry from '/systems/foundryvtt-swse/scripts/engine/progression/s
 import { evaluateClassEligibility } from '/systems/foundryvtt-swse/scripts/engine/progression/prerequisites/class-prerequisites-cache.js';
 import { getPCDroidAllowedHeroicClasses } from '/systems/foundryvtt-swse/scripts/engine/progression/droids/droid-trait-rules.js';
 import { ProgressionRules } from '/systems/foundryvtt-swse/scripts/engine/progression/ProgressionRules.js';
+import { compileProgressionSearchQuery, buildProgressionSearchText } from '../utils/progression-search.js';
 import { getClassProfileDescription, getClassProfileQuote } from './class-profile-copy.js';
 import { TalentTreeDB } from '/systems/foundryvtt-swse/scripts/data/talent-tree-db.js';
 import { getNonheroicClassModel, isNonheroicClassRef } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/nonheroic-class-model.js';
@@ -791,10 +792,11 @@ export class ClassStep extends ProgressionStepPlugin {
   _applyFilters(shell = null) {
     let filtered = [...this._allClasses];
 
-    // Search by name (case-insensitive substring)
+    // Canonical rich search: name + description/benefit + short summary.
+    // Supports AND/OR/NOT/wildcards/quoted phrases; see utils/progression-search.js.
     if (this._searchQuery) {
-      const q = this._searchQuery.toLowerCase();
-      filtered = filtered.filter(c => c.name?.toLowerCase().includes(q));
+      const compiled = compileProgressionSearchQuery(this._searchQuery);
+      filtered = filtered.filter(c => compiled.test(buildProgressionSearchText(c, [c.shortSummary, c.summary])));
     }
 
     // Type filter (base vs prestige)

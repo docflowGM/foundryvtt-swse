@@ -35,6 +35,7 @@ import { normalizeDetailPanelData } from '../detail-rail-normalizer.js';
 import { resolveClassModel, getClassTalentTreeLookupKeys } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/class-resolution.js';
 import { buildClassGrantLedger, mergeLedgerIntoPending } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/class-grant-ledger-builder.js';
 import { getDroidTalentTreeName } from '/systems/foundryvtt-swse/scripts/engine/progression/droids/droid-trait-rules.js';
+import { compileProgressionSearchQuery, buildProgressionSearchText } from '../utils/progression-search.js';
 
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { HouseRuleTalentCombination } from '/systems/foundryvtt-swse/scripts/houserules/houserule-talent-combination.js';
@@ -2427,9 +2428,14 @@ export class TalentStep extends ProgressionStepPlugin {
 
   _filterTalentRowsBySearch(rows) {
     if (!this._searchQuery) return rows;
-    const q = String(this._searchQuery || '').toLowerCase();
-    return rows.filter(row => [row.name, row.summary, row.prerequisites, row.lockReason]
-      .some(value => String(value || '').toLowerCase().includes(q)));
+    // Canonical rich search over the already-built display rows (name +
+    // summary/prerequisites/lockReason — row.summary carries the talent's
+    // description text at this point, so it is passed as a supplemental
+    // field rather than relying on buildProgressionSearchText's own
+    // description-shape detection). Supports AND/OR/NOT/wildcards/quoted
+    // phrases; see utils/progression-search.js.
+    const compiled = compileProgressionSearchQuery(this._searchQuery);
+    return rows.filter(row => compiled.test(buildProgressionSearchText(row, [row.summary, row.prerequisites, row.lockReason])));
   }
 
   _buildTalentRows(nodeStates = {}) {
@@ -2732,12 +2738,13 @@ export class TalentStep extends ProgressionStepPlugin {
     const q = rawQuery.toLowerCase();
     if (/^search\s+(?:heroic|class)?\s*talents?/.test(q)) return trees;
 
-    return trees.filter(tree =>
-      String(tree.name || '').toLowerCase().includes(q) ||
-      String(tree.id || '').toLowerCase().includes(q) ||
-      String(tree.sourceId || '').toLowerCase().includes(q) ||
-      String(tree.system?.description || tree.description || '').toLowerCase().includes(q)
-    );
+    // Canonical rich search: name + description (picked up automatically by
+    // buildProgressionSearchText) + tree.id/sourceId, which this step has
+    // always deliberately included (human-readable tree slugs, not opaque
+    // internal ids). Supports AND/OR/NOT/wildcards/quoted phrases; see
+    // utils/progression-search.js.
+    const compiled = compileProgressionSearchQuery(this._searchQuery);
+    return trees.filter(tree => compiled.test(buildProgressionSearchText(tree, [tree.id, tree.sourceId])));
   }
 
   getSelection() {

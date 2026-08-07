@@ -42,6 +42,7 @@ import { buildLevelUpEntitlementManifest, getManifestStartingFeatNameSet, normal
 import { isDroidProgressionActor } from '/systems/foundryvtt-swse/scripts/engine/progression/droids/droid-progression-guards.js';
 import { SWSEDialogV2 } from '/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js';
 import { ForceRules } from '/systems/foundryvtt-swse/scripts/engine/force/ForceRules.js';
+import { compileProgressionSearchQuery, buildProgressionSearchText } from '../utils/progression-search.js';
 import { PrereqAdapter } from '/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/prereq-adapter.js';
 
 function resolveClassLookupKeysForFeatStep(shell) {
@@ -1634,9 +1635,20 @@ export class FeatStep extends ProgressionStepPlugin {
     return { state: null, disabled: false, deselect: false, title: 'Choose this feat' };
   }
 
+  /**
+   * Ranked search results, name-priority tiers first (exact/starts-with/
+   * includes \u2014 unchanged from before, including diacritic-safe name
+   * normalization via _normalizeSearchText), then the canonical rich
+   * matcher (Boolean AND/OR/NOT, wildcards, quoted phrases \u2014 see
+   * utils/progression-search.js) against tags/prerequisites/description,
+   * and finally against the name itself for Boolean/wildcard name queries
+   * the plain tiers above would not catch (e.g. "skill* focus").
+   */
   _getSearchResultFeats() {
-    const query = this._normalizeSearchText(this._searchQuery);
-    if (!query) return [];
+    const rawQuery = String(this._searchQuery || '').trim();
+    if (!rawQuery) return [];
+    const nameQuery = this._normalizeSearchText(rawQuery);
+    const compiled = compileProgressionSearchQuery(rawQuery);
 
     // Search should be a reliable lookup, not another collapsed category filter.
     // Use the full evaluated catalog so unavailable feats still appear with their
@@ -1645,15 +1657,18 @@ export class FeatStep extends ProgressionStepPlugin {
     const seen = new Set();
     const scoreMatch = (feat) => {
       const name = this._normalizeSearchText(feat?.name);
-      const prereq = this._normalizeSearchText(feat?.prerequisiteLine || feat?.prerequisiteText || feat?.system?.prerequisite || feat?.system?.prerequisites || '');
-      const desc = this._normalizeSearchText(this._getFeatDescription(feat));
-      const tags = this._normalizeSearchText([feat?.subcategory, ...(feat?.uiBroadTags || [])].filter(Boolean).join(' '));
-      if (name === query) return 0;
-      if (name.startsWith(query)) return 1;
-      if (name.includes(query)) return 2;
-      if (tags.includes(query)) return 3;
-      if (prereq.includes(query)) return 4;
-      if (desc.includes(query)) return 5;
+      if (nameQuery && name === nameQuery) return 0;
+      if (nameQuery && name.startsWith(nameQuery)) return 1;
+      if (nameQuery && name.includes(nameQuery)) return 2;
+      const tagsText = buildProgressionSearchText(null, [feat?.subcategory, ...(feat?.uiBroadTags || [])]);
+      if (compiled.test(tagsText)) return 3;
+      const prereqText = buildProgressionSearchText(null, [
+        feat?.prerequisiteLine, feat?.prerequisiteText, feat?.system?.prerequisite, feat?.system?.prerequisites,
+      ]);
+      if (compiled.test(prereqText)) return 4;
+      const descText = buildProgressionSearchText(null, [this._getFeatDescription(feat)]);
+      if (compiled.test(descText)) return 5;
+      if (compiled.test(buildProgressionSearchText({ name: feat?.name }))) return 2.5;
       return 999;
     };
 
@@ -1674,6 +1689,11 @@ export class FeatStep extends ProgressionStepPlugin {
       .map(({ feat }) => feat);
   }
 
+  /** Diacritic-safe plain-text normalization for the name-priority ranking
+   * tiers in _getSearchResultFeats() \u2014 distinct from the canonical rich
+   * search's own normalization, which does not need to be diacritic-aware
+   * since it operates on already-normalized combined text via
+   * buildProgressionSearchText(). */
   _normalizeSearchText(value) {
     return String(value || '')
       .toLowerCase()
@@ -1685,10 +1705,16 @@ export class FeatStep extends ProgressionStepPlugin {
       .trim();
   }
 
-  _searchMatchesFeat(feat, query = this._normalizeSearchText(this._searchQuery)) {
-    if (!query) return false;
-    const haystack = this._normalizeSearchText([
-      feat?.name,
+  /**
+   * Whole-item yes/no match via the canonical rich search contract.
+   * @param {Object} feat
+   * @param {{test(text:string):boolean}} [compiled] - reuse across a loop
+   *   via compileProgressionSearchQuery(this._searchQuery) instead of
+   *   recompiling per feat.
+   */
+  _searchMatchesFeat(feat, compiled = compileProgressionSearchQuery(this._searchQuery)) {
+    if (!String(this._searchQuery || '').trim()) return false;
+    const text = buildProgressionSearchText({ name: feat?.name }, [
       feat?.subcategory,
       feat?.featTypeLabel,
       feat?.prerequisiteLine,
@@ -1697,16 +1723,16 @@ export class FeatStep extends ProgressionStepPlugin {
       feat?.system?.prerequisites,
       ...(feat?.uiBroadTags || []),
       this._getFeatDescription(feat),
-    ].filter(Boolean).join(' '));
-    return haystack.includes(query);
+    ]);
+    return compiled.test(text);
   }
 
   _expandMatchingCategoriesForSearch() {
-    const query = this._normalizeSearchText(this._searchQuery);
-    if (!query || !this._groupedFeats) return;
+    if (!String(this._searchQuery || '').trim() || !this._groupedFeats) return;
+    const compiled = compileProgressionSearchQuery(this._searchQuery);
 
     for (const [categoryKey, group] of Object.entries(this._groupedFeats)) {
-      if ((group?.feats || []).some(feat => this._searchMatchesFeat(feat, query))) {
+      if ((group?.feats || []).some(feat => this._searchMatchesFeat(feat, compiled))) {
         this._expandedCategories.add(categoryKey);
       }
     }

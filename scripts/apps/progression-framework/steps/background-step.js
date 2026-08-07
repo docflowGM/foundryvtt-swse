@@ -22,6 +22,7 @@ import { buildPendingBackgroundContext } from '/systems/foundryvtt-swse/scripts/
 import SkillRegistry from '/systems/foundryvtt-swse/scripts/engine/progression/skills/skill-registry.js';
 import { buildClassSkillKeySet, buildSkillDisplay, buildSkillDisplays, normalizeSkillKey } from '../utils/skill-display.js';
 import { LanguageRegistry } from '/systems/foundryvtt-swse/scripts/registries/language-registry.js';
+import { compileProgressionSearchQuery, buildProgressionSearchText } from '../utils/progression-search.js';
 import { CustomPlanetBackgroundDialog } from '/systems/foundryvtt-swse/scripts/apps/progression-framework/dialogs/custom-planet-background-dialog.js';
 import { BackgroundChoiceDialog } from '/systems/foundryvtt-swse/scripts/apps/progression-framework/dialogs/background-choice-dialog.js';
 import { HouseRuleService } from '/systems/foundryvtt-swse/scripts/engine/system/HouseRuleService.js';
@@ -690,12 +691,14 @@ _getFilteredBackgrounds(shell = null) {
   }
 
   if (hasSearchQuery) {
-    const q = String(this._searchQuery || '').toLowerCase().trim();
+    // Canonical rich search: name + description (bg.narrativeDescription/
+    // bg.description/mechanicalEffect.description, picked up automatically
+    // by buildProgressionSearchText) + the player-facing supplemental
+    // fields this step already exposed. Supports AND/OR/NOT/wildcards/
+    // quoted phrases; see utils/progression-search.js.
+    const compiled = compileProgressionSearchQuery(this._searchQuery);
     filtered = filtered.filter((bg) => {
-      const haystack = [
-        bg.name,
-        bg.narrativeDescription,
-        bg.description,
+      const text = buildProgressionSearchText(bg, [
         bg.specialAbility,
         bg.bonusLanguage,
         bg.source,
@@ -703,8 +706,8 @@ _getFilteredBackgrounds(shell = null) {
         ...(bg.trainedSkills || []),
         ...(bg.relevantSkills || []),
         bg.mechanicalEffect?.description,
-      ].filter(Boolean).join(' ').toLowerCase();
-      return haystack.includes(q);
+      ]);
+      return compiled.test(text);
     });
   }
 

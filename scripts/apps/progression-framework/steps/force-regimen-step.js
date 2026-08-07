@@ -13,6 +13,7 @@ import { ForceRegistry } from '../../../engine/registries/force-registry.js';
 import { FeatGrantEntitlementResolver } from '/systems/foundryvtt-swse/scripts/engine/progression/feats/feat-grant-entitlement-resolver.js';
 import { normalizeDetailPanelData } from '../detail-rail-normalizer.js';
 import { swseLogger } from '../../../utils/logger.js';
+import { compileProgressionSearchQuery, buildProgressionSearchText } from '../utils/progression-search.js';
 
 const CATEGORY_ORDER = Object.freeze({
   'force-training': 10,
@@ -345,9 +346,15 @@ export class ForceRegimenStep extends ProgressionStepPlugin {
 
   _applyFilters() {
     let filtered = [...this._allRegimens];
+    // Canonical rich search: name + description/summary (picked up
+    // automatically by buildProgressionSearchText) + the player-facing
+    // supplemental fields this step already exposed. Supports AND/OR/NOT/
+    // wildcards/quoted phrases; see utils/progression-search.js.
     if (this._searchQuery) {
-      const q = this._searchQuery.toLowerCase();
-      filtered = filtered.filter((regimen) => [regimen.name, regimen.summary, regimen.description, regimen.group, regimen.categoryLabel].join(' ').toLowerCase().includes(q));
+      const compiled = compileProgressionSearchQuery(this._searchQuery);
+      filtered = filtered.filter((regimen) => compiled.test(
+        buildProgressionSearchText(regimen, [regimen.summary, regimen.group, regimen.categoryLabel])
+      ));
     }
     filtered.sort((a, b) => String(a.sortKey).localeCompare(String(b.sortKey)));
     this._filteredRegimens = filtered;

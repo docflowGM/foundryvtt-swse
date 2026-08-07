@@ -23,6 +23,7 @@ import { ProgressionDebugCapture } from '../debug/progression-debug-capture.js';
 // PHASE 2: Pending species context builder
 import { buildPendingSpeciesContext } from '/systems/foundryvtt-swse/scripts/engine/progression/helpers/build-pending-species-context.js';
 import { humanizeSpeciesTag } from '/systems/foundryvtt-swse/scripts/engine/species/species-tag-profile-utils.js';
+import { compileProgressionSearchQuery, buildProgressionSearchText } from '../utils/progression-search.js';
 
 // Maps stepId → mentor guidance choiceType
 const STEP_CHOICE_TYPE = {
@@ -1080,18 +1081,22 @@ export class SpeciesStep extends ProgressionStepPlugin {
     const hasSearchQuery = !!String(this._searchQuery || '').trim();
 
     if (hasSearchQuery) {
-      const q = String(this._searchQuery || '').toLowerCase().trim();
+      // Canonical rich search: name + description (species.description, picked
+      // up automatically by buildProgressionSearchText) + the player-facing
+      // supplemental fields this step already exposed (source/size/ability
+      // line/tags/languages/ability names). Supports AND/OR/NOT/wildcards/
+      // quoted phrases; see utils/progression-search.js.
+      const compiled = compileProgressionSearchQuery(this._searchQuery);
       filtered = filtered.filter((species) => {
-        const haystack = [
-          species.name,
+        const text = buildProgressionSearchText(species, [
           species.source,
           species.size,
           this._formatAbilityLine(species.abilityScores),
           ...(species.tags || []),
           ...(species.languages || []),
           ...(species.abilities || []).map(ability => typeof ability === 'string' ? ability : ability?.name),
-        ].filter(Boolean).join(' ').toLowerCase();
-        return haystack.includes(q);
+        ]);
+        return compiled.test(text);
       });
     }
 

@@ -19,6 +19,7 @@ import { SuggestionContextBuilder } from '/systems/foundryvtt-swse/scripts/engin
 import { normalizeDetailPanelData } from '../detail-rail-normalizer.js';
 import { buildOptionCardAction } from '../shell/option-card-action.js';
 import { buildClassGrantLedger, mergeLedgerIntoPending } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/class-grant-ledger-builder.js';
+import { compileProgressionSearchQuery, buildProgressionSearchText } from '../utils/progression-search.js';
 
 
 const SECRET_RECOMMENDED_NAMES = new Set([
@@ -524,9 +525,13 @@ export class ForceSecretStep extends ProgressionStepPlugin {
   _applyFilters() {
     let filtered = [...this._legalSecrets];
 
+    // Canonical rich search: name + description/benefit (picked up
+    // automatically by buildProgressionSearchText) + the player-facing
+    // supplemental fields this step already exposed. Supports AND/OR/NOT/
+    // wildcards/quoted phrases; see utils/progression-search.js.
     if (this._searchQuery) {
-      const q = this._normalizeSearchText(this._searchQuery);
-      filtered = filtered.filter(s => this._secretSearchText(s).includes(q));
+      const compiled = compileProgressionSearchQuery(this._searchQuery);
+      filtered = filtered.filter(s => compiled.test(this._secretSearchText(s)));
     }
 
     filtered.sort((a, b) => String(a?.name || '').localeCompare(String(b?.name || '')));
@@ -650,17 +655,13 @@ export class ForceSecretStep extends ProgressionStepPlugin {
 
   _secretSearchText(secret) {
     const system = secret?.system || {};
-    return this._normalizeSearchText([
-      secret?.name,
-      secret?.description,
-      system.description,
-      system.benefit,
+    return buildProgressionSearchText(secret, [
       system.cost,
       system.alternativeCost,
       ...(Array.isArray(secret?.tags) ? secret.tags : []),
       ...(Array.isArray(system.tags) ? system.tags : []),
       this._getSecretCategoryKeys(secret).join(' '),
-    ].filter(Boolean).join(' '));
+    ]);
   }
 
   _getSecretCategoryKeys(secret) {

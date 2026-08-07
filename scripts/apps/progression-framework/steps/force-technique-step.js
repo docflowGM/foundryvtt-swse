@@ -16,6 +16,7 @@ import { normalizeDetailPanelData } from '../detail-rail-normalizer.js';
 import { buildClassGrantLedger, mergeLedgerIntoPending } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/class-grant-ledger-builder.js';
 import { SWSEDialogV2 } from '/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js';
 import { collectKnownForceTechniques } from '/systems/foundryvtt-swse/scripts/utils/force-knowledge.js';
+import { compileProgressionSearchQuery, buildProgressionSearchText } from '../utils/progression-search.js';
 
 
 
@@ -709,9 +710,13 @@ export class ForceTechniqueStep extends ProgressionStepPlugin {
 
   _applyFilters() {
     let filtered = this._showAllTechniques ? [...this._allTechniques] : [...this._legalTechniques];
+    // Canonical rich search: name + description/benefit (picked up
+    // automatically by buildProgressionSearchText) + the player-facing
+    // supplemental fields this step already exposed. Supports AND/OR/NOT/
+    // wildcards/quoted phrases; see utils/progression-search.js.
     if (this._searchQuery) {
-      const q = this._normalizeSearchText(this._searchQuery);
-      filtered = filtered.filter(t => this._techniqueSearchText(t).includes(q));
+      const compiled = compileProgressionSearchQuery(this._searchQuery);
+      filtered = filtered.filter(t => compiled.test(this._techniqueSearchText(t)));
     }
     filtered.sort((a, b) => this._compareTechniques(a, b));
     this._filteredTechniques = filtered;
@@ -1236,18 +1241,14 @@ export class ForceTechniqueStep extends ProgressionStepPlugin {
 
   _techniqueSearchText(technique) {
     const system = technique?.system || {};
-    return this._normalizeSearchText([
-      technique?.name,
-      technique?.description,
-      system.description,
-      system.benefit,
+    return buildProgressionSearchText(technique, [
       system.prerequisite,
       system.prerequisites,
       system.relatedPower,
       ...(Array.isArray(technique?.tags) ? technique.tags : []),
       ...(Array.isArray(system.tags) ? system.tags : []),
       this._getTechniqueCategoryKeys(technique).join(' '),
-    ].filter(Boolean).join(' '));
+    ]);
   }
 
   _getTechniqueCategoryKeys(technique) {

@@ -22,6 +22,7 @@ import { SuggestionService } from '/systems/foundryvtt-swse/scripts/engine/sugge
 import { SuggestionContextBuilder } from '/systems/foundryvtt-swse/scripts/engine/progression/suggestion/suggestion-context-builder.js';
 import { normalizeDetailPanelData } from '../detail-rail-normalizer.js';
 import { buildClassGrantLedger, mergeLedgerIntoPending } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/class-grant-ledger-builder.js';
+import { compileProgressionSearchQuery, buildProgressionSearchText } from '../utils/progression-search.js';
 import { FeatGrantEntitlementResolver } from '/systems/foundryvtt-swse/scripts/engine/progression/feats/feat-grant-entitlement-resolver.js';
 import { getLightsaberFormAccentKey } from '/systems/foundryvtt-swse/scripts/engine/force/lightsaber-form-accents.js';
 import { resolveTelekineticProdigyBonusSlots } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/force-suite-resolution.js';
@@ -881,27 +882,21 @@ export class ForcePowerStep extends ProgressionStepPlugin {
   _applyFilters() {
     let filtered = [...this._legalPowers];
 
+    // Canonical rich search: name + description (picked up automatically by
+    // buildProgressionSearchText) + the player-facing supplemental fields
+    // this step already exposed. Supports AND/OR/NOT/wildcards/quoted
+    // phrases; see utils/progression-search.js.
     if (this._searchQuery) {
-      const q = this._normalizeSearchText(this._searchQuery);
-      filtered = filtered.filter((power) => this._powerSearchText(power).includes(q));
+      const compiled = compileProgressionSearchQuery(this._searchQuery);
+      filtered = filtered.filter((power) => compiled.test(this._powerSearchText(power)));
     }
 
     filtered.sort((a, b) => String(a?.name || '').localeCompare(String(b?.name || '')));
     this._filteredPowers = filtered;
   }
 
-  _normalizeSearchText(value) {
-    return String(value || '').trim().toLowerCase();
-  }
-
   _powerSearchText(power) {
-    const tags = this._collectPowerTags(power).join(' ');
-    return this._normalizeSearchText([
-      power?.name,
-      power?.description,
-      power?.system?.description,
-      power?.category,
-      power?.system?.category,
+    return buildProgressionSearchText(power, [
       power?.category,
       power?.system?.category,
       power?.form,
@@ -909,8 +904,8 @@ export class ForcePowerStep extends ProgressionStepPlugin {
       power?.system?.form,
       power?.system?.discipline,
       power?.meta?.discipline,
-      tags,
-    ].filter(Boolean).join(' '));
+      ...this._collectPowerTags(power),
+    ]);
   }
 
   // ---------------------------------------------------------------------------

@@ -22,6 +22,7 @@ import { swseLogger } from '../../../utils/logger.js';
 import { SuggestionService } from '/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionService.js';
 import { SuggestionContextBuilder } from '/systems/foundryvtt-swse/scripts/engine/progression/suggestion/suggestion-context-builder.js';
 import { normalizeDetailPanelData } from '../detail-rail-normalizer.js';
+import { compileProgressionSearchQuery, buildProgressionSearchText } from '../utils/progression-search.js';
 
 export class StarshipManeuverStep extends ProgressionStepPlugin {
   constructor(descriptor) {
@@ -680,9 +681,12 @@ export class StarshipManeuverStep extends ProgressionStepPlugin {
 
   _applyFilters() {
     let filtered = [...this._legalManeuvers];
+    // Canonical rich search: name + description (picked up automatically by
+    // buildProgressionSearchText). Supports AND/OR/NOT/wildcards/quoted
+    // phrases; see utils/progression-search.js.
     if (this._searchQuery) {
-      const q = this._searchQuery.toLowerCase();
-      filtered = filtered.filter(m => m.name.toLowerCase().includes(q));
+      const compiled = compileProgressionSearchQuery(this._searchQuery);
+      filtered = filtered.filter(m => compiled.test(buildProgressionSearchText(m)));
     }
     filtered.sort((a, b) => a.name.localeCompare(b.name));
     this._filteredManeuvers = filtered;
