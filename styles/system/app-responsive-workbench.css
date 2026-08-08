@@ -10,7 +10,8 @@
   --swse-wb-gap: 6px;
   --swse-wb-pad: 8px;
   --swse-wb-hud-height: 34px;
-  --swse-wb-mentor-height: 82px;
+  --swse-wb-mentor-height: 64px;
+  --swse-wb-mentor-height-tiny: 44px;
   --swse-wb-tabs-height: 42px;
   --swse-wb-inventory-height: 168px;
   --swse-wb-hero-height: 188px;
@@ -66,19 +67,25 @@
   text-overflow: ellipsis !important;
 }
 
+/* Phase 3: the mentor speaks to the player and must survive every
+   responsive tier — it is never display: none. Compact-wide/short tightens
+   the strip (~40px portrait, 2 visible dialogue lines); narrow/tiny/micro
+   tighten it further (~32px portrait, 1 visible line) but it always stays
+   present, per the required invariant that mentor presence does not depend
+   on shell size. */
 .application.swse-shell-responsive.is-shell-compact:has(.swse-customization-stage) .swse-customization-mentor {
   flex: 0 0 auto !important;
-  grid-template-columns: 42px minmax(0, 1fr) !important;
+  grid-template-columns: 40px minmax(0, 1fr) !important;
   gap: 8px !important;
-  padding: 6px 8px !important;
+  padding: 5px 8px !important;
   max-height: var(--swse-wb-mentor-height) !important;
   overflow: hidden !important;
 }
 
 .application.swse-shell-responsive.is-shell-compact:has(.swse-customization-stage) .mentor-avatar {
-  width: 42px !important;
-  height: 42px !important;
-  font-size: 20px !important;
+  width: 40px !important;
+  height: 40px !important;
+  font-size: 18px !important;
 }
 
 .application.swse-shell-responsive.is-shell-compact:has(.swse-customization-stage) .mentor-head {
@@ -88,15 +95,48 @@
 
 .application.swse-shell-responsive.is-shell-compact:has(.swse-customization-stage) .mentor-text {
   font-size: 10px !important;
-  line-height: 1.35 !important;
-  max-height: 42px !important;
-  overflow: hidden !important;
+  line-height: 1.3 !important;
+  -webkit-line-clamp: 2 !important;
 }
 
+/* Narrow/tiny/micro: the smallest strip, not a hidden one. One visible
+   dialogue line, a small identity portrait, minimal padding — but present.
+   Restoring `display: none` here (the pre-Phase-3 behavior) is exactly the
+   regression tests/workbench-information-hierarchy.test.mjs guards against. */
 .application.swse-shell-responsive.is-shell-short:has(.swse-customization-stage) .swse-customization-mentor,
 .application.swse-shell-responsive.is-shell-tier-micro:has(.swse-customization-stage) .swse-customization-mentor,
+.application.swse-shell-responsive.is-shell-narrow:has(.swse-customization-stage) .swse-customization-mentor,
 .application.swse-shell-responsive.is-shell-tiny:has(.swse-customization-stage) .swse-customization-mentor {
-  display: none !important;
+  grid-template-columns: 32px minmax(0, 1fr) !important;
+  gap: 6px !important;
+  padding: 4px 6px !important;
+  max-height: var(--swse-wb-mentor-height-tiny) !important;
+}
+
+.application.swse-shell-responsive.is-shell-short:has(.swse-customization-stage) .mentor-avatar,
+.application.swse-shell-responsive.is-shell-tier-micro:has(.swse-customization-stage) .mentor-avatar,
+.application.swse-shell-responsive.is-shell-narrow:has(.swse-customization-stage) .mentor-avatar,
+.application.swse-shell-responsive.is-shell-tiny:has(.swse-customization-stage) .mentor-avatar {
+  width: 32px !important;
+  height: 32px !important;
+  font-size: 15px !important;
+}
+
+.application.swse-shell-responsive.is-shell-short:has(.swse-customization-stage) .mentor-head,
+.application.swse-shell-responsive.is-shell-tier-micro:has(.swse-customization-stage) .mentor-head,
+.application.swse-shell-responsive.is-shell-narrow:has(.swse-customization-stage) .mentor-head,
+.application.swse-shell-responsive.is-shell-tiny:has(.swse-customization-stage) .mentor-head {
+  font-size: 9px !important;
+  margin-bottom: 1px !important;
+}
+
+.application.swse-shell-responsive.is-shell-short:has(.swse-customization-stage) .mentor-text,
+.application.swse-shell-responsive.is-shell-tier-micro:has(.swse-customization-stage) .mentor-text,
+.application.swse-shell-responsive.is-shell-narrow:has(.swse-customization-stage) .mentor-text,
+.application.swse-shell-responsive.is-shell-tiny:has(.swse-customization-stage) .mentor-text {
+  font-size: 9px !important;
+  line-height: 1.25 !important;
+  -webkit-line-clamp: 1 !important;
 }
 
 .application.swse-shell-responsive.is-shell-compact:has(.swse-customization-stage) .swse-lightsaber-construction-callout {
@@ -214,19 +254,59 @@
   overflow: hidden !important;
 }
 
+/* Phase 3 correction: the collapsed hero is a stable identity strip, not a
+   permanent scroll owner — overflow: hidden, not auto. It becomes the ONE
+   exceptional scroll owner only while Full Stats is open (the :has() rule
+   below), so it never nests a second scroller (.hero-stats--expanded is
+   deliberately non-scrolling — see item-customization-workbench.css) inside
+   an already-scrolling parent. flex/overflow/padding are shared by every
+   item type (they don't affect whether the lightsaber schematic fits); only
+   max-height is split out below into a lightsaber-excluded rule plus a
+   dedicated lightsaber override, for the same reason the short-tier max-height
+   is split (see the is-shell-short .item-hero--lightsaber rule further down):
+   the ordinary-item ceiling is too small for the 168px chassis SVG. */
 .application.swse-shell-responsive.is-shell-compact:has(.swse-customization-stage) .item-hero {
   flex: 0 0 auto !important;
-  max-height: var(--swse-wb-hero-height) !important;
-  overflow: auto !important;
+  overflow: hidden !important;
   padding: 6px !important;
 }
 
+.application.swse-shell-responsive.is-shell-compact:has(.swse-customization-stage) .item-hero:not(.item-hero--lightsaber) {
+  max-height: var(--swse-wb-hero-height) !important;
+}
+
+/* is-shell-short is not the only tier that can reach this cap: shortHeight
+   (700) and compactHeight (760) are independent thresholds, so a shell can
+   be is-shell-compact (height 700-759) without also being is-shell-short.
+   The lightsaber hero needs the same wider ceiling there too — see the
+   is-shell-short .item-hero--lightsaber rule below for the full derivation
+   (~222px of natural content). This compact-scoped rule and that short-scoped
+   one intentionally overlap (a short shell is always also compact) and carry
+   the same value; that's harmless duplication, not a conflict. */
+.application.swse-shell-responsive.is-shell-compact:has(.swse-customization-stage) .item-hero--lightsaber {
+  max-height: 236px !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-customization-stage) .item-hero:has(.ls-stat-expander[open]) {
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+}
+
 .application.swse-shell-responsive.is-shell-compact:has(.swse-customization-stage) .hero-grid {
-  grid-template-columns: 88px minmax(0, 1fr) !important;
   gap: 8px !important;
 }
 
-.application.swse-shell-responsive.is-shell-compact:has(.swse-customization-stage) .hero-art {
+/* Excludes .item-hero--lightsaber for the same reason as the is-shell-short
+   equivalent below: the lightsaber hero's own base rules already allocate a
+   104px grid column / 138px art min-height to fit its 168px SVG preview, and
+   a shell can be is-shell-compact without also being is-shell-short (see the
+   max-height split above), so this exclusion has to live at the compact
+   tier too, not only the short tier. */
+.application.swse-shell-responsive.is-shell-compact:has(.swse-customization-stage) .item-hero:not(.item-hero--lightsaber) .hero-grid {
+  grid-template-columns: 88px minmax(0, 1fr) !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-customization-stage) .item-hero:not(.item-hero--lightsaber) .hero-art {
   min-height: 88px !important;
 }
 
@@ -249,9 +329,52 @@
   font-size: 15px !important;
 }
 
-.application.swse-shell-responsive.is-shell-short:has(.swse-customization-stage) .item-hero,
+.application.swse-shell-responsive.is-shell-short:has(.swse-customization-stage) .item-hero:not(.item-hero--lightsaber),
 .application.swse-shell-responsive.is-shell-tier-micro:has(.swse-customization-stage) .item-hero {
   max-height: 112px !important;
+}
+
+/* The lightsaber hero's own base rules (item-customization-workbench.css)
+   give the art column a 104px width and a 138px min-height to fit the
+   168px-tall generated chassis SVG (.ls-chassis-hero-visual), which combined
+   with panel-head (~30px) and the shared compact-tier hero padding (6px top
+   + 6px bottom = 12px — is-shell-short always implies is-shell-compact, so
+   that shared rule above is the one that applies here too) needs roughly
+   222px to render uncropped — the ordinary-item 112px cap would silently
+   clip the schematic now that the hero is overflow:hidden (not auto). Give
+   the lightsaber hero its own short-tier ceiling instead of sharing the
+   generic one; 236px is that ~222px natural height plus a small safety
+   margin, not an arbitrary design value. This overlaps with (and matches)
+   the is-shell-compact .item-hero--lightsaber rule above — a short shell is
+   always also compact, so both rules end up applying; harmless duplication.
+   This only matters when is-shell-short applies without is-shell-tier-micro/
+   tiny also applying, since those tiers hide hero-art entirely regardless of
+   item type (below), removing the art column's height contribution. */
+.application.swse-shell-responsive.is-shell-short:has(.swse-customization-stage) .item-hero--lightsaber {
+  max-height: 236px !important;
+}
+
+/* is-shell-short (independent of resolution tier — a shell can be short
+   without being tier-micro/tiny) still shows hero-art at the inherited
+   compact 88px min-height, which combined with panel-head/padding/copy
+   leaves the collapsed hero right at or past the 112px cap here — the
+   accidental reason it used to need its own scrollbar. Shrinking the
+   artwork specifically at this tier (not touching lightsaber blade/emitter
+   geometry — that's a different selector, .ls-blade-render--hero-vertical,
+   untouched) is what makes the collapsed identity strip actually fit
+   without needing .item-hero's overflow:auto as a crutch. tier-micro/tiny
+   already hide hero-art entirely (below), so this has no effect there.
+   Excludes .item-hero--lightsaber: its own base hero-art--lightsaber rule
+   already sizes the art column to fit the 168px SVG preview, and this
+   generic 64px reduction would override that (a plain .hero-art selector
+   here would otherwise win on specificity over the lightsaber-scoped base
+   rule) and crush the schematic into a cell far too small for it. */
+.application.swse-shell-responsive.is-shell-short:has(.swse-customization-stage) .item-hero:not(.item-hero--lightsaber) .hero-art {
+  min-height: 64px !important;
+}
+
+.application.swse-shell-responsive.is-shell-short:has(.swse-customization-stage) .item-hero:not(.item-hero--lightsaber) .hero-grid {
+  grid-template-columns: 64px minmax(0, 1fr) !important;
 }
 
 .application.swse-shell-responsive.is-shell-tier-micro:has(.swse-customization-stage) .hero-art,
@@ -417,6 +540,35 @@
   font-size: 9px !important;
   letter-spacing: 0.12em !important;
   white-space: nowrap !important;
+}
+
+/* Phase 3: compact-tier footer density — the desktop rail's 20px credit
+   values and 8px/16px padding still cost real height at compact/short
+   sizes; this tightens it further without dropping any credits/cost/after/
+   slot/action content. */
+.application.swse-shell-responsive.is-shell-compact:has(.swse-customization-stage) .swse-customization-footer {
+  padding: 6px 10px !important;
+  gap: 8px !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-customization-stage) .footer-credits {
+  gap: 10px !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-customization-stage) .credit-box {
+  padding-right: 8px !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-customization-stage) .credit-box .label {
+  font-size: 7px !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-customization-stage) .credit-box .value {
+  font-size: 15px !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-customization-stage) .meter-bar {
+  height: 6px !important;
 }
 
 /* ─── Narrow-width secondary reflows ─────────────────────────────────────

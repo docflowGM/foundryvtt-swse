@@ -3156,6 +3156,24 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
         tabColor: false,
         tabChassis: activeTab === 'chassis',
         tabReview: activeTab === 'review',
+        // Chassis Finish is cosmetic and belongs with the Chassis step
+        // (Phase 3): shown while actively choosing a chassis. Tuning an
+        // existing lightsaber never has a "chassis" step at all — chassis
+        // can't be swapped post-construction (see _canChangeLightsaberChassis)
+        // — so there it surfaces on Hilt instead, the nearest step tuning can
+        // actually reach, rather than disappearing entirely. It never shows
+        // during Crystal or Review in either mode.
+        //
+        // The Hilt fallback is keyed to !!editItem (an existing lightsaber is
+        // actually being edited), not !canChangeChassis: that flag is also
+        // false whenever construction is merely locked/ineligible with no
+        // existing saber (see _canChangeLightsaberChassis — it returns false
+        // both when `target` is set AND when construction isn't available),
+        // and that second case is not tuning. Using !canChangeChassis here
+        // would incorrectly surface Chassis Finish on Hilt for a
+        // locked/ineligible construction route that never had an item to
+        // tune in the first place.
+        showFinishPicker: activeTab === 'chassis' || (!!editItem && activeTab === 'hilt'),
         tabs: steps,
         navigation,
         buildSummary,
