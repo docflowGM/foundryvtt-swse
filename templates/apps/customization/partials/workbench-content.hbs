@@ -244,7 +244,7 @@
             {{#each lightsaber.crystals}}
             <button type="button" class="config-card ls-option-card {{#if selected}}selected{{/if}} {{#if incompatible}}disabled{{/if}}" data-action="inspect-lightsaber-component" data-key="{{optionKey}}" data-lightsaber-inspect-type="crystal" data-lightsaber-inspect-key="{{optionKey}}" data-component-type="crystal" title="{{description}}">
               <span class="card-top"><span class="card-name">{{name}}</span><span class="card-cost">{{cost}} cr</span></span>
-              <span class="card-tags"><span class="tag">{{rarity}}</span><span class="tag ls-color-text-tag">{{#each bladeColorParts}}<span class="{{className}}" {{#if style}}style="{{style}}"{{/if}}>{{label}}</span>{{/each}}</span><span class="tag">DC {{buildDcModifier}}</span>{{#if incompatible}}<span class="tag state">Incompatible</span>{{/if}}</span>
+              <span class="card-tags"><span class="tag">{{rarity}}</span><span class="tag ls-color-text-tag">{{#each bladeColorParts}}<span class="{{className}}" {{#if style}}style="{{style}}"{{/if}}>{{label}}</span>{{/each}}</span><span class="tag">DC {{buildDcModifier}}</span>{{#if incompatible}}<span class="tag state negative">Incompatible</span>{{/if}}</span>
             </button>
             {{/each}}
           </div>
@@ -259,7 +259,7 @@
             {{#each lightsaber.accessories}}
             <button type="button" class="config-card ls-option-card {{#if selected}}selected{{/if}} {{#if incompatible}}disabled{{/if}}" data-action="inspect-lightsaber-component" data-key="{{optionKey}}" data-lightsaber-inspect-type="accessory" data-lightsaber-inspect-key="{{optionKey}}" data-component-type="accessory" title="{{description}}">
               <span class="card-top"><span class="card-name">{{name}}</span><span class="card-cost">{{cost}} cr</span></span>
-              <span class="card-tags"><span class="tag">{{slotCost}} slot</span><span class="tag">DC {{buildDcModifier}}</span>{{#if incompatible}}<span class="tag state">Incompatible</span>{{/if}}</span>
+              <span class="card-tags"><span class="tag">{{slotCost}} slot</span><span class="tag">DC {{buildDcModifier}}</span>{{#if incompatible}}<span class="tag state negative">Incompatible</span>{{/if}}</span>
             </button>
             {{/each}}
           </div>
@@ -395,7 +395,7 @@
             <article class="config-card disabled">
               <span class="card-top"><span class="card-name">Armor Modification Surface</span><span class="card-cost">Illegal</span></span>
               <span class="card-desc">Normal armor modifications cannot be taken on an energy shield unless a rule/template explicitly says it works on energy shields.</span>
-              <span class="card-tags"><span class="tag state">No armor mods</span></span>
+              <span class="card-tags"><span class="tag state negative">No armor mods</span></span>
             </article>
             {{#each structuralActions.strips}}
             <button type="button" class="config-card {{#if selected}}selected{{/if}} {{#if installed}}installed{{/if}} {{#if removing}}removing{{/if}} {{#if inspected}}inspected{{/if}} {{#if disabled}}disabled{{/if}}" data-action="inspect-structural" data-key="{{key}}" data-inspect-kind="structural" data-inspect-key="{{key}}">

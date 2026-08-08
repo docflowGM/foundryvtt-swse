@@ -115,6 +115,10 @@
   background: radial-gradient(circle at center, color-mix(in oklch, var(--icw-cyan) 18%, transparent), transparent 70%), color-mix(in oklch, var(--icw-bg) 70%, black);
 }
 
+/* Phase 4: an unusually long mentor name previously had no overflow
+   handling and could wrap to a second line, eating into the height budget
+   the compact-tier strip allocates to .mentor-text (the part that actually
+   needs the room) instead of just truncating itself. */
 .mentor-head {
   font-family: var(--swse-font-orbit, 'Orbitron', sans-serif);
   font-size: 11px;
@@ -122,6 +126,9 @@
   letter-spacing: 0.1em;
   color: var(--icw-cyan);
   margin-bottom: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 /* Soft line-clamp, not a hard truncation: the full translated/raw dialogue
@@ -242,9 +249,19 @@
   border-left: 3px solid var(--icw-pink);
   background: linear-gradient(90deg, oklch(0.72 0.26 350 / 0.14), oklch(0.85 0.18 200 / 0.05));
 }
+/* Phase 4: same clickability treatment as .config-card — quieter than the
+   .active left-border/gradient so it layers on top without competing. */
+.inventory-item:not(.active):hover {
+  border-color: color-mix(in oklch, var(--icw-cyan), transparent 30%);
+  background: oklch(0 0 0 / 0.25);
+}
 .inventory-icon { width: 56px; height: 56px; object-fit: cover; border: 1px solid var(--icw-border); background: oklch(0 0 0 / 0.45); }
-.inventory-name { display:block; font-family: var(--swse-font-orbit, 'Orbitron', sans-serif); font-weight:600; font-size:13px; letter-spacing:0.05em; }
-.inventory-subtitle, .inventory-meta { display:block; font-family: var(--swse-font-mono, 'JetBrains Mono', monospace); font-size:9px; letter-spacing:0.16em; text-transform:uppercase; color:var(--icw-dim); }
+/* Phase 4: long item names previously had no overflow handling and could
+   wrap onto a second line, growing that row taller than its neighbors in
+   the list (.inventory-copy already has min-width:0, so the column shrinks
+   correctly — it was the text itself that needed truncation). */
+.inventory-name { display:block; font-family: var(--swse-font-orbit, 'Orbitron', sans-serif); font-weight:600; font-size:13px; letter-spacing:0.05em; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.inventory-subtitle, .inventory-meta { display:block; font-family: var(--swse-font-mono, 'JetBrains Mono', monospace); font-size:9px; letter-spacing:0.16em; text-transform:uppercase; color:var(--icw-dim); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 .inventory-meta { align-self:center; }
 
 /* Scroll ownership (Phase 2): .workbench-inventory and .workbench-detail are
@@ -278,6 +295,15 @@
 .config-card.selected, .variant-row.selected { border-left:3px solid var(--icw-pink); background: linear-gradient(135deg, oklch(0.72 0.26 350 / 0.18), oklch(0.85 0.18 200 / 0.04)); }
 .config-card.installed { border-left:3px solid var(--icw-positive); }
 .config-card.disabled { opacity:0.5; cursor:not-allowed; }
+/* Phase 4: clickability — a plain cursor:pointer wasn't a strong enough
+   signal that these are interactive. Hover/focus-visible are quieter than
+   selected/installed/removing (border-left + background) so they layer on
+   top without competing with those state signals; :not(.disabled) so an
+   incompatible/unavailable card doesn't falsely invite a click. */
+.config-card:not(.disabled):not(:disabled):hover, .variant-row:not(.disabled):hover {
+  border-color: color-mix(in oklch, var(--icw-cyan), transparent 30%);
+  background: linear-gradient(135deg, oklch(0.72 0.26 350 / 0.10), oklch(0.85 0.18 200 / 0.05) 80%);
+}
 .card-top { display:flex; justify-content:space-between; gap:8px; }
 .card-name, .variant-name { font-weight:600; font-size:11px; }
 .card-cost { font-family: var(--swse-font-display,'VT323',monospace); font-size:18px; color: var(--icw-cyan); }
@@ -295,6 +321,13 @@
 .tag { padding:1px 5px; border:1px solid currentColor; font-size:8px; letter-spacing:0.16em; text-transform:uppercase; color: var(--icw-cyan); }
 .tag.rare { color: var(--icw-pink); }
 .tag.state { color: var(--icw-positive); }
+/* Phase 4: .tag.state was also being used for negative/blocking messages
+   ("Incompatible", "No armor mods") with no visual distinction from its
+   positive uses ("Installed"/"Applied"/"Staged") — both rendered in the same
+   green. .negative gives those a distinct color so a blocking reason doesn't
+   read as a success indicator. Higher specificity than the bare .tag.state
+   above (3 classes vs 2) so it wins without needing !important. */
+.tag.state.negative { color: var(--icw-negative); }
 .empty-state { margin:auto 0; font-family: var(--swse-font-mono,'JetBrains Mono',monospace); font-size:11px; color:var(--icw-dim); text-align:center; }
 .structural-list .config-card { background: oklch(0 0 0 / 0.34); }
 
@@ -319,11 +352,15 @@
   border:1px solid var(--icw-border);
   background: linear-gradient(90deg, oklch(0.55 0.20 300 / 0.14), oklch(0.85 0.18 200 / 0.08));
 }
-.footer-credits { display:flex; gap:16px; }
-.credit-box { display:flex; flex-direction:column; gap:1px; padding-right:12px; border-right:1px solid oklch(0.85 0.18 200 / 0.2); }
+.footer-credits { display:flex; gap:16px; min-width:0; }
+/* Phase 4: min-width:0 + value truncation — without it a flex row of three
+   credit-boxes can't actually shrink below its content's intrinsic width at
+   narrow shell sizes, which risks pushing footer-actions (Apply) out past
+   the bounded/clipped footer instead of the row itself compressing. */
+.credit-box { display:flex; flex-direction:column; gap:1px; min-width:0; padding-right:12px; border-right:1px solid oklch(0.85 0.18 200 / 0.2); }
 .credit-box:last-child { border-right:none; padding-right:0; }
 .credit-box .label { font-family: var(--swse-font-mono,'JetBrains Mono',monospace); font-size:8px; letter-spacing:0.24em; text-transform:uppercase; color:var(--icw-dim); }
-.credit-box .value { font-family: var(--swse-font-display,'VT323',monospace); font-size:20px; color: var(--icw-cyan); }
+.credit-box .value { font-family: var(--swse-font-display,'VT323',monospace); font-size:20px; color: var(--icw-cyan); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 .credit-box.cost .value { color: var(--icw-pink); }
 .credit-box.short .value { color: var(--icw-negative); }
 .slot-meter { min-width:0; }
@@ -336,7 +373,30 @@
 .action.ghost { background: transparent; color: var(--icw-dim); }
 .action.primary { border-color: oklch(0.72 0.26 350 / 0.5); color: var(--icw-pink); background: oklch(0.72 0.26 350 / 0.12); }
 .action:disabled { opacity:0.6; cursor:not-allowed; }
+/* Phase 4: Reset/Close/Apply had zero hover feedback previously. */
+.action:not(:disabled):hover { border-color: color-mix(in oklch, var(--icw-cyan), transparent 20%); }
+.action.primary:not(:disabled):hover { border-color: var(--icw-pink); background: oklch(0.72 0.26 350 / 0.20); }
+.action.ghost:not(:disabled):hover { color: var(--icw-cyan); background: oklch(0.85 0.18 200 / 0.06); }
 .swse-customization-empty { padding: 48px; text-align:center; font-family: var(--swse-font-mono,'JetBrains Mono',monospace); color: var(--icw-dim); }
+
+/* Phase 4: shared keyboard-focus treatment for the Workbench's interactive
+   controls. .swse-sheet's global :focus-visible rule (styles/swse-core.css)
+   doesn't reach this app — the Workbench root carries .swse-sheet-ui, not
+   .swse-sheet — so nothing was covering cards/tabs/inventory/actions here.
+   One shared rule instead of per-selector duplicates; .config-card also
+   covers every card variant (.ls-option-card, .ls-chassis-option-card,
+   template cards, structural cards) since they all carry the base class. */
+.config-card:focus-visible,
+.variant-row:focus-visible,
+.inventory-item:focus-visible,
+.action:focus-visible,
+.workbench-tab:focus-visible,
+.wcb-tab:focus-visible,
+.rail-select-btn:focus-visible,
+.ls-step:focus-visible {
+  outline: 2px solid var(--icw-cyan);
+  outline-offset: 2px;
+}
 
 /* Narrow-width lane/grid stacking (workarea, detail-grid, appearance-blocks,
    footer) is handled by app-responsive-workbench.css's .is-shell-narrow
