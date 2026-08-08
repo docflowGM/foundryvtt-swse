@@ -1,0 +1,597 @@
+{{!--
+  workbench-content.hbs
+  Canonical Item Customization Workbench content.
+
+  This is the single source of truth for the workbench UI: HUD, mentor
+  dialogue, lightsaber-construction callout, category tabs, the
+  inventory/detail workarea (normal items or the lightsaber workspace), and
+  the footer. It contains no outer application/device chrome of its own —
+  the host decides that:
+
+    - templates/apps/customization/item-customization-workbench.hbs wraps
+      this partial in the standalone stage/screen frame for the rare case
+      ItemCustomizationWorkbench is rendered as its own ApplicationV2 window.
+    - templates/shell/partials/surface-workbench.hbs wraps this same partial
+      in the equivalent inline stage/screen frame, hosted inside the
+      character Holopad shell surface (the live, in-production path).
+
+  Both hosts render this exact same partial via the exact same
+  ItemCustomizationWorkbench._prepareContext() view model. Before this split,
+  the inline path rendered the full standalone template directly — content
+  and standalone chrome were inseparably bundled, so the Holopad-hosted
+  workbench was forced to inherit standalone-window framing it never needed.
+  Separating this content from its host's chrome is what lets the standalone
+  window keep its own frame while the Holopad host presents the same content
+  as content, not as a second application nested inside the first.
+--}}
+<header class="swse-customization-hud">
+  <div class="hud-side left">
+    <span>WORKBENCH-LINK</span>
+    <span>{{#if mentorName}}{{mentorName}}{{else}}WORKSHOP{{/if}}</span>
+  </div>
+  <div class="hud-title">ARMORY // CUSTOMIZATION</div>
+  <div class="hud-side right">
+    <span>{{actor.name}}</span>
+    <span>{{footer.credits}} CR</span>{{#if isStoreStageMode}}<span>STORE-STAGE</span>{{/if}}
+  </div>
+</header>
+
+<section class="swse-customization-mentor {{#if (eq mentorKey 'miraj')}}mentor-miraj{{else}}mentor-delta{{/if}}">
+  <div class="mentor-avatar">
+    {{#if mentorPortrait}}<img src="{{mentorPortrait}}" alt="{{mentorName}}" class="mentor-avatar-img">{{else}}⌬{{/if}}
+  </div>
+  <div class="mentor-copy">
+    <div class="mentor-head">{{mentorHead}}</div>
+    <div class="mentor-text" data-workbench-mentor-text data-mentor="{{mentorKey}}" data-raw-text="{{mentorText}}">{{mentorText}}</div>
+  </div>
+</section>
+
+{{#if lightsaberConstruction.showCallout}}
+<section class="swse-lightsaber-construction-callout panel">
+  <div>
+    <span class="callout-eyebrow">Milestone Ready</span>
+    <strong>Lightsaber construction is available.</strong>
+    <p>Open the Saber Forge wizard path without needing an existing lightsaber in inventory.</p>
+  </div>
+  <button type="button" class="primary-action saber-ready-action" data-action="start-lightsaber-construction" data-entry-point="workbench-callout">Construct Lightsaber</button>
+</section>
+{{/if}}
+
+{{#if hasItems}}
+<nav class="swse-customization-tabs">
+  {{#each categories}}
+  <button type="button" class="workbench-tab {{#if active}}active{{/if}} {{#if special}}special{{/if}}" data-action="select-category" data-category="{{key}}">
+    <span class="icon">{{icon}}</span>
+    <span>{{label}}</span>
+    <span class="count">{{count}}</span>
+  </button>
+  {{/each}}
+</nav>
+
+<section class="swse-customization-workarea">
+  <aside class="workbench-inventory panel">
+    <div class="panel-head">
+      <span>Inventory</span>
+      <span class="hint">{{currentItem.category}}</span>
+    </div>
+    {{#if isStoreStageMode}}
+    <div class="store-stage-banner">Staging mode: no credits are charged here. This customized listing is added to cart and paid at checkout.</div>
+    {{/if}}
+    <div class="search-row">
+      <input type="text" class="search-input" data-action="search-items" placeholder="Search items" value="{{search}}">
+      {{#if hasSearch}}<button type="button" class="filter-reset" data-action="reset-filter">Reset</button>{{/if}}
+    </div>
+    <div class="inventory-list">
+      {{#unless hasInventoryResults}}
+      <div class="inventory-empty">{{#if isLightsaber}}No existing lightsabers found. Use Construct Lightsaber to begin the self-built forge path.{{else}}No items match this filter.{{/if}}</div>
+      {{/unless}}
+      {{#each inventoryItems}}
+      <button type="button" class="inventory-item {{#if active}}active{{/if}}" data-action="select-item" data-item-id="{{id}}">
+        <img class="inventory-icon" src="{{img}}" alt="{{name}}">
+        <span class="inventory-copy">
+          <span class="inventory-name">{{name}}</span>
+          <span class="inventory-subtitle">{{subtitle}}</span>
+        </span>
+        <span class="inventory-meta">{{modCount}} MOD{{#if templateCount}} · {{templateCount}} TMP{{/if}}</span>
+      </button>
+      {{/each}}
+      {{#if isLightsaber}}{{#if lightsaberConstruction.eligible}}
+      <button type="button" class="inventory-item inventory-item--construct-new" data-action="construct-additional-lightsaber" data-entry-point="workbench">
+        <span class="inventory-construct-plus">+</span>
+        <span class="inventory-copy">
+          <span class="inventory-name">Construct New Lightsaber</span>
+          <span class="inventory-subtitle">Prerequisites met</span>
+        </span>
+      </button>
+      {{/if}}{{/if}}
+    </div>
+  </aside>
+
+  <section class="workbench-detail">
+    <div class="item-hero panel {{#if isLightsaber}}item-hero--lightsaber{{/if}}">
+      <div class="panel-head">
+        <span>{{currentItem.name}}</span>
+        <span class="hint">{{currentItem.subtitle}}</span>
+      </div>
+      <div class="hero-grid">
+        <div class="hero-art {{#if isLightsaber}}hero-art--lightsaber{{/if}}">
+          {{#if isLightsaber}}
+          <div class="ls-chassis-hero-visual" style="--blade-color: {{lightsaber.bladeHex}};" aria-label="{{currentItem.name}} blade preview">
+            {{{lightsaber.heroSvg}}}
+          </div>
+          {{else}}
+          <img src="{{currentItem.img}}" alt="{{currentItem.name}}">
+          {{/if}}
+        </div>
+        <div class="hero-copy {{#if isLightsaber}}hero-copy--lightsaber{{/if}}">
+          <div class="hero-breadcrumb">{{currentItem.category}} · {{currentItem.subtitle}}</div>
+          <div class="hero-description">{{currentItem.description}}</div>
+          <div class="hero-stats {{#if isLightsaber}}hero-stats--compact{{/if}}">
+            {{#each currentItem.stats}}
+            <div class="hero-stat {{#if className}}hero-stat--{{className}}{{/if}} {{#if isColor}}hero-stat--color{{/if}}">
+              <span class="key">{{key}}</span>
+              {{#if isColor}}
+              <button type="button" class="ls-hero-color-button" data-action="open-lightsaber-blade-color-editor" data-item-id="{{../lightsaber.editItemId}}" style="--blade-color: {{../lightsaber.bladeHex}};" {{#unless ../lightsaber.canPickBladeColor}}disabled{{/unless}} title="Choose a blade color allowed by the selected crystal.">
+                <span class="ls-color-dot"></span>
+                <span class="ls-color-name-strip">{{#each bladeColorParts}}<span class="{{className}}" {{#if style}}style="{{style}}"{{/if}}>{{label}}</span>{{/each}}</span>
+              </button>
+              {{else}}
+              <span class="value">{{value}}</span>
+              {{/if}}
+            </div>
+            {{/each}}
+          </div>
+          {{#if currentItem.expandedStats.length}}
+          <details class="ls-stat-expander">
+            <summary>Full Stats</summary>
+            <div class="hero-stats hero-stats--expanded">
+              {{#each currentItem.expandedStats}}
+              <div class="hero-stat">
+                <span class="key">{{key}}</span>
+                <span class="value">{{value}}</span>
+              </div>
+              {{/each}}
+            </div>
+          </details>
+          {{/if}}
+        </div>
+      </div>
+    </div>
+
+    {{#if techSpecialist.canUse}}
+    <section class="detail-panel panel tech-specialist-panel">
+      <div class="panel-head compact"><span>Tech Specialist</span><span class="hint">{{techSpecialist.subjectType}}</span></div>
+      <p class="panel-note">{{techSpecialist.hint}}</p>
+      {{#if techSpecialist.installedTraits.length}}
+      <div class="tech-trait-list">
+        {{#each techSpecialist.installedTraits}}
+        <button type="button" class="tech-trait-chip {{#if active}}active{{/if}}" data-action="toggle-tech-signature-trait" data-trait-id="{{id}}">
+          <strong>{{name}}</strong><span>{{tier}}</span>
+        </button>
+        {{/each}}
+      </div>
+      {{/if}}
+      <div class="tech-actions">
+        <button type="button" class="action primary" data-action="open-tech-specialist" {{#unless techSpecialist.canInstall}}disabled{{/unless}}>Install Tech Trait</button>
+        {{#if techSpecialist.canDesignateSignature}}<button type="button" class="action ghost" data-action="designate-signature-device">Make Signature Device</button>{{/if}}
+      </div>
+    </section>
+    {{/if}}
+
+    {{#if isLightsaber}}
+    <div class="lightsaber-workspace lightsaber-workspace--tabs lightsaber-construction-wizard {{#if lightsaber.constructionMode}}lightsaber-workspace--construction{{/if}}" data-lightsaber-route-mode="{{lightsaber.route.mode}}" data-lightsaber-route-intent="{{lightsaber.route.routeIntent}}" data-lightsaber-wizard-stage="{{lightsaber.activeTab}}" style="--blade-color: {{lightsaber.bladeHex}};">
+      <section class="detail-panel panel ls-tab-stage ls-wizard-main">
+        <div class="panel-head ls-wizard-head">
+          <span>{{#if lightsaber.constructionMode}}Lightsaber Construction Wizard{{else}}Lightsaber Tuning{{/if}}</span>
+          <span class="hint">{{lightsaber.mode}}</span>
+        </div>
+
+
+        {{#if lightsaber.alreadyBuiltNotice}}
+        <div class="ls-eligibility-banner built">
+          <strong>Lightsaber Already Constructed</strong>
+          <span>This actor already has a self-built lightsaber. Construction mode is hidden; tune the crystal, hilt, and blade color here.</span>
+        </div>
+        {{/if}}
+
+        <nav class="ls-step-rail" aria-label="Lightsaber construction steps">
+          {{#each lightsaber.tabs}}
+          <button type="button" class="ls-step {{#if active}}active{{/if}} {{#if done}}done{{/if}}" data-action="set-lightsaber-tab" data-tab="{{key}}">
+            <span class="ls-step-index">{{number}}</span>
+            <span>{{label}}</span>
+          </button>
+          {{/each}}
+        </nav>
+
+        <section class="ls-finish-picker" aria-label="Lightsaber chassis finish">
+          <div class="ls-finish-picker-head">
+            <span>Chassis Finish</span>
+            <small>Cosmetic SVG theme · selected: {{lightsaber.selectedFinishLabel}}</small>
+          </div>
+          <div class="ls-finish-options">
+            {{#each lightsaber.finishOptions}}
+            <button type="button" class="ls-finish-option {{#if selected}}selected{{/if}}" data-action="set-lightsaber-finish" data-key="{{key}}" title="{{label}}">
+              <span class="ls-finish-chip" style="--finish-accent: {{accent}};"></span>
+              <span class="ls-finish-preview">{{{previewSvg}}}</span>
+              <span class="ls-finish-label">{{label}}</span>
+            </button>
+            {{/each}}
+          </div>
+        </section>
+
+        {{#if lightsaber.tabChassis}}
+        <section class="ls-tab-panel" data-lightsaber-tab-panel="chassis">
+          <div class="panel-head compact"><span>Chassis</span><span class="hint">{{lightsaber.chassis.length}} frames</span></div>
+          <div class="ls-tab-card-grid">
+            {{#each lightsaber.chassis}}
+            <button type="button" class="config-card ls-option-card ls-chassis-option-card {{#if selected}}selected{{/if}}" data-action="inspect-lightsaber-component" data-key="{{optionKey}}" data-lightsaber-inspect-type="chassis" data-lightsaber-inspect-key="{{optionKey}}" data-component-type="chassis" title="{{description}}">
+              <span class="ls-chassis-card-art">{{{visualSvg}}}</span>
+              <span class="card-top"><span class="card-name">{{name}}</span><span class="card-cost">{{cost}} cr</span></span>
+              <span class="card-desc">{{description}}</span>
+              <span class="card-tags"><span class="tag">DC {{system.baseBuildDc}}</span><span class="tag">{{system.chassisId}}</span></span>
+            </button>
+            {{/each}}
+          </div>
+        </section>
+        {{/if}}
+
+        {{#if lightsaber.tabCrystal}}
+        <section class="ls-tab-panel" data-lightsaber-tab-panel="crystal">
+          <div class="panel-head compact"><span>Kyber Crystal</span><span class="hint">{{lightsaber.crystals.length}} crystals</span></div>
+          <div class="ls-tab-card-grid">
+            {{#each lightsaber.crystals}}
+            <button type="button" class="config-card ls-option-card {{#if selected}}selected{{/if}} {{#if incompatible}}disabled{{/if}}" data-action="inspect-lightsaber-component" data-key="{{optionKey}}" data-lightsaber-inspect-type="crystal" data-lightsaber-inspect-key="{{optionKey}}" data-component-type="crystal" title="{{description}}">
+              <span class="card-top"><span class="card-name">{{name}}</span><span class="card-cost">{{cost}} cr</span></span>
+              <span class="card-tags"><span class="tag">{{rarity}}</span><span class="tag ls-color-text-tag">{{#each bladeColorParts}}<span class="{{className}}" {{#if style}}style="{{style}}"{{/if}}>{{label}}</span>{{/each}}</span><span class="tag">DC {{buildDcModifier}}</span>{{#if incompatible}}<span class="tag state">Incompatible</span>{{/if}}</span>
+            </button>
+            {{/each}}
+          </div>
+        </section>
+        {{/if}}
+
+        {{#if lightsaber.tabHilt}}
+        <section class="ls-tab-panel" data-lightsaber-tab-panel="hilt">
+          <div class="panel-head compact"><span>Hilt Accessories</span><span class="hint">{{lightsaber.slotState.usedSlots}}/{{lightsaber.slotState.totalAvailable}} slots</span></div>
+          {{#if lightsaber.slotState.techSpecialistBonus}}<p class="panel-note">Tech Specialist grants one additional hilt modification slot during construction.</p>{{/if}}
+          <div class="ls-tab-card-grid">
+            {{#each lightsaber.accessories}}
+            <button type="button" class="config-card ls-option-card {{#if selected}}selected{{/if}} {{#if incompatible}}disabled{{/if}}" data-action="inspect-lightsaber-component" data-key="{{optionKey}}" data-lightsaber-inspect-type="accessory" data-lightsaber-inspect-key="{{optionKey}}" data-component-type="accessory" title="{{description}}">
+              <span class="card-top"><span class="card-name">{{name}}</span><span class="card-cost">{{cost}} cr</span></span>
+              <span class="card-tags"><span class="tag">{{slotCost}} slot</span><span class="tag">DC {{buildDcModifier}}</span>{{#if incompatible}}<span class="tag state">Incompatible</span>{{/if}}</span>
+            </button>
+            {{/each}}
+          </div>
+        </section>
+        {{/if}}
+
+        {{#if lightsaber.tabReview}}
+        <section class="ls-tab-panel ls-tab-panel--review" data-lightsaber-tab-panel="review">
+          <div class="panel-head compact"><span>Review / Construct</span><span class="hint">engine-authorized</span></div>
+          <div class="ls-review-grid ls-review-grid--full">
+            <article><span>Chassis</span><strong>{{lightsaber.review.chassisName}}</strong></article>
+            <article><span>Crystal</span><strong>{{lightsaber.review.crystalName}}</strong></article>
+            <article><span>Hilt</span><strong>{{lightsaber.review.accessoryNames}}</strong></article>
+            <article><span>Blade Color</span><strong class="ls-color-name-strip">{{#each lightsaber.review.bladeColorParts}}<span class="{{className}}" {{#if style}}style="{{style}}"{{/if}}>{{label}}</span>{{/each}}</strong></article>
+            <article><span>Finish</span><strong>{{lightsaber.review.finishLabel}}</strong></article>
+            <article><span>Damage</span><strong>{{lightsaber.review.damage}}</strong></article>
+            <article><span>Critical</span><strong>{{lightsaber.review.critical}}</strong></article>
+            <article><span>Damage Type</span><strong>{{lightsaber.review.damageType}}</strong></article>
+            <article><span>Range</span><strong>{{lightsaber.review.range}}</strong></article>
+            <article><span>Build DC</span><strong>{{lightsaber.review.buildDc}}</strong></article>
+            <article><span>Use the Force</span><strong>{{lightsaber.review.useTheForce}}</strong></article>
+            <article><span>Take 10</span><strong>{{lightsaber.review.take10}}</strong></article>
+            <article><span>Total Cost</span><strong>{{lightsaber.review.totalCost}} cr</strong></article>
+          </div>
+
+          <div class="ls-review-checks">
+            <div class="ls-check-mode">
+              <button type="button" class="{{#if lightsaber.rollSelected}}active{{/if}}" data-action="set-lightsaber-check-mode" data-key="roll">Roll Use the Force</button>
+              <button type="button" class="{{#if lightsaber.take10Selected}}active{{/if}}" data-action="set-lightsaber-check-mode" data-key="take10">Take 10</button>
+            </div>
+            <div class="ls-affordability {{#if lightsaber.review.affordable}}ok{{else}}bad{{/if}}">
+              <span>Credits</span>
+              <strong>{{footer.credits}} cr → {{lightsaber.review.after}} cr</strong>
+              <small>{{#if lightsaber.review.affordable}}Affordable{{else}}Insufficient credits{{/if}}</small>
+            </div>
+          </div>
+
+          {{#if lightsaber.result}}
+          <div class="ls-roll-result {{#if lightsaber.result.success}}success{{else}}failure{{/if}}">
+            <span class="ls-roll-label">{{lightsaber.result.title}}</span>
+            <strong>{{lightsaber.result.rollTotal}}</strong>
+            <p>{{lightsaber.result.message}}</p>
+            {{#if lightsaber.result.rollRaw}}<small>d20 {{lightsaber.result.rollRaw}} + UtF {{lightsaber.result.modifier}} vs DC {{lightsaber.result.finalDc}}</small>{{/if}}
+          </div>
+          {{/if}}
+
+          <div class="ls-review-actions">
+            <button type="button" class="action ghost" data-action="attempt-lightsaber-construction" data-mode="take10" {{#unless lightsaber.canTake10Build}}disabled{{/unless}}>Construct via Take 10</button>
+            <button type="button" class="action primary" data-action="attempt-lightsaber-construction" data-mode="roll" {{#unless lightsaber.canRoll}}disabled{{/unless}}>Roll Use the Force</button>
+          </div>
+        </section>
+        {{/if}}
+
+        <div class="ls-wizard-nav">
+          {{#if lightsaber.navigation.previous}}<button type="button" class="action ghost" data-action="lightsaber-step-prev" data-tab="{{lightsaber.navigation.previous}}">← Back</button>{{/if}}
+          <span class="ls-wizard-rules"><span>24 hr uninterrupted</span><span>No Take 20</span><span>Use the Force</span></span>
+          {{#if lightsaber.navigation.next}}<button type="button" class="action primary" data-action="lightsaber-step-next" data-tab="{{lightsaber.navigation.next}}">{{#if (eq lightsaber.navigation.next "review")}}Review →{{else}}Next →{{/if}}</button>{{/if}}
+        </div>
+      </section>
+
+      <aside class="ls-forge-rail ls-forge-rail--intel-only">
+        <section class="detail-panel panel ls-component-intel">
+          <div class="panel-head"><span>Selected Component Intel</span><span class="hint">{{lightsaber.componentIntel.kind}}</span></div>
+          <article class="rail-detail-card {{#if lightsaber.componentIntel.selected}}selected{{/if}}" {{#if lightsaber.componentIntel.colorHex}}style="--weapon-color: {{lightsaber.componentIntel.colorHex}}"{{/if}}>
+            <div class="rail-detail-top"><span>{{lightsaber.componentIntel.name}}</span><span>{{lightsaber.componentIntel.kind}}</span></div>
+            {{#if lightsaber.componentIntel.colorHex}}<div class="ls-intel-color-chip"><span></span>{{lightsaber.componentIntel.name}}</div>{{/if}}
+            {{#if lightsaber.componentIntel.bladeColorParts}}<div class="ls-color-name-strip ls-color-name-strip--intel">{{#each lightsaber.componentIntel.bladeColorParts}}<span class="{{className}}" {{#if style}}style="{{style}}"{{/if}}>{{label}}</span>{{/each}}</div>{{/if}}
+            <dl class="rail-detail-fields">
+              <div><dt>Detail</dt><dd>{{lightsaber.componentIntel.description}}</dd></div>
+              {{#each lightsaber.componentIntel.fields}}
+              <div><dt>{{key}}</dt><dd>{{value}}</dd></div>
+              {{/each}}
+            </dl>
+            {{#if lightsaber.componentIntel.action}}
+              <button type="button" class="rail-select-btn ls-intel-action" data-action="{{lightsaber.componentIntel.action}}" data-key="{{lightsaber.componentIntel.key}}" {{#if lightsaber.componentIntel.disabled}}disabled aria-disabled="true"{{/if}}>
+                {{lightsaber.componentIntel.buttonLabel}}
+              </button>
+            {{/if}}
+          </article>
+        </section>
+
+      </aside>
+
+      {{#if lightsaber.showSuccessOverlay}}
+      <div class="ls-success-overlay">
+        <div class="ls-success-beam" style="--blade-color: {{lightsaber.bladeHex}};"></div>
+        <h3>Lightsaber Forged</h3>
+        <p>{{lightsaber.createdWeaponName}} hums to life in your hands. The kyber crystal settles into tune, the blade steadies, and Miraj marks the weapon as ready for attunement.</p>
+        <div class="ls-success-actions">
+          <button type="button" class="action primary" data-action="begin-lightsaber-attunement">Attune Now — Summon Miraj</button>
+          <button type="button" class="action ghost" data-action="dismiss-lightsaber-success">Attune Later</button>
+        </div>
+      </div>
+      {{/if}}
+    </div>
+    {{else}}
+    {{#if isEnergyShield}}
+    <section class="energy-shield-rules panel">
+      <div class="panel-head"><span>Energy Shield Operating Profile</span><span class="hint">SR {{energyShield.sr}} · {{energyShield.typeLabel}}</span></div>
+      <div class="energy-shield-grid">
+        <div class="energy-shield-emitter">
+          <span class="shield-ring shield-ring-a"></span>
+          <span class="shield-ring shield-ring-b"></span>
+          <span class="shield-core">SR {{energyShield.sr}}</span>
+        </div>
+        <div class="energy-shield-rule-copy">
+          <p><strong>Inactive:</strong> Worn but inert. No Reflex override, no Max Dex cap, no armor check penalty, and no Shield Rating.</p>
+          <p><strong>Activated:</strong> Swift Action, consumes 1 charge, lasts until encounter end, and grants SR {{energyShield.sr}} against Energy damage only.</p>
+          <p><strong>Penalty:</strong> While active, applies Max Dex {{#if energyShield.maxDex}}+{{energyShield.maxDex}}{{else}}—{{/if}} and ACP {{energyShield.armorCheckPenalty}}. Without Armor Proficiency ({{energyShield.proficiency}}), apply -5 Reflex and deny Dex bonus, but do not remove heroic level bonus.</p>
+        </div>
+      </div>
+    </section>
+    {{/if}}
+    <div class="detail-grid">
+      <div class="workbench-tabs-container">
+        <nav class="workbench-content-tabs">
+          {{#each availableTabs}}
+          <button type="button" class="wcb-tab {{#if active}}active{{/if}}" data-action="set-workbench-tab" data-tab="{{key}}">
+            {{label}}{{#if hint}}<span class="wcb-tab-hint">{{hint}}</span>{{/if}}
+          </button>
+          {{/each}}
+        </nav>
+
+        {{#if workbenchTabModifications}}
+        <div class="wcb-pane">
+          <div class="card-list structural-list">
+            {{#if isEnergyShield}}
+            <article class="config-card installed">
+              <span class="card-top"><span class="card-name">Power Cell Housing</span><span class="card-cost">Charges</span></span>
+              <span class="card-desc">Energy shields are tuned through generator maintenance and compatible templates, not normal armor plating mods.</span>
+              <span class="card-tags"><span class="tag">5 charges</span><span class="tag">Swift activate</span></span>
+            </article>
+            <article class="config-card disabled">
+              <span class="card-top"><span class="card-name">Armor Modification Surface</span><span class="card-cost">Illegal</span></span>
+              <span class="card-desc">Normal armor modifications cannot be taken on an energy shield unless a rule/template explicitly says it works on energy shields.</span>
+              <span class="card-tags"><span class="tag state">No armor mods</span></span>
+            </article>
+            {{#each structuralActions.strips}}
+            <button type="button" class="config-card {{#if selected}}selected{{/if}} {{#if installed}}installed{{/if}} {{#if removing}}removing{{/if}} {{#if inspected}}inspected{{/if}} {{#if disabled}}disabled{{/if}}" data-action="inspect-structural" data-key="{{key}}" data-inspect-kind="structural" data-inspect-key="{{key}}">
+              <span class="card-top"><span class="card-name">{{label}}</span>{{#if effect}}<span class="card-cost">{{effect}}</span>{{/if}}</span>
+              {{#if description}}<span class="card-desc">{{description}}</span>{{/if}}
+            </button>
+            {{/each}}
+            {{else}}
+            {{#if upgrades.length}}
+              {{#each upgrades}}
+              <button type="button" class="config-card {{#if selected}}selected{{/if}} {{#if installed}}installed{{/if}} {{#if removing}}removing{{/if}} {{#if inspected}}inspected{{/if}} {{#if disabled}}disabled{{/if}}" data-action="inspect-upgrade" data-key="{{key}}" data-inspect-kind="upgrade" data-inspect-key="{{key}}" {{#if disabled}}title="No slots available"{{/if}}>
+                <span class="card-top">
+                  <span class="card-name">{{name}}</span>
+                  <span class="card-cost">{{costCredits}} cr</span>
+                </span>
+                {{#if suggestion}}<span class="workbench-suggestion-badge workbench-suggestion-badge--{{suggestion.tier}}">{{suggestion.tierLabel}}</span>{{/if}}
+                <span class="card-desc">{{description}}</span>
+                <span class="card-tags">
+                  {{#if effect}}<span class="tag">{{effect}}</span>{{/if}}
+                  <span class="tag">{{slotCost}} slot</span>
+                  {{#if suggestion}}<span class="tag suggestion-tag">Assumes use</span>{{/if}}
+                  {{#if removing}}<span class="tag state removing">Removing</span>{{else}}{{#if installed}}<span class="tag state">Installed</span>{{/if}}{{/if}}
+                  {{#if selected}}{{#unless installed}}<span class="tag state">Staged</span>{{/unless}}{{/if}}
+                </span>
+              </button>
+              {{/each}}
+            {{else}}
+              <div class="empty-state">No structured modifications available for this item.</div>
+            {{/if}}
+            {{/if}}
+          </div>
+        </div>
+        {{/if}}
+
+        {{#if workbenchTabStructural}}
+        <div class="wcb-pane">
+          <div class="card-list structural-list">
+            <button type="button" class="config-card {{#if structuralActions.sizeIncrease.selected}}selected{{/if}} {{#if structuralActions.sizeIncrease.installed}}installed{{/if}} {{#if structuralActions.sizeIncrease.removing}}removing{{/if}} {{#if structuralActions.sizeIncrease.inspected}}inspected{{/if}} {{#if structuralActions.sizeIncrease.disabled}}disabled{{/if}}" data-action="inspect-structural" data-key="size_increase" data-inspect-kind="structural" data-inspect-key="size_increase">
+              <span class="card-top">
+                <span class="card-name">{{structuralActions.sizeIncrease.label}}</span>
+              </span>
+              <span class="card-desc">{{structuralActions.sizeIncrease.description}}</span>
+            </button>
+            {{#each structuralActions.strips}}
+            <button type="button" class="config-card {{#if selected}}selected{{/if}} {{#if installed}}installed{{/if}} {{#if removing}}removing{{/if}} {{#if inspected}}inspected{{/if}} {{#if disabled}}disabled{{/if}}" data-action="inspect-structural" data-key="{{key}}" data-inspect-kind="structural" data-inspect-key="{{key}}">
+              <span class="card-top"><span class="card-name">{{label}}</span>{{#if effect}}<span class="card-cost">{{effect}}</span>{{/if}}</span>
+              {{#if description}}<span class="card-desc">{{description}}</span>{{/if}}
+            </button>
+            {{/each}}
+          </div>
+        </div>
+        {{/if}}
+
+        {{#if workbenchTabTemplates}}
+        <div class="wcb-pane">
+          <div class="card-list">
+            {{#each templates}}
+            <button type="button" class="config-card template {{#if selected}}selected{{/if}} {{#if installed}}installed{{/if}} {{#if removing}}removing{{/if}} {{#if inspected}}inspected{{/if}} {{#if disabled}}disabled{{/if}}" data-action="inspect-template" data-key="{{key}}" data-inspect-kind="template" data-inspect-key="{{key}}" {{#if disabledReason}}title="{{disabledReason}}"{{/if}}>
+              <span class="card-top">
+                <span class="card-name">{{name}}</span>
+                <span class="card-cost">{{costPreview}} cr</span>
+              </span>
+              {{#if suggestion}}<span class="workbench-suggestion-badge workbench-suggestion-badge--{{suggestion.tier}}">{{suggestion.tierLabel}}</span>{{/if}}
+              <span class="card-desc">{{description}}</span>
+              {{#if rulesText}}<span class="card-rules">{{rulesText}}</span>{{/if}}
+              <span class="card-tags">
+                <span class="tag">{{restriction}}</span>
+                {{#if suggestion}}<span class="tag suggestion-tag">Assumes use</span>{{/if}}
+                {{#if rarity}}<span class="tag rare">Rare</span>{{/if}}
+                {{#if removing}}<span class="tag state removing">Removing</span>{{else}}{{#if installed}}<span class="tag state">Applied</span>{{/if}}{{/if}}
+                {{#if selected}}{{#unless installed}}<span class="tag state">Staged</span>{{/unless}}{{/if}}
+              </span>
+            </button>
+            {{/each}}
+          </div>
+        </div>
+        {{/if}}
+
+        {{#if workbenchTabAppearance}}
+        <div class="wcb-pane">
+          <div class="appearance-blocks">
+            {{#each currentItem.appearance}}
+            <div class="appearance-block">
+              <div class="appearance-label">{{key}}</div>
+              {{#if options}}
+                {{#if selectedHex}}
+                <div class="blaster-bolt-preview" style="--weapon-color: {{selectedHex}}" aria-label="Selected bolt color {{selectedLabel}}">
+                  <span class="blaster-bolt-preview__muzzle" aria-hidden="true"></span>
+                  <span class="blaster-bolt-preview__beam" aria-hidden="true"></span>
+                  <span class="blaster-bolt-preview__label">{{selectedLabel}} bolt package</span>
+                </div>
+                <button type="button" class="color-picker-trigger bolt-color-picker-trigger" data-action="open-color-picker" data-color-action="{{action}}">
+                  <span class="color-picker-caret">▾ Change Bolt Color</span>
+                </button>
+                {{else}}
+                <button type="button" class="color-picker-trigger" data-action="open-color-picker" data-color-action="{{action}}">
+                  {{#each options}}{{#if selected}}<span class="color-picker-preview" style="--swatch: {{hex}}"></span>{{/if}}{{/each}}
+                  <span class="color-picker-caret">▾ Change</span>
+                </button>
+                {{/if}}
+              {{/if}}
+              {{#if variantOptions}}
+              <div class="variant-list">
+                {{#each variantOptions}}
+                <button type="button" class="variant-row {{#if selected}}selected{{/if}}" data-action="{{../action}}" data-key="{{key}}">
+                  <span class="variant-name">{{name}}</span>
+                  <span class="variant-desc">{{description}}</span>
+                </button>
+                {{/each}}
+              </div>
+              {{/if}}
+            </div>
+            {{/each}}
+          </div>
+        </div>
+        {{/if}}
+      </div>
+
+      <aside class="detail-rail panel workbench-intel-panel">
+        <div class="panel-head">
+          <span>Modification Intel</span>
+          <span class="hint">{{detailRail.slotSummary}}</span>
+        </div>
+        <div class="detail-rail-scroll">
+          {{#if detailRail.primaryRow}}
+          {{#with detailRail.primaryRow}}
+          <section class="rail-section rail-section-primary">
+            <div class="rail-section-title">Selected Intel</div>
+            <article class="rail-detail-card selected inspected {{#if installed}}installed{{/if}} {{#if removing}}removing{{/if}} {{#if disabled}}disabled{{/if}}">
+              <div class="rail-detail-top"><span>{{name}}</span><span>{{kind}}</span></div>
+              {{#if suggestion}}<div class="workbench-suggestion-line workbench-suggestion-line--{{suggestionTier}}">{{suggestionLabel}}</div>{{/if}}
+              <dl class="rail-detail-fields">
+                <div><dt>Detail</dt><dd>{{description}}</dd></div>
+                {{#if effect}}<div><dt>Benefit</dt><dd class="rail-benefit">{{effect}}</dd></div>{{/if}}
+                <div><dt>Slots</dt><dd>{{#if slotCost}}{{slotCost}}{{else}}0{{/if}}</dd></div>
+                <div><dt>Cost</dt><dd>{{#if cost}}{{cost}} cr{{else}}+0 cr{{/if}}</dd></div>
+                {{#if suggestionReasons.length}}<div><dt>Analysis</dt><dd><ul class="workbench-suggestion-reasons">{{#each suggestionReasons}}<li>{{this}}</li>{{/each}}</ul></dd></div>{{/if}}
+              </dl>
+              <div class="rail-tags">{{#if removing}}<span>Removing</span>{{else}}{{#if installed}}<span>Installed</span>{{/if}}{{/if}}{{#if selected}}{{#unless installed}}<span>Staged</span>{{/unless}}{{/if}}</div>
+              {{#if selectable}}<button type="button" class="rail-select-btn {{#if (eq type 'template')}}rail-select-btn--template{{/if}}" data-action="{{action}}" {{#if key}}data-key="{{key}}"{{/if}}>{{buttonLabel}}</button>{{/if}}
+            </article>
+          </section>
+          {{/with}}
+          {{/if}}
+          {{#if detailRail.stagedRows.length}}
+          <section class="rail-section rail-section-staged">
+            <div class="rail-section-title">Staged Work</div>
+            {{#each detailRail.stagedRows}}
+            <article class="rail-detail-card selected {{#if removing}}removing{{/if}} {{#if inspected}}inspected{{/if}}">
+              <div class="rail-detail-top"><span>{{name}}</span><span>{{kind}}</span></div>
+              {{#if suggestion}}<div class="workbench-suggestion-line workbench-suggestion-line--{{suggestionTier}}">{{suggestionLabel}}</div>{{/if}}
+              <dl class="rail-detail-fields">
+                <div><dt>Detail</dt><dd>{{description}}</dd></div>
+                {{#if effect}}<div><dt>Benefit</dt><dd class="rail-benefit">{{effect}}</dd></div>{{/if}}
+                <div><dt>Slots</dt><dd>{{#if slotCost}}{{slotCost}}{{else}}0{{/if}}</dd></div>
+                <div><dt>Cost</dt><dd>{{#if cost}}{{cost}} cr{{else}}+0 cr{{/if}}</dd></div>
+                {{#if suggestionReasons.length}}<div><dt>Analysis</dt><dd><ul class="workbench-suggestion-reasons">{{#each suggestionReasons}}<li>{{this}}</li>{{/each}}</ul></dd></div>{{/if}}
+              </dl>
+              {{#if selectable}}<button type="button" class="rail-select-btn" data-action="{{action}}" {{#if key}}data-key="{{key}}"{{/if}}>{{buttonLabel}}</button>{{/if}}
+            </article>
+            {{/each}}
+          </section>
+          {{/if}}
+        </div>
+      </aside>
+    </div>
+    {{/if}}
+  </section>
+</section>
+
+<footer class="swse-customization-footer">
+  <div class="footer-credits">
+    <div class="credit-box">
+      <span class="label">Credits</span>
+      <span class="value">{{footer.credits}}</span>
+    </div>
+    <div class="credit-box cost">
+      <span class="label">Cost</span>
+      <span class="value">-{{footer.cost}}</span>
+    </div>
+    <div class="credit-box {{#if footer.canApply}}after{{else}}short{{/if}}">
+      <span class="label">After</span>
+      <span class="value">{{footer.after}}</span>
+    </div>
+  </div>
+  <div class="slot-meter">
+    <div class="meter-head">Slot Usage <span>{{footer.slots.usedSlots}} / {{footer.slots.totalAvailable}}</span></div>
+    <div class="meter-bar {{#if footer.slots.isOverflowing}}overflow{{/if}}">
+      <span class="meter-fill" style="width: {{footer.slotPercent}}%"></span>
+    </div>
+  </div>
+  <div class="footer-actions">
+    <button type="button" class="action ghost" data-action="reset-item">Reset</button>
+    <button type="button" class="action ghost" data-action="close-workbench">Close</button>
+    {{#if footer.blockedReason}}<span class="footer-blocker">{{footer.blockedReason}}</span>{{/if}}
+    <button type="button" class="action primary" data-action="apply-item" {{#unless footer.canApply}}disabled{{/unless}}>{{footer.applyLabel}}</button>
+  </div>
+</footer>
+{{else}}
+<section class="swse-customization-empty">No supported items found for the first-wave customization workbench.</section>
+{{/if}}

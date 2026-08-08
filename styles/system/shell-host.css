@@ -540,16 +540,22 @@
   height: 100% !important;
 }
 
-.swse.sheet.actor.character.v2 .swse-customization-tablet {
-  flex: 1 1 auto !important;
-  min-width: 0 !important;
-  min-height: 0 !important;
-  height: 100% !important;
-}
-
 /* Convert the workbench screen from a grid to a flex column so the workarea
    can use flex: 1 1 auto instead of 1fr, which requires a definitively-sized
-   grid container that is unreliable across the sheet's CSS layering. */
+   grid container that is unreliable across the sheet's CSS layering.
+   Also: neutralize the standalone-window "device screen" presentation
+   (panel background, rounded 16px corners, inset/drop box-shadow, 18px
+   padding) here, inline-hosted only. .swse.sheet.actor.character.v2 never
+   matches the standalone ApplicationV2 window (its own root only carries
+   swse/swse-item-customization-workbench/swse-theme-holo — see
+   ItemCustomizationWorkbench.DEFAULT_OPTIONS), so the standalone window
+   keeps its full device-screen chrome unchanged. Inline, the Holopad shell
+   is already the outer frame; the workbench's own .swse-customization-stage
+   background (a full-bleed, non-boxed radial glow — no radius/shadow of its
+   own) remains the thematic canvas, so this only strips the redundant
+   *second* boxed surface .swse-customization-screen was drawing on top of
+   it. The 14px inter-region gap (HUD/mentor/tabs/workarea/footer spacing)
+   is untouched — that's real content layout, not device-frame decoration. */
 .swse.sheet.actor.character.v2 .swse-customization-screen {
   display: flex !important;
   flex-direction: column !important;
@@ -558,6 +564,10 @@
   min-width: 0 !important;
   min-height: 0 !important;
   overflow: hidden !important;
+  padding: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
 }
 
 .swse.sheet.actor.character.v2 .swse-customization-hud,
