@@ -75,8 +75,12 @@ export class WorkbenchSurfaceAdapter {
    * Build the view model for this surface by rendering the canonical workbench
    * content partial (shared with the standalone ItemCustomizationWorkbench
    * window) — not the full standalone application frame. The Holopad shell
-   * surface provides its own equivalent chrome around contentHtml; see
-   * templates/shell/partials/surface-workbench.hbs.
+   * surface wraps contentHtml in the same stage/screen scope the standalone
+   * window uses, but with the screen's own device-frame presentation
+   * (padding/radius/background/shadow) stripped inline-only, since the
+   * Holopad's own screen already provides that framing; see
+   * templates/shell/partials/surface-workbench.hbs and the inline-only rule
+   * in styles/system/shell-host.css.
    * Mirrors the pattern used by CustomizationSurfaceAdapter.
    *
    * @returns {Promise<object>}

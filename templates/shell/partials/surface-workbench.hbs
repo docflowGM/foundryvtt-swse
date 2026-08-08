@@ -4,10 +4,12 @@
 
   Uses WorkbenchSurfaceAdapter to render the canonical workbench-content.hbs
   partial (the same content the standalone ItemCustomizationWorkbench window
-  uses) and inject it as contentHtml. This surface provides its own
-  stage/screen chrome around that content — the Holopad shell is the outer
-  frame, so the inline path does not embed the full standalone application
-  frame a second time.
+  uses) and inject it as contentHtml. The Holopad shell is the outer frame:
+  this surface keeps .swse-customization-stage/.swse-customization-screen as
+  a CSS/theme scope, but strips their standalone-only device-screen
+  presentation (padding, corner radius, panel background, box-shadow) so the
+  player sees the workbench as content inside the one real Holopad screen,
+  not a second screen drawn inside it.
 
   vm:
     id           — 'workbench'
@@ -29,10 +31,19 @@
   </div>
 
   {{else if vm.contentHtml}}
-  {{!-- Canonical workbench content, hosted inline: the shell surface is the
-       outer frame, and this provides the same stage/screen chrome the
-       standalone window uses (minus the standalone-only tablet bezel), not
-       a second nested application frame. --}}
+  {{!-- Canonical workbench content, hosted inline. The classes below match
+       the standalone stage/screen structure (minus the standalone-only
+       tablet bezel, dropped in both hosts) because .swse-customization-stage
+       still scopes ~300 CSS rules and its theme/motion custom properties, and
+       .swse-customization-screen still needs its flex/grid layout rules.
+       But the actual Holopad screen is the real device screen (see
+       .swse-v2-screen in holopad-frame.hbs) — this surface is CONTENT shown
+       on it, not a second screen drawn inside it. So
+       styles/system/shell-host.css strips .swse-customization-screen's own
+       padding/border-radius/background/box-shadow inline-only (scoped to
+       .swse.sheet.actor.character.v2, which never matches the standalone
+       ApplicationV2 window), leaving only .swse-customization-stage's
+       full-bleed, non-boxed background as the thematic canvas. --}}
   <div class="swse-item-customization-workbench swse-shell-surface__body">
     <div class="swse-customization-stage swse-datapad swse-ui-shell swse-sheet-ui" data-theme="{{vm.vm.themeKey}}" data-motion-style="{{vm.vm.motionStyle}}" style="{{{vm.vm.themeStyleInline}}}; {{{vm.vm.motionStyleInline}}};">
       <div class="swse-customization-screen" data-application-content>

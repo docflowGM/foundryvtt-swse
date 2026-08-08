@@ -16,8 +16,13 @@
       character Holopad shell surface (the live, in-production path).
 
   Both hosts render this exact same partial via the exact same
-  ItemCustomizationWorkbench._prepareContext() view model, so there is only
-  one workbench UI to maintain, not two parallel copies.
+  ItemCustomizationWorkbench._prepareContext() view model. Before this split,
+  the inline path rendered the full standalone template directly — content
+  and standalone chrome were inseparably bundled, so the Holopad-hosted
+  workbench was forced to inherit standalone-window framing it never needed.
+  Separating this content from its host's chrome is what lets the standalone
+  window keep its own frame while the Holopad host presents the same content
+  as content, not as a second application nested inside the first.
 --}}
 <header class="swse-customization-hud">
   <div class="hud-side left">

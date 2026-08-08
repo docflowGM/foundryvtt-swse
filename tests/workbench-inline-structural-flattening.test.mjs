@@ -6,16 +6,24 @@
  * item-customization-workbench.hbs template (stage > tablet > screen >
  * content) inline via WorkbenchSurfaceAdapter.buildViewModel(), then
  * surface-workbench.hbs wrapped that whole rendered frame in yet another
- * .swse-item-customization-workbench container. The result was a "tablet
- * inside the Holopad": four nested chrome layers before any actual workbench
- * content appeared, two of which (the standalone app's own stage background
- * and the tablet's 16px device bezel) existed purely to imitate a standalone
- * application window that the Holopad already provides.
+ * .swse-item-customization-workbench container. There was only ever one copy
+ * of the markup — the inline path literally rendered the standalone
+ * template — but canonical content and standalone-window chrome were
+ * inseparably bundled together in that one template, so the Holopad-hosted
+ * workbench was forced to inherit standalone framing it never needed: four
+ * nested chrome layers before any actual workbench content appeared, two of
+ * which (the standalone app's own stage background and the tablet's 16px
+ * device bezel) existed purely to imitate a standalone application window
+ * that the Holopad already provides.
  *
  * This phase:
  *   - extracts the canonical workbench UI (HUD, mentor, category tabs,
  *     inventory/detail workarea, lightsaber workspace, footer) into a single
- *     shared partial: templates/apps/customization/partials/workbench-content.hbs
+ *     shared partial: templates/apps/customization/partials/workbench-content.hbs.
+ *     This is what actually separates content from chrome: it lets the
+ *     standalone window keep its own frame while the Holopad host presents
+ *     the same content as content, without forking the markup into two
+ *     independently-maintained copies.
  *   - has BOTH the standalone ItemCustomizationWorkbench window and the
  *     inline Holopad surface wrap that exact same partial in their own
  *     stage/screen chrome, instead of one embedding the other's full frame
@@ -24,14 +32,30 @@
  *     the one layer of nesting that was safely, universally removable
  *     without rewriting the ~300 CSS rules that key off .swse-customization-
  *     stage as their scoping ancestor for lightsaber/general workbench
- *     styling in this pass.
+ *     styling in this pass
+ *   - [correction pass] neutralizes .swse-customization-screen's own
+ *     device-frame presentation (18px padding, 16px corner radius, panel
+ *     background, box-shadow) inline-only, scoped to
+ *     .swse.sheet.actor.character.v2 .swse-customization-screen in
+ *     styles/system/shell-host.css — a selector/scope that structurally
+ *     cannot match the standalone ApplicationV2 window (whose own root only
+ *     ever carries swse/swse-item-customization-workbench/swse-theme-holo).
+ *     The real Holopad screen (.swse-v2-screen in holopad-frame.hbs) already
+ *     supplies padding/radius/background/shadow of its own, so the
+ *     workbench's duplicate copy of all four was a literal screen drawn
+ *     inside the real screen. .swse-customization-stage is kept exactly as
+ *     it was — it still scopes theme variables and ~300 lightsaber/general
+ *     workbench CSS rules, and its own background is a full-bleed radial
+ *     glow with no radius/shadow/padding of its own, so it reads as a
+ *     thematic canvas rather than a second boxed device.
  *
  * These are static/source-level tests (this repo has no Handlebars runtime
  * dependency and no jsdom harness for this template), following the existing
  * pattern in tests/gm-surface-render-seams.test.mjs. They pin the actual
  * architectural contract — one canonical content body, no duplicated markup,
- * no reintroduced double-frame, mentor hook intact, action bindings intact —
- * not incidental whitespace/indentation.
+ * no reintroduced double-frame, no reintroduced inline device-screen chrome,
+ * mentor hook intact, action bindings intact — not incidental
+ * whitespace/indentation.
  */
 
 import assert from 'node:assert/strict';
@@ -239,6 +263,62 @@ const REQUIRED_ACTIONS = [
   const adapter = await read(ADAPTER_PATH);
   assert.match(adapter, /this\._workbench\._renderPreservingUi = async function/, 'inline render must stay redirected to the shell host, not a standalone window');
   assert.match(adapter, /self\._shellHost\?\.setSurface\?\.\('sheet'\)/, 'closing the inline workbench must return to the character sheet surface');
+}
+
+// 9. [Correction pass] Visual-contract guard: the Holopad-hosted workbench
+// must not present .swse-customization-screen as a second boxed "device
+// screen" nested inside the real Holopad screen. This proves both halves of
+// the contract:
+//   (a) inline-only, .swse-customization-screen has its own device-frame
+//       presentation (padding/corner-radius/panel-background/box-shadow)
+//       stripped, scoped so it can never reach the standalone window;
+//   (b) the standalone window's own .swse-customization-screen declaration
+//       is untouched and still carries that same presentation, so the
+//       standalone ApplicationV2 window keeps its full device-screen chrome.
+{
+  const shellHost = await read('styles/system/shell-host.css');
+  const inlineScreenRuleMatch = shellHost.match(
+    /\.swse\.sheet\.actor\.character\.v2 \.swse-customization-screen\s*\{([^}]*)\}/
+  );
+  assert.ok(inlineScreenRuleMatch, 'shell-host.css must scope a .swse-customization-screen rule under .swse.sheet.actor.character.v2 — a scope the standalone ApplicationV2 window can never match');
+  const inlineScreenRuleBody = inlineScreenRuleMatch[1];
+  for (const [prop, value] of [
+    ['padding', '0'],
+    ['border-radius', '0'],
+    ['background', 'transparent'],
+    ['box-shadow', 'none'],
+  ]) {
+    const propRe = new RegExp(`${prop}:\\s*${value}\\s*!important`);
+    assert.match(
+      inlineScreenRuleBody,
+      propRe,
+      `inline-only .swse-customization-screen rule must neutralize ${prop} (device-frame presentation redundant with the real Holopad screen)`
+    );
+  }
+  // This selector is exactly what makes the neutralization inline-only: the
+  // standalone ApplicationV2 window's own root only ever carries
+  // swse/swse-item-customization-workbench/swse-theme-holo (see
+  // ItemCustomizationWorkbench.DEFAULT_OPTIONS), never sheet/actor/character/v2
+  // (those are the character-sheet application's own classes), so this rule
+  // structurally cannot reach the standalone window regardless of selector
+  // order or specificity games elsewhere in the cascade.
+  const workbenchSource = await read('scripts/apps/customization/item-customization-workbench.js');
+  assert.match(
+    workbenchSource,
+    /classes:\s*\[\s*'swse',\s*'swse-item-customization-workbench',\s*'swse-theme-holo'\s*\]/,
+    'ItemCustomizationWorkbench standalone root classes must not include sheet/actor/character/v2, or the inline-only neutralization would leak into the standalone window'
+  );
+
+  // The standalone window's own screen declaration must still carry its
+  // full device-screen presentation — proof standalone keeps its frame.
+  const workbenchCss = await read('styles/apps/item-customization-workbench.css');
+  const standaloneScreenRuleMatch = workbenchCss.match(/^\.swse-customization-screen\s*\{([^}]*)\}/m);
+  assert.ok(standaloneScreenRuleMatch, 'the base (standalone-applicable) .swse-customization-screen rule must still exist in item-customization-workbench.css');
+  const standaloneScreenRuleBody = standaloneScreenRuleMatch[1];
+  assert.match(standaloneScreenRuleBody, /padding:\s*18px/, 'standalone screen must retain its 18px padding');
+  assert.match(standaloneScreenRuleBody, /border-radius:\s*16px/, 'standalone screen must retain its 16px corner radius');
+  assert.match(standaloneScreenRuleBody, /background:\s*linear-gradient/, 'standalone screen must retain its panel background');
+  assert.match(standaloneScreenRuleBody, /box-shadow:\s*inset/, 'standalone screen must retain its box-shadow');
 }
 
 console.log('workbench-inline-structural-flattening: all assertions passed');
