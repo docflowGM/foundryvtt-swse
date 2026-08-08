@@ -300,9 +300,25 @@
   font-size: 15px !important;
 }
 
-.application.swse-shell-responsive.is-shell-short:has(.swse-customization-stage) .item-hero,
+.application.swse-shell-responsive.is-shell-short:has(.swse-customization-stage) .item-hero:not(.item-hero--lightsaber),
 .application.swse-shell-responsive.is-shell-tier-micro:has(.swse-customization-stage) .item-hero {
   max-height: 112px !important;
+}
+
+/* The lightsaber hero's own base rules (item-customization-workbench.css)
+   give the art column a 104px width and a 138px min-height to fit the
+   168px-tall generated chassis SVG (.ls-chassis-hero-visual), which combined
+   with panel-head (~30px) and hero padding (16px) needs roughly 226px to
+   render uncropped — the ordinary-item 112px cap would silently clip the
+   schematic now that the hero is overflow:hidden (not auto). Give the
+   lightsaber hero its own short-tier ceiling instead of sharing the generic
+   one; 236px is that ~226px natural height plus a small safety margin, not
+   an arbitrary design value. This only matters when is-shell-short applies
+   without is-shell-tier-micro/tiny also applying, since those tiers hide
+   hero-art entirely regardless of item type (below), removing the art
+   column's height contribution. */
+.application.swse-shell-responsive.is-shell-short:has(.swse-customization-stage) .item-hero--lightsaber {
+  max-height: 236px !important;
 }
 
 /* is-shell-short (independent of resolution tier — a shell can be short
@@ -314,12 +330,17 @@
    geometry — that's a different selector, .ls-blade-render--hero-vertical,
    untouched) is what makes the collapsed identity strip actually fit
    without needing .item-hero's overflow:auto as a crutch. tier-micro/tiny
-   already hide hero-art entirely (below), so this has no effect there. */
-.application.swse-shell-responsive.is-shell-short:has(.swse-customization-stage) .hero-art {
+   already hide hero-art entirely (below), so this has no effect there.
+   Excludes .item-hero--lightsaber: its own base hero-art--lightsaber rule
+   already sizes the art column to fit the 168px SVG preview, and this
+   generic 64px reduction would override that (a plain .hero-art selector
+   here would otherwise win on specificity over the lightsaber-scoped base
+   rule) and crush the schematic into a cell far too small for it. */
+.application.swse-shell-responsive.is-shell-short:has(.swse-customization-stage) .item-hero:not(.item-hero--lightsaber) .hero-art {
   min-height: 64px !important;
 }
 
-.application.swse-shell-responsive.is-shell-short:has(.swse-customization-stage) .hero-grid {
+.application.swse-shell-responsive.is-shell-short:has(.swse-customization-stage) .item-hero:not(.item-hero--lightsaber) .hero-grid {
   grid-template-columns: 64px minmax(0, 1fr) !important;
 }
 

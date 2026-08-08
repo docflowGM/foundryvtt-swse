@@ -319,6 +319,76 @@ function assertNoProperty(body, prop, message) {
 }
 
 /* ------------------------------------------------------------------ *
+ * 5c. Short-tier lightsaber hero geometry: the generic ordinary-item
+ * short-tier hero-art/hero-grid compaction (introduced by the 5b
+ * correction, to let a collapsed non-scrolling hero fit under the 112px
+ * cap) must not also apply to the lightsaber hero — it has its own
+ * specialized art allocation sized to fit the 168px-tall generated chassis
+ * SVG, and the generic 64px reduction would crush that preview into a cell
+ * far too small for it. The lightsaber hero gets its own short-tier
+ * max-height ceiling instead of sharing the ordinary-item 112px cap.
+ * ------------------------------------------------------------------ */
+{
+  const css = await read(WORKBENCH_CSS);
+  const responsive = await read(RESPONSIVE_CSS);
+
+  // The generic short-tier 112px .item-hero cap must exclude the lightsaber
+  // hero (it gets its own, separately-asserted-below, exception instead).
+  const genericCapBodies = findRuleBodies(responsive, /is-shell-short[^{]*\.item-hero:not\(\.item-hero--lightsaber\)(\s*[,{])/);
+  assert.ok(genericCapBodies.some(b => /max-height\s*:\s*112px/.test(b)),
+    'the short-tier 112px .item-hero max-height cap must be scoped to :not(.item-hero--lightsaber)');
+
+  // The lightsaber hero must have its own short-tier max-height exception,
+  // large enough to clear the ordinary-item 112px cap (it needs room for
+  // panel-head + padding + the 168px chassis SVG preview).
+  const lightsaberCapBodies = findRuleBodies(responsive, /is-shell-short[^{]*\.item-hero--lightsaber(\s*[,{])/);
+  assert.ok(lightsaberCapBodies.length > 0, 'is-shell-short must declare a dedicated .item-hero--lightsaber max-height exception');
+  const lightsaberCapMatch = lightsaberCapBodies.map(b => b.match(/max-height\s*:\s*(\d+)px/)).find(Boolean);
+  assert.ok(lightsaberCapMatch, 'the lightsaber short-tier hero rule must declare an explicit max-height');
+  assert.ok(Number(lightsaberCapMatch[1]) > 112,
+    `lightsaber short-tier max-height (${lightsaberCapMatch[1]}px) must exceed the ordinary-item 112px cap — it needs room for the 168px chassis SVG preview`);
+
+  // The generic short-tier hero-art/hero-grid 64px compaction must likewise
+  // be scoped to :not(.item-hero--lightsaber). Structural check: every
+  // short-tier rule whose body sets the generic 64px value must carry that
+  // exclusion in its selector — this fails if the exclusion is ever dropped
+  // and the generic rule goes back to matching the lightsaber hero too.
+  const re = /([^{}]+)\{([^{}]*)\}/g;
+  let m;
+  const shortHeroArtGridSelectors = [];
+  while ((m = re.exec(responsive))) {
+    const selector = m[1].replace(/\/\*[\s\S]*?\*\//g, '').trim();
+    if (!/is-shell-short/.test(selector)) continue;
+    if (/\.hero-art$/.test(selector) && /min-height\s*:\s*64px/.test(m[2])) {
+      shortHeroArtGridSelectors.push(['hero-art', selector]);
+    }
+    if (/\.hero-grid$/.test(selector) && /grid-template-columns\s*:\s*64px/.test(m[2])) {
+      shortHeroArtGridSelectors.push(['hero-grid', selector]);
+    }
+  }
+  assert.ok(shortHeroArtGridSelectors.length >= 2, 'short-tier 64px .hero-art/.hero-grid compaction rules must exist');
+  for (const [kind, selector] of shortHeroArtGridSelectors) {
+    assert.match(selector, /:not\(\.item-hero--lightsaber\)/,
+      `short-tier ${kind} rule declaring the generic 64px value must exclude .item-hero--lightsaber (selector was: "${selector}")`);
+  }
+
+  // The lightsaber hero's own specialized base geometry (unrelated to this
+  // correction, but the thing this correction exists to protect) must
+  // remain untouched.
+  const lsHeroGridBody = findRuleBodies(css, /\.item-hero--lightsaber \.hero-grid(\s*[,{])/)[0];
+  assert.ok(lsHeroGridBody, '.item-hero--lightsaber .hero-grid base rule must remain');
+  assert.match(lsHeroGridBody, /grid-template-columns\s*:\s*104px/, 'lightsaber hero-grid art column allocation must remain 104px');
+
+  const lsHeroArtBody = findRuleBodies(css, /\.item-hero--lightsaber \.hero-art--lightsaber(\s*[,{])/)[0];
+  assert.ok(lsHeroArtBody, '.item-hero--lightsaber .hero-art--lightsaber base rule must remain');
+  assert.match(lsHeroArtBody, /min-height\s*:\s*138px/, 'lightsaber hero-art min-height allocation must remain 138px');
+
+  const chassisVisualBody = findRuleBodies(css, /\.ls-chassis-hero-visual(\s*[,{])(?!\s*\.)/)[0];
+  assert.ok(chassisVisualBody, '.ls-chassis-hero-visual base rule must remain');
+  assert.match(chassisVisualBody, /height\s*:\s*168px/, 'the generated chassis SVG preview height (168px) must not be altered by this correction — the fix is to the container, not the visual');
+}
+
+/* ------------------------------------------------------------------ *
  * 6. Card / Intel authority: representative inspection bindings and Intel
  * rail action bindings survive; descriptions remain in the view/markup even
  * where visually clamped.
