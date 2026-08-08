@@ -385,7 +385,19 @@
    .swse-sheet — so nothing was covering cards/tabs/inventory/actions here.
    One shared rule instead of per-selector duplicates; .config-card also
    covers every card variant (.ls-option-card, .ls-chassis-option-card,
-   template cards, structural cards) since they all carry the base class. */
+   template cards, structural cards) since they all carry the base class.
+   .search-input is deliberately not listed here: it's a plain <input>
+   inside the .swse-sheet-ui root, so it already receives the site-wide
+   `.swse-sheet-ui input:focus` glow (styles/ui/swse-holo-phase1.css) —
+   adding a second rule here would be a redundant, not a missing, treatment.
+   Phase 4 correction: the original list only covered cards/tabs/inventory/
+   actions and missed several other live controls audited directly against
+   workbench-content.hbs — lightsaber Finish options, the hero blade-color
+   button, the Full Stats <summary> disclosure, Tech Specialist trait chips,
+   appearance/bolt color-picker triggers, the "Construct Lightsaber" callout
+   (.primary-action), and the Review step's Roll/Take 10 toggle buttons
+   (unnamed except for a conditional .active class, hence the descendant
+   selector rather than a class). */
 .config-card:focus-visible,
 .variant-row:focus-visible,
 .inventory-item:focus-visible,
@@ -393,7 +405,15 @@
 .workbench-tab:focus-visible,
 .wcb-tab:focus-visible,
 .rail-select-btn:focus-visible,
-.ls-step:focus-visible {
+.ls-step:focus-visible,
+.ls-finish-option:focus-visible,
+.ls-hero-color-button:focus-visible,
+.ls-stat-expander summary:focus-visible,
+.tech-trait-chip:focus-visible,
+.color-picker-trigger:focus-visible,
+.filter-reset:focus-visible,
+.primary-action:focus-visible,
+.ls-check-mode button:focus-visible {
   outline: 2px solid var(--icw-cyan);
   outline-offset: 2px;
 }
@@ -2526,6 +2546,16 @@
   transform: translateY(-1px);
 }
 
+/* Phase 4 correction: the radio input itself is visually hidden (opacity:0
+   below) but remains keyboard-focusable — Tab lands on it with no visible
+   indicator before this rule. :has(input:focus-visible) puts the ring on
+   the visible label instead of the invisible input, mirroring the
+   :has(input:checked) pattern above. */
+.swse-lightsaber-color-picker-dialog .swse-ls-color-option:has(input:focus-visible) {
+  outline: 2px solid var(--icw-cyan, #00e5ff);
+  outline-offset: 2px;
+}
+
 .swse-lightsaber-color-picker-dialog .swse-ls-color-option input {
   position: absolute;
   opacity: 0;
@@ -2636,6 +2666,12 @@
   border-color: color-mix(in oklch, var(--swatch, var(--weapon-color, #888)), white 15%);
   box-shadow: 0 0 14px color-mix(in oklch, var(--swatch, var(--weapon-color, #888)), transparent 62%);
   transform: translateY(-1px);
+}
+/* Phase 4 correction: same hidden-radio-input focus gap as the lightsaber
+   blade-color dialog above — see that rule's comment. */
+.swse-color-picker-dialog .swse-color-option:has(input:focus-visible) {
+  outline: 2px solid var(--icw-cyan, #00e5ff);
+  outline-offset: 2px;
 }
 .swse-color-picker-dialog .swse-color-option input {
   position: absolute;

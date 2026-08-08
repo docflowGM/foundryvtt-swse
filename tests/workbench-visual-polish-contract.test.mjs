@@ -126,7 +126,10 @@ function assertHasProperty(body, prop, message) {
 /* ------------------------------------------------------------------ *
  * 2. Focus visibility: representative interactive Workbench controls have
  * a :focus-visible treatment, via one shared rule (not per-selector
- * duplicates).
+ * duplicates). Phase 4 correction: the original list only covered
+ * cards/tabs/inventory/actions — this now requires every meaningful live
+ * control audited against workbench-content.hbs, not just four
+ * representative ones, so a regression on any of them fails here.
  * ------------------------------------------------------------------ */
 {
   const css = await read(WORKBENCH_CSS);
@@ -147,11 +150,51 @@ function assertHasProperty(body, prop, message) {
     }
   }
   assert.ok(sharedFocusSelector, 'shared :focus-visible rule must exist and declare an outline');
-  for (const selector of ['.variant-row:focus-visible', '.inventory-item:focus-visible', '.action:focus-visible']) {
+
+  // Every live, keyboard-focusable control found in workbench-content.hbs
+  // that isn't already covered by an established system-wide focus rule
+  // (the .search-input <input> — see the CSS comment above the shared
+  // rule) must appear in this shared selector list.
+  const requiredFocusSelectors = [
+    '.config-card:focus-visible',
+    '.variant-row:focus-visible',
+    '.inventory-item:focus-visible',
+    '.action:focus-visible',
+    '.workbench-tab:focus-visible',
+    '.wcb-tab:focus-visible',
+    '.rail-select-btn:focus-visible',
+    '.ls-step:focus-visible',
+    '.ls-finish-option:focus-visible',
+    '.ls-hero-color-button:focus-visible',
+    '.ls-stat-expander summary:focus-visible',
+    '.tech-trait-chip:focus-visible',
+    '.color-picker-trigger:focus-visible',
+    '.filter-reset:focus-visible',
+  ];
+  for (const selector of requiredFocusSelectors) {
     assert.ok(sharedFocusSelector.includes(selector),
       `shared :focus-visible rule must cover ${selector} (found selector list: ${sharedFocusSelector})`);
   }
   assert.match(focusBodies[0], /outline\s*:\s*\d/, ':focus-visible must declare a real outline width, not a no-op');
+
+  // The lightsaber Finish focus ring must not reuse the .selected visual
+  // signal (border-color + box-shadow glow, no outline) — it needs to be
+  // distinguishable as "currently focused" vs. "the chosen finish".
+  const finishSelectedBody = findRuleBodies(css, /\.ls-finish-option\.selected(\s*[,{])/)[0];
+  assert.ok(finishSelectedBody, '.ls-finish-option.selected rule must exist');
+  assertNoProperty(finishSelectedBody, 'outline', '.ls-finish-option.selected must not use outline — that would make it visually indistinguishable from the new keyboard-focus ring');
+
+  // Hidden-radio-input color pickers (blade color, appearance/bolt color):
+  // the visible <label> must react to the (visually hidden) radio input's
+  // focus state via :has(), mirroring the existing :has(input:checked)
+  // selected-state pattern in the same rules.
+  const lsColorFocusBodies = findRuleBodies(css, /\.swse-ls-color-option:has\(input:focus-visible\)(\s*[,{])/);
+  assert.ok(lsColorFocusBodies.length > 0, 'lightsaber blade-color picker options must react to :has(input:focus-visible)');
+  assert.match(lsColorFocusBodies[0], /outline/, 'lightsaber blade-color focus treatment must declare an outline');
+
+  const colorFocusBodies = findRuleBodies(css, /(?<!ls-)\.swse-color-option:has\(input:focus-visible\)(\s*[,{])/);
+  assert.ok(colorFocusBodies.length > 0, 'appearance/bolt color picker options must react to :has(input:focus-visible)');
+  assert.match(colorFocusBodies[0], /outline/, 'appearance/bolt color-picker focus treatment must declare an outline');
 }
 
 /* ------------------------------------------------------------------ *
