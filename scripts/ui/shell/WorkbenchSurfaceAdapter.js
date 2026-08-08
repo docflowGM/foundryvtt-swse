@@ -116,12 +116,17 @@ export class WorkbenchSurfaceAdapter {
    * Keeps AppV2 rendering pure while letting the hosted surface use the same
    * mentor translation pipeline as progression/mentor panels.
    *
+   * No manual wheel/scroll routing here (Phase 2 removed it): the CSS scroll-
+   * ownership contract in styles/apps/item-customization-workbench.css gives
+   * each lane exactly one scroll owner (.inventory-list, .wcb-pane /
+   * .ls-tab-panel, .detail-rail-scroll, .rail-detail-card), so native
+   * wheel/trackpad behavior already routes to whichever lane is under the
+   * pointer without JavaScript help.
+   *
    * @param {Element} surfaceRoot
    * @returns {Promise<void>}
    */
   async afterInlineRender(surfaceRoot) {
-    this._installScrollBridge(surfaceRoot);
-
     const mentorNode = surfaceRoot?.querySelector?.('[data-workbench-mentor-text]');
     if (!mentorNode || mentorNode.dataset.translationHydrated === 'true') return;
 
@@ -141,27 +146,6 @@ export class WorkbenchSurfaceAdapter {
       SWSELogger.error('[WorkbenchSurfaceAdapter] Mentor translation failed:', err);
       mentorNode.textContent = text;
     }
-  }
-
-  _installScrollBridge(surfaceRoot) {
-    const root = surfaceRoot?.querySelector?.('.swse-customization-stage') || surfaceRoot;
-    const body = root?.querySelector?.('.workbench-detail > .detail-grid, .workbench-detail > .lightsaber-workspace, .workbench-detail');
-    if (!root || !body || root.dataset.workbenchScrollBridge === 'true') return;
-    root.dataset.workbenchScrollBridge = 'true';
-
-    root.addEventListener('wheel', event => {
-      const delta = event.deltaY || 0;
-      if (!delta) return;
-      const explicitScroller = event.target?.closest?.('.inventory-list, .card-list, .detail-rail-scroll');
-      if (explicitScroller) {
-        const canScrollDown = explicitScroller.scrollTop + explicitScroller.clientHeight < explicitScroller.scrollHeight - 1;
-        const canScrollUp = explicitScroller.scrollTop > 0;
-        if ((delta > 0 && canScrollDown) || (delta < 0 && canScrollUp)) return;
-      }
-      if (body.scrollHeight <= body.clientHeight + 1) return;
-      body.scrollTop += delta;
-      event.preventDefault();
-    }, { passive: false });
   }
 
   /**
