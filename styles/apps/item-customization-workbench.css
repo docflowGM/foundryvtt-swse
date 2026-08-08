@@ -3039,18 +3039,15 @@
   text-transform: uppercase;
 }
 
-/* Phase 3: Full Stats is an exceptional, opt-in disclosure — cap its own
-   height and let it scroll internally rather than letting the hero (an
-   "auto"-sized row in .workbench-detail's grid) grow without bound and
-   squeeze the bounded detail-grid/wcb-pane/footer beneath it toward
-   unreachable. This is a narrowly-scoped exception to Phase 2's "no new
-   scroll owner" contract, not a new major lane. */
+/* Phase 3 correction: Full Stats does NOT own its own scroll — that would
+   nest a second vertical scroller inside .item-hero, which already becomes
+   the scroll owner while expanded at compact/short/narrow/tiny sizes (see
+   the .item-hero:has(.ls-stat-expander[open]) rule in
+   app-responsive-workbench.css). This flows naturally as part of the hero's
+   own content instead. */
 .swse-item-customization-workbench .hero-stats--expanded,
 .swse-customization-stage .hero-stats--expanded {
   margin-top: 6px;
-  max-height: 140px;
-  overflow-y: auto;
-  overflow-x: hidden;
 }
 
 .swse-item-customization-workbench .hero-stats--expanded .hero-stat,

@@ -254,11 +254,22 @@
   overflow: hidden !important;
 }
 
+/* Phase 3 correction: the collapsed hero is a stable identity strip, not a
+   permanent scroll owner — overflow: hidden, not auto. It becomes the ONE
+   exceptional scroll owner only while Full Stats is open (the :has() rule
+   below), so it never nests a second scroller (.hero-stats--expanded is
+   deliberately non-scrolling — see item-customization-workbench.css) inside
+   an already-scrolling parent. */
 .application.swse-shell-responsive.is-shell-compact:has(.swse-customization-stage) .item-hero {
   flex: 0 0 auto !important;
   max-height: var(--swse-wb-hero-height) !important;
-  overflow: auto !important;
+  overflow: hidden !important;
   padding: 6px !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-customization-stage) .item-hero:has(.ls-stat-expander[open]) {
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
 }
 
 .application.swse-shell-responsive.is-shell-compact:has(.swse-customization-stage) .hero-grid {
@@ -292,6 +303,24 @@
 .application.swse-shell-responsive.is-shell-short:has(.swse-customization-stage) .item-hero,
 .application.swse-shell-responsive.is-shell-tier-micro:has(.swse-customization-stage) .item-hero {
   max-height: 112px !important;
+}
+
+/* is-shell-short (independent of resolution tier — a shell can be short
+   without being tier-micro/tiny) still shows hero-art at the inherited
+   compact 88px min-height, which combined with panel-head/padding/copy
+   leaves the collapsed hero right at or past the 112px cap here — the
+   accidental reason it used to need its own scrollbar. Shrinking the
+   artwork specifically at this tier (not touching lightsaber blade/emitter
+   geometry — that's a different selector, .ls-blade-render--hero-vertical,
+   untouched) is what makes the collapsed identity strip actually fit
+   without needing .item-hero's overflow:auto as a crutch. tier-micro/tiny
+   already hide hero-art entirely (below), so this has no effect there. */
+.application.swse-shell-responsive.is-shell-short:has(.swse-customization-stage) .hero-art {
+  min-height: 64px !important;
+}
+
+.application.swse-shell-responsive.is-shell-short:has(.swse-customization-stage) .hero-grid {
+  grid-template-columns: 64px minmax(0, 1fr) !important;
 }
 
 .application.swse-shell-responsive.is-shell-tier-micro:has(.swse-customization-stage) .hero-art,

@@ -198,11 +198,22 @@ function assertNoProperty(body, prop, message) {
   assert.match(partial, /<span>Finish<\/span><strong>\{\{lightsaber\.review\.finishLabel\}\}<\/strong>/,
     'Review step must still display the selected Finish');
 
-  // The view-model computation: shown during Chassis in construction, and
-  // during Hilt specifically when chassis can't be changed (tuning).
+  // The view-model computation: shown during Chassis, and during Hilt
+  // specifically when an existing lightsaber is actually being tuned.
+  //
+  // This must be keyed to !!editItem, NOT !canChangeChassis:
+  // _canChangeLightsaberChassis() returns false for two conceptually
+  // different reasons — an existing saber is being edited (tuning), OR no
+  // existing saber is being edited but construction is locked/ineligible.
+  // Only the first is "tuning". Using the inverse of chassis permission as
+  // the Hilt-fallback predicate would incorrectly surface Chassis Finish on
+  // Hilt for a locked/ineligible construction route that never had an item
+  // to tune.
   const workbenchJs = await read(WORKBENCH_JS);
-  assert.match(workbenchJs, /showFinishPicker:\s*activeTab === 'chassis' \|\| \(!canChangeChassis && activeTab === 'hilt'\)/,
-    "showFinishPicker must be computed as: Chassis step, or Hilt step specifically when the actor can't change chassis (tuning an existing lightsaber never has a reachable Chassis step)");
+  assert.match(workbenchJs, /showFinishPicker:\s*activeTab === 'chassis' \|\| \(!!editItem && activeTab === 'hilt'\)/,
+    "showFinishPicker's Hilt fallback must be keyed to !!editItem (actually tuning an existing lightsaber), not !canChangeChassis (which is also true for locked/ineligible construction with no existing item)");
+  assert.doesNotMatch(workbenchJs, /showFinishPicker:\s*activeTab === 'chassis' \|\| \(!canChangeChassis && activeTab === 'hilt'\)/,
+    'showFinishPicker must not use !canChangeChassis as a tuning proxy — that flag conflates "editing an existing item" with "construction is unavailable"');
 }
 
 /* ------------------------------------------------------------------ *
@@ -257,18 +268,54 @@ function assertNoProperty(body, prop, message) {
   assert.match(partial, /\{\{#each currentItem\.expandedStats\}\}/, 'Full Stats must still iterate the expanded stat list');
 
   const css = await read(WORKBENCH_CSS);
-  // Full Stats must be a narrowly-scoped, bounded exception — not a
-  // permanently-growing or permanently-scrolling hero.
-  const expandedBody = findRuleBodies(css, /\.hero-stats--expanded(\s*[,{])(?!\s*\.)/)[0];
-  assert.ok(expandedBody, '.hero-stats--expanded rule must exist');
-  assert.match(expandedBody, /max-height\s*:/, 'Full Stats expansion must be height-bounded so it cannot push the workspace/footer unreachable');
-  assert.match(expandedBody, /overflow-y\s*:\s*auto/, 'Full Stats expansion must scroll internally once it exceeds its bounded height, rather than growing .item-hero without limit');
-
   // Description is present but visually subordinate (clamped), not deleted.
   const descBody = findRuleBodies(css, /\.hero-description(\s*[,{])(?!\s*\.)/)
     .find(b => /-webkit-line-clamp/.test(b));
   assert.ok(descBody, 'general-item .hero-description must be clamped so a long description cannot dominate the hero');
   assert.match(partial, /class="hero-description">\{\{currentItem\.description\}\}/, 'the full description text must still be rendered (clamped visually, not truncated in the DOM)');
+}
+
+/* ------------------------------------------------------------------ *
+ * 5b. Hero / Full Stats scroll ownership: exactly one owner, never two
+ * nested vertical scrollers. Correction: the collapsed hero must not scroll
+ * (overflow: hidden); it becomes the sole scroll owner only while Full
+ * Stats is open (a :has(.ls-stat-expander[open]) rule — the codebase
+ * already relies on :has() elsewhere in this file). .hero-stats--expanded
+ * itself must never independently declare overflow-y — that would nest a
+ * second scroller inside the (now scrolling) hero.
+ * ------------------------------------------------------------------ */
+{
+  const css = await read(WORKBENCH_CSS);
+  const responsive = await read(RESPONSIVE_CSS);
+
+  // .hero-stats--expanded owns no overflow of its own.
+  const expandedBody = findRuleBodies(css, /\.hero-stats--expanded(\s*[,{])(?!\s*\.)/)[0];
+  assert.ok(expandedBody, '.hero-stats--expanded rule must exist');
+  assertNoProperty(expandedBody, 'overflow-y', '.hero-stats--expanded must not independently scroll — that would nest a second vertical scroller inside .item-hero while it is the expanded-state scroll owner');
+  assertNoProperty(expandedBody, 'max-height', '.hero-stats--expanded must not be independently height-bounded either — the containing .item-hero owns both the bound and the scroll while expanded');
+
+  // The collapsed (not-expanded) compact-tier .item-hero rule must not be a
+  // permanent scroller.
+  const compactHeroBaseBody = findRuleBodies(responsive, /is-shell-compact[^{]*\.item-hero(\s*[,{])(?!:has)/)
+    .find(b => /max-height/.test(b));
+  assert.ok(compactHeroBaseBody, 'compact-tier base .item-hero rule must exist');
+  assertNoProperty(compactHeroBaseBody, 'overflow: auto', 'the collapsed compact .item-hero must not be a permanent overflow: auto scroller');
+  assert.match(compactHeroBaseBody, /overflow\s*:\s*hidden/, 'the collapsed compact .item-hero must be bounded (overflow: hidden), not scrolling, until Full Stats is open');
+
+  // The hero becomes the sole scroll owner only in the expanded state.
+  const expandedHeroBodies = findRuleBodies(responsive, /\.item-hero:has\(\.ls-stat-expander\[open\]\)(\s*[,{])/);
+  assert.ok(expandedHeroBodies.length > 0, '.item-hero:has(.ls-stat-expander[open]) must exist — the hero becomes the scroll owner only while Full Stats is actually open');
+  assert.ok(expandedHeroBodies.some(b => /overflow-y\s*:\s*auto/.test(b)), '.item-hero:has(.ls-stat-expander[open]) must own the exceptional scroll');
+
+  // No rule anywhere may resolve .item-hero to a plain (non-:has-scoped)
+  // overflow: auto / overflow-y: auto — that is exactly the "permanent
+  // scroller regardless of Full Stats state" regression.
+  const withoutComments = responsive.replace(/\/\*[\s\S]*?\*\//g, '');
+  const plainItemHeroBodies = findRuleBodies(withoutComments, /(?<!:has\(\.ls-stat-expander\[open\]\))\.item-hero(\s*[,{])(?!:has)/);
+  for (const b of plainItemHeroBodies) {
+    assertNoProperty(b, 'overflow: auto', 'no unconditional .item-hero rule may declare overflow: auto — the hero must only scroll while Full Stats is open');
+    assertNoProperty(b, 'overflow-y: auto', 'no unconditional .item-hero rule may declare overflow-y: auto — the hero must only scroll while Full Stats is open');
+  }
 }
 
 /* ------------------------------------------------------------------ *
