@@ -42,7 +42,7 @@
   </div>
   <div class="mentor-copy">
     <div class="mentor-head">{{mentorHead}}</div>
-    <div class="mentor-text" data-workbench-mentor-text data-mentor="{{mentorKey}}" data-raw-text="{{mentorText}}">{{mentorText}}</div>
+    <div class="mentor-text" data-workbench-mentor-text data-mentor="{{mentorKey}}" data-raw-text="{{mentorText}}" title="{{mentorText}}">{{mentorText}}</div>
   </div>
 </section>
 
@@ -203,6 +203,7 @@
           {{/each}}
         </nav>
 
+        {{#if lightsaber.showFinishPicker}}
         <section class="ls-finish-picker" aria-label="Lightsaber chassis finish">
           <div class="ls-finish-picker-head">
             <span>Chassis Finish</span>
@@ -218,6 +219,7 @@
             {{/each}}
           </div>
         </section>
+        {{/if}}
 
         {{#if lightsaber.tabChassis}}
         <section class="ls-tab-panel" data-lightsaber-tab-panel="chassis">

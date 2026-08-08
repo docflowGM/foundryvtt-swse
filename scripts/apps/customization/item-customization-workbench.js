@@ -3156,6 +3156,14 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
         tabColor: false,
         tabChassis: activeTab === 'chassis',
         tabReview: activeTab === 'review',
+        // Chassis Finish is cosmetic and belongs with the Chassis step
+        // (Phase 3): shown while actively choosing a chassis. Tuning an
+        // existing lightsaber never has a "chassis" step at all — chassis
+        // can't be swapped post-construction (see _canChangeLightsaberChassis)
+        // — so there it surfaces on Hilt instead, the nearest step tuning can
+        // actually reach, rather than disappearing entirely. It never shows
+        // during Crystal or Review in either mode.
+        showFinishPicker: activeTab === 'chassis' || (!canChangeChassis && activeTab === 'hilt'),
         tabs: steps,
         navigation,
         buildSummary,
