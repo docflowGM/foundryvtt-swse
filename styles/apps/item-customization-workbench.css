@@ -37,15 +37,6 @@
   font-family: var(--swse-font-body, 'Space Grotesk', system-ui, sans-serif);
 }
 
-.swse-customization-tablet {
-  padding: 16px;
-  height: 100%;
-  min-height: 0;
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
-}
-
 .swse-customization-screen {
   flex: 1 1 auto;
   min-height: 0;
@@ -657,7 +648,6 @@
 
 /* Inline workbench in Holopad shell: keep inventory and detail panes visible. */
 .swse-customization-stage,
-.swse-customization-tablet,
 .swse-customization-screen,
 .item-customization-workbench {
   height: 100%;
@@ -705,17 +695,6 @@
   height: 100% !important;
   min-width: 0 !important;
   min-height: 0 !important;
-  overflow: hidden !important;
-}
-
-.swse-item-customization-workbench .swse-customization-tablet {
-  display: flex !important;
-  flex: 1 1 auto !important;
-  width: 100% !important;
-  height: 100% !important;
-  min-width: 0 !important;
-  min-height: 0 !important;
-  padding: 14px !important;
   overflow: hidden !important;
 }
 
