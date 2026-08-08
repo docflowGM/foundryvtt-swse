@@ -233,13 +233,17 @@
 .inventory-subtitle, .inventory-meta { display:block; font-family: var(--swse-font-mono, 'JetBrains Mono', monospace); font-size:9px; letter-spacing:0.16em; text-transform:uppercase; color:var(--icw-dim); }
 .inventory-meta { align-self:center; }
 
+/* Scroll ownership (Phase 2): .workbench-inventory and .workbench-detail are
+   bounded layout containers, not scroll owners themselves. Inventory scrolls
+   via .inventory-list; the detail side scrolls via .wcb-pane (normal items)
+   or .ls-tab-panel (lightsaber) — see their rules below — not via this
+   generic ":last-child" catch-all, which used to make .detail-grid and
+   .lightsaber-workspace themselves independently scrollable, competing with
+   their own scrolling descendants. */
 .workbench-inventory,
 .workbench-detail { height: 100%; min-height: 0; overflow: hidden; }
-/* Inventory side: scrolls via .inventory-list (flex: 1 1 auto, overflow-y: auto) */
-.workbench-inventory { overflow-y: auto; }
-/* Detail side: hero is fixed, panels below scroll */
+/* Detail side: hero is fixed, panels below scroll internally */
 .workbench-detail { display:grid; grid-template-rows:auto 1fr; gap:12px; }
-.workbench-detail > :last-child { overflow-y: auto; min-height: 0; }
 .hero-grid { display:grid; grid-template-columns: 128px 1fr; gap:14px; }
 .hero-art { display:flex; align-items:center; justify-content:center; min-height: 128px; background: radial-gradient(circle at center, oklch(0.85 0.18 200 / 0.12), transparent 70%), oklch(0 0 0 / 0.45); border:1px solid var(--icw-border); }
 .hero-art img { max-width: 88%; max-height: 88%; object-fit: contain; }
@@ -308,11 +312,10 @@
 .action:disabled { opacity:0.6; cursor:not-allowed; }
 .swse-customization-empty { padding: 48px; text-align:center; font-family: var(--swse-font-mono,'JetBrains Mono',monospace); color: var(--icw-dim); }
 
-@media (max-width: 1180px) {
-  .swse-customization-workarea { grid-template-columns: 1fr; }
-  .detail-grid, .appearance-blocks { grid-template-columns: 1fr; }
-  .swse-customization-footer { grid-template-columns: 1fr; }
-}
+/* Narrow-width lane/grid stacking (workarea, detail-grid, appearance-blocks,
+   footer) is handled by app-responsive-workbench.css's .is-shell-narrow
+   rules, keyed off the Holopad's actual rendered size rather than the
+   browser viewport. */
 
 /* Lightsaber forge lane — unique workspace inside the shared armory shell */
 .workbench-tab.special {
@@ -432,18 +435,6 @@
 [data-motion-style="off"] .ls-blade,
 [data-motion-style="reduced"] .ls-blade {
   animation: none;
-}
-
-@media (max-width: 1180px) {
-  .lightsaber-workspace {
-    grid-template-columns: 1fr;
-    grid-template-areas:
-      "stage"
-      "chassis"
-      "crystal"
-      "accessories"
-      "color";
-  }
 }
 
 .ls-blade-render.pike .ls-blade,
@@ -667,13 +658,6 @@
   overflow: hidden;
 }
 
-.workbench-inventory,
-.workbench-detail,
-.workbench-inventory__list,
-.workbench-detail__body {
-  overflow: auto;
-}
-
 /* Workbench shell fit pass: the workbench is already inside the Holopad frame,
  * so it should consume the visible shell body and pin its credit/action rail to
  * the bottom of the workbench screen instead of content-sizing near the top.
@@ -748,12 +732,6 @@
   flex: 0 0 auto !important;
 }
 
-@media (max-width: 1180px) {
-  .swse-item-customization-workbench .swse-customization-workarea {
-    grid-template-columns: 1fr !important;
-  }
-}
-
 /* Runtime bugfix pass: make inventory cards legible, make the workspace itself
    scrollable inside the holopad, and add room for the modification detail rail. */
 .swse-customization-workarea {
@@ -803,24 +781,12 @@
   margin-top: 4px;
 }
 
-.workbench-detail {
-  grid-template-rows: auto auto;
-  overflow-y: auto;
-  overflow-x: hidden;
-  padding-right: 6px;
-  scrollbar-gutter: stable;
-}
-
-.workbench-detail > :last-child {
-  overflow: visible;
-}
-
-.detail-grid {
-  grid-template-columns: minmax(210px, 1fr) minmax(210px, 1fr) minmax(250px, 0.9fr);
-  grid-auto-rows: minmax(160px, auto);
-  align-items: start;
-  padding-bottom: 12px;
-}
+/* This older 3-column .detail-grid declaration (grid-template-columns,
+   grid-auto-rows, align-items, padding-bottom) is fully superseded by the
+   live 2-lane "Item workbench repair" rule below — including, as of this
+   Phase 2 correction, its row sizing — so it has been removed rather than
+   left as dead-but-confusing weight. See that rule for the current
+   grid-template-rows/align-items authority. */
 
 .detail-panel {
   min-height: 0;
@@ -930,32 +896,23 @@
   text-transform: uppercase;
 }
 
-@media (max-width: 1180px) {
-  .detail-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .detail-rail,
-  .appearance-panel {
-    grid-column: 1;
-    grid-row: auto;
-  }
-}
-
 /* Workbench scroll and inspector refinements */
 .workbench-detail {
   grid-template-rows: auto minmax(0, 1fr);
   overflow: hidden;
 }
 
+/* .detail-grid and .lightsaber-workspace are bounded layout containers, not
+   scroll owners: giving them overflow-y:auto here made them independently
+   scrollable on top of their own scrolling descendants (.wcb-pane /
+   .ls-tab-panel below), which is the nested-scroller problem Phase 2
+   removes. min-height:0 still lets them shrink to the space workbench-detail
+   actually has. */
 .workbench-detail > .detail-grid,
 .workbench-detail > .lightsaber-workspace {
   min-height: 0;
   max-height: 100%;
-  overflow-y: auto;
-  overflow-x: hidden;
-  padding-right: 6px;
-  scrollbar-gutter: stable;
+  overflow: hidden;
 }
 
 .detail-rail {
@@ -1091,13 +1048,13 @@
   overflow: hidden !important;
 }
 
-.swse-item-customization-workbench .workbench-detail,
-.swse-customization-stage .workbench-detail {
-  min-height: 0 !important;
-  overflow-y: auto !important;
-  overflow-x: hidden !important;
-  scrollbar-gutter: stable;
-}
+/* .workbench-detail's bounded/hidden overflow is set once, authoritatively,
+   in styles/system/shell-host.css (scoped to the character sheet so it
+   cannot be undercut by a lower-specificity rule elsewhere) — see that
+   file's Workbench Surface Inline Layout section. It used to also be
+   redeclared here as overflow-y:auto, contradicting the shell-host.css rule
+   and implying .workbench-detail itself scrolls, which it does not:
+   .wcb-pane / .ls-tab-panel own scrolling for this lane instead. */
 
 .swse-item-customization-workbench .workbench-detail > .lightsaber-workspace,
 .swse-customization-stage .workbench-detail > .lightsaber-workspace {
@@ -1148,19 +1105,6 @@
 .swse-item-customization-workbench .blade-color-grid,
 .swse-customization-stage .blade-color-grid {
   grid-template-columns: repeat(8, minmax(0, 1fr));
-}
-
-@media (max-width: 1180px) {
-  .swse-item-customization-workbench .workbench-detail > .lightsaber-workspace,
-  .swse-customization-stage .workbench-detail > .lightsaber-workspace {
-    grid-template-columns: 1fr !important;
-    grid-template-areas:
-      "stage"
-      "crystal"
-      "color"
-      "accessories"
-      "chassis" !important;
-  }
 }
 
 /* Energy shield and lightsaber tuning hardening pass ---------------------- */
@@ -1390,19 +1334,12 @@
   grid-template-columns: minmax(220px, 1fr) minmax(220px, 0.8fr) minmax(250px, 0.9fr);
 }
 
-@media (max-width: 1180px) {
-  .swse-item-customization-workbench .lightsaber-workspace,
-  .swse-customization-stage .lightsaber-workspace {
-    grid-template-columns: 1fr !important;
-    grid-template-areas:
-      "stage"
-      "crystal"
-      "accessories"
-      "chassis" !important;
-  }
-  .swse-item-customization-workbench .energy-shield-grid,
-  .swse-customization-stage .energy-shield-grid { grid-template-columns: 1fr; }
-}
+/* .energy-shield-grid narrow-width collapse now lives in
+   app-responsive-workbench.css's .is-shell-narrow rule. The
+   .lightsaber-workspace grid-template-areas ("stage"/"crystal"/"accessories"/
+   "chassis") this block used to also set were already dead: the live
+   .lightsaber-workspace--tabs desktop layout (below) uses a plain 2-column
+   grid with no named areas, not this older named-area system. */
 
 /* -------------------------------------------------------------------------
  * Workbench layout stabilization: lightsaber tabbed tuner + energy shields
@@ -1470,20 +1407,21 @@
   box-shadow: 0 0 12px color-mix(in oklch, var(--icw-cyan), transparent 76%);
 }
 
+/* .ls-tab-panel is the lightsaber wizard's sole scroll owner (Phase 2): only
+   one tab panel exists in the DOM at a time (Handlebars renders whichever
+   step is active), and its own card grid flows through this scroll rather
+   than scrolling independently — see .ls-tab-card-grid below. This also
+   covers .ls-tab-panel--review (the review/construct step, which carries
+   both classes), so that variant no longer needs its own duplicate rule. */
 .swse-item-customization-workbench .ls-tab-panel,
 .swse-customization-stage .ls-tab-panel {
   flex: 1 1 auto;
   min-height: 0;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-}
-
-.swse-item-customization-workbench .ls-tab-panel--review,
-.swse-customization-stage .ls-tab-panel--review {
   overflow-y: auto;
   overflow-x: hidden;
   scrollbar-gutter: stable;
+  display: flex;
+  flex-direction: column;
 }
 
 .swse-item-customization-workbench .panel-head.compact,
@@ -1493,15 +1431,15 @@
   padding-bottom: 6px;
 }
 
+/* Grid layout only — .ls-tab-card-grid flows through its parent
+   .ls-tab-panel's scroll (above), not its own; it must not also be an
+   independent vertical scroll owner. */
 .swse-item-customization-workbench .ls-tab-card-grid,
 .swse-customization-stage .ls-tab-card-grid {
   display: grid !important;
   grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
   gap: 8px !important;
   align-content: start !important;
-  overflow-y: auto !important;
-  min-height: 0 !important;
-  padding-right: 6px !important;
 }
 
 .swse-item-customization-workbench .ls-tab-card-grid .config-card,
@@ -1614,21 +1552,14 @@
   min-height: 0 !important;
 }
 
-@media (max-width: 1180px) {
-  .swse-item-customization-workbench .workbench-detail > .lightsaber-workspace--tabs,
-  .swse-customization-stage .workbench-detail > .lightsaber-workspace--tabs,
-  .swse-item-customization-workbench .energy-shield-detail-grid,
-  .swse-customization-stage .energy-shield-detail-grid {
-    grid-template-columns: 1fr !important;
-  }
-  .swse-item-customization-workbench .energy-shield-detail-grid .appearance-panel,
-  .swse-customization-stage .energy-shield-detail-grid .appearance-panel,
-  .swse-item-customization-workbench .energy-shield-detail-grid .detail-rail,
-  .swse-customization-stage .energy-shield-detail-grid .detail-rail {
-    grid-column: 1 !important;
-    grid-row: auto !important;
-  }
-}
+/* .workbench-detail > .lightsaber-workspace--tabs narrow-width stacking is
+   handled by app-responsive-workbench.css's .is-shell-narrow rule for
+   .lightsaber-workspace (which this element also carries), keyed off the
+   Holopad's rendered size. The .energy-shield-detail-grid/.appearance-panel
+   selectors this block used to also target do not match any element in the
+   current template — energy shield items render through the same
+   .detail-grid/.wcb-pane structure as other items — so that portion was
+   dropped rather than migrated. */
 
 /* Lightsaber construction milestone wiring */
 .swse-item-customization-workbench .swse-lightsaber-construction-callout,
@@ -2409,12 +2340,11 @@
   min-height: 0 !important;
 }
 
-@media (max-width: 1180px) {
-  .swse-item-customization-workbench .swse-customization-workarea,
-  .swse-customization-stage .swse-customization-workarea {
-    grid-template-columns: 1fr !important;
-  }
-}
+/* Lane stacking at narrow shell widths is handled by
+   styles/system/app-responsive-workbench.css (.is-shell-narrow), keyed off
+   the actual rendered Holopad size rather than the browser viewport — see
+   that file for the full narrow-width contract this workarea participates
+   in. */
 
 /* Lightsaber workbench: the blade-color readout is an edit affordance, and
    removing the old build summary lets component intel use the freed rail space. */
@@ -2723,13 +2653,32 @@
  * Item workbench repair: stable lanes + click-fed intel rail
  * ------------------------------------------------------------------------- */
 /* ---- Workbench tab layout ---- */
+/* Phase 2 correction: this rule previously left row sizing to the (now
+   removed) older .detail-grid declaration's `grid-auto-rows: minmax(160px,
+   auto)`, which content-sizes the "tabs intel" row instead of bounding it to
+   the space .detail-grid actually has (itself bounded to overflow: hidden by
+   shell-host.css). A long modification/template list could grow that
+   implicit row past the available height and get clipped by the outer
+   overflow: hidden, instead of .wcb-pane becoming the thing that scrolls.
+   grid-template-rows: minmax(0, 1fr) makes the row explicit and bounded —
+   0 minimum (so it can shrink), capped at the single fr track's share of
+   .detail-grid's own (bounded) height — so .workbench-tabs-container has a
+   definite height to stretch into and .wcb-pane has a definite remaining
+   space to scroll within, instead of a content-sized implicit row.
+   align-items: stretch (was start) is required for that: start sizes grid
+   items to their own content and aligns them to the row's start, which
+   would leave .workbench-tabs-container free to grow with its content again
+   regardless of the row's own bound. .workbench-intel-panel already forces
+   its own align-self: stretch below, so this only changes the tabs lane's
+   real, previously-missing behavior. */
 .swse-item-customization-workbench .detail-grid,
 .swse-customization-stage .detail-grid {
   display: grid !important;
   grid-template-columns: 1fr minmax(300px, 0.88fr) !important;
+  grid-template-rows: minmax(0, 1fr) !important;
   grid-template-areas: "tabs intel" !important;
   gap: 14px !important;
-  align-items: start !important;
+  align-items: stretch !important;
   min-height: 0 !important;
   overflow: visible !important;
   padding-bottom: 14px !important;
@@ -2806,17 +2755,27 @@
   letter-spacing: 0.06em;
 }
 
-/* Tab pane */
+/* Tab pane — the primary workspace's sole scroll owner (Phase 2). Only one
+   .wcb-pane exists in the DOM at a time (Handlebars renders whichever tab is
+   active, not a CSS-hidden stack — see workbench-content.hbs), and
+   .workbench-tabs-container above is its bounded, overflow:hidden flex
+   parent, so .wcb-pane filling the remaining space and owning scroll here is
+   the entire contract for this lane. */
 .swse-item-customization-workbench .wcb-pane,
 .swse-customization-stage .wcb-pane {
-  padding: 8px;
-}
-.swse-item-customization-workbench .wcb-pane > .card-list,
-.swse-customization-stage .wcb-pane > .card-list {
-  max-height: clamp(180px, 34vh, 420px);
-  min-height: 64px;
+  flex: 1 1 auto;
+  min-height: 0;
   overflow-y: auto;
   overflow-x: hidden;
+  scrollbar-gutter: stable;
+  padding: 8px;
+}
+/* .card-list/.appearance-blocks flow naturally through .wcb-pane's scroll —
+   they must not also be independent vertical scroll owners (that was the
+   arbitrary max-height: clamp(...) cage this phase removes: a fixed
+   180-420px band instead of using whatever height .wcb-pane actually has). */
+.swse-item-customization-workbench .wcb-pane > .card-list,
+.swse-customization-stage .wcb-pane > .card-list {
   padding: 2px 4px 6px 0;
 }
 .swse-item-customization-workbench .wcb-pane > .appearance-blocks,
@@ -2865,24 +2824,6 @@
 .swse-item-customization-workbench .rail-section-primary .rail-detail-card,
 .swse-customization-stage .rail-section-primary .rail-detail-card {
   background: linear-gradient(180deg, color-mix(in oklch, var(--icw-cyan), transparent 88%), oklch(0 0 0 / 0.40));
-}
-
-@media (max-width: 1180px) {
-  .swse-item-customization-workbench .detail-grid:not(.energy-shield-detail-grid),
-  .swse-customization-stage .detail-grid:not(.energy-shield-detail-grid) {
-    grid-template-columns: 1fr !important;
-    grid-template-areas:
-      "intel"
-      "mods"
-      "templates"
-      "structural"
-      "appearance" !important;
-  }
-
-  .swse-item-customization-workbench .detail-grid:not(.energy-shield-detail-grid) > .workbench-intel-panel,
-  .swse-customization-stage .detail-grid:not(.energy-shield-detail-grid) > .workbench-intel-panel {
-    grid-row: auto !important;
-  }
 }
 
 /* Lightsaber hero compaction -------------------------------------------------
