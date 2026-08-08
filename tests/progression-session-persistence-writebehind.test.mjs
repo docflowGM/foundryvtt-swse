@@ -35,6 +35,8 @@ function makeFakeActor(id = 'actor-1') {
   const calls = { getFlag: 0, setFlag: 0, unsetFlag: 0 };
   const writtenSequence = [];
   let blocker = null; // when set, every setFlag call awaits this before completing
+  const oneShotGates = []; // FIFO of one-time gates, independent of `blocker`
+  let failNext = false;
   let concurrent = 0;
   let maxConcurrent = 0;
 
@@ -45,6 +47,22 @@ function makeFakeActor(id = 'actor-1') {
     get maxConcurrentSetFlag() { return maxConcurrent; },
     block() { blocker = { promise: null, resolve: null }; blocker.promise = new Promise(res => { blocker.resolve = res; }); },
     release() { if (blocker) { const b = blocker; blocker = null; b.resolve(); } },
+    /** Push a one-shot gate: the next setFlag call (after any legacy
+     * `blocker`) suspends on it until releaseNextGate() resolves it. Used
+     * where a test needs to control TWO separate writes independently
+     * (block()/release() only ever controls one at a time). */
+    blockNextWrite() {
+      let resolve;
+      const promise = new Promise(res => { resolve = res; });
+      oneShotGates.push({ promise, resolve });
+    },
+    releaseNextGate() {
+      const gate = oneShotGates.shift();
+      if (gate) gate.resolve();
+    },
+    /** The next setFlag call throws instead of succeeding (simulates a
+     * durable-write failure, e.g. a permissions error or network failure). */
+    failNextSetFlag() { failNext = true; },
     // Real Foundry Document#getFlag() is SYNCHRONOUS (only set/unsetFlag
     // persist async) -- the production code never awaits it. An async fake
     // here would silently break the semantic-dedupe check (comparing
@@ -58,6 +76,13 @@ function makeFakeActor(id = 'actor-1') {
       concurrent += 1;
       maxConcurrent = Math.max(maxConcurrent, concurrent);
       if (blocker) await blocker.promise;
+      const gate = oneShotGates.shift();
+      if (gate) await gate.promise;
+      if (failNext) {
+        failNext = false;
+        concurrent -= 1;
+        throw new Error('simulated setFlag failure');
+      }
       flags.set(path, value);
       writtenSequence.push(value);
       concurrent -= 1;
@@ -274,16 +299,19 @@ globalThis.document = globalThis.document ?? {
 const { ProgressionShell } = await import(
   '/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/progression-shell.js'
 );
+const { ProgressionFinalizer } = await import(
+  '/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/progression-finalizer.js'
+);
 
-function makeShellDouble({ actor, session }) {
+function makeShellDouble({ actor, session, steps = [], stepPlugins = new Map() }) {
   const shell = Object.create(ProgressionShell.prototype);
   Object.assign(shell, {
     actor,
     mode: 'chargen',
     persistenceEnabled: true,
     progressionSession: session,
-    steps: [],
-    stepPlugins: new Map(),
+    steps,
+    stepPlugins,
     currentStepIndex: 0,
     renderScheduler: { dispose() {} },
     mentorRecommendations: null,
@@ -291,8 +319,51 @@ function makeShellDouble({ actor, session }) {
     _centerTimer: null,
     _openedAt: null,
     _clearTrackedListeners() {},
+    committedSelections: new Set(),
+    stepData: {},
+    mentor: null,
+    isProcessing: false,
+    _singleStepMode: false,
+    _embeddedInHolopad: false,
   });
   return shell;
+}
+
+/** A session shape for the _onFinalizeProgression() integration tests: like
+ * makeFakeSession(), but with a real commitSelection() that mutates
+ * draftSelections and queues a write-behind autosave -- simulating what the
+ * shell's registered persistence hook does for a real ProgressionSession,
+ * without needing a full ProgressionSession + subtype-adapter registry. */
+function makeFinalizationSession({ actor, mode = 'chargen', initialMarker = null, currentStepId = 'summary' } = {}) {
+  const session = {
+    sessionId: `chargen-${actor.id}-fixed`,
+    actorId: actor.id,
+    createdAt: 1000,
+    subtype: 'actor',
+    draftSelections: { species: initialMarker ? { id: initialMarker } : null },
+    visitedStepIds: ['species', 'summary'],
+    invalidatedStepIds: [],
+    currentStepId,
+    completedStepIds: ['species'],
+    derivedEntitlements: {},
+    commitSelection(key, value) {
+      this.draftSelections[key] = value;
+      SessionStorage.queueSessionSave(actor, this, mode);
+    },
+  };
+  return session;
+}
+
+/** A step plugin whose syncFromDom() commits a NEW value into the session,
+ * simulating e.g. SummaryStep committing an edited field from the DOM. */
+function makeSyncCommittingPlugin(newMarker) {
+  return {
+    syncFromDom(shell) {
+      shell.progressionSession.commitSelection('species', { id: newMarker });
+    },
+    validate() { return { errors: [] }; },
+    async onStepExit() {},
+  };
 }
 
 /* ------------------------------------------------------------------ *
@@ -358,5 +429,261 @@ function makeShellDouble({ actor, session }) {
   assert.equal(actor.getStoredFlag(FLAG_PATH('chargen')).draftSelections.species.id, 'pre-finalize-draft',
     'latest draft did not remain recoverable after a simulated finalization failure following the flush');
 }
+
+/* ==================================================================== *
+ * PHASE 4.1: persistence barrier closure -- corrective race/durability
+ * tests found by an independent back-check of the Phase 4 write-behind
+ * queue. C1-C9 below; C10 is "the B-series above stays green."
+ * ==================================================================== */
+
+/* ------------------------------------------------------------------ *
+ * C1 — clear must not lose a race against a save queued WHILE the clear
+ * is waiting behind an in-flight write. Bug (pre-4.1): the drain that
+ * owns the in-flight write resumes first, sees the newly-queued save,
+ * and starts writing it -- all before clearSession()'s own continuation
+ * gets a turn. clearSession() then unsets, and the newly-started write
+ * finishes AFTER the unset, resurrecting the session.
+ * ------------------------------------------------------------------ */
+{
+  const actor = makeFakeActor('c1-actor');
+  actor.block();
+  SessionStorage.queueSessionSave(actor, makeFakeSession({ actorId: actor.id, marker: 'A' }), 'chargen');
+  await afterDebounce(); // A's write is now in flight and blocked
+
+  const clearPromise = SessionStorage.clearSession(actor, 'chargen');
+  await new Promise(resolve => setTimeout(resolve, 20)); // let clearSession reach its wait behind A
+
+  // B queues WHILE the clear is waiting behind A.
+  SessionStorage.queueSessionSave(actor, makeFakeSession({ actorId: actor.id, marker: 'B' }), 'chargen');
+
+  actor.release(); // A completes
+  await clearPromise;
+
+  // Give any (buggy) delayed B write every chance to land before asserting.
+  await afterDebounce(150);
+
+  assert.equal(actor.getStoredFlag(FLAG_PATH('chargen')), undefined,
+    'stored session flag was not absent after clearSession(): a save queued while clear was waiting resurrected the session');
+  assert.equal(actor.calls.setFlag, 1, 'a save queued while clear was waiting was written (should have been discarded as pre-clear intent)');
+}
+
+/* ------------------------------------------------------------------ *
+ * C2 — flushSession() must truthfully report failure: when the only
+ * write it waits for fails and no newer state is queued afterward,
+ * flushSession() must resolve false, not silently report success.
+ * ------------------------------------------------------------------ */
+{
+  const actor = makeFakeActor('c2-actor');
+  actor.block();
+  SessionStorage.queueSessionSave(actor, makeFakeSession({ actorId: actor.id, marker: 'will-fail' }), 'chargen');
+  await afterDebounce(); // write now in flight and blocked
+  actor.failNextSetFlag(); // the blocked write will throw once released
+
+  const flushPromise = SessionStorage.flushSession(actor, 'chargen');
+  await new Promise(resolve => setTimeout(resolve, 20)); // let flushSession's drain register behind the in-flight write
+
+  actor.release();
+  const result = await flushPromise;
+
+  assert.equal(result, false, 'flushSession() reported success even though the only write it waited for failed and no newer state was queued');
+  assert.equal(actor.getStoredFlag(FLAG_PATH('chargen')), undefined, 'a failed write should not have left stored state');
+}
+
+/* ------------------------------------------------------------------ *
+ * C3 — saveSession() must truthfully report a durable-write failure.
+ * ------------------------------------------------------------------ */
+{
+  const actor = makeFakeActor('c3-actor');
+  actor.failNextSetFlag();
+  const result = await SessionStorage.saveSession(actor, makeFakeSession({ actorId: actor.id, marker: 'will-fail' }), 'chargen');
+  assert.equal(result, false, 'saveSession() reported success despite the underlying setFlag failing');
+  assert.equal(actor.getStoredFlag(FLAG_PATH('chargen')), undefined);
+}
+
+/* ------------------------------------------------------------------ *
+ * Bonus (blocker 3, recommended but not required as its own numbered
+ * test): a transient failed write does not poison the queue -- if a
+ * newer snapshot is queued after a failed in-flight write, draining
+ * again succeeds and durably reflects that newer state.
+ * ------------------------------------------------------------------ */
+{
+  const actor = makeFakeActor('c3-bonus-actor');
+  actor.block();
+  SessionStorage.queueSessionSave(actor, makeFakeSession({ actorId: actor.id, marker: 'A-fails' }), 'chargen');
+  await afterDebounce(); // A in flight, blocked
+  actor.failNextSetFlag();
+
+  const flushPromise = SessionStorage.flushSession(actor, 'chargen');
+  await new Promise(resolve => setTimeout(resolve, 20));
+
+  // A newer snapshot arrives while the doomed A write is still in flight.
+  SessionStorage.queueSessionSave(actor, makeFakeSession({ actorId: actor.id, marker: 'B-succeeds' }), 'chargen');
+
+  actor.release(); // A fails
+  const flushResult = await flushPromise;
+  await afterDebounce(150);
+
+  assert.equal(flushResult, true, 'flushSession() did not report durable success once the newer (B) state landed after A failed');
+  assert.equal(actor.getStoredFlag(FLAG_PATH('chargen')).draftSelections.species.id, 'B-succeeds',
+    'final stored state was not B after A failed and a newer save was queued');
+}
+
+/* ------------------------------------------------------------------ *
+ * C4 — queued snapshots must be immutable: mutating the live session's
+ * nested selection state AFTER queueing, without re-queueing, must not
+ * change what gets persisted.
+ * ------------------------------------------------------------------ */
+{
+  const actor = makeFakeActor('c4-actor');
+  const session = makeFakeSession({ actorId: actor.id, marker: null });
+  session.draftSelections.feats = [{ name: 'Weapon Focus', choice: { weapon: 'Rifles' } }];
+
+  SessionStorage.queueSessionSave(actor, session, 'chargen');
+  // Mutate the SAME nested object after queueing, without queueing again.
+  session.draftSelections.feats[0].choice.weapon = 'Pistols';
+
+  await afterDebounce();
+
+  const stored = actor.getStoredFlag(FLAG_PATH('chargen'));
+  assert.equal(stored.draftSelections.feats[0].choice.weapon, 'Rifles',
+    'queued snapshot was not immutable -- a later mutation of the live session changed the already-queued snapshot');
+}
+
+/* ------------------------------------------------------------------ *
+ * C5 — an explicitly re-queued newer snapshot DOES persist the newer
+ * (mutated) state, distinguishing "silent mutation of an old snapshot"
+ * (C4, must not persist) from "a genuinely newer captured snapshot"
+ * (must persist).
+ * ------------------------------------------------------------------ */
+{
+  const actor = makeFakeActor('c5-actor');
+  const session = makeFakeSession({ actorId: actor.id, marker: null });
+  session.draftSelections.feats = [{ name: 'Weapon Focus', choice: { weapon: 'Rifles' } }];
+
+  SessionStorage.queueSessionSave(actor, session, 'chargen');
+  session.draftSelections.feats[0].choice.weapon = 'Pistols';
+  SessionStorage.queueSessionSave(actor, session, 'chargen'); // explicit newer snapshot
+
+  await afterDebounce();
+
+  const stored = actor.getStoredFlag(FLAG_PATH('chargen'));
+  assert.equal(stored.draftSelections.feats[0].choice.weapon, 'Pistols',
+    'an explicitly re-queued newer snapshot did not persist');
+}
+
+/* ------------------------------------------------------------------ *
+ * C6/C7 — real _onFinalizeProgression(): the current step's syncFromDom()
+ * must run (and any commit it triggers must become durable) BEFORE
+ * ProgressionFinalizer.finalize() is invoked. A persisted/queued value of
+ * A exists; syncFromDom() commits a NEW value B; the finalizer stub
+ * records what is durably stored at the moment it begins.
+ * ------------------------------------------------------------------ */
+{
+  const actor = makeFakeActor('c6-actor');
+  const session = makeFinalizationSession({ actor, initialMarker: 'A' });
+
+  // The "already queued/persisted" value before Confirm is clicked.
+  SessionStorage.queueSessionSave(actor, session, 'chargen');
+  await afterDebounce();
+  assert.equal(actor.getStoredFlag(FLAG_PATH('chargen')).draftSelections.species.id, 'A');
+
+  const shell = makeShellDouble({
+    actor,
+    session,
+    steps: [{ stepId: 'summary' }],
+    stepPlugins: new Map([['summary', makeSyncCommittingPlugin('B')]]),
+  });
+
+  let finalizerCalls = 0;
+  let finalizerSawStoredValue = null;
+  const originalFinalize = ProgressionFinalizer.finalize;
+  ProgressionFinalizer.finalize = async () => {
+    finalizerCalls += 1;
+    finalizerSawStoredValue = actor.getStoredFlag(FLAG_PATH('chargen'))?.draftSelections?.species?.id ?? null;
+    return { success: true, message: 'ok' };
+  };
+  try {
+    await shell._onFinalizeProgression();
+  } finally {
+    ProgressionFinalizer.finalize = originalFinalize;
+  }
+
+  assert.equal(finalizerCalls, 1, 'ProgressionFinalizer.finalize was not invoked exactly once');
+  assert.equal(finalizerSawStoredValue, 'B',
+    'finalizer began before the DOM-synced (B) state was durably saved -- saw stale A instead');
+}
+
+/* ------------------------------------------------------------------ *
+ * C8 — a failed pre-finalization durability flush must block
+ * finalization entirely: ProgressionFinalizer.finalize must not be
+ * called, and isProcessing must reset so the player can retry.
+ * ------------------------------------------------------------------ */
+{
+  const actor = makeFakeActor('c8-actor');
+  actor.failNextSetFlag(); // the flush's write attempt (of the synced B state) will fail
+  const session = makeFinalizationSession({ actor, initialMarker: 'A' });
+
+  const shell = makeShellDouble({
+    actor,
+    session,
+    steps: [{ stepId: 'summary' }],
+    stepPlugins: new Map([['summary', makeSyncCommittingPlugin('B')]]),
+  });
+
+  let finalizerCalls = 0;
+  const originalFinalize = ProgressionFinalizer.finalize;
+  ProgressionFinalizer.finalize = async () => { finalizerCalls += 1; return { success: true, message: 'ok' }; };
+  try {
+    await shell._onFinalizeProgression();
+  } finally {
+    ProgressionFinalizer.finalize = originalFinalize;
+  }
+
+  assert.equal(finalizerCalls, 0, 'ProgressionFinalizer.finalize was called despite the pre-finalization durability flush failing');
+  assert.equal(shell.isProcessing, false, 'isProcessing was not reset after aborting finalization on a failed flush');
+}
+
+/* ------------------------------------------------------------------ *
+ * C9 — successful finalization cannot be followed by a stale queued
+ * draft resurrecting itself. ProgressionFinalizer never calls
+ * commitSelection() on the session (confirmed by audit: it only reads
+ * draftSelections), so nothing can re-queue during finalize() itself;
+ * combined with the durable pre-finalization flush (C6/C7), the queue
+ * for this actor+mode is fully idle for the entire finalize() call.
+ * ------------------------------------------------------------------ */
+{
+  const actor = makeFakeActor('c9-actor');
+  const session = makeFinalizationSession({ actor, initialMarker: 'A' });
+
+  const shell = makeShellDouble({
+    actor,
+    session,
+    steps: [{ stepId: 'summary' }],
+    stepPlugins: new Map([['summary', makeSyncCommittingPlugin('B')]]),
+  });
+
+  const originalFinalize = ProgressionFinalizer.finalize;
+  ProgressionFinalizer.finalize = async () => ({ success: true, message: 'ok' });
+  try {
+    await shell._onFinalizeProgression();
+  } finally {
+    ProgressionFinalizer.finalize = originalFinalize;
+  }
+
+  const setFlagCallsAfterFinalize = actor.calls.setFlag;
+  const storedAfterFinalize = actor.getStoredFlag(FLAG_PATH('chargen'));
+
+  // Wait well past the debounce window: nothing should be queued/in-flight
+  // for this key after a successful finalization, so no further write
+  // should ever happen.
+  await afterDebounce(150);
+
+  assert.equal(actor.calls.setFlag, setFlagCallsAfterFinalize,
+    'a write happened AFTER successful finalization completed -- a stale queued draft resurrected itself');
+  assert.deepEqual(actor.getStoredFlag(FLAG_PATH('chargen')), storedAfterFinalize,
+    'stored session state changed after successful finalization completed');
+}
+
+console.log('progression-session-persistence-writebehind (Phase 4.1 barrier closure): all assertions passed');
 
 console.log('progression-session-persistence-writebehind (ProgressionShell integration): all assertions passed');

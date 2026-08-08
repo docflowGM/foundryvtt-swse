@@ -4054,22 +4054,12 @@ export class ProgressionShell extends SWSEApplicationV2 {
         selectionsCount: this.committedSelections.size,
       });
 
-      // PHASE 4: durable flush before the irreversible mutation. Ordinary
-      // commit autosaves are write-behind (queueSessionSave(), a short
-      // debounce) so a queued-but-not-yet-written draft could otherwise
-      // still be sitting there when finalization begins. If finalization
-      // throws/fails below, the latest draft must remain recoverable from
-      // actor flags rather than depending on a debounce window that may
-      // never fire.
-      if (this.actor && this.persistenceEnabled) {
-        try {
-          await SessionStorage.flushSession(this.actor, this.mode);
-        } catch (err) {
-          swseLogger.warn('[ProgressionShell] Failed to flush session before finalization:', err);
-        }
-      }
-
-      // PHASE 4 STEP 4: Check for blocking issues in current step (usually summary)
+      // PHASE 4 STEP 4 / PHASE 4.1: sync the current step's DOM into the
+      // canonical session and validate BEFORE anything durability- or
+      // finalization-related runs. syncFromDom() can call
+      // progressionSession.commitSelection(...) (e.g. SummaryStep committing
+      // an edited name), which is the actual final canonical draft — the
+      // flush below must persist THIS, not whatever was queued before it.
       const currentDescriptor = this.steps[this.currentStepIndex];
       if (currentDescriptor) {
         const currentPlugin = this.stepPlugins.get(currentDescriptor.stepId);
@@ -4089,6 +4079,33 @@ export class ProgressionShell extends SWSEApplicationV2 {
             this.isProcessing = false;
             return;
           }
+        }
+      }
+
+      // PHASE 4.1: durability boundary — flush the just-synced canonical
+      // state AFTER sync/validate, BEFORE the irreversible finalizer
+      // mutation. Ordinary commit autosaves are write-behind
+      // (queueSessionSave(), a short debounce), and syncFromDom() above may
+      // itself have just queued one via commitSelection() — flushSession()
+      // drains whatever is now queued, so finalization never begins against
+      // a stale pre-sync draft. If the drain reports the write did not
+      // durably land, finalization MUST NOT proceed: continuing into
+      // ActorEngine mutation after learning the recovery snapshot failed to
+      // persist would leave no durable record of the player's latest state
+      // if that mutation itself then failed or the client crashed.
+      if (this.actor && this.persistenceEnabled) {
+        let flushed = true;
+        try {
+          flushed = await SessionStorage.flushSession(this.actor, this.mode);
+        } catch (err) {
+          swseLogger.warn('[ProgressionShell] Failed to flush session before finalization:', err);
+          flushed = false;
+        }
+        if (!flushed) {
+          swseLogger.error('[ProgressionShell] Aborting finalization: latest progression state could not be durably saved');
+          ui.notifications.error('Could not save your latest progression state. Please try again before finishing.');
+          this.isProcessing = false;
+          return;
         }
       }
 

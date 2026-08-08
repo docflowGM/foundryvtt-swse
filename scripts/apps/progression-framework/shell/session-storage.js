@@ -49,11 +49,15 @@ const AUTOSAVE_DEBOUNCE_MS = 100;
  *   pendingActor: the actor that snapshot belongs to
  *   timer: debounce timer handle, or null
  *   writeInFlight: Promise<boolean> of the write currently running, or null
+ *   clearing: true while a clearSession() barrier is active for this key
  * }
  *
  * This is a transient, in-memory, per-process queue — not a persisted
  * cache of session STATUS or data. It never survives past the actual
- * actor.setFlag() write it exists to serialize/coalesce.
+ * actor.setFlag() write it exists to serialize/coalesce. Idle entries
+ * (nothing queued, nothing in flight, not clearing) are removed from the
+ * map — see maybeCleanupEntry() — so this cannot grow unbounded across a
+ * long session touching many actors.
  */
 const pendingWrites = new Map();
 
@@ -64,10 +68,21 @@ function queueKey(actorId, mode) {
 function getQueueEntry(key) {
   let entry = pendingWrites.get(key);
   if (!entry) {
-    entry = { pendingSnapshot: null, pendingActor: null, timer: null, writeInFlight: null };
+    entry = { pendingSnapshot: null, pendingActor: null, timer: null, writeInFlight: null, clearing: false };
     pendingWrites.set(key, entry);
   }
   return entry;
+}
+
+/** Drop a fully-idle entry so the map does not grow unbounded. Safe to call
+ * any time — a genuinely idle entry has nothing referencing it, and
+ * getQueueEntry() transparently recreates one the next time it's needed. */
+function maybeCleanupEntry(key) {
+  const entry = pendingWrites.get(key);
+  if (!entry) return;
+  if (!entry.timer && !entry.pendingSnapshot && !entry.writeInFlight && !entry.clearing) {
+    pendingWrites.delete(key);
+  }
 }
 
 export class SessionStorage {
@@ -87,6 +102,16 @@ export class SessionStorage {
     if (!actor || !session) return;
     const key = queueKey(actor.id, mode);
     const entry = getQueueEntry(key);
+    // PHASE 4.1: a save racing an active clearSession() barrier represents
+    // pre-clear intent (or, at best, is indistinguishable from it) — discard
+    // it rather than let it resurrect the session the clear is removing.
+    if (entry.clearing) {
+      swseLogger.debug('[SessionStorage] Autosave discarded: clearSession() barrier active', {
+        actorId: actor.id,
+        mode,
+      });
+      return;
+    }
     entry.pendingSnapshot = this._compileSessionData(session, mode);
     entry.pendingActor = actor;
     if (entry.timer) clearTimeout(entry.timer);
@@ -120,6 +145,15 @@ export class SessionStorage {
 
     const key = queueKey(actor.id, mode);
     const entry = getQueueEntry(key);
+    // PHASE 4.1: same clear-barrier guard as queueSessionSave() — a durable
+    // save requested while a clear is in progress is pre-clear intent too.
+    if (entry.clearing) {
+      swseLogger.debug('[SessionStorage] saveSession() discarded: clearSession() barrier active', {
+        actorId: actor.id,
+        mode,
+      });
+      return false;
+    }
     entry.pendingSnapshot = this._compileSessionData(session, mode);
     entry.pendingActor = actor;
     if (entry.timer) {
@@ -156,9 +190,19 @@ export class SessionStorage {
   /**
    * Core write-behind worker for one actor+mode key. Serializes behind any
    * write already in flight (max concurrent setFlag per actor+mode = 1),
-   * then writes the latest queued snapshot. If a newer snapshot arrived
-   * while that write was running, drains again — so "latest wins" holds
-   * even under a continuous burst, without ever running two writes at once.
+   * then writes the latest queued snapshot; loops as long as newer work
+   * keeps appearing, so "latest wins" holds even under a continuous burst
+   * without ever running two writes at once.
+   *
+   * PHASE 4.1: this loops rather than checking once, because more than one
+   * caller can be draining the SAME key concurrently (e.g. an ordinary
+   * debounced autosave and an explicit flushSession() call racing the same
+   * in-flight write). Looping — re-reading entry.writeInFlight/pendingSnapshot
+   * fresh each pass, and following a newer writeInFlight if one appeared
+   * while we were awaiting an older one — makes every concurrent caller
+   * converge on the SAME final observable result (the durability of the
+   * latest state), instead of one caller reporting a stale result it
+   * captured before a sibling call picked up newer work.
    * @param {string} key
    * @returns {Promise<boolean>}
    * @private
@@ -167,35 +211,52 @@ export class SessionStorage {
     const entry = pendingWrites.get(key);
     if (!entry) return true;
 
-    if (entry.writeInFlight) {
-      try {
-        await entry.writeInFlight;
-      } catch (_err) {
-        // Already logged by _writeSnapshot(); this drain continues regardless.
+    let lastResult = true;
+    for (;;) {
+      if (entry.writeInFlight) {
+        const inFlight = entry.writeInFlight;
+        try {
+          lastResult = await inFlight;
+        } catch (_err) {
+          // Already logged by _writeSnapshot(); this drain continues regardless.
+          lastResult = false;
+        }
+        // A different write started (and is now in flight) since we began
+        // waiting on `inFlight` — a sibling _drain() call picked it up.
+        // Follow it instead of reporting our now-stale result.
+        if (entry.writeInFlight && entry.writeInFlight !== inFlight) {
+          continue;
+        }
       }
+
+      // PHASE 4.1: a clearSession() barrier started for this key. Any
+      // queued work is pre-clear intent — it must not be written now,
+      // underneath the barrier. Let clearSession() finish the job; report
+      // the durability of whatever we actually waited on above.
+      if (entry.clearing) {
+        maybeCleanupEntry(key);
+        return lastResult;
+      }
+
+      if (!entry.pendingSnapshot) {
+        maybeCleanupEntry(key);
+        return lastResult;
+      }
+
+      const snapshot = entry.pendingSnapshot;
+      const actor = entry.pendingActor;
+      entry.pendingSnapshot = null;
+
+      const writePromise = this._writeSnapshot(actor, snapshot);
+      entry.writeInFlight = writePromise;
+      try {
+        lastResult = await writePromise;
+      } finally {
+        if (entry.writeInFlight === writePromise) entry.writeInFlight = null;
+      }
+      // Loop again: a newer snapshot (or clear barrier) may have appeared
+      // while this write was running.
     }
-
-    if (!entry.pendingSnapshot) return true;
-
-    const snapshot = entry.pendingSnapshot;
-    const actor = entry.pendingActor;
-    entry.pendingSnapshot = null;
-
-    const writePromise = this._writeSnapshot(actor, snapshot);
-    entry.writeInFlight = writePromise;
-    let result;
-    try {
-      result = await writePromise;
-    } finally {
-      if (entry.writeInFlight === writePromise) entry.writeInFlight = null;
-    }
-
-    // A newer snapshot queued itself while we were writing (or while we
-    // were waiting our turn above) — drain again so it becomes durable too.
-    if (entry.pendingSnapshot) {
-      return this._drain(key);
-    }
-    return result;
   }
 
   /**
@@ -417,15 +478,22 @@ export class SessionStorage {
   static async clearSession(actor, mode = 'chargen') {
     if (!actor) return false;
 
-    // PHASE 4: hard barrier against the write-behind queue. A pending
-    // debounced (or already-queued-for-flush) autosave for this actor+mode
-    // must never land AFTER a clear and resurrect the session it just
-    // cleared. Cancel/drop what's queued, then wait for any write already
-    // physically in flight to finish before the unset below runs — so the
-    // unset is always the LAST thing to happen for this key.
     const key = queueKey(actor.id, mode);
-    const entry = pendingWrites.get(key);
-    if (entry) {
+    const entry = getQueueEntry(key);
+
+    // PHASE 4.1: raise the barrier as the FIRST synchronous statement, before
+    // any await. Nothing else can run on this key until we yield, so this
+    // atomically closes the window a queued save could otherwise slip
+    // through in. From this point until the finally below, queueSessionSave()
+    // and saveSession() both refuse new work for this key (see their
+    // `entry.clearing` guards) — any save "racing" this clear is pre-clear
+    // intent and must not be allowed to resurrect the session being cleared.
+    entry.clearing = true;
+    try {
+      // Cancel/drop whatever was queued, then wait for any write already
+      // physically in flight (started before this barrier existed) to
+      // finish, so the unset below is always the LAST thing to happen for
+      // this key.
       if (entry.timer) {
         clearTimeout(entry.timer);
         entry.timer = null;
@@ -438,28 +506,31 @@ export class SessionStorage {
           // Already logged by _writeSnapshot().
         }
       }
-      // Anything that queued itself while we awaited the in-flight write
-      // above is pre-clear intent too — drop it rather than let it write
-      // after this unset.
+      // Defense in depth: nothing should be able to populate pendingSnapshot
+      // while entry.clearing is true (the guards above prevent it), but drop
+      // it anyway rather than trust that invariant blindly.
       entry.pendingSnapshot = null;
-    }
 
-    try {
-      if (typeof actor.unsetFlag === 'function') {
-        await actor.unsetFlag('foundryvtt-swse', `progression.${mode}.session`);
-      } else {
-        await actor.setFlag('foundryvtt-swse', `progression.${mode}.session`, null);
+      try {
+        if (typeof actor.unsetFlag === 'function') {
+          await actor.unsetFlag('foundryvtt-swse', `progression.${mode}.session`);
+        } else {
+          await actor.setFlag('foundryvtt-swse', `progression.${mode}.session`, null);
+        }
+
+        swseLogger.debug('[SessionStorage] Session cleared', {
+          actorId: actor.id,
+          mode,
+        });
+
+        return true;
+      } catch (err) {
+        swseLogger.error('[SessionStorage] Failed to clear session:', err);
+        return false;
       }
-
-      swseLogger.debug('[SessionStorage] Session cleared', {
-        actorId: actor.id,
-        mode,
-      });
-
-      return true;
-    } catch (err) {
-      swseLogger.error('[SessionStorage] Failed to clear session:', err);
-      return false;
+    } finally {
+      entry.clearing = false;
+      maybeCleanupEntry(key);
     }
   }
 
@@ -557,18 +628,40 @@ export class SessionStorage {
       timestamp: new Date().toISOString(),
       version: 1,
 
-      // User selections (the primary recoverable state)
-      draftSelections: { ...session.draftSelections },
+      // User selections (the primary recoverable state). PHASE 4.1: a true
+      // deep clone — this snapshot is queued and written up to
+      // AUTOSAVE_DEBOUNCE_MS later, and the live session's nested selection
+      // objects (e.g. draftSelections.feats[i].choice) keep mutating in the
+      // meantime. A shallow copy would leave those nested objects shared, so
+      // the "queued" snapshot could silently change before it's ever written.
+      draftSelections: this._cloneSessionPayload(session.draftSelections),
 
       // Progression tracking (must be restored exactly)
-      visitedStepIds: [...session.visitedStepIds],
-      invalidatedStepIds: [...session.invalidatedStepIds],
+      visitedStepIds: this._cloneSessionPayload(session.visitedStepIds),
+      invalidatedStepIds: this._cloneSessionPayload(session.invalidatedStepIds),
       currentStepId: session.currentStepId,
-      completedStepIds: [...session.completedStepIds],
+      completedStepIds: this._cloneSessionPayload(session.completedStepIds),
 
       // Entitlements for reference (recomputed on restore)
-      derivedEntitlements: { ...session.derivedEntitlements },
+      derivedEntitlements: this._cloneSessionPayload(session.derivedEntitlements),
     };
+  }
+
+  /**
+   * Deep-clone a persisted session payload so a queued snapshot can never be
+   * mutated by later changes to the live session's nested selection state.
+   * Prefers the Foundry utility; falls back to structuredClone, then a JSON
+   * round-trip, for the headless test harness. No new dependency introduced.
+   * @private
+   */
+  static _cloneSessionPayload(value) {
+    if (value === undefined || value === null) return value;
+    if (globalThis.foundry?.utils?.deepClone) return foundry.utils.deepClone(value);
+    try {
+      return structuredClone(value);
+    } catch (_err) {
+      return JSON.parse(JSON.stringify(value));
+    }
   }
 
   /** @private */
