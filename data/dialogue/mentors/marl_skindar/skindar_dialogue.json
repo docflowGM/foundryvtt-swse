@@ -194,6 +194,37 @@
             }
           }
         }
+      },
+      "shipyard": {
+        "default": [
+          "Shipyard's open. Bring me a frame or point at what you want tuned, and we'll get to it.",
+          "Every hull's got a story and a price tag. Let's see what yours needs."
+        ],
+        "noChanges": [
+          "Nothing staged yet. Browse the systems bay when you're ready to spend credits.",
+          "Ship's sitting pretty as-is. Say the word when you want to change that."
+        ],
+        "stagedInstall": [
+          "Hyperdrive, shields, weapons — whatever you're bolting on, make sure it earns its slot.",
+          "Cargo space or firepower, pick your trade-off. I've seen both get crews killed and both get crews rich.",
+          "Nice piece of hardware. Validate it before you commit — I don't cover buyer's remorse."
+        ],
+        "stagedRemoval": [
+          "Pulling that off the frame. Resale goes back to whoever's paying — don't spend it twice.",
+          "Stripping parts is half of this business. The other half is not getting caught doing it."
+        ],
+        "blocked": [
+          "That build's not street-legal as staged. Fix the conflict or enjoy explaining it to a customs inspector.",
+          "Engine's rejecting the combination. Something on that ship doesn't play nice together."
+        ],
+        "lowFunds": [
+          "Wallet's short for this work order. Trim the list or find more credits — I don't run a tab.",
+          "That total's more than the account can cover. Pick your priorities."
+        ],
+        "ready": [
+          "Clean build, no red flags. Apply it and let's see her fly.",
+          "Legal, funded, and ready. That's rarer than you'd think in this line of work."
+        ]
       }
     },
     "guidance": {

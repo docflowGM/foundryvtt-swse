@@ -50,6 +50,36 @@
           "greeting": "<Analysis: Structural design focus engaged.>",
           "confirmation": "<Directive: Build systems that endure.>"
         }
+      },
+      "garage": {
+        "default": [
+          "<Status: Garage bay online.> Diagnostics nominal. Select a system and I will evaluate the modification.",
+          "<Greeting: Unit acknowledged.> Chassis integrity is stable. State your intended optimization."
+        ],
+        "noChanges": [
+          "<Observation: No changes staged.> Efficiency requires action, not idle diagnostics.",
+          "<Query: Awaiting input.> Browse available systems when you are ready to optimize."
+        ],
+        "stagedInstall": [
+          "<Analysis: Addition staged.> Acceptable. Validate cost and legality before committing the mutation.",
+          "<Approval: Logical choice, probably.> The engine will confirm compatibility on apply."
+        ],
+        "stagedRemoval": [
+          "<Notice: Removal staged.> Resale value will return to the paying account. Confirm when ready.",
+          "<Observation: Component scheduled for excision.> Sentiment is not a factor in this decision."
+        ],
+        "blocked": [
+          "<Warning: Build rejected.> Compliance or eligibility conflict detected. Resolve it before reapplying.",
+          "<Error: Mutation blocked.> The engine will not proceed until the conflict clears."
+        ],
+        "lowFunds": [
+          "<Alert: Insufficient credits.> The paying account cannot cover this modification. Adjust the draft.",
+          "<Statement: Funds inadequate.> Remove a system or secure additional credits before retrying."
+        ],
+        "ready": [
+          "<Confirmation: Build is clean.> No blockers detected. Apply when you are satisfied with the draft.",
+          "<Status: Optimal.> Cost, legality, and eligibility all resolve favorably. Proceed at will."
+        ]
       }
     },
     "guidance": {

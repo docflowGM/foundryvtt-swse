@@ -670,16 +670,16 @@ export function ShellHostMixin(BaseClass) {
           if (action === 'modify') {
             const bayMode = bayModeFromEl || (targetActor.type === 'vehicle' ? 'shipyard' : 'garage');
             SWSELogger.log('[AssetBay] launching modification route', { bayMode, actorId: targetActor.id, actorType: targetActor.type });
-            if (bayMode === 'shipyard' && targetActor.type === 'vehicle') {
-              const opened = await this._openShipyardForAsset(targetActor, {
-                source: 'asset-bay',
-                ownerActor: this.actor || this.document,
-                contextMode: 'modifyExisting'
-              });
-              if (!opened) SWSELogger.warn('[AssetBay] Shipyard route failed', { actorId: targetActor.id });
-              return;
-            }
-
+            // PART 7 — Asset Bay routing symmetry (Phase 1). Garage and Shipyard
+            // both stay inline inside the OWNER's already-open Holopad — neither
+            // opens the asset's own actor sheet as a second window. The prior
+            // special case here routed vehicles through VehicleCustomizationRouter
+            // -> ShellRouter.openSurface(vehicle, ...), which opened/reused the
+            // VEHICLE's own shell (a second window) and dropped the ownerActor
+            // reference, breaking "return to Asset Bay". VehicleCustomizationRouter
+            // itself is untouched and remains the correct entry point for direct
+            // vehicle-sheet Shipyard access (see _openShipyardForAsset's other
+            // caller below, for the vehicle's own home-surface tile).
             await this.setSurface('customization', {
               source: 'asset-bay',
               returnSurface: 'asset-bay',

@@ -38,7 +38,17 @@
 
 <section class="swse-customization-mentor {{#if (eq mentorKey 'miraj')}}mentor-miraj{{else}}mentor-delta{{/if}}">
   <div class="mentor-avatar">
-    {{#if mentorPortrait}}<img src="{{mentorPortrait}}" alt="{{mentorName}}" class="mentor-avatar-img">{{else}}⌬{{/if}}
+    {{! Phase 1 — Garage/Shipyard Foundation: the shared hologram primitive's
+        __image/__tint/__scan classes work standalone (they don't require the
+        .swse-mentor-hologram container class) — .mentor-avatar already has
+        its own position:relative/overflow:hidden (see
+        styles/apps/item-customization-workbench.css:1127-1130), so this stays
+        a class-only addition with no structural change to Workbench's frame. }}
+    {{#if mentorPortrait}}<img src="{{mentorPortrait}}" alt="{{mentorName}}" class="mentor-avatar-img swse-mentor-hologram__image">{{else}}⌬{{/if}}
+    {{#if mentorPortrait}}
+      <span class="swse-mentor-hologram__tint"></span>
+      <span class="swse-mentor-hologram__scan"></span>
+    {{/if}}
   </div>
   <div class="mentor-copy">
     <div class="mentor-head">{{mentorHead}}</div>

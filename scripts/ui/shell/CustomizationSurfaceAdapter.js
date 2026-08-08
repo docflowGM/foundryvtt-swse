@@ -8,6 +8,7 @@
 
 import { SWSELogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
 import { requestShellRender } from '/systems/foundryvtt-swse/scripts/ui/shell/request-shell-render.js';
+import { MentorTranslationIntegration } from '/systems/foundryvtt-swse/scripts/mentor/mentor-translation-integration.js';
 
 export class CustomizationSurfaceAdapter {
   static _registry = new Map();
@@ -119,8 +120,53 @@ export class CustomizationSurfaceAdapter {
     }
   }
 
+  /**
+   * PART 24/25 — Hydrate DOM-only affordances (mentor Aurebesh translation)
+   * after the inline shell injects the Bay. Mirrors
+   * WorkbenchSurfaceAdapter.afterInlineRender()'s exact pattern/guard so the
+   * Garage/Shipyard mentor line uses the same translation pipeline as
+   * Workbench/Progression instead of a separate implementation. Idempotent:
+   * each render injects a fresh, unhydrated DOM node (translationHydrated is
+   * per-element, not per-adapter), so this safely no-ops on repeat calls
+   * against an already-hydrated node and re-hydrates naturally when the
+   * template re-renders with new mentor text.
+   *
+   * @param {Element} surfaceRoot
+   * @returns {Promise<void>}
+   */
+  async afterInlineRender(surfaceRoot) {
+    const mentorNode = surfaceRoot?.querySelector?.('[data-customization-mentor-text]');
+    if (!mentorNode || mentorNode.dataset.translationHydrated === 'true') return;
+
+    const text = mentorNode.dataset.rawText || mentorNode.textContent || '';
+    const mentor = mentorNode.dataset.mentor || 'seraphim';
+    const topic = (this.options?.bayMode || this.options?.mode) === 'shipyard' ? 'shipyard' : 'garage';
+    mentorNode.dataset.translationHydrated = 'true';
+
+    try {
+      await MentorTranslationIntegration.render({
+        text,
+        container: mentorNode,
+        mentor,
+        topic,
+        force: true
+      });
+    } catch (err) {
+      SWSELogger.error('[CustomizationSurfaceAdapter] Mentor translation failed:', err);
+      mentorNode.textContent = text;
+    }
+  }
+
   async _getApp() {
-    if (this._app) return this._app;
+    if (this._app) {
+      // PART 2 — keep the owner identity current even though the app
+      // instance is cached across renders (the adapter itself is re-entered
+      // with fresh options on every getOrCreate() call).
+      if (this.options.ownerActorId !== undefined && this._app.ownerActorId !== (this.options.ownerActorId || null)) {
+        this._app.ownerActorId = this.options.ownerActorId || null;
+      }
+      return this._app;
+    }
 
     const { CustomizationBayApp } = await import(
       '/systems/foundryvtt-swse/scripts/apps/customization/customization-bay-app.js'

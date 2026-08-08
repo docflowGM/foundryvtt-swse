@@ -127,13 +127,22 @@
   opacity: 0.76;
 }
 
+/* Phase 1 — Garage/Shipyard Foundation hologram contract: scanlines must
+   carry both a blue/cyan and a brighter pale/white component (see
+   styles/system/mentor-hologram.css's __scan for the shared value source).
+   Rail-specific sizing/positioning stays here; only the color values were
+   widened from cyan-only to match the global contract. */
 .progression-shell .prog-holo-mentor-media__scan {
   z-index: 3;
   background:
     repeating-linear-gradient(
       0deg,
-      transparent 0 2px,
-      rgba(94, 224, 255, 0.10) 2px 3px
+      rgba(94, 224, 255, 0.14) 0px,
+      rgba(94, 224, 255, 0.14) 1px,
+      rgba(255, 255, 255, 0.16) 1px,
+      rgba(255, 255, 255, 0.16) 2px,
+      transparent 2px,
+      transparent 4px
     ),
     linear-gradient(180deg, transparent 0%, rgba(94, 224, 255, 0.10) 50%, transparent 100%);
   mix-blend-mode: screen;

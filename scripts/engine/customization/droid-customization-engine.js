@@ -224,9 +224,16 @@ export class DroidCustomizationEngine {
    * Preview proposed droid customization changes
    * Shows what would happen if user adds/removes systems
    * REUSE: Uses chargen-authority costs for preview
+   *
+   * @param {Actor} actor - The droid whose systems are being previewed (asset actor)
+   * @param {{add?: string[], remove?: string[]}} changeSet
+   * @param {{walletActor?: Actor}} [options] - walletActor defaults to `actor` for
+   *   backward compatibility (self-funded droid). Pass the owner's actor to preview
+   *   affordability against the owner's credits instead of the droid's own.
    */
-  static previewDroidCustomization(actor, changeSet = {}) {
+  static previewDroidCustomization(actor, changeSet = {}, options = {}) {
     const warnings = [];
+    const walletActor = options.walletActor || actor;
 
     if (!actor || actor.type !== 'droid') {
       return { success: false, error: 'Not a droid actor', blockingReason: 'Invalid actor type' };
@@ -242,7 +249,10 @@ export class DroidCustomizationEngine {
       return { success: false, error: normalized.error, blockingReason: normalized.blockingReason };
     }
     const { add: systemsToAdd, remove: systemsToRemove } = normalized;
-    const currentCredits = normalizedCredits(actor);
+    // Systems/eligibility are evaluated against the droid (`actor`); affordability
+    // is evaluated against whoever is paying (`walletActor`) — see Phase 1 audit,
+    // "Where are the systems? from Where are the credits?"
+    const currentCredits = normalizedCredits(walletActor);
     let totalAddCost = 0;
     let totalRemoveSale = 0;
 
@@ -296,7 +306,8 @@ export class DroidCustomizationEngine {
         preview: {
           currentCredits,
           netCost,
-          newCredits
+          newCredits,
+          walletActorId: walletActor.id
         }
       };
     }
@@ -305,6 +316,7 @@ export class DroidCustomizationEngine {
       success: true,
       preview: {
         actorId: actor.id,
+        walletActorId: walletActor.id,
         currentCredits,
         systemsAdded: addedSystems,
         systemsRemoved: removedSystems,
@@ -319,13 +331,20 @@ export class DroidCustomizationEngine {
   /**
    * Apply droid customization changes through ActorEngine
    * MUTATION AUTHORITY: ActorEngine is the sole mutation authority
+   *
+   * @param {Actor} actor - The droid being modified (asset actor)
+   * @param {{add?: string[], remove?: string[]}} changeSet
+   * @param {{walletActor?: Actor}} [options] - walletActor defaults to `actor`
+   *   (self-funded droid) for backward compatibility. Pass the owner's actor to
+   *   debit/credit the owner instead of the droid.
    */
-  static async applyDroidCustomization(actor, changeSet = {}) {
+  static async applyDroidCustomization(actor, changeSet = {}, options = {}) {
     if (!actor || actor.type !== 'droid') {
       return { success: false, error: 'Not a droid actor' };
     }
+    const walletActor = options.walletActor || actor;
 
-    const preview = this.previewDroidCustomization(actor, changeSet);
+    const preview = this.previewDroidCustomization(actor, changeSet, { walletActor });
     if (!preview.success) {
       return preview;
     }
@@ -384,12 +403,15 @@ export class DroidCustomizationEngine {
       }
 
       // Route credit movement + asset mutation through TransactionEngine so the
-      // customization is atomic AND recorded in the credit audit trail. Wallet and
-      // asset are the same droid actor; the transaction merges both legs into one
-      // snapshotted mutation and rolls back on failure. The embedded-Item delete
+      // customization is atomic AND recorded in the credit audit trail.
+      // walletActor (defaults to the droid itself for backward compatibility)
+      // pays/receives credits; assetActor (always the droid) receives the
+      // system mutation. TransactionEngine already supports wallet !== asset —
+      // see executeAssetCustomizationTransaction's own docstring — this merely
+      // stops hardcoding them to the same actor. The embedded-Item delete
       // bucket rides in the same asset plan, so a failure anywhere in the
       // transaction (insufficient funds, validation, mutation error) restores
-      // the actor's full pre-transaction snapshot — items included — via
+      // both actors' full pre-transaction snapshots — items included — via
       // TransactionEngine's existing rollback, not a second ad hoc mechanism.
       const netCost = Number(preview.preview.netCost) || 0;
       const assetMutationPlan = {
@@ -402,7 +424,7 @@ export class DroidCustomizationEngine {
         assetMutationPlan.delete = { items: [...new Set(itemIdsToDelete)] };
       }
       const txn = await TransactionEngine.executeAssetCustomizationTransaction({
-        actor,
+        actor: walletActor,
         assetActor: actor,
         assetMutationPlan,
         cost: Math.max(0, netCost),

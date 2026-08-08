@@ -611,7 +611,14 @@
 }
 
 /* Mentor portrait art is intentionally not assigned .prog-holo-media because
- * existing rail chrome owns its pseudo-elements. This only projects the photo. */
+ * existing rail chrome owns its pseudo-elements. This only projects the photo.
+ *
+ * Phase 1 — Garage/Shipyard Foundation: the actual hologram filter/tint/
+ * scanline/glow VALUES now live in the ONE shared primitive,
+ * styles/system/mentor-hologram.css (.swse-mentor-hologram__image), which
+ * templates/apps/progression-framework/mentor-rail.hbs applies alongside
+ * these classes. This rule keeps only progression's own rail-specific
+ * LAYOUT (sizing/position/circular crop) — not a second copy of the effect. */
 .progression-shell.prog-holo .prog-holo-mentor-media__image,
 .progression-shell.prog-holo .prog-mentor__portrait-image {
   position: relative;
@@ -622,14 +629,4 @@
   object-fit: contain;
   object-position: center bottom;
   border-radius: 50%;
-  filter:
-    grayscale(1)
-    sepia(0.08)
-    hue-rotate(165deg)
-    saturate(0.70)
-    brightness(1.12)
-    contrast(1.10)
-    drop-shadow(0 0 5px rgba(0, 190, 255, 0.24));
-  mix-blend-mode: screen;
-  opacity: 0.94;
 }

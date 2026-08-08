@@ -1,0 +1,122 @@
+/* ==========================================================================
+ * Shared Mentor Hologram Primitive
+ * Phase 1 — Garage/Shipyard Corrective Engineering (Foundation)
+ *
+ * Global visual contract for mentor/NPC GUIDANCE portraits (Progression,
+ * Workbench, Garage, Shipyard, and any future mentor-guided surface):
+ *
+ *   canonical WebP -> grayscale -> blue/cyan holographic tint
+ *     -> blue + white horizontal scanlines -> subtle cyan/blue glow
+ *
+ * SCOPE — read before touching this file:
+ *   Apply `.swse-mentor-hologram` (container) + `.swse-mentor-hologram__image`
+ *   (the <img>) ONLY to elements that are explicitly a mentor/NPC guidance
+ *   portrait. NEVER apply these classes (or select against them with a
+ *   broad selector such as `img`, `.profile-img`, `.actor-image`, or a
+ *   generic actor/token/item-art class) to a player character's own
+ *   portrait, token art, inventory item art, or vehicle/droid asset art.
+ *   The exclusion is enforced by scoping to this specific class pair, not by
+ *   any ancestor/theme selector — a consumer opts in per-element.
+ *
+ * This is the ONE shared implementation. Do not fork a second copy of this
+ * filter/scanline/glow stack per-surface — see docs/audits/
+ * garage-shipyard-phase-0-audit.md Audit 9 for the three pre-Phase-1
+ * implementations (mentor-rail, holo-theme .prog-holo-media, mentor-surface)
+ * this consolidates the *visual formula* from. Progression's own rail chrome
+ * (scanline positioning/sizing tuned for its portrait-zone dimensions) is
+ * intentionally left in styles/progression-framework/holo-theme.css — only
+ * its filter/tint/scan/glow VALUES are shared here; each host still owns its
+ * own container sizing, exactly like Workbench's `.mentor-avatar` and
+ * Garage/Shipyard's `.bay-mentor__portrait` already do.
+ *
+ * Motion: reduced/off is respected via the repo-wide `[data-motion-style]`
+ * attribute convention (set on the app/shell root, e.g.
+ * .swse-customization-bay, .swse-customization-stage, .progression-shell —
+ * see styles/apps/customization-bay.css, styles/progression-framework/
+ * progression-shell.css) rather than inventing a second motion preference
+ * system. No JavaScript/animation here to disable in the first place — the
+ * only thing motion-gated is scanline opacity.
+ * ========================================================================== */
+
+.swse-mentor-hologram {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  box-shadow:
+    inset 0 0 16px rgba(0, 180, 255, 0.08),
+    0 0 14px rgba(0, 190, 255, 0.20);
+}
+
+.swse-mentor-hologram__image {
+  position: relative;
+  z-index: 1;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  /* Grayscale -> blue/cyan holographic tint. hue-rotate pushes the
+     desaturated+sepia base toward blue/cyan; this exact formula is the
+     pre-Phase-1 precedent already proven in
+     styles/progression-framework/holo-theme.css's mentor-only rule. */
+  filter:
+    grayscale(1)
+    sepia(0.08)
+    hue-rotate(165deg)
+    saturate(0.70)
+    brightness(1.12)
+    contrast(1.10)
+    drop-shadow(0 0 5px rgba(0, 190, 255, 0.28));
+  mix-blend-mode: screen;
+  opacity: 0.94;
+}
+
+/* Blue/cyan holographic tint overlay — reinforces the image filter with a
+   projected-light wash so the portrait reads as a hologram, not just a
+   color-shifted photo. */
+.swse-mentor-hologram__tint {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 50% 35%, rgba(124, 236, 255, 0.20), transparent 46%),
+    linear-gradient(135deg, rgba(0, 178, 255, 0.16), transparent 38%, rgba(0, 178, 255, 0.08));
+  mix-blend-mode: screen;
+  opacity: 0.85;
+}
+
+/* Blue + pale/white horizontal scanlines — both color components are
+   required by the hologram contract (PART 14): this repeating gradient
+   alternates a cyan band and a brighter near-white band within the same
+   layer so both are always visibly present together, not two separate
+   pseudo-elements fighting over the container's only two slots. */
+.swse-mentor-hologram__scan {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(94, 224, 255, 0.20) 0px,
+    rgba(94, 224, 255, 0.20) 1px,
+    rgba(255, 255, 255, 0.22) 1px,
+    rgba(255, 255, 255, 0.22) 2px,
+    transparent 2px,
+    transparent 4px
+  );
+  mix-blend-mode: screen;
+  opacity: 0.36;
+}
+
+[data-motion-style="off"] .swse-mentor-hologram__scan,
+[data-motion-style="reduced"] .swse-mentor-hologram__scan {
+  opacity: 0.16;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .swse-mentor-hologram__scan {
+    opacity: 0.16;
+  }
+}
