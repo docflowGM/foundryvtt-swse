@@ -22,6 +22,7 @@ import { buildPendingBackgroundContext } from '/systems/foundryvtt-swse/scripts/
 import SkillRegistry from '/systems/foundryvtt-swse/scripts/engine/progression/skills/skill-registry.js';
 import { buildClassSkillKeySet, buildSkillDisplay, buildSkillDisplays, normalizeSkillKey } from '../utils/skill-display.js';
 import { LanguageRegistry } from '/systems/foundryvtt-swse/scripts/registries/language-registry.js';
+import { compileProgressionSearchQuery, buildProgressionSearchText } from '../utils/progression-search.js';
 import { CustomPlanetBackgroundDialog } from '/systems/foundryvtt-swse/scripts/apps/progression-framework/dialogs/custom-planet-background-dialog.js';
 import { BackgroundChoiceDialog } from '/systems/foundryvtt-swse/scripts/apps/progression-framework/dialogs/background-choice-dialog.js';
 import { HouseRuleService } from '/systems/foundryvtt-swse/scripts/engine/system/HouseRuleService.js';
@@ -133,7 +134,7 @@ async onDataReady(shell) {
 
   const onSearch = (e) => {
     this._searchQuery = String(e.detail?.query || '');
-    shell.requestRender({ preserveScroll: true, reason: 'background-step:onSearch' });
+    shell.requestRender({ preserveScroll: true, reason: 'background-step:onSearch', regions: ['work-surface', 'utility'] });
   };
 
   const onFilter = (e) => {
@@ -146,13 +147,13 @@ async onDataReady(shell) {
         shell.utilityBar._filterState.occupation = value && filterId === 'occupation';
         shell.utilityBar._filterState.planet = value && filterId === 'planet';
       }
-      shell.requestRender({ preserveScroll: true, reason: 'background-step:onFilter' });
+      shell.requestRender({ preserveScroll: true, reason: 'background-step:onFilter', regions: ['work-surface', 'utility'] });
     }
   };
 
   const onSort = (e) => {
     this._sortBy = e.detail?.sortId || 'alpha';
-    shell.requestRender({ preserveScroll: true, reason: 'background-step:onSort' });
+    shell.requestRender({ preserveScroll: true, reason: 'background-step:onSort', regions: ['work-surface', 'utility'] });
   };
 
   shell.element.addEventListener('prog:utility:search', onSearch, { signal });
@@ -493,21 +494,21 @@ getUtilityBarConfig() {
       event?.preventDefault?.();
       const category = String(target?.dataset?.category || 'all').toLowerCase();
       this._activeCategory = ['all', 'recommended', 'event', 'occupation', 'planet'].includes(category) ? category : 'all';
-      shell?.render?.();
+      shell?.requestRender?.({ preserveScroll: true, reason: 'background-select-category', regions: ['work-surface', 'utility'] });
       return true;
     }
 
     if (action === 'toggle-background-category-sidebar') {
       event?.preventDefault?.();
       this._categorySidebarCollapsed = !this._categorySidebarCollapsed;
-      shell?.render?.();
+      shell?.requestRender?.({ preserveScroll: true, reason: 'background-toggle-category-sidebar', regions: ['work-surface', 'utility'] });
       return true;
     }
 
     if (action === 'toggle-background-new-skills-filter') {
       event?.preventDefault?.();
       this._showOnlyNewSkillBackgrounds = !this._showOnlyNewSkillBackgrounds;
-      shell?.render?.();
+      shell?.requestRender?.({ preserveScroll: true, reason: 'background-toggle-new-skills-filter', regions: ['work-surface', 'utility'] });
       return true;
     }
 
@@ -517,7 +518,7 @@ getUtilityBarConfig() {
       this._activeCategory = 'all';
       this._showOnlyNewSkillBackgrounds = false;
       if (shell?.utilityBar?._searchQuery !== undefined) shell.utilityBar._searchQuery = '';
-      shell?.render?.();
+      shell?.requestRender?.({ preserveScroll: true, reason: 'background-reset-browser', regions: ['work-surface', 'utility'] });
       return true;
     }
 
@@ -690,12 +691,14 @@ _getFilteredBackgrounds(shell = null) {
   }
 
   if (hasSearchQuery) {
-    const q = String(this._searchQuery || '').toLowerCase().trim();
+    // Canonical rich search: name + description (bg.narrativeDescription/
+    // bg.description/mechanicalEffect.description, picked up automatically
+    // by buildProgressionSearchText) + the player-facing supplemental
+    // fields this step already exposed. Supports AND/OR/NOT/wildcards/
+    // quoted phrases; see utils/progression-search.js.
+    const compiled = compileProgressionSearchQuery(this._searchQuery);
     filtered = filtered.filter((bg) => {
-      const haystack = [
-        bg.name,
-        bg.narrativeDescription,
-        bg.description,
+      const text = buildProgressionSearchText(bg, [
         bg.specialAbility,
         bg.bonusLanguage,
         bg.source,
@@ -703,8 +706,8 @@ _getFilteredBackgrounds(shell = null) {
         ...(bg.trainedSkills || []),
         ...(bg.relevantSkills || []),
         bg.mechanicalEffect?.description,
-      ].filter(Boolean).join(' ').toLowerCase();
-      return haystack.includes(q);
+      ]);
+      return compiled.test(text);
     });
   }
 

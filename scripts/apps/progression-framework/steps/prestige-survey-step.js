@@ -557,7 +557,7 @@ export class PrestigeSurveyStep extends ProgressionStepPlugin {
       case 'survey-back':
         event?.preventDefault?.();
         if (typeof shell?._onPreviousStep === 'function') await shell._onPreviousStep();
-        else shell?.render?.();
+        else shell?.requestRender?.({ preserveScroll: true, reason: 'prestige-survey-back', regions: ['work-surface', 'utility'] });
         return true;
       default:
         return false;
@@ -589,7 +589,7 @@ export class PrestigeSurveyStep extends ProgressionStepPlugin {
     wireSurveyButton('[data-action="survey-retake"]', () => this._retakeSurvey(shell));
     wireSurveyButton('[data-action="survey-back"]', async () => {
       if (typeof shell?._onPreviousStep === 'function') await shell._onPreviousStep();
-      else shell?.render?.();
+      else shell?.requestRender?.({ preserveScroll: true, reason: 'prestige-survey-back', regions: ['work-surface', 'utility'] });
     });
   }
 

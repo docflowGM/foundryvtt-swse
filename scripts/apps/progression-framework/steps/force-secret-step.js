@@ -19,6 +19,7 @@ import { SuggestionContextBuilder } from '/systems/foundryvtt-swse/scripts/engin
 import { normalizeDetailPanelData } from '../detail-rail-normalizer.js';
 import { buildOptionCardAction } from '../shell/option-card-action.js';
 import { buildClassGrantLedger, mergeLedgerIntoPending } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/class-grant-ledger-builder.js';
+import { compileProgressionSearchQuery, buildProgressionSearchText } from '../utils/progression-search.js';
 
 
 const SECRET_RECOMMENDED_NAMES = new Set([
@@ -145,15 +146,15 @@ export class ForceSecretStep extends ProgressionStepPlugin {
     const onSearch = e => {
       this._searchQuery = e.detail.query;
       this._applyFilters();
-      shell.requestRender({ preserveScroll: true, reason: 'force-secret-step:onSearch' });
+      shell.requestRender({ preserveScroll: true, reason: 'force-secret-step:onSearch', regions: ['work-surface', 'utility'] });
     };
     const onFilter = e => {
       this._applyFilters();
-      shell.requestRender({ preserveScroll: true, reason: 'force-secret-step:onFilter' });
+      shell.requestRender({ preserveScroll: true, reason: 'force-secret-step:onFilter', regions: ['work-surface', 'utility'] });
     };
     const onSort = e => {
       this._applyFilters();
-      shell.requestRender({ preserveScroll: true, reason: 'force-secret-step:onSort' });
+      shell.requestRender({ preserveScroll: true, reason: 'force-secret-step:onSort', regions: ['work-surface', 'utility'] });
     };
 
     shell.element.addEventListener('prog:utility:search', onSearch, { signal });
@@ -271,7 +272,7 @@ export class ForceSecretStep extends ProgressionStepPlugin {
       if (!category) return true;
       this._activeCategory = category;
       this._searchQuery = '';
-      await (shell?.requestRender?.({ preserveScroll: true, reason: 'force-secret-category' }) ?? shell?.render?.());
+      await shell?.requestRender?.({ preserveScroll: true, reason: 'force-secret-category', regions: ['work-surface', 'utility'] });
       return true;
     }
 
@@ -279,7 +280,7 @@ export class ForceSecretStep extends ProgressionStepPlugin {
       event?.preventDefault?.();
       event?.stopPropagation?.();
       this._categorySidebarCollapsed = !this._categorySidebarCollapsed;
-      await (shell?.requestRender?.({ preserveScroll: true, reason: 'force-secret-category-sidebar' }) ?? shell?.render?.());
+      await shell?.requestRender?.({ preserveScroll: true, reason: 'force-secret-category-sidebar', regions: ['work-surface', 'utility'] });
       return true;
     }
 
@@ -289,7 +290,7 @@ export class ForceSecretStep extends ProgressionStepPlugin {
       this._searchQuery = '';
       this._activeCategory = 'recommended';
       this._categorySidebarCollapsed = false;
-      await (shell?.requestRender?.({ preserveScroll: true, reason: 'force-secret-browser-reset' }) ?? shell?.render?.());
+      await shell?.requestRender?.({ preserveScroll: true, reason: 'force-secret-browser-reset', regions: ['work-surface', 'utility'] });
       return true;
     }
 
@@ -524,9 +525,13 @@ export class ForceSecretStep extends ProgressionStepPlugin {
   _applyFilters() {
     let filtered = [...this._legalSecrets];
 
+    // Canonical rich search: name + description/benefit (picked up
+    // automatically by buildProgressionSearchText) + the player-facing
+    // supplemental fields this step already exposed. Supports AND/OR/NOT/
+    // wildcards/quoted phrases; see utils/progression-search.js.
     if (this._searchQuery) {
-      const q = this._normalizeSearchText(this._searchQuery);
-      filtered = filtered.filter(s => this._secretSearchText(s).includes(q));
+      const compiled = compileProgressionSearchQuery(this._searchQuery);
+      filtered = filtered.filter(s => compiled.test(this._secretSearchText(s)));
     }
 
     filtered.sort((a, b) => String(a?.name || '').localeCompare(String(b?.name || '')));
@@ -650,17 +655,13 @@ export class ForceSecretStep extends ProgressionStepPlugin {
 
   _secretSearchText(secret) {
     const system = secret?.system || {};
-    return this._normalizeSearchText([
-      secret?.name,
-      secret?.description,
-      system.description,
-      system.benefit,
+    return buildProgressionSearchText(secret, [
       system.cost,
       system.alternativeCost,
       ...(Array.isArray(secret?.tags) ? secret.tags : []),
       ...(Array.isArray(system.tags) ? system.tags : []),
       this._getSecretCategoryKeys(secret).join(' '),
-    ].filter(Boolean).join(' '));
+    ]);
   }
 
   _getSecretCategoryKeys(secret) {

@@ -1,5 +1,7 @@
 # Feats Compendium Recovery
 
+> **2026-08-06 update:** `data/feat-catalog.json` / `packs/feats.db` remain at **401** documents. An earlier pass this same day briefly merged 12 records from the orphaned `packs/feat-catalog.db` back into the catalog (401 -> 413), believing them to be lost content; that was wrong and was reverted. `scripts/data/feat-domain-guard.js` (`TALENT_ONLY_FEAT_CONTAMINANTS`) already documents, and three runtime call sites already enforce, that those exact records are SWSE talents fabricated into feat form, not real feats. `packs/feat-catalog.db` is leftover pre-cleanup scaffolding, not a recovery source — do not merge from it again. `tools/verify-feats-pack-source.mjs` now hard-fails on an empty pack and on any ID/content drift between the catalog and the pack. See `docs/audits/generated/feat-inventory-report.md` (regenerate with `node tools/generate-feat-inventory-report.mjs`) and `docs/audits/feat-inventory-history-reconciliation.md` for the full 414 -> 401 reconciliation, and `data/feat-validity-registry.json` for the single source-validity authority.
+
 ## What failed
 
 `system.json` correctly declares the native pack at `packs/feats`, but the repository did not contain a readable LevelDB pack at that path. The legacy migration source `packs/feats.db` was empty, so Foundry had no feat documents to migrate. `FeatRegistry` masked the problem by loading `data/feat-catalog.json` as a read-only fallback.

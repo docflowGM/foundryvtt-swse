@@ -687,10 +687,16 @@ export class ProgressionShell extends SWSEApplicationV2 {
       });
     }
 
+    // One job-scoped cache for this entire execution: currentDescriptor and
+    // currentPlugin resolve once, and getStepData() memoizes the plugin call
+    // so a mixed job like ['work-surface', 'summary'] — both of which read
+    // stepData — hydrates it once, not once per region.
+    const job = this._createRegionRenderJob();
+
     const appliedRegions = [];
     for (const region of requestedRegions) {
       // eslint-disable-next-line no-await-in-loop
-      if (await this._updateRegion(region)) appliedRegions.push(region);
+      if (await this._updateRegion(region, job)) appliedRegions.push(region);
     }
 
     // Every region passed preflight, so a failure here is unexpected (the region
@@ -717,7 +723,7 @@ export class ProgressionShell extends SWSEApplicationV2 {
    * @returns {Promise<boolean>} true when the region was updated in place.
    * @private
    */
-  async _updateRegion(region) {
+  async _updateRegion(region, job = null) {
     const root = this.getRootElement?.() ?? this.element;
     if (!(root instanceof HTMLElement)) return false;
 
@@ -726,10 +732,21 @@ export class ProgressionShell extends SWSEApplicationV2 {
     // 'mentor' is deliberately absent: mentor dialogue, mood, portrait, and
     // collapse are all applied straight to the mounted rail by MentorRail, so
     // the mentor never needs — and must never take — a render seam.
-    //
-    // The remaining scopes (work-surface, summary, utility, footer, progress)
-    // are produced inline by the shell template and have no independent render
-    // seam yet, so they still require a structural repaint.
+    if (region === 'mentor') return false;
+
+    // Phase 2: the remaining scopes each have a real independent seam now.
+    // Every one of them shares the same job-scoped cache so a mixed request
+    // resolves currentDescriptor/currentPlugin/stepData once, not once per
+    // region in the loop that calls this method.
+    const renderJob = job ?? this._createRegionRenderJob();
+    if (region === 'work-surface') return this._updateWorkSurfaceRegion(root, renderJob);
+    if (region === 'summary') return this._updateSummaryRegion(root, renderJob);
+    if (region === 'utility') return this._updateUtilityRegion(root, renderJob);
+    if (region === 'progress') return this._updateProgressRegion(root, renderJob);
+    if (region === 'footer') return this._updateFooterRegion(root, renderJob);
+
+    // An unrecognized region name is not a scope this shell knows how to
+    // paint independently — fail safe to structural rather than guess.
     return false;
   }
 
@@ -793,15 +810,550 @@ export class ProgressionShell extends SWSEApplicationV2 {
     }
   }
 
+  // ---------------------------------------------------------------------------
+  // Phase 2: Shared region-rendering helpers.
+  //
+  // Each of these computes exactly what one region's HTML looks like right
+  // now, given already-resolved inputs (descriptor/plugin/stepData) rather
+  // than resolving them itself. _prepareContext() (structural) and the
+  // per-region updaters below (scoped) both call these — the expensive part
+  // (calling into the plugin, rendering a template) exists in one place
+  // only. Neither path calls the other's entry point: a scoped update never
+  // runs full _prepareContext() to get a fragment of it back out.
+  // ---------------------------------------------------------------------------
+
+  /** Static footer font mode. Single source of truth for the structural
+   * context object and the scoped footer updater. @private */
+  _getFooterFontMode() {
+    return 'standard';
+  }
+
+  /**
+   * Per-step progress entries for the progress rail and the footer step
+   * chips. Iterates every step and evaluates its status once each — shared
+   * so a mixed job needing both 'progress' and structural context does not
+   * run this twice.
+   *
+   * PHASE 3: normalization and the per-step map below now share ONE
+   * evaluator, so a completed step is not evaluated once during
+   * normalization and again for its progress entry. Pass an evaluator
+   * created upstream (structural _prepareContext, a scoped 'progress'
+   * region job) to extend that sharing across the whole render/job;
+   * otherwise a fresh one is created for this call alone.
+   * @param {{get(stepId: string, stepIndex: number): Object}} [evaluator]
+   * @returns {Array<Object>}
+   * @private
+   */
+  _computeStepProgress(evaluator = this._createStepStatusEvaluator()) {
+    this._normalizeCompletedStepIds(evaluator);
+    return this.steps.map((descriptor, idx) => {
+      const status = evaluator.get(descriptor.stepId, idx);
+      return {
+        descriptor,
+        index: idx,
+        status: status.canonical,
+        isComplete: status.canonical === 'complete',
+        isError: status.canonical === 'error',
+        isCaution: status.canonical === 'caution',
+        isInProgress: status.canonical === 'in_progress',
+        isNeutral: status.canonical === 'neutral',
+        isCurrent: idx === this.currentStepIndex,
+        isConditional: descriptor.isConditional,
+        canNavigate: idx < this.currentStepIndex,
+        isVisited: status.isVisited,
+        errors: status.errors || [],
+        warnings: status.warnings || [],
+        remainingChoices: status.remainingChoices || [],
+      };
+    });
+  }
+
+  /**
+   * The minimal plugin-facing context object step plugins read from
+   * renderSummaryPanel({shell, stepData, context, currentStepId}). This is a
+   * deliberately small subset of the full structural _prepareContext()
+   * return value — renderSummaryPanel implementations in this codebase only
+   * read context.shell/context.actor — not a second canonical progression
+   * state; everything here is read straight off the live shell.
+   * @private
+   */
+  _buildStepPluginContext() {
+    return {
+      shell: this,
+      actor: this.actor,
+      mode: this.mode,
+      buildIntent: this.buildIntent,
+      focusedItem: this.focusedItem,
+    };
+  }
+
+  /**
+   * Work-surface HTML for the given plugin/step/stepData, with the same
+   * error-surface and blank-template fallback a structural render has always
+   * had. Guaranteed to return a non-empty string.
+   * @param {Object|null} currentPlugin
+   * @param {Object|null} currentDescriptor
+   * @param {Object} stepData
+   * @param {HydrationDiagnosticsCollector|null} [diagnostics] - only the
+   *   structural path (_prepareContext) passes one; a scoped update has
+   *   nothing analogous to log against and skips it.
+   * @returns {Promise<string>}
+   * @private
+   */
+  async _renderWorkSurfaceHtml(currentPlugin, currentDescriptor, stepData, diagnostics = null) {
+    let html = null;
+    try {
+      const spec = currentPlugin?.renderWorkSurface?.(stepData) ?? null;
+      html = spec?.template
+        ? await foundry.applications.handlebars.renderTemplate(spec.template, spec.data)
+        : null;
+    } catch (error) {
+      console.error('[ProgressionShell] Work surface render failed, falling back to error surface:', error);
+      html = await foundry.applications.handlebars.renderTemplate(
+        'systems/foundryvtt-swse/templates/apps/progression-framework/steps/step-error-surface.hbs',
+        {
+          stepLabel: currentDescriptor?.label || currentDescriptor?.stepId || 'Current Step',
+          errorMessage: error?.message || 'This step could not be rendered.',
+          canContinue: currentPlugin?.getBlockingIssues?.()?.length === 0,
+        }
+      );
+    }
+
+    if (!html) {
+      diagnostics?.detectBlankTemplate(currentDescriptor?.stepId ?? 'unknown', html);
+      html = await foundry.applications.handlebars.renderTemplate(
+        'systems/foundryvtt-swse/templates/apps/progression-framework/steps/step-error-surface.hbs',
+        {
+          stepLabel: currentDescriptor?.label || currentDescriptor?.stepId || 'Current Step',
+          errorMessage: 'This step returned no content. You can go back and try again.',
+          canContinue: currentPlugin?.getBlockingIssues?.()?.length === 0,
+        }
+      );
+    }
+
+    diagnostics?.detectSpeciesRowsMissingIds(currentDescriptor?.stepId, html);
+    return html;
+  }
+
+  /**
+   * Summary panel HTML: the active plugin's own renderSummaryPanel() when it
+   * provides one, otherwise the SelectedRailContext snapshot fallback. May
+   * legitimately return null (the template shows a placeholder icon then).
+   * @param {Object|null} currentPlugin
+   * @param {Object|null} currentDescriptor
+   * @param {Object} stepData
+   * @param {Object} pluginContext - from _buildStepPluginContext()
+   * @returns {Promise<string|null>}
+   * @private
+   */
+  async _renderSummaryPanelHtml(currentPlugin, currentDescriptor, stepData, pluginContext) {
+    let summaryPanelHtml = null;
+    let summaryPanelHandledByStep = false;
+    try {
+      const summaryPanelSpec = await currentPlugin?.renderSummaryPanel?.({
+        shell: this,
+        stepData,
+        context: pluginContext,
+        currentStepId: currentDescriptor?.stepId ?? null,
+      });
+      if (summaryPanelSpec?.template) {
+        summaryPanelHtml = await foundry.applications.handlebars.renderTemplate(
+          summaryPanelSpec.template,
+          summaryPanelSpec.data || {}
+        );
+        summaryPanelHandledByStep = true;
+      }
+    } catch (error) {
+      console.error('[ProgressionShell] Step summary rail render failed; falling back to selected rail:', error);
+      summaryPanelHtml = null;
+      summaryPanelHandledByStep = false;
+    }
+
+    if (!summaryPanelHandledByStep) {
+      try {
+        const selectedRailContext = await SelectedRailContext.buildSnapshot(this, currentDescriptor?.stepId ?? null);
+        summaryPanelHtml = selectedRailContext && selectedRailContext.snapshotSections.length > 0
+          ? await foundry.applications.handlebars.renderTemplate(
+              'systems/foundryvtt-swse/templates/apps/progression-framework/summary-panel/selected-rail.hbs',
+              selectedRailContext
+            )
+          : null;
+      } catch (error) {
+        console.error('[ProgressionShell] Summary rail render failed, falling back to blank rail:', error);
+        summaryPanelHtml = null;
+      }
+    }
+
+    return summaryPanelHtml;
+  }
+
+  /**
+   * The full .prog-summary-panel__body content — summaryPanelHtml wrapped
+   * in the SAME summary-panel-body.hbs partial the structural template
+   * includes, so a scoped summary repaint produces byte-identical output to
+   * a structural one, placeholder included. _prepareContext() does not call
+   * this: its structural render already includes that partial directly from
+   * progression-shell.hbs, so rendering it here too would be a second copy
+   * of the same evaluation, not a shared one. Only the scoped updater below
+   * needs to render the partial itself, since a DOM mount has no Handlebars
+   * template evaluation of its own to do it automatically.
+   * @param {Object|null} currentPlugin
+   * @param {Object|null} currentDescriptor
+   * @param {Object} stepData
+   * @param {Object} pluginContext
+   * @returns {Promise<string|null>} null only on genuine failure — a
+   *   "nothing selected" state still returns the rendered placeholder HTML.
+   * @private
+   */
+  async _renderSummaryPanelBodyHtml(currentPlugin, currentDescriptor, stepData, pluginContext) {
+    const summaryPanelHtml = await this._renderSummaryPanelHtml(currentPlugin, currentDescriptor, stepData, pluginContext);
+    try {
+      return await foundry.applications.handlebars.renderTemplate(
+        'systems/foundryvtt-swse/templates/apps/progression-framework/summary-panel/summary-panel-body.hbs',
+        { summaryPanelHtml, currentDescriptor }
+      );
+    } catch (err) {
+      console.error('[ProgressionShell] Failed to render summary-panel-body:', err);
+      return null;
+    }
+  }
+
+  /**
+   * The utility-bar config for the given plugin. A one-line, pure,
+   * synchronous read of plugin state — cheap enough that both
+   * _prepareContext() and the scoped utility updater compute it directly
+   * rather than threading a cached value through the job context.
+   * @param {Object|null} currentPlugin
+   * @returns {Object}
+   * @private
+   */
+  _resolveUtilityBarConfig(currentPlugin) {
+    return currentPlugin?.getUtilityBarConfig() ?? { mode: 'minimal' };
+  }
+
+  /**
+   * Utility-bar HTML for an already-resolved config.
+   * @param {Object|null} currentDescriptor
+   * @param {Object} utilityBarConfig - from _resolveUtilityBarConfig()
+   * @returns {Promise<string|null>}
+   * @private
+   */
+  async _renderUtilityBarHtml(currentDescriptor, utilityBarConfig) {
+    let html = null;
+    try {
+      html = await foundry.applications.handlebars.renderTemplate(
+        'systems/foundryvtt-swse/templates/apps/progression-framework/utility-bar.hbs',
+        {
+          currentDescriptor,
+          utilityBarConfig,
+          utilityBarCollapsed: this.utilityBarCollapsed,
+        }
+      );
+    } catch (err) {
+      console.error('[ProgressionShell] Failed to render utility-bar:', err);
+      html = null;
+    }
+    return html;
+  }
+
+  /**
+   * Progress-rail HTML for the given (already-computed) stepProgress array.
+   * @param {Array<Object>} stepProgress - from _computeStepProgress()
+   * @param {Object|null} currentDescriptor
+   * @returns {Promise<string|null>}
+   * @private
+   */
+  async _renderProgressRailHtml(stepProgress, currentDescriptor) {
+    try {
+      return await foundry.applications.handlebars.renderTemplate(
+        'systems/foundryvtt-swse/templates/apps/progression-framework/progress-rail.hbs',
+        {
+          stepProgress,
+          currentDescriptor,
+          currentStepIndex: this.currentStepIndex,
+          totalSteps: this.steps.length,
+          progressRailCollapsed: this.progressRailCollapsed,
+        }
+      );
+    } catch (err) {
+      console.error('[ProgressionShell] Failed to render progress-rail:', err);
+      return null;
+    }
+  }
+
+  /**
+   * Footer HTML via the shared action-footer.hbs partial — the same template
+   * the structural render includes inline, so a scoped footer repaint can
+   * never drift from what a full render would have produced.
+   * @param {Object} footerData
+   * @param {string|null} footerStatus
+   * @param {Object} footerStatusState
+   * @returns {Promise<string|null>}
+   * @private
+   */
+  async _renderFooterHtml(footerData, footerStatus, footerStatusState) {
+    try {
+      return await foundry.applications.handlebars.renderTemplate(
+        'systems/foundryvtt-swse/templates/apps/progression-framework/action-footer.hbs',
+        {
+          footer: footerData,
+          footerStatus,
+          footerStatusState,
+          fontMode: this._getFooterFontMode(),
+        }
+      );
+    } catch (err) {
+      console.error('[ProgressionShell] Failed to render action-footer:', err);
+      return null;
+    }
+  }
+
+  /**
+   * Notify the current plugin's onDataReady() hook, gated on the
+   * activation/data-revision token so it runs once per step activation or
+   * explicit invalidateStepData() call, never once per paint. Shared by the
+   * structural _onRender() path and the scoped work-surface updater — a
+   * partial repaint from search/filter/sort must not re-trigger hydration.
+   * @param {Object|null} descriptor
+   * @param {Object|null} plugin
+   * @private
+   */
+  async _maybeRunOnDataReady(descriptor, plugin) {
+    if (!descriptor || typeof plugin?.onDataReady !== 'function') return;
+    if (!this._shouldRunDataReady(descriptor.stepId)) return;
+    try {
+      this._dataReadyToken.set(descriptor.stepId, this._stepDataRevision);
+      this._onDataReadyCalls += 1;
+      await Promise.resolve(plugin.onDataReady(this));
+    } catch (err) {
+      this._dataReadyToken.delete(descriptor.stepId);
+      swseLogger.error('ProgressionShell: plugin.onDataReady failed', { err });
+    }
+  }
+
+  /**
+   * Job-scoped cache shared by every region updater within ONE scheduler
+   * execution (_executeScheduledRender). currentDescriptor/currentPlugin
+   * resolve once; getStepData() memoizes plugin.getStepData() so a mixed
+   * job needing it for both 'work-surface' and 'summary' calls the plugin
+   * once, not twice. This cache is scoped to a single job — it is not a
+   * persistent/revision-keyed cache across renders (that belongs to a later
+   * phase).
+   * @returns {Object}
+   * @private
+   */
+  _createRegionRenderJob() {
+    const descriptor = this.steps?.[this.currentStepIndex] ?? null;
+    const plugin = descriptor ? this.stepPlugins.get(descriptor.stepId) : null;
+    const pluginContext = this._buildStepPluginContext();
+    // PHASE 3: lazy, job-scoped canonical-status evaluator. Creating it is
+    // cheap (an empty Map) — no step is actually evaluated until something
+    // in this job calls .get()/.getAll(), and the cache never outlives this
+    // job object.
+    const statusEvaluator = this._createStepStatusEvaluator();
+    let stepDataPromise = null;
+    return {
+      descriptor,
+      plugin,
+      pluginContext,
+      statusEvaluator,
+      getStepData: () => {
+        if (!stepDataPromise) {
+          stepDataPromise = (async () => {
+            if (!plugin?.getStepData) return {};
+            try {
+              return await Promise.resolve(plugin.getStepData(pluginContext));
+            } catch (err) {
+              swseLogger.error('ProgressionShell: plugin.getStepData failed', { err, stepId: descriptor?.stepId });
+              return {};
+            }
+          })();
+        }
+        return stepDataPromise;
+      },
+    };
+  }
+
+  /**
+   * Replace only the plugin-generated work-surface body, leaving the
+   * step-context banner and the nested utility-bar region (both siblings of
+   * [data-prog-region-body="work-surface"], not descendants of it) intact.
+   * @private
+   */
+  async _updateWorkSurfaceRegion(root, job) {
+    const region = root.querySelector('[data-region="work-surface"]');
+    if (!(region instanceof HTMLElement)) return false;
+    const body = region.querySelector(':scope > [data-prog-region-body="work-surface"]');
+    // No wrapper found means this is the intro-mode work-surface variant
+    // (.prog-intro-stage), which has no nested utility-bar/banner structure
+    // and is never targeted by a scoped request in practice (IntroStep always
+    // requests structural). Fail safe rather than guess at a mount point.
+    if (!(body instanceof HTMLElement)) return false;
+
+    let html = null;
+    try {
+      const stepData = await job.getStepData();
+      html = await this._renderWorkSurfaceHtml(job.plugin, job.descriptor, stepData);
+    } catch (err) {
+      swseLogger.warn('[ProgressionShell] scoped work-surface update failed; deferring to full render', err);
+      return false;
+    }
+    if (!html) return false;
+
+    const snapshots = this._captureProgressionScrollSnapshots(body);
+    body.innerHTML = html;
+
+    await this._maybeRunOnDataReady(job.descriptor, job.plugin);
+    if (typeof job.plugin?.afterRender === 'function') {
+      try {
+        await Promise.resolve(job.plugin.afterRender(this, region));
+      } catch (err) {
+        swseLogger.error('ProgressionShell: plugin.afterRender failed', { err });
+      }
+    }
+
+    this._restoreProgressionScrollSnapshots(snapshots, body);
+    this._markFocusedRow(root);
+    return true;
+  }
+
+  /**
+   * Replace only the summary panel's body, leaving the collapse control
+   * (outside .prog-summary-panel__body) untouched.
+   * @private
+   */
+  async _updateSummaryRegion(root, job) {
+    const host = root.querySelector('.prog-summary-panel__body');
+    if (!(host instanceof HTMLElement)) return false;
+
+    let html = null;
+    try {
+      const stepData = await job.getStepData();
+      // Renders the SAME summary-panel-body.hbs partial the structural
+      // template includes, so "nothing selected yet" mounts the canonical
+      // placeholder here too, instead of an empty body a structural render
+      // would never have produced.
+      html = await this._renderSummaryPanelBodyHtml(job.plugin, job.descriptor, stepData, job.pluginContext);
+    } catch (err) {
+      swseLogger.warn('[ProgressionShell] scoped summary update failed; deferring to full render', err);
+      return false;
+    }
+    // A genuine render failure (template engine down) is reported as null
+    // by _renderSummaryPanelBodyHtml — that must fall back to structural,
+    // not silently mount an empty body.
+    if (!html) return false;
+
+    const snapshots = this._captureProgressionScrollSnapshots(host);
+    host.innerHTML = html;
+    this._restoreProgressionScrollSnapshots(snapshots, host);
+    return true;
+  }
+
+  /**
+   * Replace the utility-bar region and rehydrate UtilityBar's own listeners
+   * and restored state (search/filter/sort/focus) — UtilityBar.afterRender()
+   * is self-contained and does not depend on the shell's delegated root
+   * handlers, so it must run again after every swap of this region.
+   * @private
+   */
+  async _updateUtilityRegion(root, job) {
+    const host = root.querySelector('[data-region="utility-bar"]');
+    if (!(host instanceof HTMLElement)) return false;
+
+    let html = null;
+    const utilityBarConfig = this._resolveUtilityBarConfig(job.plugin);
+    try {
+      html = await this._renderUtilityBarHtml(job.descriptor, utilityBarConfig);
+    } catch (err) {
+      swseLogger.warn('[ProgressionShell] scoped utility-bar update failed; deferring to full render', err);
+      return false;
+    }
+    if (!html) return false;
+
+    this.utilityBar?.setConfig?.(utilityBarConfig);
+    host.innerHTML = html;
+    host.dataset.mode = utilityBarConfig?.mode ?? '';
+    this.utilityBar?.afterRender?.(host);
+    return true;
+  }
+
+  /**
+   * Replace the progress-rail region and rehydrate ProgressRail's own step
+   * click handlers / active-step scroll behavior.
+   * @param {HTMLElement} root
+   * @param {Object|null} [job] - PHASE 3: when this region update is part of
+   *   a mixed job (_createRegionRenderJob()), reuse its statusEvaluator so a
+   *   step already evaluated elsewhere in the same job is not evaluated
+   *   again here. A standalone/job-less call (existing test callers) still
+   *   works — _computeStepProgress() falls back to its own evaluator.
+   * @private
+   */
+  async _updateProgressRegion(root, job = null) {
+    const host = root.querySelector('[data-region="progress-rail"]');
+    if (!(host instanceof HTMLElement)) return false;
+
+    let html = null;
+    try {
+      const stepProgress = this._computeStepProgress(job?.statusEvaluator);
+      const currentDescriptor = this.steps[this.currentStepIndex] ?? null;
+      html = await this._renderProgressRailHtml(stepProgress, currentDescriptor);
+    } catch (err) {
+      swseLogger.warn('[ProgressionShell] scoped progress-rail update failed; deferring to full render', err);
+      return false;
+    }
+    if (!html) return false;
+
+    host.innerHTML = html;
+    this.progressRail?.afterRender?.(host);
+    return true;
+  }
+
+  /**
+   * Replace the action-footer region. No component lifecycle to rehydrate —
+   * every control is a delegated [data-action] handled from the shell root.
+   * @private
+   */
+  async _updateFooterRegion(root, job) {
+    const host = root.querySelector('[data-region="action-footer"]');
+    if (!(host instanceof HTMLElement)) return false;
+
+    let html = null;
+    try {
+      const isLastStep = this.currentStepIndex === this.steps.length - 1;
+      const footerData = this._buildFooterData(job.plugin, isLastStep);
+      const footerStatus = this._buildFooterStatus(footerData);
+      const footerStatusState = this._buildFooterStatusState(footerData);
+      html = await this._renderFooterHtml(footerData, footerStatus, footerStatusState);
+    } catch (err) {
+      swseLogger.warn('[ProgressionShell] scoped footer update failed; deferring to full render', err);
+      return false;
+    }
+    if (!html) return false;
+
+    host.innerHTML = html;
+    return true;
+  }
+
   /**
    * Register persistence hook to auto-save session after each commit.
    * Phase 1: Session persistence and recovery.
+   *
+   * PHASE 4: write-behind. ProgressionSession fires this hook synchronously
+   * and does not await it (_triggerPersistenceHooks()), so this must not
+   * itself await an actor flag write — queueSessionSave() compiles a
+   * snapshot immediately and schedules the actual write on a short debounce,
+   * collapsing a rapid commit burst into one write instead of one per
+   * commit. Step navigation (_persistSessionSnapshot()) and durability
+   * boundaries (finalization, close) still go through the durable,
+   * immediately-drained saveSession()/flushSession() — both share the same
+   * per-actor+mode serialization queue in SessionStorage, so a queued
+   * autosave and an explicit durable save can never race each other.
    * @private
    */
   _registerPersistenceHook() {
-    this.progressionSession.onPersist(async (session, stepId, selectionKey) => {
+    this.progressionSession.onPersist((session, stepId, selectionKey) => {
       if (this.actor && this.persistenceEnabled) {
-        await SessionStorage.saveSession(this.actor, session, this.mode);
+        SessionStorage.queueSessionSave(this.actor, session, this.mode);
       }
     });
   }
@@ -1037,13 +1589,21 @@ export class ProgressionShell extends SWSEApplicationV2 {
     }, 0);
   }
 
-  _normalizeCompletedStepIds() {
+  /**
+   * @param {{get(stepId: string, stepIndex: number): Object}} [evaluator] -
+   *   PHASE 3: a caller that has already created a render/job-scoped
+   *   evaluator (e.g. _computeStepProgress()) passes it through so a step
+   *   already evaluated for THIS pass is not evaluated a second time just
+   *   for normalization. Defaults to a fresh (unshared) evaluator so this
+   *   remains safe to call on its own.
+   */
+  _normalizeCompletedStepIds(evaluator = this._createStepStatusEvaluator()) {
     if (!Array.isArray(this.progressionSession?.completedStepIds)) return false;
     let changed = false;
 
     this.progressionSession.completedStepIds = this.progressionSession.completedStepIds.filter(stepId => {
       const stepIndex = this.steps.findIndex(descriptor => descriptor.stepId === stepId);
-      const status = stepIndex >= 0 ? this._evaluateStepStatus(stepId, stepIndex) : null;
+      const status = stepIndex >= 0 ? evaluator.get(stepId, stepIndex) : null;
       const keep = status?.canonical === 'complete';
       if (!keep) changed = true;
       return keep;
@@ -2015,33 +2575,16 @@ export class ProgressionShell extends SWSEApplicationV2 {
     }
 
     // Step progress for progress rail — derived from canonical status evaluator.
-    // First prune stale completion bookkeeping so restored sessions cannot make
-    // unvisited or still-incomplete steps appear finished.
-    this._normalizeCompletedStepIds();
-
-    const stepProgress = this.steps.map((descriptor, idx) => {
-      const status = this._evaluateStepStatus(descriptor.stepId, idx);
-      return {
-        descriptor,
-        index: idx,
-        // Canonical status (error > caution > complete > in_progress > neutral)
-        status: status.canonical,
-        isComplete: status.canonical === 'complete',
-        isError: status.canonical === 'error',
-        isCaution: status.canonical === 'caution',
-        isInProgress: status.canonical === 'in_progress',
-        isNeutral: status.canonical === 'neutral',
-        // Navigation
-        isCurrent: idx === this.currentStepIndex,
-        isConditional: descriptor.isConditional,
-        canNavigate: idx < this.currentStepIndex, // Can go back to completed steps
-        // Metadata
-        isVisited: status.isVisited,
-        errors: status.errors || [],
-        warnings: status.warnings || [],
-        remainingChoices: status.remainingChoices || [],
-      };
-    });
+    // Shared with the scoped progress-rail updater via _computeStepProgress()
+    // so there is one implementation of "what does the rail look like now."
+    //
+    // PHASE 3: one evaluator for this whole structural context. Any other
+    // status-dependent context data built below reuses it (via stepProgress
+    // or statusEvaluator directly) rather than calling _evaluateStepStatus()
+    // independently, so a structural render evaluates each step's status at
+    // most once.
+    const statusEvaluator = this._createStepStatusEvaluator();
+    const stepProgress = this._computeStepProgress(statusEvaluator);
 
     // Transform stepProgress for stepper component (label, active, done)
     const stepsTrans = stepProgress.map(step => ({
@@ -2065,46 +2608,18 @@ export class ProgressionShell extends SWSEApplicationV2 {
     // Rule 8.4: Detect invalid step data
     diagnostics.detectInvalidStepData(currentDescriptor?.stepId ?? 'unknown', stepData);
 
-    // Render work surface
-    let workSurfaceSpec = null;
-    let workSurfaceHtml = null;
-    try {
-      workSurfaceSpec = currentPlugin?.renderWorkSurface?.(stepData) ?? null;
-      workSurfaceHtml = workSurfaceSpec?.template
-        ? await foundry.applications.handlebars.renderTemplate(workSurfaceSpec.template, workSurfaceSpec.data)
-        : null;
-    } catch (error) {
-      console.error('[ProgressionShell] Work surface render failed, falling back to error surface:', error);
-      workSurfaceHtml = await foundry.applications.handlebars.renderTemplate(
-        'systems/foundryvtt-swse/templates/apps/progression-framework/steps/step-error-surface.hbs',
-        {
-          stepLabel: currentDescriptor?.label || currentDescriptor?.stepId || 'Current Step',
-          errorMessage: error?.message || 'This step could not be rendered.',
-          canContinue: currentPlugin?.getBlockingIssues?.()?.length === 0,
-        }
-      );
-    }
-
-    // Rule 8.3: Detect blank template
-    if (!workSurfaceHtml) {
-      diagnostics.detectBlankTemplate(currentDescriptor?.stepId ?? 'unknown', workSurfaceHtml);
-      workSurfaceHtml = await foundry.applications.handlebars.renderTemplate(
-        'systems/foundryvtt-swse/templates/apps/progression-framework/steps/step-error-surface.hbs',
-        {
-          stepLabel: currentDescriptor?.label || currentDescriptor?.stepId || 'Current Step',
-          errorMessage: 'This step returned no content. You can go back and try again.',
-          canContinue: currentPlugin?.getBlockingIssues?.()?.length === 0,
-        }
-      );
-    }
-
-    diagnostics.detectSpeciesRowsMissingIds(currentDescriptor?.stepId, workSurfaceHtml);
+    // Render work surface — shared with the scoped work-surface updater via
+    // _renderWorkSurfaceHtml() (same error-surface/blank-template fallback,
+    // one implementation). Rule 8.3/8.5 diagnostics run inside it here only
+    // because this is the one caller that has a diagnostics collector.
+    const workSurfaceHtml = await this._renderWorkSurfaceHtml(currentPlugin, currentDescriptor, stepData, diagnostics);
 
     // Footer data
     const isLastStep = this.currentStepIndex === this.steps.length - 1;
     const footerData = this._buildFooterData(currentPlugin, isLastStep);
 
-    // Utility bar config
+    // Utility bar config — shared with the scoped utility updater via
+    // _renderUtilityBarHtml(), which also computes this same config.
     const utilityBarConfig = currentPlugin?.getUtilityBarConfig() ?? { mode: 'minimal' };
 
     // Details panel
@@ -2157,44 +2672,10 @@ export class ProgressionShell extends SWSEApplicationV2 {
     // Species-specific: Detect details panel hydration failure
     diagnostics.detectSpeciesDetailsPanelFailure(currentDescriptor?.stepId, this.focusedItem, detailsPanelHtml);
 
-    // Summary panel (left column). Steps may override the selected rail when their layout
-    // intentionally repurposes the left column, e.g. final chargen summary metadata.
-    let summaryPanelHtml = null;
-    let summaryPanelHandledByStep = false;
-    try {
-      const summaryPanelSpec = await currentPlugin?.renderSummaryPanel?.({
-        shell: this,
-        stepData,
-        context,
-        currentStepId: currentDescriptor?.stepId ?? null,
-      });
-      if (summaryPanelSpec?.template) {
-        summaryPanelHtml = await foundry.applications.handlebars.renderTemplate(
-          summaryPanelSpec.template,
-          summaryPanelSpec.data || {}
-        );
-        summaryPanelHandledByStep = true;
-      }
-    } catch (error) {
-      console.error('[ProgressionShell] Step summary rail render failed; falling back to selected rail:', error);
-      summaryPanelHtml = null;
-      summaryPanelHandledByStep = false;
-    }
-
-    if (!summaryPanelHandledByStep) {
-      try {
-        const selectedRailContext = await SelectedRailContext.buildSnapshot(this, currentDescriptor?.stepId ?? null);
-        summaryPanelHtml = selectedRailContext && selectedRailContext.snapshotSections.length > 0
-          ? await foundry.applications.handlebars.renderTemplate(
-              'systems/foundryvtt-swse/templates/apps/progression-framework/summary-panel/selected-rail.hbs',
-              selectedRailContext
-            )
-          : null;
-      } catch (error) {
-        console.error('[ProgressionShell] Summary rail render failed, falling back to blank rail:', error);
-        summaryPanelHtml = null;
-      }
-    }
+    // Summary panel (left column) — shared with the scoped summary updater
+    // via _renderSummaryPanelHtml() (step override, else SelectedRailContext
+    // fallback; one implementation of both paths).
+    const summaryPanelHtml = await this._renderSummaryPanelHtml(currentPlugin, currentDescriptor, stepData, context);
 
     // Optional shell region trace. Keep this off by default; dumping HTML every
     // render makes Chrome's console unreadable during chargen rerenders.
@@ -2259,45 +2740,16 @@ export class ProgressionShell extends SWSEApplicationV2 {
       partsHtml.mentorRail = null;
     }
 
-    // Render progress-rail template with step progress data
-    if (this.progressRail) {
-      try {
-        partsHtml.progressRail = await foundry.applications.handlebars.renderTemplate(
-          'systems/foundryvtt-swse/templates/apps/progression-framework/progress-rail.hbs',
-          {
-            stepProgress,
-            currentDescriptor,
-            currentStepIndex: this.currentStepIndex,
-            totalSteps: this.steps.length,
-            progressRailCollapsed: this.progressRailCollapsed,
-          }
-        );
-      } catch (err) {
-        console.error('[ProgressionShell] Failed to render progress-rail:', err);
-        partsHtml.progressRail = null;
-      }
-    } else {
-      partsHtml.progressRail = null;
-    }
+    // Render progress-rail / utility-bar templates — shared with the scoped
+    // progress and utility updaters via _renderProgressRailHtml() /
+    // _renderUtilityBarHtml() (one implementation of each template's data).
+    partsHtml.progressRail = this.progressRail
+      ? await this._renderProgressRailHtml(stepProgress, currentDescriptor)
+      : null;
 
-    // Render utility-bar template with config and state
-    if (this.utilityBar) {
-      try {
-        partsHtml.utilityBar = await foundry.applications.handlebars.renderTemplate(
-          'systems/foundryvtt-swse/templates/apps/progression-framework/utility-bar.hbs',
-          {
-            currentDescriptor,
-            utilityBarConfig,
-            utilityBarCollapsed: this.utilityBarCollapsed,
-          }
-        );
-      } catch (err) {
-        console.error('[ProgressionShell] Failed to render utility-bar:', err);
-        partsHtml.utilityBar = null;
-      }
-    } else {
-      partsHtml.utilityBar = null;
-    }
+    partsHtml.utilityBar = this.utilityBar
+      ? await this._renderUtilityBarHtml(currentDescriptor, utilityBarConfig)
+      : null;
 
     // Foundry V13 can provide Document instances on the base context (including
     // context.actor). mergeObject mutates nested targets, which can recurse into
@@ -2354,40 +2806,18 @@ export class ProgressionShell extends SWSEApplicationV2 {
       footerStatus: this._buildFooterStatus(footerData),
       footerStatusState: this._buildFooterStatusState(footerData),
 
-      // Step chips for footer: visible (non-hidden) steps with canonical status
-      visibleSteps: this.steps
-        .filter(d => !d.hidden)
-        .map((descriptor, chipIdx) => {
-          const realIdx    = this.steps.indexOf(descriptor);
-          const isCurrent  = realIdx === this.currentStepIndex;
-          const status     = this._evaluateStepStatus(descriptor.stepId, realIdx);
-          const isComplete = status.canonical === 'complete';
-          const isError    = status.canonical === 'error';
-          const isCaution  = status.canonical === 'caution';
-          const isInProgress = status.canonical === 'in_progress';
-          const isNeutral  = status.canonical === 'neutral';
-          const isLocked   = realIdx > this.currentStepIndex && !isComplete;
-          const plugin     = this.stepPlugins.get(descriptor.stepId);
-          const hasWarning = !isCurrent && (plugin?.getWarnings?.()?.length ?? 0) > 0;
-          return {
-            id:          descriptor.stepId,
-            index:       chipIdx + 1,       // 1-based display number
-            label:       descriptor.label,
-            isCurrent,
-            isComplete,
-            isError,
-            isCaution,
-            isInProgress,
-            isNeutral,
-            isLocked,
-            isWarning:   hasWarning || isCaution,
-            canNavigate: isCurrent || realIdx < this.currentStepIndex,
-            status:      status.canonical,
-          };
-        }),
+      // PHASE 3: `visibleSteps` (a second per-step canonical-status pass —
+      // step chips for footer) was removed here. It had zero consumers:
+      // no template, script, or test in this branch reads context.visibleSteps
+      // (confirmed by repo-wide search before removal) — the footer no
+      // longer renders step chips and the progress rail uses stepProgress
+      // instead. Keeping it would mean structural rendering ran
+      // _evaluateStepStatus() a second time per visible step, plus a
+      // redundant plugin.getWarnings() call, purely to populate a context
+      // field nothing reads.
 
       // Font mode: 'standard' | 'aurabesh' — controls label font via data-font-mode attr
-      fontMode: 'standard',
+      fontMode: this._getFooterFontMode(),
 
       // Intro mode: when true, the shell renders only the work-surface (boot/splash takeover).
       // All normal furniture (mentor-rail, progress-rail, footer, panels) is removed from the DOM.
@@ -2659,19 +3089,10 @@ export class ProgressionShell extends SWSEApplicationV2 {
         // work. Running it on every repaint re-ran hydration and re-wired
         // utility listeners each time, and those listeners then requested more
         // renders. Gate it on a token that only advances when the step is
-        // (re-)activated or its data is explicitly invalidated.
-        if (typeof plugin.onDataReady === 'function' && this._shouldRunDataReady(descriptor.stepId)) {
-          try {
-            this._dataReadyToken.set(descriptor.stepId, this._stepDataRevision);
-            this._onDataReadyCalls += 1;
-            await Promise.resolve(plugin.onDataReady(this));
-          } catch (err) {
-            // Allow a retry on the next paint rather than stranding the step
-            // with half-hydrated data.
-            this._dataReadyToken.delete(descriptor.stepId);
-            swseLogger.error('ProgressionShell: plugin.onDataReady failed', { err });
-          }
-        }
+        // (re-)activated or its data is explicitly invalidated. Shared with
+        // the scoped work-surface updater via _maybeRunOnDataReady() so a
+        // partial repaint honors the exact same gate.
+        await this._maybeRunOnDataReady(descriptor, plugin);
 
         // Call plugin's afterRender hook with work-surface element. Mature steps
         // and follower compatibility steps do not all return Promises, so normalize.
@@ -3162,6 +3583,42 @@ export class ProgressionShell extends SWSEApplicationV2 {
   }
 
   /**
+   * PHASE 3: Render/job-scoped memoization for _evaluateStepStatus().
+   *
+   * The canonical evaluator itself calls several plugin contracts
+   * (validate/getBlockingIssues/getWarnings/getRemainingPicks/getSelection)
+   * per visited step — not free. Within a single structural render or a
+   * single scheduler job, the same step can otherwise be asked for more
+   * than once (completed-step normalization followed by the stepProgress
+   * build; a structural context asking for stepProgress and then a second
+   * independent pass for something else). This returns a small evaluator
+   * whose cache lives ONLY in this closure — nothing is attached to the
+   * shell instance, so it cannot outlive the render/job that created it and
+   * there is no cross-render invalidation problem to solve.
+   *
+   * Deliberately NOT here: a persistent status-cache field on the shell
+   * instance, any revision-keyed invalidation, or reuse across scheduler
+   * jobs. Call this again to get a fresh, empty evaluator for the next
+   * render/job.
+   * @returns {{get(stepId: string, stepIndex: number): Object, getAll(): Array<Object>}}
+   * @private
+   */
+  _createStepStatusEvaluator() {
+    const cache = new Map();
+    const get = (stepId, stepIndex) => {
+      const key = `${stepIndex}:${stepId}`;
+      if (!cache.has(key)) {
+        cache.set(key, this._evaluateStepStatus(stepId, stepIndex));
+      }
+      return cache.get(key);
+    };
+    return {
+      get,
+      getAll: () => this.steps.map((descriptor, index) => get(descriptor.stepId, index)),
+    };
+  }
+
+  /**
    * Evaluate canonical status for a step.
    * Status is determined by: visited, completion, validation, staleness.
    *
@@ -3171,6 +3628,15 @@ export class ProgressionShell extends SWSEApplicationV2 {
    * - complete: visited, no remaining choices, no issues
    * - in_progress: visited, but still has required choices
    * - neutral: visible but not yet visited
+   *
+   * Callers that need this step's status MORE THAN ONCE within one
+   * render/job (structural _prepareContext, a scoped 'progress' update, ...)
+   * should go through _createStepStatusEvaluator() instead of calling this
+   * directly, so the (validate/getBlockingIssues/getWarnings/
+   * getRemainingPicks/getSelection) contracts run at most once per step.
+   * Action-boundary callers that need a guaranteed-live result at the exact
+   * instant of a mutation (_markStepCompleted) call this directly on
+   * purpose — that is correctness, not a missed optimization.
    *
    * @param {string} stepId - Step ID to evaluate
    * @param {number} stepIndex - Current index of step in this.steps
@@ -3588,7 +4054,12 @@ export class ProgressionShell extends SWSEApplicationV2 {
         selectionsCount: this.committedSelections.size,
       });
 
-      // PHASE 4 STEP 4: Check for blocking issues in current step (usually summary)
+      // PHASE 4 STEP 4 / PHASE 4.1: sync the current step's DOM into the
+      // canonical session and validate BEFORE anything durability- or
+      // finalization-related runs. syncFromDom() can call
+      // progressionSession.commitSelection(...) (e.g. SummaryStep committing
+      // an edited name), which is the actual final canonical draft — the
+      // flush below must persist THIS, not whatever was queued before it.
       const currentDescriptor = this.steps[this.currentStepIndex];
       if (currentDescriptor) {
         const currentPlugin = this.stepPlugins.get(currentDescriptor.stepId);
@@ -3608,6 +4079,33 @@ export class ProgressionShell extends SWSEApplicationV2 {
             this.isProcessing = false;
             return;
           }
+        }
+      }
+
+      // PHASE 4.1: durability boundary — flush the just-synced canonical
+      // state AFTER sync/validate, BEFORE the irreversible finalizer
+      // mutation. Ordinary commit autosaves are write-behind
+      // (queueSessionSave(), a short debounce), and syncFromDom() above may
+      // itself have just queued one via commitSelection() — flushSession()
+      // drains whatever is now queued, so finalization never begins against
+      // a stale pre-sync draft. If the drain reports the write did not
+      // durably land, finalization MUST NOT proceed: continuing into
+      // ActorEngine mutation after learning the recovery snapshot failed to
+      // persist would leave no durable record of the player's latest state
+      // if that mutation itself then failed or the client crashed.
+      if (this.actor && this.persistenceEnabled) {
+        let flushed = true;
+        try {
+          flushed = await SessionStorage.flushSession(this.actor, this.mode);
+        } catch (err) {
+          swseLogger.warn('[ProgressionShell] Failed to flush session before finalization:', err);
+          flushed = false;
+        }
+        if (!flushed) {
+          swseLogger.error('[ProgressionShell] Aborting finalization: latest progression state could not be durably saved');
+          ui.notifications.error('Could not save your latest progression state. Please try again before finishing.');
+          this.isProcessing = false;
+          return;
         }
       }
 
@@ -4380,14 +4878,25 @@ export class ProgressionShell extends SWSEApplicationV2 {
 
     // After commitment, check if downstream steps have become non-applicable
     // and recompute the active step list if needed
-    await this._recomputeActiveStepsIfNeeded();
+    const stepsChanged = await this._recomputeActiveStepsIfNeeded();
 
     // When this runs inside a shell-orchestrated commit, the shell already
     // schedules exactly one repaint for the interaction. Requesting a second one
     // here left two render owners whose ordering depended on both landing in the
     // same animation frame — true most of the time, which is worse than never.
     if (!this.isShellOwnedInteraction()) {
-      this.requestRender({ preserveScroll: true, reason: `commit-selection:${stepId}` });
+      // A commit ordinarily dirties the item's own step content, the build
+      // snapshot, the footer counters, and step-completion status — never
+      // 'details' (nothing here changes what is focused). But if the active
+      // step LIST itself was just rebuilt (a step unlocked/became
+      // inapplicable), that's a structural change to the shell's own layout,
+      // not a same-step content update, and must stay a full repaint.
+      this.requestRender({
+        preserveScroll: true,
+        reason: `commit-selection:${stepId}`,
+        regions: stepsChanged ? null : ['work-surface', 'summary', 'footer', 'progress'],
+        structural: stepsChanged,
+      });
     }
     void this._maybeScheduleAutoAdvance({ source: `commit-selection:${stepId}` });
   }
@@ -4643,10 +5152,13 @@ export class ProgressionShell extends SWSEApplicationV2 {
           currentStepId: this.getCurrentStepId(),
           preservedStepId: currentStepIdBeforeRebuild,
         });
+        return true;
       }
+      return false;
     } catch (err) {
       swseLogger.warn(`[ProgressionShell] Error recomputing active steps:`, err);
       // Continue without recomputation on error (fail-safe)
+      return false;
     }
   }
 
@@ -4824,6 +5336,20 @@ export class ProgressionShell extends SWSEApplicationV2 {
   // ---------------------------------------------------------------------------
 
   async close(options = {}) {
+    // PHASE 4: durable close. Flush any pending write-behind autosave before
+    // tearing down, so an unfinished session's latest draft is never lost
+    // to a debounce window that never got to fire. A no-op when nothing is
+    // queued -- e.g. finalization already flushed and drained the queue
+    // before this runs, so the draft it intentionally superseded is not
+    // resurrected.
+    if (this.actor && this.persistenceEnabled) {
+      try {
+        await SessionStorage.flushSession(this.actor, this.mode);
+      } catch (err) {
+        swseLogger.warn('[ProgressionShell] Failed to flush session on close:', err);
+      }
+    }
+
     // Drop any frame-pending repaint so a closing shell cannot paint again.
     this.renderScheduler?.dispose?.();
     this.mentorRecommendations?.dispose?.();

@@ -307,7 +307,7 @@ export class FollowerConfirmStep extends FollowerStepBase {
       this.saveFollowerChoice(shell, 'followerName', value);
       this._followerChoices = this.getFollowerChoices(shell);
       if (rerender) {
-        shell?.requestRender?.({ preserveScroll: true, reason: 'follower-name-change' }) ?? shell?.render?.();
+        shell?.requestRender?.({ preserveScroll: true, reason: 'follower-name-change' });
       }
     };
 

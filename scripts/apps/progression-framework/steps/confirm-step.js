@@ -45,6 +45,7 @@ export class ConfirmStep extends ProgressionStepPlugin {
     };
     this._storeVisited = false;
     this._readinessCache = null;
+    this._headerTranslationAbort = null;
   }
 
   get descriptor() { return this._descriptor; }
@@ -78,21 +79,50 @@ export class ConfirmStep extends ProgressionStepPlugin {
   }
 
   async onStepExit(shell) {
-    // No cleanup needed
+    // Cancel any in-flight header translation sidecar so it cannot keep
+    // writing into this step's DOM after the player has moved on.
+    this._headerTranslationAbort?.abort();
   }
 
   /**
    * Apply Aurebesh translation effects to datapad headers (chargen only).
    * Called after rendering to wire up header animations.
+   *
+   * MENTOR SIDECAR: the translation pass itself is fire-and-forget from
+   * afterRender()'s perspective. afterRender() is awaited by the render
+   * pipeline (both the structural _onRender() path and the scoped
+   * work-surface updater), which holds the render scheduler's in-flight
+   * lock until it resolves. Several headers animating in sequence can take
+   * a few seconds; awaiting that here would stall every subsequent render
+   * request (Next, Back, a store visit) behind a purely cosmetic reveal.
+   * The animation still plays to completion in the background — it just
+   * doesn't hold the render pipeline hostage while it does.
    */
   async afterRender(shell, workSurfaceEl) {
     if (!workSurfaceEl || this.descriptor?.mode !== 'chargen') return;
 
+    this._headerTranslationAbort?.abort();
+    const controller = new AbortController();
+    this._headerTranslationAbort = controller;
+
+    void this._translateDatapadHeaders(workSurfaceEl, controller.signal).catch(e => {
+      swseLogger.warn('[ConfirmStep] Header translation sidecar failed', e);
+    });
+  }
+
+  /**
+   * @param {HTMLElement} workSurfaceEl
+   * @param {AbortSignal} signal
+   * @private
+   */
+  async _translateDatapadHeaders(workSurfaceEl, signal) {
     try {
       // Apply translation effect to headers marked with data-translate-header
       const headers = workSurfaceEl.querySelectorAll('[data-translate-header]');
 
       for (const header of headers) {
+        if (signal.aborted) return;
+
         const text = header.textContent?.trim();
         if (!text || header.classList.contains('prog-confirm-datapad__translated')) continue;
 
@@ -104,11 +134,15 @@ export class ConfirmStep extends ProgressionStepPlugin {
         header.textContent = '';
 
         // Apply Aurebesh-first translation animation
+        // mentor-sidecar-await-ok: this loop runs inside the fire-and-forgotten
+        // sidecar kicked off by afterRender() (see above) — it is not on any
+        // control-flow path the shell or the render scheduler awaits.
         await AurebeshTranslator.render({
           text: originalText,
           container: header,
           preset: 'mentor',
           enableSkip: true,
+          signal,
           onComplete: () => {
             // Animation complete - text remains readable
           },

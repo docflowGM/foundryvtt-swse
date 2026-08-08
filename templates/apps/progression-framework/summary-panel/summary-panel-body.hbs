@@ -1,0 +1,19 @@
+{{!--
+  summary-panel-body.hbs
+  Content of .prog-summary-panel__body — rendered inline by
+  progression-shell.hbs for a full structural render, and mounted directly
+  into .prog-summary-panel__body by ProgressionShell's scoped summary
+  updater for a partial repaint. Both paths consume this one template so a
+  scoped update can never diverge from what a structural render would have
+  shown, including the "nothing selected yet" placeholder — that placeholder
+  lives INSIDE this body, not outside it.
+--}}
+{{#if summaryPanelHtml}}
+  {{{summaryPanelHtml}}}
+{{else}}
+  <div class="prog-summary-placeholder swse-card-schema swse-card-schema--identity swse-card-schema--placeholder">
+    {{#if currentDescriptor}}
+      <i class="fas {{currentDescriptor.icon}} prog-summary-placeholder__icon"></i>
+    {{/if}}
+  </div>
+{{/if}}

@@ -319,7 +319,7 @@ export class ProgressionRecoveryManager {
           // Clear template and start over
           this.shell.progressionSession.templateId = null;
           this.shell.progressionSession.templateName = null;
-          this.shell.render();
+          this.shell.requestRender?.({ preserveScroll: false, reason: 'recovery-exit-template', structural: true });
         }
 
         this._recoveryModalElement = null;

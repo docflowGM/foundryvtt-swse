@@ -1,26 +1,30 @@
 # Core Rulebook Feat Implementation Accuracy Report
 
+Generated: 2026-08-07T01:53:11.672Z
+Git commit: b093d893c427f6a1c3a889653c86dbacf81cbec3
+
 Scope: Saga Edition Core Rulebook feats only. This audit separates implementation presence from implementation correctness.
 
 ## Totals
 
-- Feats audited: 80
-- Source-review queue: 8
+- Feats audited: 74
+- Excluded as invalid (see data/feat-validity-registry.json): 6
+- Source-review queue: 7
 - Warnings: 0
 - Errors: 0
 
 ## Accuracy counts
 
-- implemented_correct: 30
+- implemented_correct: 26
 - implemented_partial: 35
 - metadata_correct: 3
-- not_implemented: 4
-- source_review_required: 8
+- not_implemented: 3
+- source_review_required: 7
 
 ## Implementation modes
 
-- attack_option: 17
-- conditional_roll_modifier: 11
+- attack_option: 13
+- conditional_roll_modifier: 10
 - force_point_rule: 2
 - force_power_selection: 2
 - grapple_rider: 4
@@ -30,7 +34,7 @@ Scope: Saga Edition Core Rulebook feats only. This audit separates implementatio
 - procedure_metadata: 2
 - reaction_prompt: 6
 - recovery_rule: 1
-- resource_rule: 3
+- resource_rule: 2
 - scoped_choice_static: 14
 - skill_action_option: 3
 - skill_reroll_hook: 2
@@ -79,6 +83,17 @@ Scope: Saga Edition Core Rulebook feats only. This audit separates implementatio
 - Weapon Proficiency (Rifles)
 - Weapon Proficiency (Simple Weapons)
 
+## Excluded as invalid
+
+These names were audited in an earlier pass but are not legal SWSE feats (or, for Delay Damage, are a class feature) per data/feat-validity-registry.json. They are excluded from every count and queue above.
+
+- Heroic Surge (invalid_not_swse_feat)
+- Hew (invalid_not_swse_feat)
+- Improved Knock Prone (invalid_not_swse_feat)
+- Improved Stun (invalid_not_swse_feat)
+- Knock Prone (invalid_not_swse_feat)
+- Spring Attack (invalid_not_swse_feat)
+
 ## Source-review queue
 
 ### Coordinated Attack
@@ -108,16 +123,6 @@ Description: As a standard action, you may make a Persuasion check to intimidate
 Proposed bucket: Social & Intrigue / Persuasion & Influence
 
 Proposed implementation mode: skill_action_option
-
-Reason: Contextual action/reaction mechanics require book-context confirmation and in-world workflow testing before marking complete.
-
-### Hew
-
-Description: When you use Power Attack, you ignore an amount of damage reduction equal to your base attack bonus.
-
-Proposed bucket: Combat / Damage & Threshold
-
-Proposed implementation mode: conditional_roll_modifier
 
 Reason: Contextual action/reaction mechanics require book-context confirmation and in-world workflow testing before marking complete.
 

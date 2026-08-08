@@ -23,6 +23,7 @@ import { ProgressionDebugCapture } from '../debug/progression-debug-capture.js';
 // PHASE 2: Pending species context builder
 import { buildPendingSpeciesContext } from '/systems/foundryvtt-swse/scripts/engine/progression/helpers/build-pending-species-context.js';
 import { humanizeSpeciesTag } from '/systems/foundryvtt-swse/scripts/engine/species/species-tag-profile-utils.js';
+import { compileProgressionSearchQuery, buildProgressionSearchText } from '../utils/progression-search.js';
 
 // Maps stepId → mentor guidance choiceType
 const STEP_CHOICE_TYPE = {
@@ -199,18 +200,18 @@ export class SpeciesStep extends ProgressionStepPlugin {
     const onSearch = e => {
       this._searchQuery = e.detail.query;
       this._applyFilters();
-      shell.requestRender({ preserveScroll: true, reason: 'species-step:onSearch' });
+      shell.requestRender({ preserveScroll: true, reason: 'species-step:onSearch', regions: ['work-surface', 'utility'] });
     };
     const onFilter = e => {
       const { filterId, value } = e.detail;
       this._filters[filterId] = value;
       this._applyFilters();
-      shell.requestRender({ preserveScroll: true, reason: 'species-step:onFilter' });
+      shell.requestRender({ preserveScroll: true, reason: 'species-step:onFilter', regions: ['work-surface', 'utility'] });
     };
     const onSort = e => {
       this._sortBy = e.detail.sortId;
       this._applyFilters();
-      shell.requestRender({ preserveScroll: true, reason: 'species-step:onSort' });
+      shell.requestRender({ preserveScroll: true, reason: 'species-step:onSort', regions: ['work-surface', 'utility'] });
     };
 
     root.addEventListener('prog:utility:search', onSearch, { signal });
@@ -252,7 +253,7 @@ export class SpeciesStep extends ProgressionStepPlugin {
           mods: choice.mods,
         });
       }
-      shell?.render?.();
+      shell?.requestRender?.({ preserveScroll: true, reason: 'species-select-ability-choice', regions: ['work-surface', 'utility'] });
       return true;
     }
 
@@ -266,7 +267,7 @@ export class SpeciesStep extends ProgressionStepPlugin {
       } else {
         this._selectedVariantBySpeciesId.set(speciesId, variantId);
       }
-      shell?.render?.();
+      shell?.requestRender?.({ preserveScroll: true, reason: 'species-select-variant', regions: ['work-surface', 'utility'] });
       return true;
     }
 
@@ -281,7 +282,7 @@ export class SpeciesStep extends ProgressionStepPlugin {
       if (['medium', 'small', 'large'].includes(this._activeSizeCategory)) {
         this._expandedSizeCategories.add(this._activeSizeCategory);
       }
-      shell?.render?.();
+      shell?.requestRender?.({ preserveScroll: true, reason: 'species-select-category', regions: ['work-surface', 'utility'] });
       return true;
     }
 
@@ -296,14 +297,14 @@ export class SpeciesStep extends ProgressionStepPlugin {
           this._expandedSizeCategories.add(size);
         }
       }
-      shell?.render?.();
+      shell?.requestRender?.({ preserveScroll: true, reason: 'species-toggle-size-accordion', regions: ['work-surface', 'utility'] });
       return true;
     }
 
     if (action === 'toggle-species-category-sidebar') {
       event?.preventDefault?.();
       this._categorySidebarCollapsed = !this._categorySidebarCollapsed;
-      shell?.render?.();
+      shell?.requestRender?.({ preserveScroll: true, reason: 'species-toggle-category-sidebar', regions: ['work-surface', 'utility'] });
       return true;
     }
 
@@ -324,7 +325,7 @@ export class SpeciesStep extends ProgressionStepPlugin {
       };
       this._applyFilters();
       if (shell?.utilityBar?._searchQuery !== undefined) shell.utilityBar._searchQuery = '';
-      shell?.render?.();
+      shell?.requestRender?.({ preserveScroll: true, reason: 'species-reset-browser', regions: ['work-surface', 'utility'] });
       return true;
     }
     return false;
@@ -1080,18 +1081,22 @@ export class SpeciesStep extends ProgressionStepPlugin {
     const hasSearchQuery = !!String(this._searchQuery || '').trim();
 
     if (hasSearchQuery) {
-      const q = String(this._searchQuery || '').toLowerCase().trim();
+      // Canonical rich search: name + description (species.description, picked
+      // up automatically by buildProgressionSearchText) + the player-facing
+      // supplemental fields this step already exposed (source/size/ability
+      // line/tags/languages/ability names). Supports AND/OR/NOT/wildcards/
+      // quoted phrases; see utils/progression-search.js.
+      const compiled = compileProgressionSearchQuery(this._searchQuery);
       filtered = filtered.filter((species) => {
-        const haystack = [
-          species.name,
+        const text = buildProgressionSearchText(species, [
           species.source,
           species.size,
           this._formatAbilityLine(species.abilityScores),
           ...(species.tags || []),
           ...(species.languages || []),
           ...(species.abilities || []).map(ability => typeof ability === 'string' ? ability : ability?.name),
-        ].filter(Boolean).join(' ').toLowerCase();
-        return haystack.includes(q);
+        ]);
+        return compiled.test(text);
       });
     }
 

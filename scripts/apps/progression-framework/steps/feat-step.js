@@ -42,6 +42,7 @@ import { buildLevelUpEntitlementManifest, getManifestStartingFeatNameSet, normal
 import { isDroidProgressionActor } from '/systems/foundryvtt-swse/scripts/engine/progression/droids/droid-progression-guards.js';
 import { SWSEDialogV2 } from '/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js';
 import { ForceRules } from '/systems/foundryvtt-swse/scripts/engine/force/ForceRules.js';
+import { compileProgressionSearchQuery, buildProgressionSearchText } from '../utils/progression-search.js';
 import { PrereqAdapter } from '/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/prereq-adapter.js';
 
 function resolveClassLookupKeysForFeatStep(shell) {
@@ -428,19 +429,19 @@ export class FeatStep extends ProgressionStepPlugin {
       if (e.detail?.handledByStepHook) return;
       this._searchQuery = e.detail.query || '';
       this._syncSidebarForSearch();
-      shell?.requestRender?.({ preserveScroll: true, reason: 'feat-search' }) ?? shell?.render?.();
+      shell?.requestRender?.({ preserveScroll: true, reason: 'feat-search', regions: ['work-surface', 'utility'] });
     };
     const onFilter = e => {
       if (e.detail?.handledByStepHook) return;
       const { filterId, value } = e.detail || {};
       this._filters = this._filters || {};
       this._filters[filterId] = value;
-      shell?.requestRender?.({ preserveScroll: true, reason: 'feat-filter' }) ?? shell?.render?.();
+      shell?.requestRender?.({ preserveScroll: true, reason: 'feat-filter', regions: ['work-surface', 'utility'] });
     };
     const onSort = e => {
       if (e.detail?.handledByStepHook) return;
       this._sortBy = e.detail?.sortId || 'alpha-asc';
-      shell?.requestRender?.({ preserveScroll: true, reason: 'feat-sort' }) ?? shell?.render?.();
+      shell?.requestRender?.({ preserveScroll: true, reason: 'feat-sort', regions: ['work-surface', 'utility'] });
     };
 
     shell.element.addEventListener('prog:utility:search', onSearch, { signal });
@@ -459,7 +460,7 @@ export class FeatStep extends ProgressionStepPlugin {
           if (cb.checked) this._selectedTags.add(cb.value);
           else            this._selectedTags.delete(cb.value);
         }
-        shell.requestRender({ preserveScroll: true, reason: 'feat-step:onSort' });
+        shell.requestRender({ preserveScroll: true, reason: 'feat-filter-checkbox', regions: ['work-surface', 'utility'] });
       }, { signal });
     });
 
@@ -469,13 +470,13 @@ export class FeatStep extends ProgressionStepPlugin {
     if (type === 'search') {
       this._searchQuery = detail.query || '';
       this._syncSidebarForSearch();
-      await (shell?.requestRender?.({ preserveScroll: true, reason: 'feat-search' }) ?? shell?.render?.());
+      await shell?.requestRender?.({ preserveScroll: true, reason: 'feat-search', regions: ['work-surface', 'utility'] });
       return true;
     }
 
     if (type === 'sort') {
       this._sortBy = detail.sortId || 'alpha-asc';
-      await (shell?.requestRender?.({ preserveScroll: true, reason: 'feat-sort' }) ?? shell?.render?.());
+      await shell?.requestRender?.({ preserveScroll: true, reason: 'feat-sort', regions: ['work-surface', 'utility'] });
       return true;
     }
 
@@ -483,7 +484,7 @@ export class FeatStep extends ProgressionStepPlugin {
       const { filterId, value } = detail;
       this._filters = this._filters || {};
       if (filterId) this._filters[filterId] = value;
-      await (shell?.requestRender?.({ preserveScroll: true, reason: 'feat-filter' }) ?? shell?.render?.());
+      await shell?.requestRender?.({ preserveScroll: true, reason: 'feat-filter', regions: ['work-surface', 'utility'] });
       return true;
     }
 
@@ -500,7 +501,7 @@ export class FeatStep extends ProgressionStepPlugin {
       } else {
         this._expandedCategories.add(category);
       }
-      shell?.render?.();
+      shell?.requestRender?.({ preserveScroll: true, reason: 'feat-toggle-category', regions: ['work-surface', 'utility'] });
       return true;
     }
 
@@ -512,13 +513,13 @@ export class FeatStep extends ProgressionStepPlugin {
         this._showAll = false;
         this._noChoicesAvailable = true;
         ui?.notifications?.warn?.(localizeProgressionText('SWSE.Progression.Feat.Messages.CatalogUnavailableWarning'));
-        await (shell?.requestRender?.({ preserveScroll: true, reason: 'feat-show-all-catalog-unavailable' }) ?? shell?.render?.());
+        await shell?.requestRender?.({ preserveScroll: true, reason: 'feat-show-all-catalog-unavailable', regions: ['work-surface', 'utility'] });
         return true;
       }
       this._showAll = !this._showAll;
       this._refreshGroupedFeats();
       this._ensureActiveCategory();
-      await (shell?.requestRender?.({ preserveScroll: true, reason: 'feat-show-all-toggle' }) ?? shell?.render?.());
+      await shell?.requestRender?.({ preserveScroll: true, reason: 'feat-show-all-toggle', regions: ['work-surface', 'utility'] });
       return true;
     }
 
@@ -526,7 +527,7 @@ export class FeatStep extends ProgressionStepPlugin {
       event?.preventDefault?.();
       const panelId = target?.dataset?.panel;
       this._openFilterPanel = this._openFilterPanel === panelId ? null : panelId;
-      shell?.render?.();
+      shell?.requestRender?.({ preserveScroll: true, reason: 'feat-open-filter-panel', regions: ['work-surface', 'utility'] });
       return true;
     }
 
@@ -537,14 +538,14 @@ export class FeatStep extends ProgressionStepPlugin {
       this._activeCategory = category;
       this._searchQuery = '';
       this._expandedCategories.add(category);
-      shell?.render?.();
+      shell?.requestRender?.({ preserveScroll: true, reason: 'feat-select-category', regions: ['work-surface', 'utility'] });
       return true;
     }
 
     if (action === 'toggle-feat-category-sidebar') {
       event?.preventDefault?.();
       this._categorySidebarCollapsed = !this._categorySidebarCollapsed;
-      shell?.render?.();
+      shell?.requestRender?.({ preserveScroll: true, reason: 'feat-toggle-category-sidebar', regions: ['work-surface', 'utility'] });
       return true;
     }
 
@@ -557,7 +558,7 @@ export class FeatStep extends ProgressionStepPlugin {
       this._categorySidebarCollapsed = false;
       this._prereqNavigationBanner = null;
       this._ensureActiveCategory();
-      shell?.render?.();
+      shell?.requestRender?.({ preserveScroll: true, reason: 'feat-reset-browser', regions: ['work-surface', 'utility'] });
       return true;
     }
 
@@ -1494,7 +1495,7 @@ export class FeatStep extends ProgressionStepPlugin {
         : `Showing prerequisite feat: ${target.name}.`,
     };
     shell?.setFocusedItem?.({ id: targetId, _id: targetId, name: target.name, type: 'feat' });
-    shell?.requestRender?.({ preserveScroll: true, reason: 'feat-prerequisite-jump' }) ?? shell?.render?.();
+    shell?.requestRender?.({ preserveScroll: true, reason: 'feat-prerequisite-jump', regions: ['work-surface', 'utility', 'details'] });
   }
 
   // ---------------------------------------------------------------------------
@@ -1634,9 +1635,26 @@ export class FeatStep extends ProgressionStepPlugin {
     return { state: null, disabled: false, deselect: false, title: 'Choose this feat' };
   }
 
+  /**
+   * Ranked search results. _searchMatchesFeat()'s whole-item combined text \u2014
+   * name + tags + prerequisites + description together \u2014 is the inclusion
+   * gate and runs FIRST, before any ranking. That closes two ways a feat
+   * could otherwise slip past canonical Boolean/wildcard/NOT semantics:
+   * a cross-field query like "shadow AND stealth" (name has "shadow",
+   * description has "stealth" \u2014 neither field alone satisfies it, only the
+   * whole item does), and a coincidental full-phrase name match on a query
+   * the ranking tiers don't understand as Boolean (e.g. a feat literally
+   * named "Armor Not Shadow" must NOT be admitted by the plain-text
+   * name-priority tiers when the actual query is "armor NOT shadow" and the
+   * feat's own name contains the negated term). Everything below the gate
+   * exists purely to rank an already-included match for display order; it
+   * never decides inclusion.
+   */
   _getSearchResultFeats() {
-    const query = this._normalizeSearchText(this._searchQuery);
-    if (!query) return [];
+    const rawQuery = String(this._searchQuery || '').trim();
+    if (!rawQuery) return [];
+    const nameQuery = this._normalizeSearchText(rawQuery);
+    const compiled = compileProgressionSearchQuery(rawQuery);
 
     // Search should be a reliable lookup, not another collapsed category filter.
     // Use the full evaluated catalog so unavailable feats still appear with their
@@ -1644,17 +1662,26 @@ export class FeatStep extends ProgressionStepPlugin {
     const source = this._allFeats?.length ? this._allFeats : this._legalFeats;
     const seen = new Set();
     const scoreMatch = (feat) => {
+      if (!this._searchMatchesFeat(feat, compiled)) return 999;
+
       const name = this._normalizeSearchText(feat?.name);
-      const prereq = this._normalizeSearchText(feat?.prerequisiteLine || feat?.prerequisiteText || feat?.system?.prerequisite || feat?.system?.prerequisites || '');
-      const desc = this._normalizeSearchText(this._getFeatDescription(feat));
-      const tags = this._normalizeSearchText([feat?.subcategory, ...(feat?.uiBroadTags || [])].filter(Boolean).join(' '));
-      if (name === query) return 0;
-      if (name.startsWith(query)) return 1;
-      if (name.includes(query)) return 2;
-      if (tags.includes(query)) return 3;
-      if (prereq.includes(query)) return 4;
-      if (desc.includes(query)) return 5;
-      return 999;
+      if (nameQuery && name === nameQuery) return 0;
+      if (nameQuery && name.startsWith(nameQuery)) return 1;
+      if (nameQuery && name.includes(nameQuery)) return 2;
+
+      if (compiled.test(buildProgressionSearchText({ name: feat?.name }))) return 2.5;
+      const tagsText = buildProgressionSearchText(null, [feat?.subcategory, ...(feat?.uiBroadTags || [])]);
+      if (compiled.test(tagsText)) return 3;
+      const prereqText = buildProgressionSearchText(null, [
+        feat?.prerequisiteLine, feat?.prerequisiteText, feat?.system?.prerequisite, feat?.system?.prerequisites,
+      ]);
+      if (compiled.test(prereqText)) return 4;
+      const descText = buildProgressionSearchText(null, [this._getFeatDescription(feat)]);
+      if (compiled.test(descText)) return 5;
+      // Matched only against the combined whole-item text (e.g. a
+      // cross-field Boolean expression spanning name+description together)
+      // \u2014 no single field above satisfied the query on its own.
+      return 6;
     };
 
     return [...(source || [])]
@@ -1674,6 +1701,11 @@ export class FeatStep extends ProgressionStepPlugin {
       .map(({ feat }) => feat);
   }
 
+  /** Diacritic-safe plain-text normalization for the name-priority ranking
+   * tiers in _getSearchResultFeats() \u2014 distinct from the canonical rich
+   * search's own normalization, which does not need to be diacritic-aware
+   * since it operates on already-normalized combined text via
+   * buildProgressionSearchText(). */
   _normalizeSearchText(value) {
     return String(value || '')
       .toLowerCase()
@@ -1685,10 +1717,40 @@ export class FeatStep extends ProgressionStepPlugin {
       .trim();
   }
 
-  _searchMatchesFeat(feat, query = this._normalizeSearchText(this._searchQuery)) {
-    if (!query) return false;
-    const haystack = this._normalizeSearchText([
-      feat?.name,
+  /**
+   * Whole-item yes/no match via the canonical rich search contract.
+   *
+   * Passes the actual feat object (not a synthetic `{name}` stand-in) to
+   * buildProgressionSearchText() so its own field-aggregation picks up
+   * every description/benefit/summary field the feat carries. Previously
+   * this passed `{ name: feat?.name }` plus `_getFeatDescription(feat)` as
+   * an extraField — but _getFeatDescription() is a *display* helper built
+   * on extractDescriptionText(), the first-match-wins resolver, so a feat
+   * with both a description and a benefit could lose one of them from
+   * search. _getFeatDescription()'s Force Training attribute-substitution
+   * stays display-only and is intentionally NOT reproduced here — search
+   * and display are different concerns, and the feat's real underlying
+   * text (unsubstituted) is exactly what the canonical aggregator should
+   * see.
+   *
+   * No Feat-specific fallback here for accented names ("Flèche", "Teräs
+   * Käsi Training") — progression-search.js's own normalizeWhitespace()
+   * diacritic-folds both the searchable text AND every parsed query
+   * term/phrase identically, so plain-ASCII and accented spellings are
+   * equivalent under the SAME comparison for positive matches, NOT,
+   * wildcards, and everything else. A one-sided per-item fallback here
+   * (fold the text only, after a Boolean match already failed) previously
+   * made positive and NOT queries disagree with each other; that can only
+   * be correct if it lives in the canonical normalization both sides go
+   * through, not bolted onto one feat-specific call site.
+   * @param {Object} feat
+   * @param {{test(text:string):boolean}} [compiled] - reuse across a loop
+   *   via compileProgressionSearchQuery(this._searchQuery) instead of
+   *   recompiling per feat.
+   */
+  _searchMatchesFeat(feat, compiled = compileProgressionSearchQuery(this._searchQuery)) {
+    if (!String(this._searchQuery || '').trim()) return false;
+    const text = buildProgressionSearchText(feat, [
       feat?.subcategory,
       feat?.featTypeLabel,
       feat?.prerequisiteLine,
@@ -1696,17 +1758,16 @@ export class FeatStep extends ProgressionStepPlugin {
       feat?.system?.prerequisite,
       feat?.system?.prerequisites,
       ...(feat?.uiBroadTags || []),
-      this._getFeatDescription(feat),
-    ].filter(Boolean).join(' '));
-    return haystack.includes(query);
+    ]);
+    return compiled.test(text);
   }
 
   _expandMatchingCategoriesForSearch() {
-    const query = this._normalizeSearchText(this._searchQuery);
-    if (!query || !this._groupedFeats) return;
+    if (!String(this._searchQuery || '').trim() || !this._groupedFeats) return;
+    const compiled = compileProgressionSearchQuery(this._searchQuery);
 
     for (const [categoryKey, group] of Object.entries(this._groupedFeats)) {
-      if ((group?.feats || []).some(feat => this._searchMatchesFeat(feat, query))) {
+      if ((group?.feats || []).some(feat => this._searchMatchesFeat(feat, compiled))) {
         this._expandedCategories.add(categoryKey);
       }
     }
@@ -2125,13 +2186,16 @@ export class FeatStep extends ProgressionStepPlugin {
           return;
         }
 
+        // Route through the same canonical writer FeatChoiceDialog.promptAndApply
+        // uses (FeatChoiceResolver.buildChoicePatch) instead of hand-rolling the
+        // same three system.* fields a second time — see
+        // docs/audits/feat-choice-integrity-current-state.md §2.
+        const choicePatch = FeatChoiceResolver.buildChoicePatch(feat, selectedChoice) || {};
         nextSelection = {
           ...nextSelection,
           system: {
             ...(nextSelection.system || {}),
-            selectedChoice,
-            choiceResolved: true,
-            choiceResolvedAt: new Date().toISOString()
+            ...(choicePatch.system || {})
           }
         };
       }

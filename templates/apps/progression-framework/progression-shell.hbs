@@ -145,15 +145,7 @@
         </button>
 
         <div class="prog-summary-panel__body">
-        {{#if summaryPanelHtml}}
-          {{{summaryPanelHtml}}}
-        {{else}}
-          <div class="prog-summary-placeholder swse-card-schema swse-card-schema--identity swse-card-schema--placeholder">
-            {{#if currentDescriptor}}
-              <i class="fas {{currentDescriptor.icon}} prog-summary-placeholder__icon"></i>
-            {{/if}}
-          </div>
-        {{/if}}
+        {{> "systems/foundryvtt-swse/templates/apps/progression-framework/summary-panel/summary-panel-body.hbs"}}
         </div>
 
       </aside>{{!-- /summary-panel --}}
@@ -191,6 +183,11 @@
           {{{parts.utilityBar}}}
         </div>{{!-- /utility-bar --}}
 
+        {{!-- Phase 2: stable mount boundary for JUST the plugin-generated body,
+             so a scoped work-surface repaint can replace this wrapper's
+             innerHTML without destroying the step-context banner or the
+             nested utility-bar region above it. --}}
+        <div data-prog-region-body="work-surface">
         {{#if workSurfaceHtml}}
           {{{workSurfaceHtml}}}
         {{else}}
@@ -222,6 +219,7 @@
             {{/if}}
           </div>
         {{/if}}
+        </div>{{!-- /[data-prog-region-body="work-surface"] --}}
 
       </div>{{!-- /work-surface --}}
 
@@ -274,85 +272,7 @@
       data-font-mode controls label font-family: 'standard' | 'aurabesh'
     ==================================================================== --}}
     <div data-region="action-footer" class="swse-ui-frame swse-progression-footer-frame">
-      <footer class="swse-footer" data-font-mode="{{fontMode}}">
-
-        {{!-- LEFT: Back button --}}
-        <div class="action-footer__nav">
-          <button type="button"
-                  class="swse-btn swse-ui-button swse-btn--back"
-                  data-action="previous-step"
-                  {{#unless footer.back.enabled}}disabled{{/unless}}>
-            <span class="swse-btn__label">{{footer.back.label}}</span>
-          </button>
-        </div>
-
-        {{!-- CENTER: Status indicators only (no step chips here) --}}
-        <div class="action-footer__status">
-
-          {{!-- PHASE 4 UX: Footer status readout line --}}
-          {{#if footerStatus}}
-          <div class="prog-footer-status-line {{#if footerStatusState.isComplete}}prog-footer-status-line--complete{{else}}prog-footer-status-line--pending{{/if}} {{#if footer.explanation}}prog-footer-status-line--explainable{{/if}}"
-               data-remaining="{{footerStatusState.remaining}}"
-               data-total="{{footerStatusState.total}}">
-            <button type="button"
-                    class="prog-footer-status-trigger"
-                    aria-label="Explain {{footerStatus}}"
-                    {{#unless footer.explanation}}disabled{{/unless}}>
-              <span class="prog-footer-status-label">STATUS:</span>
-              <span class="prog-footer-status-value">{{footerStatus}}</span>
-              {{#if footer.explanation}}
-                <i class="fas fa-circle-info prog-footer-status-info" aria-hidden="true"></i>
-              {{/if}}
-            </button>
-            {{#if footer.explanation}}
-              <div class="prog-footer-explain-popover" role="tooltip">
-                <div class="prog-footer-explain__eyebrow">COUNTER EXPLAINER</div>
-                <div class="prog-footer-explain__title">{{footer.explanation.title}}</div>
-                <div class="prog-footer-explain__summary">{{{footer.explanation.summaryHtml}}}</div>
-                {{{footer.explanation.bodyHtml}}}
-              </div>
-            {{/if}}
-          </div>
-          {{/if}}
-
-          {{!-- PHASE 3 UX: Blocker explanation (specific, actionable message) --}}
-          {{#if (and (not footer.next.enabled) footer.blockerExplanation)}}
-            <div class="prog-blocker-explanation prog-blocker-explanation--primary">
-              <i class="fas fa-lightbulb"></i>
-              <span class="prog-blocker-text">{{footer.blockerExplanation}}</span>
-            </div>
-          {{else if footer.blockingIssues.length}}
-            <div class="swse-footer__status swse-footer__status--blocking">
-              <i class="fas fa-exclamation-circle"></i>
-              {{#each footer.blockingIssues}}
-                <span>{{this}}</span>
-              {{/each}}
-            </div>
-          {{else if footer.warnings.length}}
-            <div class="swse-footer__status swse-footer__status--warning">
-              <i class="fas fa-exclamation-triangle"></i>
-              {{#each footer.warnings}}
-                <span>{{this}}</span>
-              {{/each}}
-            </div>
-          {{/if}}
-
-        </div>
-
-        {{!-- RIGHT: Next / Confirm button --}}
-        {{#unless footer.next.hidden}}
-        <div class="action-footer__confirm">
-          <button type="button"
-                  class="swse-btn swse-btn--confirm
-                         {{#if footer.next.isLastStep}}swse-btn--last-step{{/if}} {{#if footer.next.enabled}}swse-btn--advance-ready{{/if}} {{#if footerStatusState.isComplete}}swse-btn--complete-pulse{{/if}}"
-                  data-action="{{#if footer.next.isLastStep}}confirm-step{{else}}next-step{{/if}}"
-                  {{#unless footer.next.enabled}}disabled{{/unless}}>
-            <span class="swse-btn__label">{{footer.next.label}}</span>
-          </button>
-        </div>
-        {{/unless}}
-
-      </footer>
+      {{> "systems/foundryvtt-swse/templates/apps/progression-framework/action-footer.hbs"}}
     </div>{{!-- /action-footer --}}
 
   </div>{{!-- /main-column --}}

@@ -277,11 +277,7 @@ export async function resetProgressionLayout(event, target) {
 
   ui?.notifications?.info?.('Progression layout restored.');
 
-  if (typeof app?.requestRender === 'function') {
-    app.requestRender({ preserveScroll: true, reason: 'restore-layout-defaults' });
-  } else if (typeof app?.render === 'function') {
-    app.render();
-  }
+  app?.requestRender?.({ preserveScroll: true, reason: 'restore-layout-defaults', structural: true });
 }
 
 export function handleProgressionRailResizerKey(event, target) {

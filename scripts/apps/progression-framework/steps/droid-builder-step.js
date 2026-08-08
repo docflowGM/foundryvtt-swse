@@ -1651,13 +1651,7 @@ export class DroidBuilderStep extends ProgressionStepPlugin {
   }
 
   _rerenderShell(shell, reason = 'droid-builder-update') {
-    if (typeof shell?.requestRender === 'function') {
-      return shell.requestRender({ preserveScroll: true, reason });
-    }
-    if (typeof shell?.render === 'function') {
-      return shell.render({ preserveScroll: true });
-    }
-    return null;
+    return shell?.requestRender?.({ preserveScroll: true, reason, regions: ['work-surface', 'utility'] });
   }
 
   _onFilterSystems(event, workSurfaceEl) {

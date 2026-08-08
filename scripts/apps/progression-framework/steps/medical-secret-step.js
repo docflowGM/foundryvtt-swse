@@ -16,6 +16,7 @@ import { getStepGuidance, handleAskMentor, handleAskMentorWithPicker } from './m
 import { SuggestionService } from '/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionService.js';
 import { SuggestionContextBuilder } from '/systems/foundryvtt-swse/scripts/engine/progression/suggestion/suggestion-context-builder.js';
 import { swseLogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
+import { compileProgressionSearchQuery, buildProgressionSearchText } from '../utils/progression-search.js';
 
 export class MedicalSecretStep extends ProgressionStepPlugin {
   constructor(descriptor) {
@@ -82,15 +83,15 @@ export class MedicalSecretStep extends ProgressionStepPlugin {
     const onSearch = (event) => {
       this._searchQuery = event.detail.query;
       this._applyFilters();
-      shell.requestRender({ preserveScroll: true, reason: 'medical-secret-step:onSearch' });
+      shell.requestRender({ preserveScroll: true, reason: 'medical-secret-step:onSearch', regions: ['work-surface', 'utility'] });
     };
     const onFilter = () => {
       this._applyFilters();
-      shell.requestRender({ preserveScroll: true, reason: 'medical-secret-step:onFilter' });
+      shell.requestRender({ preserveScroll: true, reason: 'medical-secret-step:onFilter', regions: ['work-surface', 'utility'] });
     };
     const onSort = () => {
       this._applyFilters();
-      shell.requestRender({ preserveScroll: true, reason: 'medical-secret-step:onSort' });
+      shell.requestRender({ preserveScroll: true, reason: 'medical-secret-step:onSort', regions: ['work-surface', 'utility'] });
     };
 
     shell.element.addEventListener('prog:utility:search', onSearch, { signal });
@@ -307,13 +308,12 @@ export class MedicalSecretStep extends ProgressionStepPlugin {
 
   _applyFilters() {
     let filtered = [...this._legalSecrets];
+    // Canonical rich search: name + description (picked up automatically by
+    // buildProgressionSearchText) + tags. Supports AND/OR/NOT/wildcards/
+    // quoted phrases; see utils/progression-search.js.
     if (this._searchQuery) {
-      const query = this._searchQuery.toLowerCase();
-      filtered = filtered.filter((secret) =>
-        secret.name.toLowerCase().includes(query)
-        || String(secret.description || '').toLowerCase().includes(query)
-        || (secret.tags || []).some((tag) => String(tag).includes(query))
-      );
+      const compiled = compileProgressionSearchQuery(this._searchQuery);
+      filtered = filtered.filter((secret) => compiled.test(buildProgressionSearchText(secret, secret.tags || [])));
     }
     filtered.sort((a, b) => a.name.localeCompare(b.name));
     this._filteredSecrets = filtered;

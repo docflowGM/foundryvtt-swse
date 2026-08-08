@@ -1715,7 +1715,7 @@ export class SummaryStep extends ProgressionStepPlugin {
       : await this._generateRandomName(shell?.actor);
     if (!randomName) return '';
     this._setCharacterName(randomName, shell, { commit: true });
-    shell?.requestRender?.({ preserveScroll: true, reason: kind === 'droid' ? 'generate-droid-name' : 'generate-name' }) ?? shell?.render?.();
+    shell?.requestRender?.({ preserveScroll: true, reason: kind === 'droid' ? 'generate-droid-name' : 'generate-name' });
     return randomName;
   }
 
@@ -1779,11 +1779,11 @@ export class SummaryStep extends ProgressionStepPlugin {
       entryOrigin: 'chargen-summary',
       onCheckoutComplete: async () => {
         await this._aggregateSummary(shell);
-        shell?.requestRender?.({ preserveScroll: true, reason: 'chargen-store-checkout' }) ?? shell?.render?.();
+        shell?.requestRender?.({ preserveScroll: true, reason: 'chargen-store-checkout' });
       },
       onClose: async () => {
         await this._aggregateSummary(shell);
-        shell?.requestRender?.({ preserveScroll: true, reason: 'chargen-store-close' }) ?? shell?.render?.();
+        shell?.requestRender?.({ preserveScroll: true, reason: 'chargen-store-close' });
       },
     }).catch(err => {
       swseLogger.error('[SummaryStep.enterStore] Failed to open store', err);
@@ -1805,7 +1805,7 @@ export class SummaryStep extends ProgressionStepPlugin {
       event?.preventDefault?.();
       event?.stopPropagation?.();
       await this.rollCredits(shell?.actor, shell);
-      shell?.requestRender?.({ preserveScroll: true, reason: action }) ?? shell?.render?.();
+      shell?.requestRender?.({ preserveScroll: true, reason: action });
       return true;
     }
 
@@ -1813,7 +1813,7 @@ export class SummaryStep extends ProgressionStepPlugin {
       event?.preventDefault?.();
       event?.stopPropagation?.();
       await this.useMaximumCredits(shell?.actor, shell);
-      shell?.requestRender?.({ preserveScroll: true, reason: action }) ?? shell?.render?.();
+      shell?.requestRender?.({ preserveScroll: true, reason: action });
       return true;
     }
 
@@ -1821,7 +1821,7 @@ export class SummaryStep extends ProgressionStepPlugin {
       event?.preventDefault?.();
       event?.stopPropagation?.();
       await this.useAverageCredits(shell?.actor, shell);
-      shell?.requestRender?.({ preserveScroll: true, reason: action }) ?? shell?.render?.();
+      shell?.requestRender?.({ preserveScroll: true, reason: action });
       return true;
     }
 
@@ -1830,7 +1830,7 @@ export class SummaryStep extends ProgressionStepPlugin {
       event?.preventDefault?.();
       event?.stopPropagation?.();
       await this.rollHP?.(shell?.actor, shell);
-      shell?.requestRender?.({ preserveScroll: true, reason: action }) ?? shell?.render?.();
+      shell?.requestRender?.({ preserveScroll: true, reason: action });
       return true;
     }
 
@@ -1838,7 +1838,7 @@ export class SummaryStep extends ProgressionStepPlugin {
       event?.preventDefault?.();
       event?.stopPropagation?.();
       await this.useMaxHP?.(shell?.actor, shell);
-      shell?.requestRender?.({ preserveScroll: true, reason: action }) ?? shell?.render?.();
+      shell?.requestRender?.({ preserveScroll: true, reason: action });
       return true;
     }
 

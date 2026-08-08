@@ -1,0 +1,143 @@
+{
+  "schemaVersion": 1,
+  "purpose": "Single authoritative source-validity enum for feat entries. Generated reports and eligibility gates should consume this registry instead of independently re-adjudicating whether a feat name is a real SWSE feat.",
+  "statusEnum": [
+    "verified_primary_source",
+    "verified_special_source",
+    "source_unavailable",
+    "source_conflict",
+    "invalid_not_swse_feat",
+    "class_feature_not_feat",
+    "talent_domain_not_feat"
+  ],
+  "defaultStatusForUnlistedEntries": "unclassified",
+  "notes": [
+    "Absence from this registry means a feat has not yet been run through a dedicated validity audit — it is NOT an implicit claim that the entry is verified.",
+    "verified_primary_source vs verified_repository_authority: nothing in this registry currently carries verified_primary_source, and it must not be assigned casually. Use it only when a repository artifact explicitly records that a specific entry was checked against an identified sourcebook/page during a prior source-review pass with book access (not merely that the entry has a `source` field, and not from a later session's general SWSE knowledge or an internet search). Everything else that has a clear repository-adjudicated answer but no such explicit page-check record uses verified_repository_authority instead — see tools/audit-feat-inventory.mjs's sourceConfidence field, which applies this same distinction and additionally flags entries citing a sourcebook unavailable in the current working session (e.g. Legacy Era Campaign Guide, Rebellion Era Campaign Guide) as source_unavailable rather than verified_repository_authority.",
+    "Sessions without direct access to the SWSE sourcebook PDFs must not independently re-verify RAW from model memory, the SWSE Wiki/Fandom, or other internet sources and use that to silently override or contradict repository-recorded source authority. Genuinely conflicting or suspicious claims belong in docs/audits/generated/feat-primary-source-review-queue.md for a future pass that does have book access — not resolved by inference here.",
+    "invalid_not_swse_feat / class_feature_not_feat entries below were adjudicated in docs/audits/strict-combat-bucket-feat-validity-audit-2026-07-03.json, which records explicit user confirmation (see that file's inputs.manualAdjudication) that these names are not legal SWSE feats, or in Delay Damage's case, are a class feature rather than a feat. They remain present as compendium documents in data/feat-catalog.json and packs/feats.db as of this registry's creation. They must be excluded from implementation queues, readiness reports, and chargen eligibility going forward; removing them from the shipped compendium is a separate follow-up decision, not made by this registry.",
+    "talent_domain_not_feat entries are correctly ABSENT from data/feat-catalog.json / packs/feats.db as of this registry's creation. scripts/data/feat-domain-guard.js (TALENT_ONLY_FEAT_CONTAMINANTS) is the current-repo authority: these names are real SWSE talents that had been scraped into the feat catalog as fabricated feat records with plausible-but-invented mechanical text distinct from the real talent text. The mechanically-distinct 'feat' record for each of these names still exists as a leftover, unreferenced artifact in packs/feat-catalog.db (an orphaned file not declared by system.json) — that file must NOT be used to 'restore' these names into the canonical catalog. See docs/audits/feat-inventory-history-reconciliation.md."
+  ],
+  "entries": [
+    {
+      "name": "Spring Attack",
+      "status": "invalid_not_swse_feat",
+      "source": "docs/audits/strict-combat-bucket-feat-validity-audit-2026-07-03.json"
+    },
+    {
+      "name": "Reckless Charge",
+      "status": "invalid_not_swse_feat",
+      "source": "docs/audits/strict-combat-bucket-feat-validity-audit-2026-07-03.json"
+    },
+    {
+      "name": "Wounding Strike",
+      "status": "invalid_not_swse_feat",
+      "source": "docs/audits/strict-combat-bucket-feat-validity-audit-2026-07-03.json"
+    },
+    {
+      "name": "Friendly Fire Avoidance",
+      "status": "invalid_not_swse_feat",
+      "source": "docs/audits/strict-combat-bucket-feat-validity-audit-2026-07-03.json"
+    },
+    {
+      "name": "Heroic Surge",
+      "status": "invalid_not_swse_feat",
+      "source": "docs/audits/strict-combat-bucket-feat-validity-audit-2026-07-03.json"
+    },
+    {
+      "name": "Grappling Strike",
+      "status": "invalid_not_swse_feat",
+      "source": "docs/audits/strict-combat-bucket-feat-validity-audit-2026-07-03.json"
+    },
+    {
+      "name": "Improved Knock Prone",
+      "status": "invalid_not_swse_feat",
+      "source": "docs/audits/strict-combat-bucket-feat-validity-audit-2026-07-03.json"
+    },
+    {
+      "name": "Knock Prone",
+      "status": "invalid_not_swse_feat",
+      "source": "docs/audits/strict-combat-bucket-feat-validity-audit-2026-07-03.json"
+    },
+    {
+      "name": "Hew",
+      "status": "invalid_not_swse_feat",
+      "source": "docs/audits/strict-combat-bucket-feat-validity-audit-2026-07-03.json"
+    },
+    {
+      "name": "Improved Stun",
+      "status": "invalid_not_swse_feat",
+      "source": "docs/audits/strict-combat-bucket-feat-validity-audit-2026-07-03.json"
+    },
+    {
+      "name": "Delay Damage",
+      "status": "class_feature_not_feat",
+      "source": "docs/audits/strict-combat-bucket-feat-validity-audit-2026-07-03.json"
+    },
+    {
+      "name": "Indomitable Will",
+      "status": "talent_domain_not_feat",
+      "source": "scripts/data/feat-domain-guard.js"
+    },
+    {
+      "name": "Lucky Shot",
+      "status": "talent_domain_not_feat",
+      "source": "scripts/data/feat-domain-guard.js"
+    },
+    {
+      "name": "Stunning Strike",
+      "status": "talent_domain_not_feat",
+      "source": "scripts/data/feat-domain-guard.js"
+    },
+    {
+      "name": "Noble Fencing Style",
+      "status": "talent_domain_not_feat",
+      "source": "scripts/data/feat-domain-guard.js"
+    },
+    {
+      "name": "Greater Weapon Specialization",
+      "status": "talent_domain_not_feat",
+      "source": "scripts/data/feat-domain-guard.js"
+    },
+    {
+      "name": "Force Focus",
+      "status": "talent_domain_not_feat",
+      "source": "scripts/data/feat-domain-guard.js"
+    },
+    {
+      "name": "Educated",
+      "status": "talent_domain_not_feat",
+      "source": "scripts/data/feat-domain-guard.js"
+    },
+    {
+      "name": "Greater Weapon Focus",
+      "status": "talent_domain_not_feat",
+      "source": "scripts/data/feat-domain-guard.js"
+    },
+    {
+      "name": "Weapon Specialization",
+      "status": "talent_domain_not_feat",
+      "source": "scripts/data/feat-domain-guard.js"
+    },
+    {
+      "name": "Recall",
+      "status": "talent_domain_not_feat",
+      "source": "scripts/data/feat-domain-guard.js"
+    },
+    {
+      "name": "Harm’s Way",
+      "status": "talent_domain_not_feat",
+      "source": "scripts/data/feat-domain-guard.js"
+    },
+    {
+      "name": "Forceful Warrior",
+      "status": "talent_domain_not_feat",
+      "source": "scripts/data/feat-domain-guard.js"
+    },
+    {
+      "name": "Redirect Shot",
+      "status": "talent_domain_not_feat",
+      "source": "scripts/data/feat-domain-guard.js"
+    }
+  ]
+}

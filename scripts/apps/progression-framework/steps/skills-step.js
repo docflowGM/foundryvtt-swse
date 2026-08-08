@@ -591,7 +591,10 @@ try {
         if (skillKey) {
           this._trainSkill(skillKey);
           await this._refreshSkillSuggestions(shell);
-          shell?.requestRender?.({ preserveScroll: true, reason: 'skill-train' }) ?? shell?.render?.();
+          // Trained/remaining counts feed both the footer's blocking-issue
+          // readout (getBlockingIssues()) and the progress rail's step-
+          // completion badge (isComplete), not just the skill list itself.
+          shell?.requestRender?.({ preserveScroll: true, reason: 'skill-train', regions: ['work-surface', 'summary', 'footer', 'progress'] });
         }
         return true;
       }
@@ -600,7 +603,7 @@ try {
         if (skillKey) {
           this._untrainSkill(skillKey);
           await this._refreshSkillSuggestions(shell);
-          shell?.requestRender?.({ preserveScroll: true, reason: 'skill-untrain' }) ?? shell?.render?.();
+          shell?.requestRender?.({ preserveScroll: true, reason: 'skill-untrain', regions: ['work-surface', 'summary', 'footer', 'progress'] });
         }
         return true;
       }
@@ -608,7 +611,7 @@ try {
       case 'skill-reset': {
         this._resetAllSkills();
         await this._refreshSkillSuggestions(shell);
-        shell?.requestRender?.({ preserveScroll: true, reason: 'skill-reset' }) ?? shell?.render?.();
+        shell?.requestRender?.({ preserveScroll: true, reason: 'skill-reset', regions: ['work-surface', 'summary', 'footer', 'progress'] });
         return true;
       }
 
@@ -712,7 +715,7 @@ renderDetailsPanel(focusedItem) {
         const focused = this._availableSkills.find(skill => skill.key === skillKey || skill.id === skillKey || skill._id === skillKey || skill.name === skillKey);
         if (focused) shell.focusedItem = focused;
         await this._refreshSkillSuggestions(shell);
-        shell.requestRender({ preserveScroll: true, reason: 'skills-step:focused' });
+        shell.requestRender({ preserveScroll: true, reason: 'skills-step:mentor-train-and-focus', regions: ['work-surface', 'summary', 'footer', 'progress', 'details'] });
       });
       return;
     }

@@ -201,7 +201,21 @@ export class L1SurveyStep extends ProgressionStepPlugin {
     // Step actions are handled through handleAction() via the shell delegated
     // action bridge. Keeping only translation setup here avoids duplicate
     // survey commits from both direct listeners and delegated listeners.
-    await this._renderInlineSurveyTranslation(shell);
+    //
+    // MENTOR SIDECAR: deliberately not awaited. onDataReady() is awaited by
+    // the render pipeline (both the structural _onRender() path and the
+    // scoped work-surface updater), which holds the render scheduler's
+    // in-flight lock for as long as it takes to resolve. The Aurebesh
+    // translation below can animate several dialogue elements in sequence —
+    // awaiting it here would stall every subsequent render request (a Next
+    // click, another survey answer) behind a cosmetic reveal that has
+    // nothing to do with progression control flow. The translation still
+    // runs to completion; it just doesn't hold the render pipeline hostage
+    // while it does. Its own AbortController (aborted here on every fresh
+    // onDataReady call, and on step exit) supersedes a stale in-flight pass.
+    void this._renderInlineSurveyTranslation(shell).catch(err => {
+      console.warn('[L1SurveyStep] Inline translation sidecar failed', err);
+    });
   }
 
   /**
@@ -221,11 +235,18 @@ export class L1SurveyStep extends ProgressionStepPlugin {
     }
     this._lastInlineTranslationKey = currentKey;
 
+    // Captured once so every element in this pass shares the same signal —
+    // a later onDataReady() call (or onStepExit()) aborts THIS controller,
+    // which stops the loop between elements instead of writing further
+    // Aurebesh reveals into a survey phase/question the player has left.
+    const signal = this._renderAbort?.signal ?? null;
+
     try {
       // Find all dialogue text spans and apply translation
       const dialogueTexts = shell.element.querySelectorAll('[data-l1-survey-dialogue-text]');
 
       for (const element of dialogueTexts) {
+        if (signal?.aborted) return;
         if (!element || element._translationApplied) continue;
 
         const text = element.textContent?.trim();
@@ -235,12 +256,16 @@ export class L1SurveyStep extends ProgressionStepPlugin {
         element._translationApplied = true;
 
         try {
+          // mentor-sidecar-await-ok: this loop runs inside the fire-and-forgotten
+          // sidecar kicked off by onDataReady() (see above) — it is not on any
+          // control-flow path the shell or the render scheduler awaits.
           await MentorTranslationIntegration.render({
             text,
             container: element,
             mentor: mentorName,
             topic: 'l1-survey',
-            force: true
+            force: true,
+            signal,
           });
         } catch (err) {
           // Gracefully degrade if translation fails
@@ -423,7 +448,7 @@ export class L1SurveyStep extends ProgressionStepPlugin {
 
     await this._saveSurveyDraft(shell);
     await this._speakCurrentPhase(shell, true);
-    shell?.render?.();
+    shell?.requestRender?.({ preserveScroll: true, reason: 'l1-survey-back', regions: ['work-surface', 'utility'] });
   }
 
   _canSurveyBack() {
@@ -589,6 +614,10 @@ export class L1SurveyStep extends ProgressionStepPlugin {
    * @param {Object} context - Exit context with optional direction ('forward' or 'backward')
    */
   async onStepExit(shell, context = {}) {
+    // Cancel any in-flight inline Aurebesh translation sidecar so it cannot
+    // keep writing into this step's DOM after the player has moved on.
+    this._renderAbort?.abort();
+
     if (!this._surveyDefinition) return;
 
     const direction = context?.direction || 'forward';

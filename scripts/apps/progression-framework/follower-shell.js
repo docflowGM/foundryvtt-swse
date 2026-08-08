@@ -454,7 +454,7 @@ export class FollowerShell extends ProgressionShell {
           });
           this.isProcessing = false;
           await this._activateStep(nextIndex, { source: 'follower-finalize-guard', restoreIndex: this.currentStepIndex });
-          this.render();
+          this.requestRender({ preserveScroll: false, reason: 'follower-finalize-guard', structural: true });
           return;
         }
         if (missing.length) {

@@ -16,6 +16,7 @@ import { normalizeDetailPanelData } from '../detail-rail-normalizer.js';
 import { buildClassGrantLedger, mergeLedgerIntoPending } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/class-grant-ledger-builder.js';
 import { SWSEDialogV2 } from '/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js';
 import { collectKnownForceTechniques } from '/systems/foundryvtt-swse/scripts/utils/force-knowledge.js';
+import { compileProgressionSearchQuery, buildProgressionSearchText } from '../utils/progression-search.js';
 
 
 
@@ -302,17 +303,17 @@ export class ForceTechniqueStep extends ProgressionStepPlugin {
       this._searchQuery = e?.detail?.query || '';
       this._categorySidebarCollapsed = Boolean(this._searchQuery);
       this._applyFilters();
-      shell?.requestRender?.({ preserveScroll: true, reason: 'force-technique-search' }) ?? shell?.render?.();
+      shell?.requestRender?.({ preserveScroll: true, reason: 'force-technique-search', regions: ['work-surface', 'utility'] });
     };
     const onFilter = e => {
       if (e?.detail?.handledByStepHook) return;
       this._applyFilters();
-      shell?.requestRender?.({ preserveScroll: true, reason: 'force-technique-filter' }) ?? shell?.render?.();
+      shell?.requestRender?.({ preserveScroll: true, reason: 'force-technique-filter', regions: ['work-surface', 'utility'] });
     };
     const onSort = e => {
       if (e?.detail?.handledByStepHook) return;
       this._applyFilters();
-      shell?.requestRender?.({ preserveScroll: true, reason: 'force-technique-sort' }) ?? shell?.render?.();
+      shell?.requestRender?.({ preserveScroll: true, reason: 'force-technique-sort', regions: ['work-surface', 'utility'] });
     };
 
     shell.element.addEventListener('prog:utility:search', onSearch, { signal });
@@ -332,13 +333,13 @@ export class ForceTechniqueStep extends ProgressionStepPlugin {
       this._searchQuery = detail?.query || '';
       this._categorySidebarCollapsed = Boolean(this._searchQuery);
       this._applyFilters();
-      await (shell?.requestRender?.({ preserveScroll: true, reason: 'force-technique-search' }) ?? shell?.render?.());
+      await shell?.requestRender?.({ preserveScroll: true, reason: 'force-technique-search', regions: ['work-surface', 'utility'] });
       return true;
     }
 
     if (type === 'filter' || type === 'sort') {
       this._applyFilters();
-      await (shell?.requestRender?.({ preserveScroll: true, reason: `force-technique-${type}` }) ?? shell?.render?.());
+      await shell?.requestRender?.({ preserveScroll: true, reason: `force-technique-${type}`, regions: ['work-surface', 'utility'] });
       return true;
     }
 
@@ -460,7 +461,7 @@ export class ForceTechniqueStep extends ProgressionStepPlugin {
       if (!category) return true;
       this._activeCategory = category;
       this._searchQuery = '';
-      await (shell?.requestRender?.({ preserveScroll: true, reason: 'force-technique-category' }) ?? shell?.render?.());
+      await shell?.requestRender?.({ preserveScroll: true, reason: 'force-technique-category', regions: ['work-surface', 'utility'] });
       return true;
     }
 
@@ -468,7 +469,7 @@ export class ForceTechniqueStep extends ProgressionStepPlugin {
       event?.preventDefault?.();
       event?.stopPropagation?.();
       this._categorySidebarCollapsed = !this._categorySidebarCollapsed;
-      await (shell?.requestRender?.({ preserveScroll: true, reason: 'force-technique-category-sidebar' }) ?? shell?.render?.());
+      await shell?.requestRender?.({ preserveScroll: true, reason: 'force-technique-category-sidebar', regions: ['work-surface', 'utility'] });
       return true;
     }
 
@@ -477,7 +478,7 @@ export class ForceTechniqueStep extends ProgressionStepPlugin {
       event?.stopPropagation?.();
       this._showAllTechniques = !this._showAllTechniques;
       this._applyFilters();
-      await (shell?.requestRender?.({ preserveScroll: true, reason: 'force-technique-show-all-toggle' }) ?? shell?.render?.());
+      await shell?.requestRender?.({ preserveScroll: true, reason: 'force-technique-show-all-toggle', regions: ['work-surface', 'utility'] });
       return true;
     }
 
@@ -489,7 +490,7 @@ export class ForceTechniqueStep extends ProgressionStepPlugin {
       this._categorySidebarCollapsed = false;
       this._showAllTechniques = false;
       this._applyFilters();
-      await (shell?.requestRender?.({ preserveScroll: true, reason: 'force-technique-browser-reset' }) ?? shell?.render?.());
+      await shell?.requestRender?.({ preserveScroll: true, reason: 'force-technique-browser-reset', regions: ['work-surface', 'utility'] });
       return true;
     }
 
@@ -709,9 +710,13 @@ export class ForceTechniqueStep extends ProgressionStepPlugin {
 
   _applyFilters() {
     let filtered = this._showAllTechniques ? [...this._allTechniques] : [...this._legalTechniques];
+    // Canonical rich search: name + description/benefit (picked up
+    // automatically by buildProgressionSearchText) + the player-facing
+    // supplemental fields this step already exposed. Supports AND/OR/NOT/
+    // wildcards/quoted phrases; see utils/progression-search.js.
     if (this._searchQuery) {
-      const q = this._normalizeSearchText(this._searchQuery);
-      filtered = filtered.filter(t => this._techniqueSearchText(t).includes(q));
+      const compiled = compileProgressionSearchQuery(this._searchQuery);
+      filtered = filtered.filter(t => compiled.test(this._techniqueSearchText(t)));
     }
     filtered.sort((a, b) => this._compareTechniques(a, b));
     this._filteredTechniques = filtered;
@@ -1236,18 +1241,14 @@ export class ForceTechniqueStep extends ProgressionStepPlugin {
 
   _techniqueSearchText(technique) {
     const system = technique?.system || {};
-    return this._normalizeSearchText([
-      technique?.name,
-      technique?.description,
-      system.description,
-      system.benefit,
+    return buildProgressionSearchText(technique, [
       system.prerequisite,
       system.prerequisites,
       system.relatedPower,
       ...(Array.isArray(technique?.tags) ? technique.tags : []),
       ...(Array.isArray(system.tags) ? system.tags : []),
       this._getTechniqueCategoryKeys(technique).join(' '),
-    ].filter(Boolean).join(' '));
+    ]);
   }
 
   _getTechniqueCategoryKeys(technique) {

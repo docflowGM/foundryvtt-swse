@@ -219,7 +219,19 @@ export function extractDescriptionText(itemOrData) {
   return '';
 }
 
-function normalizeDescriptionCandidate(candidate) {
+/**
+ * Normalize one description-shaped candidate (string, number, boolean, array,
+ * or a `{value/long/short/text/html/plain/summary/description}`-shaped
+ * object) into clean display text, or '' if the candidate has nothing usable.
+ * Exported so callers that need to aggregate *every* usable candidate rather
+ * than stop at the first (e.g. progression search, which must not silently
+ * drop a benefit because a description happened to come first) can reuse the
+ * same per-field normalization extractDescriptionText() itself is built on,
+ * instead of re-implementing HTML-stripping/entity-decoding a second time.
+ * @param {*} candidate
+ * @returns {string}
+ */
+export function normalizeDescriptionCandidate(candidate) {
   if (candidate == null) return '';
 
   if (typeof candidate === 'string') {

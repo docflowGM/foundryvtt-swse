@@ -698,19 +698,24 @@
   color: var(--attr-v2-text);
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 8px;
   min-height: 100%;
-  padding: 14px;
+  padding: 10px;
   background:
     radial-gradient(circle at 18% 0%, rgba(255, 0, 196, 0.16), transparent 34%),
     radial-gradient(circle at 92% 80%, rgba(0, 184, 255, 0.14), transparent 40%),
     linear-gradient(180deg, rgba(3, 4, 14, 0.94), rgba(2, 3, 12, 0.88));
+  /* DENSITY PASS: breakpoints below key off this surface's own available
+     width (container query), not the browser viewport -- the work-surface
+     column is narrower than the viewport once the summary/detail rails are
+     accounted for. */
+  container-type: inline-size;
+  container-name: prog-attr-v2;
 }
 
 .prog-attr-v2-header,
 .prog-attr-v2-methods,
 .prog-attr-v2-pool,
-.prog-attr-v2-cluster,
 .prog-attr-v2-dock {
   border: 1px solid var(--attr-v2-line);
   background: var(--attr-v2-panel);
@@ -721,14 +726,14 @@
   display: grid;
   grid-template-columns: auto 1fr auto;
   align-items: center;
-  gap: 14px;
-  padding: 12px 16px;
+  gap: 10px;
+  padding: 6px 10px;
 }
 
 .prog-attr-v2-stepnum {
-  min-width: 48px;
+  min-width: 30px;
   font-family: var(--font-display, 'Orbitron', sans-serif);
-  font-size: 32px;
+  font-size: 20px;
   line-height: 1;
   color: var(--attr-v2-cyan);
   text-align: center;
@@ -739,28 +744,28 @@
   margin: 0;
   color: var(--attr-v2-text);
   font-family: var(--font-orbit, 'Orbitron', sans-serif);
-  font-size: 17px;
-  letter-spacing: 0.16em;
+  font-size: 13px;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
 }
 
 .prog-attr-v2-titleblock p {
-  margin: 4px 0 0;
+  margin: 2px 0 0;
   color: var(--attr-v2-faint);
-  font-size: 11px;
-  letter-spacing: 0.12em;
+  font-size: 9px;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
 }
 
 .prog-attr-v2-status-chip {
   display: inline-flex;
   align-items: center;
-  gap: 7px;
-  padding: 8px 12px;
+  gap: 6px;
+  padding: 5px 9px;
   border: 1px solid rgba(25, 234, 255, 0.38);
   color: var(--attr-v2-cyan);
-  font-size: 10px;
-  letter-spacing: 0.18em;
+  font-size: 9px;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
 }
 
@@ -776,14 +781,16 @@
   padding: 1px;
 }
 
+/* DENSITY PASS: methods read as a single-row compact command bar. The
+   descriptive "sub" copy (e.g. "Budgeted calibration") moves to the
+   button's native title tooltip (see attribute-work-surface.hbs) instead
+   of consuming a permanent second text row per button. */
 .prog-attr-v2-method {
-  display: grid;
-  grid-template-columns: auto 1fr;
-  grid-template-areas: "icon label" "icon sub";
-  gap: 2px 9px;
+  display: flex;
   align-items: center;
-  min-height: 58px;
-  padding: 10px 12px;
+  gap: 7px;
+  min-height: 30px;
+  padding: 6px 10px;
   border: 0;
   background: rgba(0, 0, 0, 0.42);
   color: var(--attr-v2-dim);
@@ -791,19 +798,15 @@
   text-align: left;
 }
 
-.prog-attr-v2-method i { grid-area: icon; color: var(--attr-v2-cyan); }
+.prog-attr-v2-method i { color: var(--attr-v2-cyan); flex: 0 0 auto; }
 .prog-attr-v2-method .label {
-  grid-area: label;
   font-size: 10px;
-  letter-spacing: 0.17em;
+  letter-spacing: 0.15em;
   text-transform: uppercase;
 }
 .prog-attr-v2-method .sub {
-  grid-area: sub;
-  color: var(--attr-v2-faint);
-  font-size: 10px;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
+  /* Visible only as the button's title tooltip at desktop density. */
+  display: none;
 }
 .prog-attr-v2-method:hover:not(:disabled),
 .prog-attr-v2-method.active {
@@ -815,16 +818,16 @@
 
 .prog-attr-v2-array-toggle {
   display: flex;
-  gap: 8px;
+  gap: 6px;
 }
 .prog-attr-v2-array-toggle button,
 .prog-attr-v2-btn {
   border: 1px solid rgba(25, 234, 255, 0.35);
   background: rgba(0, 0, 0, 0.22);
   color: var(--attr-v2-cyan);
-  padding: 8px 12px;
-  font-size: 10px;
-  letter-spacing: 0.14em;
+  padding: 5px 10px;
+  font-size: 9px;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
   cursor: pointer;
 }
@@ -838,20 +841,21 @@
 .prog-attr-v2-alert {
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  padding: 10px 12px;
+  gap: 2px;
+  padding: 6px 10px;
   border: 1px solid rgba(255, 217, 106, 0.32);
   border-left: 3px solid var(--attr-v2-zero);
   background: rgba(255, 217, 106, 0.06);
   color: var(--attr-v2-dim);
+  font-size: 10px;
 }
-.prog-attr-v2-alert strong { color: var(--attr-v2-zero); text-transform: uppercase; letter-spacing: 0.12em; }
-.prog-attr-v2-alert em { color: var(--attr-v2-faint); font-style: normal; }
+.prog-attr-v2-alert strong { color: var(--attr-v2-zero); text-transform: uppercase; letter-spacing: 0.1em; }
+.prog-attr-v2-alert em { color: var(--attr-v2-faint); font-style: normal; font-size: 9px; }
 
 .prog-attr-v2-layout {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(260px, 320px);
-  gap: 12px;
+  gap: 8px;
   min-height: 0;
 }
 
@@ -859,17 +863,17 @@
   display: flex;
   min-width: 0;
   flex-direction: column;
-  gap: 12px;
+  gap: 6px;
 }
 
 .prog-attr-v2-pool {
-  padding: 12px;
+  padding: 7px 10px;
 }
 .prog-attr-v2-pool-head {
   display: flex;
   justify-content: space-between;
-  gap: 12px;
-  margin-bottom: 10px;
+  gap: 10px;
+  margin-bottom: 6px;
 }
 .prog-attr-v2-pool-head span,
 .prog-attr-v2-cluster-head,
@@ -877,17 +881,17 @@
 .prog-attr-v2-detail-kicker,
 .prog-attr-v2-advice span {
   color: var(--attr-v2-cyan);
-  font-size: 10px;
-  letter-spacing: 0.22em;
+  font-size: 9px;
+  letter-spacing: 0.2em;
   text-transform: uppercase;
 }
 .prog-attr-v2-pool-head p,
 .prog-attr-v2-meter em,
 .prog-attr-v2-advice p {
-  margin: 4px 0 0;
+  margin: 2px 0 0;
   color: var(--attr-v2-faint);
-  font-size: 11px;
-  line-height: 1.4;
+  font-size: 9px;
+  line-height: 1.3;
 }
 .prog-attr-v2-pool-meter {
   display: flex;
@@ -895,16 +899,21 @@
   gap: 4px;
   color: var(--attr-v2-cyan);
 }
-.prog-attr-v2-pool-meter b { font-size: 26px; font-family: var(--font-display, 'Orbitron', sans-serif); }
-.prog-attr-v2-pool-meter small { color: var(--attr-v2-faint); text-transform: uppercase; }
+.prog-attr-v2-pool-meter b { font-size: 18px; font-family: var(--font-display, 'Orbitron', sans-serif); }
+.prog-attr-v2-pool-meter small { color: var(--attr-v2-faint); text-transform: uppercase; font-size: 9px; }
 .prog-attr-v2-pool-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(70px, 1fr));
-  gap: 7px;
+  grid-template-columns: repeat(auto-fit, minmax(56px, 1fr));
+  gap: 5px;
 }
-.prog-attr-v2-pool-grid.is-organic { grid-template-columns: repeat(auto-fit, minmax(48px, 1fr)); }
+.prog-attr-v2-pool-grid.is-organic { grid-template-columns: repeat(auto-fit, minmax(38px, 1fr)); }
 .prog-attr-v2-pool-chip {
-  min-height: 48px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 34px;
+  padding: 3px 4px;
   border: 1px solid rgba(25, 234, 255, 0.3);
   background: rgba(0, 0, 0, 0.34);
   color: var(--attr-v2-text);
@@ -913,16 +922,16 @@
 .prog-attr-v2-pool-chip span {
   display: block;
   font-family: var(--font-display, 'Orbitron', sans-serif);
-  font-size: 24px;
+  font-size: 15px;
   line-height: 1;
 }
 .prog-attr-v2-pool-chip em {
   display: block;
-  margin-top: 3px;
+  margin-top: 2px;
   color: var(--attr-v2-faint);
-  font-size: 8px;
+  font-size: 7px;
   font-style: normal;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
 }
 .prog-attr-v2-pool-chip.is-focused {
@@ -931,35 +940,43 @@
 }
 .prog-attr-v2-pool-chip.is-assigned { opacity: 0.72; }
 
+/* DENSITY PASS: Physical/Mental clusters are no longer independent bordered
+   panels (that chrome cost ~2 * (border + 12px padding) of pure vertical
+   overhead for zero information). A subtle divider line under a compact
+   label is enough to keep the two series visually distinct. */
 .prog-attr-v2-cluster {
-  padding: 12px;
+  padding: 0;
+  border: none;
+  background: none;
+  box-shadow: none;
 }
 .prog-attr-v2-cluster-head {
   display: flex;
   align-items: center;
-  gap: 9px;
-  padding-bottom: 8px;
-  margin-bottom: 10px;
+  gap: 7px;
+  padding-bottom: 3px;
+  margin-bottom: 5px;
   border-bottom: 1px dashed rgba(25, 234, 255, 0.22);
 }
+.prog-attr-v2-cluster-head .ico { font-size: 10px; }
 .prog-attr-v2-cluster-head em {
   margin-left: auto;
   color: var(--attr-v2-faint);
   font-style: normal;
-  font-size: 9px;
-  letter-spacing: 0.14em;
+  font-size: 8px;
+  letter-spacing: 0.12em;
 }
 .prog-attr-v2-cells {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 10px;
+  gap: 8px;
 }
 
 .prog-attr-v2-cell {
   --cell-accent: var(--attr-v2-cyan);
   position: relative;
-  min-height: 174px;
-  padding: 12px;
+  min-height: 108px;
+  padding: 7px 8px;
   border: 1px solid color-mix(in srgb, var(--cell-accent) 42%, transparent);
   border-left: 3px solid var(--cell-accent);
   background: var(--attr-v2-cell);
@@ -992,30 +1009,30 @@
   color: var(--cell-accent);
   font-family: var(--font-orbit, 'Orbitron', sans-serif);
   font-weight: 700;
-  font-size: 12px;
-  letter-spacing: 0.18em;
+  font-size: 11px;
+  letter-spacing: 0.16em;
   text-shadow: 0 0 10px color-mix(in srgb, var(--cell-accent) 60%, transparent);
 }
 .prog-attr-v2-cell-code span {
   display: block;
-  margin-top: 2px;
+  margin-top: 1px;
   color: var(--attr-v2-faint);
   font-family: inherit;
   font-weight: 400;
-  font-size: 8px;
-  letter-spacing: 0.16em;
+  font-size: 7px;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
   text-shadow: none;
 }
 .prog-attr-v2-mod {
   position: absolute;
-  top: 10px;
-  right: 11px;
-  min-width: 34px;
+  top: 6px;
+  right: 7px;
+  min-width: 24px;
   border: 1px solid rgba(210, 244, 255, 0.25);
   color: var(--attr-v2-dim);
   font-family: var(--font-display, 'Orbitron', sans-serif);
-  font-size: 20px;
+  font-size: 13px;
   line-height: 1.1;
   text-align: center;
 }
@@ -1028,27 +1045,28 @@
 
 .prog-attr-v2-value-row {
   display: grid;
-  grid-template-columns: 32px 1fr 32px;
+  grid-template-columns: 24px 1fr 24px;
   align-items: center;
-  gap: 6px;
-  margin: 13px 0 8px;
+  gap: 4px;
+  margin: 5px 0 3px;
 }
 .prog-attr-v2-score {
   color: var(--attr-v2-text);
   font-family: var(--font-display, 'Orbitron', sans-serif);
-  font-size: 58px;
+  font-size: 26px;
   line-height: 0.9;
   text-align: center;
   text-shadow: 0 0 18px color-mix(in srgb, var(--cell-accent) 56%, transparent);
 }
 .prog-attr-v2-score.neg { opacity: 0.82; }
 .prog-attr-v2-stepper {
-  width: 32px;
-  height: 50px;
+  width: 24px;
+  height: 26px;
   border: 1px solid color-mix(in srgb, var(--cell-accent) 45%, transparent);
   background: rgba(0, 0, 0, 0.12);
   color: var(--cell-accent);
-  font-size: 24px;
+  font-size: 15px;
+  line-height: 1;
   cursor: pointer;
 }
 .prog-attr-v2-stepper:hover:not(:disabled) { background: color-mix(in srgb, var(--cell-accent) 18%, transparent); }
@@ -1059,40 +1077,41 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 6px;
+  gap: 4px;
   color: var(--attr-v2-faint);
-  font-size: 9px;
-  letter-spacing: 0.08em;
+  font-size: 8px;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
 }
 .prog-attr-v2-math b { color: var(--attr-v2-dim); }
 .prog-attr-v2-math .cost {
   margin-left: auto;
-  padding: 2px 5px;
+  padding: 1px 4px;
   border: 1px solid color-mix(in srgb, var(--cell-accent) 35%, transparent);
   color: var(--cell-accent);
 }
 .prog-attr-v2-assigned {
   display: flex;
   flex-wrap: wrap;
-  gap: 5px;
-  margin-top: 8px;
+  gap: 4px;
+  margin-top: 4px;
 }
 .prog-attr-v2-assigned-chip,
 .prog-attr-v2-clear {
   border: 1px solid color-mix(in srgb, var(--cell-accent) 42%, transparent);
   background: rgba(0, 0, 0, 0.22);
   color: var(--cell-accent);
-  min-width: 30px;
-  min-height: 25px;
+  min-width: 24px;
+  min-height: 20px;
+  font-size: 10px;
   cursor: pointer;
 }
 .prog-attr-v2-assigned-chip.is-focused { background: var(--cell-accent); color: #050714; }
 .prog-attr-v2-hint {
-  margin-top: 8px;
+  margin-top: 4px;
   color: var(--attr-v2-faint);
-  font-size: 10px;
-  letter-spacing: 0.1em;
+  font-size: 8px;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
 }
 
@@ -1181,27 +1200,36 @@
   border-top: 1px dashed rgba(25, 234, 255, 0.22);
 }
 
+/* DENSITY PASS: the dock (Point Budget + Lock Attributes) is the one region
+   that must never require hunting for -- sticky to the bottom of the
+   surface's own scroll container (NOT the browser viewport) so it stays
+   visible as a resilience fallback on short viewports, while normal desktop
+   sizing keeps it in-flow and visible without any scrolling at all. */
 .prog-attr-v2-dock {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
-  gap: 12px;
+  gap: 10px;
   align-items: center;
-  padding: 12px;
+  padding: 7px 10px;
+  position: sticky;
+  bottom: 0;
+  z-index: 2;
+  box-shadow: 0 -6px 14px rgba(0, 0, 0, 0.35), inset 0 0 22px rgba(18, 234, 255, 0.045);
 }
 .prog-attr-v2-meter-label {
   display: flex;
   justify-content: space-between;
-  gap: 12px;
+  gap: 10px;
   color: var(--attr-v2-cyan);
-  font-size: 10px;
-  letter-spacing: 0.18em;
+  font-size: 9px;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
 }
 .prog-attr-v2-meter-label b { color: var(--attr-v2-text); }
 .prog-attr-v2-meter-bar {
   position: relative;
-  height: 6px;
-  margin-top: 6px;
+  height: 5px;
+  margin-top: 4px;
   border: 1px solid rgba(25, 234, 255, 0.28);
   background: rgba(0, 0, 0, 0.42);
   overflow: hidden;
@@ -1211,14 +1239,25 @@
   height: 100%;
   background: linear-gradient(90deg, rgba(25, 234, 255, 0.35), var(--attr-v2-cyan));
 }
+.prog-attr-v2-meter em { font-size: 9px; }
 .prog-attr-v2-actions {
   display: flex;
   flex-wrap: wrap;
+  align-items: center;
   justify-content: flex-end;
-  gap: 8px;
+  gap: 6px;
 }
-.prog-attr-v2-btn i { margin-right: 6px; }
+.prog-attr-v2-btn i { margin-right: 5px; }
+.prog-attr-v2-btn {
+  padding: 6px 9px;
+  font-size: 9px;
+}
+/* Lock Attributes stays the dominant, unmistakable primary action even
+   though secondary actions (Reroll / Auto Assign) got smaller. */
 .prog-attr-v2-btn.primary {
+  padding: 7px 14px;
+  font-size: 10px;
+  font-weight: 700;
   border-color: var(--attr-v2-cyan);
   background: rgba(25, 234, 255, 0.14);
 }
@@ -1232,11 +1271,38 @@
   color: var(--attr-v2-zero);
 }
 
-@media (max-width: 980px) {
+/* DENSITY PASS: container-scoped responsive model (keyed off this surface's
+   own inline size via `container-type: inline-size` above), not the browser
+   viewport -- the work-surface column is narrower than the viewport once
+   the summary/detail rails are accounted for. 3 columns by default; an
+   intermediate 2-column mode before collapsing to 1 (each cluster keeps its
+   own grid, so group boundaries are preserved at 2 columns). */
+@container prog-attr-v2 (max-width: 850px) {
+  .prog-attr-v2-cells { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@container prog-attr-v2 (max-width: 600px) {
   .prog-attr-v2-layout { grid-template-columns: 1fr; }
   .prog-attr-v2-cells { grid-template-columns: 1fr; }
   .prog-attr-v2-methods { grid-template-columns: 1fr 1fr; }
   .prog-attr-v2-dock { grid-template-columns: 1fr; }
+}
+
+/* Fallback for browsers/contexts without container query support: keep the
+   previous viewport-based collapse so the step never regresses to broken
+   layout, but only as a last resort -- @supports guards against double-
+   applying once container queries are available. */
+@supports not (container-type: inline-size) {
+  @media (max-width: 980px) {
+    .prog-attr-v2-layout { grid-template-columns: 1fr; }
+    .prog-attr-v2-cells { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .prog-attr-v2-methods { grid-template-columns: 1fr 1fr; }
+    .prog-attr-v2-dock { grid-template-columns: 1fr; }
+  }
+
+  @media (max-width: 620px) {
+    .prog-attr-v2-cells { grid-template-columns: 1fr; }
+  }
 }
 
 

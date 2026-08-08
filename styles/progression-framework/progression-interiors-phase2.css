@@ -96,7 +96,16 @@
 
 .progression-shell.swse-prog-v2-shell .prog-canvas-title,
 .progression-shell.swse-prog-v2-shell [data-region="work-surface"] > h2,
-.progression-shell.swse-prog-v2-shell [data-region="work-surface"] > h3 {
+.progression-shell.swse-prog-v2-shell [data-region="work-surface"] > h3,
+/* Phase 2: the plugin body now mounts inside a stable
+   [data-prog-region-body="work-surface"] wrapper (added so a scoped
+   work-surface repaint can replace it without destroying the sibling
+   step-context banner / utility-bar). A step's root <h2>/<h3> is a direct
+   child of that wrapper now, not of [data-region="work-surface"] itself —
+   match through the wrapper too so this rule keeps applying identically
+   whether the paint was structural or a scoped work-surface update. */
+.progression-shell.swse-prog-v2-shell [data-region="work-surface"] [data-prog-region-body="work-surface"] > h2,
+.progression-shell.swse-prog-v2-shell [data-region="work-surface"] [data-prog-region-body="work-surface"] > h3 {
   font-family: var(--swse-font-mono, ui-monospace, monospace);
   font-size: 20px;
   letter-spacing: 0.12em;
