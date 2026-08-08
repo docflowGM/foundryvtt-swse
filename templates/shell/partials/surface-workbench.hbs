@@ -2,13 +2,17 @@
   surface-workbench.hbs
   Item Customization Workbench rendered inline inside the holopad shell.
 
-  Uses WorkbenchSurfaceAdapter to render the full ItemCustomizationWorkbench
-  template (item-customization-workbench.hbs) and inject it as contentHtml.
+  Uses WorkbenchSurfaceAdapter to render the canonical workbench-content.hbs
+  partial (the same content the standalone ItemCustomizationWorkbench window
+  uses) and inject it as contentHtml. This surface provides its own
+  stage/screen chrome around that content — the Holopad shell is the outer
+  frame, so the inline path does not embed the full standalone application
+  frame a second time.
 
   vm:
     id           — 'workbench'
     title        — 'Armory // Customization'
-    contentHtml  — pre-rendered workbench template
+    contentHtml  — pre-rendered canonical workbench-content.hbs partial
     vm.*         — full ItemCustomizationWorkbench _prepareContext() output
     error        — error message if initialization failed
 --}}
@@ -25,9 +29,16 @@
   </div>
 
   {{else if vm.contentHtml}}
-  {{!-- Full workbench content: rendered template wrapped in scoped container --}}
+  {{!-- Canonical workbench content, hosted inline: the shell surface is the
+       outer frame, and this provides the same stage/screen chrome the
+       standalone window uses (minus the standalone-only tablet bezel), not
+       a second nested application frame. --}}
   <div class="swse-item-customization-workbench swse-shell-surface__body">
-    {{{vm.contentHtml}}}
+    <div class="swse-customization-stage swse-datapad swse-ui-shell swse-sheet-ui" data-theme="{{vm.vm.themeKey}}" data-motion-style="{{vm.vm.motionStyle}}" style="{{{vm.vm.themeStyleInline}}}; {{{vm.vm.motionStyleInline}}};">
+      <div class="swse-customization-screen" data-application-content>
+        {{{vm.contentHtml}}}
+      </div>
+    </div>
   </div>
 
   {{else}}

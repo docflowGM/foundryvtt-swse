@@ -540,13 +540,6 @@
   height: 100% !important;
 }
 
-.swse.sheet.actor.character.v2 .swse-customization-tablet {
-  flex: 1 1 auto !important;
-  min-width: 0 !important;
-  min-height: 0 !important;
-  height: 100% !important;
-}
-
 /* Convert the workbench screen from a grid to a flex column so the workarea
    can use flex: 1 1 auto instead of 1fr, which requires a definitively-sized
    grid container that is unreliable across the sheet's CSS layering. */

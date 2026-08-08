@@ -72,7 +72,11 @@ export class WorkbenchSurfaceAdapter {
   }
 
   /**
-   * Build the view model for this surface by rendering the full workbench template.
+   * Build the view model for this surface by rendering the canonical workbench
+   * content partial (shared with the standalone ItemCustomizationWorkbench
+   * window) — not the full standalone application frame. The Holopad shell
+   * surface provides its own equivalent chrome around contentHtml; see
+   * templates/shell/partials/surface-workbench.hbs.
    * Mirrors the pattern used by CustomizationSurfaceAdapter.
    *
    * @returns {Promise<object>}
@@ -85,7 +89,7 @@ export class WorkbenchSurfaceAdapter {
     try {
       const context = await this._workbench._prepareContext({});
       const contentHtml = await foundry.applications.handlebars.renderTemplate(
-        'systems/foundryvtt-swse/templates/apps/customization/item-customization-workbench.hbs',
+        'systems/foundryvtt-swse/templates/apps/customization/partials/workbench-content.hbs',
         context
       );
 

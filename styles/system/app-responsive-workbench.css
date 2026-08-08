@@ -19,14 +19,9 @@
 }
 
 .application.swse-shell-responsive.is-shell-compact:has(.swse-customization-stage) .swse-customization-stage,
-.application.swse-shell-responsive.is-shell-compact:has(.swse-customization-stage) .swse-customization-tablet,
 .application.swse-shell-responsive.is-shell-compact:has(.swse-customization-stage) .swse-customization-screen {
   min-height: 0 !important;
   overflow: hidden !important;
-}
-
-.application.swse-shell-responsive.is-shell-compact:has(.swse-customization-stage) .swse-customization-tablet {
-  padding: var(--swse-wb-pad) !important;
 }
 
 .application.swse-shell-responsive.is-shell-compact:has(.swse-customization-stage) .swse-customization-screen {
