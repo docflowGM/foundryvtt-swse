@@ -295,12 +295,20 @@ function assertNoProperty(body, prop, message) {
   assertNoProperty(expandedBody, 'max-height', '.hero-stats--expanded must not be independently height-bounded either — the containing .item-hero owns both the bound and the scroll while expanded');
 
   // The collapsed (not-expanded) compact-tier .item-hero rule must not be a
-  // permanent scroller.
-  const compactHeroBaseBody = findRuleBodies(responsive, /is-shell-compact[^{]*\.item-hero(\s*[,{])(?!:has)/)
-    .find(b => /max-height/.test(b));
+  // permanent scroller. overflow/flex/padding are shared by every item type
+  // (see the bare .item-hero rule); max-height is split into a separate
+  // :not(.item-hero--lightsaber)-scoped rule plus a dedicated lightsaber
+  // override (asserted in 5c) since the ordinary-item ceiling is too small
+  // for the lightsaber's 168px SVG preview.
+  const compactHeroBaseBody = findRuleBodies(responsive, /is-shell-compact[^{]*\.item-hero(\s*[,{])(?!:has)(?!:not)/)
+    .find(b => /overflow\s*:\s*hidden/.test(b));
   assert.ok(compactHeroBaseBody, 'compact-tier base .item-hero rule must exist');
   assertNoProperty(compactHeroBaseBody, 'overflow: auto', 'the collapsed compact .item-hero must not be a permanent overflow: auto scroller');
   assert.match(compactHeroBaseBody, /overflow\s*:\s*hidden/, 'the collapsed compact .item-hero must be bounded (overflow: hidden), not scrolling, until Full Stats is open');
+
+  const compactHeroMaxHeightBody = findRuleBodies(responsive, /is-shell-compact[^{]*\.item-hero:not\(\.item-hero--lightsaber\)(\s*[,{])/)
+    .find(b => /max-height/.test(b));
+  assert.ok(compactHeroMaxHeightBody, 'compact-tier .item-hero max-height rule (bounding the collapsed non-lightsaber hero) must exist');
 
   // The hero becomes the sole scroll owner only in the expanded state.
   const expandedHeroBodies = findRuleBodies(responsive, /\.item-hero:has\(\.ls-stat-expander\[open\]\)(\s*[,{])/);
@@ -319,57 +327,75 @@ function assertNoProperty(body, prop, message) {
 }
 
 /* ------------------------------------------------------------------ *
- * 5c. Short-tier lightsaber hero geometry: the generic ordinary-item
- * short-tier hero-art/hero-grid compaction (introduced by the 5b
- * correction, to let a collapsed non-scrolling hero fit under the 112px
- * cap) must not also apply to the lightsaber hero — it has its own
- * specialized art allocation sized to fit the 168px-tall generated chassis
- * SVG, and the generic 64px reduction would crush that preview into a cell
- * far too small for it. The lightsaber hero gets its own short-tier
- * max-height ceiling instead of sharing the ordinary-item 112px cap.
+ * 5c. Compact/short-tier lightsaber hero geometry: the generic ordinary-
+ * item hero compaction — is-shell-compact's 88px hero-grid/hero-art
+ * reduction (var(--swse-wb-hero-height) max-height) and is-shell-short's
+ * 64px reduction layered on top (112px max-height) — must not apply to the
+ * lightsaber hero. It has its own specialized art allocation sized to fit
+ * the 168px-tall generated chassis SVG, and either reduction would crush
+ * that preview into a cell far too small for it. is-shell-compact and
+ * is-shell-short are independent thresholds (height <760 vs <700), so a
+ * shell can be compact without also being short — both tiers need their
+ * own lightsaber exclusion + dedicated max-height ceiling, not just
+ * is-shell-short.
  * ------------------------------------------------------------------ */
 {
   const css = await read(WORKBENCH_CSS);
   const responsive = await read(RESPONSIVE_CSS);
+  const TIERS = ['is-shell-compact', 'is-shell-short'];
 
-  // The generic short-tier 112px .item-hero cap must exclude the lightsaber
-  // hero (it gets its own, separately-asserted-below, exception instead).
-  const genericCapBodies = findRuleBodies(responsive, /is-shell-short[^{]*\.item-hero:not\(\.item-hero--lightsaber\)(\s*[,{])/);
-  assert.ok(genericCapBodies.some(b => /max-height\s*:\s*112px/.test(b)),
-    'the short-tier 112px .item-hero max-height cap must be scoped to :not(.item-hero--lightsaber)');
+  // Positive: each tier must scope its generic max-height/hero-grid/
+  // hero-art compaction away from the lightsaber hero, and provide its own
+  // dedicated lightsaber max-height ceiling large enough to matter.
+  for (const tier of TIERS) {
+    const excludedMaxHeightBodies = findRuleBodies(responsive, new RegExp(`${tier}[^{]*\\.item-hero:not\\(\\.item-hero--lightsaber\\)(\\s*[,{])`));
+    assert.ok(excludedMaxHeightBodies.some(b => /max-height\s*:/.test(b)),
+      `${tier} generic .item-hero max-height rule must be scoped to :not(.item-hero--lightsaber)`);
 
-  // The lightsaber hero must have its own short-tier max-height exception,
-  // large enough to clear the ordinary-item 112px cap (it needs room for
-  // panel-head + padding + the 168px chassis SVG preview).
-  const lightsaberCapBodies = findRuleBodies(responsive, /is-shell-short[^{]*\.item-hero--lightsaber(\s*[,{])/);
-  assert.ok(lightsaberCapBodies.length > 0, 'is-shell-short must declare a dedicated .item-hero--lightsaber max-height exception');
-  const lightsaberCapMatch = lightsaberCapBodies.map(b => b.match(/max-height\s*:\s*(\d+)px/)).find(Boolean);
-  assert.ok(lightsaberCapMatch, 'the lightsaber short-tier hero rule must declare an explicit max-height');
-  assert.ok(Number(lightsaberCapMatch[1]) > 112,
-    `lightsaber short-tier max-height (${lightsaberCapMatch[1]}px) must exceed the ordinary-item 112px cap — it needs room for the 168px chassis SVG preview`);
+    const excludedGridBodies = findRuleBodies(responsive, new RegExp(`${tier}[^{]*\\.item-hero:not\\(\\.item-hero--lightsaber\\) \\.hero-grid(\\s*[,{])`));
+    assert.ok(excludedGridBodies.some(b => /grid-template-columns\s*:/.test(b)),
+      `${tier} generic .hero-grid compaction must be scoped to :not(.item-hero--lightsaber)`);
 
-  // The generic short-tier hero-art/hero-grid 64px compaction must likewise
-  // be scoped to :not(.item-hero--lightsaber). Structural check: every
-  // short-tier rule whose body sets the generic 64px value must carry that
-  // exclusion in its selector — this fails if the exclusion is ever dropped
-  // and the generic rule goes back to matching the lightsaber hero too.
+    const excludedArtBodies = findRuleBodies(responsive, new RegExp(`${tier}[^{]*\\.item-hero:not\\(\\.item-hero--lightsaber\\) \\.hero-art(\\s*[,{])`));
+    assert.ok(excludedArtBodies.some(b => /min-height\s*:/.test(b)),
+      `${tier} generic .hero-art compaction must be scoped to :not(.item-hero--lightsaber)`);
+
+    const lightsaberCapBodies = findRuleBodies(responsive, new RegExp(`${tier}[^{]*\\.item-hero--lightsaber(\\s*[,{])`));
+    const lightsaberCapMatch = lightsaberCapBodies.map(b => b.match(/max-height\s*:\s*(\d+)px/)).find(Boolean);
+    assert.ok(lightsaberCapMatch, `${tier} must declare a dedicated .item-hero--lightsaber max-height exception`);
+    assert.ok(Number(lightsaberCapMatch[1]) >= 200,
+      `${tier} lightsaber max-height (${lightsaberCapMatch[1]}px) looks too small to fit panel-head + padding + the 168px chassis SVG preview`);
+  }
+
+  // Regression/effective-cascade guard: walk every rule at compact or short
+  // scope and fail if any *unexcluded* selector (not carrying
+  // :not(.item-hero--lightsaber), and not the dedicated lightsaber override
+  // itself) resolves .item-hero max-height, or .hero-grid/.hero-art
+  // geometry, at all — this is exactly what the base-rule-existence checks
+  // in the previous round of this test missed: they confirmed the
+  // lightsaber's own base rules exist, but not that nothing with equal-or-
+  // greater specificity still overrides them.
   const re = /([^{}]+)\{([^{}]*)\}/g;
   let m;
-  const shortHeroArtGridSelectors = [];
   while ((m = re.exec(responsive))) {
     const selector = m[1].replace(/\/\*[\s\S]*?\*\//g, '').trim();
-    if (!/is-shell-short/.test(selector)) continue;
-    if (/\.hero-art$/.test(selector) && /min-height\s*:\s*64px/.test(m[2])) {
-      shortHeroArtGridSelectors.push(['hero-art', selector]);
+    const body = m[2];
+    if (!/is-shell-compact|is-shell-short/.test(selector)) continue;
+    if (/:not\(\.item-hero--lightsaber\)/.test(selector)) continue; // properly excluded
+    if (/\.item-hero--lightsaber$/.test(selector)) continue; // the dedicated override itself
+
+    if (/\.item-hero$/.test(selector)) {
+      assertNoProperty(body, 'max-height',
+        `unexcluded selector "${selector}" must not set .item-hero max-height — that would re-cap the lightsaber hero to the ordinary-item ceiling`);
     }
-    if (/\.hero-grid$/.test(selector) && /grid-template-columns\s*:\s*64px/.test(m[2])) {
-      shortHeroArtGridSelectors.push(['hero-grid', selector]);
+    if (/\.hero-grid$/.test(selector)) {
+      assertNoProperty(body, 'grid-template-columns',
+        `unexcluded selector "${selector}" must not set .hero-grid columns — that would re-squeeze the lightsaber art column`);
     }
-  }
-  assert.ok(shortHeroArtGridSelectors.length >= 2, 'short-tier 64px .hero-art/.hero-grid compaction rules must exist');
-  for (const [kind, selector] of shortHeroArtGridSelectors) {
-    assert.match(selector, /:not\(\.item-hero--lightsaber\)/,
-      `short-tier ${kind} rule declaring the generic 64px value must exclude .item-hero--lightsaber (selector was: "${selector}")`);
+    if (/\.hero-art$/.test(selector)) {
+      assertNoProperty(body, 'min-height',
+        `unexcluded selector "${selector}" must not set .hero-art min-height — that would re-crush the lightsaber preview cell`);
+    }
   }
 
   // The lightsaber hero's own specialized base geometry (unrelated to this

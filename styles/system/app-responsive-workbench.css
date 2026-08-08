@@ -259,12 +259,32 @@
    exceptional scroll owner only while Full Stats is open (the :has() rule
    below), so it never nests a second scroller (.hero-stats--expanded is
    deliberately non-scrolling — see item-customization-workbench.css) inside
-   an already-scrolling parent. */
+   an already-scrolling parent. flex/overflow/padding are shared by every
+   item type (they don't affect whether the lightsaber schematic fits); only
+   max-height is split out below into a lightsaber-excluded rule plus a
+   dedicated lightsaber override, for the same reason the short-tier max-height
+   is split (see the is-shell-short .item-hero--lightsaber rule further down):
+   the ordinary-item ceiling is too small for the 168px chassis SVG. */
 .application.swse-shell-responsive.is-shell-compact:has(.swse-customization-stage) .item-hero {
   flex: 0 0 auto !important;
-  max-height: var(--swse-wb-hero-height) !important;
   overflow: hidden !important;
   padding: 6px !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-customization-stage) .item-hero:not(.item-hero--lightsaber) {
+  max-height: var(--swse-wb-hero-height) !important;
+}
+
+/* is-shell-short is not the only tier that can reach this cap: shortHeight
+   (700) and compactHeight (760) are independent thresholds, so a shell can
+   be is-shell-compact (height 700-759) without also being is-shell-short.
+   The lightsaber hero needs the same wider ceiling there too — see the
+   is-shell-short .item-hero--lightsaber rule below for the full derivation
+   (~222px of natural content). This compact-scoped rule and that short-scoped
+   one intentionally overlap (a short shell is always also compact) and carry
+   the same value; that's harmless duplication, not a conflict. */
+.application.swse-shell-responsive.is-shell-compact:has(.swse-customization-stage) .item-hero--lightsaber {
+  max-height: 236px !important;
 }
 
 .application.swse-shell-responsive.is-shell-compact:has(.swse-customization-stage) .item-hero:has(.ls-stat-expander[open]) {
@@ -273,11 +293,20 @@
 }
 
 .application.swse-shell-responsive.is-shell-compact:has(.swse-customization-stage) .hero-grid {
-  grid-template-columns: 88px minmax(0, 1fr) !important;
   gap: 8px !important;
 }
 
-.application.swse-shell-responsive.is-shell-compact:has(.swse-customization-stage) .hero-art {
+/* Excludes .item-hero--lightsaber for the same reason as the is-shell-short
+   equivalent below: the lightsaber hero's own base rules already allocate a
+   104px grid column / 138px art min-height to fit its 168px SVG preview, and
+   a shell can be is-shell-compact without also being is-shell-short (see the
+   max-height split above), so this exclusion has to live at the compact
+   tier too, not only the short tier. */
+.application.swse-shell-responsive.is-shell-compact:has(.swse-customization-stage) .item-hero:not(.item-hero--lightsaber) .hero-grid {
+  grid-template-columns: 88px minmax(0, 1fr) !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-customization-stage) .item-hero:not(.item-hero--lightsaber) .hero-art {
   min-height: 88px !important;
 }
 
@@ -308,15 +337,19 @@
 /* The lightsaber hero's own base rules (item-customization-workbench.css)
    give the art column a 104px width and a 138px min-height to fit the
    168px-tall generated chassis SVG (.ls-chassis-hero-visual), which combined
-   with panel-head (~30px) and hero padding (16px) needs roughly 226px to
-   render uncropped — the ordinary-item 112px cap would silently clip the
-   schematic now that the hero is overflow:hidden (not auto). Give the
-   lightsaber hero its own short-tier ceiling instead of sharing the generic
-   one; 236px is that ~226px natural height plus a small safety margin, not
-   an arbitrary design value. This only matters when is-shell-short applies
-   without is-shell-tier-micro/tiny also applying, since those tiers hide
-   hero-art entirely regardless of item type (below), removing the art
-   column's height contribution. */
+   with panel-head (~30px) and the shared compact-tier hero padding (6px top
+   + 6px bottom = 12px — is-shell-short always implies is-shell-compact, so
+   that shared rule above is the one that applies here too) needs roughly
+   222px to render uncropped — the ordinary-item 112px cap would silently
+   clip the schematic now that the hero is overflow:hidden (not auto). Give
+   the lightsaber hero its own short-tier ceiling instead of sharing the
+   generic one; 236px is that ~222px natural height plus a small safety
+   margin, not an arbitrary design value. This overlaps with (and matches)
+   the is-shell-compact .item-hero--lightsaber rule above — a short shell is
+   always also compact, so both rules end up applying; harmless duplication.
+   This only matters when is-shell-short applies without is-shell-tier-micro/
+   tiny also applying, since those tiers hide hero-art entirely regardless of
+   item type (below), removing the art column's height contribution. */
 .application.swse-shell-responsive.is-shell-short:has(.swse-customization-stage) .item-hero--lightsaber {
   max-height: 236px !important;
 }
