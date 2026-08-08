@@ -24,10 +24,13 @@
   overflow: hidden !important;
 }
 
+/* Compact spacing only — never padding/radius/background/box-shadow here.
+   Phase 1 made .swse-customization-screen a frameless layout container
+   inline (see styles/system/shell-host.css); reintroducing box-model
+   framing at any responsive tier would recreate the "screen inside the
+   Holopad screen" defect Phase 1 removed. */
 .application.swse-shell-responsive.is-shell-compact:has(.swse-customization-stage) .swse-customization-screen {
   gap: var(--swse-wb-gap) !important;
-  padding: var(--swse-wb-pad) !important;
-  border-radius: 12px !important;
 }
 
 .application.swse-shell-responsive.is-shell-compact:has(.swse-customization-stage) .swse-customization-hud {
@@ -127,20 +130,39 @@
   display: none !important;
 }
 
+/* Compact alone (which can be triggered by short height at full desktop
+   width — see shell-responsive-observer.js's `compact` classification) must
+   NOT collapse the inventory | primary-workspace lane split. Only actual
+   narrow width should stack lanes; compact-wide keeps the row layout from
+   the desktop grid-template-columns declaration and just tightens spacing. */
 .application.swse-shell-responsive.is-shell-compact:has(.swse-customization-stage) .swse-customization-workarea {
-  display: flex !important;
-  flex-direction: column !important;
   gap: var(--swse-wb-gap) !important;
   min-height: 0 !important;
   overflow: hidden !important;
 }
 
+/* Narrow (width-driven — the shared responsive observer's own width-only
+   tier) is where the inventory | workspace lanes actually stack. */
+.application.swse-shell-responsive.is-shell-narrow:has(.swse-customization-stage) .swse-customization-workarea {
+  display: flex !important;
+  flex-direction: column !important;
+}
+
 .application.swse-shell-responsive.is-shell-compact:has(.swse-customization-stage) .workbench-inventory {
-  flex: 0 0 auto !important;
-  max-height: var(--swse-wb-inventory-height) !important;
   min-height: 0 !important;
   overflow: hidden !important;
   padding: 6px !important;
+}
+
+/* The inventory-as-capped-horizontal-band presentation (flex: 0 0 auto with
+   a max-height) is only correct once the workarea has actually stacked to a
+   column (.is-shell-narrow, above) — at compact-wide, inventory stays a full-
+   height left lane per the desktop grid-template-columns declaration, and
+   capping its height here would just clip it to a few hundred pixels in a
+   layout with room to spare. */
+.application.swse-shell-responsive.is-shell-narrow:has(.swse-customization-stage) .workbench-inventory {
+  flex: 0 0 auto !important;
+  max-height: var(--swse-wb-inventory-height) !important;
 }
 
 .application.swse-shell-responsive.is-shell-compact:has(.swse-customization-stage) .workbench-inventory .panel-head,
@@ -246,9 +268,18 @@
 .application.swse-shell-responsive.is-shell-compact:has(.swse-customization-stage) .workbench-tabs-container {
   flex: 1 1 auto !important;
   min-height: 0 !important;
+  overflow: hidden !important;
+}
+
+/* .workbench-tabs-container is already display:flex/flex-direction:column
+   at desktop (tab bar above the active pane) regardless of shell size — no
+   narrow-only change needed there. .detail-grid is display:grid (tabs pane |
+   intel rail side by side) at desktop and compact-wide; only narrow width
+   collapses it to a single stacked column, same reasoning as the workarea
+   split above. */
+.application.swse-shell-responsive.is-shell-narrow:has(.swse-customization-stage) .detail-grid {
   display: flex !important;
   flex-direction: column !important;
-  overflow: hidden !important;
 }
 
 .application.swse-shell-responsive.is-shell-compact:has(.swse-customization-stage) .workbench-content-tabs,
@@ -275,14 +306,17 @@
   overflow-y: auto !important;
 }
 
+/* Grid density only — .card-list/.ls-tab-card-grid must NOT be independent
+   vertical scroll owners here: .wcb-pane/.ls-tab-panel already own scrolling
+   for this lane (below), and giving both the parent pane and this grid their
+   own overflow-y:auto is exactly the nested-scroller problem this phase
+   removes. Cards flow through the pane's scroll area at every shell size. */
 .application.swse-shell-responsive.is-shell-compact:has(.swse-customization-stage) .card-list,
 .application.swse-shell-responsive.is-shell-compact:has(.swse-customization-stage) .ls-tab-card-grid,
 .application.swse-shell-responsive.is-shell-compact:has(.swse-customization-stage) .appearance-blocks {
   display: grid !important;
   grid-template-columns: repeat(auto-fit, minmax(var(--swse-wb-card-min), 1fr)) !important;
   gap: var(--swse-wb-gap) !important;
-  min-height: 0 !important;
-  overflow-y: auto !important;
 }
 
 .application.swse-shell-responsive.is-shell-compact:has(.swse-customization-stage) .config-card,
@@ -297,11 +331,17 @@
 }
 
 .application.swse-shell-responsive.is-shell-compact:has(.swse-customization-stage) .lightsaber-workspace {
-  display: flex !important;
-  flex-direction: column !important;
   min-height: 0 !important;
   overflow: hidden !important;
   gap: var(--swse-wb-gap) !important;
+}
+
+/* Wizard | forge-rail intel columns stay side by side at compact-wide (the
+   desktop 2-column grid-template-columns declaration keeps applying); only
+   narrow width collapses them to a stacked column. */
+.application.swse-shell-responsive.is-shell-narrow:has(.swse-customization-stage) .lightsaber-workspace {
+  display: flex !important;
+  flex-direction: column !important;
 }
 
 .application.swse-shell-responsive.is-shell-compact:has(.swse-customization-stage) .ls-wizard-main {
@@ -311,17 +351,30 @@
   padding: 6px !important;
 }
 
-.application.swse-shell-responsive.is-shell-compact:has(.swse-customization-stage) .ls-forge-rail {
+/* Density only at compact-wide — .ls-forge-rail/.ls-component-intel keep
+   their desktop overflow behavior (rail bounded, .rail-detail-card is the
+   sole scroll owner) since the wizard | forge-rail columns are still side by
+   side. Only at narrow width, once the lightsaber workspace has stacked
+   (above), does the forge-rail become a capped-height drawer. */
+.application.swse-shell-responsive.is-shell-compact:has(.swse-customization-stage) .ls-component-intel,
+.application.swse-shell-responsive.is-shell-compact:has(.swse-customization-stage) .rail-detail-card {
+  padding: 6px !important;
+}
+
+/* Narrow: the forge-rail is now a capped-height drawer below the wizard
+   column, and becomes the sole scroll owner for that drawer. Its contents
+   (.ls-component-intel, .rail-detail-card) must flow through that scroll
+   rather than each independently scrolling inside it. */
+.application.swse-shell-responsive.is-shell-narrow:has(.swse-customization-stage) .ls-forge-rail {
   flex: 0 0 auto !important;
   max-height: var(--swse-wb-detail-drawer-height) !important;
   overflow-y: auto !important;
 }
 
-.application.swse-shell-responsive.is-shell-compact:has(.swse-customization-stage) .ls-component-intel,
-.application.swse-shell-responsive.is-shell-compact:has(.swse-customization-stage) .rail-detail-card {
+.application.swse-shell-responsive.is-shell-narrow:has(.swse-customization-stage) .ls-component-intel,
+.application.swse-shell-responsive.is-shell-narrow:has(.swse-customization-stage) .rail-detail-card {
   min-height: 0 !important;
-  overflow: auto !important;
-  padding: 6px !important;
+  overflow: visible !important;
 }
 
 .application.swse-shell-responsive.is-shell-compact:has(.swse-customization-stage) .ls-finish-picker {
@@ -364,6 +417,28 @@
   font-size: 9px !important;
   letter-spacing: 0.12em !important;
   white-space: nowrap !important;
+}
+
+/* ─── Narrow-width secondary reflows ─────────────────────────────────────
+   Migrated from the old browser-viewport `@media (max-width: 1180px)` rules
+   in item-customization-workbench.css, which fired off the browser window's
+   width rather than the Holopad shell's actual rendered size. These are the
+   still-live cases from that audit (the footer's 3-column credit/slot/action
+   row, the appearance-block picker's 2-column grid, and the energy shield
+   emitter+copy grid) — the rest of that media query's rules matched classes
+   no longer present in the current template (an older grid-template-areas
+   iteration of the lightsaber/detail-grid layout) and were dropped outright
+   rather than migrated, since they had already gone dead. */
+.application.swse-shell-responsive.is-shell-narrow:has(.swse-customization-stage) .swse-customization-footer {
+  grid-template-columns: 1fr !important;
+}
+
+.application.swse-shell-responsive.is-shell-narrow:has(.swse-customization-stage) .appearance-blocks {
+  grid-template-columns: 1fr !important;
+}
+
+.application.swse-shell-responsive.is-shell-narrow:has(.swse-customization-stage) .energy-shield-grid {
+  grid-template-columns: 1fr !important;
 }
 
 .application.swse-shell-responsive.is-shell-tier-micro:has(.swse-customization-stage),
