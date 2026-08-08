@@ -148,6 +148,49 @@ function assertNoProperty(body, prop, message) {
     assertNoProperty(b, 'overflow-y', '.detail-grid must not declare overflow-y — it is a bounded layout container, not a scroll owner');
   }
 
+  // .detail-grid's "tabs intel" row must be an explicitly bounded track
+  // (minmax(0, 1fr)), not a content-growing implicit row. An overflow:auto
+  // scroll owner further down the chain (.wcb-pane) is meaningless if its
+  // containing block can grow past the available height instead of being
+  // definitely sized — that lets a long modification/template list grow the
+  // row past .detail-grid's own bounded (overflow: hidden) height and get
+  // clipped there, instead of triggering .wcb-pane's own internal scroll.
+  const liveDetailGridBody = findRuleBodies(css, /\.detail-grid(\s*,|\s*\{)/)
+    .find(b => /grid-template-areas\s*:\s*"tabs intel"/.test(b));
+  assert.ok(liveDetailGridBody, 'the live "tabs intel" .detail-grid rule must exist');
+  assertPropertyValue(liveDetailGridBody, 'grid-template-rows', /minmax\(\s*0\s*,\s*1fr\s*\)/,
+    '.detail-grid must explicitly bound its one workspace/intel row to minmax(0, 1fr) — not left to an implicit, content-sized row');
+  assertPropertyValue(liveDetailGridBody, 'align-items', /stretch/,
+    '.detail-grid must stretch its tabs/intel children to the bounded row height (align-items: start would let .workbench-tabs-container size to its own content instead)');
+  assertNoProperty(liveDetailGridBody, 'grid-auto-rows',
+    'the live .detail-grid rule must not rely on grid-auto-rows (an implicit, content-growing row) for its one explicit "tabs intel" row');
+
+  // The old 3-column .detail-grid declaration (grid-auto-rows: minmax(160px,
+  // auto) + align-items: start) that caused this must be gone entirely as an
+  // actual rule, not just overridden — its grid-template-columns was already
+  // dead, but grid-auto-rows/align-items were live and are exactly what this
+  // correction removes. Strip comments first: this file's own explanatory
+  // comments (including this test's failure messages) quote that exact old
+  // value for documentation, which would otherwise false-positive a raw-text
+  // check.
+  const cssWithoutComments = css.replace(/\/\*[\s\S]*?\*\//g, '');
+  assert.doesNotMatch(cssWithoutComments, /grid-auto-rows\s*:\s*minmax\(\s*160px\s*,\s*auto\s*\)/,
+    'the obsolete content-growing grid-auto-rows: minmax(160px, auto) declaration must not survive anywhere in the stylesheet');
+
+  // .workbench-tabs-container: flex column, bounded, min-height: 0 — the
+  // grid item that stretches into the bounded row and lets .wcb-pane inside
+  // it become the actual scroller.
+  const tabsContainerBodies = findRuleBodies(css, /\.workbench-tabs-container(\s*,|\s*\{)/);
+  assert.ok(tabsContainerBodies.some(b =>
+    /display\s*:\s*flex/.test(b) && /flex-direction\s*:\s*column/.test(b) && /min-height\s*:\s*0/.test(b) && /overflow\s*:\s*hidden/.test(b)
+  ), '.workbench-tabs-container must be a bounded flex column (display: flex; flex-direction: column; min-height: 0; overflow: hidden)');
+
+  // .wcb-pane: still the scroll owner, unaffected by this correction.
+  const wcbPaneOwnerBodies = findRuleBodies(css, /\.wcb-pane(\s*,|\s*\{)(?!\s*>)/);
+  assert.ok(wcbPaneOwnerBodies.some(b =>
+    /flex\s*:\s*1 1 auto/.test(b) && /min-height\s*:\s*0/.test(b) && /overflow-y\s*:\s*auto/.test(b)
+  ), '.wcb-pane must remain the primary workspace scroll owner (flex: 1 1 auto; min-height: 0; overflow-y: auto)');
+
   // Intel rail: .detail-rail-scroll scrolls; the outer aside does not.
   const detailRailScrollBodies = findRuleBodies(css, /\.detail-rail-scroll(\s*,|\s*\{)/);
   assert.ok(detailRailScrollBodies.some(b => /overflow-y\s*:\s*auto/.test(b)), '.detail-rail-scroll must be the intel rail scroll owner');
