@@ -99,7 +99,14 @@ const read = (relPath) => fs.readFileSync(path.join(ROOT, relPath), 'utf8');
 // Test Contract D — player character portraits must be excluded. Protect
 // against selectors broad enough to affect generic actor/token/item art:
 // the shared classes must never appear on a player-character portrait
-// template, and the two Phase-0-identified mis-scoped usages must be fixed.
+// template, and the Phase-0/Phase-1-identified mis-scoped usages must be
+// fixed — at BOTH the <img> level (prog-holo-media__image /
+// swse-mentor-hologram__image) AND the ancestor-container level
+// (prog-holo-media / swse-mentor-hologram), since .prog-holo-media itself
+// applies ::before/::after blue-tint + scanline pseudo-element overlays and
+// a background/box-shadow glow directly on the container — a container can
+// visually hologram-process a plain, un-classed child image with no class
+// on the <img> at all (PR #946 final correction).
 // ---------------------------------------------------------------------------
 {
   const playerPortraitTemplates = [
@@ -109,7 +116,8 @@ const read = (relPath) => fs.readFileSync(path.join(ROOT, relPath), 'utf8');
     'templates/actors/vehicle/v2/partials/vehicle-sheet-content.hbs',
     'templates/shell/partials/surface-home.hbs',
     'templates/apps/progression-framework/summary-panel/species-summary.hbs',
-    'templates/apps/progression-framework/summary-panel/droid-builder-summary.hbs'
+    'templates/apps/progression-framework/summary-panel/droid-builder-summary.hbs',
+    'templates/apps/progression-framework/summary-panel/selected-rail.hbs'
   ];
   for (const relPath of playerPortraitTemplates) {
     const full = path.join(ROOT, relPath);
@@ -122,14 +130,55 @@ const read = (relPath) => fs.readFileSync(path.join(ROOT, relPath), 'utf8');
     );
   }
 
-  // The two Phase-0-identified mis-scoped usages must no longer carry the
-  // GENERIC hologram-filter image class on the actor's own portrait.
+  // Wrapper-aware check: locate the SPECIFIC element that wraps each genuine
+  // player-character portrait image (identified by its own stable, unique
+  // class name — not a blind whole-file scan, which would false-positive on
+  // unrelated deliberately-holographic media such as species/class/item
+  // reference art sitting elsewhere in the same template) and assert that
+  // exact wrapper's own class attribute carries neither the generic
+  // prog-holo-media opt-in nor the mentor-specific swse-mentor-hologram
+  // opt-in. This is what actually controls whether the ::before/::after
+  // tint+scanline pseudo-elements apply, independent of whatever classes the
+  // child <img> itself carries.
+  function getWrapperClassAttr(content, wrapperClassName, label) {
+    const wrapperRe = new RegExp(`<div class="([^"]*\\b${wrapperClassName}\\b[^"]*)"`);
+    const match = content.match(wrapperRe);
+    assert.ok(match, `${label}: could not locate the "${wrapperClassName}" portrait wrapper element — template structure may have changed`);
+    return match[1];
+  }
+
   const species = read('templates/apps/progression-framework/summary-panel/species-summary.hbs');
   const droidSummary = read('templates/apps/progression-framework/summary-panel/droid-builder-summary.hbs');
-  assert.doesNotMatch(species, /class="[^"]*prog-holo-media__image[^"]*"/, 'species-summary.hbs actor portrait must not receive the hologram filter class');
-  assert.doesNotMatch(droidSummary, /class="[^"]*prog-holo-media__image[^"]*"/, 'droid-builder-summary.hbs actor portrait must not receive the hologram filter class');
+  const selectedRail = read('templates/apps/progression-framework/summary-panel/selected-rail.hbs');
+
+  const wrapperChecks = [
+    ['species-summary.hbs', species, 'prog-summary__portrait'],
+    ['droid-builder-summary.hbs', droidSummary, 'prog-summary__portrait'],
+    ['selected-rail.hbs', selectedRail, 'prog-selected-rail__portrait']
+  ];
+  for (const [label, content, wrapperClassName] of wrapperChecks) {
+    const classAttr = getWrapperClassAttr(content, wrapperClassName, label);
+    assert.doesNotMatch(
+      classAttr,
+      /\bprog-holo-media\b/,
+      `${label}: the "${wrapperClassName}" player-portrait wrapper must not opt into prog-holo-media — that class alone drives ::before/::after blue-tint + scanline overlays and a background/box-shadow glow directly on the container, hologram-processing the player's own portrait even if the <img> itself carries no hologram class`
+    );
+    assert.doesNotMatch(
+      classAttr,
+      /\bswse-mentor-hologram\b/,
+      `${label}: the "${wrapperClassName}" player-portrait wrapper must not opt into swse-mentor-hologram`
+    );
+  }
+
+  // The Phase-0/Phase-1-identified mis-scoped usages must no longer carry
+  // the GENERIC hologram-filter image class on the actor's own portrait
+  // <img>, either.
+  assert.doesNotMatch(species, /class="[^"]*prog-holo-media__image[^"]*"/, 'species-summary.hbs actor portrait <img> must not receive the hologram filter class');
+  assert.doesNotMatch(droidSummary, /class="[^"]*prog-holo-media__image[^"]*"/, 'droid-builder-summary.hbs actor portrait <img> must not receive the hologram filter class');
+  assert.doesNotMatch(selectedRail, /class="[^"]*prog-holo-media__image[^"]*"/, 'selected-rail.hbs actor portrait <img> must not receive the hologram filter class');
   assert.match(species, /actor\.img/, 'sanity: this is still the actor\'s own portrait');
   assert.match(droidSummary, /actor\.img/, 'sanity: this is still the actor\'s own portrait');
+  assert.match(selectedRail, /actorIdentity\.portrait/, 'sanity: this is still the actor\'s own identity portrait');
 }
 
 // ---------------------------------------------------------------------------

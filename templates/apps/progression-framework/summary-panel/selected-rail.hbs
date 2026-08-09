@@ -29,9 +29,17 @@
   ============================================================ --}}
   <div class="prog-selected-rail__identity">
 
-    <div class="prog-selected-rail__portrait prog-holo-media prog-holo-media--avatar">
+    {{!-- Phase 1 — Garage/Shipyard Foundation: player-character portraits must
+      never receive the mentor/NPC hologram treatment (prog-holo-media /
+      prog-holo-media__image), whether from the image itself or an ancestor
+      container's tint/scanline pseudo-elements. actorIdentity.portrait is
+      the build's own actor identity (SelectedRailContext._resolveActorPortrait
+      — the actor's own image, falling back to species reference art only
+      until the player sets one), so this wrapper intentionally does NOT opt
+      into the shared prog-holo-media primitive. --}}
+    <div class="prog-selected-rail__portrait">
       {{#if actorIdentity.portrait}}
-        <img class="prog-selected-rail__portrait-img prog-holo-media__image" src="{{actorIdentity.portrait}}" alt="{{actorIdentity.name}}">
+        <img class="prog-selected-rail__portrait-img" src="{{actorIdentity.portrait}}" alt="{{actorIdentity.name}}">
       {{else}}
         <div class="prog-selected-rail__portrait-placeholder">
           <i class="fas fa-user-astronaut"></i>
