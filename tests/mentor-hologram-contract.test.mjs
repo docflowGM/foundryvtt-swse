@@ -53,9 +53,15 @@ const read = (relPath) => fs.readFileSync(path.join(ROOT, relPath), 'utf8');
   assert.doesNotMatch(seraphim, /\.png$/i);
   assert.doesNotMatch(marl, /\.png$/i);
 
-  // The Bay template itself must not hardcode a second portrait path/registry.
-  const bayTemplate = read('templates/apps/customization/customization-bay.hbs');
-  assert.doesNotMatch(bayTemplate, /assets\/mentors\/[^"']+\.(png|webp)/i, 'customization-bay.hbs must not hardcode a mentor portrait path — it must come from the resolved VM (mentor.mentorPortrait)');
+  // The Bay content itself must not hardcode a second portrait path/registry.
+  // PR #946 Phase 2 (structural flattening) moved the mentor markup out of
+  // the standalone customization-bay.hbs wrapper into the canonical
+  // partials/customization-bay-content.hbs content partial — see that
+  // change's Test Contract A/B in customization-bay-inline-structural-
+  // flattening.test.mjs. This must read the file that actually contains the
+  // markup now.
+  const bayTemplate = read('templates/apps/customization/partials/customization-bay-content.hbs');
+  assert.doesNotMatch(bayTemplate, /assets\/mentors\/[^"']+\.(png|webp)/i, 'customization-bay-content.hbs must not hardcode a mentor portrait path — it must come from the resolved VM (mentor.mentorPortrait)');
   assert.match(bayTemplate, /mentor\.mentorPortrait/, 'the template must render the resolved portrait from the VM');
 }
 
@@ -186,7 +192,9 @@ const read = (relPath) => fs.readFileSync(path.join(ROOT, relPath), 'utf8');
 // complementing the exclusion checks above).
 // ---------------------------------------------------------------------------
 {
-  const bayTemplate = read('templates/apps/customization/customization-bay.hbs');
+  // PR #946 Phase 2 moved this markup into the canonical content partial —
+  // see the Test Contract K note below.
+  const bayTemplate = read('templates/apps/customization/partials/customization-bay-content.hbs');
   assert.match(bayTemplate, /swse-mentor-hologram/, 'Garage/Shipyard mentor portrait must use the shared hologram primitive');
 
   const workbenchContent = read('templates/apps/customization/partials/workbench-content.hbs');
@@ -204,7 +212,12 @@ const read = (relPath) => fs.readFileSync(path.join(ROOT, relPath), 'utf8');
 // PART 25). Hydration must be idempotent (guarded by translationHydrated).
 // ---------------------------------------------------------------------------
 {
-  const bayTemplate = read('templates/apps/customization/customization-bay.hbs');
+  // PR #946 Phase 2 (structural flattening) extracted the Garage/Shipyard
+  // mentor markup out of the standalone customization-bay.hbs wrapper into
+  // partials/customization-bay-content.hbs, which both the standalone
+  // window and the inline Holopad adapter now render — see
+  // customization-bay-inline-structural-flattening.test.mjs.
+  const bayTemplate = read('templates/apps/customization/partials/customization-bay-content.hbs');
   assert.match(bayTemplate, /data-customization-mentor-text/, 'template must expose the mentor-text hydration hook');
   assert.match(bayTemplate, /data-mentor="{{mentor\.mentorKey}}"/, 'template must expose the mentor key for translation preset lookup');
   assert.match(bayTemplate, /data-raw-text="{{mentor\.mentorText}}"/, 'template must expose the raw (untranslated) text for idempotent hydration');

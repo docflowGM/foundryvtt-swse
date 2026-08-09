@@ -471,6 +471,7 @@ export const SWSE_TEMPLATES = [
   'systems/foundryvtt-swse/templates/shell/partials/holopad-frame-close.hbs',
   'systems/foundryvtt-swse/templates/shell/partials/surface-workbench.hbs',
   'systems/foundryvtt-swse/templates/apps/customization/partials/workbench-content.hbs',
+  'systems/foundryvtt-swse/templates/apps/customization/partials/customization-bay-content.hbs',
   'systems/foundryvtt-swse/templates/shell/partials/surface-customization.hbs',
   'systems/foundryvtt-swse/templates/shell/partials/surface-asset-bay.hbs',
   'systems/foundryvtt-swse/templates/shell/partials/concept/surface-header.hbs',
