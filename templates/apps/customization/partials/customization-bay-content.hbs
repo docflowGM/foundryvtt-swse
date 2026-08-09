@@ -28,11 +28,34 @@
   rules, but kept for defense in depth) — none of which paint any
   background, border, or frame chrome of their own.
 
+  PR #947 final correction — data-application-content lives HERE, on the
+  content root, not on the standalone frame wrapper. It was originally
+  placed on .swse-customization-bay-standalone-frame so
+  styles/apps/customization-bay.css could thread window-content's height
+  chain down through it, but that made the SAME element simultaneously
+  match ".swse-customization-bay-app [data-application-content]"
+  (specificity 0,2,0) and ".swse-customization-bay-standalone-frame"
+  (specificity 0,1,0) — so the higher-specificity window-content-sizing
+  rule's padding:0/background:transparent silently won over the frame's
+  own padding:18px/background, regardless of source order. Mirroring
+  Workbench's actual structure (data-application-content on
+  .swse-customization-screen, the CONTENT element, never on
+  .swse-customization-stage, the frame/theme-scope element) fixes this by
+  construction: the height-chain CSS now targets only the real Foundry
+  .window-content ancestor, which is a different element than the frame,
+  so there is no longer any rule competing with the frame's own chrome for
+  the same element. This also preserves the repo-wide V13
+  [data-application-content] contract (see
+  scripts/apps/base/swse-application-v2.js's contentElement getter and
+  scripts/governance/sentinel/appv2-interaction-auditor.js), which this
+  content root satisfies in both the standalone and inline hosts.
+
   V2-safe shell: UI emits intents; engines own rules, costs, validation, and
   mutation.
 --}}
 <div class="swse-customization-bay swse-datapad"
      data-customization-bay-content
+     data-application-content
      data-theme="{{themeKey}}"
      data-motion-style="{{motionStyle}}"
      data-mode="{{mode}}"

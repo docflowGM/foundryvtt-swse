@@ -283,11 +283,22 @@ export class CustomizationBayApp extends BaseSWSEAppV2 {
     return this.actor;
   }
 
+  // PR #947 final correction — swse-ui-shell was removed from this list.
+  // Audited its effective CSS (styles/ui/swse-holo-phase1.css): on this
+  // application root it independently painted a full min-height:100%
+  // screen background, an absolutely-positioned ::before page-frame SVG
+  // overlay, and backdrop-filter:blur(6px) — a second, generic frame
+  // authority sitting above the dedicated
+  // .swse-customization-bay-standalone-frame chrome. Its only non-frame
+  // contributions (typography, tooltip focus-visible styling, select/
+  // option theming) are already provided redundantly by swse-datapad
+  // (kept) and by .application.swse (Foundry's own base class, already
+  // present), so nothing is lost by dropping it.
   static DEFAULT_OPTIONS = foundry.utils.mergeObject(
     foundry.utils.deepClone(super.DEFAULT_OPTIONS ?? {}),
     {
       id: "swse-customization-bay",
-      classes: ["swse", "swse-customization-bay-app", "swse-datapad", "swse-ui-shell"],
+      classes: ["swse", "swse-customization-bay-app", "swse-datapad"],
       window: {
         title: "Customization Bay",
         resizable: true

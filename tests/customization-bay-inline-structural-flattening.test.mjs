@@ -60,6 +60,7 @@ const PARTIAL_INCLUDE = '{{> "systems/foundryvtt-swse/templates/apps/customizati
 const STANDALONE_FRAME_CLASS = 'swse-customization-bay-standalone-frame';
 const CONTENT_ROOT_MARKER = 'data-customization-bay-content';
 const CSS_PATH = 'styles/apps/customization-bay.css';
+const APP_JS_PATH = 'scripts/apps/customization/customization-bay-app.js';
 
 // Classes proven (by direct CSS audit — see PR #947 correction) to
 // independently paint a full min-height:100% screen background AND an
@@ -321,10 +322,12 @@ async function findHbsFiles(dir) {
   // (a) window-content itself must become a definite-height flex column,
   // scoped to the Bay's own ApplicationV2 root class — never a bare/global
   // .window-content rule, which would leak into every other application.
+  // Must be a SINGLE selector, not combined with a companion
+  // [data-application-content] alternate — see Test Contract I.
   const windowContentMatch = css.match(
-    /\.swse-customization-bay-app \.window-content,\s*\n\.swse-customization-bay-app \[data-application-content\]\s*\{([^}]*)\}/
+    /\.swse-customization-bay-app \.window-content\s*\{([^}]*)\}/
   );
-  assert.ok(windowContentMatch, '.swse-customization-bay-app .window-content/[data-application-content] rule must exist');
+  assert.ok(windowContentMatch, '.swse-customization-bay-app .window-content rule must exist');
   const windowContentBody = windowContentMatch[1];
   assert.match(windowContentBody, /display:\s*flex/, 'window-content must become a flex container');
   assert.match(windowContentBody, /flex-direction:\s*column/, 'window-content must lay out as a column');
@@ -375,10 +378,92 @@ async function findHbsFiles(dir) {
     'the existing three lane scroll owners (.bay-left-rail/.bay-main/.bay-right-rail) must be unchanged'
   );
 
-  // (e) the standalone template must actually carry the attribute this CSS
-  // scopes against.
+  // (e) the height-chain CSS scopes purely off the real Foundry
+  // .window-content ancestor — see Test Contract I for why this must never
+  // be a companion "[data-application-content]" selector again.
+  assert.match(windowContentBody, /padding:\s*0/, 'window-content sizing rule must still reset the Foundry window padding');
+  assert.match(windowContentBody, /background:\s*transparent/, 'window-content sizing rule must still reset the Foundry window background');
+}
+
+// ---------------------------------------------------------------------------
+// TEST CONTRACT I — standalone frame cascade-collision guard (PR #947 final
+// correction). data-application-content must live on the canonical content
+// root, never on the standalone frame wrapper, and the window-content
+// height-chain CSS must target .window-content ONLY — never a companion
+// "[data-application-content]" selector. Combining both was the exact bug:
+// with the attribute on the frame, ".swse-customization-bay-app
+// [data-application-content]" (specificity 0,2,0) matched the SAME element
+// as ".swse-customization-bay-standalone-frame" (specificity 0,1,0), so the
+// window-content rule's padding:0/background:transparent silently beat the
+// frame's own padding:18px/background regardless of source order — the
+// frame lost its own chrome. Putting the attribute on the content root
+// instead (a different element than the frame) makes this collision
+// structurally impossible, matching where Workbench actually puts it
+// (.swse-customization-screen, the content element, never
+// .swse-customization-stage, the frame/theme-scope element).
+// ---------------------------------------------------------------------------
+{
+  // Scoped to the actual <div ...> opening tag, not the whole file — the
+  // file's own header comment legitimately discusses
+  // "data-application-content" in prose to explain why it is NOT here.
   const standalone = await read(STANDALONE_PATH);
-  assert.match(standalone, /data-application-content/, 'standalone wrapper must carry data-application-content for the height-chain CSS to scope against');
+  const standaloneFrameTagMatch = standalone.match(/<div class="swse-customization-bay-standalone-frame"[^>]*>/);
+  assert.ok(standaloneFrameTagMatch, 'could not locate the standalone frame\'s opening <div> tag');
+  assert.doesNotMatch(
+    standaloneFrameTagMatch[0],
+    /data-application-content/,
+    'the standalone frame wrapper must NOT carry data-application-content — that attribute belongs on the content root only, or the window-content sizing rule collides with the frame\'s own chrome'
+  );
+
+  const partial = await read(PARTIAL_PATH);
+  const contentRootTagMatch = partial.match(/<div class="swse-customization-bay swse-datapad"[\s\S]*?>/);
+  assert.ok(contentRootTagMatch, 'could not locate the canonical content root\'s opening <div> tag');
+  assert.match(
+    contentRootTagMatch[0],
+    /data-application-content/,
+    'the canonical content root must carry data-application-content, satisfying the repo-wide V13 [data-application-content] contract (scripts/apps/base/swse-application-v2.js) in both hosts'
+  );
+
+  // Strip block comments before checking — this file's own comments
+  // legitimately discuss "[data-application-content]" in prose to explain
+  // the historical bug and why it must not come back.
+  const css = await read(CSS_PATH);
+  const cssWithoutComments = css.replace(/\/\*[\s\S]*?\*\//g, '');
+  assert.doesNotMatch(
+    cssWithoutComments,
+    /\[data-application-content\]/,
+    'no rule in this file may target [data-application-content] — the height-chain rule must scope purely off .window-content, since a companion attribute-based selector is exactly what caused the frame to lose its own padding/background to a higher-specificity rule'
+  );
+}
+
+// ---------------------------------------------------------------------------
+// TEST CONTRACT J — one standalone frame authority (PR #947 final
+// correction). CustomizationBayApp.DEFAULT_OPTIONS.classes must not carry
+// swse-ui-shell (or swse-sheet-ui): audited to independently paint a full
+// min-height:100% screen background, a ::before page-frame SVG overlay, and
+// backdrop-filter:blur(6px) directly on the ApplicationV2 window root — a
+// second, generic frame authority sitting above the dedicated
+// .swse-customization-bay-standalone-frame chrome. swse-datapad is
+// deliberately still required: audited to contribute only typography,
+// tooltip focus-visible styling, and select/option theming, none of which
+// paint any frame chrome of their own (and .application.swse already
+// provides the typography redundantly, so nothing is lost if it were ever
+// dropped — it is kept here only because it is still the app's identity/
+// theme-integration class).
+// ---------------------------------------------------------------------------
+{
+  const appJs = await read(APP_JS_PATH);
+  const classesMatch = appJs.match(/classes:\s*\[([^\]]*)\]/);
+  assert.ok(classesMatch, 'CustomizationBayApp.DEFAULT_OPTIONS.classes array must exist');
+  const classes = classesMatch[1].split(',').map((c) => c.trim().replace(/^"|"$/g, ''));
+  for (const shellClass of RESIDUAL_SHELL_CLASSES) {
+    assert.ok(
+      !classes.includes(shellClass),
+      `CustomizationBayApp.DEFAULT_OPTIONS.classes must not carry ${shellClass} — its effective CSS (styles/ui/swse-holo-phase1.css) makes the standalone ApplicationV2 window root a second, generic frame authority above the dedicated standalone frame`
+    );
+  }
+  assert.ok(classes.includes('swse-customization-bay-app'), 'CustomizationBayApp must retain its own identity class');
+  assert.ok(classes.includes('swse-datapad'), 'CustomizationBayApp should retain swse-datapad — audited to contribute only typography/tooltip/select theming, no frame chrome');
 }
 
 console.log('customization-bay-inline-structural-flattening: all assertions passed');

@@ -72,21 +72,32 @@
   font-family: var(--swse-font-body, var(--font-primary, system-ui, sans-serif));
 }
 
-/* Standalone height/flex chain (PR #947 correction) — threads a definite
-   height from the real Foundry .window-content down through the standalone
-   frame into the canonical content root, exactly as
-   .swse-item-customization-workbench .window-content/[data-application-
-   content] does for Workbench. Scoped to .swse-customization-bay-app (the
-   ApplicationV2 window's own root class — see CustomizationBayApp.
-   DEFAULT_OPTIONS) so this never reaches any other application that
-   happens to share swse-datapad/swse-ui-shell. Without this, the
-   standalone frame had no flex participation of its own, so .bay-workgrid's
-   existing flex:1 1 auto/min-height:0 had nothing bounded to flex against
-   and the three existing scroll lanes (.bay-left-rail/.bay-main/.bay-right-
-   rail) could only ever grow with their content instead of scrolling
-   within it. */
-.swse-customization-bay-app .window-content,
-.swse-customization-bay-app [data-application-content] {
+/* Standalone height/flex chain (PR #947 correction, then final correction)
+   — threads a definite height from the real Foundry .window-content down
+   through the standalone frame into the canonical content root. Scoped to
+   .swse-customization-bay-app (the ApplicationV2 window's own root class —
+   see CustomizationBayApp.DEFAULT_OPTIONS) so this never reaches any other
+   application. Without this, the standalone frame had no flex
+   participation of its own, so .bay-workgrid's existing flex:1 1 auto/
+   min-height:0 had nothing bounded to flex against and the three existing
+   scroll lanes (.bay-left-rail/.bay-main/.bay-right-rail) could only ever
+   grow with their content instead of scrolling within it.
+
+   Deliberately targets ONLY .window-content, not a companion
+   [data-application-content] selector: the frame
+   (.swse-customization-bay-standalone-frame) is a plain child of
+   .window-content, and Foundry always renders a real .window-content
+   ancestor for any ApplicationV2 window, so no attribute-based alternate
+   is needed. An earlier version of this rule also matched
+   ".swse-customization-bay-app [data-application-content]" — at the time,
+   that attribute was (mistakenly) placed on the frame element itself,
+   making the SAME element match both this rule (specificity 0,2,0) and
+   the frame's own dedicated rule below (specificity 0,1,0), so this rule's
+   padding:0/background:transparent silently won over the frame's
+   padding:18px/background regardless of source order. data-application-
+   content now lives on the content root instead (see customization-bay-
+   content.hbs), which is never the target of this sizing rule. */
+.swse-customization-bay-app .window-content {
   display: flex;
   flex-direction: column;
   height: 100%;

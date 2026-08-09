@@ -13,13 +13,16 @@
   is only one canonical Garage/Shipyard content source; standalone and
   inline differ only by frame ownership, not by markup.
 
-  PR #947 correction — data-application-content mirrors the Workbench
-  pattern (item-customization-workbench.hbs) so styles/apps/customization-
-  bay.css can thread a definite flex/height chain from the real Foundry
-  .window-content down through this frame into the canonical content root,
-  restoring the height contract .bay-workgrid's existing three scroll lanes
-  (.bay-left-rail/.bay-main/.bay-right-rail) depend on.
+  PR #947 final correction — this frame does NOT carry
+  data-application-content (see customization-bay-content.hbs's header
+  comment for why: that attribute belongs on the content root, not here,
+  to avoid a CSS specificity collision between the frame's own chrome and
+  the window-content height-chain rule). styles/apps/customization-bay.css
+  threads the standalone height/flex chain purely off the real Foundry
+  .window-content ancestor, which this frame is a plain, unmarked child
+  of — restoring the height contract .bay-workgrid's existing three scroll
+  lanes (.bay-left-rail/.bay-main/.bay-right-rail) depend on.
 --}}
-<div class="swse-customization-bay-standalone-frame" data-application-content data-motion-style="{{motionStyle}}">
+<div class="swse-customization-bay-standalone-frame" data-motion-style="{{motionStyle}}">
   {{> "systems/foundryvtt-swse/templates/apps/customization/partials/customization-bay-content.hbs"}}
 </div>
