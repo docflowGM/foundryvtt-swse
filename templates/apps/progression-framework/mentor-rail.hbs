@@ -3,22 +3,22 @@
   {{!-- Portrait zone: portrait display with CSS-based styling --}}
   <div class="prog-mentor__portrait-zone swse-ui-frame">
     <div class="prog-mentor__portrait prog-holo-mentor-media" data-mentor-portrait="{{mentor.id}}">
-      {{#if mentor.portrait}}
-        <img class="prog-mentor__portrait-image prog-holo-mentor-media__image swse-mentor-hologram__image"
-             data-src="{{mentor.portrait}}"
-             src="data:image/gif;base64,R0lGODlhAQABAAAAACw="
-             alt=""
-             title="{{mentor.name}}"
-             onload="if(!this.dataset.swseResolved){this.dataset.swseResolved='1';let raw=this.dataset.src||'';let src=raw.trim().replace(/^\/systems\//i,'systems/').replace(/^\/foundryvtt-swse\//i,'systems/foundryvtt-swse/').replace(/^foundryvtt-swse\//i,'systems/foundryvtt-swse/').replace(/^assets\//i,'systems/foundryvtt-swse/assets/').replace(/(assets\/mentors\/[^?#.]+)\.png([?#].*)?$/i,'$1.webp$2');this.src=src||'systems/foundryvtt-swse/assets/mentors/salty.webp';}"
-             onerror="this.onerror=null; this.src='systems/foundryvtt-swse/assets/mentors/salty.webp';"/>
-      {{else}}
-        <img class="prog-mentor__portrait-image prog-holo-mentor-media__image swse-mentor-hologram__image"
-             src="systems/foundryvtt-swse/assets/mentors/salty.webp"
-             alt=""
-             title='{{localize "SWSE.Progression.Mentor.FallbackName"}}'/>
-      {{/if}}
-      <div class="prog-holo-mentor-media__overlay" aria-hidden="true"></div>
-      <div class="prog-holo-mentor-media__scan" aria-hidden="true"></div>
+      {{!-- PR #946 correction: mentor.portrait arrives here already resolved
+           by resolveMentorPortraitPath() (scripts/engine/mentor/mentor-dialogues.js),
+           which already normalizes legacy path shapes and canonicalizes stale
+           .png references to .webp — see scripts/apps/progression-framework/
+           shell/mentor-rail.js. Re-deriving that in an inline onload handler
+           was a duplicate, template-side copy of the same resolver; the
+           template now just consumes the resolved VM value, with a plain
+           image-load fallback to the canonical mentor if the resolved path
+           itself 404s. --}}
+      <img class="prog-mentor__portrait-image prog-holo-mentor-media__image swse-mentor-hologram__image"
+           src="{{mentor.portrait}}"
+           alt=""
+           title="{{#if mentor.name}}{{mentor.name}}{{else}}{{localize "SWSE.Progression.Mentor.FallbackName"}}{{/if}}"
+           onerror="this.onerror=null; this.src='systems/foundryvtt-swse/assets/mentors/salty.webp';"/>
+      <div class="prog-holo-mentor-media__overlay swse-mentor-hologram__tint" aria-hidden="true"></div>
+      <div class="prog-holo-mentor-media__scan swse-mentor-hologram__scan" aria-hidden="true"></div>
     </div>
   </div>{{!-- /portrait-zone --}}
 

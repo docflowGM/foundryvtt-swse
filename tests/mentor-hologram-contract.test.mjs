@@ -182,4 +182,85 @@ const read = (relPath) => fs.readFileSync(path.join(ROOT, relPath), 'utf8');
   );
 }
 
+// ---------------------------------------------------------------------------
+// Test Contract C(2) — effective cascade, not just rule presence (PR #946
+// review, Correction 5). CSS `filter` does not merge: a more-specific
+// interaction-state rule (:hover/:focus/:active/etc.) that ALSO targets the
+// actual <img> and declares its own `filter` REPLACES the shared hologram
+// filter entirely for that state, even though the base/idle rule (checked
+// above) is untouched. This is a lightweight, targeted parse — not a full
+// CSS cascade engine — but it directly encodes the real bug class found in
+// review: an img-targeting interaction-state selector must never declare a
+// filter that lacks `grayscale`.
+// ---------------------------------------------------------------------------
+{
+  const filesToScan = [
+    'styles/progression-framework/mentor-rail.css',
+    'styles/progression-framework/holo-theme.css',
+    'styles/apps/item-customization-workbench.css',
+    'styles/apps/customization-bay.css'
+  ];
+
+  const ruleRe = /([^{}]+)\{([^{}]*)\}/g;
+  const interactionStatePattern = /:hover|:focus|:active|:focus-visible|\[data-mood|\[data-choice-reaction/;
+  const targetsImagePattern = /\bimg\b|__image\b|-image\b|__img\b/;
+
+  for (const relPath of filesToScan) {
+    const css = read(relPath);
+    let match;
+    while ((match = ruleRe.exec(css))) {
+      const selector = match[1].trim();
+      const body = match[2];
+      if (!interactionStatePattern.test(selector)) continue;
+      if (!targetsImagePattern.test(selector)) continue; // container-level filters (e.g. a brightness pulse on .prog-mentor__portrait itself) compose with, not replace, the child image's filter — not a violation.
+      const filterMatch = body.match(/(?<![\w-])filter\s*:\s*([^;]+);/);
+      if (!filterMatch) continue; // no filter declared at all — falls through the cascade to the base rule, fine.
+      assert.match(
+        filterMatch[1],
+        /grayscale/,
+        `${relPath}: interaction-state selector "${selector}" declares a non-hologram filter ("${filterMatch[1].trim()}") on the mentor image — CSS filter does not merge, so this REPLACES the shared grayscale/blue-tint hologram filter for that state`
+      );
+    }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Correction 6 — Progression must use the shared tint/scan primitive, not a
+// second, independently-maintained formula. The rail's own DOM nodes now
+// carry BOTH the rail-specific class (geometry only) and the shared class
+// (the actual effect), and mentor-rail.css must no longer independently
+// declare the tint/scanline gradient formula itself.
+// ---------------------------------------------------------------------------
+{
+  const mentorRail = read('templates/apps/progression-framework/mentor-rail.hbs');
+  assert.match(mentorRail, /prog-holo-mentor-media__overlay swse-mentor-hologram__tint/, 'Progression tint node must adopt the shared tint class');
+  assert.match(mentorRail, /prog-holo-mentor-media__scan swse-mentor-hologram__scan/, 'Progression scan node must adopt the shared scan class');
+
+  const mentorRailCss = read('styles/progression-framework/mentor-rail.css');
+  const overlayBody = (mentorRailCss.match(/\.prog-holo-mentor-media__overlay\s*\{([^}]*)\}/) || [])[1] || '';
+  const scanBody = (mentorRailCss.match(/(?<!__overlay,\s*\n\.progression-shell )\.prog-holo-mentor-media__scan\s*\{([^}]*)\}/) || [])[1] || '';
+  assert.doesNotMatch(overlayBody, /background\s*:/, 'Progression must not independently declare the tint gradient — that value comes from the shared .swse-mentor-hologram__tint class now');
+  assert.doesNotMatch(scanBody, /repeating-linear-gradient/, 'Progression must not independently declare the scanline gradient — that value comes from the shared .swse-mentor-hologram__scan class now');
+}
+
+// ---------------------------------------------------------------------------
+// Correction 7 — no inline PNG->WebP portrait-path resolution in the
+// template. The portrait resolver is JS/data authority
+// (resolveMentorPortraitPath, already applied before the VM reaches this
+// template — see scripts/apps/progression-framework/shell/progression-shell.js),
+// not template markup.
+// ---------------------------------------------------------------------------
+{
+  const mentorRail = read('templates/apps/progression-framework/mentor-rail.hbs');
+  assert.doesNotMatch(mentorRail, /data-src=/, 'template must not stage a raw, unresolved portrait path in data-src');
+  assert.doesNotMatch(mentorRail, /onload=/, 'template must not run portrait path-normalization logic in an onload handler');
+  assert.doesNotMatch(mentorRail, /\.replace\(/, 'template must not contain inline path-rewriting logic');
+  assert.doesNotMatch(mentorRail, /\\\.png/, 'template must not contain an inline .png matcher');
+  assert.match(mentorRail, /src="\{\{mentor\.portrait\}\}"/, 'template must render the already-resolved VM portrait path directly');
+  assert.match(mentorRail, /onerror=/, 'a plain image-load fallback to the canonical mentor must remain');
+
+  const progressionShell = read('scripts/apps/progression-framework/shell/progression-shell.js');
+  assert.match(progressionShell, /portrait:\s*resolveMentorPortraitPath\(this\.mentor\?\.portrait\)/, 'the controller must still resolve the portrait before building the mentor rail VM');
+}
+
 console.log('Mentor hologram contract tests passed.');

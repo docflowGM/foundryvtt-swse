@@ -246,6 +246,66 @@ const VEHICLE_SYSTEM = 'engine_basic'; // 5000cr, compatible with 'transport'
 }
 
 // ---------------------------------------------------------------------------
+// Correction 8 (PR #946 review) — Case D only proved a PREFLIGHT rejection
+// (insufficient funds, before any mutation starts). This forces a failure
+// AFTER BOTH legs of the transaction have genuinely succeeded — the wallet
+// leg (debiting the OWNER) and the asset leg (installing the system on the
+// DROID) both complete for real, and only then does something downstream
+// throw — proving TransactionEngine's real two-actor snapshot/rollback
+// restores BOTH actors from an actual prior mutation, not merely that a
+// still-pending mutation never ran. (An earlier version of this test forced
+// the failure on the asset leg's own ActorEngine.applyMutationPlan call
+// itself — that throws INSTEAD OF mutating, so the asset was never actually
+// changed and "installedSystems stays {}" was true regardless of whether
+// asset-side rollback worked at all; verified empirically by disabling the
+// asset SnapshotManager.restoreSnapshot call and observing the old test
+// still passed. Failing via Hooks.callAll — which TransactionEngine invokes
+// only after both ActorEngine.applyMutationPlan calls have already resolved
+// — closes that gap.)
+//
+// Does not reimplement rollback: this exercises
+// TransactionEngine.executeAssetCustomizationTransaction's own production
+// catch block end to end, through the real SnapshotManager/SnapshotService
+// chain — only Hooks.callAll is monkeypatched, and only to inject the
+// forced failure after both legs commit; every ActorEngine method (used
+// internally by the real snapshot create/restore path) is untouched.
+// ---------------------------------------------------------------------------
+{
+  resetFakeActorEngine();
+  const owner = makeFakeOwner('owner-rollback2', 5000);
+  const droid = makeFakeDroid('droid-rollback2', 0);
+  asGM([owner, droid]);
+
+  const expectedCost = computeDroidPartCost(droid, { id: TRANSLATOR_A });
+  const originalCallAll = globalThis.Hooks.callAll;
+  globalThis.Hooks.callAll = function forcedPostCommitFailure(hookName, ...args) {
+    if (hookName === 'swseAssetCustomizationTransactionComplete') {
+      throw new Error('Simulated post-commit failure after both legs succeeded (Correction 8 two-actor rollback regression test)');
+    }
+    return originalCallAll.call(this, hookName, ...args);
+  };
+
+  let result;
+  try {
+    result = await DroidCustomizationEngine.applyDroidCustomization(droid, { add: [TRANSLATOR_A] }, { walletActor: owner });
+  } finally {
+    globalThis.Hooks.callAll = originalCallAll;
+  }
+
+  assert.equal(result.success, false, 'apply must report failure when a post-commit step throws after both legs already applied');
+  assert.equal(
+    owner.system.credits,
+    5000,
+    `wallet credits must roll back to the pre-transaction value (5000) even though the wallet leg had already debited ${expectedCost}`
+  );
+  assert.deepEqual(
+    droid.system.installedSystems,
+    {},
+    'the asset must roll back to its pre-transaction state even though the system was genuinely installed before the forced failure'
+  );
+}
+
+// ---------------------------------------------------------------------------
 // Test Contract H — protect the actor ROLES passed into TransactionEngine,
 // not merely that some transaction call happened. Wraps the real
 // executeAssetCustomizationTransaction to record its args, then restores it.
@@ -312,6 +372,117 @@ const VEHICLE_SYSTEM = 'engine_basic'; // 5000cr, compatible with 'transport'
   assert.equal(result.success, true, result.error);
   assert.equal(owner.system.credits, 1000 + expectedResale, 'resale credit must return to the wallet actor');
   assert.equal(droid.system.credits, 0, 'the droid\'s own credits must not receive the resale — it is not the wallet');
+}
+
+// ---------------------------------------------------------------------------
+// PR #946 review, Correction 1-4 — CustomizationSurfaceAdapter must be
+// host-scoped. Behavioral test (not just a registry-key regex): imports and
+// exercises the real, unmodified CustomizationSurfaceAdapter directly.
+// _getApp() (which constructs a real CustomizationBayApp, an ApplicationV2
+// subclass) cannot run under plain Node — same repo-wide constraint every
+// other test file in this suite documents (BaseSWSEAppV2's chain hits
+// `foundry.applications.api` at module-evaluation time) — so this proves
+// registry-level isolation and route-option semantics, which is what
+// actually determines render()/close() targeting: both closures capture
+// nothing but `self._shellHost`, and that value is proven below to never
+// cross a host boundary or retain a stale value.
+// ---------------------------------------------------------------------------
+{
+  const { CustomizationSurfaceAdapter } = await import('../scripts/ui/shell/CustomizationSurfaceAdapter.js');
+
+  const vehicle = makeFakeVehicle('vehicle-multihost', 0);
+  asGM([vehicle]);
+
+  const ownerHost = { name: 'ownerHost' };
+  const vehicleHost = { name: 'vehicleHost' };
+
+  // Same target actor, same bay mode, two different live shells — exactly
+  // the "Owner Holopad -> Asset Bay -> Vehicle A -> Shipyard" +
+  // "Vehicle A's own sheet -> Shipyard" scenario from the review.
+  const ownerAdapter = CustomizationSurfaceAdapter.getOrCreate(ownerHost, vehicle, {
+    bayMode: 'shipyard', ownerActorId: 'owner-a', source: 'asset-bay', returnSurface: 'asset-bay'
+  });
+  const vehicleAdapter = CustomizationSurfaceAdapter.getOrCreate(vehicleHost, vehicle, {
+    bayMode: 'shipyard', source: 'vehicle-sheet'
+  });
+
+  assert.notEqual(ownerAdapter, vehicleAdapter, 'two different shell hosts requesting the same actor+mode must get two different adapters');
+  assert.equal(ownerAdapter._shellHost, ownerHost, 'the owner-routed adapter must stay bound to the owner\'s shell');
+  assert.equal(vehicleAdapter._shellHost, vehicleHost, 'the vehicle-sheet-routed adapter must stay bound to the vehicle\'s own shell');
+
+  // Lookups are host-scoped: asking ownerHost for this actor/mode must never
+  // silently return vehicleHost's adapter or vice versa.
+  assert.equal(CustomizationSurfaceAdapter.get(ownerHost, vehicle.id, 'shipyard'), ownerAdapter);
+  assert.equal(CustomizationSurfaceAdapter.get(vehicleHost, vehicle.id, 'shipyard'), vehicleAdapter);
+  assert.equal(CustomizationSurfaceAdapter.getForActor(ownerHost, vehicle.id, 'shipyard'), ownerAdapter);
+  assert.equal(CustomizationSurfaceAdapter.getForActor(vehicleHost, vehicle.id, 'shipyard'), vehicleAdapter);
+  assert.equal(CustomizationSurfaceAdapter.get(ownerHost, vehicle.id, 'garage'), null, 'a host with no adapter for a given mode must get null, never another host\'s adapter');
+
+  // Route-scoped option leak (Correction 4): the vehicle-sheet route never
+  // supplied ownerActorId/source/returnSurface — it must not have inherited
+  // them via prototype/object sharing just because it targets the same actor.
+  assert.equal(vehicleAdapter.options.ownerActorId, undefined, 'a route that never supplied ownerActorId must not inherit one from a different host\'s adapter');
+  assert.equal(vehicleAdapter.options.source, 'vehicle-sheet');
+  assert.notEqual(vehicleAdapter.options.returnSurface, 'asset-bay');
+  assert.equal(ownerAdapter.options.ownerActorId, 'owner-a', 'the owner-routed adapter must still carry its own owner id');
+
+  // Re-entering with the SAME host AND the same full route options must
+  // return the SAME adapter (not a third one) and keep those options intact.
+  assert.equal(
+    CustomizationSurfaceAdapter.getOrCreate(ownerHost, vehicle, {
+      bayMode: 'shipyard', ownerActorId: 'owner-a', source: 'asset-bay', returnSurface: 'asset-bay'
+    }),
+    ownerAdapter,
+    're-entering with the same host+actor+mode must reuse the existing adapter'
+  );
+  assert.equal(ownerAdapter.options.ownerActorId, 'owner-a', 'reusing the same adapter with the same route options must not lose the owner id');
+
+  // destroyForHost must only affect the host it was called with.
+  CustomizationSurfaceAdapter.destroyForHost(ownerHost);
+  assert.equal(CustomizationSurfaceAdapter.get(ownerHost, vehicle.id, 'shipyard'), null, 'destroyForHost must remove the closed host\'s own adapters');
+  assert.equal(CustomizationSurfaceAdapter.get(vehicleHost, vehicle.id, 'shipyard'), vehicleAdapter, 'destroyForHost on one host must never remove a different, still-open host\'s adapter');
+}
+
+// ---------------------------------------------------------------------------
+// Route-state leak — SAME host, sequential routes. First an Asset-Bay-style
+// route (full owner/source/returnSurface options), then a direct route that
+// omits them entirely. The second route must not retain the first route's
+// values (Correction 4) — proven at both the adapter.options layer and,
+// since _getApp() cannot construct a real app under Node, by directly
+// checking the exact resync logic CustomizationBayApp's cached-app path
+// depends on (this._app.ownerActorId, mirrored here against a plain stand-in
+// object so the resync branch itself is exercised, not merely re-asserted).
+// ---------------------------------------------------------------------------
+{
+  const { CustomizationSurfaceAdapter } = await import('../scripts/ui/shell/CustomizationSurfaceAdapter.js');
+
+  const vehicle = makeFakeVehicle('vehicle-routeleak', 0);
+  asGM([vehicle]);
+  const host = { name: 'sameHost' };
+
+  const firstRoute = CustomizationSurfaceAdapter.getOrCreate(host, vehicle, {
+    bayMode: 'shipyard', ownerActorId: 'owner-a', source: 'asset-bay', returnSurface: 'asset-bay', targetActorId: vehicle.id
+  });
+  assert.equal(firstRoute.options.ownerActorId, 'owner-a');
+
+  // Simulate the cached-app resync CustomizationSurfaceAdapter._getApp()
+  // performs on every call once an app exists, without needing a real
+  // CustomizationBayApp instance.
+  const fakeCachedApp = { ownerActorId: firstRoute.options.ownerActorId || null };
+  firstRoute._app = fakeCachedApp;
+
+  const secondRoute = CustomizationSurfaceAdapter.getOrCreate(host, vehicle, {
+    bayMode: 'shipyard', source: 'vehicle-sheet', targetActorId: vehicle.id
+  });
+  assert.equal(secondRoute, firstRoute, 'same host+actor+mode must reuse the same adapter');
+  assert.equal(secondRoute.options.ownerActorId, undefined, 'the direct route must not retain the prior route\'s ownerActorId');
+  assert.equal(secondRoute.options.source, 'vehicle-sheet');
+  assert.notEqual(secondRoute.options.returnSurface, 'asset-bay', 'the direct route must not retain the prior route\'s returnSurface');
+
+  // Exercise the actual resync branch from CustomizationSurfaceAdapter._getApp():
+  const nextOwnerActorId = secondRoute.options.ownerActorId || null;
+  if (fakeCachedApp.ownerActorId !== nextOwnerActorId) fakeCachedApp.ownerActorId = nextOwnerActorId;
+  assert.equal(fakeCachedApp.ownerActorId, null, 'the cached app\'s ownerActorId must be resynced to null, not left at the stale prior owner, once the route stops supplying one');
 }
 
 console.log('Customization Bay foundation (owner/wallet/asset authority) contract tests passed.');

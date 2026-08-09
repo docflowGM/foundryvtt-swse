@@ -109,7 +109,16 @@
   transition: opacity 180ms ease;
 }
 
-/* Explicit overlay nodes survive later chrome-trimming CSS that suppresses pseudo-elements. */
+/* Explicit overlay nodes survive later chrome-trimming CSS that suppresses
+ * pseudo-elements. PR #946 correction: the actual tint/scanline VALUES
+ * (background gradients, mix-blend-mode, opacity, motion-off dimming) now
+ * come entirely from the shared primitive — styles/system/mentor-hologram.css's
+ * .swse-mentor-hologram__tint/__scan, which mentor-rail.hbs applies as
+ * additional classes on these same two nodes. This rule keeps only the
+ * geometry that genuinely belongs to this rail: absolute positioning within
+ * the circular portrait frame and its circular clip. There is exactly one
+ * maintained tint/scanline formula in the whole system, not a shared one
+ * plus a Progression-specific one. */
 .progression-shell .prog-holo-mentor-media__overlay,
 .progression-shell .prog-holo-mentor-media__scan {
   position: absolute;
@@ -120,47 +129,23 @@
 
 .progression-shell .prog-holo-mentor-media__overlay {
   z-index: 2;
-  background:
-    radial-gradient(circle at 50% 35%, rgba(124, 236, 255, 0.18), transparent 44%),
-    linear-gradient(135deg, rgba(0, 178, 255, 0.12), transparent 34%, rgba(0, 178, 255, 0.06));
-  mix-blend-mode: screen;
-  opacity: 0.76;
 }
 
-/* Phase 1 — Garage/Shipyard Foundation hologram contract: scanlines must
-   carry both a blue/cyan and a brighter pale/white component (see
-   styles/system/mentor-hologram.css's __scan for the shared value source).
-   Rail-specific sizing/positioning stays here; only the color values were
-   widened from cyan-only to match the global contract. */
 .progression-shell .prog-holo-mentor-media__scan {
   z-index: 3;
-  background:
-    repeating-linear-gradient(
-      0deg,
-      rgba(94, 224, 255, 0.14) 0px,
-      rgba(94, 224, 255, 0.14) 1px,
-      rgba(255, 255, 255, 0.16) 1px,
-      rgba(255, 255, 255, 0.16) 2px,
-      transparent 2px,
-      transparent 4px
-    ),
-    linear-gradient(180deg, transparent 0%, rgba(94, 224, 255, 0.10) 50%, transparent 100%);
-  mix-blend-mode: screen;
-  opacity: 0.28;
 }
 
-.progression-shell.swse-prog-v2-shell[data-motion-style="off"] .prog-holo-mentor-media__scan,
-.progression-shell[data-motion-style="off"] .prog-holo-mentor-media__scan {
-  opacity: 0.16;
-}
-
-/* Hover state — stronger "active datapad feed" appearance */
+/* Hover state — stronger "active datapad feed" appearance.
+   PR #946 correction: this rule must NOT declare `filter` — CSS filter does
+   not merge, and this selector (.prog-mentor__portrait:hover img) is more
+   specific than the base .prog-mentor__portrait img rule above, so any
+   filter value here would win the cascade and silently replace the shared
+   grayscale/blue-tint hologram filter (styles/system/mentor-hologram.css via
+   holo-theme.css's .prog-mentor__portrait-image rule) with a non-hologram
+   one on hover. Only transform/glow/pseudo-element opacity may react to
+   hover here — the image's own filter stays whatever the hologram rule set. */
 .progression-shell .prog-mentor__portrait:hover img {
   transform: scale(1.02);
-  filter:
-    saturate(1.06)
-    contrast(1.08)
-    brightness(1.02);
 }
 
 .progression-shell .prog-mentor__portrait:hover {

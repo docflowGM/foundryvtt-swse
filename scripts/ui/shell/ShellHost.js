@@ -563,8 +563,8 @@ export function ShellHostMixin(BaseClass) {
           const targetActorId = surfaceRoot.dataset.actorId
             || this._shellSurfaceOptions?.targetActorId
             || this.actor?.id;
-          const adapter = CustomizationSurfaceAdapter.getForActor?.(targetActorId, mode)
-            || CustomizationSurfaceAdapter.get?.(targetActorId, mode);
+          const adapter = CustomizationSurfaceAdapter.getForActor?.(this, targetActorId, mode)
+            || CustomizationSurfaceAdapter.get?.(this, targetActorId, mode);
           if (!adapter) {
             SWSELogger.warn(`[ShellHost] No customization adapter found for ${targetActorId}/${mode}`);
             return;

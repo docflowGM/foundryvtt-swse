@@ -11,7 +11,26 @@ import { requestShellRender } from '/systems/foundryvtt-swse/scripts/ui/shell/re
 import { MentorTranslationIntegration } from '/systems/foundryvtt-swse/scripts/mentor/mentor-translation-integration.js';
 
 export class CustomizationSurfaceAdapter {
-  static _registry = new Map();
+  /**
+   * Host-scoped registry: shellHost -> Map<"actorId-mode", adapter>.
+   *
+   * PR #946 correction — the previous single flat Map keyed only by
+   * "actorId-mode" let two independently-open shells (e.g. the owner's
+   * Holopad routing to a vehicle's Shipyard via Asset Bay, and that same
+   * vehicle's own actor sheet routing to its own Shipyard) collide on the
+   * same key. getOrCreate() would silently hand the SECOND caller the
+   * FIRST caller's adapter, reassigning its _shellHost — so the adapter's
+   * overridden render()/close() closures (which capture `self._shellHost`)
+   * would start targeting the wrong window. A WeakMap keyed by the actual
+   * shell host object gives every host its own independent inner Map, so
+   * the same actor+mode key can never cross host boundaries; entries are
+   * released automatically (WeakMap) once a host is garbage-collected, and
+   * destroyForHost() below still exists for explicit, deterministic cleanup
+   * on close.
+   *
+   * @type {WeakMap<object, Map<string, CustomizationSurfaceAdapter>>}
+   */
+  static _hostRegistries = new WeakMap();
 
   constructor(shellHost, actor, options = {}) {
     this._shellHost = shellHost;
@@ -24,16 +43,28 @@ export class CustomizationSurfaceAdapter {
     return `${actorId}-${mode}`;
   }
 
-  static get(actorId, mode = 'garage') {
-    if (!actorId) return null;
-    return this._registry.get(this.key(actorId, mode)) ?? null;
+  static _registryFor(shellHost) {
+    if (!shellHost) return null;
+    let map = this._hostRegistries.get(shellHost);
+    if (!map) {
+      map = new Map();
+      this._hostRegistries.set(shellHost, map);
+    }
+    return map;
   }
 
-  static getForActor(actorId, mode = 'garage') {
-    if (!actorId) return null;
-    const exact = this.get(actorId, mode);
+  static get(shellHost, actorId, mode = 'garage') {
+    const map = shellHost ? this._hostRegistries.get(shellHost) : null;
+    if (!map || !actorId) return null;
+    return map.get(this.key(actorId, mode)) ?? null;
+  }
+
+  static getForActor(shellHost, actorId, mode = 'garage') {
+    const map = shellHost ? this._hostRegistries.get(shellHost) : null;
+    if (!map || !actorId) return null;
+    const exact = map.get(this.key(actorId, mode));
     if (exact) return exact;
-    for (const [key, adapter] of this._registry.entries()) {
+    for (const [key, adapter] of map.entries()) {
       if (key.startsWith(`${actorId}-`)) return adapter;
     }
     return null;
@@ -41,35 +72,45 @@ export class CustomizationSurfaceAdapter {
 
   static getOrCreate(shellHost, actor, options = {}) {
     const mode = options.bayMode || options.mode || (actor?.type === 'vehicle' ? 'shipyard' : 'garage');
+    const map = this._registryFor(shellHost);
     const key = this.key(actor.id, mode);
-    let adapter = this._registry.get(key);
+    let adapter = map?.get(key);
     if (!adapter) {
       adapter = new CustomizationSurfaceAdapter(shellHost, actor, options);
-      this._registry.set(key, adapter);
+      map?.set(key, adapter);
     }
     adapter._shellHost = shellHost;
     adapter.actor = actor;
-    adapter.options = { ...adapter.options, ...options, mode, bayMode: mode, inlineShell: true };
+    // Route-scoped values (ownerActorId/source/returnSurface/bayMode/
+    // contextMode/...) always reflect ONLY the current call's options —
+    // never merged with whatever this adapter's options happened to be
+    // before. Every live caller already passes the complete, current
+    // surface-options object (see ShellHost._prepareContext reading the
+    // canonical this._shellSurfaceOptions), so replacing wholesale loses
+    // nothing legitimate while preventing a later, narrower route (e.g. a
+    // direct vehicle-sheet entry) from silently inheriting an earlier
+    // route's ownerActorId/return surface (PR #946 review, Correction 4).
+    adapter.options = { ...options, mode, bayMode: mode, inlineShell: true };
     return adapter;
   }
 
-  static destroy(actorId) {
-    for (const [key, adapter] of this._registry) {
+  static destroy(shellHost, actorId) {
+    const map = shellHost ? this._hostRegistries.get(shellHost) : null;
+    if (!map || !actorId) return;
+    for (const [key, adapter] of map) {
       if (key.startsWith(actorId + '-')) {
         adapter._destroy();
-        this._registry.delete(key);
+        map.delete(key);
       }
     }
   }
 
   static destroyForHost(shellHost) {
     if (!shellHost) return;
-    for (const [key, adapter] of this._registry) {
-      if (adapter._shellHost === shellHost) {
-        adapter._destroy();
-        this._registry.delete(key);
-      }
-    }
+    const map = this._hostRegistries.get(shellHost);
+    if (!map) return;
+    for (const adapter of map.values()) adapter._destroy();
+    this._hostRegistries.delete(shellHost);
   }
 
   async buildViewModel() {
@@ -116,7 +157,8 @@ export class CustomizationSurfaceAdapter {
     await app.handleInlineAction(action, target);
     const nextMode = app.mode || this.options.mode || this.options.bayMode;
     if (this.actor?.id && nextMode) {
-      this.constructor._registry.set(this.constructor.key(this.actor.id, nextMode), this);
+      const map = this.constructor._registryFor(this._shellHost);
+      map?.set(this.constructor.key(this.actor.id, nextMode), this);
     }
   }
 
@@ -159,11 +201,19 @@ export class CustomizationSurfaceAdapter {
 
   async _getApp() {
     if (this._app) {
-      // PART 2 — keep the owner identity current even though the app
-      // instance is cached across renders (the adapter itself is re-entered
-      // with fresh options on every getOrCreate() call).
-      if (this.options.ownerActorId !== undefined && this._app.ownerActorId !== (this.options.ownerActorId || null)) {
-        this._app.ownerActorId = this.options.ownerActorId || null;
+      // PART 2 / PR #946 Correction 4 — keep the owner identity current even
+      // though the app instance is cached across renders (the adapter itself
+      // is re-entered with fresh, wholesale-replaced options on every
+      // getOrCreate() call). Always resync to whatever ownerActorId the
+      // CURRENT options carry (falling back to null, not the previous
+      // value) — a later route that omits ownerActorId entirely (e.g. a
+      // direct asset-sheet entry after an earlier Asset Bay route on the
+      // same host+actor+mode) must not leave the cached app pointed at a
+      // stale owner. The earlier `!== undefined` guard here silently skipped
+      // exactly that case; there is no longer a guard to skip.
+      const nextOwnerActorId = this.options.ownerActorId || null;
+      if (this._app.ownerActorId !== nextOwnerActorId) {
+        this._app.ownerActorId = nextOwnerActorId;
       }
       return this._app;
     }
