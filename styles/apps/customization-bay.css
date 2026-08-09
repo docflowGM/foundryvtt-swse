@@ -72,12 +72,44 @@
   font-family: var(--swse-font-body, var(--font-primary, system-ui, sans-serif));
 }
 
+/* Standalone height/flex chain (PR #947 correction) — threads a definite
+   height from the real Foundry .window-content down through the standalone
+   frame into the canonical content root, exactly as
+   .swse-item-customization-workbench .window-content/[data-application-
+   content] does for Workbench. Scoped to .swse-customization-bay-app (the
+   ApplicationV2 window's own root class — see CustomizationBayApp.
+   DEFAULT_OPTIONS) so this never reaches any other application that
+   happens to share swse-datapad/swse-ui-shell. Without this, the
+   standalone frame had no flex participation of its own, so .bay-workgrid's
+   existing flex:1 1 auto/min-height:0 had nothing bounded to flex against
+   and the three existing scroll lanes (.bay-left-rail/.bay-main/.bay-right-
+   rail) could only ever grow with their content instead of scrolling
+   within it. */
+.swse-customization-bay-app .window-content,
+.swse-customization-bay-app [data-application-content] {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+  padding: 0;
+  background: transparent;
+}
+
+.swse-customization-bay-standalone-frame > .swse-customization-bay {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
 /* Standalone-only device frame: border, outer glow, screen-fill background,
    framing padding, window sizing, full-surface scanline. Applied to the NEW
    wrapper element in customization-bay.hbs only — never present in the
    inline Holopad DOM, so there is no override to write for that host. */
 .swse-customization-bay-standalone-frame {
   position: relative;
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
   min-width: min(100%, 900px);
   min-height: 720px;
   padding: 18px;

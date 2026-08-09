@@ -12,7 +12,14 @@
   device frame there, so Garage/Shipyard never repaints a second one. There
   is only one canonical Garage/Shipyard content source; standalone and
   inline differ only by frame ownership, not by markup.
+
+  PR #947 correction — data-application-content mirrors the Workbench
+  pattern (item-customization-workbench.hbs) so styles/apps/customization-
+  bay.css can thread a definite flex/height chain from the real Foundry
+  .window-content down through this frame into the canonical content root,
+  restoring the height contract .bay-workgrid's existing three scroll lanes
+  (.bay-left-rail/.bay-main/.bay-right-rail) depend on.
 --}}
-<div class="swse-customization-bay-standalone-frame" data-motion-style="{{motionStyle}}">
+<div class="swse-customization-bay-standalone-frame" data-application-content data-motion-style="{{motionStyle}}">
   {{> "systems/foundryvtt-swse/templates/apps/customization/partials/customization-bay-content.hbs"}}
 </div>

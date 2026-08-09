@@ -13,10 +13,25 @@
       is already the outer device frame there, so Garage/Shipyard must not
       repaint a second one.
 
+  PR #947 correction — this root intentionally does NOT carry swse-ui-shell
+  or swse-sheet-ui. Both independently paint a full min-height:100% screen
+  background AND an absolutely-positioned ::before page-frame SVG overlay
+  (styles/ui/swse-holo-phase1.css), which is exactly the "second full-screen
+  frame drawn inside the real one" this phase removes — carrying them here
+  would have silently reintroduced it regardless of the standalone/inline
+  wrapper split. swse-datapad is kept: audited to contribute only
+  typography (color/font-family, already redundant with .swse-customization-
+  bay's own), a GPU-acceleration hint, and two things this content actually
+  needs — [data-swse-tooltip-key] focus-visible styling (used by
+  .bay-context-pill and the systems-browser hint) and select/option theming
+  (also independently covered by dedicated .swse-customization-bay select
+  rules, but kept for defense in depth) — none of which paint any
+  background, border, or frame chrome of their own.
+
   V2-safe shell: UI emits intents; engines own rules, costs, validation, and
   mutation.
 --}}
-<div class="swse-customization-bay swse-datapad swse-ui-shell swse-sheet-ui"
+<div class="swse-customization-bay swse-datapad"
      data-customization-bay-content
      data-theme="{{themeKey}}"
      data-motion-style="{{motionStyle}}"

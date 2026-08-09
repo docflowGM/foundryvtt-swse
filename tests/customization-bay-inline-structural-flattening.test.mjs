@@ -59,6 +59,19 @@ const ADAPTER_PATH = 'scripts/ui/shell/CustomizationSurfaceAdapter.js';
 const PARTIAL_INCLUDE = '{{> "systems/foundryvtt-swse/templates/apps/customization/partials/customization-bay-content.hbs"}}';
 const STANDALONE_FRAME_CLASS = 'swse-customization-bay-standalone-frame';
 const CONTENT_ROOT_MARKER = 'data-customization-bay-content';
+const CSS_PATH = 'styles/apps/customization-bay.css';
+
+// Classes proven (by direct CSS audit — see PR #947 correction) to
+// independently paint a full min-height:100% screen background AND an
+// absolutely-positioned ::before page-frame SVG overlay
+// (styles/ui/swse-holo-phase1.css). Carrying either on the canonical
+// content root reintroduces "a second full-screen frame drawn inside the
+// real one" even though the standalone/inline wrapper split is otherwise
+// correct. swse-datapad is deliberately NOT in this list: it was audited
+// to contribute only typography, a GPU-acceleration hint, tooltip
+// focus-visible styling, and select/option theming — no background, no
+// border, no frame chrome.
+const RESIDUAL_SHELL_CLASSES = ['swse-ui-shell', 'swse-sheet-ui'];
 
 // Markers that must appear exactly once across the whole codebase: the
 // canonical regions of the Garage/Shipyard UI. If these start appearing
@@ -219,6 +232,32 @@ async function findHbsFiles(dir) {
 }
 
 // ---------------------------------------------------------------------------
+// TEST CONTRACT D2 — no residual generic device/shell chrome on the
+// canonical content root (PR #947 correction). Structural extraction alone
+// (Contract D) does not make inline content frameless if the content root
+// itself still opts into a class that independently paints a full-screen
+// background and page-frame overlay — see RESIDUAL_SHELL_CLASSES above.
+// Checked against the actual class="..." attribute, not a blind substring
+// search, so a code comment mentioning these class names elsewhere in the
+// file (e.g. explaining why they were removed) can never cause a false
+// positive.
+// ---------------------------------------------------------------------------
+{
+  const partial = await read(PARTIAL_PATH);
+  const rootClassMatch = partial.match(/<div class="([^"]*)"\s*\n\s*data-customization-bay-content/);
+  assert.ok(rootClassMatch, 'could not locate the canonical content root\'s class attribute');
+  const rootClasses = rootClassMatch[1].split(/\s+/);
+  for (const shellClass of RESIDUAL_SHELL_CLASSES) {
+    assert.ok(
+      !rootClasses.includes(shellClass),
+      `canonical content root must not carry ${shellClass} — its effective CSS (styles/ui/swse-holo-phase1.css) paints a full-screen background and a ::before page-frame overlay, reintroducing a second frame inside the Holopad`
+    );
+  }
+  assert.ok(rootClasses.includes('swse-customization-bay'), 'canonical content root must still carry its own identity class');
+  assert.ok(rootClasses.includes('swse-datapad'), 'canonical content root should retain swse-datapad — audited to contribute only typography/tooltip/select theming, no frame chrome');
+}
+
+// ---------------------------------------------------------------------------
 // TEST CONTRACT E — shared content hooks survive extraction: action
 // delegation and mentor hydration hooks must still be present in the
 // canonical partial (this is what ShellHost._wireCustomizationSurfaceEvents,
@@ -263,6 +302,83 @@ async function findHbsFiles(dir) {
 {
   await import('./customization-bay-foundation-contract.test.mjs');
   await import('./mentor-hologram-contract.test.mjs');
+}
+
+// ---------------------------------------------------------------------------
+// TEST CONTRACT H — standalone height/flex chain (PR #947 correction).
+// Protects the definite-height chain from the real Foundry .window-content
+// down through the standalone frame into the canonical content root, which
+// is what lets .bay-workgrid's existing flex:1 1 auto/min-height:0 actually
+// bound a height for the three existing scroll lanes to scroll within
+// (rather than only ever growing with their content). Semantic presence
+// checks against the actual CSS rule bodies, not pixel/exact-value
+// snapshots, except where preserving the pre-existing sizing values is the
+// point.
+// ---------------------------------------------------------------------------
+{
+  const css = await read(CSS_PATH);
+
+  // (a) window-content itself must become a definite-height flex column,
+  // scoped to the Bay's own ApplicationV2 root class — never a bare/global
+  // .window-content rule, which would leak into every other application.
+  const windowContentMatch = css.match(
+    /\.swse-customization-bay-app \.window-content,\s*\n\.swse-customization-bay-app \[data-application-content\]\s*\{([^}]*)\}/
+  );
+  assert.ok(windowContentMatch, '.swse-customization-bay-app .window-content/[data-application-content] rule must exist');
+  const windowContentBody = windowContentMatch[1];
+  assert.match(windowContentBody, /display:\s*flex/, 'window-content must become a flex container');
+  assert.match(windowContentBody, /flex-direction:\s*column/, 'window-content must lay out as a column');
+  assert.match(windowContentBody, /height:\s*100%/, 'window-content must be given a definite height to flex against');
+  assert.match(windowContentBody, /min-height:\s*0/, 'window-content must allow its flex children to shrink');
+
+  // (b) the standalone frame itself must be a flex participant in that
+  // chain (flex:1 1 auto) while still retaining its own display:flex
+  // column layout for its one child, and its existing sizing values.
+  // Anchored on "position: relative;" as the rule's first declaration (not
+  // just the bare selector) because .swse-customization-bay-standalone-
+  // frame also appears as part of the shared token-declaration selector
+  // list earlier in the file — a bare selector match would find that block
+  // instead.
+  const frameMatch = css.match(/\.swse-customization-bay-standalone-frame\s*\{\s*\n\s*position:\s*relative;([^}]*)\}/);
+  assert.ok(frameMatch, '.swse-customization-bay-standalone-frame frame-chrome rule must exist');
+  const frameBody = frameMatch[1];
+  assert.match(frameBody, /display:\s*flex/, 'standalone frame must be a flex container for its content child');
+  assert.match(frameBody, /flex-direction:\s*column/, 'standalone frame must lay out as a column');
+  assert.match(frameBody, /flex:\s*1 1 auto/, 'standalone frame must participate in window-content\'s flex chain');
+  assert.match(frameBody, /min-height:\s*720px/, 'standalone frame must retain its existing 720px minimum sizing');
+  // max-height is declared in a separate, later rule (the "scroll safety"
+  // section) — checked against the whole file, not this rule body.
+  assert.match(
+    css,
+    /\.swse-customization-bay-standalone-frame\s*\{\s*\n\s*max-height:\s*calc\(100vh - 96px\);\s*\n\}/,
+    'standalone frame must retain its existing max-height window-sizing constraint'
+  );
+
+  // (c) the canonical content root must participate as a flex child of the
+  // standalone frame specifically (not globally — inline already gets this
+  // via the pre-existing .swse-shell-surface--customization rules in
+  // shell-host.css, which must not be duplicated or altered here).
+  const contentParticipationMatch = css.match(
+    /\.swse-customization-bay-standalone-frame > \.swse-customization-bay\s*\{([^}]*)\}/
+  );
+  assert.ok(contentParticipationMatch, '.swse-customization-bay-standalone-frame > .swse-customization-bay rule must exist');
+  const contentParticipationBody = contentParticipationMatch[1];
+  assert.match(contentParticipationBody, /flex:\s*1 1 auto/, 'content root must flex to fill the standalone frame');
+  assert.match(contentParticipationBody, /min-height:\s*0/, 'content root must be allowed to shrink so bay-workgrid can bound the scroll lanes');
+
+  // (d) the pre-existing bounded work-area and lane scroll owners must be
+  // completely unchanged by this correction.
+  assert.match(css, /\.swse-customization-bay \.bay-workgrid\s*\{\s*\n\s*flex:\s*1 1 auto;\s*\n\s*min-height:\s*0;\s*\n\s*overflow:\s*hidden;\s*\n\}/, '.bay-workgrid\'s existing bounded flex rule must be unchanged');
+  assert.match(
+    css,
+    /\.swse-customization-bay \.bay-left-rail,\s*\n\.swse-customization-bay \.bay-main,\s*\n\.swse-customization-bay \.bay-right-rail\s*\{\s*\n\s*min-height:\s*0;\s*\n\s*overflow-y:\s*auto;/,
+    'the existing three lane scroll owners (.bay-left-rail/.bay-main/.bay-right-rail) must be unchanged'
+  );
+
+  // (e) the standalone template must actually carry the attribute this CSS
+  // scopes against.
+  const standalone = await read(STANDALONE_PATH);
+  assert.match(standalone, /data-application-content/, 'standalone wrapper must carry data-application-content for the height-chain CSS to scope against');
 }
 
 console.log('customization-bay-inline-structural-flattening: all assertions passed');
