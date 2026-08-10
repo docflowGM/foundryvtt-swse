@@ -647,15 +647,23 @@
   overflow: hidden !important;
 }
 
-.swse.sheet.actor.character.v2 .swse-shell-surface--customization .bay-workgrid {
+/* Wide/default scroll ownership only. In is-shell-narrow, the Phase 3
+   responsive stylesheet (app-responsive-customization-bay.css) becomes the
+   sole authority over .bay-workgrid/.bay-*-rail scroll behavior — collapsing
+   the three lanes into one scroll owner. Both rule sets use !important, so
+   without this exclusion specificity (not source order) would decide the
+   winner and the old three-lane scroll here would always beat the narrow
+   rules. Excluding is-shell-narrow here means the two states never overlap:
+   exactly one scroll authority per responsive state. */
+.swse.sheet.actor.character.v2:not(.is-shell-narrow) .swse-shell-surface--customization .bay-workgrid {
   flex: 1 1 auto !important;
   min-height: 0 !important;
   overflow: hidden !important;
 }
 
-.swse.sheet.actor.character.v2 .swse-shell-surface--customization .bay-left-rail,
-.swse.sheet.actor.character.v2 .swse-shell-surface--customization .bay-main,
-.swse.sheet.actor.character.v2 .swse-shell-surface--customization .bay-right-rail {
+.swse.sheet.actor.character.v2:not(.is-shell-narrow) .swse-shell-surface--customization .bay-left-rail,
+.swse.sheet.actor.character.v2:not(.is-shell-narrow) .swse-shell-surface--customization .bay-main,
+.swse.sheet.actor.character.v2:not(.is-shell-narrow) .swse-shell-surface--customization .bay-right-rail {
   min-height: 0 !important;
   overflow-y: auto !important;
 }

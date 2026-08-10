@@ -69,6 +69,7 @@ const ADAPTER_PATH = 'scripts/ui/shell/CustomizationSurfaceAdapter.js';
 const APP_JS_PATH = 'scripts/apps/customization/customization-bay-app.js';
 const BAY_CSS_PATH = 'styles/apps/customization-bay.css';
 const RESPONSIVE_CSS_PATH = 'styles/system/app-responsive-customization-bay.css';
+const SHELL_HOST_CSS_PATH = 'styles/system/shell-host.css';
 
 /** Extract the FIRST-or-ALL rule bodies whose selector list matches
  * `selectorRe` (tested against the whole comma-joined selector text, with
@@ -231,6 +232,18 @@ function assertNoProperty(body, prop, message) {
  * scrolling nested boxes: once is-shell-narrow stacks the workgrid, the
  * three lanes stop independently scrolling and .bay-workgrid itself
  * becomes the one vertical scroll owner for the whole stacked column.
+ *
+ * PR #948 Phase 3 Correction: this contract originally checked ONLY
+ * app-responsive-customization-bay.css in isolation. That let CI pass while
+ * the EFFECTIVE cascade was wrong — styles/system/shell-host.css carries
+ * pre-existing, higher-specificity, !important character-sheet inline-host
+ * rules for the exact same .bay-workgrid/.bay-*-rail selectors. Since both
+ * sides use !important, specificity (not source order) decides the winner,
+ * and the old shell-host.css rules always won regardless of stylesheet load
+ * order. The fix is not a stronger narrow override — it's making the two
+ * rule sets apply to mutually-exclusive states (non-narrow vs narrow) so
+ * there is exactly one scroll authority per responsive state. This section
+ * now also reads shell-host.css to protect that cross-file contract.
  * ------------------------------------------------------------------ */
 {
   const responsive = await read(RESPONSIVE_CSS_PATH);
@@ -255,6 +268,121 @@ function assertNoProperty(body, prop, message) {
   for (const b of narrowLaneBodies) {
     assertPropertyValue(b, 'overflow-y', /visible/, 'is-shell-narrow must cancel each lane\'s own independent vertical scroll (overflow-y: visible) once .bay-workgrid itself owns scrolling — leaving overflow-y: auto here would trap the player in three small nested scrollboxes');
   }
+
+  // --- Cross-file contract: shell-host.css must not overlap is-shell-narrow ---
+  const shellHost = await read(SHELL_HOST_CSS_PATH);
+
+  // Non-narrow: the character-sheet inline host may still own workgrid
+  // overflow:hidden / lane overflow-y:auto (the wide/default scroll
+  // contract) — but ONLY once is-shell-narrow is explicitly excluded from
+  // its selector, so the state never overlaps the narrow responsive rules.
+  const nonNarrowWorkgridBodies = findRuleBodies(
+    shellHost,
+    /\.swse\.sheet\.actor\.character\.v2:not\(\.is-shell-narrow\)[^{]*\.bay-workgrid(\s*[,{])/
+  );
+  assert.ok(
+    nonNarrowWorkgridBodies.length > 0,
+    'shell-host.css must scope its character-sheet .bay-workgrid overflow:hidden rule to .swse.sheet.actor.character.v2:not(.is-shell-narrow), so it never overlaps the Phase 3 narrow responsive rule'
+  );
+  for (const b of nonNarrowWorkgridBodies) {
+    assertPropertyValue(b, 'overflow', /hidden/, 'non-narrow shell-host .bay-workgrid must keep overflow: hidden (the wide/default scroll contract)');
+  }
+
+  const nonNarrowLaneBodies = [];
+  {
+    const ruleRe = /([^{}]+)\{([^{}]*)\}/g;
+    let m;
+    while ((m = ruleRe.exec(shellHost))) {
+      const selector = m[1].replace(/\/\*[\s\S]*?\*\//g, '').trim();
+      if (!/\.swse\.sheet\.actor\.character\.v2:not\(\.is-shell-narrow\)/.test(selector)) continue;
+      if (!/\.bay-left-rail/.test(selector) || !/\.bay-main/.test(selector) || !/\.bay-right-rail/.test(selector)) continue;
+      nonNarrowLaneBodies.push(m[2]);
+    }
+  }
+  assert.ok(
+    nonNarrowLaneBodies.length > 0,
+    'shell-host.css must scope its character-sheet three-lane overflow-y:auto rule to .swse.sheet.actor.character.v2:not(.is-shell-narrow)'
+  );
+  for (const b of nonNarrowLaneBodies) {
+    assertPropertyValue(b, 'overflow-y', /auto/, 'non-narrow shell-host lanes must keep overflow-y: auto (the wide/default per-lane scroll contract)');
+  }
+
+  // Narrow: no rule anywhere in shell-host.css may set !important overflow
+  // on .bay-workgrid or the three lanes WITHOUT excluding is-shell-narrow —
+  // that would silently defeat the Phase 3 narrow single-scroll-owner rules
+  // by specificity, regardless of source order (both sides use !important).
+  // This makes "no overlap" verifiable from the selector text itself, not
+  // dependent on stylesheet load order.
+  {
+    const ruleRe = /([^{}]+)\{([^{}]*)\}/g;
+    let m;
+    let sawWorkgridImportant = false;
+    let sawLaneImportant = false;
+    while ((m = ruleRe.exec(shellHost))) {
+      const selector = m[1].replace(/\/\*[\s\S]*?\*\//g, '').trim();
+      const body = m[2];
+      if (/\.bay-workgrid\b/.test(selector) && /overflow\s*:[^;]*!important/.test(body)) {
+        sawWorkgridImportant = true;
+        assert.match(
+          selector,
+          /:not\(\.is-shell-narrow\)/,
+          `shell-host.css rule "${selector}" sets !important overflow on .bay-workgrid without excluding is-shell-narrow — this would defeat the Phase 3 narrow scroll rule by specificity regardless of source order`
+        );
+      }
+      if (/\.bay-left-rail\b/.test(selector) && /\.bay-main\b/.test(selector) && /\.bay-right-rail\b/.test(selector) && /overflow-y\s*:[^;]*!important/.test(body)) {
+        sawLaneImportant = true;
+        assert.match(
+          selector,
+          /:not\(\.is-shell-narrow\)/,
+          `shell-host.css rule "${selector}" sets !important overflow-y on the three Bay lanes without excluding is-shell-narrow — this would defeat the Phase 3 narrow single-scroll-owner rule by specificity regardless of source order`
+        );
+      }
+    }
+    assert.ok(sawWorkgridImportant, 'shell-host.css must still contain the character-sheet !important .bay-workgrid overflow rule (scoped non-narrow)');
+    assert.ok(sawLaneImportant, 'shell-host.css must still contain the character-sheet !important three-lane overflow-y rule (scoped non-narrow)');
+  }
+
+  // Base structural fallback: once the high-specificity shell-host.css rule
+  // stops applying in narrow, styles/apps/customization-bay.css's unscoped
+  // Phase 2 .swse-customization-bay .bay-workgrid rule must still supply the
+  // baseline flex/min-height contract for the workgrid to participate in
+  // its ancestor's height chain.
+  const bayCssForFallback = await read(BAY_CSS_PATH);
+  const fallbackBodies = findRuleBodies(bayCssForFallback, /^\.swse-customization-bay \.bay-workgrid(\s*[,{])/m);
+  assert.ok(fallbackBodies.length > 0, 'styles/apps/customization-bay.css must still define the unscoped Phase 2 .swse-customization-bay .bay-workgrid fallback rule');
+  for (const b of fallbackBodies) {
+    assertPropertyValue(b, 'flex', /1 1 auto/, 'the unscoped Phase 2 .bay-workgrid fallback must still supply flex: 1 1 auto');
+    assertPropertyValue(b, 'min-height', /0/, 'the unscoped Phase 2 .bay-workgrid fallback must still supply min-height: 0');
+  }
+
+  // Host-state-location proof: is-shell-narrow must land on the SAME
+  // .application element the corrected shell-host.css selector expects —
+  // the literal .application root carrying "swse sheet actor character v2"
+  // (see character-sheet.js DEFAULT_OPTIONS.classes). observeAllShellResponsive
+  // queries `.application:has(.swse-customization-bay)` and calls
+  // observeShellResponsive(target) with NO selector option, so
+  // resolveTarget()'s no-selector branch falls through to `root` itself on
+  // first discovery (no descendant/ancestor already carries
+  // .swse-shell-responsive yet) — meaning classify() toggles is-shell-narrow
+  // directly onto the queried .application element, not some inner wrapper.
+  // Verified via the actual source contract, not a DOM harness this repo
+  // does not have.
+  const observerSrcForStateLocation = await read(OBSERVER_PATH);
+  assert.match(
+    observerSrcForStateLocation,
+    /for \(const target of applicationTargets\) observeShellResponsive\(target\);/,
+    'observeAllShellResponsive must call observeShellResponsive(target) with no selector option for .application:has(...) discovery targets — passing a selector would classify some descendant instead of the .application root shell-host.css\'s .swse.sheet.actor.character.v2 selector expects'
+  );
+  assert.match(
+    observerSrcForStateLocation,
+    /return root\.closest\?\.\('\.swse-shell-responsive'\) \|\| root\.querySelector\?\.\('\.swse-shell-responsive'\) \|\| root;/,
+    'resolveTarget()\'s no-selector fallback must resolve to the root element itself so classify() (and is-shell-narrow) lands on the same .application element that carries swse/sheet/actor/character/v2 — not a wrapper below it'
+  );
+  assert.match(
+    observerSrcForStateLocation,
+    /target\.classList\.toggle\('is-shell-narrow', narrow\);/,
+    'classify() must toggle is-shell-narrow directly on the resolved target element'
+  );
 }
 
 /* ------------------------------------------------------------------ *
