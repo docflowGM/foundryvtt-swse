@@ -124,6 +124,12 @@ const MAIN_CLOSE_ANCHOR = '</main>';
     'apply through the Shipyard engine',
     'apply through the Droid Garage engine',
     'Engine validation remains authoritative',
+    'let the engine apply the mutation',
+    'apply through the engine',
+    'future integration point',
+    'Future production pass',
+    'store/transaction engines',
+    'future persistence hook',
   ];
   for (const phrase of FORBIDDEN_JS_PHRASES) {
     assert.ok(
@@ -150,11 +156,14 @@ const MAIN_CLOSE_ANCHOR = '</main>';
   assert.doesNotMatch(appJs, /#buildStages\s*\(/, 'the hardcoded-activeIndex #buildStages() generator must not exist — its output was never derived from real state');
   assert.doesNotMatch(appJs, /stageLabels/, 'MODE_CONFIG must not retain stageLabels once the stage generator that consumed them is gone');
 
-  // What replaced it must be backed by real, already-computed preview
-  // fields — not another hardcoded literal.
+  // What replaced it must be backed by real, already-computed state — not
+  // another hardcoded literal. PR #949 Phase 4 Final Correction — pending
+  // counts moved from previewSummary.additions/removals.length (which the
+  // engine's own failure preview shapes can omit, see Contract T) to the
+  // staged UI Sets themselves.
   assert.match(partial, /bay-panel--status/, 'a Modification Status panel must exist in the left rail');
-  assert.match(partial, /\{\{previewSummary\.additions\.length\}\}/, 'Modification Status must read the real staged-additions count from previewSummary, not a hardcoded value');
-  assert.match(partial, /\{\{previewSummary\.removals\.length\}\}/, 'Modification Status must read the real staged-removals count from previewSummary, not a hardcoded value');
+  assert.match(partial, /\{\{pendingAdditionsCount\}\}/, 'Modification Status must read the real staged-additions count from the UI draft state');
+  assert.match(partial, /\{\{pendingRemovalsCount\}\}/, 'Modification Status must read the real staged-removals count from the UI draft state');
   assert.match(partial, /bay-panel--validation/, 'a Build Status (validation) panel must exist in the left rail');
   assert.match(partial, /\{\{legality\.label\}\}/, 'Build Status must read the real legality.label produced by legalityFromPreview(), not a hardcoded value');
 }
@@ -511,6 +520,101 @@ const MAIN_CLOSE_ANCHOR = '</main>';
   assert.equal(profileStatsBlocks.length, 2, `expected exactly 2 inline profileStats array literals, found ${profileStatsBlocks.length}`);
   for (const block of profileStatsBlocks) {
     assert.doesNotMatch(block, /label:\s*"Slots"/, 'Core Profile (profileStats) must not duplicate a build-level Slots/Capacity total');
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ * TEST CONTRACT R — a runtime load failure does not fall back to
+ * fictional build data. #buildDroidContext/#buildVehicleContext must
+ * route both the "no actor" and the "engine/profile hydration failed"
+ * cases through the same honest error context — never the old
+ * #buildPlaceholderContext(), whose fictional "Grey Kestrel (Concept)" /
+ * "Unit R7-X9 (Concept)" systems, stats, and 6/9 slot meter are gone.
+ * ------------------------------------------------------------------ */
+{
+  const appJs = await read(APP_JS_PATH);
+  // Strip block comments — #buildErrorContext()'s own docstring legitimately
+  // names the retired #buildPlaceholderContext() in prose to document why
+  // it is gone; only executable code may not reference it.
+  const appJsCodeOnly = appJs.replace(/\/\*[\s\S]*?\*\//g, '').replace(/^\s*\/\/.*$/gm, '');
+  assert.doesNotMatch(appJsCodeOnly, /#buildPlaceholderContext/, 'the fictional-data placeholder context builder must not return');
+  assert.doesNotMatch(appJsCodeOnly, /Grey Kestrel/, 'the fabricated vehicle demo name must not return');
+  assert.doesNotMatch(appJsCodeOnly, /Unit R7-X9/, 'the fabricated droid demo name must not return');
+  assert.doesNotMatch(appJsCodeOnly, /#placeholderSystems/, 'the fictional system-card generator must not return');
+  assert.doesNotMatch(appJsCodeOnly, /#placeholderStats/, 'the fictional profile-stat generator must not return');
+
+  assert.match(appJs, /async #buildErrorContext\(config, message\)/, 'an honest error-context builder must exist');
+  const errorContextMatch = appJs.match(/async #buildErrorContext\(config, message\) \{[\s\S]*?\n {2}\}\n/);
+  assert.ok(errorContextMatch, 'could not locate #buildErrorContext()');
+  assert.doesNotMatch(errorContextMatch[0], /slotMeter:/, '#buildErrorContext() must not present a numeric slot/capacity meter');
+
+  // Both live context builders must route their failure branches through
+  // the honest error context, not a fictional one, on both the "no actor"
+  // and "engine returned success:false" paths.
+  const droidContextMatch = appJs.match(/async #buildDroidContext\(config\) \{[\s\S]*?\n {2}\}\n/);
+  const vehicleContextMatch = appJs.match(/async #buildVehicleContext\(config\) \{[\s\S]*?\n {2}\}\n/);
+  assert.ok(droidContextMatch && vehicleContextMatch, 'could not locate both live context builders');
+  for (const [label, match] of [['#buildDroidContext', droidContextMatch], ['#buildVehicleContext', vehicleContextMatch]]) {
+    const occurrences = (match[0].match(/#buildErrorContext\(/g) || []).length;
+    assert.equal(occurrences, 2, `${label} must route both its "no actor" and its "engine load failed" branches through #buildErrorContext(), found ${occurrences} occurrence(s)`);
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ * TEST CONTRACT S — failed-preview economics are preserved. Both
+ * customization engines' "Insufficient funds" rejection still returns a
+ * real preview object (currentCredits/netCost/newCredits/walletActorId).
+ * summarizePreview() must consume it whenever previewResult.preview
+ * exists, regardless of previewResult.success — a guard keyed off success
+ * would silently zero out real economic data the engine already computed.
+ * ------------------------------------------------------------------ */
+{
+  const appJs = await read(APP_JS_PATH);
+  const fnMatch = appJs.match(/function summarizePreview\(previewResult, currentCredits = 0\) \{([\s\S]*?)\n\}/);
+  assert.ok(fnMatch, 'could not locate summarizePreview()');
+  const body = fnMatch[1];
+
+  const guardMatch = body.match(/if\s*\(([^)]*)\)\s*\{/);
+  assert.ok(guardMatch, 'could not locate summarizePreview()\'s early-return guard');
+  assert.doesNotMatch(guardMatch[1], /previewResult\?\.success/, 'summarizePreview()\'s early-return guard must not key off previewResult.success — a failed preview can still carry a real preview object');
+  assert.match(guardMatch[1], /!previewResult\?\.preview/, 'summarizePreview() must early-return only when the engine supplied no preview object at all');
+
+  assert.match(body, /preview\.netCost\s*\?\?\s*0/, 'summarizePreview() must read netCost from the engine preview whenever it exists');
+  assert.match(body, /preview\.newCredits\s*\?\?\s*currentCredits/, 'summarizePreview() must read newCredits from the engine preview whenever it exists');
+}
+
+/* ------------------------------------------------------------------ *
+ * TEST CONTRACT T — pending counts use the staged UI Sets, not
+ * previewSummary.additions/removals (which several engine failure shapes
+ * omit entirely, e.g. the "Insufficient funds" rejection only returns
+ * currentCredits/netCost/newCredits — no systemsAdded/systemsRemoved).
+ * ------------------------------------------------------------------ */
+{
+  const appJs = await read(APP_JS_PATH);
+  assert.match(appJs, /pendingAdditionsCount:\s*this\.selectedAdditions\.size/, 'pendingAdditionsCount must be derived from the staged selectedAdditions Set');
+  assert.match(appJs, /pendingRemovalsCount:\s*this\.selectedRemovals\.size/, 'pendingRemovalsCount must be derived from the staged selectedRemovals Set');
+
+  const partial = await read(PARTIAL_PATH);
+  assert.match(partial, /\{\{pendingAdditionsCount\}\}/, 'Modification Status must render pendingAdditionsCount');
+  assert.match(partial, /\{\{pendingRemovalsCount\}\}/, 'Modification Status must render pendingRemovalsCount');
+  assert.doesNotMatch(partial, /previewSummary\.additions\.length/, 'Modification Status must not fall back to previewSummary.additions.length — it is empty on several failed-preview shapes even when a system is genuinely staged');
+  assert.doesNotMatch(partial, /previewSummary\.removals\.length/, 'Modification Status must not fall back to previewSummary.removals.length — it is empty on several failed-preview shapes even when a system is genuinely staged');
+}
+
+/* ------------------------------------------------------------------ *
+ * TEST CONTRACT U — no unsupported GM-review guidance. Build Guidance may
+ * only state proven behavior — the corrected legalityFromPreview()/
+ * Contract O already establish that no canonical restricted/licensed/
+ * GM-review state exists to back a claim like "some systems require GM
+ * review."
+ * ------------------------------------------------------------------ */
+{
+  const partial = await read(PARTIAL_PATH);
+  const guidanceMatch = partial.match(/<details class="bay-implementation-notes">([\s\S]*?)<\/details>/);
+  assert.ok(guidanceMatch, 'could not locate the Build Guidance disclosure');
+  const guidanceBody = guidanceMatch[1];
+  for (const forbidden of [/require GM review/i, /street-legal/i, /license required/i]) {
+    assert.doesNotMatch(guidanceBody, forbidden, `Build Guidance must not claim an unsupported rule: matched ${forbidden}`);
   }
 }
 

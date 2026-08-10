@@ -60,7 +60,7 @@ const MODE_CONFIG = Object.freeze({
     mentorTopic: "garage",
     mentorTranslationKey: "Seraphim",
     mentorFallback:
-      "Chassis integrity is stable. Select systems, validate cost and legality, then let the engine apply the mutation.",
+      "Chassis integrity is stable. Select systems, review the cost and Build Status, then apply when ready.",
     primaryMetricLabel: "Systems",
     costLabel: "Garage Cost"
   },
@@ -213,8 +213,21 @@ function legalityFromPreview(previewResult) {
   };
 }
 
+/**
+ * Phase 4 correction — a failed preview can still carry authoritative
+ * economic data. Both DroidCustomizationEngine.previewDroidCustomization()
+ * and VehicleCustomizationEngine.previewVehicleCustomization() return a
+ * real `preview: { currentCredits, netCost, newCredits, walletActorId }`
+ * object on their "Insufficient funds" rejection specifically — the whole
+ * point of that shape is to show the player what the rejected build would
+ * have cost. Gating on `previewResult.success` threw that away and made
+ * the Credits panel silently fall back to Cost 0 / unchanged balance while
+ * Build Status simultaneously said BLOCKED: Insufficient credits — a
+ * direct contradiction. Gate on whether the engine supplied a preview
+ * object at all, not on whether it accepted the request.
+ */
 function summarizePreview(previewResult, currentCredits = 0) {
-  if (!previewResult?.success || !previewResult.preview) {
+  if (!previewResult?.preview) {
     return {
       addCost: 0,
       addCostLabel: formatCredits(0),
@@ -343,7 +356,7 @@ export class CustomizationBayApp extends BaseSWSEAppV2 {
 
     const runtime = actorMatchesMode
       ? await this.#buildRuntimeContext(config)
-      : await this.#buildPlaceholderContext(config, `No ${config.actorType} actor is bound to this bay lane.`);
+      : await this.#buildErrorContext(config, `No ${config.actorType} actor is bound to this bay lane.`);
 
     const contextOptions = CONTEXT_OPTIONS.map((option) => ({
       ...option,
@@ -373,6 +386,18 @@ export class CustomizationBayApp extends BaseSWSEAppV2 {
       motionStyleInline,
       canApply: runtime.canApply && this.#hasChanges(),
       hasChanges: this.#hasChanges(),
+      // Phase 4 correction — Modification Status must reflect what the
+      // player has actually staged (this.selectedAdditions/Removals), not
+      // previewSummary.additions/removals. The engine's preview payload
+      // omits systemsAdded/systemsRemoved on several failure shapes (e.g.
+      // the "Insufficient funds" rejection only returns
+      // currentCredits/netCost/newCredits), so deriving pending counts from
+      // it made a real staged addition silently read back as "0" the
+      // moment the build became unaffordable. The staged Sets are the
+      // actual UI draft state and are always accurate regardless of
+      // whether the engine accepted the request.
+      pendingAdditionsCount: this.selectedAdditions.size,
+      pendingRemovalsCount: this.selectedRemovals.size,
       actorMatchesMode,
       ...runtime
     };
@@ -471,13 +496,13 @@ export class CustomizationBayApp extends BaseSWSEAppV2 {
   }
 
   async #buildDroidContext(config) {
-    if (!this.actor) return this.#buildPlaceholderContext(config, "No droid actor selected.");
+    if (!this.actor) return this.#buildErrorContext(config, "No droid actor selected.");
 
     const profileResult = DroidCustomizationEngine.getNormalizedDroidProfile(this.actor);
     const availableResult = DroidCustomizationEngine.getAvailableSystems(this.actor);
 
     if (!profileResult.success || !availableResult.success) {
-      return this.#buildPlaceholderContext(
+      return this.#buildErrorContext(
         config,
         profileResult.error || availableResult.error || "Failed to load droid customization state."
       );
@@ -556,13 +581,13 @@ export class CustomizationBayApp extends BaseSWSEAppV2 {
   }
 
   async #buildVehicleContext(config) {
-    if (!this.actor) return this.#buildPlaceholderContext(config, "No vehicle actor selected.");
+    if (!this.actor) return this.#buildErrorContext(config, "No vehicle actor selected.");
 
     const profileResult = VehicleCustomizationEngine.getNormalizedVehicleProfile(this.actor);
     const stateResult = VehicleCustomizationEngine.getVehicleCustomizationState(this.actor);
 
     if (!profileResult.success || !stateResult.success) {
-      return this.#buildPlaceholderContext(
+      return this.#buildErrorContext(
         config,
         profileResult.error || stateResult.error || "Failed to load vehicle customization state."
       );
@@ -622,20 +647,29 @@ export class CustomizationBayApp extends BaseSWSEAppV2 {
     };
   }
 
-  async #buildPlaceholderContext(config, message) {
+  /**
+   * Phase 4 correction — this replaces the old #buildPlaceholderContext(), which
+   * populated the SAME fictional "Grey Kestrel (Concept)" / "Unit R7-X9
+   * (Concept)" system browser, profile stats, and a fake 6/9 slot meter
+   * for two very different situations: (a) no actor bound to this bay lane
+   * at all (a real, expected UX state when switching modes), and (b) a
+   * genuine engine/profile hydration FAILURE on an actor that DOES match
+   * the current mode (DroidCustomizationEngine/VehicleCustomizationEngine
+   * returning success:false). Case (b) is a real production error, not a
+   * concept/demo state — showing fictional systems and a fake capacity
+   * meter underneath "Unable to load this customization target" actively
+   * misrepresents the failure. No caller anywhere in the codebase needs a
+   * fictional demo browser, so both cases now render the same honest,
+   * disabled error state: real message, no browser results, no capacity
+   * meter, Apply disabled.
+   */
+  async #buildErrorContext(config, message) {
     const legality = {
-      key: "review",
-      label: "CONCEPT ONLY",
-      tone: "neutral",
+      key: "blocked",
+      label: "BLOCKED",
+      tone: "negative",
       notes: [message]
     };
-
-    const systems = this.#placeholderSystems(config.mode);
-    const groups = {};
-    for (const system of systems) {
-      groups[system.category] ??= [];
-      groups[system.category].push(system);
-    }
 
     const mentor = await this.#buildMentorPresence(config, null, legality);
 
@@ -645,16 +679,15 @@ export class CustomizationBayApp extends BaseSWSEAppV2 {
       mentor,
       mentorText: mentor.mentorText,
       wallet: null,
-      profileStats: this.#placeholderStats(config.mode),
-      browser: this.#buildSystemBrowser(systems, groups),
-      intel: this.#buildSystemIntel(systems),
-      installedRows: systems.filter((system) => system.installed),
+      profileStats: [],
+      browser: this.#buildSystemBrowser([], {}),
+      intel: null,
+      installedRows: [],
       previewSummary: summarizePreview(null, 0),
       legality,
-      slotMeter: this.#buildSlotMeter(6, 9),
       summaryTitle: config.mode === MODE.SHIPYARD ? "Ship Summary" : "Droid Summary",
-      summaryName: config.mode === MODE.SHIPYARD ? "Grey Kestrel (Concept)" : "Unit R7-X9 (Concept)",
-      summarySubtitle: config.mode === MODE.SHIPYARD ? "Light Freighter · Smuggler" : "2nd-Degree · Astromech/Slicer",
+      summaryName: "Unavailable",
+      summarySubtitle: "",
       budget: this.#buildBudget(0, 0),
       canApply: false,
       runtimeLane: false
@@ -781,47 +814,6 @@ export class CustomizationBayApp extends BaseSWSEAppV2 {
     return systems.find((system) => system.id === this.selectedSystemId) || null;
   }
 
-  #placeholderSystems(mode) {
-    if (mode === MODE.SHIPYARD) {
-      return [
-        { id: "upgraded-sublight", name: "Upgraded Sublight Engines", category: "engines", categoryLabel: "Engines", costLabel: "12,000 cr", installed: true, compatible: true, description: "+2 speed profile. Runtime engine hook pending.", actionDisabled: true, actionLabel: "Installed", tone: "positive", stateLabel: "INSTALLED", badgeTone: "positive" },
-        { id: "class-1-hyperdrive", name: "Class 1 Hyperdrive", category: "hyperdrive", categoryLabel: "Hyperdrive", costLabel: "8,400 cr", installed: true, compatible: true, description: "Fast hyperspace motivator. Runtime engine hook pending.", actionDisabled: true, actionLabel: "Installed", tone: "positive", stateLabel: "INSTALLED", badgeTone: "positive" },
-        { id: "reinforced-shields", name: "Reinforced Shield Generator", category: "shields", categoryLabel: "Shields", costLabel: "14,500 cr", installed: true, compatible: true, description: "Military-grade shield projection. Requires compliance review.", actionDisabled: true, actionLabel: "Review", tone: "neutral", stateLabel: "REQUIRES GM", badgeTone: "neutral" },
-        { id: "concealed-cargo", name: "Concealed Cargo Compartment", category: "cargo", categoryLabel: "Cargo", costLabel: "6,800 cr", installed: true, compatible: true, description: "Smuggling compartment. Restricted in most jurisdictions.", actionDisabled: true, actionLabel: "Restricted", tone: "negative", stateLabel: "RESTRICTED", badgeTone: "negative" },
-        { id: "dorsal-laser", name: "Dorsal Laser Cannon", category: "weapons", categoryLabel: "Weapons", costLabel: "9,200 cr", installed: true, compatible: true, description: "Turret hardpoint weapon.", actionDisabled: true, actionLabel: "Installed", tone: "positive", stateLabel: "INSTALLED", badgeTone: "positive" }
-      ];
-    }
-
-    return [
-      { id: "utility-chassis", name: "2nd-Degree Utility Chassis", category: "chassis", categoryLabel: "Chassis", costLabel: "2,800 cr", installed: true, compatible: true, description: "Astromech / technical support frame.", actionDisabled: true, actionLabel: "Selected", tone: "positive", stateLabel: "INSTALLED", badgeTone: "positive" },
-      { id: "wheeled", name: "Wheeled Locomotion", category: "locomotion", categoryLabel: "Locomotion", costLabel: "350 cr", installed: true, compatible: true, description: "Fast and compact on stable surfaces.", actionDisabled: true, actionLabel: "Installed", tone: "positive", stateLabel: "INSTALLED", badgeTone: "positive" },
-      { id: "magnetic-clamps", name: "Magnetic Clamps", category: "locomotion", categoryLabel: "Locomotion", costLabel: "600 cr", installed: true, compatible: true, description: "Hull-walk clamps for starship service.", actionDisabled: true, actionLabel: "Installed", tone: "positive", stateLabel: "INSTALLED", badgeTone: "positive" },
-      { id: "heuristic-processor", name: "Heuristic Processor", category: "processor", categoryLabel: "Processor", costLabel: "1,200 cr", installed: true, compatible: true, description: "Adaptive learning processor.", actionDisabled: true, actionLabel: "Selected", tone: "neutral", stateLabel: "INSTALLED", badgeTone: "neutral" },
-      { id: "weapon-mount", name: "Weapon Mount", category: "restricted", categoryLabel: "Restricted", costLabel: "2,400 cr", installed: false, compatible: false, description: "Military hardware. GM review required.", actionDisabled: true, actionLabel: "Restricted", tone: "negative", stateLabel: "INCOMPATIBLE", badgeTone: "negative" }
-    ];
-  }
-
-  #placeholderStats(mode) {
-    if (mode === MODE.SHIPYARD) {
-      return [
-        { label: "Hull", value: "Light Freighter" },
-        { label: "Role", value: "Smuggler" },
-        { label: "Slots", value: "6 / 9", tone: "neutral" },
-        { label: "Speed", value: "10", tone: "positive" },
-        { label: "Hyperdrive", value: "×1", tone: "positive" },
-        { label: "Legal", value: "Restricted", tone: "negative" }
-      ];
-    }
-    return [
-      { label: "Chassis", value: "2nd-Degree" },
-      { label: "Role", value: "Astromech" },
-      { label: "Locomotion", value: "Wheeled+Mag" },
-      { label: "Appendages", value: "3", tone: "neutral" },
-      { label: "Processor", value: "Heuristic" },
-      { label: "Legal", value: "License", tone: "neutral" }
-    ];
-  }
-
   #buildBudget(currentCredits, netCost) {
     const available = Number(currentCredits ?? 0);
     const cost = Number(netCost ?? 0);
@@ -836,25 +828,16 @@ export class CustomizationBayApp extends BaseSWSEAppV2 {
     };
   }
 
-  #buildSlotMeter(used, total) {
-    const rows = [];
-    const safeTotal = Math.max(1, Number(total ?? 9));
-    const safeUsed = Math.max(0, Number(used ?? 0));
-    for (let i = 1; i <= safeTotal; i += 1) {
-      rows.push({ index: i, status: i <= safeUsed ? "used" : "free" });
-    }
-    return rows;
-  }
 
   #buildMentorText(config, legality, previewResult) {
     if (previewResult?.success === false) {
       return `${config.mentorFallback} Current draft is blocked: ${previewResult.error}`;
     }
     if (this.#hasChanges()) {
-      return `${config.mentorFallback} Draft changes are staged. Validate, then apply through the engine when ready.`;
+      return `${config.mentorFallback} Draft changes are staged. Check Build Status, then apply when ready.`;
     }
     if (legality?.tone === "negative") {
-      return `${config.mentorFallback} This build is flagged for review before it becomes street-legal.`;
+      return `${config.mentorFallback} This build is currently blocked — check Build Status for the reason.`;
     }
     return config.mentorFallback;
   }
@@ -1066,17 +1049,15 @@ export class CustomizationBayApp extends BaseSWSEAppV2 {
   }
 
   #notifyGmReview() {
-    ui.notifications.info("GM approval request is a future integration point for this unified bay.");
+    ui.notifications.info("GM approval requests are not available from this screen.");
   }
 
   #notifyStoreQuote() {
-    this.contextMode = CONTEXT_MODE.STORE_QUOTE;
-    ui.notifications.info("Store quote mode staged. Future production pass should route through store/transaction engines.");
-    this.render({ force: true });
+    ui.notifications.info("Store quotes are not available from this screen.");
   }
 
   #notifyDraft() {
-    ui.notifications.info("Draft save is a future persistence hook. No actor data was changed.");
+    ui.notifications.info("Draft saving is not available from this screen.");
   }
 
   /**

@@ -151,8 +151,8 @@
         </header>
         <div class="bay-legal-rows">
           <div class="bay-legal-row"><span>Installed</span><strong>{{installedRows.length}}</strong></div>
-          <div class="bay-legal-row"><span>Pending Additions</span><strong>{{previewSummary.additions.length}}</strong></div>
-          <div class="bay-legal-row"><span>Pending Removals</span><strong>{{previewSummary.removals.length}}</strong></div>
+          <div class="bay-legal-row"><span>Pending Additions</span><strong>{{pendingAdditionsCount}}</strong></div>
+          <div class="bay-legal-row"><span>Pending Removals</span><strong>{{pendingRemovalsCount}}</strong></div>
         </div>
       </section>
 
@@ -170,20 +170,6 @@
           <span>After {{budget.newCreditsLabel}}</span>
         </div>
       </section>
-
-      {{#if slotMeter}}
-        <section class="bay-panel bay-panel--capacity">
-          <header class="bay-panel__head">
-            <span>Capacity</span>
-            <strong>{{config.primaryMetricLabel}}</strong>
-          </header>
-          <div class="bay-slot-meter">
-            {{#each slotMeter}}
-              <span class="bay-slot bay-slot--{{status}}">{{index}}</span>
-            {{/each}}
-          </div>
-        </section>
-      {{/if}}
 
       <section class="bay-panel bay-panel--validation">
         <header class="bay-panel__head">
@@ -397,9 +383,9 @@
     <summary>Build Guidance</summary>
     <ul>
       <li>Installs and removals are staged as a draft — nothing changes on the actor until you choose Apply Changes.</li>
-      <li>Removed systems may return resale credit; the Credits summary shows the current preview.</li>
-      <li>Some systems require GM review before they become street-legal.</li>
+      <li>Removed systems may return resale credit; the Credits summary shows the current projection.</li>
       <li>Credits are drawn from the wallet named in the mentor strip above, which may not be this actor's own balance.</li>
+      <li>Blocked builds show the current reason in Build Status.</li>
     </ul>
   </details>
 </div>
