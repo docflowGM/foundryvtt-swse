@@ -60,8 +60,7 @@ const MODE_CONFIG = Object.freeze({
     mentorTopic: "garage",
     mentorTranslationKey: "Seraphim",
     mentorFallback:
-      "Chassis integrity is stable. Select systems, validate cost and legality, then let the engine apply the mutation.",
-    stageLabels: ["Chassis", "Role", "Locomotion", "Appendages", "Systems", "Compliance", "Chargen Lock"],
+      "Chassis integrity is stable. Select systems, review the cost and Build Status, then apply when ready.",
     primaryMetricLabel: "Systems",
     costLabel: "Garage Cost"
   },
@@ -81,18 +80,27 @@ const MODE_CONFIG = Object.freeze({
     mentorTopic: "shipyard",
     mentorTranslationKey: "Marl Skindar",
     mentorFallback:
-      "Slots, legality, and cost are the whole game. Keep the frame street-legal unless you want GM review stamped on the work order.",
-    stageLabels: ["Hull Frame", "Role", "Engines", "Hyperdrive", "Hardpoints", "Compliance", "Registry"],
+      "Slots, compatibility, and cost are the whole game. Keep the frame within spec, check Build Status, and make sure the work order balances before you sign off.",
     primaryMetricLabel: "Upgrade Slots",
     costLabel: "Shipyard Cost"
   }
 });
 
+// Phase 4 correction — CONTEXT_MODE still carries buildNew/storeQuote/
+// chargenDraft as internal bookkeeping values (normalizeContextMode()'s
+// no-actor fallback, contextMode-tagged options threaded from callers), but
+// none of them ever branched #buildDroidContext/#buildVehicleContext's
+// actual rendered output — every context produced the exact same browser/
+// profile/preview content. Store Quote and Chargen Draft are explicitly
+// documented (see #notifyStoreQuote/class header) as future integration
+// points with no live workflow behind them, and openCustomizationBay()'s
+// own no-actor "Build New" entry point has no caller anywhere in the
+// codebase. Presenting all four as equal first-class navigation pills
+// misrepresented three of them as real workflows. Only the one context
+// that actually reflects what this screen always does — modifying/browsing
+// an existing actor's systems — is exposed as primary navigation.
 const CONTEXT_OPTIONS = Object.freeze([
-  { key: CONTEXT_MODE.BUILD_NEW, label: "Build New", tooltipKey: "bay.context.buildNew" },
-  { key: CONTEXT_MODE.MODIFY_EXISTING, label: "Modify / Browse Systems", tooltipKey: "bay.context.modifyExisting" },
-  { key: CONTEXT_MODE.STORE_QUOTE, label: "Store Quote", tooltipKey: "bay.context.storeQuote" },
-  { key: CONTEXT_MODE.CHARGEN_DRAFT, label: "Chargen Draft", tooltipKey: "bay.context.chargenDraft" }
+  { key: CONTEXT_MODE.MODIFY_EXISTING, label: "Modify / Browse Systems", tooltipKey: "bay.context.modifyExisting" }
 ]);
 
 const CATEGORY_LABELS = Object.freeze({
@@ -175,39 +183,51 @@ function categoryFromSystem(system, mode) {
   return normalized || "systems";
 }
 
-function legalityFromPreview(previewResult, state = {}) {
+/**
+ * Phase 4 correction — this used to map EVERY failed preview (insufficient
+ * credits, an incompatible system, a missing backup processor slot, an
+ * unknown system id, a vehicle slot-governance violation, ...) to the same
+ * "GM REVIEW / Required" label. None of those are GM-approval states —
+ * they are ordinary build blockers the engine itself already explains via
+ * previewResult.error/blockingReason. No canonical droid/vehicle system
+ * definition carries a real restricted/licensed/GM-review flag this bay
+ * could surface instead, so there is no distinct "legal" state to invent —
+ * only whether the currently staged change set is READY to apply or
+ * BLOCKED, using the engine's own reason text verbatim.
+ */
+function legalityFromPreview(previewResult) {
   if (previewResult?.success === false) {
     return {
       key: "blocked",
-      label: "GM REVIEW",
+      label: "BLOCKED",
       tone: "negative",
-      gmReview: "Required",
-      notes: [previewResult.error || "Build requires review before it can be applied."]
-    };
-  }
-
-  const warnings = Array.isArray(state.warnings) ? state.warnings : [];
-  if (warnings.length) {
-    return {
-      key: "license",
-      label: "LICENSE REQUIRED",
-      tone: "neutral",
-      gmReview: "Conditional",
-      notes: warnings
+      notes: [previewResult.error || previewResult.blockingReason || "This build cannot be applied yet."]
     };
   }
 
   return {
-    key: "legal",
-    label: "LEGAL",
+    key: "ready",
+    label: "READY",
     tone: "positive",
-    gmReview: "Not Required",
     notes: []
   };
 }
 
+/**
+ * Phase 4 correction — a failed preview can still carry authoritative
+ * economic data. Both DroidCustomizationEngine.previewDroidCustomization()
+ * and VehicleCustomizationEngine.previewVehicleCustomization() return a
+ * real `preview: { currentCredits, netCost, newCredits, walletActorId }`
+ * object on their "Insufficient funds" rejection specifically — the whole
+ * point of that shape is to show the player what the rejected build would
+ * have cost. Gating on `previewResult.success` threw that away and made
+ * the Credits panel silently fall back to Cost 0 / unchanged balance while
+ * Build Status simultaneously said BLOCKED: Insufficient credits — a
+ * direct contradiction. Gate on whether the engine supplied a preview
+ * object at all, not on whether it accepted the request.
+ */
 function summarizePreview(previewResult, currentCredits = 0) {
-  if (!previewResult?.success || !previewResult.preview) {
+  if (!previewResult?.preview) {
     return {
       addCost: 0,
       addCostLabel: formatCredits(0),
@@ -260,6 +280,13 @@ export class CustomizationBayApp extends BaseSWSEAppV2 {
     this.focusCategory = options.focusCategory ?? options.region ?? null;
     this.focusSlot = options.focusSlot ?? options.slot ?? null;
     this.focusMode = options.focusMode ?? null;
+    // Phase 4 — presentation-only system browser state. Filters the same
+    // already-decorated systems array every panel already reads; never
+    // re-queries a compendium or recomputes cost/legality/compatibility.
+    this.selectedSystemId = options.selectedSystemId ?? null;
+    this.systemSearch = options.systemSearch ?? '';
+    this.systemCategoryFilter = options.systemCategoryFilter ?? 'all';
+    this.systemStatusFilter = options.systemStatusFilter ?? 'all';
     this.inlineShell = Boolean(options.inlineShell);
     // PART 1/2 — Owner/wallet authority (Phase 1). ownerActorId is threaded
     // through the live route (ShellHost -> ShellSurfaceRegistry ->
@@ -329,7 +356,7 @@ export class CustomizationBayApp extends BaseSWSEAppV2 {
 
     const runtime = actorMatchesMode
       ? await this.#buildRuntimeContext(config)
-      : await this.#buildPlaceholderContext(config, `No ${config.actorType} actor is bound to this bay lane.`);
+      : await this.#buildErrorContext(config, `No ${config.actorType} actor is bound to this bay lane.`);
 
     const contextOptions = CONTEXT_OPTIONS.map((option) => ({
       ...option,
@@ -359,6 +386,18 @@ export class CustomizationBayApp extends BaseSWSEAppV2 {
       motionStyleInline,
       canApply: runtime.canApply && this.#hasChanges(),
       hasChanges: this.#hasChanges(),
+      // Phase 4 correction — Modification Status must reflect what the
+      // player has actually staged (this.selectedAdditions/Removals), not
+      // previewSummary.additions/removals. The engine's preview payload
+      // omits systemsAdded/systemsRemoved on several failure shapes (e.g.
+      // the "Insufficient funds" rejection only returns
+      // currentCredits/netCost/newCredits), so deriving pending counts from
+      // it made a real staged addition silently read back as "0" the
+      // moment the build became unaffordable. The staged Sets are the
+      // actual UI draft state and are always accurate regardless of
+      // whether the engine accepted the request.
+      pendingAdditionsCount: this.selectedAdditions.size,
+      pendingRemovalsCount: this.selectedRemovals.size,
       actorMatchesMode,
       ...runtime
     };
@@ -401,6 +440,21 @@ export class CustomizationBayApp extends BaseSWSEAppV2 {
       case "remove-system":
         this.#toggleRemoval(target?.dataset?.systemId);
         break;
+      case "inspect-system":
+        this.#inspectSystem(target?.dataset?.systemId);
+        break;
+      case "set-system-category-filter":
+        this.#setSystemCategoryFilter(target?.dataset?.value);
+        break;
+      case "set-system-status-filter":
+        this.#setSystemStatusFilter(target?.dataset?.value);
+        break;
+      case "apply-system-search":
+        this.#applySystemSearch(target);
+        break;
+      case "reset-system-filters":
+        this.#resetSystemFilters();
+        break;
       case "reset-build":
         this.#resetSelections();
         break;
@@ -442,13 +496,13 @@ export class CustomizationBayApp extends BaseSWSEAppV2 {
   }
 
   async #buildDroidContext(config) {
-    if (!this.actor) return this.#buildPlaceholderContext(config, "No droid actor selected.");
+    if (!this.actor) return this.#buildErrorContext(config, "No droid actor selected.");
 
     const profileResult = DroidCustomizationEngine.getNormalizedDroidProfile(this.actor);
     const availableResult = DroidCustomizationEngine.getAvailableSystems(this.actor);
 
     if (!profileResult.success || !availableResult.success) {
-      return this.#buildPlaceholderContext(
+      return this.#buildErrorContext(
         config,
         profileResult.error || availableResult.error || "Failed to load droid customization state."
       );
@@ -478,32 +532,31 @@ export class CustomizationBayApp extends BaseSWSEAppV2 {
       mentor,
       mentorText: mentor.mentorText,
       wallet: this.#buildWalletContext(wallet),
-      stageItems: this.#buildStages(config, 4, legality.tone),
       profileStats: [
         { label: "Degree", value: humanize(profile.degree) },
         { label: "Size", value: humanize(profile.size) },
         { label: "Locomotion", value: humanize(profile.locomotion || "Unassigned") },
         { label: "Processor", value: humanize(profile.processor || "Standard") },
-        { label: "Appendages", value: String(profile.appendages?.length ?? 0), tone: "neutral" },
-        { label: "Credits", value: formatCredits(currentCredits), tone: "positive" }
+        { label: "Appendages", value: String(profile.appendages?.length ?? 0), tone: "neutral" }
       ],
-      systemGroups: buildRowsFromGroups(groups),
+      browser: this.#buildSystemBrowser(systems, groups),
+      intel: this.#buildSystemIntel(systems),
       installedRows: systems.filter((system) => system.installed),
       previewSummary,
       legality,
       garageFocus: this.#buildGarageFocus(),
-      readinessRows: [
-        { label: "Usable as PC", value: "Engine Check", tone: "neutral" },
-        { label: "GM Approval", value: legality.gmReview, tone: legality.tone },
-        { label: "Starting Package", value: profile.installedSystems?.length ? "Partial" : "Needs Systems", tone: "neutral" },
-        { label: "Unresolved", value: `${this.#hasChanges() ? "1" : "0"} Change Set`, tone: this.#hasChanges() ? "neutral" : "positive" }
-      ],
       summaryTitle: "Droid Summary",
       summaryName: profile.actorName ?? this.actor.name,
       summarySubtitle: `${humanize(profile.degree)} · ${humanize(profile.size)}`,
-      budget: this.#buildBudget(currentCredits, previewSummary.netCost),
+      budget: this.#buildBudget(currentCredits, previewSummary.netCost, previewSummary.newCredits),
       techSpecialist: this.#buildTechSpecialistContext(MODE.GARAGE),
-      canApply: true,
+      // Phase 4 correction — must reflect whether the canonical engine
+      // preview actually accepted the currently staged change set, not an
+      // unconditional true. The outer _prepareContext() AND's this with
+      // #hasChanges(), so an empty staged set (previewResult trivially
+      // succeeds) still correctly requires real changes before Apply
+      // enables.
+      canApply: previewResult.success === true,
       runtimeLane: true
     };
   }
@@ -528,13 +581,13 @@ export class CustomizationBayApp extends BaseSWSEAppV2 {
   }
 
   async #buildVehicleContext(config) {
-    if (!this.actor) return this.#buildPlaceholderContext(config, "No vehicle actor selected.");
+    if (!this.actor) return this.#buildErrorContext(config, "No vehicle actor selected.");
 
     const profileResult = VehicleCustomizationEngine.getNormalizedVehicleProfile(this.actor);
     const stateResult = VehicleCustomizationEngine.getVehicleCustomizationState(this.actor);
 
     if (!profileResult.success || !stateResult.success) {
-      return this.#buildPlaceholderContext(
+      return this.#buildErrorContext(
         config,
         profileResult.error || stateResult.error || "Failed to load vehicle customization state."
       );
@@ -555,8 +608,16 @@ export class CustomizationBayApp extends BaseSWSEAppV2 {
     const currentCredits = Number(wallet?.system?.credits ?? profile.credits ?? this.actor.system?.credits ?? 0) || 0;
     const previewSummary = summarizePreview(previewResult, currentCredits);
     const legality = legalityFromPreview(previewResult);
+    // Phase 4 correction — installedCount is real (profile.installedSystems
+    // is canonical actor data). There is no matching real total-capacity
+    // value: VehicleSlotGovernanceEngine governs named slot CATEGORIES
+    // (engine/armor/sensor are single-slot, weapon_mount is multi,
+    // modification is consumable) — it never defines a universal numeric
+    // vehicle capacity. The previous `Math.max(9, installedCount + 3)` was
+    // presentation-invented and is not reintroduced here; Core Profile and
+    // the left rail present the real installed count only, never a
+    // fabricated "N / totalSlots" figure.
     const installedCount = profile.installedSystems?.length ?? 0;
-    const totalSlots = Math.max(9, installedCount + 3);
     const mentor = await this.#buildMentorPresence(config, previewResult, legality);
 
     return {
@@ -565,51 +626,50 @@ export class CustomizationBayApp extends BaseSWSEAppV2 {
       mentor,
       mentorText: mentor.mentorText,
       wallet: this.#buildWalletContext(wallet),
-      stageItems: this.#buildStages(config, 5, legality.tone),
       profileStats: [
         { label: "Vehicle Type", value: humanize(profile.vehicleType) },
         { label: "Speed", value: String(profile.speed ?? 0), tone: "positive" },
         { label: "Armor", value: String(profile.armor ?? 0) },
-        { label: "Systems", value: `${installedCount}` },
-        { label: "Slots", value: `${installedCount} / ${totalSlots}`, tone: "neutral" },
-        { label: "Credits", value: formatCredits(currentCredits), tone: "positive" }
+        { label: "Systems", value: `${installedCount}` }
       ],
-      systemGroups: buildRowsFromGroups(groups),
+      browser: this.#buildSystemBrowser(systems, groups),
+      intel: this.#buildSystemIntel(systems),
       installedRows: systems.filter((system) => system.installed),
       previewSummary,
       legality,
-      readinessRows: [
-        { label: "Upgrade Slots", value: `${installedCount} / ${totalSlots}`, tone: "neutral" },
-        { label: "GM Approval", value: legality.gmReview, tone: legality.tone },
-        { label: "Store Quote", value: "Engine Pending", tone: "neutral" },
-        { label: "Registry", value: legality.label, tone: legality.tone }
-      ],
-      slotMeter: this.#buildSlotMeter(installedCount, totalSlots),
       summaryTitle: "Ship Summary",
       summaryName: profile.actorName ?? this.actor.name,
       summarySubtitle: `${humanize(profile.vehicleType)} · ${humanize(this.contextMode)}`,
-      budget: this.#buildBudget(currentCredits, previewSummary.netCost),
+      budget: this.#buildBudget(currentCredits, previewSummary.netCost, previewSummary.newCredits),
       techSpecialist: this.#buildTechSpecialistContext(MODE.SHIPYARD),
-      canApply: true,
+      canApply: previewResult.success === true,
       runtimeLane: true
     };
   }
 
-  async #buildPlaceholderContext(config, message) {
+  /**
+   * Phase 4 correction — this replaces the old #buildPlaceholderContext(), which
+   * populated the SAME fictional "Grey Kestrel (Concept)" / "Unit R7-X9
+   * (Concept)" system browser, profile stats, and a fake 6/9 slot meter
+   * for two very different situations: (a) no actor bound to this bay lane
+   * at all (a real, expected UX state when switching modes), and (b) a
+   * genuine engine/profile hydration FAILURE on an actor that DOES match
+   * the current mode (DroidCustomizationEngine/VehicleCustomizationEngine
+   * returning success:false). Case (b) is a real production error, not a
+   * concept/demo state — showing fictional systems and a fake capacity
+   * meter underneath "Unable to load this customization target" actively
+   * misrepresents the failure. No caller anywhere in the codebase needs a
+   * fictional demo browser, so both cases now render the same honest,
+   * disabled error state: real message, no browser results, no capacity
+   * meter, Apply disabled.
+   */
+  async #buildErrorContext(config, message) {
     const legality = {
-      key: "review",
-      label: "CONCEPT ONLY",
-      tone: "neutral",
-      gmReview: "Future Engine",
+      key: "blocked",
+      label: "BLOCKED",
+      tone: "negative",
       notes: [message]
     };
-
-    const systems = this.#placeholderSystems(config.mode);
-    const groups = {};
-    for (const system of systems) {
-      groups[system.category] ??= [];
-      groups[system.category].push(system);
-    }
 
     const mentor = await this.#buildMentorPresence(config, null, legality);
 
@@ -618,24 +678,24 @@ export class CustomizationBayApp extends BaseSWSEAppV2 {
       error: message,
       mentor,
       mentorText: mentor.mentorText,
+      // Phase 4 correction — wallet/budget/browser are UNKNOWN on a load
+      // failure, not zero. The canonical partial gates its Credits panel
+      // and system browser on {{#if error}}/{{#unless error}}, so these
+      // never render in this state; null (rather than a fabricated
+      // this.#buildBudget(0, 0) / empty browser view model) makes that
+      // contract explicit instead of quietly composing fake zero economics
+      // that happen to never reach the template.
       wallet: null,
-      stageItems: this.#buildStages(config, 1, "neutral"),
-      profileStats: this.#placeholderStats(config.mode),
-      systemGroups: buildRowsFromGroups(groups),
-      installedRows: systems.filter((system) => system.installed),
+      profileStats: [],
+      browser: null,
+      intel: null,
+      installedRows: [],
       previewSummary: summarizePreview(null, 0),
       legality,
-      readinessRows: [
-        { label: "Runtime", value: "Concept", tone: "neutral" },
-        { label: "Engine", value: "Not Bound", tone: "neutral" },
-        { label: "Mutation", value: "Disabled", tone: "positive" },
-        { label: "V2 Boundary", value: "Preserved", tone: "positive" }
-      ],
-      slotMeter: this.#buildSlotMeter(6, 9),
       summaryTitle: config.mode === MODE.SHIPYARD ? "Ship Summary" : "Droid Summary",
-      summaryName: config.mode === MODE.SHIPYARD ? "Grey Kestrel (Concept)" : "Unit R7-X9 (Concept)",
-      summarySubtitle: config.mode === MODE.SHIPYARD ? "Light Freighter · Smuggler" : "2nd-Degree · Astromech/Slicer",
-      budget: this.#buildBudget(0, 0),
+      summaryName: "Unavailable",
+      summarySubtitle: "",
+      budget: null,
       canApply: false,
       runtimeLane: false
     };
@@ -650,6 +710,7 @@ export class CustomizationBayApp extends BaseSWSEAppV2 {
     const compatible = system?.compatible !== false;
     const canAdd = !installed && compatible;
     const canRemove = installed;
+    const badge = this.#systemStateBadge({ installed, compatible, selectedAdd, selectedRemove });
 
     return {
       ...system,
@@ -669,97 +730,131 @@ export class CustomizationBayApp extends BaseSWSEAppV2 {
       action: installed ? "remove-system" : "add-system",
       actionLabel: installed ? (selectedRemove ? "Keep Installed" : "Uninstall") : (selectedAdd ? "Remove from Draft" : "Install"),
       actionDisabled: !installed && !compatible,
-      tone: !compatible ? "negative" : installed ? "positive" : "neutral"
+      tone: !compatible ? "negative" : installed ? "positive" : "neutral",
+      selected: id === this.selectedSystemId,
+      stateLabel: badge.label,
+      badgeTone: badge.tone
     };
   }
 
-  #placeholderSystems(mode) {
-    if (mode === MODE.SHIPYARD) {
-      return [
-        { id: "upgraded-sublight", name: "Upgraded Sublight Engines", category: "engines", categoryLabel: "Engines", costLabel: "12,000 cr", installed: true, compatible: true, description: "+2 speed profile. Runtime engine hook pending.", actionDisabled: true, actionLabel: "Installed", tone: "positive" },
-        { id: "class-1-hyperdrive", name: "Class 1 Hyperdrive", category: "hyperdrive", categoryLabel: "Hyperdrive", costLabel: "8,400 cr", installed: true, compatible: true, description: "Fast hyperspace motivator. Runtime engine hook pending.", actionDisabled: true, actionLabel: "Installed", tone: "positive" },
-        { id: "reinforced-shields", name: "Reinforced Shield Generator", category: "shields", categoryLabel: "Shields", costLabel: "14,500 cr", installed: true, compatible: true, description: "Military-grade shield projection. Requires compliance review.", actionDisabled: true, actionLabel: "Review", tone: "neutral" },
-        { id: "concealed-cargo", name: "Concealed Cargo Compartment", category: "cargo", categoryLabel: "Cargo", costLabel: "6,800 cr", installed: true, compatible: true, description: "Smuggling compartment. Restricted in most jurisdictions.", actionDisabled: true, actionLabel: "Restricted", tone: "negative" },
-        { id: "dorsal-laser", name: "Dorsal Laser Cannon", category: "weapons", categoryLabel: "Weapons", costLabel: "9,200 cr", installed: true, compatible: true, description: "Turret hardpoint weapon.", actionDisabled: true, actionLabel: "Installed", tone: "positive" }
-      ];
+  /**
+   * Phase 4 — pure presentation label for a system browser card/Intel badge.
+   * Derived entirely from booleans #decorateSystem already computed from
+   * engine-supplied data (installed/compatible) and player-staged draft
+   * state (selectedAdd/selectedRemove) — never a new compatibility,
+   * legality, or cost determination of its own (PART 33/Test Contract L).
+   */
+  #systemStateBadge({ installed, compatible, selectedAdd, selectedRemove }) {
+    if (selectedRemove) return { label: "PENDING REMOVAL", tone: "neutral" };
+    if (selectedAdd) return { label: "PENDING ADD", tone: "positive" };
+    if (installed) return { label: "INSTALLED", tone: "positive" };
+    if (!compatible) return { label: "INCOMPATIBLE", tone: "negative" };
+    return { label: "AVAILABLE", tone: "neutral" };
+  }
+
+  /**
+   * Phase 4 — system browser presentation state: search/category/status
+   * filters applied purely over the already-decorated `systems` array (the
+   * same collection every other Bay panel reads). No compendium re-query,
+   * no parallel candidate source (PART 34).
+   */
+  #buildSystemBrowser(systems, groups) {
+    const search = String(this.systemSearch || "").trim().toLowerCase();
+    const categoryFilter = this.systemCategoryFilter || "all";
+    const statusFilter = this.systemStatusFilter || "all";
+
+    const matchesSearch = (system) => {
+      if (!search) return true;
+      return String(system.name).toLowerCase().includes(search)
+        || String(system.categoryLabel).toLowerCase().includes(search)
+        || String(system.description).toLowerCase().includes(search);
+    };
+    const matchesStatus = (system) => {
+      if (statusFilter === "all") return true;
+      if (statusFilter === "installed") return system.installed;
+      if (statusFilter === "available") return !system.installed && system.compatible;
+      if (statusFilter === "incompatible") return !system.compatible;
+      return true;
+    };
+
+    const categoryFilters = [
+      { key: "all", label: "All", active: categoryFilter === "all" },
+      ...Object.keys(groups).map((key) => ({
+        key,
+        label: CATEGORY_LABELS[key] ?? humanize(key),
+        active: categoryFilter === key
+      }))
+    ];
+    const statusFilters = ["all", "available", "installed", "incompatible"].map((key) => ({
+      key,
+      label: key === "all" ? "All" : humanize(key),
+      active: statusFilter === key
+    }));
+
+    const filtered = systems.filter((system) =>
+      (categoryFilter === "all" || system.category === categoryFilter)
+      && matchesStatus(system)
+      && matchesSearch(system)
+    );
+    const filteredGroups = {};
+    for (const system of filtered) {
+      filteredGroups[system.category] ??= [];
+      filteredGroups[system.category].push(system);
     }
 
-    return [
-      { id: "utility-chassis", name: "2nd-Degree Utility Chassis", category: "chassis", categoryLabel: "Chassis", costLabel: "2,800 cr", installed: true, compatible: true, description: "Astromech / technical support frame.", actionDisabled: true, actionLabel: "Selected", tone: "positive" },
-      { id: "wheeled", name: "Wheeled Locomotion", category: "locomotion", categoryLabel: "Locomotion", costLabel: "350 cr", installed: true, compatible: true, description: "Fast and compact on stable surfaces.", actionDisabled: true, actionLabel: "Installed", tone: "positive" },
-      { id: "magnetic-clamps", name: "Magnetic Clamps", category: "locomotion", categoryLabel: "Locomotion", costLabel: "600 cr", installed: true, compatible: true, description: "Hull-walk clamps for starship service.", actionDisabled: true, actionLabel: "Installed", tone: "positive" },
-      { id: "heuristic-processor", name: "Heuristic Processor", category: "processor", categoryLabel: "Processor", costLabel: "1,200 cr", installed: true, compatible: true, description: "Adaptive learning processor.", actionDisabled: true, actionLabel: "Selected", tone: "neutral" },
-      { id: "weapon-mount", name: "Weapon Mount", category: "restricted", categoryLabel: "Restricted", costLabel: "2,400 cr", installed: false, compatible: false, description: "Military hardware. GM review required.", actionDisabled: true, actionLabel: "Restricted", tone: "negative" }
-    ];
+    return {
+      search: this.systemSearch || "",
+      categoryFilters,
+      statusFilters,
+      hasActiveFilters: Boolean(search) || categoryFilter !== "all" || statusFilter !== "all",
+      groups: buildRowsFromGroups(filteredGroups)
+    };
   }
 
-  #placeholderStats(mode) {
-    if (mode === MODE.SHIPYARD) {
-      return [
-        { label: "Hull", value: "Light Freighter" },
-        { label: "Role", value: "Smuggler" },
-        { label: "Slots", value: "6 / 9", tone: "neutral" },
-        { label: "Speed", value: "10", tone: "positive" },
-        { label: "Hyperdrive", value: "×1", tone: "positive" },
-        { label: "Legal", value: "Restricted", tone: "negative" }
-      ];
-    }
-    return [
-      { label: "Chassis", value: "2nd-Degree" },
-      { label: "Role", value: "Astromech" },
-      { label: "Locomotion", value: "Wheeled+Mag" },
-      { label: "Appendages", value: "3", tone: "neutral" },
-      { label: "Processor", value: "Heuristic" },
-      { label: "Legal", value: "License", tone: "neutral" }
-    ];
+  /**
+   * Phase 4 — System Intel view: the currently-inspected system, or null
+   * for the empty state. Looks up the already-decorated system by its
+   * stable id (never display name — PART 35); does not recompute anything.
+   */
+  #buildSystemIntel(systems) {
+    if (!this.selectedSystemId) return null;
+    return systems.find((system) => system.id === this.selectedSystemId) || null;
   }
 
-  #buildStages(config, activeIndex = 1, legalityTone = "neutral") {
-    return config.stageLabels.map((label, index) => {
-      const oneBased = index + 1;
-      const status = oneBased < activeIndex ? "done" : oneBased === activeIndex ? "active" : oneBased === 6 ? legalityTone : "pending";
-      return {
-        index: String(oneBased).padStart(2, "0"),
-        label,
-        status,
-        marker: status === "done" ? "✓" : status === "active" ? "▸" : status === "negative" ? "!" : "·"
-      };
-    });
-  }
-
-  #buildBudget(currentCredits, netCost) {
+  /**
+   * Phase 4 correction — the resulting balance (`After`) must come from the
+   * canonical engine preview's own newCredits (already captured by
+   * summarizePreview()), never be independently recomputed here. The
+   * engine is the authority on what a build actually resolves to; UI-side
+   * `available - cost` arithmetic happens to agree today but has no
+   * standing to diverge from the engine's own answer. usedPct remains
+   * presentation-only (a progress-bar fill, not a settlement figure).
+   */
+  #buildBudget(currentCredits, netCost, newCredits) {
     const available = Number(currentCredits ?? 0);
     const cost = Number(netCost ?? 0);
+    const resulting = Number(newCredits ?? (available - cost));
     const safeAvailable = Math.max(available, cost, 1);
     const usedPct = Math.min(100, Math.max(0, (Math.max(cost, 0) / safeAvailable) * 100));
     return {
       currentCreditsLabel: formatCredits(available),
       netCostLabel: formatCredits(cost),
-      newCreditsLabel: formatCredits(available - cost),
+      newCreditsLabel: formatCredits(resulting),
       usedPct: `${usedPct.toFixed(0)}%`,
-      tone: available - cost < 0 ? "negative" : cost > 0 ? "neutral" : "positive"
+      tone: resulting < 0 ? "negative" : cost > 0 ? "neutral" : "positive"
     };
   }
 
-  #buildSlotMeter(used, total) {
-    const rows = [];
-    const safeTotal = Math.max(1, Number(total ?? 9));
-    const safeUsed = Math.max(0, Number(used ?? 0));
-    for (let i = 1; i <= safeTotal; i += 1) {
-      rows.push({ index: i, status: i <= safeUsed ? "used" : "free" });
-    }
-    return rows;
-  }
 
   #buildMentorText(config, legality, previewResult) {
     if (previewResult?.success === false) {
       return `${config.mentorFallback} Current draft is blocked: ${previewResult.error}`;
     }
     if (this.#hasChanges()) {
-      return `${config.mentorFallback} Draft changes are staged. Validate, then apply through the engine when ready.`;
+      return `${config.mentorFallback} Draft changes are staged. Check Build Status, then apply when ready.`;
     }
     if (legality?.tone === "negative") {
-      return `${config.mentorFallback} This build is flagged for review before it becomes street-legal.`;
+      return `${config.mentorFallback} This build is currently blocked — check Build Status for the reason.`;
     }
     return config.mentorFallback;
   }
@@ -877,6 +972,10 @@ export class CustomizationBayApp extends BaseSWSEAppV2 {
     this.mode = nextMode;
     this.selectedAdditions.clear();
     this.selectedRemovals.clear();
+    this.selectedSystemId = null;
+    this.systemSearch = '';
+    this.systemCategoryFilter = 'all';
+    this.systemStatusFilter = 'all';
     this.render({ force: true });
   }
 
@@ -907,32 +1006,75 @@ export class CustomizationBayApp extends BaseSWSEAppV2 {
     this.render({ force: true });
   }
 
+  /**
+   * Phase 4 — System Intel selection. A card-body click inspects; it never
+   * stages an install/remove itself (PART 10) — that stays on the card's
+   * own explicit add-system/remove-system button, a separate data-action.
+   * Clicking the already-inspected system toggles the Intel rail back to
+   * its empty state.
+   */
+  #inspectSystem(systemId) {
+    if (!systemId) return;
+    this.selectedSystemId = this.selectedSystemId === systemId ? null : systemId;
+    this.render({ force: true });
+  }
+
+  #setSystemCategoryFilter(value) {
+    this.systemCategoryFilter = value || 'all';
+    this.render({ force: true });
+  }
+
+  #setSystemStatusFilter(value) {
+    this.systemStatusFilter = value || 'all';
+    this.render({ force: true });
+  }
+
+  /**
+   * Reads the search box's current value directly from the DOM at click
+   * time rather than binding a live 'input' listener: the inline Holopad
+   * host (ShellHost._wireCustomizationSurfaceEvents) only forwards 'click'
+   * events to this app's action handler, so a listener registered for any
+   * other event type would silently never fire when the Bay is hosted
+   * inline — this keeps search working identically in both hosts through
+   * the one event-delegation path both already use.
+   */
+  #applySystemSearch(target) {
+    const input = target?.closest?.('.bay-browser-search')?.querySelector?.('input[name="systemSearch"]');
+    this.systemSearch = input ? String(input.value || '') : this.systemSearch;
+    this.render({ force: true });
+  }
+
+  #resetSystemFilters() {
+    this.systemSearch = '';
+    this.systemCategoryFilter = 'all';
+    this.systemStatusFilter = 'all';
+    this.render({ force: true });
+  }
+
   #browseSystems() {
     this.contextMode = CONTEXT_MODE.MODIFY_EXISTING;
     this.focusMode = 'browse-systems';
     ui.notifications.info(this.mode === MODE.SHIPYARD
-      ? 'Browse ship systems below, stage installs/removals, then apply through the Shipyard engine.'
-      : 'Browse droid systems below, stage installs/removals, then apply through the Droid Garage engine.');
+      ? 'Browse ship systems below, then stage installs and removals.'
+      : 'Browse droid systems below, then stage installs and removals.');
     this.render({ force: true });
   }
 
   #notifyValidation() {
-    ui.notifications.info("Customization Bay validation preview refreshed. Engine validation remains authoritative.");
+    ui.notifications.info("Build status refreshed.");
     this.render({ force: true });
   }
 
   #notifyGmReview() {
-    ui.notifications.info("GM approval request is a future integration point for this unified bay.");
+    ui.notifications.info("GM approval requests are not available from this screen.");
   }
 
   #notifyStoreQuote() {
-    this.contextMode = CONTEXT_MODE.STORE_QUOTE;
-    ui.notifications.info("Store quote mode staged. Future production pass should route through store/transaction engines.");
-    this.render({ force: true });
+    ui.notifications.info("Store quotes are not available from this screen.");
   }
 
   #notifyDraft() {
-    ui.notifications.info("Draft save is a future persistence hook. No actor data was changed.");
+    ui.notifications.info("Draft saving is not available from this screen.");
   }
 
   /**
