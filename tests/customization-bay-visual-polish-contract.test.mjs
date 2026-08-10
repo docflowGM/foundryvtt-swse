@@ -81,6 +81,7 @@ function assertHasProperty(body, prop, message) {
     '.bay-context-pill:focus-visible',
     '.bay-filter-pill:focus-visible',
     '.bay-section-action:focus-visible',
+    '.bay-part-card__inspect:focus-visible',
     '.bay-part-card__action:focus-visible',
     '.bay-footer button:focus-visible',
     '.bay-summary__actions button:focus-visible',
@@ -100,9 +101,11 @@ function assertHasProperty(body, prop, message) {
   assert.match(sharedBody, /outline\s*:\s*\d+px\s+solid/, 'shared :focus-visible rule must declare a real outline, not a no-op');
   assertHasProperty(sharedBody, 'outline-offset', 'shared :focus-visible rule should offset the outline so it is not clipped by adjacent borders');
 
-  // .bay-part-card itself is not natively focusable (inspection is a card
-  // click; the real focus target is its install/remove button), so it gets
-  // a :focus-within fallback instead of appearing in the :focus-visible list.
+  // .bay-part-card (the <article> itself) is still not natively focusable —
+  // Inspect and Install/Uninstall are (both real buttons, both required in
+  // Contract M below). :focus-within is a supplementary contextual
+  // highlight for whichever of those buttons currently has focus, not a
+  // substitute for either one's own :focus-visible ring.
   const cardFocusBody = findRuleBodies(css, /^\.bay-part-card:focus-within(\s*[,{])/m)[0];
   assert.ok(cardFocusBody, '.bay-part-card:focus-within rule must exist');
   assertHasProperty(cardFocusBody, 'outline', '.bay-part-card:focus-within must declare a real outline');
@@ -268,6 +271,67 @@ function assertHasProperty(body, prop, message) {
 }
 
 /* ------------------------------------------------------------------ *
+ * Test Contract M — keyboard inspection parity: Inspect is a real action,
+ * distinct from Install/Uninstall, and must be independently operable by
+ * keyboard — not just reachable as a :focus-within side-effect of the
+ * Install button. Correction (independent review of PR #950 at
+ * 80cfa41f): the original Phase 5 pass left Inspect pointer-only inside
+ * the candidate System Browser card grid (a card's only native focus
+ * target was its Install/Uninstall button, a different action). Fixed by
+ * adding a native <button data-action="inspect-system"> per card, reusing
+ * the existing delegated click handling verbatim — no new JS.
+ * ------------------------------------------------------------------ */
+{
+  const partial = await read(PARTIAL_PATH);
+
+  // Isolate one candidate-card iteration body (inside browser.groups →
+  // systems, the actual keyboard-accessibility gap the correction fixes —
+  // not the standalone System Intel panel's own single action button,
+  // which was never in question).
+  const cardIterationMatch = partial.match(/\{\{#each systems\}\}\s*<article class="bay-part-card[\s\S]*?<\/article>\s*\{\{\/each\}\}/);
+  assert.ok(cardIterationMatch, 'could not locate the System Browser card iteration — template structure may have changed');
+  const card = cardIterationMatch[0];
+
+  // A native, keyboard-focusable Inspect control must exist inside the
+  // card, wired to the same inspect-system action and stable system id
+  // the article-level pointer affordance already uses.
+  assert.match(
+    card,
+    /<button type="button"\s+class="bay-part-card__inspect"\s+data-action="inspect-system"\s+data-system-id="\{\{id\}\}"/,
+    'every System Browser card must contain a native <button data-action="inspect-system" data-system-id="{{id}}"> — inspection must not be pointer-only'
+  );
+
+  // Inspect must remain enabled unconditionally — it must never be wired
+  // to actionDisabled (that gates Install/Uninstall only), or an
+  // incompatible system becomes unexplainable to a keyboard user.
+  const inspectButtonMatch = card.match(/<button type="button"\s+class="bay-part-card__inspect"[\s\S]*?<\/button>/);
+  assert.ok(inspectButtonMatch, 'Inspect button markup must exist');
+  assert.doesNotMatch(inspectButtonMatch[0], /\{\{#if actionDisabled\}\}disabled\{\{\/if\}\}/,
+    'Inspect must stay available even when Install is disabled (incompatible) — it must not share the actionDisabled gate');
+  assert.doesNotMatch(inspectButtonMatch[0], /\sdisabled(\s|>)/,
+    'Inspect must never render a bare disabled attribute either');
+
+  // Install/Uninstall remains a separate, still-present action — this
+  // correction must not have collapsed the two into one control.
+  assert.match(
+    card,
+    /<button type="button"\s+class="bay-part-card__action"\s+data-action="\{\{action\}\}"\s+data-system-id="\{\{id\}\}"\s+\{\{#if actionDisabled\}\}disabled\{\{\/if\}\}>/,
+    'Install/Uninstall must remain its own distinct button, still gated on actionDisabled'
+  );
+
+  // Pointer card-body inspection remains supported (unchanged from Phase 5).
+  assert.match(card, /<article class="bay-part-card[^"]*"\s*\n\s*data-action="inspect-system"\s*\n\s*data-system-id="\{\{id\}\}">/,
+    'the card body must remain pointer-inspectable via its own data-action, unchanged');
+
+  // Focus-visible coverage for the new control (cross-checked against
+  // Contract A's shared rule, not re-declared as a one-off here).
+  const css = await read(CSS_PATH);
+  const sharedSelectors = findRuleSelectors(css, /\.bay-part-card__inspect:focus-visible/);
+  assert.ok(sharedSelectors.length > 0 && sharedSelectors[0].includes('.bay-part-card__inspect:focus-visible'),
+    'Inspect must be covered by the shared Bay :focus-visible rule');
+}
+
+/* ------------------------------------------------------------------ *
  * Test Contract F — color-independent status: READY/BLOCKED/INSTALLED/
  * INCOMPATIBLE/PENDING ADD/PENDING REMOVAL/AVAILABLE must all remain
  * understandable via their textual label, not a color-only dot.
@@ -378,38 +442,63 @@ function assertHasProperty(body, prop, message) {
 }
 
 /* ------------------------------------------------------------------ *
- * Test Contract L — motion safety: any hover/focus transition added by
- * this phase must be a plain color/border/box-shadow transition already
- * covered by the existing reduced-motion conventions (no new perpetual
- * animation, no second reduced-motion framework).
+ * Test Contract L — motion authority: every hover/focus transition added
+ * by this phase must actually consume the existing motion configuration
+ * (--motion-enabled / prefers-reduced-motion), not just be "a plain
+ * transition" left ungated. Correction (independent review of PR #950 at
+ * 80cfa41f): the original Contract L asserted plain transitions need no
+ * gating at all, which let three real, newly-added, hardcoded-140ms
+ * transitions ship with no motion authority behind them. Fixed with one
+ * Bay interaction-duration token, --bay-interaction-duration, that scales
+ * with --motion-enabled (same calc() idiom the standalone frame's
+ * scanline already uses) and is independently zeroed under
+ * prefers-reduced-motion (same two-layer shape as
+ * styles/system/mentor-hologram.css's scanline gating) — no second
+ * preference framework invented.
  * ------------------------------------------------------------------ */
 {
   const css = await read(CSS_PATH);
 
-  // The Phase 5 hover/focus transitions added to filter pills / footer
-  // buttons / search buttons / installed rows are simple property
-  // transitions (color/border/background/box-shadow), not perpetual
-  // keyframe animations — those require motion-gating (see the mentor
-  // hologram's scanline layer); simple transitions established at
-  // Workbench Phase 4 precedent do not.
-  const allTransitionBodies = [];
-  {
-    const re = /([^{}]+)\{([^{}]*)\}/g;
-    let m;
-    while ((m = re.exec(css))) {
-      if (/transition\s*:/.test(m[2])) allTransitionBodies.push(m[2]);
-    }
-  }
-  assert.ok(allTransitionBodies.length > 0, 'expected at least one hover/focus transition to exist');
-  for (const body of allTransitionBodies) {
-    assert.doesNotMatch(body, /@keyframes/, 'transitions must not reference new keyframe animations');
-    assert.doesNotMatch(body, /animation\s*:/, 'a plain :hover/:focus transition rule must not also declare a perpetual animation');
+  // The token itself: declared once, scaled by the existing per-actor
+  // --motion-enabled flag (0 for the "off" motion style).
+  const tokenBody = findRuleBodies(css, /^\.swse-customization-bay,\s*\n\.swse-customization-bay-standalone-frame(\s*[,{])/m)[0]
+    ?? findRuleBodies(css, /^\.swse-customization-bay,/m)[0];
+  assert.ok(tokenBody, 'the shared Bay token block must exist');
+  assert.match(tokenBody, /--bay-interaction-duration\s*:\s*calc\(\s*\d+ms\s*\*\s*var\(--motion-enabled,\s*1\)\s*\)/,
+    '--bay-interaction-duration must scale with the existing --motion-enabled flag via calc(), not a hardcoded duration');
+
+  // Independent OS-level backstop: prefers-reduced-motion zeroes the same
+  // token regardless of the per-actor motion-style flag.
+  const reducedMotionBlockMatch = css.match(/@media \(prefers-reduced-motion:\s*reduce\)\s*\{([\s\S]*?)\n\}/);
+  assert.ok(reducedMotionBlockMatch, 'a @media (prefers-reduced-motion: reduce) block must exist');
+  assert.match(reducedMotionBlockMatch[1], /--bay-interaction-duration\s*:\s*0ms/,
+    'prefers-reduced-motion must zero --bay-interaction-duration independent of --motion-enabled');
+
+  // Every transition this phase added (search submit/reset, filter pill,
+  // installed-list row, and the new Inspect button) must reference the
+  // token — none may fall back to a hardcoded millisecond duration.
+  const gatedTransitionSelectors = [
+    /^\.bay-browser-search__submit,\s*\n\.bay-browser-search__reset(\s*[,{])/m,
+    /^\.bay-filter-pill(\s*[,{])/m,
+    /^\.bay-installed(\s*[,{])/m,
+    /^\.bay-part-card__inspect(\s*[,{])/m,
+  ];
+  for (const re of gatedTransitionSelectors) {
+    const body = findRuleBodies(css, re)[0];
+    assert.ok(body, `rule for ${re} must exist`);
+    const transitionMatch = body.match(/transition\s*:\s*([^;]+);/);
+    assert.ok(transitionMatch, `${re} must declare a transition`);
+    assert.match(transitionMatch[1], /var\(--bay-interaction-duration\)/,
+      `${re}'s transition must use var(--bay-interaction-duration), not a hardcoded duration — found "${transitionMatch[1].trim()}"`);
+    assert.doesNotMatch(transitionMatch[1], /\d+ms/,
+      `${re}'s transition must not fall back to a hardcoded millisecond duration alongside the token`);
   }
 
   // No new @keyframes were introduced by this phase, and no second
-  // reduced-motion gate was invented — the existing [data-motion-style]/
-  // prefers-reduced-motion convention on the standalone frame's scanline
-  // (already present pre-Phase-5) remains the only motion authority.
+  // reduced-motion gate was invented — the token above plus the existing
+  // [data-motion-style]/prefers-reduced-motion convention on the
+  // standalone frame's scanline (already present pre-Phase-5) remain the
+  // only motion authority.
   const keyframeMatches = css.match(/@keyframes\s+[\w-]+/g) || [];
   assert.equal(keyframeMatches.length, 0, 'Phase 5 must not introduce new perpetual Bay animations');
 }

@@ -291,13 +291,22 @@
                           <span>{{costLabel}}</span>
                           {{#if slot}}<span>Slot: {{slot}}</span>{{/if}}
                         </div>
-                        <button type="button"
-                                class="bay-part-card__action"
-                                data-action="{{action}}"
-                                data-system-id="{{id}}"
-                                {{#if actionDisabled}}disabled{{/if}}>
-                          {{actionLabel}}
-                        </button>
+                        <div class="bay-part-card__actions">
+                          <button type="button"
+                                  class="bay-part-card__inspect"
+                                  data-action="inspect-system"
+                                  data-system-id="{{id}}"
+                                  aria-label="Inspect {{name}}">
+                            Inspect
+                          </button>
+                          <button type="button"
+                                  class="bay-part-card__action"
+                                  data-action="{{action}}"
+                                  data-system-id="{{id}}"
+                                  {{#if actionDisabled}}disabled{{/if}}>
+                            {{actionLabel}}
+                          </button>
+                        </div>
                       </article>
                     {{/each}}
                   </div>
