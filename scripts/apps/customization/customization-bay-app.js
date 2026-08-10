@@ -61,7 +61,6 @@ const MODE_CONFIG = Object.freeze({
     mentorTranslationKey: "Seraphim",
     mentorFallback:
       "Chassis integrity is stable. Select systems, validate cost and legality, then let the engine apply the mutation.",
-    stageLabels: ["Chassis", "Role", "Locomotion", "Appendages", "Systems", "Compliance", "Chargen Lock"],
     primaryMetricLabel: "Systems",
     costLabel: "Garage Cost"
   },
@@ -82,7 +81,6 @@ const MODE_CONFIG = Object.freeze({
     mentorTranslationKey: "Marl Skindar",
     mentorFallback:
       "Slots, legality, and cost are the whole game. Keep the frame street-legal unless you want GM review stamped on the work order.",
-    stageLabels: ["Hull Frame", "Role", "Engines", "Hyperdrive", "Hardpoints", "Compliance", "Registry"],
     primaryMetricLabel: "Upgrade Slots",
     costLabel: "Shipyard Cost"
   }
@@ -260,6 +258,13 @@ export class CustomizationBayApp extends BaseSWSEAppV2 {
     this.focusCategory = options.focusCategory ?? options.region ?? null;
     this.focusSlot = options.focusSlot ?? options.slot ?? null;
     this.focusMode = options.focusMode ?? null;
+    // Phase 4 — presentation-only system browser state. Filters the same
+    // already-decorated systems array every panel already reads; never
+    // re-queries a compendium or recomputes cost/legality/compatibility.
+    this.selectedSystemId = options.selectedSystemId ?? null;
+    this.systemSearch = options.systemSearch ?? '';
+    this.systemCategoryFilter = options.systemCategoryFilter ?? 'all';
+    this.systemStatusFilter = options.systemStatusFilter ?? 'all';
     this.inlineShell = Boolean(options.inlineShell);
     // PART 1/2 — Owner/wallet authority (Phase 1). ownerActorId is threaded
     // through the live route (ShellHost -> ShellSurfaceRegistry ->
@@ -401,6 +406,21 @@ export class CustomizationBayApp extends BaseSWSEAppV2 {
       case "remove-system":
         this.#toggleRemoval(target?.dataset?.systemId);
         break;
+      case "inspect-system":
+        this.#inspectSystem(target?.dataset?.systemId);
+        break;
+      case "set-system-category-filter":
+        this.#setSystemCategoryFilter(target?.dataset?.value);
+        break;
+      case "set-system-status-filter":
+        this.#setSystemStatusFilter(target?.dataset?.value);
+        break;
+      case "apply-system-search":
+        this.#applySystemSearch(target);
+        break;
+      case "reset-system-filters":
+        this.#resetSystemFilters();
+        break;
       case "reset-build":
         this.#resetSelections();
         break;
@@ -478,7 +498,6 @@ export class CustomizationBayApp extends BaseSWSEAppV2 {
       mentor,
       mentorText: mentor.mentorText,
       wallet: this.#buildWalletContext(wallet),
-      stageItems: this.#buildStages(config, 4, legality.tone),
       profileStats: [
         { label: "Degree", value: humanize(profile.degree) },
         { label: "Size", value: humanize(profile.size) },
@@ -487,17 +506,12 @@ export class CustomizationBayApp extends BaseSWSEAppV2 {
         { label: "Appendages", value: String(profile.appendages?.length ?? 0), tone: "neutral" },
         { label: "Credits", value: formatCredits(currentCredits), tone: "positive" }
       ],
-      systemGroups: buildRowsFromGroups(groups),
+      browser: this.#buildSystemBrowser(systems, groups),
+      intel: this.#buildSystemIntel(systems),
       installedRows: systems.filter((system) => system.installed),
       previewSummary,
       legality,
       garageFocus: this.#buildGarageFocus(),
-      readinessRows: [
-        { label: "Usable as PC", value: "Engine Check", tone: "neutral" },
-        { label: "GM Approval", value: legality.gmReview, tone: legality.tone },
-        { label: "Starting Package", value: profile.installedSystems?.length ? "Partial" : "Needs Systems", tone: "neutral" },
-        { label: "Unresolved", value: `${this.#hasChanges() ? "1" : "0"} Change Set`, tone: this.#hasChanges() ? "neutral" : "positive" }
-      ],
       summaryTitle: "Droid Summary",
       summaryName: profile.actorName ?? this.actor.name,
       summarySubtitle: `${humanize(profile.degree)} · ${humanize(profile.size)}`,
@@ -565,7 +579,6 @@ export class CustomizationBayApp extends BaseSWSEAppV2 {
       mentor,
       mentorText: mentor.mentorText,
       wallet: this.#buildWalletContext(wallet),
-      stageItems: this.#buildStages(config, 5, legality.tone),
       profileStats: [
         { label: "Vehicle Type", value: humanize(profile.vehicleType) },
         { label: "Speed", value: String(profile.speed ?? 0), tone: "positive" },
@@ -574,16 +587,11 @@ export class CustomizationBayApp extends BaseSWSEAppV2 {
         { label: "Slots", value: `${installedCount} / ${totalSlots}`, tone: "neutral" },
         { label: "Credits", value: formatCredits(currentCredits), tone: "positive" }
       ],
-      systemGroups: buildRowsFromGroups(groups),
+      browser: this.#buildSystemBrowser(systems, groups),
+      intel: this.#buildSystemIntel(systems),
       installedRows: systems.filter((system) => system.installed),
       previewSummary,
       legality,
-      readinessRows: [
-        { label: "Upgrade Slots", value: `${installedCount} / ${totalSlots}`, tone: "neutral" },
-        { label: "GM Approval", value: legality.gmReview, tone: legality.tone },
-        { label: "Store Quote", value: "Engine Pending", tone: "neutral" },
-        { label: "Registry", value: legality.label, tone: legality.tone }
-      ],
       slotMeter: this.#buildSlotMeter(installedCount, totalSlots),
       summaryTitle: "Ship Summary",
       summaryName: profile.actorName ?? this.actor.name,
@@ -619,18 +627,12 @@ export class CustomizationBayApp extends BaseSWSEAppV2 {
       mentor,
       mentorText: mentor.mentorText,
       wallet: null,
-      stageItems: this.#buildStages(config, 1, "neutral"),
       profileStats: this.#placeholderStats(config.mode),
-      systemGroups: buildRowsFromGroups(groups),
+      browser: this.#buildSystemBrowser(systems, groups),
+      intel: this.#buildSystemIntel(systems),
       installedRows: systems.filter((system) => system.installed),
       previewSummary: summarizePreview(null, 0),
       legality,
-      readinessRows: [
-        { label: "Runtime", value: "Concept", tone: "neutral" },
-        { label: "Engine", value: "Not Bound", tone: "neutral" },
-        { label: "Mutation", value: "Disabled", tone: "positive" },
-        { label: "V2 Boundary", value: "Preserved", tone: "positive" }
-      ],
       slotMeter: this.#buildSlotMeter(6, 9),
       summaryTitle: config.mode === MODE.SHIPYARD ? "Ship Summary" : "Droid Summary",
       summaryName: config.mode === MODE.SHIPYARD ? "Grey Kestrel (Concept)" : "Unit R7-X9 (Concept)",
@@ -650,6 +652,7 @@ export class CustomizationBayApp extends BaseSWSEAppV2 {
     const compatible = system?.compatible !== false;
     const canAdd = !installed && compatible;
     const canRemove = installed;
+    const badge = this.#systemStateBadge({ installed, compatible, selectedAdd, selectedRemove });
 
     return {
       ...system,
@@ -669,27 +672,114 @@ export class CustomizationBayApp extends BaseSWSEAppV2 {
       action: installed ? "remove-system" : "add-system",
       actionLabel: installed ? (selectedRemove ? "Keep Installed" : "Uninstall") : (selectedAdd ? "Remove from Draft" : "Install"),
       actionDisabled: !installed && !compatible,
-      tone: !compatible ? "negative" : installed ? "positive" : "neutral"
+      tone: !compatible ? "negative" : installed ? "positive" : "neutral",
+      selected: id === this.selectedSystemId,
+      stateLabel: badge.label,
+      badgeTone: badge.tone
     };
+  }
+
+  /**
+   * Phase 4 — pure presentation label for a system browser card/Intel badge.
+   * Derived entirely from booleans #decorateSystem already computed from
+   * engine-supplied data (installed/compatible) and player-staged draft
+   * state (selectedAdd/selectedRemove) — never a new compatibility,
+   * legality, or cost determination of its own (PART 33/Test Contract L).
+   */
+  #systemStateBadge({ installed, compatible, selectedAdd, selectedRemove }) {
+    if (selectedRemove) return { label: "PENDING REMOVAL", tone: "neutral" };
+    if (selectedAdd) return { label: "PENDING ADD", tone: "positive" };
+    if (installed) return { label: "INSTALLED", tone: "positive" };
+    if (!compatible) return { label: "INCOMPATIBLE", tone: "negative" };
+    return { label: "AVAILABLE", tone: "neutral" };
+  }
+
+  /**
+   * Phase 4 — system browser presentation state: search/category/status
+   * filters applied purely over the already-decorated `systems` array (the
+   * same collection every other Bay panel reads). No compendium re-query,
+   * no parallel candidate source (PART 34).
+   */
+  #buildSystemBrowser(systems, groups) {
+    const search = String(this.systemSearch || "").trim().toLowerCase();
+    const categoryFilter = this.systemCategoryFilter || "all";
+    const statusFilter = this.systemStatusFilter || "all";
+
+    const matchesSearch = (system) => {
+      if (!search) return true;
+      return String(system.name).toLowerCase().includes(search)
+        || String(system.categoryLabel).toLowerCase().includes(search)
+        || String(system.description).toLowerCase().includes(search);
+    };
+    const matchesStatus = (system) => {
+      if (statusFilter === "all") return true;
+      if (statusFilter === "installed") return system.installed;
+      if (statusFilter === "available") return !system.installed && system.compatible;
+      if (statusFilter === "incompatible") return !system.compatible;
+      return true;
+    };
+
+    const categoryFilters = [
+      { key: "all", label: "All", active: categoryFilter === "all" },
+      ...Object.keys(groups).map((key) => ({
+        key,
+        label: CATEGORY_LABELS[key] ?? humanize(key),
+        active: categoryFilter === key
+      }))
+    ];
+    const statusFilters = ["all", "available", "installed", "incompatible"].map((key) => ({
+      key,
+      label: key === "all" ? "All" : humanize(key),
+      active: statusFilter === key
+    }));
+
+    const filtered = systems.filter((system) =>
+      (categoryFilter === "all" || system.category === categoryFilter)
+      && matchesStatus(system)
+      && matchesSearch(system)
+    );
+    const filteredGroups = {};
+    for (const system of filtered) {
+      filteredGroups[system.category] ??= [];
+      filteredGroups[system.category].push(system);
+    }
+
+    return {
+      search: this.systemSearch || "",
+      categoryFilters,
+      statusFilters,
+      hasActiveFilters: Boolean(search) || categoryFilter !== "all" || statusFilter !== "all",
+      groups: buildRowsFromGroups(filteredGroups)
+    };
+  }
+
+  /**
+   * Phase 4 — System Intel view: the currently-inspected system, or null
+   * for the empty state. Looks up the already-decorated system by its
+   * stable id (never display name — PART 35); does not recompute anything.
+   */
+  #buildSystemIntel(systems) {
+    if (!this.selectedSystemId) return null;
+    return systems.find((system) => system.id === this.selectedSystemId) || null;
   }
 
   #placeholderSystems(mode) {
     if (mode === MODE.SHIPYARD) {
       return [
-        { id: "upgraded-sublight", name: "Upgraded Sublight Engines", category: "engines", categoryLabel: "Engines", costLabel: "12,000 cr", installed: true, compatible: true, description: "+2 speed profile. Runtime engine hook pending.", actionDisabled: true, actionLabel: "Installed", tone: "positive" },
-        { id: "class-1-hyperdrive", name: "Class 1 Hyperdrive", category: "hyperdrive", categoryLabel: "Hyperdrive", costLabel: "8,400 cr", installed: true, compatible: true, description: "Fast hyperspace motivator. Runtime engine hook pending.", actionDisabled: true, actionLabel: "Installed", tone: "positive" },
-        { id: "reinforced-shields", name: "Reinforced Shield Generator", category: "shields", categoryLabel: "Shields", costLabel: "14,500 cr", installed: true, compatible: true, description: "Military-grade shield projection. Requires compliance review.", actionDisabled: true, actionLabel: "Review", tone: "neutral" },
-        { id: "concealed-cargo", name: "Concealed Cargo Compartment", category: "cargo", categoryLabel: "Cargo", costLabel: "6,800 cr", installed: true, compatible: true, description: "Smuggling compartment. Restricted in most jurisdictions.", actionDisabled: true, actionLabel: "Restricted", tone: "negative" },
-        { id: "dorsal-laser", name: "Dorsal Laser Cannon", category: "weapons", categoryLabel: "Weapons", costLabel: "9,200 cr", installed: true, compatible: true, description: "Turret hardpoint weapon.", actionDisabled: true, actionLabel: "Installed", tone: "positive" }
+        { id: "upgraded-sublight", name: "Upgraded Sublight Engines", category: "engines", categoryLabel: "Engines", costLabel: "12,000 cr", installed: true, compatible: true, description: "+2 speed profile. Runtime engine hook pending.", actionDisabled: true, actionLabel: "Installed", tone: "positive", stateLabel: "INSTALLED", badgeTone: "positive" },
+        { id: "class-1-hyperdrive", name: "Class 1 Hyperdrive", category: "hyperdrive", categoryLabel: "Hyperdrive", costLabel: "8,400 cr", installed: true, compatible: true, description: "Fast hyperspace motivator. Runtime engine hook pending.", actionDisabled: true, actionLabel: "Installed", tone: "positive", stateLabel: "INSTALLED", badgeTone: "positive" },
+        { id: "reinforced-shields", name: "Reinforced Shield Generator", category: "shields", categoryLabel: "Shields", costLabel: "14,500 cr", installed: true, compatible: true, description: "Military-grade shield projection. Requires compliance review.", actionDisabled: true, actionLabel: "Review", tone: "neutral", stateLabel: "REQUIRES GM", badgeTone: "neutral" },
+        { id: "concealed-cargo", name: "Concealed Cargo Compartment", category: "cargo", categoryLabel: "Cargo", costLabel: "6,800 cr", installed: true, compatible: true, description: "Smuggling compartment. Restricted in most jurisdictions.", actionDisabled: true, actionLabel: "Restricted", tone: "negative", stateLabel: "RESTRICTED", badgeTone: "negative" },
+        { id: "dorsal-laser", name: "Dorsal Laser Cannon", category: "weapons", categoryLabel: "Weapons", costLabel: "9,200 cr", installed: true, compatible: true, description: "Turret hardpoint weapon.", actionDisabled: true, actionLabel: "Installed", tone: "positive", stateLabel: "INSTALLED", badgeTone: "positive" }
       ];
     }
 
     return [
-      { id: "utility-chassis", name: "2nd-Degree Utility Chassis", category: "chassis", categoryLabel: "Chassis", costLabel: "2,800 cr", installed: true, compatible: true, description: "Astromech / technical support frame.", actionDisabled: true, actionLabel: "Selected", tone: "positive" },
-      { id: "wheeled", name: "Wheeled Locomotion", category: "locomotion", categoryLabel: "Locomotion", costLabel: "350 cr", installed: true, compatible: true, description: "Fast and compact on stable surfaces.", actionDisabled: true, actionLabel: "Installed", tone: "positive" },
-      { id: "magnetic-clamps", name: "Magnetic Clamps", category: "locomotion", categoryLabel: "Locomotion", costLabel: "600 cr", installed: true, compatible: true, description: "Hull-walk clamps for starship service.", actionDisabled: true, actionLabel: "Installed", tone: "positive" },
-      { id: "heuristic-processor", name: "Heuristic Processor", category: "processor", categoryLabel: "Processor", costLabel: "1,200 cr", installed: true, compatible: true, description: "Adaptive learning processor.", actionDisabled: true, actionLabel: "Selected", tone: "neutral" },
-      { id: "weapon-mount", name: "Weapon Mount", category: "restricted", categoryLabel: "Restricted", costLabel: "2,400 cr", installed: false, compatible: false, description: "Military hardware. GM review required.", actionDisabled: true, actionLabel: "Restricted", tone: "negative" }
+      { id: "utility-chassis", name: "2nd-Degree Utility Chassis", category: "chassis", categoryLabel: "Chassis", costLabel: "2,800 cr", installed: true, compatible: true, description: "Astromech / technical support frame.", actionDisabled: true, actionLabel: "Selected", tone: "positive", stateLabel: "INSTALLED", badgeTone: "positive" },
+      { id: "wheeled", name: "Wheeled Locomotion", category: "locomotion", categoryLabel: "Locomotion", costLabel: "350 cr", installed: true, compatible: true, description: "Fast and compact on stable surfaces.", actionDisabled: true, actionLabel: "Installed", tone: "positive", stateLabel: "INSTALLED", badgeTone: "positive" },
+      { id: "magnetic-clamps", name: "Magnetic Clamps", category: "locomotion", categoryLabel: "Locomotion", costLabel: "600 cr", installed: true, compatible: true, description: "Hull-walk clamps for starship service.", actionDisabled: true, actionLabel: "Installed", tone: "positive", stateLabel: "INSTALLED", badgeTone: "positive" },
+      { id: "heuristic-processor", name: "Heuristic Processor", category: "processor", categoryLabel: "Processor", costLabel: "1,200 cr", installed: true, compatible: true, description: "Adaptive learning processor.", actionDisabled: true, actionLabel: "Selected", tone: "neutral", stateLabel: "INSTALLED", badgeTone: "neutral" },
+      { id: "weapon-mount", name: "Weapon Mount", category: "restricted", categoryLabel: "Restricted", costLabel: "2,400 cr", installed: false, compatible: false, description: "Military hardware. GM review required.", actionDisabled: true, actionLabel: "Restricted", tone: "negative", stateLabel: "INCOMPATIBLE", badgeTone: "negative" }
     ];
   }
 
@@ -712,19 +802,6 @@ export class CustomizationBayApp extends BaseSWSEAppV2 {
       { label: "Processor", value: "Heuristic" },
       { label: "Legal", value: "License", tone: "neutral" }
     ];
-  }
-
-  #buildStages(config, activeIndex = 1, legalityTone = "neutral") {
-    return config.stageLabels.map((label, index) => {
-      const oneBased = index + 1;
-      const status = oneBased < activeIndex ? "done" : oneBased === activeIndex ? "active" : oneBased === 6 ? legalityTone : "pending";
-      return {
-        index: String(oneBased).padStart(2, "0"),
-        label,
-        status,
-        marker: status === "done" ? "✓" : status === "active" ? "▸" : status === "negative" ? "!" : "·"
-      };
-    });
   }
 
   #buildBudget(currentCredits, netCost) {
@@ -877,6 +954,10 @@ export class CustomizationBayApp extends BaseSWSEAppV2 {
     this.mode = nextMode;
     this.selectedAdditions.clear();
     this.selectedRemovals.clear();
+    this.selectedSystemId = null;
+    this.systemSearch = '';
+    this.systemCategoryFilter = 'all';
+    this.systemStatusFilter = 'all';
     this.render({ force: true });
   }
 
@@ -904,6 +985,51 @@ export class CustomizationBayApp extends BaseSWSEAppV2 {
   #resetSelections() {
     this.selectedAdditions.clear();
     this.selectedRemovals.clear();
+    this.render({ force: true });
+  }
+
+  /**
+   * Phase 4 — System Intel selection. A card-body click inspects; it never
+   * stages an install/remove itself (PART 10) — that stays on the card's
+   * own explicit add-system/remove-system button, a separate data-action.
+   * Clicking the already-inspected system toggles the Intel rail back to
+   * its empty state.
+   */
+  #inspectSystem(systemId) {
+    if (!systemId) return;
+    this.selectedSystemId = this.selectedSystemId === systemId ? null : systemId;
+    this.render({ force: true });
+  }
+
+  #setSystemCategoryFilter(value) {
+    this.systemCategoryFilter = value || 'all';
+    this.render({ force: true });
+  }
+
+  #setSystemStatusFilter(value) {
+    this.systemStatusFilter = value || 'all';
+    this.render({ force: true });
+  }
+
+  /**
+   * Reads the search box's current value directly from the DOM at click
+   * time rather than binding a live 'input' listener: the inline Holopad
+   * host (ShellHost._wireCustomizationSurfaceEvents) only forwards 'click'
+   * events to this app's action handler, so a listener registered for any
+   * other event type would silently never fire when the Bay is hosted
+   * inline — this keeps search working identically in both hosts through
+   * the one event-delegation path both already use.
+   */
+  #applySystemSearch(target) {
+    const input = target?.closest?.('.bay-browser-search')?.querySelector?.('input[name="systemSearch"]');
+    this.systemSearch = input ? String(input.value || '') : this.systemSearch;
+    this.render({ force: true });
+  }
+
+  #resetSystemFilters() {
+    this.systemSearch = '';
+    this.systemCategoryFilter = 'all';
+    this.systemStatusFilter = 'all';
     this.render({ force: true });
   }
 
