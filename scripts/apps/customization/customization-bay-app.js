@@ -86,11 +86,21 @@ const MODE_CONFIG = Object.freeze({
   }
 });
 
+// Phase 4 correction — CONTEXT_MODE still carries buildNew/storeQuote/
+// chargenDraft as internal bookkeeping values (normalizeContextMode()'s
+// no-actor fallback, contextMode-tagged options threaded from callers), but
+// none of them ever branched #buildDroidContext/#buildVehicleContext's
+// actual rendered output — every context produced the exact same browser/
+// profile/preview content. Store Quote and Chargen Draft are explicitly
+// documented (see #notifyStoreQuote/class header) as future integration
+// points with no live workflow behind them, and openCustomizationBay()'s
+// own no-actor "Build New" entry point has no caller anywhere in the
+// codebase. Presenting all four as equal first-class navigation pills
+// misrepresented three of them as real workflows. Only the one context
+// that actually reflects what this screen always does — modifying/browsing
+// an existing actor's systems — is exposed as primary navigation.
 const CONTEXT_OPTIONS = Object.freeze([
-  { key: CONTEXT_MODE.BUILD_NEW, label: "Build New", tooltipKey: "bay.context.buildNew" },
-  { key: CONTEXT_MODE.MODIFY_EXISTING, label: "Modify / Browse Systems", tooltipKey: "bay.context.modifyExisting" },
-  { key: CONTEXT_MODE.STORE_QUOTE, label: "Store Quote", tooltipKey: "bay.context.storeQuote" },
-  { key: CONTEXT_MODE.CHARGEN_DRAFT, label: "Chargen Draft", tooltipKey: "bay.context.chargenDraft" }
+  { key: CONTEXT_MODE.MODIFY_EXISTING, label: "Modify / Browse Systems", tooltipKey: "bay.context.modifyExisting" }
 ]);
 
 const CATEGORY_LABELS = Object.freeze({
@@ -173,33 +183,32 @@ function categoryFromSystem(system, mode) {
   return normalized || "systems";
 }
 
-function legalityFromPreview(previewResult, state = {}) {
+/**
+ * Phase 4 correction — this used to map EVERY failed preview (insufficient
+ * credits, an incompatible system, a missing backup processor slot, an
+ * unknown system id, a vehicle slot-governance violation, ...) to the same
+ * "GM REVIEW / Required" label. None of those are GM-approval states —
+ * they are ordinary build blockers the engine itself already explains via
+ * previewResult.error/blockingReason. No canonical droid/vehicle system
+ * definition carries a real restricted/licensed/GM-review flag this bay
+ * could surface instead, so there is no distinct "legal" state to invent —
+ * only whether the currently staged change set is READY to apply or
+ * BLOCKED, using the engine's own reason text verbatim.
+ */
+function legalityFromPreview(previewResult) {
   if (previewResult?.success === false) {
     return {
       key: "blocked",
-      label: "GM REVIEW",
+      label: "BLOCKED",
       tone: "negative",
-      gmReview: "Required",
-      notes: [previewResult.error || "Build requires review before it can be applied."]
-    };
-  }
-
-  const warnings = Array.isArray(state.warnings) ? state.warnings : [];
-  if (warnings.length) {
-    return {
-      key: "license",
-      label: "LICENSE REQUIRED",
-      tone: "neutral",
-      gmReview: "Conditional",
-      notes: warnings
+      notes: [previewResult.error || previewResult.blockingReason || "This build cannot be applied yet."]
     };
   }
 
   return {
-    key: "legal",
-    label: "LEGAL",
+    key: "ready",
+    label: "READY",
     tone: "positive",
-    gmReview: "Not Required",
     notes: []
   };
 }
@@ -503,8 +512,7 @@ export class CustomizationBayApp extends BaseSWSEAppV2 {
         { label: "Size", value: humanize(profile.size) },
         { label: "Locomotion", value: humanize(profile.locomotion || "Unassigned") },
         { label: "Processor", value: humanize(profile.processor || "Standard") },
-        { label: "Appendages", value: String(profile.appendages?.length ?? 0), tone: "neutral" },
-        { label: "Credits", value: formatCredits(currentCredits), tone: "positive" }
+        { label: "Appendages", value: String(profile.appendages?.length ?? 0), tone: "neutral" }
       ],
       browser: this.#buildSystemBrowser(systems, groups),
       intel: this.#buildSystemIntel(systems),
@@ -517,7 +525,13 @@ export class CustomizationBayApp extends BaseSWSEAppV2 {
       summarySubtitle: `${humanize(profile.degree)} · ${humanize(profile.size)}`,
       budget: this.#buildBudget(currentCredits, previewSummary.netCost),
       techSpecialist: this.#buildTechSpecialistContext(MODE.GARAGE),
-      canApply: true,
+      // Phase 4 correction — must reflect whether the canonical engine
+      // preview actually accepted the currently staged change set, not an
+      // unconditional true. The outer _prepareContext() AND's this with
+      // #hasChanges(), so an empty staged set (previewResult trivially
+      // succeeds) still correctly requires real changes before Apply
+      // enables.
+      canApply: previewResult.success === true,
       runtimeLane: true
     };
   }
@@ -569,8 +583,16 @@ export class CustomizationBayApp extends BaseSWSEAppV2 {
     const currentCredits = Number(wallet?.system?.credits ?? profile.credits ?? this.actor.system?.credits ?? 0) || 0;
     const previewSummary = summarizePreview(previewResult, currentCredits);
     const legality = legalityFromPreview(previewResult);
+    // Phase 4 correction — installedCount is real (profile.installedSystems
+    // is canonical actor data). There is no matching real total-capacity
+    // value: VehicleSlotGovernanceEngine governs named slot CATEGORIES
+    // (engine/armor/sensor are single-slot, weapon_mount is multi,
+    // modification is consumable) — it never defines a universal numeric
+    // vehicle capacity. The previous `Math.max(9, installedCount + 3)` was
+    // presentation-invented and is not reintroduced here; Core Profile and
+    // the left rail present the real installed count only, never a
+    // fabricated "N / totalSlots" figure.
     const installedCount = profile.installedSystems?.length ?? 0;
-    const totalSlots = Math.max(9, installedCount + 3);
     const mentor = await this.#buildMentorPresence(config, previewResult, legality);
 
     return {
@@ -583,22 +605,19 @@ export class CustomizationBayApp extends BaseSWSEAppV2 {
         { label: "Vehicle Type", value: humanize(profile.vehicleType) },
         { label: "Speed", value: String(profile.speed ?? 0), tone: "positive" },
         { label: "Armor", value: String(profile.armor ?? 0) },
-        { label: "Systems", value: `${installedCount}` },
-        { label: "Slots", value: `${installedCount} / ${totalSlots}`, tone: "neutral" },
-        { label: "Credits", value: formatCredits(currentCredits), tone: "positive" }
+        { label: "Systems", value: `${installedCount}` }
       ],
       browser: this.#buildSystemBrowser(systems, groups),
       intel: this.#buildSystemIntel(systems),
       installedRows: systems.filter((system) => system.installed),
       previewSummary,
       legality,
-      slotMeter: this.#buildSlotMeter(installedCount, totalSlots),
       summaryTitle: "Ship Summary",
       summaryName: profile.actorName ?? this.actor.name,
       summarySubtitle: `${humanize(profile.vehicleType)} · ${humanize(this.contextMode)}`,
       budget: this.#buildBudget(currentCredits, previewSummary.netCost),
       techSpecialist: this.#buildTechSpecialistContext(MODE.SHIPYARD),
-      canApply: true,
+      canApply: previewResult.success === true,
       runtimeLane: true
     };
   }
@@ -608,7 +627,6 @@ export class CustomizationBayApp extends BaseSWSEAppV2 {
       key: "review",
       label: "CONCEPT ONLY",
       tone: "neutral",
-      gmReview: "Future Engine",
       notes: [message]
     };
 
@@ -1037,13 +1055,13 @@ export class CustomizationBayApp extends BaseSWSEAppV2 {
     this.contextMode = CONTEXT_MODE.MODIFY_EXISTING;
     this.focusMode = 'browse-systems';
     ui.notifications.info(this.mode === MODE.SHIPYARD
-      ? 'Browse ship systems below, stage installs/removals, then apply through the Shipyard engine.'
-      : 'Browse droid systems below, stage installs/removals, then apply through the Droid Garage engine.');
+      ? 'Browse ship systems below, then stage installs and removals.'
+      : 'Browse droid systems below, then stage installs and removals.');
     this.render({ force: true });
   }
 
   #notifyValidation() {
-    ui.notifications.info("Customization Bay validation preview refreshed. Engine validation remains authoritative.");
+    ui.notifications.info("Build status refreshed.");
     this.render({ force: true });
   }
 

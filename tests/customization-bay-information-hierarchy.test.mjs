@@ -99,6 +99,11 @@ const MAIN_CLOSE_ANCHOR = '</main>';
     'UI Contract',
     'Runtime Lane',
     'Engine Only',
+    'Engine-sourced options',
+    'current engine preview',
+    'Concept / routing note',
+    'Engine validation remains authoritative',
+    'GM Review',
   ];
   for (const phrase of FORBIDDEN_PHRASES) {
     assert.ok(
@@ -111,6 +116,21 @@ const MAIN_CLOSE_ANCHOR = '</main>';
   // class="bay-implementation-notes" — so it cannot be deleted outright)
   // but must now read as player-useful build guidance.
   assert.match(partial, /<summary>Build Guidance<\/summary>/, 'the frozen bay-implementation-notes disclosure must be relabeled as player-useful build guidance, not removed (removing it would break the frozen Phase 2 region-marker contract)');
+
+  // Player-facing JS notification/fallback strings must be equally clean —
+  // these never go through the .hbs comment-stripping above.
+  const appJs = await read(APP_JS_PATH);
+  const FORBIDDEN_JS_PHRASES = [
+    'apply through the Shipyard engine',
+    'apply through the Droid Garage engine',
+    'Engine validation remains authoritative',
+  ];
+  for (const phrase of FORBIDDEN_JS_PHRASES) {
+    assert.ok(
+      !appJs.includes(phrase),
+      `player-facing notification strings in customization-bay-app.js must not expose implementation vocabulary: found "${phrase}"`
+    );
+  }
 }
 
 /* ------------------------------------------------------------------ *
@@ -215,6 +235,23 @@ const MAIN_CLOSE_ANCHOR = '</main>';
   assert.doesNotMatch(partial, /class="bay-summary__rows"/, 'the old duplicate Purchase/Resale/Net Cost/Legal build-level summary block must not return');
   assert.doesNotMatch(partial, /Cost Delta/, 'the old duplicate "Cost Delta" build-level credit label must not return');
   assert.doesNotMatch(partial, /Resulting Balance/, 'the old duplicate "Resulting Balance" build-level credit label must not return');
+
+  // PR #949 Phase 4 Correction — the widget count alone didn't catch that
+  // Core Profile's profileStats array ALSO rendered a "Credits" stat for
+  // both droid and vehicle, duplicating the one dedicated Credits panel.
+  // Audit the actual live-runtime view-model source, not just the
+  // template's widget markup.
+  const appJs = await read(APP_JS_PATH);
+  const profileStatsBlocks = [];
+  {
+    const re = /profileStats:\s*\[([\s\S]*?)\n {6}\]/g;
+    let m;
+    while ((m = re.exec(appJs))) profileStatsBlocks.push(m[1]);
+  }
+  assert.equal(profileStatsBlocks.length, 2, `expected exactly 2 inline profileStats array literals (the live droid and vehicle context builders), found ${profileStatsBlocks.length}`);
+  for (const block of profileStatsBlocks) {
+    assert.doesNotMatch(block, /label:\s*"Credits"/, 'Core Profile (profileStats) must not duplicate the one dedicated build-level Credits panel');
+  }
 }
 
 /* ------------------------------------------------------------------ *
@@ -358,6 +395,122 @@ const MAIN_CLOSE_ANCHOR = '</main>';
         `${helperName}() must not recompute business logic — found forbidden reference "${forbidden}" (it must only read fields #decorateSystem already derived from the real engine preview)`
       );
     }
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ * TEST CONTRACT M — prototype context navigation. CONTEXT_OPTIONS (the
+ * primary context-strip navigation) must not present Store Quote or
+ * Chargen Draft as first-class pills: their handlers
+ * (#notifyStoreQuote/the app's own class-header docs) are explicitly
+ * documented as future integration points with no live workflow behind
+ * them, and #setContextMode()/this.contextMode never branch what
+ * #buildDroidContext/#buildVehicleContext actually render — every context
+ * produces identical output. openCustomizationBay()'s no-actor "Build New"
+ * entry point has no caller anywhere in the codebase either. Only the one
+ * context that reflects the screen's real, always-true behavior (modifying
+ * /browsing an existing actor's systems) may render as primary navigation.
+ * ------------------------------------------------------------------ */
+{
+  const appJs = await read(APP_JS_PATH);
+  const optionsMatch = appJs.match(/const CONTEXT_OPTIONS = Object\.freeze\(\[([\s\S]*?)\]\);/);
+  assert.ok(optionsMatch, 'could not locate CONTEXT_OPTIONS');
+  const optionsBody = optionsMatch[1];
+
+  for (const prototypeKey of ['CONTEXT_MODE.STORE_QUOTE', 'CONTEXT_MODE.CHARGEN_DRAFT', 'CONTEXT_MODE.BUILD_NEW']) {
+    assert.doesNotMatch(
+      optionsBody,
+      new RegExp(`key:\\s*${prototypeKey.replace('.', '\\.')}`),
+      `CONTEXT_OPTIONS must not expose ${prototypeKey} as primary navigation — it has no live workflow behind it`
+    );
+  }
+  assert.match(optionsBody, /key:\s*CONTEXT_MODE\.MODIFY_EXISTING/, 'CONTEXT_OPTIONS must retain the one real context (Modify / Browse Systems)');
+
+  // The frozen Phase 2 REQUIRED_ACTIONS contract still requires
+  // data-action="set-context" to exist somewhere in the partial — confirm
+  // it survives via the one remaining real option, not a prototype one.
+  const partial = await read(PARTIAL_PATH);
+  assert.match(partial, /data-action="set-context"/, 'data-action="set-context" must remain present (frozen Phase 2 contract)');
+}
+
+/* ------------------------------------------------------------------ *
+ * TEST CONTRACT N — Apply consumes the canonical engine preview's own
+ * success/failure, never an unconditional true. Both live runtime context
+ * builders must derive canApply from previewResult — this is reading the
+ * engine's own verdict, not a UI-side legality/affordability calculation.
+ * ------------------------------------------------------------------ */
+{
+  const appJs = await read(APP_JS_PATH);
+  assert.doesNotMatch(
+    appJs,
+    /\n\s*canApply:\s*true,\s*\n\s*runtimeLane:\s*true/,
+    'a live runtime context must not return an unconditional canApply: true — it must derive canApply from the canonical engine preview result'
+  );
+  const canApplyMatches = appJs.match(/canApply:\s*previewResult\.success\s*===\s*true/g) || [];
+  assert.equal(canApplyMatches.length, 2, `expected both live runtime context builders (#buildDroidContext and #buildVehicleContext) to derive canApply from previewResult.success, found ${canApplyMatches.length} occurrences`);
+}
+
+/* ------------------------------------------------------------------ *
+ * TEST CONTRACT O — a blocked preview is BLOCKED, not GM REVIEW. Ordinary
+ * engine rejections (insufficient credits, an incompatible system, a
+ * missing backup processor slot, an unknown system id, a vehicle
+ * slot-governance violation, ...) are build blockers, not GM-approval
+ * states — no canonical droid/vehicle system definition carries a real
+ * restricted/licensed/GM-review flag this bay could surface instead.
+ * ------------------------------------------------------------------ */
+{
+  const appJs = await read(APP_JS_PATH);
+  const fnMatch = appJs.match(/function legalityFromPreview\([^)]*\)\s*\{([\s\S]*?)\n\}/);
+  assert.ok(fnMatch, 'could not locate legalityFromPreview()');
+  const body = fnMatch[1];
+  assert.doesNotMatch(body, /GM REVIEW/, 'legalityFromPreview() must not map a failed preview to "GM REVIEW" — that misrepresents ordinary build blockers as GM-approval states');
+  assert.doesNotMatch(body, /gmReview/, 'legalityFromPreview() must not fabricate a gmReview field — no canonical data source backs one');
+  assert.match(body, /label:\s*"BLOCKED"/, 'a failed preview must be labeled BLOCKED');
+  assert.match(body, /previewResult\.error\s*\|\|\s*previewResult\.blockingReason/, 'BLOCKED must surface the engine\'s own error/blockingReason text, not an invented reason');
+  assert.match(body, /label:\s*"READY"/, 'a successful preview must be labeled READY');
+}
+
+/* ------------------------------------------------------------------ *
+ * TEST CONTRACT P — no fabricated vehicle capacity. VehicleSlotGovernanceEngine
+ * governs named slot CATEGORIES (single/multi/consumable) — it never
+ * defines a universal numeric vehicle capacity. The old
+ * Math.max(9, installedCount + 3) formula must not return, and no numeric
+ * total-slot Capacity meter may render for a live (non-placeholder)
+ * Shipyard context.
+ * ------------------------------------------------------------------ */
+{
+  const appJs = await read(APP_JS_PATH);
+  // Strip line comments first — the source carries an explanatory comment
+  // that legitimately mentions the old formula in prose to document why it
+  // is gone; only executable code may not contain it.
+  const appJsCodeOnly = appJs.replace(/^\s*\/\/.*$/gm, '');
+  assert.doesNotMatch(appJsCodeOnly, /Math\.max\(\s*9\s*,\s*installedCount\s*\+\s*3\s*\)/, 'the fabricated total-vehicle-slot formula must not return');
+
+  // The live vehicle context builder must not set slotMeter at all — only
+  // the explicitly-labeled "(Concept)" placeholder context may (it is
+  // never mistaken for real canonical data, since every other field on
+  // that screen is already fictional/concept-labeled).
+  const vehicleContextMatch = appJs.match(/async #buildVehicleContext\(config\) \{[\s\S]*?\n {2}\}\n/);
+  assert.ok(vehicleContextMatch, 'could not locate #buildVehicleContext()');
+  assert.doesNotMatch(vehicleContextMatch[0], /slotMeter:/, 'the live #buildVehicleContext() must not present a numeric slotMeter/Capacity value — no canonical total-vehicle-capacity source exists');
+}
+
+/* ------------------------------------------------------------------ *
+ * TEST CONTRACT Q — Core Profile does not duplicate capacity. Whether or
+ * not a build-level capacity/slot summary exists elsewhere, profileStats
+ * (Core Profile) must never repeat a "Slots"-shaped total.
+ * ------------------------------------------------------------------ */
+{
+  const appJs = await read(APP_JS_PATH);
+  const profileStatsBlocks = [];
+  {
+    const re = /profileStats:\s*\[([\s\S]*?)\n {6}\]/g;
+    let m;
+    while ((m = re.exec(appJs))) profileStatsBlocks.push(m[1]);
+  }
+  assert.equal(profileStatsBlocks.length, 2, `expected exactly 2 inline profileStats array literals, found ${profileStatsBlocks.length}`);
+  for (const block of profileStatsBlocks) {
+    assert.doesNotMatch(block, /label:\s*"Slots"/, 'Core Profile (profileStats) must not duplicate a build-level Slots/Capacity total');
   }
 }
 

@@ -138,7 +138,7 @@
 
   {{#if error}}
     <aside class="bay-runtime-note" data-tone="neutral">
-      <strong>Concept / routing note:</strong> {{error}}
+      <strong>Unable to load this customization target:</strong> {{error}}
     </aside>
   {{/if}}
 
@@ -190,9 +190,6 @@
           <span>Build Status</span>
           <strong class="bay-status bay-status--{{legality.tone}}">{{legality.label}}</strong>
         </header>
-        <div class="bay-legal-rows">
-          <div class="bay-legal-row"><span>GM Review</span><strong>{{legality.gmReview}}</strong></div>
-        </div>
         {{#if legality.notes.length}}
           <ul class="bay-warning-list">
             {{#each legality.notes}}
@@ -200,7 +197,7 @@
             {{/each}}
           </ul>
         {{else}}
-          <p class="bay-muted">Ready to apply — no blocking issues from the current engine preview.</p>
+          <p class="bay-muted">Ready to apply.</p>
         {{/if}}
         <button type="button" class="bay-section-action" data-action="validate-build">Refresh Preview</button>
       </section>
@@ -251,7 +248,7 @@
         <header class="bay-section__head bay-section__head--actions">
           <h2>{{#if (eq mode 'shipyard')}}Vehicle Systems{{else}}Droid Systems{{/if}}</h2>
           <div class="bay-section__actions">
-            <span data-swse-tooltip-key="{{#if (eq mode 'shipyard')}}shipyard.systemBays{{else}}garage.systems{{/if}}">Engine-sourced options</span>
+            <span data-swse-tooltip-key="{{#if (eq mode 'shipyard')}}shipyard.systemBays{{else}}garage.systems{{/if}}">Available Systems</span>
             <button type="button" class="bay-section-action" data-action="browse-systems">
               {{#if (eq mode 'shipyard')}}Browse Ship Systems{{else}}Browse New Droid Systems{{/if}}
             </button>
@@ -400,7 +397,7 @@
     <summary>Build Guidance</summary>
     <ul>
       <li>Installs and removals are staged as a draft — nothing changes on the actor until you choose Apply Changes.</li>
-      <li>Removing a system returns roughly half its purchase price as resale credit.</li>
+      <li>Removed systems may return resale credit; the Credits summary shows the current preview.</li>
       <li>Some systems require GM review before they become street-legal.</li>
       <li>Credits are drawn from the wallet named in the mentor strip above, which may not be this actor's own balance.</li>
     </ul>
