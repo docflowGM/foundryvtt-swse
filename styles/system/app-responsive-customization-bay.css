@@ -1,0 +1,260 @@
+/**
+ * SWSE Droid Garage / Starship Shipyard Responsive Contract
+ *
+ * PR #947 Phase 3 — app-specific responsive behavior for the Customization
+ * Bay, keyed off the shared shell-size observer (scripts/ui/shell/
+ * shell-responsive-observer.js), the same authority Workbench uses (see
+ * app-responsive-workbench.css). This measures the actual rendered
+ * ApplicationV2/Holopad host size (via ResizeObserver), never the browser
+ * viewport, so a Holopad occupying only part of a wider browser window still
+ * gets the correct layout tier.
+ *
+ * Governing rule (mirrors the Workbench precedent exactly):
+ *   - WIDTH (.is-shell-narrow) controls topology — whether the three-lane
+ *     workgrid (left rail / main / right rail) is a row or a stacked column.
+ *   - HEIGHT alone (.is-shell-short, part of .is-shell-compact's OR-based
+ *     definition) controls density only — gaps, padding, mentor footprint —
+ *     and must NEVER independently stack the workgrid. A wide-but-short
+ *     Holopad keeps its three-column layout, just tighter.
+ *   - .is-shell-compact can be triggered by width OR height (see
+ *     shell-responsive-observer.js's classify()), so any rule scoped to
+ *     .is-shell-compact alone must be a density change, not a topology
+ *     change, or it would incorrectly stack a wide-but-short Holopad.
+ *
+ * This is presentation-only. It does not alter wallet/asset authority,
+ * routing, engine mechanics, mentor identity/dialogue, or the Phase 2
+ * frame-ownership contract (no responsive rule here may reintroduce
+ * swse-ui-shell/swse-sheet-ui/the standalone frame class onto the canonical
+ * content root, or touch CustomizationBayApp.DEFAULT_OPTIONS.classes).
+ */
+
+.application.swse-shell-responsive:has(.swse-customization-bay) {
+  --bay-rs-gap: 8px;
+  --bay-rs-pad: 8px;
+  --bay-rs-mentor-portrait: 48px;
+  --bay-rs-mentor-portrait-tiny: 36px;
+  --bay-rs-card-min: 128px;
+}
+
+/* ─────────────────────────────────────────────────────────────────────
+   COMPACT (width OR height below threshold) — density only. The
+   three-column .bay-workgrid topology is untouched here; only spacing,
+   font sizes, and secondary grid densities tighten. See Test Contract D
+   in tests/customization-bay-scroll-responsive-contract.test.mjs, which
+   asserts no is-shell-compact-only rule in this file sets grid-template-
+   columns or flex-direction on .bay-workgrid.
+   ───────────────────────────────────────────────────────────────────── */
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-customization-bay) .bay-workgrid {
+  gap: var(--bay-rs-gap) !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-customization-bay) .swse-customization-bay {
+  gap: var(--bay-rs-gap) !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-customization-bay) .bay-header {
+  gap: 10px !important;
+  padding-bottom: 8px !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-customization-bay) .bay-header__glyph {
+  width: 40px !important;
+  height: 40px !important;
+  font-size: 22px !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-customization-bay) .bay-header h1 {
+  font-size: 14px !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-customization-bay) .bay-mode-tabs,
+.application.swse-shell-responsive.is-shell-compact:has(.swse-customization-bay) .bay-context-strip {
+  gap: 4px !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-customization-bay) .bay-mode-tab,
+.application.swse-shell-responsive.is-shell-compact:has(.swse-customization-bay) .bay-context-pill {
+  padding: 6px 10px !important;
+  font-size: 9px !important;
+}
+
+/* Phase 3: the mentor speaks to the player and must survive every
+   responsive tier — it is never display: none (mirrors the same
+   non-negotiable invariant app-responsive-workbench.css encodes for
+   Delta/Miraj). Compact tightens the strip; short/narrow/tiny tighten it
+   further below, but it always stays present. */
+.application.swse-shell-responsive.is-shell-compact:has(.swse-customization-bay) .bay-mentor {
+  grid-template-columns: var(--bay-rs-mentor-portrait) minmax(0, 1fr) !important;
+  gap: 8px !important;
+  padding: 8px !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-customization-bay) .bay-mentor__portrait {
+  font-size: 20px !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-customization-bay) .bay-mentor__meta {
+  font-size: 9px !important;
+  gap: 6px !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-customization-bay) .bay-mentor__body p {
+  font-size: 11px !important;
+  margin-top: 4px !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-customization-bay) .bay-panel,
+.application.swse-shell-responsive.is-shell-compact:has(.swse-customization-bay) .bay-section,
+.application.swse-shell-responsive.is-shell-compact:has(.swse-customization-bay) .bay-summary,
+.application.swse-shell-responsive.is-shell-compact:has(.swse-customization-bay) .bay-implementation-notes {
+  padding: 8px !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-customization-bay) .bay-left-rail,
+.application.swse-shell-responsive.is-shell-compact:has(.swse-customization-bay) .bay-main,
+.application.swse-shell-responsive.is-shell-compact:has(.swse-customization-bay) .bay-right-rail {
+  gap: var(--bay-rs-gap) !important;
+}
+
+/* Secondary card/stat grids get denser (auto-fit-style two-up), same
+   density category as Workbench's .hero-stats/.inventory-list reflow at
+   is-shell-compact — this is a grid DENSITY change, not the primary
+   three-lane topology, so it is not gated to is-shell-narrow. */
+.application.swse-shell-responsive.is-shell-compact:has(.swse-customization-bay) .bay-card-grid,
+.application.swse-shell-responsive.is-shell-compact:has(.swse-customization-bay) .bay-stat-grid,
+.application.swse-shell-responsive.is-shell-compact:has(.swse-customization-bay) .bay-readiness-grid,
+.application.swse-shell-responsive.is-shell-compact:has(.swse-customization-bay) .bay-compliance-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 6px !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-customization-bay) .bay-part-card {
+  min-height: var(--bay-rs-card-min) !important;
+  padding: 8px !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-customization-bay) .bay-footer {
+  padding-top: 8px !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-customization-bay) .bay-footer button,
+.application.swse-shell-responsive.is-shell-compact:has(.swse-customization-bay) .bay-summary__actions button {
+  padding: 6px 8px !important;
+  font-size: 9px !important;
+}
+
+/* ─────────────────────────────────────────────────────────────────────
+   NARROW (width-driven — the observer's own width-only tier) — the ONLY
+   tier that stacks the three-lane workgrid. Compact-wide (triggerable by
+   short height alone) never reaches these rules; see Test Contract C/D.
+   ───────────────────────────────────────────────────────────────────── */
+
+/* Scroll authority (Part 8/9): wide keeps the three native lane scroll
+   owners (.bay-left-rail/.bay-main/.bay-right-rail, unchanged in
+   styles/apps/customization-bay.css). Once stacked, having all three ALSO
+   independently overflow-y: auto would trap the player inside three small
+   nested scrollboxes. Instead, once narrow, .bay-workgrid itself becomes
+   the ONE vertical scroll owner for the whole stacked reading flow, and
+   the three lanes stop independently scrolling — each just flows to its
+   natural content height inside that one scroll context. This is the
+   "surface/content root becomes the vertical scroll context" model,
+   chosen over Workbench's per-band-capped-drawer model because Bay's three
+   lanes (build-stage/legal/budget rail, main systems workspace, summary
+   rail) read as one continuous flow rather than two structurally distinct
+   panes with different interaction models the way Workbench's picker list
+   and detail editor do. */
+.application.swse-shell-responsive.is-shell-narrow:has(.swse-customization-bay) .bay-workgrid {
+  display: flex !important;
+  flex-direction: column !important;
+  min-height: 0 !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  scrollbar-gutter: stable !important;
+}
+
+.application.swse-shell-responsive.is-shell-narrow:has(.swse-customization-bay) .bay-left-rail,
+.application.swse-shell-responsive.is-shell-narrow:has(.swse-customization-bay) .bay-main,
+.application.swse-shell-responsive.is-shell-narrow:has(.swse-customization-bay) .bay-right-rail {
+  flex: 0 0 auto !important;
+  min-height: auto !important;
+  overflow-y: visible !important;
+  overflow-x: visible !important;
+  padding-right: 0 !important;
+}
+
+.application.swse-shell-responsive.is-shell-narrow:has(.swse-customization-bay) .bay-header {
+  flex-direction: column !important;
+  align-items: stretch !important;
+}
+
+.application.swse-shell-responsive.is-shell-narrow:has(.swse-customization-bay) .bay-header__identity {
+  min-width: 0 !important;
+}
+
+.application.swse-shell-responsive.is-shell-narrow:has(.swse-customization-bay) .bay-mentor {
+  grid-template-columns: 1fr !important;
+}
+
+.application.swse-shell-responsive.is-shell-narrow:has(.swse-customization-bay) .bay-mentor__portrait {
+  width: var(--bay-rs-mentor-portrait);
+  height: var(--bay-rs-mentor-portrait);
+}
+
+.application.swse-shell-responsive.is-shell-narrow:has(.swse-customization-bay) .bay-card-grid,
+.application.swse-shell-responsive.is-shell-narrow:has(.swse-customization-bay) .bay-stat-grid,
+.application.swse-shell-responsive.is-shell-narrow:has(.swse-customization-bay) .bay-readiness-grid,
+.application.swse-shell-responsive.is-shell-narrow:has(.swse-customization-bay) .bay-compliance-grid {
+  grid-template-columns: 1fr !important;
+}
+
+/* .bay-summary is position: sticky at desktop (it stays pinned to the top
+   of its own scrolling rail). Once .bay-workgrid itself is the scroll
+   context and .bay-right-rail no longer independently scrolls, sticky
+   positioning against the wrong ancestor is no longer meaningful — static
+   positioning lets it flow with the rest of the stacked column instead. */
+.application.swse-shell-responsive.is-shell-narrow:has(.swse-customization-bay) .bay-summary {
+  position: static !important;
+}
+
+/* ─────────────────────────────────────────────────────────────────────
+   SHORT / TIER-MICRO / TINY — height-driven density only, independent of
+   width. Never sets grid-template-columns or flex-direction on
+   .bay-workgrid (that remains is-shell-narrow's exclusive authority).
+   ───────────────────────────────────────────────────────────────────── */
+
+.application.swse-shell-responsive.is-shell-short:has(.swse-customization-bay) .bay-mentor,
+.application.swse-shell-responsive.is-shell-tier-micro:has(.swse-customization-bay) .bay-mentor,
+.application.swse-shell-responsive.is-shell-tiny:has(.swse-customization-bay) .bay-mentor {
+  grid-template-columns: var(--bay-rs-mentor-portrait-tiny) minmax(0, 1fr) !important;
+  gap: 6px !important;
+  padding: 6px !important;
+}
+
+.application.swse-shell-responsive.is-shell-short:has(.swse-customization-bay) .bay-mentor__portrait,
+.application.swse-shell-responsive.is-shell-tier-micro:has(.swse-customization-bay) .bay-mentor__portrait,
+.application.swse-shell-responsive.is-shell-tiny:has(.swse-customization-bay) .bay-mentor__portrait {
+  font-size: 16px !important;
+}
+
+.application.swse-shell-responsive.is-shell-short:has(.swse-customization-bay) .bay-mentor__meta,
+.application.swse-shell-responsive.is-shell-tier-micro:has(.swse-customization-bay) .bay-mentor__meta,
+.application.swse-shell-responsive.is-shell-tiny:has(.swse-customization-bay) .bay-mentor__meta {
+  font-size: 8px !important;
+}
+
+.application.swse-shell-responsive.is-shell-short:has(.swse-customization-bay) .bay-mentor__body p,
+.application.swse-shell-responsive.is-shell-tier-micro:has(.swse-customization-bay) .bay-mentor__body p,
+.application.swse-shell-responsive.is-shell-tiny:has(.swse-customization-bay) .bay-mentor__body p {
+  font-size: 10px !important;
+  line-height: 1.35 !important;
+}
+
+.application.swse-shell-responsive.is-shell-short:has(.swse-customization-bay) .bay-part-card {
+  min-height: 120px !important;
+}
+
+.application.swse-shell-responsive.is-shell-short:has(.swse-customization-bay) .bay-context-strip,
+.application.swse-shell-responsive.is-shell-tier-micro:has(.swse-customization-bay) .bay-context-strip {
+  padding-bottom: 0 !important;
+}

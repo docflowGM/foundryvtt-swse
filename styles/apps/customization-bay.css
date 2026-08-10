@@ -825,40 +825,19 @@
   color: var(--bay-accent);
 }
 
-@media (max-width: 1100px) {
-  .bay-workgrid {
-    grid-template-columns: 1fr;
-  }
-
-  .bay-summary {
-    position: static;
-  }
-
-  .bay-card-grid,
-  .bay-stat-grid,
-  .bay-readiness-grid,
-  .bay-compliance-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-
-@media (max-width: 760px) {
-  .bay-header {
-    flex-direction: column;
-  }
-
-  .bay-card-grid,
-  .bay-stat-grid,
-  .bay-readiness-grid,
-  .bay-compliance-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .bay-mentor {
-    grid-template-columns: 1fr;
-  }
-}
-
+/* PR #947 Phase 3 — these browser-viewport media queries (formerly
+   @media (max-width: 1100px)/(max-width: 760px)) were retired as Bay's
+   layout-topology authority. Browser viewport width is not reliable: the
+   Bay may occupy only part of a wider Foundry window (character sheet +
+   sidebar chrome), so a viewport query can see plenty of width while the
+   Bay itself has much less. The equivalent (and, for the workgrid/summary/
+   header rules, more correct — width-driven, not a combined width+height
+   soup) behavior now lives in styles/system/app-responsive-customization-
+   bay.css, keyed off the shared shell-size observer's .is-shell-compact
+   (density: card-grid 2-up) and .is-shell-narrow (topology: workgrid
+   stacks to one column, .bay-summary loses sticky positioning, .bay-header
+   stacks, .bay-mentor becomes single-column) classes — see
+   scripts/ui/shell/shell-responsive-observer.js. */
 
 /* Scroll safety: Garage/Shipyard surfaces must never clip long system lists.
    min-height: 0 is needed by both hosts so the flex children below can
