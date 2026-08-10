@@ -526,6 +526,25 @@ async function _openPackFromEvent(event, source = 'document') {
       locked: pack.locked
     });
 
+    // ------------------------------------------------------------------
+    // Diagnostic-only "observe native" mode (Phase 9 of the compendium
+    // interaction forensics audit, docs/audits/compendium-interaction-
+    // forensics-2026-08.md). Opt-in, one-shot, off by default.
+    //
+    // When armed, this fallback resolves the click exactly as it normally
+    // would, but instead of consuming the event it logs what it WOULD have
+    // done and lets the event continue untouched — so the native Foundry
+    // CompendiumDirectory delegated handler gets an uncontested chance to
+    // run. The flag disarms itself after this one click so normal fallback
+    // behavior resumes automatically.
+    // ------------------------------------------------------------------
+    if (globalThis.SWSE_DEBUG_COMPENDIUM_NATIVE_ONLY === true) {
+      globalThis.SWSE_DEBUG_COMPENDIUM_NATIVE_ONLY = false;
+      SWSELogger.log(`[CompendiumDirectoryClickRepair] NATIVE-ONLY diagnostic: would have opened "${resolved.packId}" from ${source} fallback, but leaving the event untouched so the native handler can run.`);
+      _dlog(`  → NATIVE-ONLY mode consumed for this click; not calling preventDefault/pack.render(true); event continues.`);
+      return false;
+    }
+
     event.preventDefault();
     event.stopPropagation();
     event.stopImmediatePropagation?.();
