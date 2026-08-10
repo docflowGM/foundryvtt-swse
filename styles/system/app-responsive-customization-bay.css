@@ -134,6 +134,14 @@
   padding: 8px !important;
 }
 
+/* Density-only truncation tightening (Phase 5) — the base 3-line clamp
+   (customization-bay.css) is generous for the wide tier's taller cards;
+   compact's shorter cards need a tighter clamp to avoid uneven card
+   heights. This changes how much text shows, not the card grid topology. */
+.application.swse-shell-responsive.is-shell-compact:has(.swse-customization-bay) .bay-part-card p {
+  -webkit-line-clamp: 2 !important;
+}
+
 .application.swse-shell-responsive.is-shell-compact:has(.swse-customization-bay) .bay-footer {
   padding-top: 8px !important;
 }
