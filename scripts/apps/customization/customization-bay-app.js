@@ -20,6 +20,7 @@ import { getActorSheetTheme, buildActorSheetThemeStyle } from "/systems/foundryv
 import { getActorSheetMotionStyle, buildActorSheetMotionStyle } from "/systems/foundryvtt-swse/scripts/theme/actor-sheet-motion-registry.js";
 import { ShellRouter } from "/systems/foundryvtt-swse/scripts/ui/shell/ShellRouter.js";
 import { TechSpecialistModificationService } from "/systems/foundryvtt-swse/scripts/engine/customization/tech-specialist-modification-service.js";
+import { getMentorPortraitPath } from "/systems/foundryvtt-swse/scripts/mentor/mentor-portrait-registry.js";
 
 const SYSTEM_ID = "foundryvtt-swse";
 
@@ -47,6 +48,17 @@ const MODE_CONFIG = Object.freeze({
     mentorRole: "Droid Garage Mentor",
     mentorClass: "seraphim",
     mentorChannel: "DIAG-INT",
+    // Mentor identity contract (Phase 1 — Garage/Shipyard Foundation):
+    // mentorDialogueKey resolves data/dialogue/mentors/**/*.json via
+    // scripts/engine/mentor/mentor-json-loader.js#getMentor(); mentorPortraitKey
+    // resolves the canonical WebP via mentor-portrait-registry.js; mentorTopic
+    // scopes the dialogue JSON's contextual key set (dialogues.garage.*);
+    // mentorTranslationKey is what MentorTranslationIntegration expects (must
+    // match a key/substring in scripts/ui/dialogue/translation-presets.js).
+    mentorDialogueKey: "seraphim",
+    mentorPortraitKey: "seraphim",
+    mentorTopic: "garage",
+    mentorTranslationKey: "Seraphim",
     mentorFallback:
       "Chassis integrity is stable. Select systems, validate cost and legality, then let the engine apply the mutation.",
     stageLabels: ["Chassis", "Role", "Locomotion", "Appendages", "Systems", "Compliance", "Chargen Lock"],
@@ -64,6 +76,10 @@ const MODE_CONFIG = Object.freeze({
     mentorRole: "Shipyard Mentor",
     mentorClass: "marl-skindar",
     mentorChannel: "SHIPWRIGHT-7",
+    mentorDialogueKey: "skindar",
+    mentorPortraitKey: "marl-skindar",
+    mentorTopic: "shipyard",
+    mentorTranslationKey: "Marl Skindar",
     mentorFallback:
       "Slots, legality, and cost are the whole game. Keep the frame street-legal unless you want GM review stamped on the work order.",
     stageLabels: ["Hull Frame", "Role", "Engines", "Hyperdrive", "Hardpoints", "Compliance", "Registry"],
@@ -245,6 +261,26 @@ export class CustomizationBayApp extends BaseSWSEAppV2 {
     this.focusSlot = options.focusSlot ?? options.slot ?? null;
     this.focusMode = options.focusMode ?? null;
     this.inlineShell = Boolean(options.inlineShell);
+    // PART 1/2 — Owner/wallet authority (Phase 1). ownerActorId is threaded
+    // through the live route (ShellHost -> ShellSurfaceRegistry ->
+    // CustomizationSurfaceAdapter -> here) when this bay was opened from an
+    // owner's Asset Bay. It is resolved into an actual wallet actor lazily by
+    // #getWalletActor(), never assumed to equal the target asset actor.
+    this.ownerActorId = options.ownerActorId || null;
+    // Per-instance cache for contextual mentor dialogue lines, mirroring
+    // ItemCustomizationWorkbench's own _workbenchDialogueCache pattern —
+    // reused, not reinvented.
+    this._mentorDialogueCache = new Map();
+  }
+
+  /**
+   * The droid/vehicle actually being modified. Kept as an alias of `this.actor`
+   * (unchanged for compatibility) so callers/tests can be explicit about which
+   * of the two authorities (asset vs. wallet) they mean.
+   * @returns {Actor|null}
+   */
+  get assetActor() {
+    return this.actor;
   }
 
   static DEFAULT_OPTIONS = foundry.utils.mergeObject(
@@ -281,8 +317,8 @@ export class CustomizationBayApp extends BaseSWSEAppV2 {
     const motionStyleInline = buildActorSheetMotionStyle(motionStyle);
 
     const runtime = actorMatchesMode
-      ? this.#buildRuntimeContext(config)
-      : this.#buildPlaceholderContext(config, `No ${config.actorType} actor is bound to this bay lane.`);
+      ? await this.#buildRuntimeContext(config)
+      : await this.#buildPlaceholderContext(config, `No ${config.actorType} actor is bound to this bay lane.`);
 
     const contextOptions = CONTEXT_OPTIONS.map((option) => ({
       ...option,
@@ -389,12 +425,12 @@ export class CustomizationBayApp extends BaseSWSEAppV2 {
     }
   }
 
-  #buildRuntimeContext(config) {
+  async #buildRuntimeContext(config) {
     if (this.mode === MODE.SHIPYARD) return this.#buildVehicleContext(config);
     return this.#buildDroidContext(config);
   }
 
-  #buildDroidContext(config) {
+  async #buildDroidContext(config) {
     if (!this.actor) return this.#buildPlaceholderContext(config, "No droid actor selected.");
 
     const profileResult = DroidCustomizationEngine.getNormalizedDroidProfile(this.actor);
@@ -415,16 +451,22 @@ export class CustomizationBayApp extends BaseSWSEAppV2 {
       groups[system.category].push(system);
     }
 
-    const previewResult = DroidCustomizationEngine.previewDroidCustomization(this.actor, this.#changeSet());
-    const currentCredits = this.actor.system?.credits ?? 0;
+    // PART 3/4 — assetActor is the droid (systems/eligibility); walletActor is
+    // resolved separately and is who pays/receives credits.
+    const wallet = this.#getWalletActor();
+    const previewResult = DroidCustomizationEngine.previewDroidCustomization(this.actor, this.#changeSet(), { walletActor: wallet });
+    const currentCredits = Number(wallet?.system?.credits ?? this.actor.system?.credits ?? 0) || 0;
     const previewSummary = summarizePreview(previewResult, currentCredits);
     const legality = legalityFromPreview(previewResult);
     const profile = profileResult.profile;
+    const mentor = await this.#buildMentorPresence(config, previewResult, legality);
 
     return {
       profile,
       error: null,
-      mentorText: this.#buildMentorText(config, legality, previewResult),
+      mentor,
+      mentorText: mentor.mentorText,
+      wallet: this.#buildWalletContext(wallet),
       stageItems: this.#buildStages(config, 4, legality.tone),
       profileStats: [
         { label: "Degree", value: humanize(profile.degree) },
@@ -474,7 +516,7 @@ export class CustomizationBayApp extends BaseSWSEAppV2 {
     return aHit ? -1 : 1;
   }
 
-  #buildVehicleContext(config) {
+  async #buildVehicleContext(config) {
     if (!this.actor) return this.#buildPlaceholderContext(config, "No vehicle actor selected.");
 
     const profileResult = VehicleCustomizationEngine.getNormalizedVehicleProfile(this.actor);
@@ -494,18 +536,24 @@ export class CustomizationBayApp extends BaseSWSEAppV2 {
       groups[system.category].push(system);
     }
 
-    const previewResult = VehicleCustomizationEngine.previewVehicleCustomization(this.actor, this.#changeSet());
+    // PART 3/4 — assetActor is the vehicle (systems/slots); walletActor is
+    // resolved separately and is who pays/receives credits.
+    const wallet = this.#getWalletActor();
+    const previewResult = VehicleCustomizationEngine.previewVehicleCustomization(this.actor, this.#changeSet(), { walletActor: wallet });
     const profile = profileResult.profile;
-    const currentCredits = profile.credits ?? this.actor.system?.credits ?? 0;
+    const currentCredits = Number(wallet?.system?.credits ?? profile.credits ?? this.actor.system?.credits ?? 0) || 0;
     const previewSummary = summarizePreview(previewResult, currentCredits);
     const legality = legalityFromPreview(previewResult);
     const installedCount = profile.installedSystems?.length ?? 0;
     const totalSlots = Math.max(9, installedCount + 3);
+    const mentor = await this.#buildMentorPresence(config, previewResult, legality);
 
     return {
       profile,
       error: null,
-      mentorText: this.#buildMentorText(config, legality, previewResult),
+      mentor,
+      mentorText: mentor.mentorText,
+      wallet: this.#buildWalletContext(wallet),
       stageItems: this.#buildStages(config, 5, legality.tone),
       profileStats: [
         { label: "Vehicle Type", value: humanize(profile.vehicleType) },
@@ -536,7 +584,7 @@ export class CustomizationBayApp extends BaseSWSEAppV2 {
     };
   }
 
-  #buildPlaceholderContext(config, message) {
+  async #buildPlaceholderContext(config, message) {
     const legality = {
       key: "review",
       label: "CONCEPT ONLY",
@@ -552,10 +600,14 @@ export class CustomizationBayApp extends BaseSWSEAppV2 {
       groups[system.category].push(system);
     }
 
+    const mentor = await this.#buildMentorPresence(config, null, legality);
+
     return {
       profile: null,
       error: message,
-      mentorText: config.mentorFallback,
+      mentor,
+      mentorText: mentor.mentorText,
+      wallet: null,
       stageItems: this.#buildStages(config, 1, "neutral"),
       profileStats: this.#placeholderStats(config.mode),
       systemGroups: buildRowsFromGroups(groups),
@@ -701,6 +753,102 @@ export class CustomizationBayApp extends BaseSWSEAppV2 {
     return config.mentorFallback;
   }
 
+  /**
+   * PART 19/21 — Garage/Shipyard mentor presence. Mentor code is advisory/
+   * read-only (PART 23): it only reads already-computed engine output
+   * (previewResult/legality/current selection sizes) to pick which
+   * contextual dialogue bucket to show — it never determines compatibility,
+   * legality, cost, or transaction outcome.
+   *
+   * @param {object} config - MODE_CONFIG entry for the active mode
+   * @param {object|null} previewResult - Result of the engine's preview call
+   * @param {object} legality - legalityFromPreview() output
+   * @returns {Promise<{mentorKey:string, mentorName:string, mentorTitle:string, mentorPortrait:string, mentorText:string}>}
+   */
+  async #buildMentorPresence(config, previewResult, legality) {
+    const topic = config.mentorTopic;
+    const contextKey = this.#pickMentorContext(previewResult, legality);
+    const fallback = this.#buildMentorText(config, legality, previewResult);
+    const mentorText = await this.#getMentorDialogueLine(config.mentorDialogueKey, [topic, contextKey], fallback)
+      || await this.#getMentorDialogueLine(config.mentorDialogueKey, [topic, 'default'], fallback)
+      || fallback;
+    const portrait = getMentorPortraitPath(config.mentorPortraitKey, '');
+
+    return {
+      mentorKey: config.mentorTranslationKey,
+      mentorName: config.mentorName,
+      mentorTitle: config.mentorRole,
+      mentorPortrait: portrait,
+      mentorText
+    };
+  }
+
+  /**
+   * Choose which contextual dialogue bucket applies, purely from already-
+   * computed engine output — never rules authority itself (PART 23).
+   * @returns {'blocked'|'lowFunds'|'noChanges'|'ready'|'stagedInstall'|'stagedRemoval'}
+   */
+  #pickMentorContext(previewResult, legality) {
+    if (previewResult?.success === false) {
+      return previewResult.blockingReason === 'Insufficient funds' ? 'lowFunds' : 'blocked';
+    }
+    if (legality?.tone === 'negative') return 'blocked';
+    const adds = this.selectedAdditions.size;
+    const removes = this.selectedRemovals.size;
+    if (!adds && !removes) return 'noChanges';
+    if (removes && !adds) return 'stagedRemoval';
+    const clean = legality?.tone === 'positive' && !(legality?.notes?.length);
+    return clean ? 'ready' : 'stagedInstall';
+  }
+
+  /**
+   * Read a random contextual line from the mentor's structured dialogue JSON
+   * (data/dialogue/mentors/**), mirroring ItemCustomizationWorkbench's
+   * proven _getWorkbenchDialogue() pattern — same authority
+   * (scripts/engine/mentor/mentor-json-loader.js#getMentor), not a new
+   * mentor dialogue source. Cached per-instance so a given context keeps a
+   * stable line across renders until the context itself changes.
+   *
+   * @param {string} mentorKey - Registry key, e.g. 'seraphim' / 'skindar'
+   * @param {string[]} path - Path into mentor.dialogues, e.g. ['garage', 'stagedInstall']
+   * @param {string} fallback
+   * @returns {Promise<string>}
+   */
+  async #getMentorDialogueLine(mentorKey, path, fallback = '') {
+    const cacheKey = `${mentorKey}:${path.join('.')}`;
+    if (this._mentorDialogueCache.has(cacheKey)) return this._mentorDialogueCache.get(cacheKey);
+    let value = fallback;
+    try {
+      const { getMentor } = await import('/systems/foundryvtt-swse/scripts/engine/mentor/mentor-json-loader.js');
+      const mentor = await getMentor(mentorKey);
+      value = path.reduce((node, key) => node?.[key], mentor?.dialogues) ?? fallback;
+      if (Array.isArray(value)) value = value[Math.floor(Math.random() * value.length)] || fallback;
+      if (value && typeof value === 'object') {
+        const defaultValue = value.default;
+        value = Array.isArray(defaultValue) ? defaultValue[Math.floor(Math.random() * defaultValue.length)] : (defaultValue || fallback);
+      }
+    } catch (err) {
+      SWSELogger.error('[CustomizationBayApp] Failed to load mentor dialogue', { mentorKey, path, error: err });
+    }
+    this._mentorDialogueCache.set(cacheKey, value || fallback);
+    return value || fallback;
+  }
+
+  /**
+   * Display-only summary of the resolved wallet actor, for template use
+   * (e.g. distinguishing an owner-funded build from a self-funded one).
+   * Never used to determine affordability itself — that stays in the
+   * engines/TransactionEngine.
+   */
+  #buildWalletContext(wallet) {
+    if (!wallet) return null;
+    return {
+      id: wallet.id,
+      name: wallet.name,
+      isOwnerFunded: Boolean(this.actor && wallet.id !== this.actor.id)
+    };
+  }
+
   #changeSet() {
     return {
       add: Array.from(this.selectedAdditions),
@@ -776,8 +924,26 @@ export class CustomizationBayApp extends BaseSWSEAppV2 {
     ui.notifications.info("Draft save is a future persistence hook. No actor data was changed.");
   }
 
+  /**
+   * PART 1/2 — Resolve the wallet actor for this bay's customization.
+   *
+   * Priority:
+   *   1. An explicit owner supplied by the live route (ownerActorId, threaded
+   *      through ShellHost -> ShellSurfaceRegistry -> CustomizationSurfaceAdapter
+   *      -> here when opened from an owner's Asset Bay).
+   *   2. TechSpecialistModificationService.resolveWalletActor() — the
+   *      already-existing, already-proven ownership resolver (checks the
+   *      asset's own ownedByActorId flags, then game.user.character), reused
+   *      rather than duplicated so a direct droid/vehicle-sheet entry with no
+   *      explicit owner still resolves a usable wallet (PART 1's "Direct
+   *      asset-sheet fallback" contract).
+   *
+   * @returns {Actor} Never null while this.actor is set — falls back to the
+   *   asset actor itself if no owner can be resolved.
+   */
   #getWalletActor() {
-    return TechSpecialistModificationService.resolveWalletActor(this.actor);
+    const explicit = this.ownerActorId ? game.actors?.get?.(this.ownerActorId) : null;
+    return TechSpecialistModificationService.resolveWalletActor(this.actor, explicit || undefined);
   }
 
   #buildTechSpecialistContext(mode = this.mode) {
@@ -820,9 +986,13 @@ export class CustomizationBayApp extends BaseSWSEAppV2 {
 
     try {
       const changeSet = this.#changeSet();
+      // PART 5 — Apply must use TransactionEngine with two actors: the
+      // resolved wallet actor pays/receives credits, the droid/vehicle
+      // (this.actor / assetActor) receives the system mutation.
+      const wallet = this.#getWalletActor();
       const result = this.mode === MODE.SHIPYARD
-        ? await VehicleCustomizationEngine.applyVehicleCustomization(this.actor, changeSet)
-        : await DroidCustomizationEngine.applyDroidCustomization(this.actor, changeSet);
+        ? await VehicleCustomizationEngine.applyVehicleCustomization(this.actor, changeSet, { walletActor: wallet })
+        : await DroidCustomizationEngine.applyDroidCustomization(this.actor, changeSet, { walletActor: wallet });
 
       if (!result.success) {
         ui.notifications.error(`Failed to apply customization: ${result.error}`);

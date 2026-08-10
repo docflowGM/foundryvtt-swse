@@ -102,9 +102,16 @@ export class VehicleCustomizationEngine {
    * Preview proposed vehicle customization changes
    * Shows what would happen if user adds/removes systems
    * REUSE: Uses canonical VEHICLE_SYSTEM_DEFINITIONS for costs and validation
+   *
+   * @param {Actor} actor - The vehicle whose systems are being previewed (asset actor)
+   * @param {{add?: string[], remove?: string[]}} changeSet
+   * @param {{walletActor?: Actor}} [options] - walletActor defaults to `actor` for
+   *   backward compatibility (self-funded vehicle). Pass the owner's actor to
+   *   preview affordability against the owner's credits instead of the vehicle's own.
    */
-  static previewVehicleCustomization(actor, changeSet = {}) {
+  static previewVehicleCustomization(actor, changeSet = {}, options = {}) {
     const warnings = [];
+    const walletActor = options.walletActor || actor;
 
     if (!actor || actor.type !== 'vehicle') {
       return { success: false, error: 'Not a vehicle actor', blockingReason: 'Invalid actor type' };
@@ -117,7 +124,10 @@ export class VehicleCustomizationEngine {
 
     const { add: systemsToAdd = [], remove: systemsToRemove = [] } = changeSet;
     const vehicleType = profile.profile.vehicleType;
-    const currentCredits = profile.profile.credits;
+    // Systems/eligibility are evaluated against the vehicle (`actor`); affordability
+    // is evaluated against whoever is paying (`walletActor`) — see Phase 1 audit,
+    // "Where are the systems? from Where are the credits?"
+    const currentCredits = Number(walletActor?.system?.credits ?? 0) || 0;
     const currentSystems = profile.profile.installedSystems;
 
     let totalAddCost = 0;
@@ -192,7 +202,8 @@ export class VehicleCustomizationEngine {
         preview: {
           currentCredits,
           netCost,
-          newCredits
+          newCredits,
+          walletActorId: walletActor.id
         }
       };
     }
@@ -201,6 +212,7 @@ export class VehicleCustomizationEngine {
       success: true,
       preview: {
         actorId: actor.id,
+        walletActorId: walletActor.id,
         currentCredits,
         systemsAdded: addedSystems,
         systemsRemoved: removedSystems,
@@ -215,13 +227,20 @@ export class VehicleCustomizationEngine {
   /**
    * Apply vehicle customization changes through ActorEngine
    * MUTATION AUTHORITY: ActorEngine is the sole mutation authority
+   *
+   * @param {Actor} actor - The vehicle being modified (asset actor)
+   * @param {{add?: string[], remove?: string[]}} changeSet
+   * @param {{walletActor?: Actor}} [options] - walletActor defaults to `actor`
+   *   (self-funded vehicle) for backward compatibility. Pass the owner's actor to
+   *   debit/credit the owner instead of the vehicle.
    */
-  static async applyVehicleCustomization(actor, changeSet = {}) {
+  static async applyVehicleCustomization(actor, changeSet = {}, options = {}) {
     if (!actor || actor.type !== 'vehicle') {
       return { success: false, error: 'Not a vehicle actor' };
     }
+    const walletActor = options.walletActor || actor;
 
-    const preview = this.previewVehicleCustomization(actor, changeSet);
+    const preview = this.previewVehicleCustomization(actor, changeSet, { walletActor });
     if (!preview.success) {
       return preview;
     }
@@ -246,12 +265,13 @@ export class VehicleCustomizationEngine {
       }
 
       // Route credit movement + asset mutation through TransactionEngine so the
-      // customization is atomic AND recorded in the credit audit trail. Wallet and
-      // asset are the same vehicle actor; the transaction merges both legs into one
-      // snapshotted mutation and rolls back on failure.
+      // customization is atomic AND recorded in the credit audit trail.
+      // walletActor (defaults to the vehicle itself for backward compatibility)
+      // pays/receives credits; assetActor (always the vehicle) receives the
+      // system mutation — TransactionEngine already supports wallet !== asset.
       const netCost = Number(preview.preview.netCost) || 0;
       const txn = await TransactionEngine.executeAssetCustomizationTransaction({
-        actor,
+        actor: walletActor,
         assetActor: actor,
         assetMutationPlan: {
           set: {

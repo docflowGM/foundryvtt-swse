@@ -14,9 +14,15 @@
   ============================================================ --}}
   <div class="prog-summary__identity">
 
-    <div class="prog-summary__portrait prog-holo-media prog-holo-media--avatar">
+    <div class="prog-summary__portrait">
       {{#if actor.img}}
-        <img class="prog-summary__portrait-img prog-holo-media__image" src="{{actor.img}}" alt="{{actor.name}}">
+        {{! Phase 1 — Garage/Shipyard Foundation: player-character portraits must
+          never receive the mentor/NPC hologram treatment (prog-holo-media /
+          prog-holo-media__image), whether from the image itself or an
+          ancestor container's tint/scanline pseudo-elements. This is the
+          actor's own portrait, not a mentor guidance image, so the wrapper
+          intentionally does NOT opt into the shared prog-holo-media primitive. }}
+      <img class="prog-summary__portrait-img" src="{{actor.img}}" alt="{{actor.name}}">
       {{else}}
         <div class="prog-summary__portrait-placeholder">
           <i class="fas fa-user-astronaut"></i>

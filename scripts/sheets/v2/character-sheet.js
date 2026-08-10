@@ -2209,6 +2209,8 @@ export class SWSEV2CharacterSheet extends
     const surfaceRoot = root.querySelector('[data-shell-region="surface-customization"]');
     if (!surfaceRoot) return;
 
+    void this._hydrateInlineCustomizationSurface(surfaceRoot);
+
     surfaceRoot.addEventListener('click', async (ev) => {
       const target = ev.target.closest('[data-action]');
       if (!target) return;
@@ -2228,8 +2230,8 @@ export class SWSEV2CharacterSheet extends
         const targetActorId = surfaceRoot.dataset.actorId
           || this._shellSurfaceOptions?.targetActorId
           || this.actor?.id;
-        const adapter = CustomizationSurfaceAdapter.getForActor?.(targetActorId, mode)
-          || CustomizationSurfaceAdapter.get?.(targetActorId, mode);
+        const adapter = CustomizationSurfaceAdapter.getForActor?.(this, targetActorId, mode)
+          || CustomizationSurfaceAdapter.get?.(this, targetActorId, mode);
         if (!adapter) {
           swseLogger.warn(`[CharacterSheet] No customization adapter found for ${targetActorId}/${mode}`);
           return;
@@ -2239,6 +2241,34 @@ export class SWSEV2CharacterSheet extends
         swseLogger.error(`[CharacterSheet] Customization surface action "${action}" failed:`, err);
       }
     }, { signal });
+  }
+
+  /**
+   * PART 25 — invoke CustomizationSurfaceAdapter.afterInlineRender() the same
+   * way _hydrateInlineWorkbenchSurface()/_hydrateInlineProgressionSurface()
+   * already invoke their adapters' hydration seam (this is the method that
+   * actually runs for Garage/Shipyard's shell surface — ShellHostMixin's own
+   * _wireCustomizationSurfaceEvents is shadowed by this class's override of
+   * the same name and never executes for SWSEV2CharacterSheet instances).
+   */
+  async _hydrateInlineCustomizationSurface(surfaceRoot) {
+    try {
+      const { CustomizationSurfaceAdapter } = await import(
+        '/systems/foundryvtt-swse/scripts/ui/shell/CustomizationSurfaceAdapter.js'
+      );
+      const mode = surfaceRoot.dataset.bayMode
+        || this._shellSurfaceOptions?.bayMode
+        || this._shellSurfaceOptions?.mode
+        || (this.actor?.type === 'vehicle' ? 'shipyard' : 'garage');
+      const targetActorId = surfaceRoot.dataset.actorId
+        || this._shellSurfaceOptions?.targetActorId
+        || this.actor?.id;
+      const adapter = CustomizationSurfaceAdapter.getForActor?.(this, targetActorId, mode)
+        || CustomizationSurfaceAdapter.get?.(this, targetActorId, mode);
+      await adapter?.afterInlineRender?.(surfaceRoot);
+    } catch (err) {
+      swseLogger.error('[CharacterSheet] Inline customization hydration failed:', err);
+    }
   }
 
   setPosition(options = {}) {
@@ -2737,8 +2767,13 @@ export class SWSEV2CharacterSheet extends
       import('/systems/foundryvtt-swse/scripts/ui/shell/WorkbenchSurfaceAdapter.js')
         .then(({ WorkbenchSurfaceAdapter }) => WorkbenchSurfaceAdapter.destroy(this.actor.id))
         .catch(() => {});
+      // Host-scoped cleanup (PR #946 correction): destroyForHost only tears
+      // down adapters registered under THIS closing shell, regardless of
+      // which target actor they're keyed by (an owner's Holopad can host an
+      // adapter keyed to a droid/vehicle's id via Asset Bay) — it must never
+      // reach into another still-open shell's adapters for the same actor.
       import('/systems/foundryvtt-swse/scripts/ui/shell/CustomizationSurfaceAdapter.js')
-        .then(({ CustomizationSurfaceAdapter }) => CustomizationSurfaceAdapter.destroy(this.actor.id))
+        .then(({ CustomizationSurfaceAdapter }) => CustomizationSurfaceAdapter.destroyForHost(this))
         .catch(() => {});
     }
 

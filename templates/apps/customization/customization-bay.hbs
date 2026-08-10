@@ -44,16 +44,25 @@
   </section>
 
   <section class="bay-mentor bay-mentor--{{config.mentorClass}}">
-    <div class="bay-mentor__portrait" aria-hidden="true">
-      <span>{{config.glyph}}</span>
+    <div class="bay-mentor__portrait swse-mentor-hologram" aria-hidden="true">
+      {{#if mentor.mentorPortrait}}
+        <img class="swse-mentor-hologram__image" src="{{mentor.mentorPortrait}}" alt="">
+      {{else}}
+        <span>{{config.glyph}}</span>
+      {{/if}}
+      <span class="swse-mentor-hologram__tint"></span>
+      <span class="swse-mentor-hologram__scan"></span>
     </div>
     <div class="bay-mentor__body">
       <div class="bay-mentor__meta">
-        <strong>{{config.mentorName}}</strong>
-        <span>{{config.mentorRole}}</span>
+        <strong>{{mentor.mentorName}}</strong>
+        <span>{{mentor.mentorTitle}}</span>
         <span>Channel · {{config.mentorChannel}}</span>
+        {{#if wallet.isOwnerFunded}}<span>Wallet · {{wallet.name}}</span>{{/if}}
       </div>
-      <p>{{mentorText}}</p>
+      <p data-customization-mentor-text
+         data-mentor="{{mentor.mentorKey}}"
+         data-raw-text="{{mentor.mentorText}}">{{mentor.mentorText}}</p>
     </div>
   </section>
 

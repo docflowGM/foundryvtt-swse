@@ -40,6 +40,7 @@
     "styles/sheets/v2-alive-systems.css",
     "styles/sheets/v2-motion-picker.css",
     "styles/system/tokens.css",
+    "styles/system/mentor-hologram.css",
     "styles/system/datapad-shell.css",
     "styles/system/components/hud.css",
     "styles/system/components/panels.css",
