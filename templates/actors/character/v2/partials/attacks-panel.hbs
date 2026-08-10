@@ -29,12 +29,12 @@
           </div>
         </div>
 
-        <div class="swse-attack-stat attack-bonus" data-weapon-id="{{attack.weaponId}}" data-attack-breakdown title="Click for breakdown">
-          <strong>{{attack.attackTotal}}</strong>
+        <div class="swse-attack-stat attack-bonus{{#if attack.attackUnavailable}} is-unavailable{{/if}}" data-weapon-id="{{attack.weaponId}}" data-attack-breakdown title="{{#if attack.attackUnavailable}}Attack resolution failed — see console{{else}}Click for breakdown{{/if}}">
+          <strong>{{#if attack.attackUnavailable}}—{{else}}{{attack.attackTotal}}{{/if}}</strong>
           <span>To Hit</span>
         </div>
 
-        <div class="swse-attack-stat attack-damage" data-weapon-id="{{attack.weaponId}}" data-damage-breakdown title="Click for breakdown">
+        <div class="swse-attack-stat attack-damage{{#if attack.damageUnavailable}} is-unavailable{{/if}}" data-weapon-id="{{attack.weaponId}}" data-damage-breakdown title="{{#if attack.damageUnavailable}}Damage resolution failed — see console{{else}}Click for breakdown{{/if}}">
           <strong>{{attack.damageFormula}}</strong>
           <span>Damage</span>
         </div>
