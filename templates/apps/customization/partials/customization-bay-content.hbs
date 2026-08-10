@@ -79,7 +79,7 @@
      style="{{{themeStyleInline}}}; {{{motionStyleInline}}};">
   <header class="bay-header">
     <div class="bay-header__identity">
-      <span class="bay-header__glyph">{{config.glyph}}</span>
+      <span class="bay-header__glyph" aria-hidden="true">{{config.glyph}}</span>
       <div>
         <p class="bay-kicker">SWSE Customization Bay</p>
         <h1>{{modeLabel}}</h1>
@@ -94,7 +94,7 @@
                 data-action="set-mode"
                 data-mode="{{key}}"
                 aria-pressed="{{#if active}}true{{else}}false{{/if}}">
-          <span class="bay-mode-tab__glyph">{{glyph}}</span>
+          <span class="bay-mode-tab__glyph" aria-hidden="true">{{glyph}}</span>
           <span>{{label}}</span>
         </button>
       {{/each}}
@@ -107,7 +107,8 @@
               class="bay-context-pill {{#if active}}active{{/if}}"
               data-action="set-context"
               data-context="{{key}}"
-              data-swse-tooltip-key="{{tooltipKey}}">
+              data-swse-tooltip-key="{{tooltipKey}}"
+              aria-pressed="{{#if active}}true{{else}}false{{/if}}">
         {{label}}
       </button>
     {{/each}}
@@ -137,7 +138,7 @@
   </section>
 
   {{#if error}}
-    <aside class="bay-runtime-note" data-tone="neutral">
+    <aside class="bay-runtime-note" data-tone="negative" role="alert">
       <strong>Unable to load this customization target:</strong> {{error}}
     </aside>
   {{/if}}
@@ -160,7 +161,7 @@
       <section class="bay-panel bay-panel--credit">
         <header class="bay-panel__head">
           <span>Credits</span>
-          <strong>{{budget.newCreditsLabel}}</strong>
+          <strong class="bay-value--{{budget.tone}}">{{budget.newCreditsLabel}}</strong>
         </header>
         <div class="bay-budget-bar">
           <span style="width: {{budget.usedPct}}"></span>
@@ -168,7 +169,7 @@
         <div class="bay-budget-meta">
           <span>Wallet {{budget.currentCreditsLabel}}</span>
           <span>Cost {{budget.netCostLabel}}</span>
-          <span>After {{budget.newCreditsLabel}}</span>
+          <span class="bay-value--{{budget.tone}}">After {{budget.newCreditsLabel}}</span>
         </div>
       </section>
       {{/unless}}
@@ -254,18 +255,18 @@
         {{else}}
           <div class="bay-browser-toolbar">
             <div class="bay-browser-search">
-              <input type="text" name="systemSearch" class="bay-browser-search__input" placeholder="Search systems" value="{{browser.search}}">
+              <input type="text" name="systemSearch" class="bay-browser-search__input" placeholder="Search systems" aria-label="Search systems" value="{{browser.search}}">
               <button type="button" class="bay-browser-search__submit" data-action="apply-system-search">Search</button>
               {{#if browser.hasActiveFilters}}<button type="button" class="bay-browser-search__reset" data-action="reset-system-filters">Reset</button>{{/if}}
             </div>
             <div class="bay-browser-filters" role="group" aria-label="Filter by category">
               {{#each browser.categoryFilters}}
-                <button type="button" class="bay-filter-pill {{#if active}}active{{/if}}" data-action="set-system-category-filter" data-value="{{key}}">{{label}}</button>
+                <button type="button" class="bay-filter-pill {{#if active}}active{{/if}}" data-action="set-system-category-filter" data-value="{{key}}" aria-pressed="{{#if active}}true{{else}}false{{/if}}">{{label}}</button>
               {{/each}}
             </div>
             <div class="bay-browser-filters" role="group" aria-label="Filter by status">
               {{#each browser.statusFilters}}
-                <button type="button" class="bay-filter-pill {{#if active}}active{{/if}}" data-action="set-system-status-filter" data-value="{{key}}">{{label}}</button>
+                <button type="button" class="bay-filter-pill {{#if active}}active{{/if}}" data-action="set-system-status-filter" data-value="{{key}}" aria-pressed="{{#if active}}true{{else}}false{{/if}}">{{label}}</button>
               {{/each}}
             </div>
           </div>
@@ -290,13 +291,22 @@
                           <span>{{costLabel}}</span>
                           {{#if slot}}<span>Slot: {{slot}}</span>{{/if}}
                         </div>
-                        <button type="button"
-                                class="bay-part-card__action"
-                                data-action="{{action}}"
-                                data-system-id="{{id}}"
-                                {{#if actionDisabled}}disabled{{/if}}>
-                          {{actionLabel}}
-                        </button>
+                        <div class="bay-part-card__actions">
+                          <button type="button"
+                                  class="bay-part-card__inspect"
+                                  data-action="inspect-system"
+                                  data-system-id="{{id}}"
+                                  aria-label="Inspect {{name}}">
+                            Inspect
+                          </button>
+                          <button type="button"
+                                  class="bay-part-card__action"
+                                  data-action="{{action}}"
+                                  data-system-id="{{id}}"
+                                  {{#if actionDisabled}}disabled{{/if}}>
+                            {{actionLabel}}
+                          </button>
+                        </div>
                       </article>
                     {{/each}}
                   </div>
@@ -350,7 +360,7 @@
           <div class="bay-installed-list">
             <h3>Installed</h3>
             {{#each installedRows}}
-              <button type="button" class="bay-installed bay-installed--{{category}}" data-action="inspect-system" data-system-id="{{id}}">
+              <button type="button" class="bay-installed bay-installed--{{category}} {{#if selected}}inspecting{{/if}}" data-action="inspect-system" data-system-id="{{id}}">
                 <span>{{name}}</span>
                 <strong>{{categoryLabel}}</strong>
               </button>

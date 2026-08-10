@@ -224,7 +224,17 @@ const MAIN_CLOSE_ANCHOR = '</main>';
   assert.ok(cardMatch, 'the browser system card must be an <article> carrying data-action="inspect-system" directly on itself');
   const cardBody = cardMatch[1];
   assert.match(cardBody, /<button[^>]*data-action="\{\{action\}\}"[^>]*>/, 'the card must contain a separate, explicit install/remove <button> with its own data-action, distinct from the card\'s own inspect-system action');
-  assert.doesNotMatch(cardBody, /<button[^>]*data-action="inspect-system"/, 'the card\'s inner action button must never itself be bound to inspect-system — that would collapse inspection and staging into the same control');
+  // Phase 5 accessibility correction (independent review of PR #950 at
+  // 80cfa41f) added a SECOND, dedicated native <button
+  // data-action="inspect-system"> (.bay-part-card__inspect) so keyboard
+  // users can inspect without going through the install/remove control —
+  // that is a distinct, intentional control, not a collapse of the two
+  // actions. The real invariant this contract protects is narrower: the
+  // install/remove button itself (.bay-part-card__action) must never be
+  // the one bound to inspect-system.
+  const installActionButtonMatch = cardBody.match(/<button[^>]*class="bay-part-card__action"[^>]*>/);
+  assert.ok(installActionButtonMatch, 'the card must contain the install/remove button (.bay-part-card__action)');
+  assert.doesNotMatch(installActionButtonMatch[0], /data-action="inspect-system"/, 'the install/remove button (.bay-part-card__action) must never itself be bound to inspect-system — that would collapse inspection and staging into the same control');
   assert.doesNotMatch(cardBody, /<button[^>]*data-action="apply-build"/, 'a browser card must never directly trigger the final apply-build commit action');
 }
 

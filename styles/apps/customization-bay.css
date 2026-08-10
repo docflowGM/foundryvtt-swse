@@ -43,6 +43,16 @@
   --bay-neutral: var(--swse-state-neutral, #ffc857);
   --bay-negative: var(--swse-state-negative, #ff6b6b);
 
+  /* Phase 5 correction — hover/focus interaction transitions added this
+     phase must respect the same motion authority the standalone frame's
+     scanline already uses: --motion-enabled (per-actor motion-style flag,
+     0 for "off") scales the duration to zero, and the OS-level
+     prefers-reduced-motion query below is a second, independent backstop
+     — mirroring styles/system/mentor-hologram.css's established
+     [data-motion-style="off"/"reduced"] + @media pair, not a new
+     framework. */
+  --bay-interaction-duration: calc(140ms * var(--motion-enabled, 1));
+
   --bay-cat-chassis: oklch(0.78 0.15 250);
   --bay-cat-locomotion: oklch(0.78 0.13 175);
   --bay-cat-appendage: oklch(0.80 0.13 110);
@@ -148,8 +158,60 @@
   opacity: 0.08;
 }
 
+/* --bay-interaction-duration already zeroes out with the per-actor
+   "off" motion style via --motion-enabled (inline-styled on this same
+   element — see customization-bay-content.hbs's motionStyleInline). The
+   OS-level prefers-reduced-motion signal is independent of that per-actor
+   flag, so it needs its own override, same two-layer shape as the
+   scanline rule above and styles/system/mentor-hologram.css's scanline
+   gating. */
+@media (prefers-reduced-motion: reduce) {
+  .swse-customization-bay,
+  .swse-customization-bay-standalone-frame {
+    --bay-interaction-duration: 0ms;
+  }
+}
+
 .swse-customization-bay button {
   font-family: var(--swse-font-mono, ui-monospace, monospace);
+}
+
+/* Phase 5 — shared Bay focus-visible treatment. A global *:focus-visible
+   rule already exists (styles/system/final-polish.css) and reaches every
+   Bay control at a base level, but one enumerated, Bay-themed rule (keyed
+   off var(--bay-accent), matching the search input's pre-existing
+   convention) gives every real Bay keyboard-interactive control a
+   consistent, clearly-visible treatment and doubles as the one place that
+   documents what those controls are, rather than relying only on the
+   low-specificity global default or scattering one-off rules. */
+.bay-mode-tab:focus-visible,
+.bay-context-pill:focus-visible,
+.bay-filter-pill:focus-visible,
+.bay-section-action:focus-visible,
+.bay-part-card__inspect:focus-visible,
+.bay-part-card__action:focus-visible,
+.bay-footer button:focus-visible,
+.bay-summary__actions button:focus-visible,
+.bay-secondary-actions__buttons button:focus-visible,
+.bay-secondary-actions summary:focus-visible,
+.bay-implementation-notes summary:focus-visible,
+.bay-installed:focus-visible,
+.bay-browser-search__input:focus-visible,
+.bay-browser-search__submit:focus-visible,
+.bay-browser-search__reset:focus-visible {
+  outline: 2px solid var(--bay-accent);
+  outline-offset: 2px;
+}
+
+/* The card body itself is still not an independent keyboard focus target
+   — Inspect and Install/Uninstall are (both real, native buttons).
+   :focus-within highlights the card's context whenever either inner
+   button has focus, so a keyboard user can see which card they are about
+   to act on; it is a supplement to those buttons' own :focus-visible
+   rings above, not a substitute for keyboard access to Inspect. */
+.bay-part-card:focus-within {
+  outline: 2px solid var(--bay-accent);
+  outline-offset: 2px;
 }
 
 .bay-header,
@@ -293,6 +355,10 @@
   flex-wrap: wrap;
 }
 
+.bay-section__actions span {
+  overflow-wrap: break-word;
+}
+
 .bay-section-action {
   padding: 6px 10px;
   color: var(--bay-accent);
@@ -341,6 +407,7 @@
   display: flex;
   gap: 8px;
   flex-wrap: wrap;
+  overflow-wrap: break-word;
   color: var(--bay-muted);
   font-family: var(--swse-font-mono, ui-monospace, monospace);
   font-size: 10px;
@@ -358,6 +425,7 @@
   line-height: 1.5;
   font-family: var(--swse-font-mono, ui-monospace, monospace);
   font-size: 12px;
+  overflow-wrap: break-word;
 }
 
 .bay-runtime-note {
@@ -365,6 +433,16 @@
   color: var(--bay-neutral);
   background: color-mix(in oklch, var(--bay-neutral) 10%, transparent);
   border: 1px solid color-mix(in oklch, var(--bay-neutral) 40%, transparent);
+}
+
+/* Actual failure note (Systems unavailable, BLOCKED build) — distinguished
+   from the neutral runtime note by more than hue: negative tone plus a
+   left accent bar so the banner remains legible in grayscale. */
+.bay-runtime-note[data-tone="negative"] {
+  color: var(--bay-negative);
+  background: color-mix(in oklch, var(--bay-negative) 10%, transparent);
+  border-color: color-mix(in oklch, var(--bay-negative) 45%, transparent);
+  border-left: 3px solid var(--bay-negative);
 }
 
 .bay-workgrid {
@@ -410,6 +488,16 @@
   text-transform: uppercase;
 }
 
+/* Very large credit values (or long target names) must not push the
+   panel header wider than its column — truncate rather than wrap the
+   layout apart. */
+.bay-panel__head strong {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .bay-section__head h2 {
   margin: 0;
   color: var(--bay-text);
@@ -446,6 +534,10 @@
 
 .bay-legal-row strong,
 .bay-summary__rows strong {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   color: var(--bay-text);
   font-family: var(--swse-font-display, monospace);
   font-size: 13px;
@@ -455,6 +547,7 @@
 .bay-status {
   padding: 2px 6px;
   border: 1px solid currentColor;
+  font-weight: 700;
 }
 
 .bay-status--positive,
@@ -463,6 +556,14 @@
 .bay-value--neutral { color: var(--bay-neutral) !important; }
 .bay-status--negative,
 .bay-value--negative { color: var(--bay-negative) !important; }
+
+/* BLOCKED must read as visually prominent, not merely red text — the
+   whole panel picks up a negative-tone border so the state is legible
+   even before reading the badge. READY leaves the panel's neutral border
+   alone (positive without being overpowering). */
+.bay-panel--validation:has(.bay-status--negative) {
+  border-color: color-mix(in oklch, var(--bay-negative) 45%, var(--bay-border-soft));
+}
 
 .bay-part-card__badge {
   padding: 2px 6px;
@@ -481,6 +582,9 @@
 
 .bay-part-card__category {
   margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   color: var(--part-color);
   font-family: var(--swse-font-mono, ui-monospace, monospace);
   font-size: 9px;
@@ -515,8 +619,12 @@
   font-size: 11px;
 }
 
+.bay-browser-search__input::placeholder {
+  color: var(--bay-faint);
+  opacity: 1;
+}
+
 .bay-browser-search__input:focus-visible {
-  outline: 1px solid var(--bay-accent);
   border-color: var(--bay-accent);
 }
 
@@ -532,6 +640,12 @@
   text-transform: uppercase;
   cursor: pointer;
   white-space: nowrap;
+  transition: box-shadow var(--bay-interaction-duration) ease, background var(--bay-interaction-duration) ease;
+}
+
+.bay-browser-search__submit:hover,
+.bay-browser-search__reset:hover {
+  box-shadow: var(--bay-glow);
 }
 
 .bay-browser-filters {
@@ -550,12 +664,22 @@
   letter-spacing: 0.1em;
   text-transform: uppercase;
   cursor: pointer;
+  transition: border-color var(--bay-interaction-duration) ease, background var(--bay-interaction-duration) ease, color var(--bay-interaction-duration) ease;
 }
 
+.bay-filter-pill:hover {
+  color: var(--bay-accent);
+  border-color: var(--bay-border);
+}
+
+/* Active must not be distinguishable by color alone — the inset
+   underline bar is a shape/position cue that survives grayscale. */
 .bay-filter-pill.active {
   color: var(--bay-accent);
   background: color-mix(in oklch, var(--bay-accent) 16%, transparent);
   border-color: color-mix(in oklch, var(--bay-accent) 62%, transparent);
+  font-weight: 600;
+  box-shadow: inset 0 -2px 0 var(--bay-accent);
 }
 
 .bay-browser-empty {
@@ -573,8 +697,14 @@
   line-height: 1.45;
 }
 
+/* Intentional empty state, not a half-rendered panel — centered/italic
+   framing signals "nothing selected yet" rather than "content missing". */
 .bay-intel-empty {
   margin-top: 8px;
+  padding: 16px 8px;
+  color: var(--bay-faint);
+  font-style: italic;
+  text-align: center;
 }
 
 .bay-intel__head {
@@ -607,6 +737,10 @@
   text-transform: uppercase;
 }
 
+.bay-secondary-actions summary:hover {
+  color: var(--bay-muted);
+}
+
 .bay-secondary-actions__buttons {
   display: flex;
   flex-direction: column;
@@ -614,8 +748,28 @@
   margin-top: 8px;
 }
 
+/* These three controls exist only because the frozen Phase 2 action-
+   binding contract requires their data-action hooks — none has a
+   functioning workflow behind it (see #notifyGmReview/#notifyStoreQuote/
+   #notifyDraft). A ghost-link treatment (no border/fill, underlined,
+   quieter than any real Bay button) keeps them visually secondary rather
+   than looking like equal peers of the primary controls around them. */
 .bay-secondary-actions__buttons button {
-  padding: 7px 10px;
+  padding: 4px 2px;
+  background: none;
+  border: none;
+  color: var(--bay-faint);
+  font-size: 9px;
+  letter-spacing: 0.06em;
+  text-transform: none;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.bay-secondary-actions__buttons button:hover {
+  color: var(--bay-muted);
 }
 
 .bay-budget-bar {
@@ -636,12 +790,20 @@
 .bay-budget-meta {
   display: flex;
   justify-content: space-between;
+  gap: 6px;
   margin-top: 5px;
   color: var(--bay-faint);
   font-family: var(--swse-font-mono, ui-monospace, monospace);
   font-size: 9px;
   letter-spacing: 0.12em;
   text-transform: uppercase;
+}
+
+.bay-budget-meta span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .bay-slot-meter {
@@ -669,9 +831,18 @@
   background: color-mix(in oklch, var(--bay-accent) 12%, transparent);
 }
 
-.bay-warning-list li,
 .bay-muted {
   color: var(--bay-muted);
+  font-family: var(--swse-font-mono, ui-monospace, monospace);
+  font-size: 11px;
+  line-height: 1.45;
+}
+
+/* A blocked-build reason is more important than generic hint text — give
+   it its own higher-contrast, thematically-tied color rather than sharing
+   .bay-muted's low-emphasis tone. */
+.bay-warning-list li {
+  color: color-mix(in oklch, var(--bay-negative) 55%, var(--bay-text) 45%);
   font-family: var(--swse-font-mono, ui-monospace, monospace);
   font-size: 11px;
   line-height: 1.45;
@@ -687,7 +858,7 @@
 }
 
 .bay-stat {
-  padding: 9px 10px;
+  padding: 8px 9px;
   background: color-mix(in oklch, black 44%, transparent);
   border: 1px solid var(--bay-border-soft);
   border-left: 2px solid var(--bay-accent);
@@ -709,6 +880,7 @@
   font-family: var(--swse-font-display, monospace);
   font-size: 18px;
   letter-spacing: 0.05em;
+  overflow-wrap: break-word;
 }
 
 .bay-stat--positive strong { color: var(--bay-positive); }
@@ -771,13 +943,35 @@
   box-shadow: 0 0 12px color-mix(in oklch, var(--bay-positive) 26%, transparent);
 }
 
+/* Pending Removal must not look identical to Incompatible: both use a
+   negative-tone accent, but stay solid-bordered (Incompatible switches to
+   a dashed border below) — a shape cue independent of the shared hue. */
 .bay-part-card.selected-remove {
   border-color: color-mix(in oklch, var(--bay-negative) 70%, transparent);
   box-shadow: 0 0 12px color-mix(in oklch, var(--bay-negative) 26%, transparent);
 }
 
+/* Dimmed opacity alone (the pre-existing treatment) does not survive
+   grayscale/low color-discrimination as clearly as a shape change. A
+   dashed border reads as "not currently obtainable" independent of hue,
+   and stays visually distinct from selected-remove's solid negative
+   border above. */
 .bay-part-card.incompatible {
   opacity: 0.62;
+  border-style: dashed;
+}
+
+/* The selected/inspected card needs a clear connection to System Intel
+   without competing with the add/remove glow treatments above — an inset
+   ring (vs. their outer blurred glow) reads as "framed" rather than
+   "flagged," restrained per PART 2's own guidance. */
+.bay-part-card.inspecting {
+  border-color: var(--bay-accent);
+  box-shadow: inset 0 0 0 1px var(--bay-accent);
+}
+
+.bay-part-card:hover {
+  border-color: color-mix(in oklch, var(--part-color) 55%, var(--bay-border-soft));
 }
 
 .bay-part-card__head {
@@ -787,6 +981,11 @@
 }
 
 .bay-part-card__head strong {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   color: var(--bay-text);
   font-family: var(--swse-font-orbit, var(--swse-font-display, monospace));
   font-size: 11px;
@@ -809,6 +1008,10 @@
   color: var(--bay-muted);
   font-size: 12px;
   line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 .bay-part-card__meta {
@@ -817,7 +1020,39 @@
   color: var(--bay-faint);
 }
 
+/* Inspect and Install/Uninstall are two distinct actions living in the
+   same row — Inspect is a real, independently keyboard-focusable control
+   (not a :focus-within echo of the Install button), kept visually
+   secondary so it doesn't compete with the card's primary operation. It
+   must stay enabled even when Install is disabled (incompatible), so a
+   keyboard user can always learn why. */
+.bay-part-card__actions {
+  display: flex;
+  gap: 6px;
+}
+
+.bay-part-card__inspect {
+  flex: 0 0 auto;
+  padding: 0 9px;
+  min-height: 30px;
+  color: var(--bay-faint);
+  background: none;
+  border: 1px solid var(--bay-border-soft);
+  font-family: var(--swse-font-mono, ui-monospace, monospace);
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: color var(--bay-interaction-duration) ease, border-color var(--bay-interaction-duration) ease;
+}
+
+.bay-part-card__inspect:hover {
+  color: var(--bay-muted);
+  border-color: var(--bay-border);
+}
+
 .bay-part-card__action {
+  flex: 1 1 auto;
   min-height: 30px;
   color: var(--part-color);
   border-color: color-mix(in oklch, var(--part-color) 46%, transparent);
@@ -829,6 +1064,20 @@
   cursor: not-allowed;
   opacity: 0.45;
   box-shadow: none;
+}
+
+/* Disabled Apply must read as disabled through more than opacity alone
+   (contrast/opacity-sensitive viewing conditions) — desaturating the primary
+   accent and dropping it back to the neutral border color are two additional,
+   color-independent cues layered on top of the shared opacity treatment. */
+.bay-footer button.primary:disabled {
+  filter: saturate(0.35);
+  border-color: var(--bay-border-soft);
+}
+
+.bay-footer button.primary:hover:not(:disabled) {
+  background: color-mix(in oklch, var(--bay-accent) 26%, transparent);
+  border-color: var(--bay-accent);
 }
 
 .bay-summary {
@@ -883,13 +1132,35 @@
   font-size: 10px;
   text-align: left;
   cursor: pointer;
+  transition: color var(--bay-interaction-duration) ease, border-top-color var(--bay-interaction-duration) ease;
 }
 
 .bay-installed:hover {
   color: var(--bay-accent);
 }
 
+/* Marks which installed entry is currently the one shown in System
+   Intel — mirrors the .inspecting card ring's accent so the connection
+   between the quick-list and Intel reads consistently. */
+.bay-installed.inspecting {
+  color: var(--bay-accent);
+  border-top-color: color-mix(in oklch, var(--bay-accent) 45%, transparent);
+}
+
+.bay-installed span {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .bay-installed strong {
+  flex: 0 0 auto;
+  max-width: 40%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   color: var(--bay-accent);
 }
 
