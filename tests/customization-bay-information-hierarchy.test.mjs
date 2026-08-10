@@ -137,6 +137,22 @@ const MAIN_CLOSE_ANCHOR = '</main>';
       `player-facing notification strings in customization-bay-app.js must not expose implementation vocabulary: found "${phrase}"`
     );
   }
+
+  // PR #949 Phase 4 final authority cleanup — a mentor fallback is
+  // player-facing guidance shown whenever the mentor dialogue loader can't
+  // resolve a better line. legalityFromPreview()/Contract O already
+  // establish there is no canonical restricted/licensed/GM-review state in
+  // this Bay, so no mentorFallback string (Garage or Shipyard) may assert
+  // one either, even as in-world flavor — a player can reasonably read it
+  // as mechanical advice.
+  const fallbackMatches = [...appJs.matchAll(/mentorFallback:\s*\n?\s*"([^"]*)"/g)];
+  assert.ok(fallbackMatches.length >= 2, `expected to find at least 2 mentorFallback string literals (Garage + Shipyard), found ${fallbackMatches.length}`);
+  for (const match of fallbackMatches) {
+    const fallbackText = match[1];
+    for (const forbidden of [/GM review/i, /street-legal/i, /license required/i]) {
+      assert.doesNotMatch(fallbackText, forbidden, `mentorFallback must not assert an unsupported legal/approval mechanic: "${fallbackText}" matched ${forbidden}`);
+    }
+  }
 }
 
 /* ------------------------------------------------------------------ *
@@ -558,6 +574,34 @@ const MAIN_CLOSE_ANCHOR = '</main>';
     const occurrences = (match[0].match(/#buildErrorContext\(/g) || []).length;
     assert.equal(occurrences, 2, `${label} must route both its "no actor" and its "engine load failed" branches through #buildErrorContext(), found ${occurrences} occurrence(s)`);
   }
+
+  // PR #949 Phase 4 final authority cleanup — the error context must not
+  // compose a fabricated zero-Credits economics object either. The wallet
+  // and resulting balance are UNKNOWN on a load failure, not 0 cr; budget
+  // must be null, not this.#buildBudget(0, 0).
+  assert.doesNotMatch(errorContextMatch[0], /budget:\s*this\.#buildBudget\(/, '#buildErrorContext() must not construct a fabricated zero-Credits budget object — the resulting balance is unknown, not 0 cr');
+  assert.match(errorContextMatch[0], /budget:\s*null/, '#buildErrorContext() must present budget as null (unknown), not a fabricated zero economics object');
+
+  // The canonical partial must gate the real Credits panel and the real
+  // system browser on the same {{error}} flag the error context sets, and
+  // present an honest "unavailable" state instead of the normal
+  // filter-empty messaging (which implies a working, merely-filtered
+  // browser rather than one that outright failed to load).
+  const partial = await read(PARTIAL_PATH);
+  const creditPanelMatch = partial.match(/\{\{#unless error\}\}\s*\n\s*<section class="bay-panel bay-panel--credit">/);
+  assert.ok(creditPanelMatch, 'the Credits panel must be gated behind {{#unless error}} so it never renders fabricated economics during a load failure');
+
+  const browserSectionMatch = partial.match(/<section class="bay-section bay-section--browser">([\s\S]*?)<\/section>\s*\n\s*<\/section>/);
+  assert.ok(browserSectionMatch, 'could not locate the system browser section');
+  assert.match(browserSectionMatch[1], /\{\{#if error\}\}/, 'the system browser section must branch on {{#if error}}');
+  assert.match(browserSectionMatch[1], /Systems are unavailable for this customization target\./, 'a load failure must show an honest "systems unavailable" state, not the normal browser controls');
+  // The normal filter-empty messaging must sit in the {{else}} branch (a
+  // working browser that filtered down to zero results), never presented
+  // as the {{#if error}} outcome.
+  const errorBranchEnd = browserSectionMatch[1].indexOf('{{else}}');
+  assert.ok(errorBranchEnd !== -1, 'the browser section must have an {{else}} branch for the normal (non-error) browser');
+  const errorBranchBody = browserSectionMatch[1].slice(browserSectionMatch[1].indexOf('{{#if error}}'), errorBranchEnd);
+  assert.doesNotMatch(errorBranchBody, /No systems match the current filters/, 'the {{#if error}} branch must not reuse the normal filter-empty message — a load failure is not a filter that matched zero results');
 }
 
 /* ------------------------------------------------------------------ *
@@ -616,6 +660,30 @@ const MAIN_CLOSE_ANCHOR = '</main>';
   for (const forbidden of [/require GM review/i, /street-legal/i, /license required/i]) {
     assert.doesNotMatch(guidanceBody, forbidden, `Build Guidance must not claim an unsupported rule: matched ${forbidden}`);
   }
+}
+
+/* ------------------------------------------------------------------ *
+ * TEST CONTRACT V — the displayed resulting balance ("After") comes from
+ * the canonical engine preview's own newCredits (already captured by
+ * summarizePreview() per Contract S), never independently recomputed as
+ * available - cost. The engine is the authority on what a build resolves
+ * to; UI-side settlement arithmetic has no standing to diverge from it.
+ * ------------------------------------------------------------------ */
+{
+  const appJs = await read(APP_JS_PATH);
+  const fnMatch = appJs.match(/#buildBudget\(currentCredits, netCost, newCredits\) \{([\s\S]*?)\n {2}\}/);
+  assert.ok(fnMatch, '#buildBudget() must accept a third newCredits parameter');
+  const body = fnMatch[1];
+  assert.doesNotMatch(body, /newCreditsLabel:\s*formatCredits\(available - cost\)/, '#buildBudget() must not independently recompute the resulting balance as available - cost — it must consume the canonical newCredits parameter');
+  assert.match(body, /const resulting = Number\(newCredits\s*\?\?\s*\(available - cost\)\)/, '#buildBudget() must consume the caller-supplied newCredits as the resulting balance (falling back to available - cost only when no canonical value was supplied at all)');
+  assert.match(body, /newCreditsLabel:\s*formatCredits\(resulting\)/, 'the displayed After value must be formatCredits(resulting), sourced from the canonical newCredits');
+
+  // Both live context builders must actually pass the canonical
+  // previewSummary.newCredits through to #buildBudget() — capturing it in
+  // summarizePreview() (Contract S) is meaningless if the caller never
+  // forwards it.
+  const buildBudgetCallMatches = appJs.match(/this\.#buildBudget\(currentCredits, previewSummary\.netCost, previewSummary\.newCredits\)/g) || [];
+  assert.equal(buildBudgetCallMatches.length, 2, `expected both live runtime context builders to call #buildBudget() with previewSummary.newCredits as the third argument, found ${buildBudgetCallMatches.length} occurrence(s)`);
 }
 
 console.log('customization-bay-information-hierarchy: all assertions passed');

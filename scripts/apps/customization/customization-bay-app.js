@@ -80,7 +80,7 @@ const MODE_CONFIG = Object.freeze({
     mentorTopic: "shipyard",
     mentorTranslationKey: "Marl Skindar",
     mentorFallback:
-      "Slots, legality, and cost are the whole game. Keep the frame street-legal unless you want GM review stamped on the work order.",
+      "Slots, compatibility, and cost are the whole game. Keep the frame within spec, check Build Status, and make sure the work order balances before you sign off.",
     primaryMetricLabel: "Upgrade Slots",
     costLabel: "Shipyard Cost"
   }
@@ -548,7 +548,7 @@ export class CustomizationBayApp extends BaseSWSEAppV2 {
       summaryTitle: "Droid Summary",
       summaryName: profile.actorName ?? this.actor.name,
       summarySubtitle: `${humanize(profile.degree)} · ${humanize(profile.size)}`,
-      budget: this.#buildBudget(currentCredits, previewSummary.netCost),
+      budget: this.#buildBudget(currentCredits, previewSummary.netCost, previewSummary.newCredits),
       techSpecialist: this.#buildTechSpecialistContext(MODE.GARAGE),
       // Phase 4 correction — must reflect whether the canonical engine
       // preview actually accepted the currently staged change set, not an
@@ -640,7 +640,7 @@ export class CustomizationBayApp extends BaseSWSEAppV2 {
       summaryTitle: "Ship Summary",
       summaryName: profile.actorName ?? this.actor.name,
       summarySubtitle: `${humanize(profile.vehicleType)} · ${humanize(this.contextMode)}`,
-      budget: this.#buildBudget(currentCredits, previewSummary.netCost),
+      budget: this.#buildBudget(currentCredits, previewSummary.netCost, previewSummary.newCredits),
       techSpecialist: this.#buildTechSpecialistContext(MODE.SHIPYARD),
       canApply: previewResult.success === true,
       runtimeLane: true
@@ -678,9 +678,16 @@ export class CustomizationBayApp extends BaseSWSEAppV2 {
       error: message,
       mentor,
       mentorText: mentor.mentorText,
+      // Phase 4 correction — wallet/budget/browser are UNKNOWN on a load
+      // failure, not zero. The canonical partial gates its Credits panel
+      // and system browser on {{#if error}}/{{#unless error}}, so these
+      // never render in this state; null (rather than a fabricated
+      // this.#buildBudget(0, 0) / empty browser view model) makes that
+      // contract explicit instead of quietly composing fake zero economics
+      // that happen to never reach the template.
       wallet: null,
       profileStats: [],
-      browser: this.#buildSystemBrowser([], {}),
+      browser: null,
       intel: null,
       installedRows: [],
       previewSummary: summarizePreview(null, 0),
@@ -688,7 +695,7 @@ export class CustomizationBayApp extends BaseSWSEAppV2 {
       summaryTitle: config.mode === MODE.SHIPYARD ? "Ship Summary" : "Droid Summary",
       summaryName: "Unavailable",
       summarySubtitle: "",
-      budget: this.#buildBudget(0, 0),
+      budget: null,
       canApply: false,
       runtimeLane: false
     };
@@ -814,17 +821,27 @@ export class CustomizationBayApp extends BaseSWSEAppV2 {
     return systems.find((system) => system.id === this.selectedSystemId) || null;
   }
 
-  #buildBudget(currentCredits, netCost) {
+  /**
+   * Phase 4 correction — the resulting balance (`After`) must come from the
+   * canonical engine preview's own newCredits (already captured by
+   * summarizePreview()), never be independently recomputed here. The
+   * engine is the authority on what a build actually resolves to; UI-side
+   * `available - cost` arithmetic happens to agree today but has no
+   * standing to diverge from the engine's own answer. usedPct remains
+   * presentation-only (a progress-bar fill, not a settlement figure).
+   */
+  #buildBudget(currentCredits, netCost, newCredits) {
     const available = Number(currentCredits ?? 0);
     const cost = Number(netCost ?? 0);
+    const resulting = Number(newCredits ?? (available - cost));
     const safeAvailable = Math.max(available, cost, 1);
     const usedPct = Math.min(100, Math.max(0, (Math.max(cost, 0) / safeAvailable) * 100));
     return {
       currentCreditsLabel: formatCredits(available),
       netCostLabel: formatCredits(cost),
-      newCreditsLabel: formatCredits(available - cost),
+      newCreditsLabel: formatCredits(resulting),
       usedPct: `${usedPct.toFixed(0)}%`,
-      tone: available - cost < 0 ? "negative" : cost > 0 ? "neutral" : "positive"
+      tone: resulting < 0 ? "negative" : cost > 0 ? "neutral" : "positive"
     };
   }
 

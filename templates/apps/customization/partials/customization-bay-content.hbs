@@ -156,6 +156,7 @@
         </div>
       </section>
 
+      {{#unless error}}
       <section class="bay-panel bay-panel--credit">
         <header class="bay-panel__head">
           <span>Credits</span>
@@ -170,6 +171,7 @@
           <span>After {{budget.newCreditsLabel}}</span>
         </div>
       </section>
+      {{/unless}}
 
       <section class="bay-panel bay-panel--validation">
         <header class="bay-panel__head">
@@ -247,62 +249,66 @@
           </aside>
         {{/if}}
 
-        <div class="bay-browser-toolbar">
-          <div class="bay-browser-search">
-            <input type="text" name="systemSearch" class="bay-browser-search__input" placeholder="Search systems" value="{{browser.search}}">
-            <button type="button" class="bay-browser-search__submit" data-action="apply-system-search">Search</button>
-            {{#if browser.hasActiveFilters}}<button type="button" class="bay-browser-search__reset" data-action="reset-system-filters">Reset</button>{{/if}}
-          </div>
-          <div class="bay-browser-filters" role="group" aria-label="Filter by category">
-            {{#each browser.categoryFilters}}
-              <button type="button" class="bay-filter-pill {{#if active}}active{{/if}}" data-action="set-system-category-filter" data-value="{{key}}">{{label}}</button>
-            {{/each}}
-          </div>
-          <div class="bay-browser-filters" role="group" aria-label="Filter by status">
-            {{#each browser.statusFilters}}
-              <button type="button" class="bay-filter-pill {{#if active}}active{{/if}}" data-action="set-system-status-filter" data-value="{{key}}">{{label}}</button>
-            {{/each}}
-          </div>
-        </div>
-
-        {{#if browser.groups.length}}
-          <div class="bay-system-groups">
-            {{#each browser.groups}}
-              <section class="bay-system-group" data-category="{{key}}">
-                <h3>{{label}}</h3>
-                <div class="bay-card-grid">
-                  {{#each systems}}
-                    <article class="bay-part-card bay-part-card--{{category}} {{#if installed}}installed{{/if}} {{#if selectedAdd}}selected-add{{/if}} {{#if selectedRemove}}selected-remove{{/if}} {{#unless compatible}}incompatible{{/unless}} {{#if selected}}inspecting{{/if}}"
-                             data-action="inspect-system"
-                             data-system-id="{{id}}">
-                      <div class="bay-part-card__head">
-                        <strong>{{name}}</strong>
-                        <span class="bay-part-card__badge bay-part-card__badge--{{badgeTone}}">{{stateLabel}}</span>
-                      </div>
-                      <p class="bay-part-card__category">{{categoryLabel}}</p>
-                      <p>{{description}}</p>
-                      <div class="bay-part-card__meta">
-                        <span>{{costLabel}}</span>
-                        {{#if slot}}<span>Slot: {{slot}}</span>{{/if}}
-                      </div>
-                      <button type="button"
-                              class="bay-part-card__action"
-                              data-action="{{action}}"
-                              data-system-id="{{id}}"
-                              {{#if actionDisabled}}disabled{{/if}}>
-                        {{actionLabel}}
-                      </button>
-                    </article>
-                  {{/each}}
-                </div>
-              </section>
-            {{/each}}
-          </div>
+        {{#if error}}
+          <p class="bay-muted bay-browser-empty">Systems are unavailable for this customization target.</p>
         {{else}}
-          <p class="bay-muted bay-browser-empty">
-            {{#if browser.search}}No systems match &quot;{{browser.search}}&quot;.{{else}}No systems match the current filters.{{/if}}
-            {{#if browser.hasActiveFilters}}<button type="button" class="bay-browser-search__reset" data-action="reset-system-filters">Reset filters</button>{{/if}}
-          </p>
+          <div class="bay-browser-toolbar">
+            <div class="bay-browser-search">
+              <input type="text" name="systemSearch" class="bay-browser-search__input" placeholder="Search systems" value="{{browser.search}}">
+              <button type="button" class="bay-browser-search__submit" data-action="apply-system-search">Search</button>
+              {{#if browser.hasActiveFilters}}<button type="button" class="bay-browser-search__reset" data-action="reset-system-filters">Reset</button>{{/if}}
+            </div>
+            <div class="bay-browser-filters" role="group" aria-label="Filter by category">
+              {{#each browser.categoryFilters}}
+                <button type="button" class="bay-filter-pill {{#if active}}active{{/if}}" data-action="set-system-category-filter" data-value="{{key}}">{{label}}</button>
+              {{/each}}
+            </div>
+            <div class="bay-browser-filters" role="group" aria-label="Filter by status">
+              {{#each browser.statusFilters}}
+                <button type="button" class="bay-filter-pill {{#if active}}active{{/if}}" data-action="set-system-status-filter" data-value="{{key}}">{{label}}</button>
+              {{/each}}
+            </div>
+          </div>
+
+          {{#if browser.groups.length}}
+            <div class="bay-system-groups">
+              {{#each browser.groups}}
+                <section class="bay-system-group" data-category="{{key}}">
+                  <h3>{{label}}</h3>
+                  <div class="bay-card-grid">
+                    {{#each systems}}
+                      <article class="bay-part-card bay-part-card--{{category}} {{#if installed}}installed{{/if}} {{#if selectedAdd}}selected-add{{/if}} {{#if selectedRemove}}selected-remove{{/if}} {{#unless compatible}}incompatible{{/unless}} {{#if selected}}inspecting{{/if}}"
+                               data-action="inspect-system"
+                               data-system-id="{{id}}">
+                        <div class="bay-part-card__head">
+                          <strong>{{name}}</strong>
+                          <span class="bay-part-card__badge bay-part-card__badge--{{badgeTone}}">{{stateLabel}}</span>
+                        </div>
+                        <p class="bay-part-card__category">{{categoryLabel}}</p>
+                        <p>{{description}}</p>
+                        <div class="bay-part-card__meta">
+                          <span>{{costLabel}}</span>
+                          {{#if slot}}<span>Slot: {{slot}}</span>{{/if}}
+                        </div>
+                        <button type="button"
+                                class="bay-part-card__action"
+                                data-action="{{action}}"
+                                data-system-id="{{id}}"
+                                {{#if actionDisabled}}disabled{{/if}}>
+                          {{actionLabel}}
+                        </button>
+                      </article>
+                    {{/each}}
+                  </div>
+                </section>
+              {{/each}}
+            </div>
+          {{else}}
+            <p class="bay-muted bay-browser-empty">
+              {{#if browser.search}}No systems match &quot;{{browser.search}}&quot;.{{else}}No systems match the current filters.{{/if}}
+              {{#if browser.hasActiveFilters}}<button type="button" class="bay-browser-search__reset" data-action="reset-system-filters">Reset filters</button>{{/if}}
+            </p>
+          {{/if}}
         {{/if}}
       </section>
     </section>
