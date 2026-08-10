@@ -33,6 +33,10 @@ const STYLE_IDS = Object.freeze([
     href: 'systems/foundryvtt-swse/styles/system/app-responsive-workbench.css',
   },
   {
+    id: 'swse-app-responsive-customization-bay-css',
+    href: 'systems/foundryvtt-swse/styles/system/app-responsive-customization-bay.css',
+  },
+  {
     id: 'swse-app-responsive-games-css',
     href: 'systems/foundryvtt-swse/styles/system/app-responsive-games.css',
   },
@@ -230,6 +234,7 @@ export function observeAllShellResponsive(root = document) {
     .application:has(.swse-customization-workarea),
     .application:has(.item-customization-workbench),
     .application:has(.swse-customization-workbench),
+    .application:has(.swse-customization-bay),
     .application:has(.gm-datapad),
     .application:has(.gm-holopad),
     .application:has(.swse-gm-datapad),
