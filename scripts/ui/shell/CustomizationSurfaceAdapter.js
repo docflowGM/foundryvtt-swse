@@ -117,8 +117,13 @@ export class CustomizationSurfaceAdapter {
     try {
       const app = await this._getApp();
       const context = await app._prepareContext({});
+      // PR #946 Phase 2 — render the canonical content partial directly, not
+      // the standalone customization-bay.hbs wrapper (which now supplies its
+      // own standalone-only device frame). The Holopad shell is already the
+      // outer frame for inline hosting, so this must never carry a second
+      // one — see customization-bay-content.hbs's own header comment.
       const contentHtml = await foundry.applications.handlebars.renderTemplate(
-        'systems/foundryvtt-swse/templates/apps/customization/customization-bay.hbs',
+        'systems/foundryvtt-swse/templates/apps/customization/partials/customization-bay-content.hbs',
         context
       );
 

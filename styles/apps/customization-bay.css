@@ -4,7 +4,30 @@
 /* Uses existing sheet/datapad theme tokens. UI only; engines own rules.       */
 /* ========================================================================== */
 
-.swse-customization-bay {
+/* Phase 2 structural flattening: .swse-customization-bay is now the
+   CANONICAL CONTENT root — the design-token scope and internal flex layout
+   only. It is used identically by both hosts (standalone-wrapped and
+   Holopad-inline) and never carries outer device-frame chrome itself.
+   Frame-only chrome (border, outer glow, screen-fill background, framing
+   padding, window sizing, full-surface scanline) lives on
+   .swse-customization-bay-standalone-frame below, which ONLY wraps this
+   content in the standalone ApplicationV2 window
+   (templates/apps/customization/customization-bay.hbs). The inline Holopad
+   path renders this content with no wrapper at all — see
+   CustomizationSurfaceAdapter.buildViewModel() and
+   templates/shell/partials/surface-customization.hbs — so there is nothing
+   to override or strip inline; the frame chrome simply never renders there. */
+/* Design tokens are declared on BOTH selectors (identically) rather than
+   only on the inner content root, because custom properties only cascade
+   DOWN the DOM: the standalone-only frame wrapper below is the content
+   root's ANCESTOR in the standalone DOM, so it needs its own copy of these
+   definitions to resolve var(--bay-*) in its own frame-chrome rule. This is
+   the one place token values are declared twice; every rule that MIXES bay
+   colors with layout (all .bay-* content rules below) still reads them
+   from a single cascaded source, since the content root's copy always
+   wins for its own descendants. */
+.swse-customization-bay,
+.swse-customization-bay-standalone-frame {
   --bay-bg: var(--screen, oklch(0.10 0.04 var(--screen-h, 278)));
   --bay-panel: var(--screen-2, oklch(0.14 0.055 var(--screen-h, 278)));
   --bay-panel-strong: color-mix(in oklch, var(--bay-panel) 78%, white 6%);
@@ -38,16 +61,69 @@
   --bay-cat-cargo: oklch(0.75 0.10 90);
   --bay-cat-crew: oklch(0.80 0.12 160);
   --bay-cat-systems: var(--bay-accent);
+}
 
+.swse-customization-bay {
   position: relative;
   display: flex;
   flex-direction: column;
   gap: 12px;
+  color: var(--bay-text);
+  font-family: var(--swse-font-body, var(--font-primary, system-ui, sans-serif));
+}
+
+/* Standalone height/flex chain (PR #947 correction, then final correction)
+   — threads a definite height from the real Foundry .window-content down
+   through the standalone frame into the canonical content root. Scoped to
+   .swse-customization-bay-app (the ApplicationV2 window's own root class —
+   see CustomizationBayApp.DEFAULT_OPTIONS) so this never reaches any other
+   application. Without this, the standalone frame had no flex
+   participation of its own, so .bay-workgrid's existing flex:1 1 auto/
+   min-height:0 had nothing bounded to flex against and the three existing
+   scroll lanes (.bay-left-rail/.bay-main/.bay-right-rail) could only ever
+   grow with their content instead of scrolling within it.
+
+   Deliberately targets ONLY .window-content, not a companion
+   [data-application-content] selector: the frame
+   (.swse-customization-bay-standalone-frame) is a plain child of
+   .window-content, and Foundry always renders a real .window-content
+   ancestor for any ApplicationV2 window, so no attribute-based alternate
+   is needed. An earlier version of this rule also matched
+   ".swse-customization-bay-app [data-application-content]" — at the time,
+   that attribute was (mistakenly) placed on the frame element itself,
+   making the SAME element match both this rule (specificity 0,2,0) and
+   the frame's own dedicated rule below (specificity 0,1,0), so this rule's
+   padding:0/background:transparent silently won over the frame's
+   padding:18px/background regardless of source order. data-application-
+   content now lives on the content root instead (see customization-bay-
+   content.hbs), which is never the target of this sizing rule. */
+.swse-customization-bay-app .window-content {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+  padding: 0;
+  background: transparent;
+}
+
+.swse-customization-bay-standalone-frame > .swse-customization-bay {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+/* Standalone-only device frame: border, outer glow, screen-fill background,
+   framing padding, window sizing, full-surface scanline. Applied to the NEW
+   wrapper element in customization-bay.hbs only — never present in the
+   inline Holopad DOM, so there is no override to write for that host. */
+.swse-customization-bay-standalone-frame {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
   min-width: min(100%, 900px);
   min-height: 720px;
   padding: 18px;
-  color: var(--bay-text);
-  font-family: var(--swse-font-body, var(--font-primary, system-ui, sans-serif));
   background:
     radial-gradient(ellipse at 18% 0%, color-mix(in oklch, var(--bay-accent-alt) 16%, transparent), transparent 46%),
     radial-gradient(ellipse at 80% 100%, color-mix(in oklch, var(--bay-accent) 18%, transparent), transparent 42%),
@@ -57,7 +133,7 @@
   overflow: hidden;
 }
 
-.swse-customization-bay::before {
+.swse-customization-bay-standalone-frame::before {
   content: "";
   position: absolute;
   inset: 0;
@@ -65,6 +141,11 @@
   background: repeating-linear-gradient(0deg, transparent 0 3px, color-mix(in oklch, white 5%, transparent) 3px 4px);
   mix-blend-mode: screen;
   opacity: calc(var(--motion-enabled, 1) * 0.42);
+}
+
+.swse-customization-bay-standalone-frame[data-motion-style="off"]::before,
+.swse-customization-bay-standalone-frame[data-motion-style="reduced"]::before {
+  opacity: 0.08;
 }
 
 .swse-customization-bay button {
@@ -744,11 +825,6 @@
   color: var(--bay-accent);
 }
 
-.swse-customization-bay[data-motion-style="off"]::before,
-.swse-customization-bay[data-motion-style="reduced"]::before {
-  opacity: 0.08;
-}
-
 @media (max-width: 1100px) {
   .bay-workgrid {
     grid-template-columns: 1fr;
@@ -784,9 +860,17 @@
 }
 
 
-/* Scroll safety: Garage/Shipyard surfaces must never clip long system lists. */
+/* Scroll safety: Garage/Shipyard surfaces must never clip long system lists.
+   min-height: 0 is needed by both hosts so the flex children below can
+   shrink/scroll correctly. max-height is a standalone ApplicationV2 window
+   sizing constraint (leaves room below the window chrome) — it belongs on
+   the standalone-only frame; inline, the Holopad's own container already
+   constrains height. */
 .swse-customization-bay {
   min-height: 0;
+}
+
+.swse-customization-bay-standalone-frame {
   max-height: calc(100vh - 96px);
 }
 
