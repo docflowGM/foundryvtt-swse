@@ -35,6 +35,7 @@ import { repairActorForcePowerAbilityMeta, repairWorldForcePowerAbilityMeta } fr
 import { migrateDarkSidePoints } from "./scripts/migration/dark-side-points-migration.js";
 import { installItemEditorTrace } from "./scripts/debug/item-editor-trace.js";
 import { registerCompendiumDirectoryClickRepair } from "./scripts/core/compendium-directory-click-repair.js";
+import { registerCompendiumInteractionDiagnostic } from "./scripts/governance/sentinel/sentinel-compendium-forensics.js";
 import { DefenseCalculator } from "./scripts/actors/derived/defense-calculator.js";
 import { initializeHolonet } from "./scripts/holonet/integration/holonet-init.js";
 import { initializeGames } from "./scripts/games/game-init.js";
@@ -157,6 +158,15 @@ Hooks.once("init", async () => {
   initializeSceneControls();
   initializeDiscoverySystem();
   initializeSentinelGovernance();
+  // Registers the compendium click-propagation diagnostic as a Sentinel
+  // layer and bootstraps Sentinel immediately (idempotent — sentinel-init.js's
+  // own ready-hook bootstrap() call becomes a no-op). Must run before
+  // registerCompendiumDirectoryClickRepair() so, when the layer is enabled,
+  // its document-capture listener observes clicks before the repair's own
+  // document-capture listener can stopImmediatePropagation() them (see
+  // docs/audits/compendium-interaction-forensics-2026-08.md, Sentinel
+  // Architecture Alignment section).
+  registerCompendiumInteractionDiagnostic();
   registerCompendiumDirectoryClickRepair();
   registerNpcDamageHydrationHooks();
   registerForceExecutorChatHooks();

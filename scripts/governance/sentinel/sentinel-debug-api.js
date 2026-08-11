@@ -11,8 +11,18 @@
 import { SentinelEngine } from "/systems/foundryvtt-swse/scripts/governance/sentinel/sentinel-core.js";
 import { SENTINEL_CATEGORIES, getCategoryConfig, getAllCategories } from "/systems/foundryvtt-swse/scripts/governance/sentinel/sentinel-categories.js";
 import { SentinelSourceMapper } from "/systems/foundryvtt-swse/scripts/governance/sentinel/sentinel-source-mapper.js";
+import { CompendiumInteractionDiagnostic } from "/systems/foundryvtt-swse/scripts/governance/sentinel/sentinel-compendium-forensics.js";
 
 export const SentinelDebugAPI = {
+  /**
+   * Per-diagnostic sub-namespaces. Each diagnostic owns its own
+   * status/report/clear surface, but reads/writes exclusively through
+   * SentinelEngine — see sentinel-compendium-forensics.js's docblock.
+   */
+  diagnostics: {
+    compendium: CompendiumInteractionDiagnostic
+  },
+
   /**
    * Print categorized dashboard to console
    * GM-only, formatted for readability

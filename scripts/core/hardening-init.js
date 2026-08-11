@@ -41,7 +41,7 @@ const SYSTEM_ID = 'foundryvtt-swse';
  * This removes any non-Foundry classes that may have been injected.
  * @private
  */
-function _restoreSidebarDefaults() {
+export function _restoreSidebarDefaults() {
   const sidebar = document.getElementById('sidebar');
   if (!sidebar) return;
 
