@@ -144,6 +144,25 @@ export const SENTINEL_CATEGORIES = {
       PURCHASE_GOVERNANCE: 'Purchase not validated through engine',
       CACHE_STALE: 'Store cache out of sync with data'
     }
+  },
+
+  /**
+   * Compendium sidebar interaction forensics — click propagation, DOM/app
+   * root identity, and ApplicationV2 options evidence for the native
+   * CompendiumDirectory pack-card click investigation. See
+   * docs/audits/compendium-interaction-forensics-2026-08.md.
+   */
+  COMPENDIUM_INTERACTION: {
+    code: 'COMPENDIUM_INTERACTION',
+    label: 'Compendium Interaction',
+    severity: 'INFO',
+    subcodes: {
+      CLICK_TRACE: 'Correlated click propagation trace completed',
+      MUTATION: 'DOM mutation observed on a compendium root',
+      IDENTITY: 'App-instance/DOM-root identity snapshot',
+      OPTIONS: 'ApplicationV2 options snapshot/diff',
+      FALLBACK: 'Click-repair fallback observation'
+    }
   }
 };
 

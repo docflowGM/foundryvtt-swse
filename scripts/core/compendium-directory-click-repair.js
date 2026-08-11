@@ -13,6 +13,7 @@
  */
 
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/core/logger.js";
+import { observeFallback } from "/systems/foundryvtt-swse/scripts/governance/sentinel/sentinel-compendium-forensics.js";
 
 // ---------------------------------------------------------------------------
 // Debug gate — same pattern as compendium-pack-registration-repair.js
@@ -452,10 +453,21 @@ function _findPackElementFromPath(event) {
   return null;
 }
 
+const RESOLVER_STRATEGIES = [
+  ['elements-at-point', _findPackElementFromElementsAtPoint],
+  ['point', _findPackElementFromPoint],
+  ['path', _findPackElementFromPath]
+];
+
 function _findPackElementFromEvent(event) {
-  return _findPackElementFromElementsAtPoint(event)
-    || _findPackElementFromPoint(event)
-    || _findPackElementFromPath(event);
+  // Same precedence/short-circuit as before; each attempt is now tagged
+  // with its strategy name so that Sentinel evidence (Phase 6/10 of the
+  // audit doc) can record which resolver actually matched.
+  for (const [strategy, resolve] of RESOLVER_STRATEGIES) {
+    const result = resolve(event);
+    if (result) return { ...result, strategy };
+  }
+  return null;
 }
 
 function _isControlClick(target, packElement) {
@@ -480,6 +492,8 @@ async function _openPackFromEvent(event, source = 'document') {
     // failed compendium click in debug mode, which masks the real action path.
     if (!_isInsideCompendiumDirectory(event.target)) return false;
 
+    observeFallback(event, 'fallback-reached', { source });
+
     // --- Diagnostic: log every click that reaches this handler when debug is on ---
     if (_isDebug()) {
       const tgt = event.target;
@@ -496,6 +510,7 @@ async function _openPackFromEvent(event, source = 'document') {
 
     if (!resolved?.packId) {
       _dlog(`  → could not resolve pack id from click target; skipping`);
+      observeFallback(event, 'resolution-failed', { source });
       return false;
     }
 
@@ -504,6 +519,8 @@ async function _openPackFromEvent(event, source = 'document') {
       className: resolved.element?.className || null,
       dataset: { ...resolved.element?.dataset }
     });
+
+    observeFallback(event, 'pack-resolved', { source, packId: resolved.packId, strategy: resolved.strategy });
 
     if (_isControlClick(event.target, resolved.element)) {
       _dlog(`  → control click detected; skipping`);
@@ -542,8 +559,11 @@ async function _openPackFromEvent(event, source = 'document') {
       globalThis.SWSE_DEBUG_COMPENDIUM_NATIVE_ONLY = false;
       SWSELogger.log(`[CompendiumDirectoryClickRepair] NATIVE-ONLY diagnostic: would have opened "${resolved.packId}" from ${source} fallback, but leaving the event untouched so the native handler can run.`);
       _dlog(`  → NATIVE-ONLY mode consumed for this click; not calling preventDefault/pack.render(true); event continues.`);
+      observeFallback(event, 'native-only-bypass', { source, packId: resolved.packId, defaultPreventedBeforeAbstain: event.defaultPrevented });
       return false;
     }
+
+    observeFallback(event, 'consuming-event', { source, packId: resolved.packId, defaultPreventedBeforeConsume: event.defaultPrevented });
 
     event.preventDefault();
     event.stopPropagation();
@@ -554,8 +574,10 @@ async function _openPackFromEvent(event, source = 'document') {
     try {
       await pack.render(true);
       _dlog(`  → pack.render(true) resolved for "${resolved.packId}"`);
+      observeFallback(event, 'render-succeeded', { source, packId: resolved.packId });
     } catch (renderErr) {
       console.error(`[SWSE-COMPENDIUM-CLICK] pack.render(true) threw for "${resolved.packId}":`, renderErr?.message, renderErr?.stack || renderErr);
+      observeFallback(event, 'render-failed', { source, packId: resolved.packId, error: renderErr?.message });
     }
     return true;
   } catch (err) {

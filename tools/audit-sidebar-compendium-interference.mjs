@@ -36,14 +36,14 @@ const STRICT = process.argv.includes('--strict');
 // ---------------------------------------------------------------------------
 const ALLOWLIST = new Map([
   [
-    'scripts/core/compendium-directory-click-repair.js:553',
+    'scripts/core/compendium-directory-click-repair.js:594',
     'Writes a dataset flag (data-swseCompendiumClickRepairInstalled) onto the ' +
     'compendium root as an idempotency guard. Does not touch classList/style/ ' +
     'innerHTML and has no effect on native action delegation.'
   ],
   [
-    'scripts/core/compendium-interaction-forensics.js',
-    'Diagnostic-only forensics module audited in this same doc; never calls ' +
+    'scripts/governance/sentinel/sentinel-compendium-forensics.js',
+    'Diagnostic-only Sentinel diagnostic module audited in this same doc; never calls ' +
     'preventDefault/stopPropagation/stopImmediatePropagation and never mutates DOM.'
   ],
   [

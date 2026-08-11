@@ -20,6 +20,12 @@ export function initializeSentinelGovernance() {
     // Install GM debug API
     installSentinelDebugAPI();
 
+    // Install the (previously defined-but-never-called) top-level status
+    // API — SWSE.sentinel.getStatus()/getReports()/getHealth()/etc. This is
+    // a one-line wiring fix, not a new API: installSentinelAPI() already
+    // existed fully built in this file with nothing calling it.
+    installSentinelAPI();
+
     // Initialize all auto-init layers
     try {
       // Import and init passive layers

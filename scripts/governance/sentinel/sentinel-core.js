@@ -390,9 +390,16 @@ export class SentinelEngine {
 
   /**
    * Clear report log
+   * @param {string|null} layerFilter - If given, remove only reports from
+   *   this layer, leaving other layers' history intact. Omit to clear
+   *   everything (existing behavior, unchanged for all current callers).
    */
-  static clearReports() {
-    this.#reportLog = [];
+  static clearReports(layerFilter = null) {
+    if (!layerFilter) {
+      this.#reportLog = [];
+      return;
+    }
+    this.#reportLog = this.#reportLog.filter(r => r.layer !== layerFilter);
   }
 
   /**
