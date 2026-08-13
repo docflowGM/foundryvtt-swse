@@ -75,8 +75,11 @@
 }
 
 .swse-games-table-frame--unified .swse-games-tm-bar {
-  min-height: 78px;
-  padding: 12px 16px;
+  /* Trimmed from 78px/12px to reclaim vertical space for the game board
+     itself; shared chrome so this benefits all four table-mode games, not
+     just Pazaak. */
+  min-height: 60px;
+  padding: 8px 16px;
   border-bottom: 1px solid var(--swse-games-line);
   background:
     linear-gradient(90deg, color-mix(in oklab, var(--swse-games-cyan) 12%, transparent), transparent 48%),
@@ -255,7 +258,12 @@
 
 .swse-games-table-frame--unified .swse-games-table-body {
   min-height: 0;
-  overflow: hidden;
+  /* Fallback scroll owner: the flex/grid chain below (pazaak-table >
+     pazaak-play > board-shell/hand-dock) is sized to fit without scrolling
+     in the normal case, but at very short viewport heights this lets the
+     table body scroll rather than permanently clipping gameplay controls
+     like the Pazaak hand dock (Stand/End Turn/side cards). */
+  overflow-y: auto;
   padding: 0;
   position: relative;
 }

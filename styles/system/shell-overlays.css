@@ -57,6 +57,14 @@
   max-height: 90vh;
 }
 
+/* Game Session Composer needs room for the rules segmented control and the
+   game-specific option forms without wrapping too aggressively. */
+.swse-shell-overlay[data-overlay-id="game-session-composer"] {
+  min-width: 420px;
+  max-width: min(720px, 92vw);
+  max-height: 86vh;
+}
+
 /* ─── Overlay Header ─────────────────────────────────────────────────────── */
 
 .swse-shell-overlay__header {
@@ -114,6 +122,10 @@
 .swse-shell-overlay__body--confirm,
 .swse-shell-overlay__body--warning {
   padding: 20px 20px 12px;
+}
+
+.swse-shell-overlay__body--composer {
+  padding: 16px 18px;
 }
 
 .swse-shell-overlay__message {

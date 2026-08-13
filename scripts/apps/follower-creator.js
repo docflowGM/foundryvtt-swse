@@ -543,9 +543,27 @@ static async createFollower(owner, templateType, grantingTalent = null) {
             const hasFeat = Array.from(follower.items || []).some(item => item.type === 'feat' && item.name === normalizedName);
             if (hasFeat) return false;
 
-            const featDoc = await FeatRegistry.getDocumentByName?.(normalizedName);
+            let featDoc = await FeatRegistry.getDocumentByName?.(normalizedName);
+            let displayName = normalizedName;
+
+            // Repeatable choice feats (Skill Training (Perception), Skill Focus
+            // (Stealth), etc.) exist in the registry only under their base name —
+            // the parenthetical target is a per-grant choice, not a separate
+            // compendium entry. Fall back to the base name so these resolve
+            // instead of silently failing, and keep the requested full name
+            // (matching the "${baseName} (${choiceLabel})" convention used
+            // elsewhere, e.g. feat-step.js) as the created item's display name.
+            if (!featDoc) {
+                const choiceMatch = normalizedName.match(/^(.*?)\s*\(([^)]+)\)\s*$/);
+                if (choiceMatch) {
+                    const baseName = choiceMatch[1].trim();
+                    featDoc = await FeatRegistry.getDocumentByName?.(baseName);
+                }
+            }
+
             if (featDoc) {
                 const featData = featDoc.toObject();
+                featData.name = displayName;
                 if (grantMetadata) {
                     featData.flags = {
                         ...(featData.flags || {}),

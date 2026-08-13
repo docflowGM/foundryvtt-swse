@@ -543,8 +543,17 @@
 .swse-games-concept-layout {
   flex: 1 1 auto;
   min-height: 0;
+  height: 100%;
   display: grid;
   grid-template-columns: minmax(260px, 0.78fr) minmax(420px, 1.45fr) minmax(300px, 0.85fr);
+  /* Explicit row track (rather than relying on the implicit "auto" track) so
+     the single row is always constrained to the grid's own definite height
+     instead of growing to the max-content height of its tallest column (the
+     detail rail, once its config form gets tall). Without this, the browser
+     is free to size the "auto" row to content, the grid itself grows past
+     its flex-allotted space, and overflow:hidden on the row's children never
+     gets a chance to activate because there's nothing left to clip against. */
+  grid-template-rows: minmax(0, 1fr);
   gap: 14px;
   margin-top: 12px;
   overflow: hidden;
@@ -553,6 +562,7 @@
 .swse-games-lib-col {
   min-width: 0;
   min-height: 0;
+  height: 100%;
   display: flex;
   flex-direction: column;
   gap: 12px;
@@ -861,6 +871,67 @@
   align-items: center;
   gap: 10px;
   flex-wrap: wrap;
+}
+
+/* ─── Detail-rail "Start a Table" CTA (opens the Game Session Composer) ── */
+
+.swse-games-config-card--cta {
+  align-items: center;
+  justify-items: center;
+  text-align: center;
+  gap: 12px;
+}
+
+.swse-games-configure-cta {
+  width: 100%;
+  padding: 10px 16px;
+  font-size: 12px;
+}
+
+/* ─── Game Session Composer (mounted inside shell-overlay-layer.hbs) ───── */
+
+.swse-games-composer-body {
+  display: grid;
+  gap: 14px;
+}
+
+.swse-games-composer-row {
+  border-top: none;
+  padding-top: 0;
+}
+
+.swse-games-composer-section {
+  display: grid;
+  gap: 10px;
+  border-top: 1px solid color-mix(in oklab, var(--vapor-cyan, #39f7ff) 14%, transparent);
+  padding-top: 12px;
+}
+
+.swse-games-composer-section .swse-games-invite-form,
+.swse-games-composer-section .swse-games-start-form {
+  border: 1px solid color-mix(in oklab, var(--vapor-cyan, #39f7ff) 18%, transparent);
+  background: oklch(0 0 0 / 0.2);
+  padding: 10px;
+  margin-top: 8px;
+}
+
+.swse-games-composer-invite {
+  margin-top: 8px;
+}
+
+.swse-games-composer-summary {
+  display: grid;
+  gap: 6px;
+  border: 1px solid color-mix(in oklab, var(--zero, #ffd166) 30%, transparent);
+  background: color-mix(in oklab, var(--zero, #ffd166) 6%, transparent);
+  padding: 12px;
+}
+
+.swse-games-composer-summary p {
+  margin: 0;
+  color: var(--ink, #dffbff);
+  font-size: 12px;
+  letter-spacing: 0.02em;
 }
 
 .swse-games-lib-col--rail {
@@ -2988,7 +3059,11 @@
 
 .swse-games-table-body {
   padding: 0;
-  overflow: hidden;
+  /* Do not force overflow:hidden here — it fights the scroll-fallback
+     contract on .swse-games-table-frame--unified .swse-games-table-body
+     (games-table-unification.css) and can clip gameplay controls (e.g. the
+     Pazaak hand dock) at short viewport heights. */
+  overflow-y: auto;
   position: relative;
 }
 
@@ -3018,7 +3093,17 @@
   min-height: 0;
   height: auto;
   display: grid;
-  grid-template-columns: 226px minmax(420px, 1fr) 226px;
+  /* Fluid rails: let the board use the actual Holopad viewport instead of
+     pinning the rails to a small fixed width. Scales between the same
+     visual floor as before and a wider ceiling on large surfaces. */
+  grid-template-columns: clamp(230px, 18vw, 300px) minmax(420px, 1fr) clamp(230px, 18vw, 300px);
+  /* Same class of bug as the Games library detail-rail scroll fix: a grid
+     container sized by flexbox (flex:1 1 auto) needs an explicit row track,
+     otherwise the implicit auto row sizes to its content's min/max-content
+     height instead of being capped to the flex-resolved height. Without
+     this, the board can grow tall enough to push the hand dock (Stand/End
+     Turn/side cards) out of the visible table body. */
+  grid-template-rows: minmax(0, 1fr);
   gap: 0;
   align-items: stretch;
   overflow: hidden;
@@ -3080,14 +3165,14 @@
 
 .swse-games-surface.is-table-mode .swse-pazaak-seat-head {
   display: grid;
-  grid-template-columns: 64px minmax(0, 1fr) 96px;
+  grid-template-columns: clamp(64px, 5vw, 88px) minmax(0, 1fr) clamp(80px, 8vw, 110px);
   gap: 14px;
   align-items: center;
 }
 
 .swse-games-surface.is-table-mode .swse-pazaak-avatar {
-  width: 64px;
-  height: 64px;
+  width: clamp(64px, 5vw, 88px);
+  height: clamp(64px, 5vw, 88px);
   border: 1px solid var(--swse-games-line);
   border-radius: 0;
   background: rgba(0, 0, 0, 0.50);
@@ -3125,11 +3210,11 @@
 }
 
 .swse-games-surface.is-table-mode .swse-pazaak-seat-head strong {
-  min-width: 96px;
+  min-width: clamp(80px, 8vw, 110px);
   text-align: center;
   color: var(--ink, #dffbff);
   font-family: var(--font-display, monospace);
-  font-size: 56px;
+  font-size: clamp(52px, 5vw, 78px);
   line-height: 0.82;
   text-shadow: 0 0 16px color-mix(in oklab, var(--swse-games-cyan) 30%, transparent);
 }
@@ -3215,8 +3300,8 @@
 }
 
 .swse-games-surface.is-table-mode .swse-pazaak-hand-card {
-  width: 104px;
-  flex: 0 0 104px;
+  width: clamp(112px, 9vw, 148px);
+  flex: 0 0 clamp(112px, 9vw, 148px);
   border-radius: 0;
   background: linear-gradient(160deg, rgba(0, 0, 0, 0.50), color-mix(in oklab, var(--swse-games-purple) 12%, transparent));
   transition: transform 0.15s ease, box-shadow 0.15s ease;
@@ -3718,7 +3803,7 @@
 
 @media (max-width: 1120px) {
   .swse-games-surface.is-table-mode .swse-pazaak-board-shell {
-    grid-template-columns: 190px minmax(360px, 1fr) 190px;
+    grid-template-columns: clamp(180px, 16vw, 220px) minmax(360px, 1fr) clamp(180px, 16vw, 220px);
   }
 
   .swse-games-surface.is-table-mode .swse-sabacc-player-dock {

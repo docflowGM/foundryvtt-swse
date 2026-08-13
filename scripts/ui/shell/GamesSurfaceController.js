@@ -27,6 +27,27 @@ export class GamesSurfaceController {
     const surface = root.querySelector('[data-shell-region="surface-games"]');
     if (!surface) return;
 
+    // The Game Session Composer renders as a shell OVERLAY (sibling of
+    // [data-shell-region="surface-games"], not a descendant of it), since it
+    // reuses the existing shell overlay host rather than a bespoke modal.
+    // Rules-mode selection and the start/invite forms need to keep working
+    // when they're rendered inside that overlay, so `scoped()` binds against
+    // both roots instead of duplicating the handler bodies below.
+    const composerOverlay = root.querySelector('[data-shell-region="overlay"][data-overlay-id="game-session-composer"]');
+    const scoped = (selector) => [
+      ...surface.querySelectorAll(selector),
+      ...(composerOverlay ? composerOverlay.querySelectorAll(selector) : [])
+    ];
+
+    surface.querySelectorAll('[data-games-action="open-games-composer"]').forEach(button => {
+      button.addEventListener('click', async ev => {
+        ev.preventDefault();
+        const gameId = button.dataset.gameId;
+        await this._host.openOverlay?.('game-session-composer', { gameId });
+        await this._render('games-open-composer');
+      }, { signal });
+    });
+
     surface.querySelectorAll('[data-games-action="select-game"]').forEach(button => {
       button.addEventListener('click', ev => {
         ev.preventDefault();
@@ -36,7 +57,7 @@ export class GamesSurfaceController {
       }, { signal });
     });
 
-    surface.querySelectorAll('[data-games-action="select-rules-mode"]').forEach(button => {
+    scoped('[data-games-action="select-rules-mode"]').forEach(button => {
       button.addEventListener('click', ev => {
         ev.preventDefault();
         if (button.disabled) return;
@@ -86,7 +107,7 @@ export class GamesSurfaceController {
       }, { signal });
     });
 
-    surface.querySelectorAll('form[data-games-action="create-game-invite"]').forEach(form => {
+    scoped('form[data-games-action="create-game-invite"]').forEach(form => {
       form.addEventListener('submit', async ev => {
         ev.preventDefault();
         ev.stopPropagation();
@@ -102,13 +123,14 @@ export class GamesSurfaceController {
         });
         this._noteResult(result);
         if (result?.threadId) {
+          await this._host.closeOverlay?.();
           await this._host.setSurface('messenger', { threadId: result.threadId, source: 'games' });
         }
         await this._render('games-create-invite');
       }, { signal });
     });
 
-    surface.querySelectorAll('form[data-games-action="start-solo-pazaak"]').forEach(form => {
+    scoped('form[data-games-action="start-solo-pazaak"]').forEach(form => {
       form.addEventListener('submit', async ev => {
         ev.preventDefault();
         ev.stopPropagation();
@@ -120,14 +142,17 @@ export class GamesSurfaceController {
           creditBuyIn: Number(data.get('creditBuyIn') || 0) || 0
         });
         if (result?.pending) {
+          await this._host.closeOverlay?.();
           this._noteResult(result);
           await this._render('games-pending-request');
-        } else if (result?.id) this._setOptions({ sessionId: result.id, selectedGameId: 'pazaak', view: 'session', sideDeckIds: [] });
-        else this._noteResult(false);
+        } else if (result?.id) {
+          await this._host.closeOverlay?.();
+          this._setOptions({ sessionId: result.id, selectedGameId: 'pazaak', view: 'session', sideDeckIds: [] });
+        } else this._noteResult(false);
       }, { signal });
     });
 
-    surface.querySelectorAll('form[data-games-action="start-solo-sabacc"]').forEach(form => {
+    scoped('form[data-games-action="start-solo-sabacc"]').forEach(form => {
       form.addEventListener('submit', async ev => {
         ev.preventDefault();
         ev.stopPropagation();
@@ -141,14 +166,17 @@ export class GamesSurfaceController {
           marketEnabled: data.get('marketEnabled') === 'on' || data.get('marketEnabled') === 'true'
         });
         if (result?.pending) {
+          await this._host.closeOverlay?.();
           this._noteResult(result);
           await this._render('games-pending-request');
-        } else if (result?.id) this._setOptions({ sessionId: result.id, selectedGameId: 'sabacc', view: 'session' });
-        else this._noteResult(false);
+        } else if (result?.id) {
+          await this._host.closeOverlay?.();
+          this._setOptions({ sessionId: result.id, selectedGameId: 'sabacc', view: 'session' });
+        } else this._noteResult(false);
       }, { signal });
     });
 
-    surface.querySelectorAll('form[data-games-action="start-solo-dejarik"]').forEach(form => {
+    scoped('form[data-games-action="start-solo-dejarik"]').forEach(form => {
       form.addEventListener('submit', async ev => {
         ev.preventDefault();
         ev.stopPropagation();
@@ -159,14 +187,17 @@ export class GamesSurfaceController {
           dejarikRulesMode: String(data.get('dejarikRulesMode') || 'holopad-skirmish').trim()
         });
         if (result?.pending) {
+          await this._host.closeOverlay?.();
           this._noteResult(result);
           await this._render('games-pending-request');
-        } else if (result?.id) this._setOptions({ sessionId: result.id, selectedGameId: 'dejarik', view: 'session' });
-        else this._noteResult(false);
+        } else if (result?.id) {
+          await this._host.closeOverlay?.();
+          this._setOptions({ sessionId: result.id, selectedGameId: 'dejarik', view: 'session' });
+        } else this._noteResult(false);
       }, { signal });
     });
 
-    surface.querySelectorAll('form[data-games-action="start-solo-hintaro"]').forEach(form => {
+    scoped('form[data-games-action="start-solo-hintaro"]').forEach(form => {
       form.addEventListener('submit', async ev => {
         ev.preventDefault();
         ev.stopPropagation();
@@ -179,10 +210,13 @@ export class GamesSurfaceController {
           hintaronMode: String(data.get('hintaronMode') || 'rotating').trim()
         });
         if (result?.pending) {
+          await this._host.closeOverlay?.();
           this._noteResult(result);
           await this._render('games-pending-request');
-        } else if (result?.id) this._setOptions({ sessionId: result.id, selectedGameId: 'hintaro', view: 'session' });
-        else this._noteResult(false);
+        } else if (result?.id) {
+          await this._host.closeOverlay?.();
+          this._setOptions({ sessionId: result.id, selectedGameId: 'hintaro', view: 'session' });
+        } else this._noteResult(false);
       }, { signal });
     });
 

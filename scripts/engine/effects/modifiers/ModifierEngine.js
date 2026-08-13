@@ -1828,13 +1828,21 @@ export class ModifierEngine {
       for (const effect of effects) {
         if (effect.enabled === false || !effect.target) continue;
 
+        // `system.activeEffects` is also used by non-modifier writers (e.g.
+        // ForceRegimenExecutor) to post status/narrative badges — those carry
+        // a `type` that isn't one of the ModifierType stacking categories and
+        // a `value` of 0. They aren't real modifiers, so skip them here rather
+        // than letting createModifier() throw on an unrecognized type.
+        const normalizedType = String(effect.type || 'untyped').toLowerCase();
+        if (!Object.values(ModifierType).includes(normalizedType)) continue;
+
         try {
           modifiers.push(createModifier({
             source: ModifierSource.EFFECT,
             sourceId: effect.id,
             sourceName: `${effect.name} (${effect.roundsRemaining}r)`,
             target: effect.target,
-            type: String(effect.type || 'untyped').toLowerCase(),
+            type: normalizedType,
             value: Number(effect.value) || 0,
             enabled: true,
             description: `${effect.name}: ${effect.roundsRemaining} rounds`

@@ -52,6 +52,44 @@
 
     {{/if}}
 
+    {{!-- ─── Game Session Composer ───────────────────────────────────────── --}}
+    {{#if (eq overlayId "game-session-composer")}}
+
+    <div class="swse-shell-overlay__header">
+      <span class="swse-shell-overlay__title">
+        <i class="fas fa-dice"></i>
+        {{#if vm.selectedGame}}{{localize "SWSE.ShellUI.ConfigureGameSession" game=vm.selectedGame.title}}{{else}}{{localize "SWSE.ShellUI.ConfigureTable"}}{{/if}}
+      </span>
+      <button class="swse-shell-overlay__close"
+              data-shell-action="close-overlay"
+              type="button"
+              title="{{localize 'SWSE.ShellUI.Close'}}">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+
+    <div class="swse-shell-overlay__body swse-shell-overlay__body--composer">
+      {{#if vm.error}}
+        <div class="swse-shell-overlay__error">
+          <i class="fas fa-exclamation-triangle"></i>
+          <span>{{vm.error}}</span>
+        </div>
+      {{else}}
+        {{> "systems/foundryvtt-swse/templates/shell/partials/games/session-composer.hbs"
+            vm=vm}}
+      {{/if}}
+    </div>
+
+    <div class="swse-shell-overlay__footer">
+      <button class="swse-btn swse-btn--secondary"
+              data-shell-action="close-overlay"
+              type="button">
+        {{localize "SWSE.ShellUI.Cancel"}}
+      </button>
+    </div>
+
+    {{/if}}
+
     {{!-- ─── Confirmation Dialog (vm.confirmLabel is set for confirm-* overlays) ─ --}}
     {{#if vm.confirmLabel}}
 

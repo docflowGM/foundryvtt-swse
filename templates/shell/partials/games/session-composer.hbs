@@ -1,0 +1,112 @@
+{{!--
+  Game Session Composer — mounted inside shell-overlay-layer.hbs when
+  overlayId === "game-session-composer".
+
+  This is presentation/workflow only. Every field, form, and
+  data-games-action here is the same VM/action surface that used to live
+  inline at the bottom of surface-games-detail.hbs — GamesSurfaceController
+  and the game engines (PazaakEngine/SabaccEngine/DejarikEngine/HintaroEngine/
+  GameHolonetBridge) remain the sole authority for starting or inviting to a
+  table. Nothing here creates a second configuration/session path.
+--}}
+{{#if vm.selectedGame}}
+<div class="swse-games-composer-body">
+
+  <section class="swse-games-config-row swse-games-composer-row">
+    <span class="lbl">{{localize "SWSE.ShellUI.Table"}}</span>
+  </section>
+
+  <section class="swse-games-config-row">
+    <span class="lbl">{{localize "SWSE.ShellUI.Rules"}}</span>
+    <div class="swse-games-seg" role="group" aria-label="{{localize 'SWSE.ShellUI.GameRulesMode'}}">
+      {{#each vm.modeCards}}
+      <button type="button"
+              class="{{#if this.selected}}on{{/if}} {{#unless this.enabled}}is-disabled{{/unless}}"
+              data-games-action="select-rules-mode"
+              data-rules-mode="{{this.id}}"
+              {{#unless this.enabled}}disabled{{/unless}}>
+        {{this.shortTitle}}
+      </button>
+      {{/each}}
+    </div>
+  </section>
+
+  {{#if vm.showCreditWagerControls}}
+  <section class="swse-games-config-row">
+    <span class="lbl">{{localize "SWSE.ShellUI.BuyIn"}}</span>
+    <div class="swse-games-buyin-chip">{{vm.selectedCreditBuyIn}} cr <small>max {{vm.maxCreditWager}} cr</small></div>
+  </section>
+  {{/if}}
+
+  <section class="swse-games-composer-section">
+    <span class="swse-games-kicker">{{localize "SWSE.ShellUI.Opponent"}}</span>
+
+    {{#if vm.canStartSoloAiPazaak}}
+    <form class="swse-games-invite-form swse-games-start-form" data-games-action="start-solo-pazaak">
+      <input type="hidden" name="rulesMode" value="{{vm.selectedRulesMode}}">
+      <label><span>{{localize "SWSE.ShellUI.TableName"}}</span><input type="text" name="title" maxlength="80" placeholder="{{localize 'SWSE.ShellUI.OptionalCustomTableName'}}"></label>
+      {{#if vm.showCreditWagerControls}}<label><span>{{localize "SWSE.ShellUI.CreditBuyIn"}}</span><input type="number" name="creditBuyIn" min="1" max="{{vm.maxCreditWager}}" step="1" value="{{vm.selectedCreditBuyIn}}"></label>{{/if}}
+      <div class="swse-games-start-row"><button type="submit" class="swse-games-primary">{{vm.selectedGame.actionLabel}}</button><span class="swse-games-start-note">{{vm.selectedGame.startNote}}</span></div>
+    </form>
+    {{/if}}
+
+    {{#if vm.canStartSoloAiSabacc}}
+    <form class="swse-games-invite-form swse-games-start-form" data-games-action="start-solo-sabacc">
+      <input type="hidden" name="rulesMode" value="{{vm.selectedRulesMode}}">
+      <label><span>{{localize "SWSE.ShellUI.TableName"}}</span><input type="text" name="title" maxlength="80" placeholder="{{localize 'SWSE.ShellUI.OptionalCustomTableName'}}"></label>
+      {{#if vm.showCreditWagerControls}}<label><span>{{localize "SWSE.ShellUI.CreditBuyIn"}}</span><input type="number" name="creditBuyIn" min="1" max="{{vm.maxCreditWager}}" step="1" value="{{vm.selectedCreditBuyIn}}"></label>{{/if}}
+      <label><span>{{localize "SWSE.ShellUI.HandLimit"}}</span><input type="number" name="handLimit" min="0" max="99" step="1" value="0"><small>{{localize "SWSE.ShellUI.Text0OpenEndedCasinoTable"}}</small></label>
+      <label class="swse-games-checkline"><input type="checkbox" name="marketEnabled" checked> <span>{{localize "SWSE.ShellUI.EnableHolopadCasinoMarketHouseRule"}}</span></label>
+      <div class="swse-games-start-row"><button type="submit" class="swse-games-primary">{{vm.selectedGame.actionLabel}}</button><span class="swse-games-start-note">{{vm.selectedGame.startNote}}</span></div>
+    </form>
+    {{/if}}
+
+    {{#if vm.canStartSoloAiDejarik}}
+    <form class="swse-games-invite-form swse-games-start-form" data-games-action="start-solo-dejarik">
+      <label><span>{{localize "SWSE.ShellUI.BoardName"}}</span><input type="text" name="title" maxlength="80" placeholder="{{localize 'SWSE.ShellUI.OptionalCustomBoardName'}}"></label>
+      <label><span>{{localize "SWSE.ShellUI.RulesStyle"}}</span><select name="dejarikRulesMode"><option value="holopad-skirmish">{{localize "SWSE.ShellUI.HolopadSkirmishHPReachAbilities"}}</option><option value="classic-holochess">{{localize "SWSE.ShellUI.ClassicHolochessAttackVsDefenseContest"}}</option></select></label>
+      <div class="swse-games-start-row"><button type="submit" class="swse-games-primary">{{vm.selectedGame.actionLabel}}</button><span class="swse-games-start-note">{{vm.selectedGame.startNote}}</span></div>
+    </form>
+    {{/if}}
+
+    {{#if vm.canStartSoloAiHintaro}}
+    <form class="swse-games-invite-form swse-games-start-form" data-games-action="start-solo-hintaro">
+      <input type="hidden" name="rulesMode" value="{{vm.selectedRulesMode}}">
+      <label><span>{{localize "SWSE.ShellUI.TableName"}}</span><input type="text" name="title" maxlength="80" placeholder="{{localize 'SWSE.ShellUI.OptionalCustomTableName'}}"></label>
+      <label><span>{{localize "SWSE.ShellUI.HintaronMode"}}</span><select name="hintaronMode"><option value="rotating">{{localize "SWSE.ShellUI.RotatingTableHintaron"}}</option><option value="casino">{{localize "SWSE.ShellUI.FixedCasinoHintaron"}}</option></select></label>
+      {{#if vm.showCreditWagerControls}}<label><span>{{localize "SWSE.ShellUI.CreditBuyIn"}}</span><input type="number" name="creditBuyIn" min="1" max="{{vm.maxCreditWager}}" step="1" value="{{vm.selectedCreditBuyIn}}"></label>{{/if}}
+      <div class="swse-games-start-row"><button type="submit" class="swse-games-primary">{{vm.selectedGame.actionLabel}}</button><span class="swse-games-start-note">{{vm.selectedGame.startNote}}</span></div>
+    </form>
+    {{/if}}
+
+    {{#if vm.canSendInvites}}
+    <form class="swse-games-invite-form swse-games-composer-invite" data-games-action="create-game-invite">
+      <input type="hidden" name="gameId" value="{{vm.selectedGame.id}}">
+      <input type="hidden" name="rulesMode" value="{{vm.selectedRulesMode}}">
+      <div><span class="swse-games-kicker">{{localize "SWSE.ShellUI.HolonetRequest"}}</span><strong>{{localize "SWSE.ShellUI.SendGameInvite"}}</strong><small>{{localize "SWSE.ShellUI.CreatesAMessengerThreadWithAnAcceptDecline"}}</small></div>
+      <label><span>{{localize "SWSE.ShellUI.Opponent"}}</span><select name="recipientId" required>{{#each vm.inviteTargets}}<option value="{{this.id}}">{{this.label}} // {{this.typeLabel}}</option>{{/each}}</select></label>
+      <label><span>{{localize "SWSE.ShellUI.TableName"}}</span><input type="text" name="title" maxlength="80" placeholder="{{localize 'SWSE.ShellUI.OptionalCustomTableName'}}"></label>
+      <label><span>{{localize "SWSE.ShellUI.Message"}}</span><input type="text" name="memo" maxlength="140" placeholder="{{localize 'SWSE.ShellUI.OptionalTableNote'}}"></label>
+      {{#if vm.showCreditWagerControls}}<label><span>{{localize "SWSE.ShellUI.CreditBuyIn"}}</span><input type="number" name="creditBuyIn" min="1" max="{{vm.maxCreditWager}}" step="1" value="{{vm.selectedCreditBuyIn}}"></label>{{/if}}
+      <button type="submit" class="swse-games-primary">{{localize "SWSE.ShellUI.SendGameRequest"}}</button>
+    </form>
+    {{else}}
+    <div class="swse-games-next-box swse-games-next-box--concept">
+      <div><span class="swse-games-kicker">{{localize "SWSE.ShellUI.NextMilestone"}}</span><strong>{{vm.selectedGame.nextMilestone}}</strong><small>{{#if vm.settings.useMessengerInvites}}{{localize "SWSE.ShellUI.NoEligibleInviteTargets"}}{{else}}{{localize "SWSE.ShellUI.MessengerInvitesDisabled"}}{{/if}}</small></div>
+    </div>
+    {{/if}}
+  </section>
+
+  <section class="swse-games-composer-summary">
+    <span class="swse-games-kicker">{{localize "SWSE.ShellUI.SessionSummary"}}</span>
+    <p>
+      {{vm.selectedGame.title}}
+      {{#each vm.modeCards}}{{#if this.selected}} · {{this.shortTitle}}{{/if}}{{/each}}
+      {{#if vm.showCreditWagerControls}} · {{vm.selectedCreditBuyIn}} cr{{else}} · {{localize "SWSE.ShellUI.NoCredits"}}{{/if}}
+    </p>
+  </section>
+
+</div>
+{{else}}
+<div class="swse-games-empty">{{localize "SWSE.ShellUI.NoGamesAreRegistered"}}</div>
+{{/if}}

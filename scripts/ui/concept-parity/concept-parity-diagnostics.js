@@ -62,7 +62,14 @@ function normalizeHref(href) {
 
 function collectLoadedStyles() {
   return Array.from(document.querySelectorAll('link[rel="stylesheet"], style[data-href]'))
-    .map((node) => normalizeHref(node.getAttribute('href') || node.dataset.href || ''))
+    .map((node) => normalizeHref(
+      // Prefer the resolved `.href` property over `getAttribute('href')`: Foundry
+      // may emit a root-relative attribute (no leading slash, e.g.
+      // "systems/foundryvtt-swse/styles/...") which normalizeHref's
+      // "/systems/" substring match won't find. The resolved property is
+      // always an absolute URL, so it reliably contains "/systems/".
+      node.href || node.getAttribute('href') || node.dataset.href || ''
+    ))
     .filter(Boolean);
 }
 

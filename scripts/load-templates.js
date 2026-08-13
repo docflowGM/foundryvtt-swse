@@ -364,6 +364,7 @@ export const SWSE_TEMPLATES = [
   'systems/foundryvtt-swse/templates/shell/partials/games/surface-games-sabacc-table.hbs',
   'systems/foundryvtt-swse/templates/shell/partials/games/surface-games-dejarik-table.hbs',
   'systems/foundryvtt-swse/templates/shell/partials/games/surface-games-hintaro-table.hbs',
+  'systems/foundryvtt-swse/templates/shell/partials/games/session-composer.hbs',
   'systems/foundryvtt-swse/templates/shell/partials/surface-allies.hbs',
   'systems/foundryvtt-swse/templates/shell/partials/surface-atlas.hbs',
   'systems/foundryvtt-swse/templates/shell/partials/surface-transmission-decryption.hbs',

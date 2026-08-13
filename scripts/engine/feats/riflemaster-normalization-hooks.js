@@ -5,11 +5,24 @@ function normalizeName(value) {
   return String(value ?? '').trim().toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
 }
 
-function hasRuleType(item, types = []) {
+// PASSIVE RULE contract (passive-contract.js validateRule) rejects any rule
+// object carrying 'value', 'amount', 'operation', 'modifiers' or 'target'.
+// A previous version of riflemasterRules() below emitted 'value' on two of
+// these rules, so actors normalized by that version carry rules that fail
+// validation on every prepareDerivedData() pass. Treat those as *not*
+// normalized so this hook re-writes them the next time the item is touched,
+// instead of perpetually skipping because a same-named rule already exists.
+const BANNED_RULE_FIELDS = ['value', 'amount', 'operation', 'modifiers', 'target'];
+
+function hasValidRuleType(item, types = []) {
   const wanted = new Set((Array.isArray(types) ? types : [types]).map(String));
   const rules = item?.system?.abilityMeta?.rules;
   if (!Array.isArray(rules)) return false;
-  return rules.some(rule => wanted.has(String(rule?.type ?? '')) && String(rule?.source ?? '').toLowerCase() === 'riflemaster');
+  return rules.some(rule =>
+    wanted.has(String(rule?.type ?? ''))
+    && String(rule?.source ?? '').toLowerCase() === 'riflemaster'
+    && !BANNED_RULE_FIELDS.some(field => rule?.[field] !== undefined)
+  );
 }
 
 function riflemasterRules() {
@@ -24,7 +37,11 @@ function riflemasterRules() {
     {
       type: 'WEAPON_PROPERTY_OVERRIDE',
       property: 'accurate',
-      value: true,
+      // No explicit `value` field: PASSIVE RULE validation (passive-contract.js)
+      // rejects any rule carrying a 'value' key ("Rules are boolean, not
+      // numeric"). CombatOptionResolver.collectWeaponRuleModifiers already
+      // defaults to `true` when rule.value is absent (`rule.value ?? true`),
+      // which is exactly what this override wants.
       requiresWeaponText: ['blaster-rifle'],
       requiresAttackType: 'ranged',
       source: 'Riflemaster',
@@ -34,7 +51,9 @@ function riflemasterRules() {
       type: 'WEAPON_DAMAGE_DIE_SIZE_STEP',
       requiresWeaponText: ['heavy-blaster-rifle'],
       requiresAttackType: 'ranged',
-      value: 1,
+      // 'steps' rather than 'value' — see note above. CombatOptionResolver
+      // reads `rule.value ?? rule.steps ?? 0` for this rule type.
+      steps: 1,
       source: 'Riflemaster',
       label: 'Riflemaster: Heavy Blaster Rifle d10 to d12'
     },
@@ -53,7 +72,7 @@ async function normalizeRiflemaster(item, options = {}) {
   if (options?.swseRiflemasterNormalization === true) return false;
   if (!item?.actor || item.type !== 'feat') return false;
   if (normalizeName(item.name) !== 'riflemaster') return false;
-  if (hasRuleType(item, ['BRACE_AUTOFIRE_ALLOWED', 'WEAPON_PROPERTY_OVERRIDE', 'WEAPON_DAMAGE_DIE_SIZE_STEP', 'EFFECTIVE_WEAPON_SIZE'])) return false;
+  if (hasValidRuleType(item, ['BRACE_AUTOFIRE_ALLOWED', 'WEAPON_PROPERTY_OVERRIDE', 'WEAPON_DAMAGE_DIE_SIZE_STEP', 'EFFECTIVE_WEAPON_SIZE'])) return false;
 
   try {
     await ActorEngine.updateEmbeddedDocuments(item.actor, 'Item', [{

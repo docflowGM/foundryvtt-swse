@@ -81,6 +81,10 @@ export class ShellSurfaceRegistry {
       return this._buildSingleItemUpgradeOverlayVm(actor, overlayOptions);
     }
 
+    if (overlayId === 'game-session-composer') {
+      return this._buildGameSessionComposerOverlayVm(actor, overlayOptions, shellHost);
+    }
+
     if (overlayId.startsWith('confirm-')) {
       return this._buildConfirmOverlayVm(overlayId, overlayOptions);
     }
@@ -90,6 +94,31 @@ export class ShellSurfaceRegistry {
     }
 
     return { overlayId, title: overlayId };
+  }
+
+  /**
+   * Game Session Composer overlay VM.
+   *
+   * Deliberately NOT a second source of truth: this reuses the same
+   * GamesSurfaceService.buildViewModel() the Games library surface itself
+   * renders from, seeded with the shell's current (shared) surface options.
+   * Selecting a rules mode, starting a solo table, or sending an invite from
+   * inside the composer goes through the exact same GamesSurfaceController
+   * actions/services as the old inline "Start a Table" form did — this VM
+   * builder only decides what the modal shows, never game/session state.
+   */
+  static async _buildGameSessionComposerOverlayVm(actor, options, shellHost) {
+    try {
+      const { GamesSurfaceService } = await import(
+        '/systems/foundryvtt-swse/scripts/ui/shell/GamesSurfaceService.js'
+      );
+      const surfaceOptions = { ...(shellHost?.shellSurfaceOptions || {}), ...(options || {}) };
+      const vm = await GamesSurfaceService.buildViewModel(actor, surfaceOptions);
+      return { ...vm, overlayId: 'game-session-composer' };
+    } catch (err) {
+      SWSELogger.error('[ShellSurfaceRegistry] Game Session Composer overlay VM failed:', err);
+      return { overlayId: 'game-session-composer', title: 'Configure Table', error: err.message };
+    }
   }
 
   // ─── Drawer VM Builders ─────────────────────────────────────────────────────

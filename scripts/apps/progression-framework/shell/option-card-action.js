@@ -117,7 +117,13 @@ export function resolveOptionCardAction({
     // Force Power copy) keep their wording while the card is actionable.
     announce = candidateName ? `${verb} ${candidateName}` : String(verb);
   } else {
-    const template = localize(`${definition.key}.Announce`, definition.announce);
+    // NOTE: intentionally no dot before "Announce" — Foundry's localization
+    // loader expandObject()s flat dotted keys into a nested tree, and a key
+    // that is simultaneously a leaf string (CardAction.Select = "SELECT")
+    // and a branch (CardAction.Select.Announce = "...") crashes that expansion
+    // ("Cannot create property 'Announce' on string"). See lang/en.json's
+    // CardAction block, which uses the matching "SelectAnnounce" naming.
+    const template = localize(`${definition.key}Announce`, definition.announce);
     announce = candidateName
       ? template.replace('{name}', candidateName)
       : template.replace('{name}', '').replace(/\s+/g, ' ').trim();

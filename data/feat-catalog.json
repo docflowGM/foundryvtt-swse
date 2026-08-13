@@ -10198,7 +10198,7 @@
         "metadataPhase": "phase14-next-feat-implementation-batch",
         "metadataNotes": "Phase 14 continues description-guided feat implementation: Force-skill bonuses, attack rerolls, condition-track rules, weapon-family rules, and safe action/resource metadata.",
         "executionModel": "PASSIVE",
-        "subType": "RULE",
+        "subType": "STATE",
         "implementationStatus": "action_metadata_phase14",
         "actionRules": [
           {
