@@ -69,6 +69,7 @@ import { registerTokenNameSyncHooks } from "./scripts/core/token-name-sync.js";
 import { installSwseFlagScopeCompatibility } from "./scripts/utils/flags/swse-flags.js";
 import { registerNpcDamageHydrationHooks } from "./scripts/engine/import/npc-damage-hydration-hooks.js";
 import { AttackRollDiagnostics } from "./scripts/engine/combat/attack-roll-diagnostics.js";
+import { registerActorPerfDiagnostics } from "./scripts/utils/actor-perf-diagnostics.js";
 import "./scripts/talents/squad-actions-init.js";
 import "./scripts/talents/minion-actions-init.js";
 
@@ -93,6 +94,13 @@ Hooks.once("init", async () => {
   // SWSE.debug.attackRolls.events after rolling an attack. Disabled (no-op,
   // no logging) by default.
   globalThis.SWSE.debug.attackRolls = AttackRollDiagnostics;
+  // Phase 1 actor authority + performance baseline: opt-in actor/derived/
+  // modifier-cache/sheet-context timing. Enable the 'performanceDiagnostics'
+  // (or 'debugMode') client setting, then use SWSE.debug.performance.actor(actor),
+  // SWSE.debug.performance.summary(), and SWSE.debug.performance.reset().
+  // Disabled (near-zero cost) by default. See scripts/utils/actor-perf-diagnostics.js
+  // and docs/audits/v2-actor-authority-performance-phase-1.md.
+  registerActorPerfDiagnostics();
 
   const { Actors, Items } = foundry.documents.collections;
   const { ActorSheet, ItemSheet } = foundry.appv1.sheets;
@@ -265,24 +273,16 @@ function registerLegacyHandlebarsHelpers() {
     getCrewName: id => {
       const actor = game.actors.get(id) || canvas.tokens.get(id)?.actor;
       return actor ? actor.name : "";
-    },
-    calculateDamageThreshold: actor => {
-      if (!actor?.system) return 0;
-      const fortitude = actor.system.defenses?.fortitude?.total ?? 10;
-      const size = String(actor.system.size ?? "medium").toLowerCase();
-      const sizeMods = { tiny: -5, small: 0, medium: 0, large: 5, huge: 10, gargantuan: 20, colossal: 50 };
-      const featBonus = actor.items?.some(i => i.type === "feat" && i.name?.toLowerCase() === "improved damage threshold") ? 5 : 0;
-      return fortitude + (sizeMods[size] ?? 0) + featBonus;
-    },
-    getSkillMod: (skill, abilities, level, conditionTrack) => {
-      if (!skill || !abilities) return 0;
-      const penalties = { normal: 0, "-1": -1, "-2": -2, "-5": -5, "-10": -10, helpless: -100 };
-      return (abilities[skill.ability]?.mod || 0)
-        + (skill.trained ? 5 : 0)
-        + (skill.focus ? 1 : 0)
-        + Math.floor((level || 1) / 2)
-        + (penalties[conditionTrack] || 0);
     }
+    // NOTE: `calculateDamageThreshold` and `getSkillMod` helpers were removed here
+    // (2026-08 Phase 1 authority audit). Both independently reimplemented SWSE rules
+    // math (DT/skill totals) in template-facing code and had zero live call sites in
+    // any .hbs template — verified by repo-wide search. The authoritative
+    // computations live in ThresholdEngine.calculateDamageThreshold() / defenses.js
+    // (DT) and DerivedCalculator/skills-reference.js (skill totals); templates read
+    // system.derived.* rather than recomputing rules. See
+    // docs/audits/v2-actor-authority-performance-phase-1.md, section "UI-side rule
+    // math audit".
   };
 
   for (const [name, helper] of Object.entries(helpers)) {

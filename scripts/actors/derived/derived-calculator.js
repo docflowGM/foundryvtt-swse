@@ -38,6 +38,8 @@ import { isRankedModeEnabled, deriveTrainedFromRanks } from "/systems/foundryvtt
 import { getDamageThresholdSizeBonus } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-stat-rules.js";
 import { DamageTypeRules } from "/systems/foundryvtt-swse/scripts/engine/combat/damage-type-rules.js";
 import { MetaResourceFeatResolver } from "/systems/foundryvtt-swse/scripts/engine/feats/meta-resource-feat-resolver.js";
+import { ActorPerfDiagnostics } from "/systems/foundryvtt-swse/scripts/utils/actor-perf-diagnostics.js";
+import { isPerformanceDiagnosticsEnabled } from "/systems/foundryvtt-swse/scripts/utils/performance-utils.js";
 
 export class DerivedCalculator {
   static _computeCache = new Map();
@@ -95,6 +97,16 @@ export class DerivedCalculator {
   }
 
   static getActorComputeSignature(actor) {
+    const perfEnabled = isPerformanceDiagnosticsEnabled();
+    const start = perfEnabled ? performance.now() : 0;
+    try {
+      return this._getActorComputeSignatureImpl(actor);
+    } finally {
+      if (perfEnabled) ActorPerfDiagnostics.recordDerivedSignatureCost(performance.now() - start);
+    }
+  }
+
+  static _getActorComputeSignatureImpl(actor) {
     if (!actor?.id) return null;
     const actorRevision = actor?._stats?.modifiedTime
       ?? actor?._source?._stats?.modifiedTime
@@ -186,12 +198,15 @@ export class DerivedCalculator {
   static async computeAll(actor) {
     const cacheKey = this.getActorComputeSignature(actor);
     if (cacheKey && this._computeCache.has(cacheKey)) {
+      ActorPerfDiagnostics.recordDerivedCacheEvent('hit');
       return this._cloneUpdates(this._computeCache.get(cacheKey));
     }
     if (cacheKey && this._computeInFlight.has(cacheKey)) {
+      ActorPerfDiagnostics.recordDerivedCacheEvent('inflight');
       const updates = await this._computeInFlight.get(cacheKey);
       return this._cloneUpdates(updates);
     }
+    ActorPerfDiagnostics.recordDerivedCacheEvent('miss');
 
     const computePromise = (async () => {
       try {

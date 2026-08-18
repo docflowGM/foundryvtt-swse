@@ -11,6 +11,7 @@ import { InventoryEngine } from "/systems/foundryvtt-swse/scripts/engine/invento
 import { DSPEngine } from "/systems/foundryvtt-swse/scripts/engine/darkside/dsp-engine.js";
 import { normalizeSkillMap } from "/systems/foundryvtt-swse/scripts/utils/skill-normalization.js";
 import { collectKnownForceSecrets, collectKnownForceTechniques } from "/systems/foundryvtt-swse/scripts/utils/force-knowledge.js";
+import { buildActorItemIndex } from "./actor-item-index.js";
 
 /**
  * Compute the minimal v2-derived fields for Characters.
@@ -79,15 +80,17 @@ export function computeCharacterDerived(actor, system) {
     system.derived.damage.threshold = 10;
   }
 
+  const itemIndex = buildActorItemIndex(actor);
+
   mirrorIdentity(actor, system);
   mirrorHp(system);
   mirrorSkills(system);
   mirrorAttacks(actor, system);
-  mirrorFeats(actor, system);
-  mirrorTalents(actor, system);
+  mirrorFeats(actor, system, itemIndex);
+  mirrorTalents(actor, system, itemIndex);
   mirrorForceTechniques(actor, system);
   mirrorForceSecrets(actor, system);
-  mirrorStarshipManeuvers(actor, system);
+  mirrorStarshipManeuvers(actor, system, itemIndex);
   mirrorRacialAbilities(system);
   mirrorActions(actor, system);
   mirrorEncumbrance(actor, system);
@@ -556,8 +559,8 @@ function mirrorAttacks(actor, system) {
 }
 
 
-function mirrorFeats(actor, system) {
-  const feats = (actor?.items ?? []).filter(i => i.type === 'feat');
+function mirrorFeats(actor, system, itemIndex = null) {
+  const feats = itemIndex?.byType.get('feat') ?? (actor?.items ?? []).filter(i => i.type === 'feat');
   const list = [];
   const groupsByKey = new Map();
 
@@ -595,8 +598,8 @@ function mirrorFeats(actor, system) {
   system.derived.feats.groups = groups;
 }
 
-function mirrorTalents(actor, system) {
-  const talents = (actor?.items ?? []).filter(i => i.type === 'talent');
+function mirrorTalents(actor, system, itemIndex = null) {
+  const talents = itemIndex?.byType.get('talent') ?? (actor?.items ?? []).filter(i => i.type === 'talent');
   const list = [];
   const groupsByKey = new Map();
 
@@ -671,8 +674,8 @@ function mirrorForceSecrets(actor, system) {
   system.derived.forceSecrets.count = list.length;
 }
 
-function mirrorStarshipManeuvers(actor, system) {
-  const maneuvers = (actor?.items ?? []).filter(i => i.type === 'maneuver');
+function mirrorStarshipManeuvers(actor, system, itemIndex = null) {
+  const maneuvers = itemIndex?.byType.get('maneuver') ?? (actor?.items ?? []).filter(i => i.type === 'maneuver');
   const list = [];
 
   for (const m of maneuvers) {

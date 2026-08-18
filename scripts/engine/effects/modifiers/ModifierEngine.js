@@ -27,6 +27,8 @@ import {
 } from "/systems/foundryvtt-swse/scripts/items/armor-data-resolver.js";
 import { EffectIntentEngine } from "/systems/foundryvtt-swse/scripts/dialogs/entity-dialog/effect-intent-engine.js";
 import { buildSourceBreakdown, buildModifierLedger } from "/systems/foundryvtt-swse/scripts/engine/effects/modifiers/modifier-breakdown-builder.js";
+import { ActorPerfDiagnostics } from "/systems/foundryvtt-swse/scripts/utils/actor-perf-diagnostics.js";
+import { isPerformanceDiagnosticsEnabled } from "/systems/foundryvtt-swse/scripts/utils/performance-utils.js";
 
 export class ModifierEngine {
 
@@ -102,6 +104,16 @@ export class ModifierEngine {
   }
 
   static _actorModifierSourceSignature(actor) {
+    const perfEnabled = isPerformanceDiagnosticsEnabled();
+    const start = perfEnabled ? performance.now() : 0;
+    try {
+      return this._actorModifierSourceSignatureImpl(actor);
+    } finally {
+      if (perfEnabled) ActorPerfDiagnostics.recordModifierSignatureCost(performance.now() - start);
+    }
+  }
+
+  static _actorModifierSourceSignatureImpl(actor) {
     if (!actor?.id) return null;
     const attributes = actor?.system?.attributes ?? actor?.system?.abilities ?? {};
     const strength = attributes?.str ?? attributes?.strength ?? {};
@@ -258,8 +270,10 @@ export class ModifierEngine {
 
     const cacheKey = this._actorModifierSourceSignature(actor);
     if (cacheKey && this._modifierSourceCache.has(cacheKey)) {
+      ActorPerfDiagnostics.recordModifierCacheEvent('source', 'hit');
       return this._cloneCacheValue(this._modifierSourceCache.get(cacheKey));
     }
+    ActorPerfDiagnostics.recordModifierCacheEvent('source', 'miss');
 
     const modifiers = [];
 
@@ -488,8 +502,10 @@ export class ModifierEngine {
   static async aggregateAll(actor) {
     const cacheKey = this._actorModifierSourceSignature(actor);
     if (cacheKey && this._aggregateCache.has(cacheKey)) {
+      ActorPerfDiagnostics.recordModifierCacheEvent('aggregate', 'hit');
       return this._cloneCacheValue(this._aggregateCache.get(cacheKey));
     }
+    ActorPerfDiagnostics.recordModifierCacheEvent('aggregate', 'miss');
 
     const allModifiers = await this.getAllModifiers(actor);
     const aggregated = {};
@@ -692,8 +708,10 @@ export class ModifierEngine {
     const targetKey = this._targetsSignature(targets);
     const cacheKey = sourceKey && targetKey ? `${sourceKey}|breakdown|${targetKey}` : null;
     if (cacheKey && this._breakdownCache.has(cacheKey)) {
+      ActorPerfDiagnostics.recordModifierCacheEvent('breakdown', 'hit');
       return this._cloneCacheValue(this._breakdownCache.get(cacheKey));
     }
+    ActorPerfDiagnostics.recordModifierCacheEvent('breakdown', 'miss');
 
     const allModifiers = await this.getAllModifiers(actor);
     const staticModifiers = allModifiers.filter(mod => this.isModifierAllowedInContext(actor, mod, {}, { staticSheet: true }));
