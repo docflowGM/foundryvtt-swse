@@ -4287,7 +4287,19 @@ export const ActorEngine = {
     }
 
     // 2. Compatibility mirror: system.abilities
-    //    Rebuilt from system.attributes on every prepareDerivedData(); treat as a compat backstop.
+    //    Phase 2 authority normalization correction: this function (called
+    //    from ActorEngine's own update pipeline on every ActorEngine-mediated
+    //    mutation that touches system.attributes/system.abilities — see
+    //    _initializeCanonicalShapesForTouchedDomains above) is the ONLY code
+    //    anywhere that populates/repairs system.abilities. DerivedCalculator
+    //    does NOT rebuild it (verified: derived-calculator.js only ever
+    //    *reads* `actor.system.attributes || actor.system.abilities`, it
+    //    never writes system.abilities). This backfill only fills missing
+    //    base/racial/temp shape defaults — it is not an independent value
+    //    authority, and no live code writes real ability *values* here.
+    //    Treat system.abilities strictly as a read-only compatibility mirror;
+    //    system.attributes is canonical (system.derived.attributes is the
+    //    canonical computed output — see DerivedCalculator.computeAll()).
     if (!actor.system.abilities) actor.system.abilities = {};
     for (const key of abilityKeys) {
       if (!actor.system.abilities[key]) {

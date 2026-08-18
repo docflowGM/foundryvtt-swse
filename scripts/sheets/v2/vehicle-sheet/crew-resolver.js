@@ -41,10 +41,37 @@ function label(value, fallback = EMPTY) {
   return resolved === null ? fallback : String(resolved);
 }
 
+/**
+ * Phase 2 authority normalization fix: system.crew is confirmed to exist in
+ * at least four live shapes across this codebase — the template.json schema
+ * default (an empty Array), compendium-imported vehicles (a descriptive
+ * String, e.g. "2 (Normal Crew Quality )"), shipyard-built starships
+ * (a plain Number, from data/stock-ships.json via vehicle-factory.js), and
+ * import-normalized vehicles (an Object, {occupied,total,quality,passenger},
+ * from vehicle-import-normalizer.js's normalizeCrew()). The previous
+ * `Number(value)` here returned NaN -> null for both the String and Object
+ * shapes — the two most common real-world cases (any compendium-imported or
+ * properly-normalized vehicle) — silently degrading crewTotal to "unknown"
+ * and, downstream, facts.largeCrew/multiCrew to a false "small crew" read.
+ * Only the Number shape and the empty-Array schema default (Number([]) is 0,
+ * a legitimate "no crew configured yet" reading) ever worked correctly.
+ */
 function numberOrNull(value) {
   if (value === null || value === undefined || value === "") return null;
-  const number = Number(value);
-  return Number.isFinite(number) ? number : null;
+  if (typeof value === "number") return Number.isFinite(value) ? value : null;
+  if (Array.isArray(value)) {
+    const fromArray = Number(value);
+    return Number.isFinite(fromArray) ? fromArray : null;
+  }
+  if (typeof value === "object") {
+    return numberOrNull(value.total ?? value.occupied ?? value.value ?? value.count ?? null);
+  }
+  const str = String(value).trim();
+  if (!str) return null;
+  const direct = Number(str);
+  if (Number.isFinite(direct)) return direct;
+  const match = str.match(/\d+(\.\d+)?/);
+  return match ? Number(match[0]) : null;
 }
 
 function hasResource(system, ...keys) {
