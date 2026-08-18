@@ -1,8 +1,11 @@
 # V2 Actor Authority + Performance Baseline — Phase 1
 
-**Status:** Phase 1 complete (authority documentation + UI-math cleanup + opt-in
-performance instrumentation). No schema migration, no sheet split, no vehicle/
-droid derived rewrite — those are explicitly out of scope for this phase.
+**Status:** Phase 1 complete and merge-verified (authority documentation +
+UI-math cleanup + opt-in performance instrumentation), including a dedicated
+final verification/break-it pass (§13) that manually proved behavioral
+equivalence for the highest-risk edits rather than relying on syntax checks
+alone. No schema migration, no sheet split, no vehicle/droid derived
+rewrite — those are explicitly out of scope for this phase.
 
 **Scope discipline:** every finding below was verified against the actual code
 on this branch (file:line citations throughout) before anything was changed.
@@ -332,8 +335,9 @@ This environment has no live Foundry client/browser — there is no way to actua
 - `node tools/run-rolling-tests.mjs` — 114 passed, 1 failed, of 115 run (5 pre-existing Force-power-track exclusions unrelated to this work). The 1 failure (`progression-suggestion-and-render-contracts.test.mjs`, `lang/en.json is missing the announced form of Select`) was verified via `git stash` to fail identically on the base branch with none of this phase's changes applied — **confirmed pre-existing, not a regression**.
 - New tests added this phase:
   - `tests/actor-item-index.test.mjs` — locks in `buildActorItemIndex()`'s grouping contract, including byte-for-byte parity with the `.filter(i => i.type === X)` calls it replaced.
-  - `tests/perf-agg.test.mjs` — locks in the pure aggregation math (`freshAgg`/`recordAgg`/`aggSummary`) behind the new performance instrumentation, and confirms by construction (argument-count assertions) that none of these helpers accept or could mutate an actor/document reference.
-- **Coverage caveat**: `scripts/utils/actor-perf-diagnostics.js` itself, and the instrumentation call sites in `base-actor.js`/`derived-calculator.js`/`ModifierEngine.js`/`character-sheet.js`, are **not** exercised by the Node test suite — those files (like most of the actor/sheet/engine stack) use Foundry-only absolute `/systems/foundryvtt-swse/...` imports and cannot be imported under plain Node, the same documented limitation behind this repo's 5 pre-existing Force-power-track test exclusions. They were verified by direct code review, `node --check` syntax validation, and the fact that the full rolling-system test suite (which exercises `character-actor.js`'s callers indirectly through other passing tests) shows zero behavioral regressions.
+  - `tests/perf-agg.test.mjs` — locks in the pure aggregation math (`freshAgg`/`recordAgg`/`aggSummary`) behind the new performance instrumentation: zero/one/many samples, a `duration = 0` sample, sub-millisecond fractional durations, and confirms max never regresses after a run of smaller samples. Also confirms by construction (argument-count assertions) that none of these helpers accept or could mutate an actor/document reference.
+  - `tests/actor-perf-diagnostics-shim.test.mjs` — added during the Phase 1 final verification pass. This repo already has a Foundry-shim harness (`tests/helpers/foundry-shim/`, built for the droid Phase 3/4 work) that rewrites Foundry-only absolute imports and stubs the narrow set of Foundry globals production code touches. `scripts/utils/actor-perf-diagnostics.js`, `scripts/actors/derived/derived-calculator.js`, and `scripts/engine/effects/modifiers/ModifierEngine.js` all load and execute correctly through the *existing* harness with zero new shim scaffolding. This test runtime-verifies (not just statically traces): the diagnostics-disabled path is a true no-op (`assert.deepEqual` of before/after state), the enabled path's counters are accurate, `ActorPerfDiagnostics.time()` preserves the wrapped call's return value/exceptions/non-promise-ness exactly, `DerivedCalculator.getActorComputeSignature`'s and `ModifierEngine._actorModifierSourceSignature`'s try/finally timing wrappers preserve their original null-bypass and determinism contracts, and — the most important correctness property — a `DerivedCalculator.computeAll()`/`ModifierEngine.getAllModifiers()` cache **hit** returns data `deepEqual` to the original **miss**, proving the added cache-hit/miss instrumentation doesn't itself corrupt what the cache returns. It also confirms `scripts/actors/v2/base-actor.js` loads without throwing at import time. **What this does not cover**: `base-actor.js`'s instance methods (`_performDerivedCalculation`, `_computeDerivedAsync`) and `character-sheet.js`'s `_prepareContext` need a realistic actor/sheet `this` well beyond this shim's documented boundary to invoke meaningfully — those remain verified by static trace only (see the "Final verification pass" addendum below).
+- **Coverage caveat (revised)**: the instrumentation call sites inside `base-actor.js`'s and `character-sheet.js`'s *instance methods* are still not exercised by the Node test suite — those specific code paths need a fuller actor/sheet `this` context than the existing shim harness is scoped for, and building that scaffolding was judged out of scope for a verification pass (it would be new test infrastructure, not verification of existing code). They were verified by direct code review, `node --check` syntax validation, and the full rolling-system test suite showing zero behavioral regressions. Everything else touched this phase — `actor-perf-diagnostics.js` itself, `DerivedCalculator`'s and `ModifierEngine`'s signature/cache instrumentation — is now genuinely runtime-verified, not just statically traced.
 
 ---
 
@@ -371,3 +375,107 @@ In priority order, based on what this phase's audit actually found (not a re-sta
 7. **Droid item-index consolidation** (§8) — a droid-specific `DroidItemIndex` (not a reuse of `actor-item-index.js`, since armor/weapon/equipment projection semantics differ) to collapse the 12 scans in `DroidSheetContextBuilder.build()`.
 8. **NPC `calculationMode` enum** (§2) — formalize NPC statblock/progression/follower/beast authority into an explicit stored field, matching the `droidCalculationMode` precedent that already exists and works.
 9. Only after 1-8: revisit `system.abilities` retirement, the giant `character-sheet.js` split, and the `computeVehicleDerived()` character-derived-then-overwrite pattern — all three are real, but none of them are blocked on anything in this list, and all three are large enough to deserve their own dedicated, single-purpose PRs per the "surgical changes" principle this phase followed.
+
+---
+
+## 13. Final verification / break-it pass
+
+A dedicated pass performed after the initial Phase 1 PR was opened, specifically to try to disprove the claim that the instrumentation changed timing/observability only. Nothing in this section changed data models, sheets, or scope — it is verification and, where it found a genuine gap, additional test coverage.
+
+### 13.1 `conceptLayout` instrumentation — exact before/after proof
+
+Diff (`git show <phase-1-commit> -- scripts/sheets/v2/character-sheet.js`), the highest-risk single edit:
+
+```diff
+-    const conceptLayout = buildConceptSheetViewModel({
++    const conceptLayout = ActorPerfDiagnostics.time(
++      ms => ActorPerfDiagnostics.recordSheetContext(actor?.type ?? 'character', ms),
++      () => buildConceptSheetViewModel({
+       ...context,
+       ...panelContexts,
+       isGM,
+       [... ~35 unchanged interior lines ...]
+       useNpcConceptSheet
+-    });
++    }));
+```
+
+The object literal's interior — every key and value passed to `buildConceptSheetViewModel` — is byte-for-byte unchanged; only the call is wrapped. Traced against `ActorPerfDiagnostics.time(recorder, fn)`:
+
+```js
+time(recorder, fn) {
+  if (!isPerformanceDiagnosticsEnabled()) return fn();
+  const start = now();
+  const result = fn();
+  if (result && typeof result.then === 'function') {
+    return result.then(value => { recorder(now() - start); return value; }, err => { recorder(now() - start); throw err; });
+  }
+  recorder(now() - start);
+  return result;
+}
+```
+
+- **Arguments**: identical object, same evaluation order (same literal, not reordered).
+- **Sync/async semantics**: `buildConceptSheetViewModel`, `buildNpcConceptSheetContext`, `buildVehicleSheetContext`, and `DroidSheetContextBuilder.build()` are all plain synchronous functions (confirmed by their `export function`/method declarations, no `async`, no `await` inside `time()`'s call chain). `result.then` is therefore never a function for any of the four wrapped sites — the Promise branch is dead code for these call sites specifically, so `time()` always takes the synchronous `recorder(...); return result;` path. **No Promise was introduced.**
+- **Return value**: identical — `time()` returns exactly `fn()`'s return value on every path (disabled: `return fn()`; enabled: `return result` where `result = fn()`).
+- **`this` semantics**: none of the four wrapped calls are method calls that depend on the surrounding function's `this` (they're plain function calls, or — for the Droid case — a method call on a freshly-constructed instance, `new DroidSheetContextBuilder(actor).build()`, whose `this` inside `.build()` resolves via the normal receiver rule and is unaffected by the arrow-function wrapper around it).
+- **Exceptions**: `time()`'s enabled-path `const result = fn();` is not wrapped in its own try/catch, so a synchronous throw from `fn()` propagates out of `time()` immediately, exactly as if `fn()` had been called directly — unchanged from the original code's exception behavior, still caught by the pre-existing outer `try { ... } catch (err) { swseLogger.warn(...) }` around each of the four call sites.
+- **Diagnostics-disabled path**: `return fn()` — verified byte-for-byte equivalent to calling the original expression directly.
+
+**Runtime-verified** (not just statically traced) via `tests/actor-perf-diagnostics-shim.test.mjs`: `time()`'s return-value passthrough, non-promise-ness, and exception propagation were executed for real (not reasoned about) using this repo's existing Foundry-shim harness — see §13.6.
+
+No wrapper replacement was needed; the pattern proved fully traceable and is now also runtime-tested.
+
+### 13.2 Every instrumentation call site — verified individually
+
+All seven `SWSEPerf`/`ActorPerfDiagnostics` additions (`base-actor.js` ×2 phases, `derived-calculator.js` signature + cache, `ModifierEngine.js` signature + 3 caches, `character-sheet.js` ×4 context builds) were re-traced against the diff directly:
+
+- **Return values**: unchanged on every path (see per-file notes below).
+- **Exceptions**: unchanged; the two `try { return this._xImpl(actor); } finally { ... }` wrappers (`DerivedCalculator.getActorComputeSignature`, `ModifierEngine._actorModifierSourceSignature`) preserve the try block's return value because their `finally` blocks never themselves `return`/`throw` — and cannot, in practice, since `ActorPerfDiagnostics.recordDerivedSignatureCost`/`recordModifierSignatureCost` only perform arithmetic on plain object fields (`agg.count += 1; agg.totalMs += durationMs; ...`), which cannot throw for any numeric input.
+- **Promise behavior**: `base-actor.js`'s `_computeDerivedAsync` finally-block addition (`ActorPerfDiagnostics.recordPreparePhase(this.id, 'async', ...)`) runs after the existing signature-cleanup logic and does not itself return/throw, so it cannot change the async function's resolved value (it already never rejects — the pre-existing `catch` swallows errors and doesn't rethrow, unchanged).
+- **No additional renders**: every render-related addition (`recordRenderQueued`/`recordRenderSuppressed`/`recordRenderSkippedNoChange`) is a bare counter increment placed immediately before a pre-existing `return`/`queueMicrotask(...)` call — none of them call `render()`, `requestSurfaceRender()`, or any other paint path themselves.
+- **No actor mutation**: none of the additions write to `system`, `actor`, or any Foundry document — confirmed by reading every inserted line; they only call into `ActorPerfDiagnostics`, whose own state is entirely module-private counters (§13.4).
+- **No extra `prepareDerivedData` calls**: nothing added calls `prepareDerivedData`, `update()`, or any actor lifecycle method.
+- **Disabled path**: gated correctly everywhere. One asymmetry noted (not a bug): `base-actor.js` computes `isPerformanceDiagnosticsEnabled()` once per phase into a local `perfEnabled` and gates all its `ActorPerfDiagnostics` calls on it, while `derived-calculator.js`/`ModifierEngine.js`'s cache-hit/miss counters call `ActorPerfDiagnostics.recordDerivedCacheEvent`/`recordModifierCacheEvent` directly (those methods self-gate internally) — meaning the settings read happens up to 3× per `computeAll()`/cache-check chain there versus once per prepare phase in `base-actor.js`. `game.settings.get()` reads an already-loaded in-memory value (no I/O), so this is a real but immaterial cost difference, left as-is per "don't refactor without a concrete problem."
+
+### 13.3 Item index — re-verified with one new (non-regression) finding
+
+Re-traced `mirrorFeats`/`mirrorTalents`/`mirrorStarshipManeuvers`'s `itemIndex?.byType.get(X) ?? (actor?.items ?? []).filter(i => i.type === X)` pattern against `buildActorItemIndex`:
+
+- **Ordering**: both walk `actor.items`'s native Collection iteration order (insertion order); `buildActorItemIndex` preserves each type-bucket's relative order exactly as `.filter()` would, since interleaving with other types during the single shared pass does not affect a given bucket's internal relative order.
+- **Item identity**: both push/return the same object references from `actor.items`, no cloning — `byType.get('feat')[i] === (actor.items filtered)[i]` for the same index.
+- **Type matching**: `item?.type ?? 'unknown'` buckets an item with a missing/null `type` under `'unknown'`, never under a real type key — matching `i.type === 'feat'`'s `false` result for the same item. Confirmed via `tests/actor-item-index.test.mjs`.
+- **Empty collections**: when a bucket is absent (`byType.get('feat')` → `undefined`), the `??` fallback re-runs the original `.filter()` — which also correctly evaluates to `[]` — so the result is correct either way, at the cost of one redundant (cheap) re-scan specifically when an actor has *zero* items of that type. This is intentional/tested behavior (`tests/actor-item-index.test.mjs` Test 1 explicitly locks in "a type with zero items has no bucket, same as `.filter()` returning `[]`"), not a new finding.
+- **Unusual/unknown types**: confirmed excluded from the wrong bucket in both old and new code (see Test 2's parity assertion across 4 types with 8 mixed items).
+- **New finding (non-regression)**: if `actor.items` ever contained a literal `null`/`undefined` entry, the OLD code (`i.type === 'feat'`) would throw a `TypeError` reading `.type` off `null`; the NEW code (`item?.type ?? 'unknown'`) uses optional chaining and would not throw, silently bucketing the null entry under `'unknown'`. This is a real behavioral difference under strict "byte-for-byte" scrutiny, but it makes the new code *more* defensive, not less — and it cannot occur with real Foundry embedded Documents (a `Collection` never holds `null`/`undefined` members through the normal document lifecycle). No action taken; noted for completeness since the verification pass explicitly asked for this check.
+- **Staleness**: `itemIndex` is a local variable created fresh by `buildActorItemIndex(actor)` at the top of every `computeCharacterDerived()` call, never stored on `actor`/`system`/module state — confirmed impossible to go stale across prepare cycles by construction (no cache, no memoization).
+
+### 13.4 New-file review verdicts
+
+| File | Genuinely useful? | Fold into existing module? | New authority layer? | Import scope | Circular risk | API surface | Verdict |
+|---|---|---|---|---|---|---|---|
+| `actor-item-index.js` | Yes — backs the §13.3 migration | Could fold into `character-actor.js`, but that would remove the file's testability (that file has absolute Foundry imports the test harness's *bare* relative-import tests can't use) | No — pure function, no state | Only `character-actor.js` + its own test (confirmed by grep) | None — zero imports, pure leaf | 1 exported function | **KEEP** |
+| `perf-agg.js` | Yes — pure aggregation math, deliberately separated for bare-import testability | Same tradeoff as above; folding into `actor-perf-diagnostics.js` would remove `tests/perf-agg.test.mjs`'s ability to import it without Foundry-shim scaffolding | No — plain math on a `{count,totalMs,maxMs}` shape | Only `actor-perf-diagnostics.js` + its own test | None — zero imports, pure leaf | 3 functions, matching exactly what's needed | **KEEP** (closest call of the three, but justified by concrete, exercised test coverage) |
+| `actor-perf-diagnostics.js` | Yes — the actual Phase 1 instrumentation module | Folding into `performance-utils.js` (generic, reused across chargen/progression/sheets) would mix actor/derived/modifier-domain knowledge into a deliberately generic file — **inconsistent** with this codebase's own convention of separate domain-specific instrumentation modules alongside the generic primitives (see `hook-performance.js`, `progression-render-stats.js`, both separate from `performance-utils.js` for the same reason) | No — every method either counts, times-and-passes-through, or reads counters; never gates a mechanical decision or caches a rules value | `base-actor.js`, `derived-calculator.js`, `ModifierEngine.js`, `character-sheet.js`, `index.js` (registration) — exactly the intended set | None — clean DAG through `performance-utils.js`→`logger.js` (leaf) and `perf-agg.js` (leaf); none of those import back | 7 `record*` methods (1:1 with the 7 distinct signals the brief asked for) + `time()` + 3 console commands + 1 registration fn | **KEEP**, appropriately scoped |
+
+### 13.5 Dead-helper audit — strengthened, same conclusion
+
+Beyond the original literal `{{helperName` template search, this pass additionally searched (repo-wide, `.js`/`.mjs`/`.hbs`/`.json`) for: quoted string literals of all 6 deleted names (`['"]name['"]`), `Handlebars.helpers['name']`/`.name` registry access, and object-literal key definitions (`^\s*name\s*[:(]`) that might indicate a second, missed registration site. **Zero matches** for any of these patterns beyond the two files already edited (`index.js`, `swse-helpers.js`). Every raw substring match found elsewhere (43 files) was manually confirmed to be an unrelated same-named data field (`conditionPenalty: defenses.fortitude.conditionPenalty ?? 0` on a `system.derived.defenses` object, `skillTotal: initiativeTotal` on an unrelated roll-result object, etc.) in files that don't even import `Handlebars`. Documentation was also checked (`docs/audits/*.md`) — the only hits are unrelated references to the `system.derived.damage.conditionPenalty` *data field*, not the deleted helper. **Conclusion unchanged: all 6 deletions are safe.**
+
+### 13.6 New runtime-verified test coverage
+
+`tests/actor-perf-diagnostics-shim.test.mjs` (new this pass) discovered and used an **existing** test harness (`tests/helpers/foundry-shim/`, built for the droid Phase 3/4 work) that this Phase 1 work did not originally use: it rewrites Foundry-only absolute imports and stubs the narrow Foundry-global surface production code touches. Through it, **with zero new shim scaffolding**, `actor-perf-diagnostics.js`, `derived-calculator.js`, and `ModifierEngine.js` load and execute for real under Node. This closed the single biggest gap named in the original merge review: several of the "NOT RUNTIME VERIFIED" claims in §10 are now **VERIFIED BY TEST**. Concretely proven at runtime (not just traced): the diagnostics-disabled path is a true no-op (`assert.deepEqual` of full state before/after); the enabled path's counters are accurate; `time()`'s return-value/exception/non-promise passthrough; the signature wrapper's null-bypass and determinism contract; and — the most important property — that a `DerivedCalculator.computeAll()` cache **hit** and a `ModifierEngine.getAllModifiers()` source-cache **hit** each return data `deepEqual` to the original miss, i.e. the added instrumentation does not corrupt cache correctness. `base-actor.js` was confirmed to load without throwing at import time. `character-sheet.js` was not attempted through the shim (its import surface — `Application`-family base classes, `UIManager`, dozens of engine modules — is far beyond this shim's documented narrow boundary, matching the harness's own stated limits for comparably heavy files like `progression-entry.js`).
+
+**Still not runtime-verified** (static trace only, per §13.1-§13.2): `base-actor.js`'s `_performDerivedCalculation`/`_computeDerivedAsync` *as bound instance methods* (would need a realistic actor `this` — `items`, `apps`, `type` — well beyond constructing a plain fake object, since these methods call several sibling engines that themselves need consistent actor state) and `character-sheet.js`'s `_prepareContext`. Building that scaffolding was judged out of scope for a verification pass (it is new test infrastructure, not verification of what already exists) and is the one item this pass leaves for an actual live Foundry smoke test.
+
+### 13.7 Perf-agg edge cases
+
+`tests/perf-agg.test.mjs` extended with: one sample, `duration = 0` (a real, countable sample — not treated as "no sample"), sub-millisecond fractional durations (confirming the accumulator keeps full precision even when the rounded *display* summary reads `0`), 500 non-monotonic samples (count/total/max all verified against an independently-computed expected value), and an explicit "max never decreases after smaller samples follow a larger one" case. Cache hit-only/miss-only/mixed scenarios live in `actor-perf-diagnostics.js`'s plain counters (not `perf-agg.js`'s duration aggregates) and are now covered by `tests/actor-perf-diagnostics-shim.test.mjs` instead (§13.6).
+
+### 13.8 Import/circular-dependency check
+
+No dependency-graph tool exists in this repo; performed by static review of every `import` line in the touched files. Result: a clean DAG. `actor-item-index.js` and `perf-agg.js` are pure leaves (zero imports each). `actor-perf-diagnostics.js` imports only `performance-utils.js` (→ `logger.js`, a leaf) and `perf-agg.js` (leaf) — none of which import back into `actor-perf-diagnostics.js` or any of its four consumers (`base-actor.js`, `derived-calculator.js`, `ModifierEngine.js`, `character-sheet.js`). No new cycle, no initialization-order change: `registerActorPerfDiagnostics()` uses `??=` to create `SWSE`/`SWSE.debug` defensively rather than assuming prior init order, and is only invoked from `index.js`'s `init` hook (never at module load), so it cannot fail startup regardless of registration order relative to other `SWSE.debug.*` assignments.
+
+### 13.9 CI reconfirmation
+
+Re-checked at the start of this pass: `main` was still at `b7287a5` (unchanged since the original PR was opened), and PR #952's only failing check (`progression-suggestion-and-render-contracts.test.mjs`, `lang/en.json is missing the announced form of Select`) was unchanged. This branch does not touch `lang/en.json`, progression suggestions, or render contracts. **Confirmed pre-existing, not introduced by this branch** — same conclusion as the original PR description, re-verified rather than assumed.

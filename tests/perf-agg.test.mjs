@@ -3,13 +3,15 @@ import { freshAgg, recordAgg, aggSummary } from '../scripts/utils/perf-agg.js';
 
 // Phase 1 actor authority + performance baseline: scripts/utils/
 // actor-perf-diagnostics.js aggregates prepareDerivedData/cache-signature/
-// sheet-context timings through these three pure helpers. The diagnostics
-// module itself imports Foundry-only absolute paths (matching the rest of
-// this codebase's convention for engine-facing files, see
-// docs/audits/rolling-system-alignment-phase-5.md's Force-power-track
-// exclusion notes) and so cannot be imported directly under plain Node —
-// these tests instead lock in the aggregation math it depends on, and
-// confirm none of it ever takes or mutates an actor/document reference.
+// sheet-context timings through these three pure helpers. This file locks
+// in the aggregation math itself in isolation (via a bare relative import,
+// no Foundry surface needed at all) and confirms none of it ever takes or
+// mutates an actor/document reference. The diagnostics module that consumes
+// these helpers, and the real DerivedCalculator/ModifierEngine instrumentation
+// built on it, ARE separately runtime-verified — see
+// tests/actor-perf-diagnostics-shim.test.mjs, which loads the real production
+// modules (Foundry-only absolute imports and all) through this repo's
+// existing Foundry-shim harness (tests/helpers/foundry-shim/).
 
 // ── freshAgg starts at zero (Test 1) ────────────────────────────────────────
 
@@ -48,6 +50,75 @@ import { freshAgg, recordAgg, aggSummary } from '../scripts/utils/perf-agg.js';
 {
   const summary = aggSummary(freshAgg());
   assert.deepEqual(summary, { count: 0, totalMs: 0, avgMs: 0, maxMs: 0 });
+}
+
+// ── one sample: count/total/max/avg all equal that single duration (Test 6) ─
+
+{
+  const agg = freshAgg();
+  recordAgg(agg, 7.5);
+  assert.deepEqual(agg, { count: 1, totalMs: 7.5, maxMs: 7.5 });
+  const summary = aggSummary(agg);
+  assert.deepEqual(summary, { count: 1, totalMs: 7.5, avgMs: 7.5, maxMs: 7.5 });
+}
+
+// ── duration = 0 is a real sample, not treated as "no sample" (Test 7) ─────
+// A same-tick synchronous call (e.g. a cache hit resolved in <1μs, rounded to
+// 0 by performance.now()) must still increment count — it is evidence the
+// call happened, not evidence it didn't.
+
+{
+  const agg = freshAgg();
+  recordAgg(agg, 0);
+  assert.deepEqual(agg, { count: 1, totalMs: 0, maxMs: 0 });
+  recordAgg(agg, 4);
+  assert.deepEqual(agg, { count: 2, totalMs: 4, maxMs: 4 }, 'a zero-duration sample does not corrupt a later non-zero max');
+}
+
+// ── very small fractional durations do not vanish to zero after rounding (Test 8) ──
+
+{
+  const agg = freshAgg();
+  recordAgg(agg, 0.001);
+  recordAgg(agg, 0.002);
+  const summary = aggSummary(agg);
+  assert.equal(summary.count, 2);
+  // 0.001 + 0.002 rounds to 0.00 at 2 decimals — this is intentional display
+  // rounding (documented in aggSummary), not data loss: `agg.totalMs` itself
+  // (the accumulator record*Cost callers actually branch on) keeps full
+  // precision, only the *presentation* copy in aggSummary() rounds.
+  assert.equal(summary.totalMs, 0);
+  assert.ok(agg.totalMs > 0, 'the underlying accumulator retains full precision even though the rounded summary reads 0');
+}
+
+// ── many samples: count/total/max stay correct under repeated accumulation (Test 9) ──
+
+{
+  const agg = freshAgg();
+  let expectedTotal = 0;
+  let expectedMax = 0;
+  for (let i = 1; i <= 500; i++) {
+    const duration = (i % 37) + i * 0.01; // varied, non-monotonic durations
+    recordAgg(agg, duration);
+    expectedTotal += duration;
+    if (duration > expectedMax) expectedMax = duration;
+  }
+  assert.equal(agg.count, 500);
+  assert.ok(Math.abs(agg.totalMs - expectedTotal) < 1e-6, 'totalMs matches the running sum across 500 samples');
+  assert.equal(agg.maxMs, expectedMax, 'maxMs matches the true maximum across 500 non-monotonic samples');
+}
+
+// ── max never decreases once a larger sample has been recorded, regardless of
+// how many smaller samples follow (Test 10) ────────────────────────────────
+
+{
+  const agg = freshAgg();
+  recordAgg(agg, 100);
+  recordAgg(agg, 1);
+  recordAgg(agg, 50);
+  recordAgg(agg, 0.5);
+  recordAgg(agg, 99.999);
+  assert.equal(agg.maxMs, 100, 'maxMs stays at the largest-ever sample even after four smaller ones follow it');
 }
 
 // ── none of these helpers take, read, or return anything actor/document-shaped —
