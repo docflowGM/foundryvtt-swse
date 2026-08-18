@@ -1,4 +1,5 @@
 import { RenderAssertions } from "/systems/foundryvtt-swse/scripts/core/render-assertions.js";
+import { ActorPerfDiagnostics } from "/systems/foundryvtt-swse/scripts/utils/actor-perf-diagnostics.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import MobileMode from "/systems/foundryvtt-swse/scripts/ui/mobile-mode-manager.js";
@@ -4194,7 +4195,10 @@ const forcePoints = [];
     let droidSheetContext = null;
     if (isDroidActor) {
       try {
-        droidSheetContext = new DroidSheetContextBuilder(actor).build();
+        droidSheetContext = ActorPerfDiagnostics.time(
+          ms => ActorPerfDiagnostics.recordSheetContext('droid', ms),
+          () => new DroidSheetContextBuilder(actor).build()
+        );
       } catch (err) {
         swseLogger.warn('[SWSEV2CharacterSheet] Failed to build droid systems tab context', {
           actorId: actor?.id,
@@ -4217,7 +4221,9 @@ const forcePoints = [];
     const combatStatus = buildCombatStatusViewModel(actor, { canEdit: this.isEditable });
     const effectiveDefenses = buildEffectiveDefensesViewModel(actor, panelContexts.defensePanel);
 
-    const conceptLayout = buildConceptSheetViewModel({
+    const conceptLayout = ActorPerfDiagnostics.time(
+      ms => ActorPerfDiagnostics.recordSheetContext(actor?.type ?? 'character', ms),
+      () => buildConceptSheetViewModel({
       ...context,
       ...panelContexts,
       isGM,
@@ -4257,16 +4263,19 @@ const forcePoints = [];
       isNpcActorDocument,
       isPromotedHeroicNpcActor,
       useNpcConceptSheet
-    });
+    }));
 
     if (useNpcConceptSheet) {
       try {
-        context.npcConcept = buildNpcConceptSheetContext(actor, {
-          ...context,
-          derived,
-          conceptLayout,
-          actionEconomy
-        });
+        context.npcConcept = ActorPerfDiagnostics.time(
+          ms => ActorPerfDiagnostics.recordSheetContext('npc', ms),
+          () => buildNpcConceptSheetContext(actor, {
+            ...context,
+            derived,
+            conceptLayout,
+            actionEconomy
+          })
+        );
       } catch (err) {
         swseLogger.warn('[SWSEV2CharacterSheet] NPC concept sheet context failed', {
           actorId: actor?.id,
@@ -4452,17 +4461,20 @@ const forcePoints = [];
     const cargoState = totalCargoWeight > cargoCapacity * 1.1 ? 'over' : totalCargoWeight > cargoCapacity * 0.8 ? 'near' : 'normal';
 
     const ruleContexts = VehicleRulesAdapter.buildAllRuleContexts(actor);
-    const panelContext = buildVehicleSheetContext(actor, context, {
-      subsystemData: ruleContexts.subsystemData,
-      subsystemPenalties: ruleContexts.subsystemPenalties,
-      shieldZones: ruleContexts.shieldZones,
-      powerData: ruleContexts.powerData,
-      pilotData: ruleContexts.pilotData,
-      commanderData: ruleContexts.commanderData,
-      turnPhaseData: ruleContexts.turnPhaseData,
-      totalCargoWeight,
-      cargoState
-    });
+    const panelContext = ActorPerfDiagnostics.time(
+      ms => ActorPerfDiagnostics.recordSheetContext('vehicle', ms),
+      () => buildVehicleSheetContext(actor, context, {
+        subsystemData: ruleContexts.subsystemData,
+        subsystemPenalties: ruleContexts.subsystemPenalties,
+        shieldZones: ruleContexts.shieldZones,
+        powerData: ruleContexts.powerData,
+        pilotData: ruleContexts.pilotData,
+        commanderData: ruleContexts.commanderData,
+        turnPhaseData: ruleContexts.turnPhaseData,
+        totalCargoWeight,
+        cargoState
+      })
+    );
 
     let actionEconomy = buildSheetActionEconomyContext({ active: false });
     if (game.combat && game.combat.combatants.some(c => c.actor?.id === actor.id)) {

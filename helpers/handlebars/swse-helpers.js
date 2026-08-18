@@ -1,20 +1,27 @@
+// NOTE: `conditionPenalty`, `isHelpless`, `defenseCalculation`, and `skillTotal`
+// helpers were removed here (2026-08 Phase 1 authority audit). All four
+// independently reimplemented SWSE rules math (condition-track penalties,
+// helplessness, defense totals, skill totals) in template-facing code and had
+// zero live call sites in any .hbs template — verified by repo-wide search.
+// The authoritative computations live in scripts/utils/calc-conditions.js
+// (condition penalties/helplessness) and DerivedCalculator/skills-reference.js
+// (skill totals); templates read system.derived.* rather than recomputing
+// rules. See docs/audits/v2-actor-authority-performance-phase-1.md, section
+// "UI-side rule math audit".
 export const swseHelpers = {
   halfLevel: (level) => Math.floor(Number(level || 1) / 2),
 
-  conditionPenalty: (track) => {
-    const penalties = { 'normal': 0, '-1': -1, '-2': -2, '-5': -5, '-10': -10, 'helpless': 0 };
-    return penalties[track] || 0;
-  },
-
-  isHelpless: (track) => track === 'helpless' || track === 5,
-
-  defenseCalculation: (defense, actor) => {
-    if (defense === 'reflex' && actor?.system?.armor?.equipped) {
-      return `10 + Armor ${actor.system.armor.reflexBonus || 0}`;
-    }
-    return `10 + Level ${actor?.system?.level || 1}`;
-  },
-
+  // KNOWN GAP (documented, not fixed in Phase 1): forceRerollDice is used by
+  // templates/partials/actor/persistent-header.hbs and independently derives
+  // the Force Point bonus-dice COUNT from level tiers (1d6/2d6/3d6), while the
+  // real authority — ForcePointsService.getScalingDice()/getDieSize() — also
+  // factors in feats and ModifierEngine die-size upgrades (e.g. Strong in the
+  // Force) and is async, so it cannot be called from a synchronous Handlebars
+  // helper. No precomputed system.derived field for the full Force Point
+  // formula exists yet to swap this call site onto. Left intact per Phase 1
+  // scope; Phase 2 should have DerivedCalculator mirror
+  // ForcePointsService.getFormulaDisplay() into system.derived and repoint
+  // this template at that field.
   forceRerollDice: (level) => {
     // Display helper for showing Force Point dice bonus
     // Uses standard heroic scaling: 1d6 (default), 2d6 (level 8+), 3d6 (level 15+)
@@ -22,15 +29,6 @@ export const swseHelpers = {
     if (l >= 15) return '+3d6 (take highest)';
     if (l >= 8) return '+2d6 (take highest)';
     return '+1d6';
-  },
-
-  skillTotal: (skill, halfLevel, abilityMod, conditionPenalty) => {
-    let total = Number(halfLevel || 0) + Number(abilityMod || 0);
-    if (skill?.trained) {total += 5;}
-    if (skill?.focused) {total += 5;}
-    total += Number(skill?.misc || 0);
-    total += Number(conditionPenalty || 0);
-    return total;
   },
 
   sign: (value) => {

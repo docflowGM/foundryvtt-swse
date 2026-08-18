@@ -12,6 +12,8 @@ import { computeXpDerived } from "/systems/foundryvtt-swse/scripts/engine/progre
 import { SWSEInitiative } from "/systems/foundryvtt-swse/scripts/engine/combat/SWSEInitiative.js";
 import { PoisonEngine } from "/systems/foundryvtt-swse/scripts/engine/poison/poison-engine.js";
 import { ImplantRules } from "/systems/foundryvtt-swse/scripts/engine/implants/ImplantRules.js";
+import { ActorPerfDiagnostics } from "/systems/foundryvtt-swse/scripts/utils/actor-perf-diagnostics.js";
+import { isPerformanceDiagnosticsEnabled } from "/systems/foundryvtt-swse/scripts/utils/performance-utils.js";
 
 /**
  * SWSE V2 Base Actor
@@ -64,6 +66,12 @@ export class SWSEV2BaseActor extends SWSEActorBase {
    * @private
    */
   _performDerivedCalculation(system) {
+    // Phase 1 perf baseline: near-free when 'performanceDiagnostics'/'debugMode'
+    // is off — see scripts/utils/actor-perf-diagnostics.js. Only performance.now()
+    // is called when diagnostics are enabled.
+    const perfEnabled = isPerformanceDiagnosticsEnabled();
+    const syncStart = perfEnabled ? performance.now() : 0;
+
     // PHASE 4E: Register all PASSIVE/ACTIVE/RULE abilities BEFORE derived calc
     // This ensures modifiers are available during DerivedCalculator.computeAll()
     try {
@@ -103,6 +111,10 @@ export class SWSEV2BaseActor extends SWSEActorBase {
     }
 
     system.derived.meta.lastRecalcMs = Date.now();
+
+    if (perfEnabled) {
+      ActorPerfDiagnostics.recordPreparePhase(this.id, 'sync', performance.now() - syncStart);
+    }
   }
 
   /**
@@ -113,6 +125,8 @@ export class SWSEV2BaseActor extends SWSEActorBase {
    * @private
    */
   async _computeDerivedAsync(system) {
+    const perfEnabled = isPerformanceDiagnosticsEnabled();
+    const asyncStart = perfEnabled ? performance.now() : 0;
     const signature = DerivedCalculator.getActorComputeSignature?.(this) ?? null;
 
     // Foundry can call prepareDerivedData multiple times for the same document
@@ -154,7 +168,10 @@ export class SWSEV2BaseActor extends SWSEActorBase {
       // second modifier pass runs here (a legacy bundle pass used to, and it
       // overcounted Skill Focus and other passive bonuses on sheet/roll totals).
 
-      if (!changed) return;
+      if (!changed) {
+        if (perfEnabled) ActorPerfDiagnostics.recordRenderSkippedNoChange();
+        return;
+      }
 
       system.derived.meta ??= {};
       system.derived.meta.lastAsyncRecalcMs = Date.now();
@@ -170,8 +187,12 @@ export class SWSEV2BaseActor extends SWSEActorBase {
         return suppressDepth > 0 || Date.now() < suppressUntil;
       };
       if (apps.length && !isRefreshSuppressed()) {
+        if (perfEnabled) ActorPerfDiagnostics.recordRenderQueued();
         queueMicrotask(() => {
-          if (isRefreshSuppressed()) return;
+          if (isRefreshSuppressed()) {
+            if (perfEnabled) ActorPerfDiagnostics.recordRenderSuppressed();
+            return;
+          }
           for (const app of apps) {
             const surfaceId = app?._shellSurface ?? app?.shellSurface ?? 'sheet';
             try {
@@ -194,6 +215,9 @@ export class SWSEV2BaseActor extends SWSEActorBase {
     } finally {
       if (signature && this._swseDerivedAsyncInFlightSignature === signature) {
         this._swseDerivedAsyncInFlightSignature = null;
+      }
+      if (perfEnabled) {
+        ActorPerfDiagnostics.recordPreparePhase(this.id, 'async', performance.now() - asyncStart);
       }
     }
   }
