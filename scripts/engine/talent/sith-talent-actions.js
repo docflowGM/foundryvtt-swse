@@ -5,6 +5,7 @@ import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
 import { getClassLevel, getTotalLevel } from "/systems/foundryvtt-swse/scripts/actors/derived/level-split.js";
 import { DSPEngine } from "/systems/foundryvtt-swse/scripts/engine/darkside/dsp-engine.js";
 import { openForceAlchemyWorkbench } from "/systems/foundryvtt-swse/scripts/apps/force-alchemy/force-alchemy-workbench-app.js";
+import { getTalentAbilityMod as abilityMod } from "/systems/foundryvtt-swse/scripts/engine/talent/talent-ability-helpers.js";
 
 const NS = 'swse';
 
@@ -33,10 +34,6 @@ function sithClassLevel(actor) {
   const apprentice = getClassLevel(actor, 'sith_apprentice') || getClassLevel(actor, 'apprentice');
   const lord = getClassLevel(actor, 'sith_lord') || getClassLevel(actor, 'lord');
   return Math.max(1, Number(apprentice || 0) + Number(lord || 0));
-}
-
-function abilityMod(actor, key) {
-  return Number(actor?.system?.derived?.attributes?.[key]?.mod ?? actor?.system?.abilities?.[key]?.mod ?? actor?.system?.attributes?.[key]?.mod ?? 0) || 0;
 }
 
 function baseAttackBonus(actor) {

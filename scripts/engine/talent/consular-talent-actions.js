@@ -7,6 +7,7 @@ import { rollSkillCheck } from "/systems/foundryvtt-swse/scripts/rolls/skills.js
 import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
 import { SchemaAdapters } from "/systems/foundryvtt-swse/scripts/utils/schema-adapters.js";
 import { GuardianSpiritActions } from "/systems/foundryvtt-swse/scripts/engine/talent/guardian-spirit-actions.js";
+import { getTalentAbilityMod as getAbilityMod } from "/systems/foundryvtt-swse/scripts/engine/talent/talent-ability-helpers.js";
 
 const NS = 'swse';
 const ADEP_FLAG = 'adeptNegotiatorCondition';
@@ -37,10 +38,6 @@ function hasTalent(actor, name) {
 
 function getLevel(actor) {
   return Number(actor?.system?.level?.heroic ?? actor?.system?.details?.level ?? actor?.system?.level ?? 1) || 1;
-}
-
-function getAbilityMod(actor, key) {
-  return Number(actor?.system?.derived?.attributes?.[key]?.mod ?? actor?.system?.abilities?.[key]?.mod ?? actor?.system?.attributes?.[key]?.mod ?? 0) || 0;
 }
 
 function getDefense(actor, key) {

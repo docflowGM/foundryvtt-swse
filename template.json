@@ -447,6 +447,17 @@
         "max": 100
       },
       "speed": 0,
+      "characterScaleSpeedLabel": "",
+      "starshipScaleSpeedLabel": "",
+      "starshipSpeed": "",
+      "characterScaleMovementMode": "",
+      "starshipScaleMovementMode": "",
+      "vehicleMovementStatus": "",
+      "vehicleMovementRaw": "",
+      "characterScaleFightingSpace": "",
+      "starshipScaleFightingSpace": "",
+      "vehicleMovementSummary": "",
+      "vehicleIsImmobile": false,
       "subsystems": {
         "engines": "normal",
         "weapons": "normal",

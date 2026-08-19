@@ -5,6 +5,7 @@ import { SWSEDialogV2 } from "/systems/foundryvtt-swse/scripts/apps/dialogs/swse
 import { showRollModifiersDialog } from "/systems/foundryvtt-swse/scripts/rolls/roll-config.js";
 import { rollSkillCheck } from "/systems/foundryvtt-swse/scripts/rolls/skills.js";
 import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
+import { getTalentAbilityMod as getAbilityMod } from "/systems/foundryvtt-swse/scripts/engine/talent/talent-ability-helpers.js";
 
 const NS = 'swse';
 
@@ -47,10 +48,6 @@ function getClassLevel(actor) {
     if (Number.isFinite(n) && n > 0) return Math.floor(n);
   }
   return getLevel(actor);
-}
-
-function getAbilityMod(actor, key) {
-  return Number(actor?.system?.derived?.attributes?.[key]?.mod ?? actor?.system?.abilities?.[key]?.mod ?? actor?.system?.attributes?.[key]?.mod ?? 0) || 0;
 }
 
 function getAbilityScore(actor, key) {

@@ -43,6 +43,14 @@ function buildImportProfile(kind, source = {}) {
     mode: 'play',
     importMode: 'play',
     sourceAuthority: 'statblock',
+    // Phase 2 authority normalization: explicit mechanical-authority mode,
+    // matching resolveNpcCalculationMode()'s inference for this exact shape
+    // (scripts/actors/npc/npc-mode-adapter.js) — stamped once at import time
+    // per the brief's "explicit mode for newly-created/imported actors"
+    // migration strategy, rather than left to be re-inferred every render.
+    // Every kind this function produces (heroic/nonheroic/beast/mount/
+    // imported) is a template/statblock import, never a follower.
+    calculationMode: 'statblock',
     legalProfile,
     legalState: 'playable-unchecked',
     source: {
