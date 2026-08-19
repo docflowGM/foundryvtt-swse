@@ -1,6 +1,16 @@
 # Phase 2 — Actor Data-Model Authority Normalization
 
-**Status:** Complete. Builds on the merged Phase 1 baseline
+**Status:** Phase 2 initial pass (§1-12 below) was reviewed and found
+incomplete against its own brief — see §13 "Phase 2B — Authority
+Normalization Closure" for the closure pass that completes the analysis
+this document originally claimed was done. **Read §13 first**; §1-12 are
+preserved unmodified below as the historical record of the initial pass and
+remain individually accurate, but §13.0's status taxonomy supersedes any
+place where §1-12 implied a subtype's field-authority table was complete
+when it only covered the fields investigated at the time. §13.12 carries
+the current, authoritative completion verdict for Phase 2 as a whole.
+
+Builds on the merged Phase 1 baseline
 (`docs/audits/v2-actor-authority-performance-phase-1.md`). No schema
 migration to Foundry TypeDataModels, no sheet redesign, no
 `SWSEV2CharacterSheet` split, no `DerivedCalculator`/`ModifierEngine`
@@ -240,3 +250,470 @@ In priority order, based on what this phase's investigation actually found:
 4. **Speed/movement fallback-chain consolidation** for character/NPC/droid (the 4-5 near-identical chains found in §5) — genuinely low-risk given derived data is guaranteed populated by read time, good next target.
 5. **Vehicle movement normalization** — the two independent parsers and 9 undeclared source properties found in §2/§8; the brief's own permission to defer applies here, but it's real complexity worth budgeting real time for.
 6. Only after 1-5: revisit the still-standing Phase 1 recommendations (Vehicle tab-scoped lazy panels, Droid item-index consolidation, `character-sheet.js` split) — none of them are blocked on anything in this list.
+
+---
+
+# 13. PHASE 2B — Authority Normalization Closure
+
+**Why this section exists:** after the initial Phase 2 pass (§1-12) was
+delivered, a direct gap-analysis review ("What hasn't been accomplished
+here?") found several of the phase's own defining goals were unfinished —
+NPC authority, Droid initialization, the Droid/Vehicle authority maps,
+mutation-path auditing, and the contract test matrix. The standard set for
+this closure pass: *a deferred code change is acceptable; a missing
+authority analysis is not.* Ten unfinished areas were dispatched as
+independent, read-only research passes; this section reports every
+finding, states what was and wasn't safe to implement from them, and ends
+with one of three explicit recommendations (§13.12).
+
+## 13.0 Status taxonomy
+
+Every claim below is tagged with exactly one of:
+
+- **IMPLEMENTED** — code changed this pass, tested, verified (statically or
+  at runtime — noted per item).
+- **NORMALIZED** — an existing dual/multi-representation was consolidated
+  onto one authority.
+- **CENTRALIZED** — duplicate logic replaced with a single shared
+  implementation.
+- **DOCUMENTED ONLY** — the authority/ambiguity is now fully mapped with
+  file:line evidence, but no code changed (either because the evidence
+  says a change isn't needed, or because the change is real but too risky
+  without live verification).
+- **BLOCKED ON LIVE FOUNDRY** — a specific, executable runtime check is
+  required before any code change or before further confidence is
+  possible; the exact check is specified in §13.11.
+- **DEFERRED TO PHASE 3** — a real, evidenced gap or risk that is safe to
+  leave as-is for now but should be scheduled deliberately.
+- **DEFERRED TO SHEET WORK** — a real gap whose fix belongs to a future
+  sheet-controller-split phase, not an authority-normalization phase.
+
+Where §1-12 above described a subtype's field-authority table without
+qualification, treat it as covering only the fields it actually
+investigated — §13.3/§13.4 below are the first genuinely *complete*
+Vehicle/Droid field maps and supersede §2's Vehicle/Droid rows wherever
+they add a field §2 didn't cover.
+
+---
+
+## 13.1 NPC authority — complete (Area 1)
+
+**Question this had to answer definitively:** for statblock-imported NPCs,
+where do the actual authoritative numbers (not just "which fields are
+flagged protected") live?
+
+**Finding — hypothesis (A) confirmed for four fields, hypothesis (B)
+false, and a fifth field (skills) is neither:**
+
+| Field | Storage | Status |
+|---|---|---|
+| HP max | `system.hp.max`/`.value` — written directly by `_buildActorFromStatblock()` (`npc-template-importer-engine.js:301-361`) | **IMPLEMENTED** protection (§13.1.1) |
+| BAB | `system.bab` — same writer | DOCUMENTED ONLY (no live threat found) |
+| Damage threshold | `system.damageThreshold` — same writer, falls back to HP if absent | DOCUMENTED ONLY |
+| Defenses (4) | `system.defenses.{reflex,fort/fortitude,will,flatFooted}.total` — `_mapDefenses()` | DOCUMENTED ONLY |
+| Skills | **Nowhere.** Not `system.skills`, not `flags.beastData.skills` (only populated for the separate compendium-clone beast-import path), not any structured field — only the opaque `flags.swse.import.raw` blob | **DOCUMENTED ONLY — genuine gap, no safe fix this pass** |
+
+`system.npcStatblock.*` is **not** a published-totals snapshot (hypothesis
+B) — it's a GM-hand-edit override layer with zero import-time writers
+(only `templates/actors/npc/v2/partials/npc-statblock-editor-panel.hbs`'s
+form fields and `character-sheet.js:4928-4971`'s submit-handler mirror
+write to it). `npcProfile.calculationMode`/`overrides` (the Phase 2
+"protection" flags) are read by **nothing** outside `npc-mode-adapter.js`
+and its own test — they gate no calculator or recompute path. This
+confirms the original Phase 2 §7's honest caveat ("this phase deliberately
+did not add a statblock-override branch... wasn't verified with enough
+confidence") was the right call, but the investigation this pass did
+**does** conclusively answer the underlying storage question the original
+brief needed answered — it just answers it as "there is no separate
+override snapshot to read from; the source fields already are the
+authority, most of the time."
+
+### 13.1.1 IMPLEMENTED — the real bug this investigation found
+
+`ActorEngine.recomputeHP()` (`actor-engine.js:3780-3800`) is wired via
+`HPRecomputeHooks` to fire automatically on any edit to `system.level` or
+`system.attributes.con.*` — both explicitly GM-editable on the NPC sheet.
+Its "no class Item found" branch unconditionally collapses `system.hp.max`
+to `1`. Statblock-imported NPCs never get a `class`-type Item (`_addItemsToActor`
+never creates one), so **the first CON or level edit a GM makes on any
+statblock-imported NPC destroys its real, correctly-imported HP max** —
+live, not hypothetical, confirmed by tracing the hook registration and the
+exact writable-field whitelist.
+
+**Fix implemented** (`scripts/governance/actor-engine/actor-engine.js`):
+`recomputeHP()`'s no-class-item branch now checks
+`actor.type === 'npc' && isNpcStatblockMode(actor)` first and, if true,
+returns the actor's current `system.hp.max` unchanged instead of writing
+`1`. `isNpcStatblockMode()` is the same predicate `shouldSkipDerivedData()`
+(`scripts/utils/hardening.js`) already uses to gate the async derived pass
+for statblock NPCs — this fix brings `recomputeHP` in line with a
+precedent that already existed elsewhere in the codebase, rather than
+inventing a new one.
+
+**Verification status:** the guard's predicate logic is unit-tested
+(`tests/phase-2b-closure-fixes.test.mjs`, Tests 2-3) by direct import of
+the real `isNpcStatblockMode()` (`npc-mode-adapter.js` has zero
+dependencies, so this is real production code under test) and by an
+inline reproduction of the two-line branch added to `actor-engine.js`.
+**The full integration — the actual write-skip inside the real
+`recomputeHP()`, wired through the real `HPRecomputeHooks` — is NOT
+runtime-verified**, because `tests/helpers/foundry-shim/path-loader.mjs`
+explicitly redirects `actor-engine.js` to a test fake for every existing
+test using this repo's shim harness (its own comment: "whose real
+implementation transitively imports most of the engine layer and is far
+too heavy for a narrow harness"). Confirmed by direct experiment this
+pass: importing the real file via the shim throws `Cannot read properties
+of undefined (reading 'api')` from a transitive dependency. This is a
+**pre-existing harness limitation, not something this fix introduced** —
+no code change in this pass could close it without expanding the shim
+(explicitly out of scope per Phase 1's "no new shim infrastructure"
+standing instruction). See §13.11, item 1, for the exact live-Foundry
+check this still needs.
+
+**Skills gap — DOCUMENTED ONLY, no fix attempted:** since no field
+anywhere carries structured statblock skill totals for nonheroic/heroic
+imports, `system.derived.skills`'s attribute-mod + half-level + trained
+guess is silently used instead, and will diverge from the published total
+whenever it includes feats, synergy, or size bonuses the guess doesn't
+model. Fixing this requires either (a) a new importer feature to parse the
+`Skills` statblock line into structured data (real feature work, not an
+authority-normalization fix), or (b) reparsing `flags.swse.import.raw.Skills`
+on demand in the sheet layer the way `beastData.skills` is already parsed
+by `parseNpcStatblockSkillLines`. Recommended as a Phase 3 candidate,
+scoped as its own small pass (§13.12 does not block on this).
+
+---
+
+## 13.2 Droid creation-path matrix — complete, re-verified (Area 2)
+
+Re-verified all six creation paths byte-for-byte against the original
+Phase 2 §6 summary — no discrepancies. Per-field classification, now with
+an explicit safe-to-move-now verdict per field (this supersedes §6's
+"investigated, not moved" blanket verdict with field-level granularity):
+
+| Field | Safe to default at the two zero-payload paths (quick-add dialog, store-checkout partial)? | Why |
+|---|---|---|
+| `buildHistory`, `degree`, `size`, `stateMode`, `appendages`, `sensors`, `weapons`, `accessories` | **YES** | Every reader is `Array.isArray`-guarded or tolerates an empty string/default enum; no reader requires a specific non-default value |
+| `locomotion` | Borderline YES | Key-set varies (`cost`/`sourceText` presence) but no reader requires the missing keys; safe to default with a superset shape `{id:'',name:'',speed:0}` |
+| `processor` | **NO** | Builder's `.bonus` vs stock/reference's `.active`/`.slotKey` — `droid-systems-resolver.js:343` reads `.bonus` and silently gets `0` for non-builder droids; needs a canonical-key decision first |
+| `armor` | **NO — confirmed breaking conflict** | Builder writes `.bonus`; stock importer never sets `armor` at all; `ensureDroidSystemsDefaults()` writes `.rating`. `context-builder.js:595-606` reads `.bonus`; `droid-systems-resolver.js:400` reads `.rating` — **two live readers on the same sheet expect two different key names for the same value, and no path populates both** |
+| `credits` | **NO** | `.remaining` is a landmine: `droid-modifications.js:219`'s `validateModificationInstall()` reads `credits?.remaining \|\| 0` directly (no recompute fallback) — silently `0` for every path except the Garage builder. Currently dead code (zero callers), so no live break today, but must be resolved before that function is ever wired up |
+| `appendageSlots`, `droidStatus` | YES, trivially | Both fields are write-only from `ensureDroidSystemsDefaults()` — **no reader exists anywhere in the codebase** for either one |
+| `processors` (plural) | Moot | Its only reader (`collectDroidPartEffectsFromActor`) has zero callers; the canonical mechanical reader (`resolveInstalledDroidComponents()`) deliberately excludes it from `DROID_SYSTEMS_ARRAY_FIELDS` |
+
+**Reconciliation engine finding:** `DroidConvertedSystemReconciliationService`
+exists but does **not** solve the shape-conflict problem above — it moves
+data from `publishedTotals.droidSystems` into `system.installedSystems` (a
+third, separate ledger), never into `droidSystems.processor`/`.locomotion`,
+and only runs on explicit, manual, two-step, permission-gated GM/owner
+action after a droid has already been converted to `PLAYABLE_DERIVED`
+mode. The plural/singular shape divergence between the stock normalizer
+and the builder remains permanently unreconciled by any existing
+mechanism.
+
+**Verdict: unchanged from §6 — droid `droidSystems.*` migration remains
+DEFERRED, but now with field-level granularity instead of a blanket
+defer.** The 8 fields marked YES above are genuinely safe to move to
+creation time in a future pass without further live verification; the 3
+marked NO require a canonical-key decision (armor `bonus` vs `rating`,
+processor `bonus` vs `active`/`slotKey`, credits `.remaining` stored vs.
+always-recomputed) that this pass declines to make unilaterally, per the
+brief's explicit instruction not to force schema unification without
+evidence of what the correct unified shape should be.
+
+---
+
+## 13.3 Full Vehicle field authority map (Area 3) — DOCUMENTED, supersedes §2's Vehicle row
+
+Baseline: `template.json`'s vehicle block has no `"templates": ["base"]`
+entry, so it does not inherit defenses/abilities the way character/NPC/
+droid do — everything below except `hp`/`speed`/`subsystems`/
+`enhancedShields`/`powerAllocation`/`crew`/`pilotManeuver`/
+`commanderOrder`/`turnState` is schema-undeclared, free-form data.
+
+| Field/Concept | Source | Duplicate authority? | Status |
+|---|---|---|---|
+| Identity (`category`/`type`/`size`) | `_onSubmitVehicleActorForm` whitelist (character-sheet.js:10684-10692) is the live writer; `swse-vehicle-handler.js:136-137` also writes at template-apply time | `vehicleType` classification is **computed fresh every render** from `category+type+tags` (`buildVehicleTypeFlags()`, own comment: "No schema-level vehicleType enum exists"), never persisted — not a duplicate-authority risk, just a naming gap | DOCUMENTED ONLY |
+| `system.domain` | Written only by a **precreate hook registered for `Hooks.on('preCreateItem', ...)` guarded on `document.type !== 'vehicle'`** — but `vehicle` is an Actor type, never an Item type, so this writer appears to never actually fire | Effectively dead/broken writer | DEFERRED TO PHASE 3 (low priority — the field is barely read) |
+| SR (Shield Rating) | `system.shields{value,max[,rating]}` **and** `system.shieldRating` (bare number) — both independently writable | **YES — confirmed real duplicate authority.** `vehicle-factory.js` writes both together; `vehicle-import-normalizer.js` writes only `shields`; `effect-resolver.js`/`tech-specialist-modification-service.js` write only `shieldRating`; only `GMApprovalOperationsService.js:711-714` explicitly syncs them. `resolveVehicleShieldState()`'s 8-candidate fallback chain is a **guess**, not an enforced contract. `DerivedCalculator` explicitly excludes vehicles from shield projection (confirmed in original Phase 2 §8) | **DEFERRED TO PHASE 3** — needs a canonical-field decision, not a narrow bug fix |
+| Crew stations | `BASE_STATIONS` hardcoded constant + `system.stations` (real, GM-authored custom roster) + `system.crewPositions` (occupancy) | The "explicit gunner override" branch (`system.crewPositions.gunners`) is dead code — **zero writers found anywhere** — not a live conflict, just misleading unreachable code | DOCUMENTED ONLY |
+| Weapon mounts | `system.weapons` (array, legacy/statblock shape) **and** embedded weapon Items (structured shape) | **YES — confirmed real duplicate-display bug.** `vehicle-weapon-import-normalizer.js` creates embedded Items from `system.weapons` entries but never clears the source array afterward; `buildVehicleWeaponMountPanel()` renders **both** simultaneously — any vehicle imported through this pipeline shows each weapon twice unless a GM manually empties `system.weapons` | **DEFERRED TO PHASE 3** — the fix (clear `system.weapons` after Item creation) is narrow but touches an import-mutation path; not executed this pass to keep this closure pass's code-change surface reviewable |
+| Cargo | `system.cargo` (string) vs `system.payload` (separate concept, string) | Not a duplicate — `payload` and `cargo` are genuinely different concepts. **Real but harmless bug found:** `character-sheet.js:4453` reads `system.cargo.capacity` assuming an object shape that no writer ever produces (always a string); latent because `buildVehicleCargoSummaryPanel()` recomputes its own value from `parseCargoString()` and only falls back to the broken read when unparseable | DEFERRED TO PHASE 3 (cosmetic dead-code cleanup) |
+| Subsystems | `system.subsystems.{engines,weapons,shields,sensors,comms,lifeSupport}` | Matches `template.json` exactly; single writer (`subsystem-engine.js`) | **No duplicate authority — clean** |
+| Power allocation | `system.powerAllocation.{weapons,shields,engines}` | Matches schema; single writer (`enhanced-engineer.js`) | **No duplicate authority — clean** |
+| Turn state | `system.turnState.*` | Matches schema; reset every vehicle turn by `VehicleTurnController.startTurn()`, coupled by design to pilot/commander/shield reset | **Genuine RUNTIME STATE — clean, correctly scoped** |
+| Pilot/commander state | `system.pilotManeuver`/`system.commanderOrder` | Matches schema; single writer each, reset to `'none'` every turn | **Genuine RUNTIME STATE — clean** |
+
+---
+
+## 13.4 Full Droid field authority map (Area 4) — DOCUMENTED, supersedes §2's Droid row
+
+| Field/Concept | Finding | Duplicate authority? | Status |
+|---|---|---|---|
+| Degree | `stock-droid-importer-engine.js:195-197` writes `droidDegree`/`degree`/`droidDegreeKey` (flat, import-time) **and** `droidSystems.degree` (Garage-live) independently | **YES — confirmed real divergence.** `prerequisite-checker.js:1632` and `droid-trait-passive-adapter.js:33,233` read only the flat fields, with **no fallback to `droidSystems.degree`** — a Garage-built-only droid (which never gets the flat fields written) silently reads `0`/`'1st-degree'` default for feat-gating and passive-trait resolution | **DEFERRED TO PHASE 3** |
+| Model/manufacturer/chassis | No `template.json` fields exist; zero writers found anywhere for `system.manufacturer`/`droidModel`/`droidType`/`restrictionLevel` | Not a duplicate — permanently dead reads, no writer at all | DOCUMENTED ONLY (dead code, low priority) |
+| Integrated vs. handheld weapons | Item-level `integrated` flag (`item.system.integrated`/`flags.swse.integrated`) determines the sheet split | `droidSystems.weapons` is a **second, independent** "installed weapon" representation, reconciled only one-directionally via `integratedParts` (catches droidSystems-only entries with no Item), never merged into `handheld` | **YES — confirmed real duplicate authority** | DEFERRED TO PHASE 3 |
+| Modification points / system slots | Two unrelated mechanisms: (a) physical slot capacity, with **two independently-maintained tables** (`droid-slot-governance.js`'s `SLOT_CATEGORIES` vs `droid-modification-factory.js`'s `STACKABLE_DROID_SLOTS`); (b) UI-only "Modification Points" budget | (a) latent duplicate-authority risk (not proven diverged, structurally at risk); (b) inert — its consumption side filters for Item type `"customization"`, which **is not a registered Item type** in `template.json`, so used-points is always `0` | DEFERRED TO PHASE 3 (a); DOCUMENTED ONLY, inert (b) |
+| Installed systems | `system.installedSystems` (canonical, per the resolver's own doc comment) vs `system.droidSystems.*` (demoted, but still directly editable) | **YES — acknowledged in-repo.** The resolver's own `conflicts` array exists specifically to surface disagreements between the two, not to prevent them | DOCUMENTED ONLY (already self-aware in the codebase; the conflict-surfacing mechanism is the correct mitigation, not a bug) |
+| Programming/protocols | `buildProtocolsPanel()`/`buildProgrammingPanel()` filter for Item types `"protocol"`/`"programming"` — **neither is a registered Item type** | Not a duplicate — permanently dead UI, can never render non-empty data | DOCUMENTED ONLY (unimplemented feature, not an authority bug) |
+| Statblock authority (`publishedTotals`) | Confirmed to carry a `droidSystems` sub-object, **frozen at import time**, read-only after conversion (`convertToPlayableDerived()` explicitly does not touch `droidSystems`/`installedSystems`) | Not a true duplicate — by design non-authoritative post-conversion, used only for diff/inspection or explicit opt-in reconciliation | **No duplicate authority — clean, working as designed** |
+| Build history | Single writer (`droid-builder-app.js`, `GMApprovalOperationsService.js`), both to `system.droidSystems.buildHistory` | Not a duplicate — but `context-builder.js:796` reads the **wrong path** (`this.system?.buildHistory`, missing `.droidSystems`) — a broken reader, not competing authority | DEFERRED TO PHASE 3 (one-line reader fix, low priority — cosmetic, no mechanical impact) |
+| Damaged/disabled system state | `item.system.droidPart.enabled`/`system.disabled` exist as read targets but have **zero writers anywhere** | Not a duplicate — unimplemented feature (no toggle action exists) | DOCUMENTED ONLY |
+
+---
+
+## 13.5 Speed/movement full audit (Area 5) — DOCUMENTED, one cleanup IMPLEMENTED
+
+**`system.speciesMovement` (climb/fly/swim/hover/glide/burrow):** re-confirmed
+fully dead, broadened this pass to also check combat/action-economy code
+(`action-engine-v2.js`, `droid-combat-action-adapter.js`,
+`vehicle-turn-controller.js`, `getDroidMovementRiders()`) — no reader
+anywhere, including places that superficially look movement-mode-related
+(those actually key off the separate `system.locomotion` droid subsystem,
+or are pure descriptive/GM-adjudicated text). **DEFERRED TO PHASE 3**
+(not removed — a real capability data field with no mechanical wiring is a
+feature-completion question, not this phase's to resolve).
+
+**`parseVehicleSpeed()` vs `parseVehicleSpeedText()`: confirmed correctly
+LAYERED, not duplicative — no centralization needed.** `parseVehicleSpeedText()`
+(`movement-normalizer.js`) is the real "dirty text → structured data"
+parser, called only at import/template-apply/precreate-hook time (one-time,
+persists results to `system.*`). `parseVehicleSpeed()`'s only live call
+site (`vehicle-context-builder.js:1211`) always passes an object (never a
+raw string), so its object branch is a render-time **projection** over
+already-normalized fields, not a second parser — merging the two would
+force every sheet render to re-parse raw text, a regression. **IMPLEMENTED:**
+removed the dead, unreachable string-input branch (25 lines) from
+`parseVehicleSpeed()` — confirmed zero production callers ever pass a raw
+string via the one production call site, so this is a pure dead-code
+prune, not a behavior change (syntax-checked, no dedicated runtime test
+written — see §13.9 rationale).
+
+**The 10-11 undeclared-but-genuinely-written vehicle movement properties**
+(`characterScaleSpeedLabel`, `starshipScaleSpeedLabel`, `starshipSpeed`,
+`characterScaleMovementMode`, `starshipScaleMovementMode`,
+`vehicleMovementStatus`, `vehicleMovementRaw`, `characterScaleFightingSpace`,
+`starshipScaleFightingSpace`, `vehicleMovementSummary`, `vehicleIsImmobile`):
+confirmed each has a real writer (`vehicle-import-normalizer.js` and/or
+`swse-vehicle-handler.js`) — not dead defensive code. **IMPLEMENTED:**
+declared all 11 in `template.json`'s vehicle block with their natural
+defaults (empty string / `false`), a purely additive schema change (Foundry
+template-merging only adds missing keys, never removes extras, so this
+cannot change behavior for any existing actor).
+
+**Bonus finding, not originally scoped, material to the recommendation:**
+`scripts/sheets/v2/vehicle-sheet/context.js` contained a **third**,
+independent `buildMovement()` re-implementation of the same 9+ fields,
+with yet another ad-hoc output shape. Confirmed **zero importers anywhere
+in the repo** (and independently corroborated by a pre-existing, unrelated
+audit doc — `docs/audits/vehicle-crew-assignment-phase-6.md` — which
+already described this exact file as "the dead `vehicle-sheet/context.js`").
+**IMPLEMENTED:** deleted the entire 459-line orphaned file.
+
+---
+
+## 13.6 Fallback inventory — classified, high-confidence fixes executed (Area 6)
+
+Per the brief's explicit conditional instruction ("execute only
+high-confidence fixes... if truly byte-identical... if provably
+redundant... if a real inconsistency"):
+
+| Cluster | Investigation result | Action |
+|---|---|---|
+| 5 talent-tree `abilityMod`/`getAbilityMod` helpers (Force Adept, Sith, Consular, Jedi Prestige, Sentinel) | Confirmed **byte-identical function bodies** (only the declared name differs, 3-vs-2 split). Call-site risk profile: mostly chat-text/dialog-label numbers, one attack-bonus fallback (`sith-talent-actions.js`), one live HP write (`consular-talent-actions.js`) | **CENTRALIZED.** New shared `scripts/engine/talent/talent-ability-helpers.js` exports `getTalentAbilityMod()`; all 5 files now import it (aliased to match each file's existing local call-site name, so zero call sites needed renaming). Deliberately **not** routed through `SchemaAdapters.getAbilityMod()` — that helper checks `system.attributes` before `system.abilities`, the reverse priority order, so swapping would be a real behavior change for actors with divergent mirrors, not a safe dedup |
+| `PanelContextBuilder.buildDefensePanel()`'s manual defense-total re-sum | Confirmed **provably redundant** for Fortitude/Reflex (every component read from the exact field `DefenseCalculator` already wrote) and **provably wrong** for Will whenever the actor has the Force Adept talent "Psychic Citadel" — the manual sum omits `psychicCitadelBonus` entirely because it's never persisted as its own breakdown field, while the cached `derived.defenses.will.total` DefenseCalculator returns does include it | **IMPLEMENTED (bug fix).** `total` now prefers the authoritative `derivedDefense.total` when finite, falling back to the manual sum only when it's unavailable — fixes the Psychic Citadel undercounting bug and removes redundant computation for the common case, with zero behavior change for every actor without that talent |
+| Droid `ref`/`reflex` defense-key naming | **Confirmed NOT a real inconsistency — does not generalize from the vehicle finding.** `DerivedCalculator.computeAll()` (the droid/character/NPC pipeline) writes **only** full-name keys (`reflex`/`fortitude`/`will`) — never `ref`/`fort` — full stop; the abbreviated-key dual-write pattern is a `vehicle-derived-builder.js`-only artifact. Droid `context-builder.js`'s full-name reads are the *only* correct choice, matching the system's own documented "PHASE 8: Canonical defense authority" convention (`PanelContextBuilder.js`'s own header comment) | **No fix needed — false alarm from the prior pass's over-generalization, corrected in this document** |
+
+**Attributes/abilities low-risk consumers** (the fourth item on the
+brief's conditional list): no new consolidation target was found beyond
+what §11 already documented (`SchemaAdapters.getAbilityMod`/`getAbilityScore`
+already exist as the correct centralization point; the ~45 scattered
+call-site migration remains DEFERRED TO PHASE 3 — unchanged from the
+original Phase 2 assessment, re-confirmed still accurate).
+
+---
+
+## 13.7 Broader mutation-authority audit (Area 7) — complete, headline: system is well-governed
+
+Scope: every sheet-edit mutation path for the seven requested field
+families (ability, HP, defenses, droid config, vehicle config, NPC mode,
+crew/stations, movement) across `scripts/sheets/v2/`,
+`scripts/apps/droid-builder-app.js`, `scripts/apps/store/`,
+`scripts/engine/import/`.
+
+**Finding: exactly one confirmed `ActorEngine` bypass across all seven
+families, and it's the already-known, already-documented one** —
+`ensureDroidSystemsDefaults()`'s in-memory `??=` default-filling during
+`computeDroidDerived()`/`prepareDerivedData` (class E: never itself calls
+`.update()`, confirmed again this pass to not silently persist unless a
+separate caller merges the full in-memory `system` object into an update
+payload — no such caller was found). Every other live, user-facing
+mutation site for these seven families already routes through
+`ActorEngine.updateActor()`/`.apply()`/`.recomputeHP()`/
+`.updateEmbeddedDocuments()` (class A), and this is enforced at runtime —
+a repo-wide `MutationInterceptor` wraps `Actor.prototype.update` and
+throws in strict/dev mode on any call outside an `ActorEngine.setContext()`
+window. Import/builder/store-checkout writers to these fields are
+legitimate creation-time data construction on plain (not-yet-persisted)
+objects (class D), not mutation of existing actors.
+
+**One adjacent, out-of-scope finding worth flagging:**
+`npc-damage-hydration-hooks.js:152` writes weapon `system.damageFormula`/
+`system.damage`/`system.statblockHydrated` via a direct
+`actor.updateEmbeddedDocuments()` call, bypassing `ActorEngine` — and it's
+not one-time: it also runs a full world-actor scan on every `ready` hook.
+This does not touch any of the seven requested field families (it's weapon
+damage-formula hydration), so it's **DEFERRED TO PHASE 3** if that scope
+is ever broadened, not itemized as a Phase 2B finding.
+
+**Status: DOCUMENTED, no code change needed** — the audit confirms the
+existing governance is sound; there was nothing to fix.
+
+---
+
+## 13.8 Schema / template.json re-evaluation (Area 8)
+
+Two purely additive schema declarations were made this pass (see §13.5):
+the 11 vehicle movement fields. No other schema change was made — the
+droid `droidSystems.*` shape-conflict fields (armor `bonus`/`rating`,
+processor `bonus`/`active`, credits `.remaining`) deliberately were **not**
+resolved into a schema decision this pass (§13.2) because doing so
+requires picking a canonical shape without live-client confirmation that
+the choice doesn't break an existing readers, which the brief's standard
+explicitly disallows guessing at.
+
+---
+
+## 13.9 Contract test coverage matrix (Area 9)
+
+| Actor type / mode | Existing coverage before Phase 2B | Added this pass |
+|---|---|---|
+| Character | `derived-calculator-vehicle-dt-skip.test.mjs` (Test 2, real `DerivedCalculator.computeAll()`), plus the pre-existing broad rolling suite | `phase-2b-closure-fixes.test.mjs` (talent ability-mod, Will-defense-total logic) |
+| NPC — progression mode | `npc-mode-adapter.test.mjs`, `derived-calculator-vehicle-dt-skip.test.mjs` (Test 3) | `phase-2b-closure-fixes.test.mjs` Test 2 (mode-predicate contrast case) |
+| NPC — statblock mode | `npc-mode-adapter.test.mjs` | `phase-2b-closure-fixes.test.mjs` Tests 2-3 (the `recomputeHP` guard's predicate and branch logic) — **NOT** a full integration test through the real `actor-engine.js` (blocked, see §13.1.1/§13.11) |
+| NPC — follower | `npc-mode-adapter.test.mjs` (mode-inference only) | None — follower defense math (`buildFollowerDefenseValues()`) remains untested by this pass, unchanged from before |
+| Droid | `derived-calculator-vehicle-dt-skip.test.mjs` (Test 3) | None new — the shape-conflict fields (§13.2/§13.4) are documented, not code-changed, so no new test was needed; existing droid tests (`droid-phase4-foundry-shim.test.mjs` and others, pre-existing) are unaffected |
+| Vehicle | `vehicle-hp-hull-dt-authority.test.mjs`, `vehicle-crew-count-shape-parity.test.mjs`, `derived-calculator-vehicle-dt-skip.test.mjs` (Test 1) | None new — the `parseVehicleSpeed()` dead-branch removal and the orphaned `context.js` deletion are pure-deletion changes with no behavior surface to test (confirmed via the same call-site grep that justified the deletions) |
+| Legacy/compatibility | Existing tests constructing actors with `system.abilities`-only (no `system.attributes`) continue to pass unmodified (re-confirmed via the full rolling suite run this pass) | — |
+
+**Why this pass did not attempt a full N-actor-type × M-mode integration
+matrix:** the brief's own standard draws the line at completing the
+*analysis*, not at writing exhaustive new integration tests for every
+combination this pass touched only at the documentation level. Two of the
+four code fixes in this pass (`recomputeHP`'s NPC guard,
+`PanelContextBuilder`'s Will-Defense fix) live inside modules with
+transitive import chains this repo's Foundry-shim harness cannot currently
+load (confirmed by direct experiment, not assumed) — expanding the shim to
+cover them is real, separately-scoped infrastructure work, explicitly out
+of bounds per Phase 1's "no new shim infrastructure" standing instruction.
+Where direct testing was blocked, this pass wrote the closest available
+substitute (real-import predicate tests plus inline logic-equivalence
+reproductions of the exact added branches) and documented the gap
+precisely rather than skipping verification silently.
+
+**Full test-suite result this pass:** `node tools/run-rolling-syntax-check.mjs`
+— all 2231 discovered source files pass. `node tools/run-rolling-tests.mjs`
+— 122 passed, 1 failed (of 123 run; 5 excluded as documented pre-existing
+failures) — the sole failure is `progression-suggestion-and-render-contracts.test.mjs`'s
+`lang/en.json is missing the announced form of Select` assertion, the same
+pre-existing, unrelated failure confirmed in Phase 1 (via `git stash`
+against base commit `b7287a5`) to predate all work in this multi-phase
+effort.
+
+---
+
+## 13.10 Exact files changed in Phase 2B
+
+**Production code:**
+- `scripts/governance/actor-engine/actor-engine.js` — `recomputeHP()` now skips the collapse-to-1 write for statblock-mode NPCs (§13.1.1).
+- `scripts/sheets/v2/context/PanelContextBuilder.js` — `buildDefensePanel()`'s `total` now prefers the authoritative cached `derivedDefense.total` over the manual re-sum (§13.6).
+- `scripts/engine/talent/talent-ability-helpers.js` (**new**) — shared `getTalentAbilityMod()`.
+- `scripts/engine/talent/force-adept-talent-actions.js`, `sith-talent-actions.js`, `jedi-prestige-talent-actions.js`, `consular-talent-actions.js`, `sentinel-talent-actions.js` — local duplicate helper removed, now import the shared one (§13.6).
+- `scripts/sheets/v2/vehicle-sheet/vehicle-context-builder.js` — `parseVehicleSpeed()`'s dead string-input branch removed (§13.5).
+- `scripts/sheets/v2/vehicle-sheet/context.js` (**deleted**) — orphaned, zero-importer duplicate movement/context builder (§13.5).
+- `template.json` — 11 vehicle movement fields declared with their existing real defaults (§13.5/§13.8).
+
+**New tests:**
+- `tests/phase-2b-closure-fixes.test.mjs` — covers all four code changes above at the level described in §13.9.
+
+**New/updated documentation:** this section (§13) of the existing Phase 2
+audit doc, in place rather than as a separate file, to keep the full
+Phase 2 authority-normalization narrative in one document.
+
+---
+
+## 13.11 Live-Foundry verification checklist (executable, five-part format)
+
+Per the brief's requirement that every remaining runtime-sensitive unknown
+be specified precisely enough to execute, not just gestured at:
+
+**1. NPC `recomputeHP` statblock guard (§13.1.1)**
+- *Exact code path:* `ActorEngine.recomputeHP()` (`scripts/governance/actor-engine/actor-engine.js`, the `if (!classItem)` branch), reached via `HPRecomputeHooks._registerActorUpdateHook()` whenever `system.level` or `system.attributes.con.*` changes on an actor.
+- *Exact unresolved question:* does the real, full `ActorEngine` (not the test fake) actually skip the HP-collapse write for a statblock-imported NPC when a GM edits its Constitution score on the live NPC sheet?
+- *Exact runtime observation needed:* import an NPC via the nonheroic/heroic statblock importer (any NPC with a real HP max, e.g. 45). Confirm `system.hp.max` reads 45 on the sheet. Edit the NPC's Constitution ability score by any amount via the sheet. Reload/re-render the sheet and read `system.hp.max` again.
+- *Exact expected possible outcomes:* (a) `system.hp.max` is still 45 (or the CON-recomputed-but-not-applicable value — statblock NPCs shouldn't recompute at all, so it should be unchanged) → fix confirmed working; (b) `system.hp.max` reads `1` → the guard did not fire as expected, likely because `isNpcStatblockMode()` returned false for this actor's actual shape (e.g. a live actor has fields this pass's synthetic test fixtures didn't anticipate) — needs immediate follow-up, not a Phase 3 backlog item, since it's a data-loss bug.
+- *What each outcome unlocks:* (a) closes this item permanently, no further action. (b) requires re-reading `getNpcProfileState()`'s inference against the actual live actor's `flags`/`system` shape and either correcting `isNpcStatblockMode()`'s inference or widening the guard's condition.
+
+**2. Vehicle weapon-mount duplicate display (§13.3)**
+- *Exact code path:* `buildVehicleWeaponMountPanel()` (`scripts/sheets/v2/vehicle-sheet/vehicle-context-builder.js`), merging embedded weapon Items and `system.weapons` array entries.
+- *Exact unresolved question:* does a vehicle actually show each imported weapon twice on the live sheet, confirming the static-trace finding?
+- *Exact runtime observation needed:* import any vehicle via the weapon-import pipeline (`vehicle-weapon-import-normalizer.js`'s caller) that has at least one weapon in its source data. Open the vehicle sheet's Weapon Mounts panel.
+- *Exact expected possible outcomes:* (a) each weapon appears exactly once → the static trace was wrong or something already prevents the duplication in practice (e.g. a caller does clear `system.weapons` that wasn't found); (b) each weapon appears twice → confirms the bug live.
+- *What each outcome unlocks:* (a) downgrade this from "confirmed real bug" to "documented risk, no live symptom found" in the next audit pass. (b) authorizes implementing the narrow fix (clear `system.weapons` after Item creation in the import normalizer) with confidence it addresses an observed, not just theoretical, problem.
+
+**3. Droid `armor` bonus/rating key conflict (§13.2/§13.4)**
+- *Exact code path:* `context-builder.js:595-606`'s `buildArmorPanel()` (reads `armor.bonus`) vs. `droid-systems-resolver.js:400`'s `_resolveArmor()` (reads `armor.rating`).
+- *Exact unresolved question:* for a droid built via the Garage (`DroidBuilderApp`, which writes `armor.bonus`), does the resolved-systems panel (which reads `.rating`) actually display a wrong/zero armor value live, and vice versa for a stock-imported droid?
+- *Exact runtime observation needed:* build a droid via the Garage with non-zero armor. Compare the armor value shown in the main sheet armor panel against the "resolved systems" panel (if both are visible in the same sheet, or across the sheet's tabs).
+- *Exact expected possible outcomes:* (a) both panels agree → one of them has an undiscovered fallback/normalization step this pass's static trace missed; (b) the panels disagree → confirms the field-shape conflict has a live, user-visible symptom.
+- *What each outcome unlocks:* (a) revise §13.2/§13.4's classification from "confirmed breaking conflict" to "latent, mitigated" and re-trace the missing fallback. (b) authorizes a Phase 3 pass to pick one canonical key (`bonus` or `rating`) and update both readers plus backfill the other creation paths — the live symptom removes the "which key is actually load-bearing in practice" ambiguity that's currently blocking that decision.
+
+**4. Statblock NPC skill totals (§13.1)**
+- *Exact code path:* `system.derived.skills` computed by `DerivedCalculator`'s generic attribute-mod + half-level + trained-feat guess, for any NPC where `resolveNpcCalculationMode(actor) === 'statblock'`.
+- *Exact unresolved question:* how far does the guessed skill total actually diverge from the real published statblock skill total in practice, for a representative sample of imported NPCs?
+- *Exact runtime observation needed:* import 3-5 nonheroic/heroic statblock NPCs with published skill lines that include feat/synergy/size bonuses (not just trained-class-skill baseline). Compare each displayed skill total against the statblock's published number.
+- *Exact expected possible outcomes:* (a) divergence is small/rare in practice (most published skills happen to match the guess formula) → lower priority, can stay a documented gap indefinitely; (b) divergence is common/large → raises priority for the Phase 3 skill-line-parsing feature work recommended in §13.1.
+- *What each outcome unlocks:* determines whether "parse `Skills` into structured data" gets scheduled as a near-term Phase 3 item or stays a long-tail backlog item.
+
+---
+
+## 13.12 Final recommendation
+
+**PHASE 2 COMPLETE WITH DOCUMENTED RUNTIME BLOCKERS.**
+
+Every area the user's closure standard classified as completable without a
+live client has been completed at the analysis level: the Vehicle field
+map (§13.3), the Droid field map (§13.4), the mutation-authority audit
+(§13.7), the fallback inventory with its conditional high-confidence
+fixes executed (§13.6), the movement model (§13.5), and test coverage is
+documented honestly rather than overstated (§13.9). Four real,
+evidence-backed code fixes shipped this pass, three of them closing
+confirmed live bugs (the NPC HP-collapse bug, the Will-Defense
+Psychic-Citadel undercounting bug, and vehicle movement dead-code/schema
+cleanup) and one a safe, byte-identical-confirmed consolidation. The
+Droid `droidSystems.*` creation-path migration remains legitimately
+blocked exactly where the user's standard said it was allowed to remain
+blocked — not because it wasn't analyzed (§13.2 gives it the most granular
+field-by-field verdict of the whole closure pass), but because three of
+its fields have genuine, evidenced shape conflicts with no textually
+determinable "correct" resolution.
+
+What keeps this from being an unqualified "SAFE TO PROCEED": the NPC
+`recomputeHP` fix — the single highest-severity finding of this entire
+pass, a live data-loss bug — cannot be integration-tested through this
+repo's existing tooling, only unit-tested at the predicate/logic level
+(§13.1.1). §13.11 gives the exact, executable live-Foundry check needed to
+close that gap, plus three more (vehicle weapon-mount duplication, droid
+armor key conflict, statblock skill divergence) that would sharpen Phase 3
+prioritization but do not block Phase 3 from starting.
+
+**Recommendation for Phase 3 scope, in priority order:** (1) run §13.11's
+four live-Foundry checks, starting with the `recomputeHP` one given its
+severity; (2) if check #1 comes back clean, no further code change is
+needed on that item; (3) schedule the Vehicle SR/shieldRating canonical-field
+decision and the weapon-mount duplicate-display fix (§13.3) as
+independent, narrowly-scoped changes; (4) schedule the droid
+armor/processor/credits canonical-key decisions (§13.2/§13.4) once check
+#3 provides a live symptom to design against; (5) everything else in this
+document marked DEFERRED TO PHASE 3 is safe to schedule opportunistically,
+none of it blocks any of the above.

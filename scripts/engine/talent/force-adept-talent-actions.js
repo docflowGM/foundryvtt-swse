@@ -6,6 +6,7 @@ import { rollAttack, rollDamage } from "/systems/foundryvtt-swse/scripts/combat/
 import { getClassLevel, getTotalLevel } from "/systems/foundryvtt-swse/scripts/actors/derived/level-split.js";
 import { DSPEngine } from "/systems/foundryvtt-swse/scripts/engine/darkside/dsp-engine.js";
 import { openForceAlchemyWorkbench } from "/systems/foundryvtt-swse/scripts/apps/force-alchemy/force-alchemy-workbench-app.js";
+import { getTalentAbilityMod as abilityMod } from "/systems/foundryvtt-swse/scripts/engine/talent/talent-ability-helpers.js";
 
 const NS = 'swse';
 
@@ -28,10 +29,6 @@ function hasTalent(actor, name) {
 
 function encounterId() {
   return game?.combat?.started && game.combat?.id ? game.combat.id : 'out-of-combat';
-}
-
-function abilityMod(actor, key) {
-  return Number(actor?.system?.derived?.attributes?.[key]?.mod ?? actor?.system?.abilities?.[key]?.mod ?? actor?.system?.attributes?.[key]?.mod ?? 0) || 0;
 }
 
 function useTheForceTotal(actor) {

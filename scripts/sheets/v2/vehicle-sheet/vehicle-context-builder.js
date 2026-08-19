@@ -231,40 +231,25 @@ export function parseCargoString(value) {
  * @returns {{raw:string, mode:string, character:string, starship:string, summary:string}}
  */
 export function parseVehicleSpeed(value) {
-  if (value && typeof value === 'object') {
-    const system = value;
-    const character = firstPresent(system.characterScaleSpeedLabel, system.speed, system.vehicleIsImmobile ? 'Immobile' : null, '—');
-    const starship = firstPresent(system.starshipScaleSpeedLabel, system.starshipSpeed, '—');
-    const mode = firstPresent(system.characterScaleMovementMode, system.starshipScaleMovementMode, system.vehicleMovementStatus, '');
-    return {
-      raw: safeString(system.vehicleMovementRaw || system.speed || '').trim(),
-      mode: safeString(mode),
-      character: safeString(character),
-      starship: safeString(starship),
-      characterFightingSpace: safeString(system.characterScaleFightingSpace || '—'),
-      starshipFightingSpace: safeString(system.starshipScaleFightingSpace || '—'),
-      summary: safeString(system.vehicleMovementSummary || [character && `Character ${character}`, starship && starship !== '—' && `Starship ${starship}`].filter(Boolean).join(' / ') || '—')
-    };
-  }
-
-  const raw = safeString(value).trim();
-  if (!raw) return { raw: '', mode: '', character: '—', starship: '—', summary: '—' };
-
-  const modeMatch = raw.match(/^(\w+)/);
-  const mode = modeMatch ? modeMatch[1].toLowerCase() : '';
-  const characterMatch = raw.match(/(\d+)\s*squares?\s*\(\s*character\s*scale\s*\)/i);
-  const starshipMatch = raw.match(/(\d+)\s*squares?\s*\(\s*starship\s*scale\s*\)/i);
-  const firstSquares = raw.match(/(\d+)\s*squares?/i);
-
-  const character = characterMatch ? `${characterMatch[1]} sq.` : firstSquares ? `${firstSquares[1]} sq.` : raw;
-  const starship = starshipMatch ? `${starshipMatch[1]} sq.` : '—';
-
+  // The only production call site always passes actor.system (an object) —
+  // real string-to-structured-movement parsing is parseVehicleSpeedText()'s
+  // job (scripts/utils/movement-normalizer.js), run once at import/template-
+  // apply time and persisted to the fields this function reads back. This
+  // function is a render-time projection over that already-normalized data,
+  // not a second parser; see docs/audits/v2-phase-2-actor-authority-normalization.md
+  // "Vehicle movement/speed" for the full layering evidence.
+  const system = value && typeof value === 'object' ? value : {};
+  const character = firstPresent(system.characterScaleSpeedLabel, system.speed, system.vehicleIsImmobile ? 'Immobile' : null, '—');
+  const starship = firstPresent(system.starshipScaleSpeedLabel, system.starshipSpeed, '—');
+  const mode = firstPresent(system.characterScaleMovementMode, system.starshipScaleMovementMode, system.vehicleMovementStatus, '');
   return {
-    raw,
-    mode,
-    character,
-    starship,
-    summary: starshipMatch ? `${character} character / ${starship} starship` : character
+    raw: safeString(system.vehicleMovementRaw || system.speed || '').trim(),
+    mode: safeString(mode),
+    character: safeString(character),
+    starship: safeString(starship),
+    characterFightingSpace: safeString(system.characterScaleFightingSpace || '—'),
+    starshipFightingSpace: safeString(system.starshipScaleFightingSpace || '—'),
+    summary: safeString(system.vehicleMovementSummary || [character && `Character ${character}`, starship && starship !== '—' && `Starship ${starship}`].filter(Boolean).join(' / ') || '—')
   };
 }
 
