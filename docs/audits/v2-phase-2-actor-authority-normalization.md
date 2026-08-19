@@ -396,7 +396,7 @@ an explicit safe-to-move-now verdict per field (this supersedes §6's
 | `buildHistory`, `degree`, `size`, `stateMode`, `appendages`, `sensors`, `weapons`, `accessories` | **YES** | Every reader is `Array.isArray`-guarded or tolerates an empty string/default enum; no reader requires a specific non-default value |
 | `locomotion` | Borderline YES | Key-set varies (`cost`/`sourceText` presence) but no reader requires the missing keys; safe to default with a superset shape `{id:'',name:'',speed:0}` |
 | `processor` | **NO** | Builder's `.bonus` vs stock/reference's `.active`/`.slotKey` — `droid-systems-resolver.js:343` reads `.bonus` and silently gets `0` for non-builder droids; needs a canonical-key decision first |
-| `armor` | **NO — confirmed breaking conflict** | Builder writes `.bonus`; stock importer never sets `armor` at all; `ensureDroidSystemsDefaults()` writes `.rating`. `context-builder.js:595-606` reads `.bonus`; `droid-systems-resolver.js:400` reads `.rating` — **two live readers on the same sheet expect two different key names for the same value, and no path populates both** |
+| `armor` | **NO — confirmed conflict, corrected during the §13B compliance re-check (see below)** | Builder writes `.bonus`; stock importer never sets `armor` at all; `ensureDroidSystemsDefaults()` writes `.rating`. **Corrected finding:** `context-builder.js:602`'s `buildArmorPanel()` does correctly read `droidSystems.armor.bonus`, but its output (`droidPanels.armor`) is never referenced by any template — confirmed zero matches for `droidPanels.armor` or `panels.armor` anywhere in `templates/`, so this panel is dead/unwired. The panel that IS wired and rendered, `droid.resolvedSystems.armor` (populated by `droid-systems-resolver.js`'s `_resolveArmor()`), passes `bonus`/`rating` as `extra` into `_fromBuilder()` (`droid-systems-resolver.js:400`), but `_fromBuilder()`'s return object (lines 283-298) is a fixed key list that does **not** include `bonus`, `rating`, or `armorBonus` — those extras are silently dropped. A third template, `droid-armor-panel.hbs:15`, reads yet a fourth key name, `armor.armorBonus`, which is populated by none of the above. **Net effect: no template anywhere ever displays a Garage-built droid's armor bonus correctly** — not a two-reader naming mismatch as originally stated, but a resolver that drops the field entirely plus a wired panel builder whose correct output is never consumed |
 | `credits` | **NO** | `.remaining` is a landmine: `droid-modifications.js:219`'s `validateModificationInstall()` reads `credits?.remaining \|\| 0` directly (no recompute fallback) — silently `0` for every path except the Garage builder. Currently dead code (zero callers), so no live break today, but must be resolved before that function is ever wired up |
 | `appendageSlots`, `droidStatus` | YES, trivially | Both fields are write-only from `ensureDroidSystemsDefaults()` — **no reader exists anywhere in the codebase** for either one |
 | `processors` (plural) | Moot | Its only reader (`collectDroidPartEffectsFromActor`) has zero callers; the canonical mechanical reader (`resolveInstalledDroidComponents()`) deliberately excludes it from `DROID_SYSTEMS_ARRAY_FIELDS` |
@@ -550,12 +550,41 @@ separate caller merges the full in-memory `system` object into an update
 payload — no such caller was found). Every other live, user-facing
 mutation site for these seven families already routes through
 `ActorEngine.updateActor()`/`.apply()`/`.recomputeHP()`/
-`.updateEmbeddedDocuments()` (class A), and this is enforced at runtime —
-a repo-wide `MutationInterceptor` wraps `Actor.prototype.update` and
-throws in strict/dev mode on any call outside an `ActorEngine.setContext()`
-window. Import/builder/store-checkout writers to these fields are
-legitimate creation-time data construction on plain (not-yet-persisted)
-objects (class D), not mutation of existing actors.
+`.updateEmbeddedDocuments()` (class A). Import/builder/store-checkout
+writers to these fields are legitimate creation-time data construction on
+plain (not-yet-persisted) objects (class D), not mutation of existing
+actors.
+
+**Correction made during the §13B compliance re-check (this claim was
+wrong as originally written):** the original text here claimed
+`MutationInterceptor` "wraps `Actor.prototype.update` and throws in
+strict/dev mode on any call outside an `ActorEngine.setContext()` window."
+Direct re-reading of `scripts/governance/mutation/MutationInterceptor.js`
+this pass found that claim is **false as currently implemented**. The
+file's own header and `initialize()` method state explicitly: *"PERMANENT
+FIX: Does NOT patch `Actor.prototype.update` anymore... No more:
+`MutationInterceptor._wrapActorUpdate()`"* — prototype wrapping was
+deliberately removed, and `initialize()` now runs `_verifyPrototypeClean()`
+specifically to **throw if wrapping is ever reintroduced** (the opposite
+of what the original claim described). What actually exists today:
+`MutationInterceptor.setContext()`/`clearContext()`/`hasContext()` is a
+simple in-memory flag `ActorEngine` sets around its own operations;
+`sentinel-update-atomicity.js`'s `preUpdateActor` hook is an explicitly
+`readOnly: true` burst/loop *monitor*, not a gate; and
+`mutation-path-validator.js`'s `validateMutationRouting()` returns a
+**self-reported description** of where enforcement is supposed to live
+(`enforcement: 'MutationInterceptor.setContext()'`) rather than itself
+performing any check. No runtime mechanism was found in this codebase that
+throws or blocks a hypothetical direct `actor.update()` call bypassing
+`ActorEngine` — governance today is a **strong, consistently-followed
+convention verified by direct code search across every live call site**,
+not a mechanically enforced runtime gate. This does not change the
+factual finding (every found call site for the seven field families does
+route through `ActorEngine`, confirmed by direct grep/read, not by trusting
+an enforcement claim) — but it means a future violation would not be
+caught automatically the way "well-governed... enforced at runtime"
+implied, and that risk should be carried into Phase 3 rather than assumed
+away.
 
 **One adjacent, out-of-scope finding worth flagging:**
 `npc-damage-hydration-hooks.js:152` writes weapon `system.damageFormula`/
@@ -717,3 +746,37 @@ armor/processor/credits canonical-key decisions (§13.2/§13.4) once check
 #3 provides a live symptom to design against; (5) everything else in this
 document marked DEFERRED TO PHASE 3 is safe to schedule opportunistically,
 none of it blocks any of the above.
+
+---
+
+# 14. Phase 2B Final Compliance Audit (review-only pass)
+
+A review-only compliance pass re-verified §13's claims against current
+repository state (re-reading files directly, reproducing the CI failure on
+`origin/main`, tracing the actual `MutationInterceptor` mechanism) rather
+than trusting §13's own summary. Two genuine inaccuracies in §13 were found
+and corrected in place (see the inline "Corrected finding"/"Correction made
+during the §13B compliance re-check" notes in §13.2/§13.4's armor row and
+§13.7): the droid armor `bonus`/`rating` conflict was mischaracterized (the
+real defect is that `_fromBuilder()` drops both keys and a correctly-wired
+panel builder is never referenced by any template — worse and differently
+shaped than originally stated, not a simple two-reader naming mismatch),
+and the mutation-audit's enforcement claim was factually wrong
+(`MutationInterceptor` explicitly does **not** wrap `Actor.prototype.update`
+— that was deliberately removed as a "PERMANENT FIX"; governance is a
+verified-by-grep convention, not a runtime-enforced gate). Everything else
+independently re-checked this pass — the NPC `recomputeHP` fix's exact code
+path, `computeNpcDerived()`'s continued non-mode-awareness, the absence of
+any BAB/DT/defense-clobbering mechanism analogous to the HP bug, the
+`PanelContextBuilder` fix's correctness (`psychicCitadelBonus` confirmed
+absent from `derived-calculator.js`'s persisted Will breakdown fields), the
+talent-helper consolidation's exact call-site preservation, the vehicle SR
+dual-write, the droid degree dual-write divergence, the `template.json`
+defaults' safety (verified against `firstPresent()`'s exact semantics, and
+confirmed there are zero other readers of the 11 declared fields anywhere
+in the repo), and the CI failure's direct reproduction on `origin/main` —
+held up as documented. Full structured compliance matrix, per-fix
+verification table, runtime-blocker matrix, and final phase gate delivered
+separately as the compliance report; verdict:
+**PHASE 2 COMPLETE WITH DOCUMENTED RUNTIME BLOCKERS**, gate
+**PHASE 3 MAY BEGIN WITH EXPLICIT RUNTIME EXCLUSIONS**.
