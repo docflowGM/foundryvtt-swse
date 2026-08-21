@@ -85,16 +85,25 @@ export function computeCharacterDerived(actor, system) {
   mirrorIdentity(actor, system);
   mirrorHp(system);
   mirrorSkills(system);
-  mirrorAttacks(actor, system);
+  // Vehicle sheets never render the attacks/actions panels this mirrors (the
+  // templates that would are unregistered, and the generic reader code is
+  // unreachable behind the vehicle sheet's own early-return), so skip the
+  // item scan for vehicle actors. system.derived.attacks/actions are already
+  // initialized to {} above.
+  if (actor.type !== 'vehicle') {
+    mirrorAttacks(actor, system);
+  }
   mirrorFeats(actor, system, itemIndex);
   mirrorTalents(actor, system, itemIndex);
   mirrorForceTechniques(actor, system);
   mirrorForceSecrets(actor, system);
   mirrorStarshipManeuvers(actor, system, itemIndex);
   mirrorRacialAbilities(system);
-  mirrorActions(actor, system);
+  if (actor.type !== 'vehicle') {
+    mirrorActions(actor, system);
+  }
   mirrorEncumbrance(actor, system);
-  mirrorInventory(actor, system);
+  mirrorInventory(actor, system, itemIndex);
 }
 
 const RESOURCE_TICK_CAP = 100;
@@ -1088,7 +1097,18 @@ function mirrorRacialAbilities(system) {
   system.derived.racialAbilities = abilities;
 }
 
-function mirrorInventory(actor, system) {
+function mirrorInventoryEntry(item) {
+  return {
+    id: item.id,
+    name: item.name,
+    quantity: item.system.quantity ?? 1,
+    equipped: item.system.equipped ?? false,
+    weight: item.system.weight ?? 0,
+    summary: item.system.description ?? ""
+  };
+}
+
+function mirrorInventory(actor, system, itemIndex = null) {
   const groups = {
     weapons: [],
     armor: [],
@@ -1097,46 +1117,31 @@ function mirrorInventory(actor, system) {
     misc: []
   };
 
-  for (const item of actor.items) {
-    // Exclude non-gear document types from the inventory ledger entirely.
-    if (!["weapon", "armor", "equipment", "consumable", "misc", "ammo"].includes(item.type)) {
-      continue;
+  if (itemIndex?.byType) {
+    // Single-type groups: reuse the shared per-cycle item index directly
+    // (same item.type equality predicate the original scan applied) instead
+    // of re-scanning actor.items with a separate traversal.
+    for (const item of itemIndex.byType.get("weapon") ?? []) groups.weapons.push(mirrorInventoryEntry(item));
+    for (const item of itemIndex.byType.get("armor") ?? []) groups.armor.push(mirrorInventoryEntry(item));
+    for (const item of itemIndex.byType.get("equipment") ?? []) groups.equipment.push(mirrorInventoryEntry(item));
+    for (const item of itemIndex.byType.get("consumable") ?? []) groups.consumables.push(mirrorInventoryEntry(item));
+
+    // "misc" merges two source types (ammo, misc) and the original scan
+    // preserved actor.items document order across that merge, so fall back
+    // to a single filtered pass here rather than risk reordering by
+    // concatenating two independently-ordered index buckets.
+    for (const item of actor.items) {
+      if (item.type === "ammo" || item.type === "misc") groups.misc.push(mirrorInventoryEntry(item));
     }
-
-    const entry = {
-      id: item.id,
-      name: item.name,
-      quantity: item.system.quantity ?? 1,
-      equipped: item.system.equipped ?? false,
-      weight: item.system.weight ?? 0,
-      summary: item.system.description ?? ""
-    };
-
-    switch (item.type) {
-      case "weapon":
-        groups.weapons.push(entry);
-        break;
-
-      case "armor":
-        groups.armor.push(entry);
-        break;
-
-      case "equipment":
-        groups.equipment.push(entry);
-        break;
-
-      case "consumable":
-        groups.consumables.push(entry);
-        break;
-
-      case "ammo":
-      case "misc":
-        groups.misc.push(entry);
-        break;
-
-      default:
-        // Should never reach here due to the filter at the start
-        groups.misc.push(entry);
+  } else {
+    for (const item of actor.items) {
+      if (!["weapon", "armor", "equipment", "consumable", "misc", "ammo"].includes(item.type)) continue;
+      const groupKey = item.type === "weapon" ? "weapons"
+        : item.type === "armor" ? "armor"
+        : item.type === "equipment" ? "equipment"
+        : item.type === "consumable" ? "consumables"
+        : "misc";
+      groups[groupKey].push(mirrorInventoryEntry(item));
     }
   }
 

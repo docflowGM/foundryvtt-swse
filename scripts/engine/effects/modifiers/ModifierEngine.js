@@ -103,6 +103,22 @@ export class ModifierEngine {
     return targets.map(target => String(target || '')).filter(Boolean).sort().join('|');
   }
 
+  /**
+   * Public accessor for the actor modifier-source cache signature.
+   *
+   * Lets callers that invoke multiple ModifierEngine methods for the same
+   * actor in one cycle (e.g. DerivedCalculator.computeAll()) compute the
+   * signature once and pass it via options.signature to getAllModifiers(),
+   * aggregateAll(), and buildModifierBreakdown() instead of triggering a
+   * fresh items/effects scan-sort-join per call.
+   *
+   * @param {Actor} actor
+   * @returns {string|null}
+   */
+  static getActorModifierSourceSignature(actor) {
+    return this._actorModifierSourceSignature(actor);
+  }
+
   static _actorModifierSourceSignature(actor) {
     const perfEnabled = isPerformanceDiagnosticsEnabled();
     const start = perfEnabled ? performance.now() : 0;
@@ -265,10 +281,18 @@ export class ModifierEngine {
     return true;
   }
 
-  static async getAllModifiers(actor) {
+  /**
+   * @param {Actor} actor
+   * @param {Object} [options={}]
+   * @param {string|null} [options.signature] - Pre-computed source signature from a
+   *   caller that already ran _actorModifierSourceSignature(actor) this cycle (e.g.
+   *   aggregateAll/buildModifierBreakdown's own cache-key computation), so the
+   *   items/effects scan-sort-join isn't repeated for the same actor state.
+   */
+  static async getAllModifiers(actor, options = {}) {
     if (!actor) return [];
 
-    const cacheKey = this._actorModifierSourceSignature(actor);
+    const cacheKey = options.signature !== undefined ? options.signature : this._actorModifierSourceSignature(actor);
     if (cacheKey && this._modifierSourceCache.has(cacheKey)) {
       ActorPerfDiagnostics.recordModifierCacheEvent('source', 'hit');
       return this._cloneCacheValue(this._modifierSourceCache.get(cacheKey));
@@ -497,17 +521,21 @@ export class ModifierEngine {
    * Modifiers with unsatisfied conditions are excluded from aggregation.
    *
    * @param {Actor} actor
+   * @param {Object} [options={}]
+   * @param {string|null} [options.signature] - Pre-computed source signature from a
+   *   caller that already ran _actorModifierSourceSignature(actor) this cycle, so the
+   *   items/effects scan-sort-join isn't repeated for the same actor state.
    * @returns {Object<string, number>} Map of target → total modifier value
    */
-  static async aggregateAll(actor) {
-    const cacheKey = this._actorModifierSourceSignature(actor);
+  static async aggregateAll(actor, options = {}) {
+    const cacheKey = options.signature !== undefined ? options.signature : this._actorModifierSourceSignature(actor);
     if (cacheKey && this._aggregateCache.has(cacheKey)) {
       ActorPerfDiagnostics.recordModifierCacheEvent('aggregate', 'hit');
       return this._cloneCacheValue(this._aggregateCache.get(cacheKey));
     }
     ActorPerfDiagnostics.recordModifierCacheEvent('aggregate', 'miss');
 
-    const allModifiers = await this.getAllModifiers(actor);
+    const allModifiers = await this.getAllModifiers(actor, { signature: cacheKey });
     const aggregated = {};
 
     // Group by target
@@ -701,10 +729,14 @@ export class ModifierEngine {
    *
    * @param {Actor} actor
    * @param {string[]} targets - Targets to include in breakdown
+   * @param {Object} [options={}]
+   * @param {string|null} [options.signature] - Pre-computed source signature from a
+   *   caller that already ran _actorModifierSourceSignature(actor) this cycle, so the
+   *   items/effects scan-sort-join isn't repeated for the same actor state.
    * @returns {Object}
    */
-  static async buildModifierBreakdown(actor, targets = []) {
-    const sourceKey = this._actorModifierSourceSignature(actor);
+  static async buildModifierBreakdown(actor, targets = [], options = {}) {
+    const sourceKey = options.signature !== undefined ? options.signature : this._actorModifierSourceSignature(actor);
     const targetKey = this._targetsSignature(targets);
     const cacheKey = sourceKey && targetKey ? `${sourceKey}|breakdown|${targetKey}` : null;
     if (cacheKey && this._breakdownCache.has(cacheKey)) {
@@ -713,7 +745,7 @@ export class ModifierEngine {
     }
     ActorPerfDiagnostics.recordModifierCacheEvent('breakdown', 'miss');
 
-    const allModifiers = await this.getAllModifiers(actor);
+    const allModifiers = await this.getAllModifiers(actor, { signature: sourceKey });
     const staticModifiers = allModifiers.filter(mod => this.isModifierAllowedInContext(actor, mod, {}, { staticSheet: true }));
     const breakdown = ModifierUtils.buildModifierBreakdown(staticModifiers, targets);
     if (cacheKey) this._rememberBounded(this._breakdownCache, this._breakdownCacheOrder, cacheKey, breakdown, this._breakdownCacheMax);
