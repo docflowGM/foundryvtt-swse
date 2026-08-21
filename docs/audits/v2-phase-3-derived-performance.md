@@ -288,15 +288,25 @@ backend fixes were judged the safer stopping point than adding 2 more
 sheet-layer changes with no automated equivalence proof available in this
 environment.
 
-## 5. Runtime benchmark checklist (BLOCKED ON LIVE FOUNDRY)
+## 5. Runtime benchmark checklist (OPTIONAL FUTURE VALIDATION — not a Phase 3 closure requirement)
 
-None of the 5 fixes in this pass change template output, panel visibility,
-or any user-visible sheet content — they only reduce redundant internal
+**Status update (Static Closure Review, see §9): live Foundry access is not
+currently available, and per the revised Phase 3 closure standard, its
+absence is not by itself grounds for withholding closure.** Every claim in
+this document is now backed by direct static code/dataflow tracing and/or
+an automated test against real production code (see §9 for the full
+per-fix evidence). The checklist below (and the companion procedure,
+`docs/audits/v2-phase-3-live-benchmark-procedure.md`) remains in the repo
+as a **recommended future smoke-test pass**, not a blocker.
+
+None of the 5 originally-shipped fixes, nor the Phase 3B NPC guard added in
+the static closure pass (§9), change template output, panel visibility, or
+any user-visible sheet content — they only reduce redundant internal
 computation. No exact millisecond timings are claimed anywhere in this
 document (per the brief: "If exact runtime timing cannot be measured
 without Foundry, do NOT invent milliseconds."). A maintainer with a live
-Foundry client should still confirm no regression using the following
-steps. For each scenario: open DevTools Performance panel, click Record,
+Foundry client can still use the following steps for a future smoke test.
+For each scenario: open DevTools Performance panel, click Record,
 perform the action, stop recording, and note wall-clock time plus call
 counts for `DerivedCalculator.computeAll`, `ModifierEngine.getAllModifiers`/
 `aggregateAll`/`buildModifierBreakdown`, and `character-actor.js`'s
@@ -421,3 +431,250 @@ constraints (all still unresolved from Phase 2/2B):
   - `tests/modifier-engine-signature-reuse.test.mjs`
   - `tests/defense-calculator-species-bonus-hoist.test.mjs`
   - `tests/character-actor-inventory-index-and-vehicle-skip.test.mjs`
+
+## 9. Static Closure Review
+
+Performed after live Foundry access became unavailable. Per the revised
+closure standard, live benchmark timing is a recommended future validation
+step, not a blocker — every claim below is instead backed by direct
+static code/dataflow tracing and/or an automated test. Evidence taxonomy:
+**VERIFIED** (proven by direct code trace and/or passing test),
+**INFERRED** (strongly supported, one non-exhaustive link in the chain —
+e.g. a framework getter this repo doesn't define), **NOT VERIFIED**,
+**RUNTIME FOLLOW-UP** (recommended future live smoke test, not blocking).
+
+### 9.1 Five-fix re-verification
+
+**Fix #1 (DerivedCalculator signature reuse) — VERIFIED.** Traced
+`base-actor.js`'s `_computeDerivedAsync()`: `signature` is computed at line
+130 (`DerivedCalculator.getActorComputeSignature?.(this)`) and consumed at
+line 145 (`DerivedCalculator.computeAll(this, { signature })`) with zero
+`await` or actor-mutation boundary between them — only synchronous
+in-flight/applied-signature coalescing checks run in between. The signature
+is a pure function of actor/item/effect revision fields
+(`_getActorComputeSignatureImpl`), so it provably describes the exact same
+state `computeAll()` consumes. `computeAll(actor, options = {})` falls back
+to self-computing when `options.signature` is `undefined`, so every other
+caller (`ActorEngine.recalcAll()`) is unaffected — confirmed unchanged.
+
+**Fix #2 (ModifierEngine signature threading) — VERIFIED for the primary
+path, one narrow edge case flagged as RUNTIME FOLLOW-UP (not blocking).**
+Traced `computeAll()`'s modifier section: `modifierSignature` is computed
+once (line 231) and threaded into `getAllModifiers`/`aggregateAll`/
+`buildModifierBreakdown` (lines 234, 237, and the `buildModifierBreakdown`
+call further down), and each of those in turn passes it to their own
+internal `getAllModifiers` fan-out call. All three public methods still
+default to self-computing when `options.signature` is omitted (confirmed
+at all 3 `ModifierEngine.js` call sites), so the many other single-argument
+external callers are unaffected. Edge case: unlike the pre-Phase-3 code
+(where each of the 3 methods independently re-read `actor.items`/`effects`
+at its own call time, self-healing against a concurrent mutation to the
+same actor mid-`computeAll()`), the shared signature means a mutation
+landing in the `await`-window between the top-level computation and a
+later consuming call would be invisible to that call's cache lookup. This
+is narrow (requires a non-ActorEngine-routed write to the *same* actor
+inside a single microtask window — Phase 2B already established
+ActorEngine routing is a followed convention, not a mechanically-enforced
+gate, so this can't be fully ruled out) and self-correcting (a stale hit
+only reflects the state from immediately before the mutation, and the next
+`computeAll()` cycle recomputes fresh) — not a data-integrity risk, but
+flagged as RUNTIME FOLLOW-UP rather than claimed fully proven.
+
+**Fix #3 (DefenseCalculator species filter hoist) — VERIFIED as a net
+improvement, not reverted.** Re-examined per the brief's explicit
+"don't defend sunk cost" instruction. The `direct` early-return in
+`_collectSpeciesDefenseBonus` sums 5 fields
+(`defenseState.speciesBonus`/`.species`/`.misc.auto.species`,
+`speciesTraitBonuses`, `speciesCombatBonuses`). Grepped the entire `scripts/`
+tree for writers of all 5: **zero writers exist** for any of them as actor
+*source* data (the only matches are the function's own read sites and, for
+`speciesBonus`, unrelated *output* fields in other objects). This means
+`direct` is effectively always `0` in the current codebase — the "rare
+0→1 regression case" this fix trades against requires a writer that
+doesn't exist today, while the "common 3→1 improvement case" is
+essentially universal. Kept as-is.
+
+**Fix #4 (mirrorInventory itemIndex reuse) — VERIFIED, unchanged since
+initial implementation.** Re-read `buildActorItemIndex()` (single forward
+pass, `bucket.push(item)` preserves `actor.items` relative order per type
+— also independently locked in by `tests/actor-item-index.test.mjs`) and
+`mirrorInventory()`'s current code: 4 single-type groups read
+`itemIndex.byType.get(type)` directly; the `misc` group (merging `ammo`+
+`misc` types) still uses one filtered `actor.items` pass specifically to
+preserve document order across that merge, per the existing test
+(`tests/character-actor-inventory-index-and-vehicle-skip.test.mjs`, Test 1,
+which interleaves types and asserts the merged order).
+
+**Fix #5 (Vehicle mirrorAttacks/mirrorActions skip) — VERIFIED via a fuller
+reachability proof than the original Phase 3 pass, two new facts found:**
+1. Two vehicle-specific templates exist on disk —
+   `templates/actors/vehicle/v2/partials/{attacks,actions}-panel.hbs` — and
+   *do* reference `derived.attacks.list`/`derived.actions.groups`. Grepped
+   the entire repo for any inclusion of these two exact paths (partial
+   registration in `scripts/load-templates.js`, or a `{{> "..."}}`
+   reference anywhere): **zero matches other than the files' own content.**
+   They are orphaned/dead files, never registered, never included by the
+   actually-rendered `vehicle-sheet-content.hbs` (which includes 15
+   partials by explicit path — none of them these two; weapon/station UI
+   comes from `vehicle-weapon-mount-panel.hbs`, reading `vehiclePanels.
+   weaponMountPanel`, not `derived.attacks`/`actions`).
+2. `character-sheet.js` has an attacks-fallback-rescue mechanism
+   (`_buildAttacksFallback`, called at line ~3390) that reconstructs an
+   attacks list from equipped weapons when `derived.attacks.list` is
+   missing — exactly the kind of second-order consumer that could
+   silently negate this fix. Traced its call site: it lives *after* the
+   `useVehicleSheet` early-return (~line 2850) in `_prepareContext()`, so
+   vehicle actors never reach it — confirmed by grepping
+   `_prepareVehicleActorSheetContext()`'s entire body (lines 4457–4684)
+   for any attack/action reference: **zero matches.**
+   `VehicleRulesAdapter.buildAllRuleContexts()` and `buildVehicleSheetContext()`
+   were also checked directly: neither reads `derived.attacks`/`actions`.
+   The two debug/diagnostic readers found (`sheet-diagnostics.js`,
+   `scripts/debug/phase-9-runtime-matrix.js`, `scripts/debug/
+   actor-contract-inspector.js`) are either purely informational (optional
+   chaining, no throw) or explicitly scoped to `actor.type === 'character'`
+   only, never invoked against vehicles.
+
+### 9.2 NPC static redundancy review — reclassified: STATICALLY SAFE TO IMPLEMENT (implemented this pass)
+
+Traced the full chain rather than relying on a template grep:
+1. `character-sheet.js`'s `PARTS` declares one fixed root template,
+   `templates/actors/character/v2-concept/character-sheet.hbs`, used for
+   every actor type this sheet class handles.
+2. That root template's structure is `{{#if actorSheetMode.useVehicleSheet}}
+   ...vehicle-sheet-content.hbs...{{else if actorSheetMode.useNpcConceptSheet}}
+   ...npc-concept-content.hbs...{{else}}...[[every `conceptLayout.*`
+   reference across 50 template files lives here]]...{{/if}}` — a
+   mutually-exclusive Handlebars chain. When `useNpcConceptSheet` is true,
+   the `{{else}}` branch (and everything inside it, including every
+   `conceptLayout` reference) provably never evaluates.
+3. `useNpcConceptSheet = actor.type === 'npc' && !isPromotedHeroicNpcActor(actor)`
+   (`actor-sheet-mode.js`) — independent of `calculationMode`
+   (progression/statblock/follower), so this covers every standard
+   (non-promoted) NPC actor.
+4. `buildNpcConceptSheetContext()` (`npc-sheet-helpers.js`, the function
+   that produces `context.npcConcept`, which `npc-concept-content.hbs` and
+   its partials *do* read) receives `conceptLayout` as an input option but
+   — grepped its entire 1,257-line file — never references it.
+5. `buildConceptSheetViewModel()` itself (`concept-context.js`, 1,971
+   lines): grepped for `.update(`, `.setFlag`, `Hooks.call`,
+   `.create(`/`.delete(` — zero matches, consistent with a pure
+   context-shaping function. (Not independently traced through every
+   helper it calls, so this one link is INFERRED rather than fully
+   exhaustively proven — a genuinely hidden side effect several calls deep
+   would not have been caught by this grep.)
+6. No JS-side consumer (`_onRender`, listener setup) reads `conceptLayout`
+   — grepped `character-sheet.js` for the identifier outside the
+   declaration/consumption sites already covered above.
+
+**Implemented**: `scripts/sheets/v2/character-sheet.js` — the
+`buildConceptSheetViewModel()` call is now guarded:
+`useNpcConceptSheet ? null : ActorPerfDiagnostics.time(...)`. Nothing
+upstream of the call (combatStatus/effectiveDefenses/etc. construction) was
+touched, keeping the change narrow. Test:
+`tests/npc-concept-layout-skip.test.mjs` — a source-text contract test
+(following the established pattern for this un-importable-under-Node file,
+see `tests/dsp-engine-consolidation.test.mjs`) that (a) asserts the guard
+exists, (b) asserts `buildNpcConceptSheetContext` still never reads
+`conceptLayout` — re-checked every future change to this fix's safety
+argument, and (c) asserts the root template's mutually-exclusive branch
+structure and `npc-concept-content.hbs`'s non-use of `conceptLayout` are
+preserved.
+
+**Structural reduction**: for every non-promoted NPC actor render, the
+entire `buildConceptSheetViewModel()` execution (a ~1,971-line function,
+previously invoked unconditionally regardless of actor type) is now
+skipped — the largest single structural reduction in the Phase 3 track.
+
+### 9.3 Droid static redundancy review — PROBABLY SAFE, KEEP DEFERRED (not implemented)
+
+Built the required per-panel equivalence table. `DroidSheetContextBuilder`
+constructs its own second `PanelContextBuilder` instance:
+`new PanelContextBuilder(actor, { isEditable: actor?.isOwner === true })` —
+note the *second* constructor argument is a bare `{ isEditable }` object,
+not the real sheet instance the main loop's builder receives
+(`new PanelContextBuilder(this.document, this)`, i.e. `this.sheet` = the
+actual `ActorSheet` there).
+
+| Panel | Second-pass call | Transformed after? | `this.sheet` dependency | Consumer | Safe to reuse main-loop copy? |
+|---|---|---|---|---|---|
+| `healthPanel` | `this.panelBuilder.buildHealthPanel()` | No | `this.sheet.isEditable` only (×3 sites) | `droidSheetContext.healthPanel`, `quickGlance` | Probably — pending `isEditable` equivalence (below) |
+| `defensePanel` | `this.panelBuilder.buildDefensePanel()` | No | `this.sheet.isEditable` (×2) + `getRecentHydrationMutation(this.sheet)` | `droidSheetContext.defensePanel`, `quickGlance` | Probably — the `getRecentHydrationMutation` divergence is diagnostic-log-only, confirmed not present in the returned `panel` object |
+| `secondWindPanel` | `this.panelBuilder.buildSecondWindPanel()` | No | `this.sheet.isEditable` (×3) | `droidSheetContext.secondWindPanel` | Probably — same `isEditable` caveat |
+| `biographyPanel` | `this.buildBiographyPanel()` → `this.panelBuilder.buildBiographyPanel()` | **Yes** — overwrites `identity.class/species/profession/homeworld` with droid-specific fields (`droidType`/`droidModel`/`manufacturer`) | n/a (post-processing, not `this.sheet`) | `droidSheetContext.biographyPanel` | **Not directly** — reuse would require re-applying this transform on top of the cached main-loop panel |
+| `abilitiesPanel` | `this.buildAbilitiesPanel()` → `this.panelBuilder.buildAbilitiesPanel()` | **Yes** — filters out the `'con'` ability entry | n/a | `droidSheetContext.abilitiesPanel`, plus `abilities`/`derived.identity.abilities` derived from it | **Not directly** — same, and the main loop doesn't even guarantee building `abilitiesPanel` every render (`abilitiesPanel` is absent from `alwaysHydratedPanels`; it's only built if `visibilityManager.getPanelsToBuild()` dynamically selects it for the active tab) |
+
+The `isEditable` equivalence question: Droid's second builder computes it as
+a bare `actor?.isOwner === true` check; the main loop's builder gets it from
+the real sheet's inherited `ActorSheet`/`DocumentSheet` `isEditable` getter
+(no local override in `character-sheet.js`), which is Foundry framework
+code this repo doesn't define and can layer in additional permission/lock
+logic beyond plain ownership. This one link is **NOT VERIFIED** without
+either reading Foundry's core source or a live check.
+
+**Classification: PROBABLY SAFE — KEEP DEFERRED.** 2 of 5 panels require a
+real, non-trivial transform layer on top of any reused value (not a
+"narrow" reuse); the other 3 depend on an `isEditable`-equivalence
+assumption this pass could not fully verify. Not implemented this pass —
+consistent with the brief's "only implement if equivalence is provable."
+
+### 9.4 Diagnostic label commit (`18589f1`) review
+
+Confirmed: all label changes in that commit are string arguments to
+`ActorPerfDiagnostics.recordSheetContext(label, ms)` calls only — no
+control flow, condition, or test anywhere in the repo branches on the old
+label strings (`'droid'`/`'npc'`/`actor.type` directly). Grepped for any
+other reference to the old label strings as diagnostic keys: none found
+outside the changed call sites. Purely additive/renaming, gated behind the
+existing disabled-by-default `performanceDiagnostics`/`debugMode` setting.
+The live benchmark procedure (`docs/audits/v2-phase-3-live-benchmark-procedure.md`)
+remains in the repo unchanged in content, with its role downgraded from
+"the Phase 3 gate" to "recommended future validation" per §5 above.
+
+### 9.5 Authority boundary re-confirmation
+
+Every change in this static closure pass (the NPC guard in
+`character-sheet.js`, the two test files) was checked against the Phase 2
+exclusion list: none read or write Droid armor/processor/credits/degree
+fields, none read or write Vehicle SR/weapon-mount fields, and none
+establish a new canonical representation for any of them through a cache
+or signature projection. The NPC guard only affects `conceptLayout`
+computation gated on `actor.type === 'npc'`, which is disjoint from Droid's
+`isDroidActor` branch — Droid rendering is completely unaffected by it.
+
+### 9.6 Performance claim quality (separated per the brief's categories)
+
+| Claim | Category |
+|---|---|
+| ModifierEngine signature calls 5 → 1 per `computeAll()` cycle | TEST VERIFIED (`tests/modifier-engine-signature-reuse.test.mjs`, Test 3, a call-count spy) |
+| DerivedCalculator signature calls 2 → 1 per async pass | TEST VERIFIED (`tests/derived-calculator-signature-reuse.test.mjs`) |
+| Species-item filter 3 → 1 (common case) | STRUCTURALLY VERIFIED (no live writer makes the regression case reachable — §9.1) |
+| Vehicle `mirrorAttacks`/`mirrorActions` dead work eliminated | STRUCTURALLY VERIFIED (exhaustive reachability proof, §9.1) |
+| NPC `buildConceptSheetViewModel()` skip (~1,971 lines) | STRUCTURALLY VERIFIED (template branch-exclusivity proof + unused-parameter proof, §9.2) |
+| Actual milliseconds saved, any fix | REQUIRES LIVE TIMING — not claimed anywhere in this document |
+| Droid double-panel-build reduction | NOT IMPLEMENTED — equivalence not fully provable (§9.3); no performance claim made |
+
+### 9.7 CI re-confirmation
+
+`node tools/run-rolling-syntax-check.mjs` — 2236/2236 pass (was 2235; +1 new
+test file). `node tools/run-rolling-tests.mjs` — 127 passed, 1 failed (128
+run, 5 documented exclusions); the 1 failure is the same
+`progression-suggestion-and-render-contracts.test.mjs` / `lang/en.json` gap,
+re-confirmed unchanged. 2 new test files added this pass:
+`tests/npc-concept-layout-skip.test.mjs` (Phase 3B guard contract) — the
+other new file from the live-benchmark pass
+(`docs/audits/v2-phase-3-live-benchmark-procedure.md`) is documentation,
+not a test.
+
+### 9.8 Final static-closure verdict
+
+**PHASE 3 COMPLETE — STATICALLY VERIFIED WITH DOCUMENTED RUNTIME
+FOLLOW-UP.** All shipped optimizations (the original 5, plus the Phase 3B
+NPC guard) are statically safe per direct dataflow tracing and/or
+passing automated tests. The two residual items (Fix #2's narrow
+concurrent-mutation edge case, and the Droid double-panel-build finding)
+are documented, non-blocking (narrow/self-correcting or simply not
+implemented), and carried forward as runtime follow-up rather than
+treated as an open correctness question.
+
+**GATE: PHASE 4 MAY BEGIN — RUNTIME SMOKE TEST DEFERRED.**
