@@ -382,10 +382,23 @@ function bindForceTraditionPicker(app, html) {
   });
 }
 
+const CONCEPT_SHEET_CLASS_NAMES = new Set(['SWSEV2CharacterSheet', 'SWSEV2NpcSheet', 'SWSEV2DroidSheet']);
+
 export function registerForceTraditionPickerHooks() {
+  // Character/NPC/Droid actors previously all rendered through the single
+  // SWSEV2CharacterSheet class (now split into SWSEV2CharacterSheet /
+  // SWSEV2NpcSheet / SWSEV2DroidSheet), so this hook must be registered for
+  // all three render-hook names — and the renderApplication fallback below
+  // must recognize all three constructor names — to keep the Force
+  // Tradition picker working for NPC and Droid actors exactly as it did
+  // before that split. bindForceTraditionPicker() itself is a no-op when
+  // the actor's template has no Force tradition field, so this is safe for
+  // actor types that never render one.
   Hooks.on('renderSWSEV2CharacterSheet', bindForceTraditionPicker);
+  Hooks.on('renderSWSEV2NpcSheet', bindForceTraditionPicker);
+  Hooks.on('renderSWSEV2DroidSheet', bindForceTraditionPicker);
   Hooks.on('renderApplication', (app, html) => {
-    if (app?.constructor?.name !== 'SWSEV2CharacterSheet') return;
+    if (!CONCEPT_SHEET_CLASS_NAMES.has(app?.constructor?.name)) return;
     bindForceTraditionPicker(app, html);
   });
 

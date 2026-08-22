@@ -5,6 +5,8 @@
 
 import { SWSE } from "./scripts/core/config.js";
 import { SWSEV2CharacterSheet } from "./scripts/sheets/v2/character-sheet.js";
+import { SWSEV2NpcSheet } from "./scripts/sheets/v2/npc-actor-sheet.js";
+import { SWSEV2DroidSheet } from "./scripts/sheets/v2/droid-actor-sheet.js";
 import { SWSEV2VehicleSheet } from "./scripts/sheets/v2/vehicle-actor-sheet.js";
 import { SWSEItemSheet } from "./scripts/items/swse-item-sheet.js";
 import { EntityCreateBrowser, openEntityCreateBrowser } from "./scripts/dialogs/entity-dialog/entity-create-browser.js";
@@ -133,23 +135,29 @@ Hooks.once("init", async () => {
   Actors.unregisterSheet("core", ActorSheet);
   Items.unregisterSheet("core", ItemSheet);
 
+  Actors.registerSheet("swse", SWSEV2CharacterSheet, {
+    types: ["character"],
+    label: "SWSE Character Sheet v2",
+    makeDefault: true
+  });
+
+  Actors.registerSheet("swse", SWSEV2NpcSheet, {
+    types: ["npc"],
+    label: "SWSE NPC Actor Sheet v2 (Actor Shell)",
+    makeDefault: true
+  });
+
+  Actors.registerSheet("swse", SWSEV2DroidSheet, {
+    types: ["droid"],
+    label: "SWSE Droid Actor Sheet v2 (Actor Shell)",
+    makeDefault: true
+  });
+
   Actors.registerSheet("swse", SWSEV2VehicleSheet, {
     types: ["vehicle"],
     label: "SWSE Vehicle Actor Sheet v2 (Actor Shell)",
     makeDefault: true
   });
-
-  for (const [type, label] of [
-    ["character", "SWSE Character Sheet v2"],
-    ["droid", "SWSE Droid Actor Sheet v2 (Actor Shell)"],
-    ["npc", "SWSE NPC Actor Sheet v2 (Actor Shell)"]
-  ]) {
-    Actors.registerSheet("swse", SWSEV2CharacterSheet, {
-      types: [type],
-      label,
-      makeDefault: true
-    });
-  }
 
   Items.registerSheet("swse", SWSEItemSheet, {
     types: SWSE.itemTypes,

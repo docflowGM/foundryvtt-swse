@@ -17,7 +17,11 @@ const npcSheetHelpers = await readFile(new URL('../scripts/sheets/v2/npc/npc-she
 const panelContextBuilder = await readFile(new URL('../scripts/sheets/v2/context/PanelContextBuilder.js', import.meta.url), 'utf8');
 const darkSidePanelContext = await readFile(new URL('../scripts/sheets/v2/context/dark-side-panel-context.js', import.meta.url), 'utf8');
 const panelValidators = await readFile(new URL('../scripts/sheets/v2/context/PanelValidators.js', import.meta.url), 'utf8');
-const characterSheet = await readFile(new URL('../scripts/sheets/v2/character-sheet.js', import.meta.url), 'utf8');
+// This content used to live in character-sheet.js; it moved to the shared
+// SWSEV2CharacterLikeSheet base in character-like-sheet.js during the
+// Character/NPC/Droid sheet-class split (character-sheet.js is now a thin
+// SWSEV2CharacterSheet subclass with no body of its own).
+const characterSheet = await readFile(new URL('../scripts/sheets/v2/character-like-sheet.js', import.meta.url), 'utf8');
 const npcImporter = await readFile(new URL('../scripts/engine/import/npc-template-importer-engine.js', import.meta.url), 'utf8');
 const droidImporter = await readFile(new URL('../scripts/engine/import/stock-droid-importer-engine.js', import.meta.url), 'utf8');
 const droidNormalizer = await readFile(new URL('../scripts/domain/droids/stock-droid-normalizer.js', import.meta.url), 'utf8');
