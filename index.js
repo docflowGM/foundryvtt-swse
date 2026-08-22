@@ -5,6 +5,7 @@
 
 import { SWSE } from "./scripts/core/config.js";
 import { SWSEV2CharacterSheet } from "./scripts/sheets/v2/character-sheet.js";
+import { SWSEV2VehicleSheet } from "./scripts/sheets/v2/vehicle-actor-sheet.js";
 import { SWSEItemSheet } from "./scripts/items/swse-item-sheet.js";
 import { EntityCreateBrowser, openEntityCreateBrowser } from "./scripts/dialogs/entity-dialog/entity-create-browser.js";
 import { preloadHandlebarsTemplates } from "./scripts/load-templates.js";
@@ -132,11 +133,16 @@ Hooks.once("init", async () => {
   Actors.unregisterSheet("core", ActorSheet);
   Items.unregisterSheet("core", ItemSheet);
 
+  Actors.registerSheet("swse", SWSEV2VehicleSheet, {
+    types: ["vehicle"],
+    label: "SWSE Vehicle Actor Sheet v2 (Actor Shell)",
+    makeDefault: true
+  });
+
   for (const [type, label] of [
     ["character", "SWSE Character Sheet v2"],
     ["droid", "SWSE Droid Actor Sheet v2 (Actor Shell)"],
-    ["npc", "SWSE NPC Actor Sheet v2 (Actor Shell)"],
-    ["vehicle", "SWSE Vehicle Actor Sheet v2 (Actor Shell)"]
+    ["npc", "SWSE NPC Actor Sheet v2 (Actor Shell)"]
   ]) {
     Actors.registerSheet("swse", SWSEV2CharacterSheet, {
       types: [type],

@@ -18,9 +18,15 @@ import { readFile } from 'node:fs/promises';
 // Phase 6 moved the binding into vehicle-crew-assignment-controls.js,
 // called from _wireVehicleActorModeEvents — the listener path vehicles
 // actually use — so this guard now points there instead.
+//
+// Phase 4 sheet-architecture separation later moved
+// _wireVehicleActorModeEvents (and all other vehicle-only sheet code) off
+// SWSEV2CharacterSheet and into the new, dedicated SWSEV2VehicleSheet class
+// (scripts/sheets/v2/vehicle-actor-sheet.js), so this guard now reads that
+// file instead of character-sheet.js.
 
 const controls = await readFile(new URL('../scripts/sheets/v2/vehicle-sheet/vehicle-crew-assignment-controls.js', import.meta.url), 'utf8');
-const characterSheet = await readFile(new URL('../scripts/sheets/v2/character-sheet.js', import.meta.url), 'utf8');
+const characterSheet = await readFile(new URL('../scripts/sheets/v2/vehicle-actor-sheet.js', import.meta.url), 'utf8');
 const crewSkillRouter = await readFile(new URL('../scripts/sheets/v2/vehicle-sheet/crew-skill-router.js', import.meta.url), 'utf8');
 const contextBuilder = await readFile(new URL('../scripts/sheets/v2/vehicle-sheet/vehicle-context-builder.js', import.meta.url), 'utf8');
 const template = await readFile(new URL('../templates/actors/vehicle/v2/partials/vehicle-weapon-mount-panel.hbs', import.meta.url), 'utf8');

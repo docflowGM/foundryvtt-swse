@@ -17,8 +17,17 @@ import { readFile } from 'node:fs/promises';
 // use (_wireVehicleActorModeEvents), unifies the station model so
 // multi-gunner/custom stations are assignable, and hardens the assignment
 // service's mutation/permission contract.
+//
+// Phase 4 sheet-architecture separation later extracted all vehicle-only
+// sheet code (including _wireVehicleActorModeEvents) off SWSEV2CharacterSheet
+// and into the dedicated SWSEV2VehicleSheet class
+// (scripts/sheets/v2/vehicle-actor-sheet.js), so the reachability guards
+// below read that file instead. character-sheet.js is still read separately
+// to confirm no vehicle-crew binding leaked back into the character/npc/droid
+// sheet class.
 
-const sheet = await readFile(new URL('../scripts/sheets/v2/character-sheet.js', import.meta.url), 'utf8');
+const sheet = await readFile(new URL('../scripts/sheets/v2/vehicle-actor-sheet.js', import.meta.url), 'utf8');
+const characterSheet = await readFile(new URL('../scripts/sheets/v2/character-sheet.js', import.meta.url), 'utf8');
 const controls = await readFile(new URL('../scripts/sheets/v2/vehicle-sheet/vehicle-crew-assignment-controls.js', import.meta.url), 'utf8');
 const service = await readFile(new URL('../scripts/engine/crew/vehicle-crew-assignment-service.js', import.meta.url), 'utf8');
 const dropEngine = await readFile(new URL('../scripts/engine/interactions/vehicle-drop-engine.js', import.meta.url), 'utf8');
@@ -39,14 +48,19 @@ const wireVehicleStart = sheet.indexOf('_wireVehicleActorModeEvents(root, signal
 const wireVehicleFn = sheet.slice(wireVehicleStart, wireVehicleStart + 1500);
 assert.match(wireVehicleFn, /bindVehicleCrewAssignmentControls\(this, root, \{ signal \}\)/);
 assert.equal((sheet.match(/bindVehicleCrewAssignmentControls\(/g) || []).length, 1, 'bindVehicleCrewAssignmentControls must be called exactly once');
-assert.equal((sheet.match(/rollVehicleCrewSkill\(/g) || []).length, 0, 'the old vehicle-crew-skill binding (calling rollVehicleCrewSkill directly from character-sheet.js) must be removed, not duplicated');
+assert.equal((sheet.match(/rollVehicleCrewSkill\(/g) || []).length, 0, 'the old vehicle-crew-skill binding (calling rollVehicleCrewSkill directly from the sheet class) must be removed, not duplicated');
+assert.equal((characterSheet.match(/bindVehicleCrewAssignmentControls\(/g) || []).length, 0, 'the vehicle-crew binding must not leak back into the character/npc/droid sheet class');
 
-// The vehicle branch of _onRender still returns early before
+// SWSEV2VehicleSheet._onRenderActorSheet (called from
+// SWSEV2ActorSheetBase._onRender's shared preamble) still never calls
 // activateListeners() — documenting that this is why the controller has to
 // be bound from _wireVehicleActorModeEvents rather than the generic path.
-const onRenderVehicleBranch = sheet.slice(sheet.indexOf("if (this.document?.type === 'vehicle') {"), sheet.indexOf('this.activateListeners(root, { signal });'));
-assert.match(onRenderVehicleBranch, /this\._wireVehicleActorModeEvents\(root, signal\);/);
-assert.match(onRenderVehicleBranch, /return;/);
+const onRenderHookStart = sheet.indexOf('_onRenderActorSheet(root, signal) {');
+assert.notEqual(onRenderHookStart, -1, 'SWSEV2VehicleSheet must implement _onRenderActorSheet');
+const onRenderHookEnd = sheet.indexOf('\n  }', onRenderHookStart);
+const onRenderHookBody = sheet.slice(onRenderHookStart, onRenderHookEnd);
+assert.match(onRenderHookBody, /this\._wireVehicleActorModeEvents\(root, signal\);/);
+assert.doesNotMatch(onRenderHookBody, /this\.activateListeners\(/);
 
 // --- Button wiring (spec section 2) ----------------------------------------
 
