@@ -1,12 +1,14 @@
 # Canonical Damage Packet — v2 Contract
 
-Status: **Phase 1 (Hard) — contract locked, runtime still emits v1**
+Status: **Phase 2 — character weapon damage now emits v2; all other families still emit v1**
 Owner: damage/mitigation pipeline
 Related:
 - `docs/audits/phase-0-damage-packet-recalibration-audit.md` (Phase 0 research this contract implements)
-- `scripts/engine/combat/canonical-damage-packet.js` (v1 normalizer — current runtime)
-- `scripts/engine/combat/damage-packet-builder.js` (v1 builder — current runtime)
-- `scripts/engine/combat/damage-profile-registry.js` (profile registry — this phase)
+- `docs/audits/phase-2-weapon-packet-runtime-wiring.md` (Phase 2 runtime wiring notes)
+- `scripts/engine/combat/canonical-damage-packet.js` (v1 normalizer — still the shape for non-weapon callers)
+- `scripts/engine/combat/damage-packet-builder.js` (v1 builder; calls the Phase 2 weapon enhancer for every weapon-backed packet)
+- `scripts/engine/combat/builders/weapon-damage-packet-builder.js` (Phase 2 — character weapon v1→v2 enhancer)
+- `scripts/engine/combat/damage-profile-registry.js` (profile registry — Phase 1)
 - `docs/audits/phase-3-canonical-damage-packet-design.md` (v1 design)
 - `docs/audits/generated/damage-profile-audit.md` (generated compendium audit)
 
