@@ -390,7 +390,11 @@ await TalentRegistry.initialize();
   );
   assert.match(abilitiesUi, /_showItemSelectionModal\?\.\(itemType\)/);
 
-  const sheet = fs.readFileSync(path.join(ROOT, 'scripts/sheets/v2/character-sheet.js'), 'utf8');
+  // This content used to live in character-sheet.js; it moved to the shared
+  // SWSEV2CharacterLikeSheet base in character-like-sheet.js during the
+  // Character/NPC/Droid sheet-class split (character-sheet.js is now a thin
+  // SWSEV2CharacterSheet subclass with no body of its own).
+  const sheet = fs.readFileSync(path.join(ROOT, 'scripts/sheets/v2/character-like-sheet.js'), 'utf8');
   assert.match(sheet, /_addAbilityItemFromCompendium\(itemType\)/, 'the compendium add path is missing');
   assert.match(sheet, /registry\.getDocumentById\?\.\(entry\.id\)/, 'the compendium add path does not load the real document');
   assert.match(

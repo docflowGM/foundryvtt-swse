@@ -33,9 +33,13 @@ class CharacterSheetDiagnostics {
    * Find the character sheet app instance and its element
    */
   getSheetInstance() {
-    // Try to find a SWSEV2CharacterSheet instance from open apps
+    // Try to find a SWSEV2CharacterSheet/SWSEV2NpcSheet/SWSEV2DroidSheet
+    // instance from open apps. These three classes used to be one class
+    // (SWSEV2CharacterSheet); this diagnostics helper looks for any of them
+    // so console debugging still finds NPC/Droid sheets after the split.
     for (const app of Object.values(ui.windows || {})) {
-      if (app.constructor.name === 'SWSEV2CharacterSheet') {
+      const name = app.constructor.name;
+      if (name === 'SWSEV2CharacterSheet' || name === 'SWSEV2NpcSheet' || name === 'SWSEV2DroidSheet') {
         return app;
       }
     }

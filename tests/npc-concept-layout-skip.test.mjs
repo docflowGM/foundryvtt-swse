@@ -22,12 +22,18 @@ import { readFile } from 'node:fs/promises';
 //      templates DO consume — receives `conceptLayout` as an input option
 //      but never reads it.
 //
-// character-sheet.js cannot be imported under this repo's Node/Foundry-shim
+// character-like-sheet.js cannot be imported under this repo's Node/Foundry-shim
 // harness (ApplicationV2 + heavy Foundry globals), so this locks in the
 // guard and its safety invariants as source-text contracts, following the
 // established pattern for this file (see tests/dsp-engine-consolidation.test.mjs).
+//
+// This guard's code used to live in character-sheet.js; it moved to the
+// shared SWSEV2CharacterLikeSheet base in
+// scripts/sheets/v2/character-like-sheet.js during the Character/NPC/Droid
+// sheet-class split (character-sheet.js is now a thin SWSEV2CharacterSheet
+// subclass with no body of its own).
 
-const characterSheet = await readFile(new URL('../scripts/sheets/v2/character-sheet.js', import.meta.url), 'utf8');
+const characterSheet = await readFile(new URL('../scripts/sheets/v2/character-like-sheet.js', import.meta.url), 'utf8');
 const npcSheetHelpers = await readFile(new URL('../scripts/sheets/v2/npc/npc-sheet-helpers.js', import.meta.url), 'utf8');
 const rootTemplate = await readFile(new URL('../templates/actors/character/v2-concept/character-sheet.hbs', import.meta.url), 'utf8');
 const npcConceptContent = await readFile(new URL('../templates/actors/npc/v2/partials/npc-concept-content.hbs', import.meta.url), 'utf8');

@@ -76,11 +76,19 @@ async function renderCombatFeaturesPanel(app, html) {
 export function registerCombatFeaturesPanelRenderer() {
   if (registered) return false;
   registered = true;
-  Hooks.on('renderSWSEV2CharacterSheet', (app, html) => {
+  const onRender = (app, html) => {
     renderCombatFeaturesPanel(app, html).catch(err => {
       console.error('[SWSE] Failed to render Combat Features panel', err);
     });
-  });
+  };
+  // Character/NPC/Droid actors previously all rendered through the single
+  // SWSEV2CharacterSheet class (now split into SWSEV2CharacterSheet /
+  // SWSEV2NpcSheet / SWSEV2DroidSheet), so this hook must be registered for
+  // all three render-hook names to keep this panel appearing for NPC and
+  // Droid actors exactly as it did before that split.
+  Hooks.on('renderSWSEV2CharacterSheet', onRender);
+  Hooks.on('renderSWSEV2NpcSheet', onRender);
+  Hooks.on('renderSWSEV2DroidSheet', onRender);
   return true;
 }
 
