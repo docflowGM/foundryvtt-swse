@@ -227,9 +227,13 @@ const read = (relPath) => fs.readFileSync(path.join(ROOT, relPath), 'utf8');
   assert.match(adapter, /MentorTranslationIntegration\.render\(/, 'adapter must use the shared MentorTranslationIntegration pipeline, not a separate implementation');
   assert.match(adapter, /translationHydrated/, 'hydration must be idempotent, matching WorkbenchSurfaceAdapter\'s guard');
 
-  const sheet = read('scripts/sheets/v2/character-sheet.js');
+  // Phase 4 sheet-architecture separation moved the Shell-surface wiring
+  // methods (shared across all actor-type sheets) off SWSEV2CharacterSheet
+  // and onto the new SWSEV2ActorSheetBase that it — and SWSEV2VehicleSheet —
+  // now extend. _wireCustomizationSurfaceEvents lives there now.
+  const sheet = read('scripts/sheets/v2/actor-sheet-base.js');
   const wireStart = sheet.indexOf('_wireCustomizationSurfaceEvents(root, signal)');
-  assert.ok(wireStart !== -1, '_wireCustomizationSurfaceEvents must exist on the actual live sheet class');
+  assert.ok(wireStart !== -1, '_wireCustomizationSurfaceEvents must exist on the actual live sheet base class');
   const wireEnd = sheet.indexOf('\n  }', wireStart);
   const wireBlock = sheet.slice(wireStart, wireEnd);
   assert.match(

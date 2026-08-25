@@ -1,4 +1,4 @@
-import { SWSEV2CharacterSheet } from '/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet.js';
+import { SWSEV2NpcSheet } from '/systems/foundryvtt-swse/scripts/sheets/v2/npc-actor-sheet.js';
 import { DefenseCalculator } from '/systems/foundryvtt-swse/scripts/actors/derived/defense-calculator.js';
 import { FollowerCreator } from '/systems/foundryvtt-swse/scripts/apps/follower-creator.js';
 import { InventoryEngine } from '/systems/foundryvtt-swse/scripts/engine/inventory/InventoryEngine.js';
@@ -270,7 +270,7 @@ function applyFollowerContext(context, actor) {
 }
 
 function patchContext() {
-  const proto = SWSEV2CharacterSheet?.prototype;
+  const proto = SWSEV2NpcSheet?.prototype;
   if (!proto || proto[CONTEXT_PATCHED] || typeof proto._prepareContext !== 'function') return;
   const original = proto._prepareContext;
   proto._prepareContext = async function patchedNpcContext(options = {}) {
@@ -449,7 +449,7 @@ function injectGearControls(sheet, root, signal) {
 }
 
 function patchEvents() {
-  const proto = SWSEV2CharacterSheet?.prototype;
+  const proto = SWSEV2NpcSheet?.prototype;
   if (!proto || proto[EVENTS_PATCHED] || typeof proto._wireNpcConceptSheetEvents !== 'function') return;
   const original = proto._wireNpcConceptSheetEvents;
   proto._wireNpcConceptSheetEvents = function patchedNpcEvents(root, signal) {

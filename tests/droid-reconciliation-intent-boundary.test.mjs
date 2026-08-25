@@ -523,12 +523,15 @@ async function intentFor(actor, selectedCanonicalIds) {
 
 resetFoundryShimGlobals();
 
-// 31. UI caller migration — character-sheet.js's reconciliation handler
-// submits INTENT, never a mutation plan (structural: character-sheet.js
+// 31. UI caller migration — droid-actor-sheet.js's reconciliation handler
+// submits INTENT, never a mutation plan (structural: droid-actor-sheet.js
 // cannot load in this Node shim harness — see other Phase 3/4 structural
-// tests in this suite for the same documented wall).
+// tests in this suite for the same documented wall). This handler used to
+// live in character-sheet.js; it moved to SWSEV2DroidSheet in
+// scripts/sheets/v2/droid-actor-sheet.js during the Character/NPC/Droid
+// sheet-class split.
 {
-  const source = await readFile(new URL('../scripts/sheets/v2/character-sheet.js', import.meta.url), 'utf8');
+  const source = await readFile(new URL('../scripts/sheets/v2/droid-actor-sheet.js', import.meta.url), 'utf8');
   const handlerStart = source.indexOf('async _reconcileDroidSystems(');
   assert.ok(handlerStart !== -1, '_reconcileDroidSystems handler not found');
   const handlerEnd = source.indexOf('\n  }\n', handlerStart);

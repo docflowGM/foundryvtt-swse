@@ -193,10 +193,15 @@ export class DerivedCalculator {
    * Called from prepareDerivedData() during recalculation pass.
    *
    * @param {Actor} actor - the actor being recalculated
+   * @param {Object} [options={}]
+   * @param {string|null} [options.signature] - Pre-computed cache signature from
+   *   a caller that already ran getActorComputeSignature(actor) this tick (e.g.
+   *   SWSEV2BaseActor._computeDerivedAsync's own coalescing check), so the
+   *   items/effects scan-sort-join isn't repeated for the same actor state.
    * @returns {Promise<Object>} update object to apply to derived system fields
    */
-  static async computeAll(actor) {
-    const cacheKey = this.getActorComputeSignature(actor);
+  static async computeAll(actor, options = {}) {
+    const cacheKey = options.signature !== undefined ? options.signature : this.getActorComputeSignature(actor);
     if (cacheKey && this._computeCache.has(cacheKey)) {
       ActorPerfDiagnostics.recordDerivedCacheEvent('hit');
       return this._cloneUpdates(this._computeCache.get(cacheKey));
@@ -219,11 +224,17 @@ export class DerivedCalculator {
       // ========================================
       // PHASE 0: Modifier Pipeline Integration
       // ========================================
+      // Compute the modifier-source signature once so the three ModifierEngine
+      // entry points below (getAllModifiers/aggregateAll/buildModifierBreakdown)
+      // don't each independently re-scan/sort/join actor.items+effects for the
+      // same unchanged actor state within this single computeAll() cycle.
+      const modifierSignature = ModifierEngine.getActorModifierSourceSignature(actor);
+
       // Collect all modifiers from every source
-      const allModifiers = await ModifierEngine.getAllModifiers(actor);
+      const allModifiers = await ModifierEngine.getAllModifiers(actor, { signature: modifierSignature });
 
       // Aggregate modifiers: group by target, apply stacking rules
-      const modifierMap = await ModifierEngine.aggregateAll(actor);
+      const modifierMap = await ModifierEngine.aggregateAll(actor, { signature: modifierSignature });
 
       // Extract specific adjustments for calculators
       const hpAdjustment = modifierMap['hp.max'] || 0;
@@ -964,7 +975,7 @@ export class DerivedCalculator {
         'defense.fortitude', 'defense.reflex', 'defense.will',
         'hp.max', 'bab.total', 'initiative.total'
       ];
-      const modifierBreakdown = await ModifierEngine.buildModifierBreakdown(actor, allTargets);
+      const modifierBreakdown = await ModifierEngine.buildModifierBreakdown(actor, allTargets, { signature: modifierSignature });
 
       updates['system.derived.modifiers'] = {
         all: allModifiers,
