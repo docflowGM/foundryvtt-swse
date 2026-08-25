@@ -140,7 +140,9 @@ export class SWSEV2BaseActor extends SWSEActorBase {
     }
 
     try {
-      const updates = await DerivedCalculator.computeAll(this);
+      // Pass the signature already computed above so computeAll() doesn't
+      // repeat the same items/effects scan-sort-join for identical actor state.
+      const updates = await DerivedCalculator.computeAll(this, { signature });
       let changed = false;
 
       // Merge computed values into system.derived, but only mark the actor for a

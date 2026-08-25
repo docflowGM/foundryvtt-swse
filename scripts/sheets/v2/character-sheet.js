@@ -4196,7 +4196,11 @@ const forcePoints = [];
     if (isDroidActor) {
       try {
         droidSheetContext = ActorPerfDiagnostics.time(
-          ms => ActorPerfDiagnostics.recordSheetContext('droid', ms),
+          // Distinct label from the buildConceptSheetViewModel() droid entry below
+          // (Phase 3 live-benchmark seam) so the two builders' costs, previously
+          // both aggregated under 'droid', can be read separately from
+          // SWSE.debug.performance.summary().sheetContext.
+          ms => ActorPerfDiagnostics.recordSheetContext('droid-panel-builder', ms),
           () => new DroidSheetContextBuilder(actor).build()
         );
       } catch (err) {
@@ -4221,8 +4225,23 @@ const forcePoints = [];
     const combatStatus = buildCombatStatusViewModel(actor, { canEdit: this.isEditable });
     const effectiveDefenses = buildEffectiveDefensesViewModel(actor, panelContexts.defensePanel);
 
-    const conceptLayout = ActorPerfDiagnostics.time(
-      ms => ActorPerfDiagnostics.recordSheetContext(actor?.type ?? 'character', ms),
+    // Phase 3B: buildConceptSheetViewModel() is statically proven unused for
+    // useNpcConceptSheet actors — character-sheet.hbs's root
+    // {{#if useVehicleSheet}}...{{else if useNpcConceptSheet}}...{{else}}
+    // chain renders npc-concept-content.hbs for these actors instead, and
+    // that branch (and every partial it includes) never references
+    // `conceptLayout`. buildNpcConceptSheetContext() below also receives
+    // `conceptLayout` as an input but never reads it (verified: zero
+    // references to `conceptLayout` anywhere in npc-sheet-helpers.js).
+    // Skipping the ~1,971-line builder for these actors is therefore a
+    // provably-unused-output elimination, not a behavior change. See
+    // docs/audits/v2-phase-3-derived-performance.md, "Static Closure Review".
+    const conceptLayout = useNpcConceptSheet ? null : ActorPerfDiagnostics.time(
+      // Phase 3 live-benchmark seam: '-concept-layout' suffix keeps this
+      // distinct from the 'droid-panel-builder'/'npc-context-builder' entries
+      // above/below, so buildConceptSheetViewModel()'s own cost per actor
+      // type is separately readable from SWSE.debug.performance.summary().
+      ms => ActorPerfDiagnostics.recordSheetContext(`${actor?.type ?? 'character'}-concept-layout`, ms),
       () => buildConceptSheetViewModel({
       ...context,
       ...panelContexts,
@@ -4268,7 +4287,9 @@ const forcePoints = [];
     if (useNpcConceptSheet) {
       try {
         context.npcConcept = ActorPerfDiagnostics.time(
-          ms => ActorPerfDiagnostics.recordSheetContext('npc', ms),
+          // Distinct label from the buildConceptSheetViewModel() 'npc-concept-layout'
+          // entry above (Phase 3 live-benchmark seam) — see that call site's comment.
+          ms => ActorPerfDiagnostics.recordSheetContext('npc-context-builder', ms),
           () => buildNpcConceptSheetContext(actor, {
             ...context,
             derived,

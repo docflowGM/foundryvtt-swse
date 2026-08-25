@@ -596,7 +596,14 @@ export class DefenseCalculator {
     return 'will';
   }
 
-  static _collectSpeciesDefenseBonus(actor, defenseType) {
+  /**
+   * @param {Actor} actor
+   * @param {string} defenseType
+   * @param {Item[]} [speciesItems] - Pre-filtered actor.items of type 'species', from
+   *   a caller iterating fort/ref/will in the same calculate() cycle, so the items
+   *   array isn't re-filtered per defense type for identical actor state.
+   */
+  static _collectSpeciesDefenseBonus(actor, defenseType, speciesItems = null) {
     const key = this._normalizeDefenseKey(defenseType);
     const defensesState = actor?.system?.defenses ?? {};
     const defenseState = defensesState?.[key] ?? {};
@@ -609,7 +616,7 @@ export class DefenseCalculator {
     if (direct !== 0) return direct;
 
     let ruleTotal = 0;
-    const speciesItems = (actor?.items || []).filter(item => item?.type === 'species');
+    if (!speciesItems) speciesItems = (actor?.items || []).filter(item => item?.type === 'species');
     for (const item of speciesItems) {
       const traitBuckets = [
         item?.system?.structuralTraits,
@@ -750,9 +757,12 @@ export class DefenseCalculator {
     const fortitudeState = defensesState?.fortitude ?? {};
     const willState = defensesState?.will ?? {};
 
-    const reflexSpeciesBonus = this._collectSpeciesDefenseBonus(actor, 'reflex');
-    const fortSpeciesBonus = this._collectSpeciesDefenseBonus(actor, 'fortitude');
-    const willSpeciesBonus = this._collectSpeciesDefenseBonus(actor, 'will');
+    // Pre-filter species items once for the fort/ref/will trio below instead of
+    // re-scanning actor.items per defense type for identical actor state.
+    const speciesItemsForDefense = (actor?.items || []).filter(item => item?.type === 'species');
+    const reflexSpeciesBonus = this._collectSpeciesDefenseBonus(actor, 'reflex', speciesItemsForDefense);
+    const fortSpeciesBonus = this._collectSpeciesDefenseBonus(actor, 'fortitude', speciesItemsForDefense);
+    const willSpeciesBonus = this._collectSpeciesDefenseBonus(actor, 'will', speciesItemsForDefense);
 
     let reflexAbilityKey = String(reflexState.ability || 'dex').toLowerCase();
     let reflexAbilityResolution = this._resolveDefenseAbilityFromProfile(actor, 'reflex', reflexAbilityKey, getAbilityMod, defenseProfile);
