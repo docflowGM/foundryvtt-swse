@@ -310,11 +310,21 @@ export class PanelContextBuilder {
         + miscMod
         + conditionPenalty
         + implantWillPenalty;
-      // The sheet displays the same total as the player-facing formula.  Some
-      // older derived defense payloads miss species/rules penalties even though
-      // the breakdown has them, so do not let a stale cached total contradict
-      // the visible math.
-      const total = Number.isFinite(computedTotal) ? computedTotal : (Number(defenseViewModel?.total ?? derivedDefense?.total ?? 10) || 10);
+      // The authoritative total is whatever DefenseCalculator already computed
+      // and persisted to system.derived.defenses.<key>.total — computedTotal
+      // above is a display-only re-sum of the same breakdown fields and is
+      // missing at least one term DefenseCalculator includes (Psychic
+      // Citadel's Will Defense bonus is never persisted as its own breakdown
+      // field, so the manual sum can't see it; see
+      // docs/audits/v2-phase-2-actor-authority-normalization.md "Defense
+      // panel re-derivation"). Prefer the cached total; fall back to the
+      // manual sum only when it's unavailable.
+      const authoritativeTotal = Number(derivedDefense?.total);
+      const total = Number.isFinite(authoritativeTotal)
+        ? authoritativeTotal
+        : Number.isFinite(computedTotal)
+          ? computedTotal
+          : (Number(defenseViewModel?.total ?? 10) || 10);
       const abilityModClass = abilityMod > 0 ? 'mod--positive' : abilityMod < 0 ? 'mod--negative' : 'mod--zero';
       const miscModClass = miscMod > 0 ? 'mod--positive' : miscMod < 0 ? 'mod--negative' : 'mod--zero';
       const speciesBonusClass = speciesBonus > 0 ? 'mod--positive' : speciesBonus < 0 ? 'mod--negative' : 'mod--zero';

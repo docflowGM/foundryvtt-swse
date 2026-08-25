@@ -312,6 +312,62 @@ export function buildNpcProfileUpdate(actor) {
   };
 }
 
+const NPC_CALCULATION_MODES = new Set(['progression', 'statblock', 'follower']);
+
+/**
+ * Phase 2 authority normalization — single explicit mechanical-authority mode
+ * for an NPC actor, consolidating the existing kind/mode/sourceAuthority
+ * fields (all resolved above) into the one enum
+ * docs/audits/v2-actor-authority-performance-phase-1.md §12 recommended:
+ * 'progression' | 'statblock' | 'follower'.
+ *
+ * This does NOT add new inference — it is a thin, explicit read of the same
+ * getNpcProfileState() this file already computes, so every existing
+ * consumer of kind/mode/sourceAuthority keeps working unchanged. It exists
+ * so computeNpcDerived() and any future statblock-override logic have ONE
+ * name to branch on instead of re-deriving "is this NPC calculated or
+ * authoritative-from-import" from kind+mode+sourceAuthority each time.
+ *
+ * 'beast' is intentionally NOT a calculationMode value: beast-specific
+ * mechanics (BeastSubtypeAdapter) only run during chargen/progression
+ * sessions, never during ordinary derived-data computation — a beast NPC's
+ * calculationMode is whichever of progression/statblock/follower actually
+ * governs its defenses/HP/DT today (see the kind vs. calculationMode
+ * distinction in the Phase 2 authority-normalization audit doc). Follower
+ * takes priority over sourceAuthority because followers use their own
+ * defense formula (buildFollowerDefenseValues in npc-sheet-helpers.js)
+ * regardless of how they were imported.
+ *
+ * Explicit-field-wins, same priority order as resolveDroidCalculationMode()
+ * in scripts/actors/droid/droid-mode-adapter.js: a valid stored
+ * system.npcProfile.calculationMode is trusted outright (an import/GM
+ * decision should not be silently overridden by inference every render);
+ * only an absent/invalid stored value falls through to inference from
+ * kind/mode/sourceAuthority.
+ *
+ * @param {Actor} actor
+ * @returns {'progression'|'statblock'|'follower'}
+ */
+export function resolveNpcCalculationMode(actor) {
+  const explicit = normalizeKey(actor?.system?.npcProfile?.calculationMode);
+  if (NPC_CALCULATION_MODES.has(explicit)) return explicit;
+
+  const state = getNpcProfileState(actor);
+  if (state.kind === 'follower') return 'follower';
+  if (state.mode === 'progression') return 'progression';
+  if (state.sourceAuthority === 'progression') return 'progression';
+  return 'statblock';
+}
+
+/**
+ * @param {Actor} actor
+ * @returns {boolean}
+ */
+export function isNpcCalculationMode(actor, mode) {
+  if (!NPC_CALCULATION_MODES.has(mode)) return false;
+  return resolveNpcCalculationMode(actor) === mode;
+}
+
 /**
  * Check if NPC should use flat statblock attack bonuses.
  * @param {Actor} actor

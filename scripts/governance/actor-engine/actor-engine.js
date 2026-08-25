@@ -22,6 +22,7 @@ import { MutationNormalizationService } from "/systems/foundryvtt-swse/scripts/g
 import { MutationBoundaryService } from "/systems/foundryvtt-swse/scripts/governance/mutation/mutation-boundary-service.js";
 import * as PlanBuilders from "/systems/foundryvtt-swse/scripts/governance/actor-engine/plan-builders.js";
 import { normalizeActiveEffectDataForRuntime } from "/systems/foundryvtt-swse/scripts/utils/active-effect-change-utils.js";
+import { isNpcStatblockMode } from "/systems/foundryvtt-swse/scripts/actors/npc/npc-mode-adapter.js";
 
 /**
  * ActorEngine
@@ -3786,6 +3787,16 @@ export const ActorEngine = {
       // SSOT ENFORCEMENT: Get class from registry
       const classItem = ActorAbilityBridge.getClasses(actor)[0] || null;
       if (!classItem) {
+        // Statblock-imported NPCs never get a class Item (their HP max is
+        // written directly to system.hp.max by the statblock importer, see
+        // docs/audits/v2-phase-2-actor-authority-normalization.md "NPC HP
+        // authority"). Without this guard, the very first CON/level edit a
+        // GM makes on such an NPC (both wired to call recomputeHP via
+        // HPRecomputeHooks) would fall into the "no class = minimum 1 HP"
+        // branch below and silently collapse the imported HP max to 1.
+        if (actor.type === 'npc' && isNpcStatblockMode(actor)) {
+          return actor.system.hp?.max ?? 1;
+        }
         // No class = minimum 1 HP; but check if it's already 1
         const currentMax = actor.system.hp?.max ?? 1;
         if (currentMax === 1) {
@@ -4287,7 +4298,19 @@ export const ActorEngine = {
     }
 
     // 2. Compatibility mirror: system.abilities
-    //    Rebuilt from system.attributes on every prepareDerivedData(); treat as a compat backstop.
+    //    Phase 2 authority normalization correction: this function (called
+    //    from ActorEngine's own update pipeline on every ActorEngine-mediated
+    //    mutation that touches system.attributes/system.abilities — see
+    //    _initializeCanonicalShapesForTouchedDomains above) is the ONLY code
+    //    anywhere that populates/repairs system.abilities. DerivedCalculator
+    //    does NOT rebuild it (verified: derived-calculator.js only ever
+    //    *reads* `actor.system.attributes || actor.system.abilities`, it
+    //    never writes system.abilities). This backfill only fills missing
+    //    base/racial/temp shape defaults — it is not an independent value
+    //    authority, and no live code writes real ability *values* here.
+    //    Treat system.abilities strictly as a read-only compatibility mirror;
+    //    system.attributes is canonical (system.derived.attributes is the
+    //    canonical computed output — see DerivedCalculator.computeAll()).
     if (!actor.system.abilities) actor.system.abilities = {};
     for (const key of abilityKeys) {
       if (!actor.system.abilities[key]) {

@@ -42,17 +42,31 @@ function coerceVehicleHp(system) {
   let max = 1;
   let temp = 0;
 
-  // Vehicle sheets treat the statblock hull field as the table-facing
-  // authority. Some imported actors also carry a generic system.hp shell
-  // default; do not let that shell value override real vehicle hull.
-  if (system.hull && typeof system.hull === 'object') {
-    value = safeNumber(system.hull.value, 0);
-    max = safeNumber(system.hull.max, 1);
-    temp = safeNumber(system.hull.temp, 0);
-  } else if (system.hp && typeof system.hp === 'object') {
+  // Phase 2 authority normalization fix: system.hp is the live, combat-
+  // damage-tracked field for every actor type including vehicles —
+  // ActorEngine.applyDamage()/SchemaAdapters.setHPUpdate() write ONLY
+  // 'system.hp.value' (confirmed: no code path anywhere writes
+  // system.hull.* after actor creation). system.hull is a one-time,
+  // import-time mirror (vehicle-import-normalizer.js's normalizeHp()
+  // writes both fields with identical values "to preserve the legacy hull
+  // field for compatibility", then never touches hull again). Preferring
+  // hull here — the previous behavior — meant a vehicle's displayed HP
+  // silently stopped reflecting combat damage the moment it took any, for
+  // every vehicle imported with a legacy hull object. hp-first matches
+  // vehicle-import-normalizer.js's own documented intended priority
+  // ("system.hp (modern) > system.hull (legacy) > bare number") and what
+  // template.json's vehicle schema actually declares (only "hp", no
+  // "hull" — hull is purely a runtime/legacy-import artifact, never part
+  // of the schema). hull remains the fallback for the rare case where an
+  // actor somehow has a populated hull but no hp object at all.
+  if (system.hp && typeof system.hp === 'object') {
     value = safeNumber(system.hp.value, 0);
     max = safeNumber(system.hp.max, 1);
     temp = safeNumber(system.hp.temp, 0);
+  } else if (system.hull && typeof system.hull === 'object') {
+    value = safeNumber(system.hull.value, 0);
+    max = safeNumber(system.hull.max, 1);
+    temp = safeNumber(system.hull.temp, 0);
   }
 
   // Ensure max > 0 to prevent division by zero
@@ -140,8 +154,23 @@ export function buildVehicleDerived(actor, system) {
   // DAMAGE: Threshold, reduction, and state
   // ════════════════════════════════════════════════════════════════════════════
 
-  system.derived.damage.threshold = safeNumber(system.damageThreshold ?? system.threshold, 10);
+  const vehicleDamageThreshold = safeNumber(system.damageThreshold ?? system.threshold, 10);
+  system.derived.damage.threshold = vehicleDamageThreshold;
   system.derived.damage.reduction = safeNumber(system.damageReduction ?? system.damageReductionValue, 0);
+
+  // Phase 2 authority normalization fix: also mirror onto the FLAT
+  // system.derived.damageThreshold path (no ".damage." nesting) — the one
+  // combat-facing consumers actually read (scripts/rolls/defenses.js's
+  // calculateDamageThreshold(), and ThresholdEngine.calculateDamageThreshold()
+  // in the default/RAW-rules configuration). Without this, DerivedCalculator.
+  // computeAll()'s generic flat-DT block (character Fortitude total +
+  // generic size bonus — a formula never designed for ships) runs
+  // unconditionally for vehicles too and silently wins that field, so
+  // combat resolution could read a different DT than the one displayed on
+  // the vehicle sheet. This mirrors the same flat-field pattern droid
+  // statblock mode already uses for the identical reason (droid-actor.js's
+  // applyPublishedStatblockDerivedOverrides).
+  system.derived.damageThreshold = vehicleDamageThreshold;
 
   // Condition track help state
   system.derived.damage.conditionHelpless = false;

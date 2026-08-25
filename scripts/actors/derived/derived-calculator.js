@@ -827,6 +827,23 @@ export class DerivedCalculator {
       // ========================================
       // Damage Threshold (Hardened Safe Setting Access)
       // ========================================
+      // Phase 2 authority normalization fix: this formula (Fortitude/Will
+      // total + generic size bonus) is a character-scale formula and was
+      // never designed for vehicles. Vehicle DT is a genuinely different,
+      // vehicle-specific computation already owned by
+      // vehicle-derived-builder.js's buildVehicleDerived() (reads the
+      // vehicle's own stored damageThreshold/threshold stat, not
+      // Fortitude+size). Because this async pass previously ran
+      // unconditionally for every actor type and its result gets merged
+      // into system.derived.damageThreshold whenever it differs (see
+      // SWSEV2BaseActor._computeDerivedAsync's per-field merge), it was
+      // silently overwriting the correct vehicle-specific value moments
+      // after computeVehicleDerived()'s synchronous pass set it — the same
+      // class of bug Phase 1 documented for droid statblock overrides
+      // (see docs/audits/v2-actor-authority-performance-phase-1.md §2,
+      // "Damage Threshold"). Skip this block for vehicles entirely so the
+      // vehicle-specific derived value is left alone.
+      if (actor.type !== 'vehicle') {
       try {
 
         const safeGet = (key, fallback) => HouseRuleService.getSafe(key, fallback);
@@ -874,6 +891,7 @@ export class DerivedCalculator {
           err
         );
         updates['system.derived.damageThreshold'] = 10;
+      }
       }
 
       // ========================================

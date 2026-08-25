@@ -6,6 +6,7 @@ import { rollSkillCheck } from "/systems/foundryvtt-swse/scripts/rolls/skills.js
 import { ForcePointsService } from "/systems/foundryvtt-swse/scripts/engine/force/force-points-service.js";
 import { RollEngine } from "/systems/foundryvtt-swse/scripts/engine/roll-engine.js";
 import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
+import { getTalentAbilityMod as abilityMod } from "/systems/foundryvtt-swse/scripts/engine/talent/talent-ability-helpers.js";
 
 const NS = 'swse';
 
@@ -33,10 +34,6 @@ function actorLevel(actor) {
     if (Number.isFinite(n) && n > 0) return Math.floor(n);
   }
   return 1;
-}
-
-function abilityMod(actor, key) {
-  return Number(actor?.system?.derived?.attributes?.[key]?.mod ?? actor?.system?.abilities?.[key]?.mod ?? actor?.system?.attributes?.[key]?.mod ?? 0) || 0;
 }
 
 function encounterId() {

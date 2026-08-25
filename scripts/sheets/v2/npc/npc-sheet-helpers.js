@@ -157,6 +157,23 @@ function chooseAbilityCandidate(candidates = []) {
 }
 
 function isFollowerNpcActor(actor, context = {}) {
+  // Phase 2 authority normalization: NpcProfileBuilder.buildContext(actor)
+  // (scripts/actors/npc/npc-profile-builder.js) already resolves this exact
+  // question once per context build, via the canonical resolver in
+  // scripts/actors/npc/npc-mode-adapter.js ("Central authority for NPC mode
+  // + subtype resolution"), and character-sheet.js merges its output
+  // (isFollowerNpc, among other fields) into the context object passed down
+  // to this file. Trust that already-resolved canonical value when it says
+  // TRUE — a positive match there is authoritative. Deliberately do NOT
+  // short-circuit on a canonical FALSE: npc-mode-adapter.js's inferKind()
+  // does not check system.progression?.isFollower, profile.legalProfile,
+  // context.npcKind, or the exact flags.swse.follower.isFollower /
+  // flags['foundryvtt-swse'].isFollower keys the legacy chain below checks,
+  // so a canonical "false" is not proof this actor isn't a follower by the
+  // broader legacy definition — always fall through to the full chain in
+  // that case so no existing follower detection is lost.
+  if (context?.isFollowerNpc === true) return true;
+
   const system = actor?.system ?? {};
   const profile = system.npcProfile ?? {};
   return actor?.type === 'npc' && (
