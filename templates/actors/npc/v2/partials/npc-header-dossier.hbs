@@ -49,5 +49,18 @@
       <span class="swse-npc-vital-label">{{localize "SWSE.ActorUI.Init"}}</span>
       <strong class="swse-npc-vital-stat-value">{{npcConcept.initiative}}</strong>
     </div>
+
+    {{!-- Phase 5C: Speed already computed for the sheet (npcConcept.speed —
+    used elsewhere on this same context object) but was previously only
+    visible by opening a tab; surfaced here so it sits with HP/Condition/Init
+    in the always-visible combat strip, per the "avoid GM hunting through
+    tabs" goal. No new calculation — this is the same value already shown
+    in the editable field further down the sheet. --}}
+    {{#if npcConcept.speed}}
+    <div class="swse-npc-vital-stat">
+      <span class="swse-npc-vital-label">{{localize "SWSE.ActorUI.Speed"}}</span>
+      <strong class="swse-npc-vital-stat-value">{{npcConcept.speed}}</strong>
+    </div>
+    {{/if}}
   </div>
 </header>

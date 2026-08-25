@@ -16,6 +16,7 @@ import { SWSEDialogV2 } from "/systems/foundryvtt-swse/scripts/apps/dialogs/swse
 import { LightsaberConstructionEngine } from "/systems/foundryvtt-swse/scripts/engine/crafting/lightsaber-construction-engine.js";
 import { openItemCustomization } from "/systems/foundryvtt-swse/scripts/apps/customization/item-customization-router.js";
 import { openForceAlchemyWorkbench } from "/systems/foundryvtt-swse/scripts/apps/force-alchemy/force-alchemy-workbench-app.js";
+import { getForceAlchemySuggestedRiteForItem } from "/systems/foundryvtt-swse/scripts/apps/force-alchemy/force-alchemy-context-resolver.js";
 import { launchFollowerProgression, launchMinionCreation } from "/systems/foundryvtt-swse/scripts/apps/progression-framework/progression-entry.js";
 import { isFollowerSlotOccupied, resolveFollowerSlotActorId } from "/systems/foundryvtt-swse/scripts/domain/followers/follower-slot-occupancy.js";
 import { SWSEStore } from "/systems/foundryvtt-swse/scripts/apps/store/store-main.js";
@@ -35,7 +36,11 @@ import { SithTalentActions } from "/systems/foundryvtt-swse/scripts/engine/talen
 import { ForceAdeptTalentActions } from "/systems/foundryvtt-swse/scripts/engine/talent/force-adept-talent-actions.js";
 import { LightsaberFormEngine } from "/systems/foundryvtt-swse/scripts/engine/talent/lightsaber-form-engine.js";
 import { ArmorTalentActions } from "/systems/foundryvtt-swse/scripts/engine/talent/armor-talent-actions.js";
-import { promptForcePowerRollOptions } from "/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet/force-roll-dialog.js";
+import { promptForcePowerRollOptions, promptForceRegimenRollOptions } from "/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet/force-roll-dialog.js";
+import { ForceRegimenExecutor } from "/systems/foundryvtt-swse/scripts/engine/force/force-regimen-executor.js";
+import { MetaResourceFeatResolver } from "/systems/foundryvtt-swse/scripts/engine/feats/meta-resource-feat-resolver.js";
+import { showHolopadRollCompanion } from "/systems/foundryvtt-swse/scripts/ui/shell/roll-companion.js";
+import { RecurringDamageEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/recurring-damage-engine.js";
 import { AnimationEngine } from "/systems/foundryvtt-swse/scripts/engine/animation-engine.js";
 import { ActionEconomyIntegration } from "/systems/foundryvtt-swse/scripts/ui/combat/action-economy-integration.js";
 import { ActionEconomyBindings } from "/systems/foundryvtt-swse/scripts/ui/combat/action-economy-bindings.js";
@@ -3731,7 +3736,7 @@ const forcePoints = [];
     });
 
     // Delete/Remove item
-    html.querySelectorAll('[data-action="delete"], [data-action="equip"], [data-action="toggle-activated"], [data-action="edit"], [data-action="configure"], [data-action="toggle-implant-tag"], [data-action="toggle-implant-installed"], [data-action="toggle-implant-active"]').forEach(button => {
+    html.querySelectorAll('[data-action="delete"], [data-action="equip"], [data-action="toggle-activated"], [data-action="edit"], [data-action="configure"], [data-action="toggle-implant-tag"], [data-action="toggle-implant-installed"], [data-action="toggle-implant-active"], [data-action="sell-item"], [data-action="force-alchemy"]').forEach(button => {
       button.addEventListener("click", async (event) => {
         event.preventDefault();
         const action = button.dataset.action;
@@ -3766,6 +3771,27 @@ const forcePoints = [];
           case "configure":
             openItemCustomization(this.actor, item);
             break;
+          case "sell-item":
+            // Phase 5A fix: rendered in gear-tab.hbs (data-action="sell-item"),
+            // previously had no reachable handler (the only existing sell logic,
+            // the `.item-sell` class selector above, does not match this button's
+            // markup). Reuses the same authoritative `initiateItemSale` flow.
+            await initiateItemSale(item, this.actor);
+            break;
+          case "force-alchemy": {
+            // Phase 5A fix: rendered in gear-tab.hbs (data-action="force-alchemy"),
+            // previously had no reachable handler (distinct from the already-live
+            // `open-force-alchemy-workbench` action). Routes to the same workbench
+            // used by the Force Suite tab, pre-selecting a suggested rite for this item.
+            const suggestion = getForceAlchemySuggestedRiteForItem(this.actor, item);
+            await openForceAlchemyWorkbench(this.actor, {
+              launchSource: 'gear-tab',
+              targetId: item.id,
+              riteId: suggestion?.riteId,
+              activeCategory: suggestion?.category
+            });
+            break;
+          }
         }
       }, { signal });
     });
@@ -4174,11 +4200,28 @@ const forcePoints = [];
       select.addEventListener('change', () => syncSkillAbilitySelectorState(select), { signal });
     });
 
+    // Phase 5A fix: the "All / Trained / Custom" segmented quick-filter buttons
+    // render in skills-tab.hbs alongside the Filter <select> but previously had
+    // no listener at all. They control the exact same filter state as the
+    // <select> (values overlap: all/trained/custom) — route them to the
+    // authoritative filter/sort function instead of inventing new behavior.
+    const skillsSegmentedButtons = Array.from(html.querySelectorAll('[data-action="set-skills-filter"]'));
+    skillsSegmentedButtons.forEach(button => {
+      button.addEventListener('click', (event) => {
+        event.preventDefault();
+        const filterValue = button.dataset.filter || 'all';
+        if (filterControls[0]) filterControls[0].value = filterValue;
+        skillsSegmentedButtons.forEach(other => other.classList.toggle('is-active', other === button));
+        applyFiltersAndSort();
+      }, { signal });
+    });
+
     html.querySelectorAll('[data-action="reset-skills-tools"]').forEach(button => {
       button.addEventListener('click', (event) => {
         event.preventDefault();
         filterControls.forEach(select => { select.value = 'all'; });
         sortControls.forEach(select => { select.value = 'name'; });
+        skillsSegmentedButtons.forEach(other => other.classList.toggle('is-active', other.dataset.filter === 'all'));
         applyFiltersAndSort();
       }, { signal });
     });
@@ -4458,6 +4501,550 @@ const forcePoints = [];
     // - .attack-btn (uses showRollModifiersDialog + SWSERoll.rollAttack)
     // - .damage-btn (uses showRollModifiersDialog + SWSERoll.rollDamage)
     // Both handlers create chat messages correctly via createChatMessage() or SWSEChat.postRoll()
+
+    // Phase 5A fix: the actions below (Force Suite / Starship Suite / Force Talent /
+    // Lightsaber Form / Force Regimen cluster) render in force-suite-tab.hbs,
+    // starship-suite-tab.hbs, force-suite-card.hbs, starship-suite-card.hbs,
+    // force-regimen-card.hbs, and force-powers-known-panel.hbs (all reachable from
+    // the registered root template) but previously had no attached listener anywhere
+    // in the live sheet controllers. A correct, current implementation for nearly all
+    // of them already existed in the unimported `character-sheet/force-ui.js` module
+    // (verified: every engine method it calls still exists with a matching signature);
+    // that logic is reused here instead of being reinvented. `force-ui.js` itself is
+    // removed as VERIFIED DEAD (see Phase 5 audit doc) now that its live subset lives
+    // here and its non-live subset (`force-sort`, `force-tag-filter`, `activate-force`,
+    // `customize-item`, `open-item-menu`, `open-force-alchemy-workbench`) was already
+    // superseded by the blocks earlier in this method.
+
+    html.querySelectorAll('[data-action="add-force-power"]').forEach(button => {
+      button.addEventListener("click", async (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        try {
+          const doc = await createSafeEmbeddedItem(this.actor, 'force-power', { source: 'force-panel-add-force-power' });
+          if (doc?.sheet) {
+            doc.sheet._entityDialogMode = 'create';
+            doc.sheet.render(true);
+          }
+          this.render?.(false);
+        } catch (err) {
+          ui?.notifications?.error?.(`Failed to create Force Power: ${err.message}`);
+        }
+      }, { signal });
+    });
+
+    html.querySelectorAll('[data-action="add-starship-maneuver"]').forEach(button => {
+      button.addEventListener("click", async (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        try {
+          const doc = await createSafeEmbeddedItem(this.actor, 'maneuver', { source: 'starship-suite-add-maneuver' });
+          if (doc?.sheet) {
+            doc.sheet._entityDialogMode = 'create';
+            doc.sheet.render(true);
+          }
+          this.render?.(false);
+        } catch (err) {
+          ui?.notifications?.error?.(`Failed to create Starship Maneuver: ${err.message}`);
+        }
+      }, { signal });
+    });
+
+    // Force Tradition selector (the raw <select> also carries data-action="set-force-tradition").
+    html.querySelectorAll('[data-action="set-force-tradition"]').forEach(select => {
+      select.addEventListener('change', async (event) => {
+        const value = event.target.value;
+        try {
+          await mutateAndRepaint(this, () => ActorEngine.updateActor(this.actor, { 'system.forceTradition': value }), {
+            reason: 'force-tradition-change',
+            surfaceId: this._shellSurface ?? 'sheet'
+          });
+        } catch (err) {
+          ui?.notifications?.error?.(`Failed to update Force Tradition: ${err.message}`);
+        }
+      }, { signal });
+    });
+
+    html.querySelectorAll('[data-action="construct-lightsaber"]').forEach(button => {
+      button.addEventListener('click', async (event) => {
+        event.preventDefault();
+        await openItemCustomization(this.actor, null, {
+          initialCategory: 'lightsaber',
+          category: 'lightsaber',
+          mode: 'construct',
+          routeIntent: 'lightsaber-construction',
+          entryPoint: 'gear-tab'
+        });
+      }, { signal });
+    });
+
+    html.querySelectorAll('[data-action="forceful-recovery-recover"]').forEach(button => {
+      button.addEventListener("click", async (event) => {
+        event.preventDefault();
+        const itemId = button.dataset.itemId;
+        if (!itemId) return;
+        try {
+          const result = await MetaResourceFeatResolver.recoverForcefulRecoveryPower(this.actor, itemId);
+          if (result?.success) {
+            ui?.notifications?.info?.(`${result.powerName || 'Force power'} recovered through Forceful Recovery.`);
+            this.render?.(false);
+          } else {
+            ui?.notifications?.warn?.(result?.reason || 'Forceful Recovery could not recover that power.');
+          }
+        } catch (err) {
+          ui?.notifications?.error?.(`Forceful Recovery failed: ${err.message}`);
+        }
+      }, { signal });
+    });
+
+    // Force Suite: flip card front/back
+    html.querySelectorAll('[data-action="force-suite-flip-card"]').forEach(button => {
+      button.addEventListener('click', (event) => {
+        event.preventDefault();
+        const card = button.closest('.fcard');
+        card?.classList.toggle('flipped');
+      }, { signal });
+    });
+
+    // Force Suite: Force Point boost toggle (visual only, no actor mutation)
+    html.querySelectorAll('[data-action="force-suite-toggle-fp-boost"]').forEach(button => {
+      button.addEventListener('click', (event) => {
+        event.preventDefault();
+        if (button.disabled) return;
+        button.classList.toggle('on');
+      }, { signal });
+    });
+
+    // Force Suite: recover all (rest or natural 20)
+    html.querySelectorAll('[data-action="force-suite-recover-all"]').forEach(button => {
+      button.addEventListener('click', async (event) => {
+        event.preventDefault();
+        try {
+          const result = await ForceExecutor.recoverForcePowers(this.actor);
+          if (result?.success) {
+            ui?.notifications?.info?.('All spent Force powers recovered.');
+            this.render?.(true);
+          } else {
+            ui?.notifications?.warn?.(result?.error || 'No spent Force powers to recover.');
+          }
+        } catch (err) {
+          ui?.notifications?.error?.(`Force recovery failed: ${err.message}`);
+        }
+      }, { signal });
+    });
+
+    // Force Suite: enter pick-recovery mode (Spend Force Point)
+    html.querySelectorAll('[data-action="force-suite-pick-recovery"]').forEach(button => {
+      button.addEventListener('click', (event) => {
+        event.preventDefault();
+        const root = button.closest('[data-force-suite-tab]');
+        const hasDiscard = !!root?.querySelector('[data-force-discard-pile] [data-action="force-suite-recover-one"]');
+        if (!hasDiscard) {
+          ui?.notifications?.info?.('Discard pile is empty.');
+          return;
+        }
+        root?.classList.remove('is-picking-telekinetic-savant');
+        root?.classList.remove('is-picking-influence-savant');
+        root?.classList.remove('is-picking-lightsaber-form-savant');
+        root?.classList.toggle('is-picking-recovery');
+        html.querySelectorAll('[data-action="force-suite-pick-telekinetic-savant"], [data-action="force-suite-pick-influence-savant"], [data-action="force-suite-pick-lightsaber-form-savant"]').forEach(other => other.classList.remove('sel'));
+        button.classList.toggle('sel');
+      }, { signal });
+    });
+
+    // Force Suite: enter Telekinetic/Influence/Lightsaber-Form Savant recovery modes
+    const savantModes = [
+      { action: 'force-suite-pick-telekinetic-savant', mode: 'is-picking-telekinetic-savant', attr: 'telekinetic', label: 'Telekinetic', descriptor: '[Telekinetic]' },
+      { action: 'force-suite-pick-influence-savant', mode: 'is-picking-influence-savant', attr: 'mindAffecting', label: 'Influence', descriptor: '[Mind-Affecting]' },
+      { action: 'force-suite-pick-lightsaber-form-savant', mode: 'is-picking-lightsaber-form-savant', attr: 'lightsaberForm', label: 'Lightsaber Form', descriptor: '[Lightsaber Form]' }
+    ];
+    savantModes.forEach(({ action, mode, attr, label, descriptor }) => {
+      html.querySelectorAll(`[data-action="${action}"]`).forEach(button => {
+        button.addEventListener('click', (event) => {
+          event.preventDefault();
+          if (button.classList.contains('disabled') || button.disabled) {
+            ui?.notifications?.warn?.(`${label} Savant has no eligible spent ${descriptor} powers or no uses remaining.`);
+            return;
+          }
+          const root = button.closest('[data-force-suite-tab]');
+          const hasEligible = !!root?.querySelector(`[data-force-discard-pile] [data-action="force-suite-recover-one"][data-${attr.replace(/[A-Z]/g, c => '-' + c.toLowerCase())}="true"]`);
+          if (!hasEligible) {
+            ui?.notifications?.info?.(`No spent ${descriptor} Force powers to recover.`);
+            return;
+          }
+          savantModes.forEach(other => { if (other.mode !== mode) root?.classList.remove(other.mode); });
+          root?.classList.remove('is-picking-recovery');
+          root?.classList.toggle(mode);
+          html.querySelectorAll(savantModes.filter(o => o.mode !== mode).map(o => `[data-action="${o.action}"]`).concat('[data-action="force-suite-pick-recovery"]').join(', ')).forEach(other => other.classList.remove('sel'));
+          button.classList.toggle('sel');
+        }, { signal });
+      });
+    });
+
+    // Force Suite: recover one power from discard pile
+    html.querySelectorAll('[data-action="force-suite-recover-one"]').forEach(button => {
+      button.addEventListener('click', async (event) => {
+        event.preventDefault();
+        const itemId = button.dataset.itemId;
+        if (!itemId) return;
+
+        const root = button.closest('[data-force-suite-tab]');
+        const spendingForcePoint = root?.classList.contains('is-picking-recovery');
+        const usingTelekineticSavant = root?.classList.contains('is-picking-telekinetic-savant');
+        const usingInfluenceSavant = root?.classList.contains('is-picking-influence-savant');
+        const usingLightsaberFormSavant = root?.classList.contains('is-picking-lightsaber-form-savant');
+
+        if (!spendingForcePoint && !usingTelekineticSavant && !usingInfluenceSavant && !usingLightsaberFormSavant) {
+          ui?.notifications?.info?.('Choose Spend Force Point, Telekinetic Savant, Influence Savant, or Lightsaber Form Savant before recovering a spent power.');
+          return;
+        }
+        if (usingTelekineticSavant && button.dataset.telekinetic !== 'true') {
+          ui?.notifications?.warn?.('Telekinetic Savant can only recover spent powers with the [Telekinetic] descriptor.');
+          return;
+        }
+        if (usingInfluenceSavant && button.dataset.mindAffecting !== 'true') {
+          ui?.notifications?.warn?.('Influence Savant can only recover spent powers with the [Mind-Affecting] descriptor.');
+          return;
+        }
+        if (usingLightsaberFormSavant && button.dataset.lightsaberForm !== 'true') {
+          ui?.notifications?.warn?.('Lightsaber Form Savant can only recover spent powers with the [Lightsaber Form] descriptor.');
+          return;
+        }
+
+        const talentRecoveryName = usingTelekineticSavant
+          ? 'Telekinetic Savant'
+          : usingInfluenceSavant
+            ? 'Influence Savant'
+            : usingLightsaberFormSavant
+              ? 'Lightsaber Form Savant'
+              : null;
+        if (talentRecoveryName && typeof this._applyActionEconomy === 'function') {
+          const allowed = await this._applyActionEconomy('swift', {
+            source: 'force-suite-talent-recovery',
+            actionId: talentRecoveryName.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
+            actionName: talentRecoveryName,
+            sourceName: talentRecoveryName,
+            sourceType: 'talent'
+          });
+          if (!allowed) return;
+        }
+
+        try {
+          const result = usingTelekineticSavant
+            ? await ForceExecutor.recoverTelekineticSavantPower(this.actor, itemId)
+            : usingInfluenceSavant
+              ? await ForceExecutor.recoverInfluenceSavantPower(this.actor, itemId)
+              : usingLightsaberFormSavant
+                ? await ForceExecutor.recoverLightsaberFormSavantPower(this.actor, itemId)
+                : await ForceExecutor.recoverForcePowers(this.actor, [itemId]);
+          if (result?.success) {
+            const spentMsg = usingTelekineticSavant ? ' (Telekinetic Savant)' : usingInfluenceSavant ? ' (Influence Savant)' : usingLightsaberFormSavant ? ' (Lightsaber Form Savant)' : ' (Force Point spent)';
+            ui?.notifications?.info?.(`Force power recovered${spentMsg}.`);
+            root?.classList.remove('is-picking-recovery');
+            root?.classList.remove('is-picking-telekinetic-savant');
+            root?.classList.remove('is-picking-influence-savant');
+            root?.classList.remove('is-picking-lightsaber-form-savant');
+            this.render?.(false);
+          } else {
+            ui?.notifications?.warn?.(result?.error || 'Could not recover that Force power.');
+          }
+        } catch (err) {
+          ui?.notifications?.error?.(`Force recovery failed: ${err.message}`);
+        }
+      }, { signal });
+    });
+
+    // Force Talents: Aversion / Illusion / Link / Telepathic Link / Suppress Force
+    const forceTalentHandlers = {
+      'force-talent-aversion': () => ForceExecutor.activateAversion(this.actor),
+      'force-talent-illusion': (button) => ForceExecutor.promptIllusion(this.actor, { sourceElement: button }),
+      'force-talent-link': () => ForceExecutor.promptLink(this.actor),
+      'force-talent-telepathic-link': () => ForceExecutor.promptTelepathicLink(this.actor),
+      'force-talent-suppress-force': () => ForceExecutor.promptSuppressForce(this.actor)
+    };
+    Object.entries(forceTalentHandlers).forEach(([action, run]) => {
+      html.querySelectorAll(`[data-action="${action}"]`).forEach(button => {
+        button.addEventListener('click', async (event) => {
+          event.preventDefault();
+          try {
+            const result = await mutateAndRepaint(this, () => run(button), { reason: action, surfaceId: this._shellSurface ?? 'sheet', preserveUi: true });
+            if (result?.success) ui?.notifications?.info?.('Resolved.');
+          } catch (err) {
+            ui?.notifications?.error?.(`Action failed: ${err.message}`);
+          }
+        }, { signal });
+      });
+    });
+
+    // Lightsaber Forms: choose exactly one active form; may cost a swift action if wired.
+    html.querySelectorAll('[data-action="set-lightsaber-form"]').forEach(button => {
+      button.addEventListener('click', async (event) => {
+        event.preventDefault();
+        const form = button.dataset.form;
+        if (!form) return;
+        try {
+          if (typeof this._applyActionEconomy === 'function') {
+            const allowed = await this._applyActionEconomy('swift', {
+              source: 'lightsaber-form',
+              actionId: `lightsaber-form-${form}`,
+              actionName: `Adopt Lightsaber Form: ${button.dataset.formName || form}`,
+              sourceName: 'Lightsaber Form',
+              sourceType: 'talent'
+            });
+            if (!allowed) return;
+          }
+          const result = await mutateAndRepaint(this, () => LightsaberFormEngine.setActiveForm(this.actor, form), {
+            reason: 'set-lightsaber-form',
+            surfaceId: this._shellSurface ?? 'sheet',
+            preserveUi: true
+          });
+          if (result?.success) ui?.notifications?.info?.(`${result.activeForm?.name || 'Lightsaber Form'} is now active.`);
+          else if (result?.error) ui?.notifications?.warn?.(result.error);
+        } catch (err) {
+          ui?.notifications?.error?.(`Lightsaber Form activation failed: ${err.message}`);
+        }
+      }, { signal });
+    });
+
+    html.querySelectorAll('[data-action="clear-lightsaber-form"]').forEach(button => {
+      button.addEventListener('click', async (event) => {
+        event.preventDefault();
+        try {
+          const result = await mutateAndRepaint(this, () => LightsaberFormEngine.clearActiveForm(this.actor), {
+            reason: 'clear-lightsaber-form',
+            surfaceId: this._shellSurface ?? 'sheet',
+            preserveUi: true
+          });
+          if (result?.success) ui?.notifications?.info?.('Active Lightsaber Form cleared.');
+        } catch (err) {
+          ui?.notifications?.error?.(`Could not clear Lightsaber Form: ${err.message}`);
+        }
+      }, { signal });
+    });
+
+    // Force Regimens: roll UTF, resolve the DC tier, move the card to active/discard lane.
+    html.querySelectorAll('[data-action="use-force-regimen"]').forEach(button => {
+      button.addEventListener('click', async (event) => {
+        event.preventDefault();
+        const itemId = button.dataset.itemId;
+        if (!itemId) return;
+        const regimen = this.actor.items.get(itemId);
+        if (!regimen || regimen.type !== 'force-regimen') return;
+        try {
+          const rollOptions = await promptForceRegimenRollOptions({ actor: this.actor, regimen, sourceElement: button });
+          if (!rollOptions) return;
+          const result = await mutateAndRepaint(this, () => ForceRegimenExecutor.executeRegimen(this.actor, itemId, rollOptions), {
+            reason: 'force-regimen-use',
+            surfaceId: this._shellSurface ?? 'sheet',
+            preserveUi: true
+          });
+          if (result?.success) {
+            ui?.notifications?.info?.(`${result.regimenName || 'Force Regimen'} is active until long rest.`);
+            showHolopadRollCompanion(button, result, {
+              kind: 'force-regimen',
+              title: 'Force Regimen',
+              itemName: regimen.name,
+              actorName: this.actor?.name,
+              actor: this.actor,
+              sourceItem: regimen,
+              forceDescriptor: regimen.system?.category === 'lightsaber-training' ? 'form' : 'light'
+            });
+            this.render?.(false);
+          } else {
+            ui?.notifications?.warn?.(result?.error || 'Force Regimen could not be used.');
+          }
+        } catch (err) {
+          ui?.notifications?.error?.(`Force Regimen failed: ${err.message}`);
+        }
+      }, { signal });
+    });
+
+    // Force Regimens: end early (before long rest)
+    html.querySelectorAll('[data-action="end-force-regimen"]').forEach(button => {
+      button.addEventListener('click', async (event) => {
+        event.preventDefault();
+        const itemId = button.dataset.itemId;
+        try {
+          const result = await mutateAndRepaint(this, () => ForceRegimenExecutor.endRegimen(this.actor, itemId ?? null), {
+            reason: 'end-force-regimen',
+            surfaceId: this._shellSurface ?? 'sheet',
+            preserveUi: true
+          });
+          if (result?.success !== false) ui?.notifications?.info?.('Force Regimen ended.');
+        } catch (err) {
+          ui?.notifications?.error?.(`Could not end Force Regimen: ${err.message}`);
+        }
+      }, { signal });
+    });
+
+    // Phase 5A fix: rendered in current-conditions-panel.hbs (reachable from
+    // the Character/NPC/Droid branch) with no listener anywhere. A correct,
+    // current implementation for three of the four existed in the unimported
+    // `character-sheet/misc-ui.js` module; `remove-active-effect`'s copy
+    // there called a nonexistent `ActorEngine.deleteActiveEffects` (stale API
+    // name) and is corrected here to the real method,
+    // `ActorEngine.deleteEmbeddedDocuments(actor, 'ActiveEffect', ids)`.
+    html.querySelectorAll('[data-action="apply-temp-defense"]').forEach(button => {
+      button.addEventListener("click", async (event) => {
+        event.preventDefault();
+        try {
+          const result = await MetaResourceFeatResolver.applyTemporaryDefenseRule(this.actor, button.dataset.ruleId || null);
+          if (result?.success) ui?.notifications?.info?.(`${result.rule?.sourceName ?? 'Temporary defense'} applied.`);
+          else ui?.notifications?.warn?.(result?.reason ?? 'Temporary defense could not be applied.');
+        } catch (err) {
+          ui?.notifications?.error?.(`Temporary defense failed: ${err.message}`);
+        }
+      }, { signal });
+    });
+
+    html.querySelectorAll('[data-action="remove-recurring-damage"]').forEach(button => {
+      button.addEventListener("click", async (event) => {
+        event.preventDefault();
+        try {
+          if (!this.actor?.isOwner) {
+            ui?.notifications?.warn?.('You do not control this actor.');
+            return;
+          }
+          const instanceId = button.dataset.ruleId || button.dataset.effectId || null;
+          const result = await RecurringDamageEngine.removeRecurringDamage(this.actor, instanceId, { reason: 'removed' });
+          if (result?.removed?.length) ui?.notifications?.info?.('Recurring damage removed.');
+          else ui?.notifications?.warn?.('Recurring damage was not found.');
+          this.render?.(false);
+        } catch (err) {
+          ui?.notifications?.warn?.(`Failed to remove recurring damage: ${err.message}`);
+        }
+      }, { signal });
+    });
+
+    html.querySelectorAll('[data-action="tick-recurring-damage-now"]').forEach(button => {
+      button.addEventListener("click", async (event) => {
+        event.preventDefault();
+        try {
+          if (!this.actor?.isOwner) {
+            ui?.notifications?.warn?.('You do not control this actor.');
+            return;
+          }
+          const instanceId = button.dataset.ruleId || button.dataset.effectId || null;
+          const result = await RecurringDamageEngine.tickRecurringDamage(this.actor, { trigger: 'startOfTurn', instanceId, hook: 'manual-condition-panel' });
+          if (Array.isArray(result) && result.length) ui?.notifications?.info?.('Recurring damage ticked.');
+          else ui?.notifications?.warn?.('No matching recurring damage ticked.');
+          this.render?.(false);
+        } catch (err) {
+          ui?.notifications?.warn?.(`Failed to tick recurring damage: ${err.message}`);
+        }
+      }, { signal });
+    });
+
+    html.querySelectorAll('[data-action="remove-active-effect"]').forEach(button => {
+      button.addEventListener("click", async (event) => {
+        event.preventDefault();
+        const effectId = button.dataset.effectId;
+        if (!effectId) {
+          ui?.notifications?.warn?.('Effect ID not found.');
+          return;
+        }
+        try {
+          if (!this.actor?.isOwner) {
+            ui?.notifications?.warn?.('You do not control this actor.');
+            return;
+          }
+          await ActorEngine.deleteEmbeddedDocuments(this.actor, 'ActiveEffect', [effectId], { source: 'condition-panel-remove-action' });
+          ui?.notifications?.info?.('Effect removed.');
+        } catch (err) {
+          ui?.notifications?.warn?.(`Failed to remove effect: ${err.message}`);
+        }
+      }, { signal });
+    });
+
+    // ── Starship Maneuver Suite ──────────────────────────────────────────────
+    html.querySelectorAll('[data-action="starship-suite-flip-card"]').forEach(button => {
+      button.addEventListener('click', (event) => {
+        event.preventDefault();
+        const card = button.closest('.fcard');
+        card?.classList.toggle('flipped');
+      }, { signal });
+    });
+
+    html.querySelectorAll('[data-action="activate-starship-maneuver"]').forEach(button => {
+      button.addEventListener('click', async (event) => {
+        event.preventDefault();
+        const itemId = button.dataset.itemId;
+        if (!itemId) return;
+        const maneuver = this.actor.items.get(itemId);
+        if (!maneuver || maneuver.type !== 'maneuver') return;
+        if (maneuver.system?.spent === true) {
+          ui?.notifications?.info?.(`${maneuver.name} is already spent.`);
+          return;
+        }
+        try {
+          await ActorEngine.updateEmbeddedDocuments(this.actor, 'Item', [{ _id: itemId, 'system.spent': true }], { source: 'starship-suite-use' });
+          ui?.notifications?.info?.(`${maneuver.name} spent.`);
+          showHolopadRollCompanion(button, { success: true, spent: true }, {
+            kind: 'starship-maneuver',
+            title: 'Maneuver Used',
+            itemName: maneuver.name,
+            actorName: this.actor?.name,
+            actor: this.actor,
+            sourceItem: maneuver
+          });
+          this.render?.(false);
+        } catch (err) {
+          ui?.notifications?.error?.(`Starship maneuver use failed: ${err.message}`);
+        }
+      }, { signal });
+    });
+
+    html.querySelectorAll('[data-action="starship-suite-recover-all"]').forEach(button => {
+      button.addEventListener('click', async (event) => {
+        event.preventDefault();
+        const spent = this.actor.items.filter((item) => item.type === 'maneuver' && item.system?.spent === true);
+        if (!spent.length) {
+          ui?.notifications?.info?.('No spent Starship Maneuvers to recover.');
+          return;
+        }
+        try {
+          await ActorEngine.updateEmbeddedDocuments(this.actor, 'Item', spent.map((item) => ({ _id: item.id, 'system.spent': false })), { source: 'starship-suite-recover-all' });
+          ui?.notifications?.info?.('All spent Starship Maneuvers recovered.');
+          this.render?.(false);
+        } catch (err) {
+          ui?.notifications?.error?.(`Starship maneuver recovery failed: ${err.message}`);
+        }
+      }, { signal });
+    });
+
+    html.querySelectorAll('[data-action="starship-suite-pick-recovery"]').forEach(button => {
+      button.addEventListener('click', (event) => {
+        event.preventDefault();
+        const root = button.closest('[data-starship-suite-tab]');
+        const hasSpent = !!root?.querySelector('[data-starship-discard-pile] [data-action="starship-suite-recover-one"]');
+        if (!hasSpent) {
+          ui?.notifications?.info?.('Spent maneuver pile is empty.');
+          return;
+        }
+        root?.classList.toggle('is-picking-recovery');
+        button.classList.toggle('sel');
+      }, { signal });
+    });
+
+    html.querySelectorAll('[data-action="starship-suite-recover-one"]').forEach(button => {
+      button.addEventListener('click', async (event) => {
+        event.preventDefault();
+        const itemId = button.dataset.itemId;
+        if (!itemId) return;
+        const maneuver = this.actor.items.get(itemId);
+        if (!maneuver || maneuver.type !== 'maneuver') return;
+        const root = button.closest('[data-starship-suite-tab]');
+        const spendingForcePoint = root?.classList.contains('is-picking-recovery');
+        try {
+          await ActorEngine.updateEmbeddedDocuments(this.actor, 'Item', [{ _id: itemId, 'system.spent': false }], { source: 'starship-suite-recover-one' });
+          ui?.notifications?.info?.(`${maneuver.name} recovered${spendingForcePoint ? ' (Force Point spent)' : ''}.`);
+          root?.classList.remove('is-picking-recovery');
+          this.render?.(false);
+        } catch (err) {
+          ui?.notifications?.error?.(`Starship maneuver recovery failed: ${err.message}`);
+        }
+      }, { signal });
+    });
   }
 
   /* ============================================================
@@ -5362,6 +5949,23 @@ const forcePoints = [];
         ui?.notifications?.error?.('Condition update failed: ' + err.message);
       }
     }, { signal, capture: false });
+
+    // Phase 5A fix: rendered in hp-condition-panel.hbs as a checkbox with a
+    // real, widely-consumed data path (system.conditionTrack.persistent —
+    // read by ConditionEngine/threshold-engine/combat-automation and others)
+    // but previously had no listener anywhere (submitOnChange is false on
+    // this sheet, so the bare `name` attribute alone does nothing).
+    html.querySelectorAll('[data-action="toggle-condition-persistent"]').forEach(checkbox => {
+      checkbox.addEventListener('change', async (event) => {
+        try {
+          await ActorEngine.updateActor(this.actor, {
+            'system.conditionTrack.persistent': !!event.currentTarget?.checked
+          }, { source: 'condition-track-persistent-toggle' });
+        } catch (err) {
+          ui?.notifications?.error?.(`Could not update Persistent Condition: ${err.message}`);
+        }
+      }, { signal });
+    });
 
     // Set dark side score button — authorization is recomputed fresh on
     // every click inside handleSetDarkSideScore; never trust the DOM's
