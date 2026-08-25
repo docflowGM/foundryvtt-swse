@@ -1,6 +1,6 @@
 {
   "generatedBy": "tools/audit-damage-profiles.mjs",
-  "generatedAt": "2026-07-13T18:45:23.789Z",
+  "generatedAt": "2026-08-25T15:48:39.218Z",
   "contract": "docs/systems/CANONICAL_DAMAGE_PACKET.md (swse.damage.packet.v2)",
   "registrySeedCounts": {
     "weapon": {
@@ -10,10 +10,10 @@
       "manualRequired": 0
     },
     "vehicleWeapon": {
-      "total": 63,
+      "total": 64,
       "verified": 0,
       "inferred": 17,
-      "manualRequired": 46
+      "manualRequired": 47
     },
     "forcePower": {
       "total": 17,
@@ -580,10 +580,9 @@
   },
   "poisonBoundary": {
     "pack": "poisons.db",
-    "scanned": 0,
-    "packNote": "packs/poisons.db is currently empty (0 bytes); the poison item type exists in template.json and the poison engine remains the schema authority.",
+    "scanned": 17,
     "boundary": "Poison keeps its own engine/schema and becomes a packet RIDER in a later pass. It is not a damage component and never enters SR/immunity/DR/resistance math. Only type \"poison\" HP damage with explicit printed-source support may ever become a component.",
-    "poisonsWithHpDamageFields": 0
+    "poisonsWithHpDamageFields": 11
   },
   "validators": [
     {
