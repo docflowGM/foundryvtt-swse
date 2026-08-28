@@ -64,8 +64,12 @@ import { buildHpViewModel, buildDefensesViewModel, buildHeaderHpSegments } from 
 import { rollSkillCheck } from "/systems/foundryvtt-swse/scripts/rolls/skills.js";
 import { SkillUseFilter } from "/systems/foundryvtt-swse/scripts/utils/skill-use-filter.js";
 import { CustomLanguageDialog } from "/systems/foundryvtt-swse/scripts/apps/progression-framework/dialogs/custom-language-dialog.js";
-import { DroidSheetContextBuilder } from "/systems/foundryvtt-swse/scripts/sheets/v2/droid-sheet/context-builder.js";
-import { buildNpcConceptSheetContext } from "/systems/foundryvtt-swse/scripts/sheets/v2/npc/npc-sheet-helpers.js";
+// Phase 6 (context ownership): DroidSheetContextBuilder and
+// buildNpcConceptSheetContext are no longer imported here. Their
+// construction now happens behind the _buildDroidSheetContext /
+// _buildNpcConceptSheetContext subtype hooks below, overridden on
+// SWSEV2DroidSheet / SWSEV2NpcSheet respectively, so this shared file no
+// longer executes (or even loads) either subtype-only builder.
 // Phase 7: Shared platform layer imports (reusable across all V2 sheets)
 import { applyResourceBarAnimations } from "/systems/foundryvtt-swse/scripts/sheets/v2/shared/resource-bar-animations.js";
 import { PortraitUploadController } from "/systems/foundryvtt-swse/scripts/sheets/v2/shared/PortraitUploadController.js";
@@ -2227,35 +2231,11 @@ const forcePoints = [];
     // Log panel contract version for debugging
     const _sheetContractVersion = 1;
 
-    let droidSheetContext = null;
-    if (isDroidActor) {
-      try {
-        droidSheetContext = ActorPerfDiagnostics.time(
-          // Distinct label from the buildConceptSheetViewModel() droid entry below
-          // (Phase 3 live-benchmark seam) so the two builders' costs, previously
-          // both aggregated under 'droid', can be read separately from
-          // SWSE.debug.performance.summary().sheetContext.
-          ms => ActorPerfDiagnostics.recordSheetContext('droid-panel-builder', ms),
-          () => new DroidSheetContextBuilder(actor).build()
-        );
-      } catch (err) {
-        swseLogger.warn('[SWSEV2CharacterSheet] Failed to build droid systems tab context', {
-          actorId: actor?.id,
-          actorName: actor?.name,
-          error: err?.message
-        });
-        droidSheetContext = {
-          droid: {
-            degree: { label: '', category: '', isConfigured: false },
-            garage: { canOpenGarage: actor?.isOwner === true, systemsLocked: false },
-            resolvedSystems: null,
-            sourceStatus: { sourceLabel: 'Unavailable', validationMessages: [], hasValidationMessages: false }
-          },
-          droidPanels: {},
-          combatWeapons: { hasIntegrated: false, hasHandheld: false, integrated: [], handheld: [] }
-        };
-      }
-    }
+    // Phase 6: Droid-only context construction is owned by SWSEV2DroidSheet
+    // (see _buildDroidSheetContext there). This shared method's default is a
+    // no-op that returns null, so Character/NPC renders never construct or
+    // import DroidSheetContextBuilder at all.
+    const droidSheetContext = isDroidActor ? this._buildDroidSheetContext(actor) : null;
 
     const combatStatus = buildCombatStatusViewModel(actor, { canEdit: this.isEditable });
     const effectiveDefenses = buildEffectiveDefensesViewModel(actor, panelContexts.defensePanel);
@@ -2320,34 +2300,20 @@ const forcePoints = [];
     }));
 
     if (useNpcConceptSheet) {
-      try {
-        context.npcConcept = ActorPerfDiagnostics.time(
-          // Distinct label from the buildConceptSheetViewModel() 'npc-concept-layout'
-          // entry above (Phase 3 live-benchmark seam) — see that call site's comment.
-          ms => ActorPerfDiagnostics.recordSheetContext('npc-context-builder', ms),
-          () => buildNpcConceptSheetContext(actor, {
-            ...context,
-            derived,
-            conceptLayout,
-            actionEconomy
-          })
-        );
-      } catch (err) {
-        swseLogger.warn('[SWSEV2CharacterSheet] NPC concept sheet context failed', {
-          actorId: actor?.id,
-          actorName: actor?.name,
-          error: err?.message
-        });
-        context.npcConcept = {
-          kind: 'npc',
-          kindLabel: 'NPC',
-          modeLabel: '',
-          showModeBadge: false,
-          summaryLine: [],
-          defenseChips: [],
-          showGmTab: game.user?.isGM === true
-        };
-      }
+      // Phase 6: NPC-only concept-sheet context construction is owned by
+      // SWSEV2NpcSheet (see _buildNpcConceptSheetContext there). The shared
+      // ~25-local entanglement (conceptLayout, derived, actionEconomy,
+      // context) is passed through as one coherent options object rather
+      // than threaded as separate parameters (see docs/audits/
+      // v2-phase-6-context-render-performance.md §6B). Character/Droid
+      // never reach this branch (useNpcConceptSheet is false for them), so
+      // this shared file no longer even imports buildNpcConceptSheetContext.
+      context.npcConcept = this._buildNpcConceptSheetContext(actor, {
+        context,
+        derived,
+        conceptLayout,
+        actionEconomy
+      });
     }
 
     const sheetThemeContext = ThemeResolutionService.buildSurfaceContext({ actor });
@@ -2509,6 +2475,45 @@ const forcePoints = [];
    */
   _buildNpcConceptAbilitiesContext(_context, _actor) {
     // Intentionally empty — see SWSEV2NpcSheet override.
+  }
+
+  /**
+   * Phase 6 subtype context extension hook (droid). No-op default so the
+   * shared _prepareContextForActorSheet call site (behind an
+   * `if (isDroidActor)` guard, only ever true for actual Droid instances)
+   * is correct for every subtype. Overridden by SWSEV2DroidSheet with the
+   * original inline try/catch block's exact body — see that override for
+   * why the duplicate DroidSheetContextBuilder/PanelContextBuilder build is
+   * kept rather than reused (isEditable-semantics equivalence not proven,
+   * §6D of docs/audits/v2-phase-6-context-render-performance.md).
+   * @param {SWSEActor} _actor
+   * @returns {object|null} droidSheetContext ({ droid, droidPanels, combatWeapons }) or null
+   */
+  _buildDroidSheetContext(_actor) {
+    return null;
+  }
+
+  /**
+   * Phase 6 subtype context extension hook (NPC concept sheet). No-op
+   * default so the shared _prepareContextForActorSheet call site (behind an
+   * `if (useNpcConceptSheet)` guard, only ever true for actual NPC
+   * instances) is correct for every subtype. Overridden by SWSEV2NpcSheet
+   * with the original inline try/catch block's exact body.
+   *
+   * Receives the shared entangled locals as one coherent options object
+   * (not ~25 separate parameters — see spec §6B) because
+   * buildNpcConceptSheetContext()'s existing signature already requires
+   * `context`, `derived`, `conceptLayout`, and `actionEconomy` together and
+   * cross-references between them (conceptLayout itself already depends on
+   * droidSheetContext being spread in upstream) were judged too entangled
+   * to further decompose without duplicating shared computation — matching
+   * Phase 4/5's own documented conclusion for this call site.
+   * @param {SWSEActor} _actor
+   * @param {{context: object, derived: object, conceptLayout: object|null, actionEconomy: object}} _opts
+   * @returns {object|null} npcConcept view-model or null
+   */
+  _buildNpcConceptSheetContext(_actor, _opts) {
+    return null;
   }
 
   /* ============================================================

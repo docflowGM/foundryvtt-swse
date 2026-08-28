@@ -3,6 +3,8 @@ import { SWSEDialogV2 } from "/systems/foundryvtt-swse/scripts/apps/dialogs/swse
 import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { getDroidPartDefinition, getSelfDestructBurstSquares, getSelfDestructDamage, hydrateDroidPart } from "/systems/foundryvtt-swse/scripts/data/droid-part-schema.js";
+import { DroidSheetContextBuilder } from "/systems/foundryvtt-swse/scripts/sheets/v2/droid-sheet/context-builder.js";
+import { ActorPerfDiagnostics } from "/systems/foundryvtt-swse/scripts/utils/actor-perf-diagnostics.js";
 
 // ---------------------------------------------------------------------------
 // Droid-only module-level helpers. These were used exclusively by the
@@ -141,6 +143,57 @@ async function postDroidPartChat(actor, part, { roll = null, destroyed = false }
  * implementation.
  */
 export class SWSEV2DroidSheet extends SWSEV2CharacterLikeSheet {
+
+  /**
+   * Phase 6: override of SWSEV2CharacterLikeSheet's no-op default. Exact
+   * body of the original inline `if (isDroidActor) { ... }` block from
+   * _prepareContextForActorSheet, relocated verbatim. Character/NPC renders
+   * never call this (the shared default short-circuits before even
+   * evaluating isDroidActor's true branch), so DroidSheetContextBuilder is
+   * now only ever imported and constructed by this file.
+   *
+   * NOT merged with the shared PanelContextBuilder-driven `panelContexts`
+   * (health/defense/secondWind) built earlier in the shared
+   * _prepareContextForActorSheet: this builder's internal
+   * `new PanelContextBuilder(actor, { isEditable: actor?.isOwner === true })`
+   * uses a different isEditable definition than the shared
+   * `new PanelContextBuilder(this.document, this)` (which reads the real
+   * ApplicationV2 `sheet.isEditable` getter — GM-aware, not plain
+   * ownership). A GM viewing a droid it does not personally own would
+   * disagree between the two. This was flagged as unresolved in Phase 3/4
+   * and is still unresolved here — see
+   * docs/audits/v2-phase-6-context-render-performance.md §6D. Ownership of
+   * *which controller invokes this builder* has moved; the underlying
+   * duplicate-build question has not been (falsely) merged away.
+   */
+  _buildDroidSheetContext(actor) {
+    try {
+      return ActorPerfDiagnostics.time(
+        // Distinct label from the buildConceptSheetViewModel() droid entry
+        // (Phase 3 live-benchmark seam) so the two builders' costs, previously
+        // both aggregated under 'droid', can be read separately from
+        // SWSE.debug.performance.summary().sheetContext.
+        ms => ActorPerfDiagnostics.recordSheetContext('droid-panel-builder', ms),
+        () => new DroidSheetContextBuilder(actor).build()
+      );
+    } catch (err) {
+      swseLogger.warn('[SWSEV2DroidSheet] Failed to build droid systems tab context', {
+        actorId: actor?.id,
+        actorName: actor?.name,
+        error: err?.message
+      });
+      return {
+        droid: {
+          degree: { label: '', category: '', isConfigured: false },
+          garage: { canOpenGarage: actor?.isOwner === true, systemsLocked: false },
+          resolvedSystems: null,
+          sourceStatus: { sourceLabel: 'Unavailable', validationMessages: [], hasValidationMessages: false }
+        },
+        droidPanels: {},
+        combatWeapons: { hasIntegrated: false, hasHandheld: false, integrated: [], handheld: [] }
+      };
+    }
+  }
 
   async _useDroidPartFromButton(button) {
     if (!button || !this.actor || this.actor.type !== 'droid') return null;
