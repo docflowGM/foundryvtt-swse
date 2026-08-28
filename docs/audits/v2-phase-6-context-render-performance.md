@@ -13,6 +13,34 @@ action-integrity + subtype UX, PR #958), and PR #959 (stale
 render-contracts.test.mjs` on `main` already asserts
 `` bundle[`${key}Announce`] ``, not the dotted form).
 
+**Correction-pass note** (added after independent review of the initial PR
+#960 submission, before merge): review of the actual diff — not just this
+audit's own summary — found two real problems in the first version of this
+phase and fixed both here:
+
+1. **Regression**: relocating `_buildNpcConceptSheetContext` onto
+   `SWSEV2NpcSheet` dropped the original `ActorPerfDiagnostics.time(...)`
+   wrapper around it, silently removing the `'npc-context-builder'` entry
+   from `SWSE.debug.performance.summary()`. The equivalent Droid move
+   preserved its `'droid-panel-builder'` wrapper, so the two subtypes were
+   handled inconsistently by accident. Restored (see §9, item 3).
+2. **Overstated claim**: §14/§18 originally described the removal of
+   `character-like-sheet.js`'s `DroidSheetContextBuilder`/
+   `buildNpcConceptSheetContext` imports as a per-actor-type startup
+   module-loading reduction ("Character pays neither, NPC pays only its
+   own, Droid pays only its own"). That is inaccurate: `index.js`
+   statically imports all four sheet controllers at system startup
+   regardless of which actor types exist, so the full controller module
+   graph loads either way. Both sections have been rewritten to describe
+   the actual, defensible benefit — dependency ownership and subtype
+   isolation, not a loading-cost change.
+
+The Phase 6 contract test was also strengthened (§9, item 5) so a future
+regression of case 1 fails a test instead of shipping with green CI, which
+is how the original regression passed unnoticed the first time. Neither
+correction changes the underlying context-ownership architecture, which
+review agreed was sound.
+
 ---
 
 ## 1. Before context call graph
@@ -306,6 +334,17 @@ carrying different mechanical meaning was force-merged.
    - Added `_buildNpcConceptSheetContext(actor, { context, derived,
      conceptLayout, actionEconomy })` override — the original inline block's
      exact body (same stub fallback object on failure).
+   - **Correction pass**: the first version of this override dropped the
+     original `ActorPerfDiagnostics.time(...)` wrapper around the
+     `buildNpcConceptSheetContext` call, silently removing the
+     `'npc-context-builder'` entry from
+     `SWSE.debug.performance.summary().sheetContext` — a real regression in
+     Phase 1/3 diagnostic infrastructure that independent review caught
+     after the PR was opened (CI stayed green throughout because nothing
+     asserted the label's presence). Added the missing `ActorPerfDiagnostics`
+     import and restored the identical wrapper/label used before this phase,
+     so the override is now a true verbatim relocation, diagnostics
+     included, matching the Droid override's pattern.
 4. `tests/npc-concept-layout-skip.test.mjs`: updated assertion #2 to read
    the relocated call site in `npc-actor-sheet.js` instead of
    `character-like-sheet.js`; added a new assertion confirming the shared
@@ -313,11 +352,17 @@ carrying different mechanical meaning was force-merged.
 5. New: `tests/phase6-subtype-context-ownership-contract.test.mjs` — source-
    contract test locking in both hooks' existence, no-op default bodies, call
    shape, and the cross-subtype import-boundary invariant (§10).
+   **Correction pass**: added assertions #6 verifying both subtype
+   controllers preserve their `ActorPerfDiagnostics.recordSheetContext(...)`
+   timing seam by label, and that the shared controller owns neither label
+   — this is the coverage that was missing when the NPC regression above
+   first shipped, so a future refactor that drops one of these wrappers
+   again will fail this test instead of passing silently.
 6. New: this document.
 
-**No other files were changed.** `DerivedCalculator`, `ModifierEngine`,
-`ActorEngine`, SWSE formulas, Actor/Item schemas, progression, and Phase 5's
-action routing/listener wiring were not touched.
+**No other production files were changed.** `DerivedCalculator`,
+`ModifierEngine`, `ActorEngine`, SWSE formulas, Actor/Item schemas,
+progression, and Phase 5's action routing/listener wiring were not touched.
 
 ---
 
@@ -472,13 +517,31 @@ No live Foundry client is available in this environment (same limitation as
 Phases 3-5). No live render-timing numbers are fabricated. Structural
 comparison:
 
-- **Import/module-load surface**: `character-like-sheet.js` no longer
-  statically imports `DroidSheetContextBuilder` or
-  `buildNpcConceptSheetContext` — two fewer module-graph edges loaded by
-  every Character/NPC/Droid sheet instantiation regardless of actor type
-  (previously all three types paid the module-load cost of both imports;
-  now Character pays neither, NPC pays only its own, Droid pays only its
-  own).
+- **Import/module-load surface — corrected**: `character-like-sheet.js` no
+  longer statically imports `DroidSheetContextBuilder` or
+  `buildNpcConceptSheetContext`. **This is a dependency-ownership
+  improvement, not a startup module-loading reduction**: `index.js`
+  statically imports all four sheet controllers
+  (`SWSEV2CharacterSheet`, `SWSEV2NpcSheet`, `SWSEV2DroidSheet`,
+  `SWSEV2VehicleSheet`) unconditionally at system startup, and each of
+  those controller files still imports its own subtype builder, so the
+  entire controller module graph — Droid's and NPC's included — is still
+  eagerly loaded when the system boots, regardless of which actor types
+  exist in a given world. Opening a Character sheet does not currently
+  avoid loading the Droid or NPC context-builder modules; nothing in this
+  phase changes when those modules are loaded, only which controller file
+  is allowed to reference them. An earlier draft of this section
+  incorrectly framed this as "Character pays neither, NPC pays only its
+  own, Droid pays only its own" — that language implied a per-actor-type
+  module-loading cost difference that does not exist under the current
+  static-import startup path, and has been corrected here after
+  independent review caught it. The real, defensible benefit is: the
+  shared Character-like controller no longer directly depends on
+  NPC- or Droid-specific context builders, which improves dependency
+  direction and subtype isolation (a future Droid-only change to
+  `DroidSheetContextBuilder` can no longer accidentally touch a file
+  Character/NPC also load), independent of whether it changes any
+  measured runtime cost.
 - **Invocation-count reduction**: none — both builders were already guarded
   by `if (isDroidActor)` / `if (useNpcConceptSheet)` before this phase, so
   they were never *invoked* for the wrong actor type at runtime, only
@@ -700,10 +763,15 @@ logs, not player-facing UI or localized strings).
     regression). See §16 for full detail.
 
 18. **Performance/structural comparison**: §14 — no live timings fabricated;
-    two fewer module-graph edges loaded by Character/NPC sheets respectively;
-    zero invocation-count change (both builders were already correctly
-    guarded); zero duplicate-build elimination (not provably safe); Vehicle
-    eagerness unchanged and documented as a sized future candidate.
+    zero startup module-loading change (`index.js` statically imports all
+    four sheet controllers regardless of actor type, so the full controller
+    module graph loads at boot either way — see the corrected §14, added
+    after independent review flagged the original wording as an overstated
+    module-load-savings claim); the actual benefit is dependency-ownership/
+    subtype-isolation, not a loading-cost reduction; zero invocation-count
+    change (both builders were already correctly guarded); zero
+    duplicate-build elimination (not provably safe); Vehicle eagerness
+    unchanged and documented as a sized future candidate.
 
 19. **Dead code removed**: none — nothing was found to remove (§15).
 

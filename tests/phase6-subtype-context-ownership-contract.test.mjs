@@ -124,4 +124,34 @@ assert.ok(
   'Character-like-only context hook'
 );
 
+// ─── 6. Relocating a subtype builder must not silently drop its Phase 1/3 ───
+//        performance-diagnostics timing seam. A prior version of this phase
+//        moved _buildNpcConceptSheetContext without its ActorPerfDiagnostics
+//        wrapper, which would have made 'npc-context-builder' vanish from
+//        SWSE.debug.performance.summary() silently (CI stayed green because
+//        nothing asserted the label existed). Guard both subtype builders.
+
+assert.match(
+  droidSheet,
+  /ActorPerfDiagnostics\.recordSheetContext\(\s*'droid-panel-builder'/,
+  "SWSEV2DroidSheet's _buildDroidSheetContext must preserve the 'droid-panel-builder' " +
+  'ActorPerfDiagnostics timing label'
+);
+assert.match(
+  npcSheet,
+  /import \{ ActorPerfDiagnostics \} from/,
+  'SWSEV2NpcSheet must import ActorPerfDiagnostics to time its context build'
+);
+assert.match(
+  npcSheet,
+  /ActorPerfDiagnostics\.recordSheetContext\(\s*'npc-context-builder'/,
+  "SWSEV2NpcSheet's _buildNpcConceptSheetContext must preserve the 'npc-context-builder' " +
+  'ActorPerfDiagnostics timing label'
+);
+assert.ok(
+  !/recordSheetContext\(\s*'(droid-panel-builder|npc-context-builder)'/.test(characterLikeSheet),
+  'the shared Character-like controller must not own either subtype diagnostic call site — ' +
+  'each belongs to the subtype controller that now owns the builder'
+);
+
 console.log('phase6-subtype-context-ownership-contract.test.mjs: all assertions passed');

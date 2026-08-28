@@ -9,6 +9,7 @@ import { buildNpcConceptAbilities, buildNpcConceptSheetContext, isNpcSheetWritab
 import { coerceSingleFieldValue } from "/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet/form.js";
 import { launchFollowerProgression } from "/systems/foundryvtt-swse/scripts/apps/progression-framework/progression-entry.js";
 import { NpcProgressionEngine } from "/systems/foundryvtt-swse/scripts/engine/progression/npc-progression-engine.js";
+import { ActorPerfDiagnostics } from "/systems/foundryvtt-swse/scripts/utils/actor-perf-diagnostics.js";
 
 /**
  * SWSEV2NpcSheet — the actor sheet controller for `type: "npc"` actors.
@@ -73,12 +74,15 @@ export class SWSEV2NpcSheet extends SWSEV2CharacterLikeSheet {
    */
   _buildNpcConceptSheetContext(actor, { context, derived, conceptLayout, actionEconomy } = {}) {
     try {
-      return buildNpcConceptSheetContext(actor, {
-        ...context,
-        derived,
-        conceptLayout,
-        actionEconomy
-      });
+      return ActorPerfDiagnostics.time(
+        ms => ActorPerfDiagnostics.recordSheetContext('npc-context-builder', ms),
+        () => buildNpcConceptSheetContext(actor, {
+          ...context,
+          derived,
+          conceptLayout,
+          actionEconomy
+        })
+      );
     } catch (err) {
       swseLogger.warn('[SWSEV2NpcSheet] NPC concept sheet context failed', {
         actorId: actor?.id,
