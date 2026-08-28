@@ -5,7 +5,7 @@ import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
 import { showRollModifiersDialog } from "/systems/foundryvtt-swse/scripts/rolls/roll-config.js";
 import { NpcProfileBuilder } from "/systems/foundryvtt-swse/scripts/actors/npc/npc-profile-builder.js";
-import { buildNpcConceptAbilities, isNpcSheetWritablePath, isNpcStatblockAuthorityPath, isQuietNpcSheetPath } from "/systems/foundryvtt-swse/scripts/sheets/v2/npc/npc-sheet-helpers.js";
+import { buildNpcConceptAbilities, buildNpcConceptSheetContext, isNpcSheetWritablePath, isNpcStatblockAuthorityPath, isQuietNpcSheetPath } from "/systems/foundryvtt-swse/scripts/sheets/v2/npc/npc-sheet-helpers.js";
 import { coerceSingleFieldValue } from "/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet/form.js";
 import { launchFollowerProgression } from "/systems/foundryvtt-swse/scripts/apps/progression-framework/progression-entry.js";
 import { NpcProgressionEngine } from "/systems/foundryvtt-swse/scripts/engine/progression/npc-progression-engine.js";
@@ -61,6 +61,39 @@ export class SWSEV2NpcSheet extends SWSEV2CharacterLikeSheet {
         actorName: actor?.name,
         error: err?.message
       });
+    }
+  }
+
+  /**
+   * Phase 6: override of SWSEV2CharacterLikeSheet's no-op default. Exact
+   * body of the original inline `if (useNpcConceptSheet) { context.npcConcept
+   * = ... }` block from _prepareContextForActorSheet, relocated verbatim
+   * (only the parameter shape changed — from separate locals to one
+   * options object, per the hook contract's JSDoc on the base method).
+   */
+  _buildNpcConceptSheetContext(actor, { context, derived, conceptLayout, actionEconomy } = {}) {
+    try {
+      return buildNpcConceptSheetContext(actor, {
+        ...context,
+        derived,
+        conceptLayout,
+        actionEconomy
+      });
+    } catch (err) {
+      swseLogger.warn('[SWSEV2NpcSheet] NPC concept sheet context failed', {
+        actorId: actor?.id,
+        actorName: actor?.name,
+        error: err?.message
+      });
+      return {
+        kind: 'npc',
+        kindLabel: 'NPC',
+        modeLabel: '',
+        showModeBadge: false,
+        summaryLine: [],
+        defenseChips: [],
+        showGmTab: game.user?.isGM === true
+      };
     }
   }
 

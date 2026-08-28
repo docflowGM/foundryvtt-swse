@@ -32,8 +32,18 @@ import { readFile } from 'node:fs/promises';
 // scripts/sheets/v2/character-like-sheet.js during the Character/NPC/Droid
 // sheet-class split (character-sheet.js is now a thin SWSEV2CharacterSheet
 // subclass with no body of its own).
+//
+// Phase 6 (context ownership): the actual buildNpcConceptSheetContext() call
+// site moved again, from character-like-sheet.js into a
+// SWSEV2NpcSheet._buildNpcConceptSheetContext() override in
+// scripts/sheets/v2/npc-actor-sheet.js, behind a shared no-op default hook
+// (see docs/audits/v2-phase-6-context-render-performance.md §6C/6B).
+// character-like-sheet.js still computes conceptLayout and still calls the
+// hook under the same `if (useNpcConceptSheet)` guard (assertion 1 below is
+// unaffected); assertion 2 now reads the relocated call site.
 
 const characterSheet = await readFile(new URL('../scripts/sheets/v2/character-like-sheet.js', import.meta.url), 'utf8');
+const npcActorSheet = await readFile(new URL('../scripts/sheets/v2/npc-actor-sheet.js', import.meta.url), 'utf8');
 const npcSheetHelpers = await readFile(new URL('../scripts/sheets/v2/npc/npc-sheet-helpers.js', import.meta.url), 'utf8');
 const rootTemplate = await readFile(new URL('../templates/actors/character/v2-concept/character-sheet.hbs', import.meta.url), 'utf8');
 const npcConceptContent = await readFile(new URL('../templates/actors/npc/v2/partials/npc-concept-content.hbs', import.meta.url), 'utf8');
@@ -52,9 +62,14 @@ assert.match(
 //    read `conceptLayout`, this guard must be revisited before this
 //    assertion may be relaxed.
 assert.match(
-  characterSheet,
+  npcActorSheet,
   /buildNpcConceptSheetContext\(actor, \{\s*\n\s*\.\.\.context,\s*\n\s*derived,\s*\n\s*conceptLayout,/,
-  'buildNpcConceptSheetContext call site must still pass conceptLayout through unchanged'
+  'SWSEV2NpcSheet._buildNpcConceptSheetContext must still pass conceptLayout through unchanged'
+);
+assert.match(
+  characterSheet,
+  /this\._buildNpcConceptSheetContext\(actor, \{/,
+  'character-like-sheet.js must still invoke the NPC concept-context hook behind the useNpcConceptSheet guard'
 );
 assert.doesNotMatch(
   npcSheetHelpers,
