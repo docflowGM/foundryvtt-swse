@@ -28,12 +28,8 @@
  */
 
 import { AbilityEngine } from "/systems/foundryvtt-swse/scripts/engine/abilities/AbilityEngine.js";
-import { isXPEnabled } from "/systems/foundryvtt-swse/scripts/engine/progression/xp-engine.js";
 import { DroidValidationEngine } from "/systems/foundryvtt-swse/scripts/engine/droid-validation-engine.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
-import { PanelContextBuilder } from "/systems/foundryvtt-swse/scripts/sheets/v2/context/PanelContextBuilder.js";
-import { buildHeaderHpSegments } from "/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet/context.js";
-import { XP_LEVEL_THRESHOLDS } from "/systems/foundryvtt-swse/scripts/engine/shared/xp-system.js";
 import { DroidSystemsResolver } from "/systems/foundryvtt-swse/scripts/sheets/v2/droid-sheet/droid-systems-resolver.js";
 import { buildUnarmedAttackContext } from "/systems/foundryvtt-swse/scripts/engine/combat/unarmed-attack-helper.js";
 import { ThemeResolutionService } from "/systems/foundryvtt-swse/scripts/ui/theme/theme-resolution-service.js";
@@ -112,17 +108,41 @@ function projectItems(items) {
 }
 
 export class DroidSheetContextBuilder {
-  constructor(actor) {
+  /**
+   * @param {SWSEActor} actor
+   * @param {object} [options]
+   * @param {boolean} [options.isEditable] - Authoritative sheet-presentation
+   *   editability (the owning SWSEV2DroidSheet's real ApplicationV2
+   *   `isEditable` getter — GM-aware, options.editable-aware, not raw
+   *   ownership). Phase 7: replaces the builder's former internal guess
+   *   (`actor?.isOwner === true`), which disagreed with the shared
+   *   Character-like context path for a GM viewing a droid it does not
+   *   personally own. See docs/audits/v2-phase-7-droid-context-convergence.md.
+   */
+  constructor(actor, { isEditable = false } = {}) {
     this.actor = actor;
     this.system = actor?.system ?? {};
     this.derived = actor?.system?.derived ?? {};
-    this.panelBuilder = new PanelContextBuilder(actor, { isEditable: actor?.isOwner === true });
+    this.isEditable = isEditable === true;
   }
 
   /**
    * Build the full overrides object the live droid template + its partials
    * expect. Preserves the exact keyset previously assembled inline in
    * `SWSEV2DroidSheet._prepareContext`.
+   *
+   * Phase 7: this builder no longer constructs its own second
+   * `PanelContextBuilder` (and therefore no longer builds its own
+   * healthPanel/defensePanel/secondWindPanel/biographyPanel/abilitiesPanel).
+   * Tracing every consumer of this method's return value (character-like-
+   * sheet.js's `_prepareContextForActorSheet`, and every live-included Droid
+   * template) proved those five panels were built here but never read from
+   * this object — the shared `panelContexts.*` built once by
+   * `SWSEV2CharacterLikeSheet` via `new PanelContextBuilder(this.document,
+   * this)` (real ApplicationV2 `isEditable`) were always the values actually
+   * rendered. This was dead, duplicate computation using a divergent (and
+   * incorrect) editability authority, not a genuine second data source — see
+   * docs/audits/v2-phase-7-droid-context-convergence.md §5/§6.
    *
    * @returns {object} overrides to be merged with super._prepareContext output
    */
@@ -133,16 +153,6 @@ export class DroidSheetContextBuilder {
     const weapons = this.buildWeaponEntries();
     const abilityCards = this.buildAbilityCardLists();
     const droidPanels = this.buildDroidSpecificPanels();
-
-    const biographyPanel = this.buildBiographyPanel();
-    const healthPanel = this.panelBuilder.buildHealthPanel();
-    const defensePanel = this.panelBuilder.buildDefensePanel();
-    const quickGlance = this.buildQuickGlancePanel(healthPanel, defensePanel);
-    const secondWindPanel = this.panelBuilder.buildSecondWindPanel();
-    const abilitiesPanel = this.buildAbilitiesPanel();
-    const abilities = abilitiesPanel.abilities;
-    const derived = this.buildDerivedViewModel(abilities);
-    const header = this.buildHeaderViewModel();
 
     // Phase 7: Build droid-specific context variants
     const degree = this.buildDegreeNormalization();
@@ -157,31 +167,6 @@ export class DroidSheetContextBuilder {
       // NOTE: the 'actor' Document is intentionally NOT included; consumers use
       // `document` from the base context.
       system: this.system,
-      derived,
-      biographyPanel,
-      healthPanel,
-      defensePanel,
-      quickGlance,
-      abilitiesPanel,
-      abilities,
-      conceptLayout: {
-        abilities,
-        abilitiesTab: {
-          entries: abilities
-        }
-      },
-      xpEnabled: header.xpEnabled,
-      xpData: header.xpData,
-      xpPercent: header.xpPercent,
-      xpLevelReady: header.xpLevelReady,
-      isGM: header.isGM,
-      headerHpSegments: header.headerHpSegments,
-      headerXpSegments: header.headerXpSegments,
-      forcePointsValue: header.forcePointsValue,
-      forcePointsMax: header.forcePointsMax,
-      destinyPointsValue: header.destinyPointsValue,
-      destinyPointsMax: header.destinyPointsMax,
-      secondWindPanel,
       items: projectItems(asItemArray(this.actor?.items)),
       equipment,
       armor,
@@ -222,36 +207,6 @@ export class DroidSheetContextBuilder {
    * primitive fields — Document refs are not safe to serialize into the
    * Handlebars context.
    */
-
-  buildBiographyPanel() {
-    const panel = this.panelBuilder.buildBiographyPanel();
-    panel.identity = {
-      ...panel.identity,
-      class: 'Droid',
-      species: this.system?.droidType || panel.identity.species,
-      profession: this.system?.droidModel || panel.identity.profession,
-      homeworld: this.system?.manufacturer || panel.identity.homeworld
-    };
-    return panel;
-  }
-
-  buildAbilitiesPanel() {
-    const panel = this.panelBuilder.buildAbilitiesPanel();
-    panel.abilities = panel.abilities.filter((ability) => ability.key !== 'con');
-    return panel;
-  }
-
-  buildDerivedViewModel(abilities) {
-    const derived = foundry.utils.deepClone(this.derived ?? {});
-    derived.identity ??= {};
-    derived.identity.abilities = abilities.map((ability) => ({
-      key: ability.key,
-      label: ability.label,
-      value: ability.total,
-      mod: ability.mod
-    }));
-    return derived;
-  }
 
   buildOwnedActorMap() {
     const map = {};
@@ -301,57 +256,6 @@ export class DroidSheetContextBuilder {
       hasIntegratedParts: integratedParts.length > 0,
       hasIntegratedCombat: integrated.length > 0 || rollableIntegratedParts.length > 0,
       hasAny: handheld.length > 0 || integrated.length > 0 || integratedParts.length > 0 || Boolean(unarmed)
-    };
-  }
-
-  buildQuickGlancePanel(healthPanel, defensePanel) {
-    const defenseBySystemKey = new Map((defensePanel?.defenses ?? []).map((defense) => [defense.systemKey, defense]));
-    const speed = this.derived?.speed?.total ?? this.derived?.speed ?? this.system?.speed?.total ?? this.system?.speed?.value ?? 0;
-    return {
-      hpLabel: `${healthPanel?.hp?.value ?? 0}/${healthPanel?.hp?.max ?? 0}`,
-      speed,
-      reflex: defenseBySystemKey.get('reflex')?.total ?? this.derived?.defenses?.reflex?.total ?? 10,
-      fortitude: defenseBySystemKey.get('fortitude')?.total ?? this.derived?.defenses?.fortitude?.total ?? 10,
-      will: defenseBySystemKey.get('will')?.total ?? this.derived?.defenses?.will?.total ?? 10
-    };
-  }
-
-  buildHeaderViewModel() {
-    const xpEnabled = isXPEnabled();
-    const xpDerived = this.derived?.xp ?? { total: 0, progressPercent: 0, xpToNext: 0, level: this.system?.level ?? 1 };
-    const xpDisplayLevel = Math.max(1, Number(this.system?.level ?? xpDerived.level ?? 1));
-    const xpTotal = Number(xpDerived.total ?? this.system?.xp?.total ?? 0) || 0;
-    const xpPercent = Math.max(0, Math.min(100, Math.round(Number(xpDerived.progressPercent ?? 0) || 0)));
-    const nextLevelAtDisplay = XP_LEVEL_THRESHOLDS[Math.min(20, xpDisplayLevel + 1)] ?? null;
-    const xpLevelReady = !xpEnabled || xpPercent >= 100;
-    const xpData = {
-      level: xpDisplayLevel,
-      total: xpTotal,
-      nextLevelAt: nextLevelAtDisplay,
-      xpToNext: nextLevelAtDisplay !== null ? Math.max(0, nextLevelAtDisplay - xpTotal) : 0,
-      percentRounded: xpPercent,
-      stateClass: xpLevelReady ? 'state--ready-levelup' : xpPercent >= 75 ? 'state--nearly-ready' : 'state--in-progress',
-      advisoryOnly: !xpEnabled
-    };
-
-    const headerHpSegments = buildHeaderHpSegments(this.actor);
-    const xpFilledSegments = Math.round((xpPercent / 100) * 20);
-    const headerXpSegments = Array.from({ length: 20 }, (_, index) => ({
-      filled: index < xpFilledSegments
-    }));
-
-    return {
-      xpEnabled,
-      xpData,
-      xpPercent,
-      xpLevelReady,
-      isGM: game.user?.isGM === true,
-      headerHpSegments,
-      headerXpSegments,
-      forcePointsValue: Number(this.system?.forcePoints?.value ?? 0) || 0,
-      forcePointsMax: Number(this.system?.forcePoints?.max ?? 0) || 0,
-      destinyPointsValue: Number(this.system?.destinyPoints?.value ?? 0) || 0,
-      destinyPointsMax: Number(this.system?.destinyPoints?.max ?? 0) || 0
     };
   }
 
@@ -430,9 +334,14 @@ export class DroidSheetContextBuilder {
    */
   buildStockStatblockControlsPanel() {
     const resolution = resolveDroidCalculationMode(this.actor);
+    // Phase 7: `canAct` gates presentation controls (the conversion/rollback
+    // buttons), so it now reads the authoritative sheet-editability value
+    // passed in from SWSEV2DroidSheet instead of reconstructing an
+    // owner-or-GM guess locally. `isOwner` is kept as its own field — it is
+    // genuine ownership information some callers may still want to display —
+    // but no longer doubles as the presentation-permission gate.
     const isOwner = this.actor?.isOwner === true;
-    const isGM = Boolean(game.user?.isGM);
-    const canAct = isOwner || isGM;
+    const canAct = this.isEditable;
     const importState = this.actor?.flags?.swse?.stockDroidImport ?? null;
     const conversionState = this.actor?.flags?.swse?.stockDroidConversion ?? null;
 
@@ -469,9 +378,9 @@ export class DroidSheetContextBuilder {
     if (!importState) return { visible: false };
 
     const resolution = resolveDroidCalculationMode(this.actor);
-    const isOwner = this.actor?.isOwner === true;
-    const isGM = Boolean(game.user?.isGM);
-    const canAct = isOwner || isGM;
+    // Phase 7: see buildStockStatblockControlsPanel()'s comment above —
+    // same authoritative-editability normalization.
+    const canAct = this.isEditable;
 
     const publishedDroidSystems = importState.publishedTotals?.droidSystems ?? {};
     const sourceEntries = [];
@@ -533,7 +442,9 @@ export class DroidSheetContextBuilder {
       maxModificationPoints: this._calculateMaxModPoints(),
       usedModificationPoints: this._calculateUsedModPoints(),
       availableModificationPoints: this._calculateAvailableModPoints(),
-      canEdit: this.actor?.isOwner === true,
+      // Phase 7: presentation editability, not raw ownership — see the
+      // constructor's isEditable doc comment.
+      canEdit: this.isEditable,
       // Phase 1: Project core droidSystems summary for backwards-compatible template migration
       degree: droidSystems.degree ?? "",
       size: droidSystems.size ?? "",
@@ -1079,7 +990,6 @@ export class DroidSheetContextBuilder {
     const swseFlags = this.actor?.flags?.swse ?? {};
     const droidSystems = this.system?.droidSystems ?? {};
     const level = Number(this.system?.level ?? 0);
-    const isOwner = this.actor?.isOwner === true;
 
     const isStockDroid = Boolean(swseFlags.stockDroidImport);
     const hasConversionReport = Boolean(swseFlags.stockDroidConversionReport);
@@ -1124,8 +1034,13 @@ export class DroidSheetContextBuilder {
       validationMessages.push({ severity: 'info', text: 'Droid degree not set — affects trained skills and ability bonuses' });
     }
 
+    // Phase 7: this CTA gates a presentation action ("open the Garage to fix
+    // this"), so it follows the authoritative sheet-editability value rather
+    // than raw ownership — a GM without literal actor ownership can still
+    // see and act on the recommendation, matching every other edit control
+    // on the sheet.
     const garageRecommended =
-      isOwner &&
+      this.isEditable &&
       !isFinalized &&
       (validationMessages.length > 0 || buildSource === 'legacy' || buildSource === 'manual');
 
@@ -1147,7 +1062,16 @@ export class DroidSheetContextBuilder {
   }
 
   buildGarageContext() {
-    const isOwner = this.actor?.isOwner === true;
+    // Phase 7: these gate real, live-rendered controls in
+    // droid-systems-panel.hbs (the "Open Garage" button, the locked-systems
+    // notice). They previously gated on raw `actor.isOwner`, which
+    // disagreed with the sheet-wide rule (`canUseActorSheetEditControls` /
+    // the real ApplicationV2 `isEditable` getter) that a GM can always use
+    // edit controls, even on a droid it does not personally own. Normalized
+    // to the authoritative sheet-presentation editability value passed in
+    // from SWSEV2DroidSheet. See docs/audits/
+    // v2-phase-7-droid-context-convergence.md §4/§9.
+    const canEditSheet = this.isEditable;
     const droidSystems = this.system?.droidSystems ?? {};
     const hasConfiguration = Boolean(droidSystems.degree);
     const isStock = Boolean(this.actor?.flags?.swse?.stockDroidImport);
@@ -1163,17 +1087,17 @@ export class DroidSheetContextBuilder {
       : isInPlay ? 'Systems managed through Garage' : null;
 
     return {
-      canEdit: isOwner,
-      canCustomize: isOwner && hasConfiguration,
-      canConvert: isOwner && isStock,
+      canEdit: canEditSheet,
+      canCustomize: canEditSheet && hasConfiguration,
+      canConvert: canEditSheet && isStock,
       openMode: hasConfiguration ? 'EDIT' : 'NEW',
       hasConfiguration,
       // Phase 5
       systemsLocked,
       isFinalized,
       lockReason,
-      canOpenGarage: isOwner,
-      canManageSystems: isOwner,
+      canOpenGarage: canEditSheet,
+      canManageSystems: canEditSheet,
     };
   }
 
