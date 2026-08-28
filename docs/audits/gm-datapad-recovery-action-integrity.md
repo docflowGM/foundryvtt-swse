@@ -38,6 +38,64 @@ below with a reason.
 **Verdict: GM DATAPAD RECOVERY COMPLETE WITH DOCUMENTED RUNTIME FOLLOW-UP.**
 See §17–19.
 
+## 1a. Correction pass (post-review of PR #962)
+
+A reviewer inspection of the first version of this branch found three real
+gaps, all now fixed:
+
+1. **The scanner proved attribute-name reachability, not action-value
+   reachability.** The original `gm-datapad-action-registry.mjs` treated any
+   `dataset.gmFactionAction` read anywhere in a controller as proof that
+   *every* value of `data-gm-faction-action="..."` was handled — including a
+   value the code never actually branched on. Rewritten to extract, per
+   dispatch attribute, every literal value rendered in the template and
+   every literal value actually branched on in code (`case 'x':`,
+   `=== 'x'`, or a `[data-x="value"]` literal selector, brace-matched for
+   switch blocks, including multi-hop forwarding chains such as
+   `data-economy-action` → `GMDatapad._handleEconomyRepairAction` →
+   `HolonetMessengerService.threadAction`'s own switch), and requires the
+   rendered set to be a subset of the accepted set. Verified against a
+   deliberate regression (renaming a real `case` label made the scanner
+   correctly report it UNRESOLVED, then reverted). 127 of 206 scanned
+   controls are now proven at this stronger level; the rest (surface-id
+   navigation, tab/subtab switches whose vocabulary is validated against
+   sibling template attributes rather than hardcoded strings, id/reference
+   attributes) are documented as attribute-name-level only, with the reason
+   each one doesn't need value-level proof the same way. See §5.
+2. **Three Faction Dossier buttons were real placebos, and the original
+   audit was wrong about why.** `approve-suggestion`, `reject-suggestion`,
+   and `remove-relationship` fell through to the generic "not connected
+   yet" warning — but `FactionRegistryService.approveSuggestedFaction()`,
+   `.rejectSuggestedFaction()`, and `.removeActorRelationship()` already
+   existed with exactly the right semantics (`GMApprovalsSurfaceController`
+   already calls `approveSuggestedFaction`/`rejectSuggestedFaction` for the
+   equivalent Approvals-surface flow, which is how they were found). Wired
+   all three. The original text claiming "no service semantics exist" was
+   wrong and has been corrected throughout this document.
+3. **Wizard progression was asserted from selector presence, not proven.**
+   `tests/gm-datapad-wizard-contract.test.mjs` (added in the first version of
+   this branch) proves template and controller agree on selector names; it
+   does not prove that clicking Next actually transitions state correctly.
+   The Job Contract and Faction Dossier wizards' identical, previously
+   duplicated page-transition closure was extracted into
+   `scripts/ui/shell/gm/utils/gm-wizard-navigation.js` (the "small common
+   wizard-navigation helper... acceptable ONLY if multiple wizards already
+   follow the same contract" case — verified true by direct reading before
+   extracting, not assumed), which has zero Foundry-runtime dependency and
+   so can be executed directly under plain Node. A new test,
+   `tests/gm-datapad-wizard-progression-execution.test.mjs`, builds a
+   minimal fake DOM matching the real wizard markup shape and drives real
+   page transitions through it, asserting actual panel/button state changes
+   — not string matching. Intel and Locations use the same logic shape
+   (verified correct by direct reading, §6) but their controller files use
+   this codebase's Foundry-runtime absolute import convention
+   (`/systems/foundryvtt-swse/...`), which this repo's plain-Node test
+   harness cannot resolve without a custom loader; building one was judged
+   out of scope for this pass. Their wizard status below is stated as
+   "verified by direct code reading," a deliberately weaker claim than the
+   execution-level proof Job/Faction now have — not upgraded to FUNCTIONAL
+   on selector presence alone.
+
 ## 2. Before architecture
 
 ```
@@ -109,9 +167,9 @@ state change → one render request, with no compatibility shim in the path.
 | approvals | GMApprovalsSurfaceService | GMApprovalsSurfaceController | – | – | none | same as home | FUNCTIONAL |
 | healing | GMHealingSurfaceService | GMHealingSurfaceController | – | – | none | same as home | FUNCTIONAL |
 | workspace | GMWorkspaceSurfaceService | GMWorkspaceSurfaceController | – | party member modal | none | same as home | FUNCTIONAL |
-| factions | GMFactionRelationshipSurfaceService | GMFactionRelationshipSurfaceController | Faction wizard (3 pages) | wizard overlay | **`_mutate` + `_wireButtons` (migrated — see §7)** | modal bounds, checkbox feedback | FUNCTIONAL |
+| factions | GMFactionRelationshipSurfaceService | GMFactionRelationshipSurfaceController | Faction wizard (3 pages) | wizard overlay | **`_mutate` + `_wireButtons` (migrated — see §7)** | modal bounds, checkbox feedback | FUNCTIONAL (3 placebo Dossier actions wired — see §5) |
 | intel | GMIntelSurfaceService | GMIntelSurfaceController | Compose wizard (6 pages) | editor modal | none | **Intel skill-grid/difficulty hydration (retained, justified — see §8)** | FUNCTIONAL WITH RUNTIME FOLLOW-UP |
-| locations | GMLocationsSurfaceService | GMLocationsSurfaceController | Create/Import wizard (2+ pages) | create/import/delete modals | **smart-drop init (proven obsolete — see §7)** | modal bounds, checkbox feedback | FUNCTIONAL |
+| locations | GMLocationsSurfaceService | GMLocationsSurfaceController | Create/Import wizard (2+ pages) | create/import/delete modals | **smart-drop init (proven obsolete — see §7)** | modal bounds, checkbox feedback | FUNCTIONAL WITH RUNTIME FOLLOW-UP |
 | skill-challenges | GMSkillChallengeSurfaceService | GMSkillChallengeSurfaceController | – | – | none | same as home | FUNCTIONAL |
 | settings | GMSettingsSurfaceService | GMSettingsSurfaceController (delegates to shared `SettingsSurfaceController`) | – | – | none | same as home | FUNCTIONAL |
 
@@ -124,45 +182,92 @@ task's own guidance ("do not hardcode a meaningless static list if a scanner
 can derive it"): `scripts/dev/gm-datapad-action-registry.mjs`, enforced by
 `tests/gm-datapad-action-integrity-contract.test.mjs`.
 
-Method: for each of the 14 registered surfaces, BFS-resolve every template
-reachable from that surface's root partial (mirroring Handlebars'
-`{{> "…"}}` resolution), collect every literal-valued `data-*="…"` attribute
-rendered on it (a Handlebars expression value like `data-faction-id="{{this.id}}"`
-is a reference/id binding, not an authored action token, and is excluded),
-and cross-reference the attribute name against `dataset.<name>` reads (or
-equivalent `[data-name]` selectors) in: that surface's own controller, the
-GM Datapad host, `GMInteractionRepairService`, and the shared cross-surface
-services (`GMSmartFormDropService`, `DossierDragDropService`,
-`HolonetComposerAssist`, `SettingsSurfaceController`).
+Method: for each of the 14 registered surfaces (plus a 15th synthetic entry
+for host chrome — the sidebar/dock/toolbar partials are included directly
+from `gm-datapad.hbs`, not from any surface's own template tree, so they
+need their own scan target), BFS-resolve every template reachable from that
+surface's root partial (mirroring Handlebars' `{{> "…"}}` resolution) and
+collect every literal-valued `data-*="…"` attribute rendered on it (a
+Handlebars expression value like `data-faction-id="{{this.id}}"` is a
+reference/id binding, not an authored action token, and is excluded). Two
+levels of proof are then applied, not one (the first version of this scan
+only attempted the weaker one, and review of PR #962 on this branch
+correctly flagged that as overstating what it proved):
 
-Result at the end of this pass: **86 controls scanned across 14 surfaces, 0
-UNRESOLVED.** Before the Job subtab fix (§9), the same scan reported the six
-`data-job-subtab-switch` controls and six `data-job-subtab-panel` targets as
-UNRESOLVED — the scanner's first real catch.
+- **Action-value-level**, for the twelve attributes known to dispatch on
+  their literal value (`data-gm-faction-action`, `data-location-action`,
+  `data-intel-action`, `data-trade-action`, `data-economy-action`,
+  `data-skill-challenge-action`, bare `data-action` on Store/Bulletin/
+  Approvals, `data-gm-v2-action`): every literal value rendered in the
+  template must appear as a real branch — `case 'x':`/`=== 'x'` against the
+  same variable the controller assigned from that `dataset` read, or a
+  `[data-x="value"]` literal selector (`GMApprovalsSurfaceController`'s
+  style: one `querySelectorAll` per action value, no dispatch variable at
+  all) — in the file(s) that actually own that dispatch, including
+  multi-hop forwarding (`data-economy-action` is read by
+  `GMTradeConsoleSurfaceController`, forwarded to
+  `GMDatapad._handleEconomyRepairAction`, which for `kind === 'trade'`
+  forwards again, untouched, to `HolonetMessengerService.threadAction`'s
+  own switch — the scanner's dispatch table follows that whole chain, not
+  just the first hop).
+- **Attribute-name-level**, for everything else — surface-id navigation
+  (`data-nav-to`, validated against the surface registry at runtime, not a
+  hardcoded string set), tab/subtab switches whose vocabulary is validated
+  against sibling `-panel` attributes in the same template rather than
+  code literals, and id/reference attributes: the attribute *name* must have
+  a `dataset.<name>` read somewhere in the files allowed to wire that
+  surface. This level cannot distinguish "handles this exact value" from
+  "handles some value of this attribute," which is exactly why it is not
+  used for the dispatch attributes above.
 
-Non-scanner findings from direct code reading, not caught by the (necessarily
-generic) scanner because they are wiring-correctness bugs rather than
-missing-wiring bugs:
+Result at the end of this pass: **206 controls scanned across 15 entries, 0
+UNRESOLVED — 127 of them proven at action-value level.** Verified the
+scanner can actually fail: renaming a real `case 'approve-suggestion':`
+label to a decoy string made it correctly report that value UNRESOLVED
+(reverted after confirming). Two real defects were caught during
+development of this scan, one at each proof level:
+
+| Finding | Surface | Proof level that caught it | Status before | Status after |
+|---|---|---|---|---|
+| Job dossier/settlement subtabs (`data-job-subtab-switch`) | jobs | attribute-name (zero `dataset.jobSubtab*` reads anywhere) | DEAD_UI | fixed |
+| `data-gm-faction-action="approve-suggestion"/"reject-suggestion"/"remove-relationship"` | factions | action-value (attribute-name-level would have reported these LIVE_HANDLED, incorrectly, on the strength of the *other* thirteen `gm-faction-action` values the controller does branch on) | LIVE_BROKEN (rendered, fell through to a generic "not connected yet" warning) | fixed — see below |
+
+Non-scanner findings from direct code reading (wiring-*correctness* bugs —
+a handler exists and is reachable, but does the wrong thing or fights
+another handler — rather than missing-wiring, which the scanner above
+covers):
 
 | Finding | Surface | Status before | Status after |
 |---|---|---|---|
 | `_mutate(operation, reason)` argument order | factions | LIVE_BROKEN (silent no-op mutation) | fixed |
 | `_wireButtons` targeting retired attributes | factions | DUPLICATE_HANDLER (compat's delegated listener always won; real per-button listeners always matched zero elements) | fixed (single delegated handler, current attribute contract) |
 | Job status buttons | jobs | DUPLICATE_HANDLER (repair-service capture handler always won over both the real and the compat handler) | fixed (single handler, real controller) |
-| Job dossier/settlement subtabs | jobs | DEAD_UI (zero handlers anywhere) | fixed |
-| `approve-suggestion`, `reject-suggestion`, `remove-relationship` | factions | FUTURE_FEATURE (no service semantics exist) | unchanged — see §17 |
+
+`approve-suggestion`, `reject-suggestion`, and `remove-relationship` are
+wired to `FactionRegistryService.approveSuggestedFaction()`,
+`.rejectSuggestedFaction()`, and `.removeActorRelationship()` respectively
+— all three already existed with exactly the needed semantics
+(`GMApprovalsSurfaceController` already calls the first two for the
+equivalent Approvals-surface flow). The first version of this document
+claimed "no service semantics exist" for these three; that was wrong, found
+during the correction pass described in §1a, and is corrected here.
 
 ## 6. Wizard inventory
 
-| Wizard | Surface | Open | Pages | Page state owner | Next | Back | Direct step nav | Validation | Submit | Cancel/Close | Rerender behavior | Status |
-|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| Contract wizard | jobs | `data-gm-wizard-open="contract"` | 4 | `wizard.dataset.currentPage` (in-DOM, no rerender) | `data-gm-wizard-next` | `data-gm-wizard-back` | `data-gm-wizard-step-button` | `novalidate` form; primary objective required at submit only | `data-gm-wizard-submit` → `[data-job-create-form]` submit handler | `data-gm-wizard-close` | opening resets to page 1 (`setPage(wizard, 1)`); mid-fill DOM state is not disturbed by unrelated surface rerenders | FUNCTIONAL |
-| Faction Dossier wizard | factions | `data-gm-wizard-open="faction"` | 3 | `wizard.dataset.currentPage` (in-DOM, no rerender) | `data-gm-wizard-next` | `data-gm-wizard-back` | `data-gm-wizard-step-button` | `novalidate` form | `data-gm-wizard-submit` → `[data-gm-faction-create-form]` submit handler | `data-gm-wizard-close` | same as Contract wizard | FUNCTIONAL |
-| Intel Compose wizard | intel | server-rendered surface-state modal (`patchSurfaceState('intel', { modal: { type: 'editor' } })` + rerender) | 6 | `wizard.dataset.currentPage` (in-DOM after each attach) | `data-intel-action="wizard-next"` (disabled at last page) | `data-intel-action="wizard-back"` (disabled at page 1) | step indicators are display-only (no direct-nav) | none enforced client-side | page 6 (Review) submits via the record editor's own save action, not a dedicated wizard-submit button | `data-intel-action="close-modal"` (server-rendered close) | surface rerender (e.g. any `patchSurfaceState` on `intel`) re-attaches the controller, which resets the wizard to page 1 — see §17 | FUNCTIONAL WITH RUNTIME FOLLOW-UP |
-| Locations Create/Import wizard | locations | server-rendered surface-state modal (`patchSurfaceState('locations', { modal: { type: 'create'|'import' } })` + rerender) | 2+ (varies by form) | `wizard.dataset.currentPage` (in-DOM after each attach) | `data-location-action="wizard-next"` (disabled at last page, relabels "Review Complete") | `data-location-action="wizard-back"` (disabled at page 1) | none | none enforced client-side | the wizard's own create/import form submit (not a `wizard-submit` action) | `data-location-action="close-modal"` | same rerender-resets-to-page-1 behavior as Intel | FUNCTIONAL WITH RUNTIME FOLLOW-UP |
+| Wizard | Surface | Open | Pages | Page state owner | Next | Back | Direct step nav | Validation | Submit | Cancel/Close | Rerender behavior | Progression proof | Status |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| Contract wizard | jobs | `data-gm-wizard-open="contract"` | 4 | `wizard.dataset.currentPage` (in-DOM, no rerender) | `data-gm-wizard-next` | `data-gm-wizard-back` | `data-gm-wizard-step-button` | `novalidate` form; primary objective required at submit only | `data-gm-wizard-submit` → `[data-job-create-form]` submit handler | `data-gm-wizard-close` | opening resets to page 1 (`setWizardPage(wizard, 1)`); mid-fill DOM state is not disturbed by unrelated surface rerenders | **Executed** — `tests/gm-datapad-wizard-progression-execution.test.mjs` drives real page 1→2→4 transitions against a fake DOM and asserts actual panel/button state | FUNCTIONAL |
+| Faction Dossier wizard | factions | `data-gm-wizard-open="faction"` | 3 | `wizard.dataset.currentPage` (in-DOM, no rerender) | `data-gm-wizard-next` | `data-gm-wizard-back` | `data-gm-wizard-step-button` | `novalidate` form | `data-gm-wizard-submit` → `[data-gm-faction-create-form]` submit handler | `data-gm-wizard-close` | same as Contract wizard | **Executed** — same test, same shared `setWizardPage` function, faction-kind label set | FUNCTIONAL |
+| Intel Compose wizard | intel | server-rendered surface-state modal (`patchSurfaceState('intel', { modal: { type: 'editor' } })` + rerender) | 6 | `wizard.dataset.currentPage` (in-DOM after each attach) | `data-intel-action="wizard-next"` (disabled at last page) | `data-intel-action="wizard-back"` (disabled at page 1) | step indicators are display-only (no direct-nav) | none enforced client-side | page 6 (Review) submits via the record editor's own save action, not a dedicated wizard-submit button | `data-intel-action="close-modal"` (server-rendered close) | surface rerender (e.g. any `patchSurfaceState` on `intel`) re-attaches the controller, which resets the wizard to page 1 — see §17 | **Read, not executed** — `_setWizardPage`/`_shiftWizardPage` verified correct by direct code reading (same disable-based show/hide logic as Locations); this controller's absolute Foundry-runtime imports cannot be executed under this repo's Node test harness — see §1a | FUNCTIONAL WITH RUNTIME FOLLOW-UP |
+| Locations Create/Import wizard | locations | server-rendered surface-state modal (`patchSurfaceState('locations', { modal: { type: 'create'|'import' } })` + rerender) | 2+ (varies by form) | `wizard.dataset.currentPage` (in-DOM after each attach) | `data-location-action="wizard-next"` (disabled at last page, relabels "Review Complete") | `data-location-action="wizard-back"` (disabled at page 1) | none | none enforced client-side | the wizard's own create/import form submit (not a `wizard-submit` action) | `data-location-action="close-modal"` | same rerender-resets-to-page-1 behavior as Intel | **Read, not executed** — same constraint as Intel | FUNCTIONAL WITH RUNTIME FOLLOW-UP |
 
 Every wizard can reach its final page from open; none is intentionally
-incomplete or hidden.
+incomplete or hidden. "FUNCTIONAL" for the Job/Faction row rests on executed
+proof of the page-transition logic plus direct reading of the surrounding
+open/submit/close wiring; for Intel/Locations it rests on direct reading of
+all of it, which is why those two rows keep the WITH RUNTIME FOLLOW-UP
+qualifier — live-Foundry validation (§18) is still the authoritative check
+for all four.
 
 ## 7. `GMControllerCompatibilityService` patch inventory (retired)
 
@@ -276,6 +381,16 @@ a CSS replacement is built and tested — seePhase I in §17.
    Dossier detail rail and the Settlement workspace.
 4. `templates/shell/shell-surface.hbs` — fixed the GM-home floating
    home-button leak.
+5. `GMFactionRelationshipSurfaceController` — wired `approve-suggestion`,
+   `reject-suggestion`, and `remove-relationship` (rendered, previously fell
+   through to a generic "not connected yet" warning) to the
+   `FactionRegistryService` methods that already existed for them. Found
+   during the §1a correction pass, not the initial pass.
+6. `scripts/ui/shell/gm/utils/gm-wizard-navigation.js` (new) — extracted the
+   byte-identical wizard page-transition logic previously duplicated in both
+   `GMJobBoardSurfaceController` and `GMFactionRelationshipSurfaceController`
+   into one shared, zero-dependency, directly-testable function. Found
+   during the §1a correction pass.
 
 ## 14. Compatibility patches retired
 
@@ -291,19 +406,28 @@ retained with reasons in §8.
 
 ## 16. Tests added
 
-- `tests/gm-datapad-action-integrity-contract.test.mjs` — runs the new
-  scanner (`scripts/dev/gm-datapad-action-registry.mjs`) across all 14
-  surfaces and asserts zero unresolved controls.
+- `tests/gm-datapad-action-integrity-contract.test.mjs` — runs the scanner
+  (`scripts/dev/gm-datapad-action-registry.mjs`) across all 14 surfaces plus
+  host chrome, asserts zero unresolved controls, and asserts the three
+  previously-placebo Faction actions are specifically proven at
+  action-value level (not merely attribute-name level).
 - `tests/gm-datapad-wizard-contract.test.mjs` — per-wizard static contract
   (open selector, page count, back/next/step-button/submit selectors present
   in both template and controller) for all 4 live wizards.
+- `tests/gm-datapad-wizard-progression-execution.test.mjs` (added in the
+  §1a correction pass) — actually executes the shared
+  `setWizardPage` function against a fake DOM built to the real wizard
+  markup shape for the Job and Faction wizards, and asserts real page/button
+  state transitions across pages, clamping at both ends, and per-kind label
+  text — not string presence.
 - `tests/gm-datapad-no-duplicate-handler-regression.test.mjs` — pins the
   fixes in §9: `GMControllerCompatibilityService.js` stays deleted, the
   interaction-repair service never regains a job-status interceptor or a
   `stopImmediatePropagation()` call, the Job controller's real
   `_wireStatusButtons` remains the sole definition and calls the public API,
-  and the Faction controller's `_mutate`/`_wireButtons` keep their fixed
-  signatures.
+  the Faction controller's `_mutate`/`_wireButtons` keep their fixed
+  signatures, and the three previously-placebo Faction actions keep calling
+  their real `FactionRegistryService` methods.
 
 ## 17. Remaining runtime requirements (not fixed this pass)
 
@@ -323,22 +447,27 @@ These are deliberate scope boundaries, not oversights:
 - **`GMInteractionRepairService`'s CSS/viewport/modal-bounds/Intel-hydration
   responsibilities** — retained per §8, each with a named future owner. Phase
   I (CSS consolidation) was intentionally not started this pass.
-- **Job/Faction wizard navigation duplication.** `_wireWizardControls` /
-  `setPage` in `GMJobBoardSurfaceController` and
-  `GMFactionRelationshipSurfaceController` are near-identical (~90 lines
-  each). Both are independently verified correct in this pass. The task's
-  own guidance only sanctions a shared helper when multiple wizards *already*
-  follow the same contract — which is now demonstrably true for these two —
-  but extracting it was judged higher-risk than valuable within this pass's
-  budget, given both implementations are currently correct and tested.
-  Recommended follow-up, not started.
-- **Dead Dossier actions** (`approve-suggestion`, `reject-suggestion`,
-  `remove-relationship`) — rendered in `factions.hbs`, no service semantics
-  exist anywhere in the codebase. They already fail loudly (the delegated
-  handler's `default` case shows a "not connected yet" `ui.notifications`
-  warning rather than doing nothing), so they are not silent, but they are
-  not implemented. No service semantics were invented for them, per the
-  task's explicit prohibition.
+- **Intel/Locations wizard execution proof.** As covered in §1a/§6, the
+  page-transition logic for these two was verified correct only by direct
+  code reading, not by the executed-DOM test the Job/Faction wizards now
+  have, because their controller files use this codebase's Foundry-runtime
+  absolute import convention. A Node ESM loader that maps
+  `/systems/foundryvtt-swse/...` back to the repo root (plus enough
+  `game`/`ui`/`Hooks` stubbing for whatever else those files touch at import
+  or call time) would let a future pass extend the same execution-level test
+  to these two. Judged out of scope for this correction pass.
+- **Job/Faction wizard navigation duplication — resolved this pass.** The
+  originally-duplicated `setPage` closure is now the single shared
+  `scripts/ui/shell/gm/utils/gm-wizard-navigation.js` module (§1a), which
+  also made the execution-level test above possible. Locations/Intel's
+  equivalent logic (`_setWizardPage`/`_shiftWizardPage`) was deliberately
+  left as-is rather than folded into the same module: their attribute names
+  differ (`data-wizard-page` vs `data-gm-wizard-page`, `data-location-action`/
+  `data-intel-action` gating vs `data-gm-wizard-back`/`-next`) and their
+  Next/Back buttons use a disable-based contract instead of Job/Faction's
+  hide-based one, so unifying all four would be exactly the kind of
+  "unrelated wizard mechanics into a giant new WizardEngine" the task
+  explicitly warns against, not a same-contract extraction.
 
 ## 18. Live Foundry follow-up checklist
 

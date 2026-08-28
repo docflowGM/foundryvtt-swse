@@ -84,4 +84,15 @@ const read = (rel) => readFile(new URL(rel, root), 'utf8');
   assert.doesNotMatch(factions, /data-gm-faction-delete\]|data-gm-faction-job\]|data-gm-faction-intel\]/, 'the real Faction controller must not still target the retired data-gm-faction-delete/-job/-intel attributes');
 }
 
+// 6. The three Faction Dossier buttons that were clickable placebos
+// (rendered, but falling through to the generic "not connected yet"
+// warning) are wired to the real FactionRegistryService methods that
+// already existed for them.
+{
+  const factions = await read('scripts/ui/shell/gm/controllers/GMFactionRelationshipSurfaceController.js');
+  assert.match(factions, /case 'approve-suggestion':[\s\S]{0,600}FactionRegistryService\.approveSuggestedFaction/, 'approve-suggestion must call FactionRegistryService.approveSuggestedFaction');
+  assert.match(factions, /case 'reject-suggestion':[\s\S]{0,600}FactionRegistryService\.rejectSuggestedFaction/, 'reject-suggestion must call FactionRegistryService.rejectSuggestedFaction');
+  assert.match(factions, /case 'remove-relationship':[\s\S]{0,600}FactionRegistryService\.removeActorRelationship/, 'remove-relationship must call FactionRegistryService.removeActorRelationship');
+}
+
 console.log('GM Datapad duplicate-handler regression guards passed.');
