@@ -20,7 +20,6 @@ import { GMIntelSurfaceController } from './GMIntelSurfaceController.js';
 import { GMLocationsSurfaceController } from './GMLocationsSurfaceController.js';
 import { GMSkillChallengeSurfaceController } from './GMSkillChallengeSurfaceController.js';
 import { GMInteractionRepairService } from '../GMInteractionRepairService.js';
-import { GMControllerCompatibilityService } from '../GMControllerCompatibilityService.js';
 
 const CONTROLLERS = Object.freeze({
   approvals: GMApprovalsSurfaceController,
@@ -86,11 +85,7 @@ export class GMSurfaceControllerRegistry {
     }
 
     GMInteractionRepairService.bind({ surfaceId, host, root });
-    const controller = GMControllerCompatibilityService.prepare({
-      surfaceId,
-      host,
-      controller: new Controller(host)
-    });
+    const controller = new Controller(host);
 
     try {
       const attached = await controller.attach(root);
