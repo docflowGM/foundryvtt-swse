@@ -566,11 +566,15 @@ const actor = () => ({
   assert.ok(bundle, 'the card-action strings are not in the localization bundle');
   for (const key of ['Select', 'Selected', 'Deselect', 'Again', 'Owned', 'Granted', 'Locked', 'Unavailable', 'Maximum']) {
     assert.ok(bundle[key], `lang/en.json is missing SWSE.Progression.CardAction.${key}`);
-    assert.ok(bundle[`${key}.Announce`], `lang/en.json is missing the announced form of ${key}`);
+    assert.ok(bundle[`${key}Announce`], `lang/en.json is missing SWSE.Progression.CardAction.${key}Announce`);
+    // A dotted "Key.Announce" form would make Foundry's localization loader treat
+    // "Key" as both a leaf string and a branch object, which fails to load.
+    assert.equal(bundle[`${key}.Announce`], undefined,
+      `${key}.Announce reintroduces Foundry's leaf/branch localization collision`);
   }
   // The announced forms must be able to name the candidate.
   for (const [key, value] of Object.entries(bundle)) {
-    if (!key.endsWith('.Announce')) continue;
+    if (!key.endsWith('Announce')) continue;
     assert.ok(value.includes('{name}'), `${key} cannot name the candidate it describes`);
   }
 }
