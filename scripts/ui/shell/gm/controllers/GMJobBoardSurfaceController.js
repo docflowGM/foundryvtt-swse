@@ -29,6 +29,7 @@ export class GMJobBoardSurfaceController {
     if (!this._assertGM('open the GM Job Board')) return;
 
     this._wireJobBoardTabs(pageElement, signal);
+    this._wireJobSubtabs(pageElement, signal);
     this._wireLifecycleShelves(pageElement, signal);
     this._wireWizardControls(pageElement, signal);
     this._wireContractWizardEnhancements(pageElement, signal);
@@ -101,6 +102,44 @@ export class GMJobBoardSurfaceController {
     let initial = 'board';
     try { initial = globalThis.localStorage?.getItem?.(storageKey) || 'board'; } catch (_err) {}
     setActiveTab(initial, { persist: false });
+  }
+
+  /**
+   * The Dossier "briefing/objectives/reputation/activity/control" rail and the
+   * Settlement "summary/credits/xp/items/assets/legacy" rail both render a
+   * second-level `data-job-subtab-*` tab strip (templates/apps/gm-datapad/surfaces/jobs/kanban-and-detail.hbs)
+   * that had no click wiring anywhere — the buttons rendered but never did
+   * anything. This is purely local DOM tab state (no service round-trip), so
+   * it does not need a render request.
+   */
+  _wireJobSubtabs(pageElement, signal) {
+    pageElement.querySelectorAll('[data-job-subtab-root]').forEach((root) => {
+      const buttons = Array.from(root.querySelectorAll('[data-job-subtab-switch]'));
+      const panels = Array.from(root.querySelectorAll('[data-job-subtab-panel]'));
+      if (!buttons.length || !panels.length) return;
+      const validSubtabs = new Set(panels.map(panel => panel.dataset.jobSubtabPanel).filter(Boolean));
+
+      const setActiveSubtab = (requested) => {
+        const subtab = validSubtabs.has(requested) ? requested : (root.dataset.jobSubtabDefault || buttons[0]?.dataset.jobSubtabSwitch);
+        buttons.forEach(button => {
+          const active = button.dataset.jobSubtabSwitch === subtab;
+          button.classList.toggle('is-active', active);
+          button.setAttribute('aria-selected', active ? 'true' : 'false');
+        });
+        panels.forEach(panel => {
+          panel.classList.toggle('is-active', panel.dataset.jobSubtabPanel === subtab);
+        });
+      };
+
+      root.addEventListener('click', (event) => {
+        const button = event.target?.closest?.('[data-job-subtab-switch]');
+        if (!button || !root.contains(button)) return;
+        event.preventDefault();
+        setActiveSubtab(button.dataset.jobSubtabSwitch);
+      }, { signal });
+
+      setActiveSubtab(root.dataset.jobSubtabDefault);
+    });
   }
 
   _wireLifecycleShelves(pageElement, signal) {

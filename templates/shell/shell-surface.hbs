@@ -165,7 +165,7 @@
     Floating home button visible on all non-home surfaces.
     Lets the user jump to the Home launcher from any route.
   ═══════════════════════════════════════════════════════════════════ --}}
-  {{#unless (eq shellSurface "home")}}
+  {{#unless (or (eq shellSurface "home") (eq shellSurface "gm-home"))}}
   <button class="swse-shell-home-nav"
           data-shell-action="open-home"
           type="button"
