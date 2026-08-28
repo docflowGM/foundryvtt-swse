@@ -15,6 +15,7 @@ import { LocationRegistryService } from '/systems/foundryvtt-swse/scripts/locati
 import { mutateShellOnly } from '/systems/foundryvtt-swse/scripts/ui/shell/mutate-and-repaint.js';
 import { confirmGmDatapadModal } from '/systems/foundryvtt-swse/scripts/ui/shell/gm/utils/gm-datapad-modal.js';
 import { GMSmartFormDropService } from '/systems/foundryvtt-swse/scripts/ui/shell/gm/utils/gm-smart-form-drop-service.js';
+import { setWizardPage } from '/systems/foundryvtt-swse/scripts/ui/shell/gm/utils/gm-wizard-navigation.js';
 
 function text(formData, key) { return String(formData.get(key) ?? '').trim(); }
 function number(formData, key) { return Number(formData.get(key) || 0) || 0; }
@@ -193,10 +194,6 @@ export class GMFactionRelationshipSurfaceController {
   /**
    * The Dossier template's live command contract is one delegated
    * `[data-gm-faction-action]` per button (see templates/apps/gm-datapad/surfaces/factions.hbs).
-   * `approve-suggestion`, `reject-suggestion`, and `remove-relationship` are
-   * rendered but have no backing service semantics yet — they fall through to
-   * the default case's explicit "not connected yet" notice rather than being
-   * silently dead.
    */
   _wireButtons(pageElement, signal) {
     pageElement.addEventListener('click', async (event) => {
@@ -211,6 +208,8 @@ export class GMFactionRelationshipSurfaceController {
       const contactId = String(button.dataset.contactId || '').trim();
       const contactName = String(button.dataset.contactName || '').trim();
       const locationId = String(button.dataset.locationId || '').trim();
+      const actorId = String(button.dataset.actorId || '').trim();
+      const relationshipId = String(button.dataset.relationshipId || '').trim();
       const issuerFilter = {
         factionId,
         factionName,
@@ -347,6 +346,52 @@ export class GMFactionRelationshipSurfaceController {
             return;
           }
 
+          case 'approve-suggestion': {
+            if (!this._assertGM('approve a faction suggestion')) return;
+            const actor = actorId ? game.actors?.get?.(actorId) : null;
+            if (!actor) throw new Error('The requesting actor could not be found.');
+            const relationship = await this._mutate(
+              () => FactionRegistryService.approveSuggestedFaction({ actorId: actor.id, factionRecordId: factionId }),
+              'gm-faction-approve-suggestion'
+            );
+            if (!relationship) throw new Error('Could not approve this faction suggestion.');
+            ui.notifications?.info?.(`Faction suggestion approved for ${actor.name}.`);
+            await this._refresh();
+            return;
+          }
+
+          case 'reject-suggestion': {
+            if (!this._assertGM('reject a faction suggestion')) return;
+            const actor = actorId ? game.actors?.get?.(actorId) : null;
+            if (!actor) throw new Error('The requesting actor could not be found.');
+            const reasonField = button.closest('.gm-faction-suggestion-card')?.querySelector('input[name="rejectReason"]');
+            const reason = String(reasonField?.value || '').trim();
+            const rejected = await this._mutate(
+              () => FactionRegistryService.rejectSuggestedFaction({ actorId: actor.id, factionRecordId: factionId, reason }),
+              'gm-faction-reject-suggestion'
+            );
+            if (!rejected) throw new Error('Could not reject this faction suggestion.');
+            ui.notifications?.info?.(`Faction suggestion rejected for ${actor.name}.`);
+            await this._refresh();
+            return;
+          }
+
+          case 'remove-relationship': {
+            if (!this._assertGM('remove a faction relationship')) return;
+            const actor = actorId ? game.actors?.get?.(actorId) : null;
+            if (!actor) throw new Error('The related actor could not be found.');
+            if (!relationshipId) throw new Error('This relationship has no id.');
+            if (!globalThis.confirm?.('Remove this faction relationship?')) return;
+            const removed = await this._mutate(
+              () => FactionRegistryService.removeActorRelationship(actor, relationshipId),
+              'gm-faction-remove-relationship'
+            );
+            if (!removed) throw new Error('Could not remove this faction relationship.');
+            ui.notifications?.info?.('Faction relationship removed.');
+            await this._refresh();
+            return;
+          }
+
           case 'send-contact-message':
             this.host.patchSurfaceState?.('bulletin', {
               focusedContactId: contactId,
@@ -465,36 +510,6 @@ export class GMFactionRelationshipSurfaceController {
   }
 
   _wireWizardControls(pageElement, signal) {
-    const labels = {
-      contract: ['Next: Objectives', 'Next: Briefing', 'Next: Publish', 'Create Contract'],
-      faction: ['Next: Attach Actors', 'Next: Notes', 'Create Faction Dossier']
-    };
-    const setPage = (wizard, page) => {
-      const max = wizard.querySelectorAll('[data-gm-wizard-page]').length || 1;
-      const nextPage = Math.max(1, Math.min(max, Number(page) || 1));
-      wizard.dataset.currentPage = String(nextPage);
-      wizard.querySelectorAll('[data-gm-wizard-page]').forEach((panel) => {
-        panel.classList.toggle('is-active', Number(panel.dataset.gmWizardPage) === nextPage);
-      });
-      wizard.querySelectorAll('[data-gm-wizard-step-button]').forEach((step) => {
-        const stepNumber = Number(step.dataset.gmWizardStepButton) || 0;
-        step.classList.toggle('is-active', stepNumber === nextPage);
-        step.classList.toggle('is-complete', stepNumber < nextPage);
-      });
-      const kind = wizard.dataset.gmWizard || 'contract';
-      const back = wizard.querySelector('[data-gm-wizard-back]');
-      const next = wizard.querySelector('[data-gm-wizard-next]');
-      const submit = wizard.querySelector('[data-gm-wizard-submit]');
-      const current = wizard.querySelector('[data-gm-wizard-current]');
-      if (current) current.textContent = String(nextPage);
-      if (back) back.hidden = nextPage <= 1;
-      if (next) {
-        next.hidden = nextPage >= max;
-        next.textContent = labels[kind]?.[nextPage - 1] || 'Next';
-      }
-      if (submit) submit.hidden = nextPage < max;
-    };
-
     pageElement.querySelectorAll('[data-gm-wizard-open]').forEach((button) => {
       button.addEventListener('click', (event) => {
         event.preventDefault();
@@ -503,7 +518,7 @@ export class GMFactionRelationshipSurfaceController {
         if (!wizard) return;
         wizard.hidden = false;
         wizard.classList.add('is-open');
-        setPage(wizard, 1);
+        setWizardPage(wizard, 1);
       }, { signal });
     });
 
@@ -522,7 +537,7 @@ export class GMFactionRelationshipSurfaceController {
         event.preventDefault();
         const wizard = event.currentTarget.closest('[data-gm-wizard]');
         if (!wizard) return;
-        setPage(wizard, Number(wizard.dataset.currentPage || 1) + 1);
+        setWizardPage(wizard, Number(wizard.dataset.currentPage || 1) + 1);
       }, { signal });
     });
 
@@ -531,7 +546,7 @@ export class GMFactionRelationshipSurfaceController {
         event.preventDefault();
         const wizard = event.currentTarget.closest('[data-gm-wizard]');
         if (!wizard) return;
-        setPage(wizard, Number(wizard.dataset.currentPage || 1) - 1);
+        setWizardPage(wizard, Number(wizard.dataset.currentPage || 1) - 1);
       }, { signal });
     });
 
@@ -540,7 +555,7 @@ export class GMFactionRelationshipSurfaceController {
         event.preventDefault();
         const wizard = event.currentTarget.closest('[data-gm-wizard]');
         if (!wizard) return;
-        setPage(wizard, Number(event.currentTarget.dataset.gmWizardStepButton || 1));
+        setWizardPage(wizard, Number(event.currentTarget.dataset.gmWizardStepButton || 1));
       }, { signal });
     });
   }
