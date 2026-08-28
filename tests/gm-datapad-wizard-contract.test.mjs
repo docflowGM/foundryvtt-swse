@@ -11,6 +11,17 @@ import { readFile } from 'node:fs/promises';
 // wires the matching open/back/next/step-button/submit selectors — not just
 // that a selector string exists somewhere, but that template and controller
 // agree on the same attribute names.
+//
+// Selector agreement is necessary but not sufficient proof of correct
+// behavior (raised in review of PR #962 on this branch). For the Job
+// Contract and Faction Dossier wizards,
+// tests/gm-datapad-wizard-progression-execution.test.mjs additionally
+// EXECUTES the real page-transition function and asserts actual state
+// transitions. Intel and Locations use the same logic shape (verified by
+// direct code reading, documented in the audit) but their controllers use
+// this codebase's Foundry-runtime absolute import convention, which this
+// Node test harness cannot execute — see that file's header comment for the
+// full reasoning.
 
 const root = new URL('../', import.meta.url);
 const read = (rel) => readFile(new URL(rel, root), 'utf8');

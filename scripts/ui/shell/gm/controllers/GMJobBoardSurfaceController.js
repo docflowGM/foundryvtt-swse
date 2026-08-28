@@ -13,6 +13,7 @@ import { FactionJobBridgeService } from '/systems/foundryvtt-swse/scripts/ui/she
 import { requestShellRender } from '/systems/foundryvtt-swse/scripts/ui/shell/request-shell-render.js';
 import { mutateShellOnly } from '/systems/foundryvtt-swse/scripts/ui/shell/mutate-and-repaint.js';
 import { GMSmartFormDropService } from '/systems/foundryvtt-swse/scripts/ui/shell/gm/utils/gm-smart-form-drop-service.js';
+import { setWizardPage } from '/systems/foundryvtt-swse/scripts/ui/shell/gm/utils/gm-wizard-navigation.js';
 
 export class GMJobBoardSurfaceController {
   constructor(host) {
@@ -155,36 +156,6 @@ export class GMJobBoardSurfaceController {
   }
 
   _wireWizardControls(pageElement, signal) {
-    const labels = {
-      contract: ['Next: Objectives', 'Next: Briefing', 'Next: Publish', 'Create Contract'],
-      faction: ['Next: Attach Actors', 'Next: Notes', 'Create Faction']
-    };
-    const setPage = (wizard, page) => {
-      const max = wizard.querySelectorAll('[data-gm-wizard-page]').length || 1;
-      const nextPage = Math.max(1, Math.min(max, Number(page) || 1));
-      wizard.dataset.currentPage = String(nextPage);
-      wizard.querySelectorAll('[data-gm-wizard-page]').forEach((panel) => {
-        panel.classList.toggle('is-active', Number(panel.dataset.gmWizardPage) === nextPage);
-      });
-      wizard.querySelectorAll('[data-gm-wizard-step-button]').forEach((step) => {
-        const stepNumber = Number(step.dataset.gmWizardStepButton) || 0;
-        step.classList.toggle('is-active', stepNumber === nextPage);
-        step.classList.toggle('is-complete', stepNumber < nextPage);
-      });
-      const kind = wizard.dataset.gmWizard || 'contract';
-      const back = wizard.querySelector('[data-gm-wizard-back]');
-      const next = wizard.querySelector('[data-gm-wizard-next]');
-      const submit = wizard.querySelector('[data-gm-wizard-submit]');
-      const current = wizard.querySelector('[data-gm-wizard-current]');
-      if (current) current.textContent = String(nextPage);
-      if (back) back.hidden = nextPage <= 1;
-      if (next) {
-        next.hidden = nextPage >= max;
-        next.textContent = labels[kind]?.[nextPage - 1] || 'Next';
-      }
-      if (submit) submit.hidden = nextPage < max;
-    };
-
     pageElement.querySelectorAll('[data-gm-wizard-open]').forEach((button) => {
       button.addEventListener('click', (event) => {
         event.preventDefault();
@@ -198,7 +169,7 @@ export class GMJobBoardSurfaceController {
         if (clearJobPrefill) this._clearContractPrefill(wizard);
         wizard.hidden = false;
         wizard.classList.add('is-open');
-        setPage(wizard, 1);
+        setWizardPage(wizard, 1);
       }, { signal });
     });
 
@@ -220,7 +191,7 @@ export class GMJobBoardSurfaceController {
         event.preventDefault();
         const wizard = event.currentTarget.closest('[data-gm-wizard]');
         if (!wizard) return;
-        setPage(wizard, Number(wizard.dataset.currentPage || 1) + 1);
+        setWizardPage(wizard, Number(wizard.dataset.currentPage || 1) + 1);
       }, { signal });
     });
 
@@ -229,7 +200,7 @@ export class GMJobBoardSurfaceController {
         event.preventDefault();
         const wizard = event.currentTarget.closest('[data-gm-wizard]');
         if (!wizard) return;
-        setPage(wizard, Number(wizard.dataset.currentPage || 1) - 1);
+        setWizardPage(wizard, Number(wizard.dataset.currentPage || 1) - 1);
       }, { signal });
     });
 
@@ -238,7 +209,7 @@ export class GMJobBoardSurfaceController {
         event.preventDefault();
         const wizard = event.currentTarget.closest('[data-gm-wizard]');
         if (!wizard) return;
-        setPage(wizard, Number(event.currentTarget.dataset.gmWizardStepButton || 1));
+        setWizardPage(wizard, Number(event.currentTarget.dataset.gmWizardStepButton || 1));
       }, { signal });
     });
   }
