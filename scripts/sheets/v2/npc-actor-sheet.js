@@ -7,6 +7,8 @@ import { showRollModifiersDialog } from "/systems/foundryvtt-swse/scripts/rolls/
 import { NpcProfileBuilder } from "/systems/foundryvtt-swse/scripts/actors/npc/npc-profile-builder.js";
 import { buildNpcConceptAbilities, isNpcSheetWritablePath, isNpcStatblockAuthorityPath, isQuietNpcSheetPath } from "/systems/foundryvtt-swse/scripts/sheets/v2/npc/npc-sheet-helpers.js";
 import { coerceSingleFieldValue } from "/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet/form.js";
+import { launchFollowerProgression } from "/systems/foundryvtt-swse/scripts/apps/progression-framework/progression-entry.js";
+import { NpcProgressionEngine } from "/systems/foundryvtt-swse/scripts/engine/progression/npc-progression-engine.js";
 
 /**
  * SWSEV2NpcSheet — the actor sheet controller for `type: "npc"` actors.
@@ -238,6 +240,61 @@ export class SWSEV2NpcSheet extends SWSEV2CharacterLikeSheet {
         } catch (err) {
           ui?.notifications?.error?.(`NPC Level-Up failed to open: ${err.message}`);
         }
+      }, { signal });
+    });
+
+    // Phase 5A fix: rendered in npc-progression-panel.hbs, npc-owner-panel.hbs,
+    // and npc-related-actor-card.hbs (all included by npc-concept-content.hbs)
+    // but previously had no listener anywhere in the sheet controllers.
+    root.querySelectorAll('[data-action="revert-npc-progression"]').forEach((button) => {
+      button.addEventListener('click', async (ev) => {
+        ev.preventDefault();
+        ev.stopPropagation();
+        try {
+          const ok = await Dialog.confirm({
+            title: 'Revert NPC Progression',
+            content: '<p>This restores this NPC to its last saved progression snapshot. Continue?</p>',
+            yes: () => true,
+            no: () => false,
+            defaultYes: false
+          });
+          if (!ok) return;
+          await NpcProgressionEngine.revertToSnapshot(this.actor);
+          await this.requestSurfaceRender({ reason: 'npc-progression-revert' });
+        } catch (err) {
+          ui?.notifications?.error?.(`Could not revert NPC progression: ${err.message}`);
+        }
+      }, { signal });
+    });
+
+    root.querySelectorAll('[data-action="open-follower-advancement"]').forEach((button) => {
+      button.addEventListener('click', async (ev) => {
+        ev.preventDefault();
+        ev.stopPropagation();
+        const ownerActorId = button.dataset.ownerActorId;
+        const ownerActor = ownerActorId ? game.actors?.get?.(ownerActorId) : null;
+        if (!ownerActor) {
+          ui?.notifications?.warn?.('This follower\'s owner could not be resolved.');
+          return;
+        }
+        try {
+          await launchFollowerProgression(ownerActor, { existingFollowerId: this.actor?.id });
+        } catch (err) {
+          ui?.notifications?.error?.(`Could not open follower advancement: ${err.message}`);
+        }
+      }, { signal });
+    });
+
+    root.querySelectorAll('[data-action="open-related-actor"]').forEach((el) => {
+      el.addEventListener('click', (ev) => {
+        ev.preventDefault();
+        const actorId = ev.currentTarget?.dataset?.actorId;
+        const relatedActor = actorId ? game.actors?.get?.(actorId) : null;
+        if (!relatedActor) {
+          ui?.notifications?.warn?.('That related actor could not be found.');
+          return;
+        }
+        relatedActor.sheet?.render?.(true);
       }, { signal });
     });
 

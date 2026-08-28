@@ -22,6 +22,7 @@ import { EnhancedPilot } from "/systems/foundryvtt-swse/scripts/engine/combat/st
 import { EnhancedCommander } from "/systems/foundryvtt-swse/scripts/engine/combat/starship/enhanced-commander.js";
 import { VehicleTurnController } from "/systems/foundryvtt-swse/scripts/engine/combat/starship/vehicle-turn-controller.js";
 import { SWSEV2ActorSheetBase } from "/systems/foundryvtt-swse/scripts/sheets/v2/actor-sheet-base.js";
+import { SWSERoll } from "/systems/foundryvtt-swse/scripts/combat/rolls/enhanced-rolls.js";
 
 /**
  * The following three small pure-function groups (action-economy view-model
@@ -640,6 +641,81 @@ export class SWSEV2VehicleSheet extends SWSEV2ActorSheetBase {
           companionSource: ev.currentTarget,
           sheet: this
         });
+      }, { signal });
+    });
+
+    // Phase 5A fix: these render on the Pilot/Engineering starship-maneuver
+    // list (vehicle-sheet-content.hbs) with data-item-id/data-actor-id/
+    // data-item-uuid already shaped to match StarshipManeuversEngine's ref
+    // argument, but had no listener anywhere. The engine method names match
+    // the action names exactly (useManeuver/regainManeuver) — this was clearly
+    // built for these buttons and simply never wired.
+    root.querySelectorAll('[data-action="useManeuver"]').forEach(btn => {
+      btn.addEventListener('click', async (ev) => {
+        ev.preventDefault();
+        const { itemId, actorId, itemUuid } = ev.currentTarget?.dataset ?? {};
+        await StarshipManeuversEngine.useManeuver(this.actor, { itemId, actorId, uuid: itemUuid });
+        this.render?.(false);
+      }, { signal });
+    });
+
+    root.querySelectorAll('[data-action="regainManeuver"]').forEach(btn => {
+      btn.addEventListener('click', async (ev) => {
+        ev.preventDefault();
+        const { itemId, actorId, itemUuid } = ev.currentTarget?.dataset ?? {};
+        await StarshipManeuversEngine.regainManeuver(this.actor, { itemId, actorId, uuid: itemUuid });
+        this.render?.(false);
+      }, { signal });
+    });
+
+    // Phase 5A: "Import Vehicle" has no authoritative implementation anywhere
+    // in the codebase (verified: no importVehicle-style function exists in any
+    // engine/subsystem). Per fix policy C, this control is disabled with an
+    // explanation rather than inventing an import mechanic.
+    root.querySelectorAll('[data-action="import-vehicle"]').forEach(btn => {
+      btn.setAttribute('disabled', 'disabled');
+      btn.title = 'Vehicle import is not implemented yet.';
+      btn.setAttribute('aria-disabled', 'true');
+    });
+
+    // Phase 5A fix: the shared Ability Matrix panel (abilities-panel.hbs,
+    // used by Character/Droid tabs and this Vehicle sheet alike — vehicles
+    // carry ability scores for e.g. computer/pilot-relevant checks) renders
+    // [data-action="toggle-abilities"] and [data-action="roll-ability"] for
+    // every actor type that includes it, but Vehicle never inherited the
+    // Character-like sheet's handlers for them (Vehicle extends
+    // SWSEV2ActorSheetBase directly, not the Character/NPC/Droid chain).
+    // "Roll for Attributes" is template-gated to actor.type === "character"
+    // already and is correctly absent here; these two are not gated and were
+    // genuinely unreachable. Reuses the exact same DOM toggle / SWSERoll call
+    // as the Character-like implementation.
+    root.querySelectorAll('[data-action="toggle-abilities"]').forEach(button => {
+      button.addEventListener('click', (ev) => {
+        ev.preventDefault();
+        const panel = button.closest('.abilities-panel');
+        if (!panel) return;
+        const isExpanded = panel.classList.toggle('abilities-expanded');
+        panel.querySelectorAll('.ability-row').forEach(row => {
+          const collapsed = row.querySelector('.ability-collapsed');
+          const expanded = row.querySelector('.ability-expanded');
+          if (collapsed) collapsed.style.display = isExpanded ? 'none' : 'flex';
+          if (expanded) expanded.style.display = isExpanded ? (expanded.dataset?.expandedDisplay || 'flex') : 'none';
+        });
+        button.setAttribute('aria-expanded', String(isExpanded));
+        button.textContent = isExpanded ? 'Collapse' : (button.dataset?.collapsedLabel || 'Edit Defenses');
+      }, { signal });
+    });
+
+    root.querySelectorAll('[data-action="roll-ability"]').forEach(button => {
+      button.addEventListener('click', async (ev) => {
+        ev.preventDefault();
+        const abilityKey = button.dataset.ability;
+        if (!abilityKey) return;
+        try {
+          await SWSERoll.rollAbility(this.actor, abilityKey, { sourceElement: button, companionSource: button, sheet: this, showRollCompanion: true });
+        } catch (err) {
+          ui?.notifications?.error?.(`Ability roll failed: ${err.message}`);
+        }
       }, { signal });
     });
 
