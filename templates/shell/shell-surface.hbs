@@ -145,7 +145,8 @@
   {{/if}}
 
   {{#if (eq shellSurface "gm-locations")}}
-    {{> "systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/locations.hbs"}}
+    {{> "systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/locations.hbs"
+        surface=shellSurfaceVm}}
   {{/if}}
 
   {{#if (eq shellSurface "gm-skill-challenges")}}
