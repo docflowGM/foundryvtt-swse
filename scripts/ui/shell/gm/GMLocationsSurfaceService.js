@@ -342,6 +342,21 @@ function blankEditorVm() {
   };
 }
 
+function applyCreateDefaults(editor, defaults = null) {
+  if (!defaults || typeof defaults !== 'object') return editor;
+  return {
+    ...editor,
+    name: text(defaults.name, editor.name),
+    factionIdsText: defaults.factionIds ? tagsLabel(defaults.factionIds) : editor.factionIdsText,
+    contactIdsText: defaults.contactIds ? tagsLabel(defaults.contactIds) : editor.contactIdsText,
+    raw: {
+      ...editor.raw,
+      controllingFactionId: text(defaults.controllingFactionId, editor.raw.controllingFactionId),
+      publicSummary: text(defaults.publicSummary, editor.raw.publicSummary)
+    }
+  };
+}
+
 function leadDiscoveryRows(records = []) {
   const byId = new Map(records.map(entry => [entry.id, entry]));
   return LocationRegistryService.getAtlasLeadDiscoveries({ unresolvedOnly: true }).map((lead) => {
@@ -404,7 +419,8 @@ export class GMLocationsSurfaceService {
     const selectedLocationId = text(state.selectedLocationId || (state?.modal?.type === 'create' ? '' : visibleCards[0]?.id) || '');
     const selectedLocation = selectedLocationId ? LocationRegistryService.findLocation(selectedLocationId) : null;
     const selected = selectedVm(selectedLocation, records, factions);
-    const editor = selected || blankEditorVm();
+    const rawModal = state.modal && typeof state.modal === 'object' ? state.modal : {};
+    const editor = selected || applyCreateDefaults(blankEditorVm(), rawModal.defaults);
     const hasSelection = Boolean(selected);
     const selectedVisibleCards = visibleCards.map(card => ({ ...card, selected: card.id === selectedLocationId }));
     const leadQueue = leadDiscoveryRows(records);
@@ -426,7 +442,6 @@ export class GMLocationsSurfaceService {
       visibleCount: visibleCards.length
     };
 
-    const rawModal = state.modal && typeof state.modal === 'object' ? state.modal : {};
     const modalType = text(rawModal.type);
     const deleteLocationId = text(rawModal.locationId);
     const deleteLocation = deleteLocationId ? LocationRegistryService.findLocation(deleteLocationId) : null;
