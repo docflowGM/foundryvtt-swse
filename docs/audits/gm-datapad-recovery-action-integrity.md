@@ -56,12 +56,15 @@ gaps, all now fixed:
    `HolonetMessengerService.threadAction`'s own switch), and requires the
    rendered set to be a subset of the accepted set. Verified against a
    deliberate regression (renaming a real `case` label made the scanner
-   correctly report it UNRESOLVED, then reverted). 127 of 206 scanned
-   controls are now proven at this stronger level; the rest (surface-id
-   navigation, tab/subtab switches whose vocabulary is validated against
-   sibling template attributes rather than hardcoded strings, id/reference
-   attributes) are documented as attribute-name-level only, with the reason
-   each one doesn't need value-level proof the same way. See §5.
+   correctly report it UNRESOLVED, then reverted). A substantial share of
+   scanned controls are now proven at this stronger level; the rest
+   (surface-id navigation, tab/subtab switches whose vocabulary is validated
+   against sibling template attributes rather than hardcoded strings,
+   id/reference attributes) are documented as attribute-name-level only,
+   with the reason each one doesn't need value-level proof the same way. A
+   further, materially different gap in this same scanner — one attribute
+   invisible to it entirely — was found in a second pass; see §1b for that
+   fix and the final totals, and §5 for the full method.
 2. **Three Faction Dossier buttons were real placebos, and the original
    audit was wrong about why.** `approve-suggestion`, `reject-suggestion`,
    and `remove-relationship` fell through to the generic "not connected
@@ -95,6 +98,52 @@ gaps, all now fixed:
    "verified by direct code reading," a deliberately weaker claim than the
    execution-level proof Job/Faction now have — not upgraded to FUNCTIONAL
    on selector presence alone.
+
+## 1b. Final correction pass — dynamic Trade action proof
+
+A second, narrower review found that `data-trade-action="{{this.action}}"`
+(`templates/apps/gm-datapad/surfaces/trade/trade-board.hbs`) renders its
+value dynamically, generated per-row by
+`GMTradeConsoleSurfaceService._buildActions()`. This is a materially
+different and worse gap than either version of the scanner up to this point
+had accounted for: the scanner's literal-value regex requires an
+alphanumeric attribute value and simply does not match a Handlebars
+expression, so **`data-trade-action` was completely invisible to every
+prior version of this scan** — not merely proven at a weaker level, not
+present in the control count at all, in either direction. The `trade-action`
+entry that did exist in `DISPATCH_CONTROLS` before this pass was dead code:
+it could never fire, because the attribute it named was never found in the
+`attrs` map it depends on.
+
+Fixed by deriving the actual generated vocabulary statically from
+`GMTradeConsoleSurfaceService.js` — see §5 for the full chain and the
+`DYNAMIC_ACTION_SOURCE_VERIFIED` proof level this introduced — and proving
+each of the 22 values it can produce is accepted by
+`HolonetMessengerService`'s dispatch.
+
+While building that check, a second, independent imprecision surfaced:
+`collectDispatchValues`' original if-chain matching style scanned the
+*entire* `holonet-messenger-service.js` file for `action === 'x'`
+occurrences, not just the intended `_gmThreadAction` switch. That file
+reuses the identifier `action` in an unrelated second-layer dispatcher,
+`_gmResolveCreditTransfer` (called by the switch's `case 'approve-transfer':`
+group, among others, for the credit-transfer action family), which has its
+own internal `action === 'approve-transfer'` check. A deliberate regression
+test proved this was a real precision gap, not a hypothetical one: renaming
+`_gmThreadAction`'s `case 'approve-transfer':` label — the only thing that
+actually routes that value into the handler — left the scanner reporting
+`approve-transfer` as handled anyway, because the whole-file scan still
+matched the now-orphaned inner check. Fixed by adding a `switch-only` mode
+that this file's checks (both the new Trade derivation and the pre-existing
+`economy-action` cross-check against the same file) now use, restricting
+matching to `_gmThreadAction`'s own switch block — verified sufficient by
+confirming every value either check needs appears there as a `case` label,
+and verified precise by re-running the same deliberate regression, which now
+correctly fails.
+
+Final scanner totals after both fixes: **228 controls scanned across 15
+entries (14 surfaces + host chrome), 0 UNRESOLVED — 127 at action-value
+level, 22 at dynamic-action-value level, 79 at attribute-name level.**
 
 ## 2. Before architecture
 
@@ -189,14 +238,16 @@ need their own scan target), BFS-resolve every template reachable from that
 surface's root partial (mirroring Handlebars' `{{> "…"}}` resolution) and
 collect every literal-valued `data-*="…"` attribute rendered on it (a
 Handlebars expression value like `data-faction-id="{{this.id}}"` is a
-reference/id binding, not an authored action token, and is excluded). Two
-levels of proof are then applied, not one (the first version of this scan
-only attempted the weaker one, and review of PR #962 on this branch
-correctly flagged that as overstating what it proved):
+reference/id binding, not an authored action token, and is excluded — with
+one deliberate exception, below). Three levels of proof are then applied,
+not one or two (the first version of this scan only attempted the weakest
+one, and review of PR #962 on this branch correctly flagged that as
+overstating what it proved; a second review found a further gap in the
+strongest level, fixed in §1b):
 
-- **Action-value-level**, for the twelve attributes known to dispatch on
-  their literal value (`data-gm-faction-action`, `data-location-action`,
-  `data-intel-action`, `data-trade-action`, `data-economy-action`,
+- **Action-value-level**, for the attributes known to dispatch on
+  their literal, template-authored value (`data-gm-faction-action`,
+  `data-location-action`, `data-intel-action`, `data-economy-action`,
   `data-skill-challenge-action`, bare `data-action` on Store/Bulletin/
   Approvals, `data-gm-v2-action`): every literal value rendered in the
   template must appear as a real branch — `case 'x':`/`=== 'x'` against the
@@ -210,6 +261,19 @@ correctly flagged that as overstating what it proved):
   forwards again, untouched, to `HolonetMessengerService.threadAction`'s
   own switch — the scanner's dispatch table follows that whole chain, not
   just the first hop).
+- **Dynamic-action-value-level**, for the one attribute rendered with a
+  Handlebars-expression value instead of a literal —
+  `data-trade-action="{{this.action}}"` in trade-board.hbs, generated by
+  `GMTradeConsoleSurfaceService._buildActions()`. A dedicated static parser
+  reads that service's frozen `TRANSFER_TYPES` config (every `<x>Action:
+  'value'` field) and `_buildActions`'s own hardcoded `gm-*-trade`
+  diagnostic literals to derive the complete set of values that method can
+  ever generate, then proves every one of them is accepted by
+  `HolonetMessengerService`'s dispatch — scoped specifically to
+  `_gmThreadAction`'s own switch block, not a whole-file scan (§1b explains
+  why that scoping is load-bearing, not cosmetic). If the template stops
+  rendering that exact expression, or the service's config/function shape
+  moves, this reports a discrepancy rather than silently going stale.
 - **Attribute-name-level**, for everything else — surface-id navigation
   (`data-nav-to`, validated against the surface registry at runtime, not a
   hardcoded string set), tab/subtab switches whose vocabulary is validated
@@ -220,17 +284,23 @@ correctly flagged that as overstating what it proved):
   "handles some value of this attribute," which is exactly why it is not
   used for the dispatch attributes above.
 
-Result at the end of this pass: **206 controls scanned across 15 entries, 0
-UNRESOLVED — 127 of them proven at action-value level.** Verified the
-scanner can actually fail: renaming a real `case 'approve-suggestion':`
-label to a decoy string made it correctly report that value UNRESOLVED
-(reverted after confirming). Two real defects were caught during
-development of this scan, one at each proof level:
+Result at the end of this pass: **228 controls scanned across 15 entries, 0
+UNRESOLVED — 127 proven at action-value level, 22 at dynamic-action-value
+level, 79 at attribute-name level.** Verified the scanner can actually fail,
+twice: renaming a real `case 'approve-suggestion':` label to a decoy string
+made it correctly report that value UNRESOLVED (reverted after confirming),
+and — for the dynamic-action-value level specifically — renaming
+`_gmThreadAction`'s `case 'approve-transfer':` label made the scanner
+correctly report `data-trade-action="approve-transfer"` UNRESOLVED too
+(reverted after confirming; see §1b for why this second check was needed at
+all). Three real defects were caught during development of this scan, one at
+each proof level:
 
 | Finding | Surface | Proof level that caught it | Status before | Status after |
 |---|---|---|---|---|
 | Job dossier/settlement subtabs (`data-job-subtab-switch`) | jobs | attribute-name (zero `dataset.jobSubtab*` reads anywhere) | DEAD_UI | fixed |
 | `data-gm-faction-action="approve-suggestion"/"reject-suggestion"/"remove-relationship"` | factions | action-value (attribute-name-level would have reported these LIVE_HANDLED, incorrectly, on the strength of the *other* thirteen `gm-faction-action` values the controller does branch on) | LIVE_BROKEN (rendered, fell through to a generic "not connected yet" warning) | fixed — see below |
+| `data-trade-action` was invisible to the scanner entirely (not merely under-proven) | trade | none — caught by direct reading while investigating the review's dynamic-Trade concern, not by the scanner itself, since the scanner could not see the attribute to begin with | UNRESOLVED (was not even counted before this fix — no status existed for it) | fixed — see §1b |
 
 Non-scanner findings from direct code reading (wiring-*correctness* bugs —
 a handler exists and is reachable, but does the wrong thing or fights
@@ -314,7 +384,7 @@ any control that has its own real handler.
    duplicate; the opposite defect (zero handlers). Documented separately in
    §5 and fixed in `GMJobBoardSurfaceController._wireJobSubtabs`.
 
-No other duplicate-handler pattern was found across the 86 scanned controls
+No other duplicate-handler pattern was found across the 228 scanned controls
 or the direct reading of every controller file in `scripts/ui/shell/gm/controllers/`.
 
 ## 10. State authority map
@@ -495,5 +565,18 @@ validation against §18, (2) Phase I CSS consolidation so
 `GMInteractionRepairService`'s remaining modal/viewport JS can be retired in
 favor of stable CSS, (3) migrate Intel wizard hydration into
 `GMIntelSurfaceController` once CSS consolidation reduces the risk of doing
-so, (4) evaluate extracting the now-duplicated Job/Faction wizard-navigation
-helper.
+so, (4) give Intel/Locations wizard progression the same execution-level
+proof Job/Faction now have (§1a/§6) — likely via a small Node ESM loader
+that maps this codebase's `/systems/foundryvtt-swse/...` import convention
+back to the repo root, since their controller files (not just their
+page-transition logic) would need to run under this test harness, (5) trace
+the two dynamic-dispatch attributes noted but deliberately left unaudited in
+this pass (`scripts/dev/gm-datapad-action-registry.mjs`'s file header) —
+`data-job-transition-action`'s sibling `data-status` value and the one
+dynamic `data-skill-challenge-action` row sourced from
+`SkillChallengeFeatHooks.getTrackerOptions` — and decide whether either
+needs the same derive-and-verify treatment `data-trade-action` got in §1b.
+
+The Job/Faction wizard-navigation duplication itself is already resolved
+(`scripts/ui/shell/gm/utils/gm-wizard-navigation.js`, §1a) — not listed
+above as it is already done, not a recommendation.
