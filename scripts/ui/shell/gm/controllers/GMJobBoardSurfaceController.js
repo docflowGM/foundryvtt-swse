@@ -13,6 +13,7 @@ import { FactionJobBridgeService } from '/systems/foundryvtt-swse/scripts/ui/she
 import { requestShellRender } from '/systems/foundryvtt-swse/scripts/ui/shell/request-shell-render.js';
 import { mutateShellOnly } from '/systems/foundryvtt-swse/scripts/ui/shell/mutate-and-repaint.js';
 import { GMSmartFormDropService } from '/systems/foundryvtt-swse/scripts/ui/shell/gm/utils/gm-smart-form-drop-service.js';
+import { setWizardPage } from '/systems/foundryvtt-swse/scripts/ui/shell/gm/utils/gm-wizard-navigation.js';
 
 export class GMJobBoardSurfaceController {
   constructor(host) {
@@ -29,6 +30,7 @@ export class GMJobBoardSurfaceController {
     if (!this._assertGM('open the GM Job Board')) return;
 
     this._wireJobBoardTabs(pageElement, signal);
+    this._wireJobSubtabs(pageElement, signal);
     this._wireLifecycleShelves(pageElement, signal);
     this._wireWizardControls(pageElement, signal);
     this._wireContractWizardEnhancements(pageElement, signal);
@@ -103,6 +105,44 @@ export class GMJobBoardSurfaceController {
     setActiveTab(initial, { persist: false });
   }
 
+  /**
+   * The Dossier "briefing/objectives/reputation/activity/control" rail and the
+   * Settlement "summary/credits/xp/items/assets/legacy" rail both render a
+   * second-level `data-job-subtab-*` tab strip (templates/apps/gm-datapad/surfaces/jobs/kanban-and-detail.hbs)
+   * that had no click wiring anywhere — the buttons rendered but never did
+   * anything. This is purely local DOM tab state (no service round-trip), so
+   * it does not need a render request.
+   */
+  _wireJobSubtabs(pageElement, signal) {
+    pageElement.querySelectorAll('[data-job-subtab-root]').forEach((root) => {
+      const buttons = Array.from(root.querySelectorAll('[data-job-subtab-switch]'));
+      const panels = Array.from(root.querySelectorAll('[data-job-subtab-panel]'));
+      if (!buttons.length || !panels.length) return;
+      const validSubtabs = new Set(panels.map(panel => panel.dataset.jobSubtabPanel).filter(Boolean));
+
+      const setActiveSubtab = (requested) => {
+        const subtab = validSubtabs.has(requested) ? requested : (root.dataset.jobSubtabDefault || buttons[0]?.dataset.jobSubtabSwitch);
+        buttons.forEach(button => {
+          const active = button.dataset.jobSubtabSwitch === subtab;
+          button.classList.toggle('is-active', active);
+          button.setAttribute('aria-selected', active ? 'true' : 'false');
+        });
+        panels.forEach(panel => {
+          panel.classList.toggle('is-active', panel.dataset.jobSubtabPanel === subtab);
+        });
+      };
+
+      root.addEventListener('click', (event) => {
+        const button = event.target?.closest?.('[data-job-subtab-switch]');
+        if (!button || !root.contains(button)) return;
+        event.preventDefault();
+        setActiveSubtab(button.dataset.jobSubtabSwitch);
+      }, { signal });
+
+      setActiveSubtab(root.dataset.jobSubtabDefault);
+    });
+  }
+
   _wireLifecycleShelves(pageElement, signal) {
     pageElement.querySelectorAll('[data-job-shelf-select]').forEach((button) => {
       button.addEventListener('click', async (event) => {
@@ -116,36 +156,6 @@ export class GMJobBoardSurfaceController {
   }
 
   _wireWizardControls(pageElement, signal) {
-    const labels = {
-      contract: ['Next: Objectives', 'Next: Briefing', 'Next: Publish', 'Create Contract'],
-      faction: ['Next: Attach Actors', 'Next: Notes', 'Create Faction']
-    };
-    const setPage = (wizard, page) => {
-      const max = wizard.querySelectorAll('[data-gm-wizard-page]').length || 1;
-      const nextPage = Math.max(1, Math.min(max, Number(page) || 1));
-      wizard.dataset.currentPage = String(nextPage);
-      wizard.querySelectorAll('[data-gm-wizard-page]').forEach((panel) => {
-        panel.classList.toggle('is-active', Number(panel.dataset.gmWizardPage) === nextPage);
-      });
-      wizard.querySelectorAll('[data-gm-wizard-step-button]').forEach((step) => {
-        const stepNumber = Number(step.dataset.gmWizardStepButton) || 0;
-        step.classList.toggle('is-active', stepNumber === nextPage);
-        step.classList.toggle('is-complete', stepNumber < nextPage);
-      });
-      const kind = wizard.dataset.gmWizard || 'contract';
-      const back = wizard.querySelector('[data-gm-wizard-back]');
-      const next = wizard.querySelector('[data-gm-wizard-next]');
-      const submit = wizard.querySelector('[data-gm-wizard-submit]');
-      const current = wizard.querySelector('[data-gm-wizard-current]');
-      if (current) current.textContent = String(nextPage);
-      if (back) back.hidden = nextPage <= 1;
-      if (next) {
-        next.hidden = nextPage >= max;
-        next.textContent = labels[kind]?.[nextPage - 1] || 'Next';
-      }
-      if (submit) submit.hidden = nextPage < max;
-    };
-
     pageElement.querySelectorAll('[data-gm-wizard-open]').forEach((button) => {
       button.addEventListener('click', (event) => {
         event.preventDefault();
@@ -159,7 +169,7 @@ export class GMJobBoardSurfaceController {
         if (clearJobPrefill) this._clearContractPrefill(wizard);
         wizard.hidden = false;
         wizard.classList.add('is-open');
-        setPage(wizard, 1);
+        setWizardPage(wizard, 1);
       }, { signal });
     });
 
@@ -181,7 +191,7 @@ export class GMJobBoardSurfaceController {
         event.preventDefault();
         const wizard = event.currentTarget.closest('[data-gm-wizard]');
         if (!wizard) return;
-        setPage(wizard, Number(wizard.dataset.currentPage || 1) + 1);
+        setWizardPage(wizard, Number(wizard.dataset.currentPage || 1) + 1);
       }, { signal });
     });
 
@@ -190,7 +200,7 @@ export class GMJobBoardSurfaceController {
         event.preventDefault();
         const wizard = event.currentTarget.closest('[data-gm-wizard]');
         if (!wizard) return;
-        setPage(wizard, Number(wizard.dataset.currentPage || 1) - 1);
+        setWizardPage(wizard, Number(wizard.dataset.currentPage || 1) - 1);
       }, { signal });
     });
 
@@ -199,7 +209,7 @@ export class GMJobBoardSurfaceController {
         event.preventDefault();
         const wizard = event.currentTarget.closest('[data-gm-wizard]');
         if (!wizard) return;
-        setPage(wizard, Number(event.currentTarget.dataset.gmWizardStepButton || 1));
+        setWizardPage(wizard, Number(event.currentTarget.dataset.gmWizardStepButton || 1));
       }, { signal });
     });
   }

@@ -1,8 +1,5 @@
 import { HolonetDecryptionService } from '/systems/foundryvtt-swse/scripts/holonet/subsystems/holonet-decryption-service.js';
 import { HolonetIntelService } from '/systems/foundryvtt-swse/scripts/holonet/subsystems/holonet-intel-service.js';
-import { HolonetMessengerService } from '/systems/foundryvtt-swse/scripts/holonet/subsystems/holonet-messenger-service.js';
-import { HolonetStorage } from '/systems/foundryvtt-swse/scripts/holonet/subsystems/holonet-storage.js';
-import { requestShellRender } from '/systems/foundryvtt-swse/scripts/ui/shell/request-shell-render.js';
 
 const ACTIVE = new WeakMap();
 const STYLE_ID = 'swse-gm-datapad-interaction-repairs';
@@ -193,7 +190,6 @@ export class GMInteractionRepairService {
     this._bindModalBounds(root, signal);
     this._stabilizeViewport(host, root, signal);
     if (surfaceId === 'intel') void this._hydrateIntelWizard(root, signal);
-    if (surfaceId === 'jobs') this._bindJobStatusRepair(host, root, signal);
     return true;
   }
 
@@ -426,38 +422,6 @@ export class GMInteractionRepairService {
     }
   }
 
-  static _bindJobStatusRepair(host, root, signal) {
-    root.addEventListener('click', async event => {
-      const button = event.target?.closest?.('[data-job-status-action], [data-job-transition-action]');
-      if (!button || !root.contains(button)) return;
-      event.preventDefault();
-      event.stopImmediatePropagation();
-      const threadId = String(button.dataset.threadId || '').trim();
-      const status = String(button.dataset.status || '').trim();
-      if (!threadId || !status) return;
-      const note = String(root.querySelector(`[data-job-status-note][data-thread-id="${CSS.escape(threadId)}"]`)?.value || '').trim();
-      const thread = await HolonetStorage.getThread(threadId);
-      if (!thread) {
-        ui.notifications?.error?.('The selected job thread could not be found.');
-        return;
-      }
-      const allowOverride = button.dataset.jobStatusOverride === 'true';
-      const result = await HolonetMessengerService._gmTransitionJobStatus({
-        thread,
-        nextStatus: status,
-        statusNote: note,
-        requesterId: game.user?.id || null,
-        senderRecipientId: null,
-        allowOverride
-      });
-      if (!result) {
-        ui.notifications?.warn?.('The job status change did not complete.');
-        return;
-      }
-      host.selectedJobThreadId = threadId;
-      await requestShellRender(host, { reason: allowOverride ? 'gm-job-status-override-repair' : 'gm-job-status-transition-repair', surfaceId: 'jobs' });
-    }, { signal, capture: true });
-  }
 }
 
 export default GMInteractionRepairService;

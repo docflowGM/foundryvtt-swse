@@ -15,6 +15,7 @@ import { LocationRegistryService } from '/systems/foundryvtt-swse/scripts/locati
 import { mutateShellOnly } from '/systems/foundryvtt-swse/scripts/ui/shell/mutate-and-repaint.js';
 import { confirmGmDatapadModal } from '/systems/foundryvtt-swse/scripts/ui/shell/gm/utils/gm-datapad-modal.js';
 import { GMSmartFormDropService } from '/systems/foundryvtt-swse/scripts/ui/shell/gm/utils/gm-smart-form-drop-service.js';
+import { setWizardPage } from '/systems/foundryvtt-swse/scripts/ui/shell/gm/utils/gm-wizard-navigation.js';
 
 function text(formData, key) { return String(formData.get(key) ?? '').trim(); }
 function number(formData, key) { return Number(formData.get(key) || 0) || 0; }
@@ -120,7 +121,9 @@ export class GMFactionRelationshipSurfaceController {
 
   async _mutate(operation, reason = 'gm-faction-surface') {
     if (typeof operation !== 'function') return null;
-    if (typeof mutateShellOnly === 'function') return mutateShellOnly(operation, reason);
+    if (typeof mutateShellOnly === 'function') {
+      return mutateShellOnly(this.host, operation, { reason, surfaceId: 'factions' });
+    }
     return operation();
   }
 
@@ -188,39 +191,227 @@ export class GMFactionRelationshipSurfaceController {
     });
   }
 
+  /**
+   * The Dossier template's live command contract is one delegated
+   * `[data-gm-faction-action]` per button (see templates/apps/gm-datapad/surfaces/factions.hbs).
+   */
   _wireButtons(pageElement, signal) {
-    pageElement.querySelectorAll('[data-gm-faction-delete]').forEach((button) => {
-      button.addEventListener('click', async (event) => {
-        event.preventDefault();
-        if (!this._assertGM('delete faction records')) return;
-        const id = event.currentTarget.dataset.gmFactionDelete;
-        if (!id) return;
-        const ok = await confirmGmDatapadModal?.({ title: 'Delete Faction', content: '<p>Delete this faction record?</p>' }) ?? true;
-        if (!ok) return;
-        if (typeof FactionRegistryService.deleteFaction === 'function') {
-          await this._mutate(() => FactionRegistryService.deleteFaction(id), 'gm-faction-delete');
-          await this._refresh();
+    pageElement.addEventListener('click', async (event) => {
+      const button = event.target?.closest?.('[data-gm-faction-action]');
+      if (!button || !pageElement.contains(button)) return;
+      event.preventDefault();
+      event.stopPropagation();
+
+      const action = String(button.dataset.gmFactionAction || '').trim();
+      const factionId = String(button.dataset.factionId || '').trim();
+      const factionName = String(button.dataset.factionName || '').trim();
+      const contactId = String(button.dataset.contactId || '').trim();
+      const contactName = String(button.dataset.contactName || '').trim();
+      const locationId = String(button.dataset.locationId || '').trim();
+      const actorId = String(button.dataset.actorId || '').trim();
+      const relationshipId = String(button.dataset.relationshipId || '').trim();
+      const issuerFilter = {
+        factionId,
+        factionName,
+        contactId,
+        contactName,
+        label: [factionName, contactName].filter(Boolean).join(' - ') || factionName || contactName || 'Issuer'
+      };
+
+      if (!action) return;
+
+      try {
+        switch (action) {
+          case 'make-job-faction':
+          case 'make-job-contact': {
+            const draft = action === 'make-job-contact'
+              ? FactionJobBridgeService.buildDraftFromContact(factionId || factionName, contactId || contactName)
+              : FactionJobBridgeService.buildDraftFromFaction(factionId || factionName);
+            if (!draft) throw new Error('Could not build a contract draft from this dossier.');
+            this.host.patchSurfaceState?.('jobs', { pendingJobDraft: draft, openWizard: true, issuerFilter }, { render: false });
+            await this.host._navigateTo('jobs');
+            ui.notifications?.info?.('Job draft prepared from the selected dossier.');
+            return;
+          }
+
+          case 'view-jobs-faction':
+          case 'view-jobs-contact':
+            this.host.patchSurfaceState?.('jobs', { issuerFilter, pendingJobDraft: null, openWizard: false }, { render: false });
+            await this.host._navigateTo('jobs');
+            return;
+
+          case 'create-intel-faction':
+          case 'create-intel-contact': {
+            const record = action === 'create-intel-contact'
+              ? await FactionIntelBridgeService.createDraftFromContact(factionId || factionName, contactId || contactName)
+              : await FactionIntelBridgeService.createDraftFromFaction(factionId || factionName);
+            if (!record?.id) throw new Error('Could not create an Intel draft from this dossier.');
+            this.host.patchSurfaceState?.('intel', { selectedRecordId: record.id, modal: { type: 'editor', recordId: record.id } }, { render: false });
+            await this.host._navigateTo('intel');
+            return;
+          }
+
+          case 'reveal-faction':
+          case 'reveal-contact': {
+            const record = action === 'reveal-contact'
+              ? await FactionIntelBridgeService.buildContactRevealIntel(factionId || factionName, contactId || contactName)
+              : await FactionIntelBridgeService.buildFactionRevealIntel(factionId || factionName);
+            if (!record?.id) throw new Error('Could not prepare a player reveal from this dossier.');
+            this.host.patchSurfaceState?.('intel', { selectedRecordId: record.id, modal: { type: 'editor', recordId: record.id } }, { render: false });
+            await this.host._navigateTo('intel');
+            ui.notifications?.info?.('Player-ready reveal Intel prepared. Review and release it from Intel.');
+            return;
+          }
+
+          case 'view-locations-faction':
+          case 'view-locations-contact':
+            this.host.patchSurfaceState?.('locations', {
+              search: contactName || factionName,
+              selectedLocationId: '',
+              modal: null
+            }, { render: false });
+            await this.host._navigateTo('locations');
+            return;
+
+          case 'create-location-faction':
+          case 'create-location-contact':
+            this.host.patchSurfaceState?.('locations', {
+              modal: {
+                type: 'create',
+                defaults: {
+                  name: action === 'create-location-contact' ? `${contactName || 'Contact'} Location` : `${factionName || 'Faction'} Operations Site`,
+                  controllingFactionId: factionId,
+                  factionIds: factionId ? [factionId] : [],
+                  contactIds: contactId ? [contactId] : [],
+                  publicSummary: action === 'create-location-contact'
+                    ? `A location associated with ${contactName || 'this contact'}.`
+                    : `An operating location associated with ${factionName || 'this faction'}.`
+                }
+              }
+            }, { render: false });
+            await this.host._navigateTo('locations');
+            return;
+
+          case 'open-location':
+            if (!locationId) throw new Error('This dossier location has no registry id.');
+            this.host.patchSurfaceState?.('locations', { selectedLocationId: locationId, modal: null }, { render: false });
+            await this.host._navigateTo('locations');
+            return;
+
+          case 'hide-contact': {
+            const found = FactionRegistryService.findFactionContact(factionId || factionName, contactId || contactName);
+            if (!found?.contact) throw new Error('The selected contact could not be found.');
+            await this._mutate(() => FactionRegistryService.upsertFactionContact(found.faction.id, {
+              ...found.contact,
+              revealState: 'hidden',
+              knownToPlayers: false
+            }), 'gm-faction-hide-contact');
+            await this._refresh();
+            return;
+          }
+
+          case 'promote-contact': {
+            const result = await this._mutate(
+              () => FactionRegistryService.promoteFactionContactToActor(factionId || factionName, contactId || contactName),
+              'gm-faction-promote-contact'
+            );
+            if (result?.error) throw new Error(result.error);
+            result?.actor?.sheet?.render?.(true);
+            ui.notifications?.info?.(result?.created ? 'Contact promoted to a new NPC actor.' : 'Existing linked NPC actor opened.');
+            await this._refresh();
+            return;
+          }
+
+          case 'open-contact-actor': {
+            const actor = await resolveActorForContact({ actorId: button.dataset.actorId, uuid: button.dataset.actorUuid });
+            if (!actor) throw new Error('The linked contact actor could not be found.');
+            actor.sheet?.render?.(true);
+            return;
+          }
+
+          case 'delete-contact': {
+            if (!globalThis.confirm?.(`Delete ${contactName || 'this contact'} from the faction dossier?`)) return;
+            await this._mutate(
+              () => FactionRegistryService.deleteFactionContact(factionId || factionName, contactId),
+              'gm-faction-delete-contact'
+            );
+            await this._refresh();
+            return;
+          }
+
+          case 'delete-registry': {
+            if (!(await confirmGmDatapadModal?.({ title: 'Delete Faction', content: `<p>Delete ${factionName || 'this faction'} and its lightweight contact records?</p>` }) ?? globalThis.confirm?.(`Delete ${factionName || 'this faction'} and its lightweight contact records?`))) return;
+            await this._mutate(() => FactionRegistryService.deleteFaction(factionId), 'gm-faction-delete');
+            await this._refresh();
+            return;
+          }
+
+          case 'approve-suggestion': {
+            if (!this._assertGM('approve a faction suggestion')) return;
+            const actor = actorId ? game.actors?.get?.(actorId) : null;
+            if (!actor) throw new Error('The requesting actor could not be found.');
+            const relationship = await this._mutate(
+              () => FactionRegistryService.approveSuggestedFaction({ actorId: actor.id, factionRecordId: factionId }),
+              'gm-faction-approve-suggestion'
+            );
+            if (!relationship) throw new Error('Could not approve this faction suggestion.');
+            ui.notifications?.info?.(`Faction suggestion approved for ${actor.name}.`);
+            await this._refresh();
+            return;
+          }
+
+          case 'reject-suggestion': {
+            if (!this._assertGM('reject a faction suggestion')) return;
+            const actor = actorId ? game.actors?.get?.(actorId) : null;
+            if (!actor) throw new Error('The requesting actor could not be found.');
+            const reasonField = button.closest('.gm-faction-suggestion-card')?.querySelector('input[name="rejectReason"]');
+            const reason = String(reasonField?.value || '').trim();
+            const rejected = await this._mutate(
+              () => FactionRegistryService.rejectSuggestedFaction({ actorId: actor.id, factionRecordId: factionId, reason }),
+              'gm-faction-reject-suggestion'
+            );
+            if (!rejected) throw new Error('Could not reject this faction suggestion.');
+            ui.notifications?.info?.(`Faction suggestion rejected for ${actor.name}.`);
+            await this._refresh();
+            return;
+          }
+
+          case 'remove-relationship': {
+            if (!this._assertGM('remove a faction relationship')) return;
+            const actor = actorId ? game.actors?.get?.(actorId) : null;
+            if (!actor) throw new Error('The related actor could not be found.');
+            if (!relationshipId) throw new Error('This relationship has no id.');
+            if (!globalThis.confirm?.('Remove this faction relationship?')) return;
+            const removed = await this._mutate(
+              () => FactionRegistryService.removeActorRelationship(actor, relationshipId),
+              'gm-faction-remove-relationship'
+            );
+            if (!removed) throw new Error('Could not remove this faction relationship.');
+            ui.notifications?.info?.('Faction relationship removed.');
+            await this._refresh();
+            return;
+          }
+
+          case 'send-contact-message':
+            this.host.patchSurfaceState?.('bulletin', {
+              focusedContactId: contactId,
+              focusedFactionId: factionId,
+              pendingContactName: contactName,
+              pendingFactionName: factionName
+            }, { render: false });
+            await this.host._navigateTo('bulletin');
+            ui.notifications?.info?.('Contact selected for GM communications.');
+            return;
+
+          default:
+            SWSELogger.warn('[GMFactionRelationship] Unhandled Dossier action', { action, factionId, contactId, locationId });
+            ui.notifications?.warn?.(`The Dossier action "${action}" is not connected yet.`);
         }
-      }, { signal });
-    });
-
-    pageElement.querySelectorAll('[data-gm-faction-job]').forEach((button) => {
-      button.addEventListener('click', async (event) => {
-        event.preventDefault();
-        const id = event.currentTarget.dataset.gmFactionJob;
-        await FactionJobBridgeService?.createJobFromFaction?.(id, { host: this.host });
-        await this._refresh();
-      }, { signal });
-    });
-
-    pageElement.querySelectorAll('[data-gm-faction-intel]').forEach((button) => {
-      button.addEventListener('click', async (event) => {
-        event.preventDefault();
-        const id = event.currentTarget.dataset.gmFactionIntel;
-        await FactionIntelBridgeService?.createIntelFromFaction?.(id, { host: this.host });
-        await this._refresh();
-      }, { signal });
-    });
+      } catch (error) {
+        SWSELogger.error(`[GMFactionRelationship] Dossier action failed: ${action}`, error);
+        ui.notifications?.error?.(`Dossier action failed: ${error?.message || error}`);
+      }
+    }, { signal });
   }
 
   _factionPayloadFromForm(formData) {
@@ -319,36 +510,6 @@ export class GMFactionRelationshipSurfaceController {
   }
 
   _wireWizardControls(pageElement, signal) {
-    const labels = {
-      contract: ['Next: Objectives', 'Next: Briefing', 'Next: Publish', 'Create Contract'],
-      faction: ['Next: Attach Actors', 'Next: Notes', 'Create Faction Dossier']
-    };
-    const setPage = (wizard, page) => {
-      const max = wizard.querySelectorAll('[data-gm-wizard-page]').length || 1;
-      const nextPage = Math.max(1, Math.min(max, Number(page) || 1));
-      wizard.dataset.currentPage = String(nextPage);
-      wizard.querySelectorAll('[data-gm-wizard-page]').forEach((panel) => {
-        panel.classList.toggle('is-active', Number(panel.dataset.gmWizardPage) === nextPage);
-      });
-      wizard.querySelectorAll('[data-gm-wizard-step-button]').forEach((step) => {
-        const stepNumber = Number(step.dataset.gmWizardStepButton) || 0;
-        step.classList.toggle('is-active', stepNumber === nextPage);
-        step.classList.toggle('is-complete', stepNumber < nextPage);
-      });
-      const kind = wizard.dataset.gmWizard || 'contract';
-      const back = wizard.querySelector('[data-gm-wizard-back]');
-      const next = wizard.querySelector('[data-gm-wizard-next]');
-      const submit = wizard.querySelector('[data-gm-wizard-submit]');
-      const current = wizard.querySelector('[data-gm-wizard-current]');
-      if (current) current.textContent = String(nextPage);
-      if (back) back.hidden = nextPage <= 1;
-      if (next) {
-        next.hidden = nextPage >= max;
-        next.textContent = labels[kind]?.[nextPage - 1] || 'Next';
-      }
-      if (submit) submit.hidden = nextPage < max;
-    };
-
     pageElement.querySelectorAll('[data-gm-wizard-open]').forEach((button) => {
       button.addEventListener('click', (event) => {
         event.preventDefault();
@@ -357,7 +518,7 @@ export class GMFactionRelationshipSurfaceController {
         if (!wizard) return;
         wizard.hidden = false;
         wizard.classList.add('is-open');
-        setPage(wizard, 1);
+        setWizardPage(wizard, 1);
       }, { signal });
     });
 
@@ -376,7 +537,7 @@ export class GMFactionRelationshipSurfaceController {
         event.preventDefault();
         const wizard = event.currentTarget.closest('[data-gm-wizard]');
         if (!wizard) return;
-        setPage(wizard, Number(wizard.dataset.currentPage || 1) + 1);
+        setWizardPage(wizard, Number(wizard.dataset.currentPage || 1) + 1);
       }, { signal });
     });
 
@@ -385,7 +546,7 @@ export class GMFactionRelationshipSurfaceController {
         event.preventDefault();
         const wizard = event.currentTarget.closest('[data-gm-wizard]');
         if (!wizard) return;
-        setPage(wizard, Number(wizard.dataset.currentPage || 1) - 1);
+        setWizardPage(wizard, Number(wizard.dataset.currentPage || 1) - 1);
       }, { signal });
     });
 
@@ -394,7 +555,7 @@ export class GMFactionRelationshipSurfaceController {
         event.preventDefault();
         const wizard = event.currentTarget.closest('[data-gm-wizard]');
         if (!wizard) return;
-        setPage(wizard, Number(event.currentTarget.dataset.gmWizardStepButton || 1));
+        setWizardPage(wizard, Number(event.currentTarget.dataset.gmWizardStepButton || 1));
       }, { signal });
     });
   }
