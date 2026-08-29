@@ -2481,11 +2481,10 @@ const forcePoints = [];
    * Phase 6 subtype context extension hook (droid). No-op default so the
    * shared _prepareContextForActorSheet call site (behind an
    * `if (isDroidActor)` guard, only ever true for actual Droid instances)
-   * is correct for every subtype. Overridden by SWSEV2DroidSheet with the
-   * original inline try/catch block's exact body — see that override for
-   * why the duplicate DroidSheetContextBuilder/PanelContextBuilder build is
-   * kept rather than reused (isEditable-semantics equivalence not proven,
-   * §6D of docs/audits/v2-phase-6-context-render-performance.md).
+   * is correct for every subtype. Overridden by SWSEV2DroidSheet, which
+   * passes its own authoritative `isEditable` into `DroidSheetContextBuilder`
+   * (Phase 7 — see docs/audits/v2-phase-7-droid-context-convergence.md).
+   * Character/NPC renders never call the real implementation.
    * @param {SWSEActor} _actor
    * @returns {object|null} droidSheetContext ({ droid, droidPanels, combatWeapons }) or null
    */

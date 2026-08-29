@@ -145,26 +145,25 @@ async function postDroidPartChat(actor, part, { roll = null, destroyed = false }
 export class SWSEV2DroidSheet extends SWSEV2CharacterLikeSheet {
 
   /**
-   * Phase 6: override of SWSEV2CharacterLikeSheet's no-op default. Exact
-   * body of the original inline `if (isDroidActor) { ... }` block from
-   * _prepareContextForActorSheet, relocated verbatim. Character/NPC renders
-   * never call this (the shared default short-circuits before even
-   * evaluating isDroidActor's true branch), so DroidSheetContextBuilder is
-   * now only ever imported and constructed by this file.
+   * Phase 6: override of SWSEV2CharacterLikeSheet's no-op default. Character/
+   * NPC renders never call this (the shared default short-circuits before
+   * even evaluating isDroidActor's true branch), so DroidSheetContextBuilder
+   * is only ever imported and constructed by this file.
    *
-   * NOT merged with the shared PanelContextBuilder-driven `panelContexts`
-   * (health/defense/secondWind) built earlier in the shared
-   * _prepareContextForActorSheet: this builder's internal
-   * `new PanelContextBuilder(actor, { isEditable: actor?.isOwner === true })`
-   * uses a different isEditable definition than the shared
-   * `new PanelContextBuilder(this.document, this)` (which reads the real
-   * ApplicationV2 `sheet.isEditable` getter — GM-aware, not plain
-   * ownership). A GM viewing a droid it does not personally own would
-   * disagree between the two. This was flagged as unresolved in Phase 3/4
-   * and is still unresolved here — see
-   * docs/audits/v2-phase-6-context-render-performance.md §6D. Ownership of
-   * *which controller invokes this builder* has moved; the underlying
-   * duplicate-build question has not been (falsely) merged away.
+   * Phase 7: DroidSheetContextBuilder no longer builds its own, second
+   * health/defense/secondWind/biography/abilities panels via an internal
+   * `PanelContextBuilder(actor, { isEditable: actor?.isOwner === true })`.
+   * Tracing every consumer proved those panels were computed but never read
+   * (the shared `panelContexts.*` built by `new PanelContextBuilder(
+   * this.document, this)` earlier in `_prepareContextForActorSheet` are the
+   * values every live Droid template actually renders) — see
+   * docs/audits/v2-phase-7-droid-context-convergence.md §5/§6. The Droid-
+   * specific panels this builder still owns (garage/source-status/degree/
+   * resolved-systems presentation flags) now consume the same authoritative
+   * `this.isEditable` (this sheet's real ApplicationV2 getter — GM-aware,
+   * `options.editable`-aware) instead of a raw `actor.isOwner` guess, so a
+   * GM viewing a droid it does not personally own gets the same edit
+   * affordances the rest of the sheet already grants it.
    */
   _buildDroidSheetContext(actor) {
     try {
@@ -174,7 +173,7 @@ export class SWSEV2DroidSheet extends SWSEV2CharacterLikeSheet {
         // both aggregated under 'droid', can be read separately from
         // SWSE.debug.performance.summary().sheetContext.
         ms => ActorPerfDiagnostics.recordSheetContext('droid-panel-builder', ms),
-        () => new DroidSheetContextBuilder(actor).build()
+        () => new DroidSheetContextBuilder(actor, { isEditable: this.isEditable === true }).build()
       );
     } catch (err) {
       swseLogger.warn('[SWSEV2DroidSheet] Failed to build droid systems tab context', {
@@ -185,7 +184,9 @@ export class SWSEV2DroidSheet extends SWSEV2CharacterLikeSheet {
       return {
         droid: {
           degree: { label: '', category: '', isConfigured: false },
-          garage: { canOpenGarage: actor?.isOwner === true, systemsLocked: false },
+          // Phase 7: fallback consistency (§7H) — use the same authoritative
+          // editability value the success path now uses, not raw ownership.
+          garage: { canOpenGarage: this.isEditable === true, systemsLocked: false },
           resolvedSystems: null,
           sourceStatus: { sourceLabel: 'Unavailable', validationMessages: [], hasValidationMessages: false }
         },
