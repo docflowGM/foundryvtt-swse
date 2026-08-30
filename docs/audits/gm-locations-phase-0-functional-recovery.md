@@ -448,6 +448,16 @@ registry, no speculative caching/retry/queue layer.
 **STAGE 1 COMPLETE WITH DOCUMENTED RUNTIME FOLLOW-UP** (no live Foundry
 client available — see the manual checklist at the end of this section).
 
+**Note**: an initial Stage 1 pass claimed the import service was already
+concurrency-safe "by construction," and deferred the busy-state UI and the
+all-invalid-selection handling to Stage 2. Review correctly found the
+concurrency claim wrong (a real lost-update race across concurrent
+*different* batches — see §11) and the two deferrals mischaracterized as
+non-blocking. All three were corrected within Stage 1 before this verdict
+was finalized; §7, §11, §12, §15, and §17 below reflect the corrected,
+final state, with the original wrong reasoning left visible (not deleted)
+where it explains why the fix looks the way it does.
+
 ## 2. Import source authority
 
 | Source | Purpose | Required? | Identity | Failure mode |
@@ -545,7 +555,9 @@ Per-record: an incoming record whose `id` already exists in the registry
 is **skipped** (added to `skipped[]`) unless `overwrite: true` is passed
 (no caller in this codebase currently passes `overwrite`). This existing
 per-record policy was correct before Stage 1 and is unchanged. What Stage 1
-fixed was the *batching* around it — see §13.
+fixed was the *batching* around it (§10) and, in a final correction after
+review, *serialization across concurrent batches* (§11) — the two are
+different bugs and this section originally (incorrectly) conflated them.
 
 Proven for real (`tests/gm-locations-library-import-service.test.mjs`,
 executed against a real in-memory `game.settings` store via the Foundry
@@ -554,12 +566,10 @@ shim, not asserted from reading the source):
 - Import "Tatooine" → 4 records created (1 parent + 3 children).
 - Import "Tatooine" again → `imported: 0`, `skipped: 4`, **zero** additional
   registry writes, registry still holds exactly 4 Tatooine-derived records.
-- Two *concurrent* imports of the same seed (`Promise.all`, simulating a
-  double-click racing past the controller's guard) still leave exactly one
-  canonical set of records in the registry with no duplicate ids anywhere
-  — the service is safe even without the controller-side guard, which
-  exists only to avoid two redundant registry writes and two duplicate
-  success notifications for one GM click, not for correctness.
+- Two *concurrent* imports of the **same** seed (`Promise.all`) still leave
+  exactly one canonical set of records with no duplicate ids. This alone is
+  **not** sufficient evidence that concurrent imports are safe in general —
+  see §11 for why, and for the real fix.
 
 ## 8. Import Selected result
 
@@ -624,34 +634,124 @@ supports without new infrastructure.
 
 ## 11. Concurrent/double-submit handling
 
-`GMLocationsSurfaceController` gained an `_importInFlight` boolean guard
-(instance field, reset in a `finally`), checked at the single choke point
-all three importer entry paths already funneled through —
-`_importLibrarySeedIds()` (called by the import-form `submit` handler,
-the `import-library-visible-now` action, and the Quick Library
+**This section was corrected after review found the original Stage 1 pass's
+concurrency claim wrong.** The first pass claimed "the underlying service
+was already concurrency-safe by construction" on the strength of a
+same-seed-twice concurrency test. That test could not have shown otherwise:
+two concurrent imports of the *same* seed produce byte-identical final
+registry content regardless of write order, so a lost-update race between
+them is invisible no matter which write wins. The real risk — proven by
+review, then reproduced here with a settings mock whose `set()` has a
+genuine macrotask delay instead of resolving synchronously — was two
+*different* concurrent batches (e.g. importing Tatooine and Hoth at the
+same moment): each does its own `getRegistry()` → merge → `saveRegistry()`
+independently, so both can read the same starting registry before either
+saves, and last-write-wins silently discards whichever batch saved first.
+Verified via `git stash`: the test reproducing this
+(`tests/gm-locations-library-import-service.test.mjs`, "concurrent
+DIFFERENT seeds" case) fails against the pre-correction code (Tatooine's
+4 records vanish, only Hoth's 4 remain) and passes with the fix below.
+
+**Fix**: `LocationRegistryService` gained a private static promise-chain
+queue (`#importQueue`, `Promise.resolve()` initially). `importLibrarySeeds()`
+is now a synchronous dispatcher that chains its actual work
+(`#importLibrarySeedsExclusive()`, the read-resolve-save body from §10)
+onto that queue via `.then(run, run)` — the second argument runs `run` even
+if the previous queued entry rejected, so **a rejected import never
+permanently poisons the queue** for later calls (proven: a simulated write
+failure rejects its own caller with the real error, and the very next
+queued import still completes normally and persists). The queue variable
+itself is always kept resolved (`.then(() => undefined, () => undefined)`)
+so it never carries a rejection forward; only the caller's own returned
+promise reflects that call's real outcome. `importLibrarySeed()` (singular)
+already delegated to `importLibrarySeeds()`, so both go through the same
+queue automatically — no separate wiring was needed for that requirement.
+One registry write per logical batch (§10) and per-record idempotency (§7)
+are both unchanged; the queue only changes *when* a batch's read is allowed
+to happen, not what it does.
+
+Proven for real, all in `tests/gm-locations-library-import-service.test.mjs`:
+concurrent imports of the **same** seed (no duplication), of **different**
+seeds (neither is lost), and of **overlapping** batches (`['tatooine',
+'hoth']` concurrently with `['hoth', 'naboo']` — all three end up with
+exactly one canonical 4-record hierarchy each, no duplicate ids anywhere).
+
+**Scope of this guarantee**: this is serialization *within one running
+`LocationRegistryService` in one client* — a private static field on the
+class, held in that process's memory. It does not, and does not claim to,
+provide cross-tab, cross-GM-client, or cross-process locking; Foundry's
+settings store has no such mechanism for this codebase to build on. Two
+GMs each running their own Foundry client and both clicking Import at the
+same moment are not serialized against each other by this fix — only two
+overlapping imports issued from within the same client (the double-click
+case this was originally scoped for) are. That was already effectively the
+practical case Stage 1 needed to cover (double-clicks and rapid successive
+imports from one GM's own datapad), but it is a real boundary and worth
+stating plainly rather than implying more than the architecture provides.
+
+On top of the service-level fix, `GMLocationsSurfaceController` still has
+its own `_importInFlight` boolean guard (instance field, reset in a
+`finally`), checked at the single choke point all three importer entry
+paths funnel through — `_importLibrarySeedIds()` (the import-form `submit`
+handler, the `import-library-visible-now` action, and the Quick Library
 drag/drop handler). A second call while one is in flight is rejected with
 an explicit `ui.notifications.warn` ("An import is already in progress…"),
-not silently ignored. This guarantees one logical import (and one success
-notification) per GM click; the underlying service was already
-concurrency-safe by construction (§7), so this guard is a UX correctness
-fix, not a data-integrity one.
+not silently ignored — this remains a second line of defense for the "one
+notification per click" UX, now backed by real data-integrity guarantees
+underneath rather than sitting in front of an unverified one.
 
-No new global queue, daemon, or event bus was introduced.
+**Visible busy state** (a completion gap flagged by review, not merely
+deferred to Stage 2 as the first pass claimed): `_importLibrarySeedIds()`
+now calls `_setImportControlsBusy(true)` before starting and
+`_setImportControlsBusy(false)` in its `finally`, which disables/re-enables
+the "Import Selected" submit button and the "Import All Shown" button via
+`this._pageElement` (a reference the controller already receives in
+`attach()` and now retains, cleared in `destroy()`) — no new DOM-access
+pattern or loading-state framework was introduced. Proven executed, with a
+minimal fake page element (no jsdom in this repo), in
+`tests/gm-locations-importer-controller-behavior.test.mjs`: both controls
+are disabled for the duration of an in-flight import and restored once it
+finishes.
+
+No new global queue, daemon, event bus, or generic transaction framework
+was introduced.
 
 ## 12. Error handling result
 
-`_importLibrarySeedIds()` now wraps the service call in `try/catch`: on
-success it reports a single batch summary notification including, for the
-first time, unresolved-selection count (`"; N selection(s) could not be
-resolved"` when `result.invalid.length > 0` — previously invalid ids were
-silently absorbed with no signal anywhere). On a thrown error it logs via
-`SWSELogger.error` and shows `ui.notifications.error` stating plainly that
-nothing was changed by that attempt — accurate, because the single-save
-batching in §10 means a failure either happens before the one `saveRegistry`
-call (nothing written) or *is* that one call failing (Foundry's
-`settings.set` does not partially apply). No `catch {}`, no
-`console.warn`-and-pretend-success pattern exists anywhere in this path;
-audited directly against the controller and service source.
+`_importLibrarySeedIds()` wraps the service call in `try/catch`, and
+distinguishes three outcomes rather than treating "nothing imported" as one
+undifferentiated case (a distinction review found missing from the first
+Stage 1 pass):
+
+- **All-invalid** (`result.seeds.length === 0`, i.e. every requested id was
+  unresolvable): `ui.notifications.warn(...)`, no `patchSurfaceState` call
+  (the invalid id string is never written into `selectedLocationId`, which
+  it was before this correction — a real, if minor, corruption risk: the
+  UI could end up "selecting" a nonexistent location id), no refresh — the
+  importer modal is left exactly as the GM had it, with an explicit count
+  of unresolved selections.
+- **Mixed valid + invalid, or already-imported-only** (`result.seeds.length
+  > 0`): the normal success path — select the (first) resolved location,
+  refresh, and report a single info notification that includes unresolved-
+  selection count when relevant (`"; N selection(s) could not be
+  resolved"`) and already-existed count when relevant (`"; N record(s)
+  already existed"`). An all-already-imported result (`imported: 0,
+  skipped > 0`, but a real seed resolved) is explicitly **not** routed
+  through the all-invalid/warning path — it is a legitimate idempotent
+  result and must read as one.
+- **Thrown error** (e.g. the underlying `saveRegistry` call rejects): logs
+  via `SWSELogger.error` and shows `ui.notifications.error` stating plainly
+  that nothing was changed by that attempt — accurate, because the
+  single-save batching in §10 means a failure either happens before the one
+  `saveRegistry` call (nothing written) or *is* that one call failing
+  (Foundry's `settings.set` does not partially apply), and because the
+  serialization fix in §11 guarantees that failure does not corrupt or
+  block whatever the next queued import does.
+
+All three outcomes are proven executed (not just read from source) in
+`tests/gm-locations-importer-controller-behavior.test.mjs` and
+`tests/gm-locations-library-import-service.test.mjs`. No `catch {}`, no
+`console.warn`-and-pretend-success pattern exists anywhere in this path.
 
 ## 13. Catalog integrity (numbers)
 
@@ -706,12 +806,29 @@ warning and no import attempt (pre-existing, correct behavior, unchanged).
   biome tags (after the fix), correct generated-record shape for a sample
   of real seeds, case-insensitive lookup for every catalog id.
 - `tests/gm-locations-library-import-service.test.mjs` — executed, against
-  a real in-memory `game.settings` store via the Foundry-shim harness:
-  single-save batching (with a real write counter), idempotent re-import,
-  invalid-id classification alongside valid ids in one request,
-  duplicate/case-variant ids in one request treated once, parent/child
-  identity after a real import, filtered "Import All Shown" imports
-  exactly the filtered set, and concurrent double-import safety.
+  a real in-memory `game.settings` store via the Foundry-shim harness
+  (with a **genuinely async** `set()` — a real `setTimeout` delay, not a
+  synchronously-mutating mock wrapped in `Promise.resolve()`, which is
+  what made the original "concurrent same-seed" case alone insufficient
+  evidence — see §11): single-save batching (with a real write counter),
+  idempotent re-import, invalid-id classification alongside valid ids in
+  one request, duplicate/case-variant ids in one request treated once,
+  parent/child identity after a real import, filtered "Import All Shown"
+  imports exactly the filtered set, concurrent imports of the **same**
+  seed, of **different** seeds, and of **overlapping** batches all
+  resolve correctly with no lost or duplicated records, and a rejected
+  import does not poison the queue for the next one.
+- `tests/gm-locations-importer-controller-behavior.test.mjs` (added in the
+  final reliability correction) — executes the real
+  `GMLocationsSurfaceController._importLibrarySeedIds()` under the
+  Foundry-shim harness with a fake host and a minimal fake page element:
+  an all-invalid selection produces no state patch and no refresh (only a
+  warning); a mixed valid/invalid selection still imports the valid seed
+  and reports both counts; an already-imported-only result is confirmed
+  to take the normal success path, not the all-invalid path; the import
+  trigger controls are disabled for the duration of an import and
+  restored after; and a second concurrent call is rejected with an
+  explicit notification.
 - `tests/gm-locations-importer-contract.test.mjs` — static wiring: the
   import form's three wizard pages live in one `<form>` (checkbox
   persistence), the "Import Selected" submit path is proven separately
@@ -724,8 +841,8 @@ warning and no import attempt (pre-existing, correct behavior, unchanged).
   `gm-datapad-wizard-contract.test.mjs` were re-run and remain green
   (228 controls scanned, 0 unresolved; 4 wizards including Locations).
 
-Full rolling suite: **142/142** passed (139 Phase-0 baseline + 3 new Stage 1
-files), syntax check: **2254/2254** files.
+Full rolling suite: **143/143** passed (139 Phase-0 baseline + 4 Stage 1
+files), syntax check: **2255/2255** files.
 
 ## 16. Live Foundry checklist
 
@@ -751,7 +868,8 @@ drop → forced-error case), reproduced here for convenience:
    imports.
 6. **Double-click**: rapidly double-click Import Selected (or Import All
    Shown). PASS = one logical import, one notification, no duplicate
-   records.
+   records, and the buttons visibly disable for the duration of the import
+   and re-enable once it finishes.
 7. **Navigate away/back**: close the modal, leave Locations, return, open
    the importer again. PASS = catalog and counts still correct.
 8. **Compendium drop**: drag a supported Quick Library `JournalEntry` from
@@ -763,12 +881,6 @@ drop → forced-error case), reproduced here for convenience:
 
 ## 17. Remaining Stage 2 candidates (not started)
 
-- No visual "busy" state (disabled buttons/spinner) on the import
-  controls while `_importInFlight` is true — the guard is functionally
-  correct (rejects a second click with an explicit notification) but does
-  not yet grey out the buttons. Would need a DOM-element handle this
-  controller doesn't currently keep; deferred rather than inventing a new
-  host/element-access pattern for Stage 1.
 - Phase 0's already-documented gap remains open: `locationManager.leadQueue`
   and encounter-seed/scene rows are computed by the service and have live
   controller handlers, but `locations.hbs` renders no markup for them.
