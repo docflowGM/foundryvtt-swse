@@ -14,12 +14,28 @@ export const LOCATION_LIBRARY_BIOMES = Object.freeze([
     "label": "Ancient"
   },
   {
+    "value": "archive",
+    "label": "Archive"
+  },
+  {
     "value": "asteroid",
     "label": "Asteroid"
   },
   {
+    "value": "banking",
+    "label": "Banking"
+  },
+  {
     "value": "battlefield",
     "label": "Battlefield"
+  },
+  {
+    "value": "beast",
+    "label": "Beast Lair"
+  },
+  {
+    "value": "bridge",
+    "label": "Bridge / Command Deck"
   },
   {
     "value": "bureaucracy",
@@ -32,6 +48,10 @@ export const LOCATION_LIBRARY_BIOMES = Object.freeze([
   {
     "value": "capital",
     "label": "Capital"
+  },
+  {
+    "value": "cave",
+    "label": "Cave"
   },
   {
     "value": "city",
@@ -58,8 +78,16 @@ export const LOCATION_LIBRARY_BIOMES = Object.freeze([
     "label": "Desert"
   },
   {
+    "value": "diplomacy",
+    "label": "Diplomacy"
+  },
+  {
     "value": "espionage",
     "label": "Espionage"
+  },
+  {
+    "value": "ewok",
+    "label": "Ewok"
   },
   {
     "value": "facility",
@@ -88,6 +116,10 @@ export const LOCATION_LIBRARY_BIOMES = Object.freeze([
   {
     "value": "grassland",
     "label": "Grassland"
+  },
+  {
+    "value": "hazard",
+    "label": "Hazard"
   },
   {
     "value": "hidden",
@@ -122,6 +154,10 @@ export const LOCATION_LIBRARY_BIOMES = Object.freeze([
     "label": "Industrial"
   },
   {
+    "value": "island",
+    "label": "Island"
+  },
+  {
     "value": "jedi",
     "label": "Jedi / Force"
   },
@@ -130,8 +166,16 @@ export const LOCATION_LIBRARY_BIOMES = Object.freeze([
     "label": "Jungle"
   },
   {
+    "value": "junkyard",
+    "label": "Junkyard"
+  },
+  {
     "value": "lava",
     "label": "Lava / Volcanic"
+  },
+  {
+    "value": "mandalorian",
+    "label": "Mandalorian"
   },
   {
     "value": "military",
@@ -170,8 +214,20 @@ export const LOCATION_LIBRARY_BIOMES = Object.freeze([
     "label": "Palace"
   },
   {
+    "value": "plague",
+    "label": "Plague"
+  },
+  {
     "value": "pleasure",
     "label": "Pleasure World"
+  },
+  {
+    "value": "polar",
+    "label": "Polar"
+  },
+  {
+    "value": "politics",
+    "label": "Politics"
   },
   {
     "value": "rain",
@@ -190,6 +246,14 @@ export const LOCATION_LIBRARY_BIOMES = Object.freeze([
     "label": "Remote"
   },
   {
+    "value": "research",
+    "label": "Research"
+  },
+  {
+    "value": "resistance",
+    "label": "Resistance"
+  },
+  {
     "value": "restoration",
     "label": "Restoration"
   },
@@ -200,6 +264,14 @@ export const LOCATION_LIBRARY_BIOMES = Object.freeze([
   {
     "value": "rural",
     "label": "Rural"
+  },
+  {
+    "value": "sacred",
+    "label": "Sacred Site"
+  },
+  {
+    "value": "scavenger",
+    "label": "Scavenger"
   },
   {
     "value": "shipyard",
@@ -234,6 +306,10 @@ export const LOCATION_LIBRARY_BIOMES = Object.freeze([
     "label": "Temple"
   },
   {
+    "value": "tomb",
+    "label": "Tomb"
+  },
+  {
     "value": "tropical",
     "label": "Tropical"
   },
@@ -246,6 +322,14 @@ export const LOCATION_LIBRARY_BIOMES = Object.freeze([
     "label": "Underworld"
   },
   {
+    "value": "urban",
+    "label": "Urban"
+  },
+  {
+    "value": "vertical",
+    "label": "Vertical / Multi-Level"
+  },
+  {
     "value": "wasteland",
     "label": "Wasteland"
   },
@@ -254,8 +338,16 @@ export const LOCATION_LIBRARY_BIOMES = Object.freeze([
     "label": "Water / Ocean"
   },
   {
+    "value": "wilderness",
+    "label": "Wilderness"
+  },
+  {
     "value": "wildlife",
     "label": "Wildlife"
+  },
+  {
+    "value": "wookiee",
+    "label": "Wookiee"
   },
   {
     "value": "wreckage",
