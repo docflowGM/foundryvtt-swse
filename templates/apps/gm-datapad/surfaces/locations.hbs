@@ -57,6 +57,33 @@
     </div>
   </section>
 
+  <section class="swse-location-panel gm-phase5-location-panel gm-location-lead-queue">
+    <div class="swse-location-panel-head gm-phase5-location-panel-head">
+      <div>
+        <span class="gm-phase5-location-eyebrow">Atlas Operations</span>
+        <h3>Atlas Lead Queue</h3>
+      </div>
+      <span class="swse-location-chip">{{surface.locationManager.leadQueue.length}} unresolved</span>
+    </div>
+    {{#each surface.locationManager.leadQueue}}
+      <div class="gm-location-fact-row gm-location-lead-row {{#if isSelectedLocation}}is-selected-location{{/if}}">
+        <strong>{{factTitle}}</strong>
+        <span>{{actorName}} at <button type="button" class="gm-location-linked-row" data-location-action="lead-select-location" data-location-id="{{locationId}}">{{locationName}}</button></span>
+        <span>{{skillLabel}} DC {{dc}}{{#if checkLabel}} ({{checkLabel}}){{/if}} · discovered {{updatedLabel}}</span>
+        <div>
+          <button type="button" data-location-action="lead-create-intel" data-actor-id="{{actorId}}" data-discovery-id="{{id}}">Create Intel</button>
+          <button type="button" data-location-action="lead-create-job" data-actor-id="{{actorId}}" data-discovery-id="{{id}}">Create Job</button>
+          {{#if hasRevealLinks}}
+            <button type="button" data-location-action="lead-reveal-links" data-actor-id="{{actorId}}" data-discovery-id="{{id}}">Reveal Links</button>
+          {{/if}}
+          <button type="button" class="danger" data-location-action="lead-resolve" data-actor-id="{{actorId}}" data-discovery-id="{{id}}">Resolve</button>
+        </div>
+      </div>
+    {{else}}
+      <p class="swse-empty-state">No unresolved Atlas leads.</p>
+    {{/each}}
+  </section>
+
   <section class="gm-location-workbench">
     <aside class="gm-location-browser">
       <section class="swse-location-panel gm-phase5-location-panel gm-location-browser-filters">
@@ -186,9 +213,6 @@
             <button type="button" data-location-action="set-party-location" data-location-id="{{surface.locationManager.selected.id}}">Set Active</button>
             <button type="button" data-location-action="create-intel" data-location-id="{{surface.locationManager.selected.id}}">Create Intel</button>
             <button type="button" data-location-action="create-job" data-location-id="{{surface.locationManager.selected.id}}">Create Job</button>
-            <button type="button" data-location-action="open-scene" data-location-id="{{surface.locationManager.selected.id}}">Open Scene</button>
-            <button type="button" data-location-action="create-scene" data-location-id="{{surface.locationManager.selected.id}}">Create Scene</button>
-            <button type="button" data-location-action="stage-encounter-seeds" data-location-id="{{surface.locationManager.selected.id}}">Stage Seeds</button>
             <button type="button" class="danger" data-location-action="delete" data-location-id="{{surface.locationManager.selected.id}}">Delete</button>
           </div>
         </section>
@@ -218,6 +242,130 @@
               <p>No Atlas facts seeded yet.</p>
             {{/each}}
           </div>
+        </section>
+
+        <section class="swse-location-panel gm-phase5-location-panel gm-location-encounters">
+          <div class="swse-location-panel-head gm-phase5-location-panel-head">
+            <div>
+              <span class="gm-phase5-location-eyebrow">Encounters</span>
+              <h3>Encounter Seeds</h3>
+            </div>
+            {{#if surface.locationManager.selected.encounterSeeds.length}}
+              <button type="button" class="swse-mini-button" data-location-action="stage-encounter-seeds" data-location-id="{{surface.locationManager.selected.id}}">Stage Encounter Seeds</button>
+            {{/if}}
+          </div>
+          {{#each surface.locationManager.selected.encounterSeeds}}
+            <div class="gm-location-fact-row">
+              <strong>{{name}}</strong>
+              <span>{{categoryLabel}} · {{sourceLabel}}{{#if hasActor}} · {{actorLabel}}{{#unless actorResolved}} (unresolved){{/unless}}{{/if}}</span>
+              <div>
+                <button type="button" class="danger" data-location-action="remove-seed" data-location-id="{{../surface.locationManager.selected.id}}" data-seed-id="{{id}}">Remove</button>
+              </div>
+            </div>
+          {{else}}
+            <p class="swse-empty-state">No encounter seeds.</p>
+          {{/each}}
+        </section>
+
+        <section class="swse-location-panel gm-phase5-location-panel gm-location-scenes">
+          <div class="swse-location-panel-head gm-phase5-location-panel-head">
+            <div>
+              <span class="gm-phase5-location-eyebrow">Scenes / Map</span>
+              <h3>Scene Links</h3>
+            </div>
+            {{#unless surface.locationManager.selected.hasPrimaryScene}}
+              <button type="button" class="swse-mini-button primary" data-location-action="create-scene" data-location-id="{{surface.locationManager.selected.id}}">Create Scene</button>
+            {{/unless}}
+          </div>
+          {{#each surface.locationManager.selected.sceneRows}}
+            <div class="gm-location-fact-row {{#unless resolved}}is-broken-link{{/unless}}">
+              <strong>{{label}}</strong>
+              <span>{{#if isPrimary}}Primary{{else}}Linked{{/if}}{{#if isActive}} · Active{{/if}}</span>
+              <div>
+                {{#if isPrimary}}
+                  <button type="button" data-location-action="open-scene" data-location-id="{{../surface.locationManager.selected.id}}">Open Scene</button>
+                  <button type="button" data-location-action="activate-scene" data-location-id="{{../surface.locationManager.selected.id}}">Activate Scene</button>
+                {{/if}}
+                <button type="button" class="danger" data-location-action="remove-link" data-location-id="{{../surface.locationManager.selected.id}}" data-link-kind="scene" data-link-value="{{uuid}}">Unlink</button>
+              </div>
+            </div>
+          {{else}}
+            <p class="swse-empty-state">No Scenes linked.</p>
+          {{/each}}
+        </section>
+
+        <section class="swse-location-panel gm-phase5-location-panel gm-location-links">
+          <div class="swse-location-panel-head gm-phase5-location-panel-head">
+            <div>
+              <span class="gm-phase5-location-eyebrow">Dossier Relationships</span>
+              <h3>Links</h3>
+            </div>
+          </div>
+          <div class="gm-location-link-group">
+            <span class="gm-phase5-location-eyebrow">Factions</span>
+            {{#each surface.locationManager.selected.factionRows}}
+              <div class="gm-location-fact-row">
+                <strong>{{name}}</strong>
+                <div><button type="button" class="danger" data-location-action="remove-link" data-location-id="{{../surface.locationManager.selected.id}}" data-link-kind="faction" data-link-value="{{id}}">Unlink</button></div>
+              </div>
+            {{else}}
+              <p class="swse-empty-state">No Factions linked.</p>
+            {{/each}}
+          </div>
+          <div class="gm-location-link-group">
+            <span class="gm-phase5-location-eyebrow">Contacts</span>
+            {{#each surface.locationManager.selected.contactRows}}
+              <div class="gm-location-fact-row">
+                <strong>{{name}}</strong>
+                <span>{{role}} · {{factionName}}</span>
+                <div><button type="button" class="danger" data-location-action="remove-link" data-location-id="{{../surface.locationManager.selected.id}}" data-link-kind="contact" data-link-value="{{id}}">Unlink</button></div>
+              </div>
+            {{else}}
+              <p class="swse-empty-state">No Contacts linked.</p>
+            {{/each}}
+          </div>
+          <div class="gm-location-link-group">
+            <span class="gm-phase5-location-eyebrow">NPCs / Actors</span>
+            {{#each surface.locationManager.selected.actorRows}}
+              <div class="gm-location-fact-row {{#unless resolved}}is-broken-link{{/unless}}">
+                <strong>{{label}}</strong>
+                <div><button type="button" class="danger" data-location-action="remove-link" data-location-id="{{../surface.locationManager.selected.id}}" data-link-kind="actor" data-link-value="{{uuid}}">Unlink</button></div>
+              </div>
+            {{else}}
+              <p class="swse-empty-state">No NPCs/Actors linked.</p>
+            {{/each}}
+          </div>
+          <div class="gm-location-link-group">
+            <span class="gm-phase5-location-eyebrow">Intel</span>
+            {{#each surface.locationManager.selected.intelRows}}
+              <div class="gm-location-fact-row">
+                <strong>Intel record {{id}}</strong>
+                <div><button type="button" class="danger" data-location-action="remove-link" data-location-id="{{../surface.locationManager.selected.id}}" data-link-kind="intel" data-link-value="{{id}}">Unlink</button></div>
+              </div>
+            {{else}}
+              <p class="swse-empty-state">No Intel linked.</p>
+            {{/each}}
+          </div>
+          <div class="gm-location-link-group">
+            <span class="gm-phase5-location-eyebrow">Jobs</span>
+            {{#each surface.locationManager.selected.jobRows}}
+              <div class="gm-location-fact-row">
+                <strong>Job record {{id}}</strong>
+                <div><button type="button" class="danger" data-location-action="remove-link" data-location-id="{{../surface.locationManager.selected.id}}" data-link-kind="job" data-link-value="{{id}}">Unlink</button></div>
+              </div>
+            {{else}}
+              <p class="swse-empty-state">No Jobs linked.</p>
+            {{/each}}
+          </div>
+          {{#if surface.locationManager.selected.raw.linkedJournalUuid}}
+            <div class="gm-location-link-group">
+              <span class="gm-phase5-location-eyebrow">Journal</span>
+              <div class="gm-location-fact-row">
+                <strong>{{surface.locationManager.selected.raw.linkedJournalUuid}}</strong>
+                <div><button type="button" class="danger" data-location-action="remove-link" data-location-id="{{surface.locationManager.selected.id}}" data-link-kind="journal" data-link-value="{{surface.locationManager.selected.raw.linkedJournalUuid}}">Unlink</button></div>
+              </div>
+            </div>
+          {{/if}}
         </section>
       {{else}}
         <section class="swse-location-panel gm-phase5-location-panel gm-location-empty-detail gm-location-compendium-drop" data-location-library-drop-zone>

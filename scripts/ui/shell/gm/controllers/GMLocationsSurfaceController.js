@@ -136,6 +136,7 @@ export class GMLocationsSurfaceController {
     this._abort = null;
     this._searchTimer = null;
     this._importInFlight = false;
+    this._createSceneInFlight = false;
     this._pageElement = null;
   }
 
@@ -350,12 +351,29 @@ export class GMLocationsSurfaceController {
         }
 
         if (action === 'create-scene' && locationId) {
+          // A location's primary Scene is meant to be single: re-checking
+          // here (not just hiding the button once one exists) closes the
+          // window where a rapid double-click could otherwise queue two
+          // Scene.create() calls before either has saved and hidden the
+          // button via rerender.
+          if (this._createSceneInFlight) {
+            ui.notifications?.warn?.('A Scene is already being created for this location.');
+            return;
+          }
+          const existing = LocationRegistryService.findLocation(locationId);
+          if (existing?.map?.sceneUuid) {
+            ui.notifications?.info?.('This location already has a linked Scene. Use Open Scene to view it.');
+            return;
+          }
+          this._createSceneInFlight = true;
           try {
             const scene = await LocationSceneBridgeService.createSceneFromLocation(locationId);
             if (scene) ui.notifications?.info?.('Foundry Scene created and linked to this location.');
             await this._refresh('gm-location-create-scene');
           } catch (err) {
             ui.notifications?.warn?.(err?.message || 'Could not create Scene from location.');
+          } finally {
+            this._createSceneInFlight = false;
           }
           return;
         }

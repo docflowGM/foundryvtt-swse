@@ -132,6 +132,50 @@ function findFaction(factions = [], factionId = '') {
   return factions.find(faction => text(faction.id).toLowerCase() === id || text(faction.name).toLowerCase() === id) || null;
 }
 
+/**
+ * World-collection UUIDs (`Scene.<id>`, `Actor.<id>`) resolve synchronously
+ * via game.scenes/game.actors — the only UUID shape LocationSceneBridgeService
+ * actually produces (Scene.create()) or the drop-payload path stores for a
+ * world Actor. A compendium-sourced UUID (e.g. from a Quick Library drop)
+ * won't match this and is reported as unresolved rather than attempted via
+ * an async fromUuid() lookup — buildViewModel() renders every card in the
+ * list on every request, so adding per-link async resolution there would
+ * cost real render latency for a case the built-in importer/drop paths
+ * don't produce. See docs/audits/... Phase 2 §"Scene/actor resolution
+ * scope" for the tradeoff.
+ */
+function parseWorldDocId(uuid = '', docType = '') {
+  const match = text(uuid).match(new RegExp(`^${docType}\\.([A-Za-z0-9]+)$`));
+  return match ? match[1] : '';
+}
+
+function resolveSceneRow(uuid, isPrimary) {
+  const id = parseWorldDocId(uuid, 'Scene');
+  const scene = id ? game.scenes?.get?.(id) : null;
+  return {
+    uuid,
+    isPrimary,
+    id: scene?.id || '',
+    name: scene?.name || '',
+    resolved: Boolean(scene),
+    isActive: Boolean(scene?.active),
+    label: scene ? scene.name : `Missing Scene (${uuid})`
+  };
+}
+
+function resolveActorLink(uuid) {
+  const id = parseWorldDocId(uuid, 'Actor');
+  const actor = id ? game.actors?.get?.(id) : null;
+  return {
+    uuid,
+    id: actor?.id || '',
+    name: actor?.name || '',
+    img: actor?.img || '',
+    resolved: Boolean(actor),
+    label: actor ? actor.name : `Missing Actor (${uuid})`
+  };
+}
+
 function contactRowsForFaction(factions = [], factionId = '') {
   const selected = findFaction(factions, factionId);
   const source = selected ? [selected] : factions;
@@ -257,16 +301,22 @@ function selectedVm(location = null, records = [], factions = []) {
     children,
     factionRows,
     contactRows,
-    actorRows: location.npcActorUuids.map(uuid => ({ uuid })),
+    actorRows: location.npcActorUuids.map(uuid => resolveActorLink(uuid)),
     intelRows: location.linkedIntelIds.map(id => ({ id })),
     jobRows: location.linkedJobIds.map(id => ({ id })),
-    sceneRows: Array.from(new Set([location.map?.sceneUuid, ...location.linkedSceneUuids].filter(Boolean))).map(uuid => ({ uuid, isPrimary: uuid === location.map?.sceneUuid })),
-    encounterSeeds: location.encounterSeeds.map(seed => ({
-      ...seed,
-      categoryLabel: LocationRegistryService.optionLabel(LocationRegistryService.ENCOUNTER_SEED_CATEGORIES, seed.category),
-      sourceLabel: seed.sourceKind === 'compendium' ? 'Compendium Actor' : seed.sourceKind === 'world' ? 'World Actor' : 'Manual Seed',
-      hasActor: Boolean(seed.uuid)
-    })),
+    sceneRows: Array.from(new Set([location.map?.sceneUuid, ...location.linkedSceneUuids].filter(Boolean))).map(uuid => resolveSceneRow(uuid, uuid === location.map?.sceneUuid)),
+    hasPrimaryScene: Boolean(location.map?.sceneUuid),
+    encounterSeeds: location.encounterSeeds.map((seed) => {
+      const actorLink = seed.uuid ? resolveActorLink(seed.uuid) : null;
+      return {
+        ...seed,
+        categoryLabel: LocationRegistryService.optionLabel(LocationRegistryService.ENCOUNTER_SEED_CATEGORIES, seed.category),
+        sourceLabel: seed.sourceKind === 'compendium' ? 'Compendium Actor' : seed.sourceKind === 'world' ? 'World Actor' : 'Manual Seed',
+        hasActor: Boolean(seed.uuid),
+        actorResolved: actorLink ? actorLink.resolved : false,
+        actorLabel: actorLink ? actorLink.label : ''
+      };
+    }),
     atlasFacts: location.atlasFacts.map(fact => ({
       ...fact,
       categoryLabel: LocationRegistryService.optionLabel(LocationRegistryService.FACT_CATEGORIES, fact.category),
@@ -423,7 +473,7 @@ export class GMLocationsSurfaceService {
     const editor = selected || applyCreateDefaults(blankEditorVm(), rawModal.defaults);
     const hasSelection = Boolean(selected);
     const selectedVisibleCards = visibleCards.map(card => ({ ...card, selected: card.id === selectedLocationId }));
-    const leadQueue = leadDiscoveryRows(records);
+    const leadQueue = leadDiscoveryRows(records).map(lead => ({ ...lead, isSelectedLocation: lead.locationId === selectedLocationId }));
     const registryStats = LocationRegistryService.summarizeForWorkspace();
     const librarySeeds = LocationRegistryService.getLibrarySeeds({ search: filters.librarySearch, biome: filters.libraryBiome, category: filters.libraryCategory });
     const libraryCards = librarySeeds.map(seed => librarySeedCard(seed, records));

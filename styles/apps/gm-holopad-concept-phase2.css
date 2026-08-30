@@ -4753,6 +4753,25 @@
   text-align: left;
 }
 
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-fact-row.is-broken-link {
+  border-color: color-mix(in oklab, #ff8b8b 42%, transparent);
+  background: rgba(255, 107, 107, 0.08);
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-fact-row.is-selected-location {
+  border-color: rgba(112, 226, 255, 0.46);
+  background: rgba(112, 226, 255, 0.1);
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-link-group {
+  margin-top: 10px;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-link-group + .gm-location-link-group {
+  border-top: 1px solid rgba(112, 226, 255, 0.12);
+  padding-top: 10px;
+}
+
 .swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-empty-detail {
   min-height: 280px;
   display: flex;
