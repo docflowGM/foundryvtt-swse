@@ -881,10 +881,369 @@ drop → forced-error case), reproduced here for convenience:
 
 ## 17. Remaining Stage 2 candidates (not started)
 
-- Phase 0's already-documented gap remains open: `locationManager.leadQueue`
+- ~~Phase 0's already-documented gap remains open: `locationManager.leadQueue`
   and encounter-seed/scene rows are computed by the service and have live
-  controller handlers, but `locations.hbs` renders no markup for them.
+  controller handlers, but `locations.hbs` renders no markup for them.~~
+  **Resolved in Phase 2 — see the section below.**
 - The catalog's biome vocabulary is now complete relative to the seed
   data, but the *filter pill* UI itself was not otherwise reviewed for
   Stage 1 (e.g. whether 86 biome pills is a usable amount of UI, versus
   needing search/grouping) — a UX question, not a reliability defect.
+
+---
+
+# PHASE 2 — Operational UI Reachability
+
+Scope: making already-computed Locations VM data and already-wired
+controller actions reachable from `locations.hbs` — Atlas lead discoveries,
+encounter seeds, Scene/map links, and dossier relationships (Factions /
+Contacts / NPCs / Intel / Jobs / Journal). No new location-action service,
+scene service, lead service, or link registry was created; everything below
+routes into `LocationRegistryService`, `LocationSceneBridgeService`,
+`LocationIntelBridgeService`, `LocationJobBridgeService`, and
+`GMLocationsSurfaceController`, exactly as they already existed. The Stage 1
+importer's production files (`location-library-seeds.js` and the
+`importLibrarySeed*` methods in `location-registry-service.js`) were **not
+touched**.
+
+## 1. Phase 2 verdict
+
+**PHASE 2 COMPLETE WITH DOCUMENTED RUNTIME FOLLOW-UP** (no live Foundry
+client available — see the manual checklist at the end of this section).
+
+## 2. VM reachability matrix
+
+| VM field | Source | Before Phase 2 | After Phase 2 |
+|---|---|---|---|
+| `locationManager.cards` / `allCards` | `locationCard()` per record | RENDERED | RENDERED (unchanged) |
+| `locationManager.selected` (card fields) | `locationCard()` | RENDERED | RENDERED (unchanged) |
+| `locationManager.editor` | `blankEditorVm()`/`selectedVm()` + Phase 0's `applyCreateDefaults()` | RENDERED | RENDERED (unchanged) |
+| `locationManager.modal` | `state.modal` | RENDERED | RENDERED (unchanged) |
+| `locationManager.library.*` | `location-library-seeds.js` (Stage 1) | RENDERED | RENDERED (unchanged) |
+| `locationManager.leadQueue` / `hasLeadQueue` | `leadDiscoveryRows()` → `LocationRegistryService.getAtlasLeadDiscoveries()` | COMPUTED_NOT_RENDERED | **RENDERED** — global Atlas Lead Queue panel (§4) |
+| `selected.sceneRows` | new `resolveSceneRow()` (was a bare `{uuid, isPrimary}`) | COMPUTED_NOT_RENDERED (and only partially computed — no name/resolution) | **RENDERED** — Scenes/Map panel (§7) |
+| `selected.hasPrimaryScene` | new, derived from `location.map?.sceneUuid` | did not exist | **RENDERED** — gates the Create Scene button |
+| `selected.encounterSeeds` | existing mapping, now also actor-resolved | PARTIALLY_RENDERED (only the top card's numeric "Seeds" count) | **RENDERED** — full list with per-seed Remove (§6) |
+| `selected.atlasFacts` | existing mapping | RENDERED | RENDERED (unchanged) |
+| `selected.factionRows` | `findFaction()` over `FactionRegistryService` data | PARTIALLY_RENDERED (only folded into the card's `factionNames` summary string) | **RENDERED** — Links panel, Factions group (§9) |
+| `selected.contactRows` | `contactRowsForFaction()` | PARTIALLY_RENDERED (same — folded into `contactNames`) | **RENDERED** — Links panel, Contacts group |
+| `selected.actorRows` | new `resolveActorLink()` (was a bare `{uuid}`) | COMPUTED_NOT_RENDERED | **RENDERED** — Links panel, NPCs/Actors group, with broken-link safety (§10) |
+| `selected.intelRows` | existing (`{id}` only, deliberately not deep-resolved — see §9) | COMPUTED_NOT_RENDERED | **RENDERED** — Links panel, Intel group (id + Unlink only) |
+| `selected.jobRows` | existing (`{id}` only) | COMPUTED_NOT_RENDERED | **RENDERED** — Links panel, Jobs group (id + Unlink only) |
+| `selected.raw.linkedJournalUuid` | raw location field | COMPUTED_NOT_RENDERED (not part of any list) | **RENDERED** — Links panel, Journal group |
+| `selected.children` | existing | RENDERED | RENDERED (unchanged) |
+| filter/option lists (`categoryOptions`, `editorTypeOptions`, etc.) | existing | RENDERED | RENDERED (unchanged) |
+
+**Counts** (fields inspected above): RENDERED 15 (7 unchanged + 8 newly
+reachable in Phase 2), PARTIALLY_RENDERED 0 (the 2 that were partial —
+factionRows/contactRows — are now fully rendered), COMPUTED_NOT_RENDERED 0,
+DEAD 0, DEFERRED 0. No field was found with zero consumers and no plausible
+purpose; nothing was deleted.
+
+## 3. Controller reachability matrix
+
+| Action | Before Phase 2 | After Phase 2 |
+|---|---|---|
+| `remove-link` | VALID_BUT_UNRENDERED (full `unlinkLocationLink()` dispatch already correct) | **RENDERED_LIVE** |
+| `remove-seed` | VALID_BUT_UNRENDERED (`removeEncounterSeed()` already correct) | **RENDERED_LIVE** |
+| `lead-select-location` | VALID_BUT_UNRENDERED | **RENDERED_LIVE** |
+| `lead-create-job` | VALID_BUT_UNRENDERED (`_createJobFromLead()` already correct, incl. auto-resolve) | **RENDERED_LIVE** |
+| `lead-create-intel` | VALID_BUT_UNRENDERED (`_createIntelFromLead()` already correct, incl. auto-resolve + navigate) | **RENDERED_LIVE** |
+| `lead-reveal-links` | VALID_BUT_UNRENDERED (`_revealLeadLinks()` already correct) | **RENDERED_LIVE** |
+| `lead-resolve` | VALID_BUT_UNRENDERED | **RENDERED_LIVE** |
+| `open-scene` | LIVE_RENDERED (top action bar) | **RENDERED_LIVE** (relocated to the Scenes panel, primary scene only) |
+| `create-scene` | LIVE_RENDERED, but with **no duplicate-creation guard** (a real bug, not just unreachable data — see §8) | **BROKEN_FIXED** — guarded, relocated to the Scenes panel |
+| `activate-scene` | VALID_BUT_UNRENDERED (no template control existed for it before Phase 2, despite the top action bar having Open Scene/Create Scene) | **RENDERED_LIVE** |
+| `stage-encounter-seeds` | LIVE_RENDERED (top action bar) | **RENDERED_LIVE** (relocated to the Encounters panel, gated on having ≥1 seed) |
+| `create-encounter-scene` | VALID_BUT_UNRENDERED | **DEFERRED_WITH_REASON** — no template control point identified with a clear, distinct GM-facing purpose from `create-scene`/`stage-encounter-seeds` in this pass; left as-is (real, callable, just not surfaced) |
+| `import-library-seed` | VALID_BUT_UNRENDERED (per-seed single import; the template only offers `open-import-modal` + the batch import form) | **DEFERRED_WITH_REASON** — importer surface is explicitly out of Phase 2 scope (§"Preserve importer" rule); Stage 1's Import Selected/Import All Shown already cover single- and multi-seed import |
+
+Every action in the task's "Phase 2U — specific required action checks" list
+now has a final, non-`UNCLEAR` status.
+
+## 4. Atlas Lead Queue design
+
+`locationManager.leadQueue` is built once per render from **every actor's**
+`atlasLocationState.leadDiscoveries` flag (`LocationRegistryService.
+getAtlasLeadDiscoveries({ unresolvedOnly: true })`), not filtered to the
+selected location — it is a campaign-wide operations queue, and
+`lead-select-location`'s entire purpose (jump to a lead's location) only
+makes sense if the queue is visible independent of what's currently
+selected. The header's existing "Leads" stat tile
+(`stats.leadDiscoveryCount`, present since before Phase 0) already counted
+the same `unresolvedOnly: true` set, confirming this was always meant to be
+a global concept — Phase 2 does not change that meaning, only renders it.
+
+**Deliberate choice** (Phase 2Q): rendered as one always-visible global
+panel (`gm-location-lead-queue`, placed above the Locations/Library
+workbench, outside the `{{#if selected}}` branch), not nested inside the
+selected-location detail. Each row that belongs to the *currently selected*
+location gets a `is-selected-location` highlight (new `isSelectedLocation`
+VM flag, `lead.locationId === selectedLocationId`) so the GM can see at a
+glance which unresolved leads concern the location they're already looking
+at, without hiding the rest of the queue.
+
+Each row shows: `actorName` (who), `locationName` via `lead-select-location`
+(where — clickable), `factTitle` (what), `skillLabel`/`dc`/`checkLabel`
+(how it was found), `updatedLabel` (when). All of this was already computed
+by `leadDiscoveryRows()`; Phase 2 added only `isSelectedLocation`.
+
+## 5. Lead action traces
+
+All four lead actions were already fully implemented in
+`GMLocationsSurfaceController` before Phase 2 (verified by direct code
+read in Phase 0/Stage 1 exploration and now proven executed — see §14):
+
+```
+lead row (actorId, id=discoveryId, locationId)
+    ↓
+data-location-action="lead-create-intel" data-actor-id="{{actorId}}" data-discovery-id="{{id}}"
+    ↓
+GMLocationsSurfaceController._createIntelFromLead(actorId, discoveryId)
+    ↓
+_findLead() → LocationRegistryService.getAtlasLeadDiscoveries({ unresolvedOnly: false, actorId }).find(...)
+    ↓
+LocationIntelBridgeService.createIntelDraftFromFact(lead.locationId, lead.factId, {...})
+    ↓
+LocationRegistryService.resolveAtlasLeadDiscovery(lead.actorId, lead.id, { status: 'resolved', ... })
+    ↓
+patchSurfaceState('intel', { selectedRecordId }) + _navigateTo('intel')
+```
+
+`lead-create-job` follows the identical shape via `LocationJobBridgeService`
++ `_openJobDraft()`. `lead-reveal-links` (`_revealLeadLinks()`) walks
+`revealLocationIds`/`revealFactionIds`/`revealContactIds` and calls
+`LocationRegistryService.revealLocation()` /
+`FactionRegistryService.upsertFaction()` /
+`FactionRegistryService.upsertFactionContact()` per target, then resolves
+the lead — only rendered when `hasRevealLinks` is true (i.e. the lead
+actually has reveal targets), so the button is never a no-op. `lead-resolve`
+calls `resolveAtlasLeadDiscovery()` directly with a fixed GM note. None of
+this logic was duplicated in the template or re-implemented in the
+controller — every action is a single call into an existing service method.
+
+## 6. Encounter Seed UI
+
+`selected.encounterSeeds` (from the location's own `encounterSeeds` array,
+via `LocationRegistryService`) already carried `id`, `name`, `category`
+(→ `categoryLabel`), `uuid` (optional bestiary Actor link), `notes`,
+`quantity`, and `sourceKind` (→ `sourceLabel`: Compendium/World/Manual).
+Phase 2 added `actorResolved`/`actorLabel` (via the new `resolveActorLink()`
+helper) so a seed's actor link renders its real name or an explicit
+"Missing Actor (uuid)" instead of just a boolean `hasActor`. The Encounters
+panel lists every seed with a `remove-seed` control
+(`LocationRegistryService.removeEncounterSeed()`, pre-existing, unchanged)
+and a "Stage Encounter Seeds" button (`stage-encounter-seeds`, relocated
+from the top action bar, gated on the seed list being non-empty) — no
+encounter-generation engine was built; these are the same campaign-prep
+references `LocationSceneBridgeService.stageEncounterSeeds()` already
+turned into Scene tokens.
+
+## 7. Scene/map UI
+
+`selected.sceneRows` was, before Phase 2, `[{uuid, isPrimary}]` — no name,
+no existence check. The new `resolveSceneRow()` resolves each UUID via
+`game.scenes.get()` (parsed from the `Scene.<id>` shape
+`LocationSceneBridgeService.createSceneFromLocation()` — the only producer
+of location-linked Scenes — actually creates), yielding `name`, `resolved`,
+`isActive`, and a display `label` (`scene.name` or `"Missing Scene (uuid)"`
+if unresolved). `selected.hasPrimaryScene` was added
+(`Boolean(location.map?.sceneUuid)`) to gate the Create Scene button.
+
+**Resolution scope decision** (documented in the VM helper's own comment):
+only world-collection UUIDs (`Scene.<id>`, `Actor.<id>`) resolve
+synchronously via `game.scenes`/`game.actors` — the only shape this
+codebase's own Scene-creation and drop paths produce. A compendium-sourced
+UUID renders as unresolved rather than triggering an async `fromUuid()`
+lookup per link on every render of every card in the list; this avoids
+adding render-time I/O latency for a case the built-in paths don't
+currently produce.
+
+The panel shows every scene row; only the **primary** row gets Open
+Scene/Activate Scene, because `LocationSceneBridgeService.
+openLinkedScene()`/`activateLinkedScene()` both resolve *the* linked scene
+(`map.sceneUuid || linkedSceneUuids[0]`) — there is no per-UUID open/activate
+variant in the service to expose for a secondary linked scene, so Phase 2
+does not fabricate one. Every row (primary or secondary) gets Unlink
+(`remove-link`, kind `scene`) via the pre-existing
+`unlinkLocationLink()`, which already correctly promotes the next linked
+scene to primary if the removed one was primary.
+
+## 8. Scene actions
+
+| Action | Valid today? | Calls | Requires selection? | Requires a specific Scene UUID? | Result visible? |
+|---|---|---|---|---|---|
+| `open-scene` | Yes | `LocationSceneBridgeService.openLinkedScene()` | Yes (locationId) | No (always the primary) | Yes (Foundry opens the Scene view) |
+| `create-scene` | Yes, but **was unguarded** (fixed — §Phase 2K below) | `LocationSceneBridgeService.createSceneFromLocation()` | Yes | No | Yes (notification + new Scenes-panel row) |
+| `create-encounter-scene` | Yes | same, with `nameSuffix: 'Encounter'` | Yes | No | Deferred (see §3) |
+| `activate-scene` | Yes | `LocationSceneBridgeService.activateLinkedScene()` | Yes | No (always the primary) | Yes (notification names the Scene) |
+| `stage-encounter-seeds` | Yes | `LocationSceneBridgeService.stageEncounterSeeds()` | Yes | No (creates the primary if missing) | Yes (notification with created/skipped counts) |
+
+**Phase 2L — Activate Scene**: the button is labeled exactly "Activate
+Scene" (not "Use" or anything ambiguous), is a separate control from "Open
+Scene", and nothing auto-activates on open — `openLinkedScene()` only calls
+`scene.view()`, never `scene.activate()`.
+
+## 9. Link relationship UI
+
+Grouped exactly as `LocationRegistryService.unlinkLocationLink()`'s
+supported `kind` values: **Factions**, **Contacts**, **NPCs/Actors**,
+**Intel**, **Jobs**, **Journal** (the service also accepts `npc-dossier` as
+a `contact` alias and `seed`/`encounter-seed` for seeds, both already
+covered by their own dedicated UI — the Contacts group and the Encounters
+panel respectively). Factions and Contacts already had fully-resolved
+name/role/faction data (`factionRows`/`contactRows`, both pre-existing) and
+render real names, per the "fall back to id only when resolution fails"
+rule. NPCs/Actors render via the new `resolveActorLink()`.
+
+**Intel and Jobs render by id, with only an Unlink control — a deliberate
+scope decision, not an oversight.** `HolonetIntelService.getIntelById()`
+and the Job Board's equivalent lookups are both genuinely async
+(journal/storage-backed, unlike Factions/Locations which are synchronous
+settings arrays), so resolving their titles would mean giving
+`GMLocationsSurfaceService` a new cross-subsystem async dependency it
+doesn't have today, for every linked Intel/Job id on every selected
+location's render. That is a larger architectural change than "make
+already-computed data reachable," which is this phase's charter. The GM can
+still identify and remove a stale/wrong Intel or Job link by id; viewing an
+existing linked record's full content by navigating to it from Locations is
+a real, reasonable next step, recorded in §16 as a Stage 3+ candidate
+rather than attempted here.
+
+## 10. Broken-reference behavior
+
+`resolveSceneRow()`/`resolveActorLink()` never throw and never mutate
+anything — a UUID that doesn't resolve (`game.scenes.get()`/
+`game.actors.get()` returns `undefined`) produces `{resolved: false, label:
+"Missing Scene/Actor (<uuid>)", ...}`, which the template renders with an
+`is-broken-link` CSS class (subtle red tint) but otherwise identically to a
+resolved row. The stored UUID stays visible in the label. Proven
+side-effect-free and still removable via the normal Unlink path in
+`tests/gm-locations-links-scenes-encounters.test.mjs` (§14).
+
+## 11. Action-value matrix
+
+37 template occurrences → **31 distinct `data-location-action` values**
+(up from Phase 0's 23; 8 new values: `lead-select-location`,
+`lead-create-job`, `lead-create-intel`, `lead-reveal-links`, `lead-resolve`,
+`remove-link`, `remove-seed`, `activate-scene`). All 31 resolve at
+action-value level in `tests/gm-datapad-action-integrity-contract.test.mjs`
+(237 controls scanned across the whole GM Datapad, 0 unresolved).
+`tests/gm-locations-operational-ui-action-matrix.test.mjs` additionally
+proves, for the 11 Phase 2 controls, that each rendered element carries
+every `data-*` identifier its own controller branch actually reads (e.g.
+`lead-resolve` needs both `data-actor-id` and `data-discovery-id` on the
+*same* element) — the broader scanner proves the action value resolves to a
+branch, not that the specific control has the data the branch needs.
+
+## 12. Service computations exposed
+
+`leadQueue`, `sceneRows` (now resolved), `actorRows` (now resolved),
+`encounterSeeds` (now with actor resolution), `factionRows`, `contactRows`,
+`intelRows`, `jobRows`, `raw.linkedJournalUuid`, `hasPrimaryScene` (new).
+
+## 13. Dead/deferred computations
+
+None found dead. `intelRows`/`jobRows` are rendered but deliberately
+id-only (§9, a scope decision, not deferral). `create-encounter-scene` and
+`import-library-seed` remain valid, callable, unrendered (§3) — left alone
+per the "do not automatically render every controller branch" rule, since
+neither has a template control point whose purpose is distinct enough from
+an already-rendered action to justify adding one in this pass.
+
+## 14. Tests
+
+- `tests/gm-locations-atlas-lead-operations.test.mjs` — executed: empty and
+  populated lead queue (real actor flag → `getAtlasLeadDiscoveries()` →
+  `leadQueue`), `isSelectedLocation` flagging, `lead-select-location`'s
+  real state patch, `lead-resolve`'s real status mutation (and its removal
+  from the next unresolved-queue build), `lead-create-intel`'s real Intel
+  draft creation + auto-resolve + navigation.
+- `tests/gm-locations-links-scenes-encounters.test.mjs` — executed:
+  `remove-seed` (only the targeted seed disappears, VM reflects it),
+  `remove-link` for two distinct kinds (faction, scene) with unrelated
+  links/contacts proven to survive each, broken Scene/Actor representation
+  (render is side-effect-free, broken links stay removable), a resolved
+  scene's real name/active state.
+- `tests/gm-locations-scene-creation-safety.test.mjs` — executed, against
+  a genuinely-async mocked `Scene.create()`: a double-click creates exactly
+  one Scene (verified via `git stash` to fail against the pre-fix
+  controller), and re-clicking after a primary Scene exists creates none.
+- `tests/gm-locations-operational-ui-action-matrix.test.mjs` — static:
+  every Phase 2 control's data attributes match what its controller branch
+  reads.
+- Re-run and still green: `tests/gm-datapad-action-integrity-contract.
+  test.mjs` (237 controls, 0 unresolved), `tests/gm-datapad-wizard-contract.
+  test.mjs` (4 wizards), `tests/gm-datapad-no-duplicate-handler-regression.
+  test.mjs`, `tests/gm-locations-surface-context-contract.test.mjs` (Phase
+  0), and all four Stage 1 importer test files unchanged.
+
+Full rolling suite: **147/147** passed (143 pre-Phase-2 + 4 new files),
+syntax check: **2259/2259** files.
+
+## 15. Runtime validation gap
+
+No live Foundry client is available in this environment. See the manual
+checklist below. Everything above is verified by direct source reading and
+by executing the real production services/controller methods under the
+repo's Foundry-shim Node harness (not React/DOM rendering — Handlebars
+itself cannot be constructed under this harness either, same limitation
+documented throughout this file and the other GM Datapad contract tests),
+with fake minimal DOM/event objects standing in for the browser.
+
+## 16. Remaining Locations work (Stage 3+ candidates)
+
+- View an existing linked Intel/Job record from Locations (not just create
+  a new one or unlink) would need either a "select an existing record and
+  navigate" affordance in Intel/Jobs' own surfaces, or async name
+  resolution added to `GMLocationsSurfaceService` — deliberately deferred
+  (§9).
+- `create-encounter-scene` and `import-library-seed` remain valid,
+  unrendered controller branches (§3) — no template control point was
+  added for either in this pass.
+- Biome filter-pill UI density (86 pills) was not reviewed for usability
+  (carried over from Stage 1, §17 above).
+- No visual busy/disabled state was added for the new Scene actions
+  (Create Scene has its own in-flight guard, §8, but no button-disable —
+  the same class of polish Stage 1 added for the importer, not extended
+  here since Create Scene's guard already prevents duplication; a
+  double-click on Open/Activate Scene is idempotent by nature, since both
+  just view/activate the same existing document).
+- Live Foundry validation (below) is the only remaining step to call
+  Phase 2 fully validated end to end.
+
+---
+
+## Phase 2 manual Foundry validation checklist (not yet run — no live client available)
+
+**Atlas Leads**: open GM Datapad → Locations → verify the Atlas Lead Queue
+renders (or its empty state, "No unresolved Atlas leads.", if none exist)
+→ with an unresolved lead, verify actor/location/fact info is readable →
+click the location name to select it → Create Intel from a lead → Create
+Job from a lead → Reveal Links (if the row shows it) → Resolve a lead.
+PASS = each action happens exactly once, results appear immediately
+(new Intel/Job draft, lead disappears from the queue on Resolve/after a
+Create action), no dead controls.
+
+**Encounter Seeds**: select a location with encounter seeds → verify the
+seed list → Remove one seed → PASS = only that seed disappears → Stage
+Encounter Seeds (if supported for that location) → PASS = existing bridge
+behavior occurs once (tokens appear on the linked/created Scene).
+
+**Scenes**: select a location with no Scene → Create Scene → PASS = Scene
+created, linked, visible in the Scenes panel → Open Scene → PASS = correct
+Scene opens/views → Activate Scene → PASS = correct Scene activates →
+re-click Create Scene → PASS = no second Scene is created (the button
+should already be gone, replaced by Open/Activate, once a primary exists).
+
+**Links**: select a location with Faction/Contact/NPC/Intel/Job/Journal
+links → verify names resolve for Factions/Contacts/NPCs (Intel/Jobs show
+by id, by design) → remove one link → PASS = only that relation disappears,
+the rest remain → if practical, break a link (delete the linked Actor/Scene
+document) and reopen Locations → PASS = the location remains usable, the
+broken target reads as "Missing Scene/Actor (uuid)", and it can still be
+removed.
+
+**Regression**: open Import Location → PASS = the static sample library
+still appears immediately and behaves exactly as Stage 1 left it → import
+a sample planet → PASS = Stage 1 behavior unchanged.
