@@ -266,7 +266,7 @@ smart-drop zones for that service to repair.
 ## 14. Action-value matrix
 
 Every literal `data-location-action="..."` value actually rendered in
-`locations.hbs` (37 occurrences, 22 distinct values, enumerated directly from
+`locations.hbs` (37 occurrences, 23 distinct values, enumerated directly from
 the template, not from memory):
 
 | Action | Status |
@@ -295,7 +295,7 @@ the template, not from memory):
 | `import-library-visible-now` | LIVE_HANDLED |
 | `confirm-delete` | LIVE_HANDLED |
 
-All 22 template-rendered action values resolve to a real branch in
+All 23 template-rendered action values resolve to a real branch in
 `GMLocationsSurfaceController._wireActions()`. This matrix was produced by
 grepping the template directly (not by trusting the controller's action list)
 and cross-checking every distinct value found.
@@ -430,3 +430,349 @@ Encounter Seeds from a selected location's detail panel.
 Watch the console throughout for: missing `surface` root warnings, controller
 attach errors, undefined-context Handlebars warnings, duplicate handler
 firing, re-render loops, and modal geometry/visibility failures.
+
+---
+
+# STAGE 1 — Importer Reliability
+
+Scope: the built-in sample-planet ("Location Library") importer only —
+`scripts/locations/location-library-seeds.js`,
+`scripts/locations/location-registry-service.js`'s `importLibrarySeed*`
+methods, and the importer-specific paths in
+`GMLocationsSurfaceController`/`GMLocationsSurfaceService`. Same
+non-negotiables as Phase 0: no new importer engine, no second seed
+registry, no speculative caching/retry/queue layer.
+
+## 1. Stage 1 verdict
+
+**STAGE 1 COMPLETE WITH DOCUMENTED RUNTIME FOLLOW-UP** (no live Foundry
+client available — see the manual checklist at the end of this section).
+
+## 2. Import source authority
+
+| Source | Purpose | Required? | Identity | Failure mode |
+|---|---|---|---|---|
+| `LOCATION_LIBRARY_SEEDS` (`scripts/locations/location-library-seeds.js`) | The **entire** built-in sample-planet catalog the "Import Location" wizard shows | Yes — this is the only source the built-in importer reads | `seed.id` / `child.id`, hand-authored, used directly as the imported registry record's `id` | A missing/renamed id breaks that one seed's re-import idempotency; caught by the new catalog contract test |
+| Foundry compendium (`game.packs`) | **Not used at all** by the built-in importer | N/A | N/A | N/A |
+| Dropped compendium `JournalEntry` (drag/drop onto the Quick Library zone) | An alternate *discovery* affordance for the same static catalog, not a second catalog | No — optional convenience path | Resolved back to a `LOCATION_LIBRARY_SEEDS` id via a flag/name match (`_seedIdFromDropPayload`), then imported through the identical `importLibrarySeeds()` pipeline | Unresolvable drop → explicit warning, no import attempted (already correct, see §14) |
+
+**Grep-verified**: no reference to `game.packs`, `getIndex`, or
+`getDocument` anywhere in `scripts/locations/` or the Locations
+controller/service. The built-in importer is 100% synchronous, in-memory
+static data — it has no compendium dependency to be "ready" or "cold" for.
+
+## 3. Compendium relationship
+
+There is no compendium relationship for the primary importer. The one
+compendium touchpoint in this surface is the Quick Library drop zone
+(`data-location-library-drop-zone`), which resolves a dropped
+`JournalEntry` via `fromUuid()` (an on-demand, single-document fetch — not
+`pack.getIndex()`) back to a **static** seed id and then calls the same
+`importLibrarySeeds()` used everywhere else. There is no pack-index
+pre-loading requirement, so Stage 1D's cold/warm pack-index matrix
+(Cases 11–14) does not apply to this codebase's actual architecture; this
+is a documented finding, not a gap.
+
+## 4. Library initialization path
+
+`GMLocationsSurfaceService.buildViewModel()` calls
+`LocationRegistryService.getLibrarySeeds(filters)` unconditionally on every
+render — there is no lazy/async initialization step, no "first open"
+special case, and no state that could be stale on a cold Foundry restart.
+Opening the importer is exactly: read `state.modal.type === 'import'` →
+already-computed `locationManager.library.cards/summary` render — both are
+built from the same synchronous `filterLocationLibrarySeeds()` call the
+rest of the surface already made for this render. There is no code path
+that can open the modal with a "loading" or blank-because-not-ready state;
+zero-card is only ever "zero results under the current filter" (`{{else}}`
+branch in the template's `{{#each library.cards}}`, verified in Phase 0's
+review of the template) or, after Stage 1's fix, "N results, all already
+imported" via the counts in §9.
+
+## 5. Catalog integrity
+
+Audited every one of `LOCATION_LIBRARY_SEEDS`'s 50 top-level seeds and 150
+children (200 generated records total) via
+`tests/gm-locations-library-catalog-contract.test.mjs`, executed for real
+against `LocationRegistryService`'s actual `CATEGORIES`/`TYPES`/`SCALES`
+vocabularies (not a hand-copied duplicate list):
+
+- **0** duplicate ids across all 200 catalog entries.
+- **0** invalid `category`/`type`/`scale` values.
+- **23** biome tags used by seeds were not declared in
+  `LOCATION_LIBRARY_BIOMES` (e.g. `tomb`, `wookiee`, `wilderness`,
+  `hazard`, `mandalorian`, `research`, …) — confirmed via a real
+  `LocationRegistryService.optionLabel()` fallback (returns the raw slug,
+  not a real label, for an unmatched value) rather than a crash, so this
+  was a display/filter-completeness defect, not an import-breaking one:
+  those planets still imported correctly, they just couldn't be found via
+  the biome filter pills and showed an untitled slug instead of a label.
+  **Fixed**: added all 23 missing biome entries to `LOCATION_LIBRARY_BIOMES`
+  with real labels (purely additive; 63 → 86 declared biomes). No seed data
+  was changed.
+- `buildLocationLibraryRecords()` produces exactly `1 + children.length`
+  records per seed, every child correctly parented and carrying
+  `librarySeedId` provenance, verified against 10 real seeds (first 5 +
+  last 5 in the catalog) by executing the real function, not by reading it.
+- `getLocationLibrarySeed()` resolves every catalog id case-insensitively
+  and returns `null` (never throws) for an unknown id.
+
+## 6. Stable identity rules
+
+**One seed → one stable id → at most one canonical registry record.**
+`seedToLocationRecord()`/`childToLocationRecord()` (in
+`location-library-seeds.js`) assign the registry record's `id` directly
+from `seed.id` (parent) or `child.id` (children) — never a freshly
+generated/random id. Re-importing "Tatooine" always targets the exact same
+registry record id (`tatooine`) on every call, forever. `librarySeedId` is
+additionally stamped on every generated record (parent and children) so
+provenance back to the source seed survives independent of `id`.
+`LocationRegistryService.findLocation()`/`getLibrarySeed()` are the only
+lookup paths and both are case-insensitive by design, already present
+before Stage 1 — no change needed here beyond verifying it, which the new
+catalog test now does for every catalog id.
+
+If a GM manually creates their own Location that happens to share a
+library planet's *name* (not its reserved id, e.g. `tatooine`), it does
+not collide — identity is by `id`, not by name, and a user-created Location
+gets a `slugify(name)`-derived id from `normalizeLocation()`'s own creation
+path only when no `id` is supplied at all. This existing behavior was
+verified, not changed.
+
+## 7. Duplicate/idempotency policy
+
+Per-record: an incoming record whose `id` already exists in the registry
+is **skipped** (added to `skipped[]`) unless `overwrite: true` is passed
+(no caller in this codebase currently passes `overwrite`). This existing
+per-record policy was correct before Stage 1 and is unchanged. What Stage 1
+fixed was the *batching* around it — see §13.
+
+Proven for real (`tests/gm-locations-library-import-service.test.mjs`,
+executed against a real in-memory `game.settings` store via the Foundry
+shim, not asserted from reading the source):
+
+- Import "Tatooine" → 4 records created (1 parent + 3 children).
+- Import "Tatooine" again → `imported: 0`, `skipped: 4`, **zero** additional
+  registry writes, registry still holds exactly 4 Tatooine-derived records.
+- Two *concurrent* imports of the same seed (`Promise.all`, simulating a
+  double-click racing past the controller's guard) still leave exactly one
+  canonical set of records in the registry with no duplicate ids anywhere
+  — the service is safe even without the controller-side guard, which
+  exists only to avoid two redundant registry writes and two duplicate
+  success notifications for one GM click, not for correctness.
+
+## 8. Import Selected result
+
+`FormData.getAll('seedIds')` on the import form's `submit` event returns
+exactly the *checked* checkboxes' values — this is native browser/FormData
+behavior, not something this codebase computes, so "select A + C → import
+A + C, never A+B+C" is guaranteed by construction as long as the checkbox
+elements are still the ones that were checked. They are: the wizard's three
+pages (`data-wizard-page="1|2|3"`) all live inside the **same** `<form
+data-location-import-form>` (proven in
+`tests/gm-locations-importer-contract.test.mjs`), and
+`GMLocationsSurfaceController._setWizardPage()` only toggles the CSS
+`.is-active` class on existing DOM — it never removes or re-renders a page,
+so a checkbox checked on the Browse page is still checked (and still in the
+DOM) when the GM clicks Import Selected from the Import page. No
+Handlebars re-render happens between wizard pages (`wizard-next`/`-back`
+never call `patchSurfaceState`/`requestSurfaceRender`), so there is no
+window in which selection state could be lost to a rerender either.
+
+## 9. Import All Shown result
+
+`data-location-action="import-library-visible-now"` and the rendered
+library cards both resolve their id set via the **identical**
+`LocationRegistryService.getLibrarySeeds({ search, biome, category })`
+call keyed off the same persisted surface-state fields
+(`state.librarySearch`/`libraryBiome`/`libraryCategory`) — proven as a
+source-text contract (both call sites' exact filter-object shape asserted
+in `tests/gm-locations-importer-contract.test.mjs`) and exercised for real
+by importing an `{ biome: 'ice' }`-filtered set and asserting the imported
+seed-id set equals the filtered set exactly, no more, no less
+(`tests/gm-locations-library-import-service.test.mjs`). There is exactly
+one filtering implementation; the controller and service are not
+independently recomputing "what's shown."
+
+## 10. Batch save policy
+
+**Before Stage 1**: `importLibrarySeeds(seedIds)` called
+`importLibrarySeed(seedId)` once per id, and each call did its own
+`getRegistry()`/`saveRegistry()` round trip — an N-seed batch meant N
+separate `game.settings.set()` writes. A failure partway through (or two
+overlapping batches) left an unreported partial import with no batch-level
+result.
+
+**After Stage 1**: `importLibrarySeeds()` reads the registry once, resolves
+and merges every requested seed (valid, invalid, and duplicate-in-request
+ids all classified — see §12) into one in-memory `byId` map, and calls
+`saveRegistry()` **at most once**, only if anything was actually imported
+(a batch that resolves to all-skipped/all-invalid never touches the
+setting at all). `importLibrarySeed()` (singular) is now a thin wrapper
+over `importLibrarySeeds([seedId])`, preserving its original `{ imported,
+skipped, seed }` return contract exactly (the one caller,
+`GMLocationsSurfaceController`'s single-seed `import-library-seed` action,
+was verified to read only those three fields).
+
+Proven with a real settings-write counter (not inferred from source): a
+2-seed batch (8 records) → **1** `settings.set()` call; re-importing the
+same 2 seeds → **0** additional calls.
+
+This is not a generic transaction framework — it is "read once, merge in
+memory, save once," which the existing settings-backed registry already
+supports without new infrastructure.
+
+## 11. Concurrent/double-submit handling
+
+`GMLocationsSurfaceController` gained an `_importInFlight` boolean guard
+(instance field, reset in a `finally`), checked at the single choke point
+all three importer entry paths already funneled through —
+`_importLibrarySeedIds()` (called by the import-form `submit` handler,
+the `import-library-visible-now` action, and the Quick Library
+drag/drop handler). A second call while one is in flight is rejected with
+an explicit `ui.notifications.warn` ("An import is already in progress…"),
+not silently ignored. This guarantees one logical import (and one success
+notification) per GM click; the underlying service was already
+concurrency-safe by construction (§7), so this guard is a UX correctness
+fix, not a data-integrity one.
+
+No new global queue, daemon, or event bus was introduced.
+
+## 12. Error handling result
+
+`_importLibrarySeedIds()` now wraps the service call in `try/catch`: on
+success it reports a single batch summary notification including, for the
+first time, unresolved-selection count (`"; N selection(s) could not be
+resolved"` when `result.invalid.length > 0` — previously invalid ids were
+silently absorbed with no signal anywhere). On a thrown error it logs via
+`SWSELogger.error` and shows `ui.notifications.error` stating plainly that
+nothing was changed by that attempt — accurate, because the single-save
+batching in §10 means a failure either happens before the one `saveRegistry`
+call (nothing written) or *is* that one call failing (Foundry's
+`settings.set` does not partially apply). No `catch {}`, no
+`console.warn`-and-pretend-success pattern exists anywhere in this path;
+audited directly against the controller and service source.
+
+## 13. Catalog integrity (numbers)
+
+- **50** top-level sample planets/moons/asteroids.
+- **150** starter child POIs (3 per seed, consistently).
+- **200** total records a full-catalog import would generate.
+- **86** declared biome tags (63 original + 23 added in this pass) — now
+  100% of biome tags actually used by seed data resolve to a real label.
+
+## 14. Exact import flow
+
+```
+LOCATION_LIBRARY_SEEDS (static data)
+    ↓
+LocationRegistryService.getLibrarySeeds(filters) / filterLocationLibrarySeeds()
+    ↓
+GMLocationsSurfaceService.buildViewModel() → locationManager.library.{cards,previewCards,summary}
+    ↓
+locations.hbs → {{#each surface.locationManager.library.cards}} → <input type="checkbox" name="seedIds" value="{{id}}">
+    ↓
+GM checks boxes across Browse/Options/Import wizard pages (same <form>, no rerender between pages)
+    ↓
+"Import Selected" (type=submit, form[data-location-import-form] submit handler)
+   OR "Import All Shown" (data-location-action="import-library-visible-now")
+   OR Quick Library drag/drop (resolves a dropped JournalEntry back to a seed id)
+    ↓
+GMLocationsSurfaceController._importLibrarySeedIds() — _importInFlight guard, try/catch
+    ↓
+LocationRegistryService.importLibrarySeeds(ids, options) — ONE getRegistry() + ONE conditional saveRegistry()
+    ↓
+buildLibrarySeedRecords()/seedToLocationRecord()/childToLocationRecord() — stable seed.id-derived record ids
+    ↓
+byId Map merge — per-record skip-if-exists-unless-overwrite duplicate detection
+    ↓
+saveRegistry() (world-scoped `gmLocationRegistry` setting, only if imported.length > 0)
+    ↓
+patchSurfaceState({ selectedLocationId: firstImportedSeedId, modal: null }) + one batch notification
+    ↓
+requestShellRender → GMLocationsSurfaceService rebuilds → imported location card(s) appear, selected
+```
+
+The drag/drop path for a dropped compendium `JournalEntry`
+(`_importLibraryDrop` → `_seedIdFromDropPayload` → same
+`_importLibrarySeedIds`) was traced separately (§2/§3): invalid document
+type or missing UUID/flag/name match already resolved to an explicit
+warning and no import attempt (pre-existing, correct behavior, unchanged).
+
+## 15. Tests
+
+- `tests/gm-locations-library-catalog-contract.test.mjs` — executed catalog
+  integrity: 0 duplicate ids, 0 invalid category/type/scale, 0 unknown
+  biome tags (after the fix), correct generated-record shape for a sample
+  of real seeds, case-insensitive lookup for every catalog id.
+- `tests/gm-locations-library-import-service.test.mjs` — executed, against
+  a real in-memory `game.settings` store via the Foundry-shim harness:
+  single-save batching (with a real write counter), idempotent re-import,
+  invalid-id classification alongside valid ids in one request,
+  duplicate/case-variant ids in one request treated once, parent/child
+  identity after a real import, filtered "Import All Shown" imports
+  exactly the filtered set, and concurrent double-import safety.
+- `tests/gm-locations-importer-contract.test.mjs` — static wiring: the
+  import form's three wizard pages live in one `<form>` (checkbox
+  persistence), the "Import Selected" submit path is proven separately
+  from `data-location-action` dispatch, all six importer action values
+  are covered in both template and controller, controller and service
+  share the identical `getLibrarySeeds()` filter-shape call, and the
+  `_importInFlight` guard exists.
+- Phase 0's `tests/gm-locations-surface-context-contract.test.mjs` and the
+  pre-existing `gm-datapad-action-integrity-contract.test.mjs` /
+  `gm-datapad-wizard-contract.test.mjs` were re-run and remain green
+  (228 controls scanned, 0 unresolved; 4 wizards including Locations).
+
+Full rolling suite: **142/142** passed (139 Phase-0 baseline + 3 new Stage 1
+files), syntax check: **2254/2254** files.
+
+## 16. Live Foundry checklist
+
+No live Foundry client is available in this environment. Use the exact
+Stage 1 manual sequence from the task brief (fresh world / empty registry
+→ selected import → reopen/counts → repeat-import → filtered "Import All
+Shown" → cold restart → double-click → navigate away/back → compendium
+drop → forced-error case), reproduced here for convenience:
+
+1. **Fresh/cold**: restart Foundry, do not open any compendium, open GM
+   Datapad → Locations → Import Location. PASS = sample planet library
+   appears immediately (no spinner, no dependency on having opened a
+   compendium first).
+2. **Selected import**: select exactly two sample planets, step through
+   the wizard, Import Selected. PASS = exactly those two hierarchies
+   appear as new location cards.
+3. **Reopen**: open the importer again. PASS = the two just-imported
+   planets show as imported/unavailable; counts reflect it.
+4. **Repeat**: attempt to import the same two again. PASS = no
+   duplicates; batch notification says they already existed.
+5. **Filtered "Import All Shown"**: apply a filter (e.g. a biome pill),
+   click Import All Shown. PASS = exactly the visible filtered set
+   imports.
+6. **Double-click**: rapidly double-click Import Selected (or Import All
+   Shown). PASS = one logical import, one notification, no duplicate
+   records.
+7. **Navigate away/back**: close the modal, leave Locations, return, open
+   the importer again. PASS = catalog and counts still correct.
+8. **Compendium drop**: drag a supported Quick Library `JournalEntry` from
+   its compendium onto the drop zone. PASS = correct canonical import,
+   duplicate-safe on a second drop of the same document.
+9. **Forced error** (if practical in a dev world): make the underlying
+   setting write fail. PASS = explicit error notification, no partial/
+   corrupt registry save, no modal that closes as if it had succeeded.
+
+## 17. Remaining Stage 2 candidates (not started)
+
+- No visual "busy" state (disabled buttons/spinner) on the import
+  controls while `_importInFlight` is true — the guard is functionally
+  correct (rejects a second click with an explicit notification) but does
+  not yet grey out the buttons. Would need a DOM-element handle this
+  controller doesn't currently keep; deferred rather than inventing a new
+  host/element-access pattern for Stage 1.
+- Phase 0's already-documented gap remains open: `locationManager.leadQueue`
+  and encounter-seed/scene rows are computed by the service and have live
+  controller handlers, but `locations.hbs` renders no markup for them.
+- The catalog's biome vocabulary is now complete relative to the seed
+  data, but the *filter pill* UI itself was not otherwise reviewed for
+  Stage 1 (e.g. whether 86 biome pills is a usable amount of UI, versus
+  needing search/grouping) — a UX question, not a reliability defect.
