@@ -933,38 +933,66 @@ export class LocationRegistryService {
     return buildLocationLibraryRecords(seedId, options).map(record => this.normalizeLocation(record));
   }
 
-  static async importLibrarySeed(seedId = '', { overwrite = false, includeChildren = true, includeAtlasFacts = true, revealState = 'hidden', knownToPlayers = false } = {}) {
-    const seed = this.getLibrarySeed(seedId);
-    if (!seed) return { imported: [], skipped: [], seed: null };
-    const incoming = this.buildLibrarySeedRecords(seed.id, { includeChildren, includeAtlasFacts, revealState, knownToPlayers, importedAt: nowIso() });
+  /**
+   * Import one built-in Location Library seed. Thin wrapper over
+   * importLibrarySeeds() so single- and batch-seed imports share one
+   * read-resolve-save path (see that method for the reliability
+   * reasoning) instead of each seed doing its own registry read/write.
+   */
+  static async importLibrarySeed(seedId = '', options = {}) {
+    const result = await this.importLibrarySeeds([seedId], options);
+    return { imported: result.imported, skipped: result.skipped, seed: result.seeds[0] || null };
+  }
+
+  /**
+   * Import a batch of built-in Location Library seeds as ONE registry
+   * write. Earlier this called importLibrarySeed() per id, each doing its
+   * own getRegistry()/saveRegistry() round trip — N settings writes for an
+   * N-seed batch, so a failure partway through left an unreported partial
+   * import and importing the same seed twice concurrently could race. This
+   * version resolves and merges every seed into a single in-memory `byId`
+   * map first and saves once, only if anything actually changed.
+   *
+   * Duplicate detection is by stable identity: buildLibrarySeedRecords()
+   * always assigns the seed's own id to its generated parent record (and
+   * `<seedId>-<child-slug>` to its children), so re-importing the same
+   * seed maps to the same registry record id and is skipped rather than
+   * duplicated — including across repeated calls, since the save only
+   * happens when there is new data to persist.
+   */
+  static async importLibrarySeeds(seedIds = [], { overwrite = false, includeChildren = true, includeAtlasFacts = true, revealState = 'hidden', knownToPlayers = false } = {}) {
+    const ids = Array.from(new Set(safeArray(seedIds).map(id => text(id)).filter(Boolean)));
+    const importedAt = nowIso();
     const records = this.getRegistry();
     const byId = new Map(records.map(record => [record.id, record]));
     const imported = [];
     const skipped = [];
-    for (const record of incoming) {
-      const existing = byId.get(record.id);
-      if (existing && !overwrite) {
-        skipped.push(record);
+    const invalid = [];
+    const seeds = [];
+    const seenSeedIds = new Set();
+    for (const seedId of ids) {
+      const seed = this.getLibrarySeed(seedId);
+      if (!seed) {
+        invalid.push(seedId);
         continue;
       }
-      const nextRecord = existing ? this.normalizeLocation({ ...existing, ...record, createdAt: existing.createdAt, updatedAt: nowIso() }) : record;
-      byId.set(record.id, nextRecord);
-      imported.push(nextRecord);
+      if (seenSeedIds.has(seed.id)) continue;
+      seenSeedIds.add(seed.id);
+      seeds.push(seed);
+      const incoming = this.buildLibrarySeedRecords(seed.id, { includeChildren, includeAtlasFacts, revealState, knownToPlayers, importedAt });
+      for (const record of incoming) {
+        const existing = byId.get(record.id);
+        if (existing && !overwrite) {
+          skipped.push(record);
+          continue;
+        }
+        const nextRecord = existing ? this.normalizeLocation({ ...existing, ...record, createdAt: existing.createdAt, updatedAt: nowIso() }) : record;
+        byId.set(record.id, nextRecord);
+        imported.push(nextRecord);
+      }
     }
-    await this.saveRegistry(Array.from(byId.values()));
-    return { imported, skipped, seed };
-  }
-
-  static async importLibrarySeeds(seedIds = [], options = {}) {
-    const ids = Array.from(new Set(safeArray(seedIds).map(id => text(id)).filter(Boolean)));
-    const results = [];
-    for (const seedId of ids) results.push(await this.importLibrarySeed(seedId, options));
-    return results.reduce((summary, result) => {
-      summary.imported.push(...safeArray(result.imported));
-      summary.skipped.push(...safeArray(result.skipped));
-      if (result.seed) summary.seeds.push(result.seed);
-      return summary;
-    }, { imported: [], skipped: [], seeds: [] });
+    if (imported.length) await this.saveRegistry(Array.from(byId.values()));
+    return { imported, skipped, invalid, seeds };
   }
 
   static summarizeForWorkspace() {

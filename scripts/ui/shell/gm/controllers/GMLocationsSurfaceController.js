@@ -7,6 +7,7 @@ import { LocationSceneBridgeService } from '/systems/foundryvtt-swse/scripts/ui/
 import { requestShellRender } from '/systems/foundryvtt-swse/scripts/ui/shell/request-shell-render.js';
 import { DossierDragDropService } from '/systems/foundryvtt-swse/scripts/ui/dragdrop/dossier-drag-drop-service.js';
 import { FactionRegistryService } from '/systems/foundryvtt-swse/scripts/allies/faction-registry-service.js';
+import { SWSELogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
 
 function text(formData, key, fallback = '') {
   const out = String(formData.get(key) ?? fallback ?? '').trim();
@@ -134,6 +135,7 @@ export class GMLocationsSurfaceController {
     this.host = host;
     this._abort = null;
     this._searchTimer = null;
+    this._importInFlight = false;
   }
 
   async attach(root) {
@@ -735,16 +737,33 @@ export class GMLocationsSurfaceController {
       ui.notifications?.warn?.('Select at least one quick location to import.');
       return;
     }
-    const result = await LocationRegistryService.importLibrarySeeds(ids, {
-      includeChildren: options.includeChildren !== false,
-      includeAtlasFacts: options.includeAtlasFacts !== false,
-      revealState: String(options.revealState || 'hidden').trim() || 'hidden',
-      knownToPlayers: options.knownToPlayers === true
-    });
-    const firstSeedId = result.seeds?.[0]?.id || ids[0] || '';
-    this.host?.patchSurfaceState?.('locations', { selectedLocationId: firstSeedId, modal: null }, { render: false });
-    ui.notifications?.info?.(`Imported ${result.imported.length} location record(s) from ${result.seeds.length} quick location(s)${result.skipped.length ? `; ${result.skipped.length} record(s) already existed` : ''}.`);
-    await this._refresh(reason);
+    if (this._importInFlight) {
+      ui.notifications?.warn?.('An import is already in progress; please wait for it to finish.');
+      return;
+    }
+    this._importInFlight = true;
+    try {
+      const result = await LocationRegistryService.importLibrarySeeds(ids, {
+        includeChildren: options.includeChildren !== false,
+        includeAtlasFacts: options.includeAtlasFacts !== false,
+        revealState: String(options.revealState || 'hidden').trim() || 'hidden',
+        knownToPlayers: options.knownToPlayers === true
+      });
+      const firstSeedId = result.seeds?.[0]?.id || ids[0] || '';
+      this.host?.patchSurfaceState?.('locations', { selectedLocationId: firstSeedId, modal: null }, { render: false });
+      const invalidCount = result.invalid?.length || 0;
+      ui.notifications?.info?.(
+        `Imported ${result.imported.length} location record(s) from ${result.seeds.length} quick location(s)` +
+        `${result.skipped.length ? `; ${result.skipped.length} record(s) already existed` : ''}` +
+        `${invalidCount ? `; ${invalidCount} selection(s) could not be resolved` : ''}.`
+      );
+      await this._refresh(reason);
+    } catch (err) {
+      SWSELogger.error('[GM Locations] Library import failed before it could complete; no registry changes from this batch were saved.', err);
+      ui.notifications?.error?.('Location import failed before it could complete. No locations were changed by this attempt.');
+    } finally {
+      this._importInFlight = false;
+    }
   }
 
   async _openJobDraft(draft) {
