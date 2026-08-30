@@ -136,6 +136,7 @@ export class GMLocationsSurfaceController {
     this._abort = null;
     this._searchTimer = null;
     this._importInFlight = false;
+    this._pageElement = null;
   }
 
   async attach(root) {
@@ -145,6 +146,7 @@ export class GMLocationsSurfaceController {
     const pageElement = root.querySelector('.gm-datapad-locations');
     if (!pageElement) return false;
     if (!this._assertGM('manage Locations')) return false;
+    this._pageElement = pageElement;
     this._wireFilters(pageElement, signal);
     this._wireActions(pageElement, signal);
     this._wireForms(pageElement, signal);
@@ -159,6 +161,7 @@ export class GMLocationsSurfaceController {
     this._abort = null;
     if (this._searchTimer) window.clearTimeout(this._searchTimer);
     this._searchTimer = null;
+    this._pageElement = null;
   }
 
   _wireFilters(pageElement, signal) {
@@ -731,6 +734,18 @@ export class GMLocationsSurfaceController {
     await this._refresh('gm-location-lead-reveal-links');
   }
 
+  /** Buttons that trigger a library import — disabled while one is running (see _importLibrarySeedIds). */
+  _importTriggerElements() {
+    if (!this._pageElement) return [];
+    return Array.from(this._pageElement.querySelectorAll(
+      '[data-location-action="import-library-visible-now"], form[data-location-import-form] button[type="submit"]'
+    ));
+  }
+
+  _setImportControlsBusy(busy) {
+    for (const el of this._importTriggerElements()) el.disabled = busy;
+  }
+
   async _importLibrarySeedIds(seedIds = [], reason = 'gm-location-library-import', options = {}) {
     const ids = Array.from(new Set((seedIds || []).map(value => String(value || '').trim()).filter(Boolean)));
     if (!ids.length) {
@@ -742,6 +757,7 @@ export class GMLocationsSurfaceController {
       return;
     }
     this._importInFlight = true;
+    this._setImportControlsBusy(true);
     try {
       const result = await LocationRegistryService.importLibrarySeeds(ids, {
         includeChildren: options.includeChildren !== false,
@@ -749,9 +765,18 @@ export class GMLocationsSurfaceController {
         revealState: String(options.revealState || 'hidden').trim() || 'hidden',
         knownToPlayers: options.knownToPlayers === true
       });
-      const firstSeedId = result.seeds?.[0]?.id || ids[0] || '';
-      this.host?.patchSurfaceState?.('locations', { selectedLocationId: firstSeedId, modal: null }, { render: false });
       const invalidCount = result.invalid?.length || 0;
+      if (!result.seeds.length) {
+        // Every requested id was unresolvable: nothing was imported and
+        // there is no real location to select, so leave the importer
+        // modal open and the surface state untouched rather than reporting
+        // a false success or selecting the invalid input as if it were a
+        // location id.
+        ui.notifications?.warn?.(`Could not resolve ${invalidCount} selected location(s). No locations were imported.`);
+        return;
+      }
+      const firstSeedId = result.seeds[0]?.id || '';
+      this.host?.patchSurfaceState?.('locations', { selectedLocationId: firstSeedId, modal: null }, { render: false });
       ui.notifications?.info?.(
         `Imported ${result.imported.length} location record(s) from ${result.seeds.length} quick location(s)` +
         `${result.skipped.length ? `; ${result.skipped.length} record(s) already existed` : ''}` +
@@ -763,6 +788,7 @@ export class GMLocationsSurfaceController {
       ui.notifications?.error?.('Location import failed before it could complete. No locations were changed by this attempt.');
     } finally {
       this._importInFlight = false;
+      this._setImportControlsBusy(false);
     }
   }
 

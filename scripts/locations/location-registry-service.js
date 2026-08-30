@@ -946,13 +946,41 @@ export class LocationRegistryService {
 
   /**
    * Import a batch of built-in Location Library seeds as ONE registry
-   * write. Earlier this called importLibrarySeed() per id, each doing its
-   * own getRegistry()/saveRegistry() round trip — N settings writes for an
+   * write, serialized against any other library import already running in
+   * this client (see `#importQueue` below). Earlier this called
+   * importLibrarySeed() per id, each doing its own
+   * getRegistry()/saveRegistry() round trip — N settings writes for an
    * N-seed batch, so a failure partway through left an unreported partial
-   * import and importing the same seed twice concurrently could race. This
-   * version resolves and merges every seed into a single in-memory `byId`
-   * map first and saves once, only if anything actually changed.
-   *
+   * import. And even after that was fixed to one read+save per batch, two
+   * *different* batches called concurrently (e.g. a Faction-panel import
+   * racing a Locations-panel import) could each read the same starting
+   * registry and last-write-wins would silently discard whichever batch
+   * saved first — a real lost-update race, not merely a cosmetic
+   * double-click concern. `#importQueue` — a private static promise chain,
+   * not a generic transaction engine — makes every call to this method run
+   * only after the previous one has fully finished (settled, success or
+   * failure), so each batch's registry read always reflects every
+   * previously queued batch's write. This proves serialization within this
+   * running client/service instance only; it is not cross-tab, cross-GM,
+   * or cross-process locking, which this settings-backed architecture does
+   * not provide.
+   */
+  static #importQueue = Promise.resolve();
+
+  static importLibrarySeeds(seedIds = [], options = {}) {
+    const run = () => this.#importLibrarySeedsExclusive(seedIds, options);
+    // Chain onto the queue regardless of whether the previous entry
+    // resolved or rejected, so one rejected import never permanently
+    // poisons later imports.
+    const scheduled = this.#importQueue.then(run, run);
+    // Keep the queue itself always-resolved, decoupled from this call's
+    // own outcome — callers still see `scheduled`'s real result/rejection.
+    this.#importQueue = scheduled.then(() => undefined, () => undefined);
+    return scheduled;
+  }
+
+  /**
+   * The actual read-resolve-save body, run exclusively by the queue above.
    * Duplicate detection is by stable identity: buildLibrarySeedRecords()
    * always assigns the seed's own id to its generated parent record (and
    * `<seedId>-<child-slug>` to its children), so re-importing the same
@@ -960,7 +988,7 @@ export class LocationRegistryService {
    * duplicated — including across repeated calls, since the save only
    * happens when there is new data to persist.
    */
-  static async importLibrarySeeds(seedIds = [], { overwrite = false, includeChildren = true, includeAtlasFacts = true, revealState = 'hidden', knownToPlayers = false } = {}) {
+  static async #importLibrarySeedsExclusive(seedIds = [], { overwrite = false, includeChildren = true, includeAtlasFacts = true, revealState = 'hidden', knownToPlayers = false } = {}) {
     const ids = Array.from(new Set(safeArray(seedIds).map(id => text(id)).filter(Boolean)));
     const importedAt = nowIso();
     const records = this.getRegistry();
