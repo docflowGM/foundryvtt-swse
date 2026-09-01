@@ -114,7 +114,14 @@ function installShim({ locations = [], scenes = [], actors = [] } = {}) {
   assert.equal(vm.locationManager.filtersRelaxed, undefined, 'the old silent-fallback flag must be gone, not just unused');
 }
 
-// --- 4: Atlas Fact / Encounter Seed authoring reachability -----------------
+// --- 4: Atlas Fact / Encounter Seed authoring reachability AND
+// completeness — every field factPayload()/seedPayload() actually reads
+// must have a real rendered input, and the whole rendered-field → FormData
+// → payload helper → controller → service chain must work end to end
+// (Stage 3 final correction: the first pass only rendered a subset of the
+// fields those payload helpers already supported — Reveal Mode was
+// completely missing, and the whole advanced reveal/output block and the
+// Encounter Seed image field were never rendered at all) --------------------
 
 const root = new URL('../', import.meta.url);
 const template = await readFile(new URL('templates/apps/gm-datapad/surfaces/locations.hbs', root), 'utf8');
@@ -125,20 +132,103 @@ assert.match(template, /<form[^>]*data-encounter-seed-form/, 'locations.hbs must
 assert.match(controllerSource, /form\[data-atlas-fact-form\][\s\S]{0,200}addEventListener\(['"]submit['"]/, 'the controller must wire a submit handler for the Atlas Fact form');
 assert.match(controllerSource, /form\[data-encounter-seed-form\][\s\S]{0,200}addEventListener\(['"]submit['"]/, 'the controller must wire a submit handler for the Encounter Seed form');
 
-// Executed: real production save through the newly-reachable forms' own
-// payload shape.
-{
-  installShim({ locations: [{ id: 'dxun', name: 'Dxun' }] });
-  const { LocationRegistryService } = await import('/systems/foundryvtt-swse/scripts/locations/location-registry-service.js');
-  const savedLocation = await LocationRegistryService.upsertAtlasFact('dxun', {
-    title: 'Mandalorian Ruins', category: 'general', skill: 'knowledgeGalacticLore', dc: 18, revealState: 'hidden'
-  });
-  assert.equal(savedLocation.atlasFacts.length, 1);
-  assert.equal(savedLocation.atlasFacts[0].title, 'Mandalorian Ruins');
-
-  const withSeed = await LocationRegistryService.addEncounterSeed('dxun', { name: 'Beast Pack', category: 'random', quantity: '2' });
-  assert.equal(withSeed.encounterSeeds.length, 1);
-  assert.equal(withSeed.encounterSeeds[0].name, 'Beast Pack');
+const atlasFormMatch = template.match(/<form data-atlas-fact-form>[\s\S]*?<\/form>/);
+assert.ok(atlasFormMatch, 'expected to find the Atlas Fact form body');
+const atlasFormBody = atlasFormMatch[0];
+for (const name of ['factTitle', 'factCategory', 'factSkill', 'factDc', 'factRevealState', 'factRevealMode', 'leadOutput']) {
+  assert.match(atlasFormBody, new RegExp(`name="${name}"`), `the Atlas Fact form must render an input/select named ${name} — factPayload() already reads it`);
 }
 
-console.log('GM Locations truthful UI contract passed (compendium references never labeled "Missing", Scene actions gated on their real prerequisite, zero-match filters show zero, Atlas Fact/Encounter Seed authoring reachable and functional).');
+const seedFormMatch = template.match(/<form data-encounter-seed-form>[\s\S]*?<\/form>/);
+assert.ok(seedFormMatch, 'expected to find the Encounter Seed form body');
+const seedFormBody = seedFormMatch[0];
+for (const name of ['seedName', 'seedCategory', 'seedRole', 'seedQuantity', 'seedUuid', 'seedNotes', 'seedImg']) {
+  assert.match(seedFormBody, new RegExp(`name="${name}"`), `the Encounter Seed form must render an input/select named ${name} — seedPayload() already reads it`);
+}
+
+// Executed: the real rendered-field-name → FormData → payload helper →
+// controller → service chain, via a minimal fake form/FormData (no jsdom
+// dependency in this repo — see gm-locations-import-selection-persistence
+// for the same technique and rationale).
+class FakeFieldsFormData {
+  constructor(form) { this._fields = form.fields; }
+  get(name) { return Object.prototype.hasOwnProperty.call(this._fields, name) ? this._fields[name] : null; }
+  getAll(name) { return Object.prototype.hasOwnProperty.call(this._fields, name) ? [this._fields[name]] : []; }
+  has(name) { return Boolean(this._fields[name]); }
+}
+class FakeFieldsForm {
+  constructor(fields) { this.fields = fields; this._listeners = {}; }
+  addEventListener(type, handler) { (this._listeners[type] ||= []).push(handler); }
+  submit() { return Promise.all((this._listeners.submit || []).map(handler => handler({ preventDefault() {} }))); }
+}
+
+{
+  const realFormData = globalThis.FormData;
+  globalThis.FormData = FakeFieldsFormData;
+  try {
+    installShim({ locations: [{ id: 'dxun', name: 'Dxun' }] });
+    const { GMLocationsSurfaceController } = await import('/systems/foundryvtt-swse/scripts/ui/shell/gm/controllers/GMLocationsSurfaceController.js');
+    const { LocationRegistryService } = await import('/systems/foundryvtt-swse/scripts/locations/location-registry-service.js');
+
+    const atlasForm = new FakeFieldsForm({
+      locationId: 'dxun',
+      factTitle: 'Mandalorian Ruins',
+      factTeaser: 'Something stirs beneath the ash.',
+      factBody: 'A hidden Mandalorian armory.',
+      factCategory: 'general',
+      factSkill: 'knowledgeGalacticLore',
+      factDc: '18',
+      factRevealState: 'hidden',
+      factRevealMode: 'tiered',
+      leadOutput: 'none',
+      factTags: 'mandalorian, ruins'
+    });
+    const seedForm = new FakeFieldsForm({
+      locationId: 'dxun',
+      seedName: 'Beast Pack',
+      seedCategory: 'random',
+      seedRole: 'ambush',
+      seedQuantity: '2',
+      seedUuid: 'Actor.abc123',
+      seedImg: 'icons/creatures/beast.svg',
+      seedNotes: 'Circles the ruins at dusk.'
+    });
+    const fakeHost = { getSurfaceState: () => ({}), patchSurfaceState: () => {}, requestSurfaceRender: async () => {} };
+    const controller = new GMLocationsSurfaceController(fakeHost);
+    const abortController = new AbortController();
+    controller._wireForms({
+      querySelectorAll(selector) {
+        if (selector === 'form[data-atlas-fact-form]') return [atlasForm];
+        if (selector === 'form[data-encounter-seed-form]') return [seedForm];
+        return [];
+      }
+    }, abortController.signal);
+
+    await atlasForm.submit();
+    const savedLocation = LocationRegistryService.findLocation('dxun');
+    assert.equal(savedLocation.atlasFacts.length, 1);
+    const savedFact = savedLocation.atlasFacts[0];
+    assert.equal(savedFact.title, 'Mandalorian Ruins');
+    assert.equal(savedFact.category, 'general');
+    assert.equal(savedFact.checks[0].skill, 'knowledgeGalacticLore');
+    assert.equal(savedFact.checks[0].dc, 18);
+    assert.equal(savedFact.revealState, 'hidden');
+    assert.equal(savedFact.revealMode, 'tiered', 'the rendered Reveal Mode field must actually reach the saved record — this is the field the first Stage 3 pass never rendered at all');
+    assert.deepEqual(savedFact.tags, ['mandalorian', 'ruins']);
+
+    await seedForm.submit();
+    const withSeed = LocationRegistryService.findLocation('dxun');
+    assert.equal(withSeed.encounterSeeds.length, 1);
+    const savedSeed = withSeed.encounterSeeds[0];
+    assert.equal(savedSeed.name, 'Beast Pack');
+    assert.equal(savedSeed.category, 'random');
+    assert.equal(savedSeed.role, 'ambush');
+    assert.equal(savedSeed.quantity, '2');
+    assert.equal(savedSeed.uuid, 'Actor.abc123');
+    assert.equal(savedSeed.img, 'icons/creatures/beast.svg', 'the rendered Token Image field must actually reach the saved record — this field was never rendered at all in the first Stage 3 pass');
+  } finally {
+    globalThis.FormData = realFormData;
+  }
+}
+
+console.log('GM Locations truthful UI contract passed (compendium references never labeled "Missing", Scene actions gated on their real prerequisite, zero-match filters show zero, Atlas Fact/Encounter Seed authoring forms render every field their own payload contract supports and the full rendered-field-to-saved-record chain works end to end).');

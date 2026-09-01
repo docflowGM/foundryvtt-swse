@@ -256,8 +256,26 @@
                   <label class="swse-location-field"><span>Skill</span><select name="factSkill">{{#each surface.locationManager.skillOptions}}<option value="{{value}}" {{#if selected}}selected{{/if}}>{{label}}</option>{{/each}}</select></label>
                   <label class="swse-location-field"><span>DC</span><input type="number" name="factDc" value="15" min="0" /></label>
                   <label class="swse-location-field"><span>Reveal State</span><select name="factRevealState">{{#each surface.locationManager.editorRevealOptions}}<option value="{{value}}" {{#if selected}}selected{{/if}}>{{label}}</option>{{/each}}</select></label>
+                  <label class="swse-location-field"><span>Reveal Mode</span><select name="factRevealMode">{{#each surface.locationManager.factRevealModeOptions}}<option value="{{value}}" {{#if selected}}selected{{/if}}>{{label}}</option>{{/each}}</select></label>
                 </div>
                 <label class="swse-location-field"><span>On success, create</span><select name="leadOutput">{{#each surface.locationManager.leadOutputOptions}}<option value="{{value}}" {{#if selected}}selected{{/if}}>{{label}}</option>{{/each}}</select></label>
+                <details class="gm-location-optional-fields">
+                  <summary>Advanced reveal &amp; output options</summary>
+                  <label class="swse-location-field swse-location-field--wide"><span>Check Label (overrides the default Skill/DC summary)</span><input name="factCheckLabel" placeholder="e.g. Perception DC 20" /></label>
+                  <label class="swse-location-field swse-location-field--wide"><span>Multiple checks (one per line: skill|dc|label — overrides Skill/DC above if filled in)</span><textarea name="factChecksText" rows="2" placeholder="knowledgeGalacticLore|15|Local history&#10;perception|20|Spot the marking"></textarea></label>
+                  <label class="swse-location-field swse-location-field--wide"><span>Tags (comma-separated)</span><input name="factTags" placeholder="sith, ruins, underworld" /></label>
+                  <div class="swse-location-field-grid">
+                    <label class="swse-location-field"><input type="checkbox" name="leadCreateJob" /> Create a Job draft</label>
+                    <label class="swse-location-field"><input type="checkbox" name="leadCreateIntel" /> Create an Intel draft</label>
+                  </div>
+                  <label class="swse-location-field swse-location-field--wide"><span>Job Title</span><input name="leadJobTitle" /></label>
+                  <label class="swse-location-field swse-location-field--wide"><span>Job Objective</span><input name="leadJobObjective" /></label>
+                  <label class="swse-location-field"><span>Job Reward (credits)</span><input type="number" name="leadRewardCredits" value="0" min="0" /></label>
+                  <label class="swse-location-field swse-location-field--wide"><span>Intel Title</span><input name="leadIntelTitle" /></label>
+                  <label class="swse-location-field swse-location-field--wide"><span>Reveal Location ids on success (comma-separated)</span><input name="leadRevealLocationIds" /></label>
+                  <label class="swse-location-field swse-location-field--wide"><span>Reveal Faction ids on success (comma-separated)</span><input name="leadRevealFactionIds" /></label>
+                  <label class="swse-location-field swse-location-field--wide"><span>Reveal Contact ids on success (comma-separated)</span><input name="leadRevealContactIds" /></label>
+                </details>
                 <button type="submit" class="swse-mini-button primary">Save Atlas Fact</button>
               </form>
             </details>
@@ -304,6 +322,7 @@
                 <label class="swse-location-field"><span>Quantity</span><input name="seedQuantity" value="1" placeholder="1 or a dice formula, e.g. 1d4" /></label>
               </div>
               <label class="swse-location-field swse-location-field--wide"><span>Actor UUID (optional — used when staging tokens)</span><input name="seedUuid" placeholder="Actor.xxxxxxxx or Compendium.pack.id" /></label>
+              <label class="swse-location-field swse-location-field--wide"><span>Token Image (optional — overrides the Actor's own image when staged)</span><input name="seedImg" placeholder="icons/svg/mystery-man.svg" /></label>
               <label class="swse-location-field swse-location-field--wide"><span>Notes</span><input name="seedNotes" /></label>
               <button type="submit" class="swse-mini-button primary">Add Seed</button>
             </form>
