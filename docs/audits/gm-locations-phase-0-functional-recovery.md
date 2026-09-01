@@ -1074,15 +1074,60 @@ scene to primary if the removed one was primary.
 | Action | Valid today? | Calls | Requires selection? | Requires a specific Scene UUID? | Result visible? |
 |---|---|---|---|---|---|
 | `open-scene` | Yes | `LocationSceneBridgeService.openLinkedScene()` | Yes (locationId) | No (always the primary) | Yes (Foundry opens the Scene view) |
-| `create-scene` | Yes, but **was unguarded** (fixed — §Phase 2K below) | `LocationSceneBridgeService.createSceneFromLocation()` | Yes | No | Yes (notification + new Scenes-panel row) |
+| `create-scene` | Yes, but **was unguarded, then found still racy against `stage-encounter-seeds` — see "Final Scene-operation correction" below** | `LocationSceneBridgeService.createSceneFromLocation()` | Yes | No | Yes (notification + new Scenes-panel row) |
 | `create-encounter-scene` | Yes | same, with `nameSuffix: 'Encounter'` | Yes | No | Deferred (see §3) |
 | `activate-scene` | Yes | `LocationSceneBridgeService.activateLinkedScene()` | Yes | No (always the primary) | Yes (notification names the Scene) |
-| `stage-encounter-seeds` | Yes | `LocationSceneBridgeService.stageEncounterSeeds()` | Yes | No (creates the primary if missing) | Yes (notification with created/skipped counts) |
+| `stage-encounter-seeds` | Yes, **also creates a Scene when none is linked — same correction applies** | `LocationSceneBridgeService.stageEncounterSeeds()` | Yes | No (creates the primary if missing) | Yes (notification with created/skipped counts, now also refreshes the Scenes panel) |
 
 **Phase 2L — Activate Scene**: the button is labeled exactly "Activate
 Scene" (not "Use" or anything ambiguous), is a separate control from "Open
 Scene", and nothing auto-activates on open — `openLinkedScene()` only calls
 `scene.view()`, never `scene.activate()`.
+
+**Final Scene-operation correction (post-review).** The first Phase 2 pass
+guarded only `create-scene` (`_createSceneInFlight`) against its own
+double-click and against re-creating when a primary Scene already existed.
+Review found that incomplete: `stage-encounter-seeds` (rendered for the
+first time in this same Phase 2 pass) calls
+`LocationSceneBridgeService.stageEncounterSeeds(locationId, { createIfMissing:
+true })`, which — via `createEncounterScene()` → `createSceneFromLocation()`
+— **also** calls `Scene.create()` unconditionally whenever the location has
+no resolvable linked Scene yet, completely independent of
+`_createSceneInFlight`. So a double-click on Stage Encounter Seeds, or a
+Create Scene click racing a Stage Encounter Seeds click, could each
+independently observe "no Scene yet" and both create one — the identical
+bug class, through a second door this same phase had just opened.
+
+**Fix**: widened the guard from `_createSceneInFlight` to
+`_sceneOperationInFlight`, now checked and held by both `create-scene` and
+`stage-encounter-seeds` (the only two currently-rendered actions that can
+call `Scene.create()`). `LocationSceneBridgeService` itself remains
+unchanged — this is controller-level operation serialization only, per the
+Locations recovery's standing rule against altering Scene generation
+semantics. `stage-encounter-seeds` also gained a `_refresh()` call after
+completing (it previously didn't refresh at all), so a newly-created Scene
+from staging shows up in the Scenes panel immediately instead of only after
+some unrelated rerender.
+
+Proven for real (`tests/gm-locations-scene-creation-safety.test.mjs`,
+against a genuinely-async mocked `Scene.create()` — a synchronous mock
+cannot reproduce this class of race at all, same lesson as Stage 1's
+importer concurrency tests):
+
+- Double-click **Create Scene** → exactly one `Scene.create()` call
+  (unchanged from the first pass).
+- Double-click **Stage Encounter Seeds** with no linked Scene → exactly one
+  `Scene.create()` call. Verified via `git stash` to fail against the
+  pre-correction controller (2 calls) and pass with the fix.
+- **Create Scene racing Stage Encounter Seeds**, both starting from no
+  linked Scene → exactly one `Scene.create()` call, proving the two
+  actions share one guard rather than two independent ones.
+- **Stage Encounter Seeds with an existing primary Scene** → zero
+  `Scene.create()` calls; the existing Scene is reused.
+- **Guard recovery**: a simulated `Scene.create()` failure surfaces its
+  real error and links nothing, and a subsequent attempt on the same
+  location succeeds normally — the `finally`-reset guard never gets stuck
+  "in flight" after a failure.
 
 ## 9. Link relationship UI
 
@@ -1166,9 +1211,13 @@ an already-rendered action to justify adding one in this pass.
   (render is side-effect-free, broken links stay removable), a resolved
   scene's real name/active state.
 - `tests/gm-locations-scene-creation-safety.test.mjs` — executed, against
-  a genuinely-async mocked `Scene.create()`: a double-click creates exactly
-  one Scene (verified via `git stash` to fail against the pre-fix
-  controller), and re-clicking after a primary Scene exists creates none.
+  a genuinely-async mocked `Scene.create()`: double-click Create Scene,
+  double-click Stage Encounter Seeds, Create Scene racing Stage Encounter
+  Seeds, and Stage Encounter Seeds with an existing Scene all resolve to
+  exactly one Scene (or zero, when one already existed) — every
+  create-a-Scene case verified via `git stash` to fail against the
+  pre-correction controller and pass with the fix — plus guard recovery
+  after a simulated failure.
 - `tests/gm-locations-operational-ui-action-matrix.test.mjs` — static:
   every Phase 2 control's data attributes match what its controller branch
   reads.
@@ -1204,11 +1253,20 @@ with fake minimal DOM/event objects standing in for the browser.
 - Biome filter-pill UI density (86 pills) was not reviewed for usability
   (carried over from Stage 1, §17 above).
 - No visual busy/disabled state was added for the new Scene actions
-  (Create Scene has its own in-flight guard, §8, but no button-disable —
-  the same class of polish Stage 1 added for the importer, not extended
-  here since Create Scene's guard already prevents duplication; a
-  double-click on Open/Activate Scene is idempotent by nature, since both
-  just view/activate the same existing document).
+  (Create Scene/Stage Encounter Seeds share `_sceneOperationInFlight`, §8,
+  but no button-disable — the same class of polish Stage 1 added for the
+  importer, not extended here since the shared guard already prevents
+  duplication; a double-click on Open/Activate Scene is idempotent by
+  nature, since both just view/activate the same existing document).
+- Minor, non-blocking UX gap noted in review: the Scenes panel's primary
+  row still renders Open Scene/Activate Scene even when that primary
+  `map.sceneUuid` no longer resolves (`resolved: false`) — clicking either
+  reaches `LocationSceneBridgeService`, which already fails safely and
+  warns ("No linked Foundry Scene found for this location"), so nothing
+  breaks, but the buttons could be hidden or relabeled for a broken
+  primary the same way secondary broken links already read "Missing Scene
+  (uuid)". Left as a Stage 3+ polish item rather than folded into this
+  correction, which was scoped to the Scene-creation race only.
 - Live Foundry validation (below) is the only remaining step to call
   Phase 2 fully validated end to end.
 
