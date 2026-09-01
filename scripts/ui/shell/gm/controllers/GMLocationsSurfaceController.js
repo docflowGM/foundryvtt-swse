@@ -499,11 +499,31 @@ export class GMLocationsSurfaceController {
     pageElement.querySelectorAll('form[data-location-form]').forEach((form) => {
       form.addEventListener('submit', async (event) => {
         event.preventDefault();
-        const payload = locationPayload(new FormData(form));
-        const location = await LocationRegistryService.upsertLocation(payload);
-        if (location?.id) this.host?.patchSurfaceState?.('locations', { selectedLocationId: location.id, modal: null }, { render: false });
-        ui.notifications?.info?.('Location saved.');
-        await this._refresh('gm-location-save');
+        try {
+          const payload = locationPayload(new FormData(form));
+          const location = await LocationRegistryService.upsertLocation(payload);
+          if (!location?.id) {
+            ui.notifications?.error?.('Location could not be saved.');
+            return;
+          }
+          this.host?.patchSurfaceState?.('locations', { selectedLocationId: location.id, modal: null }, { render: false });
+          // upsertLocation() rejects an invalid parentLocationId (self,
+          // nonexistent, or a cycle) rather than blocking the whole save —
+          // the rest of the location's edits still apply. If what came
+          // back differs from what was submitted, the GM asked for
+          // something invalid; say so instead of a plain "saved" that
+          // would silently hide it.
+          const submittedParentId = String(payload.parentLocationId || '').trim();
+          if (submittedParentId && submittedParentId !== location.parentLocationId) {
+            ui.notifications?.warn?.('Location saved, but the parent location you entered was invalid (itself, missing, or would create a cycle) and was cleared.');
+          } else {
+            ui.notifications?.info?.('Location saved.');
+          }
+          await this._refresh('gm-location-save');
+        } catch (err) {
+          SWSELogger.error('[GM Locations] Location save failed.', err);
+          ui.notifications?.error?.(err?.message || 'Location could not be saved.');
+        }
       }, { signal });
     });
 
@@ -518,24 +538,42 @@ export class GMLocationsSurfaceController {
     pageElement.querySelectorAll('form[data-atlas-fact-form]').forEach((form) => {
       form.addEventListener('submit', async (event) => {
         event.preventDefault();
-        const formData = new FormData(form);
-        const locationId = text(formData, 'locationId') || this.host?.getSurfaceState?.('locations')?.selectedLocationId || '';
-        const location = await LocationRegistryService.upsertAtlasFact(locationId, factPayload(formData));
-        if (location?.id) this.host?.patchSurfaceState?.('locations', { selectedLocationId: location.id }, { render: false });
-        ui.notifications?.info?.('Atlas fact saved.');
-        await this._refresh('gm-location-fact-save');
+        try {
+          const formData = new FormData(form);
+          const locationId = text(formData, 'locationId') || this.host?.getSurfaceState?.('locations')?.selectedLocationId || '';
+          const location = await LocationRegistryService.upsertAtlasFact(locationId, factPayload(formData));
+          if (!location?.id) {
+            ui.notifications?.warn?.('Could not save that Atlas fact — select a location first.');
+            return;
+          }
+          this.host?.patchSurfaceState?.('locations', { selectedLocationId: location.id }, { render: false });
+          ui.notifications?.info?.('Atlas fact saved.');
+          await this._refresh('gm-location-fact-save');
+        } catch (err) {
+          SWSELogger.error('[GM Locations] Atlas fact save failed.', err);
+          ui.notifications?.error?.(err?.message || 'Atlas fact could not be saved.');
+        }
       }, { signal });
     });
 
     pageElement.querySelectorAll('form[data-encounter-seed-form]').forEach((form) => {
       form.addEventListener('submit', async (event) => {
         event.preventDefault();
-        const formData = new FormData(form);
-        const locationId = text(formData, 'locationId') || this.host?.getSurfaceState?.('locations')?.selectedLocationId || '';
-        const location = await LocationRegistryService.addEncounterSeed(locationId, seedPayload(formData));
-        if (location?.id) this.host?.patchSurfaceState?.('locations', { selectedLocationId: location.id }, { render: false });
-        ui.notifications?.info?.('Encounter seed added.');
-        await this._refresh('gm-location-seed-save');
+        try {
+          const formData = new FormData(form);
+          const locationId = text(formData, 'locationId') || this.host?.getSurfaceState?.('locations')?.selectedLocationId || '';
+          const location = await LocationRegistryService.addEncounterSeed(locationId, seedPayload(formData));
+          if (!location?.id) {
+            ui.notifications?.warn?.('Could not add that encounter seed — select a location first.');
+            return;
+          }
+          this.host?.patchSurfaceState?.('locations', { selectedLocationId: location.id }, { render: false });
+          ui.notifications?.info?.('Encounter seed added.');
+          await this._refresh('gm-location-seed-save');
+        } catch (err) {
+          SWSELogger.error('[GM Locations] Encounter seed save failed.', err);
+          ui.notifications?.error?.(err?.message || 'Encounter seed could not be added.');
+        }
       }, { signal });
     });
   }

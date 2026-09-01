@@ -139,13 +139,6 @@
             <h3>Location Library</h3>
           </div>
         </div>
-        {{#if surface.locationManager.filtersRelaxed}}
-          <div class="gm-location-filter-warning">
-            <strong>Filters hid all imported locations.</strong>
-            <span>Showing all {{surface.locationManager.stats.importedCount}} imported records instead. Clear filters to return to the default view.</span>
-            <button type="button" class="swse-mini-button" data-location-action="clear-location-filters">Clear Filters</button>
-          </div>
-        {{/if}}
         {{#if surface.locationManager.hasVisibleLocations}}
           <div class="gm-location-card-stack">
             {{#each surface.locationManager.cards}}
@@ -167,15 +160,25 @@
             {{/each}}
           </div>
         {{else}}
-          <div class="swse-empty-state gm-phase5-location-empty gm-location-compendium-drop" data-location-library-drop-zone>
-            <h3>No locations found</h3>
-            <p>Import a quick location, create one with the guided wizard, or drag a record from the <strong>Locations - Quick Library</strong> compendium onto this panel.</p>
-            <p class="gm-location-empty-hint">Drop a quick-location Journal here to import it immediately, or use Import Location for multi-select.</p>
-            <div class="gm-location-empty-actions">
-              <button type="button" class="swse-mini-button primary" data-location-action="open-import-modal">Import Location</button>
-              <button type="button" class="swse-mini-button" data-location-action="new">New Location</button>
+          {{#if surface.locationManager.filtersProducedNoMatches}}
+            <div class="swse-empty-state gm-phase5-location-empty">
+              <h3>No locations match your filters</h3>
+              <p>{{surface.locationManager.stats.importedCount}} location(s) are imported, but none match the current search/category/type/reveal filters.</p>
+              <div class="gm-location-empty-actions">
+                <button type="button" class="swse-mini-button primary" data-location-action="clear-location-filters">Clear Filters</button>
+              </div>
             </div>
-          </div>
+          {{else}}
+            <div class="swse-empty-state gm-phase5-location-empty gm-location-compendium-drop" data-location-library-drop-zone>
+              <h3>No locations found</h3>
+              <p>Import a quick location, create one with the guided wizard, or drag a record from the <strong>Locations - Quick Library</strong> compendium onto this panel.</p>
+              <p class="gm-location-empty-hint">Drop a quick-location Journal here to import it immediately, or use Import Location for multi-select.</p>
+              <div class="gm-location-empty-actions">
+                <button type="button" class="swse-mini-button primary" data-location-action="open-import-modal">Import Location</button>
+                <button type="button" class="swse-mini-button" data-location-action="new">New Location</button>
+              </div>
+            </div>
+          {{/if}}
         {{/if}}
       </section>
     </aside>
@@ -241,6 +244,23 @@
             {{else}}
               <p>No Atlas facts seeded yet.</p>
             {{/each}}
+            <details class="gm-location-optional-fields">
+              <summary>Add Atlas Fact</summary>
+              <form data-atlas-fact-form>
+                <input type="hidden" name="locationId" value="{{surface.locationManager.selected.id}}" />
+                <label class="swse-location-field swse-location-field--wide"><span>Title</span><input name="factTitle" placeholder="New Atlas Fact" /></label>
+                <label class="swse-location-field swse-location-field--wide"><span>Teaser (shown before the check succeeds)</span><input name="factTeaser" /></label>
+                <label class="swse-location-field swse-location-field--wide"><span>Body (revealed on success)</span><textarea name="factBody" rows="2"></textarea></label>
+                <div class="swse-location-field-grid">
+                  <label class="swse-location-field"><span>Category</span><select name="factCategory">{{#each surface.locationManager.factCategoryOptions}}<option value="{{value}}" {{#if selected}}selected{{/if}}>{{label}}</option>{{/each}}</select></label>
+                  <label class="swse-location-field"><span>Skill</span><select name="factSkill">{{#each surface.locationManager.skillOptions}}<option value="{{value}}" {{#if selected}}selected{{/if}}>{{label}}</option>{{/each}}</select></label>
+                  <label class="swse-location-field"><span>DC</span><input type="number" name="factDc" value="15" min="0" /></label>
+                  <label class="swse-location-field"><span>Reveal State</span><select name="factRevealState">{{#each surface.locationManager.editorRevealOptions}}<option value="{{value}}" {{#if selected}}selected{{/if}}>{{label}}</option>{{/each}}</select></label>
+                </div>
+                <label class="swse-location-field"><span>On success, create</span><select name="leadOutput">{{#each surface.locationManager.leadOutputOptions}}<option value="{{value}}" {{#if selected}}selected{{/if}}>{{label}}</option>{{/each}}</select></label>
+                <button type="submit" class="swse-mini-button primary">Save Atlas Fact</button>
+              </form>
+            </details>
           </div>
         </section>
 
@@ -251,13 +271,21 @@
               <h3>Encounter Seeds</h3>
             </div>
             {{#if surface.locationManager.selected.encounterSeeds.length}}
-              <button type="button" class="swse-mini-button" data-location-action="stage-encounter-seeds" data-location-id="{{surface.locationManager.selected.id}}">Stage Encounter Seeds</button>
+              {{#if surface.locationManager.selected.hasPrimaryScene}}
+                <button type="button" class="swse-mini-button" data-location-action="stage-encounter-seeds" data-location-id="{{surface.locationManager.selected.id}}">Stage Encounter Seeds</button>
+              {{else}}
+                {{#if surface.locationManager.selected.canCreateScene}}
+                  <button type="button" class="swse-mini-button" data-location-action="stage-encounter-seeds" data-location-id="{{surface.locationManager.selected.id}}">Stage Encounter Seeds</button>
+                {{else}}
+                  <span class="swse-location-chip" title="Add a map image before staging — no Scene exists yet and one can't be created without one.">Needs a map image</span>
+                {{/if}}
+              {{/if}}
             {{/if}}
           </div>
           {{#each surface.locationManager.selected.encounterSeeds}}
             <div class="gm-location-fact-row">
               <strong>{{name}}</strong>
-              <span>{{categoryLabel}} · {{sourceLabel}}{{#if hasActor}} · {{actorLabel}}{{#unless actorResolved}} (unresolved){{/unless}}{{/if}}</span>
+              <span>{{categoryLabel}} · {{sourceLabel}}{{#if hasActor}} · {{actorLabel}}{{#if actorUnverifiable}}{{else}}{{#unless actorResolved}} (unresolved){{/unless}}{{/if}}{{/if}}</span>
               <div>
                 <button type="button" class="danger" data-location-action="remove-seed" data-location-id="{{../surface.locationManager.selected.id}}" data-seed-id="{{id}}">Remove</button>
               </div>
@@ -265,6 +293,21 @@
           {{else}}
             <p class="swse-empty-state">No encounter seeds.</p>
           {{/each}}
+          <details class="gm-location-optional-fields">
+            <summary>Add Encounter Seed</summary>
+            <form data-encounter-seed-form>
+              <input type="hidden" name="locationId" value="{{surface.locationManager.selected.id}}" />
+              <label class="swse-location-field swse-location-field--wide"><span>Name</span><input name="seedName" placeholder="Encounter Seed" /></label>
+              <div class="swse-location-field-grid">
+                <label class="swse-location-field"><span>Category</span><select name="seedCategory">{{#each surface.locationManager.seedCategoryOptions}}<option value="{{value}}" {{#if selected}}selected{{/if}}>{{label}}</option>{{/each}}</select></label>
+                <label class="swse-location-field"><span>Role</span><input name="seedRole" placeholder="Guard, patrol, boss..." /></label>
+                <label class="swse-location-field"><span>Quantity</span><input name="seedQuantity" value="1" placeholder="1 or a dice formula, e.g. 1d4" /></label>
+              </div>
+              <label class="swse-location-field swse-location-field--wide"><span>Actor UUID (optional — used when staging tokens)</span><input name="seedUuid" placeholder="Actor.xxxxxxxx or Compendium.pack.id" /></label>
+              <label class="swse-location-field swse-location-field--wide"><span>Notes</span><input name="seedNotes" /></label>
+              <button type="submit" class="swse-mini-button primary">Add Seed</button>
+            </form>
+          </details>
         </section>
 
         <section class="swse-location-panel gm-phase5-location-panel gm-location-scenes">
@@ -274,17 +317,23 @@
               <h3>Scene Links</h3>
             </div>
             {{#unless surface.locationManager.selected.hasPrimaryScene}}
-              <button type="button" class="swse-mini-button primary" data-location-action="create-scene" data-location-id="{{surface.locationManager.selected.id}}">Create Scene</button>
+              {{#if surface.locationManager.selected.canCreateScene}}
+                <button type="button" class="swse-mini-button primary" data-location-action="create-scene" data-location-id="{{surface.locationManager.selected.id}}">Create Scene</button>
+              {{else}}
+                <span class="swse-location-chip" title="Add a map image or a Map Image Path in the Edit wizard before creating a Scene.">Needs a map image</span>
+              {{/if}}
             {{/unless}}
           </div>
           {{#each surface.locationManager.selected.sceneRows}}
-            <div class="gm-location-fact-row {{#unless resolved}}is-broken-link{{/unless}}">
+            <div class="gm-location-fact-row {{#unless unverifiable}}{{#unless resolved}}is-broken-link{{/unless}}{{/unless}}">
               <strong>{{label}}</strong>
-              <span>{{#if isPrimary}}Primary{{else}}Linked{{/if}}{{#if isActive}} · Active{{/if}}</span>
+              <span>{{#if unverifiable}}Compendium-sourced{{else}}{{#if isPrimary}}Primary{{else}}Linked{{/if}}{{#if isActive}} · Active{{/if}}{{/if}}</span>
               <div>
                 {{#if isPrimary}}
-                  <button type="button" data-location-action="open-scene" data-location-id="{{../surface.locationManager.selected.id}}">Open Scene</button>
-                  <button type="button" data-location-action="activate-scene" data-location-id="{{../surface.locationManager.selected.id}}">Activate Scene</button>
+                  {{#if resolved}}
+                    <button type="button" data-location-action="open-scene" data-location-id="{{../surface.locationManager.selected.id}}">Open Scene</button>
+                    <button type="button" data-location-action="activate-scene" data-location-id="{{../surface.locationManager.selected.id}}">Activate Scene</button>
+                  {{/if}}
                 {{/if}}
                 <button type="button" class="danger" data-location-action="remove-link" data-location-id="{{../surface.locationManager.selected.id}}" data-link-kind="scene" data-link-value="{{uuid}}">Unlink</button>
               </div>
@@ -327,7 +376,7 @@
           <div class="gm-location-link-group">
             <span class="gm-phase5-location-eyebrow">NPCs / Actors</span>
             {{#each surface.locationManager.selected.actorRows}}
-              <div class="gm-location-fact-row {{#unless resolved}}is-broken-link{{/unless}}">
+              <div class="gm-location-fact-row {{#unless unverifiable}}{{#unless resolved}}is-broken-link{{/unless}}{{/unless}}">
                 <strong>{{label}}</strong>
                 <div><button type="button" class="danger" data-location-action="remove-link" data-location-id="{{../surface.locationManager.selected.id}}" data-link-kind="actor" data-link-value="{{uuid}}">Unlink</button></div>
               </div>

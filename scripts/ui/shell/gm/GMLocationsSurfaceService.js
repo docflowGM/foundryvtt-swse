@@ -149,8 +149,21 @@ function parseWorldDocId(uuid = '', docType = '') {
   return match ? match[1] : '';
 }
 
+function isCompendiumUuid(uuid = '') {
+  return text(uuid).startsWith('Compendium.');
+}
+
 function resolveSceneRow(uuid, isPrimary) {
   const id = parseWorldDocId(uuid, 'Scene');
+  // A Compendium.* UUID (a compendium-sourced Scene link) can't be
+  // resolved synchronously here — game.scenes only holds world documents.
+  // Reporting it as "Missing" would be false: LocationSceneBridgeService
+  // resolves these fine via async fromUuid() when actually opening it.
+  // Only a world-shaped (Scene.<id>) UUID that fails to resolve is
+  // genuinely missing.
+  if (!id && isCompendiumUuid(uuid)) {
+    return { uuid, isPrimary, id: '', name: '', resolved: false, isActive: false, unverifiable: true, label: 'Compendium Scene (unverified)' };
+  }
   const scene = id ? game.scenes?.get?.(id) : null;
   return {
     uuid,
@@ -159,12 +172,20 @@ function resolveSceneRow(uuid, isPrimary) {
     name: scene?.name || '',
     resolved: Boolean(scene),
     isActive: Boolean(scene?.active),
+    unverifiable: false,
     label: scene ? scene.name : `Missing Scene (${uuid})`
   };
 }
 
 function resolveActorLink(uuid) {
   const id = parseWorldDocId(uuid, 'Actor');
+  // Same reasoning as resolveSceneRow() above — a compendium-sourced
+  // encounter-seed/NPC actor link is real and staging/linking already
+  // resolves it via async fromUuid(); it just can't be verified here
+  // without adding render-time I/O for every card in the list.
+  if (!id && isCompendiumUuid(uuid)) {
+    return { uuid, id: '', name: '', img: '', resolved: false, unverifiable: true, label: 'Compendium Actor (unverified)' };
+  }
   const actor = id ? game.actors?.get?.(id) : null;
   return {
     uuid,
@@ -172,6 +193,7 @@ function resolveActorLink(uuid) {
     name: actor?.name || '',
     img: actor?.img || '',
     resolved: Boolean(actor),
+    unverifiable: false,
     label: actor ? actor.name : `Missing Actor (${uuid})`
   };
 }
@@ -306,6 +328,10 @@ function selectedVm(location = null, records = [], factions = []) {
     jobRows: location.linkedJobIds.map(id => ({ id })),
     sceneRows: Array.from(new Set([location.map?.sceneUuid, ...location.linkedSceneUuids].filter(Boolean))).map(uuid => resolveSceneRow(uuid, uuid === location.map?.sceneUuid)),
     hasPrimaryScene: Boolean(location.map?.sceneUuid),
+    // Matches LocationSceneBridgeService.createSceneFromLocation()'s own
+    // prerequisite check (map.imagePath || location.image) exactly, so
+    // Create Scene is never offered as a guaranteed-failure control.
+    canCreateScene: Boolean(location.map?.imagePath || location.image),
     encounterSeeds: location.encounterSeeds.map((seed) => {
       const actorLink = seed.uuid ? resolveActorLink(seed.uuid) : null;
       return {
@@ -314,6 +340,7 @@ function selectedVm(location = null, records = [], factions = []) {
         sourceLabel: seed.sourceKind === 'compendium' ? 'Compendium Actor' : seed.sourceKind === 'world' ? 'World Actor' : 'Manual Seed',
         hasActor: Boolean(seed.uuid),
         actorResolved: actorLink ? actorLink.resolved : false,
+        actorUnverifiable: actorLink ? actorLink.unverifiable : false,
         actorLabel: actorLink ? actorLink.label : ''
       };
     }),
@@ -464,8 +491,13 @@ export class GMLocationsSurfaceService {
       return true;
     });
     const hasActiveFilters = Boolean(filters.search || filters.category || filters.type || filters.revealState || filters.special);
-    const filtersRelaxed = !filters.search && hasActiveFilters && cards.length > 0 && filteredCards.length === 0;
-    const visibleCards = filtersRelaxed ? cards : filteredCards;
+    // A filter that matches nothing must show nothing — silently
+    // substituting the full unfiltered list ("filtersRelaxed") made a
+    // zero-match filter look like it had no effect at all. The template
+    // now renders a distinct "no locations match your filters" empty
+    // state (with Clear Filters) instead.
+    const visibleCards = filteredCards;
+    const filtersProducedNoMatches = hasActiveFilters && cards.length > 0 && filteredCards.length === 0;
     const selectedLocationId = text(state.selectedLocationId || (state?.modal?.type === 'create' ? '' : visibleCards[0]?.id) || '');
     const selectedLocation = selectedLocationId ? LocationRegistryService.findLocation(selectedLocationId) : null;
     const selected = selectedVm(selectedLocation, records, factions);
@@ -496,11 +528,16 @@ export class GMLocationsSurfaceService {
     const deleteLocationId = text(rawModal.locationId);
     const deleteLocation = deleteLocationId ? LocationRegistryService.findLocation(deleteLocationId) : null;
 
-    const locationOptions = [{ value: '', label: 'No parent / standalone', selected: !editor?.parentLocationId }, ...records.map(record => ({
+    // A location can never be its own parent — excluded outright rather
+    // than merely marked disabled=true, since <datalist> options don't
+    // reliably enforce "disabled" across browsers and the field is free
+    // text regardless (upsertLocation()'s own _sanitizeParentLocationId()
+    // is the real, unconditional guard against self-parenting and cycles;
+    // this list is only the suggestion UI).
+    const locationOptions = [{ value: '', label: 'No parent / standalone', selected: !editor?.parentLocationId }, ...records.filter(record => record.id !== selected?.id).map(record => ({
       value: record.id,
       label: locationChain(record, new Map(records.map(entry => [entry.id, entry]))) || record.name,
-      selected: record.id === editor?.parentLocationId,
-      disabled: record.id === selected?.id
+      selected: record.id === editor?.parentLocationId
     }))];
     const factionOptions = [{ value: '', label: 'No controlling faction', selected: !editor?.raw?.controllingFactionId }, ...factions.map(faction => ({ value: faction.id, label: faction.name, selected: faction.id === editor?.raw?.controllingFactionId }))];
 
@@ -514,7 +551,7 @@ export class GMLocationsSurfaceService {
         hasLocations: cards.length > 0,
         hasVisibleLocations: visibleCards.length > 0,
         hasActiveFilters,
-        filtersRelaxed,
+        filtersProducedNoMatches,
         selectedLocationId,
         selected,
         editor,
