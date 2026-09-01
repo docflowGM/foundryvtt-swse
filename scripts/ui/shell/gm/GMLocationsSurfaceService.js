@@ -282,7 +282,15 @@ function locationCard(location = {}, records = [], factions = []) {
 
 
 function librarySeedCard(seed = {}, records = []) {
-  const imported = records.some(record => record.id === seed.id || record.librarySeedId === seed.id);
+  // Provenance only (librarySeedId), not raw id equality — an unrelated
+  // manually-created Location can share a seed's canonical id (e.g. a GM
+  // manually creating "Tatooine" before ever importing the built-in
+  // Tatooine seed), which used to make this seed falsely read as already
+  // imported and disable its checkbox. librarySeedId is set only by a
+  // real Library import and stays pinned to the seed's own canonical id
+  // even if LocationRegistryService had to land the actual record at a
+  // fallback id due to that collision.
+  const imported = records.some(record => record.librarySeedId === seed.id);
   const childCount = asArray(seed.children).length;
   const factCount = asArray(seed.atlasFacts).length;
   const recordCount = 1 + childCount;

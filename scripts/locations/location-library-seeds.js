@@ -5126,7 +5126,15 @@ function normalizeImportOptions(options = {}) {
     includeAtlasFacts: options.includeAtlasFacts !== false,
     revealState: text(options.revealState || 'hidden'),
     knownToPlayers: options.knownToPlayers === true,
-    importedAt: text(options.importedAt || new Date().toISOString())
+    importedAt: text(options.importedAt || new Date().toISOString()),
+    // Normally the parent record's own registry id is the seed's own
+    // canonical id (seed.id) — see LocationRegistryService's identity
+    // namespace collision handling for why a caller may need to import a
+    // seed under a DIFFERENT record id (its canonical id already belongs
+    // to an unrelated, non-library record). Provenance (librarySeedId)
+    // always stays keyed to the seed's own canonical id regardless of
+    // which record id the import actually lands on.
+    parentRecordId: text(options.parentRecordId || '')
   };
 }
 
@@ -5173,8 +5181,9 @@ function seedFactToAtlasFact(fact = {}, seed = {}) {
 
 function seedToLocationRecord(seed = {}, options = {}) {
   const opts = normalizeImportOptions(options);
+  const recordId = opts.parentRecordId || seed.id;
   return {
-    id: seed.id,
+    id: recordId,
     name: seed.name,
     category: seed.category || 'planetary',
     type: seed.type || 'planet',
@@ -5197,19 +5206,20 @@ function seedToLocationRecord(seed = {}, options = {}) {
     commerceNotes: seed.commerceNotes || '',
     travelNotes: seed.travelNotes || '',
     atlasFacts: opts.includeAtlasFacts ? asArray(seed.atlasFacts).map(fact => seedFactToAtlasFact(fact, seed)) : [],
-    history: [{ id: `library-${seed.id}`, at: opts.importedAt, type: 'library-seed-imported', note: `Imported ${seed.name} from Location Library.` }]
+    history: [{ id: `library-${recordId}`, at: opts.importedAt, type: 'library-seed-imported', note: `Imported ${seed.name} from Location Library.` }]
   };
 }
 
 function childToLocationRecord(child = {}, parentSeed = {}, options = {}) {
   const opts = normalizeImportOptions(options);
+  const parentRecordId = opts.parentRecordId || parentSeed.id;
   return {
     id: child.id,
     name: child.name,
     category: child.category || parentSeed.category || 'planetary',
     type: child.type || 'poi',
     scale: child.scale || 'site',
-    parentLocationId: parentSeed.id,
+    parentLocationId: parentRecordId,
     region: parentSeed.region || '',
     sector: parentSeed.sector || '',
     system: parentSeed.system || '',
