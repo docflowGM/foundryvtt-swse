@@ -1305,3 +1305,418 @@ removed.
 **Regression**: open Import Location → PASS = the static sample library
 still appears immediately and behaves exactly as Stage 1 left it → import
 a sample planet → PASS = Stage 1 behavior unchanged.
+
+# STAGE 3 — Usability + State Integrity Closure
+
+## 1. Stage 3 verdict
+
+Every item explicitly called out to start with is closed: the workbench
+layout now responds to the Locations surface's own width (not just the
+browser viewport), the selected-location detail column owns one scroll
+region instead of three overlapping ones, and the
+`GMInteractionRepairService` stale-callback race that produced the
+reported live crash (`TypeError: Cannot read properties of null (reading
+'style')`) is fixed with two independent guards. Also closed: the
+duplicate-name location-identity bug, hierarchy cycle/self-parent
+validation, filter-zero-match false fallback, Scene-action prerequisite
+truthfulness, compendium Actor/Scene false-"Missing" labeling, missing
+Atlas Fact/Encounter Seed authoring forms, honest form-failure handling,
+and import-selection loss across filter reruns. Deferred, with rationale
+below: CSS repair-layer classification, UI entry-point/preview-card
+preselection, and "Quick Locations Compendium" terminology cleanup —
+none of these were required for correctness and Stage 4 remains
+explicitly not started.
+
+## 2. Actual-width layout — before/after
+
+**Before**: `.gm-location-workbench`'s only responsive rule was
+`@media (max-width: 1180px)`, which measures the *browser* viewport.
+GMDatapad's own window (`scripts/apps/gm-datapad.js`) can be resized
+independently down to `GM_TABLET_MIN_WIDTH` (55% of
+`GM_TABLET_BASE_WIDTH = 1440`, i.e. ~792px), and its command rail already
+consumes `minmax(210px, 236px)` of that. The two-column workbench grid
+(`minmax(360px,.85fr) minmax(520px,1.15fr)` + gap) needs ~892px minimum.
+A browser window at 1500px+ never trips the 1180px breakpoint even while
+the actual Locations surface inside the Datapad window has well under
+600px available — the grid overflows/clips silently, no responsive
+fallback ever fires.
+
+**After**: `.gm-datapad-locations` declares `container-type: inline-size;
+container-name: gm-locations-surface;`, and a new
+`@container gm-locations-surface (max-width: 920px)` rule collapses the
+workbench, the friendly filter grid, and the selected-location support
+grid to one column, keyed to the *surface's own* measured width. The
+original `@media (max-width: 1180px)` rule is layered underneath, not
+deleted — a coarse fallback for any context without container-query
+support, not a competing source of truth.
+
+Verified statically (source-text assertions on the real CSS file, no
+live cascade evaluation available — see §16) in
+`tests/gm-locations-container-responsive-layout.test.mjs`, proven to
+fail against the pre-fix file via `git stash`.
+
+## 3. Detail-panel scroll ownership — before/after
+
+**Before**: `.gm-location-browser` and `.gm-location-detail` shared one
+rule (`overflow: hidden` on the column, with only the first child,
+`.gm-location-selected-card`, independently scrollable via its own
+`flex:1; overflow:auto`). Every panel Phase 2 added after it
+(Children/Facts, Encounter Seeds, Scenes, Links) was a plain block child
+with no sizing rule of its own — once their combined height exceeded the
+column, the parent's `overflow: hidden` clipped them with nothing to
+scroll them into view.
+
+**After**: `.gm-location-browser` (list column) keeps `overflow: hidden`
+— its own list scrolls internally, filters stay pinned. `.gm-location-detail`
+(selected-location workspace) now owns one vertical scroll region for the
+whole column (`overflow-y: auto; overflow-x: hidden`).
+`.gm-location-selected-card` is `flex-shrink: 0` (no longer independently
+scrollable, participates in the parent's single region); the stray
+`max-height: 250px; overflow: auto` on `.gm-location-selected-support`
+(a third nested scroll region) is removed.
+
+## 4. `GMInteractionRepairService` — live-crash diagnosis and fix
+
+**Diagnosis, confirmed by source reading**:
+`_stabilizeViewport(host, root, signal)` scheduled a nested double-`requestAnimationFrame`
+(`view.requestAnimationFrame(() => view.requestAnimationFrame(apply))`)
+without ever capturing either frame id. Only the two `setTimeout` ids were
+cleared on the binding's `AbortController` firing (`destroy()`, called by
+`GMSurfaceControllerRegistry` on every surface rerender and on app close —
+confirmed the abort itself fires at the right times). `apply()` itself had
+no `signal.aborted`/connectivity guard at all, so a stale callback that
+outlived its binding called `host._applyGmDatapadPosition(...)` against a
+host/element Foundry had already torn down — matching the reported stack
+(`Foundry #applyPosition → GMDatapad.setPosition →
+_applyGmDatapadPosition → GMInteractionRepairService`) exactly.
+
+**Fix**: both rAF ids (outer and the nested inner one) are captured and
+canceled via `cancelAnimationFrame` in the existing abort listener,
+alongside the two `setTimeout` ids. `apply()` now refuses to touch
+anything unless `!signal.aborted`, `root.isConnected`, and the host's
+element is still a connected `HTMLElement` — three independent
+conditions, any one of which alone would have prevented the reported
+crash. `_bindModalBounds()`'s deferred click-driven `sync` (scheduled via
+`setTimeout(sync,0)`/`requestAnimationFrame(sync)` from a click on a
+repair-relevant action) gets the same `signal.aborted`/`root.isConnected`
+guard, for the identical class of bug.
+
+Verified executed against a minimal hand-rolled fake DOM (no jsdom
+dependency in this repo — `tests/gm-datapad-interaction-repair-lifecycle.test.mjs`):
+a destroyed binding's stale double-rAF and both `setTimeout` repair
+callbacks can never call `host._applyGmDatapadPosition`; `apply()`
+independently refuses to act once `root` is disconnected even without an
+explicit `destroy()` call (defense in depth); the click-scheduled
+deferred modal-bounds sync is inert after destroy. All four assertions
+proven to fail against the pre-fix file via `git stash`.
+
+## 5. Import selection state contract
+
+**Before**: the Import Location modal's checked state lived only in
+checkbox DOM. Every library search/biome/category filter change patches
+surface state and triggers a full rerender, rebuilding
+`surface.locationManager.library.cards` (and every `<input>` the
+`{{#each}}` loop renders) from a fresh view-model with no memory of what
+had been checked — adjusting a filter mid-selection silently discarded
+the GM's picks, no warning, no visual sign anything was lost.
+
+**After**: checked seed ids are persisted into surface state
+(`librarySelectedSeedIds`) on every checkbox `change` event (the whole
+current checked set, read back from the form, not a single toggled id —
+robust against any ordering). `GMLocationsSurfaceService.buildViewModel()`
+marks each library card's `checked` from that state, independent of which
+filter produced the current visible card list. The selection is cleared
+at the two points that actually consume or discard it: a successful
+import (`_importLibrarySeedIds`'s success path) and closing the modal
+(`close-modal` action) — not on every filter change, which was the bug.
+
+Verified executed
+(`tests/gm-locations-import-selection-persistence.test.mjs`): the same
+`librarySelectedSeedIds` state produces `checked: true` for a matching
+card both unfiltered and after a search filter narrows the visible list;
+no card reads `checked` with empty state; a successful import's state
+patch includes `librarySelectedSeedIds: []`; source-level assertions
+confirm the checkbox-change wiring and the close-modal clear. Proven to
+fail against the pre-fix files via `git stash`.
+
+## 6. Location identity — duplicate-name bug (from `07ff3cf`)
+
+**Before**: `upsertLocation()` matched an existing record by id OR by
+case-insensitive name. A brand-new Location (blank id, from the create
+wizard) whose name collided with an unrelated existing record — two
+different planets both named "Command Center" is a real scenario — was
+silently treated as an edit of that unrelated record, discarding its
+data with no warning.
+
+**After**: identity on write is by id only.
+`const existing = requestedId ? records.find(record => record.id === requestedId) : null;`
+— a blank/new id never matches by name. A name collision on creation now
+produces a second, distinct record with a disambiguated id via the new
+`_uniqueLocationSlug(name, records)` static helper (slug + numeric-suffix
+disambiguation). `findLocation()` keeps its own name-fallback for
+read/search — a separate, safe concern from write-identity.
+
+## 7. Hierarchy validation contract (from `07ff3cf`)
+
+`upsertLocation()` now validates `parentLocationId` at the same mutation
+boundary via the new `_sanitizeParentLocationId(id, parentLocationId, records)`:
+
+- **Self-parent** (a location naming itself as its own parent) — rejected,
+  parent cleared.
+- **Direct cycle** (A's parent is B, B's parent set to A) — rejected.
+- **Descendant cycle** (a location naming one of its own descendants as
+  parent, walking the chain further than one hop) — rejected.
+- **Nonexistent parent id** — rejected.
+- **Valid hierarchy** (any real, non-cyclic parent) — succeeds normally.
+
+The create/edit form submit handler in the controller now distinguishes
+this from a plain save failure: if the saved record's `parentLocationId`
+differs from what was submitted, it warns explicitly ("Location saved,
+but the parent location you entered was invalid ... and was cleared")
+instead of a plain "Location saved." that would silently hide the
+rejection. The parent-location datalist also no longer offers the
+record's own id as a choice (previously relied on an unrendered
+`disabled` attribute that never rendered).
+
+All five cases (and the duplicate-name fix in §6) verified executed in
+`tests/gm-locations-identity-and-hierarchy-integrity.test.mjs`: same-named
+but unrelated locations get distinct ids and never merge (proven to fail
+pre-fix via `git stash`), explicit-id edits stay correctly scoped to
+their own record, Quick Library import stays idempotent (unaffected —
+it never routes through `upsertLocation()`), and all four hierarchy
+rejection cases plus the valid-hierarchy success case pass.
+
+## 8. Filter zero-match semantics (from `2f2153f`)
+
+**Before**: a filter matching zero locations silently substituted the
+full unfiltered list (`filtersRelaxed`) — a filter that visibly did
+nothing, indistinguishable from a filter that was never applied.
+
+**After**: `filtersRelaxed` is gone entirely, not just unused.
+`visibleCards = filteredCards` (no fallback), and a new
+`filtersProducedNoMatches` flag (`hasActiveFilters && cards.length > 0 &&
+filteredCards.length === 0`) drives a distinct "No locations match your
+filters" empty state in the template (with a Clear Filters button),
+separate from the "No locations found" state shown when the registry
+itself is empty.
+
+## 9. Scene capability truthfulness (from `2f2153f`)
+
+**Before**: Create Scene and Stage Encounter Seeds were offered
+unconditionally, even for a location with no map image at all, though
+`LocationSceneBridgeService.createSceneFromLocation()` unconditionally
+throws in that case — a guaranteed-failure control presented as if it
+would work.
+
+**After**: `selectedVm()` now computes
+`canCreateScene: Boolean(location.map?.imagePath || location.image)`,
+matching the bridge service's own prerequisite check exactly (including
+its fallback to the location's general `image` field, not just
+`map.imagePath`). The template gates Create Scene on this flag, showing
+"Needs a map image" instead when it's false.
+
+Verified executed in `tests/gm-locations-truthful-ui-contract.test.mjs`:
+no map image and no general image → `canCreateScene: false`;
+`map.imagePath` set → `true`; only the general `image` field set (no
+`map.imagePath`) → still `true`, proving the fallback is matched exactly,
+not just the primary field.
+
+## 10. Broken primary Scene behavior (from `2f2153f`)
+
+A broken (unresolved) primary Scene link no longer offers Open
+Scene/Activate Scene — both are now gated on `resolved` as well as
+`isPrimary`, leaving only Unlink available, closing the minor UX gap
+noted (non-blocking) at the end of Phase 2's final correction.
+
+## 11. Compendium Actor/Scene representation (from `2f2153f`)
+
+**Before**: a `Compendium.*`-sourced Actor or Scene UUID (a real, valid
+reference — `LocationSceneBridgeService` resolves these fine via async
+`fromUuid()` when actually staging/opening) was rendered identically to a
+genuinely missing world document: "Missing Actor (Compendium...)". A
+false negative with no way to tell "actually gone" from "can't check this
+synchronously" apart.
+
+**After**: `resolveActorLink()`/`resolveSceneRow()` recognize a
+`Compendium.*` UUID that can't be parsed as `Scene.<id>`/`Actor.<id>` and
+report `unverifiable: true` with a label like "Compendium Actor
+(unverified)" instead of a false "Missing". A genuinely unresolvable
+*world* UUID (`Actor.gone`, no matching id in `game.actors`) still reads
+as missing — the fix narrows the false-negative case without weakening
+the real-negative case. The same fix applies to an encounter seed's
+`actorUnverifiable` flag, and to `is-broken-link` CSS class application
+in the template (skips `unverifiable` rows).
+
+Verified executed in `tests/gm-locations-truthful-ui-contract.test.mjs`:
+a compendium Actor UUID → `unverifiable: true`, label never matches
+`/Missing/`; a genuinely missing world Actor UUID → `unverifiable: false`,
+label matches `/Missing Actor/`; a resolvable world Actor UUID →
+`resolved: true` with the correct name; a compendium Scene UUID →
+`unverifiable: true`, never "Missing"; an encounter seed's compendium
+actor link → `actorUnverifiable: true`.
+
+## 12. Atlas Fact / Encounter Seed authoring (from `2f2153f`)
+
+`GMLocationsSurfaceController` already had live submit handlers for
+`form[data-atlas-fact-form]` and `form[data-encounter-seed-form]`
+(`factPayload()`/`seedPayload()` → `LocationRegistryService.upsertAtlasFact()`/
+`.addEncounterSeed()`), but `locations.hbs` rendered neither form — wired
+but unreachable, the same class of gap Phase 2 closed for
+leads/links/scenes. Both are now rendered as compact collapsible
+(`<details>`) forms reusing the option lists the service already computed
+(`factCategoryOptions`, `skillOptions`, `editorRevealOptions`,
+`leadOutputOptions`, `seedCategoryOptions`) — no new VM surface, no
+parallel option system.
+
+Verified executed in `tests/gm-locations-truthful-ui-contract.test.mjs`:
+both forms render in the template, both submit handlers are wired in the
+controller source, and a real end-to-end save through
+`upsertAtlasFact()`/`addEncounterSeed()` succeeds with the expected
+payload shape.
+
+## 13. Form failure handling (from `2f2153f`)
+
+All three location-mutating form submit handlers (create/edit, Atlas
+Fact, Encounter Seed) now wrap their body in try/catch: a genuine
+failure (thrown error, rejected promise) reports an explicit
+`ui.notifications.error(...)`, never a false "saved" notification or an
+unhandled rejection. The create/edit handler additionally distinguishes
+a parent-hierarchy rejection (§7) from a hard failure, warning rather
+than erroring, since the rest of the location's edits still applied.
+
+## 14. Action/form integrity re-verification
+
+Re-read the full Stage 1/Phase 2 action-value matrices against the
+current controller and template; no action or form added or changed
+during Stage 3 introduced a new dead control, and no previously-verified
+action lost its wiring. The three new/restored forms (Atlas Fact,
+Encounter Seed, and the already-existing create/edit/import forms) are
+each traced end to end from template → controller submit handler → real
+`LocationRegistryService` method, with no placeholder or "not connected
+yet" fallback remaining on any Locations-surface control.
+
+## 15. Deferred (not started, with rationale)
+
+- **CSS repair-layer classification** (which `GMInteractionRepairService`
+  inline-style/`!important` rules in `gm-holopad-concept-phase2.css` are
+  still required vs. now redundant vs. actively conflicting with the
+  Stage 3 layout fixes) — not attempted. This is a broad audit of
+  interim-repair CSS unrelated to any reported functional defect;
+  removing rules without a live client to verify against risks silently
+  reintroducing the exact positioning/overflow bugs those rules exist to
+  paper over. Left for a future pass with live Foundry access.
+- **UI entry-point clarity** (multiple "Import Location" entry points;
+  whether clicking a Quick Library preview card should preselect that
+  seed in the importer using the same `librarySelectedSeedIds` state
+  added in §5) — not attempted. Multiple entry points to the same modal
+  is a minor redundancy, not a correctness defect, and reusing §5's state
+  for preview-card preselection is a real but separable enhancement best
+  scoped and tested on its own.
+- **Terminology cleanup** ("Quick Locations Compendium" → "Quick Location
+  Library"/"Built-in Location Library", reserving "compendium" for the
+  actual drag/drop Journal affordance) — not attempted. Pure copy change
+  with no functional effect; deferring it keeps this pass focused on the
+  state-integrity and truthfulness defects that were the stated priority.
+- **Full `GMInteractionRepairService` retirement**, general CSS/performance
+  rewrite, Intel/Job title resolution, actor sheet/progression/SWSE
+  mechanics work, and any new storage schema remain explicitly out of
+  scope per the task's own "do not begin Stage 4" instruction.
+
+## 16. Tests added this stage
+
+- `tests/gm-locations-identity-and-hierarchy-integrity.test.mjs` (executed)
+- `tests/gm-locations-truthful-ui-contract.test.mjs` (executed + static)
+- `tests/gm-locations-container-responsive-layout.test.mjs` (static)
+- `tests/gm-datapad-interaction-repair-lifecycle.test.mjs` (executed,
+  hand-rolled fake DOM)
+- `tests/gm-locations-import-selection-persistence.test.mjs` (executed +
+  static)
+
+Every test in this list was verified via `git stash` to fail against the
+pre-fix source it targets and pass against the fix, per this project's
+standing requirement.
+
+## 17. Full validation results
+
+Full rolling test suite: **152/152** passed (147 pre-Stage-3 + 5 new
+files), including every named prior-stage contract test unchanged:
+Phase 0 context contract; all four Stage 1 catalog/importer/import-service/
+importer-controller-behavior tests; all four Phase 2 atlas-lead/links-
+scenes-encounters/operational-ui-action-matrix/scene-creation-safety
+tests; the GM Datapad action-integrity, wizard, and duplicate-handler
+regression tests. Syntax check: **2264/2264** files pass `node --check`.
+
+## 18. Runtime validation gap
+
+No live Foundry client is available in this environment, as in every
+prior phase. Every layout, scroll-region, and repair-lifecycle claim
+above is verified by direct source reading and by executing the real
+production services/controller methods (and, for the CSS claims, static
+source-text assertions against the real stylesheet) under the repo's
+Foundry-shim Node harness, with a hand-rolled minimal fake DOM standing
+in for the browser where `GMInteractionRepairService` needed one. See the
+manual checklist below.
+
+## 19. Known remaining defects / Stage 4 candidates
+
+Everything listed in §15 above (CSS repair-layer classification, UI
+entry-point/preselection clarity, terminology cleanup), plus the items
+already carried forward from Phase 2 §16: viewing an existing linked
+Intel/Job record from Locations (not just creating a new one or
+unlinking), `create-encounter-scene`/`import-library-seed` as still-valid
+unrendered controller branches, and biome filter-pill UI density.
+
+**Stage 4 has not been started, per explicit instruction.**
+
+## 20. PR #963 status
+
+Draft, on `claude/locations-context-contract-i8tbp0`, mergeable, all
+Stage 3 commits pushed. See the PR itself for the current head SHA and
+CI status at the time this section was written — both are best verified
+live at push time rather than pinned here.
+
+---
+
+## Stage 3 manual Foundry validation checklist (not yet run — no live client available)
+
+**Layout**: open GM Datapad → Locations with the Datapad window resized
+narrower than ~920px (independent of the browser window) → PASS = the
+workbench collapses to one column, the friendly filter grid and
+selected-location support grid also collapse, no clipped/overflowing
+content.
+
+**Detail scroll**: select a location with enough Children/Facts/
+Encounter Seeds/Scenes/Links content to exceed the visible detail column
+height → PASS = the whole column scrolls as one region (no independently
+scrolling sub-panels, nothing clipped/unreachable).
+
+**Repair lifecycle**: rapidly switch between Locations and another
+surface (or resize/close the Datapad window) several times in a row while
+a Locations modal is open or a filter is mid-change → PASS = no console
+error, no `TypeError: Cannot read properties of null`, the Datapad window
+repositions/stabilizes normally throughout.
+
+**Import selection**: open Import Location → check several Quick Library
+seeds → change the search text or a biome/category filter pill →
+PASS = previously-checked seeds (if still visible under the new filter)
+remain checked → submit → PASS = only the checked seeds import → reopen
+the modal → PASS = selection starts empty (cleared by the prior import).
+
+**Identity/hierarchy**: create a new location with the same name as an
+existing one → PASS = a second, distinct record is created, the original
+is untouched → attempt to set a location as its own parent, or create a
+parent-child cycle → PASS = the save succeeds but the parent field is
+cleared with an explicit warning notification.
+
+**Scene truthfulness**: select a location with no map/general image →
+PASS = Create Scene is replaced with "Needs a map image" → select one
+with a broken (deleted) primary Scene → PASS = Open/Activate Scene are
+gone, only Unlink remains.
+
+**Atlas Fact / Encounter Seed authoring**: expand "Add Atlas Fact" →
+submit a new fact → PASS = it appears in the Atlas Facts list → expand
+"Add Encounter Seed" → submit a new seed → PASS = it appears in the
+Encounter Seeds list.
+
+**Regression**: repeat the Phase 0/Stage 1/Phase 2 manual checklists
+above → PASS = all prior behavior unchanged.
