@@ -247,6 +247,12 @@ export class GMInteractionRepairService {
   static _bindModalBounds(root, signal) {
     const view = root.ownerDocument.defaultView;
     const sync = () => {
+      // A click can schedule this on a macrotask/rAF delay; by the time it
+      // fires, this binding may have been destroyed (surface rerender or
+      // app close) and root detached from the document. Guard rather than
+      // touch stale DOM — see _stabilizeViewport()'s comment below for the
+      // same class of bug this mirrors.
+      if (signal.aborted || !root.isConnected) return;
       this._syncModalBounds(root);
       this._syncModalState(root);
     };
@@ -268,6 +274,17 @@ export class GMInteractionRepairService {
   static _stabilizeViewport(host, root, signal) {
     const view = root.ownerDocument.defaultView;
     const apply = () => {
+      // This can fire from a deferred rAF/timeout well after bind() — by then
+      // the surface may have rerendered or the app may have closed, which
+      // aborts `signal` and calls GMSurfaceControllerRegistry's teardown, but
+      // does not itself cancel callbacks already queued with the browser. Do
+      // not touch DOM or reposition the host unless this binding is still the
+      // live one: signal not aborted, root still attached, host still owning
+      // a connected element. Without this guard a stale callback can call
+      // host._applyGmDatapadPosition() on a host whose element has already
+      // been torn down, producing "Cannot read properties of null (reading
+      // 'style')" inside Foundry's #applyPosition.
+      if (signal.aborted || !root.isConnected) return;
       const scrollFrame = root.querySelector('[data-gm-surface-scrollframe], .gm-command-surface-scrollframe');
       const surfaceHost = root.querySelector('.swse-shell-surface-host');
       const stage = root.querySelector('.gm-command-surface-stage');
@@ -286,7 +303,8 @@ export class GMInteractionRepairService {
       this._syncModalBounds(root);
       if (typeof host?._applyGmDatapadPosition === 'function') {
         const element = host.element instanceof HTMLElement ? host.element : host.element?.[0];
-        const rect = element?.getBoundingClientRect?.();
+        if (!(element instanceof HTMLElement) || !element.isConnected) return;
+        const rect = element.getBoundingClientRect?.();
         host._applyGmDatapadPosition({
           left: Number(host.position?.left ?? rect?.left ?? 8),
           top: Number(host.position?.top ?? rect?.top ?? 8),
@@ -295,7 +313,10 @@ export class GMInteractionRepairService {
         });
       }
     };
-    view.requestAnimationFrame(() => view.requestAnimationFrame(apply));
+    let raf2 = null;
+    const raf1 = view.requestAnimationFrame(() => {
+      raf2 = view.requestAnimationFrame(apply);
+    });
     const timer1 = view.setTimeout(apply, 60);
     const timer2 = view.setTimeout(apply, 240);
     view.addEventListener('pageshow', apply, { signal, passive: true });
@@ -303,6 +324,8 @@ export class GMInteractionRepairService {
     signal.addEventListener('abort', () => {
       view.clearTimeout(timer1);
       view.clearTimeout(timer2);
+      view.cancelAnimationFrame(raf1);
+      if (raf2 !== null) view.cancelAnimationFrame(raf2);
     }, { once: true });
   }
 
