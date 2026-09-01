@@ -19,21 +19,32 @@ import { installFoundryShimGlobals } from './helpers/foundry-shim/globals.mjs';
 // itself, an id that doesn't exist, or a parent assignment that would
 // create an ancestor cycle. Fixed at the one authoritative mutation
 // boundary (upsertLocation()), not just in the UI suggestion list.
+//
+// Stage 3 final correction: the first hierarchy-validation pass silently
+// cleared an invalid parentLocationId and still saved the rest of the
+// edit — which could destructively detach an existing Location from a
+// valid parent it already had on nothing more than a GM's typo. Fixed:
+// upsertLocation() now REJECTS the whole save (upsertLocation() throws,
+// zero registry writes, the existing record's real parent untouched) for
+// self-parent, a nonexistent parent id, or any cycle. These five cases
+// are rewritten below to prove rejection, not sanitization.
 
 registerFoundryPathLoader();
 
 function installShim(initialLocations = []) {
   const store = new Map([['gmLocationRegistry', initialLocations]]);
+  const writeCounter = { count: 0 };
   installFoundryShimGlobals({
     game: {
       settings: {
         get: (_m, key) => store.get(key),
-        set: (_m, key, value) => { store.set(key, value); return Promise.resolve(value); },
+        set: (_m, key, value) => { writeCounter.count += 1; store.set(key, value); return Promise.resolve(value); },
         settings: { has: () => true },
         register: () => {}
       }
     }
   });
+  return writeCounter;
 }
 
 const { LocationRegistryService } = await import('/systems/foundryvtt-swse/scripts/locations/location-registry-service.js');
@@ -100,46 +111,115 @@ const { LocationRegistryService } = await import('/systems/foundryvtt-swse/scrip
   assert.equal(cantina.parentLocationId, city.id);
 }
 
-// CASE: self-parenting is rejected — the record's own id as its parent is
-// silently cleared, not stored.
+// CASE: self-parenting REJECTS the entire save — zero registry writes,
+// the record's prior (valid, non-empty) parent is preserved untouched.
 {
-  installShim();
-  const a = await LocationRegistryService.upsertLocation({ name: 'Self Referential' });
-  const patched = await LocationRegistryService.upsertLocation({ id: a.id, name: 'Self Referential', parentLocationId: a.id });
-  assert.equal(patched.parentLocationId, '', 'a location must never be stored as its own parent');
+  const writes = installShim();
+  const grandparent = await LocationRegistryService.upsertLocation({ name: 'Mos Eisley' });
+  const a = await LocationRegistryService.upsertLocation({ name: 'Cantina', parentLocationId: grandparent.id });
+  const before = LocationRegistryService.getRegistry();
+  writes.count = 0;
+
+  await assert.rejects(
+    () => LocationRegistryService.upsertLocation({ id: a.id, name: 'Cantina', parentLocationId: a.id }),
+    /own parent/i,
+    'a location naming itself as its own parent must reject the save, not silently clear the field'
+  );
+
+  assert.equal(writes.count, 0, 'a rejected self-parent save must never write the registry');
+  const after = LocationRegistryService.getRegistry();
+  assert.deepEqual(after, before, 'the registry must be byte-for-byte unchanged after a rejected self-parent save');
+  assert.equal(LocationRegistryService.findLocation(a.id).parentLocationId, grandparent.id, 'the record\'s existing valid parent must survive the rejected save, not be blanked');
 }
 
-// CASE: a descendant cycle (A -> B -> C, then set A's parent to C) is
-// rejected.
+// CASE: a nonexistent parent id on CREATE rejects — no new Location is
+// created at all.
 {
-  installShim();
+  const writes = installShim();
+  await assert.rejects(
+    () => LocationRegistryService.upsertLocation({ name: 'Orphan Attempt', parentLocationId: 'not-a-real-location-id' }),
+    /does not exist/i,
+    'a nonexistent parent id must reject the whole create, not store an orphan reference'
+  );
+  assert.equal(writes.count, 0, 'a rejected create must never write the registry');
+  assert.equal(LocationRegistryService.getRegistry().length, 0, 'no Location may be created when its requested parent does not exist');
+}
+
+// CASE: a nonexistent parent id on EDIT of an existing record also
+// rejects, leaving that record's real parent untouched.
+{
+  const writes = installShim();
+  const parent = await LocationRegistryService.upsertLocation({ name: 'Nar Shaddaa' });
+  const child = await LocationRegistryService.upsertLocation({ name: 'Smugglers Den', parentLocationId: parent.id });
+  const before = LocationRegistryService.getRegistry();
+  writes.count = 0;
+
+  await assert.rejects(
+    () => LocationRegistryService.upsertLocation({ id: child.id, name: 'Smugglers Den', parentLocationId: 'ghost-location' }),
+    /does not exist/i
+  );
+  assert.equal(writes.count, 0);
+  assert.deepEqual(LocationRegistryService.getRegistry(), before, 'the registry must be unchanged after a rejected nonexistent-parent edit');
+  assert.equal(LocationRegistryService.findLocation(child.id).parentLocationId, parent.id, 'the existing valid parent must survive the rejection');
+}
+
+// CASE: a descendant cycle (A -> B -> C, then attempt A's parent = C)
+// rejects — A's real parent (none) and the rest of the chain are
+// untouched.
+{
+  const writes = installShim();
   const a = await LocationRegistryService.upsertLocation({ name: 'A' });
   const b = await LocationRegistryService.upsertLocation({ name: 'B', parentLocationId: a.id });
   const c = await LocationRegistryService.upsertLocation({ name: 'C', parentLocationId: b.id });
-  const cycled = await LocationRegistryService.upsertLocation({ id: a.id, name: 'A', parentLocationId: c.id });
-  assert.equal(cycled.parentLocationId, '', 'setting an ancestor\'s parent to one of its own descendants must be rejected, not stored as a cycle');
+  const before = LocationRegistryService.getRegistry();
+  writes.count = 0;
 
-  // The rest of the hierarchy must be untouched by the rejection.
-  assert.equal(LocationRegistryService.findLocation(b.id).parentLocationId, a.id);
-  assert.equal(LocationRegistryService.findLocation(c.id).parentLocationId, b.id);
+  await assert.rejects(
+    () => LocationRegistryService.upsertLocation({ id: a.id, name: 'A', parentLocationId: c.id }),
+    /cycle/i,
+    'setting an ancestor\'s parent to one of its own descendants must reject the save, not store a cycle'
+  );
+
+  assert.equal(writes.count, 0, 'a rejected descendant-cycle save must never write the registry');
+  assert.deepEqual(LocationRegistryService.getRegistry(), before, 'the whole hierarchy must be byte-for-byte unchanged after the rejection');
+  assert.equal(LocationRegistryService.findLocation(a.id).parentLocationId, '', 'A\'s real parent (none) must be preserved, not overwritten with anything');
+  assert.equal(LocationRegistryService.findLocation(b.id).parentLocationId, a.id, 'B must remain parented to A');
+  assert.equal(LocationRegistryService.findLocation(c.id).parentLocationId, b.id, 'C must remain parented to B');
 }
 
-// CASE: a parentLocationId that doesn't reference any real record is
-// rejected (cleared), not stored as an orphan reference.
+// CASE: two-hop direct cycle (A parent=B, B parent=A) rejects — proves the
+// guard isn't limited to a single-level self-reference, and A's existing
+// parent survives.
 {
-  installShim();
-  const location = await LocationRegistryService.upsertLocation({ name: 'Orphan Attempt', parentLocationId: 'not-a-real-location-id' });
-  assert.equal(location.parentLocationId, '', 'a nonexistent parent id must not be stored');
-}
-
-// CASE: two-hop direct cycle (A parent=B, B parent=A) — proves the guard
-// isn't limited to a single-level self-reference.
-{
-  installShim();
-  const a = await LocationRegistryService.upsertLocation({ name: 'Alpha' });
+  const writes = installShim();
+  const grandparent = await LocationRegistryService.upsertLocation({ name: 'Root' });
+  const a = await LocationRegistryService.upsertLocation({ name: 'Alpha', parentLocationId: grandparent.id });
   const b = await LocationRegistryService.upsertLocation({ name: 'Beta', parentLocationId: a.id });
-  const cycled = await LocationRegistryService.upsertLocation({ id: a.id, name: 'Alpha', parentLocationId: b.id });
-  assert.equal(cycled.parentLocationId, '', 'a direct A<->B parent cycle must be rejected');
+  const before = LocationRegistryService.getRegistry();
+  writes.count = 0;
+
+  await assert.rejects(
+    () => LocationRegistryService.upsertLocation({ id: a.id, name: 'Alpha', parentLocationId: b.id }),
+    /cycle/i,
+    'a direct A<->B parent cycle must reject the save'
+  );
+
+  assert.equal(writes.count, 0);
+  assert.deepEqual(LocationRegistryService.getRegistry(), before);
+  assert.equal(LocationRegistryService.findLocation(a.id).parentLocationId, grandparent.id, 'A\'s real existing parent must survive the rejected cycle attempt');
 }
 
-console.log('GM Locations identity and hierarchy integrity passed (name-collision creates distinct records, explicit-id edits stay scoped, import stays idempotent, self-parent/cycle/missing-parent all rejected, valid hierarchy still works).');
+// CASE: a save with no parentLocationId requested at all (undefined) is
+// always valid and preserves the record's existing parent — proves the
+// validation only engages on an actual non-blank request, matching
+// upsertLocation()'s own "no parent requested" fallback to the existing
+// value.
+{
+  installShim();
+  const parent = await LocationRegistryService.upsertLocation({ name: 'Kessel' });
+  const child = await LocationRegistryService.upsertLocation({ name: 'Spice Mine', parentLocationId: parent.id });
+  const resaved = await LocationRegistryService.upsertLocation({ id: child.id, name: 'Spice Mine', publicSummary: 'Updated notes only.' });
+  assert.equal(resaved.parentLocationId, parent.id, 'omitting parentLocationId entirely on an edit must not disturb the existing valid parent');
+}
+
+console.log('GM Locations identity and hierarchy integrity passed (name-collision creates distinct records, explicit-id edits stay scoped, import stays idempotent, self-parent/missing-parent/direct-cycle/descendant-cycle all REJECT the whole save with zero registry writes and the existing valid parent preserved, valid hierarchy still works).');

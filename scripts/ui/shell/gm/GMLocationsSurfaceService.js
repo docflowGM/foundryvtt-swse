@@ -538,8 +538,9 @@ export class GMLocationsSurfaceService {
     // A location can never be its own parent — excluded outright rather
     // than merely marked disabled=true, since <datalist> options don't
     // reliably enforce "disabled" across browsers and the field is free
-    // text regardless (upsertLocation()'s own _sanitizeParentLocationId()
-    // is the real, unconditional guard against self-parenting and cycles;
+    // text regardless (upsertLocation()'s own _validateParentLocationId()
+    // is the real, unconditional guard against self-parenting and cycles —
+    // it rejects the whole save rather than silently clearing the field;
     // this list is only the suggestion UI).
     const locationOptions = [{ value: '', label: 'No parent / standalone', selected: !editor?.parentLocationId }, ...records.filter(record => record.id !== selected?.id).map(record => ({
       value: record.id,

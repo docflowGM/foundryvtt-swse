@@ -600,7 +600,14 @@ export class LocationRegistryService {
     // would create a parent/child cycle — a location can never become its
     // own ancestor.
     const requestedParentId = data.parentLocationId !== undefined ? text(data.parentLocationId) : (existing?.parentLocationId || '');
-    const parentLocationId = this._sanitizeParentLocationId(id, requestedParentId, records);
+    // Validate BEFORE building/saving anything — an invalid parent must
+    // reject the whole save (registry untouched, existing record's real
+    // parent preserved), not silently clear the field and save the rest of
+    // the edit. Blanking-and-saving previously meant a GM's typo in the
+    // parent field could detach an existing Location from a valid parent
+    // it already had, with no warning beyond a notification the modal had
+    // already closed past.
+    const parentLocationId = this._validateParentLocationId(id, requestedParentId, records);
     const normalized = this.normalizeLocation({
       ...existing,
       ...data,
@@ -640,16 +647,23 @@ export class LocationRegistryService {
    * OTHER registry record that is not already a descendant of this one
    * (which would make this location its own ancestor once linked).
    * `records` is the pre-save registry snapshot passed to upsertLocation.
+   *
+   * Throws on an invalid, non-blank request rather than silently
+   * resolving to '' — upsertLocation() must reject the whole save (no
+   * registry write at all) rather than saving the rest of the edit with
+   * the parent quietly blanked out, which could detach an existing
+   * Location from a valid parent it already had.
    */
-  static _sanitizeParentLocationId(id, parentLocationId, records = []) {
+  static _validateParentLocationId(id, parentLocationId, records = []) {
     const parentId = text(parentLocationId);
-    if (!parentId || parentId === id) return '';
+    if (!parentId) return ''; // no parent requested — always valid
+    if (parentId === id) throw new Error('A location cannot be its own parent.');
     const byId = new Map(records.map(record => [record.id, record]));
-    if (!byId.has(parentId)) return '';
+    if (!byId.has(parentId)) throw new Error('That parent location does not exist.');
     let current = byId.get(parentId);
     const seen = new Set();
     while (current) {
-      if (current.id === id) return ''; // parentId is a descendant of id — would create a cycle
+      if (current.id === id) throw new Error('That parent location is a descendant of this location — setting it would create a hierarchy cycle.');
       if (seen.has(current.id)) break; // pre-existing cycle elsewhere in the data; don't loop forever
       seen.add(current.id);
       current = current.parentLocationId ? byId.get(current.parentLocationId) : null;
