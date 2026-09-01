@@ -507,20 +507,16 @@ export class GMLocationsSurfaceController {
             return;
           }
           this.host?.patchSurfaceState?.('locations', { selectedLocationId: location.id, modal: null }, { render: false });
-          // upsertLocation() rejects an invalid parentLocationId (self,
-          // nonexistent, or a cycle) rather than blocking the whole save —
-          // the rest of the location's edits still apply. If what came
-          // back differs from what was submitted, the GM asked for
-          // something invalid; say so instead of a plain "saved" that
-          // would silently hide it.
-          const submittedParentId = String(payload.parentLocationId || '').trim();
-          if (submittedParentId && submittedParentId !== location.parentLocationId) {
-            ui.notifications?.warn?.('Location saved, but the parent location you entered was invalid (itself, missing, or would create a cycle) and was cleared.');
-          } else {
-            ui.notifications?.info?.('Location saved.');
-          }
+          ui.notifications?.info?.('Location saved.');
           await this._refresh('gm-location-save');
         } catch (err) {
+          // upsertLocation() rejects the WHOLE save (no registry write at
+          // all) for an invalid parentLocationId (self, nonexistent, or a
+          // cycle) rather than silently clearing the field and saving the
+          // rest of the edit — that used to be able to detach an existing
+          // Location from a valid parent it already had on a GM's typo.
+          // The modal intentionally stays open here (no patchSurfaceState
+          // above ran) so the GM can correct the field and resubmit.
           SWSELogger.error('[GM Locations] Location save failed.', err);
           ui.notifications?.error?.(err?.message || 'Location could not be saved.');
         }
@@ -531,18 +527,39 @@ export class GMLocationsSurfaceController {
       form.addEventListener('submit', async (event) => {
         event.preventDefault();
         const formData = new FormData(form);
-        await this._importLibrarySeedIds(seedIdsFromForm(formData), 'gm-location-library-import-selected', importOptionsFromForm(formData));
+        // librarySelectedSeedIds in surface state is the authoritative
+        // selection, not the currently-rendered (and possibly
+        // filter-narrowed) form — a seed checked earlier under a different
+        // library filter has no <input> in the DOM right now at all, so
+        // reading only this form's FormData would silently drop it from
+        // the import. seedIdsFromForm(formData) is still unioned in as a
+        // defensive fallback in case a change event was ever missed.
+        const state = this.host?.getSurfaceState?.('locations') || {};
+        const authoritativeIds = Array.from(new Set([
+          ...(Array.isArray(state.librarySelectedSeedIds) ? state.librarySelectedSeedIds : []),
+          ...seedIdsFromForm(formData)
+        ].map(value => String(value || '').trim()).filter(Boolean)));
+        await this._importLibrarySeedIds(authoritativeIds, 'gm-location-library-import-selected', importOptionsFromForm(formData));
       }, { signal });
 
-      // Persist the checked seed ids into surface state as they change, not
-      // just the checkbox DOM — a library search/biome/category filter
-      // rebuilds this whole list from the view-model on every keystroke or
-      // pill click, and a rebuilt <input> has no memory of a prior click.
-      // No rerender is needed here: the checkbox already reflects its own
-      // state; this only needs to be correct the NEXT time the VM rebuilds.
+      // Persist each checkbox's OWN membership in the authoritative
+      // selection set as it changes — not a reconstruction of the whole
+      // set from this form's current FormData. A library search/biome/
+      // category filter rebuilds this list (and every <input> it renders)
+      // from the view-model, so a seed checked before the filter changed
+      // has no <input> here any more; reading the whole set from FormData
+      // would silently overwrite it out of the selection. No rerender is
+      // needed here: the checkbox already reflects its own state; this
+      // only needs to be correct the NEXT time the VM rebuilds.
       form.addEventListener('change', (event) => {
-        if (event.target?.name !== 'seedIds') return;
-        this.host?.patchSurfaceState?.('locations', { librarySelectedSeedIds: seedIdsFromForm(new FormData(form)) }, { render: false });
+        const input = event.target;
+        if (!input || input.name !== 'seedIds') return;
+        const seedId = String(input.value || '').trim();
+        if (!seedId) return;
+        const state = this.host?.getSurfaceState?.('locations') || {};
+        const current = new Set((Array.isArray(state.librarySelectedSeedIds) ? state.librarySelectedSeedIds : []).map(value => String(value)));
+        if (input.checked) current.add(seedId); else current.delete(seedId);
+        this.host?.patchSurfaceState?.('locations', { librarySelectedSeedIds: Array.from(current) }, { render: false });
       }, { signal });
     });
 
@@ -683,13 +700,24 @@ export class GMLocationsSurfaceController {
           };
         }
 
-        const linked = await LocationRegistryService.linkDossierPayload(locationId, payload);
-        if (!linked) {
-          ui.notifications?.warn?.('That drop payload is not linkable to a Location yet.');
-          return;
+        try {
+          const linked = await LocationRegistryService.linkDossierPayload(locationId, payload);
+          if (!linked) {
+            ui.notifications?.warn?.('That drop payload is not linkable to a Location yet.');
+            return;
+          }
+          ui.notifications?.info?.(`Linked ${payload.name || payload.kind || 'dossier payload'} to location.`);
+          await this._refresh('gm-location-drop-link');
+        } catch (err) {
+          // linkDossierPayload() nesting a Location under another Location
+          // routes through upsertLocation()'s hierarchy validation (self,
+          // nonexistent, or cyclic parent), which now rejects instead of
+          // silently clearing — this must surface as an explicit warning
+          // rather than an unhandled rejection from a dropped location that
+          // would create a cycle.
+          SWSELogger.error('[GM Locations] Drop link failed.', err);
+          ui.notifications?.warn?.(err?.message || 'That drop could not be linked.');
         }
-        ui.notifications?.info?.(`Linked ${payload.name || payload.kind || 'dossier payload'} to location.`);
-        await this._refresh('gm-location-drop-link');
       }, { signal });
     });
   }
