@@ -105,11 +105,16 @@ function metadataForThread(thread) {
   return thread?.metadata ?? {};
 }
 
-function jobForThread(thread) {
+// Exported so other real authorities that only need to RESOLVE a job's
+// title/status by id (e.g. GMLocationsSurfaceService's "Jobs Here"
+// relationship card) can reuse this service's own derivation instead of
+// duplicating it — Job Board remains the sole place that decides what a
+// job's status actually means.
+export function jobForThread(thread) {
   return metadataForThread(thread).job ?? {};
 }
 
-function jobStatus(job) {
+export function jobStatus(job) {
   const status = String(job?.status || 'posted').trim() || 'posted';
   return JOB_STATUS_META[status] ? status : 'posted';
 }
@@ -118,7 +123,7 @@ function statusMeta(status) {
   return JOB_STATUS_META[jobStatus({ status })] ?? JOB_STATUS_META.posted;
 }
 
-function statusLabel(status) {
+export function statusLabel(status) {
   return JOB_STATUS_LABELS[status] ?? String(status || 'Open');
 }
 
