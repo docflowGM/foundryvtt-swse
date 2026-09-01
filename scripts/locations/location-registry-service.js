@@ -583,15 +583,30 @@ export class LocationRegistryService {
     const records = this.getRegistry();
     const requestedId = text(data.id || data.locationId);
     const name = text(data.name || data.locationName || 'Unnamed Location');
-    const byId = requestedId ? records.find(record => record.id === requestedId) : null;
-    const byName = records.find(record => record.name.toLowerCase() === name.toLowerCase());
-    const existing = byId ?? byName ?? null;
-    const id = existing?.id || requestedId || slugify(name);
+    // Identity is by id only — a location is "the same record" only when
+    // its own id is provided and matches. Matching by name here (as this
+    // used to do) meant a brand-new Location whose name merely collided
+    // with an unrelated existing one (two different planets can both have
+    // a "Command Center") was silently treated as an edit of that
+    // unrelated record, discarding its data. findLocation() still matches
+    // by name for read/search purposes, which is a safe, separate concern.
+    const existing = requestedId ? records.find(record => record.id === requestedId) : null;
+    const id = existing?.id || requestedId || this._uniqueLocationSlug(name, records);
+    // The create/edit wizard's Parent Location field is free text against a
+    // datalist (the browser doesn't enforce the "self" option's disabled
+    // hint, and nothing server-side checked this before), so a GM can type
+    // the record's own id or an id that doesn't exist. Reject a
+    // self-reference, a reference to a nonexistent record, or one that
+    // would create a parent/child cycle — a location can never become its
+    // own ancestor.
+    const requestedParentId = data.parentLocationId !== undefined ? text(data.parentLocationId) : (existing?.parentLocationId || '');
+    const parentLocationId = this._sanitizeParentLocationId(id, requestedParentId, records);
     const normalized = this.normalizeLocation({
       ...existing,
       ...data,
       id,
       name,
+      parentLocationId,
       updatedAt: nowIso(),
       createdAt: existing?.createdAt || nowIso(),
       history: [
@@ -602,6 +617,44 @@ export class LocationRegistryService {
     const next = existing ? records.map(record => record.id === id ? normalized : record) : [...records, normalized];
     await this.saveRegistry(next);
     return normalized;
+  }
+
+  /**
+   * A name-based slug that is guaranteed not to collide with any existing
+   * registry record's id — two different locations sharing a display name
+   * (e.g. two unrelated "Command Center"s) must never end up sharing an
+   * id, since id is the sole identity key throughout this service (byId
+   * maps, findLocation, parentLocationId references, ...).
+   */
+  static _uniqueLocationSlug(name, records = []) {
+    const base = slugify(name);
+    const taken = new Set(records.map(record => record.id));
+    if (!taken.has(base)) return base;
+    let suffix = 2;
+    while (taken.has(`${base}-${suffix}`)) suffix += 1;
+    return `${base}-${suffix}`;
+  }
+
+  /**
+   * A location's parentLocationId must be blank, or the id of a real
+   * OTHER registry record that is not already a descendant of this one
+   * (which would make this location its own ancestor once linked).
+   * `records` is the pre-save registry snapshot passed to upsertLocation.
+   */
+  static _sanitizeParentLocationId(id, parentLocationId, records = []) {
+    const parentId = text(parentLocationId);
+    if (!parentId || parentId === id) return '';
+    const byId = new Map(records.map(record => [record.id, record]));
+    if (!byId.has(parentId)) return '';
+    let current = byId.get(parentId);
+    const seen = new Set();
+    while (current) {
+      if (current.id === id) return ''; // parentId is a descendant of id — would create a cycle
+      if (seen.has(current.id)) break; // pre-existing cycle elsewhere in the data; don't loop forever
+      seen.add(current.id);
+      current = current.parentLocationId ? byId.get(current.parentLocationId) : null;
+    }
+    return parentId;
   }
 
   static async deleteLocation(locationId = '') {
