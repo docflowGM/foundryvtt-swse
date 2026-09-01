@@ -1872,6 +1872,141 @@ Full validation after the correction: **152/152** rolling tests passed,
 first Stage 3 pass (no new test files, three rewritten/extended in place)
 and to the pre-correction reviewed baseline.
 
+## 22. Pre-live-validation identity/provenance correction — summary
+
+Independent review of head `6785036` accepted the final state-integrity
+correction (§21) as fixed, and found three further real data-integrity
+issues before recommending live Foundry validation — each confirmed
+against actual source before any fix was written.
+
+**1. Built-in Library id namespace collision.** Manual Location creation
+derives its id from its display name (`_uniqueLocationSlug`), and the
+built-in Location Library's seeds always write to that exact same
+canonical id (`buildLocationLibraryRecords`/`seedToLocationRecord`
+hardcode `id: seed.id`) — e.g. the Tatooine seed's parent record is
+always meant to be registry id `"tatooine"`. In a world where a manual
+Location already occupies that id (pre-existing data, or an explicitly
+requested id — `_uniqueLocationSlug` only protects *new* manual
+creation going forward, not data that predates a fix), two independent
+places used raw id equality as proof of "already imported":
+`GMLocationsSurfaceService.librarySeedCard()` (`record.id === seed.id`)
+and `LocationRegistryService.summarizeLibrary()`
+(`importedIds.has(seed.id)`, built from `record.librarySeedId ||
+record.id`). Both falsely reported the unrelated manual record as the
+already-imported seed. Worse, the importer's own duplicate-skip check
+(`byId.get(record.id)`) treated that same unrelated record as "this seed
+already exists here" and silently skipped importing the seed's own
+parent record — while its children, whose `parentLocationId` is always
+hardcoded to `parentSeed.id`, still imported and got attached to the
+unrelated manual record, corrupting the hierarchy without ever
+overwriting the manual record's actual data.
+
+Fixed in two parts:
+- **Provenance-only "imported" detection.** Both `librarySeedCard()` and
+  `summarizeLibrary()` now check only `record.librarySeedId === seed.id`
+  — a field a real Library import always sets, and (per the next point)
+  always keeps pinned to the seed's own canonical id even when the
+  underlying record itself had to land elsewhere.
+- **Collision-safe import identity.** A new
+  `LocationRegistryService._resolveLibraryParentId(seedId, byId)` checks
+  whether the canonical id is free, or already occupied by *this exact
+  seed's own* prior import (by provenance) — in either case it imports
+  normally. Otherwise it walks a deterministic fallback sequence
+  (`${seedId}-library`, `${seedId}-library-2`, ...), stopping at the
+  first slot that's free or already this seed's own prior fallback
+  import, so a second import of the same seed always finds the same
+  slot again. `buildLocationLibraryRecords`/`seedToLocationRecord`/
+  `childToLocationRecord` in `location-library-seeds.js` were extended
+  with an optional `parentRecordId` override for exactly this: the
+  parent record's own `id` and every child's `parentLocationId` use it
+  when set, while `librarySeedId` on every record (parent and children)
+  stays pinned to the seed's own canonical id regardless — this is what
+  keeps provenance detection correct even under the fallback. The
+  unrelated manual record is never read from except to detect the
+  collision, and is never written to.
+- **Reserved namespace going forward.** `_uniqueLocationSlug` now also
+  reserves every id the built-in Library could ever write (every seed's
+  own id and every one of its children's ids) against future manual slug
+  generation, so this specific collision can no longer arise for any
+  *newly*-created manual Location — only for data that already existed
+  before this fix (or an explicitly requested id), which is exactly what
+  the fallback-resolution above handles.
+
+**2. Partial Library hierarchy repair.** `deleteLocation()` (pre-existing,
+unchanged behavior) reparents surviving children to `''` rather than
+deleting them when only their parent record is removed. Re-importing the
+same seed afterward correctly recreated the parent (a fresh id, since the
+old one no longer exists) but the importer's plain `byId.get(record.id)`
+duplicate check meant the surviving children — an id match on an
+existing record — were skipped outright regardless of whether their
+`parentLocationId` actually still pointed anywhere, leaving them
+permanently orphaned with no automatic repair. Fixed: when an existing
+record at a computed id has matching provenance
+(`existing.librarySeedId === seed.id`) but a stale/blank
+`parentLocationId` that doesn't match what the fresh import expects, only
+that one field is healed onto the record — nothing else about it is
+touched, so a GM customization made to the child while the hierarchy was
+broken (e.g. edited notes) survives the repair completely intact. The
+import result now has a `repaired` array (alongside `imported`/`skipped`/
+`invalid`) so a repair is honestly distinguishable from a fresh import;
+the batch save now triggers on `imported.length || repaired.length`
+(previously `imported.length` alone, which would have silently dropped a
+repair-only batch's write); the controller's import notifications mention
+a nonzero repair count.
+
+**3. Atlas Fact creation identity/visibility.**
+- *Visibility.* The Add Atlas Fact form renders no `factKnownToPlayers`
+  checkbox, but `factPayload()` supplied an explicit `knownToPlayers:
+  false` regardless. `normalizeFact()`'s `bool()` helper returns an
+  explicit boolean argument as-is (bypassing its own designed fallback:
+  `revealState` of `known`/`active`/`compromised` implies
+  `knownToPlayers: true`), so a fact created through this form with
+  Reveal State "Known" was always actually saved as *not* known to
+  players — an internally incoherent record. Fixed: `factPayload()` no
+  longer supplies the key at all, letting the intended fallback apply —
+  chosen over rendering a redundant second checkbox, per "do not create a
+  second visibility system."
+- *Duplicate titles.* No `factId` field is rendered either, so every
+  interactive submission fell through to `normalizeFact()`'s id fallback,
+  `slugify(title)` — with no per-call disambiguation, unlike
+  `normalizeEncounterSeed()`'s own fallback (`slugify(`${name}-
+  ${index+1}`)`), which is why Encounter Seed never had this bug. Two
+  facts submitted with the same title generated the identical id, and
+  `upsertAtlasFact()` correctly-but-unintentionally treated the second
+  submission as an edit of the first, silently overwriting it. Fixed:
+  `factPayload()` now generates a real unique id
+  (`foundry.utils.randomID()`) whenever the form doesn't supply one —
+  fixed at the interactive creation call site, not inside
+  `normalizeFact()` itself, so the static Library seed facts (which
+  always supply their own deterministic id via `seedFactToAtlasFact()`)
+  are completely unaffected.
+
+Files changed: `scripts/locations/location-library-seeds.js`
+(`parentRecordId` override), `scripts/locations/location-registry-service.js`
+(`_resolveLibraryParentId`, `_uniqueLocationSlug` reservation, provenance-
+only `summarizeLibrary()`, repair tracking in
+`#importLibrarySeedsExclusive`), `scripts/ui/shell/gm/GMLocationsSurfaceService.js`
+(provenance-only `librarySeedCard()`), `scripts/ui/shell/gm/controllers/GMLocationsSurfaceController.js`
+(`factPayload()` id generation and `knownToPlayers` omission, repair-aware
+notifications), and the new
+`tests/gm-locations-library-identity-and-fact-integrity.test.mjs`.
+
+All eight required cases verified executed under the Foundry-shim
+harness against the real production services/controller: a brand-new
+manual Location can no longer land on a Library id at all; a
+pre-existing collision no longer falsely marks a seed "Imported"; the
+real seed still imports completely at a fallback id with the unrelated
+manual record completely untouched and no built-in child attached to it;
+a repeated collision-affected import is idempotent; the Library card
+correctly flips to "Imported" once the real import lands; partial-parent-
+deletion recovery heals surviving children (including one with a GM
+customization made in the interim, which survives untouched) without
+duplication; two same-titled Atlas Facts stay distinct; an explicit-id
+edit changes only its target; and a "Known" fact is saved genuinely known
+to players. Verified via `git stash` to fail against head `6785036`.
+Full validation after this correction: **153/153** rolling tests passed
+(152 + 1 new file), **2265/2265** files passed the syntax check.
+
 ---
 
 ## Stage 3 manual Foundry validation checklist (not yet run — no live client available)
@@ -1924,6 +2059,26 @@ PASS = the fact appears in the Atlas Facts list with the chosen Reveal
 Mode actually applied → expand "Add Encounter Seed" → fill in a Token
 Image path → submit a new seed → PASS = it appears in the Encounter Seeds
 list with that image applied.
+
+**Library id collision recovery**: manually create a Location named
+exactly one of the built-in seeds (e.g. "Tatooine") → PASS = the Library
+card for that seed does NOT read "Imported" → import that seed anyway →
+PASS = the manual Location is untouched, the real seed's full hierarchy
+appears as new records, notifications mention what was actually
+added/repaired → re-import the same seed again → PASS = no duplicate
+records, still idempotent.
+
+**Partial hierarchy repair**: import a seed with children (e.g. Tatooine)
+→ delete only the parent Location, leaving its children → PASS = the
+children remain in the list with no parent → re-import the same seed →
+PASS = the parent reappears and the same children are re-linked under it
+(not duplicated) → any manual edits made to a surviving child in the
+meantime are still present.
+
+**Atlas Fact identity/visibility**: add two Atlas Facts with the exact
+same title → PASS = both appear as separate entries, not one overwriting
+the other → add a fact with Reveal State "Known" → PASS = it behaves as
+actually known to players (not silently hidden).
 
 **Regression**: repeat the Phase 0/Stage 1/Phase 2 manual checklists
 above → PASS = all prior behavior unchanged.
