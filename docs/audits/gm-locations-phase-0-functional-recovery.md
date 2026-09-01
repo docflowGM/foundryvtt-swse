@@ -1327,6 +1327,36 @@ preselection, and "Quick Locations Compendium" terminology cleanup —
 none of these were required for correctness and Stage 4 remains
 explicitly not started.
 
+**STAGE 3 FINAL STATE-INTEGRITY CORRECTION.** An independent review of the
+first Stage 3 pass (head `519d29f`) found the layout, scroll, and
+`GMInteractionRepairService` fixes sound, but caught two real blockers and
+one completion gap the first pass's own tests did not actually exercise:
+
+1. **Cross-filter import selection was still lost**, just one step later
+   than the original bug — the checkbox `change` handler reconstructed the
+   whole selected set from the currently-*visible* (filter-narrowed) form
+   instead of adding/removing the one seed that changed, and "Import
+   Selected" read only the visible form at submit time. The first pass's
+   test manually built a final state and proved the VM read it correctly,
+   without ever driving the actual select → filter → select transition
+   that lost data. **Fixed**: see the corrected §5 below.
+2. **An invalid parent hierarchy sanitized-and-saved instead of
+   rejecting** — `upsertLocation()` blanked an invalid `parentLocationId`
+   and still saved the rest of the edit, which could silently detach an
+   existing Location from a real, valid parent on a GM's typo. The first
+   pass's own tests encoded this weaker behavior directly. **Fixed**: see
+   the corrected §7 below — invalid hierarchy now rejects the whole save
+   with zero registry writes.
+3. **The restored Atlas Fact/Encounter Seed forms only exposed a subset**
+   of the fields their own `factPayload()`/`seedPayload()` contracts
+   already supported — Reveal Mode was completely missing (a
+   Stage-3-required minimum field), and Encounter Seed's image field
+   wasn't rendered at all. **Fixed**: see the corrected §12 below.
+
+All three are corrected in this same pass, on the same branch/PR, with no
+new branch or PR and Stage 4 still not started. See §21 for the full
+before/after and regression-test detail.
+
 ## 2. Actual-width layout — before/after
 
 **Before**: `.gm-location-workbench`'s only responsive rule was
@@ -1420,24 +1450,51 @@ surface state and triggers a full rerender, rebuilding
 had been checked — adjusting a filter mid-selection silently discarded
 the GM's picks, no warning, no visual sign anything was lost.
 
-**After**: checked seed ids are persisted into surface state
-(`librarySelectedSeedIds`) on every checkbox `change` event (the whole
-current checked set, read back from the form, not a single toggled id —
-robust against any ordering). `GMLocationsSurfaceService.buildViewModel()`
-marks each library card's `checked` from that state, independent of which
-filter produced the current visible card list. The selection is cleared
-at the two points that actually consume or discard it: a successful
-import (`_importLibrarySeedIds`'s success path) and closing the modal
-(`close-modal` action) — not on every filter change, which was the bug.
+**First Stage 3 pass (incomplete — corrected below)**: checked seed ids
+were persisted into surface state (`librarySelectedSeedIds`) on every
+checkbox `change` event, and `GMLocationsSurfaceService.buildViewModel()`
+correctly marked each library card's `checked` from that state. But the
+`change` handler itself reconstructed the *entire* selected set from
+`seedIdsFromForm(new FormData(form))` — the currently-rendered, possibly
+filter-narrowed form. Independent review caught that this reproduces the
+exact bug one step later: select Naboo, filter to "Tatooine" (Naboo's
+checkbox disappears from the DOM), select Tatooine → the handler rebuilt
+the set from what's visible (`['tatooine']`), silently dropping Naboo.
+"Import Selected" had the matching bug on the read side: it imported
+`seedIdsFromForm(formData)` from the currently-visible form at submit
+time, so a selected-but-hidden seed could never actually be imported. The
+first pass's test manually constructed a final `librarySelectedSeedIds`
+state and proved the VM read it correctly — it did not exercise the
+actual click → change → filter → click transition that lost data, so it
+passed while the underlying bug remained.
+
+**Stage 3 final correction**: `librarySelectedSeedIds` in surface state
+is now genuinely authoritative. The checkbox `change` handler adds or
+removes *only the one seed that changed* from the existing state set —
+it never reconstructs the whole set from the DOM, so a seed hidden by a
+later filter change is never touched. "Import Selected" now imports the
+union of the authoritative state selection and whatever the visible form
+has checked (the latter is a defensive fallback only; state is already
+correct by submit time). The selection is still cleared only at the two
+points that actually consume or discard it: a successful import and
+closing the modal.
 
 Verified executed
-(`tests/gm-locations-import-selection-persistence.test.mjs`): the same
-`librarySelectedSeedIds` state produces `checked: true` for a matching
-card both unfiltered and after a search filter narrows the visible list;
-no card reads `checked` with empty state; a successful import's state
-patch includes `librarySelectedSeedIds: []`; source-level assertions
-confirm the checkbox-change wiring and the close-modal clear. Proven to
-fail against the pre-fix files via `git stash`.
+(`tests/gm-locations-import-selection-persistence.test.mjs`): a real
+state-transition proof drives the actual click sequence through a
+minimal fake form/FormData (no jsdom in this repo) — select Naboo
+(`state=[naboo]`) → filter narrows the DOM so Naboo's checkbox no longer
+exists → select Tatooine (`state=[naboo,tatooine]`, Naboo survives) →
+filter again (state untouched) → uncheck Tatooine (`state=[naboo]`) →
+re-select it (`state=[naboo,tatooine]`) → submit Import Selected while
+Naboo is hidden by the current filter → both Naboo and Tatooine are
+actually imported → a successful import clears the state to `[]`.
+Verified via `git stash` against the FIRST Stage 3 pass's controller
+(not just the pre-Stage-3 original) to prove this specific transition
+was still broken after that pass and is fixed now. Plus the original
+VM-level `checked`-from-state proof and source-level wiring assertions
+(now updated to assert the add/remove pattern and the absence of the old
+whole-set-reconstruction pattern).
 
 ## 6. Location identity — duplicate-name bug (from `07ff3cf`)
 
@@ -1456,35 +1513,73 @@ produces a second, distinct record with a disambiguated id via the new
 disambiguation). `findLocation()` keeps its own name-fallback for
 read/search — a separate, safe concern from write-identity.
 
-## 7. Hierarchy validation contract (from `07ff3cf`)
+## 7. Hierarchy validation contract (from `07ff3cf`, corrected below)
 
-`upsertLocation()` now validates `parentLocationId` at the same mutation
-boundary via the new `_sanitizeParentLocationId(id, parentLocationId, records)`:
+**First Stage 3 pass (destructive — corrected below)**: `upsertLocation()`
+validated `parentLocationId` via `_sanitizeParentLocationId(id,
+parentLocationId, records)`, but on an invalid request (self, nonexistent,
+or a cycle) that function returned `''` instead of rejecting — and
+`upsertLocation()` proceeded to save the rest of the edit with the parent
+silently blanked. The controller detected the mismatch after the fact and
+warned "Location saved, but the parent location you entered was invalid
+... and was cleared," then closed the modal. Independent review correctly
+identified this as destructive: an existing Location with a real, valid
+parent (e.g. Cantina → Mos Eisley) that a GM edited with a typo'd
+descendant as the new parent would have its *real* parent silently wiped
+and the edit saved anyway, discoverable only by reading a notification
+after the modal had already closed. The first pass's tests encoded this
+weaker behavior directly (`assert.equal(patched.parentLocationId, '')`),
+so the suite was green while validating sanitization, not rejection.
 
-- **Self-parent** (a location naming itself as its own parent) — rejected,
-  parent cleared.
-- **Direct cycle** (A's parent is B, B's parent set to A) — rejected.
+**Stage 3 final correction**: invalid hierarchy now rejects the whole
+save. `_sanitizeParentLocationId` is renamed `_validateParentLocationId`
+and throws (`self`/`nonexistent`/`cycle`, each with a distinct message)
+instead of returning `''`, and the throw happens *before*
+`upsertLocation()` builds or saves anything — zero registry writes occur,
+and an existing record's real, valid parent is left completely untouched.
+The four validated cases:
+
+- **Self-parent** (a location naming itself as its own parent) — REJECTED.
+- **Direct cycle** (A's parent is B, B's parent set to A) — REJECTED.
 - **Descendant cycle** (a location naming one of its own descendants as
-  parent, walking the chain further than one hop) — rejected.
-- **Nonexistent parent id** — rejected.
-- **Valid hierarchy** (any real, non-cyclic parent) — succeeds normally.
+  parent, walking the chain further than one hop) — REJECTED.
+- **Nonexistent parent id** — REJECTED (both on CREATE, where no new
+  Location is created at all, and on EDIT, where the existing record's
+  real parent survives untouched).
+- **Valid hierarchy** (any real, non-cyclic parent, and a save that omits
+  `parentLocationId` entirely) — still succeeds normally.
 
-The create/edit form submit handler in the controller now distinguishes
-this from a plain save failure: if the saved record's `parentLocationId`
-differs from what was submitted, it warns explicitly ("Location saved,
-but the parent location you entered was invalid ... and was cleared")
-instead of a plain "Location saved." that would silently hide the
-rejection. The parent-location datalist also no longer offers the
-record's own id as a choice (previously relied on an unrendered
-`disabled` attribute that never rendered).
+The controller's create/edit submit handler no longer has a
+parent-was-cleared branch to distinguish (there is nothing to clear
+silently) — a rejected save now surfaces through the same try/catch every
+other save failure already used, reporting the validator's own message
+(e.g. "That parent location is a descendant of this location — setting
+it would create a hierarchy cycle.") and leaving the modal open, since
+the `patchSurfaceState({ modal: null })` line is never reached on a
+thrown rejection. The one other caller that can request an arbitrary new
+`parentLocationId` — drag-and-drop location nesting
+(`linkDossierPayload()` → `upsertLocation({ parentLocationId: location.id
+})`) — previously had no try/catch around this call at all; since it now
+throws for the same invalid-hierarchy cases, that call site was wrapped
+in try/catch too (a drop that would create a cycle now warns explicitly
+instead of surfacing as an unhandled promise rejection). The
+parent-location datalist still excludes the record's own id as a choice
+(previously relied on an unrendered `disabled` attribute).
 
-All five cases (and the duplicate-name fix in §6) verified executed in
-`tests/gm-locations-identity-and-hierarchy-integrity.test.mjs`: same-named
-but unrelated locations get distinct ids and never merge (proven to fail
-pre-fix via `git stash`), explicit-id edits stay correctly scoped to
-their own record, Quick Library import stays idempotent (unaffected —
-it never routes through `upsertLocation()`), and all four hierarchy
-rejection cases plus the valid-hierarchy success case pass.
+All cases (and the duplicate-name fix in §6) verified executed in
+`tests/gm-locations-identity-and-hierarchy-integrity.test.mjs`, rewritten
+for the rejection contract: same-named but unrelated locations get
+distinct ids and never merge (proven to fail pre-fix via `git stash`),
+explicit-id edits stay correctly scoped to their own record, Quick
+Library import stays idempotent (unaffected — it never routes through
+`upsertLocation()`), and self-parent/nonexistent-parent (create and
+edit)/direct-cycle/descendant-cycle each assert `assert.rejects(...)`,
+zero `game.settings.set` calls during the rejected attempt, and the
+registry byte-for-byte unchanged (`deepEqual` against a pre-attempt
+snapshot) — plus the existing record's real, valid parent explicitly
+confirmed to survive the rejection. Verified via `git stash` to fail
+against the first Stage 3 pass's sanitize-and-save behavior (not just the
+pre-Stage-3 original).
 
 ## 8. Filter zero-match semantics (from `2f2153f`)
 
@@ -1555,24 +1650,54 @@ label matches `/Missing Actor/`; a resolvable world Actor UUID →
 `unverifiable: true`, never "Missing"; an encounter seed's compendium
 actor link → `actorUnverifiable: true`.
 
-## 12. Atlas Fact / Encounter Seed authoring (from `2f2153f`)
+## 12. Atlas Fact / Encounter Seed authoring (from `2f2153f`, extended below)
 
 `GMLocationsSurfaceController` already had live submit handlers for
 `form[data-atlas-fact-form]` and `form[data-encounter-seed-form]`
 (`factPayload()`/`seedPayload()` → `LocationRegistryService.upsertAtlasFact()`/
 `.addEncounterSeed()`), but `locations.hbs` rendered neither form — wired
 but unreachable, the same class of gap Phase 2 closed for
-leads/links/scenes. Both are now rendered as compact collapsible
+leads/links/scenes. Both were rendered as compact collapsible
 (`<details>`) forms reusing the option lists the service already computed
 (`factCategoryOptions`, `skillOptions`, `editorRevealOptions`,
 `leadOutputOptions`, `seedCategoryOptions`) — no new VM surface, no
 parallel option system.
 
+**Stage 3 final correction — completeness.** Independent review found
+this first pass only exposed a subset of the fields `factPayload()`/
+`seedPayload()` already read: the Atlas Fact form was missing `factRevealMode`
+(a Stage-3-required minimum field, backed by the already-computed
+`factRevealModeOptions`) and the whole advanced reveal/output block
+(`factCheckLabel`, `factChecksText`, `factTags`, `leadCreateJob`,
+`leadCreateIntel`, `leadJobTitle`, `leadJobObjective`, `leadRewardCredits`,
+`leadIntelTitle`, `leadRevealLocationIds`, `leadRevealFactionIds`,
+`leadRevealContactIds`); the Encounter Seed form was missing `seedImg`
+entirely. Fixed: Reveal Mode was added to the primary field grid; the
+rest of the Atlas Fact advanced fields were added inside a nested
+"Advanced reveal & output options" `<details>` (not dumped into the
+primary form) — every rendered field maps to an existing payload key, no
+new fields were invented. Encounter Seed's Token Image field was added
+next to its Actor UUID field. While auditing this, a real (unrelated)
+documentation bug was also caught and fixed: the Atlas Fact multi-check
+textarea's placeholder/label described a comma-delimited `skill,dc,label`
+format, but `LocationRegistryService.parseAtlasCheckLines()` actually
+splits each line on `|` (`skill|dc|label`) — the placeholder now matches
+the real parser.
+
 Verified executed in `tests/gm-locations-truthful-ui-contract.test.mjs`:
-both forms render in the template, both submit handlers are wired in the
-controller source, and a real end-to-end save through
-`upsertAtlasFact()`/`addEncounterSeed()` succeeds with the expected
-payload shape.
+both forms render in the template; both submit handlers are wired in the
+controller source; every field name `factPayload()`/`seedPayload()` reads
+is asserted present in the rendered form body (`factTitle`,
+`factCategory`, `factSkill`, `factDc`, `factRevealState`,
+`factRevealMode`, `leadOutput` for Atlas Fact; `seedName`, `seedCategory`,
+`seedRole`, `seedQuantity`, `seedUuid`, `seedNotes`, `seedImg` for
+Encounter Seed); and — via the same hand-rolled fake-form/FormData
+technique as §5, driving the real `_wireForms()` — a full rendered-field
+→ FormData → payload helper → controller → service chain is executed for
+both forms, confirming `revealMode` and `img` specifically reach the
+saved record (the two fields the first pass never rendered at all).
+Verified via `git stash` to fail against the first pass's template (the
+`factRevealMode` field-presence assertion fails as expected).
 
 ## 13. Form failure handling (from `2f2153f`)
 
@@ -1624,27 +1749,36 @@ yet" fallback remaining on any Locations-surface control.
 
 ## 16. Tests added this stage
 
-- `tests/gm-locations-identity-and-hierarchy-integrity.test.mjs` (executed)
-- `tests/gm-locations-truthful-ui-contract.test.mjs` (executed + static)
+- `tests/gm-locations-identity-and-hierarchy-integrity.test.mjs`
+  (executed; rewritten in the final correction for the rejection contract)
+- `tests/gm-locations-truthful-ui-contract.test.mjs` (executed + static;
+  extended in the final correction with form field-completeness proof)
 - `tests/gm-locations-container-responsive-layout.test.mjs` (static)
 - `tests/gm-datapad-interaction-repair-lifecycle.test.mjs` (executed,
   hand-rolled fake DOM)
 - `tests/gm-locations-import-selection-persistence.test.mjs` (executed +
-  static)
+  static; rewritten in the final correction to drive the real
+  state-transition sequence instead of a manually-built final state)
 
 Every test in this list was verified via `git stash` to fail against the
 pre-fix source it targets and pass against the fix, per this project's
-standing requirement.
+standing requirement — the three rewritten in the final correction were
+each additionally verified to fail against the FIRST Stage 3 pass's
+source (not just the pre-Stage-3 original), since that pass's own tests
+were passing against the behavior review found incomplete or wrong.
 
 ## 17. Full validation results
 
-Full rolling test suite: **152/152** passed (147 pre-Stage-3 + 5 new
-files), including every named prior-stage contract test unchanged:
-Phase 0 context contract; all four Stage 1 catalog/importer/import-service/
-importer-controller-behavior tests; all four Phase 2 atlas-lead/links-
-scenes-encounters/operational-ui-action-matrix/scene-creation-safety
-tests; the GM Datapad action-integrity, wizard, and duplicate-handler
-regression tests. Syntax check: **2264/2264** files pass `node --check`.
+Full rolling test suite: **152/152** passed (147 pre-Stage-3 + 5 files,
+3 of them rewritten/extended in the final correction — same file count,
+no new test files added by the correction). Includes every named
+prior-stage contract test unchanged: Phase 0 context contract; all four
+Stage 1 catalog/importer/import-service/importer-controller-behavior
+tests; all four Phase 2 atlas-lead/links-scenes-encounters/operational-
+ui-action-matrix/scene-creation-safety tests; the GM Datapad
+action-integrity, wizard, and duplicate-handler regression tests. Syntax
+check: **2264/2264** files pass `node --check`. Both totals match the
+reviewed baseline exactly.
 
 ## 18. Runtime validation gap
 
@@ -1671,9 +1805,72 @@ unrendered controller branches, and biome filter-pill UI density.
 ## 20. PR #963 status
 
 Draft, on `claude/locations-context-contract-i8tbp0`, mergeable, all
-Stage 3 commits pushed. See the PR itself for the current head SHA and
-CI status at the time this section was written — both are best verified
-live at push time rather than pinned here.
+Stage 3 commits (including the final state-integrity correction) pushed.
+See the PR itself for the current head SHA and CI status at the time this
+section was written — both are best verified live at push time rather
+than pinned here.
+
+## 21. Stage 3 final state-integrity correction — summary
+
+Independent review of head `519d29f` found the layout/scroll/repair-
+lifecycle work (§2–4) sound, and found two real blockers plus one
+completion gap in the state-integrity and authoring work (§5, §7, §12) —
+each confirmed against actual source before any fix was written, per this
+project's standing verification requirement. All three are corrected in
+this pass:
+
+1. **Import selection authority** (§5) — the checkbox `change` handler
+   now adds/removes only the one seed that changed from the existing
+   authoritative state set, instead of reconstructing the whole set from
+   the currently-visible (filter-narrowed) form; "Import Selected" now
+   imports the union starting from that authoritative state.
+2. **Hierarchy rejection, not sanitization** (§7) — `_sanitizeParentLocationId`
+   is now `_validateParentLocationId` and throws instead of returning
+   `''`; `upsertLocation()` validates before building or saving anything,
+   so an invalid hierarchy request produces zero registry writes and
+   leaves an existing record's real parent untouched. The one other
+   caller that can request an arbitrary new parent
+   (`linkDossierPayload()`'s drag-and-drop nesting path) was audited and
+   given a try/catch it previously lacked, since it now throws for the
+   same cases.
+3. **Form field completeness** (§12) — Atlas Fact's Reveal Mode field
+   (Stage-3-required minimum) and its advanced reveal/output block, plus
+   Encounter Seed's image field, are now rendered — every added field
+   maps to an existing `factPayload()`/`seedPayload()` key, none invented.
+
+Files changed in this correction:
+
+- `scripts/locations/location-registry-service.js` — hierarchy validation
+  rewritten to throw (§7).
+- `scripts/ui/shell/gm/GMLocationsSurfaceService.js` — comment reference
+  updated to the renamed validator.
+- `scripts/ui/shell/gm/controllers/GMLocationsSurfaceController.js` —
+  import-selection change/submit handlers rewritten to be authoritative
+  (§5); create/edit submit handler's dead parent-cleared branch removed
+  (§7); drag-and-drop nesting call site wrapped in try/catch (§7).
+- `templates/apps/gm-datapad/surfaces/locations.hbs` — Atlas Fact Reveal
+  Mode field and advanced reveal/output `<details>` block added; Encounter
+  Seed image field added; the multi-check textarea's placeholder corrected
+  from a comma-delimited example to the actual pipe-delimited format
+  `parseAtlasCheckLines()` parses (§12).
+- `tests/gm-locations-identity-and-hierarchy-integrity.test.mjs` —
+  rewritten for the rejection contract (zero writes, registry unchanged,
+  existing parent preserved) in place of the old sanitize-and-clear
+  assertions.
+- `tests/gm-locations-import-selection-persistence.test.mjs` — rewritten
+  to drive the real click → change → filter → click state-transition
+  sequence through a hand-rolled fake form/FormData, plus updated
+  source-level wiring assertions.
+- `tests/gm-locations-truthful-ui-contract.test.mjs` — extended with
+  field-name-mapping assertions and a real rendered-field → FormData →
+  payload → controller → service execution proof for both forms.
+- `docs/audits/gm-locations-phase-0-functional-recovery.md` — this
+  section, plus corrected §1/§5/§7/§12 language.
+
+Full validation after the correction: **152/152** rolling tests passed,
+**2264/2264** files passed the syntax check — identical totals to the
+first Stage 3 pass (no new test files, three rewritten/extended in place)
+and to the pre-correction reviewed baseline.
 
 ---
 
@@ -1696,27 +1893,37 @@ a Locations modal is open or a filter is mid-change → PASS = no console
 error, no `TypeError: Cannot read properties of null`, the Datapad window
 repositions/stabilizes normally throughout.
 
-**Import selection**: open Import Location → check several Quick Library
-seeds → change the search text or a biome/category filter pill →
-PASS = previously-checked seeds (if still visible under the new filter)
-remain checked → submit → PASS = only the checked seeds import → reopen
-the modal → PASS = selection starts empty (cleared by the prior import).
+**Import selection**: open Import Location → check a seed (e.g. Naboo) →
+change the search/filter so that seed's card and checkbox disappear from
+view → check a second, now-visible seed (e.g. Tatooine) → PASS = both
+remain part of the selection (not just the second one) → change the
+filter again so BOTH are hidden → PASS = the selection is still intact →
+submit Import Selected while the first seed is still hidden by the
+current filter → PASS = both locations are imported, not just the
+visible one → reopen the modal → PASS = selection starts empty (cleared
+by the prior import).
 
 **Identity/hierarchy**: create a new location with the same name as an
 existing one → PASS = a second, distinct record is created, the original
-is untouched → attempt to set a location as its own parent, or create a
-parent-child cycle → PASS = the save succeeds but the parent field is
-cleared with an explicit warning notification.
+is untouched → edit an existing location that has a real, valid parent →
+attempt to set its parent to itself, a nonexistent id, or one of its own
+descendants → PASS = the save is REJECTED outright (an explicit error
+notification, the modal stays open, no other edits in that submission are
+saved either) and the location's original valid parent is completely
+unchanged, not blanked.
 
 **Scene truthfulness**: select a location with no map/general image →
 PASS = Create Scene is replaced with "Needs a map image" → select one
 with a broken (deleted) primary Scene → PASS = Open/Activate Scene are
 gone, only Unlink remains.
 
-**Atlas Fact / Encounter Seed authoring**: expand "Add Atlas Fact" →
-submit a new fact → PASS = it appears in the Atlas Facts list → expand
-"Add Encounter Seed" → submit a new seed → PASS = it appears in the
-Encounter Seeds list.
+**Atlas Fact / Encounter Seed authoring**: expand "Add Atlas Fact" → set a
+Reveal Mode other than the default and expand "Advanced reveal & output
+options" to fill in at least one advanced field (e.g. Tags) → submit →
+PASS = the fact appears in the Atlas Facts list with the chosen Reveal
+Mode actually applied → expand "Add Encounter Seed" → fill in a Token
+Image path → submit a new seed → PASS = it appears in the Encounter Seeds
+list with that image applied.
 
 **Regression**: repeat the Phase 0/Stage 1/Phase 2 manual checklists
 above → PASS = all prior behavior unchanged.
