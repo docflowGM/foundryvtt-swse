@@ -2082,3 +2082,263 @@ actually known to players (not silently hidden).
 
 **Regression**: repeat the Phase 0/Stage 1/Phase 2 manual checklists
 above → PASS = all prior behavior unchanged.
+
+# GM DATAPAD ECOSYSTEM REDESIGN — PHASE 1
+
+Locations Ecosystem Shell + View-Model Migration, on the same branch/PR.
+Governing rule: the prototype (`GM Datapad v2.html`) decided presentation
+and information architecture; every real authority (LocationRegistryService,
+FactionRegistryService, world Actors, the Job Board's own thread/status
+derivation, Holonet Intel) stayed the sole source of truth. No prototype
+fake data array, timestamp id, inline `onclick`, or text-name navigation
+was ported.
+
+## 1. Phase 1 verdict
+
+**PHASE 1 COMPLETE WITH DOCUMENTED RUNTIME FOLLOW-UP.** The real Locations
+UI now presents as a campaign hub — Current Situation, four Campaign
+Relationship cards (Factions/Contacts & NPCs/Jobs/Intel & Leads),
+Preparation (Encounter Seeds/Scenes), and progressively-disclosed World
+Detail (Children/Atlas Facts/Environment) — instead of a flat CRUD record,
+with Jobs and Intel now resolving their real titles/status from their own
+authorities instead of rendering a raw id. Cross-surface navigation
+(clicking a Job row to land inside the Job Board with that job selected)
+was deliberately NOT implemented — see §12 and §17.
+
+## 2. Prototype-to-production mapping
+
+| Design section | Production authority | Stable identity | VM field | Action/service |
+|---|---|---|---|---|
+| Registry List | `LocationRegistryService.getRegistry()` | `location.id` | `locationManager.cards` | `select` |
+| Current Situation | Derived from the same VM below | — | `selected.currentSituation` | (presentation only) |
+| Controlling Faction | `FactionRegistryService` | `factionId` | `currentSituation.controllingFaction` | `remove-link` (kind=faction) |
+| Factions Present | `FactionRegistryService` | `factionId` | `relationships.factions` | `remove-link` (kind=faction) |
+| Contacts / NPCs | Faction registry dossier contacts + world Actor UUIDs | `contactId` / `actorUuid` | `relationships.contacts` | `remove-link` (kind=contact\|actor) |
+| Jobs Here | Job Board's own Holonet thread (`HolonetStorage.getThread`) | `threadId` | `relationships.jobs` | `remove-link` (kind=job) |
+| Intel & Leads (Intel) | `HolonetIntelService` | `intelId` | `relationships.intel` | `remove-link` (kind=intel) |
+| Intel & Leads (Leads) | `LocationRegistryService.getAtlasLeadDiscoveries()` | `discoveryId` | `relationships.leads` | `lead-resolve` |
+| Encounter Seeds | Location record (owned) | `seedId` | `preparation.encounterSeeds` | `remove-seed`, `stage-encounter-seeds` |
+| Scenes / Maps | Foundry `Scene` (world) | `sceneUuid` | `preparation.scenes` | `open-scene`, `activate-scene`, `remove-link` (kind=scene) |
+| Child Locations | `LocationRegistryService` | `locationId` | `world.children` | `select` |
+| Atlas Facts | Location record (owned) | `factId` | `world.atlasFacts` | `fact-intel`, `fact-job`, `remove-fact` |
+| Quick Location Library | Static built-in seed catalog | `librarySeedId` | `library.cards` | `import-library-seed`, form submit |
+
+## 3. Authority map
+
+Locations remains a linking authority only. It never stores a copy of a
+Job's title/status or an Intel record's title/status — both are resolved
+fresh, on every render, from their own real services:
+
+- **Jobs**: `HolonetStorage.getThread(jobId)` (a single-thread lookup, not
+  a full-catalog scan) plus `GMJobBoardSurfaceService`'s own
+  `jobForThread()`/`jobStatus()`/`statusLabel()` — exported from that file
+  for exactly this reuse, so Job Board remains the sole place that decides
+  what a job's status means. A deleted/stale thread id resolves to an
+  honest `{ missing: true, title: 'Missing Job' }` row rather than
+  crashing or showing a raw id.
+- **Intel**: `HolonetIntelService.getIntelById()` /
+  `.toIntelSummary()` — the same public API the rest of the Holonet system
+  uses. Same missing-reference handling.
+- **Factions / Contacts**: `FactionRegistryService` (unchanged authority);
+  a location only ever stores `controllingFactionId`, `factionPresence[]`,
+  `contactIds[]`.
+- **Actors**: world `game.actors.get()` (unchanged, Phase 2's synchronous
+  world-UUID resolution).
+- **Leads**: `LocationRegistryService.getAtlasLeadDiscoveries({ locationId })`
+  — the identical authority the global Atlas Lead Queue already used,
+  now also called scoped to one location.
+- **Scenes**: unchanged (Phase 0/2's `resolveSceneRow()`).
+
+## 4. Selected Location ecosystem VM
+
+`GMLocationsSurfaceService.selectedVm()` was made `async` (it already sat
+inside an `async buildViewModel()` that awaited nothing before this) and
+now returns, alongside every pre-existing flat property (untouched, for
+backward compatibility with every prior-phase test and any future
+consumer), five new presentation-only groups built from the same
+underlying data: `identity`, `currentSituation`, `relationships`
+(`factions`/`contacts`/`jobs`/`intel`/`leads`), `preparation`
+(`encounterSeeds`/`scenes`/gating flags), and `world`
+(`children`/`atlasFacts`/`environment`/notes). No new stored schema; no
+second VM framework.
+
+## 5. Current Situation
+
+Renders: Party Here (yes/no), Controlling Faction (resolved name),
+active Job count (jobs not in `paid`/`archived`/`failed`/`missing`),
+unresolved Lead count (scoped to this location), Encounter Seed count,
+and Scene readiness (a primary Scene exists and resolves). All six are
+computed from data the VM was already computing for the flat shape — no
+fabricated metric.
+
+## 6. Campaign Relationships
+
+**Factions**: `FactionRegistryService`-resolved rows, each marked
+`isController` when it matches `controllingFactionId` (visually
+distinguished, per the design requirement).
+
+**Contacts/NPCs**: merges Faction-registry dossier contacts and raw
+world-Actor UUID links into one card (the split between the two is an
+authority implementation detail, not a distinct campaign concept the GM
+needs surfaced separately) — deliberately per Phase 1F's explicit
+allowance. A missing Actor still reads "Missing Actor," never a silent
+drop.
+
+**Jobs**: real title/status/client resolved from the Job Board's own
+thread, per §3.
+
+**Intel**: real title/status resolved from Holonet Intel, per §3.
+
+**Leads**: kept as a visually and semantically distinct subgroup inside
+the same card, never merged with Intel — a Lead is an unresolved player
+discovery (`LocationRegistryService.getAtlasLeadDiscoveries`); Intel is a
+separate campaign record this location happens to reference. Atlas Facts
+(the Location's own inherent knowledge) live in World Detail, not here —
+also never collapsed into Leads/Intel.
+
+## 7. Intel vs Atlas Lead vs Atlas Fact vs Encounter Seed distinction
+
+Preserved and reinforced as four separate concepts, never rendered under
+one heading:
+
+- **Atlas Fact** — knowledge inherent to the Location (World Detail).
+- **Atlas Lead** — an unresolved discovery generated by player
+  interaction with an Atlas Fact (Campaign Relationships → Intel & Leads
+  → Leads).
+- **Intel** — a separate Holonet Intel campaign record this location
+  references (Campaign Relationships → Intel & Leads → Intel).
+- **Encounter Seed** — GM preparation for a possible encounter
+  (Preparation), unrelated to any of the above.
+
+`tests/gm-locations-ecosystem-template-contract.test.mjs` asserts none of
+these four leak into each other's section.
+
+## 8. Preparation
+
+Encounter Seeds and Scenes/Maps kept in their own section, separate from
+Campaign Relationships. All Phase 2/3 functionality reused verbatim:
+`remove-seed`, `stage-encounter-seeds` (with its existing
+`_sceneOperationInFlight` guard and gating logic, unchanged), `create-scene`,
+`open-scene`, `activate-scene`, `remove-link` (kind=scene), the exact
+Scene-prerequisite truthfulness (`canCreateScene`) and broken-Scene
+truthfulness (`is-broken-link`, no Open/Activate on an unresolved primary)
+from Stage 3.
+
+## 9. World Detail
+
+Child Locations, Atlas Facts (with its authoring form), and
+Environment/Notes (hazards/rumors/commerce/travel notes, public summary,
+GM notes, linked Journal) moved into `<details>`-based progressive
+disclosure, lower visual priority than Current Situation/Relationships/
+Preparation, per Phase 1J.
+
+## 10. Registry-list migration
+
+Visual redesign only — every real capability preserved: search, category/
+type/reveal/special filters, selected/current/hidden state, hierarchy
+context (`parentName`), counts. Cards now show a type icon, NPC/Job
+counts, and a "Party Here" marker. The registry remains card-per-record
+(not reduced to search-only), and the static Library's ~200-record scale
+is unaffected — this pass didn't touch the importer's data path.
+
+## 11. Prototype features intentionally NOT ported
+
+Fixed 1440×900 shell scaling; text-name cross-navigation ("scan rendered
+text → flash row"); fake in-memory `LOCATIONS[]`/`COMPENDIUM[]` arrays;
+`Date.now()` import ids; inline `onclick` handlers; the prototype's literal
+5-step Location creation wizard (existing lighter create/edit flow
+preserved instead, per Phase 1O); the prototype's smallest (7-9px)
+typography (this pass's new text sizes stay ≥0.68rem/≈11px, with primary
+content ≥0.78rem).
+
+## 12. Deferred cross-surface navigation
+
+Explicitly not implemented, per Phase 1M. Every relationship row carries
+a stable identifier (`data-faction-id`, `data-actor-uuid`/`data-contact-id`,
+`data-job-id`, `data-intel-id`, `data-lead-id`) ready for a future
+`host.navigateToSurface(surfaceId, { selectedXId })`-style contract, but no
+ad hoc navigation was invented — rows that aren't yet navigable render as
+information with only their real, already-wired actions (unlink/resolve),
+never a fake button. This is the explicit Phase 2 recommendation (§17).
+
+## 13. Importer preservation
+
+Visual-only changes zero — the importer's markup, service internals, and
+every Stage 1/Stage 3 hardening (stable `librarySeedId` identity, one-write
+batch persistence, same-client serialization, idempotent repeat import,
+invalid-id handling, cross-filter selection state, collision-safe fallback
+identity) are untouched by this pass. `tests/gm-locations-library-import-service.test.mjs`,
+`gm-locations-importer-controller-behavior.test.mjs`, and
+`gm-locations-library-identity-and-fact-integrity.test.mjs` all still pass
+unchanged.
+
+## 14. Accessibility/readability
+
+New text sizes stay ≥0.68rem (chips/meta) and ≥0.78rem (primary copy) —
+no prototype 7-9px text was ported. Icon-only row-action buttons
+(unlink/remove/resolve/open/activate) all carry `title` and `aria-label`.
+The registry list and relationship rows use `role="list"`/`role="listitem"`
+where appropriate. `<details>`/`<summary>` used for World Detail's native
+keyboard-accessible disclosure.
+
+## 15. Tests
+
+- `tests/gm-locations-ecosystem-view-model.test.mjs` (executed) — proves
+  `currentSituation`, all five `relationships.*` groups, `preparation.*`,
+  and `world.*` all resolve REAL linked data (a faction's real name, a
+  Job's real title/status/client from its own thread, an Intel record's
+  real title/status, a per-location Lead distinct from Intel, a resolved
+  world Actor), plus honest missing-Job/missing-Intel handling. Verified
+  via `git stash` to fail against the pre-Phase-1 source.
+- `tests/gm-locations-ecosystem-template-contract.test.mjs` (static) —
+  proves every required section renders, relationship rows carry stable
+  ids (not text identity), Intel/Jobs render resolved labels (not the old
+  "Intel record {{id}}" placebo text), Preparation and Campaign
+  Relationships never leak into each other, and existing filters/authoring
+  forms survive. Verified via `git stash` to fail against the pre-Phase-1
+  template.
+
+Both new tests plus every pre-existing Locations/GM-Datapad test pass
+unchanged (§16).
+
+## 16. Live Foundry follow-up
+
+No live Foundry client is available in this environment, as in every
+prior phase — every claim above is verified by direct source reading and
+by executing the real production services (including the new
+`HolonetStorage`/`HolonetIntelService` resolution calls) under the repo's
+Foundry-shim Node harness. **STATICALLY VERIFIED, LIVE FOUNDRY
+UNVERIFIED.** Manual checklist:
+
+1. Open GM Datapad → Locations at default window size. PASS = registry
+   usable, detail readable, no horizontal clipping.
+2. Select a Location with factions, NPCs, jobs, intel/leads, encounter
+   seeds, Scenes, children, and Atlas Facts. PASS = each appears in its
+   correct conceptual section (Current Situation / Campaign Relationships
+   split into Factions/Contacts/Jobs/Intel & Leads / Preparation / World
+   Detail), Job and Intel rows show real titles and status, not raw ids.
+3. Resize the Datapad window narrow → wide (independent of the browser
+   window). PASS = layout remains coherent (container-query breakpoints
+   at ~1050px/700px/620px on the `gm-locations-surface` container).
+4. Select the current party Location. PASS = Current Situation's "Party"
+   row reads "Currently Here."
+5. Reference a since-deleted Actor / broken Scene / deleted Job thread /
+   deleted Intel record. PASS = each reads as a safe "Missing ..." row,
+   no crash.
+6. Open the importer, import a sample Location. PASS = Stage 1/3 behavior
+   unchanged, new record appears in the redesigned registry list.
+7. Create a new Location via the existing wizard. PASS = unchanged create
+   flow still works.
+8. Add an Atlas Fact and an Encounter Seed via their forms (now under
+   World Detail / Preparation respectively). PASS = both save and display
+   in the new design.
+
+## 17. Phase 2 recommendation
+
+Context-preserving cross-surface navigation: a shared
+`host.navigateToSurface(surfaceId, { selectedXId })`-style contract so
+clicking a Job/Faction/Intel row in Locations opens that surface with the
+record already selected, instead of the GM re-searching for it. Every
+relationship row already carries the stable id this needs
+(`data-faction-id`/`data-job-id`/`data-intel-id`/`data-actor-uuid`). Not
+started, per explicit instruction.
