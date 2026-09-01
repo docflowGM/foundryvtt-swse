@@ -45,6 +45,8 @@ function installShim({ locations = [], scenes = [], actors = [] } = {}) {
       actors: new Map(actors.map(a => [a.id, a]))
     }
   });
+  let seq = 0;
+  globalThis.foundry.utils.randomID = () => `test-random-id-${++seq}`;
 }
 
 {

@@ -80,13 +80,32 @@ function factPayload(formData) {
   };
   const checks = multiChecks.length ? multiChecks : [quickCheck];
   return {
-    id: text(formData, 'factId'),
+    // The Add Atlas Fact form never renders a factId field — every
+    // interactive submission used to fall through to normalizeFact()'s
+    // id: text(record.id || record.factId) || slugify(title) fallback.
+    // slugify(title) alone has no per-call disambiguation (unlike
+    // normalizeEncounterSeed(), whose fallback is slugify(`${name}-
+    // ${index+1}`)), so two different facts named the same thing
+    // ("Local Rumor" twice) generated the SAME id and the second save
+    // silently overwrote the first as an "edit". Generating a real
+    // unique id here for every interactive (no-explicit-id) submission
+    // fixes create-vs-edit identity without touching normalizeFact()'s
+    // shared fallback — which stays exactly as-is for the static Library
+    // seed facts that always supply their own deterministic id anyway
+    // (see seedFactToAtlasFact in location-library-seeds.js).
+    id: text(formData, 'factId') || foundry.utils.randomID(),
     title: text(formData, 'factTitle', 'New Atlas Fact'),
     teaser: text(formData, 'factTeaser'),
     body: text(formData, 'factBody'),
     category: text(formData, 'factCategory', 'general'),
     revealState: text(formData, 'factRevealState', 'hidden'),
-    knownToPlayers: checked(formData, 'factKnownToPlayers'),
+    // No factKnownToPlayers checkbox is rendered on this form. Do NOT
+    // supply an explicit boolean here — normalizeFact()'s own bool()
+    // helper returns an explicit boolean as-is (bypassing its designed
+    // revealState-based fallback: known/active/compromised implies
+    // knownToPlayers=true), so a form-created fact with revealState=
+    // 'known' used to always be saved with knownToPlayers=false. Omitting
+    // the key entirely lets that intended fallback actually apply.
     revealMode: text(formData, 'factRevealMode', 'any'),
     checks,
     onReveal: {
@@ -271,7 +290,8 @@ export class GMLocationsSurfaceController {
           this.host?.patchSurfaceState?.('locations', { selectedLocationId: result.seed.id, modal: null }, { render: false });
           const importedCount = result.imported?.length || 0;
           const skippedCount = result.skipped?.length || 0;
-          ui.notifications?.info?.(`Imported ${result.seed.name}: ${importedCount} records added${skippedCount ? `, ${skippedCount} already existed` : ''}.`);
+          const repairedCount = result.repaired?.length || 0;
+          ui.notifications?.info?.(`Imported ${result.seed.name}: ${importedCount} records added${skippedCount ? `, ${skippedCount} already existed` : ''}${repairedCount ? `, ${repairedCount} hierarchy link(s) repaired` : ''}.`);
           await this._refresh('gm-location-library-import');
           return;
         }
@@ -888,10 +908,12 @@ export class GMLocationsSurfaceController {
         return;
       }
       const firstSeedId = result.seeds[0]?.id || '';
+      const repairedCount = result.repaired?.length || 0;
       this.host?.patchSurfaceState?.('locations', { selectedLocationId: firstSeedId, modal: null, librarySelectedSeedIds: [] }, { render: false });
       ui.notifications?.info?.(
         `Imported ${result.imported.length} location record(s) from ${result.seeds.length} quick location(s)` +
         `${result.skipped.length ? `; ${result.skipped.length} record(s) already existed` : ''}` +
+        `${repairedCount ? `; ${repairedCount} hierarchy link(s) repaired` : ''}` +
         `${invalidCount ? `; ${invalidCount} selection(s) could not be resolved` : ''}.`
       );
       await this._refresh(reason);
