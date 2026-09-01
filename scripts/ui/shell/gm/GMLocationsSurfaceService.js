@@ -2,6 +2,9 @@
 
 import { LocationRegistryService } from '/systems/foundryvtt-swse/scripts/locations/location-registry-service.js';
 import { FactionRegistryService } from '/systems/foundryvtt-swse/scripts/allies/faction-registry-service.js';
+import { HolonetStorage } from '/systems/foundryvtt-swse/scripts/holonet/subsystems/holonet-storage.js';
+import { HolonetIntelService } from '/systems/foundryvtt-swse/scripts/holonet/subsystems/holonet-intel-service.js';
+import { jobForThread, jobStatus, statusLabel as jobStatusLabel } from '/systems/foundryvtt-swse/scripts/ui/shell/gm/GMJobBoardSurfaceService.js';
 
 function text(value, fallback = '') {
   const out = String(value ?? fallback ?? '').trim();
@@ -228,6 +231,26 @@ function depthFor(location = {}, byId = new Map()) {
   return depth;
 }
 
+const TYPE_ICON_CLASSES = Object.freeze({
+  planet: 'fa-solid fa-earth-americas',
+  moon: 'fa-solid fa-moon',
+  'star-system': 'fa-solid fa-sun',
+  orbit: 'fa-solid fa-satellite',
+  'space-station': 'fa-solid fa-satellite-dish',
+  ship: 'fa-solid fa-rocket',
+  city: 'fa-solid fa-city',
+  region: 'fa-solid fa-map',
+  poi: 'fa-solid fa-location-dot',
+  base: 'fa-solid fa-shield-halved',
+  temple: 'fa-solid fa-gopuram',
+  facility: 'fa-solid fa-industry',
+  unknown: 'fa-solid fa-question'
+});
+
+function iconClassForType(type = '') {
+  return TYPE_ICON_CLASSES[type] || 'fa-solid fa-location-dot';
+}
+
 function locationCard(location = {}, records = [], factions = []) {
   const byId = new Map(records.map(entry => [entry.id, entry]));
   const parent = location.parentLocationId ? byId.get(location.parentLocationId) : null;
@@ -246,6 +269,9 @@ function locationCard(location = {}, records = [], factions = []) {
     categoryLabel: LocationRegistryService.optionLabel(optionSource('CATEGORIES'), location.category),
     type: location.type,
     typeLabel: LocationRegistryService.optionLabel(optionSource('TYPES'), location.type),
+    iconClass: iconClassForType(location.type),
+    isCurrent: Boolean(location.activeForParty),
+    isHidden: location.revealState === 'hidden',
     scale: location.scale,
     scaleLabel: LocationRegistryService.optionLabel(optionSource('SCALES'), location.scale),
     parentLocationId: location.parentLocationId,
@@ -318,13 +344,181 @@ function librarySeedCard(seed = {}, records = []) {
   };
 }
 
-function selectedVm(location = null, records = [], factions = []) {
+/**
+ * Resolve a linked Job Board posting by its thread id, via the real Job
+ * Board authority — HolonetStorage.getThread() plus GMJobBoardSurfaceService's
+ * own status derivation (jobForThread/jobStatus/statusLabel, exported for
+ * exactly this reuse). Locations never stores a copy of a job's title or
+ * status; this resolves it fresh on every render. A thread that no longer
+ * exists (deleted, or a stale link) reports missing rather than throwing.
+ */
+async function resolveJobRow(jobId = '') {
+  const id = text(jobId);
+  if (!id) return null;
+  const thread = await HolonetStorage.getThread(id).catch(() => null);
+  if (!thread) return { id, title: 'Missing Job', status: 'missing', statusLabel: 'Missing', clientLabel: '', missing: true };
+  const job = jobForThread(thread);
+  const status = jobStatus(job);
+  return {
+    id: thread.id,
+    title: text(job?.title || thread.title, 'Job Board Posting'),
+    status,
+    statusLabel: jobStatusLabel(status),
+    clientLabel: text(job?.issuer?.contactName || job?.issuer?.name || job?.client?.name || job?.contactLabel),
+    missing: false
+  };
+}
+
+/**
+ * Resolve a linked Holonet Intel record by its intel id, via the real
+ * Intel authority — HolonetIntelService.getIntelById()/toIntelSummary().
+ * Same non-storing, resolve-on-render approach as resolveJobRow() above.
+ */
+async function resolveIntelRow(intelId = '') {
+  const id = text(intelId);
+  if (!id) return null;
+  const record = await HolonetIntelService.getIntelById(id).catch(() => null);
+  const summary = record ? HolonetIntelService.toIntelSummary(record) : null;
+  if (!summary) return { id, title: 'Missing Intel', status: 'missing', statusLabel: 'Missing', missing: true };
+  return {
+    id: summary.id || summary.recordId,
+    title: text(summary.title, 'Untitled Intel'),
+    status: summary.status,
+    statusLabel: titleCase(summary.status),
+    missing: false
+  };
+}
+
+/**
+ * "Factions Present" relationship rows — the faction registry stays the
+ * sole authority for faction identity/name; a location only ever stores
+ * relationship ids (controllingFactionId, factionPresence[].factionId).
+ */
+function factionRelationshipRows(location, factions = []) {
+  const presenceById = new Map(asArray(location.factionPresence).map(entry => [entry.factionId, entry]));
+  const ids = Array.from(new Set([location.controllingFactionId, ...asArray(location.factionIds), ...asArray(location.factionPresence).map(entry => entry.factionId)].filter(Boolean)));
+  return ids.map((id) => {
+    const faction = findFaction(factions, id);
+    const presence = presenceById.get(id);
+    const isController = id === location.controllingFactionId;
+    return {
+      id,
+      name: faction?.name || id,
+      roleLabel: isController ? 'Controlling Faction' : titleCase(presence?.influence || 'Present'),
+      isController,
+      missing: !faction
+    };
+  });
+}
+
+/**
+ * "Contacts & NPCs" relationship rows — merges the Faction registry's
+ * dossier contacts (already linked via location.contactIds) with raw
+ * world-Actor links (location.npcActorUuids, resolved via resolveActorLink()
+ * above). Both represent "who is here"; the distinction between a
+ * registered Faction contact and a bare Actor UUID is an authority
+ * implementation detail, not a separate campaign concept the GM needs
+ * surfaced as two cards.
+ */
+function contactRelationshipRows(location, factions = []) {
+  const contactRows = contactRowsForFaction(factions).filter(contact => asArray(location.contactIds).includes(contact.id));
+  const fromContacts = contactRows.map(contact => ({
+    id: contact.id,
+    kind: 'contact',
+    name: contact.name,
+    roleLabel: [contact.role, contact.factionName].filter(Boolean).join(' · '),
+    actorUuid: contact.actorUuid || '',
+    missing: false,
+    canUnlink: false
+  }));
+  const fromActors = asArray(location.npcActorUuids).map((uuid) => {
+    const link = resolveActorLink(uuid);
+    return {
+      id: uuid,
+      kind: 'actor',
+      name: link.label,
+      roleLabel: link.unverifiable ? 'Compendium-sourced' : '',
+      actorUuid: uuid,
+      missing: !link.resolved && !link.unverifiable,
+      canUnlink: true
+    };
+  });
+  return [...fromContacts, ...fromActors];
+}
+
+async function selectedVm(location = null, records = [], factions = []) {
   if (!location) return null;
   const byId = new Map(records.map(entry => [entry.id, entry]));
   const card = locationCard(location, records, factions);
   const children = records.filter(entry => entry.parentLocationId === location.id).map(entry => locationCard(entry, records, factions));
   const contactRows = contactRowsForFaction(factions).filter(contact => asArray(location.contactIds).includes(contact.id));
   const factionRows = Array.from(new Set([location.controllingFactionId, ...location.factionIds, ...location.factionPresence.map(entry => entry.factionId)].filter(Boolean))).map(id => findFaction(factions, id)).filter(Boolean);
+
+  const sceneRows = Array.from(new Set([location.map?.sceneUuid, ...location.linkedSceneUuids].filter(Boolean))).map(uuid => resolveSceneRow(uuid, uuid === location.map?.sceneUuid));
+  const hasPrimaryScene = Boolean(location.map?.sceneUuid);
+  // Matches LocationSceneBridgeService.createSceneFromLocation()'s own
+  // prerequisite check (map.imagePath || location.image) exactly, so
+  // Create Scene is never offered as a guaranteed-failure control.
+  const canCreateScene = Boolean(location.map?.imagePath || location.image);
+  const primaryScene = sceneRows.find(row => row.isPrimary) || null;
+
+  const encounterSeeds = location.encounterSeeds.map((seed) => {
+    const actorLink = seed.uuid ? resolveActorLink(seed.uuid) : null;
+    return {
+      ...seed,
+      categoryLabel: LocationRegistryService.optionLabel(LocationRegistryService.ENCOUNTER_SEED_CATEGORIES, seed.category),
+      sourceLabel: seed.sourceKind === 'compendium' ? 'Compendium Actor' : seed.sourceKind === 'world' ? 'World Actor' : 'Manual Seed',
+      hasActor: Boolean(seed.uuid),
+      actorResolved: actorLink ? actorLink.resolved : false,
+      actorUnverifiable: actorLink ? actorLink.unverifiable : false,
+      actorLabel: actorLink ? actorLink.label : ''
+    };
+  });
+
+  const atlasFacts = location.atlasFacts.map(fact => ({
+    ...fact,
+    categoryLabel: LocationRegistryService.optionLabel(LocationRegistryService.FACT_CATEGORIES, fact.category),
+    revealLabel: LocationRegistryService.optionLabel(optionSource('REVEAL_STATES'), fact.revealState),
+    revealModeLabel: LocationRegistryService.optionLabel(LocationRegistryService.FACT_REVEAL_MODES, fact.revealMode || 'any'),
+    checkCount: asArray(fact.checks).length,
+    checksText: LocationRegistryService.formatAtlasCheckLines(fact.checks),
+    checkRows: asArray(fact.checks).map(check => ({
+      ...check,
+      skillLabel: LocationRegistryService.optionLabel(LocationRegistryService.ATLAS_SKILLS, check.skill),
+      summary: `${LocationRegistryService.optionLabel(LocationRegistryService.ATLAS_SKILLS, check.skill)} DC ${check.dc}${check.label ? ` — ${check.label}` : ''}`
+    })),
+    checkLabel: asArray(fact.checks).map(check => `${LocationRegistryService.optionLabel(LocationRegistryService.ATLAS_SKILLS, check.skill)} DC ${check.dc}${check.label ? ` — ${check.label}` : ''}`).join(' / '),
+    outputLabel: LocationRegistryService.optionLabel(LocationRegistryService.LEAD_OUTPUTS, fact.onReveal?.output || 'none')
+  }));
+
+  // Ecosystem relationships — Jobs and Intel are resolved fresh from
+  // their own real authorities (Job Board / Holonet Intel) on every
+  // render; Locations never stores a copy of a title or status. Leads
+  // are Atlas Lead discoveries scoped to this one location (the same
+  // authority the global Atlas Lead Queue reads, LocationRegistryService.
+  // getAtlasLeadDiscoveries()), and are a materially different concept
+  // from linked Intel: a Lead is an unresolved player discovery, Intel is
+  // a separate campaign record this location happens to reference.
+  const [jobRelationshipRows, intelRelationshipRows] = await Promise.all([
+    Promise.all(location.linkedJobIds.map(resolveJobRow)),
+    Promise.all(location.linkedIntelIds.map(resolveIntelRow))
+  ]);
+  const leadRelationshipRows = leadDiscoveryRows(records, { locationId: location.id });
+  const factionRelationships = factionRelationshipRows(location, factions);
+  const contactRelationships = contactRelationshipRows(location, factions);
+
+  const activeJobCount = jobRelationshipRows.filter(job => !['paid', 'archived', 'failed', 'missing'].includes(job.status)).length;
+  const controllingFaction = factionRelationships.find(row => row.isController) || null;
+
+  const stageBlockedReason = !encounterSeeds.length
+    ? ''
+    : (!hasPrimaryScene && !canCreateScene)
+      ? 'Add a map image before staging — no Scene exists yet and one can\'t be created without one.'
+      : '';
+  const sceneCreationBlockedReason = (!hasPrimaryScene && !canCreateScene)
+    ? 'Add a map image or a Map Image Path in the Edit wizard before creating a Scene.'
+    : '';
+
   return {
     ...card,
     raw: location,
@@ -334,39 +528,11 @@ function selectedVm(location = null, records = [], factions = []) {
     actorRows: location.npcActorUuids.map(uuid => resolveActorLink(uuid)),
     intelRows: location.linkedIntelIds.map(id => ({ id })),
     jobRows: location.linkedJobIds.map(id => ({ id })),
-    sceneRows: Array.from(new Set([location.map?.sceneUuid, ...location.linkedSceneUuids].filter(Boolean))).map(uuid => resolveSceneRow(uuid, uuid === location.map?.sceneUuid)),
-    hasPrimaryScene: Boolean(location.map?.sceneUuid),
-    // Matches LocationSceneBridgeService.createSceneFromLocation()'s own
-    // prerequisite check (map.imagePath || location.image) exactly, so
-    // Create Scene is never offered as a guaranteed-failure control.
-    canCreateScene: Boolean(location.map?.imagePath || location.image),
-    encounterSeeds: location.encounterSeeds.map((seed) => {
-      const actorLink = seed.uuid ? resolveActorLink(seed.uuid) : null;
-      return {
-        ...seed,
-        categoryLabel: LocationRegistryService.optionLabel(LocationRegistryService.ENCOUNTER_SEED_CATEGORIES, seed.category),
-        sourceLabel: seed.sourceKind === 'compendium' ? 'Compendium Actor' : seed.sourceKind === 'world' ? 'World Actor' : 'Manual Seed',
-        hasActor: Boolean(seed.uuid),
-        actorResolved: actorLink ? actorLink.resolved : false,
-        actorUnverifiable: actorLink ? actorLink.unverifiable : false,
-        actorLabel: actorLink ? actorLink.label : ''
-      };
-    }),
-    atlasFacts: location.atlasFacts.map(fact => ({
-      ...fact,
-      categoryLabel: LocationRegistryService.optionLabel(LocationRegistryService.FACT_CATEGORIES, fact.category),
-      revealLabel: LocationRegistryService.optionLabel(optionSource('REVEAL_STATES'), fact.revealState),
-      revealModeLabel: LocationRegistryService.optionLabel(LocationRegistryService.FACT_REVEAL_MODES, fact.revealMode || 'any'),
-      checkCount: asArray(fact.checks).length,
-      checksText: LocationRegistryService.formatAtlasCheckLines(fact.checks),
-      checkRows: asArray(fact.checks).map(check => ({
-        ...check,
-        skillLabel: LocationRegistryService.optionLabel(LocationRegistryService.ATLAS_SKILLS, check.skill),
-        summary: `${LocationRegistryService.optionLabel(LocationRegistryService.ATLAS_SKILLS, check.skill)} DC ${check.dc}${check.label ? ` — ${check.label}` : ''}`
-      })),
-      checkLabel: asArray(fact.checks).map(check => `${LocationRegistryService.optionLabel(LocationRegistryService.ATLAS_SKILLS, check.skill)} DC ${check.dc}${check.label ? ` — ${check.label}` : ''}`).join(' / '),
-      outputLabel: LocationRegistryService.optionLabel(LocationRegistryService.LEAD_OUTPUTS, fact.onReveal?.output || 'none')
-    })),
+    sceneRows,
+    hasPrimaryScene,
+    canCreateScene,
+    encounterSeeds,
+    atlasFacts,
     parentChain: locationChain(location, byId),
     tags: tagsLabel(location.tags),
     factionIdsText: tagsLabel(location.factionIds),
@@ -381,7 +547,70 @@ function selectedVm(location = null, records = [], factions = []) {
     mapDefaultWidth: location.map?.defaultWidth ?? 0,
     mapDefaultHeight: location.map?.defaultHeight ?? 0,
     mapDefaultPadding: location.map?.defaultPadding ?? 0.25,
-    mapNotes: location.map?.notes || ''
+    mapNotes: location.map?.notes || '',
+
+    // ---- Campaign-hub ecosystem VM (GM Datapad ecosystem redesign,
+    // Phase 1). Presentation grouping only — every value here is derived
+    // from the same authorities/fields as the flat properties above, not
+    // a second stored data model. ----
+    identity: {
+      id: card.id,
+      name: card.name,
+      typeLabel: card.typeLabel,
+      categoryLabel: card.categoryLabel,
+      regionLabel: [location.region, location.sector, location.system].filter(Boolean).join(' · '),
+      revealLabel: card.revealLabel,
+      revealTone: card.revealClass,
+      tags: splitList(location.tags),
+      summary: location.publicSummary,
+      parent: byId.get(location.parentLocationId) ? { id: location.parentLocationId, name: byId.get(location.parentLocationId).name } : null
+    },
+    currentSituation: {
+      partyHere: card.isCurrent,
+      isRevealed: location.revealState !== 'hidden',
+      revealState: card.revealState,
+      revealLabel: card.revealLabel,
+      revealTone: card.revealClass,
+      controllingFaction,
+      activeJobCount,
+      unresolvedLeadCount: leadRelationshipRows.length,
+      encounterSeedCount: encounterSeeds.length,
+      hasScene: hasPrimaryScene,
+      sceneReady: hasPrimaryScene && Boolean(primaryScene?.resolved),
+      warnings: []
+    },
+    relationships: {
+      factions: factionRelationships,
+      contacts: contactRelationships,
+      jobs: jobRelationshipRows,
+      intel: intelRelationshipRows,
+      leads: leadRelationshipRows
+    },
+    preparation: {
+      encounterSeeds,
+      scenes: sceneRows.map(row => ({
+        ...row,
+        canOpen: row.isPrimary && row.resolved,
+        canActivate: row.isPrimary && row.resolved,
+        canUnlink: true
+      })),
+      canCreateScene,
+      canStageEncounterSeeds: Boolean(encounterSeeds.length) && (hasPrimaryScene || canCreateScene),
+      stageBlockedReason,
+      sceneCreationBlockedReason
+    },
+    world: {
+      children,
+      atlasFacts,
+      environment: {
+        hazards: location.hazards || '',
+        rumors: location.rumors || '',
+        commerceNotes: location.commerceNotes || '',
+        travelNotes: location.travelNotes || ''
+      },
+      publicSummary: location.publicSummary,
+      gmNotes: location.gmNotes
+    }
   };
 }
 
@@ -442,9 +671,9 @@ function applyCreateDefaults(editor, defaults = null) {
   };
 }
 
-function leadDiscoveryRows(records = []) {
+function leadDiscoveryRows(records = [], { locationId = '' } = {}) {
   const byId = new Map(records.map(entry => [entry.id, entry]));
-  return LocationRegistryService.getAtlasLeadDiscoveries({ unresolvedOnly: true }).map((lead) => {
+  return LocationRegistryService.getAtlasLeadDiscoveries({ unresolvedOnly: true, locationId }).map((lead) => {
     const location = byId.get(lead.locationId) || LocationRegistryService.findLocation(lead.locationId);
     const fact = location?.atlasFacts?.find(entry => entry.id === lead.factId);
     const onReveal = fact?.onReveal || {};
@@ -508,7 +737,7 @@ export class GMLocationsSurfaceService {
     const filtersProducedNoMatches = hasActiveFilters && cards.length > 0 && filteredCards.length === 0;
     const selectedLocationId = text(state.selectedLocationId || (state?.modal?.type === 'create' ? '' : visibleCards[0]?.id) || '');
     const selectedLocation = selectedLocationId ? LocationRegistryService.findLocation(selectedLocationId) : null;
-    const selected = selectedVm(selectedLocation, records, factions);
+    const selected = await selectedVm(selectedLocation, records, factions);
     const rawModal = state.modal && typeof state.modal === 'object' ? state.modal : {};
     const editor = selected || applyCreateDefaults(blankEditorVm(), rawModal.defaults);
     const hasSelection = Boolean(selected);
@@ -531,6 +760,8 @@ export class GMLocationsSurfaceService {
     librarySummary.selectedCount = libraryCards.filter(card => card.checked && !card.imported).length;
     const stats = {
       ...registryStats,
+      total: registryStats.count,
+      revealedCount: cards.filter(card => card.revealState !== 'hidden').length,
       importedCount: records.length,
       quickLibraryCount: librarySummary.total,
       quickLibraryVisible: librarySummary.visible,
