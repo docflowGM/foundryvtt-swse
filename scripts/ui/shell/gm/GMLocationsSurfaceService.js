@@ -507,13 +507,20 @@ export class GMLocationsSurfaceService {
     const selectedVisibleCards = visibleCards.map(card => ({ ...card, selected: card.id === selectedLocationId }));
     const leadQueue = leadDiscoveryRows(records).map(lead => ({ ...lead, isSelectedLocation: lead.locationId === selectedLocationId }));
     const registryStats = LocationRegistryService.summarizeForWorkspace();
+    // Selection is tracked in surface state (not just the checkbox DOM) so
+    // it survives a filter rerun — before this, adjusting a library search/
+    // biome/category filter rebuilt the whole import list from the VM with
+    // no `checked` property at all, silently discarding whatever the GM had
+    // already picked.
+    const selectedSeedIds = new Set(asArray(state.librarySelectedSeedIds).map(id => String(id)));
     const librarySeeds = LocationRegistryService.getLibrarySeeds({ search: filters.librarySearch, biome: filters.libraryBiome, category: filters.libraryCategory });
-    const libraryCards = librarySeeds.map(seed => librarySeedCard(seed, records));
+    const libraryCards = librarySeeds.map(seed => ({ ...librarySeedCard(seed, records), checked: selectedSeedIds.has(String(seed.id)) }));
     const librarySummary = LocationRegistryService.summarizeLibrary({ search: filters.librarySearch, biome: filters.libraryBiome, category: filters.libraryCategory });
     const allLibraryCards = LocationRegistryService.getLibrarySeeds().map(seed => librarySeedCard(seed, records));
     librarySummary.visibleRecordCount = libraryCards.reduce((sum, card) => sum + Number(card.recordCount || 1), 0);
     librarySummary.totalRecordCount = allLibraryCards.reduce((sum, card) => sum + Number(card.recordCount || 1), 0);
     librarySummary.unimportedVisible = libraryCards.filter(card => !card.imported).length;
+    librarySummary.selectedCount = libraryCards.filter(card => card.checked && !card.imported).length;
     const stats = {
       ...registryStats,
       importedCount: records.length,

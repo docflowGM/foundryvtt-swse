@@ -481,7 +481,7 @@
           <section class="gm-location-import-list">
             {{#each surface.locationManager.library.cards}}
               <label class="gm-location-import-card {{#if imported}}is-imported{{/if}}">
-                <input type="checkbox" name="seedIds" value="{{id}}" {{#if imported}}disabled{{/if}} />
+                <input type="checkbox" name="seedIds" value="{{id}}" {{#if checked}}checked{{/if}} {{#if imported}}disabled{{/if}} />
                 <div>
                   <strong>{{name}}</strong>
                   <span>{{categoryLabel}} · {{typeLabel}} · {{region}}</span>

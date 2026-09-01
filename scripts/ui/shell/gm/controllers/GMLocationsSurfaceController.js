@@ -256,7 +256,7 @@ export class GMLocationsSurfaceController {
         }
 
         if (action === 'close-modal') {
-          this.host?.patchSurfaceState?.('locations', { modal: null }, { render: false });
+          this.host?.patchSurfaceState?.('locations', { modal: null, librarySelectedSeedIds: [] }, { render: false });
           await this._refresh('gm-location-close-modal');
           return;
         }
@@ -532,6 +532,17 @@ export class GMLocationsSurfaceController {
         event.preventDefault();
         const formData = new FormData(form);
         await this._importLibrarySeedIds(seedIdsFromForm(formData), 'gm-location-library-import-selected', importOptionsFromForm(formData));
+      }, { signal });
+
+      // Persist the checked seed ids into surface state as they change, not
+      // just the checkbox DOM — a library search/biome/category filter
+      // rebuilds this whole list from the view-model on every keystroke or
+      // pill click, and a rebuilt <input> has no memory of a prior click.
+      // No rerender is needed here: the checkbox already reflects its own
+      // state; this only needs to be correct the NEXT time the VM rebuilds.
+      form.addEventListener('change', (event) => {
+        if (event.target?.name !== 'seedIds') return;
+        this.host?.patchSurfaceState?.('locations', { librarySelectedSeedIds: seedIdsFromForm(new FormData(form)) }, { render: false });
       }, { signal });
     });
 
@@ -849,7 +860,7 @@ export class GMLocationsSurfaceController {
         return;
       }
       const firstSeedId = result.seeds[0]?.id || '';
-      this.host?.patchSurfaceState?.('locations', { selectedLocationId: firstSeedId, modal: null }, { render: false });
+      this.host?.patchSurfaceState?.('locations', { selectedLocationId: firstSeedId, modal: null, librarySelectedSeedIds: [] }, { render: false });
       ui.notifications?.info?.(
         `Imported ${result.imported.length} location record(s) from ${result.seeds.length} quick location(s)` +
         `${result.skipped.length ? `; ${result.skipped.length} record(s) already existed` : ''}` +
