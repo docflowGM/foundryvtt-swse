@@ -136,7 +136,7 @@ export class GMLocationsSurfaceController {
     this._abort = null;
     this._searchTimer = null;
     this._importInFlight = false;
-    this._createSceneInFlight = false;
+    this._sceneOperationInFlight = false;
     this._pageElement = null;
   }
 
@@ -355,9 +355,13 @@ export class GMLocationsSurfaceController {
           // here (not just hiding the button once one exists) closes the
           // window where a rapid double-click could otherwise queue two
           // Scene.create() calls before either has saved and hidden the
-          // button via rerender.
-          if (this._createSceneInFlight) {
-            ui.notifications?.warn?.('A Scene is already being created for this location.');
+          // button via rerender. Shares _sceneOperationInFlight with
+          // stage-encounter-seeds below — both can independently trigger
+          // Scene.create() when the location has no linked Scene yet, so
+          // a Create Scene click racing a Stage Encounter Seeds click (or
+          // either racing itself) must be serialized through one guard.
+          if (this._sceneOperationInFlight) {
+            ui.notifications?.warn?.('A Scene operation is already in progress for this location.');
             return;
           }
           const existing = LocationRegistryService.findLocation(locationId);
@@ -365,7 +369,7 @@ export class GMLocationsSurfaceController {
             ui.notifications?.info?.('This location already has a linked Scene. Use Open Scene to view it.');
             return;
           }
-          this._createSceneInFlight = true;
+          this._sceneOperationInFlight = true;
           try {
             const scene = await LocationSceneBridgeService.createSceneFromLocation(locationId);
             if (scene) ui.notifications?.info?.('Foundry Scene created and linked to this location.');
@@ -373,7 +377,7 @@ export class GMLocationsSurfaceController {
           } catch (err) {
             ui.notifications?.warn?.(err?.message || 'Could not create Scene from location.');
           } finally {
-            this._createSceneInFlight = false;
+            this._sceneOperationInFlight = false;
           }
           return;
         }
@@ -397,12 +401,25 @@ export class GMLocationsSurfaceController {
         }
 
         if (action === 'stage-encounter-seeds' && locationId) {
+          // Shares _sceneOperationInFlight with create-scene above:
+          // stageEncounterSeeds({ createIfMissing: true }) also calls
+          // Scene.create() when the location has no resolvable linked
+          // Scene yet, so this must not run concurrently with itself or
+          // with create-scene.
+          if (this._sceneOperationInFlight) {
+            ui.notifications?.warn?.('A Scene operation is already in progress for this location.');
+            return;
+          }
+          this._sceneOperationInFlight = true;
           try {
             const result = await LocationSceneBridgeService.stageEncounterSeeds(locationId, { createIfMissing: true });
             const skipped = result.skipped?.length || 0;
             ui.notifications?.info?.(`Staged ${result.created?.length || 0} encounter token(s)${skipped ? `; ${skipped} seed(s) skipped` : ''}.`);
+            await this._refresh('gm-location-stage-encounter-seeds');
           } catch (err) {
             ui.notifications?.warn?.(err?.message || 'Could not stage encounter seeds.');
+          } finally {
+            this._sceneOperationInFlight = false;
           }
           return;
         }
