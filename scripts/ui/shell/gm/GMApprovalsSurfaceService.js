@@ -509,6 +509,16 @@ function buildStoreItemApprovalRequest(approval, index) {
 
   return {
     key: `custom:${index}`,
+    // Phase 6 CORRECTION 9 — an array index is not stable identity (another
+    // request appearing/disappearing before the GM clicks through can shift
+    // it onto a different record). When the underlying pending-purchase
+    // record already carries its own persistent id (pending_store_item_...),
+    // expose it here so a caller (GMCampaignContextService.attentionItems())
+    // can select by that real id instead; buildViewModel()'s own selection
+    // match below accepts either. The mutation path (approve/deny) still
+    // uses the index-based `key` unchanged — selection identity and
+    // mutation bookkeeping are deliberately kept separate.
+    stableKey: approval?.id ? `custom-id:${approval.id}` : '',
     sourceType: 'store-item-approval',
     actorId: ownerActor?.id ?? null,
     requestIndex: index,
@@ -660,6 +670,10 @@ function buildStoreApprovalRequest(approval, index) {
 
   return {
     key: `custom:${index}`,
+    // See buildStoreItemApprovalRequest()'s identical comment — index is
+    // not stable identity; expose the record's own persistent id
+    // (pending_droid_.../pending_vehicle_...) when it has one.
+    stableKey: approval?.id ? `custom-id:${approval.id}` : '',
     sourceType: 'store-custom',
     actorId: draftActor?.id ?? null,
     requestIndex: index,
@@ -690,13 +704,23 @@ export class GMApprovalsSurfaceService {
     const factionRequests = FactionRegistryService.getPendingSuggestions().map((row) => buildFactionSuggestionRequest(row));
     const approvalRequests = [...gameRequests, ...droidRequests, ...storeRequests, ...factionRequests];
 
-    if (!approvalRequests.some((request) => request.key === host.selectedApprovalKey)) {
+    // Phase 6 CORRECTION 9 — a selection may arrive as either the legacy
+    // index-based `key` (this surface's own row clicks) or the stable
+    // `stableKey` (a custom-purchase record's own persistent id, used by
+    // GMCampaignContextService.attentionItems()/Home's exact navigation so
+    // a target survives another request being added/removed/reordered
+    // before the GM clicks through). Accept both; mutation buttons still
+    // read selectedApproval.key fresh from the current render below, so
+    // they always carry the correct up-to-date index regardless of which
+    // form the incoming selection took.
+    const matchesSelection = (request) => request.key === host.selectedApprovalKey || (request.stableKey && request.stableKey === host.selectedApprovalKey);
+    if (!approvalRequests.some(matchesSelection)) {
       host.selectedApprovalKey = approvalRequests[0]?.key ?? null;
       host.approvalEditMode = false;
       host.approvalDenyMode = false;
     }
 
-    const selectedApproval = approvalRequests.find((request) => request.key === host.selectedApprovalKey) ?? approvalRequests[0] ?? null;
+    const selectedApproval = approvalRequests.find(matchesSelection) ?? approvalRequests[0] ?? null;
     const hasRequests = approvalRequests.length > 0;
 
     return {
