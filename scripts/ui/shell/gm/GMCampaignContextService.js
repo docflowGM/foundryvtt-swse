@@ -535,18 +535,31 @@ export class GMCampaignContextService {
     const inCombat = Boolean(safeCollection(game.combat?.combatants).some(combatant => combatant.actor?.id === actor.id));
 
     // The Actor's real Faction relationship ledger (score/standing), not a
-    // Contact association — Correction 8.
+    // Contact association — Correction 8. Phase 7 addendum D: the common
+    // {kind,id,label,status,resolved,resolutionKind} contract stays valid,
+    // but this row carries additive real fields
+    // (relationshipType/score/relationshipStatus/source/benefits) straight
+    // from FactionRegistryService's own relationship record rather than
+    // forcing Workspace to re-read FactionRegistryService merely because
+    // the generic row dropped them.
     const relationshipLedger = FactionRegistryService.getActorRelationships?.(actor) ?? [];
     const factions = relationshipLedger.map((relationship) => {
       const faction = relationship.factionId ? exactFaction(relationship.factionId) : null;
-      return row({
-        kind: 'faction',
-        id: relationship.factionId || '',
-        label: faction?.name || relationship.factionName || '',
-        status: relationship.relationshipType || '',
-        resolved: Boolean(faction),
-        resolutionKind: faction ? 'canonical-id' : (relationship.factionId ? 'missing' : 'unresolved')
-      });
+      return {
+        ...row({
+          kind: 'faction',
+          id: relationship.factionId || '',
+          label: faction?.name || relationship.factionName || '',
+          status: relationship.relationshipType || '',
+          resolved: Boolean(faction),
+          resolutionKind: faction ? 'canonical-id' : (relationship.factionId ? 'missing' : 'unresolved')
+        }),
+        relationshipType: relationship.relationshipType || '',
+        score: Number(relationship.score ?? 0) || 0,
+        relationshipStatus: relationship.status || '',
+        source: relationship.source || '',
+        benefits: relationship.benefits || ''
+      };
     });
 
     // Faction Contact associations — a separate concept, explicit fields.
@@ -565,6 +578,30 @@ export class GMCampaignContextService {
         resolutionKind: 'canonical-id'
       }));
 
+    // Locations (Phase 7 addendum C): two genuinely different meanings of
+    // "this Actor relates to this Location," never merged into one
+    // unexplained link. 'direct-actor' = location.npcActorUuids literally
+    // contains this Actor. 'faction-contact' = this Actor backs a Faction
+    // Contact whose id is separately listed in location.contactIds. Actor
+    // Location is never inferred from Faction control, Job location, or
+    // party location — those remain distinct concepts (addendum J).
+    const contactIdsForActor = new Set(factionContacts.map(entry => entry.contactId).filter(Boolean));
+    const directLocationIds = new Set();
+    const contactLocationIds = new Set();
+    const locations = [];
+    for (const location of (LocationRegistryService.getRegistry?.() ?? [])) {
+      const isDirect = asArray(location.npcActorUuids).some(uuid => resolveActorByAnyRef(uuid)?.id === actor.id);
+      if (isDirect && !directLocationIds.has(location.id)) {
+        directLocationIds.add(location.id);
+        locations.push({ ...locationRow(location), role: 'direct-actor' });
+      }
+      const isViaContact = asArray(location.contactIds).some(contactId => contactIdsForActor.has(contactId));
+      if (isViaContact && !contactLocationIds.has(location.id)) {
+        contactLocationIds.add(location.id);
+        locations.push({ ...locationRow(location), role: 'faction-contact' });
+      }
+    }
+
     // Jobs: reuse FactionJobBridgeService.normalizeJobIssuer()'s own alias
     // reading (issuer.contactActorUuid/contactActorId, client.actorUuid)
     // instead of hand-picking a single field — Correction 8.
@@ -580,23 +617,47 @@ export class GMCampaignContextService {
 
     const limitations = [];
 
+    // Recovery (Phase 7 addendum F): GMHealingTrigger's "eligible" means
+    // "legally allowed to receive the natural-healing trigger" (character
+    // type, not droid/vehicle, HP > 0) — it does NOT mean "injured." A
+    // full-HP character is still "eligible." `injured` is computed
+    // independently, straight from the Actor's own hp values, so a caller
+    // never has to treat eligible as a proxy for "needs healing."
     let recovery = null;
     try {
       const summary = await GMHealingTrigger.getHealingSummary();
       const eligible = asArray(summary?.eligibleActors).some(entry => entry.id === actor.id);
       const ineligible = asArray(summary?.ineligibleActors).some(entry => entry.id === actor.id);
-      recovery = { eligible, ineligible, needsAttention: eligible };
+      const hp = actor.system?.hp ?? actor.system?.attributes?.hp ?? {};
+      const hpValue = Number(hp.value ?? hp.current ?? 0) || 0;
+      const hpMax = Number(hp.max ?? hp.maximum ?? 0) || 0;
+      const injured = hpMax > 0 && hpValue < hpMax;
+      recovery = { eligible, ineligible, injured, needsAttention: eligible };
     } catch (err) {
       SWSELogger.warn?.('[GMCampaignContextService] Healing summary unavailable for forActor():', err);
       limitations.push('Healing/recovery status could not be determined for this actor.');
     }
 
+    // Trades (Phase 7 addendum E): preserve whether this Actor was the
+    // sender or recipient, and who the real counterparty is, so Workspace
+    // never has to re-run the Trade query merely to answer "who's on the
+    // other side of this."
     let trades = [];
     try {
       const tradeConsole = await GMTradeConsoleSurfaceService.buildTradeConsoleVm();
       trades = asArray(tradeConsole?.activeQueue).concat(asArray(tradeConsole?.approvalQueue), asArray(tradeConsole?.failedQueue))
         .filter(entry => entry.fromActorId === actor.id || entry.toActorId === actor.id)
-        .map(entry => row({ kind: 'trade', id: entry.recordId, label: entry.title || entry.threadTitle || 'Trade', status: entry.status, resolved: true, resolutionKind: 'canonical-id' }));
+        .map((entry) => {
+          const isSender = entry.fromActorId === actor.id;
+          const counterpartyActorId = isSender ? entry.toActorId : entry.fromActorId;
+          const counterpartyActor = counterpartyActorId ? game.actors?.get?.(counterpartyActorId) : null;
+          return {
+            ...row({ kind: 'trade', id: entry.recordId, label: entry.title || entry.threadTitle || 'Trade', status: entry.status, resolved: true, resolutionKind: 'canonical-id' }),
+            role: isSender ? 'sender' : 'recipient',
+            counterpartyActorId: counterpartyActorId || '',
+            counterpartyActorName: counterpartyActor?.name || ''
+          };
+        });
     } catch (err) {
       SWSELogger.warn?.('[GMCampaignContextService] Trade Console unavailable for forActor():', err);
       limitations.push('Trade Console context could not be loaded for this actor.');
@@ -605,7 +666,7 @@ export class GMCampaignContextService {
     return {
       subject: { ...subject, uuid: actorUuid },
       party: { isPartyMember: GMPartyRosterService.isPartyMember(actor), inCombat, inScene },
-      relationships: { factions, factionContacts, jobs, intel },
+      relationships: { factions, factionContacts, locations, jobs, intel },
       operations: { trades, recovery },
       workflows: {},
       limitations
@@ -687,7 +748,14 @@ export class GMCampaignContextService {
       const summary = await GMHealingTrigger.getHealingSummary();
       for (const entry of asArray(summary?.eligibleActors)) {
         const actor = game.actors?.get?.(entry.id);
-        add({ id: `recovery:${entry.id}`, kind: 'recovery', severity: 'warning', source: 'Combat & Recovery', title: entry.name, detail: 'Eligible for natural healing/recovery.', target: { kind: 'actor', id: entry.id, uuid: actor?.uuid || '' }, actionLabel: 'Open Actor' });
+        // Phase 7 addendum H: the recovery workflow is the one Home
+        // attention item deliberately migrated from the generic
+        // {kind:'actor'} (open-the-sheet) target to {kind:'workspace-actor'}
+        // — it selects this Actor in Workspace's Recovery operations card
+        // rather than opening the bare Foundry sheet. Every other Actor
+        // link in Locations/Factions/Jobs/Intel keeps {kind:'actor'}
+        // sheet-opening semantics; this migration is scoped to recovery only.
+        add({ id: `recovery:${entry.id}`, kind: 'recovery', severity: 'warning', source: 'Combat & Recovery', title: entry.name, detail: 'Eligible for natural healing/recovery.', target: { kind: 'workspace-actor', id: entry.id, uuid: actor?.uuid || '' }, actionLabel: 'Open in Workspace' });
       }
     } catch (err) {
       SWSELogger.warn?.('[GMCampaignContextService] Healing attention items unavailable:', err);
