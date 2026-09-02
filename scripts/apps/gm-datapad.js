@@ -306,19 +306,19 @@ export class GMDatapad extends BaseSWSEAppV2 {
     // Location through GMCampaignContextService.party() instead of its own
     // independent activeForParty lookup, so Home and the rest of the
     // ecosystem (Job/Intel "party here" checks) always agree on the same
-    // source of truth. Falls back to a "known to players" Location only
-    // when no Location is actively marked for the party, matching this
-    // method's pre-existing fallback behavior.
+    // source of truth (Location.activeForParty === true, exclusively — see
+    // GMCampaignContextService's own currentPartyLocationResult()).
+    //
+    // CORRECTION 3 (Phase 6 independent review): Home previously fell back
+    // to the first merely "known to players" Location when no Location was
+    // actively marked for the party — misleading in a command hub, since a
+    // revealed-but-not-current planet would silently masquerade as "where
+    // the party is." No activeForParty Location now means Home honestly
+    // shows "Unassigned Location," never a guessed substitute.
     const campaignParty = await GMCampaignContextService.party().catch(() => null);
-    const activeLocation = (() => {
-      try {
-        if (campaignParty?.currentLocation?.resolved) {
-          return LocationRegistryService.findLocation(campaignParty.currentLocation.id) ?? { name: campaignParty.currentLocation.label };
-        }
-        const locations = LocationRegistryService.getRegistry?.() ?? [];
-        return locations.find((loc) => loc?.knownToPlayers || loc?.revealState === 'known') ?? null;
-      } catch (_err) { return null; }
-    })();
+    const activeLocation = campaignParty?.currentLocation?.resolved
+      ? (LocationRegistryService.findLocation(campaignParty.currentLocation.id) ?? { name: campaignParty.currentLocation.label })
+      : null;
     const attentionItems = await GMCampaignContextService.attentionItems().catch((err) => {
       SWSELogger.warn('[GMDatapad] Unable to load campaign attention items for home:', err);
       return [];
@@ -383,8 +383,16 @@ export class GMDatapad extends BaseSWSEAppV2 {
       'skill-challenge-active': 'skill-challenges',
       'location-lead': 'locations'
     };
+    // CORRECTION 1 (Phase 6 independent review): every row built from
+    // attentionItems() is marked isExact:true, INCLUDING rows whose
+    // target is null (e.g. the unresolved-Atlas-leads item) — home.hbs
+    // must branch on isExact, not on the presence of a real target, or a
+    // targetless exact row falls through to the generic data-app-card
+    // branch and navigates using the attention item's own composite id
+    // (e.g. "location-leads:unresolved") instead of its fallbackRoute.
     const exactActionItems = attentionItems.slice(0, 12).map((item) => ({
       id: item.id,
+      isExact: true,
       tone: ATTENTION_SEVERITY_TONE[item.severity] || 'info',
       icon: ATTENTION_KIND_ICON[item.kind] || 'fa-solid fa-circle-exclamation',
       label: item.title,
@@ -421,7 +429,13 @@ export class GMDatapad extends BaseSWSEAppV2 {
       partyHealth,
       actionItems,
       quickLaunch,
-      actionCount: actionItems.reduce((sum, item) => sum + (item.tone === 'crit' ? item.count : 0), 0) + number(counts.store) + number(counts.bulletin),
+      // CORRECTION 10 (Phase 6 independent review): "Actions Needed" must
+      // count every actionable row Home is actually showing, not just the
+      // critical-tone ones — the pre-correction formula silently excluded
+      // warning/info exact rows (payout/approvals/recovery/Skill Challenge)
+      // while ALSO double-counting genericActionItems' store/bulletin
+      // counts (once inside actionItems, once again added on top).
+      actionCount: actionItems.reduce((sum, item) => sum + (item.count || 0), 0),
       activeJobs: number(counts.jobActive),
       creditsLabel: '—',
       locationLeadCount: number(locationsSummary.leadDiscoveryCount),

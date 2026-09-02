@@ -31,7 +31,7 @@
       <header class="gm-command-section-label">⚡ Action Queue</header>
       {{#if gmHome.actionItems.length}}
         {{#each gmHome.actionItems}}
-        {{#if this.targetKind}}
+        {{#if this.isExact}}
         <button type="button" class="gm-command-queue-item {{this.tone}}" data-target-kind="{{this.targetKind}}" data-target-id="{{this.targetId}}" data-target-uuid="{{this.targetUuid}}" data-fallback-route="{{this.fallbackRoute}}" title="{{this.sub}}">
           <span class="gm-command-queue-item__dot {{this.tone}}"></span>
           <span class="gm-command-queue-item__copy">
