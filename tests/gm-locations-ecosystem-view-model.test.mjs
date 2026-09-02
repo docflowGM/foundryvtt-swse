@@ -143,6 +143,40 @@ assert.equal(selected.world.children[0].name, 'Docking Bay 94');
 assert.equal(selected.world.atlasFacts.length, 1);
 assert.equal(selected.world.atlasFacts[0].title, 'Smuggler Tunnels');
 
+// --- legacy flat VM parity ---------------------------------------------
+// selectedVm() grew the identity/currentSituation/relationships/
+// preparation/world groups ADDITIVELY — every pre-existing flat property
+// the create/edit wizard and prior-stage controller code already depend
+// on must survive untouched, so this migration can never silently break
+// something that isn't rendered by the new template yet.
+assert.ok(selected.raw, 'the raw unmodified Location record must still be present');
+assert.equal(selected.raw.id, 'mos-eisley');
+assert.ok(Array.isArray(selected.children));
+assert.equal(selected.children.length, 1);
+assert.ok(Array.isArray(selected.factionRows));
+assert.equal(selected.factionRows.length, 1);
+assert.equal(selected.factionRows[0].name, 'Hutt Cartel');
+assert.ok(Array.isArray(selected.contactRows));
+assert.equal(selected.contactRows.length, 1);
+assert.equal(selected.contactRows[0].name, 'Vigo Korda');
+assert.ok(Array.isArray(selected.actorRows));
+assert.equal(selected.actorRows.length, 1);
+assert.equal(selected.actorRows[0].name, 'Jawa Trader');
+assert.ok(Array.isArray(selected.sceneRows));
+assert.ok(Array.isArray(selected.encounterSeeds));
+assert.equal(selected.encounterSeeds.length, 1);
+assert.ok(Array.isArray(selected.atlasFacts));
+assert.equal(selected.atlasFacts.length, 1);
+// The legacy jobRows/intelRows stay the old raw-id-only shape (never
+// resolved) — a separate consumer that only ever read `{ id }` must not
+// break just because relationships.jobs/intel now resolve real data.
+assert.deepEqual(selected.jobRows, [{ id: 'job-thread-1' }]);
+assert.deepEqual(selected.intelRows, [{ id: 'intel-1' }]);
+assert.equal(typeof selected.mapImagePath, 'string');
+assert.equal(selected.mapImagePath, 'icons/mos-eisley.svg');
+assert.equal(typeof selected.factionIdsText, 'string');
+assert.equal(typeof selected.linkedJobIdsText, 'string');
+
 // --- a linked-but-deleted Job/Intel resolves honestly as missing, not a
 // crash or a false success ---------------------------------------------
 {
