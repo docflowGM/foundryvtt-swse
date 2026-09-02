@@ -382,8 +382,13 @@ console.log('Messenger bare emitPreparedRecordPublished() call remains unaffecte
   assert.match(deliverAsBulletinBody, /HolonetEngine\.prepareRecordForPublish\(bulletin\)/, 'deliverAsBulletin() must route publish-lifecycle/recipients/projections through the central HolonetEngine pipeline');
   assert.match(deliverAsBulletinBody, /HolonetEngine\.emitPreparedRecordPublished\(bulletin,/, 'deliverAsBulletin() must let the central pipeline own the post-commit publication event');
   assert.match(deliverAsBulletinBody, /if \(!saved\) return null;/, 'deliverAsBulletin() must still fail safe (return null) if the storage write does not succeed');
-  // Explicitly unchanged this pass, per the Phase 8A scope boundary:
-  assert.match(intelSource, /sourceIntelId: intel\.id,\s*\n\s*intelDelivery: true,\s*\n\s*\[INTEL_METADATA_KEY\]: intel/, 'the full Intel metadata copy and sourceIntelId/intelDelivery fields must remain byte-for-byte unchanged in Phase 8A -- that content audit is Phase 8B, not this pass');
+  // Phase 8B superseded this: the full Intel metadata copy this line used
+  // to pin as "unchanged in Phase 8A, Phase 8B's to audit" was audited and
+  // removed for new records (no production consumer ever read it back off
+  // a Bulletin -- see tests/gm-holonet-phase8b-intel-bulletin-privacy.test.mjs).
+  // sourceIntelId/intelDelivery -- the actual provenance this pass cared
+  // about -- remain present, which is what we assert now.
+  assert.match(intelSource, /sourceIntelId: intel\.id,\s*\n\s*intelDelivery: true/, 'Intel->Bulletin provenance (sourceIntelId/intelDelivery) must remain present');
 
   // D2: the socket service's publish-record handler no longer manually
   // re-emits its own success sync after calling the engine.
