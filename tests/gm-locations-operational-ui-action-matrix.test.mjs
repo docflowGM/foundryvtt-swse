@@ -40,7 +40,12 @@ const REQUIRED_ATTRS = {
   'create-scene': ['data-location-id'],
   'open-scene': ['data-location-id'],
   'activate-scene': ['data-location-id'],
-  'stage-encounter-seeds': ['data-location-id']
+  'stage-encounter-seeds': ['data-location-id'],
+  // Ecosystem Redesign Phase 2 — context-preserving cross-surface navigation.
+  'open-faction': ['data-faction-id'],
+  'open-contact': ['data-contact-kind', 'data-contact-id', 'data-actor-uuid', 'data-faction-id'],
+  'open-job': ['data-job-id'],
+  'open-intel': ['data-intel-id']
 };
 
 for (const [action, attrs] of Object.entries(REQUIRED_ATTRS)) {
@@ -62,7 +67,11 @@ const CONTROLLER_READS = {
   'lead-reveal-links': ['dataset.actorId', 'dataset.discoveryId'],
   'lead-resolve': ['dataset.actorId', 'dataset.discoveryId'],
   'remove-link': ['dataset.linkKind', 'dataset.linkValue'],
-  'remove-seed': ['dataset.seedId']
+  'remove-seed': ['dataset.seedId'],
+  'open-faction': ['dataset.factionId'],
+  'open-contact': ['dataset.contactKind', 'dataset.actorUuid', 'dataset.factionId', 'dataset.contactId'],
+  'open-job': ['dataset.jobId'],
+  'open-intel': ['dataset.intelId']
 };
 for (const [action, reads] of Object.entries(CONTROLLER_READS)) {
   const branchMatch = controller.match(new RegExp(`action === '${action}'[\\s\\S]{0,600}?\\n\\s*\\}`));
@@ -84,7 +93,9 @@ const renderedActions = new Set(
 const PHASE_2_ACTIONS = [
   'remove-link', 'remove-seed',
   'lead-select-location', 'lead-create-job', 'lead-create-intel', 'lead-reveal-links', 'lead-resolve',
-  'create-scene', 'open-scene', 'activate-scene', 'stage-encounter-seeds'
+  'create-scene', 'open-scene', 'activate-scene', 'stage-encounter-seeds',
+  // Ecosystem Redesign Phase 2 — context-preserving cross-surface navigation.
+  'open-faction', 'open-contact', 'open-job', 'open-intel'
 ];
 for (const action of PHASE_2_ACTIONS) {
   assert.ok(renderedActions.has(action), `Phase 2 action "${action}" must be rendered somewhere in locations.hbs`);
