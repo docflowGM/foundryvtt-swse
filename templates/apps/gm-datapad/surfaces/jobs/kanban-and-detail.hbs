@@ -255,6 +255,39 @@
         </div>
       </div>
       {{/if}}
+
+      {{!-- Ecosystem Redesign Phase 4 — Location/Intel campaign
+           relationships, resolved on selectedJob.relationships (Phase 4D
+           ecosystem VM) and navigated via the Phase 2 shell contract. --}}
+      {{#if jobBoard.selectedJob.relationships.locations.length}}
+      <div class="job-detail-block gm-job-relationship-block">
+        <h4>Mission Location</h4>
+        <div class="gm-job-relationship-list">
+          {{#each jobBoard.selectedJob.relationships.locations}}
+            <div class="gm-job-relationship-row {{#unless this.missing}}is-navigable{{/unless}}">
+              <span class="gm-job-relationship-copy"><strong>{{this.name}}</strong><span>{{this.roleLabel}}{{#if this.currentPartyPresence}} · Party Here{{/if}}</span></span>
+              {{#unless this.missing}}
+                <button type="button" class="gm-job-relationship-action" data-job-open-location data-location-id="{{this.id}}" title="Open {{this.name}} in Locations" aria-label="Open {{this.name}} in Locations"><i class="fa-solid fa-chevron-right" aria-hidden="true"></i></button>
+              {{/unless}}
+            </div>
+          {{/each}}
+        </div>
+      </div>
+      {{/if}}
+
+      {{#if jobBoard.selectedJob.relationships.intel.length}}
+      <div class="job-detail-block gm-job-relationship-block">
+        <h4>Linked Intel</h4>
+        <div class="gm-job-relationship-list">
+          {{#each jobBoard.selectedJob.relationships.intel}}
+            <div class="gm-job-relationship-row is-navigable">
+              <span class="gm-job-relationship-copy"><strong>{{this.title}}</strong><span>{{this.statusLabel}}</span></span>
+              <button type="button" class="gm-job-relationship-action" data-job-open-intel data-intel-id="{{this.id}}" title="Open {{this.title}} in Intel" aria-label="Open {{this.title}} in Intel"><i class="fa-solid fa-chevron-right" aria-hidden="true"></i></button>
+            </div>
+          {{/each}}
+        </div>
+      </div>
+      {{/if}}
           </section>
 
           <section class="gm-job-subtab-panel" data-job-subtab-panel="objectives" aria-label="Objective management">

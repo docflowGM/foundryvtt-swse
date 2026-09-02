@@ -3750,6 +3750,67 @@
   margin-top: 0.85rem;
 }
 
+/* Ecosystem Redesign Phase 4 — selected Job's navigable Location/Intel
+   relationship rows. Same navigable-row visual language established for
+   Locations/Factions in Phase 2/3 (chevron affordance, subtle hover, muted
+   for non-navigable/missing). */
+.gm-job-relationship-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.gm-job-relationship-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.4rem 0.55rem;
+  border-radius: 8px;
+}
+
+.gm-job-relationship-row.is-navigable:hover {
+  background: rgba(126, 231, 255, 0.06);
+}
+
+.gm-job-relationship-copy {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.gm-job-relationship-copy strong {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 0.78rem;
+}
+
+.gm-job-relationship-copy span {
+  color: var(--swse-muted, #8fb8c5);
+  font-size: 0.66rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.gm-job-relationship-action {
+  flex: 0 0 auto;
+  width: 26px;
+  height: 26px;
+  display: inline-grid;
+  place-items: center;
+  border: 1px solid rgba(126, 231, 255, 0.14);
+  border-radius: 5px;
+  background: transparent;
+  color: rgba(126, 231, 255, 0.75);
+}
+
+.gm-job-relationship-action:hover {
+  border-color: rgba(126, 231, 255, 0.4);
+  background: rgba(126, 231, 255, 0.09);
+  color: rgba(126, 231, 255, 0.95);
+}
+
 .job-objective-list,
 .job-participant-list,
 .job-timeline,
