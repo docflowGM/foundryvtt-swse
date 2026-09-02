@@ -351,9 +351,16 @@ export class GMFactionRelationshipSurfaceController {
           // opens the real Foundry sheet) — this selects the Actor in
           // Workspace's campaign dossier via the same workspace-actor
           // target GMCampaignTargetService.resolve() understands elsewhere.
+          // CORRECTION 3: this control is now only rendered when the
+          // Contact VM already proved a real WORLD Actor resolves
+          // (hasWorkspaceActorLink/workspaceActorId, computed with the
+          // same world-only rule Workspace's own selection uses) — so a
+          // plain game.actors.get() lookup here is honest; it must never
+          // fall back to resolveActorForContact()'s fromUuid()
+          // Compendium-resolving behavior, which Workspace cannot select.
           case 'open-workspace-actor': {
-            const actor = await resolveActorForContact({ actorId: button.dataset.actorId, uuid: button.dataset.actorUuid });
-            if (!actor) throw new Error('The linked contact actor could not be found.');
+            const actor = game.actors?.get?.(button.dataset.actorId);
+            if (!actor) throw new Error('The linked Workspace actor could not be found.');
             const target = GMCampaignTargetService.workspaceActor(actor.id);
             await this.host?.navigateToSurface?.(target.surfaceId, target);
             return;

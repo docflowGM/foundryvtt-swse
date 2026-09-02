@@ -98,6 +98,34 @@ function defaultRewardLabel(record = {}) {
   return bits.join(' · ');
 }
 
+/**
+ * CORRECTION 3: a Faction Contact's actorId/actorUuid can resolve to a
+ * Compendium-only Actor via fromUuid() (resolveActorForContact() in the
+ * controller does exactly that for "Open Actor," which is fine — a
+ * Compendium Actor document can still open its own sheet). Workspace's
+ * selectedActorId contract, however, is explicitly a WORLD Actor id
+ * (game.actors.get(selectedActorId)) — it never auto-imports. This sync,
+ * world-actors-only lookup is what decides whether "Open in Workspace" is
+ * truthfully advertised at all, so a Compendium-only Contact never shows a
+ * button that is guaranteed to fail after navigation.
+ */
+function resolveWorldActorForContact({ actorId = '', actorUuid = '' } = {}) {
+  if (actorId) {
+    const byId = game.actors?.get?.(actorId);
+    if (byId) return byId;
+  }
+  if (actorUuid) {
+    const bareId = actorUuid.startsWith('Actor.') ? actorUuid.slice(6) : (actorUuid.startsWith('Compendium.') ? '' : actorUuid);
+    if (bareId) {
+      const byBareId = game.actors?.get?.(bareId);
+      if (byBareId) return byBareId;
+    }
+    const byUuid = Array.from(game.actors ?? []).find(candidate => candidate.uuid === actorUuid);
+    if (byUuid) return byUuid;
+  }
+  return null;
+}
+
 function contactVm(contact = {}, faction = {}, jobs = [], options = {}) {
   const jobStats = FactionJobBridgeService.summarizeJobsByIssuer(jobs, {
     factionId: faction.id,
@@ -114,6 +142,7 @@ function contactVm(contact = {}, faction = {}, jobs = [], options = {}) {
   ]);
   const hasSecretIntel = Boolean(contact.secret || contact.gmNotes || linkedIntelIds.length);
   const contactLocationRows = asArray(options.locationRows).filter(row => asArray(row.raw?.contactIds).includes(contact.id));
+  const worldActor = resolveWorldActorForContact({ actorId: contact.actorId, actorUuid: contact.actorUuid });
   return {
     ...contact,
     tagsLabel: Array.isArray(contact.tags) ? contact.tags.join(', ') : String(contact.tags || ''),
@@ -127,6 +156,12 @@ function contactVm(contact = {}, faction = {}, jobs = [], options = {}) {
     activeLocationName: contactLocationRows.find(row => row.view.activeForParty)?.view?.name || '',
     hasActorLink: Boolean(contact.actorId || contact.actorUuid),
     actorLinkLabel: contact.actorName || contact.actorUuid || contact.actorId || '',
+    // CORRECTION 3: true only when the linked Actor is a real WORLD Actor
+    // (Workspace selection can resolve it) — false for a Compendium-only
+    // link, so "Open in Workspace" is never advertised on a target that is
+    // guaranteed to fail after navigation. "Open Actor" is unaffected.
+    hasWorkspaceActorLink: Boolean(worldActor),
+    workspaceActorId: worldActor?.id || '',
     defaultRewardLabel: defaultRewardLabel(contact),
     dispositionLabel: optionLabel(dispositionOptions, contact.disposition),
     dispositionOptions: selectOptions(dispositionOptions, contact.disposition),
