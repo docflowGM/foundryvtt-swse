@@ -106,7 +106,11 @@ const DROID_ACTOR = { id: 'r2d2', name: 'R2-D2', system: { droidSystems: { state
 
   const recovery = items.find(item => item.kind === 'recovery' && item.target?.id === 'chewie');
   assert.ok(recovery, 'a healing-eligible party actor must produce a recovery attention item');
-  assert.equal(recovery.target.kind, 'actor');
+  // Phase 7 addendum H: recovery is the one Home attention item that
+  // migrates from the generic {kind:'actor'} (open-the-sheet) target to
+  // {kind:'workspace-actor'} (select this Actor in Workspace's Recovery
+  // operations card). No other attention item's target kind changes.
+  assert.equal(recovery.target.kind, 'workspace-actor');
 
   // Ordering: critical items must sort before warning/info items.
   const severities = items.map(item => item.severity);
