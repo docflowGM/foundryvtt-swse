@@ -257,7 +257,17 @@ function normalizeLinks(data = {}, existing = {}) {
     linkedJobThreadId: cleanString(data.linkedJobThreadId ?? existing.linkedJobThreadId),
     linkedSceneUuid: cleanString(data.linkedSceneUuid ?? existing.linkedSceneUuid),
     linkedItemUuid: cleanString(data.linkedItemUuid ?? existing.linkedItemUuid),
-    linkedUuids: uniqueStrings(data.linkedUuids ?? existing.linkedUuids, 24)
+    linkedUuids: uniqueStrings(data.linkedUuids ?? existing.linkedUuids, 24),
+    // Ecosystem Redesign Phase 5 — the Location this Intel is ABOUT (never a
+    // copy of the Location's own data, just its stable id) and, when this
+    // Intel was drafted from a specific Atlas Fact on that Location, the
+    // Fact's own id so it can be resolved fresh from the Location on every
+    // render. Added here, flat, alongside the other linked* fields rather
+    // than reviving the old dropped `metadata` object — see
+    // LocationIntelBridgeService, which used to build that object and have
+    // it silently discarded because this function never read it.
+    linkedLocationId: cleanString(data.linkedLocationId ?? existing.linkedLocationId),
+    sourceFactId: cleanString(data.sourceFactId ?? existing.sourceFactId)
   };
 }
 
