@@ -64,7 +64,15 @@ function locationVm(location = {}, records = []) {
     revealState: location.revealState,
     revealLabel,
     knownToPlayers: Boolean(location.knownToPlayers || ['known', 'active', 'compromised'].includes(location.revealState)),
-    activeForParty: Boolean(location.activeForParty || location.revealState === 'active'),
+    // PRE-BROADCAST INTEGRITY PASS item 1: canonical party-Location
+    // identity is ONLY Location.activeForParty === true (Phase 6
+    // Correction 2; GMLocationsSurfaceService's own isCurrent and
+    // GMCampaignContextService.party() both already enforce this with no
+    // revealState fallback). A revealState:'active' Location the party
+    // has never actually visited must never be reported as "Party In
+    // Territory" — that is exactly the false claim Bulletin must not
+    // later turn into player-facing communication.
+    activeForParty: Boolean(location.activeForParty),
     hasScene: Boolean(location.map?.sceneUuid || asArray(location.linkedSceneUuids).length),
     intelCount: asArray(location.linkedIntelIds).length,
     jobCount: asArray(location.linkedJobIds).length,
