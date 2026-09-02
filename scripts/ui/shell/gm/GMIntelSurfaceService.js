@@ -84,13 +84,13 @@ function persistenceLabel(value = '') {
   return titleCase(value || INTEL_PERSISTENCE.GM_ONLY);
 }
 
-function findFaction(factions = [], factionId = '') {
+export function findFaction(factions = [], factionId = '') {
   const id = cleanString(factionId).toLowerCase();
   if (!id) return null;
   return factions.find(faction => cleanString(faction.id).toLowerCase() === id || cleanString(faction.name).toLowerCase() === id) || null;
 }
 
-function findContact(factions = [], factionId = '', contactId = '') {
+export function findContact(factions = [], factionId = '', contactId = '') {
   const faction = findFaction(factions, factionId);
   const contacts = faction ? asArray(faction.contacts) : factions.flatMap(entry => asArray(entry.contacts));
   const id = cleanString(contactId).toLowerCase();
@@ -244,12 +244,12 @@ function editorFromRecord(record = null, defaults = {}) {
  * rather than missing — resolving it for real requires an async
  * fromUuid() lookup, deferred to click-time in the controller instead.
  */
-function parseWorldDocId(uuid = '', docType = '') {
+export function parseWorldDocId(uuid = '', docType = '') {
   const match = cleanString(uuid).match(new RegExp(`^${docType}\\.([A-Za-z0-9]+)$`));
   return match ? match[1] : '';
 }
 
-function isCompendiumUuid(uuid = '') {
+export function isCompendiumUuid(uuid = '') {
   return cleanString(uuid).startsWith('Compendium.');
 }
 
@@ -259,7 +259,7 @@ function isCompendiumUuid(uuid = '') {
  * HolonetIntelService.normalizeLinks()). Intel never stores a copy of the
  * Location's own data, only its stable id; resolved fresh on every render.
  */
-function resolveIntelLocation(intel) {
+export function resolveIntelLocation(intel) {
   const id = cleanString(intel?.linkedLocationId);
   if (!id) return null;
   const location = LocationRegistryService.findLocation(id);
@@ -279,7 +279,7 @@ function resolveIntelLocation(intel) {
  * global registry) — presentation-only. This intentionally never copies
  * the Fact's own text onto the Intel record; see Phase 5M.
  */
-function resolveIntelSourceFact(intel, location) {
+export function resolveIntelSourceFact(intel, location) {
   const factId = cleanString(intel?.sourceFactId);
   if (!factId) return null;
   const fact = location ? asArray(location.atlasFacts).find(entry => entry.id === factId) : null;
@@ -294,7 +294,7 @@ function resolveIntelSourceFact(intel, location) {
  * exactly this reuse — see GMLocationsSurfaceService's identical
  * resolveJobRow()). Intel never stores a copy of a job's title or status.
  */
-async function resolveIntelJob(threadId) {
+export async function resolveIntelJob(threadId) {
   const id = cleanString(threadId);
   if (!id) return null;
   const thread = await HolonetStorage.getThread(id).catch(() => null);
@@ -311,7 +311,7 @@ async function resolveIntelJob(threadId) {
   };
 }
 
-function resolveIntelScene(sceneUuid) {
+export function resolveIntelScene(sceneUuid) {
   const uuid = cleanString(sceneUuid);
   if (!uuid) return null;
   const id = parseWorldDocId(uuid, 'Scene');
@@ -321,7 +321,7 @@ function resolveIntelScene(sceneUuid) {
   return { uuid, id: scene.id, name: scene.name, isActive: Boolean(scene.active), resolved: true, resolutionKind: 'canonical-id' };
 }
 
-function resolveIntelActor(actorUuid) {
+export function resolveIntelActor(actorUuid) {
   const uuid = cleanString(actorUuid);
   if (!uuid) return null;
   const id = parseWorldDocId(uuid, 'Actor');

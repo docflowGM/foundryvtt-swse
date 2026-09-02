@@ -636,7 +636,7 @@ function signedDeltaLabel(value) {
   return n > 0 ? `+${Math.trunc(n)}` : String(Math.trunc(n));
 }
 
-function factionConsequenceEntries(job = {}) {
+export function factionConsequenceEntries(job = {}) {
   const c = job?.factionConsequences || job?.relationshipConsequences || {};
   const sourceEntries = safeArray(c?.entries);
   const rows = [];
@@ -738,7 +738,7 @@ function buildTimeline(thread, job, recordsById) {
  * factionName fall back to a name match against the real Faction Registry,
  * but ONLY when that name is unique — never an arbitrary guess.
  */
-function resolveIssuerFaction(job) {
+export function resolveIssuerFaction(job) {
   const canonicalId = String(job.issuerFactionId || '').trim();
   if (canonicalId) {
     const faction = FactionRegistryService.findFaction(canonicalId);
@@ -759,7 +759,7 @@ function resolveIssuerFaction(job) {
  * Faction-registry contact from a linked world/compendium Actor from an
  * unresolved legacy name — never collapsed into one shape, per Phase 4I.
  */
-function resolveIssuerContact(job, resolvedFaction) {
+export function resolveIssuerContact(job, resolvedFaction) {
   const contactId = String(job.issuerContactId || '').trim();
   if (contactId && resolvedFaction?.resolved) {
     const found = FactionRegistryService.findFactionContact(resolvedFaction.id, contactId);
@@ -799,7 +799,7 @@ function resolveIssuerContact(job, resolvedFaction) {
  * name-only inference from briefing text. Exposed as an array per Phase 4J
  * even though only one primary source Location is currently modeled.
  */
-function resolveJobLocations(job) {
+export function resolveJobLocations(job) {
   const sourceLocation = job.rawJob?.sourceLocation || null;
   const locationId = String(sourceLocation?.locationId || '').trim();
   if (!locationId) return [];
@@ -831,7 +831,7 @@ function resolveJobLocations(job) {
  * LocationIntelBridgeService/FactionIntelBridgeService (draft-creation
  * adapters only).
  */
-async function resolveJobIntel(threadId) {
+export async function resolveJobIntel(threadId) {
   try {
     const records = await HolonetIntelService.getAllIntel({ includeArchived: true });
     return records
@@ -852,7 +852,7 @@ async function resolveJobIntel(threadId) {
  * a rivalry (see Phase 4N — no such canonical storage exists, per the
  * Phase 3 audit).
  */
-function resolveConsequenceFactions(consequenceEntries = []) {
+export function resolveConsequenceFactions(consequenceEntries = []) {
   return consequenceEntries.map((entry) => {
     if (entry.factionId) {
       const faction = FactionRegistryService.findFaction(entry.factionId);
