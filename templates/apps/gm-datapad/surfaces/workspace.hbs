@@ -248,7 +248,7 @@
       <section class="gm-party-command-section">
         <header><span class="gm-command-eyebrow">ORGANIZATION ROLE</span></header>
         {{#each selection.relationships.factionContacts}}
-        <button type="button" class="workspace-dossier-row" data-dossier-target-kind="faction" data-dossier-target-id="{{this.factionId}}">
+        <button type="button" class="workspace-dossier-row" data-dossier-target-kind="faction-contact" data-dossier-target-id="{{this.contactId}}" data-dossier-target-faction-id="{{this.factionId}}">
           <strong>{{this.contactName}}</strong><span>{{this.factionName}}</span>
         </button>
         {{else}}<p class="placeholder">Not registered as any Faction Contact.</p>{{/each}}
@@ -287,7 +287,11 @@
         <button type="button" class="workspace-dossier-row" data-dossier-target-kind="trade" data-dossier-target-id="{{this.id}}">
           <strong>{{this.label}}</strong><span>{{this.role}}{{#if this.counterpartyActorName}} · {{this.counterpartyActorName}}{{/if}}</span>
         </button>
-        {{else}}<p class="placeholder">No active or recent Trade activity.</p>{{/each}}
+        {{!-- CORRECTION 5: forActor().operations.trades only reads the
+              active/approval/failed Trade queues (never recentCompleted),
+              so the empty state must not claim "recent" activity was
+              checked when it was not. --}}
+        {{else}}<p class="placeholder">No active, pending-approval, or failed Trade activity.</p>{{/each}}
       </section>
     </div>
 

@@ -67,10 +67,23 @@ export class GMCampaignTargetService {
   }
 
   /**
+   * CORRECTION 4 — a Faction Contact target preserves the exact Contact
+   * focus (Factions already supports focusedContactId alongside
+   * focusedFactionId), so "open this exact NPC's organization role" stays
+   * distinct from a generic Faction target. faction(id) is UNCHANGED and
+   * still means only the Faction — this is a separate, additive kind.
+   */
+  static factionContact(factionId, contactId) {
+    return { surfaceId: 'factions', statePatch: { focusedFactionId: factionId, focusedContactId: contactId } };
+  }
+
+  /**
    * Convert a {kind, id} campaign-target descriptor (the shape
    * GMCampaignContextService.attentionItems() rows carry as `.target`)
    * into the real navigateToSurface() call arguments. Returns null for an
    * unsupported/actor kind — callers must handle Actor targets themselves.
+   * 'faction-contact' additionally requires target.factionId (id alone is
+   * only the Contact id, which is not addressable without its Faction).
    */
   static resolve(target) {
     const kind = String(target?.kind || '');
@@ -85,6 +98,10 @@ export class GMCampaignTargetService {
       case 'trade': return this.trade(id);
       case 'approval': return this.approval(id);
       case 'workspace-actor': return this.workspaceActor(id);
+      case 'faction-contact': {
+        const factionId = target?.factionId;
+        return factionId ? this.factionContact(factionId, id) : null;
+      }
       default: return null;
     }
   }

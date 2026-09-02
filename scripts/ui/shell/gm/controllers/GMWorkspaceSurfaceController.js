@@ -103,6 +103,7 @@ export class GMWorkspaceSurfaceController {
         event.preventDefault();
         const kind = event.currentTarget.dataset.dossierTargetKind;
         const id = event.currentTarget.dataset.dossierTargetId;
+        const factionId = event.currentTarget.dataset.dossierTargetFactionId;
         if (!kind || !id) return;
         if (kind === 'actor') {
           const actor = game.actors?.get?.(id);
@@ -113,7 +114,11 @@ export class GMWorkspaceSurfaceController {
           actor.sheet?.render?.(true);
           return;
         }
-        const target = GMCampaignTargetService.resolve({ kind, id });
+        // CORRECTION 4: a 'faction-contact' row carries the Contact's own
+        // Faction alongside it so navigation preserves the exact Contact
+        // focus (focusedContactId) rather than degrading to a generic
+        // Faction target.
+        const target = GMCampaignTargetService.resolve(factionId ? { kind, id, factionId } : { kind, id });
         if (!target) return;
         await this.host?.navigateToSurface?.(target.surfaceId, target);
       }, { signal });
