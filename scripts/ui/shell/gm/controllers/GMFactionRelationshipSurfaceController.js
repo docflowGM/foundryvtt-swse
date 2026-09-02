@@ -210,6 +210,8 @@ export class GMFactionRelationshipSurfaceController {
       const locationId = String(button.dataset.locationId || '').trim();
       const actorId = String(button.dataset.actorId || '').trim();
       const relationshipId = String(button.dataset.relationshipId || '').trim();
+      const jobId = String(button.dataset.jobId || '').trim();
+      const intelId = String(button.dataset.intelId || '').trim();
       const issuerFilter = {
         factionId,
         factionName,
@@ -296,6 +298,21 @@ export class GMFactionRelationshipSurfaceController {
             if (!locationId) throw new Error('This dossier location has no registry id.');
             this.host.patchSurfaceState?.('locations', { selectedLocationId: locationId, modal: null }, { render: false });
             await this.host._navigateTo('locations');
+            return;
+
+          // Ecosystem Redesign Phase 3 — context-preserving navigation from
+          // the Faction's own Jobs/Intel relationship rows (relationships.
+          // jobs/relationships.intel on the Phase 3 ecosystem VM), using
+          // the real stable id each row already carries, via the Phase 2
+          // shell navigation contract. No new routing helper.
+          case 'open-faction-job':
+            if (!jobId) throw new Error('This linked Job has no thread id.');
+            await this.host.navigateToSurface?.('jobs', { hostPatch: { selectedJobThreadId: jobId } });
+            return;
+
+          case 'open-faction-intel':
+            if (!intelId) throw new Error('This linked Intel record has no id.');
+            await this.host.navigateToSurface?.('intel', { statePatch: { selectedRecordId: intelId } });
             return;
 
           case 'hide-contact': {
