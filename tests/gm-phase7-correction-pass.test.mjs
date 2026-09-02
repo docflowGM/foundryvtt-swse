@@ -180,10 +180,14 @@ console.log('Correction 2 (canonical Condition Track field) passed.');
   assert.equal(worldContact.hasActorLink, true);
   assert.equal(worldContact.hasWorkspaceActorLink, true, 'a real world Actor link must advertise Open in Workspace');
   assert.equal(worldContact.workspaceActorId, 'world-actor-1');
-  if (compendiumContact) {
-    assert.equal(compendiumContact.hasActorLink, true, 'a Compendium-only Contact must still support Open Actor');
-    assert.equal(compendiumContact.hasWorkspaceActorLink, false, 'a Compendium-only Contact must NOT advertise Open in Workspace — Workspace selection cannot resolve it');
-  }
+  // FINAL CORRECTION 4A: this must be an unconditional assertion — the
+  // pre-correction test's `if (compendiumContact)` guard meant the test
+  // still passed even if the Compendium Contact silently vanished from
+  // the VM entirely. The real contract is: it stays present, Open Actor
+  // stays available, only Open in Workspace is withheld.
+  assert.ok(compendiumContact, 'a Compendium-only Contact must remain present in the VM — it must never be dropped');
+  assert.equal(compendiumContact.hasActorLink, true, 'a Compendium-only Contact must still support Open Actor');
+  assert.equal(compendiumContact.hasWorkspaceActorLink, false, 'a Compendium-only Contact must NOT advertise Open in Workspace — Workspace selection cannot resolve it');
 }
 
 console.log('Correction 3 (Faction Open in Workspace world-Actor truthfulness) passed.');
@@ -220,4 +224,111 @@ console.log('Correction 4 (faction-contact target preserves exact Contact focus)
 
 console.log('Correction 5 (Trade empty-state truthfulness) passed.');
 
-console.log('PHASE 7 INDEPENDENT REVIEW CORRECTION PASS regression suite passed (recovery eligible != needs attention; canonical Condition Track field; Faction Open-in-Workspace world-Actor truthfulness; Organization Role exact Contact-focus preservation; Trade empty-state truthfulness).');
+// ============================================================
+// FINAL CORRECTION 1 — per-Actor recovery legality bug
+// (GMHealingTrigger.getHealingSummary() is a WHOLE-ROSTER search: with a
+// defined party, a non-party world Actor is absent from BOTH
+// eligibleActors/ineligibleActors, so the array-membership check
+// silently reported eligible:false, ineligible:false for a perfectly
+// valid living character. Fixed by using the canonical per-Actor
+// predicate GMHealingTrigger.isEligibleForHealing(actor) directly.)
+// ============================================================
+{
+  const { GMHealingTrigger } = await import('/systems/foundryvtt-swse/scripts/holonet/subsystems/gm-healing-trigger.js');
+
+  const PARTY_PC = organicActor({ id: 'party-pc-1', name: 'Party PC', inParty: true });
+  const NON_PARTY_NPC = organicActor({ id: 'non-party-npc-1', name: 'Non-Party Living NPC', inParty: false });
+  NON_PARTY_NPC.type = 'character'; // a living, valid, non-Droid/Vehicle character
+  installShim({ actors: [PARTY_PC, NON_PARTY_NPC] });
+
+  for (const actor of [PARTY_PC, NON_PARTY_NPC]) {
+    const context = await GMCampaignContextService.forActor(actor);
+    const expectedEligible = GMHealingTrigger.isEligibleForHealing(actor);
+    assert.equal(context.operations.recovery.eligible, expectedEligible, `forActor(${actor.id}).operations.recovery.eligible must equal the canonical per-Actor predicate`);
+    assert.equal(context.operations.recovery.ineligible, !expectedEligible, `forActor(${actor.id}).operations.recovery.ineligible must be the exact logical complement of eligible`);
+    assert.notEqual(context.operations.recovery.eligible, false && context.operations.recovery.ineligible === false, 'eligible and ineligible must never BOTH be false for a resolvable Actor');
+  }
+
+  // The non-party NPC is the case that was broken pre-correction: with a
+  // defined party (PARTY_PC), the old array-membership check would have
+  // found NON_PARTY_NPC in neither array.
+  const nonPartyContext = await GMCampaignContextService.forActor(NON_PARTY_NPC);
+  assert.equal(nonPartyContext.operations.recovery.eligible, true, 'a living, non-Droid/Vehicle, HP>0 character must be eligible regardless of party membership');
+  assert.equal(nonPartyContext.operations.recovery.ineligible, false);
+
+  // A Droid must be correctly ineligible via the same direct predicate.
+  const DROID = { id: 'droid-elig-1', name: 'Repair Droid', type: 'droid', uuid: 'Actor.droid-elig-1', system: { hp: { value: 10, max: 10 }, isDroid: true }, effects: [], flags: {}, getFlag: () => undefined };
+  installShim({ actors: [PARTY_PC, DROID] });
+  const droidContext = await GMCampaignContextService.forActor(DROID);
+  assert.equal(droidContext.operations.recovery.eligible, false, 'a Droid must never be reported eligible for the natural-healing trigger');
+  assert.equal(droidContext.operations.recovery.ineligible, true);
+}
+
+console.log('Final Correction 1 (per-Actor recovery legality, party-independent) passed.');
+
+// ============================================================
+// FINAL CORRECTION 2 — eliminate the double buildActorCard() call on a
+// Workspace selected-Actor render.
+// ============================================================
+{
+  const SELECTED = organicActor({ id: 'selected-once-1', name: 'Selected Once PC' });
+  installShim({ actors: [SELECTED] });
+
+  let callCount = 0;
+  const originalBuildActorCard = GMCombatRecoveryService.buildActorCard;
+  GMCombatRecoveryService.buildActorCard = (actor) => { callCount++; return originalBuildActorCard.call(GMCombatRecoveryService, actor); };
+  try {
+    const vm = await GMWorkspaceSurfaceService.buildViewModel({ getSurfaceState: () => ({ selectedActorId: 'selected-once-1' }) });
+    assert.equal(callCount, 1, 'GMCombatRecoveryService.buildActorCard(selectedActor) must be called exactly ONCE per Workspace render — forActor() computes it once and Workspace must consume that same card, never recompute it');
+    assert.ok(vm.selection.operations.recovery, 'the Workspace VM must still expose the real recovery card via the single shared computation');
+    assert.equal(vm.selection.operations.recovery.id, 'selected-once-1');
+  } finally {
+    GMCombatRecoveryService.buildActorCard = originalBuildActorCard;
+  }
+}
+
+console.log('Final Correction 2 (single buildActorCard() call per Workspace render) passed.');
+
+// ============================================================
+// FINAL CORRECTION 3 — Home recovery attention preserves party-first
+// scope; it must not silently expand to every managed world Actor when
+// a campaign party is defined.
+// ============================================================
+
+// A. with a defined party: the party PC gets a Home item, a wounded
+//    NON-party NPC does not.
+{
+  const PARTY_PC = organicActor({ id: 'scope-party-pc', name: 'Scope Party PC', hp: 5, hpMax: 20, inParty: true });
+  const NON_PARTY_NPC = organicActor({ id: 'scope-nonparty-npc', name: 'Scope Non-Party NPC', hp: 5, hpMax: 20, inParty: false });
+  installShim({ actors: [PARTY_PC, NON_PARTY_NPC] });
+  const items = await GMCampaignContextService.attentionItems();
+  const recoveryIds = items.filter(item => item.kind === 'recovery').map(item => item.target?.id);
+  assert.ok(recoveryIds.includes('scope-party-pc'), 'a wounded DEFINED-party PC must produce a Home recovery item');
+  assert.ok(!recoveryIds.includes('scope-nonparty-npc'), 'with a defined party, a wounded NON-party world NPC must NOT flood Home recovery attention — this is a scope decision, not merely the eligible/needsAttention semantic fix');
+}
+
+// B. a wounded PARTY Droid may produce truthful repair attention, never
+//    organic-rest wording.
+{
+  const PARTY_PC = organicActor({ id: 'scope-party-pc-2', name: 'Scope Party PC 2', inParty: true });
+  const PARTY_DROID = { id: 'scope-party-droid', name: 'Scope Party Droid', type: 'droid', uuid: 'Actor.scope-party-droid', system: { hp: { value: 0, max: 20 }, isDroid: true }, effects: [], flags: { [`foundryvtt-swse`]: { gmPartyMember: true } }, getFlag: (_scope, key) => (key === 'gmPartyMember' ? true : undefined) };
+  installShim({ actors: [PARTY_PC, PARTY_DROID] });
+  const items = await GMCampaignContextService.attentionItems();
+  const droidItem = items.find(item => item.kind === 'recovery' && item.target?.id === 'scope-party-droid');
+  assert.ok(droidItem, 'a downed party Droid must still produce a recovery/repair attention item');
+  assert.doesNotMatch(droidItem.detail, /eligible for natural healing/i);
+  assert.match(droidItem.detail, /repair/i);
+}
+
+// C. with NO defined party at all, a wounded managed Actor still
+//    produces a Home item (the explicit fallback).
+{
+  const NO_PARTY_WOUNDED = organicActor({ id: 'scope-no-party-1', name: 'No Party Wounded', hp: 5, hpMax: 20, inParty: false });
+  installShim({ actors: [NO_PARTY_WOUNDED] });
+  const items = await GMCampaignContextService.attentionItems();
+  assert.ok(items.find(item => item.kind === 'recovery' && item.target?.id === 'scope-no-party-1'), 'with no defined campaign party at all, a wounded managed Actor must still surface via the explicit fallback');
+}
+
+console.log('Final Correction 3 (Home recovery attention stays party-first, falls back to the managed roster only when no party is defined) passed.');
+
+console.log('PHASE 7 INDEPENDENT REVIEW CORRECTION PASS regression suite passed (recovery eligible != needs attention; canonical Condition Track field; Faction Open-in-Workspace world-Actor truthfulness; Organization Role exact Contact-focus preservation; Trade empty-state truthfulness; per-Actor recovery legality independent of party roster membership; single buildActorCard() call per Workspace render; Home recovery attention stays party-first).');
