@@ -25,11 +25,26 @@
  *                    relationship between two different objects
  *                    (Actor<->Healing, Actor<->Trade, Actor<->Combat/Scene).
  *   workflows     — reserved for provenance-only handoffs (Intel->Bulletin
- *                    etc.) — Phase 6 does not populate this yet; no
- *                    provenance ids exist on Bulletin records to resolve
- *                    (see the audit doc's missing-link table). Present in
- *                    every subject context as an empty object so callers
- *                    have a stable shape to check against, never omitted.
+ *                    etc.) — Phase 6/7 do not populate this yet. This is
+ *                    NOT because no Bulletin provenance exists at all:
+ *                    the Intel authority's own Bulletin-delivery helper
+ *                    already stamps every Intel-originated Bulletin
+ *                    record with a stable `sourceIntelId` (it also
+ *                    currently copies the full Intel metadata object
+ *                    onto the Bulletin alongside it — an authority-
+ *                    duplication/possible private-data-leak question
+ *                    Phase 8 must audit before deciding whether to keep,
+ *                    reduce, or drop that copy for NEW records). What's
+ *                    actually missing is a GENERALIZED provenance
+ *                    contract (Job/Location/Faction/Actor-originated
+ *                    Bulletins have no equivalent stable source id yet)
+ *                    and the reverse lookup this field would need
+ *                    (Bulletins referencing a given subject). Phase 8 is
+ *                    expected to normalize and consume that seam; this
+ *                    field stays an empty object until then. Present in
+ *                    every subject context
+ *                    as an empty object so callers have a stable shape to
+ *                    check against, never omitted.
  *   limitations   — honest strings naming a gap in the current data model,
  *                    never a guess standing in for one.
  *
@@ -633,20 +648,41 @@ export class GMCampaignContextService {
       }
     }
 
+    const limitations = [];
+
     // Jobs: reuse FactionJobBridgeService.normalizeJobIssuer()'s own alias
     // reading (issuer.contactActorUuid/contactActorId, client.actorUuid)
     // instead of hand-picking a single field — Correction 8.
-    const jobIndex = await loadJobIndex();
-    const jobs = jobIndex
-      .filter(({ thread, job }) => {
-        const issuer = FactionJobBridgeService.normalizeJobIssuer(jobResolverCard(thread, job));
-        return (issuer.contactActorUuid && issuer.contactActorUuid === actorUuid) || (issuer.contactActorId && issuer.contactActorId === actor.id);
-      })
-      .map(({ thread, job }) => jobRow(thread, job));
+    //
+    // PRE-BROADCAST INTEGRITY PASS item 3: Jobs and Intel are independent
+    // Holonet authorities from Recovery/Trade (already isolated below) —
+    // a Job Board storage failure must never blank the rest of the
+    // selected Actor's campaign dossier (identity/Factions/Locations/
+    // Recovery/Trade must all still render). Isolated the same way
+    // Recovery/Trade already are: a real caught exception logs via
+    // SWSELogger.warn and reports an honest limitation, never a silent
+    // empty result standing in for a genuine failure.
+    let jobs = [];
+    try {
+      const jobIndex = await loadJobIndex();
+      jobs = jobIndex
+        .filter(({ thread, job }) => {
+          const issuer = FactionJobBridgeService.normalizeJobIssuer(jobResolverCard(thread, job));
+          return (issuer.contactActorUuid && issuer.contactActorUuid === actorUuid) || (issuer.contactActorId && issuer.contactActorId === actor.id);
+        })
+        .map(({ thread, job }) => jobRow(thread, job));
+    } catch (err) {
+      SWSELogger.warn?.('[GMCampaignContextService] Job Board context unavailable for forActor():', err);
+      limitations.push('Job context could not be loaded for this actor.');
+    }
 
-    const intel = (await loadIntelIndex()).filter(entry => text(entry.linkedActorUuid) === actorUuid).map(intelRow);
-
-    const limitations = [];
+    let intel = [];
+    try {
+      intel = (await loadIntelIndex()).filter(entry => text(entry.linkedActorUuid) === actorUuid).map(intelRow);
+    } catch (err) {
+      SWSELogger.warn?.('[GMCampaignContextService] Intel context unavailable for forActor():', err);
+      limitations.push('Intel context could not be loaded for this actor.');
+    }
 
     // Recovery (Phase 7 addendum F, CORRECTION 1): GMHealingTrigger's
     // "eligible" means "legally allowed to receive the natural-healing
@@ -669,8 +705,19 @@ export class GMCampaignContextService {
       // silently reported eligible:false, ineligible:false for a
       // perfectly valid character. Use the canonical PER-ACTOR predicate
       // instead — it needs no roster/party context at all.
-      const eligible = GMHealingTrigger.isEligibleForHealing(actor);
-      const ineligible = !eligible;
+      //
+      // PRE-BROADCAST INTEGRITY PASS item 5: named naturalHealingEligible/
+      // naturalHealingIneligible (not the generic eligible/ineligible) —
+      // this specifically means "eligible for GMHealingTrigger's
+      // natural-healing workflow," a narrower concept than
+      // card.restEligible/repairEligible (which GMCombatRecoveryService
+      // computes for organic rest AND Droid/Vehicle repair). A generic
+      // name invites a future consumer to misread this as "can this
+      // Actor recover at all," which it is not. This field never existed
+      // outside this same correction pass, so no compatibility alias is
+      // carried forward.
+      const naturalHealingEligible = GMHealingTrigger.isEligibleForHealing(actor);
+      const naturalHealingIneligible = !naturalHealingEligible;
       const hp = actor.system?.hp ?? actor.system?.attributes?.hp ?? {};
       const hpValue = Number(hp.value ?? hp.current ?? 0) || 0;
       const hpMax = Number(hp.max ?? hp.maximum ?? 0) || 0;
@@ -683,7 +730,7 @@ export class GMCampaignContextService {
       // GMWorkspaceSurfaceService can consume it directly instead of
       // calling buildActorCard() again.
       const recoveryCard = GMCombatRecoveryService.buildActorCard(actor);
-      recovery = { eligible, ineligible, injured, needsAttention: recoveryCard.needsAttention, card: recoveryCard };
+      recovery = { naturalHealingEligible, naturalHealingIneligible, injured, needsAttention: recoveryCard.needsAttention, card: recoveryCard };
     } catch (err) {
       SWSELogger.warn?.('[GMCampaignContextService] Recovery status unavailable for forActor():', err);
       limitations.push('Healing/recovery status could not be determined for this actor.');
@@ -805,21 +852,25 @@ export class GMCampaignContextService {
       // Workspace's Recovery card uses) instead of re-deriving that
       // boolean expression here.
       //
-      // FINAL CORRECTION 3: buildViewModel()'s own `needsAttention` array
-      // starts from getManagedActors() — EVERY managed world Actor, not
-      // just the defined campaign party. Home's pre-correction source
-      // (GMHealingTrigger.getHealingSummary()) was party-first (the
-      // defined party when one exists, a wider fallback only when it
-      // doesn't); silently switching to the all-managed-Actors set would
-      // have been a scope expansion this correction pass was never
-      // authorized to make (e.g. every wounded world NPC/Droid suddenly
-      // flooding Home). Preserve party-first scope: when a party is
-      // defined, only its members are candidates; only with NO defined
-      // party does every managed Actor become the (still-useful) fallback.
-      const recoveryVm = await GMCombatRecoveryService.buildViewModel();
-      const partyRecoveryCards = asArray(recoveryVm?.combatRecovery?.partyActors);
-      const recoveryCandidates = partyRecoveryCards.length ? partyRecoveryCards : asArray(recoveryVm?.combatRecovery?.actors);
-      for (const card of recoveryCandidates.filter(candidate => candidate.needsAttention)) {
+      // FINAL CORRECTION 3 / PRE-BROADCAST INTEGRITY PASS item 2:
+      // buildViewModel()'s own `needsAttention` array starts from
+      // getManagedActors() — EVERY managed world Actor, not just the
+      // defined campaign party — and additionally computes metrics,
+      // status-effect/poison option lists, and the recovery log for the
+      // whole Recovery console, none of which Home needs. Home's
+      // pre-correction source (GMHealingTrigger.getHealingSummary()) was
+      // both DISPLAY- and COMPUTATION-scoped to the party first; calling
+      // buildViewModel() only fixed the display scope while still doing
+      // full-world work. Compute the candidate list directly instead —
+      // the defined party when one exists, else the managed roster — and
+      // build a real recovery card only for those candidates. This also
+      // isolates Home from an unrelated Recovery-console failure (a bad
+      // status-effect/poison option build must not prevent Home from
+      // reporting that a party member is wounded).
+      const partyRecoveryActors = GMPartyRosterService.getPartyActors({ ownedOnly: false });
+      const recoveryCandidateActors = partyRecoveryActors.length ? partyRecoveryActors : GMCombatRecoveryService.getManagedActors();
+      const recoveryCandidateCards = recoveryCandidateActors.map(actor => GMCombatRecoveryService.buildActorCard(actor));
+      for (const card of recoveryCandidateCards.filter(candidate => candidate.needsAttention)) {
         // Phase 7 addendum H: the recovery workflow is the one Home
         // attention item deliberately migrated from the generic
         // {kind:'actor'} (open-the-sheet) target to {kind:'workspace-actor'}
