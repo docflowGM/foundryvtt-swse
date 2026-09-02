@@ -3524,7 +3524,7 @@ request (e.g. a purchased/triggered Bulletin) is persisted and
 broadcast exactly once, never twice; (9) the non-primary GM's client
 shows no error and no duplicate record.
 
-## 71. Phase 8 gate (supersedes §64)
+## 71. Phase 8 gate (superseded by §80 — see below)
 
 **PHASE 8A CORRECTION PASS COMPLETE — CLOSURE WITHHELD BY THIS PASS IS
 NOW LIFTED.** All three findings (C1 blocker, C2, C3) fixed with
@@ -3535,3 +3535,274 @@ introduced beyond the one small reusable seam (`HolonetGmAuthority`)
 explicitly requested to avoid duplicating an existing pattern. Per
 explicit instruction, this pass stops here — Phase 8B (Intel→Bulletin
 private-data/provenance audit) is not started.
+
+# PHASE 8B — INTEL → BULLETIN PRIVATE-DATA / PROVENANCE AUDIT
+
+Starting head: `4c0d34b62e6d323e089000f8a005bac898211386` (verified:
+clean tree, correct branch, matching HEAD, exact-head CI green, PR #963
+open/draft/unmerged/mergeable, independent review of the Phase 8A
+correction pass confirmed closed). Scope: Intel→Bulletin private-data/
+provenance only — no general Bulletin redesign, no Job/Location/
+Faction/Workspace→Bulletin handoff, no immediate-publish UX change, no
+generalized `sourceKind` provenance contract.
+
+## 72. Authority/consumer audit
+
+Read in full before any code change:
+`holonet-intel-service.js`, `holonet-engine.js`, `holonet-storage.js`,
+`holonet-delivery-router.js`, `holonet-projection-router.js`,
+`holonet-record.js`, `enums.js`, `bulletin-source.js`, `gm-datapad.js`,
+`GMBulletinSurfaceService.js`, `GMBulletinSurfaceController.js`,
+`ShellHost.js`, `HomeSurfaceService.js`, `holonet-chat-card.js`,
+`holonet-boundaries.js`, `GMCampaignContextService.js`.
+
+**Storage boundary fact that shapes this whole audit**: all Holonet
+records — Bulletin, Messenger, and GM-only Intel drafts alike — live in
+one Foundry world-scope setting (`holonet_records`, `scope:'world'`,
+`config:false`, registered in `holonet-init.js`). Foundry world
+settings are synced in full to every connected client, GM and player,
+regardless of the `config` flag and regardless of what any template
+renders. `HolonetRecord.toJSON()` serializes `metadata` verbatim into
+that setting. This means whatever gets written into a Bulletin's
+`metadata` is reachable by any player client the instant it is
+persisted — via `game.settings.get('foundryvtt-swse','holonet_records')`
+in a browser console if nothing else — independent of the DOM. This is
+a genuinely broader, pre-existing architectural fact (it also means a
+GM-only Intel *draft*, never delivered to anyone, is technically
+client-readable the same way) that is **not** this phase's to fix —
+only Intel-derived Bulletin content is in scope — but it is why the
+"not currently rendered" defense does not apply to this audit's
+findings, and it is recorded here as a known, deferred, broader
+limitation.
+
+**Every `INTEL_METADATA_KEY`/`sourceIntelId`/`intelDelivery` consumer
+found**, traced by full-file reads plus repository-wide grep (not a
+single grep string):
+
+| File | What it reads off a Bulletin record's `metadata` | Reads the full Intel copy? |
+|---|---|---|
+| `GMBulletinSurfaceService.js` | `bulletinKind` only | NO |
+| `gm-datapad.js` `_buildBulletinRecordView()` (the sole GM Bulletin-surface row builder) | `category`, `holonews`, `breakingNews`, `urgent`, `pinAsLastSession`, `homeSlot`, `newsSource`, `dateline`, `sector`, `newsCategory`, `newsDeck`, `holonewsSeedId`, `ambientHolonews`, `automatedHolonews`, `priority`, `contactId`, `imageUrl`, `acknowledgements`, `dismissals` | NO |
+| `HomeSurfaceService._mapFeedRecord()` (the player Home feed row builder) | `route`, `imageUrl`, `priority`, `routeId`, `workbenchCategory`, `initialCategory`, `mode`, `routeIntent`, `entryPoint`, `tab`, `sheetAnchor`, `breakingNews`, `urgent` | NO |
+| `ShellHost.js` action-data helpers | `actionOptions`, `threadId`, `sourceRecordId`, `recordId`, `route`, `actionSurface`, `routeId`, `approvalType`, `assetType`, `category` | NO |
+| `holonet-chat-card.js` | `chatCard`, `actorId` | NO |
+| `holonet-delivery-router.js` | (recipient resolution reads `record.audience`, never `record.metadata`) | NO |
+| `holonet-projection-router.js` | `urgent` only | NO |
+| `holonet-boundaries.js` (`normalizeBulletinRecord`/`assertHolonetBoundary`) | writes `sphere`/`oneWay`/`replyEnabled`/`conversationAllowed`, never reads `intel` | NO |
+| `GMCampaignContextService.js` | doc comment only (flagged this exact question for Phase 8 — see §68/this section) — no runtime read | N/A |
+| `holonet-messenger-service.js` | `sourceIntelId` for **Secret Notes** (a sibling, unrelated delivery mode — already minimal, never copies a full Intel snapshot) | NO (different record type) |
+
+**Verdict: `NO_CONSUMER_FOUND`** for the full Intel-metadata copy
+(`metadata[INTEL_METADATA_KEY]`) on a Bulletin record, anywhere in
+production code. `sourceIntelId` and `intelDelivery` are the only two
+fields any part of the system was ever positioned to use, and even
+those currently have no reverse-lookup reader yet (`GMCampaignContextService`'s
+`workflows` relationship kind stays an empty object pending a
+generalized provenance contract — explicitly deferred, see §75).
+
+## 73. Field-classification table
+
+| Field | Classification | Consumer cited |
+|---|---|---|
+| `sourceIntelId` | REQUIRED_PROVENANCE | No reverse-lookup reader yet (deferred generalized provenance contract), but this is the stable id any future reader resolves through — matches the identical, already-correct pattern `deliverAsSecretNote()` uses today |
+| `intelDelivery: true` | BULLETIN_WORKFLOW_STATE | `NO_CONSUMER_FOUND` today; kept — it is a harmless boolean marker, not private data, and matches the minimal schema this phase's own spec calls for |
+| `metadata[INTEL_METADATA_KEY]` (full Intel object: `gmNotes`, `fullBody`, `skillGate`, `lockbox`, `linkedFactionId`, `linkedContactId`, `linkedJobThreadId`, `linkedActorUuid`, `linkedSceneUuid`, etc.) | GM_PRIVATE / PLAYER_UNSAFE for the private sub-fields, DUPLICATED_CANONICAL_TRUTH for the rest | `NO_CONSUMER_FOUND` anywhere — removed for new records (§74) |
+| `record.body` (top-level, not metadata) | REQUIRED_BULLETIN_CONTENT | `_buildBulletinRecordView`, `HomeSurfaceService._mapFeedRecord`, chat card — all read `record.body` directly; already correctly sourced from `bodyForIntel(intel,'public')`, untouched by this pass |
+
+`linkedFactionId`/`linkedContactId`/`linkedJobThreadId`/`linkedActorUuid`/
+`linkedSceneUuid` were never flattened onto `bulletin.metadata` directly
+— they only existed nested inside the now-removed full copy. Removing
+the full copy therefore also satisfies the spec's "do not flatten
+upstream links onto Bulletin" requirement with no separate change
+needed.
+
+## 74. Private-data finding and fix
+
+**Finding**: `HolonetIntelService.deliverAsBulletin()` copied the
+entire normalized Intel object onto the newly-created Bulletin's
+`metadata[INTEL_METADATA_KEY]` (written twice — once in the
+`BulletinSource.createBulletinMessage()` call, then redundantly
+reassigned again immediately after with identical values). Per §72,
+this full copy — `gmNotes`, unreleased `fullBody`, `skillGate`
+(including the DC/skill/decryption-mode internals), `lockbox`
+(including credits/item contents), and every `linked*` id — was
+persisted into the shared world setting with **no production consumer
+ever reading it back off a Bulletin**, making it reachable by every
+player client the instant a GM used "Publish as Bulletin," independent
+of what the UI rendered. `deliverAsSecretNote()`, the sibling delivery
+method three functions above it in the same file, already used the
+correct minimal pattern (`sourceIntelId` only) — this was an
+inconsistency within the same service, not a deliberate design choice.
+
+**Fix**: `deliverAsBulletin()` now builds `metadata` with exactly two
+fields — `sourceIntelId: intel.id` and `intelDelivery: true` — and the
+redundant second reassignment was deleted. Nothing else in the method
+changed: `bodyForIntel(intel, 'public')` (the pre-existing, authoritative
+player-safe-body helper — no new sanitizer introduced) still selects the
+rendered `body`; audience/projection/publish-lifecycle logic is
+byte-for-byte unchanged.
+
+## 75. Player-safe body authority
+
+`bodyForIntel(intel, mode)` (already existed, unchanged) is the one
+authoritative content-selection seam; `deliverAsBulletin()` already
+called it with `mode:'public'` before this pass and still does — no new
+sanitizer was introduced. Proven directly against the real persisted
+record (B2, §77): with `publicBody` set, the Bulletin's `record.body`
+equals the public text, never the private `fullBody`, matching what the
+audit found: the leak was entirely in the metadata copy, not in the
+rendered body selection.
+
+## 76. New Bulletin provenance schema
+
+```js
+metadata: {
+  sourceIntelId: intel.id,
+  intelDelivery: true
+}
+```
+Exactly the minimal schema requested. One canonical provenance edge
+(`sourceIntelId`) — a future reader resolves
+`Bulletin.sourceIntelId → Intel → Intel's own canonical links`, rather
+than Bulletin carrying flattened copies of those links itself. The
+generalized cross-source provenance contract (`sourceKind`,
+Job/Location/Faction/Actor-originated Bulletins) remains explicitly
+deferred — this phase settles Intel provenance only, per the scope
+boundary.
+
+## 77. Fail-before/pass-after proof and tests
+
+New `tests/gm-holonet-phase8b-intel-bulletin-privacy.test.mjs`,
+executed against the real production `HolonetIntelService`/
+`HolonetStorage`/`holonet-boundaries.js` (not source-string assertions,
+except where noted) via the same `game.settings`-backed Node shim
+pattern established in `gm-intel-ecosystem-view-model.test.mjs`:
+
+- **B1/B2/B3/B4/B5** (one combined block): creates an Intel record with
+  unmistakable sentinel values (`GM_ONLY_DO_NOT_EXPOSE_8B` in `gmNotes`,
+  `UNRELEASED_INTEL_BODY_8B` in `fullBody`, `LOCKBOX_SECRET_8B` in the
+  lockbox label, `SKILL_GATE_SECRET_8B` in the skill-gate's skill
+  field, plus five `linked*` ids), publishes it as a Bulletin, and reads
+  back the **actual raw persisted record** from the settings store (not
+  the in-memory object, not rendered HTML). Asserts: `record.body`
+  equals the public text; `metadata.sourceIntelId`/`metadata.intelDelivery`
+  are present and correct; `metadata.intel` is `undefined`; none of the
+  four sentinel strings appear anywhere in `JSON.stringify()` of the
+  persisted record; none of the five `linked*` ids are flattened onto
+  `metadata`.
+- **Fail-before proof**: `git stash push -- scripts/holonet/subsystems/holonet-intel-service.js`,
+  re-ran the same test — failed exactly at the "full Intel metadata
+  snapshot must not be persisted" assertion, with the actual persisted
+  object shown containing `gmNotes: 'GM_ONLY_DO_NOT_EXPOSE_8B'`,
+  `fullBody: 'UNRELEASED_INTEL_BODY_8B'`, and the rest of the sentinel
+  values, confirmed via the raw AssertionError diff. `git stash pop`
+  restored the fix; the same test then passed. A genuine pre-fix
+  failure, not a source-string proof.
+- **B6/B11** (combined): re-verifies audience type and both projections
+  (`HOME_FEED`, `GM_DATAPAD_BULLETIN`) are unaffected, and re-proves
+  Phase 8A's exactly-once contract still holds through this path —
+  exactly one `record-published` sync, correlated to the one persisted
+  Bulletin.
+- **B7**: successful delivery adds exactly one new record (the
+  Bulletin); the Intel record's own `status`/`persistence`/`delivery.history`
+  are updated exactly once, in place — not duplicated.
+- **B8**: `HolonetStorage.saveRecord` monkey-patched to fail — asserts
+  `deliverAsBulletin()` returns `null`, zero new records are persisted,
+  zero syncs are broadcast, and the Intel record's status is **not**
+  advanced to released. Confirms the pre-existing Phase 8A invariant
+  (persist-then-announce, D3) already covers this path unchanged.
+- **B9**: hand-constructs a legacy-shaped raw record (carrying the old
+  full `metadata.intel` copy) directly in the settings store, loads it
+  through real `HolonetStorage.getRecord()`/`getAllRecords()`, and
+  confirms it hydrates without error, is still recognized as a Bulletin
+  record (`isBulletinRecord()`), and its `body`/`sourceIntelId` still
+  read correctly. No destructive migration exists or is needed — since
+  no reader ever consumed the extra field, its presence on old records
+  is inert.
+- **B10**: a newly-created minimal-provenance Bulletin round-trips
+  through the same real storage/boundary functions and is recognized
+  identically, alongside legacy records, with no migration step.
+- The Phase 8A test file's own M9 static-scan assertion, which had
+  pinned the full-metadata-copy shape as "unchanged in Phase 8A —
+  Phase 8B's to audit," was updated (not weakened) to assert only what
+  Phase 8A's own scope actually owns — `sourceIntelId`/`intelDelivery`
+  provenance remaining present — since the field it used to pin is
+  exactly what this phase's audit found and removed.
+
+## 78. Legacy compatibility disposition
+
+No migration performed or needed. Nothing in production ever read
+`metadata[INTEL_METADATA_KEY]` back off a Bulletin record (§72), so a
+legacy record still carrying it is inert, not broken — proven directly
+(B9). New records simply stop writing the field. This is the
+conservative, non-destructive outcome the phase's migration policy
+calls for by default.
+
+## 79. Intel release/delivery-state disposition
+
+Unchanged and re-verified (B7/B8): `deliverAsBulletin()`'s
+persist-then-announce-then-release ordering — already correct from
+Phase 8A's D3 fix — still holds. A successful Bulletin write updates
+Intel `status`/`persistence`/`delivery.history` exactly once; a failed
+write updates none of them and announces nothing. This phase did not
+touch that ordering, only the `metadata` object's shape.
+
+## 80. Regression / totals
+
+`gm-holonet-phase8b-intel-bulletin-privacy.test.mjs`: 6 executed blocks
+(B1-B5 combined, B6/B11 combined, B7, B8, B9, B10), all green, with an
+isolated git-stash fail-before/pass-after proof for the core finding.
+Full `gm-*.test.mjs` sweep: 54/54 green (was 53 pre-Phase-8B, +1 new
+file), zero regressions. Full rolling suite and syntax check re-run;
+see the PR body / final report for exact totals (same pre-existing,
+GM-Datapad-unrelated Force-power failures as every prior phase — none
+newly broken).
+
+## 81. Live Foundry checklist (not run — no live client available)
+
+Same limitation as every prior phase. (1) Create Intel with clearly
+different public and GM-private text (plus gmNotes/skillGate/lockbox
+populated); (2) Publish as Bulletin; (3) Open a player's Holopad Home;
+(4) confirm the player sees only the intended public Bulletin text;
+(5) confirm the Bulletin appears/live-updates without reopening Home
+(Phase 8A contract); (6) inspect
+`game.settings.get('foundryvtt-swse','holonet_records')` from a player
+client's own console and confirm the newly-created Bulletin carries
+only `sourceIntelId`/`intelDelivery`, never `gmNotes`/`fullBody`/
+`skillGate`/`lockbox`; (7) confirm recipient targeting is unaffected;
+(8) confirm Intel release state updates correctly; (9) confirm a
+pre-existing legacy Intel-derived Bulletin (created before this phase)
+still renders correctly in GM Bulletin, player Home, and previews;
+(10) confirm a newly-created minimal-provenance Bulletin renders
+identically; (11) confirm direct (non-Intel) Bulletin publishing is
+unaffected; (12) confirm Messenger is unaffected.
+
+## 82. Explicitly deferred work
+
+Per the phase's own scope boundary: general Bulletin redesign,
+Job/Location/Faction/Workspace→Bulletin provenance handoff, a
+generalized `sourceKind`/cross-source provenance contract, the
+"Prepare Bulletin Draft" workflow, Preview As Player/Owner, Bulletin
+Contact redesign, Messenger redesign, Secret Note redesign, and Skill
+Challenges/Phase 9. Also explicitly out of THIS phase's fix scope
+(recorded, not solved): the broader, pre-existing fact that ALL Holonet
+records — including GM-only Intel drafts never delivered to anyone —
+live in one client-synced world setting (§72); reducing Intel→Bulletin's
+copy does not change that any Holonet record is technically
+client-readable via console today. That is a transport/storage-layer
+question broader than Intel→Bulletin and is not addressed here.
+
+## 83. Phase 8 gate (supersedes §71)
+
+**PHASE 8B COMPLETE — READY FOR GENERAL BULLETIN INTEGRATION.** The
+private-data leak (full Intel metadata snapshot reachable by every
+player client on Intel→Bulletin delivery) is fixed for new records,
+proven via an isolated git-stash fail-before/pass-after cycle against
+real persisted-record content (not source-string assertions). Minimal,
+truthful provenance (`sourceIntelId`/`intelDelivery`) is preserved.
+Legacy records remain readable with no destructive migration. Intel
+release/delivery-state semantics and Phase 8A's exactly-once transport
+contract are both unchanged and re-verified. No general Bulletin
+redesign or unrelated provenance expansion occurred. Live Foundry
+validation remains the one honestly-documented outstanding limitation.
+Per explicit instruction, this pass stops here.
