@@ -117,13 +117,65 @@ console.log('Item 1 (strict Faction party-Location authority, no revealState fal
   }
 }
 
-// no defined party at all: the managed-roster fallback still works, and
-// still only builds cards for that (smaller, in this fixture) set.
+// the roster convention was NEVER TOUCHED at all (no actor carries any
+// explicit gmPartyMember override): the managed-roster fallback still
+// works, and still only builds cards for that (smaller, in this
+// fixture) set.
 {
-  const NO_PARTY_WOUNDED = organicActor({ id: 'no-party-wounded', name: 'No Party Wounded', hp: 5, hpMax: 20, inParty: false });
+  const NO_PARTY_WOUNDED = {
+    id: 'no-party-wounded', name: 'No Party Wounded', type: 'character', uuid: 'Actor.no-party-wounded',
+    system: { hp: { value: 5, max: 20 }, conditionTrack: { current: 0, persistent: false }, secondWind: { uses: 1, max: 1 } },
+    effects: [], flags: {}, isOwner: true,
+    getFlag: () => undefined, setFlag: async () => undefined
+  };
   installShim({ actors: [NO_PARTY_WOUNDED] });
   const items = await GMCampaignContextService.attentionItems();
-  assert.ok(items.find(item => item.kind === 'recovery' && item.target?.id === 'no-party-wounded'), 'with no defined party, the managed-roster fallback must still surface a wounded Actor');
+  assert.ok(items.find(item => item.kind === 'recovery' && item.target?.id === 'no-party-wounded'), 'with the roster convention never configured at all, the managed-roster fallback must still surface a wounded Actor');
+}
+
+// ITEM 1 (new regression): the GM DELIBERATELY configures an EMPTY
+// party (a player-linked Actor explicitly excluded via
+// gmPartyMember:false) -- this must NOT fall back to the wider managed
+// roster. A wounded, unrelated managed NPC must produce NO Home
+// recovery attention, and buildActorCard() must never be invoked for it.
+{
+  const { GMPartyRosterService } = await import('/systems/foundryvtt-swse/scripts/ui/shell/gm/utils/gm-party-roster-service.js');
+  const EXCLUDED_PLAYER_ACTOR = organicActor({ id: 'excluded-player-1', name: 'Explicitly Excluded Player Actor', inParty: false });
+  const UNRELATED_WOUNDED_NPC = {
+    id: 'unrelated-npc-1', name: 'Unrelated Wounded NPC', type: 'npc', uuid: 'Actor.unrelated-npc-1',
+    system: { hp: { value: 5, max: 20 }, conditionTrack: { current: 0, persistent: false }, secondWind: { uses: 1, max: 1 } },
+    effects: [], flags: {}, isOwner: true,
+    getFlag: () => undefined, setFlag: async () => undefined
+  };
+  installShim({ actors: [EXCLUDED_PLAYER_ACTOR, UNRELATED_WOUNDED_NPC] });
+  // Simulate the player-linked-but-excluded case: a non-GM user whose
+  // character is EXCLUDED_PLAYER_ACTOR (player-linked), with that Actor's
+  // own gmPartyMember flag explicitly false (an explicit override wins
+  // over the player-linked default per GMPartyRosterService.isPartyMember()).
+  installFoundryShimGlobals({
+    game: {
+      user: { isGM: true },
+      settings: { get: (_m, key) => (['gmLocationRegistry', 'gmFactionRegistry', 'pendingCustomPurchases', 'holonet_threads', 'holonet_records'].includes(key) ? [] : []), set: () => Promise.resolve(), settings: { has: () => true }, register: () => {} },
+      actors: makeActorsCollection([EXCLUDED_PLAYER_ACTOR, UNRELATED_WOUNDED_NPC]),
+      users: makeActorsCollection([{ isGM: false, character: { id: 'excluded-player-1' } }]),
+      scenes: new Map(),
+      combat: null
+    }
+  });
+
+  assert.equal(GMPartyRosterService.getPartyActors({ ownedOnly: false }).length, 0, 'sanity: the party really is empty (the sole player-linked Actor was explicitly excluded)');
+  assert.equal(GMPartyRosterService.hasExplicitRosterConfiguration(), true, 'sanity: the roster WAS explicitly configured (an explicit override exists), unlike the "never touched" case above');
+
+  let callCount = 0;
+  const originalBuildActorCard = GMCombatRecoveryService.buildActorCard;
+  GMCombatRecoveryService.buildActorCard = (actor) => { callCount++; return originalBuildActorCard.call(GMCombatRecoveryService, actor); };
+  try {
+    const items = await GMCampaignContextService.attentionItems();
+    assert.equal(items.filter(item => item.kind === 'recovery').length, 0, 'a deliberately emptied party must produce ZERO Home recovery attention items -- it must never silently fall back to the wider managed roster');
+    assert.equal(callCount, 0, 'buildActorCard() must not be invoked for the unrelated managed NPC when the party was deliberately emptied, not merely never configured');
+  } finally {
+    GMCombatRecoveryService.buildActorCard = originalBuildActorCard;
+  }
 }
 
 console.log('Item 2 (Home recovery attention is computationally party-first, not just display-filtered) passed.');

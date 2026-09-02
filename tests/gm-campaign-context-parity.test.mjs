@@ -393,7 +393,15 @@ console.log('Intel context parity passed (Location/source-Fact/Faction/Contact/J
   assert.equal(contactAssoc.factionId, 'rebel-alliance');
   assert.equal(contactAssoc.contactId, 'contact-1');
   assert.equal(contactAssoc.actorUuid, 'Actor.han-solo');
-  assert.equal(typeof contactAssoc.id, 'undefined', 'a Faction Contact association row must never carry an opaque composite id field');
+  // FINAL CONTRACT CLOSURE item 2: the row now satisfies the service's
+  // own documented common {kind,id,...} contract — `id` is the
+  // Contact's OWN canonical id (mirrors contactId exactly), never an
+  // opaque composite of factionId+contactId. The original Correction 8
+  // concern (never fabricate a composite id) still holds; it just no
+  // longer means "never expose id at all."
+  assert.equal(contactAssoc.kind, 'faction-contact');
+  assert.equal(contactAssoc.id, contactAssoc.contactId, 'the common row id must be the real Contact id, never a composite/opaque string');
+  assert.equal(contactAssoc.id, 'contact-1');
 
   assert.equal(byObject.relationships.jobs.length, 1);
   assert.equal(byObject.relationships.jobs[0].id, 'job-han');

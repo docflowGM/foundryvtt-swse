@@ -325,13 +325,22 @@ console.log('Final Correction 2 (single buildActorCard() call per Workspace rend
   assert.match(droidItem.detail, /repair/i);
 }
 
-// C. with NO defined party at all, a wounded managed Actor still
-//    produces a Home item (the explicit fallback).
+// C. with the roster convention NEVER TOUCHED at all (no actor carries
+//    any explicit gmPartyMember override, not even false) a wounded
+//    managed Actor still produces a Home item via the explicit fallback.
+//    Using organicActor({inParty:false}) here would be testing
+//    "explicitly excluded," a genuinely different state covered
+//    separately in gm-phase7-pre-broadcast-integrity.test.mjs.
 {
-  const NO_PARTY_WOUNDED = organicActor({ id: 'scope-no-party-1', name: 'No Party Wounded', hp: 5, hpMax: 20, inParty: false });
+  const NO_PARTY_WOUNDED = {
+    id: 'scope-no-party-1', name: 'No Party Wounded', type: 'character', uuid: 'Actor.scope-no-party-1',
+    system: { hp: { value: 5, max: 20 }, conditionTrack: { current: 0, persistent: false }, secondWind: { uses: 1, max: 1 } },
+    effects: [], flags: {}, isOwner: true,
+    getFlag: () => undefined, setFlag: async () => undefined
+  };
   installShim({ actors: [NO_PARTY_WOUNDED] });
   const items = await GMCampaignContextService.attentionItems();
-  assert.ok(items.find(item => item.kind === 'recovery' && item.target?.id === 'scope-no-party-1'), 'with no defined campaign party at all, a wounded managed Actor must still surface via the explicit fallback');
+  assert.ok(items.find(item => item.kind === 'recovery' && item.target?.id === 'scope-no-party-1'), 'with the party roster convention never configured at all, a wounded managed Actor must still surface via the explicit fallback');
 }
 
 console.log('Final Correction 3 (Home recovery attention stays party-first, falls back to the managed roster only when no party is defined) passed.');
