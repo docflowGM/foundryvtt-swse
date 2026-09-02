@@ -17,11 +17,11 @@ const FLAG_SCOPE = 'foundryvtt-swse';
 const PARTY_FLAG = 'gmPartyMember';
 const ATLAS_FLAG = 'atlasLocationState';
 
-function fakeActor({ id, name, type = 'character', hp = 10, isDroid = false, droidSystems = null, leadDiscoveries = [] }) {
+function fakeActor({ id, name, type = 'character', hp = 10, hpMax = 10, isDroid = false, droidSystems = null, leadDiscoveries = [] }) {
   const flags = { [PARTY_FLAG]: true, [ATLAS_FLAG]: { leadDiscoveries } };
   return {
     id, name, type,
-    system: { hp: { value: hp }, isDroid, droidSystems },
+    system: { hp: { value: hp, max: hpMax }, isDroid, droidSystems },
     getFlag: (_scope, key) => flags[key],
     setFlag: async (_scope, key, value) => { flags[key] = value; return value; },
     isOwner: true
@@ -73,7 +73,11 @@ const FAILED_TRADE_RECORD = {
   id: 'trade-record-1', threadId: 'trade-thread-1', state: 'active',
   metadata: { creditTransfer: { status: 'failed', amount: 500, fromActorId: 'han', toActorId: 'lando', failureReason: 'Ledger mismatch' } }
 };
-const WOUNDED_ACTOR = fakeActor({ id: 'chewie', name: 'Chewbacca', hp: 12 });
+// CORRECTION 1: attentionItems() now reuses GMCombatRecoveryService's real
+// needsAttention legality (wounded/downed/CT/etc.), not GMHealingTrigger
+// eligibility — so this fixture must be genuinely wounded (hp below max),
+// not merely "alive," to produce a recovery attention item.
+const WOUNDED_ACTOR = fakeActor({ id: 'chewie', name: 'Chewbacca', hp: 8, hpMax: 12 });
 const DROID_ACTOR = { id: 'r2d2', name: 'R2-D2', system: { droidSystems: { stateMode: 'PENDING' } }, getFlag: () => undefined };
 
 // --- attentionItems() surfaces at least one of each required domain -------

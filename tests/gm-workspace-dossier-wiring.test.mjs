@@ -34,13 +34,18 @@ assert.match(controller, /patchSurfaceState\?\.\('workspace', \{ selectedActorId
 
 // --- relationship-row targets resolve through the real target service ----
 assert.match(controller, /querySelectorAll\('\[data-dossier-target-kind\]'\)/);
-assert.match(controller, /GMCampaignTargetService\.resolve\(\{ kind, id \}\)/, 'dossier relationship rows must resolve through GMCampaignTargetService, never a hand-rolled switch');
+assert.match(controller, /GMCampaignTargetService\.resolve\(factionId \? \{ kind, id, factionId \} : \{ kind, id \}\)/, 'dossier relationship rows must resolve through GMCampaignTargetService, never a hand-rolled switch, and must forward a factionId when the row carries one (Correction 4)');
 assert.match(controller, /await this\.host\?\.navigateToSurface\?\.\(target\.surfaceId, target\)/);
 assert.match(controller, /if \(kind === 'actor'\)/, "an 'actor' kind must still be handled defensively (opens the real sheet) even though no dossier row currently emits it");
 
 // --- the real template renders the attributes the handler reads ----------
 assert.match(template, /data-workspace-select-actor="\{\{this\.id\}\}"/, 'the roster card grid must expose a Dossier selection control');
 assert.match(template, /data-dossier-target-kind="faction" data-dossier-target-id="\{\{this\.id\}\}"/, 'the Faction standing row must carry a real navigable target');
+
+// --- CORRECTION 4: Organization Role rows preserve exact Contact focus,
+// not a degraded generic Faction target.
+assert.match(template, /data-dossier-target-kind="faction-contact" data-dossier-target-id="\{\{this\.contactId\}\}" data-dossier-target-faction-id="\{\{this\.factionId\}\}"/, 'the Organization Role row must carry BOTH the Contact id and its Faction id, not collapse to a generic Faction target');
+assert.doesNotMatch(template, /data-dossier-target-kind="faction" data-dossier-target-id="\{\{this\.factionId\}\}"/, 'the pre-correction Organization Role target (generic faction kind keyed off factionId) must not still be present');
 assert.match(template, /data-dossier-target-kind="location" data-dossier-target-id="\{\{this\.id\}\}"/, 'the Location relationship row must carry a real navigable target');
 assert.match(template, /data-dossier-target-kind="job" data-dossier-target-id="\{\{this\.id\}\}"/, 'the Job relationship row must carry a real navigable target');
 assert.match(template, /data-dossier-target-kind="intel" data-dossier-target-id="\{\{this\.id\}\}"/, 'the Intel relationship row must carry a real navigable target');
@@ -87,5 +92,11 @@ assert.match(factionsTemplate, /data-gm-faction-action="open-workspace-actor"/, 
 assert.match(factionsController, /case 'open-workspace-actor':/);
 assert.match(factionsController, /GMCampaignTargetService\.workspaceActor\(actor\.id\)/);
 assert.match(factionsController, /await this\.host\?\.navigateToSurface\?\.\(target\.surfaceId, target\)/);
+
+// --- CORRECTION 3: "Open in Workspace" is gated on a real world-Actor
+// resolution, never rendered merely because SOME actor link (possibly
+// Compendium-only) exists.
+assert.match(factionsTemplate, /\{\{#if this\.hasWorkspaceActorLink\}\}\s*<button type="button" class="swse-ui-button" data-gm-faction-action="open-workspace-actor" data-actor-id="\{\{this\.workspaceActorId\}\}"/, '"Open in Workspace" must be gated on hasWorkspaceActorLink (a real world Actor), not on hasActorLink (which also matches Compendium-only links)');
+assert.match(factionsController, /const actor = game\.actors\?\.get\?\.\(button\.dataset\.actorId\);/, 'open-workspace-actor must resolve with a plain world-Actor lookup, never resolveActorForContact()\'s fromUuid()-based Compendium resolution, which Workspace selection cannot use');
 
 console.log('Workspace dossier wiring passed (selection patches state and re-renders, relationship rows resolve through the real GMCampaignTargetService/navigateToSurface() contract, Workspace stays a dossier rather than a second Actor sheet, every pre-existing party-command-modal action is still present, the new dossier delegates to the same controller data-attributes rather than duplicating them, and Factions gained a second inbound Actor->Workspace path).');
