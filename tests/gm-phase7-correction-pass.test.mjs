@@ -244,24 +244,29 @@ console.log('Correction 5 (Trade empty-state truthfulness) passed.');
   for (const actor of [PARTY_PC, NON_PARTY_NPC]) {
     const context = await GMCampaignContextService.forActor(actor);
     const expectedEligible = GMHealingTrigger.isEligibleForHealing(actor);
-    assert.equal(context.operations.recovery.eligible, expectedEligible, `forActor(${actor.id}).operations.recovery.eligible must equal the canonical per-Actor predicate`);
-    assert.equal(context.operations.recovery.ineligible, !expectedEligible, `forActor(${actor.id}).operations.recovery.ineligible must be the exact logical complement of eligible`);
-    assert.notEqual(context.operations.recovery.eligible, false && context.operations.recovery.ineligible === false, 'eligible and ineligible must never BOTH be false for a resolvable Actor');
+    // PRE-BROADCAST INTEGRITY PASS item 5: renamed from the ambiguous
+    // eligible/ineligible to naturalHealingEligible/naturalHealingIneligible
+    // — this specifically means eligibility for GMHealingTrigger's
+    // natural-healing workflow, not "can this Actor recover at all"
+    // (that broader concept stays on card.restEligible/repairEligible).
+    assert.equal(context.operations.recovery.naturalHealingEligible, expectedEligible, `forActor(${actor.id}).operations.recovery.naturalHealingEligible must equal the canonical per-Actor predicate`);
+    assert.equal(context.operations.recovery.naturalHealingIneligible, !expectedEligible, `forActor(${actor.id}).operations.recovery.naturalHealingIneligible must be the exact logical complement`);
+    assert.notEqual(context.operations.recovery.naturalHealingEligible, false && context.operations.recovery.naturalHealingIneligible === false, 'naturalHealingEligible and naturalHealingIneligible must never BOTH be false for a resolvable Actor');
   }
 
   // The non-party NPC is the case that was broken pre-correction: with a
   // defined party (PARTY_PC), the old array-membership check would have
   // found NON_PARTY_NPC in neither array.
   const nonPartyContext = await GMCampaignContextService.forActor(NON_PARTY_NPC);
-  assert.equal(nonPartyContext.operations.recovery.eligible, true, 'a living, non-Droid/Vehicle, HP>0 character must be eligible regardless of party membership');
-  assert.equal(nonPartyContext.operations.recovery.ineligible, false);
+  assert.equal(nonPartyContext.operations.recovery.naturalHealingEligible, true, 'a living, non-Droid/Vehicle, HP>0 character must be eligible regardless of party membership');
+  assert.equal(nonPartyContext.operations.recovery.naturalHealingIneligible, false);
 
   // A Droid must be correctly ineligible via the same direct predicate.
   const DROID = { id: 'droid-elig-1', name: 'Repair Droid', type: 'droid', uuid: 'Actor.droid-elig-1', system: { hp: { value: 10, max: 10 }, isDroid: true }, effects: [], flags: {}, getFlag: () => undefined };
   installShim({ actors: [PARTY_PC, DROID] });
   const droidContext = await GMCampaignContextService.forActor(DROID);
-  assert.equal(droidContext.operations.recovery.eligible, false, 'a Droid must never be reported eligible for the natural-healing trigger');
-  assert.equal(droidContext.operations.recovery.ineligible, true);
+  assert.equal(droidContext.operations.recovery.naturalHealingEligible, false, 'a Droid must never be reported eligible for the natural-healing trigger');
+  assert.equal(droidContext.operations.recovery.naturalHealingIneligible, true);
 }
 
 console.log('Final Correction 1 (per-Actor recovery legality, party-independent) passed.');

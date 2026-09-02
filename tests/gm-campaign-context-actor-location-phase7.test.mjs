@@ -173,11 +173,11 @@ const { FactionRegistryService } = await import('/systems/foundryvtt-swse/script
   GMPartyRosterService.getPartyActors = () => [HEALTHY, WOUNDED];
   try {
     const healthyContext = await GMCampaignContextService.forActor(HEALTHY);
-    assert.equal(healthyContext.operations.recovery.eligible, true, 'a full-HP character is still eligible for the natural-healing trigger');
+    assert.equal(healthyContext.operations.recovery.naturalHealingEligible, true, 'a full-HP character is still eligible for the natural-healing trigger');
     assert.equal(healthyContext.operations.recovery.injured, false, 'a full-HP character must never be reported as injured');
 
     const woundedContext = await GMCampaignContextService.forActor(WOUNDED);
-    assert.equal(woundedContext.operations.recovery.eligible, true);
+    assert.equal(woundedContext.operations.recovery.naturalHealingEligible, true);
     assert.equal(woundedContext.operations.recovery.injured, true, 'a below-max-HP character must be reported as injured');
   } finally {
     GMPartyRosterService.getPartyActors = originalGetPartyActors;
