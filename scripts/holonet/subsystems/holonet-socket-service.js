@@ -9,8 +9,38 @@ import { hydrateHolonetRecord } from '../contracts/record-factory.js';
 const SOCKET_NAME = 'system.foundryvtt-swse';
 const HOLONET_EVENT = 'holonet';
 
+// PHASE 8A: exactly-once publication delivery. `publicationEventId`
+// identifies a single publication OCCURRENCE (never the record id — the
+// same record may legitimately be republished later as a distinct
+// occurrence, and must not be deduped against its own earlier
+// publication). Bounded, in-memory, transport-level only — never a
+// world setting or a persistent ledger. Covers two real risks:
+//   1. origin loopback — if the socket transport ever echoes an
+//      emitSync() back to the emitting client, that client must not
+//      re-dispatch hooks it already fired locally for the same event.
+//   2. duplicate remote delivery — a socket redelivery of the same sync
+//      must not cause a receiving client to dispatch hooks twice.
+// Scoped to events that actually carry a publicationEventId (currently
+// only 'record-published'); every other sync type (thread-updated,
+// state-updated, etc.) is completely unaffected.
+const SEEN_PUBLICATION_EVENT_CAP = 200;
+
 export class HolonetSocketService {
   static #initialized = false;
+  static #seenPublicationEventIds = new Set();
+
+  static #markPublicationEventSeen(id) {
+    if (!id) return;
+    this.#seenPublicationEventIds.add(id);
+    if (this.#seenPublicationEventIds.size > SEEN_PUBLICATION_EVENT_CAP) {
+      const oldest = this.#seenPublicationEventIds.values().next().value;
+      this.#seenPublicationEventIds.delete(oldest);
+    }
+  }
+
+  static #hasSeenPublicationEvent(id) {
+    return Boolean(id) && this.#seenPublicationEventIds.has(id);
+  }
 
   static initialize() {
     if (this.#initialized || !game.socket) return;
@@ -19,6 +49,13 @@ export class HolonetSocketService {
       if (!payload || payload.event !== HOLONET_EVENT) return;
       if (payload.kind === 'sync') {
         const syncData = payload.data ?? {};
+        if (syncData.publicationEventId && this.#hasSeenPublicationEvent(syncData.publicationEventId)) {
+          // Already dispatched for this exact publication occurrence —
+          // either this client originated it (loopback) or already
+          // processed this same remote delivery once. Never redispatch.
+          return;
+        }
+        if (syncData.publicationEventId) this.#markPublicationEventSeen(syncData.publicationEventId);
         // Legacy compatibility hook — always fired
         Hooks.callAll('swseHolonetUpdated', syncData);
         // Typed hook routing based on sync type
@@ -61,6 +98,10 @@ export class HolonetSocketService {
   }
 
   static emitSync(data = {}) {
+    // Mark BEFORE sending: if the transport ever echoes this back to us,
+    // or if some other path redelivers the same publicationEventId, the
+    // receive handler above will recognize it and skip redispatching.
+    if (data?.publicationEventId) this.#markPublicationEventSeen(data.publicationEventId);
     game.socket?.emit?.(SOCKET_NAME, {
       event: HOLONET_EVENT,
       kind: 'sync',
@@ -76,10 +117,17 @@ export class HolonetSocketService {
 
     switch (action) {
       case 'publish-record': {
+        // PHASE 8A: the GM-authoritative publish path is now the SOLE
+        // owner of the post-commit record-published sync (it already
+        // knows recipients/requestId/requesterId and — critically —
+        // whether persistence actually succeeded). Previously this
+        // handler called publish() with skipSocket:true and then
+        // manually re-emitted its own success sync afterward, without
+        // checking publish()'s result — a failed storage write could
+        // still announce a successful publication to every client.
         const record = hydrateHolonetRecord(data?.record);
         if (record) {
-          await HolonetEngine.publish(record, { skipSocket: true });
-          this.emitSync({ type: 'record-published', recordId: record.id, recipientIds: record.recipients?.map(r => r.id) ?? [], requestId: data.requestId ?? null, requesterId: data.requesterId ?? null });
+          await HolonetEngine.publish(record, { skipSocket: false, requestId: data.requestId ?? null, requesterId: data.requesterId ?? null });
         }
         break;
       }
