@@ -743,3 +743,399 @@ this environment — see §1.)
 that Locations, Factions, and Job Board all resolve and navigate to Intel
 using the same real `HolonetIntelService` authority and the same Phase 2
 navigation contract. **Not started, per explicit instruction.**
+
+# ECOSYSTEM REDESIGN — PHASE 5: INTEL AS THE "WHAT IS KNOWN" HUB
+
+## 1. Phase 5 verdict
+
+**PHASE 5 COMPLETE WITH DOCUMENTED RUNTIME FOLLOW-UP.** No live Foundry
+client is available in this environment. Every claim below is verified by
+direct source reading and by executing the real production code
+(`HolonetIntelService.createIntelDraft`/`normalizeLinks`,
+`GMIntelSurfaceService.buildViewModel`, the real
+`GMIntelSurfaceController` click-delegation branches, the real
+`GMDatapad.navigateToSurface()` contract from Phase 2) under the repo's
+Foundry-shim Node harness.
+
+## 2. Intel authority audit (5A)
+
+Read in full: `scripts/holonet/subsystems/holonet-intel-service.js` (1223
+lines), `scripts/ui/shell/gm/GMIntelSurfaceService.js`,
+`scripts/ui/shell/gm/controllers/GMIntelSurfaceController.js`,
+`scripts/ui/shell/gm/LocationIntelBridgeService.js`,
+`scripts/ui/shell/gm/FactionIntelBridgeService.js`,
+`templates/apps/gm-datapad/surfaces/intel.hbs`,
+`scripts/ui/shell/gm/LocationSceneBridgeService.js`.
+
+Intel is modeled as metadata (`record.metadata.intel`) on an existing
+Holonet record, not a parallel storage system — the outer record's
+`title`/`body` are presentation projections; the intel object under
+`INTEL_METADATA_KEY` is the real data. `normalizeIntelMetadata()` is the
+single normalization function for every write path (create/update/
+archive/destroy/decryption-state changes) and returns an explicit
+whitelist object literal — no generic passthrough field of any kind.
+Field-authority table:
+
+| Field | Classification |
+|---|---|
+| `id`, `title`, `kind`, `classification`, `status`, `persistence`, `revealState`, `summary`, `gmNotes`, `publicBody`/`redactedBody`/`fullBody`, `tags`, `visibility`, `skillGate`, `lockbox`, `delivery`, `dossierCommit`, `createdAt`/`updatedAt`/`readyAt`/`releasedAt`/`archivedAt`/`destroyedAt` | CANONICAL_INTEL_DATA |
+| `linkedFactionId`, `linkedContactId`, `linkedActorUuid`, `linkedJobThreadId`, `linkedSceneUuid`, `linkedItemUuid`, `linkedUuids` | RELATIONSHIP_ID — pre-existing, all already correctly whitelisted in `normalizeLinks()` |
+| `linkedLocationId`, `sourceFactId` | **RELATIONSHIP_ID — NEW this phase.** Confirmed absent from `normalizeLinks()` before this phase (see §3) |
+| `record.title`/`record.body`/`record.sourceFamily`/`record.sourceId`/`record.intent` | DERIVED_PRESENTATION — written by `applyIntelToRecord()` from the intel object, never independently authoritative |
+| Decryption/lockbox subsystem (`skillGate`, `lockbox`, `HolonetDecryptionService`) | EXTERNAL_AUTHORITY — layered mechanics, untouched this phase |
+| Delivery/reveal mechanics (`deliverAsSecretNote`/`deliverAsMessengerMessage`/`deliverAsBulletin`/`releaseToDossier`, `getPlayerIntel`) | EXTERNAL_AUTHORITY — the real reveal/publication pipeline, untouched this phase (see §14) |
+| A `metadata: {...}` object on data passed into `createIntelDraft`/`updateIntel` | **UNCLEAR → confirmed dead** — `normalizeIntelMetadata()` never reads a `data.metadata` field at all (see §3) |
+
+## 3. Knowledge-concept distinction (5B)
+
+Confirmed via source reading, not assumed: **Atlas Fact**, **Atlas Lead**,
+**Intel**, **Job Briefing**, and **Faction Description** are five
+architecturally separate concepts with no auto-conversion between them.
+
+- **Atlas Fact** — `location.atlasFacts[]`, a per-Location array
+  (`{id, title, teaser, body, category, skill, dc, onReveal}`). Owned by
+  `LocationRegistryService`; there is no global Fact registry. A Fact's
+  `onReveal` can point at creating a Job draft or an Intel draft, but the
+  Fact itself always remains on the Location.
+- **Atlas Lead** — an actor-flag-based discovery record
+  (`LocationRegistryService.getAtlasLeadDiscoveries()`,
+  `ATLAS_ACTOR_FLAG`), produced when a PC actor succeeds a Gather
+  Information-style check against a Fact. A Lead references a Fact
+  (`factId`) and a Location (`locationId`) by id; it is not itself Intel or
+  a Fact copy.
+  - `LocationsSurfaceController._createIntelFromLead()` (pre-existing,
+    unchanged this phase) already turns a resolved Lead into a real Intel
+    draft via `LocationIntelBridgeService.createIntelDraftFromFact()` —
+    the exact bridge this phase fixed the identity bug in (§4). This
+    remains the only Lead→Intel conversion path; a Lead is never itself
+    treated as Intel.
+- **Intel** — the canonical knowledge-record authority audited in §2. May
+  *link to* a Location/Faction/Job/Actor/Scene/source-Fact by stable id,
+  never copy their data.
+- **Job Briefing** — `job.briefing*` fields on a Job Board thread, owned
+  by `HolonetMessengerService`/Job Board. Distinct from Intel even when a
+  Job's briefing text is narratively similar to an Intel summary; no
+  shared storage, no conversion.
+- **Faction Description** — `faction.description`/`faction.publicSummary`
+  fields owned by `FactionRegistryService`. Distinct from any Intel that
+  happens to be *about* that Faction.
+
+No code changes were made to blur these boundaries; this phase only adds
+Intel-side *links* (ids) to Location/Job/Faction/Actor/Scene, never copies
+of their content.
+
+## 4. Creation-path identity audit — the confirmed bug (5C, 5H, 5M, 5T)
+
+**The one real gap found by this audit**, in the same shape as the Phase 4
+Job/Location gap: `LocationIntelBridgeService.buildDraftDataFromLocation()`/
+`buildDraftDataFromFact()` built a `metadata: {locationId, locationName,
+locationChain, factId, factTitle}` object on the draft data passed to
+`HolonetIntelService.createIntelDraft()` — but `normalizeIntelMetadata()`/
+`normalizeLinks()` never read a `data.metadata` field at all.
+**Every Intel record ever created from a Location or an Atlas Fact lost
+that relationship completely at the moment it was saved — not even a
+display name survived.** `linkedFactionId` (from
+`location.controllingFactionId`) and `linkedSceneUuid` (from
+`location.map.sceneUuid`) did survive, since those were already passed as
+top-level fields `normalizeLinks()` actually reads.
+
+A full-repo grep confirmed zero other consumers of `metadata.locationId`/
+`metadata.factId`/`.locationChain` anywhere in `scripts/` — no legacy
+reader depends on the dead shape, so the fix needed no compatibility shim.
+
+**Fix**, narrow and additive, following Intel's own existing flat
+`linked*` convention rather than reviving a nested `metadata` object:
+
+1. `HolonetIntelService.normalizeLinks()` gained two new fields:
+   `linkedLocationId` and `sourceFactId` (the Location this Intel is
+   *about*, and — when drafted from a specific Atlas Fact — that Fact's
+   own id, scoped to `linkedLocationId` since Facts live per-Location, not
+   in a global registry).
+2. `LocationIntelBridgeService.buildDraftDataFromLocation()`/
+   `buildDraftDataFromFact()` now write `linkedLocationId`/`sourceFactId`
+   as top-level draft fields instead of the dead `metadata` object (which
+   was removed, not merely supplemented).
+
+`FactionIntelBridgeService` was read in full and confirmed to **not** have
+this bug — it already passes `linkedFactionId`/`linkedContactId`/
+`linkedActorUuid` as top-level fields via
+`HolonetIntelService.buildDraftFromFaction`/`buildDraftFromContact`. Its
+private `#linkIntelToContact()` reverse-link (writing the new Intel's id
+onto `contact.linkedIntelIds` after creating Intel from a Contact) is a
+real, pre-existing, correct mechanism — preserved untouched.
+
+Locations' own reverse relationship (`location.linkedIntelIds[]`, a
+GM-maintained field on the Location, resolved via
+`GMLocationsSurfaceService.resolveIntelRow()`) is a separate, independent,
+already-working mechanism in the *other* direction (Location→Intel) —
+distinct from, and not replaced by, the new Intel→Location link this phase
+adds. Neither direction infers the other.
+
+Bug-category regression proof: `tests/gm-intel-location-fact-identity.test.mjs`
+(§19).
+
+## 5. Selected Intel ecosystem VM (5C)
+
+Like Job Board (and unlike Factions, which has no single-selected-detail
+concept — Phase 3 audit), Intel already has a clear
+`intelManager.selectedCard` singleton (`GMIntelSurfaceService
+.buildViewModel()`'s `selectedRecordId`/`selectedRecord`/`selectedCard`
+chain, pre-existing). The ecosystem groups (`identity`/`currentSituation`/
+`relationships`/`knowledge`/`world`) are computed **only for
+`selectedCard`**, once, in the new `buildSelectedIntelEcosystemGroups()` —
+mirroring Job Board's `buildSelectedJobEcosystemGroups()` exactly, never
+for every card in the list (see §17 performance). Every legacy flat field
+on `selectedCard` (`title`, `summary`, `linkLabel`, `visibilityLabel`, …)
+is preserved verbatim via object spread; the new groups are added
+alongside them. None of these group names are written to canonical Intel
+storage.
+
+## 6. Current Situation result (5F)
+
+`currentSituation` reports real, already-derived state: `revealState`/
+`revealStateLabel` (existing), `visibilityMode`, `dossierCommit`,
+`hasLockbox`, `skillGateEnabled`, `isReleased` (`status ===
+INTEL_STATUS.RELEASED`), and `currentPartyAtLocation` — truthful, derived
+only from the resolved Location relationship's own `activeForParty`/
+`revealState`, mirroring Job Board's identical
+`currentPartyAtMissionLocation` derivation (Phase 4F) rather than
+inventing a second "is the party here" concept.
+
+## 7. Knowledge core result (5G/5N)
+
+`knowledge` groups the actual content fields — `summary`, `publicBody`,
+`redactedBody`, `fullBody`, `gmNotes`, `persistence`/`persistenceLabel`,
+`lockboxSummary` — as a single presentation group, never a copy (these are
+the same underlying `intel.*` fields the legacy VM already exposed,
+regrouped, not duplicated).
+
+## 8. Player visibility / reveal model (5H/5AH)
+
+No second reveal/visibility mechanism was built. `currentSituation`
+surfaces the *existing* `intel.visibility.mode`/`dossierCommit`/
+`revealState` fields read-only; the real reveal transitions remain
+entirely owned by `deliverAsSecretNote`/`deliverAsMessengerMessage`/
+`deliverAsBulletin`/`releaseToDossier`/`getPlayerIntel` in
+`HolonetIntelService`, none of which this phase edited (confirmed by
+source diff — the only edited function in that file is `normalizeLinks()`,
+§4). No dedicated pre-existing test suite exercised these delivery
+methods to regress against; their exact source text is unchanged, which is
+the strongest available proof under this repo's Node harness (these
+methods drive live thread/messenger side effects the shim does not
+model, same limitation noted for Job's `createJobPosting()` in Phase 4).
+
+## 9. Location relationship result (5H/5J)
+
+`resolveIntelLocation()` resolves `intel.linkedLocationId` via the real
+`LocationRegistryService.findLocation()` — `resolutionKind: 'canonical-id'`
+when found, `'missing'` when the id is stale/broken (§13), `null` when
+unlinked. Never a name-based guess. Proven with real Location fixtures in
+`tests/gm-intel-ecosystem-view-model.test.mjs` (§19).
+
+## 10. Source Atlas Fact provenance result (5M)
+
+`resolveIntelSourceFact()` resolves `intel.sourceFactId` **scoped to the
+resolved Location** (`location.atlasFacts.find(f => f.id ===
+sourceFactId)`) — presentation-only, resolved fresh on every render. The
+Fact's own text is never copied onto the Intel record; only `{id, title,
+teaser}` are surfaced for display. `resolutionKind: 'canonical-id'`/
+`'missing'`, matching the Location relationship's convention.
+
+## 11. Faction/Contact relationship result (5I)
+
+Reused, unchanged: `findFaction()`/`findContact()` (pre-existing, already
+used by `cardFromRecord()`). The ecosystem VM wraps their result in the
+same `{id, name, resolved, resolutionKind}` shape as every other
+relationship for consistency, without altering the underlying resolution
+logic.
+
+## 12. Job relationship result (5K)
+
+`resolveIntelJob()` resolves `intel.linkedJobThreadId` via
+`HolonetStorage.getThread()` plus `GMJobBoardSurfaceService`'s own
+exported `jobForThread`/`jobStatus`/`statusLabel` — the exact same reuse
+pattern already established by `GMLocationsSurfaceService.resolveJobRow()`
+(that file's own comment explicitly documents this export existing "so
+other real authorities... can reuse this service's own derivation instead
+of duplicating it"). Intel never stores a copy of a job's title or status.
+
+## 13. Actor/Scene relationship result (5L) and broken-reference result (5X)
+
+`resolveIntelScene()`/`resolveIntelActor()` resolve `linkedSceneUuid`/
+`linkedActorUuid` via the same synchronous world-collection-id technique
+already established and documented in `GMLocationsSurfaceService
+.resolveSceneRow()`/`parseWorldDocId()` (`Scene.<id>`/`Actor.<id>` via
+`game.scenes.get`/`game.actors.get`; a `Compendium.*` uuid is reported
+`resolutionKind: 'ambiguous', unverifiable: true` rather than falsely
+"missing", since resolving it for real needs an async `fromUuid()` this
+phase defers to click-time in the controller, exactly like Locations'
+open-contact 'actor' branch and Job Board's `_resolveActorReference`).
+A stale/broken `linkedLocationId`/`linkedJobThreadId`/`linkedSceneUuid`/
+`linkedActorUuid` resolves honestly as `resolved: false,
+resolutionKind: 'missing'` — never silently dropped, never fabricated.
+Proven for Location/Job in `tests/gm-intel-ecosystem-view-model.test.mjs`
+case 3 (§19); Scene/Actor honesty follows the identical, already-proven
+Locations pattern being reused verbatim.
+
+## 14. Job Board / party-location context (5P/5Q)
+
+`intelManager.selectedCard.currentSituation.currentPartyAtLocation` is the
+Intel-side answer to "is the party where this Intel is about" (§6). No new
+party-location concept was introduced; it reads the same
+`location.activeForParty`/`revealState` fields Job Board already reads
+for its own `currentPartyAtMissionLocation` (Phase 4F). The user's own
+broader observation (raised mid-Phase-5, see the Phase 6 discussion below)
+that party-location currently has two representations
+(`Location.activeForParty` vs. `HolonetStateService partyState.location`)
+is real and was not resolved by this phase — Intel only reads the
+Location-side representation, matching every other ecosystem-phase
+surface built so far; normalizing the two representations is scoped to
+Phase 6 (§21 below), not duplicated or guessed at here.
+
+## 15. Intel list / knowledge queue / selected-survives-filters result (5R)
+
+Confirmed structurally already correct before this phase, not rebuilt:
+`GMIntelSurfaceService.buildViewModel()` resolves `selectedRecord`
+directly via `HolonetIntelService.getIntelById(selectedRecordId)` — never
+from the filtered `visibleCards` list — so a selected Intel record stays
+selected (and its detail panel keeps rendering) even when the active
+filters would hide it from the left-rail card list. This phase did not
+change that resolution path; only appended the new ecosystem groups onto
+the same `selectedCard`.
+
+## 16. Navigation result (5Y)
+
+`GMIntelSurfaceController._wireRelationshipButtons()` adds six branches —
+`open-location`/`open-faction`/`open-contact`/`open-job`/`open-scene`/
+`open-actor` — mirroring Job Board's `_wireRelationshipButtons()` name and
+shape exactly. Location/Faction/Contact/Job route through the real
+`navigateToSurface()` shell contract established in Phase 2
+(`statePatch: {selectedLocationId}` / `{focusedFactionId}` /
+`{focusedFactionId, focusedContactId}` / `hostPatch:
+{selectedJobThreadId}`, each matching the exact destination-specific
+contract already proven by Locations/Job Board's own identical branches).
+Scene and Actor are **not** GM Datapad surfaces, so those two branches
+resolve and open the real Foundry document directly (`scene.view()`/
+`actor.sheet.render(true)`) instead of calling `navigateToSurface()` —
+matching `LocationSceneBridgeService`'s own technique and
+`GMLocationsSurfaceController`'s existing `open-contact` 'actor' branch,
+never a newly-invented mechanic. An empty/missing id never navigates or
+opens a document (fail-safe, proven in §19).
+
+## 17. Performance result (5AC)
+
+The six resolvers (`resolveIntelLocation`, `resolveIntelSourceFact`,
+`resolveIntelJob`, `resolveIntelScene`, `resolveIntelActor`, plus the
+reused `findFaction`/`findContact`) run exactly once, only for
+`selectedCard`, inside `buildSelectedIntelEcosystemGroups()` — never
+per-row inside `cardFromRecord()`'s list-building loop. `resolveIntelJob()`
+is the one added authority read (`HolonetStorage.getThread()`, a single
+lookup by id, not a full-thread scan) — same cost class as Job Board's
+`resolveJobIntel()` full-scan in Phase 4, but cheaper since Intel already
+holds the job's id directly. No new index/cache/generic caching framework
+was introduced.
+
+## 18. Mutation authority (5AJ)
+
+No canonical Intel/Location/Faction/Job template is mutated by this
+phase's VM code. `GMIntelSurfaceService.js`/`GMIntelSurfaceController.js`'s
+existing lifecycle-mutation branches (`updateIntel`/`markReady`/
+`releaseIntel`/`archiveIntel`/`destroyIntel`/deliver-*) are entirely
+unchanged; the six new navigation branches only read and navigate, never
+write.
+
+## 19. Tests (5AD–5AH)
+
+- `tests/gm-intel-location-fact-identity.test.mjs` (executed) — the
+  bug-category regression proof for §4: draft-build round trip through the
+  real `HolonetIntelService.createIntelDraft()`/`normalizeLinks()`,
+  proving `linkedLocationId`/`sourceFactId` persist for real, and that an
+  unrelated Intel record never fabricates either. Verified via `git stash`
+  to fail against the pre-Phase-5 source and pass after.
+- `tests/gm-intel-ecosystem-view-model.test.mjs` (executed) — a pure
+  additive design contract for `identity`/`currentSituation`/
+  `relationships`/`knowledge`/`world` (none existed on the Intel VM before
+  this phase), executed against realistic fixtures across every real
+  authority Intel now resolves through (`LocationRegistryService`,
+  `FactionRegistryService`, `HolonetStorage`/`GMJobBoardSurfaceService`,
+  `game.scenes`, `game.actors`). Covers: a fully-linked Intel record
+  resolving all six relationships with real ids; an unlinked Intel record
+  reporting every relationship as `null` (never fabricated); a Intel
+  record with stale `linkedLocationId`/`linkedJobThreadId` resolving
+  honestly as `missing` (§13/5X); no selected Intel at all producing no
+  crash. Verified via `git stash` to fail against the pre-Phase-5 source
+  (VM code) and pass after.
+- `tests/gm-intel-context-navigation-controller.test.mjs` (executed) — a
+  bug-category regression proof (no such navigation existed at all before
+  this phase, mirroring `gm-job-context-navigation-controller.test.mjs`'s
+  shape). Drives the real `GMIntelSurfaceController
+  ._wireRelationshipButtons()` delegated listeners through all six
+  branches, proving each calls the correct contract (or opens the correct
+  real document) exactly once with the correct real-id patch, and that an
+  empty/missing id never navigates or opens anything. Verified via `git
+  stash` to fail against the pre-Phase-5 source and pass after.
+- `tests/gm-intel-relationship-template-wiring.test.mjs` (executed) —
+  static proof that `intel.hbs`'s new relationship markup actually emits
+  the exact `data-intel-open-*` attributes the controller queries for,
+  preventing silent template/controller drift. Verified via `git stash` to
+  fail against the pre-Phase-5 source and pass after.
+- `tests/gm-datapad-action-integrity-contract.test.mjs`,
+  `tests/gm-datapad-no-duplicate-handler-regression.test.mjs`,
+  `tests/gm-datapad-wizard-contract.test.mjs` (all pre-existing,
+  unmodified) — re-verified green (§20).
+- Every Phase 1-4 ecosystem/navigation/creation-identity test
+  (`gm-locations-*`, `gm-faction-*`, `gm-job-*`,
+  `gm-datapad-context-navigation-contract`,
+  `gm-datapad-navigation-destination-selection`) — re-verified green,
+  unchanged.
+
+## 20. Action integrity (5AI)
+
+`tests/gm-datapad-action-integrity-contract.test.mjs` (pre-existing,
+unmodified) reports the same **244/141/22/81/0** totals before and after
+this phase — the pre-existing bare-presence-attribute blind spot
+documented in Phase 4 §17 (`DATA_ATTR_RE` only matches literal
+`data-x="value"` attributes) applies identically to Intel's six new
+`data-intel-open-*` controls, none of which carry a literal value on the
+attribute itself. Not a regression, not newly introduced by this phase.
+Real proof for the six new controls instead comes from the executed
+`tests/gm-intel-context-navigation-controller.test.mjs` (§19) plus the
+static `tests/gm-intel-relationship-template-wiring.test.mjs` (§19) —
+together stronger proof than the static scanner provides for this
+attribute family, matching the precedent set in Phase 4 §17.
+
+## 21. Deferred issues / known missing canonical links
+
+- **Party-location dual representation** (`Location.activeForParty` vs.
+  `HolonetStateService partyState.location`) — real, pre-existing, not
+  introduced or resolved by this phase. Intel reads only the
+  Location-side representation, consistent with every prior
+  ecosystem-phase surface. Normalizing this is explicitly scoped to
+  Phase 6 (see the user's own Phase 6 spec, §6F).
+- **Bulletin/Job/Faction/Skill-Challenge provenance/source ids** — audited
+  only at the level needed to confirm Intel's own concept boundaries
+  (§3); a full audit of those systems' own schemas is out of scope for
+  Phase 5 and explicitly deferred to Phase 6 (`GMCampaignContextService`)
+  and later dedicated phases per the user's own roadmap.
+- **The action-integrity scanner's bare-attribute blind spot** (§20) is
+  pre-existing and was not fixed this phase either — same reasoning as
+  Phase 4 §17: fixing shared dev-tooling scanner behavior was not
+  requested and is out of scope for a surface-level ecosystem phase.
+- **Compendium-sourced Scene/Actor UUIDs** on Intel resolve as
+  `unverifiable` rather than a real name in the ecosystem VM's synchronous
+  resolution (§13) — same documented tradeoff as
+  `GMLocationsSurfaceService.resolveSceneRow()`; opening them still works
+  correctly at click-time via the controller's async `fromUuid()`
+  fallback.
+
+## 22. Phase 6 recommendation
+
+Mid-Phase-5, the user requested and received a discussion of the broader
+14-surface GM Datapad ecosystem (Home, Workspace, Healing, Bulletin, Skill
+Challenges, Trade, Store, Approvals, House Rules, Settings, alongside the
+four already-redesigned hubs). The agreed direction: **Phase 6 combines
+(A) a new read-only `GMCampaignContextService` cross-authority resolution
+layer with (B) rebuilding Home as the campaign Command/Attention Hub**,
+per the user's formal Phase 6 specification. **Not started as of this
+Phase 5 commit — begins next, per that specification's own start gate
+(verify Phase 5's exact HEAD/CI state before proceeding).**
