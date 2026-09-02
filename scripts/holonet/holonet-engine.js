@@ -104,16 +104,40 @@ export class HolonetEngine {
    * Returns the publicationEventId identifying this publication
    * OCCURRENCE (never the record id — the same record may legitimately
    * be republished later as a distinct occurrence).
+   *
+   * PHASE 8A CORRECTION PASS (C2): builds ONE canonical publication-
+   * occurrence envelope after persistence succeeds — `type`,
+   * `publicationEventId`, `recordId`, `recipientIds`, `requestId`,
+   * `requesterId` — and both local and remote dispatch derive from that
+   * SAME object. `syncExtra` (caller-supplied additive provenance, e.g.
+   * Intel's `source`/`intelId`) is spread FIRST so the reserved fields
+   * always win — a caller can never overwrite what actually happened.
+   * The local hook keeps ONE additive, local-only compatibility field
+   * (`recipients`, full recipient objects, never sent over the wire) —
+   * local and remote payloads are NOT byte-identical, but both are
+   * built from the one canonical envelope, not two independently
+   * constructed objects.
    */
   static emitPreparedRecordPublished(record, { suppressLocalHook = false, skipSocket = true, requestId = null, requesterId = null, syncExtra = {} } = {}) {
     const publicationEventId = foundry.utils.randomID();
+    const recipientIds = record.recipients?.map(r => r.id) ?? [];
+    const canonicalEnvelope = {
+      ...syncExtra,
+      // Reserved, authority-owned fields — always applied AFTER
+      // syncExtra so caller-supplied data can never redefine them.
+      type: 'record-published',
+      publicationEventId,
+      recordId: record.id,
+      recipientIds,
+      requestId,
+      requesterId
+    };
     if (!suppressLocalHook) {
       this._notifyLocalRecipient(record);
-      this._emitPublished(record, publicationEventId);
+      this._emitPublished(record, canonicalEnvelope);
     }
     if (!skipSocket) {
-      const recipientIds = record.recipients?.map(r => r.id) ?? [];
-      HolonetBus.sync('record-published', { publicationEventId, recordId: record.id, recipientIds, requestId, requesterId, ...syncExtra });
+      HolonetBus.sync(canonicalEnvelope);
     }
     return publicationEventId;
   }
@@ -167,15 +191,22 @@ export class HolonetEngine {
    * @private — Fire local hooks so UI can react without waiting for
    * socket sync. PHASE 8A: routed through HolonetBus.emitLocal() (the
    * project's documented local/socket facade) instead of two separate
-   * raw Hooks.callAll() calls with two different payload shapes — the
-   * merged payload is a strict superset (adds `type`/`publicationEventId`
-   * to what `swseHolonet:recordPublished` listeners read, adds
-   * `recipients` to what `swseHolonetUpdated` listeners read), so every
-   * existing consumer (scripts/chat/holonet-chat-card.js reads only
-   * `recordId`) keeps working unchanged.
+   * raw Hooks.callAll() calls with two different payload shapes.
+   *
+   * PHASE 8A CORRECTION PASS (C2): `canonicalEnvelope` is the SAME
+   * object emitPreparedRecordPublished() also broadcasts remotely (when
+   * not skipSocket) — this is no longer an independently constructed
+   * local payload. `recipients` (full recipient objects) is added ON
+   * TOP as a documented LOCAL-ONLY compatibility field for
+   * `swseHolonet:recordPublished`'s existing listeners; it is never
+   * sent over the wire. Local and remote payloads are therefore NOT
+   * byte-identical, but both derive from one canonical envelope rather
+   * than two separately-built ones. Every existing consumer
+   * (scripts/chat/holonet-chat-card.js reads only `recordId`) keeps
+   * working unchanged.
    */
-  static _emitPublished(record, publicationEventId = null) {
-    HolonetBus.emitLocal('recordPublished', { type: 'record-published', publicationEventId, recordId: record.id, recipients: record.recipients });
+  static _emitPublished(record, canonicalEnvelope) {
+    HolonetBus.emitLocal('recordPublished', { ...canonicalEnvelope, recipients: record.recipients });
   }
 
   static async publishRecord(recordClass, data, options = {}) {
