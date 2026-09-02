@@ -94,6 +94,81 @@
         <p>{{#if intelManager.selectedCard.summary}}{{intelManager.selectedCard.summary}}{{else}}No summary yet. Open the wizard to add player-facing and GM-facing text.{{/if}}</p>
         {{#if intelManager.selectedCard.hasLockbox}}<p class="gm-intel-lockbox-pill"><i class="fa-solid fa-box-archive"></i> {{intelManager.selectedCard.lockboxSummary}}</p>{{/if}}
       </section>
+
+      {{!-- Ecosystem Redesign Phase 5 — Intel's campaign relationships,
+           resolved on selectedCard.relationships (Phase 5C ecosystem VM)
+           and navigated via the Phase 2 shell contract. Reuses the
+           gm-job-relationship-* visual language already established for
+           this same navigable-row pattern in Job Board/Locations, matching
+           the classes intel.hbs already borrows elsewhere (job-board-*,
+           gm-faction-*) rather than minting a parallel set. --}}
+      {{#if intelManager.selectedCard.relationships}}
+      <div class="job-detail-block gm-job-relationship-block">
+        <h4>Campaign Relationships</h4>
+        <div class="gm-job-relationship-list">
+          {{#if intelManager.selectedCard.relationships.location}}
+          <div class="gm-job-relationship-row {{#if intelManager.selectedCard.relationships.location.resolved}}is-navigable{{/if}}">
+            <span class="gm-job-relationship-copy"><strong>{{intelManager.selectedCard.relationships.location.name}}</strong><span>Location{{#if intelManager.selectedCard.relationships.location.currentPartyPresence}} · Party Here{{/if}}</span></span>
+            {{#if intelManager.selectedCard.relationships.location.resolved}}
+            <button type="button" class="gm-job-relationship-action" data-intel-open-location data-location-id="{{intelManager.selectedCard.relationships.location.id}}" title="Open {{intelManager.selectedCard.relationships.location.name}} in Locations" aria-label="Open {{intelManager.selectedCard.relationships.location.name}} in Locations"><i class="fa-solid fa-chevron-right" aria-hidden="true"></i></button>
+            {{/if}}
+          </div>
+          {{/if}}
+
+          {{#if intelManager.selectedCard.relationships.sourceFact}}
+          <div class="gm-job-relationship-row">
+            <span class="gm-job-relationship-copy"><strong>{{intelManager.selectedCard.relationships.sourceFact.title}}</strong><span>Source Atlas Fact</span></span>
+          </div>
+          {{/if}}
+
+          {{#if intelManager.selectedCard.relationships.faction}}
+          <div class="gm-job-relationship-row {{#if intelManager.selectedCard.relationships.faction.resolved}}is-navigable{{/if}}">
+            <span class="gm-job-relationship-copy"><strong>{{intelManager.selectedCard.relationships.faction.name}}</strong><span>Faction</span></span>
+            {{#if intelManager.selectedCard.relationships.faction.resolved}}
+            <button type="button" class="gm-job-relationship-action" data-intel-open-faction data-faction-id="{{intelManager.selectedCard.relationships.faction.id}}" title="Open {{intelManager.selectedCard.relationships.faction.name}} in Factions" aria-label="Open {{intelManager.selectedCard.relationships.faction.name}} in Factions"><i class="fa-solid fa-chevron-right" aria-hidden="true"></i></button>
+            {{/if}}
+          </div>
+          {{/if}}
+
+          {{#if intelManager.selectedCard.relationships.contact}}
+          <div class="gm-job-relationship-row {{#if intelManager.selectedCard.relationships.contact.resolved}}is-navigable{{/if}}">
+            <span class="gm-job-relationship-copy"><strong>{{intelManager.selectedCard.relationships.contact.name}}</strong><span>Named Contact</span></span>
+            {{#if intelManager.selectedCard.relationships.contact.resolved}}
+            <button type="button" class="gm-job-relationship-action" data-intel-open-contact data-faction-id="{{intelManager.selectedCard.relationships.faction.id}}" data-contact-id="{{intelManager.selectedCard.relationships.contact.id}}" title="Open {{intelManager.selectedCard.relationships.contact.name}} in Factions" aria-label="Open {{intelManager.selectedCard.relationships.contact.name}} in Factions"><i class="fa-solid fa-chevron-right" aria-hidden="true"></i></button>
+            {{/if}}
+          </div>
+          {{/if}}
+
+          {{#if intelManager.selectedCard.relationships.job}}
+          <div class="gm-job-relationship-row {{#if intelManager.selectedCard.relationships.job.resolved}}is-navigable{{/if}}">
+            <span class="gm-job-relationship-copy"><strong>{{intelManager.selectedCard.relationships.job.title}}</strong><span>{{intelManager.selectedCard.relationships.job.statusLabel}}</span></span>
+            {{#if intelManager.selectedCard.relationships.job.resolved}}
+            <button type="button" class="gm-job-relationship-action" data-intel-open-job data-job-id="{{intelManager.selectedCard.relationships.job.id}}" title="Open {{intelManager.selectedCard.relationships.job.title}} in Job Board" aria-label="Open {{intelManager.selectedCard.relationships.job.title}} in Job Board"><i class="fa-solid fa-chevron-right" aria-hidden="true"></i></button>
+            {{/if}}
+          </div>
+          {{/if}}
+
+          {{#if intelManager.selectedCard.relationships.scene}}
+          <div class="gm-job-relationship-row {{#if intelManager.selectedCard.relationships.scene.resolved}}is-navigable{{/if}}">
+            <span class="gm-job-relationship-copy"><strong>{{#if intelManager.selectedCard.relationships.scene.resolved}}{{intelManager.selectedCard.relationships.scene.name}}{{else}}Linked Scene{{/if}}</strong><span>Scene</span></span>
+            {{#if intelManager.selectedCard.relationships.scene.resolved}}
+            <button type="button" class="gm-job-relationship-action" data-intel-open-scene data-scene-uuid="{{intelManager.selectedCard.relationships.scene.uuid}}" title="Open Scene" aria-label="Open Scene"><i class="fa-solid fa-chevron-right" aria-hidden="true"></i></button>
+            {{/if}}
+          </div>
+          {{/if}}
+
+          {{#if intelManager.selectedCard.relationships.actor}}
+          <div class="gm-job-relationship-row {{#if intelManager.selectedCard.relationships.actor.resolved}}is-navigable{{/if}}">
+            <span class="gm-job-relationship-copy"><strong>{{#if intelManager.selectedCard.relationships.actor.resolved}}{{intelManager.selectedCard.relationships.actor.name}}{{else}}Linked Actor{{/if}}</strong><span>Actor</span></span>
+            {{#if intelManager.selectedCard.relationships.actor.resolved}}
+            <button type="button" class="gm-job-relationship-action" data-intel-open-actor data-actor-uuid="{{intelManager.selectedCard.relationships.actor.uuid}}" title="Open Actor Sheet" aria-label="Open Actor Sheet"><i class="fa-solid fa-chevron-right" aria-hidden="true"></i></button>
+            {{/if}}
+          </div>
+          {{/if}}
+        </div>
+      </div>
+      {{/if}}
+
       <div class="gm-intel-delivery-grid">
         <button type="button" class="swse-ui-button" data-intel-action="mark-ready" data-record-id="{{intelManager.selectedCard.recordId}}"><i class="fa-solid fa-circle-check"></i> Mark Ready</button>
         <button type="button" class="swse-ui-button approve" data-intel-action="release" data-record-id="{{intelManager.selectedCard.recordId}}"><i class="fa-solid fa-unlock-keyhole"></i> Mark Released</button>

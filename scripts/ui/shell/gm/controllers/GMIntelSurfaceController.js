@@ -141,6 +141,7 @@ export class GMIntelSurfaceController {
     this._wireIntelActions(pageElement, signal);
     this._wireForms(pageElement, signal);
     this._wireWizardControls(pageElement, signal);
+    this._wireRelationshipButtons(pageElement, signal);
     GMSmartFormDropService.bind(pageElement, { signal });
   }
 
@@ -327,6 +328,116 @@ export class GMIntelSurfaceController {
     });
   }
 
+
+  // --- Ecosystem Redesign Phase 5: context-preserving cross-surface
+  // navigation. Each branch carries the RELATED record's own stable id
+  // (never its display name) and routes through the shell's existing
+  // navigateToSurface()/_navigateTo() contract (Phase 2), so the GM lands
+  // on the correct destination with the correct record already selected.
+  // Scene/Actor are not GM Datapad surfaces, so those two branches resolve
+  // and open the real Foundry document directly instead, mirroring
+  // GMLocationsSurfaceController's open-contact 'actor' branch.
+  _wireRelationshipButtons(pageElement, signal) {
+    pageElement.querySelectorAll('[data-intel-open-location]').forEach((button) => {
+      button.addEventListener('click', async (event) => {
+        event.preventDefault();
+        const locationId = event.currentTarget.dataset.locationId || '';
+        if (!locationId) return;
+        await this.host?.navigateToSurface?.('locations', { statePatch: { selectedLocationId: locationId } });
+      }, { signal });
+    });
+
+    pageElement.querySelectorAll('[data-intel-open-faction]').forEach((button) => {
+      button.addEventListener('click', async (event) => {
+        event.preventDefault();
+        const factionId = event.currentTarget.dataset.factionId || '';
+        if (!factionId) return;
+        await this.host?.navigateToSurface?.('factions', { statePatch: { focusedFactionId: factionId } });
+      }, { signal });
+    });
+
+    pageElement.querySelectorAll('[data-intel-open-contact]').forEach((button) => {
+      button.addEventListener('click', async (event) => {
+        event.preventDefault();
+        const factionId = event.currentTarget.dataset.factionId || '';
+        const contactId = event.currentTarget.dataset.contactId || '';
+        if (!factionId || !contactId) return;
+        await this.host?.navigateToSurface?.('factions', { statePatch: { focusedFactionId: factionId, focusedContactId: contactId } });
+      }, { signal });
+    });
+
+    pageElement.querySelectorAll('[data-intel-open-job]').forEach((button) => {
+      button.addEventListener('click', async (event) => {
+        event.preventDefault();
+        const jobId = event.currentTarget.dataset.jobId || '';
+        if (!jobId) return;
+        await this.host?.navigateToSurface?.('jobs', { hostPatch: { selectedJobThreadId: jobId } });
+      }, { signal });
+    });
+
+    pageElement.querySelectorAll('[data-intel-open-scene]').forEach((button) => {
+      button.addEventListener('click', async (event) => {
+        event.preventDefault();
+        const sceneUuid = event.currentTarget.dataset.sceneUuid || '';
+        if (!sceneUuid) return;
+        const scene = await this._resolveSceneByUuid(sceneUuid);
+        if (!scene) {
+          ui.notifications?.warn?.('That linked Scene could not be found.');
+          return;
+        }
+        scene.view?.();
+      }, { signal });
+    });
+
+    pageElement.querySelectorAll('[data-intel-open-actor]').forEach((button) => {
+      button.addEventListener('click', async (event) => {
+        event.preventDefault();
+        const actorUuid = event.currentTarget.dataset.actorUuid || '';
+        if (!actorUuid) return;
+        const actor = await this._resolveActorByUuid(actorUuid);
+        if (!actor) {
+          ui.notifications?.warn?.('That linked Actor could not be found.');
+          return;
+        }
+        if (!actor.sheet?.render) {
+          ui.notifications?.warn?.(`${actor.name} does not have an openable sheet.`);
+          return;
+        }
+        actor.sheet.render(true);
+      }, { signal });
+    });
+  }
+
+  async _resolveSceneByUuid(uuid = '') {
+    const ref = String(uuid || '').trim();
+    if (!ref) return null;
+    const directId = ref.replace(/^Scene\./, '');
+    const byId = game.scenes?.get?.(directId);
+    if (byId) return byId;
+    if (typeof fromUuid === 'function') {
+      try {
+        const doc = await fromUuid(ref);
+        if (doc?.documentName === 'Scene' || doc?.constructor?.documentName === 'Scene') return doc;
+      } catch (_err) { /* unresolvable uuid — treated as missing below */ }
+    }
+    return null;
+  }
+
+  async _resolveActorByUuid(uuid = '') {
+    const ref = String(uuid || '').trim();
+    if (!ref) return null;
+    const directId = ref.replace(/^Actor\./, '');
+    const byId = game.actors?.get?.(directId);
+    if (byId) return byId;
+    if (typeof fromUuid === 'function') {
+      try {
+        const doc = await fromUuid(ref);
+        if (doc?.documentName === 'Actor' || doc?.constructor?.documentName === 'Actor') return doc;
+        if (doc?.actor) return doc.actor;
+      } catch (_err) { /* unresolvable uuid — treated as missing below */ }
+    }
+    return null;
+  }
 
   _wireModeDropdown(pageElement, signal) {
     pageElement.querySelectorAll('[data-intel-mode-select-control]').forEach((select) => {
