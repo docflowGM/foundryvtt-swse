@@ -7,6 +7,13 @@ import { FactionJobBridgeService } from '/systems/foundryvtt-swse/scripts/ui/she
 import { LocationRegistryService } from '/systems/foundryvtt-swse/scripts/locations/location-registry-service.js';
 
 function asArray(value) { return Array.isArray(value) ? value : []; }
+function titleCase(value = '') {
+  return String(value ?? '').trim()
+    .split(/[-_\s]+/g)
+    .filter(Boolean)
+    .map(part => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(' ');
+}
 function scoreClass(score) { return score > 0 ? 'is-positive' : score < 0 ? 'is-negative' : 'is-neutral'; }
 function scoreLabel(score) { return score > 0 ? `+${score}` : score === 0 ? '+0' : String(score); }
 function splitPlanetSystem(value = '') {
@@ -158,6 +165,73 @@ function actorOption(actor) {
   };
 }
 
+/**
+ * Ecosystem Redesign Phase 3 — "Locations relationship" rows for a selected
+ * Faction, reusing the exact same authority (LocationRegistryService, via
+ * the already-resolved locationRows) and the exact same real relationship
+ * fields (controllingFactionId/factionIds/factionPresence) the Locations
+ * surface itself resolves Faction relationships from — never a copy of a
+ * Location record into Faction storage.
+ */
+function factionLocationRelationshipRows(factionId, locationRows = []) {
+  return locationRows
+    .filter(row => (
+      row.raw.controllingFactionId === factionId
+      || asArray(row.raw.factionIds).includes(factionId)
+      || asArray(row.raw.factionPresence).some(entry => entry.factionId === factionId)
+    ))
+    .map((row) => {
+      const isController = row.raw.controllingFactionId === factionId;
+      const presence = asArray(row.raw.factionPresence).find(entry => entry.factionId === factionId);
+      return {
+        ...row.view,
+        roleLabel: isController ? 'Controls' : (presence?.influence ? titleCase(presence.influence) : 'Present')
+      };
+    });
+}
+
+/**
+ * "Jobs relationship" rows for a selected Faction, resolved from the real
+ * Job Board authority (jobs, already loaded via HolonetStorage in
+ * _loadJobRows() — never a draft-creation bridge) and filtered using
+ * FactionJobBridgeService's already-proven issuer-matching logic — the
+ * same matching summarizeJobsByIssuer() uses for jobStats, here uncapped
+ * so every linked Job is reachable, not just the most recent few.
+ */
+function factionJobRelationshipRows(faction, jobs = []) {
+  const filter = FactionJobBridgeService.issuerFilterFromFaction(faction);
+  return FactionJobBridgeService.filterJobsByIssuer(jobs, filter).map((job) => {
+    const issuer = FactionJobBridgeService.normalizeJobIssuer(job);
+    const isPrimaryIssuer = issuer.factionId === faction.id
+      || issuer.factionName.toLowerCase() === String(faction.name || '').toLowerCase();
+    return {
+      id: job.threadId,
+      title: job.title,
+      status: job.status,
+      statusLabel: job.status === 'posted' ? 'Open' : job.status === 'complete' ? 'Ready to Pay' : titleCase(job.status),
+      roleLabel: isPrimaryIssuer ? 'Client' : 'Rival Stakes',
+      clientLabel: issuer.label
+    };
+  });
+}
+
+/**
+ * "Intel relationship" rows for a selected Faction, resolved from the real
+ * Holonet Intel authority (intelRows, already loaded via
+ * HolonetIntelService in _loadIntelRows()) — never LocationIntelBridgeService.
+ */
+function factionIntelRelationshipRows(factionId, intelRows = []) {
+  return intelRows
+    .filter(row => row.linkedFactionId === factionId)
+    .map(row => ({
+      id: row.intelId,
+      title: row.title,
+      status: row.status,
+      statusLabel: titleCase(row.status),
+      linkedContactId: row.linkedContactId || ''
+    }));
+}
+
 export class GMFactionRelationshipSurfaceService {
   static async buildViewModel(host) {
     const surfaceState = host?.getSurfaceState?.('factions') || {};
@@ -217,6 +291,16 @@ export class GMFactionRelationshipSurfaceService {
           }));
           const factionIntelCount = intelRows.filter(row => row.linkedFactionId === record.id).length;
           const isFocused = Boolean((focusedFactionId && record.id === focusedFactionId) || (focusedFactionName && String(record.name || '').trim().toLowerCase() === focusedFactionName));
+
+          // Ecosystem Redesign Phase 3 — additive presentation grouping.
+          // Reuses every row above (factionLocationRows/jobStats/intelRows
+          // filtering) rather than re-deriving them; adds nothing to
+          // canonical Faction storage.
+          const ecosystemLocationRows = factionLocationRelationshipRows(record.id, locationRows);
+          const ecosystemJobRows = factionJobRelationshipRows(record, jobs);
+          const ecosystemIntelRows = factionIntelRelationshipRows(record.id, intelRows);
+          const currentPartyLocationPresence = ecosystemLocationRows.some(row => row.activeForParty);
+
           return {
             ...record,
             planet: location.planet,
@@ -239,7 +323,50 @@ export class GMFactionRelationshipSurfaceService {
             hiddenContactCount: contacts.filter(contact => !contact.knownToPlayers).length,
             secretContactCount: contacts.filter(contact => contact.secret || contact.gmNotes || contact.hasLinkedIntel).length,
             isFocused,
-            searchText: searchText(record.name, record.type, record.planetSystem, record.leader, record.status, record.sourceLabel, contacts.map(contact => contact.searchText).join(' '), factionLocationRows.map(row => row.view.chain).join(' '))
+            searchText: searchText(record.name, record.type, record.planetSystem, record.leader, record.status, record.sourceLabel, contacts.map(contact => contact.searchText).join(' '), factionLocationRows.map(row => row.view.chain).join(' ')),
+
+            // --- Ecosystem Redesign Phase 3 groups (additive; every field
+            // above stays untouched for existing template/controller/
+            // approval behavior). "relationships.factions" is intentionally
+            // always empty — no canonical Faction-vs-Faction relationship
+            // storage exists anywhere in this codebase (audited; see the
+            // Phase 3 ecosystem audit doc), so this category is deferred
+            // rather than invented.
+            identity: {
+              id: record.id,
+              name: record.name,
+              image: record.image,
+              type: record.type,
+              status: record.status,
+              planetSystem: record.planetSystem,
+              scale: record.scale,
+              leader: record.leader,
+              scoreLabel: scoreLabel(record.score),
+              scoreClass: scoreClass(record.score)
+            },
+            currentSituation: {
+              controlledLocationCount: ecosystemLocationRows.filter(row => row.roleLabel === 'Controls').length,
+              presenceLocationCount: ecosystemLocationRows.length,
+              contactCount: contacts.length,
+              linkedJobCount: ecosystemJobRows.length,
+              activeJobCount: jobStats.activeTotal,
+              intelCount: ecosystemIntelRows.length,
+              currentPartyLocationPresence
+            },
+            relationships: {
+              locations: ecosystemLocationRows,
+              contacts,
+              jobs: ecosystemJobRows,
+              intel: ecosystemIntelRows,
+              factions: []
+            },
+            world: {
+              notes: record.notes,
+              gmNotes: record.gmNotes,
+              benefits: record.benefits,
+              jobDefaults: record.jobDefaults,
+              history: record.history
+            }
           };
         }),
         relationships: activeRelationships.map(row => ({
