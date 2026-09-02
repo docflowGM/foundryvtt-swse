@@ -28,19 +28,20 @@
  *                    etc.) — Phase 6/7 do not populate this yet. This is
  *                    NOT because no Bulletin provenance exists at all:
  *                    the Intel authority's own Bulletin-delivery helper
- *                    already stamps every Intel-originated Bulletin
- *                    record with a stable `sourceIntelId` (it also
- *                    currently copies the full Intel metadata object
- *                    onto the Bulletin alongside it — an authority-
- *                    duplication/possible private-data-leak question
- *                    Phase 8 must audit before deciding whether to keep,
- *                    reduce, or drop that copy for NEW records). What's
- *                    actually missing is a GENERALIZED provenance
- *                    contract (Job/Location/Faction/Actor-originated
- *                    Bulletins have no equivalent stable source id yet)
- *                    and the reverse lookup this field would need
- *                    (Bulletins referencing a given subject). Phase 8 is
- *                    expected to normalize and consume that seam; this
+ *                    stamps every Intel-originated Bulletin record with a
+ *                    stable `sourceIntelId`. It used to also copy the
+ *                    full Intel metadata object onto the Bulletin
+ *                    alongside it; the Phase 8B privacy/provenance audit
+ *                    found no production consumer of that copy and
+ *                    removed it for newly-created records (legacy
+ *                    records keep it, harmlessly, since nothing ever
+ *                    read it back off a Bulletin). What's actually
+ *                    missing is a GENERALIZED provenance contract
+ *                    (Job/Location/Faction/Actor-originated Bulletins
+ *                    have no equivalent stable source id yet) and the
+ *                    reverse lookup this field would need (Bulletins
+ *                    referencing a given subject) — that generalization
+ *                    is explicitly deferred past Phase 8B too. This
  *                    field stays an empty object until then. Present in
  *                    every subject context
  *                    as an empty object so callers have a stable shape to

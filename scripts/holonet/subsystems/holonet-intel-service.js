@@ -810,6 +810,21 @@ export class HolonetIntelService {
     const record = await this.getIntelById(intelOrRecordId);
     const intel = this.getIntelMetadata(record);
     if (!record || !intel) return null;
+    // PHASE 8B: Bulletin stores only the player-safe body plus stable
+    // provenance (sourceIntelId/intelDelivery) — NOT a full snapshot of
+    // the Intel record. The full Intel object (gmNotes, fullBody,
+    // skillGate, lockbox, etc.) this used to copy in under
+    // INTEL_METADATA_KEY was reachable by every connected client — every
+    // Holonet record lives in one world-scope setting (holonet_records)
+    // that Foundry syncs in full to all clients, GM and player alike,
+    // regardless of what the UI renders — and the Phase 8B audit found
+    // no production consumer anywhere that ever read it back off a
+    // Bulletin record (Bulletin's own delivery-summary/audience/
+    // recipient resolution are computed from the record's own audience/
+    // recipients/deliveryStates, never from this copy). matches the
+    // minimal-provenance pattern deliverAsSecretNote() already used
+    // (sourceIntelId only, never a full Intel snapshot). See the audit
+    // doc's Phase 8B section for the full consumer trace.
     const bulletin = BulletinSource.createBulletinMessage({
       title: options.title ?? intel.title,
       body: options.body ?? bodyForIntel(intel, 'public'),
@@ -818,16 +833,9 @@ export class HolonetIntelService {
       category: 'intel',
       metadata: {
         sourceIntelId: intel.id,
-        intelDelivery: true,
-        [INTEL_METADATA_KEY]: intel
+        intelDelivery: true
       }
     });
-    bulletin.metadata = {
-      ...(bulletin.metadata ?? {}),
-      sourceIntelId: intel.id,
-      intelDelivery: true,
-      [INTEL_METADATA_KEY]: intel
-    };
     bulletin.projections = [
       { surfaceType: SURFACE_TYPE.HOME_FEED, recordId: bulletin.id, isPinned: false, metadata: { sourceIntelId: intel.id, intelDelivery: true } },
       { surfaceType: SURFACE_TYPE.GM_DATAPAD_BULLETIN, recordId: bulletin.id, isPinned: false, metadata: { sourceIntelId: intel.id, intelDelivery: true } }
@@ -840,10 +848,9 @@ export class HolonetIntelService {
     // avoid a circular static import (holonet-engine.js already imports
     // this file's HolonetIntelService), matching the pattern
     // holonet-socket-service.js already uses for the same reason.
-    // NOTHING about the Bulletin's content, audience, projections,
-    // sourceIntelId/intelDelivery metadata, or the full-Intel-metadata
-    // copy changes here — that is explicitly Phase 8B's audit, not this
-    // pass's.
+    // Persist-then-check-then-announce ordering (below) is unchanged by
+    // Phase 8B: a failed save still returns null before any Intel
+    // release or publication event.
     const { HolonetEngine } = await import('../holonet-engine.js');
     HolonetEngine.prepareRecordForPublish(bulletin);
     const saved = await HolonetStorage.saveRecord(bulletin);
