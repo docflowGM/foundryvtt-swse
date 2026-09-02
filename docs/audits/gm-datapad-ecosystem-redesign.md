@@ -3142,7 +3142,7 @@ fail-before proof: reverting `GMCampaignContextService.js` makes
 - Live Foundry status: not run — no live client available, same
   limitation as every prior phase.
 
-## 55. Phase 8 gate (supersedes §51)
+## 55. Phase 8 gate (superseded by §63 — see below)
 
 **PHASE 7 CONTRACT CLOSED — READY FOR PHASE 8.** Both items are closed
 with executed, git-stash fail-before-proven regression tests. Per the
@@ -3152,3 +3152,204 @@ Bulletin provenance, Phase 7's deferred UX (§50), Recovery mechanics, or
 party mutation semantics. Recommended next: Phase 8A — exactly-once
 Holonet publication/socket synchronization. Not started here, per
 instruction.
+
+# PHASE 8A — EXACTLY-ONCE HOLONET PUBLICATION / SOCKET SYNCHRONIZATION
+
+Starting head: `3a4b1e5c273014403b1dada7f69fba9d0dd4d40f` (verified:
+clean tree, correct branch, matching HEAD). Transport/publication-
+integrity work only — no Bulletin presentation redesign, no generalized
+Job/Location/Faction/Actor provenance, no Intel content/audience
+semantic changes. All deferred to Phase 8B per the explicit scope
+boundary.
+
+## 56. Publication authority audit (before code)
+
+Traced the actual head, not inferred from names:
+
+| Producer | Record type | Persistence | Local hook | Socket sync | Disposition |
+|---|---|---|---|---|---|
+| `holonet-manager.js` (4 call sites) | Bulletin/event | `HolonetEngine.publish(record,{skipSocket:false})` | via engine | **none — bug D1** | fixed by this pass |
+| `home-feed-task-emitter.js` | notification | `publish(record,{skipSocket:false,suppressLocalHook:true})` | suppressed (intended) | **none — bug D1** | fixed by this pass |
+| `holonews-auto-publisher.js` | event | `publish(record)` (defaults) | via engine | **none — bug D1** | fixed by this pass |
+| `holonet-emission-service.js` | varies | forwards caller's `publishOptions` | caller-controlled | caller-controlled | unaffected, now correct by construction |
+| `messenger-notification-bridge.js` `publishActionNotice()` | notification | `publish(notice,{skipSocket:true})` | fires | intentionally none (thread-updated already covers refresh) | **preserved unchanged** |
+| `holonet-thread-service.js` `publishMessageToThread()` | message | `prepareRecordForPublish`+`saveRecordAndThread`+`emitPreparedRecordPublished(message)` (bare call, no options) | fires | intentionally none (specialized envelope, own hooks) | **preserved unchanged** — `emitPreparedRecordPublished()`'s default flipped specifically so this bare call keeps its exact pre-8A behavior |
+| `holonet-socket-service.js` `publish-record` request handler | any | called `publish(record,{skipSocket:true})` then manually `emitSync({type:'record-published',...})`, **never checked the result** | via engine | manual, duplicate authority — bug D2 | now `publish(record,{skipSocket:false,requestId,requesterId})`; engine owns the one sync |
+| `holonet-intel-service.js` `deliverAsBulletin()` | Bulletin (Intel-derived) | manually replicated publish/recipients/persist, own `HolonetStorage.saveRecord()` with an `if(!ok) return null` check (already correct on failure) | none (bypassed engine) | manual, duplicate authority — bug D5 | now routes through `HolonetEngine.prepareRecordForPublish`+`emitPreparedRecordPublished` |
+| `HolonetStorage._persistRecord()` (inside `HolonetEngine`) | n/a | `await HolonetStorage.saveRecord(record)`, **boolean result discarded** — bug D3 | n/a | n/a | now returns/checks the real boolean |
+
+`skipSocket`/`suppressLocalHook` caller audit: every existing caller
+was traced (table above) before any change. Two callers
+(`messenger-notification-bridge.js`, `holonet-thread-service.js`)
+deliberately keep their exact pre-8A behavior — `emitPreparedRecordPublished()`'s
+own default flipped to `skipSocket:true` (opposite of `publish()`'s
+default of `false`) specifically so the bare `emitPreparedRecordPublished(message)`
+call in `publishMessageToThread()` never gained a new duplicate remote
+sync merely by sharing the same underlying method Bulletin now uses
+correctly.
+
+## 57. Fixes applied
+
+- **D1 (missing sync)** — `publish()`/`_publishAsGm()` now thread
+  `skipSocket` all the way into `emitPreparedRecordPublished()`, which
+  broadcasts a normalized `record-published` sync via `HolonetBus.sync()`
+  unless explicitly skipped. This is additive to `skipSocket`'s existing
+  meaning (a caller that already knows another mechanism owns the
+  remote refresh sets it true), not a redefinition.
+- **D2 (duplicate authority)** — the socket service's `publish-record`
+  handler no longer manually reconstructs a `record-published` sync; it
+  calls `HolonetEngine.publish(record, {skipSocket:false, requestId,
+  requesterId})` and lets the engine be the sole owner of the post-commit
+  event, now also correctly not announcing anything when `publish()`
+  returns `false`.
+- **D3 (false success on storage failure)** — `_persistRecord()` returns
+  `HolonetStorage.saveRecord()`'s real boolean; `_publishAsGm()` checks
+  it before calling `emitPreparedRecordPublished()` at all, logs, and
+  returns `false`.
+- **D4 (payload mismatch)** — `_emitPublished()` now fires one merged,
+  additive superset payload (`{type, publicationEventId, recordId,
+  recipients}`) through `HolonetBus.emitLocal()` instead of two
+  differently-shaped raw `Hooks.callAll()` calls. Every existing
+  consumer found (`scripts/chat/holonet-chat-card.js` reads only
+  `recordId`) is unaffected — extra fields are harmless to a consumer
+  that destructures a subset.
+- **D5 (Intel bypass)** — `deliverAsBulletin()` now calls
+  `HolonetEngine.prepareRecordForPublish(bulletin)` (publish lifecycle +
+  recipient resolution + delivery-state — byte-for-byte the same logic
+  it used to inline manually) and `HolonetEngine.emitPreparedRecordPublished(bulletin,
+  {skipSocket:false, syncExtra:{source:'intel-bulletin', intelId:
+  intel.id}})` instead of its own manual publish/persist/sync sequence.
+  Dynamic import (`await import('../holonet-engine.js')`) to avoid a
+  circular static import, matching the pattern `holonet-socket-service.js`
+  already uses for the same reason. `sourceIntelId`/`intelDelivery`/the
+  full Intel-metadata copy/audience/projections are byte-for-byte
+  unchanged — that content audit is explicitly Phase 8B's, not this
+  pass's.
+
+## 58. Exactly-once publication contract
+
+Every successful publication now carries a `publicationEventId` —
+identifies the publication OCCURRENCE, never the record id (the same
+record can legitimately be republished later as a distinct occurrence;
+deduping by `recordId` would silently swallow that legitimate
+republish). Envelope:
+`{type:'record-published', publicationEventId, recordId, recipientIds,
+requestId, requesterId, ...syncExtra}`.
+
+**Dedup strategy** (added to `HolonetSocketService`, not a new
+subsystem): a bounded (`200`-entry, FIFO-evicted) in-memory
+`Set<publicationEventId>`. `emitSync()` marks an id seen *before*
+sending (covers origin loopback, should the transport ever echo a
+client's own emission back to it); the inbound sync handler marks an id
+seen on first receipt and skips redispatch on any later delivery of the
+same id (covers duplicate remote redelivery). Scoped to events that
+actually carry a `publicationEventId` — every other sync type
+(`thread-updated`, `state-updated`, `record-read`, etc.) is completely
+unaffected, no behavior change. No world setting, no persistent ledger,
+no new event bus — `HolonetBus`/`HolonetSocketService` remain the sole
+transport/dedup authority, matching the project's own documented
+facade.
+
+## 59. `skipSocket` / `suppressLocalHook` final semantics
+
+- `suppressLocalHook:true` — suppresses only the authoritative client's
+  local hook dispatch. Does **not** suppress remote sync — independent
+  concerns (proven: M7).
+- `skipSocket:true` — suppresses only the remote `record-published`
+  broadcast. The local hook still fires (proven: M8). On the public
+  `publish()` entry point it additionally still gates the non-GM
+  relay-to-GM check, unchanged from before this pass.
+- `emitPreparedRecordPublished()`'s own default is `skipSocket:true`
+  (the opposite of `publish()`'s `false` default) specifically to keep
+  `HolonetThreadService.publishMessageToThread()`'s bare call
+  unaffected — see §56/§57.
+
+## 60. ShellHost live-update proof
+
+Traced: socket sync → `Hooks.callAll('swseHolonetUpdated', ...)` →
+`ShellHost`'s existing `Hooks.on('swseHolonetUpdated', ...)` listener
+(unconditional on `syncData.type` — fires for any Holonet update while
+`this.rendered` and surface is `'home'`/`'messenger'`) →
+`MessengerSurfaceController._scheduleHolonetSurfaceRender()`, which
+already debounces (90ms messenger / 120ms home `window.setTimeout`
+coalescing) before requesting a single surface render. This mechanism
+was NOT modified — it was already correct and already provides the "at
+most one scheduled render" guarantee section O of the spec asked for;
+Phase 8A's job was making sure the sync that feeds it actually fires
+for GM-direct publication, which it now does.
+
+## 61. Tests
+
+New `tests/gm-holonet-phase8a-exactly-once-publication.test.mjs` (first
+Holonet/socket test in this codebase — the default foundry-shim's
+`Hooks` was no-op stubs and `game.socket` was unshimmed anywhere; this
+file adds a minimal working `Hooks`/`game.socket` shim scoped to itself).
+Executed coverage: M1 (GM direct publish broadcasts exactly once,
+proven against a real fake socket + real Hooks dispatch), M2 (storage
+failure announces nothing — zero hooks, zero sync), M3/M4 combined
+(origin-loopback echo and duplicate remote redelivery of the same
+`publicationEventId` never redispatch), a genuinely-new remote event id
+dispatches exactly once, M5 (republishing the same record twice
+produces two DISTINCT `publicationEventId`s, each dispatched once —
+proves dedup is never recordId-based), M6 (a simulated player-originated
+`publish-record` socket request results in exactly one GM-side
+persistence call and exactly one correlated sync carrying `requestId`/
+`requesterId`), M7 (`suppressLocalHook` isolates the local hook only),
+M8 (`skipSocket` isolates the remote sync only; a companion case proves
+Messenger's bare `emitPreparedRecordPublished(message)` call keeps
+zero remote sync, matching its pre-8A behavior exactly). M9/M10 are
+static source-scan proofs (established codebase pattern for a
+dependency stack — `HolonetIntelService`'s full Bulletin/audience/body
+stack — impractical to stand up as an executed integration test in this
+harness): confirms `deliverAsBulletin()` no longer contains a literal
+`HolonetSocketService.emitSync({type:'record-published'...})` call and
+does call the central pipeline, confirms the full Intel-metadata-copy
+block is byte-for-byte unchanged, confirms the socket service's
+`publish-record` case no longer manually re-emits, and inventories
+every literal producer of `type:'record-published'` across the entire
+`scripts/holonet/` tree — exactly one (`HolonetEngine`, via
+`HolonetBus.sync()`).
+
+Git-stash fail-before proof: reverting `holonet-engine.js`/
+`holonet-socket-service.js`/`holonet-intel-service.js` reproduces the
+exact primary bug — a GM direct publish broadcasts zero remote syncs.
+
+## 62. Regression / totals
+
+Full rolling test suite and syntax re-run after this pass; see the PR
+body / final report for exact totals (same 6 pre-existing,
+GM-Datapad-unrelated failures as every prior phase — none newly
+broken). All Holonet-adjacent existing tests (`gm-campaign-context-parity`,
+`gm-intel-ecosystem-view-model`, `gm-intel-location-fact-identity`,
+`gm-phase7-pre-broadcast-integrity`) re-verified green, unchanged. All
+`gm-*.test.mjs` remain green.
+
+## 63. Live Foundry checklist (not run — no live client available)
+
+Same limitation as every prior phase; every claim above is static/
+Node-shim verified, not live-runtime verified. The checklist for manual
+validation once a live client is available: (1) GM Bulletin → an
+already-open player Home refreshes without reopening, Bulletin appears
+exactly once, no duplicate toast/feed row; (2) two player clients both
+connected each receive one update from an all-players Bulletin; (3) a
+targeted Bulletin reaches only its intended recipient (the socket sync
+can be global — record recipient/audience authority still controls
+visibility, this pass does not change that); (4) republishing the same
+edited record a second time is not incorrectly deduped; (5) an ambient
+HoloNews publish refreshes a connected player's Home exactly once; (6)
+Intel → Bulletin delivery: visible content is unchanged from before
+this pass, player receives it without reopening Home; (7) ordinary
+Messenger send/action-notice: no new duplicate repaint/toast introduced.
+
+## 64. Phase 8 gate (supersedes §55)
+
+**PHASE 8A COMPLETE — READY FOR PHASE 8B.** All 5 findings (D1-D5)
+fixed with executed, git-stash fail-before-proven tests, plus a static
+signal-inventory proof that no other producer of `record-published`
+remains anywhere in the Holonet subtree. No new authority/event bus/
+persistent ledger was introduced — `HolonetEngine`/`HolonetBus`/
+`HolonetSocketService`/`HolonetStorage` remain the complete set.
+Live Foundry validation is the one remaining limitation, honestly
+documented, same as every prior phase. Phase 8B (Intel→Bulletin
+private-data/provenance audit — the full-Intel-metadata copy flagged in
+§57/§47) is recommended next. Not started here, per instruction.
