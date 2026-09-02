@@ -6104,6 +6104,19 @@
   border-left: 2px solid rgba(255, 198, 91, 0.55);
 }
 
+/* Rows carrying a working cross-surface nav control (Ecosystem Redesign
+   Phase 2). Kept subtle — a soft highlight and focus ring, not a button
+   treatment — since the row itself stays a plain container; the nav
+   affordance lives in the chevron control below. */
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-relationship-row.is-navigable:hover {
+  background: rgba(112, 226, 255, 0.08);
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-relationship-row.is-navigable:focus-within {
+  outline: 1px solid rgba(112, 226, 255, 0.45);
+  outline-offset: -1px;
+}
+
 .swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-relationship-avatar {
   flex: 0 0 auto;
   display: grid;
@@ -6322,4 +6335,18 @@
 .swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-row-action.danger:hover {
   border-color: rgba(255, 107, 107, 0.4);
   background: rgba(255, 107, 107, 0.08);
+}
+
+/* Cross-surface navigation control (chevron) — a sibling of the existing
+   unlink/remove/resolve row-action buttons above, never a wrapper around
+   them, so a row's unlink <button> is never nested inside another
+   <button> (Ecosystem Redesign Phase 2). */
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-row-action.nav {
+  color: rgba(112, 226, 255, 0.75);
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-row-action.nav:hover {
+  border-color: rgba(112, 226, 255, 0.5);
+  background: rgba(112, 226, 255, 0.1);
+  color: rgba(112, 226, 255, 0.95);
 }

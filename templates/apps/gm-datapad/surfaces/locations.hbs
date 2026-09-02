@@ -283,9 +283,12 @@
                 <header><div><i class="fa-solid fa-people-group" aria-hidden="true"></i><span>Factions Present</span></div><strong>{{this.relationships.factions.length}}</strong></header>
                 <div class="gm-location-relationship-list">
                   {{#each this.relationships.factions}}
-                    <div class="gm-location-relationship-row {{#if this.isController}}is-controller{{/if}}" data-faction-id="{{this.id}}">
+                    <div class="gm-location-relationship-row {{#if this.isController}}is-controller{{/if}} {{#unless this.missing}}is-navigable{{/unless}}" data-faction-id="{{this.id}}">
                       <span class="gm-location-relationship-avatar" aria-hidden="true"><i class="fa-solid fa-flag"></i></span>
                       <div class="gm-location-relationship-copy"><strong>{{this.name}}</strong><span>{{this.roleLabel}}</span></div>
+                      {{#unless this.missing}}
+                        <button type="button" class="gm-location-row-action nav" title="Open {{this.name}} in Factions" aria-label="Open {{this.name}} in Factions" data-location-action="open-faction" data-faction-id="{{this.id}}"><i class="fa-solid fa-chevron-right" aria-hidden="true"></i></button>
+                      {{/unless}}
                       <button type="button" class="gm-location-row-action danger" title="Unlink faction" aria-label="Unlink {{this.name}}" data-location-action="remove-link" data-location-id="{{../identity.id}}" data-link-kind="faction" data-link-value="{{this.id}}"><i class="fa-solid fa-link-slash" aria-hidden="true"></i></button>
                     </div>
                   {{else}}
@@ -297,9 +300,12 @@
                 <header><div><i class="fa-solid fa-user-group" aria-hidden="true"></i><span>Contacts &amp; NPCs</span></div><strong>{{this.relationships.contacts.length}}</strong></header>
                 <div class="gm-location-relationship-list">
                   {{#each this.relationships.contacts}}
-                    <div class="gm-location-relationship-row {{#if this.missing}}is-missing{{/if}}" data-contact-id="{{this.id}}" data-actor-uuid="{{this.actorUuid}}">
+                    <div class="gm-location-relationship-row {{#if this.missing}}is-missing{{else}}is-navigable{{/if}}" data-contact-id="{{this.id}}" data-actor-uuid="{{this.actorUuid}}">
                       <span class="gm-location-relationship-avatar" aria-hidden="true"><i class="fa-solid fa-user"></i></span>
                       <div class="gm-location-relationship-copy"><strong>{{this.name}}</strong><span>{{this.roleLabel}}</span></div>
+                      {{#unless this.missing}}
+                        <button type="button" class="gm-location-row-action nav" title="Open {{this.name}}" aria-label="Open {{this.name}}" data-location-action="open-contact" data-contact-kind="{{this.kind}}" data-contact-id="{{this.id}}" data-actor-uuid="{{this.actorUuid}}" data-faction-id="{{this.factionId}}" data-missing="false"><i class="fa-solid fa-chevron-right" aria-hidden="true"></i></button>
+                      {{/unless}}
                       {{#if this.canUnlink}}
                         <button type="button" class="gm-location-row-action danger" title="Unlink actor" aria-label="Unlink {{this.name}}" data-location-action="remove-link" data-location-id="{{../identity.id}}" data-link-kind="actor" data-link-value="{{this.actorUuid}}"><i class="fa-solid fa-link-slash" aria-hidden="true"></i></button>
                       {{else}}
@@ -315,9 +321,12 @@
                 <header><div><i class="fa-solid fa-clipboard-list" aria-hidden="true"></i><span>Jobs Here</span></div><strong>{{this.relationships.jobs.length}}</strong></header>
                 <div class="gm-location-relationship-list">
                   {{#each this.relationships.jobs}}
-                    <div class="gm-location-relationship-row {{#if this.missing}}is-missing{{/if}}" data-job-id="{{this.id}}">
+                    <div class="gm-location-relationship-row {{#if this.missing}}is-missing{{else}}is-navigable{{/if}}" data-job-id="{{this.id}}">
                       <span class="gm-location-relationship-avatar" aria-hidden="true"><i class="fa-solid fa-file-contract"></i></span>
                       <div class="gm-location-relationship-copy"><strong>{{this.title}}</strong><span>{{this.statusLabel}}{{#if this.clientLabel}} · {{this.clientLabel}}{{/if}}</span></div>
+                      {{#unless this.missing}}
+                        <button type="button" class="gm-location-row-action nav" title="Open {{this.title}} in Job Board" aria-label="Open {{this.title}} in Job Board" data-location-action="open-job" data-job-id="{{this.id}}"><i class="fa-solid fa-chevron-right" aria-hidden="true"></i></button>
+                      {{/unless}}
                       <button type="button" class="gm-location-row-action danger" title="Unlink job" aria-label="Unlink {{this.title}}" data-location-action="remove-link" data-location-id="{{../identity.id}}" data-link-kind="job" data-link-value="{{this.id}}"><i class="fa-solid fa-link-slash" aria-hidden="true"></i></button>
                     </div>
                   {{else}}
@@ -330,9 +339,12 @@
                 <div class="gm-location-relationship-group">
                   <span class="gm-location-relationship-subheading">Intel</span>
                   {{#each this.relationships.intel}}
-                    <div class="gm-location-relationship-row {{#if this.missing}}is-missing{{/if}}" data-intel-id="{{this.id}}">
+                    <div class="gm-location-relationship-row {{#if this.missing}}is-missing{{else}}is-navigable{{/if}}" data-intel-id="{{this.id}}">
                       <span class="gm-location-relationship-avatar" aria-hidden="true"><i class="fa-solid fa-file-waveform"></i></span>
                       <div class="gm-location-relationship-copy"><strong>{{this.title}}</strong><span>{{this.statusLabel}}</span></div>
+                      {{#unless this.missing}}
+                        <button type="button" class="gm-location-row-action nav" title="Open {{this.title}} in Intel" aria-label="Open {{this.title}} in Intel" data-location-action="open-intel" data-intel-id="{{this.id}}"><i class="fa-solid fa-chevron-right" aria-hidden="true"></i></button>
+                      {{/unless}}
                       <button type="button" class="gm-location-row-action danger" title="Unlink intel" aria-label="Unlink {{this.title}}" data-location-action="remove-link" data-location-id="{{../identity.id}}" data-link-kind="intel" data-link-value="{{this.id}}"><i class="fa-solid fa-link-slash" aria-hidden="true"></i></button>
                     </div>
                   {{else}}

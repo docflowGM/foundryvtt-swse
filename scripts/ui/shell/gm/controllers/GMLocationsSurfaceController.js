@@ -483,6 +483,71 @@ export class GMLocationsSurfaceController {
           return;
         }
 
+        // --- Ecosystem Redesign Phase 2: context-preserving cross-surface
+        // navigation. Each branch below carries the RELATED record's own
+        // stable id (never its display name) and routes through the shell's
+        // existing navigateToSurface()/_navigateTo() contract, so the GM
+        // lands on the correct destination with the correct record already
+        // selected on first render. See templates/apps/gm-datapad/surfaces/
+        // locations.hbs for the data-location-action="open-*" markup.
+
+        if (action === 'open-faction') {
+          const factionId = target.dataset.factionId || '';
+          if (!factionId) return;
+          await this.host?.navigateToSurface?.('factions', { statePatch: { focusedFactionId: factionId } });
+          return;
+        }
+
+        if (action === 'open-contact') {
+          if (target.dataset.missing === 'true') return;
+          const contactKind = target.dataset.contactKind || '';
+          const contactId = target.dataset.contactId || '';
+          const contactActorUuid = target.dataset.actorUuid || '';
+          const contactFactionId = target.dataset.factionId || '';
+
+          if (contactKind === 'contact') {
+            if (!contactFactionId) {
+              ui.notifications?.warn?.('This contact has no owning Faction to open.');
+              return;
+            }
+            await this.host?.navigateToSurface?.('factions', {
+              statePatch: { focusedFactionId: contactFactionId, focusedContactId: contactId }
+            });
+            return;
+          }
+
+          if (contactKind === 'actor') {
+            const actor = await this._resolveActorByUuid(contactActorUuid);
+            if (!actor) {
+              ui.notifications?.warn?.('That linked Actor could not be found.');
+              return;
+            }
+            if (!actor.sheet?.render) {
+              ui.notifications?.warn?.(`${actor.name} does not have an openable sheet.`);
+              return;
+            }
+            actor.sheet.render(true);
+            return;
+          }
+          return;
+        }
+
+        if (action === 'open-job') {
+          if (target.dataset.missing === 'true') return;
+          const jobId = target.dataset.jobId || '';
+          if (!jobId) return;
+          await this.host?.navigateToSurface?.('jobs', { hostPatch: { selectedJobThreadId: jobId } });
+          return;
+        }
+
+        if (action === 'open-intel') {
+          if (target.dataset.missing === 'true') return;
+          const intelId = target.dataset.intelId || '';
+          if (!intelId) return;
+          await this.host?.navigateToSurface?.('intel', { statePatch: { selectedRecordId: intelId } });
+          return;
+        }
+
         if (action === 'lead-select-location') {
           const leadLocationId = target.dataset.locationId || '';
           if (leadLocationId) this.host?.patchSurfaceState?.('locations', { selectedLocationId: leadLocationId }, { render: false });
@@ -783,6 +848,28 @@ export class GMLocationsSurfaceController {
     if (!name) return '';
     const match = LocationRegistryService.getLibrarySeeds().find(seed => String(seed.name || '').trim().toLowerCase() === name || String(seed.id || '').trim().toLowerCase() === name);
     return match?.id || '';
+  }
+
+  /**
+   * Resolve a world or compendium Actor from a stable Actor UUID/id — the
+   * same "id, never a name-text lookup" resolution the Faction dossier
+   * controller already uses for its own contact-actor links (see
+   * resolveActorForContact() in GMFactionRelationshipSurfaceController.js).
+   */
+  async _resolveActorByUuid(uuid = '') {
+    const ref = String(uuid || '').trim();
+    if (!ref) return null;
+    const directId = ref.replace(/^Actor\./, '');
+    const byId = game.actors?.get?.(directId);
+    if (byId) return byId;
+    if (typeof fromUuid === 'function') {
+      try {
+        const doc = await fromUuid(ref);
+        if (doc?.documentName === 'Actor' || doc?.constructor?.documentName === 'Actor') return doc;
+        if (doc?.actor) return doc.actor;
+      } catch (_err) { /* unresolvable uuid — treated as missing below */ }
+    }
+    return null;
   }
 
   _assertGM(action = 'use Locations controls') {

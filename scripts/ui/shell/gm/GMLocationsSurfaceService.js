@@ -428,6 +428,11 @@ function contactRelationshipRows(location, factions = []) {
     name: contact.name,
     roleLabel: [contact.role, contact.factionName].filter(Boolean).join(' · '),
     actorUuid: contact.actorUuid || '',
+    // Carried through so a GM can navigate this contact row to its owning
+    // Faction dossier (Phase 2 cross-surface navigation) without a second
+    // lookup — the Faction registry stays the sole authority for this id,
+    // this only threads the id already resolved by contactRowsForFaction().
+    factionId: contact.factionId || '',
     missing: false,
     canUnlink: false
   }));
