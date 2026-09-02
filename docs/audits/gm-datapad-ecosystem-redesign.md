@@ -3341,7 +3341,7 @@ Intel → Bulletin delivery: visible content is unchanged from before
 this pass, player receives it without reopening Home; (7) ordinary
 Messenger send/action-notice: no new duplicate repaint/toast introduced.
 
-## 64. Phase 8 gate (supersedes §55)
+## 64. Phase 8 gate (superseded by §71 — see below)
 
 **PHASE 8A COMPLETE — READY FOR PHASE 8B.** All 5 findings (D1-D5)
 fixed with executed, git-stash fail-before-proven tests, plus a static
@@ -3353,3 +3353,185 @@ Live Foundry validation is the one remaining limitation, honestly
 documented, same as every prior phase. Phase 8B (Intel→Bulletin
 private-data/provenance audit — the full-Intel-metadata copy flagged in
 §57/§47) is recommended next. Not started here, per instruction.
+
+# PHASE 8A INDEPENDENT-REVIEW CORRECTION PASS
+
+Starting head: `5ce983c9e3cd2f75e949f842915efc8845af7827` (verified:
+clean tree, correct branch, matching HEAD, exact-head CI green, PR #963
+open/draft/unmerged). This pass does not reopen the core Phase 8A fixes
+(D1-D5) — an independent review confirmed those are real — and touches
+nothing outside the three findings below. Explicitly out of scope, per
+the review's own list of settled items: Contact→Workspace gating,
+`workspace-actor`/`actor` separation, the Faction Contact navigation
+test, the single-recovery-card-computation fix.
+
+## 65. Finding C1 (blocker) — single-active-GM assumption was undocumented and unenforced
+
+`HolonetSocketService`'s `publish-record` request handler gated
+GM-authoritative processing only on `game.user?.isGM`. Foundry's socket
+relay is not addressed to a single connection — every currently active
+GM client receives the identical broadcast request. With N
+simultaneously active GM clients, all N independently persisted the
+same player-originated request and each broadcast its own distinct
+`publicationEventId`, violating "one player request → one GM-authoritative
+persistence → one publication occurrence → one sync." The existing M6
+test could not catch this: its fake socket stores a single handler and
+therefore cannot model two independently-registered GM clients.
+
+**Fix**: extracted `HolonewsAutoPublisher.isPrimaryActiveGm()`'s
+pre-existing deterministic tie-break (among active GM users, the
+lexicographically lowest user id is authoritative) into a new shared
+seam, `HolonetGmAuthority.isPrimaryActiveGm()`
+(`scripts/holonet/subsystems/holonet-gm-authority.js`).
+`HolonewsAutoPublisher.isPrimaryActiveGm()` now delegates to it
+one-for-one — behavior unchanged for its existing callers
+(`checkAndPublish()`, `publishNow()`, `GMBulletinSurfaceService.js:323`).
+`HolonetSocketService`'s socket handler gains one additional gate,
+immediately after the existing `isGM` check:
+`if (!HolonetGmAuthority.isPrimaryActiveGm()) return;` — every
+non-primary active GM client now silently stands down instead of
+independently processing the request. Generic Holonet socket transport
+is not coupled to the HoloNews subsystem; both now depend on the same
+small shared authority module instead of one depending on the other's
+internals. Documented, pre-existing, NOT-newly-introduced limitation:
+the rule disambiguates between different GM *users*, not between
+multiple browser tabs/connections of the *same* GM user — Foundry's
+`game.users` list is per-user, not per-connection, and this codebase
+has no per-connection identity anywhere; `HolonewsAutoPublisher` had
+this exact limitation before this pass, and the extraction neither
+solves nor widens it. Zero-active-GM-info compatibility: if
+`game.users` carries no active-GM information at all, any GM caller is
+treated as authoritative rather than every GM silently refusing to act.
+
+**Test** (`tests/gm-holonet-phase8a-exactly-once-publication.test.mjs`,
+new block "C1"): delivers the identical `publish-record` socket request
+twice against a shim simulating two distinct active GM identities
+(`gm-a` then `gm-b`) with a stubbed `HolonetStorage.saveRecord()`.
+Asserts exactly one persistence call and exactly one broadcast sync,
+never two. Git-stash fail-before proof, isolated to only the fix's own
+file (`holonet-socket-service.js` stashed, `holonet-engine.js`'s C2/C3
+changes left in place so the suite reaches this exact assertion):
+pre-fix, `saveCallCount === 2` and the assertion fails as expected
+(two independent GM identities each persisted and each broadcast);
+post-fix (`git stash pop`), `saveCallCount === 1` and
+`socket.emitted.length === 1`.
+
+## 66. Finding C2 — canonical publication envelope
+
+Local and remote publication payloads were built as two separately
+constructed object literals inside `_emitPublished()` and
+`emitPreparedRecordPublished()`, sharing field values but not a single
+source object. §57/§58's "normalized payload"/"merged, additive
+superset payload" language overstated this as one canonical envelope.
+Additionally, `syncExtra` was spread into the outgoing payload without
+protection — a caller passing a `syncExtra` key that collided with an
+authority-owned field name could silently overwrite it.
+
+**Fix**: `HolonetEngine.emitPreparedRecordPublished()` now builds ONE
+object, `canonicalEnvelope`, exactly once per publication:
+```
+canonicalEnvelope = {
+  ...syncExtra,
+  type: 'record-published',
+  publicationEventId,
+  recordId: record.id,
+  recipientIds,
+  requestId,
+  requesterId
+}
+```
+Reserved/authority-owned fields are spread **after** `syncExtra`, so
+they always win — a caller cannot override `type`, `publicationEventId`,
+`recordId`, `recipientIds`, `requestId`, or `requesterId` no matter what
+`syncExtra` contains; any other key `syncExtra` supplies passes through
+untouched as legitimate additive data. Both dispatch paths now derive
+from this same object: `_emitPublished(record, canonicalEnvelope)`
+(local — fires `HolonetBus.emitLocal('recordPublished', {...canonicalEnvelope,
+recipients: record.recipients})`, where `recipients` — full recipient
+objects, not just ids — is a documented, additive, **local-only**
+compatibility field for existing local consumers) and
+`HolonetBus.sync(canonicalEnvelope)` (remote — broadcast as-is, no
+augmentation). Local and remote are therefore **not byte-identical**
+(local carries the one extra `recipients` field); both are now built
+from a single canonical source instead of two independently
+constructed objects, which is the corrected, honest claim in place of
+§57/§58's overstatement.
+
+**Test** (new block "C2"): calls `emitPreparedRecordPublished()` with a
+`syncExtra` object that attempts to overwrite every one of the six
+reserved fields (`type`, `publicationEventId`, `recordId`,
+`recipientIds`, `requestId`, `requesterId`) plus one legitimate
+additive field (`source`). Asserts the real values survive on the
+remote sync payload, the legitimate additive field passes through
+unchanged, and the local hook payload's `recordId`/`publicationEventId`/
+`type` match the same canonical values (proving both paths derive from
+one envelope) while still carrying the additive local-only `recipients`
+array.
+
+## 67. Finding C3 (secondary) — dedupe cache was bounded but not time-limited
+
+The publication-event dedupe cache (`HolonetSocketService`) was a
+200-entry FIFO-evicted `Set<publicationEventId>` — bounded, but not
+actually "short-lived" as described, since an entry could persist
+indefinitely under low publication volume.
+
+**Fix**: replaced the `Set` with a `Map<publicationEventId, seenAtMs>`
+and added `SEEN_PUBLICATION_EVENT_TTL_MS = 5 * 60 * 1000` (5 minutes)
+alongside the existing 200-entry cap. `#pruneExpiredPublicationEvents()`
+relies on Map's insertion-ordered iteration — since an id is only ever
+inserted once and never re-marked, the oldest entry is always first, so
+pruning can `break` at the first non-expired entry. Both cap eviction
+and TTL pruning happen in-memory, per-process, keyed only by
+`publicationEventId` — no world setting, no persistent ledger, no new
+subsystem.
+
+**Test** (new block "C3"): publishes a record and confirms its
+duplicate redelivery within the TTL window is still suppressed;
+publishes a second, distinct record and confirms it dispatches
+normally (proving one id's presence never affects another); then
+monkey-patches `Date.now()` forward six minutes (past the five-minute
+TTL) and redelivers the FIRST sync, confirming it is now treated as
+genuinely new — proving the cache actually expires rather than being
+merely capacity-bounded.
+
+## 68. `docs/audits` correction
+
+§57's D4 bullet and §58's envelope description are corrected by this
+section — see §66. The claim of one "merged, additive superset
+payload" is replaced with: one canonical envelope (authority-owned
+fields, always reserved-field-protected against `syncExtra`); a
+documented local-only compatibility augmentation (`recipients`, full
+objects, local dispatch only); and the remote socket envelope, which is
+the canonical envelope broadcast with no augmentation at all. §64's
+gate is superseded by §71 below.
+
+## 69. Regression / totals
+
+`git stash`-isolated fail-before/pass-after proof executed per finding
+(C1 above; C2/C3 proven via their own dedicated assertions against the
+corrected code, following the same convention used for every additive
+contract test in this project). Full `gm-*.test.mjs` sweep: all green,
+zero regressions. Full rolling suite and syntax check re-run; see the
+PR body / final report for exact totals (same pre-existing,
+GM-Datapad-unrelated failures as every prior phase — none newly
+broken).
+
+## 70. Live Foundry checklist (not run — no live client available)
+
+Same limitation as every prior phase. Additive to §63's checklist: (8)
+with two GMs simultaneously connected, a player-originated publish
+request (e.g. a purchased/triggered Bulletin) is persisted and
+broadcast exactly once, never twice; (9) the non-primary GM's client
+shows no error and no duplicate record.
+
+## 71. Phase 8 gate (supersedes §64)
+
+**PHASE 8A CORRECTION PASS COMPLETE — CLOSURE WITHHELD BY THIS PASS IS
+NOW LIFTED.** All three findings (C1 blocker, C2, C3) fixed with
+executed regression tests; C1 additionally proven via an isolated
+git-stash fail-before/pass-after cycle modeling two distinct active GM
+identities. No new authority/event bus/persistent ledger was
+introduced beyond the one small reusable seam (`HolonetGmAuthority`)
+explicitly requested to avoid duplicating an existing pattern. Per
+explicit instruction, this pass stops here — Phase 8B (Intel→Bulletin
+private-data/provenance audit) is not started.
