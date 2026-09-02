@@ -602,20 +602,34 @@ export class GMCampaignContextService {
       };
     });
 
-    // Faction Contact associations — a separate concept, explicit fields.
+    // Faction Contact associations — a separate concept from Faction
+    // standing, with additive explicit fields (factionId/contactId/etc.)
+    // existing consumers (Workspace's Organization Role navigation) rely
+    // on. FINAL CONTRACT CLOSURE item 2: still built through the common
+    // row() helper so it also satisfies the service's own documented
+    // {kind,id,label,status,resolved,resolutionKind} contract — `id` is
+    // the Contact's own canonical id (mirrors `contactId`, kept for
+    // back-compat with the one existing consumer), so generic Phase 8+
+    // relationship code that only knows `row.kind`/`row.id` still
+    // addresses the right record, rather than this row being a silent
+    // exception to the contract.
     const factionContacts = (FactionRegistryService.getRegistry?.() ?? [])
       .flatMap(faction => asArray(faction.contacts).map(contact => ({ faction, contact })))
       .filter(({ contact }) => text(contact.actorUuid) === actorUuid || text(contact.actorId) === actor.id)
       .map(({ faction, contact }) => ({
-        kind: 'faction-contact',
+        ...row({
+          kind: 'faction-contact',
+          id: contact.id,
+          label: `${contact.name} (${faction.name})`,
+          status: '',
+          resolved: true,
+          resolutionKind: 'canonical-id'
+        }),
         factionId: faction.id,
         factionName: faction.name,
         contactId: contact.id,
         contactName: contact.name,
-        actorUuid: contact.actorUuid || '',
-        label: `${contact.name} (${faction.name})`,
-        resolved: true,
-        resolutionKind: 'canonical-id'
+        actorUuid: contact.actorUuid || ''
       }));
 
     // Locations (Phase 7 addendum C): two genuinely different meanings of
@@ -867,8 +881,21 @@ export class GMCampaignContextService {
       // isolates Home from an unrelated Recovery-console failure (a bad
       // status-effect/poison option build must not prevent Home from
       // reporting that a party member is wounded).
+      //
+      // FINAL CONTRACT CLOSURE item 1: `partyActors.length === 0` alone
+      // conflates two different states — "no one has ever configured a
+      // party roster" versus "the GM deliberately configured an EMPTY
+      // party" (e.g. every player-linked Actor explicitly excluded via
+      // gmPartyMember:false, which GMPartyRosterService fully supports).
+      // Falling back to the whole managed-Actor roster in the second
+      // case would flood Home with unrelated NPC/Droid/Vehicle recovery
+      // attention the GM specifically chose not to include. The wider
+      // managed-roster fallback is now reserved for the case where the
+      // roster convention was never touched at all.
       const partyRecoveryActors = GMPartyRosterService.getPartyActors({ ownedOnly: false });
-      const recoveryCandidateActors = partyRecoveryActors.length ? partyRecoveryActors : GMCombatRecoveryService.getManagedActors();
+      const recoveryCandidateActors = partyRecoveryActors.length
+        ? partyRecoveryActors
+        : (GMPartyRosterService.hasExplicitRosterConfiguration() ? [] : GMCombatRecoveryService.getManagedActors());
       const recoveryCandidateCards = recoveryCandidateActors.map(actor => GMCombatRecoveryService.buildActorCard(actor));
       for (const card of recoveryCandidateCards.filter(candidate => candidate.needsAttention)) {
         // Phase 7 addendum H: the recovery workflow is the one Home
