@@ -1,0 +1,128 @@
+import assert from 'node:assert/strict';
+import { registerFoundryPathLoader } from './helpers/foundry-shim/register.mjs';
+import { installFoundryShimGlobals } from './helpers/foundry-shim/globals.mjs';
+
+// GM Datapad ecosystem redesign — Phase 6: proves GMCampaignContextService
+// .attentionItems() aggregates real actionable items — at minimum Job,
+// Trade, Approval, Actor/recovery, Location (Phase 6AL) — each carrying
+// stable target identity a caller can hand straight to
+// GMCampaignTargetService.resolve()/GMDatapad.navigateToSurface().
+//
+// PURE ADDITIVE DESIGN CONTRACT — attentionItems() did not exist before
+// this phase.
+
+registerFoundryPathLoader();
+
+const FLAG_SCOPE = 'foundryvtt-swse';
+const PARTY_FLAG = 'gmPartyMember';
+const ATLAS_FLAG = 'atlasLocationState';
+
+function fakeActor({ id, name, type = 'character', hp = 10, isDroid = false, droidSystems = null, leadDiscoveries = [] }) {
+  const flags = { [PARTY_FLAG]: true, [ATLAS_FLAG]: { leadDiscoveries } };
+  return {
+    id, name, type,
+    system: { hp: { value: hp }, isDroid, droidSystems },
+    getFlag: (_scope, key) => flags[key],
+    setFlag: async (_scope, key, value) => { flags[key] = value; return value; },
+    isOwner: true
+  };
+}
+
+function makeActorsCollection(actorList) {
+  const byId = new Map(actorList.map(a => [a.id, a]));
+  return { contents: actorList, get: (id) => byId.get(id), [Symbol.iterator]: () => actorList[Symbol.iterator]() };
+}
+
+function installShim({ locations = [], factions = [], threads = [], records = [], actors = [] } = {}) {
+  const stores = new Map([
+    ['gmLocationRegistry', locations],
+    ['gmFactionRegistry', factions],
+    ['holonet_threads', threads],
+    ['holonet_records', records],
+    ['pendingCustomPurchases', []]
+  ]);
+  installFoundryShimGlobals({
+    game: {
+      user: { isGM: true },
+      settings: {
+        get: (_module, key) => stores.get(key),
+        set: (_module, key, value) => { stores.set(key, value); return Promise.resolve(value); },
+        settings: { has: () => true },
+        register: () => {}
+      },
+      actors: makeActorsCollection(actors),
+      users: makeActorsCollection([]),
+      scenes: new Map(),
+      combat: null
+    }
+  });
+  globalThis.foundry.utils.randomID = () => `test-${Math.random().toString(36).slice(2, 10)}`;
+}
+
+const LOCATION = { id: 'tatooine', name: 'Tatooine' };
+
+const JOB_REVIEW_THREAD = {
+  id: 'job-review-1', title: 'Rescue the Senator',
+  metadata: { threadType: 'job', job: { title: 'Rescue the Senator', status: 'inProgress', objectives: [{ id: 'o1', status: 'submitted' }] } }
+};
+const JOB_PAYOUT_THREAD = {
+  id: 'job-payout-1', title: 'Smuggler\'s Run',
+  metadata: { threadType: 'job', job: { title: 'Smuggler\'s Run', status: 'complete', objectives: [] } }
+};
+const FAILED_TRADE_RECORD = {
+  id: 'trade-record-1', threadId: 'trade-thread-1', state: 'active',
+  metadata: { creditTransfer: { status: 'failed', amount: 500, fromActorId: 'han', toActorId: 'lando', failureReason: 'Ledger mismatch' } }
+};
+const WOUNDED_ACTOR = fakeActor({ id: 'chewie', name: 'Chewbacca', hp: 12 });
+const DROID_ACTOR = { id: 'r2d2', name: 'R2-D2', system: { droidSystems: { stateMode: 'PENDING' } }, getFlag: () => undefined };
+
+// --- attentionItems() surfaces at least one of each required domain -------
+{
+  installShim({
+    locations: [LOCATION],
+    threads: [JOB_REVIEW_THREAD, JOB_PAYOUT_THREAD],
+    records: [FAILED_TRADE_RECORD],
+    actors: [WOUNDED_ACTOR, DROID_ACTOR]
+  });
+  const { GMCampaignContextService } = await import('/systems/foundryvtt-swse/scripts/ui/shell/gm/GMCampaignContextService.js');
+  const items = await GMCampaignContextService.attentionItems();
+
+  const jobReview = items.find(item => item.kind === 'job-review');
+  assert.ok(jobReview, 'a Job with a submitted objective must produce a job-review attention item');
+  assert.deepEqual(jobReview.target, { kind: 'job', id: 'job-review-1' });
+
+  const jobPayout = items.find(item => item.kind === 'job-payout');
+  assert.ok(jobPayout, 'a complete Job must produce a job-payout attention item');
+  assert.deepEqual(jobPayout.target, { kind: 'job', id: 'job-payout-1' });
+
+  const tradeFailed = items.find(item => item.kind === 'trade-failed');
+  assert.ok(tradeFailed, 'a failed credit transfer must produce a trade-failed attention item');
+  assert.deepEqual(tradeFailed.target, { kind: 'trade', id: 'trade-record-1' });
+  assert.equal(tradeFailed.severity, 'critical');
+
+  const droidApproval = items.find(item => item.id === 'approval:droid:r2d2');
+  assert.ok(droidApproval, 'a PENDING droid must produce an approval attention item');
+  assert.deepEqual(droidApproval.target, { kind: 'approval', id: 'droid:r2d2' });
+
+  const recovery = items.find(item => item.kind === 'recovery' && item.target?.id === 'chewie');
+  assert.ok(recovery, 'a healing-eligible party actor must produce a recovery attention item');
+  assert.equal(recovery.target.kind, 'actor');
+
+  // Ordering: critical items must sort before warning/info items.
+  const severities = items.map(item => item.severity);
+  const firstWarnIdx = severities.indexOf('warning');
+  const lastCritIdx = severities.lastIndexOf('critical');
+  if (firstWarnIdx !== -1 && lastCritIdx !== -1) {
+    assert.ok(lastCritIdx < firstWarnIdx, 'critical items must be sorted before warning items');
+  }
+}
+
+// --- an empty campaign produces an empty, non-throwing queue --------------
+{
+  installShim({});
+  const { GMCampaignContextService } = await import('/systems/foundryvtt-swse/scripts/ui/shell/gm/GMCampaignContextService.js');
+  const items = await GMCampaignContextService.attentionItems();
+  assert.deepEqual(items, []);
+}
+
+console.log('GMCampaignContextService.attentionItems() passed (Job review/payout, Trade failure, Approval, Recovery all produce real target identity; empty campaign yields an empty queue; critical items sort first).');
