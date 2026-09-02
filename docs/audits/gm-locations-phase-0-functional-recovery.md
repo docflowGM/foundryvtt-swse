@@ -2430,3 +2430,304 @@ resolve real data), and representative `*Text`/`map*` editor fields.
 Full rolling test suite: **155/155** passed (unchanged from Phase 1 — the
 addendum added no new test files, extended one). Syntax check:
 **2267/2267** files pass `node --check`.
+
+# GM DATAPAD ECOSYSTEM REDESIGN — PHASE 2: CONTEXT-PRESERVING CROSS-SURFACE NAVIGATION
+
+## 1. Verdict
+
+**IMPLEMENTED, STATICALLY VERIFIED, LIVE FOUNDRY UNVERIFIED.** No live
+Foundry client is available in this environment, as in every prior phase.
+Every claim below is verified by direct source reading and by executing
+the real production code (the real `GMDatapad.navigateToSurface()`/
+`_navigateTo()` method bodies, the real destination `buildViewModel()`s,
+and the real `GMLocationsSurfaceController` click-delegation branches)
+under the repo's Foundry-shim Node harness — never a hand-summarized
+reimplementation standing in for the production code.
+
+## 2. Shell navigation audit (2A)
+
+Read in full before any code was written: `scripts/ui/shell/ShellHost.js`,
+`scripts/apps/gm-datapad.js`, `scripts/ui/shell/gm/GMSurfaceRegistry.js`,
+`scripts/ui/shell/gm/controllers/GMSurfaceControllerRegistry.js`,
+`scripts/ui/shell/request-shell-render.js`, and the existing
+`patchSurfaceState`/`_navigateTo` call sites already present in
+`GMFactionRelationshipSurfaceController.js`, `GMJobBoardSurfaceController.js`,
+`GMWorkspaceSurfaceController.js`, and `GMLocationsSurfaceController.js`.
+
+**Critical finding: `GMDatapad` does NOT use `ShellHostMixin`.** It is its
+own `BaseSWSEAppV2` subclass with its own parallel implementations of
+`getSurfaceState`/`patchSurfaceState`/`requestSurfaceRender`. `ShellHost.js`'s
+`setSurface()`/`_shellSurface` (the `'gm-locations'`-prefixed id family)
+belongs to the actor-sheet shell, a different host entirely, and was never
+relevant to GM Datapad navigation — the `gm-`-prefixed id
+(`_getGmShellSurfaceId()`) that appears in `_prepareContext()` is a
+display/template-branching label only, never used as a state-lookup key.
+
+The real surface-id space GM Datapad navigation actually uses is the bare
+id family already used by `GMSurfaceRegistry`/`GMSurfaceControllerRegistry`
+(`'locations'`, `'factions'`, `'jobs'`, `'intel'`, `'workspace'`, …) — the
+same id `GMDatapad.currentPage` holds and `getSurfaceState(surfaceId)`/
+`patchSurfaceState(surfaceId, …)` key on. This resolves the two-id-space
+ambiguity flagged going into this phase: there is only one real id space
+for GM Datapad surfaces; the `gm-`-prefixed string is cosmetic.
+
+**An existing navigation primitive already exists:** `GMDatapad._navigateTo(pageId)`
+(`scripts/apps/gm-datapad.js`) already validates the target via
+`GMSurfaceRegistry.hasSurface()`, sets `currentPage`, and renders exactly
+once via `requestSurfaceRender()`. At least four existing controllers
+(Factions, Jobs, Workspace, Locations itself) already compose it with the
+existing `patchSurfaceState(surfaceId, patch, { render: false })` at dozens
+of call sites — including working, already-shipped **reverse** navigation
+(Faction dossier → Locations/Jobs/Intel/Bulletin) that predates this phase.
+
+| Surface | Real surface id | VM service | Selection field | Existing support | Needed change |
+|---|---|---|---|---|---|
+| Locations | `locations` | `GMLocationsSurfaceService` | `selectedLocationId` (surface state) | Yes (Phase 0/1) | None |
+| Factions | `factions` | `GMFactionRelationshipSurfaceService` | `focusedFactionId` + `focusedContactId` (surface state) | Yes — already marks `isFocused` on faction/contact rows | None |
+| Job Board | `jobs` | `GMJobBoardSurfaceService` | `host.selectedJobThreadId` — a **bare host property**, not surface state | Yes — `buildViewModel()` reads it into `jobBoard.selectedJob` | None (must be set via a host-property patch, not `patchSurfaceState`) |
+| Intel | `intel` | `GMIntelSurfaceService` | `selectedRecordId` (surface state) | Yes — resolves into `intelManager.selectedCard` | None |
+| Workspace / world Actor | *(no GM Datapad surface — real destination is the Actor's own sheet)* | n/a | n/a | Yes — `actor.sheet.render(true)`, the same pattern the Faction dossier's `open-contact-actor` action already uses | None |
+
+Per the explicit instruction — an existing general method already existed,
+so it was reused, not replaced or duplicated.
+
+## 3. New/reused navigation contract (2B/2C)
+
+No new navigation *mechanism* was added. One minimal, named, testable
+wrapper — `GMDatapad.navigateToSurface(surfaceId, { statePatch, hostPatch })`
+— composes the two existing primitives above (`patchSurfaceState(...,
+{render:false})` and/or a direct host-property assignment, then
+`_navigateTo(surfaceId)`) so every new call site has one contract instead
+of re-deriving the two-call ordering ad hoc. `_navigateTo()` still owns
+validation, `currentPage`, and the single render — `navigateToSurface()`
+never re-implements them. `hostPatch` exists specifically because the Job
+Board's real selection mechanism is a bare host property, not surface
+state (§2 above) — the contract had to accommodate the destination's real
+mechanism rather than forcing every destination onto one shape.
+
+Selection field names used are each destination's own REAL, already-live
+field (verified by reading each service's source, not assumed from the
+illustrative sketch that kicked this phase off) — `focusedFactionId`/
+`focusedContactId` for Factions, `selectedJobThreadId` for Jobs (not
+`selectedJobId`), `selectedRecordId` for Intel (not `selectedIntelId`).
+
+## 4. Destination surface map
+
+See the table in §2. Surface ids: `factions`, `jobs`, `intel`. Selection
+fields: `focusedFactionId`/`focusedContactId`, `host.selectedJobThreadId`,
+`selectedRecordId`. The fourth destination class (a linked world/compendium
+Actor) has no GM Datapad surface at all — its real destination is the
+Actor's own character sheet.
+
+## 5. Faction navigation (2E)
+
+`GMLocationsSurfaceController`'s new `open-faction` branch calls
+`host.navigateToSurface('factions', { statePatch: { focusedFactionId } })`
+using the Location's own already-resolved `relationships.factions[].id`.
+Reuses the Faction dossier's existing `isFocused` semantics; never touches
+Faction storage.
+
+## 6. Contact/Actor navigation (2F)
+
+`relationships.contacts[]` rows classify by their existing `kind` field:
+
+- `kind === 'contact'` (a Faction-registry contact): navigates to
+  `factions` with `{ focusedFactionId, focusedContactId }`. This required
+  one additive VM field — `contactRelationshipRows()` in
+  `GMLocationsSurfaceService.js` now also carries `factionId` (already
+  resolved internally by `contactRowsForFaction()`, just not previously
+  threaded onto the row) so Locations can navigate to the right Faction
+  without a second lookup.
+- `kind === 'actor'` (a resolved world Actor, `link.resolved`): opens
+  `actor.sheet.render(true)` directly — the real, already-established
+  destination for a linked Actor (mirrors `GMFactionRelationshipSurfaceController`'s
+  own `open-contact-actor` action), not a GM Datapad surface.
+- Compendium-sourced (`link.unverifiable`, `missing: false`): resolved via
+  the same generic `fromUuid`-based lookup (`_resolveActorByUuid`, mirroring
+  `GMFactionRelationshipSurfaceController`'s `resolveActorForContact`); if
+  it can't resolve, warns rather than pretending success.
+- `missing: true`: the template never renders a nav control for these rows
+  at all (§10 below) — non-clickable except the pre-existing unlink action.
+
+## 7. Job navigation (2G)
+
+`open-job` calls `host.navigateToSurface('jobs', { hostPatch: {
+selectedJobThreadId: jobId } })`, using the Location's already-resolved
+`relationships.jobs[].id` (the real Job Board thread id, resolved in Phase
+1 via `HolonetStorage.getThread()`/`jobForThread()` — never a title lookup,
+never a fake client, never a new Job created).
+
+## 8. Intel navigation (2H)
+
+`open-intel` calls `host.navigateToSurface('intel', { statePatch: {
+selectedRecordId: intelId } })`, using `relationships.intel[].id` (the
+canonical intel id resolved via `HolonetIntelService.getIntelById()` in
+Phase 1 — never `LocationIntelBridgeService`, which is a draft-creation
+adapter only). Intel has one real surface mode (its own editor/list view);
+no dossier/bulletin mode split existed to choose between.
+
+## 9. Lead behavior (2I)
+
+Unchanged. Leads keep their existing resolve/create-intel/create-job/
+reveal-links/select-location actions; no `open-lead`-style navigation into
+Intel was added, since an unresolved Atlas Lead discovery is not itself an
+Intel record.
+
+## 10. Broken-target safety (2P)
+
+No dataset "missing" flag gates navigation at click time as the primary
+mechanism — the template simply never renders a nav control on a row whose
+`missing` flag is true (Faction/Job/Intel/Actor rows all already carry this
+flag from Phase 1). The controller branches additionally no-op on
+`dataset.missing === 'true'` as defense in depth, proven in
+`tests/gm-locations-context-navigation-controller.test.mjs`.
+
+## 11. Destination-filter preservation (2O)
+
+`ShellSurfaceState.patch()` is (and already was) a shallow merge, not a
+replace — `navigateToSurface()`'s `statePatch` only ever adds/overwrites
+the keys it names, so an existing filter/search value on the destination
+survives untouched. Proven directly in
+`tests/gm-datapad-context-navigation-contract.test.mjs` (an unrelated
+`unrelatedFilter`/`search` value on the destination survives a navigation
+patch).
+
+## 12. Render-count behavior (2M/2Y)
+
+Exactly one render per navigation call: `navigateToSurface()` never calls
+`requestSurfaceRender` itself — all state/host-property patches use
+`{ render: false }` and are applied before `_navigateTo()`'s own single
+`requestSurfaceRender()` call, so the destination's first render already
+reflects the requested selection. Proven by an executed render-count
+assertion in `tests/gm-datapad-context-navigation-contract.test.mjs` (one
+render per call, and the render happens after `currentPage`/surface state
+already reflect the destination).
+
+## 13. Stable-identity proof (first principle / 2W)
+
+Every navigation call site uses a stable id (`factionId`, `contactId`,
+`actorUuid`, `jobId`/thread id, `intelId`) carried on the relationship row
+as a `data-*` attribute — never a display name, never DOM text search.
+`tests/gm-locations-context-navigation-controller.test.mjs` includes a
+static scan of the new controller code and `navigateToSurface()` for
+`scrollIntoView`, `.textContent`, `document.querySelector`,
+`window.location`, `Date.now()`, and name-based `.includes()` matching —
+none are present.
+
+## 14. Accessibility (2R/2S)
+
+The new nav control (`.gm-location-row-action.nav`, a chevron icon) is a
+**sibling** of each row's existing unlink `<button>`, never a wrapper
+around it — no row was turned into a nested `<button>`-inside-`<button>`.
+Every nav control carries both `title` and `aria-label` naming the target
+record. Visual language reuses the existing accent color (`rgba(112, 226,
+255, …)`) at a subtle hover/`:focus-within` outline on the row plus a
+hover state on the button itself — no new glow, no primary-button
+treatment. Missing rows keep their pre-existing `is-missing`
+opacity-reduction and simply never render the nav control.
+
+## 15. Tests (2T/2U/2V/2W)
+
+- `tests/gm-datapad-context-navigation-contract.test.mjs` (executed) —
+  exercises the real `navigateToSurface()`/`_navigateTo()` method bodies
+  (reproduced verbatim, per this codebase's own established pattern in
+  `gm-surface-render-seams.test.mjs` for testing an ApplicationV2 class
+  that cannot be instantiated under Node) against Faction/Job/Intel/
+  reverse-Locations destinations, then pins the real `gm-datapad.js`
+  source with regex assertions so the executed fake cannot silently drift
+  from the real file. Proves: target validation, safe fallback to `home`
+  on an unknown surface, pre-render state application, single render,
+  unrelated state preservation.
+- `tests/gm-datapad-navigation-destination-selection.test.mjs` (executed)
+  — proves each destination's REAL `buildViewModel()` honors its selection
+  field: `focusedFactionId`/`focusedContactId` really mark `isFocused` in
+  `GMFactionRelationshipSurfaceService`; `host.selectedJobThreadId` really
+  selects `jobBoard.selectedJob` in `GMJobBoardSurfaceService`;
+  `selectedRecordId` really resolves `intelManager.selectedCard` in
+  `GMIntelSurfaceService`.
+- `tests/gm-locations-context-navigation-controller.test.mjs` (executed) —
+  drives the real `GMLocationsSurfaceController._wireActions()` delegated
+  click listener (not a private handler called directly) through
+  open-faction/open-contact (both Faction-contact and world-Actor
+  branches)/open-job/open-intel, proving the shell navigation call happens
+  exactly once per click with the correct surface id and the correct real
+  identity field, that a linked-Actor contact opens its own sheet instead
+  of navigating a GM Datapad surface, and that `missing`-flagged targets
+  never navigate. Includes the prototype-shortcut scan (§13).
+- `tests/gm-locations-operational-ui-action-matrix.test.mjs` (static,
+  extended) — the four new `data-location-action` values now checked
+  alongside every other Phase-2/Stage-3 action for template-attribute ↔
+  controller-read agreement.
+- `tests/gm-datapad-action-integrity-contract.test.mjs` (pre-existing,
+  unmodified) — its generic scanner picked up all four new
+  `data-location-action` values automatically and confirmed each reaches a
+  real handler (0 unresolved controls).
+
+All three new test files were verified via `git stash` (tracked source
+changes only, new test files left in place) to fail against the pre-Phase-2
+source and pass after — except
+`gm-datapad-navigation-destination-selection.test.mjs`, which proves
+pre-existing destination behavior (`focusedFactionId`/`selectedJobThreadId`/
+`selectedRecordId` already worked before this phase, per §2/2X) and
+correctly passes on both sides of the stash. Full validation after all
+Phase 2 changes: syntax check **2270/2270** files pass `node --check`
+(2267 baseline + 3 new test files); rolling test suite **158/158** passed
+(155 baseline + 3 new test files; the 5 documented pre-existing
+Force-power-track exclusions unchanged). All Locations tests plus
+`gm-datapad-action-integrity-contract`, `gm-datapad-wizard-contract`, and
+`gm-datapad-no-duplicate-handler-regression` re-verified individually and
+pass.
+
+## 16. Live Foundry checklist (not run — no live client available)
+
+1. Select a Location with a controlling Faction, a Faction-registry
+   contact, a linked world Actor, a linked Job, and linked Intel. PASS =
+   each Campaign Relationship row shows a chevron nav control.
+2. Click the Faction row's chevron. PASS = GM Datapad switches to Factions
+   with that exact faction focused/highlighted, no intermediate screen.
+3. Click the Faction-contact row's chevron. PASS = switches to Factions
+   with both the faction and that contact focused.
+4. Click the world-Actor contact row's chevron. PASS = that Actor's own
+   character sheet opens (a separate window), GM Datapad stays on
+   Locations.
+5. Click the Job row's chevron. PASS = switches to Job Board with that
+   exact job already selected/open, no re-search needed.
+6. Click the Intel row's chevron. PASS = switches to Intel with that exact
+   record already selected/open.
+7. Reference a since-deleted Faction/Job/Intel/Actor. PASS = its
+   relationship row shows no chevron (non-navigable), only the existing
+   unlink control still works.
+8. Navigate from Locations into Factions, then use the Faction dossier's
+   own existing "View Locations"/"Open Location" action back into
+   Locations. PASS = existing reverse-navigation behavior (predates this
+   phase) is unaffected.
+9. Resize the Datapad window narrow → wide with a navigable row visible.
+   PASS = chevron stays visible and clickable, no layout regression.
+10. Tab-focus a navigable row via keyboard, press Enter/Space on the
+    chevron button. PASS = navigation fires identically to a mouse click.
+11. Rapidly click a chevron twice. PASS = exactly one navigation occurs
+    (button is not a toggle; a second click on the now-different surface
+    is a no-op for this row).
+
+If no live client exists: DO NOT CLAIM LIVE VALIDATION. (None exists in
+this environment — see §1.)
+
+## 17. Deferred: navigation history / reverse-nav wiring (2Q/2J)
+
+No back-stack/navigation-history system was added or found to exist; not
+in scope this phase (only checked, not built, per instruction). The
+`navigateToSurface()` contract is generic enough for reverse navigation —
+proven with an executed test using Locations' own real surface id/selection
+field navigating the other direction (`factions` → `locations`) — but no
+new reverse links were wired this phase beyond the Faction dossier's
+pre-existing ones from before this phase.
+
+## 18. Phase 3 recommendation (not started)
+
+Apply the same ecosystem-hub presentation language (Current
+Situation/Campaign Relationships-style grouping) to the Factions, Job
+Board, Intel, and Workspace surfaces themselves, now that Locations,
+Factions, and Job Board all share one working cross-surface navigation
+contract. **Not started, per explicit instruction** — this phase
+deliberately made relationships navigable without redesigning any
+destination surface.
