@@ -14,12 +14,19 @@
  * straight into that real contract. It knows nothing about HOW to
  * navigate, only how to ADDRESS a campaign object once you're navigating.
  *
- * Actor is deliberately absent — every existing surface (Locations'
- * open-contact 'actor' branch, Job Board's issuer-actor branch, Intel's
- * open-actor branch, Workspace's open-actor control) opens the real
- * Foundry Actor sheet directly (`actor.sheet.render(true)`), never a
- * Datapad surface selection. Callers wanting an Actor should resolve and
- * open the sheet themselves, exactly as those controllers already do.
+ * Actor ({kind:'actor'}) is deliberately absent — every existing surface
+ * (Locations' open-contact 'actor' branch, Job Board's issuer-actor
+ * branch, Intel's open-actor branch, Workspace's open-actor control)
+ * opens the real Foundry Actor sheet directly (`actor.sheet.render(true)`),
+ * never a Datapad surface selection. Callers wanting an Actor sheet should
+ * resolve and open it themselves, exactly as those controllers already do.
+ * This behavior is NOT changed by Phase 7.
+ *
+ * `workspaceActor(id)` / {kind:'workspace-actor'} is a genuinely different,
+ * additive destination (Phase 7): it selects an Actor inside the Workspace
+ * surface's campaign-dossier detail (GMCampaignContextService.forActor()),
+ * it does not open the Foundry sheet. The two must never be conflated —
+ * "Open Sheet" and "Open in Workspace" are different GM intentions.
  */
 export class GMCampaignTargetService {
   static location(id) {
@@ -51,6 +58,15 @@ export class GMCampaignTargetService {
   }
 
   /**
+   * Phase 7 — select an Actor inside Workspace's campaign-dossier detail.
+   * Genuinely distinct from an 'actor' target (which remains unsupported
+   * here and always means "open the Foundry sheet" wherever it is used).
+   */
+  static workspaceActor(id) {
+    return { surfaceId: 'workspace', statePatch: { selectedActorId: id } };
+  }
+
+  /**
    * Convert a {kind, id} campaign-target descriptor (the shape
    * GMCampaignContextService.attentionItems() rows carry as `.target`)
    * into the real navigateToSurface() call arguments. Returns null for an
@@ -68,6 +84,7 @@ export class GMCampaignTargetService {
       case 'skill-challenge': return this.skillChallenge(id);
       case 'trade': return this.trade(id);
       case 'approval': return this.approval(id);
+      case 'workspace-actor': return this.workspaceActor(id);
       default: return null;
     }
   }
