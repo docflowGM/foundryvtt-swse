@@ -73,6 +73,7 @@ import { HolonetStateService } from '/systems/foundryvtt-swse/scripts/holonet/su
 import { GameSessionStore } from '/systems/foundryvtt-swse/scripts/games/game-session-store.js';
 import { GMPartyRosterService } from '/systems/foundryvtt-swse/scripts/ui/shell/gm/utils/gm-party-roster-service.js';
 import { GMHealingTrigger } from '/systems/foundryvtt-swse/scripts/holonet/subsystems/gm-healing-trigger.js';
+import { GMCombatRecoveryService } from '/systems/foundryvtt-swse/scripts/holonet/subsystems/gm-combat-recovery-service.js';
 import { SWSELogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
 import {
   jobForThread, jobStatus, statusLabel as jobStatusLabel,
@@ -174,6 +175,30 @@ async function loadIntelIndex() {
   return records
     .map(record => HolonetIntelService.getIntelMetadata(record))
     .filter(Boolean);
+}
+
+/**
+ * CORRECTION 1: truthful, kind-aware wording for a real
+ * GMCombatRecoveryService.buildActorCard() needsAttention:true card.
+ * Droids/Vehicles never receive organic-rest wording ("eligible for
+ * natural healing") — they get repair/condition wording instead, since
+ * GMCombatRecoveryService itself never grants them rest eligibility.
+ */
+function recoveryAttentionDetail(card) {
+  if (card.isDroid || card.isVehicle) {
+    if (card.downed) return `${card.kindLabel} disabled — repair required.`;
+    if (card.conditionPersistent) return `${card.kindLabel} has a persistent condition track impairment — repair required.`;
+    if (card.ctImpaired) return `${card.kindLabel} condition track is impaired — repair/reset required.`;
+    return `${card.kindLabel} requires repair/condition attention.`;
+  }
+  if (card.downed) return 'Down/disabled — requires immediate attention.';
+  if (card.conditionPersistent) return 'Persistent condition track impairment.';
+  if (card.ctImpaired) return 'Condition track impaired.';
+  if (card.wounded) return 'Wounded and eligible for natural healing/recovery.';
+  if (card.secondWindSpent) return 'Second Wind spent.';
+  if (card.activePoisonCount > 0) return 'Active poison requires treatment.';
+  if (card.activeOngoingEffectCount > 0) return 'Active ongoing effect requires attention.';
+  return 'Requires recovery attention.';
 }
 
 function jobRow(thread, job) {
@@ -589,8 +614,14 @@ export class GMCampaignContextService {
     const directLocationIds = new Set();
     const contactLocationIds = new Set();
     const locations = [];
+    // CORRECTION 6 (optional cleanup): the selected Actor is already known,
+    // so compare Location refs against a small precomputed reference set
+    // (id/uuid/'Actor.<id>') instead of resolving every npcActorUuids entry
+    // through game.actors via resolveActorByAnyRef() per Location. No
+    // semantic broadening — still an exact-string match, never a name match.
+    const actorRefs = new Set([actor.id, actorUuid, `Actor.${actor.id}`].filter(Boolean));
     for (const location of (LocationRegistryService.getRegistry?.() ?? [])) {
-      const isDirect = asArray(location.npcActorUuids).some(uuid => resolveActorByAnyRef(uuid)?.id === actor.id);
+      const isDirect = asArray(location.npcActorUuids).some(uuid => actorRefs.has(text(uuid)));
       if (isDirect && !directLocationIds.has(location.id)) {
         directLocationIds.add(location.id);
         locations.push({ ...locationRow(location), role: 'direct-actor' });
@@ -617,12 +648,17 @@ export class GMCampaignContextService {
 
     const limitations = [];
 
-    // Recovery (Phase 7 addendum F): GMHealingTrigger's "eligible" means
-    // "legally allowed to receive the natural-healing trigger" (character
-    // type, not droid/vehicle, HP > 0) — it does NOT mean "injured." A
-    // full-HP character is still "eligible." `injured` is computed
-    // independently, straight from the Actor's own hp values, so a caller
-    // never has to treat eligible as a proxy for "needs healing."
+    // Recovery (Phase 7 addendum F, CORRECTION 1): GMHealingTrigger's
+    // "eligible" means "legally allowed to receive the natural-healing
+    // trigger" (character type, not droid/vehicle, HP > 0) — it does NOT
+    // mean "injured," and it must never be used as a proxy for
+    // "needs attention." `injured` is computed independently, straight
+    // from the Actor's own hp values. `needsAttention` reuses
+    // GMCombatRecoveryService.buildActorCard(actor)'s own real recovery
+    // legality (wounded/downed/CT impairment/persistent CT/spent Second
+    // Wind/poisons/ongoing effects) rather than re-deriving that boolean
+    // expression a second time — a full-HP, unimpaired PC is "eligible"
+    // but must never report needsAttention:true.
     let recovery = null;
     try {
       const summary = await GMHealingTrigger.getHealingSummary();
@@ -632,7 +668,8 @@ export class GMCampaignContextService {
       const hpValue = Number(hp.value ?? hp.current ?? 0) || 0;
       const hpMax = Number(hp.max ?? hp.maximum ?? 0) || 0;
       const injured = hpMax > 0 && hpValue < hpMax;
-      recovery = { eligible, ineligible, injured, needsAttention: eligible };
+      const recoveryCard = GMCombatRecoveryService.buildActorCard(actor);
+      recovery = { eligible, ineligible, injured, needsAttention: recoveryCard.needsAttention };
     } catch (err) {
       SWSELogger.warn?.('[GMCampaignContextService] Healing summary unavailable for forActor():', err);
       limitations.push('Healing/recovery status could not be determined for this actor.');
@@ -745,9 +782,16 @@ export class GMCampaignContextService {
     }
 
     try {
-      const summary = await GMHealingTrigger.getHealingSummary();
-      for (const entry of asArray(summary?.eligibleActors)) {
-        const actor = game.actors?.get?.(entry.id);
+      // CORRECTION 1: GMHealingTrigger.eligibleActors ("legally allowed to
+      // receive the natural-healing trigger") is NOT the same thing as
+      // "needs GM attention" — a full-HP, unimpaired PC is eligible but
+      // must never appear here. Reuse GMCombatRecoveryService's own real
+      // recovery authority (buildViewModel()'s needsAttention card list,
+      // the exact same wounded/downed/CT-impaired/persistent-CT/spent-
+      // Second-Wind/poison/ongoing-effect legality Workspace's Recovery
+      // card uses) instead of re-deriving that boolean expression here.
+      const recoveryVm = await GMCombatRecoveryService.buildViewModel();
+      for (const card of asArray(recoveryVm?.combatRecovery?.needsAttention)) {
         // Phase 7 addendum H: the recovery workflow is the one Home
         // attention item deliberately migrated from the generic
         // {kind:'actor'} (open-the-sheet) target to {kind:'workspace-actor'}
@@ -755,7 +799,16 @@ export class GMCampaignContextService {
         // rather than opening the bare Foundry sheet. Every other Actor
         // link in Locations/Factions/Jobs/Intel keeps {kind:'actor'}
         // sheet-opening semantics; this migration is scoped to recovery only.
-        add({ id: `recovery:${entry.id}`, kind: 'recovery', severity: 'warning', source: 'Combat & Recovery', title: entry.name, detail: 'Eligible for natural healing/recovery.', target: { kind: 'workspace-actor', id: entry.id, uuid: actor?.uuid || '' }, actionLabel: 'Open in Workspace' });
+        add({
+          id: `recovery:${card.id}`,
+          kind: 'recovery',
+          severity: card.actionTone === 'critical' ? 'critical' : (card.actionTone === 'warning' ? 'warning' : 'info'),
+          source: 'Combat & Recovery',
+          title: card.name,
+          detail: recoveryAttentionDetail(card),
+          target: { kind: 'workspace-actor', id: card.id, uuid: card.uuid || '' },
+          actionLabel: 'Open in Workspace'
+        });
       }
     } catch (err) {
       SWSELogger.warn?.('[GMCampaignContextService] Healing attention items unavailable:', err);

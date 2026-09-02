@@ -29,7 +29,11 @@ function actorCard(actor, extra = {}) {
   const hp = actor.system?.hp ?? actor.system?.attributes?.hp ?? {};
   const hpValue = Number(hp.value ?? hp.current ?? 0) || 0;
   const hpMax = Number(hp.max ?? hp.maximum ?? 0) || 0;
-  const conditionTrack = Number(actor.system?.conditionTrack?.value ?? actor.system?.condition?.track ?? 0) || 0;
+  // CORRECTION 2: the canonical Actor schema stores Condition Track at
+  // system.conditionTrack.current (the exact field
+  // GMCombatRecoveryService.buildActorCard() reads) — .value/.condition.track
+  // are legacy-compatibility fallbacks only, never the primary source.
+  const conditionTrack = Number(actor.system?.conditionTrack?.current ?? actor.system?.conditionTrack?.value ?? actor.system?.condition?.track ?? 0) || 0;
   const xpTotal = Number(actor.system?.xp?.total ?? actor.system?.xp?.value ?? actor.system?.experience ?? 0) || 0;
   const credits = Number(actor.system?.credits ?? actor.system?.wealth?.credits ?? 0) || 0;
   const level = Number(actor.system?.level ?? actor.system?.details?.level ?? actor.system?.progression?.level ?? 0) || 0;
