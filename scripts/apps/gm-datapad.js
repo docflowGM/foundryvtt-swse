@@ -2159,6 +2159,39 @@ export class GMDatapad extends BaseSWSEAppV2 {
   }
 
   /**
+   * Context-preserving cross-surface navigation (Ecosystem Redesign Phase 2).
+   *
+   * This does not replace _navigateTo() below — it composes the two
+   * primitives every surface controller already uses ad hoc at dozens of
+   * call sites (patchSurfaceState(surfaceId, patch, {render:false}) then
+   * _navigateTo(surfaceId)) into one named, testable entry point, so new
+   * relationship-navigation call sites don't have to re-derive that
+   * two-call ordering. _navigateTo() still owns surface validation,
+   * setting currentPage, and the single coalesced render.
+   *
+   * hostPatch exists because not every surface keys its "selected record"
+   * off surface state — the Job Board resolves its selection from a bare
+   * host.selectedJobThreadId property (see GMJobBoardSurfaceService
+   * buildViewModel), not getSurfaceState('jobs'). Both patches are applied
+   * BEFORE _navigateTo()'s render, so the destination's first render
+   * already reflects the requested selection.
+   *
+   * @param {string} surfaceId - Real destination surface id (e.g. 'factions', 'jobs', 'intel', 'locations').
+   * @param {object} [options]
+   * @param {object} [options.statePatch] - Merged into that surface's getSurfaceState() via patchSurfaceState.
+   * @param {object} [options.hostPatch] - Assigned directly onto this host (e.g. { selectedJobThreadId }).
+   */
+  async navigateToSurface(surfaceId, { statePatch = null, hostPatch = null } = {}) {
+    if (hostPatch && typeof hostPatch === 'object') {
+      for (const [key, value] of Object.entries(hostPatch)) this[key] = value;
+    }
+    if (statePatch && typeof statePatch === 'object' && Object.keys(statePatch).length) {
+      this.patchSurfaceState(surfaceId, statePatch, { render: false });
+    }
+    return this._navigateTo(surfaceId);
+  }
+
+  /**
    * Navigate to a different page within the datapad
    */
   async _navigateTo(pageId) {
