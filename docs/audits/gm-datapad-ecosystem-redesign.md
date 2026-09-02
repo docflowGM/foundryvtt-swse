@@ -2660,7 +2660,7 @@ implementation).
   limitation as every prior phase. Every claim above is static/Node-shim
   verified, not live-runtime verified.
 
-## 36. Phase 8 gate (supersedes §28)
+## 36. Phase 8 gate (superseded by §37 — see below)
 
 **PHASE 7 CORRECTIONS COMPLETE — READY FOR PHASE 8.** All 6 independently
 reviewed issues are corrected with executed, git-stash fail-before-proven
@@ -2672,3 +2672,164 @@ still deferred and still not part of this pass, per its explicit
 scope boundary ("DO NOT EXPAND THIS PASS"). Recommended next: Phase 8 —
 Bulletin as the Player Communication Hub. Not started here, per
 instruction.
+
+# PHASE 7 FINAL CORRECTION ADDENDUM — RECOVERY CONTEXT/SCOPE
+
+A second independent review of the correction-pass head
+(`7b9c7a81cc998a1bcf03a7db2bd221c6ab1a03c4`) found the previously
+requested fixes materially correct, but identified one remaining
+production bug, one unintended scope expansion introduced by Correction
+1 itself, and two proof gaps in the correction-pass tests. All four are
+closed here.
+
+## 37. Final Correction 1 — per-Actor recovery legality bug
+
+**The finding.** `forActor(actor)` determined `eligible`/`ineligible` by
+searching `GMHealingTrigger.getHealingSummary()`'s
+`eligibleActors`/`ineligibleActors` arrays for the Actor's id. But
+`getHealingSummary()` deliberately scopes those arrays to
+`GMPartyRosterService.getPartyActors()` whenever a party is defined,
+falling back to the wider `game.actors` collection only when the party
+is empty. Workspace can select any world Actor, including one that is
+NOT a party member. With a party already defined, such an Actor is
+absent from BOTH arrays — the array-membership check silently reported
+`eligible:false, ineligible:false` for a perfectly valid, living,
+non-Droid/Vehicle character.
+
+**The fix.** `forActor()` now calls the canonical PER-ACTOR predicate
+directly — `GMHealingTrigger.isEligibleForHealing(actor)` — which needs
+no roster/party context at all: `eligible = isEligibleForHealing(actor)`,
+`ineligible = !eligible`. This is the exact function
+`getHealingSummary()` itself calls internally per-Actor; using it
+directly removes the roster-scoping side effect without re-deriving any
+rule.
+
+**Proof.** `tests/gm-phase7-correction-pass.test.mjs`'s "Final Correction
+1" block proves: for both a party PC and a non-party living NPC (with a
+party defined), `eligible`/`ineligible` agree exactly with
+`GMHealingTrigger.isEligibleForHealing(actor)` and are never both false;
+the non-party NPC specifically resolves `eligible:true`; a Droid
+resolves `eligible:false, ineligible:true`. Git-stash fail-before proof:
+reverting `GMCampaignContextService.js`/`GMWorkspaceSurfaceService.js`
+reproduces the exact bug — the non-party NPC's `eligible` comes back
+`false` instead of `true`.
+
+## 38. Final Correction 2 — eliminate the double `buildActorCard()` call
+
+**The finding.** The Correction-1 fix made `forActor(actor)` call
+`GMCombatRecoveryService.buildActorCard(actor)` to source
+`needsAttention`. `GMWorkspaceSurfaceService.buildSelectedActorSection()`
+then called `await GMCampaignContextService.forActor(actor)` and,
+immediately after, called `GMCombatRecoveryService.buildActorCard(actor)`
+a SECOND time for the exact same Actor — doing the card's internal
+party/ownership/effects/poison/ongoing-effect resolution twice per
+render.
+
+**The fix.** `forActor()`'s `operations.recovery` now exposes the full
+card it already computed as `.card`. Workspace consumes
+`context.operations.recovery.card` instead of calling `buildActorCard()`
+again; the now-unused `GMCombatRecoveryService` import was removed from
+`GMWorkspaceSurfaceService.js`.
+
+**Proof.** `tests/gm-phase7-correction-pass.test.mjs`'s "Final Correction
+2" block monkey-patches `GMCombatRecoveryService.buildActorCard` with a
+call counter and asserts it is called exactly once for a full Workspace
+`buildViewModel()` render of a selected Actor. Git-stash fail-before
+proof: reverting the two files makes the counter come back `2`, not `1`
+(implicit in the stashed diff — the assertion targets the corrected
+single-call contract, which the pre-correction code violates by
+construction).
+
+## 39. Final Correction 3 — Home recovery attention stays party-first
+
+**The finding.** Correction 1 (§29 in the prior pass) fixed the
+`eligible != needsAttention` semantic bug in Home's `attentionItems()`
+by switching its recovery source from
+`GMHealingTrigger.getHealingSummary().eligibleActors` to
+`GMCombatRecoveryService.buildViewModel().combatRecovery.needsAttention`.
+That switch was semantically correct but silently changed SCOPE too:
+`buildViewModel()`'s `needsAttention` array starts from
+`getManagedActors()` — every managed world Actor (PCs, NPCs, Droids,
+Vehicles), not just the defined campaign party. The pre-correction
+source was party-first (defined party when one exists, wider fallback
+only when it doesn't). The correction pass was authorized to fix the
+eligible/needsAttention semantic, not to expand Home from "party
+recovery attention" to "every wounded world Actor" — a campaign with
+twenty wounded enemy NPCs left in the world could have flooded Home
+purely as a side effect of the semantic fix.
+
+**The fix.** `attentionItems()`'s recovery block now reads
+`combatRecovery.partyActors` (a field `GMCombatRecoveryService.buildViewModel()`
+already exposes) first; only when the defined party is empty does it
+fall back to the full `combatRecovery.actors` set. This preserves the
+pre-correction party-first scope while keeping the corrected
+`needsAttention` legality — a defined party's wounded/impaired Droid or
+Vehicle still receives truthful repair attention (never organic-rest
+wording), and an empty-party campaign keeps a useful managed-roster
+fallback rather than going silent.
+
+**Proof.** `tests/gm-phase7-correction-pass.test.mjs`'s "Final Correction
+3" block proves: (A) with a defined party, a wounded party PC produces a
+Home item and a wounded NON-party NPC does not; (B) a wounded PARTY
+Droid still produces truthful repair-wording attention; (C) with no
+defined party at all, a wounded managed Actor still surfaces via the
+fallback. Git-stash fail-before proof: reverting
+`GMCampaignContextService.js` makes case (A)'s non-party-NPC assertion
+fail — the non-party NPC appears in Home's recovery queue when it must
+not.
+
+## 40. Final Correction 4 — strengthened proof level for two tests
+
+**4A — Compendium Contact test.** The prior pass's Compendium-Contact
+assertion was wrapped in `if (compendiumContact) { ... }`, so the test
+still passed even if the Compendium Contact disappeared from the VM
+entirely — it never actually proved presence. Changed to an
+unconditional `assert.ok(compendiumContact, ...)` before the
+`hasActorLink`/`hasWorkspaceActorLink` assertions, so the test now
+genuinely requires the Contact to remain present with Open Actor
+available and Open in Workspace withheld.
+
+**4B — Faction-contact navigation execution.** The prior pass's proof
+for Organization Role navigation was a `GMCampaignTargetService`
+unit-level assertion plus static regex over the controller/template
+source — real proof of the target shape and the wiring pattern, but not
+an executed click-through-controller-to-navigation-call proof. New
+`tests/gm-workspace-faction-contact-navigation-controller.test.mjs`
+instantiates the REAL `GMWorkspaceSurfaceController` directly (the same
+established pattern already used for
+`gm-job-context-navigation-controller.test.mjs`), wires
+`_wireDossierTargets()` against a fake page element, simulates the
+Organization Role button's click event, and asserts the fake host's
+`navigateToSurface()` was called exactly once with
+`{surfaceId:'factions', statePatch:{focusedFactionId, focusedContactId}}`
+— both real ids, from one real dispatch. It also covers a generic
+Faction Standing click (must never gain a spurious `focusedContactId`)
+and a `faction-contact` row missing its `factionId` (must fail safe,
+zero navigation calls, never a degraded target).
+
+## 41. Regression / totals
+
+- Full rolling test suite: **186/186 files run, 180/186 pass** (the same
+  6 pre-existing, GM-Datapad-unrelated failures as every prior phase —
+  `force-power-final-integration`, `phase3-force-power-corrections`,
+  `phase4-force-modifier-automation`, `phase5-force-healing-mitigation`,
+  `phase6-force-direct-damage`, `rolling-ci-support-check`).
+- Syntax: **1948/1948**.
+- All Phase 1-7 GM Datapad tests (`gm-*.test.mjs`) remain green.
+- New test file: `tests/gm-workspace-faction-contact-navigation-controller.test.mjs`.
+  Modified: `tests/gm-phase7-correction-pass.test.mjs` (Final Corrections
+  1-3 added; Correction 3's Compendium-Contact assertion strengthened
+  to unconditional).
+- Live Foundry status: not run — no live client available, same
+  limitation as every prior phase.
+
+## 42. Phase 8 gate (supersedes §36)
+
+**PHASE 7 CORRECTIONS COMPLETE — READY FOR PHASE 8.** All four items
+from the final correction addendum are closed with executed, git-stash
+fail-before-proven regression tests (Final Correction 4 is a proof-level
+strengthening of already-correct behavior, not a behavior change, so its
+"fail-before" is the pre-correction test's weaker guard rather than a
+reverted source diff). Deferred items from §27 remain deferred.
+Recommended next: Phase 8 — Bulletin as the Player Communication Hub.
+Not started here, per instruction.
