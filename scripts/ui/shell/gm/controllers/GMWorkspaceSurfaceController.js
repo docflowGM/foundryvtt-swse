@@ -15,6 +15,7 @@ import { applyXP, isXPEnabled, determineLevelFromXP } from '/systems/foundryvtt-
 import { XP_LEVEL_THRESHOLDS, XP_MAX_LEVEL } from '/systems/foundryvtt-swse/scripts/engine/shared/xp-system.js';
 import { GMPartyRosterService } from '/systems/foundryvtt-swse/scripts/ui/shell/gm/utils/gm-party-roster-service.js';
 import { GMCombatRecoveryService } from '/systems/foundryvtt-swse/scripts/holonet/subsystems/gm-combat-recovery-service.js';
+import { GMCampaignTargetService } from '/systems/foundryvtt-swse/scripts/ui/shell/gm/GMCampaignTargetService.js';
 
 export class GMWorkspaceSurfaceController {
   constructor(host) {
@@ -31,6 +32,8 @@ export class GMWorkspaceSurfaceController {
     if (!this._assertGM('open the GM workspace')) return;
 
     this._wireActorOpenControls(pageElement, signal);
+    this._wireDossierSelection(pageElement, signal);
+    this._wireDossierTargets(pageElement, signal);
     this._wireWorkspaceQuickControls(pageElement, signal);
     this._wireFullHealthControls(pageElement, signal);
     this._wirePartyActorPanels(pageElement, signal);
@@ -66,6 +69,56 @@ export class GMWorkspaceSurfaceController {
     });
   }
 
+
+  /**
+   * Phase 7 — select an Actor for the campaign-dossier detail panel.
+   * Distinct from _wireActorOpenControls() (which opens the real Foundry
+   * sheet): selecting an actor never navigates away from Workspace, it
+   * only patches selectedActorId and re-renders this surface.
+   */
+  _wireDossierSelection(pageElement, signal) {
+    pageElement.querySelectorAll('[data-workspace-select-actor]').forEach((control) => {
+      control.addEventListener('click', async (event) => {
+        event.preventDefault();
+        const actorId = event.currentTarget.dataset.workspaceSelectActor;
+        if (!actorId) return;
+        this.host?.patchSurfaceState?.('workspace', { selectedActorId: actorId }, { render: false });
+        await requestShellRender(this.host, { reason: 'gm-workspace-select-actor', surfaceId: 'workspace' });
+      }, { signal });
+    });
+  }
+
+  /**
+   * Phase 7 — dossier relationship rows (Faction/Location/Job/Intel/Trade)
+   * navigate through the real GMCampaignTargetService + navigateToSurface()
+   * contract, exactly like Home's _wireHomeAttentionTargets(). An 'actor'
+   * kind (not currently emitted by any dossier row, but handled
+   * defensively for consistency with Home's dispatcher) opens the real
+   * Foundry sheet rather than a Datapad selection, since
+   * GMCampaignTargetService intentionally does not resolve it.
+   */
+  _wireDossierTargets(pageElement, signal) {
+    pageElement.querySelectorAll('[data-dossier-target-kind]').forEach((control) => {
+      control.addEventListener('click', async (event) => {
+        event.preventDefault();
+        const kind = event.currentTarget.dataset.dossierTargetKind;
+        const id = event.currentTarget.dataset.dossierTargetId;
+        if (!kind || !id) return;
+        if (kind === 'actor') {
+          const actor = game.actors?.get?.(id);
+          if (!actor) {
+            ui?.notifications?.warn?.('That actor could not be found.');
+            return;
+          }
+          actor.sheet?.render?.(true);
+          return;
+        }
+        const target = GMCampaignTargetService.resolve({ kind, id });
+        if (!target) return;
+        await this.host?.navigateToSurface?.(target.surfaceId, target);
+      }, { signal });
+    });
+  }
 
   _resolveActor(actorId) {
     const actor = game.actors?.get?.(actorId);

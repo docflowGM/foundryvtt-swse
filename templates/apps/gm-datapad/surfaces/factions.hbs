@@ -273,6 +273,7 @@
                   {{/if}}
                   {{#if this.hasActorLink}}
                   <button type="button" class="swse-ui-button" data-gm-faction-action="open-contact-actor" data-actor-id="{{this.actorId}}" data-actor-uuid="{{this.actorUuid}}"><i class="fa-solid fa-user"></i> Open Actor</button>
+                  <button type="button" class="swse-ui-button" data-gm-faction-action="open-workspace-actor" data-actor-id="{{this.actorId}}" data-actor-uuid="{{this.actorUuid}}"><i class="fa-solid fa-address-book"></i> Open in Workspace</button>
                   {{else}}
                   <button type="button" class="swse-ui-button" data-gm-faction-action="promote-contact" data-faction-id="{{../id}}" data-contact-id="{{this.id}}"><i class="fa-solid fa-user-plus"></i> Promote</button>
                   {{/if}}

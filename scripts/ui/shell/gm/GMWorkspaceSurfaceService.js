@@ -4,6 +4,13 @@ import { FactionRegistryService } from '/systems/foundryvtt-swse/scripts/allies/
 import { GMPartyRosterService } from '/systems/foundryvtt-swse/scripts/ui/shell/gm/utils/gm-party-roster-service.js';
 import { isXPEnabled, determineLevelFromXP } from '/systems/foundryvtt-swse/scripts/engine/progression/xp-engine.js';
 import { XP_LEVEL_THRESHOLDS, XP_MAX_LEVEL } from '/systems/foundryvtt-swse/scripts/engine/shared/xp-system.js';
+import { GMCampaignContextService } from '/systems/foundryvtt-swse/scripts/ui/shell/gm/GMCampaignContextService.js';
+import { GMCombatRecoveryService } from '/systems/foundryvtt-swse/scripts/holonet/subsystems/gm-combat-recovery-service.js';
+
+function text(value, fallback = '') {
+  const out = String(value ?? fallback ?? '').trim();
+  return out || fallback;
+}
 
 function safeCollection(collection) {
   if (!collection) return [];
@@ -99,8 +106,88 @@ function uniqueActors(rows = []) {
   return Array.from(map.values());
 }
 
+/**
+ * Selected-Actor campaign dossier (Phase 7). Resolves
+ * GMCampaignContextService.forActor() EXACTLY ONCE per render, only for
+ * the one selected Actor — never per roster card (the Phase 7 performance
+ * rule). Decorates the shared context for Workspace's presentation rather
+ * than re-querying Locations/Factions/Jobs/Intel/Trade independently
+ * (Phase 7 addendum B).
+ *
+ * Selection-state contract: an explicit selectedActorId that no longer
+ * resolves to a real Actor is reported as a `warning`, never silently
+ * substituted for another Actor (Phase 7 7S). No selectedActorId at all
+ * falls back to the first current party member, matching the same
+ * "default to the first visible record" convention Locations already uses
+ * (GMLocationsSurfaceService.buildViewModel()'s own selectedLocationId
+ * fallback) — an honest UX default, not a resolved identity claim.
+ */
+async function buildSelectedActorSection(requestedActorId, partyActors, { xpSystemEnabled }) {
+  const selectedActorId = text(requestedActorId) || partyActors[0]?.id || '';
+  if (!selectedActorId) {
+    return {
+      selectedActorId: '', hasSelection: false, warning: '',
+      empty: 'No Actor selected. Choose a party member or GM-owned actor below to open their campaign dossier.'
+    };
+  }
+  const actor = game.actors?.get?.(selectedActorId);
+  if (!actor) {
+    return {
+      selectedActorId, hasSelection: false, empty: '',
+      warning: `The selected Actor (${selectedActorId}) could not be found. It may have been deleted or is no longer accessible.`
+    };
+  }
+
+  const context = await GMCampaignContextService.forActor(actor);
+  const recoveryCard = GMCombatRecoveryService.buildActorCard(actor);
+  const card = actorCard(actor, { xpSystemEnabled });
+  const locations = (context.relationships?.locations ?? []).map(entry => ({
+    ...entry,
+    roleLabel: entry.role === 'direct-actor' ? 'Present at Location' : 'Via Faction Contact'
+  }));
+
+  return {
+    selectedActorId,
+    hasSelection: true,
+    warning: '',
+    empty: '',
+    identity: card,
+    currentSituation: {
+      hpLabel: card.hpLabel,
+      hpTone: card.hpTone,
+      conditionLabel: card.conditionLabel,
+      injured: context.operations?.recovery?.injured ?? false,
+      recoveryEligible: context.operations?.recovery?.eligible ?? false,
+      recoveryKindLabel: recoveryCard?.kindLabel || '',
+      statusChips: recoveryCard?.statusChips ?? [],
+      inCombat: context.party?.inCombat ?? false,
+      inScene: context.party?.inScene ?? false,
+      isPartyMember: context.party?.isPartyMember ?? false
+    },
+    relationships: { ...context.relationships, locations },
+    operations: {
+      recovery: recoveryCard,
+      trades: context.operations?.trades ?? []
+    },
+    progression: {
+      xpTotal: card.xpTotal,
+      xpProgressLabel: card.xpProgressLabel,
+      xpSystemEnabled: card.xpSystemEnabled,
+      canUseXpControls: card.canUseXpControls,
+      canGrantLevelUpXp: card.canGrantLevelUpXp,
+      credits: card.credits,
+      levelLabel: card.levelLabel,
+      fpValue: card.fpValue,
+      fpMax: card.fpMax,
+      hasForcePool: card.hasForcePool,
+      canRestoreForcePoints: card.canRestoreForcePoints
+    },
+    limitations: context.limitations ?? []
+  };
+}
+
 export class GMWorkspaceSurfaceService {
-  static async buildViewModel() {
+  static async buildViewModel(host) {
     const xpSystemEnabled = isXPEnabled();
     const ownedActors = game.actors.filter((actor) => actor.isOwner);
     const scene = game.scenes?.active ?? globalThis.canvas?.scene ?? null;
@@ -120,6 +207,8 @@ export class GMWorkspaceSurfaceService {
       .filter(actor => !partyActorIds.has(actor.id) && !sceneActorIds.has(actor.id) && !combatActorIds.has(actor.id))
       .map(actor => actorCard(actor, { xpSystemEnabled })));
     const factionSummary = FactionRegistryService.summarizeForWorkspace();
+    const state = host?.getSurfaceState?.('workspace') || {};
+    const selection = await buildSelectedActorSection(state.selectedActorId, partyActors, { xpSystemEnabled });
     const actorOptions = gmActors
       .map(actor => ({ id: actor.id, name: actor.name, type: actor.type, label: `${actor.name} (${actor.type})` }))
       .sort((a, b) => a.name.localeCompare(b.name));
@@ -138,6 +227,7 @@ export class GMWorkspaceSurfaceService {
       gmActors,
       rosterSections,
       xpSystemEnabled,
+      selection,
       partyManager: {
         members: partyActors,
         availableActors: availablePartyActors,

@@ -80,6 +80,7 @@
           <div class="gm-party-member-card__quick">
             <button type="button" class="gm-party-full-health-mini" data-actor-full-health="{{this.id}}" title="Restore {{this.name}} to full health"><i class="fa-solid fa-heart-pulse"></i></button>
             <button type="button" class="gm-party-remove-button" title="Remove {{this.name}} from party" data-party-remove-actor="{{this.id}}"><i class="fa-solid fa-trash-can"></i></button>
+            <button type="button" class="swse-ui-button" data-workspace-select-actor="{{this.id}}" title="Open {{this.name}}'s campaign dossier above."><i class="fa-solid fa-address-book"></i></button>
             <button type="button" class="gm-party-manage-button" data-party-member-open="{{this.id}}" aria-controls="gm-party-member-modal-{{this.id}}" title="Open command modal for {{this.name}}"><i class="fa-solid fa-up-right-and-down-left-from-center"></i> Manage</button>
           </div>
         </div>
@@ -201,6 +202,126 @@
     </div>
   </section>
 
+  {{!-- Phase 7: campaign dossier for the selected Actor. Resolves
+        GMCampaignContextService.forActor() exactly once per render, then
+        decorates it for presentation — it does not re-query
+        Locations/Factions/Jobs/Intel/Trade independently. This is a
+        campaign-relevance/operations dossier, not a second Actor sheet:
+        full abilities/defenses/attacks/inventory remain on the real sheet
+        (Open Sheet). --}}
+  <section class="swse-ui-panel workspace-actor-dossier gm-phase2-panel" data-workspace-dossier>
+    <header class="gm-party-manager__header">
+      <div>
+        <span class="gm-command-eyebrow">CAMPAIGN DOSSIER</span>
+        <h3>{{#if selection.hasSelection}}{{selection.identity.name}}{{else}}No Actor Selected{{/if}}</h3>
+        <p>Campaign relevance, operational state, and cross-app relationships for the selected Actor.</p>
+      </div>
+      {{#if selection.hasSelection}}
+      <div class="gm-party-manager__actions">
+        <button type="button" class="swse-ui-button" data-open-actor="{{selection.identity.id}}"><i class="fa-solid fa-address-card"></i> Open Sheet</button>
+      </div>
+      {{/if}}
+    </header>
+
+    {{#if selection.warning}}<div class="gm-party-empty">{{selection.warning}}</div>{{/if}}
+    {{#if selection.empty}}<div class="gm-party-empty">{{selection.empty}}</div>{{/if}}
+
+    {{#if selection.hasSelection}}
+    <div class="gm-party-member-vitals">
+      <span><b>{{selection.identity.hpLabel}}</b><em>Health{{#if selection.currentSituation.injured}} · Injured{{/if}}</em></span>
+      <span><b>{{selection.identity.conditionLabel}}</b><em>Condition</em></span>
+      <span><b>{{selection.identity.forcePointsLabel}}</b><em>Force Points</em></span>
+      {{#if selection.progression.xpSystemEnabled}}<span><b>{{selection.progression.xpProgressLabel}}</b><em>XP Progress</em></span>{{/if}}
+      <span><b>{{selection.progression.credits}}</b><em>Credits</em></span>
+    </div>
+
+    <div class="workspace-dossier-columns">
+      <section class="gm-party-command-section">
+        <header><span class="gm-command-eyebrow">FACTION STANDING</span></header>
+        {{#each selection.relationships.factions}}
+        <button type="button" class="workspace-dossier-row" data-dossier-target-kind="faction" data-dossier-target-id="{{this.id}}" {{#unless this.resolved}}disabled{{/unless}}>
+          <strong>{{this.label}}</strong><span>{{this.relationshipType}}{{#if this.score}} · Score {{this.score}}{{/if}}</span>
+        </button>
+        {{else}}<p class="placeholder">No known Faction standing.</p>{{/each}}
+      </section>
+
+      <section class="gm-party-command-section">
+        <header><span class="gm-command-eyebrow">ORGANIZATION ROLE</span></header>
+        {{#each selection.relationships.factionContacts}}
+        <button type="button" class="workspace-dossier-row" data-dossier-target-kind="faction" data-dossier-target-id="{{this.factionId}}">
+          <strong>{{this.contactName}}</strong><span>{{this.factionName}}</span>
+        </button>
+        {{else}}<p class="placeholder">Not registered as any Faction Contact.</p>{{/each}}
+      </section>
+
+      <section class="gm-party-command-section">
+        <header><span class="gm-command-eyebrow">LOCATIONS</span></header>
+        {{#each selection.relationships.locations}}
+        <button type="button" class="workspace-dossier-row" data-dossier-target-kind="location" data-dossier-target-id="{{this.id}}">
+          <strong>{{this.label}}</strong><span>{{this.roleLabel}}</span>
+        </button>
+        {{else}}<p class="placeholder">No known Location presence.</p>{{/each}}
+      </section>
+
+      <section class="gm-party-command-section">
+        <header><span class="gm-command-eyebrow">JOBS</span></header>
+        {{#each selection.relationships.jobs}}
+        <button type="button" class="workspace-dossier-row" data-dossier-target-kind="job" data-dossier-target-id="{{this.id}}">
+          <strong>{{this.label}}</strong><span>{{this.status}}</span>
+        </button>
+        {{else}}<p class="placeholder">No linked Jobs.</p>{{/each}}
+      </section>
+
+      <section class="gm-party-command-section">
+        <header><span class="gm-command-eyebrow">INTEL</span></header>
+        {{#each selection.relationships.intel}}
+        <button type="button" class="workspace-dossier-row" data-dossier-target-kind="intel" data-dossier-target-id="{{this.id}}">
+          <strong>{{this.label}}</strong><span>{{this.status}}</span>
+        </button>
+        {{else}}<p class="placeholder">No linked Intel.</p>{{/each}}
+      </section>
+
+      <section class="gm-party-command-section">
+        <header><span class="gm-command-eyebrow">TRADE</span></header>
+        {{#each selection.operations.trades}}
+        <button type="button" class="workspace-dossier-row" data-dossier-target-kind="trade" data-dossier-target-id="{{this.id}}">
+          <strong>{{this.label}}</strong><span>{{this.role}}{{#if this.counterpartyActorName}} · {{this.counterpartyActorName}}{{/if}}</span>
+        </button>
+        {{else}}<p class="placeholder">No active or recent Trade activity.</p>{{/each}}
+      </section>
+    </div>
+
+    <section class="gm-party-command-section">
+      <header>
+        <span class="gm-command-eyebrow">RECOVERY</span>
+        <p>Reuses GMCombatRecoveryService's own legality rules — Droids and Vehicles never show a fake organic-rest option.</p>
+      </header>
+      <div class="gm-party-member-vitals">
+        {{#each selection.operations.recovery.statusChips}}<span class="chip {{this.tone}}">{{this.label}}</span>{{/each}}
+      </div>
+      <div class="gm-party-member-action-grid">
+        <button type="button" class="swse-ui-button" data-actor-full-health="{{selection.identity.id}}" title="Restore to maximum HP, reset condition, and refresh second wind where applicable."><i class="fa-solid fa-heart-pulse"></i> Full Health</button>
+        {{#if selection.operations.recovery.restEligible}}
+        <button type="button" class="swse-ui-button" data-party-actor-rest="short-rest" data-actor-id="{{selection.identity.id}}"><i class="fa-solid fa-mug-hot"></i> Short Rest</button>
+        <button type="button" class="swse-ui-button" data-party-actor-rest="extended-rest" data-actor-id="{{selection.identity.id}}"><i class="fa-solid fa-bed"></i> Full Rest</button>
+        {{/if}}
+        {{#if selection.identity.hasForcePool}}
+        <button type="button" class="swse-ui-button" data-party-restore-force="{{selection.identity.id}}"><i class="fa-solid fa-sparkles"></i> Restore FP</button>
+        {{/if}}
+      </div>
+    </section>
+
+    <section class="gm-party-command-section">
+      <header><span class="gm-command-eyebrow">GM ACTIONS</span></header>
+      <div class="gm-party-member-action-grid">
+        <button type="button" class="swse-ui-button" data-party-open-intel="{{selection.identity.id}}"><i class="fa-solid fa-file-shield"></i> Give Intel</button>
+        <button type="button" class="swse-ui-button" data-party-open-job="{{selection.identity.id}}"><i class="fa-solid fa-clipboard-list"></i> Assign Job</button>
+        <button type="button" class="swse-ui-button" data-workspace-party-toggle="{{selection.identity.id}}">{{#if selection.identity.inParty}}Remove from Party{{else}}Add to Party{{/if}}</button>
+      </div>
+    </section>
+    {{/if}}
+  </section>
+
   <div class="workspace-content gm-phase2-workspace-content">
     {{#each rosterSections}}
     <section class="swse-ui-panel workspace-roster-section gm-phase2-panel" data-workspace-roster="{{this.id}}">
@@ -221,6 +342,7 @@
             <button type="button" class="gm-workspace-party-chip {{#if this.inParty}}in{{/if}}" title="{{this.partySourceDetail}}" data-workspace-party-toggle="{{this.id}}">{{#if this.inParty}}● Party{{else}}+ Add to Party{{/if}}</button>
           </div>
           <div class="workspace-actor-actions gm-workspace-actions">
+            <button class="swse-ui-button" data-workspace-select-actor="{{this.id}}" title="Open {{this.name}}'s campaign dossier above."><i class="fa-solid fa-address-book"></i> Dossier</button>
             <button class="swse-ui-button" data-open-actor="{{this.id}}">Open Sheet</button>
             <button class="swse-ui-button gm-workspace-full-health-action" title="Restore {{this.name}} to maximum HP, reset condition, and refresh second wind where applicable." data-actor-full-health="{{this.id}}">Full Health</button>
             <button class="swse-ui-button" data-nav-to="healing">Recovery</button>

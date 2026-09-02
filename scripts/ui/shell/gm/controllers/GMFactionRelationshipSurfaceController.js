@@ -16,6 +16,7 @@ import { mutateShellOnly } from '/systems/foundryvtt-swse/scripts/ui/shell/mutat
 import { confirmGmDatapadModal } from '/systems/foundryvtt-swse/scripts/ui/shell/gm/utils/gm-datapad-modal.js';
 import { GMSmartFormDropService } from '/systems/foundryvtt-swse/scripts/ui/shell/gm/utils/gm-smart-form-drop-service.js';
 import { setWizardPage } from '/systems/foundryvtt-swse/scripts/ui/shell/gm/utils/gm-wizard-navigation.js';
+import { GMCampaignTargetService } from '/systems/foundryvtt-swse/scripts/ui/shell/gm/GMCampaignTargetService.js';
 
 function text(formData, key) { return String(formData.get(key) ?? '').trim(); }
 function number(formData, key) { return Number(formData.get(key) || 0) || 0; }
@@ -343,6 +344,18 @@ export class GMFactionRelationshipSurfaceController {
             const actor = await resolveActorForContact({ actorId: button.dataset.actorId, uuid: button.dataset.actorUuid });
             if (!actor) throw new Error('The linked contact actor could not be found.');
             actor.sheet?.render?.(true);
+            return;
+          }
+
+          // Phase 7 inbound path: distinct from open-contact-actor (which
+          // opens the real Foundry sheet) — this selects the Actor in
+          // Workspace's campaign dossier via the same workspace-actor
+          // target GMCampaignTargetService.resolve() understands elsewhere.
+          case 'open-workspace-actor': {
+            const actor = await resolveActorForContact({ actorId: button.dataset.actorId, uuid: button.dataset.actorUuid });
+            if (!actor) throw new Error('The linked contact actor could not be found.');
+            const target = GMCampaignTargetService.workspaceActor(actor.id);
+            await this.host?.navigateToSurface?.(target.surfaceId, target);
             return;
           }
 
