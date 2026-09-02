@@ -119,14 +119,24 @@ function uniqueActors(rows = []) {
  *
  * Selection-state contract: an explicit selectedActorId that no longer
  * resolves to a real Actor is reported as a `warning`, never silently
- * substituted for another Actor (Phase 7 7S). No selectedActorId at all
- * falls back to the first current party member, matching the same
- * "default to the first visible record" convention Locations already uses
- * (GMLocationsSurfaceService.buildViewModel()'s own selectedLocationId
- * fallback) — an honest UX default, not a resolved identity claim.
+ * substituted for another Actor (Phase 7 7S) — the fallback chain below
+ * applies ONLY when there is no explicit selection at all. With no
+ * explicit selection, Workspace picks the most contextually relevant
+ * Actor rather than defaulting straight to an empty dossier (PRE-
+ * BROADCAST INTEGRITY PASS item 4): first party member, else first
+ * active-combat Actor, else first current-scene Actor, else first
+ * visible GM-owned Actor — an honest UX default, not a resolved identity
+ * claim, matching the same "default to the first visible record"
+ * convention Locations already uses (GMLocationsSurfaceService
+ * .buildViewModel()'s own selectedLocationId fallback).
  */
-async function buildSelectedActorSection(requestedActorId, partyActors, { xpSystemEnabled }) {
-  const selectedActorId = text(requestedActorId) || partyActors[0]?.id || '';
+async function buildSelectedActorSection(requestedActorId, { partyActors = [], combatActors = [], sceneActors = [], gmActors = [] } = {}, { xpSystemEnabled }) {
+  const selectedActorId = text(requestedActorId)
+    || partyActors[0]?.id
+    || combatActors[0]?.id
+    || sceneActors[0]?.id
+    || gmActors[0]?.id
+    || '';
   if (!selectedActorId) {
     return {
       selectedActorId: '', hasSelection: false, warning: '',
@@ -166,7 +176,7 @@ async function buildSelectedActorSection(requestedActorId, partyActors, { xpSyst
       hpTone: card.hpTone,
       conditionLabel: card.conditionLabel,
       injured: context.operations?.recovery?.injured ?? false,
-      recoveryEligible: context.operations?.recovery?.eligible ?? false,
+      naturalHealingEligible: context.operations?.recovery?.naturalHealingEligible ?? false,
       recoveryKindLabel: recoveryCard?.kindLabel || '',
       statusChips: recoveryCard?.statusChips ?? [],
       inCombat: context.party?.inCombat ?? false,
@@ -217,7 +227,7 @@ export class GMWorkspaceSurfaceService {
       .map(actor => actorCard(actor, { xpSystemEnabled })));
     const factionSummary = FactionRegistryService.summarizeForWorkspace();
     const state = host?.getSurfaceState?.('workspace') || {};
-    const selection = await buildSelectedActorSection(state.selectedActorId, partyActors, { xpSystemEnabled });
+    const selection = await buildSelectedActorSection(state.selectedActorId, { partyActors, combatActors, sceneActors, gmActors }, { xpSystemEnabled });
     const actorOptions = gmActors
       .map(actor => ({ id: actor.id, name: actor.name, type: actor.type, label: `${actor.name} (${actor.type})` }))
       .sort((a, b) => a.name.localeCompare(b.name));
