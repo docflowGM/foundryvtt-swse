@@ -393,7 +393,8 @@ console.log('Messenger bare emitPreparedRecordPublished() call remains unaffecte
 
   // M10: inventory every literal producer of type:'record-published' —
   // it must be exactly the one call site inside HolonetEngine
-  // (via HolonetBus.sync), nothing else in the Holonet subtree.
+  // (via HolonetBus.sync(canonicalEnvelope), C2's canonical-envelope
+  // shape), nothing else in the Holonet subtree.
   const holonetDir = new URL('scripts/holonet/', root);
   async function collectRecordPublishedProducers(dirUrl) {
     const { readdir } = await import('node:fs/promises');
@@ -405,7 +406,7 @@ console.log('Messenger bare emitPreparedRecordPublished() call remains unaffecte
         hits.push(...await collectRecordPublishedProducers(entryUrl));
       } else if (entry.name.endsWith('.js')) {
         const text = await readFile(entryUrl, 'utf8');
-        const matches = [...text.matchAll(/(emitSync\(\{[^}]*type:\s*'record-published'|HolonetBus\.sync\('record-published')/g)];
+        const matches = [...text.matchAll(/(emitSync\(\{[^}]*type:\s*'record-published'|HolonetBus\.sync\('record-published'|type:\s*'record-published',)/g)];
         if (matches.length) hits.push({ file: entryUrl.pathname, count: matches.length });
       }
     }
@@ -414,8 +415,166 @@ console.log('Messenger bare emitPreparedRecordPublished() call remains unaffecte
   const producers = await collectRecordPublishedProducers(holonetDir);
   assert.equal(producers.length, 1, `exactly one file may literally produce a record-published sync; found: ${JSON.stringify(producers)}`);
   assert.ok(producers[0].file.endsWith('holonet-engine.js'), 'the sole record-published producer must be HolonetEngine itself (via HolonetBus.sync), not a domain service reimplementing the transport');
-  assert.match(engineSource, /HolonetBus\.sync\('record-published'/, 'sanity: HolonetEngine really is the one producer found above');
+  assert.match(engineSource, /type:\s*'record-published',/, 'sanity: HolonetEngine really is the one producer found above (C2 canonical envelope)');
+  assert.match(engineSource, /HolonetBus\.sync\(canonicalEnvelope\)/, 'sanity: the canonical envelope is what actually gets broadcast');
 }
 console.log('M9/M10 (Intel->Bulletin transport migration + publication-signal inventory) passed.');
+
+// ============================================================
+// PHASE 8A INDEPENDENT-REVIEW CORRECTION PASS
+// ============================================================
+
+// ------------------------------------------------------------
+// C1 — player-originated publish request must be handled by exactly
+// ONE deterministic primary GM, even when multiple GM clients are
+// simultaneously active and each independently receives the same
+// broadcast request (Foundry's socket relay is not addressed to a
+// single connection). Without this gate, N active GMs each
+// independently persist and broadcast N distinct publication
+// occurrences for what should be one player action.
+// ------------------------------------------------------------
+{
+  let saveCallCount = 0;
+  const originalSaveRecord = HolonetStorage.saveRecord;
+  HolonetStorage.saveRecord = async () => { saveCallCount++; return true; };
+  socket.emitted.length = 0;
+
+  const GM_A = { isGM: true, id: 'gm-a', active: true };
+  const GM_B = { isGM: true, id: 'gm-b', active: true };
+  const activeGmUsers = [GM_A, GM_B];
+
+  function installMultiGmShim(currentUser) {
+    installFoundryShimGlobals({
+      game: {
+        user: currentUser,
+        users: activeGmUsers,
+        socket,
+        settings: { get: () => [], set: () => Promise.resolve(), settings: { has: () => true }, register: () => {} },
+        actors: []
+      },
+      ui: { notifications: { info: () => {}, warn: () => {}, error: () => {} } },
+      Hooks: hooks
+    });
+    globalThis.foundry.utils.randomID = () => `evt-${Math.random().toString(36).slice(2, 10)}`;
+  }
+
+  try {
+    const record = fixtureRecord('c1-record');
+    const requestPayload = {
+      event: 'holonet', kind: 'request', action: 'publish-record',
+      data: { record: record.toJSON(), requestId: 'req-c1' },
+      requesterId: 'player-9', requestId: 'req-c1'
+    };
+
+    // Simulate GM A's client receiving the broadcast request...
+    installMultiGmShim(GM_A);
+    await socket.deliver(requestPayload);
+    // ...then GM B's client ALSO receiving the exact same broadcast
+    // request (a real second active GM connection would).
+    installMultiGmShim(GM_B);
+    await socket.deliver(requestPayload);
+
+    assert.equal(saveCallCount, 1, 'exactly ONE GM (the deterministic primary, lowest user id) must persist the record, even though two active GM clients both received the identical broadcast request');
+    assert.equal(socket.emitted.length, 1, 'exactly ONE publication sync must be broadcast, never one per active GM client');
+  } finally {
+    HolonetStorage.saveRecord = originalSaveRecord;
+    installShim({ isGM: true });
+  }
+}
+console.log('C1 (multi-active-GM primary-authority gate: exactly one persistence, exactly one sync) passed.');
+
+// ------------------------------------------------------------
+// C2 — canonical envelope: caller-supplied syncExtra must never
+// overwrite authority-owned reserved fields (type/publicationEventId/
+// recordId/recipientIds/requestId/requesterId), and local/remote
+// dispatch must both derive from the same canonical envelope.
+// ------------------------------------------------------------
+{
+  installShim({ isGM: true });
+  const originalSaveRecord = HolonetStorage.saveRecord;
+  HolonetStorage.saveRecord = async () => true;
+  socket.emitted.length = 0;
+  const legacy = countHooks('swseHolonetUpdated');
+  try {
+    const record = fixtureRecord('c2-record');
+    HolonetEngine.prepareRecordForPublish(record);
+    await HolonetStorage.saveRecord(record);
+    const publicationEventId = HolonetEngine.emitPreparedRecordPublished(record, {
+      skipSocket: false,
+      requestId: 'real-request-id',
+      requesterId: 'real-requester-id',
+      syncExtra: {
+        type: 'evil-type',
+        publicationEventId: 'evil-event-id',
+        recordId: 'evil-record-id',
+        recipientIds: ['evil-recipient'],
+        requestId: 'evil-request-id',
+        requesterId: 'evil-requester-id',
+        source: 'legit-extra-field'
+      }
+    });
+    assert.equal(socket.emitted.length, 1);
+    const sent = socket.emitted[0].data;
+    assert.equal(sent.type, 'record-published', 'syncExtra must never override the reserved type field');
+    assert.equal(sent.publicationEventId, publicationEventId, 'syncExtra must never override the reserved publicationEventId');
+    assert.equal(sent.recordId, 'c2-record', 'syncExtra must never override the reserved recordId');
+    assert.deepEqual(sent.recipientIds, [], 'syncExtra must never override the reserved recipientIds');
+    assert.equal(sent.requestId, 'real-request-id', 'syncExtra must never override the reserved requestId');
+    assert.equal(sent.requesterId, 'real-requester-id', 'syncExtra must never override the reserved requesterId');
+    assert.equal(sent.source, 'legit-extra-field', 'legitimate additive syncExtra fields must still pass through untouched');
+
+    assert.equal(legacy.calls.length, 1);
+    const localPayload = legacy.calls[0][0];
+    assert.equal(localPayload.recordId, 'c2-record', 'the local hook must derive from the SAME canonical envelope as the remote sync');
+    assert.equal(localPayload.publicationEventId, publicationEventId);
+    assert.equal(localPayload.type, 'record-published', 'evil syncExtra must not leak into the local hook payload either');
+    assert.ok(Array.isArray(localPayload.recipients), 'the documented local-only compatibility recipients field must still be present');
+  } finally {
+    legacy.off();
+    HolonetStorage.saveRecord = originalSaveRecord;
+  }
+}
+console.log('C2 (reserved canonical-envelope fields cannot be overwritten by syncExtra; local/remote share one envelope) passed.');
+
+// ------------------------------------------------------------
+// C3 — the publication-event dedupe cache is genuinely time-limited,
+// not just capacity-bounded.
+// ------------------------------------------------------------
+{
+  installShim({ isGM: true });
+  const originalSaveRecord = HolonetStorage.saveRecord;
+  HolonetStorage.saveRecord = async () => true;
+  const legacy = countHooks('swseHolonetUpdated');
+  socket.emitted.length = 0;
+  const originalDateNow = Date.now;
+  try {
+    const record = fixtureRecord('c3-record');
+    await HolonetEngine.publish(record, { skipSocket: false });
+    assert.equal(socket.emitted.length, 1);
+    const sentPayload = socket.emitted[0];
+
+    // Within the retention window: a duplicate delivery is still suppressed.
+    await socket.deliver(sentPayload);
+    assert.equal(legacy.calls.length, 1, 'a duplicate delivery within the TTL window must still be suppressed');
+
+    // A legitimate NEW publication (different id) during the same window
+    // is completely unaffected.
+    const record2 = fixtureRecord('c3-record-2');
+    await HolonetEngine.publish(record2, { skipSocket: false });
+    assert.equal(legacy.calls.length, 2, 'a genuinely new publicationEventId must never be affected by another id\'s presence in the cache');
+
+    // Fast-forward past the TTL (5 minutes) -- the FIRST event id must
+    // now be treated as genuinely new again: an honest "short-lived"
+    // cache, not a bounded-but-eternal one.
+    Date.now = () => originalDateNow() + 6 * 60 * 1000;
+    await socket.deliver(sentPayload);
+    assert.equal(legacy.calls.length, 3, 'a publicationEventId older than the TTL must be allowed through again -- the dedupe cache must be genuinely short-lived');
+  } finally {
+    Date.now = originalDateNow;
+    legacy.off();
+    HolonetStorage.saveRecord = originalSaveRecord;
+  }
+}
+console.log('C3 (publication-event dedupe cache is time-limited, not merely capacity-bounded) passed.');
 
 console.log('PHASE 8A exactly-once Holonet publication/socket synchronization suite passed.');
