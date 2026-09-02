@@ -832,12 +832,23 @@ export class HolonetIntelService {
       { surfaceType: SURFACE_TYPE.HOME_FEED, recordId: bulletin.id, isPinned: false, metadata: { sourceIntelId: intel.id, intelDelivery: true } },
       { surfaceType: SURFACE_TYPE.GM_DATAPAD_BULLETIN, recordId: bulletin.id, isPinned: false, metadata: { sourceIntelId: intel.id, intelDelivery: true } }
     ];
-    bulletin.publish();
-    bulletin.recipients = HolonetDeliveryRouter.resolveRecipients(bulletin);
-    for (const recipient of bulletin.recipients) bulletin.setDeliveryState(recipient.id, DELIVERY_STATE.DELIVERED);
-    const ok = await HolonetStorage.saveRecord(bulletin);
-    if (!ok) return null;
-    HolonetSocketService.emitSync({ type: 'record-published', recordId: bulletin.id, source: 'intel-bulletin', intelId: intel.id });
+    // PHASE 8A transport-only migration: this used to manually replicate
+    // HolonetEngine's own publish/recipients/persist/sync pipeline (and
+    // its own record-published sync was a second, independent publication
+    // announcement — the exact D5 finding). Routed through the same
+    // central pipeline every other publisher uses. Dynamic import to
+    // avoid a circular static import (holonet-engine.js already imports
+    // this file's HolonetIntelService), matching the pattern
+    // holonet-socket-service.js already uses for the same reason.
+    // NOTHING about the Bulletin's content, audience, projections,
+    // sourceIntelId/intelDelivery metadata, or the full-Intel-metadata
+    // copy changes here — that is explicitly Phase 8B's audit, not this
+    // pass's.
+    const { HolonetEngine } = await import('../holonet-engine.js');
+    HolonetEngine.prepareRecordForPublish(bulletin);
+    const saved = await HolonetStorage.saveRecord(bulletin);
+    if (!saved) return null;
+    HolonetEngine.emitPreparedRecordPublished(bulletin, { skipSocket: false, syncExtra: { source: 'intel-bulletin', intelId: intel.id } });
     const updated = await this.releaseIntel(record.id, {
       persistence: INTEL_PERSISTENCE.BULLETIN,
       revealState: INTEL_REVEAL_STATE.FULLY_REVEALED,
