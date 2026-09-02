@@ -1679,3 +1679,385 @@ fabricated.
 **CONNECTIONS REJECTED AS UNNECESSARY**: Healing↔Faction, House
 Rules↔Intel, Settings↔Job — none built, matching the addendum's explicit
 "prefer fewer truthful connections" instruction.
+
+# PHASE 6 CORRECTION PASS — CONTEXT PARITY + EXACT-TARGET INTEGRITY
+
+An independent review of Phase 6 (reviewed head
+`2612845548aeeba7707169ac3d5a5788eee6b6e3`) confirmed the overall
+architecture — `GMCampaignContextService` as the read-only resolution
+layer, `GMCampaignTargetService` as a justified small adapter, Home's
+exact-record attention routing — but found the first implementation was a
+**narrower** interpretation of the campaign graph than the production
+Phase 1-5 surfaces it was meant to unify, plus one real Home navigation
+bug. This section documents the correction pass. It does not redesign
+Phase 6; every fix below is scoped to the specific gap the review named.
+
+## 1. Correction verdict
+
+**PHASE 6 CORRECTIONS COMPLETE.** All 14 correction items were
+implemented and independently proven (fail-before/pass-after where the
+correction was a real defect; executed parity comparisons where the
+correction was a completeness gap). Full test suite: 174/174 (172
+pre-correction baseline + 2 new correction-specific test files; the
+existing five Phase 6 test files were extended/rewritten in place, not
+counted as new). Syntax: 2288/2288.
+
+## 2. Home targetless-fallback result (Correction 1)
+
+**Real bug, confirmed and fixed.** `attentionItems()`'s unresolved-Atlas-
+leads item (`target: null`, intended fallback `locations`) fell through
+`home.hbs`'s `{{#if this.targetKind}}` branch (empty `targetKind` on a
+targetless item) into the generic `data-app-card="{{this.id}}"` branch —
+navigating to the literal string `"location-leads:unresolved"` as if it
+were a surface id, not `locations`. Fixed generically, not by
+special-casing Atlas Leads: `_buildGmHomeContext()` now marks every
+`attentionItems()`-derived row `isExact: true` unconditionally (target
+present or not), and `home.hbs` branches on `isExact`, never on
+`targetKind`. `tests/gm-home-attention-navigation-wiring.test.mjs` gained
+both a static proof (the template branches on `isExact`, the old
+`targetKind` branch condition is gone) and an executed simulation of the
+real click-handler dispatch order for a targetless row, proving the final
+navigation target is `locations`, never the item's own composite id.
+Verified via `git stash` to fail against the pre-correction source.
+
+## 3. Party Location authority result (Correction 2)
+
+**Real bug, confirmed and fixed.** `currentPartyLocationResult()`
+previously used `activeForParty || revealState === 'active'` — a Location
+merely revealed as `'active'` (but explicitly `activeForParty: false`)
+was wrongly treated as the party's current position. Confirmed against
+the real authority: `LocationRegistryService.setPartyLocation()` sets
+`activeForParty` on exactly one record; `GMLocationsSurfaceService`'s own
+`isCurrent` is `Boolean(location.activeForParty)`, no `revealState`
+fallback. Fixed to `activeForParty === true` exclusively. Also audited
+for legacy/corrupt data carrying more than one `activeForParty:true`
+record — that case now reports an honest `limitations` entry and
+`currentLocation: null` rather than an arbitrary `.find()`-order pick.
+`tests/gm-campaign-party-location-authority.test.mjs` (new) proves all
+four cases (revealState-only never counts, exactly-one resolves, zero
+resolves to null, more-than-one reports honest ambiguity). Verified via
+`git stash`: the pre-correction source resolved the *wrong* Location
+(`loc-a`, a `.find()` artifact) instead of the real one (`loc-b`).
+
+## 4. Home current-Location result (Correction 3)
+
+**Real UX defect, confirmed and fixed.** Home previously fell back to the
+first `knownToPlayers`/`revealState:'known'` Location when no
+`activeForParty` Location existed — misleading in a command hub (a merely
+revealed planet would silently masquerade as "where the party is"). Fixed:
+no `activeForParty` Location now means `currentLocation: null` /
+`"Unassigned Location"`, honestly, with no substitute. Covered by the same
+party-location-authority test (§3) plus the existing
+`gm-home-attention-navigation-wiring` static proof of the
+`currentLocationId` derivation.
+
+## 5. Location context parity result (Correction 4)
+
+**Completeness gap, confirmed and fixed.** `forLocation()` previously
+resolved only `controllingFactionId` (missing `factionIds[]`/
+`factionPresence[]`), had no Contacts/Actors/Leads/Scenes at all, and
+resolved Jobs/Intel via reverse lookup only (missing the forward
+`linkedJobIds`/`linkedIntelIds` arrays a GM may have hand-curated). Fixed:
+`forLocation()` now resolves the full relationship set —
+
+- **Factions**: union of `controllingFactionId` + `factionIds[]` +
+  `factionPresence[].factionId`, each row carrying a `role`
+  (`controlling`/`presence`) — mirrors
+  `GMLocationsSurfaceService.factionRelationshipRows()` exactly.
+- **Contacts**: `location.contactIds[]` resolved against every Faction's
+  registered contacts (mirrors `contactRelationshipRows()`).
+- **Actors**: `location.npcActorUuids[]` resolved via the same
+  synchronous world-doc-id technique used everywhere else.
+- **Jobs/Intel**: the **union** of the forward array
+  (`linkedJobIds`/`linkedIntelIds`) and the reverse Phase 4/5 link
+  (`job.sourceLocation.locationId`/`intel.linkedLocationId`),
+  deduplicated by real id. A stored forward id that no longer resolves is
+  a real `resolutionKind: 'missing'` row, never silently dropped.
+- **Leads**: `LocationRegistryService.getAtlasLeadDiscoveries({locationId})`.
+- **Scenes**: `location.map.sceneUuid` + `location.linkedSceneUuids[]`.
+
+`tests/gm-campaign-context-parity.test.mjs`'s Location section invokes
+the REAL `GMLocationsSurfaceService.buildViewModel()` against the same
+fixture and asserts identical Faction/Contact id sets; for Jobs/Intel it
+proves — and documents as an intentional, honest divergence rather than a
+bug — that the production Locations VM itself is forward-only
+(`location.linkedJobIds.map(resolveJobRow)`, confirmed by reading
+`selectedVm()`), so `forLocation()`'s union is a genuine superset
+improvement, not a competing interpretation. A dedicated Job-A/B/C and
+Intel-A/B/C fixture set proves forward-only, reverse-only, and
+both-linked cases all resolve to exactly one row each (no duplication).
+
+## 6. Faction context parity result (Correction 5)
+
+**Completeness gap, confirmed and fixed.** `forFaction()` previously
+resolved Locations via `controllingFactionId` only (missing
+`factionIds[]`/`factionPresence[]`), Jobs via `issuer.factionId` only
+(missing legacy-name and consequence-Faction matches), and had no
+Contacts/promoted-Actors at all. Fixed by reusing real, already-proven
+authorities directly rather than re-deriving narrower rules:
+
+- **Locations**: `LocationRegistryService.getLocationsForFaction(id)` —
+  the Location Registry's own exported union method.
+- **Jobs**: `FactionJobBridgeService.filterJobsByIssuer()` with the filter
+  built by `FactionJobBridgeService.issuerFilterFromFaction(faction)` —
+  the exact filter `GMFactionRelationshipSurfaceService`'s own
+  `factionJobRelationshipRows()` passes, which is what actually enables
+  the unique-legacy-name match path and includes rival/additional
+  consequence-Faction Jobs, not just the canonical issuer.
+- **Contacts vs. promoted Actors**: kept as two separate row lists
+  (`contacts`, `contactActors`) — never merged into one opaque id.
+
+`tests/gm-campaign-context-parity.test.mjs`'s Faction section invokes the
+REAL `GMFactionRelationshipSurfaceService.buildViewModel()` against a
+fixture with a controlling Location, a presence-only Location, an issuer
+Job, and a rival-consequence Job, and asserts identical Location/Job/Intel
+id sets between the production VM and `forFaction()`.
+
+## 7. Job context result (Correction 6)
+
+**Real bug + completeness gap, both confirmed and fixed.**
+
+- **Real bug**: `forJob()` treated any `HolonetStorage.getThread(id)` hit
+  as a resolved Job, without checking `thread.metadata.threadType ===
+  'job'` — a Messenger/party/private thread could masquerade as a Job
+  context. Fixed: non-Job threads now report `resolved: false,
+  resolutionKind: 'missing'`, proven by an executed test with a real
+  `threadType: 'message'` fixture.
+- **Completeness gap**: `forJob()` re-derived issuer/location/intel
+  resolution narrowly, missing the Phase 4 legacy-name fallback,
+  Contact-vs-Actor distinction, and consequence-Faction resolution. Fixed
+  by exporting and reusing Job Board's own resolvers directly —
+  `resolveIssuerFaction`, `resolveIssuerContact`, `resolveJobLocations`,
+  `resolveJobIntel`, `resolveConsequenceFactions`, `factionConsequenceEntries`
+  (five `export` keywords added to `GMJobBoardSurfaceService.js`, zero
+  logic changes) — rather than maintaining a second, narrower copy of the
+  same compatibility rules. Those functions expect the job-board CARD's
+  flat field shape (`issuerFactionId`, `factionName`, ...), not the raw
+  Holonet job metadata object, so a small `jobResolverCard()` adapter
+  mirrors the exact five field-extraction lines `_buildJobCard()` itself
+  uses — trivial, stable reads, never resolution logic, so the actual
+  matching RULES stay a single, reused implementation.
+
+`tests/gm-campaign-context-parity.test.mjs`'s Job section invokes the
+REAL `GMJobBoardSurfaceService.buildViewModel()` for a canonical-issuer
+Job and asserts `forJob()`'s Faction resolution matches exactly, plus
+dedicated legacy-unique-name and ambiguous-name fixtures proving those
+classifications are honest, never a guess.
+
+## 8. Intel context result (Correction 7)
+
+**Completeness gap, confirmed and fixed.** `forIntel()` previously
+resolved only Location/Faction/Job, explicitly omitting Contact/Actor/
+Scene/source-Fact because Home didn't need them — the audit itself
+called this out as intentional but conceded it was "the wrong abstraction
+boundary for a shared campaign context service," and the reviewer agreed.
+Fixed by exporting and reusing every one of Phase 5's own resolvers —
+`resolveIntelLocation`, `resolveIntelSourceFact`, `resolveIntelJob`,
+`resolveIntelScene`, `resolveIntelActor` (five `export` keywords added to
+`GMIntelSurfaceService.js`, zero logic changes) — so `forIntel()` now
+resolves the complete canonical link set: Location, source Atlas Fact
+(presentation-only, never copied), Faction, Contact, Job, Scene, Actor.
+Faction/Contact resolution also moved from the loose name-fallback
+`findFaction`/`findContact` to the new exact-id-only `exactFaction`/
+`exactContact` helpers (Correction 12), since `intel.linkedFactionId`/
+`linkedContactId` are always meant to be ids.
+
+`tests/gm-campaign-context-parity.test.mjs`'s Intel section invokes the
+REAL `GMIntelSurfaceService.buildViewModel()` against a fixture exercising
+all seven relationship fields and asserts every one matches exactly.
+
+## 9. Actor context result (Correction 8)
+
+**Real bug + conceptual conflation, both confirmed and fixed.**
+
+- **Real bug**: `forActor('abc123')` (a plain Actor id string) failed to
+  resolve — the old code only handled an `{uuid}`-shaped object or an
+  `'Actor.<id>'`-prefixed string, treating a bare id as a malformed uuid.
+  Fixed: a new `resolveActorByAnyRef()` handles an Actor object, a plain
+  id, and an `'Actor.<id>'` uuid identically, proven by an executed test
+  resolving the same real Actor all three ways.
+- **Conceptual conflation**: `relationships.factions` previously meant
+  only "this Actor backs a Faction Contact" — collapsing two genuinely
+  different concepts. Fixed: `relationships.factions` is now the Actor's
+  REAL standing ledger (`FactionRegistryService.getActorRelationships()`,
+  score/relationshipType per Faction), and `relationships.factionContacts`
+  is the separate Contact-association list, with explicit `factionId`/
+  `contactId`/`actorUuid` fields — never one opaque `${factionId}:
+  ${contactId}` composite id.
+- Jobs now match via `FactionJobBridgeService.normalizeJobIssuer()`'s own
+  alias reading (`contactActorUuid`/`contactActorId`), not a single
+  hand-picked field.
+- `recovery`/`trades` failures now report via `limitations` + a real
+  `SWSELogger.warn` call (Correction 11) rather than a healing failure
+  silently resembling a genuine `needsAttention: false` result.
+
+`tests/gm-campaign-context-parity.test.mjs`'s Actor section proves all
+three resolution paths, the real Faction ledger vs. Contact-association
+split (including that the Contact-association row has no opaque `id`
+field), and Jobs/Intel/Trade all resolving with real identity.
+
+## 10. Approval target identity result (Correction 9)
+
+**Real identity-stability gap, confirmed and fixed.** Store-created
+pending-purchase records already carry their own persistent id
+(`pending_droid_...`/`pending_vehicle_...`/`pending_store_item_...`), but
+both `attentionItems()` and `GMApprovalsSurfaceService` addressed them
+purely by array index (`custom:<index>`) — another request appearing,
+being approved, or being removed before the GM clicked through could
+silently repoint the selection at a different record. Fixed:
+`GMApprovalsSurfaceService`'s two request builders now expose a
+`stableKey` (`custom-id:<approval.id>`) alongside the existing index-based
+`key`; `buildViewModel()`'s selection match accepts either.
+`attentionItems()` now targets `custom-id:<id>` when a real id exists,
+falling back to the legacy `custom:<index>` only for id-less legacy
+records. Mutation (approve/deny) still reads `selectedApproval.key`
+freshly on every render — untouched, per the correction's explicit
+instruction not to make mutation depend on parsing the selection key.
+`tests/gm-approvals-stable-target-identity.test.mjs` (new) proves the
+exact scenario the reviewer specified: select request B by its stable id,
+remove request A (B reindexes from position 1 to position 0), B remains
+selected — an index-only selection would have lost it. Verified via `git
+stash` to fail against the pre-correction source.
+
+## 11. Home action count result (Correction 10)
+
+**Real calculation bug, confirmed and fixed.** `actionCount` previously
+summed only critical-tone exact rows, then added the generic Store/
+Bulletin counts a second time on top (those were already inside
+`actionItems`) — undercounting warning/info rows while double-counting
+Store/Bulletin. Fixed: `actionCount = actionItems.reduce((sum, item) =>
+sum + (item.count || 0), 0)` — every actionable row counted exactly once,
+matching the "Actions Needed" label's own description ("critical reviews,
+monitoring items, and pending GM decisions"). Proven by an executed
+simulation in `tests/gm-home-attention-navigation-wiring.test.mjs`
+(mixed-severity queue: corrected total 7 vs. the old formula's 2).
+
+## 12. Failure isolation / logging result (Correction 11)
+
+Every per-domain `try/catch` in `attentionItems()`/`forActor()` now calls
+`SWSELogger.warn?.()` with the domain name and the real caught error,
+instead of a comment-only silent skip — proven by an executed test that
+injects a real thrown error into the Job Board domain and asserts a
+matching `SWSELogger.warn` call, while a healthy empty-result run logs
+nothing (no spam for ordinary absence). `forActor()`'s `recovery` result
+is now `null` (plus a `limitations` entry) on a genuine Healing-subsystem
+failure, never a false-negative `{needsAttention: false}` that would look
+identical to "actually checked, actually ineligible."
+
+## 13. Exact-id contract result (Correction 12)
+
+Every direct canonical-path lookup inside `GMCampaignContextService.js`
+now uses a new exact-id-only helper (`exactFaction`/`exactLocation`/
+`exactContact`) instead of `FactionRegistryService.findFaction()`/
+`LocationRegistryService.findLocation()`, which also match on display
+name/slug — a canonical path must never label a name match
+`resolutionKind: 'canonical-id'`. Reused resolver functions (Job Board's/
+Intel's own, §7-§8) keep their own established, already-audited
+compatibility branches (legacy-name-unique/ambiguous/missing) untouched —
+this correction applies only to this file's own direct authority calls.
+
+## 14. Parity test result (Correction 13)
+
+`tests/gm-campaign-context-parity.test.mjs` was replaced in full. It now
+invokes the REAL production `GMLocationsSurfaceService.buildViewModel()`
+and `GMFactionRelationshipSurfaceService.buildViewModel()` against shared
+fixtures and asserts identical relationship-id sets against
+`GMCampaignContextService`'s output (genuine runtime parity, not a
+hand-written expected value); for Job/Intel it compares against the real
+`GMJobBoardSurfaceService.buildViewModel()`/`GMIntelSurfaceService
+.buildViewModel()` output for the canonical-issuer/full-relationship
+cases, and relies on (documents explicitly) the fact that `forJob()`/
+`forIntel()` now call the exact same exported Phase 4/5 resolver
+functions those production VMs call — parity by construction, not by
+promise, for the branches a runtime comparison can't isolate as cleanly
+(legacy-name/ambiguous classification, non-Job-thread rejection). Every
+fixture set named in the correction spec is present: Location
+factions/factionIds/factionPresence/contactIds/npcActorUuids/
+linkedJobIds/linkedIntelIds; Job A/B/C and Intel A/B/C union-dedup cases;
+Faction controller/presence/issuer/rival/contact/promoted-actor; Job
+canonical/legacy/ambiguous/non-Job-thread; Intel's full seven-field
+relationship set; Actor object/id/uuid + real ledger + Contact
+association + Job/Intel/Trade.
+
+## 15. Read-only contract result
+
+Unchanged and re-verified: `tests/gm-campaign-context-read-only-contract
+.test.mjs` still finds zero mutation call sites in
+`GMCampaignContextService.js` after the correction pass (the new
+`SWSELogger.warn` calls, exact-id helpers, and reused-resolver imports
+introduce no writes).
+
+## 16. Target service result
+
+Unchanged: `GMCampaignTargetService` remains a pure `{kind,id} ->
+{surfaceId, statePatch|hostPatch}` translator. It never calls
+`navigateToSurface()` itself; Correction 9's `custom-id:` key format is
+just a new string shape `GMCampaignTargetService.approval(id)` passes
+through unchanged.
+
+## 17. Files changed (this correction pass)
+
+Modified: `scripts/ui/shell/gm/GMCampaignContextService.js` (near-total
+rewrite of `forLocation`/`forFaction`/`forJob`/`forIntel`/`forActor`,
+strict party-location resolution, exact-id helpers, logging),
+`scripts/ui/shell/gm/GMJobBoardSurfaceService.js` (5 `export` keywords,
+zero logic changes), `scripts/ui/shell/gm/GMIntelSurfaceService.js` (9
+`export` keywords, zero logic changes), `scripts/ui/shell/gm/
+GMApprovalsSurfaceService.js` (`stableKey` + broadened selection match),
+`scripts/apps/gm-datapad.js` (`isExact`, Unassigned-Location fallback
+removal, corrected `actionCount`), `templates/apps/gm-datapad/surfaces/
+home.hbs` (`isExact` branch). Rewritten:
+`tests/gm-campaign-context-parity.test.mjs`. New:
+`tests/gm-campaign-party-location-authority.test.mjs`,
+`tests/gm-approvals-stable-target-identity.test.mjs`. Extended in place:
+`tests/gm-home-attention-navigation-wiring.test.mjs`,
+`tests/gm-campaign-attention-items.test.mjs`.
+
+## 18. Tests added/modified
+
+See §17. Every new/rewritten test verified via `git stash` (or, for the
+parity file, by confirming it throws against the pre-correction shape) to
+fail against the pre-correction source and pass after.
+
+## 19. Full test total / syntax total
+
+174/174 tests passed (172 pre-correction-pass baseline + 2 net-new test
+files; five existing files extended/rewritten in place). Syntax:
+2288/2288.
+
+## 20. Prior-phase regression result
+
+Re-verified green, unchanged: every Phase 1-5 ecosystem/navigation/
+creation-identity test (`gm-locations-*`, `gm-faction-*`, `gm-job-*`,
+`gm-intel-*`), `gm-datapad-action-integrity-contract` (still 245
+controls, 0 unresolved — the correction pass added no new home.hbs
+controls), `gm-datapad-no-duplicate-handler-regression`,
+`gm-datapad-wizard-contract`.
+
+## 21. Live Foundry status
+
+Not run — no live Foundry client is available in this environment, same
+as every prior phase.
+
+## 22. Overclaimed-language correction (Correction 14)
+
+The pre-correction Phase 6 report claimed "parity with Phases 1-5 proven"
+(true only after §14 above), "every Approval target has stable identity"
+(true only after §10), and "current party Location resolves from
+activeForParty" (true only after §3 — the implementation actually also
+accepted `revealState === 'active'`). This section, the PR body, and the
+final report below use only the corrected, now-truthful versions of these
+claims.
+
+## 23. Phase 7 gate
+
+**READY FOR PHASE 7.** `GMCampaignContextService.forActor()` — the
+integration seam Workspace's redesign is meant to depend on — now
+resolves the Actor's real Faction relationship ledger (not just Contact
+association), Contact association (kept separate), Jobs (via the same
+alias-reading Job Board itself uses), Intel, Trade, and recovery, with
+honest failure-isolation and exact-id resolution throughout, and every
+Job/Location/Faction/Intel resolver it depends on is now the same
+function the production Phase 1-5 surfaces call, not a second copy.
+**Phase 7 (Workspace as the Party/People Hub) is not started, per explicit
+instruction.**
