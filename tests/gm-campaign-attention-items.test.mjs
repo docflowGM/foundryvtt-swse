@@ -125,4 +125,49 @@ const DROID_ACTOR = { id: 'r2d2', name: 'R2-D2', system: { droidSystems: { state
   assert.deepEqual(items, []);
 }
 
-console.log('GMCampaignContextService.attentionItems() passed (Job review/payout, Trade failure, Approval, Recovery all produce real target identity; empty campaign yields an empty queue; critical items sort first).');
+// --- CORRECTION 11: a real per-domain failure must be logged via the
+// existing SWSELogger, not silently swallowed — while a domain that
+// legitimately has nothing to report must never log a spurious warning.
+{
+  installShim({ locations: [LOCATION], threads: [JOB_REVIEW_THREAD] });
+  const { GMCampaignContextService } = await import('/systems/foundryvtt-swse/scripts/ui/shell/gm/GMCampaignContextService.js');
+  const { SWSELogger } = await import('/systems/foundryvtt-swse/scripts/utils/logger.js');
+  const { HolonetStorage } = await import('/systems/foundryvtt-swse/scripts/holonet/subsystems/holonet-storage.js');
+
+  const warnCalls = [];
+  const originalWarn = SWSELogger.warn;
+  SWSELogger.warn = (...args) => warnCalls.push(args);
+  const originalGetAllThreads = HolonetStorage.getAllThreads;
+  HolonetStorage.getAllThreads = async () => { throw new Error('simulated Job Board authority failure'); };
+
+  try {
+    const items = await GMCampaignContextService.attentionItems();
+    assert.ok(warnCalls.some(args => String(args[0] || '').includes('Job Board')), 'a genuine caught exception in the Job Board domain must be logged via SWSELogger.warn, not silently swallowed');
+    // The rest of the queue must still be usable — one domain failing must
+    // never crash attentionItems() as a whole (Phase 6AQ).
+    assert.ok(Array.isArray(items));
+  } finally {
+    HolonetStorage.getAllThreads = originalGetAllThreads;
+    SWSELogger.warn = originalWarn;
+  }
+}
+
+{
+  // A domain with legitimately nothing to report (no failed trades, no
+  // pending approvals, etc.) must never log a spurious warning — logging
+  // is reserved for actual caught exceptions.
+  installShim({});
+  const { GMCampaignContextService } = await import('/systems/foundryvtt-swse/scripts/ui/shell/gm/GMCampaignContextService.js');
+  const { SWSELogger } = await import('/systems/foundryvtt-swse/scripts/utils/logger.js');
+  const warnCalls = [];
+  const originalWarn = SWSELogger.warn;
+  SWSELogger.warn = (...args) => warnCalls.push(args);
+  try {
+    await GMCampaignContextService.attentionItems();
+    assert.deepEqual(warnCalls, [], 'an empty-but-healthy campaign must never log a warning — only a genuine caught exception should');
+  } finally {
+    SWSELogger.warn = originalWarn;
+  }
+}
+
+console.log('GMCampaignContextService.attentionItems() passed (Job review/payout, Trade failure, Approval, Recovery all produce real target identity; empty campaign yields an empty queue; critical items sort first; a real per-domain failure is logged via SWSELogger.warn and never crashes the whole queue; a healthy empty campaign never logs spuriously).');
