@@ -3023,7 +3023,7 @@ filtering controls, an explicit selected-card visual marker across
 registry cards, and `aria-selected`/roving-`tabindex` semantics on
 roster selection are NOT implemented. These do not block Phase 8.
 
-## 51. Phase 8 gate (supersedes §42)
+## 51. Phase 8 gate (superseded by §54 — see below)
 
 **PHASE 7 PRE-BROADCAST INTEGRITY PASS COMPLETE — READY FOR PHASE 8.**
 All four items are closed with executed, git-stash fail-before-proven
@@ -3038,3 +3038,117 @@ already-open player Home); 8B — the Intel→Bulletin private-data/
 provenance audit (the full-Intel-metadata copy flagged in §47); only
 then generalize Bulletin handoffs to Jobs/Locations/Factions/Workspace.
 Not started here, per instruction.
+
+# PHASE 7 FINAL CONTRACT CLOSURE
+
+A fourth independent review of the pre-broadcast integrity pass head
+(`669beca2c34060e40ebeca456fe39eb124621f17`) reconfirmed every prior
+correction as materially correct and explicitly declined to reopen any
+of them (strict Faction party-Location authority, per-domain Job/Intel
+failure isolation, natural-healing eligibility naming, single
+selected-Actor recovery-card computation, world-vs-Compendium Contact
+handling, Faction Contact exact navigation, `actor` vs
+`workspace-actor`, Workspace fallback priority, Trade wording, Assign
+Job persistence findings). It found two final, narrow contract holes
+before Bulletin/Holonet generalization begins.
+
+## 52. Item 1 — an explicitly empty party must not fall back to every managed Actor
+
+**The finding.** Home's recovery-candidate logic
+(`partyActors.length ? partyActors : GMCombatRecoveryService
+.getManagedActors()`) conflated two genuinely different states:
+"the party roster convention has never been touched" versus "the GM
+deliberately configured a party with zero members" (e.g. every
+player-linked Actor explicitly excluded via `gmPartyMember:false` —
+`GMPartyRosterService.getOverride(actor)` already distinguishes an
+explicit `false` from `null`/never-set). A GM who deliberately emptied
+the roster would silently get Recovery attention for every wounded
+NPC/Droid/Vehicle/Beast in the world — exactly the opposite of what
+"party-first" is supposed to mean, and a real regression the prior
+pass's own test suite didn't catch (its "no defined party" fixture used
+an Actor with an explicit `gmPartyMember:false` override, which is
+actually the "explicitly excluded" case, not the "never configured"
+case it was meant to represent).
+
+**The fix.** `GMPartyRosterService.hasExplicitRosterConfiguration()`
+(new, read-only, additive — `getManagedActors({ownedOnly:false}).some(
+actor => getOverride(actor) !== null)`) distinguishes the two states.
+Home's recovery-candidate logic now reads: nonempty party → those
+members; empty party AND an explicit roster configuration exists →
+`[]` (respect the GM's deliberate choice, never substitute); empty
+party AND no explicit configuration exists anywhere → the managed-roster
+compatibility fallback, unchanged from the prior pass.
+
+**Proof.** `tests/gm-phase7-pre-broadcast-integrity.test.mjs` gained a
+new block: a player-linked Actor explicitly excluded (party size 0,
+`hasExplicitRosterConfiguration()` true) alongside an unrelated wounded
+managed NPC — asserts ZERO Home recovery items and that
+`buildActorCard()` is never even invoked for the unrelated NPC (not just
+that its result is filtered out). The two pre-existing "no defined
+party" fixtures (in this file and in `gm-phase7-correction-pass.test.mjs`)
+were corrected to use an Actor with NO flag configuration at all (`getFlag:
+() => undefined`) — the case they were always meant to represent — since
+the old `organicActor({inParty:false})` fixture was, per the finding
+above, actually testing the different "explicitly excluded" state.
+Git-stash fail-before proof: reverting `GMCampaignContextService.js`/
+`gm-party-roster-service.js` makes `hasExplicitRosterConfiguration` not
+exist at all — the new test fails with a `TypeError`, which is itself
+proof the distinction did not previously exist.
+
+## 53. Item 2 — normalize `factionContacts` to the common relationship-row contract
+
+**The finding.** `GMCampaignContextService`'s own documented contract
+for every relationship/operation row is `{kind, id, label, status,
+resolved, resolutionKind}`. `forActor().relationships.factionContacts`
+rows never carried the common `id`/`status` fields — Workspace happens
+to know the special shape and reads `contactId` directly, but any
+future generic Phase 8+ relationship/provenance consumer that only
+knows `row.kind`/`row.id` would silently be unable to address this one
+relationship kind. Correction 8's original intent (never fabricate an
+opaque composite id merging factionId+contactId) was real and is
+preserved, but had been implemented as "never expose `id` at all,"
+which is a stronger and now-outdated restriction.
+
+**The fix.** The row is now built through the same `row()` helper every
+other relationship kind uses, with `id: contact.id` (the Contact's own
+real, non-composite canonical id — identical to `contactId`) alongside
+the existing additive `factionId`/`factionName`/`contactId`/
+`contactName`/`actorUuid` fields, which are unchanged and still the
+fields Workspace's Organization Role navigation reads. No change to
+`GMCampaignTargetService` or Workspace navigation semantics.
+
+**Proof.** `tests/gm-campaign-context-parity.test.mjs`'s Actor section
+now asserts `contactAssoc.kind === 'faction-contact'` and
+`contactAssoc.id === contactAssoc.contactId === 'contact-1'` — replacing
+the prior (now-outdated) assertion that `id` must be `undefined`. Git-stash
+fail-before proof: reverting `GMCampaignContextService.js` makes
+`contactAssoc.id` come back `undefined` instead of `'contact-1'`.
+
+## 54. Regression / totals
+
+- Full rolling test suite and syntax: re-run after this pass; see the PR
+  body / final report for the exact totals (same 6 pre-existing,
+  GM-Datapad-unrelated failures as every prior phase).
+- All Phase 1-7 GM Datapad tests (`gm-*.test.mjs`) remain green.
+- Modified: `scripts/ui/shell/gm/utils/gm-party-roster-service.js`
+  (new `hasExplicitRosterConfiguration()`),
+  `scripts/ui/shell/gm/GMCampaignContextService.js` (Home recovery
+  candidate logic, `factionContacts` row normalization),
+  `tests/gm-phase7-pre-broadcast-integrity.test.mjs` (new
+  explicitly-empty-party regression; corrected "never configured"
+  fixtures), `tests/gm-phase7-correction-pass.test.mjs` (corrected
+  "never configured" fixture), `tests/gm-campaign-context-parity.test.mjs`
+  (updated `factionContacts` common-row-shape assertion).
+- Live Foundry status: not run — no live client available, same
+  limitation as every prior phase.
+
+## 55. Phase 8 gate (supersedes §51)
+
+**PHASE 7 CONTRACT CLOSED — READY FOR PHASE 8.** Both items are closed
+with executed, git-stash fail-before-proven regression tests. Per the
+review's own explicit scope boundary, this pass did not touch Bulletin
+publication, sockets, Intel delivery, HolonetEngine, generalized
+Bulletin provenance, Phase 7's deferred UX (§50), Recovery mechanics, or
+party mutation semantics. Recommended next: Phase 8A — exactly-once
+Holonet publication/socket synchronization. Not started here, per
+instruction.
