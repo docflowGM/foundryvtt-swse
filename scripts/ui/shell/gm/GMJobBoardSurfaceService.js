@@ -3,6 +3,9 @@
 import { HolonetStorage } from '/systems/foundryvtt-swse/scripts/holonet/subsystems/holonet-storage.js';
 import { AssetGrantService } from '/systems/foundryvtt-swse/scripts/engine/assets/AssetGrantService.js';
 import { FactionJobBridgeService } from '/systems/foundryvtt-swse/scripts/ui/shell/gm/FactionJobBridgeService.js';
+import { FactionRegistryService } from '/systems/foundryvtt-swse/scripts/allies/faction-registry-service.js';
+import { LocationRegistryService } from '/systems/foundryvtt-swse/scripts/locations/location-registry-service.js';
+import { HolonetIntelService } from '/systems/foundryvtt-swse/scripts/holonet/subsystems/holonet-intel-service.js';
 
 const THREAD_TYPE_JOB = 'job';
 const PARTY_FUND_RECIPIENT_ID = 'party-fund';
@@ -728,6 +731,197 @@ function buildTimeline(thread, job, recordsById) {
     .slice(0, 12);
 }
 
+/**
+ * Ecosystem Redesign Phase 4 — resolve a Job's issuer Faction relationship.
+ * Canonical identity (job.issuerFactionId, already written at creation time
+ * by known-issuer selection) is tried first; legacy Jobs with only a
+ * factionName fall back to a name match against the real Faction Registry,
+ * but ONLY when that name is unique — never an arbitrary guess.
+ */
+function resolveIssuerFaction(job) {
+  const canonicalId = String(job.issuerFactionId || '').trim();
+  if (canonicalId) {
+    const faction = FactionRegistryService.findFaction(canonicalId);
+    if (faction) return { id: faction.id, name: faction.name, resolved: true, resolutionKind: 'canonical-id' };
+    return { id: canonicalId, name: String(job.factionName || '').trim(), resolved: false, resolutionKind: 'missing' };
+  }
+  const name = String(job.factionName || '').trim();
+  if (!name) return { id: '', name: '', resolved: false, resolutionKind: 'missing' };
+  const needle = name.toLowerCase();
+  const matches = FactionRegistryService.getRegistry().filter(faction => faction.name.trim().toLowerCase() === needle);
+  if (matches.length === 1) return { id: matches[0].id, name: matches[0].name, resolved: true, resolutionKind: 'legacy-name-unique' };
+  if (matches.length > 1) return { id: '', name, resolved: false, resolutionKind: 'ambiguous' };
+  return { id: '', name, resolved: false, resolutionKind: 'unresolved' };
+}
+
+/**
+ * Resolve a Job's issuer Contact/Actor relationship. Distinguishes a
+ * Faction-registry contact from a linked world/compendium Actor from an
+ * unresolved legacy name — never collapsed into one shape, per Phase 4I.
+ */
+function resolveIssuerContact(job, resolvedFaction) {
+  const contactId = String(job.issuerContactId || '').trim();
+  if (contactId && resolvedFaction?.resolved) {
+    const found = FactionRegistryService.findFactionContact(resolvedFaction.id, contactId);
+    if (found?.contact) {
+      return {
+        kind: 'contact',
+        id: found.contact.id,
+        name: found.contact.name,
+        actorUuid: found.contact.actorUuid || '',
+        resolved: true,
+        resolutionKind: 'canonical-id'
+      };
+    }
+  }
+  const actorUuid = String(job.issuerContactActorUuid || '').trim();
+  const actorId = String(job.issuerContactActorId || '').trim();
+  if (actorUuid || actorId) {
+    return {
+      kind: 'actor',
+      id: actorId || actorUuid,
+      name: String(job.issuer?.contactActorName || job.issuer?.contactName || '').trim() || 'Linked Actor',
+      actorUuid,
+      actorId,
+      resolved: true,
+      resolutionKind: 'canonical-id'
+    };
+  }
+  const contactName = String(job.issuer?.contactName || '').trim();
+  if (contactName) return { kind: 'unresolved', id: '', name: contactName, resolved: false, resolutionKind: 'unresolved' };
+  return null;
+}
+
+/**
+ * Resolve a Job's Location relationship from its real stable id
+ * (job.rawJob.sourceLocation.locationId, only ever written at creation
+ * time — see LocationJobBridgeService/_normalizeJobSourceLocation). No
+ * name-only inference from briefing text. Exposed as an array per Phase 4J
+ * even though only one primary source Location is currently modeled.
+ */
+function resolveJobLocations(job) {
+  const sourceLocation = job.rawJob?.sourceLocation || null;
+  const locationId = String(sourceLocation?.locationId || '').trim();
+  if (!locationId) return [];
+  const location = LocationRegistryService.findLocation(locationId);
+  if (!location) {
+    return [{
+      id: locationId,
+      name: String(sourceLocation?.locationName || 'Missing Location').trim(),
+      roleLabel: 'Mission Site',
+      currentPartyPresence: false,
+      missing: true,
+      resolutionKind: 'missing'
+    }];
+  }
+  return [{
+    id: location.id,
+    name: location.name,
+    roleLabel: 'Mission Site',
+    currentPartyPresence: Boolean(location.activeForParty || location.revealState === 'active'),
+    missing: false,
+    resolutionKind: 'canonical-id'
+  }];
+}
+
+/**
+ * Resolve Intel linked to this Job via the real Holonet Intel authority —
+ * Intel stores the relationship (intel.linkedJobThreadId), the Job does
+ * not, mirroring how Faction<->Intel is resolved. Never
+ * LocationIntelBridgeService/FactionIntelBridgeService (draft-creation
+ * adapters only).
+ */
+async function resolveJobIntel(threadId) {
+  try {
+    const records = await HolonetIntelService.getAllIntel({ includeArchived: true });
+    return records
+      .map(record => HolonetIntelService.getIntelMetadata(record))
+      .filter(intel => intel && intel.linkedJobThreadId === threadId)
+      .map(intel => ({ id: intel.id, title: intel.title, status: intel.status, statusLabel: statusLabel(intel.status) || intel.status }));
+  } catch (_err) {
+    return [];
+  }
+}
+
+/**
+ * Thread each faction-consequence row's factionName against the real
+ * Faction Registry for presentation/navigation only — the stored numeric
+ * effects (successDelta/failureDelta) are never touched. A Job-specific
+ * "rival faction" consequence is a narrative/consequence relationship
+ * scoped to this Job; it is never proof the Faction Registry itself stores
+ * a rivalry (see Phase 4N — no such canonical storage exists, per the
+ * Phase 3 audit).
+ */
+function resolveConsequenceFactions(consequenceEntries = []) {
+  return consequenceEntries.map((entry) => {
+    if (entry.factionId) {
+      const faction = FactionRegistryService.findFaction(entry.factionId);
+      if (faction) return { ...entry, resolvedFactionId: faction.id, resolutionKind: 'canonical-id' };
+    }
+    const needle = String(entry.factionName || '').trim().toLowerCase();
+    if (!needle) return { ...entry, resolvedFactionId: '', resolutionKind: 'unresolved' };
+    const matches = FactionRegistryService.getRegistry().filter(faction => faction.name.trim().toLowerCase() === needle);
+    if (matches.length === 1) return { ...entry, resolvedFactionId: matches[0].id, resolutionKind: 'legacy-name-unique' };
+    if (matches.length > 1) return { ...entry, resolvedFactionId: '', resolutionKind: 'ambiguous' };
+    return { ...entry, resolvedFactionId: '', resolutionKind: 'unresolved' };
+  });
+}
+
+/**
+ * Ecosystem Redesign Phase 4 — the additive identity/currentSituation/
+ * relationships/mission/world grouping for the SELECTED Job only (never
+ * every job card — see Phase 4AB performance guidance). A pure
+ * presentation VM: none of these group names are written to canonical Job
+ * storage.
+ */
+async function buildSelectedJobEcosystemGroups(job) {
+  const resolvedFaction = resolveIssuerFaction(job);
+  const resolvedContact = resolveIssuerContact(job, resolvedFaction);
+  const locations = resolveJobLocations(job);
+  const intel = await resolveJobIntel(job.threadId);
+  const consequences = resolveConsequenceFactions(job.consequenceEntries);
+
+  return {
+    identity: {
+      threadId: job.threadId,
+      title: job.title,
+      status: job.status,
+      statusLabel: job.statusLabel,
+      visibility: job.rawJob?.status === 'draft' ? 'hidden' : 'posted',
+      legality: String(job.rawJob?.legality || '').trim()
+    },
+    currentSituation: {
+      status: job.status,
+      statusLabel: job.statusLabel,
+      settlementState: job.status === 'complete' ? 'ready-to-pay' : job.status === 'paid' ? 'paid' : job.status === 'failed' ? 'failed' : 'not-ready',
+      payoutState: job.rewards?.hasPayableRewards ? (job.status === 'paid' ? 'paid' : 'payable') : 'none',
+      partyRelevance: ['posted', 'accepted', 'inProgress', 'review'].includes(job.status),
+      locationReady: locations.length > 0 && !locations[0].missing,
+      currentPartyAtMissionLocation: locations.some(row => row.currentPartyPresence),
+      intelCount: intel.length,
+      factionConsequenceCount: consequences.length
+    },
+    relationships: {
+      issuerFaction: resolvedFaction,
+      contact: resolvedContact,
+      locations,
+      intel,
+      rivalFactions: consequences.filter(entry => entry.isRival)
+    },
+    mission: {
+      objective: job.objectives?.find(o => o.isPrimaryTier)?.title || job.objectives?.[0]?.title || '',
+      briefing: job.briefingBody,
+      instructions: job.briefingInstructions,
+      reward: job.rewards
+    },
+    world: {
+      notes: job.briefingOocNote,
+      history: job.timeline,
+      metadata: { createdAt: job.createdAt, updatedAt: job.updatedAt }
+    }
+  };
+}
+
 export class GMJobBoardSurfaceService {
   static async buildViewModel(host) {
     const threads = await HolonetStorage.getAllThreads();
@@ -760,7 +954,10 @@ export class GMJobBoardSurfaceService {
       : this._pickDefaultJobId(visibleJobs.length ? visibleJobs : jobs);
     if (host) host.selectedJobThreadId = selectedId;
 
-    const selectedJob = jobs.find(job => job.threadId === selectedId) ?? visibleJobs[0] ?? jobs[0] ?? null;
+    const baseSelectedJob = jobs.find(job => job.threadId === selectedId) ?? visibleJobs[0] ?? jobs[0] ?? null;
+    const selectedJob = baseSelectedJob
+      ? { ...baseSelectedJob, ...(await buildSelectedJobEcosystemGroups(baseSelectedJob)) }
+      : null;
     const columns = JOB_COLUMNS.map(column => ({
       ...column,
       jobs: jobs.filter(job => column.statuses.includes(job.status)),
