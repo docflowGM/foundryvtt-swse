@@ -2448,9 +2448,227 @@ Documented honestly rather than silently skipped or fabricated as done:
   new styling beyond the responsive grid/row rules needed for it to work
   (§22).
 
-## 28. Phase 8 gate
+## 28. Phase 8 gate (superseded by §29 — see below)
 
 Recommended, not started: **Phase 8 (Duplicate Faction-admin UX
 disposition in Workspace, and the Assign-Job stable-identity decision
 from §20/§27) is a reasonable next scope**, but is explicitly not begun
 here, per instruction.
+
+# PHASE 7 INDEPENDENT REVIEW CORRECTION PASS — WORKSPACE / ACTOR CONTEXT
+# INTEGRITY
+
+An independent review of the Phase 7 head
+(`e6b988dfab37bba91f442f5a4559decc904ff9e6`) found the overall Phase 7
+architecture sound (single `forActor()` call per render, `workspace-actor`
+kept distinct from `actor`, Location role separation preserved), but
+identified 4 substantive correctness/context issues plus 2 smaller
+cleanups. All 6 are corrected here. **These are bug fixes to semantic
+drift Phase 7's own work introduced, not additive design contracts** —
+each fail-before proof below is a real pre-correction defect, not a
+missing-feature crash.
+
+## 29. Correction 1 — recovery "eligible" is not "needs attention"
+
+**The finding.** `GMHealingTrigger.isEligibleForHealing(actor)` means
+"character type, not Droid/Vehicle, HP > 0" — it never checks HP < max.
+Phase 7 itself proved this in a test (a full-HP PC is
+`eligible:true, injured:false`), but the production code still used
+`needsAttention: eligible` in `forActor()`, and `attentionItems()` still
+iterated `GMHealingTrigger.getHealingSummary().eligibleActors` to build
+Home's recovery queue. Net effect: a perfectly healthy, unimpaired PC
+produced a Home `"Combat & Recovery" — "Eligible for natural
+healing/recovery"` **warning**, inflating the Actions Needed count.
+
+**The fix.** Both call sites now reuse
+`GMCombatRecoveryService.buildActorCard(actor)` — the SAME real recovery
+authority Workspace's own Recovery operations card already renders
+verbatim — instead of re-deriving the legality expression a second time:
+
+- `forActor().operations.recovery.needsAttention` is now
+  `GMCombatRecoveryService.buildActorCard(actor).needsAttention` exactly
+  (`wounded || downed || ctImpaired || conditionPersistent || swSpent ||
+  poisons.length>0 || ongoingEffects.length>0`). `eligible`/`ineligible`
+  (legality) and `injured` (hp-based) are unchanged and remain distinct
+  concepts.
+- `attentionItems()`'s recovery block now iterates
+  `GMCombatRecoveryService.buildViewModel().combatRecovery.needsAttention`
+  (the exact card array Combat & Recovery's own console filters to) —
+  never `GMHealingTrigger.eligibleActors`. Severity is taken from the
+  card's own `actionTone`, never re-derived. A new `recoveryAttentionDetail(card)`
+  helper produces truthful, kind-aware wording — Droids/Vehicles get
+  repair/condition language ("HK-Unit disabled — repair required."),
+  never organic-rest language ("eligible for natural healing"), matching
+  the correction spec's explicit Droid/Vehicle wording requirement.
+
+**Proof.** `tests/gm-phase7-correction-pass.test.mjs` proves: a full-HP
+unimpaired PC produces zero recovery attention items; a genuinely wounded
+PC produces one with `target.kind:'workspace-actor'`; a full-HP but
+CT-impaired PC still produces one (needsAttention is not HP-only); a
+downed Droid produces truthful repair wording, never "eligible for
+natural healing"; and `forActor(actor).operations.recovery.needsAttention`
+agrees exactly with the real `GMCombatRecoveryService.buildActorCard(actor).needsAttention`
+for both a wounded and a healthy fixture. `tests/gm-campaign-attention-items.test.mjs`'s
+`WOUNDED_ACTOR` fixture was corrected from `hp:{value:12}` (no `max`,
+so it never actually triggered `wounded` under the real authority) to
+`hp:{value:8,max:12}` — the old fixture was only passing because the
+pre-correction code used the wrong (eligibility-based) signal.
+Git-stash fail-before proof: reverting all 8 correction-pass files
+reproduces the exact bug — a "Healthy PC" attention item with detail
+`"Eligible for natural healing/recovery."` and `severity:'warning'`.
+
+## 30. Correction 2 — Workspace's canonical Condition Track field
+
+**The finding.** `GMWorkspaceSurfaceService`'s `actorCard()` read
+`actor.system?.conditionTrack?.value ?? actor.system?.condition?.track`
+as its *primary* source. The canonical Actor schema stores CT at
+`system.conditionTrack.current` — the exact field
+`GMCombatRecoveryService.buildActorCard()` reads. An Actor at CT 2 could
+show "CT normal" in the Workspace dossier while Combat & Recovery
+correctly showed CT 2 for the same Actor.
+
+**The fix.** `actorCard()` now reads `conditionTrack.current` first,
+falling back to `.value`/`condition.track` only for legacy compatibility
+— no data migration, no new CT model.
+
+**Proof.** `tests/gm-phase7-correction-pass.test.mjs` proves a
+`conditionTrack.current:2` fixture renders `"CT 2"` in the Workspace
+selected-Actor VM, and that `.current` wins over a deliberately
+conflicting stale `.value:0` on the same fixture.
+
+## 31. Correction 3 — Faction "Open in Workspace" world-Actor truthfulness
+
+**The finding.** A Faction Contact's `hasActorLink` is `true` whenever
+`actorId || actorUuid` exists — including a Compendium-only UUID, which
+`resolveActorForContact()` (via `fromUuid()`) can genuinely open as a
+sheet. Workspace's `selectedActorId` contract, however, is explicitly a
+WORLD Actor id resolved via `game.actors.get()`, which never resolves a
+Compendium-only reference. Phase 7's "Open in Workspace" button rendered
+for `hasActorLink`, so a Compendium-backed Contact advertised a
+navigation that was guaranteed to land on an empty/broken Workspace
+selection.
+
+**The fix.** `contactVm()` now computes a separate,
+world-Actor-only fact — `hasWorkspaceActorLink` / `workspaceActorId` —
+via a new sync `resolveWorldActorForContact()` helper (`game.actors.get()`
+by id, then by exact uuid match; deliberately never `fromUuid()`, never
+an import). `factions.hbs` gates "Open in Workspace" on
+`hasWorkspaceActorLink`, passing `workspaceActorId` (not the raw
+`actorId`/`actorUuid`). The controller's `open-workspace-actor` case now
+does a plain `game.actors.get()` lookup instead of
+`resolveActorForContact()` — it can no longer silently resolve a
+Compendium document that Workspace cannot select. "Open Actor" is
+completely unaffected — it keeps resolving both world and Compendium
+Actors exactly as before.
+
+**Proof.** `tests/gm-phase7-correction-pass.test.mjs` builds a real
+`GMFactionRelationshipSurfaceService.buildViewModel()` VM with one
+world-Actor-backed Contact and one Compendium-uuid-only Contact: the
+world Contact gets `hasWorkspaceActorLink:true` /
+`workspaceActorId:'world-actor-1'`; the Compendium Contact keeps
+`hasActorLink:true` (Open Actor still works) but gets
+`hasWorkspaceActorLink:false` (Open in Workspace is not advertised).
+`tests/gm-workspace-dossier-wiring.test.mjs` statically proves the
+template gates the button on `hasWorkspaceActorLink` and the controller
+never falls back to `resolveActorForContact()`.
+
+## 32. Correction 4 — Organization Role preserves exact Contact focus
+
+**The finding.** Workspace's dossier already resolves both `factionId`
+AND `contactId` for each Faction Contact association
+(`relationships.factionContacts`), but the Organization Role row
+discarded `contactId` and navigated as a generic
+`{kind:'faction', id:factionId}` — patching only `focusedFactionId`. The
+Factions surface already supports a richer, pre-existing
+`focusedContactId` selection contract (used by its own contact-focus
+rows), so this was a real regression of the Phase 2 context-preserving
+navigation principle: "open this exact NPC's organization role" silently
+became "open their faction" with no contact focus at all.
+
+**The fix.** Added `GMCampaignTargetService.factionContact(factionId, contactId)`
+returning `{surfaceId:'factions', statePatch:{focusedFactionId, focusedContactId}}`,
+and a `resolve({kind:'faction-contact', id:contactId, factionId})` case
+that requires `factionId` (returns `null`, never a degraded target, if
+it's missing). `GMCampaignTargetService.faction(id)` and
+`resolve({kind:'faction', id})` are **completely unchanged** — a generic
+Faction target still means only the Faction. Workspace's Organization
+Role row now renders `data-dossier-target-kind="faction-contact"` with
+both `data-dossier-target-id="{{contactId}}"` and
+`data-dossier-target-faction-id="{{factionId}}"`; `_wireDossierTargets()`
+reads the extra attribute and forwards it into `resolve()`.
+
+**Proof.** `tests/gm-phase7-correction-pass.test.mjs` proves
+`factionContact()`'s exact return shape, that `resolve('faction-contact')`
+matches it, that a missing `factionId` returns `null` rather than
+degrading, and that the plain `faction()`/`resolve('faction')` targets
+are byte-for-byte unchanged. `tests/gm-workspace-dossier-wiring.test.mjs`
+statically proves the template carries both ids and that the
+pre-correction single-id pattern is gone.
+
+## 33. Correction 5 — Trade empty-state truthfulness
+
+**The finding.** `forActor().operations.trades` only ever reads
+`GMTradeConsoleSurfaceService`'s `activeQueue`/`approvalQueue`/`failedQueue`
+— it never reads the separately-exposed `recentCompleted` queue. The
+Workspace dossier's empty state nonetheless said *"No active or recent
+Trade activity,"* which is false for an Actor whose only Trade activity
+was a recently completed transfer: the code never checked "recent"
+activity at all.
+
+**The fix (smallest truthful option, per the correction spec's own
+preference).** The copy now reads *"No active, pending-approval, or
+failed Trade activity"* — describing exactly what was actually checked.
+`recentCompleted` integration is explicitly deferred (§34), not
+implemented, since Phase 7 only established operational Trade state for
+the dossier.
+
+**Proof.** `tests/gm-phase7-correction-pass.test.mjs` statically confirms
+the corrected copy is present and the false pre-correction copy is gone.
+
+## 34. Correction 6 (optional) — Actor→Location lookup cleanup
+
+Not a correctness bug — an efficiency cleanup the correction spec marked
+optional. `forActor()`'s direct-Actor-presence check previously called
+`resolveActorByAnyRef(uuid)` (a `game.actors` lookup/scan) for every
+`npcActorUuids` entry on every Location. Since the selected Actor is
+already known, this now builds a small reference set once
+(`{actor.id, actor.uuid, 'Actor.'+actor.id}`) and does an O(1) exact
+string-membership test per `npcActorUuids` entry instead — no semantic
+broadening, still an exact match, never a name match. Covered by the
+existing `tests/gm-campaign-context-actor-location-phase7.test.mjs`
+direct-actor-presence assertions (unchanged pass/fail behavior, faster
+implementation).
+
+## 35. Regression / totals
+
+- Full rolling test suite: **185/185 files run, 179/185 pass** (6
+  pre-existing failures — `force-power-final-integration`,
+  `phase3-force-power-corrections`, `phase4-force-modifier-automation`,
+  `phase5-force-healing-mitigation`, `phase6-force-direct-damage`,
+  `rolling-ci-support-check` — all unrelated to GM Datapad, present on
+  the unmodified Phase 7 head, and confirmed via a git-stash baseline
+  comparison; none newly broken by this pass).
+- Syntax: **1948/1948** (`node --check` across every file in `scripts/`).
+- All Phase 1-7 GM Datapad tests (`gm-*.test.mjs`) remain green,
+  including every prior phase's own regression suite — none weakened to
+  make this pass green.
+- New test file: `tests/gm-phase7-correction-pass.test.mjs`. Modified:
+  `tests/gm-campaign-attention-items.test.mjs` (WOUNDED_ACTOR fixture
+  corrected to be genuinely wounded), `tests/gm-workspace-dossier-wiring.test.mjs`
+  (faction-contact target + hasWorkspaceActorLink gating assertions).
+- Live Foundry status: not run — no live client available, same
+  limitation as every prior phase. Every claim above is static/Node-shim
+  verified, not live-runtime verified.
+
+## 36. Phase 8 gate (supersedes §28)
+
+**PHASE 7 CORRECTIONS COMPLETE — READY FOR PHASE 8.** All 6 independently
+reviewed issues are corrected with executed, git-stash fail-before-proven
+regression tests (Correction 5, a pure copy change, and Correction 6, a
+pure efficiency cleanup with no behavior change, are proven by static/
+existing-test coverage rather than a fail-before proof, since neither
+changes an observable pass/fail outcome). Deferred items from §27 are
+still deferred and still not part of this pass, per its explicit
+scope boundary ("DO NOT EXPAND THIS PASS"). Recommended next: Phase 8 —
+Bulletin as the Player Communication Hub. Not started here, per
+instruction.
