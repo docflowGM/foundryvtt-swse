@@ -2342,3 +2342,91 @@ record already selected, instead of the GM re-searching for it. Every
 relationship row already carries the stable id this needs
 (`data-faction-id`/`data-job-id`/`data-intel-id`/`data-actor-uuid`). Not
 started, per explicit instruction.
+
+## 20. Phase 1 JavaScript addendum (post-review)
+
+A follow-up review of Phase 1's JavaScript specifically (not the markup)
+asked for three concrete, low-risk organizational improvements to
+`GMLocationsSurfaceService.js`, plus confirmation of two architectural
+constraints already satisfied. All implemented with zero output changes
+(every pre-existing Locations/GM-Datapad test — including the new
+ecosystem VM/template contract tests — passes unchanged).
+
+**1. Extracted pure helpers.** `buildEncounterSeedRows(location)` and
+`buildAtlasFactRows(location)` — previously inline `.map()` blocks inside
+`selectedVm()` — are now named, independently-readable functions.
+`buildLocationIdentityVm()`, `buildRelationshipVm()`,
+`buildPreparationVm()`, `buildWorldVm()`, and `buildCurrentSituationVm()`
+were similarly extracted from what was inline object-literal construction
+inside `selectedVm()`, matching the addendum's requested organizational
+shape (adapted to this file's actual field names rather than the
+addendum's illustrative signatures verbatim). `selectedVm()` itself is now
+a short composition of these helpers plus the untouched legacy flat
+return shape.
+
+**2. Single lead-discovery computation.** `buildViewModel()` previously
+called `LocationRegistryService.getAtlasLeadDiscoveries()` twice per
+render for a selected location — once unscoped for the global Atlas Lead
+Queue (`leadDiscoveryRows(records)`), once again scoped by `locationId`
+inside `selectedVm()` for `relationships.leads`. The unscoped call is now
+computed exactly once in `buildViewModel()` and passed into `selectedVm()`
+as `leadRows`; `buildRelationshipVm()` filters it client-side
+(`leadRows.filter(lead => lead.locationId === location.id)`) instead of
+triggering a second full actor-flag scan.
+
+**3. Legacy VM parity locked down by test.** `selectedVm()`'s pre-existing
+flat properties (`raw`, `children`, `factionRows`, `contactRows`,
+`actorRows`, `sceneRows`, `encounterSeeds`, `atlasFacts`, `jobRows`/
+`intelRows` in their original unresolved `{ id }` shape, every `*Text`
+field, `mapImagePath`, etc.) were always additive — never removed —
+across all of Phase 1; this addendum adds an explicit executed test
+section proving it (§21), so a future edit that accidentally drops one of
+these can't land silently.
+
+**Constraints already satisfied, confirmed on review:**
+- **Job/Intel resolution authority.** `resolveJobRow()`/`resolveIntelRow()`
+  use `HolonetStorage.getThread()` (Job Board's own thread storage) and
+  `HolonetIntelService.getIntelById()/toIntelSummary()` (Holonet Intel's
+  own public API) — never `LocationJobBridgeService`/
+  `LocationIntelBridgeService`, which are draft-creation adapters
+  ("create a new Job/Intel FROM this location"), not lookup authorities
+  for an already-linked one.
+- **Controller left alone.** `GMLocationsSurfaceController.js` was not
+  touched by any Phase 1 commit — every new relationship/preparation/world
+  control in the redesigned markup reuses an existing
+  `data-location-action` the controller already handled (confirmed by
+  `gm-datapad-action-integrity-contract` and
+  `gm-locations-operational-ui-action-matrix`, both still green).
+- **No stored ecosystem schema.** `location-registry-service.js`'s
+  canonical record shape is untouched — `identity`/`currentSituation`/
+  `relationships`/`preparation`/`world` exist only on the render VM.
+
+**Deferred, with rationale:** shared index-building
+(`buildLocationIndexes()`, a `byId`/`childrenByParentId` map built once in
+`buildViewModel()` and threaded through `locationCard()` instead of each
+card rebuilding a full `records`-sized `Map` and re-filtering `records`
+for children) — explicitly marked optional by the review itself ("do not
+turn this into a performance phase"). The static Library caps a world's
+registry at roughly 200 records; the current O(n²) card-list construction
+has not been reported as a real performance problem, and reworking
+`locationCard()`'s signature now would touch every call site for a
+speculative win. Left as a candidate for Phase 2 or a dedicated
+performance pass, not this one.
+
+## 21. Legacy VM parity test
+
+`tests/gm-locations-ecosystem-view-model.test.mjs` was extended with an
+explicit legacy-parity section against the same realistic fixture used for
+the ecosystem assertions: `selected.raw`, `.children`, `.factionRows`,
+`.contactRows`, `.actorRows`, `.sceneRows`, `.encounterSeeds`,
+`.atlasFacts`, the unresolved-shape `.jobRows`/`.intelRows`
+(`[{ id: 'job-thread-1' }]`/`[{ id: 'intel-1' }]`, deliberately NOT
+resolved — a separate legacy consumer that only ever read `{ id }` must
+not break just because `relationships.jobs`/`relationships.intel` now
+resolve real data), and representative `*Text`/`map*` editor fields.
+
+## 22. Full validation after the addendum
+
+Full rolling test suite: **155/155** passed (unchanged from Phase 1 — the
+addendum added no new test files, extended one). Syntax check:
+**2267/2267** files pass `node --check`.
