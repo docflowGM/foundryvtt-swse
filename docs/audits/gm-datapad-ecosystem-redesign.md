@@ -2061,3 +2061,396 @@ Job/Location/Faction/Intel resolver it depends on is now the same
 function the production Phase 1-5 surfaces call, not a second copy.
 **Phase 7 (Workspace as the Party/People Hub) is not started, per explicit
 instruction.**
+
+# ECOSYSTEM REDESIGN — PHASE 7: WORKSPACE AS THE PARTY/PEOPLE HUB
+
+Start gate re-verified independently before any Phase 7 code (per the
+standing "verify actual current state, don't trust a prior report" rule):
+branch `claude/locations-context-contract-i8tbp0`, clean working tree,
+HEAD `38174c2765d8dbcf199d2463d8ab7e104b20a4a3`, all 5 Phase 6 correction
+commits present in `git log`. Confirmed directly rather than assumed.
+
+## 1. Workspace authority audit (7A)
+
+Read `GMWorkspaceSurfaceService.js`, `GMWorkspaceSurfaceController.js`,
+and `workspace.hbs` in full before writing any code. Confirmed Workspace
+already delegates every mutation to a real existing authority and invents
+none of its own: party membership → `GMPartyRosterService.setPartyMember`;
+credits → `TransactionEngine.executeCreditAdjustment`; XP →
+`applyXP`/`isXPEnabled`/`determineLevelFromXP`
+(`engine/progression/xp-engine.js`); recovery →
+`GMCombatRecoveryService.executeGroupAction`/`buildActorCard`; Force Point
+restore → `actor.regainForcePoints`/`ActorEngine.updateActor`; Faction
+relationships → `FactionRegistryService`. Phase 7 extends this surface,
+it does not replace it, and adds no parallel service.
+
+## 2. `GMCampaignContextService.forActor()` extensions (addenda C/D/E/F)
+
+Per the addendum's explicit instruction — extend the one shared seam,
+never build a second Workspace-only interpretation:
+
+- **`relationships.locations`** (new): two genuinely distinct roles, never
+  merged into one unexplained link. `role: 'direct-actor'` —
+  `Location.npcActorUuids` literally contains this Actor.
+  `role: 'faction-contact'` — this Actor backs a Faction Contact whose id
+  is separately listed in `Location.contactIds`. Both rows can exist for
+  the same Location simultaneously without collapsing into one. Actor
+  Location is never inferred from Faction control, Job location, or party
+  Location — `party.currentLocation` (still `Location.activeForParty`
+  only) and `relationships.locations` are proven, by an executed test, to
+  stay independent even when they name the same real Location.
+- **`relationships.factions` enrichment**: each row now additionally
+  carries `relationshipType`, `score`, `relationshipStatus`, `source`,
+  `benefits` straight from `FactionRegistryService.getActorRelationships()`'s
+  own record — the pre-existing common `{kind,id,label,status,resolved,
+  resolutionKind}` contract is unchanged, these are additive fields, not a
+  replacement.
+- **`operations.trades` enrichment**: each row now carries `role`
+  (`'sender'`/`'recipient'`) and the real resolved `counterpartyActorId`/
+  `counterpartyActorName`, so a caller never has to re-run the Trade query
+  merely to answer "who's on the other side of this."
+- **`operations.recovery.injured`** (new, independent from `eligible`):
+  `GMHealingTrigger.getHealingSummary()`'s `eligible` means "character
+  type, not droid/vehicle, HP > 0" — it does **not** mean "injured." A
+  full-HP character is still reported `eligible`. `injured` is computed
+  directly from the Actor's own hp values (`hpMax > 0 && hpValue <
+  hpMax`), confirmed by an executed test asserting a full-HP actor is
+  `eligible:true, injured:false` and a wounded one is
+  `eligible:true, injured:true`.
+
+All four are additive; the pre-existing `factions`/`factionContacts`/
+`jobs`/`intel`/`operations.recovery.eligible`/`operations.recovery
+.ineligible` fields and every Phase 6 correction are unchanged.
+
+## 3. `GMCampaignTargetService.workspaceActor()` (addendum G)
+
+A new, genuinely distinct destination — `workspaceActor(id)` →
+`{surfaceId:'workspace', statePatch:{selectedActorId:id}}` — and
+`resolve({kind:'workspace-actor', id})` maps to the same target.
+`resolve({kind:'actor', id})` is proven, by an executed test, to remain
+`null` after this change: Phase 7 adds Workspace addressing, it does not
+redefine what `'actor'` means anywhere else in the Datapad. Every other
+existing surface's Actor link keeps opening the real Foundry sheet
+directly.
+
+## 4. Home recovery migration (addendum H) — scoped to recovery only
+
+`GMCampaignContextService.attentionItems()`'s recovery row's target
+changed from `{kind:'actor', ...}` (open-the-sheet) to
+`{kind:'workspace-actor', ...}` (select this Actor in Workspace's
+Recovery operations card). This is the **one** attention-item kind that
+migrates; Job/Trade/Approval/Skill-Challenge/Location-lead targets are
+untouched. The pre-existing `gm-campaign-attention-items.test.mjs`
+assertion (`recovery.target.kind === 'actor'`) was updated in place to
+assert `'workspace-actor'`, with a comment explaining this is a
+deliberate, addendum-authorized contract change, not an accidental break.
+No special-case handling was needed in `gm-datapad.js`'s
+`_wireHomeAttentionTargets()` — it already falls through non-`'actor'`
+kinds to `GMCampaignTargetService.resolve()` → `navigateToSurface()`.
+
+## 5. Selection-state contract (7C, addendum N)
+
+`GMWorkspaceSurfaceService.buildViewModel(host)` reads
+`host.getSurfaceState('workspace').selectedActorId` — the single
+canonical selection identity (`world Actor.id`, never a name/UUID-in-one-
+place-id-in-another/DOM-index), matching the exact pattern
+`GMLocationsSurfaceService.buildViewModel()` already uses for
+`selectedLocationId`. Honest fallback rules, each covered by an executed
+test:
+
+- No explicit selection → falls back to the first current party member
+  (same "default to the first visible record" convention Locations
+  already uses) — an honest UX default, never a resolved-identity claim.
+- An explicit `selectedActorId` that no longer resolves to a real Actor →
+  `hasSelection:false` and a real `warning` string naming the broken id;
+  it is never silently substituted for a different real Actor.
+- No party members and no explicit selection → an honest `empty` state,
+  never a warning about a nonexistent id.
+
+## 6. Performance rule (7D)
+
+`GMCampaignContextService.forActor()` is called **exactly once** per
+Workspace render, only for the selected Actor — never once per roster
+card. Proven by an executed test that monkey-patches `forActor()` with a
+call counter, builds a 5-actor roster (3 in party), and asserts the
+counter is `1` after `buildViewModel()` while confirming all 5 actors
+were still built into `gmActors` (ruling out a coincidentally-tiny
+roster as the reason for a low count).
+
+## 7. Selected-Actor VM contract (7E)
+
+`selection` (new `buildViewModel()` key) carries `identity` (reused
+`actorCard()` fields — name/img/type/hp/condition/FP/credits/level/XP —
+**no new actor-summarization logic**), `currentSituation` (hp/condition/
+`injured`/`recoveryEligible`/`statusChips` from
+`GMCombatRecoveryService.buildActorCard()`/party flags), `relationships`
+(the corrected `forActor()` result, decorated only with a `roleLabel` for
+Location rows), `operations` (`recovery`: the real
+`GMCombatRecoveryService.buildActorCard()` — not a re-derived summary, so
+Droid/Vehicle rest-legality rules are consumed verbatim, never
+reimplemented; `trades`: `forActor()`'s enriched rows), `progression`
+(XP/credits/FP fields lifted from `actorCard()`, no new mutation path),
+and `limitations` (passed through from `forActor()`).
+
+## 8. Visual/interaction design (7F/7K)
+
+A new "Campaign Dossier" panel (`workspace.hbs`, `data-workspace-dossier`)
+sits above the existing roster grid — a two-region layout (dossier +
+roster), not a full rewrite of the existing panels. It deliberately does
+**not** reproduce a second Actor sheet: no attacks/talents/feats/
+equipment/full inventory (locked in by an executed regex assertion that
+those never appear in the template). "Open Sheet" remains a single click
+away in the dossier header. Clicking a roster card's new "Dossier" button
+(`data-workspace-select-actor`) or a party member's small dossier icon
+selects that Actor and re-renders Workspace in place — it does not
+navigate away.
+
+## 9. Relationship cards + exact navigation (7G, addendum D)
+
+Faction Standing, Organization Role (Faction Contact), Locations, Jobs,
+and Intel each render as clickable rows
+(`data-dossier-target-kind`/`data-dossier-target-id`) that resolve
+through the real `GMCampaignTargetService.resolve()` →
+`navigateToSurface()` contract — the same pattern
+`_wireHomeAttentionTargets()` established in Phase 6, now reused by a new
+`GMWorkspaceSurfaceController._wireDossierTargets()` rather than
+re-invented. An `'actor'` kind is handled defensively (opens the real
+sheet) even though no dossier row currently emits one, for consistency
+with Home's own dispatcher.
+
+## 10. Operations cards (7H)
+
+Recovery reuses `GMCombatRecoveryService.buildActorCard()`'s own
+`statusChips`/`restEligible` fields directly in the template — Droid/
+Vehicle actors never see a fake organic-rest control because the
+template conditions on the real service's own `restEligible`, not a
+re-derived guess. Trade renders `forActor()`'s enriched
+role/counterparty rows. Neither card reimplements legality rules.
+
+## 11. Progression/resources (7I)
+
+XP/FP/credits are read straight from the existing `actorCard()` fields
+already used by the roster grid and the pre-existing party-member modal
+— no new mutation path, no new storage.
+
+## 12. Creation vs. navigation (7J) / GM Actions
+
+"Give Intel" (`data-party-open-intel`) and "Assign Job"
+(`data-party-open-job`) remain object-creation actions (open the Intel/
+Job wizard prefilled for this Actor) — distinct from the relationship
+rows above, which are pure navigation. Both reuse the **same**
+`GMWorkspaceSurfaceController` methods (`_openIntelForActor`,
+`_openJobWizardForActor`) the pre-existing party-member modal already
+calls — the dossier's GM Actions section is a second rendering surface
+for the same controller methods, never a second implementation.
+
+## 13. Inbound navigation (7L/7M)
+
+Two proven inbound paths land on a selected Workspace Actor via
+`{kind:'workspace-actor'}`:
+
+1. **Home → Workspace**: the recovery attention item (§4 above).
+2. **Factions → Workspace** (new, addendum requirement for "at least one
+   other inbound path"): a Faction Contact's card gained an "Open in
+   Workspace" button (`data-gm-faction-action="open-workspace-actor"`)
+   alongside the pre-existing "Open Actor" (sheet) button —
+   `GMFactionRelationshipSurfaceController` resolves the same real Contact
+   Actor `resolveActorForContact()` already resolves, then calls
+   `GMCampaignTargetService.workspaceActor(actor.id)` →
+   `navigateToSurface()`. "Open Actor" (sheet) is untouched.
+
+## 14. Outbound navigation (7N)
+
+Every dossier relationship row (§9) navigates outward through
+`GMCampaignTargetService` + `navigateToSurface()` using the subject's real
+stable id — never a name or a DOM index.
+
+## 15. Party-Location context (7O, addendum J)
+
+`selection` does not expose a `relationships.locations` entry synthesized
+from `party.currentLocation` — proven directly by the executed test in
+§2 (a party member with `activeForParty` Location set but no real
+Location link still reports `relationships.locations: []`). Party
+Location context, where shown, is sourced from
+`GMCampaignContextService.party()` exactly as Phase 6 established it.
+
+## 16. Party-manager parity (7P, addendum L) — modal retained, not removed
+
+The pre-existing party-member command modal (Full Health, Short Rest,
+Full Rest, Restore FP, Give Intel, Assign Job, Open Sheet, XP form, XP
+presets, Level-Up XP, Remove from Party) is **fully retained** — Phase 7
+does not delete it. An executed test (`gm-workspace-dossier-wiring
+.test.mjs`) asserts every one of those 11 controls is still present in
+`workspace.hbs`, and separately asserts the new dossier's own action
+buttons use the exact same `data-*` attributes (`data-actor-full-health`,
+`data-party-actor-rest`, `data-party-restore-force`,
+`data-party-open-intel`, `data-party-open-job`,
+`data-workspace-party-toggle`) — both surfaces delegate to the same
+`GMWorkspaceSurfaceController` methods, never two implementations.
+**Parity is proven; removal of the old modal is explicitly deferred** —
+the addendum requires proof before removal, not removal itself, and nothing
+in the Phase 7 spec instructs deleting it this phase.
+
+## 17. Duplicate Faction-admin UX in Workspace (7Q)
+
+Audited, not touched: Workspace's existing Faction create/attach/delete
+forms (`_wireFactionForms`/`_wireFactionActions`) remain exactly as they
+were. They are pre-existing functionality, not something Phase 7 added or
+promoted, and removing/relocating them was not required by this phase's
+scope. Flagged here for a future phase's disposition rather than acted on
+now, matching the addendum's "do not automatically delete working
+functionality" instruction.
+
+## 18. No new storage (7R)
+
+Confirmed: `selection`/dossier state lives entirely in
+`ShellSurfaceState` (`getSurfaceState('workspace').selectedActorId`), the
+same mechanism every other surface's selection already uses. No new
+Actor flag, no new setting, no new "player state" store was created.
+
+## 19. Broken-reference honesty (7S)
+
+Covered by §5's second bullet and its executed test — a stale
+`selectedActorId` never silently substitutes a different Actor.
+
+## 20. Assign Job persistence audit (addendum I) — REQUIRED FINDING
+
+Traced the complete path from Workspace's "Assign Job" action to
+canonical Job storage:
+`GMWorkspaceSurfaceController._openJobWizardForActor()` → `pendingJobDraft`
+(with `assignedActorId`/`assignedActorUuid`/`assignedActorName`) →
+`jobs.hbs` wizard template → `GMJobBoardSurfaceController._wireCreateForms()`'s
+FormData-driven submit handler → `HolonetMessengerService.createJobPosting()`.
+
+**Finding: the three assigned-Actor fields do NOT survive.**
+`jobs.hbs` never renders `assignedActorId`/`assignedActorUuid`/
+`assignedActorName` as a form field; `_wireCreateForms()`'s submit
+handler never reads any of the three (it reads `title`, `briefing`,
+`instructions`, `primaryObjective`, `issuerFactionId`,
+`issuerContactActorId`, etc., but not these); and
+`createJobPosting()`'s own parameter list has no such field at all. The
+only real effect of `_openJobWizardForActor()`'s draft is the
+**title/briefing/instructions text prefill** already visible in the
+wizard.
+
+Per the addendum's option B: **Assign Job is a Job prefill only. No
+persistent Actor↔Job assignment relationship exists anywhere in this
+codebase**, and Workspace/`forActor()` make no such claim — `forActor()`'s
+`relationships.jobs` resolves Jobs via the real issuer/contact-actor
+matching Job Board itself uses (Correction 8's
+`FactionJobBridgeService.normalizeJobIssuer()`), never via this
+draft-only field. Locked in as a permanent executable regression guard
+(`gm-job-assign-actor-persistence-audit.test.mjs`) — a future change that
+threads a stable assigned-Actor identity through Job creation should
+intentionally break this test and update it alongside a
+`forActor()`/`forJob()` change, not by accident.
+
+## 21. Action integrity / mutation authority (7T/7U)
+
+Every new interactive control (`data-workspace-select-actor`,
+`data-dossier-target-kind`, `data-gm-faction-action="open-workspace-
+actor"`) is wired in its surface's real controller
+(`GMWorkspaceSurfaceController`, `GMFactionRelationshipSurfaceController`)
+using the codebase's established `querySelectorAll` + `{signal}` +
+`type="button"` pattern — no new global listeners, no inline handlers.
+`GMWorkspaceSurfaceController` remains the sole action owner for
+Workspace; no `_grantXp`/`_runRecoveryActionForActor`/
+`_restoreForcePoints`/`_openIntelForActor`/`_openJobWizardForActor`/
+`_setPartyMembership` method was duplicated — the new dossier calls the
+exact same methods via the same `data-*` attributes (§16).
+
+## 22. Responsive/accessibility
+
+New controls follow the established conventions: `type="button"` on every
+new button, `.workspace-dossier-row` is a real `<button>` (keyboard-
+activatable by default, not a `<div>` with a click handler), the new
+`.workspace-dossier-columns` grid uses `repeat(auto-fit, minmax(...))`
+(container-aware, no fixed-width overflow) with a `max-width:680px`
+single-column fallback, and no new nested-scroll region was introduced.
+
+## 23. Tests
+
+Five new files, one existing file extended in place:
+
+- `gm-campaign-context-actor-location-phase7.test.mjs` (new) — direct vs.
+  Faction-Contact-derived Location presence kept distinct and coexistent,
+  party Location never leaks into `relationships.locations`, Faction
+  standing enrichment fields, Trade role/counterparty enrichment,
+  `eligible` vs. `injured` independence. **Pure additive design contract**
+  — `git stash`-verified to fail before (the fields/relationships didn't
+  exist) and pass after.
+- `gm-campaign-target-workspace-actor.test.mjs` (new) — `workspaceActor()`/
+  `resolve('workspace-actor')` shape, `resolve('actor')` still `null`,
+  missing-id guards. **Pure additive**, `git stash`-verified fail-before/
+  pass-after.
+- `gm-workspace-selected-actor-vm.test.mjs` (new) — fallback-to-first-
+  party-member, honest missing-selection warning, honest empty state,
+  `forActor()` called exactly once per render (not per card), full VM
+  shape sanity. **Pure additive**, `git stash`-verified fail-before/
+  pass-after.
+- `gm-job-assign-actor-persistence-audit.test.mjs` (new) — the §20
+  finding, locked in as a static regression guard. **Pure audit/
+  authority-boundary finding, not a bug fix** — nothing in this phase
+  changes Assign Job's behavior; this test only formalizes what was
+  already true.
+- `gm-workspace-dossier-wiring.test.mjs` (new) — dossier selection/target
+  wiring, Workspace-is-not-a-second-sheet guard, full old-modal-action
+  parity list (§16), Faction inbound path (§13). **Pure additive**,
+  `git stash`-verified fail-before/pass-after (the wiring didn't exist).
+- `gm-campaign-attention-items.test.mjs` (modified) — the one assertion
+  changed by §4, with an explanatory comment distinguishing it from an
+  accidental break.
+
+## 24. Full test/syntax totals
+
+Rolling test suite: **184 files run, 178 passed.** The 6 failures
+(`force-power-final-integration`, `phase3-force-power-corrections`,
+`phase4-force-modifier-automation`, `phase5-force-healing-mitigation`,
+`phase6-force-direct-damage`, `rolling-ci-support-check`) are
+**pre-existing and unrelated to this phase** — confirmed by `git stash`-
+ing every Phase 7 change and re-running two of them directly: both fail
+identically on the unmodified baseline (`force-power-final-integration`
+with a pre-existing `ERR_MODULE_NOT_FOUND` for
+`governance/actor-engine/actor-engine.js` that this phase never touches;
+`rolling-ci-support-check` times out identically with or without this
+phase's diff). Rolling syntax check: **1948/1948 passed, 0 failures.**
+
+## 25. Prior-phase regression result
+
+Re-verified via the same rolling test run: every Phase 1-6 GM Datapad
+test (`gm-locations-*`, `gm-faction-*`, `gm-job-*`, `gm-intel-*`,
+`gm-campaign-*`, `gm-home-*`, `gm-approvals-*`) still passes, including
+the corrected Phase 6 parity suite (`gm-campaign-context-parity
+.test.mjs`) and every Phase 6 correction-pass test — none were weakened
+or reinterpreted to make Phase 7 pass.
+
+## 26. Live Foundry status
+
+Not run — no live Foundry client is available in this environment, same
+as every prior phase.
+
+## 27. Deferred / not done this phase
+
+Documented honestly rather than silently skipped or fabricated as done:
+
+- **Party-member modal removal** — parity is proven (§16), removal is
+  not performed. Left for a future phase's explicit decision.
+- **Duplicate Faction-admin UX in Workspace** — audited (§17), not
+  relocated/reduced this phase.
+- **Assign Job stable-identity persistence** — documented as a genuine
+  gap (§20), not implemented; option A (threading a stable id through
+  Job creation) is explicitly deferred, not attempted.
+- **Live Foundry 36-step checklist** — not run (no live client
+  available), same limitation as every prior phase.
+- **Visual polish beyond a functional two-region layout** — the dossier
+  panel is functional and follows the established `swse-ui-panel`/
+  `gm-party-command-section` visual language; it was not given bespoke
+  new styling beyond the responsive grid/row rules needed for it to work
+  (§22).
+
+## 28. Phase 8 gate
+
+Recommended, not started: **Phase 8 (Duplicate Faction-admin UX
+disposition in Workspace, and the Assign-Job stable-identity decision
+from §20/§27) is a reasonable next scope**, but is explicitly not begun
+here, per instruction.
