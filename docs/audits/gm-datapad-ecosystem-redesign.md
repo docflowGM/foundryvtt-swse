@@ -1139,3 +1139,543 @@ layer with (B) rebuilding Home as the campaign Command/Attention Hub**,
 per the user's formal Phase 6 specification. **Not started as of this
 Phase 5 commit — begins next, per that specification's own start gate
 (verify Phase 5's exact HEAD/CI state before proceeding).**
+
+# ECOSYSTEM REDESIGN — PHASE 6: CAMPAIGN CONTEXT SERVICE + HOME COMMAND HUB
+
+## 1. Phase 6 verdict
+
+**PHASE 6 COMPLETE WITH DOCUMENTED RUNTIME FOLLOW-UP.** No live Foundry
+client is available in this environment. Every claim below is verified by
+direct source reading and by executing the real production code
+(`GMCampaignContextService`'s six public methods, `GMCampaignTargetService`,
+`GMDashboardSurfaceService`/Home's own `_buildGmHomeContext`/
+`_wireHomeAttentionTargets` wiring) under the repo's Foundry-shim Node
+harness, plus static source-wiring proof for the one call chain that
+cannot be instantiated end-to-end (`GMDatapad` itself — see §19).
+
+## 2. Start gate (verified before any Phase 6 code)
+
+- Branch: `claude/locations-context-contract-i8tbp0`. PR: #963 (open, draft).
+- Clean working tree confirmed before starting.
+- Phase 5 HEAD at start: `7049cb407c44b2c7460564ab645e75bebf443e1b` (4
+  commits: `5115d40`, `5fc405d`, `baa5644`, `7049cb4`).
+- CI on that exact head: **green** (`Rolling system validation`,
+  conclusion `success`), confirmed via the GitHub API before Phase 6 work
+  began.
+- Baseline `node tools/run-rolling-syntax-check.mjs`: 2279/2279.
+- Baseline `node tools/run-rolling-tests.mjs`: 167/167 (163 Phase-1-4
+  baseline + 4 Phase 5 test files).
+
+## 3. Integration authority audit (6A)
+
+Read in full or in the relevant part: `GMDashboardSurfaceService.js`,
+`scripts/apps/gm-datapad.js` (`_prepareContext`, `_buildGmHomeContext`,
+`_getHomeBadgeCounts`/`_getJobBadgeCounts`/`_getTradeBadgeCounts`,
+`_loadPendingDroids`/`_loadStorePendingApprovals`, `_onRender`),
+`gm-party-roster-service.js`, `holonet-state-service.js`,
+`game-session-store.js`, `GMWorkspaceSurfaceService.js`,
+`GMLocationsSurfaceService.js` (its `resolveJobRow`/`resolveIntelRow`
+pattern), `GMJobBoardSurfaceService.js` (its exported `jobForThread`/
+`jobStatus`/`statusLabel`), plus a dedicated research pass (quoted
+verbatim into this audit's working notes, summarized in §5) covering
+`GMTradeConsoleSurfaceService.js`, `GMStoreControlSurfaceService.js`,
+`GMApprovalsSurfaceService.js`/`GMApprovalOperationsService.js`,
+`GMHealingSurfaceService.js`/`GMCombatRecoveryService`/`GMHealingTrigger`,
+and `SkillChallengeStore.js`/`SkillChallengeState.js`/
+`GMSkillChallengeSurfaceService.js`.
+
+Integration matrix (READ-only; the "Service should mutate?" column is
+`NO` for every row, per the Phase 6N contract):
+
+| Domain | Canonical authority | Stable id | Existing resolver | Existing summary API | Legacy fallback |
+|---|---|---|---|---|---|
+| Location | `LocationRegistryService` | `location.id` | `findLocation(id)` | `getRegistry()`/`summarizeForWorkspace()` | none needed |
+| Faction | `FactionRegistryService` | `faction.id` | `findFaction(id)` | `getRegistry()`/`summarizeForWorkspace()` | name-match (existing surfaces only) |
+| Job | `HolonetStorage` (thread, `threadType:'job'`) | `thread.id` | `getThread(id)` + `jobForThread`/`jobStatus`/`statusLabel` (exported by `GMJobBoardSurfaceService`) | `getAllThreads()` filtered | `factionName` (existing surfaces only) |
+| Intel | `HolonetIntelService` | `intel.id`/`record.id` | `getIntelById(id)` | `getAllIntel(filters)` | none |
+| Party | `GMPartyRosterService` + `Location.activeForParty` | actor id / location id | `getPartyActors()` | n/a | `HolonetStateService.getPartyState().location` (free text, no id — see §7) |
+| Actor | Foundry `game.actors` | `actor.id`/`actor.uuid` | `game.actors.get(id)` | n/a | none |
+| Trade | Holonet transfer records (`HolonetStorage`) | `record.id` (`recordId`) | `GMTradeConsoleSurfaceService.buildTradeConsoleVm()` | same | none |
+| Approvals | Four independent sources (droid actor scan, `pendingCustomPurchases` setting, `GameSessionStore`, `FactionRegistryService.getPendingSuggestions()`) | composite `key` (`droid:<actorId>`, `custom:<index>`, `game:<sessionId>`, `faction:<actorId>:<recordId>`) | `GMApprovalsSurfaceService.buildViewModel()` (mutates `host.selectedApprovalKey` as a side effect — **not safely reusable read-only**, see §5) | same | none |
+| Healing/Recovery | `GMCombatRecoveryService`/`GMHealingTrigger` | `actor.id` (`GMHealingTrigger`) / `actor.id`+`actor.uuid` (`GMCombatRecoveryService`) | `getHealingSummary()` | same | none |
+| Skill Challenge | `SkillChallengeStore` | `challenge.id` | `getAll()` | same | none — **no `sourceJobThreadId`/`sourceLocationId` field exists at all** (confirmed, §12) |
+
+## 4. Domain classification (Phase 6 addendum §A)
+
+Per the user's own mid-Phase-6 addendum, connections are classified by
+KIND, not flattened into one relationship graph:
+
+- **Party/Player Operations** (subject matter is player Actors/party
+  state/transactions, not player-accessible surfaces): Workspace,
+  Healing, Trade, Store, Skill Challenges (partially).
+- **Shared/Player Communication & Interaction** (GM-owned canonical state
+  with a player-visible/interactive projection): Bulletin, Jobs, Intel,
+  Skill Challenges.
+- **GM Campaign Authority**: Locations, Factions, Approvals, House Rules.
+- **Command layer**: Home — observes/summarizes/prioritizes/routes across
+  the other three regions; owns no canonical campaign data itself.
+- **Configuration** (outside the campaign graph): Settings, House Rules
+  (policy/mechanical configuration, never a semantic campaign-object
+  relationship unless a rule explicitly declares affected systems — none
+  do today, confirmed by reading `GMHouseRulesSurfaceService.js`: no
+  `affectedSystems`/`appliesTo`/`scope` field exists on a rule record).
+
+## 5. `GMCampaignContextService` — role and non-authority contract (6B/6N)
+
+File: `scripts/ui/shell/gm/GMCampaignContextService.js`. **Owns no
+canonical campaign record; performs no mutation of any kind.** Confirmed
+by an executed static-source scan (`tests/gm-campaign-context-read-only-
+contract.test.mjs`, §19) that no mutation call site
+(`game.settings.set`/`.update(`/`.create(`/`.delete(`/any `*RegistryService
+.upsert*`/`HolonetIntelService.create*`/`TransactionEngine.*`/etc.) exists
+anywhere in the file.
+
+**One deliberate exception to "reuse the exact existing resolver"**: the
+audit found `GMApprovalsSurfaceService.buildViewModel(host)` **mutates its
+host as a side effect** (`host.selectedApprovalKey = ...`,
+`host.approvalEditMode = false`, etc., lines 693-697) whenever the caller's
+stored selection no longer matches the current request list — calling it
+from a read-only context service would risk stomping the real GM
+Datapad's selection state whenever `attentionItems()` runs on a render for
+a *different* surface. `GMCampaignContextService.attentionItems()`
+therefore independently re-derives the four approval sources
+(droid-pending actor scan, `pendingCustomPurchases` setting, pending-GM
+`GameSessionStore` sessions, `FactionRegistryService.getPendingSuggestions()`)
+using the same raw authorities `GMApprovalsSurfaceService` itself reads
+from, and reconstructs the **identical composite key scheme**
+(`droid:<actorId>`, `custom:<index>`, `game:<sessionId>`,
+`faction:<actorId>:<recordId>`) so that navigating via
+`GMCampaignTargetService.approval(key)` lands on the exact same request
+the real Approvals surface would show — proven by construction (the key
+format is copied verbatim from `buildFactionSuggestionRequest`/etc.), not
+merely assumed.
+
+## 6. Public API result (6C)
+
+Implemented exactly as specified: `party()`, `forLocation(locationId)`,
+`forFaction(factionId)`, `forJob(threadId)`, `forIntel(intelId)`,
+`forActor(actorRef)`, `attentionItems()`. All `static async`. No method
+was made "enormous" — each delegates to small private per-domain
+resolvers (`resolveIntelLocation`-style, one per relationship) inside the
+same file, matching the Phase 4/5 established pattern rather than
+inventing a new style.
+
+## 7. Party context result (6F)
+
+`party()` reports `partySize`, `onlinePlayers`, `totalPlayers`,
+`currentLocation` (a real relationship row, resolved via
+`Location.activeForParty` — **never** `HolonetStateService
+.getPartyState().location`), `objective`/`situation`
+(from `HolonetStateService`, display-only), `partyStateLocationText`, and
+`inCombat`.
+
+**Dual Location-authority finding, confirmed real**: `HolonetStateService
+.getPartyState()` stores `{location, objective, situation, updatedAt,
+updatedBy}` — `location` is a free-text display string with **no
+`locationId` field at all** (confirmed by reading `savePartyState()`'s
+full normalized shape). The only place a *stable id* for "the party's
+current Location" exists is `Location.activeForParty` (a boolean on the
+Location record). This phase does **not** rewrite `HolonetStateService`'s
+schema — doing so safely would require auditing and updating every UI
+that writes `partyState.location` (chiefly Bulletin's party-state editor),
+which the Phase 6 spec explicitly scopes out ("do not add a large
+Bulletin redesign here"). Per the spec's own fallback instruction ("if
+this normalization is too risky in Phase 6: defer storage change but
+document the dual representation explicitly"), `party()` reports a
+`limitations` entry naming the dual representation whenever
+`partyState.location` is set but doesn't match any `activeForParty`
+Location, and resolves `currentLocation` from `Location.activeForParty`
+only — the same source Job Board (`currentPartyAtMissionLocation`, Phase
+4F) and Intel (`currentPartyAtLocation`, Phase 5F) already trust, so Home
+now agrees with the rest of the ecosystem instead of introducing a third
+opinion.
+
+## 8. Location context result (6G)
+
+`forLocation(locationId)` resolves `relationships.faction` (via
+`location.controllingFactionId`), `relationships.jobs` (scanning job
+threads for `job.sourceLocation.locationId === locationId` — the exact
+Phase 4 field), `relationships.intel` (scanning Intel for
+`intel.linkedLocationId === locationId` — the exact Phase 5 field), and
+`party.currentPartyPresence`. Proven against real fixtures to resolve the
+same real ids the Phase 1/4/5 VMs would (`tests/gm-campaign-context-
+parity.test.mjs`, §19). This is a fresh, independent implementation
+against the same authorities — not a literal import of
+`GMLocationsSurfaceService`'s private `resolveJobRow`/`resolveIntelRow` —
+per the Phase 6AI instruction not to churn the stable Phase 1 file; parity
+is proven behaviorally (matching ids on identical fixtures), not by code
+sharing.
+
+## 9. Faction context result (6H)
+
+`forFaction(factionId)` resolves `relationships.locations`
+(`controllingFactionId` match), `relationships.jobs`
+(`issuer.factionId` match), `relationships.intel` (`linkedFactionId`
+match). `limitations` always includes the honest, unchanged Phase 3
+finding: no canonical Faction-vs-Faction relationship storage exists
+anywhere in this codebase — not fabricated here either.
+
+## 10. Job context result (6I)
+
+`forJob(threadId)` resolves `relationships.faction`/`contact` (issuer
+identity, canonical-id only — this phase does not add the Phase 4
+legacy-name-match fallback to the context service, since `forJob()`
+always has the real thread and therefore the real `issuer.factionId`;
+the legacy fallback remains Job Board's own VM's responsibility for
+*display*, per Phase 6I's "do not move Job mutation or settlement
+authority here"), `relationships.location` (`sourceLocation.locationId`),
+`relationships.intel` (`linkedJobThreadId` scan), and
+`party.currentPartyAtMissionLocation`.
+
+## 11. Intel context result (6J)
+
+`forIntel(intelId)` resolves `relationships.location`, `.faction`,
+`.job`, and `party.currentPartyAtLocation` — the same real
+`linkedLocationId`/`linkedFactionId`/`linkedJobThreadId` fields Phase 5
+established. Source Atlas Fact provenance and Scene/Actor relationships
+are deliberately **not** duplicated into the context service this phase:
+`GMIntelSurfaceService`'s own Phase 5 resolvers already own that
+presentation, and Phase 6's `forIntel()` is scoped to the campaign-graph
+subset Home's attention items actually need (Location/Faction/Job).
+Extending it further is a candidate for a later incremental-adoption pass
+per Phase 6AI, not required now.
+
+## 12. Actor context result (6K)
+
+`forActor(actorRef)` resolves what can currently be proven, split by
+Phase-6-addendum type: `relationships` (Faction Contact links via
+`contact.actorUuid`, Job issuer/contact links via
+`issuer.contactActorUuid`, Intel links via `linkedActorUuid` — all
+CAMPAIGN RELATIONSHIP, canonical id only, never inferred from a name) and
+`operations` (`trades` — Trade Console entries where the actor is
+`fromActorId`/`toActorId`, and `recovery` — this actor's own
+`GMHealingTrigger.getHealingSummary()` eligibility; both OPERATIONAL
+CONTEXT per the addendum, the same subject viewed by a different system,
+never modeled as a "relationship"). `party` reports
+`isPartyMember`/`inCombat`/`inScene`. A Trade Console load failure is
+caught and reported via `limitations`, never thrown (Phase 6AQ).
+
+## 13. Trade context result (6L)
+
+Reused directly: `GMTradeConsoleSurfaceService.buildTradeConsoleVm()`
+already exposes real `recordId`/`threadId`/`fromActorId`/`toActorId` per
+entry (confirmed the method tolerates a missing/`undefined` host — it only
+reads `host?.selectedTradeRecordId`, so the context service can call it
+safely with no host at all). No parallel trade ledger, no correlation by
+amount/actor/timestamp anywhere in this phase's code.
+
+## 14. Skill Challenge context result (6M)
+
+**Confirmed absent, as predicted**: `SkillChallengeState.normalize()` has
+no `sourceJobThreadId` and no `sourceLocationId` field; the only
+location-adjacent field is a free-string `sceneId`. Participant identity
+is `actorId` (plain Foundry Actor id), not `actorUuid` — already a stable
+id, just not the same shape Job/Intel/Faction use elsewhere. **Not added
+this phase.** Threading real `sourceJobThreadId`/`sourceLocationId` fields
+through the Skill Challenge creation/editing paths (`GMSkillChallengeSurface
+Controller`'s new/start/edit handlers) is real, non-trivial surface —
+correctly classified `DEFER_TO_DEDICATED_PHASE` in §16's table rather than
+attempted as a "small additive fix" here, matching the spec's own
+instruction not to let this become a full Skill Challenge redesign.
+`attentionItems()` still surfaces active Skill Challenges (by `status`,
+the one real lifecycle field that does exist) with a real
+`selectedChallengeId`-shaped target, via `GMCampaignTargetService
+.skillChallenge(id)`.
+
+## 15. Selection-contract audit result
+
+Two incompatible selection-storage conventions were found to coexist:
+direct `host.selectedX` properties (Trade's `selectedTradeRecordId`,
+Approvals' `selectedApprovalKey`, both pre-existing) and the newer
+`getSurfaceState(surfaceId)`/`patchSurfaceState()` bag (used by
+Locations/Factions/Job Board/Intel since Phase 1-5, and independently by
+Skill Challenges' own `selectedChallengeId`). `GMCampaignTargetService`
+(§17) hides this split behind one small mapping function per destination
+— exactly the repetition-avoidance the Phase 6T instruction anticipated.
+Store and Healing have **no** selection concept at all today (confirmed);
+Home's recovery attention items open the real Actor sheet directly
+instead of inventing a new Healing surface-state field, matching the
+established "open Actor" behavior every other surface (Locations'
+open-contact 'actor' branch, Job Board's issuer-actor branch, Intel's
+open-actor branch) already uses, and matching the spec's explicit
+"do not redesign Healing" instruction.
+
+## 16. Missing canonical link audit (Phase 6 addendum §E)
+
+| Connection | Type | Stable source id? | Stable target id? | Status |
+|---|---|---|---|---|
+| Locations ↔ Factions ↔ Jobs ↔ Intel (core graph) | Campaign relationship | yes | yes | READY_NOW (Phases 1-5) |
+| Workspace Actor ↔ Healing | Operational context | yes (`actor.id`) | n/a (no selection contract) | CONTEXT_SERVICE_ONLY — `forActor().operations.recovery`; Home/Workspace open the real Actor sheet rather than a Healing selection |
+| Workspace Actor ↔ Trade | Operational context | yes (`actor.id`) | yes (`recordId`) | READY_NOW — `forActor().operations.trades`, `GMCampaignTargetService.trade()` |
+| Workspace Actor ↔ Factions | Campaign relationship | yes (`actor.uuid`) | yes (`faction.id`) | READY_NOW — `forActor().relationships.factions` |
+| Workspace Actor ↔ Jobs | Campaign relationship | yes (`actor.uuid`) | yes (`thread.id`) | READY_NOW — `forActor().relationships.jobs` |
+| Workspace Actor ↔ Intel | Campaign relationship | yes (`actor.uuid`) | yes (`intel.id`) | READY_NOW — `forActor().relationships.intel` |
+| Workspace Actor ↔ Skill Challenges | Operational context | yes (`actor.id`) | no (`participants[].actorId` exists but nothing resolves "which challenges include this actor" today) | SMALL_ADDITIVE_FIX candidate — not built this phase (Workspace itself is out of scope per 6AI) |
+| Intel → Bulletin | Workflow handoff | n/a | n/a | DEFER_TO_DEDICATED_PHASE — zero `sourceIntelId`/`sourceJobThreadId`/`sourceLocationId`/`sourceFactionId` fields exist anywhere on a Bulletin record (confirmed by grep — zero matches in `GMBulletinSurfaceService.js`) |
+| Job → Bulletin | Workflow handoff | n/a | n/a | DEFER_TO_DEDICATED_PHASE — same finding |
+| Location → Bulletin | Workflow handoff | n/a | n/a | DEFER_TO_DEDICATED_PHASE — same finding |
+| Faction → Bulletin | Workflow handoff | n/a | n/a | DEFER_TO_DEDICATED_PHASE — same finding |
+| Job ↔ Skill Challenge | Campaign relationship (would-be) | n/a | n/a | DEFER_TO_DEDICATED_PHASE — no `sourceJobThreadId` field exists (§14) |
+| Location ↔ Skill Challenge | Campaign relationship (would-be) | n/a | n/a | DEFER_TO_DEDICATED_PHASE — no `sourceLocationId` field exists (§14) |
+| Actor ↔ Skill Challenge | Operational context | yes (`participants[].actorId`) | yes (`challenge.id`) | SMALL_ADDITIVE_FIX candidate — the id already exists, only a resolver is missing; deferred alongside the Skill Challenge phase for scope discipline |
+| Store ↔ Approvals | Policy/workflow gate | index-based (`custom:<index>`), not the purchase record's own `id` | n/a | READY_NOW at the presentation layer (`attentionItems()` reuses the same index-based key Approvals itself uses) — the underlying **index-as-identity** is itself fragile (reordering `pendingCustomPurchases` would change every key) but is pre-existing, unrelated to this phase, and out of scope to fix here |
+| Trade ↔ Approvals | Policy/workflow gate | yes (`recordId`) | n/a | READY_NOW — `attentionItems()`'s `trade-approval`/`trade-failed` rows already carry the real Trade `recordId` |
+| Store ↔ Trade | Not a campaign relationship (would need a real correlation id) | `TransactionEngine` mints its own `tx_<...>` id; Trade Console entries use `recordId`/`transferId` (`HolonetStorage`-scoped) | — | DEFER_TO_DEDICATED_PHASE — no shared/correlation id confirmed between the two id schemes; explicitly not correlated by amount/actor/timestamp here or anywhere in this phase |
+| House Rules → Store | Policy dependency | n/a | n/a | NOT_A_CAMPAIGN_RELATIONSHIP — confirmed no rule record declares `affectedSystems`/`appliesTo`; not fabricated |
+| House Rules → Healing | Policy dependency | n/a | n/a | NOT_A_CAMPAIGN_RELATIONSHIP — same finding |
+
+## 17. Target navigation result (6T)
+
+**A new tiny target adapter was added**, justified by real, already-proven
+repetition: four call sites (Locations/Factions/Job Board/Intel
+controllers) already hard-code the exact same `navigateToSurface()`
+argument shapes independently. `GMCampaignTargetService` (file:
+`scripts/ui/shell/gm/GMCampaignTargetService.js`) provides
+`location(id)`/`faction(id)`/`job(id)`/`intel(id)`/`skillChallenge(id)`/
+`trade(id)`/`approval(key)`, each returning the exact
+`{surfaceId, statePatch|hostPatch}` object those controllers already
+construct by hand, plus a `resolve({kind, id})` dispatcher. It **never**
+calls `navigateToSurface()` itself — callers still own the actual
+navigation call, matching the Phase 6S instruction that the context/target
+layer resolves data/addressing, the shell handles navigation. Actor is
+deliberately unsupported (`resolve()` returns `null` for it) since no
+surface anywhere treats Actor as a Datapad selection.
+
+## 18. Home Campaign-Now / Action-Queue / exact-navigation result (6P-6AB)
+
+Home's pre-existing structure (`gm-command-session`/`gm-command-action-
+queue`/`gm-command-pulse`/`gm-command-quick-launch` in `home.hbs`) was
+**not rewritten from scratch** — the spec's own instruction. Changed:
+
+- `_buildGmHomeContext()` (in `scripts/apps/gm-datapad.js`) is now `async`
+  and calls `GMCampaignContextService.party()` (for the current-Location
+  session block) and `.attentionItems()` (for the action queue), replacing
+  the previous badge-count-only, route-based `actionItems` array.
+- Each action-queue row now carries `targetKind`/`targetId`/`targetUuid`
+  (from the real `attentionItem.target`) plus a `fallbackRoute` (a plain
+  app id, used only when no real target resolves — never silently
+  no-op-ing a click). Store/Bulletin rows remain generic app-launch rows
+  (§16 — no provenance/selection contract exists for either yet), rendered
+  through the *same* pre-existing `data-app-card` path, unchanged.
+- `home.hbs`'s current-Location block is now a real navigable control
+  (`data-target-kind="location"`) when `GMCampaignContextService.party()`
+  resolves a real Location, and a plain non-interactive block otherwise —
+  never a fake/disabled button.
+- A new `_wireHomeAttentionTargets(root, signal)` method (wired into the
+  existing `_onRender()` listener-binding block, right after the
+  pre-existing `data-app-card` wiring) resolves every `[data-target-kind]`
+  control: an `actor` target opens the real Actor sheet directly
+  (`actor.sheet.render(true)`), matching Workspace's/Locations'/Job
+  Board's/Intel's own established behavior; every other kind resolves
+  through `GMCampaignTargetService.resolve()` into the real
+  `navigateToSurface()` call; an unresolvable target falls back to
+  `_navigateTo(fallbackRoute)`, never throwing or silently doing nothing.
+
+Exact-navigation coverage: Home → Job (review/payout), Home → Trade
+(failed/approval), Home → Approval (droid/store/game/faction, via the
+reconstructed composite key), Home → recovery Actor (opens the real
+sheet), Home → Location (current-Location block), Home → Skill Challenge
+(active challenges). Store/Bulletin remain generic, honestly (§16).
+
+## 19. Tests (6AJ-6AN)
+
+- `tests/gm-campaign-context-read-only-contract.test.mjs` (executed) —
+  static source-scan proof of zero mutation call sites in
+  `GMCampaignContextService.js`, plus presence of all seven required
+  public methods.
+- `tests/gm-campaign-context-parity.test.mjs` (executed) — `forLocation`/
+  `forFaction`/`forJob`/`forIntel` resolve the same real ids the Phase
+  1-5 VMs already resolve, against realistic fixtures reused across all
+  four methods; plus honest `resolved:false`/`resolutionKind:'missing'`
+  for a nonexistent Location/Job (never fabricated, Phase 6AR).
+- `tests/gm-campaign-attention-items.test.mjs` (executed) — proves the
+  minimum-required domains (Phase 6AL: Job, Trade, Approval,
+  Actor/recovery — Location is covered via `forLocation()`'s own parity
+  test and the `location-lead` attention-item source) each produce a real
+  attention item with real target identity, plus severity-ordering
+  (critical before warning) and a non-throwing empty queue when no
+  campaign data exists.
+- `tests/gm-campaign-target-adapter.test.mjs` (executed) — every real
+  target kind maps to the exact stable per-surface selection contract
+  (Phase 6AN); Actor/unknown-kind/empty-id all resolve to `null` rather
+  than a broken navigation call.
+- `tests/gm-home-attention-navigation-wiring.test.mjs` (executed, static
+  source-wiring proof) — `scripts/apps/gm-datapad.js` (`GMDatapad`, an
+  `ApplicationV2` subclass) cannot be imported under this repo's Node/
+  Foundry shim (confirmed: throws "Cannot read properties of undefined
+  (reading 'api')" — the shim does not provide
+  `foundry.applications.api.ApplicationV2`), the same class of limitation
+  already documented for `HolonetMessengerService.createJobPosting()` in
+  Phase 4's `gm-job-source-location-identity.test.mjs`. This test proves
+  every hop instead: `_buildGmHomeContext()` actually calls
+  `GMCampaignContextService.party()`/`.attentionItems()`; each item maps
+  to `targetKind`/`targetId`/`targetUuid`/`fallbackRoute`;
+  `_wireHomeAttentionTargets()` is actually invoked from `_onRender()`
+  and its Actor/`GMCampaignTargetService.resolve()`/fallback-route
+  branches all exist; `home.hbs` renders the exact attributes the handler
+  reads.
+- All five new test files verified via `git stash` to fail against the
+  pre-Phase-6 source and pass after.
+- `tests/gm-datapad-action-integrity-contract.test.mjs` — re-verified
+  green; totals moved from 244 to **245** controls (81→**82**
+  attribute-name entries, 0 unresolved) — the scanner picked up the new
+  `data-fallback-route`-style attribute-name control; no unresolved
+  control was introduced.
+- `tests/gm-datapad-no-duplicate-handler-regression.test.mjs`,
+  `tests/gm-datapad-wizard-contract.test.mjs` — re-verified green,
+  unchanged.
+- Every Phase 1-5 ecosystem/navigation/creation-identity/Intel test —
+  re-verified green, unchanged.
+
+## 20. Failure isolation / broken-reference result (6AQ/6AR)
+
+Every authority read inside `attentionItems()` is wrapped in its own
+`try/catch` — a Skill Challenge Store failure, a Trade Console failure, an
+Approvals-source failure, or a Healing-summary failure each independently
+degrades to "skip that domain's items" rather than throwing and blanking
+the whole queue; `SWSELogger`-style logging was intentionally omitted in
+favor of silent skip only for `attentionItems()`'s per-domain try/catch
+blocks (each domain's absence is self-evident from the queue simply
+lacking that domain's rows — an explicit warning per skipped domain on
+every single Home render was judged noisier than useful, unlike
+`_buildGmHomeContext()`'s own top-level `.catch()` calls for `party()`/
+`attentionItems()`, which do log via the existing `SWSELogger.warn`
+convention). `forLocation`/`forFaction`/`forJob`/`forIntel`/`forActor` all
+report `resolved:false, resolutionKind:'missing'` for a subject that
+doesn't exist, never throwing and never guessing.
+
+## 21. Performance result (6AP)
+
+Every `forX()`/`attentionItems()` call loads each authority **once**
+(`loadJobIndex()` loads all job threads once per call; Intel is scanned
+once via `intelRowsWhere()`; Trade Console is built once per call) — no
+per-relationship refetching, matching the spec's explicit BAD/GOOD example.
+No persistent cache, no cache-invalidation hook, and no static campaign
+snapshot is stored anywhere in `GMCampaignContextService` — confirmed by
+the same read-only source scan (§19) doubling as a no-cache check (no
+module-level mutable state exists in the file beyond `const` function
+declarations).
+
+## 22. Action integrity (6AO)
+
+See §19/§18 — `gm-datapad-action-integrity-contract` totals moved from
+244 to 245 (82 attribute-name entries, 0 unresolved); the increase is the
+scanner recognizing the new home.hbs attribute-style controls, not a
+regression. Real proof for the exact-navigation click paths comes from
+the executed `gm-campaign-target-adapter`/`gm-campaign-context-*` tests
+plus the static `gm-home-attention-navigation-wiring` wiring proof (§19),
+matching the precedent set in Phase 4 §17 / Phase 5 §20 for control
+families this scanner cannot fully verify on its own.
+
+## 23. Files changed
+
+New: `scripts/ui/shell/gm/GMCampaignContextService.js`,
+`scripts/ui/shell/gm/GMCampaignTargetService.js`,
+`tests/gm-campaign-context-read-only-contract.test.mjs`,
+`tests/gm-campaign-context-parity.test.mjs`,
+`tests/gm-campaign-attention-items.test.mjs`,
+`tests/gm-campaign-target-adapter.test.mjs`,
+`tests/gm-home-attention-navigation-wiring.test.mjs`.
+Modified: `scripts/apps/gm-datapad.js` (`_prepareContext`,
+`_buildGmHomeContext`, `_onRender`, new `_wireHomeAttentionTargets`),
+`templates/apps/gm-datapad/surfaces/home.hbs` (action-queue rows,
+current-Location block).
+
+## 24. Live Foundry checklist (not run — no live client available)
+
+1. Open GM Datapad → Home. PASS = campaign state visible immediately,
+   action queue readable, app launcher secondary.
+2. Set/verify current party Location (mark a Location `activeForParty`).
+   Click the current-Location session block. PASS = exact Location opens.
+3. Create/use a Job with a submitted objective. Click its Home action
+   item. PASS = exact Job selected on first render.
+4. Put a Job into `complete` (payout-ready) state. PASS = Home shows the
+   actionable item; clicking opens the exact Job.
+5. Create/use a failed or pending-GM Trade transfer. Click the Home item.
+   PASS = exact Trade selected in the Trade Console.
+6. Create/use a pending droid/store/game/faction-suggestion Approval.
+   Click the Home item. PASS = exact Approval selected in Approvals.
+7. Use a wounded/recovery-eligible party Actor. PASS = Home reflects it
+   truthfully; clicking opens that Actor's real sheet.
+8. Create an active Skill Challenge. PASS = Home shows it truthfully;
+   clicking opens the exact Challenge.
+9. Simulate one unavailable subsystem (e.g. a Skill Challenge Store read
+   failure). PASS = Home remains usable; other domains still render.
+10. Resize the Datapad narrow → wide with several action items queued.
+    PASS = action queue remains usable, no overflow, no nested scroll trap
+    (reuses the shell's existing `container-type: inline-size`).
+11. Navigate Home → Location → Faction → Job → Intel → Home. PASS =
+    context navigation still works, no duplicate handler behavior, no
+    stale render exception.
+
+If no live client exists: DO NOT CLAIM LIVE VALIDATION. (None exists in
+this environment — see §2.)
+
+## 25. Deferred issues
+
+- **Workspace's own redesign** (Phase 7, per the user's roadmap) was
+  explicitly not started — Workspace's `actorCard()`/party-roster logic
+  was read for audit purposes only, never edited.
+- **Skill Challenge `sourceJobThreadId`/`sourceLocationId`** — confirmed
+  absent, classified `DEFER_TO_DEDICATED_PHASE` (§14/§16), not added.
+- **Bulletin provenance ids** (`sourceIntelId`/`sourceJobThreadId`/
+  `sourceLocationId`/`sourceFactionId`) — confirmed absent (zero matches
+  anywhere in `GMBulletinSurfaceService.js`), classified
+  `DEFER_TO_DEDICATED_PHASE`, not added — Bulletin was not redesigned.
+  this phase, per the explicit instruction.
+- **`forIntel()`'s Scene/Actor/source-Fact relationships** were not added
+  to the context service this phase (§11) — `GMIntelSurfaceService`
+  remains their sole owner; extending `forIntel()` is a candidate for a
+  future incremental-adoption pass, not required by Phase 6's own success
+  criteria.
+- **Store's index-based approval identity** (`custom:<index>` into
+  `pendingCustomPurchases`, rather than the purchase record's own `id`)
+  is a pre-existing fragility (reordering the array changes every key) —
+  not introduced by this phase, not fixed by this phase (Store was not
+  redesigned), reused as-is for parity with the real Approvals surface.
+- **Store↔Trade correlation** — no shared/correlation id confirmed
+  between `TransactionEngine`'s `tx_<...>` ids and Trade Console's
+  `HolonetStorage`-scoped `recordId`s; documented rather than guessed at
+  via amount/actor/timestamp matching, per the explicit prohibition.
+
+## 26. Phase 7 recommendation
+
+**WORKSPACE AS THE PARTY/PEOPLE HUB** — the next natural expansion, using
+`GMCampaignContextService.forActor()` (already built and proven this
+phase) as its primary cross-authority integration seam: Workspace's
+per-Actor cards can resolve Faction/Job/Intel relationships and Trade/
+recovery operational context through the exact same service Home now
+uses, rather than re-deriving them a third time. **Not started, per
+explicit instruction.**
+
+## 27. Holopad connection map result (Phase 6 addendum §H, item 33)
+
+| Connection | Type | Ready now? | Service enough? | Schema needed? | Deferred phase |
+|---|---|---|---|---|---|
+| Locations↔Factions↔Jobs↔Intel | Campaign relationship | yes | yes | no | — |
+| Actor↔Faction/Job/Intel | Campaign relationship | yes | yes | no | — |
+| Actor↔Trade | Operational context | yes | yes | no | — |
+| Actor↔Healing | Operational context | yes (opens Actor sheet) | yes | no (Healing selection deferred) | Phase 7 (Workspace) |
+| Actor↔Skill Challenge | Operational context | no | no | resolver only, id already exists | Phase 7 / Skill Challenge phase |
+| Job/Location↔Skill Challenge | Campaign relationship | no | no | yes (`sourceJobThreadId`/`sourceLocationId`) | dedicated Skill Challenge phase |
+| Intel/Job/Location/Faction→Bulletin | Workflow handoff | no | no | yes (provenance ids) | dedicated Bulletin phase |
+| Store↔Approvals | Policy/workflow gate | yes (index-based key reused) | yes | no | — |
+| Trade↔Approvals | Policy/workflow gate | yes | yes | no | — |
+| Store↔Trade | (rejected — no correlation) | no | no | a real correlation id, if one is ever added | dedicated Economy phase |
+| House Rules→Store/Healing | Policy dependency | n/a | n/a | n/a | rejected as a campaign relationship |
+
+**READY CONNECTIONS**: the core Location/Faction/Job/Intel graph (Phases
+1-5) plus every `forActor()` relationship/operation this phase adds.
+**CONTEXT-SERVICE CONNECTIONS**: Actor↔Healing (via sheet-open, not a
+Healing selection contract), Store↔Approvals, Trade↔Approvals.
+**MISSING CANONICAL LINKS**: Skill Challenge source ids, Bulletin
+provenance ids, a Store↔Trade correlation id.
+**WORKFLOW-PROVENANCE GAPS**: every Bulletin handoff (Intel/Job/Location/
+Faction → Bulletin) — none exist yet, all correctly left unbuilt this
+phase.
+**POLICY-ONLY CONNECTIONS**: House Rules → Store/Healing — confirmed no
+metadata exists to resolve them as relationships, correctly not
+fabricated.
+**CONNECTIONS REJECTED AS UNNECESSARY**: Healing↔Faction, House
+Rules↔Intel, Settings↔Job — none built, matching the addendum's explicit
+"prefer fewer truthful connections" instruction.
