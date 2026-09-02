@@ -5,6 +5,7 @@
  */
 
 import { hydrateHolonetRecord } from '../contracts/record-factory.js';
+import { HolonetGmAuthority } from './holonet-gm-authority.js';
 
 const SOCKET_NAME = 'system.foundryvtt-swse';
 const HOLONET_EVENT = 'holonet';
@@ -13,8 +14,9 @@ const HOLONET_EVENT = 'holonet';
 // identifies a single publication OCCURRENCE (never the record id — the
 // same record may legitimately be republished later as a distinct
 // occurrence, and must not be deduped against its own earlier
-// publication). Bounded, in-memory, transport-level only — never a
-// world setting or a persistent ledger. Covers two real risks:
+// publication). Bounded, in-memory, transport-level only, AND (PHASE 8A
+// CORRECTION PASS C3) time-limited — never a world setting or a
+// persistent ledger. Covers two real risks:
 //   1. origin loopback — if the socket transport ever echoes an
 //      emitSync() back to the emitting client, that client must not
 //      re-dispatch hooks it already fired locally for the same event.
@@ -24,22 +26,37 @@ const HOLONET_EVENT = 'holonet';
 // only 'record-published'); every other sync type (thread-updated,
 // state-updated, etc.) is completely unaffected.
 const SEEN_PUBLICATION_EVENT_CAP = 200;
+const SEEN_PUBLICATION_EVENT_TTL_MS = 5 * 60 * 1000;
 
 export class HolonetSocketService {
   static #initialized = false;
-  static #seenPublicationEventIds = new Set();
+  // id -> the timestamp (ms) it was first seen. A Map preserves
+  // insertion order, so the oldest entry is always first — both TTL
+  // pruning and cap eviction only ever need to look at/remove the front.
+  static #seenPublicationEvents = new Map();
+
+  static #pruneExpiredPublicationEvents() {
+    const cutoff = Date.now() - SEEN_PUBLICATION_EVENT_TTL_MS;
+    for (const [id, seenAt] of this.#seenPublicationEvents) {
+      if (seenAt >= cutoff) break; // insertion-ordered: everything after this is newer too
+      this.#seenPublicationEvents.delete(id);
+    }
+  }
 
   static #markPublicationEventSeen(id) {
     if (!id) return;
-    this.#seenPublicationEventIds.add(id);
-    if (this.#seenPublicationEventIds.size > SEEN_PUBLICATION_EVENT_CAP) {
-      const oldest = this.#seenPublicationEventIds.values().next().value;
-      this.#seenPublicationEventIds.delete(oldest);
+    this.#pruneExpiredPublicationEvents();
+    this.#seenPublicationEvents.set(id, Date.now());
+    if (this.#seenPublicationEvents.size > SEEN_PUBLICATION_EVENT_CAP) {
+      const oldestId = this.#seenPublicationEvents.keys().next().value;
+      this.#seenPublicationEvents.delete(oldestId);
     }
   }
 
   static #hasSeenPublicationEvent(id) {
-    return Boolean(id) && this.#seenPublicationEventIds.has(id);
+    if (!id) return false;
+    this.#pruneExpiredPublicationEvents();
+    return this.#seenPublicationEvents.has(id);
   }
 
   static initialize() {
@@ -76,6 +93,16 @@ export class HolonetSocketService {
         return;
       }
       if (!game.user?.isGM) return;
+      // PHASE 8A CORRECTION PASS (C1): every ACTIVE GM client receives
+      // this same request (Foundry's socket relay is not addressed to a
+      // single connection) — without this gate, N active GMs would each
+      // independently persist and broadcast N separate publication
+      // occurrences for the same player request. Only the deterministic
+      // primary active GM (HolonetGmAuthority) proceeds; every other
+      // active GM silently stands down. Does not disambiguate multiple
+      // browser tabs of the SAME GM user — see HolonetGmAuthority's own
+      // documented limitation.
+      if (!HolonetGmAuthority.isPrimaryActiveGm()) return;
       try {
         await this.#handleGmRequest(payload);
       } catch (err) {
