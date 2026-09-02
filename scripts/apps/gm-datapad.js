@@ -48,6 +48,8 @@ import { GameCreditEscrowService } from "/systems/foundryvtt-swse/scripts/games/
 import { computeCenteredPosition, resetApplicationCentering } from "/systems/foundryvtt-swse/scripts/utils/sheet-position.js";
 import { GMPartyRosterService } from "/systems/foundryvtt-swse/scripts/ui/shell/gm/utils/gm-party-roster-service.js";
 import { SkillChallengeStore } from "/systems/foundryvtt-swse/scripts/engine/skill-challenges/SkillChallengeStore.js";
+import { GMCampaignContextService } from "/systems/foundryvtt-swse/scripts/ui/shell/gm/GMCampaignContextService.js";
+import { GMCampaignTargetService } from "/systems/foundryvtt-swse/scripts/ui/shell/gm/GMCampaignTargetService.js";
 
 const GM_TABLET_BASE_WIDTH = 1440;
 const GM_TABLET_BASE_HEIGHT = 900;
@@ -251,7 +253,7 @@ export class GMDatapad extends BaseSWSEAppV2 {
       urgentApps,
       hasUrgentApps: urgentApps.length > 0,
       appClusters: this._buildAppClusters(apps, appCounts),
-      gmHome: this._buildGmHomeContext(apps, appCounts),
+      gmHome: await this._buildGmHomeContext(apps, appCounts),
       homeSummary: appCounts,
       user: game.user,
       ...surfaceContext,
@@ -291,7 +293,7 @@ export class GMDatapad extends BaseSWSEAppV2 {
   }
 
 
-  _buildGmHomeContext(apps = [], counts = {}) {
+  async _buildGmHomeContext(apps = [], counts = {}) {
     const number = (value) => Number(value ?? 0) || 0;
     const locationsSummary = (() => {
       try { return LocationRegistryService.summarizeForWorkspace(); }
@@ -300,14 +302,27 @@ export class GMDatapad extends BaseSWSEAppV2 {
         return { count: 0, active: 0, leadDiscoveryCount: 0 };
       }
     })();
+    // Ecosystem Redesign Phase 6 — Home now reads the party's current
+    // Location through GMCampaignContextService.party() instead of its own
+    // independent activeForParty lookup, so Home and the rest of the
+    // ecosystem (Job/Intel "party here" checks) always agree on the same
+    // source of truth. Falls back to a "known to players" Location only
+    // when no Location is actively marked for the party, matching this
+    // method's pre-existing fallback behavior.
+    const campaignParty = await GMCampaignContextService.party().catch(() => null);
     const activeLocation = (() => {
       try {
+        if (campaignParty?.currentLocation?.resolved) {
+          return LocationRegistryService.findLocation(campaignParty.currentLocation.id) ?? { name: campaignParty.currentLocation.label };
+        }
         const locations = LocationRegistryService.getRegistry?.() ?? [];
-        return locations.find((loc) => loc?.activeForParty || loc?.revealState === 'active')
-          ?? locations.find((loc) => loc?.knownToPlayers || loc?.revealState === 'known')
-          ?? null;
+        return locations.find((loc) => loc?.knownToPlayers || loc?.revealState === 'known') ?? null;
       } catch (_err) { return null; }
     })();
+    const attentionItems = await GMCampaignContextService.attentionItems().catch((err) => {
+      SWSELogger.warn('[GMDatapad] Unable to load campaign attention items for home:', err);
+      return [];
+    });
     const partyUsers = Array.from(game.users ?? []).filter((user) => !user.isGM);
     const onlinePlayers = partyUsers.filter((user) => user.active).length;
     const partyActors = GMPartyRosterService.getPartyActors({ ownedOnly: false });
@@ -338,15 +353,59 @@ export class GMDatapad extends BaseSWSEAppV2 {
       return summary;
     }, { current: 0, max: 0, down: 0, wounded: 0, healthy: 0, members: [] });
 
-    const actionItems = [
-      { id: 'approvals', tone: 'crit', icon: 'fa-solid fa-check-circle', label: 'Pending Approvals', sub: `${number(counts.approvals)} approval request${number(counts.approvals) === 1 ? '' : 's'} awaiting GM review`, count: number(counts.approvals) },
-      { id: 'jobs', tone: 'crit', icon: 'fa-solid fa-clipboard-list', label: 'Jobs Need Review', sub: `${number(counts.jobReview)} objective review / ${number(counts.jobPayout)} payout ready`, count: number(counts.jobs) },
-      { id: 'trade', tone: 'crit', icon: 'fa-solid fa-right-left', label: 'Failed Settlements', sub: `${number(counts.tradeFailed)} failed trade settlement${number(counts.tradeFailed) === 1 ? '' : 's'} requiring attention`, count: number(counts.tradeFailed) },
+    // Ecosystem Redesign Phase 6P/6X — each row now carries the EXACT
+    // record GMCampaignContextService.attentionItems() found (a specific
+    // Job, Trade, Approval, or recovery-eligible Actor), not a generic
+    // "N items — open the app" badge. GMCampaignTargetService converts a
+    // row's `target` into the exact navigateToSurface() call; an Actor
+    // target has no Datapad surface selection (see
+    // GMCampaignTargetService's own note) so those rows open the real
+    // Actor sheet directly instead, matching every other surface's
+    // established "open Actor" behavior.
+    const ATTENTION_KIND_ICON = {
+      'job-review': 'fa-solid fa-clipboard-list',
+      'job-payout': 'fa-solid fa-sack-dollar',
+      'trade-failed': 'fa-solid fa-triangle-exclamation',
+      'trade-approval': 'fa-solid fa-right-left',
+      approval: 'fa-solid fa-check-circle',
+      recovery: 'fa-solid fa-heart-pulse',
+      'skill-challenge-active': 'fa-solid fa-dice-d20',
+      'location-lead': 'fa-solid fa-map-location-dot'
+    };
+    const ATTENTION_SEVERITY_TONE = { critical: 'crit', warning: 'warn', info: 'info' };
+    const ATTENTION_KIND_FALLBACK_ROUTE = {
+      'job-review': 'jobs',
+      'job-payout': 'jobs',
+      'trade-failed': 'trade',
+      'trade-approval': 'trade',
+      approval: 'approvals',
+      recovery: 'healing',
+      'skill-challenge-active': 'skill-challenges',
+      'location-lead': 'locations'
+    };
+    const exactActionItems = attentionItems.slice(0, 12).map((item) => ({
+      id: item.id,
+      tone: ATTENTION_SEVERITY_TONE[item.severity] || 'info',
+      icon: ATTENTION_KIND_ICON[item.kind] || 'fa-solid fa-circle-exclamation',
+      label: item.title,
+      sub: item.detail,
+      source: item.source,
+      count: 1,
+      targetKind: item.target?.kind || '',
+      targetId: item.target?.id || '',
+      targetUuid: item.target?.uuid || '',
+      fallbackRoute: ATTENTION_KIND_FALLBACK_ROUTE[item.kind] || 'home'
+    }));
+
+    // Store/Bulletin have no exact-record selection contract yet (see the
+    // audit doc's missing-link table) — they stay generic app-launch rows,
+    // same as before this phase, rather than fabricating an exact target.
+    const genericActionItems = [
       { id: 'store', tone: 'warn', icon: 'fa-solid fa-store', label: 'Store Pending', sub: `${number(counts.pendingSales)} sales / ${number(counts.storeApprovals)} purchase approvals`, count: number(counts.store) },
-      { id: 'bulletin', tone: 'warn', icon: 'fa-solid fa-newspaper', label: 'Bulletin Signals', sub: `${number(counts.bulletin)} live or draft Holonet records`, count: number(counts.bulletin) },
-      { id: 'healing', tone: 'info', icon: 'fa-solid fa-heart-pulse', label: 'Healing Eligible', sub: `${number(counts.healing)} party member${number(counts.healing) === 1 ? '' : 's'} eligible for recovery`, count: number(counts.healing) },
-      { id: 'locations', tone: locationsSummary.leadDiscoveryCount ? 'ok' : 'info', icon: 'fa-solid fa-map-location-dot', label: 'Location Leads', sub: `${number(locationsSummary.leadDiscoveryCount)} unresolved Atlas lead${number(locationsSummary.leadDiscoveryCount) === 1 ? '' : 's'} / ${number(locationsSummary.count)} registered locations`, count: number(locationsSummary.leadDiscoveryCount) }
-    ].filter((item) => item.count > 0 || ['healing', 'locations'].includes(item.id));
+      { id: 'bulletin', tone: 'warn', icon: 'fa-solid fa-newspaper', label: 'Bulletin Signals', sub: `${number(counts.bulletin)} live or draft Holonet records`, count: number(counts.bulletin) }
+    ].filter((item) => item.count > 0);
+
+    const actionItems = [...exactActionItems, ...genericActionItems];
 
     const quickLaunch = apps
       .filter((app) => app.featured || ['house-rules', 'settings'].includes(app.id))
@@ -355,6 +414,7 @@ export class GMDatapad extends BaseSWSEAppV2 {
     return {
       sessionLabel: 'Session Console',
       currentLocation: activeLocation?.name || 'Unassigned Location',
+      currentLocationId: campaignParty?.currentLocation?.resolved ? campaignParty.currentLocation.id : '',
       currentLocationSub: activeLocation ? [activeLocation.typeLabel || activeLocation.type, activeLocation.categoryLabel || activeLocation.category].filter(Boolean).join(' · ') : 'No active location has been set.',
       onlinePlayers,
       totalPlayers: partyUsers.length,
@@ -1398,6 +1458,8 @@ export class GMDatapad extends BaseSWSEAppV2 {
       }, { signal: frameSignal });
     });
 
+    this._wireHomeAttentionTargets(root, frameSignal);
+
     // Wire nav buttons. Exclude tablet-home: it is already wired above as a Home
     // affordance, and binding it here too would navigate to 'home' twice.
     root.querySelectorAll('[data-nav-to]:not([data-action="tablet-home"])').forEach(btn => {
@@ -1417,6 +1479,49 @@ export class GMDatapad extends BaseSWSEAppV2 {
     });
     if (handledBySurfaceController) return;
 
+  }
+
+  /**
+   * Ecosystem Redesign Phase 6 — exact-record navigation for Home's action
+   * queue and the current-Location session block. Never a second router:
+   * every non-actor target resolves through GMCampaignTargetService into
+   * the real navigateToSurface() contract (Phase 2); an actor target has
+   * no Datapad surface selection (GMCampaignTargetService.resolve()
+   * returns null for it by design) and opens the real Actor sheet
+   * directly instead, matching every other surface's established
+   * "open Actor" behavior. A control with no real target id falls back to
+   * the app card's own generic navigation (data-app-card), never throws.
+   */
+  _wireHomeAttentionTargets(root, signal) {
+    // data-target-kind buttons never also carry data-app-card (see
+    // home.hbs) — a single click must resolve to exactly one navigation,
+    // never both a generic app-card route AND an exact target.
+    root.querySelectorAll('[data-target-kind]').forEach(btn => {
+      btn.addEventListener('click', async (ev) => {
+        const dataset = ev.currentTarget.dataset;
+        const kind = dataset.targetKind || '';
+        const id = dataset.targetId || '';
+        const uuid = dataset.targetUuid || '';
+        const fallbackRoute = dataset.fallbackRoute || '';
+
+        if (kind === 'actor') {
+          const actor = (id && game.actors?.get?.(id)) || (uuid && Array.from(game.actors ?? []).find(candidate => candidate.uuid === uuid)) || null;
+          if (!actor) {
+            ui.notifications?.warn?.('That actor could not be found.');
+            return;
+          }
+          actor.sheet?.render?.(true);
+          return;
+        }
+
+        const target = (kind && id) ? GMCampaignTargetService.resolve({ kind, id }) : null;
+        if (target) {
+          await this.navigateToSurface(target.surfaceId, target);
+          return;
+        }
+        if (fallbackRoute) this._navigateTo(fallbackRoute);
+      }, { signal });
+    });
   }
 
 
