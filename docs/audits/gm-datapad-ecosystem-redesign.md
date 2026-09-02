@@ -1623,6 +1623,18 @@ this environment — see §2.)
   anywhere in `GMBulletinSurfaceService.js`), classified
   `DEFER_TO_DEDICATED_PHASE`, not added — Bulletin was not redesigned.
   this phase, per the explicit instruction.
+  **Correction (Phase 7 pre-broadcast integrity pass, §46):** this
+  finding was scoped narrowly and correctly to `GMBulletinSurfaceService.js`
+  itself, but should not be read as "no Bulletin provenance exists
+  anywhere" — `HolonetIntelService.deliverAsBulletin()` already stamps
+  every Intel-originated Bulletin with a stable `sourceIntelId` (and
+  currently also copies the full Intel metadata object alongside it,
+  which Phase 8 must audit for authority duplication / private-data
+  leakage before deciding what to keep). What remains genuinely absent
+  is a *generalized* provenance contract for Job/Location/Faction/
+  Actor-originated Bulletins and the reverse lookup
+  `GMCampaignContextService`'s `workflows` field would need. See §46 for
+  the corrected statement.
 - **`forIntel()`'s Scene/Actor/source-Fact relationships** were not added
   to the context service this phase (§11) — `GMIntelSurfaceService`
   remains their sole owner; extending `forIntel()` is a candidate for a
@@ -2823,7 +2835,7 @@ zero navigation calls, never a degraded target).
 - Live Foundry status: not run — no live client available, same
   limitation as every prior phase.
 
-## 42. Phase 8 gate (supersedes §36)
+## 42. Phase 8 gate (superseded by §47 — see below)
 
 **PHASE 7 CORRECTIONS COMPLETE — READY FOR PHASE 8.** All four items
 from the final correction addendum are closed with executed, git-stash
@@ -2832,4 +2844,197 @@ strengthening of already-correct behavior, not a behavior change, so its
 "fail-before" is the pre-correction test's weaker guard rather than a
 reverted source diff). Deferred items from §27 remain deferred.
 Recommended next: Phase 8 — Bulletin as the Player Communication Hub.
+Not started here, per instruction.
+
+# PHASE 7 PRE-BROADCAST FINAL INTEGRITY PASS
+
+A third independent review of the correction head
+(`dd5208f70eeb92e46c3b7aa60105254dfffccb1d`) reconfirmed the prior two
+correction passes as materially correct (explicitly: world-vs-Compendium
+Workspace Actor gating, faction-contact/generic-faction/actor/
+workspace-actor target semantics, canonical `conditionTrack.current`,
+the single selected-Actor `buildActorCard()` computation, Trade
+empty-state wording, Actor→Location relationship distinction, and the
+Assign Job persistence audit were all explicitly reconfirmed and left
+untouched), but found four remaining integration issues to close before
+Bulletin/Holonet work begins.
+
+## 43. Item 1 — strict party-Location authority in Factions
+
+**The finding.** `GMFactionRelationshipSurfaceService.locationVm()` still
+computed `activeForParty: Boolean(location.activeForParty ||
+location.revealState === 'active')` — the exact revealState fallback
+Phase 6's Correction 2 eliminated everywhere else
+(`GMLocationsSurfaceService`'s `isCurrent`, `GMCampaignContextService
+.party()`'s `currentPartyLocationResult()`). A Location with
+`revealState:'active'` but `activeForParty:false` made Factions report
+"Party In Territory" even though the party was never canonically there
+— exactly the kind of false claim that must never later become
+player-facing Bulletin communication.
+
+**The fix.** `locationVm()` now reads `activeForParty:
+Boolean(location.activeForParty)` only, matching every other authority.
+This value feeds `activeLocationName`/`activeLocationCount`/
+`currentPartyLocationPresence` throughout the file, so all three are
+corrected by the one change.
+
+**Proof.** `tests/gm-phase7-pre-broadcast-integrity.test.mjs`'s Item 1
+block proves a `revealState:'active', activeForParty:false` Location
+produces `currentPartyLocationPresence:false, activeLocationCount:0`,
+and that a genuine `activeForParty:true` Location still correctly
+produces the positive result. Git-stash fail-before proof: reverting the
+three touched files reproduces the exact false-positive — the same
+fixture reports `currentPartyLocationPresence:true`.
+
+## 44. Item 2 — Home recovery attention is computationally party-first
+
+**The finding.** The prior pass's Correction 3 fixed the *display* scope
+(filtering to `combatRecovery.partyActors` before building attention
+items) but still called `GMCombatRecoveryService.buildViewModel()`
+first — which itself starts from `getManagedActors()` (every managed
+world Actor) and additionally computes metrics, status-effect/poison
+option lists, and the recovery log for the whole Recovery console. A
+campaign with 4 party members and 50 other managed Actors still built a
+real recovery card (and all its internal effect/poison/ownership/party
+resolution) for all 54 Actors merely to display 4.
+
+**The fix.** `attentionItems()`'s recovery block now computes the
+candidate list directly — `GMPartyRosterService.getPartyActors({
+ownedOnly:false })`, falling back to `GMCombatRecoveryService
+.getManagedActors()` only when no party is defined — and calls
+`GMCombatRecoveryService.buildActorCard(actor)` only for those
+candidates, never `buildViewModel()`. This also isolates Home from an
+unrelated Recovery-console failure (a bad status-effect/poison option
+build can no longer prevent Home from reporting a wounded party member).
+
+**Proof.** `tests/gm-phase7-pre-broadcast-integrity.test.mjs`'s Item 2
+block monkey-patches `buildActorCard` with a call counter across a
+4-party/50-non-party fixture and asserts exactly 4 calls (never 54),
+plus confirms the no-defined-party managed-roster fallback still works.
+
+## 45. Item 3 — `forActor()` failure-isolates Jobs and Intel independently
+
+**The finding.** Recovery and Trade were already independently
+try/caught in `forActor()`, but Jobs and Intel were loaded directly —
+`await loadJobIndex()` / `await loadIntelIndex()` with no isolation. A
+Job Board or Intel storage failure would throw out of the entire
+`forActor()` call, potentially blanking the whole selected-Actor
+Workspace dossier (identity, Factions, Locations, Recovery, Trade —
+everything) over a single subsystem's failure. Before Phase 8 adds more
+Holonet dependencies to this same seam, this needed the same isolation
+boundary Recovery/Trade already have.
+
+**The fix.** Jobs and Intel are now each independently wrapped: a real
+caught exception logs via `SWSELogger.warn` and pushes an honest,
+domain-specific limitation string; the corresponding relationship array
+resolves to `[]` rather than propagating the exception. Every other
+domain (identity, Factions, Locations, Recovery, Trade, and the other of
+Jobs/Intel if only one failed) continues to resolve normally.
+
+**Proof.** `tests/gm-phase7-pre-broadcast-integrity.test.mjs`'s Item 3
+block forces a `HolonetStorage.getAllThreads()` failure and separately a
+`HolonetIntelService.getAllIntel()` failure, proving in each case that
+Actor identity/Factions/Locations/Recovery/Trade/the other domain all
+still resolve, the failed domain reports `[]` plus a truthful limitation
+string, and `SWSELogger.warn` is called with a domain-specific message —
+plus a healthy-campaign case proving no spurious warning is logged.
+
+## 46. Item 4 — Workspace's contextual initial-selection fallback chain
+
+**The finding.** With no explicit `selectedActorId`, Workspace only ever
+fell back to the first current party member. A GM who hadn't yet
+formally defined a party — but had Actors in active combat, on the
+current scene, or simply owned — would see "No Actor Selected" directly
+above a roster full of visible Actors.
+
+**The fix.** The no-explicit-selection fallback is now a real chain:
+first party member → first active-combat Actor → first current-scene
+Actor → first visible GM-owned Actor. Critically, this chain applies
+ONLY when there is no explicit selection at all — an explicit
+`selectedActorId` that fails to resolve still reports a warning and
+never falls back to any of these, preserving the honesty guarantee from
+the original Phase 7 selection contract.
+
+**Proof.** `tests/gm-phase7-pre-broadcast-integrity.test.mjs`'s Item 4
+block covers all five cases: (A) party exists → first party Actor; (B)
+no party, a combat Actor exists → first combat Actor; (C) no party/
+combat, a scene Actor exists → first scene Actor; (D) only a GM-owned
+Actor exists → first visible GM Actor, not an empty dossier; (E) an
+explicit broken `selectedActorId` stays broken (a warning, no automatic
+substitution) even when a party/combat/scene/GM Actor is available that
+could have been substituted.
+
+## 47. Doc/comment correction — Bulletin provenance claim
+
+Beyond the four code items, the independent review also flagged that
+`GMCampaignContextService`'s own top-of-file `workflows` documentation
+(and the related §25 deferred-items note from the Phase 6 audit) could
+be read as "no Bulletin provenance exists at all," when in fact
+`HolonetIntelService`'s Intel→Bulletin delivery path already stamps a
+stable `sourceIntelId` on every Intel-originated Bulletin (and currently
+also copies the full Intel metadata object alongside it — an
+authority-duplication/private-data question Phase 8 must audit, not
+this pass). Both the JS docstring and the §25 audit entry have been
+corrected in place (the §25 correction is an addendum note preserving
+the original Phase 6 finding's historical accuracy — it was correctly
+scoped to `GMBulletinSurfaceService.js` specifically — while clarifying
+what it does not mean). This is documentation-only; no behavior changed.
+
+## 48. Semantic hygiene — recovery field rename
+
+`operations.recovery.eligible`/`.ineligible` are renamed to
+`.naturalHealingEligible`/`.naturalHealingIneligible` — the generic
+names invited a future Phase 8+ consumer to misread them as "can this
+Actor recover at all" when they specifically mean "eligible for
+`GMHealingTrigger`'s natural-healing trigger workflow," a narrower
+concept than `card.restEligible`/`card.repairEligible`. Since Phase 7 is
+not merged, no compatibility alias is carried — the only real consumers
+(`GMWorkspaceSurfaceService.js`'s `currentSituation.naturalHealingEligible`
+presentation field, and this branch's own tests) were updated in the
+same pass; a branch-wide search confirmed no other consumer exists.
+`injured`, `needsAttention`, and `card` are unchanged.
+
+## 49. Regression / totals
+
+- Full rolling test suite and syntax: re-run after this pass; see the PR
+  body / final report for the exact totals (same 6 pre-existing,
+  GM-Datapad-unrelated failures as every prior phase).
+- All Phase 1-7 GM Datapad tests (`gm-*.test.mjs`) remain green,
+  including the read-only-contract static scan (which required a
+  comment reword — see §47 — to avoid a false-positive match on the
+  words "HolonetIntelService.deliver..." appearing in prose rather than
+  as a call site).
+- New test file: `tests/gm-phase7-pre-broadcast-integrity.test.mjs`.
+  Modified: `scripts/ui/shell/gm/GMCampaignContextService.js`,
+  `scripts/ui/shell/gm/GMFactionRelationshipSurfaceService.js`,
+  `scripts/ui/shell/gm/GMWorkspaceSurfaceService.js`,
+  `tests/gm-campaign-context-actor-location-phase7.test.mjs`,
+  `tests/gm-phase7-correction-pass.test.mjs` (both updated for the
+  `naturalHealingEligible`/`naturalHealingIneligible` rename).
+- Live Foundry status: not run — no live client available, same
+  limitation as every prior phase.
+
+## 50. Non-blocking Phase 7 UX debt (documented, not implemented)
+
+Per the review's own explicit non-blocking classification, honestly
+recorded rather than silently ignored or claimed done: the original
+Phase 7 UX spec's main Actor-registry search, Party/Combat/Scene/Other
+filtering controls, an explicit selected-card visual marker across
+registry cards, and `aria-selected`/roving-`tabindex` semantics on
+roster selection are NOT implemented. These do not block Phase 8.
+
+## 51. Phase 8 gate (supersedes §42)
+
+**PHASE 7 PRE-BROADCAST INTEGRITY PASS COMPLETE — READY FOR PHASE 8.**
+All four items are closed with executed, git-stash fail-before-proven
+regression tests. The documentation correction (§47) and the field
+rename (§48) are non-behavioral/pure-rename changes respectively, so
+neither needed a fail-before source revert to prove; §48's rename is
+proven correct by the updated tests passing against the new field
+names. Deferred items from §27/§50 remain deferred and non-blocking.
+Recommended Phase 8 order, per the review: 8A — exactly-once Holonet
+publication sync (the likely cause of Bulletin not live-refreshing an
+already-open player Home); 8B — the Intel→Bulletin private-data/
+provenance audit (the full-Intel-metadata copy flagged in §47); only
+then generalize Bulletin handoffs to Jobs/Locations/Factions/Workspace.
 Not started here, per instruction.
