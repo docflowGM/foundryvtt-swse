@@ -5,7 +5,6 @@ import { GMPartyRosterService } from '/systems/foundryvtt-swse/scripts/ui/shell/
 import { isXPEnabled, determineLevelFromXP } from '/systems/foundryvtt-swse/scripts/engine/progression/xp-engine.js';
 import { XP_LEVEL_THRESHOLDS, XP_MAX_LEVEL } from '/systems/foundryvtt-swse/scripts/engine/shared/xp-system.js';
 import { GMCampaignContextService } from '/systems/foundryvtt-swse/scripts/ui/shell/gm/GMCampaignContextService.js';
-import { GMCombatRecoveryService } from '/systems/foundryvtt-swse/scripts/holonet/subsystems/gm-combat-recovery-service.js';
 
 function text(value, fallback = '') {
   const out = String(value ?? fallback ?? '').trim();
@@ -143,7 +142,13 @@ async function buildSelectedActorSection(requestedActorId, partyActors, { xpSyst
   }
 
   const context = await GMCampaignContextService.forActor(actor);
-  const recoveryCard = GMCombatRecoveryService.buildActorCard(actor);
+  // FINAL CORRECTION 2: forActor() is the ONE authoritative
+  // GMCombatRecoveryService.buildActorCard(actor) call for this render —
+  // it already resolves party/ownership/effects/poisons/ongoing-effects
+  // internally, so Workspace consumes the exact card forActor() computed
+  // (context.operations.recovery.card) rather than calling
+  // buildActorCard() a second time for the same Actor.
+  const recoveryCard = context.operations?.recovery?.card ?? null;
   const card = actorCard(actor, { xpSystemEnabled });
   const locations = (context.relationships?.locations ?? []).map(entry => ({
     ...entry,

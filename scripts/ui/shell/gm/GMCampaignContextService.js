@@ -661,17 +661,31 @@ export class GMCampaignContextService {
     // but must never report needsAttention:true.
     let recovery = null;
     try {
-      const summary = await GMHealingTrigger.getHealingSummary();
-      const eligible = asArray(summary?.eligibleActors).some(entry => entry.id === actor.id);
-      const ineligible = asArray(summary?.ineligibleActors).some(entry => entry.id === actor.id);
+      // FINAL CORRECTION 1: GMHealingTrigger.getHealingSummary() searches a
+      // WHOLE-ROSTER array (the defined party when one exists, else every
+      // Actor) — a selected Actor who is a living, valid, non-party world
+      // Actor while a party IS defined is absent from both
+      // eligibleActors/ineligibleActors, so the old array-membership check
+      // silently reported eligible:false, ineligible:false for a
+      // perfectly valid character. Use the canonical PER-ACTOR predicate
+      // instead — it needs no roster/party context at all.
+      const eligible = GMHealingTrigger.isEligibleForHealing(actor);
+      const ineligible = !eligible;
       const hp = actor.system?.hp ?? actor.system?.attributes?.hp ?? {};
       const hpValue = Number(hp.value ?? hp.current ?? 0) || 0;
       const hpMax = Number(hp.max ?? hp.maximum ?? 0) || 0;
       const injured = hpMax > 0 && hpValue < hpMax;
+      // FINAL CORRECTION 2: this is the ONE authoritative
+      // GMCombatRecoveryService.buildActorCard(actor) call for the
+      // selected Actor's render — it resolves party/ownership/effects/
+      // poisons/ongoing-effects internally, so it must never be computed
+      // a second time. The full card is exposed on `.card` so
+      // GMWorkspaceSurfaceService can consume it directly instead of
+      // calling buildActorCard() again.
       const recoveryCard = GMCombatRecoveryService.buildActorCard(actor);
-      recovery = { eligible, ineligible, injured, needsAttention: recoveryCard.needsAttention };
+      recovery = { eligible, ineligible, injured, needsAttention: recoveryCard.needsAttention, card: recoveryCard };
     } catch (err) {
-      SWSELogger.warn?.('[GMCampaignContextService] Healing summary unavailable for forActor():', err);
+      SWSELogger.warn?.('[GMCampaignContextService] Recovery status unavailable for forActor():', err);
       limitations.push('Healing/recovery status could not be determined for this actor.');
     }
 
@@ -786,12 +800,26 @@ export class GMCampaignContextService {
       // receive the natural-healing trigger") is NOT the same thing as
       // "needs GM attention" — a full-HP, unimpaired PC is eligible but
       // must never appear here. Reuse GMCombatRecoveryService's own real
-      // recovery authority (buildViewModel()'s needsAttention card list,
-      // the exact same wounded/downed/CT-impaired/persistent-CT/spent-
-      // Second-Wind/poison/ongoing-effect legality Workspace's Recovery
-      // card uses) instead of re-deriving that boolean expression here.
+      // recovery authority (the exact same wounded/downed/CT-impaired/
+      // persistent-CT/spent-Second-Wind/poison/ongoing-effect legality
+      // Workspace's Recovery card uses) instead of re-deriving that
+      // boolean expression here.
+      //
+      // FINAL CORRECTION 3: buildViewModel()'s own `needsAttention` array
+      // starts from getManagedActors() — EVERY managed world Actor, not
+      // just the defined campaign party. Home's pre-correction source
+      // (GMHealingTrigger.getHealingSummary()) was party-first (the
+      // defined party when one exists, a wider fallback only when it
+      // doesn't); silently switching to the all-managed-Actors set would
+      // have been a scope expansion this correction pass was never
+      // authorized to make (e.g. every wounded world NPC/Droid suddenly
+      // flooding Home). Preserve party-first scope: when a party is
+      // defined, only its members are candidates; only with NO defined
+      // party does every managed Actor become the (still-useful) fallback.
       const recoveryVm = await GMCombatRecoveryService.buildViewModel();
-      for (const card of asArray(recoveryVm?.combatRecovery?.needsAttention)) {
+      const partyRecoveryCards = asArray(recoveryVm?.combatRecovery?.partyActors);
+      const recoveryCandidates = partyRecoveryCards.length ? partyRecoveryCards : asArray(recoveryVm?.combatRecovery?.actors);
+      for (const card of recoveryCandidates.filter(candidate => candidate.needsAttention)) {
         // Phase 7 addendum H: the recovery workflow is the one Home
         // attention item deliberately migrated from the generic
         // {kind:'actor'} (open-the-sheet) target to {kind:'workspace-actor'}
