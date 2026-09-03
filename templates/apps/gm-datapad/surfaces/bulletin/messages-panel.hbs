@@ -223,6 +223,7 @@
                 <div class="bulletin-record-actions">
                   <button type="button" class="swse-ui-button" data-action="bulletin-edit" data-section="messages" data-record-id="{{this.id}}">Edit</button>
                   {{#unless (eq this.state "published")}}<button type="button" class="swse-ui-button" data-action="bulletin-publish" data-record-id="{{this.id}}">Publish</button>{{/unless}}
+                  {{#if this.hasSourceProvenance}}<button type="button" class="swse-ui-button" data-action="bulletin-open-source" data-source-kind="{{this.sourceKind}}" data-source-id="{{this.sourceId}}" title="Source: {{this.sourceKind}}"><i class="fa-solid fa-diagram-project"></i> Open Source</button>{{/if}}
                   {{#if this.isPinned}}<button type="button" class="swse-ui-button" data-action="bulletin-unpin-last-session" data-record-id="{{this.id}}">Unpin</button>{{else}}<button type="button" class="swse-ui-button" data-action="bulletin-pin-last-session" data-record-id="{{this.id}}">Pin Last Session</button>{{/if}}
                   {{#unless (eq this.state "archived")}}<button type="button" class="swse-ui-button" data-action="bulletin-archive" data-record-id="{{this.id}}">Archive</button>{{/unless}}
                   <button type="button" class="swse-ui-button" data-action="bulletin-delete" data-record-id="{{this.id}}">Delete</button>

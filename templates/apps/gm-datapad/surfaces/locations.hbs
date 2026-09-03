@@ -221,6 +221,7 @@
             </div>
             <div class="gm-location-identity-actions swse-location-editor-actions">
               <button type="button" class="swse-mini-button primary" data-location-action="edit" data-location-id="{{this.identity.id}}"><i class="fa-solid fa-pen" aria-hidden="true"></i> Edit in Wizard</button>
+              <button type="button" class="swse-mini-button" data-location-action="prepare-bulletin-draft" data-location-id="{{this.identity.id}}"><i class="fa-solid fa-pen-to-square" aria-hidden="true"></i> Prepare Bulletin Draft</button>
               {{#if this.currentSituation.isRevealed}}
                 <button type="button" data-location-action="hide" data-location-id="{{this.identity.id}}"><i class="fa-solid fa-eye-slash" aria-hidden="true"></i> GM Only</button>
               {{else}}
