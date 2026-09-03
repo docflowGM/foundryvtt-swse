@@ -132,20 +132,40 @@ export function defaultLocalityBiasForArchetype(archetype) {
  *     authority; delegates straight to `selectSpeciesId()` on the
  *     Faction's own policy exactly as supplied. Explicit Faction
  *     identity always wins.
- *  2. `speciesPolicy.mode === 'open'` → roll `localityBias`:
- *     - roll succeeds (and a Location profile with real weights is
- *       supplied) → weighted-pick from the Location's FULL
- *       `speciesWeights` (`selectSpeciesForLocation()` — every species
- *       in its real proportion, not only the single dominant one);
- *     - roll fails (or no Location profile was supplied) → ordinary
- *       open Faction selection (`selectSpeciesId()` uniform over
- *       `availableSpeciesIds`, respecting the policy's
- *       `excludedSpeciesIds`).
+ *  2. `speciesPolicy.mode === 'open'` → the Location's `speciesWeights`
+ *     are first filtered down to species that are BOTH in
+ *     `availableSpeciesIds` and NOT in the policy's own
+ *     `excludedSpeciesIds` (an `open` policy can still carry an
+ *     explicit exclusion — e.g. a generated ideology trait — and that
+ *     must be respected exactly as strictly as a `required`/
+ *     `allowed-list` constraint would be; see the correction note
+ *     below). Then roll `localityBias`:
+ *     - roll succeeds (and at least one Location species survived the
+ *       filter) → weighted-pick from that FILTERED distribution
+ *       (`selectSpeciesForLocation()` — every eligible species in its
+ *       real relative proportion, not only the single dominant one;
+ *       no renormalization needed, weighted selection only needs
+ *       relative weights);
+ *     - roll fails (or no Location species survived the filter) →
+ *       ordinary open Faction selection (`selectSpeciesId()` uniform
+ *       over `availableSpeciesIds`, respecting `excludedSpeciesIds`)
+ *       — never an illegal species and never `null` from this branch
+ *       alone.
  *
  * `localityBias` therefore means exactly what its name says: 0 = no
  * Location influence at all (pure open selection); 1 = always drawn
- * from the Location's real weighted distribution; values between blend
- * proportionally.
+ * from the Location's real weighted distribution AMONG ELIGIBLE
+ * species; values between blend proportionally.
+ *
+ * CORRECTION (independent review of head `cff63f4`): the version that
+ * introduced this function passed `locationPopulationProfile` straight
+ * to `selectSpeciesForLocation()` unfiltered, so an `open` policy's own
+ * `excludedSpeciesIds` and the caller's `availableSpeciesIds` boundary
+ * were both bypassed on the Location-influenced branch — a Faction
+ * that explicitly excluded a species (or was scoped to a restricted
+ * canonical species pool) could still have that exact species selected
+ * whenever the Location roll succeeded. Fixed by filtering
+ * `speciesWeights` against both constraints before the weighted pick.
  */
 export function selectFactionSpeciesWithLocality({
   speciesPolicy,
@@ -159,10 +179,13 @@ export function selectFactionSpeciesWithLocality({
     return selectSpeciesId(policy, availableSpeciesIds, { rng });
   }
   const bias = clamp01(localityBias, 0.5);
-  const hasLocationWeights = Array.isArray(locationPopulationProfile?.speciesWeights) && locationPopulationProfile.speciesWeights.length > 0;
+  const available = new Set(availableSpeciesIds);
+  const excluded = new Set(policy.excludedSpeciesIds);
+  const eligibleLocalWeights = (locationPopulationProfile?.speciesWeights ?? [])
+    .filter((entry) => available.has(entry.speciesId) && !excluded.has(entry.speciesId));
   const roll = (rng ?? Math.random)();
-  if (hasLocationWeights && roll < bias) {
-    return selectSpeciesForLocation(locationPopulationProfile, { rng });
+  if (eligibleLocalWeights.length && roll < bias) {
+    return selectSpeciesForLocation({ speciesWeights: eligibleLocalWeights }, { rng });
   }
   return selectSpeciesId(policy, availableSpeciesIds, { rng });
 }
