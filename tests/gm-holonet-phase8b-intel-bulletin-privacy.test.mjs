@@ -425,4 +425,97 @@ function hasLegacyEmbeddedIntelSnapshot(rawRecord) {
   console.log('B10 (new minimal-provenance Bulletin records surface correctly and are correctly NOT flagged by the legacy-recognition predicate) passed.');
 }
 
+// --- C8B-4a: public helper regression -- redacted fallback. publicBody
+// empty, redactedBody present, fullBody private -> Bulletin uses
+// redactedBody, never fullBody. -----------------------------------------
+{
+  const { stores } = installShim();
+  const { HolonetIntelService } = await import('/systems/foundryvtt-swse/scripts/holonet/subsystems/holonet-intel-service.js');
+
+  const REDACTED = 'The redacted briefing text.';
+  const draft = await HolonetIntelService.createIntelDraft({
+    title: 'Redacted Fallback Check',
+    publicBody: '',
+    redactedBody: REDACTED,
+    summary: '',
+    fullBody: SENTINEL_FULL_BODY
+  });
+  const result = await HolonetIntelService.deliverAsBulletin(draft.id, {});
+  assert.ok(result?.ok, 'delivery must succeed when redactedBody is available');
+  const bulletinRaw = findRawRecord(stores, result.result.recordId);
+  assert.equal(bulletinRaw.body, REDACTED, 'the persisted Bulletin body must be the redactedBody, never the private fullBody');
+  assert.ok(!JSON.stringify(bulletinRaw).includes(SENTINEL_FULL_BODY), 'the private fullBody sentinel must never reach the persisted record');
+
+  console.log('C8B-4a (redacted-body fallback: bodyForIntel(public) never uses fullBody) passed.');
+}
+
+// --- C8B-4b: public helper regression -- summary fallback. publicBody
+// and redactedBody empty, summary present, fullBody private -> Bulletin
+// uses summary, never fullBody. -------------------------------------------
+{
+  const { stores } = installShim();
+  const { HolonetIntelService } = await import('/systems/foundryvtt-swse/scripts/holonet/subsystems/holonet-intel-service.js');
+
+  const SUMMARY = 'A one-line summary of the briefing.';
+  const draft = await HolonetIntelService.createIntelDraft({
+    title: 'Summary Fallback Check',
+    publicBody: '',
+    redactedBody: '',
+    summary: SUMMARY,
+    fullBody: SENTINEL_FULL_BODY
+  });
+  const result = await HolonetIntelService.deliverAsBulletin(draft.id, {});
+  assert.ok(result?.ok, 'delivery must succeed when summary is available');
+  const bulletinRaw = findRawRecord(stores, result.result.recordId);
+  assert.equal(bulletinRaw.body, SUMMARY, 'the persisted Bulletin body must be the summary, never the private fullBody');
+  assert.ok(!JSON.stringify(bulletinRaw).includes(SENTINEL_FULL_BODY), 'the private fullBody sentinel must never reach the persisted record');
+
+  console.log('C8B-4b (summary fallback: bodyForIntel(public) never uses fullBody) passed.');
+}
+
+// --- C8B-4c: private-only Intel fails closed. publicBody, redactedBody,
+// and summary all empty, only fullBody exists -> deliverAsBulletin() must
+// refuse entirely: no Bulletin, no persistence, no publication event, no
+// Intel release, no delivery-history entry. Git-stash isolated
+// fail-before proof (holonet-intel-service.js stashed alone) confirmed
+// the exact pre-fix bug: result was {ok:true,...}, the persisted
+// Bulletin's body WAS the fullBody sentinel, one publication sync fired,
+// and Intel was marked released -- all reproduced against the reviewed
+// head 6295b90 before this fix, none of it reproducible after. ------------
+{
+  const { stores, socket, hooks } = installShim();
+  const { HolonetIntelService } = await import('/systems/foundryvtt-swse/scripts/holonet/subsystems/holonet-intel-service.js');
+
+  const releasedHookCalls = [];
+  hooks.on('swseHolonetUpdated', (payload) => { if (payload?.type === 'intel-released') releasedHookCalls.push(payload); });
+
+  const draft = await HolonetIntelService.createIntelDraft({
+    title: 'Private-Only Intel',
+    publicBody: '',
+    redactedBody: '',
+    summary: '',
+    fullBody: SENTINEL_FULL_BODY
+  });
+  const before = (stores.get('holonet_records') ?? []).length;
+  const intelStatusBefore = findRawRecord(stores, draft.id).metadata.intel.status;
+
+  const result = await HolonetIntelService.deliverAsBulletin(draft.id, {});
+  assert.equal(result, null, 'deliverAsBulletin() must return null for Intel with no player-safe text at all');
+
+  const after = (stores.get('holonet_records') ?? []).length;
+  assert.equal(after, before, 'no Bulletin record may be added when there is no player-safe text');
+  assert.equal(socket.emitted.length, 0, 'zero publication syncs must be emitted');
+  assert.equal(releasedHookCalls.length, 0, 'the Intel release hook must never fire');
+
+  const intelRaw = findRawRecord(stores, draft.id);
+  assert.equal(intelRaw.metadata.intel.status, intelStatusBefore, 'Intel status must be completely unchanged');
+  assert.equal((intelRaw.metadata.intel.delivery?.history ?? []).length, 0, 'no delivery-history entry may be persisted');
+  // No new record was added at all (asserted above via after === before),
+  // so there is no Bulletin for the sentinel to have leaked into. The
+  // source Intel record legitimately keeps its own fullBody -- that is
+  // not the leak this test guards against.
+
+  console.log('C8B-4c (private-only Intel fails closed: no Bulletin, no persistence, no publication, no release) passed.');
+}
+
 console.log('PHASE 8B Intel->Bulletin privacy/provenance suite passed.');
