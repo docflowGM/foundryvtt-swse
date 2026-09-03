@@ -355,6 +355,19 @@ export const LOCATION_LIBRARY_BIOMES = Object.freeze([
   }
 ]);
 
+const LOCATION_LIBRARY_BIOME_VALUES = Object.freeze(LOCATION_LIBRARY_BIOMES.map((entry) => entry.value));
+
+/**
+ * True if `value` is one of `LOCATION_LIBRARY_BIOMES`' own values — the
+ * single biome vocabulary this Library (and, since Phase 8D-2's
+ * correction pass, every procedural Location generator) uses. Added so
+ * procedural generation code has one authoritative check rather than
+ * each caller re-deriving the value list itself.
+ */
+export function isLocationLibraryBiome(value) {
+  return LOCATION_LIBRARY_BIOME_VALUES.includes(value);
+}
+
 export const LOCATION_LIBRARY_SEEDS = Object.freeze([
   {
     "id": "dantooine",
@@ -5141,6 +5154,21 @@ function normalizeImportOptions(options = {}) {
 export function getLocationLibrarySeed(seedId = '') {
   const id = text(seedId).toLowerCase();
   return LOCATION_LIBRARY_SEEDS.find(seed => seed.id === id || seed.name.toLowerCase() === id) || null;
+}
+
+const LOCATION_LIBRARY_PLANET_NAMES = new Set(LOCATION_LIBRARY_SEEDS.map((seed) => seed.name.toLowerCase().trim()));
+
+/**
+ * True if `name` (case-insensitive) matches one of this Library's real,
+ * curated top-level planet names (Dantooine, Tatooine, ...). Added for
+ * the Phase 8D-2 correction pass: a PROCEDURALLY generated planet name
+ * must never collide with a real known world -- this is the single
+ * canonical-name exclusion authority every procedural name generator
+ * checks against, rather than each one re-deriving the Library's name
+ * list itself.
+ */
+export function isKnownLibraryPlanetName(name) {
+  return LOCATION_LIBRARY_PLANET_NAMES.has(String(name ?? '').toLowerCase().trim());
 }
 
 export function filterLocationLibrarySeeds({ search = '', biome = '', category = '' } = {}) {
