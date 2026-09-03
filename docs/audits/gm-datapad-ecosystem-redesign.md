@@ -4458,9 +4458,9 @@ explicitly not done: migrating `deliverAsBulletin()`'s own
 `sourceKind`/`sourceId` contract (§99) — the two coexist by design in
 this pass.
 
-## 110. Phase 8 gate (supersedes §95)
+## 110. Phase 8 gate (superseded by §116 — see below)
 
-**PHASE 8C COMPLETE — READY FOR INDEPENDENT REVIEW.** Bulletin is now
+~~**PHASE 8C COMPLETE — READY FOR INDEPENDENT REVIEW.** Bulletin is now
 the canonical "what players are told" surface with a real, shared,
 tested draft-handoff authority from all five named GM Datapad
 authorities, using one general `{sourceKind, sourceId}` provenance
@@ -4475,4 +4475,180 @@ coexists. Source navigation reuses the existing
 router. No general Bulletin visual redesign, no arbitrary provenance
 graph, no new authority beyond the one shared seam. Per explicit
 instruction: not beginning Phase 9/Skill Challenges; waiting for
-independent review of this pushed head.
+independent review of this pushed head.~~ (Struck through, not deleted,
+per this audit's own convention — independent review of this exact head
+found one real blocker; see §111.)
+
+## 111. C8C-1 (blocker) — "Open Source" never verified the source existed
+
+**Finding.** `GMDatapad._openBulletinSource()` (for every non-Actor
+kind) called `GMCampaignTargetService.resolve({kind, id})` directly.
+`GMCampaignTargetService.resolve()` is documented as, and actually is, a
+*pure id-to-navigation-shape mapper* (`§GMCampaignTargetService.js`
+lines 88-107) — it has no existence check of any kind, by design (it
+only knows how to ADDRESS a target once navigating, never whether that
+target is real). `GMCampaignContextService.resolveBulletinSource()`,
+the read-only resolver Phase 8C actually built to answer "does this
+source still exist," was called by nothing in production — the only
+caller was 8C-9's own test, which exercised the resolver directly and
+never proved the real `_openBulletinSource()` code path used it. Net
+effect: a Bulletin whose source Job/Location/Faction/Intel had since
+been deleted still navigated to that surface with the dead id selected,
+instead of failing safe — a direct violation of the Phase 8C spec's own
+"broken source provenance fails safe" requirement, undetected because
+the test proved the unused resolver worked while the actual UI bypassed
+it.
+
+**Fix.** `_openBulletinSource()`'s non-Actor branch now calls
+`GMCampaignContextService.resolveBulletinSource({sourceKind, sourceId})`
+first; if `!resolution.resolved`, it warns and returns without
+navigating. Only a resolved source proceeds to
+`GMCampaignTargetService.resolve(resolution.target)`. The Actor branch
+was already safe (a direct `game.actors.get()`/uuid existence check,
+not a bypass of any resolver) and is unchanged.
+
+**Why the original test missed it, and how the correction closes that
+gap.** 8C-9 tested `GMCampaignContextService.resolveBulletinSource()`
+in isolation. `GMDatapad` (an `ApplicationV2` subclass) cannot be
+instantiated in this repo's Node/Foundry shim (documented precedent:
+`tests/gm-home-attention-navigation-wiring.test.mjs`), so
+`_openBulletinSource()` cannot literally be invoked in a test. The
+correction adds a source-proof test (in the same established pattern as
+that precedent file) that: (a) the Bulletin controller's click handler
+calls the real `host._openBulletinSource()`, not a controller-local
+reimplementation; (b) `_openBulletinSource()`'s own body — extracted
+from the real file, not retyped — calls
+`resolveBulletinSource()` and gates on `.resolved` strictly *before*
+calling `GMCampaignTargetService.resolve()`, never after; and (c) an
+executed call into the real (non-reimplemented) resolver proves a
+deleted source actually reports `resolved:false`. This is weaker than a
+full instantiated end-to-end call, but it is the same standard this
+codebase already accepts for this exact class of unreachable code, and
+it specifically closes the "tests the unused resolver, not the actual
+UI" gap the reviewer identified.
+
+## 112. C8C-2 — Job prefill fallback chain was broader than documented and tested
+
+**Finding.** `_prefillForSource('job', id)` built `body` from
+`job?.briefing?.body || job?.description || job?.brief ||
+thread.preview || ''`, but every doc comment and the 8C-1 test assertion
+message claimed the source was "the proven-public briefing.body field
+only." Messenger's own player-facing Job Board VM
+(`holonet-messenger-service.js:562`, `briefingBody`) does use the
+identical fallback chain, so this was not a demonstrated privacy leak —
+but it was an undocumented, untested discrepancy between what the code
+does and what the audit claimed, and reusing an unrelated consumer's
+full fallback chain is a weaker safety argument than reusing only the
+one field with a clean, single-purpose provenance (briefing.body is
+GM-authored specifically as player-facing job briefing text; description/
+brief/thread.preview have no equivalent documented purpose).
+
+**Fix.** Per the standing privacy posture (prefer the conservative
+reading absent a specific reason to reuse the wider chain), `_prefillForSource`
+now uses `job?.briefing?.body || ''` only. A Job with no
+`briefing.body` prefills an empty body for the GM to write, exactly
+like Faction/Actor. A new regression proves `description`/`brief`/
+`thread.preview` values never reach a persisted draft even when
+present, and that a Job entirely lacking `briefing.body` still produces
+a draft (with an empty body, not a missing/failed one).
+
+## 113. C8C-3 — resolved source label made visible (was tooltip-only)
+
+**Finding.** The spec asked for the GM to see roughly "Job: Rescue the
+Senator — [Open Source]"; the shipped UI rendered only an "Open Source"
+button with a `title="Source: job"` tooltip (the raw `sourceKind`, not
+the resolved label) — the GM could not tell which Job/Location/Faction/
+Actor/Intel record a Bulletin actually came from without clicking
+through.
+
+**Fix.** `GMDatapad._buildBulletinRecordView()` is now `async` and, for
+a record carrying `hasSourceProvenance`, calls
+`GMCampaignContextService.resolveBulletinSource()` (the same read-only
+seam §111's navigation fix depends on) to derive `sourceKindLabel`,
+`sourceLabel`, and `sourceResolved` — DERIVED DISPLAY ONLY, never
+written back onto the record (a deleted source simply stops resolving a
+label on the next render instead of leaving stale/duplicated truth
+behind). `GMBulletinSurfaceService.buildViewModel()`'s six call sites
+were updated to `await`/`Promise.all` the now-async builder. The
+Bulletin messages panel template now renders `Source · {kind} ·
+{label}` (or `(source no longer found)` when unresolved, styled
+distinctly) above the record footer, and the "Open Source" button's
+tooltip carries the resolved label too. A new regression proves this
+against the real source: it extracts `_buildBulletinRecordView()`'s
+body and asserts it derives the fields from
+`resolveBulletinSource()` (never a hand-rolled lookup) and never writes
+`record.metadata.sourceLabel`; asserts `buildViewModel()` awaits every
+call site; asserts the template renders the label fields; and executes
+the real resolver to prove it returns the actual label a GM would see.
+
+## 114. C8C-4 — 8C-13 overstated what it tested
+
+**Finding.** 8C-13's own comment and closing log line claimed old
+Bulletin shapes "continue to render through the real surface view-model
+builder." The test body only ever called
+`HolonetStorage.getAllRecords()` and `isBulletinRecord()` — storage
+hydration and Bulletin-contract compatibility, not the view-model
+builder. `GMDatapad` cannot be instantiated in this Node/Foundry shim
+(§111), so the view-model path genuinely cannot be executed by this
+test.
+
+**Fix.** Per the reviewer's own offered option ("or correct its
+claim"), 8C-13's comments and closing log line were rewritten to
+accurately describe what the test proves (storage/contract
+compatibility, no migration required) rather than claiming rendering
+coverage it never had. The view-model's own new C8C-3 fields are
+separately, honestly proven by §113's new test using the same
+source-proof technique this file's sibling precedent already
+establishes as this codebase's accepted standard for `GMDatapad`'s
+unreachable methods.
+
+## 115. Stale documentation correction (found during this pass, not reviewer-flagged)
+
+`GMCampaignContextService.js`'s class header still said legacy
+Intel-derived Bulletin data is kept "harmlessly" and that a generalized
+Bulletin provenance contract is "explicitly deferred past Phase 8B."
+Both statements were obsolete: Phase 8B's own C8B-2 correction (§85)
+explicitly retracted the "harmless" characterization, and this very
+phase (Phase 8C) implemented the generalized contract the comment said
+did not exist yet. The header comment is corrected in place (not
+silently rewritten — the correction narrates what changed and why,
+matching this audit's own convention for retracted claims) to point at
+§85 for the C8B-2 finding and describe the real Phase 8C contract
+(`{sourceKind, sourceId}` + `resolveBulletinSource()`).
+
+## 116. Regression / totals (correction pass)
+
+Full `gm-*.test.mjs` sweep: 55/55 green (same file count as §107 — the
+correction pass added test blocks inside the existing Phase 8C file,
+not a new file), zero regressions. Full rolling suite: 190 files, 185
+pass, 5 fail — same pre-existing, unrelated Force-power failures as
+every prior phase (confirmed unchanged by this pass). Syntax check:
+2194/2194 clean (unchanged file count — no new files added).
+
+## 117. Live Foundry checklist (not run — no live client available)
+
+Same limitation as every prior phase, plus one addition specific to
+this pass: (16) with a Job source deleted after a Bulletin draft was
+prepared from it, click "Open Source" on that Bulletin and confirm the
+GM sees a warning and remains on Bulletin — never a navigation to
+Jobs with a stale/dead thread id selected.
+
+## 118. Phase 8 gate (supersedes §110)
+
+**PHASE 8C CORRECTION PASS COMPLETE — READY FOR INDEPENDENT REVIEW.**
+All four items from the independent review of head `e1e62d4` are
+addressed: (C8C-1, blocker) "Open Source" now verifies the source still
+exists via `resolveBulletinSource()` before navigating, closing the
+broken-source-fails-safe gap, proven against the real host/controller
+code path (not just the previously-unused resolver); (C8C-2) Job
+prefill is now conservatively scoped to `briefing.body` only, matching
+what the audit and tests already claimed; (C8C-3) the resolved source
+label is now visibly displayed on the Bulletin record, derived-only and
+never persisted; (C8C-4) 8C-13's claim now matches what it actually
+tests. One stale documentation comment (§115) was also corrected. The
+underlying Phase 8C architecture is unchanged — no rewrite, exactly as
+the reviewer's verdict recommended keeping almost all of it. Per
+explicit instruction: not beginning Phase 9/Skill Challenges (Preset +
+Random Job/Faction/NPC generator work, if pursued, would land as Phase
+8D before Phase 9); not merging PR #963; waiting for independent review
+of this pushed head.
