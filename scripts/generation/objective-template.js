@@ -58,9 +58,22 @@ export function isObjectiveSlotType(value) {
  *   id, missionTypes: string[], tiers: string[], template: string,
  *   slots: { [slotName]: { type, required } },
  *   difficulty: { min, max }, weight, tags: string[],
- *   creates: { npcConcepts, locations }
+ *   creates: { npcConcepts, locations },
+ *   constraints: string[], oppositionHints: string[],
+ *   locationHints: string[], subjectHints: string[]
  * }
  * ```
+ *
+ * `constraints`/`oppositionHints`/`locationHints`/`subjectHints`
+ * (added in the Phase 8D-2 correction pass) are OPTIONAL free-text tag
+ * arrays -- validated the same lightweight way `tags` already is
+ * (coerced to an array of strings, never a hard schema error), not a
+ * new closed vocabulary. They let a template loosely suggest e.g. an
+ * `objective-constraint.js` constraint value, an `opposition-request.js`
+ * `archetypeTags` entry, a Location biome/category hint, or a
+ * `mission-subject.js` archetype -- a FUTURE Job composer can read
+ * them as starting suggestions; nothing here performs that resolution
+ * itself, and no existing fixture is required to populate them.
  */
 export function normalizeObjectiveTemplate(raw) {
   const { valid, errors } = validateObjectiveTemplate(raw);
@@ -71,6 +84,8 @@ export function normalizeObjectiveTemplate(raw) {
     const type = typeof slotDef === 'string' ? slotDef : slotDef?.type;
     slots[slotName] = { type, required: slotDef?.required !== false };
   }
+
+  const stringArray = (value) => (Array.isArray(value) ? value.filter((entry) => typeof entry === 'string') : []);
 
   return {
     id: String(raw.id),
@@ -85,6 +100,10 @@ export function normalizeObjectiveTemplate(raw) {
       npcConcepts: Math.max(0, Number(raw.creates?.npcConcepts ?? 0) || 0),
       locations: Math.max(0, Number(raw.creates?.locations ?? 0) || 0)
     },
+    constraints: stringArray(raw.constraints),
+    oppositionHints: stringArray(raw.oppositionHints),
+    locationHints: stringArray(raw.locationHints),
+    subjectHints: stringArray(raw.subjectHints),
     // errors is always [] here (normalize only returns non-null when valid)
     errors
   };
@@ -178,7 +197,10 @@ const RAW_FIXTURES = [
     difficulty: { min: 'standard', max: 'severe' },
     weight: 10,
     tags: ['rescue', 'extraction'],
-    creates: { npcConcepts: 1, locations: 1 }
+    creates: { npcConcepts: 1, locations: 1 },
+    constraints: ['no lethal force permitted', 'a strict time limit before the situation worsens'],
+    oppositionHints: ['security-guards', 'captors'],
+    subjectHints: ['hostage', 'kidnap victim', 'missing person']
   },
   {
     id: 'extraction-hostile-facility',
@@ -192,7 +214,11 @@ const RAW_FIXTURES = [
     difficulty: { min: 'difficult', max: 'extreme' },
     weight: 8,
     tags: ['extraction', 'infiltration'],
-    creates: { npcConcepts: 1, locations: 1 }
+    creates: { npcConcepts: 1, locations: 1 },
+    constraints: ['stealth required -- detection ends the mission'],
+    oppositionHints: ['military-patrol', 'security-guards'],
+    locationHints: ['military-paramilitary', 'urban'],
+    subjectHints: ['captured ally awaiting rescue', 'undercover agent needing exfiltration']
   },
   {
     id: 'delivery-cargo-local',
@@ -221,7 +247,10 @@ const RAW_FIXTURES = [
     difficulty: { min: 'difficult', max: 'severe' },
     weight: 8,
     tags: ['sabotage', 'infiltration'],
-    creates: { locations: 1 }
+    creates: { locations: 1 },
+    constraints: ['no witnesses can be left behind', 'avoid collateral damage to nearby civilians'],
+    oppositionHints: ['military-patrol', 'facility-security'],
+    locationHints: ['military-paramilitary', 'industrial']
   },
   {
     id: 'recovery-cargo-wreck',
