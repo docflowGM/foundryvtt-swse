@@ -5075,9 +5075,9 @@ Location's population profile, calls
 `deriveSpeciesPolicyFromLocationContext()`, and only then builds the
 draft with the already-blended `populationProfile`.
 
-## 135. Regression / totals + Phase 8D-1 gate (supersedes §131)
+## 135. Regression / totals + Phase 8D-1 gate (superseded by §138 — see below)
 
-Full `gm-*.test.mjs` sweep: 56/56 green (unchanged file count — the
+~~Full `gm-*.test.mjs` sweep: 56/56 green (unchanged file count — the
 addendum extended the existing Phase 8D-1 test file with 2 new
 sections rather than adding a new file), zero regressions. Full rolling
 suite: 191 files, 186 pass, 5 fail — the same pre-existing, unrelated
@@ -5102,4 +5102,110 @@ instruction: not building the finished generator UI or the full
 objective catalog in this pass; not merging PR #963; waiting for
 independent review of this pushed head before Phase 8D-2 (actual Job/
 Faction archetypes, the objective catalog, briefing composition)
-begins.
+begins.~~ (Struck through, not deleted, per this audit's own
+convention — independent review of this exact head found one real
+blocker in the locality-bias implementation; see §136-138.)
+
+## 136. C8D-1 (blocker) — locality bias collapsed the full Location distribution to a single species
+
+**Finding.** `deriveSpeciesPolicyFromLocationContext()` tried to
+express Location-derived bias as a STATIC `SpeciesPolicy` object:
+`createSpeciesPolicy({mode:'preferred', dominantSpeciesId: <the single
+highest-weight species in the Location>, dominantSpeciesWeight:
+localityBias})`. Confirmed by reading the code directly: this discarded
+every species in the Location's distribution except the single highest
+one BEFORE biasing, so e.g. Ryloth's real 76% Twi'lek / 24% Human split
+and a hypothetical 51%/49% split with the same dominant species would
+have produced IDENTICAL selection behavior at the same `localityBias`
+— the curated 50-world dataset's actual demographic shape was thrown
+away, undercutting the reason it was built. It also meant
+`localityBias` did not mean what its name said: `selectSpeciesId()`'s
+`preferred` mode treats `dominantSpeciesWeight` as "probability of
+picking the dominant species outright, else uniform over the whole
+pool" — so at `localityBias 1.0` the result was "always the single
+dominant species" (never the Location's real distribution, which would
+still leave room for the 24% minority), and at low bias the effective
+dominant-species probability was `bias + (1-bias)/poolSize`, not "bias%
+Location influence" as documented.
+
+**Fix.** `deriveSpeciesPolicyFromLocationContext()` is removed (no
+production caller existed — the blend was always documented as
+deferred to the Phase 8D-2 generator, so there was nothing to migrate)
+and replaced with `selectFactionSpeciesWithLocality()`, which performs
+the mixture at SELECTION time instead of precomputing a lossy static
+policy: for a non-`open` Faction policy, delegates straight to
+`selectSpeciesId()` with zero Location involvement (unchanged
+correctness); for an `open` policy, rolls `localityBias` — on success,
+weighted-picks from the Location's FULL `speciesWeights` via the
+already-existing `selectSpeciesForLocation()`; on failure, falls back
+to ordinary open selection. This makes `localityBias` mean exactly what
+it says: 0 = zero Location influence, 1 = exactly the Location's real
+distribution, values between blend proportionally.
+
+## 137. Fail-before/pass-after proof and tests
+
+Confirmed the bug directly by reading the pre-fix source (git history,
+not a stash — this file was only ever pushed once before this
+correction) rather than re-deriving it from the review alone. Five
+tests, matching the reviewer's own recommended list, use deterministic
+QUEUED rng (not loose statistics) so each proves the exact mechanism
+rather than a probabilistic tendency: (1) a non-`open` policy produces
+a byte-identical result to calling `selectSpeciesId()` directly with
+the same single rng value, proving the Location path is never even
+entered; (2) `localityBias 0` under an always-`0` rng (the lowest
+possible roll) still falls through to open selection, proving zero
+Location influence is structural, not merely likely; (3) `localityBias
+1` with an engineered rng sequence selects Ryloth's 24% MINORITY
+species (`species-human`) — under the pre-fix code this was
+mathematically impossible at bias 1.0, since `dominantSpeciesWeight:1`
+meant the dominant species won every single roll; (4) two synthetic
+Locations sharing the SAME dominant species (Twi'lek) but different
+real splits (99/1 vs 51/49) diverge under the IDENTICAL roll sequence
+(`species-twi-lek` vs `species-human`), directly demonstrating that
+demographic shape, not merely dominant-species identity, now drives the
+result; (5) a real seeded-RNG statistical run (500 trials) confirms the
+minority species appears near its actual ~24% rate at bias 1, as a
+complementary sanity check to the deterministic proofs. A regression
+test also confirms `bias:1` no longer collapses to a single guaranteed
+species — the exact defect the review named.
+
+Two smaller items from the same review were also addressed while
+touching this area: `createRecruitmentProfile()`'s doc comment
+previously overstated what the pure factory enforces ("real, canonical
+Location ids ONLY") — corrected to describe it accurately as a pure
+factory that never fabricates an id and never validates one against
+`LocationRegistryService` (deliberately, to avoid crossing the
+"generator is never campaign-data authority" line for a self-check with
+no benefit — an unresolvable id here simply produces no bias downstream
+rather than corrupting anything). `location-population-profile.js`'s
+`deriveDiversity()` doc comment said homogeneous starts "~95%+" while
+the code's actual threshold is `>=90`; corrected the comment to match
+the implemented thresholds exactly.
+
+## 138. Regression / totals + Phase 8D-1 gate (supersedes §135)
+
+Full `gm-*.test.mjs` sweep: 56/56 green (unchanged file count — the
+correction extended the existing test file, no new files), zero
+regressions. Full rolling suite: 191 files, 186 pass, 5 fail — the same
+pre-existing, unrelated Force-power failures as every prior phase
+(confirmed unchanged by this correction). Syntax check: 2216/2216 clean
+(unchanged file count).
+
+**PHASE 8D-1 (RANDOM GENERATION FOUNDATION, INCLUDING ALL THREE
+ADDENDA AND THE C8D-1 CORRECTION) COMPLETE — READY FOR INDEPENDENT
+REVIEW.** All items from the independent review of head `180cedd` are
+addressed: (C8D-1, blocker) locality bias now performs a genuine
+mixture against a Location's full weighted species distribution
+instead of collapsing it to a single dominant species, proven with
+deterministic queued-rng tests reproducing the exact reported
+scenario; two smaller documentation-accuracy issues in the same area
+were also corrected. The underlying architecture is unchanged — the
+reviewer's own assessment called the rest of the addendum (read-only
+Location context, `librarySeedId`/`parentLocationId`-based hierarchy
+resolution, the explicit-Faction-identity-always-wins precedence rule)
+sound, and no rewrite was needed. Per explicit instruction: not
+building the finished generator UI or the full objective catalog in
+this pass; not merging PR #963; waiting for independent review of this
+pushed head before Phase 8D-2 (actual Job/Faction archetypes, the
+objective catalog, briefing composition, and the separately-proposed
+procedural planet/POI generator addendum) begins.
