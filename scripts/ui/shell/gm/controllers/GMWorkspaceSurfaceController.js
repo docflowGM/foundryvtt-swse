@@ -32,6 +32,7 @@ export class GMWorkspaceSurfaceController {
     if (!this._assertGM('open the GM workspace')) return;
 
     this._wireActorOpenControls(pageElement, signal);
+    this._wireBulletinDraftFromActor(pageElement, signal);
     this._wireDossierSelection(pageElement, signal);
     this._wireDossierTargets(pageElement, signal);
     this._wireWorkspaceQuickControls(pageElement, signal);
@@ -69,6 +70,27 @@ export class GMWorkspaceSurfaceController {
     });
   }
 
+
+  /**
+   * PHASE 8C — hands off to the shared Bulletin draft authority
+   * (GMBulletinSurfaceService.prepareDraftFromSource() via the host).
+   * Uses the Actor's stable UUID as provenance, never its bare id or
+   * display name.
+   */
+  _wireBulletinDraftFromActor(pageElement, signal) {
+    pageElement.querySelectorAll('[data-workspace-prepare-bulletin-draft]').forEach((button) => {
+      button.addEventListener('click', async (event) => {
+        event.preventDefault();
+        const actorId = event.currentTarget.dataset.workspacePrepareBulletinDraft;
+        const actor = actorId ? game.actors?.get?.(actorId) : null;
+        if (!actor) {
+          ui?.notifications?.warn?.('That actor could not be found.');
+          return;
+        }
+        await this.host?._prepareBulletinDraftFromSource?.('actor', actor.uuid);
+      }, { signal });
+    });
+  }
 
   /**
    * Phase 7 — select an Actor for the campaign-dossier detail panel.

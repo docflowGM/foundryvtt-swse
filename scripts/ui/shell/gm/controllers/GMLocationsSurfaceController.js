@@ -251,6 +251,18 @@ export class GMLocationsSurfaceController {
           return;
         }
 
+        // PHASE 8C — hands off to the shared Bulletin draft authority
+        // (GMBulletinSurfaceService.prepareDraftFromSource() via the
+        // host); this controller supplies only the stable locationId.
+        if (action === 'prepare-bulletin-draft') {
+          if (!locationId) {
+            ui.notifications?.warn?.('Select a location before preparing a Bulletin draft.');
+            return;
+          }
+          await this.host?._prepareBulletinDraftFromSource?.('location', locationId);
+          return;
+        }
+
         if (action === 'wizard-next' || action === 'wizard-back') {
           this._shiftWizardPage(target.closest('[data-location-wizard]'), action === 'wizard-next' ? 1 : -1);
           return;

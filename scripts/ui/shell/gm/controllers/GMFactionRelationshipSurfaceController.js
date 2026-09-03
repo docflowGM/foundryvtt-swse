@@ -237,6 +237,19 @@ export class GMFactionRelationshipSurfaceController {
             return;
           }
 
+          // PHASE 8C — hands off to the shared Bulletin draft authority
+          // (GMBulletinSurfaceService.prepareDraftFromSource() via the
+          // host); this is the Faction record itself (not a Contact),
+          // supplying only the stable factionId.
+          case 'prepare-bulletin-draft': {
+            if (!factionId) {
+              ui.notifications?.warn?.('Select a faction before preparing a Bulletin draft.');
+              return;
+            }
+            await this.host?._prepareBulletinDraftFromSource?.('faction', factionId);
+            return;
+          }
+
           case 'view-jobs-faction':
           case 'view-jobs-contact':
             this.host.patchSurfaceState?.('jobs', { issuerFilter, pendingJobDraft: null, openWizard: false }, { render: false });

@@ -282,6 +282,23 @@ export class GMIntelSurfaceController {
           return;
         }
 
+        // PHASE 8C — distinct from 'deliver-bulletin' above: this creates
+        // an editable DRAFT (GM-only, not published, no player event) via
+        // the shared GMBulletinSurfaceService.prepareDraftFromSource()
+        // authority, then navigates to Bulletin with it selected. Intel's
+        // existing immediate "Publish as Bulletin" action is unchanged
+        // and unaffected -- both coexist.
+        if (action === 'prepare-bulletin-draft' && recordId) {
+          const record = await HolonetIntelService.getIntelById(recordId);
+          const intel = record ? HolonetIntelService.getIntelMetadata(record) : null;
+          if (!intel) {
+            ui.notifications?.warn?.('That Intel record could not be found.');
+            return;
+          }
+          await this.host._prepareBulletinDraftFromSource('intel', intel.id);
+          return;
+        }
+
         if (action === 'release-dossier' && recordId) {
           const result = await HolonetIntelService.releaseToDossier(recordId, { partyFallback: true });
           if (result?.ok) ui.notifications?.info?.('Intel released to the player Intel Locker.');

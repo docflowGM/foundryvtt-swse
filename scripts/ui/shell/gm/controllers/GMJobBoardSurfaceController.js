@@ -619,6 +619,19 @@ export class GMJobBoardSurfaceController {
       }, { signal });
     });
 
+    // PHASE 8C — hands off to the shared Bulletin draft authority
+    // (GMBulletinSurfaceService.prepareDraftFromSource() via the host);
+    // this controller supplies only the stable threadId, never builds a
+    // Bulletin record itself.
+    pageElement.querySelectorAll('[data-job-prepare-bulletin-draft]').forEach((button) => {
+      button.addEventListener('click', async (event) => {
+        event.preventDefault();
+        const threadId = event.currentTarget.dataset.threadId;
+        if (!threadId) return;
+        await this.host?._prepareBulletinDraftFromSource?.('job', threadId);
+      }, { signal });
+    });
+
     pageElement.querySelectorAll('[data-job-open-issuer-actor]').forEach((button) => {
       button.addEventListener('click', async (event) => {
         event.preventDefault();
