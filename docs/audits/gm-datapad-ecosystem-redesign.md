@@ -4191,13 +4191,288 @@ check re-run; see the PR body / final report for exact totals. No
 Messenger test exists to regress (confirmed by trace, §91), so none
 ran; this is recorded honestly rather than claimed as "all green."
 
-**PHASE 8B FINAL SAFETY CORRECTION COMPLETE — READY FOR INDEPENDENT
-REVIEW.** `bodyForIntel(intel,'public')` can no longer return private
-`fullBody` under any caller; `deliverAsBulletin()` fails closed with no
-side effects when no player-safe representation exists, proven via an
-isolated git-stash fail-before/pass-after cycle against real
-persisted-record content. C8B-1/C8B-2/C8B-3 and the combined-commit
-boundary from the prior correction pass are unchanged and re-verified.
-Per explicit instruction: not declaring "READY FOR GENERAL BULLETIN
-INTEGRATION" until independent review of this corrected, pushed head;
-not beginning Phase 8C or any general Bulletin integration work.
+**PHASE 8B FINAL SAFETY CORRECTION COMPLETE.** `bodyForIntel(intel,'public')`
+can no longer return private `fullBody` under any caller;
+`deliverAsBulletin()` fails closed with no side effects when no
+player-safe representation exists, proven via an isolated git-stash
+fail-before/pass-after cycle against real persisted-record content.
+C8B-1/C8B-2/C8B-3 and the combined-commit boundary from the prior
+correction pass are unchanged and re-verified. **Independently reviewed
+and approved** — Phase 8C begins below.
+
+# PHASE 8C — GENERAL BULLETIN INTEGRATION / CROSS-SURFACE HANDOFFS
+
+Starting head: `e5af6b3207fc30e60d13f35ee5457467af0c5961` (verified:
+clean tree, correct branch, matching HEAD, exact-head CI green, PR #963
+open/draft/unmerged/mergeable; Phase 8B independently reviewed and
+approved). Scope: directional workflow-provenance handoffs from
+Job/Location/Faction/Actor/Intel into Bulletin, via one shared draft
+authority. Bulletin becomes the canonical "what players are told"
+surface without becoming a second copy of any source domain's truth.
+
+## 96. Bulletin authority map
+
+Read in full before implementation: `GMBulletinSurfaceService.js`,
+`GMBulletinSurfaceController.js`, `gm-datapad.js`'s Bulletin methods
+(`_saveBulletinRecord`, `_buildBulletinRecordView`,
+`_applyBulletinProjectionOptions`), `BulletinSource`, `holonet-record.js`,
+`holonet-engine.js`, `holonet-storage.js`, `holonet-boundaries.js`,
+`holonet-projection-router.js`, `HomeSurfaceService.js`,
+`GMCampaignTargetService.js`, `GMDatapad.navigateToSurface()`.
+
+| Field | Classification | Notes |
+|---|---|---|
+| `id` | BULLETIN_CANONICAL | — |
+| `title`/`body` | BULLETIN_CANONICAL (prefilled once, then editable) | For a handoff draft: `title`/`body` are `SOURCE_PREFILL_ONLY` at creation, `BULLETIN_CANONICAL` the moment the GM edits them — see §98 |
+| `priority`/`audience`/`recipients` | BULLETIN_CANONICAL | Never inferred from source relationships (§101) |
+| `category`/`metadata.bulletinKind` | BULLETIN_CANONICAL | `category` reuses the source kind as a real, already-supported filter value (`'intel'` precedent) — not a new taxonomy |
+| `state` | BULLETIN_CANONICAL | Existing DRAFT→PUBLISHED→ARCHIVED lifecycle (§97) — already real, reused verbatim |
+| `projections` | BULLETIN_CANONICAL | Existing HOME_FEED/GM_DATAPAD_BULLETIN pair, unchanged shape |
+| `metadata.sourceKind`/`metadata.sourceId` | SOURCE_PROVENANCE | The one new general contract (§99) |
+| `metadata.sourceIntelId`/`intelDelivery` (Intel's own *immediate*-publish path only) | LEGACY / untouched | `deliverAsBulletin()` keeps its existing schema unchanged (§102) — a genuinely separate action from the new draft path |
+| `publishedAt`/delivery/read/ack/dismiss state | DERIVED_DISPLAY | Existing `_buildBulletinDeliverySummary()`, unchanged |
+| Old `metadata[INTEL_METADATA_KEY]` on legacy records | LEGACY | Unaffected by this phase — still inert, still not migrated (Phase 8B §85) |
+
+## 97. Draft lifecycle (already real — reused, not invented)
+
+Audited `gm-datapad.js`'s existing `_saveBulletinRecord()`: a Bulletin
+already has a genuine DRAFT state — `HolonetStorage.saveRecord(record)`
+persists a `DELIVERY_STATE.DRAFT` record without ever calling
+`HolonetEngine.publish()`. A draft therefore already has zero resolved
+recipients (`publish()` is the only thing that calls
+`HolonetDeliveryRouter.resolveRecipients()`), so it is structurally
+absent from every recipient-scoped player feed
+(`HolonetEngine.getFeedForRecipient()`) — not because of a state check,
+but because it has no recipients to be found under. No new lifecycle
+state was invented.
+
+## 98. Shared draft-authority seam
+
+`GMBulletinSurfaceService.prepareDraftFromSource({sourceKind, sourceId})`
+is the one authority every source surface's action calls — no
+independent draft-construction logic in any controller. It: resolves
+the source via `_prefillForSource()` (exact-id lookup against the
+source's own canonical registry only, §101), builds a
+`BulletinSource.createBulletinMessage()` record with the prefilled
+title/body, stamps `metadata.sourceKind`/`metadata.sourceId`, and
+persists via `HolonetStorage.saveRecord()` — never
+`HolonetEngine.publish()`. Returns `null` (no draft created) if the
+source kind is unsupported or the source does not resolve. A companion
+host method, `GMDatapad._prepareBulletinDraftFromSource()`, calls this
+and then navigates to the Bulletin surface with the new draft selected
+for editing (`hostPatch: { bulletinEditor: { mode:'edit', recordId } }`).
+
+## 99. General provenance contract
+
+```js
+metadata: { sourceKind: 'job'|'location'|'faction'|'actor'|'intel', sourceId }
+```
+One source kind, one stable source identity, no duplicated source
+truth — exactly the direction requested. `sourceIntelId` was **not**
+migrated onto this new contract for the *existing* `deliverAsBulletin()`
+immediate-publish path (§102) — per the Phase 8B audit, nothing reads
+`sourceIntelId` back off a Bulletin today, so there was no compatibility
+reader to preserve, but changing that action's schema was explicitly
+out of scope for this phase ("Do NOT change the semantics of Intel's
+existing immediate-publish command"). The two schemas coexist on
+different actions rather than being unified in this pass.
+
+## 100. Source field / prefill audit
+
+A dedicated read-only audit (background research agent, cited
+file:line evidence) determined, per source, whether a reliable
+player-facing/GM-only split already exists elsewhere in the codebase
+— never inventing one:
+
+| Source | Stable id | Reliable public field? | Prefill used |
+|---|---|---|---|
+| Job | `threadId` | **Yes** — `job.briefing.body`, independently proven by `holonet-messenger-service.js`'s player-facing Messenger job board VM (`buildHolonetJobBoardVm`) reading the identical field | `title = job.title`; `body = job.briefing?.body \|\| job.description \|\| job.brief \|\| thread.preview \|\| ''` |
+| Location | `location.id` | **Yes** — `publicSummary` vs `gmNotes`, proven by the player-facing `AtlasSurfaceService.js` (`publicSummary: location.publicSummary`) | `title = location.name`; `body = location.publicSummary` |
+| Faction | `faction.id` | **No at the faction-record level** — only nested `contacts[].publicNotes` has a proven split; the faction record itself has only `notes`/`gmNotes`, neither proven safe anywhere | `title = faction.name`; `body = ''` (deliberately empty — GM writes it, never guessed from notes/gmNotes) |
+| Actor | Actor **UUID** | **No** — audited the full SWSE actor data model (`template.json`); no biography/description/notes field exists anywhere on Actor | `title = actor.name`; `body = ''` (never system/mechanical data — HP, credits, inventory, conditions excluded categorically) |
+| Intel | `intel.id` | **Yes** — reuses `HolonetIntelService.getPublicBody()`, a new thin public wrapper around the exact `bodyForIntel(intel,'public')` authority `deliverAsBulletin()` itself uses, including the Phase 8B C8B-4 fix | `title = intel.title`; `body = HolonetIntelService.getPublicBody(record)` |
+
+Every lookup is an exact-id match against the source's own canonical
+registry (`LocationRegistryService.getRegistry().find(r => r.id === id)`,
+same for Faction; `HolonetStorage.getThread(id)` + `metadata.threadType
+=== 'job'` check for Job) — never the fuzzy name/slug-matching
+`findLocation()`/`findFaction()` helpers those registries also expose
+for other purposes. Proven by a static source check (8C-12).
+
+## 101. Draft lifecycle safety properties
+
+- **No player event on draft creation**: zero syncs, zero
+  `record-published` hook dispatches, zero resolved recipients, `publishedAt`
+  stays `null` (8C-7).
+- **No audience inference**: every draft defaults to
+  `HolonetAudience.gmOnly()` regardless of source — a Location's
+  controlling Faction, a Job's assignee, a Faction's membership, none of
+  it is used to infer recipients. The GM chooses an audience explicitly
+  while editing, exactly as any other Bulletin draft already works.
+- **Source/Bulletin independence**: mutating the source registry after
+  draft creation never rewrites the persisted draft body, and editing
+  the draft never mutates the source record (8C-10) — the prefill is a
+  one-time copy, not a live binding.
+- **No draft-uniqueness constraint**: two drafts from the same source
+  are both valid, distinct Bulletin records sharing the same provenance
+  (8C-11) — no source→single-Bulletin registry was introduced.
+
+## 102. Job / Location / Faction / Actor / Intel handoffs
+
+All five call the identical `prepareDraftFromSource()` seam (§98) with
+the source-specific prefill from §100. Each is proven with an executed
+production-path test against real persisted-record content, with
+sentinel-based privacy assertions (`JOB_GM_ONLY_8C`,
+`LOCATION_SECRET_8C`, `FACTION_GM_ONLY_8C`, `ACTOR_PRIVATE_8C`,
+`INTEL_FULL_BODY_8C`) proving the specific private fields identified in
+§100 never reach the persisted draft — reward math, objective-review
+metadata, and faction-consequence deltas for Job; `gmNotes`/`hazards`/
+`rumors` for Location; `notes`/`gmNotes`/`jobDefaults` for Faction;
+`notes`/credits/inventory/conditions for Actor; `fullBody`/`gmNotes`/
+`skillGate`/`lockbox` for Intel (tests 8C-1 through 8C-5).
+
+**Intel's existing immediate "Publish as Bulletin" action
+(`deliverAsBulletin()`) is byte-for-byte unchanged** — same schema,
+same fail-closed behavior from Phase 8B, same combined-commit boundary
+from the Phase 8B correction pass. Test 8C-6 proves both actions coexist
+independently: preparing a draft never publishes, and immediate publish
+still works exactly as before.
+
+## 103. Source-side actions (UI wiring)
+
+Added a "Prepare Bulletin Draft" button, wired through each surface's
+existing delegated-action controller pattern (no new dispatch
+mechanism), to all five sources:
+
+- **Job Board** (`kanban-and-detail.hbs` / `GMJobBoardSurfaceController.js`,
+  `[data-job-prepare-bulletin-draft]`, alongside "Open Faction"/"Make
+  Follow-Up").
+- **Locations** (`locations.hbs` / `GMLocationsSurfaceController.js`,
+  `data-location-action="prepare-bulletin-draft"`, alongside "Edit in
+  Wizard").
+- **Factions** (`factions.hbs` / `GMFactionRelationshipSurfaceController.js`,
+  `data-gm-faction-action="prepare-bulletin-draft"`, alongside "Create
+  Intel").
+- **Workspace** (`workspace.hbs` / `GMWorkspaceSurfaceController.js`,
+  `[data-workspace-prepare-bulletin-draft]` on the selected-Actor
+  dossier header, alongside "Open Sheet").
+- **Intel** (`intel.hbs` / `GMIntelSurfaceController.js`,
+  `data-intel-action="prepare-bulletin-draft"`, alongside the existing
+  Secret Note/Messenger/Bulletin delivery actions).
+
+Every button calls the same `GMDatapad._prepareBulletinDraftFromSource()`
+host method (§98) — no controller constructs a Bulletin record itself.
+
+## 104. Source navigation ("Open Source")
+
+`GMCampaignContextService.resolveBulletinSource({sourceKind, sourceId})`
+(new, read-only) resolves a Bulletin's provenance to
+`{sourceKind, sourceId, label, resolved, resolutionKind, target}` by
+delegating to this service's own existing `for<Kind>()` resolvers
+(`forJob`/`forLocation`/`forFaction`/`forIntel`/`forActor`) — never
+re-deriving identity/label logic, never matching by title/name/label
+(exact-id-only, proven 8C-9/8C-12). `target` is the same `{kind, id}`
+shape `attentionItems()` rows already use, so
+`GMCampaignTargetService.resolve(target)` works unchanged.
+
+`'actor'` deliberately has no navigable Datapad-surface `target`
+(`null`) — matching `GMCampaignTargetService`'s own long-documented
+actor exclusion (every existing surface opens the real Foundry Actor
+sheet directly, never a Datapad selection). `GMDatapad._openBulletinSource()`
+mirrors the exact actor-vs-target split `_wireHomeAttentionTargets()`
+already established: `'actor'` opens `actor.sheet.render(true)` via the
+Actor UUID; every other kind resolves through `GMCampaignTargetService.resolve()`
+and navigates via the real `navigateToSurface()` contract. A broken/
+unresolvable source reports `resolved:false`/`resolutionKind:'missing'`
+and the UI warns — never a guessed match (8C-9).
+
+Wired as an "Open Source" button on each Bulletin message record
+carrying provenance (`messages-panel.hbs`,
+`data-action="bulletin-open-source"`, shown only when
+`hasSourceProvenance` is true — a new, purely additive, raw-passthrough
+field on `_buildBulletinRecordView()`; resolution happens at click time,
+never pre-guessed at render time).
+
+## 105. Legacy / broken-provenance disposition
+
+No migration performed or needed. A Bulletin record with no provenance,
+Phase 8B's legacy `sourceIntelId`-only shape, or this phase's new
+`sourceKind`/`sourceId` shape all continue to hydrate and render
+identically through the real `HolonetStorage`/`holonet-boundaries.js`
+functions (8C-13). A source that no longer exists (deleted Location,
+archived Job, etc.) is not specially handled by this phase's persistence
+layer — it simply reports `resolved:false` when "Open Source" is
+clicked (§104); the Bulletin record itself, its provenance fields, and
+its content are never touched, deleted, or reset.
+
+## 106. Privacy sentinel results
+
+Every source handoff has an executed, sentinel-based, persisted-record
+proof (§102) — this is an additive design contract (the draft-handoff
+path is new production surface, not a pre-existing bug), so there is no
+git-stash fail-before/pass-after cycle for it (there is no "before" —
+the path did not exist). The privacy guarantee is proven from the first
+commit of this code, in the same style Phase 8B's own tests inspect the
+actual persisted object rather than rendered HTML.
+
+## 107. Regression / totals
+
+Full `gm-*.test.mjs` sweep: 55/55 green (was 54; +1 new
+`gm-holonet-phase8c-bulletin-handoffs.test.mjs`), zero regressions.
+Phase 8A and Phase 8B suites re-verified green — Phase 8C did not
+reopen either. Full rolling suite: 190 files, 185 pass, 5 fail — same
+pre-existing, unrelated Force-power failures as every prior phase.
+Syntax check: 2194/2194 clean.
+
+## 108. Live Foundry checklist (not run — no live client available)
+
+Same limitation as every prior phase. (1) From a Job's detail panel,
+click "Prepare Bulletin Draft"; (2) confirm Bulletin opens with the new
+draft selected, title/body prefilled from the Job's briefing only; (3)
+edit the draft text without altering the Job; (4) Publish; (5) confirm
+an already-open player Home receives it live; (6) click "Open Source"
+on the published Bulletin, confirm it opens the exact Job; (7)-(9)
+repeat for Location/Faction/Actor; (10) prepare a draft from Intel,
+confirm no private Intel fields ever appear in the draft; (11) confirm
+Intel's immediate "Publish as Bulletin" still works unchanged; (12)
+create two drafts from the same source, confirm both are distinct and
+valid; (13) delete/archive a source and confirm its already-published
+Bulletin remains readable with an "unresolved source" state on "Open
+Source"; (14) confirm pre-Phase-8C Bulletin records still render; (15)
+with two active distinct GM users connected, confirm publishing a
+prepared draft still respects Phase 8A's exactly-once authority.
+
+## 109. Explicitly deferred
+
+Per the phase's own scope boundary: Skill Challenges/Phase 9, Bulletin
+visual redesign, player replies/conversation threads, Messenger
+redesign, Secret Note redesign, Bulletin approvals, scheduled
+publication, automatic Bulletin generation, automatic audience
+inference, automatic Bulletin regeneration when a source changes,
+arbitrary multi-hop provenance chains (Bulletin→Intel→Location→...),
+a generic campaign-relationship graph, historical private-data
+cleanup/migration (still Phase 8B's open, unapproved remediation
+finding), new Home architecture, new notification framework. Also
+explicitly not done: migrating `deliverAsBulletin()`'s own
+`sourceIntelId`/`intelDelivery` schema onto the new general
+`sourceKind`/`sourceId` contract (§99) — the two coexist by design in
+this pass.
+
+## 110. Phase 8 gate (supersedes §95)
+
+**PHASE 8C COMPLETE — READY FOR INDEPENDENT REVIEW.** Bulletin is now
+the canonical "what players are told" surface with a real, shared,
+tested draft-handoff authority from all five named GM Datapad
+authorities, using one general `{sourceKind, sourceId}` provenance
+contract with no duplicated source truth. Draft creation is proven
+distinct from publication (zero player-visible side effects). Every
+handoff's player-safe prefill is backed by a cited, already-proven
+public/private split in this codebase — never invented — with an honest
+empty-body default (Faction record level, Actor) where no such split
+exists. Intel's existing immediate-publish action is unchanged and
+coexists. Source navigation reuses the existing
+`GMCampaignTargetService`/`GMCampaignContextService` seams with no new
+router. No general Bulletin visual redesign, no arbitrary provenance
+graph, no new authority beyond the one shared seam. Per explicit
+instruction: not beginning Phase 9/Skill Challenges; waiting for
+independent review of this pushed head.
