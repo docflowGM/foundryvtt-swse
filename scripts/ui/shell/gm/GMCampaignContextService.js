@@ -33,19 +33,30 @@
  *                    full Intel metadata object onto the Bulletin
  *                    alongside it; the Phase 8B privacy/provenance audit
  *                    found no production consumer of that copy and
- *                    removed it for newly-created records (legacy
- *                    records keep it, harmlessly, since nothing ever
- *                    read it back off a Bulletin). What's actually
- *                    missing is a GENERALIZED provenance contract
- *                    (Job/Location/Faction/Actor-originated Bulletins
- *                    have no equivalent stable source id yet) and the
- *                    reverse lookup this field would need (Bulletins
- *                    referencing a given subject) — that generalization
- *                    is explicitly deferred past Phase 8B too. This
- *                    field stays an empty object until then. Present in
- *                    every subject context
- *                    as an empty object so callers have a stable shape to
- *                    check against, never omitted.
+ *                    removed it for newly-created records. UPDATE (Phase
+ *                    8B correction pass, C8B-2): legacy records that
+ *                    still carry that copy are NOT harmless — it is a
+ *                    real world-setting private-data exposure risk on
+ *                    the client-sync threat model this codebase uses;
+ *                    see docs/audits/gm-datapad-ecosystem-redesign.md
+ *                    §85 for the full remediation finding (no
+ *                    destructive migration was performed, but the risk
+ *                    is documented honestly, not waved away). UPDATE
+ *                    (Phase 8C): the GENERALIZED provenance contract
+ *                    this paragraph used to call "explicitly deferred"
+ *                    now exists — every source surface (Job/Location/
+ *                    Faction/Actor/Intel) stamps a Bulletin draft with
+ *                    {sourceKind, sourceId} via
+ *                    GMBulletinSurfaceService.prepareDraftFromSource(),
+ *                    and this service's own resolveBulletinSource()
+ *                    below is the reverse lookup (id -> resolved
+ *                    subject) callers use for both navigation (C8C-1)
+ *                    and display (C8C-3). This `workflows` bag itself
+ *                    is still unpopulated by that contract — the
+ *                    provenance lives on the Bulletin record's own
+ *                    metadata, not injected into a subject's context
+ *                    row — so it remains an empty object here, present
+ *                    on every subject context
  *   limitations   — honest strings naming a gap in the current data model,
  *                    never a guess standing in for one.
  *
