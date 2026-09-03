@@ -4969,9 +4969,9 @@ species-aware name mechanics without an existing authority);
 Rank-and-Privilege/Gear-Requisition player mechanics; encounter-balance
 mathematics; ideology/prejudice mechanics of any kind.
 
-## 131. Phase 8D-1 gate
+## 131. Phase 8D-1 gate (superseded by §135 — see below)
 
-**PHASE 8D-1 (RANDOM GENERATION FOUNDATION) COMPLETE — READY FOR
+~~**PHASE 8D-1 (RANDOM GENERATION FOUNDATION) COMPLETE — READY FOR
 INDEPENDENT REVIEW.** Eighteen new, additive, pure/RNG-injectable
 modules under `scripts/generation/` plus one new 16-section test file.
 Every named existing authority (name generators, SpeciesRegistry,
@@ -4989,4 +4989,117 @@ proven at the source level, not just asserted. Per explicit instruction:
 not building the finished generator UI or the full objective catalog in
 this pass; not merging PR #963; waiting for independent review of this
 pushed head before Phase 8D-2 (actual Job/Faction archetypes, the
-objective catalog, briefing composition) begins.
+objective catalog, briefing composition) begins.~~ (Struck through, not
+deleted, per this audit's own convention — a third addendum landed in
+the same session before independent review, extending this same
+foundation pass; see §132-135.)
+
+## 132. 3rd addendum — Location demographics + Faction recruitment locality bias
+
+Planet/settlement demographics are now a first-class, read-only
+generation input, kept in three deliberately separate concerns: "who
+lives here" (`location-population-profile.js`), "who belongs to this
+organization" (`population-profile.js`, unchanged), and "how strongly
+one should influence the other" (`recruitment-profile.js`, new). No
+canonical Location schema field was added — `LocationRegistryService
+.normalizeLocation()` is untouched; demographics resolve entirely
+through the `librarySeedId` a real, Library-imported Location record
+already carries (confirmed by reconnaissance:
+`seedToLocationRecord()`/`childToLocationRecord()` in
+`location-library-seeds.js` both stamp it), walked up `parentLocationId`
+with a defensive cycle guard (never a duplicated validation — real data
+can't cycle; `LocationRegistryService.upsertLocation()` already
+prevents that at write time).
+
+## 133. The 50-planet population dataset
+
+`data/location-population-profiles.js` — one curated profile per real
+`LOCATION_LIBRARY_SEEDS[].id` (all 50 keys confirmed to match a real
+top-level seed id before this file was written), built by
+programmatically transforming a user-supplied, Wookieepedia-sourced
+census dataset rather than hand-transcribed (35 entries use a real
+Wookieepedia percentage/count-derived census split; 15 have no usable
+sapient-species census and use the project's own procedural fallback —
+Human 70% + six contextually-selected supported Species compendium IDs
+at 5% each — flagged `fallbackUsed:true` rather than presented as
+lore). The fold-to-human policy was applied to the data BEFORE this
+codebase ever sees it: a named source species absent from the project's
+Species compendium (e.g. Corellia's Selonian, Bespin's Ugnaught/
+Lutrillian, Endor's Yuzzum), and any unresolved aggregate Other/Various
+share, is recorded in `sourceDemographics` (`supported:false`, for
+GM-facing transparency — nothing is silently lost) but excluded from
+`speciesWeights` and folded into Human. `speciesWeights` therefore
+never contains a rollable "other" entry, and every one of the 50
+entries' weights sum to exactly 100 — both proven by an executed test
+that reads the real, shipped data file, not a hand-picked sample.
+Special cases are preserved rather than smoothed over: Nal Hutta's
+source percentages summed to 101 (rounding) and are proportionally
+normalized to exactly 100 with that fact flagged
+(`generatorNormalizationApplied`); several entries are explicitly
+`eraSensitive`/carry a `historicalContext` (Korriban's Sith Empire
+split, Ossus's modern-era split, Lehon's Infinite Empire split, Taris's
+3956 BBY split) since the same Wookieepedia page gives materially
+different numbers for other eras; Ord Mantell keeps its own qualitative
+"no single species over 5%" source note even though the required
+70/5×6 fallback doesn't model that nuance, so a GM reading the entry
+sees the honest gap rather than an invented precision. `diversity`
+(homogeneous/strongly-dominant/dominant/mixed/cosmopolitan) is DERIVED
+from the top species weight, purely descriptive, never itself fed back
+into random selection.
+
+## 134. Faction recruitment locality bias
+
+`recruitment-profile.js`'s `deriveSpeciesPolicyFromLocationContext()`
+is the one bridge function connecting Location demographics to a
+Faction's `populationProfile.speciesPolicy` — and it enforces the
+explicit-identity-always-wins precedence rule the design phase set
+structurally, not just by convention: it inspects `speciesPolicy.mode`
+first and returns the policy COMPLETELY UNCHANGED unless that mode is
+`open`. A species-locked, restricted-coalition, or already
+species-dominant Faction is never "corrected" toward its planet's
+demographics — a generated "Human-exclusive noble house on Ryloth"
+stays exactly that, proven by an executed test. Only an `open` policy
+gets blended, becoming a `preferred` policy favoring the Location's
+single dominant species, weighted by `localityBias` (0-1, bounded).
+`ARCHETYPE_DEFAULT_LOCALITY_BIAS` centralizes the "local government/
+clan/street-gang are shaped by where they operate; offworld military/
+bounty-hunter/smuggler networks are not" distinction from the design
+conversation as one tunable table, covering every archetype id
+`organization-metadata.js`'s `FACTION_ARCHETYPE_FAMILY` already names.
+`faction-draft.js`'s new `recruitmentProfile` field carries
+`originLocationId`/`headquartersLocationId`/`currentLocationId` (real
+canonical Location ids only, empty by default) and `localityBias`; the
+blend itself is deliberately NOT performed inside `createFactionDraft()`
+— that composition is Phase 8D-2+'s generator, which resolves a
+Location's population profile, calls
+`deriveSpeciesPolicyFromLocationContext()`, and only then builds the
+draft with the already-blended `populationProfile`.
+
+## 135. Regression / totals + Phase 8D-1 gate (supersedes §131)
+
+Full `gm-*.test.mjs` sweep: 56/56 green (unchanged file count — the
+addendum extended the existing Phase 8D-1 test file with 2 new
+sections rather than adding a new file), zero regressions. Full rolling
+suite: 191 files, 186 pass, 5 fail — the same pre-existing, unrelated
+Force-power failures as every prior phase. Syntax check: 2216/2216
+clean (was 2213; +3 new files — `location-population-profile.js`,
+`recruitment-profile.js`, `data/location-population-profiles.js` — all
+clean).
+
+**PHASE 8D-1 (RANDOM GENERATION FOUNDATION, INCLUDING ALL THREE
+ADDENDA) COMPLETE — READY FOR INDEPENDENT REVIEW.** Twenty-one new,
+additive, pure/RNG-injectable modules (eighteen from the base pass plus
+`location-population-profile.js`, `recruitment-profile.js`, and the
+50-entry curated dataset from this addendum) under `scripts/generation/`,
+plus the one test file extended to 18 sections. Every named existing
+authority was reused, never duplicated; no canonical Location schema
+field was added for demographics (resolution keys entirely off the
+existing `librarySeedId`/`parentLocationId` fields); explicit Faction
+population identity always overrides Location-derived bias, proven
+executably. No canonical Actor/Faction/Location/Job is created,
+upserted, or otherwise mutated anywhere in this pass. Per explicit
+instruction: not building the finished generator UI or the full
+objective catalog in this pass; not merging PR #963; waiting for
+independent review of this pushed head before Phase 8D-2 (actual Job/
+Faction archetypes, the objective catalog, briefing composition)
+begins.
