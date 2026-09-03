@@ -638,4 +638,67 @@ const INTEL_FULL_BODY_SENTINEL = 'INTEL_FULL_BODY_8C';
   console.log('C8C-3 (resolved source label is a derived, never-persisted display value, proven against the real view-builder/template code path) passed.');
 }
 
+// ------------------------------------------------------------
+// C8C-5 correction: resolveBulletinSource() previously delegated to the
+// corresponding for*() resolver and read only its `.subject` row. Those
+// for*() methods compute a FULL relationship/operations graph
+// (forLocation() alone scans factions, contacts, actors, the entire Job
+// index, the entire Intel index, leads, and scenes; forActor()
+// additionally computes Trade/Recovery operational context) --
+// wildly disproportionate for what should be an O(1) "does this exact
+// subject exist, what is its label" lookup, and one that ran once per
+// provenance-bearing Bulletin on every render (buildViewModel()'s
+// Promise.all over _buildBulletinRecordView()). This spies on the real
+// exported for*() methods and proves resolveBulletinSource() calls NONE
+// of them for any source kind, while still producing the exact same
+// label/resolved/resolutionKind a caller would have gotten before.
+// ------------------------------------------------------------
+{
+  const JOB_THREAD = { id: 'job-c5', title: 'Job C5', metadata: { threadType: 'job', job: { title: 'Job C5', status: 'posted' } } };
+  const LOCATION = { id: 'loc-c5', name: 'Location C5', publicSummary: 'x' };
+  const FACTION = { id: 'faction-c5', name: 'Faction C5' };
+  const ACTOR = { id: 'actor-c5', uuid: 'Actor.actor-c5', name: 'Actor C5' };
+  installShim({ threads: [JOB_THREAD], locations: [LOCATION], factions: [FACTION], actors: [ACTOR] });
+  const { GMCampaignContextService } = await import('/systems/foundryvtt-swse/scripts/ui/shell/gm/GMCampaignContextService.js');
+  const { HolonetIntelService } = await import('/systems/foundryvtt-swse/scripts/holonet/subsystems/holonet-intel-service.js');
+  const intel = await HolonetIntelService.createIntelDraft({ title: 'Intel C5', publicBody: 'x' });
+
+  const calls = { forJob: 0, forLocation: 0, forFaction: 0, forIntel: 0, forActor: 0 };
+  for (const method of Object.keys(calls)) {
+    const original = GMCampaignContextService[method].bind(GMCampaignContextService);
+    GMCampaignContextService[method] = (...args) => { calls[method]++; return original(...args); };
+  }
+
+  const jobResolved = await GMCampaignContextService.resolveBulletinSource({ sourceKind: 'job', sourceId: 'job-c5' });
+  const locResolved = await GMCampaignContextService.resolveBulletinSource({ sourceKind: 'location', sourceId: 'loc-c5' });
+  const facResolved = await GMCampaignContextService.resolveBulletinSource({ sourceKind: 'faction', sourceId: 'faction-c5' });
+  const intelResolved = await GMCampaignContextService.resolveBulletinSource({ sourceKind: 'intel', sourceId: intel.metadata.intel.id });
+  const actorResolved = await GMCampaignContextService.resolveBulletinSource({ sourceKind: 'actor', sourceId: 'Actor.actor-c5' });
+
+  assert.deepEqual(calls, { forJob: 0, forLocation: 0, forFaction: 0, forIntel: 0, forActor: 0 }, 'C8C-5: resolveBulletinSource() must never call any of the heavyweight for*() relationship resolvers, for any source kind');
+
+  // Parity: the lightweight path must still produce the exact same
+  // label/resolved/resolutionKind a caller depending on this API expects.
+  assert.equal(jobResolved.label, 'Job C5');
+  assert.equal(jobResolved.resolved, true);
+  assert.equal(jobResolved.resolutionKind, 'canonical-id');
+  assert.equal(locResolved.label, 'Location C5');
+  assert.equal(locResolved.resolved, true);
+  assert.equal(facResolved.label, 'Faction C5');
+  assert.equal(facResolved.resolved, true);
+  assert.equal(intelResolved.label, 'Intel C5');
+  assert.equal(intelResolved.resolved, true);
+  assert.equal(actorResolved.label, 'Actor C5');
+  assert.equal(actorResolved.resolved, true);
+
+  // A broken/deleted source must still fail safe with zero heavyweight
+  // calls (the lightweight path itself must not need the full graph to
+  // report resolved:false).
+  const broken = await GMCampaignContextService.resolveBulletinSource({ sourceKind: 'location', sourceId: 'nonexistent-c5' });
+  assert.equal(broken.resolved, false);
+  assert.deepEqual(calls, { forJob: 0, forLocation: 0, forFaction: 0, forIntel: 0, forActor: 0 }, 'C8C-5: a broken source must also resolve without touching any for*() resolver');
+
+  console.log('C8C-5 (resolveBulletinSource is a lightweight exact-id lookup, never the full for*() relationship graph, with identical label/resolved output) passed.');
+}
+
 console.log('PHASE 8C Bulletin general-integration/cross-surface-handoff suite passed.');
