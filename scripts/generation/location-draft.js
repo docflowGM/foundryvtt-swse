@@ -23,16 +23,29 @@
 
 import { LOCATION_LIBRARY_SEEDS, filterLocationLibrarySeeds } from '../locations/location-library-seeds.js';
 import { pickRandom } from './lib/weighted-random.js';
-import { stableHexId } from '../utils/stable-id.js';
+import { createDraftId } from './lib/draft-id.js';
 import { createProvenance, isProvenance } from './provenance.js';
 
-/** How a Job/Faction generator wants to resolve its mission Location. */
+/**
+ * How a Job/Faction generator wants to resolve its mission Location.
+ * `RANDOM_PLANET`/`RANDOM_PLANET_AND_POI` pick from the existing,
+ * curated Location Library (this file's original Phase 8D-1 modes).
+ * `GENERATE_NEW_PLANET`/`GENERATE_NEW_PLANET_AND_POI`/
+ * `GENERATE_NEW_POI` (Phase 8D-2) are the DISTINCT procedural path —
+ * see `planets/planet-draft.js` — never a redefinition of the existing
+ * `RANDOM_PLANET` meaning. Known/library and procedural/new stay two
+ * separate, explicit modes so a caller (and a future UI) always chooses
+ * deliberately between them.
+ */
 export const LOCATION_DRAFT_MODE = Object.freeze({
   USE_CURRENT: 'use-current',
   USE_EXISTING: 'use-existing',
   RANDOM_POI_ON_CURRENT_PLANET: 'random-poi-on-current-planet',
   RANDOM_PLANET: 'random-planet',
-  RANDOM_PLANET_AND_POI: 'random-planet-and-poi'
+  RANDOM_PLANET_AND_POI: 'random-planet-and-poi',
+  GENERATE_NEW_PLANET: 'generate-new-planet',
+  GENERATE_NEW_PLANET_AND_POI: 'generate-new-planet-and-poi',
+  GENERATE_NEW_POI: 'generate-new-poi'
 });
 
 const LOCATION_DRAFT_MODES = Object.freeze(Object.values(LOCATION_DRAFT_MODE));
@@ -49,10 +62,13 @@ function cleanString(value) {
  * A locally-unique, non-canonical draft id — namespaced so it can never
  * be confused with a real `LocationRegistryService` record id. Only
  * meaningful within one generation batch (for `parentDraftId` linking
- * before commit); never written to a canonical record.
+ * before commit); never written to a canonical record. Phase 8D-2:
+ * delegates to the shared `createDraftId()` (`lib/draft-id.js`) rather
+ * than keeping its own local implementation, so every domain mints
+ * draft ids the identical way.
  */
 function newDraftId() {
-  return `draft:location:${stableHexId(`${Date.now()}:${Math.random()}`).slice(0, 12)}`;
+  return createDraftId('location');
 }
 
 /**

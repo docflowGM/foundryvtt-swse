@@ -99,6 +99,28 @@ export function weightedPickWithPreference(entries, {
 }
 
 /**
+ * PHASE 8D-2 addition: weighted pick of up to `n` DISTINCT entries
+ * (without replacement), each roll reusing `weightedPickWithPreference()`
+ * against whatever remains after the previous pick is removed. Returns
+ * fewer than `n` entries if the pool is smaller than `n` or every
+ * remaining entry weighs zero. Used by the new procedural planet/POI/
+ * Faction/NPC/Job catalogs whenever a generator needs "roll 1-3 hazards"
+ * style multi-select without picking the same entry twice.
+ */
+export function weightedPickUniqueN(entries, n, { rng = defaultRng, preferTags = [], preferenceBoost = 3, weightOf = (entry) => Number(entry?.weight ?? 1) } = {}) {
+  const pool = (Array.isArray(entries) ? entries : []).slice();
+  const out = [];
+  const count = Math.max(0, Math.floor(n));
+  for (let i = 0; i < count && pool.length; i++) {
+    const picked = weightedPickWithPreference(pool, { rng, preferTags, preferenceBoost, weightOf });
+    if (!picked) break;
+    out.push(picked);
+    pool.splice(pool.indexOf(picked), 1);
+  }
+  return out;
+}
+
+/**
  * A small, seedable deterministic RNG (mulberry32) for tests only. NOT a
  * cryptographic RNG and never appropriate as a production default — every
  * exported function above defaults to `Math.random()` and only uses this
