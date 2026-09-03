@@ -4701,3 +4701,292 @@ keeping almost all of it. Per explicit instruction: not beginning Phase
 9/Skill Challenges (Preset + Random Job/Faction/NPC generator work, if
 pursued, would land as Phase 8D before Phase 9); not merging PR #963;
 waiting for independent review of this pushed head.
+
+---
+
+# PHASE 8D-1 — RANDOM GENERATION FOUNDATION
+
+## 120. Scope and start gate
+
+Phase 8C received independent closure at §119 above (both review rounds
+addressed, CI green on head `9ab9284`). This phase builds ONLY the
+reusable infrastructure random Job/Faction/NPC/Location/ship generation
+will need later — no finished Random Job/Faction UI, no full
+~200-objective catalog, no automatic Actor/Faction/Location/Job
+creation. Two addenda were folded into this same pass before any of the
+affected modules were written a second time: a Faction rank/authority/
+opposition-readiness addendum, and a Faction population-composition/
+membership-policy addendum. Both extend the Faction/NPC draft schemas
+rather than adding parallel ones.
+
+## 121. Reconnaissance — existing authorities inventoried before writing anything
+
+Per the phase's own mandatory first step, a research pass read the real
+source (not a design assumption) for every authority this phase might
+duplicate, before any new file was written:
+
+| Concern | Authority | Reused as |
+|---|---|---|
+| Living-being names | `chargen-shared.js`'s `getRandomName()` | unchanged, called by future 8D-2 NPC generation |
+| Droid names | `chargen-shared.js`'s `getRandomDroidName()` | unchanged |
+| Species enumeration | `SpeciesRegistry.getAll()`/`getById()` | species ids passed through this phase's modules unchanged, never duplicated |
+| Location registry + presets | `LocationRegistryService`, `location-library-seeds.js` | `location-draft.js` reads `LOCATION_LIBRARY_SEEDS`/`filterLocationLibrarySeeds` directly; never reimplements parent/cycle validation |
+| Faction registry | `FactionRegistryService` | `faction-draft.js`'s `jobDefaults` reuses `normalizeJobDefaults()`'s exact field set; commit remains `upsertFaction()`, not called here |
+| Job creation | `HolonetMessengerService.createJobPosting()`, `GMJobBoardSurfaceService` | `objective-economy.js`'s tiers (`primary`/`secondary`/`tertiary`) match `normalizeObjective()` verbatim; no difficulty concept existed, confirmed absent by grep before inventing one here |
+| Party roster | `GMPartyRosterService.getPartyActors()` | `party-capability.js` accepts already-extracted levels (no normalized capability existed anywhere; documented choice: average) |
+| Contact→Actor promotion | `FactionRegistryService.promoteFactionContactToActor()`, `GMContactActorizerService` | untouched; `npc-concept.js`'s doc comment names this as the future commit path, this phase never calls it |
+| Store/vehicle pricing | `buildStoreIndex()`, `StoreEngine.getInventory()`, `cost-registry.js` | `reward-package.js` documents this as the future pricing adapter; not called in this foundation pass |
+| Weighted random selection | none found (only private, unexported, non-injectable helpers in `chargen-shared.js`) | new: `lib/weighted-random.js` |
+| Stable/slug ids | `scripts/utils/stable-id.js` (3 competing implementations found; this one chosen as purpose-built for JSON-backed content) | reused for location draft ids |
+
+## 122. Module map (`scripts/generation/`)
+
+Eighteen files, each a small, pure, RNG-injectable module or dataset —
+no god object, per the phase's own explicit instruction:
+
+- `lib/weighted-random.js` — `pickRandom`/`weightedPick`/`filterByTags`/
+  `weightedPickWithPreference`/`makeSeededRng`. The one genuinely new
+  shared primitive.
+- `provenance.js` — the one shared draft-provenance stamp (schema
+  version, presetId/templateId, seed, tags, warnings) every other
+  draft module composes.
+- `data/ship-name-adjectives.js` (143 entries), `data/ship-name-nouns.js`
+  (128 entries) — plain weighted/tagged data, plain JS modules (not a
+  fetched JSON file like `random-names.json`) so the generator is
+  importable/testable with zero Foundry dependency.
+- `ship-names/ship-name-generator.js` — `getRandomShipName()` +
+  independent adjective/noun reroll. Confirmed no existing ship-name
+  generator exists anywhere in the repo before writing this.
+- `objective-economy.js` — tier/difficulty economy constants
+  (`TIER_REWARD_WEIGHT`, `DIFFICULTY_REWARD_MODIFIER`,
+  `objectiveRewardWeight()`), centralized so later balancing never
+  touches calculation logic.
+- `objective-template.js` — schema/normalizer/validator/renderer +
+  12 representative fixtures (rescue/extraction/delivery/sabotage/
+  recovery/investigation/escort/ship-theft/ship-recovery/ship-boarding/
+  2 Faction-organization-duty objectives) — explicitly NOT the full
+  ~200-template catalog.
+- `npc-concept.js` — living/droid concept draft schema. HARD RULE
+  enforced structurally: no HP/BAB/defenses/level/class field exists
+  anywhere in the schema (`hasForbiddenMechanicalFields()` proves it).
+- `rank-metadata.js` (addendum) — normalized `COMMAND_TIER` vocabulary +
+  example military/criminal-syndicate/pirate/noble-security/clan
+  display-rank maps + `SPECIALIST_ROLES` + `RANK_TARGET_IMPORTANCE`.
+  Carries no level/CL field anywhere, by design.
+- `organization-metadata.js` — canonical SWSE `ORGANIZATION_FAMILY`
+  enum, `FACTION_ARCHETYPE_FAMILY` mapping, `SCALE_BANDS` (1-20
+  descriptive labels), `SCALE_RESOURCE_MULTIPLIER_BANDS` (the reward
+  curve's issuer-resource input), non-Faction `ISSUER_TYPE` multipliers,
+  and a small bounded `RELATIONSHIP_REWARD_ADJUSTMENT`.
+- `faction-relationship-draft.js` — canonical (real Faction id) vs
+  generated (unresolved concept, `factionId` always `''`) ally/enemy
+  entries. No `allies`/`enemies` field exists on the canonical Faction
+  record (confirmed by reconnaissance) — this is genuinely new draft
+  surface, not a duplicate.
+- `faction-doctrine-draft.js` (addendum) — nonmechanical
+  commonRoles/specialistRoles/leadershipRoles/droidUsage/vehicleUsage/
+  eliteAvailability/reinforcementCapability/doctrineTags, plus a
+  preferred-statblock-roster contract (UUID references only, grouped by
+  category — no stats copied).
+- `population-profile.js` (2nd addendum) — `POPULATION_MODE` (mixed/
+  species-dominant/species-locked/restricted-coalition/droid-heavy/
+  droid-only/organic-only), `MEMBERSHIP_POLICY` (kept as a SEPARATE
+  field from population mode), pure RNG-injectable `selectMemberKind()`/
+  `selectSpeciesId()` selectors, and a centralized, tunable
+  `ARCHETYPE_POPULATION_MODE_WEIGHTS` table.
+- `faction-draft.js` (addendum) — composes all of the above plus
+  `jobDefaults` (exact `FactionRegistryService` field names) into the
+  one full Faction draft shape. `source:'generator-draft'`/
+  `status:'draft'` are deliberately distinct from the canonical record's
+  own vocabulary until commit.
+- `party-capability.js` — `extractPartyLevels()`/`averagePartyLevel()`/
+  `medianPartyLevel()`/`computePartyCapability()`; documented choice
+  (average) rather than hidden behavior.
+- `reward-estimator.js` — `estimateReward()`, the pure compensation
+  estimator (see §123).
+- `reward-package.js` — `createRewardPackage()`/`addMaterialReward()`/
+  `createKeepTheTargetPackage()` + two accounting-verification
+  functions.
+- `location-draft.js` — `LOCATION_DRAFT_MODE` (use-current/use-existing/
+  random-POI-on-current-planet/random-planet/random-planet-and-POI),
+  drafts linked by local `draft:location:<hex>` ids (never a real
+  Location id, never a name) until commit; reuses
+  `LOCATION_LIBRARY_SEEDS`/`filterLocationLibrarySeeds` for the random
+  modes rather than a second planet generator.
+
+## 123. Reward estimator — inputs, curve, and the no-double-counting rule
+
+`estimateReward({partyCapability, objectives[], issuer, relationship,
+asset, rng, applyVariance})` returns `{total, keepsTarget, targetValue,
+breakdown, diagnostics}`. Pipeline: `objectiveWeight` (sum of
+`objectiveRewardWeight()` across every objective — more/harder
+objectives strictly increase this) × `partyCapability` ×
+`BASE_CREDITS_PER_CAPABILITY_POINT` = `objectiveComponent`; issuer
+resource multiplier (Faction → `scaleResourceMultiplier(scale)`,
+non-Faction → `ISSUER_TYPE_RESOURCE_MULTIPLIER`); a small bounded
+relationship multiplier (`hostile` → diagnostic, not a Job); an asset
+component per `ASSET_OBJECTIVE_TYPE`
+(steal-and-deliver/hijack-for-buyer → 30% of value,
+recover-for-owner → 20%, keep-the-target → **0** cash component with
+the asset's own value surfaced separately as `targetValue` — the
+explicit no-double-counting rule — sabotage/destroy → 0, mission
+importance already carried by objective tier/difficulty); bounded
+variance (0.90-1.10, injectable RNG). `issuer-resource-mismatch` is
+flagged when a targeted acquisition asset's raw value exceeds 20× the
+issuer's BASELINE payout scale (party component × resource multiplier,
+computed independently of the asset itself to avoid circularity — using
+the final total, which already includes a slice of the asset value,
+would never trip at any realistic scale).
+
+`reward-package.js` then turns one `total` into `credits +
+materialRewards[]` such that `credits + Σ(materialRewards.value) ===
+totalValue` always (`verifyRewardPackageAccounting()`), with an
+over-budget material reward CLAMPED and the clamp reported as a warning
+rather than silently overpaying. A keep-the-target package is verified
+separately (`verifyKeepTheTargetPackageAccounting()`): cash stays at
+exactly the estimator's `total` (which never included the asset), and
+the kept asset is reported once at its own full value — never
+subtracted from cash, never added to it, because `estimateReward()`
+already excluded it from `total`.
+
+## 124. Rank ≠ level, Scale ≠ membership count (hard rules enforced structurally, not just documented)
+
+Every place a level/Challenge-Level field could have been added instead
+was deliberately left out: `rank-metadata.js`'s `COMMAND_TIER`/
+`RANK_TARGET_IMPORTANCE` carry no numeric level field; `npc-concept.js`'s
+`hasForbiddenMechanicalFields()` guard rejects any draft carrying `level`/
+`class`/`classes` alongside `hp`/`bab`/`defenses`/etc.; a droid NPC
+concept can hold `COMMAND_TIER.STRATEGIC_COMMAND` exactly like a living
+one (proven in the test suite). `organization-metadata.js`'s
+`SCALE_BANDS` labels (1 "Small Localized Group" through 20 "Entire
+Galaxy") are sourced from the SWSE organization-scale reference the
+design phase reviewed and describe sphere of influence/resources, never
+membership count; `SCALE_RESOURCE_MULTIPLIER_BANDS` is a SEPARATE
+generator-economy curve (not an SWSE rule) using the same 13+/17+
+breakpoints. Faction Organization Score/standing
+(`RELATIONSHIP_REWARD_ADJUSTMENT`) is capped to a 0.90-1.10 band so it
+can never impersonate Scale.
+
+## 125. Population composition ≠ membership policy ≠ ideology (addendum hard rules)
+
+`population-profile.js` never writes to `faction-relationship-draft.js`
+(no selector here produces an ally/enemy/exclusion entry), and
+`createSpeciesPolicy()`'s `excludedSpeciesIds` starts empty and is only
+ever set to what a caller explicitly supplies — a species-locked or
+species-dominant profile creates no automatic hostility or exclusion.
+`membershipPolicy` (open/preferred/restricted/exclusive/droid-only/
+organic-only) is a field entirely separate from `populationProfile.mode`
+on the Faction draft — a Faction can be demographically 80% one species
+with fully open membership, or the reverse, and the schema does not
+prevent either combination. `selectSpeciesId()` never invents or
+mangles a species id — every id it returns is one that was already in
+the caller-supplied candidate pool (proven with a Compendium-UUID-shaped
+id passed straight through unchanged).
+
+## 126. Draft safety
+
+No generation module creates, upserts, or otherwise mutates a canonical
+Actor/Faction/Location/Job. This is proven two ways: (a) every module
+that reads real canonical data (`location-draft.js`'s
+`describeExistingLocation()`) is read-only and documented as the one
+Foundry-dependent function in the whole package; (b) a source-level test
+(comment-stripped, so doc-comment mentions of the future commit
+authorities don't false-positive) asserts that no file under
+`scripts/generation/` contains a call to `upsertFaction(`,
+`upsertLocation(`, `createJobPosting(`, `Actor.create(`,
+`promoteFactionContactToActor(`, or `.actorizePayload(` anywhere in its
+live code.
+
+## 127. Tests
+
+New file: `tests/gm-generation-phase8d1-foundation.test.mjs`, 16
+executed sections covering every module above plus the required
+invariant list from both the base spec and both addenda: weighted-random
+determinism/tag filtering; ship-name adjective+noun structure,
+independent-field reroll, no model coupling; objective schema
+validation (invalid templates fail safe, undeclared-slot detection,
+slot rendering, all 9 named representative fixture families present);
+NPC concept mechanical-field absence + per-field reroll; rank/level
+separation + nonmilitary rank-tier mapping; Scale-band/multiplier
+breakpoints + family-vs-archetype distinction; party capability
+average/median; the full required reward-estimator invariant list
+(objective count and difficulty both increase payout, Scale 13+
+substantially outpays Scale 4-, ordinary individual pays less than a
+substantial Faction, 30% ship-acquisition component, ship-name-change
+has zero effect on value, ship-value-change changes compensation,
+keep-the-target never double-pays, resource-mismatch diagnostic fires
+correctly and only when warranted, deterministic under injected RNG);
+reward-package accounting (exact budget balance, over-budget clamped
+and reported, keep-the-target accounting verified separately); no fake
+canonical ally/enemy ids; doctrine/roster carry no mechanical fields;
+every population-profile addendum invariant (droid-only/organic-only
+are HARD constraints over 100 trials each, species-locked/coalition/
+dominant selection behave correctly, membership policy independence,
+no auto-generated exclusions, canonical species ids pass through
+unchanged, droid leadership allowed, archetype weighting is non-uniform
+and centralized); full Faction draft composition (exact `jobDefaults`
+field reuse, draft-only source/status, no canonical id, no mechanical
+fields); location draft parent/child linking by draft id, never a name
+or fake canonical id; provenance stamp immutability/dedup; and the
+source-level no-canonical-mutation proof. All ADDITIVE — no git-stash
+fail-before/pass-after cycle applies (no "before" exists for new
+production surface), consistent with this audit's own established
+convention for purely new code.
+
+## 128. Regression / totals
+
+Full `gm-*.test.mjs` sweep: 56/56 green (was 55; +1 new
+`gm-generation-phase8d1-foundation.test.mjs`), zero regressions in any
+prior phase's suite. Full rolling suite: 191 files, 186 pass, 5 fail —
+the same pre-existing, unrelated Force-power failures as every prior
+phase (confirmed unchanged). Syntax check: 2213/2213 clean (was 2194;
++19 new files, all clean).
+
+## 129. Live Foundry checklist (not run — no live client available)
+
+Same limitation as every prior phase. This foundation pass has no UI to
+click through — nothing in `scripts/generation/` is wired into a
+surface yet (that begins in Phase 8D-2+). Verification is limited to
+the executed pure-function test suite above.
+
+## 130. Explicitly deferred (unchanged from the phase's own scope boundary)
+
+The full ~200-objective template catalog; the finished Random Job/
+Faction/NPC generation UI; per-field reroll UI controls (the draft
+schemas are reroll-ready, per §14 of the spec, but no UI calls them
+yet); automatic Actor/Faction/Location/Job creation from a generated
+draft; a Store-index adapter that actually prices candidate reward
+items (the accounting/seam exists in `reward-package.js`, the adapter
+does not); a Location-Library-seed-to-upsert-ready-record commit path
+(exists already as `buildLocationLibraryRecords()`, not called from
+this phase); the full NPC Opposition Catalog + Rank/Role Affinity
+resolver (the addendum's own closing instruction: inventory the real
+heroic/nonheroic NPC compendium content BEFORE inventing that
+classification taxonomy — nothing in this pass pre-empts that
+inventory); species-specific name generation (none exists; `getRandomName()`
+stays generic per the addendum's explicit instruction not to invent
+species-aware name mechanics without an existing authority);
+Rank-and-Privilege/Gear-Requisition player mechanics; encounter-balance
+mathematics; ideology/prejudice mechanics of any kind.
+
+## 131. Phase 8D-1 gate
+
+**PHASE 8D-1 (RANDOM GENERATION FOUNDATION) COMPLETE — READY FOR
+INDEPENDENT REVIEW.** Eighteen new, additive, pure/RNG-injectable
+modules under `scripts/generation/` plus one new 16-section test file.
+Every named existing authority (name generators, SpeciesRegistry,
+LocationRegistryService + Location Library, FactionRegistryService,
+Job creation, party roster, Contact→Actor promotion, Store pricing) was
+inventoried by direct source reading before this phase wrote a single
+new file, and reused rather than duplicated everywhere reuse was
+possible; the one genuinely new shared primitive (weighted-random
+selection) was confirmed absent first. Both mid-pass addenda (Faction
+rank/authority/opposition-readiness; Faction population composition/
+membership policy) are folded into the same draft schemas rather than
+becoming parallel structures. No canonical Actor/Faction/Location/Job
+is created, upserted, or otherwise mutated anywhere in this pass —
+proven at the source level, not just asserted. Per explicit instruction:
+not building the finished generator UI or the full objective catalog in
+this pass; not merging PR #963; waiting for independent review of this
+pushed head before Phase 8D-2 (actual Job/Faction archetypes, the
+objective catalog, briefing composition) begins.
