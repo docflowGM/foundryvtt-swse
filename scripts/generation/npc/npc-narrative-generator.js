@@ -17,6 +17,17 @@
  * mechanic, or canonical record. The hard rule restated: "Generate
  * narrative facts. Suggest canonical mechanics. Resolve through
  * existing authorities."
+ *
+ * CORRECTED (Phase 8D-2 independent review, round 1): `suggestion` is
+ * DERIVED from `personality`+`motivation` ("facts first, prose
+ * second" -- `lib/description-composer.js`'s own hard rule), so
+ * rerolling either field must never leave the stored `suggestion`
+ * describing the OLD values. `composeNpcSuggestion(draft)` is now
+ * exported as the single source of truth for that derivation --
+ * `rerollNpcPersonality()`/`rerollNpcMotivation()` both call it to
+ * recompute `suggestion` before returning, and any caller can call it
+ * directly at any time to get a guaranteed-fresh value instead of
+ * trusting whatever is currently stored.
  */
 
 import { NPC_APPEARANCE_TRAITS } from '../data/npc-appearance-traits.js';
@@ -60,6 +71,18 @@ export function pickNpcSecret({ rng, preferTags = [] } = {}) {
 
 function composeSuggestion(personality, motivation) {
   return `Could be played as ${personality.value}, ${motivation.value} -- a GM may use this as a hook, never as a mechanical requirement.`;
+}
+
+/**
+ * PUBLIC derivation: recompute `suggestion` from a draft's CURRENT
+ * `personality`/`motivation` fields. Always safe to call after any
+ * edit to either field -- this is the one place that composition
+ * logic lives, so `rerollNpcPersonality()`/`rerollNpcMotivation()`
+ * (and any future caller) never risk re-implementing it slightly
+ * differently and drifting from this exact wording.
+ */
+export function composeNpcSuggestion(draft) {
+  return composeSuggestion({ value: draft?.personality ?? '' }, { value: draft?.motivation ?? '' });
 }
 
 /**
@@ -113,9 +136,16 @@ export function rerollNpcAppearance(draft, { rng, preferTags = [] } = {}) {
   return updateNpcConceptDraft(draft, { appearance: pickNpcAppearance({ rng, preferTags })?.value ?? '' });
 }
 
-/** Reroll ONLY the personality field. */
+/**
+ * Reroll ONLY the personality field. Also recomputes `suggestion`
+ * (via `composeNpcSuggestion()`) since it's derived from personality --
+ * leaving the old value in place here was the exact stale-prose bug
+ * this correction pass fixed.
+ */
 export function rerollNpcPersonality(draft, { rng, preferTags = [] } = {}) {
-  return updateNpcConceptDraft(draft, { personality: pickNpcPersonality({ rng, preferTags })?.value ?? '' });
+  const personality = pickNpcPersonality({ rng, preferTags })?.value ?? '';
+  const suggestion = composeNpcSuggestion({ ...draft, personality });
+  return updateNpcConceptDraft(draft, { personality, suggestion });
 }
 
 /** Reroll ONLY the mannerisms field. */
@@ -123,9 +153,14 @@ export function rerollNpcMannerisms(draft, { rng, preferTags = [] } = {}) {
   return updateNpcConceptDraft(draft, { mannerisms: pickNpcMannerism({ rng, preferTags })?.value ?? '' });
 }
 
-/** Reroll ONLY the motivation field. */
+/**
+ * Reroll ONLY the motivation field. Also recomputes `suggestion` (see
+ * `rerollNpcPersonality()`'s doc comment for why).
+ */
 export function rerollNpcMotivation(draft, { rng, preferTags = [] } = {}) {
-  return updateNpcConceptDraft(draft, { motivation: pickNpcMotivation({ rng, preferTags })?.value ?? '' });
+  const motivation = pickNpcMotivation({ rng, preferTags })?.value ?? '';
+  const suggestion = composeNpcSuggestion({ ...draft, motivation });
+  return updateNpcConceptDraft(draft, { motivation, suggestion });
 }
 
 /** Reroll ONLY the agenda field. */
