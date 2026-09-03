@@ -4458,7 +4458,7 @@ explicitly not done: migrating `deliverAsBulletin()`'s own
 `sourceKind`/`sourceId` contract (§99) — the two coexist by design in
 this pass.
 
-## 110. Phase 8 gate (superseded by §116 — see below)
+## 110. Phase 8 gate (superseded by §119 — see below)
 
 ~~**PHASE 8C COMPLETE — READY FOR INDEPENDENT REVIEW.** Bulletin is now
 the canonical "what players are told" surface with a real, shared,
@@ -4616,16 +4616,61 @@ matching this audit's own convention for retracted claims) to point at
 §85 for the C8B-2 finding and describe the real Phase 8C contract
 (`{sourceKind, sourceId}` + `resolveBulletinSource()`).
 
-## 116. Regression / totals (correction pass)
+## 116. C8C-5 (independent review of head `5abab38`) — `resolveBulletinSource()` delegated to the full relationship graph
+
+**Finding.** C8C-3 (§113) made `resolveBulletinSource()`'s callers
+render-time-hot: `GMBulletinSurfaceService.buildViewModel()` now calls
+it once per provenance-bearing Bulletin record via `Promise.all` on
+every render. `resolveBulletinSource()` itself delegated to the
+corresponding `for*()` resolver and read only its `.subject` row — but
+those `for*()` methods answer "what is related to this subject?", a
+full relationship/operations graph: `forLocation()` alone scans
+faction/contact/actor relationships, loads the entire Job index, loads
+the entire Intel index, resolves Atlas leads, and resolves linked
+scenes; `forActor()` additionally computes Trade/Recovery operational
+context before returning. A single "does this exact subject exist, and
+what is its label" lookup — the only thing `resolveBulletinSource()`
+callers ever needed — was therefore paying for a full cross-domain
+scan, once per sourced Bulletin, on every Bulletin render. With sourced
+Bulletin history growing over a campaign, this is exactly the wrong
+cost profile for what should be an O(1) provenance lookup.
+
+**Fix.** `resolveBulletinSource()` no longer calls any `for*()` method.
+Each branch now performs only the same lightweight, exact-id identity
+lookup each `for*()` method itself starts with, reusing the file's own
+existing lightweight primitives rather than re-deriving them:
+`job` → `HolonetStorage.getThread(id)` + threadType check +
+`jobForThread()`; `location` → `exactLocation(id)`; `faction` →
+`exactFaction(id)`; `intel` → `HolonetIntelService.getIntelById(id)` +
+`getIntelMetadata()`; `actor` → `resolveActorByAnyRef(id)`. Output
+shape and every field value are unchanged — this is a cost fix, not a
+contract change.
+
+**Proof.** A new regression spies on the real, exported
+`GMCampaignContextService.forJob`/`forLocation`/`forFaction`/`forIntel`/
+`forActor` methods (wrapping each, not reimplementing it) and calls
+`resolveBulletinSource()` for all five kinds plus a broken/deleted
+source; asserts all five spy counts stay at zero across every call; and
+separately asserts the lightweight path still produces byte-identical
+`label`/`resolved`/`resolutionKind` output to what the old delegating
+implementation would have returned. `buildViewModel()`'s per-record
+`Promise.all` dedup-by-`sourceKind:sourceId` optimization the reviewer
+flagged as optional hardening (only necessary once the resolver itself
+was cheap) was not added — the resolver being O(1) removes the
+motivating cost problem, and the reviewer's own verdict called it
+optional once that was true.
+
+## 117. Regression / totals (correction pass)
 
 Full `gm-*.test.mjs` sweep: 55/55 green (same file count as §107 — the
 correction pass added test blocks inside the existing Phase 8C file,
 not a new file), zero regressions. Full rolling suite: 190 files, 185
 pass, 5 fail — same pre-existing, unrelated Force-power failures as
-every prior phase (confirmed unchanged by this pass). Syntax check:
-2194/2194 clean (unchanged file count — no new files added).
+every prior phase (confirmed unchanged by this pass, including after
+the C8C-5 fix). Syntax check: 2194/2194 clean (unchanged file count —
+no new files added).
 
-## 117. Live Foundry checklist (not run — no live client available)
+## 118. Live Foundry checklist (not run — no live client available)
 
 Same limitation as every prior phase, plus one addition specific to
 this pass: (16) with a Job source deleted after a Bulletin draft was
@@ -4633,22 +4678,26 @@ prepared from it, click "Open Source" on that Bulletin and confirm the
 GM sees a warning and remains on Bulletin — never a navigation to
 Jobs with a stale/dead thread id selected.
 
-## 118. Phase 8 gate (supersedes §110)
+## 119. Phase 8 gate (supersedes §110)
 
 **PHASE 8C CORRECTION PASS COMPLETE — READY FOR INDEPENDENT REVIEW.**
-All four items from the independent review of head `e1e62d4` are
-addressed: (C8C-1, blocker) "Open Source" now verifies the source still
-exists via `resolveBulletinSource()` before navigating, closing the
-broken-source-fails-safe gap, proven against the real host/controller
-code path (not just the previously-unused resolver); (C8C-2) Job
-prefill is now conservatively scoped to `briefing.body` only, matching
-what the audit and tests already claimed; (C8C-3) the resolved source
-label is now visibly displayed on the Bulletin record, derived-only and
-never persisted; (C8C-4) 8C-13's claim now matches what it actually
-tests. One stale documentation comment (§115) was also corrected. The
-underlying Phase 8C architecture is unchanged — no rewrite, exactly as
-the reviewer's verdict recommended keeping almost all of it. Per
-explicit instruction: not beginning Phase 9/Skill Challenges (Preset +
-Random Job/Faction/NPC generator work, if pursued, would land as Phase
-8D before Phase 9); not merging PR #963; waiting for independent review
-of this pushed head.
+All items from both rounds of independent review are addressed. Round 1
+(review of head `e1e62d4`): (C8C-1, blocker) "Open Source" now verifies
+the source still exists via `resolveBulletinSource()` before
+navigating, closing the broken-source-fails-safe gap, proven against
+the real host/controller code path (not just the previously-unused
+resolver); (C8C-2) Job prefill is now conservatively scoped to
+`briefing.body` only, matching what the audit and tests already
+claimed; (C8C-3) the resolved source label is now visibly displayed on
+the Bulletin record, derived-only and never persisted; (C8C-4) 8C-13's
+claim now matches what it actually tests. One stale documentation
+comment (§115) was also corrected. Round 2 (review of head `5abab38`):
+(C8C-5) `resolveBulletinSource()` is now a lightweight exact-id lookup
+that never touches the heavyweight `for*()` relationship graph, proven
+by an executed spy against the real resolver methods, with identical
+output. The underlying Phase 8C architecture is unchanged across both
+rounds — no rewrite, exactly as the reviewer's own verdict recommended
+keeping almost all of it. Per explicit instruction: not beginning Phase
+9/Skill Challenges (Preset + Random Job/Faction/NPC generator work, if
+pursued, would land as Phase 8D before Phase 9); not merging PR #963;
+waiting for independent review of this pushed head.
