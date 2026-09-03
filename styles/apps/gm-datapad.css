@@ -485,6 +485,16 @@
   color: oklch(var(--swse-accent-text) / 0.74);
 }
 
+.bulletin-record-source {
+  margin: 0;
+  font-size: 0.85em;
+  color: oklch(var(--swse-accent-text) / 0.6);
+}
+
+.bulletin-record-source-broken {
+  color: oklch(var(--swse-warn, var(--swse-accent-text)) / 0.85);
+}
+
 .bulletin-record-meta,
 .bulletin-record-footer,
 .bulletin-record-actions {
