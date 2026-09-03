@@ -804,14 +804,31 @@ export class GMCampaignContextService {
    * pair matching every other row this service returns, and a
    * {kind, id} target a caller passes to GMCampaignTargetService.resolve()
    * for the "Open Source" action — same convention attentionItems() rows
-   * already use. Delegates to this service's own for*() resolvers rather
-   * than re-deriving identity/label logic; never falls back to matching
-   * by title/name/label (Correction 12's exact-id-only discipline extends
-   * here). 'actor' is deliberately not given a navigable target here —
-   * every existing surface opens the real Foundry Actor sheet directly,
-   * never a Datapad surface selection (see GMCampaignTargetService's own
-   * documented actor exclusion); callers resolve/open the Actor sheet
-   * themselves using sourceId as the Actor UUID.
+   * already use. Never falls back to matching by title/name/label
+   * (Correction 12's exact-id-only discipline extends here). 'actor' is
+   * deliberately not given a navigable target here — every existing
+   * surface opens the real Foundry Actor sheet directly, never a Datapad
+   * surface selection (see GMCampaignTargetService's own documented actor
+   * exclusion); callers resolve/open the Actor sheet themselves using
+   * sourceId as the Actor UUID.
+   *
+   * C8C-5 correction: this method used to delegate to the corresponding
+   * for*() resolver and read only its `.subject` row. Those for*()
+   * methods answer "what is related to this subject?" (full relationship/
+   * operations graphs — forLocation() alone scans factions, contacts,
+   * actors, the entire Job index, the entire Intel index, leads, and
+   * scenes; forActor() additionally computes Trade/Recovery operational
+   * context) — this method only ever needs "does this exact subject
+   * exist, and what is its label?" Every provenance-bearing Bulletin
+   * render called this once per record (buildViewModel()'s Promise.all),
+   * so delegating to the heavyweight resolvers turned a should-be-O(1)
+   * lookup into a full cross-domain relationship scan per rendered
+   * Bulletin. Each branch below now performs ONLY the same lightweight,
+   * exact-id identity lookup each for*() method itself starts with
+   * (exactLocation()/exactFaction()/resolveActorByAnyRef(), or a single
+   * getThread()/getIntelById() call) and calls none of the for*() methods
+   * — see tests/gm-holonet-phase8c-bulletin-handoffs.test.mjs for the
+   * executed spy proof that zero for*() calls happen here.
    */
   static async resolveBulletinSource({ sourceKind = '', sourceId = '' } = {}) {
     const kind = text(sourceKind);
@@ -819,24 +836,28 @@ export class GMCampaignContextService {
     if (!kind || !id) return { sourceKind: kind, sourceId: id, label: '', resolved: false, resolutionKind: 'missing', target: null };
     switch (kind) {
       case 'job': {
-        const { subject } = await this.forJob(id);
-        return { sourceKind: kind, sourceId: id, label: subject.label, resolved: subject.resolved, resolutionKind: subject.resolutionKind, target: { kind: 'job', id } };
+        const thread = await HolonetStorage.getThread(id).catch(() => null);
+        const isJobThread = Boolean(thread?.metadata?.threadType === THREAD_TYPE_JOB);
+        const job = isJobThread ? jobForThread(thread) : null;
+        const label = text(job?.title || thread?.title);
+        return { sourceKind: kind, sourceId: id, label, resolved: isJobThread, resolutionKind: isJobThread ? 'canonical-id' : 'missing', target: { kind: 'job', id } };
       }
       case 'location': {
-        const { subject } = await this.forLocation(id);
-        return { sourceKind: kind, sourceId: id, label: subject.label, resolved: subject.resolved, resolutionKind: subject.resolutionKind, target: { kind: 'location', id } };
+        const location = exactLocation(id);
+        return { sourceKind: kind, sourceId: id, label: location?.name || '', resolved: Boolean(location), resolutionKind: location ? 'canonical-id' : 'missing', target: { kind: 'location', id } };
       }
       case 'faction': {
-        const { subject } = await this.forFaction(id);
-        return { sourceKind: kind, sourceId: id, label: subject.label, resolved: subject.resolved, resolutionKind: subject.resolutionKind, target: { kind: 'faction', id } };
+        const faction = exactFaction(id);
+        return { sourceKind: kind, sourceId: id, label: faction?.name || '', resolved: Boolean(faction), resolutionKind: faction ? 'canonical-id' : 'missing', target: { kind: 'faction', id } };
       }
       case 'intel': {
-        const { subject } = await this.forIntel(id);
-        return { sourceKind: kind, sourceId: id, label: subject.label, resolved: subject.resolved, resolutionKind: subject.resolutionKind, target: { kind: 'intel', id } };
+        const record = await HolonetIntelService.getIntelById(id).catch(() => null);
+        const intel = record ? HolonetIntelService.getIntelMetadata(record) : null;
+        return { sourceKind: kind, sourceId: id, label: intel?.title || '', resolved: Boolean(intel), resolutionKind: intel ? 'canonical-id' : 'missing', target: { kind: 'intel', id } };
       }
       case 'actor': {
-        const { subject } = await this.forActor(id);
-        return { sourceKind: kind, sourceId: id, label: subject.label, resolved: subject.resolved, resolutionKind: subject.resolutionKind, target: null };
+        const actor = resolveActorByAnyRef(id);
+        return { sourceKind: kind, sourceId: id, label: actor?.name || '', resolved: Boolean(actor), resolutionKind: actor ? 'canonical-id' : 'missing', target: null };
       }
       default:
         return { sourceKind: kind, sourceId: id, label: '', resolved: false, resolutionKind: 'missing', target: null };
