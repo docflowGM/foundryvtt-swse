@@ -1,67 +1,83 @@
 /**
  * PHASE 8D-2 foundation — procedural planet-name generator.
  *
- * Same combinatorial contract as `ship-names/ship-name-generator.js`
- * (Phase 8D-1): join two small weighted/tagged syllable pools
- * (`data/planet-name-syllables.js`) rather than picking from a
- * hand-written list of full names. `preferTags` softly biases toward a
- * biome affinity (reusing the Location Library's own free-text biome
- * vocabulary — "desert"/"forest"/"ice"/... — see
- * `location-library-seeds.js`) without hard-filtering the pool, so an
- * "off-biome" name (a green world with a harsh-sounding name) stays
- * possible.
- *
- * This is a GENERATE-tier fact only — a narrative label, never a
- * canonical Location id. This module is deliberately Foundry-independent
- * (plain data + `lib/weighted-random.js`), same as every other Phase
- * 8D-1/8D-2 name generator.
+ * CORRECTED (Phase 8D-2 independent review, round 1): the original
+ * version of this generator was built entirely around the
+ * prefix+suffix syllable combinator below, with no curated-name
+ * authority and no check against real, known worlds. The PRIMARY
+ * authority is now `data/procedural-planet-names.js`'s curated
+ * `PROCEDURAL_PLANET_NAMES` pool (checked at its own module load
+ * against `isKnownLibraryPlanetName()` -- see that file's header). The
+ * syllable combinator (unchanged internally) survives as an explicit
+ * FALLBACK: `getRandomPlanetName()` only reaches for it when the
+ * curated pool is exhausted by the caller's own `excludeNames` (e.g.
+ * generating many planets in one session and not wanting repeats), and
+ * even then every syllable-combined candidate is checked against
+ * `isKnownLibraryPlanetName()` before being returned, so the syllable
+ * path can never silently hand back a name that collides with a real
+ * known world (the review's own example: "Rax" + "us" -> "Raxus").
  */
 
+import { PROCEDURAL_PLANET_NAMES } from '../data/procedural-planet-names.js';
 import { PLANET_NAME_PREFIXES, PLANET_NAME_SUFFIXES } from '../data/planet-name-syllables.js';
 import { weightedPickWithPreference } from '../lib/weighted-random.js';
+import { isKnownLibraryPlanetName } from '../../locations/location-library-seeds.js';
 
-/** Pick a random prefix syllable entry (the full `{value, weight, tags}` record). */
-export function pickPlanetNamePrefix({ rng, preferTags = [] } = {}) {
-  return weightedPickWithPreference(PLANET_NAME_PREFIXES, { rng, preferTags });
+function excludeSetOf(excludeNames) {
+  return new Set((Array.isArray(excludeNames) ? excludeNames : []).map((n) => String(n ?? '').toLowerCase().trim()));
 }
 
-/** Pick a random suffix syllable entry. See `pickPlanetNamePrefix()`. */
-export function pickPlanetNameSuffix({ rng, preferTags = [] } = {}) {
-  return weightedPickWithPreference(PLANET_NAME_SUFFIXES, { rng, preferTags });
+/** Pick a random curated-pool entry (the full `{value, weight, tags}` record), optionally excluding already-used names. */
+export function pickCuratedPlanetName({ rng, preferTags = [], excludeNames = [] } = {}) {
+  const excluded = excludeSetOf(excludeNames);
+  const pool = PROCEDURAL_PLANET_NAMES.filter((entry) => !excluded.has(entry.value.toLowerCase()));
+  return pool.length ? weightedPickWithPreference(pool, { rng, preferTags }) : null;
 }
 
 /**
- * Generate a full planet-name draft: `{ name, prefix, suffix }`, where
- * `prefix`/`suffix` are the full pool entries (so a caller can reroll
- * just one and re-join) and `name` is `"${prefix.value}${suffix.value}"`
- * (joined with no space — matches real Star Wars planet-naming
- * convention, e.g. "Tatooine", "Dantooine").
+ * FALLBACK ONLY (see module header): generate a name by combining a
+ * prefix+suffix syllable, retrying up to `maxAttempts` times if the
+ * combined name collides with a real known Library world or one of
+ * `excludeNames`. On the (astronomically unlikely, given 55x50
+ * combinations) exhaustion of every attempt, appends a disambiguating
+ * numeral rather than silently returning a colliding/duplicate name.
+ */
+export function generateSyllablePlanetName({ rng, preferTags = [], excludeNames = [], maxAttempts = 20 } = {}) {
+  const excluded = excludeSetOf(excludeNames);
+  const roll = rng ?? Math.random;
+  for (let attempt = 0; attempt < maxAttempts; attempt++) {
+    const prefix = weightedPickWithPreference(PLANET_NAME_PREFIXES, { rng, preferTags });
+    const suffix = weightedPickWithPreference(PLANET_NAME_SUFFIXES, { rng, preferTags });
+    const name = `${prefix?.value ?? 'Vor'}${suffix?.value ?? 'an'}`;
+    if (!isKnownLibraryPlanetName(name) && !excluded.has(name.toLowerCase())) {
+      return { name, prefix, suffix, source: 'syllable' };
+    }
+  }
+  const prefix = weightedPickWithPreference(PLANET_NAME_PREFIXES, { rng, preferTags });
+  const suffix = weightedPickWithPreference(PLANET_NAME_SUFFIXES, { rng, preferTags });
+  const name = `${prefix?.value ?? 'Vor'}${suffix?.value ?? 'an'} ${Math.floor(roll() * 900 + 100)}`;
+  return { name, prefix, suffix, source: 'syllable-disambiguated' };
+}
+
+/**
+ * Generate a full planet-name draft: `{ name, entry, source }` where
+ * `source` is `'curated'` (the normal case) or `'syllable'`/
+ * `'syllable-disambiguated'` (fallback, only when the curated pool is
+ * exhausted by `excludeNames`).
  *
  * @param {object} [options]
  * @param {() => number} [options.rng] - injectable RNG; defaults to `Math.random()`.
- * @param {string[]} [options.preferTags] - soft biome-tone preference
- *   shared by both the prefix and suffix roll (e.g. `['desert','arid']`).
+ * @param {string[]} [options.preferTags] - soft biome-tone preference (e.g. `['desert','arid']`).
+ * @param {string[]} [options.excludeNames] - names already used this session (e.g. by a prior `getRandomPlanetName()` call) -- never reselected; triggers the syllable fallback once the curated pool is exhausted.
  */
-export function getRandomPlanetName({ rng, preferTags = [] } = {}) {
-  const prefix = pickPlanetNamePrefix({ rng, preferTags });
-  const suffix = pickPlanetNameSuffix({ rng, preferTags });
-  return {
-    name: `${prefix?.value ?? 'Vor'}${suffix?.value ?? 'an'}`,
-    prefix,
-    suffix
-  };
+export function getRandomPlanetName({ rng, preferTags = [], excludeNames = [] } = {}) {
+  const entry = pickCuratedPlanetName({ rng, preferTags, excludeNames });
+  if (entry) return { name: entry.value, entry, source: 'curated' };
+  return generateSyllablePlanetName({ rng, preferTags, excludeNames });
 }
 
-/** Reroll ONLY the prefix, preserving the suffix (per-field reroll readiness). */
-export function rerollPlanetNamePrefix(draft, { rng, preferTags = [] } = {}) {
-  const prefix = pickPlanetNamePrefix({ rng, preferTags });
-  const suffix = draft?.suffix ?? pickPlanetNameSuffix({ rng, preferTags });
-  return { name: `${prefix?.value ?? 'Vor'}${suffix?.value ?? 'an'}`, prefix, suffix };
-}
-
-/** Reroll ONLY the suffix, preserving the prefix. Mirrors the above. */
-export function rerollPlanetNameSuffix(draft, { rng, preferTags = [] } = {}) {
-  const prefix = draft?.prefix ?? pickPlanetNamePrefix({ rng, preferTags });
-  const suffix = pickPlanetNameSuffix({ rng, preferTags });
-  return { name: `${prefix?.value ?? 'Vor'}${suffix?.value ?? 'an'}`, prefix, suffix };
+/** Reroll the whole name (curated pool first, syllable fallback if exhausted) -- there is no sub-component to preserve once a curated name is picked, unlike the old syllable-only API. */
+export function rerollPlanetName(draft, { rng, preferTags = [], excludeNames = [] } = {}) {
+  const excluded = draft?.name ? [...excludeNames, draft.name] : excludeNames;
+  return getRandomPlanetName({ rng, preferTags, excludeNames: excluded });
 }
