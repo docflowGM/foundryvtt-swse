@@ -110,6 +110,25 @@ export function createNpcConceptDraft(input = {}) {
     personality: cleanString(input.personality),
     hook: cleanString(input.hook),
 
+    // Phase 8D-2 addendum: broader narrative-generation fields.
+    // `motivation` (WHY this NPC does what it does) stays distinct from
+    // `agenda` (WHAT they are actively pursuing right now) -- two NPCs
+    // can share a motivation ("desperate to pay off a debt") while
+    // pursuing very different agendas. `appearance`/`mannerisms` are
+    // physical-description/behavioral-tic flavor only -- never anything
+    // that could be mistaken for a mechanical trait. `situation` is a
+    // short "why this matters right now" beat distinct from the older
+    // `hook` field (a hook is what draws a PC in; a situation is the
+    // NPC's own current circumstance) -- both may be populated
+    // independently. `suggestion` is SUGGEST-tier only: a proposed way
+    // a GM might use this NPC, never an authoritative link to any
+    // mechanic, statblock, or canonical record.
+    appearance: cleanString(input.appearance),
+    motivation: cleanString(input.motivation),
+    mannerisms: cleanString(input.mannerisms),
+    situation: cleanString(input.situation),
+    suggestion: cleanString(input.suggestion),
+
     provenance: isProvenance(input.provenance) ? input.provenance : createProvenance()
   };
 
