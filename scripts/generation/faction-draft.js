@@ -16,6 +16,16 @@
  * one from the other and defaults `membershipPolicy` to `'open'`
  * regardless of population composition.
  *
+ * `recruitmentProfile` (`recruitment-profile.js`, 3rd addendum) carries
+ * a Faction's origin/operating-Location context and how strongly that
+ * context should bias its (still explicitly-set) `populationProfile` —
+ * see that module's header for the "explicit Faction identity always
+ * wins" rule. This module does not itself call
+ * `deriveSpeciesPolicyFromLocationContext()`; that blending happens in
+ * the future generator (Phase 8D-2+) BEFORE it calls `createFactionDraft()`,
+ * so this module only stores the already-resolved
+ * `populationProfile.speciesPolicy` it's given, never re-derives it.
+ *
  * HARD RULE: this module never creates, upserts, or otherwise mutates a
  * canonical Faction. Committing a draft to a real Faction record is
  * later, explicit GM action through the EXISTING
@@ -30,6 +40,7 @@
 import { createFactionRelationshipDraftSet } from './faction-relationship-draft.js';
 import { createFactionDoctrineDraft, createFactionPreferredStatblockRoster } from './faction-doctrine-draft.js';
 import { createPopulationProfile, isMembershipPolicy, MEMBERSHIP_POLICY } from './population-profile.js';
+import { createRecruitmentProfile } from './recruitment-profile.js';
 import { createProvenance, isProvenance } from './provenance.js';
 
 function cleanString(value) {
@@ -99,6 +110,7 @@ export function createFactionDraft({
   preferredStatblockRoster,
   populationProfile,
   membershipPolicy = MEMBERSHIP_POLICY.OPEN,
+  recruitmentProfile,
   provenance
 } = {}) {
   return {
@@ -138,6 +150,11 @@ export function createFactionDraft({
     // join) — see this file's header comment.
     populationProfile: createPopulationProfile(populationProfile || {}),
     membershipPolicy: isMembershipPolicy(membershipPolicy) ? membershipPolicy : MEMBERSHIP_POLICY.OPEN,
+    // 3rd addendum: origin/operating-Location context + how strongly it
+    // should bias the (already explicitly-set) populationProfile above.
+    // See recruitment-profile.js's header for why this module never
+    // performs that blend itself.
+    recruitmentProfile: createRecruitmentProfile(recruitmentProfile || {}),
     // Draft-only status vocabulary — deliberately DISTINCT from the
     // canonical Faction record's own `source`/`status` fields (which
     // use 'gm'/'job'/'organization'/'player-suggested' and become
