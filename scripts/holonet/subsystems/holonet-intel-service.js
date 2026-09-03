@@ -600,14 +600,26 @@ export class HolonetIntelService {
     return record;
   }
 
-  static async updateIntel(intelOrRecordId, patch = {}) {
-    if (!globalThis.game?.user?.isGM) return null;
-    const record = await this.getIntelById(intelOrRecordId);
-    if (!record) return null;
+  /**
+   * @private — mutate an Intel record in place with a normalized patch,
+   * WITHOUT persisting. Shared by updateIntel() (which persists it alone)
+   * and deliverAsBulletin() (PHASE 8B correction pass, C8B-1), which needs
+   * to commit this mutation and a new Bulletin record together in one
+   * settings write rather than as two sequential saves.
+   */
+  static #prepareIntelUpdate(record, patch = {}) {
     const existing = record.metadata?.[INTEL_METADATA_KEY] ?? {};
     const next = normalizeIntelMetadata({ ...existing, ...patch, id: existing.id }, existing, { touchUpdatedAt: true });
     record.state = lifecycleStateForIntelStatus(next.status);
     applyIntelToRecord(record, next);
+    return record;
+  }
+
+  static async updateIntel(intelOrRecordId, patch = {}) {
+    if (!globalThis.game?.user?.isGM) return null;
+    const record = await this.getIntelById(intelOrRecordId);
+    if (!record) return null;
+    this.#prepareIntelUpdate(record, patch);
     const ok = await HolonetStorage.saveRecord(record);
     if (!ok) return null;
     this.#emitIntelHook('updated', record);
@@ -825,9 +837,16 @@ export class HolonetIntelService {
     // minimal-provenance pattern deliverAsSecretNote() already used
     // (sourceIntelId only, never a full Intel snapshot). See the audit
     // doc's Phase 8B section for the full consumer trace.
+    // PHASE 8B CORRECTION PASS (C8B body-override audit): the sole
+    // production caller (GMIntelSurfaceController.js) never passes
+    // options.body — no caller anywhere relies on overriding the
+    // player-safe body. Removed so Intel->Bulletin delivery always uses
+    // the authoritative bodyForIntel(intel,'public') representation,
+    // with no path for a future caller to accidentally (or otherwise)
+    // substitute unreleased/private text.
     const bulletin = BulletinSource.createBulletinMessage({
       title: options.title ?? intel.title,
-      body: options.body ?? bodyForIntel(intel, 'public'),
+      body: bodyForIntel(intel, 'public'),
       priority: options.priority ?? 'normal',
       audience: audienceFromVisibility(intel, options),
       category: 'intel',
@@ -836,9 +855,16 @@ export class HolonetIntelService {
         intelDelivery: true
       }
     });
+    // PHASE 8B CORRECTION PASS (C8B-3): sourceIntelId/intelDelivery used
+    // to be duplicated onto both projection.metadata objects as well as
+    // the Bulletin's own metadata. No production consumer anywhere reads
+    // provenance off a projection (gm-datapad.js's own pin/feature
+    // toggles only ever touch surfaceType/isPinned; projection.metadata
+    // is otherwise used only for Messenger's threadId annotation). The
+    // Bulletin record itself is the one canonical provenance edge.
     bulletin.projections = [
-      { surfaceType: SURFACE_TYPE.HOME_FEED, recordId: bulletin.id, isPinned: false, metadata: { sourceIntelId: intel.id, intelDelivery: true } },
-      { surfaceType: SURFACE_TYPE.GM_DATAPAD_BULLETIN, recordId: bulletin.id, isPinned: false, metadata: { sourceIntelId: intel.id, intelDelivery: true } }
+      { surfaceType: SURFACE_TYPE.HOME_FEED, recordId: bulletin.id, isPinned: false, metadata: {} },
+      { surfaceType: SURFACE_TYPE.GM_DATAPAD_BULLETIN, recordId: bulletin.id, isPinned: false, metadata: {} }
     ];
     // PHASE 8A transport-only migration: this used to manually replicate
     // HolonetEngine's own publish/recipients/persist/sync pipeline (and
@@ -848,20 +874,36 @@ export class HolonetIntelService {
     // avoid a circular static import (holonet-engine.js already imports
     // this file's HolonetIntelService), matching the pattern
     // holonet-socket-service.js already uses for the same reason.
-    // Persist-then-check-then-announce ordering (below) is unchanged by
-    // Phase 8B: a failed save still returns null before any Intel
-    // release or publication event.
     const { HolonetEngine } = await import('../holonet-engine.js');
     HolonetEngine.prepareRecordForPublish(bulletin);
-    const saved = await HolonetStorage.saveRecord(bulletin);
-    if (!saved) return null;
-    HolonetEngine.emitPreparedRecordPublished(bulletin, { skipSocket: false, syncExtra: { source: 'intel-bulletin', intelId: intel.id } });
-    const updated = await this.releaseIntel(record.id, {
+
+    // PHASE 8B CORRECTION PASS (C8B-1): the Bulletin write and the Intel
+    // release/delivery-state write used to be two SEPARATE
+    // HolonetStorage.saveRecord() calls, with the publication event
+    // announced in between. That left a real partial-failure window: if
+    // the Bulletin save succeeded but the Intel-release save failed, the
+    // Bulletin would already be persisted and broadcast to players while
+    // Intel silently stayed unreleased — and this method still returned
+    // an ok:true-shaped result. Both records live in the SAME
+    // holonet_records setting, so #prepareIntelUpdate() mutates the Intel
+    // record in memory (no persistence yet) and HolonetStorage
+    // .saveRecords() commits both records in ONE settings write —
+    // genuinely one storage operation, not a second compensating layer.
+    // Nothing is announced (publication event or Intel release hook)
+    // unless that one write actually succeeds.
+    this.#prepareIntelUpdate(record, {
       persistence: INTEL_PERSISTENCE.BULLETIN,
       revealState: INTEL_REVEAL_STATE.FULLY_REVEALED,
+      status: INTEL_STATUS.RELEASED,
+      releasedAt: nowIso(),
       delivery: deliverySummary(intel, { mode: 'bulletin', recordId: bulletin.id, recipientIds: bulletin.recipients?.map(r => r.id) ?? [] })
     });
-    return { ok: true, mode: 'bulletin', result: { recordId: bulletin.id }, record: updated };
+    const saved = await HolonetStorage.saveRecords([bulletin, record]);
+    if (!saved) return null;
+
+    HolonetEngine.emitPreparedRecordPublished(bulletin, { skipSocket: false, syncExtra: { source: 'intel-bulletin', intelId: intel.id } });
+    this.#emitIntelHook('released', record);
+    return { ok: true, mode: 'bulletin', result: { recordId: bulletin.id }, record };
   }
 
   static async releaseToDossier(intelOrRecordId, options = {}) {
