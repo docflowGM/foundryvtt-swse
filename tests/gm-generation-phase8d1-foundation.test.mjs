@@ -622,13 +622,49 @@ const abs = (rel) => `/systems/foundryvtt-swse/${rel}`;
   const humanFraction = humanCount / trials;
   assert.ok(humanFraction > 0.15 && humanFraction < 0.33, `at bias 1 over ${trials} trials, the minority species should appear near its real ~24% share (got ${(humanFraction * 100).toFixed(1)}%)`);
 
+  // C8D-1 edge-case correction (independent review of head cff63f4): the
+  // Location-influenced branch previously passed the raw
+  // locationPopulationProfile straight to selectSpeciesForLocation(),
+  // bypassing BOTH the policy's own excludedSpeciesIds and the caller's
+  // availableSpeciesIds boundary -- so an open policy's explicit
+  // exclusion (or a restricted canonical species pool) could still be
+  // violated whenever the Location roll succeeded.
+
+  // (6) An OPEN policy that explicitly excludes Twi'lek must never
+  // select Twi'lek even at localityBias 1 on Twi'lek-dominant Ryloth --
+  // deterministic proof (single-entry pool after filtering always wins
+  // regardless of the weightedPick roll) plus a statistical sweep.
+  const excludingTwilek = createSpeciesPolicy({ mode: SPECIES_POLICY_MODE.OPEN, excludedSpeciesIds: ['species-twi-lek'] });
+  const excludedDeterministic = selectFactionSpeciesWithLocality({ speciesPolicy: excludingTwilek, availableSpeciesIds: pool, locationPopulationProfile: ryloth, localityBias: 1, rng: makeQueueRng([0.1, 0.3]) });
+  assert.equal(excludedDeterministic, 'species-human', 'with Twi\'lek excluded, the filtered Location pool must contain only Human, so any roll must select Human, never the excluded majority species');
+  const excludedSweepRng = makeSeededRng(21);
+  let sawExcludedSpecies = false;
+  for (let i = 0; i < 300; i += 1) {
+    if (selectFactionSpeciesWithLocality({ speciesPolicy: excludingTwilek, availableSpeciesIds: pool, locationPopulationProfile: ryloth, localityBias: 1, rng: excludedSweepRng }) === 'species-twi-lek') sawExcludedSpecies = true;
+  }
+  assert.equal(sawExcludedSpecies, false, 'an explicitly excluded species must NEVER be selected via the Location-influenced branch, across 300 trials at bias 1 on the Location where it is the 76% majority');
+
+  // (7) availableSpeciesIds acts as a hard boundary on the Location
+  // branch too -- restricting the pool to Human-only must mean only
+  // Human is ever selected, even though Ryloth's real distribution is
+  // 76% Twi'lek.
+  const humanOnlyPool = ['species-human'];
+  const restrictedDeterministic = selectFactionSpeciesWithLocality({ speciesPolicy: openPolicy, availableSpeciesIds: humanOnlyPool, locationPopulationProfile: ryloth, localityBias: 1, rng: makeQueueRng([0.1, 0.5]) });
+  assert.equal(restrictedDeterministic, 'species-human', 'restricting availableSpeciesIds to Human-only must select Human even though Twi\'lek is the Location\'s real majority');
+  const restrictedSweepRng = makeSeededRng(33);
+  let sawOutOfPoolSpecies = false;
+  for (let i = 0; i < 300; i += 1) {
+    if (selectFactionSpeciesWithLocality({ speciesPolicy: openPolicy, availableSpeciesIds: humanOnlyPool, locationPopulationProfile: ryloth, localityBias: 1, rng: restrictedSweepRng }) !== 'species-human') sawOutOfPoolSpecies = true;
+  }
+  assert.equal(sawOutOfPoolSpecies, false, 'a species outside availableSpeciesIds must NEVER be selected via the Location-influenced branch, across 300 trials at bias 1');
+
   // Archetype defaults distinguish "shaped by where it operates" from "not".
   assert.ok(defaultLocalityBiasForArchetype('government') > defaultLocalityBiasForArchetype('military'), 'a local government archetype must default to a materially higher locality bias than an (offworld-flavored) military archetype');
   assert.ok(defaultLocalityBiasForArchetype('clan') > defaultLocalityBiasForArchetype('bounty_hunters'), 'a clan archetype must default to a materially higher locality bias than bounty hunters');
   assert.equal(defaultLocalityBiasForArchetype('totally-unknown'), 0.5, 'an unrecognized archetype must default to a neutral 0.5, never throw');
   assert.ok(Object.keys(ARCHETYPE_DEFAULT_LOCALITY_BIAS).length >= 15, 'the archetype locality-bias table must be centralized and cover most named archetypes, not left for callers to invent');
 
-  console.log('recruitment-profile.js (C8D-1 fix verified: bounded locality bias, explicit Faction species policy consumes zero Location influence, bias 0 never touches Location data, bias 1 consults the FULL distribution including minorities, demographic shape -- not just dominant-species identity -- changes outcomes, archetype defaults distinguish local vs offworld organizations) passed.');
+  console.log('recruitment-profile.js (C8D-1 fix verified: bounded locality bias, explicit Faction species policy consumes zero Location influence, bias 0 never touches Location data, bias 1 consults the FULL distribution including minorities, demographic shape -- not just dominant-species identity -- changes outcomes, excludedSpeciesIds and availableSpeciesIds are hard boundaries on the Location branch too, archetype defaults distinguish local vs offworld organizations) passed.');
 }
 
 // ------------------------------------------------------------
