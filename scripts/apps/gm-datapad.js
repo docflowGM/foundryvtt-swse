@@ -61,6 +61,18 @@ const GM_TABLET_MIN_SAFE_HEIGHT = 260;
 const GM_TABLET_COMPACT_WIDTH = 460;
 const GM_TABLET_COMPACT_HEIGHT = 76;
 
+// C8C-3 — display-only label per Bulletin provenance sourceKind. Used
+// solely to render "Source · Job · ..."; never persisted, never used for
+// resolution (GMCampaignContextService.resolveBulletinSource() already
+// owns that).
+const BULLETIN_SOURCE_KIND_LABEL = {
+  job: 'Job',
+  location: 'Location',
+  faction: 'Faction',
+  actor: 'Actor',
+  intel: 'Intel'
+};
+
 export class GMDatapad extends BaseSWSEAppV2 {
   static DEFAULT_OPTIONS = {
     id: 'gm-datapad',
@@ -657,7 +669,7 @@ export class GMDatapad extends BaseSWSEAppV2 {
     }
   }
 
-  _buildBulletinRecordView(record) {
+  async _buildBulletinRecordView(record) {
     const featuredProjection = record.projections?.find((projection) => projection.surfaceType === SURFACE_TYPE.BULLETIN_FEATURED) ?? null;
     const homeFeedProjection = record.projections?.find((projection) => projection.surfaceType === SURFACE_TYPE.HOME_FEED) ?? null;
     const notificationProjection = record.projections?.find((projection) => projection.surfaceType === SURFACE_TYPE.NOTIFICATION_BUBBLE) ?? null;
@@ -667,6 +679,13 @@ export class GMDatapad extends BaseSWSEAppV2 {
     const isPinned = Boolean(featuredProjection?.isPinned || record.metadata?.pinAsLastSession);
     const homeSlot = record.metadata?.homeSlot || (isPinned ? 'last-session' : 'feed');
     const deliverySummary = this._buildBulletinDeliverySummary(record);
+    // C8C-3 — read-only, derived-only source label for display. Reuses the
+    // same resolveBulletinSource() seam _openBulletinSource() (C8C-1) uses
+    // for navigation safety; never persisted onto the record.
+    const hasSourceProvenance = Boolean(record.metadata?.sourceKind && record.metadata?.sourceId);
+    const sourceResolution = hasSourceProvenance
+      ? await GMCampaignContextService.resolveBulletinSource({ sourceKind: record.metadata.sourceKind, sourceId: record.metadata.sourceId }).catch(() => null)
+      : null;
 
     return {
       id: record.id,
@@ -708,12 +727,22 @@ export class GMDatapad extends BaseSWSEAppV2 {
       contactId: record.metadata?.contactId || '',
       imageUrl: record.metadata?.imageUrl || record.sender?.avatar || '',
       // PHASE 8C — the general Bulletin-handoff provenance contract
-      // (§100). Raw passthrough only; "Open Source" resolves the actual
-      // target at click time via GMCampaignTargetService, so this view
-      // never needs to guess a label or pre-resolve navigation here.
+      // (§100). Raw sourceKind/sourceId passthrough; "Open Source" itself
+      // re-resolves the navigation target at click time via
+      // GMCampaignContextService.resolveBulletinSource() (C8C-1), never
+      // trusting this render-time snapshot for navigation safety.
+      //
+      // C8C-3 — sourceLabel/sourceResolved are a DERIVED DISPLAY ONLY: read
+      // through the same read-only resolveBulletinSource() seam so the GM
+      // sees what a Bulletin actually came from, never stored back onto the
+      // record (no duplicated/stale truth — a deleted source simply stops
+      // resolving a label on the next render).
       sourceKind: record.metadata?.sourceKind || '',
       sourceId: record.metadata?.sourceId || '',
       hasSourceProvenance: Boolean(record.metadata?.sourceKind && record.metadata?.sourceId),
+      sourceKindLabel: sourceResolution ? BULLETIN_SOURCE_KIND_LABEL[sourceResolution.sourceKind] || sourceResolution.sourceKind : '',
+      sourceLabel: sourceResolution?.label || '',
+      sourceResolved: Boolean(sourceResolution?.resolved),
       deliverySummary,
       recipientCount: deliverySummary.recipientCount,
       readCount: deliverySummary.readCount,
@@ -1577,13 +1606,19 @@ export class GMDatapad extends BaseSWSEAppV2 {
   }
 
   /**
-   * PHASE 8C — "Open Source" for a Bulletin record's own
-   * metadata.sourceKind/sourceId provenance. Mirrors
+   * PHASE 8C (C8C-1 correction) — "Open Source" for a Bulletin record's
+   * own metadata.sourceKind/sourceId provenance. Mirrors
    * _wireHomeAttentionTargets()'s established actor-vs-Datapad-surface
    * split exactly: 'actor' opens the real Foundry Actor sheet directly
-   * (sourceId is the Actor UUID), every other kind resolves through the
-   * same GMCampaignTargetService.resolve() seam every other navigation
-   * in this app already uses. Never falls back to matching by the
+   * (sourceId is the Actor UUID) via a real existence check
+   * (game.actors.get()/uuid match), every other kind is first verified
+   * to actually exist via GMCampaignContextService.resolveBulletinSource()
+   * (the read-only resolver added alongside this action) before
+   * GMCampaignTargetService.resolve() — a pure id-to-navigation-shape
+   * mapper with no existence check of its own — builds the destination.
+   * A deleted/never-existed source now reports resolved:false and this
+   * warns and stays on Bulletin, instead of navigating to a destination
+   * addressed by a dead id. Never falls back to matching by the
    * Bulletin's own title/label — an unresolved source reports itself as
    * unresolved, never guessed.
    */
@@ -1601,7 +1636,12 @@ export class GMDatapad extends BaseSWSEAppV2 {
       actor.sheet?.render?.(true);
       return;
     }
-    const target = GMCampaignTargetService.resolve({ kind, id });
+    const resolution = await GMCampaignContextService.resolveBulletinSource({ sourceKind: kind, sourceId: id });
+    if (!resolution?.resolved) {
+      ui.notifications?.warn?.('This Bulletin’s source could not be resolved.');
+      return;
+    }
+    const target = GMCampaignTargetService.resolve(resolution.target);
     if (!target) {
       ui.notifications?.warn?.('This Bulletin’s source could not be resolved.');
       return;
