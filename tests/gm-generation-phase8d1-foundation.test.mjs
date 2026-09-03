@@ -479,6 +479,98 @@ const abs = (rel) => `/systems/foundryvtt-swse/${rel}`;
 }
 
 // ------------------------------------------------------------
+// location-population-profile.js — planet demographics + hierarchy resolution (3rd addendum)
+// ------------------------------------------------------------
+{
+  const {
+    getPopulationProfileForSeedId, getPopulationProfileForLocation, GENERIC_GALACTIC_FALLBACK_POPULATION_PROFILE,
+    selectSpeciesForLocation, POPULATION_DIVERSITY
+  } = await import(abs('scripts/generation/location-population-profile.js'));
+  const { LOCATION_POPULATION_PROFILES_BY_SEED_ID } = await import(abs('scripts/generation/data/location-population-profiles.js'));
+  const { makeSeededRng } = await import(abs('scripts/generation/lib/weighted-random.js'));
+
+  // All 50 curated seed profiles sum to exactly 100 and never carry an
+  // "other" rollable key (the fold-to-human policy was applied before
+  // this data was written).
+  const seedIds = Object.keys(LOCATION_POPULATION_PROFILES_BY_SEED_ID);
+  assert.equal(seedIds.length, 50, 'the curated Location population dataset must contain all 50 profiled seeds');
+  for (const seedId of seedIds) {
+    const profile = getPopulationProfileForSeedId(seedId);
+    const total = profile.speciesWeights.reduce((sum, entry) => sum + entry.weight, 0);
+    assert.ok(Math.abs(total - 100) < 0.01, `"${seedId}" speciesWeights must sum to 100 (got ${total})`);
+    assert.ok(!profile.speciesWeights.some((entry) => entry.speciesId === 'other' || entry.speciesId === 'species-other'), `"${seedId}" must never carry a rollable "other" species entry`);
+  }
+
+  assert.equal(getPopulationProfileForSeedId('not-a-real-seed'), null, 'an unknown seed id must resolve to null, never a guessed profile');
+
+  // Diversity categorization spot-checks against known real data.
+  assert.equal(getPopulationProfileForSeedId('bothawui').diversity, POPULATION_DIVERSITY.HOMOGENEOUS, 'Bothawui (98% Bothan) must categorize as homogeneous');
+  assert.equal(getPopulationProfileForSeedId('ryloth').diversity, POPULATION_DIVERSITY.DOMINANT, 'Ryloth (76% Twi\'lek) must categorize as dominant');
+  assert.equal(getPopulationProfileForSeedId('taris').diversity, POPULATION_DIVERSITY.HOMOGENEOUS, 'Taris (fold-to-human -> 100% Human) must categorize as homogeneous');
+
+  // Hierarchy resolution: most-specific wins, then parent, then generic fallback.
+  const registry = [
+    { id: 'ryloth', parentLocationId: '', librarySeedId: 'ryloth', name: 'Ryloth' },
+    { id: 'ryloth-child-no-own-profile', parentLocationId: 'ryloth', librarySeedId: '', name: 'Some POI' },
+    { id: 'ryloth-child-own-profile', parentLocationId: 'ryloth', librarySeedId: 'bothawui', name: 'Bothan Enclave' }
+  ];
+  const childInherits = getPopulationProfileForLocation(registry[1], registry);
+  assert.equal(childInherits.resolvedFromLocationId, 'ryloth', 'a child Location with no own profile must inherit from its parent');
+  assert.deepEqual(childInherits.profile.speciesWeights, getPopulationProfileForSeedId('ryloth').speciesWeights, 'inherited profile must match the parent seed exactly');
+
+  const childOverrides = getPopulationProfileForLocation(registry[2], registry);
+  assert.equal(childOverrides.resolvedFromLocationId, 'ryloth-child-own-profile', 'a child Location with its own profile must use ITS OWN, not its parent\'s (most-specific wins)');
+  assert.deepEqual(childOverrides.profile.speciesWeights, getPopulationProfileForSeedId('bothawui').speciesWeights, 'the most-specific profile must be the one actually used');
+
+  const orphan = { id: 'nowhere', parentLocationId: '', librarySeedId: '', name: 'Deep Space' };
+  const orphanResult = getPopulationProfileForLocation(orphan, registry);
+  assert.equal(orphanResult.profile, GENERIC_GALACTIC_FALLBACK_POPULATION_PROFILE, 'a Location resolving to nothing in the chain must fall back to the generic galactic profile, never throw or guess');
+
+  // Weighted species selection actually favors the dominant species.
+  const rylothProfile = getPopulationProfileForSeedId('ryloth');
+  const rng = makeSeededRng(9);
+  let twilekCount = 0;
+  for (let i = 0; i < 200; i += 1) if (selectSpeciesForLocation(rylothProfile, { rng }) === 'species-twi-lek') twilekCount += 1;
+  assert.ok(twilekCount > 100, 'species selection for a Twi\'lek-dominant Location must favor Twi\'lek in the large majority of rolls');
+
+  console.log('location-population-profile.js (50/50 curated profiles sum to 100 with no rollable "other", diversity categorization, most-specific-wins hierarchy resolution, generic fallback, weighted selection) passed.');
+}
+
+// ------------------------------------------------------------
+// recruitment-profile.js — Faction locality bias (3rd addendum)
+// ------------------------------------------------------------
+{
+  const { createRecruitmentProfile, deriveSpeciesPolicyFromLocationContext, defaultLocalityBiasForArchetype, ARCHETYPE_DEFAULT_LOCALITY_BIAS } = await import(abs('scripts/generation/recruitment-profile.js'));
+  const { createSpeciesPolicy, SPECIES_POLICY_MODE } = await import(abs('scripts/generation/population-profile.js'));
+  const { getPopulationProfileForSeedId } = await import(abs('scripts/generation/location-population-profile.js'));
+
+  const rp = createRecruitmentProfile({ currentLocationId: 'ryloth', localityBias: 1.5 });
+  assert.equal(rp.localityBias, 1, 'localityBias must be clamped to at most 1');
+  assert.equal(createRecruitmentProfile({ localityBias: -1 }).localityBias, 0, 'localityBias must be clamped to at least 0');
+  assert.equal('id' in rp, false, 'a recruitment profile must never carry a fabricated id of its own');
+
+  // Explicit Faction species constraints ALWAYS win over Location bias.
+  const ryloth = getPopulationProfileForSeedId('ryloth');
+  const lockedToHuman = createSpeciesPolicy({ mode: SPECIES_POLICY_MODE.REQUIRED, allowedSpeciesIds: ['species-human'] });
+  const stillLocked = deriveSpeciesPolicyFromLocationContext(lockedToHuman, ryloth, 0.99);
+  assert.equal(stillLocked, lockedToHuman, 'an explicit species-locked policy must be returned completely unchanged regardless of Location demographics -- explicit Faction identity always wins');
+
+  // An open policy DOES get biased toward the dominant local species.
+  const openPolicy = createSpeciesPolicy();
+  const biased = deriveSpeciesPolicyFromLocationContext(openPolicy, ryloth, 0.9);
+  assert.equal(biased.mode, SPECIES_POLICY_MODE.PREFERRED, 'an open policy in a strongly-biased Location context must become a preferred (species-dominant) policy');
+  assert.equal(biased.dominantSpeciesId, 'species-twi-lek', 'the derived dominant species must match the Location\'s own actual dominant species');
+
+  // Archetype defaults distinguish "shaped by where it operates" from "not".
+  assert.ok(defaultLocalityBiasForArchetype('government') > defaultLocalityBiasForArchetype('military'), 'a local government archetype must default to a materially higher locality bias than an (offworld-flavored) military archetype');
+  assert.ok(defaultLocalityBiasForArchetype('clan') > defaultLocalityBiasForArchetype('bounty_hunters'), 'a clan archetype must default to a materially higher locality bias than bounty hunters');
+  assert.equal(defaultLocalityBiasForArchetype('totally-unknown'), 0.5, 'an unrecognized archetype must default to a neutral 0.5, never throw');
+  assert.ok(Object.keys(ARCHETYPE_DEFAULT_LOCALITY_BIAS).length >= 15, 'the archetype locality-bias table must be centralized and cover most named archetypes, not left for callers to invent');
+
+  console.log('recruitment-profile.js (bounded locality bias, explicit Faction species constraints always win over Location context, open policies get biased toward the real dominant local species, archetype defaults distinguish local vs offworld organizations) passed.');
+}
+
+// ------------------------------------------------------------
 // faction-draft.js — full contract composition + jobDefaults reuse
 // ------------------------------------------------------------
 {
@@ -494,8 +586,11 @@ const abs = (rel) => `/systems/foundryvtt-swse/${rel}`;
     scale: 11,
     jobDefaults: { tone: 'mercantile', credits: 5000, successDelta: 2 },
     populationProfile: { mode: POPULATION_MODE.MIXED },
-    membershipPolicy: MEMBERSHIP_POLICY.OPEN
+    membershipPolicy: MEMBERSHIP_POLICY.OPEN,
+    recruitmentProfile: { currentLocationId: 'coruscant', localityBias: 0.5 }
   });
+
+  assert.deepEqual(draft.recruitmentProfile, { originLocationId: '', headquartersLocationId: '', currentLocationId: 'coruscant', localityBias: 0.5 }, 'a Faction draft must carry its recruitmentProfile with only real-id-shaped location fields, never a fabricated id');
 
   // jobDefaults reuses the EXACT FactionRegistryService field set.
   for (const field of ['tone', 'rewardStyle', 'objective', 'briefing', 'instructions', 'credits', 'xp', 'successDelta', 'failureDelta', 'visibility', 'legality', 'payStyle', 'rivalFactionName', 'rivalSuccessDelta', 'rivalFailureDelta', 'consequenceNotes']) {
