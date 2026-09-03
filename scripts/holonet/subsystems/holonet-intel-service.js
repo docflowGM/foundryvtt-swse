@@ -404,10 +404,19 @@ function deliverySummary(intel = {}, extra = {}) {
   };
 }
 
+// PHASE 8B CORRECTION PASS (C8B-4): mode:'public' (and 'redacted') must
+// NEVER fall back to fullBody -- fullBody is GM-private/unreleased text,
+// and every production caller of bodyForIntel(intel,'public')
+// (deliverAsBulletin, deliverAsMessengerMessage, deliverAsSecretNote's
+// non-encrypted path) treats its return value as safe to send to
+// players. Only mode:'full' (GM-side decryption-payload construction,
+// never player-facing) may use fullBody. An Intel record with no
+// publicBody/redactedBody/summary now correctly returns an empty
+// string here rather than silently leaking fullBody.
 function bodyForIntel(intel = {}, mode = 'public') {
   if (mode === 'full') return cleanString(intel.fullBody || intel.publicBody || intel.redactedBody || intel.summary);
   if (mode === 'redacted') return cleanString(intel.redactedBody || intel.publicBody || intel.summary);
-  return cleanString(intel.publicBody || intel.redactedBody || intel.summary || intel.fullBody);
+  return cleanString(intel.publicBody || intel.redactedBody || intel.summary);
 }
 
 function shouldBuildDecryption(intel = {}, options = {}) {
@@ -822,6 +831,19 @@ export class HolonetIntelService {
     const record = await this.getIntelById(intelOrRecordId);
     const intel = this.getIntelMetadata(record);
     if (!record || !intel) return null;
+    // PHASE 8B CORRECTION PASS (C8B-4): fail closed. bodyForIntel(intel,
+    // 'public') can no longer return fullBody, so an Intel record with
+    // no publicBody/redactedBody/summary yields an empty string here.
+    // Publishing that would mean either an empty player-facing Bulletin
+    // or (before this fix) silently falling back to private text. Refuse
+    // instead: no Bulletin, no Intel release, no delivery-history entry,
+    // no publication event -- computed and checked before anything else
+    // in this method touches storage.
+    const publicBody = bodyForIntel(intel, 'public');
+    if (!publicBody) {
+      globalThis.ui?.notifications?.warn?.('This Intel has no player-safe text (public body, redacted body, or summary) to publish as a Bulletin.');
+      return null;
+    }
     // PHASE 8B: Bulletin stores only the player-safe body plus stable
     // provenance (sourceIntelId/intelDelivery) — NOT a full snapshot of
     // the Intel record. The full Intel object (gmNotes, fullBody,
@@ -846,7 +868,7 @@ export class HolonetIntelService {
     // substitute unreleased/private text.
     const bulletin = BulletinSource.createBulletinMessage({
       title: options.title ?? intel.title,
-      body: bodyForIntel(intel, 'public'),
+      body: publicBody,
       priority: options.priority ?? 'normal',
       audience: audienceFromVisibility(intel, options),
       category: 'intel',
