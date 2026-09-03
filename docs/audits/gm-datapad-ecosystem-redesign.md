@@ -3959,14 +3959,20 @@ affected-world record count is **unknown**, not zero):
 6. **Idempotency**: a remediation keyed on the predicate in (1) is
    naturally idempotent — a record with `metadata.intel` already absent
    simply fails the predicate and is skipped.
-7. **Records lacking `sourceIntelId`**: yes, theoretically possible —
-   any Bulletin published before Phase 8A's D5 fix (which routed
-   `deliverAsBulletin()` through the central pipeline) could in
-   principle predate even the `sourceIntelId`/`intelDelivery` fields
-   existing at all, if the source shape changed between then and now.
-   The predicate in (1) requires `sourceIntelId` to be present, so such
-   a record would not be flagged by it — a gap worth noting for any
-   future remediation design, not solved here.
+7. **Records lacking `sourceIntelId`**: the Phase 8B independent-review
+   correction pass checked repository history directly — the very first
+   version of `deliverAsBulletin()` already wrote `sourceIntelId`,
+   `intelDelivery`, and `metadata.intel` together in the same commit;
+   no system-generated Intel-derived Bulletin format predating
+   `sourceIntelId` was found anywhere in this repository's history. The
+   predicate in (1) requiring `sourceIntelId` therefore covers every
+   actual system-generated legacy record. The theoretical gap remains
+   real only for a manually-constructed or corrupted record (e.g.
+   hand-edited via the settings API, or a partially-written record from
+   an interrupted save) that carries `metadata.intel` without
+   `sourceIntelId` — worth defensive wording in any future remediation
+   design, but not a documented historical format this system ever
+   produced.
 8. **Recoverable-elsewhere check**: every field inside the embedded
    `intel` snapshot is, by construction, a normalized copy of fields
    that also exist on the canonical Intel record (`normalizeIntelMetadata()`
@@ -4045,7 +4051,7 @@ every prior phase. Syntax check: 2193/2193 clean. Phase 8A's full
 exactly-once suite re-verified green (M1-M10, C1-C3), confirming this
 correction pass did not reopen Phase 8A transport.
 
-## 90. Phase 8 gate (supersedes §83)
+## 90. Phase 8 gate (superseded by §95 — see below)
 
 **PHASE 8B CORRECTION PASS COMPLETE — READY FOR INDEPENDENT REVIEW.**
 C8B-1 (blocker) fixed with a genuine git-stash-isolated fail-before/
@@ -4064,3 +4070,134 @@ instruction: not declaring "READY FOR GENERAL BULLETIN INTEGRATION"
 until independent review of this corrected, pushed head; not beginning
 general Bulletin integration, Job/Location/Faction/Workspace→Bulletin
 work, or Phase 9.
+
+# PHASE 8B — FINAL PUBLIC-BODY SAFETY CORRECTION
+
+Starting head: `6295b9066dc172ec949484febf99bb54fd905b84` (verified:
+clean tree, correct branch, matching HEAD, exact-head CI green, PR #963
+open/draft/unmerged/mergeable). Independent review confirmed C8B-1,
+C8B-2, C8B-3, projection provenance cleanup, body-override removal, and
+the combined-commit boundary are all correct and unchanged by this
+pass. One privacy blocker remained: `bodyForIntel(intel,'public')`
+could still return the private `fullBody`.
+
+## 91. C8B-4 (blocker) — `bodyForIntel(intel,'public')` could still return private `fullBody`
+
+**Finding**: the default/`'public'` branch of `bodyForIntel()` was
+`intel.publicBody || intel.redactedBody || intel.summary ||
+intel.fullBody` — the trailing `|| intel.fullBody` meant that an Intel
+record with no `publicBody`/`redactedBody`/`summary` set (only a
+private `fullBody`) would have that private text returned by a helper
+every caller treats as "the player-safe representation." Removing
+`deliverAsBulletin()`'s `options.body` override (the prior correction
+pass) did not close this — the leak was inside the authoritative helper
+itself, not in a caller-supplied override.
+
+**Every production caller of `bodyForIntel(intel,'public')`**, traced
+before changing the helper:
+
+| Caller | Mode | Effect of the fix |
+|---|---|---|
+| `deliverAsBulletin()` | `'public'` | Now also fails closed (see §92) — the primary path this audit is about |
+| `deliverAsMessengerMessage()` | `'public'` | Now correctly returns an empty string for private-only Intel instead of leaking `fullBody`; no existing test exercised this path with private-only content, so this closes a real but previously untested leak with no regression |
+| `deliverAsSecretNote()` (non-encrypted branch: `decryptionPayload ? 'redacted' : 'public'`) | `'public'` when not encrypted | Same as above — closes an untested leak, no regression |
+| `buildDecryptionPayload()` | `'full'`/`'redacted'` | Unaffected — `'full'` mode intentionally still uses `fullBody` (GM-side decryption-payload construction, never sent to players as-is); `'redacted'` mode already excluded `fullBody` before this pass |
+
+No test anywhere depended on the `'public'`-mode `fullBody` fallback
+(confirmed: no existing test calls `deliverAsSecretNote()` or
+`deliverAsMessengerMessage()` at all). Per the correction pass's
+explicit scope, Messenger/Secret Note are not redesigned in this pass
+— they receive the same minimal helper-level fix as Bulletin, with no
+additional fail-closed behavior added to them here (that would be a
+larger, separately-scoped change; documented, not implemented).
+
+**Fix**: `bodyForIntel()`'s `'public'` branch is now
+`intel.publicBody || intel.redactedBody || intel.summary` — `fullBody`
+removed entirely from that branch. `'redacted'` mode was already
+correct (no change needed). `'full'` mode is intentionally unchanged
+(GM-side only, never a player-facing "safe" claim).
+
+## 92. Bulletin fail-closed behavior
+
+`deliverAsBulletin()` now computes `publicBody = bodyForIntel(intel,'public')`
+immediately after resolving the Intel record — before constructing the
+Bulletin, before touching storage, before any Intel mutation — and
+refuses immediately if it is empty: no Bulletin is constructed, no
+`HolonetStorage.saveRecords()` call happens, no publication event, no
+Intel release, no delivery-history entry. Matches the pre-existing
+service convention of `ui.notifications.warn()` + `return null` used by
+`deliverAsSecretNote()`/`deliverAsMessengerMessage()` for their own
+precondition failures.
+
+## 93. Fail-before/pass-after proof and tests
+
+A standalone script (git-stash isolated, same convention as C8B-1's
+proof) created Intel with `publicBody`/`redactedBody`/`summary` all
+explicitly empty and only `fullBody` set to an unmistakable sentinel
+(`UNRELEASED_FULL_BODY_ONLY_8B_PROOF`), then called the real
+`HolonetIntelService.deliverAsBulletin()`.
+
+**Pre-fix** (`git stash push -- scripts/holonet/subsystems/holonet-intel-service.js`,
+run against reviewed head `6295b90`): `deliverAsBulletin()` returned
+`{ok:true, ...}`; the actual **persisted** Bulletin record's `body`
+field was confirmed to equal the sentinel string exactly; exactly one
+`record-published` publication sync was broadcast. The precise bug the
+review predicted, reproduced against real persisted-record content.
+
+**Post-fix** (`git stash pop`, same script re-run): `deliverAsBulletin()`
+returned `null`; the record count in storage was unchanged (no Bulletin
+added); zero syncs were emitted.
+
+**Permanent regression tests** added to
+`tests/gm-holonet-phase8b-intel-bulletin-privacy.test.mjs`, executed
+against the real production `bodyForIntel()`/`deliverAsBulletin()`
+(no source-string assertions):
+
+- **C8B-4a** (redacted fallback): `publicBody` empty, `redactedBody`
+  set, `fullBody` a private sentinel → persisted Bulletin `body` equals
+  `redactedBody`; sentinel absent from the persisted record.
+- **C8B-4b** (summary fallback): `publicBody`/`redactedBody` empty,
+  `summary` set, `fullBody` a private sentinel → persisted Bulletin
+  `body` equals `summary`; sentinel absent.
+- **C8B-4c** (private-only, fails closed): `publicBody`/`redactedBody`/
+  `summary` all empty, only `fullBody` set → `deliverAsBulletin()`
+  returns `null`; record count unchanged (no Bulletin persisted); zero
+  publication syncs; zero Intel release hooks; Intel's own `status` and
+  `delivery.history` completely unchanged.
+- The existing B1/B2 block (unchanged) already covers "public
+  representation exists" — `publicBody` set alongside a distinct
+  private `fullBody` sentinel — the persisted `body` equals `publicBody`,
+  proving the normal, common case was never broken by any of this.
+
+## 94. Legacy remediation note update
+
+Per further repository-history review (§85 item 7, corrected above):
+the very first version of `deliverAsBulletin()` already wrote
+`sourceIntelId`, `intelDelivery`, and the full `metadata.intel` copy
+together — no system-generated Intel-derived Bulletin format predating
+`sourceIntelId` exists anywhere in this repository's history. The
+remediation predicate's dependency on `sourceIntelId` being present
+therefore covers every actual historical system-generated record; the
+defensive wording for a record lacking it is now scoped honestly to a
+manually-constructed or corrupted record, not a documented historical
+format.
+
+## 95. Regression / totals and Phase 8 gate (supersedes §90)
+
+Full `gm-*.test.mjs` sweep: 54/54 green (unchanged file count — no new
+test files, the existing Phase 8B file extended). Phase 8A's full
+exactly-once suite re-verified green. Full rolling suite and syntax
+check re-run; see the PR body / final report for exact totals. No
+Messenger test exists to regress (confirmed by trace, §91), so none
+ran; this is recorded honestly rather than claimed as "all green."
+
+**PHASE 8B FINAL SAFETY CORRECTION COMPLETE — READY FOR INDEPENDENT
+REVIEW.** `bodyForIntel(intel,'public')` can no longer return private
+`fullBody` under any caller; `deliverAsBulletin()` fails closed with no
+side effects when no player-safe representation exists, proven via an
+isolated git-stash fail-before/pass-after cycle against real
+persisted-record content. C8B-1/C8B-2/C8B-3 and the combined-commit
+boundary from the prior correction pass are unchanged and re-verified.
+Per explicit instruction: not declaring "READY FOR GENERAL BULLETIN
+INTEGRATION" until independent review of this corrected, pushed head;
+not beginning Phase 8C or any general Bulletin integration work.
