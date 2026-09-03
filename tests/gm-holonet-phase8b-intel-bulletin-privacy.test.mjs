@@ -82,13 +82,14 @@ function installShim() {
   ]);
   const hooks = makeFakeHooks();
   const socket = makeFakeSocket();
+  const setCalls = [];
   installFoundryShimGlobals({
     game: {
       user: { isGM: true, id: 'gm1' },
       socket,
       settings: {
         get: (_module, key) => stores.get(key) ?? [],
-        set: (_module, key, value) => { stores.set(key, value); return Promise.resolve(value); },
+        set: (_module, key, value) => { setCalls.push(key); stores.set(key, value); return Promise.resolve(value); },
         settings: { has: () => true },
         register: () => {}
       },
@@ -99,7 +100,7 @@ function installShim() {
     Hooks: hooks
   });
   globalThis.foundry.utils.randomID = () => `test-${Math.random().toString(36).slice(2, 10)}`;
-  return { stores, hooks, socket };
+  return { stores, hooks, socket, setCalls };
 }
 
 const SENTINEL_GM_NOTES = 'GM_ONLY_DO_NOT_EXPOSE_8B';
@@ -127,6 +128,21 @@ async function createSentinelIntel(HolonetIntelService) {
 
 function findRawRecord(stores, recordId) {
   return (stores.get('holonet_records') ?? []).find(r => r.id === recordId);
+}
+
+// C8B-2's exact identifying predicate for a legacy Intel-derived Bulletin
+// still retaining the (now-removed) private full-Intel-metadata snapshot:
+// sourceFamily is bulletin, it carries sourceIntelId provenance, AND it
+// still has a truthy metadata.intel object. A record failing any of these
+// (a non-Intel Bulletin, or a new-format Intel Bulletin with only
+// sourceIntelId/intelDelivery) is not flagged. Read-only recognition --
+// never mutates or removes anything.
+function hasLegacyEmbeddedIntelSnapshot(rawRecord) {
+  return Boolean(
+    rawRecord?.sourceFamily === 'bulletin'
+    && rawRecord?.metadata?.sourceIntelId
+    && rawRecord?.metadata?.intel
+  );
 }
 
 // --- B1/B3/B4/B5 + fail-before proof: the persisted Bulletin must carry
@@ -202,16 +218,80 @@ function findRawRecord(stores, recordId) {
   console.log('B6/B11 (audience/projections unchanged, exactly-once transport contract preserved) passed.');
 }
 
-// --- B7: successful publication updates Intel release/delivery state
-// exactly once ------------------------------------------------------------
+// --- C8B-3: provenance lives on the Bulletin record only -- no consumer
+// reads sourceIntelId/intelDelivery off projection metadata, so it is not
+// duplicated there. ---------------------------------------------------------
 {
   const { stores } = installShim();
+  const { HolonetIntelService } = await import('/systems/foundryvtt-swse/scripts/holonet/subsystems/holonet-intel-service.js');
+
+  const draft = await HolonetIntelService.createIntelDraft({ title: 'Projection Provenance Check', publicBody: 'Body' });
+  const result = await HolonetIntelService.deliverAsBulletin(draft.id, {});
+  const bulletinRaw = findRawRecord(stores, result.result.recordId);
+
+  assert.equal(bulletinRaw.metadata.sourceIntelId, draft.metadata.intel.id, 'the Bulletin record itself remains the one canonical provenance edge');
+  for (const projection of bulletinRaw.projections) {
+    assert.equal(projection.metadata?.sourceIntelId, undefined, `${projection.surfaceType} projection metadata must not duplicate sourceIntelId -- no consumer reads it there`);
+    assert.equal(projection.metadata?.intelDelivery, undefined, `${projection.surfaceType} projection metadata must not duplicate intelDelivery -- no consumer reads it there`);
+  }
+
+  console.log('C8B-3 (provenance lives only on the Bulletin record, not duplicated onto projection metadata) passed.');
+}
+
+// --- Body-override disposition: the sole production caller
+// (GMIntelSurfaceController) never passes options.body, and the override
+// has been removed -- Intel->Bulletin delivery always uses the
+// authoritative bodyForIntel(intel,'public') representation, even if a
+// future caller attempts to pass a body override. ---------------------------
+{
+  const { stores } = installShim();
+  const { HolonetIntelService } = await import('/systems/foundryvtt-swse/scripts/holonet/subsystems/holonet-intel-service.js');
+
+  const draft = await HolonetIntelService.createIntelDraft({
+    title: 'Body Override Check',
+    publicBody: 'The authoritative public text.',
+    fullBody: 'UNRELEASED_PRIVATE_BODY_OVERRIDE_CHECK'
+  });
+  const result = await HolonetIntelService.deliverAsBulletin(draft.id, { body: 'INJECTED_UNSAFE_BODY_OVERRIDE_ATTEMPT' });
+  const bulletinRaw = findRawRecord(stores, result.result.recordId);
+
+  assert.equal(bulletinRaw.body, 'The authoritative public text.', 'options.body must never be honored -- Intel->Bulletin delivery always uses bodyForIntel(intel,\'public\')');
+  assert.doesNotMatch(JSON.stringify(bulletinRaw), /INJECTED_UNSAFE_BODY_OVERRIDE_ATTEMPT/, 'an attempted body override must never reach the persisted record');
+
+  console.log('Body-override disposition (options.body override removed, always uses the authoritative public-body representation) passed.');
+}
+
+// --- C8B-1 success path (supersedes B7): Bulletin + Intel release commit
+// as ONE settings write, Intel release/delivery state updated exactly
+// once, exactly one publication event, exactly one release hook. --------
+{
+  const { stores, socket, hooks, setCalls } = installShim();
   const { HolonetIntelService, INTEL_STATUS, INTEL_PERSISTENCE } = await import('/systems/foundryvtt-swse/scripts/holonet/subsystems/holonet-intel-service.js');
+  const { HolonetStorage } = await import('/systems/foundryvtt-swse/scripts/holonet/subsystems/holonet-storage.js');
+
+  const releasedHookCalls = [];
+  hooks.on('swseHolonetUpdated', (payload) => { if (payload?.type === 'intel-released') releasedHookCalls.push(payload); });
 
   const draft = await HolonetIntelService.createIntelDraft({ title: 'Release State Check', publicBody: 'Body' });
   const before = (stores.get('holonet_records') ?? []).length;
-  const result = await HolonetIntelService.deliverAsBulletin(draft.id, {});
+  setCalls.length = 0;
+
+  const originalSaveRecord = HolonetStorage.saveRecord;
+  let saveRecordCalls = 0;
+  HolonetStorage.saveRecord = async (...args) => { saveRecordCalls++; return originalSaveRecord.apply(HolonetStorage, args); };
+  let result;
+  try {
+    result = await HolonetIntelService.deliverAsBulletin(draft.id, {});
+  } finally {
+    HolonetStorage.saveRecord = originalSaveRecord;
+  }
   const after = (stores.get('holonet_records') ?? []).length;
+
+  // C8B-1: the Bulletin write and the Intel release write must commit as
+  // ONE settings.set() call, not two sequential HolonetStorage.saveRecord()
+  // calls -- the exact partial-failure window the correction pass closed.
+  assert.equal(saveRecordCalls, 0, 'the combined Bulletin+Intel commit must use HolonetStorage.saveRecords(), never two separate saveRecord() calls');
+  assert.equal(setCalls.filter(k => k === 'holonet_records').length, 1, 'the Bulletin and the Intel release must commit in exactly one settings write');
 
   assert.equal(after, before + 1, 'delivery must add exactly one new record (the Bulletin) -- the Intel record is updated in place, not duplicated');
   assert.equal(result.record.metadata.intel.status, INTEL_STATUS.RELEASED, 'the Intel record itself must be marked released exactly once');
@@ -219,39 +299,52 @@ function findRawRecord(stores, recordId) {
   assert.equal(result.record.metadata.intel.delivery.history[0].mode, 'bulletin', 'delivery history must record exactly one bulletin delivery entry');
   assert.equal(result.record.metadata.intel.delivery.history.length, 1, 'exactly one delivery history entry must be recorded for this one publication');
 
-  console.log('B7 (Intel release/delivery state updated exactly once on success) passed.');
+  const publishedSyncs = socket.emitted.filter(e => e?.kind === 'sync' && e.data?.type === 'record-published');
+  assert.equal(publishedSyncs.length, 1, 'exactly one publication event must fire on a successful combined commit');
+  assert.equal(releasedHookCalls.length, 1, 'the Intel release hook must fire exactly once on a successful combined commit');
+
+  console.log('C8B-1 success path (one settings write, Intel release exactly once, one publication event, one release hook) passed.');
 }
 
-// --- B8: Bulletin persistence failure must block Intel release and
-// publication entirely -----------------------------------------------------
+// --- C8B-1 failure path (supersedes B8): a failed combined commit must
+// block EVERYTHING -- no Bulletin persisted, no Intel release, no
+// publication event, no false success result. ------------------------------
 {
-  const { stores, socket } = installShim();
+  const { stores, socket, hooks } = installShim();
   const { HolonetIntelService } = await import('/systems/foundryvtt-swse/scripts/holonet/subsystems/holonet-intel-service.js');
   const { HolonetStorage } = await import('/systems/foundryvtt-swse/scripts/holonet/subsystems/holonet-storage.js');
 
+  const releasedHookCalls = [];
+  hooks.on('swseHolonetUpdated', (payload) => { if (payload?.type === 'intel-released') releasedHookCalls.push(payload); });
+
   const draft = await createSentinelIntel(HolonetIntelService);
   const before = (stores.get('holonet_records') ?? []).length;
+  const intelStatusBefore = findRawRecord(stores, draft.id).metadata.intel.status;
 
-  const originalSaveRecord = HolonetStorage.saveRecord;
-  HolonetStorage.saveRecord = async () => false;
+  const originalSaveRecords = HolonetStorage.saveRecords;
+  HolonetStorage.saveRecords = async () => false;
+  let result;
   try {
-    const result = await HolonetIntelService.deliverAsBulletin(draft.id, {});
-    assert.equal(result, null, 'deliverAsBulletin() must report failure (null) when the Bulletin storage write does not succeed');
+    result = await HolonetIntelService.deliverAsBulletin(draft.id, {});
   } finally {
-    HolonetStorage.saveRecord = originalSaveRecord;
+    HolonetStorage.saveRecords = originalSaveRecords;
   }
+  assert.equal(result, null, 'deliverAsBulletin() must report failure (null) when the combined Bulletin+Intel write does not succeed -- never a false ok:true result');
 
   const after = (stores.get('holonet_records') ?? []).length;
-  assert.equal(after, before, 'a failed Bulletin write must not add any record to storage');
-  assert.equal(socket.emitted.length, 0, 'a failed Bulletin write must never broadcast a publication sync');
+  assert.equal(after, before, 'a failed combined write must not leave any Bulletin persisted');
+  assert.equal(socket.emitted.length, 0, 'a failed combined write must never broadcast a publication sync');
+  assert.equal(releasedHookCalls.length, 0, 'a failed combined write must never fire the Intel release hook');
 
-  // The original Intel record must still show its pre-delivery state --
-  // never marked released/delivered off of a publication that never
-  // actually persisted.
+  // The original Intel record must be byte-for-byte in its pre-delivery
+  // state -- never marked released, no delivery-history entry persisted,
+  // off of a publication that never actually committed.
   const intelRaw = findRawRecord(stores, draft.id);
-  assert.notEqual(intelRaw.metadata.intel.status, 'released', 'Intel must not be marked released when the Bulletin write failed');
+  assert.equal(intelRaw.metadata.intel.status, intelStatusBefore, 'Intel status must be completely unchanged when the combined write fails');
+  assert.notEqual(intelRaw.metadata.intel.status, 'released', 'Intel must not be marked released when the combined write fails');
+  assert.equal((intelRaw.metadata.intel.delivery?.history ?? []).length, 0, 'no delivery-history entry may be persisted when the combined write fails');
 
-  console.log('B8 (Bulletin persistence failure blocks Intel release and publication entirely) passed.');
+  console.log('C8B-1 failure path (combined-commit failure blocks Bulletin persistence, Intel release, and publication entirely) passed.');
 }
 
 // --- B9: legacy Bulletin records (with the old embedded full-Intel-
@@ -300,7 +393,15 @@ function findRawRecord(stores, recordId) {
   const all = await HolonetStorage.getAllRecords();
   assert.equal(all.length, 1, 'getAllRecords() must not choke on a legacy record carrying the old embedded metadata shape');
 
-  console.log('B9 (legacy Intel-derived Bulletin records remain readable, no destructive migration performed) passed.');
+  // C8B-2: "remains readable" must not be conflated with "safe." This
+  // legacy record is explicitly RECOGNIZED as still retaining a private
+  // historical snapshot (gmNotes/fullBody/skillGate/lockbox), not waved
+  // off as harmless -- it is an unresolved remediation finding (see the
+  // audit doc), even though no destructive cleanup is performed here.
+  assert.equal(hasLegacyEmbeddedIntelSnapshot(legacyRaw), true, 'a legacy Intel-derived Bulletin still carrying metadata.intel must be explicitly recognized as retaining private historical data, not treated as inert');
+  assert.ok(JSON.stringify(legacyRaw).includes(SENTINEL_GM_NOTES), 'sanity: the legacy fixture genuinely still carries the private sentinel, proving the recognition predicate above is meaningful, not vacuous');
+
+  console.log('B9 (legacy Intel-derived Bulletin records remain readable, but are explicitly flagged -- not harmless -- as an unresolved remediation finding) passed.');
 }
 
 // --- B10: new minimal-provenance records surface correctly alongside
@@ -319,8 +420,9 @@ function findRawRecord(stores, recordId) {
   assert.equal(isBulletinRecord(hydrated), true, 'a new minimal-provenance Bulletin must still be recognized as a Bulletin record');
   assert.equal(hydrated.metadata.intel, undefined, 'a new record must never carry the full Intel snapshot');
   assert.equal(hydrated.metadata.sourceIntelId, draft.metadata.intel.id, 'a new record must carry sourceIntelId provenance');
+  assert.equal(hasLegacyEmbeddedIntelSnapshot(findRawRecord(stores, result.result.recordId)), false, 'a new minimal-provenance record must NOT be flagged by the legacy-recognition predicate -- there is nothing to remediate on new writes');
 
-  console.log('B10 (new minimal-provenance Bulletin records surface correctly, no migration required) passed.');
+  console.log('B10 (new minimal-provenance Bulletin records surface correctly and are correctly NOT flagged by the legacy-recognition predicate) passed.');
 }
 
 console.log('PHASE 8B Intel->Bulletin privacy/provenance suite passed.');
