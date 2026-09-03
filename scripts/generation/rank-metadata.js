@@ -104,6 +104,27 @@ export const CLAN_RANK_TIER_MAP = Object.freeze({
   'Clan Leader': COMMAND_TIER.STRATEGIC_COMMAND
 });
 
+/** Phase 8D-2 addition: corporate/guild-flavored rank ladder (`corporation`/`guild` archetypes). */
+export const CORPORATE_RANK_TIER_MAP = Object.freeze({
+  Associate: COMMAND_TIER.RANK_AND_FILE,
+  'Senior Associate': COMMAND_TIER.FIRETEAM_LEADERSHIP,
+  'Team Lead': COMMAND_TIER.SQUAD_COMMAND,
+  Manager: COMMAND_TIER.JUNIOR_COMMAND,
+  Director: COMMAND_TIER.TACTICAL_COMMAND,
+  'Vice President': COMMAND_TIER.OPERATIONAL_COMMAND,
+  'Chief Executive': COMMAND_TIER.STRATEGIC_COMMAND
+});
+
+/** Phase 8D-2 addition: Force-tradition rank ladder (`force_order` archetype). Titles are deliberately generic, never a real canonical Order's own titles. */
+export const FORCE_TRADITION_RANK_TIER_MAP = Object.freeze({
+  Initiate: COMMAND_TIER.RANK_AND_FILE,
+  Adept: COMMAND_TIER.FIRETEAM_LEADERSHIP,
+  'Knight-equivalent': COMMAND_TIER.SQUAD_COMMAND,
+  'Master-equivalent': COMMAND_TIER.SENIOR_SPECIALIST,
+  'Council Member': COMMAND_TIER.OPERATIONAL_COMMAND,
+  'Grandmaster-equivalent': COMMAND_TIER.STRATEGIC_COMMAND
+});
+
 /**
  * Generator archetype id -> its example rank-tier map, for archetypes
  * the addendum names explicitly. An archetype not listed here has no
@@ -116,7 +137,10 @@ export const ARCHETYPE_RANK_TIER_MAP = Object.freeze({
   'criminal-syndicate': CRIME_SYNDICATE_RANK_TIER_MAP,
   pirates: PIRATE_RANK_TIER_MAP,
   'noble-house': NOBLE_SECURITY_RANK_TIER_MAP,
-  clan: CLAN_RANK_TIER_MAP
+  clan: CLAN_RANK_TIER_MAP,
+  corporation: CORPORATE_RANK_TIER_MAP,
+  guild: CORPORATE_RANK_TIER_MAP,
+  force_order: FORCE_TRADITION_RANK_TIER_MAP
 });
 
 /**

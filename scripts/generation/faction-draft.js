@@ -48,6 +48,10 @@ function cleanString(value) {
   return String(value ?? '').trim();
 }
 
+function cleanStringArray(value) {
+  return Array.isArray(value) ? value.map(cleanString).filter(Boolean) : [];
+}
+
 function clampScale(scale) {
   const n = Number(scale);
   if (!Number.isFinite(n)) return 1;
@@ -112,6 +116,27 @@ export function createFactionDraft({
   populationProfile,
   membershipPolicy = MEMBERSHIP_POLICY.OPEN,
   recruitmentProfile,
+  // Phase 8D-2 addendum: institutional character/leadership/goals/
+  // problems/resources are all plain narrative facts (strings, or a
+  // small structured resourceProfile) -- see `factions/faction-*.js`
+  // for the generators that roll them. This module only stores what
+  // it's given, exactly like every other narrative field above.
+  institutionalCharacter = '',
+  leadershipStructure = '',
+  publicGoal = '',
+  actualGoal = '',
+  currentObjective = '',
+  internalProblems = [],
+  resourceProfile = null,
+  // Territory refs use IDs only, never visible names -- matching the
+  // exact-id-only discipline `location-draft.js`'s own header
+  // documents. `territoryLocationIds` are real canonical Location ids;
+  // `territoryLocationDraftIds` link to another draft (e.g. a
+  // `planet-draft.js` planet) in the same generation batch that hasn't
+  // been committed yet -- never both meaning the same territory entry,
+  // but a Faction can hold some of each simultaneously.
+  territoryLocationIds = [],
+  territoryLocationDraftIds = [],
   provenance
 } = {}) {
   return {
@@ -156,6 +181,17 @@ export function createFactionDraft({
     // See recruitment-profile.js's header for why this module never
     // performs that blend itself.
     recruitmentProfile: createRecruitmentProfile(recruitmentProfile || {}),
+    // Phase 8D-2 addendum fields -- see the destructured-parameter
+    // comment above for the full rationale on each.
+    institutionalCharacter: cleanString(institutionalCharacter),
+    leadershipStructure: cleanString(leadershipStructure),
+    publicGoal: cleanString(publicGoal),
+    actualGoal: cleanString(actualGoal),
+    currentObjective: cleanString(currentObjective),
+    internalProblems: cleanStringArray(internalProblems),
+    resourceProfile: resourceProfile && typeof resourceProfile === 'object' ? resourceProfile : null,
+    territoryLocationIds: cleanStringArray(territoryLocationIds),
+    territoryLocationDraftIds: cleanStringArray(territoryLocationDraftIds),
     // Draft-only status vocabulary — deliberately DISTINCT from the
     // canonical Faction record's own `source`/`status` fields (which
     // use 'gm'/'job'/'organization'/'player-suggested' and become
