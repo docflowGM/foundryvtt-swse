@@ -538,28 +538,89 @@ const abs = (rel) => `/systems/foundryvtt-swse/${rel}`;
 
 // ------------------------------------------------------------
 // recruitment-profile.js — Faction locality bias (3rd addendum)
+//
+// C8D-1 correction (independent review of head 180cedd): the original
+// deriveSpeciesPolicyFromLocationContext() collapsed a Location's full
+// weighted distribution down to its single dominant species BEFORE
+// biasing, so two Locations sharing a dominant species but with very
+// different actual splits (e.g. 99/1 vs 51/49) produced IDENTICAL
+// behavior, and at bias 1.0 the result was "always the single dominant
+// species" rather than "the Location's real distribution." Replaced
+// with selectFactionSpeciesWithLocality(), which performs the mixture
+// at selection time against the FULL distribution. Tests below use
+// deterministic queued RNG (not loose statistics) to prove the fix
+// directly, per the reviewer's own recommended test list.
 // ------------------------------------------------------------
 {
-  const { createRecruitmentProfile, deriveSpeciesPolicyFromLocationContext, defaultLocalityBiasForArchetype, ARCHETYPE_DEFAULT_LOCALITY_BIAS } = await import(abs('scripts/generation/recruitment-profile.js'));
-  const { createSpeciesPolicy, SPECIES_POLICY_MODE } = await import(abs('scripts/generation/population-profile.js'));
+  const { createRecruitmentProfile, selectFactionSpeciesWithLocality, defaultLocalityBiasForArchetype, ARCHETYPE_DEFAULT_LOCALITY_BIAS } = await import(abs('scripts/generation/recruitment-profile.js'));
+  const { createSpeciesPolicy, SPECIES_POLICY_MODE, selectSpeciesId } = await import(abs('scripts/generation/population-profile.js'));
   const { getPopulationProfileForSeedId } = await import(abs('scripts/generation/location-population-profile.js'));
+  const { makeSeededRng } = await import(abs('scripts/generation/lib/weighted-random.js'));
+
+  function makeQueueRng(values) {
+    let i = 0;
+    return () => values[i++ % values.length];
+  }
 
   const rp = createRecruitmentProfile({ currentLocationId: 'ryloth', localityBias: 1.5 });
   assert.equal(rp.localityBias, 1, 'localityBias must be clamped to at most 1');
   assert.equal(createRecruitmentProfile({ localityBias: -1 }).localityBias, 0, 'localityBias must be clamped to at least 0');
   assert.equal('id' in rp, false, 'a recruitment profile must never carry a fabricated id of its own');
 
-  // Explicit Faction species constraints ALWAYS win over Location bias.
-  const ryloth = getPopulationProfileForSeedId('ryloth');
-  const lockedToHuman = createSpeciesPolicy({ mode: SPECIES_POLICY_MODE.REQUIRED, allowedSpeciesIds: ['species-human'] });
-  const stillLocked = deriveSpeciesPolicyFromLocationContext(lockedToHuman, ryloth, 0.99);
-  assert.equal(stillLocked, lockedToHuman, 'an explicit species-locked policy must be returned completely unchanged regardless of Location demographics -- explicit Faction identity always wins');
-
-  // An open policy DOES get biased toward the dominant local species.
+  const ryloth = getPopulationProfileForSeedId('ryloth'); // real 76% Twi'lek / 24% Human
+  const pool = ['species-human', 'species-twi-lek', 'species-duros'];
   const openPolicy = createSpeciesPolicy();
-  const biased = deriveSpeciesPolicyFromLocationContext(openPolicy, ryloth, 0.9);
-  assert.equal(biased.mode, SPECIES_POLICY_MODE.PREFERRED, 'an open policy in a strongly-biased Location context must become a preferred (species-dominant) policy');
-  assert.equal(biased.dominantSpeciesId, 'species-twi-lek', 'the derived dominant species must match the Location\'s own actual dominant species');
+
+  // (1) Explicit Faction policy invariant: Location has ZERO authority
+  // and consumes ZERO extra rng calls when the policy isn't open --
+  // proven by an exact-match delegation check, not just a value check.
+  const lockedToHuman = createSpeciesPolicy({ mode: SPECIES_POLICY_MODE.REQUIRED, allowedSpeciesIds: ['species-human'] });
+  const oneValueA = [0.42];
+  const viaLocality = selectFactionSpeciesWithLocality({ speciesPolicy: lockedToHuman, availableSpeciesIds: pool, locationPopulationProfile: ryloth, localityBias: 0.99, rng: makeQueueRng(oneValueA) });
+  const viaDirect = selectSpeciesId(lockedToHuman, pool, { rng: makeQueueRng(oneValueA) });
+  assert.equal(viaLocality, viaDirect, 'a non-open Faction policy must delegate to selectSpeciesId() with NO extra rng consumption and NO Location influence -- identical result for the identical single rng value proves the Location path is never even entered');
+  assert.equal(viaLocality, 'species-human', 'sanity: the locked policy result must actually be the allowed species');
+
+  // (2) Bias 0 = zero Location influence, provably, not just "usually".
+  // rng() returning 0 is the lowest possible roll; even then, roll(0) < bias(0) is false,
+  // so this must fall through to open selection regardless of what any rng call would return.
+  const zeroRng = () => 0;
+  const biasZeroResult = selectFactionSpeciesWithLocality({ speciesPolicy: openPolicy, availableSpeciesIds: pool, locationPopulationProfile: ryloth, localityBias: 0, rng: zeroRng });
+  assert.equal(biasZeroResult, pool[0], 'localityBias 0 must always fall through to plain open selection (picking pool[0] under an always-0 rng), proving the Location distribution is never consulted at all');
+
+  // (3) Bias 1 must consult the FULL Location distribution, able to
+  // select the 24% MINORITY species -- the original bug made this
+  // structurally impossible (dominantSpeciesWeight:1 meant the single
+  // dominant species won 100% of the time, always).
+  const rollPassesGate = 0.1; // < any bias > 0.1, so the locality roll always succeeds
+  const rollSelectsMinority = 0.9; // weightedPick: 0.9*100=90; 90-76(twi'lek)=14>0 continue; 14-24(human)=-10<=0 -> human
+  const bias1Result = selectFactionSpeciesWithLocality({ speciesPolicy: openPolicy, availableSpeciesIds: pool, locationPopulationProfile: ryloth, localityBias: 1, rng: makeQueueRng([rollPassesGate, rollSelectsMinority]) });
+  assert.equal(bias1Result, 'species-human', 'at localityBias 1, the minority species (24% Human on Ryloth) must be reachable -- proves the full distribution is used, not only speciesWeights[0]/dominantSpeciesIds[0]');
+
+  // (4) Demographic sensitivity: two Locations sharing the SAME
+  // dominant species but different actual splits must be able to
+  // produce DIFFERENT results for the identical roll sequence.
+  const locNearHomogeneous = { speciesWeights: [{ speciesId: 'species-twi-lek', weight: 99 }, { speciesId: 'species-human', weight: 1 }] };
+  const locNearEven = { speciesWeights: [{ speciesId: 'species-twi-lek', weight: 51 }, { speciesId: 'species-human', weight: 49 }] };
+  const midRoll = [0.1, 0.6]; // gate passes; weightedPick roll = 60
+  const resultNearHomogeneous = selectFactionSpeciesWithLocality({ speciesPolicy: openPolicy, availableSpeciesIds: pool, locationPopulationProfile: locNearHomogeneous, localityBias: 1, rng: makeQueueRng(midRoll) });
+  const resultNearEven = selectFactionSpeciesWithLocality({ speciesPolicy: openPolicy, availableSpeciesIds: pool, locationPopulationProfile: locNearEven, localityBias: 1, rng: makeQueueRng(midRoll) });
+  assert.equal(resultNearHomogeneous, 'species-twi-lek', 'a 99/1 split must still select the dominant species at roll 60');
+  assert.equal(resultNearEven, 'species-human', 'a 51/49 split must select the OTHER species at the identical roll 60 -- the actual percentages, not just "which species is dominant", determine the outcome');
+  assert.notEqual(resultNearHomogeneous, resultNearEven, 'two Locations with the same dominant species but different real splits must be able to diverge under the identical roll -- demographic shape matters');
+
+  // (5) Minorities remain statistically possible under a real seeded
+  // RNG too (not just the engineered deterministic proof above) -- a
+  // fully local Ryloth Faction with open membership must still
+  // generate the non-Twi'lek ~24% share at roughly its real rate.
+  const seededRng = makeSeededRng(77);
+  let humanCount = 0;
+  const trials = 500;
+  for (let i = 0; i < trials; i += 1) {
+    if (selectFactionSpeciesWithLocality({ speciesPolicy: openPolicy, availableSpeciesIds: pool, locationPopulationProfile: ryloth, localityBias: 1, rng: seededRng }) === 'species-human') humanCount += 1;
+  }
+  const humanFraction = humanCount / trials;
+  assert.ok(humanFraction > 0.15 && humanFraction < 0.33, `at bias 1 over ${trials} trials, the minority species should appear near its real ~24% share (got ${(humanFraction * 100).toFixed(1)}%)`);
 
   // Archetype defaults distinguish "shaped by where it operates" from "not".
   assert.ok(defaultLocalityBiasForArchetype('government') > defaultLocalityBiasForArchetype('military'), 'a local government archetype must default to a materially higher locality bias than an (offworld-flavored) military archetype');
@@ -567,7 +628,7 @@ const abs = (rel) => `/systems/foundryvtt-swse/${rel}`;
   assert.equal(defaultLocalityBiasForArchetype('totally-unknown'), 0.5, 'an unrecognized archetype must default to a neutral 0.5, never throw');
   assert.ok(Object.keys(ARCHETYPE_DEFAULT_LOCALITY_BIAS).length >= 15, 'the archetype locality-bias table must be centralized and cover most named archetypes, not left for callers to invent');
 
-  console.log('recruitment-profile.js (bounded locality bias, explicit Faction species constraints always win over Location context, open policies get biased toward the real dominant local species, archetype defaults distinguish local vs offworld organizations) passed.');
+  console.log('recruitment-profile.js (C8D-1 fix verified: bounded locality bias, explicit Faction species policy consumes zero Location influence, bias 0 never touches Location data, bias 1 consults the FULL distribution including minorities, demographic shape -- not just dominant-species identity -- changes outcomes, archetype defaults distinguish local vs offworld organizations) passed.');
 }
 
 // ------------------------------------------------------------
