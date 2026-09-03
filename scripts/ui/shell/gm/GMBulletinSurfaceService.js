@@ -85,10 +85,16 @@ export class GMBulletinSurfaceService {
    * source's own canonical registry -- never a name/label/slug fallback
    * (Phase 8C's C8C audit explicitly forbids resolving by visible text).
    *
-   * Job: job.briefing.body is the exact field
-   * holonet-messenger-service.js's player-facing job board VM already
-   * reads independently (buildHolonetJobBoardVm) -- proven safe by an
-   * unrelated existing consumer, not asserted here for the first time.
+   * Job: job.briefing.body ONLY -- deliberately narrower than
+   * holonet-messenger-service.js's player-facing job board VM
+   * (buildHolonetJobBoardVm's briefingBody reads
+   * briefing?.body || description || brief || thread.preview). That
+   * fallback chain is not independently proven safe for every link --
+   * only briefing.body has a documented, GM-authored-for-players
+   * origin -- so Bulletin intentionally does not reuse the rest of it.
+   * A Job with no briefing.body prefills an empty body for the GM to
+   * write, exactly like Faction/Actor, rather than falling through to
+   * fields with no proven public/private split at the Bulletin layer.
    *
    * Location: publicSummary vs gmNotes is LocationRegistryService's own
    * documented split, already relied on by the player-facing
@@ -118,7 +124,7 @@ export class GMBulletinSurfaceService {
         const job = jobForThread(thread);
         return {
           title: String(job?.title || thread.title || 'Untitled Job').trim(),
-          body: String(job?.briefing?.body || job?.description || job?.brief || thread.preview || '').trim(),
+          body: String(job?.briefing?.body || '').trim(),
           category: 'job'
         };
       }
@@ -187,10 +193,13 @@ export class GMBulletinSurfaceService {
     const holonewsAtomPolicy = await HolonewsAtomPolicy.getPolicy();
     const atomFilters = HolonewsAtomPolicy.toGeneratorFilters(holonewsAtomPolicy);
 
-    const allEventViews = eventRecords.map((record) => host._buildBulletinRecordView(record));
+    // C8C-3: _buildBulletinRecordView() is async (it resolves the derived
+    // source-provenance display label via GMCampaignContextService
+    // .resolveBulletinSource()), so every call site here awaits it.
+    const allEventViews = await Promise.all(eventRecords.map((record) => host._buildBulletinRecordView(record)));
     const eventViews = allEventViews.filter((record) => !record.isHolonews);
     const holonewsViews = allEventViews.filter((record) => record.isHolonews);
-    const messageViews = messageRecords.map((record) => host._buildBulletinRecordView(record));
+    const messageViews = await Promise.all(messageRecords.map((record) => host._buildBulletinRecordView(record)));
     const secretNoteRecords = await HolonetMessengerService.getSecretNoteConsoleView();
     const holonewsArchiveFilters = {
       query: String(host.holonewsArchiveFilters?.query || '').trim(),
@@ -217,13 +226,13 @@ export class GMBulletinSurfaceService {
         bodyPreview: HolonetMarkupService.preview(seed.body || '', 180)
       }));
     const eventEditorRecord = host._getBulletinEditorRecord(eventRecords, 'events')
-      ? host._buildBulletinRecordView(host._getBulletinEditorRecord(eventRecords, 'events'))
+      ? await host._buildBulletinRecordView(host._getBulletinEditorRecord(eventRecords, 'events'))
       : null;
     const holonewsEditorRecord = host._getBulletinEditorRecord(eventRecords, 'holonews')
-      ? host._buildBulletinRecordView(host._getBulletinEditorRecord(eventRecords, 'holonews'))
+      ? await host._buildBulletinRecordView(host._getBulletinEditorRecord(eventRecords, 'holonews'))
       : null;
     const messageEditorRecord = host._getBulletinEditorRecord(messageRecords, 'messages')
-      ? host._buildBulletinRecordView(host._getBulletinEditorRecord(messageRecords, 'messages'))
+      ? await host._buildBulletinRecordView(host._getBulletinEditorRecord(messageRecords, 'messages'))
       : null;
     const previewRecord = GMBulletinSurfaceService._selectPreviewRecord({
       section: host.currentBulletinSection,
