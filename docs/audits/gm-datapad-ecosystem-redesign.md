@@ -3716,9 +3716,15 @@ pattern established in `gm-intel-ecosystem-view-model.test.mjs`:
   through real `HolonetStorage.getRecord()`/`getAllRecords()`, and
   confirms it hydrates without error, is still recognized as a Bulletin
   record (`isBulletinRecord()`), and its `body`/`sourceIntelId` still
-  read correctly. No destructive migration exists or is needed — since
-  no reader ever consumed the extra field, its presence on old records
-  is inert.
+  read correctly. **Corrected by the Phase 8B independent-review
+  correction pass (§84, C8B-2)**: this originally concluded the extra
+  field's presence on old records was "inert" because nothing reads it
+  back. That conflated "doesn't break rendering" with "safe" — a legacy
+  record still carrying `metadata.intel` remains a genuine, unresolved
+  private-data exposure under this same audit's own client-sync threat
+  model (§72), not a harmless leftover. No destructive migration was
+  performed in Phase 8B; §84 documents this as an explicit remediation
+  finding instead.
 - **B10**: a newly-created minimal-provenance Bulletin round-trips
   through the same real storage/boundary functions and is recognized
   identically, alongside legacy records, with no migration step.
@@ -3729,14 +3735,24 @@ pattern established in `gm-intel-ecosystem-view-model.test.mjs`:
   provenance remaining present — since the field it used to pin is
   exactly what this phase's audit found and removed.
 
-## 78. Legacy compatibility disposition
+## 78. Legacy compatibility disposition (corrected by §84, C8B-2 — see below)
 
-No migration performed or needed. Nothing in production ever read
+No migration performed. Nothing in production ever read
 `metadata[INTEL_METADATA_KEY]` back off a Bulletin record (§72), so a
-legacy record still carrying it is inert, not broken — proven directly
-(B9). New records simply stop writing the field. This is the
-conservative, non-destructive outcome the phase's migration policy
-calls for by default.
+legacy record still carrying it is not **broken** — proven directly
+(B9): it hydrates, renders, and functions identically to a new-format
+record. New records simply stop writing the field.
+
+**This section originally called the legacy exposure "inert." That was
+wrong and is corrected in §84**: "doesn't break anything" is a
+functional-compatibility claim, not a privacy claim, and this audit's
+own §72 threat model (every Holonet record, including one still
+carrying a full private Intel snapshot, is synced in full to every
+connected client) applies just as much to an old record as a new one.
+A legacy Intel-derived Bulletin still carrying `gmNotes`/`fullBody`/
+`skillGate`/`lockbox` is a real, unresolved historical exposure. §84
+documents it as a remediation finding rather than performing any
+destructive cleanup here.
 
 ## 79. Intel release/delivery-state disposition
 
@@ -3792,7 +3808,7 @@ copy does not change that any Holonet record is technically
 client-readable via console today. That is a transport/storage-layer
 question broader than Intel→Bulletin and is not addressed here.
 
-## 83. Phase 8 gate (supersedes §71)
+## 83. Phase 8 gate (superseded by §90 — see below)
 
 **PHASE 8B COMPLETE — READY FOR GENERAL BULLETIN INTEGRATION.** The
 private-data leak (full Intel metadata snapshot reachable by every
@@ -3806,3 +3822,245 @@ contract are both unchanged and re-verified. No general Bulletin
 redesign or unrelated provenance expansion occurred. Live Foundry
 validation remains the one honestly-documented outstanding limitation.
 Per explicit instruction, this pass stops here.
+
+# PHASE 8B — INDEPENDENT-REVIEW CORRECTION PASS
+
+Starting head: `1eea1f183b8ae32a52c7bcec24d4ca3a0fd2f6e1` (verified:
+clean tree, correct branch, matching HEAD, exact-head CI green, PR #963
+open/draft/unmerged/mergeable). Independent review confirmed the
+primary new-write privacy fix (§74) is real and should stay, then
+required one blocker correction and two secondary items, all closed
+below. Per explicit instruction, general Bulletin integration is still
+not started.
+
+## 84. C8B-1 (blocker) — Bulletin publication and Intel release were a two-write partial-failure window
+
+**Finding**: `deliverAsBulletin()`'s sequence was: save Bulletin →
+emit `record-published` → `releaseIntel()` → save Intel. Two separate
+`HolonetStorage.saveRecord()` calls. If the first (Bulletin) succeeded
+but the second (Intel release) failed, the Bulletin was already
+persisted and already broadcast to players, Intel silently stayed
+unreleased, and `deliverAsBulletin()` still returned an `ok:true`
+result (with `record:null`) — violating the invariant "Bulletin
+succeeds → Intel release/delivery state is updated exactly once
+**before** publication announcement." The existing B8 test only failed
+the *first* `saveRecord()` call, so it never reached this window.
+
+**Fix**: both records live in the same `holonet_records` setting, so
+this reuses the existing `HolonetStorage.saveRecords(records)`
+primitive (already used elsewhere for exactly this kind of envelope,
+e.g. `saveRecordAndThread`) rather than inventing a new
+transaction/ledger/event-bus/socket-compensation layer. A new private
+seam, `HolonetIntelService.#prepareIntelUpdate(record, patch)`, was
+extracted from `updateIntel()`'s existing mutate-then-persist logic —
+it mutates an Intel record in memory with the same normalization
+`updateIntel()`/`releaseIntel()` already use, without persisting.
+`deliverAsBulletin()` now: prepares the Bulletin, prepares the Intel
+record's release mutation (via `#prepareIntelUpdate`, unpersisted),
+commits **both** in one `HolonetStorage.saveRecords([bulletin, record])`
+call, and only then — once that one write actually succeeds — emits
+the publication event and the Intel release hook. `updateIntel()`
+itself is unchanged (still a single-record `saveRecord()` call using
+the same shared `#prepareIntelUpdate()` mutation logic); ordinary
+`releaseIntel()` callers are unaffected. Release semantics
+(`status:RELEASED`, `persistence:BULLETIN`, `revealState:FULLY_REVEALED`,
+`releasedAt`, delivery history/summary) are byte-for-byte the same
+values `releaseIntel()` would have produced — only the persistence
+boundary and the hook-firing count changed (see below).
+
+One deliberate, minimal simplification: the original chain (`releaseIntel()`
+→ `updateIntel()`) fired both an `'updated'` and a `'released'` Intel
+hook for one release action — an artifact of the chained-call shape,
+not a meaningful distinct signal. The combined-commit path fires only
+the `'released'` hook once, matching the correction pass's explicit
+"Intel release hook fires exactly once" requirement.
+
+**Fail-before/pass-after proof**: a standalone script (not part of the
+committed suite, since it deliberately models the *old* two-sequential-
+`saveRecord()` shape rather than asserting new behavior) stubbed
+`HolonetStorage.saveRecord` to succeed on its 1st call and fail on its
+2nd, then called `deliverAsBulletin()`. Run via `git stash` against the
+pre-fix source:
+```
+saveRecord call count: 2
+deliverAsBulletin() result: { ok: true, mode: 'bulletin',
+  result: { recordId: 'proof-...' }, record: null }
+publication syncs emitted: 1
+Intel status after: draft
+Bulletin persisted: true
+```
+Confirming exactly the reported bug: Bulletin persisted and broadcast,
+Intel never released, method still returned an `ok:true`-shaped result.
+`git stash pop` restored the fix; the same script re-run against the
+fixed source showed `saveRecord` called **zero** times (the two-write
+shape no longer exists at all — the operation now goes through
+`saveRecords()` instead), the operation fully succeeding, and Intel
+genuinely marked released.
+
+**Permanent regression tests** (`tests/gm-holonet-phase8b-intel-bulletin-privacy.test.mjs`,
+replacing the old B7/B8 blocks): "C8B-1 success path" asserts
+`HolonetStorage.saveRecord` is called zero times and exactly one
+`game.settings.set('holonet_records', …)` write occurs for the whole
+operation, one new Bulletin record, Intel `status`/`persistence`/
+`delivery.history` updated exactly once, exactly one publication sync,
+and exactly one Intel release hook. "C8B-1 failure path" stubs
+`HolonetStorage.saveRecords` to fail and asserts: `deliverAsBulletin()`
+returns `null` (never a false `ok:true`), no Bulletin record is added
+to storage, zero publication syncs, zero release hooks, and the Intel
+record's raw persisted state is byte-for-byte unchanged (including zero
+new delivery-history entries).
+
+## 85. C8B-2 — legacy Intel-derived Bulletins are a remediation finding, not "harmless"
+
+**Finding**: §74/§77/§78's original wording called the old full-metadata
+copy still present on pre-existing Bulletin records "harmless"/"inert"
+because no reader consumes it. That conflated read-compatibility with
+privacy safety — this audit's own §72 threat model (every Holonet
+record, new or old, syncs in full to every connected client) applies
+identically to a legacy record. §78/B9's wording is corrected above
+(struck through the "inert" framing) rather than silently rewritten.
+
+**Remediation-scope audit** (read-only — no world data was mutated or
+even accessed; this environment has no live Foundry world/save data at
+all, only system/module source and Compendium packs, confirmed by
+searching for `worlds/`/`world.json` and finding none — so the actual
+affected-world record count is **unknown**, not zero):
+
+1. **Identifying predicate** for a legacy Intel-derived Bulletin still
+   retaining the removed snapshot: `record.sourceFamily === 'bulletin'
+   && record.metadata?.sourceIntelId && record.metadata?.intel` (all
+   three). A non-Intel Bulletin fails the 2nd/3rd clauses; a new-format
+   Intel Bulletin (post this pass) fails only the 3rd. Implemented and
+   tested as `hasLegacyEmbeddedIntelSnapshot()` in the test file (kept
+   test-local rather than added as unused production surface, per the
+   same "no consumer" scrutiny this whole audit applies to itself).
+2. **Exact private field** a remediation would remove:
+   `record.metadata.intel` (the entire object) — `gmNotes`, `fullBody`,
+   `skillGate` (including DC/skill/decryption-mode), `lockbox`
+   (including credits/items), every `linked*` id, and the rest of the
+   normalized Intel snapshot.
+3. **Storage affected**: `foundryvtt-swse.holonet_records` (world-scope
+   setting) only — no other setting or document type carries this copy.
+4. **What removing only `metadata.intel` would preserve** (verified by
+   inspection of every other field a remediation would leave alone):
+   Bulletin `body` (top-level, separate field — untouched);
+   `sourceIntelId`/`intelDelivery` (siblings of `intel` inside
+   `metadata`, not nested under it — untouched); `audience`; `recipients`;
+   `projections`; `publishedAt`/`state`. Deleting exactly the one key
+   would not disturb any of these.
+5. **Recoverability/rollback**: deleting `metadata.intel` from a legacy
+   Bulletin is **not** recoverable from the Bulletin alone afterward —
+   but the canonical Intel record (identified by `sourceIntelId`) still
+   holds the authoritative copy of everything in that snapshot, so
+   nothing is actually lost; the Bulletin's copy was always redundant
+   with the Intel record it was derived from. A rollback would mean
+   re-copying the field back from the canonical Intel record if it
+   still exists.
+6. **Idempotency**: a remediation keyed on the predicate in (1) is
+   naturally idempotent — a record with `metadata.intel` already absent
+   simply fails the predicate and is skipped.
+7. **Records lacking `sourceIntelId`**: yes, theoretically possible —
+   any Bulletin published before Phase 8A's D5 fix (which routed
+   `deliverAsBulletin()` through the central pipeline) could in
+   principle predate even the `sourceIntelId`/`intelDelivery` fields
+   existing at all, if the source shape changed between then and now.
+   The predicate in (1) requires `sourceIntelId` to be present, so such
+   a record would not be flagged by it — a gap worth noting for any
+   future remediation design, not solved here.
+8. **Recoverable-elsewhere check**: every field inside the embedded
+   `intel` snapshot is, by construction, a normalized copy of fields
+   that also exist on the canonical Intel record (`normalizeIntelMetadata()`
+   is the single source of truth both use) — nothing in the embedded
+   copy is unique information that would be lost if it were deleted
+   while the source Intel record still exists. If the source Intel
+   record has itself been deleted, the embedded copy would be the only
+   remaining trace — worth flagging for a future remediation design.
+
+**Disposition**: per explicit instruction, **no destructive cleanup was
+performed in this correction pass.** This is an evidence-backed
+finding and remediation plan only, awaiting explicit approval to act
+on it.
+
+## 86. C8B-3 — projection provenance duplication
+
+**Audit**: grepped and read every file that touches `record.projections`
+or a projection's own `.metadata` (`gm-datapad.js`, `ShellHost.js`,
+`holonet-projection-router.js`, `HomeSurfaceService.js`,
+`GMBulletinSurfaceService.js`). `gm-datapad.js`'s own projection
+mutators only ever touch `surfaceType`/`isPinned`/`recordId`, or write
+unrelated keys (`source`, `imageUrl`, `breakingNews`) for its own
+pin/feature toggles; `ShellHost.js` reads only `projection.metadata.threadId`
+for Messenger. **`NO_CONSUMER_FOUND`** for `sourceIntelId`/`intelDelivery`
+on projection metadata anywhere.
+
+**Fix**: removed the duplicate `sourceIntelId`/`intelDelivery` copies
+from both the `HOME_FEED` and `GM_DATAPAD_BULLETIN` projection
+`metadata` objects (now `{}`, matching the shape other projections
+already default to when unused). The Bulletin record's own `metadata`
+remains the one canonical provenance edge, exactly as §76 already
+claimed but did not, until now, fully enforce.
+
+## 87. Body-override audit
+
+**Audit**: `deliverAsBulletin()` is called from exactly one production
+site (`GMIntelSurfaceController.js:278`), and that call never passes
+`options.body` — `HolonetIntelService.deliverAsBulletin(recordId,
+{ partyFallback: true })`. No production caller anywhere relies on
+overriding the body.
+
+**Fix**: removed the `options.body ?? bodyForIntel(intel,'public')`
+override entirely — Intel→Bulletin delivery now always uses
+`bodyForIntel(intel,'public')`, unconditionally. `title`/`priority`
+overrides were left untouched (not privacy-relevant, not in this
+audit's scope, and still used by nothing today but not flagged by the
+correction pass). Tested directly: an attempted `options.body` override
+containing a sentinel string is proven absent from the persisted
+record, and the record's `body` field is proven to equal the
+authoritative public text regardless.
+
+## 88. Updated tests
+
+`tests/gm-holonet-phase8b-intel-bulletin-privacy.test.mjs` now has 8
+executed blocks: B1-B5 (unchanged), B6/B11 (unchanged), **C8B-3**
+(projection metadata no longer carries provenance), **body-override
+disposition** (an injected override never reaches storage), **C8B-1
+success path** (replaces B7 — one settings write, `saveRecord()` called
+zero times, Intel release exactly once, one publication event, one
+release hook), **C8B-1 failure path** (replaces B8 — combined-commit
+failure blocks everything, proven against `HolonetStorage.saveRecords`
+rather than the now-superseded `saveRecord` stub), B9 (unchanged
+mechanics, corrected framing — now explicitly asserts the legacy record
+**is flagged** by the remediation predicate as still carrying the
+private sentinel, rather than concluding it is harmless), B10
+(additionally asserts a new-format record is correctly **not** flagged
+by that same predicate).
+
+## 89. Regression / totals
+
+Full `gm-*.test.mjs` sweep: 54/54 green, zero regressions (same file
+count as before this correction pass — no new test files, the existing
+Phase 8B file was extended). Full rolling suite: 189 files run, 184
+pass, 5 fail — same pre-existing, unrelated Force-power failures as
+every prior phase. Syntax check: 2193/2193 clean. Phase 8A's full
+exactly-once suite re-verified green (M1-M10, C1-C3), confirming this
+correction pass did not reopen Phase 8A transport.
+
+## 90. Phase 8 gate (supersedes §83)
+
+**PHASE 8B CORRECTION PASS COMPLETE — READY FOR INDEPENDENT REVIEW.**
+C8B-1 (blocker) fixed with a genuine git-stash-isolated fail-before/
+pass-after proof against real persisted-record behavior — Bulletin
+publication and Intel release now commit as one atomic settings write
+via the existing `HolonetStorage.saveRecords()` primitive, with no new
+transaction ledger, event bus, or socket-compensation layer introduced.
+C8B-2 corrected the prior "harmless"/"inert" framing of legacy
+historical exposure into an honest, evidence-backed remediation finding
+— no destructive cleanup was performed, and the actual affected-world
+count is honestly reported as unknown (no live world data exists in
+this environment). C8B-3 removed a genuine (non-private) provenance
+duplication with no consumer. The body-override audit closed the one
+remaining ambiguity the original pass left undocumented. Per explicit
+instruction: not declaring "READY FOR GENERAL BULLETIN INTEGRATION"
+until independent review of this corrected, pushed head; not beginning
+general Bulletin integration, Job/Location/Faction/Workspace→Bulletin
+work, or Phase 9.
