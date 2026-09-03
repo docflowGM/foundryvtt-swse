@@ -21,10 +21,11 @@
  * context should bias its (still explicitly-set) `populationProfile` —
  * see that module's header for the "explicit Faction identity always
  * wins" rule. This module does not itself call
- * `deriveSpeciesPolicyFromLocationContext()`; that blending happens in
- * the future generator (Phase 8D-2+) BEFORE it calls `createFactionDraft()`,
- * so this module only stores the already-resolved
- * `populationProfile.speciesPolicy` it's given, never re-derives it.
+ * `selectFactionSpeciesWithLocality()`; that per-member selection
+ * happens in the future generator (Phase 8D-2+) when it actually rolls
+ * a Contact's species, so this module only stores the
+ * `populationProfile`/`recruitmentProfile` it's given, never performs
+ * selection itself.
  *
  * HARD RULE: this module never creates, upserts, or otherwise mutates a
  * canonical Faction. Committing a draft to a real Faction record is

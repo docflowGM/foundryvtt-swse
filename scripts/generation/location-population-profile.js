@@ -60,9 +60,11 @@ function cleanSpeciesWeights(value) {
  * Categorical diversity label derived from the single highest species
  * weight — descriptive only, never itself fed back into generation
  * (`speciesWeights` is what `selectSpeciesForLocation()` actually
- * rolls against). Bands per the design phase's own guidance:
- * homogeneous ~95%+, strongly-dominant ~80-90%, dominant ~60-75%,
- * mixed ~35-55%, cosmopolitan below that (no strong majority).
+ * rolls against). Bands (matching the thresholds implemented below
+ * exactly — corrected during independent review, this comment
+ * previously said homogeneous started at ~95%): homogeneous >=90%,
+ * strongly-dominant >=80%, dominant >=60%, mixed >=35%, cosmopolitan
+ * below that (no strong majority).
  */
 function deriveDiversity(speciesWeights) {
   if (!speciesWeights.length) return POPULATION_DIVERSITY.COSMOPOLITAN;
