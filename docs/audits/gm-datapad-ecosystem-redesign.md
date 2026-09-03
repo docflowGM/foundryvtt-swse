@@ -5290,3 +5290,434 @@ merging PR #963; waiting for independent review of this pushed head
 before Phase 8D-2 (actual Job/Faction archetypes, the objective
 catalog, briefing composition, and the separately-proposed procedural
 planet/POI generator addendum) begins.
+
+## 142. Phase 8D-2 — Procedural Content Ecosystem Groundwork (overview)
+
+Following both C8D-1 correction rounds' independent reviews closing
+Phase 8D-1, this pass builds the SKELETON for the entire procedural
+content ecosystem — Locations/Planets/POIs, NPCs, Factions, and
+Jobs/missions — explicitly NOT the full production content (thousands
+of names, ~150-250 POI templates, ~100-200 Job complications, etc.).
+Every new data catalog in this pass is a small, reviewable,
+REPRESENTATIVE pool (typically 20-30 entries) proving the architecture
+works, following the exact precedent Phase 8D-1 itself set (12
+objective-template fixtures, not ~200; 143/128 ship-name adjectives/
+nouns, not an exhaustive list) — explicitly documented per-file as
+deferred-to-expand later, never blocking this review with a giant
+unreviewed data dump. §0 of the governing spec required first closing
+the remaining C8D-1 edge case (§139-141 above), completed immediately
+before this pass began.
+
+## 143. The Generate / Suggest / Resolve principle
+
+The organizing rule applied to every module in this pass, restated
+verbatim from the governing spec: **"Generate narrative facts. Suggest
+canonical mechanics. Resolve through existing authorities. The
+procedural generation system is never a replacement SWSE rules
+engine."** Concretely: GENERATE covers safe narrative/flavor facts this
+system may invent freely (a planet's history hook, an NPC's
+personality, a Faction's institutional character) — plain strings with
+no mechanical weight. SUGGEST covers a proposed use of an existing
+mechanic/resource/statblock that is never authoritative on its own —
+`jobs/opposition-request.js`'s semantic request shape is the clearest
+example: it describes what KIND of opposition a scene calls for and
+NEVER selects, names, or references an actual statblock/Actor.
+RESOLVE covers canonical references obtainable only through an
+EXISTING authority (`SpeciesRegistry`, `LocationRegistryService`,
+`FactionRegistryService`, a Store price index) — every module in this
+pass that needs a species/Location/Faction id takes it as a
+caller-supplied parameter (exactly like `population-profile.js`'s
+established "species ids are always caller-supplied" discipline) and
+never invents, fabricates, or independently resolves one.
+
+## 144. Cross-cutting contracts (no procedural god object)
+
+Four small, genuinely reusable primitives, extracted BEFORE any
+per-entity generator so every domain (Location/Planet/POI/NPC/Faction/
+Job) shares one implementation rather than five near-duplicates:
+
+- `lib/tag-utils.js` — `normalizeTags()`/`hasAllTags()`/`hasAnyTag()`/
+  `mergeTags()`, complementing (not replacing) `weighted-random.js`'s
+  existing `filterByTags()`/`weightedPickWithPreference()`.
+- `lib/generator-diagnostics.js` — a single `DIAGNOSTIC_CODE` enum +
+  `createDiagnostic()` factory, consolidating the diagnostic-code
+  pattern `reward-estimator.js`'s `ISSUER_RESOURCE_MISMATCH` and
+  `recruitment-profile.js`-adjacent `HOSTILE_RELATIONSHIP_NO_NORMAL_JOB`
+  already established — both existing string values are reused
+  verbatim inside the new enum, not redefined.
+- `lib/description-composer.js` — "generate facts first, compose prose
+  second": `joinClauses()`/`composeFromTemplate()` plus one example
+  composer per domain (Location/Faction/NPC). A generated paragraph is
+  NEVER the sole authority for a fact; every composer reads already-
+  structured draft fields and renders a short summary that is always
+  recomputable, never persisted as the only copy of the underlying
+  facts — rerolling one structured field never leaves stale prose
+  behind.
+- `lib/draft-id.js` — generalizes `location-draft.js`'s own
+  Phase-8D-1-established `draft:location:<hex>` pattern into
+  `createDraftId(domain)` so every new domain (Faction/NPC/Job/POI)
+  mints draft ids identically. Its header also documents the explicit
+  investigation conclusion for spec §7 (whether a generic `draftRef`/
+  `{refType, entityType, id}` wrapper is needed): **no** — the existing
+  specialized pattern (a domain-namespaced string id + a documented
+  field name at each use site) is sufficient and clearer; a generic
+  wrapper would either duplicate the namespace prefix's own
+  information or become a second parallel addressing scheme. If a
+  genuinely different dependency SHAPE (many-to-many, not
+  parent-to-child) is needed later, it should be solved when that need
+  is concrete, not speculatively now.
+
+`weighted-random.js` also gained one small, purely additive primitive
+this pass: `weightedPickUniqueN(entries, n)` (weighted pick of up to
+`n` DISTINCT entries without replacement) — used by every new
+multi-select catalog (planet hazards/history hooks/traits/economies,
+Faction internal problems, Job complications/intel clues) instead of
+each duplicating its own pick-without-replacement loop.
+
+## 145. Naming ecosystem — planet/system/settlement/Faction names
+
+Every new name generator follows `ship-name-generator.js`'s exact
+Phase-8D-1 contract: small, tagged, weighted component pools combined
+combinatorially (never a hand-written list of full names), RNG-
+injectable, per-field rerollable.
+
+- `names/planet-name-generator.js` — 55 prefix + 50 suffix syllables
+  (`data/planet-name-syllables.js`), tagged with the SAME free-text
+  biome vocabulary `location-library-seeds.js` already uses
+  (`desert`/`forest`/`ice`/...) rather than a second biome enum;
+  2,750+ combinations from a reviewable pool.
+- `names/system-name-generator.js` — defaults to the exact
+  `"<Planet> system"` convention `location-library-seeds.js` already
+  uses for every known world; an `independent: true` flag draws from a
+  small `data/system-name-designations.js` pool (Reach/Cluster/
+  Expanse/...) for the rarer case of a system not named after one
+  dominant world.
+- `names/settlement-name-generator.js` — a ROLLED TEMPLATE shape
+  (`prefix-root`/`root-suffix`/`prefix-root-suffix`/`root-only`) so
+  output varies structurally, not just lexically; the template itself
+  is part of the deterministic RNG sequence, so a caller with a queued
+  RNG can pin an exact shape for testing. A reroll of a slot the
+  current template doesn't use (e.g. rerolling `prefix` on a
+  `root-only` draft) is a declared NO-OP returning the same reference,
+  proven in the test suite.
+- `names/faction-name-generator.js` — reuses
+  `organization-metadata.js`'s existing `ORGANIZATION_FAMILY` taxonomy
+  verbatim (never a second family enum) to pick a family-appropriate
+  organization-type noun (`Syndicate` for crime-syndicate,
+  `Directorate` for government-bureaucracy, `House` for noble-house,
+  ...) from `data/faction-name-components.js`'s per-family pools, an
+  optional adjective descriptor, and a shared root-name pool. An
+  omitted/unrecognized family resolves to a uniform random real family
+  (recorded on the draft) rather than guessing or defaulting silently
+  to one family.
+
+## 146. Procedural planet groundwork — the no-fallback population rule
+
+`planets/planet-draft.js` composes eight small, independent
+sub-generators (world class/size/gravity/atmosphere via
+`planet-quality-tables.js`; name/system via the naming ecosystem;
+population via `planets/planet-population.js`; government/stability/
+economy/hazards/history-hooks/traits each in their own thin wrapper
+file over their own `data/` pool) into ONE draft record. The single
+HARD RULE this section exists to prove: a brand-new procedurally
+GENERATED planet must never default to
+`location-population-profile.js`'s existing
+`GENERIC_GALACTIC_FALLBACK_POPULATION_PROFILE` (Human 70% + six
+contextually generic supported Species at 5% each) — that fallback
+stays reserved for a real, KNOWN Library world that genuinely has no
+curated census data. `planet-population.js` instead rolls a population
+CHARACTER reusing `location-population-profile.js`'s own
+`POPULATION_DIVERSITY` vocabulary (`homogeneous`/`strongly-dominant`/
+`dominant`/`mixed`/`cosmopolitan` — no second vocabulary invented) and
+builds a REAL weighted distribution from a caller-supplied candidate
+species pool, picking the dominant species UNIFORMLY (never
+Human-weighted) so a non-Human species can dominate exactly as easily
+as Human. Proven in the test suite across a 500-trial sweep (species
+weights always sum to exactly 100) and a targeted 50-trial sweep with
+an all-non-Human candidate pool (Human never appears as dominant,
+proving the reverse is possible too). One genuine bug was caught and
+fixed during this pass's own verification (not by external review):
+the minority-species count could exceed the remaining weight budget,
+making an exact integer split to 100 impossible in rare cases (found
+via a 5,000-trial sweep after the initial implementation, root-caused
+to `minorityCount` not being capped by `remainderWeight`, fixed by
+adding that cap, re-verified clean across the same 5,000 trials).
+
+The Library-based modes (`RANDOM_PLANET`/`RANDOM_PLANET_AND_POI`,
+Phase 8D-1) and the new procedural modes (`GENERATE_NEW_PLANET`/
+`GENERATE_NEW_PLANET_AND_POI`/`GENERATE_NEW_POI`, this pass) stay
+explicitly separate values on `LOCATION_DRAFT_MODE` — never a
+redefinition of what `RANDOM_PLANET` means — so a caller (and a future
+UI) always chooses deliberately between "pick a known/curated world"
+and "invent a new one." A procedural planet draft's base fields
+(`draftId`/`mode`/`locationId`/`parentLocationId`/`parentDraftId`/
+`name`/`category`/`type`/`biomes`/`tags`/`summary`/`provenance`)
+deliberately mirror `location-draft.js`'s `createLocationDependencyDraft()`
+shape — a procedural planet draft already IS a location-dependency
+draft (a superset carrying richer generated facts), so a Faction/Job
+generator that only needs "this Job happens on this Location" consumes
+it identically to a Library-seed-based draft, without a second generic
+wrapper (same investigation conclusion as `draft-id.js`, §144). Eight
+per-field reroll functions (`rerollPlanetWorldClass`/`-Government`/
+`-Stability`/`-Economies`/`-Hazards`/`-HistoryHooks`/`-Traits`/
+`-Population`) each preserve every unrelated field, proven directly in
+the test suite (e.g. a world-class reroll preserves the population
+profile object REFERENCE, not just its content).
+
+## 147. Procedural POI groundwork — contextual weighting
+
+`planets/poi-generator.js` composes a POI-template pick
+(`planets/poi-template.js` over `data/poi-templates.js`, 34
+representative categories: cantina/starport/mine/ruins/military
+outpost/...) with a reused settlement-style name (via
+`names/settlement-name-generator.js` — a POI IS a named place, just
+smaller-scale than a planet, so no second name generator was written).
+Context weighting: when a caller passes the parent planet's own draft
+object, this reads its `worldClass.tags` + `economies[].tags` and
+merges them into the soft tag preference used for BOTH the template
+pick and the name pick — proven in the test suite via a 200-draw sweep
+against a volcanic/mining-context parent, confirming context-matching
+POI types appear meaningfully more often than chance (soft bias, never
+a hard filter — an off-context POI stays reachable). A POI draft is
+the `GENERATE_NEW_POI` mode value on the same `LOCATION_DRAFT_MODE`
+enum used everywhere else in this pass.
+
+## 148. NPC narrative-generation groundwork
+
+`npc-concept.js`'s existing Phase-8D-1 schema already reserved
+`personality`/`agenda`/`secret`/`hook`/`targetImportance` for
+narrative color; this pass adds `appearance`/`motivation`/
+`mannerisms`/`situation`/`suggestion` (purely additive fields,
+confirmed zero regression against every existing `npc-concept.js`
+test). `motivation` (WHY an NPC does what it does) stays a distinct
+field from `agenda` (WHAT they are actively pursuing right now) — two
+NPCs can share a motivation ("desperate to pay off a debt") while
+pursuing entirely different agendas; `situation` (the NPC's own
+current circumstance) stays distinct from the older `hook` (what draws
+a PC in). `npc/npc-narrative-generator.js` rolls all six pools
+(`data/npc-appearance-traits.js`/`-personality-traits.js`/
+`-mannerisms.js`/`-motivations.js`/`-agendas.js`/`-secrets.js`, 25-30
+representative entries each) and composes a `suggestion` field by
+lightly combining the rolled personality + motivation — explicitly
+SUGGEST-tier only, a GM-facing possible use, never a mechanical
+requirement or a link to any statblock. `createGeneratedNpcConceptDraft()`
+lets a caller override any single narrative field while still
+generating sensible defaults for the rest (proven in the test suite);
+`name`/`speciesId`/`factionId`/`linkedLocationId` stay entirely
+caller-supplied, exactly as `npc-concept.js` already required — this
+module never invents a canonical reference. Every field passes the
+existing `hasForbiddenMechanicalFields()` structural guard unchanged.
+One real bug was caught during authoring (not a design defect, a typo):
+an unescaped apostrophe inside a single-quoted data-file string
+(`'...family's lost standing'`) produced a silent syntax error that
+`node --check` did NOT catch (confirmed directly — `node --check`
+returned exit 0 on the broken file), only surfaced by an actual ESM
+`import`. Fixed immediately, and every subsequent new data file in
+this pass was verified by real `--input-type=module` execution, not
+`node --check` alone, per that finding.
+
+## 149. Faction procedural groundwork
+
+Five small additions compose onto the existing `faction-draft.js`
+contract without touching its Phase-8D-1 shape: `factions/
+faction-institutional-character.js` (HOW an org operates — "secretive
+and compartmentalized", "meritocratic", ...), `faction-leadership-structure.js`
+(the SHAPE of power — "a single supreme leader", "a ruling council",
+..., explicitly independent of `rank-metadata.js`'s internal rank
+ladder), `faction-goals.js` (rolls `publicGoal`/`actualGoal`
+INDEPENDENTLY from the same `FACTION_LONG_TERM_GOALS` pool — proven in
+the test suite to differ more than half the time across 100 trials,
+the deliberately interesting narrative case of a Faction whose real
+aim doesn't match its claimed one — plus a separate short-term
+`currentObjective` pool), `faction-internal-problems.js`, and
+`faction-resource-profile.js` (reuses `organization-metadata.js`'s
+EXISTING `describeScale()`/`scaleResourceMultiplier()` Scale authority
+verbatim for `reachLabel`/`fundingTier` — a categorical label
+LOOKUP over the existing fixed multiplier curve, never a second
+numeric Scale system — plus a genuinely new `resourceFlavors` pool
+describing WHAT KIND of resources, independent of HOW MUCH).
+`faction-draft.js` gained nine new fields (`institutionalCharacter`/
+`leadershipStructure`/`publicGoal`/`actualGoal`/`currentObjective`/
+`internalProblems`/`resourceProfile`/`territoryLocationIds`/
+`territoryLocationDraftIds`) — territory refs use IDs only, matching
+the exact-id-only discipline `location-draft.js` already established,
+never a visible name. No bespoke per-field reroll wrappers were needed
+at the Faction level: `updateFactionDraft()` was already a generic
+patch-and-renormalize function (Phase 8D-1), so it covers every new
+field automatically, confirmed directly in the test suite.
+`rank-metadata.js` gained two more archetype rank ladders
+(`CORPORATE_RANK_TIER_MAP` for `corporation`/`guild`,
+`FORCE_TRADITION_RANK_TIER_MAP` for `force_order`), registered into
+the existing `ARCHETYPE_RANK_TIER_MAP` — purely additive, zero change
+to the five existing maps.
+
+## 150. Job/mission procedural groundwork
+
+Twelve small modules under `jobs/`, each a thin wrapper over its own
+`data/` pool (or, for the three smallest closed vocabularies —
+urgency/legality-visibility/encounter-phase — an inline table matching
+`planets/planet-stability.js`'s own established precedent for a small
+enum that doesn't warrant a separate data file):
+`job-archetype-metadata.js` (flavor defaults keyed off
+`objective-template.js`'s EXISTING `missionTypes` vocabulary, never a
+second mission-type enum), `objective-constraint.js` (a GENERATE-tier
+flavor condition layered onto an already-chosen objective template —
+"no witnesses", "a strict time limit"), `mission-subject.js` (a
+role/archetype — hostage/fugitive/VIP/informant/... — with an OPTIONAL
+full narrative NPC concept attached via the Phase-8D-2
+`npc/npc-narrative-generator.js`, reused rather than duplicated),
+`cargo-concept.js` and `intel-clue-concept.js` (fill the EXISTING
+`CARGO`/`ITEM` objective-template slot types; the intel-clue pool is
+explicitly documented as conceptually related to, but never calling
+into, the existing Holonet Intel system), `job-complication.js` and
+`job-twist.js` (execution-level mid-mission complications vs. rarer
+narrative-recontextualizing twists — kept as two separate pools with
+very different default weights, since a twist should be an
+occasional reveal, not a default), `job-urgency.js` and
+`job-legality-visibility.js` (small closed vocabularies;
+`JOB_VISIBILITY.POSTED` deliberately equals `'posted'` character-for-
+character, matching `faction-draft.js`'s own `jobDefaults.visibility`
+default exactly, so a rolled value writes straight through with no
+translation), `job-consequence.js` (narrative flavor for success/
+failure BEYOND the numeric `successDelta`/`failureDelta` already in
+`jobDefaults` — never replaces or computes those numbers), and
+`encounter-phase.js` (a SUGGEST-tier proposed phase sequence —
+infiltration/negotiation/chase/firefight/investigation/escape/
+stealth/standoff — a GM can use, ignore, or rearrange freely; never an
+actual encounter/scene builder).
+
+## 151. The opposition-request contract (Suggest-tier, no Catalog built)
+
+`jobs/opposition-request.js` is the pass's clearest embodiment of the
+Generate/Suggest/Resolve hard rule's middle tier. `createOppositionRequest()`
+returns a semantic description of what KIND of opposition a scene
+calls for (`archetypeTags` — free-text, deliberately not a closed enum,
+matching `location-library-seeds.js`'s own flexible tag discipline;
+`threatLevel`; `countBand`) and is proven in the test suite to NEVER
+carry a `statblockRef`/`actorId`/`uuid` key of any kind — it cannot
+reference an actual statblock because it structurally has no field
+that could hold one. The module's header documents, but does not
+build, the FUTURE interface this request shape is meant to feed: an
+eventual `OppositionCatalogService.resolve(request)` would consume
+exactly this shape and return `{ statblockRefs: string[] }` —
+UUID-only references into the existing Actor compendium, the identical
+UUID-only discipline `faction-doctrine-draft.js`'s
+`createFactionPreferredStatblockRoster()` already established for
+preferred statblocks. Building that resolver is explicitly out of
+scope for this pass.
+
+## 152. Location current-events
+
+`location-event.js` (+ `data/location-events.js`, 28 representative
+entries) rolls a short-term AMBIENT event happening at/around a
+Location right now ("a labor strike has brought commerce to a halt",
+"a smuggling bust has just gone public") plus a small independent
+severity roll (minor/moderate/major/crisis). Deliberately distinct
+from `planets/planet-history-hooks.js` (past events) and
+`planets/planet-hazards.js` (standing environmental/security risk) —
+three different time-horizons for three different kinds of Location
+color. Applies to any Location (planet or POI, Library-based or
+procedural) since it takes no Location reference at all — a caller
+attaches the rolled fact to whichever Location it's describing; this
+module never touches the canonical Location schema.
+
+## 153. Tests
+
+One new suite, `tests/gm-generation-phase8d2-foundation.test.mjs`
+(additive — the existing `gm-generation-phase8d1-foundation.test.mjs`
+was not modified this pass beyond what §139-141 already covered),
+covering all nine sections above: cross-cutting contracts; the naming
+ecosystem (deterministic reroll preservation including the two
+declared-no-op cases); procedural planet groundwork (the 500-trial
+sum-to-100 invariant, the 50-trial non-Human-dominance sweep, the
+`characterOverride`/`dominantSpeciesIdOverride` deterministic pin,
+per-field reroll preserving unrelated fields including object
+REFERENCE identity where nothing about that field changed); procedural
+POI groundwork (the 200-draw context-weighting sweep, per-field
+reroll); NPC narrative-generation groundwork (all six pools nonempty,
+caller-override precedence, zero mechanical fields, per-field reroll
+isolation across five fields simultaneously); Faction procedural
+groundwork (the 100-trial public-vs-actual-goal divergence sweep, the
+resource-profile Scale-authority-reuse proof, the rank-metadata
+archetype-map registration, the Faction-draft schema extension plus
+generic-reroll proof); Job/mission procedural groundwork (archetype
+metadata fail-safe default, mission-subject NPC attachment, urgency/
+legality/visibility vocabulary validity, encounter-phase sequence
+distinctness, the opposition-request never-references-a-statblock
+proof plus its invalid-input fail-safe); Location current-events. Every
+assertion follows the established deterministic-RNG-first style (a
+fixed seed proving the exact mechanism), with statistical sweeps used
+only as a secondary sanity check on genuinely probabilistic behavior
+(context weighting, goal divergence, non-Human dominance), never as
+the sole proof — matching the reviewer-requested style from the C8D-1
+corrections. Draft safety for every new file in this pass is proven by
+the EXISTING recursive source-level scan in
+`gm-generation-phase8d1-foundation.test.mjs` (it walks all of
+`scripts/generation/` recursively and already re-ran clean against
+every file this pass added — no duplicate scan was written).
+
+## 154. Explicitly deferred (unchanged from this pass's own scope boundary)
+
+The finished procedural planet/POI generator UI; full Job
+orchestration (assembling a mission-subject + cargo/intel-clue +
+objective template + constraints + complications + twist + consequence
++ encounter-phase sequence + opposition requests into one composed,
+committable Job draft — this pass built every INGREDIENT, not the
+recipe that combines them); Opposition Catalog classification/resolver
+of any kind (documented interface shape only, per §151); any UI
+wiring of any new module into a surface; full-scale content population
+of any catalog to its wider design-discussion target (~500 planet
+names, ~150-250 POI templates, ~50-100 NPC trait pools each,
+~100-200 Job complications, etc. — every pool in this pass is
+representative, not final); automatic canonical creation of any kind
+(no module calls `upsertFaction`/`upsertLocation`/`createJobPosting`/
+`Actor.create`/`promoteFactionContactToActor`/`.actorizePayload`,
+proven by the same recursive scan referenced in §153); new pricing,
+Species, Location-hierarchy, Faction-persistence, or Job-persistence
+authorities of any kind — every new module in this pass reuses an
+existing authority or stores a plain caller-supplied reference, never
+invents a new one; NPC mechanical stat generation; encounter-balance
+mathematics.
+
+## 155. Regression / totals + Phase 8D-2 gate
+
+Full `gm-*.test.mjs` sweep: 57/57 green (was 56; +1 new
+`gm-generation-phase8d2-foundation.test.mjs`), zero regressions in any
+prior phase's suite, including the full Phase 8D-1 suite (all three
+addenda + both C8D-1 correction rounds) re-run byte-identical. Full
+rolling suite (`tests/*.test.mjs`): 192 files, 187 pass, 5 fail — the
+same pre-existing, unrelated Force-power failures as every prior phase
+(`force-power-final-integration`, `phase3-force-power-corrections`,
+`phase4-force-modifier-automation`, `phase5-force-healing-mitigation`,
+`phase6-force-direct-damage` — confirmed unchanged, none touch
+anything this pass modified). Syntax check (`node --check` across
+every file in `scripts/`, matching this doc's own established
+methodology): **2037/2037 clean** — this session's own direct
+measurement; noted for transparency that this diverges from the
+`2216/2216` figure recorded at the end of §141, and no explanation for
+that divergence is asserted here (this pass did not delete any file
+that would account for it) — every file this pass touched or added is
+individually confirmed clean, both via `node --check` and, per §148's
+finding, via actual `--input-type=module` execution for every new data
+file, which is the stronger and more reliable proof.
+
+**PHASE 8D-2 (PROCEDURAL CONTENT ECOSYSTEM GROUNDWORK) COMPLETE —
+READY FOR INDEPENDENT REVIEW.** Cross-cutting contracts, the naming
+ecosystem, procedural Planet/POI groundwork, NPC narrative-generation
+groundwork, Faction procedural groundwork, Job/mission procedural
+groundwork (including the opposition-request Suggest-tier contract),
+and Location current-events are all built as small, composable,
+RNG-injectable, per-field-rerollable, draft-safe modules — the
+skeleton the governing spec asked for, not the full production content
+catalogs. One genuine bug (planet-population weight-sum edge case) and
+one genuine authoring error (an unescaped apostrophe silently breaking
+a data file's syntax, undetected by `node --check` alone) were both
+caught and fixed during this pass's OWN verification, not by external
+review — documented in §146 and §148 respectively. Per explicit
+instruction: not building the finished planet generator, full Job
+orchestration, Opposition Catalog classification, or any UI in this
+pass; not merging PR #963; waiting for independent review of this
+pushed head before splitting the next implementation phase into
+clean chunks (planets/POIs first, NPC/Faction narrative generators
+second, then Jobs/objectives/complications, then Opposition
+resolution) begins.
