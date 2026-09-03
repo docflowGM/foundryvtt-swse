@@ -517,6 +517,19 @@ export class HolonetIntelService {
     return normalizeIntelMetadata(record.metadata[INTEL_METADATA_KEY]);
   }
 
+  /**
+   * PHASE 8C: the one authoritative way for a caller outside this file
+   * (e.g. GMBulletinSurfaceService's "Prepare Bulletin Draft" prefill) to
+   * get an Intel record's player-safe body. Thin public wrapper around
+   * the same bodyForIntel(intel,'public') helper deliverAsBulletin()
+   * itself uses -- never a second sanitizer, never re-derives fullBody
+   * as a fallback (see the Phase 8B C8B-4 correction).
+   */
+  static getPublicBody(record) {
+    const intel = this.getIntelMetadata(record);
+    return intel ? bodyForIntel(intel, 'public') : '';
+  }
+
   static toIntelSummary(record) {
     const intel = this.getIntelMetadata(record);
     if (!intel) return null;

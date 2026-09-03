@@ -787,6 +787,52 @@ export class GMCampaignContextService {
   }
 
   /**
+   * PHASE 8C — read-only Bulletin provenance resolution. A Bulletin
+   * record's {sourceKind, sourceId} (the general handoff-provenance
+   * contract §100) resolved to a display label, a resolved/resolutionKind
+   * pair matching every other row this service returns, and a
+   * {kind, id} target a caller passes to GMCampaignTargetService.resolve()
+   * for the "Open Source" action — same convention attentionItems() rows
+   * already use. Delegates to this service's own for*() resolvers rather
+   * than re-deriving identity/label logic; never falls back to matching
+   * by title/name/label (Correction 12's exact-id-only discipline extends
+   * here). 'actor' is deliberately not given a navigable target here —
+   * every existing surface opens the real Foundry Actor sheet directly,
+   * never a Datapad surface selection (see GMCampaignTargetService's own
+   * documented actor exclusion); callers resolve/open the Actor sheet
+   * themselves using sourceId as the Actor UUID.
+   */
+  static async resolveBulletinSource({ sourceKind = '', sourceId = '' } = {}) {
+    const kind = text(sourceKind);
+    const id = text(sourceId);
+    if (!kind || !id) return { sourceKind: kind, sourceId: id, label: '', resolved: false, resolutionKind: 'missing', target: null };
+    switch (kind) {
+      case 'job': {
+        const { subject } = await this.forJob(id);
+        return { sourceKind: kind, sourceId: id, label: subject.label, resolved: subject.resolved, resolutionKind: subject.resolutionKind, target: { kind: 'job', id } };
+      }
+      case 'location': {
+        const { subject } = await this.forLocation(id);
+        return { sourceKind: kind, sourceId: id, label: subject.label, resolved: subject.resolved, resolutionKind: subject.resolutionKind, target: { kind: 'location', id } };
+      }
+      case 'faction': {
+        const { subject } = await this.forFaction(id);
+        return { sourceKind: kind, sourceId: id, label: subject.label, resolved: subject.resolved, resolutionKind: subject.resolutionKind, target: { kind: 'faction', id } };
+      }
+      case 'intel': {
+        const { subject } = await this.forIntel(id);
+        return { sourceKind: kind, sourceId: id, label: subject.label, resolved: subject.resolved, resolutionKind: subject.resolutionKind, target: { kind: 'intel', id } };
+      }
+      case 'actor': {
+        const { subject } = await this.forActor(id);
+        return { sourceKind: kind, sourceId: id, label: subject.label, resolved: subject.resolved, resolutionKind: subject.resolutionKind, target: null };
+      }
+      default:
+        return { sourceKind: kind, sourceId: id, label: '', resolved: false, resolutionKind: 'missing', target: null };
+    }
+  }
+
+  /**
    * Aggregate actionable items across the authorities the Phase 6 spec
    * names (6Q). Each authority is read exactly once (Phase 6AP); a
    * subsystem that fails to load is skipped and logged, never crashes the

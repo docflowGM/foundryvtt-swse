@@ -707,6 +707,13 @@ export class GMDatapad extends BaseSWSEAppV2 {
       homeSlotLabel: homeSlot === 'last-session' ? 'Last Session' : 'Comm Feed',
       contactId: record.metadata?.contactId || '',
       imageUrl: record.metadata?.imageUrl || record.sender?.avatar || '',
+      // PHASE 8C — the general Bulletin-handoff provenance contract
+      // (§100). Raw passthrough only; "Open Source" resolves the actual
+      // target at click time via GMCampaignTargetService, so this view
+      // never needs to guess a label or pre-resolve navigation here.
+      sourceKind: record.metadata?.sourceKind || '',
+      sourceId: record.metadata?.sourceId || '',
+      hasSourceProvenance: Boolean(record.metadata?.sourceKind && record.metadata?.sourceId),
       deliverySummary,
       recipientCount: deliverySummary.recipientCount,
       readCount: deliverySummary.readCount,
@@ -1538,6 +1545,69 @@ export class GMDatapad extends BaseSWSEAppV2 {
     });
   }
 
+  /**
+   * PHASE 8C — the one shared "Prepare Bulletin Draft" entry point every
+   * source surface's action button calls. Delegates the actual draft
+   * creation to GMBulletinSurfaceService.prepareDraftFromSource() (the
+   * sole Bulletin-authority seam — this method contains no independent
+   * draft-construction logic of its own) and, on success, navigates to
+   * the Bulletin surface with the new draft selected for editing.
+   * GMBulletinSurfaceService is dynamically imported here to match the
+   * existing lazy-load convention this surface already uses
+   * (GMSurfaceRegistry), not a new pattern.
+   */
+  async _prepareBulletinDraftFromSource(sourceKind, sourceId) {
+    const { GMBulletinSurfaceService } = await import('/systems/foundryvtt-swse/scripts/ui/shell/gm/GMBulletinSurfaceService.js');
+    const draft = await GMBulletinSurfaceService.prepareDraftFromSource({ sourceKind, sourceId });
+    if (!draft) {
+      ui.notifications?.warn?.('Could not prepare a Bulletin draft from that source.');
+      return null;
+    }
+    // prepareDraftFromSource() always builds a BulletinSource.createBulletinMessage()
+    // record (a communication draft is message-shaped), so it always
+    // belongs in the 'messages' section.
+    const section = 'messages';
+    await this.navigateToSurface('bulletin', {
+      hostPatch: {
+        currentBulletinSection: section,
+        bulletinEditor: { section, mode: 'edit', recordId: draft.id }
+      }
+    });
+    return draft;
+  }
+
+  /**
+   * PHASE 8C — "Open Source" for a Bulletin record's own
+   * metadata.sourceKind/sourceId provenance. Mirrors
+   * _wireHomeAttentionTargets()'s established actor-vs-Datapad-surface
+   * split exactly: 'actor' opens the real Foundry Actor sheet directly
+   * (sourceId is the Actor UUID), every other kind resolves through the
+   * same GMCampaignTargetService.resolve() seam every other navigation
+   * in this app already uses. Never falls back to matching by the
+   * Bulletin's own title/label — an unresolved source reports itself as
+   * unresolved, never guessed.
+   */
+  async _openBulletinSource(sourceKind, sourceId) {
+    const kind = String(sourceKind || '');
+    const id = String(sourceId || '');
+    if (!kind || !id) return;
+    if (kind === 'actor') {
+      const bareId = id.replace(/^Actor\./, '');
+      const actor = game.actors?.get?.(bareId) || Array.from(game.actors ?? []).find(candidate => candidate.uuid === id) || null;
+      if (!actor) {
+        ui.notifications?.warn?.('That source Actor could not be found.');
+        return;
+      }
+      actor.sheet?.render?.(true);
+      return;
+    }
+    const target = GMCampaignTargetService.resolve({ kind, id });
+    if (!target) {
+      ui.notifications?.warn?.('This Bulletin’s source could not be resolved.');
+      return;
+    }
+    await this.navigateToSurface(target.surfaceId, target);
+  }
 
   _wireGmDatapadV2Chrome(root) {
     if (!(root instanceof HTMLElement)) return;
