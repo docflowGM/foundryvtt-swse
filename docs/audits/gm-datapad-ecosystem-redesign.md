@@ -5182,9 +5182,9 @@ rather than corrupting anything). `location-population-profile.js`'s
 the code's actual threshold is `>=90`; corrected the comment to match
 the implemented thresholds exactly.
 
-## 138. Regression / totals + Phase 8D-1 gate (supersedes §135)
+## 138. Regression / totals + Phase 8D-1 gate (superseded by §141 — see below)
 
-Full `gm-*.test.mjs` sweep: 56/56 green (unchanged file count — the
+~~Full `gm-*.test.mjs` sweep: 56/56 green (unchanged file count — the
 correction extended the existing test file, no new files), zero
 regressions. Full rolling suite: 191 files, 186 pass, 5 fail — the same
 pre-existing, unrelated Force-power failures as every prior phase
@@ -5208,4 +5208,85 @@ building the finished generator UI or the full objective catalog in
 this pass; not merging PR #963; waiting for independent review of this
 pushed head before Phase 8D-2 (actual Job/Faction archetypes, the
 objective catalog, briefing composition, and the separately-proposed
-procedural planet/POI generator addendum) begins.
+procedural planet/POI generator addendum) begins.~~ (Struck through,
+not deleted — a second review round on this exact head found one
+remaining edge case in the same function; see §139-141.)
+
+## 139. C8D-1 edge case — the Location-influenced branch bypassed the policy's exclusions and the caller's available-species boundary
+
+**Finding.** Confirmed by reading the pushed code directly:
+`selectFactionSpeciesWithLocality()`'s Location-influenced branch
+called `selectSpeciesForLocation(locationPopulationProfile, {rng})`
+with the RAW, unfiltered Location profile — never checking it against
+either `availableSpeciesIds` (the caller's restricted candidate pool)
+or `policy.excludedSpeciesIds` (an `open` policy can legitimately carry
+an explicit exclusion, e.g. a future generated ideology trait). So an
+`open` Faction policy that explicitly excluded a species could still
+have that exact species selected whenever the `localityBias` roll
+succeeded and the Location's demographics favored it — e.g. a Faction
+excluding Twi'lek could still generate a Twi'lek member on Ryloth at
+`localityBias 1`, and a Faction restricted to a Human-only candidate
+pool could still generate a non-Human member the same way. This did
+not affect the non-`open` policy path (already fully correct, proven
+in §137) or the core "does the full distribution get used" fix from
+§136 — it was a narrower gap in the same function's Location branch,
+found on a second independent-review pass of the same head.
+
+**Fix.** Before the weighted pick, the Location's `speciesWeights` are
+now filtered to species that are BOTH present in `availableSpeciesIds`
+AND absent from `policy.excludedSpeciesIds`, and only that filtered
+distribution is passed to `selectSpeciesForLocation()`. No
+renormalization is needed — weighted selection only requires relative
+weights, so filtering out ineligible entries changes nothing about the
+relative proportions among the entries that remain. If the filtered
+pool is empty (every Location species was excluded or out-of-pool),
+the function falls back to the existing `selectSpeciesId()` open-
+selection path rather than returning an illegal species or `null`.
+
+## 140. Fail-before/pass-after proof and tests
+
+Confirmed the gap by reading the pre-fix source directly before
+writing anything (`selectSpeciesForLocation(locationPopulationProfile,
+...)` called with the profile exactly as received, no filter step
+anywhere in between), then verified the fix with two deterministic
+proofs plus two statistical sweeps, matching the reviewer's exact
+request: (1) an `open` policy excluding Twi'lek, on Ryloth (76%
+Twi'lek), at `localityBias 1` — a queued-rng call proves the filtered
+pool contains only Human so any roll must select Human, and a 300-trial
+sweep with a real seeded RNG confirms Twi'lek is never selected even
+once; (2) `availableSpeciesIds` restricted to Human-only, same Location
+and bias — the same deterministic-plus-sweep pattern confirms no
+species outside the pool is ever selected. Both sweeps are genuine
+regression proofs: run against the pre-fix code, either would have
+failed within the first few trials (Ryloth's real distribution favors
+the excluded/out-of-pool species 76% of the time).
+
+## 141. Regression / totals + Phase 8D-1 gate (supersedes §138)
+
+Full `gm-*.test.mjs` sweep: 56/56 green (unchanged file count — the
+correction extended the existing test file, no new files), zero
+regressions, including no change to any of the five tests from the
+first C8D-1 correction (§137) — confirmed byte-identical behavior for
+every case those tests cover. Full rolling suite: 191 files, 186 pass,
+5 fail — the same pre-existing, unrelated Force-power failures as every
+prior phase. Syntax check: 2216/2216 clean (unchanged file count).
+
+**PHASE 8D-1 (RANDOM GENERATION FOUNDATION, INCLUDING ALL THREE
+ADDENDA AND BOTH C8D-1 CORRECTION ROUNDS) COMPLETE — READY FOR
+INDEPENDENT REVIEW.** Round 1 (review of head `180cedd`): locality bias
+now performs a genuine mixture against a Location's full weighted
+species distribution instead of collapsing it to a single dominant
+species. Round 2 (review of head `cff63f4`): that mixture now also
+respects the Faction's own `excludedSpeciesIds` and the caller's
+`availableSpeciesIds` boundary on the Location-influenced branch, not
+only on the ordinary open-selection branch — explicit Faction
+constraints win in every code path, not just the obvious one. Both
+rounds' reviewers independently assessed the surrounding architecture
+(read-only Location context, hierarchy resolution, the non-`open`-
+policy delegation path, the dataset itself) as sound; no rewrite was
+needed either time. Per explicit instruction: not building the
+finished generator UI or the full objective catalog in this pass; not
+merging PR #963; waiting for independent review of this pushed head
+before Phase 8D-2 (actual Job/Faction archetypes, the objective
+catalog, briefing composition, and the separately-proposed procedural
+planet/POI generator addendum) begins.
