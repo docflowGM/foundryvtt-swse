@@ -5679,9 +5679,9 @@ existing authority or stores a plain caller-supplied reference, never
 invents a new one; NPC mechanical stat generation; encounter-balance
 mathematics.
 
-## 155. Regression / totals + Phase 8D-2 gate
+## 155. Regression / totals + Phase 8D-2 gate (superseded by §166 — see below)
 
-Full `gm-*.test.mjs` sweep: 57/57 green (was 56; +1 new
+~~Full `gm-*.test.mjs` sweep: 57/57 green (was 56; +1 new
 `gm-generation-phase8d2-foundation.test.mjs`), zero regressions in any
 prior phase's suite, including the full Phase 8D-1 suite (all three
 addenda + both C8D-1 correction rounds) re-run byte-identical. Full
@@ -5720,4 +5720,429 @@ pass; not merging PR #963; waiting for independent review of this
 pushed head before splitting the next implementation phase into
 clean chunks (planets/POIs first, NPC/Faction narrative generators
 second, then Jobs/objectives/complications, then Opposition
-resolution) begins.
+resolution) begins.~~ (Struck through, not deleted, per this audit's
+own convention — independent review of this exact head found seven
+foundation-contract issues, plus a follow-up request to unify planet
+trade under one shared commodity catalog; see §156-166.)
+
+## 156. Phase 8D-2 correction pass — independent review round 1 (overview)
+
+Independent review of head `7d6fc66` (Rolling System Validation green,
+PR #963 still open/draft/mergeable) confirmed the broad architecture as
+good — small modules, injected RNG, draft-only generation, separate
+data catalogs, canonical authorities left untouched — and confirmed
+the second C8D-1 locality correction (§139-141) held. The review then
+found SEVEN foundation-CONTRACT issues (not missing production
+content, which this whole phase was always explicit about deferring):
+the planet biome field collapsed procedural tags into the Location
+Library's real biome vocabulary instead of keeping them separate;
+population generation ran unconditionally regardless of a world
+class's `habitable` flag; the planet-name generator was built entirely
+around a syllable combinator with no curated-name authority and no
+check against real known worlds; the opposition-request contract was
+too lossy for the resolver the wider design anticipates; the
+objective-template schema had no seam for constraints/opposition/
+location/subject hints; an NPC's `suggestion` field went stale after a
+personality/motivation reroll; and POI templates could only soft-
+deprioritize an incompatible planet context, never actually exclude
+one. A follow-up user message, sent mid-fix, additionally asked planet
+imports/exports to read from one SHARED Galactic Commodity Catalog
+(explicitly for reuse by a future Cargo/smuggling Job generator) rather
+than a planet-specific commodity list, restructured as
+`primarySector`/`secondarySectors` with `{commodityId, importance}`
+trade entries. The review explicitly approved, unchanged: the
+`draft:<domain>:<hex>` draft-id approach (no generic draft-reference
+object needed); the Faction additions (draft-only, population/
+recruitment kept separate, canonical vs. draft Location ids
+distinguished, the abstract resource profile correctly deriving from
+existing Faction Scale); and the mission-subject layer's reuse of NPC
+concept generation instead of inventing a second character structure.
+Every correction below follows the session's established discipline:
+verify the reviewer's claim against the actual source before touching
+anything, fix minimally, prove the fix with real `--input-type=module`
+execution (never `node --check` alone — see §159's own finding on why),
+and confirm zero regression against the entire existing suite before
+moving to the next item.
+
+## 157. Correction 1 — biome single-source-of-truth violation
+
+**Finding**: `planet-quality-tables.js`'s `WORLD_CLASS` entries used a
+made-up `tags` vocabulary (`arid`/`ocean`/`void`/`coastal`/...) as
+their ONLY descriptive field, and `planet-draft.js` wrote that field
+straight into the draft's `biomes` — a second, parallel biome
+vocabulary existing specifically alongside the Location Library's own
+real, curated `LOCATION_LIBRARY_BIOMES` (`location-library-seeds.js`,
+86 values: `desert`/`forest`/`ice`/`urban`/... — confirmed by direct
+`node --input-type=module` inspection, not assumed). This is exactly
+the parallel-vocabulary outcome the wider design was supposed to
+prevent.
+
+**Fix**: every `WORLD_CLASS` entry now carries TWO separate arrays —
+`biomes` (values drawn ONLY from `LOCATION_LIBRARY_BIOMES`, checked at
+module load via a new `isLocationLibraryBiome()` self-check that
+throws immediately if this table and the Library's vocabulary ever
+drift) and `tags` (procedural-only descriptors, kept for soft
+preference-matching across the sibling economy/hazard/trait/name
+pools, never written into a Location's `biomes` field by any caller).
+`planet-draft.js`'s `biomes: worldClass.biomes` is now the sole biome
+authority on a generated draft; `tags` stays procedural-only.
+`preferTags` fed to sibling pools now merges BOTH arrays
+(`worldClassPreferenceTags()`) so soft-matching quality is unchanged
+for the other pools, which mix genuine biome words with procedural
+adjectives in their own tag pools. A second, smaller finding in the
+same review — `type: 'planet'` was hardcoded even for the
+`asteroid-field` world class, which the Library would never call a
+"planet" — is fixed by a new `locationType` field per `WORLD_CLASS`
+entry (`'planet'` for every entry except `asteroid-field`, which uses
+the Library's own `'region'` type). Proven via a 200-seed sweep: every
+generated draft's `biomes` array validates against
+`isLocationLibraryBiome()`, and `type` exactly follows
+`worldClass.locationType` (asteroid-field → `region`, everything else
+→ `planet`).
+
+## 158. Correction 2 — population generation ignored `habitable: false`
+
+**Finding**: `planet-population.js` rolled a full organic species
+distribution unconditionally, regardless of the rolled world class's
+`habitable` flag — a `volcanic`/`barren-rock`/`gas-giant` world (all
+`habitable: false`) could receive an ordinary 100%-weighted organic
+population identical to a `temperate` world.
+
+**Fix**: a new `POPULATION_SCALE` enum (`uninhabited`/`outpost`/
+`small-settlement`/`settled`/`populous`/`hyper-urbanized`, reusing NO
+existing vocabulary — genuinely new, since nothing else in this
+codebase described settlement density) is rolled FIRST, via one of two
+weight tables selected by `habitable` — the uninhabitable table weighs
+`uninhabited`/`outpost` at 10/5 against `settled`'s mere 0.3 (never
+fully zeroed, since a hardy fringe colony on a volcanic world is
+thematically reasonable, just rare). `UNINHABITED` short-circuits
+demographics generation entirely — `speciesWeights: []`, `character:
+null`, `droidComposition: null` — rather than "just" making organic
+population less likely, matching the review's own explicit
+instruction ("Demographics should be empty for an intentionally
+uninhabited planet"). A `droidComposition` field (reusing
+`population-profile.js`'s EXISTING `LIVING_DROID_COMPOSITION_MODE`/
+`createLivingDroidComposition()` — already built for Faction
+demographics, the identical underlying concept — rather than a second
+living/droid vocabulary) and a `populationEstimate` human-readable
+band (`describePopulationEstimate()`) round out the inhabited case.
+`settlementPattern` (`planet-profile.js`) is deliberately DERIVED from
+`populationScale`, never rolled independently — `uninhabited` always
+produces `none`, `hyper-urbanized` always produces `ecumenopolis` — so
+the two facts can never contradict each other, proven across 20 seeds
+at both extremes. Every reroll that changes `populationScale`
+(`rerollPlanetPopulation()`) also rerolls `settlementPattern` AND
+`economy.exports/imports/shortages/illicitTrade` (via
+`planet-trade.js`'s own `UNINHABITED` short-circuit — see §161) so a
+reroll into `uninhabited` can never leave stale trade/settlement data
+behind, closing the exact same class of bug §164 fixes for NPCs.
+
+One genuine bug was caught during this fix's OWN verification (not by
+external review): the minority-species weight-share algorithm could
+occasionally fail to sum to exactly 100 when the rolled minority count
+exceeded the remaining weight budget (each minority species needs at
+least weight 1, so the count can never exceed the remainder itself).
+Root-caused, fixed by capping `minorityCount` at `remainderWeight`,
+re-verified clean across a 5,000-trial sweep with zero failures.
+
+## 159. Correction 3 — missing structural planet fields
+
+**Finding**: the original composite covered world class/size/gravity/
+atmosphere/population/government/stability/economy/hazards/history/
+traits but omitted `region`/`sector`/`climate`/`hydrosphere`/
+population estimate/droid prevalence/technology level/settlement
+pattern/imports-exports — flagged not as "more table entries" but as
+structural fields later Faction/Job generation genuinely needs.
+
+**Fix**: `planets/planet-profile.js` (new) adds `region` (reusing the
+real 7-value galactic-region vocabulary `location-library-seeds.js`
+already uses — `Core Worlds`/`Colonies`/`Inner Rim`/`Mid Rim`/
+`Outer Rim`/`Wild Space`/`Unknown Regions` — never a second one),
+`sector` (a generated `"<Root> sector"` name reusing the EXISTING
+`planet-name-syllables.js` prefix pool rather than a third name-
+component pool), `climate` and `hydrosphere` (new small closed
+vocabularies, softly biased by the same `worldClass` biome/tag
+preference as everything else), and `technologyLevel`. Droid
+prevalence and population estimate are covered by §158's
+`droidComposition`/`populationEstimate`. Every new pick function is
+individually validated (`isPlanetRegion`/`isPlanetClimate`/
+`isPlanetHydrosphere`/`isPlanetTechnologyLevel`/`isSettlementPattern`)
+and wired into `planet-draft.js`'s composite with matching per-field
+reroll functions (`rerollPlanetRegion`/`-Sector`/`-Climate`/
+`-Hydrosphere`/`-TechnologyLevel`). Imports/exports are covered by the
+economy follow-up in §161, since the review's own follow-up message
+substantially expanded what that field needed to be.
+
+## 160. Correction 4 — planet-name authority inverted
+
+**Finding**: the ORIGINAL requirement was a curated pool of roughly
+500 complete procedural planet names; the syllable prefix+suffix
+combinator was implemented as the PRIMARY generator instead, with the
+API built around prefix/suffix rerolls specifically. Reframed by the
+review as an architecture problem, not deferred data population — and
+a second, concrete finding: the combinator has no canonical-name
+exclusion authority, so it can (and, on a long enough run, would)
+produce a name identical to a real Star Wars world (the review's own
+worked example: `"Rax"` + `"us"` → `"Raxus"`).
+
+**Fix**: `data/procedural-planet-names.js` (new, 102 curated full
+names, tagged with biome affinity exactly like every other pool) is
+now the PRIMARY authority — `getRandomPlanetName()` draws from it
+first. A new `isKnownLibraryPlanetName()` on `location-library-seeds.js`
+(case-insensitive, checked against the Library's real 50 curated
+top-level world names) is the canonical-name exclusion authority; the
+curated pool is checked against it at its OWN module load (a
+self-check, same pattern as §157's biome check) and confirmed
+programmatically clean (zero collisions, zero internal duplicates).
+The syllable combinator survives as an explicit FALLBACK ONLY
+(`generateSyllablePlanetName()`), reached automatically by
+`getRandomPlanetName()` when a caller's `excludeNames` exhausts the
+entire curated pool (e.g. generating many planets in one session and
+wanting no repeats) — and even then, every syllable-combined candidate
+is checked against `isKnownLibraryPlanetName()` before being returned,
+retrying up to 20 times and appending a disambiguating numeral on the
+(astronomically unlikely, given 55×50 combinations) exhaustion of
+every attempt, so the fallback path can never silently hand back a
+name colliding with a real known world. Proven: a 500-draw sweep of
+the syllable generator alone confirms zero collisions; a 300-seed
+sweep of the full `planet-draft.js` composite confirms the same. Noted
+for transparency (documented, not silently asserted): the exclusion
+check only GUARANTEES no collision with this repo's own 50-name
+Library — it cannot exhaustively guarantee no collision against the
+full breadth of Star Wars canon/Legends, which has thousands of named
+worlds; every curated entry was authored avoiding well-known real
+names as a matter of care, not a runtime-checked guarantee beyond the
+Library's own scope. `rerollPlanetName()` replaces the old prefix/
+suffix-only reroll API (there is no sub-component to preserve once a
+curated name is picked) and excludes the draft's own previous name
+from reselection.
+
+## 161. Economy follow-up — the shared Galactic Commodity Catalog
+
+A follow-up user message, sent while this correction pass was already
+underway, asked specifically that planet imports/exports read from ONE
+shared commodity catalog reusable by a future Cargo/smuggling/piracy
+Job generator — explicitly NOT a planet-specific hardcoded string list
+("Use every part of the buffalo": Planet Trade / Cargo Jobs /
+Smuggling should all read one catalog, never three drifting copies) —
+with `economy` restructured as `primarySector`/`secondarySectors` and
+`exports`/`imports` as `{commodityId, importance}` pairs referencing
+that catalog, plus `shortages`/`illicitTrade`.
+
+**Built**: `data/galactic-commodities.js` (new) — 113 entries across
+all 14 requested categories (food-agriculture/minerals-raw-materials/
+energy-fuel/industrial-goods/technology/droids/vehicles-transportation/
+shipbuilding/medicine-biotechnology/luxury-goods/cultural-goods/
+information-services/military-goods/black-market-commodities),
+programmatically confirmed to have zero duplicate ids. Each entry
+carries `legality`/`rarity`/`producedBy`/`demandedBy`/`scarcityOn` —
+`rarity` (`common`/`uncommon`/`rare`/`very-rare`) directly implements
+the review's own explicit caution that iconic materials (kyber
+crystals, cortosis, phrik) must stay genuinely rare, not appear on a
+third of rolled worlds; `producedBy`/`demandedBy`/`scarcityOn`
+reference the SAME two vocabularies already established elsewhere in
+this pass (a new stable `sector` slug added to each
+`data/planet-economies.js` entry, plus the real Location Library biome/
+tag vocabulary) rather than a third addressing scheme.
+`planets/planet-economy.js` is restructured
+(`generatePlanetEconomySectors()`) to roll a single `primarySector`
+plus 0-2 distinct `secondarySectors`, never the same entry twice.
+`planets/planet-trade.js` (new) is the Trade Resolver:
+`generatePlanetTrade()` reads the rolled sectors + `worldClass` biomes/
+tags + `settlementPattern`-derived demand context + `stability` and
+resolves `exports`/`imports` (`{commodityId, importance}`, weighted by
+`rarity` so common goods dominate and `very-rare` ones stay
+exceptional), `shortages` (a demanded-but-scarce-for-this-world-class
+commodity, when one exists), and `illicitTrade` (probability raised by
+`unstable`/`lawless`/`contested` stability or a `black-market`/`spice`
+economy sector — proven to exceed 30% on a lawless world across a
+200-trial sweep, vs. the 15% baseline). An `UNINHABITED` world (§158)
+gets ZERO trade of any kind — the exact same empty-not-fabricated
+discipline demographics already established, proven directly (`{
+exports: [], imports: [], shortages: [], illicitTrade: [] }` for every
+uninhabited draw). `planet-draft.js`'s flat `economies` field is fully
+replaced by the nested `economy` object; `poi-generator.js`'s context-
+tag derivation (which read the now-removed field) is updated to match.
+Proven end-to-end across a 300-seed sweep of the full planet-draft
+composite: every export/import `commodityId` resolves in the shared
+catalog, exports and imports never overlap, and an uninhabited world's
+economy is always fully empty.
+
+## 162. Correction 5 — opposition-request contract too lossy
+
+**Finding**: the contract carried only `archetypeTags`/`threatLevel`/
+`countBand`/`notes` — insufficient for the intelligent resolver the
+wider design already anticipates; building that resolver later against
+this shape would force an immediate breaking rewrite.
+
+**Fix**: `createOppositionRequest()` gains `environmentTags`/
+`organizationTags` (context), `requiredRoles`/`optionalRoles`/
+`leaderRequirement`/`specialistRequirements` (composition),
+`reinforcementLevel`/`vehicleSupport`/`droidSupport` (scale), and
+`difficulty`/`rankContext`/`speciesContext`. The last three
+deliberately REUSE existing authorities verbatim rather than inventing
+three more vocabularies: `difficulty` is `objective-economy.js`'s
+existing `OBJECTIVE_DIFFICULTY` (`routine`/`standard`/`difficult`/
+`severe`/`extreme`); `rankContext` is `rank-metadata.js`'s existing
+`COMMAND_TIER`; `speciesContext` is a plain caller-supplied array,
+matching `population-profile.js`'s established "species ids are always
+caller-supplied, never resolved internally" discipline.
+`threatLevel`/`countBand` are explicitly NOT replaced — all three
+facets (a `deadly`/`horde` fight can still be `routine` difficulty for
+a high-tier party) stay independently settable, per the review's own
+instruction. The hard rule is unchanged and re-verified: the expanded
+request still cannot carry a `statblockRef`/`actorId`/`uuid` key of
+any kind — proven directly, not merely asserted — and every invalid
+enum input still fails safe to a documented default rather than
+throwing.
+
+## 163. Correction 6 — objective-template groundwork not extended
+
+**Finding**: `objective-template.js`'s schema/normalizer/validator
+covered `missionTypes`/`tiers`/`slots`/`difficulty`/`weight`/`tags`/
+`creates` only; the separately-built `objective-constraint.js` catalog
+floated beside the contract instead of being representable by it, and
+there was no seam for opposition/location/subject hints at all.
+
+**Fix**: `normalizeObjectiveTemplate()` gains four optional fields —
+`constraints`/`oppositionHints`/`locationHints`/`subjectHints` — each a
+free-text string array, validated the same lightweight way the
+existing `tags` field already is (coerced/filtered, never a hard
+schema error for a missing or malformed entry) rather than a new
+closed vocabulary. Two of the twelve existing representative fixtures
+(`rescue-person-secured-site`, `extraction-hostile-facility`) and one
+more (`sabotage-multiple-targets`) were populated with real example
+values to prove the contract works end-to-end; the review's own
+instruction ("the existing 12 fixtures do not all need to use them
+yet") means the remaining nine correctly keep safe empty-array
+defaults. Proven directly: a template with garbage entries mixed into
+`constraints` (a number, `null`) has them filtered out without
+crashing normalization.
+
+## 164. Correction 7a — NPC reroll left `suggestion` stale
+
+**Finding**: `generateNpcNarrativeFacts()` composed `suggestion` from
+`personality`+`motivation` at generation time, but
+`rerollNpcPersonality()`/`rerollNpcMotivation()` only replaced their
+own single field, leaving the OLD `suggestion` describing the OLD
+values — a direct violation of this whole pass's own "facts first,
+prose second" principle (`lib/description-composer.js`'s header).
+
+**Fix**: a new exported `composeNpcSuggestion(draft)` is the single
+source of truth for the derivation (reading a draft's CURRENT
+`personality`/`motivation`, callable by anyone at any time to get a
+guaranteed-fresh value); `rerollNpcPersonality()`/
+`rerollNpcMotivation()` both call it to recompute and store a fresh
+`suggestion` before returning, so the stored field can never go stale
+from these two specific rerolls again. Proven directly: rerolling
+personality changes `suggestion` to reference the NEW personality
+(previously it would have kept referencing the old one — this is the
+exact bug, reproduced and confirmed fixed, not merely asserted fixed);
+rerolling an unrelated field (appearance) correctly leaves `suggestion`
+untouched; the stored value after either reroll exactly matches an
+independent fresh `composeNpcSuggestion()` call.
+
+## 165. Correction 7b — POI compatibility contract too thin
+
+**Finding**: POI templates carried only `value`/`label`/`weight`/
+`type`/`tags` — enough for SOFT preference (`preferTags`
+deprioritization), not enough to express genuine incompatibility. The
+review's own worked example: an uninhabited barren world could still
+roll "Market District," just less often — never actually excluded.
+
+**Fix**: every `POI_TEMPLATES` entry gains `requiredPlanetTags`
+(ALL must be present, hard filter), `excludedPlanetTags` (NONE may be
+present, hard filter), `populationRequirements` (the parent's
+`populationScale` must be one of these, hard filter — empty means
+compatible with any scale, including `uninhabited`, correctly true for
+e.g. `ruins`/`cave-network`), and `economyTags`/`governmentTags` (soft
+preference bonuses, same mechanism as the existing `tags`, never a
+hard filter). A new `filterCompatiblePoiTemplates()` applies the three
+hard filters; `pickCompatiblePoiTemplate()` layers the existing soft
+`preferTags` weighting on top of whatever survives, falling back to
+the FULL pool (never `null`, never a crash) on the — in practice
+essentially unreachable, since most templates carry no hard
+constraints at all — case where every template is excluded, recording
+`DIAGNOSTIC_CODE.POI_CONTEXT_MISMATCH` (an existing code from
+`lib/generator-diagnostics.js`, already reserved for exactly this) in
+the draft's `diagnostics` array (a plain array on the result object,
+matching `reward-estimator.js`'s own established diagnostics
+convention) rather than silently hiding the mismatch. The original
+soft-only `pickPoiTemplate()` is UNCHANGED and stays available for a
+caller with no planet context to filter against. Proven directly, not
+just via the general sweep: a 500-draw sweep with an uninhabited
+barren-rock context NEVER produces "Market District" (the exact
+review example, reproduced and confirmed fixed); `ruins` and
+`cave-network` remain reachable on that same uninhabited world;
+`farmstead` is correctly excluded (both a population requirement and a
+biome exclusion apply). `poi-generator.js`'s `createProceduralPoiDraft()`/
+`rerollPoiTemplate()` both now derive `planetTags`/`populationScale`
+from `parentPlanetDraft` automatically when supplied.
+
+## 166. Tests + Regression / totals + Phase 8D-2 gate (final)
+
+`tests/gm-generation-phase8d2-foundation.test.mjs` was substantially
+rewritten (not just extended) to match every corrected contract above
+— the file count is unchanged (still the one suite from §153, no new
+test file added this round). New/rewritten coverage: a dedicated
+Location Library biome/known-planet-name authority section; the
+naming-ecosystem section rewritten for the curated-primary/syllable-
+fallback architecture (proving zero collisions across the curated
+pool, the fallback trigger, and a 500-draw fallback collision-
+avoidance sweep); the planet-groundwork section rewritten for biome
+SSOT validation, the habitable-aware `POPULATION_SCALE` bias, the
+`UNINHABITED` short-circuit (demographics AND trade both empty), the
+new structural fields, the shared-catalog Trade Resolver (exports/
+imports resolving in the catalog, never overlapping, the illicit-trade
+stability sweep), and `asteroid-field`'s `type: 'region'` correction;
+the POI section rewritten around the review's own uninhabited/Market-
+District example as the primary proof, plus the `POI_CONTEXT_MISMATCH`
+diagnostic; the NPC section extended with the exact stale-suggestion
+reproduction-then-fix proof; the Job section extended with the
+expanded opposition-request's existing-authority reuse and the
+objective-template hint-field defaults/garbage-filtering proof. Every
+assertion follows the established deterministic-RNG-first style, with
+statistical sweeps (200-500 trials, sized to the claim) used only as
+secondary sanity checks on genuinely probabilistic behavior, never as
+the sole proof.
+
+Full `gm-*.test.mjs` sweep: **57/57 green** (unchanged file count — this
+round rewrote the existing Phase 8D-2 suite rather than adding a new
+file), zero regressions in any prior phase's suite, including the full
+Phase 8D-1 suite (all three addenda + both C8D-1 correction rounds)
+re-run byte-identical throughout every correction in this round. Full
+rolling suite (`tests/*.test.mjs`): **192 files, 187 pass, 5 fail** —
+the same pre-existing, unrelated Force-power failures as every prior
+phase (confirmed unchanged). Syntax check (`node --check` across every
+file in `scripts/`): **2041/2041 clean** (was 2037 per §155's own
+measurement; +4 new files this round — `data/procedural-planet-names.js`,
+`data/galactic-commodities.js`, `planets/planet-profile.js`,
+`planets/planet-trade.js` — all clean; a fifth new file,
+`data/planet-trade-goods.js`, was created then deleted during the
+economy follow-up's own redesign and never committed).
+
+**PHASE 8D-2 (PROCEDURAL CONTENT ECOSYSTEM GROUNDWORK, INCLUDING THE
+INDEPENDENT-REVIEW ROUND-1 CORRECTION PASS) COMPLETE — READY FOR
+INDEPENDENT REVIEW.** All seven findings from the round-1 review are
+fixed and proven, individually, with the exact scenario each finding
+described reproduced and confirmed corrected (not merely asserted):
+the biome SSOT violation, the habitable-blind population generation,
+the missing structural planet fields, the inverted planet-naming
+authority (now curated-primary with a canonical-exclusion guarantee
+scoped honestly to this repo's own Library), the too-lossy opposition-
+request contract, the unextended objective-template schema, the stale
+NPC suggestion field, and the too-thin POI compatibility contract. The
+economy follow-up (one shared Galactic Commodity Catalog, reusable by
+a future Cargo/Job generator, never a planet-specific list) is built
+as its own architectural layer, not folded ad hoc into the planet
+generator. Everything the round-1 review explicitly approved
+unchanged — the draft-id approach, the Faction additions, the
+mission-subject NPC-concept reuse — remains genuinely unchanged; none
+of those files were touched this round except where a field they
+referenced (the old flat `economies`) was renamed out from under them,
+confirmed by direct diff review, not by omission. Per explicit
+instruction: not building the finished planet generator, full Job
+orchestration, Opposition Catalog classification, or any UI in this
+pass; not merging PR #963; not adding further catalogs or production-
+scale content until this correction pass itself is independently
+reviewed.
