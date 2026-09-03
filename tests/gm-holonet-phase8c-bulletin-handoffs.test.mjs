@@ -129,6 +129,46 @@ const INTEL_FULL_BODY_SENTINEL = 'INTEL_FULL_BODY_8C';
 }
 
 // ------------------------------------------------------------
+// C8C-2 correction: Job prefill must use briefing.body ONLY, never fall
+// through to description/brief/thread.preview -- those fields are not
+// independently proven safe at the Bulletin layer (Messenger's own
+// player-facing VM using the same chain does not make every link in it
+// safe for a second, separate consumer). A Job with no briefing.body
+// must prefill an empty body, exactly like Faction/Actor.
+// ------------------------------------------------------------
+{
+  const JOB_THREAD_NO_BRIEFING = {
+    id: 'job-thread-8c-c2',
+    title: 'Fallback Job',
+    preview: 'JOB_FALLBACK_PREVIEW_8C',
+    metadata: {
+      threadType: 'job',
+      job: {
+        title: 'Fallback Job',
+        status: 'posted',
+        description: 'JOB_FALLBACK_DESCRIPTION_8C',
+        brief: 'JOB_FALLBACK_BRIEF_8C'
+        // no briefing.body at all
+      }
+    }
+  };
+  const { stores } = installShim({ threads: [JOB_THREAD_NO_BRIEFING] });
+  const { GMBulletinSurfaceService } = await import('/systems/foundryvtt-swse/scripts/ui/shell/gm/GMBulletinSurfaceService.js');
+
+  const draft = await GMBulletinSurfaceService.prepareDraftFromSource({ sourceKind: 'job', sourceId: 'job-thread-8c-c2' });
+  assert.ok(draft, 'C8C-2: a draft must still be created for a Job with no briefing.body');
+
+  const raw = findRawRecord(stores, draft.id);
+  assert.equal(raw.body, '', 'C8C-2: body must be empty when briefing.body is absent, never fall through to description/brief/preview');
+  const serialized = JSON.stringify(raw);
+  assert.ok(!serialized.includes('JOB_FALLBACK_DESCRIPTION_8C'), 'C8C-2: job.description must never be used as a Bulletin body fallback');
+  assert.ok(!serialized.includes('JOB_FALLBACK_BRIEF_8C'), 'C8C-2: job.brief must never be used as a Bulletin body fallback');
+  assert.ok(!serialized.includes('JOB_FALLBACK_PREVIEW_8C'), 'C8C-2: thread.preview must never be used as a Bulletin body fallback');
+
+  console.log('C8C-2 (Job prefill uses briefing.body only, no fallback chain) passed.');
+}
+
+// ------------------------------------------------------------
 // 8C-2 / privacy: Location -> draft
 // ------------------------------------------------------------
 {
@@ -371,6 +411,60 @@ const INTEL_FULL_BODY_SENTINEL = 'INTEL_FULL_BODY_8C';
 }
 
 // ------------------------------------------------------------
+// C8C-1 correction: 8C-9 above only proved GMCampaignContextService
+// .resolveBulletinSource() itself fails safe -- it never proved the
+// actual production "Open Source" action (GMDatapad._openBulletinSource)
+// uses that resolver before navigating. Before this correction,
+// _openBulletinSource() called GMCampaignTargetService.resolve({kind,id})
+// directly -- a pure id-to-navigation-shape mapper with NO existence
+// check -- so a Bulletin whose source had been deleted still navigated
+// to a destination addressed by the dead id instead of failing safe.
+//
+// GMDatapad (an ApplicationV2 subclass) cannot be imported under this
+// repo's Node/Foundry shim (documented in
+// tests/gm-home-attention-navigation-wiring.test.mjs); this suite uses
+// that file's own established pattern for such a call chain: a static
+// source-proof that the real code performs resolve-then-gate-then-map in
+// the correct order, combined with an executed call into the real
+// (non-reimplemented) resolveBulletinSource() the source is proven to
+// depend on.
+// ------------------------------------------------------------
+{
+  const { readFile } = await import('node:fs/promises');
+  const root = new URL('../', import.meta.url);
+  const source = await readFile(new URL('scripts/apps/gm-datapad.js', root), 'utf8');
+  const controllerSource = await readFile(new URL('scripts/ui/shell/gm/controllers/GMBulletinSurfaceController.js', root), 'utf8');
+
+  // The controller dispatches the click to the real host method, not a
+  // hand-rolled navigation of its own.
+  assert.match(controllerSource, /data-action="bulletin-open-source"/, 'the Bulletin surface must wire an open-source control');
+  assert.match(controllerSource, /this\.host\._openBulletinSource\(event\.currentTarget\.dataset\.sourceKind, event\.currentTarget\.dataset\.sourceId\)/, 'clicking Open Source must call the real host._openBulletinSource(), never a controller-local reimplementation');
+
+  // The host method itself: for a non-actor kind, it must resolve via
+  // GMCampaignContextService.resolveBulletinSource() and check .resolved
+  // BEFORE calling GMCampaignTargetService.resolve() -- the exact ordering
+  // C8C-1 requires, extracted from the real _openBulletinSource() body.
+  const openSourceBody = source.slice(source.indexOf('async _openBulletinSource('), source.indexOf('\n  _wireGmDatapadV2Chrome'));
+  assert.match(openSourceBody, /const resolution = await GMCampaignContextService\.resolveBulletinSource\(\{ sourceKind: kind, sourceId: id \}\);/, '_openBulletinSource must resolve source existence through the real read-only resolver before navigating');
+  assert.match(openSourceBody, /if \(!resolution\?\.resolved\) \{/, '_openBulletinSource must gate on resolution.resolved, failing safe when the source no longer exists');
+  assert.match(openSourceBody, /GMCampaignTargetService\.resolve\(resolution\.target\)/, 'GMCampaignTargetService.resolve() must only ever be called with the already-verified resolution.target, never a raw {kind,id} that bypassed the existence check');
+  const resolveCallIndex = openSourceBody.indexOf('GMCampaignTargetService.resolve(resolution.target)');
+  const gateIndex = openSourceBody.indexOf('if (!resolution?.resolved)');
+  assert.ok(gateIndex >= 0 && resolveCallIndex > gateIndex, '_openBulletinSource must check resolution.resolved BEFORE calling GMCampaignTargetService.resolve(), never after');
+
+  // Executed proof (real production resolver, not reimplemented): a
+  // deleted/never-existed Job source reports resolved:false, which the
+  // source-proven gate above turns into "warn and stay on Bulletin"
+  // rather than a navigation addressed by a dead id.
+  installShim({ threads: [] });
+  const { GMCampaignContextService } = await import('/systems/foundryvtt-swse/scripts/ui/shell/gm/GMCampaignContextService.js');
+  const brokenSource = await GMCampaignContextService.resolveBulletinSource({ sourceKind: 'job', sourceId: 'deleted-job-c1' });
+  assert.equal(brokenSource.resolved, false, 'C8C-1: a deleted source must report resolved:false so _openBulletinSource\'s gate fails safe');
+
+  console.log('C8C-1 (Open Source now verifies the source exists via resolveBulletinSource before navigating, proven against the real host/controller code path) passed.');
+}
+
+// ------------------------------------------------------------
 // 8C-10: source independence -- mutating the source after draft creation
 // never changes the Bulletin body, and vice versa.
 // ------------------------------------------------------------
@@ -437,9 +531,22 @@ const INTEL_FULL_BODY_SENTINEL = 'INTEL_FULL_BODY_8C';
 }
 
 // ------------------------------------------------------------
-// 8C-13: old Bulletins (no provenance, legacy Intel provenance, new Intel
-// minimal provenance) all continue to render through the real surface
-// view-model builder -- no migration required.
+// 8C-13 (C8C-4 correction): old Bulletins (no provenance, legacy Intel
+// provenance, new Intel minimal provenance) all continue to hydrate
+// through the real storage/contract layer -- no migration required.
+//
+// C8C-4 correction: this test previously claimed the three shapes
+// "continue to render through the real surface view-model builder", but
+// it only ever exercised HolonetStorage.getAllRecords()/isBulletinRecord()
+// -- storage hydration and Bulletin-contract compatibility, not the
+// view-model builder (GMBulletinSurfaceService.buildViewModel() /
+// GMDatapad._buildBulletinRecordView()). GMDatapad cannot be instantiated
+// in this Node/Foundry shim (documented in
+// tests/gm-home-attention-navigation-wiring.test.mjs), so the view-model
+// path cannot literally be executed here; the wording below is corrected
+// to describe what this test actually proves instead of overstating it.
+// The view-model's own new C8C-3 source-label field is separately proven,
+// against the real source, by the source-regex + real-resolver test below.
 // ------------------------------------------------------------
 {
   const legacyNoProvenance = {
@@ -478,7 +585,57 @@ const INTEL_FULL_BODY_SENTINEL = 'INTEL_FULL_BODY_8C';
     assert.ok(typeof record.body === 'string', `8C-13: ${record.id} must still expose a readable body`);
   }
 
-  console.log('8C-13 (old Bulletins with no/legacy/new provenance shapes all continue to render, no migration required) passed.');
+  console.log('8C-13 (old Bulletins with no/legacy/new provenance shapes all continue to hydrate through storage and pass the Bulletin-record contract, no migration required) passed.');
+}
+
+// ------------------------------------------------------------
+// C8C-3 correction: the resolved source label the GM actually sees is a
+// DERIVED DISPLAY ONLY (never persisted onto the record) -- proven
+// against the real GMCampaignContextService.resolveBulletinSource() the
+// view builder depends on, plus a source-proof that
+// GMDatapad._buildBulletinRecordView() reads through that exact seam
+// (not a hand-rolled label) and that the persisted record itself never
+// grows the label field. GMDatapad cannot be instantiated in this
+// Node/Foundry shim (see 8C-13 above and
+// tests/gm-home-attention-navigation-wiring.test.mjs), so this follows
+// that file's own established source-proof pattern for the render path.
+// ------------------------------------------------------------
+{
+  const { readFile } = await import('node:fs/promises');
+  const root = new URL('../', import.meta.url);
+  const source = await readFile(new URL('scripts/apps/gm-datapad.js', root), 'utf8');
+  const viewModelSource = await readFile(new URL('scripts/ui/shell/gm/GMBulletinSurfaceService.js', root), 'utf8');
+  const templateSource = await readFile(new URL('templates/apps/gm-datapad/surfaces/bulletin/messages-panel.hbs', root), 'utf8');
+
+  const viewBody = source.slice(source.indexOf('async _buildBulletinRecordView('), source.indexOf('\n  _buildBulletinDeliverySummary'));
+  assert.match(viewBody, /const sourceResolution = hasSourceProvenance\s*\n\s*\? await GMCampaignContextService\.resolveBulletinSource\(\{ sourceKind: record\.metadata\.sourceKind, sourceId: record\.metadata\.sourceId \}\)/, 'the view builder must derive the label from the real read-only resolveBulletinSource() seam, not a hand-rolled lookup');
+  assert.match(viewBody, /sourceLabel: sourceResolution\?\.label \|\| ''/, 'sourceLabel must come straight from the resolver, never a locally guessed value');
+  assert.match(viewBody, /sourceResolved: Boolean\(sourceResolution\?\.resolved\)/, 'sourceResolved must reflect the real resolver result');
+  // Nothing in the view builder writes the label back onto the record --
+  // it only ever appears in the returned view object, proving "derived
+  // display only, never persisted" from the real source.
+  assert.doesNotMatch(viewBody, /record\.metadata\.sourceLabel\s*=/, 'the resolved label must never be written back onto the record (it would become stale, duplicated truth)');
+
+  // buildViewModel() must await the now-async view builder at every call
+  // site (a bug here would silently render "[object Promise]" instead of
+  // the real fields).
+  assert.match(viewModelSource, /await Promise\.all\(eventRecords\.map\(\(record\) => host\._buildBulletinRecordView\(record\)\)\)/, 'buildViewModel must await every _buildBulletinRecordView() call now that it is async');
+  assert.match(viewModelSource, /await Promise\.all\(messageRecords\.map\(\(record\) => host\._buildBulletinRecordView\(record\)\)\)/, 'buildViewModel must await every _buildBulletinRecordView() call now that it is async');
+
+  // The template renders the resolved label, not just a bare "Open Source"
+  // control with no visible provenance.
+  assert.match(templateSource, /\{\{this\.sourceKindLabel\}\}/, 'the Bulletin messages panel must display the resolved source kind label');
+  assert.match(templateSource, /\{\{this\.sourceLabel\}\}/, 'the Bulletin messages panel must display the resolved source label, not just an "Open Source" button with no visible provenance');
+
+  // Executed proof (real production resolver): the same resolveBulletinSource()
+  // call the view builder is proven above to depend on really does return a
+  // human-readable label for a resolved source.
+  installShim({ locations: [{ id: 'loc-c3', name: 'Coruscant Undercity', publicSummary: 'x' }] });
+  const { GMCampaignContextService } = await import('/systems/foundryvtt-swse/scripts/ui/shell/gm/GMCampaignContextService.js');
+  const resolved = await GMCampaignContextService.resolveBulletinSource({ sourceKind: 'location', sourceId: 'loc-c3' });
+  assert.equal(resolved.label, 'Coruscant Undercity', 'C8C-3: the resolver the view builder depends on must produce the real label the GM would see');
+
+  console.log('C8C-3 (resolved source label is a derived, never-persisted display value, proven against the real view-builder/template code path) passed.');
 }
 
 console.log('PHASE 8C Bulletin general-integration/cross-surface-handoff suite passed.');
