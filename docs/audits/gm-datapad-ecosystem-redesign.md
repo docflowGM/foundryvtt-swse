@@ -6869,3 +6869,284 @@ Job -> Objectives + Cargo/MacGuffins -> Opposition Request -> Rewards
 practice of stopping after each phase/correction for explicit
 independent sign-off before starting the next body of work, this phase
 has not been started.
+
+## 180. PHASE 8D-3A — Procedural Locations Productionization (completion report)
+
+Authorized by an explicit, detailed user specification directly
+following Phase 8D-2's independent-review closure (§179): take the
+existing procedural planet/POI foundation and turn it into a
+"sufficiently deep, production-sized generator" — production-scale
+catalog expansions, demographic production rules, context-sensitive
+Trade Resolver/droid-prevalence tuning, a planet+POI bundle generator
+with sibling-safe reroll/regenerate operations, a planet presets
+system, SUGGEST-tier narrative hooks, and an expanded diagnostics/
+summary-composition pass. Same branch/PR (`claude/locations-context-
+contract-i8tbp0`, PR #963), still draft, no premature canonical
+persistence — GENERATE/SUGGEST/RESOLVE preserved throughout: this
+phase never creates a canonical Actor/Faction/Job/Scene/Journal/
+LocationRegistry record.
+
+### Catalog expansions (all counts land in the spec's own target ranges)
+
+| Catalog | Before | After | Target |
+|---|---|---|---|
+| `data/procedural-planet-names.js` `PROCEDURAL_PLANET_NAMES` | 102 | 500 | ~500 (450-550) |
+| `data/planet-name-syllables.js` `PLANET_NAME_PREFIXES` | 56 | 206 | 150-250 (also backs sector/system-root naming) |
+| `data/planet-name-syllables.js` `PLANET_NAME_SUFFIXES` | 51 | 111 | 100+ |
+| `planet-quality-tables.js` `WORLD_CLASS` | 12 | 38 | 30-50 |
+| `planet-quality-tables.js` `PLANET_GRAVITY` | 3 | 6 | 6 tuned categories |
+| `planet-quality-tables.js` `PLANET_ATMOSPHERE` | 5 | 12 | 12 |
+| `planet-profile.js` `PLANET_CLIMATE` | 7 | 20 | 15-25 |
+| `planet-profile.js` `PLANET_HYDROSPHERE` | 5 | 12 | 12 |
+| `data/planet-traits.js` `PLANET_TRAITS` | 26 | 122 | 100-150 |
+| `data/planet-hazards.js` `PLANET_HAZARDS` | 26 | 91 | 75-100 |
+| `data/planet-history-hooks.js` `PLANET_HISTORY_HOOKS` | 26 | 108 | 100-150 |
+| `data/planet-governments.js` `PLANET_GOVERNMENTS` | 24 | 56 | 40-60 |
+| `planet-stability.js` `PLANET_STABILITY` | 7 | 22 | 20-30 |
+| `data/planet-economies.js` `PLANET_ECONOMIES` | 28 | 61 | 50-75 |
+| `data/galactic-commodities.js` `GALACTIC_COMMODITIES` | 114 | 166 | 150-250 |
+| `data/poi-templates.js` `POI_TEMPLATES` | 34 | 194 | 150-250 |
+| `data/settlement-name-components.js` `SETTLEMENT_NAME_ROOTS` | 30 | 330 | 300+ |
+
+Every new/expanded catalog entry was verified programmatically before
+being spliced in (never by inspection alone): zero duplicate values
+within its own pool; every `biomeAffinities`/`biomes` value a real
+`LOCATION_LIBRARY_BIOMES` entry (the module's own self-check, which
+throws at load if this ever drifts, still passes); every `type` a real
+canonical `LOCATION_TYPES` value; every economy `sector`/`producedBy`/
+`demandedBy` slug cross-referenced so no sector has zero matching
+commodities (including the 6 brand-new sectors this phase introduced:
+`entertainment`/`luxury`/`research`/`education`/`salvage`/`security`);
+`PROCEDURAL_PLANET_NAMES` checked for zero collisions against the real
+curated Location Library planet names, not just against itself.
+
+### New POI naming component pools (`data/poi-place-name-components.js`, `names/poi-place-name-generator.js`)
+
+Previously EVERY POI (a Cantina, a Sith Tomb, a Research Facility —
+any kind at all) got the same settlement-style name
+(`${settlementName} ${label}`), because `settlement-name-generator.js`
+was the only name generator that existed. This phase adds three more
+naming STYLES, dispatched from a POI template's own canonical `type`
+(`poi-place-name-generator.js`'s `poiNameStyleForType()` — `city` stays
+SETTLEMENT unchanged; `facility`/`base` -> FACILITY, an institutional
+designation e.g. "Site 7"; `region` -> DISTRICT, a quarter/ward name
+e.g. "the Ashfall Quarter"; everything else -> GEOGRAPHIC, an
+adjective+feature pair e.g. "Shattered Ridge", reusing the EXISTING
+`ship-name-adjectives.js` pool (145 entries) rather than duplicating
+it, paired with a new `GEOGRAPHIC_FEATURE_NOUNS` pool (90 entries) —
+235 combined geographic naming components). `FACILITY_DESIGNATIONS`
+(160) and `DISTRICT_DESCRIPTORS` (109) are new flat pools. `poi.name`
+still always ends with `poi.template.label` regardless of style
+(verified directly, 1000+ draws). `rerollPoiTemplate()` regenerates
+the place-name only when the newly-rolled template's style actually
+differs from the old one — a same-style reroll (Mine -> Processing
+Plant, both FACILITY) keeps the existing place-name for continuity.
+
+### Demographic and context-sensitivity production tuning (`planet-population.js`, `planet-profile.js`, `planet-trade.js`)
+
+- **Species prevalence**: a new, EXPLICITLY generator-only (never a
+  lore authority, never a second Species registry) prevalence manifest
+  (`SPECIES_GENERATOR_PREVALENCE`, private) softly weights which
+  species from a caller-supplied pool becomes dominant — Human common
+  but not guaranteed dominant. Matched via an optional `{id, name}`
+  pool-entry shape; a bare ID string (the original contract, and what
+  every existing test still uses) gets neutral weighting exactly as
+  before — this SUPERSEDES the 8D-2 design note that dominance was
+  uniform across species, by design, per this phase's explicit
+  instruction.
+- **Native vs. dominant species** are now separate concepts
+  (`nativeSpeciesIds`/`dominantSpeciesIds`), driven by a new
+  `COLONIZATION_PATTERN` enum (native-majority/native-minority/
+  settler-majority/cosmopolitan-colony/multi-native).
+- **Numeric population estimates** (`rollPopulationEstimateNumeric()` +
+  `formatPopulationEstimateNumeric()`) sit alongside the existing prose
+  band, deterministic under an injected `rng`, always within that
+  band's numeric range, and exactly `0` (never `null`) for
+  `UNINHABITED`.
+- **Droid prevalence** now softly skews toward HIGH/VERY_HIGH/AUTOMATED
+  under an advanced-tech/industrial-economy context
+  (`droidContextScore()`/`applyDroidContextBias()`), which required
+  reordering `planet-draft.js` so `rollCivilization()` (technology
+  level/economy) runs BEFORE the droid-prevalence roll — verified this
+  is a soft skew, never a requirement (a Cutting-Edge world can still
+  roll LOW prevalence, just less often).
+- **Trade Resolver**: `computeShortages()` now also factors population
+  pressure, thin production base (`sectorCount <= 1`), and stability
+  (a new `STRAINED_STABILITY_VALUES` set spanning ~13 of the 22
+  production stability values, up from 3 of the original 7) — a
+  shortage can now occur WITHOUT a direct environmental scarcity match
+  under enough combined pressure, and up to two shortages can occur at
+  once; an environmental match alone still guarantees at least one
+  shortage exactly as before (a strict widening, never a narrowing).
+  `illicitChanceFor()` now also reads a `crime-syndicate`-tagged
+  government and a `trade`-sector "port context."
+
+All of the above were verified with real statistical effect (seeded
+large-N sampling), never merely "the code path exists" — e.g. an
+advanced-tech/manufacturing context raises high-tier droid prevalence
+from a measured baseline to a rate 1.3x+ higher (formalized in the new
+test suite, §181), and a hyper-urbanized/unstable/single-sector world
+can roll a shortage with zero environmental scarcity match.
+
+### Planet+POI bundle generator and reroll operations (`planets/planet-bundle.js`, new)
+
+`generateProceduralPlanetBundle()` composes `planet-draft.js` and
+`poi-generator.js` (no new pick logic of its own) into one
+`{ planetDraft, poiDrafts }` bundle with proper `parentDraftId`
+linkage and a `poiCountForPopulationScale()` helper
+(`poi-generator.js`) resolving a sensible POI count per world size
+(UNINHABITED/OUTPOST 1-3 up to HYPER_URBANIZED 7-12). Six bundle-level
+operations follow: `regeneratePlanetAndPois()` (the one operation
+besides initial creation allowed to replace every POI),
+`rerollPlanetFactsOnly()` (hazards/history hooks/traits together),
+`regenerateEnvironment()` (world class/climate/hydrosphere together),
+`regenerateCivilization()` (government/stability/technology/economy,
+composed from `planet-draft.js`'s own exported single-field reroll
+functions, never a reimplementation), and `addPoiToBundle()`/
+`removePoiFromBundle()`/`rerollPoiInBundle()` for individual POIs.
+Every scoped operation was verified — not merely by count, but by
+OBJECT-IDENTITY preservation of every untouched sibling `poiDrafts[]`
+entry — to never silently destroy a POI it wasn't asked to touch.
+
+### Planet presets (`data/planet-presets.js`, new — 20 named presets)
+
+A preset (Mining World, Ecumenopolis, Agricultural World, Ocean World,
+Ice World, Desert World, Jungle World, Ancient Ruins World, Trade Hub
+World, Frontier Outpost World, Military Garrison World, Pirate Haven
+World, Penal Colony World, Research Outpost World, Sacred World,
+Corporate Colony World, Volcanic Industrial World, Post-Cataclysmic
+World, Isolated World, Crime Syndicate World) is NOT a bespoke
+generator — it is only a `preferTags` bundle plus an optional
+`densityBias` override, feeding the SAME soft-preference picks that
+already existed. `createProceduralPlanetDraft({ presetId })` threads a
+preset's `preferTags` into `pickPlanetWorldClass()` (which previously
+NEVER received any preferTags at all — a genuine pre-existing gap,
+closed here) and downstream picks; the resolved id is recorded on the
+draft's own `presetId` field and in `provenance.presetId`, and stays
+"sticky" across a world-class/government/population reroll rather than
+only ever applying once. Closed two more pre-existing wiring gaps
+found while threading this through: `pickPlanetGovernment()` and
+`pickPlanetHistoryHooks()` were never passed `preferTags` at their
+call sites despite both functions already supporting it. Verified with
+real statistical effect: a direct preferTags check shows a large,
+significant bias (e.g. crime-syndicate/black-market preferTags raise
+the criminal-archetype suggestion rate from 60% to 88%); a whole-draft
+check (diluted by a full draft's own varied tag context, as intended —
+presets bias, never dictate) still shows a highly significant effect
+(z≈5, not noise).
+
+### SUGGEST-tier hooks (`planets/planet-hooks.js`, new)
+
+Adds `suggestedFactionArchetypeTags`/`suggestedJobArchetypeTags` (1-3
+each, reusing `organization-metadata.js`'s existing 20 Faction
+archetypes and `job-archetype-metadata.js`'s existing 14 Job mission
+types verbatim — no third archetype vocabulary), `suggestedOppositionTags`
+(a plain filter of the draft's own tags against an opposition-relevant
+subset, matching `opposition-request.js`'s own explicit "free-text, not
+a closed enum" design), `currentEvents` (0-2, via the EXISTING
+`location-event.js`, previously never wired into a planet draft at
+all), and `secret` (one optional GM-only world-level fact,
+`data/planet-secrets.js`, 28 entries — distinct from the existing
+`npc-secrets.js`, which is about a PERSON, not a world). All five are
+narrative hints only; none creates an actual Faction/Job/Intel record.
+A new `rerollPlanetHooks()` recomputes only these five fields; they
+never change as a side effect of an unrelated reroll.
+
+### Diagnostics expansion + richer summary prose
+
+Three new `DIAGNOSTIC_CODE` values
+(`TRADE_CONTEXT_MISMATCH`/`GOVERNMENT_POPULATION_MISMATCH`/
+`TECHNOLOGY_POPULATION_MISMATCH`), all "warn about an unusual
+combination, never fix or discard" — the same discipline every
+existing diagnostic follows. A planet draft previously had NO
+`diagnostics` field at all (unlike a POI draft); it does now, computed
+at creation and recomputed on every reroll that can affect one of the
+three checks. `composeLocationSummary()` gained two new optional
+params (`government`/`population`, both backward compatible — the
+existing `composeLocationSummary({})` empty-facts contract still
+holds), synthesizing them as their own grammatically-correct sentences
+rather than a comma-splice. A sample generated summary: *"A
+low-gravity-terrestrial world of wilderness, rural terrain, known for
+archaeology and heritage tourism, governed by hereditary monarchy.
+Population estimate: fewer than 100. The political situation is
+unstable."*
+
+### Explicitly NOT built this phase (matches the spec's own deferred list)
+
+Final GM-facing UI for any of this, the canonical-commit workflow (a
+draft is still never written to `LocationRegistryService`), production
+Faction/NPC/Job generators, the Opposition Catalog resolver
+(`suggestedOppositionTags` remains a hint with nothing to consume it
+yet — the resolver's future interface is still only documented, not
+built, in `opposition-request.js`), encounter/Scene generation,
+mechanical hazard resolution, economic simulation, a merchant/store
+UI, or automated campaign generation.
+
+## 181. Tests + Regression / totals + Phase 8D-3A gate (final)
+
+New dedicated test file `tests/gm-generation-phase8d3a-production.test.mjs`
+(matching the `gm-generation-phase8d1/8d2-foundation.test.mjs`
+convention rather than further growing the 8D-2 file), organized in
+three sections: **catalog quality** (every count/range above, zero
+duplicates, biome/type/sector validity against the real authorities,
+zero collision against the curated Library, 20 unique preset ids,
+graceful unknown-preset-id handling); **generation semantics**
+(numeric population estimate banding, statistically-verified
+context-sensitive droid prevalence and Trade Resolver widening,
+colonization-pattern validity, POI naming-style dispatch correctness
+across 1000 draws with all 4 styles confirmed reachable,
+statistically-verified preset bias, diagnostics reachability for all 3
+new codes with the UNINHABITED-empty guarantee); **bundle generation,
+reroll safety, and determinism** (POI-count-by-population-scale
+ranges, parentDraftId linkage over 100 seeds, an explicit `poiCount`
+override, every scoped bundle operation verified to preserve untouched
+sibling POIs by OBJECT IDENTITY — not merely by count, which would
+miss a subtler class of bug — and a whole-bundle seeded-determinism
+check: the same seed produces byte-for-byte identical generated facts
+across two independent runs, draftId/timestamps excluded as
+intentionally non-deterministic identity/wall-clock fields never
+generated facts, with a differing-seed sanity check guarding against a
+vacuously-passing comparison).
+
+One existing assertion in `tests/gm-generation-phase8d2-foundation.test.mjs`
+was corrected in passing (not a finding from this phase's own review —
+a self-caught test-fragility fix while adding the new `artificial-
+habitat` `WORLD_CLASS` entry, which needed the SAME `locationType`
+exception `asteroid-field` already established): the POI/planet-type
+assertion compared against a hardcoded "only asteroid-field is an
+exception" list; rewritten to compare against `draft.worldClass.locationType`
+directly, a more correct and less brittle check that needs no future
+exception-list maintenance at all.
+
+Full `gm-*.test.mjs` sweep: **58/58 green** (57 prior files, unchanged
+and re-run byte-identical except the one self-caught fragility fix
+above, + 1 new file this phase). Full rolling suite
+(`tools/run-rolling-tests.mjs`, the project's own official runner,
+`node tools/run-rolling-tests.mjs`): **188 passed, 0 failed (of 188
+run; 5 excluded as documented pre-existing failures)** — 193 total
+`tests/*.test.mjs` files (192 pre-existing + this phase's 1 new file),
+matching the pre-existing baseline exactly aside from the one new
+file; the same 5 pre-existing, unrelated Force-power failures as every
+prior phase remain excluded (confirmed unchanged, `KNOWN_EXCLUDED_TESTS.length
+=== 5` still holds). Full syntax check (`tools/run-rolling-syntax-check.mjs`,
+`node --input-type=module --check` across every discovered source
+file): **2402/2402 clean**. No canonical-persistence call
+(`LocationRegistryService`/`FactionRegistryService`/`game.actors`/
+`game.folders`/etc.) exists anywhere in any file this phase touched or
+added — confirmed by direct grep across every new/changed 8D-3A
+module, not by omission. Working tree clean before this commit.
+
+**PHASE 8D-3A (PROCEDURAL LOCATIONS PRODUCTIONIZATION) COMPLETE —
+READY FOR INDEPENDENT REVIEW.** Every production target the
+authorizing spec named is met or exceeded (see the catalog table
+above); every new weighting/tuning mechanism (species prevalence,
+droid-context skew, Trade Resolver shortage/illicit widening, planet
+presets, suggested-archetype hooks) is verified with REAL, measurable
+statistical effect, never merely "the code path exists but does
+nothing detectable"; the bundle generator's sibling-safety guarantee
+is verified by object identity, the strongest form of that check; the
+GENERATE/SUGGEST/RESOLVE boundary holds throughout — no canonical
+Actor/Faction/Job/Scene/Journal/LocationRegistry record is created
+anywhere in this phase. PR #963 stays draft and unmerged. Per this
+session's standing practice: STOPPING here for explicit independent
+review before starting any hypothetical Phase 8D-3B.
