@@ -6,11 +6,13 @@
  * Context weighting: when a caller passes `parentPlanetDraft` (the
  * object `planet-draft.js`'s `createProceduralPlanetDraft()` returns),
  * this reads its `worldClass.biomes` + `worldClass.tags` +
- * `economy.primarySector`/`secondarySectors[].tags` and merges them
- * into the soft tag preference used for BOTH the POI template pick and
- * the settlement-name pick — a POI generated for a volcanic mining
- * world should skew toward "Mine"/"Processing Plant" over "Fishing
- * Village". CORRECTED (Phase 8D-2 review, economy follow-up): also
+ * `economy.primarySector`/`secondarySectors[].tags` +
+ * `government.tags` and merges them into the soft tag preference used
+ * for BOTH the POI template pick and the settlement-name pick — a POI
+ * generated for a volcanic mining world should skew toward "Mine"/
+ * "Processing Plant" over "Fishing Village", and one generated under a
+ * theocracy should skew toward "Temple"/"Shrine" over "Government
+ * Complex". CORRECTED (Phase 8D-2 review, economy follow-up): also
  * applies `poi-template.js`'s new HARD compatibility filter (using the
  * planet's `worldClass.biomes`+`tags` and `populationScale`) on top of
  * that soft preference -- an uninhabited world can no longer roll
@@ -23,6 +25,13 @@
  * caller without a planet draft object at hand (e.g. attaching a POI
  * to an existing canonical planet) can instead pass `preferTags`/
  * `planetTags`/`populationScale` directly.
+ *
+ * CORRECTED (round 2): a POI draft's `biomes` field now comes from the
+ * template's own `biomes` (real `LOCATION_LIBRARY_BIOMES` values only
+ * -- see `data/poi-templates.js`'s header), never `template.tags`
+ * (procedural-only organization/flavor descriptors like "criminal" or
+ * "government-bureaucracy") -- the same biome single-source-of-truth
+ * fix `planet-quality-tables.js`'s `WORLD_CLASS` split applies here too.
  *
  * Reuses `settlement-name-generator.js` for the POI's place-name rather
  * than inventing a second name generator — a POI IS a settlement/named
@@ -44,7 +53,8 @@ function contextTagsFor(parentPlanetDraft, preferTags) {
   const worldClassTags = parentPlanetDraft.worldClass?.tags ?? [];
   const economySectors = [parentPlanetDraft.economy?.primarySector, ...(parentPlanetDraft.economy?.secondarySectors ?? [])].filter(Boolean);
   const economyTags = economySectors.flatMap((e) => e.tags || []);
-  return mergeTags(preferTags, worldClassBiomes, worldClassTags, economyTags);
+  const governmentTags = parentPlanetDraft.government?.tags ?? [];
+  return mergeTags(preferTags, worldClassBiomes, worldClassTags, economyTags, governmentTags);
 }
 
 function planetTagsFor(parentPlanetDraft, explicitPlanetTags) {
@@ -106,7 +116,7 @@ export function createProceduralPoiDraft({
     template,
     category: 'planetary',
     type: template.type,
-    biomes: template.tags,
+    biomes: template.biomes,
     tags: mergeTags(template.tags, contextTags),
     summary: composeSummary(template, name),
     diagnostics: contextMismatch ? [DIAGNOSTIC_CODE.POI_CONTEXT_MISMATCH] : [],
@@ -122,7 +132,7 @@ export function rerollPoiTemplate(draft, { rng, preferTags = [], planetTags = []
     ...draft,
     template,
     type: template.type,
-    biomes: template.tags,
+    biomes: template.biomes,
     name,
     tags: mergeTags(template.tags, preferTags),
     summary: composeSummary(template, name),
