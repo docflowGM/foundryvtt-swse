@@ -6146,3 +6146,392 @@ orchestration, Opposition Catalog classification, or any UI in this
 pass; not merging PR #963; not adding further catalogs or production-
 scale content until this correction pass itself is independently
 reviewed.
+
+## 167. Independent review, round 2 (head `9a4a8b7`) — overview
+
+A second independent review, run against the round-1 correction pass
+(head `9a4a8b7`, confirmed exact-head-green on Rolling System
+Validation, `mergeable_state: clean`, still draft), confirmed the
+round-1 fixes as substantially correct: the shared Galactic Commodity
+Catalog's design (113 Star Wars-flavored commodities, stable ids,
+categories, legality, rarity, production/demand affinities), the Trade
+Resolver storing `{commodityId, importance}` rather than copying
+commodity data into Location drafts, the expanded opposition-request
+contract, the objective-template hint fields, and the NPC stale-
+suggestion fix were all explicitly approved unchanged. It found six
+more foundation-contract issues — none of them "more catalogs," all
+of them the same class of problem as round 1: a declared contract that
+the actual generator code didn't fully honor. Explicit review
+instruction: fix these six, rerun the same regression gate, then stop
+— still no further catalogs, no UI, no 500-name/200-objective/
+150-250-POI production expansion until this pass itself is reviewed.
+
+The six findings, and this section's fixes:
+
+1. **Cargo/commodity SSOT still duplicated** — `jobs/cargo-concept.js`
+   read its own free-text `CARGO_CONCEPTS` table (medical supplies,
+   restricted weapons, spice, droid parts, fuel cells, starship parts,
+   ...) instead of the shared Galactic Commodity Catalog, directly
+   violating the "one commodity vocabulary" goal the catalog exists
+   for. Fixed in §168.
+2. **POI biome/type authority still wrong, two fields dead** —
+   `poi-generator.js` wrote a POI template's `tags` (which mix real
+   biome words with organization-family descriptors like "criminal"/
+   "government-bureaucracy") straight into the draft's canonical
+   `biomes` field — the SAME violation the round-1 biome-SSOT fix
+   corrected for planets, just not yet applied here. Separately, POI
+   templates declared `economyTags`/`governmentTags` but the picker
+   only ever read `entry.tags`, so those two fields never actually
+   influenced selection. And almost every template defaulted to the
+   generic `poi` type instead of the richer canonical Location types
+   (`base`/`temple`/`facility`/`city`) the Location Registry already
+   defines. Fixed in §169.
+3. **`UNINHABITED` only gated demographics/trade** — a generated
+   uninhabited world still rolled a government, political stability, a
+   technology level, and economy sectors unconditionally, producing
+   structurally contradictory drafts (the review's own example: "no
+   permanent population" paired with "parliamentary government" in
+   "civil unrest"). Fixed in §170.
+4. **Planet droid prevalence used the wrong semantic model** —
+   `planet-population.js` reused the Faction living/droid COMPOSITION
+   model (`DROID_ONLY`/`ORGANIC_ONLY`), so a `DROID_ONLY` roll zeroed
+   `livingWeight` while an ordinary organic species distribution
+   generated anyway regardless. Fixed in §171.
+5. **`rerollPlanetEconomy()`'s `secondaryCount` ordering bug** — sectors
+   and trade were generated first, `secondarySectors` sliced down to
+   `secondaryCount` only afterward, so an export/import could reference
+   a secondary sector the slice then removed. Fixed in §172.
+6. (Caught in passing while fixing #3, not itself a review finding)
+   **`rerollPlanetGovernment()` never recomputed `tags`** despite
+   `composeTagsAndSummary()` reading `government.tags` — a government
+   reroll could silently leave the draft's `tags` stale. Fixed in §172.
+
+Two things the review explicitly said NOT to block on, and this pass
+did not touch: the curated planet-name pool staying at 102 (not the
+eventual ~500) entries, and the commodity catalog staying at 113 (not
+150-250) entries — both already correctly documented as representative
+starting catalogs, not architecture gaps.
+
+## 168. Fix: Cargo generator adopts the shared Galactic Commodity Catalog as its SSOT
+
+**Finding**: `jobs/cargo-concept.js`'s `pickCargoConcept()` read its
+own 24-entry `CARGO_CONCEPTS` free-text table, duplicating things the
+Galactic Commodity Catalog (§161) already covers — the review named
+medical supplies, weapons, agricultural equipment, luxury goods, droid
+parts, fuel cells, and starship parts specifically. This is exactly
+the "one commodity vocabulary, not three drifting copies" violation
+the catalog's own header warns against.
+
+**Fix**: cargo concepts now come in two kinds, matching the review's
+requested `commodity cargo` + `special narrative cargo` split:
+
+- **COMMODITY** (`pickCommodityCargo()`) resolves by `commodityId`
+  against `GALACTIC_COMMODITIES` — the SAME catalog `planets/
+  planet-trade.js`'s Trade Resolver reads, never a second copy of its
+  data — weighted by `rarity` the same way the Trade Resolver already
+  is (so kyber crystals/cortosis/phrik stay genuinely rare cargo, not
+  common), and optionally filtered to a specific `legality`.
+- **NARRATIVE** (`pickNarrativeCargo()`) draws from `data/
+  cargo-concepts.js`, trimmed from 24 entries down to 11 — kept ONLY
+  for genuinely non-commodity mission objects with no stable per-unit
+  market identity a Trade Resolver could ever price: a sealed
+  diplomatic pouch, an evidence locker, an unmarked/mystery crate,
+  live cargo/passengers/refugees, a one-off prototype, hard currency,
+  and similar. Every one of the original 24 entries that DID map onto
+  a real tradeable good (medical supplies, restricted weapons, stolen
+  data, spice, forged IDs, salvaged droid parts, high-grade fuel
+  cells, ...) was retired in favor of the matching catalog commodity;
+  one small gap the mapping surfaced (`agricultural-equipment`, an
+  entry the review named by name) was added to the catalog's existing
+  `INDUSTRIAL_GOODS` category rather than left as a narrative-only
+  approximation, since it belongs there for the same reason
+  `mining-equipment`/`refinery-equipment` already do (114 catalog
+  entries total now, still comfortably inside the "not the production
+  ~150-250 target yet" framing).
+
+`pickCargoConcept()` is the orchestrator a caller uses when it doesn't
+need to care about the distinction: it rolls COMMODITY most of the
+time (default 70%) and NARRATIVE otherwise, always returning one
+normalized shape (`{ kind, commodityId, value, name, category, tags,
+legality, rarity }`) regardless of which kind it picked.
+
+**Proof**: a 2000-draw sweep confirms every `pickCargoConcept()` result
+declares `kind: 'commodity'` or `kind: 'narrative'`, every commodity
+result's `commodityId` resolves in `GALACTIC_COMMODITIES`, and every
+narrative result's `commodityId` is `null`; a `legality: 'illegal'`
+filter on `pickCommodityCargo()` is respected across 200 draws; a
+5000-draw sweep confirms rarity weighting holds (kyber crystals ~0.1%
+of commodity picks, matching the Trade Resolver's own rarity-weight
+discipline).
+
+## 169. Fix: POI biome/type single-source-of-truth + economyTags/governmentTags actually wired into selection
+
+**Finding**: three related contract problems in `data/poi-templates.js`
+/ `planets/poi-template.js` / `planets/poi-generator.js`:
+
+1. `createProceduralPoiDraft()`/`rerollPoiTemplate()` wrote
+   `template.tags` straight into the draft's canonical `biomes` field
+   — but `tags` mixed real biome words ("mountain", "urban") with
+   organization-family/thematic descriptors ("criminal", "trade",
+   "military-paramilitary", "government-bureaucracy",
+   "business-professional") that are not biomes. The exact same
+   single-source-of-truth violation the round-1 `WORLD_CLASS` fix
+   (§157) corrected for planets, just never applied to POI templates.
+2. Templates declared `economyTags`/`governmentTags` (added in round 1
+   as soft-preference fields — §165), but `poi-template.js`'s picker
+   called `weightedPickWithPreference()`, whose default tag reader
+   only ever looks at `entry.tags` — so `economyTags`/`governmentTags`
+   were dead, unused metadata. `poi-generator.js` also never merged
+   the parent planet's `government.tags` into the context-preference
+   pool it built, so even a caller who wanted government-aware bias
+   had nothing to feed it.
+3. Nearly every template defaulted to the generic `poi` type, even
+   where the canonical `LOCATION_TYPES` vocabulary
+   (`location-registry-service.js`) already has a better fit — a
+   Temple/Military Outpost/Research Facility isn't structurally the
+   same KIND of place as an unclassified point of interest.
+
+**Fix**: each `POI_TEMPLATES` entry now carries `biomes` (real
+`LOCATION_LIBRARY_BIOMES` values only, self-checked at module load —
+the exact same discipline `WORLD_CLASS.biomes`'s self-check enforces,
+see §157) separate from `tags` (procedural-only organization/flavor
+descriptors), and a canonical `type` drawn from `LOCATION_TYPES`:
+`temple` for Temple AND Ruins (the canonical type is literally labeled
+"Temple / Ruin") and Shrine/Monastery; `base` for Military Outpost and
+a criminal Hideout ("Base / Safehouse"); `facility` for Starport,
+Mine, Prison, Research Facility, Shipyard, Government Complex,
+Processing Plant, and similar installations (12 of 34 templates); and
+`city` for Fishing Village — an actual settlement, not a sub-component
+of one. `poi-generator.js`'s `contextTagsFor()` now also merges
+`parentPlanetDraft.government.tags` into the soft-preference pool.
+`poi-template.js`'s `pickTemplateWithPreference()` (new, reusing the
+shared `weightedPick()` primitive rather than duplicating its roll
+logic) boosts an entry's weight when `preferTags` intersects
+`biomes`+`tags`+`economyTags`+`governmentTags` merged together, so all
+four fields a template declares now actually influence which one gets
+picked — not just two of them. `pickPoiTemplate()` (the soft-only,
+no-planet-context variant) is intentionally left reading `entry.tags`
+only, unchanged, matching its own documented "no planet context to
+filter against" scope.
+
+**Proof**: a 2000-draw sweep of `createProceduralPoiDraft()` confirms
+every returned `biomes` entry is a real Library value; the module-load
+self-check (mirroring `WORLD_CLASS`'s) confirms no `POI_TEMPLATES`
+entry ever declares a non-real biome; a direct check confirms no
+template's `biomes` contains "criminal" or "government-bureaucracy" (a
+regression guard for the exact review finding). A 2000-vs-2000-draw
+comparison with a fake planet draft carrying `government.tags:
+['religion']` shows religious POI templates (temple/shrine/monastery)
+picked at roughly 3x the baseline rate (13.0% vs 4.7% in one run),
+confirming `governmentTags` now measurably influences selection. A
+template reroll's `biomes` is confirmed to always match the NEWLY
+rerolled template's `biomes`, never its `tags`.
+
+## 170. Fix: `UNINHABITED` now suppresses government/stability/technology/economy, not just demographics/trade
+
+**Finding**: `planet-draft.js`'s `createProceduralPlanetDraft()` gated
+population demographics and trade on `populationScale ===
+POPULATION_SCALE.UNINHABITED` (§158, §161) but rolled
+`technologyLevel`/`government`/`stability`/the economy's
+`primarySector`/`secondarySectors` completely unconditionally,
+producing structurally contradictory drafts — the review's own
+example: "Population: no permanent population... Government:
+parliamentary government... Stability: civil unrest... Economy:
+financial services" with "Imports/Exports: none." An `OUTPOST`-scale
+world (a research station, a mining camp) SHOULD still roll a real, if
+modest, government/economy of its own — the review was explicit that
+only the genuinely uninhabited case should be nulled, not every low-
+population world.
+
+**Fix**: a new `rollCivilization()` helper in `planet-draft.js` gates
+`technologyLevel`/`government`/`stability`/`economy` on the SAME
+`populationScale === UNINHABITED` check demographics/trade already
+use: `UNINHABITED` now yields `technologyLevel: null`,
+`government: null`, `stability: null`, and an economy with
+`primarySector: null` and every array empty — never fabricated
+civilization facts. `composeTagsAndSummary()` is null-safe throughout
+(`government?.tags`, `stability?.value`, sectors filtered for
+`Boolean` before being read) so an uninhabited world's tags/summary
+never claim a government or economy it doesn't have. History hooks are
+untouched by this gate and can still describe a former civilization on
+an uninhabited world, exactly as the review suggested.
+
+This gate is enforced across every path that can produce or change a
+draft's `populationScale`, not just the initial roll:
+
+- Each single-field civilization reroll
+  (`rerollPlanetGovernment`/`-Stability`/`-TechnologyLevel`/`-Economy`/
+  `-Trade`) is now a declared no-op on an `UNINHABITED` draft — there
+  is nothing to reroll.
+- `rerollPlanetPopulation()` can cross the `UNINHABITED` boundary in
+  either direction (a settled world rerolled into uninhabited, or vice
+  versa). It previously only recomputed `settlementPattern`+trade,
+  leaving the OLD government/stability/technology level in place —
+  reintroducing exactly this contradiction via reroll even after the
+  creation-time gate was fixed. It now recomputes the WHOLE
+  civilization block (via the same `rollCivilization()` the initial
+  draft uses) from the NEW `populationScale` every time.
+
+**Proof**: a 3000-draft sweep confirms every `UNINHABITED` draft has
+`government`/`stability`/`technologyLevel` all `null` and
+`economy.primarySector` null with empty `secondarySectors`/exports/
+imports, while every non-`UNINHABITED` draft has all four populated —
+zero contradictions either direction. A direct check confirms all five
+single-field civilization rerolls are no-ops on an `UNINHABITED`
+draft. A 3000-seed sweep confirms `rerollPlanetPopulation()` crossing
+the boundary in both directions correctly nulls (crossing in) or
+repopulates (crossing out) the whole civilization block, not just
+settlement pattern and trade.
+
+## 171. Fix: planet droid prevalence — a Location-specific concept, independent of organic population
+
+**Finding**: `planet-population.js`'s `pickDroidComposition()` reused
+`population-profile.js`'s `LIVING_DROID_COMPOSITION_MODE` — a Faction
+MEMBER-COMPOSITION model describing what share of a group's members
+are organic vs. droid. `createLivingDroidComposition()` gives
+`DROID_ONLY` a `livingWeight` of exactly `0`, but
+`generateProceduralPlanetPopulationProfile()` went right ahead and
+generated an ordinary organic species distribution regardless — the
+two facts on the same draft couldn't help but contradict each other.
+The review was explicit about the correct model: a world's droid
+prevalence describes how AUTOMATED its economy/society is, entirely
+INDEPENDENT of its organic population — a `very-high`/`automated`
+droid-prevalence, Human-majority world is perfectly coherent (a
+heavily industrialized, droid-staffed world still full of people).
+
+**Fix**: `pickDroidComposition()`/`DROID_COMPOSITION_MODE_ENTRIES` are
+removed from `planet-population.js` entirely, along with
+`droidComposition` from every branch of
+`generateProceduralPlanetPopulationProfile()`'s return value. A new
+`PLANET_DROID_PREVALENCE` enum lives in `planet-profile.js` (alongside
+`region`/`climate`/`hydrosphere`/`technologyLevel` — the other
+structural, population-independent planet facts) with the exact six
+levels the review specified: `rare`/`low`/`normal`/`high`/`very-high`/
+`automated`. `pickPlanetDroidPrevalence()` is rolled UNCONDITIONALLY
+in `planet-draft.js` — including for an `UNINHABITED` world (a fully
+`automated` derelict mine, or a `rare`-droid-activity abandoned world,
+are both coherent) — and is explicitly NEVER touched by a population
+reroll (`rerollPlanetPopulation()` doesn't read or write it), matching
+its independence from organic demographics. A dedicated
+`rerollPlanetDroidPrevalence()` reroll function is added for parity
+with the file's other single-field structural rerolls.
+
+**Proof**: a direct check confirms `generateProceduralPlanetPopulationProfile()`'s
+return value never carries a `droidComposition` key in any branch
+(uninhabited, empty-pool, and normal). A 50-seed sweep confirms every
+`pickPlanetDroidPrevalence()` result is a valid
+`PLANET_DROID_PREVALENCE` value, and `Object.values(PLANET_DROID_PREVALENCE)`
+is confirmed to be exactly the six requested levels. A direct check
+confirms `rerollPlanetPopulation()` never changes `droidPrevalence`
+(same value before/after across a population reroll), while
+`rerollPlanetDroidPrevalence()` works correctly even on an
+`UNINHABITED` draft.
+
+## 172. Fix: `rerollPlanetEconomy()`'s `secondaryCount` ordering bug, and the government-reroll stale-tags bug caught in passing
+
+**Finding (review)**: `rerollPlanetEconomy(draft, { secondaryCount })`
+generated `primarySector`/`secondarySectors` with an internally-rolled
+random count (ignoring the caller's `secondaryCount` entirely), ran
+the Trade Resolver against that FULL set, and only THEN sliced
+`secondarySectors` down to `secondaryCount` — after trade had already
+been resolved against the larger, pre-slice set. An export/import
+could end up referencing a secondary sector the subsequent slice then
+removed from the draft.
+
+**Fix**: `rollEconomy()` (the shared helper both the initial draft and
+every economy-related reroll now funnel through — see §170) accepts an
+optional `secondaryCount` and passes it directly INTO
+`generatePlanetEconomySectors({ secondaryCount })`, which already
+generates exactly that many secondary sectors natively (no slicing
+needed at all — `generatePlanetEconomySectors()` itself was never the
+bug). The Trade Resolver then always runs against the FINAL sector
+set. `rerollPlanetEconomy()` no longer performs any post-hoc slice.
+
+**Finding (caught in passing, not itself a review item)**: while
+rewriting `rerollPlanetGovernment()` to add the `UNINHABITED` no-op
+guard (§170), its existing doc comment claimed it preserved "summary/
+tags, which don't read government" — but `composeTagsAndSummary()`
+explicitly reads `government.tags` into the draft's `tags`. The
+function never actually recomputed `tags`/`summary` after a government
+reroll, so a draft's `tags` could go stale (still reflecting the
+PREVIOUS government's tags) after a government-only reroll.
+
+**Fix**: `rerollPlanetGovernment()` now recomputes `tags`/`summary` via
+`composeTagsAndSummary()`, exactly like `rerollPlanetStability()`/
+`rerollPlanetEconomy()` already correctly did.
+
+**Proof**: a 50-seed sweep confirms `rerollPlanetEconomy(draft, {
+secondaryCount: 0 })` always produces exactly zero secondary sectors
+(previously verifiable only by the ABSENCE of a bug, this proves the
+positive case directly). A 30-seed sweep confirms
+`rerollPlanetGovernment()` produces a changed `tags` array at least
+once (a government reroll that never changed the government's tags by
+coincidence would be a false negative, so the sweep checks across
+multiple seeds rather than asserting on a single draw).
+
+## 173. Tests + Regression / totals + Phase 8D-2 gate (round 2, final)
+
+`tests/gm-generation-phase8d2-foundation.test.mjs` was extended (not
+rewritten from scratch this time — round 1 already rewrote it in full)
+to cover every round-2 fix: the cargo commodity/narrative split (kind
+discrimination, commodityId resolution against the shared catalog,
+legality filtering); the POI biome/type split (module-load self-check
+parity with `WORLD_CLASS`, explicit checks that "criminal"/
+"government-bureaucracy" never appear in a template's `biomes`, the
+Temple/Ruins/Military-Outpost/Fishing-Village canonical-type
+assertions, the `governmentTags`-influences-selection statistical
+comparison, template-reroll biomes-from-template.biomes-not-tags); the
+full `UNINHABITED`-gates-civilization sweep (per-seed assertions on
+BOTH branches — null civilization facts when uninhabited, real ones
+otherwise — plus the five single-field-reroll no-op checks, plus the
+population-reroll boundary-crossing-in-both-directions sweep); the
+independent droid-prevalence model (valid-value sweep, the exact six-
+level enum check, the population-reroll-never-changes-it proof, the
+direct-reroll-works-even-when-uninhabited proof); and the
+`secondaryCount` ordering fix plus the government-reroll stale-tags
+fix. Every assertion follows the same established deterministic-RNG-
+first style as every prior phase, with statistical sweeps used only
+where the underlying behavior is genuinely probabilistic.
+
+Full `gm-*.test.mjs` sweep: **57/57 green** (unchanged file count —
+this round extended the existing suite rather than adding a new file),
+zero regressions in any prior phase's suite, confirmed by a full
+re-run of all 57 files, not a partial spot check. Full rolling suite
+(`tests/*.test.mjs`): **192 files, 187 pass, 5 fail** — the same five
+pre-existing, unrelated Force-power failures as every prior phase
+(`force-power-final-integration`, `phase3-force-power-corrections`,
+`phase4-force-modifier-automation`, `phase5-force-healing-mitigation`,
+`phase6-force-direct-damage`), confirmed unchanged from §166's own
+measurement. Syntax check (`node --input-type=module --check` across
+every file in `scripts/`): **2041/2041 clean** — unchanged file count
+from §166 (this round modified nine existing files and added zero new
+ones: `jobs/cargo-concept.js`, `data/cargo-concepts.js`,
+`data/galactic-commodities.js` [+1 entry], `data/poi-templates.js`,
+`planets/poi-template.js`, `planets/poi-generator.js`,
+`planets/planet-population.js`, `planets/planet-profile.js`,
+`planets/planet-draft.js`).
+
+**PHASE 8D-2 (PROCEDURAL CONTENT ECOSYSTEM GROUNDWORK, INCLUDING BOTH
+INDEPENDENT-REVIEW CORRECTION PASSES) COMPLETE — READY FOR INDEPENDENT
+REVIEW.** All six round-2 findings are fixed and proven, individually,
+with the exact scenario each finding described reproduced and
+confirmed corrected: the cargo/commodity vocabulary duplication (now
+resolving by `commodityId` against the one shared catalog, with a
+trimmed narrative-only table for genuine non-commodities), the POI
+biome/type authority violation and the two dead soft-preference
+fields (now split + wired + mapped onto richer canonical Location
+types), the `UNINHABITED`-only-gates-demographics gap (now gates the
+whole civilization block, across every reroll path including boundary
+crossings), the wrong Faction-composition droid model (now an
+independent Location-specific `PLANET_DROID_PREVALENCE`), and the
+`secondaryCount` reroll-ordering bug (plus one government-reroll
+stale-tags bug caught in passing). Everything the round-2 review
+explicitly approved unchanged — the Galactic Commodity Catalog's
+design, the Trade Resolver's `{commodityId, importance}` boundary, the
+expanded opposition-request contract, the objective-template hints,
+the NPC stale-suggestion fix — remains genuinely unchanged; none of
+those files were touched this round. Per explicit instruction: not
+adding further catalogs, not expanding to the production ~500-name/
+~200-objective/150-250-POI/150-250-commodity targets, no UI, and PR
+#963 remains a draft, unmerged, until this correction pass itself is
+independently reviewed.
