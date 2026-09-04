@@ -107,6 +107,7 @@ export const GALACTIC_COMMODITIES = Object.freeze([
   { id: 'repulsorlift-components', name: 'Repulsorlift Components', category: C.INDUSTRIAL_GOODS, tags: ['industrial', 'manufactured'], legality: L.LEGAL, rarity: R.UNCOMMON, producedBy: ['manufacturing', 'technology'], demandedBy: ['urban', 'shipbuilding'], scarcityOn: [] },
   { id: 'power-converters', name: 'Power Converters', category: C.INDUSTRIAL_GOODS, tags: ['industrial', 'manufactured'], legality: L.LEGAL, rarity: R.COMMON, producedBy: ['manufacturing', 'technology'], demandedBy: ['urban', 'frontier'], scarcityOn: ['frontier'] },
   { id: 'mining-equipment', name: 'Mining Equipment', category: C.INDUSTRIAL_GOODS, tags: ['industrial', 'manufactured'], legality: L.LEGAL, rarity: R.COMMON, producedBy: ['manufacturing'], demandedBy: ['mining'], scarcityOn: [] },
+  { id: 'agricultural-equipment', name: 'Agricultural Equipment', category: C.INDUSTRIAL_GOODS, tags: ['industrial', 'manufactured', 'agricultural'], legality: L.LEGAL, rarity: R.COMMON, producedBy: ['manufacturing'], demandedBy: ['agriculture', 'rural', 'frontier'], scarcityOn: [] },
   { id: 'refinery-equipment', name: 'Refinery Equipment', category: C.INDUSTRIAL_GOODS, tags: ['industrial', 'manufactured'], legality: L.LEGAL, rarity: R.UNCOMMON, producedBy: ['manufacturing'], demandedBy: ['mining', 'energy'], scarcityOn: [] },
 
   // --- technology ------------------------------------------------------
