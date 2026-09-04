@@ -17,10 +17,10 @@ import { installFoundryShimGlobals } from './helpers/foundry-shim/globals.mjs';
 // planet generator UI, no full Job orchestration, no Opposition Catalog
 // resolver, no canonical Actor/Faction/Location/Job creation anywhere.
 //
-// CORRECTION PASS (independent review of head `7d6fc66`) fixed seven
-// foundation-contract issues, all covered below: (1) the planet biome
-// field collapsed procedural tags into the Location Library's real
-// biome vocabulary instead of keeping them separate; (2) population
+// CORRECTION PASS, ROUND 1 (independent review of head `7d6fc66`) fixed
+// seven foundation-contract issues, all covered below: (1) the planet
+// biome field collapsed procedural tags into the Location Library's
+// real biome vocabulary instead of keeping them separate; (2) population
 // generation ran unconditionally regardless of a world class's
 // `habitable` flag; (3) the planet-name generator was built entirely
 // around a syllable combinator with no curated-name authority and no
@@ -35,6 +35,36 @@ import { installFoundryShimGlobals } from './helpers/foundry-shim/globals.mjs';
 // (`data/galactic-commodities.js`) rather than a planet-specific list,
 // with a `primarySector`/`secondarySectors` economy structure and
 // `{commodityId, importance}` trade entries -- also covered below.
+//
+// CORRECTION PASS, ROUND 2 (independent review of head `9a4a8b7`) fixed
+// six more foundation-contract issues, all covered below: (1) the Cargo
+// generator owned its OWN commodity vocabulary, duplicating the shared
+// Galactic Commodity Catalog -- now split into COMMODITY cargo
+// (resolves by `commodityId` against the shared catalog) and NARRATIVE
+// cargo (a trimmed table of genuinely non-commodity mission objects);
+// (2) POI templates had the SAME biome-SSOT violation the planet
+// WORLD_CLASS fix (round 1) corrected, just not yet applied there, PLUS
+// two declared-but-unused `economyTags`/`governmentTags` fields, PLUS
+// almost every template defaulting to the generic `poi` type instead of
+// the richer canonical Location types (`temple`/`base`/`facility`/
+// `city`) -- all three fixed together; (3) an `UNINHABITED` world still
+// rolled a government/stability/technology-level/economy despite having
+// "no permanent population" -- now nulled/emptied exactly like
+// demographics/trade already were, including across every reroll path
+// (single-field civilization rerolls are a no-op on an UNINHABITED
+// draft; a population reroll crossing the UNINHABITED boundary in
+// either direction recomputes the WHOLE civilization block, not just
+// settlementPattern+trade); (4) planet droid prevalence reused the
+// Faction living/droid COMPOSITION model, so `DROID_ONLY` zeroed
+// `livingWeight` while an ordinary organic species distribution still
+// generated anyway -- replaced with `planet-profile.js`'s
+// `PLANET_DROID_PREVALENCE`, a Location-specific concept explicitly
+// INDEPENDENT of organic population; (5) `rerollPlanetEconomy()` sliced
+// `secondarySectors` down to `secondaryCount` AFTER the Trade Resolver
+// already ran against the full (unsliced) set -- `secondaryCount` now
+// flows into sector generation BEFORE trade is resolved; (6), caught in
+// passing while fixing (3), `rerollPlanetGovernment()` never recomputed
+// `tags` despite `tags` reading `government.tags` -- now fixed too.
 //
 // Every module here is a PURE, RNG-injectable function set with no
 // Foundry dependency (this suite installs the shim anyway to match the
@@ -191,7 +221,7 @@ const abs = (rel) => `/systems/foundryvtt-swse/${rel}`;
   assert.equal(asteroidField.locationType, 'region', 'asteroid-field must declare locationType "region", not "planet" (the exact mismatch the review found)');
 
   // --- population: POPULATION_SCALE + habitable-aware bias + uninhabited short-circuit ---
-  const { generateProceduralPlanetPopulationProfile, POPULATION_SCALE, pickPopulationScale, pickDroidComposition, describePopulationEstimate } = await import(abs('scripts/generation/planets/planet-population.js'));
+  const { generateProceduralPlanetPopulationProfile, POPULATION_SCALE, pickPopulationScale, describePopulationEstimate } = await import(abs('scripts/generation/planets/planet-population.js'));
   const { POPULATION_DIVERSITY } = await import(abs('scripts/generation/location-population-profile.js'));
 
   let uninhabitedOrOutpost = 0;
@@ -209,7 +239,7 @@ const abs = (rel) => `/systems/foundryvtt-swse/${rel}`;
   const uninhabited = generateProceduralPlanetPopulationProfile({ availableSpeciesIds: pool5, populationScaleOverride: POPULATION_SCALE.UNINHABITED, rng: makeSeededRng(1) });
   assert.deepEqual(uninhabited.profile.speciesWeights, [], 'an UNINHABITED world must have empty demographics, never a fabricated organic population');
   assert.equal(uninhabited.character, null, 'an UNINHABITED world must have a null character (no diversity to describe)');
-  assert.equal(uninhabited.droidComposition, null, 'an UNINHABITED world must have a null droidComposition');
+  assert.ok(!('droidComposition' in uninhabited), 'population profile must NEVER return a droidComposition field anymore -- droid prevalence is now planet-profile.js\'s independent PLANET_DROID_PREVALENCE, not a population-generation concern (the review\'s round-2 finding)');
 
   for (let seed = 0; seed < 500; seed++) {
     const { profile } = generateProceduralPlanetPopulationProfile({ availableSpeciesIds: pool5, populationScaleOverride: POPULATION_SCALE.SETTLED, rng: makeSeededRng(seed) });
@@ -224,17 +254,23 @@ const abs = (rel) => `/systems/foundryvtt-swse/${rel}`;
   }
 
   const inhabited = generateProceduralPlanetPopulationProfile({ availableSpeciesIds: pool5, populationScaleOverride: POPULATION_SCALE.SETTLED, rng: makeSeededRng(5) });
-  assert.ok(inhabited.droidComposition && typeof inhabited.droidComposition.mode === 'string', 'an inhabited world must carry a droidComposition (reused from population-profile.js\'s LIVING_DROID_COMPOSITION_MODE)');
   assert.equal(inhabited.populationEstimate, describePopulationEstimate(POPULATION_SCALE.SETTLED), 'populationEstimate must match the scale label');
-  assert.equal(pickDroidComposition({ rng: makeSeededRng(1) }).mode !== undefined, true, 'pickDroidComposition must resolve a mode');
 
-  // --- planet-profile.js: region/sector/climate/hydrosphere/technology/settlementPattern ---
-  const { pickPlanetRegion, isPlanetRegion, pickSectorName, pickPlanetClimate, isPlanetClimate, pickPlanetHydrosphere, isPlanetHydrosphere, pickPlanetTechnologyLevel, isPlanetTechnologyLevel, pickSettlementPattern, isSettlementPattern, SETTLEMENT_PATTERN } = await import(abs('scripts/generation/planets/planet-profile.js'));
+  // --- planet-profile.js: region/sector/climate/hydrosphere/technology/droid-prevalence/settlementPattern ---
+  const {
+    pickPlanetRegion, isPlanetRegion, pickSectorName, pickPlanetClimate, isPlanetClimate, pickPlanetHydrosphere, isPlanetHydrosphere,
+    pickPlanetTechnologyLevel, isPlanetTechnologyLevel, pickPlanetDroidPrevalence, isPlanetDroidPrevalence, PLANET_DROID_PREVALENCE,
+    pickSettlementPattern, isSettlementPattern, SETTLEMENT_PATTERN
+  } = await import(abs('scripts/generation/planets/planet-profile.js'));
   assert.equal(isPlanetRegion(pickPlanetRegion({ rng: makeSeededRng(1) })), true, 'region pick must be valid');
   assert.match(pickSectorName({ rng: makeSeededRng(1) }), / sector$/, 'sector name must end with " sector"');
   assert.equal(isPlanetClimate(pickPlanetClimate({ rng: makeSeededRng(1) })), true, 'climate pick must be valid');
   assert.equal(isPlanetHydrosphere(pickPlanetHydrosphere({ rng: makeSeededRng(1) })), true, 'hydrosphere pick must be valid');
   assert.equal(isPlanetTechnologyLevel(pickPlanetTechnologyLevel({ rng: makeSeededRng(1) })), true, 'technology-level pick must be valid');
+
+  // --- droid prevalence: the review's round-2 fix -- an independent Location concept, NOT the Faction living/droid composition model ---
+  for (let seed = 0; seed < 50; seed++) assert.equal(isPlanetDroidPrevalence(pickPlanetDroidPrevalence({ rng: makeSeededRng(seed) })), true, 'droid-prevalence pick must always be a valid PLANET_DROID_PREVALENCE value');
+  assert.deepEqual(Object.values(PLANET_DROID_PREVALENCE).sort(), ['automated', 'high', 'low', 'normal', 'rare', 'very-high'].sort(), 'PLANET_DROID_PREVALENCE must expose the exact six Location-specific levels the review requested, not the Faction DROID_ONLY/ORGANIC_ONLY vocabulary');
   for (let seed = 0; seed < 20; seed++) {
     assert.equal(pickSettlementPattern({ rng: makeSeededRng(seed), populationScale: POPULATION_SCALE.UNINHABITED }), SETTLEMENT_PATTERN.NONE, 'uninhabited must ALWAYS produce settlement pattern none (never contradicts populationScale)');
     assert.equal(pickSettlementPattern({ rng: makeSeededRng(seed), populationScale: POPULATION_SCALE.HYPER_URBANIZED }), SETTLEMENT_PATTERN.ECUMENOPOLIS, 'hyper-urbanized must ALWAYS produce ecumenopolis');
@@ -278,7 +314,8 @@ const abs = (rel) => `/systems/foundryvtt-swse/${rel}`;
 
   // --- planet-draft.js: the full composite, corrected ---
   const {
-    createProceduralPlanetDraft, rerollPlanetWorldClass, rerollPlanetEconomy, rerollPlanetTrade, rerollPlanetPopulation, rerollPlanetStability
+    createProceduralPlanetDraft, rerollPlanetWorldClass, rerollPlanetEconomy, rerollPlanetTrade, rerollPlanetPopulation, rerollPlanetStability,
+    rerollPlanetGovernment, rerollPlanetTechnologyLevel, rerollPlanetDroidPrevalence
   } = await import(abs('scripts/generation/planets/planet-draft.js'));
   const { LOCATION_DRAFT_MODE, isLocationDraftMode } = await import(abs('scripts/generation/location-draft.js'));
   const { isProvenance } = await import(abs('scripts/generation/provenance.js'));
@@ -287,14 +324,27 @@ const abs = (rel) => `/systems/foundryvtt-swse/${rel}`;
     const draft = createProceduralPlanetDraft({ rng: makeSeededRng(seed), availableSpeciesIds: pool5 });
     assert.ok(draft.biomes.every((b) => isLocationLibraryBiome(b)), `seed ${seed}: every draft biome must be a real Library value`);
     assert.equal(isKnownLibraryPlanetName(draft.name), false, `seed ${seed}: generated planet name must never collide with a known Library world, got "${draft.name}"`);
-    assert.ok(draft.economy?.primarySector && Array.isArray(draft.economy.secondarySectors), `seed ${seed}: economy structure malformed`);
+    assert.ok(draft.economy && Array.isArray(draft.economy.secondarySectors), `seed ${seed}: economy structure malformed`);
+    assert.ok(draft.populationScale === POPULATION_SCALE.UNINHABITED || draft.economy.primarySector, `seed ${seed}: a non-uninhabited world's economy must have a real primarySector`);
     assert.ok(draft.economy.exports.every((e) => commodityById.has(e.commodityId)), `seed ${seed}: export commodityId must resolve`);
     assert.ok(draft.economy.imports.every((i) => commodityById.has(i.commodityId)), `seed ${seed}: import commodityId must resolve`);
     if (draft.populationScale === POPULATION_SCALE.UNINHABITED) {
       assert.equal(draft.settlementPattern, SETTLEMENT_PATTERN.NONE, `seed ${seed}: uninhabited must pair with settlement pattern none`);
       assert.deepEqual(draft.populationProfile.speciesWeights, [], `seed ${seed}: uninhabited must have empty demographics`);
       assert.equal(draft.economy.exports.length, 0, `seed ${seed}: uninhabited must have zero economy exports`);
+      // --- round-2 fix: UNINHABITED must ALSO suppress government/stability/technologyLevel/economy sectors, not just demographics+trade ---
+      assert.equal(draft.government, null, `seed ${seed}: uninhabited world must have a null government (the review's exact "no permanent population... parliamentary government" contradiction)`);
+      assert.equal(draft.stability, null, `seed ${seed}: uninhabited world must have a null stability`);
+      assert.equal(draft.technologyLevel, null, `seed ${seed}: uninhabited world must have a null technologyLevel`);
+      assert.equal(draft.economy.primarySector, null, `seed ${seed}: uninhabited world must have a null economy.primarySector`);
+      assert.deepEqual(draft.economy.secondarySectors, [], `seed ${seed}: uninhabited world must have zero economy.secondarySectors`);
+    } else {
+      assert.notEqual(draft.government, null, `seed ${seed}: a non-uninhabited world must still roll a real government (an OUTPOST can have a limited local administration)`);
+      assert.notEqual(draft.stability, null, `seed ${seed}: a non-uninhabited world must still roll real stability`);
+      assert.notEqual(draft.technologyLevel, null, `seed ${seed}: a non-uninhabited world must still roll a real technologyLevel`);
+      assert.notEqual(draft.economy.primarySector, null, `seed ${seed}: a non-uninhabited world must still roll a real economy.primarySector`);
     }
+    assert.equal(isPlanetDroidPrevalence(draft.droidPrevalence), true, `seed ${seed}: droidPrevalence must always be a valid, independently-rolled value regardless of populationScale`);
     assert.equal(draft.type, draft.worldClass.value === 'asteroid-field' ? 'region' : 'planet', `seed ${seed}: type must follow worldClass.locationType exactly`);
   }
 
@@ -327,7 +377,59 @@ const abs = (rel) => `/systems/foundryvtt-swse/${rel}`;
   assert.equal(stabilityReroll.name, planetDraft.name, 'a stability reroll must preserve the planet\'s name');
   assert.ok(Array.isArray(stabilityReroll.economy.illicitTrade), 'a stability reroll must recompute economy.illicitTrade (which reads stability), never leave it stale');
 
-  console.log('procedural planet groundwork (biome SSOT, population-scale/uninhabited gating, region/sector/climate/hydrosphere/technology/settlement-pattern, shared-catalog Trade Resolver, curated-name exclusion, per-field reroll) passed.');
+  // --- round-2 fix: rerollPlanetGovernment must recompute tags (a prior version left them stale) ---
+  let sawGovernmentTagsChange = false;
+  for (let seed = 0; seed < 30; seed++) {
+    const govReroll = rerollPlanetGovernment(planetDraft, { rng: makeSeededRng(3000 + seed) });
+    if (JSON.stringify(govReroll.tags) !== JSON.stringify(planetDraft.tags)) { sawGovernmentTagsChange = true; break; }
+  }
+  assert.ok(sawGovernmentTagsChange, 'rerollPlanetGovernment must recompute tags (which read government.tags) at least once across 30 rerolls -- a prior version left tags stale');
+
+  // --- round-2 fix: single-field civilization rerolls must be a no-op on an UNINHABITED draft ---
+  let uninhabitedDraft = null;
+  for (let seed = 0; seed < 500 && !uninhabitedDraft; seed++) {
+    const d = createProceduralPlanetDraft({ rng: makeSeededRng(seed + 10000), availableSpeciesIds: pool5 });
+    if (d.populationScale === POPULATION_SCALE.UNINHABITED) uninhabitedDraft = d;
+  }
+  assert.ok(uninhabitedDraft, 'sanity: must find at least one UNINHABITED draft within 500 seeds to test reroll no-ops against');
+  assert.equal(rerollPlanetGovernment(uninhabitedDraft, { rng: makeSeededRng(1) }).government, null, 'rerollPlanetGovernment on an UNINHABITED draft must be a no-op -- there is no government to reroll');
+  assert.equal(rerollPlanetStability(uninhabitedDraft, { rng: makeSeededRng(1) }).stability, null, 'rerollPlanetStability on an UNINHABITED draft must be a no-op');
+  assert.equal(rerollPlanetTechnologyLevel(uninhabitedDraft, { rng: makeSeededRng(1) }).technologyLevel, null, 'rerollPlanetTechnologyLevel on an UNINHABITED draft must be a no-op');
+  assert.equal(rerollPlanetEconomy(uninhabitedDraft, { rng: makeSeededRng(1) }).economy.primarySector, null, 'rerollPlanetEconomy on an UNINHABITED draft must be a no-op');
+  assert.equal(rerollPlanetTrade(uninhabitedDraft, { rng: makeSeededRng(1) }).economy.exports.length, 0, 'rerollPlanetTrade on an UNINHABITED draft must be a no-op');
+
+  // --- round-2 fix: droidPrevalence is independent of population -- untouched by a population reroll, but directly rerollable (including on an UNINHABITED draft) ---
+  const popRerollSamePrevalence = rerollPlanetPopulation(planetDraft, { rng: makeSeededRng(2), availableSpeciesIds: pool5 });
+  assert.equal(popRerollSamePrevalence.droidPrevalence, planetDraft.droidPrevalence, 'a population reroll must NEVER change droidPrevalence -- it is an independent Location concept, not a population characteristic');
+  const prevalenceReroll = rerollPlanetDroidPrevalence(uninhabitedDraft, { rng: makeSeededRng(1) });
+  assert.equal(isPlanetDroidPrevalence(prevalenceReroll.droidPrevalence), true, 'rerollPlanetDroidPrevalence must work even on an UNINHABITED draft -- a fully automated derelict facility is coherent');
+
+  // --- round-2 fix: rerollPlanetPopulation crossing the UNINHABITED boundary must recompute the WHOLE civilization block, never leave stale government/stability/economy ---
+  let crossedToUninhabited = false;
+  let crossedToInhabited = false;
+  for (let seed = 0; seed < 3000 && (!crossedToUninhabited || !crossedToInhabited); seed++) {
+    const fromInhabited = rerollPlanetPopulation(planetDraft, { rng: makeSeededRng(20000 + seed), availableSpeciesIds: pool5 });
+    if (!crossedToUninhabited && fromInhabited.populationScale === POPULATION_SCALE.UNINHABITED) {
+      assert.equal(fromInhabited.government, null, 'a population reroll crossing INTO uninhabited must null out government, not leave the previous roll\'s value stale');
+      assert.equal(fromInhabited.economy.primarySector, null, 'a population reroll crossing INTO uninhabited must null out economy.primarySector');
+      crossedToUninhabited = true;
+    }
+    const fromUninhabited = rerollPlanetPopulation(uninhabitedDraft, { rng: makeSeededRng(30000 + seed), availableSpeciesIds: pool5 });
+    if (!crossedToInhabited && fromUninhabited.populationScale !== POPULATION_SCALE.UNINHABITED) {
+      assert.notEqual(fromUninhabited.government, null, 'a population reroll crossing OUT of uninhabited must roll a real government, not leave it null');
+      assert.notEqual(fromUninhabited.economy.primarySector, null, 'a population reroll crossing OUT of uninhabited must roll a real economy');
+      crossedToInhabited = true;
+    }
+  }
+  assert.ok(crossedToUninhabited && crossedToInhabited, 'must observe rerollPlanetPopulation crossing the UNINHABITED boundary in both directions within the sweep');
+
+  // --- round-2 fix: rerollPlanetEconomy's secondaryCount must flow into sector generation BEFORE trade is resolved, never slice the sector set AFTER trade already ran against it ---
+  for (let seed = 0; seed < 50; seed++) {
+    const zeroSecondary = rerollPlanetEconomy(planetDraft, { rng: makeSeededRng(40000 + seed), secondaryCount: 0 });
+    assert.equal(zeroSecondary.economy.secondarySectors.length, 0, `seed ${seed}: rerollPlanetEconomy secondaryCount:0 must produce zero secondary sectors`);
+  }
+
+  console.log('procedural planet groundwork (biome SSOT, population-scale/uninhabited gating INCLUDING government/stability/technology/economy, independent droid-prevalence, region/sector/climate/hydrosphere/technology/settlement-pattern, shared-catalog Trade Resolver, curated-name exclusion, per-field reroll with UNINHABITED no-ops and boundary-crossing recomputation, secondaryCount ordering fix) passed.');
 }
 
 // ------------------------------------------------------------
@@ -341,6 +443,23 @@ const abs = (rel) => `/systems/foundryvtt-swse/${rel}`;
   const { POPULATION_SCALE } = await import(abs('scripts/generation/planets/planet-population.js'));
   const { LOCATION_DRAFT_MODE, isLocationDraftMode } = await import(abs('scripts/generation/location-draft.js'));
   const { DIAGNOSTIC_CODE } = await import(abs('scripts/generation/lib/generator-diagnostics.js'));
+  const { isLocationLibraryBiome } = await import(abs('scripts/locations/location-library-seeds.js'));
+
+  // --- round-2 fix: POI templates must split real biomes from procedural tags, exactly like planet WORLD_CLASS ---
+  for (const entry of POI_TEMPLATES) {
+    for (const biome of entry.biomes) assert.equal(isLocationLibraryBiome(biome), true, `POI_TEMPLATES "${entry.value}"'s biome "${biome}" must be a real Library value`);
+  }
+  assert.ok(!POI_TEMPLATES.some((e) => e.biomes.includes('criminal') || e.biomes.includes('government-bureaucracy')), 'organization-family words like "criminal"/"government-bureaucracy" must never appear in a POI template\'s biomes field (the exact review finding)');
+  const typeValues = new Set(POI_TEMPLATES.map((e) => e.type));
+  assert.ok(['temple', 'base', 'facility', 'city'].every((t) => typeValues.has(t)), 'POI templates must use the richer canonical Location types (temple/base/facility/city), not default almost everything to generic poi');
+  const templeTemplate = POI_TEMPLATES.find((e) => e.value === 'temple');
+  assert.equal(templeTemplate.type, 'temple', 'the Temple template must use canonical type "temple"');
+  const ruinsTemplate = POI_TEMPLATES.find((e) => e.value === 'ruins');
+  assert.equal(ruinsTemplate.type, 'temple', 'Ruins must map to the canonical "temple" type (LOCATION_TYPES labels it "Temple / Ruin")');
+  const outpostTemplate = POI_TEMPLATES.find((e) => e.value === 'military-outpost');
+  assert.equal(outpostTemplate.type, 'base', 'Military Outpost must map to canonical type "base"');
+  const fishingVillageTemplate = POI_TEMPLATES.find((e) => e.value === 'fishing-village');
+  assert.equal(fishingVillageTemplate.type, 'city', 'Fishing Village is an actual settlement and must map to canonical type "city"');
 
   // --- the review's own core example: an uninhabited barren world must NEVER roll Market District ---
   const uninhabitedBarrenTags = ['wasteland', 'asteroid', 'mine'];
@@ -365,6 +484,11 @@ const abs = (rel) => `/systems/foundryvtt-swse/${rel}`;
   assert.equal(poi.parentDraftId, 'draft:location:abc123456789', 'parentDraftId must be preserved verbatim');
   assert.ok(poi.name.endsWith(poi.template.label), 'POI display name must end with its template label');
   assert.ok(Array.isArray(poi.diagnostics), 'a POI draft must always carry a diagnostics array (empty when no context mismatch)');
+  assert.deepEqual(poi.biomes, poi.template.biomes, 'round-2 fix: a POI draft\'s biomes field must come from template.biomes (real Library values), never template.tags');
+  for (const seed of [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]) {
+    const d = createProceduralPoiDraft({ rng: makeSeededRng(seed) });
+    for (const b of d.biomes) assert.equal(isLocationLibraryBiome(b), true, `seed ${seed}: POI draft biomes must always be real Library values, got "${b}"`);
+  }
 
   const poiOnUninhabited = createProceduralPoiDraft({
     rng: makeSeededRng(3),
@@ -380,15 +504,29 @@ const abs = (rel) => `/systems/foundryvtt-swse/${rel}`;
   }
   assert.ok(contextMatchCount / 200 > 0.25, `parent-planet context tags must meaningfully bias the POI template pick (got ${contextMatchCount}/200)`);
 
+  // --- round-2 fix: economyTags/governmentTags were declared but never actually wired into the picker; now they must meaningfully bias selection ---
+  const religiousPlanet = { worldClass: { biomes: [], tags: [] }, economy: { primarySector: null, secondarySectors: [] }, government: { tags: ['religion'] }, populationScale: 'settled' };
+  let religiousCount = 0;
+  let baselineReligiousCount = 0;
+  const N = 2000;
+  for (let i = 0; i < N; i++) {
+    const rng1 = makeSeededRng(i * 3 + 7);
+    if (['temple', 'shrine', 'monastery'].includes(createProceduralPoiDraft({ rng: rng1, parentPlanetDraft: religiousPlanet }).template.value)) religiousCount++;
+    const rng2 = makeSeededRng(i * 3 + 7);
+    if (['temple', 'shrine', 'monastery'].includes(createProceduralPoiDraft({ rng: rng2 }).template.value)) baselineReligiousCount++;
+  }
+  assert.ok(religiousCount > baselineReligiousCount, `a planet government tagged "religion" must raise the rate of religious POI templates above baseline (governmentTags wiring) -- got ${religiousCount} vs baseline ${baselineReligiousCount} of ${N}`);
+
   const templateReroll = rerollPoiTemplate(poi, { rng: makeSeededRng(77) });
   assert.equal(templateReroll.parentDraftId, poi.parentDraftId, 'a template reroll must preserve parentDraftId');
+  assert.deepEqual(templateReroll.biomes, templateReroll.template.biomes, 'round-2 fix: a template reroll must also set biomes from the NEW template\'s biomes, never its tags');
   const nameReroll = rerollPoiName(poi, { rng: makeSeededRng(33) });
   assert.equal(nameReroll.template, poi.template, 'a name reroll must preserve the template reference');
 
   const soft = pickPoiTemplate({ rng: makeSeededRng(1) });
   assert.equal(typeof soft.value, 'string', 'the original soft-only pickPoiTemplate() must remain backward compatible for a caller with no planet context');
 
-  console.log('procedural POI groundwork (hard compatibility filter excludes incompatible combos structurally, POI_CONTEXT_MISMATCH diagnostic, draft composition, per-field reroll) passed.');
+  console.log('procedural POI groundwork (biome/type SSOT with richer canonical Location types, economyTags/governmentTags wired into selection, hard compatibility filter excludes incompatible combos structurally, POI_CONTEXT_MISMATCH diagnostic, draft composition, per-field reroll) passed.');
 }
 
 // ------------------------------------------------------------
@@ -499,7 +637,8 @@ const abs = (rel) => `/systems/foundryvtt-swse/${rel}`;
   const { describeJobArchetype } = await import(abs('scripts/generation/jobs/job-archetype-metadata.js'));
   const { pickObjectiveConstraints } = await import(abs('scripts/generation/jobs/objective-constraint.js'));
   const { createMissionSubjectDraft } = await import(abs('scripts/generation/jobs/mission-subject.js'));
-  const { pickCargoConcept } = await import(abs('scripts/generation/jobs/cargo-concept.js'));
+  const { pickCargoConcept, pickCommodityCargo, pickNarrativeCargo } = await import(abs('scripts/generation/jobs/cargo-concept.js'));
+  const { GALACTIC_COMMODITIES: CARGO_COMMODITIES } = await import(abs('scripts/generation/data/galactic-commodities.js'));
   const { pickIntelClues } = await import(abs('scripts/generation/jobs/intel-clue-concept.js'));
   const { pickJobComplications } = await import(abs('scripts/generation/jobs/job-complication.js'));
   const { pickJobTwist } = await import(abs('scripts/generation/jobs/job-twist.js'));
@@ -530,6 +669,26 @@ const abs = (rel) => `/systems/foundryvtt-swse/${rel}`;
   assert.equal(hasForbiddenMechanicalFields(subjectWithNpc.npcConcept), false, 'an attached mission-subject npcConcept must carry zero mechanical fields');
 
   assert.equal(typeof pickCargoConcept({ rng: makeSeededRng(11) }).value, 'string', 'cargo-concept pick must resolve');
+
+  // --- round-2 fix: cargo must resolve commodities against the SHARED Galactic Commodity Catalog, never its own duplicate vocabulary ---
+  const commodityIdsForCargo = new Set(CARGO_COMMODITIES.map((c) => c.id));
+  let commodityKindCount = 0, narrativeKindCount = 0;
+  for (let seed = 0; seed < 1000; seed++) {
+    const concept = pickCargoConcept({ rng: makeSeededRng(seed) });
+    assert.ok(['commodity', 'narrative'].includes(concept.kind), 'every cargo concept must declare kind "commodity" or "narrative"');
+    if (concept.kind === 'commodity') {
+      commodityKindCount++;
+      assert.ok(commodityIdsForCargo.has(concept.commodityId), `a commodity cargo concept's commodityId ("${concept.commodityId}") must resolve in the shared Galactic Commodity Catalog`);
+    } else {
+      narrativeKindCount++;
+      assert.equal(concept.commodityId, null, 'a narrative cargo concept must never carry a commodityId');
+    }
+  }
+  assert.ok(commodityKindCount > 0 && narrativeKindCount > 0, `pickCargoConcept must produce both kinds across 1000 draws, got commodity=${commodityKindCount} narrative=${narrativeKindCount}`);
+  const illegalCommodityCargo = pickCommodityCargo({ rng: makeSeededRng(1), legality: 'illegal' });
+  assert.equal(illegalCommodityCargo.legality, 'illegal', 'pickCommodityCargo must respect an explicit legality filter');
+  const narrativeOnly = pickNarrativeCargo({ rng: makeSeededRng(1) });
+  assert.equal(narrativeOnly.kind, 'narrative', 'pickNarrativeCargo must always return a narrative-kind concept');
   const clues = pickIntelClues({ rng: makeSeededRng(11), count: 2 });
   assert.equal(clues.length, 2, 'pickIntelClues must respect count');
   const jobComplications = pickJobComplications({ rng: makeSeededRng(11), count: 2 });
@@ -607,4 +766,4 @@ const abs = (rel) => `/systems/foundryvtt-swse/${rel}`;
   console.log('Location current-events (deterministic description+severity generation) passed.');
 }
 
-console.log('PHASE 8D-2 procedural content ecosystem groundwork suite (including independent-review correction pass) passed.');
+console.log('PHASE 8D-2 procedural content ecosystem groundwork suite (including independent-review correction pass rounds 1 and 2) passed.');
