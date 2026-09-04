@@ -60,9 +60,24 @@
  * reconstructed by parsing the old POI's own `tags`, which would be
  * lossy and unreliable.
  *
- * Reuses `settlement-name-generator.js` for the POI's place-name rather
- * than inventing a second name generator — a POI IS a settlement/named
- * place, just at a smaller scale than a planet.
+ * Reuses `settlement-name-generator.js` for an actual-settlement POI's
+ * place-name (`type: 'city'`) rather than inventing a second name
+ * generator for that case — a settlement-type POI IS a settlement/
+ * named place, just at a smaller scale than a planet.
+ *
+ * PHASE 8D-3A production tuning: a non-settlement POI (a natural
+ * feature, an installation, a district) previously ALSO got a
+ * settlement-style name ("Kalhaven Sith Tomb", "Kalhaven Research
+ * Facility"), because the settlement generator was the only one that
+ * existed. `poi-place-name-generator.js`'s `poiNameStyleForType()` now
+ * picks a style from the template's own canonical `type`
+ * (facility/base -> an institutional designation, region -> a
+ * quarter/ward name, everything else -> an adjective+feature
+ * geographic name), and `getRandomPoiPlaceName()` dispatches to it --
+ * `settlement-name-generator.js` remains exactly what it was, just one
+ * of four styles now instead of the only one. `name` is still always
+ * `${placeName} ${template.label}` (`poi.name.endsWith(poi.template.label)`
+ * still holds for every style).
  */
 
 import { LOCATION_DRAFT_MODE } from '../location-draft.js';
@@ -72,7 +87,7 @@ import { mergeTags } from '../lib/tag-utils.js';
 import { joinClauses } from '../lib/description-composer.js';
 import { DIAGNOSTIC_CODE } from '../lib/generator-diagnostics.js';
 import { pickCompatiblePoiTemplate } from './poi-template.js';
-import { getRandomSettlementName } from '../names/settlement-name-generator.js';
+import { getRandomPoiPlaceName, poiNameStyleForType } from '../names/poi-place-name-generator.js';
 
 function contextTagsFor(parentPlanetDraft, preferTags) {
   if (!parentPlanetDraft) return preferTags;
@@ -162,7 +177,7 @@ export function createProceduralPoiDraft({
   const hardFilterTags = planetTagsFor(parentPlanetDraft, planetTags);
   const hardFilterScale = populationScale || parentPlanetDraft?.populationScale || '';
   const { entry: template, contextMismatch } = pickCompatiblePoiTemplate({ rng, preferTags: contextTags, planetTags: hardFilterTags, populationScale: hardFilterScale });
-  const nameDraft = getRandomSettlementName({ rng, preferTags: contextTags });
+  const nameDraft = getRandomPoiPlaceName({ rng, preferTags: contextTags, style: poiNameStyleForType(template.type) });
   const name = `${nameDraft.name} ${template.label}`;
   const generatorContext = { preferTags: contextTags, planetTags: hardFilterTags, populationScale: hardFilterScale };
   return {
@@ -197,6 +212,15 @@ export function createProceduralPoiDraft({
  * silently losing them. Passing an explicit option overrides the
  * stored context for this reroll AND updates what's stored going
  * forward (e.g. re-parenting a POI to a different planet).
+ *
+ * PHASE 8D-3A: when the newly-rolled template's naming style
+ * (`poiNameStyleForType()`) differs from the draft's existing
+ * `nameDraft.style` (e.g. rerolling from a Cantina, GEOGRAPHIC, to a
+ * Mine, FACILITY), the place-name is regenerated in the NEW style
+ * rather than keeping a place-name whose flavor no longer matches the
+ * new kind of POI. A same-style reroll (Mine -> Processing Plant, both
+ * FACILITY) keeps the existing place-name, preserving continuity
+ * exactly like before this phase.
  */
 export function rerollPoiTemplate(draft, { rng, preferTags, planetTags, populationScale, parentPlanetDraft = null } = {}) {
   const stored = draft.generatorContext ?? { preferTags: [], planetTags: [], populationScale: '' };
@@ -204,7 +228,9 @@ export function rerollPoiTemplate(draft, { rng, preferTags, planetTags, populati
   const resolvedPlanetTags = planetTags ?? (parentPlanetDraft ? planetTagsFor(parentPlanetDraft, []) : stored.planetTags);
   const resolvedPopulationScale = populationScale ?? (parentPlanetDraft?.populationScale) ?? stored.populationScale;
   const { entry: template, contextMismatch } = pickCompatiblePoiTemplate({ rng, preferTags: resolvedPreferTags, planetTags: resolvedPlanetTags, populationScale: resolvedPopulationScale });
-  const name = `${draft.nameDraft.name} ${template.label}`;
+  const newStyle = poiNameStyleForType(template.type);
+  const nameDraft = draft.nameDraft?.style === newStyle ? draft.nameDraft : getRandomPoiPlaceName({ rng, preferTags: resolvedPreferTags, style: newStyle });
+  const name = `${nameDraft.name} ${template.label}`;
   const generatorContext = { preferTags: resolvedPreferTags, planetTags: resolvedPlanetTags, populationScale: resolvedPopulationScale };
   return {
     ...draft,
@@ -212,6 +238,7 @@ export function rerollPoiTemplate(draft, { rng, preferTags, planetTags, populati
     type: template.type,
     biomes: deriveActualPoiBiomes(template, parentBiomesFor(parentPlanetDraft, resolvedPlanetTags)),
     name,
+    nameDraft,
     tags: mergeTags(template.tags, resolvedPreferTags),
     generatorContext,
     summary: composeSummary(template, name),
@@ -219,10 +246,11 @@ export function rerollPoiTemplate(draft, { rng, preferTags, planetTags, populati
   };
 }
 
-/** Reroll ONLY the name, keeping the same template/kind and parent linkage. Falls back to the draft's stored `generatorContext.preferTags` when the caller omits `preferTags`, same as `rerollPoiTemplate()`. */
+/** Reroll ONLY the name, keeping the same template/kind, naming STYLE, and parent linkage. Falls back to the draft's stored `generatorContext.preferTags` when the caller omits `preferTags`, same as `rerollPoiTemplate()`. */
 export function rerollPoiName(draft, { rng, preferTags } = {}) {
   const resolvedPreferTags = preferTags ?? draft.generatorContext?.preferTags ?? [];
-  const nameDraft = getRandomSettlementName({ rng, preferTags: resolvedPreferTags });
+  const style = draft.nameDraft?.style ?? poiNameStyleForType(draft.template?.type);
+  const nameDraft = getRandomPoiPlaceName({ rng, preferTags: resolvedPreferTags, style });
   const name = `${nameDraft.name} ${draft.template.label}`;
   return { ...draft, nameDraft, name, summary: composeSummary(draft.template, name) };
 }
