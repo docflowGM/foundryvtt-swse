@@ -6792,3 +6792,80 @@ corrections," not a reason to reopen the architecture broadly, and the
 remaining work (the ~500 planet names, ~200 objectives, 150-250 POIs,
 150-250 commodities, and larger NPC/Faction catalogs) is now content
 expansion, not foundation repair. PR #963 remains a draft, unmerged.
+
+## 179. Independent review, round 3 — GATE CLOSED
+
+A fourth review pass (against the round-3 correction pass itself, head
+`37cc801`, re-confirmed exact-head-green on Rolling System Validation,
+`mergeable_state: clean`, still draft, zero open review threads)
+verified all three round-3 fixes directly against their own worked
+examples and closed the gate:
+
+1. **Population reroll** — confirmed the three-branch split holds:
+   inhabited -> inhabited preserves government/stability/technology/
+   economy sectors by reference and only regenerates demographics/
+   populationScale/settlementPattern/trade; either direction across the
+   `UNINHABITED` boundary still correctly regenerates the whole
+   civilization block. Noted the new tests specifically exercise
+   thousands of inhabited -> inhabited cases checking REFERENCE
+   preservation, not just output validity. **Gate: passed.**
+2. **POI affinity vs. actual biome** — confirmed `biomeAffinities` now
+   clearly means "where this kind of POI tends to occur," not "this
+   generated Location's actual biome list," in both the template schema
+   and the generator; confirmed the Ruins-on-jungle scenario is
+   directly tested; confirmed the persisted `generatorContext` closes
+   the bare-reroll context-loss problem (a reroll can no longer
+   silently forget it came from an uninhabited world, a mining world, a
+   theocracy, etc.). One NON-BLOCKING content-design note for the
+   future content-expansion pass: when a parent has no biome overlapping
+   a template's affinities, the POI resolves to `biomes: []`, which the
+   review confirms is the CORRECT foundation behavior ("no specific
+   child biome was established rather than inventing a false one") —
+   template metadata like `inherit-parent`/`local-override`/`interior`
+   for finer control is a possible LATER refinement, explicitly not a
+   reason to reopen this pass. **Gate: passed.**
+3. **Cargo affinity + Job legality** — confirmed the `JOB_LEGALITY` ->
+   `COMMODITY_LEGALITY` translation boundary is explicit and the
+   mapping sensible (`legal`->`legal`; `gray-area`->`restricted`;
+   `illegal`->`restricted`/`illegal`; `black-market`->`illegal`);
+   confirmed the narrative branch now receives the same Job-legality
+   context, closing the "a legal Job could roll explicitly illegal
+   narrative cargo" path; confirmed commodity context weighting now
+   reads `tags`+`producedBy`+`demandedBy` together, so a mining world's
+   Cargo generator can actually prefer commodities whose economic
+   metadata says they originate in mining contexts. **Gate: passed.**
+
+**Overall verdict: Phase 8D-2 (Procedural Content Ecosystem Groundwork)
+is independently CLOSED.** Every foundation-level contract audited
+across all three correction rounds — generation-core contracts,
+draft/canonical authority separation, Location demographic foundation,
+Faction locality foundation, the procedural planet contract, the
+planet environment/profile contract, the planet economy/trade
+foundation, the shared Galactic Commodity Catalog, Cargo commodity
+SSOT, the procedural POI contract, POI compatibility/context
+persistence, the NPC narrative foundation, the Faction narrative
+foundation, Job support contracts, objective hints/constraints, the
+opposition-request schema, and targeted-reroll semantics — passed. The
+review's own closing note: further review at this point is "increasingly
+going to find tuning or content questions rather than missing
+architectural seams," and no fourth foundation correction round is
+warranted. PR #963 stays draft and unmerged — live Foundry/UI
+validation still hasn't happened, and no canonical Actor/Faction/
+Location/Job creation, full Job orchestration, or Opposition Catalog
+resolver exists yet.
+
+**Proposed next phase (not yet started — reported back to the user for
+go-ahead before beginning any of it):** the review outlines a shift
+from foundation architecture to (a) production-scale content
+expansion — ~500 planet names, ~150-250 POI templates, ~150-250
+Galactic Commodities, ~200 objective templates, ~100-200 complications,
+~50-100 twists, and larger NPC personality/motivation/agenda/secret and
+Faction naming/goals/problems/doctrine and planet traits/hazards/
+history pools — and (b) composing the existing foundation modules into
+an actual end-to-end workflow (Generate Planet -> Generate POIs ->
+Generate local Factions -> Generate Contacts/NPC concepts -> Generate
+Job -> Objectives + Cargo/MacGuffins -> Opposition Request -> Rewards
+-> GM reviews/rerolls -> canonical commit). Per this session's standing
+practice of stopping after each phase/correction for explicit
+independent sign-off before starting the next body of work, this phase
+has not been started.
