@@ -16,6 +16,7 @@ import { mutateShellOnly } from '/systems/foundryvtt-swse/scripts/ui/shell/mutat
 import { confirmGmDatapadModal } from '/systems/foundryvtt-swse/scripts/ui/shell/gm/utils/gm-datapad-modal.js';
 import { GMSmartFormDropService } from '/systems/foundryvtt-swse/scripts/ui/shell/gm/utils/gm-smart-form-drop-service.js';
 import { setWizardPage } from '/systems/foundryvtt-swse/scripts/ui/shell/gm/utils/gm-wizard-navigation.js';
+import { GMCampaignTargetService } from '/systems/foundryvtt-swse/scripts/ui/shell/gm/GMCampaignTargetService.js';
 
 function text(formData, key) { return String(formData.get(key) ?? '').trim(); }
 function number(formData, key) { return Number(formData.get(key) || 0) || 0; }
@@ -210,6 +211,8 @@ export class GMFactionRelationshipSurfaceController {
       const locationId = String(button.dataset.locationId || '').trim();
       const actorId = String(button.dataset.actorId || '').trim();
       const relationshipId = String(button.dataset.relationshipId || '').trim();
+      const jobId = String(button.dataset.jobId || '').trim();
+      const intelId = String(button.dataset.intelId || '').trim();
       const issuerFilter = {
         factionId,
         factionName,
@@ -231,6 +234,19 @@ export class GMFactionRelationshipSurfaceController {
             this.host.patchSurfaceState?.('jobs', { pendingJobDraft: draft, openWizard: true, issuerFilter }, { render: false });
             await this.host._navigateTo('jobs');
             ui.notifications?.info?.('Job draft prepared from the selected dossier.');
+            return;
+          }
+
+          // PHASE 8C — hands off to the shared Bulletin draft authority
+          // (GMBulletinSurfaceService.prepareDraftFromSource() via the
+          // host); this is the Faction record itself (not a Contact),
+          // supplying only the stable factionId.
+          case 'prepare-bulletin-draft': {
+            if (!factionId) {
+              ui.notifications?.warn?.('Select a faction before preparing a Bulletin draft.');
+              return;
+            }
+            await this.host?._prepareBulletinDraftFromSource?.('faction', factionId);
             return;
           }
 
@@ -298,6 +314,21 @@ export class GMFactionRelationshipSurfaceController {
             await this.host._navigateTo('locations');
             return;
 
+          // Ecosystem Redesign Phase 3 — context-preserving navigation from
+          // the Faction's own Jobs/Intel relationship rows (relationships.
+          // jobs/relationships.intel on the Phase 3 ecosystem VM), using
+          // the real stable id each row already carries, via the Phase 2
+          // shell navigation contract. No new routing helper.
+          case 'open-faction-job':
+            if (!jobId) throw new Error('This linked Job has no thread id.');
+            await this.host.navigateToSurface?.('jobs', { hostPatch: { selectedJobThreadId: jobId } });
+            return;
+
+          case 'open-faction-intel':
+            if (!intelId) throw new Error('This linked Intel record has no id.');
+            await this.host.navigateToSurface?.('intel', { statePatch: { selectedRecordId: intelId } });
+            return;
+
           case 'hide-contact': {
             const found = FactionRegistryService.findFactionContact(factionId || factionName, contactId || contactName);
             if (!found?.contact) throw new Error('The selected contact could not be found.');
@@ -326,6 +357,25 @@ export class GMFactionRelationshipSurfaceController {
             const actor = await resolveActorForContact({ actorId: button.dataset.actorId, uuid: button.dataset.actorUuid });
             if (!actor) throw new Error('The linked contact actor could not be found.');
             actor.sheet?.render?.(true);
+            return;
+          }
+
+          // Phase 7 inbound path: distinct from open-contact-actor (which
+          // opens the real Foundry sheet) — this selects the Actor in
+          // Workspace's campaign dossier via the same workspace-actor
+          // target GMCampaignTargetService.resolve() understands elsewhere.
+          // CORRECTION 3: this control is now only rendered when the
+          // Contact VM already proved a real WORLD Actor resolves
+          // (hasWorkspaceActorLink/workspaceActorId, computed with the
+          // same world-only rule Workspace's own selection uses) — so a
+          // plain game.actors.get() lookup here is honest; it must never
+          // fall back to resolveActorForContact()'s fromUuid()
+          // Compendium-resolving behavior, which Workspace cannot select.
+          case 'open-workspace-actor': {
+            const actor = game.actors?.get?.(button.dataset.actorId);
+            if (!actor) throw new Error('The linked Workspace actor could not be found.');
+            const target = GMCampaignTargetService.workspaceActor(actor.id);
+            await this.host?.navigateToSurface?.(target.surfaceId, target);
             return;
           }
 

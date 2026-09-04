@@ -3,10 +3,17 @@
   <section class="gm-command-session" aria-label="Current GM session status">
     <div class="gm-command-session__badge">{{gmHome.sessionLabel}}</div>
     <div class="gm-command-session__divider" aria-hidden="true"></div>
+    {{#if gmHome.currentLocationId}}
+    <button type="button" class="gm-command-session__block gm-command-session__block--nav" data-target-kind="location" data-target-id="{{gmHome.currentLocationId}}" title="Open {{gmHome.currentLocation}} in Locations">
+      <strong>{{gmHome.currentLocation}}</strong>
+      <span>{{gmHome.currentLocationSub}}</span>
+    </button>
+    {{else}}
     <div class="gm-command-session__block">
       <strong>{{gmHome.currentLocation}}</strong>
       <span>{{gmHome.currentLocationSub}}</span>
     </div>
+    {{/if}}
     <div class="gm-command-session__divider" aria-hidden="true"></div>
     <div class="gm-command-session__online">
       <span class="gm-command-session__dot"></span>
@@ -24,7 +31,17 @@
       <header class="gm-command-section-label">⚡ Action Queue</header>
       {{#if gmHome.actionItems.length}}
         {{#each gmHome.actionItems}}
-        <button type="button" class="gm-command-queue-item {{this.tone}}" data-route-id="{{this.id}}" data-app-card="{{this.id}}" title="{{this.sub}}">
+        {{#if this.isExact}}
+        <button type="button" class="gm-command-queue-item {{this.tone}}" data-target-kind="{{this.targetKind}}" data-target-id="{{this.targetId}}" data-target-uuid="{{this.targetUuid}}" data-fallback-route="{{this.fallbackRoute}}" title="{{this.sub}}">
+          <span class="gm-command-queue-item__dot {{this.tone}}"></span>
+          <span class="gm-command-queue-item__copy">
+            <strong>{{this.label}}</strong>
+            <em>{{this.sub}}{{#if this.source}} · {{this.source}}{{/if}}</em>
+          </span>
+          <span class="gm-command-queue-item__go">Review ›</span>
+        </button>
+        {{else}}
+        <button type="button" class="gm-command-queue-item {{this.tone}}" data-app-card="{{this.id}}" title="{{this.sub}}">
           <span class="gm-command-queue-item__dot {{this.tone}}"></span>
           <span class="gm-command-queue-item__copy">
             <strong>{{this.label}}</strong>
@@ -33,6 +50,7 @@
           {{#if this.count}}<span class="gm-command-queue-item__count {{this.tone}}">{{this.count}}</span>{{/if}}
           <span class="gm-command-queue-item__go">Go ›</span>
         </button>
+        {{/if}}
         {{/each}}
       {{else}}
         <div class="gm-command-empty-state">No critical actions are queued. Monitoring session telemetry.</div>

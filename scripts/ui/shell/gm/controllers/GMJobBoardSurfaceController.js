@@ -47,6 +47,7 @@ export class GMJobBoardSurfaceController {
     this._wireItemAwardForms(pageElement, signal);
     this._wireAssetAwardForms(pageElement, signal);
     this._wireIssuerButtons(pageElement, signal);
+    this._wireRelationshipButtons(pageElement, signal);
     GMSmartFormDropService.bind(pageElement, { signal });
   }
 
@@ -223,7 +224,8 @@ export class GMJobBoardSurfaceController {
       'clientName', 'clientFaction', 'clientImage', 'title', 'primaryObjective', 'primaryDescription', 'primaryCredits', 'primaryXp', 'primaryItems',
       'secondaryObjective', 'secondaryDescription', 'secondaryCredits', 'secondaryXp', 'secondaryItems',
       'tertiaryObjective', 'tertiaryDescription', 'tertiaryCredits', 'tertiaryXp', 'tertiaryItems',
-      'briefing', 'instructions', 'oocNote', 'status', 'flatCredits', 'flatItems', 'factionSuccessDelta', 'factionFailureDelta', 'factionNotes', 'rivalFactionName', 'rivalSuccessDelta', 'rivalFailureDelta', 'rivalNotes'
+      'briefing', 'instructions', 'oocNote', 'status', 'flatCredits', 'flatItems', 'factionSuccessDelta', 'factionFailureDelta', 'factionNotes', 'rivalFactionName', 'rivalSuccessDelta', 'rivalFailureDelta', 'rivalNotes',
+      'sourceLocationId', 'sourceLocationName'
     ];
     const setControlValue = (control, value) => {
       if (!control || typeof control !== 'object') return;
@@ -617,6 +619,19 @@ export class GMJobBoardSurfaceController {
       }, { signal });
     });
 
+    // PHASE 8C — hands off to the shared Bulletin draft authority
+    // (GMBulletinSurfaceService.prepareDraftFromSource() via the host);
+    // this controller supplies only the stable threadId, never builds a
+    // Bulletin record itself.
+    pageElement.querySelectorAll('[data-job-prepare-bulletin-draft]').forEach((button) => {
+      button.addEventListener('click', async (event) => {
+        event.preventDefault();
+        const threadId = event.currentTarget.dataset.threadId;
+        if (!threadId) return;
+        await this.host?._prepareBulletinDraftFromSource?.('job', threadId);
+      }, { signal });
+    });
+
     pageElement.querySelectorAll('[data-job-open-issuer-actor]').forEach((button) => {
       button.addEventListener('click', async (event) => {
         event.preventDefault();
@@ -646,6 +661,33 @@ export class GMJobBoardSurfaceController {
     });
   }
 
+
+  /**
+   * Ecosystem Redesign Phase 4 — context-preserving navigation from the
+   * selected Job's Location/Intel relationships (jobBoard.selectedJob
+   * .relationships, the Phase 4D ecosystem VM), using the real stable id
+   * each row already carries and routing through the Phase 2 shell
+   * navigation contract. No new routing helper, no text matching.
+   */
+  _wireRelationshipButtons(pageElement, signal) {
+    pageElement.querySelectorAll('[data-job-open-location]').forEach((button) => {
+      button.addEventListener('click', async (event) => {
+        event.preventDefault();
+        const locationId = String(event.currentTarget.dataset.locationId || '').trim();
+        if (!locationId) return;
+        await this.host?.navigateToSurface?.('locations', { statePatch: { selectedLocationId: locationId } });
+      }, { signal });
+    });
+
+    pageElement.querySelectorAll('[data-job-open-intel]').forEach((button) => {
+      button.addEventListener('click', async (event) => {
+        event.preventDefault();
+        const intelId = String(event.currentTarget.dataset.intelId || '').trim();
+        if (!intelId) return;
+        await this.host?.navigateToSurface?.('intel', { statePatch: { selectedRecordId: intelId } });
+      }, { signal });
+    });
+  }
 
   _draftStorageKey() {
     const worldId = String(game?.world?.id || 'world');
@@ -860,6 +902,8 @@ export class GMJobBoardSurfaceController {
 
         const rewardCredits = number('flatCredits') + objectives.reduce((sum, objective) => sum + Number(objective.rewardCredits || 0), 0);
         const rewardItems = itemNotes('flatItems', 'primaryItems', 'secondaryItems', 'tertiaryItems');
+        const sourceLocationId = text('sourceLocationId');
+        const sourceLocation = sourceLocationId ? { locationId: sourceLocationId, locationName: text('sourceLocationName') } : null;
         const result = await mutateShellOnly(this.host, () => HolonetMessengerService.createJobPosting({
           actor: null,
           title,
@@ -888,6 +932,7 @@ export class GMJobBoardSurfaceController {
             name: text('issuerName') || text('clientName'),
             image: text('issuerImage') || text('clientImage')
           },
+          sourceLocation,
           objectives,
           briefing: {
             body: text('briefing'),

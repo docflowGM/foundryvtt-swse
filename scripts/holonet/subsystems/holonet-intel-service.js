@@ -257,7 +257,17 @@ function normalizeLinks(data = {}, existing = {}) {
     linkedJobThreadId: cleanString(data.linkedJobThreadId ?? existing.linkedJobThreadId),
     linkedSceneUuid: cleanString(data.linkedSceneUuid ?? existing.linkedSceneUuid),
     linkedItemUuid: cleanString(data.linkedItemUuid ?? existing.linkedItemUuid),
-    linkedUuids: uniqueStrings(data.linkedUuids ?? existing.linkedUuids, 24)
+    linkedUuids: uniqueStrings(data.linkedUuids ?? existing.linkedUuids, 24),
+    // Ecosystem Redesign Phase 5 — the Location this Intel is ABOUT (never a
+    // copy of the Location's own data, just its stable id) and, when this
+    // Intel was drafted from a specific Atlas Fact on that Location, the
+    // Fact's own id so it can be resolved fresh from the Location on every
+    // render. Added here, flat, alongside the other linked* fields rather
+    // than reviving the old dropped `metadata` object — see
+    // LocationIntelBridgeService, which used to build that object and have
+    // it silently discarded because this function never read it.
+    linkedLocationId: cleanString(data.linkedLocationId ?? existing.linkedLocationId),
+    sourceFactId: cleanString(data.sourceFactId ?? existing.sourceFactId)
   };
 }
 
@@ -394,10 +404,19 @@ function deliverySummary(intel = {}, extra = {}) {
   };
 }
 
+// PHASE 8B CORRECTION PASS (C8B-4): mode:'public' (and 'redacted') must
+// NEVER fall back to fullBody -- fullBody is GM-private/unreleased text,
+// and every production caller of bodyForIntel(intel,'public')
+// (deliverAsBulletin, deliverAsMessengerMessage, deliverAsSecretNote's
+// non-encrypted path) treats its return value as safe to send to
+// players. Only mode:'full' (GM-side decryption-payload construction,
+// never player-facing) may use fullBody. An Intel record with no
+// publicBody/redactedBody/summary now correctly returns an empty
+// string here rather than silently leaking fullBody.
 function bodyForIntel(intel = {}, mode = 'public') {
   if (mode === 'full') return cleanString(intel.fullBody || intel.publicBody || intel.redactedBody || intel.summary);
   if (mode === 'redacted') return cleanString(intel.redactedBody || intel.publicBody || intel.summary);
-  return cleanString(intel.publicBody || intel.redactedBody || intel.summary || intel.fullBody);
+  return cleanString(intel.publicBody || intel.redactedBody || intel.summary);
 }
 
 function shouldBuildDecryption(intel = {}, options = {}) {
@@ -498,6 +517,19 @@ export class HolonetIntelService {
     return normalizeIntelMetadata(record.metadata[INTEL_METADATA_KEY]);
   }
 
+  /**
+   * PHASE 8C: the one authoritative way for a caller outside this file
+   * (e.g. GMBulletinSurfaceService's "Prepare Bulletin Draft" prefill) to
+   * get an Intel record's player-safe body. Thin public wrapper around
+   * the same bodyForIntel(intel,'public') helper deliverAsBulletin()
+   * itself uses -- never a second sanitizer, never re-derives fullBody
+   * as a fallback (see the Phase 8B C8B-4 correction).
+   */
+  static getPublicBody(record) {
+    const intel = this.getIntelMetadata(record);
+    return intel ? bodyForIntel(intel, 'public') : '';
+  }
+
   static toIntelSummary(record) {
     const intel = this.getIntelMetadata(record);
     if (!intel) return null;
@@ -590,14 +622,26 @@ export class HolonetIntelService {
     return record;
   }
 
-  static async updateIntel(intelOrRecordId, patch = {}) {
-    if (!globalThis.game?.user?.isGM) return null;
-    const record = await this.getIntelById(intelOrRecordId);
-    if (!record) return null;
+  /**
+   * @private — mutate an Intel record in place with a normalized patch,
+   * WITHOUT persisting. Shared by updateIntel() (which persists it alone)
+   * and deliverAsBulletin() (PHASE 8B correction pass, C8B-1), which needs
+   * to commit this mutation and a new Bulletin record together in one
+   * settings write rather than as two sequential saves.
+   */
+  static #prepareIntelUpdate(record, patch = {}) {
     const existing = record.metadata?.[INTEL_METADATA_KEY] ?? {};
     const next = normalizeIntelMetadata({ ...existing, ...patch, id: existing.id }, existing, { touchUpdatedAt: true });
     record.state = lifecycleStateForIntelStatus(next.status);
     applyIntelToRecord(record, next);
+    return record;
+  }
+
+  static async updateIntel(intelOrRecordId, patch = {}) {
+    if (!globalThis.game?.user?.isGM) return null;
+    const record = await this.getIntelById(intelOrRecordId);
+    if (!record) return null;
+    this.#prepareIntelUpdate(record, patch);
     const ok = await HolonetStorage.saveRecord(record);
     if (!ok) return null;
     this.#emitIntelHook('updated', record);
@@ -800,40 +844,101 @@ export class HolonetIntelService {
     const record = await this.getIntelById(intelOrRecordId);
     const intel = this.getIntelMetadata(record);
     if (!record || !intel) return null;
+    // PHASE 8B CORRECTION PASS (C8B-4): fail closed. bodyForIntel(intel,
+    // 'public') can no longer return fullBody, so an Intel record with
+    // no publicBody/redactedBody/summary yields an empty string here.
+    // Publishing that would mean either an empty player-facing Bulletin
+    // or (before this fix) silently falling back to private text. Refuse
+    // instead: no Bulletin, no Intel release, no delivery-history entry,
+    // no publication event -- computed and checked before anything else
+    // in this method touches storage.
+    const publicBody = bodyForIntel(intel, 'public');
+    if (!publicBody) {
+      globalThis.ui?.notifications?.warn?.('This Intel has no player-safe text (public body, redacted body, or summary) to publish as a Bulletin.');
+      return null;
+    }
+    // PHASE 8B: Bulletin stores only the player-safe body plus stable
+    // provenance (sourceIntelId/intelDelivery) — NOT a full snapshot of
+    // the Intel record. The full Intel object (gmNotes, fullBody,
+    // skillGate, lockbox, etc.) this used to copy in under
+    // INTEL_METADATA_KEY was reachable by every connected client — every
+    // Holonet record lives in one world-scope setting (holonet_records)
+    // that Foundry syncs in full to all clients, GM and player alike,
+    // regardless of what the UI renders — and the Phase 8B audit found
+    // no production consumer anywhere that ever read it back off a
+    // Bulletin record (Bulletin's own delivery-summary/audience/
+    // recipient resolution are computed from the record's own audience/
+    // recipients/deliveryStates, never from this copy). matches the
+    // minimal-provenance pattern deliverAsSecretNote() already used
+    // (sourceIntelId only, never a full Intel snapshot). See the audit
+    // doc's Phase 8B section for the full consumer trace.
+    // PHASE 8B CORRECTION PASS (C8B body-override audit): the sole
+    // production caller (GMIntelSurfaceController.js) never passes
+    // options.body — no caller anywhere relies on overriding the
+    // player-safe body. Removed so Intel->Bulletin delivery always uses
+    // the authoritative bodyForIntel(intel,'public') representation,
+    // with no path for a future caller to accidentally (or otherwise)
+    // substitute unreleased/private text.
     const bulletin = BulletinSource.createBulletinMessage({
       title: options.title ?? intel.title,
-      body: options.body ?? bodyForIntel(intel, 'public'),
+      body: publicBody,
       priority: options.priority ?? 'normal',
       audience: audienceFromVisibility(intel, options),
       category: 'intel',
       metadata: {
         sourceIntelId: intel.id,
-        intelDelivery: true,
-        [INTEL_METADATA_KEY]: intel
+        intelDelivery: true
       }
     });
-    bulletin.metadata = {
-      ...(bulletin.metadata ?? {}),
-      sourceIntelId: intel.id,
-      intelDelivery: true,
-      [INTEL_METADATA_KEY]: intel
-    };
+    // PHASE 8B CORRECTION PASS (C8B-3): sourceIntelId/intelDelivery used
+    // to be duplicated onto both projection.metadata objects as well as
+    // the Bulletin's own metadata. No production consumer anywhere reads
+    // provenance off a projection (gm-datapad.js's own pin/feature
+    // toggles only ever touch surfaceType/isPinned; projection.metadata
+    // is otherwise used only for Messenger's threadId annotation). The
+    // Bulletin record itself is the one canonical provenance edge.
     bulletin.projections = [
-      { surfaceType: SURFACE_TYPE.HOME_FEED, recordId: bulletin.id, isPinned: false, metadata: { sourceIntelId: intel.id, intelDelivery: true } },
-      { surfaceType: SURFACE_TYPE.GM_DATAPAD_BULLETIN, recordId: bulletin.id, isPinned: false, metadata: { sourceIntelId: intel.id, intelDelivery: true } }
+      { surfaceType: SURFACE_TYPE.HOME_FEED, recordId: bulletin.id, isPinned: false, metadata: {} },
+      { surfaceType: SURFACE_TYPE.GM_DATAPAD_BULLETIN, recordId: bulletin.id, isPinned: false, metadata: {} }
     ];
-    bulletin.publish();
-    bulletin.recipients = HolonetDeliveryRouter.resolveRecipients(bulletin);
-    for (const recipient of bulletin.recipients) bulletin.setDeliveryState(recipient.id, DELIVERY_STATE.DELIVERED);
-    const ok = await HolonetStorage.saveRecord(bulletin);
-    if (!ok) return null;
-    HolonetSocketService.emitSync({ type: 'record-published', recordId: bulletin.id, source: 'intel-bulletin', intelId: intel.id });
-    const updated = await this.releaseIntel(record.id, {
+    // PHASE 8A transport-only migration: this used to manually replicate
+    // HolonetEngine's own publish/recipients/persist/sync pipeline (and
+    // its own record-published sync was a second, independent publication
+    // announcement — the exact D5 finding). Routed through the same
+    // central pipeline every other publisher uses. Dynamic import to
+    // avoid a circular static import (holonet-engine.js already imports
+    // this file's HolonetIntelService), matching the pattern
+    // holonet-socket-service.js already uses for the same reason.
+    const { HolonetEngine } = await import('../holonet-engine.js');
+    HolonetEngine.prepareRecordForPublish(bulletin);
+
+    // PHASE 8B CORRECTION PASS (C8B-1): the Bulletin write and the Intel
+    // release/delivery-state write used to be two SEPARATE
+    // HolonetStorage.saveRecord() calls, with the publication event
+    // announced in between. That left a real partial-failure window: if
+    // the Bulletin save succeeded but the Intel-release save failed, the
+    // Bulletin would already be persisted and broadcast to players while
+    // Intel silently stayed unreleased — and this method still returned
+    // an ok:true-shaped result. Both records live in the SAME
+    // holonet_records setting, so #prepareIntelUpdate() mutates the Intel
+    // record in memory (no persistence yet) and HolonetStorage
+    // .saveRecords() commits both records in ONE settings write —
+    // genuinely one storage operation, not a second compensating layer.
+    // Nothing is announced (publication event or Intel release hook)
+    // unless that one write actually succeeds.
+    this.#prepareIntelUpdate(record, {
       persistence: INTEL_PERSISTENCE.BULLETIN,
       revealState: INTEL_REVEAL_STATE.FULLY_REVEALED,
+      status: INTEL_STATUS.RELEASED,
+      releasedAt: nowIso(),
       delivery: deliverySummary(intel, { mode: 'bulletin', recordId: bulletin.id, recipientIds: bulletin.recipients?.map(r => r.id) ?? [] })
     });
-    return { ok: true, mode: 'bulletin', result: { recordId: bulletin.id }, record: updated };
+    const saved = await HolonetStorage.saveRecords([bulletin, record]);
+    if (!saved) return null;
+
+    HolonetEngine.emitPreparedRecordPublished(bulletin, { skipSocket: false, syncExtra: { source: 'intel-bulletin', intelId: intel.id } });
+    this.#emitIntelHook('released', record);
+    return { ok: true, mode: 'bulletin', result: { recordId: bulletin.id }, record };
   }
 
   static async releaseToDossier(intelOrRecordId, options = {}) {

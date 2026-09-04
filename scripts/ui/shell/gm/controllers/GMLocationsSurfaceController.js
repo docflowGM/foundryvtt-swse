@@ -7,6 +7,7 @@ import { LocationSceneBridgeService } from '/systems/foundryvtt-swse/scripts/ui/
 import { requestShellRender } from '/systems/foundryvtt-swse/scripts/ui/shell/request-shell-render.js';
 import { DossierDragDropService } from '/systems/foundryvtt-swse/scripts/ui/dragdrop/dossier-drag-drop-service.js';
 import { FactionRegistryService } from '/systems/foundryvtt-swse/scripts/allies/faction-registry-service.js';
+import { SWSELogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
 
 function text(formData, key, fallback = '') {
   const out = String(formData.get(key) ?? fallback ?? '').trim();
@@ -79,13 +80,32 @@ function factPayload(formData) {
   };
   const checks = multiChecks.length ? multiChecks : [quickCheck];
   return {
-    id: text(formData, 'factId'),
+    // The Add Atlas Fact form never renders a factId field — every
+    // interactive submission used to fall through to normalizeFact()'s
+    // id: text(record.id || record.factId) || slugify(title) fallback.
+    // slugify(title) alone has no per-call disambiguation (unlike
+    // normalizeEncounterSeed(), whose fallback is slugify(`${name}-
+    // ${index+1}`)), so two different facts named the same thing
+    // ("Local Rumor" twice) generated the SAME id and the second save
+    // silently overwrote the first as an "edit". Generating a real
+    // unique id here for every interactive (no-explicit-id) submission
+    // fixes create-vs-edit identity without touching normalizeFact()'s
+    // shared fallback — which stays exactly as-is for the static Library
+    // seed facts that always supply their own deterministic id anyway
+    // (see seedFactToAtlasFact in location-library-seeds.js).
+    id: text(formData, 'factId') || foundry.utils.randomID(),
     title: text(formData, 'factTitle', 'New Atlas Fact'),
     teaser: text(formData, 'factTeaser'),
     body: text(formData, 'factBody'),
     category: text(formData, 'factCategory', 'general'),
     revealState: text(formData, 'factRevealState', 'hidden'),
-    knownToPlayers: checked(formData, 'factKnownToPlayers'),
+    // No factKnownToPlayers checkbox is rendered on this form. Do NOT
+    // supply an explicit boolean here — normalizeFact()'s own bool()
+    // helper returns an explicit boolean as-is (bypassing its designed
+    // revealState-based fallback: known/active/compromised implies
+    // knownToPlayers=true), so a form-created fact with revealState=
+    // 'known' used to always be saved with knownToPlayers=false. Omitting
+    // the key entirely lets that intended fallback actually apply.
     revealMode: text(formData, 'factRevealMode', 'any'),
     checks,
     onReveal: {
@@ -134,6 +154,9 @@ export class GMLocationsSurfaceController {
     this.host = host;
     this._abort = null;
     this._searchTimer = null;
+    this._importInFlight = false;
+    this._sceneOperationInFlight = false;
+    this._pageElement = null;
   }
 
   async attach(root) {
@@ -143,6 +166,7 @@ export class GMLocationsSurfaceController {
     const pageElement = root.querySelector('.gm-datapad-locations');
     if (!pageElement) return false;
     if (!this._assertGM('manage Locations')) return false;
+    this._pageElement = pageElement;
     this._wireFilters(pageElement, signal);
     this._wireActions(pageElement, signal);
     this._wireForms(pageElement, signal);
@@ -157,6 +181,7 @@ export class GMLocationsSurfaceController {
     this._abort = null;
     if (this._searchTimer) window.clearTimeout(this._searchTimer);
     this._searchTimer = null;
+    this._pageElement = null;
   }
 
   _wireFilters(pageElement, signal) {
@@ -226,6 +251,18 @@ export class GMLocationsSurfaceController {
           return;
         }
 
+        // PHASE 8C — hands off to the shared Bulletin draft authority
+        // (GMBulletinSurfaceService.prepareDraftFromSource() via the
+        // host); this controller supplies only the stable locationId.
+        if (action === 'prepare-bulletin-draft') {
+          if (!locationId) {
+            ui.notifications?.warn?.('Select a location before preparing a Bulletin draft.');
+            return;
+          }
+          await this.host?._prepareBulletinDraftFromSource?.('location', locationId);
+          return;
+        }
+
         if (action === 'wizard-next' || action === 'wizard-back') {
           this._shiftWizardPage(target.closest('[data-location-wizard]'), action === 'wizard-next' ? 1 : -1);
           return;
@@ -250,7 +287,7 @@ export class GMLocationsSurfaceController {
         }
 
         if (action === 'close-modal') {
-          this.host?.patchSurfaceState?.('locations', { modal: null }, { render: false });
+          this.host?.patchSurfaceState?.('locations', { modal: null, librarySelectedSeedIds: [] }, { render: false });
           await this._refresh('gm-location-close-modal');
           return;
         }
@@ -265,7 +302,8 @@ export class GMLocationsSurfaceController {
           this.host?.patchSurfaceState?.('locations', { selectedLocationId: result.seed.id, modal: null }, { render: false });
           const importedCount = result.imported?.length || 0;
           const skippedCount = result.skipped?.length || 0;
-          ui.notifications?.info?.(`Imported ${result.seed.name}: ${importedCount} records added${skippedCount ? `, ${skippedCount} already existed` : ''}.`);
+          const repairedCount = result.repaired?.length || 0;
+          ui.notifications?.info?.(`Imported ${result.seed.name}: ${importedCount} records added${skippedCount ? `, ${skippedCount} already existed` : ''}${repairedCount ? `, ${repairedCount} hierarchy link(s) repaired` : ''}.`);
           await this._refresh('gm-location-library-import');
           return;
         }
@@ -345,12 +383,33 @@ export class GMLocationsSurfaceController {
         }
 
         if (action === 'create-scene' && locationId) {
+          // A location's primary Scene is meant to be single: re-checking
+          // here (not just hiding the button once one exists) closes the
+          // window where a rapid double-click could otherwise queue two
+          // Scene.create() calls before either has saved and hidden the
+          // button via rerender. Shares _sceneOperationInFlight with
+          // stage-encounter-seeds below — both can independently trigger
+          // Scene.create() when the location has no linked Scene yet, so
+          // a Create Scene click racing a Stage Encounter Seeds click (or
+          // either racing itself) must be serialized through one guard.
+          if (this._sceneOperationInFlight) {
+            ui.notifications?.warn?.('A Scene operation is already in progress for this location.');
+            return;
+          }
+          const existing = LocationRegistryService.findLocation(locationId);
+          if (existing?.map?.sceneUuid) {
+            ui.notifications?.info?.('This location already has a linked Scene. Use Open Scene to view it.');
+            return;
+          }
+          this._sceneOperationInFlight = true;
           try {
             const scene = await LocationSceneBridgeService.createSceneFromLocation(locationId);
             if (scene) ui.notifications?.info?.('Foundry Scene created and linked to this location.');
             await this._refresh('gm-location-create-scene');
           } catch (err) {
             ui.notifications?.warn?.(err?.message || 'Could not create Scene from location.');
+          } finally {
+            this._sceneOperationInFlight = false;
           }
           return;
         }
@@ -374,12 +433,25 @@ export class GMLocationsSurfaceController {
         }
 
         if (action === 'stage-encounter-seeds' && locationId) {
+          // Shares _sceneOperationInFlight with create-scene above:
+          // stageEncounterSeeds({ createIfMissing: true }) also calls
+          // Scene.create() when the location has no resolvable linked
+          // Scene yet, so this must not run concurrently with itself or
+          // with create-scene.
+          if (this._sceneOperationInFlight) {
+            ui.notifications?.warn?.('A Scene operation is already in progress for this location.');
+            return;
+          }
+          this._sceneOperationInFlight = true;
           try {
             const result = await LocationSceneBridgeService.stageEncounterSeeds(locationId, { createIfMissing: true });
             const skipped = result.skipped?.length || 0;
             ui.notifications?.info?.(`Staged ${result.created?.length || 0} encounter token(s)${skipped ? `; ${skipped} seed(s) skipped` : ''}.`);
+            await this._refresh('gm-location-stage-encounter-seeds');
           } catch (err) {
             ui.notifications?.warn?.(err?.message || 'Could not stage encounter seeds.');
+          } finally {
+            this._sceneOperationInFlight = false;
           }
           return;
         }
@@ -423,6 +495,71 @@ export class GMLocationsSurfaceController {
           return;
         }
 
+        // --- Ecosystem Redesign Phase 2: context-preserving cross-surface
+        // navigation. Each branch below carries the RELATED record's own
+        // stable id (never its display name) and routes through the shell's
+        // existing navigateToSurface()/_navigateTo() contract, so the GM
+        // lands on the correct destination with the correct record already
+        // selected on first render. See templates/apps/gm-datapad/surfaces/
+        // locations.hbs for the data-location-action="open-*" markup.
+
+        if (action === 'open-faction') {
+          const factionId = target.dataset.factionId || '';
+          if (!factionId) return;
+          await this.host?.navigateToSurface?.('factions', { statePatch: { focusedFactionId: factionId } });
+          return;
+        }
+
+        if (action === 'open-contact') {
+          if (target.dataset.missing === 'true') return;
+          const contactKind = target.dataset.contactKind || '';
+          const contactId = target.dataset.contactId || '';
+          const contactActorUuid = target.dataset.actorUuid || '';
+          const contactFactionId = target.dataset.factionId || '';
+
+          if (contactKind === 'contact') {
+            if (!contactFactionId) {
+              ui.notifications?.warn?.('This contact has no owning Faction to open.');
+              return;
+            }
+            await this.host?.navigateToSurface?.('factions', {
+              statePatch: { focusedFactionId: contactFactionId, focusedContactId: contactId }
+            });
+            return;
+          }
+
+          if (contactKind === 'actor') {
+            const actor = await this._resolveActorByUuid(contactActorUuid);
+            if (!actor) {
+              ui.notifications?.warn?.('That linked Actor could not be found.');
+              return;
+            }
+            if (!actor.sheet?.render) {
+              ui.notifications?.warn?.(`${actor.name} does not have an openable sheet.`);
+              return;
+            }
+            actor.sheet.render(true);
+            return;
+          }
+          return;
+        }
+
+        if (action === 'open-job') {
+          if (target.dataset.missing === 'true') return;
+          const jobId = target.dataset.jobId || '';
+          if (!jobId) return;
+          await this.host?.navigateToSurface?.('jobs', { hostPatch: { selectedJobThreadId: jobId } });
+          return;
+        }
+
+        if (action === 'open-intel') {
+          if (target.dataset.missing === 'true') return;
+          const intelId = target.dataset.intelId || '';
+          if (!intelId) return;
+          await this.host?.navigateToSurface?.('intel', { statePatch: { selectedRecordId: intelId } });
+          return;
+        }
+
         if (action === 'lead-select-location') {
           const leadLocationId = target.dataset.locationId || '';
           if (leadLocationId) this.host?.patchSurfaceState?.('locations', { selectedLocationId: leadLocationId }, { render: false });
@@ -459,11 +596,27 @@ export class GMLocationsSurfaceController {
     pageElement.querySelectorAll('form[data-location-form]').forEach((form) => {
       form.addEventListener('submit', async (event) => {
         event.preventDefault();
-        const payload = locationPayload(new FormData(form));
-        const location = await LocationRegistryService.upsertLocation(payload);
-        if (location?.id) this.host?.patchSurfaceState?.('locations', { selectedLocationId: location.id, modal: null }, { render: false });
-        ui.notifications?.info?.('Location saved.');
-        await this._refresh('gm-location-save');
+        try {
+          const payload = locationPayload(new FormData(form));
+          const location = await LocationRegistryService.upsertLocation(payload);
+          if (!location?.id) {
+            ui.notifications?.error?.('Location could not be saved.');
+            return;
+          }
+          this.host?.patchSurfaceState?.('locations', { selectedLocationId: location.id, modal: null }, { render: false });
+          ui.notifications?.info?.('Location saved.');
+          await this._refresh('gm-location-save');
+        } catch (err) {
+          // upsertLocation() rejects the WHOLE save (no registry write at
+          // all) for an invalid parentLocationId (self, nonexistent, or a
+          // cycle) rather than silently clearing the field and saving the
+          // rest of the edit — that used to be able to detach an existing
+          // Location from a valid parent it already had on a GM's typo.
+          // The modal intentionally stays open here (no patchSurfaceState
+          // above ran) so the GM can correct the field and resubmit.
+          SWSELogger.error('[GM Locations] Location save failed.', err);
+          ui.notifications?.error?.(err?.message || 'Location could not be saved.');
+        }
       }, { signal });
     });
 
@@ -471,31 +624,81 @@ export class GMLocationsSurfaceController {
       form.addEventListener('submit', async (event) => {
         event.preventDefault();
         const formData = new FormData(form);
-        await this._importLibrarySeedIds(seedIdsFromForm(formData), 'gm-location-library-import-selected', importOptionsFromForm(formData));
+        // librarySelectedSeedIds in surface state is the authoritative
+        // selection, not the currently-rendered (and possibly
+        // filter-narrowed) form — a seed checked earlier under a different
+        // library filter has no <input> in the DOM right now at all, so
+        // reading only this form's FormData would silently drop it from
+        // the import. seedIdsFromForm(formData) is still unioned in as a
+        // defensive fallback in case a change event was ever missed.
+        const state = this.host?.getSurfaceState?.('locations') || {};
+        const authoritativeIds = Array.from(new Set([
+          ...(Array.isArray(state.librarySelectedSeedIds) ? state.librarySelectedSeedIds : []),
+          ...seedIdsFromForm(formData)
+        ].map(value => String(value || '').trim()).filter(Boolean)));
+        await this._importLibrarySeedIds(authoritativeIds, 'gm-location-library-import-selected', importOptionsFromForm(formData));
+      }, { signal });
+
+      // Persist each checkbox's OWN membership in the authoritative
+      // selection set as it changes — not a reconstruction of the whole
+      // set from this form's current FormData. A library search/biome/
+      // category filter rebuilds this list (and every <input> it renders)
+      // from the view-model, so a seed checked before the filter changed
+      // has no <input> here any more; reading the whole set from FormData
+      // would silently overwrite it out of the selection. No rerender is
+      // needed here: the checkbox already reflects its own state; this
+      // only needs to be correct the NEXT time the VM rebuilds.
+      form.addEventListener('change', (event) => {
+        const input = event.target;
+        if (!input || input.name !== 'seedIds') return;
+        const seedId = String(input.value || '').trim();
+        if (!seedId) return;
+        const state = this.host?.getSurfaceState?.('locations') || {};
+        const current = new Set((Array.isArray(state.librarySelectedSeedIds) ? state.librarySelectedSeedIds : []).map(value => String(value)));
+        if (input.checked) current.add(seedId); else current.delete(seedId);
+        this.host?.patchSurfaceState?.('locations', { librarySelectedSeedIds: Array.from(current) }, { render: false });
       }, { signal });
     });
 
     pageElement.querySelectorAll('form[data-atlas-fact-form]').forEach((form) => {
       form.addEventListener('submit', async (event) => {
         event.preventDefault();
-        const formData = new FormData(form);
-        const locationId = text(formData, 'locationId') || this.host?.getSurfaceState?.('locations')?.selectedLocationId || '';
-        const location = await LocationRegistryService.upsertAtlasFact(locationId, factPayload(formData));
-        if (location?.id) this.host?.patchSurfaceState?.('locations', { selectedLocationId: location.id }, { render: false });
-        ui.notifications?.info?.('Atlas fact saved.');
-        await this._refresh('gm-location-fact-save');
+        try {
+          const formData = new FormData(form);
+          const locationId = text(formData, 'locationId') || this.host?.getSurfaceState?.('locations')?.selectedLocationId || '';
+          const location = await LocationRegistryService.upsertAtlasFact(locationId, factPayload(formData));
+          if (!location?.id) {
+            ui.notifications?.warn?.('Could not save that Atlas fact — select a location first.');
+            return;
+          }
+          this.host?.patchSurfaceState?.('locations', { selectedLocationId: location.id }, { render: false });
+          ui.notifications?.info?.('Atlas fact saved.');
+          await this._refresh('gm-location-fact-save');
+        } catch (err) {
+          SWSELogger.error('[GM Locations] Atlas fact save failed.', err);
+          ui.notifications?.error?.(err?.message || 'Atlas fact could not be saved.');
+        }
       }, { signal });
     });
 
     pageElement.querySelectorAll('form[data-encounter-seed-form]').forEach((form) => {
       form.addEventListener('submit', async (event) => {
         event.preventDefault();
-        const formData = new FormData(form);
-        const locationId = text(formData, 'locationId') || this.host?.getSurfaceState?.('locations')?.selectedLocationId || '';
-        const location = await LocationRegistryService.addEncounterSeed(locationId, seedPayload(formData));
-        if (location?.id) this.host?.patchSurfaceState?.('locations', { selectedLocationId: location.id }, { render: false });
-        ui.notifications?.info?.('Encounter seed added.');
-        await this._refresh('gm-location-seed-save');
+        try {
+          const formData = new FormData(form);
+          const locationId = text(formData, 'locationId') || this.host?.getSurfaceState?.('locations')?.selectedLocationId || '';
+          const location = await LocationRegistryService.addEncounterSeed(locationId, seedPayload(formData));
+          if (!location?.id) {
+            ui.notifications?.warn?.('Could not add that encounter seed — select a location first.');
+            return;
+          }
+          this.host?.patchSurfaceState?.('locations', { selectedLocationId: location.id }, { render: false });
+          ui.notifications?.info?.('Encounter seed added.');
+          await this._refresh('gm-location-seed-save');
+        } catch (err) {
+          SWSELogger.error('[GM Locations] Encounter seed save failed.', err);
+          ui.notifications?.error?.(err?.message || 'Encounter seed could not be added.');
+        }
       }, { signal });
     });
   }
@@ -594,13 +797,24 @@ export class GMLocationsSurfaceController {
           };
         }
 
-        const linked = await LocationRegistryService.linkDossierPayload(locationId, payload);
-        if (!linked) {
-          ui.notifications?.warn?.('That drop payload is not linkable to a Location yet.');
-          return;
+        try {
+          const linked = await LocationRegistryService.linkDossierPayload(locationId, payload);
+          if (!linked) {
+            ui.notifications?.warn?.('That drop payload is not linkable to a Location yet.');
+            return;
+          }
+          ui.notifications?.info?.(`Linked ${payload.name || payload.kind || 'dossier payload'} to location.`);
+          await this._refresh('gm-location-drop-link');
+        } catch (err) {
+          // linkDossierPayload() nesting a Location under another Location
+          // routes through upsertLocation()'s hierarchy validation (self,
+          // nonexistent, or cyclic parent), which now rejects instead of
+          // silently clearing — this must surface as an explicit warning
+          // rather than an unhandled rejection from a dropped location that
+          // would create a cycle.
+          SWSELogger.error('[GM Locations] Drop link failed.', err);
+          ui.notifications?.warn?.(err?.message || 'That drop could not be linked.');
         }
-        ui.notifications?.info?.(`Linked ${payload.name || payload.kind || 'dossier payload'} to location.`);
-        await this._refresh('gm-location-drop-link');
       }, { signal });
     });
   }
@@ -646,6 +860,28 @@ export class GMLocationsSurfaceController {
     if (!name) return '';
     const match = LocationRegistryService.getLibrarySeeds().find(seed => String(seed.name || '').trim().toLowerCase() === name || String(seed.id || '').trim().toLowerCase() === name);
     return match?.id || '';
+  }
+
+  /**
+   * Resolve a world or compendium Actor from a stable Actor UUID/id — the
+   * same "id, never a name-text lookup" resolution the Faction dossier
+   * controller already uses for its own contact-actor links (see
+   * resolveActorForContact() in GMFactionRelationshipSurfaceController.js).
+   */
+  async _resolveActorByUuid(uuid = '') {
+    const ref = String(uuid || '').trim();
+    if (!ref) return null;
+    const directId = ref.replace(/^Actor\./, '');
+    const byId = game.actors?.get?.(directId);
+    if (byId) return byId;
+    if (typeof fromUuid === 'function') {
+      try {
+        const doc = await fromUuid(ref);
+        if (doc?.documentName === 'Actor' || doc?.constructor?.documentName === 'Actor') return doc;
+        if (doc?.actor) return doc.actor;
+      } catch (_err) { /* unresolvable uuid — treated as missing below */ }
+    }
+    return null;
   }
 
   _assertGM(action = 'use Locations controls') {
@@ -729,22 +965,64 @@ export class GMLocationsSurfaceController {
     await this._refresh('gm-location-lead-reveal-links');
   }
 
+  /** Buttons that trigger a library import — disabled while one is running (see _importLibrarySeedIds). */
+  _importTriggerElements() {
+    if (!this._pageElement) return [];
+    return Array.from(this._pageElement.querySelectorAll(
+      '[data-location-action="import-library-visible-now"], form[data-location-import-form] button[type="submit"]'
+    ));
+  }
+
+  _setImportControlsBusy(busy) {
+    for (const el of this._importTriggerElements()) el.disabled = busy;
+  }
+
   async _importLibrarySeedIds(seedIds = [], reason = 'gm-location-library-import', options = {}) {
     const ids = Array.from(new Set((seedIds || []).map(value => String(value || '').trim()).filter(Boolean)));
     if (!ids.length) {
       ui.notifications?.warn?.('Select at least one quick location to import.');
       return;
     }
-    const result = await LocationRegistryService.importLibrarySeeds(ids, {
-      includeChildren: options.includeChildren !== false,
-      includeAtlasFacts: options.includeAtlasFacts !== false,
-      revealState: String(options.revealState || 'hidden').trim() || 'hidden',
-      knownToPlayers: options.knownToPlayers === true
-    });
-    const firstSeedId = result.seeds?.[0]?.id || ids[0] || '';
-    this.host?.patchSurfaceState?.('locations', { selectedLocationId: firstSeedId, modal: null }, { render: false });
-    ui.notifications?.info?.(`Imported ${result.imported.length} location record(s) from ${result.seeds.length} quick location(s)${result.skipped.length ? `; ${result.skipped.length} record(s) already existed` : ''}.`);
-    await this._refresh(reason);
+    if (this._importInFlight) {
+      ui.notifications?.warn?.('An import is already in progress; please wait for it to finish.');
+      return;
+    }
+    this._importInFlight = true;
+    this._setImportControlsBusy(true);
+    try {
+      const result = await LocationRegistryService.importLibrarySeeds(ids, {
+        includeChildren: options.includeChildren !== false,
+        includeAtlasFacts: options.includeAtlasFacts !== false,
+        revealState: String(options.revealState || 'hidden').trim() || 'hidden',
+        knownToPlayers: options.knownToPlayers === true
+      });
+      const invalidCount = result.invalid?.length || 0;
+      if (!result.seeds.length) {
+        // Every requested id was unresolvable: nothing was imported and
+        // there is no real location to select, so leave the importer
+        // modal open and the surface state untouched rather than reporting
+        // a false success or selecting the invalid input as if it were a
+        // location id.
+        ui.notifications?.warn?.(`Could not resolve ${invalidCount} selected location(s). No locations were imported.`);
+        return;
+      }
+      const firstSeedId = result.seeds[0]?.id || '';
+      const repairedCount = result.repaired?.length || 0;
+      this.host?.patchSurfaceState?.('locations', { selectedLocationId: firstSeedId, modal: null, librarySelectedSeedIds: [] }, { render: false });
+      ui.notifications?.info?.(
+        `Imported ${result.imported.length} location record(s) from ${result.seeds.length} quick location(s)` +
+        `${result.skipped.length ? `; ${result.skipped.length} record(s) already existed` : ''}` +
+        `${repairedCount ? `; ${repairedCount} hierarchy link(s) repaired` : ''}` +
+        `${invalidCount ? `; ${invalidCount} selection(s) could not be resolved` : ''}.`
+      );
+      await this._refresh(reason);
+    } catch (err) {
+      SWSELogger.error('[GM Locations] Library import failed before it could complete; no registry changes from this batch were saved.', err);
+      ui.notifications?.error?.('Location import failed before it could complete. No locations were changed by this attempt.');
+    } finally {
+      this._importInFlight = false;
+      this._setImportControlsBusy(false);
+    }
   }
 
   async _openJobDraft(draft) {

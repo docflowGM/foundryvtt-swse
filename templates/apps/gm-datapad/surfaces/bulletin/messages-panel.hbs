@@ -218,11 +218,17 @@
               <div class="bulletin-record-sender">From {{this.senderName}}</div>
               {{#if this.imageUrl}}<img class="bulletin-record-image" src="{{this.imageUrl}}" alt="{{this.title}}">{{/if}}
               <p class="holonet-rendered-text">{{{this.renderedBodyPreview}}}</p>
+              {{#if this.hasSourceProvenance}}
+              <div class="bulletin-record-source{{#unless this.sourceResolved}} bulletin-record-source-broken{{/unless}}">
+                Source · {{this.sourceKindLabel}}{{#if this.sourceResolved}} · {{this.sourceLabel}}{{else}} · (source no longer found){{/if}}
+              </div>
+              {{/if}}
               <div class="bulletin-record-footer">
                 <span>{{this.createdAt}}</span>
                 <div class="bulletin-record-actions">
                   <button type="button" class="swse-ui-button" data-action="bulletin-edit" data-section="messages" data-record-id="{{this.id}}">Edit</button>
                   {{#unless (eq this.state "published")}}<button type="button" class="swse-ui-button" data-action="bulletin-publish" data-record-id="{{this.id}}">Publish</button>{{/unless}}
+                  {{#if this.hasSourceProvenance}}<button type="button" class="swse-ui-button" data-action="bulletin-open-source" data-source-kind="{{this.sourceKind}}" data-source-id="{{this.sourceId}}" title="Source: {{this.sourceKindLabel}}{{#if this.sourceResolved}} · {{this.sourceLabel}}{{/if}}"><i class="fa-solid fa-diagram-project"></i> Open Source</button>{{/if}}
                   {{#if this.isPinned}}<button type="button" class="swse-ui-button" data-action="bulletin-unpin-last-session" data-record-id="{{this.id}}">Unpin</button>{{else}}<button type="button" class="swse-ui-button" data-action="bulletin-pin-last-session" data-record-id="{{this.id}}">Pin Last Session</button>{{/if}}
                   {{#unless (eq this.state "archived")}}<button type="button" class="swse-ui-button" data-action="bulletin-archive" data-record-id="{{this.id}}">Archive</button>{{/unless}}
                   <button type="button" class="swse-ui-button" data-action="bulletin-delete" data-record-id="{{this.id}}">Delete</button>

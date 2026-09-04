@@ -15,6 +15,9 @@ import {
 } from '/systems/foundryvtt-swse/scripts/holonet/subsystems/holonet-intel-service.js';
 import { FactionRegistryService } from '/systems/foundryvtt-swse/scripts/allies/faction-registry-service.js';
 import { HolonetDecryptionService } from '/systems/foundryvtt-swse/scripts/holonet/subsystems/holonet-decryption-service.js';
+import { LocationRegistryService } from '/systems/foundryvtt-swse/scripts/locations/location-registry-service.js';
+import { HolonetStorage } from '/systems/foundryvtt-swse/scripts/holonet/subsystems/holonet-storage.js';
+import { jobForThread, jobStatus, statusLabel as jobStatusLabel } from '/systems/foundryvtt-swse/scripts/ui/shell/gm/GMJobBoardSurfaceService.js';
 
 function cleanString(value, fallback = '') {
   const text = String(value ?? '').trim();
@@ -81,13 +84,13 @@ function persistenceLabel(value = '') {
   return titleCase(value || INTEL_PERSISTENCE.GM_ONLY);
 }
 
-function findFaction(factions = [], factionId = '') {
+export function findFaction(factions = [], factionId = '') {
   const id = cleanString(factionId).toLowerCase();
   if (!id) return null;
   return factions.find(faction => cleanString(faction.id).toLowerCase() === id || cleanString(faction.name).toLowerCase() === id) || null;
 }
 
-function findContact(factions = [], factionId = '', contactId = '') {
+export function findContact(factions = [], factionId = '', contactId = '') {
   const faction = findFaction(factions, factionId);
   const contacts = faction ? asArray(faction.contacts) : factions.flatMap(entry => asArray(entry.contacts));
   const id = cleanString(contactId).toLowerCase();
@@ -233,6 +236,170 @@ function editorFromRecord(record = null, defaults = {}) {
   return data;
 }
 
+/**
+ * World-collection UUIDs (`Scene.<id>`, `Actor.<id>`) resolve synchronously
+ * via game.scenes/game.actors, mirroring GMLocationsSurfaceService's own
+ * Scene-row resolution (see that file's parseWorldDocId comment for the
+ * full tradeoff rationale). A compendium-sourced UUID reports unverifiable
+ * rather than missing — resolving it for real requires an async
+ * fromUuid() lookup, deferred to click-time in the controller instead.
+ */
+export function parseWorldDocId(uuid = '', docType = '') {
+  const match = cleanString(uuid).match(new RegExp(`^${docType}\\.([A-Za-z0-9]+)$`));
+  return match ? match[1] : '';
+}
+
+export function isCompendiumUuid(uuid = '') {
+  return cleanString(uuid).startsWith('Compendium.');
+}
+
+/**
+ * Resolve Intel's Location relationship via the real Location Registry
+ * authority (intel.linkedLocationId — see Phase 5A's confirmed fix to
+ * HolonetIntelService.normalizeLinks()). Intel never stores a copy of the
+ * Location's own data, only its stable id; resolved fresh on every render.
+ */
+export function resolveIntelLocation(intel) {
+  const id = cleanString(intel?.linkedLocationId);
+  if (!id) return null;
+  const location = LocationRegistryService.findLocation(id);
+  if (!location) return { id, name: 'Missing Location', resolved: false, resolutionKind: 'missing' };
+  return {
+    id: location.id,
+    name: location.name,
+    resolved: true,
+    resolutionKind: 'canonical-id',
+    currentPartyPresence: Boolean(location.activeForParty || location.revealState === 'active')
+  };
+}
+
+/**
+ * Resolve Intel's source Atlas Fact provenance (intel.sourceFactId, scoped
+ * to intel.linkedLocationId since Facts are stored per-Location, not in a
+ * global registry) — presentation-only. This intentionally never copies
+ * the Fact's own text onto the Intel record; see Phase 5M.
+ */
+export function resolveIntelSourceFact(intel, location) {
+  const factId = cleanString(intel?.sourceFactId);
+  if (!factId) return null;
+  const fact = location ? asArray(location.atlasFacts).find(entry => entry.id === factId) : null;
+  if (!fact) return { id: factId, title: 'Missing Atlas Fact', resolved: false, resolutionKind: 'missing' };
+  return { id: fact.id, title: fact.title, teaser: fact.teaser || '', resolved: true, resolutionKind: 'canonical-id' };
+}
+
+/**
+ * Resolve Intel's linked Job Board posting via the real Job Board
+ * authority — HolonetStorage.getThread() plus GMJobBoardSurfaceService's
+ * own status derivation (jobForThread/jobStatus/statusLabel, exported for
+ * exactly this reuse — see GMLocationsSurfaceService's identical
+ * resolveJobRow()). Intel never stores a copy of a job's title or status.
+ */
+export async function resolveIntelJob(threadId) {
+  const id = cleanString(threadId);
+  if (!id) return null;
+  const thread = await HolonetStorage.getThread(id).catch(() => null);
+  if (!thread) return { id, title: 'Missing Job', status: 'missing', statusLabel: 'Missing', resolved: false, resolutionKind: 'missing' };
+  const job = jobForThread(thread);
+  const status = jobStatus(job);
+  return {
+    id: thread.id,
+    title: cleanString(job?.title || thread.title, 'Job Board Posting'),
+    status,
+    statusLabel: jobStatusLabel(status),
+    resolved: true,
+    resolutionKind: 'canonical-id'
+  };
+}
+
+export function resolveIntelScene(sceneUuid) {
+  const uuid = cleanString(sceneUuid);
+  if (!uuid) return null;
+  const id = parseWorldDocId(uuid, 'Scene');
+  if (!id && isCompendiumUuid(uuid)) return { uuid, id: '', name: '', resolved: false, resolutionKind: 'ambiguous', unverifiable: true };
+  const scene = id ? game.scenes?.get?.(id) : null;
+  if (!scene) return { uuid, id: '', name: '', resolved: false, resolutionKind: 'missing' };
+  return { uuid, id: scene.id, name: scene.name, isActive: Boolean(scene.active), resolved: true, resolutionKind: 'canonical-id' };
+}
+
+export function resolveIntelActor(actorUuid) {
+  const uuid = cleanString(actorUuid);
+  if (!uuid) return null;
+  const id = parseWorldDocId(uuid, 'Actor');
+  if (!id && isCompendiumUuid(uuid)) return { uuid, id: '', name: '', resolved: false, resolutionKind: 'ambiguous', unverifiable: true };
+  const actor = id ? game.actors?.get?.(id) : null;
+  if (!actor) return { uuid, id: '', name: '', resolved: false, resolutionKind: 'missing' };
+  return { uuid, id: actor.id, name: actor.name, resolved: true, resolutionKind: 'canonical-id' };
+}
+
+/**
+ * Ecosystem Redesign Phase 5 — the additive identity/currentSituation/
+ * relationships/knowledge/world grouping for the SELECTED Intel card only
+ * (mirroring Job Board's buildSelectedJobEcosystemGroups — never every
+ * card, see Phase 5AC performance guidance). A pure presentation VM: none
+ * of these group names are written to canonical Intel storage.
+ */
+async function buildSelectedIntelEcosystemGroups(card, intel, factions) {
+  const location = resolveIntelLocation(intel);
+  const sourceFact = resolveIntelSourceFact(intel, location ? LocationRegistryService.findLocation(location.id) : null);
+  const faction = findFaction(factions, intel.linkedFactionId);
+  const contact = findContact(factions, intel.linkedFactionId, intel.linkedContactId);
+  const job = await resolveIntelJob(intel.linkedJobThreadId);
+  const scene = resolveIntelScene(intel.linkedSceneUuid);
+  const actor = resolveIntelActor(intel.linkedActorUuid);
+
+  return {
+    identity: {
+      intelId: card.id,
+      recordId: card.recordId,
+      title: card.title,
+      kind: card.kind,
+      kindLabel: card.kindLabel,
+      classification: card.classification,
+      classificationLabel: card.classificationLabel,
+      status: card.status,
+      statusLabel: card.statusLabel
+    },
+    currentSituation: {
+      revealState: card.revealState,
+      revealStateLabel: card.revealStateLabel,
+      visibilityMode: intel.visibility?.mode || 'gm-only',
+      visibilityLabel: card.visibilityLabel,
+      dossierCommit: Boolean(intel.dossierCommit),
+      hasLockbox: card.hasLockbox,
+      skillGateEnabled: Boolean(intel.skillGate?.enabled),
+      isReleased: card.status === INTEL_STATUS.RELEASED,
+      currentPartyAtLocation: Boolean(location?.currentPartyPresence)
+    },
+    relationships: {
+      location,
+      sourceFact,
+      faction: faction ? { id: faction.id, name: faction.name, resolved: true, resolutionKind: 'canonical-id' } : (intel.linkedFactionId ? { id: intel.linkedFactionId, name: '', resolved: false, resolutionKind: 'missing' } : null),
+      contact: contact ? { id: contact.id, name: contact.name, resolved: true, resolutionKind: 'canonical-id' } : (intel.linkedContactId ? { id: intel.linkedContactId, name: '', resolved: false, resolutionKind: 'missing' } : null),
+      job,
+      scene,
+      actor
+    },
+    knowledge: {
+      summary: intel.summary,
+      publicBody: intel.publicBody,
+      redactedBody: intel.redactedBody,
+      fullBody: intel.fullBody,
+      gmNotes: intel.gmNotes,
+      persistence: intel.persistence,
+      persistenceLabel: card.persistenceLabel,
+      lockboxSummary: card.lockboxSummary
+    },
+    world: {
+      tags: intel.tags || [],
+      tagsLabel: card.tagsLabel,
+      createdAt: intel.createdAt,
+      createdLabel: card.createdLabel,
+      updatedAt: intel.updatedAt,
+      updatedLabel: card.updatedLabel
+    }
+  };
+}
+
 export class GMIntelSurfaceService {
   static async buildViewModel(host) {
     const surfaceState = host?.getSurfaceState?.('intel') || {};
@@ -266,7 +433,11 @@ export class GMIntelSurfaceService {
       ? ''
       : cleanString(modalRecordId || surfaceState.selectedRecordId || surfaceState.focusedRecordId || visibleCards[0]?.recordId || '');
     const selectedRecord = selectedRecordId ? await HolonetIntelService.getIntelById(selectedRecordId) : null;
-    const selectedCard = selectedRecord ? cardFromRecord(selectedRecord, factions) : null;
+    const baseSelectedCard = selectedRecord ? cardFromRecord(selectedRecord, factions) : null;
+    const selectedIntel = selectedRecord ? HolonetIntelService.getIntelMetadata(selectedRecord) : null;
+    const selectedCard = baseSelectedCard && selectedIntel
+      ? { ...baseSelectedCard, ...(await buildSelectedIntelEcosystemGroups(baseSelectedCard, selectedIntel, factions)) }
+      : baseSelectedCard;
     const modalDefaults = modal?.defaults && typeof modal.defaults === 'object' ? modal.defaults : {};
     const editor = editorFromRecord(selectedRecord, selectedRecord ? {} : modalDefaults);
     const factionOptions = [{ value: '', label: 'No linked faction', selected: !editor.linkedFactionId }, ...factions.map(faction => ({

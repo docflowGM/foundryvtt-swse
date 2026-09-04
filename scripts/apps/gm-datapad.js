@@ -48,6 +48,8 @@ import { GameCreditEscrowService } from "/systems/foundryvtt-swse/scripts/games/
 import { computeCenteredPosition, resetApplicationCentering } from "/systems/foundryvtt-swse/scripts/utils/sheet-position.js";
 import { GMPartyRosterService } from "/systems/foundryvtt-swse/scripts/ui/shell/gm/utils/gm-party-roster-service.js";
 import { SkillChallengeStore } from "/systems/foundryvtt-swse/scripts/engine/skill-challenges/SkillChallengeStore.js";
+import { GMCampaignContextService } from "/systems/foundryvtt-swse/scripts/ui/shell/gm/GMCampaignContextService.js";
+import { GMCampaignTargetService } from "/systems/foundryvtt-swse/scripts/ui/shell/gm/GMCampaignTargetService.js";
 
 const GM_TABLET_BASE_WIDTH = 1440;
 const GM_TABLET_BASE_HEIGHT = 900;
@@ -58,6 +60,18 @@ const GM_TABLET_MIN_SAFE_WIDTH = 360;
 const GM_TABLET_MIN_SAFE_HEIGHT = 260;
 const GM_TABLET_COMPACT_WIDTH = 460;
 const GM_TABLET_COMPACT_HEIGHT = 76;
+
+// C8C-3 — display-only label per Bulletin provenance sourceKind. Used
+// solely to render "Source · Job · ..."; never persisted, never used for
+// resolution (GMCampaignContextService.resolveBulletinSource() already
+// owns that).
+const BULLETIN_SOURCE_KIND_LABEL = {
+  job: 'Job',
+  location: 'Location',
+  faction: 'Faction',
+  actor: 'Actor',
+  intel: 'Intel'
+};
 
 export class GMDatapad extends BaseSWSEAppV2 {
   static DEFAULT_OPTIONS = {
@@ -251,7 +265,7 @@ export class GMDatapad extends BaseSWSEAppV2 {
       urgentApps,
       hasUrgentApps: urgentApps.length > 0,
       appClusters: this._buildAppClusters(apps, appCounts),
-      gmHome: this._buildGmHomeContext(apps, appCounts),
+      gmHome: await this._buildGmHomeContext(apps, appCounts),
       homeSummary: appCounts,
       user: game.user,
       ...surfaceContext,
@@ -291,7 +305,7 @@ export class GMDatapad extends BaseSWSEAppV2 {
   }
 
 
-  _buildGmHomeContext(apps = [], counts = {}) {
+  async _buildGmHomeContext(apps = [], counts = {}) {
     const number = (value) => Number(value ?? 0) || 0;
     const locationsSummary = (() => {
       try { return LocationRegistryService.summarizeForWorkspace(); }
@@ -300,14 +314,27 @@ export class GMDatapad extends BaseSWSEAppV2 {
         return { count: 0, active: 0, leadDiscoveryCount: 0 };
       }
     })();
-    const activeLocation = (() => {
-      try {
-        const locations = LocationRegistryService.getRegistry?.() ?? [];
-        return locations.find((loc) => loc?.activeForParty || loc?.revealState === 'active')
-          ?? locations.find((loc) => loc?.knownToPlayers || loc?.revealState === 'known')
-          ?? null;
-      } catch (_err) { return null; }
-    })();
+    // Ecosystem Redesign Phase 6 — Home now reads the party's current
+    // Location through GMCampaignContextService.party() instead of its own
+    // independent activeForParty lookup, so Home and the rest of the
+    // ecosystem (Job/Intel "party here" checks) always agree on the same
+    // source of truth (Location.activeForParty === true, exclusively — see
+    // GMCampaignContextService's own currentPartyLocationResult()).
+    //
+    // CORRECTION 3 (Phase 6 independent review): Home previously fell back
+    // to the first merely "known to players" Location when no Location was
+    // actively marked for the party — misleading in a command hub, since a
+    // revealed-but-not-current planet would silently masquerade as "where
+    // the party is." No activeForParty Location now means Home honestly
+    // shows "Unassigned Location," never a guessed substitute.
+    const campaignParty = await GMCampaignContextService.party().catch(() => null);
+    const activeLocation = campaignParty?.currentLocation?.resolved
+      ? (LocationRegistryService.findLocation(campaignParty.currentLocation.id) ?? { name: campaignParty.currentLocation.label })
+      : null;
+    const attentionItems = await GMCampaignContextService.attentionItems().catch((err) => {
+      SWSELogger.warn('[GMDatapad] Unable to load campaign attention items for home:', err);
+      return [];
+    });
     const partyUsers = Array.from(game.users ?? []).filter((user) => !user.isGM);
     const onlinePlayers = partyUsers.filter((user) => user.active).length;
     const partyActors = GMPartyRosterService.getPartyActors({ ownedOnly: false });
@@ -338,15 +365,67 @@ export class GMDatapad extends BaseSWSEAppV2 {
       return summary;
     }, { current: 0, max: 0, down: 0, wounded: 0, healthy: 0, members: [] });
 
-    const actionItems = [
-      { id: 'approvals', tone: 'crit', icon: 'fa-solid fa-check-circle', label: 'Pending Approvals', sub: `${number(counts.approvals)} approval request${number(counts.approvals) === 1 ? '' : 's'} awaiting GM review`, count: number(counts.approvals) },
-      { id: 'jobs', tone: 'crit', icon: 'fa-solid fa-clipboard-list', label: 'Jobs Need Review', sub: `${number(counts.jobReview)} objective review / ${number(counts.jobPayout)} payout ready`, count: number(counts.jobs) },
-      { id: 'trade', tone: 'crit', icon: 'fa-solid fa-right-left', label: 'Failed Settlements', sub: `${number(counts.tradeFailed)} failed trade settlement${number(counts.tradeFailed) === 1 ? '' : 's'} requiring attention`, count: number(counts.tradeFailed) },
+    // Ecosystem Redesign Phase 6P/6X — each row now carries the EXACT
+    // record GMCampaignContextService.attentionItems() found (a specific
+    // Job, Trade, Approval, or recovery-eligible Actor), not a generic
+    // "N items — open the app" badge. GMCampaignTargetService converts a
+    // row's `target` into the exact navigateToSurface() call; an Actor
+    // target has no Datapad surface selection (see
+    // GMCampaignTargetService's own note) so those rows open the real
+    // Actor sheet directly instead, matching every other surface's
+    // established "open Actor" behavior.
+    const ATTENTION_KIND_ICON = {
+      'job-review': 'fa-solid fa-clipboard-list',
+      'job-payout': 'fa-solid fa-sack-dollar',
+      'trade-failed': 'fa-solid fa-triangle-exclamation',
+      'trade-approval': 'fa-solid fa-right-left',
+      approval: 'fa-solid fa-check-circle',
+      recovery: 'fa-solid fa-heart-pulse',
+      'skill-challenge-active': 'fa-solid fa-dice-d20',
+      'location-lead': 'fa-solid fa-map-location-dot'
+    };
+    const ATTENTION_SEVERITY_TONE = { critical: 'crit', warning: 'warn', info: 'info' };
+    const ATTENTION_KIND_FALLBACK_ROUTE = {
+      'job-review': 'jobs',
+      'job-payout': 'jobs',
+      'trade-failed': 'trade',
+      'trade-approval': 'trade',
+      approval: 'approvals',
+      recovery: 'healing',
+      'skill-challenge-active': 'skill-challenges',
+      'location-lead': 'locations'
+    };
+    // CORRECTION 1 (Phase 6 independent review): every row built from
+    // attentionItems() is marked isExact:true, INCLUDING rows whose
+    // target is null (e.g. the unresolved-Atlas-leads item) — home.hbs
+    // must branch on isExact, not on the presence of a real target, or a
+    // targetless exact row falls through to the generic data-app-card
+    // branch and navigates using the attention item's own composite id
+    // (e.g. "location-leads:unresolved") instead of its fallbackRoute.
+    const exactActionItems = attentionItems.slice(0, 12).map((item) => ({
+      id: item.id,
+      isExact: true,
+      tone: ATTENTION_SEVERITY_TONE[item.severity] || 'info',
+      icon: ATTENTION_KIND_ICON[item.kind] || 'fa-solid fa-circle-exclamation',
+      label: item.title,
+      sub: item.detail,
+      source: item.source,
+      count: 1,
+      targetKind: item.target?.kind || '',
+      targetId: item.target?.id || '',
+      targetUuid: item.target?.uuid || '',
+      fallbackRoute: ATTENTION_KIND_FALLBACK_ROUTE[item.kind] || 'home'
+    }));
+
+    // Store/Bulletin have no exact-record selection contract yet (see the
+    // audit doc's missing-link table) — they stay generic app-launch rows,
+    // same as before this phase, rather than fabricating an exact target.
+    const genericActionItems = [
       { id: 'store', tone: 'warn', icon: 'fa-solid fa-store', label: 'Store Pending', sub: `${number(counts.pendingSales)} sales / ${number(counts.storeApprovals)} purchase approvals`, count: number(counts.store) },
-      { id: 'bulletin', tone: 'warn', icon: 'fa-solid fa-newspaper', label: 'Bulletin Signals', sub: `${number(counts.bulletin)} live or draft Holonet records`, count: number(counts.bulletin) },
-      { id: 'healing', tone: 'info', icon: 'fa-solid fa-heart-pulse', label: 'Healing Eligible', sub: `${number(counts.healing)} party member${number(counts.healing) === 1 ? '' : 's'} eligible for recovery`, count: number(counts.healing) },
-      { id: 'locations', tone: locationsSummary.leadDiscoveryCount ? 'ok' : 'info', icon: 'fa-solid fa-map-location-dot', label: 'Location Leads', sub: `${number(locationsSummary.leadDiscoveryCount)} unresolved Atlas lead${number(locationsSummary.leadDiscoveryCount) === 1 ? '' : 's'} / ${number(locationsSummary.count)} registered locations`, count: number(locationsSummary.leadDiscoveryCount) }
-    ].filter((item) => item.count > 0 || ['healing', 'locations'].includes(item.id));
+      { id: 'bulletin', tone: 'warn', icon: 'fa-solid fa-newspaper', label: 'Bulletin Signals', sub: `${number(counts.bulletin)} live or draft Holonet records`, count: number(counts.bulletin) }
+    ].filter((item) => item.count > 0);
+
+    const actionItems = [...exactActionItems, ...genericActionItems];
 
     const quickLaunch = apps
       .filter((app) => app.featured || ['house-rules', 'settings'].includes(app.id))
@@ -355,13 +434,20 @@ export class GMDatapad extends BaseSWSEAppV2 {
     return {
       sessionLabel: 'Session Console',
       currentLocation: activeLocation?.name || 'Unassigned Location',
+      currentLocationId: campaignParty?.currentLocation?.resolved ? campaignParty.currentLocation.id : '',
       currentLocationSub: activeLocation ? [activeLocation.typeLabel || activeLocation.type, activeLocation.categoryLabel || activeLocation.category].filter(Boolean).join(' · ') : 'No active location has been set.',
       onlinePlayers,
       totalPlayers: partyUsers.length,
       partyHealth,
       actionItems,
       quickLaunch,
-      actionCount: actionItems.reduce((sum, item) => sum + (item.tone === 'crit' ? item.count : 0), 0) + number(counts.store) + number(counts.bulletin),
+      // CORRECTION 10 (Phase 6 independent review): "Actions Needed" must
+      // count every actionable row Home is actually showing, not just the
+      // critical-tone ones — the pre-correction formula silently excluded
+      // warning/info exact rows (payout/approvals/recovery/Skill Challenge)
+      // while ALSO double-counting genericActionItems' store/bulletin
+      // counts (once inside actionItems, once again added on top).
+      actionCount: actionItems.reduce((sum, item) => sum + (item.count || 0), 0),
       activeJobs: number(counts.jobActive),
       creditsLabel: '—',
       locationLeadCount: number(locationsSummary.leadDiscoveryCount),
@@ -583,7 +669,7 @@ export class GMDatapad extends BaseSWSEAppV2 {
     }
   }
 
-  _buildBulletinRecordView(record) {
+  async _buildBulletinRecordView(record) {
     const featuredProjection = record.projections?.find((projection) => projection.surfaceType === SURFACE_TYPE.BULLETIN_FEATURED) ?? null;
     const homeFeedProjection = record.projections?.find((projection) => projection.surfaceType === SURFACE_TYPE.HOME_FEED) ?? null;
     const notificationProjection = record.projections?.find((projection) => projection.surfaceType === SURFACE_TYPE.NOTIFICATION_BUBBLE) ?? null;
@@ -593,6 +679,13 @@ export class GMDatapad extends BaseSWSEAppV2 {
     const isPinned = Boolean(featuredProjection?.isPinned || record.metadata?.pinAsLastSession);
     const homeSlot = record.metadata?.homeSlot || (isPinned ? 'last-session' : 'feed');
     const deliverySummary = this._buildBulletinDeliverySummary(record);
+    // C8C-3 — read-only, derived-only source label for display. Reuses the
+    // same resolveBulletinSource() seam _openBulletinSource() (C8C-1) uses
+    // for navigation safety; never persisted onto the record.
+    const hasSourceProvenance = Boolean(record.metadata?.sourceKind && record.metadata?.sourceId);
+    const sourceResolution = hasSourceProvenance
+      ? await GMCampaignContextService.resolveBulletinSource({ sourceKind: record.metadata.sourceKind, sourceId: record.metadata.sourceId }).catch(() => null)
+      : null;
 
     return {
       id: record.id,
@@ -633,6 +726,23 @@ export class GMDatapad extends BaseSWSEAppV2 {
       homeSlotLabel: homeSlot === 'last-session' ? 'Last Session' : 'Comm Feed',
       contactId: record.metadata?.contactId || '',
       imageUrl: record.metadata?.imageUrl || record.sender?.avatar || '',
+      // PHASE 8C — the general Bulletin-handoff provenance contract
+      // (§100). Raw sourceKind/sourceId passthrough; "Open Source" itself
+      // re-resolves the navigation target at click time via
+      // GMCampaignContextService.resolveBulletinSource() (C8C-1), never
+      // trusting this render-time snapshot for navigation safety.
+      //
+      // C8C-3 — sourceLabel/sourceResolved are a DERIVED DISPLAY ONLY: read
+      // through the same read-only resolveBulletinSource() seam so the GM
+      // sees what a Bulletin actually came from, never stored back onto the
+      // record (no duplicated/stale truth — a deleted source simply stops
+      // resolving a label on the next render).
+      sourceKind: record.metadata?.sourceKind || '',
+      sourceId: record.metadata?.sourceId || '',
+      hasSourceProvenance: Boolean(record.metadata?.sourceKind && record.metadata?.sourceId),
+      sourceKindLabel: sourceResolution ? BULLETIN_SOURCE_KIND_LABEL[sourceResolution.sourceKind] || sourceResolution.sourceKind : '',
+      sourceLabel: sourceResolution?.label || '',
+      sourceResolved: Boolean(sourceResolution?.resolved),
       deliverySummary,
       recipientCount: deliverySummary.recipientCount,
       readCount: deliverySummary.readCount,
@@ -1398,6 +1508,8 @@ export class GMDatapad extends BaseSWSEAppV2 {
       }, { signal: frameSignal });
     });
 
+    this._wireHomeAttentionTargets(root, frameSignal);
+
     // Wire nav buttons. Exclude tablet-home: it is already wired above as a Home
     // affordance, and binding it here too would navigate to 'home' twice.
     root.querySelectorAll('[data-nav-to]:not([data-action="tablet-home"])').forEach(btn => {
@@ -1419,6 +1531,123 @@ export class GMDatapad extends BaseSWSEAppV2 {
 
   }
 
+  /**
+   * Ecosystem Redesign Phase 6 — exact-record navigation for Home's action
+   * queue and the current-Location session block. Never a second router:
+   * every non-actor target resolves through GMCampaignTargetService into
+   * the real navigateToSurface() contract (Phase 2); an actor target has
+   * no Datapad surface selection (GMCampaignTargetService.resolve()
+   * returns null for it by design) and opens the real Actor sheet
+   * directly instead, matching every other surface's established
+   * "open Actor" behavior. A control with no real target id falls back to
+   * the app card's own generic navigation (data-app-card), never throws.
+   */
+  _wireHomeAttentionTargets(root, signal) {
+    // data-target-kind buttons never also carry data-app-card (see
+    // home.hbs) — a single click must resolve to exactly one navigation,
+    // never both a generic app-card route AND an exact target.
+    root.querySelectorAll('[data-target-kind]').forEach(btn => {
+      btn.addEventListener('click', async (ev) => {
+        const dataset = ev.currentTarget.dataset;
+        const kind = dataset.targetKind || '';
+        const id = dataset.targetId || '';
+        const uuid = dataset.targetUuid || '';
+        const fallbackRoute = dataset.fallbackRoute || '';
+
+        if (kind === 'actor') {
+          const actor = (id && game.actors?.get?.(id)) || (uuid && Array.from(game.actors ?? []).find(candidate => candidate.uuid === uuid)) || null;
+          if (!actor) {
+            ui.notifications?.warn?.('That actor could not be found.');
+            return;
+          }
+          actor.sheet?.render?.(true);
+          return;
+        }
+
+        const target = (kind && id) ? GMCampaignTargetService.resolve({ kind, id }) : null;
+        if (target) {
+          await this.navigateToSurface(target.surfaceId, target);
+          return;
+        }
+        if (fallbackRoute) this._navigateTo(fallbackRoute);
+      }, { signal });
+    });
+  }
+
+  /**
+   * PHASE 8C — the one shared "Prepare Bulletin Draft" entry point every
+   * source surface's action button calls. Delegates the actual draft
+   * creation to GMBulletinSurfaceService.prepareDraftFromSource() (the
+   * sole Bulletin-authority seam — this method contains no independent
+   * draft-construction logic of its own) and, on success, navigates to
+   * the Bulletin surface with the new draft selected for editing.
+   * GMBulletinSurfaceService is dynamically imported here to match the
+   * existing lazy-load convention this surface already uses
+   * (GMSurfaceRegistry), not a new pattern.
+   */
+  async _prepareBulletinDraftFromSource(sourceKind, sourceId) {
+    const { GMBulletinSurfaceService } = await import('/systems/foundryvtt-swse/scripts/ui/shell/gm/GMBulletinSurfaceService.js');
+    const draft = await GMBulletinSurfaceService.prepareDraftFromSource({ sourceKind, sourceId });
+    if (!draft) {
+      ui.notifications?.warn?.('Could not prepare a Bulletin draft from that source.');
+      return null;
+    }
+    // prepareDraftFromSource() always builds a BulletinSource.createBulletinMessage()
+    // record (a communication draft is message-shaped), so it always
+    // belongs in the 'messages' section.
+    const section = 'messages';
+    await this.navigateToSurface('bulletin', {
+      hostPatch: {
+        currentBulletinSection: section,
+        bulletinEditor: { section, mode: 'edit', recordId: draft.id }
+      }
+    });
+    return draft;
+  }
+
+  /**
+   * PHASE 8C (C8C-1 correction) — "Open Source" for a Bulletin record's
+   * own metadata.sourceKind/sourceId provenance. Mirrors
+   * _wireHomeAttentionTargets()'s established actor-vs-Datapad-surface
+   * split exactly: 'actor' opens the real Foundry Actor sheet directly
+   * (sourceId is the Actor UUID) via a real existence check
+   * (game.actors.get()/uuid match), every other kind is first verified
+   * to actually exist via GMCampaignContextService.resolveBulletinSource()
+   * (the read-only resolver added alongside this action) before
+   * GMCampaignTargetService.resolve() — a pure id-to-navigation-shape
+   * mapper with no existence check of its own — builds the destination.
+   * A deleted/never-existed source now reports resolved:false and this
+   * warns and stays on Bulletin, instead of navigating to a destination
+   * addressed by a dead id. Never falls back to matching by the
+   * Bulletin's own title/label — an unresolved source reports itself as
+   * unresolved, never guessed.
+   */
+  async _openBulletinSource(sourceKind, sourceId) {
+    const kind = String(sourceKind || '');
+    const id = String(sourceId || '');
+    if (!kind || !id) return;
+    if (kind === 'actor') {
+      const bareId = id.replace(/^Actor\./, '');
+      const actor = game.actors?.get?.(bareId) || Array.from(game.actors ?? []).find(candidate => candidate.uuid === id) || null;
+      if (!actor) {
+        ui.notifications?.warn?.('That source Actor could not be found.');
+        return;
+      }
+      actor.sheet?.render?.(true);
+      return;
+    }
+    const resolution = await GMCampaignContextService.resolveBulletinSource({ sourceKind: kind, sourceId: id });
+    if (!resolution?.resolved) {
+      ui.notifications?.warn?.('This Bulletin’s source could not be resolved.');
+      return;
+    }
+    const target = GMCampaignTargetService.resolve(resolution.target);
+    if (!target) {
+      ui.notifications?.warn?.('This Bulletin’s source could not be resolved.');
+      return;
+    }
+    await this.navigateToSurface(target.surfaceId, target);
+  }
 
   _wireGmDatapadV2Chrome(root) {
     if (!(root instanceof HTMLElement)) return;
@@ -2156,6 +2385,39 @@ export class GMDatapad extends BaseSWSEAppV2 {
     }
     resetApplicationCentering(this);
     return super.close(options);
+  }
+
+  /**
+   * Context-preserving cross-surface navigation (Ecosystem Redesign Phase 2).
+   *
+   * This does not replace _navigateTo() below — it composes the two
+   * primitives every surface controller already uses ad hoc at dozens of
+   * call sites (patchSurfaceState(surfaceId, patch, {render:false}) then
+   * _navigateTo(surfaceId)) into one named, testable entry point, so new
+   * relationship-navigation call sites don't have to re-derive that
+   * two-call ordering. _navigateTo() still owns surface validation,
+   * setting currentPage, and the single coalesced render.
+   *
+   * hostPatch exists because not every surface keys its "selected record"
+   * off surface state — the Job Board resolves its selection from a bare
+   * host.selectedJobThreadId property (see GMJobBoardSurfaceService
+   * buildViewModel), not getSurfaceState('jobs'). Both patches are applied
+   * BEFORE _navigateTo()'s render, so the destination's first render
+   * already reflects the requested selection.
+   *
+   * @param {string} surfaceId - Real destination surface id (e.g. 'factions', 'jobs', 'intel', 'locations').
+   * @param {object} [options]
+   * @param {object} [options.statePatch] - Merged into that surface's getSurfaceState() via patchSurfaceState.
+   * @param {object} [options.hostPatch] - Assigned directly onto this host (e.g. { selectedJobThreadId }).
+   */
+  async navigateToSurface(surfaceId, { statePatch = null, hostPatch = null } = {}) {
+    if (hostPatch && typeof hostPatch === 'object') {
+      for (const [key, value] of Object.entries(hostPatch)) this[key] = value;
+    }
+    if (statePatch && typeof statePatch === 'object' && Object.keys(statePatch).length) {
+      this.patchSurfaceState(surfaceId, statePatch, { render: false });
+    }
+    return this._navigateTo(surfaceId);
   }
 
   /**

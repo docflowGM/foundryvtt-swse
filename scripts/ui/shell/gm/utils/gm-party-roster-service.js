@@ -124,6 +124,20 @@ export class GMPartyRosterService {
     return this.getManagedActors(options).filter((actor) => !this.isPartyMember(actor));
   }
 
+  /**
+   * PRE-BROADCAST FINAL CONTRACT CLOSURE item 1: a read-only distinction
+   * between "no one has ever touched the party roster" and "the GM
+   * explicitly configured it" (even to an intentionally empty party —
+   * e.g. every player-linked Actor explicitly excluded via
+   * gmPartyMember:false). getPartyActors().length === 0 alone cannot
+   * tell those two states apart; a caller that wants to fall back to a
+   * wider Actor set ONLY when the roster was never configured (never
+   * when the GM deliberately emptied it) needs this.
+   */
+  static hasExplicitRosterConfiguration() {
+    return this.getManagedActors({ ownedOnly: false }).some((actor) => this.getOverride(actor) !== null);
+  }
+
   static async setPartyMember(actor, included) {
     if (!actor) throw new Error('Actor does not support flag updates.');
     const ActorEngine = await actorEngine();

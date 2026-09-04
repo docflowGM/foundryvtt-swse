@@ -105,6 +105,17 @@ export class GMBulletinSurfaceController {
   }
 
   _wireRecordActions(pageElement, signal) {
+    // PHASE 8C — "Open Source" for a Bulletin record's own
+    // metadata.sourceKind/sourceId provenance. Resolution happens at
+    // click time on the host (GMDatapad._openBulletinSource), never
+    // pre-guessed here from the record's title/label.
+    pageElement.querySelectorAll('[data-action="bulletin-open-source"]').forEach((button) => {
+      button.addEventListener('click', async (event) => {
+        event.preventDefault();
+        await this.host._openBulletinSource(event.currentTarget.dataset.sourceKind, event.currentTarget.dataset.sourceId);
+      }, { signal });
+    });
+
     pageElement.querySelectorAll('[data-action="bulletin-edit"]').forEach((button) => {
       button.addEventListener('click', async (event) => {
         event.preventDefault();

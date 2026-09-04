@@ -4,6 +4,12 @@ import { FactionRegistryService } from '/systems/foundryvtt-swse/scripts/allies/
 import { GMPartyRosterService } from '/systems/foundryvtt-swse/scripts/ui/shell/gm/utils/gm-party-roster-service.js';
 import { isXPEnabled, determineLevelFromXP } from '/systems/foundryvtt-swse/scripts/engine/progression/xp-engine.js';
 import { XP_LEVEL_THRESHOLDS, XP_MAX_LEVEL } from '/systems/foundryvtt-swse/scripts/engine/shared/xp-system.js';
+import { GMCampaignContextService } from '/systems/foundryvtt-swse/scripts/ui/shell/gm/GMCampaignContextService.js';
+
+function text(value, fallback = '') {
+  const out = String(value ?? fallback ?? '').trim();
+  return out || fallback;
+}
 
 function safeCollection(collection) {
   if (!collection) return [];
@@ -22,7 +28,11 @@ function actorCard(actor, extra = {}) {
   const hp = actor.system?.hp ?? actor.system?.attributes?.hp ?? {};
   const hpValue = Number(hp.value ?? hp.current ?? 0) || 0;
   const hpMax = Number(hp.max ?? hp.maximum ?? 0) || 0;
-  const conditionTrack = Number(actor.system?.conditionTrack?.value ?? actor.system?.condition?.track ?? 0) || 0;
+  // CORRECTION 2: the canonical Actor schema stores Condition Track at
+  // system.conditionTrack.current (the exact field
+  // GMCombatRecoveryService.buildActorCard() reads) — .value/.condition.track
+  // are legacy-compatibility fallbacks only, never the primary source.
+  const conditionTrack = Number(actor.system?.conditionTrack?.current ?? actor.system?.conditionTrack?.value ?? actor.system?.condition?.track ?? 0) || 0;
   const xpTotal = Number(actor.system?.xp?.total ?? actor.system?.xp?.value ?? actor.system?.experience ?? 0) || 0;
   const credits = Number(actor.system?.credits ?? actor.system?.wealth?.credits ?? 0) || 0;
   const level = Number(actor.system?.level ?? actor.system?.details?.level ?? actor.system?.progression?.level ?? 0) || 0;
@@ -99,8 +109,104 @@ function uniqueActors(rows = []) {
   return Array.from(map.values());
 }
 
+/**
+ * Selected-Actor campaign dossier (Phase 7). Resolves
+ * GMCampaignContextService.forActor() EXACTLY ONCE per render, only for
+ * the one selected Actor — never per roster card (the Phase 7 performance
+ * rule). Decorates the shared context for Workspace's presentation rather
+ * than re-querying Locations/Factions/Jobs/Intel/Trade independently
+ * (Phase 7 addendum B).
+ *
+ * Selection-state contract: an explicit selectedActorId that no longer
+ * resolves to a real Actor is reported as a `warning`, never silently
+ * substituted for another Actor (Phase 7 7S) — the fallback chain below
+ * applies ONLY when there is no explicit selection at all. With no
+ * explicit selection, Workspace picks the most contextually relevant
+ * Actor rather than defaulting straight to an empty dossier (PRE-
+ * BROADCAST INTEGRITY PASS item 4): first party member, else first
+ * active-combat Actor, else first current-scene Actor, else first
+ * visible GM-owned Actor — an honest UX default, not a resolved identity
+ * claim, matching the same "default to the first visible record"
+ * convention Locations already uses (GMLocationsSurfaceService
+ * .buildViewModel()'s own selectedLocationId fallback).
+ */
+async function buildSelectedActorSection(requestedActorId, { partyActors = [], combatActors = [], sceneActors = [], gmActors = [] } = {}, { xpSystemEnabled }) {
+  const selectedActorId = text(requestedActorId)
+    || partyActors[0]?.id
+    || combatActors[0]?.id
+    || sceneActors[0]?.id
+    || gmActors[0]?.id
+    || '';
+  if (!selectedActorId) {
+    return {
+      selectedActorId: '', hasSelection: false, warning: '',
+      empty: 'No Actor selected. Choose a party member or GM-owned actor below to open their campaign dossier.'
+    };
+  }
+  const actor = game.actors?.get?.(selectedActorId);
+  if (!actor) {
+    return {
+      selectedActorId, hasSelection: false, empty: '',
+      warning: `The selected Actor (${selectedActorId}) could not be found. It may have been deleted or is no longer accessible.`
+    };
+  }
+
+  const context = await GMCampaignContextService.forActor(actor);
+  // FINAL CORRECTION 2: forActor() is the ONE authoritative
+  // GMCombatRecoveryService.buildActorCard(actor) call for this render —
+  // it already resolves party/ownership/effects/poisons/ongoing-effects
+  // internally, so Workspace consumes the exact card forActor() computed
+  // (context.operations.recovery.card) rather than calling
+  // buildActorCard() a second time for the same Actor.
+  const recoveryCard = context.operations?.recovery?.card ?? null;
+  const card = actorCard(actor, { xpSystemEnabled });
+  const locations = (context.relationships?.locations ?? []).map(entry => ({
+    ...entry,
+    roleLabel: entry.role === 'direct-actor' ? 'Present at Location' : 'Via Faction Contact'
+  }));
+
+  return {
+    selectedActorId,
+    hasSelection: true,
+    warning: '',
+    empty: '',
+    identity: card,
+    currentSituation: {
+      hpLabel: card.hpLabel,
+      hpTone: card.hpTone,
+      conditionLabel: card.conditionLabel,
+      injured: context.operations?.recovery?.injured ?? false,
+      naturalHealingEligible: context.operations?.recovery?.naturalHealingEligible ?? false,
+      recoveryKindLabel: recoveryCard?.kindLabel || '',
+      statusChips: recoveryCard?.statusChips ?? [],
+      inCombat: context.party?.inCombat ?? false,
+      inScene: context.party?.inScene ?? false,
+      isPartyMember: context.party?.isPartyMember ?? false
+    },
+    relationships: { ...context.relationships, locations },
+    operations: {
+      recovery: recoveryCard,
+      trades: context.operations?.trades ?? []
+    },
+    progression: {
+      xpTotal: card.xpTotal,
+      xpProgressLabel: card.xpProgressLabel,
+      xpSystemEnabled: card.xpSystemEnabled,
+      canUseXpControls: card.canUseXpControls,
+      canGrantLevelUpXp: card.canGrantLevelUpXp,
+      credits: card.credits,
+      levelLabel: card.levelLabel,
+      fpValue: card.fpValue,
+      fpMax: card.fpMax,
+      hasForcePool: card.hasForcePool,
+      canRestoreForcePoints: card.canRestoreForcePoints
+    },
+    limitations: context.limitations ?? []
+  };
+}
+
 export class GMWorkspaceSurfaceService {
-  static async buildViewModel() {
+  static async buildViewModel(host) {
     const xpSystemEnabled = isXPEnabled();
     const ownedActors = game.actors.filter((actor) => actor.isOwner);
     const scene = game.scenes?.active ?? globalThis.canvas?.scene ?? null;
@@ -120,6 +226,8 @@ export class GMWorkspaceSurfaceService {
       .filter(actor => !partyActorIds.has(actor.id) && !sceneActorIds.has(actor.id) && !combatActorIds.has(actor.id))
       .map(actor => actorCard(actor, { xpSystemEnabled })));
     const factionSummary = FactionRegistryService.summarizeForWorkspace();
+    const state = host?.getSurfaceState?.('workspace') || {};
+    const selection = await buildSelectedActorSection(state.selectedActorId, { partyActors, combatActors, sceneActors, gmActors }, { xpSystemEnabled });
     const actorOptions = gmActors
       .map(actor => ({ id: actor.id, name: actor.name, type: actor.type, label: `${actor.name} (${actor.type})` }))
       .sort((a, b) => a.name.localeCompare(b.name));
@@ -138,6 +246,7 @@ export class GMWorkspaceSurfaceService {
       gmActors,
       rosterSections,
       xpSystemEnabled,
+      selection,
       partyManager: {
         members: partyActors,
         availableActors: availablePartyActors,
