@@ -28,10 +28,14 @@
  *    deliberately the SAME two vocabularies already established
  *    elsewhere in this pass, not a third one.
  *
- * Representative catalog across all 14 categories the correction
- * request named (~100 entries) -- a genuinely useful starting set, not
- * the full ~150-250 target; expanding this list later never requires
- * touching the Trade Resolver, only this data file.
+ * PHASE 8D-3A production expansion: grown from ~113 to a ~165-entry
+ * production catalog across all 14 categories, including new entries
+ * cross-referencing the economy sectors `data/planet-economies.js`
+ * introduced in the same pass (`entertainment`/`luxury`/`research`/
+ * `education`/`salvage`/`security`) so every economy sector a planet
+ * can roll has at least one matching commodity. Expanding this list
+ * further later never requires touching the Trade Resolver, only this
+ * data file.
  */
 
 export const COMMODITY_CATEGORY = Object.freeze({
@@ -199,5 +203,93 @@ export const GALACTIC_COMMODITIES = Object.freeze([
   { id: 'stolen-artifacts', name: 'Stolen Artifacts', category: C.BLACK_MARKET, tags: ['illicit', 'criminal', 'cultural'], legality: L.ILLEGAL, rarity: R.RARE, producedBy: ['black-market'], demandedBy: ['black-market'], scarcityOn: [] },
   { id: 'pirated-data', name: 'Pirated Data', category: C.BLACK_MARKET, tags: ['illicit', 'criminal'], legality: L.ILLEGAL, rarity: R.UNCOMMON, producedBy: ['black-market'], demandedBy: ['black-market'], scarcityOn: [] },
   { id: 'counterfeit-parts', name: 'Counterfeit Parts', category: C.BLACK_MARKET, tags: ['illicit', 'criminal'], legality: L.ILLEGAL, rarity: R.UNCOMMON, producedBy: ['black-market'], demandedBy: ['black-market'], scarcityOn: [] },
-  { id: 'spice', name: 'Spice', category: C.BLACK_MARKET, tags: ['illicit', 'criminal'], legality: L.ILLEGAL, rarity: R.UNCOMMON, producedBy: ['spice', 'black-market'], demandedBy: ['black-market'], scarcityOn: [] }
+  { id: 'spice', name: 'Spice', category: C.BLACK_MARKET, tags: ['illicit', 'criminal'], legality: L.ILLEGAL, rarity: R.UNCOMMON, producedBy: ['spice', 'black-market'], demandedBy: ['black-market'], scarcityOn: [] },
+
+  // ================================================================
+  // PHASE 8D-3A production expansion (~55 new entries) -- filling
+  // remaining category gaps and cross-referencing the new economy
+  // sector slugs (`entertainment`/`luxury`/`research`/`education`/
+  // `salvage`/`security`) `data/planet-economies.js` introduced, so no
+  // sector exists with zero matching commodities.
+  // ================================================================
+
+  // --- food & agriculture (more) ---
+  { id: 'root-vegetables', name: 'Root Vegetables', category: C.FOOD_AGRICULTURE, tags: ['agricultural'], legality: L.LEGAL, rarity: R.COMMON, producedBy: ['agriculture', 'rural'], demandedBy: ['urban'], scarcityOn: ['desert', 'ecumenopolis'] },
+  { id: 'orchard-fruit', name: 'Orchard Fruit', category: C.FOOD_AGRICULTURE, tags: ['agricultural'], legality: L.LEGAL, rarity: R.COMMON, producedBy: ['agriculture', 'grassland'], demandedBy: ['urban'], scarcityOn: ['desert'] },
+  { id: 'seed-stock', name: 'Seed Stock', category: C.FOOD_AGRICULTURE, tags: ['agricultural'], legality: L.LEGAL, rarity: R.COMMON, producedBy: ['agriculture'], demandedBy: ['agriculture', 'frontier'], scarcityOn: ['frontier'] },
+  { id: 'animal-feed', name: 'Animal Feed', category: C.FOOD_AGRICULTURE, tags: ['agricultural'], legality: L.LEGAL, rarity: R.COMMON, producedBy: ['agriculture'], demandedBy: ['agriculture', 'rural'], scarcityOn: [] },
+  { id: 'bantha-hide-wool', name: 'Bantha Hide & Wool', category: C.FOOD_AGRICULTURE, tags: ['agricultural'], legality: L.LEGAL, rarity: R.COMMON, producedBy: ['agriculture', 'rural'], demandedBy: ['urban', 'manufacturing'], scarcityOn: [] },
+  { id: 'nutrient-cultures', name: 'Nutrient Cultures', category: C.FOOD_AGRICULTURE, tags: ['agricultural', 'technology'], legality: L.LEGAL, rarity: R.COMMON, producedBy: ['manufacturing', 'research'], demandedBy: ['frontier', 'military-industrial'], scarcityOn: [] },
+
+  // --- minerals & raw materials (more) ---
+  { id: 'carbonite', name: 'Carbonite', category: C.MINERALS_RAW_MATERIALS, tags: ['raw-materials', 'industrial'], legality: L.RESTRICTED, rarity: R.UNCOMMON, producedBy: ['mining', 'industrial'], demandedBy: ['manufacturing', 'shipbuilding'], scarcityOn: [] },
+  { id: 'ceramic-composites', name: 'Ceramic Composites', category: C.MINERALS_RAW_MATERIALS, tags: ['raw-materials', 'industrial'], legality: L.LEGAL, rarity: R.UNCOMMON, producedBy: ['mining', 'manufacturing'], demandedBy: ['shipbuilding', 'urban'], scarcityOn: [] },
+  { id: 'raw-ore-generic', name: 'Bulk Ore', category: C.MINERALS_RAW_MATERIALS, tags: ['raw-materials'], legality: L.LEGAL, rarity: R.COMMON, producedBy: ['mining'], demandedBy: ['manufacturing', 'industrial'], scarcityOn: [] },
+  { id: 'sand-and-silicates', name: 'Sand & Silicates', category: C.MINERALS_RAW_MATERIALS, tags: ['raw-materials'], legality: L.LEGAL, rarity: R.COMMON, producedBy: ['mining', 'desert'], demandedBy: ['manufacturing', 'technology'], scarcityOn: [] },
+
+  // --- energy & fuel (more) ---
+  { id: 'energy-storage-cells', name: 'Energy Storage Cells', category: C.ENERGY_FUEL, tags: ['energy', 'technology'], legality: L.LEGAL, rarity: R.UNCOMMON, producedBy: ['energy', 'technology'], demandedBy: ['urban', 'frontier'], scarcityOn: ['frontier'] },
+  { id: 'fuel-precursors', name: 'Fuel Precursor Chemicals', category: C.ENERGY_FUEL, tags: ['energy'], legality: L.RESTRICTED, rarity: R.UNCOMMON, producedBy: ['energy', 'mining'], demandedBy: ['energy', 'shipbuilding'], scarcityOn: [] },
+  { id: 'coolant-fluids', name: 'Reactor Coolant Fluids', category: C.ENERGY_FUEL, tags: ['energy', 'industrial'], legality: L.LEGAL, rarity: R.COMMON, producedBy: ['energy', 'manufacturing'], demandedBy: ['military-industrial', 'urban'], scarcityOn: [] },
+
+  // --- industrial goods (more) ---
+  { id: 'industrial-machinery', name: 'Industrial Machinery', category: C.INDUSTRIAL_GOODS, tags: ['industrial', 'manufactured'], legality: L.LEGAL, rarity: R.COMMON, producedBy: ['manufacturing'], demandedBy: ['mining', 'agriculture', 'energy'], scarcityOn: ['frontier'] },
+  { id: 'construction-equipment', name: 'Construction Equipment', category: C.INDUSTRIAL_GOODS, tags: ['industrial', 'manufactured'], legality: L.LEGAL, rarity: R.COMMON, producedBy: ['manufacturing'], demandedBy: ['urban', 'frontier'], scarcityOn: ['frontier'] },
+  { id: 'communications-array-components', name: 'Communications Array Components', category: C.INDUSTRIAL_GOODS, tags: ['industrial', 'technology'], legality: L.LEGAL, rarity: R.UNCOMMON, producedBy: ['manufacturing', 'technology'], demandedBy: ['urban', 'frontier'], scarcityOn: ['frontier'] },
+  { id: 'scrap-metal', name: 'Scrap Metal', category: C.INDUSTRIAL_GOODS, tags: ['industrial', 'salvage'], legality: L.LEGAL, rarity: R.COMMON, producedBy: ['salvage'], demandedBy: ['manufacturing', 'salvage'], scarcityOn: [] },
+  { id: 'salvaged-components', name: 'Salvaged Components', category: C.INDUSTRIAL_GOODS, tags: ['industrial', 'salvage'], legality: L.LEGAL, rarity: R.COMMON, producedBy: ['salvage'], demandedBy: ['frontier', 'manufacturing'], scarcityOn: [] },
+
+  // --- technology (more) ---
+  { id: 'memory-modules', name: 'Memory Modules', category: C.TECHNOLOGY, tags: ['technology'], legality: L.LEGAL, rarity: R.COMMON, producedBy: ['technology'], demandedBy: ['urban', 'droids'], scarcityOn: ['frontier'] },
+  { id: 'scientific-instruments', name: 'Scientific Instruments', category: C.TECHNOLOGY, tags: ['technology', 'research'], legality: L.LEGAL, rarity: R.UNCOMMON, producedBy: ['technology', 'research'], demandedBy: ['research'], scarcityOn: [] },
+  { id: 'security-systems-hardware', name: 'Security Systems Hardware', category: C.TECHNOLOGY, tags: ['technology', 'security'], legality: L.LEGAL, rarity: R.UNCOMMON, producedBy: ['technology', 'security'], demandedBy: ['security', 'urban'], scarcityOn: [] },
+  { id: 'holo-projectors', name: 'Holoprojectors', category: C.TECHNOLOGY, tags: ['technology'], legality: L.LEGAL, rarity: R.COMMON, producedBy: ['technology'], demandedBy: ['urban', 'entertainment'], scarcityOn: ['frontier'] },
+
+  // --- droids (more) ---
+  { id: 'generic-droid-components', name: 'Droid Components', category: C.DROIDS, tags: ['droids', 'technology'], legality: L.LEGAL, rarity: R.COMMON, producedBy: ['droids', 'technology'], demandedBy: ['droids', 'manufacturing'], scarcityOn: ['frontier'] },
+  { id: 'combat-droid-chassis', name: 'Combat Droid Chassis', category: C.DROIDS, tags: ['droids', 'military'], legality: L.RESTRICTED, rarity: R.RARE, producedBy: ['droids', 'military-industrial'], demandedBy: ['military-industrial'], scarcityOn: [] },
+
+  // --- vehicles & transportation (more) ---
+  { id: 'generic-vehicle-components', name: 'Vehicle Components', category: C.VEHICLES_TRANSPORTATION, tags: ['manufactured'], legality: L.LEGAL, rarity: R.COMMON, producedBy: ['manufacturing'], demandedBy: ['urban', 'frontier'], scarcityOn: [] },
+  { id: 'avionics-systems', name: 'Avionics Systems', category: C.VEHICLES_TRANSPORTATION, tags: ['manufactured', 'technology'], legality: L.LEGAL, rarity: R.UNCOMMON, producedBy: ['manufacturing', 'technology'], demandedBy: ['shipbuilding'], scarcityOn: [] },
+
+  // --- shipbuilding (more) ---
+  { id: 'docking-clamp-assemblies', name: 'Docking Clamp Assemblies', category: C.SHIPBUILDING, tags: ['shipbuilding'], legality: L.LEGAL, rarity: R.COMMON, producedBy: ['shipbuilding'], demandedBy: ['trade', 'shipbuilding'], scarcityOn: [] },
+  { id: 'hyperdrive-motivators', name: 'Hyperdrive Motivators', category: C.SHIPBUILDING, tags: ['shipbuilding', 'technology'], legality: L.LEGAL, rarity: R.RARE, producedBy: ['shipbuilding', 'technology'], demandedBy: ['shipbuilding', 'trade'], scarcityOn: [] },
+
+  // --- medicine & biotechnology (more) ---
+  { id: 'lab-supplies', name: 'Laboratory Supplies', category: C.MEDICINE_BIOTECHNOLOGY, tags: ['medical', 'research'], legality: L.LEGAL, rarity: R.COMMON, producedBy: ['medical', 'research'], demandedBy: ['research', 'medical'], scarcityOn: ['frontier'] },
+  { id: 'biological-samples', name: 'Biological Samples', category: C.MEDICINE_BIOTECHNOLOGY, tags: ['medical', 'research'], legality: L.RESTRICTED, rarity: R.UNCOMMON, producedBy: ['research', 'medical'], demandedBy: ['research'], scarcityOn: [] },
+  { id: 'nutrient-supplements', name: 'Nutrient Supplements', category: C.MEDICINE_BIOTECHNOLOGY, tags: ['medical'], legality: L.LEGAL, rarity: R.COMMON, producedBy: ['medical', 'agriculture'], demandedBy: ['frontier', 'urban'], scarcityOn: ['frontier'] },
+
+  // --- luxury goods (more) ---
+  { id: 'luxury-groundspeeders', name: 'Luxury Groundspeeders', category: C.LUXURY_GOODS, tags: ['luxury', 'manufactured'], legality: L.LEGAL, rarity: R.RARE, producedBy: ['luxury', 'manufacturing'], demandedBy: ['noble-house'], scarcityOn: [] },
+  { id: 'designer-apparel', name: 'Designer Apparel', category: C.LUXURY_GOODS, tags: ['luxury'], legality: L.LEGAL, rarity: R.UNCOMMON, producedBy: ['luxury', 'manufacturing'], demandedBy: ['noble-house', 'urban'], scarcityOn: [] },
+  { id: 'fine-art', name: 'Fine Art', category: C.LUXURY_GOODS, tags: ['luxury', 'cultural'], legality: L.LEGAL, rarity: R.RARE, producedBy: ['cultural', 'luxury'], demandedBy: ['noble-house', 'urban'], scarcityOn: [] },
+
+  // --- cultural goods (more) ---
+  { id: 'educational-texts-holocrons', name: 'Educational Texts & Holocrons', category: C.CULTURAL_GOODS, tags: ['cultural', 'education'], legality: L.LEGAL, rarity: R.COMMON, producedBy: ['education', 'cultural'], demandedBy: ['education', 'urban'], scarcityOn: ['frontier'] },
+  { id: 'gaming-and-gambling-equipment', name: 'Gaming & Gambling Equipment', category: C.CULTURAL_GOODS, tags: ['cultural', 'entertainment'], legality: L.LEGAL, rarity: R.COMMON, producedBy: ['entertainment'], demandedBy: ['entertainment', 'tourism'], scarcityOn: [] },
+  { id: 'sporting-goods', name: 'Sporting Goods', category: C.CULTURAL_GOODS, tags: ['cultural', 'entertainment'], legality: L.LEGAL, rarity: R.COMMON, producedBy: ['entertainment', 'manufacturing'], demandedBy: ['urban'], scarcityOn: [] },
+
+  // --- information & services (more) ---
+  { id: 'private-security-contracts', name: 'Private Security Contracts', category: C.INFORMATION_SERVICES, tags: ['services', 'security'], legality: L.LEGAL, rarity: R.COMMON, producedBy: ['security'], demandedBy: ['urban', 'trade'], scarcityOn: [] },
+  { id: 'educational-services', name: 'Educational Services', category: C.INFORMATION_SERVICES, tags: ['services', 'education'], legality: L.LEGAL, rarity: R.COMMON, producedBy: ['education'], demandedBy: ['urban'], scarcityOn: ['frontier'] },
+  { id: 'research-contracts', name: 'Research Contracts', category: C.INFORMATION_SERVICES, tags: ['services', 'research'], legality: L.LEGAL, rarity: R.UNCOMMON, producedBy: ['research'], demandedBy: ['technology', 'medical'], scarcityOn: [] },
+  { id: 'archaeological-consulting', name: 'Archaeological Consulting', category: C.INFORMATION_SERVICES, tags: ['services', 'cultural'], legality: L.LEGAL, rarity: R.UNCOMMON, producedBy: ['cultural'], demandedBy: ['tourism', 'cultural'], scarcityOn: [] },
+
+  // --- military goods (more) ---
+  { id: 'targeting-systems', name: 'Targeting Systems', category: C.MILITARY_GOODS, tags: ['military', 'restricted', 'controlled'], legality: L.RESTRICTED, rarity: R.RARE, producedBy: ['military-industrial', 'technology'], demandedBy: ['military-industrial'], scarcityOn: [] },
+  { id: 'body-armor-components', name: 'Body Armor Components', category: C.MILITARY_GOODS, tags: ['military', 'restricted', 'controlled'], legality: L.RESTRICTED, rarity: R.UNCOMMON, producedBy: ['military-industrial'], demandedBy: ['military-industrial', 'security'], scarcityOn: [] },
+  { id: 'military-vehicle-components', name: 'Military Vehicle Components', category: C.MILITARY_GOODS, tags: ['military', 'restricted', 'controlled'], legality: L.RESTRICTED, rarity: R.RARE, producedBy: ['military-industrial'], demandedBy: ['military-industrial'], scarcityOn: [] },
+  { id: 'field-rations-military', name: 'Military Field Rations', category: C.MILITARY_GOODS, tags: ['military'], legality: L.LEGAL, rarity: R.COMMON, producedBy: ['military-industrial', 'agriculture'], demandedBy: ['military-industrial', 'frontier'], scarcityOn: [] },
+
+  // --- black-market commodities (more) ---
+  { id: 'unregistered-blasters', name: 'Unregistered Blasters', category: C.BLACK_MARKET, tags: ['illicit', 'criminal', 'military'], legality: L.ILLEGAL, rarity: R.UNCOMMON, producedBy: ['black-market'], demandedBy: ['black-market'], scarcityOn: [] },
+  { id: 'stolen-vehicles', name: 'Stolen Vehicles', category: C.BLACK_MARKET, tags: ['illicit', 'criminal'], legality: L.ILLEGAL, rarity: R.UNCOMMON, producedBy: ['black-market'], demandedBy: ['black-market'], scarcityOn: [] },
+  { id: 'illicit-cybernetics', name: 'Illicit Cybernetics', category: C.BLACK_MARKET, tags: ['illicit', 'criminal', 'medical'], legality: L.ILLEGAL, rarity: R.RARE, producedBy: ['black-market'], demandedBy: ['black-market'], scarcityOn: [] },
+  { id: 'trafficked-goods', name: 'Trafficked Goods (sensitive)', category: C.BLACK_MARKET, tags: ['illicit', 'criminal'], legality: L.ILLEGAL, rarity: R.RARE, producedBy: ['black-market'], demandedBy: ['black-market'], scarcityOn: [] },
+  { id: 'illegal-spice-derivatives', name: 'Illegal Spice Derivatives', category: C.BLACK_MARKET, tags: ['illicit', 'criminal'], legality: L.ILLEGAL, rarity: R.UNCOMMON, producedBy: ['spice', 'black-market'], demandedBy: ['black-market'], scarcityOn: [] },
+  { id: 'counterfeit-currency', name: 'Counterfeit Currency', category: C.BLACK_MARKET, tags: ['illicit', 'criminal'], legality: L.ILLEGAL, rarity: R.RARE, producedBy: ['black-market'], demandedBy: ['black-market'], scarcityOn: [] },
+  { id: 'illegal-surveillance-gear', name: 'Illegal Surveillance Gear', category: C.BLACK_MARKET, tags: ['illicit', 'criminal', 'security'], legality: L.ILLEGAL, rarity: R.UNCOMMON, producedBy: ['black-market'], demandedBy: ['black-market', 'security'], scarcityOn: [] }
 ]);
