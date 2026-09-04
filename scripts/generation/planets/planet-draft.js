@@ -106,6 +106,11 @@ function worldClassPreferenceTags(worldClass) {
   return mergeTags(worldClass.biomes, worldClass.tags);
 }
 
+/** The rolled economy's sector `tags`, merged -- the context `pickPlanetDroidPrevalence()` softly skews on (see `planet-profile.js`). Empty for an `UNINHABITED` world (no economy). */
+function economySectorTags(economy) {
+  return mergeTags(economy.primarySector?.tags || [], ...(economy.secondarySectors || []).map((s) => s.tags || []));
+}
+
 function composeTagsAndSummary({ worldClass, government, stability, economy, hazards, traits }) {
   // The draft's own `tags` field stays PROCEDURAL-ONLY (never a biome
   // claim) -- `biomes` (set separately in the draft, see
@@ -142,7 +147,7 @@ function composeTagsAndSummary({ worldClass, government, stability, economy, haz
  * after trade was already generated against it (a prior version of
  * `rerollPlanetEconomy()` had exactly that bug).
  */
-function rollEconomy({ rng, preferTags, worldClass, populationScale, settlementPattern, stability, secondaryCount }) {
+function rollEconomy({ rng, preferTags, worldClass, populationScale, settlementPattern, stability, government, secondaryCount }) {
   if (populationScale === POPULATION_SCALE.UNINHABITED) return { ...EMPTY_ECONOMY };
   const { primarySector, secondarySectors } = generatePlanetEconomySectors({
     rng,
@@ -157,6 +162,7 @@ function rollEconomy({ rng, preferTags, worldClass, populationScale, settlementP
     populationScale,
     settlementPattern,
     stabilityValue: stability?.value ?? '',
+    governmentTags: government?.tags || [],
     exportCount: 1 + Math.floor((rng ?? Math.random)() * 2),
     importCount: 1 + Math.floor((rng ?? Math.random)() * 2)
   });
@@ -174,7 +180,7 @@ function rollCivilization({ rng, preferTags, worldClass, populationScale, settle
   const technologyLevel = isUninhabited ? null : pickPlanetTechnologyLevel({ rng });
   const government = isUninhabited ? null : pickPlanetGovernment({ rng });
   const stability = isUninhabited ? null : pickPlanetStability({ rng });
-  const economy = rollEconomy({ rng, preferTags, worldClass, populationScale, settlementPattern, stability, secondaryCount });
+  const economy = rollEconomy({ rng, preferTags, worldClass, populationScale, settlementPattern, stability, government, secondaryCount });
   return { technologyLevel, government, stability, economy };
 }
 
@@ -207,12 +213,17 @@ export function createProceduralPlanetDraft({ rng, availableSpeciesIds = [], inc
   const {
     profile: populationProfile,
     character: populationCharacter,
+    dominantSpeciesId,
+    dominantSpeciesIds,
+    nativeSpeciesIds,
+    colonizationPattern,
     populationScale,
-    populationEstimate
-  } = generateProceduralPlanetPopulationProfile({ availableSpeciesIds, rng, habitable: worldClass.habitable });
+    populationEstimate,
+    populationEstimateNumeric
+  } = generateProceduralPlanetPopulationProfile({ availableSpeciesIds, rng, habitable: worldClass.habitable, densityBias: worldClass.populationBias || '' });
   const settlementPattern = pickSettlementPattern({ rng, populationScale });
-  const droidPrevalence = pickPlanetDroidPrevalence({ rng });
   const { technologyLevel, government, stability, economy } = rollCivilization({ rng, preferTags, worldClass, populationScale, settlementPattern });
+  const droidPrevalence = pickPlanetDroidPrevalence({ rng, technologyLevel: technologyLevel || '', economyTags: economySectorTags(economy) });
   const hazards = pickPlanetHazards({ rng, preferTags, count: Math.floor((rng ?? Math.random)() * 3) });
   const historyHooks = pickPlanetHistoryHooks({ rng, count: 1 });
   const traits = pickPlanetTraits({ rng, preferTags, count: 1 + Math.floor((rng ?? Math.random)() * 3) });
@@ -241,8 +252,13 @@ export function createProceduralPlanetDraft({ rng, availableSpeciesIds = [], inc
     hydrosphere,
     populationProfile,
     populationCharacter,
+    dominantSpeciesId,
+    dominantSpeciesIds,
+    nativeSpeciesIds,
+    colonizationPattern,
     populationScale,
     populationEstimate,
+    populationEstimateNumeric,
     droidPrevalence,
     settlementPattern,
     technologyLevel,
@@ -292,6 +308,7 @@ export function rerollPlanetStability(draft, { rng } = {}) {
     populationScale: draft.populationScale,
     settlementPattern: draft.settlementPattern,
     stabilityValue: stability.value,
+    governmentTags: draft.government?.tags || [],
     exportCount: draft.economy.exports.length || 1,
     importCount: draft.economy.imports.length || 1
   });
@@ -334,6 +351,7 @@ export function rerollPlanetTrade(draft, { rng, exportCount, importCount } = {})
     populationScale: draft.populationScale,
     settlementPattern: draft.settlementPattern,
     stabilityValue: draft.stability.value,
+    governmentTags: draft.government?.tags || [],
     exportCount: exportCount ?? draft.economy.exports.length ?? 1,
     importCount: importCount ?? draft.economy.imports.length ?? 1
   });
@@ -412,9 +430,19 @@ export function rerollPlanetPopulation(draft, { rng, availableSpeciesIds = [], h
   const {
     profile: populationProfile,
     character: populationCharacter,
+    dominantSpeciesId,
+    dominantSpeciesIds,
+    nativeSpeciesIds,
+    colonizationPattern,
     populationScale,
-    populationEstimate
-  } = generateProceduralPlanetPopulationProfile({ availableSpeciesIds, rng, habitable: habitable ?? draft.worldClass?.habitable });
+    populationEstimate,
+    populationEstimateNumeric
+  } = generateProceduralPlanetPopulationProfile({
+    availableSpeciesIds,
+    rng,
+    habitable: habitable ?? draft.worldClass?.habitable,
+    densityBias: draft.worldClass?.populationBias || ''
+  });
   const settlementPattern = pickSettlementPattern({ rng, populationScale });
 
   const wasUninhabited = draft.populationScale === POPULATION_SCALE.UNINHABITED;
@@ -446,6 +474,7 @@ export function rerollPlanetPopulation(draft, { rng, availableSpeciesIds = [], h
       populationScale,
       settlementPattern,
       stabilityValue: stability?.value ?? '',
+      governmentTags: government?.tags || [],
       exportCount: draft.economy.exports.length || 1,
       importCount: draft.economy.imports.length || 1
     });
@@ -457,8 +486,13 @@ export function rerollPlanetPopulation(draft, { rng, availableSpeciesIds = [], h
     ...draft,
     populationProfile,
     populationCharacter,
+    dominantSpeciesId,
+    dominantSpeciesIds,
+    nativeSpeciesIds,
+    colonizationPattern,
     populationScale,
     populationEstimate,
+    populationEstimateNumeric,
     settlementPattern,
     technologyLevel,
     government,
@@ -495,7 +529,7 @@ export function rerollPlanetTechnologyLevel(draft, { rng } = {}) {
   return { ...draft, technologyLevel: pickPlanetTechnologyLevel({ rng }) };
 }
 
-/** Reroll ONLY the droid prevalence. Always meaningful, including on an `UNINHABITED` draft -- droid prevalence is independent of organic population (see `planet-profile.js`'s `PLANET_DROID_PREVALENCE`). */
+/** Reroll ONLY the droid prevalence. Always meaningful, including on an `UNINHABITED` draft -- droid prevalence is independent of organic population (see `planet-profile.js`'s `PLANET_DROID_PREVALENCE`). Re-applies the same technology-level/economy-tag context skew the initial roll used. */
 export function rerollPlanetDroidPrevalence(draft, { rng } = {}) {
-  return { ...draft, droidPrevalence: pickPlanetDroidPrevalence({ rng }) };
+  return { ...draft, droidPrevalence: pickPlanetDroidPrevalence({ rng, technologyLevel: draft.technologyLevel || '', economyTags: economySectorTags(draft.economy) }) };
 }

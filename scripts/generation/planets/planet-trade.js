@@ -22,11 +22,44 @@
  * trade of any kind — empty arrays across the board, the same
  * empty-not-fabricated discipline `POPULATION_SCALE.UNINHABITED`
  * already established for demographics.
+ *
+ * A commodity can never appear as BOTH an export and an import in the
+ * same resolution -- `demandable` explicitly excludes whatever already
+ * got picked as an export (`exportIds`) before rolling imports, so
+ * "exports and imports never contradict" is a structural guarantee, not
+ * a probabilistic one.
+ *
+ * PHASE 8D-3A production tuning:
+ *  - Shortages (`computeShortages()`) previously derived ONLY from an
+ *    import's `scarcityOn` matching the world's biome/tag context. Now
+ *    also factor in population PRESSURE (a populous/hyper-urbanized
+ *    world strains its own supply chains more) and PRODUCTION
+ *    capability (a world with only one economy sector has a thinner
+ *    production base) and STABILITY (an unstable/lawless/fractured/...
+ *    world's supply chains are less reliable) -- under enough combined
+ *    pressure, a shortage can occur even without a direct environmental
+ *    scarcity match, and up to two shortages can occur at once. An
+ *    environmental scarcity match alone still guarantees at least one
+ *    shortage, exactly as before -- this is a strict widening, not a
+ *    narrowing, of when shortages occur.
+ *  - Illicit trade (`illicitChanceFor()`) previously read ONLY
+ *    `stabilityValue` (3 values) and the `black-market`/`spice`
+ *    sectors. Now also reads the rolled government's own `tags` (a
+ *    `crime-syndicate`-tagged government, e.g. "crime-lord fiefdom,"
+ *    raises the chance) and whether `trade` is one of the world's
+ *    economy sectors ("port/trade context" -- smuggling piggybacks on
+ *    legitimate shipping lanes more easily on a trade-hub world), and
+ *    covers the FULL expanded `planet-stability.js` vocabulary (round
+ *    2/3 only checked 3 of the original 7 stability values; several new
+ *    production values -- `fractured`/`civil-war`/`rebellious`/
+ *    `occupied`/`under-blockade`/`corrupt` -- clearly belong in the
+ *    same "raises illicit trade" bucket and previously wouldn't have
+ *    counted at all).
  */
 
 import { GALACTIC_COMMODITIES } from '../data/galactic-commodities.js';
 import { mergeTags } from '../lib/tag-utils.js';
-import { weightedPick, weightedPickUniqueN, pickRandom } from '../lib/weighted-random.js';
+import { weightedPick, weightedPickUniqueN } from '../lib/weighted-random.js';
 import { POPULATION_SCALE } from './planet-population.js';
 import { SETTLEMENT_PATTERN } from './planet-profile.js';
 
@@ -42,6 +75,12 @@ const DEMAND_TAGS_BY_SETTLEMENT_PATTERN = Object.freeze({
   [SETTLEMENT_PATTERN.ECUMENOPOLIS]: ['urban', 'ecumenopolis']
 });
 
+/** `planet-stability.js` values that raise shortage/illicit-trade likelihood -- a supply chain (legal or not) is less reliable on a world in any of these conditions. */
+const STRAINED_STABILITY_VALUES = Object.freeze(new Set([
+  'unstable', 'lawless', 'contested', 'fractured', 'civil-war', 'civil unrest',
+  'rebellious', 'occupied', 'under-blockade', 'corrupt', 'popular-unrest', 'succession-crisis', 'economic-crisis'
+]));
+
 function sectorSlugs(primarySector, secondarySectors) {
   return [primarySector?.sector, ...(secondarySectors || []).map((s) => s?.sector)].filter(Boolean);
 }
@@ -56,6 +95,40 @@ function assignImportance(list) {
 }
 
 /**
+ * Resolve `shortages` from environment (an import's own `scarcityOn`
+ * matching the world's biome/tag context), population pressure,
+ * production capability, and stability -- see module doc.
+ */
+function computeShortages({ importsEntries, scarcityTags, populationScale, stabilityValue, sectorCount, rng }) {
+  if (!importsEntries.length) return [];
+  const scarcityMatches = importsEntries.filter((entry) => entry.scarcityOn.some((tag) => scarcityTags.includes(tag)));
+
+  let pressure = 0;
+  if ([POPULATION_SCALE.POPULOUS, POPULATION_SCALE.HYPER_URBANIZED].includes(populationScale)) pressure += 1;
+  if (STRAINED_STABILITY_VALUES.has(stabilityValue)) pressure += 1;
+  if (sectorCount <= 1) pressure += 1;
+
+  if (!scarcityMatches.length && pressure === 0) return [];
+
+  const pool = pressure > 0 ? importsEntries : scarcityMatches;
+  const shortageChance = scarcityMatches.length ? 1 : Math.min(0.85, 0.25 * pressure);
+  if ((rng ?? Math.random)() >= shortageChance) return [];
+
+  const count = pressure >= 2 ? Math.min(2, pool.length) : 1;
+  return weightedPickUniqueN(pool, count, { rng, weightOf: weightOfCommodity }).map((entry) => entry.id);
+}
+
+/** Resolve the illicit-trade chance from stability, government character, black-market/spice sector presence, and trade/port context -- see module doc. */
+function illicitChanceFor({ stabilityValue, sectors, governmentTags }) {
+  let chance = 0.15;
+  if (STRAINED_STABILITY_VALUES.has(stabilityValue)) chance = Math.max(chance, 0.5);
+  if (sectors.includes('black-market') || sectors.includes('spice')) chance = Math.max(chance, 0.55);
+  if (governmentTags.includes('crime-syndicate')) chance = Math.max(chance, 0.6);
+  if (sectors.includes('trade')) chance += 0.1;
+  return Math.min(0.9, chance);
+}
+
+/**
  * Resolve a full trade profile: `{ exports, imports, shortages, illicitTrade }`.
  *
  * @param {object} [options]
@@ -65,7 +138,8 @@ function assignImportance(list) {
  * @param {object} options.worldClass - the rolled `WORLD_CLASS` entry (`planet-quality-tables.js`), for biome-driven scarcity/production matching.
  * @param {string} options.populationScale - a `POPULATION_SCALE` value.
  * @param {string} options.settlementPattern - a `SETTLEMENT_PATTERN` value.
- * @param {string} [options.stabilityValue] - the rolled `planet-stability.js` value; `'unstable'`/`'lawless'`/`'contested'` raise the illicit-trade chance.
+ * @param {string} [options.stabilityValue] - the rolled `planet-stability.js` value.
+ * @param {string[]} [options.governmentTags] - the rolled `planet-government.js` entry's own `tags` -- a `crime-syndicate`-tagged government raises the illicit-trade chance.
  * @param {number} [options.exportCount]
  * @param {number} [options.importCount]
  */
@@ -77,6 +151,7 @@ export function generatePlanetTrade({
   populationScale,
   settlementPattern,
   stabilityValue = '',
+  governmentTags = [],
   exportCount = 2,
   importCount = 2
 } = {}) {
@@ -100,10 +175,9 @@ export function generatePlanetTrade({
   const importsEntries = weightedPickUniqueN(demandable, importCount, { rng, weightOf: weightOfCommodity });
   const imports = assignImportance(importsEntries);
 
-  const shortageCandidates = importsEntries.filter((entry) => entry.scarcityOn.some((tag) => scarcityTags.includes(tag)));
-  const shortages = shortageCandidates.length ? [pickRandom(shortageCandidates, { rng }).id] : [];
+  const shortages = computeShortages({ importsEntries, scarcityTags, populationScale, stabilityValue, sectorCount: sectors.length, rng });
 
-  const illicitChance = ['unstable', 'lawless', 'contested'].includes(stabilityValue) || sectors.includes('black-market') || sectors.includes('spice') ? 0.5 : 0.15;
+  const illicitChance = illicitChanceFor({ stabilityValue, sectors, governmentTags });
   const illicitTrade = (rng ?? Math.random)() < illicitChance
     ? (() => {
         const illicitPool = GALACTIC_COMMODITIES.filter((entry) => entry.legality === 'illegal');
