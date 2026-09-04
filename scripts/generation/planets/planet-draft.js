@@ -71,6 +71,17 @@
  * Still a DRAFT — no canonical Location record is created here. Commit
  * remains `LocationRegistryService`'s job, exactly as
  * `location-draft.js`'s own header documents.
+ *
+ * PHASE 8D-3A additions: `presetId` (`data/planet-presets.js`, see
+ * `createProceduralPlanetDraft({ presetId })`'s own doc) and the
+ * SUGGEST-tier hook bundle `planet-hooks.js` composes
+ * (`suggestedFactionArchetypeTags`/`suggestedJobArchetypeTags`/
+ * `suggestedOppositionTags`/`currentEvents`/`secret`) -- narrative
+ * hints only, never an actual Faction/Job/Intel/canonical fact. Hooks
+ * are set once at creation and only change via the explicit
+ * `rerollPlanetHooks()`, never as a side effect of an unrelated
+ * reroll -- the same "a scoped reroll never silently changes something
+ * else" discipline `planet-bundle.js` established for POIs.
  */
 
 import { LOCATION_DRAFT_MODE } from '../location-draft.js';
@@ -91,6 +102,7 @@ import { pickPlanetHistoryHooks } from './planet-history-hooks.js';
 import { pickPlanetTraits } from './planet-traits.js';
 import { pickPlanetRegion, pickSectorName, pickPlanetClimate, pickPlanetHydrosphere, pickPlanetTechnologyLevel, pickPlanetDroidPrevalence, pickSettlementPattern } from './planet-profile.js';
 import { getPlanetPreset } from '../data/planet-presets.js';
+import { generatePlanetHooks } from './planet-hooks.js';
 
 const EMPTY_ECONOMY = Object.freeze({ primarySector: null, secondarySectors: Object.freeze([]), exports: Object.freeze([]), imports: Object.freeze([]), shortages: Object.freeze([]), illicitTrade: Object.freeze([]) });
 
@@ -247,6 +259,7 @@ export function createProceduralPlanetDraft({ rng, availableSpeciesIds = [], inc
   const historyHooks = pickPlanetHistoryHooks({ rng, preferTags, count: 1 });
   const traits = pickPlanetTraits({ rng, preferTags, count: 1 + Math.floor((rng ?? Math.random)() * 3) });
   const { tags, summary } = composeTagsAndSummary({ worldClass, government, stability, economy, hazards, traits });
+  const hooks = generatePlanetHooks({ rng, tags });
 
   return {
     draftId: createDraftId('location'),
@@ -291,8 +304,20 @@ export function createProceduralPlanetDraft({ rng, availableSpeciesIds = [], inc
     tags,
     summary,
     presetId: preset?.id || '',
+    ...hooks,
     provenance: createProvenance({ presetId: preset?.id || LOCATION_DRAFT_MODE.GENERATE_NEW_PLANET, templateId: '' })
   };
+}
+
+/**
+ * Reroll ONLY the SUGGEST-tier hooks (`suggestedFactionArchetypeTags`/
+ * `suggestedJobArchetypeTags`/`suggestedOppositionTags`/`currentEvents`/
+ * `secret`), keeping every other field untouched. Recomputed against
+ * the draft's OWN current `tags`, so a hooks reroll after e.g. a
+ * government or economy reroll picks up the world's latest context.
+ */
+export function rerollPlanetHooks(draft, { rng } = {}) {
+  return { ...draft, ...generatePlanetHooks({ rng, tags: draft.tags }) };
 }
 
 /**
