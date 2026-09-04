@@ -382,7 +382,7 @@ const abs = (rel) => `/systems/foundryvtt-swse/${rel}`;
       assert.notEqual(draft.economy.primarySector, null, `seed ${seed}: a non-uninhabited world must still roll a real economy.primarySector`);
     }
     assert.equal(isPlanetDroidPrevalence(draft.droidPrevalence), true, `seed ${seed}: droidPrevalence must always be a valid, independently-rolled value regardless of populationScale`);
-    assert.equal(draft.type, draft.worldClass.value === 'asteroid-field' ? 'region' : 'planet', `seed ${seed}: type must follow worldClass.locationType exactly`);
+    assert.equal(draft.type, draft.worldClass.locationType, `seed ${seed}: type must follow worldClass.locationType exactly (asteroid-field -> region, artificial-habitat -> space-station, everything else -> planet)`);
   }
 
   const planetDraft = createProceduralPlanetDraft({ rng: makeSeededRng(17), availableSpeciesIds: pool5 });
