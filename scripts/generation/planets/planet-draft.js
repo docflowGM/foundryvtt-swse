@@ -103,8 +103,69 @@ import { pickPlanetTraits } from './planet-traits.js';
 import { pickPlanetRegion, pickSectorName, pickPlanetClimate, pickPlanetHydrosphere, pickPlanetTechnologyLevel, pickPlanetDroidPrevalence, pickSettlementPattern } from './planet-profile.js';
 import { getPlanetPreset } from '../data/planet-presets.js';
 import { generatePlanetHooks } from './planet-hooks.js';
+import { DIAGNOSTIC_CODE } from '../lib/generator-diagnostics.js';
 
 const EMPTY_ECONOMY = Object.freeze({ primarySector: null, secondarySectors: Object.freeze([]), exports: Object.freeze([]), imports: Object.freeze([]), shortages: Object.freeze([]), illicitTrade: Object.freeze([]) });
+
+const POPULATION_SCALE_RANK = Object.freeze({
+  [POPULATION_SCALE.OUTPOST]: 0,
+  [POPULATION_SCALE.SMALL_SETTLEMENT]: 1,
+  [POPULATION_SCALE.SETTLED]: 2,
+  [POPULATION_SCALE.POPULOUS]: 3,
+  [POPULATION_SCALE.HYPER_URBANIZED]: 4
+});
+
+const TECHNOLOGY_LEVEL_RANK = Object.freeze({ primitive: 0, frontier: 1, standard: 2, advanced: 3, 'cutting-edge': 4 });
+
+/** Government `tags` implying a large administrative apparatus -- an unusual fit for a tiny population (see `computePlanetDiagnostics()`). */
+const LARGE_SCALE_GOVERNMENT_TAGS = new Set(['noble-house', 'government-bureaucracy']);
+const SMALL_POPULATION_SCALES = new Set([POPULATION_SCALE.OUTPOST, POPULATION_SCALE.SMALL_SETTLEMENT]);
+
+/**
+ * PHASE 8D-3A: flag (never fix/discard -- the same "warn about an
+ * unusual combination" discipline every `DIAGNOSTIC_CODE` follows)
+ * civilization/economy combinations worth a GM's attention:
+ *
+ *  - `TRADE_CONTEXT_MISMATCH`: the rolled economy sector(s) share NO
+ *    tag at all with the world's own biome/character context --
+ *    structurally possible because `generatePlanetEconomySectors()`
+ *    only SOFTLY prefers matching tags, never hard-filters on them
+ *    (unlike POI's `pickCompatiblePoiTemplate()`).
+ *  - `GOVERNMENT_POPULATION_MISMATCH`: a tiny population (OUTPOST/
+ *    SMALL_SETTLEMENT) paired with a government implying a large
+ *    administrative apparatus (a Noble House, a full bureaucracy).
+ *  - `TECHNOLOGY_POPULATION_MISMATCH`: technology level and
+ *    population scale are more than two rank-steps apart (e.g. a
+ *    lone OUTPOST running Cutting-Edge tech, or a HYPER_URBANIZED
+ *    ecumenopolis stuck at Primitive tech).
+ *
+ * All three are `UNINHABITED`-safe (an uninhabited world has no
+ * government/economy/technology to compare -- see `rollCivilization()`
+ * -- so this returns `[]` immediately for one).
+ */
+function computePlanetDiagnostics({ worldClass, government, economy, technologyLevel, populationScale }) {
+  if (populationScale === POPULATION_SCALE.UNINHABITED) return [];
+  const diagnostics = [];
+
+  const economySectors = [economy.primarySector, ...(economy.secondarySectors || [])].filter(Boolean);
+  if (economySectors.length) {
+    const sectorTags = mergeTags(...economySectors.map((s) => s.tags || []));
+    const worldTags = worldClassPreferenceTags(worldClass);
+    if (!sectorTags.some((t) => worldTags.includes(t))) diagnostics.push(DIAGNOSTIC_CODE.TRADE_CONTEXT_MISMATCH);
+  }
+
+  if (government && SMALL_POPULATION_SCALES.has(populationScale) && (government.tags || []).some((t) => LARGE_SCALE_GOVERNMENT_TAGS.has(t))) {
+    diagnostics.push(DIAGNOSTIC_CODE.GOVERNMENT_POPULATION_MISMATCH);
+  }
+
+  if (technologyLevel) {
+    const techRank = TECHNOLOGY_LEVEL_RANK[technologyLevel] ?? 2;
+    const scaleRank = POPULATION_SCALE_RANK[populationScale] ?? 2;
+    if (Math.abs(techRank - scaleRank) >= 3) diagnostics.push(DIAGNOSTIC_CODE.TECHNOLOGY_POPULATION_MISMATCH);
+  }
+
+  return diagnostics;
+}
 
 /**
  * `preferTags` fed to sibling pools (economy/hazard/trait/name) merges
@@ -124,7 +185,15 @@ function economySectorTags(economy) {
   return mergeTags(economy.primarySector?.tags || [], ...(economy.secondarySectors || []).map((s) => s.tags || []));
 }
 
-function composeTagsAndSummary({ worldClass, government, stability, economy, hazards, traits }) {
+/**
+ * PHASE 8D-3A: `composeLocationSummary()` now also synthesizes
+ * `government`/`population` into the summary prose (previously only
+ * worldClass/biomes/economy/stability) -- `populationEstimate`
+ * (optional, defaults to '' so a call site that omits it composes
+ * exactly as it always did) is `planet-population.js`'s own prose
+ * band ("hundreds to low thousands"), never a raw number.
+ */
+function composeTagsAndSummary({ worldClass, government, stability, economy, hazards, traits, populationEstimate = '' }) {
   // The draft's own `tags` field stays PROCEDURAL-ONLY (never a biome
   // claim) -- `biomes` (set separately in the draft, see
   // createProceduralPlanetDraft() below) is the sole biome authority.
@@ -144,6 +213,8 @@ function composeTagsAndSummary({ worldClass, government, stability, economy, haz
     worldClass: worldClass.value,
     biomes: worldClass.biomes,
     economy: economySectors.map((e) => e.value),
+    government: government?.value ?? '',
+    population: populationEstimate,
     stability: stability?.value ?? ''
   });
   return { tags, summary };
@@ -258,8 +329,9 @@ export function createProceduralPlanetDraft({ rng, availableSpeciesIds = [], inc
   const hazards = pickPlanetHazards({ rng, preferTags, count: Math.floor((rng ?? Math.random)() * 3) });
   const historyHooks = pickPlanetHistoryHooks({ rng, preferTags, count: 1 });
   const traits = pickPlanetTraits({ rng, preferTags, count: 1 + Math.floor((rng ?? Math.random)() * 3) });
-  const { tags, summary } = composeTagsAndSummary({ worldClass, government, stability, economy, hazards, traits });
+  const { tags, summary } = composeTagsAndSummary({ worldClass, government, stability, economy, hazards, traits, populationEstimate });
   const hooks = generatePlanetHooks({ rng, tags });
+  const diagnostics = computePlanetDiagnostics({ worldClass, government, economy, technologyLevel, populationScale });
 
   return {
     draftId: createDraftId('location'),
@@ -305,6 +377,7 @@ export function createProceduralPlanetDraft({ rng, availableSpeciesIds = [], inc
     summary,
     presetId: preset?.id || '',
     ...hooks,
+    diagnostics,
     provenance: createProvenance({ presetId: preset?.id || LOCATION_DRAFT_MODE.GENERATE_NEW_PLANET, templateId: '' })
   };
 }
@@ -331,8 +404,9 @@ export function rerollPlanetHooks(draft, { rng } = {}) {
 export function rerollPlanetWorldClass(draft, { rng } = {}) {
   const preset = draft.presetId ? getPlanetPreset(draft.presetId) : null;
   const worldClass = pickPlanetWorldClass({ rng, preferTags: preset?.preferTags || [] });
-  const { tags, summary } = composeTagsAndSummary({ worldClass, government: draft.government, stability: draft.stability, economy: draft.economy, hazards: draft.hazards, traits: draft.traits });
-  return { ...draft, worldClass, biomes: worldClass.biomes, tags, summary, type: worldClass.locationType };
+  const { tags, summary } = composeTagsAndSummary({ worldClass, government: draft.government, stability: draft.stability, economy: draft.economy, hazards: draft.hazards, traits: draft.traits, populationEstimate: draft.populationEstimate });
+  const diagnostics = computePlanetDiagnostics({ worldClass, government: draft.government, economy: draft.economy, technologyLevel: draft.technologyLevel, populationScale: draft.populationScale });
+  return { ...draft, worldClass, biomes: worldClass.biomes, tags, summary, type: worldClass.locationType, diagnostics };
 }
 
 /**
@@ -347,15 +421,16 @@ export function rerollPlanetGovernment(draft, { rng } = {}) {
   if (draft.populationScale === POPULATION_SCALE.UNINHABITED) return draft;
   const preset = draft.presetId ? getPlanetPreset(draft.presetId) : null;
   const government = pickPlanetGovernment({ rng, preferTags: preset?.preferTags || [] });
-  const { tags, summary } = composeTagsAndSummary({ worldClass: draft.worldClass, government, stability: draft.stability, economy: draft.economy, hazards: draft.hazards, traits: draft.traits });
-  return { ...draft, government, tags, summary };
+  const { tags, summary } = composeTagsAndSummary({ worldClass: draft.worldClass, government, stability: draft.stability, economy: draft.economy, hazards: draft.hazards, traits: draft.traits, populationEstimate: draft.populationEstimate });
+  const diagnostics = computePlanetDiagnostics({ worldClass: draft.worldClass, government, economy: draft.economy, technologyLevel: draft.technologyLevel, populationScale: draft.populationScale });
+  return { ...draft, government, tags, summary, diagnostics };
 }
 
 /** Reroll ONLY the stability, recomposing the summary (which reads it). Also rerolls `economy.illicitTrade`, which reads stability, to avoid leaving it stale. A no-op on an `UNINHABITED` draft -- there is no stability to reroll. */
 export function rerollPlanetStability(draft, { rng } = {}) {
   if (draft.populationScale === POPULATION_SCALE.UNINHABITED) return draft;
   const stability = pickPlanetStability({ rng });
-  const { summary } = composeTagsAndSummary({ worldClass: draft.worldClass, government: draft.government, stability, economy: draft.economy, hazards: draft.hazards, traits: draft.traits });
+  const { summary } = composeTagsAndSummary({ worldClass: draft.worldClass, government: draft.government, stability, economy: draft.economy, hazards: draft.hazards, traits: draft.traits, populationEstimate: draft.populationEstimate });
   const trade = generatePlanetTrade({
     rng,
     primarySector: draft.economy.primarySector,
@@ -392,8 +467,9 @@ export function rerollPlanetEconomy(draft, { rng, secondaryCount } = {}) {
     stability: draft.stability,
     secondaryCount
   });
-  const { tags, summary } = composeTagsAndSummary({ worldClass: draft.worldClass, government: draft.government, stability: draft.stability, economy, hazards: draft.hazards, traits: draft.traits });
-  return { ...draft, economy, tags, summary };
+  const { tags, summary } = composeTagsAndSummary({ worldClass: draft.worldClass, government: draft.government, stability: draft.stability, economy, hazards: draft.hazards, traits: draft.traits, populationEstimate: draft.populationEstimate });
+  const diagnostics = computePlanetDiagnostics({ worldClass: draft.worldClass, government: draft.government, economy, technologyLevel: draft.technologyLevel, populationScale: draft.populationScale });
+  return { ...draft, economy, tags, summary, diagnostics };
 }
 
 /** Reroll ONLY the trade (exports/imports/shortages/illicitTrade), keeping the same economy sectors. A no-op on an `UNINHABITED` draft -- there is no trade to reroll. */
@@ -537,7 +613,8 @@ export function rerollPlanetPopulation(draft, { rng, availableSpeciesIds = [], h
     economy = { primarySector: draft.economy.primarySector, secondarySectors: draft.economy.secondarySectors, ...trade };
   }
 
-  const { tags, summary } = composeTagsAndSummary({ worldClass: draft.worldClass, government, stability, economy, hazards: draft.hazards, traits: draft.traits });
+  const { tags, summary } = composeTagsAndSummary({ worldClass: draft.worldClass, government, stability, economy, hazards: draft.hazards, traits: draft.traits, populationEstimate });
+  const diagnostics = computePlanetDiagnostics({ worldClass: draft.worldClass, government, economy, technologyLevel, populationScale });
   return {
     ...draft,
     populationProfile,
@@ -555,7 +632,8 @@ export function rerollPlanetPopulation(draft, { rng, availableSpeciesIds = [], h
     stability,
     economy,
     tags,
-    summary
+    summary,
+    diagnostics
   };
 }
 
@@ -582,7 +660,9 @@ export function rerollPlanetHydrosphere(draft, { rng } = {}) {
 /** Reroll ONLY the technology level. A no-op on an `UNINHABITED` draft -- there is no technology level to reroll. */
 export function rerollPlanetTechnologyLevel(draft, { rng } = {}) {
   if (draft.populationScale === POPULATION_SCALE.UNINHABITED) return draft;
-  return { ...draft, technologyLevel: pickPlanetTechnologyLevel({ rng }) };
+  const technologyLevel = pickPlanetTechnologyLevel({ rng });
+  const diagnostics = computePlanetDiagnostics({ worldClass: draft.worldClass, government: draft.government, economy: draft.economy, technologyLevel, populationScale: draft.populationScale });
+  return { ...draft, technologyLevel, diagnostics };
 }
 
 /** Reroll ONLY the droid prevalence. Always meaningful, including on an `UNINHABITED` draft -- droid prevalence is independent of organic population (see `planet-profile.js`'s `PLANET_DROID_PREVALENCE`). Re-applies the same technology-level/economy-tag context skew the initial roll used. */

@@ -25,6 +25,11 @@ export const DIAGNOSTIC_CODE = Object.freeze({
   POI_CONTEXT_MISMATCH: 'poi-context-mismatch',
   UNINHABITED_WORLD_HAS_SETTLEMENT: 'uninhabited-world-has-settlement',
 
+  // PHASE 8D-3A: planet civilization/economy coherence (planet-draft.js)
+  TRADE_CONTEXT_MISMATCH: 'trade-context-mismatch',
+  GOVERNMENT_POPULATION_MISMATCH: 'government-population-mismatch',
+  TECHNOLOGY_POPULATION_MISMATCH: 'technology-population-mismatch',
+
   // Faction
   FACTION_RESOURCE_MISMATCH: 'faction-resource-mismatch',
   FACTION_POPULATION_MISMATCH: 'faction-population-mismatch',

@@ -55,13 +55,31 @@ export function composeFromTemplate(templateClauses, facts = {}) {
  * names `planet-draft.js` (Phase 8D-2) uses — and never reads or
  * writes any stored prose field.
  */
-export function composeLocationSummary({ worldClass = '', biomes = [], economy = [], stability = '' } = {}) {
-  const clauses = [];
-  if (worldClass) clauses.push(`A ${worldClass} world`);
-  if (biomes.length) clauses.push(`of ${joinClauses(biomes.slice(0, 3), ', ')} terrain`);
-  if (economy.length) clauses.push(`, known for ${joinClauses(economy.slice(0, 2), ' and ')}`);
-  if (stability) clauses.push(`. The political situation is ${stability}.`);
-  return joinClauses(clauses, ' ').replace(/\s+([,.])/g, '$1');
+/**
+ * PHASE 8D-3A: added `population`/`government` (both optional, both
+ * default to '' so an omitted value contributes nothing -- fully
+ * backward compatible with every existing call). `population` is
+ * expected to be a prose estimate (e.g. `planet-population.js`'s own
+ * `populationEstimate`, "hundreds to low thousands"), never a raw
+ * number -- this composer synthesizes PROSE, not a census figure.
+ */
+export function composeLocationSummary({ worldClass = '', biomes = [], economy = [], government = '', population = '', stability = '' } = {}) {
+  const leadClauses = [];
+  if (worldClass) leadClauses.push(`A ${worldClass} world`);
+  if (biomes.length) leadClauses.push(`of ${joinClauses(biomes.slice(0, 3), ', ')} terrain`);
+  if (economy.length) leadClauses.push(`, known for ${joinClauses(economy.slice(0, 2), ' and ')}`);
+  if (government) leadClauses.push(`, governed by ${government}`);
+  const lead = joinClauses(leadClauses, ' ').replace(/\s+([,.])/g, '$1');
+
+  // Each fact below is its OWN sentence (never a comma-splice onto the
+  // lead clause) so the summary stays grammatically correct regardless
+  // of which optional facts are present -- e.g. `population` supplied
+  // with an empty `stability` must still end in exactly one period.
+  const sentences = [];
+  if (lead) sentences.push(`${lead}.`);
+  if (population) sentences.push(`Population estimate: ${population}.`);
+  if (stability) sentences.push(`The political situation is ${stability}.`);
+  return sentences.join(' ');
 }
 
 /** Example composer: a short Faction summary from structured facts. */
