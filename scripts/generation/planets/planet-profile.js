@@ -142,6 +142,55 @@ export function pickPlanetTechnologyLevel({ rng } = {}) {
   return weightedPick(TECHNOLOGY_LEVEL_ENTRIES, { rng })?.value ?? PLANET_TECHNOLOGY_LEVEL.STANDARD;
 }
 
+/**
+ * CORRECTED (independent review, round 2): a planet's droid prevalence
+ * previously reused `population-profile.js`'s Faction living/droid
+ * COMPOSITION model (`LIVING_DROID_COMPOSITION_MODE`) -- but that model
+ * describes what SHARE of a group's living members are organic vs.
+ * droid, which is the wrong concept for a world. `DROID_ONLY` gave a
+ * world a `livingWeight` of 0 while `planet-population.js` went right
+ * ahead and generated an ordinary organic species distribution anyway
+ * -- the two facts couldn't help but contradict.
+ *
+ * `PLANET_DROID_PREVALENCE` is the Location-specific concept instead:
+ * how automated a world's economy/society is, entirely INDEPENDENT of
+ * its organic population. A `very-high` (or fully `automated`) droid
+ * prevalence and a Human-majority organic population are perfectly
+ * coherent together -- a highly industrialized, heavily droid-staffed
+ * world is still full of people. Rolled unconditionally (including for
+ * an `UNINHABITED` world -- a fully `automated` derelict mine or an
+ * abandoned world of `rare` droid activity are both coherent; see
+ * `planets/planet-draft.js`).
+ */
+export const PLANET_DROID_PREVALENCE = Object.freeze({
+  RARE: 'rare',
+  LOW: 'low',
+  NORMAL: 'normal',
+  HIGH: 'high',
+  VERY_HIGH: 'very-high',
+  AUTOMATED: 'automated'
+});
+
+const DROID_PREVALENCE_ENTRIES = Object.freeze([
+  { value: PLANET_DROID_PREVALENCE.RARE, weight: 3 },
+  { value: PLANET_DROID_PREVALENCE.LOW, weight: 4 },
+  { value: PLANET_DROID_PREVALENCE.NORMAL, weight: 5 },
+  { value: PLANET_DROID_PREVALENCE.HIGH, weight: 3 },
+  { value: PLANET_DROID_PREVALENCE.VERY_HIGH, weight: 1.5 },
+  { value: PLANET_DROID_PREVALENCE.AUTOMATED, weight: 0.5 }
+]);
+
+const DROID_PREVALENCE_VALUES = Object.freeze(Object.values(PLANET_DROID_PREVALENCE));
+
+export function isPlanetDroidPrevalence(value) {
+  return DROID_PREVALENCE_VALUES.includes(value);
+}
+
+/** Pick a random droid-prevalence level, independent of organic population. */
+export function pickPlanetDroidPrevalence({ rng } = {}) {
+  return weightedPick(DROID_PREVALENCE_ENTRIES, { rng })?.value ?? PLANET_DROID_PREVALENCE.NORMAL;
+}
+
 export const SETTLEMENT_PATTERN = Object.freeze({
   NONE: 'none',
   SCATTERED_OUTPOSTS: 'scattered-outposts',

@@ -22,7 +22,6 @@
  */
 
 import { createLocationPopulationProfile, POPULATION_DIVERSITY } from '../location-population-profile.js';
-import { LIVING_DROID_COMPOSITION_MODE, createLivingDroidComposition } from '../population-profile.js';
 import { pickRandom, weightedPick, randomIntInclusive } from '../lib/weighted-random.js';
 
 const POPULATION_CHARACTERS = Object.freeze(Object.values(POPULATION_DIVERSITY));
@@ -101,27 +100,6 @@ export function pickPopulationScale({ rng, habitable = true } = {}) {
 /** A short human-readable population-count band for a given scale. Never a precise number -- this is flavor, not a census. */
 export function describePopulationEstimate(scale) {
   return POPULATION_ESTIMATE_LABEL[scale] ?? POPULATION_ESTIMATE_LABEL[POPULATION_SCALE.SETTLED];
-}
-
-const DROID_COMPOSITION_MODE_ENTRIES = Object.freeze([
-  { value: LIVING_DROID_COMPOSITION_MODE.MIXED, weight: 5 },
-  { value: LIVING_DROID_COMPOSITION_MODE.WEIGHTED, weight: 3 },
-  { value: LIVING_DROID_COMPOSITION_MODE.ORGANIC_ONLY, weight: 3 },
-  { value: LIVING_DROID_COMPOSITION_MODE.DROID_ONLY, weight: 1 }
-]);
-
-/**
- * Roll a droid-prevalence profile for an inhabited world. Reuses
- * `population-profile.js`'s EXISTING `LIVING_DROID_COMPOSITION_MODE`/
- * `createLivingDroidComposition()` authority verbatim (already built
- * for Faction demographics) rather than inventing a second living/droid
- * vocabulary -- a planet's droid prevalence and a Faction's are the
- * exact same underlying concept.
- */
-export function pickDroidComposition({ rng } = {}) {
-  const mode = weightedPick(DROID_COMPOSITION_MODE_ENTRIES, { rng })?.value ?? LIVING_DROID_COMPOSITION_MODE.MIXED;
-  const livingWeight = mode === LIVING_DROID_COMPOSITION_MODE.WEIGHTED ? 0.3 + (rng ?? Math.random)() * 0.5 : undefined;
-  return createLivingDroidComposition({ mode, livingWeight });
 }
 
 /** Default relative likelihood of each character when the caller doesn't force one — extremes (fully homogeneous / fully cosmopolitan) are rarer than the middle bands. */
@@ -223,13 +201,11 @@ export function generateProceduralPlanetPopulationProfile({
       character: null,
       dominantSpeciesId: null,
       populationScale,
-      populationEstimate,
-      droidComposition: null
+      populationEstimate
     };
   }
 
   const pool = (Array.isArray(availableSpeciesIds) ? availableSpeciesIds : []).filter(Boolean);
-  const droidComposition = pickDroidComposition({ rng });
   if (!pool.length) {
     return {
       profile: createLocationPopulationProfile({
@@ -240,8 +216,7 @@ export function generateProceduralPlanetPopulationProfile({
       character: POPULATION_DIVERSITY.COSMOPOLITAN,
       dominantSpeciesId: null,
       populationScale,
-      populationEstimate,
-      droidComposition
+      populationEstimate
     };
   }
   const character = isPopulationCharacter(characterOverride) ? characterOverride : pickPopulationCharacter({ rng });
@@ -269,5 +244,5 @@ export function generateProceduralPlanetPopulationProfile({
     fallbackTemplate: '',
     notes: [`Procedurally generated ${character} population distribution for a new fictional world -- not the generic galactic fallback and not a lore census.`]
   });
-  return { profile, character, dominantSpeciesId, populationScale, populationEstimate, droidComposition };
+  return { profile, character, dominantSpeciesId, populationScale, populationEstimate };
 }

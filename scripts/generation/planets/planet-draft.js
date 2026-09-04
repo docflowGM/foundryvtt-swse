@@ -30,6 +30,31 @@
  * Cargo/smuggling Job generator reads, never a planet-specific
  * commodity list.
  *
+ * CORRECTED (round 2): `UNINHABITED` previously only gated demographics
+ * and trade -- `technologyLevel`/`government`/`stability`/the economy's
+ * `primarySector`/`secondarySectors` still rolled unconditionally,
+ * producing contradictory drafts (a world with "no permanent
+ * population" carrying a "parliamentary government" in "civil unrest").
+ * `rollCivilization()` now gates ALL FOUR on the same `populationScale`
+ * check demographics/trade already used: an `UNINHABITED` world gets
+ * `technologyLevel: null`, `government: null`, `stability: null`, and
+ * an empty economy -- never fabricated civilization facts. History
+ * hooks can still describe a former civilization; an `OUTPOST`-scale
+ * world (a research station, a mining camp) still rolls a real, if
+ * modest, government/economy of its own, exactly as before. Rerolling
+ * population can cross the `UNINHABITED` boundary in either direction,
+ * so `rerollPlanetPopulation()` now recomputes the WHOLE civilization
+ * block from the new scale rather than only `settlementPattern`+trade,
+ * and each single-field civilization reroll
+ * (`rerollPlanetGovernment`/`-Stability`/`-TechnologyLevel`/`-Economy`/
+ * `-Trade`) is a no-op on an `UNINHABITED` draft -- there is nothing to
+ * reroll. `droidPrevalence` (`planet-profile.js`'s
+ * `PLANET_DROID_PREVALENCE`) replaces the old Faction-composition-model
+ * `droidComposition`: it is now explicitly INDEPENDENT of organic
+ * population (how automated a world is, not what share of a group is
+ * organic vs. droid), rolled unconditionally including for `UNINHABITED`
+ * worlds, and untouched by a population reroll.
+ *
  * The returned draft's base fields (`draftId`/`mode`/`locationId`/
  * `parentLocationId`/`parentDraftId`/`name`/`category`/`type`/`biomes`/
  * `tags`/`summary`/`provenance`) intentionally mirror
@@ -56,7 +81,7 @@ import { composeLocationSummary } from '../lib/description-composer.js';
 import { pickPlanetWorldClass, pickPlanetSize, pickPlanetGravity, pickPlanetAtmosphere } from './planet-quality-tables.js';
 import { getRandomPlanetName } from '../names/planet-name-generator.js';
 import { getRandomSystemName } from '../names/system-name-generator.js';
-import { generateProceduralPlanetPopulationProfile } from './planet-population.js';
+import { generateProceduralPlanetPopulationProfile, POPULATION_SCALE } from './planet-population.js';
 import { pickPlanetGovernment } from './planet-government.js';
 import { pickPlanetStability } from './planet-stability.js';
 import { generatePlanetEconomySectors } from './planet-economy.js';
@@ -64,7 +89,9 @@ import { generatePlanetTrade } from './planet-trade.js';
 import { pickPlanetHazards } from './planet-hazards.js';
 import { pickPlanetHistoryHooks } from './planet-history-hooks.js';
 import { pickPlanetTraits } from './planet-traits.js';
-import { pickPlanetRegion, pickSectorName, pickPlanetClimate, pickPlanetHydrosphere, pickPlanetTechnologyLevel, pickSettlementPattern } from './planet-profile.js';
+import { pickPlanetRegion, pickSectorName, pickPlanetClimate, pickPlanetHydrosphere, pickPlanetTechnologyLevel, pickPlanetDroidPrevalence, pickSettlementPattern } from './planet-profile.js';
+
+const EMPTY_ECONOMY = Object.freeze({ primarySector: null, secondarySectors: Object.freeze([]), exports: Object.freeze([]), imports: Object.freeze([]), shortages: Object.freeze([]), illicitTrade: Object.freeze([]) });
 
 /**
  * `preferTags` fed to sibling pools (economy/hazard/trait/name) merges
@@ -83,25 +110,45 @@ function composeTagsAndSummary({ worldClass, government, stability, economy, haz
   // The draft's own `tags` field stays PROCEDURAL-ONLY (never a biome
   // claim) -- `biomes` (set separately in the draft, see
   // createProceduralPlanetDraft() below) is the sole biome authority.
-  const economySectors = [economy.primarySector, ...economy.secondarySectors];
+  // `government`/`stability`/`economy.primarySector` are `null` for an
+  // `UNINHABITED` world (see `rollCivilization()`) -- every read below
+  // is null-safe so an uninhabited world's tags/summary never claim a
+  // government or economy it doesn't have.
+  const economySectors = [economy.primarySector, ...(economy.secondarySectors || [])].filter(Boolean);
   const tags = mergeTags(
     worldClass.tags,
     economySectors.flatMap((e) => e.tags || []),
     hazards.flatMap((h) => h.tags || []),
     traits.flatMap((t) => t.tags || []),
-    government.tags || []
+    government?.tags || []
   );
   const summary = composeLocationSummary({
     worldClass: worldClass.value,
     biomes: worldClass.biomes,
     economy: economySectors.map((e) => e.value),
-    stability: stability.value
+    stability: stability?.value ?? ''
   });
   return { tags, summary };
 }
 
-function rollEconomy({ rng, preferTags, worldClass, populationScale, settlementPattern, stability }) {
-  const { primarySector, secondarySectors } = generatePlanetEconomySectors({ rng, preferTags, secondaryCount: Math.floor((rng ?? Math.random)() * 3) });
+/**
+ * Roll `primarySector`/`secondarySectors`/`exports`/`imports`/
+ * `shortages`/`illicitTrade` for a world -- empty across the board for
+ * `UNINHABITED` (mirroring `generatePlanetTrade()`'s own gate, so this
+ * stays correct even when called directly, e.g. from
+ * `rerollPlanetEconomy()`). `secondaryCount`, when supplied, is passed
+ * INTO sector generation itself so the Trade Resolver always resolves
+ * against the FINAL sector set -- never a superset later sliced down
+ * after trade was already generated against it (a prior version of
+ * `rerollPlanetEconomy()` had exactly that bug).
+ */
+function rollEconomy({ rng, preferTags, worldClass, populationScale, settlementPattern, stability, secondaryCount }) {
+  if (populationScale === POPULATION_SCALE.UNINHABITED) return { ...EMPTY_ECONOMY };
+  const { primarySector, secondarySectors } = generatePlanetEconomySectors({
+    rng,
+    preferTags,
+    secondaryCount: Number.isFinite(secondaryCount) ? secondaryCount : Math.floor((rng ?? Math.random)() * 3)
+  });
   const trade = generatePlanetTrade({
     rng,
     primarySector,
@@ -109,11 +156,26 @@ function rollEconomy({ rng, preferTags, worldClass, populationScale, settlementP
     worldClass,
     populationScale,
     settlementPattern,
-    stabilityValue: stability.value,
+    stabilityValue: stability?.value ?? '',
     exportCount: 1 + Math.floor((rng ?? Math.random)() * 2),
     importCount: 1 + Math.floor((rng ?? Math.random)() * 2)
   });
   return { primarySector, secondarySectors, ...trade };
+}
+
+/**
+ * Roll the full "civilization" block (`technologyLevel`/`government`/
+ * `stability`/`economy`) for a world. `UNINHABITED` gates all four --
+ * see the module-header correction note. `OUTPOST` and every denser
+ * scale still roll a real (if modest) government/economy of their own.
+ */
+function rollCivilization({ rng, preferTags, worldClass, populationScale, settlementPattern, secondaryCount }) {
+  const isUninhabited = populationScale === POPULATION_SCALE.UNINHABITED;
+  const technologyLevel = isUninhabited ? null : pickPlanetTechnologyLevel({ rng });
+  const government = isUninhabited ? null : pickPlanetGovernment({ rng });
+  const stability = isUninhabited ? null : pickPlanetStability({ rng });
+  const economy = rollEconomy({ rng, preferTags, worldClass, populationScale, settlementPattern, stability, secondaryCount });
+  return { technologyLevel, government, stability, economy };
 }
 
 /**
@@ -146,14 +208,11 @@ export function createProceduralPlanetDraft({ rng, availableSpeciesIds = [], inc
     profile: populationProfile,
     character: populationCharacter,
     populationScale,
-    populationEstimate,
-    droidComposition
+    populationEstimate
   } = generateProceduralPlanetPopulationProfile({ availableSpeciesIds, rng, habitable: worldClass.habitable });
   const settlementPattern = pickSettlementPattern({ rng, populationScale });
-  const technologyLevel = pickPlanetTechnologyLevel({ rng });
-  const government = pickPlanetGovernment({ rng });
-  const stability = pickPlanetStability({ rng });
-  const economy = rollEconomy({ rng, preferTags, worldClass, populationScale, settlementPattern, stability });
+  const droidPrevalence = pickPlanetDroidPrevalence({ rng });
+  const { technologyLevel, government, stability, economy } = rollCivilization({ rng, preferTags, worldClass, populationScale, settlementPattern });
   const hazards = pickPlanetHazards({ rng, preferTags, count: Math.floor((rng ?? Math.random)() * 3) });
   const historyHooks = pickPlanetHistoryHooks({ rng, count: 1 });
   const traits = pickPlanetTraits({ rng, preferTags, count: 1 + Math.floor((rng ?? Math.random)() * 3) });
@@ -184,7 +243,7 @@ export function createProceduralPlanetDraft({ rng, availableSpeciesIds = [], inc
     populationCharacter,
     populationScale,
     populationEstimate,
-    droidComposition,
+    droidPrevalence,
     settlementPattern,
     technologyLevel,
     government,
@@ -207,13 +266,22 @@ export function rerollPlanetWorldClass(draft, { rng } = {}) {
   return { ...draft, worldClass, biomes: worldClass.biomes, tags, summary, type: worldClass.locationType };
 }
 
-/** Reroll ONLY the government, preserving everything else (including summary/tags, which don't read government). */
+/**
+ * Reroll ONLY the government, recomputing tags (which read
+ * `government.tags` -- CORRECTED: a prior version of this function
+ * left `tags` stale after a government reroll) and the summary. A
+ * no-op on an `UNINHABITED` draft -- there is no government to reroll.
+ */
 export function rerollPlanetGovernment(draft, { rng } = {}) {
-  return { ...draft, government: pickPlanetGovernment({ rng }) };
+  if (draft.populationScale === POPULATION_SCALE.UNINHABITED) return draft;
+  const government = pickPlanetGovernment({ rng });
+  const { tags, summary } = composeTagsAndSummary({ worldClass: draft.worldClass, government, stability: draft.stability, economy: draft.economy, hazards: draft.hazards, traits: draft.traits });
+  return { ...draft, government, tags, summary };
 }
 
-/** Reroll ONLY the stability, recomposing the summary (which reads it). Also rerolls `economy.illicitTrade`, which reads stability, to avoid leaving it stale. */
+/** Reroll ONLY the stability, recomposing the summary (which reads it). Also rerolls `economy.illicitTrade`, which reads stability, to avoid leaving it stale. A no-op on an `UNINHABITED` draft -- there is no stability to reroll. */
 export function rerollPlanetStability(draft, { rng } = {}) {
+  if (draft.populationScale === POPULATION_SCALE.UNINHABITED) return draft;
   const stability = pickPlanetStability({ rng });
   const { summary } = composeTagsAndSummary({ worldClass: draft.worldClass, government: draft.government, stability, economy: draft.economy, hazards: draft.hazards, traits: draft.traits });
   const trade = generatePlanetTrade({
@@ -230,23 +298,34 @@ export function rerollPlanetStability(draft, { rng } = {}) {
   return { ...draft, stability, summary, economy: { ...draft.economy, ...trade } };
 }
 
-/** Reroll ONLY the economy (primary + secondary sectors + trade), recomputing tags/summary. */
+/**
+ * Reroll ONLY the economy (primary + secondary sectors + trade),
+ * recomputing tags/summary. A no-op on an `UNINHABITED` draft -- there
+ * is no economy to reroll. CORRECTED: `secondaryCount` now flows INTO
+ * sector generation (via `rollEconomy()`) before trade is resolved,
+ * rather than slicing `secondarySectors` down AFTER the Trade Resolver
+ * already ran against the full (unsliced) set -- the prior version
+ * could leave an export/import referencing a secondary sector that was
+ * then removed from the draft.
+ */
 export function rerollPlanetEconomy(draft, { rng, secondaryCount } = {}) {
+  if (draft.populationScale === POPULATION_SCALE.UNINHABITED) return draft;
   const economy = rollEconomy({
     rng,
     preferTags: worldClassPreferenceTags(draft.worldClass),
     worldClass: draft.worldClass,
     populationScale: draft.populationScale,
     settlementPattern: draft.settlementPattern,
-    stability: draft.stability
+    stability: draft.stability,
+    secondaryCount
   });
-  if (Number.isFinite(secondaryCount)) economy.secondarySectors = economy.secondarySectors.slice(0, secondaryCount);
   const { tags, summary } = composeTagsAndSummary({ worldClass: draft.worldClass, government: draft.government, stability: draft.stability, economy, hazards: draft.hazards, traits: draft.traits });
   return { ...draft, economy, tags, summary };
 }
 
-/** Reroll ONLY the trade (exports/imports/shortages/illicitTrade), keeping the same economy sectors. */
+/** Reroll ONLY the trade (exports/imports/shortages/illicitTrade), keeping the same economy sectors. A no-op on an `UNINHABITED` draft -- there is no trade to reroll. */
 export function rerollPlanetTrade(draft, { rng, exportCount, importCount } = {}) {
+  if (draft.populationScale === POPULATION_SCALE.UNINHABITED) return draft;
   const trade = generatePlanetTrade({
     rng,
     primarySector: draft.economy.primarySector,
@@ -291,41 +370,51 @@ export function rerollPlanetTraits(draft, { rng, count } = {}) {
  * `populationScale` -- leaving the old pattern in place after a
  * population reroll could otherwise recreate exactly the kind of
  * contradiction (e.g. an uninhabited world with `rural-villages`)
- * this correction pass fixed. `economy.exports/imports/shortages/
- * illicitTrade` are ALSO rerolled -- `planet-trade.js`'s Trade Resolver
- * returns empty trade for an `UNINHABITED` world, so leaving the old
- * (possibly nonempty) trade in place after a reroll into `UNINHABITED`
- * would reintroduce the same kind of contradiction.
+ * this correction pass fixed.
+ *
+ * CORRECTED (round 2): a population reroll can cross the `UNINHABITED`
+ * boundary in either direction (a settled world rerolled into
+ * uninhabited, or vice versa), so the WHOLE civilization block
+ * (`technologyLevel`/`government`/`stability`/`economy`, via the same
+ * `rollCivilization()` the initial draft uses) is now recomputed from
+ * the NEW `populationScale` here, not just `settlementPattern`+trade --
+ * otherwise a reroll into `UNINHABITED` could leave the previous roll's
+ * government/stability/technology level in place, reintroducing the
+ * exact contradiction this correction pass fixed. `droidPrevalence` is
+ * explicitly NOT touched here -- it is independent of organic
+ * population by design (see `planet-profile.js`'s
+ * `PLANET_DROID_PREVALENCE`), so a population reroll has no reason to
+ * change it.
  */
 export function rerollPlanetPopulation(draft, { rng, availableSpeciesIds = [], habitable } = {}) {
   const {
     profile: populationProfile,
     character: populationCharacter,
     populationScale,
-    populationEstimate,
-    droidComposition
+    populationEstimate
   } = generateProceduralPlanetPopulationProfile({ availableSpeciesIds, rng, habitable: habitable ?? draft.worldClass?.habitable });
   const settlementPattern = pickSettlementPattern({ rng, populationScale });
-  const trade = generatePlanetTrade({
+  const { technologyLevel, government, stability, economy } = rollCivilization({
     rng,
-    primarySector: draft.economy.primarySector,
-    secondarySectors: draft.economy.secondarySectors,
+    preferTags: worldClassPreferenceTags(draft.worldClass),
     worldClass: draft.worldClass,
     populationScale,
-    settlementPattern,
-    stabilityValue: draft.stability.value,
-    exportCount: draft.economy.exports.length || 1,
-    importCount: draft.economy.imports.length || 1
+    settlementPattern
   });
+  const { tags, summary } = composeTagsAndSummary({ worldClass: draft.worldClass, government, stability, economy, hazards: draft.hazards, traits: draft.traits });
   return {
     ...draft,
     populationProfile,
     populationCharacter,
     populationScale,
     populationEstimate,
-    droidComposition,
     settlementPattern,
-    economy: { ...draft.economy, ...trade }
+    technologyLevel,
+    government,
+    stability,
+    economy,
+    tags,
+    summary
   };
 }
 
@@ -349,7 +438,13 @@ export function rerollPlanetHydrosphere(draft, { rng } = {}) {
   return { ...draft, hydrosphere: pickPlanetHydrosphere({ rng, preferTags: worldClassPreferenceTags(draft.worldClass) }) };
 }
 
-/** Reroll ONLY the technology level. */
+/** Reroll ONLY the technology level. A no-op on an `UNINHABITED` draft -- there is no technology level to reroll. */
 export function rerollPlanetTechnologyLevel(draft, { rng } = {}) {
+  if (draft.populationScale === POPULATION_SCALE.UNINHABITED) return draft;
   return { ...draft, technologyLevel: pickPlanetTechnologyLevel({ rng }) };
+}
+
+/** Reroll ONLY the droid prevalence. Always meaningful, including on an `UNINHABITED` draft -- droid prevalence is independent of organic population (see `planet-profile.js`'s `PLANET_DROID_PREVALENCE`). */
+export function rerollPlanetDroidPrevalence(draft, { rng } = {}) {
+  return { ...draft, droidPrevalence: pickPlanetDroidPrevalence({ rng }) };
 }
