@@ -376,13 +376,35 @@ export function rerollPlanetTraits(draft, { rng, count } = {}) {
  * boundary in either direction (a settled world rerolled into
  * uninhabited, or vice versa), so the WHOLE civilization block
  * (`technologyLevel`/`government`/`stability`/`economy`, via the same
- * `rollCivilization()` the initial draft uses) is now recomputed from
- * the NEW `populationScale` here, not just `settlementPattern`+trade --
- * otherwise a reroll into `UNINHABITED` could leave the previous roll's
- * government/stability/technology level in place, reintroducing the
- * exact contradiction this correction pass fixed. `droidPrevalence` is
- * explicitly NOT touched here -- it is independent of organic
- * population by design (see `planet-profile.js`'s
+ * `rollCivilization()` the initial draft uses) was recomputed from the
+ * NEW `populationScale` unconditionally -- necessary when crossing the
+ * boundary (otherwise a reroll into `UNINHABITED` could leave the
+ * previous roll's government/stability/technology level in place), but
+ * WRONG for an inhabited -> inhabited reroll, where it threw away a
+ * perfectly good, unrelated government/stability/technology/economy
+ * for no reason -- the review's own example: a "Reroll Population"
+ * click on a Corporate protectorate, Advanced-tech shipbuilding world
+ * could silently turn it into a Clan council in Frontier tech running
+ * Agriculture, purely because the species distribution changed. That
+ * violates the core reroll contract (rerolling one field preserves
+ * unrelated fields).
+ *
+ * CORRECTED (round 3): three branches, matching whether `UNINHABITED`
+ * is crossed:
+ *  - inhabited -> inhabited: `government`/`stability`/`technologyLevel`/
+ *    `economy.primarySector`/`economy.secondarySectors` are PRESERVED
+ *    unchanged; only `economy`'s TRADE is recomputed (exports/imports/
+ *    shortages/illicitTrade genuinely do depend on the new
+ *    `populationScale`/`settlementPattern` -- a hyper-urbanized world
+ *    demands differently than a small settlement even with the same
+ *    economy sectors).
+ *  - inhabited -> uninhabited, or uninhabited -> inhabited: the WHOLE
+ *    civilization block is (re)computed via `rollCivilization()`,
+ *    exactly as round 2 already did -- this is the one case where
+ *    cascading is correct, not a bug.
+ *
+ * `droidPrevalence` is explicitly NOT touched by any branch -- it is
+ * independent of organic population by design (see `planet-profile.js`'s
  * `PLANET_DROID_PREVALENCE`), so a population reroll has no reason to
  * change it.
  */
@@ -394,13 +416,42 @@ export function rerollPlanetPopulation(draft, { rng, availableSpeciesIds = [], h
     populationEstimate
   } = generateProceduralPlanetPopulationProfile({ availableSpeciesIds, rng, habitable: habitable ?? draft.worldClass?.habitable });
   const settlementPattern = pickSettlementPattern({ rng, populationScale });
-  const { technologyLevel, government, stability, economy } = rollCivilization({
-    rng,
-    preferTags: worldClassPreferenceTags(draft.worldClass),
-    worldClass: draft.worldClass,
-    populationScale,
-    settlementPattern
-  });
+
+  const wasUninhabited = draft.populationScale === POPULATION_SCALE.UNINHABITED;
+  const isUninhabited = populationScale === POPULATION_SCALE.UNINHABITED;
+
+  let technologyLevel, government, stability, economy;
+  if (wasUninhabited || isUninhabited) {
+    // Crossing the UNINHABITED boundary in either direction: the whole
+    // civilization block must be (re)computed from scratch.
+    ({ technologyLevel, government, stability, economy } = rollCivilization({
+      rng,
+      preferTags: worldClassPreferenceTags(draft.worldClass),
+      worldClass: draft.worldClass,
+      populationScale,
+      settlementPattern
+    }));
+  } else {
+    // Staying inhabited: preserve government/stability/technologyLevel/
+    // sectors untouched. Only trade is recomputed -- it genuinely
+    // depends on the new populationScale/settlementPattern.
+    technologyLevel = draft.technologyLevel;
+    government = draft.government;
+    stability = draft.stability;
+    const trade = generatePlanetTrade({
+      rng,
+      primarySector: draft.economy.primarySector,
+      secondarySectors: draft.economy.secondarySectors,
+      worldClass: draft.worldClass,
+      populationScale,
+      settlementPattern,
+      stabilityValue: stability?.value ?? '',
+      exportCount: draft.economy.exports.length || 1,
+      importCount: draft.economy.imports.length || 1
+    });
+    economy = { primarySector: draft.economy.primarySector, secondarySectors: draft.economy.secondarySectors, ...trade };
+  }
+
   const { tags, summary } = composeTagsAndSummary({ worldClass: draft.worldClass, government, stability, economy, hazards: draft.hazards, traits: draft.traits });
   return {
     ...draft,
