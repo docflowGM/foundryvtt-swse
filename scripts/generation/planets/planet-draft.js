@@ -90,6 +90,7 @@ import { pickPlanetHazards } from './planet-hazards.js';
 import { pickPlanetHistoryHooks } from './planet-history-hooks.js';
 import { pickPlanetTraits } from './planet-traits.js';
 import { pickPlanetRegion, pickSectorName, pickPlanetClimate, pickPlanetHydrosphere, pickPlanetTechnologyLevel, pickPlanetDroidPrevalence, pickSettlementPattern } from './planet-profile.js';
+import { getPlanetPreset } from '../data/planet-presets.js';
 
 const EMPTY_ECONOMY = Object.freeze({ primarySector: null, secondarySectors: Object.freeze([]), exports: Object.freeze([]), imports: Object.freeze([]), shortages: Object.freeze([]), illicitTrade: Object.freeze([]) });
 
@@ -174,11 +175,17 @@ function rollEconomy({ rng, preferTags, worldClass, populationScale, settlementP
  * `stability`/`economy`) for a world. `UNINHABITED` gates all four --
  * see the module-header correction note. `OUTPOST` and every denser
  * scale still roll a real (if modest) government/economy of their own.
+ *
+ * PHASE 8D-3A: `government` now also reads `preferTags` (previously
+ * only `economy` did) -- a pre-existing wiring gap, closed here because
+ * it is exactly what makes a planet preset's (`data/planet-presets.js`)
+ * intent (e.g. "Corporate Colony," "Military Garrison," "Sacred World")
+ * actually reach the government pick, not just world class/economy.
  */
 function rollCivilization({ rng, preferTags, worldClass, populationScale, settlementPattern, secondaryCount }) {
   const isUninhabited = populationScale === POPULATION_SCALE.UNINHABITED;
   const technologyLevel = isUninhabited ? null : pickPlanetTechnologyLevel({ rng });
-  const government = isUninhabited ? null : pickPlanetGovernment({ rng });
+  const government = isUninhabited ? null : pickPlanetGovernment({ rng, preferTags });
   const stability = isUninhabited ? null : pickPlanetStability({ rng });
   const economy = rollEconomy({ rng, preferTags, worldClass, populationScale, settlementPattern, stability, government, secondaryCount });
   return { technologyLevel, government, stability, economy };
@@ -197,10 +204,22 @@ function rollCivilization({ rng, preferTags, worldClass, populationScale, settle
  *   `GENERATE_NEW_PLANET_AND_POI` instead of `GENERATE_NEW_PLANET`
  *   (the actual POI draft itself is `planets/../poi`'s job, Phase
  *   8D-2's next groundwork task -- this flag only records intent).
+ * @param {string} [options.presetId] - PHASE 8D-3A: a `data/planet-presets.js`
+ *   id (e.g. `'mining-world'`). A preset never fabricates a fact
+ *   directly -- it only feeds its `preferTags` into the SAME soft-
+ *   preference picks every other field already uses (world class,
+ *   climate, hydrosphere, government, economy, hazards, traits, history
+ *   hooks) and its `densityBias` (when set) overrides `worldClass.populationBias`
+ *   for the population-scale roll. An unrecognized/empty id is simply
+ *   no preset (never an error) -- the draft generates exactly as it
+ *   always did. The resolved id (or `''`) is recorded on the draft's
+ *   own `presetId` field and in `provenance.presetId`.
  */
-export function createProceduralPlanetDraft({ rng, availableSpeciesIds = [], includeChild = false } = {}) {
-  const worldClass = pickPlanetWorldClass({ rng });
-  const preferTags = worldClassPreferenceTags(worldClass);
+export function createProceduralPlanetDraft({ rng, availableSpeciesIds = [], includeChild = false, presetId = '' } = {}) {
+  const preset = presetId ? getPlanetPreset(presetId) : null;
+  const presetPreferTags = preset?.preferTags || [];
+  const worldClass = pickPlanetWorldClass({ rng, preferTags: presetPreferTags });
+  const preferTags = mergeTags(presetPreferTags, worldClassPreferenceTags(worldClass));
   const size = pickPlanetSize({ rng });
   const gravity = pickPlanetGravity({ rng });
   const atmosphere = pickPlanetAtmosphere({ rng });
@@ -220,12 +239,12 @@ export function createProceduralPlanetDraft({ rng, availableSpeciesIds = [], inc
     populationScale,
     populationEstimate,
     populationEstimateNumeric
-  } = generateProceduralPlanetPopulationProfile({ availableSpeciesIds, rng, habitable: worldClass.habitable, densityBias: worldClass.populationBias || '' });
+  } = generateProceduralPlanetPopulationProfile({ availableSpeciesIds, rng, habitable: worldClass.habitable, densityBias: preset?.densityBias || worldClass.populationBias || '' });
   const settlementPattern = pickSettlementPattern({ rng, populationScale });
   const { technologyLevel, government, stability, economy } = rollCivilization({ rng, preferTags, worldClass, populationScale, settlementPattern });
   const droidPrevalence = pickPlanetDroidPrevalence({ rng, technologyLevel: technologyLevel || '', economyTags: economySectorTags(economy) });
   const hazards = pickPlanetHazards({ rng, preferTags, count: Math.floor((rng ?? Math.random)() * 3) });
-  const historyHooks = pickPlanetHistoryHooks({ rng, count: 1 });
+  const historyHooks = pickPlanetHistoryHooks({ rng, preferTags, count: 1 });
   const traits = pickPlanetTraits({ rng, preferTags, count: 1 + Math.floor((rng ?? Math.random)() * 3) });
   const { tags, summary } = composeTagsAndSummary({ worldClass, government, stability, economy, hazards, traits });
 
@@ -271,13 +290,22 @@ export function createProceduralPlanetDraft({ rng, availableSpeciesIds = [], inc
     biomes: worldClass.biomes,
     tags,
     summary,
-    provenance: createProvenance({ presetId: LOCATION_DRAFT_MODE.GENERATE_NEW_PLANET, templateId: '' })
+    presetId: preset?.id || '',
+    provenance: createProvenance({ presetId: preset?.id || LOCATION_DRAFT_MODE.GENERATE_NEW_PLANET, templateId: '' })
   };
 }
 
-/** Reroll ONLY the world class, recomputing biomes/tags/summary and type; preserves every other field (including name -- a planet's name doesn't imply its class). */
+/**
+ * Reroll ONLY the world class, recomputing biomes/tags/summary and
+ * type; preserves every other field (including name -- a planet's
+ * name doesn't imply its class). PHASE 8D-3A: when the draft carries a
+ * `presetId`, the reroll stays biased by that preset's `preferTags` --
+ * a preset applied at creation stays "sticky" across a world-class
+ * reroll rather than only ever applying once.
+ */
 export function rerollPlanetWorldClass(draft, { rng } = {}) {
-  const worldClass = pickPlanetWorldClass({ rng });
+  const preset = draft.presetId ? getPlanetPreset(draft.presetId) : null;
+  const worldClass = pickPlanetWorldClass({ rng, preferTags: preset?.preferTags || [] });
   const { tags, summary } = composeTagsAndSummary({ worldClass, government: draft.government, stability: draft.stability, economy: draft.economy, hazards: draft.hazards, traits: draft.traits });
   return { ...draft, worldClass, biomes: worldClass.biomes, tags, summary, type: worldClass.locationType };
 }
@@ -287,10 +315,13 @@ export function rerollPlanetWorldClass(draft, { rng } = {}) {
  * `government.tags` -- CORRECTED: a prior version of this function
  * left `tags` stale after a government reroll) and the summary. A
  * no-op on an `UNINHABITED` draft -- there is no government to reroll.
+ * PHASE 8D-3A: honors the draft's `presetId` (if any), same stickiness
+ * rationale as `rerollPlanetWorldClass()`.
  */
 export function rerollPlanetGovernment(draft, { rng } = {}) {
   if (draft.populationScale === POPULATION_SCALE.UNINHABITED) return draft;
-  const government = pickPlanetGovernment({ rng });
+  const preset = draft.presetId ? getPlanetPreset(draft.presetId) : null;
+  const government = pickPlanetGovernment({ rng, preferTags: preset?.preferTags || [] });
   const { tags, summary } = composeTagsAndSummary({ worldClass: draft.worldClass, government, stability: draft.stability, economy: draft.economy, hazards: draft.hazards, traits: draft.traits });
   return { ...draft, government, tags, summary };
 }
@@ -441,7 +472,7 @@ export function rerollPlanetPopulation(draft, { rng, availableSpeciesIds = [], h
     availableSpeciesIds,
     rng,
     habitable: habitable ?? draft.worldClass?.habitable,
-    densityBias: draft.worldClass?.populationBias || ''
+    densityBias: (draft.presetId ? getPlanetPreset(draft.presetId)?.densityBias : '') || draft.worldClass?.populationBias || ''
   });
   const settlementPattern = pickSettlementPattern({ rng, populationScale });
 
