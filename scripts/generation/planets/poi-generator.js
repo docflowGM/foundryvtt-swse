@@ -88,6 +88,33 @@ import { joinClauses } from '../lib/description-composer.js';
 import { DIAGNOSTIC_CODE } from '../lib/generator-diagnostics.js';
 import { pickCompatiblePoiTemplate } from './poi-template.js';
 import { getRandomPoiPlaceName, poiNameStyleForType } from '../names/poi-place-name-generator.js';
+import { POPULATION_SCALE } from './planet-population.js';
+
+/**
+ * PHASE 8D-3A: how many POIs a world of a given `populationScale`
+ * plausibly has -- an UNINHABITED world still gets a couple of
+ * wilderness/ruin-type POIs (nothing implying active population, the
+ * hard compatibility filter already guarantees that), while a
+ * HYPER_URBANIZED ecumenopolis has noticeably more than a lone
+ * OUTPOST. `[min, max]` inclusive; `rng` (defaulting to `Math.random`)
+ * resolves a single count within that range. Used by
+ * `planet-bundle.js`'s `generateProceduralPlanetBundle()` as the
+ * default when a caller doesn't pass an explicit `poiCount`.
+ */
+const POI_COUNT_RANGE_BY_POPULATION_SCALE = Object.freeze({
+  [POPULATION_SCALE.UNINHABITED]: [1, 3],
+  [POPULATION_SCALE.OUTPOST]: [1, 3],
+  [POPULATION_SCALE.SMALL_SETTLEMENT]: [2, 4],
+  [POPULATION_SCALE.SETTLED]: [3, 6],
+  [POPULATION_SCALE.POPULOUS]: [5, 9],
+  [POPULATION_SCALE.HYPER_URBANIZED]: [7, 12]
+});
+
+/** Resolve a POI count for a `populationScale` -- see `POI_COUNT_RANGE_BY_POPULATION_SCALE` above. An unrecognized/empty scale falls back to the SETTLED range, a reasonable middle default. */
+export function poiCountForPopulationScale(populationScale, { rng } = {}) {
+  const [min, max] = POI_COUNT_RANGE_BY_POPULATION_SCALE[populationScale] ?? POI_COUNT_RANGE_BY_POPULATION_SCALE[POPULATION_SCALE.SETTLED];
+  return min + Math.floor((rng ?? Math.random)() * (max - min + 1));
+}
 
 function contextTagsFor(parentPlanetDraft, preferTags) {
   if (!parentPlanetDraft) return preferTags;
