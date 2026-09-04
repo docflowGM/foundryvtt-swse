@@ -24,6 +24,12 @@
  * `poi-generator.js`) actually sees a Government Complex or Noble
  * Estate skew toward a matching government, not just a matching
  * economy/biome.
+ *
+ * CORRECTED (round 3): `data/poi-templates.js`'s `biomes` field was
+ * renamed `biomeAffinities` (it was always "where this KIND of POI is
+ * plausible," not "what this SPECIFIC POI's biome actually is" -- see
+ * that file's header). `pickTemplateWithPreference()` reads the
+ * renamed field.
  */
 
 import { POI_TEMPLATES } from '../data/poi-templates.js';
@@ -64,7 +70,7 @@ function pickTemplateWithPreference(pool, { rng, preferTags = [], preferenceBoos
   const weightOf = (entry) => {
     const base = Number(entry?.weight ?? 1);
     if (!preferTags.length) return base;
-    const tags = mergeTags(entry.biomes, entry.tags, entry.economyTags, entry.governmentTags);
+    const tags = mergeTags(entry.biomeAffinities, entry.tags, entry.economyTags, entry.governmentTags);
     return base * (preferTags.some((tag) => tags.includes(tag)) ? preferenceBoost : 1);
   };
   return weightedPick(pool, { rng, weightOf });
