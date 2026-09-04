@@ -6535,3 +6535,260 @@ adding further catalogs, not expanding to the production ~500-name/
 ~200-objective/150-250-POI/150-250-commodity targets, no UI, and PR
 #963 remains a draft, unmerged, until this correction pass itself is
 independently reviewed.
+
+## 174. Independent review, round 3 (head `abfdbbe`) — overview
+
+A third independent review, run against the round-2 correction pass
+(head `abfdbbe`, confirmed exact-head-green on Rolling System
+Validation, `mergeable_state: clean`, still draft), confirmed all six
+round-2 fixes as real and correct — the Cargo commodity-catalog SSOT,
+the trimmed narrative cargo list, the independent Location-specific
+droid prevalence, the full `UNINHABITED` civilization gating, the
+`secondaryCount` ordering fix, and the POI canonical-type/biome-
+vocabulary fixes were all explicitly confirmed working. It found
+**three more concentrated foundation-contract issues** — the review's
+own framing: "I would not reopen the architecture broadly... after
+these, I think 8D-2 groundwork should be closable." All three are
+fixed in this push.
+
+1. **Population reroll over-cascade** — `rerollPlanetPopulation()`
+   (round 2's own fix) recomputed the WHOLE civilization block
+   (`technologyLevel`/`government`/`stability`/`economy`) via
+   `rollCivilization()` unconditionally, correct only when the reroll
+   crosses the `UNINHABITED` boundary. For an inhabited -> inhabited
+   reroll it threw away a perfectly good, unrelated government/
+   stability/technology/economy for no reason — the review's own
+   worked example: a "Reroll Population" click on a Corporate
+   protectorate, Advanced-tech shipbuilding world could silently
+   produce a Clan council in Frontier tech running Agriculture, purely
+   because the rolled species distribution changed. Violates the core
+   reroll contract: rerolling one field preserves unrelated fields.
+   Fixed in §175.
+2. **POI biome affinity conflated with actual biome** — round 2 fixed
+   the VOCABULARY (every `biomes` value real) but not the SEMANTICS: a
+   template's list was "where this KIND of POI is plausible" (Ruins:
+   desert OR jungle), not "what this SPECIFIC generated POI's biome
+   actually is," yet the whole list was written into the draft
+   verbatim — a single Ruins POI could claim BOTH desert AND jungle
+   simultaneously, even on an ice-world parent that's neither. A
+   related bug in the same area: `rerollPoiTemplate()`/
+   `rerollPoiName()` silently lost all parent planetary context (and
+   therefore the hard compatibility filter) on a bare reroll unless the
+   caller manually re-supplied `preferTags`/`planetTags`/
+   `populationScale` every time. Fixed in §176.
+3. **Cargo contextual affinity and Job-legality integration incomplete**
+   — the same dead-affinity bug already fixed once for POIs (round 2):
+   `preferTags` matched only `commodity.tags`, never `producedBy`/
+   `demandedBy`, where a commodity's actual economic/environmental
+   affinity mostly lives. Separately, the `legality` parameter compared
+   directly against `commodity.legality` (`legal`/`restricted`/
+   `illegal`) as if it were the SAME vocabulary as a Job's
+   (`legal`/`gray-area`/`illegal`/`black-market` --
+   `jobs/job-legality-visibility.js`) — `gray-area`/`black-market` have
+   no matching commodity legality at all, so passing either silently
+   emptied the filtered pool and fell back to the FULL unfiltered
+   catalog with no signal anything went wrong; the narrative branch
+   didn't receive the legality signal at all, so a legal-only Job could
+   still roll an "unmarked crate -- contents unknown" narrative object
+   tagged illegal. Fixed in §177.
+
+## 175. Fix: `rerollPlanetPopulation()` no longer over-cascades on an inhabited -> inhabited reroll
+
+**Finding**: see §174 item 1. `rerollPlanetPopulation()` called
+`rollCivilization()` unconditionally after every population reroll,
+recomputing `technologyLevel`/`government`/`stability`/`economy` from
+scratch even when the world stayed inhabited both before and after —
+necessary only when crossing the `UNINHABITED` boundary (the exact
+case round 2 was fixing), never for an ordinary inhabited-to-inhabited
+reroll.
+
+**Fix**: three branches, matching the reviewer's exact spec:
+
+- **inhabited -> inhabited**: `government`/`stability`/
+  `technologyLevel`/`economy.primarySector`/`economy.secondarySectors`
+  are PRESERVED by reference, completely untouched. Only `economy`'s
+  TRADE (exports/imports/shortages/illicitTrade) is recomputed against
+  the EXISTING sectors — trade genuinely depends on the new
+  `populationScale`/`settlementPattern` (a hyper-urbanized world
+  demands differently than a small settlement even running the same
+  economy sectors), so this one piece SHOULD still change.
+- **inhabited -> uninhabited**, or **uninhabited -> inhabited**: the
+  whole civilization block is (re)computed via `rollCivilization()`,
+  exactly as round 2 already did — this remains the one case where
+  cascading is correct, not a bug.
+
+`droidPrevalence` is untouched by every branch, unchanged from round 2
+— it was already correctly independent of population.
+
+**Proof**: a 3000-seed sweep of inhabited -> inhabited rerolls confirms
+`government`/`stability`/`technologyLevel`/`economy.primarySector` are
+preserved EXACTLY (reference equality) in every one, while trade
+(exports/imports) is confirmed to actually change across the same
+sweep at least once (proving the "trade still depends on the new
+scale" half isn't accidentally frozen too). A parallel 2000-seed sweep
+re-confirms round 2's boundary-crossing behavior (both directions)
+still holds unchanged.
+
+## 176. Fix: POI `biomeAffinities` vs. a generated POI's actual `biomes`, and reroll context persistence
+
+**Finding**: see §174 item 2. `data/poi-templates.js`'s `biomes` field
+(round 2) was always affinity data — "Ruins are plausible in desert or
+jungle," not "this specific Ruins POI's biome is BOTH desert and
+jungle at once" — but `createProceduralPoiDraft()` wrote the entire
+list into the draft's actual `biomes` field verbatim. A related,
+compounding bug: `rerollPoiTemplate()`'s own doc comment claimed it
+"keeps the same tags-context," but the function only ever used whatever
+`preferTags`/`planetTags`/`populationScale` the CALLER passed this
+specific call — a bare `rerollPoiTemplate(draft, { rng })` silently
+dropped all of the original parent planet's context, including the
+hard compatibility filter (reopening the exact "Market District on an
+uninhabited world" problem that filter exists to prevent).
+
+**Fix**:
+
+- `data/poi-templates.js`'s `biomes` field is renamed
+  `biomeAffinities` throughout (self-check at module load unchanged,
+  now validating the renamed field) to make its actual meaning
+  explicit in the name itself.
+- `planets/poi-generator.js`'s new `deriveActualPoiBiomes(template,
+  parentBiomes)` computes a generated POI's REAL `biomes` as the
+  intersection of `template.biomeAffinities` with the parent planet's
+  actual biomes when a parent is known — a Ruins POI on a jungle-only
+  world resolves to `biomes: ['jungle']`, on a desert-only world to
+  `biomes: ['desert']`, never both. A template with empty
+  `biomeAffinities` (an indoor installation — Prison, Research
+  Facility, Temple, ...) always resolves to `biomes: []` regardless of
+  parent, correctly reflecting that its environment doesn't depend on
+  outdoor terrain. With NO parent context at all (a standalone POI
+  with nothing to intersect against), the affinity list is used as-is
+  — the only information available, not a claim about a specific known
+  world.
+- A generated draft now persists the RESOLVED `generatorContext`
+  (`{ preferTags, planetTags, populationScale }`) it was actually built
+  from — never the raw `parentPlanetDraft` object itself (heavier to
+  keep around, can go stale). `rerollPoiTemplate()`/`rerollPoiName()`
+  fall back to this stored context for any option the caller omits, so
+  a bare reroll still respects the ORIGINAL parent's soft preference
+  AND hard compatibility filter. An explicit override on a reroll call
+  both applies for that reroll and updates the stored context going
+  forward (e.g. deliberately re-parenting a POI to a different planet)
+  — per the reviewer's own instruction, this is NEVER reconstructed by
+  parsing the old POI's own `tags`, which would be lossy and
+  unreliable; it's the literal resolved values from generation, kept.
+
+**Proof**: a 3000-draw sweep with a jungle-only parent confirms every
+Ruins POI generated resolves to exactly `biomes: ['jungle']` and NEVER
+`'desert'` (the review's own worked example, reproduced and confirmed
+fixed). A parallel 2000-draw sweep with a desert-only parent confirms
+Prison (an indoor installation) always resolves to `biomes: []`
+regardless. A 500-draw sweep of BARE `rerollPoiTemplate(draft, { rng
+})` calls (no options resupplied) on a POI generated against an
+uninhabited barren-rock parent confirms Market District is STILL never
+reachable — the exact scenario the reviewer described as silently
+reopened — and that the stored `generatorContext` is left byte-for-byte
+unchanged across every bare reroll. An explicit override call is
+confirmed to both take effect immediately and persist into the stored
+context for subsequent rerolls.
+
+## 177. Fix: Cargo `producedBy`/`demandedBy` affinity wiring, and explicit `jobLegality` translation
+
+**Finding**: see §174 item 3. Two related gaps in
+`jobs/cargo-concept.js`:
+
+- `pickCommodityCargo()`'s `preferTags` was matched via
+  `weightedPickWithPreference()`'s default reader, which only looks at
+  `entry.tags` — but a commodity's actual affinity data mostly lives in
+  `producedBy`/`demandedBy` (e.g. `iron-ore` carries `tags:
+  ['raw-materials']` but `producedBy: ['mining', 'mountain']`), so
+  `preferTags: ['mining', 'mountain']` never measurably biased
+  anything. The exact same class of dead-metadata bug already fixed
+  once for POI `economyTags`/`governmentTags` (round 2, §169).
+- The `legality` parameter compared directly against
+  `commodity.legality` (`legal`/`restricted`/`illegal`), silently
+  assuming it was the same vocabulary as a Job's own `JOB_LEGALITY`
+  (`legal`/`gray-area`/`illegal`/`black-market`). It isn't:
+  `gray-area`/`black-market` have no matching commodity legality
+  value at all, so a caller passing either emptied the filtered pool
+  and fell back to the FULL unfiltered catalog with zero signal
+  anything had gone wrong — the one value that happened to work
+  (`'illegal'`) was coincidental string overlap, not a real contract.
+  The narrative branch (`pickNarrativeCargo()`) never received a
+  legality signal in the first place — `pickCargoConcept()` dropped it
+  entirely on that path — so a `legal`-only Job could still roll "an
+  unmarked crate -- contents unknown to the crew" tagged `illegal`.
+
+**Fix**: `commodityPreferenceWeight()` now boosts a commodity's weight
+against `tags`+`producedBy`+`demandedBy` merged together (reusing
+`weightedPick()`'s core roll mechanism with a custom weight function,
+the same pattern `poi-template.js`'s `pickTemplateWithPreference()`
+already established). The ambiguous `legality` parameter is replaced
+with an explicit `jobLegality` (a real `JOB_LEGALITY` value), which
+`pickCommodityCargo()` translates via a new
+`JOB_LEGALITY_TO_COMMODITY_LEGALITY` map (`LEGAL` -> `legal`;
+`GRAY_AREA` -> `restricted`; `ILLEGAL` -> `illegal` or `restricted`;
+`BLACK_MARKET` -> `illegal` only) and `pickNarrativeCargo()` via a
+parallel `JOB_LEGALITY_TO_NARRATIVE_LEGALITY` map matching the
+narrative table's own `legal`/`gray-area`/`illegal` flavor tags.
+`pickCargoConcept()` now forwards `jobLegality` to WHICHEVER kind gets
+picked, commodity or narrative — never dropped on either branch.
+
+**Proof**: a 3000-draw comparison confirms `preferTags: ['mining',
+'mountain']` measurably raises the rate of commodities whose
+`producedBy` actually includes those tags, well above the unbiased
+baseline. A 500-draw sweep each confirms `jobLegality: GRAY_AREA`
+always resolves to a `restricted` commodity and `jobLegality:
+BLACK_MARKET` always resolves to an `illegal` one — never silently
+falling back to the full catalog. A 500-draw sweep confirms
+`pickNarrativeCargo({ jobLegality: LEGAL })` only ever picks a
+narrative concept whose own tags include `'legal'`, and a 2000-draw
+sweep of `pickCargoConcept({ jobLegality: LEGAL })` (both kinds mixed)
+confirms it never once produces a non-legal item on EITHER branch —
+the exact review finding, reproduced and confirmed fixed.
+
+## 178. Tests + Regression / totals + Phase 8D-2 gate (round 3, final)
+
+`tests/gm-generation-phase8d2-foundation.test.mjs` was extended again
+to cover all three round-3 fixes: a dedicated inhabited->inhabited
+population-reroll preservation sweep (government/stability/
+technologyLevel/economy sectors held by reference, trade still
+confirmed to change); the POI `biomeAffinities`-vs-actual-`biomes`
+derivation (the jungle/desert Ruins worked example, the always-empty
+indoor-installation case) plus the bare-reroll stored-`generatorContext`
+proof (including the exact "Market District survives a bare reroll on
+an uninhabited world" regression check); and the cargo `jobLegality`
+translation (both commodity and narrative branches, including the
+"never produces a non-legal item on a legal-only Job across either
+branch" sweep) plus the `producedBy`/`demandedBy` affinity-bias
+comparison. Every assertion follows the same established
+deterministic-RNG-first style as every prior phase.
+
+Full `gm-*.test.mjs` sweep: **57/57 green** (unchanged file count —
+this round extended the existing suite rather than adding a new file),
+zero regressions in any prior phase's suite, confirmed by a full
+re-run of all 57 files. Full rolling suite (`tests/*.test.mjs`): **192
+files, 187 pass, 5 fail** — the same five pre-existing, unrelated
+Force-power failures as every prior phase, confirmed unchanged from
+§173's own measurement. Syntax check (`node --input-type=module
+--check` across every file in `scripts/`): **2041/2041 clean** —
+unchanged file count from §173 (this round modified four existing
+files and added zero new ones: `jobs/cargo-concept.js`,
+`data/poi-templates.js`, `planets/poi-template.js`,
+`planets/poi-generator.js`, `planets/planet-draft.js`).
+
+**PHASE 8D-2 (PROCEDURAL CONTENT ECOSYSTEM GROUNDWORK, INCLUDING ALL
+THREE INDEPENDENT-REVIEW CORRECTION PASSES) COMPLETE.** All three
+round-3 findings are fixed and proven, individually, with the exact
+scenario each finding described reproduced and confirmed corrected:
+the population-reroll over-cascade (now branch-aware, preserving
+unrelated civilization facts on an inhabited->inhabited reroll), the
+POI biome-affinity-vs-actual-biome conflation (now correctly derived
+per-draft via intersection with the parent, never a raw copy of the
+affinity list) plus the reroll-context-loss bug (now persisted via
+`generatorContext`), and the cargo dead-affinity/legality-vocabulary-
+mismatch pair (now wired to `producedBy`/`demandedBy` and explicitly
+translated via `jobLegality`, forwarded to both cargo kinds). Per the
+round-3 review's own closing assessment: these three were "concentrated
+corrections," not a reason to reopen the architecture broadly, and the
+remaining work (the ~500 planet names, ~200 objectives, 150-250 POIs,
+150-250 commodities, and larger NPC/Faction catalogs) is now content
+expansion, not foundation repair. PR #963 remains a draft, unmerged.
