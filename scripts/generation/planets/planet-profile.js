@@ -169,12 +169,20 @@ export const PLANET_TECHNOLOGY_LEVEL = Object.freeze({
   CUTTING_EDGE: 'cutting-edge'
 });
 
+/**
+ * PHASE 8D-3A correction pass: `tags` added and `pickPlanetTechnologyLevel()`
+ * now accepts `preferTags` -- a genuine gap caught on re-check (it
+ * previously had NO soft-preference input at all, so a preset like
+ * "High-Tech World" or a research/manufacturing economy context had
+ * zero ability to skew this field, despite the phase spec explicitly
+ * naming `technologyWeights` in its preset schema, §33).
+ */
 const TECHNOLOGY_LEVEL_ENTRIES = Object.freeze([
-  { value: PLANET_TECHNOLOGY_LEVEL.PRIMITIVE, weight: 1 },
-  { value: PLANET_TECHNOLOGY_LEVEL.FRONTIER, weight: 4 },
-  { value: PLANET_TECHNOLOGY_LEVEL.STANDARD, weight: 5 },
-  { value: PLANET_TECHNOLOGY_LEVEL.ADVANCED, weight: 3 },
-  { value: PLANET_TECHNOLOGY_LEVEL.CUTTING_EDGE, weight: 1 }
+  { value: PLANET_TECHNOLOGY_LEVEL.PRIMITIVE, weight: 1, tags: ['frontier', 'isolated'] },
+  { value: PLANET_TECHNOLOGY_LEVEL.FRONTIER, weight: 4, tags: ['frontier'] },
+  { value: PLANET_TECHNOLOGY_LEVEL.STANDARD, weight: 5, tags: [] },
+  { value: PLANET_TECHNOLOGY_LEVEL.ADVANCED, weight: 3, tags: ['technology', 'research', 'industrial'] },
+  { value: PLANET_TECHNOLOGY_LEVEL.CUTTING_EDGE, weight: 1, tags: ['technology', 'research'] }
 ]);
 
 const TECHNOLOGY_LEVEL_VALUES = Object.freeze(Object.values(PLANET_TECHNOLOGY_LEVEL));
@@ -183,9 +191,9 @@ export function isPlanetTechnologyLevel(value) {
   return TECHNOLOGY_LEVEL_VALUES.includes(value);
 }
 
-/** Pick a random technology/development level. */
-export function pickPlanetTechnologyLevel({ rng } = {}) {
-  return weightedPick(TECHNOLOGY_LEVEL_ENTRIES, { rng })?.value ?? PLANET_TECHNOLOGY_LEVEL.STANDARD;
+/** Pick a random technology/development level, optionally softly biased by `preferTags`. */
+export function pickPlanetTechnologyLevel({ rng, preferTags = [] } = {}) {
+  return weightedPickWithPreference(TECHNOLOGY_LEVEL_ENTRIES, { rng, preferTags })?.value ?? PLANET_TECHNOLOGY_LEVEL.STANDARD;
 }
 
 /**

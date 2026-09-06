@@ -342,4 +342,117 @@ const abs = (rel) => `/systems/foundryvtt-swse/${rel}`;
   console.log('PHASE 8D-3A bundle generation (POI-count-by-population-scale, parentDraftId linkage, explicit poiCount override, sibling-preserving scoped reroll/regenerate operations, whole-bundle seeded determinism) passed.');
 }
 
+// ------------------------------------------------------------
+// Correction pass: gaps caught on re-check against the phase spec's
+// own checklists (§32 bundle operations, §33 preset schema, §45
+// targeted-reroll list) after the initial delivery -- presets had no
+// way to influence stability/technology level, independent-style
+// system names could never occur during normal generation, four
+// planet reroll fields were missing entirely, and the bundle had no
+// "reroll all POIs" operation.
+// ------------------------------------------------------------
+{
+  const { makeSeededRng } = await import(abs('scripts/generation/lib/weighted-random.js'));
+  const {
+    createProceduralPlanetDraft,
+    rerollPlanetName,
+    rerollPlanetSystem,
+    rerollPlanetGravity,
+    rerollPlanetAtmosphere
+  } = await import(abs('scripts/generation/planets/planet-draft.js'));
+  const { generateProceduralPlanetBundle, regenerateAllPois } = await import(abs('scripts/generation/planets/planet-bundle.js'));
+  const { isPlanetStability } = await import(abs('scripts/generation/planets/planet-stability.js'));
+  const { isPlanetTechnologyLevel } = await import(abs('scripts/generation/planets/planet-profile.js'));
+
+  // Presets must now measurably bias stability and technology level (previously neither pick function accepted preferTags at all).
+  const N = 1000;
+  let highTech = 0, baselineTech = 0;
+  for (let i = 0; i < N; i++) {
+    const d = createProceduralPlanetDraft({ rng: makeSeededRng(i), presetId: 'research-outpost-world' });
+    if (d.technologyLevel === 'advanced' || d.technologyLevel === 'cutting-edge') highTech++;
+    const b = createProceduralPlanetDraft({ rng: makeSeededRng(i) });
+    if (b.technologyLevel === 'advanced' || b.technologyLevel === 'cutting-edge') baselineTech++;
+  }
+  assert.ok(highTech > baselineTech, `research-outpost-world preset must raise the advanced/cutting-edge technology rate (got ${highTech}/${N} vs baseline ${baselineTech}/${N})`);
+
+  const lawlessLike = new Set(['lawless', 'corrupt', 'fractured', 'contested']);
+  let lawlessCount = 0, baselineLawless = 0;
+  for (let i = 0; i < N; i++) {
+    const d = createProceduralPlanetDraft({ rng: makeSeededRng(i + 500000), presetId: 'pirate-haven-world' });
+    if (lawlessLike.has(d.stability?.value)) lawlessCount++;
+    const b = createProceduralPlanetDraft({ rng: makeSeededRng(i + 500000) });
+    if (lawlessLike.has(b.stability?.value)) baselineLawless++;
+  }
+  assert.ok(lawlessCount > baselineLawless, `pirate-haven-world preset must raise the lawless-like stability rate (got ${lawlessCount}/${N} vs baseline ${baselineLawless}/${N})`);
+  for (let seed = 0; seed < 100; seed++) {
+    const d = createProceduralPlanetDraft({ rng: makeSeededRng(seed) });
+    if (d.stability) assert.equal(isPlanetStability(d.stability.value), true, `seed ${seed}: stability must still be a real PLANET_STABILITY value`);
+    if (d.technologyLevel) assert.equal(isPlanetTechnologyLevel(d.technologyLevel), true, `seed ${seed}: technologyLevel must still be a real PLANET_TECHNOLOGY_LEVEL value`);
+  }
+
+  // Independent-style system names must be reachable during NORMAL generation (previously dead: no caller ever passed independent:true) but stay relatively uncommon.
+  let independentCount = 0;
+  const M = 3000;
+  for (let seed = 0; seed < M; seed++) {
+    const d = createProceduralPlanetDraft({ rng: makeSeededRng(seed + 9000000) });
+    if (d.systemDraft.independent) independentCount++;
+  }
+  const independentRate = independentCount / M;
+  assert.ok(independentRate > 0.03 && independentRate < 0.25, `independent-style system names must be reachable but relatively uncommon (got rate ${independentRate})`);
+
+  // rerollPlanetName: preserves unrelated fields, re-derives a DERIVED system name from the new planet name, and leaves an INDEPENDENT system name untouched.
+  const derivedBase = (() => {
+    for (let seed = 0; seed < 200; seed++) {
+      const d = createProceduralPlanetDraft({ rng: makeSeededRng(seed) });
+      if (!d.systemDraft.independent) return d;
+    }
+    throw new Error('could not find a derived-system-name draft in 200 seeds');
+  })();
+  const renamed = rerollPlanetName(derivedBase, { rng: makeSeededRng(1) });
+  assert.notEqual(renamed.name, derivedBase.name, 'rerollPlanetName must actually change the name');
+  assert.equal(renamed.worldClass, derivedBase.worldClass, 'rerollPlanetName must preserve worldClass');
+  assert.equal(renamed.government, derivedBase.government, 'rerollPlanetName must preserve government');
+  assert.equal(renamed.system, `${renamed.name} system`, 'rerollPlanetName must re-derive a DERIVED system name from the new planet name');
+
+  const independentBase = (() => {
+    for (let seed = 0; seed < 200; seed++) {
+      const d = createProceduralPlanetDraft({ rng: makeSeededRng(seed + 9000000) });
+      if (d.systemDraft.independent) return d;
+    }
+    throw new Error('could not find an independent-system-name draft in 200 seeds');
+  })();
+  const renamedIndependent = rerollPlanetName(independentBase, { rng: makeSeededRng(1) });
+  assert.equal(renamedIndependent.system, independentBase.system, 'rerollPlanetName must leave an INDEPENDENT system name untouched');
+
+  // rerollPlanetSystem: independent forces a style; omitted re-rolls the chance.
+  const forcedIndependent = rerollPlanetSystem(derivedBase, { rng: makeSeededRng(5), independent: true });
+  assert.equal(forcedIndependent.systemDraft.independent, true, 'rerollPlanetSystem({ independent: true }) must force an independent-style name');
+  assert.equal(forcedIndependent.name, derivedBase.name, 'rerollPlanetSystem must never touch the planet name');
+  const forcedDerived = rerollPlanetSystem(derivedBase, { rng: makeSeededRng(5), independent: false });
+  assert.equal(forcedDerived.system, `${derivedBase.name} system`, 'rerollPlanetSystem({ independent: false }) must force a derived-style name');
+
+  // rerollPlanetGravity / rerollPlanetAtmosphere: preserve unrelated fields.
+  const gravityBase = createProceduralPlanetDraft({ rng: makeSeededRng(21) });
+  const afterGravity = rerollPlanetGravity(gravityBase, { rng: makeSeededRng(22) });
+  assert.equal(afterGravity.worldClass, gravityBase.worldClass, 'rerollPlanetGravity must preserve worldClass');
+  assert.equal(afterGravity.name, gravityBase.name, 'rerollPlanetGravity must preserve name');
+  const afterAtmosphere = rerollPlanetAtmosphere(gravityBase, { rng: makeSeededRng(23) });
+  assert.equal(afterAtmosphere.gravity, gravityBase.gravity, 'rerollPlanetAtmosphere must preserve gravity');
+  assert.equal(afterAtmosphere.worldClass, gravityBase.worldClass, 'rerollPlanetAtmosphere must preserve worldClass');
+
+  // regenerateAllPois: keeps the SAME planetDraft, replaces every POI, defaults to the same count, respects an explicit override.
+  const bundleBase = generateProceduralPlanetBundle({ rng: makeSeededRng(7), poiCount: 5 });
+  const allRerolled = regenerateAllPois(bundleBase, { rng: makeSeededRng(99) });
+  assert.equal(allRerolled.planetDraft, bundleBase.planetDraft, 'regenerateAllPois must keep the exact same planetDraft object reference');
+  assert.equal(allRerolled.poiDrafts.length, bundleBase.poiDrafts.length, 'regenerateAllPois must default to the same POI count');
+  for (let i = 0; i < bundleBase.poiDrafts.length; i++) {
+    assert.notEqual(allRerolled.poiDrafts[i], bundleBase.poiDrafts[i], `regenerateAllPois must replace every POI object, index ${i} was left unchanged`);
+    assert.equal(allRerolled.poiDrafts[i].parentDraftId, bundleBase.planetDraft.draftId, `regenerated POI at index ${i} must keep parentDraftId linkage`);
+  }
+  const explicitPoiCount = regenerateAllPois(bundleBase, { rng: makeSeededRng(3), poiCount: 2 });
+  assert.equal(explicitPoiCount.poiDrafts.length, 2, 'regenerateAllPois must honor an explicit poiCount override');
+
+  console.log('PHASE 8D-3A correction pass (preset bias reaches stability/technology, independent system names reachable-but-uncommon, missing name/system/gravity/atmosphere rerolls, regenerateAllPois bundle operation) passed.');
+}
+
 console.log('PHASE 8D-3A procedural locations productionization suite (catalog quality, generation semantics, bundle generation, reroll safety, determinism) passed.');

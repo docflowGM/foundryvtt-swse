@@ -107,6 +107,25 @@ import { DIAGNOSTIC_CODE } from '../lib/generator-diagnostics.js';
 
 const EMPTY_ECONOMY = Object.freeze({ primarySector: null, secondarySectors: Object.freeze([]), exports: Object.freeze([]), imports: Object.freeze([]), shortages: Object.freeze([]), illicitTrade: Object.freeze([]) });
 
+/**
+ * PHASE 8D-3A correction pass: `system-name-generator.js`'s own module
+ * doc already documents `independent: true` as an intentional,
+ * deliberate-opt-in alternative to the planet-derived default -- but no
+ * caller in this file ever actually set it, so an independent
+ * designation-style system name (e.g. "Kal Reach") could never occur
+ * during NORMAL planet generation at all, only if a caller invoked
+ * `getRandomSystemName()` directly. The phase spec's own instruction
+ * ("designation-style system names should remain relatively uncommon")
+ * implies they DO occur sometimes, just rarely -- this constant is that
+ * rare chance.
+ */
+const INDEPENDENT_SYSTEM_NAME_CHANCE = 0.12;
+
+function rollSystemDraft({ rng, planetName, preferTags, independent }) {
+  const useIndependent = independent ?? (rng ?? Math.random)() < INDEPENDENT_SYSTEM_NAME_CHANCE;
+  return getRandomSystemName({ planetName, independent: useIndependent, rng, preferTags });
+}
+
 const POPULATION_SCALE_RANK = Object.freeze({
   [POPULATION_SCALE.OUTPOST]: 0,
   [POPULATION_SCALE.SMALL_SETTLEMENT]: 1,
@@ -178,6 +197,25 @@ function computePlanetDiagnostics({ worldClass, government, economy, technologyL
  */
 function worldClassPreferenceTags(worldClass) {
   return mergeTags(worldClass.biomes, worldClass.tags);
+}
+
+/**
+ * PHASE 8D-3A correction pass: shared helper replacing three separate
+ * inline `draft.presetId ? getPlanetPreset(draft.presetId) : null`
+ * copies -- resolve a draft's own applied preset (or `null` for an
+ * unrecognized/empty `presetId`), and its `preferTags` alone (or `[]`).
+ * Used by every reroll that keeps a preset "sticky" across itself.
+ */
+function presetFor(draft) {
+  return draft.presetId ? getPlanetPreset(draft.presetId) : null;
+}
+
+function presetPreferTagsFor(draft) {
+  return presetFor(draft)?.preferTags || [];
+}
+
+function presetDensityBiasFor(draft) {
+  return presetFor(draft)?.densityBias || '';
 }
 
 /** The rolled economy's sector `tags`, merged -- the context `pickPlanetDroidPrevalence()` softly skews on (see `planet-profile.js`). Empty for an `UNINHABITED` world (no economy). */
@@ -267,9 +305,9 @@ function rollEconomy({ rng, preferTags, worldClass, populationScale, settlementP
  */
 function rollCivilization({ rng, preferTags, worldClass, populationScale, settlementPattern, secondaryCount }) {
   const isUninhabited = populationScale === POPULATION_SCALE.UNINHABITED;
-  const technologyLevel = isUninhabited ? null : pickPlanetTechnologyLevel({ rng });
+  const technologyLevel = isUninhabited ? null : pickPlanetTechnologyLevel({ rng, preferTags });
   const government = isUninhabited ? null : pickPlanetGovernment({ rng, preferTags });
-  const stability = isUninhabited ? null : pickPlanetStability({ rng });
+  const stability = isUninhabited ? null : pickPlanetStability({ rng, preferTags });
   const economy = rollEconomy({ rng, preferTags, worldClass, populationScale, settlementPattern, stability, government, secondaryCount });
   return { technologyLevel, government, stability, economy };
 }
@@ -307,7 +345,7 @@ export function createProceduralPlanetDraft({ rng, availableSpeciesIds = [], inc
   const gravity = pickPlanetGravity({ rng });
   const atmosphere = pickPlanetAtmosphere({ rng });
   const nameDraft = getRandomPlanetName({ rng, preferTags });
-  const systemDraft = getRandomSystemName({ planetName: nameDraft.name });
+  const systemDraft = rollSystemDraft({ rng, planetName: nameDraft.name, preferTags });
   const region = pickPlanetRegion({ rng });
   const sector = pickSectorName({ rng });
   const climate = pickPlanetClimate({ rng, preferTags });
@@ -402,8 +440,7 @@ export function rerollPlanetHooks(draft, { rng } = {}) {
  * reroll rather than only ever applying once.
  */
 export function rerollPlanetWorldClass(draft, { rng } = {}) {
-  const preset = draft.presetId ? getPlanetPreset(draft.presetId) : null;
-  const worldClass = pickPlanetWorldClass({ rng, preferTags: preset?.preferTags || [] });
+  const worldClass = pickPlanetWorldClass({ rng, preferTags: presetPreferTagsFor(draft) });
   const { tags, summary } = composeTagsAndSummary({ worldClass, government: draft.government, stability: draft.stability, economy: draft.economy, hazards: draft.hazards, traits: draft.traits, populationEstimate: draft.populationEstimate });
   const diagnostics = computePlanetDiagnostics({ worldClass, government: draft.government, economy: draft.economy, technologyLevel: draft.technologyLevel, populationScale: draft.populationScale });
   return { ...draft, worldClass, biomes: worldClass.biomes, tags, summary, type: worldClass.locationType, diagnostics };
@@ -419,17 +456,16 @@ export function rerollPlanetWorldClass(draft, { rng } = {}) {
  */
 export function rerollPlanetGovernment(draft, { rng } = {}) {
   if (draft.populationScale === POPULATION_SCALE.UNINHABITED) return draft;
-  const preset = draft.presetId ? getPlanetPreset(draft.presetId) : null;
-  const government = pickPlanetGovernment({ rng, preferTags: preset?.preferTags || [] });
+  const government = pickPlanetGovernment({ rng, preferTags: presetPreferTagsFor(draft) });
   const { tags, summary } = composeTagsAndSummary({ worldClass: draft.worldClass, government, stability: draft.stability, economy: draft.economy, hazards: draft.hazards, traits: draft.traits, populationEstimate: draft.populationEstimate });
   const diagnostics = computePlanetDiagnostics({ worldClass: draft.worldClass, government, economy: draft.economy, technologyLevel: draft.technologyLevel, populationScale: draft.populationScale });
   return { ...draft, government, tags, summary, diagnostics };
 }
 
-/** Reroll ONLY the stability, recomposing the summary (which reads it). Also rerolls `economy.illicitTrade`, which reads stability, to avoid leaving it stale. A no-op on an `UNINHABITED` draft -- there is no stability to reroll. */
+/** Reroll ONLY the stability, recomposing the summary (which reads it). Also rerolls `economy.illicitTrade`, which reads stability, to avoid leaving it stale. A no-op on an `UNINHABITED` draft -- there is no stability to reroll. PHASE 8D-3A: honors the draft's `presetId` (if any), same stickiness rationale as `rerollPlanetWorldClass()`. */
 export function rerollPlanetStability(draft, { rng } = {}) {
   if (draft.populationScale === POPULATION_SCALE.UNINHABITED) return draft;
-  const stability = pickPlanetStability({ rng });
+  const stability = pickPlanetStability({ rng, preferTags: presetPreferTagsFor(draft) });
   const { summary } = composeTagsAndSummary({ worldClass: draft.worldClass, government: draft.government, stability, economy: draft.economy, hazards: draft.hazards, traits: draft.traits, populationEstimate: draft.populationEstimate });
   const trade = generatePlanetTrade({
     rng,
@@ -573,7 +609,7 @@ export function rerollPlanetPopulation(draft, { rng, availableSpeciesIds = [], h
     availableSpeciesIds,
     rng,
     habitable: habitable ?? draft.worldClass?.habitable,
-    densityBias: (draft.presetId ? getPlanetPreset(draft.presetId)?.densityBias : '') || draft.worldClass?.populationBias || ''
+    densityBias: presetDensityBiasFor(draft) || draft.worldClass?.populationBias || ''
   });
   const settlementPattern = pickSettlementPattern({ rng, populationScale });
 
@@ -637,6 +673,55 @@ export function rerollPlanetPopulation(draft, { rng, availableSpeciesIds = [], h
   };
 }
 
+/**
+ * PHASE 8D-3A correction pass: `rerollPlanetName()`/`rerollPlanetSystem()`/
+ * `rerollPlanetGravity()`/`rerollPlanetAtmosphere()` were missing entirely
+ * -- the phase spec's own targeted-reroll checklist (§45) names all four
+ * alongside every other planet field, a gap caught on re-check.
+ */
+
+/**
+ * Reroll ONLY the planet's own name. When the draft's current system
+ * name is DERIVED from the planet name (`systemDraft.independent ===
+ * false`, the default), the system name is re-derived from the NEW
+ * name too -- otherwise a rename would leave a stale, mismatched
+ * system name behind (e.g. planet "Kordan" but system "Talora
+ * system"). An INDEPENDENT system name (not derived from any one
+ * planet) is left untouched, since by definition it never depended on
+ * the old name in the first place.
+ */
+export function rerollPlanetName(draft, { rng } = {}) {
+  const nameDraft = getRandomPlanetName({ rng, preferTags: presetPreferTagsFor(draft) });
+  const systemDraft = draft.systemDraft?.independent
+    ? draft.systemDraft
+    : { ...draft.systemDraft, name: `${nameDraft.name} system`, planetName: nameDraft.name };
+  return { ...draft, name: nameDraft.name, nameDraft, system: systemDraft.name, systemDraft };
+}
+
+/**
+ * Reroll ONLY the system name, from the draft's CURRENT planet name.
+ * `independent` forces a style (`true` for a designation-style name
+ * independent of the planet, `false` to re-derive from the planet
+ * name); omitted, it re-rolls the same rare chance
+ * (`INDEPENDENT_SYSTEM_NAME_CHANCE`) initial generation used, so a
+ * bare reroll can occasionally flip styles, not just reshuffle within
+ * whichever style happened to be rolled first.
+ */
+export function rerollPlanetSystem(draft, { rng, independent } = {}) {
+  const systemDraft = rollSystemDraft({ rng, planetName: draft.name, preferTags: presetPreferTagsFor(draft), independent });
+  return { ...draft, system: systemDraft.name, systemDraft };
+}
+
+/** Reroll ONLY the gravity. */
+export function rerollPlanetGravity(draft, { rng } = {}) {
+  return { ...draft, gravity: pickPlanetGravity({ rng }) };
+}
+
+/** Reroll ONLY the atmosphere. */
+export function rerollPlanetAtmosphere(draft, { rng } = {}) {
+  return { ...draft, atmosphere: pickPlanetAtmosphere({ rng }) };
+}
+
 /** Reroll ONLY the region. */
 export function rerollPlanetRegion(draft, { rng } = {}) {
   return { ...draft, region: pickPlanetRegion({ rng }) };
@@ -657,10 +742,10 @@ export function rerollPlanetHydrosphere(draft, { rng } = {}) {
   return { ...draft, hydrosphere: pickPlanetHydrosphere({ rng, preferTags: worldClassPreferenceTags(draft.worldClass) }) };
 }
 
-/** Reroll ONLY the technology level. A no-op on an `UNINHABITED` draft -- there is no technology level to reroll. */
+/** Reroll ONLY the technology level. A no-op on an `UNINHABITED` draft -- there is no technology level to reroll. PHASE 8D-3A: honors the draft's `presetId` (if any), same stickiness rationale as `rerollPlanetWorldClass()`. */
 export function rerollPlanetTechnologyLevel(draft, { rng } = {}) {
   if (draft.populationScale === POPULATION_SCALE.UNINHABITED) return draft;
-  const technologyLevel = pickPlanetTechnologyLevel({ rng });
+  const technologyLevel = pickPlanetTechnologyLevel({ rng, preferTags: presetPreferTagsFor(draft) });
   const diagnostics = computePlanetDiagnostics({ worldClass: draft.worldClass, government: draft.government, economy: draft.economy, technologyLevel, populationScale: draft.populationScale });
   return { ...draft, technologyLevel, diagnostics };
 }

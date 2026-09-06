@@ -16,12 +16,13 @@
  * established immutable-draft convention throughout this codebase) and
  * NEVER silently drops sibling POIs: a reroll scoped to one field (the
  * planet's environment, its civilization block, or a single POI) always
- * carries the bundle's OTHER POIs through untouched. Only the two
- * explicitly whole-bundle operations -- `generateProceduralPlanetBundle()`
- * itself and `regeneratePlanetAndPois()` -- replace the POI set, because
- * regenerating the whole world (a new world class, a new population
- * scale, ...) genuinely invalidates what POIs made sense on it; a
- * scoped reroll never does.
+ * carries the bundle's OTHER POIs through untouched. Only three
+ * operations are explicitly allowed to replace the whole POI set:
+ * `generateProceduralPlanetBundle()` and `regeneratePlanetAndPois()`
+ * (a wholly new world genuinely invalidates what POIs made sense on
+ * it) and `regenerateAllPois()` (an explicit "reroll all POIs" the GM
+ * asked for, keeping the same planet) -- every other operation leaves
+ * POIs it wasn't asked to touch alone.
  */
 
 import {
@@ -64,12 +65,36 @@ export function generateProceduralPlanetBundle({ rng, availableSpeciesIds = [], 
 
 /**
  * Regenerate the ENTIRE bundle from scratch -- a new planet draft AND a
- * new POI set. The one bundle-level operation besides initial creation
- * that's allowed to replace every POI, since a wholly new world
- * genuinely invalidates the old POI set's context.
+ * new POI set.
  */
 export function regeneratePlanetAndPois(bundle, { rng, availableSpeciesIds = [], poiCount } = {}) {
   return generateProceduralPlanetBundle({ rng, availableSpeciesIds, poiCount });
+}
+
+/**
+ * PHASE 8D-3A correction pass: was missing entirely -- the phase spec's
+ * own bundle-operations list (§32) names "reroll all POIs" as a
+ * distinct whole-object operation alongside "reroll whole planet
+ * bundle" (`regeneratePlanetAndPois()`), "reroll individual POI"
+ * (`rerollPoiInBundle()`), and add/remove, a gap caught on re-check.
+ *
+ * Regenerate EVERY POI in the bundle against the SAME planet draft --
+ * the planet itself is untouched (unlike `regeneratePlanetAndPois()`,
+ * which replaces both). Defaults to the same POI count the bundle
+ * already had; pass `poiCount` to change it. This and
+ * `regeneratePlanetAndPois()` are the only two operations allowed to
+ * replace every POI at once -- every other bundle operation
+ * (`rerollPlanetFactsOnly()`/`regenerateEnvironment()`/
+ * `regenerateCivilization()`/`rerollPoiInBundle()`) leaves POIs it
+ * wasn't asked to touch alone.
+ */
+export function regenerateAllPois(bundle, { rng, poiCount } = {}) {
+  const resolvedPoiCount = Number.isFinite(poiCount) ? Math.max(0, poiCount) : bundle.poiDrafts.length;
+  const poiDrafts = [];
+  for (let i = 0; i < resolvedPoiCount; i++) {
+    poiDrafts.push(createProceduralPoiDraft({ rng, parentDraftId: bundle.planetDraft.draftId, parentPlanetDraft: bundle.planetDraft }));
+  }
+  return { ...bundle, poiDrafts };
 }
 
 /**

@@ -7150,3 +7150,100 @@ Actor/Faction/Job/Scene/Journal/LocationRegistry record is created
 anywhere in this phase. PR #963 stays draft and unmerged. Per this
 session's standing practice: STOPPING here for explicit independent
 review before starting any hypothetical Phase 8D-3B.
+
+## 182. PHASE 8D-3A correction pass — self-caught gaps against the phase spec's own checklists
+
+After the §180-181 completion report was posted and pushed (head
+`f2e7768`), the user resent the full Phase 8D-3A specification
+verbatim. Rather than re-do completed work, the branch/PR/head state
+was re-verified first (unchanged, working tree clean, PR CI green) and
+the delivered work was then re-checked line-by-line against the
+spec's own explicit checklists — §32 (bundle whole-object operations),
+§33 (preset schema), and §45 (targeted-reroll requirements) — which
+the original delivery had not cross-checked item-by-item. That
+re-check found four genuine gaps, all fixed in this pass:
+
+1. **Presets could not influence stability or political technology
+   level at all.** `pickPlanetStability()`/`pickPlanetTechnologyLevel()`
+   never accepted `preferTags` in the first place (unlike every other
+   pick function a preset feeds), so a "Post-Cataclysmic World" or
+   "Research Outpost World" preset had zero ability to skew the one
+   field each is most obviously ABOUT. Fixed: both catalogs
+   (`planet-stability.js`'s 22 entries, `planet-profile.js`'s 5
+   technology-level entries) gained `tags` (reusing the same free-text
+   vocabulary every other pool tags with), both pick functions gained
+   `preferTags`, and `rollCivilization()` (`planet-draft.js`) now
+   passes `preferTags` to both. `rerollPlanetStability()`/
+   `rerollPlanetTechnologyLevel()` also gained the same preset-
+   stickiness `rerollPlanetWorldClass()`/`rerollPlanetGovernment()`
+   already had (refactored into one shared `presetPreferTagsFor(draft)`
+   helper, replacing three separate inline copies of the same
+   `draft.presetId ? getPlanetPreset(...) : null` check).
+   Verified: a `research-outpost-world` preset raises the advanced/
+   cutting-edge technology rate (1000-draw sample: 42.3% vs. a 27.1%
+   baseline); a `pirate-haven-world` preset raises the lawless-like
+   stability rate (20.3% vs. 13.7% baseline).
+2. **Independent-style system names (§4: "designation-style system
+   names should remain relatively uncommon") never actually occurred
+   during normal generation at all.** `getRandomSystemName()`'s
+   `independent: true` branch was real and already correctly
+   documented in `system-name-generator.js` as an intentional opt-in,
+   but `createProceduralPlanetDraft()` never once passed it — every
+   generated planet's system name was unconditionally
+   `"${name} system"`. Fixed: a new `INDEPENDENT_SYSTEM_NAME_CHANCE`
+   (12%) constant and `rollSystemDraft()` helper in `planet-draft.js`
+   now roll for it on every planet generated. Verified over 3000 seeds:
+   12.4% independent rate, comfortably inside a sane "reachable but
+   uncommon" band.
+3. **Four planet fields named in §45's own targeted-reroll checklist
+   had no reroll function at all**: name, system, gravity, atmosphere.
+   Added `rerollPlanetName()` (also correctly re-derives a DERIVED
+   system name from the new planet name, but leaves an INDEPENDENT one
+   untouched — verified both branches directly), `rerollPlanetSystem()`
+   (an explicit `independent` override, or re-rolls the same rare
+   chance when omitted), `rerollPlanetGravity()`, and
+   `rerollPlanetAtmosphere()` (both simple, unrelated-field-preserving
+   single-field rerolls matching the existing pattern).
+4. **The bundle had no "reroll all POIs" operation** — §32 lists it as
+   a distinct whole-object operation alongside "reroll whole planet
+   bundle" (had it, `regeneratePlanetAndPois()`), "reroll individual
+   POI" (had it), and add/remove (had both). Added
+   `regenerateAllPois(bundle, { rng, poiCount })` to `planet-bundle.js`:
+   keeps the exact same `planetDraft` object reference, replaces every
+   POI against that same planet context, defaults to the bundle's
+   existing POI count, and accepts an explicit override. Verified
+   directly: planet reference identity preserved, every POI object
+   replaced, `parentDraftId` linkage intact on every regenerated POI.
+
+No other gaps were found on this pass against the remaining sections
+of the spec (catalog counts, commodity/sector coverage, POI naming
+styles, demographic production rules, Trade Resolver tuning, hooks,
+diagnostics, and the whole-bundle determinism guarantee all still hold
+exactly as reported in §180-181 — re-run, not re-litigated).
+
+### Tests + Regression (this pass)
+
+`tests/gm-generation-phase8d3a-production.test.mjs` gained a fourth
+section covering all four fixes above: the statistical preset-bias
+checks on stability/technology, the independent-system-name reachable-
+but-uncommon rate, both `rerollPlanetName()` branches (derived-system
+re-derivation and independent-system preservation), `rerollPlanetSystem()`'s
+explicit-override and omitted-reroll paths, `rerollPlanetGravity()`/
+`rerollPlanetAtmosphere()` unrelated-field preservation, and
+`regenerateAllPois()`'s planet-identity-preserved/every-POI-replaced/
+linkage-intact/explicit-count-override guarantees.
+
+Full `gm-*.test.mjs` sweep: **58/58 green** (same file count as §181 —
+this pass extended the existing Phase 8D-3A test file rather than
+adding a new one). Full rolling suite (`tools/run-rolling-tests.mjs`):
+**188 passed, 0 failed** (5 pre-existing excluded, unchanged). Full
+syntax check (`tools/run-rolling-syntax-check.mjs`): **2402/2402
+clean**. No canonical-persistence call in any file this pass touched
+(confirmed by direct grep — the one match is a doc-comment reference,
+not a call). Working tree clean before this commit.
+
+**PHASE 8D-3A CORRECTION PASS COMPLETE.** All four gaps caught on
+re-check are fixed and verified with real statistical/direct-execution
+proof, not merely asserted. PR #963 stays draft and unmerged. Per
+standing practice: stopping here for independent review before any
+further Phase 8D-3A work or a hypothetical Phase 8D-3B.
