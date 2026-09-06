@@ -16,9 +16,10 @@
  * `ecumenopolis`) so the two facts can never contradict each other.
  */
 
-import { weightedPick, weightedPickWithPreference } from '../lib/weighted-random.js';
+import { weightedPick, weightedPickWithPreference, weightedPickUniqueN } from '../lib/weighted-random.js';
 import { PLANET_NAME_PREFIXES } from '../data/planet-name-syllables.js';
 import { POPULATION_SCALE } from './planet-population.js';
+import { TECHNOLOGY_SPECIALTIES } from '../data/technology-specialties.js';
 
 export const PLANET_REGION = Object.freeze({
   CORE_WORLDS: 'Core Worlds',
@@ -156,15 +157,43 @@ export function isPlanetHydrosphere(value) {
   return HYDROSPHERE_VALUES.includes(value);
 }
 
-/** Pick a random hydrosphere entry, softly biased by biome/tag affinity. */
-export function pickPlanetHydrosphere({ rng, preferTags = [] } = {}) {
-  return weightedPickWithPreference(HYDROSPHERE_ENTRIES, { rng, preferTags })?.value ?? PLANET_HYDROSPHERE.MODERATE;
+/**
+ * Pick a random hydrosphere entry, softly biased by biome/tag affinity.
+ * PHASE 8D-3A correction pass (finding #3): `allowedValues`, when
+ * supplied non-empty, restricts the pool to ONLY those values before
+ * picking -- a DEFINITIONAL constraint (e.g. an `ocean` world class
+ * requires `extensive`/`oceanic`/`world-ocean`), distinct from the
+ * ordinary soft `preferTags` weighting every other world class still
+ * uses. See `planet-quality-tables.js`'s `WORLD_CLASS_DEFINITIONAL_CONSTRAINTS`.
+ */
+export function pickPlanetHydrosphere({ rng, preferTags = [], allowedValues } = {}) {
+  const pool = Array.isArray(allowedValues) && allowedValues.length ? HYDROSPHERE_ENTRIES.filter((e) => allowedValues.includes(e.value)) : HYDROSPHERE_ENTRIES;
+  return weightedPickWithPreference(pool.length ? pool : HYDROSPHERE_ENTRIES, { rng, preferTags })?.value ?? PLANET_HYDROSPHERE.MODERATE;
 }
 
+/**
+ * PHASE 8D-3A R2 fix 10 (technology production refinement): expanded from
+ * 5 to 7 values for finer-grained worldbuilding resolution. Ranked
+ * (see `planet-draft.js`'s `TECHNOLOGY_LEVEL_RANK`) primitive <
+ * pre-industrial < industrial < frontier < galactic-standard < advanced
+ * < cutting-edge -- `galactic-standard` replaces the old `standard` as
+ * the baseline/most-common value, and `frontier` (a world with real,
+ * working modern tech that is nonetheless patchy/rugged/hand-me-down)
+ * now sits ABOVE `industrial` rather than being the second-lowest tier,
+ * matching how the term is actually used describing SWSE frontier worlds.
+ *
+ * `technologyLevel` describes the civilization's GENERAL capability only
+ * -- deliberately never used to derive combat mechanics. Distinct from
+ * `technologyAccess` (how broadly galactic technology reaches this
+ * world, independent of local capability) and `technologySpecialties`
+ * (specific areas of notable capability), both defined further below.
+ */
 export const PLANET_TECHNOLOGY_LEVEL = Object.freeze({
   PRIMITIVE: 'primitive',
+  PRE_INDUSTRIAL: 'pre-industrial',
+  INDUSTRIAL: 'industrial',
   FRONTIER: 'frontier',
-  STANDARD: 'standard',
+  GALACTIC_STANDARD: 'galactic-standard',
   ADVANCED: 'advanced',
   CUTTING_EDGE: 'cutting-edge'
 });
@@ -179,8 +208,10 @@ export const PLANET_TECHNOLOGY_LEVEL = Object.freeze({
  */
 const TECHNOLOGY_LEVEL_ENTRIES = Object.freeze([
   { value: PLANET_TECHNOLOGY_LEVEL.PRIMITIVE, weight: 1, tags: ['frontier', 'isolated'] },
+  { value: PLANET_TECHNOLOGY_LEVEL.PRE_INDUSTRIAL, weight: 2, tags: ['frontier', 'isolated', 'rural'] },
+  { value: PLANET_TECHNOLOGY_LEVEL.INDUSTRIAL, weight: 3, tags: ['industrial', 'manufacturing'] },
   { value: PLANET_TECHNOLOGY_LEVEL.FRONTIER, weight: 4, tags: ['frontier'] },
-  { value: PLANET_TECHNOLOGY_LEVEL.STANDARD, weight: 5, tags: [] },
+  { value: PLANET_TECHNOLOGY_LEVEL.GALACTIC_STANDARD, weight: 5, tags: [] },
   { value: PLANET_TECHNOLOGY_LEVEL.ADVANCED, weight: 3, tags: ['technology', 'research', 'industrial'] },
   { value: PLANET_TECHNOLOGY_LEVEL.CUTTING_EDGE, weight: 1, tags: ['technology', 'research'] }
 ]);
@@ -191,9 +222,63 @@ export function isPlanetTechnologyLevel(value) {
   return TECHNOLOGY_LEVEL_VALUES.includes(value);
 }
 
-/** Pick a random technology/development level, optionally softly biased by `preferTags`. */
+/** Pick a random technology/development level, optionally softly biased by `preferTags` (region/world-class/economy-sector context -- see `planet-draft.js`'s `rollCivilization()`). */
 export function pickPlanetTechnologyLevel({ rng, preferTags = [] } = {}) {
-  return weightedPickWithPreference(TECHNOLOGY_LEVEL_ENTRIES, { rng, preferTags })?.value ?? PLANET_TECHNOLOGY_LEVEL.STANDARD;
+  return weightedPickWithPreference(TECHNOLOGY_LEVEL_ENTRIES, { rng, preferTags })?.value ?? PLANET_TECHNOLOGY_LEVEL.GALACTIC_STANDARD;
+}
+
+/**
+ * PHASE 8D-3A R2 fix 10: `technologyAccess` describes how broadly
+ * GALACTIC technology reaches this world -- distinct from
+ * `technologyLevel`'s "how capable is the civilization" question. An
+ * `isolated` world can still be `industrial`-level (self-sufficient,
+ * cut off from galactic supply lines); a `ubiquitous`-access world need
+ * not be `cutting-edge` (a well-connected Mid Rim world with ordinary
+ * `galactic-standard` tech that is simply never hard to buy).
+ */
+export const PLANET_TECHNOLOGY_ACCESS = Object.freeze({
+  ISOLATED: 'isolated',
+  SCARCE: 'scarce',
+  LIMITED: 'limited',
+  COMMON: 'common',
+  UBIQUITOUS: 'ubiquitous'
+});
+
+const TECHNOLOGY_ACCESS_ENTRIES = Object.freeze([
+  { value: PLANET_TECHNOLOGY_ACCESS.ISOLATED, weight: 1, tags: ['isolated', 'remote', 'frontier'] },
+  { value: PLANET_TECHNOLOGY_ACCESS.SCARCE, weight: 2, tags: ['frontier', 'rural'] },
+  { value: PLANET_TECHNOLOGY_ACCESS.LIMITED, weight: 3, tags: [] },
+  { value: PLANET_TECHNOLOGY_ACCESS.COMMON, weight: 5, tags: [] },
+  { value: PLANET_TECHNOLOGY_ACCESS.UBIQUITOUS, weight: 2, tags: ['urban', 'trade', 'technology', 'industrial'] }
+]);
+
+const TECHNOLOGY_ACCESS_VALUES = Object.freeze(Object.values(PLANET_TECHNOLOGY_ACCESS));
+
+export function isPlanetTechnologyAccess(value) {
+  return TECHNOLOGY_ACCESS_VALUES.includes(value);
+}
+
+/** Pick a random technology-access level, optionally softly biased by `preferTags`. `common` is the baseline/most-common value. */
+export function pickPlanetTechnologyAccess({ rng, preferTags = [] } = {}) {
+  return weightedPickWithPreference(TECHNOLOGY_ACCESS_ENTRIES, { rng, preferTags })?.value ?? PLANET_TECHNOLOGY_ACCESS.COMMON;
+}
+
+export function isPlanetTechnologySpecialty(value) {
+  return TECHNOLOGY_SPECIALTIES.some((entry) => entry.value === value);
+}
+
+/**
+ * Pick up to `count` distinct technology specialties (see
+ * `data/technology-specialties.js`), softly biased by `preferTags`.
+ * Returns plain value strings (unlike `pickPlanetTraits()`/
+ * `pickPlanetHazards()`, which return full entry objects) -- the phase
+ * spec's own contract for this field is `technologySpecialties: string[]`.
+ * `count: 0` (the common case -- most worlds have no notable specialty)
+ * returns `[]` without consulting the RNG at all.
+ */
+export function pickPlanetTechnologySpecialties({ rng, preferTags = [], count = 0 } = {}) {
+  if (!count) return [];
+  return weightedPickUniqueN(TECHNOLOGY_SPECIALTIES, count, { rng, preferTags }).map((entry) => entry.value);
 }
 
 /**
@@ -250,8 +335,14 @@ const DROID_PREVALENCE_INDEX = Object.freeze({
   [PLANET_DROID_PREVALENCE.AUTOMATED]: 5
 });
 
+// PHASE 8D-3A R2 fix 10: rescaled for the 7-value PLANET_TECHNOLOGY_LEVEL --
+// the three lowest tiers (primitive/pre-industrial/industrial) push droid
+// prevalence down, the two highest (advanced/cutting-edge) push it up;
+// frontier/galactic-standard stay neutral (frontier now sits ABOVE
+// industrial and is no longer itself a low-tech tier -- see
+// `PLANET_TECHNOLOGY_LEVEL`'s own doc).
 const DROID_PREVALENCE_TECH_UP = Object.freeze(['advanced', 'cutting-edge']);
-const DROID_PREVALENCE_TECH_DOWN = Object.freeze(['primitive', 'frontier']);
+const DROID_PREVALENCE_TECH_DOWN = Object.freeze(['primitive', 'pre-industrial', 'industrial']);
 const DROID_PREVALENCE_ECONOMY_TAGS = Object.freeze(['industrial', 'manufacturing', 'technology', 'shipbuilding', 'droids', 'military-industrial', 'mining']);
 
 /**
@@ -265,11 +356,20 @@ const DROID_PREVALENCE_ECONOMY_TAGS = Object.freeze(['industrial', 'manufacturin
  * instruction: a high-tech world can still roll `rare` droid presence,
  * just less often) -- droid prevalence remains otherwise entirely
  * independent of organic Species demographics, unchanged from round 2.
+ *
+ * R2 fix 10: `technologyAccess` (how broadly galactic tech reaches this
+ * world) now also softly skews this same score -- `ubiquitous` access
+ * pushes up, `isolated` access pushes down -- independent of
+ * `technologyLevel`'s own contribution (a `galactic-standard`,
+ * `ubiquitous`-access world is somewhat more droid-staffed than an
+ * equally `galactic-standard` but `isolated` one).
  */
-function droidContextScore({ technologyLevel = '', economyTags = [] } = {}) {
+function droidContextScore({ technologyLevel = '', technologyAccess = '', economyTags = [] } = {}) {
   let score = 0;
   if (DROID_PREVALENCE_TECH_UP.includes(technologyLevel)) score += 1;
   if (DROID_PREVALENCE_TECH_DOWN.includes(technologyLevel)) score -= 1;
+  if (technologyAccess === PLANET_TECHNOLOGY_ACCESS.UBIQUITOUS) score += 1;
+  if (technologyAccess === PLANET_TECHNOLOGY_ACCESS.ISOLATED) score -= 1;
   if (economyTags.some((tag) => DROID_PREVALENCE_ECONOMY_TAGS.includes(tag))) score += 1;
   return score;
 }
@@ -288,11 +388,12 @@ function applyDroidContextBias(entries, score) {
 /**
  * Pick a random droid-prevalence level, independent of organic
  * population. Optionally softly skewed by `technologyLevel`/
- * `economyTags` (see `droidContextScore()`) -- both optional; omitting
- * either (or both) falls back to the original context-free weighting.
+ * `technologyAccess`/`economyTags` (see `droidContextScore()`) -- all
+ * optional; omitting any (or all) falls back to the original
+ * context-free weighting.
  */
-export function pickPlanetDroidPrevalence({ rng, technologyLevel = '', economyTags = [] } = {}) {
-  const score = droidContextScore({ technologyLevel, economyTags });
+export function pickPlanetDroidPrevalence({ rng, technologyLevel = '', technologyAccess = '', economyTags = [] } = {}) {
+  const score = droidContextScore({ technologyLevel, technologyAccess, economyTags });
   const entries = applyDroidContextBias(DROID_PREVALENCE_ENTRIES, score);
   return weightedPick(entries, { rng })?.value ?? PLANET_DROID_PREVALENCE.NORMAL;
 }

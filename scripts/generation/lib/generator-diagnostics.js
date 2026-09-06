@@ -26,7 +26,11 @@ export const DIAGNOSTIC_CODE = Object.freeze({
   UNINHABITED_WORLD_HAS_SETTLEMENT: 'uninhabited-world-has-settlement',
 
   // PHASE 8D-3A: planet civilization/economy coherence (planet-draft.js)
-  TRADE_CONTEXT_MISMATCH: 'trade-context-mismatch',
+  // R2 fix 8: the "rolled economy sector(s) share no tag with the
+  // world's own environment" check now reuses `ECONOMY_ENVIRONMENT_MISMATCH`
+  // above (which already existed for exactly this concept but had no
+  // computer anywhere yet) instead of the redundant `TRADE_CONTEXT_MISMATCH`
+  // this phase had separately introduced for the same case.
   GOVERNMENT_POPULATION_MISMATCH: 'government-population-mismatch',
   TECHNOLOGY_POPULATION_MISMATCH: 'technology-population-mismatch',
 

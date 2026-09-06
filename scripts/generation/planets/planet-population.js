@@ -25,10 +25,28 @@
  * equal-weighted), other galactically-widespread Species (Twi'lek,
  * Rodian, Duros, Bothan, Zabrak, Mon Calamari, Sullustan, Quarren, ...)
  * meaningfully likely, and genuinely exotic/rare Species uncommon as
- * DOMINANT populations without being impossible. `SPECIES_GENERATOR_PREVALENCE`
+ * DOMINANT populations without being impossible. `SPECIES_GENERATOR_PREVALENCE_BY_ID`
  * below is that weighting -- see its own doc comment for why it's
  * generator-only flavor, never a manual second Species list or a lore
  * claim.
+ *
+ * PHASE 8D-3A correction pass: the manifest was originally keyed by
+ * the Species' visible display NAME (matched via an `{id, name}`
+ * pool-entry shape), with a bare id-string pool entry (this module's
+ * ORIGINAL, still-required contract) explicitly falling back to
+ * neutral weighting -- documented as intentional at the time, but a
+ * real stable-identity violation this project holds itself to
+ * elsewhere: the exact same logical Species pool represented as
+ * `['species-human', 'species-rodian']` vs.
+ * `[{id:'species-human',name:'Human'}, {id:'species-rodian',name:'Rodian'}]`
+ * produced DIFFERENT procedural weighting for identical input. Rekeyed
+ * by canonical Species ID instead (the same `species-*` semantic-slug
+ * convention `location-population-profile.js`'s own
+ * `GENERIC_GALACTIC_FALLBACK_POPULATION_PROFILE` already uses
+ * throughout this codebase) -- both pool-entry shapes now resolve
+ * through the SAME `speciesKeyFor()` id-extraction this module already
+ * uses for identity (`dominantSpeciesId`/`remainderPool`), so weighting
+ * can never again diverge from identity.
  */
 
 import { createLocationPopulationProfile, POPULATION_DIVERSITY } from '../location-population-profile.js';
@@ -221,7 +239,7 @@ export const CHARACTER_DOMINANT_WEIGHT_RANGE = Object.freeze({
  * PHASE 8D-3A production tuning — a GENERATOR-ONLY prevalence weighting
  * manifest, explicitly NOT a lore/canon authority and NOT a second
  * Species registry: it holds nothing but a relative pick-weight per
- * SPECIES NAME (lowercased), used ONLY to bias which species from the
+ * canonical Species ID, used ONLY to bias which species from the
  * caller-supplied pool is more likely to be rolled as DOMINANT on a
  * brand-new procedural world. Every actual Species fact (ability
  * scores, size, traits, ...) still comes exclusively from
@@ -229,66 +247,58 @@ export const CHARACTER_DOMINANT_WEIGHT_RANGE = Object.freeze({
  * species absent from it (a homebrew/rare/exotic entry, or simply one
  * this manifest doesn't happen to list) still participates fully in
  * generation at the `DEFAULT_PREVALENCE_WEIGHT` baseline, never
- * excluded. Matched against `speciesNameFor()`'s resolved lowercase
- * name when the caller's pool entries carry one (an object shape
- * `{ id, name }`, e.g. straight from `SpeciesRegistry.getAll()`); a
- * caller that only supplies bare id strings (this module's original,
- * still-fully-supported contract) gets neutral/uniform weighting
- * exactly as before, since there is no name to match against.
+ * excluded. Only include ids that have been verified against
+ * `SpeciesRegistry`'s own id space.
  */
-const SPECIES_GENERATOR_PREVALENCE = Object.freeze({
-  human: 8,
-  "twi'lek": 4,
-  twilek: 4,
-  rodian: 4,
-  duros: 4,
-  bothan: 4,
-  zabrak: 4,
-  'mon calamari': 3,
-  moncalamari: 3,
-  sullustan: 3,
-  quarren: 3,
-  wookiee: 3,
-  trandoshan: 3,
-  gran: 3,
-  ithorian: 3,
-  nautolan: 3,
-  chiss: 2,
-  mirialan: 2,
-  togruta: 2,
-  'kel dor': 2,
-  keldor: 2,
-  weequay: 2,
-  devaronian: 2,
-  gungan: 2,
-  aqualish: 2,
-  ortolan: 2,
-  chagrian: 2,
-  cerean: 2
+const SPECIES_GENERATOR_PREVALENCE_BY_ID = Object.freeze({
+  'species-human': 8,
+  'species-twi-lek': 4,
+  'species-rodian': 4,
+  'species-duros': 4,
+  'species-bothan': 4,
+  'species-zabrak': 4,
+  'species-mon-calamari': 3,
+  'species-sullustan': 3,
+  'species-quarren': 3,
+  'species-wookiee': 3,
+  'species-trandoshan': 3,
+  'species-gran': 3,
+  'species-ithorian': 3,
+  'species-nautolan': 3,
+  'species-chiss': 2,
+  'species-mirialan': 2,
+  'species-togruta': 2,
+  'species-kel-dor': 2,
+  'species-weequay': 2,
+  'species-devaronian': 2,
+  'species-gungan': 2,
+  'species-aqualish': 2,
+  'species-ortolan': 2,
+  'species-chagrian': 2,
+  'species-cerean': 2
 });
 
 const DEFAULT_PREVALENCE_WEIGHT = 1;
 
+/** Extract a pool entry's canonical Species ID -- the SAME extraction used for identity (`dominantSpeciesId`/`remainderPool`) and, since this correction pass, for prevalence weighting too, so the two can never diverge. Accepts either a bare id string or a `{ id, name }` object (e.g. straight from `SpeciesRegistry.getAll()`). */
 function speciesKeyFor(entry) {
   if (entry && typeof entry === 'object') return String(entry.id ?? '');
   return String(entry ?? '');
 }
 
-function speciesNameFor(entry) {
-  if (entry && typeof entry === 'object' && entry.name) return String(entry.name).toLowerCase();
-  return '';
-}
-
 /**
  * Look up a caller-supplied species pool entry's generator-only
- * prevalence weight (see `SPECIES_GENERATOR_PREVALENCE` above). Exposed
- * for callers/tests that want to inspect the weighting directly without
- * re-deriving it.
+ * prevalence weight (see `SPECIES_GENERATOR_PREVALENCE_BY_ID` above).
+ * Exposed for callers/tests that want to inspect the weighting
+ * directly without re-deriving it. Resolves by canonical id via
+ * `speciesKeyFor()` regardless of whether the entry is a bare id
+ * string or an `{id, name}` object -- the same logical pool produces
+ * IDENTICAL weighting either way.
  */
 export function getSpeciesPrevalenceWeight(entry) {
-  const name = speciesNameFor(entry);
-  if (!name) return DEFAULT_PREVALENCE_WEIGHT;
-  return SPECIES_GENERATOR_PREVALENCE[name] ?? DEFAULT_PREVALENCE_WEIGHT;
+  const key = speciesKeyFor(entry);
+  if (!key) return DEFAULT_PREVALENCE_WEIGHT;
+  return SPECIES_GENERATOR_PREVALENCE_BY_ID[key] ?? DEFAULT_PREVALENCE_WEIGHT;
 }
 
 /**

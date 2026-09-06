@@ -7247,3 +7247,270 @@ re-check are fixed and verified with real statistical/direct-execution
 proof, not merely asserted. PR #963 stays draft and unmerged. Per
 standing practice: stopping here for independent review before any
 further Phase 8D-3A work or a hypothetical Phase 8D-3B.
+
+## 183. PHASE 8D-3A correction pass round 2 — independent-review fixes 1-10
+
+An independent review of §182's head evaluated PR #963 (open, draft,
+unmerged, Rolling System Validation green, no open review threads at
+the reviewed SHA) and returned nine numbered findings plus several
+secondary observations, with an explicit instruction: no further
+content expansion (no more names/POIs/commodities/traits/hazards/
+presets) — fix only the nine findings, add deterministic tests for
+each, and rerun the gate. A follow-up message mid-pass added a tenth,
+larger item: a technology-production refinement (expanding
+`technologyLevel`, adding `technologyAccess`/`technologySpecialties`).
+The review's own findings were evaluated against a head one commit
+behind this pass's starting point, so finding #6 (the review listed
+five reroll functions still needing preset/region context) was
+partially already resolved by that intervening commit — only
+`rerollPlanetDemographics()` (a function that did not exist yet) was
+actually still open. All ten fixes below are structural/wiring
+corrections or one bounded field-vocabulary expansion the user
+explicitly requested mid-pass (the technology refinement) — no
+unrequested catalog growth (no new planet names, POIs, commodities,
+traits, hazards, or presets) was added.
+
+1. **Species prevalence weighting kept dominant-species identity and
+   its own weighting keyed on two DIFFERENT things — display name vs.
+   ID — so the weighting was silently inert.**
+   `planet-population.js`'s `SPECIES_GENERATOR_PREVALENCE` was keyed by
+   display name (`'Human'`) via a now-removed `speciesNameFor()`, while
+   `speciesKeyFor()` (used for actual identity everywhere else)
+   extracts the canonical `species-*` id. A caller passing normal
+   `{id, name}` pool entries got neutral weighting for every species,
+   always — the manifest never actually matched anything. Fixed:
+   renamed to `SPECIES_GENERATOR_PREVALENCE_BY_ID`, rekeyed by the same
+   `species-*` semantic-id convention `location-population-profile.js`
+   already establishes codebase-wide (confirmed via direct inspection
+   of `species-registry.js` that this is the established convention,
+   not a fabricated id scheme), and `getSpeciesPrevalenceWeight()` now
+   resolves through `speciesKeyFor()` — the SAME identity extraction
+   used everywhere else. Verified: a bare-string pool entry and an
+   `{id, name}` object for the same species now resolve to the
+   identical weight; `species-human` measurably dominates more often
+   than a flat `1/N` share across a themed species pool (2000-seed
+   sample).
+2. **`pickPlanetRegion()`'s result was pure decoration — rolled,
+   stored, read by nothing.** Population density, technology,
+   government, economy, world class, and droid prevalence all rolled
+   completely independent of which galactic region a world belonged
+   to. Fixed: new `data/planet-region-bias.js` maps all 7
+   `PLANET_REGION` values to a `preferTags`/`densityBias` bundle (Core
+   Worlds/Colonies dense + urban/trade/institutional; Outer
+   Rim/Wild Space/Unknown Regions sparse + frontier/isolated/remote;
+   Inner Rim/Mid Rim deliberately left neutral), self-checked at
+   module load against `PLANET_REGION` (the same discipline as every
+   other Phase 8D catalog). `region` is now rolled BEFORE `worldClass`
+   specifically so it can bias that pick too. Verified over 6000 seeds:
+   Core Worlds produces urban/trade-tagged world classes measurably
+   more often than Wild Space.
+3. **World class and gravity/atmosphere/hydrosphere could land on
+   physically incoherent combinations** (an `ocean` world with `none`
+   hydrosphere; a `gas-giant` with breathable atmosphere) because every
+   environmental field was purely soft-preference-weighted, with no
+   mechanism to make an incoherent combination actually impossible.
+   Fixed: a new `allowedValues` pool-restriction parameter on
+   `pickPlanetGravity()`/`pickPlanetAtmosphere()`/`pickPlanetHydrosphere()`
+   (`planet-quality-tables.js`/`planet-profile.js`) — a genuinely
+   DIFFERENT mechanism from `preferTags`'s soft weighting, since some
+   combinations must be impossible, not just less likely — driven by a
+   new `WORLD_CLASS_DEFINITIONAL_CONSTRAINTS` table covering the
+   handful of classes that need a hard restriction (`ocean`,
+   `gas-giant`, `high-/low-gravity-terrestrial`, `artificial-habitat`);
+   every other world class stays fully soft-weighted, unchanged.
+   `computePlanetDiagnostics()` now also computes `ENVIRONMENT_MISMATCH`
+   (an existing but previously dead diagnostic code) unconditionally,
+   even for `UNINHABITED` worlds and even outside this check, so that
+   `rerollPlanetWorldClass()` — which deliberately does NOT touch
+   gravity/atmosphere/hydrosphere, preserving the "reroll ONLY the
+   world class" contract — can surface a resulting incoherence as a
+   visible signal instead of silently forcing or silently ignoring it.
+   Verified over 3000 seeds: gravity/atmosphere/hydrosphere never land
+   outside their world class's definitional pool when one exists.
+4. **Presets could not reach the bundle generator, and stickiness
+   across bundle regeneration was incomplete.**
+   `generateProceduralPlanetBundle()` had no `presetId` parameter at
+   all — a preset applied at draft creation was invisible to the
+   bundle layer — and `regeneratePlanetAndPois()` did not forward the
+   originating preset either, silently dropping it on a "regenerate
+   whole planet+POIs" operation. Fixed: `presetId` now flows into
+   `generateProceduralPlanetBundle()` and `regeneratePlanetAndPois()`
+   defaults to the bundle's existing preset unless explicitly
+   overridden or cleared (`presetId: ''`). Precedence across
+   preset/region/world-class is implemented as pure tag-set union
+   (`generationPreferenceTagsForDraft()`, the single seam nearly every
+   context-sensitive pick/reroll now goes through, replacing several
+   previously-inconsistent ad hoc derivations) — preset tags are never
+   suppressed by region tags, only ever supplemented. Verified directly:
+   `generateProceduralPlanetBundle({ presetId })` records the id on the
+   planet draft; `regeneratePlanetAndPois()` preserves it by default
+   and honors an explicit override/clear; a `mining-world` preset can
+   still produce a Core Worlds mining world within 3000 seeds (proving
+   region tags add alternatives rather than override the preset).
+5. **`regenerateEnvironment()`/`regenerateCivilization()` silently
+   preserved every child POI's context even after the parent planet's
+   environment/civilization changed underneath it — no refresh, no
+   staleness signal.** Fixed: a new `refreshPoiContext()` in
+   `poi-generator.js` — preserves POI IDENTITY (`draftId`/`template`/
+   `name`/`nameDraft`, never regenerated), refreshes DERIVED context
+   (`biomes`/`tags`/`generatorContext` against the new parent), and
+   flags incompatibility via `DIAGNOSTIC_CODE.POI_CONTEXT_MISMATCH`
+   rather than either silently destroying or silently ignoring
+   staleness. Both `regenerateEnvironment()` (whose scope was also
+   widened per a secondary observation to include gravity/atmosphere/
+   hazards, not just world class/climate/hydrosphere) and
+   `regenerateCivilization()` now map every sibling POI through it.
+   Verified over 500 seeds: POI identity fields are always preserved
+   byte-identical; a previously-clean POI can newly acquire
+   `POI_CONTEXT_MISMATCH` after `regenerateEnvironment()`, proving the
+   staleness signal is real and detectable, not decorative.
+6. **`rerollPlanetDemographics()` (species-distribution-only, narrower
+   than the existing `rerollPlanetPopulation()`, which also rerolls
+   scale) did not exist**, leaving no way to reroll a world's
+   species/colonization mix without also risking a scale change.
+   Added, using the pre-existing (but previously unused by this
+   function) `populationScaleOverride` parameter on
+   `generateProceduralPlanetPopulationProfile()` to pin scale exactly.
+   Verified over 400 seeds: every unrelated field
+   (`populationScale`/`populationEstimate`/`populationEstimateNumeric`/
+   `settlementPattern`/`government`/`technologyLevel`/`economy`/`trade`/
+   environment/identity fields) preserved byte-identical across all 338
+   inhabited draws; a true no-op (`===` identity where checked) across
+   all 62 uninhabited draws; species-distribution fields
+   (`populationProfile`/`dominantSpeciesId`/`dominantSpeciesIds`/
+   `nativeSpeciesIds`/`colonizationPattern`) changed on every one of the
+   338 inhabited draws.
+7. **`composeTagsAndSummary()` received `stability` but never merged
+   `stability.tags` into the draft's own `tags` field** — only ever
+   reading `stability.value` for the summary prose. Since
+   `planet-stability.js`'s own entries carry exactly the
+   `lawless`/`unstable`/`contested`/`fractured`/`civil-war`/etc. tags
+   `planet-hooks.js`'s `deriveSuggestedOppositionTags()` explicitly
+   filters for, a `lawless` or `civil-war` world's own stability could
+   never actually reach its `suggestedOppositionTags` — the draft's
+   `tags` field genuinely never carried them, in ANY draft, ever.
+   Fixed: `stability?.tags || []` added to the `mergeTags()` call.
+   Also fixed `rerollPlanetStability()`, which recomposed the summary
+   but not `tags` — a stability reroll left `tags`/`suggestedOppositionTags`
+   silently stale until an unrelated full reroll happened to recompute
+   them. Verified: every draft with an opposition-relevant stability
+   value has that tag present in both `draft.tags` and
+   `deriveSuggestedOppositionTags(draft.tags)`; `rerollPlanetStability()`
+   refreshes `tags` to match the newly-rolled stability across 20+
+   inhabited samples.
+8. **Two diagnostic codes covered the identical concept.**
+   `generator-diagnostics.js` already defined
+   `ECONOMY_ENVIRONMENT_MISMATCH` for "economy sector shares no tag
+   with the world's environment," but nothing computed it anywhere —
+   this phase had separately introduced `TRADE_CONTEXT_MISMATCH` for
+   the exact same check in `planet-draft.js`, unaware the canonical
+   code already existed unused. Fixed: `TRADE_CONTEXT_MISMATCH` removed
+   from the registry entirely; the check now pushes
+   `ECONOMY_ENVIRONMENT_MISMATCH`. No other file referenced the removed
+   code (confirmed by direct grep before removal).
+9. **`planet-hook-archetypes.js`'s own header doc claims
+   `FACTION_ARCHETYPE_TAGS`/`JOB_ARCHETYPE_TAGS` are "exactly" their
+   canonical authorities' key sets — `organization-metadata.js`'s
+   `FACTION_ARCHETYPE_FAMILY` (20 keys), `job-archetype-metadata.js`'s
+   `JOB_ARCHETYPE_METADATA` (14 keys) — but nothing verified that
+   claim.** The two manifests could silently drift apart (an archetype
+   added to one authority, forgotten in the suggestion-tag manifest)
+   with zero error, only a quietly-incomplete suggestion pool. Fixed:
+   a module-load self-check (the same discipline
+   `data/planet-region-bias.js` established for `PLANET_REGION`) throws
+   immediately on drift in either direction, and additionally verifies
+   each `FACTION_ARCHETYPE_TAGS` entry carries its mapped
+   `ORGANIZATION_FAMILY` tag. A matching test asserts the same
+   invariant explicitly so a regression is visible in test output, not
+   only as an import-time crash. Both catalogs currently match their
+   authorities exactly (confirmed — the module loads cleanly).
+10. **Technology production refinement** (added mid-pass, at the
+    user's explicit request, as a bounded field-vocabulary expansion —
+    not the "no content expansion" catalog growth the review's
+    instruction was aimed at preventing). `PLANET_TECHNOLOGY_LEVEL`
+    expanded from 5 to 7 values (`primitive, pre-industrial, industrial,
+    frontier, galactic-standard, advanced, cutting-edge` — `frontier`
+    now sits ABOVE `industrial`, describing real-but-patchy/rugged
+    modern tech rather than a second-lowest tier; `galactic-standard`
+    replaces `standard` as the baseline/most-common value). Two new
+    fields added: `technologyAccess` (`isolated/scarce/limited/common/
+    ubiquitous` — how broadly galactic technology reaches this world,
+    independent of local capability) and `technologySpecialties`
+    (`string[]`, from a new centralized `data/technology-specialties.js`
+    catalog of 24 entries tagged with the SAME economy-sector
+    vocabulary `planet-economies.js` already establishes, never a
+    competing vocabulary). `rollCivilization()` reordered so `economy`
+    rolls BEFORE technology (verified safe — `rollEconomy()` never
+    reads `technologyLevel`), letting the technology picks read the
+    world's ACTUAL rolled economy-sector tags rather than only ambient
+    region/world-class context; `pickPlanetDroidPrevalence()` now also
+    reads `technologyAccess`. `TECHNOLOGY_POPULATION_MISMATCH`'s
+    threshold rescaled from a raw integer rank-gap (`>=3` of a possible
+    4) to a normalized 0-1 rank comparison (`>=0.7`) so it stays
+    meaningful as the technology-level enum's size changes; combat
+    mechanics are explicitly never derived from any of these three
+    fields (a repeated instruction, respected by construction — nothing
+    in `swse-roll-engine.js`/combat modules reads them). Two new
+    targeted rerolls added: `rerollPlanetTechnologyAccess()`,
+    `rerollPlanetTechnologySpecialties()` (accepts an optional explicit
+    `count` override); `rerollPlanetTechnologyLevel()`'s `preferTags`
+    now also include the draft's current economy-sector tags. Verified
+    over up to 8000 seeds: every one of the 7 technology-level and 5
+    technology-access values remains reachable; a technology/research/
+    industrial-tagged economy measurably raises the average technology
+    rank (3.13 vs. 2.94 baseline); `TECHNOLOGY_POPULATION_MISMATCH`
+    fires at a reachable-but-not-dominant 8.4% rate; every targeted
+    reroll preserves every unrelated field (including the OTHER two
+    technology fields) and is a true no-op on `UNINHABITED`.
+
+Two further secondary observations from the review were addressed:
+`UNINHABITED`'s POI-count floor lowered from 1 to 0 (a genuinely empty,
+featureless world is a coherent result, not a gap to force-fill —
+`poi-generator.js`); and real end-to-end preset tests added
+(`createProceduralPlanetDraft({ presetId })`/full pipeline, not only
+the isolated archetype-tag pick function) — verified the
+`ecumenopolis` preset's `densityBias` measurably raises the
+`POPULOUS`/`HYPER_URBANIZED` rate end-to-end, and that `presetId` lands
+on both the draft and its `provenance`. (The third secondary
+observation — widening `regenerateEnvironment()`'s scope to include
+gravity/atmosphere/hazards — was folded directly into fix #5 above,
+since both concern the same function.) A fourth, purely administrative
+observation (a commit-count discrepancy) required no code change.
+
+### Tests + Regression (this pass)
+
+`tests/gm-generation-phase8d3a-production.test.mjs` gained five new
+sections: fixes #1-6 together (species-prevalence identity, region
+bias reachability/measurable effect, world-class/environment
+definitional coherence, preset propagation/stickiness/precedence,
+`rerollPlanetDemographics()`), fix #10 (technology level/access/
+specialties reachability, economy-context bias, rescaled mismatch
+threshold, all three targeted rerolls), fix #7 (stability tags reaching
+`suggestedOppositionTags`, `rerollPlanetStability()`'s tags refresh),
+fix #9 (archetype-manifest self-validation against both canonical
+authorities), and the secondary observations (POI floor of 0, the
+real end-to-end preset test). The pre-existing `regenerateEnvironment`/
+`regenerateCivilization` sibling-POI assertions were also updated: an
+exact-array-reference check is no longer valid now that `refreshPoiContext()`
+legitimately returns a new array every time (fix #5), so these now
+assert per-POI identity-field preservation instead.
+
+Full `gm-*.test.mjs` sweep: **58/58 green** (same file count as §182 —
+this pass extended the existing Phase 8D-3A test file rather than
+adding a new one). Full rolling suite (`tools/run-rolling-tests.mjs`):
+**188 passed, 0 failed** (5 pre-existing excluded, unchanged). Full
+syntax check (`tools/run-rolling-syntax-check.mjs`): **2404/2404
+clean** (two new files: `data/planet-region-bias.js`,
+`data/technology-specialties.js`). No canonical-persistence call
+(`LocationRegistryService`/`FactionRegistryService`/`game.actors`/
+`game.folders`/etc.) exists anywhere in any file this pass touched or
+added. Working tree clean before this commit.
+
+**PHASE 8D-3A CORRECTION PASS ROUND 2 COMPLETE.** All nine
+independent-review findings, the technology-production refinement
+added mid-pass, and every secondary observation are fixed and verified
+with real statistical/direct-execution proof. No unrequested catalog
+content was added, per the review's explicit instruction. PR #963
+stays draft and unmerged. Per standing practice: stopping here for
+independent review before any further Phase 8D-3A work or a
+hypothetical Phase 8D-3B.

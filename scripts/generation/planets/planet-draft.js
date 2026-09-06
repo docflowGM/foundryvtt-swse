@@ -89,7 +89,7 @@ import { createDraftId } from '../lib/draft-id.js';
 import { createProvenance } from '../provenance.js';
 import { mergeTags } from '../lib/tag-utils.js';
 import { composeLocationSummary } from '../lib/description-composer.js';
-import { pickPlanetWorldClass, pickPlanetSize, pickPlanetGravity, pickPlanetAtmosphere } from './planet-quality-tables.js';
+import { pickPlanetWorldClass, pickPlanetSize, pickPlanetGravity, pickPlanetAtmosphere, definitionalConstraintsFor } from './planet-quality-tables.js';
 import { getRandomPlanetName } from '../names/planet-name-generator.js';
 import { getRandomSystemName } from '../names/system-name-generator.js';
 import { generateProceduralPlanetPopulationProfile, POPULATION_SCALE } from './planet-population.js';
@@ -100,8 +100,9 @@ import { generatePlanetTrade } from './planet-trade.js';
 import { pickPlanetHazards } from './planet-hazards.js';
 import { pickPlanetHistoryHooks } from './planet-history-hooks.js';
 import { pickPlanetTraits } from './planet-traits.js';
-import { pickPlanetRegion, pickSectorName, pickPlanetClimate, pickPlanetHydrosphere, pickPlanetTechnologyLevel, pickPlanetDroidPrevalence, pickSettlementPattern } from './planet-profile.js';
+import { pickPlanetRegion, pickSectorName, pickPlanetClimate, pickPlanetHydrosphere, pickPlanetTechnologyLevel, pickPlanetTechnologyAccess, pickPlanetTechnologySpecialties, pickPlanetDroidPrevalence, pickSettlementPattern, PLANET_TECHNOLOGY_ACCESS } from './planet-profile.js';
 import { getPlanetPreset } from '../data/planet-presets.js';
+import { regionPreferTagsFor, regionDensityBiasFor } from '../data/planet-region-bias.js';
 import { generatePlanetHooks } from './planet-hooks.js';
 import { DIAGNOSTIC_CODE } from '../lib/generator-diagnostics.js';
 
@@ -134,7 +135,32 @@ const POPULATION_SCALE_RANK = Object.freeze({
   [POPULATION_SCALE.HYPER_URBANIZED]: 4
 });
 
-const TECHNOLOGY_LEVEL_RANK = Object.freeze({ primitive: 0, frontier: 1, standard: 2, advanced: 3, 'cutting-edge': 4 });
+// PHASE 8D-3A R2 fix 10: rescaled for the 7-value PLANET_TECHNOLOGY_LEVEL
+// (was `{ primitive: 0, frontier: 1, standard: 2, advanced: 3, 'cutting-edge': 4 }`).
+// `TECHNOLOGY_LEVEL_MAX_RANK`/`POPULATION_SCALE_MAX_RANK` let
+// `computePlanetDiagnostics()` compare the two ranks on a common 0-1
+// scale rather than a raw integer difference, so the mismatch threshold
+// stays meaningful if either enum's size changes again later.
+const TECHNOLOGY_LEVEL_RANK = Object.freeze({
+  primitive: 0,
+  'pre-industrial': 1,
+  industrial: 2,
+  frontier: 3,
+  'galactic-standard': 4,
+  advanced: 5,
+  'cutting-edge': 6
+});
+const TECHNOLOGY_LEVEL_MAX_RANK = 6;
+const POPULATION_SCALE_MAX_RANK = 4;
+/**
+ * Normalized-rank-difference threshold for `TECHNOLOGY_POPULATION_MISMATCH`
+ * (see `computePlanetDiagnostics()`). Chosen to match the pre-expansion
+ * behavior's selectivity: the old 5-value scale flagged a mismatch at a
+ * raw rank gap of >=3 out of a possible 4 (i.e. >=75% of the full range)
+ * -- 0.7 preserves that same "only the more extreme combinations" bar
+ * while staying robust to either rank scale's size changing again.
+ */
+const TECHNOLOGY_POPULATION_MISMATCH_THRESHOLD = 0.7;
 
 /** Government `tags` implying a large administrative apparatus -- an unusual fit for a tiny population (see `computePlanetDiagnostics()`). */
 const LARGE_SCALE_GOVERNMENT_TAGS = new Set(['noble-house', 'government-bureaucracy']);
@@ -145,11 +171,15 @@ const SMALL_POPULATION_SCALES = new Set([POPULATION_SCALE.OUTPOST, POPULATION_SC
  * unusual combination" discipline every `DIAGNOSTIC_CODE` follows)
  * civilization/economy combinations worth a GM's attention:
  *
- *  - `TRADE_CONTEXT_MISMATCH`: the rolled economy sector(s) share NO
- *    tag at all with the world's own biome/character context --
+ *  - `ECONOMY_ENVIRONMENT_MISMATCH`: the rolled economy sector(s) share
+ *    NO tag at all with the world's own biome/character context --
  *    structurally possible because `generatePlanetEconomySectors()`
  *    only SOFTLY prefers matching tags, never hard-filters on them
- *    (unlike POI's `pickCompatiblePoiTemplate()`).
+ *    (unlike POI's `pickCompatiblePoiTemplate()`). R2 fix 8: this reuses
+ *    `generator-diagnostics.js`'s existing `ECONOMY_ENVIRONMENT_MISMATCH`
+ *    code (which already existed for exactly this concept but had no
+ *    computer anywhere yet) rather than the separate, redundant
+ *    `TRADE_CONTEXT_MISMATCH` this phase had originally introduced.
  *  - `GOVERNMENT_POPULATION_MISMATCH`: a tiny population (OUTPOST/
  *    SMALL_SETTLEMENT) paired with a government implying a large
  *    administrative apparatus (a Noble House, a full bureaucracy).
@@ -162,15 +192,36 @@ const SMALL_POPULATION_SCALES = new Set([POPULATION_SCALE.OUTPOST, POPULATION_SC
  * government/economy/technology to compare -- see `rollCivilization()`
  * -- so this returns `[]` immediately for one).
  */
-function computePlanetDiagnostics({ worldClass, government, economy, technologyLevel, populationScale }) {
-  if (populationScale === POPULATION_SCALE.UNINHABITED) return [];
+function computePlanetDiagnostics({ worldClass, government, economy, technologyLevel, populationScale, gravity, atmosphere, hydrosphere }) {
   const diagnostics = [];
+
+  // PHASE 8D-3A correction pass (finding #3): environment coherence
+  // applies REGARDLESS of population/civilization state (an
+  // UNINHABITED barren rock still has a gravity/atmosphere) -- this is
+  // the one check in this function not gated by the UNINHABITED
+  // short-circuit below. Reuses the EXISTING (previously never
+  // actually computed anywhere) `ENVIRONMENT_MISMATCH` code rather
+  // than inventing a new one -- see `rerollPlanetWorldClass()`'s own
+  // doc for why this can legitimately fire on a real draft: a
+  // single-field world-class reroll deliberately preserves the OLD
+  // gravity/atmosphere/hydrosphere rather than silently changing them,
+  // so a reroll into e.g. "High-Gravity Terrestrial" while gravity
+  // stays "Very Low" is flagged, not silently forced or hidden.
+  const constraints = definitionalConstraintsFor(worldClass.value);
+  const envMismatch = Boolean(
+    (constraints.gravity && gravity && !constraints.gravity.includes(gravity.value)) ||
+    (constraints.atmosphere && atmosphere && !constraints.atmosphere.includes(atmosphere.value)) ||
+    (constraints.hydrosphere && hydrosphere && !constraints.hydrosphere.includes(hydrosphere))
+  );
+  if (envMismatch) diagnostics.push(DIAGNOSTIC_CODE.ENVIRONMENT_MISMATCH);
+
+  if (populationScale === POPULATION_SCALE.UNINHABITED) return diagnostics;
 
   const economySectors = [economy.primarySector, ...(economy.secondarySectors || [])].filter(Boolean);
   if (economySectors.length) {
     const sectorTags = mergeTags(...economySectors.map((s) => s.tags || []));
     const worldTags = worldClassPreferenceTags(worldClass);
-    if (!sectorTags.some((t) => worldTags.includes(t))) diagnostics.push(DIAGNOSTIC_CODE.TRADE_CONTEXT_MISMATCH);
+    if (!sectorTags.some((t) => worldTags.includes(t))) diagnostics.push(DIAGNOSTIC_CODE.ECONOMY_ENVIRONMENT_MISMATCH);
   }
 
   if (government && SMALL_POPULATION_SCALES.has(populationScale) && (government.tags || []).some((t) => LARGE_SCALE_GOVERNMENT_TAGS.has(t))) {
@@ -178,9 +229,10 @@ function computePlanetDiagnostics({ worldClass, government, economy, technologyL
   }
 
   if (technologyLevel) {
-    const techRank = TECHNOLOGY_LEVEL_RANK[technologyLevel] ?? 2;
-    const scaleRank = POPULATION_SCALE_RANK[populationScale] ?? 2;
-    if (Math.abs(techRank - scaleRank) >= 3) diagnostics.push(DIAGNOSTIC_CODE.TECHNOLOGY_POPULATION_MISMATCH);
+    const techRank = TECHNOLOGY_LEVEL_RANK[technologyLevel] ?? Math.round(TECHNOLOGY_LEVEL_MAX_RANK / 2);
+    const scaleRank = POPULATION_SCALE_RANK[populationScale] ?? Math.round(POPULATION_SCALE_MAX_RANK / 2);
+    const normalizedRankDiff = Math.abs(techRank / TECHNOLOGY_LEVEL_MAX_RANK - scaleRank / POPULATION_SCALE_MAX_RANK);
+    if (normalizedRankDiff >= TECHNOLOGY_POPULATION_MISMATCH_THRESHOLD) diagnostics.push(DIAGNOSTIC_CODE.TECHNOLOGY_POPULATION_MISMATCH);
   }
 
   return diagnostics;
@@ -218,9 +270,68 @@ function presetDensityBiasFor(draft) {
   return presetFor(draft)?.densityBias || '';
 }
 
+/**
+ * PHASE 8D-3A correction pass (independent review round 2, findings #2
+ * and #4B): the single seam every context-sensitive pick/reroll now
+ * goes through, replacing what used to be several DIFFERENT,
+ * inconsistent preferTags derivations scattered across this file (some
+ * rerolls honored only the preset, some only world class, some
+ * neither). Merges, in this order:
+ *
+ *  1. the applied preset's `preferTags` (§33) -- never suppressed by
+ *     anything below; a Mining World preset can still produce a Core
+ *     mining world, because region tags only ADD alternative matches,
+ *     they never remove the preset's own.
+ *  2. the rolled region's `preferTags` (`data/planet-region-bias.js`,
+ *     finding #2) -- previously `pickPlanetRegion()`'s result was pure
+ *     decoration, read by nothing.
+ *  3. the rolled world class's own biome/tag context
+ *     (`worldClassPreferenceTags()`).
+ *
+ * `worldClassPreferTagsFor()` is the narrower variant used ONLY to bias
+ * the world-class pick itself (which obviously can't include its own
+ * not-yet-rolled tags) -- preset + region alone.
+ */
+function worldClassPreferTagsFor({ presetPreferTags, region }) {
+  return mergeTags(presetPreferTags, regionPreferTagsFor(region));
+}
+
+function generationPreferenceTags({ presetPreferTags, region, worldClass }) {
+  return mergeTags(presetPreferTags, regionPreferTagsFor(region), worldClassPreferenceTags(worldClass));
+}
+
+/** Same as `generationPreferenceTags()`, resolved from an existing draft object -- the seam every applicable targeted reroll uses to stay preset/region-sticky. */
+function generationPreferenceTagsForDraft(draft) {
+  return generationPreferenceTags({ presetPreferTags: presetPreferTagsFor(draft), region: draft.region, worldClass: draft.worldClass });
+}
+
+/** Density bias precedence for population-scale weighting: explicit preset > rolled region > the world class's own `populationBias` hint > neutral. */
+function densityBiasFor({ presetDensityBias, region, worldClass }) {
+  return presetDensityBias || regionDensityBiasFor(region) || worldClass?.populationBias || '';
+}
+
 /** The rolled economy's sector `tags`, merged -- the context `pickPlanetDroidPrevalence()` softly skews on (see `planet-profile.js`). Empty for an `UNINHABITED` world (no economy). */
 function economySectorTags(economy) {
   return mergeTags(economy.primarySector?.tags || [], ...(economy.secondarySectors || []).map((s) => s.tags || []));
+}
+
+/**
+ * PHASE 8D-3A R2 fix 10: how many `technologySpecialties` a world gets --
+ * softly weighted toward more at higher `technologyLevel`/wider
+ * `technologyAccess`, toward zero (the common case) otherwise, but never
+ * deterministic: every count from 0-3 stays reachable at any level/access
+ * combination (a `primitive` world can still turn out to have one
+ * genuinely notable specialty; a `cutting-edge` one can still have none).
+ */
+function rollTechnologySpecialtyCount({ technologyLevel, technologyAccess, rng }) {
+  const levelRank = TECHNOLOGY_LEVEL_RANK[technologyLevel] ?? Math.round(TECHNOLOGY_LEVEL_MAX_RANK / 2);
+  let base = levelRank >= 5 ? 2 : levelRank >= 3 ? 1 : 0;
+  if (technologyAccess === PLANET_TECHNOLOGY_ACCESS.UBIQUITOUS) base += 1;
+  if (technologyAccess === PLANET_TECHNOLOGY_ACCESS.ISOLATED) base = Math.max(0, base - 1);
+  const roll = (rng ?? Math.random)();
+  if (roll < 0.15) return Math.max(0, base - 1);
+  if (roll > 0.85) return Math.min(3, base + 1);
+  return base;
 }
 
 /**
@@ -239,13 +350,24 @@ function composeTagsAndSummary({ worldClass, government, stability, economy, haz
   // `UNINHABITED` world (see `rollCivilization()`) -- every read below
   // is null-safe so an uninhabited world's tags/summary never claim a
   // government or economy it doesn't have.
+  //
+  // PHASE 8D-3A R2 fix 7: `stability.tags` (`planet-stability.js`'s own
+  // `lawless`/`unstable`/`contested`/`fractured`/`civil-war`/etc. tags)
+  // is now merged in too -- previously `stability` was received here
+  // but only ever read for its `.value` in the summary prose below,
+  // never its `.tags`, so a `lawless` or `civil-war` world's own
+  // `suggestedOppositionTags` (`planet-hooks.js`'s
+  // `deriveSuggestedOppositionTags()`, which explicitly filters for
+  // exactly these values) could never actually surface them -- the
+  // draft's `tags` field genuinely never carried them.
   const economySectors = [economy.primarySector, ...(economy.secondarySectors || [])].filter(Boolean);
   const tags = mergeTags(
     worldClass.tags,
     economySectors.flatMap((e) => e.tags || []),
     hazards.flatMap((h) => h.tags || []),
     traits.flatMap((t) => t.tags || []),
-    government?.tags || []
+    government?.tags || [],
+    stability?.tags || []
   );
   const summary = composeLocationSummary({
     worldClass: worldClass.value,
@@ -292,24 +414,45 @@ function rollEconomy({ rng, preferTags, worldClass, populationScale, settlementP
 }
 
 /**
- * Roll the full "civilization" block (`technologyLevel`/`government`/
- * `stability`/`economy`) for a world. `UNINHABITED` gates all four --
- * see the module-header correction note. `OUTPOST` and every denser
- * scale still roll a real (if modest) government/economy of their own.
+ * Roll the full "civilization" block (`technologyLevel`/`technologyAccess`/
+ * `technologySpecialties`/`government`/`stability`/`economy`) for a world.
+ * `UNINHABITED` gates all of it -- see the module-header correction note.
+ * `OUTPOST` and every denser scale still roll a real (if modest)
+ * government/economy of their own.
  *
  * PHASE 8D-3A: `government` now also reads `preferTags` (previously
  * only `economy` did) -- a pre-existing wiring gap, closed here because
  * it is exactly what makes a planet preset's (`data/planet-presets.js`)
  * intent (e.g. "Corporate Colony," "Military Garrison," "Sacred World")
  * actually reach the government pick, not just world class/economy.
+ *
+ * PHASE 8D-3A R2 fix 10 (technology production refinement): `economy` now
+ * rolls BEFORE `technologyLevel`/`technologyAccess`/`technologySpecialties`
+ * (previously technology rolled first) specifically so the technology
+ * picks can be softly weighted by the world's ACTUAL rolled economy-sector
+ * tags, not just the ambient region/world-class `preferTags` every other
+ * field already saw -- a `mining`/`technology`/`shipbuilding`-sector world
+ * is now somewhat more likely to roll higher technology, independent of
+ * whether its region/world class alone would have suggested that. This
+ * reorder is safe: `rollEconomy()`/`generatePlanetEconomySectors()` never
+ * read `technologyLevel` themselves, so nothing downstream loses context by
+ * moving technology after economy. Every technology field stays a SOFT
+ * skew only (§ "do not hard-lock except for clearly incoherent combos" --
+ * there are none here) -- every level/access value and every specialty
+ * stays reachable regardless of context, just more or less likely.
  */
 function rollCivilization({ rng, preferTags, worldClass, populationScale, settlementPattern, secondaryCount }) {
   const isUninhabited = populationScale === POPULATION_SCALE.UNINHABITED;
-  const technologyLevel = isUninhabited ? null : pickPlanetTechnologyLevel({ rng, preferTags });
   const government = isUninhabited ? null : pickPlanetGovernment({ rng, preferTags });
   const stability = isUninhabited ? null : pickPlanetStability({ rng, preferTags });
   const economy = rollEconomy({ rng, preferTags, worldClass, populationScale, settlementPattern, stability, government, secondaryCount });
-  return { technologyLevel, government, stability, economy };
+  const technologyPreferTags = mergeTags(preferTags, economySectorTags(economy));
+  const technologyLevel = isUninhabited ? null : pickPlanetTechnologyLevel({ rng, preferTags: technologyPreferTags });
+  const technologyAccess = isUninhabited ? null : pickPlanetTechnologyAccess({ rng, preferTags: technologyPreferTags });
+  const technologySpecialties = isUninhabited
+    ? []
+    : pickPlanetTechnologySpecialties({ rng, preferTags: technologyPreferTags, count: rollTechnologySpecialtyCount({ technologyLevel, technologyAccess, rng }) });
+  return { technologyLevel, technologyAccess, technologySpecialties, government, stability, economy };
 }
 
 /**
@@ -339,17 +482,26 @@ function rollCivilization({ rng, preferTags, worldClass, populationScale, settle
 export function createProceduralPlanetDraft({ rng, availableSpeciesIds = [], includeChild = false, presetId = '' } = {}) {
   const preset = presetId ? getPlanetPreset(presetId) : null;
   const presetPreferTags = preset?.preferTags || [];
-  const worldClass = pickPlanetWorldClass({ rng, preferTags: presetPreferTags });
-  const preferTags = mergeTags(presetPreferTags, worldClassPreferenceTags(worldClass));
+  // Region is rolled BEFORE world class specifically so it can bias
+  // that pick too (finding #2) -- nothing downstream of world class
+  // depended on region being rolled after it.
+  const region = pickPlanetRegion({ rng });
+  const worldClass = pickPlanetWorldClass({ rng, preferTags: worldClassPreferTagsFor({ presetPreferTags, region }) });
+  const preferTags = generationPreferenceTags({ presetPreferTags, region, worldClass });
+  // PHASE 8D-3A correction pass (finding #3): a handful of world
+  // classes carry a DEFINITIONAL (hard-filtered) gravity/atmosphere/
+  // hydrosphere restriction -- see `WORLD_CLASS_DEFINITIONAL_CONSTRAINTS`'s
+  // own doc. `envConstraints` is `{}` for the vast majority of world
+  // classes, which stay fully soft-weighted exactly as before.
+  const envConstraints = definitionalConstraintsFor(worldClass.value);
   const size = pickPlanetSize({ rng });
-  const gravity = pickPlanetGravity({ rng });
-  const atmosphere = pickPlanetAtmosphere({ rng });
+  const gravity = pickPlanetGravity({ rng, allowedValues: envConstraints.gravity });
+  const atmosphere = pickPlanetAtmosphere({ rng, allowedValues: envConstraints.atmosphere });
   const nameDraft = getRandomPlanetName({ rng, preferTags });
   const systemDraft = rollSystemDraft({ rng, planetName: nameDraft.name, preferTags });
-  const region = pickPlanetRegion({ rng });
   const sector = pickSectorName({ rng });
   const climate = pickPlanetClimate({ rng, preferTags });
-  const hydrosphere = pickPlanetHydrosphere({ rng, preferTags });
+  const hydrosphere = pickPlanetHydrosphere({ rng, preferTags, allowedValues: envConstraints.hydrosphere });
   const {
     profile: populationProfile,
     character: populationCharacter,
@@ -360,16 +512,16 @@ export function createProceduralPlanetDraft({ rng, availableSpeciesIds = [], inc
     populationScale,
     populationEstimate,
     populationEstimateNumeric
-  } = generateProceduralPlanetPopulationProfile({ availableSpeciesIds, rng, habitable: worldClass.habitable, densityBias: preset?.densityBias || worldClass.populationBias || '' });
+  } = generateProceduralPlanetPopulationProfile({ availableSpeciesIds, rng, habitable: worldClass.habitable, densityBias: densityBiasFor({ presetDensityBias: preset?.densityBias || '', region, worldClass }) });
   const settlementPattern = pickSettlementPattern({ rng, populationScale });
-  const { technologyLevel, government, stability, economy } = rollCivilization({ rng, preferTags, worldClass, populationScale, settlementPattern });
-  const droidPrevalence = pickPlanetDroidPrevalence({ rng, technologyLevel: technologyLevel || '', economyTags: economySectorTags(economy) });
+  const { technologyLevel, technologyAccess, technologySpecialties, government, stability, economy } = rollCivilization({ rng, preferTags, worldClass, populationScale, settlementPattern });
+  const droidPrevalence = pickPlanetDroidPrevalence({ rng, technologyLevel: technologyLevel || '', technologyAccess: technologyAccess || '', economyTags: economySectorTags(economy) });
   const hazards = pickPlanetHazards({ rng, preferTags, count: Math.floor((rng ?? Math.random)() * 3) });
   const historyHooks = pickPlanetHistoryHooks({ rng, preferTags, count: 1 });
   const traits = pickPlanetTraits({ rng, preferTags, count: 1 + Math.floor((rng ?? Math.random)() * 3) });
   const { tags, summary } = composeTagsAndSummary({ worldClass, government, stability, economy, hazards, traits, populationEstimate });
   const hooks = generatePlanetHooks({ rng, tags });
-  const diagnostics = computePlanetDiagnostics({ worldClass, government, economy, technologyLevel, populationScale });
+  const diagnostics = computePlanetDiagnostics({ worldClass, government, economy, technologyLevel, populationScale, gravity, atmosphere, hydrosphere });
 
   return {
     draftId: createDraftId('location'),
@@ -404,6 +556,8 @@ export function createProceduralPlanetDraft({ rng, availableSpeciesIds = [], inc
     droidPrevalence,
     settlementPattern,
     technologyLevel,
+    technologyAccess,
+    technologySpecialties,
     government,
     stability,
     economy,
@@ -437,12 +591,25 @@ export function rerollPlanetHooks(draft, { rng } = {}) {
  * name doesn't imply its class). PHASE 8D-3A: when the draft carries a
  * `presetId`, the reroll stays biased by that preset's `preferTags` --
  * a preset applied at creation stays "sticky" across a world-class
- * reroll rather than only ever applying once.
+ * reroll rather than only ever applying once. Also honors the draft's
+ * rolled `region` (correction pass round 2, finding #2) -- region was
+ * previously pure decoration, read by nothing.
+ *
+ * Deliberately does NOT touch gravity/atmosphere/hydrosphere (finding
+ * #3) -- "reroll ONLY the world class" means only the world class. If
+ * the newly-rolled class carries a DEFINITIONAL environment constraint
+ * (`WORLD_CLASS_DEFINITIONAL_CONSTRAINTS`) the PRESERVED
+ * gravity/atmosphere/hydrosphere no longer satisfies (e.g. rerolling
+ * into "High-Gravity Terrestrial" while gravity stays "Very Low"),
+ * that's flagged via `DIAGNOSTIC_CODE.ENVIRONMENT_MISMATCH`, never
+ * silently forced to match or silently left inconsistent with no
+ * signal -- a GM can then choose to also reroll gravity, or use
+ * `regenerateEnvironment()` for a coherent whole-environment reroll.
  */
 export function rerollPlanetWorldClass(draft, { rng } = {}) {
-  const worldClass = pickPlanetWorldClass({ rng, preferTags: presetPreferTagsFor(draft) });
+  const worldClass = pickPlanetWorldClass({ rng, preferTags: worldClassPreferTagsFor({ presetPreferTags: presetPreferTagsFor(draft), region: draft.region }) });
   const { tags, summary } = composeTagsAndSummary({ worldClass, government: draft.government, stability: draft.stability, economy: draft.economy, hazards: draft.hazards, traits: draft.traits, populationEstimate: draft.populationEstimate });
-  const diagnostics = computePlanetDiagnostics({ worldClass, government: draft.government, economy: draft.economy, technologyLevel: draft.technologyLevel, populationScale: draft.populationScale });
+  const diagnostics = computePlanetDiagnostics({ worldClass, government: draft.government, economy: draft.economy, technologyLevel: draft.technologyLevel, populationScale: draft.populationScale, gravity: draft.gravity, atmosphere: draft.atmosphere, hydrosphere: draft.hydrosphere });
   return { ...draft, worldClass, biomes: worldClass.biomes, tags, summary, type: worldClass.locationType, diagnostics };
 }
 
@@ -451,22 +618,34 @@ export function rerollPlanetWorldClass(draft, { rng } = {}) {
  * `government.tags` -- CORRECTED: a prior version of this function
  * left `tags` stale after a government reroll) and the summary. A
  * no-op on an `UNINHABITED` draft -- there is no government to reroll.
- * PHASE 8D-3A: honors the draft's `presetId` (if any), same stickiness
+ * PHASE 8D-3A: honors the draft's `presetId`/`region`/world-class
+ * context (`generationPreferenceTagsForDraft()`), same stickiness
  * rationale as `rerollPlanetWorldClass()`.
  */
 export function rerollPlanetGovernment(draft, { rng } = {}) {
   if (draft.populationScale === POPULATION_SCALE.UNINHABITED) return draft;
-  const government = pickPlanetGovernment({ rng, preferTags: presetPreferTagsFor(draft) });
+  const government = pickPlanetGovernment({ rng, preferTags: generationPreferenceTagsForDraft(draft) });
   const { tags, summary } = composeTagsAndSummary({ worldClass: draft.worldClass, government, stability: draft.stability, economy: draft.economy, hazards: draft.hazards, traits: draft.traits, populationEstimate: draft.populationEstimate });
-  const diagnostics = computePlanetDiagnostics({ worldClass: draft.worldClass, government, economy: draft.economy, technologyLevel: draft.technologyLevel, populationScale: draft.populationScale });
+  const diagnostics = computePlanetDiagnostics({ worldClass: draft.worldClass, government, economy: draft.economy, technologyLevel: draft.technologyLevel, populationScale: draft.populationScale, gravity: draft.gravity, atmosphere: draft.atmosphere, hydrosphere: draft.hydrosphere });
   return { ...draft, government, tags, summary, diagnostics };
 }
 
-/** Reroll ONLY the stability, recomposing the summary (which reads it). Also rerolls `economy.illicitTrade`, which reads stability, to avoid leaving it stale. A no-op on an `UNINHABITED` draft -- there is no stability to reroll. PHASE 8D-3A: honors the draft's `presetId` (if any), same stickiness rationale as `rerollPlanetWorldClass()`. */
+/**
+ * Reroll ONLY the stability, recomposing `tags`/`summary` (both read it --
+ * R2 fix 7: `tags` previously wasn't recomputed here at all, so a
+ * stability reroll into e.g. `lawless`/`civil-war` left the draft's own
+ * `tags` field, and therefore `suggestedOppositionTags`, silently stale
+ * until an unrelated full reroll happened to recompute them). Also
+ * rerolls `economy.illicitTrade`, which reads stability, to avoid
+ * leaving it stale. A no-op on an `UNINHABITED` draft -- there is no
+ * stability to reroll. PHASE 8D-3A: honors the draft's
+ * `presetId`/`region`/world-class context, same stickiness rationale as
+ * `rerollPlanetWorldClass()`.
+ */
 export function rerollPlanetStability(draft, { rng } = {}) {
   if (draft.populationScale === POPULATION_SCALE.UNINHABITED) return draft;
-  const stability = pickPlanetStability({ rng, preferTags: presetPreferTagsFor(draft) });
-  const { summary } = composeTagsAndSummary({ worldClass: draft.worldClass, government: draft.government, stability, economy: draft.economy, hazards: draft.hazards, traits: draft.traits, populationEstimate: draft.populationEstimate });
+  const stability = pickPlanetStability({ rng, preferTags: generationPreferenceTagsForDraft(draft) });
+  const { tags, summary } = composeTagsAndSummary({ worldClass: draft.worldClass, government: draft.government, stability, economy: draft.economy, hazards: draft.hazards, traits: draft.traits, populationEstimate: draft.populationEstimate });
   const trade = generatePlanetTrade({
     rng,
     primarySector: draft.economy.primarySector,
@@ -479,7 +658,7 @@ export function rerollPlanetStability(draft, { rng } = {}) {
     exportCount: draft.economy.exports.length || 1,
     importCount: draft.economy.imports.length || 1
   });
-  return { ...draft, stability, summary, economy: { ...draft.economy, ...trade } };
+  return { ...draft, stability, tags, summary, economy: { ...draft.economy, ...trade } };
 }
 
 /**
@@ -496,7 +675,7 @@ export function rerollPlanetEconomy(draft, { rng, secondaryCount } = {}) {
   if (draft.populationScale === POPULATION_SCALE.UNINHABITED) return draft;
   const economy = rollEconomy({
     rng,
-    preferTags: worldClassPreferenceTags(draft.worldClass),
+    preferTags: generationPreferenceTagsForDraft(draft),
     worldClass: draft.worldClass,
     populationScale: draft.populationScale,
     settlementPattern: draft.settlementPattern,
@@ -504,7 +683,7 @@ export function rerollPlanetEconomy(draft, { rng, secondaryCount } = {}) {
     secondaryCount
   });
   const { tags, summary } = composeTagsAndSummary({ worldClass: draft.worldClass, government: draft.government, stability: draft.stability, economy, hazards: draft.hazards, traits: draft.traits, populationEstimate: draft.populationEstimate });
-  const diagnostics = computePlanetDiagnostics({ worldClass: draft.worldClass, government: draft.government, economy, technologyLevel: draft.technologyLevel, populationScale: draft.populationScale });
+  const diagnostics = computePlanetDiagnostics({ worldClass: draft.worldClass, government: draft.government, economy, technologyLevel: draft.technologyLevel, populationScale: draft.populationScale, gravity: draft.gravity, atmosphere: draft.atmosphere, hydrosphere: draft.hydrosphere });
   return { ...draft, economy, tags, summary, diagnostics };
 }
 
@@ -526,21 +705,21 @@ export function rerollPlanetTrade(draft, { rng, exportCount, importCount } = {})
   return { ...draft, economy: { ...draft.economy, ...trade } };
 }
 
-/** Reroll ONLY the hazards, recomputing tags. */
+/** Reroll ONLY the hazards, recomputing tags. PHASE 8D-3A: honors the draft's `presetId`/`region`/world-class context. */
 export function rerollPlanetHazards(draft, { rng, count } = {}) {
-  const hazards = pickPlanetHazards({ rng, preferTags: worldClassPreferenceTags(draft.worldClass), count: count ?? draft.hazards.length });
+  const hazards = pickPlanetHazards({ rng, preferTags: generationPreferenceTagsForDraft(draft), count: count ?? draft.hazards.length });
   const { tags } = composeTagsAndSummary({ worldClass: draft.worldClass, government: draft.government, stability: draft.stability, economy: draft.economy, hazards, traits: draft.traits });
   return { ...draft, hazards, tags };
 }
 
-/** Reroll ONLY the history hooks. Never touches tags/summary (history hooks aren't read by either). */
+/** Reroll ONLY the history hooks. Never touches tags/summary (history hooks aren't read by either). PHASE 8D-3A: honors the draft's `presetId`/`region`/world-class context (previously rerolled with NO preference at all, unlike the initial roll). */
 export function rerollPlanetHistoryHooks(draft, { rng, count } = {}) {
-  return { ...draft, historyHooks: pickPlanetHistoryHooks({ rng, count: count ?? draft.historyHooks.length ?? 1 }) };
+  return { ...draft, historyHooks: pickPlanetHistoryHooks({ rng, preferTags: generationPreferenceTagsForDraft(draft), count: count ?? draft.historyHooks.length ?? 1 }) };
 }
 
-/** Reroll ONLY the traits, recomputing tags. */
+/** Reroll ONLY the traits, recomputing tags. PHASE 8D-3A: honors the draft's `presetId`/`region`/world-class context. */
 export function rerollPlanetTraits(draft, { rng, count } = {}) {
-  const traits = pickPlanetTraits({ rng, preferTags: worldClassPreferenceTags(draft.worldClass), count: count ?? draft.traits.length });
+  const traits = pickPlanetTraits({ rng, preferTags: generationPreferenceTagsForDraft(draft), count: count ?? draft.traits.length });
   const { tags } = composeTagsAndSummary({ worldClass: draft.worldClass, government: draft.government, stability: draft.stability, economy: draft.economy, hazards: draft.hazards, traits });
   return { ...draft, traits, tags };
 }
@@ -609,18 +788,18 @@ export function rerollPlanetPopulation(draft, { rng, availableSpeciesIds = [], h
     availableSpeciesIds,
     rng,
     habitable: habitable ?? draft.worldClass?.habitable,
-    densityBias: presetDensityBiasFor(draft) || draft.worldClass?.populationBias || ''
+    densityBias: densityBiasFor({ presetDensityBias: presetDensityBiasFor(draft), region: draft.region, worldClass: draft.worldClass })
   });
   const settlementPattern = pickSettlementPattern({ rng, populationScale });
 
   const wasUninhabited = draft.populationScale === POPULATION_SCALE.UNINHABITED;
   const isUninhabited = populationScale === POPULATION_SCALE.UNINHABITED;
 
-  let technologyLevel, government, stability, economy;
+  let technologyLevel, technologyAccess, technologySpecialties, government, stability, economy;
   if (wasUninhabited || isUninhabited) {
     // Crossing the UNINHABITED boundary in either direction: the whole
     // civilization block must be (re)computed from scratch.
-    ({ technologyLevel, government, stability, economy } = rollCivilization({
+    ({ technologyLevel, technologyAccess, technologySpecialties, government, stability, economy } = rollCivilization({
       rng,
       preferTags: worldClassPreferenceTags(draft.worldClass),
       worldClass: draft.worldClass,
@@ -629,9 +808,12 @@ export function rerollPlanetPopulation(draft, { rng, availableSpeciesIds = [], h
     }));
   } else {
     // Staying inhabited: preserve government/stability/technologyLevel/
-    // sectors untouched. Only trade is recomputed -- it genuinely
-    // depends on the new populationScale/settlementPattern.
+    // technologyAccess/technologySpecialties/sectors untouched. Only
+    // trade is recomputed -- it genuinely depends on the new
+    // populationScale/settlementPattern.
     technologyLevel = draft.technologyLevel;
+    technologyAccess = draft.technologyAccess;
+    technologySpecialties = draft.technologySpecialties;
     government = draft.government;
     stability = draft.stability;
     const trade = generatePlanetTrade({
@@ -650,7 +832,7 @@ export function rerollPlanetPopulation(draft, { rng, availableSpeciesIds = [], h
   }
 
   const { tags, summary } = composeTagsAndSummary({ worldClass: draft.worldClass, government, stability, economy, hazards: draft.hazards, traits: draft.traits, populationEstimate });
-  const diagnostics = computePlanetDiagnostics({ worldClass: draft.worldClass, government, economy, technologyLevel, populationScale });
+  const diagnostics = computePlanetDiagnostics({ worldClass: draft.worldClass, government, economy, technologyLevel, populationScale, gravity: draft.gravity, atmosphere: draft.atmosphere, hydrosphere: draft.hydrosphere });
   return {
     ...draft,
     populationProfile,
@@ -664,6 +846,8 @@ export function rerollPlanetPopulation(draft, { rng, availableSpeciesIds = [], h
     populationEstimateNumeric,
     settlementPattern,
     technologyLevel,
+    technologyAccess,
+    technologySpecialties,
     government,
     stability,
     economy,
@@ -671,6 +855,41 @@ export function rerollPlanetPopulation(draft, { rng, availableSpeciesIds = [], h
     summary,
     diagnostics
   };
+}
+
+/**
+ * PHASE 8D-3A correction pass (independent review round 2, finding
+ * #6): reroll ONLY the species demographic distribution (population
+ * character, dominant/native species, colonization pattern) -- pinning
+ * population SCALE exactly as it was via
+ * `generateProceduralPlanetPopulationProfile()`'s own
+ * `populationScaleOverride`, so `populationEstimate`/
+ * `populationEstimateNumeric`/`settlementPattern`/`government`/
+ * `technologyLevel`/`economy`/`trade` are left completely untouched --
+ * distinct from `rerollPlanetPopulation()`, which rerolls the scale
+ * ITSELF and can therefore legitimately cascade into the whole
+ * civilization block when a reroll crosses the UNINHABITED boundary.
+ * `rerollPlanetDemographics()` never crosses that boundary (an already
+ * inhabited world stays inhabited at the SAME scale); a no-op on an
+ * UNINHABITED draft, exactly like every civilization-block reroll --
+ * there is no demographic distribution to reroll on a world with none.
+ */
+export function rerollPlanetDemographics(draft, { rng, availableSpeciesIds = [] } = {}) {
+  if (draft.populationScale === POPULATION_SCALE.UNINHABITED) return draft;
+  const {
+    profile: populationProfile,
+    character: populationCharacter,
+    dominantSpeciesId,
+    dominantSpeciesIds,
+    nativeSpeciesIds,
+    colonizationPattern
+  } = generateProceduralPlanetPopulationProfile({
+    availableSpeciesIds,
+    rng,
+    habitable: draft.worldClass?.habitable,
+    populationScaleOverride: draft.populationScale
+  });
+  return { ...draft, populationProfile, populationCharacter, dominantSpeciesId, dominantSpeciesIds, nativeSpeciesIds, colonizationPattern };
 }
 
 /**
@@ -691,7 +910,7 @@ export function rerollPlanetPopulation(draft, { rng, availableSpeciesIds = [], h
  * the old name in the first place.
  */
 export function rerollPlanetName(draft, { rng } = {}) {
-  const nameDraft = getRandomPlanetName({ rng, preferTags: presetPreferTagsFor(draft) });
+  const nameDraft = getRandomPlanetName({ rng, preferTags: generationPreferenceTagsForDraft(draft) });
   const systemDraft = draft.systemDraft?.independent
     ? draft.systemDraft
     : { ...draft.systemDraft, name: `${nameDraft.name} system`, planetName: nameDraft.name };
@@ -708,18 +927,22 @@ export function rerollPlanetName(draft, { rng } = {}) {
  * whichever style happened to be rolled first.
  */
 export function rerollPlanetSystem(draft, { rng, independent } = {}) {
-  const systemDraft = rollSystemDraft({ rng, planetName: draft.name, preferTags: presetPreferTagsFor(draft), independent });
+  const systemDraft = rollSystemDraft({ rng, planetName: draft.name, preferTags: generationPreferenceTagsForDraft(draft), independent });
   return { ...draft, system: systemDraft.name, systemDraft };
 }
 
-/** Reroll ONLY the gravity. */
+/** Reroll ONLY the gravity, respecting the CURRENT world class's definitional constraint (PHASE 8D-3A correction pass, finding #3) -- there is never a reason for a targeted gravity reroll to deliberately introduce a contradiction the world class already forbids. Recomputes diagnostics, since this reroll can newly satisfy (or, on an unconstrained world class, never affect) `ENVIRONMENT_MISMATCH`. */
 export function rerollPlanetGravity(draft, { rng } = {}) {
-  return { ...draft, gravity: pickPlanetGravity({ rng }) };
+  const gravity = pickPlanetGravity({ rng, allowedValues: definitionalConstraintsFor(draft.worldClass.value).gravity });
+  const diagnostics = computePlanetDiagnostics({ worldClass: draft.worldClass, government: draft.government, economy: draft.economy, technologyLevel: draft.technologyLevel, populationScale: draft.populationScale, gravity, atmosphere: draft.atmosphere, hydrosphere: draft.hydrosphere });
+  return { ...draft, gravity, diagnostics };
 }
 
-/** Reroll ONLY the atmosphere. */
+/** Reroll ONLY the atmosphere, respecting the CURRENT world class's definitional constraint -- see `rerollPlanetGravity()`'s own doc for the rationale this mirrors. */
 export function rerollPlanetAtmosphere(draft, { rng } = {}) {
-  return { ...draft, atmosphere: pickPlanetAtmosphere({ rng }) };
+  const atmosphere = pickPlanetAtmosphere({ rng, allowedValues: definitionalConstraintsFor(draft.worldClass.value).atmosphere });
+  const diagnostics = computePlanetDiagnostics({ worldClass: draft.worldClass, government: draft.government, economy: draft.economy, technologyLevel: draft.technologyLevel, populationScale: draft.populationScale, gravity: draft.gravity, atmosphere, hydrosphere: draft.hydrosphere });
+  return { ...draft, atmosphere, diagnostics };
 }
 
 /** Reroll ONLY the region. */
@@ -734,23 +957,64 @@ export function rerollPlanetSector(draft, { rng } = {}) {
 
 /** Reroll ONLY the climate. */
 export function rerollPlanetClimate(draft, { rng } = {}) {
-  return { ...draft, climate: pickPlanetClimate({ rng, preferTags: worldClassPreferenceTags(draft.worldClass) }) };
+  return { ...draft, climate: pickPlanetClimate({ rng, preferTags: generationPreferenceTagsForDraft(draft) }) };
 }
 
-/** Reroll ONLY the hydrosphere. */
+/** Reroll ONLY the hydrosphere, respecting the CURRENT world class's definitional constraint -- see `rerollPlanetGravity()`'s own doc for the rationale this mirrors. */
 export function rerollPlanetHydrosphere(draft, { rng } = {}) {
-  return { ...draft, hydrosphere: pickPlanetHydrosphere({ rng, preferTags: worldClassPreferenceTags(draft.worldClass) }) };
+  const hydrosphere = pickPlanetHydrosphere({ rng, preferTags: generationPreferenceTagsForDraft(draft), allowedValues: definitionalConstraintsFor(draft.worldClass.value).hydrosphere });
+  const diagnostics = computePlanetDiagnostics({ worldClass: draft.worldClass, government: draft.government, economy: draft.economy, technologyLevel: draft.technologyLevel, populationScale: draft.populationScale, gravity: draft.gravity, atmosphere: draft.atmosphere, hydrosphere });
+  return { ...draft, hydrosphere, diagnostics };
 }
 
-/** Reroll ONLY the technology level. A no-op on an `UNINHABITED` draft -- there is no technology level to reroll. PHASE 8D-3A: honors the draft's `presetId` (if any), same stickiness rationale as `rerollPlanetWorldClass()`. */
+/**
+ * Reroll ONLY the technology level. A no-op on an `UNINHABITED` draft --
+ * there is no technology level to reroll. PHASE 8D-3A: honors the draft's
+ * `presetId` (if any), same stickiness rationale as `rerollPlanetWorldClass()`.
+ * R2 fix 10: preferTags now also include the draft's CURRENT economy-sector
+ * tags -- the same region/world-class/economy soft-weighting context
+ * `rollCivilization()` uses at creation -- so a targeted reroll stays
+ * consistent with the world's actual rolled economy, not just its ambient
+ * region/world-class context. Leaves `technologyAccess`/
+ * `technologySpecialties` completely untouched (single-field reroll
+ * discipline -- use `rerollPlanetTechnologyAccess()`/
+ * `rerollPlanetTechnologySpecialties()` for those).
+ */
 export function rerollPlanetTechnologyLevel(draft, { rng } = {}) {
   if (draft.populationScale === POPULATION_SCALE.UNINHABITED) return draft;
-  const technologyLevel = pickPlanetTechnologyLevel({ rng, preferTags: presetPreferTagsFor(draft) });
-  const diagnostics = computePlanetDiagnostics({ worldClass: draft.worldClass, government: draft.government, economy: draft.economy, technologyLevel, populationScale: draft.populationScale });
+  const preferTags = mergeTags(generationPreferenceTagsForDraft(draft), economySectorTags(draft.economy));
+  const technologyLevel = pickPlanetTechnologyLevel({ rng, preferTags });
+  const diagnostics = computePlanetDiagnostics({ worldClass: draft.worldClass, government: draft.government, economy: draft.economy, technologyLevel, populationScale: draft.populationScale, gravity: draft.gravity, atmosphere: draft.atmosphere, hydrosphere: draft.hydrosphere });
   return { ...draft, technologyLevel, diagnostics };
 }
 
-/** Reroll ONLY the droid prevalence. Always meaningful, including on an `UNINHABITED` draft -- droid prevalence is independent of organic population (see `planet-profile.js`'s `PLANET_DROID_PREVALENCE`). Re-applies the same technology-level/economy-tag context skew the initial roll used. */
+/**
+ * PHASE 8D-3A R2 fix 10: reroll ONLY `technologyAccess`, preserving
+ * `technologyLevel`/`technologySpecialties`/everything else. A no-op on
+ * an `UNINHABITED` draft, matching every other civilization-block field.
+ */
+export function rerollPlanetTechnologyAccess(draft, { rng } = {}) {
+  if (draft.populationScale === POPULATION_SCALE.UNINHABITED) return draft;
+  const preferTags = mergeTags(generationPreferenceTagsForDraft(draft), economySectorTags(draft.economy));
+  return { ...draft, technologyAccess: pickPlanetTechnologyAccess({ rng, preferTags }) };
+}
+
+/**
+ * PHASE 8D-3A R2 fix 10: reroll ONLY `technologySpecialties`, preserving
+ * `technologyLevel`/`technologyAccess`/everything else. A no-op on an
+ * `UNINHABITED` draft. `count`, when supplied, overrides the normal
+ * level/access-weighted count roll (see `rollTechnologySpecialtyCount()`)
+ * -- e.g. a GM explicitly wanting exactly one specialty rerolled rather
+ * than also rerolling how many the world has.
+ */
+export function rerollPlanetTechnologySpecialties(draft, { rng, count } = {}) {
+  if (draft.populationScale === POPULATION_SCALE.UNINHABITED) return draft;
+  const preferTags = mergeTags(generationPreferenceTagsForDraft(draft), economySectorTags(draft.economy));
+  const resolvedCount = Number.isFinite(count) ? count : rollTechnologySpecialtyCount({ technologyLevel: draft.technologyLevel, technologyAccess: draft.technologyAccess, rng });
+  return { ...draft, technologySpecialties: pickPlanetTechnologySpecialties({ rng, preferTags, count: resolvedCount }) };
+}
+
+/** Reroll ONLY the droid prevalence. Always meaningful, including on an `UNINHABITED` draft -- droid prevalence is independent of organic population (see `planet-profile.js`'s `PLANET_DROID_PREVALENCE`). Re-applies the same technology-level/technology-access/economy-tag context skew the initial roll used. */
 export function rerollPlanetDroidPrevalence(draft, { rng } = {}) {
-  return { ...draft, droidPrevalence: pickPlanetDroidPrevalence({ rng, technologyLevel: draft.technologyLevel || '', economyTags: economySectorTags(draft.economy) }) };
+  return { ...draft, droidPrevalence: pickPlanetDroidPrevalence({ rng, technologyLevel: draft.technologyLevel || '', technologyAccess: draft.technologyAccess || '', economyTags: economySectorTags(draft.economy) }) };
 }

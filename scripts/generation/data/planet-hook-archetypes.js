@@ -19,7 +19,8 @@
  * consider, never an actual Faction or Job created here.
  */
 
-import { ORGANIZATION_FAMILY } from '../organization-metadata.js';
+import { ORGANIZATION_FAMILY, FACTION_ARCHETYPE_FAMILY } from '../organization-metadata.js';
+import { JOB_ARCHETYPE_METADATA } from '../jobs/job-archetype-metadata.js';
 
 export const FACTION_ARCHETYPE_TAGS = Object.freeze([
   { value: 'government', tags: [ORGANIZATION_FAMILY.GOVERNMENT_BUREAUCRACY, 'urban'] },
@@ -60,3 +61,40 @@ export const JOB_ARCHETYPE_TAGS = Object.freeze([
   { value: 'infiltration', tags: ['criminal', 'mysterious', 'government-bureaucracy'] },
   { value: 'boarding', tags: ['void', 'trade', 'criminal'] }
 ]);
+
+// PHASE 8D-3A R2 fix 9: self-check at module load, the same discipline
+// `data/planet-region-bias.js` established -- these two manifests claim
+// (in this file's own header doc) to be "exactly" their canonical
+// authorities' key sets (`organization-metadata.js`'s
+// `FACTION_ARCHETYPE_FAMILY`, `job-archetype-metadata.js`'s
+// `JOB_ARCHETYPE_METADATA`), but nothing previously verified that claim
+// -- the two manifests could silently drift apart (an archetype added to
+// one, forgotten in the other) with no error, only a quietly-incomplete
+// suggestion pool. Throws immediately on a mismatch in EITHER direction
+// (missing here, or extra/stale here) so drift is caught at load time,
+// not discovered later as "why does this archetype never get suggested."
+{
+  const factionValues = new Set(FACTION_ARCHETYPE_TAGS.map((e) => e.value));
+  const factionAuthorityKeys = new Set(Object.keys(FACTION_ARCHETYPE_FAMILY));
+  for (const key of factionAuthorityKeys) {
+    if (!factionValues.has(key)) throw new Error(`planet-hook-archetypes.js: FACTION_ARCHETYPE_TAGS is missing an entry for FACTION_ARCHETYPE_FAMILY key "${key}"`);
+  }
+  for (const value of factionValues) {
+    if (!factionAuthorityKeys.has(value)) throw new Error(`planet-hook-archetypes.js: FACTION_ARCHETYPE_TAGS has a stale/unrecognized entry "${value}" not present in FACTION_ARCHETYPE_FAMILY`);
+  }
+  for (const entry of FACTION_ARCHETYPE_TAGS) {
+    const expectedFamily = FACTION_ARCHETYPE_FAMILY[entry.value];
+    if (expectedFamily && !entry.tags.includes(expectedFamily)) {
+      throw new Error(`planet-hook-archetypes.js: FACTION_ARCHETYPE_TAGS entry "${entry.value}" must carry its canonical ORGANIZATION_FAMILY tag "${expectedFamily}"`);
+    }
+  }
+
+  const jobValues = new Set(JOB_ARCHETYPE_TAGS.map((e) => e.value));
+  const jobAuthorityKeys = new Set(Object.keys(JOB_ARCHETYPE_METADATA));
+  for (const key of jobAuthorityKeys) {
+    if (!jobValues.has(key)) throw new Error(`planet-hook-archetypes.js: JOB_ARCHETYPE_TAGS is missing an entry for JOB_ARCHETYPE_METADATA key "${key}"`);
+  }
+  for (const value of jobValues) {
+    if (!jobAuthorityKeys.has(value)) throw new Error(`planet-hook-archetypes.js: JOB_ARCHETYPE_TAGS has a stale/unrecognized entry "${value}" not present in JOB_ARCHETYPE_METADATA`);
+  }
+}

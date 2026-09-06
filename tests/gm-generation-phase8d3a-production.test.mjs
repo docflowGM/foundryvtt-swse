@@ -222,7 +222,7 @@ const abs = (rel) => `/systems/foundryvtt-swse/${rel}`;
     const d = createProceduralPlanetDraft({ rng: makeSeededRng(seed + 2000000) });
     assert.ok(Array.isArray(d.diagnostics), `seed ${seed}: diagnostics must always be an array`);
     if (d.populationScale === POPULATION_SCALE.UNINHABITED) { assert.deepEqual(d.diagnostics, [], `seed ${seed}: an UNINHABITED world must have empty diagnostics`); continue; }
-    if (d.diagnostics.includes(DIAGNOSTIC_CODE.TRADE_CONTEXT_MISMATCH)) sawTrade = true;
+    if (d.diagnostics.includes(DIAGNOSTIC_CODE.ECONOMY_ENVIRONMENT_MISMATCH)) sawTrade = true;
     if (d.diagnostics.includes(DIAGNOSTIC_CODE.GOVERNMENT_POPULATION_MISMATCH)) sawGovPop = true;
     if (d.diagnostics.includes(DIAGNOSTIC_CODE.TECHNOLOGY_POPULATION_MISMATCH)) sawTechPop = true;
   }
@@ -277,11 +277,25 @@ const abs = (rel) => `/systems/foundryvtt-swse/${rel}`;
   assert.equal(factsOnly.planetDraft.worldClass, base.planetDraft.worldClass, 'rerollPlanetFactsOnly must not touch worldClass');
   assert.notEqual(factsOnly.planetDraft.hazards, base.planetDraft.hazards, 'rerollPlanetFactsOnly must actually reroll hazards');
 
+  // regenerateEnvironment/regenerateCivilization preserve every POI's IDENTITY (draftId/template/name/nameDraft)
+  // but REFRESH its parent-derived context (biomes/tags/generatorContext/diagnostics) against the changed planet --
+  // finding #5's fix: staleness must become a visible signal, not silently preserved AND not silently hidden.
   const envReroll = regenerateEnvironment(base, { rng: makeSeededRng(20) });
-  assert.equal(envReroll.poiDrafts, base.poiDrafts, 'regenerateEnvironment must preserve the exact same poiDrafts array reference');
+  assert.equal(envReroll.poiDrafts.length, base.poiDrafts.length, 'regenerateEnvironment must preserve the POI count');
+  for (let i = 0; i < base.poiDrafts.length; i++) {
+    assert.equal(envReroll.poiDrafts[i].draftId, base.poiDrafts[i].draftId, `regenerateEnvironment must preserve POI identity (draftId) at index ${i}`);
+    assert.equal(envReroll.poiDrafts[i].template, base.poiDrafts[i].template, `regenerateEnvironment must preserve POI identity (template) at index ${i}`);
+    assert.equal(envReroll.poiDrafts[i].name, base.poiDrafts[i].name, `regenerateEnvironment must preserve POI identity (name) at index ${i}`);
+    assert.ok(Array.isArray(envReroll.poiDrafts[i].diagnostics), `regenerateEnvironment must leave every POI with a well-formed diagnostics array at index ${i}`);
+  }
 
   const civReroll = regenerateCivilization(base, { rng: makeSeededRng(30) });
-  assert.equal(civReroll.poiDrafts, base.poiDrafts, 'regenerateCivilization must preserve the exact same poiDrafts array reference');
+  assert.equal(civReroll.poiDrafts.length, base.poiDrafts.length, 'regenerateCivilization must preserve the POI count');
+  for (let i = 0; i < base.poiDrafts.length; i++) {
+    assert.equal(civReroll.poiDrafts[i].draftId, base.poiDrafts[i].draftId, `regenerateCivilization must preserve POI identity (draftId) at index ${i}`);
+    assert.equal(civReroll.poiDrafts[i].template, base.poiDrafts[i].template, `regenerateCivilization must preserve POI identity (template) at index ${i}`);
+    assert.equal(civReroll.poiDrafts[i].name, base.poiDrafts[i].name, `regenerateCivilization must preserve POI identity (name) at index ${i}`);
+  }
 
   const added = addPoiToBundle(base, { rng: makeSeededRng(40) });
   assert.equal(added.poiDrafts.length, base.poiDrafts.length + 1, 'addPoiToBundle must add exactly one POI');
@@ -453,6 +467,388 @@ const abs = (rel) => `/systems/foundryvtt-swse/${rel}`;
   assert.equal(explicitPoiCount.poiDrafts.length, 2, 'regenerateAllPois must honor an explicit poiCount override');
 
   console.log('PHASE 8D-3A correction pass (preset bias reaches stability/technology, independent system names reachable-but-uncommon, missing name/system/gravity/atmosphere rerolls, regenerateAllPois bundle operation) passed.');
+}
+
+// ------------------------------------------------------------
+// Correction pass round 2: gaps caught by independent review --
+// species prevalence weighting used display names while identity used
+// IDs (silently inert), region had no generation-bias wiring, world
+// class and gravity/atmosphere/hydrosphere could land on physically
+// incoherent combinations, presets couldn't reach the bundle
+// generator or survive regeneration, and rerollPlanetDemographics
+// (species-only, narrower than rerollPlanetPopulation) didn't exist.
+// ------------------------------------------------------------
+{
+  const { makeSeededRng } = await import(abs('scripts/generation/lib/weighted-random.js'));
+  const {
+    createProceduralPlanetDraft,
+    rerollPlanetDemographics
+  } = await import(abs('scripts/generation/planets/planet-draft.js'));
+  const { getSpeciesPrevalenceWeight } = await import(abs('scripts/generation/planets/planet-population.js'));
+  const { regionPreferTagsFor, regionDensityBiasFor, REGION_GENERATION_BIAS } = await import(abs('scripts/generation/data/planet-region-bias.js'));
+  const { PLANET_REGION } = await import(abs('scripts/generation/planets/planet-profile.js'));
+  const { definitionalConstraintsFor, WORLD_CLASS_DEFINITIONAL_CONSTRAINTS } = await import(abs('scripts/generation/planets/planet-quality-tables.js'));
+  const { generateProceduralPlanetBundle, regeneratePlanetAndPois } = await import(abs('scripts/generation/planets/planet-bundle.js'));
+
+  const HUMAN_ID = 'species-human';
+  const OTHER_IDS = ['species-twi-lek', 'species-rodian', 'species-duros', 'species-bothan', 'species-zabrak', 'species-wookiee', 'species-trandoshan'];
+  const SPECIES_POOL = [HUMAN_ID, ...OTHER_IDS];
+
+  // Fix #1: prevalence weighting must key off the canonical species ID, not a display name -- a bare-string
+  // pool entry (the normal shape callers pass) must resolve to its real prevalence weight, not the neutral default.
+  assert.equal(getSpeciesPrevalenceWeight(HUMAN_ID), getSpeciesPrevalenceWeight({ id: HUMAN_ID, name: 'Human' }), 'prevalence weight must match whether the pool entry is a bare ID string or an {id,name} object');
+  assert.ok(getSpeciesPrevalenceWeight(HUMAN_ID) > getSpeciesPrevalenceWeight('species-chiss'), 'a high-prevalence species ID must actually outweigh a low-prevalence one');
+  {
+    let humanDominant = 0;
+    const N = 2000;
+    for (let seed = 0; seed < N; seed++) {
+      const d = createProceduralPlanetDraft({ rng: makeSeededRng(seed + 42000000), availableSpeciesIds: SPECIES_POOL });
+      if (d.dominantSpeciesId === HUMAN_ID) humanDominant++;
+    }
+    assert.ok(humanDominant / N > 1 / SPECIES_POOL.length, `species-human must dominate more often than a flat 1/${SPECIES_POOL.length} share now that prevalence weighting actually reaches identity (got ${humanDominant}/${N})`);
+  }
+
+  // Fix #2: region must have real generation-bias wiring -- every PLANET_REGION value must resolve to a real bias entry, and Core Worlds must measurably raise urban/trade outcomes vs Wild Space.
+  for (const region of Object.values(PLANET_REGION)) {
+    assert.ok(REGION_GENERATION_BIAS[region], `PLANET_REGION value "${region}" must have a REGION_GENERATION_BIAS entry`);
+    assert.ok(Array.isArray(regionPreferTagsFor(region)), `regionPreferTagsFor("${region}") must return an array`);
+  }
+  assert.equal(regionDensityBiasFor('Core Worlds'), 'dense', 'Core Worlds must carry a dense density bias');
+  assert.equal(regionDensityBiasFor('Wild Space'), 'sparse', 'Wild Space must carry a sparse density bias');
+  {
+    const isUrban = (d) => d.worldClass.tags?.includes('urban') || d.worldClass.biomes?.includes('urban') || d.worldClass.tags?.includes('trade');
+    let coreUrban = 0, coreTotal = 0, wildUrban = 0, wildTotal = 0;
+    const N = 6000;
+    for (let seed = 0; seed < N; seed++) {
+      const d = createProceduralPlanetDraft({ rng: makeSeededRng(seed + 43000000) });
+      if (d.region === 'Core Worlds') { coreTotal++; if (isUrban(d)) coreUrban++; }
+      else if (d.region === 'Wild Space') { wildTotal++; if (isUrban(d)) wildUrban++; }
+    }
+    assert.ok(coreTotal > 50 && wildTotal > 50, `test needs enough Core Worlds/Wild Space samples within ${N} seeds (got ${coreTotal}/${wildTotal})`);
+    const coreRate = coreUrban / coreTotal, wildRate = wildUrban / wildTotal;
+    assert.ok(coreRate > wildRate, `Core Worlds must produce urban/trade-tagged world classes more often than Wild Space (got ${coreUrban}/${coreTotal} vs ${wildUrban}/${wildTotal})`);
+  }
+
+  // Fix #3: world-class/environment coherence must be DEFINITIONAL (impossible, not just unlikely) for the constrained classes -- gravity/atmosphere/hydrosphere must never land outside the allowed pool.
+  assert.ok(Object.keys(WORLD_CLASS_DEFINITIONAL_CONSTRAINTS).length > 0, 'at least one world class must carry definitional environment constraints');
+  for (let seed = 0; seed < 3000; seed++) {
+    const d = createProceduralPlanetDraft({ rng: makeSeededRng(seed + 44000000) });
+    const constraints = definitionalConstraintsFor(d.worldClass.value);
+    if (constraints.gravity) assert.ok(constraints.gravity.includes(d.gravity.value), `seed ${seed}: world class "${d.worldClass.value}" got an impossible gravity "${d.gravity.value}"`);
+    if (constraints.atmosphere) assert.ok(constraints.atmosphere.includes(d.atmosphere.value), `seed ${seed}: world class "${d.worldClass.value}" got an impossible atmosphere "${d.atmosphere.value}"`);
+    if (constraints.hydrosphere) assert.ok(constraints.hydrosphere.includes(d.hydrosphere), `seed ${seed}: world class "${d.worldClass.value}" got an impossible hydrosphere "${d.hydrosphere}"`);
+  }
+
+  // Fix #4: presets must reach the bundle generator and survive regeneration by default (full stickiness), while still being explicitly overridable/clearable.
+  const presetBundle = generateProceduralPlanetBundle({ rng: makeSeededRng(45000001), poiCount: 3, presetId: 'mining-world' });
+  assert.equal(presetBundle.planetDraft.presetId, 'mining-world', 'generateProceduralPlanetBundle must forward presetId into the planet draft');
+  const regenerated = regeneratePlanetAndPois(presetBundle, { rng: makeSeededRng(45000002) });
+  assert.equal(regenerated.planetDraft.presetId, 'mining-world', 'regeneratePlanetAndPois must preserve the preset by default (full stickiness)');
+  const regeneratedCleared = regeneratePlanetAndPois(presetBundle, { rng: makeSeededRng(45000003), presetId: '' });
+  assert.equal(regeneratedCleared.planetDraft.presetId, '', 'regeneratePlanetAndPois must allow explicitly clearing the preset');
+  {
+    // preset precedence must be additive (preset tags ∪ region tags), never suppressive -- a mining preset must still be able to land in the Core Worlds.
+    let coreMiningFound = false;
+    for (let seed = 0; seed < 3000 && !coreMiningFound; seed++) {
+      const d = createProceduralPlanetDraft({ rng: makeSeededRng(seed + 46000000), presetId: 'mining-world' });
+      if (d.region === 'Core Worlds') coreMiningFound = true;
+    }
+    assert.ok(coreMiningFound, 'a mining-world preset must still be able to produce a Core Worlds mining world (preset/region tags must merge, not override each other)');
+  }
+
+  // Fix #6: rerollPlanetDemographics must reroll ONLY species-distribution fields, be a true no-op on UNINHABITED, and never touch population scale/government/technology/economy/environment/identity.
+  const UNRELATED_KEYS = ['populationScale', 'populationEstimate', 'populationEstimateNumeric', 'settlementPattern', 'government', 'technologyLevel', 'economy', 'trade', 'worldClass', 'region', 'gravity', 'atmosphere', 'hydrosphere', 'name', 'system', 'draftId'];
+  let sawInhabited = false, sawUninhabited = false;
+  for (let seed = 0; seed < 400 && !(sawInhabited && sawUninhabited); seed++) {
+    const d = createProceduralPlanetDraft({ rng: makeSeededRng(seed + 47000000), availableSpeciesIds: SPECIES_POOL });
+    const reroll = rerollPlanetDemographics(d, { rng: makeSeededRng(seed + 47500000), availableSpeciesIds: SPECIES_POOL });
+    if (d.populationScale === 'uninhabited') {
+      sawUninhabited = true;
+      assert.deepEqual(reroll, d, `seed ${seed}: rerollPlanetDemographics must be a true no-op on an UNINHABITED draft`);
+    } else {
+      sawInhabited = true;
+      for (const key of UNRELATED_KEYS) {
+        assert.deepEqual(reroll[key], d[key], `seed ${seed}: rerollPlanetDemographics must preserve unrelated field "${key}"`);
+      }
+    }
+  }
+  assert.ok(sawInhabited && sawUninhabited, 'the demographics-reroll test must exercise both an inhabited and an uninhabited draft within 400 seeds');
+  {
+    let changed = 0;
+    const N = 300;
+    for (let seed = 0; seed < N; seed++) {
+      const d = createProceduralPlanetDraft({ rng: makeSeededRng(seed + 48000000), availableSpeciesIds: SPECIES_POOL });
+      if (d.populationScale === 'uninhabited') continue;
+      const reroll = rerollPlanetDemographics(d, { rng: makeSeededRng(seed + 48500000), availableSpeciesIds: SPECIES_POOL });
+      if (reroll.dominantSpeciesId !== d.dominantSpeciesId || JSON.stringify(reroll.populationProfile) !== JSON.stringify(d.populationProfile)) changed++;
+    }
+    assert.ok(changed > 0, 'rerollPlanetDemographics must actually change species-distribution fields at least some of the time');
+  }
+
+  console.log('PHASE 8D-3A correction pass round 2 (species prevalence by canonical ID, region generation-bias wiring, world-class/environment definitional coherence, preset propagation + stickiness, rerollPlanetDemographics) passed.');
+}
+
+// ------------------------------------------------------------
+// Correction pass round 2, fix 10: technology production refinement.
+// `technologyLevel` expanded from 5 to 7 values (primitive/pre-industrial/
+// industrial/frontier/galactic-standard/advanced/cutting-edge); two new
+// fields added -- `technologyAccess` (how broadly galactic tech reaches
+// this world) and `technologySpecialties` (specific notable capability
+// areas, from a centralized catalog); `rollCivilization()` reordered so
+// economy rolls before technology, letting the world's ACTUAL economy
+// sectors softly weight the technology picks; `TECHNOLOGY_POPULATION_MISMATCH`
+// rescaled to a normalized 0-1 rank comparison so it stays meaningful at
+// the new enum size; two new targeted rerolls added.
+// ------------------------------------------------------------
+{
+  const { makeSeededRng } = await import(abs('scripts/generation/lib/weighted-random.js'));
+  const {
+    createProceduralPlanetDraft,
+    rerollPlanetTechnologyLevel,
+    rerollPlanetTechnologyAccess,
+    rerollPlanetTechnologySpecialties
+  } = await import(abs('scripts/generation/planets/planet-draft.js'));
+  const {
+    PLANET_TECHNOLOGY_LEVEL,
+    PLANET_TECHNOLOGY_ACCESS,
+    isPlanetTechnologyLevel,
+    isPlanetTechnologyAccess,
+    isPlanetTechnologySpecialty
+  } = await import(abs('scripts/generation/planets/planet-profile.js'));
+
+  const TECH_RANK = { primitive: 0, 'pre-industrial': 1, industrial: 2, frontier: 3, 'galactic-standard': 4, advanced: 5, 'cutting-edge': 6 };
+  assert.equal(Object.keys(TECH_RANK).length, Object.values(PLANET_TECHNOLOGY_LEVEL).length, 'the test\'s own rank table must cover every PLANET_TECHNOLOGY_LEVEL value (catches drift if the catalog changes again)');
+  for (const v of Object.values(PLANET_TECHNOLOGY_LEVEL)) assert.ok(v in TECH_RANK, `PLANET_TECHNOLOGY_LEVEL value "${v}" must have a rank`);
+
+  // Every technologyLevel AND technologyAccess value must remain reachable -- the soft economy/region/world-class weighting must never make any value unreachable.
+  const N = 6000;
+  const levelSeen = new Set(), accessSeen = new Set();
+  let sawAnySpecialty = false, sawZeroSpecialty = false;
+  for (let seed = 0; seed < N; seed++) {
+    const d = createProceduralPlanetDraft({ rng: makeSeededRng(seed + 51000000) });
+    if (d.technologyLevel) levelSeen.add(d.technologyLevel);
+    if (d.technologyAccess) accessSeen.add(d.technologyAccess);
+    if (d.technologySpecialties) {
+      if (d.technologySpecialties.length > 0) sawAnySpecialty = true; else sawZeroSpecialty = true;
+      for (const s of d.technologySpecialties) assert.ok(isPlanetTechnologySpecialty(s), `"${s}" must be a real cataloged technology specialty`);
+    }
+    if (d.populationScale === 'uninhabited') {
+      assert.equal(d.technologyLevel, null, `seed ${seed}: an UNINHABITED draft must have technologyLevel: null`);
+      assert.equal(d.technologyAccess, null, `seed ${seed}: an UNINHABITED draft must have technologyAccess: null`);
+      assert.deepEqual(d.technologySpecialties, [], `seed ${seed}: an UNINHABITED draft must have empty technologySpecialties`);
+    }
+  }
+  for (const v of Object.values(PLANET_TECHNOLOGY_LEVEL)) assert.ok(levelSeen.has(v), `technologyLevel value "${v}" must remain reachable within ${N} seeds`);
+  for (const v of Object.values(PLANET_TECHNOLOGY_ACCESS)) assert.ok(accessSeen.has(v), `technologyAccess value "${v}" must remain reachable within ${N} seeds`);
+  assert.ok(sawAnySpecialty, 'at least some drafts must roll one or more technology specialties');
+  assert.ok(sawZeroSpecialty, 'at least some drafts must roll zero technology specialties (the common case)');
+
+  // Economy sectors tagged technology/research/industrial must measurably raise the average technology rank vs. other economies (soft bias, reordering rollCivilization() so economy is rolled first).
+  {
+    let techEconRankSum = 0, techEconCount = 0, otherRankSum = 0, otherCount = 0;
+    const M = 8000;
+    for (let seed = 0; seed < M; seed++) {
+      const d = createProceduralPlanetDraft({ rng: makeSeededRng(seed + 52000000) });
+      if (!d.technologyLevel) continue;
+      const sectors = [d.economy.primarySector, ...(d.economy.secondarySectors || [])].filter(Boolean);
+      const hasTechTag = sectors.some((s) => (s.tags || []).some((t) => ['technology', 'research', 'industrial'].includes(t)));
+      if (hasTechTag) { techEconRankSum += TECH_RANK[d.technologyLevel]; techEconCount++; }
+      else { otherRankSum += TECH_RANK[d.technologyLevel]; otherCount++; }
+    }
+    assert.ok(techEconCount > 100 && otherCount > 100, `test needs enough samples in both economy buckets within ${M} seeds (got ${techEconCount}/${otherCount})`);
+    const techEconAvg = techEconRankSum / techEconCount, otherAvg = otherRankSum / otherCount;
+    assert.ok(techEconAvg > otherAvg, `a technology/research/industrial-tagged economy must raise the average technology rank (got ${techEconAvg} vs ${otherAvg})`);
+  }
+
+  // TECHNOLOGY_POPULATION_MISMATCH must still be reachable but not dominant at the new 7-value scale.
+  {
+    let mismatchCount = 0, total = 0;
+    const M = 8000;
+    for (let seed = 0; seed < M; seed++) {
+      const d = createProceduralPlanetDraft({ rng: makeSeededRng(seed + 53000000) });
+      if (!d.technologyLevel) continue;
+      total++;
+      if (d.diagnostics.includes('technology-population-mismatch')) mismatchCount++;
+    }
+    const rate = mismatchCount / total;
+    assert.ok(rate > 0.01 && rate < 0.3, `TECHNOLOGY_POPULATION_MISMATCH must be reachable but not dominant after the rank rescale (got rate ${rate})`);
+  }
+
+  // Targeted rerolls: each touches ONLY its own field, is a no-op on UNINHABITED, and never touches the other two technology fields.
+  const UNRELATED_KEYS = ['worldClass', 'region', 'gravity', 'atmosphere', 'hydrosphere', 'name', 'system', 'government', 'stability', 'economy', 'populationScale', 'draftId'];
+  let checkedInhabited = 0, checkedUninhabited = 0;
+  for (let seed = 0; seed < 600 && (checkedInhabited < 50 || checkedUninhabited < 1); seed++) {
+    const d = createProceduralPlanetDraft({ rng: makeSeededRng(seed + 54000000) });
+    if (d.populationScale === 'uninhabited') {
+      checkedUninhabited++;
+      assert.equal(rerollPlanetTechnologyLevel(d, { rng: makeSeededRng(1) }), d, `seed ${seed}: rerollPlanetTechnologyLevel must be a no-op on UNINHABITED`);
+      assert.equal(rerollPlanetTechnologyAccess(d, { rng: makeSeededRng(1) }), d, `seed ${seed}: rerollPlanetTechnologyAccess must be a no-op on UNINHABITED`);
+      assert.equal(rerollPlanetTechnologySpecialties(d, { rng: makeSeededRng(1) }), d, `seed ${seed}: rerollPlanetTechnologySpecialties must be a no-op on UNINHABITED`);
+      continue;
+    }
+    checkedInhabited++;
+
+    const rLevel = rerollPlanetTechnologyLevel(d, { rng: makeSeededRng(seed + 1) });
+    for (const k of UNRELATED_KEYS) assert.deepEqual(rLevel[k], d[k], `seed ${seed}: rerollPlanetTechnologyLevel must preserve "${k}"`);
+    assert.deepEqual(rLevel.technologyAccess, d.technologyAccess, `seed ${seed}: rerollPlanetTechnologyLevel must not touch technologyAccess`);
+    assert.deepEqual(rLevel.technologySpecialties, d.technologySpecialties, `seed ${seed}: rerollPlanetTechnologyLevel must not touch technologySpecialties`);
+    assert.ok(isPlanetTechnologyLevel(rLevel.technologyLevel), `seed ${seed}: rerollPlanetTechnologyLevel must produce a real value`);
+
+    const rAccess = rerollPlanetTechnologyAccess(d, { rng: makeSeededRng(seed + 2) });
+    for (const k of UNRELATED_KEYS) assert.deepEqual(rAccess[k], d[k], `seed ${seed}: rerollPlanetTechnologyAccess must preserve "${k}"`);
+    assert.deepEqual(rAccess.technologyLevel, d.technologyLevel, `seed ${seed}: rerollPlanetTechnologyAccess must not touch technologyLevel`);
+    assert.deepEqual(rAccess.technologySpecialties, d.technologySpecialties, `seed ${seed}: rerollPlanetTechnologyAccess must not touch technologySpecialties`);
+    assert.ok(isPlanetTechnologyAccess(rAccess.technologyAccess), `seed ${seed}: rerollPlanetTechnologyAccess must produce a real value`);
+
+    const rSpecialties = rerollPlanetTechnologySpecialties(d, { rng: makeSeededRng(seed + 3) });
+    for (const k of UNRELATED_KEYS) assert.deepEqual(rSpecialties[k], d[k], `seed ${seed}: rerollPlanetTechnologySpecialties must preserve "${k}"`);
+    assert.deepEqual(rSpecialties.technologyLevel, d.technologyLevel, `seed ${seed}: rerollPlanetTechnologySpecialties must not touch technologyLevel`);
+    assert.deepEqual(rSpecialties.technologyAccess, d.technologyAccess, `seed ${seed}: rerollPlanetTechnologySpecialties must not touch technologyAccess`);
+    for (const s of rSpecialties.technologySpecialties) assert.ok(isPlanetTechnologySpecialty(s), `seed ${seed}: rerolled specialty "${s}" must be a real cataloged value`);
+
+    // rerollPlanetTechnologySpecialties with an explicit count must honor it exactly.
+    const rSpecialtiesExplicit = rerollPlanetTechnologySpecialties(d, { rng: makeSeededRng(seed + 4), count: 2 });
+    assert.equal(rSpecialtiesExplicit.technologySpecialties.length, 2, `seed ${seed}: rerollPlanetTechnologySpecialties({ count: 2 }) must honor an explicit count exactly`);
+  }
+  assert.ok(checkedInhabited > 40, `the technology reroll test must exercise enough inhabited drafts (got ${checkedInhabited})`);
+  assert.ok(checkedUninhabited > 0, 'the technology reroll test must exercise at least one UNINHABITED draft');
+
+  console.log('PHASE 8D-3A correction pass round 2 fix 10 (technology level expansion, technologyAccess/technologySpecialties, economy-before-technology reordering, rescaled mismatch threshold, targeted rerolls) passed.');
+}
+
+// ------------------------------------------------------------
+// Correction pass round 2, fix 7: `composeTagsAndSummary()` received
+// `stability` but never merged `stability.tags` into the draft's own
+// `tags` field -- so a `lawless`/`unstable`/`contested`/`civil-war`/etc.
+// world's OWN stability could never actually reach
+// `planet-hooks.js`'s `deriveSuggestedOppositionTags()`, despite that
+// function explicitly filtering for exactly those values. Also fixed
+// `rerollPlanetStability()`, which recomposed the summary but not tags.
+// ------------------------------------------------------------
+{
+  const { makeSeededRng } = await import(abs('scripts/generation/lib/weighted-random.js'));
+  const { createProceduralPlanetDraft, rerollPlanetStability } = await import(abs('scripts/generation/planets/planet-draft.js'));
+  const { deriveSuggestedOppositionTags } = await import(abs('scripts/generation/planets/planet-hooks.js'));
+
+  const OPPOSITION_RELEVANT_STABILITY_TAGS = ['lawless', 'unstable', 'contested', 'fractured', 'civil-war', 'civil unrest', 'popular-unrest', 'rebellious', 'occupied', 'under-blockade', 'corrupt', 'succession-crisis'];
+
+  // A draft's own `tags` must carry its stability's opposition-relevant tags, and suggestedOppositionTags (derived from those same tags) must therefore surface them too.
+  let sawRelevantStability = false;
+  for (let seed = 0; seed < 3000; seed++) {
+    const d = createProceduralPlanetDraft({ rng: makeSeededRng(seed + 60000000) });
+    if (!d.stability) continue;
+    const relevant = (d.stability.tags || []).filter((t) => OPPOSITION_RELEVANT_STABILITY_TAGS.includes(t));
+    if (!relevant.length) continue;
+    sawRelevantStability = true;
+    for (const t of relevant) {
+      assert.ok(d.tags.includes(t), `seed ${seed}: draft.tags must include stability tag "${t}" (stability: "${d.stability.value}")`);
+    }
+    const opposition = deriveSuggestedOppositionTags(d.tags);
+    for (const t of relevant) {
+      assert.ok(opposition.includes(t), `seed ${seed}: suggestedOppositionTags must surface stability tag "${t}" (stability: "${d.stability.value}")`);
+    }
+  }
+  assert.ok(sawRelevantStability, 'the test must find at least one draft with an opposition-relevant stability within 3000 seeds');
+
+  // rerollPlanetStability must recompute `tags` (previously only `summary`) so the new stability's tags aren't left stale.
+  let checkedReroll = 0;
+  for (let seed = 0; seed < 500 && checkedReroll < 30; seed++) {
+    const d = createProceduralPlanetDraft({ rng: makeSeededRng(seed + 61000000) });
+    if (d.populationScale === 'uninhabited') continue;
+    const reroll = rerollPlanetStability(d, { rng: makeSeededRng(seed + 1) });
+    checkedReroll++;
+    for (const t of reroll.stability.tags || []) {
+      assert.ok(reroll.tags.includes(t), `seed ${seed}: rerollPlanetStability must refresh draft.tags to include the new stability's tag "${t}"`);
+    }
+  }
+  assert.ok(checkedReroll > 20, `the rerollPlanetStability tags-refresh test must exercise enough inhabited drafts (got ${checkedReroll})`);
+
+  console.log('PHASE 8D-3A correction pass round 2 fix 7 (stability tags wired into suggestedOppositionTags context) passed.');
+}
+
+// ------------------------------------------------------------
+// Correction pass round 2, fix 9: `planet-hook-archetypes.js`'s own
+// header doc claims `FACTION_ARCHETYPE_TAGS`/`JOB_ARCHETYPE_TAGS` are
+// "exactly" their canonical authorities' key sets
+// (`organization-metadata.js`'s `FACTION_ARCHETYPE_FAMILY`,
+// `jobs/job-archetype-metadata.js`'s `JOB_ARCHETYPE_METADATA`) -- but
+// nothing previously verified that claim, so the two could silently
+// drift apart. The module now self-checks this at load time (throwing
+// immediately on drift, the same discipline `data/planet-region-bias.js`
+// established); this test asserts the same invariant explicitly so a
+// regression is visible in test output too, not only as an import-time
+// crash.
+// ------------------------------------------------------------
+{
+  const { FACTION_ARCHETYPE_TAGS, JOB_ARCHETYPE_TAGS } = await import(abs('scripts/generation/data/planet-hook-archetypes.js'));
+  const { FACTION_ARCHETYPE_FAMILY, ORGANIZATION_FAMILY } = await import(abs('scripts/generation/organization-metadata.js'));
+  const { JOB_ARCHETYPE_METADATA } = await import(abs('scripts/generation/jobs/job-archetype-metadata.js'));
+
+  const factionValues = new Set(FACTION_ARCHETYPE_TAGS.map((e) => e.value));
+  const factionAuthorityKeys = new Set(Object.keys(FACTION_ARCHETYPE_FAMILY));
+  assert.deepEqual(factionValues, factionAuthorityKeys, 'FACTION_ARCHETYPE_TAGS values must exactly match FACTION_ARCHETYPE_FAMILY keys (no drift in either direction)');
+  for (const entry of FACTION_ARCHETYPE_TAGS) {
+    assert.ok(entry.tags.includes(FACTION_ARCHETYPE_FAMILY[entry.value]), `FACTION_ARCHETYPE_TAGS entry "${entry.value}" must carry its canonical ORGANIZATION_FAMILY tag "${FACTION_ARCHETYPE_FAMILY[entry.value]}"`);
+    assert.ok(Object.values(ORGANIZATION_FAMILY).includes(FACTION_ARCHETYPE_FAMILY[entry.value]), `"${entry.value}"'s mapped family must be a real ORGANIZATION_FAMILY value`);
+  }
+
+  const jobValues = new Set(JOB_ARCHETYPE_TAGS.map((e) => e.value));
+  const jobAuthorityKeys = new Set(Object.keys(JOB_ARCHETYPE_METADATA));
+  assert.deepEqual(jobValues, jobAuthorityKeys, 'JOB_ARCHETYPE_TAGS values must exactly match JOB_ARCHETYPE_METADATA keys (no drift in either direction)');
+
+  console.log('PHASE 8D-3A correction pass round 2 fix 9 (archetype manifests self-validated against their canonical authorities) passed.');
+}
+
+// ------------------------------------------------------------
+// Correction pass round 2, secondary observations:
+//  - UNINHABITED's POI-count floor is now 0 (a genuinely empty,
+//    featureless world is coherent -- it was previously forced to have
+//    at least one POI).
+//  - real END-TO-END preset tests: previously the only preset-bias
+//    assertion below the whole-draft level called the isolated pick
+//    function (`generatePlanetSuggestedFactionArchetypeTags`) directly
+//    with hand-supplied `preferTags` -- never actually exercising
+//    `createProceduralPlanetDraft({ presetId })`'s real preset-resolution
+//    path end-to-end for that pick. This block drives the full pipeline:
+//    a preset's `densityBias` measurably shifting `populationScale`, and
+//    `presetId` actually landing on both the draft and its provenance.
+// ------------------------------------------------------------
+{
+  const { makeSeededRng } = await import(abs('scripts/generation/lib/weighted-random.js'));
+  const { createProceduralPlanetDraft } = await import(abs('scripts/generation/planets/planet-draft.js'));
+  const { poiCountForPopulationScale } = await import(abs('scripts/generation/planets/poi-generator.js'));
+  const { POPULATION_SCALE } = await import(abs('scripts/generation/planets/planet-population.js'));
+  const { getPlanetPreset } = await import(abs('scripts/generation/data/planet-presets.js'));
+
+  // POI floor: UNINHABITED must be able to resolve to 0, and never below 0 or above its documented max.
+  let sawZeroPoi = false;
+  for (let seed = 0; seed < 3000; seed++) {
+    const count = poiCountForPopulationScale(POPULATION_SCALE.UNINHABITED, { rng: makeSeededRng(seed) });
+    assert.ok(count >= 0 && count <= 3, `seed ${seed}: UNINHABITED POI count must stay in [0,3], got ${count}`);
+    if (count === 0) sawZeroPoi = true;
+  }
+  assert.ok(sawZeroPoi, 'UNINHABITED must be able to resolve to exactly 0 POIs within 3000 seeds');
+
+  // End-to-end: presetId must actually land on the draft AND its provenance -- via the real createProceduralPlanetDraft() pipeline, not a hand-constructed object.
+  const ecumenopolisPreset = getPlanetPreset('ecumenopolis');
+  assert.equal(ecumenopolisPreset.densityBias, 'dense', 'test assumes the ecumenopolis preset carries densityBias: "dense" (if this fails, the preset catalog changed -- update the test)');
+  const presetDraft = createProceduralPlanetDraft({ rng: makeSeededRng(70000000), presetId: 'ecumenopolis' });
+  assert.equal(presetDraft.presetId, 'ecumenopolis', 'createProceduralPlanetDraft({ presetId }) must record the resolved preset id on the draft itself');
+  assert.equal(presetDraft.provenance.presetId, 'ecumenopolis', 'createProceduralPlanetDraft({ presetId }) must record the resolved preset id in provenance too');
+
+  // End-to-end: the ecumenopolis preset's densityBias must measurably shift populationScale toward denser outcomes across the FULL pipeline (region roll -> world class -> density resolution -> population scale), not just at the isolated pick-function level.
+  const DENSE_SCALES = new Set([POPULATION_SCALE.POPULOUS, POPULATION_SCALE.HYPER_URBANIZED]);
+  let denseWithPreset = 0, denseWithoutPreset = 0;
+  const N = 2000;
+  for (let seed = 0; seed < N; seed++) {
+    const withPreset = createProceduralPlanetDraft({ rng: makeSeededRng(seed + 71000000), presetId: 'ecumenopolis' });
+    if (DENSE_SCALES.has(withPreset.populationScale)) denseWithPreset++;
+    const withoutPreset = createProceduralPlanetDraft({ rng: makeSeededRng(seed + 71000000) });
+    if (DENSE_SCALES.has(withoutPreset.populationScale)) denseWithoutPreset++;
+  }
+  assert.ok(denseWithPreset > denseWithoutPreset, `the ecumenopolis preset's densityBias must raise the POPULOUS/HYPER_URBANIZED rate end-to-end (got ${denseWithPreset}/${N} vs baseline ${denseWithoutPreset}/${N})`);
+
+  console.log('PHASE 8D-3A correction pass round 2 secondary observations (UNINHABITED POI floor of 0, real end-to-end preset density/provenance test) passed.');
 }
 
 console.log('PHASE 8D-3A procedural locations productionization suite (catalog quality, generation semantics, bundle generation, reroll safety, determinism) passed.');

@@ -168,6 +168,36 @@ export const PLANET_ATMOSPHERE = Object.freeze([
 ]);
 
 /**
+ * PHASE 8D-3A correction pass (independent review round 2, finding
+ * #3): a handful of `WORLD_CLASS` values now carry an IDENTITY, not
+ * just a soft affinity -- "High-Gravity Terrestrial" rolling "Gravity:
+ * Very Low," or "Ocean" rolling "Hydrosphere: None," don't read as
+ * interesting unusual-world hooks, they read as the world class simply
+ * being wrong. This table is the DEFINITIONAL (hard-filter) exception
+ * to the otherwise-universal soft-weighting rule everything else in
+ * this catalog follows -- restricting the gravity/atmosphere/
+ * hydrosphere POOL to the values compatible with that specific world
+ * class before picking, never a post-hoc validation or a new
+ * diagnostic (the existing `ENVIRONMENT_MISMATCH` code already covers
+ * unusual-but-still-VALID combinations; this table is about
+ * combinations that shouldn't be reachable at all). Every other
+ * `WORLD_CLASS` value is unconstrained here and keeps its existing
+ * fully-soft gravity/atmosphere/hydrosphere weighting.
+ */
+export const WORLD_CLASS_DEFINITIONAL_CONSTRAINTS = Object.freeze({
+  'high-gravity-terrestrial': Object.freeze({ gravity: Object.freeze(['high', 'very-high']) }),
+  'low-gravity-terrestrial': Object.freeze({ gravity: Object.freeze(['very-low', 'low']) }),
+  ocean: Object.freeze({ hydrosphere: Object.freeze(['extensive', 'oceanic', 'world-ocean']) }),
+  'gas-giant': Object.freeze({ atmosphere: Object.freeze(['unbreathable', 'toxic', 'corrosive', 'trace', 'none-vacuum']) }),
+  'artificial-habitat': Object.freeze({ gravity: Object.freeze(['artificial', 'standard']), atmosphere: Object.freeze(['artificially-maintained', 'standard-breathable']) })
+});
+
+/** The gravity/atmosphere/hydrosphere value restrictions (if any) a `WORLD_CLASS` value definitionally requires -- `{}` for an unconstrained (the vast majority) world class. */
+export function definitionalConstraintsFor(worldClassValue) {
+  return WORLD_CLASS_DEFINITIONAL_CONSTRAINTS[worldClassValue] ?? {};
+}
+
+/**
  * Pick a random world-class entry, optionally biased toward a biome/tag
  * affinity. Matches `preferTags` against BOTH `biomes` and `tags`
  * (merged) -- a caller biasing toward `'desert'` should match
@@ -185,12 +215,22 @@ export function pickPlanetSize({ rng } = {}) {
   return weightedPick(PLANET_SIZE, { rng });
 }
 
-/** Pick a random gravity entry. */
-export function pickPlanetGravity({ rng } = {}) {
-  return weightedPick(PLANET_GRAVITY, { rng });
+/**
+ * Pick a random gravity entry. `allowedValues` (PHASE 8D-3A correction
+ * pass, finding #3), when supplied non-empty, restricts the pool to
+ * ONLY those values before picking -- a definitional constraint, not a
+ * preference. Falls back to the full, unconstrained pool if the
+ * restriction would eliminate every entry (should never happen given
+ * `WORLD_CLASS_DEFINITIONAL_CONSTRAINTS` is hand-verified against real
+ * `PLANET_GRAVITY` values, but never silently return nothing).
+ */
+export function pickPlanetGravity({ rng, allowedValues } = {}) {
+  const pool = Array.isArray(allowedValues) && allowedValues.length ? PLANET_GRAVITY.filter((e) => allowedValues.includes(e.value)) : PLANET_GRAVITY;
+  return weightedPick(pool.length ? pool : PLANET_GRAVITY, { rng });
 }
 
-/** Pick a random atmosphere entry. */
-export function pickPlanetAtmosphere({ rng } = {}) {
-  return weightedPick(PLANET_ATMOSPHERE, { rng });
+/** Pick a random atmosphere entry. `allowedValues` -- see `pickPlanetGravity()`'s own doc for the definitional-constraint contract this mirrors. */
+export function pickPlanetAtmosphere({ rng, allowedValues } = {}) {
+  const pool = Array.isArray(allowedValues) && allowedValues.length ? PLANET_ATMOSPHERE.filter((e) => allowedValues.includes(e.value)) : PLANET_ATMOSPHERE;
+  return weightedPick(pool.length ? pool : PLANET_ATMOSPHERE, { rng });
 }

@@ -86,13 +86,13 @@ import { createProvenance } from '../provenance.js';
 import { mergeTags } from '../lib/tag-utils.js';
 import { joinClauses } from '../lib/description-composer.js';
 import { DIAGNOSTIC_CODE } from '../lib/generator-diagnostics.js';
-import { pickCompatiblePoiTemplate } from './poi-template.js';
+import { pickCompatiblePoiTemplate, filterCompatiblePoiTemplates } from './poi-template.js';
 import { getRandomPoiPlaceName, poiNameStyleForType } from '../names/poi-place-name-generator.js';
 import { POPULATION_SCALE } from './planet-population.js';
 
 /**
  * PHASE 8D-3A: how many POIs a world of a given `populationScale`
- * plausibly has -- an UNINHABITED world still gets a couple of
+ * plausibly has -- an UNINHABITED world can still have a couple of
  * wilderness/ruin-type POIs (nothing implying active population, the
  * hard compatibility filter already guarantees that), while a
  * HYPER_URBANIZED ecumenopolis has noticeably more than a lone
@@ -100,9 +100,14 @@ import { POPULATION_SCALE } from './planet-population.js';
  * resolves a single count within that range. Used by
  * `planet-bundle.js`'s `generateProceduralPlanetBundle()` as the
  * default when a caller doesn't pass an explicit `poiCount`.
+ *
+ * PHASE 8D-3A R2 secondary observation: `UNINHABITED`'s floor is `0`
+ * (previously `1`, forcing every uninhabited world to have at least one
+ * POI) -- a genuinely empty, featureless rock is a coherent result for
+ * an uninhabited world, not a gap to force-fill.
  */
 const POI_COUNT_RANGE_BY_POPULATION_SCALE = Object.freeze({
-  [POPULATION_SCALE.UNINHABITED]: [1, 3],
+  [POPULATION_SCALE.UNINHABITED]: [0, 3],
   [POPULATION_SCALE.OUTPOST]: [1, 3],
   [POPULATION_SCALE.SMALL_SETTLEMENT]: [2, 4],
   [POPULATION_SCALE.SETTLED]: [3, 6],
@@ -280,4 +285,40 @@ export function rerollPoiName(draft, { rng, preferTags } = {}) {
   const nameDraft = getRandomPoiPlaceName({ rng, preferTags: resolvedPreferTags, style });
   const name = `${nameDraft.name} ${draft.template.label}`;
   return { ...draft, nameDraft, name, summary: composeSummary(draft.template, name) };
+}
+
+/**
+ * PHASE 8D-3A correction pass (independent review round 2, finding
+ * #5): `planet-bundle.js`'s `regenerateEnvironment()`/
+ * `regenerateCivilization()` correctly PRESERVE every child POI when
+ * the parent planet changes (never silently destroying GM-selected
+ * content) -- but previously did nothing else, so a POI could go
+ * stale relative to its changed parent with no visible signal at all:
+ * its `biomes`/`tags`/`generatorContext` kept reflecting the OLD
+ * parent state forever, and a POI that no longer fits (e.g. a Fishing
+ * Village on a world whose environment reroll removed its only water
+ * biome) carried no compatibility diagnostic either.
+ *
+ * `refreshPoiContext()` re-derives everything that legitimately
+ * depends on the parent's CURRENT state -- `biomes` (the
+ * `biomeAffinities` ∩ real-parent-biomes intersection
+ * `createProceduralPoiDraft()` itself uses), `tags`, and
+ * `generatorContext` -- against `parentPlanetDraft`'s NEW facts, and
+ * re-evaluates the existing `template`'s hard compatibility against
+ * that new context. It NEVER changes `draftId`/`template`/`name`/
+ * `nameDraft` -- the POI a GM picked and named stays exactly what it
+ * was. If the template is no longer compatible with the new context,
+ * the POI is kept AS-IS with `DIAGNOSTIC_CODE.POI_CONTEXT_MISMATCH`
+ * attached -- preserve GM-selected content, warn about the mismatch,
+ * never silently delete or reroll it out from under them.
+ */
+export function refreshPoiContext(poiDraft, { parentPlanetDraft = null } = {}) {
+  const contextTags = contextTagsFor(parentPlanetDraft, []);
+  const hardFilterTags = planetTagsFor(parentPlanetDraft, []);
+  const hardFilterScale = parentPlanetDraft?.populationScale || '';
+  const biomes = deriveActualPoiBiomes(poiDraft.template, parentBiomesFor(parentPlanetDraft, hardFilterTags));
+  const tags = mergeTags(poiDraft.template.tags, contextTags);
+  const generatorContext = { preferTags: contextTags, planetTags: hardFilterTags, populationScale: hardFilterScale };
+  const stillCompatible = filterCompatiblePoiTemplates([poiDraft.template], { planetTags: hardFilterTags, populationScale: hardFilterScale }).length > 0;
+  return { ...poiDraft, biomes, tags, generatorContext, diagnostics: stillCompatible ? [] : [DIAGNOSTIC_CODE.POI_CONTEXT_MISMATCH] };
 }

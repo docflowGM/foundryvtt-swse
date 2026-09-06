@@ -14,20 +14,30 @@
  *
  * Every bundle-level operation returns a NEW bundle object (the
  * established immutable-draft convention throughout this codebase) and
- * NEVER silently drops sibling POIs: a reroll scoped to one field (the
- * planet's environment, its civilization block, or a single POI) always
- * carries the bundle's OTHER POIs through untouched. Only three
- * operations are explicitly allowed to replace the whole POI set:
- * `generateProceduralPlanetBundle()` and `regeneratePlanetAndPois()`
- * (a wholly new world genuinely invalidates what POIs made sense on
- * it) and `regenerateAllPois()` (an explicit "reroll all POIs" the GM
- * asked for, keeping the same planet) -- every other operation leaves
- * POIs it wasn't asked to touch alone.
+ * NEVER silently DROPS OR REPLACES a sibling POI -- every POI's own
+ * identity (`draftId`/`template`/`name`/`nameDraft`) survives every
+ * operation except the three explicitly allowed to replace the whole
+ * POI set: `generateProceduralPlanetBundle()` and
+ * `regeneratePlanetAndPois()` (a wholly new world genuinely invalidates
+ * what POIs made sense on it) and `regenerateAllPois()` (an explicit
+ * "reroll all POIs" the GM asked for, keeping the same planet).
+ * `rerollPlanetFactsOnly()`/`rerollPoiInBundle()` leave every POI they
+ * weren't asked to touch COMPLETELY untouched (same object reference).
+ * `regenerateEnvironment()`/`regenerateCivilization()` are a middle
+ * case (finding #5): the planet actually changed in a way that affects
+ * every POI's derived context, so each POI's `biomes`/`tags`/
+ * `generatorContext`/compatibility diagnostic ARE refreshed against
+ * the new parent state (`refreshPoiContext()`), while its identity
+ * still never changes -- staleness becomes a visible
+ * `POI_CONTEXT_MISMATCH` diagnostic, never silent drift and never
+ * silent deletion.
  */
 
 import {
   createProceduralPlanetDraft,
   rerollPlanetWorldClass,
+  rerollPlanetGravity,
+  rerollPlanetAtmosphere,
   rerollPlanetClimate,
   rerollPlanetHydrosphere,
   rerollPlanetGovernment,
@@ -38,7 +48,7 @@ import {
   rerollPlanetHistoryHooks,
   rerollPlanetTraits
 } from './planet-draft.js';
-import { createProceduralPoiDraft, rerollPoiTemplate, rerollPoiName, poiCountForPopulationScale } from './poi-generator.js';
+import { createProceduralPoiDraft, rerollPoiTemplate, rerollPoiName, poiCountForPopulationScale, refreshPoiContext } from './poi-generator.js';
 
 /**
  * Generate a full planet+POI bundle: `{ planetDraft, poiDrafts }`.
@@ -52,9 +62,13 @@ import { createProceduralPoiDraft, rerollPoiTemplate, rerollPoiName, poiCountFor
  * @param {string[]} [options.availableSpeciesIds]
  * @param {number} [options.poiCount] - explicit POI count; defaults to
  *   `poiCountForPopulationScale(planetDraft.populationScale, { rng })`.
+ * @param {string} [options.presetId] - PHASE 8D-3A correction pass
+ *   (finding #4A): forwarded verbatim to `createProceduralPlanetDraft()`
+ *   -- previously this API had no way to express "Generate New Planet
+ *   + POIs From Preset" at all.
  */
-export function generateProceduralPlanetBundle({ rng, availableSpeciesIds = [], poiCount } = {}) {
-  const planetDraft = createProceduralPlanetDraft({ rng, availableSpeciesIds, includeChild: true });
+export function generateProceduralPlanetBundle({ rng, availableSpeciesIds = [], poiCount, presetId = '' } = {}) {
+  const planetDraft = createProceduralPlanetDraft({ rng, availableSpeciesIds, includeChild: true, presetId });
   const resolvedPoiCount = Number.isFinite(poiCount) ? Math.max(0, poiCount) : poiCountForPopulationScale(planetDraft.populationScale, { rng });
   const poiDrafts = [];
   for (let i = 0; i < resolvedPoiCount; i++) {
@@ -65,10 +79,15 @@ export function generateProceduralPlanetBundle({ rng, availableSpeciesIds = [], 
 
 /**
  * Regenerate the ENTIRE bundle from scratch -- a new planet draft AND a
- * new POI set.
+ * new POI set. PHASE 8D-3A correction pass (finding #4A): preserves
+ * the EXISTING bundle's `presetId` unless the caller explicitly
+ * overrides it -- a bundle generated "From Preset: Mining World" stays
+ * a Mining World bundle across a full regenerate unless the GM
+ * deliberately picks a different preset (or `presetId: ''` to clear
+ * it).
  */
-export function regeneratePlanetAndPois(bundle, { rng, availableSpeciesIds = [], poiCount } = {}) {
-  return generateProceduralPlanetBundle({ rng, availableSpeciesIds, poiCount });
+export function regeneratePlanetAndPois(bundle, { rng, availableSpeciesIds = [], poiCount, presetId } = {}) {
+  return generateProceduralPlanetBundle({ rng, availableSpeciesIds, poiCount, presetId: presetId ?? bundle.planetDraft.presetId });
 }
 
 /**
@@ -114,24 +133,39 @@ export function rerollPlanetFactsOnly(bundle, { rng, hazardCount, historyHookCou
 }
 
 /**
- * Reroll the planet's ENVIRONMENT cluster (world class, climate,
- * hydrosphere) together -- a bigger, coherent "this world's physical
- * character changed" operation, one level up from rerolling world
- * class alone. POIs are carried through UNCHANGED -- their `biomes`
- * (derived from the OLD world class at generation time,
- * `poi-generator.js`'s `deriveActualPoiBiomes()`) can go stale against
- * the new one; this is a known, accepted limitation of a SCOPED reroll
- * (see module doc: only a full regenerate replaces POIs), and
- * `DIAGNOSTIC_CODE.POI_CONTEXT_MISMATCH` (`poi-generator.js`) plus the
- * planet-level diagnostics this phase adds are the intended path for
- * surfacing that staleness to a GM, not silent POI deletion.
+ * Reroll the planet's ENVIRONMENT cluster (world class, gravity,
+ * atmosphere, climate, hydrosphere, hazards) together -- a bigger,
+ * coherent "this world's physical character changed" operation, one
+ * level up from rerolling world class alone. PHASE 8D-3A correction
+ * pass (finding #5 and the related secondary observation): gravity/
+ * atmosphere/hazards are now part of this coherent operation too (the
+ * expanded environment model made leaving them out of a "regenerate
+ * the whole environment" op an increasingly narrow reading of
+ * "environment"); single-field rerolls of any of these stay
+ * independent exactly as before.
+ *
+ * Every child POI is preserved (never replaced/deleted -- that stays
+ * `regenerateAllPois()`'s job) but its parent-derived context IS
+ * refreshed via `refreshPoiContext()`: `biomes`/`tags`/
+ * `generatorContext` are re-derived against the world's NEW
+ * environment, and a POI whose template no longer fits gets
+ * `DIAGNOSTIC_CODE.POI_CONTEXT_MISMATCH` attached rather than being
+ * silently left with stale context and no signal at all (the previous
+ * behavior this correction pass fixes) or silently deleted/rerolled
+ * out from under the GM (which this module's whole design exists to
+ * prevent). `draftId`/`template`/`name`/`nameDraft` on every POI are
+ * completely untouched.
  */
 export function regenerateEnvironment(bundle, { rng } = {}) {
   let planetDraft = bundle.planetDraft;
   planetDraft = rerollPlanetWorldClass(planetDraft, { rng });
+  planetDraft = rerollPlanetGravity(planetDraft, { rng });
+  planetDraft = rerollPlanetAtmosphere(planetDraft, { rng });
   planetDraft = rerollPlanetClimate(planetDraft, { rng });
   planetDraft = rerollPlanetHydrosphere(planetDraft, { rng });
-  return { ...bundle, planetDraft };
+  planetDraft = rerollPlanetHazards(planetDraft, { rng });
+  const poiDrafts = bundle.poiDrafts.map((poi) => refreshPoiContext(poi, { parentPlanetDraft: planetDraft }));
+  return { ...bundle, planetDraft, poiDrafts };
 }
 
 /**
@@ -140,8 +174,10 @@ export function regenerateEnvironment(bundle, { rng } = {}) {
  * single-field reroll functions `planet-draft.js` already exports
  * (never reimplementing `rollCivilization()`'s private logic here). A
  * no-op on an UNINHABITED draft, exactly like each underlying reroll
- * already is individually. POIs are carried through unchanged, same
- * rationale as `regenerateEnvironment()`.
+ * already is individually. Every child POI is preserved but has its
+ * context refreshed, same rationale and mechanism as
+ * `regenerateEnvironment()` -- a POI's `generatorContext` also depends
+ * on the planet's economy/government tags, not just its environment.
  */
 export function regenerateCivilization(bundle, { rng } = {}) {
   let planetDraft = bundle.planetDraft;
@@ -149,7 +185,8 @@ export function regenerateCivilization(bundle, { rng } = {}) {
   planetDraft = rerollPlanetStability(planetDraft, { rng });
   planetDraft = rerollPlanetTechnologyLevel(planetDraft, { rng });
   planetDraft = rerollPlanetEconomy(planetDraft, { rng });
-  return { ...bundle, planetDraft };
+  const poiDrafts = bundle.poiDrafts.map((poi) => refreshPoiContext(poi, { parentPlanetDraft: planetDraft }));
+  return { ...bundle, planetDraft, poiDrafts };
 }
 
 /**
