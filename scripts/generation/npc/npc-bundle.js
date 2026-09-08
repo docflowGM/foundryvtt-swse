@@ -61,7 +61,7 @@ import { composeNpcPublicDescription } from '../lib/description-composer.js';
 import {
   createContactLocationLink, rollContactLocationRelationshipFlavor, CONTACT_LOCATION_LINK_STATUS, CONTACT_LOCATION_LINK_SOURCE
 } from './npc-location-link.js';
-import { createProvenance, withWarning } from '../provenance.js';
+import { createProvenance, withWarning, isProvenance } from '../provenance.js';
 import { DIAGNOSTIC_CODE } from '../lib/generator-diagnostics.js';
 import {
   selectMemberKind, selectSpeciesId, createPopulationProfile
@@ -279,6 +279,7 @@ async function resolveNameProvider(kind, { nameProvider, droidNameProvider } = {
  * @param {number} [options.flavorNoteCount] - explicit flavor-note count override; defaults to `npc-flavor.js`'s own 0-3 weighted roll.
  * @param {object} [options.nameProvider] - override for the living-name async provider (tests inject a deterministic stub).
  * @param {object} [options.droidNameProvider] - override for the droid-name async provider.
+ * @param {object} [options.provenance] - an existing `provenance.js`-shaped stamp to build on (e.g. a caller re-generating with prior provenance already in hand). Explicitly named (never left to fall through `...rest`) so a `NPC_LOCATION_CONTEXT_MISMATCH` warning this function itself attaches can never be silently overwritten by a caller-supplied `provenance` -- see the correction round 6 note on `resolvedProvenance` below.
  */
 export async function createGeneratedNpcConcept({
   rng,
@@ -299,6 +300,7 @@ export async function createGeneratedNpcConcept({
   flavorNoteCount,
   nameProvider,
   droidNameProvider,
+  provenance = null,
   ...rest
 } = {}) {
   // CORRECTION (independent review round 2 -- "duplicate Location
@@ -494,15 +496,24 @@ export async function createGeneratedNpcConcept({
     suggestedOppositionTags,
     flavorNotes,
     profileAffinity: { roleTags },
-    // CORRECTION (independent review round 5, item 1): flag a
-    // Location-context/explicit-identity conflict on the draft itself
-    // (never auto-"corrected" -- see `lib/generator-diagnostics.js`'s
-    // own "warn, never silently fix" discipline), so a caller can see
-    // WHY `locationContext`'s bias/tags were dropped rather than
-    // discovering it only by noticing technologyFamiliarity/lifestyle
-    // didn't move the way a supplied `locationContext` seemed to imply.
-    ...(contextMismatch ? { provenance: withWarning(createProvenance(), DIAGNOSTIC_CODE.NPC_LOCATION_CONTEXT_MISMATCH) } : {}),
-    ...rest
+    ...rest,
+    // CORRECTION (independent review round 6 -- "the mismatch
+    // diagnostic can still be silently overwritten"): `provenance` is
+    // computed here, AFTER `...rest`, and as its own explicitly-named
+    // parameter (never left to fall through `...rest` itself) so a
+    // caller-supplied `provenance` can NEVER silently clobber the
+    // NPC_LOCATION_CONTEXT_MISMATCH warning this function itself
+    // attaches (round 5, item 1) -- the two are MERGED via
+    // `withWarning()` instead, preserving the caller's own presetId/
+    // templateId/seed/tags/other warnings and simply adding this one
+    // on top, exactly like `withWarning()`'s own contract already
+    // supports. Never auto-"corrected" -- see
+    // `lib/generator-diagnostics.js`'s own "warn, never silently fix"
+    // discipline; this only makes the warning IMPOSSIBLE to lose, not
+    // a change to what it means.
+    provenance: contextMismatch
+      ? withWarning(isProvenance(provenance) ? provenance : createProvenance(), DIAGNOSTIC_CODE.NPC_LOCATION_CONTEXT_MISMATCH)
+      : (isProvenance(provenance) ? provenance : createProvenance())
   };
 
   if (conceptKind === NPC_CONCEPT_KIND.LIVING) {

@@ -54,6 +54,20 @@ function hasOnlyValidExplicitEnums(input) {
 }
 
 /**
+ * CORRECTION (independent review round 6, item 2 -- "strict authoring
+ * validation forgot that primary is a boolean input"): `addContactLocationLink()`'s
+ * own `Boolean(input.primary)` coercion (a truthy NON-boolean like
+ * `"false"` or `1` would silently become `true`) was exactly the kind
+ * of tolerant coercion round 5's own enum-validation fix explicitly
+ * rejected for the strict GM authoring layer. An explicitly-supplied
+ * `primary` must be a real boolean or the whole call is rejected --
+ * `primary` absent entirely is fine (defaults to not-requested).
+ */
+function hasValidExplicitPrimary(input) {
+  return !Object.prototype.hasOwnProperty.call(input, 'primary') || typeof input.primary === 'boolean';
+}
+
+/**
  * Append one new Location relationship. Every OTHER existing link is
  * preserved untouched. A no-op (returns the draft unchanged) if
  * `input` isn't meaningful (no resolvable target/eligible snapshot, or
@@ -81,11 +95,16 @@ function hasOnlyValidExplicitEnums(input) {
  * `setContactLocationLinkPrimary()` -- the one authoritative operation
  * for changing primary state -- so "add B as primary" always means
  * exactly that, never "maybe primary depending on what else exists."
+ * An explicitly-supplied `primary` that isn't a real boolean (e.g.
+ * `"false"`, `1`) is REJECTED (see `hasValidExplicitPrimary()` above)
+ * rather than tolerantly coerced -- the same strictness principle as
+ * `hasOnlyValidExplicitEnums()`.
  */
 export function addContactLocationLink(draft, input = {}) {
   if (!hasOnlyValidExplicitEnums(input)) return draft;
+  if (!hasValidExplicitPrimary(input)) return draft;
   const existing = Array.isArray(draft?.locationLinks) ? draft.locationLinks : [];
-  const requestPrimary = Boolean(input.primary);
+  const requestPrimary = input.primary === true;
   const candidate = createContactLocationLink({ source: CONTACT_LOCATION_LINK_SOURCE.MANUAL, ...input, primary: false });
   const next = normalizeContactLocationLinks([...existing, candidate]);
   if (next.length === existing.length) return draft;

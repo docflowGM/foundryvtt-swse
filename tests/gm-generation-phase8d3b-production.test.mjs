@@ -1018,6 +1018,30 @@ const stubDroidNameProvider = async () => 'TX-1';
   }
   console.log('PHASE 8D-3B correction round 5 (Location-context identity mismatch): a conflicting locationContext is now dropped ENTIRELY (bias + tags), not just its identity, and the conflict is flagged on provenance.warnings, passed.');
 
+  // --- CORRECTION (independent review round 6, item 1): the mismatch diagnostic must MERGE onto a caller-supplied provenance, never be silently overwritable by it ---
+  {
+    const { DIAGNOSTIC_CODE } = await import(abs('scripts/generation/lib/generator-diagnostics.js'));
+    const { createProvenance } = await import(abs('scripts/generation/provenance.js'));
+
+    const callerProvenance = createProvenance({ presetId: 'test-preset', warnings: ['EXISTING_WARNING'] });
+    const npc = await createGeneratedNpcConcept({
+      rng: makeSeededRng(1), availableSpeciesIds, linkedLocationId: 'location-A', locationContext: { locationId: 'location-B' },
+      provenance: callerProvenance, nameProvider: stubNameProvider, droidNameProvider: stubDroidNameProvider
+    });
+    assert.equal(npc.provenance.presetId, 'test-preset', 'a caller-supplied provenance\'s presetId must survive -- the mismatch warning merges onto it, never replaces it with a fresh blank provenance');
+    assert.ok(npc.provenance.warnings.includes('EXISTING_WARNING'), 'a caller-supplied provenance\'s own pre-existing warnings must survive the merge');
+    assert.ok(npc.provenance.warnings.includes(DIAGNOSTIC_CODE.NPC_LOCATION_CONTEXT_MISMATCH), 'the NPC_LOCATION_CONTEXT_MISMATCH warning must still be added on top of the caller-supplied provenance, not lost to it');
+
+    // No mismatch -> a caller-supplied provenance is still honored as-is (not silently replaced with a fresh one).
+    const noMismatchProvenance = createProvenance({ presetId: 'other-preset' });
+    const npcNoMismatch = await createGeneratedNpcConcept({
+      rng: makeSeededRng(1), availableSpeciesIds, linkedLocationId: 'location-A', provenance: noMismatchProvenance,
+      nameProvider: stubNameProvider, droidNameProvider: stubDroidNameProvider
+    });
+    assert.equal(npcNoMismatch.provenance.presetId, 'other-preset', 'a caller-supplied provenance must be honored even when there is no mismatch to merge in');
+  }
+  console.log('PHASE 8D-3B correction round 6 (mismatch-warning provenance merge): a caller-supplied provenance can no longer silently overwrite the NPC_LOCATION_CONTEXT_MISMATCH warning -- the two are merged, preserving presetId/existing warnings, passed.');
+
   // --- publicDescription: derived, safe-to-reveal only -------------------
   {
     const description = composeNpcPublicDescription({
@@ -1748,6 +1772,32 @@ const stubDroidNameProvider = async () => 'TX-1';
     assert.equal(aLinkStillPrimary.primary, true, 'addContactLocationLink without requesting primary must leave the existing primary link untouched');
   }
   console.log('PHASE 8D-3B locationLinks single primary mutation authority (updateContactLocationLink rejects any patch mentioning primary at all; addContactLocationLink({primary:true}) deterministically promotes the new link via setContactLocationLinkPrimary rather than depending on normalizer tie-breaking; setContactLocationLinkPrimary remains the sole authority) passed.');
+
+  // --- CORRECTION (independent review round 6, item 2): addContactLocationLink's primary input must be STRICTLY boolean, never tolerantly coerced ---
+  {
+    const npc = createNpcConceptDraft({ kind: 'living', name: 'Strict Primary Test' });
+
+    // primary: true / false are the only valid explicit values.
+    const withTrue = addContactLocationLink(npc, { locationId: 'loc-a', relationshipType: CONTACT_LOCATION_RELATIONSHIP.RESIDENT, primary: true });
+    assert.equal(withTrue.locationLinks[0].primary, true, 'primary:true (a real boolean) must still be honored and promote the new link');
+    const withFalse = addContactLocationLink(npc, { locationId: 'loc-a', relationshipType: CONTACT_LOCATION_RELATIONSHIP.RESIDENT, primary: false });
+    assert.equal(withFalse.locationLinks[0].primary, false, 'primary:false (a real boolean) must still be honored and add as non-primary');
+
+    // Truthy/falsy NON-boolean values must be REJECTED (return the draft unchanged), never coerced via Boolean(...).
+    const withStringFalse = addContactLocationLink(npc, { locationId: 'loc-a', relationshipType: CONTACT_LOCATION_RELATIONSHIP.RESIDENT, primary: 'false' });
+    assert.equal(withStringFalse, npc, 'primary:"false" (a truthy STRING, not a boolean) must be REJECTED, never coerced to true via Boolean(...)');
+    const withOne = addContactLocationLink(npc, { locationId: 'loc-a', relationshipType: CONTACT_LOCATION_RELATIONSHIP.RESIDENT, primary: 1 });
+    assert.equal(withOne, npc, 'primary:1 (truthy NUMBER, not a boolean) must be REJECTED');
+    const withZero = addContactLocationLink(npc, { locationId: 'loc-a', relationshipType: CONTACT_LOCATION_RELATIONSHIP.RESIDENT, primary: 0 });
+    assert.equal(withZero, npc, 'primary:0 (falsy NUMBER, not a boolean) must be REJECTED too -- strictness applies regardless of truthiness');
+    const withNull = addContactLocationLink(npc, { locationId: 'loc-a', relationshipType: CONTACT_LOCATION_RELATIONSHIP.RESIDENT, primary: null });
+    assert.equal(withNull, npc, 'primary:null (explicitly supplied, not a boolean) must be REJECTED');
+
+    // primary omitted entirely must still work exactly as before (defaults to not-requested).
+    const withoutPrimary = addContactLocationLink(npc, { locationId: 'loc-a', relationshipType: CONTACT_LOCATION_RELATIONSHIP.RESIDENT });
+    assert.equal(withoutPrimary.locationLinks[0].primary, false, 'omitting primary entirely must still work normally, defaulting to non-primary');
+  }
+  console.log('PHASE 8D-3B locationLinks strict primary boolean validation (addContactLocationLink rejects any explicitly-supplied non-boolean primary value -- truthy strings/numbers, falsy numbers, and null all rejected rather than coerced; true/false/omitted all still work normally) passed.');
 
   // --- CORRECTION (independent review round 4, item 5): snapshot-only entries are restricted to explicitly non-resolvable historical facts (LAST_SEEN / imported), never a name-only back door for a normal current relationship ---
   {
