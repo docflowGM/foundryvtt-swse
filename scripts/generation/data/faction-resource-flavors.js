@@ -20,7 +20,6 @@ export const FACTION_RESOURCE_FLAVORS = Object.freeze([
   { value: 'well-funded but slow to spend, bureaucratic approval required', weight: 1, tags: ['government-bureaucracy'] },
   { value: 'wealthy in influence and favors, not necessarily credits', weight: 2, tags: ['noble-house', 'business-professional'] },
   { value: 'resource-rich in territory but cash-poor', weight: 2, tags: ['community-tribe', 'noble-house'] },
-  { value: 'maintains a private fleet of vessels', weight: 1, tags: ['military-paramilitary', 'business-professional'] },
   { value: 'controls access to a scarce, valuable raw material', weight: 2, tags: ['business-professional', 'crime-syndicate'] },
   { value: 'runs lean, deliberately avoids ostentatious spending', weight: 2, tags: ['military-paramilitary', 'force-tradition'] },
   { value: 'heavily leveraged, resources look better on paper than in practice', weight: 1, tags: ['business-professional'] },
@@ -40,5 +39,16 @@ export const FACTION_RESOURCE_FLAVORS = Object.freeze([
   { value: 'maintains a hidden emergency reserve few know about', weight: 1, tags: ['crime-syndicate', 'noble-house'] },
   { value: 'has strong informal barter/trade relationships instead of credits', weight: 1, tags: ['community-tribe', 'frontier'] },
   { value: 'benefits from a lucrative but illegal revenue stream', weight: 1, tags: ['crime-syndicate'] },
-  { value: 'commands a large, dedicated volunteer base instead of paid staff', weight: 1, tags: ['humanitarian', 'religion', 'community-tribe'] }
+  { value: 'commands a large, dedicated volunteer base instead of paid staff', weight: 1, tags: ['humanitarian', 'religion', 'community-tribe'] },
+
+  // PHASE 8D-3B FINAL CONTENT HYDRATION PASS -- reviewed under the
+  // task's "no documented target" provision. "maintains a private
+  // fleet of vessels" was removed above as a near-duplicate of the
+  // existing "controls a small but valuable fleet of ships" entry. A
+  // small number of genuinely distinct resource flavors were added
+  // below.
+  { value: 'profits from brokering information rather than goods', weight: 1, tags: ['crime-syndicate', 'government-bureaucracy'] },
+  { value: 'relies on droid labor to offset a chronic shortage of willing members', weight: 1, tags: ['business-professional', 'industrial'] },
+  { value: 'directly controls a piece of vital regional infrastructure', weight: 2, tags: ['government-bureaucracy', 'business-professional'] },
+  { value: 'wealth is tied up in illiquid holdings, hard to move quickly', weight: 1, tags: ['noble-house', 'business-professional'] }
 ]);

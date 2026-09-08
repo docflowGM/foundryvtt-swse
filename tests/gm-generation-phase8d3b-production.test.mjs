@@ -132,6 +132,69 @@ const stubDroidNameProvider = async () => 'TX-1';
 }
 
 // ------------------------------------------------------------
+// FINAL CONTENT HYDRATION PASS -- documented production-floor assertions
+// (minimum only, per the phase spec: "never require the exact upper
+// bound") for every catalog hydrated in this pass that isn't already
+// covered by an existing assertion above.
+// ------------------------------------------------------------
+{
+  const { NPC_SOCIAL_ROLES } = await import(abs('scripts/generation/data/npc-social-roles.js'));
+  const { NPC_NARRATIVE_FUNCTIONS } = await import(abs('scripts/generation/data/npc-narrative-functions.js'));
+  const { NPC_LOCATION_RELATIONSHIPS } = await import(abs('scripts/generation/data/npc-location-relationships.js'));
+  const { NPC_LOYALTY_PROFILES } = await import(abs('scripts/generation/data/npc-loyalty-profiles.js'));
+  const { NPC_SOCIAL_STYLES } = await import(abs('scripts/generation/data/npc-social-styles.js'));
+  const { NPC_TEMPERAMENTS } = await import(abs('scripts/generation/data/npc-temperaments.js'));
+  const { NPC_OCCUPATIONS } = await import(abs('scripts/generation/data/npc-occupations.js'));
+  const { NPC_FACTION_ROLES } = await import(abs('scripts/generation/data/npc-faction-roles.js'));
+  const { NPC_DESIRES } = await import(abs('scripts/generation/data/npc-desires.js'));
+  const { NPC_FEARS } = await import(abs('scripts/generation/data/npc-fears.js'));
+  const { NPC_COMPLICATIONS } = await import(abs('scripts/generation/data/npc-complications.js'));
+  const { NPC_RELATIONSHIP_HOOK_TEMPLATES } = await import(abs('scripts/generation/data/npc-relationship-hooks.js'));
+  const { NPC_VOICE_QUALITIES_ORGANIC } = await import(abs('scripts/generation/data/npc-voice-qualities-organic.js'));
+  const { NPC_VOICE_QUALITIES_DROID } = await import(abs('scripts/generation/data/npc-voice-qualities-droid.js'));
+  const { NPC_SPEECH_STYLES } = await import(abs('scripts/generation/data/npc-speech-styles.js'));
+  const { NPC_DROID_MANNERISMS } = await import(abs('scripts/generation/data/npc-mannerisms-droid.js'));
+
+  const floors = {
+    NPC_SOCIAL_ROLES: [NPC_SOCIAL_ROLES, 75],
+    NPC_NARRATIVE_FUNCTIONS: [NPC_NARRATIVE_FUNCTIONS, 50],
+    NPC_LOCATION_RELATIONSHIPS: [NPC_LOCATION_RELATIONSHIPS, 30],
+    NPC_LOYALTY_PROFILES: [NPC_LOYALTY_PROFILES, 50],
+    NPC_SOCIAL_STYLES: [NPC_SOCIAL_STYLES, 75],
+    NPC_TEMPERAMENTS: [NPC_TEMPERAMENTS, 50],
+    NPC_OCCUPATIONS: [NPC_OCCUPATIONS, 250],
+    NPC_FACTION_ROLES: [NPC_FACTION_ROLES, 100],
+    NPC_DESIRES: [NPC_DESIRES, 150],
+    NPC_FEARS: [NPC_FEARS, 150],
+    NPC_COMPLICATIONS: [NPC_COMPLICATIONS, 250],
+    NPC_RELATIONSHIP_HOOK_TEMPLATES: [NPC_RELATIONSHIP_HOOK_TEMPLATES, 200],
+    NPC_VOICE_QUALITIES_ORGANIC: [NPC_VOICE_QUALITIES_ORGANIC, 100],
+    NPC_VOICE_QUALITIES_DROID: [NPC_VOICE_QUALITIES_DROID, 100],
+    NPC_SPEECH_STYLES: [NPC_SPEECH_STYLES, 200],
+    NPC_DROID_MANNERISMS: [NPC_DROID_MANNERISMS, 150]
+  };
+  for (const [name, [pool, floor]] of Object.entries(floors)) {
+    assert.ok(pool.length >= floor, `${name} must meet its documented production floor (${floor}+), got ${pool.length}`);
+    const seen = new Set();
+    for (const entry of pool) {
+      const key = (entry.value ?? entry.text).toLowerCase().trim();
+      assert.ok(!seen.has(key), `${name} must contain no duplicate values, case/whitespace-normalized (dup: "${key}")`);
+      seen.add(key);
+    }
+  }
+
+  // NPC_OCCUPATIONS.roleTag must reference a real NPC_ROLES value (also independently checked below in
+  // the table-validation block; re-asserted here so this hydration-floor block stands on its own).
+  const { NPC_ROLES } = await import(abs('scripts/generation/data/npc-roles.js'));
+  const roleTagValues = new Set(NPC_ROLES.map((e) => e.value));
+  for (const occEntry of NPC_OCCUPATIONS) {
+    assert.ok(roleTagValues.has(occEntry.roleTag), `NPC_OCCUPATIONS entry "${occEntry.value}"'s roleTag "${occEntry.roleTag}" must reference a real NPC_ROLES value`);
+  }
+
+  console.log('PHASE 8D-3B final content hydration production-floor assertions (16 additional hydrated catalogs meet their documented minimums, zero duplicates, occupation roleTags valid) passed.');
+}
+
+// ------------------------------------------------------------
 // Generation semantics (statistically-verified context weighting)
 // ------------------------------------------------------------
 {
@@ -530,8 +593,25 @@ const stubDroidNameProvider = async () => 'TX-1';
       assert.ok(entry.id.startsWith(name.startsWith('ORGANIC') ? 'organic.' : 'droid.'), `${name} entry "${entry.id}" must carry its pool's namespace prefix`);
     }
   }
-  assert.ok(ORGANIC_NPC_FLAVOR_QUALITIES.length >= 100, `ORGANIC_NPC_FLAVOR_QUALITIES must be a substantial representative catalog (100+), got ${ORGANIC_NPC_FLAVOR_QUALITIES.length}`);
-  assert.ok(DROID_NPC_FLAVOR_QUALITIES.length >= 75, `DROID_NPC_FLAVOR_QUALITIES must be a substantial representative catalog (75+), got ${DROID_NPC_FLAVOR_QUALITIES.length}`);
+  assert.ok(ORGANIC_NPC_FLAVOR_QUALITIES.length >= 1000, `ORGANIC_NPC_FLAVOR_QUALITIES must meet the documented production floor (1,000-1,500), got ${ORGANIC_NPC_FLAVOR_QUALITIES.length}`);
+  assert.ok(DROID_NPC_FLAVOR_QUALITIES.length >= 500, `DROID_NPC_FLAVOR_QUALITIES must meet the documented production floor (500-1,000), got ${DROID_NPC_FLAVOR_QUALITIES.length}`);
+  {
+    const appearanceCueCategories = new Set(['chassis', 'paint', 'replacement-parts', 'photoreceptor']);
+    const droidAppearanceCueCount = DROID_NPC_FLAVOR_QUALITIES.filter((e) => appearanceCueCategories.has(e.category)).length;
+    assert.ok(droidAppearanceCueCount >= 200, `DROID_NPC_FLAVOR_QUALITIES's chassis/paint/replacement-parts/photoreceptor categories (serving as the droid appearance-cue pool) must meet the documented floor (200-350 combined), got ${droidAppearanceCueCount}`);
+  }
+  // Every declared conflictTags reference must resolve against SOME entry's own `tags` array in the
+  // same pool (the mechanism `conflictsWithPicked()` in npc-flavor.js actually checks) -- otherwise the
+  // pairing is silently inert. Guards against the exact latent-reference bug this phase's hydration found
+  // and fixed across both pools.
+  for (const [name, pool] of [['ORGANIC_NPC_FLAVOR_QUALITIES', ORGANIC_NPC_FLAVOR_QUALITIES], ['DROID_NPC_FLAVOR_QUALITIES', DROID_NPC_FLAVOR_QUALITIES]]) {
+    const allTags = new Set(pool.flatMap((e) => e.tags ?? []));
+    for (const entry of pool) {
+      for (const conflictTag of entry.conflictTags ?? []) {
+        assert.ok(allTags.has(conflictTag), `${name} entry "${entry.id}"'s conflictTags value "${conflictTag}" must be present in some entry's own tags[] in the same pool, or the conflict pairing is silently inert`);
+      }
+    }
+  }
 
   // 3. No namespace collision between the two pools if a resolver ever addresses both by id.
   const organicIds = new Set(ORGANIC_NPC_FLAVOR_QUALITIES.map((e) => e.id));

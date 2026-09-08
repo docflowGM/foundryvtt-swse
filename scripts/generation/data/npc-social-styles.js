@@ -1,8 +1,10 @@
 /**
  * PHASE 8D-3B production — NPC social-style catalog: HOW this NPC
  * conducts themselves in interaction (distinct from `temperament`,
- * the emotional baseline underneath it). Representative catalog
- * (phase target: 75-125).
+ * the emotional baseline underneath it).
+ *
+ * PHASE 8D-3B FINAL CONTENT HYDRATION PASS: expanded toward the
+ * documented production target (75-125).
  */
 export const NPC_SOCIAL_STYLES = Object.freeze([
   { value: 'formal', weight: 2, tags: ['noble-house', 'government-bureaucracy'] },
@@ -29,5 +31,61 @@ export const NPC_SOCIAL_STYLES = Object.freeze([
   { value: 'self-deprecating', weight: 1, tags: [] },
   { value: 'gregarious', weight: 1, tags: [] },
   { value: 'reticent', weight: 1, tags: [] },
-  { value: 'businesslike', weight: 2, tags: ['business-professional'] }
+  { value: 'businesslike', weight: 2, tags: ['business-professional'] },
+  { value: 'overly polite', weight: 1, tags: [] },
+  { value: 'plainspoken', weight: 1.5, tags: [] },
+  { value: 'chatty with strangers', weight: 1, tags: [] },
+  { value: 'measured, chooses words carefully', weight: 1, tags: ['government-bureaucracy'] },
+  { value: 'excitable', weight: 1, tags: [] },
+  { value: 'stiffly polite', weight: 1, tags: ['government-bureaucracy'] },
+  { value: 'wry and understated', weight: 1, tags: [] },
+  { value: 'overexplains everything', weight: 1, tags: [] },
+  { value: 'terse, keeps it short', weight: 1.5, tags: ['military-paramilitary'] },
+  { value: 'warmly welcoming to strangers', weight: 1, tags: [] },
+  { value: 'coolly transactional', weight: 1, tags: ['business-professional', 'crime-syndicate'] },
+  { value: 'nervously accommodating', weight: 1, tags: [] },
+  { value: 'quick to joke, even in tense moments', weight: 1, tags: [] },
+  { value: 'guarded around outsiders, warm with regulars', weight: 1, tags: [] },
+  { value: 'confrontational by default', weight: 0.5, tags: ['crime-syndicate'] },
+  { value: 'unfailingly courteous', weight: 1, tags: ['noble-house'] },
+  { value: 'prickly, takes offense easily', weight: 0.5, tags: [] },
+  { value: 'flatly matter-of-fact', weight: 1.5, tags: [] },
+  { value: 'overeager to please', weight: 1, tags: [] },
+  { value: 'aloof, keeps a distance', weight: 1, tags: ['noble-house'] },
+  { value: 'straightforward negotiator', weight: 1, tags: ['business-professional', 'trade'] },
+  { value: 'performs friendliness without much warmth', weight: 1, tags: ['business-professional'] },
+  { value: 'openly curious about everyone they meet', weight: 1, tags: [] },
+  { value: 'skeptical until proven otherwise', weight: 1, tags: [] },
+  { value: 'stern but fair', weight: 1, tags: ['military-paramilitary', 'enforcement'] },
+  { value: 'deliberately intimidating', weight: 0.5, tags: ['enforcement', 'crime-syndicate'] },
+  { value: 'quick to defer to authority', weight: 1, tags: ['government-bureaucracy'] },
+  { value: 'stubbornly informal, even with superiors', weight: 1, tags: [] },
+  { value: 'chronically apologetic', weight: 0.5, tags: [] },
+  { value: 'coldly efficient', weight: 1, tags: ['business-professional', 'government-bureaucracy'] },
+  { value: 'over-familiar with new acquaintances', weight: 1, tags: [] },
+  { value: 'takes a while to warm up', weight: 1.5, tags: [] },
+  { value: 'instantly at ease with anyone', weight: 1, tags: [] },
+  { value: 'careful never to overpromise', weight: 1, tags: ['business-professional'] },
+  { value: 'answers questions with more questions', weight: 0.5, tags: ['mysterious'] },
+  { value: 'speaks mostly in practicalities', weight: 1, tags: [] },
+  { value: 'quietly watchful before speaking', weight: 1, tags: ['mysterious'] },
+  { value: 'good-natured teasing with familiar faces', weight: 1, tags: [] },
+  { value: 'no patience for small talk', weight: 1, tags: [] },
+  { value: 'insists on proper titles and forms of address', weight: 0.5, tags: ['government-bureaucracy', 'noble-house'] },
+  { value: 'openly affectionate with friends', weight: 1, tags: [] },
+  { value: 'reserved with strangers, loyal once trusted', weight: 1, tags: [] },
+  { value: 'quick to laugh at their own mistakes', weight: 1, tags: [] },
+  { value: 'measured and diplomatic even under pressure', weight: 1, tags: ['government-bureaucracy'] },
+  { value: 'bluntly honest, sometimes to a fault', weight: 1, tags: [] },
+  { value: 'endlessly patient with questions', weight: 1, tags: ['education'] },
+  { value: 'visibly uncomfortable with praise', weight: 0.5, tags: [] },
+  { value: 'talks with their hands constantly', weight: 1, tags: [] },
+  { value: 'formally polite but privately cold', weight: 0.5, tags: ['noble-house'] },
+  { value: 'trusts easily, sometimes too easily', weight: 0.5, tags: [] },
+  { value: 'keeps interactions strictly on-topic', weight: 1.5, tags: ['business-professional'] },
+  { value: 'openly competitive in conversation', weight: 0.5, tags: [] },
+  { value: 'soft-spoken but very direct', weight: 1, tags: [] },
+  { value: 'performative warmth that fades quickly', weight: 0.5, tags: ['crime-syndicate'] },
+  { value: 'unusually formal for their age', weight: 0.5, tags: [] },
+  { value: 'relentlessly upbeat', weight: 1, tags: [] }
 ]);

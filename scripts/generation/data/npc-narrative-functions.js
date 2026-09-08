@@ -3,7 +3,9 @@
  * role this NPC is likely to play for the party, not their occupation.
  * SUGGEST-tier only (matches `combatRole`/`levelBand`'s existing
  * discipline on this same schema) -- a GM-facing hint, never binding.
- * Representative catalog (phase target: 50-75).
+ *
+ * PHASE 8D-3B FINAL CONTENT HYDRATION PASS: expanded toward the
+ * documented production target (50-75).
  */
 export const NPC_NARRATIVE_FUNCTIONS = Object.freeze([
   { value: 'information-source', weight: 3, tags: [] },
@@ -35,5 +37,39 @@ export const NPC_NARRATIVE_FUNCTIONS = Object.freeze([
   { value: 'gossip/rumor source', weight: 1, tags: ['community-tribe'] },
   { value: 'go-between for two hostile parties', weight: 0.5, tags: [] },
   { value: 'accidental complication', weight: 0.5, tags: [] },
-  { value: 'moral compass', weight: 0.5, tags: [] }
+  { value: 'moral compass', weight: 0.5, tags: [] },
+  { value: 'patron', weight: 1.5, tags: ['business-professional', 'noble-house'] },
+  { value: 'employer', weight: 1.5, tags: ['business-professional'] },
+  { value: 'competitor', weight: 1, tags: ['business-professional'] },
+  { value: 'informant', weight: 2, tags: ['crime-syndicate', 'enforcement'] },
+  { value: 'handler', weight: 1, tags: ['government-bureaucracy', 'crime-syndicate'] },
+  { value: 'go-to fixer', weight: 1, tags: ['crime-syndicate', 'business-professional'] },
+  { value: 'reluctant ally of convenience', weight: 1, tags: [] },
+  { value: 'gatekeeper of restricted information', weight: 1, tags: ['government-bureaucracy'] },
+  { value: 'material supplier', weight: 1, tags: ['trade', 'business-professional'] },
+  { value: 'technical consultant', weight: 1, tags: ['research', 'technology'] },
+  { value: 'first responder to a crisis', weight: 0.5, tags: ['medical', 'security'] },
+  { value: 'unwitting pawn', weight: 0.5, tags: [] },
+  { value: 'longtime friend of the party', weight: 0.5, tags: [] },
+  { value: 'old debt come due', weight: 0.5, tags: [] },
+  { value: 'source of a false lead', weight: 0.5, tags: ['mysterious'] },
+  { value: 'keeper of an old secret', weight: 0.5, tags: [] },
+  { value: 'representative of a larger organization', weight: 1, tags: [] },
+  { value: 'test of the party reputation locally', weight: 0.5, tags: [] },
+  { value: 'comic foil for a more serious scene', weight: 1, tags: [] },
+  { value: 'unofficial mediator between factions', weight: 0.5, tags: [] },
+  { value: 'someone owed a debt by the party', weight: 0.5, tags: [] },
+  { value: 'someone the party owes a debt', weight: 0.5, tags: [] },
+  { value: 'watcher who reports elsewhere', weight: 0.5, tags: ['mysterious'] },
+  { value: 'local color with a useful skill', weight: 1.5, tags: [] },
+  { value: 'stubborn holdout who will not cooperate', weight: 0.5, tags: [] },
+  { value: 'well-meaning meddler', weight: 1, tags: [] },
+  { value: 'source of comic misdirection', weight: 0.5, tags: [] },
+  { value: 'bystander caught in the middle', weight: 1, tags: [] },
+  { value: 'living archive of local history', weight: 0.5, tags: ['cultural'] },
+  { value: 'temporary crew member or hire', weight: 1, tags: ['trade'] },
+  { value: 'symbol the party rallies around or against', weight: 0.5, tags: [] },
+  { value: 'stepping stone to someone more important', weight: 1, tags: [] },
+  { value: 'unreliable narrator of events', weight: 0.5, tags: ['mysterious'] },
+  { value: 'quiet supporter working behind the scenes', weight: 0.5, tags: [] }
 ]);

@@ -29,16 +29,28 @@ export const FACTION_LEADERSHIP_STRUCTURES = Object.freeze([
   { value: 'a hereditary lineage of succession within one family', weight: 2, tags: ['noble-house'] },
   { value: 'a rotating chairmanship among senior members', weight: 1, tags: ['business-professional', 'government-bureaucracy'] },
   { value: 'a strict military-style rank hierarchy', weight: 2, tags: ['military-paramilitary'] },
-  { value: 'a single, unchallenged supreme leader', weight: 2, tags: ['crime-syndicate', 'military-paramilitary'] },
   { value: 'a triumvirate of co-equal leaders who must agree unanimously', weight: 1, tags: ['government-bureaucracy', 'noble-house'] },
   { value: 'elected leadership, subject to periodic votes by the membership', weight: 2, tags: ['government-bureaucracy', 'community-tribe'] },
   { value: 'leadership earned through trial or proven skill', weight: 1, tags: ['force-tradition', 'military-paramilitary'] },
-  { value: 'a spiritual leader whose authority is unquestioned', weight: 1, tags: ['religion', 'force-tradition'] },
   { value: 'a board of directors balancing competing interests', weight: 2, tags: ['business-professional'] },
   { value: 'informal leadership -- whoever speaks loudest at the moment', weight: 1, tags: ['crime-syndicate', 'community-tribe'] },
   { value: 'a council of elders whose word is final', weight: 2, tags: ['community-tribe', 'noble-house'] },
   { value: 'leadership passed by mentorship, chosen by the outgoing leader', weight: 1, tags: ['force-tradition', 'business-professional'] },
   { value: 'a puppet leader controlled by unseen backers', weight: 1, tags: ['crime-syndicate', 'government-bureaucracy'] },
   { value: 'a franchise model -- semi-independent local cells under a shared banner', weight: 1, tags: ['crime-syndicate', 'business-professional'] },
-  { value: 'joint command shared uneasily between former rivals', weight: 1, tags: ['military-paramilitary', 'crime-syndicate'] }
+  { value: 'joint command shared uneasily between former rivals', weight: 1, tags: ['military-paramilitary', 'crime-syndicate'] },
+
+  // PHASE 8D-3B FINAL CONTENT HYDRATION PASS -- reviewed under the
+  // task's "no documented target" provision. Three near-duplicate
+  // entries were removed above ("a single, unchallenged supreme
+  // leader" restated line 9; "a hereditary lineage of succession
+  // within one family" restated the existing hereditary-succession
+  // entry; "a spiritual leader whose authority is unquestioned"
+  // restated the existing spiritual-leader entry). A small number of
+  // genuinely distinct leadership shapes were added below.
+  { value: 'leadership vacant right now, an uneasy caretaker holds the seat', weight: 1, tags: ['crime-syndicate', 'government-bureaucracy'] },
+  { value: 'power held by whichever cell currently controls the most territory', weight: 1, tags: ['crime-syndicate', 'military-paramilitary'] },
+  { value: 'a rotating stewardship among a handful of founding families', weight: 1, tags: ['noble-house', 'business-professional'] },
+  { value: 'leadership divided by function -- separate heads for separate domains', weight: 2, tags: ['government-bureaucracy', 'business-professional'] },
+  { value: 'an outside patron effectively dictates leadership decisions', weight: 1, tags: ['government-bureaucracy', 'crime-syndicate'] }
 ]);

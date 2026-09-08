@@ -8755,3 +8755,87 @@ The review noted that `locationPopulationProfile`/`droidPrevalence` remain separ
 Full `gm-*.test.mjs` sweep: **60/60 green** (unchanged file count). Full rolling suite (`tools/run-rolling-tests.mjs`): **189 passed, 0 failed** (5 pre-existing exclusions, unchanged). Full syntax check (`tools/run-rolling-syntax-check.mjs`): **2440/2440 clean** (zero new files, per the review's own explicit request — pure hardening of `npc/npc-bundle.js` and `npc/npc-location-link-actions.js`). `tools/validate-partials.mjs`/`tools/validate-data.js`/`system.json` parse all clean. No canonical-persistence call in either touched file (confirmed by direct grep).
 
 **PHASE 8D-3B CORRECTION PASS ROUND 6 COMPLETE — STRUCTURAL/WIRING REVIEW CLOSED.** Per the reviewer's own explicit framing across rounds 5 and 6, the `locationLinks[]` schema is frozen and no further architecture work remains for this phase; both concrete bugs from round 6 are fixed and verified, and the one remaining coherence gap is deliberately recorded as a future 8D-4/UI-integration invariant rather than addressed here. No catalog was hydrated. Same branch (`claude/gm-datapad-phase8d3b-49c10v`), same PR (#964). Per standing practice: stopping here for independent review — the next work, per the reviewer's own recommendation, is either catalog hydration or Datapad/UI integration against this now-frozen contract, neither of which should begin without explicit new instruction.
+
+## 193. PHASE 8D-3B final content hydration pass
+
+With the structural/wiring review explicitly closed as of round 6 (§192), a separate, content-only instruction requested a final hydration pass over every NPC/Faction catalog Phase 8D-3B owns or expanded, under an absolute architecture freeze: no change to `npc-concept.js`, `locationLinks[]` schema, the location-link action/query modules, the NPC Competence API, Faction Scale authority, draft/GM field-authoring APIs, Public Description composition, GM Notes, targeted-reroll contracts, or the GENERATE/SUGGEST/RESOLVE boundary. `docs/audits/gm-datapad-ecosystem-redesign.md` §186F's own "Exact catalog counts" table was treated as authoritative for every catalog it already documented a target for; the six purely-Faction narrative catalogs it lists with no forward target (goals/objectives/institutional-characters/internal-problems/leadership-structures/resource-flavors) were handled under the task's own explicit "no documented target — do not invent one" provision instead.
+
+### Before/after count matrix
+
+| Catalog | Before | After | Target | Status |
+|---|---:|---:|---|---|
+| `NPC_SOCIAL_ROLES` | 41 | 97 | 75-125 | met |
+| `NPC_NARRATIVE_FUNCTIONS` | 30 | 64 | 50-75 | met |
+| `NPC_LOCATION_RELATIONSHIPS` | 20 | 36 | 30-50 | met |
+| `NPC_LOYALTY_PROFILES` | 22 | 60 | 50-100 | met |
+| `NPC_SOCIAL_STYLES` | 25 | 81 | 75-125 | met |
+| `NPC_TEMPERAMENTS` | 20 | 57 | 50-75 | met |
+| `NPC_OCCUPATIONS` | 82 | 318 | 250-400 | met |
+| `NPC_FACTION_ROLES` | 34 | 111 | 100-150 | met |
+| `NPC_MOTIVATIONS` | 40 | 162 | 150-250 | met |
+| `NPC_DESIRES` | 30 | 151 | 150-250 | met |
+| `NPC_FEARS` | 38 | 164 | 150-250 | met |
+| `NPC_AGENDAS` | 51 | 201 | 200-300 | met |
+| `NPC_SECRETS` | 39 | 251 | 250-400 | met |
+| `NPC_COMPLICATIONS` | 30 | 254 | 250-400 | met |
+| `NPC_RELATIONSHIP_HOOK_TEMPLATES` | 20 | 201 | 200-300 | met |
+| `NPC_RELATIONSHIP_HOOK_SUBJECTS` | 15 | 32 | (no documented target; modest judgment-call expansion since it directly multiplies the templates' variety) | expanded |
+| `NPC_APPEARANCE_TRAITS` | 49 | 302 | 300-500 | met |
+| `NPC_VOICE_QUALITIES_ORGANIC` | 20 | 100 | 100-150 | met |
+| `NPC_VOICE_QUALITIES_DROID` | 18 | 101 | 100-150 | met |
+| `NPC_SPEECH_STYLES` | 30 | 200 | 200-300 | met |
+| `NPC_MANNERISMS` | 40 | 200 | 200-300 | met |
+| `NPC_DROID_MANNERISMS` | 20 | 150 | 150-250 | met |
+| `ORGANIC_NPC_FLAVOR_QUALITIES` | 134 | 1000 | 1,000-1,500 | met |
+| `DROID_NPC_FLAVOR_QUALITIES` | 99 | 500 | 500-1,000 | met |
+| — droid `chassis`+`paint`+`replacement-parts`+`photoreceptor` (appearance-cue combined) | 25 | 203 | 200-350 combined | met |
+| `FACTION_LONG_TERM_GOALS` | 44 | 44 | none documented | reviewed, adequate — unchanged |
+| `FACTION_CURRENT_OBJECTIVES` | 37 | 37 | none documented | reviewed, adequate — unchanged |
+| `FACTION_INSTITUTIONAL_CHARACTERS` | 48 | 53 | none documented | 1 near-duplicate removed, 6 genuinely new entries added |
+| `FACTION_INTERNAL_PROBLEMS` | 45 | 45 | none documented | reviewed, adequate — unchanged |
+| `FACTION_LEADERSHIP_STRUCTURES` | 35 | 38 | none documented | 3 near-duplicates removed, 5 genuinely new entries added |
+| `FACTION_RESOURCE_FLAVORS` | 33 | 36 | none documented | 1 near-duplicate removed, 4 genuinely new entries added |
+| **Total (30 catalogs/pools)** | **1,189** | **5,046** | | |
+
+Every catalog with an audit-documented or user-specified target lands within its floor-to-ceiling range (none at the exact ceiling; several deliberately land at or just above the floor, per the phase spec's own "never require the exact upper bound" guidance and the explicit instruction that count is not itself the goal).
+
+### Quality checks performed
+
+- **Per-file, immediately after every edit** (not batched to the end, per the phase spec's explicit "run validation after each major group" instruction): a real Node ESM import of the just-edited file (not `node --check` alone — `node --check` was observed, twice, to report success on a file containing a genuine unescaped-apostrophe `SyntaxError` that only a real `import` surfaced), plus a `.length` count and a `Set(value.toLowerCase().trim())` exact/case/whitespace-normalized uniqueness check.
+- **Cross-catalog reference validation**: every `NPC_OCCUPATIONS.roleTag` checked against the full `NPC_ROLES` value set (0 invalid across all 318 occupations); every `NPC_RELATIONSHIP_HOOK_TEMPLATES.type` checked against `RELATIONSHIP_HOOK_TYPE` (0 invalid across 201 templates); every `NPC_LOCATION_RELATIONSHIPS.linkType` checked against `CONTACT_LOCATION_RELATIONSHIP` (0 invalid across 36 entries).
+- **`conflictTags` correctness fix** (a genuine latent bug this pass both inherited and found): `npc/npc-flavor.js`'s `conflictsWithPicked()` checks a candidate's `conflictTags` against sibling entries' own `tags[]` array specifically — NOT against the sibling's `id` or its own `conflictTags`. A pre-existing authoring convention in the original 134/99-entry organic/droid catalogs (e.g. `unusually-tall` ↔ `unusually-short`) declared `conflictTags` referencing the sibling's id-shaped slug without that slug ever appearing in the sibling's own `tags[]` — silently inert (0/1 organic pairs actually worked pre-hydration). This hydration pass initially continued that same convention at scale (219 more inert references added across ~110 new conflictTags pairs in the organic pool, 10 in the droid pool), then caught it via a dedicated verification script, and fixed EVERY reference (pre-existing and newly-added alike) by adding each entry's own id-slug into its own `tags[]` wherever a sibling's `conflictTags` needed it to resolve — 220/220 organic and 10/10 droid `conflictTags` references now genuinely functional. One additional dangling reference (`barely-audible-voice`'s `conflictTags: ['loud-voice']`, where no entry with id `loud-voice` has ever existed — a pre-existing typo, not hydration-introduced) was corrected to `['loud']`, the tag two real entries (`very-loud-voice`, `booming-laugh`) already carry.
+- **Systematic near-duplicate detection** (word-overlap/Jaccard similarity, not just exact-string matching) run across all 30 hydrated catalogs/pools, flagging any pair at ≥0.72 similarity for manual review. Result: only 2 pairs flagged in >5,000 entries, and both are intentional paired opposites already wired as `conflictTags` pairs (`prefers-dim-lighting`/`prefers-bright-lighting`; a droid-affection/people-as-equipment mirror pair in `NPC_SPEECH_STYLES`) — not padding or accidental restatement.
+- **Manual full-file review** of the six Faction narrative catalogs (§23's "no documented target" case) turned up 5 genuine pre-existing near-duplicate pairs the automated scanner's threshold didn't independently confirm but manual reading did — see the count matrix above; all 5 removed.
+- **Content-distribution discipline**: every newly-added entry across the fear/secret/complication/agenda/motivation pools was deliberately weighted toward ordinary/mundane content (missed deadlines, minor financial worry, workplace embarrassment, family concerns) at HIGHER `weight` than the existing dramatic-leaning entries, per the phase spec's explicit "ordinary=common...bizarre=rare" distribution rule — this shifts actual generation-time selection probability toward mundane outcomes, not merely the catalog's raw composition.
+- **Organic/droid hard boundary**: preserved throughout — `ORGANIC_NPC_FLAVOR_QUALITIES`/`DROID_NPC_FLAVOR_QUALITIES` remain two structurally separate arrays (`npc-flavor.js`'s `kind`-keyed pool lookup, unchanged); `NPC_MANNERISMS`/`NPC_DROID_MANNERISMS` and `NPC_VOICE_QUALITIES_ORGANIC`/`NPC_VOICE_QUALITIES_DROID` likewise; no cross-pool entry was ever added to the wrong file.
+- **Default per-NPC selection counts, weighting philosophy, and every generator/schema file**: confirmed unchanged — this pass touched only catalog *data* files (`scripts/generation/data/*.js`) plus the one production test file; zero edits to `npc/`, `factions/`, `lib/`, or any Foundry-facing module.
+
+### Requesting catalog/no-action decisions (§23 provision)
+
+Per the task's own explicit instruction not to invent a large arbitrary target for a Faction catalog the audit doesn't separately document: `FACTION_LONG_TERM_GOALS` (44), `FACTION_CURRENT_OBJECTIVES` (37), and `FACTION_INTERNAL_PROBLEMS` (45) were each read in full, found to already cover a genuinely broad range of archetypes (military/business/community/religion/noble/crime/government) with intentional weighting and zero duplicates, and judged adequate for foundation scale — left unchanged. `FACTION_INSTITUTIONAL_CHARACTERS`/`FACTION_LEADERSHIP_STRUCTURES`/`FACTION_RESOURCE_FLAVORS` each had genuine near-duplicate entries (documented above) removed and received a small, judgment-based set of genuinely new entries (5-6 each) closing real conceptual gaps spotted during the same full-file read — not padding toward an invented number.
+
+### Test suite changes
+
+`tests/gm-generation-phase8d3b-production.test.mjs`: the two loose `ORGANIC_NPC_FLAVOR_QUALITIES.length >= 100` / `DROID_NPC_FLAVOR_QUALITIES.length >= 75` placeholder assertions were tightened to their real documented floors (1,000 / 500), a new assertion was added confirming the droid appearance-cue combined categories meet their own 200+ floor, and a new assertion confirms every declared `conflictTags` reference resolves against some entry's own `tags[]` in the same pool (guards against the exact latent-reference class of bug this pass found and fixed — regression-proof against it recurring). A new, self-contained test block asserts the documented production floor (never the exact ceiling) for the 16 additional hydrated catalogs that previously had no explicit floor assertion, plus a duplicate-value check (case/whitespace-normalized) on every one of them, plus a standalone re-assertion that `NPC_OCCUPATIONS.roleTag` values are all real `NPC_ROLES` values.
+
+### Full regression
+
+- `gm-*.test.mjs`: **59/59 passed, 0 failed** (59 files currently exist under that glob; 0 failures either way is the bar that matters).
+- `tools/run-rolling-tests.mjs`: **189 passed, 0 failed** (5 pre-existing documented exclusions, unchanged from baseline).
+- `tools/run-rolling-syntax-check.mjs`: **2,440/2,440 clean** (identical file count to the round-6 baseline — this pass added zero new files, only edited existing catalog/test files).
+- `tools/validate-partials.mjs`: clean (532 `.hbs` files scanned, 218 file-backed partials referenced).
+- `tools/validate-data.js`: **PASSED** — 137/137 species, 6/6 talent enhancements, 263/263 feat combat actions, 30 ship combat actions, 125 templates/886 units nonheroic data, 139/139 extra skill uses; 0 errors, 0 warnings.
+- `system.json`: parses as valid JSON.
+- **Canonical-persistence guard**: direct `git diff` grep across every file this pass touched for `upsertFaction`/`promoteFactionContactToActor`/`game.actors.create`/`LocationRegistryService` — zero matches. No canonical-persistence call was introduced anywhere in this pass.
+
+### Architecture-freeze confirmation
+
+**No generator/schema/relationship architecture was changed during hydration.** Every file this pass touched is either a catalog data file under `scripts/generation/data/` or the one production test file (`tests/gm-generation-phase8d3b-production.test.mjs`, extended additively with new assertions only — no existing assertion was weakened or removed, several were tightened). `npc-concept.js`, `locationLinks[]` and its action/query modules, `npc-competence.js`, Faction Scale authority, `draft-field-authoring.js`/`npc-field-authoring.js`, `npc/npc-flavor.js`'s selection/conflict engine, Public Description composition, and every targeted-reroll wrapper are byte-for-byte unchanged. This statement is true; per the phase spec's own explicit instruction, hydration would have stopped and reported rather than proceeding had that not been the case.
+
+### Deferred / intentionally not changed
+
+- No new Faction-scale target was invented for the six catalogs §23 explicitly says not to invent one for; three were left unchanged after review, three received a small, documented, judgment-based expansion tied to genuine gaps found during a full-file read.
+- The one remaining `locationPopulationProfile`/`droidPrevalence`-vs-`locationContext` coherence gap recorded in §192 as an explicit 8D-4/UI-integration invariant remains deferred there — untouched by this content-only pass, as it always was out of scope for it.
+- No further catalog beyond the phase spec's own enumerated list was touched (e.g. `npc-personality-traits.js`/`npc-disposition.js`/technology-familiarity/lifestyle ladders were explicitly named as NOT to be inflated, and were not).
+
+**PHASE 8D-3B FINAL CONTENT HYDRATION PASS COMPLETE.** Same branch (`claude/gm-datapad-phase8d3b-49c10v`), same PR (#964). Per standing practice: stopping here for independent review.
