@@ -61,6 +61,8 @@ import { composeNpcPublicDescription } from '../lib/description-composer.js';
 import {
   createContactLocationLink, rollContactLocationRelationshipFlavor, CONTACT_LOCATION_LINK_STATUS, CONTACT_LOCATION_LINK_SOURCE
 } from './npc-location-link.js';
+import { createProvenance, withWarning } from '../provenance.js';
+import { DIAGNOSTIC_CODE } from '../lib/generator-diagnostics.js';
 import {
   selectMemberKind, selectSpeciesId, createPopulationProfile
 } from '../population-profile.js';
@@ -141,6 +143,60 @@ export function resolveLocationContextBias(locationContext) {
     if (wealthy || modest) lifestyleBias = Math.max(-2, Math.min(2, wealthy - modest));
   }
   return { technologyBias, lifestyleBias };
+}
+
+/**
+ * CORRECTION (independent review round 5, item 1 -- "the Location-context
+ * identity mismatch is still not actually solved"): round 2's own
+ * explicit-id-wins precedence only governed which `linkedLocationId`/
+ * `locationDraftId` got written onto the finished draft -- it never
+ * stopped `locationContext`'s technology/economy bias and tags from
+ * being applied REGARDLESS of whether they actually belonged to the
+ * WINNING target. A caller could still generate an NPC explicitly
+ * linked to Location A while its `technologyFamiliarity`/`lifestyle`/
+ * `preferTags` were biased by Location B's `locationContext` -- exactly
+ * the "context from Location A while the NPC links to Location B"
+ * disagreement that fix was meant to prevent, one layer deeper than it
+ * reached. This resolves BOTH the winning target AND whether
+ * `locationContext` should be consumed AT ALL, together, before either
+ * is used for anything -- no guessing, ever:
+ *
+ *  - no explicit identity, a context identity exists -> use the context normally.
+ *  - an explicit identity, but the context declares NO identity of its
+ *    own at all -> assume the context describes the explicit target;
+ *    use it normally (this is the common case: a caller resolves one
+ *    Location and passes both its id and its own context together).
+ *  - explicit identity equals the context's own declared identity -> use the context normally.
+ *  - explicit identity CONFLICTS with a context identity -> the
+ *    explicit target wins for the returned `locationRef`; the ENTIRE
+ *    `locationContext` is dropped (`context: null` -- no bias, no
+ *    tags) and `contextMismatch: true` is reported so the caller can
+ *    attach a diagnostic warning rather than silently misapplying it.
+ */
+export function resolveNpcLocationGenerationContext({ linkedLocationId = '', locationDraftId = '', locationContext = null } = {}) {
+  const explicitId = String(linkedLocationId || '').trim();
+  const explicitDraftId = String(locationDraftId || '').trim();
+  const explicitWinner = explicitId || explicitDraftId;
+
+  const contextId = String(locationContext?.locationId || '').trim();
+  const contextDraftId = String(locationContext?.locationDraftId || '').trim();
+  const contextWinner = contextId || contextDraftId;
+
+  const conflict = Boolean(explicitWinner) && Boolean(contextWinner) && explicitWinner !== contextWinner;
+
+  const locationRef = {
+    locationId: explicitId || (conflict ? '' : contextId),
+    locationDraftId: explicitDraftId || (conflict ? '' : contextDraftId)
+  };
+  // Canonical always wins over draft in the FINAL ref, mirroring
+  // createContactLocationLink()'s own draft/canonical duality invariant.
+  if (locationRef.locationId) locationRef.locationDraftId = '';
+
+  return {
+    locationRef,
+    context: conflict ? null : locationContext,
+    contextMismatch: conflict
+  };
 }
 
 /** Default command-tier roll weights for a generated Contact: heavily rank-and-file, rarely strategic. `leadershipBoost` (e.g. from a Faction's `doctrine.eliteAvailability`) multiplies every tier ABOVE `rank-and-file`, softly shifting the distribution upward without ever excluding the common case. */
@@ -245,6 +301,20 @@ export async function createGeneratedNpcConcept({
   droidNameProvider,
   ...rest
 } = {}) {
+  // CORRECTION (independent review round 2 -- "duplicate Location
+  // identity inputs" -- further hardened by round 5, item 1): resolve
+  // the WINNING Location target AND whether `locationContext` should
+  // be consumed at all, TOGETHER, before either is used for anything --
+  // see `resolveNpcLocationGenerationContext()`'s own doc for the full
+  // rule set. An explicit `linkedLocationId`/`locationDraftId` always
+  // wins the returned identity; if it CONFLICTS with `locationContext`'s
+  // own declared identity, the context is dropped entirely (no bias, no
+  // tags) rather than silently biasing generation toward a Location the
+  // NPC isn't actually linked to.
+  const { locationRef, context: effectiveLocationContext, contextMismatch } = resolveNpcLocationGenerationContext({ linkedLocationId, locationDraftId, locationContext });
+  const resolvedLocationId = locationRef.locationId;
+  const resolvedLocationDraftId = locationRef.locationDraftId;
+
   // Fold locationContext's own tags into preferTags ONCE, at the top --
   // every existing preferTags-consuming pick below (role/occupation/
   // appearance/flavor/voice/speech/temperament/...) benefits
@@ -252,28 +322,10 @@ export async function createGeneratedNpcConcept({
   // call site individually. See `resolveLocationContextBias()`'s doc
   // for why technologyFamiliarity/lifestyle additionally need their
   // OWN numeric bias rather than only a soft tag preference.
-  if (locationContext) {
-    preferTags = [...preferTags, ...(locationContext.locationTags ?? []), ...(locationContext.economyTags ?? []), ...(locationContext.technologySpecialties ?? [])];
+  if (effectiveLocationContext) {
+    preferTags = [...preferTags, ...(effectiveLocationContext.locationTags ?? []), ...(effectiveLocationContext.economyTags ?? []), ...(effectiveLocationContext.technologySpecialties ?? [])];
   }
-  const { technologyBias: locationTechnologyBias, lifestyleBias: locationLifestyleBias } = resolveLocationContextBias(locationContext);
-
-  // CORRECTION (independent review round 2 -- "duplicate Location
-  // identity inputs"): `locationContext` and the separate
-  // `linkedLocationId`/`locationDraftId` scalar params both claim to
-  // carry Location identity. Rather than letting a caller supply
-  // conflicting values that silently disagree (context carries bias
-  // from Location A while the NPC links to Location B), the explicit
-  // scalar params always WIN when supplied -- they are the caller's
-  // unambiguous, single-purpose identity args -- and `locationContext`'s
-  // own `locationId`/`locationDraftId` are only a fallback for a caller
-  // that passes ONLY the structured object. Every place below that
-  // previously read `linkedLocationId`/`locationDraftId` directly now
-  // reads these resolved values instead, so a caller who supplies
-  // `locationContext.locationDraftId` alone (no separate scalar) still
-  // gets `locationRelationship` generated and `linkedLocationId`/
-  // `locationDraftId` populated on the resulting draft.
-  const resolvedLocationId = linkedLocationId || locationContext?.locationId || '';
-  const resolvedLocationDraftId = locationDraftId || locationContext?.locationDraftId || '';
+  const { technologyBias: locationTechnologyBias, lifestyleBias: locationLifestyleBias } = resolveLocationContextBias(effectiveLocationContext);
 
   const resolvedCommandTier = commandTier || rollCommandTier({ rng, leadershipBoost });
 
@@ -442,6 +494,14 @@ export async function createGeneratedNpcConcept({
     suggestedOppositionTags,
     flavorNotes,
     profileAffinity: { roleTags },
+    // CORRECTION (independent review round 5, item 1): flag a
+    // Location-context/explicit-identity conflict on the draft itself
+    // (never auto-"corrected" -- see `lib/generator-diagnostics.js`'s
+    // own "warn, never silently fix" discipline), so a caller can see
+    // WHY `locationContext`'s bias/tags were dropped rather than
+    // discovering it only by noticing technologyFamiliarity/lifestyle
+    // didn't move the way a supplied `locationContext` seemed to imply.
+    ...(contextMismatch ? { provenance: withWarning(createProvenance(), DIAGNOSTIC_CODE.NPC_LOCATION_CONTEXT_MISMATCH) } : {}),
     ...rest
   };
 

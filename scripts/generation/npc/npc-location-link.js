@@ -85,6 +85,26 @@ const SCOPE_VALUES = new Set(Object.values(CONTACT_LOCATION_LINK_SCOPE));
 const CERTAINTY_VALUES = new Set(Object.values(CONTACT_LOCATION_LINK_CERTAINTY));
 const SOURCE_VALUES = new Set(Object.values(CONTACT_LOCATION_LINK_SOURCE));
 
+/**
+ * Exported enum validators (independent review round 5 -- "strict
+ * authoring-patch validation"): `createContactLocationLink()` itself
+ * stays intentionally TOLERANT (an invalid enum value silently
+ * coerces to a sane default), which is correct for bulk normalization/
+ * migration/loading of possibly-messy data. An explicit GM authoring
+ * PATCH is a different situation -- a typo like `status: 'historic'`
+ * should bounce, not silently succeed as `'active'` while the rest of
+ * the edit applies. `npc-location-link-actions.js`'s
+ * `addContactLocationLink()`/`updateContactLocationLink()` use these to
+ * reject a patch that explicitly supplies an invalid enum value,
+ * rather than letting `createContactLocationLink()`'s own tolerant
+ * coercion silently rewrite the GM's mistake into something else.
+ */
+export function isContactLocationLinkStatus(value) { return STATUS_VALUES.has(value); }
+export function isContactLocationLinkScope(value) { return SCOPE_VALUES.has(value); }
+export function isContactLocationLinkCertainty(value) { return CERTAINTY_VALUES.has(value); }
+export function isContactLocationLinkSource(value) { return SOURCE_VALUES.has(value); }
+export function isContactLocationLinkRevealState(value) { return LOCATION_LINK_REVEAL_STATE.includes(value); }
+
 function cleanString(value) {
   return String(value ?? '').trim();
 }

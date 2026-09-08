@@ -46,6 +46,13 @@ export const DIAGNOSTIC_CODE = Object.freeze({
   NPC_FACTION_MEMBERSHIP_MISMATCH: 'npc-faction-membership-mismatch',
   NPC_SPECIES_CONTEXT_MISMATCH: 'npc-species-context-mismatch',
   NPC_DROID_CONTEXT_MISMATCH: 'npc-droid-context-mismatch',
+  // PHASE 8D-3B correction pass round 5: an explicit linkedLocationId/
+  // locationDraftId conflicts with locationContext's own declared
+  // identity (npc/npc-bundle.js's resolveNpcLocationGenerationContext())
+  // -- the explicit target wins and locationContext's bias/tags are
+  // dropped entirely rather than silently biasing generation toward a
+  // Location the NPC isn't actually linked to.
+  NPC_LOCATION_CONTEXT_MISMATCH: 'npc-location-context-mismatch',
 
   // Reward (reward-estimator.js already emits this one under the same code)
   ISSUER_RESOURCE_MISMATCH: 'issuer-resource-mismatch',

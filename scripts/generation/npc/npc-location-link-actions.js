@@ -17,19 +17,50 @@ import { updateNpcConceptDraft } from '../npc-concept.js';
 import {
   createContactLocationLink, normalizeContactLocationLinks, getPrimaryContactLocationLink,
   isMeaningfulContactLocationLink, resolveLocationDraftReferenceInLinks,
+  isContactLocationLinkStatus, isContactLocationLinkScope, isContactLocationLinkCertainty,
+  isContactLocationLinkRevealState, isContactLocationLinkSource,
   rollContactLocationRelationshipFlavor, CONTACT_LOCATION_LINK_STATUS, CONTACT_LOCATION_LINK_SOURCE
 } from './npc-location-link.js';
+import { isContactLocationRelationshipType } from '../data/npc-location-relationship-types.js';
 
 function withLinks(draft, locationLinks) {
   return updateNpcConceptDraft(draft, { locationLinks });
 }
 
 /**
+ * Strict enum validation for an explicit GM authoring PATCH
+ * (independent review round 5, item 2) -- `createContactLocationLink()`
+ * itself stays tolerant (coerces an invalid value to a sane default,
+ * correct for bulk normalization/migration), but an explicit edit
+ * should bounce on a typo like `status: 'historic'`, never silently
+ * rewrite it to `'active'` while the rest of the patch applies. Returns
+ * `false` the moment any EXPLICITLY-present enum key fails its own
+ * validator; a key the caller never mentioned is never checked.
+ */
+const ENUM_FIELD_VALIDATORS = Object.freeze({
+  relationshipType: isContactLocationRelationshipType,
+  status: isContactLocationLinkStatus,
+  scope: isContactLocationLinkScope,
+  certainty: isContactLocationLinkCertainty,
+  revealState: isContactLocationLinkRevealState,
+  source: isContactLocationLinkSource
+});
+
+function hasOnlyValidExplicitEnums(input) {
+  for (const [field, validate] of Object.entries(ENUM_FIELD_VALIDATORS)) {
+    if (Object.prototype.hasOwnProperty.call(input, field) && !validate(input[field])) return false;
+  }
+  return true;
+}
+
+/**
  * Append one new Location relationship. Every OTHER existing link is
- * preserved untouched. A no-op (returns the draft unchanged) if `input`
- * isn't meaningful (no resolvable target/eligible snapshot, or a
- * `custom` type with no label) -- see `npc-location-link.js`'s
- * `isMeaningfulContactLocationLink()`.
+ * preserved untouched. A no-op (returns the draft unchanged) if
+ * `input` isn't meaningful (no resolvable target/eligible snapshot, or
+ * a `custom` type with no label -- see `npc-location-link.js`'s
+ * `isMeaningfulContactLocationLink()`), or if any EXPLICITLY-supplied
+ * enum-valued field is invalid (see `hasOnlyValidExplicitEnums()`
+ * above).
  *
  * Defaults `source` to `'manual'` unless the caller explicitly
  * overrides it -- this is the GM-facing authoring action (the
@@ -39,12 +70,28 @@ function withLinks(draft, locationLinks) {
  * definition, exactly like `npc/npc-field-authoring.js`'s "editing a
  * generated value converts it to manual" rule elsewhere in this
  * ecosystem.
+ *
+ * CORRECTION (independent review round 5, item 4 -- "single primary
+ * mutation authority"): `input.primary` is NEVER passed through to the
+ * normalizer directly (which would leave the outcome dependent on
+ * array-position tie-breaking against any existing active primary,
+ * surprising the caller who explicitly asked for `primary: true`).
+ * The new link is always added `primary: false` first; if the caller
+ * asked for `primary: true`, it is THEN deterministically promoted via
+ * `setContactLocationLinkPrimary()` -- the one authoritative operation
+ * for changing primary state -- so "add B as primary" always means
+ * exactly that, never "maybe primary depending on what else exists."
  */
 export function addContactLocationLink(draft, input = {}) {
+  if (!hasOnlyValidExplicitEnums(input)) return draft;
   const existing = Array.isArray(draft?.locationLinks) ? draft.locationLinks : [];
-  const next = normalizeContactLocationLinks([...existing, { source: CONTACT_LOCATION_LINK_SOURCE.MANUAL, ...input }]);
+  const requestPrimary = Boolean(input.primary);
+  const candidate = createContactLocationLink({ source: CONTACT_LOCATION_LINK_SOURCE.MANUAL, ...input, primary: false });
+  const next = normalizeContactLocationLinks([...existing, candidate]);
   if (next.length === existing.length) return draft;
-  return withLinks(draft, next);
+  const added = withLinks(draft, next);
+  if (!requestPrimary) return added;
+  return setContactLocationLinkPrimary(added, candidate.linkId);
 }
 
 /** Remove one Location relationship by `linkId` (a real, permanent removal -- unlike the GM Field Authoring API's hide/restore semantics, a relationship the GM deletes is just gone, matching `removeFactionContact()`'s own list-membership-removal convention elsewhere in this ecosystem). A no-op if no link with that id exists. Every OTHER link is preserved untouched. */
@@ -58,14 +105,20 @@ export function removeContactLocationLink(draft, linkId) {
 /**
  * Patch one Location relationship's fields (label/notes/status/scope/
  * certainty/revealState/...) by `linkId`, preserving its `linkId` and
- * every OTHER link untouched. A no-op if no link with that id exists,
- * OR if the patched result would no longer be meaningful (e.g.
- * changing `relationshipType` to `custom` without also supplying a
- * `relationshipLabel`) -- the update is REJECTED wholesale in that
- * case, never silently dropping the relationship out of the array
- * (a GM's bad edit should bounce, not delete data).
+ * every OTHER link untouched. A no-op (REJECTS the whole patch, never
+ * silently dropping the relationship out of the array) if:
+ *  - no link with that `linkId` exists,
+ *  - the patched result would no longer be meaningful (e.g. changing
+ *    `relationshipType` to `custom` without also supplying a
+ *    `relationshipLabel`),
+ *  - any EXPLICITLY-supplied enum-valued field is invalid (a typo like
+ *    `status: 'historic'` bounces rather than silently coercing to
+ *    `'active'` -- see `hasOnlyValidExplicitEnums()` above), or
+ *  - the patch explicitly supplies `primary` at all (see item 4 below)
+ *    -- a GM's bad edit should bounce, not delete data or silently
+ *    reinterpret intent.
  *
- * Two coherence rules, both scoped to THIS call only:
+ * Three coherence rules, all scoped to THIS call only:
  *  - Defaults `source` to `'manual'` unless the patch explicitly
  *    overrides it (same GM-authorship default as `addContactLocationLink()`).
  *  - If `relationshipType` is explicitly changed and the patch does
@@ -75,8 +128,27 @@ export function removeContactLocationLink(draft, linkId) {
  *    ("native") attached to the new type, an accidental semantic drift
  *    the GM never asked for. Supplying BOTH in the same patch always
  *    preserves the caller's exact label untouched.
+ *  - CORRECTION (independent review round 5, item 3 -- "relinking can
+ *    leave the old snapshot behind"): if the link's TARGET identity
+ *    changes (`locationId`/`locationDraftId`) and the patch does NOT
+ *    also explicitly supply a new `snapshot`, the old snapshot is
+ *    CLEARED -- otherwise a stale "Kellin IV" snapshot could survive a
+ *    relink to a wholly different Location and later lie to an orphan
+ *    fallback display. Supplying an explicit `snapshot` in the same
+ *    patch always wins.
+ *
+ * CORRECTION (independent review round 5, item 4 -- "single primary
+ * mutation authority"): this function REJECTS a patch that explicitly
+ * includes a `primary` key at all -- `setContactLocationLinkPrimary()`
+ * is the ONE authoritative operation for changing primary state,
+ * exactly like `npc-concept.js`'s own single-authority conventions
+ * elsewhere. Routing "make this primary" through a generic patch would
+ * let the normalizer's array-order tie-breaking silently decide the
+ * outcome instead of the GM's explicit request.
  */
 export function updateContactLocationLink(draft, linkId, patch = {}) {
+  if (Object.prototype.hasOwnProperty.call(patch, 'primary')) return draft;
+  if (!hasOnlyValidExplicitEnums(patch)) return draft;
   const existing = Array.isArray(draft?.locationLinks) ? draft.locationLinks : [];
   const index = existing.findIndex((l) => l.linkId === linkId);
   if (index === -1) return draft;
@@ -84,7 +156,17 @@ export function updateContactLocationLink(draft, linkId, patch = {}) {
   const typeChanged = Object.prototype.hasOwnProperty.call(patch, 'relationshipType') && patch.relationshipType !== current.relationshipType;
   const labelExplicit = Object.prototype.hasOwnProperty.call(patch, 'relationshipLabel');
   const effectivePatch = (typeChanged && !labelExplicit) ? { ...patch, relationshipLabel: '' } : patch;
-  const merged = createContactLocationLink({ ...current, source: CONTACT_LOCATION_LINK_SOURCE.MANUAL, ...effectivePatch, linkId });
+  let merged = createContactLocationLink({ ...current, source: CONTACT_LOCATION_LINK_SOURCE.MANUAL, ...effectivePatch, linkId });
+  // Compare the FINAL resolved target (not the raw patch fields) --
+  // createContactLocationLink()'s own locationId-wins-over-locationDraftId
+  // precedence means a patch touching only ONE of the two id fields can
+  // still change the link's actual resolved target (or, conversely,
+  // leave it unchanged even though a field was mentioned); resolved-value
+  // comparison is correct in every case, raw-field comparison isn't.
+  const targetChanged = merged.locationId !== current.locationId || merged.locationDraftId !== current.locationDraftId;
+  if (targetChanged && !Object.prototype.hasOwnProperty.call(patch, 'snapshot')) {
+    merged = { ...merged, snapshot: { name: '', type: '' } };
+  }
   if (!isMeaningfulContactLocationLink(merged)) return draft;
   const next = normalizeContactLocationLinks(existing.map((l, i) => (i === index ? merged : l)));
   return withLinks(draft, next);

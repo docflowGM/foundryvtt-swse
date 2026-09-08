@@ -962,6 +962,62 @@ const stubDroidNameProvider = async () => 'TX-1';
   }
   console.log('PHASE 8D-3B correction round 2 (duplicate Location identity inputs normalized: explicit linkedLocationId/locationDraftId win over locationContext, locationContext-only identity still resolves + triggers locationRelationship, factionDraftId alone now counts as real Faction context) passed.');
 
+  // --- CORRECTION (independent review round 5, item 1): a conflicting locationContext must be dropped ENTIRELY (bias + tags), not just lose the identity-writing tie-break ---
+  {
+    const { resolveNpcLocationGenerationContext } = await import(abs('scripts/generation/npc/npc-bundle.js'));
+    const { DIAGNOSTIC_CODE } = await import(abs('scripts/generation/lib/generator-diagnostics.js'));
+
+    // Direct primitive checks of the four rules.
+    const noExplicit = resolveNpcLocationGenerationContext({ locationContext: { locationId: 'loc-context' } });
+    assert.equal(noExplicit.locationRef.locationId, 'loc-context', 'no explicit identity + a context identity -> use the context\'s identity');
+    assert.notEqual(noExplicit.context, null, 'no explicit identity + a context identity -> the context must be used normally, not dropped');
+    assert.equal(noExplicit.contextMismatch, false, 'no explicit identity -> never a mismatch');
+
+    const explicitOnlyContextHasNoIdentity = resolveNpcLocationGenerationContext({ linkedLocationId: 'loc-explicit', locationContext: { technologyLevel: 'advanced' } });
+    assert.equal(explicitOnlyContextHasNoIdentity.locationRef.locationId, 'loc-explicit', 'an explicit identity with a context that declares NO identity of its own must resolve to the explicit target');
+    assert.notEqual(explicitOnlyContextHasNoIdentity.context, null, 'a context with no identity of its own is assumed to describe the explicit target, and must still be used normally');
+    assert.equal(explicitOnlyContextHasNoIdentity.contextMismatch, false, 'a context with no declared identity is never a mismatch');
+
+    const matching = resolveNpcLocationGenerationContext({ linkedLocationId: 'loc-x', locationContext: { locationId: 'loc-x', technologyLevel: 'advanced' } });
+    assert.equal(matching.contextMismatch, false, 'an explicit identity that MATCHES the context\'s own declared identity is never a mismatch');
+    assert.notEqual(matching.context, null, 'a matching context must be used normally');
+
+    const conflicting = resolveNpcLocationGenerationContext({ linkedLocationId: 'location-A', locationContext: { locationId: 'location-B', technologyLevel: 'cutting-edge', economyTags: ['financial-services'] } });
+    assert.equal(conflicting.locationRef.locationId, 'location-A', 'a conflicting explicit identity must still win for the resolved locationRef');
+    assert.equal(conflicting.context, null, 'a conflicting locationContext must be dropped ENTIRELY -- not merely lose the identity tie-break');
+    assert.equal(conflicting.contextMismatch, true, 'a genuine identity conflict must be reported');
+
+    // End-to-end: the EXACT scenario from the review -- an explicit linkedLocationId conflicting with locationContext.locationId must NOT let the context's technology/economy bias leak through.
+    const HIGH_TECH = new Set(['expert', 'specialist']);
+    const N = 400;
+    let highTechCount = 0;
+    for (let seed = 0; seed < N; seed++) {
+      const npc = await createGeneratedNpcConcept({
+        rng: makeSeededRng(seed), availableSpeciesIds, linkedLocationId: 'location-A',
+        locationContext: { locationId: 'location-B', technologyLevel: 'cutting-edge', technologyAccess: 'ubiquitous', economyTags: ['financial-services'] },
+        nameProvider: stubNameProvider, droidNameProvider: stubDroidNameProvider
+      });
+      assert.equal(npc.linkedLocationId, 'location-A', 'the NPC must still link to the explicit target, not the conflicting context target');
+      if (HIGH_TECH.has(npc.technologyFamiliarity)) highTechCount++;
+    }
+    assert.ok(highTechCount / N < 0.35, `a conflicting locationContext's cutting-edge/ubiquitous technology bias must NOT leak through once the identity conflict is detected (got ${highTechCount}/${N} high-tech, expected roughly the unbiased baseline)`);
+
+    // The mismatch must be visible on the draft's own provenance -- never silently dropped with no trace.
+    const flagged = await createGeneratedNpcConcept({
+      rng: makeSeededRng(1), availableSpeciesIds, linkedLocationId: 'location-A', locationContext: { locationId: 'location-B' },
+      nameProvider: stubNameProvider, droidNameProvider: stubDroidNameProvider
+    });
+    assert.ok(flagged.provenance.warnings.includes(DIAGNOSTIC_CODE.NPC_LOCATION_CONTEXT_MISMATCH), 'a Location-context identity conflict must be flagged on the draft\'s own provenance.warnings, never silently swallowed');
+
+    // No conflict -> no warning, and the context's bias DOES apply normally.
+    const unflagged = await createGeneratedNpcConcept({
+      rng: makeSeededRng(1), availableSpeciesIds, linkedLocationId: 'location-A', locationContext: { locationId: 'location-A', technologyLevel: 'cutting-edge', technologyAccess: 'ubiquitous' },
+      nameProvider: stubNameProvider, droidNameProvider: stubDroidNameProvider
+    });
+    assert.ok(!unflagged.provenance.warnings.includes(DIAGNOSTIC_CODE.NPC_LOCATION_CONTEXT_MISMATCH), 'a matching (non-conflicting) locationContext must never be flagged');
+  }
+  console.log('PHASE 8D-3B correction round 5 (Location-context identity mismatch): a conflicting locationContext is now dropped ENTIRELY (bias + tags), not just its identity, and the conflict is flagged on provenance.warnings, passed.');
+
   // --- publicDescription: derived, safe-to-reveal only -------------------
   {
     const description = composeNpcPublicDescription({
@@ -1593,6 +1649,105 @@ const stubDroidNameProvider = async () => 'TX-1';
     assert.equal(addCustomNoLabel, npc, 'addContactLocationLink must also reject a relationshipType:custom entry with no label');
   }
   console.log('PHASE 8D-3B locationLinks type/label coherence (relationshipType change without an explicit label resets to the new type\'s default; supplying both preserves the GM\'s exact text; a label-only patch never touches relationshipType; CUSTOM with no label is rejected on both add and update) passed.');
+
+  // --- CORRECTION (independent review round 5, item 2): explicit GM authoring patches are STRICT about invalid enum values -- never silently coerced to a tolerant default ---
+  {
+    let npc = createNpcConceptDraft({ kind: 'living', name: 'Strict Validation Test', linkedLocationId: 'loc-a', locationRelationship: 'native' });
+    const linkId = npc.locationLinks[0].linkId;
+    assert.equal(npc.locationLinks[0].status, 'active', 'test setup: link starts active');
+
+    // A typo'd status must REJECT the whole patch, never silently coerce to 'active' while the rest of the edit applies.
+    const badStatus = updateContactLocationLink(npc, linkId, { notes: 'should never apply', status: 'historic' });
+    assert.equal(badStatus, npc, 'updateContactLocationLink must reject (return the draft unchanged) a patch with an invalid explicit status, rather than coercing it to a default');
+    assert.equal(badStatus.locationLinks[0].notes, '', 'the REST of a rejected patch must not partially apply either -- the whole patch bounces together');
+
+    // Each other enum field gets the same strict treatment.
+    assert.equal(updateContactLocationLink(npc, linkId, { scope: 'exacct' }), npc, 'an invalid scope must reject the patch');
+    assert.equal(updateContactLocationLink(npc, linkId, { certainty: 'maybe' }), npc, 'an invalid certainty must reject the patch');
+    assert.equal(updateContactLocationLink(npc, linkId, { revealState: 'secret' }), npc, 'an invalid revealState must reject the patch');
+    assert.equal(updateContactLocationLink(npc, linkId, { source: 'unknown-origin' }), npc, 'an invalid source must reject the patch');
+    assert.equal(updateContactLocationLink(npc, linkId, { relationshipType: 'not-a-real-type' }), npc, 'an invalid relationshipType must reject the patch');
+
+    // A VALID explicit enum value still applies normally.
+    const goodStatus = updateContactLocationLink(npc, linkId, { status: 'historical' });
+    assert.equal(goodStatus.locationLinks[0].status, 'historical', 'a valid explicit status must still apply normally');
+
+    // addContactLocationLink gets the same strict treatment.
+    const badAdd = addContactLocationLink(npc, { locationId: 'loc-z', status: 'historic' });
+    assert.equal(badAdd, npc, 'addContactLocationLink must also reject an invalid explicit enum value');
+    const goodAdd = addContactLocationLink(npc, { locationId: 'loc-z', status: 'historical' });
+    assert.equal(goodAdd.locationLinks.length, 2, 'addContactLocationLink must still succeed with a VALID explicit enum value');
+
+    // Contrast: createContactLocationLink() itself (bulk normalization/migration) stays TOLERANT -- an invalid value there coerces to a sane default, never throws/rejects. Strictness is an AUTHORING-layer property, not a schema-wide one.
+    const tolerant = createContactLocationLink({ locationId: 'loc-y', status: 'historic' });
+    assert.equal(tolerant.status, 'active', 'createContactLocationLink() itself must remain tolerant (coerce to the default) for bulk normalization/migration -- only the GM authoring actions are strict');
+  }
+  console.log('PHASE 8D-3B locationLinks strict authoring-patch validation (addContactLocationLink/updateContactLocationLink reject the WHOLE patch on any invalid explicit enum value across relationshipType/status/scope/certainty/revealState/source; createContactLocationLink itself stays tolerant for bulk normalization) passed.');
+
+  // --- CORRECTION (independent review round 5, item 3): relinking a Contact to a new target clears the OLD snapshot unless a new one is explicitly supplied ---
+  {
+    let npc = createNpcConceptDraft({
+      kind: 'living', name: 'Snapshot Relink Test',
+      locationLinks: [createContactLocationLink({ locationId: 'loc-a', relationshipType: CONTACT_LOCATION_RELATIONSHIP.RESIDENT, snapshot: { name: 'Kellin IV', type: 'planet' } })]
+    });
+    const linkId = npc.locationLinks[0].linkId;
+    assert.equal(npc.locationLinks[0].snapshot.name, 'Kellin IV', 'test setup: the link starts with a real snapshot');
+
+    // Relinking to a new target WITHOUT an explicit snapshot must clear the stale one.
+    const relinked = updateContactLocationLink(npc, linkId, { locationId: 'loc-b' });
+    assert.equal(relinked.locationLinks[0].locationId, 'loc-b', 'the target must update as patched');
+    assert.equal(relinked.locationLinks[0].snapshot.name, '', 'relinking to a NEW target without an explicit snapshot must clear the OLD (now-stale) snapshot -- it must never survive to lie for a future orphan fallback');
+
+    // Relinking WITH an explicit new snapshot must use the new one, never the old.
+    const relinkedWithSnapshot = updateContactLocationLink(npc, linkId, { locationId: 'loc-c', snapshot: { name: 'Port Aurek', type: 'facility' } });
+    assert.equal(relinkedWithSnapshot.locationLinks[0].snapshot.name, 'Port Aurek', 'relinking WITH an explicit snapshot must use the caller\'s new snapshot');
+
+    // A patch that does NOT change the target must never touch the snapshot.
+    const notesOnly = updateContactLocationLink(npc, linkId, { notes: 'just a note' });
+    assert.equal(notesOnly.locationLinks[0].snapshot.name, 'Kellin IV', 'a patch that does not change the target must leave the snapshot completely untouched');
+
+    // Relinking from canonical to draft (the OTHER direction) must also clear a stale snapshot.
+    const toDraft = updateContactLocationLink(npc, linkId, { locationId: '', locationDraftId: 'draft:location:new-place' });
+    assert.equal(toDraft.locationLinks[0].locationDraftId, 'draft:location:new-place', 'relinking from canonical to draft must update the target');
+    assert.equal(toDraft.locationLinks[0].snapshot.name, '', 'relinking from canonical to draft without an explicit snapshot must also clear the old snapshot');
+  }
+  console.log('PHASE 8D-3B locationLinks snapshot coherence after relink (a target change without an explicit new snapshot clears the stale old one; an explicit new snapshot is preserved; a non-target-changing patch never touches the snapshot; works in both the canonical->draft and draft->canonical directions) passed.');
+
+  // --- CORRECTION (independent review round 5, item 4): setContactLocationLinkPrimary is the SOLE primary-mutation authority ---
+  {
+    let npc = createNpcConceptDraft({
+      kind: 'living', name: 'Primary Authority Test',
+      locationLinks: [createContactLocationLink({ locationId: 'loc-a', relationshipType: CONTACT_LOCATION_RELATIONSHIP.RESIDENT, primary: true })]
+    });
+    const aLinkId = npc.locationLinks[0].linkId;
+
+    // updateContactLocationLink must REJECT any patch that explicitly mentions `primary` at all -- even a no-op reaffirmation of the current value.
+    const rejectedTrue = updateContactLocationLink(npc, aLinkId, { primary: true });
+    assert.equal(rejectedTrue, npc, 'updateContactLocationLink must reject a patch that explicitly includes primary:true');
+    const rejectedFalse = updateContactLocationLink(npc, aLinkId, { primary: false });
+    assert.equal(rejectedFalse, npc, 'updateContactLocationLink must reject a patch that explicitly includes primary:false, even as a no-op reaffirmation');
+    const rejectedWithOtherFields = updateContactLocationLink(npc, aLinkId, { notes: 'should not apply either', primary: true });
+    assert.equal(rejectedWithOtherFields, npc, 'a patch mixing primary with other fields must reject the WHOLE patch, not apply the other fields and ignore primary');
+
+    // The ONLY way to change primary is the dedicated operation.
+    const viaSetter = setContactLocationLinkPrimary(npc, aLinkId);
+    assert.equal(viaSetter.locationLinks[0].primary, true, 'setContactLocationLinkPrimary remains the one authoritative way to change primary state');
+
+    // addContactLocationLink({ primary: true }) must be UNAMBIGUOUS: "add B, then make B primary" -- deterministic, never order-dependent on the normalizer's own first-wins tie-break.
+    const withB = addContactLocationLink(npc, { locationId: 'loc-b', relationshipType: CONTACT_LOCATION_RELATIONSHIP.WORK, primary: true });
+    const bLink = withB.locationLinks.find((l) => l.locationId === 'loc-b');
+    const aLinkAfter = withB.locationLinks.find((l) => l.linkId === aLinkId);
+    assert.equal(bLink.primary, true, 'addContactLocationLink({ primary: true }) must deterministically make the NEW link primary');
+    assert.equal(aLinkAfter.primary, false, 'adding a new primary link must demote the previously-primary link -- exactly one active primary, deterministically, never a coin flip on array order');
+
+    // Without requesting primary, the add must not disturb the existing primary at all.
+    const withC = addContactLocationLink(npc, { locationId: 'loc-c', relationshipType: CONTACT_LOCATION_RELATIONSHIP.FREQUENTS });
+    const cLink = withC.locationLinks.find((l) => l.locationId === 'loc-c');
+    const aLinkStillPrimary = withC.locationLinks.find((l) => l.linkId === aLinkId);
+    assert.equal(cLink.primary, false, 'addContactLocationLink without requesting primary must add the new link as non-primary');
+    assert.equal(aLinkStillPrimary.primary, true, 'addContactLocationLink without requesting primary must leave the existing primary link untouched');
+  }
+  console.log('PHASE 8D-3B locationLinks single primary mutation authority (updateContactLocationLink rejects any patch mentioning primary at all; addContactLocationLink({primary:true}) deterministically promotes the new link via setContactLocationLinkPrimary rather than depending on normalizer tie-breaking; setContactLocationLinkPrimary remains the sole authority) passed.');
 
   // --- CORRECTION (independent review round 4, item 5): snapshot-only entries are restricted to explicitly non-resolvable historical facts (LAST_SEEN / imported), never a name-only back door for a normal current relationship ---
   {
