@@ -8323,3 +8323,196 @@ wiring gaps are fixed and verified; no catalog was hydrated in this
 pass (deliberately, per the review's own explicit instruction). Same
 branch (`claude/gm-datapad-phase8d3b-49c10v`), same PR (#964). Per
 standing practice: stopping here for independent review.
+
+## 189. PHASE 8D-3B correction pass round 3 — Contact↔Location relationship hardening
+
+A third independent-review message, after confirming round 2's head
+was sound, proposed a substantial architectural hardening: Contact↔
+Location is one of the central edges the wider campaign graph (Jobs,
+Factions, Stores, Intel, Bulletins, future Skill Challenges) will query
+repeatedly ("who is associated with this place, and how?"), and a
+single scalar Location reference cannot represent an NPC who is
+simultaneously a resident of one place, works at another, and was last
+seen at a third. Implemented on the same branch/PR, no table
+hydration.
+
+### The central change
+
+`npc-concept.js`'s single scalar Location reference (`linkedLocationId`/
+`locationDraftId`/`locationRelationship`/`lastKnownLocation`) is
+replaced by a first-class, multi-valued `locationLinks[]` array as the
+schema's real authority. Each entry (`npc/npc-location-link.js`'s
+`createContactLocationLink()`) carries: a stable `linkId` (never
+display name/index/target id — an NPC can hold two links to the SAME
+Location with different meanings, e.g. "used to work here" + "hiding
+here now"); `locationId`/`locationDraftId` (draft/canonical duality —
+a canonical id always wins and CLEARS any simultaneously-supplied
+draft id in the same call, so a link never carries two competing
+active target identities); `relationshipType` (a new stable
+`CONTACT_LOCATION_RELATIONSHIP` vocabulary — resident/work/stationed/
+hiding/last-seen/... — `data/npc-location-relationship-types.js`) plus
+a free-text `relationshipLabel`; `status` (active/historical/planned/
+unknown); `primary` (at most one ACTIVE link may hold it, enforced by
+the normalizer, never used to imply "the only" relationship); `scope`
+(exact/descendants — a jurisdiction link anchored at a parent Location
+also covers a query anywhere beneath it, without duplicating links
+per child); `certainty` (confirmed/reported/suspected/disputed —
+seam for future Intel-driven "suspected" relationships); `revealState`
+(truth vs. player knowledge stay separate, exactly like the rest of
+this schema); `source` (generated/manual/resolved/imported); `notes`;
+a `snapshot` (`{name, type}`) display fallback that is NEVER authority,
+only shown when resolution fails; and `provenance`.
+
+### Reuse, not duplication
+
+The existing `data/npc-location-relationships.js` narrative catalog
+("native"/"recent arrival"/"traveler passing through"/...) is NOT
+replaced or duplicated — it keeps doing exactly what it always did
+(bias locality/species selection, supply a link's `relationshipLabel`)
+and additively gained one field per entry, `linkType`, mapping each
+narrative value onto the new structural vocabulary
+(`relationshipTypeForNpcLocationRelationshipValue()`). A narrative
+flavor pick and its structural classification are generated together
+in one call (`rollContactLocationRelationshipFlavor()`), never two
+separate authorities that could disagree.
+
+### Migration and legacy compatibility
+
+`linkedLocationId`/`locationDraftId`/`locationRelationship`/
+`lastKnownLocation` remain real fields on every constructed NPC
+concept, but are now DERIVED, read-only mirrors of `locationLinks`
+(`deriveLegacyLocationFields()`), never independent authority — every
+pre-existing consumer that reads them as plain strings keeps working
+unchanged. A caller that still constructs the pre-hardening way (no
+`locationLinks` key at all) migrates transparently
+(`migrateLegacyLocationScalarsToLinks()`): the old
+`linkedLocationId`/`locationRelationship` pair becomes one primary
+link (preserving the OLD narrative text verbatim as `relationshipLabel`,
+even for GM-authored text this catalog doesn't recognize — falls back
+to `ASSOCIATED`, never a fuzzy guess); `lastKnownLocation` (which was
+ALWAYS a bare display string with no id of its own) becomes a
+`LAST_SEEN`/`historical` link carrying only a `snapshot.name`, never a
+fabricated id. Detecting "did this construction call explicitly
+provide `locationLinks`" via `Object.prototype.hasOwnProperty` (not
+truthiness) was the key correctness fix here: `updateNpcConceptDraft()`
+always spreads the previous draft first, so every already-constructed
+draft's `locationLinks` — even an explicit `[]` after a GM removes the
+only relationship — must be respected as-is on every subsequent
+reroll, never silently re-migrated from stale inherited legacy
+scalars (which would otherwise resurrect a just-deleted relationship).
+`npc-concept.js` gained a `schemaVersion` marker (`2` = the
+`locationLinks[]` model) for future migration bookkeeping.
+
+### Architecture: pure primitives + thin draft-CRUD wrapper
+
+Mirrors the exact split this same correction round 1 already
+established for the GM Field Authoring API
+(`lib/draft-field-authoring.js`/`npc/npc-field-authoring.js`), for the
+identical reason (avoiding a circular import with `npc-concept.js`
+while keeping the core logic trivially unit-testable against bare
+arrays): `npc/npc-location-link.js` is a pure primitive layer (create/
+normalize/migrate/derive/resolve/query — zero `npc-concept.js`
+dependency) and `npc/npc-location-link-actions.js` is the thin
+draft-CRUD wrapper (`addContactLocationLink`/`removeContactLocationLink`/
+`updateContactLocationLink`/`setContactLocationLinkPrimary`/
+`rerollContactLocationLink`/`rerollPrimaryContactLocationLink`) that
+imports `updateNpcConceptDraft()`. Every CRUD operation targets a
+`linkId`, never index or label, and preserves every sibling link plus
+every unrelated NPC field. `npc/npc-characterization.js`'s existing
+`rerollNpcLocationRelationship()` wrapper now delegates to
+`rerollPrimaryContactLocationLink()` (its old scalar-patching
+implementation would have been silently discarded by the new
+derived-mirror discipline — patching `locationRelationship` directly
+no longer does anything). `npc/npc-bundle.js` now builds a proper
+primary `locationLinks` entry directly (`source: 'generated'`) instead
+of assembling three separate legacy scalars.
+
+### Orphan-safe resolution and reverse lookup (pure primitives; UI/Foundry wiring explicitly deferred)
+
+`resolveContactLocationLink(link, { findLocation, findLocationDraft })`
+takes INJECTED lookups and reports `state: 'canonical'|'draft'|
+'orphaned'|'empty'` — this module never guesses a Location by name/
+slug when an id fails to resolve (verified directly: the injected
+lookup is always called with the exact stored `locationId`, never a
+snapshot name); an orphaned link falls back to its own `snapshot` for
+display, the value staying pure metadata that is never treated as
+authority. `findContactsForLocation(contacts, locationId, {
+includeDescendants, isDescendant })` is the reverse-lookup primitive,
+supporting BOTH hierarchy directions the review's own examples
+described: querying an ancestor Location with `includeDescendants`
+surfaces every Contact anchored anywhere beneath it, and a single link
+scoped `descendants` (e.g. a governor's jurisdiction over a whole
+planet) surfaces for a query at any Location beneath ITS OWN target,
+even without `includeDescendants`. Both directions share one injected
+`isDescendant(candidateId, ancestorId)` predicate — this module never
+imports `LocationRegistryService` (a Foundry-dependent service outside
+the Node-testable generation layer this whole phase operates in); a
+real hierarchy-aware bridge belongs in `scripts/ui/shell/gm/` (mirroring
+`LocationJobBridgeService.js`'s existing pattern) as later, separate
+UI-wiring work.
+
+### Explicitly deferred (per the review's own scope notes)
+
+A universal cross-domain relationship registry ("the logical endpoint,
+not necessarily this phase" — the review's own words); `validFrom`/
+`validUntil` timestamps ("I would not require dates now, but leave the
+seam" — `status` alone covers the immediate need); a generation-context
+fingerprint (diagnostic-only, optional); `buildNpcLocationContext(locationRef)`
+as a real resolver against live Location data (requires
+`LocationRegistryService` wiring, a later UI-integration phase's job,
+not this generation-layer phase's); and the Foundry-dependent
+`LocationRegistryService`/reverse-index UI bridge itself (the pure
+algorithm is delivered; the live wiring is deferred to whenever the
+Location Datapad's roster view is actually built). None of these
+change the `locationLinks[]` shape or its stable identities, so none
+of this deferral requires a future migration.
+
+### Tests + Regression (this correction pass)
+
+`tests/gm-generation-phase8d3b-production.test.mjs` gained a new
+"Contact↔Location relationship model" section (11 sub-blocks):
+primitives (stable linkId identity, 0/1/many multiplicity, idempotent
+normalization, meaningless-entry dropping, duplicate-linkId dedup,
+at-most-one-active-primary enforcement — including proof a demoted
+primary is demoted, never dropped); draft/canonical duality; v1→v2
+migration (exact round-trip via `deriveLegacyLocationFields()`,
+unrecognized narrative labels fall back to `ASSOCIATED` never a
+guess); `npc-concept.js` wiring (schemaVersion 2, unrelated rerolls
+preserve `locationLinks`, a stray legacy scalar in a patch is ignored
+once `locationLinks` exists, an explicit empty array is respected
+rather than resurrected from stale scalars); generator wiring;
+CRUD actions (every operation proven to target `linkId` and preserve
+siblings + unrelated NPC fields, including the `rerollNpcLocationRelationship()`
+delegation and its no-op-with-no-location case); orphan-safe resolution
+(canonical/draft/orphaned/empty states, exact-id-only lookup proven via
+a lookup-argument spy); reverse lookup (exact match, both hierarchy
+directions, empty-input safety); query helpers; JSON round-trip; and a
+300-trial bounded randomized invariant sequence (up to 8 random add/
+remove/update/setPrimary/reroll operations each, asserting no duplicate
+linkIds, at most one active primary, idempotent normalization, and no
+unrelated-field mutation ever survive any sequence) — a scoped
+property-style test matching the review's own "fuzzing pays off here"
+suggestion without building a full fuzzing harness. The pre-existing
+round-2 "duplicate Location identity inputs" test needed updating: it
+had exercised an artificial scenario (explicitly supplying both a
+canonical id and a draft id for the same relationship) that this
+round's own new draft/canonical duality invariant intentionally
+collapses — split into realistic single-identity-at-a-time scenarios,
+plus one new assertion proving the collapse itself.
+
+Full `gm-*.test.mjs` sweep: **60/60 green** (unchanged file count —
+extended the existing Phase 8D-3B file). Full rolling suite
+(`tools/run-rolling-tests.mjs`): **189 passed, 0 failed** (5
+pre-existing exclusions, unchanged). Full syntax check
+(`tools/run-rolling-syntax-check.mjs`): **2440/2440 clean** (3 new
+files). `tools/validate-partials.mjs`/`tools/validate-data.js`/
+`system.json` parse all clean. No canonical-persistence call in any
+file this pass touched or added (confirmed by direct grep).
+
+**PHASE 8D-3B CORRECTION PASS ROUND 3 COMPLETE.** The Contact↔Location
+relationship model is hardened to the shape a later Job/Intel/Store/
+Bulletin "who is associated with this place" query can build on
+without further schema changes; no catalog was hydrated in this pass
+(deliberately). Same branch (`claude/gm-datapad-phase8d3b-49c10v`),
+same PR (#964). Per standing practice: stopping here for independent
+review.

@@ -51,13 +51,16 @@ import { pickNpcOccupation } from './npc-occupation.js';
 import { rollNpcCompetence } from './npc-competence.js';
 import {
   pickNpcAgeImpression, pickNpcTemperament, pickNpcSocialStyle, pickNpcPersonalityTraits,
-  pickNpcDesire, pickNpcFear, pickNpcSocialRole, pickNpcNarrativeFunction, pickNpcLocationRelationship,
+  pickNpcDesire, pickNpcFear, pickNpcSocialRole, pickNpcNarrativeFunction,
   pickNpcFactionRole, pickNpcLoyalty, pickNpcComplication, pickNpcRelationshipHooks,
   pickNpcVoice, pickNpcSpeechStyle, pickNpcMannerismForKind, pickNpcAppearanceForKind,
   pickNpcTechnologyFamiliarity, pickNpcLifestyle
 } from './npc-characterization.js';
 import { generatePlanetSuggestedJobArchetypeTags, deriveSuggestedOppositionTags } from '../planets/planet-hooks.js';
 import { composeNpcPublicDescription } from '../lib/description-composer.js';
+import {
+  createContactLocationLink, rollContactLocationRelationshipFlavor, CONTACT_LOCATION_LINK_STATUS, CONTACT_LOCATION_LINK_SOURCE
+} from './npc-location-link.js';
 import {
   selectMemberKind, selectSpeciesId, createPopulationProfile
 } from '../population-profile.js';
@@ -330,7 +333,23 @@ export async function createGeneratedNpcConcept({
   const fear = pickNpcFear({ rng, preferTags });
   const socialRole = pickNpcSocialRole({ rng, preferTags });
   const narrativeFunction = pickNpcNarrativeFunction({ rng, preferTags });
-  const locationRelationship = (resolvedLocationId || resolvedLocationDraftId) ? pickNpcLocationRelationship({ rng, preferTags }) : '';
+  // CORRECTION (independent review round 3 -- Contact<->Location
+  // hardening): a resolved Location association is now built as a
+  // proper `locationLinks[]` entry (the schema's real authority)
+  // rather than a lone `locationRelationship` scalar -- see
+  // `npc-concept.js`'s own `legacyLocationFields` doc for how the old
+  // scalar fields (`linkedLocationId`/`locationDraftId`/
+  // `locationRelationship`) stay populated as DERIVED mirrors of this.
+  const primaryLocationLink = (resolvedLocationId || resolvedLocationDraftId)
+    ? createContactLocationLink({
+      locationId: resolvedLocationId,
+      locationDraftId: resolvedLocationDraftId,
+      ...rollContactLocationRelationshipFlavor({ rng, preferTags }),
+      status: CONTACT_LOCATION_LINK_STATUS.ACTIVE,
+      primary: true,
+      source: CONTACT_LOCATION_LINK_SOURCE.GENERATED
+    })
+    : null;
   // specialistRole (the reused "factionRole" slot -- see npc-concept.js's
   // own doc comment) is only rolled for a plausible Faction context:
   // an explicit populationProfile (faction-bundle.js's own
@@ -403,13 +422,11 @@ export async function createGeneratedNpcConcept({
     speechStyle,
     technologyFamiliarity,
     lifestyle,
-    locationRelationship,
     relationshipHooks,
     complication,
     factionId,
     factionDraftId,
-    linkedLocationId: resolvedLocationId,
-    locationDraftId: resolvedLocationDraftId,
+    locationLinks: primaryLocationLink ? [primaryLocationLink] : [],
     factionRankTitle,
     commandTier: resolvedCommandTier,
     specialistRole,

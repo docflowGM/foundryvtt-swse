@@ -34,6 +34,7 @@ import { isNpcCompetenceLevel } from './npc/npc-competence.js';
 import { composeNpcPublicDescription } from './lib/description-composer.js';
 import { reconcileFieldsStateWithScalars } from './lib/draft-field-authoring.js';
 import { NPC_FIELD_DEFINITIONS } from './npc/npc-field-definitions.js';
+import { normalizeContactLocationLinks, migrateLegacyLocationScalarsToLinks, deriveLegacyLocationFields } from './npc/npc-location-link.js';
 
 export const NPC_CONCEPT_KIND = Object.freeze({ LIVING: 'living', DROID: 'droid' });
 
@@ -109,7 +110,40 @@ export function createNpcConceptDraft(input = {}) {
   const kind = input.kind === NPC_CONCEPT_KIND.DROID ? NPC_CONCEPT_KIND.DROID : (input.kind === NPC_CONCEPT_KIND.LIVING ? NPC_CONCEPT_KIND.LIVING : null);
   if (!kind) return null;
 
+  // CORRECTION (independent review round 3 -- Contact<->Location
+  // hardening): `locationLinks[]` is the real authority; the legacy
+  // scalar fields below (`linkedLocationId`/`locationDraftId`/
+  // `locationRelationship`/`lastKnownLocation`) become DERIVED
+  // compatibility mirrors of it, never independent input. Detecting
+  // "did THIS input explicitly carry locationLinks" via
+  // `hasOwnProperty` (not truthiness) matters: `updateNpcConceptDraft()`
+  // always spreads the PREVIOUS draft into `merged` first, so every
+  // already-constructed draft's `locationLinks` (even an explicit `[]`
+  // after the GM removed its only link) is always "present" on every
+  // subsequent reroll and must be respected as-is, never re-migrated
+  // from stale inherited legacy scalars. Only a caller that NEVER
+  // mentions `locationLinks` at all (a genuinely legacy construction,
+  // e.g. `npc/npc-bundle.js` before this correction, or hand-authored
+  // old data) falls through to `migrateLegacyLocationScalarsToLinks()`.
+  const locationLinks = normalizeContactLocationLinks(
+    Object.prototype.hasOwnProperty.call(input, 'locationLinks')
+      ? input.locationLinks
+      : migrateLegacyLocationScalarsToLinks({
+        linkedLocationId: input.linkedLocationId, locationDraftId: input.locationDraftId,
+        locationRelationship: input.locationRelationship, lastKnownLocation: input.lastKnownLocation
+      })
+  );
+  const legacyLocationFields = deriveLegacyLocationFields(locationLinks);
+
   const base = {
+    // CORRECTION (independent review round 3): schema version marker --
+    // v1 is the pre-hardening single-scalar Location reference; v2 is
+    // this `locationLinks[]` model. Always the CURRENT version for
+    // anything this function constructs (never caller-settable) --
+    // existing v1-shaped data migrates transparently via
+    // `migrateLegacyLocationScalarsToLinks()` above, it doesn't need to
+    // carry its own version forward.
+    schemaVersion: 2,
     // PHASE 8D-3B addition: same domain-namespaced draft-id addressing
     // every other draft type (planet/POI/...) already uses (`lib/draft-id.js`)
     // -- npc-concept.js was the one draft schema still missing it, which
@@ -137,20 +171,34 @@ export function createNpcConceptDraft(input = {}) {
 
     // Real canonical references ONLY — empty string when unresolved.
     factionId: cleanString(input.factionId),
-    linkedLocationId: cleanString(input.linkedLocationId),
+    // CORRECTION (independent review round 3): `linkedLocationId`/
+    // `locationDraftId`/`locationRelationship` (and `lastKnownLocation`
+    // further below) are now DERIVED mirrors of `locationLinks[]` --
+    // the primary active link's target/label -- never independent
+    // authority. See `legacyLocationFields`'s own computation above and
+    // `npc/npc-location-link.js`'s `deriveLegacyLocationFields()` doc.
+    linkedLocationId: legacyLocationFields.linkedLocationId,
     // PHASE 8D-3B addition: link to another draft (e.g. a
     // `planet-draft.js` planet, or a `faction-draft.js` Faction) in the
     // same generation batch that hasn't been committed yet — mirrors
     // `faction-draft.js`'s existing `territoryLocationDraftIds` pattern.
     // Never both this AND `linkedLocationId` meaning the same Location.
-    locationDraftId: cleanString(input.locationDraftId),
+    locationDraftId: legacyLocationFields.locationDraftId,
     factionDraftId: cleanString(input.factionDraftId),
+    // First-class Contact<->Location relationship model (CORRECTION,
+    // independent review round 3) -- an NPC can simultaneously be a
+    // resident of one place, work at another, and have last been seen
+    // at a third; see `npc/npc-location-link.js`'s header for the full
+    // rationale and `npc/npc-location-link-actions.js` for the
+    // linkId-targeted add/remove/update/reroll/set-primary operations.
+    locationLinks,
     // Narrative-only: how this NPC relates to wherever they were
     // generated (`data/npc-location-relationships.js`) — "native" vs.
     // "just passing through" — feeds locality/species weighting the
     // same way `recruitment-profile.js`'s `localityBias` already does
-    // for Faction membership, at the individual-NPC scale.
-    locationRelationship: cleanString(input.locationRelationship),
+    // for Faction membership, at the individual-NPC scale. Mirrors the
+    // PRIMARY active `locationLinks` entry's `relationshipLabel`.
+    locationRelationship: legacyLocationFields.locationRelationship,
 
     // Addendum: rank/authority metadata. factionRankTitle is the
     // DISPLAY string (whatever this Faction actually calls the rank);
@@ -209,7 +257,12 @@ export function createNpcConceptDraft(input = {}) {
     // from `secret` (something hidden); a complication may be entirely
     // known to everyone.
     complication: cleanString(input.complication),
-    lastKnownLocation: cleanString(input.lastKnownLocation),
+    // CORRECTION (independent review round 3): DERIVED from the most
+    // recent `LAST_SEEN`-type `locationLinks` entry's `snapshot.name` --
+    // this field was ALWAYS a bare display string with no id of its
+    // own (never a Location reference), so it migrates/derives as a
+    // name-only historical link. See `legacyLocationFields` above.
+    lastKnownLocation: legacyLocationFields.lastKnownLocation,
     tags: cleanStringArray(input.tags),
     image: cleanString(input.image),
 

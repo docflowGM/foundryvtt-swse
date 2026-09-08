@@ -43,6 +43,7 @@ import { NPC_APPEARANCE_TRAITS } from '../data/npc-appearance-traits.js';
 import { DROID_NPC_FLAVOR_QUALITIES } from '../data/npc-flavor-qualities-droid.js';
 import { weightedPick, weightedPickWithPreference, weightedPickUniqueN, randomIntInclusive } from '../lib/weighted-random.js';
 import { updateNpcConceptDraft, recomposeNpcPublicDescription } from '../npc-concept.js';
+import { rerollPrimaryContactLocationLink } from './npc-location-link-actions.js';
 
 // --- small fixed ladders (organic vs. droid) -----------------------------
 // Deliberately NOT numeric ages -- an "impression," per the phase spec,
@@ -254,8 +255,22 @@ export function rerollNpcNarrativeFunction(draft, { rng, preferTags = [] } = {})
   return updateNpcConceptDraft(draft, { narrativeFunction: pickNpcNarrativeFunction({ rng, preferTags }) });
 }
 
+/**
+ * CORRECTION (independent review round 3 -- Contact<->Location
+ * hardening): `locationRelationship` is now a DERIVED mirror of the
+ * primary active `locationLinks` entry (`npc-concept.js`'s own
+ * `legacyLocationFields`), never independent authority -- patching it
+ * directly here would be silently overwritten on the very next
+ * construction. This wrapper now delegates to
+ * `npc/npc-location-link-actions.js`'s `rerollPrimaryContactLocationLink()`,
+ * which rerolls the SAME narrative flavor (reusing the identical
+ * `data/npc-location-relationships.js` catalog) directly on the link
+ * itself. A no-op if the NPC has no Location association at all
+ * (nothing to reroll) -- matching the old wrapper's own behavior when
+ * there was no Location context to work with.
+ */
 export function rerollNpcLocationRelationship(draft, { rng, preferTags = [] } = {}) {
-  return updateNpcConceptDraft(draft, { locationRelationship: pickNpcLocationRelationship({ rng, preferTags }) });
+  return rerollPrimaryContactLocationLink(draft, { rng, preferTags });
 }
 
 /** Rerolls the reused `specialistRole` slot (see `data/npc-faction-roles.js`'s header for why this is not a separate `factionRole` field). */
