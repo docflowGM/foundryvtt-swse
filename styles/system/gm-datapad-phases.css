@@ -636,6 +636,55 @@
   text-align: right;
 }
 
+/* Phase 7 — Workspace campaign dossier for the selected Actor. */
+.workspace-actor-dossier {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.workspace-dossier-columns {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 10px;
+}
+
+.workspace-dossier-row {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid rgba(112, 226, 255, 0.16);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.18);
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.workspace-dossier-row:hover:not(:disabled) {
+  border-color: rgba(112, 226, 255, 0.4);
+  background: rgba(112, 226, 255, 0.08);
+}
+
+.workspace-dossier-row:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.workspace-dossier-row span {
+  font-size: 11px;
+  color: rgba(207, 246, 255, 0.56);
+}
+
+@media (max-width: 680px) {
+  .workspace-dossier-columns {
+    grid-template-columns: 1fr;
+  }
+}
+
 .gm-party-member-command-modal .gm-party-member-vitals {
   grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
   padding-top: 0;

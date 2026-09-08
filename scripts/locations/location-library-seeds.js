@@ -14,12 +14,28 @@ export const LOCATION_LIBRARY_BIOMES = Object.freeze([
     "label": "Ancient"
   },
   {
+    "value": "archive",
+    "label": "Archive"
+  },
+  {
     "value": "asteroid",
     "label": "Asteroid"
   },
   {
+    "value": "banking",
+    "label": "Banking"
+  },
+  {
     "value": "battlefield",
     "label": "Battlefield"
+  },
+  {
+    "value": "beast",
+    "label": "Beast Lair"
+  },
+  {
+    "value": "bridge",
+    "label": "Bridge / Command Deck"
   },
   {
     "value": "bureaucracy",
@@ -32,6 +48,10 @@ export const LOCATION_LIBRARY_BIOMES = Object.freeze([
   {
     "value": "capital",
     "label": "Capital"
+  },
+  {
+    "value": "cave",
+    "label": "Cave"
   },
   {
     "value": "city",
@@ -58,8 +78,16 @@ export const LOCATION_LIBRARY_BIOMES = Object.freeze([
     "label": "Desert"
   },
   {
+    "value": "diplomacy",
+    "label": "Diplomacy"
+  },
+  {
     "value": "espionage",
     "label": "Espionage"
+  },
+  {
+    "value": "ewok",
+    "label": "Ewok"
   },
   {
     "value": "facility",
@@ -88,6 +116,10 @@ export const LOCATION_LIBRARY_BIOMES = Object.freeze([
   {
     "value": "grassland",
     "label": "Grassland"
+  },
+  {
+    "value": "hazard",
+    "label": "Hazard"
   },
   {
     "value": "hidden",
@@ -122,6 +154,10 @@ export const LOCATION_LIBRARY_BIOMES = Object.freeze([
     "label": "Industrial"
   },
   {
+    "value": "island",
+    "label": "Island"
+  },
+  {
     "value": "jedi",
     "label": "Jedi / Force"
   },
@@ -130,8 +166,16 @@ export const LOCATION_LIBRARY_BIOMES = Object.freeze([
     "label": "Jungle"
   },
   {
+    "value": "junkyard",
+    "label": "Junkyard"
+  },
+  {
     "value": "lava",
     "label": "Lava / Volcanic"
+  },
+  {
+    "value": "mandalorian",
+    "label": "Mandalorian"
   },
   {
     "value": "military",
@@ -170,8 +214,20 @@ export const LOCATION_LIBRARY_BIOMES = Object.freeze([
     "label": "Palace"
   },
   {
+    "value": "plague",
+    "label": "Plague"
+  },
+  {
     "value": "pleasure",
     "label": "Pleasure World"
+  },
+  {
+    "value": "polar",
+    "label": "Polar"
+  },
+  {
+    "value": "politics",
+    "label": "Politics"
   },
   {
     "value": "rain",
@@ -190,6 +246,14 @@ export const LOCATION_LIBRARY_BIOMES = Object.freeze([
     "label": "Remote"
   },
   {
+    "value": "research",
+    "label": "Research"
+  },
+  {
+    "value": "resistance",
+    "label": "Resistance"
+  },
+  {
     "value": "restoration",
     "label": "Restoration"
   },
@@ -200,6 +264,14 @@ export const LOCATION_LIBRARY_BIOMES = Object.freeze([
   {
     "value": "rural",
     "label": "Rural"
+  },
+  {
+    "value": "sacred",
+    "label": "Sacred Site"
+  },
+  {
+    "value": "scavenger",
+    "label": "Scavenger"
   },
   {
     "value": "shipyard",
@@ -234,6 +306,10 @@ export const LOCATION_LIBRARY_BIOMES = Object.freeze([
     "label": "Temple"
   },
   {
+    "value": "tomb",
+    "label": "Tomb"
+  },
+  {
     "value": "tropical",
     "label": "Tropical"
   },
@@ -246,6 +322,14 @@ export const LOCATION_LIBRARY_BIOMES = Object.freeze([
     "label": "Underworld"
   },
   {
+    "value": "urban",
+    "label": "Urban"
+  },
+  {
+    "value": "vertical",
+    "label": "Vertical / Multi-Level"
+  },
+  {
     "value": "wasteland",
     "label": "Wasteland"
   },
@@ -254,14 +338,35 @@ export const LOCATION_LIBRARY_BIOMES = Object.freeze([
     "label": "Water / Ocean"
   },
   {
+    "value": "wilderness",
+    "label": "Wilderness"
+  },
+  {
     "value": "wildlife",
     "label": "Wildlife"
+  },
+  {
+    "value": "wookiee",
+    "label": "Wookiee"
   },
   {
     "value": "wreckage",
     "label": "Wreckage"
   }
 ]);
+
+const LOCATION_LIBRARY_BIOME_VALUES = Object.freeze(LOCATION_LIBRARY_BIOMES.map((entry) => entry.value));
+
+/**
+ * True if `value` is one of `LOCATION_LIBRARY_BIOMES`' own values — the
+ * single biome vocabulary this Library (and, since Phase 8D-2's
+ * correction pass, every procedural Location generator) uses. Added so
+ * procedural generation code has one authoritative check rather than
+ * each caller re-deriving the value list itself.
+ */
+export function isLocationLibraryBiome(value) {
+  return LOCATION_LIBRARY_BIOME_VALUES.includes(value);
+}
 
 export const LOCATION_LIBRARY_SEEDS = Object.freeze([
   {
@@ -5034,13 +5139,36 @@ function normalizeImportOptions(options = {}) {
     includeAtlasFacts: options.includeAtlasFacts !== false,
     revealState: text(options.revealState || 'hidden'),
     knownToPlayers: options.knownToPlayers === true,
-    importedAt: text(options.importedAt || new Date().toISOString())
+    importedAt: text(options.importedAt || new Date().toISOString()),
+    // Normally the parent record's own registry id is the seed's own
+    // canonical id (seed.id) — see LocationRegistryService's identity
+    // namespace collision handling for why a caller may need to import a
+    // seed under a DIFFERENT record id (its canonical id already belongs
+    // to an unrelated, non-library record). Provenance (librarySeedId)
+    // always stays keyed to the seed's own canonical id regardless of
+    // which record id the import actually lands on.
+    parentRecordId: text(options.parentRecordId || '')
   };
 }
 
 export function getLocationLibrarySeed(seedId = '') {
   const id = text(seedId).toLowerCase();
   return LOCATION_LIBRARY_SEEDS.find(seed => seed.id === id || seed.name.toLowerCase() === id) || null;
+}
+
+const LOCATION_LIBRARY_PLANET_NAMES = new Set(LOCATION_LIBRARY_SEEDS.map((seed) => seed.name.toLowerCase().trim()));
+
+/**
+ * True if `name` (case-insensitive) matches one of this Library's real,
+ * curated top-level planet names (Dantooine, Tatooine, ...). Added for
+ * the Phase 8D-2 correction pass: a PROCEDURALLY generated planet name
+ * must never collide with a real known world -- this is the single
+ * canonical-name exclusion authority every procedural name generator
+ * checks against, rather than each one re-deriving the Library's name
+ * list itself.
+ */
+export function isKnownLibraryPlanetName(name) {
+  return LOCATION_LIBRARY_PLANET_NAMES.has(String(name ?? '').toLowerCase().trim());
 }
 
 export function filterLocationLibrarySeeds({ search = '', biome = '', category = '' } = {}) {
@@ -5081,8 +5209,9 @@ function seedFactToAtlasFact(fact = {}, seed = {}) {
 
 function seedToLocationRecord(seed = {}, options = {}) {
   const opts = normalizeImportOptions(options);
+  const recordId = opts.parentRecordId || seed.id;
   return {
-    id: seed.id,
+    id: recordId,
     name: seed.name,
     category: seed.category || 'planetary',
     type: seed.type || 'planet',
@@ -5105,19 +5234,20 @@ function seedToLocationRecord(seed = {}, options = {}) {
     commerceNotes: seed.commerceNotes || '',
     travelNotes: seed.travelNotes || '',
     atlasFacts: opts.includeAtlasFacts ? asArray(seed.atlasFacts).map(fact => seedFactToAtlasFact(fact, seed)) : [],
-    history: [{ id: `library-${seed.id}`, at: opts.importedAt, type: 'library-seed-imported', note: `Imported ${seed.name} from Location Library.` }]
+    history: [{ id: `library-${recordId}`, at: opts.importedAt, type: 'library-seed-imported', note: `Imported ${seed.name} from Location Library.` }]
   };
 }
 
 function childToLocationRecord(child = {}, parentSeed = {}, options = {}) {
   const opts = normalizeImportOptions(options);
+  const parentRecordId = opts.parentRecordId || parentSeed.id;
   return {
     id: child.id,
     name: child.name,
     category: child.category || parentSeed.category || 'planetary',
     type: child.type || 'poi',
     scale: child.scale || 'site',
-    parentLocationId: parentSeed.id,
+    parentLocationId: parentRecordId,
     region: parentSeed.region || '',
     sector: parentSeed.sector || '',
     system: parentSeed.system || '',

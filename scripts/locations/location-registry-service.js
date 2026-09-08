@@ -15,6 +15,17 @@ const REGISTRY_SETTING = 'gmLocationRegistry';
 const ATLAS_ACTOR_FLAG = 'atlasLocationState';
 const MAX_HISTORY = 100;
 
+// Every id the built-in Location Library could ever write to a registry
+// record — each seed's own id plus every one of its children's ids.
+// Reserved from future manual Location id generation (_uniqueLocationSlug)
+// so a brand-new manually-created Location can never land on a Library
+// seed's canonical namespace going forward. This does not by itself fix a
+// PRE-EXISTING collision in a world that already has a manual record at
+// one of these ids — see _resolveLibraryParentId() for that.
+const LIBRARY_RESERVED_IDS = new Set(
+  LOCATION_LIBRARY_SEEDS.flatMap(seed => [seed.id, ...(seed.children || []).map(child => child.id)])
+);
+
 const LOCATION_CATEGORIES = Object.freeze([
   { value: 'planetary', label: 'Planetary' },
   { value: 'space', label: 'Space' },
@@ -583,15 +594,37 @@ export class LocationRegistryService {
     const records = this.getRegistry();
     const requestedId = text(data.id || data.locationId);
     const name = text(data.name || data.locationName || 'Unnamed Location');
-    const byId = requestedId ? records.find(record => record.id === requestedId) : null;
-    const byName = records.find(record => record.name.toLowerCase() === name.toLowerCase());
-    const existing = byId ?? byName ?? null;
-    const id = existing?.id || requestedId || slugify(name);
+    // Identity is by id only — a location is "the same record" only when
+    // its own id is provided and matches. Matching by name here (as this
+    // used to do) meant a brand-new Location whose name merely collided
+    // with an unrelated existing one (two different planets can both have
+    // a "Command Center") was silently treated as an edit of that
+    // unrelated record, discarding its data. findLocation() still matches
+    // by name for read/search purposes, which is a safe, separate concern.
+    const existing = requestedId ? records.find(record => record.id === requestedId) : null;
+    const id = existing?.id || requestedId || this._uniqueLocationSlug(name, records);
+    // The create/edit wizard's Parent Location field is free text against a
+    // datalist (the browser doesn't enforce the "self" option's disabled
+    // hint, and nothing server-side checked this before), so a GM can type
+    // the record's own id or an id that doesn't exist. Reject a
+    // self-reference, a reference to a nonexistent record, or one that
+    // would create a parent/child cycle — a location can never become its
+    // own ancestor.
+    const requestedParentId = data.parentLocationId !== undefined ? text(data.parentLocationId) : (existing?.parentLocationId || '');
+    // Validate BEFORE building/saving anything — an invalid parent must
+    // reject the whole save (registry untouched, existing record's real
+    // parent preserved), not silently clear the field and save the rest of
+    // the edit. Blanking-and-saving previously meant a GM's typo in the
+    // parent field could detach an existing Location from a valid parent
+    // it already had, with no warning beyond a notification the modal had
+    // already closed past.
+    const parentLocationId = this._validateParentLocationId(id, requestedParentId, records);
     const normalized = this.normalizeLocation({
       ...existing,
       ...data,
       id,
       name,
+      parentLocationId,
       updatedAt: nowIso(),
       createdAt: existing?.createdAt || nowIso(),
       history: [
@@ -602,6 +635,52 @@ export class LocationRegistryService {
     const next = existing ? records.map(record => record.id === id ? normalized : record) : [...records, normalized];
     await this.saveRegistry(next);
     return normalized;
+  }
+
+  /**
+   * A name-based slug that is guaranteed not to collide with any existing
+   * registry record's id — two different locations sharing a display name
+   * (e.g. two unrelated "Command Center"s) must never end up sharing an
+   * id, since id is the sole identity key throughout this service (byId
+   * maps, findLocation, parentLocationId references, ...).
+   */
+  static _uniqueLocationSlug(name, records = []) {
+    const base = slugify(name);
+    const taken = new Set(records.map(record => record.id));
+    for (const reserved of LIBRARY_RESERVED_IDS) taken.add(reserved);
+    if (!taken.has(base)) return base;
+    let suffix = 2;
+    while (taken.has(`${base}-${suffix}`)) suffix += 1;
+    return `${base}-${suffix}`;
+  }
+
+  /**
+   * A location's parentLocationId must be blank, or the id of a real
+   * OTHER registry record that is not already a descendant of this one
+   * (which would make this location its own ancestor once linked).
+   * `records` is the pre-save registry snapshot passed to upsertLocation.
+   *
+   * Throws on an invalid, non-blank request rather than silently
+   * resolving to '' — upsertLocation() must reject the whole save (no
+   * registry write at all) rather than saving the rest of the edit with
+   * the parent quietly blanked out, which could detach an existing
+   * Location from a valid parent it already had.
+   */
+  static _validateParentLocationId(id, parentLocationId, records = []) {
+    const parentId = text(parentLocationId);
+    if (!parentId) return ''; // no parent requested — always valid
+    if (parentId === id) throw new Error('A location cannot be its own parent.');
+    const byId = new Map(records.map(record => [record.id, record]));
+    if (!byId.has(parentId)) throw new Error('That parent location does not exist.');
+    let current = byId.get(parentId);
+    const seen = new Set();
+    while (current) {
+      if (current.id === id) throw new Error('That parent location is a descendant of this location — setting it would create a hierarchy cycle.');
+      if (seen.has(current.id)) break; // pre-existing cycle elsewhere in the data; don't loop forever
+      seen.add(current.id);
+      current = current.parentLocationId ? byId.get(current.parentLocationId) : null;
+    }
+    return parentId;
   }
 
   static async deleteLocation(locationId = '') {
@@ -915,7 +994,15 @@ export class LocationRegistryService {
   static summarizeLibrary(filters = {}) {
     const seeds = this.getLibrarySeeds(filters);
     const records = this.getRegistry();
-    const importedIds = new Set(records.map(record => record.librarySeedId || record.id).filter(Boolean));
+    // Provenance only — a raw id match (records.map(r => r.id)) used to
+    // also count here, which meant an unrelated manually-created Location
+    // that happened to share a seed's canonical id (e.g. a GM manually
+    // creating "Tatooine") made the built-in seed falsely report as
+    // already imported. librarySeedId is set only by an actual Library
+    // import (see buildLocationLibraryRecords) and, since
+    // _resolveLibraryParentId() keeps it pinned to the seed's own
+    // canonical id even when the record itself had to land at a fallback
+    // id, this stays correct in the collision case too.
     const importedSeedIds = new Set(records.map(record => record.librarySeedId).filter(Boolean));
     const biomeCounts = new Map();
     for (const seed of LOCATION_LIBRARY_SEEDS) {
@@ -924,7 +1011,7 @@ export class LocationRegistryService {
     return {
       total: LOCATION_LIBRARY_SEEDS.length,
       visible: seeds.length,
-      imported: LOCATION_LIBRARY_SEEDS.filter(seed => importedIds.has(seed.id) || importedSeedIds.has(seed.id)).length,
+      imported: LOCATION_LIBRARY_SEEDS.filter(seed => importedSeedIds.has(seed.id)).length,
       biomes: LOCATION_LIBRARY_BIOMES.map(entry => ({ ...entry, count: biomeCounts.get(entry.value) || 0 }))
     };
   }
@@ -933,38 +1020,146 @@ export class LocationRegistryService {
     return buildLocationLibraryRecords(seedId, options).map(record => this.normalizeLocation(record));
   }
 
-  static async importLibrarySeed(seedId = '', { overwrite = false, includeChildren = true, includeAtlasFacts = true, revealState = 'hidden', knownToPlayers = false } = {}) {
-    const seed = this.getLibrarySeed(seedId);
-    if (!seed) return { imported: [], skipped: [], seed: null };
-    const incoming = this.buildLibrarySeedRecords(seed.id, { includeChildren, includeAtlasFacts, revealState, knownToPlayers, importedAt: nowIso() });
+  /**
+   * Import one built-in Location Library seed. Thin wrapper over
+   * importLibrarySeeds() so single- and batch-seed imports share one
+   * read-resolve-save path (see that method for the reliability
+   * reasoning) instead of each seed doing its own registry read/write.
+   */
+  static async importLibrarySeed(seedId = '', options = {}) {
+    const result = await this.importLibrarySeeds([seedId], options);
+    return { imported: result.imported, skipped: result.skipped, seed: result.seeds[0] || null };
+  }
+
+  /**
+   * Import a batch of built-in Location Library seeds as ONE registry
+   * write, serialized against any other library import already running in
+   * this client (see `#importQueue` below). Earlier this called
+   * importLibrarySeed() per id, each doing its own
+   * getRegistry()/saveRegistry() round trip — N settings writes for an
+   * N-seed batch, so a failure partway through left an unreported partial
+   * import. And even after that was fixed to one read+save per batch, two
+   * *different* batches called concurrently (e.g. a Faction-panel import
+   * racing a Locations-panel import) could each read the same starting
+   * registry and last-write-wins would silently discard whichever batch
+   * saved first — a real lost-update race, not merely a cosmetic
+   * double-click concern. `#importQueue` — a private static promise chain,
+   * not a generic transaction engine — makes every call to this method run
+   * only after the previous one has fully finished (settled, success or
+   * failure), so each batch's registry read always reflects every
+   * previously queued batch's write. This proves serialization within this
+   * running client/service instance only; it is not cross-tab, cross-GM,
+   * or cross-process locking, which this settings-backed architecture does
+   * not provide.
+   */
+  static #importQueue = Promise.resolve();
+
+  static importLibrarySeeds(seedIds = [], options = {}) {
+    const run = () => this.#importLibrarySeedsExclusive(seedIds, options);
+    // Chain onto the queue regardless of whether the previous entry
+    // resolved or rejected, so one rejected import never permanently
+    // poisons later imports.
+    const scheduled = this.#importQueue.then(run, run);
+    // Keep the queue itself always-resolved, decoupled from this call's
+    // own outcome — callers still see `scheduled`'s real result/rejection.
+    this.#importQueue = scheduled.then(() => undefined, () => undefined);
+    return scheduled;
+  }
+
+  /**
+   * Resolve the actual registry record id to use for a Library seed's
+   * PARENT record. Normally this is the seed's own canonical id
+   * (seed.id) — importing the same seed twice must land on the same
+   * record id for idempotency. But _uniqueLocationSlug()'s reservation
+   * only protects a world going forward; a world that already has a
+   * manual (non-library) record occupying that id — same name, same
+   * slug, no relation — would otherwise have this import silently
+   * SKIP the real seed (an unrelated existing record already "matches"
+   * that id) while its children still import and get parented to that
+   * unrelated record, corrupting the hierarchy without ever touching or
+   * overwriting the manual record's own data. Walk forward to a
+   * deterministic fallback id instead (`${seedId}-library`, then
+   * `-library-2`, ...) — stopping at the first slot that's either free or
+   * already this exact seed's own prior fallback import (checked by
+   * librarySeedId, not by id, since id is exactly what collided) — so a
+   * second import of the same seed always finds the same slot again.
+   */
+  static _resolveLibraryParentId(seedId, byId) {
+    const direct = byId.get(seedId);
+    if (!direct || direct.librarySeedId === seedId) return seedId;
+    let candidate = `${seedId}-library`;
+    let suffix = 2;
+    for (;;) {
+      const occupant = byId.get(candidate);
+      if (!occupant || occupant.librarySeedId === seedId) return candidate;
+      candidate = `${seedId}-library-${suffix}`;
+      suffix += 1;
+    }
+  }
+
+  /**
+   * The actual read-resolve-save body, run exclusively by the queue above.
+   * Duplicate detection is by stable identity: buildLibrarySeedRecords()
+   * normally assigns the seed's own id to its generated parent record
+   * (and `<seedId>-<child-slug>` to its children), so re-importing the
+   * same seed maps to the same registry record id and is skipped rather
+   * than duplicated — including across repeated calls, since the save
+   * only happens when there is new data to persist. When that canonical
+   * id is already occupied by an unrelated (non-library) record,
+   * _resolveLibraryParentId() picks a deterministic fallback instead —
+   * see its own comment.
+   */
+  static async #importLibrarySeedsExclusive(seedIds = [], { overwrite = false, includeChildren = true, includeAtlasFacts = true, revealState = 'hidden', knownToPlayers = false } = {}) {
+    const ids = Array.from(new Set(safeArray(seedIds).map(id => text(id)).filter(Boolean)));
+    const importedAt = nowIso();
     const records = this.getRegistry();
     const byId = new Map(records.map(record => [record.id, record]));
     const imported = [];
     const skipped = [];
-    for (const record of incoming) {
-      const existing = byId.get(record.id);
-      if (existing && !overwrite) {
-        skipped.push(record);
+    const invalid = [];
+    const repaired = [];
+    const seeds = [];
+    const seenSeedIds = new Set();
+    for (const seedId of ids) {
+      const seed = this.getLibrarySeed(seedId);
+      if (!seed) {
+        invalid.push(seedId);
         continue;
       }
-      const nextRecord = existing ? this.normalizeLocation({ ...existing, ...record, createdAt: existing.createdAt, updatedAt: nowIso() }) : record;
-      byId.set(record.id, nextRecord);
-      imported.push(nextRecord);
+      if (seenSeedIds.has(seed.id)) continue;
+      seenSeedIds.add(seed.id);
+      seeds.push(seed);
+      const parentRecordId = this._resolveLibraryParentId(seed.id, byId);
+      const incoming = this.buildLibrarySeedRecords(seed.id, { includeChildren, includeAtlasFacts, revealState, knownToPlayers, importedAt, parentRecordId });
+      for (const record of incoming) {
+        const existing = byId.get(record.id);
+        if (existing && !overwrite) {
+          // A record already at this id that IS this exact seed's own
+          // prior import (by provenance, librarySeedId) but whose
+          // parentLocationId no longer matches what this seed expects —
+          // most commonly a child that survived deleteLocation() removing
+          // just its parent (deleteLocation reparents surviving children
+          // to '' rather than deleting them) — gets ONLY its hierarchy
+          // link healed. Nothing else about the existing record is
+          // touched, so any GM customization made to it survives, and an
+          // unrelated record that merely happens to share this id (no
+          // matching librarySeedId) is never touched at all.
+          if (existing.librarySeedId === seed.id && existing.parentLocationId !== record.parentLocationId) {
+            const healed = this.normalizeLocation({ ...existing, parentLocationId: record.parentLocationId, updatedAt: nowIso() });
+            byId.set(existing.id, healed);
+            repaired.push(healed);
+          } else {
+            skipped.push(record);
+          }
+          continue;
+        }
+        const nextRecord = existing ? this.normalizeLocation({ ...existing, ...record, createdAt: existing.createdAt, updatedAt: nowIso() }) : record;
+        byId.set(record.id, nextRecord);
+        imported.push(nextRecord);
+      }
     }
-    await this.saveRegistry(Array.from(byId.values()));
-    return { imported, skipped, seed };
-  }
-
-  static async importLibrarySeeds(seedIds = [], options = {}) {
-    const ids = Array.from(new Set(safeArray(seedIds).map(id => text(id)).filter(Boolean)));
-    const results = [];
-    for (const seedId of ids) results.push(await this.importLibrarySeed(seedId, options));
-    return results.reduce((summary, result) => {
-      summary.imported.push(...safeArray(result.imported));
-      summary.skipped.push(...safeArray(result.skipped));
-      if (result.seed) summary.seeds.push(result.seed);
-      return summary;
-    }, { imported: [], skipped: [], seeds: [] });
+    if (imported.length || repaired.length) await this.saveRegistry(Array.from(byId.values()));
+    return { imported, skipped, invalid, seeds, repaired };
   }
 
   static summarizeForWorkspace() {

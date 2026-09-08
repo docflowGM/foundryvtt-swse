@@ -2,7 +2,7 @@
 
 import { HolonetStorage } from '/systems/foundryvtt-swse/scripts/holonet/subsystems/holonet-storage.js';
 import { HolonetStateService } from '/systems/foundryvtt-swse/scripts/holonet/subsystems/holonet-state-service.js';
-import { SOURCE_FAMILY, DELIVERY_STATE, AUDIENCE_TYPE, INTENT_TYPE } from '/systems/foundryvtt-swse/scripts/holonet/contracts/enums.js';
+import { SOURCE_FAMILY, DELIVERY_STATE, AUDIENCE_TYPE, INTENT_TYPE, SURFACE_TYPE } from '/systems/foundryvtt-swse/scripts/holonet/contracts/enums.js';
 import { HolonetMarkupService } from '/systems/foundryvtt-swse/scripts/holonet/subsystems/holonet-markup-service.js';
 import { HolonewsGenerator } from '/systems/foundryvtt-swse/scripts/holonet/data/holonews-seed-events.js';
 import { HolonewsAutoPublisher } from '/systems/foundryvtt-swse/scripts/holonet/subsystems/holonews-auto-publisher.js';
@@ -10,8 +10,167 @@ import { BulletinContactRegistry } from '/systems/foundryvtt-swse/scripts/holone
 import { HolonewsAtomPolicy } from '/systems/foundryvtt-swse/scripts/holonet/subsystems/holonews-atom-policy.js';
 import { GMCombatRecoveryService } from '/systems/foundryvtt-swse/scripts/holonet/subsystems/gm-combat-recovery-service.js';
 import { HolonetMessengerService } from '/systems/foundryvtt-swse/scripts/holonet/subsystems/holonet-messenger-service.js';
+import { HolonetIntelService } from '/systems/foundryvtt-swse/scripts/holonet/subsystems/holonet-intel-service.js';
+import { HolonetAudience } from '/systems/foundryvtt-swse/scripts/holonet/contracts/holonet-audience.js';
+import { BulletinSource } from '/systems/foundryvtt-swse/scripts/holonet/sources/bulletin-source.js';
+import { LocationRegistryService } from '/systems/foundryvtt-swse/scripts/locations/location-registry-service.js';
+import { FactionRegistryService } from '/systems/foundryvtt-swse/scripts/allies/faction-registry-service.js';
+import { jobForThread } from '/systems/foundryvtt-swse/scripts/ui/shell/gm/GMJobBoardSurfaceService.js';
+
+// PHASE 8C: valid Bulletin-handoff source kinds. Kept small and explicit
+// (not a generalized/open-ended registry) -- exactly the GM Datapad
+// authorities the phase spec names, no more.
+const BULLETIN_SOURCE_KINDS = Object.freeze(['job', 'location', 'faction', 'actor', 'intel']);
+
+function resolveActorForProvenance(id) {
+  const ref = String(id || '').trim();
+  if (!ref) return null;
+  const bareId = ref.replace(/^Actor\./, '');
+  return globalThis.game?.actors?.get?.(bareId)
+    ?? (globalThis.game?.actors?.contents ?? Array.from(globalThis.game?.actors ?? [])).find?.(a => a?.uuid === ref)
+    ?? null;
+}
 
 export class GMBulletinSurfaceService {
+  /**
+   * PHASE 8C — the one shared Bulletin draft-creation authority every
+   * source surface's "Prepare Bulletin Draft" action calls. Builds a
+   * player-safe prefill (never GM-only text) from the real source
+   * authority, persists a DRAFT-state Bulletin record (never publishes:
+   * draft save uses HolonetStorage.saveRecord(), never
+   * HolonetEngine.publish() -- a draft never resolves recipients, never
+   * appears in a player's feed, never broadcasts record-published), and
+   * stamps the general {sourceKind, sourceId} provenance contract. Does
+   * not touch or mutate the source record in any way. Returns null if
+   * the source kind is unsupported or the source does not resolve --
+   * never creates a draft with fabricated/guessed provenance.
+   */
+  static async prepareDraftFromSource({ sourceKind = '', sourceId = '' } = {}) {
+    if (!globalThis.game?.user?.isGM) return null;
+    const kind = String(sourceKind || '').trim();
+    const id = String(sourceId || '').trim();
+    if (!kind || !id || !BULLETIN_SOURCE_KINDS.includes(kind)) return null;
+
+    const prefill = await this._prefillForSource(kind, id);
+    if (!prefill) return null;
+
+    const bulletin = BulletinSource.createBulletinMessage({
+      title: prefill.title,
+      body: prefill.body,
+      priority: 'normal',
+      // Safe default per the phase spec: never infer an audience from an
+      // upstream relationship (faction membership, job assignee, etc.) --
+      // stays GM-only/unconfigured until the GM explicitly chooses one
+      // while editing the draft.
+      audience: HolonetAudience.gmOnly(),
+      category: prefill.category,
+      metadata: {
+        sourceKind: kind,
+        sourceId: id
+      }
+    });
+    bulletin.projections = [
+      { surfaceType: SURFACE_TYPE.HOME_FEED, recordId: bulletin.id, isPinned: false, metadata: {} },
+      { surfaceType: SURFACE_TYPE.GM_DATAPAD_BULLETIN, recordId: bulletin.id, isPinned: false, metadata: {} }
+    ];
+    const saved = await HolonetStorage.saveRecord(bulletin);
+    if (!saved) return null;
+    return bulletin;
+  }
+
+  /**
+   * @private — player-safe title/body prefill per source kind, using
+   * ONLY fields already proven player-facing elsewhere in this codebase
+   * (never guessed). Every lookup is an exact-id match against the
+   * source's own canonical registry -- never a name/label/slug fallback
+   * (Phase 8C's C8C audit explicitly forbids resolving by visible text).
+   *
+   * Job: job.briefing.body ONLY -- deliberately narrower than
+   * holonet-messenger-service.js's player-facing job board VM
+   * (buildHolonetJobBoardVm's briefingBody reads
+   * briefing?.body || description || brief || thread.preview). That
+   * fallback chain is not independently proven safe for every link --
+   * only briefing.body has a documented, GM-authored-for-players
+   * origin -- so Bulletin intentionally does not reuse the rest of it.
+   * A Job with no briefing.body prefills an empty body for the GM to
+   * write, exactly like Faction/Actor, rather than falling through to
+   * fields with no proven public/private split at the Bulletin layer.
+   *
+   * Location: publicSummary vs gmNotes is LocationRegistryService's own
+   * documented split, already relied on by the player-facing
+   * AtlasSurfaceService (`publicSummary: location.publicSummary`).
+   *
+   * Faction: audited and found NO reliable public field at the
+   * faction-record level (only its nested contacts distinguish
+   * publicNotes/gmNotes) -- body is deliberately left empty for the GM
+   * to write rather than guessing from notes/gmNotes, which have no
+   * proven-safe reader anywhere in this codebase.
+   *
+   * Actor: audited the full SWSE actor data model (template.json) --
+   * there is no biography/description/notes field of any kind. Body is
+   * deliberately left empty; only the Actor's own name is used, never
+   * system/mechanical data (HP, inventory, conditions, credits).
+   *
+   * Intel: HolonetIntelService.getPublicBody() -- the same
+   * bodyForIntel(intel,'public') authority deliverAsBulletin() itself
+   * uses, including the Phase 8B C8B-4 fix (never falls back to
+   * fullBody).
+   */
+  static async _prefillForSource(kind, id) {
+    switch (kind) {
+      case 'job': {
+        const thread = await HolonetStorage.getThread(id).catch(() => null);
+        if (!thread || thread.metadata?.threadType !== 'job') return null;
+        const job = jobForThread(thread);
+        return {
+          title: String(job?.title || thread.title || 'Untitled Job').trim(),
+          body: String(job?.briefing?.body || '').trim(),
+          category: 'job'
+        };
+      }
+      case 'location': {
+        const location = (LocationRegistryService.getRegistry?.() ?? []).find(entry => entry.id === id) ?? null;
+        if (!location) return null;
+        return {
+          title: String(location.name || 'Untitled Location').trim(),
+          body: String(location.publicSummary || '').trim(),
+          category: 'location'
+        };
+      }
+      case 'faction': {
+        const faction = (FactionRegistryService.getRegistry?.() ?? []).find(entry => entry.id === id) ?? null;
+        if (!faction) return null;
+        return {
+          title: String(faction.name || 'Untitled Faction').trim(),
+          body: '',
+          category: 'faction'
+        };
+      }
+      case 'actor': {
+        const actor = resolveActorForProvenance(id);
+        if (!actor) return null;
+        return {
+          title: String(actor.name || 'Untitled Actor').trim(),
+          body: '',
+          category: 'actor'
+        };
+      }
+      case 'intel': {
+        const record = await HolonetIntelService.getIntelById(id).catch(() => null);
+        const intel = record ? HolonetIntelService.getIntelMetadata(record) : null;
+        if (!intel) return null;
+        return {
+          title: String(intel.title || 'Untitled Intel').trim(),
+          body: HolonetIntelService.getPublicBody(record),
+          category: 'intel'
+        };
+      }
+      default:
+        return null;
+    }
+  }
+
+
   static async buildViewModel(host) {
     const records = (await HolonetStorage.getAllRecords())
       .filter((record) => record.sourceFamily === SOURCE_FAMILY.BULLETIN)
@@ -34,10 +193,13 @@ export class GMBulletinSurfaceService {
     const holonewsAtomPolicy = await HolonewsAtomPolicy.getPolicy();
     const atomFilters = HolonewsAtomPolicy.toGeneratorFilters(holonewsAtomPolicy);
 
-    const allEventViews = eventRecords.map((record) => host._buildBulletinRecordView(record));
+    // C8C-3: _buildBulletinRecordView() is async (it resolves the derived
+    // source-provenance display label via GMCampaignContextService
+    // .resolveBulletinSource()), so every call site here awaits it.
+    const allEventViews = await Promise.all(eventRecords.map((record) => host._buildBulletinRecordView(record)));
     const eventViews = allEventViews.filter((record) => !record.isHolonews);
     const holonewsViews = allEventViews.filter((record) => record.isHolonews);
-    const messageViews = messageRecords.map((record) => host._buildBulletinRecordView(record));
+    const messageViews = await Promise.all(messageRecords.map((record) => host._buildBulletinRecordView(record)));
     const secretNoteRecords = await HolonetMessengerService.getSecretNoteConsoleView();
     const holonewsArchiveFilters = {
       query: String(host.holonewsArchiveFilters?.query || '').trim(),
@@ -64,13 +226,13 @@ export class GMBulletinSurfaceService {
         bodyPreview: HolonetMarkupService.preview(seed.body || '', 180)
       }));
     const eventEditorRecord = host._getBulletinEditorRecord(eventRecords, 'events')
-      ? host._buildBulletinRecordView(host._getBulletinEditorRecord(eventRecords, 'events'))
+      ? await host._buildBulletinRecordView(host._getBulletinEditorRecord(eventRecords, 'events'))
       : null;
     const holonewsEditorRecord = host._getBulletinEditorRecord(eventRecords, 'holonews')
-      ? host._buildBulletinRecordView(host._getBulletinEditorRecord(eventRecords, 'holonews'))
+      ? await host._buildBulletinRecordView(host._getBulletinEditorRecord(eventRecords, 'holonews'))
       : null;
     const messageEditorRecord = host._getBulletinEditorRecord(messageRecords, 'messages')
-      ? host._buildBulletinRecordView(host._getBulletinEditorRecord(messageRecords, 'messages'))
+      ? await host._buildBulletinRecordView(host._getBulletinEditorRecord(messageRecords, 'messages'))
       : null;
     const previewRecord = GMBulletinSurfaceService._selectPreviewRecord({
       section: host.currentBulletinSection,

@@ -4647,6 +4647,26 @@
     linear-gradient(145deg, rgba(25, 18, 5, 0.78), rgba(2, 8, 18, 0.92));
 }
 
+/*
+ * Locations usability repair — container-aware layout.
+ *
+ * GMDatapad's own window can be resized independently of the browser
+ * viewport, down to GM_TABLET_MIN_WIDTH (55% of GM_TABLET_BASE_WIDTH =
+ * 1440, i.e. ~792px — see scripts/apps/gm-datapad.js), and its own command
+ * rail already consumes minmax(210px, 236px) of that. A `@media` query
+ * measures the BROWSER viewport, which can be 1500px+ wide while the
+ * actual Locations surface inside the Datapad window has well under
+ * 600px available — the two-column workbench below (360px + 520px + gap
+ * minimum ≈ 892px) would then overflow/clip with no visual warning, since
+ * the viewport-based breakpoint never fires. `container-type: inline-size`
+ * here makes the @container rule below respond to the Locations surface's
+ * OWN width, not the browser's.
+ */
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-datapad-locations {
+  container-type: inline-size;
+  container-name: gm-locations-surface;
+}
+
 .swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-workbench {
   display: grid;
   grid-template-columns: minmax(360px, 0.85fr) minmax(520px, 1.15fr);
@@ -4655,20 +4675,63 @@
   min-height: 0;
 }
 
-.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-browser,
+@container gm-locations-surface (max-width: 920px) {
+  .swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-workbench {
+    grid-template-columns: 1fr;
+  }
+
+  .swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-modal-filters--friendly {
+    grid-template-columns: 1fr !important;
+  }
+
+  .swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-selected-support {
+    grid-template-columns: 1fr;
+  }
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-browser {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-height: 0;
+  /* Only .gm-location-browser-list scrolls internally, below; the filters
+     above it stay pinned in view — a deliberate, single scroll region for
+     this column, not the clipping bug in .gm-location-detail fixed below. */
+  overflow: hidden;
+}
+
+/*
+ * .gm-location-detail (the selected-location workspace) used to share the
+ * rule above verbatim: overflow:hidden on the column, with only the first
+ * child (.gm-location-selected-card) individually scrollable via its own
+ * flex:1/overflow:auto. Every panel Phase 2 added after it (Children/
+ * Facts, Encounter Seeds, Scenes, Links) was a plain block child with no
+ * sizing rule of its own, so once their combined height exceeded the
+ * column, they were squeezed or clipped by this parent's overflow:hidden
+ * with nothing to scroll them into view. This column now owns ONE
+ * vertical scroll region for the whole selected-location workspace
+ * instead.
+ */
 .swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-detail {
   display: flex;
   flex-direction: column;
   gap: 10px;
   min-height: 0;
-  overflow: hidden;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
-.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-browser-list,
-.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-selected-card {
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-browser-list {
   flex: 1;
   min-height: 0;
   overflow: auto;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-selected-card {
+  /* Participates in .gm-location-detail's own scroll above instead of
+     scrolling internally — keep it from being crushed by flex sizing,
+     but it is no longer flex:1/overflow:auto. */
+  flex-shrink: 0;
 }
 
 .swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-card-stack {
@@ -4736,8 +4799,9 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 10px;
-  max-height: 250px;
-  overflow: auto;
+  /* No max-height/overflow here — this panel now flows within
+     .gm-location-detail's single scroll region (see that rule's comment)
+     instead of adding its own nested scrollbar on top of it. */
 }
 
 .swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-linked-row,
@@ -4751,6 +4815,25 @@
   background: rgba(1, 9, 18, 0.72);
   color: #dff8ff;
   text-align: left;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-fact-row.is-broken-link {
+  border-color: color-mix(in oklab, #ff8b8b 42%, transparent);
+  background: rgba(255, 107, 107, 0.08);
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-fact-row.is-selected-location {
+  border-color: rgba(112, 226, 255, 0.46);
+  background: rgba(112, 226, 255, 0.1);
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-link-group {
+  margin-top: 10px;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-link-group + .gm-location-link-group {
+  border-top: 1px solid rgba(112, 226, 255, 0.12);
+  padding-top: 10px;
 }
 
 .swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-empty-detail {
@@ -5618,4 +5701,652 @@
 
 .swse-skill-challenge-feat-option.is-muted {
   opacity: 0.68;
+}
+
+/* ============================================================================
+   GM DATAPAD ECOSYSTEM REDESIGN — PHASE 1 (Locations campaign hub)
+   ---------------------------------------------------------------------------
+   Locations becomes the geographic hub of the campaign: a selected Location
+   reads as Current Situation + Campaign Relationships (Factions/Contacts/
+   Jobs/Intel & Leads) + Preparation (Encounter Seeds/Scenes) + World Detail,
+   instead of a flat CRUD record. All new rules here reuse the existing
+   `gm-locations-surface` CSS container (declared on .gm-datapad-locations,
+   Stage 3) rather than introducing a second container name, and the
+   existing .gm-location-workbench/.gm-location-browser/.gm-location-detail
+   container-query and single-scroll-region plumbing is untouched — only the
+   CONTENT inside the registry list and the selected-location detail panel
+   changed.
+   ============================================================================ */
+
+/* ---------- Header metrics ---------- */
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-page-header {
+  align-items: flex-start;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-eyebrow {
+  display: block;
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  opacity: 0.62;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-page-metrics {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-page-metric {
+  min-width: 84px;
+  padding: 7px 9px;
+  border: 1px solid rgba(112, 226, 255, 0.14);
+  border-radius: 6px;
+  background: rgba(0, 0, 0, 0.18);
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-page-metric span {
+  display: block;
+  font-size: 0.68rem;
+  opacity: 0.55;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-page-metric strong {
+  display: block;
+  margin-top: 2px;
+  font-size: 1rem;
+}
+
+/* ---------- Registry list: new card internals ---------- */
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-registry-card {
+  width: 100%;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 8px;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-registry-card.is-current {
+  box-shadow: inset 3px 0 0 rgba(103, 232, 163, 0.85) !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-registry-card.is-current.is-selected {
+  box-shadow:
+    inset 3px 0 0 rgba(103, 232, 163, 0.85),
+    0 0 16px rgba(125, 255, 178, 0.14) !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-registry-card-main {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-registry-icon {
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 6px;
+  background: rgba(112, 226, 255, 0.08);
+  color: rgba(112, 226, 255, 0.8);
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-registry-copy {
+  min-width: 0;
+  flex: 1;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-registry-copy strong,
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-registry-copy span {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-registry-copy span {
+  margin-top: 1px;
+  font-size: 0.74rem;
+  opacity: 0.58;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-current-marker {
+  flex: 0 0 auto;
+  color: #8af0b7;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-registry-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  font-size: 0.7rem;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-status-chip {
+  padding: 2px 7px;
+  border-radius: 999px;
+  border: 1px solid rgba(112, 226, 255, 0.2);
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-registry-summary {
+  opacity: 0.56;
+}
+
+/* ---------- Identity header ---------- */
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-identity {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px;
+  border: 1px solid rgba(112, 226, 255, 0.14);
+  border-radius: 8px;
+  background: linear-gradient(135deg, rgba(18, 65, 78, 0.22), rgba(4, 14, 21, 0.72));
+  flex-wrap: wrap;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-identity-copy {
+  min-width: 0;
+  flex: 1 1 320px;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-breadcrumb {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  font-size: 0.76rem;
+  opacity: 0.6;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-title-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-title-row h3 {
+  margin: 3px 0;
+  font-size: 1.35rem;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-party-here {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 7px;
+  border: 1px solid rgba(103, 232, 163, 0.35);
+  border-radius: 999px;
+  color: #8af0b7;
+  background: rgba(103, 232, 163, 0.09);
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-subtitle {
+  opacity: 0.62;
+  font-size: 0.82rem;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-identity-chips {
+  display: flex;
+  gap: 5px;
+  flex-wrap: wrap;
+  margin-top: 6px;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-identity-chips .chip {
+  padding: 2px 8px;
+  border-radius: 999px;
+  border: 1px solid rgba(112, 226, 255, 0.22);
+  font-size: 0.72rem;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-summary {
+  max-width: 760px;
+  margin: 9px 0 0;
+  opacity: 0.78;
+  line-height: 1.45;
+  font-size: 0.85rem;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-summary.is-muted {
+  opacity: 0.5;
+  font-style: italic;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-identity-actions {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  flex: 0 0 auto;
+}
+
+/* ---------- Generic ecosystem section wrapper ---------- */
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-section {
+  margin-top: 12px;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-section-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-section-eyebrow {
+  display: block;
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  opacity: 0.6;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-section-header h4 {
+  margin: 1px 0 0;
+  font-size: 0.92rem;
+}
+
+/* ---------- Current Situation strip ---------- */
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-situation-grid {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(100px, 1fr));
+  gap: 5px;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-situation-item {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  min-width: 0;
+  padding: 7px 8px;
+  border: 1px solid rgba(112, 226, 255, 0.1);
+  border-radius: 6px;
+  background: rgba(0, 0, 0, 0.17);
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-situation-item.is-active,
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-situation-item.is-ready {
+  border-color: rgba(103, 232, 163, 0.3);
+  background: rgba(103, 232, 163, 0.06);
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-situation-item > div {
+  min-width: 0;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-situation-item span:not(.gm-location-situation-icon),
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-situation-item strong {
+  display: block;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-situation-item span:not(.gm-location-situation-icon) {
+  font-size: 0.68rem;
+  opacity: 0.52;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-situation-item strong {
+  margin-top: 1px;
+  font-size: 0.78rem;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+@container gm-locations-surface (max-width: 1050px) {
+  .swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-situation-grid {
+    grid-template-columns: repeat(3, minmax(110px, 1fr));
+  }
+}
+
+@container gm-locations-surface (max-width: 620px) {
+  .swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-situation-grid {
+    grid-template-columns: repeat(2, minmax(100px, 1fr));
+  }
+}
+
+/* ---------- Campaign relationships ---------- */
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-relationship-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 7px;
+}
+
+@container gm-locations-surface (max-width: 700px) {
+  .swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-relationship-grid,
+  .swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-preparation-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-relationship-card,
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-panel,
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-world-panel {
+  border: 1px solid rgba(112, 226, 255, 0.11);
+  border-radius: 7px;
+  background: rgba(5, 18, 27, 0.56);
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-relationship-card > header,
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 7px 8px;
+  border-bottom: 1px solid rgba(112, 226, 255, 0.08);
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-relationship-card > header > div,
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-panel-header > div {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-relationship-card > header span,
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-panel-header span {
+  font-size: 0.74rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  opacity: 0.72;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-relationship-list,
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-relationship-group {
+  padding: 5px;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-relationship-group + .gm-location-relationship-group {
+  border-top: 1px solid rgba(112, 226, 255, 0.07);
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-relationship-subheading {
+  display: block;
+  padding: 3px 3px 5px;
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  opacity: 0.48;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-relationship-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px;
+  border-radius: 5px;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-relationship-row:hover {
+  background: rgba(112, 226, 255, 0.045);
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-relationship-row.is-missing {
+  opacity: 0.68;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-relationship-row.is-controller {
+  border-left: 2px solid rgba(255, 198, 91, 0.55);
+}
+
+/* Rows carrying a working cross-surface nav control (Ecosystem Redesign
+   Phase 2). Kept subtle — a soft highlight and focus ring, not a button
+   treatment — since the row itself stays a plain container; the nav
+   affordance lives in the chevron control below. */
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-relationship-row.is-navigable:hover {
+  background: rgba(112, 226, 255, 0.08);
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-relationship-row.is-navigable:focus-within {
+  outline: 1px solid rgba(112, 226, 255, 0.45);
+  outline-offset: -1px;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-relationship-avatar {
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 5px;
+  background: rgba(112, 226, 255, 0.08);
+  color: rgba(112, 226, 255, 0.8);
+  font-size: 0.72rem;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-relationship-copy {
+  min-width: 0;
+  flex: 1;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-relationship-copy strong,
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-relationship-copy span {
+  display: block;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-relationship-copy strong {
+  font-size: 0.82rem;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-relationship-copy span {
+  margin-top: 1px;
+  font-size: 0.72rem;
+  opacity: 0.56;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-relationship-empty,
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-panel-empty {
+  padding: 10px 8px;
+  text-align: center;
+  opacity: 0.46;
+  font-size: 0.76rem;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-relationship-empty.compact {
+  padding: 6px;
+}
+
+/* ---------- Preparation ---------- */
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-preparation-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 7px;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-panel-body {
+  padding: 5px;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-panel-footer {
+  padding: 6px 7px;
+  border-top: 1px solid rgba(112, 226, 255, 0.07);
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-panel-footer.is-muted,
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-blocked-reason {
+  font-size: 0.74rem;
+  opacity: 0.56;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-encounter-row,
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-scene-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px;
+  border-radius: 5px;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-scene-row.is-broken-link {
+  border-left: 2px solid rgba(255, 107, 107, 0.55);
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-encounter-copy,
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-scene-copy {
+  flex: 1;
+  min-width: 0;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-encounter-copy strong,
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-encounter-copy span,
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-scene-copy strong,
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-scene-copy span {
+  display: block;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-encounter-copy span,
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-scene-copy span {
+  margin-top: 1px;
+  font-size: 0.72rem;
+  opacity: 0.58;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-scene-actions {
+  display: flex;
+  gap: 4px;
+  flex: 0 0 auto;
+}
+
+/* ---------- World detail ---------- */
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-world-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-world-panel > summary {
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 7px 8px;
+  list-style: none;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-world-panel > summary::-webkit-details-marker {
+  display: none;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-world-panel > summary > span {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-world-panel-body {
+  padding: 5px 7px 8px;
+  border-top: 1px solid rgba(112, 226, 255, 0.07);
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-child-row {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  text-align: left;
+  padding: 6px;
+  border: 0;
+  border-radius: 5px;
+  background: transparent;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-child-row:hover {
+  background: rgba(112, 226, 255, 0.05);
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-child-row strong,
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-child-row small {
+  display: block;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-child-row small {
+  margin-top: 1px;
+  opacity: 0.54;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-world-panel .gm-location-fact-row header {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-world-copy + .gm-location-world-copy {
+  margin-top: 8px;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-world-copy > span {
+  display: block;
+  margin-bottom: 2px;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  opacity: 0.52;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-world-copy p {
+  margin: 0;
+  line-height: 1.45;
+  font-size: 0.82rem;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-world-copy.is-gm-only {
+  padding: 7px;
+  border-left: 2px solid rgba(255, 198, 91, 0.55);
+  background: rgba(255, 198, 91, 0.035);
+}
+
+/* ---------- Small row-action controls (unlink/remove/resolve icon buttons) ---------- */
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-row-action {
+  flex: 0 0 auto;
+  width: 26px;
+  height: 26px;
+  display: inline-grid;
+  place-items: center;
+  border: 1px solid rgba(112, 226, 255, 0.11);
+  border-radius: 5px;
+  background: transparent;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-row-action:hover {
+  border-color: rgba(112, 226, 255, 0.35);
+  background: rgba(112, 226, 255, 0.06);
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-row-action.danger:hover {
+  border-color: rgba(255, 107, 107, 0.4);
+  background: rgba(255, 107, 107, 0.08);
+}
+
+/* Cross-surface navigation control (chevron) — a sibling of the existing
+   unlink/remove/resolve row-action buttons above, never a wrapper around
+   them, so a row's unlink <button> is never nested inside another
+   <button> (Ecosystem Redesign Phase 2). */
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-row-action.nav {
+  color: rgba(112, 226, 255, 0.75);
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-row-action.nav:hover {
+  border-color: rgba(112, 226, 255, 0.5);
+  background: rgba(112, 226, 255, 0.1);
+  color: rgba(112, 226, 255, 0.95);
 }

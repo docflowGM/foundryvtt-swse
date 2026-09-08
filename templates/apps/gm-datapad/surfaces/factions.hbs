@@ -54,6 +54,7 @@
                 <button type="button" class="swse-ui-button primary gm-faction-action-button" data-gm-faction-action="make-job-faction" data-faction-id="{{this.id}}" data-faction-name="{{this.name}}"><i class="fa-solid fa-clipboard-list"></i> Make Job</button>
                 <button type="button" class="swse-ui-button" data-gm-faction-action="view-jobs-faction" data-faction-id="{{this.id}}" data-faction-name="{{this.name}}"><i class="fa-solid fa-filter"></i> View Jobs</button>
                 <button type="button" class="swse-ui-button gm-dossier-intel-action" data-gm-faction-action="create-intel-faction" data-faction-id="{{this.id}}" data-faction-name="{{this.name}}"><i class="fa-solid fa-file-shield"></i> Create Intel</button>
+                <button type="button" class="swse-ui-button" data-gm-faction-action="prepare-bulletin-draft" data-faction-id="{{this.id}}" data-faction-name="{{this.name}}"><i class="fa-solid fa-pen-to-square"></i> Prepare Bulletin Draft</button>
                 <button type="button" class="swse-ui-button" data-gm-faction-action="view-locations-faction" data-faction-id="{{this.id}}" data-faction-name="{{this.name}}"><i class="fa-solid fa-map-location-dot"></i> Locations</button>
                 <button type="button" class="swse-ui-button" data-gm-faction-action="create-location-faction" data-faction-id="{{this.id}}" data-faction-name="{{this.name}}"><i class="fa-solid fa-location-plus"></i> New Site</button>
                 <button type="button" class="swse-ui-button gm-dossier-intel-action" data-gm-faction-action="reveal-faction" data-faction-id="{{this.id}}" data-faction-name="{{this.name}}"><i class="fa-solid fa-eye"></i> Reveal</button>
@@ -72,6 +73,10 @@
             <div class="gm-faction-intel-chip is-hidden"><span>GM Only</span><strong>{{this.hiddenContactCount}}</strong></div>
             <div class="gm-faction-intel-chip is-known"><span>Intel</span><strong>{{this.intelCount}}</strong></div>
             <div class="gm-faction-intel-chip is-known"><span>Locations</span><strong>{{this.locationCount}}</strong></div>
+            <div class="gm-faction-intel-chip is-known"><span>Controls</span><strong>{{this.currentSituation.controlledLocationCount}}</strong></div>
+            {{#if this.currentSituation.currentPartyLocationPresence}}
+              <div class="gm-faction-intel-chip is-party"><span>Party</span><strong>In Territory</strong></div>
+            {{/if}}
           </div>
 
           <details class="gm-phase2-details gm-faction-location-footprint" {{#if this.locationRows.length}}open{{/if}}>
@@ -97,6 +102,46 @@
             {{else}}
               <p class="placeholder">No Locations are linked to this faction yet. Drag this faction onto a Location, or create a starter operations site.</p>
             {{/if}}
+          </details>
+
+          {{!-- Ecosystem Redesign Phase 3 — Campaign Footprint: Jobs/Intel
+               linked to this Faction, each navigable to its exact real
+               record via the Phase 2 shell navigation contract. --}}
+          <details class="gm-phase2-details gm-faction-linked-jobs" {{#if this.relationships.jobs.length}}open{{/if}}>
+            <summary><i class="fa-solid fa-clipboard-list"></i> Linked Jobs</summary>
+            {{#if this.relationships.jobs.length}}
+              <div class="gm-faction-linked-list">
+                {{#each this.relationships.jobs}}
+                  <button type="button" class="gm-faction-linked-row" data-gm-faction-action="open-faction-job" data-job-id="{{this.id}}" title="Open {{this.title}} in Job Board" aria-label="Open {{this.title}} in Job Board">
+                    <span class="gm-faction-linked-row-copy"><strong>{{this.title}}</strong><span>{{this.statusLabel}} · {{this.roleLabel}}</span></span>
+                    <i class="fa-solid fa-chevron-right" aria-hidden="true"></i>
+                  </button>
+                {{/each}}
+              </div>
+            {{else}}
+              <p class="placeholder">No Jobs currently reference this Faction.</p>
+            {{/if}}
+          </details>
+
+          <details class="gm-phase2-details gm-faction-linked-intel" {{#if this.relationships.intel.length}}open{{/if}}>
+            <summary><i class="fa-solid fa-file-waveform"></i> Linked Intel</summary>
+            {{#if this.relationships.intel.length}}
+              <div class="gm-faction-linked-list">
+                {{#each this.relationships.intel}}
+                  <button type="button" class="gm-faction-linked-row" data-gm-faction-action="open-faction-intel" data-intel-id="{{this.id}}" title="Open {{this.title}} in Intel" aria-label="Open {{this.title}} in Intel">
+                    <span class="gm-faction-linked-row-copy"><strong>{{this.title}}</strong><span>{{this.statusLabel}}</span></span>
+                    <i class="fa-solid fa-chevron-right" aria-hidden="true"></i>
+                  </button>
+                {{/each}}
+              </div>
+            {{else}}
+              <p class="placeholder">No Intel currently linked to this Faction.</p>
+            {{/if}}
+          </details>
+
+          <details class="gm-phase2-details gm-faction-relationships-deferred">
+            <summary><i class="fa-solid fa-diagram-project"></i> Faction Relationships</summary>
+            <p class="placeholder">Faction-to-faction relationships (allies, rivals, etc.) are not tracked as structured campaign data yet — only a free-text "Rival Faction" name used for Job Board reward/consequence flavor exists today. This section will populate once that becomes real, resolvable data.</p>
           </details>
 
           <details class="gm-phase2-details">
@@ -229,6 +274,9 @@
                   {{/if}}
                   {{#if this.hasActorLink}}
                   <button type="button" class="swse-ui-button" data-gm-faction-action="open-contact-actor" data-actor-id="{{this.actorId}}" data-actor-uuid="{{this.actorUuid}}"><i class="fa-solid fa-user"></i> Open Actor</button>
+                  {{#if this.hasWorkspaceActorLink}}
+                  <button type="button" class="swse-ui-button" data-gm-faction-action="open-workspace-actor" data-actor-id="{{this.workspaceActorId}}"><i class="fa-solid fa-address-book"></i> Open in Workspace</button>
+                  {{/if}}
                   {{else}}
                   <button type="button" class="swse-ui-button" data-gm-faction-action="promote-contact" data-faction-id="{{../id}}" data-contact-id="{{this.id}}"><i class="fa-solid fa-user-plus"></i> Promote</button>
                   {{/if}}

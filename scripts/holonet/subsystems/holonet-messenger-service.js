@@ -2660,7 +2660,7 @@ export class HolonetMessengerService {
     });
   }
 
-  static async createJobPosting({ actor, title = '', body = '', recipientIds = [], contactRecipientId = '', rewardCredits = 0, rewardItems = '', rewardItemUuids = [], rewardAssetActorIds = [], attachments = [], client = null, issuer = null, objectives = [], briefing = null, factionConsequences = null, status = 'posted' }) {
+  static async createJobPosting({ actor, title = '', body = '', recipientIds = [], contactRecipientId = '', rewardCredits = 0, rewardItems = '', rewardItemUuids = [], rewardAssetActorIds = [], attachments = [], client = null, issuer = null, sourceLocation = null, objectives = [], briefing = null, factionConsequences = null, status = 'posted' }) {
     if (!game.user?.isGM) return false;
     const payload = {
       actorId: actor?.id ?? null,
@@ -2675,6 +2675,7 @@ export class HolonetMessengerService {
       attachments: normalizeAttachmentList(attachments),
       client,
       issuer,
+      sourceLocation,
       objectives,
       briefing,
       factionConsequences,
@@ -2757,6 +2758,7 @@ export class HolonetMessengerService {
       attachments: safeArray(clone.attachments),
       client: clone.client || null,
       issuer: clone.issuer || null,
+      sourceLocation: clone.sourceLocation || null,
       objectives: normalizeJobObjectiveEntries(clone).map(objective => ({
         ...objective,
         id: foundry.utils.randomID(12),
@@ -2774,7 +2776,7 @@ export class HolonetMessengerService {
     });
   }
 
-  static async _gmCreateJobPosting({ actorId, title = 'Job Board Posting', body = '', recipientIds = [], contactRecipientId = '', rewardCredits = 0, rewardItems = '', rewardItemUuids = [], rewardAssetActorIds = [], attachments = [], client = null, issuer = null, objectives = [], briefing = null, factionConsequences = null, status = 'posted', senderUserId = null, senderRecipientId = null, requestId = null, requesterId = null } = {}) {
+  static async _gmCreateJobPosting({ actorId, title = 'Job Board Posting', body = '', recipientIds = [], contactRecipientId = '', rewardCredits = 0, rewardItems = '', rewardItemUuids = [], rewardAssetActorIds = [], attachments = [], client = null, issuer = null, sourceLocation = null, objectives = [], briefing = null, factionConsequences = null, status = 'posted', senderUserId = null, senderRecipientId = null, requestId = null, requesterId = null } = {}) {
     const actor = actorId ? game.actors?.get(actorId) : null;
     const senderRecipient = this._recipientForActorContext(actor, { senderUserId, senderRecipientId });
     const rawRecipientIds = this._normalizeRecipientIds(recipientIds);
@@ -2789,6 +2791,7 @@ export class HolonetMessengerService {
     const normalizedObjectives = this._normalizeJobContractObjectives(objectives, { title, rewardCredits, rewardItems });
     const normalizedClient = this._normalizeJobClient(client, contactRecipient);
     const normalizedIssuer = this._normalizeJobIssuer(issuer, normalizedClient);
+    const normalizedSourceLocation = this._normalizeJobSourceLocation(sourceLocation);
     const thread = await HolonetThreadService.createThread(title || 'Job Board Posting', participants, {
       sourceFamily: SOURCE_FAMILY.MESSENGER,
       threadType: THREAD_TYPE.JOB,
@@ -2808,6 +2811,7 @@ export class HolonetMessengerService {
         contactLabel: normalizedClient?.name || (contactRecipient ? recipientDisplayName(contactRecipient) : 'Job Board'),
         client: normalizedClient,
         issuer: normalizedIssuer,
+        sourceLocation: normalizedSourceLocation,
         briefing: briefing && typeof briefing === 'object' ? { ...briefing } : { body: String(body || '').trim() },
         objectives: normalizedObjectives,
         factionConsequences: normalizeJobFactionConsequences(factionConsequences, { issuer: normalizedIssuer, client: normalizedClient }),
@@ -2900,6 +2904,24 @@ export class HolonetMessengerService {
       imageUrl: String(client.imageUrl || client.avatar || '').trim(),
       saveForReuse: Boolean(client.saveForReuse),
       notes: String(client.notes || '').trim()
+    };
+  }
+
+  /**
+   * Ecosystem Redesign Phase 4 — a Job's source Location (when created from
+   * one, e.g. LocationJobBridgeService.buildDraftFromLocation()) previously
+   * never survived past wizard prefill: the create-form submit handler had
+   * no field to carry it, and this method had nowhere to store it. Stable
+   * id, never a name-only guess; null when no real Location context exists
+   * (never fabricated).
+   */
+  static _normalizeJobSourceLocation(sourceLocation = null) {
+    if (!sourceLocation || typeof sourceLocation !== 'object') return null;
+    const locationId = String(sourceLocation.locationId || sourceLocation.id || '').trim();
+    if (!locationId) return null;
+    return {
+      locationId,
+      locationName: String(sourceLocation.locationName || sourceLocation.name || '').trim()
     };
   }
 

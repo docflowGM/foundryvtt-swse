@@ -37,12 +37,8 @@ export class LocationIntelBridgeService {
       gmNotes: text(overrides.gmNotes || location.gmNotes || ''),
       linkedSceneUuid: text(location.map?.sceneUuid || location.linkedSceneUuids?.[0] || ''),
       linkedFactionId: text(overrides.linkedFactionId || location.controllingFactionId || ''),
+      linkedLocationId: location.id,
       tags: ['location', location.category, location.type, ...(location.tags || [])].filter(Boolean),
-      metadata: {
-        locationId: location.id,
-        locationName: location.name,
-        locationChain: chain
-      },
       ...overrides
     };
   }
@@ -59,12 +55,8 @@ export class LocationIntelBridgeService {
       redactedBody: text(overrides.redactedBody || fact.teaser),
       fullBody: text(overrides.fullBody || fact.body || fact.teaser),
       tags: ['atlas-fact', fact.category, ...(fact.tags || [])].filter(Boolean),
-      metadata: {
-        locationId: location.id,
-        locationName: location.name,
-        factId: fact.id,
-        factTitle: fact.title
-      },
+      linkedLocationId: location.id,
+      sourceFactId: fact.id,
       ...overrides
     });
   }

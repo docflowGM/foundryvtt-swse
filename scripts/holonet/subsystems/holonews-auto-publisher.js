@@ -14,6 +14,7 @@ import { HolonetAudience } from '../contracts/holonet-audience.js';
 import { DELIVERY_STATE, SOURCE_FAMILY, SURFACE_TYPE } from '../contracts/enums.js';
 import { HolonewsGenerator } from '../data/holonews-seed-events.js';
 import { HolonewsAtomPolicy } from './holonews-atom-policy.js';
+import { HolonetGmAuthority } from './holonet-gm-authority.js';
 import { ShellMutationGuard } from '/systems/foundryvtt-swse/scripts/ui/shell/ShellMutationGuard.js';
 
 const SYSTEM_ID = 'foundryvtt-swse';
@@ -138,12 +139,15 @@ export class HolonewsAutoPublisher {
     }
   }
 
+  /**
+   * PHASE 8A CORRECTION PASS (C1): delegates to the shared
+   * HolonetGmAuthority seam so HolonetSocketService's GM-authoritative
+   * request handling uses the exact same deterministic tie-break this
+   * method already established, instead of a second copy. Behavior is
+   * unchanged for every existing caller of this method.
+   */
   static isPrimaryActiveGm() {
-    if (!game.user?.isGM) return false;
-    const activeGms = Array.from(game.users ?? [])
-      .filter((user) => user?.isGM && user?.active)
-      .sort((a, b) => String(a.id).localeCompare(String(b.id)));
-    return !activeGms.length || activeGms[0]?.id === game.user.id;
+    return HolonetGmAuthority.isPrimaryActiveGm();
   }
 
   static async checkAndPublish({ reason = 'scheduled', force = false } = {}) {

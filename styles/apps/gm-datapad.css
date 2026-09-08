@@ -485,6 +485,16 @@
   color: oklch(var(--swse-accent-text) / 0.74);
 }
 
+.bulletin-record-source {
+  margin: 0;
+  font-size: 0.85em;
+  color: oklch(var(--swse-accent-text) / 0.6);
+}
+
+.bulletin-record-source-broken {
+  color: oklch(var(--swse-warn, var(--swse-accent-text)) / 0.85);
+}
+
 .bulletin-record-meta,
 .bulletin-record-footer,
 .bulletin-record-actions {
@@ -3748,6 +3758,67 @@
   border-top: 1px solid rgba(148, 163, 184, 0.16);
   padding-top: 0.85rem;
   margin-top: 0.85rem;
+}
+
+/* Ecosystem Redesign Phase 4 — selected Job's navigable Location/Intel
+   relationship rows. Same navigable-row visual language established for
+   Locations/Factions in Phase 2/3 (chevron affordance, subtle hover, muted
+   for non-navigable/missing). */
+.gm-job-relationship-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.gm-job-relationship-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.4rem 0.55rem;
+  border-radius: 8px;
+}
+
+.gm-job-relationship-row.is-navigable:hover {
+  background: rgba(126, 231, 255, 0.06);
+}
+
+.gm-job-relationship-copy {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.gm-job-relationship-copy strong {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 0.78rem;
+}
+
+.gm-job-relationship-copy span {
+  color: var(--swse-muted, #8fb8c5);
+  font-size: 0.66rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.gm-job-relationship-action {
+  flex: 0 0 auto;
+  width: 26px;
+  height: 26px;
+  display: inline-grid;
+  place-items: center;
+  border: 1px solid rgba(126, 231, 255, 0.14);
+  border-radius: 5px;
+  background: transparent;
+  color: rgba(126, 231, 255, 0.75);
+}
+
+.gm-job-relationship-action:hover {
+  border-color: rgba(126, 231, 255, 0.4);
+  background: rgba(126, 231, 255, 0.09);
+  color: rgba(126, 231, 255, 0.95);
 }
 
 .job-objective-list,
@@ -8949,6 +9020,74 @@ form[id^="SWSEV2CharacterSheet"] .swse-sheet-v2-shell--concept .swse-tablet-cont
   font-size: 0.68rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
+}
+
+/* -------------------------------------------------------------------------
+   Ecosystem Redesign Phase 3 — Faction Linked Jobs/Intel rows. Same
+   navigable-row visual language established for Locations in Phase 2
+   (chevron affordance, subtle hover/focus, muted for non-interactive),
+   scoped to the Factions surface's own token set.
+   ------------------------------------------------------------------------- */
+.gm-faction-linked-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.gm-faction-linked-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.4rem 0.55rem;
+  border: 1px solid rgba(126, 231, 255, 0.14);
+  border-radius: 8px;
+  background: rgba(126, 231, 255, 0.035);
+  color: var(--swse-text, #d8f7ff);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.gm-faction-linked-row:hover,
+.gm-faction-linked-row:focus-visible {
+  border-color: rgba(126, 231, 255, 0.4);
+  background: rgba(126, 231, 255, 0.09);
+}
+
+.gm-faction-linked-row-copy {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.gm-faction-linked-row-copy strong {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 0.78rem;
+}
+
+.gm-faction-linked-row-copy span {
+  color: var(--swse-muted, #8fb8c5);
+  font-size: 0.66rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.gm-faction-linked-row i.fa-chevron-right {
+  flex: 0 0 auto;
+  color: rgba(126, 231, 255, 0.6);
+}
+
+.gm-faction-intel-chip.is-party {
+  border-color: rgba(125, 255, 178, 0.4) !important;
+  background: rgba(125, 255, 178, 0.1) !important;
+}
+
+.gm-faction-intel-chip.is-party strong {
+  color: #7dffb2 !important;
 }
 
 /* -------------------------------------------------------------------------

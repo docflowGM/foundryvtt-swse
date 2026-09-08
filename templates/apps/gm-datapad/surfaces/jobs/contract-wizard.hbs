@@ -114,6 +114,12 @@
           <input type="hidden" name="issuerContactActorName" value="{{jobBoard.creation.prefill.issuer.contactActorName}}">
           <input type="hidden" name="issuerName" value="{{jobBoard.creation.prefill.issuer.name}}">
           <input type="hidden" name="issuerImage" value="{{jobBoard.creation.prefill.issuer.image}}">
+          {{!-- Ecosystem Redesign Phase 4 — carries the source Location's
+               stable id (when this draft came from LocationJobBridgeService)
+               through to job creation. Independent of the issuer fields
+               above: a Location is never treated as the issuing Faction. --}}
+          <input type="hidden" name="sourceLocationId" value="{{jobBoard.creation.prefill.location.id}}">
+          <input type="hidden" name="sourceLocationName" value="{{jobBoard.creation.prefill.location.name}}">
           <div class="gm-wizard-grid two">
             <label for="cwiz-clientType">Client Type
               <select id="cwiz-clientType" name="clientType">
