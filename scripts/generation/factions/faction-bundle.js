@@ -162,14 +162,21 @@ function attachFactionDiagnostics(draft, { archetype }) {
  */
 async function generateFactionContacts({
   count, preferTags, populationProfile, locationPopulationProfile, recruitmentProfile,
-  droidPrevalence, availableSpeciesIds, leadershipBoost, rankTierMap, rng, nameProvider, droidNameProvider, factionDraftId
+  droidPrevalence, availableSpeciesIds, leadershipBoost, rankTierMap, rng, nameProvider, droidNameProvider, factionDraftId,
+  // CORRECTION (independent review round 2 -- "Location -> Faction ->
+  // Contact context"): forwarded straight through to
+  // `createGeneratedNpcConcept()`, exactly like a direct (non-Faction)
+  // NPC generation caller already can -- see that function's own
+  // `locationContext` doc. Previously this Faction->Contact path had NO
+  // way to carry a Location's technology/economy signal at all.
+  locationContext
 }) {
   const contacts = [];
   for (let i = 0; i < count; i++) {
     // eslint-disable-next-line no-await-in-loop -- sequential by design: each contact's name-provider call should not race a shared deterministic rng.
     const contact = await createGeneratedNpcConcept({
       rng, preferTags, populationProfile, locationPopulationProfile, recruitmentProfile,
-      droidPrevalence, availableSpeciesIds, leadershipBoost, rankTierMap, nameProvider, droidNameProvider, factionDraftId
+      droidPrevalence, availableSpeciesIds, leadershipBoost, rankTierMap, nameProvider, droidNameProvider, factionDraftId, locationContext
     });
     contacts.push(contact);
   }
@@ -188,6 +195,7 @@ async function generateFactionContacts({
  * @param {string[]} [options.availableSpeciesIds]
  * @param {object} [options.locationPopulationProfile] - a Location's `location-population-profile.js` profile, for locality-biased Contact species selection.
  * @param {string} [options.droidPrevalence] - a `PLANET_DROID_PREVALENCE` string, forwarded to `npc-bundle.js` for droid Contacts when the rolled `populationProfile` mode leaves it ambiguous.
+ * @param {object} [options.locationContext] - CORRECTION (independent review round 2): the SAME structured `{ technologyLevel, technologyAccess, technologySpecialties, economyTags, locationTags, locationId, locationDraftId }` shape `npc/npc-bundle.js`'s `createGeneratedNpcConcept()` accepts directly, forwarded verbatim to every generated Contact (`generateFactionContacts()`/`regenerateFactionContacts()`/`rerollFactionContact()`/`addFactionContact()` all accept and forward it identically) -- closes the one narrative-weaving path (`Planet -> Faction -> generated Contacts`) that previously had no way to carry a Location's technology/economy signal at all, unlike a directly-generated standalone NPC.
  * @param {string} [options.originLocationId]
  * @param {string} [options.headquartersLocationId]
  * @param {string} [options.currentLocationId]
@@ -216,7 +224,8 @@ export async function createProceduralFactionDraft({
   membershipPolicy,
   contactCount,
   nameProvider,
-  droidNameProvider
+  droidNameProvider,
+  locationContext = null
 } = {}) {
   // CORRECTION (independent review of PR #964's initial head): reserve
   // the Faction's OWN draftId before generating any Contact, so every
@@ -266,7 +275,7 @@ export async function createProceduralFactionDraft({
   const resolvedContactCount = Number.isFinite(contactCount) ? Math.max(0, contactCount) : contactCountForScale(resolvedScale, { rng });
   const contacts = await generateFactionContacts({
     count: resolvedContactCount, preferTags: mergedPreferTags, populationProfile, locationPopulationProfile, recruitmentProfile,
-    droidPrevalence, availableSpeciesIds, leadershipBoost, rankTierMap, rng, nameProvider, droidNameProvider, factionDraftId: reservedDraftId
+    droidPrevalence, availableSpeciesIds, leadershipBoost, rankTierMap, rng, nameProvider, droidNameProvider, factionDraftId: reservedDraftId, locationContext
   });
 
   const provenance = createProvenance({ presetId: effectivePreset?.id ?? '', tags: [resolvedArchetype, family] });
@@ -373,20 +382,20 @@ export function rerollFactionRelationships(draft, { rng } = {}) {
 }
 
 /** Regenerate EVERY Contact against the draft's CURRENT population/recruitment/doctrine context -- the "reroll all contacts" bundle operation, mirroring `planet-bundle.js`'s `regenerateAllPois()`. Defaults to the same contact count the draft already has. */
-export async function regenerateFactionContacts(draft, { rng, count, preferTags, locationPopulationProfile, availableSpeciesIds = [], droidPrevalence = 'normal', nameProvider, droidNameProvider } = {}) {
+export async function regenerateFactionContacts(draft, { rng, count, preferTags, locationPopulationProfile, availableSpeciesIds = [], droidPrevalence = 'normal', nameProvider, droidNameProvider, locationContext } = {}) {
   const rankTierMap = ARCHETYPE_RANK_TIER_MAP[draft.archetype] || MILITARY_RANK_TIER_MAP;
   const leadershipBoost = LEADERSHIP_BOOST_BY_USAGE[draft.doctrine?.eliteAvailability] ?? 1;
   const resolvedCount = Number.isFinite(count) ? Math.max(0, count) : draft.contacts.length;
   const contacts = await generateFactionContacts({
     count: resolvedCount, preferTags: preferTags ?? draft.doctrine?.environmentAffinities ?? [], populationProfile: draft.populationProfile,
     locationPopulationProfile, recruitmentProfile: draft.recruitmentProfile, droidPrevalence, availableSpeciesIds,
-    leadershipBoost, rankTierMap, rng, nameProvider, droidNameProvider, factionDraftId: draft.draftId
+    leadershipBoost, rankTierMap, rng, nameProvider, droidNameProvider, factionDraftId: draft.draftId, locationContext
   });
   return updateFactionDraft(draft, { contacts });
 }
 
 /** Reroll ONE Contact by `draftId`, preserving every OTHER Contact untouched (same object reference) -- the core "never silently destroy sibling Contacts" guarantee, matching `planet-bundle.js`'s `rerollPoiInBundle()`. A no-op (returns the draft unchanged) if no Contact with that `draftId` exists. */
-export async function rerollFactionContact(draft, contactDraftId, { rng, preferTags, locationPopulationProfile, availableSpeciesIds = [], droidPrevalence = 'normal', nameProvider, droidNameProvider } = {}) {
+export async function rerollFactionContact(draft, contactDraftId, { rng, preferTags, locationPopulationProfile, availableSpeciesIds = [], droidPrevalence = 'normal', nameProvider, droidNameProvider, locationContext } = {}) {
   const index = draft.contacts.findIndex((c) => c.draftId === contactDraftId);
   if (index === -1) return draft;
   const rankTierMap = ARCHETYPE_RANK_TIER_MAP[draft.archetype] || MILITARY_RANK_TIER_MAP;
@@ -394,7 +403,7 @@ export async function rerollFactionContact(draft, contactDraftId, { rng, preferT
   const replacement = await createGeneratedNpcConcept({
     rng, preferTags: preferTags ?? draft.doctrine?.environmentAffinities ?? [], populationProfile: draft.populationProfile,
     locationPopulationProfile, recruitmentProfile: draft.recruitmentProfile, droidPrevalence, availableSpeciesIds,
-    leadershipBoost, rankTierMap, nameProvider, droidNameProvider, factionDraftId: draft.draftId,
+    leadershipBoost, rankTierMap, nameProvider, droidNameProvider, factionDraftId: draft.draftId, locationContext,
     // Preserve the SAME draftId across a reroll so the Contact stays
     // addressable by the GM/UI afterward -- this is a reroll of one
     // Contact's facts, not a replacement of its identity.
@@ -405,13 +414,13 @@ export async function rerollFactionContact(draft, contactDraftId, { rng, preferT
 }
 
 /** Add one new Contact, generated against the draft's own current context. Every existing Contact is preserved untouched. */
-export async function addFactionContact(draft, { rng, preferTags, locationPopulationProfile, availableSpeciesIds = [], droidPrevalence = 'normal', nameProvider, droidNameProvider } = {}) {
+export async function addFactionContact(draft, { rng, preferTags, locationPopulationProfile, availableSpeciesIds = [], droidPrevalence = 'normal', nameProvider, droidNameProvider, locationContext } = {}) {
   const rankTierMap = ARCHETYPE_RANK_TIER_MAP[draft.archetype] || MILITARY_RANK_TIER_MAP;
   const leadershipBoost = LEADERSHIP_BOOST_BY_USAGE[draft.doctrine?.eliteAvailability] ?? 1;
   const contact = await createGeneratedNpcConcept({
     rng, preferTags: preferTags ?? draft.doctrine?.environmentAffinities ?? [], populationProfile: draft.populationProfile,
     locationPopulationProfile, recruitmentProfile: draft.recruitmentProfile, droidPrevalence, availableSpeciesIds,
-    leadershipBoost, rankTierMap, nameProvider, droidNameProvider, factionDraftId: draft.draftId
+    leadershipBoost, rankTierMap, nameProvider, droidNameProvider, factionDraftId: draft.draftId, locationContext
   });
   return updateFactionDraft(draft, { contacts: [...draft.contacts, contact] });
 }

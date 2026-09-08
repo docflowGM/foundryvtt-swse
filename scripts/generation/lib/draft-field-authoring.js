@@ -63,14 +63,30 @@ export function createFieldEntry(value, source = 'generated') {
   return { entryId: mintId('field-entry'), value: cleanString(value), source: source === 'manual' ? 'manual' : 'generated' };
 }
 
-/** One field's full state: identity + display + values. `defaultLabel` is preserved separately from `label` so `resetDraftFieldLabel()` can restore it without needing the domain's field-definitions registry at reset time. */
-export function createFieldState({ fieldId, label, defaultLabel, isCustom = false, multiValue = false, hidden = false, values = [] } = {}) {
+/**
+ * One field's full state: identity + display + capabilities + values.
+ * `defaultLabel` is preserved separately from `label` so
+ * `resetDraftFieldLabel()` can restore it without needing the domain's
+ * field-definitions registry at reset time.
+ *
+ * CORRECTION (independent review round 2): `removable`/`renameable` are
+ * now carried on the field state itself (alongside the pre-existing
+ * `multiValue`), not merely recorded in the domain's field-definitions
+ * registry and then ignored -- see `removeDraftField()`/
+ * `renameDraftField()`/`addDraftFieldValue()`/`duplicateDraftFieldValue()`
+ * below, which now actually ENFORCE these instead of only storing them.
+ * Both default to `true` (maximally permissive), matching every custom
+ * field's own behavior.
+ */
+export function createFieldState({ fieldId, label, defaultLabel, isCustom = false, multiValue = false, removable = true, renameable = true, hidden = false, values = [] } = {}) {
   return {
     fieldId: cleanString(fieldId),
     label: cleanString(label) || cleanString(defaultLabel),
     defaultLabel: cleanString(defaultLabel) || cleanString(label),
     isCustom: Boolean(isCustom),
     multiValue: Boolean(multiValue),
+    removable: removable !== false,
+    renameable: renameable !== false,
     hidden: Boolean(hidden),
     values: Array.isArray(values) ? values.map((v) => (v && v.entryId ? v : createFieldEntry(v))) : []
   };
@@ -104,7 +120,11 @@ export function buildFieldsStateFromScalars(fieldDefinitions, scalarValues) {
     const values = Array.isArray(rawValue)
       ? rawValue.filter(Boolean).map((v) => createFieldEntry(v, 'generated'))
       : (cleanString(rawValue) ? [createFieldEntry(rawValue, 'generated')] : []);
-    fields[fieldId] = createFieldState({ fieldId, label: definition.defaultLabel, defaultLabel: definition.defaultLabel, isCustom: false, multiValue: Boolean(definition.multiValue), hidden: false, values });
+    fields[fieldId] = createFieldState({
+      fieldId, label: definition.defaultLabel, defaultLabel: definition.defaultLabel, isCustom: false,
+      multiValue: Boolean(definition.multiValue), removable: definition.removable !== false, renameable: definition.renameable !== false,
+      hidden: false, values
+    });
     order.push(fieldId);
   }
   return { order, fields };
@@ -124,6 +144,25 @@ export function buildFieldsStateFromScalars(fieldDefinitions, scalarValues) {
  * customizations -- including any extra manual entries on a
  * multi-value field, which only get collapsed when THAT field's own
  * primary scalar actually changes.
+ *
+ * CORRECTION (independent review round 2 -- "deleted field semantic
+ * sovereignty"): a HIDDEN field's "current" primary value is treated as
+ * `''` here, exactly like `getFieldPrimaryValue()` treats it for every
+ * other reader -- NOT its retained (privately preserved) value. This is
+ * what makes `npc/npc-field-authoring.js`'s scalar-mirroring safe: when
+ * a GM removes a field, the mirrored scalar becomes `''` (see
+ * `getFieldPrimaryValue()` below), and that `''` flows back into THIS
+ * function on the very next `createNpcConceptDraft()` call as
+ * `scalarValues[fieldId]`. Comparing it against the hidden field's real
+ * stored value (instead of against this same hidden-aware `''`) would
+ * misread "the mirror reflects removal" as "an external reroll changed
+ * this to blank" and WIPE the retained values, breaking Restore. Once a
+ * field is hidden, its stored values only ever change via an explicit
+ * field-authoring operation (`setDraftFieldValue()`/`addDraftFieldValue()`/
+ * a subsequent remove-then-restore) or a genuinely new incoming
+ * non-empty scalar (a plain reroll while hidden still refreshes the
+ * privately-retained value, per this function's own header) -- never by
+ * silently discarding it here.
  */
 export function reconcileFieldsStateWithScalars(fieldsState, fieldDefinitions, scalarValues) {
   if (!isValidFieldsState(fieldsState)) return buildFieldsStateFromScalars(fieldDefinitions, scalarValues);
@@ -135,12 +174,15 @@ export function reconcileFieldsStateWithScalars(fieldsState, fieldDefinitions, s
     const nextPrimary = Array.isArray(rawValue) ? cleanString(rawValue[0]) : cleanString(rawValue);
     if (!existing) {
       if (nextPrimary) {
-        fields[fieldId] = createFieldState({ fieldId, label: definition.defaultLabel, defaultLabel: definition.defaultLabel, multiValue: Boolean(definition.multiValue), values: [createFieldEntry(nextPrimary, 'generated')] });
+        fields[fieldId] = createFieldState({
+          fieldId, label: definition.defaultLabel, defaultLabel: definition.defaultLabel, multiValue: Boolean(definition.multiValue),
+          removable: definition.removable !== false, renameable: definition.renameable !== false, values: [createFieldEntry(nextPrimary, 'generated')]
+        });
         changed = true;
       }
       continue;
     }
-    const currentPrimary = existing.values[0]?.value ?? '';
+    const currentPrimary = existing.hidden ? '' : (existing.values[0]?.value ?? '');
     if (currentPrimary !== nextPrimary) {
       fields[fieldId] = { ...existing, values: nextPrimary ? [createFieldEntry(nextPrimary, 'generated')] : [] };
       changed = true;
@@ -157,14 +199,33 @@ export function getFieldState(fieldsState, fieldId) {
   return fieldsState?.fields?.[fieldId] ?? null;
 }
 
-/** Plain string values for a field, in entry order (empty array if the field doesn't exist or has no values). */
+/**
+ * Plain string values for a field, in entry order -- empty array if the
+ * field doesn't exist, has no values, OR IS HIDDEN.
+ *
+ * CORRECTION (independent review round 2): a hidden ("removed") field
+ * now reads as semantically ABSENT here, not merely UI-hidden. Its
+ * values remain privately stored in `fieldsState` (so `addDraftField()`/
+ * `restoreDraftField()` can bring them straight back), but every
+ * consumer that reads through this function -- most importantly
+ * `npc/npc-field-authoring.js`'s scalar mirror, which is what every
+ * OTHER generator/composer in this codebase actually reads
+ * (`draft.fear`, not `draft.narrativeFields`) -- now correctly sees
+ * nothing. "GM removed Fear" must mean no future consumer can read a
+ * Fear the GM explicitly took away, exactly like a removed field never
+ * existed, while remaining one Restore away from coming back.
+ */
 export function getFieldValues(fieldsState, fieldId) {
-  return (getFieldState(fieldsState, fieldId)?.values ?? []).map((e) => e.value);
+  const field = getFieldState(fieldsState, fieldId);
+  if (!field || field.hidden) return [];
+  return field.values.map((e) => e.value);
 }
 
-/** The primary (first) value, or `''` if none. */
+/** The primary (first) value, or `''` if none OR the field is hidden -- see `getFieldValues()`'s doc for why hidden fields read as empty here. */
 export function getFieldPrimaryValue(fieldsState, fieldId) {
-  return getFieldState(fieldsState, fieldId)?.values?.[0]?.value ?? '';
+  const field = getFieldState(fieldsState, fieldId);
+  if (!field || field.hidden) return '';
+  return field.values[0]?.value ?? '';
 }
 
 export function isFieldHidden(fieldsState, fieldId) {
@@ -203,10 +264,11 @@ export function addDraftField(draft, fieldId) {
   return withFieldsState(draft, updateField(state, fieldId, (f) => ({ ...f, hidden: false })));
 }
 
-/** Mark a field hidden/removed WITHOUT discarding its values -- restorable later via `addDraftField()`/`restoreDraftField()`. A no-op for an unknown fieldId (fails safe). */
+/** Mark a field hidden/removed WITHOUT discarding its values -- restorable later via `addDraftField()`/`restoreDraftField()`. A no-op for an unknown fieldId (fails safe), and a no-op for a field whose `removable` capability is `false` (structural/required-by-design fields the domain declared non-removable -- enforced here, not merely recorded). */
 export function removeDraftField(draft, fieldId) {
   const state = draft?.narrativeFields;
-  if (!isValidFieldsState(state) || !state.fields[fieldId]) return draft;
+  const field = state?.fields?.[fieldId];
+  if (!isValidFieldsState(state) || !field || field.removable === false) return draft;
   return withFieldsState(draft, updateField(state, fieldId, (f) => ({ ...f, hidden: true })));
 }
 
@@ -215,10 +277,11 @@ export function restoreDraftField(draft, fieldId) {
   return addDraftField(draft, fieldId);
 }
 
-/** Rename a field's DISPLAY label only -- the semantic `fieldId` never changes, so the generator/every reroll wrapper keeps working unchanged. */
+/** Rename a field's DISPLAY label only -- the semantic `fieldId` never changes, so the generator/every reroll wrapper keeps working unchanged. A no-op for an unknown fieldId or one whose `renameable` capability is `false`. */
 export function renameDraftField(draft, fieldId, newLabel) {
   const state = draft?.narrativeFields;
-  if (!isValidFieldsState(state) || !state.fields[fieldId]) return draft;
+  const field = state?.fields?.[fieldId];
+  if (!isValidFieldsState(state) || !field || field.renameable === false) return draft;
   const label = cleanString(newLabel);
   if (!label) return draft;
   return withFieldsState(draft, updateField(state, fieldId, (f) => ({ ...f, label })));
@@ -241,10 +304,21 @@ export function setDraftFieldValue(draft, fieldId, value, { source = 'manual' } 
   return withFieldsState(draft, updateField(state, fieldId, (f) => ({ ...f, values: clean ? [createFieldEntry(clean, source)] : [] })));
 }
 
-/** Append one new value entry (multi-value fields: "+ Add"). Defaults to `'manual'` source -- the GM explicitly asked for another entry. */
+/**
+ * Append one new value entry (multi-value fields: "+ Add"). Defaults to
+ * `'manual'` source -- the GM explicitly asked for another entry.
+ *
+ * CORRECTION (independent review round 2 -- "capability enforcement"): a
+ * no-op when the field's `multiValue` capability is `false` and it
+ * already carries a value -- a single-value field (e.g. GM Notes) can
+ * never silently accumulate a second entry through this operation. Use
+ * `setDraftFieldValue()` to REPLACE a single-value field's one entry.
+ */
 export function addDraftFieldValue(draft, fieldId, value, { source = 'manual' } = {}) {
   const state = draft?.narrativeFields;
-  if (!isValidFieldsState(state) || !state.fields[fieldId]) return draft;
+  const field = state?.fields?.[fieldId];
+  if (!isValidFieldsState(state) || !field) return draft;
+  if (!field.multiValue && field.values.length >= 1) return draft;
   const clean = cleanString(value);
   if (!clean) return draft;
   return withFieldsState(draft, updateField(state, fieldId, (f) => ({ ...f, values: [...f.values, createFieldEntry(clean, source)] })));
@@ -258,10 +332,11 @@ export function removeDraftFieldValue(draft, fieldId, entryId) {
   return withFieldsState(draft, updateField(state, fieldId, (f) => ({ ...f, values: f.values.filter((v) => v.entryId !== entryId) })));
 }
 
-/** Duplicate one value entry, inserted immediately after the original. The duplicate ALWAYS gets a NEW `entryId` and `source: 'manual'` (duplication is itself an explicit GM authoring action, even duplicating a generated entry). A no-op if the entryId doesn't exist. */
+/** Duplicate one value entry, inserted immediately after the original. The duplicate ALWAYS gets a NEW `entryId` and `source: 'manual'` (duplication is itself an explicit GM authoring action, even duplicating a generated entry). A no-op if the entryId doesn't exist, or if the field's `multiValue` capability is `false` (duplicating on a single-value field would produce two values, which `addDraftFieldValue()` already refuses -- see its own doc). */
 export function duplicateDraftFieldValue(draft, fieldId, entryId) {
   const state = draft?.narrativeFields;
   const field = state?.fields?.[fieldId];
+  if (field && !field.multiValue) return draft;
   const index = field?.values.findIndex((v) => v.entryId === entryId) ?? -1;
   if (index === -1) return draft;
   const duplicate = createFieldEntry(field.values[index].value, 'manual');

@@ -347,6 +347,42 @@ const stubDroidNameProvider = async () => 'TX-1';
     assert.equal(rerolledOne.contacts[0].factionDraftId, draft.draftId, 'rerollFactionContact must preserve factionDraftId on the rerolled Contact');
   }
 
+  // CORRECTION (independent review round 2 -- "Location -> Faction -> Contact context"): a Faction's own generated Contacts must be reachable by the SAME locationContext technology/economy signal a directly-generated standalone NPC already receives -- createProceduralFactionDraft/regenerateFactionContacts/rerollFactionContact/addFactionContact must all forward it.
+  {
+    const HIGH_TECH = new Set(['expert', 'specialist']);
+    const LOW_TECH = new Set(['unfamiliar', 'basic']);
+    const N = 300;
+    let advancedHigh = 0, frontierLow = 0;
+    for (let seed = 0; seed < N; seed++) {
+      const advancedDraft = await createProceduralFactionDraft({
+        rng: makeSeededRng(seed), presetId: 'corporation', contactCount: 2,
+        locationContext: { technologyLevel: 'cutting-edge', technologyAccess: 'ubiquitous' }, ...baseOptions
+      });
+      for (const c of advancedDraft.contacts) if (HIGH_TECH.has(c.technologyFamiliarity)) advancedHigh++;
+      const frontierDraft = await createProceduralFactionDraft({
+        rng: makeSeededRng(seed + 7000000), presetId: 'corporation', contactCount: 2,
+        locationContext: { technologyLevel: 'primitive', technologyAccess: 'isolated' }, ...baseOptions
+      });
+      for (const c of frontierDraft.contacts) if (LOW_TECH.has(c.technologyFamiliarity)) frontierLow++;
+    }
+    assert.ok(advancedHigh / (N * 2) > 0.3, `Faction Contacts generated under a cutting-edge/ubiquitous locationContext must skew toward expert/specialist technologyFamiliarity (got ${advancedHigh}/${N * 2})`);
+    assert.ok(frontierLow / (N * 2) > 0.6, `Faction Contacts generated under a primitive/isolated locationContext must skew toward unfamiliar/basic technologyFamiliarity (got ${frontierLow}/${N * 2})`);
+
+    // regenerateFactionContacts / rerollFactionContact / addFactionContact all forward locationContext too (reachability, not just initial generation).
+    const draft = await createProceduralFactionDraft({ rng: makeSeededRng(11), presetId: 'corporation', contactCount: 3, locationContext: { technologyLevel: 'cutting-edge', technologyAccess: 'ubiquitous' }, ...baseOptions });
+    let anyHigh = 0;
+    for (let seed = 0; seed < 200; seed++) {
+      const regenerated = await regenerateFactionContacts(draft, { rng: makeSeededRng(seed + 12000000), locationContext: { technologyLevel: 'cutting-edge', technologyAccess: 'ubiquitous' }, ...baseOptions });
+      if (regenerated.contacts.some((c) => HIGH_TECH.has(c.technologyFamiliarity))) anyHigh++;
+      const added = await addFactionContact(draft, { rng: makeSeededRng(seed + 13000000), locationContext: { technologyLevel: 'cutting-edge', technologyAccess: 'ubiquitous' }, ...baseOptions });
+      if (HIGH_TECH.has(added.contacts[added.contacts.length - 1].technologyFamiliarity)) anyHigh++;
+      const rerolled = await rerollFactionContact(draft, draft.contacts[0].draftId, { rng: makeSeededRng(seed + 14000000), locationContext: { technologyLevel: 'cutting-edge', technologyAccess: 'ubiquitous' }, ...baseOptions });
+      if (HIGH_TECH.has(rerolled.contacts[0].technologyFamiliarity)) anyHigh++;
+    }
+    assert.ok(anyHigh > 0, 'regenerateFactionContacts/addFactionContact/rerollFactionContact must all forward locationContext through to createGeneratedNpcConcept (at least SOME high-tech Contacts must appear under a cutting-edge locationContext)');
+  }
+  console.log('PHASE 8D-3B correction round 2 (Location -> Faction -> generated Contacts): locationContext now reaches every Faction Contact-generating operation, not just direct standalone NPC generation, passed.');
+
   // rerollFactionName changes ONLY the name (family/archetype/scale/contacts all untouched, contacts preserved by object identity).
   {
     const draft = await createProceduralFactionDraft({ rng: makeSeededRng(2), presetId: 'noble-house', ...baseOptions });
@@ -870,6 +906,38 @@ const stubDroidNameProvider = async () => 'TX-1';
   }
   console.log('PHASE 8D-3B locationContext wiring (technologyFamiliarity/lifestyle measurably driven by Location technology/economy signal, additive with role-derived bias, tags reach the shared preferTags mechanism, backward compatible when omitted) passed.');
 
+  // --- CORRECTION (independent review round 2): duplicate Location identity inputs must be normalized, not left free to disagree ---
+  {
+    // Explicit linkedLocationId/locationDraftId always win over locationContext's own locationId/locationDraftId when BOTH are supplied.
+    const explicitWins = await createGeneratedNpcConcept({
+      rng: makeSeededRng(1), availableSpeciesIds, linkedLocationId: 'location-explicit-A', locationDraftId: 'draft:location:explicit-A',
+      locationContext: { locationId: 'location-context-B', locationDraftId: 'draft:location:context-B' },
+      nameProvider: stubNameProvider, droidNameProvider: stubDroidNameProvider
+    });
+    assert.equal(explicitWins.linkedLocationId, 'location-explicit-A', 'an explicit linkedLocationId must win over locationContext.locationId when both are supplied');
+    assert.equal(explicitWins.locationDraftId, 'draft:location:explicit-A', 'an explicit locationDraftId must win over locationContext.locationDraftId when both are supplied');
+
+    // locationContext-only identity (no separate scalar params) must still resolve onto the NPC AND still trigger locationRelationship generation.
+    const contextOnly = await createGeneratedNpcConcept({
+      rng: makeSeededRng(2), availableSpeciesIds, locationContext: { locationId: 'location-context-only', locationDraftId: 'draft:location:context-only' },
+      nameProvider: stubNameProvider, droidNameProvider: stubDroidNameProvider
+    });
+    assert.equal(contextOnly.linkedLocationId, 'location-context-only', 'locationContext.locationId must resolve onto linkedLocationId when no separate scalar is supplied');
+    assert.equal(contextOnly.locationDraftId, 'draft:location:context-only', 'locationContext.locationDraftId must resolve onto locationDraftId when no separate scalar is supplied');
+    assert.ok(contextOnly.locationRelationship, 'a locationContext-only-supplied Location identity must still trigger locationRelationship generation, not just an explicit linkedLocationId/locationDraftId');
+
+    // isFactionContext must recognize a pre-commit factionDraftId, not only a committed factionId/populationProfile -- a Contact generated FOR a not-yet-committed Faction draft is real Faction context.
+    const { NPC_FACTION_ROLES } = await import(abs('scripts/generation/data/npc-faction-roles.js'));
+    const factionRoleValues = new Set(NPC_FACTION_ROLES.map((e) => e.value));
+    let sawFactionRole = false;
+    for (let seed = 0; seed < 100 && !sawFactionRole; seed++) {
+      const npc = await createGeneratedNpcConcept({ rng: makeSeededRng(seed + 15000000), availableSpeciesIds, factionDraftId: 'draft:faction:not-yet-committed', nameProvider: stubNameProvider, droidNameProvider: stubDroidNameProvider });
+      if (npc.specialistRole && factionRoleValues.has(npc.specialistRole)) sawFactionRole = true;
+    }
+    assert.ok(sawFactionRole, 'a factionDraftId alone (no factionId/populationProfile) must be recognized as real Faction context and roll a specialistRole -- confirms isFactionContext now includes factionDraftId');
+  }
+  console.log('PHASE 8D-3B correction round 2 (duplicate Location identity inputs normalized: explicit linkedLocationId/locationDraftId win over locationContext, locationContext-only identity still resolves + triggers locationRelationship, factionDraftId alone now counts as real Faction context) passed.');
+
   // --- publicDescription: derived, safe-to-reveal only -------------------
   {
     const description = composeNpcPublicDescription({
@@ -960,7 +1028,7 @@ const stubDroidNameProvider = async () => 'TX-1';
 {
   const engine = await import(abs('scripts/generation/lib/draft-field-authoring.js'));
   const {
-    npcRemoveDraftField, npcRenameDraftField,
+    npcRemoveDraftField, npcRestoreDraftField, npcRenameDraftField,
     npcSetFieldValue, npcAddFieldValue, npcRemoveFieldValue, npcDuplicateFieldValue, npcAddCustomField
   } = await import(abs('scripts/generation/npc/npc-field-authoring.js'));
   const { createGeneratedNpcConcept } = await import(abs('scripts/generation/npc/npc-bundle.js'));
@@ -1135,6 +1203,87 @@ const stubDroidNameProvider = async () => 'TX-1';
     assert.deepEqual(roundTripped.narrativeFields, d.narrativeFields, 'narrativeFields must round-trip through JSON exactly (custom label, removed field, multi-values, custom field all preserved)');
   }
   console.log('PHASE 8D-3B GM Field Authoring API save/load round-trip (narrativeFields survives JSON serialize/deserialize exactly) passed.');
+
+  // --- CORRECTION (independent review round 2, item 1) -- "Delete field" must mean semantically ABSENT to every consumer, not just UI-hidden with the old value still live on the scalar every generator/composer actually reads.
+  {
+    const npc = await createGeneratedNpcConcept({ rng: makeSeededRng(5), availableSpeciesIds, nameProvider: stubNameProvider, droidNameProvider: stubDroidNameProvider });
+    assert.ok(npc.fear, 'test setup: a freshly generated NPC must have a non-empty fear to make this a meaningful check');
+    const originalFear = npc.fear;
+
+    const removed = npcRemoveDraftField(npc, 'fear');
+    assert.equal(removed.narrativeFields.fields.fear.hidden, true, 'npcRemoveDraftField must mark the field hidden');
+    assert.equal(removed.fear, '', 'the SEMANTIC scalar mirror (draft.fear) must become empty once Fear is removed -- a future generator/composer reading draft.fear directly must see nothing, not the GM-removed value');
+    assert.equal(engine.getFieldPrimaryValue(removed.narrativeFields, 'fear'), '', 'getFieldPrimaryValue must also report empty for a hidden field -- every reader, not just the NPC scalar mirror, must agree a removed field is absent');
+    assert.deepEqual(engine.getFieldValues(removed.narrativeFields, 'fear'), [], 'getFieldValues must report an empty list for a hidden field');
+
+    // The retained value must survive PRIVATELY in the authoring state, ready for an explicit Restore -- never actually discarded.
+    assert.equal(removed.narrativeFields.fields.fear.values[0]?.value, originalFear, 'the field-authoring state must PRIVATELY retain the original value after removal, for Restore Field');
+
+    const restored = npcRestoreDraftField(removed, 'fear');
+    assert.equal(restored.narrativeFields.fields.fear.hidden, false, 'npcRestoreDraftField must unhide the field');
+    assert.equal(restored.fear, originalFear, 'restoring Fear must bring the ORIGINAL value back onto the scalar mirror -- never regenerate a new one');
+
+    // An unrelated reroll while Fear is removed must never smuggle the old value back onto the scalar, and must never auto-restore the field.
+    const { rerollNpcSpeechStyle } = await import(abs('scripts/generation/npc/npc-characterization.js'));
+    const rerolledWhileRemoved = rerollNpcSpeechStyle(removed, { rng: makeSeededRng(21) });
+    assert.equal(rerolledWhileRemoved.fear, '', 'an unrelated reroll must not resurrect a removed field\'s scalar value');
+    assert.equal(rerolledWhileRemoved.narrativeFields.fields.fear.hidden, true, 'an unrelated reroll must not auto-restore a removed field');
+    assert.equal(rerolledWhileRemoved.narrativeFields.fields.fear.values[0]?.value, originalFear, 'an unrelated reroll must still preserve the removed field\'s privately-retained value for a later Restore');
+  }
+  console.log('PHASE 8D-3B correction round 2 (deleted-field semantic sovereignty): removing a field now clears its scalar mirror for every consumer while privately retaining the value for Restore; an unrelated reroll neither resurrects nor auto-restores it, passed.');
+
+  // --- CORRECTION (independent review round 2, item 2) -- field-definition capabilities (multiValue/removable/renameable) must be ENFORCED by the mutation functions, not merely recorded.
+  {
+    const npc = await createGeneratedNpcConcept({ rng: makeSeededRng(6), availableSpeciesIds, nameProvider: stubNameProvider, droidNameProvider: stubDroidNameProvider });
+
+    // gmNotes is declared multiValue:false -- adding a second value must be a no-op. (Note: the NPC wrapper's own scalar-mirror sync always rebuilds the draft object, per `syncAndNormalize()`'s own doc, so "no-op" is verified by CONTENT here, not draft reference identity -- the direct-engine block below verifies reference-identity no-ops on the underlying primitive itself.)
+    let withNotes = npcSetFieldValue(npc, 'gmNotes', 'First note');
+    assert.equal(withNotes.narrativeFields.fields.gmNotes.values.length, 1, 'test setup: gmNotes must start with exactly one value');
+    const afterAddAttempt = npcAddFieldValue(withNotes, 'gmNotes', 'Second note');
+    assert.equal(afterAddAttempt.narrativeFields.fields.gmNotes.values.length, 1, 'npcAddFieldValue on a single-value (multiValue:false) field that already has a value must be a no-op -- gmNotes must still carry exactly one value');
+    assert.equal(afterAddAttempt.narrativeFields.fields.gmNotes.values[0].value, 'First note', 'the blocked add attempt must not alter the existing value');
+    assert.equal(afterAddAttempt.gmNotes, 'First note', 'the blocked add attempt must not alter the scalar mirror');
+
+    // Duplicating a value on a single-value field must likewise be a no-op.
+    const gmNotesEntryId = withNotes.narrativeFields.fields.gmNotes.values[0].entryId;
+    const afterDupAttempt = npcDuplicateFieldValue(withNotes, 'gmNotes', gmNotesEntryId);
+    assert.equal(afterDupAttempt.narrativeFields.fields.gmNotes.values.length, 1, 'npcDuplicateFieldValue on a multiValue:false field must be a no-op -- gmNotes must still carry exactly one value after a blocked duplicate attempt');
+
+    // Direct-engine-level no-op reference-identity check (no NPC scalar-mirror sync involved): both operations must return the EXACT SAME fields-state object when blocked.
+    {
+      const defs = { gmNotes: { defaultLabel: 'GM Notes', multiValue: false } };
+      let bare = { narrativeFields: engine.buildFieldsStateFromScalars(defs, { gmNotes: 'Only note' }) };
+      const bareAfterAdd = engine.addDraftFieldValue(bare, 'gmNotes', 'Second note');
+      assert.equal(bareAfterAdd, bare, 'the generic engine\'s addDraftFieldValue must return the identical draft reference when blocked by multiValue:false');
+      const bareEntryId = bare.narrativeFields.fields.gmNotes.values[0].entryId;
+      const bareAfterDup = engine.duplicateDraftFieldValue(bare, 'gmNotes', bareEntryId);
+      assert.equal(bareAfterDup, bare, 'the generic engine\'s duplicateDraftFieldValue must return the identical draft reference when blocked by multiValue:false');
+    }
+
+    // setDraftFieldValue (REPLACE, not append) must still work normally on a single-value field -- capability enforcement blocks accumulation, not editing.
+    const replaced = npcSetFieldValue(withNotes, 'gmNotes', 'Replaced note');
+    assert.equal(replaced.narrativeFields.fields.gmNotes.values.length, 1, 'setDraftFieldValue must still be able to REPLACE a single-value field\'s one entry');
+    assert.equal(replaced.gmNotes, 'Replaced note', 'the replaced value must reach the scalar mirror');
+
+    // motivation is declared multiValue:true -- the same two operations must work normally there (proves this is real capability-driven enforcement, not a blanket restriction).
+    let withMotivation = npcAddFieldValue(npc, 'motivation', 'A second motivation');
+    assert.equal(withMotivation.narrativeFields.fields.motivation.values.length, 2, 'npcAddFieldValue must still work normally on a multiValue:true field');
+    const motivationEntryId = withMotivation.narrativeFields.fields.motivation.values[0].entryId;
+    const dupMotivation = npcDuplicateFieldValue(withMotivation, 'motivation', motivationEntryId);
+    assert.equal(dupMotivation.narrativeFields.fields.motivation.values.length, 3, 'npcDuplicateFieldValue must still work normally on a multiValue:true field');
+
+    // Direct engine-level checks: a field definition's removable:false/renameable:false, once threaded into field state, must actually block removeDraftField/renameDraftField -- not merely be recorded metadata.
+    {
+      const defs = { locked: { defaultLabel: 'Locked Field', multiValue: false, removable: false, renameable: false } };
+      let draft = { narrativeFields: engine.buildFieldsStateFromScalars(defs, { locked: 'Cannot touch this' }) };
+      assert.equal(engine.createFieldState({ fieldId: 'locked', defaultLabel: 'Locked Field', removable: false, renameable: false }).removable, false, 'createFieldState must actually store removable:false when supplied, not silently default to true');
+      const removeAttempt = engine.removeDraftField(draft, 'locked');
+      assert.equal(removeAttempt, draft, 'removeDraftField must no-op on a field whose removable capability is false');
+      const renameAttempt = engine.renameDraftField(draft, 'locked', 'New Label');
+      assert.equal(renameAttempt, draft, 'renameDraftField must no-op on a field whose renameable capability is false');
+    }
+  }
+  console.log('PHASE 8D-3B correction round 2 (field capability enforcement): multiValue:false fields now reject a second value via add/duplicate while still allowing replace via set; removable:false/renameable:false fields now actually block remove/rename, not merely record the capability, passed.');
 }
 
 console.log('PHASE 8D-3B NPC + Faction productionization suite (catalog quality, generation semantics, bundle generation, reroll safety, determinism, flavor notes, complete NPC schema addendum, GM field authoring API) passed.');

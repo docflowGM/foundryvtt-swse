@@ -215,8 +215,8 @@ async function resolveNameProvider(kind, { nameProvider, droidNameProvider } = {
  * @param {object} [options.locationContext] - optional structured Location signal: `{ technologyLevel, technologyAccess, technologySpecialties, economyTags, locationTags, locationId, locationDraftId }`. `technologyLevel`/`technologyAccess` (plain `planet-profile.js`-shaped strings -- this module still never imports that planet module, see `resolveLocationContextBias()`'s doc) bias `technologyFamiliarity`; `economyTags`/`locationTags` additionally bias `lifestyle` AND are folded into every other context-sensitive pick's `preferTags`. One structured object rather than a growing pile of separate scalar parameters.
  * @param {string} [options.factionId] - a REAL canonical Faction id (post-commit context only).
  * @param {string} [options.factionDraftId] - the draft:faction:... id of the `faction-draft.js` Faction this Contact is being generated FOR, pre-commit -- `factions/faction-bundle.js` always passes its own reserved `draftId` here so a generated Contact can always be traced back to its parent Faction draft even before either is committed.
- * @param {string} [options.linkedLocationId] - a REAL canonical Location id.
- * @param {string} [options.locationDraftId] - a `planets/planet-draft.js` (or other Location-domain) draft id, pre-commit.
+ * @param {string} [options.linkedLocationId] - a REAL canonical Location id. Takes precedence over `locationContext.locationId` when BOTH are supplied (see the `resolvedLocationId` precedence note below) -- a caller should normally only ever supply one or the other.
+ * @param {string} [options.locationDraftId] - a `planets/planet-draft.js` (or other Location-domain) draft id, pre-commit. Takes precedence over `locationContext.locationDraftId` when BOTH are supplied, same as `linkedLocationId` above.
  * @param {number} [options.flavorNoteCount] - explicit flavor-note count override; defaults to `npc-flavor.js`'s own 0-3 weighted roll.
  * @param {object} [options.nameProvider] - override for the living-name async provider (tests inject a deterministic stub).
  * @param {object} [options.droidNameProvider] - override for the droid-name async provider.
@@ -253,6 +253,24 @@ export async function createGeneratedNpcConcept({
     preferTags = [...preferTags, ...(locationContext.locationTags ?? []), ...(locationContext.economyTags ?? []), ...(locationContext.technologySpecialties ?? [])];
   }
   const { technologyBias: locationTechnologyBias, lifestyleBias: locationLifestyleBias } = resolveLocationContextBias(locationContext);
+
+  // CORRECTION (independent review round 2 -- "duplicate Location
+  // identity inputs"): `locationContext` and the separate
+  // `linkedLocationId`/`locationDraftId` scalar params both claim to
+  // carry Location identity. Rather than letting a caller supply
+  // conflicting values that silently disagree (context carries bias
+  // from Location A while the NPC links to Location B), the explicit
+  // scalar params always WIN when supplied -- they are the caller's
+  // unambiguous, single-purpose identity args -- and `locationContext`'s
+  // own `locationId`/`locationDraftId` are only a fallback for a caller
+  // that passes ONLY the structured object. Every place below that
+  // previously read `linkedLocationId`/`locationDraftId` directly now
+  // reads these resolved values instead, so a caller who supplies
+  // `locationContext.locationDraftId` alone (no separate scalar) still
+  // gets `locationRelationship` generated and `linkedLocationId`/
+  // `locationDraftId` populated on the resulting draft.
+  const resolvedLocationId = linkedLocationId || locationContext?.locationId || '';
+  const resolvedLocationDraftId = locationDraftId || locationContext?.locationDraftId || '';
 
   const resolvedCommandTier = commandTier || rollCommandTier({ rng, leadershipBoost });
 
@@ -312,12 +330,17 @@ export async function createGeneratedNpcConcept({
   const fear = pickNpcFear({ rng, preferTags });
   const socialRole = pickNpcSocialRole({ rng, preferTags });
   const narrativeFunction = pickNpcNarrativeFunction({ rng, preferTags });
-  const locationRelationship = (linkedLocationId || locationDraftId) ? pickNpcLocationRelationship({ rng, preferTags }) : '';
+  const locationRelationship = (resolvedLocationId || resolvedLocationDraftId) ? pickNpcLocationRelationship({ rng, preferTags }) : '';
   // specialistRole (the reused "factionRole" slot -- see npc-concept.js's
   // own doc comment) is only rolled for a plausible Faction context:
-  // either an explicit populationProfile (faction-bundle.js's own
-  // Contact-generation path) or an explicit factionId.
-  const isFactionContext = Boolean(populationProfile) || Boolean(factionId);
+  // an explicit populationProfile (faction-bundle.js's own
+  // Contact-generation path), an explicit committed factionId, OR a
+  // pre-commit factionDraftId (CORRECTION, independent review round 2 --
+  // a Faction draft this Contact is being generated FOR is real Faction
+  // context even before either draft is committed; previously only the
+  // canonical-id case was recognized, so a Contact generated for a
+  // fresh, not-yet-committed Faction draft never got a specialistRole).
+  const isFactionContext = Boolean(populationProfile) || Boolean(factionId) || Boolean(factionDraftId);
   const specialistRole = isFactionContext ? pickNpcFactionRole({ rng, preferTags }) : '';
   const loyalty = pickNpcLoyalty({ rng, preferTags });
   const complication = pickNpcComplication({ rng, preferTags });
@@ -385,8 +408,8 @@ export async function createGeneratedNpcConcept({
     complication,
     factionId,
     factionDraftId,
-    linkedLocationId,
-    locationDraftId,
+    linkedLocationId: resolvedLocationId,
+    locationDraftId: resolvedLocationDraftId,
     factionRankTitle,
     commandTier: resolvedCommandTier,
     specialistRole,

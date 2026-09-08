@@ -8200,3 +8200,126 @@ was hydrated in this pass (deliberately, per the review's own explicit
 instruction). Same branch (`claude/gm-datapad-phase8d3b-49c10v`), same
 PR (#964). Per standing practice: stopping here for independent
 review.
+
+## 188. PHASE 8D-3B correction pass — independent review round 2 (wiring, not content)
+
+A second independent review of round 1's head (`e0b501b`) confirmed CI
+green and the four round-1 fixes sound, then identified three further
+wiring-level gaps — again explicitly scoped as "nothing to do with
+table hydration." All three fixed on the same branch/PR.
+
+### 1. Deleted field semantic sovereignty
+
+`removeDraftField()` only ever set `hidden: true` while every reader
+(`getFieldValues()`/`getFieldPrimaryValue()`) still returned the
+retained value, so `npc/npc-field-authoring.js`'s scalar mirror
+(`patch.fear = getFieldPrimaryValue(...)`) kept mirroring a Fear the GM
+had explicitly removed straight back onto `draft.fear` — the one field
+every OTHER generator/composer actually reads. Fixed by making
+`getFieldValues()`/`getFieldPrimaryValue()` treat a hidden field as
+semantically empty (`''`/`[]`), which the scalar-mirror sync then
+propagates automatically with no NPC-layer change required.
+
+That surfaced a second-order bug in `reconcileFieldsStateWithScalars()`
+itself: it compared a hidden field's RAW retained value against the
+incoming (now-empty, mirrored) scalar, read that as "an external reroll
+blanked this field," and collapsed `values` to `[]` — silently
+discarding the very value Restore is supposed to bring back. Fixed by
+making the reconcile's own "current primary" read hidden-aware too
+(`existing.hidden ? '' : existing.values[0]?.value`), so a hidden
+field's empty mirror is recognized as self-consistent (no change) while
+Restore's real values stay privately intact the whole time. Verified:
+`npcRemoveDraftField(npc, 'fear')` → `draft.fear === ''` AND
+`getFieldPrimaryValue(...) === ''` AND `getFieldValues(...)` is `[]`,
+while the field-authoring state still privately carries the original
+value; `npcRestoreDraftField()` brings the ORIGINAL value back (never
+regenerates); an unrelated reroll while hidden neither resurrects the
+scalar nor auto-restores the field, while still preserving the
+privately-retained value for a later Restore.
+
+### 2. Field capability enforcement
+
+`multiValue`/`removable`/`renameable` were declared per-field in
+`npc/npc-field-definitions.js` but never threaded onto the actual
+field-state object nor read by any mutation function — a single-value
+field like GM Notes could silently accumulate a second entry via
+`addDraftFieldValue()`/`duplicateDraftFieldValue()`, and there was no
+way to honor a future `renameable:false`/`removable:false` declaration
+at all. Fixed by carrying `removable`/`renameable` on `createFieldState()`
+itself (alongside the pre-existing `multiValue`), threading them
+through `buildFieldsStateFromScalars()`/`reconcileFieldsStateWithScalars()`,
+and enforcing all three in the mutation functions themselves:
+`addDraftFieldValue()`/`duplicateDraftFieldValue()` now no-op on a
+`multiValue:false` field that already has a value; `removeDraftField()`
+no-ops when `removable === false`; `renameDraftField()` no-ops when
+`renameable === false`. `setDraftFieldValue()` (replace, not append)
+is deliberately untouched — capability enforcement blocks
+accumulation, never editing. Custom fields stay maximally permissive by
+construction (all three capabilities default `true`). Verified with
+both an NPC-level content check (gmNotes stays at exactly one value
+across blocked add/duplicate attempts, motivation — `multiValue:true`
+— still accepts both normally) and a direct engine-level reference-
+identity no-op check on a bare fields-state, plus a synthetic
+`removable:false`/`renameable:false` field proving `removeDraftField()`/
+`renameDraftField()` actually block rather than merely record the
+capability.
+
+### 3. Location → Faction → Contact context
+
+`npc/npc-bundle.js`'s `locationContext` reached a directly-generated
+standalone NPC, but `factions/faction-bundle.js` had no `locationContext`
+parameter at all — the one narrative-weaving path
+(`Planet -> Faction -> generated Contacts`) that most needs a Location's
+technology/economy signal had no way to carry it. Fixed by threading an
+identical `locationContext` parameter through
+`createProceduralFactionDraft()` → `generateFactionContacts()` and
+independently through `regenerateFactionContacts()`/
+`rerollFactionContact()`/`addFactionContact()`, each forwarding it
+verbatim into `createGeneratedNpcConcept()` — mirroring exactly how
+`locationPopulationProfile`/`droidPrevalence` already flow through this
+same set of functions (a caller-supplied-per-call value, never
+persisted on the Faction draft itself).
+
+Separately, `locationContext.locationId`/`locationDraftId` and the
+existing standalone `linkedLocationId`/`locationDraftId` params could
+disagree (or a caller could supply only the structured object and get
+no Location link at all), since only the standalone scalars drove
+`locationRelationship` generation and the drafted `linkedLocationId`/
+`locationDraftId` fields. Fixed with an explicit precedence: the
+standalone scalar wins when supplied (`linkedLocationId ||
+locationContext?.locationId`, same pattern for the draft id), used
+uniformly everywhere Location identity is read or written in this
+function. Also folded a pre-commit `factionDraftId` into
+`isFactionContext` (previously only a canonical `factionId` or an
+explicit `populationProfile` counted) — a Contact generated FOR a
+not-yet-committed Faction draft is real Faction context and should
+still roll a `specialistRole`.
+
+### Tests + Regression (this correction pass)
+
+`tests/gm-generation-phase8d3b-production.test.mjs` gained 5 new
+sections: Faction→Contact `locationContext` statistical reachability
+(direct generation + regenerate/reroll-one/add-contact all forward it),
+duplicate Location identity normalization (explicit scalar wins,
+context-only identity still resolves and triggers
+`locationRelationship`, `factionDraftId`-alone Faction context), deleted-
+field semantic sovereignty (scalar mirror clears, every reader agrees,
+private retention + Restore, unrelated-reroll safety), and field
+capability enforcement (multiValue block on add/duplicate at both the
+NPC-wrapper content level and the bare-engine reference-identity level,
+removable/renameable block verified directly).
+
+Full `gm-*.test.mjs` sweep: **59/59 green** (unchanged file count).
+Full rolling suite (`tools/run-rolling-tests.mjs`): **189 passed, 0
+failed** (5 pre-existing exclusions, unchanged). Full syntax check
+(`tools/run-rolling-syntax-check.mjs`): **2437/2437 clean**.
+`tools/validate-partials.mjs`/`tools/validate-data.js`/`system.json`
+parse all clean (no template/data files touched this pass). No
+canonical-persistence call in any file this pass touched (confirmed by
+direct grep, same discipline as §186/§187).
+
+**PHASE 8D-3B CORRECTION PASS ROUND 2 COMPLETE.** All three additional
+wiring gaps are fixed and verified; no catalog was hydrated in this
+pass (deliberately, per the review's own explicit instruction). Same
+branch (`claude/gm-datapad-phase8d3b-49c10v`), same PR (#964). Per
+standing practice: stopping here for independent review.
