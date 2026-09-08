@@ -34,5 +34,22 @@ export const NPC_PERSONALITY_TRAITS = Object.freeze([
   { value: 'dry, deadpan sense of humor', weight: 2, tags: ['civilian', 'military'] },
   { value: 'quietly grieving something they won’t discuss', weight: 1, tags: ['mysterious'] },
   { value: 'idealistic, still believes in a cause', weight: 2, tags: ['military', 'religion'] },
-  { value: 'unremarkable, easy to underestimate', weight: 2, tags: [] }
+  { value: 'unremarkable, easy to underestimate', weight: 2, tags: [] },
+  { value: 'blunt to the point of rudeness', weight: 2, tags: [] },
+  { value: 'endlessly patient, rarely rattled', weight: 1, tags: ['business', 'military'] },
+  { value: 'quick-tempered, slow to cool down', weight: 2, tags: ['criminal', 'military'] },
+  { value: 'chronically curious, can\'t leave a mystery alone', weight: 2, tags: ['research', 'mysterious'] },
+  { value: 'warm and generous, quick to offer help', weight: 2, tags: ['civilian'] },
+  { value: 'coldly professional, keeps everyone at arm\'s length', weight: 1, tags: ['business', 'military'] },
+  { value: 'superstitious, reads omens into everyday events', weight: 1, tags: ['frontier', 'mysterious'] },
+  { value: 'stubborn once a decision is made', weight: 2, tags: [] },
+  { value: 'anxious, always expecting the worst', weight: 1, tags: ['civilian'] },
+  { value: 'charming and glib, talks their way out of trouble', weight: 2, tags: ['criminal', 'business'] },
+  { value: 'fiercely competitive, keeps score of everything', weight: 1, tags: ['business', 'military'] },
+  { value: 'gentle and soft-spoken despite a rough profession', weight: 1, tags: [] },
+  { value: 'brash and overconfident, sometimes to their own detriment', weight: 2, tags: ['military', 'criminal'] },
+  { value: 'melancholic, carries an air of quiet sadness', weight: 1, tags: ['mysterious'] },
+  { value: 'relentlessly cheerful, even in bad situations', weight: 1, tags: ['civilian'] },
+  { value: 'deeply loyal once trust is earned, slow to give it', weight: 2, tags: [] },
+  { value: 'obsessively organized, everything has its place', weight: 1, tags: ['business', 'technology'] }
 ]);

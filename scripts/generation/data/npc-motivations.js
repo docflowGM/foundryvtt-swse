@@ -31,5 +31,20 @@ export const NPC_MOTIVATIONS = Object.freeze([
   { value: 'motivated by an old, unresolved grudge', weight: 2, tags: [] },
   { value: 'devoted to a faith or tradition few others share', weight: 1, tags: ['religion'] },
   { value: 'simply doing a job, nothing personal', weight: 3, tags: ['military', 'business'] },
-  { value: 'unclear even to themselves -- acting on instinct', weight: 1, tags: [] }
+  { value: 'unclear even to themselves -- acting on instinct', weight: 1, tags: [] },
+  { value: 'desperate to pay off a debt before it comes due', weight: 2, tags: ['criminal', 'business'] },
+  { value: 'trying to secure a better future for their children', weight: 2, tags: [] },
+  { value: 'seeking approval from a demanding parent or mentor', weight: 1, tags: [] },
+  { value: 'driven by guilt over a past mistake', weight: 1, tags: [] },
+  { value: 'chasing the thrill, routine bores them', weight: 1, tags: ['criminal', 'frontier'] },
+  { value: 'convinced they alone can fix a broken situation', weight: 1, tags: ['military', 'government'] },
+  { value: 'loyal to a person, not to any cause or ideal', weight: 2, tags: [] },
+  { value: 'terrified of ending up like someone they once knew', weight: 1, tags: [] },
+  { value: 'motivated purely by curiosity and the unknown', weight: 1, tags: ['research'] },
+  { value: 'protecting a community that took them in when no one else would', weight: 1, tags: ['community-tribe'] },
+  { value: 'trying to escape a reputation they can\'t shake', weight: 1, tags: ['criminal'] },
+  { value: 'seeking recognition long denied to them', weight: 1, tags: ['military', 'business'] },
+  { value: 'motivated by fear of what happens if they stop', weight: 1, tags: ['criminal'] },
+  { value: 'quietly hoping to be talked out of what they\'re doing', weight: 1, tags: [] },
+  { value: 'driven by a promise made to someone now gone', weight: 1, tags: [] }
 ]);

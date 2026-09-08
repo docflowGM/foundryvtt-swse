@@ -33,7 +33,27 @@ export const FACTION_LONG_TERM_GOALS = Object.freeze([
   { value: 'become the dominant power in their region', weight: 2, tags: ['military-paramilitary', 'crime-syndicate'] },
   { value: 'uphold an ancient oath or duty', weight: 1, tags: ['noble-house', 'force-tradition'] },
   { value: 'exploit chaos and conflict for personal gain', weight: 2, tags: ['crime-syndicate'] },
-  { value: 'no grand goal, just day-to-day operation', weight: 2, tags: [] }
+  { value: 'no grand goal, just day-to-day operation', weight: 2, tags: [] },
+  { value: 'cement control over a strategic chokepoint (trade route, mine, pass)', weight: 2, tags: ['business-professional', 'crime-syndicate', 'military-paramilitary'] },
+  { value: 'win formal favor from a distant, more powerful authority', weight: 2, tags: ['government-bureaucracy', 'noble-house'] },
+  { value: 'preserve a dying culture or tradition against outside pressure', weight: 1, tags: ['community-tribe', 'religion'] },
+  { value: 'undermine a specific rival leader\'s personal credibility', weight: 1, tags: ['crime-syndicate', 'government-bureaucracy'] },
+  { value: 'perfect and control a valuable technology or process', weight: 2, tags: ['business-professional'] },
+  { value: 'find and secure a long-lost artifact or archive', weight: 1, tags: ['force-tradition', 'noble-house'] },
+  { value: 'buy respectability through public works and charity', weight: 1, tags: ['crime-syndicate', 'business-professional'] },
+  { value: 'break free of a patron organization\'s control', weight: 1, tags: ['military-paramilitary', 'crime-syndicate'] },
+  { value: 'settle and hold a new frontier territory', weight: 2, tags: ['community-tribe'] },
+  { value: 'protect a specific person or bloodline at any cost', weight: 1, tags: ['noble-house', 'force-tradition'] },
+  { value: 'infiltrate and quietly control a rival from within', weight: 1, tags: ['crime-syndicate', 'government-bureaucracy'] },
+  { value: 'complete a generations-long undertaking (a project, a pilgrimage, a debt)', weight: 1, tags: ['religion', 'noble-house'] },
+  { value: 'prove a contested claim of legitimacy or succession', weight: 1, tags: ['noble-house', 'government-bureaucracy'] },
+  { value: 'corner the market on a single valuable commodity', weight: 2, tags: ['business-professional', 'crime-syndicate'] },
+  { value: 'win a long, grinding war of attrition', weight: 1, tags: ['military-paramilitary'] },
+  { value: 'earn enough goodwill to be forgiven a past atrocity', weight: 1, tags: ['military-paramilitary', 'crime-syndicate'] },
+  { value: 'train and place its members throughout other organizations', weight: 1, tags: ['crime-syndicate', 'force-tradition'] },
+  { value: 'simply outlast every rival still standing', weight: 2, tags: ['crime-syndicate'] },
+  { value: 'chase profit wherever the opportunity leads, no fixed plan', weight: 2, tags: ['business-professional'] },
+  { value: 'protect a sacred site or homeworld from exploitation', weight: 1, tags: ['religion', 'community-tribe'] }
 ]);
 
 export const FACTION_CURRENT_OBJECTIVES = Object.freeze([
@@ -58,5 +78,20 @@ export const FACTION_CURRENT_OBJECTIVES = Object.freeze([
   { value: 'planning a symbolic show of strength', weight: 1, tags: ['military-paramilitary'] },
   { value: 'quietly relocating operations to a safer base', weight: 1, tags: ['crime-syndicate'] },
   { value: 'training a new generation of members', weight: 1, tags: [] },
-  { value: 'business as usual -- nothing unusual in motion right now', weight: 3, tags: [] }
+  { value: 'business as usual -- nothing unusual in motion right now', weight: 3, tags: [] },
+  { value: 'vetting a lucrative but suspicious new client', weight: 2, tags: ['business-professional', 'crime-syndicate'] },
+  { value: 'containing word of an internal scandal before it spreads', weight: 2, tags: [] },
+  { value: 'shoring up a border/territory line against encroachment', weight: 2, tags: ['military-paramilitary'] },
+  { value: 'auditing accounts after a suspected embezzlement', weight: 1, tags: ['business-professional', 'government-bureaucracy'] },
+  { value: 'testing a risky new tactic or product before wide use', weight: 1, tags: ['business-professional'] },
+  { value: 'mourning and reorganizing after the loss of a senior member', weight: 1, tags: [] },
+  { value: 'chasing down a shipment that never arrived', weight: 2, tags: ['business-professional', 'crime-syndicate'] },
+  { value: 'currying favor ahead of an upcoming inspection or review', weight: 1, tags: ['government-bureaucracy'] },
+  { value: 'managing fallout from a public relations disaster', weight: 1, tags: ['business-professional', 'government-bureaucracy'] },
+  { value: 'preparing a delegation for a high-stakes negotiation', weight: 1, tags: ['government-bureaucracy', 'noble-house'] },
+  { value: 'hunting for the source of a persistent security leak', weight: 2, tags: ['crime-syndicate', 'military-paramilitary'] },
+  { value: 'onboarding a large influx of new members at once', weight: 1, tags: [] },
+  { value: 'testing the loyalty of a recently promoted lieutenant', weight: 1, tags: ['crime-syndicate', 'military-paramilitary'] },
+  { value: 'quietly probing a rival\'s defenses before committing to anything', weight: 1, tags: ['military-paramilitary', 'crime-syndicate'] },
+  { value: 'nothing pressing -- an unusually quiet stretch', weight: 2, tags: [] }
 ]);

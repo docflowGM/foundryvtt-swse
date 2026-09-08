@@ -30,5 +30,19 @@ export const NPC_SECRETS = Object.freeze([
   { value: 'is a deserter hiding from their former unit', weight: 1, tags: ['military'] },
   { value: 'has a hidden stash few people know about', weight: 2, tags: ['criminal', 'business'] },
   { value: 'is reporting on this operation to an outside party', weight: 1, tags: ['criminal', 'military'] },
-  { value: 'has no notable secret worth hiding', weight: 3, tags: [] }
+  { value: 'has no notable secret worth hiding', weight: 3, tags: [] },
+  { value: 'is secretly working a second job their employer would not approve of', weight: 1, tags: ['business', 'criminal'] },
+  { value: 'owes their position to a forged credential', weight: 1, tags: ['business', 'government'] },
+  { value: 'is quietly funding a cause they cannot publicly support', weight: 1, tags: [] },
+  { value: 'once betrayed someone close to them and was never caught', weight: 1, tags: ['criminal'] },
+  { value: 'is not who their identification says they are', weight: 1, tags: ['mysterious', 'criminal'] },
+  { value: 'is secretly in love with someone they cannot have', weight: 1, tags: [] },
+  { value: 'has been skimming a small amount off the top for years', weight: 1, tags: ['business', 'criminal'] },
+  { value: 'is hiding a serious illness from their colleagues', weight: 1, tags: [] },
+  { value: 'knows something about a superior that could end their career', weight: 1, tags: ['business', 'military', 'government'] },
+  { value: 'is secretly related to someone they publicly disavow', weight: 1, tags: ['noble'] },
+  { value: 'sabotaged a rival to get where they are now', weight: 1, tags: ['business', 'criminal'] },
+  { value: 'is planning to disappear the moment they get the chance', weight: 1, tags: ['criminal', 'frontier'] },
+  { value: 'has a criminal record sealed under a different name', weight: 1, tags: ['criminal'] },
+  { value: 'is secretly loyal to an old cause everyone thinks is dead', weight: 1, tags: ['military', 'religion'] }
 ]);

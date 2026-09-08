@@ -101,3 +101,45 @@ export function composeNpcSummary({ name = '', title = '', role = '', personalit
   if (hook) clauses.push(`. ${hook}`);
   return joinClauses(clauses, ' ').replace(/\s+([,.])/g, '$1');
 }
+
+/**
+ * PHASE 8D-3B addition — a full NPC concept's PUBLIC description:
+ * composed ONLY from safe-to-reveal structured facts, exactly matching
+ * this module's "generate facts first, compose prose second" hard rule
+ * (a caller recomposes on demand; nothing here is persisted as the
+ * sole authority). HARD RULE (phase spec §36): NEVER reads
+ * `secret`/`complication`/`loyalty`/`agenda`/`motivation`/`fear`/
+ * `desire`/`gmNotes` — those stay GM-only. `flavorNotes`/`appearanceCues`
+ * are each capped at ONE entry here (a public description is a short
+ * paragraph, not an exhaustive fact dump); a caller wanting the full
+ * list reads the draft's own fields directly.
+ */
+function capitalize(text) {
+  const clean = String(text ?? '').trim();
+  return clean ? clean.charAt(0).toUpperCase() + clean.slice(1) : '';
+}
+
+export function composeNpcPublicDescription({
+  name = '', title = '', ageImpression = '', occupation = '', role = '',
+  appearanceCues = [], voice = '', speechStyle = '', mannerism = '', flavorNotes = []
+} = {}) {
+  const sentences = [];
+
+  const displayName = title ? `${title} ${name}` : name;
+  const descriptor = joinClauses([ageImpression, occupation || role], ' ');
+  if (displayName && descriptor) sentences.push(`${displayName} is a ${descriptor}.`);
+  else if (displayName) sentences.push(`${displayName}.`);
+  else if (descriptor) sentences.push(`A ${descriptor}.`);
+
+  if (appearanceCues.length) sentences.push(`${capitalize(appearanceCues[0])}.`);
+
+  const behaviorClauses = [];
+  if (voice) behaviorClauses.push(`has a voice that is ${voice}`);
+  if (speechStyle) behaviorClauses.push(speechStyle);
+  if (mannerism) behaviorClauses.push(mannerism);
+  if (behaviorClauses.length) sentences.push(`${capitalize(joinClauses(behaviorClauses, ', '))}.`);
+
+  if (flavorNotes.length) sentences.push(flavorNotes[0]);
+
+  return sentences.join(' ').replace(/\.\./g, '.').replace(/\s+/g, ' ').trim();
+}

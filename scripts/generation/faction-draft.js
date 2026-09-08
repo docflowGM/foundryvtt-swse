@@ -43,6 +43,7 @@ import { createFactionDoctrineDraft, createFactionPreferredStatblockRoster } fro
 import { createPopulationProfile, isMembershipPolicy, MEMBERSHIP_POLICY } from './population-profile.js';
 import { createRecruitmentProfile } from './recruitment-profile.js';
 import { createProvenance, isProvenance } from './provenance.js';
+import { createDraftId } from './lib/draft-id.js';
 
 function cleanString(value) {
   return String(value ?? '').trim();
@@ -95,6 +96,7 @@ function normalizeJobDefaultsDraft(input = {}) {
  * `preferredStatblockRoster` hold `faction-doctrine-draft.js` shapes.
  */
 export function createFactionDraft({
+  draftId = '',
   name = '',
   organizationFamily = '',
   archetype = '',
@@ -142,6 +144,13 @@ export function createFactionDraft({
   return {
     // Draft never carries a canonical Faction id — one is assigned only
     // by FactionRegistryService.upsertFaction() at commit time.
+    // PHASE 8D-3B addition: a domain-namespaced DRAFT id (`lib/draft-id.js`),
+    // matching every other draft type in this ecosystem (planet/POI/
+    // npc-concept) — lets a generated NPC concept's `factionDraftId`
+    // reference the Faction draft it belongs to before either is
+    // committed. Preserved verbatim by `updateFactionDraft()`'s patch
+    // merge exactly like every other field.
+    draftId: cleanString(draftId) || createDraftId('faction'),
     name: cleanString(name),
     organizationFamily: cleanString(organizationFamily),
     archetype: cleanString(archetype),

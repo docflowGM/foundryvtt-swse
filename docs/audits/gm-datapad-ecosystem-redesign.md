@@ -7739,3 +7739,316 @@ scope named is fixed in both affected reroll paths and verified with
 real statistical/direct-execution proof. PR #963 stays draft and
 unmerged. Per standing practice: stopping here for independent review.
 Phase 8D-3B is explicitly not started.
+
+## 186. PHASE 8D-3B — NPC + Faction Productionization (completion report)
+
+Authorized directly following PR #963's merge to `main` (§185 was the
+last pre-merge state) via a fresh-session handoff naming Phase 8D-3B:
+"take the already-established NPC/Faction generation groundwork and
+expand it into production-ready narrative generators that consume the
+now-stable Location context." Two substantial user-driven addenda
+arrived mid-phase and are folded into this same completion report
+rather than deferred to a later phase, per the handoff's own "same
+branch, same PR" discipline: (1) an NPC flavor-note system (small,
+memorable sensory/behavioral quirks) with structurally separate
+organic/droid catalogs; (2) a full NPC-concept schema unification
+(hand-created and generated NPCs share one schema) plus an NPC
+Competence Level authority explicitly modeled on SWSE's existing Crew
+Quality progression.
+
+### A. Architectural inventory (first task, before any content)
+
+Confirmed extensive Phase 8D-1/8D-2 foundation already existed but was
+never composed into a full generator: `faction-draft.js` (full Faction
+draft schema), five standalone Faction sub-generators
+(`factions/faction-goals.js` etc., each a thin wrapper over a 20-46
+entry pool), `names/faction-name-generator.js` (already
+production-quality), `npc-concept.js` (full NPC draft schema, hard
+mechanical-field guard), `npc/npc-narrative-generator.js` (rolled
+appearance/personality/mannerism/motivation/agenda/secret, ALWAYS from
+the organic-only pools, never role/species/droid/rank), and fully-built
+but never-called species/droid selectors
+(`population-profile.js`/`recruitment-profile.js`). Gaps: no top-level
+Faction bundle composer, no Faction presets, no archetype-from-context
+resolver, no NPC role/occupation catalog at all, no wiring of the
+species/droid selectors into any generator, and no production test
+file. Full inventory (A-G) was reported to the user before any
+implementation began.
+
+### B. Faction + NPC bundle composers (core productionization)
+
+**New:** `factions/faction-archetype.js` (reuses Phase 8D-3A's own
+`FACTION_ARCHETYPE_TAGS` table in the reverse direction — context tags
+-> archetype pick — no second archetype-tag catalog); `data/faction-presets.js`
+(20 presets, exactly 1:1 onto every existing `FACTION_ARCHETYPE_FAMILY`
+archetype, self-validated at test time); `factions/faction-bundle.js`
+(`createProceduralFactionDraft()` composing archetype/name/Scale/
+doctrine/goals/institutional-character/leadership-structure/internal-
+problems/resource-profile/population-profile+membership-policy/
+recruitment-profile/relationships/territory/contacts into one draft,
+plus 15 reroll/regenerate operations mirroring `planet-bundle.js`'s
+sibling-preserving discipline, verified by OBJECT IDENTITY); `data/npc-roles.js`
+(140 entries)/`data/npc-droid-roles.js` (31 entries) + `npc/npc-role.js`
+(role picker, command-tier-biased); `npc/npc-bundle.js`
+(`createGeneratedNpcConcept()` — the first caller anywhere of
+`selectMemberKind()`/`selectFactionSpeciesWithLocality()`/
+`selectSpeciesId()`, built in Phase 8D-1 but dormant until now).
+
+**Modified additively:** `npc-concept.js` gained a `draftId`
+(`lib/draft-id.js`, matching every other draft type — this was the one
+draft schema still missing bundle-addressable identity, which had left
+generated Contacts unreachable for a scoped per-contact reroll);
+`faction-draft.js` gained the same `draftId` for the same reason (an
+NPC's new `factionDraftId` field needed something real to reference
+pre-commit).
+
+### C. NPC flavor-note system (user addendum 1)
+
+`npc/npc-flavor.js`: ONE shared selection/conflict/reroll engine over
+TWO structurally separate content pools —
+`data/npc-flavor-qualities-organic.js` (134 entries) and
+`data/npc-flavor-qualities-droid.js` (99 entries), the boundary
+enforced by which pool a `kind` looks up (never a per-entry exclusion
+tag, per the user's explicit "structural, not tag-based" requirement).
+`conflictTags` prevent declared-contradictory qualities (e.g.
+"maintains unnervingly intense eye contact" vs. "rarely makes eye
+contact") from co-occurring on the same NPC, verified over 2000 seeds
+at zero co-occurrences. `flavorNotes: [{qualityId, text}]` on
+`npc-concept.js`; default count distribution 0/10%-1/45%-2/35%-3/10%,
+verified reachable and roughly matching those weights over 4000 seeds.
+`rerollNpcFlavorNotes()`/`rerollNpcFlavorNote()` (whole-set / single-
+note-by-id) both preserve every unrelated field and never cross pools
+(the droid single-note-reroll case explicitly tested). `faction-bundle.js`
+gained matching `rerollFactionContactFlavorNotes()`/
+`rerollFactionContactFlavorNote()` passthroughs for the
+finest-grained reroll the phase spec asked for.
+
+### D. Complete NPC concept schema + Competence Level (user addendum 2)
+
+**Reuse-mapping audit performed FIRST** (before adding any field), per
+the addendum's own "search the repository, reuse/expand, do not
+duplicate" rule. Several of the proposed new fields turned out to
+already have a home:
+
+- `entityKind` -> the existing `kind` field (identical values,
+  `'living'`/`'droid'`) — not duplicated.
+- `factionRole` -> the existing `specialistRole` field (Phase 8D-1
+  addendum, "what this person does for the Faction") — `data/npc-faction-roles.js`
+  (34 entries) now populates it for generated Contacts instead of a
+  second field.
+- `factionRank` (broad band) -> `rank-metadata.js`'s NEW
+  `describeFactionRankBand(commandTier)` — a pure DERIVED view over the
+  EXISTING `commandTier`, mapping its 10 tiers onto the 7 requested
+  narrative bands (outsider/associate/junior/established/senior/
+  leadership/command). No second stored rank field exists; a test
+  asserts `'factionRank' in npc === false`.
+- `diagnostics` -> the existing `provenance.warnings` mechanism
+  (already used by every other draft type) — 4 new codes added
+  (`NPC_ROLE_CONTEXT_MISMATCH`/`NPC_FACTION_MEMBERSHIP_MISMATCH`/
+  `NPC_SPECIES_CONTEXT_MISMATCH`/`NPC_DROID_CONTEXT_MISMATCH`), no
+  second field.
+- `suggestedNarrativeFunction` -> dropped as a literal duplicate of the
+  new `narrativeFunction` field itself.
+- `suggestedJobArchetypeTags`/`suggestedOppositionTags` -> reuse
+  Phase 8D-3A's own `generatePlanetSuggestedJobArchetypeTags()`/
+  `deriveSuggestedOppositionTags()` (`planets/planet-hooks.js` — pure
+  tag utilities despite their planet-module location, unlike
+  `PLANET_DROID_PREVALENCE`, which genuinely IS planet-context-derived
+  and stays out of the NPC layer).
+- Organic appearance cues / organic mannerisms -> the EXISTING
+  `data/npc-appearance-traits.js` (expanded to 49)/`data/npc-mannerisms.js`
+  (expanded to 40), never duplicated into a second organic pool.
+
+**Genuinely new fields added** (additive to `npc-concept.js`, zero
+existing fields removed or renamed, full backward compatibility with
+every 8D-1/8D-2 caller and test): `pronouns`/`presentation`/
+`ageImpression`, `occupation`/`socialRole`/`narrativeFunction`/
+`competenceLevel`, `locationDraftId`/`factionDraftId`/
+`locationRelationship`, `personalityTraits`/`temperament`/`socialStyle`,
+`appearanceCues`, `desire`/`fear`/`loyalty`, `voice`/`speechStyle`,
+`technologyFamiliarity`/`lifestyle`, `relationshipHooks`, `complication`,
+`publicDescription`, `suggestedJobArchetypeTags`/`suggestedOppositionTags`,
+`actorId`/`actorUuid`/`promotedAt`, `knownToPlayers` (mirrors the
+canonical Faction Contact schema's own field name verbatim).
+
+**NPC Competence Level** (`npc/npc-competence.js`): five narrative
+tiers (`untrained`/`capable`/`skilled`/`expert`/`elite`) explicitly
+modeled on — and documented against — SWSE's existing generic-crew
+Crew Quality progression (`Untrained`/`Normal`/`Skilled`/`Expert`/`Ace`),
+a ONE-WAY documentation seam with zero mechanical dependency in either
+direction; no level/BAB/skill-bonus/CL field exists anywhere in the
+module. Context-weighted via five named presets
+(ordinaryCivilian/specializedProfessional/seniorFactionSpecialist/
+randomBystander/eliteInstitution) resolved from role tier + command
+tier — **never from Faction Scale**, verified empirically: a Scale-2
+and a Scale-19 government's generated contacts show statistically
+indistinguishable Expert+/Elite rates (150-seed sample, <15 percentage
+points apart) — "a Scale-18 government still employs ordinary clerks,"
+exactly as the addendum required.
+
+**New representative data catalogs** (11 wholly new pools this
+addendum required, ~30-140 entries each; see §F for full counts):
+occupations, social roles, narrative functions, location relationships,
+loyalty profiles, temperaments, social styles, desires, fears, organic
++ droid voice qualities, speech styles (one shared pool with
+`excludedTags` gating the few kind-specific entries), droid mannerisms,
+relationship-hook templates + subjects, complications.
+
+**Two real pre-existing content-leak bugs found and fixed** during
+wiring (both matching the exact class of bug the flavor-note system's
+own kind-locking discipline was built to prevent): every generated
+droid NPC was drawing its `mannerisms` field from the organic-only
+pool (`npc-narrative-generator.js`'s `pickNpcMannerism()` never
+kind-dispatched), and — caught only once end-to-end output was
+inspected — the same was true of `appearance`/`appearanceCues` (a
+droid NPC could get "meticulously groomed, not a hair out of place").
+Both fixed via `npc/npc-characterization.js`'s new
+`pickNpcMannerismForKind()`/`pickNpcAppearanceForKind()`
+(droid appearance reuses `data/npc-flavor-qualities-droid.js`'s
+chassis/paint/replacement-parts/photoreceptor categories rather than a
+third droid content pool — a genuine field-name mismatch, `.text` vs.
+the plain-pool `.value` convention, was caught and fixed in the same
+pass). `motivation`/`agenda`/`secret`/`desire`/`fear`/`loyalty` remain
+ONE shared pool for both kinds, per the addendum's own explicit list
+of concepts that "genuinely apply to both" ("droids can want things,
+fear things, hold grudges").
+
+**`composeNpcPublicDescription()`** (`lib/description-composer.js`):
+DERIVED (never the sole authority, matching the file's existing
+"facts first, prose second" rule) from safe-to-reveal facts only —
+name/title/ageImpression/occupation/appearanceCues/voice/speechStyle/
+mannerism/one flavor note. Structurally cannot read
+secret/complication/loyalty/agenda/motivation/fear/desire/gmNotes (not
+accepted as parameters at all, not merely unused).
+
+**20 new targeted reroll wrappers** across `npc/npc-characterization.js`/
+`npc-occupation.js`/`npc-competence.js`, each verified to preserve
+name/draftId/role/secret. Per `npc-concept.js`'s own documented
+convention, plain-value fields with no pool re-selection (agenda,
+secret, name, etc.) are NOT given bespoke wrappers — the existing
+generic `updateNpcConceptDraft(draft, {field: value})` patch already
+covers them; duplicating that would contradict the codebase's own
+stated design.
+
+### E. Content-scale honesty
+
+Every new/expanded catalog landed at a "substantial representative"
+size (20-140 entries), NOT the full directional production targets the
+handoff/addenda named (some as high as 1,000-1,500 for the flavor-note
+pools, 250-400 for occupations). This was a deliberate scope decision,
+consistent with both the original phase spec ("do not immediately
+begin writing hundreds of entries... first implement a representative
+catalog, test the system, then production-expand") and the addendum's
+own §57 implementation order (architecture and tests before content
+expansion) — full-target content expansion for the ~35 catalogs this
+phase touches would cost many times the token budget this session
+reasonably allows for content generation with correspondingly
+diminishing architectural value, and risks exactly the "mechanical
+permutation" content-quality failure the addendum's own §48 explicitly
+warns against. Every catalog is zero-duplicate, well-tagged, and
+covers a real breadth of category/tone (mundane through strange,
+per §49's balance requirement) at its current size. **Content
+expansion toward the full targets is explicitly deferred follow-up
+work**, not silently dropped scope.
+
+### F. Exact catalog counts (this phase)
+
+```text
+NPC_ROLES                        140   (target 75-125, exceeded)
+NPC_DROID_ROLES                   31   (target 20+)
+FACTION_PRESETS                   20   (exact — 1:1 onto every archetype)
+ORGANIC_NPC_FLAVOR_QUALITIES     134   (target 1,000-1,500)
+DROID_NPC_FLAVOR_QUALITIES        99   (target 500-1,000)
+NPC_OCCUPATIONS                   82   (target 250-400)
+NPC_SOCIAL_ROLES                  41   (target 75-125)
+NPC_NARRATIVE_FUNCTIONS           30   (target 50-75)
+NPC_LOCATION_RELATIONSHIPS        20   (target 30-50)
+NPC_FACTION_ROLES                 34   (target 100-150)
+NPC_LOYALTY_PROFILES              22   (target 50-100)
+NPC_TEMPERAMENTS                  20   (target 50-75)
+NPC_SOCIAL_STYLES                 25   (target 75-125)
+NPC_DESIRES                       30   (target 150-250)
+NPC_FEARS                         30   (target 150-250)
+NPC_VOICE_QUALITIES_ORGANIC       20   (target 100-150)
+NPC_VOICE_QUALITIES_DROID         18   (target 100-150)
+NPC_SPEECH_STYLES                 30   (target 200-300)
+NPC_DROID_MANNERISMS              20   (target 150-250)
+NPC_RELATIONSHIP_HOOK_TEMPLATES   20   (target 200-300)
+NPC_COMPLICATIONS                 30   (target 250-400)
+
+-- Phase 8D-2 foundation catalogs, expanded this phase --
+FACTION_LONG_TERM_GOALS         24 -> 44
+FACTION_CURRENT_OBJECTIVES      22 -> 37
+FACTION_INSTITUTIONAL_CHARACTERS 25 -> 48
+FACTION_INTERNAL_PROBLEMS       25 -> 45
+FACTION_LEADERSHIP_STRUCTURES   20 -> 35
+FACTION_RESOURCE_FLAVORS        20 -> 33
+NPC_AGENDAS                     25 -> 43
+NPC_APPEARANCE_TRAITS           30 -> 49
+NPC_MANNERISMS                  25 -> 40
+NPC_MOTIVATIONS                 25 -> 40
+NPC_PERSONALITY_TRAITS          30 -> 47
+NPC_SECRETS                     25 -> 39
+
+TOTAL entries across all 33 catalog exports this phase: 1,396
+```
+
+Every catalog verified zero-duplicate (both `id`/`value` and, for
+flavor qualities, `text`) at test time; `NPC_OCCUPATIONS.roleTag`
+verified to reference only real `NPC_ROLES` values (drift guard);
+`NPC_RELATIONSHIP_HOOK_TEMPLATES.type` verified against
+`RELATIONSHIP_HOOK_TYPE`; `FACTION_PRESETS.archetype` verified 1:1
+against `FACTION_ARCHETYPE_FAMILY`'s key set (no gaps, no strays).
+
+### G. GENERATE/SUGGEST/RESOLVE boundary + canonical-write guard
+
+Confirmed by direct grep across every file this phase touched or
+added: zero occurrences of `LocationRegistryService.upsert`/
+`FactionRegistryService.upsert/save/delete/promote`/`game.actors.create`/
+`game.folders.create`/`Actor.create`/`Scene.create`/`JournalEntry.create`
+anywhere outside documentation comments explicitly describing what
+these modules do NOT call. Every generated Faction/NPC stays a draft;
+`contacts` are `npc-concept.js` drafts, never Actors; commit remains
+exclusively `FactionRegistryService.upsertFaction()`/
+`promoteFactionContactToActor()`'s job, unchanged.
+
+### Tests + Regression (this phase)
+
+New `tests/gm-generation-phase8d3b-production.test.mjs`, organized in
+8 sections: catalog quality; generation semantics (archetype/role/
+droid-prevalence/locality-bias context weighting, explicit species
+exclusion enforced at probability exactly 0, rank/leadership-boost,
+Scale-banded roster size, diagnostics reachability, mechanical-field
+guard); bundle generation/reroll safety/determinism (sibling
+preservation by object identity, whole-draft seeded determinism);
+flavor notes (structural pool separation proven over 300+ seeds,
+conflict-tag exclusion at 0/2000, context/role weighting on both
+pools); NPC competence (all 5 values reachable, exact Crew Quality
+mapping, Faction-Scale independence proven empirically, elite rarity);
+reuse-mapping validation (asserts the fields that were deliberately
+NOT duplicated genuinely don't exist); kind-dispatch fixes (droid
+mannerism/appearance never leak organic content, proven over 40+ droid
+samples); table validation (cross-catalog reference integrity);
+representative weighting; publicDescription safety; 13 more targeted
+rerolls.
+
+Full `gm-*.test.mjs` sweep: **59/59 green** (58 prior files, unchanged,
++ 1 new file this phase). Full rolling suite
+(`tools/run-rolling-tests.mjs`): **189 passed, 0 failed** (of 189 run;
+5 excluded as documented pre-existing failures — unchanged from every
+prior phase). Full syntax check (`tools/run-rolling-syntax-check.mjs`):
+**2434/2434 clean**. No canonical-persistence call anywhere in any file
+this phase touched or added (§G). Working tree clean before this
+commit.
+
+**PHASE 8D-3B (NPC + FACTION PRODUCTIONIZATION) COMPLETE — READY FOR
+INDEPENDENT REVIEW.** Both user-driven mid-phase addenda (flavor notes;
+complete NPC schema + Competence Level) are fully implemented,
+architecturally reuse-mapped against every existing authority before
+any new field/table was added, and covered by real statistical tests
+— never merely "the code path exists." The GENERATE/SUGGEST/RESOLVE
+boundary holds throughout. Content-scale honesty: every catalog is
+production-quality at a representative size; full-target expansion
+(§E) is explicit, tracked follow-up, not silently dropped. Per
+standing practice: stopping here for independent review before
+starting Phase 8D-3C.

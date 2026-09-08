@@ -1,0 +1,331 @@
+/**
+ * PHASE 8D-3B production — full NPC concept composer.
+ *
+ * Composes every existing NPC sub-generator into ONE `npc-concept.js`
+ * draft: `selectMemberKind()`/`selectFactionSpeciesWithLocality()`/
+ * `selectSpeciesId()` (species/droid selection, `population-profile.js`/
+ * `recruitment-profile.js` — built in Phase 8D-1 but never called from
+ * a generator until now), `npc-role.js` (role/occupation, new this
+ * phase), `rank-metadata.js` (commandTier/factionRankTitle), and
+ * `npc-narrative-generator.js` (appearance/personality/mannerism/
+ * motivation/agenda/secret/suggestion). This module owns no table data
+ * or pick logic of its own — deliberately just composition, matching
+ * `planet-draft.js`/`planet-bundle.js`'s own "avoid the procedural god
+ * object" discipline.
+ *
+ * Name generation is the ONE Foundry-dependent step
+ * (`chargen-shared.js`'s `getRandomName()`/`getRandomDroidName()`,
+ * per the phase spec's "SHARED NAME AUTHORITY" section — reused, not
+ * reimplemented). Exactly like `location-population-profile.js`'s
+ * `resolveLocationPopulationProfile()`, that ONE Foundry-dependent call
+ * is isolated behind a dynamic import and an injectable
+ * `nameProvider`/`droidNameProvider` — every other function in this
+ * module stays pure and Node-testable, and a caller (test or otherwise)
+ * can inject a deterministic synchronous provider instead of the
+ * default async Foundry-fetch-backed one. `createGeneratedNpcConcept()`
+ * is therefore async; every OTHER export in this module is a plain
+ * sync function.
+ *
+ * `kind`/species selection is caller-driven, never inferred here: pass
+ * `populationProfile` (a Faction's own, from `population-profile.js`)
+ * to bias living/droid + species selection toward that Faction's
+ * explicit identity; pass `locationPopulationProfile` +
+ * `recruitmentProfile`/`localityBias` to additionally blend in a
+ * Location's demographics (`selectFactionSpeciesWithLocality()`); pass
+ * neither for a context-free standalone NPC (falls back to a neutral
+ * mixed/open default). `droidLikelihood` is a SEPARATE, independent
+ * input for the no-Faction-context case — see
+ * `droidLikelihoodForPrevalence()` below — matching the phase spec's
+ * "Droids are conceptually separate from Species demographics" rule;
+ * when a `populationProfile` IS supplied, its own
+ * `livingDroidComposition` takes over instead (a Faction's explicit
+ * population composition always wins over a generic Location droid
+ * prevalence guess).
+ */
+
+import { createNpcConceptDraft, NPC_CONCEPT_KIND } from '../npc-concept.js';
+import { generateNpcNarrativeFacts } from './npc-narrative-generator.js';
+import { pickNpcRole, pickNpcDroidRole } from './npc-role.js';
+import { generateNpcFlavorNotes } from './npc-flavor.js';
+import { pickNpcOccupation } from './npc-occupation.js';
+import { rollNpcCompetence } from './npc-competence.js';
+import {
+  pickNpcAgeImpression, pickNpcTemperament, pickNpcSocialStyle, pickNpcPersonalityTraits,
+  pickNpcDesire, pickNpcFear, pickNpcSocialRole, pickNpcNarrativeFunction, pickNpcLocationRelationship,
+  pickNpcFactionRole, pickNpcLoyalty, pickNpcComplication, pickNpcRelationshipHooks,
+  pickNpcVoice, pickNpcSpeechStyle, pickNpcMannerismForKind, pickNpcAppearanceForKind,
+  pickNpcTechnologyFamiliarity, pickNpcLifestyle
+} from './npc-characterization.js';
+import { generatePlanetSuggestedJobArchetypeTags, deriveSuggestedOppositionTags } from '../planets/planet-hooks.js';
+import { composeNpcPublicDescription } from '../lib/description-composer.js';
+import {
+  selectMemberKind, selectSpeciesId, createPopulationProfile
+} from '../population-profile.js';
+import { selectFactionSpeciesWithLocality } from '../recruitment-profile.js';
+import {
+  COMMAND_TIER, MILITARY_RANK_TIER_MAP, resolveCommandTier
+} from '../rank-metadata.js';
+import { pickRandom } from '../lib/weighted-random.js';
+import { NPC_ROLE_TIER } from '../data/npc-roles.js';
+
+/** `PLANET_DROID_PREVALENCE` value -> base droid-selection probability for a context-free NPC roll (no Faction populationProfile supplied). Deliberately duplicated as PLAIN NUMBERS here rather than importing `planets/planet-profile.js` (a Faction/NPC module has no business depending on the planet module — see the phase spec's layering; a caller who HAS a planet draft passes its `droidPrevalence` string straight in, this table is the only place that maps it to a probability). */
+const DROID_LIKELIHOOD_BY_PREVALENCE = Object.freeze({
+  rare: 0.03,
+  low: 0.08,
+  normal: 0.15,
+  high: 0.30,
+  'very-high': 0.50,
+  automated: 0.75
+});
+
+/** Resolve a droid-selection probability for a `PLANET_DROID_PREVALENCE`-shaped string, or the neutral 0.15 default for an unrecognized/omitted value. */
+export function droidLikelihoodForPrevalence(prevalence) {
+  return DROID_LIKELIHOOD_BY_PREVALENCE[prevalence] ?? 0.15;
+}
+
+/** Default command-tier roll weights for a generated Contact: heavily rank-and-file, rarely strategic. `leadershipBoost` (e.g. from a Faction's `doctrine.eliteAvailability`) multiplies every tier ABOVE `rank-and-file`, softly shifting the distribution upward without ever excluding the common case. */
+const BASE_COMMAND_TIER_WEIGHTS = Object.freeze([
+  { value: COMMAND_TIER.NONE, weight: 3 },
+  { value: COMMAND_TIER.RANK_AND_FILE, weight: 5 },
+  { value: COMMAND_TIER.FIRETEAM_LEADERSHIP, weight: 2 },
+  { value: COMMAND_TIER.SQUAD_COMMAND, weight: 1.5 },
+  { value: COMMAND_TIER.SPECIALIST, weight: 2 },
+  { value: COMMAND_TIER.SENIOR_SPECIALIST, weight: 1 },
+  { value: COMMAND_TIER.JUNIOR_COMMAND, weight: 0.75 },
+  { value: COMMAND_TIER.TACTICAL_COMMAND, weight: 0.4 },
+  { value: COMMAND_TIER.OPERATIONAL_COMMAND, weight: 0.2 },
+  { value: COMMAND_TIER.STRATEGIC_COMMAND, weight: 0.08 }
+]);
+
+const LEADERSHIP_TIERS = new Set([
+  COMMAND_TIER.FIRETEAM_LEADERSHIP, COMMAND_TIER.SQUAD_COMMAND, COMMAND_TIER.SENIOR_SPECIALIST,
+  COMMAND_TIER.JUNIOR_COMMAND, COMMAND_TIER.TACTICAL_COMMAND, COMMAND_TIER.OPERATIONAL_COMMAND, COMMAND_TIER.STRATEGIC_COMMAND
+]);
+
+/**
+ * Roll a commandTier for one generated Contact. `leadershipBoost`
+ * (default 1 = unbiased) multiplies every above-rank-and-file tier's
+ * weight — a Faction with high `doctrine.eliteAvailability`/
+ * `reinforcementCapability` can pass a boost > 1 so its generated
+ * roster skews toward more leaders/specialists, never a hard guarantee.
+ */
+export function rollCommandTier({ rng, leadershipBoost = 1 } = {}) {
+  const entries = BASE_COMMAND_TIER_WEIGHTS.map((entry) => ({
+    ...entry,
+    weight: LEADERSHIP_TIERS.has(entry.value) ? entry.weight * leadershipBoost : entry.weight
+  }));
+  const total = entries.reduce((sum, entry) => sum + entry.weight, 0);
+  let roll = (rng ?? Math.random)() * total;
+  for (const entry of entries) {
+    roll -= entry.weight;
+    if (roll <= 0) return entry.value;
+  }
+  return COMMAND_TIER.NONE;
+}
+
+/** Reverse-lookup: a display rank title whose `tierMap` entry resolves to `commandTier`. Returns '' if the tier is NONE or no title in the map maps to it (never invents a title). */
+export function titleForCommandTier(commandTier, tierMap = MILITARY_RANK_TIER_MAP, { rng } = {}) {
+  if (!commandTier || commandTier === COMMAND_TIER.NONE) return '';
+  const matches = Object.entries(tierMap).filter(([, tier]) => tier === commandTier).map(([title]) => title);
+  return pickRandom(matches, { rng }) ?? '';
+}
+
+async function resolveNameProvider(kind, { nameProvider, droidNameProvider } = {}) {
+  if (kind === NPC_CONCEPT_KIND.DROID && droidNameProvider) return droidNameProvider;
+  if (kind === NPC_CONCEPT_KIND.LIVING && nameProvider) return nameProvider;
+  const mod = await import('../../apps/chargen/chargen-shared.js');
+  return kind === NPC_CONCEPT_KIND.DROID ? mod.getRandomDroidName : mod.getRandomName;
+}
+
+/**
+ * Compose one full, generated NPC concept draft. See module doc for the
+ * full field-by-field reuse map. Returns `null` only if
+ * `createNpcConceptDraft()` itself would (an invalid `kind`), which
+ * cannot happen from this function's own internal kind resolution — the
+ * null case exists purely as a defensive contract match.
+ *
+ * @param {object} [options]
+ * @param {() => number} [options.rng]
+ * @param {string[]} [options.preferTags] - soft role/narrative preference tags (organization-family/economy context).
+ * @param {object} [options.populationProfile] - a Faction's `population-profile.js` profile (kind + species selection authority when supplied).
+ * @param {object} [options.locationPopulationProfile] - a Location's `location-population-profile.js` profile, blended per `recruitmentProfile.localityBias` when both are supplied alongside `populationProfile`.
+ * @param {object} [options.recruitmentProfile] - `recruitment-profile.js` shape; `localityBias` read from here when supplied.
+ * @param {string} [options.droidPrevalence] - a `PLANET_DROID_PREVALENCE` string, used ONLY when `populationProfile` is omitted.
+ * @param {string[]} [options.availableSpeciesIds] - canonical `SpeciesRegistry` ids to choose among (caller-supplied, per the "species ids are always caller-supplied" discipline).
+ * @param {string} [options.commandTier] - explicit `COMMAND_TIER`; rolled via `rollCommandTier()` if omitted.
+ * @param {number} [options.leadershipBoost] - forwarded to `rollCommandTier()` when `commandTier` is not explicit.
+ * @param {object} [options.rankTierMap] - display-title map for `titleForCommandTier()` (defaults to the military example map).
+ * @param {string} [options.factionId]
+ * @param {string} [options.linkedLocationId]
+ * @param {number} [options.flavorNoteCount] - explicit flavor-note count override; defaults to `npc-flavor.js`'s own 0-3 weighted roll.
+ * @param {object} [options.nameProvider] - override for the living-name async provider (tests inject a deterministic stub).
+ * @param {object} [options.droidNameProvider] - override for the droid-name async provider.
+ */
+export async function createGeneratedNpcConcept({
+  rng,
+  preferTags = [],
+  populationProfile = null,
+  locationPopulationProfile = null,
+  recruitmentProfile = null,
+  droidPrevalence = 'normal',
+  availableSpeciesIds = [],
+  commandTier,
+  leadershipBoost = 1,
+  rankTierMap = MILITARY_RANK_TIER_MAP,
+  factionId = '',
+  linkedLocationId = '',
+  flavorNoteCount,
+  nameProvider,
+  droidNameProvider,
+  ...rest
+} = {}) {
+  const resolvedCommandTier = commandTier || rollCommandTier({ rng, leadershipBoost });
+
+  let kind;
+  let speciesId = '';
+  if (populationProfile) {
+    kind = selectMemberKind(populationProfile, { rng });
+    if (kind === 'living') {
+      speciesId = selectFactionSpeciesWithLocality({
+        speciesPolicy: populationProfile.speciesPolicy,
+        availableSpeciesIds,
+        locationPopulationProfile,
+        localityBias: recruitmentProfile?.localityBias ?? 0.5,
+        rng
+      }) || '';
+    }
+  } else {
+    const roll = (rng ?? Math.random)();
+    kind = roll < droidLikelihoodForPrevalence(droidPrevalence) ? 'droid' : 'living';
+    if (kind === 'living') {
+      speciesId = locationPopulationProfile
+        ? (selectFactionSpeciesWithLocality({ speciesPolicy: createPopulationProfile().speciesPolicy, availableSpeciesIds, locationPopulationProfile, localityBias: 0.6, rng }) || '')
+        : (selectSpeciesId(createPopulationProfile().speciesPolicy, availableSpeciesIds, { rng }) || '');
+    }
+  }
+
+  const conceptKind = kind === 'droid' ? NPC_CONCEPT_KIND.DROID : NPC_CONCEPT_KIND.LIVING;
+  const roleEntry = conceptKind === NPC_CONCEPT_KIND.DROID
+    ? pickNpcDroidRole({ rng, preferTags, commandTier: resolvedCommandTier })
+    : pickNpcRole({ rng, preferTags, commandTier: resolvedCommandTier });
+  const roleTags = roleEntry?.tags ?? [];
+  const combinedPreferTags = [...preferTags, ...roleTags];
+
+  const narrative = generateNpcNarrativeFacts({ rng, preferTags });
+  const factionRankTitle = titleForCommandTier(resolvedCommandTier, rankTierMap, { rng });
+  // Flavor notes are biased by the SAME context tags as everything else,
+  // plus the rolled role's own tags (so a mechanic's notes skew toward
+  // grease/tools without that being a hard requirement) -- see
+  // npc-flavor.js's header for why this stays a soft preference roll,
+  // never a deterministic role -> quirk mapping.
+  const flavorNotes = generateNpcFlavorNotes({ kind: conceptKind, preferTags, roleTags, count: flavorNoteCount, rng });
+
+  // PHASE 8D-3B schema addendum: occupation is living-only (a droid's
+  // role, e.g. "protocol droid"/"mining droid", already reads as an
+  // occupation -- see data/npc-occupations.js's header); every other
+  // new field below is kind-agnostic OR kind-dispatched as noted.
+  const occupationEntry = conceptKind === NPC_CONCEPT_KIND.LIVING ? pickNpcOccupation({ rng, roleValue: roleEntry?.value, preferTags }) : null;
+  // Kind-dispatch fix (phase completion report): `appearance` previously
+  // ALWAYS came from `npc-narrative-generator.js`'s organic-only pool,
+  // including for droids -- now routed through `pickNpcAppearanceForKind()`.
+  const appearance = pickNpcAppearanceForKind({ kind: conceptKind, rng, preferTags });
+  const ageImpression = pickNpcAgeImpression({ kind: conceptKind, rng });
+  const temperament = pickNpcTemperament({ rng, preferTags: combinedPreferTags });
+  const socialStyle = pickNpcSocialStyle({ rng, preferTags: combinedPreferTags });
+  const personalityTraits = pickNpcPersonalityTraits({ rng, preferTags });
+  const desire = pickNpcDesire({ rng, preferTags });
+  const fear = pickNpcFear({ rng, preferTags });
+  const socialRole = pickNpcSocialRole({ rng, preferTags });
+  const narrativeFunction = pickNpcNarrativeFunction({ rng, preferTags });
+  const locationRelationship = linkedLocationId ? pickNpcLocationRelationship({ rng, preferTags }) : '';
+  // specialistRole (the reused "factionRole" slot -- see npc-concept.js's
+  // own doc comment) is only rolled for a plausible Faction context:
+  // either an explicit populationProfile (faction-bundle.js's own
+  // Contact-generation path) or an explicit factionId.
+  const isFactionContext = Boolean(populationProfile) || Boolean(factionId);
+  const specialistRole = isFactionContext ? pickNpcFactionRole({ rng, preferTags }) : '';
+  const loyalty = pickNpcLoyalty({ rng, preferTags });
+  const complication = pickNpcComplication({ rng, preferTags });
+  const relationshipHooks = pickNpcRelationshipHooks({ rng, preferTags });
+  const voice = pickNpcVoice({ kind: conceptKind, rng, preferTags: combinedPreferTags });
+  const speechStyle = pickNpcSpeechStyle({ kind: conceptKind, rng, preferTags: combinedPreferTags });
+  // Kind-dispatch fix (phase completion report): every NPC, droids
+  // included, previously drew from the organic-only mannerism pool.
+  const mannerisms = pickNpcMannerismForKind({ kind: conceptKind, rng, preferTags: combinedPreferTags });
+  const technologyBias = roleTags.includes('technology') || roleTags.includes('research') ? 1 : 0;
+  const technologyFamiliarity = pickNpcTechnologyFamiliarity({ rng, contextBias: technologyBias });
+  const lifestyleBias = roleEntry?.tier === NPC_ROLE_TIER.LEADERSHIP ? 1 : (roleEntry?.tier === NPC_ROLE_TIER.COMMON ? -0.5 : 0);
+  const lifestyle = pickNpcLifestyle({ rng, contextBias: lifestyleBias });
+  const competenceLevel = rollNpcCompetence({ rng, roleTier: roleEntry?.tier, commandTier: resolvedCommandTier });
+  // Reuse note: `generatePlanetSuggestedJobArchetypeTags()`/
+  // `deriveSuggestedOppositionTags()` (`planets/planet-hooks.js`) are
+  // generic tag utilities with no actual planet-specific dependency
+  // (unlike e.g. PLANET_DROID_PREVALENCE, which genuinely IS
+  // planet-context-derived and stays out of this module) -- reused here
+  // per the phase spec's explicit "do not make a new Job-archetype
+  // table" instruction, never a duplicate catalog.
+  const suggestedJobArchetypeTags = generatePlanetSuggestedJobArchetypeTags({ rng, preferTags: combinedPreferTags, count: 2 });
+  const suggestedOppositionTags = deriveSuggestedOppositionTags(combinedPreferTags);
+
+  const nameFn = await resolveNameProvider(conceptKind, { nameProvider, droidNameProvider });
+  const name = await nameFn();
+
+  const publicDescription = composeNpcPublicDescription({
+    name, ageImpression, occupation: occupationEntry?.value ?? '', role: roleEntry?.value ?? '',
+    appearanceCues: appearance ? [appearance] : [], voice, speechStyle, mannerism: mannerisms,
+    flavorNotes: flavorNotes.map((n) => n.text)
+  });
+
+  const base = {
+    kind: conceptKind,
+    name,
+    role: roleEntry?.value ?? '',
+    occupation: occupationEntry?.value ?? '',
+    socialRole,
+    narrativeFunction,
+    competenceLevel,
+    ageImpression,
+    appearanceCues: appearance ? [appearance] : [],
+    temperament,
+    socialStyle,
+    personalityTraits,
+    desire,
+    fear,
+    loyalty,
+    voice,
+    speechStyle,
+    technologyFamiliarity,
+    lifestyle,
+    locationRelationship,
+    relationshipHooks,
+    complication,
+    factionId,
+    linkedLocationId,
+    factionRankTitle,
+    commandTier: resolvedCommandTier,
+    specialistRole,
+    appearance,
+    personality: narrative.personality,
+    mannerisms,
+    motivation: narrative.motivation,
+    agenda: narrative.agenda,
+    secret: narrative.secret,
+    suggestion: narrative.suggestion,
+    publicDescription,
+    suggestedJobArchetypeTags,
+    suggestedOppositionTags,
+    flavorNotes,
+    profileAffinity: { roleTags },
+    ...rest
+  };
+
+  if (conceptKind === NPC_CONCEPT_KIND.LIVING) {
+    return createNpcConceptDraft({ ...base, speciesId });
+  }
+  return createNpcConceptDraft({
+    ...base,
+    droidRole: roleEntry?.value ?? '',
+    chassisSuggestion: roleEntry?.chassisSuggestion ?? '',
+    primaryFunction: roleEntry?.value ?? ''
+  });
+}

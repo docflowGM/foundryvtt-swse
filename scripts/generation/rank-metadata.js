@@ -200,3 +200,43 @@ export const COMMAND_TIER_DEFAULT_IMPORTANCE = Object.freeze({
   [COMMAND_TIER.OPERATIONAL_COMMAND]: RANK_TARGET_IMPORTANCE.MAJOR,
   [COMMAND_TIER.STRATEGIC_COMMAND]: RANK_TARGET_IMPORTANCE.STRATEGIC
 });
+
+/**
+ * PHASE 8D-3B addition — broad narrative "faction rank BAND" labels
+ * (phase spec §14: "Do NOT create a giant fake military rank catalog
+ * unless the organization already defines real rank terminology... or
+ * whatever existing architecture already supports"). `COMMAND_TIER`
+ * already IS that existing architecture — this is a pure DERIVED
+ * presentation view over it, not a second stored rank field. A caller
+ * that wants "this Contact's rank, broadly speaking" reads
+ * `describeFactionRankBand(contact.commandTier)` rather than a
+ * separately-generated/stored `factionRank` field, so the two can never
+ * drift out of sync with each other.
+ */
+export const FACTION_RANK_BAND = Object.freeze({
+  OUTSIDER: 'outsider',
+  ASSOCIATE: 'associate',
+  JUNIOR: 'junior',
+  ESTABLISHED: 'established',
+  SENIOR: 'senior',
+  LEADERSHIP: 'leadership',
+  COMMAND: 'command'
+});
+
+const COMMAND_TIER_TO_RANK_BAND = Object.freeze({
+  [COMMAND_TIER.NONE]: FACTION_RANK_BAND.OUTSIDER,
+  [COMMAND_TIER.RANK_AND_FILE]: FACTION_RANK_BAND.ASSOCIATE,
+  [COMMAND_TIER.FIRETEAM_LEADERSHIP]: FACTION_RANK_BAND.JUNIOR,
+  [COMMAND_TIER.SQUAD_COMMAND]: FACTION_RANK_BAND.ESTABLISHED,
+  [COMMAND_TIER.SPECIALIST]: FACTION_RANK_BAND.ESTABLISHED,
+  [COMMAND_TIER.SENIOR_SPECIALIST]: FACTION_RANK_BAND.SENIOR,
+  [COMMAND_TIER.JUNIOR_COMMAND]: FACTION_RANK_BAND.SENIOR,
+  [COMMAND_TIER.TACTICAL_COMMAND]: FACTION_RANK_BAND.LEADERSHIP,
+  [COMMAND_TIER.OPERATIONAL_COMMAND]: FACTION_RANK_BAND.COMMAND,
+  [COMMAND_TIER.STRATEGIC_COMMAND]: FACTION_RANK_BAND.COMMAND
+});
+
+/** Broad narrative rank band for a `COMMAND_TIER` value. Falls back to `outsider` for an unrecognized/omitted tier — never guesses upward. */
+export function describeFactionRankBand(commandTier) {
+  return COMMAND_TIER_TO_RANK_BAND[commandTier] ?? FACTION_RANK_BAND.OUTSIDER;
+}

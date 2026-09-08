@@ -27,5 +27,18 @@ export const FACTION_RESOURCE_FLAVORS = Object.freeze([
   { value: 'draws resources from many small, loyal contributors', weight: 2, tags: ['community-tribe', 'religion'] },
   { value: 'has extensive but aging infrastructure', weight: 1, tags: ['government-bureaucracy'] },
   { value: 'quietly diverts resources from a larger parent organization', weight: 1, tags: ['military-paramilitary', 'government-bureaucracy'] },
-  { value: 'unremarkable, ordinary resources for its size', weight: 3, tags: [] }
+  { value: 'unremarkable, ordinary resources for its size', weight: 3, tags: [] },
+  { value: 'controls a small but valuable fleet of ships', weight: 2, tags: ['trade', 'crime-syndicate', 'military-paramilitary'] },
+  { value: 'owns and operates its own manufacturing capacity', weight: 2, tags: ['business-professional', 'industrial'] },
+  { value: 'holds a deep well of favors owed by influential people', weight: 2, tags: ['government-bureaucracy', 'noble-house'] },
+  { value: 'maintains a private security/enforcement arm', weight: 2, tags: ['crime-syndicate', 'military-paramilitary'] },
+  { value: 'sits on a stockpile of stolen or salvaged goods', weight: 1, tags: ['crime-syndicate'] },
+  { value: 'commands significant real estate/territory holdings', weight: 2, tags: ['noble-house', 'business-professional'] },
+  { value: 'has access to exclusive, closely-guarded technology', weight: 1, tags: ['research', 'business-professional'] },
+  { value: 'relies heavily on a single wealthy benefactor', weight: 1, tags: ['noble-house', 'crime-syndicate'] },
+  { value: 'operates on razor-thin margins, resources are always tight', weight: 2, tags: [] },
+  { value: 'maintains a hidden emergency reserve few know about', weight: 1, tags: ['crime-syndicate', 'noble-house'] },
+  { value: 'has strong informal barter/trade relationships instead of credits', weight: 1, tags: ['community-tribe', 'frontier'] },
+  { value: 'benefits from a lucrative but illegal revenue stream', weight: 1, tags: ['crime-syndicate'] },
+  { value: 'commands a large, dedicated volunteer base instead of paid staff', weight: 1, tags: ['humanitarian', 'religion', 'community-tribe'] }
 ]);
