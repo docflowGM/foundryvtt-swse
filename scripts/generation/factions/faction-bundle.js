@@ -50,6 +50,7 @@ import { ARCHETYPE_RANK_TIER_MAP, MILITARY_RANK_TIER_MAP } from '../rank-metadat
 import { weightedPick, weightedPickUniqueN, randomIntInclusive } from '../lib/weighted-random.js';
 import { createProvenance, withWarning } from '../provenance.js';
 import { DIAGNOSTIC_CODE } from '../lib/generator-diagnostics.js';
+import { createDraftId } from '../lib/draft-id.js';
 
 function clampScale(scale) {
   const n = Number(scale);
@@ -161,14 +162,14 @@ function attachFactionDiagnostics(draft, { archetype }) {
  */
 async function generateFactionContacts({
   count, preferTags, populationProfile, locationPopulationProfile, recruitmentProfile,
-  droidPrevalence, availableSpeciesIds, leadershipBoost, rankTierMap, rng, nameProvider, droidNameProvider
+  droidPrevalence, availableSpeciesIds, leadershipBoost, rankTierMap, rng, nameProvider, droidNameProvider, factionDraftId
 }) {
   const contacts = [];
   for (let i = 0; i < count; i++) {
     // eslint-disable-next-line no-await-in-loop -- sequential by design: each contact's name-provider call should not race a shared deterministic rng.
     const contact = await createGeneratedNpcConcept({
       rng, preferTags, populationProfile, locationPopulationProfile, recruitmentProfile,
-      droidPrevalence, availableSpeciesIds, leadershipBoost, rankTierMap, nameProvider, droidNameProvider
+      droidPrevalence, availableSpeciesIds, leadershipBoost, rankTierMap, nameProvider, droidNameProvider, factionDraftId
     });
     contacts.push(contact);
   }
@@ -217,6 +218,15 @@ export async function createProceduralFactionDraft({
   nameProvider,
   droidNameProvider
 } = {}) {
+  // CORRECTION (independent review of PR #964's initial head): reserve
+  // the Faction's OWN draftId before generating any Contact, so every
+  // generated Contact's `factionDraftId` can point back to the EXACT
+  // same draftId the finished Faction draft carries -- previously
+  // Contacts were generated before the Faction draft existed at all,
+  // so `factionDraftId` was never set and the Faction->Contact graph
+  // was unaddressable pre-commit, undermining the whole point of
+  // giving both draft types a stable id in the first place.
+  const reservedDraftId = createDraftId('faction');
   const explicitPreset = presetId ? getFactionPreset(presetId) : null;
   const resolvedArchetype = pickFactionArchetype({
     rng,
@@ -256,12 +266,13 @@ export async function createProceduralFactionDraft({
   const resolvedContactCount = Number.isFinite(contactCount) ? Math.max(0, contactCount) : contactCountForScale(resolvedScale, { rng });
   const contacts = await generateFactionContacts({
     count: resolvedContactCount, preferTags: mergedPreferTags, populationProfile, locationPopulationProfile, recruitmentProfile,
-    droidPrevalence, availableSpeciesIds, leadershipBoost, rankTierMap, rng, nameProvider, droidNameProvider
+    droidPrevalence, availableSpeciesIds, leadershipBoost, rankTierMap, rng, nameProvider, droidNameProvider, factionDraftId: reservedDraftId
   });
 
   const provenance = createProvenance({ presetId: effectivePreset?.id ?? '', tags: [resolvedArchetype, family] });
 
   let draft = createFactionDraft({
+    draftId: reservedDraftId,
     name: nameDraft.name,
     organizationFamily: family,
     archetype: resolvedArchetype,
@@ -369,7 +380,7 @@ export async function regenerateFactionContacts(draft, { rng, count, preferTags,
   const contacts = await generateFactionContacts({
     count: resolvedCount, preferTags: preferTags ?? draft.doctrine?.environmentAffinities ?? [], populationProfile: draft.populationProfile,
     locationPopulationProfile, recruitmentProfile: draft.recruitmentProfile, droidPrevalence, availableSpeciesIds,
-    leadershipBoost, rankTierMap, rng, nameProvider, droidNameProvider
+    leadershipBoost, rankTierMap, rng, nameProvider, droidNameProvider, factionDraftId: draft.draftId
   });
   return updateFactionDraft(draft, { contacts });
 }
@@ -383,7 +394,7 @@ export async function rerollFactionContact(draft, contactDraftId, { rng, preferT
   const replacement = await createGeneratedNpcConcept({
     rng, preferTags: preferTags ?? draft.doctrine?.environmentAffinities ?? [], populationProfile: draft.populationProfile,
     locationPopulationProfile, recruitmentProfile: draft.recruitmentProfile, droidPrevalence, availableSpeciesIds,
-    leadershipBoost, rankTierMap, nameProvider, droidNameProvider,
+    leadershipBoost, rankTierMap, nameProvider, droidNameProvider, factionDraftId: draft.draftId,
     // Preserve the SAME draftId across a reroll so the Contact stays
     // addressable by the GM/UI afterward -- this is a reroll of one
     // Contact's facts, not a replacement of its identity.
@@ -400,7 +411,7 @@ export async function addFactionContact(draft, { rng, preferTags, locationPopula
   const contact = await createGeneratedNpcConcept({
     rng, preferTags: preferTags ?? draft.doctrine?.environmentAffinities ?? [], populationProfile: draft.populationProfile,
     locationPopulationProfile, recruitmentProfile: draft.recruitmentProfile, droidPrevalence, availableSpeciesIds,
-    leadershipBoost, rankTierMap, nameProvider, droidNameProvider
+    leadershipBoost, rankTierMap, nameProvider, droidNameProvider, factionDraftId: draft.draftId
   });
   return updateFactionDraft(draft, { contacts: [...draft.contacts, contact] });
 }

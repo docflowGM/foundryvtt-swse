@@ -31,8 +31,27 @@ import { isCommandTier, COMMAND_TIER, RANK_TARGET_IMPORTANCES } from './rank-met
 import { createProvenance, isProvenance } from './provenance.js';
 import { createDraftId } from './lib/draft-id.js';
 import { isNpcCompetenceLevel } from './npc/npc-competence.js';
+import { composeNpcPublicDescription } from './lib/description-composer.js';
+import { reconcileFieldsStateWithScalars } from './lib/draft-field-authoring.js';
+import { NPC_FIELD_DEFINITIONS } from './npc/npc-field-definitions.js';
 
 export const NPC_CONCEPT_KIND = Object.freeze({ LIVING: 'living', DROID: 'droid' });
+
+/**
+ * PHASE 8D-3B correction (independent review of PR #964's initial
+ * head): `publicDescription` is DERIVED, but a GM must be able to
+ * overwrite it with their own prose without a later targeted reroll
+ * silently discarding that edit -- the same "structured facts are
+ * authority, but a GM's explicit prose stays sovereign" tension the
+ * planet generator already resolved for its own summary field. `source`
+ * tracks which regime currently owns the text: `'derived'` (the
+ * default -- recomposed automatically whenever a reroll wrapper below
+ * touches one of `composeNpcPublicDescription()`'s inputs) or
+ * `'manual'` (a GM wrote it; every recompose call becomes a no-op until
+ * the GM explicitly asks to recompose again via
+ * `resetNpcPublicDescriptionToDerived()`).
+ */
+export const PUBLIC_DESCRIPTION_SOURCE = Object.freeze({ DERIVED: 'derived', MANUAL: 'manual' });
 
 export const NPC_DISPOSITION = Object.freeze([
   'ally', 'friendly', 'neutral', 'suspicious', 'rival', 'hostile'
@@ -265,6 +284,7 @@ export function createNpcConceptDraft(input = {}) {
     // motivation. A caller can always recompose fresh from the draft's
     // own fields; this stored copy is a convenience, not authority.
     publicDescription: cleanString(input.publicDescription),
+    publicDescriptionSource: input.publicDescriptionSource === PUBLIC_DESCRIPTION_SOURCE.MANUAL ? PUBLIC_DESCRIPTION_SOURCE.MANUAL : PUBLIC_DESCRIPTION_SOURCE.DERIVED,
     // PHASE 8D-3B addition: SUGGEST-tier only, reusing the EXISTING
     // `data/planet-hook-archetypes.js` `JOB_ARCHETYPE_TAGS`/
     // `FACTION_ARCHETYPE_TAGS`-style vocabulary (`JOB_ARCHETYPE_METADATA`)
@@ -292,6 +312,37 @@ export function createNpcConceptDraft(input = {}) {
     // rerollable LIST so a GM can keep two quirks and reroll a third,
     // per this field's own reroll contract in `npc-flavor.js`.
     flavorNotes: cleanFlavorNotes(input.flavorNotes),
+
+    // PHASE 8D-3B correction (independent review addendum) — GM Field
+    // Authoring API state (`lib/draft-field-authoring.js`,
+    // `npc/npc-field-authoring.js`). Stays `null` on every ordinarily
+    // generated/rerolled draft (a field-authoring operation has never
+    // touched it) -- zero cost, zero determinism impact, for the common
+    // case. Once a GM has touched it (any `npc/npc-field-authoring.js`
+    // call), it is RECONCILED here against this construction's own
+    // registered scalar values on every single `createNpcConceptDraft()`/
+    // `updateNpcConceptDraft()` call, built or not: a field whose
+    // scalar didn't change in this call is preserved byte-for-byte
+    // (including any GM multi-value/custom-label/hidden state); a field
+    // whose scalar DID change (a plain, field-authoring-unaware reroll
+    // touched it) collapses to one fresh generated entry carrying the
+    // new value, preserving only its customized label/hidden state --
+    // see `reconcileFieldsStateWithScalars()`'s own doc for the full
+    // "unrelated reroll never disturbs GM customization; a reroll of
+    // THIS field replaces its value, never its label" contract.
+    narrativeFields: input.narrativeFields
+      ? reconcileFieldsStateWithScalars(input.narrativeFields, NPC_FIELD_DEFINITIONS, {
+        motivation: cleanString(input.motivation),
+        desire: cleanString(input.desire),
+        fear: cleanString(input.fear),
+        agenda: cleanString(input.agenda),
+        secret: cleanString(input.secret),
+        complication: cleanString(input.complication),
+        loyalty: cleanString(input.loyalty),
+        publicNotes: cleanString(input.publicNotes),
+        gmNotes: cleanString(input.gmNotes)
+      })
+      : null,
 
     provenance: isProvenance(input.provenance) ? input.provenance : createProvenance()
   };
@@ -332,6 +383,63 @@ export function updateNpcConceptDraft(draft, patch = {}) {
     merged.profileAffinity = { ...draft.profileAffinity, ...patch.profileAffinity };
   }
   return createNpcConceptDraft(merged) ?? draft;
+}
+
+/**
+ * Recompute `publicDescription` from the draft's OWN current
+ * structured facts (`lib/description-composer.js`'s
+ * `composeNpcPublicDescription()`) -- a no-op (returns the draft
+ * UNCHANGED) whenever `publicDescriptionSource` is `'manual'`, so a
+ * GM's own prose is never silently overwritten. Every targeted reroll
+ * in `npc/npc-characterization.js`/`npc/npc-occupation.js`/
+ * `npc/npc-flavor.js` that touches one of this composer's inputs
+ * (appearanceCues/voice/speechStyle/mannerisms/occupation/ageImpression/
+ * flavorNotes) calls this immediately after updating its own field, so
+ * `publicDescription` can never go stale relative to the facts it was
+ * built from -- unless a GM has taken manual ownership, in which case
+ * staleness relative to the OLD facts is exactly what "manual" means.
+ */
+export function recomposeNpcPublicDescription(draft) {
+  if (!draft || draft.publicDescriptionSource === PUBLIC_DESCRIPTION_SOURCE.MANUAL) return draft;
+  const publicDescription = composeNpcPublicDescription({
+    name: draft.name,
+    title: draft.title,
+    ageImpression: draft.ageImpression,
+    occupation: draft.occupation,
+    role: draft.role,
+    appearanceCues: draft.appearanceCues,
+    voice: draft.voice,
+    speechStyle: draft.speechStyle,
+    mannerism: draft.mannerisms,
+    flavorNotes: (draft.flavorNotes ?? []).map((note) => note.text)
+  });
+  return updateNpcConceptDraft(draft, { publicDescription });
+}
+
+/**
+ * Explicit GM authorship action: overwrite `publicDescription` with
+ * GM-written text and mark it `'manual'` -- every future recompose call
+ * becomes a no-op until `resetNpcPublicDescriptionToDerived()` is
+ * called. Mirrors the "editing a generated value converts it to
+ * manual" rule the wider GM-sovereignty design uses throughout.
+ */
+export function setNpcPublicDescription(draft, text) {
+  if (!draft) return draft;
+  return updateNpcConceptDraft(draft, { publicDescription: cleanString(text), publicDescriptionSource: PUBLIC_DESCRIPTION_SOURCE.MANUAL });
+}
+
+/**
+ * The "↻ Recompose" action: explicitly hand `publicDescription` back to
+ * the derived regime and immediately recompute it from current facts,
+ * discarding whatever manual text was there. Distinct from
+ * `recomposeNpcPublicDescription()`, which respects an existing manual
+ * lock -- this is the one operation that deliberately overrides it,
+ * because the GM asked for it by name.
+ */
+export function resetNpcPublicDescriptionToDerived(draft) {
+  if (!draft) return draft;
+  const reset = updateNpcConceptDraft(draft, { publicDescriptionSource: PUBLIC_DESCRIPTION_SOURCE.DERIVED });
+  return recomposeNpcPublicDescription(reset);
 }
 
 /**

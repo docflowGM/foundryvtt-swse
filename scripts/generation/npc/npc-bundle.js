@@ -83,6 +83,63 @@ export function droidLikelihoodForPrevalence(prevalence) {
   return DROID_LIKELIHOOD_BY_PREVALENCE[prevalence] ?? 0.15;
 }
 
+/**
+ * CORRECTION (independent review of PR #964's initial head): a
+ * generated NPC's `technologyFamiliarity`/`lifestyle` were biased
+ * ONLY by the NPC's own rolled role tier -- a Location's real
+ * technology/economy context (now available from Phase 8D-3A's planet
+ * drafts) never reached these two fields at all, even though every
+ * OTHER context-sensitive pick (occupation/appearance/flavor/voice/
+ * speech) already receives Location context indirectly via
+ * `preferTags`. `resolveLocationContextBias()` below closes that gap
+ * with ONE structured optional input rather than a growing pile of
+ * separate scalar parameters -- see `createGeneratedNpcConcept()`'s own
+ * `locationContext` doc.
+ *
+ * Deliberately duplicated as PLAIN STRING KEYS here, exactly like
+ * `DROID_LIKELIHOOD_BY_PREVALENCE` above -- this module still never
+ * imports `planets/planet-profile.js` (the Faction/NPC layer has no
+ * business depending on the planet module); a caller who HAS a planet
+ * draft passes its `technologyLevel`/`technologyAccess` STRINGS
+ * straight through `locationContext`, and this is the only place those
+ * strings get mapped to a bias number.
+ */
+const TECHNOLOGY_LEVEL_BIAS = Object.freeze({
+  primitive: -2, 'pre-industrial': -1.5, industrial: -0.5, frontier: -0.5,
+  'galactic-standard': 0, advanced: 1, 'cutting-edge': 2
+});
+const TECHNOLOGY_ACCESS_BIAS = Object.freeze({
+  isolated: -1.5, scarce: -1, limited: -0.3, common: 0.3, ubiquitous: 1.5
+});
+const WEALTHY_ECONOMY_TAGS = new Set(['financial-services', 'trade', 'urban', 'cosmopolitan']);
+const MODEST_ECONOMY_TAGS = new Set(['mining', 'frontier', 'rural', 'salvage', 'agriculture']);
+
+/**
+ * Resolve `{ technologyBias, lifestyleBias }` (each roughly -2..+2, fed
+ * straight into `pickNpcTechnologyFamiliarity()`/`pickNpcLifestyle()`)
+ * from an OPTIONAL `locationContext`. Returns `null` for either bias
+ * when `locationContext` supplies nothing relevant, so the caller falls
+ * back to its own default (role-tier-derived) heuristic instead of a
+ * silent 0 -- "no Location context supplied" and "Location context is
+ * neutral" are different states.
+ */
+export function resolveLocationContextBias(locationContext) {
+  if (!locationContext) return { technologyBias: null, lifestyleBias: null };
+  const { technologyLevel, technologyAccess, economyTags = [], locationTags = [] } = locationContext;
+  let technologyBias = null;
+  if (technologyLevel in TECHNOLOGY_LEVEL_BIAS || technologyAccess in TECHNOLOGY_ACCESS_BIAS) {
+    technologyBias = (TECHNOLOGY_LEVEL_BIAS[technologyLevel] ?? 0) + (TECHNOLOGY_ACCESS_BIAS[technologyAccess] ?? 0);
+  }
+  const combinedTags = [...economyTags, ...locationTags];
+  let lifestyleBias = null;
+  if (combinedTags.length) {
+    const wealthy = combinedTags.filter((t) => WEALTHY_ECONOMY_TAGS.has(t)).length;
+    const modest = combinedTags.filter((t) => MODEST_ECONOMY_TAGS.has(t)).length;
+    if (wealthy || modest) lifestyleBias = Math.max(-2, Math.min(2, wealthy - modest));
+  }
+  return { technologyBias, lifestyleBias };
+}
+
 /** Default command-tier roll weights for a generated Contact: heavily rank-and-file, rarely strategic. `leadershipBoost` (e.g. from a Faction's `doctrine.eliteAvailability`) multiplies every tier ABOVE `rank-and-file`, softly shifting the distribution upward without ever excluding the common case. */
 const BASE_COMMAND_TIER_WEIGHTS = Object.freeze([
   { value: COMMAND_TIER.NONE, weight: 3 },
@@ -155,8 +212,11 @@ async function resolveNameProvider(kind, { nameProvider, droidNameProvider } = {
  * @param {string} [options.commandTier] - explicit `COMMAND_TIER`; rolled via `rollCommandTier()` if omitted.
  * @param {number} [options.leadershipBoost] - forwarded to `rollCommandTier()` when `commandTier` is not explicit.
  * @param {object} [options.rankTierMap] - display-title map for `titleForCommandTier()` (defaults to the military example map).
- * @param {string} [options.factionId]
- * @param {string} [options.linkedLocationId]
+ * @param {object} [options.locationContext] - optional structured Location signal: `{ technologyLevel, technologyAccess, technologySpecialties, economyTags, locationTags, locationId, locationDraftId }`. `technologyLevel`/`technologyAccess` (plain `planet-profile.js`-shaped strings -- this module still never imports that planet module, see `resolveLocationContextBias()`'s doc) bias `technologyFamiliarity`; `economyTags`/`locationTags` additionally bias `lifestyle` AND are folded into every other context-sensitive pick's `preferTags`. One structured object rather than a growing pile of separate scalar parameters.
+ * @param {string} [options.factionId] - a REAL canonical Faction id (post-commit context only).
+ * @param {string} [options.factionDraftId] - the draft:faction:... id of the `faction-draft.js` Faction this Contact is being generated FOR, pre-commit -- `factions/faction-bundle.js` always passes its own reserved `draftId` here so a generated Contact can always be traced back to its parent Faction draft even before either is committed.
+ * @param {string} [options.linkedLocationId] - a REAL canonical Location id.
+ * @param {string} [options.locationDraftId] - a `planets/planet-draft.js` (or other Location-domain) draft id, pre-commit.
  * @param {number} [options.flavorNoteCount] - explicit flavor-note count override; defaults to `npc-flavor.js`'s own 0-3 weighted roll.
  * @param {object} [options.nameProvider] - override for the living-name async provider (tests inject a deterministic stub).
  * @param {object} [options.droidNameProvider] - override for the droid-name async provider.
@@ -173,12 +233,27 @@ export async function createGeneratedNpcConcept({
   leadershipBoost = 1,
   rankTierMap = MILITARY_RANK_TIER_MAP,
   factionId = '',
+  factionDraftId = '',
   linkedLocationId = '',
+  locationDraftId = '',
+  locationContext = null,
   flavorNoteCount,
   nameProvider,
   droidNameProvider,
   ...rest
 } = {}) {
+  // Fold locationContext's own tags into preferTags ONCE, at the top --
+  // every existing preferTags-consuming pick below (role/occupation/
+  // appearance/flavor/voice/speech/temperament/...) benefits
+  // automatically, without threading a second tag array through every
+  // call site individually. See `resolveLocationContextBias()`'s doc
+  // for why technologyFamiliarity/lifestyle additionally need their
+  // OWN numeric bias rather than only a soft tag preference.
+  if (locationContext) {
+    preferTags = [...preferTags, ...(locationContext.locationTags ?? []), ...(locationContext.economyTags ?? []), ...(locationContext.technologySpecialties ?? [])];
+  }
+  const { technologyBias: locationTechnologyBias, lifestyleBias: locationLifestyleBias } = resolveLocationContextBias(locationContext);
+
   const resolvedCommandTier = commandTier || rollCommandTier({ rng, leadershipBoost });
 
   let kind;
@@ -237,7 +312,7 @@ export async function createGeneratedNpcConcept({
   const fear = pickNpcFear({ rng, preferTags });
   const socialRole = pickNpcSocialRole({ rng, preferTags });
   const narrativeFunction = pickNpcNarrativeFunction({ rng, preferTags });
-  const locationRelationship = linkedLocationId ? pickNpcLocationRelationship({ rng, preferTags }) : '';
+  const locationRelationship = (linkedLocationId || locationDraftId) ? pickNpcLocationRelationship({ rng, preferTags }) : '';
   // specialistRole (the reused "factionRole" slot -- see npc-concept.js's
   // own doc comment) is only rolled for a plausible Faction context:
   // either an explicit populationProfile (faction-bundle.js's own
@@ -252,9 +327,18 @@ export async function createGeneratedNpcConcept({
   // Kind-dispatch fix (phase completion report): every NPC, droids
   // included, previously drew from the organic-only mannerism pool.
   const mannerisms = pickNpcMannerismForKind({ kind: conceptKind, rng, preferTags: combinedPreferTags });
-  const technologyBias = roleTags.includes('technology') || roleTags.includes('research') ? 1 : 0;
+  // CORRECTION (independent review): the role-derived bias below no
+  // longer stands ALONE -- when a caller supplies `locationContext`,
+  // its own technology/economy signal (`resolveLocationContextBias()`)
+  // is ADDED to the role-derived bias (an advanced-tech world's own
+  // technician reads as MORE tech-familiar than either signal alone
+  // would suggest), never simply overridden. `pickNpcTechnologyFamiliarity()`/
+  // `pickNpcLifestyle()` already clamp the combined bias internally.
+  const roleTechnologyBias = roleTags.includes('technology') || roleTags.includes('research') ? 1 : 0;
+  const technologyBias = roleTechnologyBias + (locationTechnologyBias ?? 0);
   const technologyFamiliarity = pickNpcTechnologyFamiliarity({ rng, contextBias: technologyBias });
-  const lifestyleBias = roleEntry?.tier === NPC_ROLE_TIER.LEADERSHIP ? 1 : (roleEntry?.tier === NPC_ROLE_TIER.COMMON ? -0.5 : 0);
+  const roleLifestyleBias = roleEntry?.tier === NPC_ROLE_TIER.LEADERSHIP ? 1 : (roleEntry?.tier === NPC_ROLE_TIER.COMMON ? -0.5 : 0);
+  const lifestyleBias = roleLifestyleBias + (locationLifestyleBias ?? 0);
   const lifestyle = pickNpcLifestyle({ rng, contextBias: lifestyleBias });
   const competenceLevel = rollNpcCompetence({ rng, roleTier: roleEntry?.tier, commandTier: resolvedCommandTier });
   // Reuse note: `generatePlanetSuggestedJobArchetypeTags()`/
@@ -300,7 +384,9 @@ export async function createGeneratedNpcConcept({
     relationshipHooks,
     complication,
     factionId,
+    factionDraftId,
     linkedLocationId,
+    locationDraftId,
     factionRankTitle,
     commandTier: resolvedCommandTier,
     specialistRole,

@@ -32,7 +32,7 @@
 import { ORGANIC_NPC_FLAVOR_QUALITIES } from '../data/npc-flavor-qualities-organic.js';
 import { DROID_NPC_FLAVOR_QUALITIES } from '../data/npc-flavor-qualities-droid.js';
 import { weightedPick, weightedPickWithPreference } from '../lib/weighted-random.js';
-import { updateNpcConceptDraft } from '../npc-concept.js';
+import { updateNpcConceptDraft, recomposeNpcPublicDescription } from '../npc-concept.js';
 
 /** Structural pool boundary -- the ONE place `kind` maps to a content authority. */
 const CATALOG_BY_KIND = Object.freeze({
@@ -137,7 +137,7 @@ export function generateNpcFlavorNotes({ kind, preferTags = [], roleTags = [], c
 export function rerollNpcFlavorNotes(draft, { rng, preferTags = [], roleTags = [], contextTags = [], traitTags, count } = {}) {
   if (!draft) return draft;
   const flavorNotes = generateNpcFlavorNotes({ kind: draft.kind, preferTags, roleTags, contextTags, traitTags, count, rng });
-  return updateNpcConceptDraft(draft, { flavorNotes });
+  return recomposeNpcPublicDescription(updateNpcConceptDraft(draft, { flavorNotes }));
 }
 
 /**
@@ -173,5 +173,5 @@ export function rerollNpcFlavorNote(draft, qualityIdOrIndex, { rng, preferTags =
 
   const replacement = { qualityId: chosen.id, text: chosen.text };
   const flavorNotes = notes.map((n, i) => (i === index ? replacement : n));
-  return updateNpcConceptDraft(draft, { flavorNotes });
+  return recomposeNpcPublicDescription(updateNpcConceptDraft(draft, { flavorNotes }));
 }

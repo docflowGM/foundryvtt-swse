@@ -12,7 +12,7 @@
 
 import { NPC_OCCUPATIONS } from '../data/npc-occupations.js';
 import { weightedPickWithPreference } from '../lib/weighted-random.js';
-import { updateNpcConceptDraft } from '../npc-concept.js';
+import { updateNpcConceptDraft, recomposeNpcPublicDescription } from '../npc-concept.js';
 
 /** Pick one occupation entry, filtered to `roleValue` when that yields at least one match. */
 export function pickNpcOccupation({ rng, roleValue = '', preferTags = [] } = {}) {
@@ -25,5 +25,5 @@ export function pickNpcOccupation({ rng, roleValue = '', preferTags = [] } = {})
 export function rerollNpcOccupation(draft, { rng, preferTags = [] } = {}) {
   if (!draft) return draft;
   const entry = pickNpcOccupation({ rng, roleValue: draft.role, preferTags });
-  return updateNpcConceptDraft(draft, { occupation: entry?.value ?? '' });
+  return recomposeNpcPublicDescription(updateNpcConceptDraft(draft, { occupation: entry?.value ?? '' }));
 }

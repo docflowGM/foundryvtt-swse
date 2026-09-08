@@ -42,7 +42,7 @@ import { NPC_PERSONALITY_TRAITS } from '../data/npc-personality-traits.js';
 import { NPC_APPEARANCE_TRAITS } from '../data/npc-appearance-traits.js';
 import { DROID_NPC_FLAVOR_QUALITIES } from '../data/npc-flavor-qualities-droid.js';
 import { weightedPick, weightedPickWithPreference, weightedPickUniqueN, randomIntInclusive } from '../lib/weighted-random.js';
-import { updateNpcConceptDraft } from '../npc-concept.js';
+import { updateNpcConceptDraft, recomposeNpcPublicDescription } from '../npc-concept.js';
 
 // --- small fixed ladders (organic vs. droid) -----------------------------
 // Deliberately NOT numeric ages -- an "impression," per the phase spec,
@@ -279,25 +279,25 @@ export function rerollNpcRelationshipHooks(draft, { rng, preferTags = [], count 
 /** Kind-locked reroll -- always re-resolves against the draft's OWN `kind`, so a droid Contact's voice reroll can never cross into the organic pool (mirrors `npc-flavor.js`'s same kind-locking guarantee). */
 export function rerollNpcVoice(draft, { rng, preferTags = [] } = {}) {
   if (!draft) return draft;
-  return updateNpcConceptDraft(draft, { voice: pickNpcVoice({ kind: draft.kind, rng, preferTags }) });
+  return recomposeNpcPublicDescription(updateNpcConceptDraft(draft, { voice: pickNpcVoice({ kind: draft.kind, rng, preferTags }) }));
 }
 
 export function rerollNpcSpeechStyle(draft, { rng, preferTags = [] } = {}) {
   if (!draft) return draft;
-  return updateNpcConceptDraft(draft, { speechStyle: pickNpcSpeechStyle({ kind: draft.kind, rng, preferTags }) });
+  return recomposeNpcPublicDescription(updateNpcConceptDraft(draft, { speechStyle: pickNpcSpeechStyle({ kind: draft.kind, rng, preferTags }) }));
 }
 
 /** Kind-locked reroll for the PRIMARY `mannerisms` field. */
 export function rerollNpcMannerism(draft, { rng, preferTags = [] } = {}) {
   if (!draft) return draft;
-  return updateNpcConceptDraft(draft, { mannerisms: pickNpcMannerismForKind({ kind: draft.kind, rng, preferTags }) });
+  return recomposeNpcPublicDescription(updateNpcConceptDraft(draft, { mannerisms: pickNpcMannerismForKind({ kind: draft.kind, rng, preferTags }) }));
 }
 
 /** Kind-locked reroll for `appearance`/`appearanceCues` together (kept in sync -- see `npc/npc-bundle.js`'s own composition of the two). */
 export function rerollNpcAppearanceCues(draft, { rng, preferTags = [] } = {}) {
   if (!draft) return draft;
   const appearance = pickNpcAppearanceForKind({ kind: draft.kind, rng, preferTags });
-  return updateNpcConceptDraft(draft, { appearance, appearanceCues: appearance ? [appearance] : [] });
+  return recomposeNpcPublicDescription(updateNpcConceptDraft(draft, { appearance, appearanceCues: appearance ? [appearance] : [] }));
 }
 
 export function rerollNpcTechnologyFamiliarity(draft, { rng, contextBias = 0 } = {}) {
@@ -310,5 +310,5 @@ export function rerollNpcLifestyle(draft, { rng, contextBias = 0 } = {}) {
 
 export function rerollNpcAgeImpression(draft, { rng } = {}) {
   if (!draft) return draft;
-  return updateNpcConceptDraft(draft, { ageImpression: pickNpcAgeImpression({ kind: draft.kind, rng }) });
+  return recomposeNpcPublicDescription(updateNpcConceptDraft(draft, { ageImpression: pickNpcAgeImpression({ kind: draft.kind, rng }) }));
 }

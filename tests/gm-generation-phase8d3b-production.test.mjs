@@ -331,6 +331,22 @@ const stubDroidNameProvider = async () => 'TX-1';
     for (const id of ids) assert.ok(id.startsWith('draft:npc:'), `Contact draftId "${id}" must be domain-namespaced draft:npc:...`);
   }
 
+  // CORRECTION (independent review): every generated Contact's factionDraftId must point back to the EXACT parent Faction draft's own draftId -- this is the pre-commit Faction<->Contact graph edge the schema addendum introduced factionDraftId/draftId specifically to support.
+  {
+    const draft = await createProceduralFactionDraft({ rng: makeSeededRng(2), presetId: 'noble-house', contactCount: 5, ...baseOptions });
+    assert.ok(draft.draftId.startsWith('draft:faction:'), `Faction draftId "${draft.draftId}" must be domain-namespaced draft:faction:...`);
+    for (const contact of draft.contacts) {
+      assert.equal(contact.factionDraftId, draft.draftId, `Contact "${contact.name}"'s factionDraftId must equal the parent Faction draft's own draftId`);
+    }
+    // addFactionContact/regenerateFactionContacts/rerollFactionContact must ALL wire the same link, not just initial generation.
+    const added = await addFactionContact(draft, { rng: makeSeededRng(3), ...baseOptions });
+    assert.equal(added.contacts[added.contacts.length - 1].factionDraftId, draft.draftId, 'addFactionContact must set factionDraftId to the parent draft\'s draftId');
+    const regenerated = await regenerateFactionContacts(draft, { rng: makeSeededRng(4), ...baseOptions });
+    assert.ok(regenerated.contacts.every((c) => c.factionDraftId === draft.draftId), 'regenerateFactionContacts must set factionDraftId on every regenerated Contact');
+    const rerolledOne = await rerollFactionContact(draft, draft.contacts[0].draftId, { rng: makeSeededRng(5), ...baseOptions });
+    assert.equal(rerolledOne.contacts[0].factionDraftId, draft.draftId, 'rerollFactionContact must preserve factionDraftId on the rerolled Contact');
+  }
+
   // rerollFactionName changes ONLY the name (family/archetype/scale/contacts all untouched, contacts preserved by object identity).
   {
     const draft = await createProceduralFactionDraft({ rng: makeSeededRng(2), presetId: 'noble-house', ...baseOptions });
@@ -432,7 +448,10 @@ const stubDroidNameProvider = async () => 'TX-1';
         const out = {};
         for (const [key, v] of Object.entries(value)) {
           if (key === 'generatedAt') { out[key] = ''; continue; }
-          if (key === 'draftId') continue;
+          // draftId/factionDraftId/locationDraftId are all minted fresh
+          // per generation call (lib/draft-id.js) -- intentionally
+          // non-deterministic identity, never a generated FACT.
+          if (key === 'draftId' || key === 'factionDraftId' || key === 'locationDraftId') continue;
           out[key] = stripNonDeterministic(v);
         }
         return out;
@@ -647,7 +666,7 @@ const stubDroidNameProvider = async () => 'TX-1';
   const { createGeneratedNpcConcept } = await import(abs('scripts/generation/npc/npc-bundle.js'));
   const { createProceduralFactionDraft } = await import(abs('scripts/generation/factions/faction-bundle.js'));
   const {
-    rerollNpcVoice, rerollNpcMannerism, rerollNpcAppearanceCues, rerollNpcDesire, rerollNpcFear,
+    rerollNpcVoice, rerollNpcSpeechStyle, rerollNpcMannerism, rerollNpcAppearanceCues, rerollNpcDesire, rerollNpcFear,
     rerollNpcLoyalty, rerollNpcComplication, rerollNpcRelationshipHooks, rerollNpcPersonalityTraits,
     rerollNpcTemperament, rerollNpcSocialStyle, rerollNpcFactionRole, pickNpcAppearanceForKind, pickNpcMannerismForKind
   } = await import(abs('scripts/generation/npc/npc-characterization.js'));
@@ -811,6 +830,46 @@ const stubDroidNameProvider = async () => 'TX-1';
   }
   console.log('PHASE 8D-3B weighting (representative subset: role-filtered occupation always matches, technology-familiarity context bias has measurable effect) passed.');
 
+  // --- CORRECTION (independent review): locationContext reaches technologyFamiliarity/lifestyle end-to-end ---
+  {
+    const { resolveLocationContextBias } = await import(abs('scripts/generation/npc/npc-bundle.js'));
+    assert.deepEqual(resolveLocationContextBias(null), { technologyBias: null, lifestyleBias: null }, 'resolveLocationContextBias(null) must signal "no Location context" distinctly from a neutral bias');
+    assert.deepEqual(resolveLocationContextBias({}), { technologyBias: null, lifestyleBias: null }, 'an empty locationContext must also resolve to null (nothing relevant supplied), not a false neutral 0');
+
+    const HIGH_TECH = new Set(['expert', 'specialist']);
+    const LOW_TECH = new Set(['unfamiliar', 'basic']);
+    const WEALTHY_LIFESTYLE = new Set(['affluent', 'wealthy', 'elite']);
+    const N = 1500;
+    let advancedHigh = 0, frontierLow = 0, wealthyLifestyle = 0, modestLifestyle = 0;
+    for (let seed = 0; seed < N; seed++) {
+      const advanced = await createGeneratedNpcConcept({ rng: makeSeededRng(seed), availableSpeciesIds, locationContext: { technologyLevel: 'cutting-edge', technologyAccess: 'ubiquitous' }, nameProvider: stubNameProvider, droidNameProvider: stubDroidNameProvider });
+      if (HIGH_TECH.has(advanced.technologyFamiliarity)) advancedHigh++;
+      const frontier = await createGeneratedNpcConcept({ rng: makeSeededRng(seed + 4000000), availableSpeciesIds, locationContext: { technologyLevel: 'primitive', technologyAccess: 'isolated' }, nameProvider: stubNameProvider, droidNameProvider: stubDroidNameProvider });
+      if (LOW_TECH.has(frontier.technologyFamiliarity)) frontierLow++;
+      const wealthy = await createGeneratedNpcConcept({ rng: makeSeededRng(seed + 5000000), availableSpeciesIds, locationContext: { economyTags: ['financial-services', 'trade'] }, nameProvider: stubNameProvider, droidNameProvider: stubDroidNameProvider });
+      if (WEALTHY_LIFESTYLE.has(wealthy.lifestyle)) wealthyLifestyle++;
+      const modest = await createGeneratedNpcConcept({ rng: makeSeededRng(seed + 6000000), availableSpeciesIds, locationContext: { economyTags: ['mining', 'frontier'] }, nameProvider: stubNameProvider, droidNameProvider: stubDroidNameProvider });
+      if (WEALTHY_LIFESTYLE.has(modest.lifestyle)) modestLifestyle++;
+    }
+    assert.ok(advancedHigh / N > 0.4, `a cutting-edge/ubiquitous locationContext must produce mostly expert/specialist technologyFamiliarity (got ${advancedHigh}/${N})`);
+    assert.ok(frontierLow / N > 0.7, `a primitive/isolated locationContext must produce mostly unfamiliar/basic technologyFamiliarity (got ${frontierLow}/${N})`);
+    assert.ok(wealthyLifestyle > modestLifestyle * 5, `financial-services/trade economyTags must produce measurably more affluent+ lifestyle than mining/frontier economyTags (got ${wealthyLifestyle}/${N} vs ${modestLifestyle}/${N})`);
+
+    // locationContext's tags also flow into the general preferTags mechanism (occupation weighting proof, mirroring the existing mining-context test elsewhere).
+    const miningIds = new Set(['mineral surveyor', 'drilling rig operator', 'ore refinery operator', 'mining foreman']);
+    let miningOccupations = 0;
+    for (let seed = 0; seed < 400; seed++) {
+      const npc = await createGeneratedNpcConcept({ rng: makeSeededRng(seed), availableSpeciesIds, locationContext: { economyTags: ['mining', 'industrial'] }, nameProvider: stubNameProvider, droidNameProvider: stubDroidNameProvider });
+      if (miningIds.has(npc.occupation)) miningOccupations++;
+    }
+    assert.ok(miningOccupations > 0, 'locationContext.economyTags must reach the occupation pick via the shared preferTags mechanism (a mining-tagged locationContext must be able to produce a mining-flavored occupation)');
+
+    // Absent locationContext, generation still works exactly as before (backward compatible).
+    const noContext = await createGeneratedNpcConcept({ rng: makeSeededRng(1), availableSpeciesIds, nameProvider: stubNameProvider, droidNameProvider: stubDroidNameProvider });
+    assert.ok(noContext.technologyFamiliarity && noContext.lifestyle, 'omitting locationContext entirely must still produce valid technologyFamiliarity/lifestyle values');
+  }
+  console.log('PHASE 8D-3B locationContext wiring (technologyFamiliarity/lifestyle measurably driven by Location technology/economy signal, additive with role-derived bias, tags reach the shared preferTags mechanism, backward compatible when omitted) passed.');
+
   // --- publicDescription: derived, safe-to-reveal only -------------------
   {
     const description = composeNpcPublicDescription({
@@ -825,6 +884,46 @@ const stubDroidNameProvider = async () => 'TX-1';
     assert.equal(composeNpcPublicDescription({}), '', 'composeNpcPublicDescription must degrade to an empty string when given no facts, never throw');
   }
   console.log('PHASE 8D-3B publicDescription (derived from safe-to-reveal structured facts only, degrades gracefully) passed.');
+
+  // --- CORRECTION (independent review): publicDescription freshness/GM-sovereignty seam ---
+  {
+    const { setNpcPublicDescription, resetNpcPublicDescriptionToDerived, recomposeNpcPublicDescription, PUBLIC_DESCRIPTION_SOURCE } = await import(abs('scripts/generation/npc-concept.js'));
+    const npc = await createGeneratedNpcConcept({ rng: makeSeededRng(90), availableSpeciesIds, nameProvider: stubNameProvider, droidNameProvider: stubDroidNameProvider });
+    assert.equal(npc.publicDescriptionSource, PUBLIC_DESCRIPTION_SOURCE.DERIVED, 'a freshly generated NPC\'s publicDescription must default to derived');
+
+    // A reroll that touches one of composeNpcPublicDescription()'s own inputs must refresh publicDescription to match the NEW facts.
+    const rerolled = rerollNpcAppearanceCues(npc, { rng: makeSeededRng(91) });
+    assert.notEqual(rerolled.appearance, npc.appearance, 'test setup: this seed pair must actually change appearance');
+    assert.notEqual(rerolled.publicDescription, npc.publicDescription, 'publicDescription must be recomposed after a reroll that changes one of its own inputs (appearanceCues)');
+    assert.ok(rerolled.publicDescription.length === 0 || !npc.appearance || rerolled.publicDescription !== npc.publicDescription, 'recomposed publicDescription must never describe stale facts');
+
+    // GM sovereignty: once manually set, publicDescription survives EVERY relevant reroll untouched.
+    const manual = setNpcPublicDescription(npc, 'A hand-written GM description that must never be silently overwritten.');
+    assert.equal(manual.publicDescriptionSource, PUBLIC_DESCRIPTION_SOURCE.MANUAL, 'setNpcPublicDescription must mark the source manual');
+    const relevantRerollers = [
+      ['appearanceCues', () => rerollNpcAppearanceCues(manual, { rng: makeSeededRng(1) })],
+      ['mannerism', () => rerollNpcMannerism(manual, { rng: makeSeededRng(1) })],
+      ['voice', () => rerollNpcVoice(manual, { rng: makeSeededRng(1) })],
+      ['speechStyle', () => rerollNpcSpeechStyle(manual, { rng: makeSeededRng(1) })],
+      ['occupation', () => rerollNpcOccupation(manual, { rng: makeSeededRng(1) })]
+    ];
+    for (const [label, run] of relevantRerollers) {
+      const result = run();
+      assert.equal(result.publicDescription, manual.publicDescription, `reroll${label} must NEVER overwrite a manually-set publicDescription`);
+      assert.equal(result.publicDescriptionSource, PUBLIC_DESCRIPTION_SOURCE.MANUAL, `reroll${label} must leave publicDescriptionSource as manual`);
+    }
+    // recomposeNpcPublicDescription() called directly must also be a no-op while manual.
+    assert.equal(recomposeNpcPublicDescription(manual).publicDescription, manual.publicDescription, 'recomposeNpcPublicDescription must be a no-op on a manual-source draft');
+
+    // The explicit "Recompose" action overrides manual and returns to derived.
+    const reset = resetNpcPublicDescriptionToDerived(manual);
+    assert.equal(reset.publicDescriptionSource, PUBLIC_DESCRIPTION_SOURCE.DERIVED, 'resetNpcPublicDescriptionToDerived must switch the source back to derived');
+    assert.notEqual(reset.publicDescription, manual.publicDescription, 'resetNpcPublicDescriptionToDerived must discard the manual text and recompose fresh');
+    // And once back to derived, a relevant reroll refreshes it again.
+    const rerolledAfterReset = rerollNpcMannerism(reset, { rng: makeSeededRng(2) });
+    assert.equal(rerolledAfterReset.publicDescriptionSource, PUBLIC_DESCRIPTION_SOURCE.DERIVED, 'a reroll after explicit recompose must keep the source derived');
+  }
+  console.log('PHASE 8D-3B publicDescription freshness (derived recomposes after every relevant reroll, manual text survives every reroll untouched, explicit recompose overrides manual) passed.');
 
   // --- remaining targeted rerolls preserve unrelated fields (batch check) ---
   {
@@ -855,4 +954,187 @@ const stubDroidNameProvider = async () => 'TX-1';
   console.log('PHASE 8D-3B targeted reroll wrappers (13 new field rerolls, each preserving name/draftId/role/secret) passed.');
 }
 
-console.log('PHASE 8D-3B NPC + Faction productionization suite (catalog quality, generation semantics, bundle generation, reroll safety, determinism, flavor notes, complete NPC schema addendum) passed.');
+// ------------------------------------------------------------
+// GM Field Authoring API (correction pass: draft-field-authoring.js + npc/npc-field-authoring.js)
+// ------------------------------------------------------------
+{
+  const engine = await import(abs('scripts/generation/lib/draft-field-authoring.js'));
+  const {
+    npcRemoveDraftField, npcRenameDraftField,
+    npcSetFieldValue, npcAddFieldValue, npcRemoveFieldValue, npcDuplicateFieldValue, npcAddCustomField
+  } = await import(abs('scripts/generation/npc/npc-field-authoring.js'));
+  const { createGeneratedNpcConcept } = await import(abs('scripts/generation/npc/npc-bundle.js'));
+  const { rerollNpcAppearanceCues } = await import(abs('scripts/generation/npc/npc-characterization.js'));
+  const availableSpeciesIds = ['species-human', 'species-twi-lek'];
+
+  // §53 -- the generic engine imports NOTHING domain-specific (no NPC/Faction/Planet/Species catalogs). Read its own source and confirm every import target is either a Node builtin-adjacent utility or has no domain-content vocabulary in its path.
+  {
+    const fs = await import('node:fs');
+    const path = await import('node:path');
+    const sourcePath = path.default.join(process.cwd(), 'scripts/generation/lib/draft-field-authoring.js');
+    const source = fs.default.readFileSync(sourcePath, 'utf8');
+    const importLines = [...source.matchAll(/^import .* from '([^']+)';$/gm)].map((m) => m[1]);
+    assert.deepEqual(importLines, ['../../utils/stable-id.js'], `draft-field-authoring.js must import ONLY the generic stable-id utility, no domain catalogs -- found: ${JSON.stringify(importLines)}`);
+  }
+
+  // §48/§49 -- core operations, exercised directly on a bare fields-state (no NPC involved at all -- proves the engine's own genericness).
+  {
+    const defs = { motivation: { defaultLabel: 'Motivation', multiValue: true }, gmNotes: { defaultLabel: 'GM Notes', multiValue: false } };
+    let draft = { narrativeFields: engine.buildFieldsStateFromScalars(defs, { motivation: 'Protect family', gmNotes: '' }) };
+    assert.equal(engine.getFieldPrimaryValue(draft.narrativeFields, 'motivation'), 'Protect family', 'buildFieldsStateFromScalars must seed the initial value');
+
+    // add value / identity
+    draft = engine.addDraftFieldValue(draft, 'motivation', 'Leave the planet');
+    draft = engine.addDraftFieldValue(draft, 'motivation', 'Get revenge');
+    assert.equal(draft.narrativeFields.fields.motivation.values.length, 3, 'addDraftFieldValue must append, not replace');
+    const ids3 = draft.narrativeFields.fields.motivation.values.map((v) => v.entryId);
+    assert.equal(new Set(ids3).size, 3, 'every added value must get a unique entryId');
+
+    // remove middle
+    const middleId = draft.narrativeFields.fields.motivation.values[1].entryId;
+    draft = engine.removeDraftFieldValue(draft, 'motivation', middleId);
+    assert.equal(draft.narrativeFields.fields.motivation.values.length, 2, 'removeDraftFieldValue must remove exactly one entry');
+    assert.ok(draft.narrativeFields.fields.motivation.values.every((v) => v.entryId !== middleId), 'the removed entryId must be gone');
+
+    // duplicate first -> new id
+    const firstId = draft.narrativeFields.fields.motivation.values[0].entryId;
+    draft = engine.duplicateDraftFieldValue(draft, 'motivation', firstId);
+    assert.equal(draft.narrativeFields.fields.motivation.values.length, 3, 'duplicateDraftFieldValue must add one entry');
+    const dupIds = draft.narrativeFields.fields.motivation.values.map((v) => v.entryId);
+    assert.equal(new Set(dupIds).size, 3, 'a duplicated value must receive a NEW entryId, never reuse the original');
+    assert.equal(draft.narrativeFields.fields.motivation.values.filter((v) => v.value === 'Protect family').length, 2, 'the duplicate must carry the same VALUE as the original');
+    assert.equal(draft.narrativeFields.fields.motivation.values[1].source, 'manual', 'a duplicated entry must be source:manual, even duplicating a generated entry');
+
+    // reorder value does not change ids
+    const idsBeforeMove = draft.narrativeFields.fields.motivation.values.map((v) => v.entryId);
+    const lastId = idsBeforeMove[idsBeforeMove.length - 1];
+    const targetBeforeId = idsBeforeMove[0];
+    draft = engine.moveDraftFieldValue(draft, 'motivation', lastId, targetBeforeId);
+    const idsAfterMove = draft.narrativeFields.fields.motivation.values.map((v) => v.entryId);
+    assert.equal(new Set(idsAfterMove).size, new Set(idsBeforeMove).size, 'moveDraftFieldValue must not change entry count');
+    assert.deepEqual([...idsAfterMove].sort(), [...idsBeforeMove].sort(), 'moveDraftFieldValue must never change any entryId, only order');
+    assert.equal(idsAfterMove[0], lastId, 'the moved entry must now sit before its target');
+
+    // rename / reset label
+    draft = engine.renameDraftField(draft, 'motivation', 'Goal');
+    assert.equal(draft.narrativeFields.fields.motivation.label, 'Goal', 'renameDraftField must change the display label');
+    assert.equal(draft.narrativeFields.fields.motivation.fieldId, 'motivation', 'renameDraftField must NEVER change the semantic fieldId');
+    draft = engine.resetDraftFieldLabel(draft, 'motivation');
+    assert.equal(draft.narrativeFields.fields.motivation.label, 'Motivation', 'resetDraftFieldLabel must restore the original defaultLabel');
+
+    // remove/restore field (empty vs. deleted, §52)
+    draft = engine.setDraftFieldValue(draft, 'gmNotes', 'Some GM notes');
+    let removed = engine.removeDraftField(draft, 'gmNotes');
+    assert.equal(removed.narrativeFields.fields.gmNotes.hidden, true, 'removeDraftField must mark the field hidden');
+    assert.equal(removed.narrativeFields.fields.gmNotes.values.length, 1, 'removeDraftField must PRESERVE the field\'s values, not discard them');
+    let restored = engine.restoreDraftField(removed, 'gmNotes');
+    assert.equal(restored.narrativeFields.fields.gmNotes.hidden, false, 'restoreDraftField must unhide the field');
+    assert.equal(restored.narrativeFields.fields.gmNotes.values[0].value, 'Some GM notes', 'restoreDraftField must bring back the SAME values (never regenerate)');
+    // Now genuinely empty a field (remove its only value) vs. remove/hide it -- two different states.
+    const onlyValueId = restored.narrativeFields.fields.gmNotes.values[0].entryId;
+    const emptied = engine.removeDraftFieldValue(restored, 'gmNotes', onlyValueId);
+    assert.equal(emptied.narrativeFields.fields.gmNotes.hidden, false, 'a field with its last value removed must stay VISIBLE (present, awaiting input) -- not the same as removeDraftField()');
+    assert.equal(emptied.narrativeFields.fields.gmNotes.values.length, 0, 'an emptied field must have zero values');
+    const hiddenInstead = engine.removeDraftField(restored, 'gmNotes');
+    assert.equal(hiddenInstead.narrativeFields.fields.gmNotes.hidden, true, 'a REMOVED field must be hidden regardless of whether it still has values');
+
+    // custom fields
+    let withCustom = engine.addCustomDraftField(draft, { label: 'Favorite Drink', value: 'Spiced caf' });
+    const customId = withCustom.narrativeFields.order[withCustom.narrativeFields.order.length - 1];
+    assert.ok(customId.startsWith('custom-field-'), 'a custom field must get a custom-field-... id, never reuse a built-in fieldId');
+    assert.equal(withCustom.narrativeFields.fields[customId].isCustom, true, 'a custom field must be flagged isCustom');
+    assert.equal(withCustom.narrativeFields.fields[customId].values[0].value, 'Spiced caf', 'addCustomDraftField must accept an initial value in one call');
+    const duplicatedField = engine.duplicateDraftField(withCustom, customId);
+    const newCustomIds = duplicatedField.narrativeFields.order.filter((id) => id.startsWith('custom-field-'));
+    assert.equal(newCustomIds.length, 2, 'duplicateDraftField must add a second custom field');
+    assert.notEqual(newCustomIds[0], newCustomIds[1], 'duplicateDraftField must mint a NEW fieldId for the copy, never reuse the original');
+    const afterCustomRemoval = engine.removeCustomDraftField(duplicatedField, customId);
+    assert.ok(!(customId in afterCustomRemoval.narrativeFields.fields), 'removeCustomDraftField must PERMANENTLY delete a custom field (unlike removeDraftField, which only hides a built-in)');
+    assert.equal(engine.removeCustomDraftField(draft, 'motivation'), draft, 'removeCustomDraftField must be a no-op on a built-in (non-custom) field');
+
+    // reorder field
+    const orderBefore = withCustom.narrativeFields.order.slice();
+    const reordered = engine.moveDraftField(withCustom, customId, orderBefore[0]);
+    assert.equal(reordered.narrativeFields.order[0], customId, 'moveDraftField must place the field before its target');
+    assert.deepEqual([...reordered.narrativeFields.order].sort(), [...orderBefore].sort(), 'moveDraftField must never add/remove/rename a fieldId, only reorder');
+
+    // §54 -- unknown/structural fieldIds fail safe (no-op), never throw, never touched.
+    assert.equal(engine.removeDraftField(draft, 'draftId'), draft, 'removeDraftField("draftId") must no-op -- draftId is never a registered field');
+    assert.equal(engine.renameDraftField(draft, 'kind', 'Type'), draft, 'renameDraftField("kind") must no-op -- structural fields are simply never addressable');
+    assert.equal(engine.setDraftFieldValue(draft, 'provenance', 'hacked'), draft, 'setDraftFieldValue("provenance") must no-op');
+    assert.equal(engine.addDraftFieldValue(draft, 'not-a-real-field', 'x'), draft, 'an operation on a completely unknown fieldId must fail safe, never throw');
+  }
+  console.log('PHASE 8D-3B GM Field Authoring API core operations (add/remove/restore/rename/reset-label fields, add/remove/duplicate/reorder values with stable identity, custom field add/duplicate/remove, structural-field protection, no domain imports in the generic engine) passed.');
+
+  // §50/§51 -- full NPC walkthrough: GM ownership, unrelated-reroll preservation, custom fields, structural id/kind untouched, matching the review's own end-to-end example.
+  {
+    const npc = await createGeneratedNpcConcept({ rng: makeSeededRng(3), availableSpeciesIds, nameProvider: stubNameProvider, droidNameProvider: stubDroidNameProvider });
+    assert.equal(npc.narrativeFields, null, 'a freshly generated NPC must carry NO narrativeFields until a GM touches field authoring -- zero cost for the common case');
+
+    let d = npcAddFieldValue(npc, 'motivation', 'Leave the planet');
+    d = npcAddFieldValue(d, 'motivation', 'Get revenge');
+    assert.equal(d.narrativeFields.fields.motivation.values.length, 3, 'two npcAddFieldValue calls onto the one generated entry must yield 3 total entries');
+    assert.equal(d.motivation, npc.motivation, 'the scalar mirror stays the PRIMARY (first/original) value while only additional entries are appended');
+
+    const middleId = d.narrativeFields.fields.motivation.values[1].entryId;
+    d = npcRemoveFieldValue(d, 'motivation', middleId);
+    assert.equal(d.narrativeFields.fields.motivation.values.length, 2, 'npcRemoveFieldValue must remove exactly the targeted entry');
+
+    const firstId = d.narrativeFields.fields.motivation.values[0].entryId;
+    d = npcDuplicateFieldValue(d, 'motivation', firstId);
+    assert.equal(d.narrativeFields.fields.motivation.values.length, 3, 'npcDuplicateFieldValue must add one new entry');
+
+    d = npcRenameDraftField(d, 'motivation', 'Goal');
+    assert.equal(d.narrativeFields.fields.motivation.label, 'Goal', 'npcRenameDraftField must update the label');
+
+    d = npcRemoveFieldValue(d, 'motivation', d.narrativeFields.fields.motivation.values[0].entryId);
+    assert.equal(d.narrativeFields.fields.motivation.label, 'Goal', 'removing a value must not reset a customized label');
+
+    d = npcAddCustomField(d, { label: 'Favorite Drink', value: 'Spiced Caf' });
+    d = npcRemoveDraftField(d, 'fear');
+
+    // THE FINAL INVARIANT (review's own wording): after ALL of the above, a reroll of an UNRELATED field must preserve every one of these GM choices.
+    const beforeReroll = d;
+    const afterReroll = rerollNpcAppearanceCues(d, { rng: makeSeededRng(77) });
+    assert.notEqual(afterReroll.appearance, beforeReroll.appearance, 'test setup: appearance must actually change for this to be a meaningful check');
+    assert.equal(afterReroll.narrativeFields.fields.motivation.label, 'Goal', 'reroll Appearance must preserve the renamed Goal label');
+    assert.deepEqual(afterReroll.narrativeFields.fields.motivation.values, beforeReroll.narrativeFields.fields.motivation.values, 'reroll Appearance must preserve every Goal entry exactly');
+    assert.equal(afterReroll.narrativeFields.fields.fear.hidden, true, 'reroll Appearance must NOT restore the deleted Fear field');
+    const customFieldId = Object.keys(afterReroll.narrativeFields.fields).find((id) => afterReroll.narrativeFields.fields[id].label === 'Favorite Drink');
+    assert.ok(customFieldId, 'reroll Appearance must preserve the custom Favorite Drink field');
+    assert.equal(afterReroll.narrativeFields.fields[customFieldId].values[0].value, 'Spiced Caf', 'reroll Appearance must preserve the custom field\'s value');
+    assert.equal(afterReroll.draftId, npc.draftId, 'reroll Appearance must never touch draftId');
+    assert.equal(afterReroll.kind, npc.kind, 'reroll Appearance must never touch kind');
+
+    // GM Notes: manual edit + survives an unrelated reroll.
+    let withNotes = npcSetFieldValue(npc, 'gmNotes', 'A note only the GM should see.');
+    assert.equal(withNotes.gmNotes, 'A note only the GM should see.', 'npcSetFieldValue must sync the gmNotes scalar mirror');
+    assert.equal(withNotes.narrativeFields.fields.gmNotes.values[0].source, 'manual', 'npcSetFieldValue must mark the entry manual');
+    const rerolledWithNotes = rerollNpcAppearanceCues(withNotes, { rng: makeSeededRng(78) });
+    assert.equal(rerolledWithNotes.gmNotes, withNotes.gmNotes, 'GM Notes must survive an unrelated reroll');
+
+    // A TARGETED reroll of the SAME field (a plain scalar patch, not through the field-authoring API) replaces the value but preserves the custom label.
+    const { updateNpcConceptDraft } = await import(abs('scripts/generation/npc-concept.js'));
+    const targetedReroll = updateNpcConceptDraft(afterReroll, { motivation: 'A wholly new generated motivation' });
+    assert.equal(targetedReroll.narrativeFields.fields.motivation.label, 'Goal', 'a targeted reroll of motivation itself must still preserve the customized label');
+    assert.equal(targetedReroll.narrativeFields.fields.motivation.values.length, 1, 'a targeted reroll of motivation must collapse back to one fresh generated entry');
+    assert.equal(targetedReroll.narrativeFields.fields.motivation.values[0].value, 'A wholly new generated motivation', 'the fresh entry must carry the new value');
+    assert.equal(targetedReroll.narrativeFields.fields.motivation.values[0].source, 'generated', 'the fresh entry from a plain reroll must be source:generated');
+    assert.equal(targetedReroll.narrativeFields.fields.fear.hidden, true, 'a targeted reroll of motivation must not affect the unrelated (already-removed) fear field');
+  }
+  console.log('PHASE 8D-3B GM Field Authoring API full walkthrough (multi-value motivation add/remove/duplicate/rename, custom field, field removal, ALL preserved across an unrelated reroll -- the review\'s own final invariant; a targeted reroll of the SAME field replaces its value while preserving its custom label) passed.');
+
+  // §55 -- save/load round-trip: narrativeFields is plain, JSON-safe state -- a full JSON.stringify/parse cycle must preserve it exactly.
+  {
+    const npc = await createGeneratedNpcConcept({ rng: makeSeededRng(4), availableSpeciesIds, nameProvider: stubNameProvider, droidNameProvider: stubDroidNameProvider });
+    let d = npcAddFieldValue(npc, 'motivation', 'Escape the planet');
+    d = npcRenameDraftField(d, 'motivation', 'Goal');
+    d = npcRemoveDraftField(d, 'fear');
+    d = npcAddCustomField(d, { label: 'Favorite Drink', value: 'Spiced caf' });
+    const roundTripped = JSON.parse(JSON.stringify(d));
+    assert.deepEqual(roundTripped.narrativeFields, d.narrativeFields, 'narrativeFields must round-trip through JSON exactly (custom label, removed field, multi-values, custom field all preserved)');
+  }
+  console.log('PHASE 8D-3B GM Field Authoring API save/load round-trip (narrativeFields survives JSON serialize/deserialize exactly) passed.');
+}
+
+console.log('PHASE 8D-3B NPC + Faction productionization suite (catalog quality, generation semantics, bundle generation, reroll safety, determinism, flavor notes, complete NPC schema addendum, GM field authoring API) passed.');

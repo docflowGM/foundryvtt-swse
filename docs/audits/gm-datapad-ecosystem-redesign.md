@@ -8052,3 +8052,151 @@ production-quality at a representative size; full-target expansion
 (§E) is explicit, tracked follow-up, not silently dropped. Per
 standing practice: stopping here for independent review before
 starting Phase 8D-3C.
+
+## 187. PHASE 8D-3B correction pass — independent review round 1 (wiring, not content)
+
+Independent review of §186's head found the architecture sound
+("Faction/NPC composers ✅, species/locality selection ✅, droid-vs-
+organic selection/content authority ✅, competence authority ✅, Crew
+Quality mapping ✅, Faction Scale separation ✅, targeted reroll
+primitives ✅, canonical-persistence boundary ✅, deterministic
+generation ✅, exact-head CI ✅") but identified four real WIRING gaps
+— explicitly not a request to hydrate catalogs ("do not block 8D-3B
+because NPC_FEARS has 30 entries instead of 250... I am judging this
+phase on whether 5 entries and 5,000 entries behave identically
+architecturally"). All four fixed on this same branch/PR, per standing
+practice.
+
+**1. Generated Contacts didn't reference their parent Faction draft.**
+`factions/faction-bundle.js` generated every Contact BEFORE the
+Faction draft (and its `draftId`) existed, so the schema addendum's own
+`factionDraftId` field was always empty. Fixed: `createProceduralFactionDraft()`
+now reserves its `draftId` (`createDraftId('faction')`) FIRST and
+threads it through `generateFactionContacts()`/`addFactionContact()`/
+`regenerateFactionContacts()`/`rerollFactionContact()` into every
+generated Contact's `factionDraftId`. Verified every generation/reroll/
+add/regenerate path produces `contact.factionDraftId === faction.draftId`
+exactly.
+
+**2. `publicDescription` went stale after a targeted reroll.**
+Composed once at generation time but never recomputed, so e.g.
+rerolling `appearanceCues` left `publicDescription` describing the OLD
+appearance. Fixed with the same derived/manual authorship seam the
+planet generator's own summary field already resolved this tension
+with: `npc-concept.js` gained `publicDescriptionSource`
+(`'derived'`/`'manual'`) plus `recomposeNpcPublicDescription()`
+(a no-op once manual), `setNpcPublicDescription()` (GM authorship,
+marks manual), and `resetNpcPublicDescriptionToDerived()` (the explicit
+"↻ Recompose" action, which alone may override manual). Every reroll
+wrapper whose field feeds the composer
+(`appearanceCues`/`voice`/`speechStyle`/`mannerism`/`occupation`/
+`ageImpression`/both flavor-note rerolls) now calls
+`recomposeNpcPublicDescription()` immediately after updating its own
+field. Verified: a derived-source reroll always refreshes the text; a
+manual-source reroll NEVER touches it, across all seven reroll paths;
+explicit recompose discards manual text and returns to derived.
+
+**3. Location technology/economy context never reached `technologyFamiliarity`/`lifestyle`.**
+Both fields were biased ONLY by the NPC's own role tier — a Location's
+real `technologyLevel`/`technologyAccess`/`economyTags` (available from
+Phase 8D-3A planet drafts) never factored in, even though every OTHER
+context-sensitive pick already received Location signal indirectly via
+`preferTags`. Fixed with ONE new structured optional input,
+`npc/npc-bundle.js`'s `locationContext: { technologyLevel,
+technologyAccess, technologySpecialties, economyTags, locationTags,
+locationId, locationDraftId }`, resolved by the new
+`resolveLocationContextBias()` into `{technologyBias, lifestyleBias}`
+that ADD to (never replace) the existing role-derived bias — an
+advanced-tech world's own technician now reads as measurably MORE
+tech-familiar than either signal alone would suggest. `locationContext`'s
+tags are also folded into `preferTags` once, at the top of
+`createGeneratedNpcConcept()`, so occupation/appearance/flavor/voice/
+speech all benefit automatically without a second parameter. Verified
+statistically: a cutting-edge/ubiquitous context produces >40%
+expert+/specialist technologyFamiliarity (vs. the ~15% neutral
+baseline); a primitive/isolated context produces >70% unfamiliar/basic;
+financial-services/trade economyTags produce >5x the affluent+
+lifestyle rate of mining/frontier economyTags; omitting `locationContext`
+entirely remains fully backward compatible.
+
+**4. GM Field Authoring API — the review's largest ask, implemented
+in full.** A generic, domain-agnostic engine
+(`lib/draft-field-authoring.js` — verified by test to import NOTHING
+but the generic stable-id utility, no NPC/Faction/Planet/Species
+catalog knowledge at all) providing add/remove/restore/rename/reset-
+label field operations, set/add/remove/duplicate/move value operations
+(stable `entryId`s, never array index), duplicate/reorder field
+operations, and add/remove custom-field operations — every operation
+immutable-safe (`{...draft, narrativeFields: next}`, never mutates its
+input) and fail-safe on an unknown fieldId (returns the draft
+UNCHANGED, never throws). Structural identity (`draftId`/`kind`/
+`provenance`) is protected NOT by special-casing but structurally: only
+fields an `npc/npc-field-definitions.js`-style registry explicitly
+declares (`motivation`/`desire`/`fear`/`agenda`/`secret`/`complication`/
+`loyalty`/`publicNotes`/`gmNotes` in this pass) are ever addressable at
+all.
+
+`npc/npc-field-authoring.js` is the thin NPC-specific layer: lazily
+builds `narrativeFields` from current scalars on first touch (a
+freshly generated NPC carries `narrativeFields: null` — zero cost for
+the common, untouched case, zero determinism impact), and mirrors
+every registered field's PRIMARY value back onto its matching
+`npc-concept.js` scalar after every operation so every EXISTING
+consumer reading e.g. `draft.motivation` as a plain string keeps
+working completely unchanged. The reconciliation half of this
+lives in `npc-concept.js`'s own `createNpcConceptDraft()`, via the
+generic engine's `reconcileFieldsStateWithScalars()`: on every
+construction/patch, a registered field whose scalar did NOT change is
+preserved byte-for-byte (custom label, hidden state, every multi-value
+entry, all survive); a field whose scalar DID change (a plain,
+field-authoring-unaware reroll touched it directly) collapses to one
+fresh `'generated'`-source entry carrying the new value while
+PRESERVING its customized label — exactly the review's own "reroll
+Appearance must preserve Goal; reroll Motivation itself replaces its
+value but keeps the Goal label" distinction.
+
+Verified end-to-end against the review's own literal final-invariant
+walkthrough: add two more motivations, remove the middle one, duplicate
+the first, rename the field to "Goal", remove one more value, add a
+custom "Favorite Drink" field, delete the Fear field entirely — then
+reroll Appearance, and confirm EVERY one of those choices (renamed
+label, exact remaining entries, deleted Fear, custom field, its value)
+survives unchanged, while `draftId`/`kind` are untouched throughout and
+Appearance itself demonstrably did change. Also verified: entry/field
+identity survives every operation (duplicates always mint NEW ids,
+moves never change any id); "empty field" (zero values, still visible)
+is verified structurally distinct from "removed field" (hidden,
+values preserved for restoration); a full `JSON.stringify`/`parse`
+round-trip preserves `narrativeFields` exactly.
+
+### Tests + Regression (this correction pass)
+
+`tests/gm-generation-phase8d3b-production.test.mjs` gained 6 new
+sections covering all four fixes: factionDraftId wiring (verified
+across generate/add/regenerate/reroll-one), publicDescription
+freshness (derived-refreshes / manual-survives across all seven
+relevant reroll paths / explicit recompose), locationContext wiring
+(statistical technology/lifestyle bias, preferTags flow-through,
+backward compatibility), and three GM Field Authoring API sections
+(core operations against a bare fields-state proving the engine's own
+genericness; the full NPC walkthrough matching the review's exact
+final invariant; JSON round-trip). Every PRE-EXISTING assertion in the
+file (the whole-draft seeded-determinism check in particular) still
+passes unchanged, confirming `narrativeFields` staying `null` on
+untouched drafts has zero effect on generation determinism.
+
+Full `gm-*.test.mjs` sweep: **59/59 green** (unchanged file count —
+this pass extended the existing Phase 8D-3B file rather than adding a
+new one). Full rolling suite (`tools/run-rolling-tests.mjs`): **189
+passed, 0 failed** (5 pre-existing exclusions, unchanged). Full syntax
+check (`tools/run-rolling-syntax-check.mjs`): **2437/2437 clean**. No
+canonical-persistence call in any file this pass touched or added
+(confirmed by direct grep, same discipline as §186's own §G). Working
+tree clean before this commit.
+
+**PHASE 8D-3B CORRECTION PASS ROUND 1 COMPLETE.** All four wiring gaps
+the independent review identified are fixed and verified; no catalog
+was hydrated in this pass (deliberately, per the review's own explicit
+instruction). Same branch (`claude/gm-datapad-phase8d3b-49c10v`), same
+PR (#964). Per standing practice: stopping here for independent
+review.
