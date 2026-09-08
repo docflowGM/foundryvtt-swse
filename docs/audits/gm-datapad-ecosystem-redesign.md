@@ -8516,3 +8516,190 @@ without further schema changes; no catalog was hydrated in this pass
 (deliberately). Same branch (`claude/gm-datapad-phase8d3b-49c10v`),
 same PR (#964). Per standing practice: stopping here for independent
 review.
+
+## 190. PHASE 8D-3B correction pass round 4 — Contact↔Location resilience hardening
+
+A fourth independent-review message confirmed `locationLinks[]`'s
+shape was correct and should NOT be redesigned again, then identified
+nine resilience gaps in identity lifecycle, resolution semantics, GM
+authorship, and validation — explicitly scoped as hardening around the
+existing shape, not a schema change. All nine addressed on the same
+branch/PR, no table hydration.
+
+### 1. Draft Locations were second-class in reverse lookup
+
+`findContactsForLocation(contacts, locationId, ...)` only ever matched
+`link.locationId` — a Contact generated for a not-yet-committed
+Faction/Location draft (`locationDraftId` only) was invisible to the
+reverse lookup until promotion, breaking the exact
+`GenerateLocation → GenerateFaction → GenerateContacts → open the
+draft Location's own Datapad` workflow this draft-first architecture
+exists to support. Renamed to `findContactsForLocationRef(contacts,
+{ locationId } | { locationDraftId }, options)`: a canonical
+`locationId` always wins when both are supplied in the same query ref
+(mirroring `createContactLocationLink()`'s own precedence), a draft
+target matches by EXACT `locationDraftId` (hierarchy traversal stays
+canonical-only for now — a draft batch's own hierarchy isn't
+necessarily available to a caller yet — but an exact draft match always
+works today).
+
+### 2. Resolution states conflated "not checked" with "broken"
+
+`resolveContactLocationLink()` returned `'orphaned'` for a canonical id
+with no `findLocation` supplied at all, indistinguishable from a
+resolver that was supplied and definitively found nothing — a UI would
+show "⚠ Missing Location" for a relationship nobody had even tried to
+resolve yet. Added a fifth state,
+`CONTACT_LOCATION_LINK_RESOLUTION_STATE`: `canonical`/`draft` (a
+resolver was supplied and found it), `unresolved` (an id is set but no
+resolver function was supplied at all), `orphaned` (a resolver WAS
+supplied and definitively returned nothing), `empty` (no id at all).
+Applied symmetrically to both canonical and draft targets.
+
+### 3. GM edits didn't reliably become `source: manual`
+
+`updateContactLocationLink()`/`addContactLocationLink()` inherited
+`createContactLocationLink()`'s neutral `source: 'generated'` default,
+so a GM manually editing a generated relationship's text could leave
+it looking machine-authored — fragile provenance that put the burden
+on every UI call site to remember to pass `source: 'manual'`. Both GM
+action-layer operations now default `source` to `'manual'` unless the
+caller explicitly overrides it (the generator itself never goes
+through this action layer — `npc/npc-bundle.js` calls
+`createContactLocationLink()` directly). `rerollContactLocationLink()`
+deliberately keeps its own `source: 'generated'` default — the GM
+explicitly asked the generator to replace the fact, which is a
+different authorship event than editing it by hand.
+
+### 4. No draft → canonical promotion operation existed
+
+The schema could represent both `locationDraftId` and, after commit,
+`locationId`, but nothing owned the TRANSITION — leaving it to "random
+controllers doing `patch.locationId = ...`" (the review's own words),
+which risks losing `relationshipType`/label/certainty/notes/ordering
+in the process. Added `resolveLocationDraftReferenceInLinks()` (pure,
+`npc/npc-location-link.js`) and its draft-CRUD wrapper
+`resolveContactLocationDraftReference()` (`npc/npc-location-link-actions.js`):
+replaces every link whose `locationDraftId` matches the promoted
+draft's id with the new canonical `locationId`, preserving `linkId`/
+`relationshipType`/`relationshipLabel`/`status`/`primary`/`scope`/
+`certainty`/`revealState`/`source`/`notes`/`provenance` exactly and
+optionally refreshing `snapshot` to the newly-committed Location's real
+name — an unrelated sibling link (a different `locationDraftId`) is
+returned by the SAME object reference, untouched. Explicitly NOT the
+universal cross-domain relationship registry deferred in §189 — this
+only finishes the draft/canonical lifecycle THIS relationship type
+already promised.
+
+### 5. Snapshot-only entries were too permissive
+
+The round-3 normalizer treated ANY snapshot-named entry as meaningful,
+which (necessary for a migrated `lastKnownLocation`, which never had an
+id) also permitted the exact back door the review called out: an
+`addContactLocationLink()` call for `relationshipType: 'resident'` with
+only a `snapshot.name` and no real target — reintroducing name-only
+relationships through the side door the whole `locationId`/
+`locationDraftId` identity model exists to close. Restricted
+snapshot-only validity to the two cases that genuinely have no
+resolvable id by nature: `relationshipType: LAST_SEEN` and `source:
+'imported'` (legacy data whose original system may not have carried an
+id either) — a normal current relationship (resident/work/stationed/
+owns/hiding/...) now always requires a real `locationId`/
+`locationDraftId`. Enforced in one place,
+`isMeaningfulContactLocationLink()`, used by both `normalizeContactLocationLinks()`
+and the CRUD actions' rejection checks.
+
+### 6. `CUSTOM` relationship type accepted a blank label
+
+`data/npc-location-relationship-types.js` already documented "CUSTOM
+has no default; custom without GM-written label is contradictory," but
+`createContactLocationLink()` happily built (and normalization
+accepted) a `custom` link with an empty `relationshipLabel`, violating
+its own documented contract. `isMeaningfulContactLocationLink()` now
+rejects `relationshipType: CUSTOM` with no label — reused the SAME
+meaningfulness gate as item 5, so `addContactLocationLink()`
+no-ops and `updateContactLocationLink()` rejects the WHOLE patch
+(returns the draft unchanged) rather than silently dropping the
+relationship out of the array — a bad GM edit bounces, it doesn't
+delete data.
+
+### 7. Changing `relationshipType` could leave a contradictory label
+
+`updateContactLocationLink()` spread the old link before the patch, so
+changing ONLY `relationshipType` (e.g. resident → work) silently kept
+the OLD type's label ("native") attached to the new type — legal
+structurally, almost certainly accidental. Fixed with a narrow rule
+scoped to `updateContactLocationLink()`: if `relationshipType` is
+explicitly changed in a patch that does NOT also explicitly supply
+`relationshipLabel`, the label resets to the new type's own default
+(reusing `createContactLocationLink()`'s existing default-label
+fallback by passing an explicit empty string) — supplying BOTH in the
+same patch always preserves the GM's exact text untouched, and patching
+`relationshipLabel` alone never touches `relationshipType`.
+
+### 8. `primary` could survive a status change
+
+`setContactLocationLinkPrimary()`'s own doc said it demotes every
+OTHER link, but `normalizeContactLocationLinks()`'s invariant only
+constrained ACTIVE links, so a HISTORICAL/PLANNED/UNKNOWN link could
+independently carry `primary: true` — meaningless (`primary` only ever
+mattered for an active relationship) but structurally possible.
+Chose the review's own preferred option: `primary` is meaningful
+EXCLUSIVELY on an ACTIVE link, and `normalizeContactLocationLinks()`
+now universally forces it `false` on any non-active link, not merely
+capping ACTIVE links at one primary.
+
+### 9. No locationLinks-aware determinism test existed
+
+The pre-existing whole-draft seeded-determinism test (round 3) never
+exercised a Contact WITH a Location association, so it never actually
+proved `locationLinks` content was deterministic under a seeded RNG (as
+opposed to merely being empty every time). Added a dedicated test:
+same seed + same `linkedLocationId` input reproduces byte-for-byte
+identical `locationLinks` content (target, `relationshipType`,
+`relationshipLabel`, `status`, `primary`, `scope`, `certainty`,
+`revealState`, `source`) once `linkId`'s own intentionally-fresh
+identity is stripped, with a sanity check across many different seeds
+proving the flavor genuinely varies (guards against a vacuous
+always-identical-because-always-empty pass). Also added `linkId` to the
+existing whole-Faction-draft determinism test's recursive strip-list
+defensively, for whenever that fixture starts supplying Location
+context to its Contacts.
+
+### Tests + Regression (this correction pass)
+
+`tests/gm-generation-phase8d3b-production.test.mjs`'s "Contact↔Location
+relationship model" section gained/updated 8 sub-blocks covering all
+nine fixes (GM-edit provenance defaults + override + flip-on-edit +
+reroll-stays-generated; type/label coherence including the CUSTOM
+rejection on both add and update; the exact "name-only resident" back
+door from the review rejected, plus the LAST_SEEN/imported exceptions
+and a direct `isMeaningfulContactLocationLink()` check; draft→canonical
+promotion preserving every field except the target, sibling links
+preserved by true object reference at the bare-primitive level; the
+5-state resolution matrix for both canonical and draft targets; draft-
+target reverse lookup including the both-supplied canonical-wins case;
+the locationLinks-aware determinism test); the round-3 "primary
+historical" test was corrected to assert the NEW stricter invariant
+(primary forced false on any non-active link) rather than the old one
+this round intentionally supersedes; the round-3 "many links" test's
+snapshot-only fixture was updated to use a `LAST_SEEN` type, matching
+the new validity boundary.
+
+Full `gm-*.test.mjs` sweep: **60/60 green** (unchanged file count).
+Full rolling suite (`tools/run-rolling-tests.mjs`): **189 passed, 0
+failed** (5 pre-existing exclusions, unchanged). Full syntax check
+(`tools/run-rolling-syntax-check.mjs`): **2440/2440 clean** (no new
+files this pass — purely hardening the two existing
+`npc/npc-location-link*.js` files). `tools/validate-partials.mjs`/
+`tools/validate-data.js`/`system.json` parse all clean. No
+canonical-persistence call in either touched file (confirmed by direct
+grep).
+
+**PHASE 8D-3B CORRECTION PASS ROUND 4 COMPLETE.** The `locationLinks[]`
+shape itself is unchanged from §189 — this pass only hardened identity
+lifecycle, resolution semantics, GM authorship defaults, and
+validation boundaries around it, exactly as the review scoped it. No
+catalog was hydrated. Same branch (`claude/gm-datapad-phase8d3b-49c10v`),
+same PR (#964). Per standing practice: stopping here for independent
+review.

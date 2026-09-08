@@ -16,6 +16,7 @@
 import { updateNpcConceptDraft } from '../npc-concept.js';
 import {
   createContactLocationLink, normalizeContactLocationLinks, getPrimaryContactLocationLink,
+  isMeaningfulContactLocationLink, resolveLocationDraftReferenceInLinks,
   rollContactLocationRelationshipFlavor, CONTACT_LOCATION_LINK_STATUS, CONTACT_LOCATION_LINK_SOURCE
 } from './npc-location-link.js';
 
@@ -23,10 +24,25 @@ function withLinks(draft, locationLinks) {
   return updateNpcConceptDraft(draft, { locationLinks });
 }
 
-/** Append one new Location relationship. Every OTHER existing link is preserved untouched. A no-op (returns the draft unchanged) if `input` carries no resolvable target/snapshot -- see `npc-location-link.js`'s `hasTarget()`. */
+/**
+ * Append one new Location relationship. Every OTHER existing link is
+ * preserved untouched. A no-op (returns the draft unchanged) if `input`
+ * isn't meaningful (no resolvable target/eligible snapshot, or a
+ * `custom` type with no label) -- see `npc-location-link.js`'s
+ * `isMeaningfulContactLocationLink()`.
+ *
+ * Defaults `source` to `'manual'` unless the caller explicitly
+ * overrides it -- this is the GM-facing authoring action (the
+ * generator constructs its own links directly via
+ * `createContactLocationLink()` in `npc/npc-bundle.js`, never through
+ * this action layer), so a relationship added here is GM authorship by
+ * definition, exactly like `npc/npc-field-authoring.js`'s "editing a
+ * generated value converts it to manual" rule elsewhere in this
+ * ecosystem.
+ */
 export function addContactLocationLink(draft, input = {}) {
   const existing = Array.isArray(draft?.locationLinks) ? draft.locationLinks : [];
-  const next = normalizeContactLocationLinks([...existing, input]);
+  const next = normalizeContactLocationLinks([...existing, { source: CONTACT_LOCATION_LINK_SOURCE.MANUAL, ...input }]);
   if (next.length === existing.length) return draft;
   return withLinks(draft, next);
 }
@@ -39,12 +55,37 @@ export function removeContactLocationLink(draft, linkId) {
   return withLinks(draft, next);
 }
 
-/** Patch one Location relationship's fields (label/notes/status/scope/certainty/revealState/...) by `linkId`, preserving its `linkId` and every OTHER link untouched. A no-op if no link with that id exists. */
+/**
+ * Patch one Location relationship's fields (label/notes/status/scope/
+ * certainty/revealState/...) by `linkId`, preserving its `linkId` and
+ * every OTHER link untouched. A no-op if no link with that id exists,
+ * OR if the patched result would no longer be meaningful (e.g.
+ * changing `relationshipType` to `custom` without also supplying a
+ * `relationshipLabel`) -- the update is REJECTED wholesale in that
+ * case, never silently dropping the relationship out of the array
+ * (a GM's bad edit should bounce, not delete data).
+ *
+ * Two coherence rules, both scoped to THIS call only:
+ *  - Defaults `source` to `'manual'` unless the patch explicitly
+ *    overrides it (same GM-authorship default as `addContactLocationLink()`).
+ *  - If `relationshipType` is explicitly changed and the patch does
+ *    NOT also explicitly supply `relationshipLabel`, the label resets
+ *    to the new type's own default label -- otherwise a type change
+ *    (e.g. resident -> work) could silently leave the OLD type's label
+ *    ("native") attached to the new type, an accidental semantic drift
+ *    the GM never asked for. Supplying BOTH in the same patch always
+ *    preserves the caller's exact label untouched.
+ */
 export function updateContactLocationLink(draft, linkId, patch = {}) {
   const existing = Array.isArray(draft?.locationLinks) ? draft.locationLinks : [];
   const index = existing.findIndex((l) => l.linkId === linkId);
   if (index === -1) return draft;
-  const merged = createContactLocationLink({ ...existing[index], ...patch, linkId });
+  const current = existing[index];
+  const typeChanged = Object.prototype.hasOwnProperty.call(patch, 'relationshipType') && patch.relationshipType !== current.relationshipType;
+  const labelExplicit = Object.prototype.hasOwnProperty.call(patch, 'relationshipLabel');
+  const effectivePatch = (typeChanged && !labelExplicit) ? { ...patch, relationshipLabel: '' } : patch;
+  const merged = createContactLocationLink({ ...current, source: CONTACT_LOCATION_LINK_SOURCE.MANUAL, ...effectivePatch, linkId });
+  if (!isMeaningfulContactLocationLink(merged)) return draft;
   const next = normalizeContactLocationLinks(existing.map((l, i) => (i === index ? merged : l)));
   return withLinks(draft, next);
 }
@@ -81,4 +122,20 @@ export function rerollPrimaryContactLocationLink(draft, { rng, preferTags = [] }
   const primary = getPrimaryContactLocationLink(existing);
   if (!primary) return draft;
   return rerollContactLocationLink(draft, primary.linkId, { rng, preferTags });
+}
+
+/**
+ * Draft -> canonical promotion: the moment a `draft:location:...` this
+ * NPC relates to is actually committed, every link pointing at it must
+ * follow -- see `npc-location-link.js`'s `resolveLocationDraftReferenceInLinks()`
+ * for the full rationale (this is NOT the universal cross-domain
+ * relationship registry deliberately deferred elsewhere; it only
+ * finishes THIS relationship type's own draft/canonical lifecycle). A
+ * no-op if no link on this draft carries the given `locationDraftId`.
+ */
+export function resolveContactLocationDraftReference(draft, { locationDraftId, locationId, snapshot } = {}) {
+  const existing = Array.isArray(draft?.locationLinks) ? draft.locationLinks : [];
+  const next = resolveLocationDraftReferenceInLinks(existing, { locationDraftId, locationId, snapshot });
+  if (next === existing) return draft;
+  return withLinks(draft, next);
 }

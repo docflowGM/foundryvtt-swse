@@ -32,16 +32,20 @@
  * RESOLUTION FAILS SAFE, NEVER FUZZY: `resolveContactLocationLink()`
  * takes INJECTED lookups (`findLocation`/`findLocationDraft`) -- this
  * module never guesses a Location by name/slug when an id can't be
- * resolved; an unresolvable link reports `state: 'orphaned'` and falls
- * back to its own `snapshot` for display, never a silent name-based
- * relink.
+ * resolved. Five distinct states (see `CONTACT_LOCATION_LINK_RESOLUTION_STATE`)
+ * keep "nobody supplied a resolver yet" (`unresolved`) from being
+ * confused with "a resolver definitively found nothing"
+ * (`orphaned`) -- a UI must never show "⚠ Missing Location" when the
+ * real story is "nobody asked the resolver." An unresolvable/
+ * not-yet-resolved link always falls back to its own `snapshot` for
+ * display, never a silent name-based relink.
  *
  * DEFERRED (explicitly, per this correction round's own scope note):
  * a universal cross-domain relationship registry, `validFrom`/
  * `validUntil` timestamps, a generation-context fingerprint, and the
  * Foundry-dependent `LocationRegistryService` hierarchy-traversal
- * wiring for `findContactsForLocation()`'s `isDescendant` predicate --
- * this module supplies the pure algorithm only; a later UI-layer
+ * wiring for `findContactsForLocationRef()`'s `isDescendant` predicate
+ * -- this module supplies the pure algorithm only; a later UI-layer
  * bridge (mirroring `scripts/ui/shell/gm/LocationJobBridgeService.js`'s
  * existing pattern) supplies the real predicate.
  */
@@ -59,6 +63,11 @@ export const CONTACT_LOCATION_LINK_STATUS = Object.freeze({ ACTIVE: 'active', HI
 export const CONTACT_LOCATION_LINK_SCOPE = Object.freeze({ EXACT: 'exact', DESCENDANTS: 'descendants' });
 export const CONTACT_LOCATION_LINK_CERTAINTY = Object.freeze({ CONFIRMED: 'confirmed', REPORTED: 'reported', SUSPECTED: 'suspected', DISPUTED: 'disputed' });
 export const CONTACT_LOCATION_LINK_SOURCE = Object.freeze({ GENERATED: 'generated', MANUAL: 'manual', RESOLVED: 'resolved', IMPORTED: 'imported' });
+
+/** `resolveContactLocationLink()`'s five distinct resolution states -- see this module's header for why `unresolved` and `orphaned` must never be conflated. */
+export const CONTACT_LOCATION_LINK_RESOLUTION_STATE = Object.freeze({
+  CANONICAL: 'canonical', DRAFT: 'draft', UNRESOLVED: 'unresolved', ORPHANED: 'orphaned', EMPTY: 'empty'
+});
 
 /**
  * Deliberately duplicated from `npc-concept.js`'s own `NPC_REVEAL_STATE`
@@ -120,18 +129,44 @@ export function createContactLocationLink(input = {}) {
   };
 }
 
-function hasTarget(link) {
-  return Boolean(link.locationId || link.locationDraftId || link.snapshot?.name);
+/**
+ * A link's `relationshipType` may be `custom` ONLY with a GM-written
+ * `relationshipLabel` -- `data/npc-location-relationship-types.js`'s
+ * own `CONTACT_LOCATION_RELATIONSHIP_DEFAULT_LABEL` documents this
+ * ("CUSTOM has no default; custom without GM-written label is
+ * contradictory"); this is where that contract is actually enforced,
+ * not merely documented.
+ *
+ * Snapshot-only entries (no `locationId`/`locationDraftId` at all) are
+ * permitted ONLY for the one case that genuinely never had a resolvable
+ * id -- a migrated `lastKnownLocation` (`relationshipType: LAST_SEEN`)
+ * -- or explicitly `IMPORTED` legacy data whose original source system
+ * may not have carried an id either. A normal CURRENT relationship
+ * (resident/work/stationed/owns/hiding/...) always requires a real
+ * target; without this restriction the API would silently reintroduce
+ * name-only relationships as a back door around the whole point of
+ * `locationId`/`locationDraftId` being the real identity.
+ */
+const SNAPSHOT_ONLY_ELIGIBLE_TYPES = new Set([CONTACT_LOCATION_RELATIONSHIP.LAST_SEEN]);
+
+export function isMeaningfulContactLocationLink(link) {
+  if (!link) return false;
+  if (link.relationshipType === CONTACT_LOCATION_RELATIONSHIP.CUSTOM && !link.relationshipLabel) return false;
+  if (link.locationId || link.locationDraftId) return true;
+  if (!link.snapshot?.name) return false;
+  return SNAPSHOT_ONLY_ELIGIBLE_TYPES.has(link.relationshipType) || link.source === CONTACT_LOCATION_LINK_SOURCE.IMPORTED;
 }
 
 /**
- * Clean/validate a whole `locationLinks` array: drop entries with no
- * resolvable target AND no display snapshot (meaningless -- neither a
- * real relationship nor even a display fallback), dedupe by `linkId`
- * (first occurrence wins), and enforce "at most one ACTIVE primary
- * link" (the first ACTIVE link flagged primary wins; later ones are
- * demoted, never dropped -- they keep their own link, just lose the
- * primary flag).
+ * Clean/validate a whole `locationLinks` array: drop entries that
+ * aren't meaningful (see `isMeaningfulContactLocationLink()`), dedupe
+ * by `linkId` (first occurrence wins), and enforce two invariants --
+ * "primary is only ever meaningful on an ACTIVE link" (a historical/
+ * planned/unknown link's `primary` flag is always forced `false`,
+ * never left dangling from a status change) and "at most one ACTIVE
+ * link may be primary" (the first ACTIVE link flagged primary wins;
+ * later ones are demoted, never dropped -- they keep their own link,
+ * just lose the primary flag).
  */
 export function normalizeContactLocationLinks(value) {
   const raw = Array.isArray(value) ? value : [];
@@ -141,7 +176,7 @@ export function normalizeContactLocationLinks(value) {
     const incomingId = cleanString(entry?.linkId);
     if (incomingId && seenIds.has(incomingId)) continue;
     const link = createContactLocationLink(entry);
-    if (!hasTarget(link)) continue;
+    if (!isMeaningfulContactLocationLink(link)) continue;
     if (seenIds.has(link.linkId)) continue;
     seenIds.add(link.linkId);
     out.push(link);
@@ -149,7 +184,11 @@ export function normalizeContactLocationLinks(value) {
   let sawActivePrimary = false;
   for (let i = 0; i < out.length; i++) {
     const link = out[i];
-    if (link.primary && link.status === CONTACT_LOCATION_LINK_STATUS.ACTIVE) {
+    if (link.status !== CONTACT_LOCATION_LINK_STATUS.ACTIVE) {
+      if (link.primary) out[i] = { ...link, primary: false };
+      continue;
+    }
+    if (link.primary) {
       if (sawActivePrimary) out[i] = { ...link, primary: false };
       else sawActivePrimary = true;
     }
@@ -253,55 +292,123 @@ export function rollContactLocationRelationshipFlavor({ rng, preferTags = [] } =
 
 /**
  * Resolve a link against INJECTED lookups -- never a name/slug guess
- * (see this module's header). Returns `{ state, location, snapshot }`:
- * `state` is `'canonical'` (a `findLocation(locationId)` hit),
- * `'draft'` (`locationDraftId` is set), `'orphaned'` (an id was set but
- * did not resolve via the injected lookup), or `'empty'` (the link
- * carries no target id at all, e.g. a migrated `lastKnownLocation`
- * with only a snapshot name).
+ * (see this module's header). Returns `{ state, location, snapshot }`
+ * with one of `CONTACT_LOCATION_LINK_RESOLUTION_STATE`'s five states:
+ *
+ *  - `CANONICAL` -- a canonical `locationId`, and `findLocation()` found it.
+ *  - `DRAFT` -- a `locationDraftId`, and `findLocationDraft()` found it.
+ *  - `UNRESOLVED` -- an id is set, but no resolver function was supplied
+ *    at all -- "nobody asked," never "confirmed missing."
+ *  - `ORPHANED` -- an id is set, a resolver WAS supplied, and it
+ *    definitively returned nothing.
+ *  - `EMPTY` -- the link carries no target id at all (e.g. a migrated
+ *    `lastKnownLocation` with only a snapshot name).
+ *
+ * `UNRESOLVED` and `ORPHANED` must never be conflated -- a UI showing
+ * "⚠ Missing Location" for a link nobody has even tried to resolve yet
+ * would be actively misleading (and the reverse: an unresolved draft
+ * link would otherwise look identical to a live one forever).
  */
 export function resolveContactLocationLink(link, { findLocation, findLocationDraft } = {}) {
-  if (!link) return { state: 'empty', location: null, snapshot: null };
+  const S = CONTACT_LOCATION_LINK_RESOLUTION_STATE;
+  if (!link) return { state: S.EMPTY, location: null, snapshot: null };
   if (link.locationId) {
-    const location = typeof findLocation === 'function' ? (findLocation(link.locationId) ?? null) : null;
-    return { state: location ? 'canonical' : 'orphaned', location, snapshot: link.snapshot ?? null };
+    if (typeof findLocation !== 'function') return { state: S.UNRESOLVED, location: null, snapshot: link.snapshot ?? null };
+    const location = findLocation(link.locationId) ?? null;
+    return { state: location ? S.CANONICAL : S.ORPHANED, location, snapshot: link.snapshot ?? null };
   }
   if (link.locationDraftId) {
-    const location = typeof findLocationDraft === 'function' ? (findLocationDraft(link.locationDraftId) ?? null) : null;
-    return { state: 'draft', location, snapshot: link.snapshot ?? null };
+    if (typeof findLocationDraft !== 'function') return { state: S.UNRESOLVED, location: null, snapshot: link.snapshot ?? null };
+    const location = findLocationDraft(link.locationDraftId) ?? null;
+    return { state: location ? S.DRAFT : S.ORPHANED, location, snapshot: link.snapshot ?? null };
   }
-  return { state: 'empty', location: null, snapshot: link.snapshot ?? null };
+  return { state: S.EMPTY, location: null, snapshot: link.snapshot ?? null };
 }
 
 /**
  * Pure reverse-lookup primitive: which of `contacts` (an array of
  * `npc-concept.js` drafts) carry an ACTIVE `locationLinks` entry
- * reaching `locationId`. Two independent hierarchy features, both
- * driven by ONE injected `isDescendant(candidateLocationId,
- * ancestorLocationId)` predicate (this module never talks to
- * `LocationRegistryService` directly -- see this module's header):
+ * reaching `locationRef` -- `{ locationId }` for a canonical target OR
+ * `{ locationDraftId }` for a pre-commit one (mirrors `createContactLocationLink()`'s
+ * own draft/canonical precedence: a supplied `locationId` always wins
+ * when both are present). A DRAFT Location is a first-class query
+ * target, not a second-class one -- the exact GENERATE -> Faction ->
+ * Contacts -> "open the not-yet-committed Location's Datapad" workflow
+ * this whole draft-first architecture is built around would otherwise
+ * have no way to see its own just-generated relationships.
  *
- *  - `includeDescendants: true` -- querying an ANCESTOR location (e.g.
- *    a planet) also surfaces Contacts anchored at any location BENEATH
- *    it, regardless of that link's own `scope`.
+ * Two independent hierarchy features, both driven by ONE injected
+ * `isDescendant(candidateLocationId, ancestorLocationId)` predicate
+ * (this module never talks to `LocationRegistryService` directly --
+ * see this module's header) -- CANONICAL-ONLY for now, since a draft
+ * batch's own hierarchy isn't necessarily available to a caller yet;
+ * an exact draft-target match always works regardless:
+ *
+ *  - `includeDescendants: true` -- querying an ANCESTOR canonical
+ *    location (e.g. a planet) also surfaces Contacts anchored at any
+ *    location BENEATH it, regardless of that link's own `scope`.
  *  - a link's own `scope: 'descendants'` -- a SINGLE link anchored at
- *    a high-level location (e.g. a governor's link to a planet) also
- *    covers a query for any location BENEATH it, even without
- *    `includeDescendants` (jurisdiction, not physical presence).
+ *    a high-level canonical location (e.g. a governor's link to a
+ *    planet) also covers a query at any location BENEATH it, even
+ *    without `includeDescendants` (jurisdiction, not physical
+ *    presence).
  */
-export function findContactsForLocation(contacts, locationId, { includeDescendants = false, isDescendant } = {}) {
-  const target = cleanString(locationId);
-  if (!target) return [];
+export function findContactsForLocationRef(contacts, locationRef, { includeDescendants = false, isDescendant } = {}) {
+  const targetId = cleanString(locationRef?.locationId);
+  const targetDraftId = targetId ? '' : cleanString(locationRef?.locationDraftId);
+  if (!targetId && !targetDraftId) return [];
   const list = Array.isArray(contacts) ? contacts : [];
   const descendantOf = (candidateId, ancestorId) => Boolean(candidateId && ancestorId && typeof isDescendant === 'function' && isDescendant(candidateId, ancestorId));
   return list.filter((contact) => {
     const links = Array.isArray(contact?.locationLinks) ? contact.locationLinks : [];
     return links.some((link) => {
-      if (link.status !== CONTACT_LOCATION_LINK_STATUS.ACTIVE || !link.locationId) return false;
-      if (link.locationId === target) return true;
-      if (includeDescendants && descendantOf(link.locationId, target)) return true;
-      if (link.scope === CONTACT_LOCATION_LINK_SCOPE.DESCENDANTS && descendantOf(target, link.locationId)) return true;
+      if (link.status !== CONTACT_LOCATION_LINK_STATUS.ACTIVE) return false;
+      if (targetDraftId) return link.locationDraftId === targetDraftId;
+      if (!link.locationId) return false;
+      if (link.locationId === targetId) return true;
+      if (includeDescendants && descendantOf(link.locationId, targetId)) return true;
+      if (link.scope === CONTACT_LOCATION_LINK_SCOPE.DESCENDANTS && descendantOf(targetId, link.locationId)) return true;
       return false;
     });
   });
+}
+
+/**
+ * Draft -> canonical promotion for Location targets: replace EVERY
+ * link whose `locationDraftId` equals `fromLocationDraftId` with the
+ * new canonical `toLocationId`, preserving `linkId`/`relationshipType`/
+ * `relationshipLabel`/`status`/`primary`/`scope`/`certainty`/
+ * `revealState`/`source`/`notes`/`provenance` EXACTLY -- only the
+ * target identity changes. This is NOT the universal cross-domain
+ * relationship registry deliberately deferred elsewhere -- it only
+ * finishes the draft/canonical lifecycle THIS relationship type
+ * already promises (see this module's header's draft/canonical duality
+ * invariant): the moment a draft Location is committed, every
+ * relationship pointing at it must follow, and that transition belongs
+ * to this module, not to ad hoc `patch.locationId = ...` writes
+ * scattered across whatever controller happens to run the commit.
+ *
+ * A link with a DIFFERENT (or no) `locationDraftId` is returned
+ * completely untouched (same object reference) -- an unrelated
+ * promotion never disturbs a sibling relationship. Returns the
+ * ORIGINAL array reference (a true no-op) if nothing matched, or if
+ * either id is blank.
+ */
+export function resolveLocationDraftReferenceInLinks(locationLinks, { locationDraftId, locationId, snapshot } = {}) {
+  const fromDraftId = cleanString(locationDraftId);
+  const toLocationId = cleanString(locationId);
+  const links = Array.isArray(locationLinks) ? locationLinks : [];
+  if (!fromDraftId || !toLocationId) return links;
+  let changed = false;
+  const next = links.map((link) => {
+    if (link.locationDraftId !== fromDraftId) return link;
+    changed = true;
+    return createContactLocationLink({
+      ...link,
+      locationId: toLocationId,
+      locationDraftId: '',
+      snapshot: snapshot ? { name: snapshot.name, type: snapshot.type } : link.snapshot
+    });
+  });
+  return changed ? next : links;
 }

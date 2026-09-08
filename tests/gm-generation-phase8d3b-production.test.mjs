@@ -486,8 +486,13 @@ const stubDroidNameProvider = async () => 'TX-1';
           if (key === 'generatedAt') { out[key] = ''; continue; }
           // draftId/factionDraftId/locationDraftId are all minted fresh
           // per generation call (lib/draft-id.js) -- intentionally
-          // non-deterministic identity, never a generated FACT.
-          if (key === 'draftId' || key === 'factionDraftId' || key === 'locationDraftId') continue;
+          // non-deterministic identity, never a generated FACT. linkId
+          // (npc/npc-location-link.js) is the same kind of fresh-minted
+          // identity for a locationLinks entry -- stripped defensively
+          // here too, though this fixture doesn't currently supply a
+          // Location to its Contacts (see the dedicated locationLinks
+          // determinism test elsewhere in this file for that case).
+          if (key === 'draftId' || key === 'factionDraftId' || key === 'locationDraftId' || key === 'linkId') continue;
           out[key] = stripNonDeterministic(v);
         }
         return out;
@@ -1306,18 +1311,19 @@ const stubDroidNameProvider = async () => 'TX-1';
 }
 
 // ------------------------------------------------------------
-// Contact <-> Location relationship model (correction pass round 3: locationLinks[] replaces the single scalar Location reference as the schema's real authority)
+// Contact <-> Location relationship model (correction pass round 3: locationLinks[] replaces the single scalar Location reference as the schema's real authority; correction pass round 4: draft-target reverse lookup, 5-state resolution, GM-edit provenance, draft->canonical promotion, snapshot-only/CUSTOM-label validation, primary/status coherence)
 // ------------------------------------------------------------
 {
   const primitives = await import(abs('scripts/generation/npc/npc-location-link.js'));
   const {
     createContactLocationLink, normalizeContactLocationLinks, migrateLegacyLocationScalarsToLinks, deriveLegacyLocationFields,
-    getPrimaryContactLocationLink, getContactLocationLinksByType, resolveContactLocationLink, findContactsForLocation,
-    CONTACT_LOCATION_LINK_STATUS, CONTACT_LOCATION_LINK_SCOPE, CONTACT_LOCATION_RELATIONSHIP
+    getPrimaryContactLocationLink, getContactLocationLinksByType, resolveContactLocationLink, findContactsForLocationRef,
+    isMeaningfulContactLocationLink, resolveLocationDraftReferenceInLinks,
+    CONTACT_LOCATION_LINK_STATUS, CONTACT_LOCATION_LINK_SCOPE, CONTACT_LOCATION_LINK_SOURCE, CONTACT_LOCATION_RELATIONSHIP
   } = primitives;
   const {
     addContactLocationLink, removeContactLocationLink, updateContactLocationLink,
-    setContactLocationLinkPrimary, rerollContactLocationLink, rerollPrimaryContactLocationLink
+    setContactLocationLinkPrimary, rerollContactLocationLink, rerollPrimaryContactLocationLink, resolveContactLocationDraftReference
   } = await import(abs('scripts/generation/npc/npc-location-link-actions.js'));
   const { createNpcConceptDraft, updateNpcConceptDraft } = await import(abs('scripts/generation/npc-concept.js'));
   const { createGeneratedNpcConcept } = await import(abs('scripts/generation/npc/npc-bundle.js'));
@@ -1335,9 +1341,9 @@ const stubDroidNameProvider = async () => 'TX-1';
     assert.deepEqual(normalizeContactLocationLinks([]), [], 'a Contact may have zero Location relationships');
     assert.deepEqual(normalizeContactLocationLinks(null), [], 'normalize must fail safe on a non-array input');
 
-    // many links is valid, and re-normalizing is idempotent (same content, same linkIds).
-    const many = normalizeContactLocationLinks([link1, link2, createContactLocationLink({ snapshot: { name: 'Somewhere Else' } })]);
-    assert.equal(many.length, 3, 'a Contact may have many Location relationships, including a snapshot-only (unresolvable-id) one');
+    // many links is valid, and re-normalizing is idempotent (same content, same linkIds). The third entry is snapshot-only -- eligible ONLY because it's a LAST_SEEN link (see round 4's "snapshot-only validity boundary" hardening below).
+    const many = normalizeContactLocationLinks([link1, link2, createContactLocationLink({ relationshipType: CONTACT_LOCATION_RELATIONSHIP.LAST_SEEN, status: CONTACT_LOCATION_LINK_STATUS.HISTORICAL, snapshot: { name: 'Somewhere Else' } })]);
+    assert.equal(many.length, 3, 'a Contact may have many Location relationships, including a LAST_SEEN snapshot-only (unresolvable-id) one');
     const renormalized = normalizeContactLocationLinks(many);
     assert.deepEqual(renormalized.map((l) => l.linkId), many.map((l) => l.linkId), 'normalizeContactLocationLinks must be idempotent -- re-running it preserves every linkId');
     assert.deepEqual(renormalized, many, 'normalizeContactLocationLinks must be content-idempotent -- re-running it changes nothing');
@@ -1359,14 +1365,16 @@ const stubDroidNameProvider = async () => 'TX-1';
     ]);
     assert.equal(twoPrimaries.filter((l) => l.primary).length, 1, 'at most one ACTIVE link may be flagged primary -- the second must be demoted');
     assert.equal(twoPrimaries.length, 2, 'demoting a redundant primary must NOT drop the link itself -- both relationships survive');
-    // a HISTORICAL link flagged primary is not constrained by the ACTIVE-only invariant.
+    // CORRECTION (independent review round 4 -- "primary status normalization"): `primary` is meaningful EXCLUSIVELY on an ACTIVE link -- normalization always forces it false on any non-active link, never leaves it dangling from a status change.
     const primaryHistorical = normalizeContactLocationLinks([
       createContactLocationLink({ locationId: 'loc-x', primary: true, status: CONTACT_LOCATION_LINK_STATUS.ACTIVE }),
       createContactLocationLink({ locationId: 'loc-z', primary: true, status: CONTACT_LOCATION_LINK_STATUS.HISTORICAL })
     ]);
-    assert.equal(primaryHistorical.filter((l) => l.primary).length, 2, 'the "at most one primary" invariant only constrains ACTIVE links -- a historical link may independently be flagged primary for its own era');
+    assert.equal(primaryHistorical.find((l) => l.locationId === 'loc-x').primary, true, 'the ACTIVE link\'s primary flag must survive normalization');
+    assert.equal(primaryHistorical.find((l) => l.locationId === 'loc-z').primary, false, 'a HISTORICAL link must never be flagged primary -- normalization always forces it false, regardless of what was supplied');
+    assert.equal(primaryHistorical.filter((l) => l.primary).length, 1, 'primary must be meaningful on at most one link total, and only ever an ACTIVE one');
   }
-  console.log('PHASE 8D-3B locationLinks primitives (stable linkId identity, 0/1/many multiplicity, idempotent normalization, meaningless-entry dropping, duplicate-linkId dedup, at-most-one-active-primary enforcement) passed.');
+  console.log('PHASE 8D-3B locationLinks primitives (stable linkId identity, 0/1/many multiplicity, idempotent normalization, meaningless-entry dropping, duplicate-linkId dedup, at-most-one-active-primary enforcement, primary forced false on any non-active link) passed.');
 
   // --- draft/canonical duality ---
   {
@@ -1451,6 +1459,26 @@ const stubDroidNameProvider = async () => 'TX-1';
   }
   console.log('PHASE 8D-3B locationLinks generator wiring (npc/npc-bundle.js builds a proper primary locationLinks entry, source:generated, zero links when no Location context) passed.');
 
+  // --- CORRECTION (independent review round 4, item 9): a generated NPC's locationLinks must be deterministic under a seeded RNG + fixed Location input, aside from linkId's own intentionally-fresh identity ---
+  {
+    function stripLinkIds(links) {
+      return (links ?? []).map(({ linkId, ...rest }) => rest);
+    }
+    const runA = await createGeneratedNpcConcept({ rng: makeSeededRng(555), availableSpeciesIds, linkedLocationId: 'loc-determinism', nameProvider: stubNameProvider, droidNameProvider: stubDroidNameProvider });
+    const runB = await createGeneratedNpcConcept({ rng: makeSeededRng(555), availableSpeciesIds, linkedLocationId: 'loc-determinism', nameProvider: stubNameProvider, droidNameProvider: stubDroidNameProvider });
+    assert.notEqual(runA.locationLinks[0].linkId, runB.locationLinks[0].linkId, 'test setup: linkId is intentionally minted fresh per generation, never a seeded generator fact -- it must actually differ here to make the strip below meaningful');
+    assert.deepEqual(stripLinkIds(runA.locationLinks), stripLinkIds(runB.locationLinks), 'the same RNG seed + the same Location input must reproduce IDENTICAL locationLinks content (target, relationshipType, relationshipLabel, status, primary, scope, certainty, revealState, source) once linkId\'s own fresh identity is stripped');
+
+    // Sanity check (not itself a determinism assertion): across enough DIFFERENT seeds, the flavor actually varies -- otherwise the identical-content proof above would be trivially true of a constant generator.
+    const labelsAcrossSeeds = new Set();
+    for (let seed = 600; seed < 630; seed++) {
+      const run = await createGeneratedNpcConcept({ rng: makeSeededRng(seed), availableSpeciesIds, linkedLocationId: 'loc-determinism', nameProvider: stubNameProvider, droidNameProvider: stubDroidNameProvider });
+      labelsAcrossSeeds.add(run.locationLinks[0].relationshipLabel);
+    }
+    assert.ok(labelsAcrossSeeds.size > 1, 'test setup: different seeds must be able to produce different relationshipLabel flavor across a reasonable sample, or the determinism proof above would be vacuous');
+  }
+  console.log('PHASE 8D-3B locationLinks determinism (same RNG seed + same Location input reproduces identical locationLinks content with linkId stripped; a different seed can differ) passed.');
+
   // --- CRUD actions: add/remove/update/setPrimary/reroll, each targeting linkId and preserving every OTHER link + every unrelated NPC field ---
   {
     let npc = createNpcConceptDraft({ kind: 'living', name: 'CRUD Test', linkedLocationId: 'loc-home', locationRelationship: 'native' });
@@ -1506,16 +1534,160 @@ const stubDroidNameProvider = async () => 'TX-1';
   }
   console.log('PHASE 8D-3B locationLinks CRUD actions (add/remove/update/setPrimary/reroll-one/reroll-primary, every operation targets linkId, preserves sibling links and unrelated NPC fields, rerollNpcLocationRelationship delegates correctly) passed.');
 
-  // --- orphan-safe resolution: never fuzzy, always falls back to snapshot ---
+  // --- CORRECTION (independent review round 4, item 3): GM edits through the action layer default to source:manual, never silently staying source:generated ---
+  {
+    const npc = createNpcConceptDraft({ kind: 'living', name: 'Provenance Test' });
+
+    // addContactLocationLink defaults to manual (this IS the GM-facing authoring action -- the generator constructs its own links directly via createContactLocationLink() in npc-bundle.js, never through this layer).
+    const withAdded = addContactLocationLink(npc, { locationId: 'loc-a', relationshipType: CONTACT_LOCATION_RELATIONSHIP.RESIDENT });
+    assert.equal(withAdded.locationLinks[0].source, 'manual', 'addContactLocationLink must default source to manual, not generated');
+    // An explicit override is still honored (e.g. a controller re-importing already-generated data through this same action).
+    const withAddedGenerated = addContactLocationLink(npc, { locationId: 'loc-b', relationshipType: CONTACT_LOCATION_RELATIONSHIP.RESIDENT, source: 'generated' });
+    assert.equal(withAddedGenerated.locationLinks[0].source, 'generated', 'addContactLocationLink must honor an EXPLICIT source override rather than forcing manual unconditionally');
+
+    // A generator-produced link that the GM then edits must flip to manual.
+    const generatorNpc = createNpcConceptDraft({ kind: 'living', name: 'Generated', linkedLocationId: 'loc-gen', locationRelationship: 'native' });
+    assert.equal(generatorNpc.locationLinks[0].source, 'generated', 'test setup: a migrated/generator-produced link must start source:generated');
+    const genLinkId = generatorNpc.locationLinks[0].linkId;
+    const edited = updateContactLocationLink(generatorNpc, genLinkId, { notes: 'Actually runs a spice den here' });
+    assert.equal(edited.locationLinks[0].source, 'manual', 'updateContactLocationLink must flip a generated link to manual once the GM edits it, per the wider "editing a generated value converts it to manual" rule');
+
+    // rerollContactLocationLink deliberately goes the OTHER way: the GM explicitly asked the GENERATOR to replace the fact, so it stays/returns to generated even on a previously-manual link.
+    const rerolled = rerollContactLocationLink(edited, genLinkId, { rng: makeSeededRng(9) });
+    assert.equal(rerolled.locationLinks[0].source, 'generated', 'rerollContactLocationLink must set source:generated -- an explicit "regenerate this fact" request, distinct from a manual edit');
+  }
+  console.log('PHASE 8D-3B locationLinks GM-edit provenance (addContactLocationLink/updateContactLocationLink default to source:manual unless explicitly overridden, editing a generated link flips it to manual, rerollContactLocationLink deliberately returns to generated) passed.');
+
+  // --- CORRECTION (independent review round 4, items 6/7): CUSTOM relationshipType requires a label; changing relationshipType without an explicit new label resets to the new type's default, never leaving a contradictory old label ---
+  {
+    let npc = createNpcConceptDraft({ kind: 'living', name: 'Coherence Test', linkedLocationId: 'loc-a', locationRelationship: 'native' });
+    const linkId = npc.locationLinks[0].linkId;
+    assert.equal(npc.locationLinks[0].relationshipType, CONTACT_LOCATION_RELATIONSHIP.RESIDENT, 'test setup: "native" must migrate to RESIDENT');
+    assert.equal(npc.locationLinks[0].relationshipLabel, 'native', 'test setup: the original label must survive migration');
+
+    // Changing relationshipType alone (no explicit relationshipLabel) must reset the label to the NEW type's default -- never leave "native" attached to "work".
+    const typeChanged = updateContactLocationLink(npc, linkId, { relationshipType: CONTACT_LOCATION_RELATIONSHIP.WORK });
+    assert.equal(typeChanged.locationLinks[0].relationshipType, CONTACT_LOCATION_RELATIONSHIP.WORK, 'the relationshipType must change as patched');
+    assert.notEqual(typeChanged.locationLinks[0].relationshipLabel, 'native', 'the OLD label must never survive an unrelated-label type change');
+    assert.equal(typeChanged.locationLinks[0].relationshipLabel, 'Works here', 'the label must reset to the NEW type\'s own default label');
+
+    // Changing relationshipType AND explicitly supplying a new relationshipLabel in the SAME patch must preserve the GM's exact text, never overridden by the default.
+    const typeAndLabelChanged = updateContactLocationLink(npc, linkId, { relationshipType: CONTACT_LOCATION_RELATIONSHIP.WORK, relationshipLabel: 'Runs the night shift' });
+    assert.equal(typeAndLabelChanged.locationLinks[0].relationshipLabel, 'Runs the night shift', 'an explicit relationshipLabel supplied in the SAME patch as a relationshipType change must be preserved exactly, never overridden by the default');
+
+    // Patching relationshipLabel alone (no type change) must never reset anything -- ordinary label edits stay ordinary.
+    const labelOnlyChanged = updateContactLocationLink(npc, linkId, { relationshipLabel: 'Something else entirely' });
+    assert.equal(labelOnlyChanged.locationLinks[0].relationshipType, CONTACT_LOCATION_RELATIONSHIP.RESIDENT, 'patching only relationshipLabel must never change relationshipType');
+    assert.equal(labelOnlyChanged.locationLinks[0].relationshipLabel, 'Something else entirely', 'patching only relationshipLabel must apply the new label exactly');
+
+    // CUSTOM relationshipType with no label is a contradiction (per data/npc-location-relationship-types.js's own documented contract) -- the update must be REJECTED wholesale, not silently create/keep a blank-labeled custom link.
+    const customNoLabel = updateContactLocationLink(npc, linkId, { relationshipType: CONTACT_LOCATION_RELATIONSHIP.CUSTOM });
+    assert.equal(customNoLabel, npc, 'updateContactLocationLink must reject (return the draft unchanged) a relationshipType:custom change with no label -- never silently drop or keep a blank-labeled custom relationship');
+    // The SAME custom type WITH an explicit label must succeed normally.
+    const customWithLabel = updateContactLocationLink(npc, linkId, { relationshipType: CONTACT_LOCATION_RELATIONSHIP.CUSTOM, relationshipLabel: 'Meets their ex here every fifth Taungsday' });
+    assert.equal(customWithLabel.locationLinks[0].relationshipType, CONTACT_LOCATION_RELATIONSHIP.CUSTOM, 'a custom type WITH an explicit label must be accepted');
+    assert.equal(customWithLabel.locationLinks[0].relationshipLabel, 'Meets their ex here every fifth Taungsday', 'the custom label must be preserved exactly');
+
+    // addContactLocationLink must apply the SAME CUSTOM-requires-label rejection.
+    const addCustomNoLabel = addContactLocationLink(npc, { locationId: 'loc-z', relationshipType: CONTACT_LOCATION_RELATIONSHIP.CUSTOM });
+    assert.equal(addCustomNoLabel, npc, 'addContactLocationLink must also reject a relationshipType:custom entry with no label');
+  }
+  console.log('PHASE 8D-3B locationLinks type/label coherence (relationshipType change without an explicit label resets to the new type\'s default; supplying both preserves the GM\'s exact text; a label-only patch never touches relationshipType; CUSTOM with no label is rejected on both add and update) passed.');
+
+  // --- CORRECTION (independent review round 4, item 5): snapshot-only entries are restricted to explicitly non-resolvable historical facts (LAST_SEEN / imported), never a name-only back door for a normal current relationship ---
+  {
+    // The exact "back door" scenario the review called out: a snapshot-only "resident" relationship with no real target must be rejected.
+    const npc = createNpcConceptDraft({ kind: 'living', name: 'Snapshot Boundary Test' });
+    const backDoorAttempt = addContactLocationLink(npc, { relationshipType: CONTACT_LOCATION_RELATIONSHIP.RESIDENT, snapshot: { name: 'Kellin IV' } });
+    assert.equal(backDoorAttempt, npc, 'a snapshot-only "resident" relationship with no locationId/locationDraftId must be rejected -- snapshot is a display fallback, never pseudo-identity for a normal current relationship');
+
+    const workAttempt = addContactLocationLink(npc, { relationshipType: CONTACT_LOCATION_RELATIONSHIP.WORK, snapshot: { name: 'Some Facility' } });
+    assert.equal(workAttempt, npc, 'a snapshot-only "work" relationship must likewise be rejected');
+
+    // LAST_SEEN is the one explicitly-permitted snapshot-only case (this is exactly what lastKnownLocation migration produces).
+    const lastSeenOk = addContactLocationLink(npc, { relationshipType: CONTACT_LOCATION_RELATIONSHIP.LAST_SEEN, status: 'historical', snapshot: { name: 'The Old Docks' } });
+    assert.equal(lastSeenOk.locationLinks.length, 1, 'a snapshot-only LAST_SEEN relationship must be accepted');
+    assert.equal(lastSeenOk.locationLinks[0].snapshot.name, 'The Old Docks', 'the LAST_SEEN snapshot name must be preserved');
+
+    // source:imported is the other explicitly-permitted snapshot-only case (legacy data whose original system may not have carried an id).
+    const importedOk = addContactLocationLink(npc, { relationshipType: CONTACT_LOCATION_RELATIONSHIP.RESIDENT, source: 'imported', snapshot: { name: 'Some Old Record' } });
+    assert.equal(importedOk.locationLinks.length, 1, 'a snapshot-only entry explicitly marked source:imported must be accepted even for a normally-current relationshipType');
+
+    // Direct primitive check: isMeaningfulContactLocationLink itself enforces the same boundary (proves this isn't just an add-time coincidence).
+    const bareBackDoor = createContactLocationLink({ relationshipType: CONTACT_LOCATION_RELATIONSHIP.STATIONED, snapshot: { name: 'A Base' } });
+    assert.equal(isMeaningfulContactLocationLink(bareBackDoor), false, 'isMeaningfulContactLocationLink must reject a snapshot-only, non-LAST_SEEN, non-imported link directly');
+
+    // migrateLegacyLocationScalarsToLinks's own no-id-no-target case (locationRelationship text with no linkedLocationId at all) must now be dropped by normalizeContactLocationLinks -- a label alone was never a real relationship.
+    const labelOnlyMigrated = normalizeContactLocationLinks(migrateLegacyLocationScalarsToLinks({ locationRelationship: 'native' }));
+    assert.deepEqual(labelOnlyMigrated, [], 'a locationRelationship label with no linkedLocationId/locationDraftId at all must normalize away to zero links -- a floating label was never a real relationship');
+  }
+  console.log('PHASE 8D-3B locationLinks snapshot-only validity boundary (a name-only "resident"/"work" relationship is rejected as a back door; LAST_SEEN and source:imported remain the only explicitly-permitted snapshot-only cases; enforced directly by isMeaningfulContactLocationLink, not just at add-time) passed.');
+
+  // --- CORRECTION (independent review round 4, item 4): draft -> canonical promotion rewrites every matching link's target while preserving everything else ---
+  {
+    let npc = createNpcConceptDraft({
+      kind: 'living', name: 'Promotion Test',
+      locationLinks: [
+        createContactLocationLink({ locationDraftId: 'draft:location:kellin', relationshipType: CONTACT_LOCATION_RELATIONSHIP.RESIDENT, relationshipLabel: 'native', primary: true, certainty: 'confirmed', notes: 'Grew up here' }),
+        createContactLocationLink({ locationDraftId: 'draft:location:other-place', relationshipType: CONTACT_LOCATION_RELATIONSHIP.WORK })
+      ]
+    });
+    const residentLinkId = npc.locationLinks[0].linkId;
+    const otherLinkId = npc.locationLinks[1].linkId;
+
+    const promoted = resolveContactLocationDraftReference(npc, { locationDraftId: 'draft:location:kellin', locationId: 'loc-kellin-iv', snapshot: { name: 'Kellin IV', type: 'planet' } });
+    const promotedLink = promoted.locationLinks.find((l) => l.linkId === residentLinkId);
+    assert.equal(promotedLink.locationId, 'loc-kellin-iv', 'promotion must set the new canonical locationId');
+    assert.equal(promotedLink.locationDraftId, '', 'promotion must clear the old locationDraftId');
+    assert.equal(promotedLink.linkId, residentLinkId, 'promotion must preserve the exact linkId');
+    assert.equal(promotedLink.relationshipType, CONTACT_LOCATION_RELATIONSHIP.RESIDENT, 'promotion must preserve relationshipType');
+    assert.equal(promotedLink.relationshipLabel, 'native', 'promotion must preserve relationshipLabel');
+    assert.equal(promotedLink.primary, true, 'promotion must preserve the primary flag');
+    assert.equal(promotedLink.certainty, 'confirmed', 'promotion must preserve certainty');
+    assert.equal(promotedLink.notes, 'Grew up here', 'promotion must preserve notes');
+    assert.equal(promotedLink.snapshot.name, 'Kellin IV', 'promotion must refresh the snapshot to the newly-committed Location\'s real name when supplied');
+
+    // The UNRELATED link (a different draftId) must survive completely untouched (content-identical -- npc-concept.js's own construction pipeline always reconstructs fresh link objects on every save, same precedent as flavorNotes/relationshipHooks elsewhere in this schema; the bare `resolveLocationDraftReferenceInLinks()` primitive checked below preserves true object identity for an untouched entry).
+    const untouchedLink = promoted.locationLinks.find((l) => l.linkId === otherLinkId);
+    assert.equal(untouchedLink.locationDraftId, 'draft:location:other-place', 'a link pointing at a DIFFERENT draftId must never be touched by an unrelated promotion');
+    assert.deepEqual(untouchedLink, npc.locationLinks[1], 'the untouched sibling link must be content-identical -- promotion never alters an unrelated entry\'s fields');
+
+    // The derived legacy mirror must follow the promotion too (the promoted link is primary).
+    assert.equal(promoted.linkedLocationId, 'loc-kellin-iv', 'the derived linkedLocationId mirror must reflect the promoted canonical id');
+    assert.equal(promoted.locationDraftId, '', 'the derived locationDraftId mirror must clear once the primary link is promoted');
+
+    // No-op cases: unknown draftId, or missing either id.
+    const noMatch = resolveContactLocationDraftReference(npc, { locationDraftId: 'draft:location:not-linked-to-anything', locationId: 'loc-x' });
+    assert.equal(noMatch, npc, 'resolveContactLocationDraftReference must no-op (same draft reference) when no link matches the given locationDraftId');
+    const missingCanonical = resolveContactLocationDraftReference(npc, { locationDraftId: 'draft:location:kellin' });
+    assert.equal(missingCanonical, npc, 'resolveContactLocationDraftReference must no-op when no canonical locationId is supplied');
+
+    // Direct primitive check on the pure array-level function: true object-identity preservation for an untouched sibling, plus the no-op (same array reference) contract.
+    const bareUntouched = createContactLocationLink({ locationDraftId: 'draft:location:untouched' });
+    const bareTarget = createContactLocationLink({ locationDraftId: 'draft:location:x' });
+    const bareLinks = [bareTarget, bareUntouched];
+    const bareResolved = resolveLocationDraftReferenceInLinks(bareLinks, { locationDraftId: 'draft:location:x', locationId: 'loc-x' });
+    assert.equal(bareResolved[0].locationId, 'loc-x', 'resolveLocationDraftReferenceInLinks (the bare-array primitive) must perform the same rewrite');
+    assert.equal(bareResolved[1], bareUntouched, 'resolveLocationDraftReferenceInLinks must preserve the EXACT object reference of an untouched sibling link');
+    assert.equal(resolveLocationDraftReferenceInLinks(bareLinks, { locationDraftId: 'draft:location:no-match', locationId: 'loc-x' }), bareLinks, 'resolveLocationDraftReferenceInLinks must return the SAME array reference (a true no-op) when nothing matches');
+  }
+  console.log('PHASE 8D-3B locationLinks draft->canonical promotion (resolveContactLocationDraftReference rewrites locationDraftId->locationId while preserving linkId/relationshipType/label/primary/certainty/notes exactly, unrelated sibling links untouched by object reference, derived legacy mirrors follow, no-op for unmatched/incomplete refs) passed.');
+
+  // --- orphan-safe resolution: 5 distinct states, never fuzzy, always falls back to snapshot ---
   {
     const canonicalLink = createContactLocationLink({ locationId: 'loc-exists', snapshot: { name: 'Kessler Pit', type: 'facility' } });
     const resolved = resolveContactLocationLink(canonicalLink, { findLocation: (id) => (id === 'loc-exists' ? { id: 'loc-exists', name: 'Kessler Pit' } : null) });
     assert.equal(resolved.state, 'canonical', 'a resolvable canonical locationId must resolve to state:canonical');
     assert.ok(resolved.location, 'a canonical resolution must return the real location object');
 
+    // CORRECTION (independent review round 4 -- "resolution states conflate not-checked with broken"): an id set but NO resolver supplied at all must report UNRESOLVED, never orphaned -- "nobody asked" is not "confirmed missing."
+    const unresolvedCanonical = resolveContactLocationLink(canonicalLink, {});
+    assert.equal(unresolvedCanonical.state, 'unresolved', 'a canonical locationId with NO findLocation supplied at all must report state:unresolved, distinct from orphaned');
+    assert.equal(unresolvedCanonical.location, null, 'unresolved must never fabricate a location object');
+
     const orphanedLink = createContactLocationLink({ locationId: 'loc-deleted', snapshot: { name: 'Vornak Extraction Complex', type: 'facility' } });
     const orphaned = resolveContactLocationLink(orphanedLink, { findLocation: () => null });
-    assert.equal(orphaned.state, 'orphaned', 'an id that fails to resolve must report state:orphaned, never silently succeed');
+    assert.equal(orphaned.state, 'orphaned', 'a resolver that was SUPPLIED and definitively found nothing must report state:orphaned');
     assert.equal(orphaned.location, null, 'an orphaned resolution must never fabricate a location object');
     assert.equal(orphaned.snapshot.name, 'Vornak Extraction Complex', 'an orphaned link must still expose its snapshot for a "last known name" display fallback');
 
@@ -1524,15 +1696,21 @@ const stubDroidNameProvider = async () => 'TX-1';
     resolveContactLocationLink(orphanedLink, { findLocation: (id) => { calledWith = id; return null; } });
     assert.equal(calledWith, 'loc-deleted', 'resolveContactLocationLink must always look up by the exact stored locationId, never by snapshot.name');
 
+    // Draft links get the SAME symmetric treatment: unresolved (no resolver), draft (resolver found it), orphaned (resolver supplied, found nothing).
     const draftLink = createContactLocationLink({ locationDraftId: 'draft:location:pending' });
-    const draftResolved = resolveContactLocationLink(draftLink, {});
-    assert.equal(draftResolved.state, 'draft', 'a locationDraftId-only link must report state:draft even with no findLocationDraft supplied');
+    const draftUnresolved = resolveContactLocationLink(draftLink, {});
+    assert.equal(draftUnresolved.state, 'unresolved', 'a locationDraftId-only link with no findLocationDraft supplied must report state:unresolved, not a false state:draft');
+    const draftResolved = resolveContactLocationLink(draftLink, { findLocationDraft: (id) => (id === 'draft:location:pending' ? { draftId: id, name: 'Pending Outpost' } : null) });
+    assert.equal(draftResolved.state, 'draft', 'a locationDraftId that DOES resolve via the supplied findLocationDraft must report state:draft');
+    assert.ok(draftResolved.location, 'a resolved draft must return the real draft object');
+    const draftOrphaned = resolveContactLocationLink(draftLink, { findLocationDraft: () => null });
+    assert.equal(draftOrphaned.state, 'orphaned', 'a locationDraftId whose supplied resolver definitively finds nothing must report state:orphaned, not state:draft');
 
-    const emptyLink = createContactLocationLink({ snapshot: { name: 'Old Docks' } });
+    const emptyLink = createContactLocationLink({ relationshipType: CONTACT_LOCATION_RELATIONSHIP.LAST_SEEN, snapshot: { name: 'Old Docks' } });
     const emptyResolved = resolveContactLocationLink(emptyLink, {});
-    assert.equal(emptyResolved.state, 'empty', 'a link with no id at all (e.g. a migrated lastKnownLocation) must report state:empty, distinct from orphaned');
+    assert.equal(emptyResolved.state, 'empty', 'a link with no id at all (e.g. a migrated lastKnownLocation) must report state:empty, distinct from unresolved/orphaned');
   }
-  console.log('PHASE 8D-3B locationLinks orphan-safe resolution (canonical/draft/orphaned/empty states, exact-id-only lookup never a name/slug guess, snapshot survives as a display fallback) passed.');
+  console.log('PHASE 8D-3B locationLinks orphan-safe resolution (5 distinct states -- canonical/draft/unresolved/orphaned/empty -- unresolved never conflated with orphaned for either canonical or draft targets, exact-id-only lookup never a name/slug guess, snapshot survives as a display fallback) passed.');
 
   // --- reverse lookup + hierarchy (pure primitive; predicate injected, no LocationRegistryService dependency) ---
   {
@@ -1550,26 +1728,40 @@ const stubDroidNameProvider = async () => 'TX-1';
     const isDescendant = (candidateId, ancestorId) => descendantsOf[candidateId] === ancestorId;
 
     // Exact match only.
-    const exact = findContactsForLocation(contacts, 'kessler-pit', {});
+    const exact = findContactsForLocationRef(contacts, { locationId: 'kessler-pit' }, {});
     assert.deepEqual(exact.map((c) => c.name), ['Resident'], 'an exact (non-hierarchical) query must match only a Contact linked directly to that Location');
 
     // includeDescendants: querying the ANCESTOR (kellin-iv) surfaces Contacts anchored at ANY descendant, regardless of their own link scope -- PLUS the Governor, whose own link already targets kellin-iv exactly.
-    const withDescendants = findContactsForLocation(contacts, 'kellin-iv', { includeDescendants: true, isDescendant });
+    const withDescendants = findContactsForLocationRef(contacts, { locationId: 'kellin-iv' }, { includeDescendants: true, isDescendant });
     assert.deepEqual(new Set(withDescendants.map((c) => c.name)), new Set(['Resident', 'Worker', 'Governor']), 'includeDescendants must surface Contacts anchored at any descendant Location when querying an ancestor, alongside anyone linked to the ancestor itself');
     assert.ok(!withDescendants.some((c) => c.name === 'Unrelated'), 'a Contact linked to an unrelated Location must never appear');
 
     // scope:'descendants' -- the governor's SINGLE link anchored at kellin-iv (the ancestor) must ALSO surface for a query at a DESCENDANT location (jurisdiction), even without includeDescendants.
-    const jurisdictionQuery = findContactsForLocation(contacts, 'kessler-pit', { isDescendant });
+    const jurisdictionQuery = findContactsForLocationRef(contacts, { locationId: 'kessler-pit' }, { isDescendant });
     assert.ok(jurisdictionQuery.some((c) => c.name === 'Governor'), 'a link scoped to descendants must surface for a query at any Location beneath its own target, even without includeDescendants');
     assert.ok(jurisdictionQuery.some((c) => c.name === 'Resident'), 'the exact-match Contact must still be included alongside the jurisdiction match');
 
     // Without includeDescendants and without a descendants-scoped link, an ancestor query must NOT surface descendant-anchored Contacts.
-    const noHierarchy = findContactsForLocation(contacts, 'kellin-iv', {});
+    const noHierarchy = findContactsForLocationRef(contacts, { locationId: 'kellin-iv' }, {});
     assert.ok(!noHierarchy.some((c) => c.name === 'Resident'), 'omitting includeDescendants must not surface a Contact anchored at a descendant Location');
     assert.ok(noHierarchy.some((c) => c.name === 'Governor'), 'the governor\'s own link IS anchored exactly at kellin-iv, so it matches the exact query regardless');
 
-    assert.deepEqual(findContactsForLocation(contacts, ''), [], 'an empty locationId must return no results, never every Contact');
-    assert.deepEqual(findContactsForLocation([], 'kellin-iv'), [], 'an empty contacts list must return no results');
+    assert.deepEqual(findContactsForLocationRef(contacts, { locationId: '' }), [], 'an empty locationId must return no results, never every Contact');
+    assert.deepEqual(findContactsForLocationRef([], { locationId: 'kellin-iv' }), [], 'an empty contacts list must return no results');
+    assert.deepEqual(findContactsForLocationRef(contacts, {}), [], 'a locationRef with neither locationId nor locationDraftId must return no results');
+
+    // CORRECTION (independent review round 4 -- "draft Locations are second-class in reverse lookup"): a Contact generated FOR a not-yet-committed Faction/Location draft must be queryable by its locationDraftId, not just after promotion to canonical.
+    const draftLinked = createNpcConceptDraft({
+      kind: 'living', name: 'Draft-Linked',
+      locationLinks: [createContactLocationLink({ locationDraftId: 'draft:location:kellin', relationshipType: CONTACT_LOCATION_RELATIONSHIP.RESIDENT, primary: true })]
+    });
+    const draftQuery = findContactsForLocationRef([...contacts, draftLinked], { locationDraftId: 'draft:location:kellin' }, {});
+    assert.deepEqual(draftQuery.map((c) => c.name), ['Draft-Linked'], 'findContactsForLocationRef must match an EXACT locationDraftId target, not just canonical locationIds');
+    const wrongDraftQuery = findContactsForLocationRef([...contacts, draftLinked], { locationDraftId: 'draft:location:some-other-place' }, {});
+    assert.deepEqual(wrongDraftQuery, [], 'a locationDraftId query must not match a Contact linked to a DIFFERENT draft');
+    // locationId always wins over locationDraftId in the SAME query ref, mirroring createContactLocationLink()'s own precedence.
+    const bothInRef = findContactsForLocationRef([...contacts, draftLinked], { locationId: 'kessler-pit', locationDraftId: 'draft:location:kellin' }, {});
+    assert.deepEqual(bothInRef.map((c) => c.name), ['Resident'], 'a locationRef supplying BOTH locationId and locationDraftId must query by the canonical locationId only');
   }
   console.log('PHASE 8D-3B locationLinks reverse lookup (exact match, includeDescendants ancestor->descendant traversal, scope:descendants jurisdiction, injected isDescendant predicate, no LocationRegistryService dependency) passed.');
 
