@@ -7647,3 +7647,95 @@ named are fixed and verified with real statistical/direct-execution
 proof. PR #963 stays draft and unmerged. Per standing practice:
 stopping here for independent review before any further Phase 8D-3A
 work or a hypothetical Phase 8D-3B.
+
+## 185. PHASE 8D-3A correction pass round 4 — the government -> Trade Resolver dependency
+
+A further independent review of round 3's head (`cd9509f`) confirmed
+all three round-3 dependency fixes and the gas-giant correction as
+correct, with exact-head CI green, and found exactly one remaining
+reroll dependency bug: `planet-trade.js`'s Trade Resolver explicitly
+consumes `governmentTags` (`illicitChanceFor()` raises the illicit-trade
+chance to at least 0.6 for a `crime-syndicate`-tagged government, vs. a
+0.15 baseline) — a dependency initial generation (`rollCivilization()`)
+already threads correctly, but two targeted reroll paths did not.
+
+1. **`rerollPlanetEconomy()` never passed `government` into
+   `rollEconomy()` at all**, so the Trade Resolver always resolved
+   against `governmentTags: []` here regardless of the draft's actual
+   government — a crime-syndicate government's influence on illicit
+   trade was silently dropped on every economy reroll. Fixed: `rollEconomy()`
+   already accepted (and correctly used) a `government` parameter — this
+   was purely a missing pass-through at the call site.
+   `government: draft.government` added; `government` itself is
+   untouched by this reroll (read-only Trade Resolver context, exactly
+   like `stability`). Verified over up to 6000 seeds: `rerollPlanetEconomy()`
+   measurably raises the illicit-trade rate for drafts whose CURRENT
+   government carries `crime-syndicate` (67.5% in a direct check) vs.
+   drafts whose government doesn't (35.7%); government reference
+   identity and `populationScale` confirmed preserved through the
+   reroll.
+2. **`rerollPlanetGovernment()` left `economy.exports`/`imports`/
+   `shortages`/`illicitTrade` sampled under the OLD, pre-reroll
+   government** after rolling a new one — the same class of staleness
+   `rerollPlanetStability()` was already fixed for (R2 fix 7), just one
+   field over. Fixed by mirroring that exact pattern: after picking the
+   new government, `generatePlanetTrade()` is re-run against the SAME
+   `primarySector`/`secondarySectors` (explicitly preserved — this
+   stays a targeted government reroll, never a cascading economy-sector
+   reroll) and the NEW `government.tags`, merged into `economy`; `tags`/
+   `summary`/`suggestedOppositionTags`/`diagnostics` are then recomputed
+   from the refreshed economy, same as every other tags-affecting
+   reroll. Verified over up to 6000 seeds: `primarySector`/
+   `secondarySectors` preserved on every single reroll; every unrelated
+   field (`populationScale`/`populationEstimate`/`technologyLevel`/
+   `technologyAccess`/`technologySpecialties`/`droidPrevalence`/
+   `worldClass`/`name`) confirmed unchanged; the illicit-trade rate is
+   measurably higher when the reroll lands on a crime-syndicate
+   government (62.1%) vs. one that doesn't (35.0%).
+
+**Caller audit** (per the review's explicit instruction to re-read
+every `generatePlanetTrade()`/`rollEconomy()` call site before
+declaring complete, not to broaden scope beyond real omissions): all
+other callers already correctly thread government through --
+`rollCivilization()` (initial generation) passes the just-rolled
+government before economy; `rerollPlanetStability()`/
+`rerollPlanetTrade()` already read `draft.government?.tags`;
+`rerollPlanetPopulation()`'s "staying inhabited" branch assigns
+`government = draft.government` before its own trade-only recompute.
+No other caller needed a change, and none was touched beyond the two
+real omissions above.
+
+**No bundle-layer special-casing was added.** `planet-bundle.js`'s
+`regenerateCivilizationCluster()`-composing `regenerateCivilization()`
+(added in round 3) required NO changes at all — its existing
+composition (`government -> stability -> economy -> ...`) automatically
+produces trade generated against the freshly-rolled government purely
+because `rerollPlanetEconomy()` itself is now correct. Verified over
+6000 seeds directly against `regenerateCivilization()`: the same
+crime-syndicate-vs-other illicit-trade rate gap holds (66.7% vs. 33.6%)
+with zero code changes in `planet-bundle.js`.
+
+### Tests + Regression (this pass)
+
+`tests/gm-generation-phase8d3a-production.test.mjs` gained a seventh
+section: `rerollPlanetEconomy()`'s government-context statistical
+check plus government-identity/population-preservation assertions,
+`rerollPlanetGovernment()`'s sector-preservation + unrelated-field
+preservation + trade-refresh statistical check, and a direct
+`regenerateCivilization()` check confirming the composed seam benefits
+automatically.
+
+Full `gm-*.test.mjs` sweep: **58/58 green** (same file count as §184 —
+this pass extended the existing Phase 8D-3A test file rather than
+adding a new one). Full rolling suite (`tools/run-rolling-tests.mjs`):
+**188 passed, 0 failed** (5 pre-existing excluded, unchanged). Full
+syntax check (`tools/run-rolling-syntax-check.mjs`): **2404/2404
+clean** (no new files this pass). No canonical-persistence call in any
+file this pass touched. Working tree clean before this commit.
+
+**PHASE 8D-3A CORRECTION PASS ROUND 4 COMPLETE.** The one remaining
+government -> Trade Resolver dependency bug the review's final narrow
+scope named is fixed in both affected reroll paths and verified with
+real statistical/direct-execution proof. PR #963 stays draft and
+unmerged. Per standing practice: stopping here for independent review.
+Phase 8D-3B is explicitly not started.

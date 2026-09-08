@@ -1005,4 +1005,81 @@ const abs = (rel) => `/systems/foundryvtt-swse/${rel}`;
   console.log('PHASE 8D-3A correction pass round 3 (population-reroll boundary-crossing context, cohesive civilization regeneration dependency order, suggestedOppositionTags staleness, gas-giant atmosphere correction) passed.');
 }
 
+// ------------------------------------------------------------
+// Correction pass round 4: the government -> Trade Resolver dependency.
+// `generatePlanetTrade()` explicitly consumes `governmentTags` (a
+// `crime-syndicate`-tagged government raises illicit-trade likelihood
+// to at least 0.6, vs. a 0.15 baseline -- see `planet-trade.js`'s own
+// `illicitChanceFor()`). Initial generation (`rollCivilization()`)
+// already threads the current government through correctly, but two
+// reroll paths did not: `rerollPlanetEconomy()` never passed
+// `government` into `rollEconomy()` at all (governmentTags: [] always,
+// even with a real government on the draft), and
+// `rerollPlanetGovernment()` left the OLD, previous-government-sampled
+// trade fields in place after rolling a new government.
+// ------------------------------------------------------------
+{
+  const { makeSeededRng } = await import(abs('scripts/generation/lib/weighted-random.js'));
+  const { createProceduralPlanetDraft, rerollPlanetEconomy, rerollPlanetGovernment } = await import(abs('scripts/generation/planets/planet-draft.js'));
+  const { generateProceduralPlanetBundle, regenerateCivilization } = await import(abs('scripts/generation/planets/planet-bundle.js'));
+
+  const isCrimeSyndicate = (government) => Boolean(government?.tags?.includes('crime-syndicate'));
+
+  // Fix 1: rerollPlanetEconomy() must honor the draft's CURRENT government as Trade Resolver context.
+  {
+    let illicitWithCrimeGov = 0, crimeGovTrials = 0, illicitOther = 0, otherTrials = 0;
+    const N = 6000;
+    for (let seed = 0; seed < N; seed++) {
+      const d = createProceduralPlanetDraft({ rng: makeSeededRng(seed) });
+      if (d.populationScale === 'uninhabited' || !d.government) continue;
+      const r = rerollPlanetEconomy(d, { rng: makeSeededRng(seed + 1000000) });
+      assert.equal(r.government, d.government, `seed ${seed}: rerollPlanetEconomy() must not touch government (reference identity)`);
+      assert.equal(r.populationScale, d.populationScale, `seed ${seed}: rerollPlanetEconomy() must not touch populationScale`);
+      if (isCrimeSyndicate(d.government)) { crimeGovTrials++; if (r.economy.illicitTrade.length > 0) illicitWithCrimeGov++; }
+      else { otherTrials++; if (r.economy.illicitTrade.length > 0) illicitOther++; }
+    }
+    assert.ok(crimeGovTrials > 30 && otherTrials > 30, `test needs enough samples in both government buckets within ${N} seeds (got ${crimeGovTrials}/${otherTrials})`);
+    const crimeRate = illicitWithCrimeGov / crimeGovTrials, otherRate = illicitOther / otherTrials;
+    assert.ok(crimeRate > otherRate, `rerollPlanetEconomy() must exercise the draft's current crime-syndicate government context, measurably raising the illicit-trade rate (got ${crimeRate} vs ${otherRate})`);
+  }
+
+  // Fix 2: rerollPlanetGovernment() must refresh trade against the NEW government while preserving economy sectors and every unrelated field.
+  {
+    let illicitAfterCrimeGov = 0, crimeGovRerolls = 0, illicitAfterOther = 0, otherRerolls = 0;
+    const UNRELATED_KEYS = ['populationScale', 'populationEstimate', 'technologyLevel', 'technologyAccess', 'technologySpecialties', 'droidPrevalence', 'worldClass', 'name'];
+    const N = 6000;
+    for (let seed = 0; seed < N; seed++) {
+      const d = createProceduralPlanetDraft({ rng: makeSeededRng(seed + 2000000) });
+      if (d.populationScale === 'uninhabited') continue;
+      const r = rerollPlanetGovernment(d, { rng: makeSeededRng(seed + 3000000) });
+      assert.equal(r.economy.primarySector, d.economy.primarySector, `seed ${seed}: rerollPlanetGovernment() must preserve primarySector`);
+      assert.deepEqual(r.economy.secondarySectors, d.economy.secondarySectors, `seed ${seed}: rerollPlanetGovernment() must preserve secondarySectors`);
+      for (const k of UNRELATED_KEYS) assert.deepEqual(r[k], d[k], `seed ${seed}: rerollPlanetGovernment() must preserve unrelated field "${k}"`);
+      if (isCrimeSyndicate(r.government)) { crimeGovRerolls++; if (r.economy.illicitTrade.length > 0) illicitAfterCrimeGov++; }
+      else { otherRerolls++; if (r.economy.illicitTrade.length > 0) illicitAfterOther++; }
+    }
+    assert.ok(crimeGovRerolls > 30 && otherRerolls > 30, `test needs enough samples in both post-reroll government buckets within ${N} seeds (got ${crimeGovRerolls}/${otherRerolls})`);
+    const crimeRate = illicitAfterCrimeGov / crimeGovRerolls, otherRate = illicitAfterOther / otherRerolls;
+    assert.ok(crimeRate > otherRate, `rerollPlanetGovernment() must refresh trade against the NEW government, measurably raising the illicit-trade rate when it lands on a crime-syndicate government (got ${crimeRate} vs ${otherRate})`);
+  }
+
+  // regenerateCivilizationCluster()'s existing composition (government -> stability -> economy -> ...) must now automatically produce trade generated against the NEW government -- no bundle-layer special-casing required.
+  {
+    let illicitWithCrimeGov = 0, crimeGovTrials = 0, illicitOther = 0, otherTrials = 0;
+    const N = 6000;
+    for (let seed = 0; seed < N; seed++) {
+      const bundle = generateProceduralPlanetBundle({ rng: makeSeededRng(seed + 4000000) });
+      if (bundle.planetDraft.populationScale === 'uninhabited') continue;
+      const after = regenerateCivilization(bundle, { rng: makeSeededRng(seed + 5000000) }).planetDraft;
+      if (!after.government) continue;
+      if (isCrimeSyndicate(after.government)) { crimeGovTrials++; if (after.economy.illicitTrade.length > 0) illicitWithCrimeGov++; }
+      else { otherTrials++; if (after.economy.illicitTrade.length > 0) illicitOther++; }
+    }
+    assert.ok(crimeGovTrials > 30 && otherTrials > 30, `test needs enough samples in both regenerateCivilization() government buckets within ${N} seeds (got ${crimeGovTrials}/${otherTrials})`);
+    assert.ok(illicitWithCrimeGov / crimeGovTrials > illicitOther / otherTrials, 'regenerateCivilization()\'s composed civilization cluster must automatically produce trade consistent with its newly-rolled government');
+  }
+
+  console.log('PHASE 8D-3A correction pass round 4 (government -> Trade Resolver dependency: rerollPlanetEconomy government context, rerollPlanetGovernment trade refresh) passed.');
+}
+
 console.log('PHASE 8D-3A procedural locations productionization suite (catalog quality, generation semantics, bundle generation, reroll safety, determinism) passed.');

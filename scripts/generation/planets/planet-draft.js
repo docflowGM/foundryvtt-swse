@@ -635,13 +635,37 @@ export function rerollPlanetWorldClass(draft, { rng } = {}) {
  * PHASE 8D-3A: honors the draft's `presetId`/`region`/world-class
  * context (`generationPreferenceTagsForDraft()`), same stickiness
  * rationale as `rerollPlanetWorldClass()`.
+ *
+ * R2 round 4: also re-runs the Trade Resolver (`generatePlanetTrade()`)
+ * against the NEW government's tags -- government is a direct Trade
+ * Resolver input (a crime-syndicate government measurably raises
+ * illicit-trade likelihood), so leaving `economy.exports`/`imports`/
+ * `shortages`/`illicitTrade` at their OLD, previous-government-sampled
+ * values after a government reroll left them silently stale, exactly
+ * the same class of bug `rerollPlanetStability()` was already fixed
+ * for. `primarySector`/`secondarySectors` themselves are explicitly
+ * preserved -- this stays a TARGETED government reroll, not a
+ * cascading economy-sector reroll.
  */
 export function rerollPlanetGovernment(draft, { rng } = {}) {
   if (draft.populationScale === POPULATION_SCALE.UNINHABITED) return draft;
   const government = pickPlanetGovernment({ rng, preferTags: generationPreferenceTagsForDraft(draft) });
   const { tags, summary, suggestedOppositionTags } = composeTagsAndSummary({ worldClass: draft.worldClass, government, stability: draft.stability, economy: draft.economy, hazards: draft.hazards, traits: draft.traits, populationEstimate: draft.populationEstimate });
-  const diagnostics = computePlanetDiagnostics({ worldClass: draft.worldClass, government, economy: draft.economy, technologyLevel: draft.technologyLevel, populationScale: draft.populationScale, gravity: draft.gravity, atmosphere: draft.atmosphere, hydrosphere: draft.hydrosphere });
-  return { ...draft, government, tags, summary, suggestedOppositionTags, diagnostics };
+  const trade = generatePlanetTrade({
+    rng,
+    primarySector: draft.economy.primarySector,
+    secondarySectors: draft.economy.secondarySectors,
+    worldClass: draft.worldClass,
+    populationScale: draft.populationScale,
+    settlementPattern: draft.settlementPattern,
+    stabilityValue: draft.stability?.value ?? '',
+    governmentTags: government?.tags ?? [],
+    exportCount: draft.economy.exports.length || 1,
+    importCount: draft.economy.imports.length || 1
+  });
+  const economy = { ...draft.economy, ...trade };
+  const diagnostics = computePlanetDiagnostics({ worldClass: draft.worldClass, government, economy, technologyLevel: draft.technologyLevel, populationScale: draft.populationScale, gravity: draft.gravity, atmosphere: draft.atmosphere, hydrosphere: draft.hydrosphere });
+  return { ...draft, government, tags, summary, suggestedOppositionTags, economy, diagnostics };
 }
 
 /**
@@ -684,6 +708,14 @@ export function rerollPlanetStability(draft, { rng } = {}) {
  * already ran against the full (unsliced) set -- the prior version
  * could leave an export/import referencing a secondary sector that was
  * then removed from the draft.
+ *
+ * R2 round 4: `government: draft.government` is now passed through to
+ * `rollEconomy()` -- previously omitted, so the Trade Resolver always
+ * saw `governmentTags: []` here even when the draft carries a real
+ * government whose tags (e.g. a crime-syndicate government) should
+ * measurably raise illicit-trade likelihood. `government` itself is
+ * NOT rerolled by this function -- it is read-only context fed INTO
+ * the Trade Resolver, exactly like `stability`.
  */
 export function rerollPlanetEconomy(draft, { rng, secondaryCount } = {}) {
   if (draft.populationScale === POPULATION_SCALE.UNINHABITED) return draft;
@@ -694,6 +726,7 @@ export function rerollPlanetEconomy(draft, { rng, secondaryCount } = {}) {
     populationScale: draft.populationScale,
     settlementPattern: draft.settlementPattern,
     stability: draft.stability,
+    government: draft.government,
     secondaryCount
   });
   const { tags, summary, suggestedOppositionTags } = composeTagsAndSummary({ worldClass: draft.worldClass, government: draft.government, stability: draft.stability, economy, hazards: draft.hazards, traits: draft.traits, populationEstimate: draft.populationEstimate });
