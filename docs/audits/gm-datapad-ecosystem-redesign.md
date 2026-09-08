@@ -7514,3 +7514,136 @@ content was added, per the review's explicit instruction. PR #963
 stays draft and unmerged. Per standing practice: stopping here for
 independent review before any further Phase 8D-3A work or a
 hypothetical Phase 8D-3B.
+
+## 184. PHASE 8D-3A correction pass round 3 — three dependency bugs + one data correction
+
+A further independent review of round 2's head (`548eafd`) confirmed
+every round-2 fix as genuinely good (species-prevalence identity,
+region bias, environmental hard constraints, preset bundle
+propagation, POI context refresh, the demographics reroll, the
+diagnostic-code dedup, and the archetype-manifest self-check all
+independently re-verified) and the technology refinement as
+conceptually solid, but found three real dependency bugs left over
+from wiring the new preset/region/technology seams through EVERY call
+site that needed them, plus one tiny world-class data correction. All
+four fixed, no new catalogs/fields/behaviors/architecture added, per
+the review's explicit scope.
+
+1. **`rerollPlanetPopulation()` lost the draft's preset + region
+   context specifically when the reroll crosses the `UNINHABITED`
+   boundary.** The "staying inhabited" branch correctly uses
+   `generationPreferenceTagsForDraft(draft)` (preset ∪ region ∪ world
+   class), but the boundary-crossing branch — which rebuilds the whole
+   civilization block via `rollCivilization()` — passed only
+   `worldClassPreferenceTags(draft.worldClass)`, silently dropping
+   preset and region. An `UNINHABITED -> inhabited` reroll on a Mining
+   World preset in the Outer Rim would rebuild government/economy/
+   technology with neither the preset nor the region actually
+   influencing the result. Fixed: one-line change to
+   `generationPreferenceTagsForDraft(draft)`. Verified over 3000 seeds:
+   a mining-world preset raises the mining-sector rate on the newly-
+   inhabited economy to 22.0% vs. a 3.6% no-preset baseline, and
+   `presetId` is confirmed preserved across the crossing.
+2. **`planet-bundle.js`'s `regenerateCivilization()` had drifted out
+   of sync with the technology-production refinement's own dependency
+   order.** It hard-coded `government -> stability -> technologyLevel
+   -> economy` directly rather than composing anything from
+   `planet-draft.js`, which both rolled `technologyLevel` against the
+   STALE pre-reroll economy (backwards from
+   `rollCivilization()`'s now-correct `economy` -before-`technology`
+   ordering) and omitted `technologyAccess`/`technologySpecialties`/
+   `droidPrevalence` entirely — the technology model was coherent on
+   initial generation but not on its own explicit "regenerate
+   civilization" operation. Fixed with the reusable seam the review
+   asked for: a new `regenerateCivilizationCluster(draft, { rng,
+   secondaryCount })` in `planet-draft.js` that composes the existing
+   single-field rerolls in the correct order — `government -> stability
+   -> economy -> technologyLevel -> technologyAccess ->
+   technologySpecialties -> droidPrevalence` — so `planet-bundle.js`
+   never has to know or re-derive that ordering independently again.
+   `droidPrevalence` IS included in this cohesive operation
+   (deliberately, per the review) even though every narrower
+   single-field economy/technology reroll must still preserve it — this
+   broader operation re-deriving it to match the newly-rolled context
+   is the correct default here. `regenerateCivilization()` is now a
+   two-line composition of this seam plus the existing POI-refresh
+   step. Verified over 3000 seeds: `technologyLevel` after
+   regeneration correlates with the FRESH economy (avg rank 3.07 for
+   technology/research/industrial-tagged post-reroll economies vs. 2.93
+   for others); `technologyAccess`/`technologySpecialties`/
+   `droidPrevalence` all measurably change across regenerations; on an
+   `UNINHABITED` draft every civilization field stays `null`/empty
+   except `droidPrevalence`, which still rerolls, exactly matching its
+   independent-of-population design.
+3. **`suggestedOppositionTags` — a pure, deterministic projection of
+   `draft.tags` (`planet-hooks.js`'s `deriveSuggestedOppositionTags()`)
+   — was stored once at creation and never refreshed on any
+   tags-affecting reroll** (world class, government, stability,
+   economy, hazards, traits), silently going stale exactly like
+   `tags` itself did before R2 fix 7 (which fixed `tags` reaching
+   `stability`'s own tags, but never addressed the SEPARATE
+   `suggestedOppositionTags` staleness one level up). The round-2 test
+   had itself masked this: it asserted
+   `deriveSuggestedOppositionTags(d.tags)` computed fresh in the test,
+   never the actual STORED `d.suggestedOppositionTags` field. Two
+   options were weighed: recompute it wherever `tags` changes, or stop
+   storing it and derive it on read. The latter doesn't fit this
+   codebase's convention — every draft is a plain object propagated via
+   `{...draft, field}` spreads throughout, never a class with computed
+   getters, so a lazily-derived accessor would either not survive a
+   spread correctly or would need every consumer to call
+   `deriveSuggestedOppositionTags(draft.tags)` itself, which is exactly
+   the workaround the round-2 test had to resort to. Fixed the former
+   way instead, at the single existing seam every tags-affecting reroll
+   already goes through: `composeTagsAndSummary()` now also returns
+   `suggestedOppositionTags: deriveSuggestedOppositionTags(tags)`
+   alongside `tags`/`summary`, and every one of its 8 call sites
+   (`createProceduralPlanetDraft`, `rerollPlanetWorldClass`,
+   `rerollPlanetGovernment`, `rerollPlanetStability`,
+   `rerollPlanetEconomy`, `rerollPlanetHazards`, `rerollPlanetTraits`,
+   `rerollPlanetPopulation`) now captures and returns it too — no new
+   function, no new architecture, just completing a value this function
+   already had every input needed to compute. The other SUGGEST-tier
+   hooks (`currentEvents`/`secret`/`suggestedFactionArchetypeTags`/
+   `suggestedJobArchetypeTags`) are deliberately NOT touched by any of
+   these rerolls, exactly as before — only `suggestedOppositionTags` is
+   a deterministic tags projection; the rest stay stable until an
+   explicit `rerollPlanetHooks()`. Verified over 300 seeds across all
+   six tags-affecting reroll paths (stability/government/economy/
+   hazards/traits/world class): the STORED `suggestedOppositionTags`
+   field matches `deriveSuggestedOppositionTags(draft.tags)` exactly,
+   every time; the other four hook fields confirmed untouched by the
+   same rerolls.
+4. **Tiny data correction**: `WORLD_CLASS_DEFINITIONAL_CONSTRAINTS['gas-giant'].atmosphere`
+   allowed `'none-vacuum'`, which is definitionally impossible — a gas
+   giant has an atmosphere by definition. Removed from the allowed set
+   (`planet-quality-tables.js`). Verified over 5000 seeds: every rolled
+   gas-giant world's atmosphere is never `'none-vacuum'`.
+
+### Tests + Regression (this pass)
+
+`tests/gm-generation-phase8d3a-production.test.mjs` gained a sixth
+section covering all four fixes: the boundary-crossing preset/region
+statistical check, `regenerateCivilizationCluster()`'s full-cluster
+reroll + fresh-economy-context verification (including the
+UNINHABITED-safe droidPrevalence-still-rerolls case and a direct
+sanity check of the new seam itself), the six-reroll-path
+`suggestedOppositionTags`-sync check plus the other-hooks-untouched
+check, and the gas-giant atmosphere correction.
+
+Full `gm-*.test.mjs` sweep: **58/58 green** (same file count as §183
+-- this pass extended the existing Phase 8D-3A test file rather than
+adding a new one). Full rolling suite (`tools/run-rolling-tests.mjs`):
+**188 passed, 0 failed** (5 pre-existing excluded, unchanged). Full
+syntax check (`tools/run-rolling-syntax-check.mjs`): **2404/2404
+clean** (no new files this pass -- purely dependency-ordering/wiring
+fixes and one data correction to existing files). No canonical-
+persistence call in any file this pass touched. Working tree clean
+before this commit.
+
+**PHASE 8D-3A CORRECTION PASS ROUND 3 COMPLETE.** All three dependency
+bugs and the gas-giant data correction the review's final narrow scope
+named are fixed and verified with real statistical/direct-execution
+proof. PR #963 stays draft and unmerged. Per standing practice:
+stopping here for independent review before any further Phase 8D-3A
+work or a hypothetical Phase 8D-3B.

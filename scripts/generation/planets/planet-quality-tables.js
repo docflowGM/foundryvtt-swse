@@ -188,7 +188,10 @@ export const WORLD_CLASS_DEFINITIONAL_CONSTRAINTS = Object.freeze({
   'high-gravity-terrestrial': Object.freeze({ gravity: Object.freeze(['high', 'very-high']) }),
   'low-gravity-terrestrial': Object.freeze({ gravity: Object.freeze(['very-low', 'low']) }),
   ocean: Object.freeze({ hydrosphere: Object.freeze(['extensive', 'oceanic', 'world-ocean']) }),
-  'gas-giant': Object.freeze({ atmosphere: Object.freeze(['unbreathable', 'toxic', 'corrosive', 'trace', 'none-vacuum']) }),
+  // R2 round 3 fix 4: 'none-vacuum' removed -- a gas giant has an
+  // atmosphere by definition, so a vacuum/no-atmosphere reading is
+  // definitionally impossible for this world class, not merely unlikely.
+  'gas-giant': Object.freeze({ atmosphere: Object.freeze(['unbreathable', 'toxic', 'corrosive', 'trace']) }),
   'artificial-habitat': Object.freeze({ gravity: Object.freeze(['artificial', 'standard']), atmosphere: Object.freeze(['artificially-maintained', 'standard-breathable']) })
 });
 

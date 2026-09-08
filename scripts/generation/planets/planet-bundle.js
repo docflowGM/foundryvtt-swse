@@ -40,10 +40,7 @@ import {
   rerollPlanetAtmosphere,
   rerollPlanetClimate,
   rerollPlanetHydrosphere,
-  rerollPlanetGovernment,
-  rerollPlanetStability,
-  rerollPlanetTechnologyLevel,
-  rerollPlanetEconomy,
+  regenerateCivilizationCluster,
   rerollPlanetHazards,
   rerollPlanetHistoryHooks,
   rerollPlanetTraits
@@ -170,21 +167,27 @@ export function regenerateEnvironment(bundle, { rng } = {}) {
 
 /**
  * Reroll the planet's CIVILIZATION cluster (government, stability,
- * technology level, economy) together -- composing the same
- * single-field reroll functions `planet-draft.js` already exports
- * (never reimplementing `rollCivilization()`'s private logic here). A
- * no-op on an UNINHABITED draft, exactly like each underlying reroll
- * already is individually. Every child POI is preserved but has its
- * context refreshed, same rationale and mechanism as
- * `regenerateEnvironment()` -- a POI's `generatorContext` also depends
- * on the planet's economy/government tags, not just its environment.
+ * economy, technology level, technology access, technology
+ * specialties, droid prevalence) together, in that dependency order --
+ * composing `planet-draft.js`'s own `regenerateCivilizationCluster()`
+ * seam, never re-deriving the ordering here (R2 round 3 fix 2: this
+ * function previously hard-coded government -> stability ->
+ * technologyLevel -> economy directly, which both rolled technology
+ * against the STALE pre-reroll economy and omitted technologyAccess/
+ * technologySpecialties/droidPrevalence entirely -- drift that crept
+ * in once the technology-production refinement changed
+ * `rollCivilization()`'s own ordering without this bundle-level
+ * operation being updated to match). A no-op for every civilization
+ * field on an UNINHABITED draft except `droidPrevalence`, which stays
+ * independent of population/civilization state by design and rerolls
+ * unconditionally -- see `regenerateCivilizationCluster()`'s own doc.
+ * Every child POI is preserved but has its context refreshed, same
+ * rationale and mechanism as `regenerateEnvironment()` -- a POI's
+ * `generatorContext` also depends on the planet's economy/government
+ * tags, not just its environment.
  */
 export function regenerateCivilization(bundle, { rng } = {}) {
-  let planetDraft = bundle.planetDraft;
-  planetDraft = rerollPlanetGovernment(planetDraft, { rng });
-  planetDraft = rerollPlanetStability(planetDraft, { rng });
-  planetDraft = rerollPlanetTechnologyLevel(planetDraft, { rng });
-  planetDraft = rerollPlanetEconomy(planetDraft, { rng });
+  const planetDraft = regenerateCivilizationCluster(bundle.planetDraft, { rng });
   const poiDrafts = bundle.poiDrafts.map((poi) => refreshPoiContext(poi, { parentPlanetDraft: planetDraft }));
   return { ...bundle, planetDraft, poiDrafts };
 }

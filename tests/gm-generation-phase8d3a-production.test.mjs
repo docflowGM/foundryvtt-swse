@@ -851,4 +851,158 @@ const abs = (rel) => `/systems/foundryvtt-swse/${rel}`;
   console.log('PHASE 8D-3A correction pass round 2 secondary observations (UNINHABITED POI floor of 0, real end-to-end preset density/provenance test) passed.');
 }
 
+// ------------------------------------------------------------
+// Correction pass round 3: four dependency bugs (plus one data
+// correction) caught by a further independent review of round 2's
+// head -- a population reroll losing preset/region context on an
+// UNINHABITED boundary crossing, the bundle's cohesive civilization
+// regeneration operation drifting out of sync with the technology
+// model's own dependency order, suggestedOppositionTags going stale
+// after any tag-affecting reroll, and gas giants allowing a physically
+// impossible vacuum atmosphere.
+// ------------------------------------------------------------
+{
+  const { makeSeededRng } = await import(abs('scripts/generation/lib/weighted-random.js'));
+  const {
+    createProceduralPlanetDraft,
+    rerollPlanetPopulation,
+    rerollPlanetStability,
+    rerollPlanetGovernment,
+    rerollPlanetEconomy,
+    rerollPlanetHazards,
+    rerollPlanetTraits,
+    rerollPlanetWorldClass,
+    regenerateCivilizationCluster
+  } = await import(abs('scripts/generation/planets/planet-draft.js'));
+  const { generateProceduralPlanetBundle, regenerateCivilization } = await import(abs('scripts/generation/planets/planet-bundle.js'));
+  const { deriveSuggestedOppositionTags } = await import(abs('scripts/generation/planets/planet-hooks.js'));
+  const { definitionalConstraintsFor } = await import(abs('scripts/generation/planets/planet-quality-tables.js'));
+
+  // Fix 1: rerollPlanetPopulation() crossing the UNINHABITED boundary must keep the draft's preset+region context (not just world class).
+  // A mining-world preset must raise the mining-sector rate on the newly-inhabited economy, same as it does at initial generation.
+  {
+    let miningAfterBoundary = 0, boundaryTrials = 0, miningBaseline = 0, baselineTrials = 0;
+    const N = 3000;
+    for (let seed = 0; seed < N; seed++) {
+      const d = createProceduralPlanetDraft({ rng: makeSeededRng(seed + 80000000), presetId: 'mining-world' });
+      if (d.populationScale !== 'uninhabited') continue;
+      const r = rerollPlanetPopulation(d, { rng: makeSeededRng(seed + 81000000), availableSpeciesIds: ['species-human', 'species-rodian', 'species-duros'] });
+      if (r.populationScale === 'uninhabited') continue;
+      boundaryTrials++;
+      if (r.economy.primarySector?.sector === 'mining') miningAfterBoundary++;
+      assert.equal(r.presetId, 'mining-world', `seed ${seed}: crossing the UNINHABITED boundary must preserve the draft's presetId`);
+
+      const b = createProceduralPlanetDraft({ rng: makeSeededRng(seed + 82000000) });
+      if (b.populationScale === 'uninhabited') continue;
+      baselineTrials++;
+      if (b.economy.primarySector?.sector === 'mining') miningBaseline++;
+    }
+    assert.ok(boundaryTrials > 50 && baselineTrials > 50, `test needs enough samples in both buckets within ${N} seeds (got ${boundaryTrials}/${baselineTrials})`);
+    const boundaryRate = miningAfterBoundary / boundaryTrials, baselineRate = miningBaseline / baselineTrials;
+    assert.ok(boundaryRate > baselineRate, `a mining-world preset must raise the mining-sector rate even across an UNINHABITED->inhabited population-reroll boundary crossing (got ${boundaryRate} vs baseline ${baselineRate})`);
+  }
+
+  // Fix 2: regenerateCivilizationCluster()/planet-bundle.js's regenerateCivilization() must reroll the FULL technology cluster
+  // (technologyAccess/technologySpecialties/droidPrevalence, not just technologyLevel), and technologyLevel must be weighted by the FRESHLY rerolled economy, not the stale pre-reroll one.
+  {
+    const TECH_RANK = { primitive: 0, 'pre-industrial': 1, industrial: 2, frontier: 3, 'galactic-standard': 4, advanced: 5, 'cutting-edge': 6 };
+    let techEconRankSum = 0, techEconCount = 0, otherRankSum = 0, otherCount = 0;
+    let sawAccessChange = false, sawSpecialtyChange = false, sawDroidChange = false;
+    const N = 3000;
+    for (let seed = 0; seed < N; seed++) {
+      const bundle = generateProceduralPlanetBundle({ rng: makeSeededRng(seed + 83000000) });
+      if (bundle.planetDraft.populationScale === 'uninhabited') continue;
+      const before = bundle.planetDraft;
+      const after = regenerateCivilization(bundle, { rng: makeSeededRng(seed + 84000000) }).planetDraft;
+      if (!after.technologyLevel) continue;
+      const sectors = [after.economy.primarySector, ...(after.economy.secondarySectors || [])].filter(Boolean);
+      const hasTechTag = sectors.some((s) => (s.tags || []).some((t) => ['technology', 'research', 'industrial'].includes(t)));
+      if (hasTechTag) { techEconRankSum += TECH_RANK[after.technologyLevel]; techEconCount++; }
+      else { otherRankSum += TECH_RANK[after.technologyLevel]; otherCount++; }
+      if (after.technologyAccess !== before.technologyAccess) sawAccessChange = true;
+      if (JSON.stringify(after.technologySpecialties) !== JSON.stringify(before.technologySpecialties)) sawSpecialtyChange = true;
+      if (after.droidPrevalence !== before.droidPrevalence) sawDroidChange = true;
+    }
+    assert.ok(techEconCount > 50 && otherCount > 50, `test needs enough samples in both economy buckets within ${N} seeds (got ${techEconCount}/${otherCount})`);
+    assert.ok(techEconRankSum / techEconCount > otherRankSum / otherCount, `regenerateCivilization()'s technologyLevel must be weighted by the FRESHLY rerolled economy (got avg rank ${techEconRankSum / techEconCount} for tech-tagged economies vs ${otherRankSum / otherCount} for others)`);
+    assert.ok(sawAccessChange, 'regenerateCivilization() must actually reroll technologyAccess at least sometimes');
+    assert.ok(sawSpecialtyChange, 'regenerateCivilization() must actually reroll technologySpecialties at least sometimes');
+    assert.ok(sawDroidChange, 'regenerateCivilization() must actually reroll droidPrevalence at least sometimes (the cohesive civilization operation, unlike a narrower single-field reroll, should re-derive it)');
+
+    // UNINHABITED: every civilization field stays null/empty, but droidPrevalence still rerolls (it is independent of population/civilization state by design).
+    let checkedUninhabited = 0;
+    for (let seed = 0; seed < 3000 && checkedUninhabited < 20; seed++) {
+      const bundle = generateProceduralPlanetBundle({ rng: makeSeededRng(seed + 85000000) });
+      if (bundle.planetDraft.populationScale !== 'uninhabited') continue;
+      checkedUninhabited++;
+      const after = regenerateCivilization(bundle, { rng: makeSeededRng(seed + 1) }).planetDraft;
+      assert.equal(after.technologyLevel, null, `seed ${seed}: UNINHABITED regenerateCivilization() must leave technologyLevel null`);
+      assert.equal(after.technologyAccess, null, `seed ${seed}: UNINHABITED regenerateCivilization() must leave technologyAccess null`);
+      assert.deepEqual(after.technologySpecialties, [], `seed ${seed}: UNINHABITED regenerateCivilization() must leave technologySpecialties empty`);
+      assert.equal(after.government, null, `seed ${seed}: UNINHABITED regenerateCivilization() must leave government null`);
+    }
+    assert.ok(checkedUninhabited > 0, 'the UNINHABITED regenerateCivilization() test must exercise at least one uninhabited bundle');
+
+    // regenerateCivilizationCluster() is the reusable seam planet-bundle.js composes -- confirm it's directly usable and produces the same shape.
+    const directDraft = createProceduralPlanetDraft({ rng: makeSeededRng(86000000) });
+    if (directDraft.populationScale !== 'uninhabited') {
+      const regenerated = regenerateCivilizationCluster(directDraft, { rng: makeSeededRng(1) });
+      assert.ok(regenerated.government && regenerated.stability && regenerated.economy && regenerated.technologyLevel, 'regenerateCivilizationCluster() must produce a full civilization block directly, independent of the bundle layer');
+    }
+  }
+
+  // Fix 3: suggestedOppositionTags must stay synchronized with draft.tags after EVERY tag-affecting reroll -- checking the STORED field, not deriving it fresh in the test.
+  {
+    const checkSync = (draft, label, seed) => {
+      const expected = deriveSuggestedOppositionTags(draft.tags);
+      assert.deepEqual([...draft.suggestedOppositionTags].sort(), [...expected].sort(), `seed ${seed}: draft.suggestedOppositionTags must match deriveSuggestedOppositionTags(draft.tags) after a ${label} reroll (stored field must not go stale)`);
+    };
+    let checked = 0;
+    for (let seed = 0; seed < 300; seed++) {
+      const d = createProceduralPlanetDraft({ rng: makeSeededRng(seed + 87000000) });
+      checkSync(d, 'initial creation', seed);
+      if (d.populationScale === 'uninhabited') continue;
+      checked++;
+      checkSync(rerollPlanetStability(d, { rng: makeSeededRng(seed + 1) }), 'stability', seed);
+      checkSync(rerollPlanetGovernment(d, { rng: makeSeededRng(seed + 2) }), 'government', seed);
+      checkSync(rerollPlanetEconomy(d, { rng: makeSeededRng(seed + 3) }), 'economy', seed);
+      checkSync(rerollPlanetHazards(d, { rng: makeSeededRng(seed + 4) }), 'hazards', seed);
+      checkSync(rerollPlanetTraits(d, { rng: makeSeededRng(seed + 5) }), 'traits', seed);
+      checkSync(rerollPlanetWorldClass(d, { rng: makeSeededRng(seed + 6) }), 'world class', seed);
+    }
+    assert.ok(checked > 20, `the suggestedOppositionTags sync test must exercise enough inhabited drafts (got ${checked})`);
+
+    // The OTHER SUGGEST-tier hooks must stay completely untouched by these same rerolls -- only suggestedOppositionTags is a deterministic tags projection; the rest stay stable until rerollPlanetHooks().
+    const base = (() => {
+      for (let seed = 0; seed < 200; seed++) {
+        const d = createProceduralPlanetDraft({ rng: makeSeededRng(seed + 88000000) });
+        if (d.populationScale !== 'uninhabited') return d;
+      }
+      throw new Error('could not find an inhabited draft in 200 seeds');
+    })();
+    const afterStability = rerollPlanetStability(base, { rng: makeSeededRng(1) });
+    assert.deepEqual(afterStability.currentEvents, base.currentEvents, 'rerollPlanetStability must not touch currentEvents');
+    assert.equal(afterStability.secret, base.secret, 'rerollPlanetStability must not touch secret');
+    assert.deepEqual(afterStability.suggestedFactionArchetypeTags, base.suggestedFactionArchetypeTags, 'rerollPlanetStability must not touch suggestedFactionArchetypeTags');
+    assert.deepEqual(afterStability.suggestedJobArchetypeTags, base.suggestedJobArchetypeTags, 'rerollPlanetStability must not touch suggestedJobArchetypeTags');
+  }
+
+  // Fix 4: a gas-giant world class must never roll a 'none-vacuum' atmosphere -- a gas giant has an atmosphere by definition.
+  {
+    const gasGiantConstraints = definitionalConstraintsFor('gas-giant');
+    assert.ok(Array.isArray(gasGiantConstraints.atmosphere), 'gas-giant must still carry a definitional atmosphere constraint');
+    assert.ok(!gasGiantConstraints.atmosphere.includes('none-vacuum'), 'gas-giant\'s allowed atmosphere set must not include "none-vacuum" -- a gas giant has an atmosphere by definition');
+    let sawGasGiant = false;
+    for (let seed = 0; seed < 5000; seed++) {
+      const d = createProceduralPlanetDraft({ rng: makeSeededRng(seed + 89000000) });
+      if (d.worldClass.value !== 'gas-giant') continue;
+      sawGasGiant = true;
+      assert.notEqual(d.atmosphere.value, 'none-vacuum', `seed ${seed}: a gas-giant world must never roll a "none-vacuum" atmosphere`);
+    }
+    assert.ok(sawGasGiant, 'the gas-giant atmosphere test must actually roll at least one gas-giant world within 5000 seeds');
+  }
+
+  console.log('PHASE 8D-3A correction pass round 3 (population-reroll boundary-crossing context, cohesive civilization regeneration dependency order, suggestedOppositionTags staleness, gas-giant atmosphere correction) passed.');
+}
+
 console.log('PHASE 8D-3A procedural locations productionization suite (catalog quality, generation semantics, bundle generation, reroll safety, determinism) passed.');
