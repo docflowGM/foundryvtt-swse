@@ -270,7 +270,7 @@ export const NPC_RELATIONSHIP_HOOK_SUBJECTS = Object.freeze([
   { value: 'a local moneylender', weight: 1, tags: ['criminal'] },
   { value: 'an old business partner', weight: 1, tags: ['business'] },
   { value: 'a childhood friend', weight: 1, tags: [] },
-  { value: 'a estranged sibling', weight: 0.5, tags: [] },
+  { value: 'an estranged sibling', weight: 0.5, tags: [] },
   { value: 'a former mentor', weight: 1, tags: [] },
   { value: 'a rival in the same trade', weight: 1, tags: [] },
   { value: 'a local crime boss', weight: 0.5, tags: ['criminal'] },

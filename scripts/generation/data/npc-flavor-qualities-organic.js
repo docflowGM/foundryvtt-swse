@@ -597,7 +597,7 @@ export const ORGANIC_NPC_FLAVOR_QUALITIES = Object.freeze([
   q('excellent-bedside-manner', 'Has a genuinely reassuring bedside manner.', 'medical-specific', 0.7, ['medical', 'endearing']),
   q('clinically-detached-manner', 'Speaks about injuries and illness with clinical detachment.', 'medical-specific', 0.5, ['medical']),
   q('washes-hands-compulsively', 'Washes their hands more often than seems strictly necessary.', 'medical-specific', 0.5, ['medical']),
-  q('always-checks-vital-signs-out-of-habit', 'Checks a nearby person vital signs out of pure habit.', 'medical-specific', 0.5, ['medical']),
+  q('always-checks-vital-signs-out-of-habit', "Checks a nearby person's vital signs out of pure habit.", 'medical-specific', 0.5, ['medical']),
 
   // --- droid-relations --------------------------------------------------------------------
   q('treats-droids-as-equals', 'Treats droids with the same courtesy as organics, without exception.', 'droid-relations', 0.7, ['endearing', 'droids']),
@@ -1337,7 +1337,7 @@ export const ORGANIC_NPC_FLAVOR_QUALITIES = Object.freeze([
   // --- comparison-and-envy ----------------------------------------------------------------------------------------------------
   q('measures-success-against-a-specific-rival', 'Quietly measures their own success against one specific rival.', 'comparison-and-envy', 0.5, ['measures-success-against-a-specific-rival']),
   q('genuinely-does-not-compare-themselves-to-others', 'Genuinely seems not to compare themselves to others.', 'comparison-and-envy', 0.5, ['endearing'], { conflictTags: ['measures-success-against-a-specific-rival'] }),
-  q('quick-to-celebrate-others-success', 'Is quick to genuinely celebrate someone else success.', 'comparison-and-envy', 0.5, ['endearing']),
+  q('quick-to-celebrate-others-success', 'Is quick to genuinely celebrate the success of someone else.', 'comparison-and-envy', 0.5, ['endearing']),
 
   // --- work-ethic-visible ------------------------------------------------------------------------------------------------------
   q('visibly-tireless-worker', 'Seems to work tirelessly, rarely if ever slowing down.', 'work-ethic-visible', 0.7, ['visibly-tireless-worker']),
@@ -1364,7 +1364,7 @@ export const ORGANIC_NPC_FLAVOR_QUALITIES = Object.freeze([
 
   // --- reaction-to-authority-mistakes ------------------------------------------------------------------------------------------
   q('quietly-notes-when-superiors-are-wrong', 'Quietly notes it, without comment, when a superior makes a mistake.', 'reaction-to-authority-mistakes', 0.5, []),
-  q('will-politely-correct-a-superior', 'Will politely but firmly correct a superior mistake when it matters.', 'reaction-to-authority-mistakes', 0.5, []),
+  q('will-politely-correct-a-superior', 'Will politely but firmly correct a mistake made by a superior when it matters.', 'reaction-to-authority-mistakes', 0.5, []),
 
   // --- seasonal-mood -----------------------------------------------------------------------------------------------------------
   q('noticeably-brighter-mood-in-certain-seasons', 'Has a noticeably brighter mood during a particular season.', 'seasonal-mood', 0.3, []),

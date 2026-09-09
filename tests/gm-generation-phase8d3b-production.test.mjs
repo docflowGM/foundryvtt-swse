@@ -63,7 +63,7 @@ const stubDroidNameProvider = async () => 'TX-1';
   const { FACTION_ARCHETYPE_FAMILY, ORGANIZATION_FAMILY } = await import(abs('scripts/generation/organization-metadata.js'));
   const { isMembershipPolicy } = await import(abs('scripts/generation/population-profile.js'));
 
-  assert.ok(NPC_ROLES.length >= 75 && NPC_ROLES.length <= 150, `NPC_ROLES must land in the 75-150 production target, got ${NPC_ROLES.length}`);
+  assert.ok(NPC_ROLES.length >= 100 && NPC_ROLES.length <= 150, `NPC_ROLES must land in the 100-150 production target (tightened from the earlier 75 floor now that the catalog is production-complete), got ${NPC_ROLES.length}`);
   assert.ok(NPC_DROID_ROLES.length >= 20, `NPC_DROID_ROLES must be 20+, got ${NPC_DROID_ROLES.length}`);
   for (const [name, pool] of [['NPC_ROLES', NPC_ROLES], ['NPC_DROID_ROLES', NPC_DROID_ROLES]]) {
     const seen = new Set();
@@ -154,6 +154,11 @@ const stubDroidNameProvider = async () => 'TX-1';
   const { NPC_VOICE_QUALITIES_DROID } = await import(abs('scripts/generation/data/npc-voice-qualities-droid.js'));
   const { NPC_SPEECH_STYLES } = await import(abs('scripts/generation/data/npc-speech-styles.js'));
   const { NPC_DROID_MANNERISMS } = await import(abs('scripts/generation/data/npc-mannerisms-droid.js'));
+  const { NPC_MOTIVATIONS } = await import(abs('scripts/generation/data/npc-motivations.js'));
+  const { NPC_AGENDAS } = await import(abs('scripts/generation/data/npc-agendas.js'));
+  const { NPC_SECRETS } = await import(abs('scripts/generation/data/npc-secrets.js'));
+  const { NPC_APPEARANCE_TRAITS } = await import(abs('scripts/generation/data/npc-appearance-traits.js'));
+  const { NPC_MANNERISMS } = await import(abs('scripts/generation/data/npc-mannerisms.js'));
 
   const floors = {
     NPC_SOCIAL_ROLES: [NPC_SOCIAL_ROLES, 75],
@@ -171,7 +176,15 @@ const stubDroidNameProvider = async () => 'TX-1';
     NPC_VOICE_QUALITIES_ORGANIC: [NPC_VOICE_QUALITIES_ORGANIC, 100],
     NPC_VOICE_QUALITIES_DROID: [NPC_VOICE_QUALITIES_DROID, 100],
     NPC_SPEECH_STYLES: [NPC_SPEECH_STYLES, 200],
-    NPC_DROID_MANNERISMS: [NPC_DROID_MANNERISMS, 150]
+    NPC_DROID_MANNERISMS: [NPC_DROID_MANNERISMS, 150],
+    // CORRECTION (independent review): these five were previously only checked by the
+    // looser "grew beyond its Phase 8D-2 foundation count" assertion above, which does not
+    // actually enforce the documented production floor. Given real floor assertions here.
+    NPC_MOTIVATIONS: [NPC_MOTIVATIONS, 150],
+    NPC_AGENDAS: [NPC_AGENDAS, 200],
+    NPC_SECRETS: [NPC_SECRETS, 250],
+    NPC_APPEARANCE_TRAITS: [NPC_APPEARANCE_TRAITS, 300],
+    NPC_MANNERISMS: [NPC_MANNERISMS, 200]
   };
   for (const [name, [pool, floor]] of Object.entries(floors)) {
     assert.ok(pool.length >= floor, `${name} must meet its documented production floor (${floor}+), got ${pool.length}`);
@@ -191,7 +204,7 @@ const stubDroidNameProvider = async () => 'TX-1';
     assert.ok(roleTagValues.has(occEntry.roleTag), `NPC_OCCUPATIONS entry "${occEntry.value}"'s roleTag "${occEntry.roleTag}" must reference a real NPC_ROLES value`);
   }
 
-  console.log('PHASE 8D-3B final content hydration production-floor assertions (16 additional hydrated catalogs meet their documented minimums, zero duplicates, occupation roleTags valid) passed.');
+  console.log('PHASE 8D-3B final content hydration production-floor assertions (21 additional hydrated catalogs meet their documented minimums, zero duplicates, occupation roleTags valid) passed.');
 }
 
 // ------------------------------------------------------------
