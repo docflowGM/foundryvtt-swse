@@ -50,6 +50,7 @@ import { isJobUrgency } from './job-urgency.js';
 import { ISSUER_TYPE } from '../organization-metadata.js';
 import { createProvenance, isProvenance } from '../provenance.js';
 import { createDraftId } from '../lib/draft-id.js';
+import { resolveDualityReference } from '../lib/reference-duality.js';
 
 function cleanString(value) {
   return String(value ?? '').trim();
@@ -57,6 +58,19 @@ function cleanString(value) {
 
 function cleanStringArray(value) {
   return Array.isArray(value) ? value.map(cleanString).filter(Boolean) : [];
+}
+
+/**
+ * CORRECTION (round 2): reuses the shared `resolveDualityReference()`
+ * primitive to enforce "canonical id wins, draft id cleared" at the
+ * `createJobDraft()`/`updateJobDraft()` BOUNDARY itself, not only inside
+ * `job-bundle.js`'s composer. Previously `createJobDraft({locationId:
+ * 'Location.real', locationDraftId: 'draft:location:other'})` produced
+ * an invalid state (both set) through the public draft API; now the
+ * shape itself refuses to represent it.
+ */
+function normalizeIdDraftIdPair(id, draftId) {
+  return resolveDualityReference({ explicitId: id, explicitDraftId: draftId }).ref;
 }
 
 function clampScale(scale) {
@@ -77,11 +91,30 @@ function isIssuerType(value) {
   return ISSUER_TYPE_VALUES.includes(value);
 }
 
-/** `derived` (default: recomposed automatically by the relevant reroll) or `manual` (a GM explicitly wrote this text; recompose becomes a no-op) -- mirrors `npc-concept.js`'s `PUBLIC_DESCRIPTION_SOURCE` pattern exactly, applied to `title`/`briefing`, the two composed-from-other-fields Job fields. */
+/** `derived` (default: recomposed automatically by the relevant reroll) or `manual` (a GM explicitly wrote this text; recompose becomes a no-op) -- mirrors `npc-concept.js`'s `PUBLIC_DESCRIPTION_SOURCE` pattern exactly, applied to `title`/`briefing`, the two composed-from-other-fields Job fields, and (round 2) each objective's own `title`/`description`. */
 export const JOB_DERIVED_TEXT_SOURCE = Object.freeze({ DERIVED: 'derived', MANUAL: 'manual' });
 const DERIVED_TEXT_SOURCE_VALUES = Object.freeze(Object.values(JOB_DERIVED_TEXT_SOURCE));
 function isDerivedTextSource(value) {
   return DERIVED_TEXT_SOURCE_VALUES.includes(value);
+}
+
+/**
+ * CORRECTION (round 2): `generated` (default: every reward-affecting
+ * operation -- objective add/remove/reroll, `rerollJobReward()` itself,
+ * whole regeneration's own fresh computation -- may recompute it) or
+ * `manual` (a GM explicitly overrode the package via `setJobReward()`;
+ * every OTHER operation that would otherwise recompute the reward
+ * becomes a no-op on it, matching the same "manual wins until an
+ * EXPLICIT reroll of that exact fact" rule `JOB_DERIVED_TEXT_SOURCE`
+ * already established). `rerollJobReward()` itself is the one
+ * exception -- an explicit ask to reroll the reward always wins and
+ * resets the source back to `generated`, exactly like a GM explicitly
+ * re-rolling a locked title/briefing would.
+ */
+export const JOB_REWARD_SOURCE = Object.freeze({ GENERATED: 'generated', MANUAL: 'manual' });
+const REWARD_SOURCE_VALUES = Object.freeze(Object.values(JOB_REWARD_SOURCE));
+function isRewardSource(value) {
+  return REWARD_SOURCE_VALUES.includes(value);
 }
 
 /**
@@ -164,7 +197,17 @@ export function createJobObjectiveDraft({
   difficulty = OBJECTIVE_DIFFICULTY.STANDARD,
   required,
   title = '',
+  // CORRECTION (round 2): mirrors the Job-level title/briefing
+  // derived/manual ownership exactly (see JOB_DERIVED_TEXT_SOURCE
+  // above) -- a GM-rewritten objective title/description must survive
+  // a whole-Job regenerate, not just a Job-level field. A fresh/rerolled
+  // objective (built by job-bundle.js's buildJobObjective()) always
+  // defaults both to 'derived'; only an explicit
+  // setJobObjectiveTitle()/setJobObjectiveDescription() call sets
+  // 'manual'.
+  titleSource = JOB_DERIVED_TEXT_SOURCE.DERIVED,
   description = '',
+  descriptionSource = JOB_DERIVED_TEXT_SOURCE.DERIVED,
   slotValues = {},
   constraints = [],
   subjectRole = '',
@@ -192,7 +235,9 @@ export function createJobObjectiveDraft({
     // itself never allows.
     required: resolvedTier === OBJECTIVE_TIER.PRIMARY ? true : (required === undefined ? false : Boolean(required)),
     title: cleanString(title),
+    titleSource: isDerivedTextSource(titleSource) ? titleSource : JOB_DERIVED_TEXT_SOURCE.DERIVED,
     description: cleanString(description),
+    descriptionSource: isDerivedTextSource(descriptionSource) ? descriptionSource : JOB_DERIVED_TEXT_SOURCE.DERIVED,
     slotValues: slotValues && typeof slotValues === 'object' ? { ...slotValues } : {},
     constraints: Array.isArray(constraints) ? [...constraints] : [],
     subjectRole: cleanString(subjectRole),
@@ -258,6 +303,17 @@ export function createJobDraft({
   issuerContactActorName = '',
   issuerScale,
   issuerRelationship = 'neutral',
+  // CORRECTION (round 2): the issuer Faction's OWN soft context tags
+  // (archetype/organizationFamily for a Faction draft, `type` for a
+  // canonical Faction record -- see `job-context.js`'s
+  // `resolveJobIssuerFactionContext()`), persisted separately from the
+  // general `contextTags` pool so every opposition-request build site
+  // (including a later targeted reroll, which has no live Faction
+  // object to re-derive tags from) can read them as
+  // `oppositionRequest.organizationTags` without re-fetching the
+  // Faction. Previously this Faction identity reached generic
+  // `preferTags` but never actually reached `organizationTags` itself.
+  issuerOrganizationTags = [],
   locationId = '',
   locationDraftId = '',
   locationName = '',
@@ -270,6 +326,7 @@ export function createJobDraft({
   failureDelta = -1,
   rewardEstimate = null,
   rewardPackage = null,
+  rewardSource = JOB_REWARD_SOURCE.GENERATED,
   // The merged soft-weighting tags (missionType + jobContext-derived
   // tags) `job-bundle.js`'s composer resolved this draft against --
   // persisted so targeted reroll wrappers have a natural default tag
@@ -279,6 +336,9 @@ export function createJobDraft({
   narrativeFields,
   provenance
 } = {}) {
+  const factionRef = normalizeIdDraftIdPair(issuerFactionId, issuerFactionDraftId);
+  const contactRef = normalizeIdDraftIdPair(issuerContactId, issuerContactDraftId);
+  const locationRef = normalizeIdDraftIdPair(locationId, locationDraftId);
   return {
     // PHASE 8D-3C: a domain-namespaced DRAFT id (`lib/draft-id.js`),
     // matching every other draft type in this ecosystem. Never a
@@ -313,17 +373,18 @@ export function createJobDraft({
     // that, this shape only stores what it's given.
     issuerType: isIssuerType(issuerType) ? issuerType : ISSUER_TYPE.ORDINARY_INDIVIDUAL,
     issuerName: cleanString(issuerName),
-    issuerFactionId: cleanString(issuerFactionId),
-    issuerFactionDraftId: cleanString(issuerFactionDraftId),
-    issuerContactId: cleanString(issuerContactId),
-    issuerContactDraftId: cleanString(issuerContactDraftId),
+    issuerFactionId: factionRef.id,
+    issuerFactionDraftId: factionRef.draftId,
+    issuerContactId: contactRef.id,
+    issuerContactDraftId: contactRef.draftId,
     issuerContactActorId: cleanString(issuerContactActorId),
     issuerContactActorUuid: cleanString(issuerContactActorUuid),
     issuerContactActorName: cleanString(issuerContactActorName),
     issuerScale: issuerType === ISSUER_TYPE.FACTION ? clampScale(issuerScale) : null,
     issuerRelationship: isRelationshipKey(issuerRelationship) ? issuerRelationship : 'neutral',
-    locationId: cleanString(locationId),
-    locationDraftId: cleanString(locationDraftId),
+    issuerOrganizationTags: cleanStringArray(issuerOrganizationTags),
+    locationId: locationRef.id,
+    locationDraftId: locationRef.draftId,
     locationName: cleanString(locationName),
     // Multiple, independently rerollable objectives with stable
     // per-objective draftIds -- see createJobObjectiveDraft() above.
@@ -342,6 +403,7 @@ export function createJobDraft({
     // -- this module performs no reward math of its own.
     rewardEstimate: rewardEstimate && typeof rewardEstimate === 'object' ? rewardEstimate : null,
     rewardPackage: rewardPackage && typeof rewardPackage === 'object' ? rewardPackage : null,
+    rewardSource: isRewardSource(rewardSource) ? rewardSource : JOB_REWARD_SOURCE.GENERATED,
     contextTags: cleanStringArray(contextTags),
     narrativeFields: narrativeFields && typeof narrativeFields === 'object' ? narrativeFields : undefined,
     // Draft-only status vocabulary, deliberately distinct from the
