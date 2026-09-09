@@ -107,7 +107,7 @@
 
 import {
   createJobDraft, updateJobDraft, createJobObjectiveDraft, updateJobObjectiveDraft,
-  createJobComplicationInstance, JOB_DERIVED_TEXT_SOURCE
+  createJobComplicationInstance, createJobRewardSuggestionInstance, JOB_DERIVED_TEXT_SOURCE, JOB_REWARD_SOURCE
 } from './job-draft.js';
 import {
   resolveJobLocationContext, resolveJobIssuerFactionContext, resolveJobIssuerContactContext,
@@ -118,7 +118,9 @@ import { pickJobLegality, pickJobVisibility, isJobLegality, isJobVisibility } fr
 import { pickJobUrgency } from './job-urgency.js';
 import { pickJobHook } from './job-hook.js';
 import { pickJobStakes } from './job-stake.js';
+import { pickJobSecret } from './job-secret.js';
 import { pickJobComplications } from './job-complication.js';
+import { pickJobRewardSuggestions } from './job-reward-suggestion.js';
 import { pickJobTwist } from './job-twist.js';
 import { generateJobConsequences } from './job-consequence.js';
 import { pickObjectiveConstraints } from './objective-constraint.js';
@@ -278,6 +280,12 @@ function rollObjectiveCount({ rng } = {}) {
 /** How many complications a Job gets -- 0 is a legitimate, common outcome (a clean job is not a bug), matching `planet-hooks.js`'s own `pickCurrentEventCount()` "weighted toward fewer" framing. */
 function rollComplicationCount({ rng } = {}) {
   const entries = [{ value: 0, weight: 3 }, { value: 1, weight: 5 }, { value: 2, weight: 2 }];
+  return weightedPick(entries, { rng })?.value ?? 0;
+}
+
+/** Most Jobs offer credits only -- a narrative reward suggestion is an occasional sweetener, not the default. */
+function rollRewardSuggestionCount({ rng } = {}) {
+  const entries = [{ value: 0, weight: 5 }, { value: 1, weight: 3 }, { value: 2, weight: 1 }];
   return weightedPick(entries, { rng })?.value ?? 0;
 }
 
@@ -567,9 +575,19 @@ export async function createProceduralJobDraft({
   const urgency = pickJobUrgency({ rng }).value;
   const hook = pickJobHook({ rng, preferTags: mergedPreferTags }).value;
   const stakes = pickJobStakes({ rng, preferTags: mergedPreferTags }).value;
+  const secret = pickJobSecret({ rng, preferTags: mergedPreferTags }).value;
   const complications = pickJobComplications({ rng, preferTags: mergedPreferTags, count: rollComplicationCount({ rng }) });
   // Twists are rare, optional flavor -- see job-twist.js's own header. Roll one only ~20% of the time.
   const twist = (rng ?? Math.random)() < 0.2 ? pickJobTwist({ rng, preferTags: mergedPreferTags }) : null;
+  // Narrative reward suggestions: most Jobs have credits only (rollRewardSuggestionCount()
+  // weights 0 heaviest), an occasional Job offers 1-2 alongside the computed credit reward.
+  const rewardSuggestions = pickJobRewardSuggestions({
+    rng, preferTags: mergedPreferTags, jobLegality: resolvedLegality, count: rollRewardSuggestionCount({ rng })
+  }).map((entry) => createJobRewardSuggestionInstance(
+    entry.type === 'standing' && resolvedIssuer.factionId
+      ? { ...entry, factionId: resolvedIssuer.factionId, factionDraftId: resolvedIssuer.factionDraftId }
+      : entry
+  ));
   const { success: successConsequence, failure: failureConsequence } = generateJobConsequences({ rng, preferTags: mergedPreferTags });
 
   const resolvedObjectiveCount = Number.isFinite(objectiveCount) ? Math.max(1, Math.round(objectiveCount)) : rollObjectiveCount({ rng });
@@ -631,6 +649,7 @@ export async function createProceduralJobDraft({
     urgency,
     hook,
     stakes,
+    secret,
     briefing: objectivesWithReward[0]?.description ?? '',
     notes,
     issuerType: resolvedIssuer.type,
@@ -657,6 +676,7 @@ export async function createProceduralJobDraft({
     failureDelta: jobDefaults?.failureDelta ?? -1,
     rewardEstimate: estimate,
     rewardPackage,
+    rewardSuggestions,
     contextTags: mergedPreferTags,
     provenance
   });
@@ -723,9 +743,12 @@ export function resetJobBriefingToDerived(draft) {
  * carried them -- fixed by restoring them from the OLD draft
  * unconditionally, since a promoted Actor's identity is exactly the
  * kind of stable relationship a regenerate must never sever) -- unless
- * the caller explicitly overrides any of these. ONLY the generated
- * facts (mission type roll, legality/visibility/urgency, hook/stakes,
- * objectives, complications, twist, consequences, reward) are rerolled.
+ * the caller explicitly overrides any of these, and every manually
+ * authored (`source === 'manual'`) reward suggestion (appended onto the
+ * fresh list, since suggestions have no fixed position to merge into).
+ * ONLY the generated facts (mission type roll, legality/visibility/
+ * urgency, hook/stakes/secret, objectives, complications, twist,
+ * consequences, reward, generated reward suggestions) are rerolled.
  *
  * `preferTags` defaults to the draft's own persisted `contextTags`
  * (round 2: previously `undefined` unless the caller re-supplied one,
@@ -784,6 +807,22 @@ export async function regenerateJobDraft(draft, options = {}) {
     issuerOrganizationTags: (keepOrganizationTags && !fresh.issuerOrganizationTags.length) ? draft.issuerOrganizationTags : fresh.issuerOrganizationTags
   });
 
+  // The restore above fixes the DRAFT-level `issuerOrganizationTags`
+  // scalar, but the fresh objectives were already built (inside
+  // createProceduralJobDraft() above) against `fresh`'s OWN (empty)
+  // issuerOrganizationTags -- so a restored tag set must also be
+  // re-threaded into each objective's `oppositionRequest.organizationTags`
+  // directly, or a regenerate with no re-supplied jobContext would still
+  // silently produce untagged opposition requests despite the Job-level
+  // field itself being correctly preserved.
+  if (result.issuerOrganizationTags.length && result.issuerOrganizationTags !== fresh.issuerOrganizationTags) {
+    result = updateJobDraft(result, {
+      objectives: result.objectives.map((o) => (o.oppositionRequest
+        ? updateJobObjectiveDraft(o, { oppositionRequest: { ...o.oppositionRequest, organizationTags: result.issuerOrganizationTags } })
+        : o))
+    });
+  }
+
   // Preserve a manually-owned objective's IDENTITY + title/description BY
   // POSITION when the objective count did not change (the common case: a
   // plain `regenerateJobDraft(draft, { rng })` call) -- preserving the
@@ -823,6 +862,17 @@ export async function regenerateJobDraft(draft, options = {}) {
   // reroll" rule.
   if (draft.rewardSource === 'manual') {
     result = updateJobDraft(result, { rewardEstimate: draft.rewardEstimate, rewardPackage: draft.rewardPackage, rewardSource: 'manual' });
+  }
+
+  // Preserve every manually-authored (`source === 'manual'`) reward
+  // suggestion by appending it onto the fresh draft's newly-generated
+  // list -- reward suggestions are a free-standing list, not fixed-
+  // position facts like objectives, so there is no positional merge to
+  // do; a GM-written suggestion simply survives alongside whatever the
+  // regenerate rolled fresh.
+  const manualSuggestions = draft.rewardSuggestions.filter((s) => s.source === JOB_REWARD_SOURCE.MANUAL);
+  if (manualSuggestions.length) {
+    result = updateJobDraft(result, { rewardSuggestions: [...result.rewardSuggestions, ...manualSuggestions] });
   }
 
   // Preserve every GM-authored `narrativeFields` entry (manual value OR
@@ -888,6 +938,11 @@ export function rerollJobStakes(draft, { rng, preferTags } = {}) {
   return updateJobDraft(draft, { stakes: pickJobStakes({ rng, preferTags: preferTags ?? draft.contextTags }).value });
 }
 
+/** Reroll ONLY the (generated) secret. A GM may separately add further secrets via the multi-value field-authoring API (see job-field-definitions.js) -- this only replaces the generated scalar. */
+export function rerollJobSecret(draft, { rng, preferTags } = {}) {
+  return updateJobDraft(draft, { secret: pickJobSecret({ rng, preferTags: preferTags ?? draft.contextTags }).value });
+}
+
 /** Reroll the WHOLE complication list (count defaults to the draft's current count; 0 is a legitimate target). For a single-instance reroll see `rerollJobComplication()`. */
 export function rerollJobComplications(draft, { rng, preferTags, count } = {}) {
   const complications = pickJobComplications({ rng, preferTags: preferTags ?? draft.contextTags, count: count ?? draft.complications.length });
@@ -916,6 +971,56 @@ export function removeJobComplication(draft, instanceId) {
   const complications = draft.complications.filter((c) => c.instanceId !== instanceId);
   if (complications.length === draft.complications.length) return draft;
   return updateJobDraft(draft, { complications });
+}
+
+// --- reward suggestions (narrative-only; see JOB_REWARD_SUGGESTION_TYPE
+// in job-draft.js -- never credits, never a Faction-standing/Item
+// mutation) -- mirrors the complication targeted-op family exactly. ---
+
+/** Add one new reward suggestion. Every existing suggestion is preserved untouched. A `standing`-typed pick is linked to a real Faction issuer's ref when one exists. */
+export function addJobRewardSuggestion(draft, { rng, preferTags } = {}) {
+  const [picked] = pickJobRewardSuggestions({ rng, preferTags: preferTags ?? draft.contextTags, jobLegality: draft.legality, count: 1 });
+  if (!picked) return draft;
+  const entry = picked.type === 'standing' && draft.issuerFactionId
+    ? { ...picked, factionId: draft.issuerFactionId, factionDraftId: draft.issuerFactionDraftId }
+    : picked;
+  return updateJobDraft(draft, { rewardSuggestions: [...draft.rewardSuggestions, createJobRewardSuggestionInstance(entry)] });
+}
+
+/** Reroll ONE reward suggestion by `rewardId`, preserving its identity and every OTHER suggestion untouched. A no-op if no suggestion with that `rewardId` exists, or if it was marked `manual` (use `setJobRewardSuggestion()`/an explicit remove+add to override a manual entry). */
+export function rerollJobRewardSuggestion(draft, rewardId, { rng, preferTags } = {}) {
+  const index = draft.rewardSuggestions.findIndex((s) => s.rewardId === rewardId);
+  if (index === -1 || draft.rewardSuggestions[index].source === JOB_REWARD_SOURCE.MANUAL) return draft;
+  const [picked] = pickJobRewardSuggestions({ rng, preferTags: preferTags ?? draft.contextTags, jobLegality: draft.legality, count: 1 });
+  if (!picked) return draft;
+  const entry = picked.type === 'standing' && draft.issuerFactionId
+    ? { ...picked, factionId: draft.issuerFactionId, factionDraftId: draft.issuerFactionDraftId }
+    : picked;
+  const rerolled = createJobRewardSuggestionInstance({ ...entry, rewardId });
+  const rewardSuggestions = draft.rewardSuggestions.map((s, i) => (i === index ? rerolled : s));
+  return updateJobDraft(draft, { rewardSuggestions });
+}
+
+/** Remove one reward suggestion by `rewardId`. A no-op if no suggestion with that id exists. A Job may legitimately have zero reward suggestions (the common case -- credits only). */
+export function removeJobRewardSuggestion(draft, rewardId) {
+  const rewardSuggestions = draft.rewardSuggestions.filter((s) => s.rewardId !== rewardId);
+  if (rewardSuggestions.length === draft.rewardSuggestions.length) return draft;
+  return updateJobDraft(draft, { rewardSuggestions });
+}
+
+/** Explicit GM authorship action: overwrite one reward suggestion's text/type by `rewardId` and lock it against `rerollJobRewardSuggestion()`. A no-op if no suggestion with that id exists. */
+export function setJobRewardSuggestion(draft, rewardId, { value, type } = {}) {
+  const index = draft.rewardSuggestions.findIndex((s) => s.rewardId === rewardId);
+  if (index === -1) return draft;
+  const existing = draft.rewardSuggestions[index];
+  const updated = createJobRewardSuggestionInstance({
+    ...existing,
+    value: value !== undefined ? String(value ?? '').trim() : existing.value,
+    type: type !== undefined ? type : existing.type,
+    source: JOB_REWARD_SOURCE.MANUAL
+  });
+  const rewardSuggestions = draft.rewardSuggestions.map((s, i) => (i === index ? updated : s));
+  return updateJobDraft(draft, { rewardSuggestions });
 }
 
 /** Reroll the twist (or generate one if the draft had none). */

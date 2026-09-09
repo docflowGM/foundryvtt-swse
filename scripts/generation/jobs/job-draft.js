@@ -118,6 +118,61 @@ function isRewardSource(value) {
 }
 
 /**
+ * CORRECTION (round 2, item 6): narrative-only reward-suggestion types.
+ * `rewardEstimate`/`rewardPackage` (above) remain the ONLY authority for
+ * credits and priced material assets -- these types cover everything the
+ * phase spec asked for beyond that (favor/standing/access/information/
+ * transport/safePassage/clearance/debtForgiveness/salvageRights/service/
+ * medical/repairs/training/introduction/equipment/commodity), plus
+ * `none` for "no additional favor is offered" as an explicit, pickable
+ * catalog entry rather than an implicit empty state.
+ */
+export const JOB_REWARD_SUGGESTION_TYPE = Object.freeze({
+  FAVOR: 'favor', STANDING: 'standing', ACCESS: 'access', INFORMATION: 'information',
+  TRANSPORT: 'transport', SAFE_PASSAGE: 'safePassage', CLEARANCE: 'clearance',
+  DEBT_FORGIVENESS: 'debtForgiveness', SALVAGE_RIGHTS: 'salvageRights', SERVICE: 'service',
+  MEDICAL: 'medical', REPAIRS: 'repairs', TRAINING: 'training', INTRODUCTION: 'introduction',
+  EQUIPMENT: 'equipment', COMMODITY: 'commodity', NONE: 'none'
+});
+const REWARD_SUGGESTION_TYPE_VALUES = Object.freeze(Object.values(JOB_REWARD_SUGGESTION_TYPE));
+function isRewardSuggestionType(value) {
+  return REWARD_SUGGESTION_TYPE_VALUES.includes(value);
+}
+
+/**
+ * `source`: `'generated'` (default; a broad reroll of the suggestion list
+ * may replace it) or `'manual'` (a GM wrote/edited this suggestion; every
+ * broad-reroll operation leaves it untouched, matching every other
+ * generated/manual ownership flag in this module). `factionId`/
+ * `factionDraftId` follow the SAME canonical-id-first duality as the
+ * Job's own issuer refs -- set only for a `standing`-typed suggestion
+ * tied to a real Faction issuer; never a mutation of that Faction, only
+ * a stable reference a GM could later act on.
+ */
+export function createJobRewardSuggestionInstance(entry = {}) {
+  // Reference-preserving fast path, mirroring createJobComplicationInstance().
+  if (entry && typeof entry === 'object' && typeof entry.rewardId === 'string' && entry.rewardId
+    && typeof entry.value === 'string' && isRewardSuggestionType(entry.type)) {
+    return entry;
+  }
+  const factionRef = normalizeIdDraftIdPair(entry.factionId, entry.factionDraftId);
+  return {
+    rewardId: cleanString(entry.rewardId) || createDraftId('job-reward-suggestion'),
+    type: isRewardSuggestionType(entry.type) ? entry.type : JOB_REWARD_SUGGESTION_TYPE.NONE,
+    value: cleanString(entry.value),
+    source: entry.source === JOB_REWARD_SOURCE.MANUAL ? JOB_REWARD_SOURCE.MANUAL : JOB_REWARD_SOURCE.GENERATED,
+    commodityId: cleanString(entry.commodityId) || '',
+    itemTags: cleanStringArray(entry.itemTags),
+    factionId: factionRef.id,
+    factionDraftId: factionRef.draftId
+  };
+}
+
+function normalizeRewardSuggestions(list) {
+  return (Array.isArray(list) ? list : []).map((entry) => createJobRewardSuggestionInstance(entry));
+}
+
+/**
  * Normalize one complication instance: `{ instanceId, value, tags }`.
  * `instanceId` is minted (`draft:job-complication:<hex>`) the first
  * time a picked catalog entry (`{value, weight, tags}` from
@@ -327,6 +382,7 @@ export function createJobDraft({
   rewardEstimate = null,
   rewardPackage = null,
   rewardSource = JOB_REWARD_SOURCE.GENERATED,
+  rewardSuggestions = [],
   // The merged soft-weighting tags (missionType + jobContext-derived
   // tags) `job-bundle.js`'s composer resolved this draft against --
   // persisted so targeted reroll wrappers have a natural default tag
@@ -404,6 +460,10 @@ export function createJobDraft({
     rewardEstimate: rewardEstimate && typeof rewardEstimate === 'object' ? rewardEstimate : null,
     rewardPackage: rewardPackage && typeof rewardPackage === 'object' ? rewardPackage : null,
     rewardSource: isRewardSource(rewardSource) ? rewardSource : JOB_REWARD_SOURCE.GENERATED,
+    // Narrative-only reward suggestions (favor/standing/access/etc.) --
+    // see createJobRewardSuggestionInstance() above. Never credits, never
+    // applied to a real Faction/Item on its own.
+    rewardSuggestions: normalizeRewardSuggestions(rewardSuggestions),
     contextTags: cleanStringArray(contextTags),
     narrativeFields: narrativeFields && typeof narrativeFields === 'object' ? narrativeFields : undefined,
     // Draft-only status vocabulary, deliberately distinct from the
