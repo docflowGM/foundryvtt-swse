@@ -77,6 +77,67 @@ function isIssuerType(value) {
   return ISSUER_TYPE_VALUES.includes(value);
 }
 
+/** `derived` (default: recomposed automatically by the relevant reroll) or `manual` (a GM explicitly wrote this text; recompose becomes a no-op) -- mirrors `npc-concept.js`'s `PUBLIC_DESCRIPTION_SOURCE` pattern exactly, applied to `title`/`briefing`, the two composed-from-other-fields Job fields. */
+export const JOB_DERIVED_TEXT_SOURCE = Object.freeze({ DERIVED: 'derived', MANUAL: 'manual' });
+const DERIVED_TEXT_SOURCE_VALUES = Object.freeze(Object.values(JOB_DERIVED_TEXT_SOURCE));
+function isDerivedTextSource(value) {
+  return DERIVED_TEXT_SOURCE_VALUES.includes(value);
+}
+
+/**
+ * Normalize one complication instance: `{ instanceId, value, tags }`.
+ * `instanceId` is minted (`draft:job-complication:<hex>`) the first
+ * time a picked catalog entry (`{value, weight, tags}` from
+ * `jobs/job-complication.js`) is attached to a Job draft, then
+ * preserved across every reroll that doesn't specifically touch THAT
+ * instance -- the same stable-identity discipline every other
+ * multi-entry list in this ecosystem (objectives, locationLinks, field-
+ * authoring entries) already uses, extended here so a Job can finally
+ * support "reroll only complication #2" instead of only the whole list.
+ */
+export function createJobComplicationInstance(entry = {}) {
+  // Reference-preserving fast path: `createJobDraft()`/`updateJobDraft()`
+  // re-normalize the WHOLE complications array on every call (unlike
+  // objectives, which a caller maps by index and therefore controls
+  // reference identity for directly) -- an already-fully-shaped instance
+  // is returned UNCHANGED so an untouched complication survives an
+  // unrelated draft update as the exact same object reference, matching
+  // every other "untouched sibling" guarantee in this ecosystem.
+  if (entry && typeof entry === 'object' && typeof entry.instanceId === 'string' && entry.instanceId && Array.isArray(entry.tags) && typeof entry.value === 'string') {
+    return entry;
+  }
+  return {
+    instanceId: cleanString(entry.instanceId) || createDraftId('job-complication'),
+    value: cleanString(entry.value),
+    tags: Array.isArray(entry.tags) ? [...entry.tags] : []
+  };
+}
+
+function normalizeComplications(list) {
+  return (Array.isArray(list) ? list : []).map((entry) => createJobComplicationInstance(entry));
+}
+
+/**
+ * Normalize an asset-objective descriptor. `value`/`valueSource`
+ * matches `reward-estimator.js`/`reward-package.js`'s own explicit
+ * documented contract: a caller resolves a REAL price through the
+ * future Store/pricing authority and passes it in; absent that, `value`
+ * stays `null` (`valueSource: 'unresolved'`) rather than a fabricated
+ * number, so `estimateReward()`'s asset component is 0 until a real
+ * price exists -- never a second, invented economy.
+ */
+function normalizeAssetObjective(raw) {
+  if (!raw || typeof raw !== 'object') return null;
+  const hasValue = Number.isFinite(Number(raw.value)) && raw.valueSource === 'resolved';
+  return {
+    objectiveType: cleanString(raw.objectiveType),
+    name: cleanString(raw.name),
+    referenceId: cleanString(raw.referenceId),
+    value: hasValue ? Math.max(0, Number(raw.value)) : null,
+    valueSource: hasValue ? 'resolved' : 'unresolved'
+  };
+}
+
 /**
  * Build one objective sub-draft. `tier`/`difficulty` are the two
  * separate, never-merged concepts documented above (§7 of the phase
@@ -122,8 +183,14 @@ export function createJobObjectiveDraft({
     missionType: cleanString(missionType),
     tier: resolvedTier,
     difficulty: isObjectiveDifficulty(difficulty) ? difficulty : OBJECTIVE_DIFFICULTY.STANDARD,
-    // Matches the canonical objective's own default (GMJobBoardSurfaceService.normalizeObjective()): primary is always required, everything else defaults to optional unless explicitly overridden.
-    required: required === undefined ? resolvedTier === OBJECTIVE_TIER.PRIMARY : Boolean(required),
+    // CORRECTION (round 1): a Primary objective is ALWAYS required --
+    // matches the canonical objective's own hard rule
+    // (GMJobBoardSurfaceService.normalizeObjective(): `lowerType ===
+    // 'primary' ? true : Boolean(raw?.required)`, no override permitted
+    // either direction). Previously an explicit `required:false` could
+    // override this for a Primary objective, which the canonical schema
+    // itself never allows.
+    required: resolvedTier === OBJECTIVE_TIER.PRIMARY ? true : (required === undefined ? false : Boolean(required)),
     title: cleanString(title),
     description: cleanString(description),
     slotValues: slotValues && typeof slotValues === 'object' ? { ...slotValues } : {},
@@ -132,7 +199,7 @@ export function createJobObjectiveDraft({
     subjectArchetype: subjectArchetype && typeof subjectArchetype === 'object' ? subjectArchetype : null,
     subjectNpcConcept: subjectNpcConcept && typeof subjectNpcConcept === 'object' ? subjectNpcConcept : null,
     oppositionRequest: oppositionRequest && typeof oppositionRequest === 'object' ? oppositionRequest : null,
-    assetObjective: assetObjective && typeof assetObjective === 'object' ? assetObjective : null,
+    assetObjective: normalizeAssetObjective(assetObjective),
     rewardCredits: Math.max(0, Math.floor(Number(rewardCredits) || 0)),
     rewardXp: Math.max(0, Math.floor(Number(rewardXp) || 0)),
     notes: cleanString(notes)
@@ -160,6 +227,7 @@ export function updateJobObjectiveDraft(objective, patch = {}) {
 export function createJobDraft({
   draftId = '',
   title = '',
+  titleSource = JOB_DERIVED_TEXT_SOURCE.DERIVED,
   missionType = '',
   legality = '',
   visibility = '',
@@ -167,6 +235,7 @@ export function createJobDraft({
   hook = '',
   stakes = '',
   briefing = '',
+  briefingSource = JOB_DERIVED_TEXT_SOURCE.DERIVED,
   instructions = '',
   notes = '',
   gmNotes = '',
@@ -177,6 +246,16 @@ export function createJobDraft({
   issuerFactionDraftId = '',
   issuerContactId = '',
   issuerContactDraftId = '',
+  // CORRECTION (round 1): the canonical Job's own issuer already
+  // supports a promoted/real Actor reference
+  // (`contactActorId`/`contactActorUuid`/`contactActorName`, confirmed
+  // in HolonetMessengerService.createJobPosting()'s draft prefill
+  // shape) -- the procedural draft previously had no equivalent, so an
+  // issuer Contact who is ALREADY a real Actor could never be
+  // represented at its strongest identity.
+  issuerContactActorId = '',
+  issuerContactActorUuid = '',
+  issuerContactActorName = '',
   issuerScale,
   issuerRelationship = 'neutral',
   locationId = '',
@@ -209,6 +288,12 @@ export function createJobDraft({
     // like every other draft's id.
     draftId: cleanString(draftId) || createDraftId('job'),
     title: cleanString(title),
+    // See createJobComplicationInstance()'s doc above -- 'derived'
+    // (default) means the next relevant reroll may recompose this text;
+    // 'manual' means a GM wrote it and every recompose call becomes a
+    // no-op until explicitly reset, mirroring npc-concept.js's
+    // publicDescriptionSource pattern exactly.
+    titleSource: isDerivedTextSource(titleSource) ? titleSource : JOB_DERIVED_TEXT_SOURCE.DERIVED,
     missionType: cleanString(missionType),
     legality: isJobLegality(legality) ? legality : '',
     visibility: isJobVisibility(visibility) ? visibility : '',
@@ -216,6 +301,7 @@ export function createJobDraft({
     hook: cleanString(hook),
     stakes: cleanString(stakes),
     briefing: cleanString(briefing),
+    briefingSource: isDerivedTextSource(briefingSource) ? briefingSource : JOB_DERIVED_TEXT_SOURCE.DERIVED,
     instructions: cleanString(instructions),
     notes: cleanString(notes),
     gmNotes: cleanString(gmNotes),
@@ -231,6 +317,9 @@ export function createJobDraft({
     issuerFactionDraftId: cleanString(issuerFactionDraftId),
     issuerContactId: cleanString(issuerContactId),
     issuerContactDraftId: cleanString(issuerContactDraftId),
+    issuerContactActorId: cleanString(issuerContactActorId),
+    issuerContactActorUuid: cleanString(issuerContactActorUuid),
+    issuerContactActorName: cleanString(issuerContactActorName),
     issuerScale: issuerType === ISSUER_TYPE.FACTION ? clampScale(issuerScale) : null,
     issuerRelationship: isRelationshipKey(issuerRelationship) ? issuerRelationship : 'neutral',
     locationId: cleanString(locationId),
@@ -239,7 +328,9 @@ export function createJobDraft({
     // Multiple, independently rerollable objectives with stable
     // per-objective draftIds -- see createJobObjectiveDraft() above.
     objectives: Array.isArray(objectives) ? [...objectives] : [],
-    complications: Array.isArray(complications) ? [...complications] : [],
+    // Each complication is now a stable-identity instance -- see
+    // createJobComplicationInstance()'s doc above.
+    complications: normalizeComplications(complications),
     twist: twist && typeof twist === 'object' ? twist : null,
     successConsequence: successConsequence && typeof successConsequence === 'object' ? successConsequence : null,
     failureConsequence: failureConsequence && typeof failureConsequence === 'object' ? failureConsequence : null,

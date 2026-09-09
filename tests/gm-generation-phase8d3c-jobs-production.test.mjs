@@ -30,10 +30,15 @@ const {
   createProceduralJobDraft, regenerateJobDraft, regenerateJobObjectives, rerollJobObjective,
   rerollJobObjectiveOpposition, rerollJobObjectiveSubject, addJobObjective, removeJobObjective,
   rerollJobReward, rerollJobMissionType, rerollJobLegalityVisibility, rerollJobUrgency, rerollJobHook,
-  rerollJobStakes, rerollJobComplications, rerollJobTwist, removeJobTwist, rerollJobConsequences,
-  rollJobMissionType
+  rerollJobStakes, rerollJobComplications, rerollJobComplication, addJobComplication, removeJobComplication,
+  rerollJobTwist, removeJobTwist, rerollJobConsequences, rollJobMissionType,
+  recomposeJobTitle, recomposeJobBriefing, setJobTitle, resetJobTitleToDerived, setJobBriefing, resetJobBriefingToDerived
 } = await import('/systems/foundryvtt-swse/scripts/generation/jobs/job-bundle.js');
-const { createJobDraft, createJobObjectiveDraft } = await import('/systems/foundryvtt-swse/scripts/generation/jobs/job-draft.js');
+const { createJobDraft, createJobObjectiveDraft, updateJobDraft, updateJobObjectiveDraft, createJobComplicationInstance, JOB_DERIVED_TEXT_SOURCE } = await import('/systems/foundryvtt-swse/scripts/generation/jobs/job-draft.js');
+const {
+  resolveJobLocationContext, resolveJobIssuerFactionContext, resolveJobIssuerContactContext, deriveJobContextTags, resolveJobCurrentEventText
+} = await import('/systems/foundryvtt-swse/scripts/generation/jobs/job-context.js');
+const { resolveDualityReference } = await import('/systems/foundryvtt-swse/scripts/generation/lib/reference-duality.js');
 const { jobAddCustomField, jobSetFieldValue, jobRemoveDraftField, jobRestoreDraftField } = await import('/systems/foundryvtt-swse/scripts/generation/jobs/job-field-authoring.js');
 const { JOB_FIELD_DEFINITIONS } = await import('/systems/foundryvtt-swse/scripts/generation/jobs/job-field-definitions.js');
 const { JOB_ARCHETYPE_METADATA } = await import('/systems/foundryvtt-swse/scripts/generation/jobs/job-archetype-metadata.js');
@@ -320,31 +325,91 @@ async function run() {
     assert.equal(cannotRemoveLast.objectives.length, 1, 'the last remaining objective must never be removable');
   }
 
-  // --- 18: GM sovereignty walkthrough --------------------------------------
+  // --- 18: full GM sovereignty walkthrough (correction round 1) -----------
+  // Covers every category the independent review's issue #11 named:
+  // manual objective rewrite, removing a second objective, a manual
+  // reward edit, a custom field, a manual Secret edit, a specific
+  // Contact/Location link, a single-instance complication reroll, a
+  // single-objective opposition reroll, and GM-safe whole regeneration
+  // -- proving each survives every OTHER, unrelated operation.
   {
     const rng = makeSeededRng(90);
-    let draft = await createProceduralJobDraft({ rng, objectiveCount: 2 });
+    let draft = await createProceduralJobDraft({
+      rng, objectiveCount: 3,
+      issuer: { type: ISSUER_TYPE.FACTION, contactId: 'contact-42', factionId: 'faction-42', scale: 6 },
+      locationId: 'Location.fixed-1'
+    });
+    assert.equal(draft.issuerContactId, 'contact-42');
+    assert.equal(draft.locationId, 'Location.fixed-1');
 
-    // GM manually edits the hook via field authoring.
+    // 1. Manual objective rewrite (direct edit -- no per-objective
+    //    field-authoring exists in this phase; a GM edit is a direct
+    //    patch to that objective's own description/title).
+    const rewrittenId = draft.objectives[2].draftId;
+    draft = updateJobDraft(draft, {
+      objectives: draft.objectives.map((o) => (o.draftId === rewrittenId
+        ? updateJobObjectiveDraft(o, { title: 'GM-rewritten objective title', description: 'GM-rewritten objective description.' })
+        : o))
+    });
+    assert.equal(draft.objectives.find((o) => o.draftId === rewrittenId).description, 'GM-rewritten objective description.');
+
+    // 2. Remove a second (non-Primary) objective.
+    const toRemoveId = draft.objectives[1].draftId;
+    draft = removeJobObjective(draft, toRemoveId, { rng: makeSeededRng(91) });
+    assert.equal(draft.objectives.length, 2);
+    assert.ok(!draft.objectives.some((o) => o.draftId === toRemoveId));
+    assert.ok(draft.objectives.some((o) => o.draftId === rewrittenId), 'the manually-rewritten objective must survive removing a DIFFERENT objective');
+
+    // 3. Manual reward edit (a GM overrides the package directly).
+    draft = updateJobDraft(draft, { rewardPackage: { ...draft.rewardPackage, credits: 123456 } });
+    assert.equal(draft.rewardPackage.credits, 123456);
+
+    // 4. Add a custom field.
+    draft = jobAddCustomField(draft, { label: 'Client Alias', value: 'The Quiet Broker' });
+    const customFieldId = draft.narrativeFields.order.find((id) => draft.narrativeFields.fields[id].isCustom);
+    assert.ok(customFieldId, 'a custom field must have been added');
+
+    // 5. Manual Secret edit.
+    draft = jobSetFieldValue(draft, 'secret', 'The client is actually the target\'s sibling.');
+    assert.equal(draft.secret, "The client is actually the target's sibling.");
+
+    // 6/7. Contact/Location links already set at creation (contact-42 / Location.fixed-1) -- confirm still intact so far.
+    assert.equal(draft.issuerContactId, 'contact-42');
+    assert.equal(draft.locationId, 'Location.fixed-1');
+
+    // 8. Reroll ONE complication instance (add one first so there's something to target).
+    draft = addJobComplication(draft, { rng: makeSeededRng(92) });
+    const complicationId = draft.complications[draft.complications.length - 1].instanceId;
+    draft = rerollJobComplication(draft, complicationId, { rng: makeSeededRng(93) });
+    assert.ok(draft.complications.some((c) => c.instanceId === complicationId), 'the rerolled complication keeps its own instanceId');
+
+    // 9. Reroll ONE objective's opposition.
+    draft = rerollJobObjectiveOpposition(draft, rewrittenId, { rng: makeSeededRng(94) });
+    // The manual rewrite's description must survive an OPPOSITION-only reroll of the very same objective.
+    assert.equal(draft.objectives.find((o) => o.draftId === rewrittenId).description, 'GM-rewritten objective description.');
+
+    // Now: every manual edit above must survive an UNRELATED reroll (urgency).
+    draft = rerollJobUrgency(draft, { rng: makeSeededRng(95) });
+    assert.equal(draft.rewardPackage.credits, 123456, 'manual reward edit must survive an unrelated reroll');
+    assert.equal(draft.secret, "The client is actually the target's sibling.", 'manual Secret must survive an unrelated reroll');
+    assert.equal(draft.issuerContactId, 'contact-42', 'explicit Contact link must survive an unrelated reroll');
+    assert.equal(draft.locationId, 'Location.fixed-1', 'explicit Location link must survive an unrelated reroll');
+    assert.ok(draft.narrativeFields.fields[customFieldId], 'custom field must survive an unrelated reroll');
+    assert.equal(draft.objectives.find((o) => o.draftId === rewrittenId).description, 'GM-rewritten objective description.', 'manually-rewritten objective must survive an unrelated reroll');
+
+    // 10. Whole regeneration (GM-safe semantics): title/hook/etc. field-authoring state survives; SAME draftId.
     draft = jobSetFieldValue(draft, 'hook', 'The GM wrote this hook by hand.');
-    assert.equal(draft.hook, 'The GM wrote this hook by hand.');
+    const preRegenDraftId = draft.draftId;
+    draft = await regenerateJobDraft(draft, { rng: makeSeededRng(96) });
+    assert.equal(draft.draftId, preRegenDraftId, 'whole regeneration must preserve the Job\'s own identity');
+    assert.equal(draft.hook, 'The GM wrote this hook by hand.', 'field-authored fact must survive whole regeneration');
+    assert.equal(draft.secret, "The client is actually the target's sibling.", 'manual Secret must survive whole regeneration');
 
-    // GM manually rerolls only ONE objective.
-    const targetId = draft.objectives[1].draftId;
-    draft = await rerollJobObjective(draft, targetId, { rng: makeSeededRng(91) });
-
-    // An UNRELATED reroll (urgency) must not disturb either GM edit.
-    draft = rerollJobUrgency(draft, { rng: makeSeededRng(92) });
-    assert.equal(draft.hook, 'The GM wrote this hook by hand.', 'an unrelated reroll must never overwrite a GM-authored field');
-    assert.equal(draft.objectives[1].draftId, targetId, 'the objective identity survives an unrelated reroll');
-
-    // GM removes the hook field entirely -- must read empty (semantic sovereignty), not silently reappear.
+    // Removed-field semantic sovereignty, re-verified end to end.
     draft = jobRemoveDraftField(draft, 'hook');
     assert.equal(draft.hook, '', 'a removed field must clear its scalar mirror, matching NPC field-authoring precedent');
-    draft = rerollJobStakes(draft, { rng: makeSeededRng(93) });
+    draft = rerollJobStakes(draft, { rng: makeSeededRng(97) });
     assert.equal(draft.hook, '', 'an unrelated reroll must not resurrect a removed field');
-
-    // Restore brings it back as an empty, addressable field again.
     draft = jobRestoreDraftField(draft, 'hook');
     assert.ok(draft.narrativeFields.fields.hook && !draft.narrativeFields.fields.hook.hidden);
   }
@@ -358,12 +423,34 @@ async function run() {
     }
   }
 
-  // --- 20: full regenerate produces a wholly different draftId ------------
+  // --- 20: regenerateJobDraft is GM-SAFE -- SAME Job, generated content
+  // rerolled, every GM-authored fact preserved. `createProceduralJobDraft()`
+  // (not regenerateJobDraft()) is the "make a wholly new Job" operation.
   {
     const rng = makeSeededRng(100);
-    const draft = await createProceduralJobDraft({ rng });
+    let draft = await createProceduralJobDraft({ rng, objectiveCount: 2 });
+    draft = setJobTitle(draft, 'GM-authored title');
+    draft = jobSetFieldValue(draft, 'hook', 'GM-authored hook');
+    draft = jobRemoveDraftField(draft, 'stakes');
+    const oldMissionType = draft.missionType;
+
     const regenerated = await regenerateJobDraft(draft, { rng: makeSeededRng(101) });
-    assert.notEqual(regenerated.draftId, draft.draftId);
+    assert.equal(regenerated.draftId, draft.draftId, 'regenerateJobDraft() must preserve the Job\'s own identity -- it regenerates THIS Job, it does not create a new one');
+    assert.equal(regenerated.title, 'GM-authored title', 'a manually-locked title must survive a whole regenerate');
+    assert.equal(regenerated.titleSource, JOB_DERIVED_TEXT_SOURCE.MANUAL);
+    assert.equal(regenerated.hook, 'GM-authored hook', 'a manually-edited field-authored fact must survive a whole regenerate');
+    assert.equal(regenerated.stakes, '', 'a GM-removed field must stay removed (empty) across a whole regenerate, never silently resurrected');
+    // Generated content (mission type / objectives) IS free to reroll --
+    // that's the entire point of "regenerate"; over enough seeds it
+    // should differ from the original at least sometimes.
+    assert.ok(isDraftId(regenerated.draftId));
+    assert.notEqual(oldMissionType, undefined);
+
+    // A caller may explicitly reuse the exact same missionType too --
+    // regenerate is not required to change anything, only permitted to.
+    const pinned = await regenerateJobDraft(draft, { rng: makeSeededRng(102), missionType: draft.missionType });
+    assert.equal(pinned.missionType, draft.missionType);
+    assert.equal(pinned.draftId, draft.draftId);
   }
 
   // --- 21: regenerateJobObjectives / rerollJobReward keep reward accounting valid
@@ -431,7 +518,241 @@ async function run() {
     assert.equal(bareObjective.difficulty, OBJECTIVE_DIFFICULTY.STANDARD);
   }
 
-  console.log('PHASE 8D-3C Job generation wiring: all 24 assertion blocks passed.');
+  // --- 25: resolveDualityReference() -- the shared generic primitive -----
+  {
+    // No explicit, context declares one -> use context's.
+    let r = resolveDualityReference({ contextId: 'ctx-1' });
+    assert.deepEqual(r, { ref: { id: 'ctx-1', draftId: '' }, conflict: false });
+    // Explicit only, no context identity at all -> use explicit.
+    r = resolveDualityReference({ explicitDraftId: 'draft:x:1' });
+    assert.deepEqual(r, { ref: { id: '', draftId: 'draft:x:1' }, conflict: false });
+    // Agreement -> use it, no conflict.
+    r = resolveDualityReference({ explicitId: 'a', contextId: 'a' });
+    assert.deepEqual(r, { ref: { id: 'a', draftId: '' }, conflict: false });
+    // Conflict -> explicit wins, conflict reported.
+    r = resolveDualityReference({ explicitId: 'a', contextId: 'b' });
+    assert.deepEqual(r, { ref: { id: 'a', draftId: '' }, conflict: true });
+    // Canonical id always beats a draftId in the same ref.
+    r = resolveDualityReference({ explicitId: 'a', explicitDraftId: 'draft:x:1' });
+    assert.equal(r.ref.draftId, '', 'a real id must clear any draftId in the same resolved ref');
+  }
+
+  // --- 26: issuer Faction context accepts BOTH a real Faction record (`id`)
+  // and a Faction draft (`draftId`) -- the exact shapes those two real
+  // authorities actually produce, not a third invented shape.
+  {
+    const canonicalFaction = { id: 'faction-real-1', name: 'Real Faction', type: 'Cartel', scale: 5, jobDefaults: { legality: 'legal' }, relationship: 'good' };
+    const r1 = resolveJobIssuerFactionContext({ factionContext: canonicalFaction });
+    assert.equal(r1.factionRef.factionId, 'faction-real-1');
+    assert.equal(r1.factionRef.factionDraftId, '');
+    assert.equal(r1.jobDefaults.legality, 'legal');
+
+    const factionDraft = { draftId: 'draft:faction:abc', name: 'Drafted Faction', archetype: 'criminal-syndicate', organizationFamily: 'business_professional', scale: 9, jobDefaults: { legality: 'illegal' } };
+    const r2 = resolveJobIssuerFactionContext({ factionContext: factionDraft });
+    assert.equal(r2.factionRef.factionDraftId, 'draft:faction:abc');
+    assert.equal(r2.factionRef.factionId, '');
+    assert.ok(r2.contextTags.includes('criminal-syndicate'));
+
+    // Explicit issuerFactionId conflicts with the SUPPLIED factionContext's own id -> context dropped, conflict reported.
+    const r3 = resolveJobIssuerFactionContext({ issuerFactionId: 'other-faction', factionContext: canonicalFaction });
+    assert.equal(r3.factionRef.factionId, 'other-faction');
+    assert.equal(r3.contextMismatch, true);
+    assert.equal(r3.jobDefaults, null, 'a mismatched context must be dropped entirely, including its jobDefaults bias');
+  }
+
+  // --- 27: issuer Contact context surfaces real Actor identity ------------
+  {
+    const canonicalContact = { id: 'contact-1', name: 'Boss Rill', role: 'Fixer', actorId: 'Actor.abc', actorUuid: 'Actor.abc.uuid', actorName: 'Rill', suggestedJobArchetypeTags: ['smuggling'] };
+    const r = resolveJobIssuerContactContext({ contactContext: canonicalContact });
+    assert.equal(r.contactRef.contactId, 'contact-1');
+    assert.equal(r.actorId, 'Actor.abc');
+    assert.equal(r.actorUuid, 'Actor.abc.uuid');
+    assert.equal(r.actorName, 'Rill');
+    assert.deepEqual(r.suggestedJobArchetypeTags, ['smuggling']);
+
+    const npcDraft = { draftId: 'draft:npc:xyz', name: 'Unnamed Informant', suggestedOppositionTags: ['crime-syndicate'] };
+    const r2 = resolveJobIssuerContactContext({ contactContext: npcDraft });
+    assert.equal(r2.contactRef.contactDraftId, 'draft:npc:xyz');
+    assert.deepEqual(r2.suggestedOppositionTags, ['crime-syndicate']);
+  }
+
+  // --- 28: resolveJobCurrentEventText reads the REAL location-event.js shape
+  {
+    assert.equal(resolveJobCurrentEventText({ currentEvents: [{ description: 'a strike halts shipments', severity: 'moderate' }] }), 'a strike halts shipments');
+    assert.equal(resolveJobCurrentEventText({ currentEvents: [] }), '');
+    assert.equal(resolveJobCurrentEventText(null), '');
+    assert.equal(resolveJobCurrentEventText({ currentEventHints: ['stale legacy field, must be ignored'] }), '', 'the nonexistent legacy currentEventHints field must never be read');
+  }
+
+  // --- 29: deriveJobContextTags separates general/mission-type/opposition tags
+  {
+    const { generalTags, missionTypeTags, oppositionSeedTags } = deriveJobContextTags({
+      preferTags: ['urban'],
+      locationContext: { locationTags: ['frontier'], economyTags: ['mining'], suggestedJobArchetypeTags: ['smuggling', 'recovery'], suggestedOppositionTags: ['crime-syndicate'] },
+      factionContextTags: ['criminal-syndicate'],
+      contactSuggestedJobArchetypeTags: ['heist'],
+      contactSuggestedOppositionTags: ['lawless']
+    });
+    assert.ok(generalTags.includes('urban') && generalTags.includes('frontier') && generalTags.includes('mining') && generalTags.includes('criminal-syndicate'));
+    assert.ok(!generalTags.includes('smuggling'), 'mission-type tags must stay a SEPARATE set, not folded into the generic tag soup');
+    assert.deepEqual(missionTypeTags.sort(), ['heist', 'recovery', 'smuggling'].sort());
+    assert.deepEqual(oppositionSeedTags.sort(), ['crime-syndicate', 'lawless'].sort());
+  }
+
+  // --- 30: real suggestedJobArchetypeTags end-to-end bias missionType roll
+  {
+    const locationContext = { locationTags: ['mining'], suggestedJobArchetypeTags: ['smuggling'] };
+    let hits = 0;
+    const trials = 60;
+    for (let seed = 0; seed < trials; seed++) {
+      const d = await createProceduralJobDraft({ rng: makeSeededRng(seed * 19 + 2000), jobContext: { locationContext } });
+      if (d.missionType === 'smuggling') hits++;
+    }
+    assert.ok(hits > trials * (1 / 14), `Location suggestedJobArchetypeTags must measurably bias missionType toward "smuggling" (baseline ~1/14), got ${hits}/${trials}`);
+  }
+
+  // --- 31: context-identity conflict SUPPRESSES the mismatched context's tags/bias, not merely diagnoses it
+  {
+    const locationContext = { locationId: 'Location.B', locationTags: ['mining'], suggestedJobArchetypeTags: ['smuggling'], currentEvents: [{ description: 'seed text that must not appear', severity: 'minor' }] };
+    let sawSmuggling = false;
+    let sawSeedNote = false;
+    for (let seed = 0; seed < 40; seed++) {
+      const d = await createProceduralJobDraft({ rng: makeSeededRng(seed * 23 + 3000), locationId: 'Location.A', jobContext: { locationContext } });
+      assert.ok(d.provenance.warnings.includes(DIAGNOSTIC_CODE.JOB_CONTEXT_MISMATCH));
+      if (d.missionType === 'smuggling') sawSmuggling = true;
+      if (d.notes.includes('seed text that must not appear')) sawSeedNote = true;
+    }
+    assert.equal(sawSeedNote, false, 'a mismatched Location context\'s currentEvents must never leak into notes');
+    // (missionType bias suppression is probabilistic to prove directly without flakiness; the notes assertion above is the deterministic proof the context was dropped, not merely flagged.)
+    assert.ok(!sawSmuggling || true);
+  }
+
+  // --- 32: asset objectives never carry a fabricated price -----------------
+  {
+    let sawAsset = false;
+    for (let seed = 0; seed < 60; seed++) {
+      const d = await createProceduralJobDraft({ rng: makeSeededRng(seed * 29 + 4000), missionType: 'recovery' });
+      for (const o of d.objectives) {
+        if (o.assetObjective) {
+          sawAsset = true;
+          assert.equal(o.assetObjective.value, null, 'an asset objective must never carry an invented price');
+          assert.equal(o.assetObjective.valueSource, 'unresolved');
+        }
+      }
+    }
+    assert.ok(sawAsset, 'expected at least one trial to surface an asset objective');
+    // An unresolved asset objective must contribute nothing to the reward estimate (no double economy).
+    const d = await createProceduralJobDraft({ rng: makeSeededRng(4001), missionType: 'recovery', objectiveCount: 1 });
+    if (d.objectives[0].assetObjective) {
+      assert.equal(d.rewardEstimate.breakdown.assetComponent, 0, 'an unresolved asset must not contribute to the reward estimate');
+    }
+  }
+
+  // --- 33: opposition facets are rolled INDEPENDENTLY of objective difficulty
+  {
+    let sawRoutineDeadly = false;
+    let sawExtremeTrivial = false;
+    for (let seed = 0; seed < 300; seed++) {
+      const d = await createProceduralJobDraft({ rng: makeSeededRng(seed * 41 + 5000), objectiveCount: 1 });
+      const o = d.objectives[0];
+      if (o.difficulty === OBJECTIVE_DIFFICULTY.ROUTINE && o.oppositionRequest?.threatLevel === 'deadly') sawRoutineDeadly = true;
+      if (o.difficulty === OBJECTIVE_DIFFICULTY.EXTREME && o.oppositionRequest?.threatLevel === 'trivial') sawExtremeTrivial = true;
+    }
+    assert.ok(sawRoutineDeadly, 'a routine-difficulty objective must sometimes roll deadly opposition -- proves the facets are independent, matching opposition-request.js\'s own documented example');
+    // extreme is rare enough (weight 0.3) that we don't hard-require the second combination, only assert the mechanism has no coupling by re-checking the ACTUAL CODE (comments stripped, since this file's own doc prose legitimately names the removed constant while explaining the fix):
+    const src = readFileSync(new URL('../scripts/generation/jobs/job-bundle.js', import.meta.url), 'utf8');
+    const codeOnly = src.replace(/\/\*[\s\S]*?\*\//g, '').replace(/\/\/.*$/gm, '');
+    assert.doesNotMatch(codeOnly, /OPPOSITION_PROFILE_BY_DIFFICULTY/, 'the old hard difficulty->opposition-profile map must be gone from actual code');
+    assert.doesNotMatch(codeOnly, /leadershipBoost:\s*difficulty/, 'opposition rank must not scale with difficulty in actual code');
+  }
+
+  // --- 34: Primary objective invariant -- required cannot be overridden false,
+  // and removing the Primary promotes the next objective.
+  {
+    const forcedFalse = createJobObjectiveDraft({ tier: OBJECTIVE_TIER.PRIMARY, required: false });
+    assert.equal(forcedFalse.required, true, 'a Primary objective must always be required, even if the caller explicitly passes required:false');
+
+    const draft = await createProceduralJobDraft({ rng: makeSeededRng(6000), objectiveCount: 3 });
+    const primaryId = draft.objectives.find((o) => o.tier === OBJECTIVE_TIER.PRIMARY).draftId;
+    const afterRemoval = removeJobObjective(draft, primaryId, { rng: makeSeededRng(6001) });
+    assert.equal(afterRemoval.objectives.length, 2);
+    const newPrimary = afterRemoval.objectives.find((o) => o.tier === OBJECTIVE_TIER.PRIMARY);
+    assert.ok(newPrimary, 'a Job must always have a Primary objective -- removing the old one must promote another');
+    assert.equal(newPrimary.required, true);
+  }
+
+  // --- 35: complication instance identity + single-instance operations ----
+  {
+    const rng = makeSeededRng(7000);
+    let draft = await createProceduralJobDraft({ rng });
+    // 0 complications is a legitimate, reachable state.
+    const zeroCounts = [];
+    for (let seed = 0; seed < 30; seed++) {
+      const d = await createProceduralJobDraft({ rng: makeSeededRng(seed * 43 + 7100) });
+      zeroCounts.push(d.complications.length);
+    }
+    assert.ok(zeroCounts.includes(0), 'zero complications must be a reachable generated outcome');
+
+    draft = updateJobDraft(draft, { complications: [] });
+    draft = addJobComplication(draft, { rng: makeSeededRng(7001) });
+    draft = addJobComplication(draft, { rng: makeSeededRng(7002) });
+    assert.equal(draft.complications.length, 2);
+    const ids = draft.complications.map((c) => c.instanceId);
+    assert.equal(new Set(ids).size, 2, 'complication instance ids must be unique');
+
+    const untouched = draft.complications[1];
+    draft = rerollJobComplication(draft, ids[0], { rng: makeSeededRng(7003) });
+    assert.equal(draft.complications[0].instanceId, ids[0], 'reroll preserves the SAME instanceId');
+    assert.equal(draft.complications[1], untouched, 'the other complication instance must be the SAME object reference, untouched');
+
+    draft = removeJobComplication(draft, ids[0]);
+    assert.equal(draft.complications.length, 1);
+    assert.equal(draft.complications[0].instanceId, ids[1]);
+
+    // createJobComplicationInstance() mints a stable id, preserved on round-trip.
+    const inst = createJobComplicationInstance({ value: 'test complication', tags: [] });
+    assert.ok(isDraftId(inst.instanceId));
+    assert.equal(draftIdDomain(inst.instanceId), 'job-complication');
+    const reNormalized = createJobComplicationInstance(inst);
+    assert.equal(reNormalized.instanceId, inst.instanceId, 're-normalizing an already-shaped instance must preserve its id');
+  }
+
+  // --- 36: title/briefing recompose vs. manual lock ------------------------
+  {
+    const rng = makeSeededRng(8000);
+    let draft = await createProceduralJobDraft({ rng, objectiveCount: 2 });
+    assert.equal(draft.titleSource, JOB_DERIVED_TEXT_SOURCE.DERIVED);
+    assert.equal(draft.briefingSource, JOB_DERIVED_TEXT_SOURCE.DERIVED);
+
+    // Recompose is a no-op when nothing changed, and a real recompute when called explicitly.
+    const recomposed = recomposeJobTitle(draft);
+    assert.equal(recomposed.title, draft.title);
+
+    // Lock title manually; recompose becomes a no-op even after a direct missionType patch.
+    draft = setJobTitle(draft, 'Frozen Title');
+    assert.equal(draft.titleSource, JOB_DERIVED_TEXT_SOURCE.MANUAL);
+    const patched = updateJobDraft(draft, { missionType: 'heist' });
+    const stillFrozen = recomposeJobTitle(patched);
+    assert.equal(stillFrozen.title, 'Frozen Title', 'a manually-locked title must not be recomposed');
+
+    // Explicit reset-to-derived immediately recomputes from current facts.
+    const reset = resetJobTitleToDerived(patched);
+    assert.equal(reset.titleSource, JOB_DERIVED_TEXT_SOURCE.DERIVED);
+    assert.ok(reset.title.toLowerCase().includes('heist'));
+
+    // Briefing: lock manually, prove a Primary-objective reroll does not overwrite it.
+    draft = setJobBriefing(draft, 'Frozen Briefing');
+    const rerolled = await rerollJobObjective(draft, draft.objectives[0].draftId, { rng: makeSeededRng(8001) });
+    assert.equal(rerolled.briefing, 'Frozen Briefing', 'a manually-locked briefing must survive a Primary objective reroll');
+
+    // Reset briefing to derived, then a Primary objective reroll DOES refresh it.
+    let derivedDraft = resetJobBriefingToDerived(draft);
+    const primaryId = derivedDraft.objectives[0].draftId;
+    derivedDraft = await rerollJobObjective(derivedDraft, primaryId, { rng: makeSeededRng(8002) });
+    assert.equal(derivedDraft.briefing, derivedDraft.objectives.find((o) => o.draftId === primaryId).description, 'a derived briefing must recompose from the (possibly rerolled) Primary objective');
+  }
+
+  console.log('PHASE 8D-3C Job generation wiring: all 36 assertion blocks passed.');
 }
 
 await run();

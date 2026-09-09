@@ -12,8 +12,8 @@
  * "avoid the procedural god object" discipline -- this module owns no
  * table data and picks nothing directly except the few small NEW glue
  * tables declared right here (mission-type roll weights, generic slot
- * descriptors, asset-objective-type-per-template map) that have no
- * other natural home.
+ * descriptors, asset-objective-type-per-template map, independent
+ * opposition-facet roll weights) that have no other natural home.
  *
  * Still a DRAFT — no canonical Job is ever posted here. Commit remains
  * `HolonetMessengerService.createJobPosting()`'s job, exactly as
@@ -27,16 +27,75 @@
  * header documents, per §195.3's routing decision. Every OTHER Job
  * field is resolved synchronously.
  *
+ * CORRECTION (round 1, independent review of PR #965's initial head):
+ * this file was substantially reworked to fix several real defects the
+ * review found:
+ *  - `jobContext.factionContext`/`contactContext` identity was read via
+ *    ad-hoc field names (`factionContext?.factionId`) that matched
+ *    neither a real Faction record (`id`) nor a Faction draft
+ *    (`draftId`) -- now routed through `job-context.js`'s
+ *    `resolveJobIssuerFactionContext()`/`resolveJobIssuerContactContext()`,
+ *    which also enforce the SAME explicit/context duality invariant
+ *    Location already had (`resolveDualityReference()`,
+ *    `lib/reference-duality.js`) and surface Actor identity
+ *    (`issuerContactActorId`/`ActorUuid`/`ActorName`) the canonical
+ *    Job schema itself already expects.
+ *  - `locationContext.currentEventHints` never matched the real
+ *    `location-event.js` shape (`currentEvents: [{description,
+ *    severity}]`) -- fixed via `resolveJobCurrentEventText()`.
+ *  - `locationContext.suggestedJobArchetypeTags` (the REAL mission-type
+ *    bias signal Phase 8D-3A's Location layer already produces) was
+ *    never read at all -- now flows into `rollJobMissionType()`
+ *    through `deriveJobContextTags()`.
+ *  - a context-identity CONFLICT was diagnosed but the conflicting
+ *    context's tags/bias were still consumed anyway -- now the
+ *    resolvers above return `context: null` on conflict and every
+ *    downstream tag/bias derivation reads ONLY the post-resolution
+ *    value, never the raw input, exactly like `npc/npc-bundle.js`'s own
+ *    discipline.
+ *  - `regenerateJobDraft()` created a WHOLLY NEW draft (new draftId),
+ *    silently discarding every GM edit -- fixed to preserve `draftId`
+ *    and every GM-authored field (see its own doc below).
+ *  - a fabricated `ASSET_VALUE_BY_DIFFICULTY` price table fed
+ *    `estimateReward()` an invented number, contradicting
+ *    `reward-estimator.js`/`reward-package.js`'s own explicit "the
+ *    caller resolves a REAL price through a future Store/pricing
+ *    authority" contract -- removed; an asset objective now carries
+ *    `value: null` until a real price is supplied.
+ *  - opposition's `threatLevel`/`countBand`/`leaderRequirement`/
+ *    `reinforcementLevel` were hard-mapped 1:1 from objective
+ *    difficulty, re-coupling facets `opposition-request.js`'s own
+ *    header explicitly keeps independent ("a deadly/horde fight can
+ *    still be routine difficulty") -- now rolled independently;
+ *    `rankContext`'s leadership boost no longer scales with difficulty
+ *    either (opposition rank is not an encounter-balancing signal).
+ *  - `title`/`briefing` were computed once at creation and never
+ *    refreshed by a later mission-type/objective reroll -- fixed via
+ *    `recomposeJobTitle()`/`recomposeJobBriefing()`, mirroring
+ *    `npc-concept.js`'s `publicDescriptionSource`/
+ *    `recomposeNpcPublicDescription()` pattern (respects a GM's manual
+ *    edit, never overwrites it).
+ *  - a Primary objective's `required` flag could be overridden to
+ *    `false` -- `job-draft.js`'s `createJobObjectiveDraft()` now forces
+ *    it; `removeJobObjective()` here now promotes another objective to
+ *    Primary when the Primary is removed, so a Job can never end up
+ *    with no Primary objective.
+ *  - complications had no stable per-instance identity -- now wrapped
+ *    via `job-draft.js`'s `createJobComplicationInstance()`, with new
+ *    single-instance `rerollJobComplication()`/`addJobComplication()`/
+ *    `removeJobComplication()` operations; a Job may now legitimately
+ *    have zero complications.
+ *
  * CONTEXT WIRING (`jobContext`, phase spec's central "soft weighting"
  * requirement): `jobContext.locationContext` reuses the EXACT shape
  * `npc/npc-bundle.js`/`factions/faction-bundle.js` already accept
  * (`{technologyLevel, technologyAccess, technologySpecialties,
  * economyTags, locationTags, locationId, locationDraftId,
- * suggestedOppositionTags, currentEventHints}`) — no new Location
- * context shape is invented. `jobContext.factionContext` reads a real
- * or draft Faction's OWN `jobDefaults` (never duplicated) as a soft
- * bias on legality/visibility/relationship/reward scale.
- * `jobContext.contactContext` supplies an issuer Contact's identity.
+ * suggestedJobArchetypeTags, suggestedOppositionTags, currentEvents}`)
+ * — no new Location context shape is invented. `jobContext.factionContext`
+ * reads a real-or-draft Faction's OWN `jobDefaults` (never duplicated)
+ * as a soft bias. `jobContext.contactContext` supplies an issuer
+ * Contact's identity (real Contact or `npc-concept.js` draft).
  * `jobContext.economyContext` supplies commodity bias for cargo-flavored
  * objectives, reusing `data/galactic-commodities.js` `id`s verbatim.
  * `jobContext.campaignTags` are free-form tags merged in like every
@@ -46,9 +105,16 @@
  * explicit "no context should monopolize output" requirement.
  */
 
-import { createJobDraft, updateJobDraft, createJobObjectiveDraft, updateJobObjectiveDraft } from './job-draft.js';
+import {
+  createJobDraft, updateJobDraft, createJobObjectiveDraft, updateJobObjectiveDraft,
+  createJobComplicationInstance, JOB_DERIVED_TEXT_SOURCE
+} from './job-draft.js';
+import {
+  resolveJobLocationContext, resolveJobIssuerFactionContext, resolveJobIssuerContactContext,
+  deriveJobContextTags, resolveJobCurrentEventText
+} from './job-context.js';
 import { JOB_ARCHETYPE_METADATA, describeJobArchetype } from './job-archetype-metadata.js';
-import { pickJobLegality, pickJobVisibility, isJobLegality, isJobVisibility, JOB_LEGALITY, JOB_VISIBILITY } from './job-legality-visibility.js';
+import { pickJobLegality, pickJobVisibility, isJobLegality, isJobVisibility } from './job-legality-visibility.js';
 import { pickJobUrgency } from './job-urgency.js';
 import { pickJobHook } from './job-hook.js';
 import { pickJobStakes } from './job-stake.js';
@@ -94,7 +160,7 @@ const MISSION_TYPE_ENTRIES = Object.freeze(
   }))
 );
 
-/** Roll a mission type. Soft-biased by `preferTags` containing a mission-type name (e.g. a Faction whose doctrine tags happen to name one); never a hard filter. */
+/** Roll a mission type. Soft-biased by `preferTags` containing a mission-type name (e.g. a Location's own `suggestedJobArchetypeTags`, folded in by `deriveJobContextTags()`); never a hard filter. */
 export function rollJobMissionType({ rng, preferTags = [] } = {}) {
   const preferred = preferTags.filter((tag) => MISSION_TYPE_ROLL_WEIGHT[tag] !== undefined);
   const pool = preferred.length
@@ -156,19 +222,41 @@ const TEMPLATE_ASSET_OBJECTIVE_TYPE = Object.freeze({
   'faction-destroy-enemy-supplies': ASSET_OBJECTIVE_TYPE.SABOTAGE_OR_DESTROY
 });
 
-/** A representative valued-asset figure for the asset component of `estimateReward()` -- generator-only flavor, never a Store-priced figure (a future adapter would replace this with `resolveStoreCost()`, per `reward-package.js`'s own header). Scaled loosely by difficulty so a harder theft/recovery objective plausibly involves a more valuable target. */
-const ASSET_VALUE_BY_DIFFICULTY = Object.freeze({
-  routine: 8000, standard: 15000, difficult: 30000, severe: 60000, extreme: 120000
-});
-
-// --- opposition profile per difficulty ------------------------------------
-const OPPOSITION_PROFILE_BY_DIFFICULTY = Object.freeze({
-  routine: { threatLevel: OPPOSITION_THREAT_LEVEL.TRIVIAL, countBand: OPPOSITION_COUNT_BAND.PAIR, leaderRequirement: OPPOSITION_LEADER_REQUIREMENT.NONE, reinforcementLevel: OPPOSITION_SUPPORT_LEVEL.NONE },
-  standard: { threatLevel: OPPOSITION_THREAT_LEVEL.STANDARD, countBand: OPPOSITION_COUNT_BAND.SMALL_GROUP, leaderRequirement: OPPOSITION_LEADER_REQUIREMENT.NONE, reinforcementLevel: OPPOSITION_SUPPORT_LEVEL.LIGHT },
-  difficult: { threatLevel: OPPOSITION_THREAT_LEVEL.DANGEROUS, countBand: OPPOSITION_COUNT_BAND.SQUAD, leaderRequirement: OPPOSITION_LEADER_REQUIREMENT.OPTIONAL, reinforcementLevel: OPPOSITION_SUPPORT_LEVEL.MODERATE },
-  severe: { threatLevel: OPPOSITION_THREAT_LEVEL.DANGEROUS, countBand: OPPOSITION_COUNT_BAND.SQUAD, leaderRequirement: OPPOSITION_LEADER_REQUIREMENT.REQUIRED, reinforcementLevel: OPPOSITION_SUPPORT_LEVEL.MODERATE },
-  extreme: { threatLevel: OPPOSITION_THREAT_LEVEL.DEADLY, countBand: OPPOSITION_COUNT_BAND.HORDE, leaderRequirement: OPPOSITION_LEADER_REQUIREMENT.REQUIRED, reinforcementLevel: OPPOSITION_SUPPORT_LEVEL.HEAVY }
-});
+// --- opposition facets: rolled INDEPENDENTLY, never derived from difficulty
+// CORRECTION (round 1): `opposition-request.js`'s own header is explicit
+// that `difficulty`/`threatLevel`/`countBand` are deliberately
+// overlapping-but-separate facets ("a deadly/horde fight can still be
+// routine difficulty for a high-tier party") -- the original
+// `OPPOSITION_PROFILE_BY_DIFFICULTY` 1:1 map violated exactly that. Each
+// facet below is now its own independent weighted roll, never keyed off
+// an objective's difficulty band. This also keeps 8D-3C's own explicit
+// "not an encounter-balancing system" boundary -- difficulty stays a
+// pure reward-economy input (`objective-economy.js`), never an opposition
+// composition input.
+const THREAT_LEVEL_ENTRIES = Object.freeze([
+  { value: OPPOSITION_THREAT_LEVEL.TRIVIAL, weight: 3 },
+  { value: OPPOSITION_THREAT_LEVEL.STANDARD, weight: 5 },
+  { value: OPPOSITION_THREAT_LEVEL.DANGEROUS, weight: 3 },
+  { value: OPPOSITION_THREAT_LEVEL.DEADLY, weight: 1 }
+]);
+const COUNT_BAND_ENTRIES = Object.freeze([
+  { value: OPPOSITION_COUNT_BAND.SOLO, weight: 2 },
+  { value: OPPOSITION_COUNT_BAND.PAIR, weight: 3 },
+  { value: OPPOSITION_COUNT_BAND.SMALL_GROUP, weight: 4 },
+  { value: OPPOSITION_COUNT_BAND.SQUAD, weight: 2 },
+  { value: OPPOSITION_COUNT_BAND.HORDE, weight: 0.5 }
+]);
+const LEADER_REQUIREMENT_ENTRIES = Object.freeze([
+  { value: OPPOSITION_LEADER_REQUIREMENT.NONE, weight: 5 },
+  { value: OPPOSITION_LEADER_REQUIREMENT.OPTIONAL, weight: 3 },
+  { value: OPPOSITION_LEADER_REQUIREMENT.REQUIRED, weight: 1 }
+]);
+const REINFORCEMENT_LEVEL_ENTRIES = Object.freeze([
+  { value: OPPOSITION_SUPPORT_LEVEL.NONE, weight: 5 },
+  { value: OPPOSITION_SUPPORT_LEVEL.LIGHT, weight: 3 },
+  { value: OPPOSITION_SUPPORT_LEVEL.MODERATE, weight: 1.5 },
+  { value: OPPOSITION_SUPPORT_LEVEL.HEAVY, weight: 0.5 }
+]);
 
 function pickObjectiveDifficulty({ rng } = {}) {
   const entries = [
@@ -187,6 +275,12 @@ function rollObjectiveCount({ rng } = {}) {
   return weightedPick(entries, { rng })?.value ?? 1;
 }
 
+/** How many complications a Job gets -- 0 is a legitimate, common outcome (a clean job is not a bug), matching `planet-hooks.js`'s own `pickCurrentEventCount()` "weighted toward fewer" framing. */
+function rollComplicationCount({ rng } = {}) {
+  const entries = [{ value: 0, weight: 3 }, { value: 1, weight: 5 }, { value: 2, weight: 2 }];
+  return weightedPick(entries, { rng })?.value ?? 0;
+}
+
 function pickObjectiveTemplate({ missionType, tier, rng }) {
   const byMissionAndTier = fixturesForMissionType(missionType).filter((t) => t.tiers.includes(tier));
   if (byMissionAndTier.length) return weightedPick(byMissionAndTier, { rng, weightOf: (t) => t.weight });
@@ -199,24 +293,30 @@ function pickObjectiveTemplate({ missionType, tier, rng }) {
 
 /**
  * Build one opposition request for an objective, per §195's reuse
- * decision: `suggestedOppositionTags` (locationContext, already shared
- * cross-domain) + the template's own `oppositionHints` feed
- * `archetypeTags`; `rankContext` reuses `npc/npc-bundle.js`'s existing
- * `rollCommandTier()` rather than inventing a second distribution.
+ * decision: `oppositionSeedTags` (already-resolved `suggestedOppositionTags`
+ * from Location/Contact context, see `deriveJobContextTags()`) + the
+ * template's own `oppositionHints` feed `archetypeTags`; `rankContext`
+ * reuses `npc/npc-bundle.js`'s existing `rollCommandTier()` at a flat,
+ * neutral boost -- NOT scaled by difficulty (round 1 correction, see
+ * module header). Threat/count/leader/reinforcement are each rolled
+ * independently (`THREAT_LEVEL_ENTRIES` etc. above), never derived from
+ * `difficulty`.
  */
-function buildOppositionRequest({ template, missionType, difficulty, locationContext, organizationTags, rng }) {
-  const profile = OPPOSITION_PROFILE_BY_DIFFICULTY[difficulty] ?? OPPOSITION_PROFILE_BY_DIFFICULTY.standard;
-  const archetypeTags = normalizeTags([...(template?.oppositionHints ?? []), missionType, ...(locationContext?.suggestedOppositionTags ?? [])]);
+function buildOppositionRequest({ template, missionType, oppositionSeedTags, environmentTags, organizationTags, rng }) {
+  const archetypeTags = normalizeTags([...(template?.oppositionHints ?? []), missionType, ...oppositionSeedTags]);
   return createOppositionRequest({
     archetypeTags,
-    environmentTags: normalizeTags(locationContext?.locationTags ?? []),
+    environmentTags: normalizeTags(environmentTags ?? []),
     organizationTags: normalizeTags(organizationTags ?? []),
-    difficulty,
-    rankContext: rollCommandTier({ rng, leadershipBoost: difficulty === 'severe' || difficulty === 'extreme' ? 1.4 : 1 }),
-    threatLevel: profile.threatLevel,
-    countBand: profile.countBand,
-    leaderRequirement: profile.leaderRequirement,
-    reinforcementLevel: profile.reinforcementLevel,
+    // difficulty is deliberately NOT threaded through to this request at
+    // all -- see module header. A caller who wants a specific difficulty
+    // recorded reads the OBJECTIVE's own `difficulty` field, which
+    // already exists independently of this opposition request.
+    rankContext: rollCommandTier({ rng, leadershipBoost: 1 }),
+    threatLevel: weightedPick(THREAT_LEVEL_ENTRIES, { rng })?.value ?? OPPOSITION_THREAT_LEVEL.STANDARD,
+    countBand: weightedPick(COUNT_BAND_ENTRIES, { rng })?.value ?? OPPOSITION_COUNT_BAND.SMALL_GROUP,
+    leaderRequirement: weightedPick(LEADER_REQUIREMENT_ENTRIES, { rng })?.value ?? OPPOSITION_LEADER_REQUIREMENT.NONE,
+    reinforcementLevel: weightedPick(REINFORCEMENT_LEVEL_ENTRIES, { rng })?.value ?? OPPOSITION_SUPPORT_LEVEL.NONE,
     notes: template?.oppositionHints?.length ? `Suggested by template "${template.id}": ${template.oppositionHints.join(', ')}` : ''
   });
 }
@@ -276,7 +376,7 @@ async function resolveObjectiveSlots({ template, missionType, preferTags, locati
 
 /** Build one objective draft, composing every existing primitive above. */
 async function buildJobObjective({
-  tier, missionType, preferTags, locationContext, factionDraftId, issuerFactionName, organizationTags,
+  tier, missionType, preferTags, locationContext, oppositionSeedTags, factionDraftId, issuerFactionName, organizationTags,
   withNamedSubjects, economyContext, rng, nameProvider, droidNameProvider
 }) {
   const difficulty = pickObjectiveDifficulty({ rng });
@@ -286,11 +386,18 @@ async function buildJobObjective({
   });
   const description = renderObjectiveTemplate(template, slotValues);
   const constraints = pickObjectiveConstraints({ rng, preferTags, count: randomIntInclusive(0, 2, { rng }) }).map((e) => e.value);
-  const oppositionRequest = buildOppositionRequest({ template, missionType, difficulty, locationContext, organizationTags, rng });
+  const oppositionRequest = buildOppositionRequest({
+    template, missionType, oppositionSeedTags: oppositionSeedTags ?? [], environmentTags: locationContext?.locationTags ?? [], organizationTags, rng
+  });
 
+  // CORRECTION (round 1): no fabricated price. `value` stays `null`
+  // (`valueSource: 'unresolved'`, enforced by
+  // job-draft.js's normalizeAssetObjective()) until a real caller
+  // supplies one via the future Store/pricing authority -- see module
+  // header and reward-estimator.js/reward-package.js's own contract.
   const assetObjectiveType = TEMPLATE_ASSET_OBJECTIVE_TYPE[template.id];
   const assetObjective = assetObjectiveType
-    ? { objectiveType: assetObjectiveType, value: ASSET_VALUE_BY_DIFFICULTY[difficulty] ?? ASSET_VALUE_BY_DIFFICULTY.standard, name: slotValues.ship || slotValues.cargo || 'the valued asset', referenceId: cargoCommodityId }
+    ? { objectiveType: assetObjectiveType, name: slotValues.ship || slotValues.cargo || 'the valued asset', referenceId: cargoCommodityId }
     : null;
 
   return createJobObjectiveDraft({
@@ -310,10 +417,10 @@ async function buildJobObjective({
   });
 }
 
-/** Compute `objectiveRewardWeight()`-ready summaries for `estimateReward()`, plus resolve the reward package. */
+/** Compute `objectiveRewardWeight()`-ready summaries for `estimateReward()`, plus resolve the reward package. An objective's `assetObjective` only contributes to the estimate once it carries a REAL resolved `value` (see `buildJobObjective()`'s doc) -- an unresolved asset objective is treated as no asset at all, never a fabricated figure. */
 function computeJobReward({ objectives, issuer, relationship, rng, applyVariance, partyCapability }) {
   const objectiveInputs = objectives.map((o) => ({ tier: o.tier, difficulty: o.difficulty }));
-  const primaryAsset = objectives.find((o) => o.assetObjective)?.assetObjective ?? null;
+  const primaryAsset = objectives.find((o) => o.assetObjective?.value !== null && o.assetObjective?.value !== undefined)?.assetObjective ?? null;
   const estimate = estimateReward({
     partyCapability,
     objectives: objectiveInputs,
@@ -331,6 +438,67 @@ function computeJobReward({ objectives, issuer, relationship, rng, applyVariance
     rewardPackage = createRewardPackage(estimate.total);
   }
   return { estimate, rewardPackage };
+}
+
+/**
+ * Resolve every context input ONCE: Location/Faction/Contact identity
+ * duality (explicit id wins on conflict, conflicting context dropped
+ * entirely) plus the merged soft-weighting tag sets. Every caller below
+ * (`createProceduralJobDraft()` and every reroll/regenerate operation
+ * that accepts context) routes through this ONE function so the
+ * "explicit wins, mismatched context never silently biases anything"
+ * invariant can never drift between call sites.
+ */
+function resolveJobGenerationContext({ preferTags, jobContext, issuer, locationId, locationDraftId }) {
+  const locationContext = jobContext?.locationContext ?? null;
+  const factionContext = jobContext?.factionContext ?? null;
+  const contactContext = jobContext?.contactContext ?? null;
+  const economyContext = jobContext?.economyContext ?? null;
+  const campaignTags = jobContext?.campaignTags ?? [];
+
+  const locationResolution = resolveJobLocationContext({ locationId, locationDraftId, locationContext });
+  const factionResolution = resolveJobIssuerFactionContext({
+    issuerFactionId: issuer?.factionId ?? '', issuerFactionDraftId: issuer?.factionDraftId ?? '', factionContext
+  });
+  const contactResolution = resolveJobIssuerContactContext({
+    issuerContactId: issuer?.contactId ?? '', issuerContactDraftId: issuer?.contactDraftId ?? '', contactContext
+  });
+
+  const { generalTags, missionTypeTags, oppositionSeedTags } = deriveJobContextTags({
+    preferTags, campaignTags,
+    locationContext: locationResolution.context,
+    factionContextTags: factionResolution.contextTags,
+    contactSuggestedJobArchetypeTags: contactResolution.suggestedJobArchetypeTags,
+    contactSuggestedOppositionTags: contactResolution.suggestedOppositionTags
+  });
+  const mergedPreferTags = mergeTags(generalTags, missionTypeTags);
+
+  const resolvedIssuer = {
+    type: issuer?.type ?? (factionResolution.context ? ISSUER_TYPE.FACTION : ISSUER_TYPE.ORDINARY_INDIVIDUAL),
+    name: issuer?.name ?? contactResolution.name ?? factionResolution.name ?? '',
+    factionId: factionResolution.factionRef.factionId,
+    factionDraftId: factionResolution.factionRef.factionDraftId,
+    contactId: contactResolution.contactRef.contactId,
+    contactDraftId: contactResolution.contactRef.contactDraftId,
+    contactActorId: contactResolution.actorId,
+    contactActorUuid: contactResolution.actorUuid,
+    contactActorName: contactResolution.actorName,
+    scale: issuer?.scale ?? factionResolution.scale,
+    relationship: issuer?.relationship ?? factionResolution.context?.relationship ?? 'neutral'
+  };
+
+  return {
+    locationContext: locationResolution.context,
+    locationRef: locationResolution.locationRef,
+    locationContextMismatch: locationResolution.contextMismatch,
+    factionContextMismatch: factionResolution.contextMismatch,
+    contactContextMismatch: contactResolution.contextMismatch,
+    jobDefaults: factionResolution.jobDefaults,
+    economyContext,
+    mergedPreferTags,
+    oppositionSeedTags,
+    resolvedIssuer
+  };
 }
 
 /**
@@ -367,41 +535,15 @@ export async function createProceduralJobDraft({
   nameProvider,
   droidNameProvider
 } = {}) {
-  const locationContext = jobContext?.locationContext ?? null;
-  const factionContext = jobContext?.factionContext ?? null;
-  const contactContext = jobContext?.contactContext ?? null;
-  const economyContext = jobContext?.economyContext ?? null;
-  const campaignTags = jobContext?.campaignTags ?? [];
-
-  const mergedPreferTags = mergeTags(
-    preferTags,
-    campaignTags,
-    locationContext?.locationTags ?? [],
-    locationContext?.economyTags ?? [],
-    locationContext?.technologySpecialties ?? [],
-    factionContext?.jobDefaults?.tone ? [factionContext.jobDefaults.tone] : []
-  );
+  const {
+    locationContext, locationRef, locationContextMismatch, factionContextMismatch, contactContextMismatch,
+    jobDefaults, economyContext, mergedPreferTags, oppositionSeedTags, resolvedIssuer
+  } = resolveJobGenerationContext({ preferTags, jobContext, issuer, locationId, locationDraftId });
 
   const resolvedMissionType = missionType || rollJobMissionType({ rng, preferTags: mergedPreferTags });
   const archetypeMeta = describeJobArchetype(resolvedMissionType);
 
-  // --- issuer resolution: explicit override wins; else factionContext/
-  // contactContext soft-derive one; else a generic ordinary individual.
-  // Canonical-id-first, draft-id-fallback -- never both meaning the same
-  // Faction/Contact (see job-draft.js's own header for the discipline).
-  const resolvedIssuer = {
-    type: issuer?.type ?? (factionContext ? ISSUER_TYPE.FACTION : ISSUER_TYPE.ORDINARY_INDIVIDUAL),
-    name: issuer?.name ?? contactContext?.name ?? factionContext?.name ?? '',
-    factionId: issuer?.factionId ?? factionContext?.factionId ?? '',
-    factionDraftId: issuer?.factionDraftId ?? factionContext?.factionDraftId ?? '',
-    contactId: issuer?.contactId ?? contactContext?.contactId ?? '',
-    contactDraftId: issuer?.contactDraftId ?? contactContext?.contactDraftId ?? '',
-    scale: issuer?.scale ?? factionContext?.scale,
-    relationship: issuer?.relationship ?? factionContext?.relationship ?? 'neutral'
-  };
-
   // --- legality/visibility: explicit > Faction jobDefaults (soft) > archetype typical (soft) > random.
-  const jobDefaults = factionContext?.jobDefaults ?? null;
   const legalityRoll = (rng ?? Math.random)();
   const resolvedLegality = isJobLegality(jobDefaults?.legality) && legalityRoll < 0.5
     ? jobDefaults.legality
@@ -418,7 +560,7 @@ export async function createProceduralJobDraft({
   const urgency = pickJobUrgency({ rng }).value;
   const hook = pickJobHook({ rng, preferTags: mergedPreferTags }).value;
   const stakes = pickJobStakes({ rng, preferTags: mergedPreferTags }).value;
-  const complications = pickJobComplications({ rng, preferTags: mergedPreferTags, count: randomIntInclusive(1, 2, { rng }) });
+  const complications = pickJobComplications({ rng, preferTags: mergedPreferTags, count: rollComplicationCount({ rng }) });
   // Twists are rare, optional flavor -- see job-twist.js's own header. Roll one only ~20% of the time.
   const twist = (rng ?? Math.random)() < 0.2 ? pickJobTwist({ rng, preferTags: mergedPreferTags }) : null;
   const { success: successConsequence, failure: failureConsequence } = generateJobConsequences({ rng, preferTags: mergedPreferTags });
@@ -433,9 +575,10 @@ export async function createProceduralJobDraft({
       missionType: resolvedMissionType,
       preferTags: mergedPreferTags,
       locationContext,
+      oppositionSeedTags,
       factionDraftId: resolvedIssuer.factionDraftId,
       issuerFactionName: resolvedIssuer.name,
-      organizationTags: factionContext?.doctrineTags ?? [],
+      organizationTags: [],
       withNamedSubjects,
       economyContext,
       rng,
@@ -462,20 +605,16 @@ export async function createProceduralJobDraft({
   if (estimate.diagnostics.includes('issuer-resource-mismatch')) {
     provenance = withWarning(provenance, DIAGNOSTIC_CODE.ISSUER_RESOURCE_MISMATCH);
   }
-  // Faction/Location context conflict: an explicit locationId/locationDraftId disagrees with locationContext's own declared identity -- flagged, never silently overridden (matches NPC_LOCATION_CONTEXT_MISMATCH's precedent).
-  if (locationContext && (locationContext.locationId || locationContext.locationDraftId)) {
-    const contextTarget = locationContext.locationId || locationContext.locationDraftId;
-    const explicitTarget = locationId || locationDraftId;
-    if (explicitTarget && contextTarget && explicitTarget !== contextTarget) {
-      provenance = withWarning(provenance, DIAGNOSTIC_CODE.JOB_CONTEXT_MISMATCH);
-    }
+  if (locationContextMismatch || factionContextMismatch || contactContextMismatch) {
+    provenance = withWarning(provenance, DIAGNOSTIC_CODE.JOB_CONTEXT_MISMATCH);
   }
 
-  let notes = '';
-  if (Array.isArray(locationContext?.currentEventHints) && locationContext.currentEventHints.length) {
-    // Location current-events are read-only narrative seeds -- never mutated, only referenced as flavor.
-    notes = `Local current-events seed: ${locationContext.currentEventHints[0]}`;
-  }
+  // Location current-events are read-only narrative seeds -- never
+  // mutated, only referenced as flavor. Reads the REAL location-event.js
+  // shape (round 1 correction; the original `currentEventHints` field
+  // never existed on any real locationContext).
+  const currentEventText = resolveJobCurrentEventText(locationContext);
+  const notes = currentEventText ? `Local current-events seed: ${currentEventText}` : '';
 
   const draft = createJobDraft({
     title: `${resolvedMissionType.charAt(0).toUpperCase()}${resolvedMissionType.slice(1)} job`,
@@ -493,10 +632,13 @@ export async function createProceduralJobDraft({
     issuerFactionDraftId: resolvedIssuer.factionDraftId,
     issuerContactId: resolvedIssuer.contactId,
     issuerContactDraftId: resolvedIssuer.contactDraftId,
+    issuerContactActorId: resolvedIssuer.contactActorId,
+    issuerContactActorUuid: resolvedIssuer.contactActorUuid,
+    issuerContactActorName: resolvedIssuer.contactActorName,
     issuerScale: resolvedIssuer.scale,
     issuerRelationship: resolvedIssuer.relationship,
-    locationId: locationId || locationContext?.locationId || '',
-    locationDraftId: locationDraftId || locationContext?.locationDraftId || '',
+    locationId: locationRef.locationId,
+    locationDraftId: locationRef.locationDraftId,
     locationName,
     objectives: objectivesWithReward,
     complications,
@@ -514,22 +656,139 @@ export async function createProceduralJobDraft({
   return draft;
 }
 
-// --- reroll / regenerate operations --------------------------------------
+// --- derived-text recompose (title/briefing) ------------------------------
 
-/** Full regenerate: a wholly new draft, preserving the caller's context inputs unless explicitly overridden. */
-export async function regenerateJobDraft(draft, options = {}) {
-  return createProceduralJobDraft({ ...options, missionType: options.missionType ?? '' });
+/** Recompute `title` from the draft's current `missionType` -- a no-op if the GM has manually edited it (`titleSource === 'manual'`), mirroring `npc-concept.js`'s `recomposeNpcPublicDescription()`. */
+export function recomposeJobTitle(draft) {
+  if (!draft || draft.titleSource === JOB_DERIVED_TEXT_SOURCE.MANUAL) return draft;
+  const missionType = draft.missionType || '';
+  const title = missionType ? `${missionType.charAt(0).toUpperCase()}${missionType.slice(1)} job` : draft.title;
+  return updateJobDraft(draft, { title });
 }
 
-/** Reroll ONLY the mission type (and its typical legality/visibility defaults, which are DIRECTLY derived from it) -- objectives/opposition/reward are left untouched; use `regenerateJobObjectives()` afterward if they should follow the new mission type. */
+/** Recompute `briefing` from the draft's current primary objective's description -- a no-op if the GM has manually edited it. */
+export function recomposeJobBriefing(draft) {
+  if (!draft || draft.briefingSource === JOB_DERIVED_TEXT_SOURCE.MANUAL) return draft;
+  const primary = draft.objectives.find((o) => o.tier === OBJECTIVE_TIER.PRIMARY) ?? draft.objectives[0];
+  return updateJobDraft(draft, { briefing: primary?.description ?? draft.briefing });
+}
+
+/** Explicit GM authorship action: overwrite `title` with GM-written text and lock it against recompose. */
+export function setJobTitle(draft, text) {
+  if (!draft) return draft;
+  return updateJobDraft(draft, { title: String(text ?? '').trim(), titleSource: JOB_DERIVED_TEXT_SOURCE.MANUAL });
+}
+
+/** The "↻ Recompose" action for title: hand it back to the derived regime and immediately recompute, discarding manual text. */
+export function resetJobTitleToDerived(draft) {
+  if (!draft) return draft;
+  return recomposeJobTitle(updateJobDraft(draft, { titleSource: JOB_DERIVED_TEXT_SOURCE.DERIVED }));
+}
+
+/** Explicit GM authorship action: overwrite `briefing` with GM-written text and lock it against recompose. */
+export function setJobBriefing(draft, text) {
+  if (!draft) return draft;
+  return updateJobDraft(draft, { briefing: String(text ?? '').trim(), briefingSource: JOB_DERIVED_TEXT_SOURCE.MANUAL });
+}
+
+/** The "↻ Recompose" action for briefing: hand it back to the derived regime and immediately recompute, discarding manual text. */
+export function resetJobBriefingToDerived(draft) {
+  if (!draft) return draft;
+  return recomposeJobBriefing(updateJobDraft(draft, { briefingSource: JOB_DERIVED_TEXT_SOURCE.DERIVED }));
+}
+
+// --- reroll / regenerate operations --------------------------------------
+
+/**
+ * Regenerate THIS Job's generated content -- SAME `draftId`, and every
+ * GM-authored fact survives: manual `title`/`briefing` (their
+ * `*Source === 'manual'` lock is preserved as-is, so a manually-written
+ * title is NOT recomposed even though the mission type may change),
+ * every `narrativeFields` entry the GM marked `'manual'` or removed
+ * (hidden), custom fields, and the explicit issuer/Location links
+ * (unless the caller explicitly overrides them) -- ONLY the generated
+ * facts (mission type roll, legality/visibility/urgency, hook/stakes,
+ * objectives, complications, twist, consequences, reward) are rerolled.
+ *
+ * This is "regenerate THIS Job," never "create a new Job" -- use
+ * `createProceduralJobDraft()` directly for a wholly new draft. Distinct
+ * from `regenerateJobObjectives()` (objectives only) and the single-field
+ * reroll wrappers below (one fact at a time).
+ */
+export async function regenerateJobDraft(draft, options = {}) {
+  const fresh = await createProceduralJobDraft({
+    missionType: options.missionType ?? '',
+    preferTags: options.preferTags,
+    jobContext: options.jobContext,
+    issuer: options.issuer ?? {
+      type: draft.issuerType, name: draft.issuerName, factionId: draft.issuerFactionId, factionDraftId: draft.issuerFactionDraftId,
+      contactId: draft.issuerContactId, contactDraftId: draft.issuerContactDraftId, scale: draft.issuerScale, relationship: draft.issuerRelationship
+    },
+    locationId: options.locationId ?? draft.locationId,
+    locationDraftId: options.locationDraftId ?? draft.locationDraftId,
+    locationName: options.locationName ?? draft.locationName,
+    objectiveCount: options.objectiveCount ?? draft.objectives.length,
+    withNamedSubjects: options.withNamedSubjects,
+    applyVariance: options.applyVariance,
+    nameProvider: options.nameProvider,
+    droidNameProvider: options.droidNameProvider,
+    partyCapability: options.partyCapability,
+    partyLevels: options.partyLevels
+  });
+
+  // Preserve GM-authored derived-text locks: if the OLD draft's
+  // title/briefing were manually authored, keep them (and their
+  // 'manual' source) verbatim rather than taking the fresh generated
+  // ones.
+  let result = updateJobDraft(fresh, {
+    draftId: draft.draftId,
+    title: draft.titleSource === JOB_DERIVED_TEXT_SOURCE.MANUAL ? draft.title : fresh.title,
+    titleSource: draft.titleSource,
+    briefing: draft.briefingSource === JOB_DERIVED_TEXT_SOURCE.MANUAL ? draft.briefing : fresh.briefing,
+    briefingSource: draft.briefingSource
+  });
+
+  // Preserve every GM-authored `narrativeFields` entry (manual value OR
+  // removed/hidden) field-by-field; a field the GM never touched is left
+  // to the fresh draft's own lazily-uninitialized state (no
+  // narrativeFields at all until the GM opens field-authoring, exactly
+  // like a freshly generated Job).
+  if (draft.narrativeFields) {
+    const preservedFields = {};
+    for (const [fieldId, field] of Object.entries(draft.narrativeFields.fields)) {
+      const isManual = field.hidden || field.values.some((v) => v.source === 'manual');
+      if (isManual) preservedFields[fieldId] = field;
+    }
+    if (Object.keys(preservedFields).length) {
+      const baseState = result.narrativeFields ?? { order: draft.narrativeFields.order, fields: {} };
+      const mergedState = { order: baseState.order, fields: { ...baseState.fields, ...preservedFields } };
+      result = { ...result, narrativeFields: mergedState };
+      // Mirror the preserved manual/hidden primaries back onto the
+      // plain scalars, so a consumer that reads `draft.hook` (not
+      // `draft.narrativeFields`) still sees the GM's authored text
+      // immediately, without requiring a field-authoring op first.
+      for (const fieldId of Object.keys(preservedFields)) {
+        const field = preservedFields[fieldId];
+        const primary = field.hidden ? '' : (field.values[0]?.value ?? '');
+        result = updateJobDraft(result, { [fieldId]: primary });
+        result = { ...result, narrativeFields: mergedState };
+      }
+    }
+  }
+
+  return result;
+}
+
+/** Reroll ONLY the mission type (and its typical legality/visibility defaults, which are DIRECTLY derived from it) -- objectives/opposition/reward are left untouched; use `regenerateJobObjectives()` afterward if they should follow the new mission type. Recomposes `title` (respecting a manual lock). */
 export function rerollJobMissionType(draft, { rng, preferTags } = {}) {
   const missionType = rollJobMissionType({ rng, preferTags: preferTags ?? draft.contextTags });
   const meta = describeJobArchetype(missionType);
-  return updateJobDraft(draft, {
+  const next = updateJobDraft(draft, {
     missionType,
     legality: meta.typicalLegality && isJobLegality(meta.typicalLegality) ? meta.typicalLegality : draft.legality,
     visibility: meta.typicalVisibility && isJobVisibility(meta.typicalVisibility) ? meta.typicalVisibility : draft.visibility
   });
+  return recomposeJobTitle(next);
 }
 
 /** Reroll ONLY legality + visibility. */
@@ -552,9 +811,33 @@ export function rerollJobStakes(draft, { rng, preferTags } = {}) {
   return updateJobDraft(draft, { stakes: pickJobStakes({ rng, preferTags: preferTags ?? draft.contextTags }).value });
 }
 
-/** Reroll the complication list. */
+/** Reroll the WHOLE complication list (count defaults to the draft's current count; 0 is a legitimate target). For a single-instance reroll see `rerollJobComplication()`. */
 export function rerollJobComplications(draft, { rng, preferTags, count } = {}) {
-  const complications = pickJobComplications({ rng, preferTags: preferTags ?? draft.contextTags, count: count ?? Math.max(1, draft.complications.length) });
+  const complications = pickJobComplications({ rng, preferTags: preferTags ?? draft.contextTags, count: count ?? draft.complications.length });
+  return updateJobDraft(draft, { complications });
+}
+
+/** Reroll ONE complication instance by `instanceId`, preserving its identity and every OTHER complication untouched. A no-op if no complication with that `instanceId` exists. */
+export function rerollJobComplication(draft, instanceId, { rng, preferTags } = {}) {
+  const index = draft.complications.findIndex((c) => c.instanceId === instanceId);
+  if (index === -1) return draft;
+  const [picked] = pickJobComplications({ rng, preferTags: preferTags ?? draft.contextTags, count: 1 });
+  const rerolled = createJobComplicationInstance({ ...picked, instanceId });
+  const complications = draft.complications.map((c, i) => (i === index ? rerolled : c));
+  return updateJobDraft(draft, { complications });
+}
+
+/** Add one new complication instance. Every existing complication is preserved untouched. */
+export function addJobComplication(draft, { rng, preferTags } = {}) {
+  const [picked] = pickJobComplications({ rng, preferTags: preferTags ?? draft.contextTags, count: 1 });
+  if (!picked) return draft;
+  return updateJobDraft(draft, { complications: [...draft.complications, createJobComplicationInstance(picked)] });
+}
+
+/** Remove one complication instance by `instanceId`. A no-op if no complication with that id exists. A Job may legitimately end up with zero complications. */
+export function removeJobComplication(draft, instanceId) {
+  const complications = draft.complications.filter((c) => c.instanceId !== instanceId);
+  if (complications.length === draft.complications.length) return draft;
   return updateJobDraft(draft, { complications });
 }
 
@@ -587,8 +870,14 @@ export function rerollJobReward(draft, { rng, partyCapability, partyLevels, appl
   return updateJobDraft(draft, { objectives, rewardEstimate: estimate, rewardPackage });
 }
 
-/** Regenerate EVERY objective against the draft's current mission type/context -- the "reroll all objectives" bundle operation, mirroring `faction-bundle.js`'s `regenerateFactionContacts()`. Automatically recomputes the reward from the fresh objective set. */
+/** Resolve `locationContext` against the draft's OWN current Location identity (explicit wins, a mismatched context is dropped) -- the same discipline `createProceduralJobDraft()` applies at creation time, reused by every reroll below that accepts a fresh `locationContext`. */
+function resolveRerollLocationContext(draft, locationContext) {
+  return resolveJobLocationContext({ locationId: draft.locationId, locationDraftId: draft.locationDraftId, locationContext }).context;
+}
+
+/** Regenerate EVERY objective against the draft's current mission type/context -- the "reroll all objectives" bundle operation, mirroring `faction-bundle.js`'s `regenerateFactionContacts()`. Automatically recomputes the reward and recomposes `briefing` (respecting a manual lock) from the fresh objective set. */
 export async function regenerateJobObjectives(draft, { rng, count, preferTags, locationContext, withNamedSubjects = false, economyContext, nameProvider, droidNameProvider, partyCapability, partyLevels, applyVariance = true } = {}) {
+  const resolvedLocationContext = resolveRerollLocationContext(draft, locationContext);
   const resolvedCount = Number.isFinite(count) ? Math.max(1, count) : draft.objectives.length || 1;
   const tiersForCount = [OBJECTIVE_TIER.PRIMARY, OBJECTIVE_TIER.SECONDARY, OBJECTIVE_TIER.TERTIARY];
   const objectives = [];
@@ -596,49 +885,71 @@ export async function regenerateJobObjectives(draft, { rng, count, preferTags, l
     // eslint-disable-next-line no-await-in-loop -- sequential by design, matching faction-bundle.js's own precedent.
     const objective = await buildJobObjective({
       tier: tiersForCount[i] ?? OBJECTIVE_TIER.TERTIARY, missionType: draft.missionType, preferTags: preferTags ?? draft.contextTags,
-      locationContext, factionDraftId: draft.issuerFactionDraftId, issuerFactionName: draft.issuerName, organizationTags: [],
+      locationContext: resolvedLocationContext, oppositionSeedTags: resolvedLocationContext?.suggestedOppositionTags ?? [],
+      factionDraftId: draft.issuerFactionDraftId, issuerFactionName: draft.issuerName, organizationTags: [],
       withNamedSubjects, economyContext, rng, nameProvider, droidNameProvider
     });
     objectives.push(objective);
   }
   const withReward = updateJobDraft(draft, { objectives });
-  return rerollJobReward(withReward, { rng, partyCapability, partyLevels, applyVariance });
+  const rewarded = rerollJobReward(withReward, { rng, partyCapability, partyLevels, applyVariance });
+  return recomposeJobBriefing(rewarded);
 }
 
-/** Reroll ONE objective by `draftId`, preserving every OTHER objective untouched -- the core "never silently destroy sibling objectives" guarantee, matching `faction-bundle.js`'s `rerollFactionContact()`. Recomputes the reward afterward. A no-op if no objective with that `draftId` exists. */
+/** Reroll ONE objective by `draftId`, preserving every OTHER objective untouched -- the core "never silently destroy sibling objectives" guarantee, matching `faction-bundle.js`'s `rerollFactionContact()`. Recomputes the reward and recomposes `briefing` (if the reroll touched the Primary objective) afterward. A no-op if no objective with that `draftId` exists. */
 export async function rerollJobObjective(draft, objectiveDraftId, { rng, preferTags, locationContext, withNamedSubjects = false, economyContext, nameProvider, droidNameProvider, partyCapability, partyLevels, applyVariance = true } = {}) {
   const index = draft.objectives.findIndex((o) => o.draftId === objectiveDraftId);
   if (index === -1) return draft;
   const target = draft.objectives[index];
+  const resolvedLocationContext = resolveRerollLocationContext(draft, locationContext);
   const replacement = await buildJobObjective({
     tier: target.tier, missionType: draft.missionType, preferTags: preferTags ?? draft.contextTags,
-    locationContext, factionDraftId: draft.issuerFactionDraftId, issuerFactionName: draft.issuerName, organizationTags: [],
+    locationContext: resolvedLocationContext, oppositionSeedTags: resolvedLocationContext?.suggestedOppositionTags ?? [],
+    factionDraftId: draft.issuerFactionDraftId, issuerFactionName: draft.issuerName, organizationTags: [],
     withNamedSubjects, economyContext, rng, nameProvider, droidNameProvider
   });
   const rerolled = { ...replacement, draftId: objectiveDraftId };
   const objectives = draft.objectives.map((o, i) => (i === index ? rerolled : o));
   const withObjectives = updateJobDraft(draft, { objectives });
-  return rerollJobReward(withObjectives, { rng, partyCapability, partyLevels, applyVariance });
+  const rewarded = rerollJobReward(withObjectives, { rng, partyCapability, partyLevels, applyVariance });
+  return recomposeJobBriefing(rewarded);
 }
 
 /** Add one new objective (tertiary by default), generated against the draft's current mission type/context. Every existing objective is preserved untouched. Recomputes the reward afterward. */
 export async function addJobObjective(draft, { rng, tier = OBJECTIVE_TIER.TERTIARY, preferTags, locationContext, withNamedSubjects = false, economyContext, nameProvider, droidNameProvider, partyCapability, partyLevels, applyVariance = true } = {}) {
+  const resolvedLocationContext = resolveRerollLocationContext(draft, locationContext);
   const objective = await buildJobObjective({
     tier, missionType: draft.missionType, preferTags: preferTags ?? draft.contextTags,
-    locationContext, factionDraftId: draft.issuerFactionDraftId, issuerFactionName: draft.issuerName, organizationTags: [],
+    locationContext: resolvedLocationContext, oppositionSeedTags: resolvedLocationContext?.suggestedOppositionTags ?? [],
+    factionDraftId: draft.issuerFactionDraftId, issuerFactionName: draft.issuerName, organizationTags: [],
     withNamedSubjects, economyContext, rng, nameProvider, droidNameProvider
   });
   const withObjectives = updateJobDraft(draft, { objectives: [...draft.objectives, objective] });
   return rerollJobReward(withObjectives, { rng, partyCapability, partyLevels, applyVariance });
 }
 
-/** Remove one objective by `draftId`. A no-op if no objective with that id exists, OR if it is the draft's only objective (a Job must have at least one objective). Every OTHER objective is preserved untouched. Recomputes the reward afterward. */
+/**
+ * Remove one objective by `draftId`. A no-op if no objective with that
+ * id exists, OR if it is the draft's only objective (a Job must have at
+ * least one objective). If the REMOVED objective was the Primary, the
+ * next remaining objective (in list order) is PROMOTED to Primary/
+ * required=true -- a Job may never end up with zero Primary objectives
+ * (round 1 correction: the original version allowed exactly that).
+ * Every OTHER objective is preserved untouched. Recomputes the reward
+ * and recomposes `briefing` afterward.
+ */
 export function removeJobObjective(draft, objectiveDraftId, { rng, partyCapability, partyLevels, applyVariance = true } = {}) {
   if (draft.objectives.length <= 1) return draft;
-  const objectives = draft.objectives.filter((o) => o.draftId !== objectiveDraftId);
-  if (objectives.length === draft.objectives.length) return draft;
+  const removedIndex = draft.objectives.findIndex((o) => o.draftId === objectiveDraftId);
+  if (removedIndex === -1) return draft;
+  const wasPrimary = draft.objectives[removedIndex].tier === OBJECTIVE_TIER.PRIMARY;
+  let objectives = draft.objectives.filter((o) => o.draftId !== objectiveDraftId);
+  if (wasPrimary && objectives.length) {
+    objectives = objectives.map((o, i) => (i === 0 ? updateJobObjectiveDraft(o, { tier: OBJECTIVE_TIER.PRIMARY }) : o));
+  }
   const withObjectives = updateJobDraft(draft, { objectives });
-  return rerollJobReward(withObjectives, { rng, partyCapability, partyLevels, applyVariance });
+  const rewarded = rerollJobReward(withObjectives, { rng, partyCapability, partyLevels, applyVariance });
+  return recomposeJobBriefing(rewarded);
 }
 
 /** Reroll ONLY one objective's opposition request, leaving every other field of that objective (and every other objective) untouched -- the finest-grained opposition reroll this system offers. A no-op if no objective with that `draftId` exists. */
@@ -647,7 +958,11 @@ export function rerollJobObjectiveOpposition(draft, objectiveDraftId, { rng, loc
   if (index === -1) return draft;
   const target = draft.objectives[index];
   const template = OBJECTIVE_TEMPLATE_FIXTURES.find((t) => t.id === target.templateId) ?? null;
-  const oppositionRequest = buildOppositionRequest({ template, missionType: target.missionType, difficulty: target.difficulty, locationContext, organizationTags, rng });
+  const resolvedLocationContext = resolveRerollLocationContext(draft, locationContext);
+  const oppositionRequest = buildOppositionRequest({
+    template, missionType: target.missionType, oppositionSeedTags: resolvedLocationContext?.suggestedOppositionTags ?? [],
+    environmentTags: resolvedLocationContext?.locationTags ?? [], organizationTags, rng
+  });
   const objectives = draft.objectives.map((o, i) => (i === index ? updateJobObjectiveDraft(o, { oppositionRequest }) : o));
   return updateJobDraft(draft, { objectives });
 }
@@ -659,8 +974,9 @@ export async function rerollJobObjectiveSubject(draft, objectiveDraftId, { rng, 
   const target = draft.objectives[index];
   const template = OBJECTIVE_TEMPLATE_FIXTURES.find((t) => t.id === target.templateId) ?? null;
   if (!template) return draft;
+  const resolvedLocationContext = resolveRerollLocationContext(draft, locationContext);
   const { slotValues, subjectRole, subjectArchetype, subjectNpcConcept } = await resolveObjectiveSlots({
-    template, missionType: target.missionType, preferTags: preferTags ?? draft.contextTags, locationContext,
+    template, missionType: target.missionType, preferTags: preferTags ?? draft.contextTags, locationContext: resolvedLocationContext,
     factionDraftId: draft.issuerFactionDraftId, issuerFactionName: draft.issuerName, withNamedSubjects, forceNamedSubject, economyContext: null, rng, nameProvider, droidNameProvider
   });
   // Only the NPC-shaped slot(s) actually change on a subject reroll --
@@ -675,5 +991,6 @@ export async function rerollJobObjectiveSubject(draft, objectiveDraftId, { rng, 
   const mergedSlotValues = { ...target.slotValues, ...changedSlotValues };
   const description = renderObjectiveTemplate(template, mergedSlotValues);
   const objectives = draft.objectives.map((o, i) => (i === index ? updateJobObjectiveDraft(o, { slotValues: mergedSlotValues, description, subjectRole, subjectArchetype, subjectNpcConcept }) : o));
-  return updateJobDraft(draft, { objectives });
+  const withObjectives = updateJobDraft(draft, { objectives });
+  return target.tier === OBJECTIVE_TIER.PRIMARY ? recomposeJobBriefing(withObjectives) : withObjectives;
 }

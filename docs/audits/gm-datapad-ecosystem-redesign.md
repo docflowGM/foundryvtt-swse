@@ -8985,3 +8985,71 @@ Per the user's explicit standing instruction ("I would not let Claude immediatel
 - No UI surface (no Job-draft-editing app/HBS templates) — this phase is the generation layer only, matching every prior Phase 8D generation-only pass before its own UI phase.
 
 **PHASE 8D-3C INITIAL WIRING PASS COMPLETE. Not yet calling this phase complete** — per the user's explicit instruction, stopping here for independent review before any production-scale content hydration. Branch: `claude/gm-datapad-phase8d3c-jobs-productionization`.
+
+## 197. PHASE 8D-3C correction round 1 — context/reference normalization, GM-safe regeneration, opposition-facet decoupling, reward-authority correction, objective/complication invariants (independent review of PR #965's initial head)
+
+An independent review of PR #965's initial head (`4cf7107f9`, CI green, exact-head "Rolling System Validation #196") confirmed the authority audit and overall composition direction were correct, but found 11 real defects — two of them (whole-regeneration discarding the draftId/GM edits; the canonical/draft duality reading nonexistent field names) contradicting the phase's own stated contracts. The review's explicit verdict: correct these on the same branch/PR, do not hydrate. All 11 addressed below, same branch/PR, no separate branches.
+
+### 1. `regenerateJobDraft()` was not GM-safe (the review's clearest blocker)
+
+The original implementation called `createProceduralJobDraft()` wholesale, producing a NEW `draftId` and silently discarding every GM edit — exactly the opposite of "regenerate this Job." Fixed: `regenerateJobDraft()` now preserves the draftId, preserves every `narrativeFields` entry the GM marked `manual` or removed (field-by-field, re-mirrored onto scalars), and preserves a manually-locked `title`/`briefing` (see item 8) — only the GENERATED facts (mission type, legality/visibility/urgency, hook/stakes, objectives, complications, twist, consequences, reward) are rerolled. `createProceduralJobDraft()` remains the "make a wholly new Job" operation; the two are now genuinely distinct, matching the intended `Generate New Job` vs. `Regenerate this Job` split.
+
+### 2 & 3. Cross-domain identity read nonexistent field names; duality not enforced
+
+The original composer read `factionContext?.factionId`/`contactContext?.contactId` — neither matches a real canonical Faction record (`id`), a Faction draft (`draftId`), a canonical Contact (`id`), or an NPC concept draft (`draftId`). Fixed via a new `scripts/generation/jobs/job-context.js`: `resolveJobIssuerFactionContext()`/`resolveJobIssuerContactContext()`/`resolveJobLocationContext()` each accept the REAL shape of whatever object a caller has (verified against `faction-draft.js`, `FactionRegistryService._normalizeFactionRecord()`/`normalizeContact()`, `npc-concept.js`) and enforce the identical explicit/context duality invariant Location already had.
+
+That duality logic itself was extracted into a new shared primitive, `scripts/generation/lib/reference-duality.js`'s `resolveDualityReference()` — `npc/npc-bundle.js`'s own `resolveNpcLocationGenerationContext()` was refactored to delegate to it (a byte-for-byte-behavior-preserving change, re-verified by the full, unmodified 8D-3B test suite passing unchanged) rather than building a second near-identical implementation, per this project's own "avoid duplicate parallel systems" discipline. Actor identity (`issuerContactActorId`/`ActorUuid`/`ActorName`) is now surfaced too — the canonical Job schema's own issuer shape already expects it; the procedural draft previously had no equivalent at all.
+
+`locationId`/`locationDraftId` conflicting simultaneously (the review's concrete example: explicit Location A while `locationContext` describes Location B) is now impossible — `resolveJobLocationContext()` returns exactly one winning ref, mirroring the Location duality invariant 8D-3B already hardened.
+
+### 4 & 5. Location/Faction/Contact context wiring was mostly cosmetic; a conflict was diagnosed but still consumed
+
+Three real defects here, all fixed together via `job-context.js`'s `deriveJobContextTags()`/`resolveJobCurrentEventText()`:
+
+- `locationContext.suggestedJobArchetypeTags` (the REAL mission-type bias signal `planet-hooks.js` already produces) was never read at all — the original composer only folded `locationTags`/`economyTags`/`technologySpecialties` into one generic tag pool, and `rollJobMissionType()`'s bias filter only matches tags that are literally mission-type ids, so the real signal never reached it. Now read explicitly and kept as its own tag set through to the mission-type roll.
+- `locationContext.currentEventHints` (a string array) was checked for, but the real `location-event.js`/`planet-hooks.js` shape is `currentEvents: [{description, severity}]` under a different field name entirely — the seed-note feature was silently dead code. Fixed via `resolveJobCurrentEventText()`, which reads the real shape.
+- A Location/Faction/Contact identity conflict was correctly diagnosed (`JOB_CONTEXT_MISMATCH`) but the conflicting context's tags/bias/current-events were still consumed anyway. Fixed: `createProceduralJobDraft()` and every reroll operation that accepts context now read ONLY the post-`resolveJob*Context()` value (`null` on conflict) for every downstream tag/bias/notes derivation — never the raw input — exactly matching `npc/npc-bundle.js`'s own discipline. Proven by test block 31 (a mismatched context's `currentEvents` seed text never leaks into `notes`).
+
+### 6. A fabricated asset price table violated the reward authority's own explicit contract
+
+The original `ASSET_VALUE_BY_DIFFICULTY` table fed `estimateReward()` an invented number, directly contradicting `reward-estimator.js`/`reward-package.js`'s own documented contract ("the caller resolves a REAL price through a future Store/pricing authority and passes it in"). Removed entirely. `job-draft.js`'s `createJobObjectiveDraft()` now normalizes every `assetObjective` to `{value: null, valueSource: 'unresolved'}` unless a caller explicitly supplies a resolved value; `computeJobReward()` only feeds `estimateReward()` an asset when a REAL resolved value exists, so an unresolved asset objective correctly contributes 0 to the estimate rather than a fabricated figure (test block 32).
+
+### 7. Opposition facets were re-coupled to objective difficulty
+
+`opposition-request.js`'s own header explicitly documents `difficulty`/`threatLevel`/`countBand` as deliberately independent, overlapping facets ("a deadly/horde fight can still be routine difficulty for a high-tier party"). The original `OPPOSITION_PROFILE_BY_DIFFICULTY` map violated exactly that with a 1:1 mapping, and additionally scaled opposition rank's leadership boost by difficulty — an encounter-balancing signal this phase explicitly has no business producing. Fixed: `threatLevel`/`countBand`/`leaderRequirement`/`reinforcementLevel` are now each rolled independently (their own small weighted pools), with no difficulty input at all; `rankContext` uses a flat, neutral leadership boost. Test block 33 proves a routine-difficulty objective can roll deadly opposition.
+
+### 8. `title`/`briefing` went stale after a mission-type/objective reroll
+
+Both were computed once at creation and never refreshed. Fixed by mirroring `npc-concept.js`'s `publicDescriptionSource`/`recomposeNpcPublicDescription()` pattern exactly: `job-draft.js` gained `titleSource`/`briefingSource` (`'derived'`/`'manual'`), and `job-bundle.js` gained `recomposeJobTitle()`/`recomposeJobBriefing()` (no-ops once manually locked) plus `setJobTitle()`/`resetJobTitleToDerived()`/`setJobBriefing()`/`resetJobBriefingToDerived()`. `rerollJobMissionType()` now recomposes `title`; every objective-touching operation that can affect the Primary objective (`rerollJobObjective()`, `removeJobObjective()`, `regenerateJobObjectives()`, a Primary-tier `rerollJobObjectiveSubject()`) now recomposes `briefing`. A GM-locked title/briefing is never overwritten (test block 36). `title`/`briefing` were removed from `JOB_FIELD_DEFINITIONS` (the generic field-authoring registry) since they are COMPOSED fields, not independent free text — mirroring why `npc-concept.js`'s own `publicDescription` is likewise excluded from `NPC_FIELD_DEFINITIONS`.
+
+### 9. Objective invariants: Primary could be non-required; removing Primary could leave none
+
+`createJobObjectiveDraft()` now forces `required: true` for any Primary-tier objective unconditionally — matching the canonical objective's own hard rule, no override possible either direction (test block 34). `removeJobObjective()` now promotes the next remaining objective to Primary/required when the removed one was Primary, so a Job can never end up with zero Primary objectives.
+
+### 10. Complications had no stable per-instance identity
+
+Fixed via `job-draft.js`'s new `createJobComplicationInstance()` (mints a `draft:job-complication:<hex>` id, reference-preserving for an already-normalized instance so an untouched complication survives an unrelated draft update as the exact same object — verified by test block 35), plus new single-instance operations `rerollJobComplication()`/`addJobComplication()`/`removeJobComplication()` alongside the existing whole-list `rerollJobComplications()`. Generation now rolls 0-2 complications (previously always 1-2) — zero is a legitimate, common outcome, matching `planet-hooks.js`'s own "weighted toward fewer" framing for the analogous current-events roll.
+
+### 11. The GM-sovereignty test was much narrower than the walkthrough requested
+
+Rewritten (test block 18) to cover every category the review named: a manual objective rewrite, removing a second (non-Primary) objective, a manual reward edit, adding a custom field, a manual Secret edit, explicit Contact/Location links, a single-instance complication reroll, a single-objective opposition reroll, and GM-safe whole regeneration — each proven to survive every OTHER, unrelated operation in the same walkthrough. Per-objective field-authoring (an individually GM-lockable objective title/description, as opposed to a direct patch) was not built in this round — it was not one of the review's 11 numbered defects, and a whole regenerate is understood to legitimately reroll objective content by design (item 1); the walkthrough tests a direct objective-field edit surviving every UNRELATED operation instead, which is the guarantee actually in scope this round.
+
+### New/changed files this round
+
+- New: `scripts/generation/lib/reference-duality.js` (`resolveDualityReference()`).
+- New: `scripts/generation/jobs/job-context.js` (`resolveJobLocationContext()`, `resolveJobIssuerFactionContext()`, `resolveJobIssuerContactContext()`, `deriveJobContextTags()`, `resolveJobCurrentEventText()`).
+- Changed (surgical, behavior-preserving): `scripts/generation/npc/npc-bundle.js` — `resolveNpcLocationGenerationContext()` now delegates to `resolveDualityReference()`; no other line touched.
+- Changed: `scripts/generation/jobs/job-draft.js` — added `issuerContactActorId`/`ActorUuid`/`ActorName`, `titleSource`/`briefingSource` + `JOB_DERIVED_TEXT_SOURCE`, `createJobComplicationInstance()` (complications now stable-identity instances), `normalizeAssetObjective()` (no fabricated values), Primary-required enforcement.
+- Changed: `scripts/generation/jobs/job-bundle.js` — substantially reworked (see items 1-11 above); full diff is the bulk of this round.
+- Changed: `scripts/generation/jobs/job-field-definitions.js` — `title`/`briefing` removed (now governed by the derived-text-source mechanism instead, see item 8).
+- Changed: `tests/gm-generation-phase8d3c-jobs-production.test.mjs` — grew from 24 to 36 assertion blocks; blocks 18/20 rewritten, blocks 25-36 new.
+
+### Full regression (this correction round)
+
+- `gm-*.test.mjs`: **60/60 passed, 0 failed** (unchanged file count — this round edited existing files plus two genuinely new small modules, both counted).
+- `tools/run-rolling-tests.mjs`: 190 passed, 0 failed (5 pre-existing documented exclusions, unchanged) — includes a clean re-run of the FULL, byte-for-byte-unchanged 8D-3B suite, confirming the `npc-bundle.js` duality refactor introduced zero regression.
+- `tools/run-rolling-syntax-check.mjs`: **2,451/2,451 clean** (2,449 baseline + 2 new files this round added).
+- `tools/validate-partials.mjs` / `tools/validate-data.js` / `system.json`: clean, unchanged (this round touched no templates or game data).
+- Canonical-persistence guard: unchanged, zero matches.
+
+**PHASE 8D-3C CORRECTION ROUND 1 COMPLETE.** Same branch (`claude/gm-datapad-phase8d3c-jobs-productionization`), same PR (#965). No production-scale hydration performed. Per standing practice: stopping here for independent review / merge decision.

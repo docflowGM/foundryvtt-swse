@@ -72,6 +72,7 @@ import {
 } from '../rank-metadata.js';
 import { pickRandom } from '../lib/weighted-random.js';
 import { NPC_ROLE_TIER } from '../data/npc-roles.js';
+import { resolveDualityReference } from '../lib/reference-duality.js';
 
 /** `PLANET_DROID_PREVALENCE` value -> base droid-selection probability for a context-free NPC roll (no Faction populationProfile supplied). Deliberately duplicated as PLAIN NUMBERS here rather than importing `planets/planet-profile.js` (a Faction/NPC module has no business depending on the planet module — see the phase spec's layering; a caller who HAS a planet draft passes its `droidPrevalence` string straight in, this table is the only place that maps it to a probability). */
 const DROID_LIKELIHOOD_BY_PREVALENCE = Object.freeze({
@@ -174,26 +175,17 @@ export function resolveLocationContextBias(locationContext) {
  *    attach a diagnostic warning rather than silently misapplying it.
  */
 export function resolveNpcLocationGenerationContext({ linkedLocationId = '', locationDraftId = '', locationContext = null } = {}) {
-  const explicitId = String(linkedLocationId || '').trim();
-  const explicitDraftId = String(locationDraftId || '').trim();
-  const explicitWinner = explicitId || explicitDraftId;
-
-  const contextId = String(locationContext?.locationId || '').trim();
-  const contextDraftId = String(locationContext?.locationDraftId || '').trim();
-  const contextWinner = contextId || contextDraftId;
-
-  const conflict = Boolean(explicitWinner) && Boolean(contextWinner) && explicitWinner !== contextWinner;
-
-  const locationRef = {
-    locationId: explicitId || (conflict ? '' : contextId),
-    locationDraftId: explicitDraftId || (conflict ? '' : contextDraftId)
-  };
-  // Canonical always wins over draft in the FINAL ref, mirroring
-  // createContactLocationLink()'s own draft/canonical duality invariant.
-  if (locationRef.locationId) locationRef.locationDraftId = '';
+  // PHASE 8D-3C correction round 1: delegates to the extracted,
+  // domain-agnostic `resolveDualityReference()` (`lib/reference-duality.js`)
+  // -- this function's own public behavior/signature is unchanged; see
+  // that module's header for why the logic itself moved.
+  const { ref, conflict } = resolveDualityReference({
+    explicitId: linkedLocationId, explicitDraftId: locationDraftId,
+    contextId: locationContext?.locationId, contextDraftId: locationContext?.locationDraftId
+  });
 
   return {
-    locationRef,
+    locationRef: { locationId: ref.id, locationDraftId: ref.draftId },
     context: conflict ? null : locationContext,
     contextMismatch: conflict
   };
