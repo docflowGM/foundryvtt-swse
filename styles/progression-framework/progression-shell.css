@@ -523,6 +523,14 @@
   overflow-x: hidden;
   padding: 12px;
 
+  /* Arrange its own children (the step-context banner and the
+     [data-prog-region-body="work-surface"] step-content wrapper) as a
+     column so the body wrapper can flex to fill whatever height remains
+     after the banner/utility-bar, instead of sizing to its own content
+     height and leaving the rest of this region's stretched height empty. */
+  display: flex;
+  flex-direction: column;
+
   position: relative;
   z-index: 1;
 
@@ -535,6 +543,17 @@
   box-shadow:
     0 0 16px oklch(var(--sheet-accent-primary) / 0.08),
     inset 0 0 10px oklch(var(--sheet-accent-primary) / 0.02);
+}
+
+/* The step-content wrapper had no layout rules at all, so it only ever
+   sized to its own content height rather than filling the remaining
+   column space. work-surface itself already scrolls (overflow-y: auto
+   above), so this wrapper does not get its own scroll -- it just needs to
+   participate in the flex column and be allowed to shrink below its
+   content size. */
+[data-prog-region-body="work-surface"] {
+  flex: 1 1 auto;
+  min-height: 0;
 }
 
 /* panel-large.svg provides inner stroke — no CSS ::before inner border needed */
@@ -2605,36 +2624,19 @@
   flex: 1 1 auto;
 }
 
-.progression-shell [data-region="summary-panel"][data-collapsed="true"] {
-  display: flex !important;
-  flex: 0 0 30px !important;
-  width: 30px !important;
-  min-width: 30px !important;
-  max-width: 30px !important;
-  overflow: hidden !important;
-  padding: 0 !important;
-  background-color: #040b13;
-}
+/* A "thin 30px visible rail" variant for [data-collapsed="true"] used to
+   live here (display:flex/width:30px + matching sub-rules for
+   .prog-summary-panel__body/.prog-summary-panel__collapse). It was pure
+   dead code: a later rule below, targeting the exact same selector
+   ([data-region="summary-panel"][data-collapsed="true"]) with equal
+   specificity and !important, sets display:none -- so per CSS's
+   equal-specificity tiebreak (later source wins) that rule always won in
+   practice and this one never rendered. Removed rather than kept as an
+   unreachable second copy; see .prog-summary-restore in
+   progression-shell.hbs for the actual restore affordance used when the
+   panel is hidden this way.
 
-.progression-shell [data-region="summary-panel"][data-collapsed="true"] .prog-summary-panel__body {
-  display: none !important;
-}
-
-.progression-shell [data-region="summary-panel"][data-collapsed="true"] .prog-summary-panel__collapse {
-  position: static;
-  writing-mode: vertical-rl;
-  transform: rotate(180deg);
-  width: 100%;
-  min-height: 112px;
-  margin: 4px 0 0;
-  padding: 6px 2px;
-}
-
-.progression-shell [data-region="summary-panel"][data-collapsed="true"] .prog-summary-panel__collapse i {
-  transform: rotate(180deg);
-}
-
-/* A former @media(max-width:1400px) pair used to live here, forcing the
+   A former @media(max-width:1400px) pair used to live here, forcing the
    summary panel back to `display: flex !important` at any viewport <=1400px.
    The [data-collapsed="true"] variant was pure redundant duplication of the
    unconditional collapsed-state rule above (it already always sets
