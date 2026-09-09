@@ -551,7 +551,7 @@
    above), so this wrapper does not get its own scroll -- it just needs to
    participate in the flex column and be allowed to shrink below its
    content size. */
-[data-prog-region-body="work-surface"] {
+.progression-shell [data-prog-region-body="work-surface"] {
   flex: 1 1 auto;
   min-height: 0;
 }
