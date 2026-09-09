@@ -39,6 +39,21 @@ export const DIAGNOSTIC_CODE = Object.freeze({
   FACTION_POPULATION_MISMATCH: 'faction-population-mismatch',
   RANK_PROFILE_MISMATCH: 'rank-profile-mismatch',
 
+  // PHASE 8D-3B: NPC concept coherence (npc/npc-bundle.js) — warn only,
+  // never auto-"corrected"; an Ithorian bartender on a Human-dominated
+  // mining colony is unusual, not invalid.
+  NPC_ROLE_CONTEXT_MISMATCH: 'npc-role-context-mismatch',
+  NPC_FACTION_MEMBERSHIP_MISMATCH: 'npc-faction-membership-mismatch',
+  NPC_SPECIES_CONTEXT_MISMATCH: 'npc-species-context-mismatch',
+  NPC_DROID_CONTEXT_MISMATCH: 'npc-droid-context-mismatch',
+  // PHASE 8D-3B correction pass round 5: an explicit linkedLocationId/
+  // locationDraftId conflicts with locationContext's own declared
+  // identity (npc/npc-bundle.js's resolveNpcLocationGenerationContext())
+  // -- the explicit target wins and locationContext's bias/tags are
+  // dropped entirely rather than silently biasing generation toward a
+  // Location the NPC isn't actually linked to.
+  NPC_LOCATION_CONTEXT_MISMATCH: 'npc-location-context-mismatch',
+
   // Reward (reward-estimator.js already emits this one under the same code)
   ISSUER_RESOURCE_MISMATCH: 'issuer-resource-mismatch',
   REWARD_BUDGET_MISMATCH: 'reward-budget-mismatch',

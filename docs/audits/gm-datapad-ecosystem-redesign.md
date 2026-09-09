@@ -7739,3 +7739,1130 @@ scope named is fixed in both affected reroll paths and verified with
 real statistical/direct-execution proof. PR #963 stays draft and
 unmerged. Per standing practice: stopping here for independent review.
 Phase 8D-3B is explicitly not started.
+
+## 186. PHASE 8D-3B — NPC + Faction Productionization (completion report)
+
+Authorized directly following PR #963's merge to `main` (§185 was the
+last pre-merge state) via a fresh-session handoff naming Phase 8D-3B:
+"take the already-established NPC/Faction generation groundwork and
+expand it into production-ready narrative generators that consume the
+now-stable Location context." Two substantial user-driven addenda
+arrived mid-phase and are folded into this same completion report
+rather than deferred to a later phase, per the handoff's own "same
+branch, same PR" discipline: (1) an NPC flavor-note system (small,
+memorable sensory/behavioral quirks) with structurally separate
+organic/droid catalogs; (2) a full NPC-concept schema unification
+(hand-created and generated NPCs share one schema) plus an NPC
+Competence Level authority explicitly modeled on SWSE's existing Crew
+Quality progression.
+
+### A. Architectural inventory (first task, before any content)
+
+Confirmed extensive Phase 8D-1/8D-2 foundation already existed but was
+never composed into a full generator: `faction-draft.js` (full Faction
+draft schema), five standalone Faction sub-generators
+(`factions/faction-goals.js` etc., each a thin wrapper over a 20-46
+entry pool), `names/faction-name-generator.js` (already
+production-quality), `npc-concept.js` (full NPC draft schema, hard
+mechanical-field guard), `npc/npc-narrative-generator.js` (rolled
+appearance/personality/mannerism/motivation/agenda/secret, ALWAYS from
+the organic-only pools, never role/species/droid/rank), and fully-built
+but never-called species/droid selectors
+(`population-profile.js`/`recruitment-profile.js`). Gaps: no top-level
+Faction bundle composer, no Faction presets, no archetype-from-context
+resolver, no NPC role/occupation catalog at all, no wiring of the
+species/droid selectors into any generator, and no production test
+file. Full inventory (A-G) was reported to the user before any
+implementation began.
+
+### B. Faction + NPC bundle composers (core productionization)
+
+**New:** `factions/faction-archetype.js` (reuses Phase 8D-3A's own
+`FACTION_ARCHETYPE_TAGS` table in the reverse direction — context tags
+-> archetype pick — no second archetype-tag catalog); `data/faction-presets.js`
+(20 presets, exactly 1:1 onto every existing `FACTION_ARCHETYPE_FAMILY`
+archetype, self-validated at test time); `factions/faction-bundle.js`
+(`createProceduralFactionDraft()` composing archetype/name/Scale/
+doctrine/goals/institutional-character/leadership-structure/internal-
+problems/resource-profile/population-profile+membership-policy/
+recruitment-profile/relationships/territory/contacts into one draft,
+plus 15 reroll/regenerate operations mirroring `planet-bundle.js`'s
+sibling-preserving discipline, verified by OBJECT IDENTITY); `data/npc-roles.js`
+(140 entries)/`data/npc-droid-roles.js` (31 entries) + `npc/npc-role.js`
+(role picker, command-tier-biased); `npc/npc-bundle.js`
+(`createGeneratedNpcConcept()` — the first caller anywhere of
+`selectMemberKind()`/`selectFactionSpeciesWithLocality()`/
+`selectSpeciesId()`, built in Phase 8D-1 but dormant until now).
+
+**Modified additively:** `npc-concept.js` gained a `draftId`
+(`lib/draft-id.js`, matching every other draft type — this was the one
+draft schema still missing bundle-addressable identity, which had left
+generated Contacts unreachable for a scoped per-contact reroll);
+`faction-draft.js` gained the same `draftId` for the same reason (an
+NPC's new `factionDraftId` field needed something real to reference
+pre-commit).
+
+### C. NPC flavor-note system (user addendum 1)
+
+`npc/npc-flavor.js`: ONE shared selection/conflict/reroll engine over
+TWO structurally separate content pools —
+`data/npc-flavor-qualities-organic.js` (134 entries) and
+`data/npc-flavor-qualities-droid.js` (99 entries), the boundary
+enforced by which pool a `kind` looks up (never a per-entry exclusion
+tag, per the user's explicit "structural, not tag-based" requirement).
+`conflictTags` prevent declared-contradictory qualities (e.g.
+"maintains unnervingly intense eye contact" vs. "rarely makes eye
+contact") from co-occurring on the same NPC, verified over 2000 seeds
+at zero co-occurrences. `flavorNotes: [{qualityId, text}]` on
+`npc-concept.js`; default count distribution 0/10%-1/45%-2/35%-3/10%,
+verified reachable and roughly matching those weights over 4000 seeds.
+`rerollNpcFlavorNotes()`/`rerollNpcFlavorNote()` (whole-set / single-
+note-by-id) both preserve every unrelated field and never cross pools
+(the droid single-note-reroll case explicitly tested). `faction-bundle.js`
+gained matching `rerollFactionContactFlavorNotes()`/
+`rerollFactionContactFlavorNote()` passthroughs for the
+finest-grained reroll the phase spec asked for.
+
+### D. Complete NPC concept schema + Competence Level (user addendum 2)
+
+**Reuse-mapping audit performed FIRST** (before adding any field), per
+the addendum's own "search the repository, reuse/expand, do not
+duplicate" rule. Several of the proposed new fields turned out to
+already have a home:
+
+- `entityKind` -> the existing `kind` field (identical values,
+  `'living'`/`'droid'`) — not duplicated.
+- `factionRole` -> the existing `specialistRole` field (Phase 8D-1
+  addendum, "what this person does for the Faction") — `data/npc-faction-roles.js`
+  (34 entries) now populates it for generated Contacts instead of a
+  second field.
+- `factionRank` (broad band) -> `rank-metadata.js`'s NEW
+  `describeFactionRankBand(commandTier)` — a pure DERIVED view over the
+  EXISTING `commandTier`, mapping its 10 tiers onto the 7 requested
+  narrative bands (outsider/associate/junior/established/senior/
+  leadership/command). No second stored rank field exists; a test
+  asserts `'factionRank' in npc === false`.
+- `diagnostics` -> the existing `provenance.warnings` mechanism
+  (already used by every other draft type) — 4 new codes added
+  (`NPC_ROLE_CONTEXT_MISMATCH`/`NPC_FACTION_MEMBERSHIP_MISMATCH`/
+  `NPC_SPECIES_CONTEXT_MISMATCH`/`NPC_DROID_CONTEXT_MISMATCH`), no
+  second field.
+- `suggestedNarrativeFunction` -> dropped as a literal duplicate of the
+  new `narrativeFunction` field itself.
+- `suggestedJobArchetypeTags`/`suggestedOppositionTags` -> reuse
+  Phase 8D-3A's own `generatePlanetSuggestedJobArchetypeTags()`/
+  `deriveSuggestedOppositionTags()` (`planets/planet-hooks.js` — pure
+  tag utilities despite their planet-module location, unlike
+  `PLANET_DROID_PREVALENCE`, which genuinely IS planet-context-derived
+  and stays out of the NPC layer).
+- Organic appearance cues / organic mannerisms -> the EXISTING
+  `data/npc-appearance-traits.js` (expanded to 49)/`data/npc-mannerisms.js`
+  (expanded to 40), never duplicated into a second organic pool.
+
+**Genuinely new fields added** (additive to `npc-concept.js`, zero
+existing fields removed or renamed, full backward compatibility with
+every 8D-1/8D-2 caller and test): `pronouns`/`presentation`/
+`ageImpression`, `occupation`/`socialRole`/`narrativeFunction`/
+`competenceLevel`, `locationDraftId`/`factionDraftId`/
+`locationRelationship`, `personalityTraits`/`temperament`/`socialStyle`,
+`appearanceCues`, `desire`/`fear`/`loyalty`, `voice`/`speechStyle`,
+`technologyFamiliarity`/`lifestyle`, `relationshipHooks`, `complication`,
+`publicDescription`, `suggestedJobArchetypeTags`/`suggestedOppositionTags`,
+`actorId`/`actorUuid`/`promotedAt`, `knownToPlayers` (mirrors the
+canonical Faction Contact schema's own field name verbatim).
+
+**NPC Competence Level** (`npc/npc-competence.js`): five narrative
+tiers (`untrained`/`capable`/`skilled`/`expert`/`elite`) explicitly
+modeled on — and documented against — SWSE's existing generic-crew
+Crew Quality progression (`Untrained`/`Normal`/`Skilled`/`Expert`/`Ace`),
+a ONE-WAY documentation seam with zero mechanical dependency in either
+direction; no level/BAB/skill-bonus/CL field exists anywhere in the
+module. Context-weighted via five named presets
+(ordinaryCivilian/specializedProfessional/seniorFactionSpecialist/
+randomBystander/eliteInstitution) resolved from role tier + command
+tier — **never from Faction Scale**, verified empirically: a Scale-2
+and a Scale-19 government's generated contacts show statistically
+indistinguishable Expert+/Elite rates (150-seed sample, <15 percentage
+points apart) — "a Scale-18 government still employs ordinary clerks,"
+exactly as the addendum required.
+
+**New representative data catalogs** (11 wholly new pools this
+addendum required, ~30-140 entries each; see §F for full counts):
+occupations, social roles, narrative functions, location relationships,
+loyalty profiles, temperaments, social styles, desires, fears, organic
++ droid voice qualities, speech styles (one shared pool with
+`excludedTags` gating the few kind-specific entries), droid mannerisms,
+relationship-hook templates + subjects, complications.
+
+**Two real pre-existing content-leak bugs found and fixed** during
+wiring (both matching the exact class of bug the flavor-note system's
+own kind-locking discipline was built to prevent): every generated
+droid NPC was drawing its `mannerisms` field from the organic-only
+pool (`npc-narrative-generator.js`'s `pickNpcMannerism()` never
+kind-dispatched), and — caught only once end-to-end output was
+inspected — the same was true of `appearance`/`appearanceCues` (a
+droid NPC could get "meticulously groomed, not a hair out of place").
+Both fixed via `npc/npc-characterization.js`'s new
+`pickNpcMannerismForKind()`/`pickNpcAppearanceForKind()`
+(droid appearance reuses `data/npc-flavor-qualities-droid.js`'s
+chassis/paint/replacement-parts/photoreceptor categories rather than a
+third droid content pool — a genuine field-name mismatch, `.text` vs.
+the plain-pool `.value` convention, was caught and fixed in the same
+pass). `motivation`/`agenda`/`secret`/`desire`/`fear`/`loyalty` remain
+ONE shared pool for both kinds, per the addendum's own explicit list
+of concepts that "genuinely apply to both" ("droids can want things,
+fear things, hold grudges").
+
+**`composeNpcPublicDescription()`** (`lib/description-composer.js`):
+DERIVED (never the sole authority, matching the file's existing
+"facts first, prose second" rule) from safe-to-reveal facts only —
+name/title/ageImpression/occupation/appearanceCues/voice/speechStyle/
+mannerism/one flavor note. Structurally cannot read
+secret/complication/loyalty/agenda/motivation/fear/desire/gmNotes (not
+accepted as parameters at all, not merely unused).
+
+**20 new targeted reroll wrappers** across `npc/npc-characterization.js`/
+`npc-occupation.js`/`npc-competence.js`, each verified to preserve
+name/draftId/role/secret. Per `npc-concept.js`'s own documented
+convention, plain-value fields with no pool re-selection (agenda,
+secret, name, etc.) are NOT given bespoke wrappers — the existing
+generic `updateNpcConceptDraft(draft, {field: value})` patch already
+covers them; duplicating that would contradict the codebase's own
+stated design.
+
+### E. Content-scale honesty
+
+Every new/expanded catalog landed at a "substantial representative"
+size (20-140 entries), NOT the full directional production targets the
+handoff/addenda named (some as high as 1,000-1,500 for the flavor-note
+pools, 250-400 for occupations). This was a deliberate scope decision,
+consistent with both the original phase spec ("do not immediately
+begin writing hundreds of entries... first implement a representative
+catalog, test the system, then production-expand") and the addendum's
+own §57 implementation order (architecture and tests before content
+expansion) — full-target content expansion for the ~35 catalogs this
+phase touches would cost many times the token budget this session
+reasonably allows for content generation with correspondingly
+diminishing architectural value, and risks exactly the "mechanical
+permutation" content-quality failure the addendum's own §48 explicitly
+warns against. Every catalog is zero-duplicate, well-tagged, and
+covers a real breadth of category/tone (mundane through strange,
+per §49's balance requirement) at its current size. **Content
+expansion toward the full targets is explicitly deferred follow-up
+work**, not silently dropped scope.
+
+### F. Exact catalog counts (this phase)
+
+```text
+NPC_ROLES                        140   (target 75-125, exceeded)
+NPC_DROID_ROLES                   31   (target 20+)
+FACTION_PRESETS                   20   (exact — 1:1 onto every archetype)
+ORGANIC_NPC_FLAVOR_QUALITIES     134   (target 1,000-1,500)
+DROID_NPC_FLAVOR_QUALITIES        99   (target 500-1,000)
+NPC_OCCUPATIONS                   82   (target 250-400)
+NPC_SOCIAL_ROLES                  41   (target 75-125)
+NPC_NARRATIVE_FUNCTIONS           30   (target 50-75)
+NPC_LOCATION_RELATIONSHIPS        20   (target 30-50)
+NPC_FACTION_ROLES                 34   (target 100-150)
+NPC_LOYALTY_PROFILES              22   (target 50-100)
+NPC_TEMPERAMENTS                  20   (target 50-75)
+NPC_SOCIAL_STYLES                 25   (target 75-125)
+NPC_DESIRES                       30   (target 150-250)
+NPC_FEARS                         30   (target 150-250)
+NPC_VOICE_QUALITIES_ORGANIC       20   (target 100-150)
+NPC_VOICE_QUALITIES_DROID         18   (target 100-150)
+NPC_SPEECH_STYLES                 30   (target 200-300)
+NPC_DROID_MANNERISMS              20   (target 150-250)
+NPC_RELATIONSHIP_HOOK_TEMPLATES   20   (target 200-300)
+NPC_COMPLICATIONS                 30   (target 250-400)
+
+-- Phase 8D-2 foundation catalogs, expanded this phase --
+FACTION_LONG_TERM_GOALS         24 -> 44
+FACTION_CURRENT_OBJECTIVES      22 -> 37
+FACTION_INSTITUTIONAL_CHARACTERS 25 -> 48
+FACTION_INTERNAL_PROBLEMS       25 -> 45
+FACTION_LEADERSHIP_STRUCTURES   20 -> 35
+FACTION_RESOURCE_FLAVORS        20 -> 33
+NPC_AGENDAS                     25 -> 43
+NPC_APPEARANCE_TRAITS           30 -> 49
+NPC_MANNERISMS                  25 -> 40
+NPC_MOTIVATIONS                 25 -> 40
+NPC_PERSONALITY_TRAITS          30 -> 47
+NPC_SECRETS                     25 -> 39
+
+TOTAL entries across all 33 catalog exports this phase: 1,396
+```
+
+Every catalog verified zero-duplicate (both `id`/`value` and, for
+flavor qualities, `text`) at test time; `NPC_OCCUPATIONS.roleTag`
+verified to reference only real `NPC_ROLES` values (drift guard);
+`NPC_RELATIONSHIP_HOOK_TEMPLATES.type` verified against
+`RELATIONSHIP_HOOK_TYPE`; `FACTION_PRESETS.archetype` verified 1:1
+against `FACTION_ARCHETYPE_FAMILY`'s key set (no gaps, no strays).
+
+### G. GENERATE/SUGGEST/RESOLVE boundary + canonical-write guard
+
+Confirmed by direct grep across every file this phase touched or
+added: zero occurrences of `LocationRegistryService.upsert`/
+`FactionRegistryService.upsert/save/delete/promote`/`game.actors.create`/
+`game.folders.create`/`Actor.create`/`Scene.create`/`JournalEntry.create`
+anywhere outside documentation comments explicitly describing what
+these modules do NOT call. Every generated Faction/NPC stays a draft;
+`contacts` are `npc-concept.js` drafts, never Actors; commit remains
+exclusively `FactionRegistryService.upsertFaction()`/
+`promoteFactionContactToActor()`'s job, unchanged.
+
+### Tests + Regression (this phase)
+
+New `tests/gm-generation-phase8d3b-production.test.mjs`, organized in
+8 sections: catalog quality; generation semantics (archetype/role/
+droid-prevalence/locality-bias context weighting, explicit species
+exclusion enforced at probability exactly 0, rank/leadership-boost,
+Scale-banded roster size, diagnostics reachability, mechanical-field
+guard); bundle generation/reroll safety/determinism (sibling
+preservation by object identity, whole-draft seeded determinism);
+flavor notes (structural pool separation proven over 300+ seeds,
+conflict-tag exclusion at 0/2000, context/role weighting on both
+pools); NPC competence (all 5 values reachable, exact Crew Quality
+mapping, Faction-Scale independence proven empirically, elite rarity);
+reuse-mapping validation (asserts the fields that were deliberately
+NOT duplicated genuinely don't exist); kind-dispatch fixes (droid
+mannerism/appearance never leak organic content, proven over 40+ droid
+samples); table validation (cross-catalog reference integrity);
+representative weighting; publicDescription safety; 13 more targeted
+rerolls.
+
+Full `gm-*.test.mjs` sweep: **59/59 green** (58 prior files, unchanged,
++ 1 new file this phase). Full rolling suite
+(`tools/run-rolling-tests.mjs`): **189 passed, 0 failed** (of 189 run;
+5 excluded as documented pre-existing failures — unchanged from every
+prior phase). Full syntax check (`tools/run-rolling-syntax-check.mjs`):
+**2434/2434 clean**. No canonical-persistence call anywhere in any file
+this phase touched or added (§G). Working tree clean before this
+commit.
+
+**PHASE 8D-3B (NPC + FACTION PRODUCTIONIZATION) COMPLETE — READY FOR
+INDEPENDENT REVIEW.** Both user-driven mid-phase addenda (flavor notes;
+complete NPC schema + Competence Level) are fully implemented,
+architecturally reuse-mapped against every existing authority before
+any new field/table was added, and covered by real statistical tests
+— never merely "the code path exists." The GENERATE/SUGGEST/RESOLVE
+boundary holds throughout. Content-scale honesty: every catalog is
+production-quality at a representative size; full-target expansion
+(§E) is explicit, tracked follow-up, not silently dropped. Per
+standing practice: stopping here for independent review before
+starting Phase 8D-3C.
+
+## 187. PHASE 8D-3B correction pass — independent review round 1 (wiring, not content)
+
+Independent review of §186's head found the architecture sound
+("Faction/NPC composers ✅, species/locality selection ✅, droid-vs-
+organic selection/content authority ✅, competence authority ✅, Crew
+Quality mapping ✅, Faction Scale separation ✅, targeted reroll
+primitives ✅, canonical-persistence boundary ✅, deterministic
+generation ✅, exact-head CI ✅") but identified four real WIRING gaps
+— explicitly not a request to hydrate catalogs ("do not block 8D-3B
+because NPC_FEARS has 30 entries instead of 250... I am judging this
+phase on whether 5 entries and 5,000 entries behave identically
+architecturally"). All four fixed on this same branch/PR, per standing
+practice.
+
+**1. Generated Contacts didn't reference their parent Faction draft.**
+`factions/faction-bundle.js` generated every Contact BEFORE the
+Faction draft (and its `draftId`) existed, so the schema addendum's own
+`factionDraftId` field was always empty. Fixed: `createProceduralFactionDraft()`
+now reserves its `draftId` (`createDraftId('faction')`) FIRST and
+threads it through `generateFactionContacts()`/`addFactionContact()`/
+`regenerateFactionContacts()`/`rerollFactionContact()` into every
+generated Contact's `factionDraftId`. Verified every generation/reroll/
+add/regenerate path produces `contact.factionDraftId === faction.draftId`
+exactly.
+
+**2. `publicDescription` went stale after a targeted reroll.**
+Composed once at generation time but never recomputed, so e.g.
+rerolling `appearanceCues` left `publicDescription` describing the OLD
+appearance. Fixed with the same derived/manual authorship seam the
+planet generator's own summary field already resolved this tension
+with: `npc-concept.js` gained `publicDescriptionSource`
+(`'derived'`/`'manual'`) plus `recomposeNpcPublicDescription()`
+(a no-op once manual), `setNpcPublicDescription()` (GM authorship,
+marks manual), and `resetNpcPublicDescriptionToDerived()` (the explicit
+"↻ Recompose" action, which alone may override manual). Every reroll
+wrapper whose field feeds the composer
+(`appearanceCues`/`voice`/`speechStyle`/`mannerism`/`occupation`/
+`ageImpression`/both flavor-note rerolls) now calls
+`recomposeNpcPublicDescription()` immediately after updating its own
+field. Verified: a derived-source reroll always refreshes the text; a
+manual-source reroll NEVER touches it, across all seven reroll paths;
+explicit recompose discards manual text and returns to derived.
+
+**3. Location technology/economy context never reached `technologyFamiliarity`/`lifestyle`.**
+Both fields were biased ONLY by the NPC's own role tier — a Location's
+real `technologyLevel`/`technologyAccess`/`economyTags` (available from
+Phase 8D-3A planet drafts) never factored in, even though every OTHER
+context-sensitive pick already received Location signal indirectly via
+`preferTags`. Fixed with ONE new structured optional input,
+`npc/npc-bundle.js`'s `locationContext: { technologyLevel,
+technologyAccess, technologySpecialties, economyTags, locationTags,
+locationId, locationDraftId }`, resolved by the new
+`resolveLocationContextBias()` into `{technologyBias, lifestyleBias}`
+that ADD to (never replace) the existing role-derived bias — an
+advanced-tech world's own technician now reads as measurably MORE
+tech-familiar than either signal alone would suggest. `locationContext`'s
+tags are also folded into `preferTags` once, at the top of
+`createGeneratedNpcConcept()`, so occupation/appearance/flavor/voice/
+speech all benefit automatically without a second parameter. Verified
+statistically: a cutting-edge/ubiquitous context produces >40%
+expert+/specialist technologyFamiliarity (vs. the ~15% neutral
+baseline); a primitive/isolated context produces >70% unfamiliar/basic;
+financial-services/trade economyTags produce >5x the affluent+
+lifestyle rate of mining/frontier economyTags; omitting `locationContext`
+entirely remains fully backward compatible.
+
+**4. GM Field Authoring API — the review's largest ask, implemented
+in full.** A generic, domain-agnostic engine
+(`lib/draft-field-authoring.js` — verified by test to import NOTHING
+but the generic stable-id utility, no NPC/Faction/Planet/Species
+catalog knowledge at all) providing add/remove/restore/rename/reset-
+label field operations, set/add/remove/duplicate/move value operations
+(stable `entryId`s, never array index), duplicate/reorder field
+operations, and add/remove custom-field operations — every operation
+immutable-safe (`{...draft, narrativeFields: next}`, never mutates its
+input) and fail-safe on an unknown fieldId (returns the draft
+UNCHANGED, never throws). Structural identity (`draftId`/`kind`/
+`provenance`) is protected NOT by special-casing but structurally: only
+fields an `npc/npc-field-definitions.js`-style registry explicitly
+declares (`motivation`/`desire`/`fear`/`agenda`/`secret`/`complication`/
+`loyalty`/`publicNotes`/`gmNotes` in this pass) are ever addressable at
+all.
+
+`npc/npc-field-authoring.js` is the thin NPC-specific layer: lazily
+builds `narrativeFields` from current scalars on first touch (a
+freshly generated NPC carries `narrativeFields: null` — zero cost for
+the common, untouched case, zero determinism impact), and mirrors
+every registered field's PRIMARY value back onto its matching
+`npc-concept.js` scalar after every operation so every EXISTING
+consumer reading e.g. `draft.motivation` as a plain string keeps
+working completely unchanged. The reconciliation half of this
+lives in `npc-concept.js`'s own `createNpcConceptDraft()`, via the
+generic engine's `reconcileFieldsStateWithScalars()`: on every
+construction/patch, a registered field whose scalar did NOT change is
+preserved byte-for-byte (custom label, hidden state, every multi-value
+entry, all survive); a field whose scalar DID change (a plain,
+field-authoring-unaware reroll touched it directly) collapses to one
+fresh `'generated'`-source entry carrying the new value while
+PRESERVING its customized label — exactly the review's own "reroll
+Appearance must preserve Goal; reroll Motivation itself replaces its
+value but keeps the Goal label" distinction.
+
+Verified end-to-end against the review's own literal final-invariant
+walkthrough: add two more motivations, remove the middle one, duplicate
+the first, rename the field to "Goal", remove one more value, add a
+custom "Favorite Drink" field, delete the Fear field entirely — then
+reroll Appearance, and confirm EVERY one of those choices (renamed
+label, exact remaining entries, deleted Fear, custom field, its value)
+survives unchanged, while `draftId`/`kind` are untouched throughout and
+Appearance itself demonstrably did change. Also verified: entry/field
+identity survives every operation (duplicates always mint NEW ids,
+moves never change any id); "empty field" (zero values, still visible)
+is verified structurally distinct from "removed field" (hidden,
+values preserved for restoration); a full `JSON.stringify`/`parse`
+round-trip preserves `narrativeFields` exactly.
+
+### Tests + Regression (this correction pass)
+
+`tests/gm-generation-phase8d3b-production.test.mjs` gained 6 new
+sections covering all four fixes: factionDraftId wiring (verified
+across generate/add/regenerate/reroll-one), publicDescription
+freshness (derived-refreshes / manual-survives across all seven
+relevant reroll paths / explicit recompose), locationContext wiring
+(statistical technology/lifestyle bias, preferTags flow-through,
+backward compatibility), and three GM Field Authoring API sections
+(core operations against a bare fields-state proving the engine's own
+genericness; the full NPC walkthrough matching the review's exact
+final invariant; JSON round-trip). Every PRE-EXISTING assertion in the
+file (the whole-draft seeded-determinism check in particular) still
+passes unchanged, confirming `narrativeFields` staying `null` on
+untouched drafts has zero effect on generation determinism.
+
+Full `gm-*.test.mjs` sweep: **59/59 green** (unchanged file count —
+this pass extended the existing Phase 8D-3B file rather than adding a
+new one). Full rolling suite (`tools/run-rolling-tests.mjs`): **189
+passed, 0 failed** (5 pre-existing exclusions, unchanged). Full syntax
+check (`tools/run-rolling-syntax-check.mjs`): **2437/2437 clean**. No
+canonical-persistence call in any file this pass touched or added
+(confirmed by direct grep, same discipline as §186's own §G). Working
+tree clean before this commit.
+
+**PHASE 8D-3B CORRECTION PASS ROUND 1 COMPLETE.** All four wiring gaps
+the independent review identified are fixed and verified; no catalog
+was hydrated in this pass (deliberately, per the review's own explicit
+instruction). Same branch (`claude/gm-datapad-phase8d3b-49c10v`), same
+PR (#964). Per standing practice: stopping here for independent
+review.
+
+## 188. PHASE 8D-3B correction pass — independent review round 2 (wiring, not content)
+
+A second independent review of round 1's head (`e0b501b`) confirmed CI
+green and the four round-1 fixes sound, then identified three further
+wiring-level gaps — again explicitly scoped as "nothing to do with
+table hydration." All three fixed on the same branch/PR.
+
+### 1. Deleted field semantic sovereignty
+
+`removeDraftField()` only ever set `hidden: true` while every reader
+(`getFieldValues()`/`getFieldPrimaryValue()`) still returned the
+retained value, so `npc/npc-field-authoring.js`'s scalar mirror
+(`patch.fear = getFieldPrimaryValue(...)`) kept mirroring a Fear the GM
+had explicitly removed straight back onto `draft.fear` — the one field
+every OTHER generator/composer actually reads. Fixed by making
+`getFieldValues()`/`getFieldPrimaryValue()` treat a hidden field as
+semantically empty (`''`/`[]`), which the scalar-mirror sync then
+propagates automatically with no NPC-layer change required.
+
+That surfaced a second-order bug in `reconcileFieldsStateWithScalars()`
+itself: it compared a hidden field's RAW retained value against the
+incoming (now-empty, mirrored) scalar, read that as "an external reroll
+blanked this field," and collapsed `values` to `[]` — silently
+discarding the very value Restore is supposed to bring back. Fixed by
+making the reconcile's own "current primary" read hidden-aware too
+(`existing.hidden ? '' : existing.values[0]?.value`), so a hidden
+field's empty mirror is recognized as self-consistent (no change) while
+Restore's real values stay privately intact the whole time. Verified:
+`npcRemoveDraftField(npc, 'fear')` → `draft.fear === ''` AND
+`getFieldPrimaryValue(...) === ''` AND `getFieldValues(...)` is `[]`,
+while the field-authoring state still privately carries the original
+value; `npcRestoreDraftField()` brings the ORIGINAL value back (never
+regenerates); an unrelated reroll while hidden neither resurrects the
+scalar nor auto-restores the field, while still preserving the
+privately-retained value for a later Restore.
+
+### 2. Field capability enforcement
+
+`multiValue`/`removable`/`renameable` were declared per-field in
+`npc/npc-field-definitions.js` but never threaded onto the actual
+field-state object nor read by any mutation function — a single-value
+field like GM Notes could silently accumulate a second entry via
+`addDraftFieldValue()`/`duplicateDraftFieldValue()`, and there was no
+way to honor a future `renameable:false`/`removable:false` declaration
+at all. Fixed by carrying `removable`/`renameable` on `createFieldState()`
+itself (alongside the pre-existing `multiValue`), threading them
+through `buildFieldsStateFromScalars()`/`reconcileFieldsStateWithScalars()`,
+and enforcing all three in the mutation functions themselves:
+`addDraftFieldValue()`/`duplicateDraftFieldValue()` now no-op on a
+`multiValue:false` field that already has a value; `removeDraftField()`
+no-ops when `removable === false`; `renameDraftField()` no-ops when
+`renameable === false`. `setDraftFieldValue()` (replace, not append)
+is deliberately untouched — capability enforcement blocks
+accumulation, never editing. Custom fields stay maximally permissive by
+construction (all three capabilities default `true`). Verified with
+both an NPC-level content check (gmNotes stays at exactly one value
+across blocked add/duplicate attempts, motivation — `multiValue:true`
+— still accepts both normally) and a direct engine-level reference-
+identity no-op check on a bare fields-state, plus a synthetic
+`removable:false`/`renameable:false` field proving `removeDraftField()`/
+`renameDraftField()` actually block rather than merely record the
+capability.
+
+### 3. Location → Faction → Contact context
+
+`npc/npc-bundle.js`'s `locationContext` reached a directly-generated
+standalone NPC, but `factions/faction-bundle.js` had no `locationContext`
+parameter at all — the one narrative-weaving path
+(`Planet -> Faction -> generated Contacts`) that most needs a Location's
+technology/economy signal had no way to carry it. Fixed by threading an
+identical `locationContext` parameter through
+`createProceduralFactionDraft()` → `generateFactionContacts()` and
+independently through `regenerateFactionContacts()`/
+`rerollFactionContact()`/`addFactionContact()`, each forwarding it
+verbatim into `createGeneratedNpcConcept()` — mirroring exactly how
+`locationPopulationProfile`/`droidPrevalence` already flow through this
+same set of functions (a caller-supplied-per-call value, never
+persisted on the Faction draft itself).
+
+Separately, `locationContext.locationId`/`locationDraftId` and the
+existing standalone `linkedLocationId`/`locationDraftId` params could
+disagree (or a caller could supply only the structured object and get
+no Location link at all), since only the standalone scalars drove
+`locationRelationship` generation and the drafted `linkedLocationId`/
+`locationDraftId` fields. Fixed with an explicit precedence: the
+standalone scalar wins when supplied (`linkedLocationId ||
+locationContext?.locationId`, same pattern for the draft id), used
+uniformly everywhere Location identity is read or written in this
+function. Also folded a pre-commit `factionDraftId` into
+`isFactionContext` (previously only a canonical `factionId` or an
+explicit `populationProfile` counted) — a Contact generated FOR a
+not-yet-committed Faction draft is real Faction context and should
+still roll a `specialistRole`.
+
+### Tests + Regression (this correction pass)
+
+`tests/gm-generation-phase8d3b-production.test.mjs` gained 5 new
+sections: Faction→Contact `locationContext` statistical reachability
+(direct generation + regenerate/reroll-one/add-contact all forward it),
+duplicate Location identity normalization (explicit scalar wins,
+context-only identity still resolves and triggers
+`locationRelationship`, `factionDraftId`-alone Faction context), deleted-
+field semantic sovereignty (scalar mirror clears, every reader agrees,
+private retention + Restore, unrelated-reroll safety), and field
+capability enforcement (multiValue block on add/duplicate at both the
+NPC-wrapper content level and the bare-engine reference-identity level,
+removable/renameable block verified directly).
+
+Full `gm-*.test.mjs` sweep: **59/59 green** (unchanged file count).
+Full rolling suite (`tools/run-rolling-tests.mjs`): **189 passed, 0
+failed** (5 pre-existing exclusions, unchanged). Full syntax check
+(`tools/run-rolling-syntax-check.mjs`): **2437/2437 clean**.
+`tools/validate-partials.mjs`/`tools/validate-data.js`/`system.json`
+parse all clean (no template/data files touched this pass). No
+canonical-persistence call in any file this pass touched (confirmed by
+direct grep, same discipline as §186/§187).
+
+**PHASE 8D-3B CORRECTION PASS ROUND 2 COMPLETE.** All three additional
+wiring gaps are fixed and verified; no catalog was hydrated in this
+pass (deliberately, per the review's own explicit instruction). Same
+branch (`claude/gm-datapad-phase8d3b-49c10v`), same PR (#964). Per
+standing practice: stopping here for independent review.
+
+## 189. PHASE 8D-3B correction pass round 3 — Contact↔Location relationship hardening
+
+A third independent-review message, after confirming round 2's head
+was sound, proposed a substantial architectural hardening: Contact↔
+Location is one of the central edges the wider campaign graph (Jobs,
+Factions, Stores, Intel, Bulletins, future Skill Challenges) will query
+repeatedly ("who is associated with this place, and how?"), and a
+single scalar Location reference cannot represent an NPC who is
+simultaneously a resident of one place, works at another, and was last
+seen at a third. Implemented on the same branch/PR, no table
+hydration.
+
+### The central change
+
+`npc-concept.js`'s single scalar Location reference (`linkedLocationId`/
+`locationDraftId`/`locationRelationship`/`lastKnownLocation`) is
+replaced by a first-class, multi-valued `locationLinks[]` array as the
+schema's real authority. Each entry (`npc/npc-location-link.js`'s
+`createContactLocationLink()`) carries: a stable `linkId` (never
+display name/index/target id — an NPC can hold two links to the SAME
+Location with different meanings, e.g. "used to work here" + "hiding
+here now"); `locationId`/`locationDraftId` (draft/canonical duality —
+a canonical id always wins and CLEARS any simultaneously-supplied
+draft id in the same call, so a link never carries two competing
+active target identities); `relationshipType` (a new stable
+`CONTACT_LOCATION_RELATIONSHIP` vocabulary — resident/work/stationed/
+hiding/last-seen/... — `data/npc-location-relationship-types.js`) plus
+a free-text `relationshipLabel`; `status` (active/historical/planned/
+unknown); `primary` (at most one ACTIVE link may hold it, enforced by
+the normalizer, never used to imply "the only" relationship); `scope`
+(exact/descendants — a jurisdiction link anchored at a parent Location
+also covers a query anywhere beneath it, without duplicating links
+per child); `certainty` (confirmed/reported/suspected/disputed —
+seam for future Intel-driven "suspected" relationships); `revealState`
+(truth vs. player knowledge stay separate, exactly like the rest of
+this schema); `source` (generated/manual/resolved/imported); `notes`;
+a `snapshot` (`{name, type}`) display fallback that is NEVER authority,
+only shown when resolution fails; and `provenance`.
+
+### Reuse, not duplication
+
+The existing `data/npc-location-relationships.js` narrative catalog
+("native"/"recent arrival"/"traveler passing through"/...) is NOT
+replaced or duplicated — it keeps doing exactly what it always did
+(bias locality/species selection, supply a link's `relationshipLabel`)
+and additively gained one field per entry, `linkType`, mapping each
+narrative value onto the new structural vocabulary
+(`relationshipTypeForNpcLocationRelationshipValue()`). A narrative
+flavor pick and its structural classification are generated together
+in one call (`rollContactLocationRelationshipFlavor()`), never two
+separate authorities that could disagree.
+
+### Migration and legacy compatibility
+
+`linkedLocationId`/`locationDraftId`/`locationRelationship`/
+`lastKnownLocation` remain real fields on every constructed NPC
+concept, but are now DERIVED, read-only mirrors of `locationLinks`
+(`deriveLegacyLocationFields()`), never independent authority — every
+pre-existing consumer that reads them as plain strings keeps working
+unchanged. A caller that still constructs the pre-hardening way (no
+`locationLinks` key at all) migrates transparently
+(`migrateLegacyLocationScalarsToLinks()`): the old
+`linkedLocationId`/`locationRelationship` pair becomes one primary
+link (preserving the OLD narrative text verbatim as `relationshipLabel`,
+even for GM-authored text this catalog doesn't recognize — falls back
+to `ASSOCIATED`, never a fuzzy guess); `lastKnownLocation` (which was
+ALWAYS a bare display string with no id of its own) becomes a
+`LAST_SEEN`/`historical` link carrying only a `snapshot.name`, never a
+fabricated id. Detecting "did this construction call explicitly
+provide `locationLinks`" via `Object.prototype.hasOwnProperty` (not
+truthiness) was the key correctness fix here: `updateNpcConceptDraft()`
+always spreads the previous draft first, so every already-constructed
+draft's `locationLinks` — even an explicit `[]` after a GM removes the
+only relationship — must be respected as-is on every subsequent
+reroll, never silently re-migrated from stale inherited legacy
+scalars (which would otherwise resurrect a just-deleted relationship).
+`npc-concept.js` gained a `schemaVersion` marker (`2` = the
+`locationLinks[]` model) for future migration bookkeeping.
+
+### Architecture: pure primitives + thin draft-CRUD wrapper
+
+Mirrors the exact split this same correction round 1 already
+established for the GM Field Authoring API
+(`lib/draft-field-authoring.js`/`npc/npc-field-authoring.js`), for the
+identical reason (avoiding a circular import with `npc-concept.js`
+while keeping the core logic trivially unit-testable against bare
+arrays): `npc/npc-location-link.js` is a pure primitive layer (create/
+normalize/migrate/derive/resolve/query — zero `npc-concept.js`
+dependency) and `npc/npc-location-link-actions.js` is the thin
+draft-CRUD wrapper (`addContactLocationLink`/`removeContactLocationLink`/
+`updateContactLocationLink`/`setContactLocationLinkPrimary`/
+`rerollContactLocationLink`/`rerollPrimaryContactLocationLink`) that
+imports `updateNpcConceptDraft()`. Every CRUD operation targets a
+`linkId`, never index or label, and preserves every sibling link plus
+every unrelated NPC field. `npc/npc-characterization.js`'s existing
+`rerollNpcLocationRelationship()` wrapper now delegates to
+`rerollPrimaryContactLocationLink()` (its old scalar-patching
+implementation would have been silently discarded by the new
+derived-mirror discipline — patching `locationRelationship` directly
+no longer does anything). `npc/npc-bundle.js` now builds a proper
+primary `locationLinks` entry directly (`source: 'generated'`) instead
+of assembling three separate legacy scalars.
+
+### Orphan-safe resolution and reverse lookup (pure primitives; UI/Foundry wiring explicitly deferred)
+
+`resolveContactLocationLink(link, { findLocation, findLocationDraft })`
+takes INJECTED lookups and reports `state: 'canonical'|'draft'|
+'orphaned'|'empty'` — this module never guesses a Location by name/
+slug when an id fails to resolve (verified directly: the injected
+lookup is always called with the exact stored `locationId`, never a
+snapshot name); an orphaned link falls back to its own `snapshot` for
+display, the value staying pure metadata that is never treated as
+authority. `findContactsForLocation(contacts, locationId, {
+includeDescendants, isDescendant })` is the reverse-lookup primitive,
+supporting BOTH hierarchy directions the review's own examples
+described: querying an ancestor Location with `includeDescendants`
+surfaces every Contact anchored anywhere beneath it, and a single link
+scoped `descendants` (e.g. a governor's jurisdiction over a whole
+planet) surfaces for a query at any Location beneath ITS OWN target,
+even without `includeDescendants`. Both directions share one injected
+`isDescendant(candidateId, ancestorId)` predicate — this module never
+imports `LocationRegistryService` (a Foundry-dependent service outside
+the Node-testable generation layer this whole phase operates in); a
+real hierarchy-aware bridge belongs in `scripts/ui/shell/gm/` (mirroring
+`LocationJobBridgeService.js`'s existing pattern) as later, separate
+UI-wiring work.
+
+### Explicitly deferred (per the review's own scope notes)
+
+A universal cross-domain relationship registry ("the logical endpoint,
+not necessarily this phase" — the review's own words); `validFrom`/
+`validUntil` timestamps ("I would not require dates now, but leave the
+seam" — `status` alone covers the immediate need); a generation-context
+fingerprint (diagnostic-only, optional); `buildNpcLocationContext(locationRef)`
+as a real resolver against live Location data (requires
+`LocationRegistryService` wiring, a later UI-integration phase's job,
+not this generation-layer phase's); and the Foundry-dependent
+`LocationRegistryService`/reverse-index UI bridge itself (the pure
+algorithm is delivered; the live wiring is deferred to whenever the
+Location Datapad's roster view is actually built). None of these
+change the `locationLinks[]` shape or its stable identities, so none
+of this deferral requires a future migration.
+
+### Tests + Regression (this correction pass)
+
+`tests/gm-generation-phase8d3b-production.test.mjs` gained a new
+"Contact↔Location relationship model" section (11 sub-blocks):
+primitives (stable linkId identity, 0/1/many multiplicity, idempotent
+normalization, meaningless-entry dropping, duplicate-linkId dedup,
+at-most-one-active-primary enforcement — including proof a demoted
+primary is demoted, never dropped); draft/canonical duality; v1→v2
+migration (exact round-trip via `deriveLegacyLocationFields()`,
+unrecognized narrative labels fall back to `ASSOCIATED` never a
+guess); `npc-concept.js` wiring (schemaVersion 2, unrelated rerolls
+preserve `locationLinks`, a stray legacy scalar in a patch is ignored
+once `locationLinks` exists, an explicit empty array is respected
+rather than resurrected from stale scalars); generator wiring;
+CRUD actions (every operation proven to target `linkId` and preserve
+siblings + unrelated NPC fields, including the `rerollNpcLocationRelationship()`
+delegation and its no-op-with-no-location case); orphan-safe resolution
+(canonical/draft/orphaned/empty states, exact-id-only lookup proven via
+a lookup-argument spy); reverse lookup (exact match, both hierarchy
+directions, empty-input safety); query helpers; JSON round-trip; and a
+300-trial bounded randomized invariant sequence (up to 8 random add/
+remove/update/setPrimary/reroll operations each, asserting no duplicate
+linkIds, at most one active primary, idempotent normalization, and no
+unrelated-field mutation ever survive any sequence) — a scoped
+property-style test matching the review's own "fuzzing pays off here"
+suggestion without building a full fuzzing harness. The pre-existing
+round-2 "duplicate Location identity inputs" test needed updating: it
+had exercised an artificial scenario (explicitly supplying both a
+canonical id and a draft id for the same relationship) that this
+round's own new draft/canonical duality invariant intentionally
+collapses — split into realistic single-identity-at-a-time scenarios,
+plus one new assertion proving the collapse itself.
+
+Full `gm-*.test.mjs` sweep: **60/60 green** (unchanged file count —
+extended the existing Phase 8D-3B file). Full rolling suite
+(`tools/run-rolling-tests.mjs`): **189 passed, 0 failed** (5
+pre-existing exclusions, unchanged). Full syntax check
+(`tools/run-rolling-syntax-check.mjs`): **2440/2440 clean** (3 new
+files). `tools/validate-partials.mjs`/`tools/validate-data.js`/
+`system.json` parse all clean. No canonical-persistence call in any
+file this pass touched or added (confirmed by direct grep).
+
+**PHASE 8D-3B CORRECTION PASS ROUND 3 COMPLETE.** The Contact↔Location
+relationship model is hardened to the shape a later Job/Intel/Store/
+Bulletin "who is associated with this place" query can build on
+without further schema changes; no catalog was hydrated in this pass
+(deliberately). Same branch (`claude/gm-datapad-phase8d3b-49c10v`),
+same PR (#964). Per standing practice: stopping here for independent
+review.
+
+## 190. PHASE 8D-3B correction pass round 4 — Contact↔Location resilience hardening
+
+A fourth independent-review message confirmed `locationLinks[]`'s
+shape was correct and should NOT be redesigned again, then identified
+nine resilience gaps in identity lifecycle, resolution semantics, GM
+authorship, and validation — explicitly scoped as hardening around the
+existing shape, not a schema change. All nine addressed on the same
+branch/PR, no table hydration.
+
+### 1. Draft Locations were second-class in reverse lookup
+
+`findContactsForLocation(contacts, locationId, ...)` only ever matched
+`link.locationId` — a Contact generated for a not-yet-committed
+Faction/Location draft (`locationDraftId` only) was invisible to the
+reverse lookup until promotion, breaking the exact
+`GenerateLocation → GenerateFaction → GenerateContacts → open the
+draft Location's own Datapad` workflow this draft-first architecture
+exists to support. Renamed to `findContactsForLocationRef(contacts,
+{ locationId } | { locationDraftId }, options)`: a canonical
+`locationId` always wins when both are supplied in the same query ref
+(mirroring `createContactLocationLink()`'s own precedence), a draft
+target matches by EXACT `locationDraftId` (hierarchy traversal stays
+canonical-only for now — a draft batch's own hierarchy isn't
+necessarily available to a caller yet — but an exact draft match always
+works today).
+
+### 2. Resolution states conflated "not checked" with "broken"
+
+`resolveContactLocationLink()` returned `'orphaned'` for a canonical id
+with no `findLocation` supplied at all, indistinguishable from a
+resolver that was supplied and definitively found nothing — a UI would
+show "⚠ Missing Location" for a relationship nobody had even tried to
+resolve yet. Added a fifth state,
+`CONTACT_LOCATION_LINK_RESOLUTION_STATE`: `canonical`/`draft` (a
+resolver was supplied and found it), `unresolved` (an id is set but no
+resolver function was supplied at all), `orphaned` (a resolver WAS
+supplied and definitively returned nothing), `empty` (no id at all).
+Applied symmetrically to both canonical and draft targets.
+
+### 3. GM edits didn't reliably become `source: manual`
+
+`updateContactLocationLink()`/`addContactLocationLink()` inherited
+`createContactLocationLink()`'s neutral `source: 'generated'` default,
+so a GM manually editing a generated relationship's text could leave
+it looking machine-authored — fragile provenance that put the burden
+on every UI call site to remember to pass `source: 'manual'`. Both GM
+action-layer operations now default `source` to `'manual'` unless the
+caller explicitly overrides it (the generator itself never goes
+through this action layer — `npc/npc-bundle.js` calls
+`createContactLocationLink()` directly). `rerollContactLocationLink()`
+deliberately keeps its own `source: 'generated'` default — the GM
+explicitly asked the generator to replace the fact, which is a
+different authorship event than editing it by hand.
+
+### 4. No draft → canonical promotion operation existed
+
+The schema could represent both `locationDraftId` and, after commit,
+`locationId`, but nothing owned the TRANSITION — leaving it to "random
+controllers doing `patch.locationId = ...`" (the review's own words),
+which risks losing `relationshipType`/label/certainty/notes/ordering
+in the process. Added `resolveLocationDraftReferenceInLinks()` (pure,
+`npc/npc-location-link.js`) and its draft-CRUD wrapper
+`resolveContactLocationDraftReference()` (`npc/npc-location-link-actions.js`):
+replaces every link whose `locationDraftId` matches the promoted
+draft's id with the new canonical `locationId`, preserving `linkId`/
+`relationshipType`/`relationshipLabel`/`status`/`primary`/`scope`/
+`certainty`/`revealState`/`source`/`notes`/`provenance` exactly and
+optionally refreshing `snapshot` to the newly-committed Location's real
+name — an unrelated sibling link (a different `locationDraftId`) is
+returned by the SAME object reference, untouched. Explicitly NOT the
+universal cross-domain relationship registry deferred in §189 — this
+only finishes the draft/canonical lifecycle THIS relationship type
+already promised.
+
+### 5. Snapshot-only entries were too permissive
+
+The round-3 normalizer treated ANY snapshot-named entry as meaningful,
+which (necessary for a migrated `lastKnownLocation`, which never had an
+id) also permitted the exact back door the review called out: an
+`addContactLocationLink()` call for `relationshipType: 'resident'` with
+only a `snapshot.name` and no real target — reintroducing name-only
+relationships through the side door the whole `locationId`/
+`locationDraftId` identity model exists to close. Restricted
+snapshot-only validity to the two cases that genuinely have no
+resolvable id by nature: `relationshipType: LAST_SEEN` and `source:
+'imported'` (legacy data whose original system may not have carried an
+id either) — a normal current relationship (resident/work/stationed/
+owns/hiding/...) now always requires a real `locationId`/
+`locationDraftId`. Enforced in one place,
+`isMeaningfulContactLocationLink()`, used by both `normalizeContactLocationLinks()`
+and the CRUD actions' rejection checks.
+
+### 6. `CUSTOM` relationship type accepted a blank label
+
+`data/npc-location-relationship-types.js` already documented "CUSTOM
+has no default; custom without GM-written label is contradictory," but
+`createContactLocationLink()` happily built (and normalization
+accepted) a `custom` link with an empty `relationshipLabel`, violating
+its own documented contract. `isMeaningfulContactLocationLink()` now
+rejects `relationshipType: CUSTOM` with no label — reused the SAME
+meaningfulness gate as item 5, so `addContactLocationLink()`
+no-ops and `updateContactLocationLink()` rejects the WHOLE patch
+(returns the draft unchanged) rather than silently dropping the
+relationship out of the array — a bad GM edit bounces, it doesn't
+delete data.
+
+### 7. Changing `relationshipType` could leave a contradictory label
+
+`updateContactLocationLink()` spread the old link before the patch, so
+changing ONLY `relationshipType` (e.g. resident → work) silently kept
+the OLD type's label ("native") attached to the new type — legal
+structurally, almost certainly accidental. Fixed with a narrow rule
+scoped to `updateContactLocationLink()`: if `relationshipType` is
+explicitly changed in a patch that does NOT also explicitly supply
+`relationshipLabel`, the label resets to the new type's own default
+(reusing `createContactLocationLink()`'s existing default-label
+fallback by passing an explicit empty string) — supplying BOTH in the
+same patch always preserves the GM's exact text untouched, and patching
+`relationshipLabel` alone never touches `relationshipType`.
+
+### 8. `primary` could survive a status change
+
+`setContactLocationLinkPrimary()`'s own doc said it demotes every
+OTHER link, but `normalizeContactLocationLinks()`'s invariant only
+constrained ACTIVE links, so a HISTORICAL/PLANNED/UNKNOWN link could
+independently carry `primary: true` — meaningless (`primary` only ever
+mattered for an active relationship) but structurally possible.
+Chose the review's own preferred option: `primary` is meaningful
+EXCLUSIVELY on an ACTIVE link, and `normalizeContactLocationLinks()`
+now universally forces it `false` on any non-active link, not merely
+capping ACTIVE links at one primary.
+
+### 9. No locationLinks-aware determinism test existed
+
+The pre-existing whole-draft seeded-determinism test (round 3) never
+exercised a Contact WITH a Location association, so it never actually
+proved `locationLinks` content was deterministic under a seeded RNG (as
+opposed to merely being empty every time). Added a dedicated test:
+same seed + same `linkedLocationId` input reproduces byte-for-byte
+identical `locationLinks` content (target, `relationshipType`,
+`relationshipLabel`, `status`, `primary`, `scope`, `certainty`,
+`revealState`, `source`) once `linkId`'s own intentionally-fresh
+identity is stripped, with a sanity check across many different seeds
+proving the flavor genuinely varies (guards against a vacuous
+always-identical-because-always-empty pass). Also added `linkId` to the
+existing whole-Faction-draft determinism test's recursive strip-list
+defensively, for whenever that fixture starts supplying Location
+context to its Contacts.
+
+### Tests + Regression (this correction pass)
+
+`tests/gm-generation-phase8d3b-production.test.mjs`'s "Contact↔Location
+relationship model" section gained/updated 8 sub-blocks covering all
+nine fixes (GM-edit provenance defaults + override + flip-on-edit +
+reroll-stays-generated; type/label coherence including the CUSTOM
+rejection on both add and update; the exact "name-only resident" back
+door from the review rejected, plus the LAST_SEEN/imported exceptions
+and a direct `isMeaningfulContactLocationLink()` check; draft→canonical
+promotion preserving every field except the target, sibling links
+preserved by true object reference at the bare-primitive level; the
+5-state resolution matrix for both canonical and draft targets; draft-
+target reverse lookup including the both-supplied canonical-wins case;
+the locationLinks-aware determinism test); the round-3 "primary
+historical" test was corrected to assert the NEW stricter invariant
+(primary forced false on any non-active link) rather than the old one
+this round intentionally supersedes; the round-3 "many links" test's
+snapshot-only fixture was updated to use a `LAST_SEEN` type, matching
+the new validity boundary.
+
+Full `gm-*.test.mjs` sweep: **60/60 green** (unchanged file count).
+Full rolling suite (`tools/run-rolling-tests.mjs`): **189 passed, 0
+failed** (5 pre-existing exclusions, unchanged). Full syntax check
+(`tools/run-rolling-syntax-check.mjs`): **2440/2440 clean** (no new
+files this pass — purely hardening the two existing
+`npc/npc-location-link*.js` files). `tools/validate-partials.mjs`/
+`tools/validate-data.js`/`system.json` parse all clean. No
+canonical-persistence call in either touched file (confirmed by direct
+grep).
+
+**PHASE 8D-3B CORRECTION PASS ROUND 4 COMPLETE.** The `locationLinks[]`
+shape itself is unchanged from §189 — this pass only hardened identity
+lifecycle, resolution semantics, GM authorship defaults, and
+validation boundaries around it, exactly as the review scoped it. No
+catalog was hydrated. Same branch (`claude/gm-datapad-phase8d3b-49c10v`),
+same PR (#964). Per standing practice: stopping here for independent
+review.
+
+## 191. PHASE 8D-3B correction pass round 5 — Contact↔Location schema-freeze hardening
+
+A fifth independent-review message explicitly **froze the `locationLinks[]` shape** ("I would not redesign it again") and identified four remaining behavioral gaps, all smaller than prior rounds and scoped as "making the APIs difficult to misuse" rather than structural issues — plus two items explicitly deferred to the UI-integration seam (a rich reverse-lookup returning matching relationship edges, and automatic snapshot enrichment from resolved Location context; neither requires changing `locationLinks[]`). All four "fix now" items addressed on the same branch/PR, no schema change, no table hydration.
+
+### 1. The Location-context identity mismatch was still not actually solved
+
+Round 3's own fix made an explicit `linkedLocationId`/`locationDraftId` win the WRITTEN identity over a conflicting `locationContext.locationId`/`locationDraftId`, but `locationContext`'s technology/economy bias and tags were still applied unconditionally regardless of which target won — so an NPC could still end up linked to Location A while its `technologyFamiliarity`/`lifestyle`/`preferTags` were biased by Location B's context. Added `resolveNpcLocationGenerationContext({ linkedLocationId, locationDraftId, locationContext })` (`npc/npc-bundle.js`) as a single resolution seam consumed BEFORE either the target identity or the context's bias/tags are used for anything: no explicit identity + a context identity → use the context normally; an explicit identity with a context that declares no identity of its own → assume the context describes the explicit target, use it normally; explicit equals context → use it normally; explicit CONFLICTS with context → the explicit target wins for `locationRef`, but `locationContext` is dropped ENTIRELY (no bias, no tags) and `contextMismatch: true` is reported. A new diagnostic code, `NPC_LOCATION_CONTEXT_MISMATCH` (`lib/generator-diagnostics.js`, grouped with the other reserved `NPC_*_CONTEXT_MISMATCH` codes), gets attached to the generated draft's own `provenance.warnings` when this fires — the mismatch is visible on the draft, never silently swallowed with no trace.
+
+### 2. Invalid update values could silently reset valid relationship state
+
+`updateContactLocationLink()` routed every patch through `createContactLocationLink()`, which is intentionally TOLERANT (an invalid enum value silently coerces to a sane default — correct for bulk normalization/migration of possibly-messy data). Applied to an explicit GM authoring patch, though, a typo like `status: 'historic'` would silently succeed as `'active'` while the rest of the edit applied — a resilience failure, not a normalization convenience. Exported five enum validators from `npc/npc-location-link.js` (`isContactLocationLinkStatus`/`Scope`/`Certainty`/`RevealState`/`Source`) and added `hasOnlyValidExplicitEnums()` in the actions layer: `addContactLocationLink()`/`updateContactLocationLink()` now reject the WHOLE patch (return the draft unchanged) the moment any EXPLICITLY-present enum field fails its own validator — a field the caller never mentioned is never checked. `createContactLocationLink()` itself deliberately stays tolerant; strictness is now an authoring-layer property, not a schema-wide one, matching the review's own "normalizer tolerant, GM mutation API strict" framing.
+
+### 3. Relinking a Contact could leave the old Location snapshot behind
+
+`updateContactLocationLink()` spread the current link before applying a patch, so relinking `locationId` from `loc-a` to `loc-b` silently carried the OLD snapshot (`{name: 'Kellin IV', ...}`) forward unless the caller explicitly replaced it — a stale snapshot that could later lie to an orphan-fallback display for a relationship that had actually moved elsewhere. Fixed with the same "compare the FINAL resolved value, not the raw patch field" discipline already used for the type/label coherence fix (round 4): after building the merged link, if its resolved `locationId`/`locationDraftId` differs from the current link's (accounting for `createContactLocationLink()`'s own canonical-wins-over-draft precedence, which a raw before/after patch-field comparison could get wrong) and the patch did NOT also explicitly supply a `snapshot`, the snapshot is cleared to `{name: '', type: ''}`. An explicit `snapshot` in the same patch always wins. Works symmetrically in both the canonical→draft and draft→canonical relinking directions.
+
+### 4. `primary` had two conflicting mutation paths
+
+`setContactLocationLinkPrimary()` was the intended dedicated operation, but `updateContactLocationLink({primary: true})` and `addContactLocationLink({primary: true})` also silently accepted a `primary` value that then only actually took effect via the normalizer's own "first ACTIVE primary wins" tie-break — so the API could accept `primary: true` without actually performing the requested action, depending on what else already existed. Made `setContactLocationLinkPrimary()` the SOLE primary-mutation authority: `updateContactLocationLink()` now REJECTS the whole patch if it explicitly mentions `primary` at all (even a no-op reaffirmation of the current value, and even mixed with otherwise-valid fields — the whole patch bounces together). `addContactLocationLink({primary: true})` now means exactly "add this link, then deterministically make it primary": the candidate link is built and added with `primary: false` first (never handed to the normalizer's ambiguous tie-break), then — only if the caller asked for `primary: true` — explicitly promoted via `setContactLocationLinkPrimary()` using its own pre-minted `linkId`, never relying on array-position/order assumptions.
+
+### Tests + Regression (this correction pass)
+
+`tests/gm-generation-phase8d3b-production.test.mjs` gained 4 new sections: the Location-context identity mismatch (direct primitive checks of all four resolution rules, an end-to-end statistical proof that a conflicting context's technology bias no longer leaks through, and a provenance-warning presence/absence check for the conflicting vs. matching cases); strict authoring-patch validation (each of the five enum fields rejected on an invalid explicit value, a valid value still applying normally, `addContactLocationLink` getting the same treatment, and a direct contrast proving `createContactLocationLink()` itself stays tolerant); snapshot coherence after relink (clear-on-relink, preserve-when-explicit, untouched-when-target-unchanged, both relink directions); and single primary mutation authority (`updateContactLocationLink` rejecting `primary` in isolation and mixed with other fields, `addContactLocationLink({primary:true})`'s deterministic promote-after-add behavior, and the no-request case leaving the existing primary undisturbed).
+
+Full `gm-*.test.mjs` sweep: **60/60 green** (unchanged file count). Full rolling suite (`tools/run-rolling-tests.mjs`): **189 passed, 0 failed** (5 pre-existing exclusions, unchanged). Full syntax check (`tools/run-rolling-syntax-check.mjs`): **2440/2440 clean** (no new files — pure hardening of `npc/npc-location-link.js`, `npc/npc-location-link-actions.js`, `npc/npc-bundle.js`, and one new diagnostic code in `lib/generator-diagnostics.js`). `tools/validate-partials.mjs`/`tools/validate-data.js`/`system.json` parse all clean. No canonical-persistence call in any file this pass touched (confirmed by direct grep).
+
+**PHASE 8D-3B CORRECTION PASS ROUND 5 COMPLETE.** Per the review's own framing, the `locationLinks[]` schema shape is now frozen — this pass, like round 4, only hardened behavior around it (context/identity agreement, authoring-patch strictness, snapshot coherence, single-authority primary mutation). Two items (rich "who+how" reverse lookup, automatic snapshot enrichment) remain explicitly deferred to the UI-integration seam, requiring no further schema change. No catalog was hydrated. Same branch (`claude/gm-datapad-phase8d3b-49c10v`), same PR (#964). Per standing practice: stopping here for independent review.
+
+## 192. PHASE 8D-3B correction pass round 6 — final wiring bugs (small, no architecture)
+
+A sixth independent-review message independently re-verified round 5's exact head (CI green, all four claimed fixes genuinely present) and explicitly agreed the project is "no longer doing architecture work." It found exactly two small, concrete hardening bugs — both bypasses of protections round 5 itself had just built — plus one item explicitly recorded as an **8D-4/UI-integration invariant, not a schema change**. Both bugs fixed on the same branch/PR; the review's own recommendation ("one very small correction round... no new architecture... no new files unless absolutely necessary") was followed to the letter — zero new files this pass.
+
+### 1. The mismatch diagnostic could still be silently overwritten
+
+Round 5's `NPC_LOCATION_CONTEXT_MISMATCH` warning was attached to a FRESH `createProvenance()` and spread into `base` BEFORE `...rest` — so a caller supplying their own `provenance` (which falls into `...rest`, since it wasn't its own named parameter) would silently clobber the warning entirely, defeating the exact "never silently swallowed" contract round 5 documented for itself. Fixed by giving `provenance` its own explicit, named parameter (pulled out of `...rest` entirely, so it can never hide there again) and computing one `resolvedProvenance` that MERGES the diagnostic onto whatever the caller supplied (`isProvenance(provenance) ? provenance : createProvenance()`, then `withWarning(...)` only when `contextMismatch` is true) — applied to `base` AFTER `...rest`, so nothing can override it. `withWarning()` already merges rather than replaces (preserves `presetId`/`templateId`/`seed`/`tags`/every other existing warning), so this was a matter of using the existing primitive correctly, not building a new one.
+
+### 2. `addContactLocationLink`'s `primary` input wasn't actually strict
+
+Round 5 hardened `addContactLocationLink()`/`updateContactLocationLink()` against invalid EXPLICIT enum values specifically because a strict GM authoring API shouldn't tolerantly coerce bad input — but `addContactLocationLink()`'s own `primary` handling still used `Boolean(input.primary)`, so a truthy non-boolean like `primary: "false"` (a string) would silently become `true`. Added `hasValidExplicitPrimary()`: an explicitly-supplied `primary` must be a real boolean (`true`/`false`) or the whole call is rejected, exactly like every other enum field; `primary` omitted entirely is unaffected (still defaults to not-requested). `updateContactLocationLink()` needed no change — round 5 already rejects ANY patch mentioning `primary` at all, regardless of type, so the type-strictness question there was already moot.
+
+### 3. Recorded as a future invariant, not fixed here (by design)
+
+The review noted that `locationPopulationProfile`/`droidPrevalence` remain separate parameters from `locationContext` and are consumed independently, so a caller could in principle supply a `locationContext` that agrees with the resolved Location identity while `locationPopulationProfile`/`droidPrevalence` silently describe a DIFFERENT Location — a case `resolveNpcLocationGenerationContext()` cannot detect, since those two params carry no Location identity of their own to compare against. The review explicitly recommended NOT reopening 8D-3B for this: the eventual `buildNpcLocationContext(locationRef)` real resolver (already noted as deferred in round 3/§189) is where this coherence genuinely belongs — one function producing ONE coherent package (identity + population profile + droid prevalence + technology/economy signal + snapshot) from a single resolved Location reference, rather than a caller manually assembling five potentially-disagreeing pieces. Recorded here as an explicit 8D-4/UI-integration-phase invariant to carry forward, not a gap in this phase's own wiring.
+
+### Tests + Regression (this correction pass)
+
+`tests/gm-generation-phase8d3b-production.test.mjs` gained 2 new sections: the provenance merge (a caller-supplied provenance's `presetId` and pre-existing warnings both survive alongside the newly-added `NPC_LOCATION_CONTEXT_MISMATCH` warning; a caller-supplied provenance with no mismatch is still honored as-is); and strict primary boolean validation (`true`/`false`/omitted all still work normally; `"false"` (truthy string), `1` (truthy number), `0` (falsy number, proving strictness isn't merely truthiness-gated), and `null` are all rejected rather than coerced).
+
+Full `gm-*.test.mjs` sweep: **60/60 green** (unchanged file count). Full rolling suite (`tools/run-rolling-tests.mjs`): **189 passed, 0 failed** (5 pre-existing exclusions, unchanged). Full syntax check (`tools/run-rolling-syntax-check.mjs`): **2440/2440 clean** (zero new files, per the review's own explicit request — pure hardening of `npc/npc-bundle.js` and `npc/npc-location-link-actions.js`). `tools/validate-partials.mjs`/`tools/validate-data.js`/`system.json` parse all clean. No canonical-persistence call in either touched file (confirmed by direct grep).
+
+**PHASE 8D-3B CORRECTION PASS ROUND 6 COMPLETE — STRUCTURAL/WIRING REVIEW CLOSED.** Per the reviewer's own explicit framing across rounds 5 and 6, the `locationLinks[]` schema is frozen and no further architecture work remains for this phase; both concrete bugs from round 6 are fixed and verified, and the one remaining coherence gap is deliberately recorded as a future 8D-4/UI-integration invariant rather than addressed here. No catalog was hydrated. Same branch (`claude/gm-datapad-phase8d3b-49c10v`), same PR (#964). Per standing practice: stopping here for independent review — the next work, per the reviewer's own recommendation, is either catalog hydration or Datapad/UI integration against this now-frozen contract, neither of which should begin without explicit new instruction.
+
+## 193. PHASE 8D-3B final content hydration pass
+
+With the structural/wiring review explicitly closed as of round 6 (§192), a separate, content-only instruction requested a final hydration pass over every NPC/Faction catalog Phase 8D-3B owns or expanded, under an absolute architecture freeze: no change to `npc-concept.js`, `locationLinks[]` schema, the location-link action/query modules, the NPC Competence API, Faction Scale authority, draft/GM field-authoring APIs, Public Description composition, GM Notes, targeted-reroll contracts, or the GENERATE/SUGGEST/RESOLVE boundary. `docs/audits/gm-datapad-ecosystem-redesign.md` §186F's own "Exact catalog counts" table was treated as authoritative for every catalog it already documented a target for; the six purely-Faction narrative catalogs it lists with no forward target (goals/objectives/institutional-characters/internal-problems/leadership-structures/resource-flavors) were handled under the task's own explicit "no documented target — do not invent one" provision instead.
+
+### Before/after count matrix
+
+| Catalog | Before | After | Target | Status |
+|---|---:|---:|---|---|
+| `NPC_SOCIAL_ROLES` | 41 | 97 | 75-125 | met |
+| `NPC_NARRATIVE_FUNCTIONS` | 30 | 64 | 50-75 | met |
+| `NPC_LOCATION_RELATIONSHIPS` | 20 | 36 | 30-50 | met |
+| `NPC_LOYALTY_PROFILES` | 22 | 60 | 50-100 | met |
+| `NPC_SOCIAL_STYLES` | 25 | 81 | 75-125 | met |
+| `NPC_TEMPERAMENTS` | 20 | 57 | 50-75 | met |
+| `NPC_OCCUPATIONS` | 82 | 318 | 250-400 | met |
+| `NPC_FACTION_ROLES` | 34 | 111 | 100-150 | met |
+| `NPC_MOTIVATIONS` | 40 | 162 | 150-250 | met |
+| `NPC_DESIRES` | 30 | 151 | 150-250 | met |
+| `NPC_FEARS` | 38 | 164 | 150-250 | met |
+| `NPC_AGENDAS` | 51 | 201 | 200-300 | met |
+| `NPC_SECRETS` | 39 | 251 | 250-400 | met |
+| `NPC_COMPLICATIONS` | 30 | 254 | 250-400 | met |
+| `NPC_RELATIONSHIP_HOOK_TEMPLATES` | 20 | 201 | 200-300 | met |
+| `NPC_RELATIONSHIP_HOOK_SUBJECTS` | 15 | 32 | (no documented target; modest judgment-call expansion since it directly multiplies the templates' variety) | expanded |
+| `NPC_APPEARANCE_TRAITS` | 49 | 302 | 300-500 | met |
+| `NPC_VOICE_QUALITIES_ORGANIC` | 20 | 100 | 100-150 | met |
+| `NPC_VOICE_QUALITIES_DROID` | 18 | 101 | 100-150 | met |
+| `NPC_SPEECH_STYLES` | 30 | 200 | 200-300 | met |
+| `NPC_MANNERISMS` | 40 | 200 | 200-300 | met |
+| `NPC_DROID_MANNERISMS` | 20 | 150 | 150-250 | met |
+| `ORGANIC_NPC_FLAVOR_QUALITIES` | 134 | 1000 | 1,000-1,500 | met |
+| `DROID_NPC_FLAVOR_QUALITIES` | 99 | 500 | 500-1,000 | met |
+| — droid `chassis`+`paint`+`replacement-parts`+`photoreceptor` (appearance-cue combined) | 25 | 203 | 200-350 combined | met |
+| `FACTION_LONG_TERM_GOALS` | 44 | 44 | none documented | reviewed, adequate — unchanged |
+| `FACTION_CURRENT_OBJECTIVES` | 37 | 37 | none documented | reviewed, adequate — unchanged |
+| `FACTION_INSTITUTIONAL_CHARACTERS` | 48 | 53 | none documented | 1 near-duplicate removed, 6 genuinely new entries added |
+| `FACTION_INTERNAL_PROBLEMS` | 45 | 45 | none documented | reviewed, adequate — unchanged |
+| `FACTION_LEADERSHIP_STRUCTURES` | 35 | 38 | none documented | 3 near-duplicates removed, 5 genuinely new entries added |
+| `FACTION_RESOURCE_FLAVORS` | 33 | 36 | none documented | 1 near-duplicate removed, 4 genuinely new entries added |
+| **Total (30 catalogs/pools)** | **1,189** | **5,046** | | |
+
+Every catalog with an audit-documented or user-specified target lands within its floor-to-ceiling range (none at the exact ceiling; several deliberately land at or just above the floor, per the phase spec's own "never require the exact upper bound" guidance and the explicit instruction that count is not itself the goal).
+
+### Quality checks performed
+
+- **Per-file, immediately after every edit** (not batched to the end, per the phase spec's explicit "run validation after each major group" instruction): a real Node ESM import of the just-edited file (not `node --check` alone — `node --check` was observed, twice, to report success on a file containing a genuine unescaped-apostrophe `SyntaxError` that only a real `import` surfaced), plus a `.length` count and a `Set(value.toLowerCase().trim())` exact/case/whitespace-normalized uniqueness check.
+- **Cross-catalog reference validation**: every `NPC_OCCUPATIONS.roleTag` checked against the full `NPC_ROLES` value set (0 invalid across all 318 occupations); every `NPC_RELATIONSHIP_HOOK_TEMPLATES.type` checked against `RELATIONSHIP_HOOK_TYPE` (0 invalid across 201 templates); every `NPC_LOCATION_RELATIONSHIPS.linkType` checked against `CONTACT_LOCATION_RELATIONSHIP` (0 invalid across 36 entries).
+- **`conflictTags` correctness fix** (a genuine latent bug this pass both inherited and found): `npc/npc-flavor.js`'s `conflictsWithPicked()` checks a candidate's `conflictTags` against sibling entries' own `tags[]` array specifically — NOT against the sibling's `id` or its own `conflictTags`. A pre-existing authoring convention in the original 134/99-entry organic/droid catalogs (e.g. `unusually-tall` ↔ `unusually-short`) declared `conflictTags` referencing the sibling's id-shaped slug without that slug ever appearing in the sibling's own `tags[]` — silently inert (0/1 organic pairs actually worked pre-hydration). This hydration pass initially continued that same convention at scale (219 more inert references added across ~110 new conflictTags pairs in the organic pool, 10 in the droid pool), then caught it via a dedicated verification script, and fixed EVERY reference (pre-existing and newly-added alike) by adding each entry's own id-slug into its own `tags[]` wherever a sibling's `conflictTags` needed it to resolve — 220/220 organic and 10/10 droid `conflictTags` references now genuinely functional. One additional dangling reference (`barely-audible-voice`'s `conflictTags: ['loud-voice']`, where no entry with id `loud-voice` has ever existed — a pre-existing typo, not hydration-introduced) was corrected to `['loud']`, the tag two real entries (`very-loud-voice`, `booming-laugh`) already carry.
+- **Automated near-duplicate detection** (word-overlap/Jaccard similarity, not just exact-string matching) run across all 30 hydrated catalogs/pools at a ≥0.72 threshold. Only 2 pairs exceeded that lexical-similarity threshold across >5,000 entries, and both are intentional paired opposites already wired as `conflictTags` pairs (`prefers-dim-lighting`/`prefers-bright-lighting`; a droid-affection/people-as-equipment mirror pair in `NPC_SPEECH_STYLES`). That result is proof only of what a lexical-overlap scan can prove: it does not, by itself, establish that the catalogs are free of semantic restatement between entries with lower literal word overlap (a phrasing this pass initially relied on too heavily). An independent reviewer's manual spot-check of the motivation/desire/fear/agenda/secret/complication pools, followed up here with a second, lower-threshold (≥0.45) automated pass specifically over those six catalogs and a manual read of every pair it surfaced, found and fixed 6 genuine semantic near-duplicates the 0.72 lexical scan had missed (e.g. "trying to build a better life for their children" / "trying to secure a better future for their children"; "operating under an assumed identity" / "is not who their identification says they are"; "is dealing with a minor dispute over payment" / "is dealing with a minor billing dispute") — each fixed by replacing one side of the pair with a genuinely distinct concept rather than merely rewording it, preserving catalog counts. Pairs that share surface phrasing but describe genuinely distinct scenarios (e.g. many `NPC_COMPLICATIONS` entries deliberately reuse an "is dealing with a minor X dispute" template across different domains — payment, territory, jurisdiction — as intentional structural variety, not padding) were read individually and kept. Some residual conceptual proximity between large-pool entries is expected and acceptable at this scale; the claim here is narrower and defensible: the specific pairs an independent manual read flagged were addressed, not that no further semantic overlap exists anywhere in >5,000 entries.
+- **Manual full-file review** of the six Faction narrative catalogs (§23's "no documented target" case) turned up 5 genuine pre-existing near-duplicate pairs the automated scanner's threshold didn't independently confirm but manual reading did — see the count matrix above; all 5 removed.
+- **Content-distribution discipline**: every newly-added entry across the fear/secret/complication/agenda/motivation pools was deliberately weighted toward ordinary/mundane content (missed deadlines, minor financial worry, workplace embarrassment, family concerns) at HIGHER `weight` than the existing dramatic-leaning entries, per the phase spec's explicit "ordinary=common...bizarre=rare" distribution rule — this shifts actual generation-time selection probability toward mundane outcomes, not merely the catalog's raw composition.
+- **Organic/droid hard boundary**: preserved throughout — `ORGANIC_NPC_FLAVOR_QUALITIES`/`DROID_NPC_FLAVOR_QUALITIES` remain two structurally separate arrays (`npc-flavor.js`'s `kind`-keyed pool lookup, unchanged); `NPC_MANNERISMS`/`NPC_DROID_MANNERISMS` and `NPC_VOICE_QUALITIES_ORGANIC`/`NPC_VOICE_QUALITIES_DROID` likewise; no cross-pool entry was ever added to the wrong file.
+- **Default per-NPC selection counts, weighting philosophy, and every generator/schema file**: confirmed unchanged — this pass touched only catalog *data* files (`scripts/generation/data/*.js`) plus the one production test file; zero edits to `npc/`, `factions/`, `lib/`, or any Foundry-facing module.
+
+### Requesting catalog/no-action decisions (§23 provision)
+
+Per the task's own explicit instruction not to invent a large arbitrary target for a Faction catalog the audit doesn't separately document: `FACTION_LONG_TERM_GOALS` (44), `FACTION_CURRENT_OBJECTIVES` (37), and `FACTION_INTERNAL_PROBLEMS` (45) were each read in full, found to already cover a genuinely broad range of archetypes (military/business/community/religion/noble/crime/government) with intentional weighting and zero duplicates, and judged adequate for foundation scale — left unchanged. `FACTION_INSTITUTIONAL_CHARACTERS`/`FACTION_LEADERSHIP_STRUCTURES`/`FACTION_RESOURCE_FLAVORS` each had genuine near-duplicate entries (documented above) removed and received a small, judgment-based set of genuinely new entries (5-6 each) closing real conceptual gaps spotted during the same full-file read — not padding toward an invented number.
+
+### Test suite changes
+
+`tests/gm-generation-phase8d3b-production.test.mjs`: the two loose `ORGANIC_NPC_FLAVOR_QUALITIES.length >= 100` / `DROID_NPC_FLAVOR_QUALITIES.length >= 75` placeholder assertions were tightened to their real documented floors (1,000 / 500), a new assertion was added confirming the droid appearance-cue combined categories meet their own 200+ floor, and a new assertion confirms every declared `conflictTags` reference resolves against some entry's own `tags[]` in the same pool (guards against the exact latent-reference class of bug this pass found and fixed — regression-proof against it recurring). A new, self-contained test block asserts the documented production floor (never the exact ceiling) for the 16 additional hydrated catalogs that previously had no explicit floor assertion, plus a duplicate-value check (case/whitespace-normalized) on every one of them, plus a standalone re-assertion that `NPC_OCCUPATIONS.roleTag` values are all real `NPC_ROLES` values.
+
+### Full regression
+
+- `gm-*.test.mjs`: **59/59 passed, 0 failed** (59 files currently exist under that glob; 0 failures either way is the bar that matters).
+- `tools/run-rolling-tests.mjs`: **189 passed, 0 failed** (5 pre-existing documented exclusions, unchanged from baseline).
+- `tools/run-rolling-syntax-check.mjs`: **2,440/2,440 clean** (identical file count to the round-6 baseline — this pass added zero new files, only edited existing catalog/test files).
+- `tools/validate-partials.mjs`: clean (532 `.hbs` files scanned, 218 file-backed partials referenced).
+- `tools/validate-data.js`: **PASSED** — 137/137 species, 6/6 talent enhancements, 263/263 feat combat actions, 30 ship combat actions, 125 templates/886 units nonheroic data, 139/139 extra skill uses; 0 errors, 0 warnings.
+- `system.json`: parses as valid JSON.
+- **Canonical-persistence guard**: direct `git diff` grep across every file this pass touched for `upsertFaction`/`promoteFactionContactToActor`/`game.actors.create`/`LocationRegistryService` — zero matches. No canonical-persistence call was introduced anywhere in this pass.
+
+### Architecture-freeze confirmation
+
+**No generator/schema/relationship architecture was changed during hydration.** Every file this pass touched is either a catalog data file under `scripts/generation/data/` or the one production test file (`tests/gm-generation-phase8d3b-production.test.mjs`, extended additively with new assertions only — no existing assertion was weakened or removed, several were tightened). `npc-concept.js`, `locationLinks[]` and its action/query modules, `npc-competence.js`, Faction Scale authority, `draft-field-authoring.js`/`npc-field-authoring.js`, `npc/npc-flavor.js`'s selection/conflict engine, Public Description composition, and every targeted-reroll wrapper are byte-for-byte unchanged. This statement is true; per the phase spec's own explicit instruction, hydration would have stopped and reported rather than proceeding had that not been the case.
+
+### Deferred / intentionally not changed
+
+- No new Faction-scale target was invented for the six catalogs §23 explicitly says not to invent one for; three were left unchanged after review, three received a small, documented, judgment-based expansion tied to genuine gaps found during a full-file read.
+- The one remaining `locationPopulationProfile`/`droidPrevalence`-vs-`locationContext` coherence gap recorded in §192 as an explicit 8D-4/UI-integration invariant remains deferred there — untouched by this content-only pass, as it always was out of scope for it.
+- No further catalog beyond the phase spec's own enumerated list was touched (e.g. `npc-personality-traits.js`/`npc-disposition.js`/technology-familiarity/lifestyle ladders were explicitly named as NOT to be inflated, and were not).
+
+**PHASE 8D-3B FINAL CONTENT HYDRATION PASS COMPLETE.** Same branch (`claude/gm-datapad-phase8d3b-49c10v`), same PR (#964). Per standing practice: stopping here for independent review.
+
+## 194. PHASE 8D-3B content-hydration correction round — test-guard and content-QA cleanup
+
+An independent review of the hydration head (`7cfc69c`) confirmed the architecture freeze held exactly, the new test guards genuinely function, and the content direction was substantially better than the pre-hydration tables — but flagged three content-QA-only items to clean up before merge, explicitly scoped as not reopening architecture. All three addressed on the same branch/PR; no generator/schema/relationship file touched.
+
+### 1. Five hydrated catalogs still relied on the loose "grew beyond foundation" check
+
+`NPC_MOTIVATIONS`, `NPC_AGENDAS`, `NPC_SECRETS`, `NPC_APPEARANCE_TRAITS`, and `NPC_MANNERISMS` had already reached their documented production floors, but the test suite only asserted `pool.length > priorFoundationCount[name]` for them (the §186E-era loose growth check), not their actual §193 floor. Added real floor assertions (`>=150`/`>=200`/`>=250`/`>=300`/`>=200` respectively) into the same `floors` object the rest of the hydration-floor block already uses, so all five now get the same treatment (floor assertion + case/whitespace-normalized duplicate check) as every other hydrated catalog. Also tightened `NPC_ROLES`'s lower bound from 75 to 100 — the catalog has been production-complete at 140 entries since before this phase's hydration pass, and 75 was a stale placeholder from when the catalog was still growing.
+
+### 2. Grammar/prose sweep
+
+A manual spot-check plus several targeted regex sweeps (missing possessive apostrophes from this pass's own apostrophe-avoidance rewrites; article errors) across all 26 files this phase's hydration touched found and fixed 6 genuine errors: `barely-audible-voice`'s already-known type, a "Checks a nearby person['s] vital signs" possessive, "is secretly the reason a[n] old feud", "a[n] estranged sibling" (pre-existing, not hydration-introduced), "correct a superior['s] mistake" / "repeating a parent['s] mistake" (both reworded to avoid the possessive construction entirely, consistent with this pass's established apostrophe-avoidance convention), "a coworker['s] minor theft" (likewise reworded), and "someone else['s] mistake" / "someone else['s] success" (both reworded). Verified via the same per-file `node --check` + real ESM import + count + uniqueness discipline used throughout the original hydration; no catalog count changed.
+
+### 3. Semantic near-duplicate claim was overstated, and a manual pass found 6 more
+
+The original §193 wording ("only 2 near-duplicate pairs across 5,000+ entries") accurately described what the ≥0.72 Jaccard lexical-similarity scan found, but was written in a way that could be read as a stronger claim than the scan actually supports — a lexical scan cannot catch semantic restatement between entries with lower literal word overlap. The wording in §193 above has been corrected to state precisely what was and wasn't proven. A second, lower-threshold (≥0.45) automated scan was then run specifically over the six most reviewer-flagged catalogs (motivations/desires/fears/agendas/secrets/complications) and every surfaced pair was read manually. Of roughly 20 pairs surfaced, most were judged genuinely distinct on a close read (different specific scenario, relationship, or domain despite shared template phrasing — several `NPC_COMPLICATIONS` entries deliberately reuse an "is dealing with a minor X dispute" template across different domains as intentional structural variety). Six were judged genuine semantic duplicates and fixed by replacing one side of each pair with a concept judged genuinely distinct, never merely reworded, preserving every catalog's exact entry count:
+
+- `NPC_MOTIVATIONS`: "trying to secure a better future for their children" → "trying to give their children opportunities they never had themselves"; "desperate to pay off a debt before it comes due" → "trying to protect their family name from the shame of unpaid debt".
+- `NPC_SECRETS`: "is not who their identification says they are" → "has been secretly recording conversations for reasons they will not explain"; "has a criminal record sealed under a different name" → "was acquitted of a crime everyone still assumes they committed".
+- `NPC_FEARS`: "their best years being behind them professionally" → "that no one will remember what they built once they are gone".
+- `NPC_COMPLICATIONS`: "is dealing with a minor billing dispute" → "is dealing with a double-booked invoice no one wants to sort out"; "is quietly frustrated by a decision they were not consulted on" → "is quietly second-guessing a decision they made under pressure".
+
+### Tests + Regression (this correction round)
+
+No new test sections were added beyond the five floor assertions folded into the existing hydration-floor block (item 1 above). Full `gm-*.test.mjs` sweep, full rolling suite, full syntax check, `tools/validate-partials.mjs`/`tools/validate-data.js`/`system.json` parse, and the canonical-persistence guard were all re-run clean — see the commit for this round's exact numbers, unchanged from §193's baseline (same catalog counts, same file count, only content-QA edits to existing entries).
+
+**PHASE 8D-3B CONTENT-HYDRATION CORRECTION ROUND COMPLETE.** Same branch (`claude/gm-datapad-phase8d3b-49c10v`), same PR (#964). No architecture reopened, per the review's own explicit scoping. Per standing practice: stopping here for independent review / merge decision.

@@ -1,0 +1,73 @@
+/**
+ * PHASE 8D-3B production — NPC loyalty-profile catalog: who or what
+ * this NPC is fundamentally committed to. Distinct from `disposition`
+ * (how they treat the PCs right now, `npc-concept.js`'s existing
+ * `NPC_DISPOSITION`) -- loyalty is about their deeper allegiance,
+ * disposition is the surface read. Narrative only; no later reputation/
+ * standing system is assumed or required to read this field.
+ *
+ * PHASE 8D-3B FINAL CONTENT HYDRATION PASS: expanded toward the
+ * documented production target (50-100).
+ */
+export const NPC_LOYALTY_PROFILES = Object.freeze([
+  { value: 'loyal to their Faction, without question', weight: 2, tags: [] },
+  { value: 'loyal to a specific leader, not the organization itself', weight: 2, tags: [] },
+  { value: 'loyal to their family above all else', weight: 2, tags: [] },
+  { value: 'loyal to their homeworld or people', weight: 1, tags: ['community-tribe'] },
+  { value: 'loyal to an ideology or cause', weight: 1, tags: ['religion', 'force-tradition'] },
+  { value: 'loyal to whoever pays best', weight: 2, tags: ['crime-syndicate', 'business-professional'] },
+  { value: 'loyal only to themselves', weight: 2, tags: [] },
+  { value: 'professionally loyal, nothing personal', weight: 2, tags: ['business-professional'] },
+  { value: 'begrudgingly loyal, resents the obligation', weight: 1, tags: [] },
+  { value: 'questioning their loyalty lately', weight: 1, tags: [] },
+  { value: 'secretly disloyal, playing a longer game', weight: 0.5, tags: ['crime-syndicate'] },
+  { value: 'opportunistic, loyalty shifts with circumstance', weight: 1, tags: ['crime-syndicate'] },
+  { value: 'loyal to an old mentor, wherever they are now', weight: 1, tags: [] },
+  { value: 'loyal to a promise made long ago', weight: 1, tags: [] },
+  { value: 'loyal to a small circle of close friends', weight: 2, tags: [] },
+  { value: 'loyal to the job itself, not any employer', weight: 1, tags: [] },
+  { value: 'loyal to a memory of someone now gone', weight: 1, tags: [] },
+  { value: 'fiercely loyal, has proven it before', weight: 1, tags: [] },
+  { value: 'loyalty is untested, unclear even to them', weight: 1, tags: [] },
+  { value: 'loyal to the credits, plain and simple', weight: 1, tags: ['crime-syndicate'] },
+  { value: 'loyal to their crew, above the organization they serve', weight: 1, tags: ['military-paramilitary', 'crime-syndicate'] },
+  { value: 'loyal to a code or personal ethic', weight: 1, tags: ['force-tradition'] },
+  { value: 'loyal to their employer, within reason', weight: 2, tags: ['business-professional'] },
+  { value: 'loyal to a religious order', weight: 1, tags: ['religion'] },
+  { value: 'loyal to a guild above any single employer', weight: 1, tags: ['trade', 'business-professional'] },
+  { value: 'loyal to whoever protects their people', weight: 1, tags: ['community-tribe'] },
+  { value: 'loyal to a childhood friend, no matter what', weight: 1, tags: [] },
+  { value: 'loyal to their unit, even after leaving service', weight: 1, tags: ['military-paramilitary'] },
+  { value: 'loyal to a teacher or master they still answer to', weight: 1, tags: ['force-tradition'] },
+  { value: 'loyal to a cause they will not fully explain', weight: 0.5, tags: ['mysterious'] },
+  { value: 'loyal to habit, sticking with what is familiar', weight: 1, tags: [] },
+  { value: 'loyal to a patron who once saved their life', weight: 0.5, tags: [] },
+  { value: 'loyal to the rules, more than any person', weight: 1, tags: ['government-bureaucracy', 'enforcement'] },
+  { value: 'loyal to no one for very long', weight: 1, tags: ['crime-syndicate'] },
+  { value: 'loyal in public, uncertain in private', weight: 0.5, tags: [] },
+  { value: 'loyal to the memory of a fallen comrade', weight: 0.5, tags: ['military-paramilitary'] },
+  { value: 'loyal to a business partner, more than the business', weight: 1, tags: ['business-professional'] },
+  { value: 'loyal to whoever offers the most respect', weight: 1, tags: [] },
+  { value: 'loyal to their homeworld government, even from afar', weight: 1, tags: ['government-bureaucracy'] },
+  { value: 'loyal to a debt they intend to repay in full', weight: 1, tags: [] },
+  { value: 'loyal to the first person who trusted them', weight: 1, tags: [] },
+  { value: 'loyal to a found family, not a blood one', weight: 1.5, tags: ['community-tribe'] },
+  { value: 'loyal to whichever side is winning', weight: 0.5, tags: ['crime-syndicate'] },
+  { value: 'loyal to a set of personal standards, above orders', weight: 1, tags: [] },
+  { value: 'loyal to their old crew, even scattered now', weight: 1, tags: ['crime-syndicate'] },
+  { value: 'loyal to the community that took them in', weight: 1, tags: ['community-tribe'] },
+  { value: 'loyal by contract, and takes that seriously', weight: 1.5, tags: ['business-professional'] },
+  { value: 'loyal to a noble house, by birth or oath', weight: 1, tags: ['noble-house'] },
+  { value: 'loyal to a droid or companion, oddly enough', weight: 0.5, tags: [] },
+  { value: 'loyal to whoever keeps them employed', weight: 1.5, tags: ['business-professional'] },
+  { value: 'loyal to a cause abandoned by everyone else', weight: 0.5, tags: [] },
+  { value: 'loyal to their own reputation above all', weight: 1, tags: [] },
+  { value: 'loyal to a partner they will not betray', weight: 1, tags: [] },
+  { value: 'loyal to an oath sworn long ago and rarely mentioned', weight: 0.5, tags: [] },
+  { value: 'loyal to the highest bidder, and says so openly', weight: 1, tags: ['crime-syndicate'] },
+  { value: 'loyal to their trade or craft, more than any employer', weight: 1, tags: ['trade'] },
+  { value: 'loyal to the safety of their own crew first', weight: 1, tags: ['military-paramilitary'] },
+  { value: 'loyal to a distant relative who raised them', weight: 0.5, tags: [] },
+  { value: 'loyal to whoever gave them a second chance', weight: 1, tags: [] },
+  { value: 'loyal to their own survival, above any cause', weight: 1, tags: [] }
+]);
