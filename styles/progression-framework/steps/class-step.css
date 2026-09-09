@@ -600,6 +600,21 @@
   text-align: left;
 }
 
+/* Reduce the card's own minimum height at compact/short app sizes rather
+   than letting the fixed 300px minimum push the grid past the visible
+   work surface -- the actual failure mode a mangled height chain (see
+   chargen-stabilization.css's `overflow: hidden` containment) turns
+   into: content clipped out of view instead of the card shrinking. */
+.progression-shell.is-shell-compact .prog-class-card--visual,
+.progression-shell.is-shell-short .prog-class-card--visual {
+  min-height: 180px;
+}
+
+.progression-shell.is-shell-compact .prog-class-card__visual-wrap,
+.progression-shell.is-shell-short .prog-class-card__visual-wrap {
+  min-height: 140px;
+}
+
 .progression-shell .prog-class-card--visual:hover,
 .progression-shell .prog-class-card--visual:focus-visible,
 .progression-shell .prog-class-card--visual.prog-class-card--focused {

@@ -316,7 +316,12 @@
 .prog-class-grid,
 .prog-background-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  /* auto-fit (not auto-fill) so remaining columns stretch to fill the row
+     instead of leaving phantom empty tracks, and minmax(min(...),1fr) so
+     a track never demands more width than the work surface actually has
+     -- a card that can't fit its full 280px minimum shrinks instead of
+     forcing horizontal overflow/clipping. */
+  grid-template-columns: repeat(auto-fit, minmax(min(180px, 100%), 1fr));
   gap: 16px;
   padding: 16px 0;
   width: 100%;
@@ -415,6 +420,43 @@
 .prog-force-power-card > .progression-option-card__select,
 .prog-starship-maneuver-card > .progression-option-card__select {
   margin: 0.4rem 0.5rem 0.5rem auto;
+}
+
+/* Class cards: the universal row layout (giant portrait card + a small
+   capsule button floating beside it) reads fine for a compact feat row,
+   but not for a ~300px-tall graphical class card -- the capsule ends up
+   as an orphan floating between cards. `.prog-class-card-wrap` (the
+   `<article>` wrapping the class portrait `<button>` and the injected
+   option-card-action.hbs `<button>` as siblings, class-work-surface.hbs)
+   stacks them into one coherent unit instead: the commit control becomes
+   a full-width command strip attached directly beneath the card. Same
+   two semantic actions as every other option card (focus-item on the
+   card, the step's canonical commit action on the select button) --
+   presentation only, no behavior change. */
+.prog-class-card-wrap {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 4px;
+}
+
+.prog-class-card-wrap > .progression-option-card__select {
+  flex: 0 0 auto;
+  align-self: stretch;
+  width: 100%;
+  min-height: 30px;
+  margin: 0;
+  text-align: center;
+  border-color: rgba(80, 220, 255, 0.35);
+}
+
+.prog-class-card-wrap.progression-option-card--selected > .progression-option-card__select {
+  border-color: rgba(65, 255, 170, 0.6);
+  color: rgba(170, 255, 215, 1);
+}
+
+.prog-class-card-wrap.progression-option-card--locked > .progression-option-card__select {
+  border-color: rgba(255, 255, 255, 0.12);
+  color: rgba(255, 255, 255, 0.4);
 }
 
 .progression-option-card__select[data-card-action-state="selected"],

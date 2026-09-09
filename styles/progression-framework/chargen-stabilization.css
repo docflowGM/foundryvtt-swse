@@ -265,287 +265,306 @@
   writing-mode: vertical-rl;
 }
 
-/* Collapse low-value rails sooner on narrow sheets so the workspace stays useful. */
-@media (max-width: 1400px) {
-  .progression-shell [data-region="summary-panel"],
-  .progression-shell .prog-rail-resizer--summary {
-    display: none !important;
-  }
+/* ============================================================================
+   Responsive authority: shell-responsive-observer.js's ResizeObserver classes
+   ============================================================================
+
+   CORRECTION: every rule below this point used to be a browser-viewport
+   `@media (max-width/max-height: ...)` query. A Foundry Application's
+   rendered size and the browser's CSS viewport are NOT the same number
+   (browser chrome, page zoom, Windows display scaling, and DPR all sit
+   between them) -- Electron (no browser chrome) and a browser tab could
+   disagree about which side of a breakpoint the SAME physical window was
+   on, so the exact same progression screen could reflow correctly in one
+   host and collapse to a near-empty surface in the other. The system
+   already has the correct authority for this
+   (`shell-responsive-observer.js`'s `ResizeObserver`, which measures the
+   actual rendered `.progression-shell` application and assigns
+   `is-shell-compact`/`is-shell-narrow`/`is-shell-tiny`/`is-shell-short`
+   directly on it) -- every rule below now reads THAT instead of a
+   viewport query, so Electron and browser render identically for a given
+   actual app size. `is-shell-compact` reuses the observer's own default
+   thresholds verbatim (`width<1180 || height<760 ||
+   (width<1380 && height<820)`) rather than re-deriving a fourth set of
+   numbers here.
+
+   Collapse low-value rails sooner on narrow sheets so the workspace stays
+   useful, WITHOUT collapsing everything into a single "compact" state.
+   Summary is the lowest-value rail (glanceable elsewhere) and goes first
+   at `is-shell-compact` (roughly "laptop and below"); details stays
+   mounted at that tier and only collapses at `is-shell-narrow` (the app
+   genuinely doesn't have room for a 3rd column any more), becoming a
+   drawer instead via the automatic compact mode below. */
+.progression-shell.is-shell-compact [data-region="summary-panel"],
+.progression-shell.is-shell-compact .prog-rail-resizer--summary {
+  display: none !important;
 }
 
-@media (max-width: 1180px) {
-  .progression-shell [data-region="details-panel"],
-  .progression-shell .prog-rail-resizer--details {
-    display: none !important;
-  }
-
-  .progression-shell .prog-content-row {
-    gap: 0 !important;
-  }
+.progression-shell.is-shell-narrow [data-region="details-panel"],
+.progression-shell.is-shell-narrow .prog-rail-resizer--details {
+  display: none !important;
 }
 
-@media (max-height: 820px) {
-  .progression-shell [data-region="mentor-rail"] {
-    height: 104px !important;
-    min-height: 104px !important;
-    max-height: 104px !important;
-  }
-
-  .progression-shell [data-region="mentor-rail"][data-collapsed="true"] {
-    height: 48px !important;
-    min-height: 48px !important;
-    max-height: 48px !important;
-  }
-
-  .progression-shell .prog-phase-banner {
-    padding-block: 6px !important;
-  }
+.progression-shell.is-shell-narrow .prog-content-row {
+  gap: 0 !important;
 }
 
-@media (max-height: 700px) {
-  .progression-shell .prog-phase-banner {
-    display: none !important;
-  }
+.progression-shell.is-shell-compact [data-region="mentor-rail"] {
+  height: 104px !important;
+  min-height: 104px !important;
+  max-height: 104px !important;
+}
 
-  .progression-shell [data-region="mentor-rail"] {
-    height: 76px !important;
-    min-height: 76px !important;
-    max-height: 76px !important;
-  }
+.progression-shell.is-shell-compact [data-region="mentor-rail"][data-collapsed="true"] {
+  height: 48px !important;
+  min-height: 48px !important;
+  max-height: 48px !important;
+}
 
-  .progression-shell [data-region="progress-rail"] {
-    min-height: 36px !important;
-    padding-block: 4px !important;
-  }
+.progression-shell.is-shell-compact .prog-phase-banner {
+  padding-block: 6px !important;
+}
 
-  .progression-shell [data-region="utility-bar"] {
-    --prog-utility-bar-height: 40px;
-  }
+.progression-shell.is-shell-short .prog-phase-banner {
+  display: none !important;
+}
+
+.progression-shell.is-shell-short [data-region="mentor-rail"] {
+  height: 76px !important;
+  min-height: 76px !important;
+  max-height: 76px !important;
+}
+
+.progression-shell.is-shell-short [data-region="progress-rail"] {
+  min-height: 36px !important;
+  padding-block: 4px !important;
+}
+
+.progression-shell.is-shell-short [data-region="utility-bar"] {
+  --prog-utility-bar-height: 40px;
 }
 
 /* ============================================================================
    Automatic compact progression mode
    ============================================================================ */
 
-@media (max-width: 1180px), (max-height: 760px), (max-width: 1380px) and (max-height: 820px) {
-  .progression-shell {
-    --prog-utility-bar-height: 38px;
-    --prog-footer-height: 44px;
-  }
-
-  .progression-shell::before {
-    inset: 4px !important;
-  }
-
-  .progression-shell [data-region="mentor-rail"],
-  .progression-shell [data-region="progress-rail"],
-  .progression-shell .prog-phase-banner,
-  .progression-shell .prog-collapsed-rail-tray,
-  .progression-shell .prog-summary-restore,
-  .progression-shell .prog-summary-panel__collapse,
-  .progression-shell .prog-rail-resizer {
-    display: none !important;
-    height: 0 !important;
-    min-height: 0 !important;
-    max-height: 0 !important;
-    flex-basis: 0 !important;
-    overflow: hidden !important;
-  }
-
-  .progression-shell .prog-main-column {
-    min-height: 0 !important;
-    overflow: hidden !important;
-  }
-
-  .progression-shell .prog-content-row {
-    position: relative !important;
-    padding: 4px !important;
-    gap: 0 !important;
-  }
-
-  .progression-shell [data-region="summary-panel"] {
-    display: none !important;
-  }
-
-  .progression-shell [data-region="work-surface"] {
-    flex: 1 1 100% !important;
-    width: 100% !important;
-    min-width: 0 !important;
-    padding: 6px !important;
-    border-inline-width: 0 !important;
-  }
-
-  .progression-shell .prog-step-context-banner {
-    padding: 4px 8px !important;
-    margin: 0 0 4px !important;
-    font-size: 11px !important;
-  }
-
-  .progression-shell [data-region="utility-bar"] {
-    height: var(--prog-utility-bar-height) !important;
-    min-height: var(--prog-utility-bar-height) !important;
-    max-height: var(--prog-utility-bar-height) !important;
-    padding: 2px 6px !important;
-    border-bottom-color: rgba(80, 220, 255, 0.18) !important;
-  }
-
-  .progression-shell .prog-inline-utility-region {
-    margin-bottom: 4px !important;
-  }
-
-  .progression-shell .prog-utility-bar,
-  .progression-shell .prog-utility-bar__controls,
-  .progression-shell .prog-utility-bar__filters,
-  .progression-shell .prog-utility-bar__search {
-    min-height: 0 !important;
-    gap: 4px !important;
-  }
-
-  .progression-shell .prog-utility-bar button,
-  .progression-shell .prog-utility-bar input,
-  .progression-shell .prog-utility-bar__filter-chip,
-  .progression-shell .swse-ui-button {
-    min-height: 28px !important;
-    padding-block: 3px !important;
-    font-size: 11px !important;
-  }
-
-  .progression-shell [data-region="details-panel"] {
-    display: flex !important;
-    position: absolute !important;
-    left: 8px !important;
-    right: 8px !important;
-    bottom: 8px !important;
-    width: auto !important;
-    min-width: 0 !important;
-    max-width: none !important;
-    max-height: min(46%, 360px) !important;
-    z-index: 80 !important;
-    border: 1px solid rgba(80, 220, 255, 0.42) !important;
-    background: rgba(3, 11, 20, 0.96) !important;
-    box-shadow: 0 0 24px rgba(0, 190, 255, 0.18), inset 0 0 12px rgba(80, 220, 255, 0.08) !important;
-    backdrop-filter: blur(10px);
-  }
-
-  .progression-shell [data-region="details-panel"]:has(.prog-details-placeholder__empty) {
-    display: none !important;
-  }
-
-  .progression-shell [data-region="details-panel"] > * {
-    max-height: 100% !important;
-    overflow-y: auto !important;
-  }
-
-  .progression-shell [data-region="action-footer"] {
-    height: var(--prog-footer-height) !important;
-    min-height: var(--prog-footer-height) !important;
-    max-height: var(--prog-footer-height) !important;
-  }
-
-  .progression-shell .swse-footer {
-    min-height: 0 !important;
-    height: 100% !important;
-    grid-template-columns: minmax(72px, auto) minmax(0, 1fr) minmax(72px, auto) !important;
-    align-items: center !important;
-    padding: 2px 6px !important;
-    gap: 4px !important;
-  }
-
-  .progression-shell .action-footer__status {
-    min-width: 0 !important;
-    overflow: hidden !important;
-  }
-
-  .progression-shell .prog-footer-status-line {
-    max-width: 100% !important;
-  }
-
-  .progression-shell .prog-footer-status-trigger {
-    max-width: 100% !important;
-    padding: 2px 8px !important;
-    font-size: 10px !important;
-  }
-
-  .progression-shell .prog-blocker-explanation,
-  .progression-shell .swse-footer__status {
-    position: absolute !important;
-    left: 50% !important;
-    bottom: calc(100% + 4px) !important;
-    transform: translateX(-50%) !important;
-    max-width: min(720px, calc(100vw - 32px)) !important;
-    padding: 3px 8px !important;
-    font-size: 11px !important;
-    white-space: nowrap !important;
-    overflow: hidden !important;
-    text-overflow: ellipsis !important;
-  }
-
-  .progression-shell .swse-btn,
-  .progression-shell .swse-btn--back,
-  .progression-shell .swse-btn--confirm {
-    min-height: 30px !important;
-    padding: 4px 10px !important;
-    font-size: 11px !important;
-  }
+.progression-shell.is-shell-compact {
+  --prog-utility-bar-height: 38px;
+  --prog-footer-height: 44px;
 }
 
-@media (max-width: 900px) {
-  .progression-shell .prog-content-row {
-    padding: 2px !important;
-  }
-
-  .progression-shell [data-region="utility-bar"] {
-    height: auto !important;
-    min-height: 34px !important;
-    max-height: 74px !important;
-    overflow-y: auto !important;
-  }
-
-  .progression-shell .prog-utility-bar,
-  .progression-shell .prog-utility-bar__controls,
-  .progression-shell .prog-utility-bar__filters {
-    flex-wrap: wrap !important;
-  }
-
-  .progression-shell [data-region="work-surface"] {
-    padding: 4px !important;
-  }
-
-  .progression-shell [data-region="details-panel"] {
-    left: 4px !important;
-    right: 4px !important;
-    bottom: 4px !important;
-    max-height: 58% !important;
-  }
-
-  .progression-shell .prog-footer-status-label {
-    display: none !important;
-  }
-
-  .progression-shell .swse-footer {
-    grid-template-columns: auto minmax(0, 1fr) auto !important;
-  }
+.progression-shell.is-shell-compact::before {
+  inset: 4px !important;
 }
 
-@media (max-width: 700px) {
-  .progression-shell {
-    --prog-footer-height: 42px;
-  }
+.progression-shell.is-shell-compact [data-region="mentor-rail"],
+.progression-shell.is-shell-compact [data-region="progress-rail"],
+.progression-shell.is-shell-compact .prog-phase-banner,
+.progression-shell.is-shell-compact .prog-collapsed-rail-tray,
+.progression-shell.is-shell-compact .prog-summary-restore,
+.progression-shell.is-shell-compact .prog-summary-panel__collapse,
+.progression-shell.is-shell-compact .prog-rail-resizer {
+  display: none !important;
+  height: 0 !important;
+  min-height: 0 !important;
+  max-height: 0 !important;
+  flex-basis: 0 !important;
+  overflow: hidden !important;
+}
 
-  .progression-shell .prog-step-context-banner,
-  .progression-shell .prog-phase-banner,
-  .progression-shell .hud,
-  .progression-shell .swse-hud {
-    display: none !important;
-  }
+.progression-shell.is-shell-compact .prog-main-column {
+  min-height: 0 !important;
+  overflow: hidden !important;
+}
 
-  .progression-shell [data-region="details-panel"] {
-    max-height: 66% !important;
-  }
+.progression-shell.is-shell-compact .prog-content-row {
+  position: relative !important;
+  padding: 4px !important;
+  gap: 0 !important;
+}
 
-  .progression-shell .prog-blocker-explanation,
-  .progression-shell .swse-footer__status {
-    max-width: calc(100vw - 12px) !important;
-    font-size: 10px !important;
-  }
+.progression-shell.is-shell-compact [data-region="summary-panel"] {
+  display: none !important;
+}
+
+.progression-shell.is-shell-compact [data-region="work-surface"] {
+  flex: 1 1 100% !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  padding: 6px !important;
+  border-inline-width: 0 !important;
+}
+
+.progression-shell.is-shell-compact .prog-step-context-banner {
+  padding: 4px 8px !important;
+  margin: 0 0 4px !important;
+  font-size: 11px !important;
+}
+
+.progression-shell.is-shell-compact [data-region="utility-bar"] {
+  height: var(--prog-utility-bar-height) !important;
+  min-height: var(--prog-utility-bar-height) !important;
+  max-height: var(--prog-utility-bar-height) !important;
+  padding: 2px 6px !important;
+  border-bottom-color: rgba(80, 220, 255, 0.18) !important;
+}
+
+.progression-shell.is-shell-compact .prog-inline-utility-region {
+  margin-bottom: 4px !important;
+}
+
+.progression-shell.is-shell-compact .prog-utility-bar,
+.progression-shell.is-shell-compact .prog-utility-bar__controls,
+.progression-shell.is-shell-compact .prog-utility-bar__filters,
+.progression-shell.is-shell-compact .prog-utility-bar__search {
+  min-height: 0 !important;
+  gap: 4px !important;
+}
+
+.progression-shell.is-shell-compact .prog-utility-bar button,
+.progression-shell.is-shell-compact .prog-utility-bar input,
+.progression-shell.is-shell-compact .prog-utility-bar__filter-chip,
+.progression-shell.is-shell-compact .swse-ui-button {
+  min-height: 28px !important;
+  padding-block: 3px !important;
+  font-size: 11px !important;
+}
+
+.progression-shell.is-shell-compact [data-region="details-panel"] {
+  display: flex !important;
+  position: absolute !important;
+  left: 8px !important;
+  right: 8px !important;
+  bottom: 8px !important;
+  width: auto !important;
+  min-width: 0 !important;
+  max-width: none !important;
+  max-height: min(46%, 360px) !important;
+  z-index: 80 !important;
+  border: 1px solid rgba(80, 220, 255, 0.42) !important;
+  background: rgba(3, 11, 20, 0.96) !important;
+  box-shadow: 0 0 24px rgba(0, 190, 255, 0.18), inset 0 0 12px rgba(80, 220, 255, 0.08) !important;
+  backdrop-filter: blur(10px);
+}
+
+.progression-shell.is-shell-compact [data-region="details-panel"]:has(.prog-details-placeholder__empty) {
+  display: none !important;
+}
+
+.progression-shell.is-shell-compact [data-region="details-panel"] > * {
+  max-height: 100% !important;
+  overflow-y: auto !important;
+}
+
+.progression-shell.is-shell-compact [data-region="action-footer"] {
+  height: var(--prog-footer-height) !important;
+  min-height: var(--prog-footer-height) !important;
+  max-height: var(--prog-footer-height) !important;
+}
+
+.progression-shell.is-shell-compact .swse-footer {
+  min-height: 0 !important;
+  height: 100% !important;
+  grid-template-columns: minmax(72px, auto) minmax(0, 1fr) minmax(72px, auto) !important;
+  align-items: center !important;
+  padding: 2px 6px !important;
+  gap: 4px !important;
+}
+
+.progression-shell.is-shell-compact .action-footer__status {
+  min-width: 0 !important;
+  overflow: hidden !important;
+}
+
+.progression-shell.is-shell-compact .prog-footer-status-line {
+  max-width: 100% !important;
+}
+
+.progression-shell.is-shell-compact .prog-footer-status-trigger {
+  max-width: 100% !important;
+  padding: 2px 8px !important;
+  font-size: 10px !important;
+}
+
+.progression-shell.is-shell-compact .prog-blocker-explanation,
+.progression-shell.is-shell-compact .swse-footer__status {
+  position: absolute !important;
+  left: 50% !important;
+  bottom: calc(100% + 4px) !important;
+  transform: translateX(-50%) !important;
+  max-width: min(720px, calc(100vw - 32px)) !important;
+  padding: 3px 8px !important;
+  font-size: 11px !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+.progression-shell.is-shell-compact .swse-btn,
+.progression-shell.is-shell-compact .swse-btn--back,
+.progression-shell.is-shell-compact .swse-btn--confirm {
+  min-height: 30px !important;
+  padding: 4px 10px !important;
+  font-size: 11px !important;
+}
+
+/* ---- narrow (app-measured, not viewport) ---- */
+
+.progression-shell.is-shell-narrow .prog-content-row {
+  padding: 2px !important;
+}
+
+.progression-shell.is-shell-narrow [data-region="utility-bar"] {
+  height: auto !important;
+  min-height: 34px !important;
+  max-height: 74px !important;
+  overflow-y: auto !important;
+}
+
+.progression-shell.is-shell-narrow .prog-utility-bar,
+.progression-shell.is-shell-narrow .prog-utility-bar__controls,
+.progression-shell.is-shell-narrow .prog-utility-bar__filters {
+  flex-wrap: wrap !important;
+}
+
+.progression-shell.is-shell-narrow [data-region="work-surface"] {
+  padding: 4px !important;
+}
+
+.progression-shell.is-shell-narrow [data-region="details-panel"] {
+  left: 4px !important;
+  right: 4px !important;
+  bottom: 4px !important;
+  max-height: 58% !important;
+}
+
+.progression-shell.is-shell-narrow .prog-footer-status-label {
+  display: none !important;
+}
+
+.progression-shell.is-shell-narrow .swse-footer {
+  grid-template-columns: auto minmax(0, 1fr) auto !important;
+}
+
+/* ---- tiny (app-measured, not viewport) ---- */
+
+.progression-shell.is-shell-tiny {
+  --prog-footer-height: 42px;
+}
+
+.progression-shell.is-shell-tiny .prog-step-context-banner,
+.progression-shell.is-shell-tiny .prog-phase-banner,
+.progression-shell.is-shell-tiny .hud,
+.progression-shell.is-shell-tiny .swse-hud {
+  display: none !important;
+}
+
+.progression-shell.is-shell-tiny [data-region="details-panel"] {
+  max-height: 66% !important;
+}
+
+.progression-shell.is-shell-tiny .prog-blocker-explanation,
+.progression-shell.is-shell-tiny .swse-footer__status {
+  max-width: calc(100vw - 12px) !important;
+  font-size: 10px !important;
 }

@@ -8323,7 +8323,7 @@
  * strip non-intercepting and gives the GM-style window controls a reliable,
  * physically lower, no-drag hit target.
  */
-form[id^="SWSEV2CharacterSheet"] .swse-sheet-v2-shell--concept .swse-tablet-top-bezel,
+form.swse-character-sheet-form-root .swse-sheet-v2-shell--concept .swse-tablet-top-bezel,
 .swse.sheet.actor.character.v2 .swse-sheet-v2-shell--concept .swse-tablet-top-bezel,
 .swse-sheet-v2-shell--concept .swse-tablet-top-bezel {
   position: absolute !important;
@@ -8339,7 +8339,7 @@ form[id^="SWSEV2CharacterSheet"] .swse-sheet-v2-shell--concept .swse-tablet-top-
   touch-action: auto !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-sheet-v2-shell--concept .swse-tablet-drag-handle,
+form.swse-character-sheet-form-root .swse-sheet-v2-shell--concept .swse-tablet-drag-handle,
 .swse.sheet.actor.character.v2 .swse-sheet-v2-shell--concept .swse-tablet-drag-handle,
 .swse-sheet-v2-shell--concept .swse-tablet-drag-handle {
   pointer-events: none !important;
@@ -8347,8 +8347,8 @@ form[id^="SWSEV2CharacterSheet"] .swse-sheet-v2-shell--concept .swse-tablet-drag
   touch-action: auto !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-sheet-v2-shell--concept .swse-tablet-hardware-rail.swse-tablet-top-right-rail,
-form[id^="SWSEV2CharacterSheet"] .swse-sheet-v2-shell--concept .swse-tablet-top-right-rail,
+form.swse-character-sheet-form-root .swse-sheet-v2-shell--concept .swse-tablet-hardware-rail.swse-tablet-top-right-rail,
+form.swse-character-sheet-form-root .swse-sheet-v2-shell--concept .swse-tablet-top-right-rail,
 .swse.sheet.actor.character.v2 .swse-sheet-v2-shell--concept .swse-tablet-hardware-rail.swse-tablet-top-right-rail,
 .swse.sheet.actor.character.v2 .swse-sheet-v2-shell--concept .swse-tablet-top-right-rail,
 .swse-sheet-v2-shell--concept .swse-tablet-hardware-rail.swse-tablet-top-right-rail,
@@ -8385,8 +8385,8 @@ form[id^="SWSEV2CharacterSheet"] .swse-sheet-v2-shell--concept .swse-tablet-top-
   app-region: no-drag !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-sheet-v2-shell--concept .swse-tablet-hardware-rail.swse-tablet-top-right-rail > *,
-form[id^="SWSEV2CharacterSheet"] .swse-sheet-v2-shell--concept .swse-tablet-top-right-rail > *,
+form.swse-character-sheet-form-root .swse-sheet-v2-shell--concept .swse-tablet-hardware-rail.swse-tablet-top-right-rail > *,
+form.swse-character-sheet-form-root .swse-sheet-v2-shell--concept .swse-tablet-top-right-rail > *,
 .swse.sheet.actor.character.v2 .swse-sheet-v2-shell--concept .swse-tablet-top-right-rail > *,
 .swse-sheet-v2-shell--concept .swse-tablet-top-right-rail > * {
   position: relative !important;
@@ -8397,8 +8397,8 @@ form[id^="SWSEV2CharacterSheet"] .swse-sheet-v2-shell--concept .swse-tablet-top-
   app-region: no-drag !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-sheet-v2-shell--concept button.swse-tablet-control,
-form[id^="SWSEV2CharacterSheet"] .swse-sheet-v2-shell--concept .swse-tablet-control,
+form.swse-character-sheet-form-root .swse-sheet-v2-shell--concept button.swse-tablet-control,
+form.swse-character-sheet-form-root .swse-sheet-v2-shell--concept .swse-tablet-control,
 .swse.sheet.actor.character.v2 .swse-sheet-v2-shell--concept button.swse-tablet-control,
 .swse.sheet.actor.character.v2 .swse-sheet-v2-shell--concept .swse-tablet-control,
 .swse-sheet-v2-shell--concept button.swse-tablet-control,
@@ -8432,7 +8432,7 @@ form[id^="SWSEV2CharacterSheet"] .swse-sheet-v2-shell--concept .swse-tablet-cont
   app-region: no-drag !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-sheet-v2-shell--concept .swse-tablet-control--close,
+form.swse-character-sheet-form-root .swse-sheet-v2-shell--concept .swse-tablet-control--close,
 .swse.sheet.actor.character.v2 .swse-sheet-v2-shell--concept .swse-tablet-control--close,
 .swse-sheet-v2-shell--concept .swse-tablet-control--close {
   font-size: 22px !important;

@@ -225,6 +225,7 @@ export function observeAllShellResponsive(root = document) {
   const applicationTargets = scope.querySelectorAll?.(`
     .application:has(.swse-v2-sheet),
     .application:has(.swse-character-sheet),
+    .application.progression-shell,
     .application:has(.swse-concept-body),
     .application:has(.swse-sheet-v2-shell--concept),
     .application:has(.swse-v2-tablet--concept),

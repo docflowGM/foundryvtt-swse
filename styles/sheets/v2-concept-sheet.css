@@ -3403,7 +3403,7 @@ form.swse.sheet.actor.character.v2 > .swse-character-sheet-wrapper--concept,
    application.  This final block intentionally targets both the normal class
    chain and the runtime id so stale frame assumptions cannot push the tablet
    chrome down, hide the bottom bezel, or leave no scroll owner. */
-form[id^="SWSEV2CharacterSheet"],
+form.swse-character-sheet-form-root,
 .swse.sheet.actor.character.v2,
 .swse-character-sheet-form-root.swse-sheet--concept {
   position: absolute !important;
@@ -3417,7 +3417,7 @@ form[id^="SWSEV2CharacterSheet"],
   box-shadow: none !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-sheet-v2-shell--concept,
+form.swse-character-sheet-form-root .swse-sheet-v2-shell--concept,
 .swse.sheet.actor.character.v2 .swse-sheet-v2-shell--concept {
   position: absolute !important;
   inset: 0 !important;
@@ -3433,7 +3433,7 @@ form[id^="SWSEV2CharacterSheet"] .swse-sheet-v2-shell--concept,
   cursor: grab !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-v2-tablet--concept,
+form.swse-character-sheet-form-root .swse-v2-tablet--concept,
 .swse.sheet.actor.character.v2 .swse-v2-tablet--concept {
   position: absolute !important;
   inset: 0 !important;
@@ -3451,7 +3451,7 @@ form[id^="SWSEV2CharacterSheet"] .swse-v2-tablet--concept,
 
 /* Compact engraved top rail: no layout height, no stacked buttons, no serial
    line above the shell.  The rail is an overlay engraved into the metal. */
-form[id^="SWSEV2CharacterSheet"] .swse-tablet-top-bezel,
+form.swse-character-sheet-form-root .swse-tablet-top-bezel,
 .swse.sheet.actor.character.v2 .swse-tablet-top-bezel {
   position: absolute !important;
   top: 10px !important;
@@ -3482,7 +3482,7 @@ form[id^="SWSEV2CharacterSheet"] .swse-tablet-top-bezel,
     0 1px 0 rgba(255, 255, 255, 0.025) !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-tablet-top-bezel::before,
+form.swse-character-sheet-form-root .swse-tablet-top-bezel::before,
 .swse.sheet.actor.character.v2 .swse-tablet-top-bezel::before {
   content: "";
   justify-self: center;
@@ -3500,7 +3500,7 @@ form[id^="SWSEV2CharacterSheet"] .swse-tablet-top-bezel::before,
   pointer-events: none;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-tablet-identity-engraving,
+form.swse-character-sheet-form-root .swse-tablet-identity-engraving,
 .swse.sheet.actor.character.v2 .swse-tablet-identity-engraving {
   grid-column: 1 !important;
   grid-row: 1 !important;
@@ -3514,7 +3514,7 @@ form[id^="SWSEV2CharacterSheet"] .swse-tablet-identity-engraving,
   opacity: 0.78 !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-tablet-drag-handle,
+form.swse-character-sheet-form-root .swse-tablet-drag-handle,
 .swse.sheet.actor.character.v2 .swse-tablet-drag-handle {
   grid-column: 2 !important;
   grid-row: 1 !important;
@@ -3531,7 +3531,7 @@ form[id^="SWSEV2CharacterSheet"] .swse-tablet-drag-handle,
   opacity: 0.4 !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-tablet-hardware--top,
+form.swse-character-sheet-form-root .swse-tablet-hardware--top,
 .swse.sheet.actor.character.v2 .swse-tablet-hardware--top {
   grid-column: 3 !important;
   grid-row: 1 !important;
@@ -3554,7 +3554,7 @@ form[id^="SWSEV2CharacterSheet"] .swse-tablet-hardware--top,
   pointer-events: auto !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-tablet-control,
+form.swse-character-sheet-form-root .swse-tablet-control,
 .swse.sheet.actor.character.v2 .swse-tablet-control {
   position: relative !important;
   display: inline-grid !important;
@@ -3575,7 +3575,7 @@ form[id^="SWSEV2CharacterSheet"] .swse-tablet-control,
   cursor: pointer !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-tablet-serial--aurebesh,
+form.swse-character-sheet-form-root .swse-tablet-serial--aurebesh,
 .swse.sheet.actor.character.v2 .swse-tablet-serial--aurebesh {
   max-width: 190px !important;
   font-family: "Aurebesh Condensed", "Aurebesh", var(--swse-font-mono, monospace) !important;
@@ -3593,7 +3593,7 @@ form[id^="SWSEV2CharacterSheet"] .swse-tablet-serial--aurebesh,
 /* Screen and bottom bezel: keep all metal visible while giving the content a
    real scroll owner.  The bottom home button and vent live in the metal, not
    under the scrollable display. */
-form[id^="SWSEV2CharacterSheet"] .swse-v2-screen--concept,
+form.swse-character-sheet-form-root .swse-v2-screen--concept,
 .swse.sheet.actor.character.v2 .swse-v2-screen--concept {
   position: absolute !important;
   top: 46px !important;
@@ -3617,7 +3617,7 @@ form[id^="SWSEV2CharacterSheet"] .swse-v2-screen--concept,
   cursor: var(--cursor-default, auto) !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-tablet-home-button,
+form.swse-character-sheet-form-root .swse-tablet-home-button,
 .swse.sheet.actor.character.v2 .swse-tablet-home-button {
   position: absolute !important;
   z-index: 110 !important;
@@ -3634,7 +3634,7 @@ form[id^="SWSEV2CharacterSheet"] .swse-tablet-home-button,
   cursor: pointer !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-tablet-vent--bottom,
+form.swse-character-sheet-form-root .swse-tablet-vent--bottom,
 .swse.sheet.actor.character.v2 .swse-tablet-vent--bottom,
 .swse.sheet.actor.character.v2 .swse-tablet-vent:not(.swse-tablet-vent--top) {
   position: absolute !important;
@@ -3644,38 +3644,38 @@ form[id^="SWSEV2CharacterSheet"] .swse-tablet-vent--bottom,
   pointer-events: none !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-tablet-vent--top,
+form.swse-character-sheet-form-root .swse-tablet-vent--top,
 .swse.sheet.actor.character.v2 .swse-tablet-vent--top {
   display: none !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-concept-body,
+form.swse-character-sheet-form-root .swse-concept-body,
 .swse.sheet.actor.character.v2 .swse-concept-body {
   min-height: 0 !important;
   overflow: visible !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-concept-main.sheet-body,
+form.swse-character-sheet-form-root .swse-concept-main.sheet-body,
 .swse.sheet.actor.character.v2 .swse-concept-main.sheet-body,
-form[id^="SWSEV2CharacterSheet"] .swse-concept-main.sheet-body > .tab.active,
+form.swse-character-sheet-form-root .swse-concept-main.sheet-body > .tab.active,
 .swse.sheet.actor.character.v2 .swse-concept-main.sheet-body > .tab.active {
   min-height: 0 !important;
   overflow: visible !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-shell-surface-host,
+form.swse-character-sheet-form-root .swse-shell-surface-host,
 .swse.sheet.actor.character.v2 .swse-shell-surface-host,
-form[id^="SWSEV2CharacterSheet"] .swse-shell-surface,
+form.swse-character-sheet-form-root .swse-shell-surface,
 .swse.sheet.actor.character.v2 .swse-shell-surface,
-form[id^="SWSEV2CharacterSheet"] .swse-shell-surface__body,
+form.swse-character-sheet-form-root .swse-shell-surface__body,
 .swse.sheet.actor.character.v2 .swse-shell-surface__body {
   min-height: 0 !important;
   overflow: visible !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-sheet-v2-shell--concept.is-window-dragging,
-form[id^="SWSEV2CharacterSheet"] .swse-sheet-v2-shell--concept.is-window-dragging .swse-tablet-top-bezel,
-form[id^="SWSEV2CharacterSheet"] .swse-sheet-v2-shell--concept.is-window-dragging .swse-tablet-drag-handle,
+form.swse-character-sheet-form-root .swse-sheet-v2-shell--concept.is-window-dragging,
+form.swse-character-sheet-form-root .swse-sheet-v2-shell--concept.is-window-dragging .swse-tablet-top-bezel,
+form.swse-character-sheet-form-root .swse-sheet-v2-shell--concept.is-window-dragging .swse-tablet-drag-handle,
 .swse.sheet.actor.character.v2 .swse-sheet-v2-shell--concept.is-window-dragging,
 .swse.sheet.actor.character.v2 .swse-sheet-v2-shell--concept.is-window-dragging .swse-tablet-top-bezel,
 .swse.sheet.actor.character.v2 .swse-sheet-v2-shell--concept.is-window-dragging .swse-tablet-drag-handle {
@@ -3683,11 +3683,11 @@ form[id^="SWSEV2CharacterSheet"] .swse-sheet-v2-shell--concept.is-window-draggin
 }
 
 @media (max-width: 1120px) {
-  form[id^="SWSEV2CharacterSheet"] .swse-concept-header,
+  form.swse-character-sheet-form-root .swse-concept-header,
   .swse.sheet.actor.character.v2 .swse-concept-header {
     grid-template-columns: 150px minmax(0, 1fr) !important;
   }
-  form[id^="SWSEV2CharacterSheet"] .swse-concept-readouts-card,
+  form.swse-character-sheet-form-root .swse-concept-readouts-card,
   .swse.sheet.actor.character.v2 .swse-concept-readouts-card {
     grid-column: 1 / -1 !important;
   }
@@ -3699,7 +3699,7 @@ form[id^="SWSEV2CharacterSheet"] .swse-sheet-v2-shell--concept.is-window-draggin
 /* This block intentionally wins over the earlier migration stopgaps.          */
 /* ========================================================================== */
 
-form[id^="SWSEV2CharacterSheet"] {
+form.swse-character-sheet-form-root {
   --screen-c-base: 0.055;
   --screen-c-alt: 0.070;
   --accent-h: var(--ink-h, 190);
@@ -3725,8 +3725,8 @@ form[id^="SWSEV2CharacterSheet"] {
   font-family: var(--font-body) !important;
 }
 
-form[id^="SWSEV2CharacterSheet"],
-form[id^="SWSEV2CharacterSheet"].swse.sheet.actor.character.v2 {
+form.swse-character-sheet-form-root,
+form.swse-character-sheet-form-root.swse.sheet.actor.character.v2 {
   position: absolute !important;
   display: block !important;
   padding: 0 !important;
@@ -3737,9 +3737,9 @@ form[id^="SWSEV2CharacterSheet"].swse.sheet.actor.character.v2 {
   box-shadow: none !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-character-sheet-wrapper--concept,
-form[id^="SWSEV2CharacterSheet"] .swse-sheet-v2-shell--concept,
-form[id^="SWSEV2CharacterSheet"] .swse-v2-tablet--concept {
+form.swse-character-sheet-form-root .swse-character-sheet-wrapper--concept,
+form.swse-character-sheet-form-root .swse-sheet-v2-shell--concept,
+form.swse-character-sheet-form-root .swse-v2-tablet--concept {
   width: 100% !important;
   height: 100% !important;
   min-width: 0 !important;
@@ -3750,8 +3750,8 @@ form[id^="SWSEV2CharacterSheet"] .swse-v2-tablet--concept {
   box-sizing: border-box !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-character-sheet-wrapper--concept,
-form[id^="SWSEV2CharacterSheet"] .swse-sheet-v2-shell--concept {
+form.swse-character-sheet-form-root .swse-character-sheet-wrapper--concept,
+form.swse-character-sheet-form-root .swse-sheet-v2-shell--concept {
   position: relative !important;
   display: block !important;
   padding: 0 !important;
@@ -3759,12 +3759,12 @@ form[id^="SWSEV2CharacterSheet"] .swse-sheet-v2-shell--concept {
   border-radius: 22px !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-sheet-v2-shell--concept {
+form.swse-character-sheet-form-root .swse-sheet-v2-shell--concept {
   background: transparent !important;
   cursor: grab !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-v2-tablet--concept {
+form.swse-character-sheet-form-root .swse-v2-tablet--concept {
   position: relative !important;
   inset: auto !important;
   display: flex !important;
@@ -3785,14 +3785,14 @@ form[id^="SWSEV2CharacterSheet"] .swse-v2-tablet--concept {
   pointer-events: auto !important;
 }
 
-form[id^="SWSEV2CharacterSheet"][data-motion-style="off"] .swse-v2-tablet--concept,
-form[id^="SWSEV2CharacterSheet"][data-motion-style="reduced"] .swse-v2-tablet--concept,
-form[id^="SWSEV2CharacterSheet"] .swse-sheet-v2-shell[data-motion-style="off"] .swse-v2-tablet--concept,
-form[id^="SWSEV2CharacterSheet"] .swse-sheet-v2-shell[data-motion-style="reduced"] .swse-v2-tablet--concept {
+form.swse-character-sheet-form-root[data-motion-style="off"] .swse-v2-tablet--concept,
+form.swse-character-sheet-form-root[data-motion-style="reduced"] .swse-v2-tablet--concept,
+form.swse-character-sheet-form-root .swse-sheet-v2-shell[data-motion-style="off"] .swse-v2-tablet--concept,
+form.swse-character-sheet-form-root .swse-sheet-v2-shell[data-motion-style="reduced"] .swse-v2-tablet--concept {
   animation-play-state: paused !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-tablet-top-bezel {
+form.swse-character-sheet-form-root .swse-tablet-top-bezel {
   position: absolute !important;
   top: 8px !important;
   left: 38px !important;
@@ -3815,7 +3815,7 @@ form[id^="SWSEV2CharacterSheet"] .swse-tablet-top-bezel {
   touch-action: none !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-tablet-identity-engraving {
+form.swse-character-sheet-form-root .swse-tablet-identity-engraving {
   grid-column: 1 !important;
   display: inline-flex !important;
   align-items: center !important;
@@ -3825,16 +3825,16 @@ form[id^="SWSEV2CharacterSheet"] .swse-tablet-identity-engraving {
   opacity: 1 !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-tablet-rivet {
+form.swse-character-sheet-form-root .swse-tablet-rivet {
   width: 6px !important;
   height: 6px !important;
   border-radius: 50% !important;
   background: radial-gradient(circle at 35% 35%, #5a5a6e 0%, #1a1a22 70%) !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-tablet-micro-led,
-form[id^="SWSEV2CharacterSheet"] .swse-tablet-top-bezel::before,
-form[id^="SWSEV2CharacterSheet"] .swse-tablet-top-bezel::after {
+form.swse-character-sheet-form-root .swse-tablet-micro-led,
+form.swse-character-sheet-form-root .swse-tablet-top-bezel::before,
+form.swse-character-sheet-form-root .swse-tablet-top-bezel::after {
   content: "" !important;
   display: inline-block !important;
   width: 5px !important;
@@ -3845,7 +3845,7 @@ form[id^="SWSEV2CharacterSheet"] .swse-tablet-top-bezel::after {
   animation: ledPulse calc(1.6s / var(--anim-speed, 1)) ease-in-out infinite !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-tablet-top-bezel::before {
+form.swse-character-sheet-form-root .swse-tablet-top-bezel::before {
   grid-column: 2 !important;
   justify-self: start !important;
   margin-left: 16px !important;
@@ -3854,7 +3854,7 @@ form[id^="SWSEV2CharacterSheet"] .swse-tablet-top-bezel::before {
   animation-delay: 0.25s !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-tablet-top-bezel::after {
+form.swse-character-sheet-form-root .swse-tablet-top-bezel::after {
   grid-column: 2 !important;
   justify-self: start !important;
   margin-left: 34px !important;
@@ -3863,7 +3863,7 @@ form[id^="SWSEV2CharacterSheet"] .swse-tablet-top-bezel::after {
   animation-delay: 0.55s !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-tablet-serial--aurebesh {
+form.swse-character-sheet-form-root .swse-tablet-serial--aurebesh {
   font-family: "Aurebesh Condensed", "Aurebesh", var(--font-mono) !important;
   font-size: 9px !important;
   line-height: 1 !important;
@@ -3874,7 +3874,7 @@ form[id^="SWSEV2CharacterSheet"] .swse-tablet-serial--aurebesh {
   white-space: nowrap !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-tablet-drag-handle {
+form.swse-character-sheet-form-root .swse-tablet-drag-handle {
   grid-column: 2 !important;
   position: relative !important;
   inset: auto !important;
@@ -3889,7 +3889,7 @@ form[id^="SWSEV2CharacterSheet"] .swse-tablet-drag-handle {
   touch-action: none !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-tablet-hardware--top {
+form.swse-character-sheet-form-root .swse-tablet-hardware--top {
   grid-column: 3 !important;
   position: relative !important;
   inset: auto !important;
@@ -3906,7 +3906,7 @@ form[id^="SWSEV2CharacterSheet"] .swse-tablet-hardware--top {
   pointer-events: auto !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-tablet-control {
+form.swse-character-sheet-form-root .swse-tablet-control {
   position: relative !important;
   display: inline-grid !important;
   place-items: center !important;
@@ -3926,7 +3926,7 @@ form[id^="SWSEV2CharacterSheet"] .swse-tablet-control {
   pointer-events: auto !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-v2-screen--concept {
+form.swse-character-sheet-form-root .swse-v2-screen--concept {
   position: relative !important;
   inset: auto !important;
   z-index: 1 !important;
@@ -3951,7 +3951,7 @@ form[id^="SWSEV2CharacterSheet"] .swse-v2-screen--concept {
   cursor: var(--cursor-default, auto) !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-v2-screen--concept::before {
+form.swse-character-sheet-form-root .swse-v2-screen--concept::before {
   content: "" !important;
   position: absolute !important;
   inset: 0 !important;
@@ -3961,7 +3961,7 @@ form[id^="SWSEV2CharacterSheet"] .swse-v2-screen--concept::before {
   opacity: 1 !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .scan-v {
+form.swse-character-sheet-form-root .scan-v {
   position: absolute !important;
   left: 0 !important;
   right: 0 !important;
@@ -3974,12 +3974,12 @@ form[id^="SWSEV2CharacterSheet"] .scan-v {
   animation: scanV calc(7s / var(--anim-speed, 1)) linear infinite !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-tablet-vent--top,
-form[id^="SWSEV2CharacterSheet"] .swse-tablet-home-button {
+form.swse-character-sheet-form-root .swse-tablet-vent--top,
+form.swse-character-sheet-form-root .swse-tablet-home-button {
   display: none !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-tablet-vent--bottom {
+form.swse-character-sheet-form-root .swse-tablet-vent--bottom {
   position: absolute !important;
   left: 48px !important;
   bottom: 24px !important;
@@ -3990,7 +3990,7 @@ form[id^="SWSEV2CharacterSheet"] .swse-tablet-vent--bottom {
   pointer-events: none !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-tablet-vent--bottom span {
+form.swse-character-sheet-form-root .swse-tablet-vent--bottom span {
   width: 28px !important;
   height: 2px !important;
   border-radius: 2px !important;
@@ -3998,7 +3998,7 @@ form[id^="SWSEV2CharacterSheet"] .swse-tablet-vent--bottom span {
   box-shadow: inset 0 1px 0 rgba(255,255,255,0.08) !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-tablet-bottom-engraving {
+form.swse-character-sheet-form-root .swse-tablet-bottom-engraving {
   position: absolute !important;
   right: 38px !important;
   bottom: 14px !important;
@@ -4011,7 +4011,7 @@ form[id^="SWSEV2CharacterSheet"] .swse-tablet-bottom-engraving {
   pointer-events: none !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-tablet-resize-grip {
+form.swse-character-sheet-form-root .swse-tablet-resize-grip {
   position: absolute !important;
   right: 10px !important;
   bottom: 10px !important;
@@ -4024,7 +4024,7 @@ form[id^="SWSEV2CharacterSheet"] .swse-tablet-resize-grip {
   border-radius: 6px !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-tablet-resize-grip::before {
+form.swse-character-sheet-form-root .swse-tablet-resize-grip::before {
   content: "" !important;
   position: absolute !important;
   right: 5px !important;
@@ -4037,23 +4037,23 @@ form[id^="SWSEV2CharacterSheet"] .swse-tablet-resize-grip::before {
   filter: drop-shadow(0 0 6px var(--vapor-cyan)) !important;
 }
 
-form[id^="SWSEV2CharacterSheet"].is-window-resizing,
-form[id^="SWSEV2CharacterSheet"].is-window-resizing * {
+form.swse-character-sheet-form-root.is-window-resizing,
+form.swse-character-sheet-form-root.is-window-resizing * {
   cursor: nwse-resize !important;
   user-select: none !important;
 }
 
 /* AppV2 sheet content now mirrors the Concept HTML structure. */
-form[id^="SWSEV2CharacterSheet"] .swse-concept-hud,
-form[id^="SWSEV2CharacterSheet"] .swse-concept-title-strip,
-form[id^="SWSEV2CharacterSheet"] .swse-concept-header,
-form[id^="SWSEV2CharacterSheet"] .swse-concept-resource-strip,
-form[id^="SWSEV2CharacterSheet"] .swse-concept-tabs {
+form.swse-character-sheet-form-root .swse-concept-hud,
+form.swse-character-sheet-form-root .swse-concept-title-strip,
+form.swse-character-sheet-form-root .swse-concept-header,
+form.swse-character-sheet-form-root .swse-concept-resource-strip,
+form.swse-character-sheet-form-root .swse-concept-tabs {
   flex: 0 0 auto !important;
   min-height: 0 !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-concept-hud {
+form.swse-character-sheet-form-root .swse-concept-hud {
   display: flex !important;
   align-items: center !important;
   justify-content: space-between !important;
@@ -4068,7 +4068,7 @@ form[id^="SWSEV2CharacterSheet"] .swse-concept-hud {
   color: var(--ink-dim) !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-concept-hud__center {
+form.swse-character-sheet-form-root .swse-concept-hud__center {
   font-family: var(--font-display) !important;
   font-size: 18px !important;
   letter-spacing: 0.3em !important;
@@ -4076,7 +4076,7 @@ form[id^="SWSEV2CharacterSheet"] .swse-concept-hud__center {
   text-shadow: 0 0 calc(10px * var(--glow-mult, 1)) oklch(var(--vapor-cyan) / 0.5) !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-concept-title-strip {
+form.swse-character-sheet-form-root .swse-concept-title-strip {
   display: block !important;
   text-align: center !important;
   font-family: var(--font-display) !important;
@@ -4089,7 +4089,7 @@ form[id^="SWSEV2CharacterSheet"] .swse-concept-title-strip {
   text-shadow: 0 0 calc(10px * var(--glow-mult, 1)) oklch(var(--vapor-pink) / 0.5), 2px 0 0 oklch(var(--vapor-cyan) / 0.4), -2px 0 0 oklch(var(--vapor-pink) / 0.4) !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-concept-header {
+form.swse-character-sheet-form-root .swse-concept-header {
   display: grid !important;
   grid-template-columns: 128px minmax(0, 1fr) 300px !important;
   gap: 18px !important;
@@ -4097,14 +4097,14 @@ form[id^="SWSEV2CharacterSheet"] .swse-concept-header {
   margin: 0 0 16px !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-concept-resource-strip {
+form.swse-character-sheet-form-root .swse-concept-resource-strip {
   display: grid !important;
   grid-template-columns: 2fr 1fr 1fr !important;
   gap: 14px !important;
   margin: 0 0 16px !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-concept-tabs {
+form.swse-character-sheet-form-root .swse-concept-tabs {
   display: flex !important;
   flex-wrap: nowrap !important;
   gap: 0 !important;
@@ -4119,7 +4119,7 @@ form[id^="SWSEV2CharacterSheet"] .swse-concept-tabs {
   text-transform: uppercase !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-concept-tab {
+form.swse-character-sheet-form-root .swse-concept-tab {
   display: inline-flex !important;
   align-items: center !important;
   gap: 8px !important;
@@ -4134,11 +4134,11 @@ form[id^="SWSEV2CharacterSheet"] .swse-concept-tab {
   white-space: nowrap !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-concept-tab:hover {
+form.swse-character-sheet-form-root .swse-concept-tab:hover {
   color: var(--vapor-cyan) !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-concept-tab.active {
+form.swse-character-sheet-form-root .swse-concept-tab.active {
   color: var(--vapor-cyan) !important;
   background: linear-gradient(180deg, oklch(var(--vapor-cyan) / 0.18) 0%, oklch(var(--vapor-cyan) / 0.05) 100%) !important;
   border-color: oklch(var(--vapor-cyan) / 0.4) !important;
@@ -4146,7 +4146,7 @@ form[id^="SWSEV2CharacterSheet"] .swse-concept-tab.active {
   box-shadow: none !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-concept-body {
+form.swse-character-sheet-form-root .swse-concept-body {
   display: grid !important;
   grid-template-columns: 330px minmax(0, 1fr) !important;
   gap: 16px !important;
@@ -4154,36 +4154,36 @@ form[id^="SWSEV2CharacterSheet"] .swse-concept-body {
   overflow: visible !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-concept-sidebar {
+form.swse-character-sheet-form-root .swse-concept-sidebar {
   display: block !important;
   min-width: 0 !important;
   overflow: visible !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-concept-main.sheet-body {
+form.swse-character-sheet-form-root .swse-concept-main.sheet-body {
   display: block !important;
   min-width: 0 !important;
   min-height: 0 !important;
   overflow: visible !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-concept-main.sheet-body > .tab {
+form.swse-character-sheet-form-root .swse-concept-main.sheet-body > .tab {
   display: none !important;
   min-height: 0 !important;
   overflow: visible !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-concept-main.sheet-body > .tab.active {
+form.swse-character-sheet-form-root .swse-concept-main.sheet-body > .tab.active {
   display: block !important;
   overflow: visible !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-concept-sidecard,
-form[id^="SWSEV2CharacterSheet"] .swse-concept-panel,
-form[id^="SWSEV2CharacterSheet"] .swse-concept-portrait-card,
-form[id^="SWSEV2CharacterSheet"] .swse-concept-identity-card,
-form[id^="SWSEV2CharacterSheet"] .swse-concept-readouts-card,
-form[id^="SWSEV2CharacterSheet"] .swse-concept-resource-card {
+form.swse-character-sheet-form-root .swse-concept-sidecard,
+form.swse-character-sheet-form-root .swse-concept-panel,
+form.swse-character-sheet-form-root .swse-concept-portrait-card,
+form.swse-character-sheet-form-root .swse-concept-identity-card,
+form.swse-character-sheet-form-root .swse-concept-readouts-card,
+form.swse-character-sheet-form-root .swse-concept-resource-card {
   border-radius: 0 !important;
   border: 1px solid oklch(var(--vapor-cyan) / 0.2) !important;
   background: oklch(0 0 0 / 0.3) !important;
@@ -4191,14 +4191,14 @@ form[id^="SWSEV2CharacterSheet"] .swse-concept-resource-card {
   position: relative !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-concept-panel,
-form[id^="SWSEV2CharacterSheet"] .swse-concept-sidecard {
+form.swse-character-sheet-form-root .swse-concept-panel,
+form.swse-character-sheet-form-root .swse-concept-sidecard {
   padding: 14px !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-concept-panel::before,
-form[id^="SWSEV2CharacterSheet"] .swse-concept-sidecard::before,
-form[id^="SWSEV2CharacterSheet"] .swse-concept-resource-card::before {
+form.swse-character-sheet-form-root .swse-concept-panel::before,
+form.swse-character-sheet-form-root .swse-concept-sidecard::before,
+form.swse-character-sheet-form-root .swse-concept-resource-card::before {
   content: "" !important;
   position: absolute !important;
   top: -1px !important;
@@ -4210,8 +4210,8 @@ form[id^="SWSEV2CharacterSheet"] .swse-concept-resource-card::before {
   pointer-events: none !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-concept-panel__header,
-form[id^="SWSEV2CharacterSheet"] .swse-concept-sidecard header {
+form.swse-character-sheet-form-root .swse-concept-panel__header,
+form.swse-character-sheet-form-root .swse-concept-sidecard header {
   display: flex !important;
   justify-content: space-between !important;
   align-items: center !important;
@@ -4220,8 +4220,8 @@ form[id^="SWSEV2CharacterSheet"] .swse-concept-sidecard header {
   border-bottom: 1px dashed oklch(var(--vapor-cyan) / 0.3) !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-concept-panel__title,
-form[id^="SWSEV2CharacterSheet"] .swse-concept-sidecard h3 {
+form.swse-character-sheet-form-root .swse-concept-panel__title,
+form.swse-character-sheet-form-root .swse-concept-sidecard h3 {
   margin: 0 !important;
   font-family: var(--font-mono) !important;
   font-size: 10px !important;
@@ -4230,13 +4230,13 @@ form[id^="SWSEV2CharacterSheet"] .swse-concept-sidecard h3 {
   color: var(--vapor-cyan) !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-concept-ability-grid {
+form.swse-character-sheet-form-root .swse-concept-ability-grid {
   display: grid !important;
   grid-template-columns: 1fr 1fr !important;
   gap: 10px !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-concept-ability {
+form.swse-character-sheet-form-root .swse-concept-ability {
   position: relative !important;
   padding: 10px !important;
   border: 1px solid oklch(var(--vapor-cyan) / 0.3) !important;
@@ -4245,16 +4245,16 @@ form[id^="SWSEV2CharacterSheet"] .swse-concept-ability {
   clip-path: polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px) !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-concept-ability strong,
-form[id^="SWSEV2CharacterSheet"] .swse-concept-defense-block strong,
-form[id^="SWSEV2CharacterSheet"] .swse-concept-defense-pill strong,
-form[id^="SWSEV2CharacterSheet"] .swse-concept-stat-card strong {
+form.swse-character-sheet-form-root .swse-concept-ability strong,
+form.swse-character-sheet-form-root .swse-concept-defense-block strong,
+form.swse-character-sheet-form-root .swse-concept-defense-pill strong,
+form.swse-character-sheet-form-root .swse-concept-stat-card strong {
   font-family: var(--font-display) !important;
   color: var(--vapor-cyan) !important;
   text-shadow: 0 0 calc(12px * var(--glow-mult, 1)) oklch(var(--vapor-cyan) / 0.6), 2px 0 0 oklch(var(--vapor-pink) / 0.35), -2px 0 0 oklch(var(--vapor-cyan) / 0.35) !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-concept-skills-list {
+form.swse-character-sheet-form-root .swse-concept-skills-list {
   display: flex !important;
   flex-direction: column !important;
   gap: 0 !important;
@@ -4262,7 +4262,7 @@ form[id^="SWSEV2CharacterSheet"] .swse-concept-skills-list {
   overflow: visible !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-concept-skill-row {
+form.swse-character-sheet-form-root .swse-concept-skill-row {
   display: grid !important;
   grid-template-columns: minmax(210px, 1fr) minmax(520px, 1.8fr) !important;
   gap: 8px !important;
@@ -4277,23 +4277,23 @@ form[id^="SWSEV2CharacterSheet"] .swse-concept-skill-row {
   font-size: 11px !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-concept-skill-row:nth-of-type(even) {
+form.swse-character-sheet-form-root .swse-concept-skill-row:nth-of-type(even) {
   background: oklch(var(--vapor-cyan) / 0.025) !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-concept-skill-row:hover {
+form.swse-character-sheet-form-root .swse-concept-skill-row:hover {
   border-left-color: var(--vapor-pink) !important;
   background: oklch(var(--vapor-cyan) / 0.06) !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-concept-skill-row__identity,
-form[id^="SWSEV2CharacterSheet"] .swse-concept-skill-row__titleline {
+form.swse-character-sheet-form-root .swse-concept-skill-row__identity,
+form.swse-character-sheet-form-root .swse-concept-skill-row__titleline {
   display: flex !important;
   align-items: center !important;
   gap: 8px !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-concept-skill-name {
+form.swse-character-sheet-form-root .swse-concept-skill-name {
   color: var(--ink) !important;
   font-family: var(--font-mono) !important;
   font-size: 11px !important;
@@ -4304,16 +4304,16 @@ form[id^="SWSEV2CharacterSheet"] .swse-concept-skill-name {
   text-align: left !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-concept-skill-row__math {
+form.swse-character-sheet-form-root .swse-concept-skill-row__math {
   display: grid !important;
   grid-template-columns: minmax(96px, 1.1fr) 68px 58px 72px 72px 58px 70px 58px !important;
   gap: 6px !important;
   align-items: end !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-concept-skill-stat,
-form[id^="SWSEV2CharacterSheet"] .swse-concept-toolfield--compact,
-form[id^="SWSEV2CharacterSheet"] .swse-concept-checkpill {
+form.swse-character-sheet-form-root .swse-concept-skill-stat,
+form.swse-character-sheet-form-root .swse-concept-toolfield--compact,
+form.swse-character-sheet-form-root .swse-concept-checkpill {
   min-width: 0 !important;
   padding: 3px 5px !important;
   border-radius: 0 !important;
@@ -4321,9 +4321,9 @@ form[id^="SWSEV2CharacterSheet"] .swse-concept-checkpill {
   background: oklch(0 0 0 / 0.22) !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-concept-skill-stat span,
-form[id^="SWSEV2CharacterSheet"] .swse-concept-toolfield span,
-form[id^="SWSEV2CharacterSheet"] .swse-concept-checkpill span {
+form.swse-character-sheet-form-root .swse-concept-skill-stat span,
+form.swse-character-sheet-form-root .swse-concept-toolfield span,
+form.swse-character-sheet-form-root .swse-concept-checkpill span {
   display: block !important;
   color: var(--ink-faint) !important;
   font-family: var(--font-mono) !important;
@@ -4332,33 +4332,33 @@ form[id^="SWSEV2CharacterSheet"] .swse-concept-checkpill span {
   text-transform: uppercase !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-concept-skill-stat strong,
-form[id^="SWSEV2CharacterSheet"] .swse-concept-skill-stat--total strong {
+form.swse-character-sheet-form-root .swse-concept-skill-stat strong,
+form.swse-character-sheet-form-root .swse-concept-skill-stat--total strong {
   color: var(--vapor-cyan) !important;
   font-family: var(--font-display) !important;
   font-size: 18px !important;
   text-shadow: 0 0 calc(8px * var(--glow-mult, 1)) oklch(var(--vapor-cyan) / 0.45) !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .skill-extra-uses:not(.skill-extra-uses--collapsed) {
+form.swse-character-sheet-form-root .skill-extra-uses:not(.skill-extra-uses--collapsed) {
   margin: 0 0 8px 28px !important;
   border-left: 1px solid var(--vapor-pink) !important;
 }
 
 @media (max-width: 1180px) {
-  form[id^="SWSEV2CharacterSheet"] .swse-concept-header {
+  form.swse-character-sheet-form-root .swse-concept-header {
     grid-template-columns: 128px minmax(0, 1fr) !important;
   }
-  form[id^="SWSEV2CharacterSheet"] .swse-concept-readouts-card {
+  form.swse-character-sheet-form-root .swse-concept-readouts-card {
     grid-column: 1 / -1 !important;
   }
-  form[id^="SWSEV2CharacterSheet"] .swse-concept-body {
+  form.swse-character-sheet-form-root .swse-concept-body {
     grid-template-columns: 286px minmax(0, 1fr) !important;
   }
-  form[id^="SWSEV2CharacterSheet"] .swse-concept-skill-row {
+  form.swse-character-sheet-form-root .swse-concept-skill-row {
     grid-template-columns: 1fr !important;
   }
-  form[id^="SWSEV2CharacterSheet"] .swse-concept-skill-row__math {
+  form.swse-character-sheet-form-root .swse-concept-skill-row__math {
     grid-template-columns: repeat(4, minmax(70px, 1fr)) !important;
   }
 }
@@ -4368,7 +4368,7 @@ form[id^="SWSEV2CharacterSheet"] .skill-extra-uses:not(.skill-extra-uses--collap
 /* User-requested: serial + home + expand + close in one top-right row.        */
 /* This final block intentionally overrides earlier migration/chrome attempts.  */
 /* ========================================================================== */
-form[id^="SWSEV2CharacterSheet"] .swse-v2-tablet--concept,
+form.swse-character-sheet-form-root .swse-v2-tablet--concept,
 .swse.sheet.actor.character.v2 .swse-v2-tablet--concept {
   position: absolute !important;
   inset: 0 !important;
@@ -4382,7 +4382,7 @@ form[id^="SWSEV2CharacterSheet"] .swse-v2-tablet--concept,
   cursor: grab !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-tablet-top-bezel,
+form.swse-character-sheet-form-root .swse-tablet-top-bezel,
 .swse.sheet.actor.character.v2 .swse-tablet-top-bezel {
   position: absolute !important;
   z-index: 160 !important;
@@ -4406,15 +4406,15 @@ form[id^="SWSEV2CharacterSheet"] .swse-tablet-top-bezel,
   touch-action: none !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-tablet-top-bezel::before,
-form[id^="SWSEV2CharacterSheet"] .swse-tablet-top-bezel::after,
+form.swse-character-sheet-form-root .swse-tablet-top-bezel::before,
+form.swse-character-sheet-form-root .swse-tablet-top-bezel::after,
 .swse.sheet.actor.character.v2 .swse-tablet-top-bezel::before,
 .swse.sheet.actor.character.v2 .swse-tablet-top-bezel::after {
   content: none !important;
   display: none !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-tablet-drag-handle,
+form.swse-character-sheet-form-root .swse-tablet-drag-handle,
 .swse.sheet.actor.character.v2 .swse-tablet-drag-handle {
   position: absolute !important;
   inset: 0 !important;
@@ -4430,7 +4430,7 @@ form[id^="SWSEV2CharacterSheet"] .swse-tablet-drag-handle,
   touch-action: none !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-tablet-top-right-rail,
+form.swse-character-sheet-form-root .swse-tablet-top-right-rail,
 .swse.sheet.actor.character.v2 .swse-tablet-top-right-rail {
   position: absolute !important;
   z-index: 3 !important;
@@ -4453,7 +4453,7 @@ form[id^="SWSEV2CharacterSheet"] .swse-tablet-top-right-rail,
   pointer-events: auto !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-tablet-status-lights,
+form.swse-character-sheet-form-root .swse-tablet-status-lights,
 .swse.sheet.actor.character.v2 .swse-tablet-status-lights {
   display: inline-flex !important;
   flex: 0 0 auto !important;
@@ -4463,7 +4463,7 @@ form[id^="SWSEV2CharacterSheet"] .swse-tablet-status-lights,
   pointer-events: none !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-tablet-status-lights span,
+form.swse-character-sheet-form-root .swse-tablet-status-lights span,
 .swse.sheet.actor.character.v2 .swse-tablet-status-lights span {
   display: block !important;
   width: 5px !important;
@@ -4474,19 +4474,19 @@ form[id^="SWSEV2CharacterSheet"] .swse-tablet-status-lights span,
   opacity: 0.78 !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-tablet-status-lights span:nth-child(2),
+form.swse-character-sheet-form-root .swse-tablet-status-lights span:nth-child(2),
 .swse.sheet.actor.character.v2 .swse-tablet-status-lights span:nth-child(2) {
   background: var(--pos, #61ff9a) !important;
   box-shadow: 0 0 7px var(--pos, #61ff9a), 0 0 14px color-mix(in srgb, var(--pos, #61ff9a) 50%, transparent) !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-tablet-status-lights span:nth-child(3),
+form.swse-character-sheet-form-root .swse-tablet-status-lights span:nth-child(3),
 .swse.sheet.actor.character.v2 .swse-tablet-status-lights span:nth-child(3) {
   background: var(--vapor-pink, #ff2bd6) !important;
   box-shadow: 0 0 7px var(--vapor-pink, #ff2bd6), 0 0 14px color-mix(in srgb, var(--vapor-pink, #ff2bd6) 50%, transparent) !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-tablet-serial--aurebesh,
+form.swse-character-sheet-form-root .swse-tablet-serial--aurebesh,
 .swse.sheet.actor.character.v2 .swse-tablet-serial--aurebesh {
   display: inline-block !important;
   flex: 0 1 auto !important;
@@ -4506,7 +4506,7 @@ form[id^="SWSEV2CharacterSheet"] .swse-tablet-serial--aurebesh,
   pointer-events: none !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-tablet-control,
+form.swse-character-sheet-form-root .swse-tablet-control,
 .swse.sheet.actor.character.v2 .swse-tablet-control {
   position: relative !important;
   display: inline-grid !important;
@@ -4527,7 +4527,7 @@ form[id^="SWSEV2CharacterSheet"] .swse-tablet-control,
   cursor: pointer !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-v2-screen--concept,
+form.swse-character-sheet-form-root .swse-v2-screen--concept,
 .swse.sheet.actor.character.v2 .swse-v2-screen--concept {
   position: absolute !important;
   z-index: 1 !important;
@@ -4545,14 +4545,14 @@ form[id^="SWSEV2CharacterSheet"] .swse-v2-screen--concept,
   scrollbar-gutter: stable both-edges !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-tablet-bottom-engraving,
+form.swse-character-sheet-form-root .swse-tablet-bottom-engraving,
 .swse.sheet.actor.character.v2 .swse-tablet-bottom-engraving {
   right: 42px !important;
   bottom: 9px !important;
   z-index: 70 !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-tablet-vent--bottom,
+form.swse-character-sheet-form-root .swse-tablet-vent--bottom,
 .swse.sheet.actor.character.v2 .swse-tablet-vent--bottom,
 .swse.sheet.actor.character.v2 .swse-tablet-vent:not(.swse-tablet-vent--top) {
   left: 34px !important;
@@ -4560,7 +4560,7 @@ form[id^="SWSEV2CharacterSheet"] .swse-tablet-vent--bottom,
   z-index: 70 !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-tablet-resize-grip,
+form.swse-character-sheet-form-root .swse-tablet-resize-grip,
 .swse.sheet.actor.character.v2 .swse-tablet-resize-grip {
   right: 8px !important;
   bottom: 8px !important;
@@ -4573,7 +4573,7 @@ form[id^="SWSEV2CharacterSheet"] .swse-tablet-resize-grip,
 /* Authority: assets/Concept/Character Sheet v2.html + actor-v2 progression    */
 /* splash tablet. This block overrides earlier migration attempts.             */
 /* ========================================================================== */
-form[id^="SWSEV2CharacterSheet"],
+form.swse-character-sheet-form-root,
 .swse.sheet.actor.character.v2 {
   background: transparent !important;
   border: 0 !important;
@@ -4581,8 +4581,8 @@ form[id^="SWSEV2CharacterSheet"],
   overflow: hidden !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-character-sheet-wrapper--concept,
-form[id^="SWSEV2CharacterSheet"] .swse-sheet-v2-shell--concept {
+form.swse-character-sheet-form-root .swse-character-sheet-wrapper--concept,
+form.swse-character-sheet-form-root .swse-sheet-v2-shell--concept {
   position: relative !important;
   display: block !important;
   width: 100% !important;
@@ -4595,7 +4595,7 @@ form[id^="SWSEV2CharacterSheet"] .swse-sheet-v2-shell--concept {
   background: transparent !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-v2-tablet--concept {
+form.swse-character-sheet-form-root .swse-v2-tablet--concept {
   --tablet-pad-x: clamp(22px, 3.2vw, 44px);
   --tablet-pad-top: clamp(34px, 4.4vw, 48px);
   --tablet-pad-bottom: clamp(40px, 5vw, 56px);
@@ -4620,7 +4620,7 @@ form[id^="SWSEV2CharacterSheet"] .swse-v2-tablet--concept {
     0 0 140px oklch(var(--accent-l, 0.82) var(--accent-c, 0.17) var(--accent-h, 190) / 0.12) !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-v2-tablet--concept::before {
+form.swse-character-sheet-form-root .swse-v2-tablet--concept::before {
   content: "" !important;
   position: absolute !important;
   inset: 0 !important;
@@ -4634,7 +4634,7 @@ form[id^="SWSEV2CharacterSheet"] .swse-v2-tablet--concept::before {
     inset 0 0 58px rgba(0,0,0,0.38) !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-v2-screen--concept {
+form.swse-character-sheet-form-root .swse-v2-screen--concept {
   position: absolute !important;
   z-index: 1 !important;
   inset: var(--tablet-pad-top) var(--tablet-pad-x) var(--tablet-pad-bottom) var(--tablet-pad-x) !important;
@@ -4660,7 +4660,7 @@ form[id^="SWSEV2CharacterSheet"] .swse-v2-screen--concept {
     inset 0 0 80px oklch(var(--accent-l, 0.82) var(--accent-c, 0.17) var(--accent-h, 190) / 0.08) !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-tablet-top-bezel {
+form.swse-character-sheet-form-root .swse-tablet-top-bezel {
   position: absolute !important;
   z-index: 180 !important;
   top: 10px !important;
@@ -4680,7 +4680,7 @@ form[id^="SWSEV2CharacterSheet"] .swse-tablet-top-bezel {
   touch-action: none !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-tablet-drag-handle {
+form.swse-character-sheet-form-root .swse-tablet-drag-handle {
   position: absolute !important;
   z-index: 1 !important;
   inset: -8px 0 -4px 0 !important;
@@ -4690,7 +4690,7 @@ form[id^="SWSEV2CharacterSheet"] .swse-tablet-drag-handle {
   cursor: grab !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-tablet-top-right-rail {
+form.swse-character-sheet-form-root .swse-tablet-top-right-rail {
   position: absolute !important;
   z-index: 4 !important;
   top: 0 !important;
@@ -4712,7 +4712,7 @@ form[id^="SWSEV2CharacterSheet"] .swse-tablet-top-right-rail {
   pointer-events: auto !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-tablet-serial--aurebesh {
+form.swse-character-sheet-form-root .swse-tablet-serial--aurebesh {
   position: static !important;
   display: inline-block !important;
   flex: 0 1 auto !important;
@@ -4731,7 +4731,7 @@ form[id^="SWSEV2CharacterSheet"] .swse-tablet-serial--aurebesh {
   pointer-events: none !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-tablet-status-lights {
+form.swse-character-sheet-form-root .swse-tablet-status-lights {
   display: inline-flex !important;
   align-items: center !important;
   gap: 5px !important;
@@ -4739,8 +4739,8 @@ form[id^="SWSEV2CharacterSheet"] .swse-tablet-status-lights {
   pointer-events: none !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-tablet-status-lights span,
-form[id^="SWSEV2CharacterSheet"] .swse-tablet-led {
+form.swse-character-sheet-form-root .swse-tablet-status-lights span,
+form.swse-character-sheet-form-root .swse-tablet-led {
   width: 6px !important;
   height: 6px !important;
   border-radius: 50% !important;
@@ -4749,19 +4749,19 @@ form[id^="SWSEV2CharacterSheet"] .swse-tablet-led {
   opacity: 0.78 !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-tablet-status-lights span:nth-child(2),
-form[id^="SWSEV2CharacterSheet"] .swse-tablet-led--b {
+form.swse-character-sheet-form-root .swse-tablet-status-lights span:nth-child(2),
+form.swse-character-sheet-form-root .swse-tablet-led--b {
   background: var(--pos, oklch(0.82 0.19 145)) !important;
   box-shadow: 0 0 10px var(--pos, oklch(0.82 0.19 145)), 0 0 22px var(--pos, oklch(0.82 0.19 145)) !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-tablet-status-lights span:nth-child(3),
-form[id^="SWSEV2CharacterSheet"] .swse-tablet-led--c {
+form.swse-character-sheet-form-root .swse-tablet-status-lights span:nth-child(3),
+form.swse-character-sheet-form-root .swse-tablet-led--c {
   background: var(--vapor-pink, oklch(0.72 0.26 350)) !important;
   box-shadow: 0 0 10px var(--vapor-pink, oklch(0.72 0.26 350)), 0 0 22px var(--vapor-pink, oklch(0.72 0.26 350)) !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-tablet-control {
+form.swse-character-sheet-form-root .swse-tablet-control {
   position: static !important;
   display: inline-grid !important;
   place-items: center !important;
@@ -4782,12 +4782,12 @@ form[id^="SWSEV2CharacterSheet"] .swse-tablet-control {
   pointer-events: auto !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-tablet-control:hover {
+form.swse-character-sheet-form-root .swse-tablet-control:hover {
   border-color: var(--vapor-cyan, #00f0ff) !important;
   box-shadow: 0 0 12px color-mix(in srgb, var(--vapor-cyan, #00f0ff) 40%, transparent) !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-tablet-rivet {
+form.swse-character-sheet-form-root .swse-tablet-rivet {
   position: absolute !important;
   z-index: 95 !important;
   width: 8px !important;
@@ -4797,26 +4797,26 @@ form[id^="SWSEV2CharacterSheet"] .swse-tablet-rivet {
   box-shadow: inset 0 0 0 1px #090912, 0 0 0 1px oklch(0.18 0.02 260) !important;
   pointer-events: none !important;
 }
-form[id^="SWSEV2CharacterSheet"] .swse-tablet-rivet--tl { top: 14px !important; left: 18px !important; }
-form[id^="SWSEV2CharacterSheet"] .swse-tablet-rivet--tr { top: 14px !important; right: 18px !important; }
-form[id^="SWSEV2CharacterSheet"] .swse-tablet-rivet--bl { bottom: 14px !important; left: 18px !important; }
-form[id^="SWSEV2CharacterSheet"] .swse-tablet-rivet--br { bottom: 14px !important; right: 18px !important; }
-form[id^="SWSEV2CharacterSheet"] .swse-tablet-rivet--ml { top: 50% !important; left: 14px !important; transform: translateY(-50%) !important; }
-form[id^="SWSEV2CharacterSheet"] .swse-tablet-rivet--mr { top: 50% !important; right: 14px !important; transform: translateY(-50%) !important; }
+form.swse-character-sheet-form-root .swse-tablet-rivet--tl { top: 14px !important; left: 18px !important; }
+form.swse-character-sheet-form-root .swse-tablet-rivet--tr { top: 14px !important; right: 18px !important; }
+form.swse-character-sheet-form-root .swse-tablet-rivet--bl { bottom: 14px !important; left: 18px !important; }
+form.swse-character-sheet-form-root .swse-tablet-rivet--br { bottom: 14px !important; right: 18px !important; }
+form.swse-character-sheet-form-root .swse-tablet-rivet--ml { top: 50% !important; left: 14px !important; transform: translateY(-50%) !important; }
+form.swse-character-sheet-form-root .swse-tablet-rivet--mr { top: 50% !important; right: 14px !important; transform: translateY(-50%) !important; }
 
-form[id^="SWSEV2CharacterSheet"] .swse-tablet-phys {
+form.swse-character-sheet-form-root .swse-tablet-phys {
   position: absolute !important;
   z-index: 94 !important;
   background: linear-gradient(90deg, #0a0a12 0%, #2a2a38 50%, #0a0a12 100%) !important;
   box-shadow: 0 0 0 1px oklch(0.08 0.02 260) !important;
   pointer-events: none !important;
 }
-form[id^="SWSEV2CharacterSheet"] .swse-tablet-phys--top-a { top: -3px !important; left: 240px !important; width: 70px !important; height: 5px !important; border-radius: 2px !important; }
-form[id^="SWSEV2CharacterSheet"] .swse-tablet-phys--top-b { top: -3px !important; left: 330px !important; width: 40px !important; height: 5px !important; border-radius: 2px !important; }
-form[id^="SWSEV2CharacterSheet"] .swse-tablet-phys--right-a { right: -3px !important; top: 180px !important; width: 6px !important; height: 38px !important; border-radius: 3px !important; }
-form[id^="SWSEV2CharacterSheet"] .swse-tablet-phys--right-b { right: -3px !important; top: 230px !important; width: 6px !important; height: 38px !important; border-radius: 3px !important; }
+form.swse-character-sheet-form-root .swse-tablet-phys--top-a { top: -3px !important; left: 240px !important; width: 70px !important; height: 5px !important; border-radius: 2px !important; }
+form.swse-character-sheet-form-root .swse-tablet-phys--top-b { top: -3px !important; left: 330px !important; width: 40px !important; height: 5px !important; border-radius: 2px !important; }
+form.swse-character-sheet-form-root .swse-tablet-phys--right-a { right: -3px !important; top: 180px !important; width: 6px !important; height: 38px !important; border-radius: 3px !important; }
+form.swse-character-sheet-form-root .swse-tablet-phys--right-b { right: -3px !important; top: 230px !important; width: 6px !important; height: 38px !important; border-radius: 3px !important; }
 
-form[id^="SWSEV2CharacterSheet"] .swse-tablet-camera {
+form.swse-character-sheet-form-root .swse-tablet-camera {
   position: absolute !important;
   z-index: 95 !important;
   top: 24px !important;
@@ -4829,7 +4829,7 @@ form[id^="SWSEV2CharacterSheet"] .swse-tablet-camera {
   box-shadow: inset 0 0 0 1px oklch(0.18 0.02 260) !important;
   pointer-events: none !important;
 }
-form[id^="SWSEV2CharacterSheet"] .swse-tablet-camera::after {
+form.swse-character-sheet-form-root .swse-tablet-camera::after {
   content: "" !important;
   position: absolute !important;
   top: 3px !important;
@@ -4841,19 +4841,19 @@ form[id^="SWSEV2CharacterSheet"] .swse-tablet-camera::after {
   box-shadow: 0 0 6px var(--vapor-cyan, #00f0ff) !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-tablet-led {
+form.swse-character-sheet-form-root .swse-tablet-led {
   position: absolute !important;
   z-index: 95 !important;
   pointer-events: none !important;
   animation: swse-tablet-led-pulse 1.8s ease-in-out infinite !important;
 }
-form[id^="SWSEV2CharacterSheet"] .swse-tablet-led--a { top: 28px !important; left: 62px !important; }
-form[id^="SWSEV2CharacterSheet"] .swse-tablet-led--b { top: 28px !important; right: 62px !important; animation-delay: 0.3s !important; }
-form[id^="SWSEV2CharacterSheet"] .swse-tablet-led--c { bottom: 30px !important; left: 62px !important; animation-delay: 0.6s !important; }
-form[id^="SWSEV2CharacterSheet"] .swse-tablet-led--d { bottom: 30px !important; right: 62px !important; background: oklch(0.80 0.16 60) !important; box-shadow: 0 0 10px oklch(0.80 0.16 60), 0 0 22px oklch(0.80 0.16 60) !important; animation-delay: 0.9s !important; }
+form.swse-character-sheet-form-root .swse-tablet-led--a { top: 28px !important; left: 62px !important; }
+form.swse-character-sheet-form-root .swse-tablet-led--b { top: 28px !important; right: 62px !important; animation-delay: 0.3s !important; }
+form.swse-character-sheet-form-root .swse-tablet-led--c { bottom: 30px !important; left: 62px !important; animation-delay: 0.6s !important; }
+form.swse-character-sheet-form-root .swse-tablet-led--d { bottom: 30px !important; right: 62px !important; background: oklch(0.80 0.16 60) !important; box-shadow: 0 0 10px oklch(0.80 0.16 60), 0 0 22px oklch(0.80 0.16 60) !important; animation-delay: 0.9s !important; }
 @keyframes swse-tablet-led-pulse { 0%, 100% { opacity: 0.35; } 50% { opacity: 1; } }
 
-form[id^="SWSEV2CharacterSheet"] .swse-tablet-vent--top {
+form.swse-character-sheet-form-root .swse-tablet-vent--top {
   position: absolute !important;
   top: 22px !important;
   left: 50% !important;
@@ -4865,7 +4865,7 @@ form[id^="SWSEV2CharacterSheet"] .swse-tablet-vent--top {
   pointer-events: none !important;
   opacity: 0.56 !important;
 }
-form[id^="SWSEV2CharacterSheet"] .swse-tablet-vent--top span {
+form.swse-character-sheet-form-root .swse-tablet-vent--top span {
   width: 2px !important;
   height: 10px !important;
   border-radius: 1px !important;
@@ -4873,15 +4873,15 @@ form[id^="SWSEV2CharacterSheet"] .swse-tablet-vent--top span {
   box-shadow: inset 0 0 1px oklch(0.05 0.02 260) !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-tablet-bottom-engraving,
-form[id^="SWSEV2CharacterSheet"] .swse-tablet-vent--bottom {
+form.swse-character-sheet-form-root .swse-tablet-bottom-engraving,
+form.swse-character-sheet-form-root .swse-tablet-vent--bottom {
   z-index: 96 !important;
   pointer-events: none !important;
 }
-form[id^="SWSEV2CharacterSheet"] .swse-tablet-bottom-engraving { right: 44px !important; bottom: 18px !important; color: oklch(0.50 0.04 260) !important; }
-form[id^="SWSEV2CharacterSheet"] .swse-tablet-vent--bottom { left: 44px !important; bottom: 20px !important; }
+form.swse-character-sheet-form-root .swse-tablet-bottom-engraving { right: 44px !important; bottom: 18px !important; color: oklch(0.50 0.04 260) !important; }
+form.swse-character-sheet-form-root .swse-tablet-vent--bottom { left: 44px !important; bottom: 20px !important; }
 
-form[id^="SWSEV2CharacterSheet"] .swse-tablet-resize-grip {
+form.swse-character-sheet-form-root .swse-tablet-resize-grip {
   position: absolute !important;
   z-index: 220 !important;
   right: 7px !important;
@@ -4893,7 +4893,7 @@ form[id^="SWSEV2CharacterSheet"] .swse-tablet-resize-grip {
   pointer-events: auto !important;
   touch-action: none !important;
 }
-form[id^="SWSEV2CharacterSheet"] .swse-tablet-resize-grip::before {
+form.swse-character-sheet-form-root .swse-tablet-resize-grip::before {
   content: "" !important;
   position: absolute !important;
   right: 8px !important;
@@ -4909,9 +4909,9 @@ form[id^="SWSEV2CharacterSheet"] .swse-tablet-resize-grip::before {
 /* When chargen/progression intro is hosted inside the character holopad, the
    character tablet is already the metal shell. Remove the nested intro tablet
    chrome and keep only the animated boot screen content. */
-form[id^="SWSEV2CharacterSheet"] .swse-prog-inline-intro--screen-only,
-form[id^="SWSEV2CharacterSheet"] .swse-prog-inline-intro--screen-only > .prog-intro-surface,
-form[id^="SWSEV2CharacterSheet"] .swse-prog-inline-intro--screen-only .prog-intro-surface--actor-v2 {
+form.swse-character-sheet-form-root .swse-prog-inline-intro--screen-only,
+form.swse-character-sheet-form-root .swse-prog-inline-intro--screen-only > .prog-intro-surface,
+form.swse-character-sheet-form-root .swse-prog-inline-intro--screen-only .prog-intro-surface--actor-v2 {
   width: 100% !important;
   height: 100% !important;
   min-width: 0 !important;
@@ -4919,14 +4919,14 @@ form[id^="SWSEV2CharacterSheet"] .swse-prog-inline-intro--screen-only .prog-intr
   overflow: hidden !important;
   background: transparent !important;
 }
-form[id^="SWSEV2CharacterSheet"] .swse-prog-inline-intro--screen-only .prog-intro-surface--actor-v2::before { display: none !important; }
-form[id^="SWSEV2CharacterSheet"] .swse-prog-inline-intro--screen-only .prog-intro-surface--actor-v2 .stage {
+form.swse-character-sheet-form-root .swse-prog-inline-intro--screen-only .prog-intro-surface--actor-v2::before { display: none !important; }
+form.swse-character-sheet-form-root .swse-prog-inline-intro--screen-only .prog-intro-surface--actor-v2 .stage {
   width: 100% !important;
   height: 100% !important;
   min-height: 0 !important;
   padding: 0 !important;
 }
-form[id^="SWSEV2CharacterSheet"] .swse-prog-inline-intro--screen-only .prog-intro-surface--actor-v2 .tablet {
+form.swse-character-sheet-form-root .swse-prog-inline-intro--screen-only .prog-intro-surface--actor-v2 .tablet {
   width: 100% !important;
   height: 100% !important;
   min-height: 0 !important;
@@ -4938,18 +4938,18 @@ form[id^="SWSEV2CharacterSheet"] .swse-prog-inline-intro--screen-only .prog-intr
   box-shadow: none !important;
   animation: none !important;
 }
-form[id^="SWSEV2CharacterSheet"] .swse-prog-inline-intro--screen-only .prog-intro-surface--actor-v2 .rivet,
-form[id^="SWSEV2CharacterSheet"] .swse-prog-inline-intro--screen-only .prog-intro-surface--actor-v2 .btn-phys,
-form[id^="SWSEV2CharacterSheet"] .swse-prog-inline-intro--screen-only .prog-intro-surface--actor-v2 .bezel-led,
-form[id^="SWSEV2CharacterSheet"] .swse-prog-inline-intro--screen-only .prog-intro-surface--actor-v2 .bezel-label,
-form[id^="SWSEV2CharacterSheet"] .swse-prog-inline-intro--screen-only .prog-intro-surface--actor-v2 .bezel-serial,
-form[id^="SWSEV2CharacterSheet"] .swse-prog-inline-intro--screen-only .prog-intro-surface--actor-v2 .bezel-fcc,
-form[id^="SWSEV2CharacterSheet"] .swse-prog-inline-intro--screen-only .prog-intro-surface--actor-v2 .bezel-manu,
-form[id^="SWSEV2CharacterSheet"] .swse-prog-inline-intro--screen-only .prog-intro-surface--actor-v2 .vent,
-form[id^="SWSEV2CharacterSheet"] .swse-prog-inline-intro--screen-only .prog-intro-surface--actor-v2 .cam {
+form.swse-character-sheet-form-root .swse-prog-inline-intro--screen-only .prog-intro-surface--actor-v2 .rivet,
+form.swse-character-sheet-form-root .swse-prog-inline-intro--screen-only .prog-intro-surface--actor-v2 .btn-phys,
+form.swse-character-sheet-form-root .swse-prog-inline-intro--screen-only .prog-intro-surface--actor-v2 .bezel-led,
+form.swse-character-sheet-form-root .swse-prog-inline-intro--screen-only .prog-intro-surface--actor-v2 .bezel-label,
+form.swse-character-sheet-form-root .swse-prog-inline-intro--screen-only .prog-intro-surface--actor-v2 .bezel-serial,
+form.swse-character-sheet-form-root .swse-prog-inline-intro--screen-only .prog-intro-surface--actor-v2 .bezel-fcc,
+form.swse-character-sheet-form-root .swse-prog-inline-intro--screen-only .prog-intro-surface--actor-v2 .bezel-manu,
+form.swse-character-sheet-form-root .swse-prog-inline-intro--screen-only .prog-intro-surface--actor-v2 .vent,
+form.swse-character-sheet-form-root .swse-prog-inline-intro--screen-only .prog-intro-surface--actor-v2 .cam {
   display: none !important;
 }
-form[id^="SWSEV2CharacterSheet"] .swse-prog-inline-intro--screen-only .prog-intro-surface--actor-v2 .screen {
+form.swse-character-sheet-form-root .swse-prog-inline-intro--screen-only .prog-intro-surface--actor-v2 .screen {
   width: 100% !important;
   height: 100% !important;
   min-height: 0 !important;
@@ -4958,12 +4958,12 @@ form[id^="SWSEV2CharacterSheet"] .swse-prog-inline-intro--screen-only .prog-intr
 }
 
 @media (max-width: 1100px) {
-  form[id^="SWSEV2CharacterSheet"] .swse-v2-tablet--concept {
+  form.swse-character-sheet-form-root .swse-v2-tablet--concept {
     --tablet-pad-x: 22px;
     --tablet-pad-top: 34px;
     --tablet-pad-bottom: 42px;
   }
-  form[id^="SWSEV2CharacterSheet"] .swse-tablet-top-right-rail { right: 10px !important; }
+  form.swse-character-sheet-form-root .swse-tablet-top-right-rail { right: 10px !important; }
 }
 
 /* ========================================================================== */
@@ -4972,9 +4972,9 @@ form[id^="SWSEV2CharacterSheet"] .swse-prog-inline-intro--screen-only .prog-intr
 /* - Home/progression/settings surfaces own the whole screen.                  */
 /* - Top hardware rail is one compact row at upper-right.                      */
 /* ========================================================================== */
-form[id^="SWSEV2CharacterSheet"] .swse-character-sheet-wrapper--concept,
-form[id^="SWSEV2CharacterSheet"] .swse-sheet-v2-shell--concept,
-form[id^="SWSEV2CharacterSheet"] .swse-v2-tablet--concept {
+form.swse-character-sheet-form-root .swse-character-sheet-wrapper--concept,
+form.swse-character-sheet-form-root .swse-sheet-v2-shell--concept,
+form.swse-character-sheet-form-root .swse-v2-tablet--concept {
   width: 100% !important;
   height: 100% !important;
   min-width: 0 !important;
@@ -4983,7 +4983,7 @@ form[id^="SWSEV2CharacterSheet"] .swse-v2-tablet--concept {
   max-height: none !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-v2-tablet--concept {
+form.swse-character-sheet-form-root .swse-v2-tablet--concept {
   position: absolute !important;
   inset: 0 !important;
   padding: 0 !important;
@@ -4991,7 +4991,7 @@ form[id^="SWSEV2CharacterSheet"] .swse-v2-tablet--concept {
   border-radius: 22px !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-tablet-top-bezel {
+form.swse-character-sheet-form-root .swse-tablet-top-bezel {
   position: absolute !important;
   z-index: 260 !important;
   top: 8px !important;
@@ -5011,7 +5011,7 @@ form[id^="SWSEV2CharacterSheet"] .swse-tablet-top-bezel {
   cursor: grab !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-tablet-drag-handle {
+form.swse-character-sheet-form-root .swse-tablet-drag-handle {
   position: absolute !important;
   z-index: 1 !important;
   inset: -4px 0 -4px 0 !important;
@@ -5021,7 +5021,7 @@ form[id^="SWSEV2CharacterSheet"] .swse-tablet-drag-handle {
   cursor: grab !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-tablet-top-right-rail {
+form.swse-character-sheet-form-root .swse-tablet-top-right-rail {
   position: absolute !important;
   z-index: 3 !important;
   top: 0 !important;
@@ -5045,15 +5045,15 @@ form[id^="SWSEV2CharacterSheet"] .swse-tablet-top-right-rail {
   pointer-events: auto !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-tablet-serial--aurebesh,
-form[id^="SWSEV2CharacterSheet"] .swse-tablet-status-lights,
-form[id^="SWSEV2CharacterSheet"] .swse-tablet-control {
+form.swse-character-sheet-form-root .swse-tablet-serial--aurebesh,
+form.swse-character-sheet-form-root .swse-tablet-status-lights,
+form.swse-character-sheet-form-root .swse-tablet-control {
   position: static !important;
   transform: none !important;
   flex-shrink: 0 !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-tablet-control {
+form.swse-character-sheet-form-root .swse-tablet-control {
   display: inline-grid !important;
   place-items: center !important;
   width: 21px !important;
@@ -5064,14 +5064,14 @@ form[id^="SWSEV2CharacterSheet"] .swse-tablet-control {
   margin: 0 !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-tablet-serial--aurebesh {
+form.swse-character-sheet-form-root .swse-tablet-serial--aurebesh {
   max-width: 230px !important;
   overflow: hidden !important;
   text-overflow: ellipsis !important;
   white-space: nowrap !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-v2-screen--concept {
+form.swse-character-sheet-form-root .swse-v2-screen--concept {
   position: absolute !important;
   z-index: 5 !important;
   top: 40px !important;
@@ -5090,29 +5090,29 @@ form[id^="SWSEV2CharacterSheet"] .swse-v2-screen--concept {
   overflow: hidden !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-sheet-v2-shell--surface-sheet .swse-v2-screen--concept {
+form.swse-character-sheet-form-root .swse-sheet-v2-shell--surface-sheet .swse-v2-screen--concept {
   overflow-y: auto !important;
   overflow-x: hidden !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-tablet-bottom-engraving,
-form[id^="SWSEV2CharacterSheet"] .swse-tablet-vent--bottom {
+form.swse-character-sheet-form-root .swse-tablet-bottom-engraving,
+form.swse-character-sheet-form-root .swse-tablet-vent--bottom {
   display: flex !important;
   opacity: 0.78 !important;
   z-index: 170 !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-tablet-bottom-engraving {
+form.swse-character-sheet-form-root .swse-tablet-bottom-engraving {
   right: 62px !important;
   bottom: 18px !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-tablet-vent--bottom {
+form.swse-character-sheet-form-root .swse-tablet-vent--bottom {
   left: 48px !important;
   bottom: 22px !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-tablet-resize-grip {
+form.swse-character-sheet-form-root .swse-tablet-resize-grip {
   display: block !important;
   position: absolute !important;
   z-index: 300 !important;
@@ -5124,7 +5124,7 @@ form[id^="SWSEV2CharacterSheet"] .swse-tablet-resize-grip {
   cursor: nwse-resize !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-tablet-resize-grip::before {
+form.swse-character-sheet-form-root .swse-tablet-resize-grip::before {
   content: "" !important;
   position: absolute !important;
   right: 10px !important;
@@ -5136,10 +5136,10 @@ form[id^="SWSEV2CharacterSheet"] .swse-tablet-resize-grip::before {
   filter: drop-shadow(0 0 8px color-mix(in srgb, var(--vapor-cyan, #00f0ff) 60%, transparent)) !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-shell-screen-surface,
-form[id^="SWSEV2CharacterSheet"] .swse-shell-screen-surface > .swse-shell-surface-host,
-form[id^="SWSEV2CharacterSheet"] .swse-shell-surface-host,
-form[id^="SWSEV2CharacterSheet"] .swse-shell-surface {
+form.swse-character-sheet-form-root .swse-shell-screen-surface,
+form.swse-character-sheet-form-root .swse-shell-screen-surface > .swse-shell-surface-host,
+form.swse-character-sheet-form-root .swse-shell-surface-host,
+form.swse-character-sheet-form-root .swse-shell-surface {
   position: relative !important;
   display: flex !important;
   flex-direction: column !important;
@@ -5151,13 +5151,13 @@ form[id^="SWSEV2CharacterSheet"] .swse-shell-surface {
   overflow: hidden !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-shell-screen-surface .swse-shell-home-nav {
+form.swse-character-sheet-form-root .swse-shell-screen-surface .swse-shell-home-nav {
   top: 8px !important;
   right: 8px !important;
 }
 
 /* Restore concept sheet flex/grid ownership after separating routed surfaces. */
-form[id^="SWSEV2CharacterSheet"] .swse-concept-body {
+form.swse-character-sheet-form-root .swse-concept-body {
   display: grid !important;
   grid-template-columns: minmax(210px, 280px) minmax(0, 1fr) !important;
   gap: 18px !important;
@@ -5165,16 +5165,16 @@ form[id^="SWSEV2CharacterSheet"] .swse-concept-body {
   min-height: 0 !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-concept-main {
+form.swse-character-sheet-form-root .swse-concept-main {
   min-width: 0 !important;
   min-height: 0 !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-concept-main > .tab:not(.active) {
+form.swse-character-sheet-form-root .swse-concept-main > .tab:not(.active) {
   display: none !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-concept-main > .tab.active {
+form.swse-character-sheet-form-root .swse-concept-main > .tab.active {
   display: flex !important;
   flex-direction: column !important;
   min-width: 0 !important;
@@ -5182,7 +5182,7 @@ form[id^="SWSEV2CharacterSheet"] .swse-concept-main > .tab.active {
 }
 
 /* Inline progression must use the existing progression CSS authority. */
-form[id^="SWSEV2CharacterSheet"] .swse-progression-inline.progression-shell {
+form.swse-character-sheet-form-root .swse-progression-inline.progression-shell {
   position: relative !important;
   display: flex !important;
   flex-direction: column !important;
@@ -5194,7 +5194,7 @@ form[id^="SWSEV2CharacterSheet"] .swse-progression-inline.progression-shell {
   background: transparent !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-progression-inline.progression-shell .swse-prog-inline-body {
+form.swse-character-sheet-form-root .swse-progression-inline.progression-shell .swse-prog-inline-body {
   display: grid !important;
   grid-template-columns: minmax(172px, 0.55fr) minmax(0, 1.7fr) minmax(230px, 0.82fr) !important;
   gap: 12px !important;
@@ -5205,9 +5205,9 @@ form[id^="SWSEV2CharacterSheet"] .swse-progression-inline.progression-shell .sws
   overflow: hidden !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-progression-inline.progression-shell .swse-prog-inline-mentor,
-form[id^="SWSEV2CharacterSheet"] .swse-progression-inline.progression-shell .swse-prog-inline-work,
-form[id^="SWSEV2CharacterSheet"] .swse-progression-inline.progression-shell .swse-prog-inline-details {
+form.swse-character-sheet-form-root .swse-progression-inline.progression-shell .swse-prog-inline-mentor,
+form.swse-character-sheet-form-root .swse-progression-inline.progression-shell .swse-prog-inline-work,
+form.swse-character-sheet-form-root .swse-progression-inline.progression-shell .swse-prog-inline-details {
   min-width: 0 !important;
   min-height: 0 !important;
   overflow: auto !important;
@@ -5216,7 +5216,7 @@ form[id^="SWSEV2CharacterSheet"] .swse-progression-inline.progression-shell .sws
 /* ========================================================================== */
 /* 2026-05-10 P0: holopad chrome + canonical inline progression restoration    */
 /* ========================================================================== */
-form[id^="SWSEV2CharacterSheet"] .swse-v2-tablet--concept {
+form.swse-character-sheet-form-root .swse-v2-tablet--concept {
   --tablet-top-rail-h: 26px;
   --tablet-bottom-rail-h: 34px;
   position: absolute !important;
@@ -5226,7 +5226,7 @@ form[id^="SWSEV2CharacterSheet"] .swse-v2-tablet--concept {
   border-radius: 18px !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-tablet-top-bezel {
+form.swse-character-sheet-form-root .swse-tablet-top-bezel {
   position: absolute !important;
   z-index: 240 !important;
   top: 0 !important;
@@ -5247,7 +5247,7 @@ form[id^="SWSEV2CharacterSheet"] .swse-tablet-top-bezel {
   pointer-events: auto !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-tablet-drag-handle {
+form.swse-character-sheet-form-root .swse-tablet-drag-handle {
   position: absolute !important;
   inset: 0 !important;
   display: block !important;
@@ -5255,8 +5255,8 @@ form[id^="SWSEV2CharacterSheet"] .swse-tablet-drag-handle {
   pointer-events: auto !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-tablet-hardware-rail,
-form[id^="SWSEV2CharacterSheet"] .swse-tablet-top-right-rail {
+form.swse-character-sheet-form-root .swse-tablet-hardware-rail,
+form.swse-character-sheet-form-root .swse-tablet-top-right-rail {
   position: absolute !important;
   z-index: 320 !important;
   top: 3px !important;
@@ -5283,15 +5283,15 @@ form[id^="SWSEV2CharacterSheet"] .swse-tablet-top-right-rail {
   transform: none !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-tablet-hardware-rail > *,
-form[id^="SWSEV2CharacterSheet"] .swse-tablet-top-right-rail > * {
+form.swse-character-sheet-form-root .swse-tablet-hardware-rail > *,
+form.swse-character-sheet-form-root .swse-tablet-top-right-rail > * {
   position: static !important;
   transform: none !important;
   flex: 0 0 auto !important;
   margin: 0 !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-tablet-serial--aurebesh {
+form.swse-character-sheet-form-root .swse-tablet-serial--aurebesh {
   display: inline-block !important;
   max-width: 190px !important;
   font-size: 8px !important;
@@ -5303,14 +5303,14 @@ form[id^="SWSEV2CharacterSheet"] .swse-tablet-serial--aurebesh {
   opacity: 0.76 !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-tablet-status-lights {
+form.swse-character-sheet-form-root .swse-tablet-status-lights {
   display: inline-flex !important;
   flex-direction: row !important;
   align-items: center !important;
   gap: 4px !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-tablet-status-lights span {
+form.swse-character-sheet-form-root .swse-tablet-status-lights span {
   display: block !important;
   width: 4px !important;
   height: 4px !important;
@@ -5319,7 +5319,7 @@ form[id^="SWSEV2CharacterSheet"] .swse-tablet-status-lights span {
   box-shadow: 0 0 8px var(--vapor-cyan, #00f0ff) !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-tablet-control {
+form.swse-character-sheet-form-root .swse-tablet-control {
   display: inline-grid !important;
   place-items: center !important;
   width: 18px !important;
@@ -5333,7 +5333,7 @@ form[id^="SWSEV2CharacterSheet"] .swse-tablet-control {
   font-size: 10px !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-v2-screen--concept {
+form.swse-character-sheet-form-root .swse-v2-screen--concept {
   position: absolute !important;
   z-index: 5 !important;
   inset: calc(var(--tablet-top-rail-h) + 8px) 24px calc(var(--tablet-bottom-rail-h) + 8px) 24px !important;
@@ -5346,8 +5346,8 @@ form[id^="SWSEV2CharacterSheet"] .swse-v2-screen--concept {
   overflow: hidden !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-tablet-bottom-engraving,
-form[id^="SWSEV2CharacterSheet"] .swse-tablet-vent--bottom {
+form.swse-character-sheet-form-root .swse-tablet-bottom-engraving,
+form.swse-character-sheet-form-root .swse-tablet-vent--bottom {
   position: absolute !important;
   z-index: 300 !important;
   display: flex !important;
@@ -5355,16 +5355,16 @@ form[id^="SWSEV2CharacterSheet"] .swse-tablet-vent--bottom {
   pointer-events: none !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-tablet-bottom-engraving {
+form.swse-character-sheet-form-root .swse-tablet-bottom-engraving {
   right: 62px !important;
   font-size: 7px !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-tablet-vent--bottom {
+form.swse-character-sheet-form-root .swse-tablet-vent--bottom {
   left: 42px !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-tablet-resize-grip {
+form.swse-character-sheet-form-root .swse-tablet-resize-grip {
   z-index: 420 !important;
   right: 1px !important;
   bottom: 1px !important;
@@ -5376,7 +5376,7 @@ form[id^="SWSEV2CharacterSheet"] .swse-tablet-resize-grip {
 
 /* Frameless AppV2 edge/corner resize hit zones.
    These emulate normal OS window borders without adding visible boxes. */
-form[id^="SWSEV2CharacterSheet"] .swse-tablet-resize-zone {
+form.swse-character-sheet-form-root .swse-tablet-resize-zone {
   position: absolute !important;
   z-index: 410 !important;
   display: block !important;
@@ -5386,7 +5386,7 @@ form[id^="SWSEV2CharacterSheet"] .swse-tablet-resize-zone {
   opacity: 0 !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-tablet-resize-zone--n {
+form.swse-character-sheet-form-root .swse-tablet-resize-zone--n {
   top: -2px !important;
   left: 18px !important;
   right: 18px !important;
@@ -5394,7 +5394,7 @@ form[id^="SWSEV2CharacterSheet"] .swse-tablet-resize-zone--n {
   cursor: ns-resize !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-tablet-resize-zone--s {
+form.swse-character-sheet-form-root .swse-tablet-resize-zone--s {
   bottom: -2px !important;
   left: 18px !important;
   right: 18px !important;
@@ -5402,7 +5402,7 @@ form[id^="SWSEV2CharacterSheet"] .swse-tablet-resize-zone--s {
   cursor: ns-resize !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-tablet-resize-zone--e {
+form.swse-character-sheet-form-root .swse-tablet-resize-zone--e {
   top: 18px !important;
   right: -2px !important;
   bottom: 18px !important;
@@ -5410,7 +5410,7 @@ form[id^="SWSEV2CharacterSheet"] .swse-tablet-resize-zone--e {
   cursor: ew-resize !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-tablet-resize-zone--w {
+form.swse-character-sheet-form-root .swse-tablet-resize-zone--w {
   top: 18px !important;
   left: -2px !important;
   bottom: 18px !important;
@@ -5418,67 +5418,67 @@ form[id^="SWSEV2CharacterSheet"] .swse-tablet-resize-zone--w {
   cursor: ew-resize !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-tablet-resize-zone--ne,
-form[id^="SWSEV2CharacterSheet"] .swse-tablet-resize-zone--nw,
-form[id^="SWSEV2CharacterSheet"] .swse-tablet-resize-zone--se,
-form[id^="SWSEV2CharacterSheet"] .swse-tablet-resize-zone--sw {
+form.swse-character-sheet-form-root .swse-tablet-resize-zone--ne,
+form.swse-character-sheet-form-root .swse-tablet-resize-zone--nw,
+form.swse-character-sheet-form-root .swse-tablet-resize-zone--se,
+form.swse-character-sheet-form-root .swse-tablet-resize-zone--sw {
   width: 22px !important;
   height: 22px !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-tablet-resize-zone--ne {
+form.swse-character-sheet-form-root .swse-tablet-resize-zone--ne {
   top: -3px !important;
   right: -3px !important;
   cursor: nesw-resize !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-tablet-resize-zone--nw {
+form.swse-character-sheet-form-root .swse-tablet-resize-zone--nw {
   top: -3px !important;
   left: -3px !important;
   cursor: nwse-resize !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-tablet-resize-zone--se {
+form.swse-character-sheet-form-root .swse-tablet-resize-zone--se {
   right: -3px !important;
   bottom: -3px !important;
   cursor: nwse-resize !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-tablet-resize-zone--sw {
+form.swse-character-sheet-form-root .swse-tablet-resize-zone--sw {
   left: -3px !important;
   bottom: -3px !important;
   cursor: nesw-resize !important;
 }
 
-form[id^="SWSEV2CharacterSheet"].is-window-resizing,
-form[id^="SWSEV2CharacterSheet"].is-window-resizing * {
+form.swse-character-sheet-form-root.is-window-resizing,
+form.swse-character-sheet-form-root.is-window-resizing * {
   user-select: none !important;
 }
 
-form[id^="SWSEV2CharacterSheet"].is-window-resizing--n,
-form[id^="SWSEV2CharacterSheet"].is-window-resizing--s {
+form.swse-character-sheet-form-root.is-window-resizing--n,
+form.swse-character-sheet-form-root.is-window-resizing--s {
   cursor: ns-resize !important;
 }
 
-form[id^="SWSEV2CharacterSheet"].is-window-resizing--e,
-form[id^="SWSEV2CharacterSheet"].is-window-resizing--w {
+form.swse-character-sheet-form-root.is-window-resizing--e,
+form.swse-character-sheet-form-root.is-window-resizing--w {
   cursor: ew-resize !important;
 }
 
-form[id^="SWSEV2CharacterSheet"].is-window-resizing--ne,
-form[id^="SWSEV2CharacterSheet"].is-window-resizing--sw {
+form.swse-character-sheet-form-root.is-window-resizing--ne,
+form.swse-character-sheet-form-root.is-window-resizing--sw {
   cursor: nesw-resize !important;
 }
 
-form[id^="SWSEV2CharacterSheet"].is-window-resizing--nw,
-form[id^="SWSEV2CharacterSheet"].is-window-resizing--se {
+form.swse-character-sheet-form-root.is-window-resizing--nw,
+form.swse-character-sheet-form-root.is-window-resizing--se {
   cursor: nwse-resize !important;
 }
 
 /* Canonical progression shell embedded in the holopad screen. */
-form[id^="SWSEV2CharacterSheet"] .swse-progression-inline-host,
-form[id^="SWSEV2CharacterSheet"] .swse-progression-inline-host > .swse-datapad.progression-shell,
-form[id^="SWSEV2CharacterSheet"] .swse-progression-inline-host > .swse-datapad.progression-shell > .swse-screen {
+form.swse-character-sheet-form-root .swse-progression-inline-host,
+form.swse-character-sheet-form-root .swse-progression-inline-host > .swse-datapad.progression-shell,
+form.swse-character-sheet-form-root .swse-progression-inline-host > .swse-datapad.progression-shell > .swse-screen {
   width: 100% !important;
   height: 100% !important;
   min-width: 0 !important;
@@ -5487,14 +5487,14 @@ form[id^="SWSEV2CharacterSheet"] .swse-progression-inline-host > .swse-datapad.p
   max-height: none !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-progression-inline-host {
+form.swse-character-sheet-form-root .swse-progression-inline-host {
   position: relative !important;
   display: flex !important;
   flex: 1 1 auto !important;
   overflow: hidden !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-progression-inline-host > .swse-datapad.progression-shell {
+form.swse-character-sheet-form-root .swse-progression-inline-host > .swse-datapad.progression-shell {
   position: relative !important;
   display: flex !important;
   flex-direction: column !important;
@@ -5507,12 +5507,12 @@ form[id^="SWSEV2CharacterSheet"] .swse-progression-inline-host > .swse-datapad.p
   overflow: hidden !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-progression-inline-host > .swse-datapad.progression-shell::before,
-form[id^="SWSEV2CharacterSheet"] .swse-progression-inline-host > .swse-datapad.progression-shell::after {
+form.swse-character-sheet-form-root .swse-progression-inline-host > .swse-datapad.progression-shell::before,
+form.swse-character-sheet-form-root .swse-progression-inline-host > .swse-datapad.progression-shell::after {
   display: none !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-progression-inline-host > .swse-datapad.progression-shell > .swse-screen {
+form.swse-character-sheet-form-root .swse-progression-inline-host > .swse-datapad.progression-shell > .swse-screen {
   position: relative !important;
   display: flex !important;
   flex-direction: column !important;
@@ -5524,14 +5524,14 @@ form[id^="SWSEV2CharacterSheet"] .swse-progression-inline-host > .swse-datapad.p
   background: transparent !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-progression-inline-host .progression-shell [data-region="mentor-rail"] {
+form.swse-character-sheet-form-root .swse-progression-inline-host .progression-shell [data-region="mentor-rail"] {
   flex: 0 0 118px !important;
   height: 118px !important;
   min-height: 118px !important;
   max-height: 118px !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-progression-inline-host .progression-shell .prog-content-row {
+form.swse-character-sheet-form-root .swse-progression-inline-host .progression-shell .prog-content-row {
   min-height: 0 !important;
 }
 
@@ -5539,20 +5539,20 @@ form[id^="SWSEV2CharacterSheet"] .swse-progression-inline-host .progression-shel
    when the progression shell is embedded inside the holopad screen.
    The parent .swse-progression-inline-host and .prog-content-row already own
    the bounded viewport; individual rails must be allowed to shrink freely. */
-form[id^="SWSEV2CharacterSheet"] .swse-progression-inline-host .progression-shell [data-region="work-surface"],
-form[id^="SWSEV2CharacterSheet"] .swse-progression-inline-host .progression-shell [data-region="summary-panel"],
-form[id^="SWSEV2CharacterSheet"] .swse-progression-inline-host .progression-shell [data-region="details-panel"] {
+form.swse-character-sheet-form-root .swse-progression-inline-host .progression-shell [data-region="work-surface"],
+form.swse-character-sheet-form-root .swse-progression-inline-host .progression-shell [data-region="summary-panel"],
+form.swse-character-sheet-form-root .swse-progression-inline-host .progression-shell [data-region="details-panel"] {
   min-height: 0 !important;
   overflow: auto !important;
 }
 
 /* Species list: keep body rows text/code only; details rail owns portraits. */
-form[id^="SWSEV2CharacterSheet"] .prog-species-row__thumb-img,
-form[id^="SWSEV2CharacterSheet"] .prog-species-row__thumb .prog-holo-scan {
+form.swse-character-sheet-form-root .prog-species-row__thumb-img,
+form.swse-character-sheet-form-root .prog-species-row__thumb .prog-holo-scan {
   display: none !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .prog-species-row__thumb--badge-only {
+form.swse-character-sheet-form-root .prog-species-row__thumb--badge-only {
   width: 34px !important;
   min-width: 34px !important;
 }
@@ -5695,13 +5695,13 @@ form[id^="SWSEV2CharacterSheet"] .prog-species-row__thumb--badge-only {
 /* ========================================================================== */
 /* Phase 6: concept skills accordion + ability accent language                 */
 /* ========================================================================== */
-form[id^="SWSEV2CharacterSheet"] .skill-extra-uses.skill-extra-uses--collapsed,
+form.swse-character-sheet-form-root .skill-extra-uses.skill-extra-uses--collapsed,
 .swse.sheet.actor.character.v2 .skill-extra-uses.skill-extra-uses--collapsed,
 .swse-character-sheet .skill-extra-uses.skill-extra-uses--collapsed {
   display: none !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .skill-extra-uses.skill-extra-uses--expanded,
+form.swse-character-sheet-form-root .skill-extra-uses.skill-extra-uses--expanded,
 .swse.sheet.actor.character.v2 .skill-extra-uses.skill-extra-uses--expanded,
 .swse-character-sheet .skill-extra-uses.skill-extra-uses--expanded {
   display: block !important;
@@ -5716,13 +5716,13 @@ form[id^="SWSEV2CharacterSheet"] .skill-extra-uses.skill-extra-uses--expanded,
     0 0 calc(14px * var(--glow-mult, 1)) oklch(var(--swse-skill-accent-oklch, var(--vapor-cyan)) / 0.10) !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .skill-extra-uses-hidden,
+form.swse-character-sheet-form-root .skill-extra-uses-hidden,
 .swse.sheet.actor.character.v2 .skill-extra-uses-hidden,
 .swse-character-sheet .skill-extra-uses-hidden {
   display: none !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-concept-skill-row,
+form.swse-character-sheet-form-root .swse-concept-skill-row,
 .swse.sheet.actor.character.v2 .swse-concept-skill-row,
 .swse-character-sheet .swse-concept-skill-row {
   --swse-skill-accent: var(--vapor-cyan);
@@ -5731,7 +5731,7 @@ form[id^="SWSEV2CharacterSheet"] .swse-concept-skill-row,
   border-left: 3px solid var(--swse-skill-accent) !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-concept-skill-row::before,
+form.swse-character-sheet-form-root .swse-concept-skill-row::before,
 .swse.sheet.actor.character.v2 .swse-concept-skill-row::before,
 .swse-character-sheet .swse-concept-skill-row::before {
   content: "";
@@ -5743,55 +5743,55 @@ form[id^="SWSEV2CharacterSheet"] .swse-concept-skill-row::before,
   opacity: 0.9;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-concept-skill-ability-chip,
+form.swse-character-sheet-form-root .swse-concept-skill-ability-chip,
 .swse.sheet.actor.character.v2 .swse-concept-skill-ability-chip,
 .swse-character-sheet .swse-concept-skill-ability-chip {
   color: var(--swse-skill-accent, var(--vapor-cyan)) !important;
   text-shadow: 0 0 calc(7px * var(--glow-mult, 1)) oklch(var(--swse-skill-accent-oklch, var(--vapor-cyan)) / 0.45) !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .ability-select,
+form.swse-character-sheet-form-root .ability-select,
 .swse.sheet.actor.character.v2 .ability-select,
 .swse-character-sheet .ability-select {
   border-color: oklch(var(--swse-skill-accent-oklch, var(--vapor-cyan)) / 0.28) !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-ability-accent--str,
+form.swse-character-sheet-form-root .swse-ability-accent--str,
 .swse.sheet.actor.character.v2 .swse-ability-accent--str,
 .swse-character-sheet .swse-ability-accent--str {
   --swse-skill-accent: #ff8a3d;
   --swse-skill-accent-oklch: 0.72 0.16 48;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-ability-accent--dex,
+form.swse-character-sheet-form-root .swse-ability-accent--dex,
 .swse.sheet.actor.character.v2 .swse-ability-accent--dex,
 .swse-character-sheet .swse-ability-accent--dex {
   --swse-skill-accent: #61d66f;
   --swse-skill-accent-oklch: 0.76 0.16 145;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-ability-accent--con,
+form.swse-character-sheet-form-root .swse-ability-accent--con,
 .swse.sheet.actor.character.v2 .swse-ability-accent--con,
 .swse-character-sheet .swse-ability-accent--con {
   --swse-skill-accent: #ffd166;
   --swse-skill-accent-oklch: 0.84 0.14 84;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-ability-accent--int,
+form.swse-character-sheet-form-root .swse-ability-accent--int,
 .swse.sheet.actor.character.v2 .swse-ability-accent--int,
 .swse-character-sheet .swse-ability-accent--int {
   --swse-skill-accent: #4cc9f0;
   --swse-skill-accent-oklch: 0.77 0.13 222;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-ability-accent--wis,
+form.swse-character-sheet-form-root .swse-ability-accent--wis,
 .swse.sheet.actor.character.v2 .swse-ability-accent--wis,
 .swse-character-sheet .swse-ability-accent--wis {
   --swse-skill-accent: #c77dff;
   --swse-skill-accent-oklch: 0.71 0.18 305;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-ability-accent--cha,
+form.swse-character-sheet-form-root .swse-ability-accent--cha,
 .swse.sheet.actor.character.v2 .swse-ability-accent--cha,
 .swse-character-sheet .swse-ability-accent--cha {
   --swse-skill-accent: #ff5cbe;
@@ -5877,7 +5877,7 @@ form[id^="SWSEV2CharacterSheet"] .swse-ability-accent--cha,
 /* ========================================================================== */
 .swse.sheet.actor.character.v2 :is(.swse-concept-panel--health-condition, .swse-concept-panel--gear-actions, .swse-concept-custom-skills),
 .swse-sheet--concept :is(.swse-concept-panel--health-condition, .swse-concept-panel--gear-actions, .swse-concept-custom-skills),
-form[id^="SWSEV2CharacterSheet"] :is(.swse-concept-panel--health-condition, .swse-concept-panel--gear-actions, .swse-concept-custom-skills) {
+form.swse-character-sheet-form-root :is(.swse-concept-panel--health-condition, .swse-concept-panel--gear-actions, .swse-concept-custom-skills) {
   position: relative !important;
   border-radius: 0 !important;
   border: 1px solid color-mix(in srgb, var(--swse-accent, #70e2ff) 28%, transparent) !important;
@@ -5892,7 +5892,7 @@ form[id^="SWSEV2CharacterSheet"] :is(.swse-concept-panel--health-condition, .sws
 
 .swse.sheet.actor.character.v2 :is(.swse-concept-panel--health-condition, .swse-concept-panel--gear-actions, .swse-concept-custom-skills)::before,
 .swse-sheet--concept :is(.swse-concept-panel--health-condition, .swse-concept-panel--gear-actions, .swse-concept-custom-skills)::before,
-form[id^="SWSEV2CharacterSheet"] :is(.swse-concept-panel--health-condition, .swse-concept-panel--gear-actions, .swse-concept-custom-skills)::before {
+form.swse-character-sheet-form-root :is(.swse-concept-panel--health-condition, .swse-concept-panel--gear-actions, .swse-concept-custom-skills)::before {
   content: "" !important;
   position: absolute !important;
   top: -1px !important;
@@ -5906,14 +5906,14 @@ form[id^="SWSEV2CharacterSheet"] :is(.swse-concept-panel--health-condition, .sws
 
 .swse.sheet.actor.character.v2 :is(.swse-concept-panel--health-condition, .swse-concept-panel--gear-actions, .swse-concept-custom-skills) .swse-concept-panel__header,
 .swse-sheet--concept :is(.swse-concept-panel--health-condition, .swse-concept-panel--gear-actions, .swse-concept-custom-skills) .swse-concept-panel__header,
-form[id^="SWSEV2CharacterSheet"] :is(.swse-concept-panel--health-condition, .swse-concept-panel--gear-actions, .swse-concept-custom-skills) .swse-concept-panel__header {
+form.swse-character-sheet-form-root :is(.swse-concept-panel--health-condition, .swse-concept-panel--gear-actions, .swse-concept-custom-skills) .swse-concept-panel__header {
   align-items: center !important;
   border-bottom: 1px dashed color-mix(in srgb, var(--swse-accent, #70e2ff) 32%, transparent) !important;
 }
 
 .swse.sheet.actor.character.v2 :is(.swse-concept-panel--health-condition, .swse-concept-panel--gear-actions, .swse-concept-custom-skills) .swse-concept-panel__title,
 .swse-sheet--concept :is(.swse-concept-panel--health-condition, .swse-concept-panel--gear-actions, .swse-concept-custom-skills) .swse-concept-panel__title,
-form[id^="SWSEV2CharacterSheet"] :is(.swse-concept-panel--health-condition, .swse-concept-panel--gear-actions, .swse-concept-custom-skills) .swse-concept-panel__title {
+form.swse-character-sheet-form-root :is(.swse-concept-panel--health-condition, .swse-concept-panel--gear-actions, .swse-concept-custom-skills) .swse-concept-panel__title {
   font-family: var(--swse-font-mono, var(--font-mono, monospace)) !important;
   font-size: 11px !important;
   letter-spacing: 0.24em !important;
@@ -5923,7 +5923,7 @@ form[id^="SWSEV2CharacterSheet"] :is(.swse-concept-panel--health-condition, .sws
 
 .swse.sheet.actor.character.v2 .swse-concept-action-rail--gear,
 .swse-sheet--concept .swse-concept-action-rail--gear,
-form[id^="SWSEV2CharacterSheet"] .swse-concept-action-rail--gear {
+form.swse-character-sheet-form-root .swse-concept-action-rail--gear {
   display: grid !important;
   grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
   gap: 10px !important;
@@ -5931,10 +5931,10 @@ form[id^="SWSEV2CharacterSheet"] .swse-concept-action-rail--gear {
 
 .swse.sheet.actor.character.v2 .swse-concept-action-rail--gear .swse-concept-btn,
 .swse-sheet--concept .swse-concept-action-rail--gear .swse-concept-btn,
-form[id^="SWSEV2CharacterSheet"] .swse-concept-action-rail--gear .swse-concept-btn,
+form.swse-character-sheet-form-root .swse-concept-action-rail--gear .swse-concept-btn,
 .swse.sheet.actor.character.v2 .swse-concept-custom-skills .swse-concept-btn,
 .swse-sheet--concept .swse-concept-custom-skills .swse-concept-btn,
-form[id^="SWSEV2CharacterSheet"] .swse-concept-custom-skills .swse-concept-btn {
+form.swse-character-sheet-form-root .swse-concept-custom-skills .swse-concept-btn {
   border-radius: 0 !important;
   min-height: 34px !important;
   font-family: var(--swse-font-mono, var(--font-mono, monospace)) !important;
@@ -5946,10 +5946,10 @@ form[id^="SWSEV2CharacterSheet"] .swse-concept-custom-skills .swse-concept-btn {
 
 .swse.sheet.actor.character.v2 .swse-concept-card-grid--summary .swse-concept-toolfield,
 .swse-sheet--concept .swse-concept-card-grid--summary .swse-concept-toolfield,
-form[id^="SWSEV2CharacterSheet"] .swse-concept-card-grid--summary .swse-concept-toolfield,
+form.swse-character-sheet-form-root .swse-concept-card-grid--summary .swse-concept-toolfield,
 .swse.sheet.actor.character.v2 .swse-concept-card-grid--summary .swse-concept-info-card,
 .swse-sheet--concept .swse-concept-card-grid--summary .swse-concept-info-card,
-form[id^="SWSEV2CharacterSheet"] .swse-concept-card-grid--summary .swse-concept-info-card {
+form.swse-character-sheet-form-root .swse-concept-card-grid--summary .swse-concept-info-card {
   border-radius: 0 !important;
   border: 1px solid color-mix(in srgb, var(--swse-accent, #70e2ff) 16%, transparent) !important;
   background: rgba(4, 10, 18, 0.58) !important;
@@ -5957,7 +5957,7 @@ form[id^="SWSEV2CharacterSheet"] .swse-concept-card-grid--summary .swse-concept-
 
 .swse.sheet.actor.character.v2 .swse-concept-condition-track,
 .swse-sheet--concept .swse-concept-condition-track,
-form[id^="SWSEV2CharacterSheet"] .swse-concept-condition-track {
+form.swse-character-sheet-form-root .swse-concept-condition-track {
   padding: 12px !important;
   border: 1px solid color-mix(in srgb, var(--swse-accent, #70e2ff) 16%, transparent) !important;
   background:
@@ -5967,7 +5967,7 @@ form[id^="SWSEV2CharacterSheet"] .swse-concept-condition-track {
 
 .swse.sheet.actor.character.v2 .swse-concept-condition-chip,
 .swse-sheet--concept .swse-concept-condition-chip,
-form[id^="SWSEV2CharacterSheet"] .swse-concept-condition-chip {
+form.swse-character-sheet-form-root .swse-concept-condition-chip {
   border-radius: 0 !important;
   min-width: 70px !important;
   justify-content: center !important;
@@ -5977,7 +5977,7 @@ form[id^="SWSEV2CharacterSheet"] .swse-concept-condition-chip {
 
 .swse.sheet.actor.character.v2 .swse-concept-condition-chip.is-current,
 .swse-sheet--concept .swse-concept-condition-chip.is-current,
-form[id^="SWSEV2CharacterSheet"] .swse-concept-condition-chip.is-current {
+form.swse-character-sheet-form-root .swse-concept-condition-chip.is-current {
   border-color: color-mix(in srgb, var(--swse-accent-2, #ff6ef4) 62%, transparent) !important;
   color: var(--swse-concept-text, #f2fbff) !important;
   box-shadow:
@@ -5987,7 +5987,7 @@ form[id^="SWSEV2CharacterSheet"] .swse-concept-condition-chip.is-current {
 
 .swse.sheet.actor.character.v2 .current-conditions-panel,
 .swse-sheet--concept .current-conditions-panel,
-form[id^="SWSEV2CharacterSheet"] .current-conditions-panel {
+form.swse-character-sheet-form-root .current-conditions-panel {
   margin-top: 12px !important;
   padding: 12px !important;
   border: 1px solid color-mix(in srgb, var(--swse-accent, #70e2ff) 16%, transparent) !important;
@@ -5996,7 +5996,7 @@ form[id^="SWSEV2CharacterSheet"] .current-conditions-panel {
 
 .swse.sheet.actor.character.v2 .current-condition-notes__title,
 .swse-sheet--concept .current-condition-notes__title,
-form[id^="SWSEV2CharacterSheet"] .current-condition-notes__title {
+form.swse-character-sheet-form-root .current-condition-notes__title {
   margin-bottom: 10px !important;
   font-family: var(--swse-font-mono, var(--font-mono, monospace)) !important;
   font-size: 10px !important;
@@ -6007,14 +6007,14 @@ form[id^="SWSEV2CharacterSheet"] .current-condition-notes__title {
 
 .swse.sheet.actor.character.v2 .current-conditions-panel__list,
 .swse-sheet--concept .current-conditions-panel__list,
-form[id^="SWSEV2CharacterSheet"] .current-conditions-panel__list {
+form.swse-character-sheet-form-root .current-conditions-panel__list {
   display: grid !important;
   gap: 10px !important;
 }
 
 .swse.sheet.actor.character.v2 .current-condition-card,
 .swse-sheet--concept .current-condition-card,
-form[id^="SWSEV2CharacterSheet"] .current-condition-card {
+form.swse-character-sheet-form-root .current-condition-card {
   border-radius: 0 !important;
   border: 1px solid color-mix(in srgb, var(--swse-accent, #70e2ff) 14%, transparent) !important;
   background: rgba(6, 12, 20, 0.58) !important;
@@ -6023,7 +6023,7 @@ form[id^="SWSEV2CharacterSheet"] .current-condition-card {
 
 .swse.sheet.actor.character.v2 .swse-concept-custom-skill-row,
 .swse-sheet--concept .swse-concept-custom-skill-row,
-form[id^="SWSEV2CharacterSheet"] .swse-concept-custom-skill-row {
+form.swse-character-sheet-form-root .swse-concept-custom-skill-row {
   border-radius: 0 !important;
   border: 1px solid color-mix(in srgb, var(--swse-skill-accent, var(--swse-accent, #70e2ff)) 18%, transparent) !important;
   border-left: 3px solid var(--swse-skill-accent, var(--swse-accent, #70e2ff)) !important;
@@ -6034,7 +6034,7 @@ form[id^="SWSEV2CharacterSheet"] .swse-concept-custom-skill-row {
 
 .swse.sheet.actor.character.v2 .swse-concept-custom-skill-row :is(input, select, textarea),
 .swse-sheet--concept .swse-concept-custom-skill-row :is(input, select, textarea),
-form[id^="SWSEV2CharacterSheet"] .swse-concept-custom-skill-row :is(input, select, textarea) {
+form.swse-character-sheet-form-root .swse-concept-custom-skill-row :is(input, select, textarea) {
   border-radius: 0 !important;
   border-color: color-mix(in srgb, var(--swse-skill-accent, var(--swse-accent, #70e2ff)) 24%, transparent) !important;
   background: rgba(0, 0, 0, 0.26) !important;
@@ -6043,7 +6043,7 @@ form[id^="SWSEV2CharacterSheet"] .swse-concept-custom-skill-row :is(input, selec
 
 .swse.sheet.actor.character.v2 .swse-concept-empty-state,
 .swse-sheet--concept .swse-concept-empty-state,
-form[id^="SWSEV2CharacterSheet"] .swse-concept-empty-state {
+form.swse-character-sheet-form-root .swse-concept-empty-state {
   border-radius: 0 !important;
   border: 1px dashed color-mix(in srgb, var(--swse-accent, #70e2ff) 28%, transparent) !important;
   background:
@@ -6054,7 +6054,7 @@ form[id^="SWSEV2CharacterSheet"] .swse-concept-empty-state {
 @media (max-width: 980px) {
   .swse.sheet.actor.character.v2 .swse-concept-action-rail--gear,
   .swse-sheet--concept .swse-concept-action-rail--gear,
-  form[id^="SWSEV2CharacterSheet"] .swse-concept-action-rail--gear {
+  form.swse-character-sheet-form-root .swse-concept-action-rail--gear {
     grid-template-columns: 1fr !important;
   }
 }
@@ -6064,7 +6064,7 @@ form[id^="SWSEV2CharacterSheet"] .swse-concept-empty-state {
 /* ========================================================================== */
 .swse.sheet.actor.character.v2,
 .swse-sheet--concept,
-form[id^="SWSEV2CharacterSheet"] {
+form.swse-character-sheet-form-root {
   --swse-concept-theme-accent: var(--swse-theme-accent, var(--vapor-cyan, var(--swse-accent, #70e2ff)));
   --swse-concept-theme-accent-2: var(--swse-theme-accent-secondary, var(--vapor-pink, var(--swse-accent-soft, #ff6ef4)));
   --swse-concept-theme-panel: var(--swse-theme-panel-bg, var(--swse-concept-panel, var(--swse-bg-panel, rgba(6, 18, 32, 0.72))));
@@ -6083,7 +6083,7 @@ form[id^="SWSEV2CharacterSheet"] {
 
 .swse.sheet.actor.character.v2 :is(.swse-concept-panel--health-condition, .swse-concept-panel--gear-actions, .swse-concept-custom-skills),
 .swse-sheet--concept :is(.swse-concept-panel--health-condition, .swse-concept-panel--gear-actions, .swse-concept-custom-skills),
-form[id^="SWSEV2CharacterSheet"] :is(.swse-concept-panel--health-condition, .swse-concept-panel--gear-actions, .swse-concept-custom-skills) {
+form.swse-character-sheet-form-root :is(.swse-concept-panel--health-condition, .swse-concept-panel--gear-actions, .swse-concept-custom-skills) {
   border-color: color-mix(in oklch, var(--swse-concept-theme-accent) 28%, transparent) !important;
   background:
     linear-gradient(180deg, color-mix(in oklch, var(--swse-concept-theme-panel) 82%, transparent), color-mix(in oklch, var(--swse-concept-theme-surface) 78%, black 22%)),
@@ -6096,33 +6096,33 @@ form[id^="SWSEV2CharacterSheet"] :is(.swse-concept-panel--health-condition, .sws
 
 .swse.sheet.actor.character.v2 :is(.swse-concept-panel--health-condition, .swse-concept-panel--gear-actions, .swse-concept-custom-skills)::before,
 .swse-sheet--concept :is(.swse-concept-panel--health-condition, .swse-concept-panel--gear-actions, .swse-concept-custom-skills)::before,
-form[id^="SWSEV2CharacterSheet"] :is(.swse-concept-panel--health-condition, .swse-concept-panel--gear-actions, .swse-concept-custom-skills)::before {
+form.swse-character-sheet-form-root :is(.swse-concept-panel--health-condition, .swse-concept-panel--gear-actions, .swse-concept-custom-skills)::before {
   background: var(--swse-concept-theme-accent) !important;
   box-shadow: 0 0 8px color-mix(in oklch, var(--swse-concept-theme-accent) 70%, transparent) !important;
 }
 
 .swse.sheet.actor.character.v2 :is(.swse-concept-panel--health-condition, .swse-concept-panel--gear-actions, .swse-concept-custom-skills) .swse-concept-panel__header,
 .swse-sheet--concept :is(.swse-concept-panel--health-condition, .swse-concept-panel--gear-actions, .swse-concept-custom-skills) .swse-concept-panel__header,
-form[id^="SWSEV2CharacterSheet"] :is(.swse-concept-panel--health-condition, .swse-concept-panel--gear-actions, .swse-concept-custom-skills) .swse-concept-panel__header {
+form.swse-character-sheet-form-root :is(.swse-concept-panel--health-condition, .swse-concept-panel--gear-actions, .swse-concept-custom-skills) .swse-concept-panel__header {
   border-bottom-color: color-mix(in oklch, var(--swse-concept-theme-accent) 32%, transparent) !important;
 }
 
 .swse.sheet.actor.character.v2 :is(.swse-concept-panel--health-condition, .swse-concept-panel--gear-actions, .swse-concept-custom-skills) .swse-concept-panel__title,
 .swse-sheet--concept :is(.swse-concept-panel--health-condition, .swse-concept-panel--gear-actions, .swse-concept-custom-skills) .swse-concept-panel__title,
-form[id^="SWSEV2CharacterSheet"] :is(.swse-concept-panel--health-condition, .swse-concept-panel--gear-actions, .swse-concept-custom-skills) .swse-concept-panel__title,
+form.swse-character-sheet-form-root :is(.swse-concept-panel--health-condition, .swse-concept-panel--gear-actions, .swse-concept-custom-skills) .swse-concept-panel__title,
 .swse.sheet.actor.character.v2 .current-condition-notes__title,
 .swse-sheet--concept .current-condition-notes__title,
-form[id^="SWSEV2CharacterSheet"] .current-condition-notes__title {
+form.swse-character-sheet-form-root .current-condition-notes__title {
   color: var(--swse-concept-theme-accent) !important;
   text-shadow: 0 0 10px color-mix(in oklch, var(--swse-concept-theme-accent) 34%, transparent) !important;
 }
 
 .swse.sheet.actor.character.v2 .swse-concept-action-rail--gear .swse-concept-btn,
 .swse-sheet--concept .swse-concept-action-rail--gear .swse-concept-btn,
-form[id^="SWSEV2CharacterSheet"] .swse-concept-action-rail--gear .swse-concept-btn,
+form.swse-character-sheet-form-root .swse-concept-action-rail--gear .swse-concept-btn,
 .swse.sheet.actor.character.v2 .swse-concept-custom-skills .swse-concept-btn,
 .swse-sheet--concept .swse-concept-custom-skills .swse-concept-btn,
-form[id^="SWSEV2CharacterSheet"] .swse-concept-custom-skills .swse-concept-btn {
+form.swse-character-sheet-form-root .swse-concept-custom-skills .swse-concept-btn {
   background:
     linear-gradient(180deg, color-mix(in oklch, var(--swse-concept-theme-accent) 16%, transparent), color-mix(in oklch, var(--swse-concept-theme-surface) 86%, black 14%)) !important;
   border-color: color-mix(in oklch, var(--swse-concept-theme-accent) 34%, transparent) !important;
@@ -6131,10 +6131,10 @@ form[id^="SWSEV2CharacterSheet"] .swse-concept-custom-skills .swse-concept-btn {
 
 .swse.sheet.actor.character.v2 .swse-concept-card-grid--summary :is(.swse-concept-toolfield, .swse-concept-info-card),
 .swse-sheet--concept .swse-concept-card-grid--summary :is(.swse-concept-toolfield, .swse-concept-info-card),
-form[id^="SWSEV2CharacterSheet"] .swse-concept-card-grid--summary :is(.swse-concept-toolfield, .swse-concept-info-card),
+form.swse-character-sheet-form-root .swse-concept-card-grid--summary :is(.swse-concept-toolfield, .swse-concept-info-card),
 .swse.sheet.actor.character.v2 :is(.swse-concept-condition-track, .current-conditions-panel),
 .swse-sheet--concept :is(.swse-concept-condition-track, .current-conditions-panel),
-form[id^="SWSEV2CharacterSheet"] :is(.swse-concept-condition-track, .current-conditions-panel) {
+form.swse-character-sheet-form-root :is(.swse-concept-condition-track, .current-conditions-panel) {
   border-color: color-mix(in oklch, var(--swse-concept-theme-accent) 16%, transparent) !important;
   background:
     linear-gradient(90deg, color-mix(in oklch, var(--swse-concept-theme-accent) 6%, transparent), transparent 42%),
@@ -6143,7 +6143,7 @@ form[id^="SWSEV2CharacterSheet"] :is(.swse-concept-condition-track, .current-con
 
 .swse.sheet.actor.character.v2 .current-condition-card,
 .swse-sheet--concept .current-condition-card,
-form[id^="SWSEV2CharacterSheet"] .current-condition-card {
+form.swse-character-sheet-form-root .current-condition-card {
   border-color: color-mix(in oklch, var(--swse-concept-theme-accent) 14%, transparent) !important;
   background: color-mix(in oklch, var(--swse-concept-theme-panel) 58%, transparent) !important;
   color: var(--swse-concept-theme-muted) !important;
@@ -6151,7 +6151,7 @@ form[id^="SWSEV2CharacterSheet"] .current-condition-card {
 
 .swse.sheet.actor.character.v2 .swse-concept-condition-chip,
 .swse-sheet--concept .swse-concept-condition-chip,
-form[id^="SWSEV2CharacterSheet"] .swse-concept-condition-chip {
+form.swse-character-sheet-form-root .swse-concept-condition-chip {
   --swse-condition-step-color: var(--swse-condition-normal);
   border-color: color-mix(in oklch, var(--swse-condition-step-color) 58%, transparent) !important;
   background:
@@ -6162,43 +6162,43 @@ form[id^="SWSEV2CharacterSheet"] .swse-concept-condition-chip {
 
 .swse.sheet.actor.character.v2 .swse-concept-condition-chip.severity-normal,
 .swse-sheet--concept .swse-concept-condition-chip.severity-normal,
-form[id^="SWSEV2CharacterSheet"] .swse-concept-condition-chip.severity-normal {
+form.swse-character-sheet-form-root .swse-concept-condition-chip.severity-normal {
   --swse-condition-step-color: var(--swse-condition-normal);
 }
 
 .swse.sheet.actor.character.v2 .swse-concept-condition-chip.severity-low,
 .swse-sheet--concept .swse-concept-condition-chip.severity-low,
-form[id^="SWSEV2CharacterSheet"] .swse-concept-condition-chip.severity-low {
+form.swse-character-sheet-form-root .swse-concept-condition-chip.severity-low {
   --swse-condition-step-color: var(--swse-condition-low);
 }
 
 .swse.sheet.actor.character.v2 .swse-concept-condition-chip.severity-mid,
 .swse-sheet--concept .swse-concept-condition-chip.severity-mid,
-form[id^="SWSEV2CharacterSheet"] .swse-concept-condition-chip.severity-mid {
+form.swse-character-sheet-form-root .swse-concept-condition-chip.severity-mid {
   --swse-condition-step-color: var(--swse-condition-mid);
 }
 
 .swse.sheet.actor.character.v2 .swse-concept-condition-chip.severity-high,
 .swse-sheet--concept .swse-concept-condition-chip.severity-high,
-form[id^="SWSEV2CharacterSheet"] .swse-concept-condition-chip.severity-high {
+form.swse-character-sheet-form-root .swse-concept-condition-chip.severity-high {
   --swse-condition-step-color: var(--swse-condition-high);
 }
 
 .swse.sheet.actor.character.v2 .swse-concept-condition-chip.severity-critical,
 .swse-sheet--concept .swse-concept-condition-chip.severity-critical,
-form[id^="SWSEV2CharacterSheet"] .swse-concept-condition-chip.severity-critical {
+form.swse-character-sheet-form-root .swse-concept-condition-chip.severity-critical {
   --swse-condition-step-color: var(--swse-condition-critical);
 }
 
 .swse.sheet.actor.character.v2 .swse-concept-condition-chip.severity-helpless,
 .swse-sheet--concept .swse-concept-condition-chip.severity-helpless,
-form[id^="SWSEV2CharacterSheet"] .swse-concept-condition-chip.severity-helpless {
+form.swse-character-sheet-form-root .swse-concept-condition-chip.severity-helpless {
   --swse-condition-step-color: var(--swse-condition-helpless);
 }
 
 .swse.sheet.actor.character.v2 .swse-concept-condition-chip.is-current,
 .swse-sheet--concept .swse-concept-condition-chip.is-current,
-form[id^="SWSEV2CharacterSheet"] .swse-concept-condition-chip.is-current {
+form.swse-character-sheet-form-root .swse-concept-condition-chip.is-current {
   border-color: color-mix(in oklch, var(--swse-condition-step-color) 84%, white 16%) !important;
   background:
     linear-gradient(180deg, color-mix(in oklch, var(--swse-condition-step-color) 30%, transparent), color-mix(in oklch, var(--swse-concept-theme-surface) 68%, black 8%)) !important;
@@ -6210,7 +6210,7 @@ form[id^="SWSEV2CharacterSheet"] .swse-concept-condition-chip.is-current {
 
 .swse.sheet.actor.character.v2 .swse-concept-custom-skill-row,
 .swse-sheet--concept .swse-concept-custom-skill-row,
-form[id^="SWSEV2CharacterSheet"] .swse-concept-custom-skill-row {
+form.swse-character-sheet-form-root .swse-concept-custom-skill-row {
   border-color: color-mix(in oklch, var(--swse-skill-accent, var(--swse-concept-theme-accent)) 18%, transparent) !important;
   border-left-color: var(--swse-skill-accent, var(--swse-concept-theme-accent)) !important;
   background:
@@ -6220,7 +6220,7 @@ form[id^="SWSEV2CharacterSheet"] .swse-concept-custom-skill-row {
 
 .swse.sheet.actor.character.v2 .swse-concept-custom-skill-row :is(input, select, textarea),
 .swse-sheet--concept .swse-concept-custom-skill-row :is(input, select, textarea),
-form[id^="SWSEV2CharacterSheet"] .swse-concept-custom-skill-row :is(input, select, textarea) {
+form.swse-character-sheet-form-root .swse-concept-custom-skill-row :is(input, select, textarea) {
   border-color: color-mix(in oklch, var(--swse-skill-accent, var(--swse-concept-theme-accent)) 24%, transparent) !important;
   background: color-mix(in oklch, var(--swse-concept-theme-surface) 74%, black 12%) !important;
   color: var(--swse-concept-theme-text) !important;
@@ -6228,7 +6228,7 @@ form[id^="SWSEV2CharacterSheet"] .swse-concept-custom-skill-row :is(input, selec
 
 .swse.sheet.actor.character.v2 .swse-concept-empty-state,
 .swse-sheet--concept .swse-concept-empty-state,
-form[id^="SWSEV2CharacterSheet"] .swse-concept-empty-state {
+form.swse-character-sheet-form-root .swse-concept-empty-state {
   border-color: color-mix(in oklch, var(--swse-concept-theme-accent) 28%, transparent) !important;
   background:
     linear-gradient(90deg, color-mix(in oklch, var(--swse-concept-theme-accent) 6%, transparent), transparent 42%),
@@ -7369,55 +7369,55 @@ form[id^="SWSEV2CharacterSheet"] .swse-concept-empty-state {
 }
 
 /* Playtime hardening: preserve system-wide value language on dense skill/ability readouts. */
-form[id^="SWSEV2CharacterSheet"] .mod--positive,
+form.swse-character-sheet-form-root .mod--positive,
 .swse.sheet.actor.character.v2 .mod--positive,
 .swse-character-sheet .mod--positive,
-form[id^="SWSEV2CharacterSheet"] .swse-concept-skill-stat strong.mod--positive,
+form.swse-character-sheet-form-root .swse-concept-skill-stat strong.mod--positive,
 .swse.sheet.actor.character.v2 .swse-concept-skill-stat strong.mod--positive,
 .swse-character-sheet .swse-concept-skill-stat strong.mod--positive {
   color: #8dffbf !important;
   text-shadow: 0 0 calc(8px * var(--glow-mult, 1)) rgba(141, 255, 191, 0.45) !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .mod--negative,
+form.swse-character-sheet-form-root .mod--negative,
 .swse.sheet.actor.character.v2 .mod--negative,
 .swse-character-sheet .mod--negative,
-form[id^="SWSEV2CharacterSheet"] .swse-concept-skill-stat strong.mod--negative,
+form.swse-character-sheet-form-root .swse-concept-skill-stat strong.mod--negative,
 .swse.sheet.actor.character.v2 .swse-concept-skill-stat strong.mod--negative,
 .swse-character-sheet .swse-concept-skill-stat strong.mod--negative {
   color: #ff7b7b !important;
   text-shadow: 0 0 calc(8px * var(--glow-mult, 1)) rgba(255, 123, 123, 0.42) !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .mod--zero,
+form.swse-character-sheet-form-root .mod--zero,
 .swse.sheet.actor.character.v2 .mod--zero,
 .swse-character-sheet .mod--zero,
-form[id^="SWSEV2CharacterSheet"] .swse-concept-skill-stat strong.mod--zero,
+form.swse-character-sheet-form-root .swse-concept-skill-stat strong.mod--zero,
 .swse.sheet.actor.character.v2 .swse-concept-skill-stat strong.mod--zero,
 .swse-character-sheet .swse-concept-skill-stat strong.mod--zero {
   color: #ffe08f !important;
   text-shadow: 0 0 calc(8px * var(--glow-mult, 1)) rgba(255, 224, 143, 0.42) !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-concept-ability__label.swse-ability-accent--str,
-form[id^="SWSEV2CharacterSheet"] .swse-concept-ability-card.swse-ability-accent--str .swse-concept-ability-card__label { color: #ff8a3d !important; }
-form[id^="SWSEV2CharacterSheet"] .swse-concept-ability__label.swse-ability-accent--dex,
-form[id^="SWSEV2CharacterSheet"] .swse-concept-ability-card.swse-ability-accent--dex .swse-concept-ability-card__label { color: #61d66f !important; }
-form[id^="SWSEV2CharacterSheet"] .swse-concept-ability__label.swse-ability-accent--con,
-form[id^="SWSEV2CharacterSheet"] .swse-concept-ability-card.swse-ability-accent--con .swse-concept-ability-card__label { color: #ffd166 !important; }
-form[id^="SWSEV2CharacterSheet"] .swse-concept-ability__label.swse-ability-accent--int,
-form[id^="SWSEV2CharacterSheet"] .swse-concept-ability-card.swse-ability-accent--int .swse-concept-ability-card__label { color: #4cc9f0 !important; }
-form[id^="SWSEV2CharacterSheet"] .swse-concept-ability__label.swse-ability-accent--wis,
-form[id^="SWSEV2CharacterSheet"] .swse-concept-ability-card.swse-ability-accent--wis .swse-concept-ability-card__label { color: #c77dff !important; }
-form[id^="SWSEV2CharacterSheet"] .swse-concept-ability__label.swse-ability-accent--cha,
-form[id^="SWSEV2CharacterSheet"] .swse-concept-ability-card.swse-ability-accent--cha .swse-concept-ability-card__label { color: #ff5cbe !important; }
+form.swse-character-sheet-form-root .swse-concept-ability__label.swse-ability-accent--str,
+form.swse-character-sheet-form-root .swse-concept-ability-card.swse-ability-accent--str .swse-concept-ability-card__label { color: #ff8a3d !important; }
+form.swse-character-sheet-form-root .swse-concept-ability__label.swse-ability-accent--dex,
+form.swse-character-sheet-form-root .swse-concept-ability-card.swse-ability-accent--dex .swse-concept-ability-card__label { color: #61d66f !important; }
+form.swse-character-sheet-form-root .swse-concept-ability__label.swse-ability-accent--con,
+form.swse-character-sheet-form-root .swse-concept-ability-card.swse-ability-accent--con .swse-concept-ability-card__label { color: #ffd166 !important; }
+form.swse-character-sheet-form-root .swse-concept-ability__label.swse-ability-accent--int,
+form.swse-character-sheet-form-root .swse-concept-ability-card.swse-ability-accent--int .swse-concept-ability-card__label { color: #4cc9f0 !important; }
+form.swse-character-sheet-form-root .swse-concept-ability__label.swse-ability-accent--wis,
+form.swse-character-sheet-form-root .swse-concept-ability-card.swse-ability-accent--wis .swse-concept-ability-card__label { color: #c77dff !important; }
+form.swse-character-sheet-form-root .swse-concept-ability__label.swse-ability-accent--cha,
+form.swse-character-sheet-form-root .swse-concept-ability-card.swse-ability-accent--cha .swse-concept-ability-card__label { color: #ff5cbe !important; }
 
-form[id^="SWSEV2CharacterSheet"] .swse-concept-checkpill {
+form.swse-character-sheet-form-root .swse-concept-checkpill {
   align-items: center !important;
   gap: 6px !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-concept-checkpill input[type="checkbox"] {
+form.swse-character-sheet-form-root .swse-concept-checkpill input[type="checkbox"] {
   appearance: none !important;
   -webkit-appearance: none !important;
   width: 18px !important;
@@ -7430,13 +7430,13 @@ form[id^="SWSEV2CharacterSheet"] .swse-concept-checkpill input[type="checkbox"] 
   position: relative !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-concept-checkpill input[type="checkbox"]:checked {
+form.swse-character-sheet-form-root .swse-concept-checkpill input[type="checkbox"]:checked {
   border-color: #8dffbf !important;
   background: linear-gradient(180deg, rgba(141, 255, 191, 0.86), rgba(37, 142, 92, 0.82)) !important;
   box-shadow: 0 0 calc(12px * var(--glow-mult, 1)) rgba(141, 255, 191, 0.42) !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-concept-checkpill input[type="checkbox"]:checked::after {
+form.swse-character-sheet-form-root .swse-concept-checkpill input[type="checkbox"]:checked::after {
   content: "✓" !important;
   position: absolute !important;
   inset: -1px 0 0 0 !important;
@@ -7447,14 +7447,14 @@ form[id^="SWSEV2CharacterSheet"] .swse-concept-checkpill input[type="checkbox"]:
   font-weight: 900 !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .extra-use-row {
+form.swse-character-sheet-form-root .extra-use-row {
   display: grid !important;
   grid-template-columns: minmax(0, 1fr) 138px 82px !important;
   gap: 12px !important;
   align-items: center !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .extra-use-meta {
+form.swse-character-sheet-form-root .extra-use-meta {
   display: grid !important;
   grid-template-columns: 56px minmax(0, 1fr) !important;
   gap: 8px !important;
@@ -7462,8 +7462,8 @@ form[id^="SWSEV2CharacterSheet"] .extra-use-meta {
   justify-content: start !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .extra-use-dc,
-form[id^="SWSEV2CharacterSheet"] .extra-use-time {
+form.swse-character-sheet-form-root .extra-use-dc,
+form.swse-character-sheet-form-root .extra-use-time {
   display: inline-flex !important;
   align-items: center !important;
   min-height: 24px !important;
@@ -7596,8 +7596,8 @@ form[id^="SWSEV2CharacterSheet"] .extra-use-time {
 
 
 /* ─── Shell Chrome Usability Pass: Larger controls + engraved home ──────── */
-form[id^="SWSEV2CharacterSheet"] .swse-tablet-hardware-rail,
-form[id^="SWSEV2CharacterSheet"] .swse-tablet-top-right-rail {
+form.swse-character-sheet-form-root .swse-tablet-hardware-rail,
+form.swse-character-sheet-form-root .swse-tablet-top-right-rail {
   top: 5px !important;
   right: 14px !important;
   height: 32px !important;
@@ -7608,7 +7608,7 @@ form[id^="SWSEV2CharacterSheet"] .swse-tablet-top-right-rail {
   border-radius: 8px !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-tablet-control {
+form.swse-character-sheet-form-root .swse-tablet-control {
   width: 28px !important;
   min-width: 28px !important;
   height: 28px !important;
@@ -7620,21 +7620,21 @@ form[id^="SWSEV2CharacterSheet"] .swse-tablet-control {
   touch-action: manipulation !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-tablet-control--close {
+form.swse-character-sheet-form-root .swse-tablet-control--close {
   font-size: 20px !important;
   font-weight: 800 !important;
   padding-bottom: 2px !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-tablet-control--expand {
+form.swse-character-sheet-form-root .swse-tablet-control--expand {
   font-size: 16px !important;
   font-weight: 700 !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-tablet-control:hover,
-form[id^="SWSEV2CharacterSheet"] .swse-tablet-control:focus-visible,
-form[id^="SWSEV2CharacterSheet"] .swse-tablet-bottom-home:hover,
-form[id^="SWSEV2CharacterSheet"] .swse-tablet-bottom-home:focus-visible {
+form.swse-character-sheet-form-root .swse-tablet-control:hover,
+form.swse-character-sheet-form-root .swse-tablet-control:focus-visible,
+form.swse-character-sheet-form-root .swse-tablet-bottom-home:hover,
+form.swse-character-sheet-form-root .swse-tablet-bottom-home:focus-visible {
   outline: none !important;
   border-color: var(--vapor-cyan, #00f0ff) !important;
   box-shadow:
@@ -7642,7 +7642,7 @@ form[id^="SWSEV2CharacterSheet"] .swse-tablet-bottom-home:focus-visible {
     0 0 14px color-mix(in srgb, var(--vapor-cyan, #00f0ff) 44%, transparent) !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-tablet-bottom-home {
+form.swse-character-sheet-form-root .swse-tablet-bottom-home {
   position: absolute !important;
   z-index: 430 !important;
   left: 50% !important;
@@ -7676,13 +7676,13 @@ form[id^="SWSEV2CharacterSheet"] .swse-tablet-bottom-home {
   touch-action: manipulation !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-tablet-bottom-home__glyph {
+form.swse-character-sheet-form-root .swse-tablet-bottom-home__glyph {
   font-size: 12px !important;
   letter-spacing: 0 !important;
   opacity: 0.76 !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-tablet-bottom-engraving {
+form.swse-character-sheet-form-root .swse-tablet-bottom-engraving {
   right: 62px !important;
   max-width: 190px !important;
 }
@@ -7836,7 +7836,7 @@ form[id^="SWSEV2CharacterSheet"] .swse-tablet-bottom-engraving {
 .swse-character-sheet-form-root.swse-sheet-mode--play .swse-concept-ability-card input,
 .swse-character-sheet-form-root.swse-sheet-mode--play .swse-concept-ability-card select,
 .swse-character-sheet-form-root.swse-sheet-mode--play .swse-concept-ability-card textarea,
-form[id^="SWSEV2CharacterSheet"] .swse-concept-ability-field input {
+form.swse-character-sheet-form-root .swse-concept-ability-field input {
   pointer-events: auto !important;
   user-select: text !important;
   opacity: 1 !important;
@@ -7845,7 +7845,7 @@ form[id^="SWSEV2CharacterSheet"] .swse-concept-ability-field input {
   background: rgba(3, 10, 18, 0.86) !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-concept-ability-field input:focus {
+form.swse-character-sheet-form-root .swse-concept-ability-field input:focus {
   border-color: var(--swse-concept-accent, #00e7ff) !important;
   box-shadow: 0 0 14px rgba(0, 231, 255, 0.22) !important;
 }
@@ -8392,7 +8392,7 @@ form[id^="SWSEV2CharacterSheet"] .swse-concept-ability-field input:focus {
  * strip non-intercepting and gives the GM-style window controls a reliable,
  * physically lower, no-drag hit target.
  */
-form[id^="SWSEV2CharacterSheet"] .swse-sheet-v2-shell--concept .swse-tablet-top-bezel,
+form.swse-character-sheet-form-root .swse-sheet-v2-shell--concept .swse-tablet-top-bezel,
 .swse.sheet.actor.character.v2 .swse-sheet-v2-shell--concept .swse-tablet-top-bezel,
 .swse-sheet-v2-shell--concept .swse-tablet-top-bezel {
   position: absolute !important;
@@ -8408,7 +8408,7 @@ form[id^="SWSEV2CharacterSheet"] .swse-sheet-v2-shell--concept .swse-tablet-top-
   touch-action: auto !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-sheet-v2-shell--concept .swse-tablet-drag-handle,
+form.swse-character-sheet-form-root .swse-sheet-v2-shell--concept .swse-tablet-drag-handle,
 .swse.sheet.actor.character.v2 .swse-sheet-v2-shell--concept .swse-tablet-drag-handle,
 .swse-sheet-v2-shell--concept .swse-tablet-drag-handle {
   pointer-events: none !important;
@@ -8416,8 +8416,8 @@ form[id^="SWSEV2CharacterSheet"] .swse-sheet-v2-shell--concept .swse-tablet-drag
   touch-action: auto !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-sheet-v2-shell--concept .swse-tablet-hardware-rail.swse-tablet-top-right-rail,
-form[id^="SWSEV2CharacterSheet"] .swse-sheet-v2-shell--concept .swse-tablet-top-right-rail,
+form.swse-character-sheet-form-root .swse-sheet-v2-shell--concept .swse-tablet-hardware-rail.swse-tablet-top-right-rail,
+form.swse-character-sheet-form-root .swse-sheet-v2-shell--concept .swse-tablet-top-right-rail,
 .swse.sheet.actor.character.v2 .swse-sheet-v2-shell--concept .swse-tablet-hardware-rail.swse-tablet-top-right-rail,
 .swse.sheet.actor.character.v2 .swse-sheet-v2-shell--concept .swse-tablet-top-right-rail,
 .swse-sheet-v2-shell--concept .swse-tablet-hardware-rail.swse-tablet-top-right-rail,
@@ -8454,8 +8454,8 @@ form[id^="SWSEV2CharacterSheet"] .swse-sheet-v2-shell--concept .swse-tablet-top-
   app-region: no-drag !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-sheet-v2-shell--concept .swse-tablet-hardware-rail.swse-tablet-top-right-rail > *,
-form[id^="SWSEV2CharacterSheet"] .swse-sheet-v2-shell--concept .swse-tablet-top-right-rail > *,
+form.swse-character-sheet-form-root .swse-sheet-v2-shell--concept .swse-tablet-hardware-rail.swse-tablet-top-right-rail > *,
+form.swse-character-sheet-form-root .swse-sheet-v2-shell--concept .swse-tablet-top-right-rail > *,
 .swse.sheet.actor.character.v2 .swse-sheet-v2-shell--concept .swse-tablet-top-right-rail > *,
 .swse-sheet-v2-shell--concept .swse-tablet-top-right-rail > * {
   position: relative !important;
@@ -8466,8 +8466,8 @@ form[id^="SWSEV2CharacterSheet"] .swse-sheet-v2-shell--concept .swse-tablet-top-
   app-region: no-drag !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-sheet-v2-shell--concept button.swse-tablet-control,
-form[id^="SWSEV2CharacterSheet"] .swse-sheet-v2-shell--concept .swse-tablet-control,
+form.swse-character-sheet-form-root .swse-sheet-v2-shell--concept button.swse-tablet-control,
+form.swse-character-sheet-form-root .swse-sheet-v2-shell--concept .swse-tablet-control,
 .swse.sheet.actor.character.v2 .swse-sheet-v2-shell--concept button.swse-tablet-control,
 .swse.sheet.actor.character.v2 .swse-sheet-v2-shell--concept .swse-tablet-control,
 .swse-sheet-v2-shell--concept button.swse-tablet-control,
@@ -8501,7 +8501,7 @@ form[id^="SWSEV2CharacterSheet"] .swse-sheet-v2-shell--concept .swse-tablet-cont
   app-region: no-drag !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-sheet-v2-shell--concept .swse-tablet-control--close,
+form.swse-character-sheet-form-root .swse-sheet-v2-shell--concept .swse-tablet-control--close,
 .swse.sheet.actor.character.v2 .swse-sheet-v2-shell--concept .swse-tablet-control--close,
 .swse-sheet-v2-shell--concept .swse-tablet-control--close {
   font-size: 22px !important;
@@ -9735,13 +9735,13 @@ form[id^="SWSEV2CharacterSheet"] .swse-sheet-v2-shell--concept .swse-tablet-cont
 
 .swse.sheet.actor.character.v2 .swse-concept-condition-track--summary,
 .swse-sheet--concept .swse-concept-condition-track--summary,
-form[id^="SWSEV2CharacterSheet"] .swse-concept-condition-track--summary {
+form.swse-character-sheet-form-root .swse-concept-condition-track--summary {
   margin-top: 12px !important;
 }
 
 .swse.sheet.actor.character.v2 .swse-concept-condition-track__header,
 .swse-sheet--concept .swse-concept-condition-track__header,
-form[id^="SWSEV2CharacterSheet"] .swse-concept-condition-track__header {
+form.swse-character-sheet-form-root .swse-concept-condition-track__header {
   display: flex !important;
   justify-content: space-between !important;
   align-items: center !important;
@@ -9751,7 +9751,7 @@ form[id^="SWSEV2CharacterSheet"] .swse-concept-condition-track__header {
 
 .swse.sheet.actor.character.v2 .swse-concept-condition-track__summary,
 .swse-sheet--concept .swse-concept-condition-track__summary,
-form[id^="SWSEV2CharacterSheet"] .swse-concept-condition-track__summary {
+form.swse-character-sheet-form-root .swse-concept-condition-track__summary {
   color: color-mix(in srgb, var(--swse-concept-text-muted, #9fb6c5) 88%, transparent) !important;
   font-family: var(--swse-font-mono, var(--font-mono, monospace)) !important;
   font-size: 0.72rem !important;
@@ -9760,7 +9760,7 @@ form[id^="SWSEV2CharacterSheet"] .swse-concept-condition-track__summary {
 }
 
 /* Phase: explicit extra skill use expand/collapse affordance */
-form[id^="SWSEV2CharacterSheet"] .swse-concept-extra-uses-toggle,
+form.swse-character-sheet-form-root .swse-concept-extra-uses-toggle,
 .swse.sheet.actor.character.v2 .swse-concept-extra-uses-toggle,
 .swse-character-sheet .swse-concept-extra-uses-toggle {
   width: auto !important;
@@ -9780,7 +9780,7 @@ form[id^="SWSEV2CharacterSheet"] .swse-concept-extra-uses-toggle,
   box-shadow: inset 0 0 0 1px rgba(55, 232, 255, 0.08) !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-concept-extra-uses-toggle:hover,
+form.swse-character-sheet-form-root .swse-concept-extra-uses-toggle:hover,
 .swse.sheet.actor.character.v2 .swse-concept-extra-uses-toggle:hover,
 .swse-character-sheet .swse-concept-extra-uses-toggle:hover {
   color: var(--ink, #eafcff) !important;
@@ -9788,10 +9788,10 @@ form[id^="SWSEV2CharacterSheet"] .swse-concept-extra-uses-toggle:hover,
   box-shadow: 0 0 12px rgba(55, 232, 255, 0.22) !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-concept-extra-uses-toggle .expand-chevron,
+form.swse-character-sheet-form-root .swse-concept-extra-uses-toggle .expand-chevron,
 .swse.sheet.actor.character.v2 .swse-concept-extra-uses-toggle .expand-chevron,
 .swse-character-sheet .swse-concept-extra-uses-toggle .expand-chevron,
-form[id^="SWSEV2CharacterSheet"] .skill-extra-uses-toggle .expand-chevron,
+form.swse-character-sheet-form-root .skill-extra-uses-toggle .expand-chevron,
 .swse.sheet.actor.character.v2 .skill-extra-uses-toggle .expand-chevron,
 .swse-character-sheet .skill-extra-uses-toggle .expand-chevron {
   transform: none !important;
@@ -9799,10 +9799,10 @@ form[id^="SWSEV2CharacterSheet"] .skill-extra-uses-toggle .expand-chevron,
   line-height: 1 !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .swse-concept-extra-uses-toggle .expand-count,
+form.swse-character-sheet-form-root .swse-concept-extra-uses-toggle .expand-count,
 .swse.sheet.actor.character.v2 .swse-concept-extra-uses-toggle .expand-count,
 .swse-character-sheet .swse-concept-extra-uses-toggle .expand-count,
-form[id^="SWSEV2CharacterSheet"] .skill-extra-uses-toggle .expand-count,
+form.swse-character-sheet-form-root .skill-extra-uses-toggle .expand-count,
 .swse.sheet.actor.character.v2 .skill-extra-uses-toggle .expand-count,
 .swse-character-sheet .skill-extra-uses-toggle .expand-count {
   min-width: 16px !important;
@@ -9813,7 +9813,7 @@ form[id^="SWSEV2CharacterSheet"] .skill-extra-uses-toggle .expand-count,
   color: var(--ink, #eafcff) !important;
 }
 
-form[id^="SWSEV2CharacterSheet"] .skill-extra-uses-toggle,
+form.swse-character-sheet-form-root .skill-extra-uses-toggle,
 .swse.sheet.actor.character.v2 .skill-extra-uses-toggle,
 .swse-character-sheet .skill-extra-uses-toggle {
   width: auto !important;
@@ -10136,10 +10136,10 @@ form[id^="SWSEV2CharacterSheet"] .skill-extra-uses-toggle,
 }
 
 /* Skill row controls must stay interactive above the accent glow overlays. */
-form[id^="SWSEV2CharacterSheet"] .swse-concept-skill-row__math .ability-select,
+form.swse-character-sheet-form-root .swse-concept-skill-row__math .ability-select,
 .swse.sheet.actor.character.v2 .swse-concept-skill-row__math .ability-select,
 .swse-character-sheet .swse-concept-skill-row__math .ability-select,
-form[id^="SWSEV2CharacterSheet"] .swse-concept-skill-row__math input,
+form.swse-character-sheet-form-root .swse-concept-skill-row__math input,
 .swse.sheet.actor.character.v2 .swse-concept-skill-row__math input,
 .swse-character-sheet .swse-concept-skill-row__math input {
   position: relative;

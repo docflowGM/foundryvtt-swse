@@ -275,7 +275,13 @@ export async function resetProgressionLayout(event, target) {
 
   await persistTopRailDefaults();
 
-  ui?.notifications?.info?.('Progression layout restored.');
+  // Restores USER sizing/collapse state only -- it does not (and must
+  // not claim to) override the ResizeObserver-driven responsive layout
+  // (is-shell-compact/-narrow/-tiny, see chargen-stabilization.css). A
+  // rail the current app size responsively suppresses stays suppressed
+  // after this call; the wording says so rather than implying every rail
+  // will reappear regardless of the app's actual current size.
+  ui?.notifications?.info?.('Layout defaults restored.');
 
   app?.requestRender?.({ preserveScroll: true, reason: 'restore-layout-defaults', structural: true });
 }

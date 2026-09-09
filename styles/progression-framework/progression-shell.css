@@ -490,11 +490,14 @@
 
 /* panel-small.svg provides inner stroke — no CSS ::before inner border needed */
 
-/* Collapse summary panel on narrow widths */
-@media (max-width: 1100px) {
-  .progression-shell [data-region="summary-panel"] {
-    display: none;
-  }
+/* Collapse summary panel when the actual rendered app is compact -- driven
+   by shell-responsive-observer.js's ResizeObserver-assigned class, not a
+   browser viewport media query (a Foundry application's rendered size and
+   the browser's CSS viewport are NOT the same number, so a viewport query
+   here disagreed with the app's real dimensions -- see chargen-stabilization
+   .css's header note on this same fix). */
+.progression-shell.is-shell-compact [data-region="summary-panel"] {
+  display: none;
 }
 
 /* Placeholder when no summary panel data */
@@ -567,11 +570,11 @@
 
 /* panel-small.svg provides inner stroke — no CSS ::before inner border needed */
 
-/* Responsive: collapse details panel on narrow widths */
-@media (max-width: 900px) {
-  .progression-shell [data-region="details-panel"] {
-    display: none;
-  }
+/* Responsive: collapse details panel when the app is narrow -- see the
+   summary-panel rule above for why this reads the ResizeObserver-driven
+   class rather than a viewport media query. */
+.progression-shell.is-shell-narrow [data-region="details-panel"] {
+  display: none;
 }
 
 /* =============================================================================
@@ -922,50 +925,48 @@
  * RESPONSIVE ADJUSTMENTS
  * ============================================================================= */
 
-@media (max-width: 1200px) {
-  .progression-shell .prog-content-row {
-    gap: 8px;
-    padding: 8px;
-  }
-
-  .progression-shell [data-region="details-panel"] {
-    flex: 0 0 240px;
-    width: 240px;
-    min-width: 240px;
-    max-width: 240px;
-  }
+/* Rendered-app-size driven (shell-responsive-observer.js), not a viewport
+   media query -- see the summary/details-panel rules above for why. */
+.progression-shell.is-shell-compact .prog-content-row {
+  gap: 8px;
+  padding: 8px;
 }
 
-@media (max-width: 768px) {
-  .progression-shell [data-region="progress-rail"] {
-    display: none;
-  }
+.progression-shell.is-shell-compact [data-region="details-panel"] {
+  flex: 0 0 240px;
+  width: 240px;
+  min-width: 240px;
+  max-width: 240px;
+}
 
-  .progression-shell [data-region="details-panel"] {
-    display: none;
-  }
+.progression-shell.is-shell-narrow [data-region="progress-rail"] {
+  display: none;
+}
 
-  .progression-shell [data-region="mentor-rail"] {
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: var(--prog-mentor-width);
-    height: 100%;
-    z-index: 100;
-    box-shadow:
-      0 0 20px rgba(0, 180, 255, 0.2),
-      4px 0 12px rgba(0, 0, 0, 0.4);
-  }
+.progression-shell.is-shell-narrow [data-region="details-panel"] {
+  display: none;
+}
 
-  .progression-shell .prog-content-row {
-    flex: 1;
-    gap: 0;
-    padding: 8px;
-  }
+.progression-shell.is-shell-narrow [data-region="mentor-rail"] {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: var(--prog-mentor-width);
+  height: 100%;
+  z-index: 100;
+  box-shadow:
+    0 0 20px rgba(0, 180, 255, 0.2),
+    4px 0 12px rgba(0, 0, 0, 0.4);
+}
 
-  .progression-shell [data-region="work-surface"] {
-    flex: 1;
-  }
+.progression-shell.is-shell-narrow .prog-content-row {
+  flex: 1;
+  gap: 0;
+  padding: 8px;
+}
+
+.progression-shell.is-shell-narrow [data-region="work-surface"] {
+  flex: 1;
 }
 
 /* =============================================================================
@@ -1725,15 +1726,13 @@
   }
 }
 
-@media (max-width: 900px) {
-  .progression-shell .prog-holocall-body {
-    grid-template-columns: 1fr;
-    justify-items: center;
-  }
+.progression-shell.is-shell-narrow .prog-holocall-body {
+  grid-template-columns: 1fr;
+  justify-items: center;
+}
 
-  .progression-shell .prog-holocall-content {
-    width: 100%;
-  }
+.progression-shell.is-shell-narrow .prog-holocall-content {
+  width: 100%;
 }
 
 /* =============================================================================
@@ -1741,52 +1740,38 @@
  * Consolidates responsive breakpoints, state language, readability, and motion
  * ============================================================================= */
 
-/* ---------- UNIFIED RESPONSIVE BREAKPOINTS ---------- */
+/* ---------- UNIFIED RESPONSIVE BREAKPOINTS ----------
+ * Rendered-app-size driven (is-shell-compact/-narrow), not viewport media
+ * queries -- see the summary/details-panel rules earlier in this file for
+ * why. The former grid-template-columns rules here were dead (.prog-content-row
+ * is display:flex !important, see chargen-stabilization.css), so they were
+ * dropped rather than converted; the former duplicate
+ * "[data-region=details-panel] { display:none }" at this tier was a second,
+ * competing authority against the canonical is-shell-narrow rule earlier in
+ * this file and was removed rather than kept as a second copy. */
 
-@media (max-width: 1100px) {
-  /* 3-column → 2-column layout transitions at 1100px */
-  .progression-shell .prog-content-row {
-    grid-template-columns: 1fr 2fr;
-  }
-
-  .progression-shell [data-region="details-panel"] {
-    display: none;
-  }
-
-  /* Stack HUD meta bar with wrap on narrow widths */
-  .progression-shell .prog-hud-meta-bar {
-    flex-wrap: wrap;
-    gap: 8px;
-  }
+.progression-shell.is-shell-compact .prog-hud-meta-bar {
+  flex-wrap: wrap;
+  gap: 8px;
 }
 
-@media (max-width: 900px) {
-  /* 2-column → 1-column, details panel in tab/modal context only */
-  .progression-shell .prog-content-row {
-    grid-template-columns: 1fr;
-  }
+.progression-shell.is-shell-narrow .prog-footer-status-line {
+  flex-wrap: wrap;
+  gap: 6px;
+}
 
-  /* Footer status line flex-wrap for narrower widths */
-  .progression-shell .prog-footer-status-line {
-    flex-wrap: wrap;
-    gap: 6px;
-  }
+.progression-shell.is-shell-narrow .prog-ability-mini-grid {
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
 
-  /* Ability mini-grid responsive */
-  .progression-shell .prog-ability-mini-grid {
-    grid-template-columns: repeat(3, 1fr);
-    gap: 8px;
-  }
+.progression-shell.is-shell-narrow .prog-class-grid,
+.progression-shell.is-shell-narrow .prog-species-list {
+  gap: 10px;
+}
 
-  /* Step grids responsive */
-  .progression-shell .prog-class-grid,
-  .progression-shell .prog-species-list {
-    gap: 10px;
-  }
-
-  .progression-shell .prog-class-card {
-    min-height: auto;
-  }
+.progression-shell.is-shell-narrow .prog-class-card {
+  min-height: auto;
 }
 
 /* ---------- MOTION NORMALIZATION ---------- */
@@ -2088,16 +2073,14 @@
   flex: 0 0 auto;
 }
 
-@media (max-width: 1180px) {
-  .progression-shell [data-region="mentor-rail"] .prog-mentor__portrait-zone {
-    flex-basis: 72px;
-    width: 72px;
-    max-width: 72px;
-  }
+.progression-shell.is-shell-compact [data-region="mentor-rail"] .prog-mentor__portrait-zone {
+  flex-basis: 72px;
+  width: 72px;
+  max-width: 72px;
+}
 
-  .progression-shell [data-region="mentor-rail"] .prog-mentor__ask {
-    padding-inline: 7px;
-  }
+.progression-shell.is-shell-compact [data-region="mentor-rail"] .prog-mentor__ask {
+  padding-inline: 7px;
 }
 
 
@@ -2651,17 +2634,17 @@
   transform: rotate(180deg);
 }
 
-@media (max-width: 1400px) {
-  .progression-shell [data-region="summary-panel"][data-collapsed="true"] {
-    display: flex !important;
-  }
-}
-
-@media (max-width: 1400px) {
-  .progression-shell [data-region="summary-panel"] {
-    display: flex !important;
-  }
-}
+/* A former @media(max-width:1400px) pair used to live here, forcing the
+   summary panel back to `display: flex !important` at any viewport <=1400px.
+   The [data-collapsed="true"] variant was pure redundant duplication of the
+   unconditional collapsed-state rule above (it already always sets
+   `display: flex !important`). The un-qualified variant had no such
+   justification: with `!important` and no is-shell-compact gate, it
+   unconditionally re-showed the summary panel at nearly any realistic
+   window size, directly fighting the `.is-shell-compact
+   [data-region="summary-panel"] { display: none; }` rule earlier in this
+   file -- exactly the kind of competing responsive authority this pass
+   removed. Both were dropped rather than converted. */
 
 .progression-shell [data-region="utility-bar"][data-collapsed="true"] .prog-field,
 .progression-shell [data-region="utility-bar"][data-collapsed="true"] .swse-filter-field,
