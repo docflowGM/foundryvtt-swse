@@ -66,6 +66,22 @@ The paired width/height condition intentionally catches 1366x768 and similar low
 
 ## Shell-size observer
 
+**Superseded (2026-09-09):** `progression-layout-observer.js` (and its
+`is-prog-*` classes) has been removed. It was a second, parallel
+ResizeObserver + class-driven system alongside the generic
+`scripts/ui/shell/shell-responsive-observer.js` (`is-shell-*` classes)
+already used by every other shell-hosted surface (store, customization,
+etc.) — two responsive namespaces applying overlapping layout rules to the
+same `.progression-shell` element. `progression-shell.hbs`'s
+`onpointerenter`/`onfocusin` lazy-import now calls
+`shell-responsive-observer.js`'s `observeShellResponsive(this)` instead,
+and `shell-responsive-observer.js`'s `observeAllShellResponsive()` also
+observes `.progression-shell` directly (not just its host `.application`)
+so the embedded-in-actor-sheet case is covered without waiting for a
+pointer/focus event. The CSS below describes the original `is-prog-*`
+design; the equivalent rules now live under `is-shell-*` in
+`chargen-stabilization.css`/`progression-shell.css`.
+
 A follow-up adds `scripts/apps/progression-framework/shell/progression-layout-observer.js`.
 
 The observer uses `ResizeObserver` on the actual progression shell and applies layout classes based on the shell's real rendered size, not only the browser viewport:
@@ -143,7 +159,7 @@ Implementation files:
 ```txt
 templates/apps/progression-framework/progression-shell.hbs
 scripts/apps/progression-framework/shell/progression-rail-resizer.js
-scripts/apps/progression-framework/shell/progression-layout-observer.js
+scripts/ui/shell/shell-responsive-observer.js (superseded progression-layout-observer.js)
 styles/progression-framework/chargen-stabilization.css
 ```
 

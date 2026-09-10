@@ -3976,10 +3976,10 @@ footer.swse-store-surface__footer {
    the store to be clipped by the datapad bezel with no global scroll. This final
    block deliberately wins over older store-generation overrides above.
    -------------------------------------------------------------------------- */
-form[id^="SWSEV2CharacterSheet"] .swse-sheet-v2-shell--surface-store .swse-shell-screen-surface--store,
-form[id^="SWSEV2CharacterSheet"] .swse-sheet-v2-shell--surface-store .swse-shell-screen-surface--store > .swse-shell-surface-host[data-shell-surface="store"],
-form[id^="SWSEV2CharacterSheet"] .swse-sheet-v2-shell--surface-store .swse-shell-surface-host[data-shell-surface="store"],
-form[id^="SWSEV2CharacterSheet"] .swse-sheet-v2-shell--surface-store .swse-shell-surface-host[data-shell-surface="store"] > .swse-shell-surface--store,
+form.swse-character-sheet-form-root .swse-sheet-v2-shell--surface-store .swse-shell-screen-surface--store,
+form.swse-character-sheet-form-root .swse-sheet-v2-shell--surface-store .swse-shell-screen-surface--store > .swse-shell-surface-host[data-shell-surface="store"],
+form.swse-character-sheet-form-root .swse-sheet-v2-shell--surface-store .swse-shell-surface-host[data-shell-surface="store"],
+form.swse-character-sheet-form-root .swse-sheet-v2-shell--surface-store .swse-shell-surface-host[data-shell-surface="store"] > .swse-shell-surface--store,
 .swse.sheet.actor.character.v2 .swse-sheet-v2-shell--surface-store .swse-shell-screen-surface--store,
 .swse.sheet.actor.character.v2 .swse-sheet-v2-shell--surface-store .swse-shell-surface-host[data-shell-surface="store"],
 .swse.sheet.actor.character.v2 .swse-sheet-v2-shell--surface-store .swse-shell-surface-host[data-shell-surface="store"] > .swse-shell-surface--store {
@@ -4006,8 +4006,8 @@ form[id^="SWSEV2CharacterSheet"] .swse-sheet-v2-shell--surface-store .swse-shell
 
 .swse.sheet.actor.character.v2 .swse-sheet-v2-shell--surface-store .swse-store-surface,
 .swse.sheet.actor.character.v2 .swse-sheet-v2-shell--surface-store .swse-store-surface__tablet,
-form[id^="SWSEV2CharacterSheet"] .swse-sheet-v2-shell--surface-store .swse-store-surface,
-form[id^="SWSEV2CharacterSheet"] .swse-sheet-v2-shell--surface-store .swse-store-surface__tablet {
+form.swse-character-sheet-form-root .swse-sheet-v2-shell--surface-store .swse-store-surface,
+form.swse-character-sheet-form-root .swse-sheet-v2-shell--surface-store .swse-store-surface__tablet {
   display: flex !important;
   flex-direction: column !important;
   flex: 1 1 auto !important;
@@ -4034,7 +4034,7 @@ form[id^="SWSEV2CharacterSheet"] .swse-sheet-v2-shell--surface-store .swse-store
 }
 
 .swse.sheet.actor.character.v2 .swse-sheet-v2-shell--surface-store .swse-store-surface__screen,
-form[id^="SWSEV2CharacterSheet"] .swse-sheet-v2-shell--surface-store .swse-store-surface__screen {
+form.swse-character-sheet-form-root .swse-sheet-v2-shell--surface-store .swse-store-surface__screen {
   display: grid !important;
   grid-template-rows: auto auto auto minmax(0, 1fr) !important;
   flex: 1 1 auto !important;
@@ -4054,8 +4054,8 @@ form[id^="SWSEV2CharacterSheet"] .swse-sheet-v2-shell--surface-store .swse-store
 
 .swse.sheet.actor.character.v2 .swse-sheet-v2-shell--surface-store .swse-store-surface__browse,
 .swse.sheet.actor.character.v2 .swse-sheet-v2-shell--surface-store .swse-store-surface__browse-layout,
-form[id^="SWSEV2CharacterSheet"] .swse-sheet-v2-shell--surface-store .swse-store-surface__browse,
-form[id^="SWSEV2CharacterSheet"] .swse-sheet-v2-shell--surface-store .swse-store-surface__browse-layout {
+form.swse-character-sheet-form-root .swse-sheet-v2-shell--surface-store .swse-store-surface__browse,
+form.swse-character-sheet-form-root .swse-sheet-v2-shell--surface-store .swse-store-surface__browse-layout {
   grid-row: 4 !important;
   min-height: 0 !important;
   max-height: 100% !important;
@@ -4068,10 +4068,10 @@ form[id^="SWSEV2CharacterSheet"] .swse-sheet-v2-shell--surface-store .swse-store
 .swse.sheet.actor.character.v2 .swse-sheet-v2-shell--surface-store .swse-store-surface__cards-grid,
 .swse.sheet.actor.character.v2 .swse-sheet-v2-shell--surface-store .swse-store-surface__rail,
 .swse.sheet.actor.character.v2 .swse-sheet-v2-shell--surface-store .swse-store-surface__pane,
-form[id^="SWSEV2CharacterSheet"] .swse-sheet-v2-shell--surface-store .swse-store-surface__grid,
-form[id^="SWSEV2CharacterSheet"] .swse-sheet-v2-shell--surface-store .swse-store-surface__cards-grid,
-form[id^="SWSEV2CharacterSheet"] .swse-sheet-v2-shell--surface-store .swse-store-surface__rail,
-form[id^="SWSEV2CharacterSheet"] .swse-sheet-v2-shell--surface-store .swse-store-surface__pane {
+form.swse-character-sheet-form-root .swse-sheet-v2-shell--surface-store .swse-store-surface__grid,
+form.swse-character-sheet-form-root .swse-sheet-v2-shell--surface-store .swse-store-surface__cards-grid,
+form.swse-character-sheet-form-root .swse-sheet-v2-shell--surface-store .swse-store-surface__rail,
+form.swse-character-sheet-form-root .swse-sheet-v2-shell--surface-store .swse-store-surface__pane {
   min-height: 0 !important;
   max-height: 100% !important;
   overflow-y: auto !important;

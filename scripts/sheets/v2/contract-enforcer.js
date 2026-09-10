@@ -55,7 +55,7 @@ export class CharacterSheetContractEnforcer {
    * and .swse-v2-screen--concept is the single viewport scroller.
    */
   static isFramelessConceptSheet(element) {
-    return !!element?.matches?.('form[id^="SWSEV2CharacterSheet"]')
+    return !!element?.matches?.('form.swse-character-sheet-form-root')
       || !!element?.querySelector?.('.swse-v2-tablet--concept .swse-v2-screen--concept');
   }
 

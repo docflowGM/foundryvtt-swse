@@ -219,12 +219,22 @@ export function disconnectShellResponsive(root, options = {}) {
 export function observeAllShellResponsive(root = document) {
   ensureResponsiveStylesheets();
   const scope = root?.querySelectorAll ? root : document;
-  const explicitTargets = scope.querySelectorAll?.('.swse-shell-responsive, .swse-responsive-auto') || [];
+  // .progression-shell is included directly (not only via the .application
+  // list below) because the canonical progression/chargen markup is often
+  // injected inline inside a host application (the actor sheet's holopad),
+  // where .progression-shell is a descendant of the observed .application,
+  // not the application root itself -- classes toggled on the .application
+  // would never reach it. Observing it directly here works for both that
+  // embedded case and the standalone ProgressionShell Application (where
+  // .progression-shell IS the application root, already covered below too;
+  // re-observing the same element is a harmless no-op).
+  const explicitTargets = scope.querySelectorAll?.('.swse-shell-responsive, .swse-responsive-auto, .progression-shell') || [];
   for (const target of explicitTargets) observeShellResponsive(target);
 
   const applicationTargets = scope.querySelectorAll?.(`
     .application:has(.swse-v2-sheet),
     .application:has(.swse-character-sheet),
+    .application.progression-shell,
     .application:has(.swse-concept-body),
     .application:has(.swse-sheet-v2-shell--concept),
     .application:has(.swse-v2-tablet--concept),
