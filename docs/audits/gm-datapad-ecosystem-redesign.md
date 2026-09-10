@@ -9374,3 +9374,94 @@ Existing domain folders (`locations/`, `allies/` for Factions, `generation/`, `h
 A future "procedural settlements" or "generate an entire star system" feature should mean: a new generator, a new draft shape, a new domain mutation authority, a new commit adapter, new event definitions, and one registry call — the coordinator and every existing domain stay untouched. If a future addition can't satisfy that, per this section's own classification table, it's a sign the addition was designed as a patch onto an existing domain rather than a new one.
 
 **PHASE 8D-4 REFINEMENT CAPTURED. Nothing implemented — no new files, no code changes this section, same as §200. This further refines (does not replace) §200's `CampaignMutationCoordinator`/`ResolutionMap`/commit-adapter shape; §199's `JobEngine` boundary is unchanged. Per standing practice: stopping here — this remains a future, separately-scoped implementation phase, not part of the current 8D-3C PR.**
+
+## 202. PHASE 8D-4 stress test — `CampaignEffect`/`CampaignOutcomeResolver`, existence-vs-visibility, and one flagged EXISTING SSOT gap (design only, one item flagged for future hardening, nothing implemented)
+
+A follow-up review walked §200/§201's design against a concrete end-to-end campaign scenario (import a planet → generate a Faction + 2 Contacts + 4 Jobs → pay out a completed Job → decrypt Intel that reveals a Faction and deposits 2,500 credits → generate 4 more worlds/Factions/Contacts/Jobs) specifically to find what the coordinator design alone does NOT answer. It found the underlying storage destinations are mostly already correct — `LocationRegistryService` → Atlas, `FactionRegistryService` → Allies (for both Factions and their Contacts), `TransactionEngine` → a Player Actor's credits, `ActorEngine` for any promoted NPC — but surfaced one genuinely new abstraction gap, three principles worth recording, and one **existing, live** SSOT inconsistency worth flagging (not fixed this pass — see the explicit scoping note at the end of this section). Nothing in this section is built; it refines §200/§201 exactly as §201 refined §200.
+
+### Walkthrough table (this scenario, mapped against current architecture)
+
+| Action | Correct architecture | Current concern |
+| --- | --- | --- |
+| Import planet from Compendium | Import adapter → `LocationRegistryService` → Atlas | Mostly sound already — the Locations UI's Quick Library import already funnels into `LocationRegistryService` rather than treating the Compendium document itself as the campaign Location |
+| Create Faction | `FactionRegistryService` | Authority exists, but canonical identity still has name-derived fallback behavior (see below) |
+| Create 2 Contacts | Faction authority → Allies reads Contacts | Storage/view path is sound (`FactionRegistryService.getAllFactionContacts()` → Allies); visibility semantics need attention (see below) |
+| Create 4 Jobs | Job drafts → future `JobEngine` → Holonet storage | `JobEngine` still missing — unchanged from §199 |
+| Generate recommended payouts | Generator suggests → Job owns reward terms | Sound as draft data (this phase's own `rewardEstimate`/`rewardPackage`/`rewardSuggestions`) |
+| Pay completed Job | `JobEngine` → `TransactionEngine` → Player Actor | Too much of this currently lives inside Holonet Messenger rather than a Job authority |
+| Decrypt Intel | Intel authority emits `intel.decrypted` | The trigger exists; generalized cross-domain consequence orchestration does not |
+| Reveal Faction (as a consequence of decryption) | Coordinator → Faction authority | Missing generalized effect path — this is the gap this section names |
+| Deposit 2,500 credits (as a consequence) | Coordinator → `TransactionEngine` → the decrypting/assigned Player Actor | The current Intel lockbox requires a manual claim rather than an automatic award |
+| Generate 4 more worlds/Factions/Contacts/Jobs | Generator → draft bundle → GM → Coordinator | The architecture is designed for this already (§200/§201); the Coordinator itself just isn't built yet |
+
+Confirmed already-correct today, independent of anything in this section: the credit-reward mechanism itself. A lockbox claim already routes through `HolonetIntelService` → `TransactionEngine.executeCreditAdjustment()` → the Actor, and Item rewards similarly already go through `ActorEngine` — the underlying money-mutation authority is sound. What's missing is ONLY the trigger orchestration around it (below), not the mutation itself.
+
+### The new abstraction: `CampaignEffect` / `CampaignOutcomeResolver`
+
+§201's `DomainEventBus` establishes that a domain emits an event (`intel.decrypted`) rather than calling other domains directly. This section names the piece that was still missing between "an event fired" and "the coordinator executes a mutation": something has to say WHAT should happen as a result, without the triggering domain (Intel) knowing how to do any of it. A `CampaignEffect` describes a desired consequence, declaratively, and never performs the mutation itself:
+
+```js
+{
+  effectId: "effect-intel-382-faction-reveal",
+  trigger: "intel.decrypted",
+  domain: "faction",
+  action: "reveal",
+  targetRef: { domain: "faction", refType: "canonical", value: "faction-abcd" },
+  payload: {}
+}
+```
+
+```js
+{
+  effectId: "effect-intel-382-credit-reward",
+  trigger: "intel.decrypted",
+  domain: "credits",
+  action: "grant",
+  recipientPolicy: "triggeringActor",
+  payload: { amount: 2500 }
+}
+```
+
+`CampaignOutcomeResolver` sits between the event bus and the coordinator: `Intel decrypted → emit domain event → resolve configured CampaignEffects → CampaignMutationCoordinator → the correct domain authority (FactionRegistryService, TransactionEngine, ...)`. The recipient of a credit-grant effect resolves to a real Player **Actor** (the existing reward machinery already targets Actors — Job payouts and lockbox claims both already end at `TransactionEngine.executeCreditAdjustment()` against an Actor record), never merely a Foundry User. The extensibility test this section proposes for the whole effect layer: **when a new possible consequence is added (reveal a Location, add a Contact, unlock a Store, grant an Item, publish a Bulletin, start a skill challenge, trigger a Faction consequence, ...), does the triggering system need to be modified?** The answer must be no — add a new `CampaignEffect` type and its domain handler; Intel itself never learns anything beyond "decryption succeeded."
+
+### Idempotency is a hard requirement for automatic effects, not an optional nicety
+
+A reconnect, a retried socket request, or `intel.decrypted` firing twice must never double-apply a consequence (three credit grants instead of one). Every `CampaignEffect` needs its own `idempotencyKey` (e.g. `"intel-83:decoded:credit-reward"`), checked against §201's own `CommitLedger` before execution — a duplicate event becomes a no-op read (`already applied`), not a re-execution. This is additional, concrete justification for why §201 paired `ResolutionMap` with `CommitLedger` in the first place, now grounded in a scenario where the ledger's absence would cause a real, player-visible bug (double-paid credits) rather than only a theoretical one.
+
+### Existence vs. visibility — a principle to apply across every domain, not just Factions
+
+If the GM already knows a decryption will reveal "the Black Vorn Syndicate," the Faction should already exist canonically (`faction-f92a`) with a `revealState: hidden` the whole time, and the Intel record stores `linkedFactionId: faction-f92a` (a stable relationship seam that already exists on the Intel model today). Decryption then does not CREATE a Faction — it produces a `FactionRevealEffect` transitioning `hidden → known` on a Faction that was real all along. The same distinction — a record can be real to the GM without being visible to players — applies identically to Locations, Contacts, Intel, and Jobs, and should be treated as a standing principle for how `CampaignEffect`'s reveal-type actions work across every domain, not a Faction-specific mechanism.
+
+### One flagged EXISTING inconsistency: name-derived canonical identity in Factions/Contacts
+
+This is the one item in this review that describes CURRENT, LIVE code rather than future design, and is called out separately for that reason. `FactionRegistryService`'s `upsertFaction()` currently falls back to `existing?.id || requestedId || slugify(name)` for canonical Faction identity, and also searches for an existing Faction by name; Contacts similarly fall back to an id derived from `name + role` in their normalizer. This directly contradicts the "display text is not identity" discipline §197/§198's `reference-duality.js` work already established for Job cross-domain references — two unrelated Factions or Contacts sharing a display name (`"Colonial Security Directorate"`, `"Jax Marr — Quartermaster"`) can merge canonical identity that should never have merged, and rename semantics become awkward as a result. The recommended fix (not applied this pass): mint a new Faction/Contact's canonical id independently of its name at creation, keeping name-based search as an interactive UI convenience only, never as mutation identity.
+
+**This item is explicitly NOT fixed in this pass.** `FactionRegistryService` and the Contact normalizer are existing, live production systems this session has not read, audited, or touched, entirely outside `claude/gm-datapad-phase8d3c-jobs-productionization`'s own scope (Job generation) — changing name-fallback identity behavior on a live registry without first auditing every current caller that may depend on the existing merge-by-name behavior would be exactly the kind of unscoped, unreviewed change this project's own operating principles warn against. It is recorded here as a concrete, named action item for a future, separately-scoped correction pass on the Faction/Contact registries specifically (most naturally as prep work before or alongside 8D-4, since the coordinator's own `EntityRef`/`ResolutionMap` design in §201 assumes stable, non-name-derived canonical ids for every domain it touches).
+
+### Per-player discovery visibility — a known, documented, deferred limitation
+
+Allies currently decides Contact player-visibility via `knownToPlayers === true` or a `revealState` in `hinted`/`known`/`compromised` — effectively global visibility shared by the whole party. That's sufficient for a table that shares all discoveries, but insufficient if different player characters should be able to maintain independently different social networks (one player has met a Contact, another hasn't). A future `visibility: { mode: 'party'|'selected-actors'|'public'|'gm-only', actorIds: [...] }` shape (or an Actor→Contact knowledge relationship) is named as the eventual direction, but **explicitly not solved now** — recorded here so Allies' dependence on global `knownToPlayers` is a known, documented tradeoff rather than an accidental one, before more features build on top of it.
+
+### Generation-triggered canonical commits: GM approval (or an explicit automation policy) only, never spontaneous
+
+Should 4 procedurally-generated worlds/Factions/Contacts/Jobs (triggered by, say, a player's Investigation roll) become canonical immediately? Only through the same path §200/§201 already establish: `generation trigger → CampaignDraftBundle → GM review (a "new world content proposed" attention item) → GM accepts → CampaignMutationCoordinator commits`. A future automation policy ("automatically commit generated discovery content") may skip the GM confirmation step, but must still route through the identical coordinator and domain authorities — automation is permitted to skip confirmation, never permitted to skip the architecture itself (i.e., never a generator calling `LocationRegistryService.upsertLocation()` directly, confirmation or not).
+
+### Summary: what this scenario confirms is healthy vs. what's still a gap
+
+```text
+ALREADY HEALTHY (no change needed):
+  Location  → LocationRegistryService → Atlas
+  Contact   → FactionRegistryService  → Allies
+  Credits   → TransactionEngine       → Player Actor
+  NPC Actor → ActorEngine
+
+STILL GAPS:
+  Job canonical mutation authority        MISSING            (§199)
+  CampaignMutationCoordinator             DESIGNED, NOT BUILT (§200/§201)
+  CampaignEffect / Outcome layer          NOT YET FORMALIZED  (this section)
+  Cross-domain idempotency / ledger check NOT BUILT           (this section, builds on §201's CommitLedger)
+  Faction/Contact canonical ID minting    NEEDS HARDENING     (this section, flagged, NOT fixed this pass)
+  Per-player discovery visibility         LIMITED, DEFERRED   (this section)
+```
+
+**PHASE 8D-4 STRESS-TEST REVIEW CAPTURED.** Nothing implemented. Adds `CampaignEffect`/`CampaignOutcomeResolver` and the existence-vs-visibility principle to the §200/§201 design; flags (does not fix) the Faction/Contact name-derived identity issue as a separately-scoped future correction; records per-player visibility as a known deferred limitation. Still a future, separately-scoped implementation phase, not part of the current 8D-3C PR.
