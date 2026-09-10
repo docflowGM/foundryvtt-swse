@@ -9269,3 +9269,108 @@ PHASE 8D-4 -- Campaign Composition + Commit Orchestration
 9. Every dependency between operations is expressed as `dependsOn` on the operation itself and topologically sorted — never a hardcoded per-domain call sequence.
 
 **PHASE 8D-4 DESIGN CAPTURED. Nothing implemented — no new files, no code changes this section. Builds directly on §199's `JobEngine` boundary and the existing draft-id/duality discipline threaded through 8D-3A/8D-3B/8D-3C. Per standing practice: stopping here: the shim itself is a future, separately-scoped implementation phase, not part of the current 8D-3C PR.**
+
+## 201. PHASE 8D-4 architecture refinement — shared contracts, event bus, adapter registry, and the project-wide extensibility test (design only, nothing built)
+
+§200 established the `CampaignMutationCoordinator` shape. A follow-up review named the underlying goal explicitly — "I can add new domains/features later without turning the codebase into spaghetti" — and refined §200 into a **modular monolith**: strong domain boundaries, one mutation authority per domain (unchanged from §199/§200), thin orchestration, and shared contracts only at the seams between domains, never replacing each domain's own native schema. This section captures that refinement. **Nothing in this section is built — design only, same scoping as §199/§200.**
+
+```text
+                    INTENT
+          UI / Generator / Socket / Workflow
+                      │
+                      ▼
+               APPLICATION LAYER
+          CampaignMutationCoordinator
+                      │
+          ┌───────────┼───────────┐
+          ▼           ▼           ▼
+       DOMAIN       DOMAIN       DOMAIN
+     ActorEngine   JobEngine   Location authority
+          │           │           │
+          └───────────┼───────────┘
+                      ▼
+              PERSISTENCE LAYER
+         Foundry Docs / Settings / Holonet
+```
+
+Events flow back OUTWARD from this stack (below), rather than domains reaching sideways into each other directly.
+
+### Shared contracts (seams only — never a domain-schema replacement)
+
+- **`EntityRef`** — a normalized cross-domain reference shape the coordinator/event-bus/commit-adapters/`ResolutionMap` all speak (`{ domain, refType: 'draft'|'id'|'uuid', value }`), so the coordinator knows exactly one identity convention instead of six. Each domain still stores its own native fields (`locationId`/`locationDraftId`, Actor uuid, etc.) internally and translates at its own adapter boundary — this is NOT a universal-graph rewrite of existing schemas, which stay exactly as §197/§198's `reference-duality.js` discipline already shaped them.
+- **`MutationCommand`** envelope (`{ commandId, correlationId, domain, action, targetRef, payload, source }`) and **`MutationResult`** envelope (`{ ok, commandId, canonicalRef, warnings, events }`) — the envelope is domain-agnostic (gives orchestration logging/resumability/auditing/testing for free); `payload` stays fully domain-specific, so a domain authority is never forced into a shared payload schema.
+- **`CommitAdapterRegistry`** (`CommitAdapterRegistry.register('job', JobCommitAdapter)`) replaces a hardcoded `switch (operation.domain)` inside the coordinator (§200's own adapter concept, now explicit about the registration mechanism) — adding a new persistent domain six months from now (settlement/vehicle/encounter/quest-chain/rumor/resource-node, all named as plausible future examples, none planned yet) means registering one new adapter, never touching the coordinator itself. This is the single highest-leverage extensibility investment in the whole proposal.
+- **`DomainEventBus`** — commands and events are kept strictly separate. A command says "create this Job"; an event says "JobCreated" (`{ type: 'job.created', entityRef, correlationId, metadata }`). `JobEngine` never calls `HolonetIntelService`/`FactionRegistryService`/a notification service/a Bulletin service directly on a lifecycle transition — it emits an event and lets independent handlers (Faction-consequence handler, Home-attention handler, Intel-suggestion handler, notification handler, ...) react. Foundry Hooks get wrapped behind this bus rather than every feature inventing its own ad hoc Hook name, which is the actual mechanism that would otherwise let domains silently reach sideways into each other as the number of domains grows.
+
+### Repositories underneath authorities (future direction, not a refactor of what exists today)
+
+`JobEngine → JobRepository → HolonetStorage`: the engine owns validation/business-invariants/lifecycle/authorization/side-effects; the repository owns only persistence mechanics, which matters most for the v14 migration (persistence format can change without the rest of the system noticing). Explicitly **not** a mandate to refactor `FactionRegistryService`/`LocationRegistryService` into repositories now — both remain reasonable domain authorities as-is (unchanged from §199); this is only the shape to grow into if/when they do.
+
+### Three smaller hardening items, all deferred
+
+- **Schema versioning** — every persisted non-Document record (settings/Holonet/custom metadata) eventually carries `{ schemaVersion, ... }`, with normalize/validate/migrate owned by the domain, never compensated for ad hoc by a UI controller reading an old shape. Foundry `DataModel`s are worth investigating for v14 where they genuinely fit, but schema ownership living with the domain (not the view) is the load-bearing invariant, independent of which mechanism implements it.
+- **Optimistic concurrency** — a `revision` counter so a domain authority can detect a `STALE_WRITE` (GM opens a Job at revision 14, another surface saves revision 15, the stale window's update is rejected rather than silently overwriting) instead of silent last-write-wins. Matters once the Datapad/Messenger/Job Board/Atlas can all touch the same world facts concurrently — not urgent while only one surface writes each domain today.
+- **Architecture enforcement as executable tests, not just documentation** — extending this project's EXISTING mutation-linting philosophy (already applied to Actor mutation paths) to the cross-domain seams §199-201 establish: fail a test if a UI controller imports `HolonetStorage` directly, a generator imports `JobEngine`, Job UI calls `HolonetMessengerService.createJobPosting()` directly instead of through the future `JobEngine`, or any non-authority code calls `actor.update()` directly. This is what turns §199/§200/§201 from documentation GM/devs can drift away from into policy the test suite actually catches drift against.
+
+### `CommitLedger` — pairs with `ResolutionMap`, powers `resume()` and future provenance
+
+Where `ResolutionMap` answers "what canonical id did this draft id resolve to," `CommitLedger` (`{ commitId, correlationId, operations: [{ operationId, domain, status, draftRef, canonicalRef, errorCode? }] }`) is the concrete source of truth `resume()` reads to know which operations already completed in a partially-failed compound commit (§200's own saga-style failure handling, now with an explicit record shape). It also unlocks a genuinely useful future capability with zero extra design cost: "why does this Faction exist? → created by campaign bundle #42, operation #2, GM user, timestamp."
+
+### `plan()` stays strictly pure — enforced, not just stated
+
+Extending §200's own "planning is mutation-free" rule: `plan()` may READ canonical state to validate references but must never create/update/delete/set-flags/set-settings/send-socket-requests under any circumstance. This is what makes it possible to test planning at scale (thousands of synthetic bundle combinations) without touching a real Foundry world, and what lets a GM trust the pre-commit confirmation screen actually describes what `commit()` will do.
+
+### A light CQRS-style split (not full enterprise CQRS)
+
+Command side: domain authorities mutate truth. Query side: surface/view-model services (`GMJobBoardSurfaceService`, `GMLocationsSurfaceService`, and their siblings) read and shape truth for UI, but never become the place Job/Location mutation semantics live — `LocationRegistryService` stays the writer even when `GMLocationsSurfaceService` is the thing a template actually renders from. This distinction already exists informally in the current codebase; this section just names it as a rule to hold as the UI surfaces grow more elaborate, not a new module to build.
+
+### Avoid a generic `update(entity, patch)` orchestration API
+
+Explicitly rejected as the primary domain API shape: `WorldMutationService.update('job', id, patch)` tells a reader nothing about what business process occurred. `JobEngine.complete(...)`/`.assign(...)`/`.completeObjective(...)`/`.setReward(...)`/`.transitionStatus(...)` (semantic commands, mirroring `FactionRegistryService.addContact(...)`/`LocationRegistryService.moveLocation(...)`'s existing shape) each can enforce their own specific invariants (objectives resolved, reward state valid, status transition legal, consequences prepared, events emitted, audit recorded) in a way a generic patch-applier structurally cannot. The thin coordinator works only when domain APIs are commands, not arbitrary patches.
+
+### Five-role module classification (a code-review question, not new code)
+
+| Role | Responsibility | May mutate canonical state? |
+| --- | --- | --- |
+| Generator | Propose facts | No |
+| View/Surface | Present/read state | No |
+| Coordinator | Sequence domain commands | No direct writes |
+| Domain Authority | Enforce invariants + mutate | **Yes** |
+| Repository | Persist/read data | Only on its authority's behalf |
+
+The practical use: when a new file is added, ask which of the five it is. "A little of all of them" is the design smell this table exists to catch in review, the same way §199 already named "generators never mutate, controllers never mutate, bridges never mutate" as a standing invariant — this table is that invariant made checkable per-file.
+
+### Explicitly rejected, still (unchanged verdict from §200, restated for completeness)
+
+A universal `WorldEngine`, a universal `Entity` class, a universal repository for everything, a universal relationship graph replacing domain-native references, a generic CRUD engine, a large dependency-injection container, and a plugin/microservice framework are all named as tempting-but-wrong abstractions for a project of this shape — a Foundry system running as one codebase is correctly served by a well-partitioned modular monolith, not by importing enterprise-scale patterns that solve problems this project doesn't have.
+
+### Priority order for whenever 8D-4 is actually built
+
+```text
+1. EntityRef + ResolutionMap
+2. CommitAdapterRegistry + CampaignMutationCoordinator
+3. DomainEventBus + standardized MutationResult
+```
+
+with the package layout this converges toward (illustrative, NOT a migration target for existing files):
+
+```text
+scripts/
+  contracts/        entity-ref.js, mutation-command.js, mutation-result.js, domain-event.js
+  governance/
+    coordinator/     campaign-mutation-coordinator.js, commit-plan.js, resolution-map.js,
+                      commit-ledger.js, commit-adapter-registry.js
+    actor-engine/     (exists today)
+    job-engine/       (§199 target, not yet built)
+  events/            domain-event-bus.js
+```
+
+Existing domain folders (`locations/`, `allies/` for Factions, `generation/`, `holonet/`) are explicitly NOT reorganized to match this — new architecture converges toward this shape naturally as it's built, no big-bang folder migration.
+
+### The standing test for every future architecture decision
+
+> Can I add a new persistent domain without modifying five existing domains?
+
+A future "procedural settlements" or "generate an entire star system" feature should mean: a new generator, a new draft shape, a new domain mutation authority, a new commit adapter, new event definitions, and one registry call — the coordinator and every existing domain stay untouched. If a future addition can't satisfy that, per this section's own classification table, it's a sign the addition was designed as a patch onto an existing domain rather than a new one.
+
+**PHASE 8D-4 REFINEMENT CAPTURED. Nothing implemented — no new files, no code changes this section, same as §200. This further refines (does not replace) §200's `CampaignMutationCoordinator`/`ResolutionMap`/commit-adapter shape; §199's `JobEngine` boundary is unchanged. Per standing practice: stopping here — this remains a future, separately-scoped implementation phase, not part of the current 8D-3C PR.**
