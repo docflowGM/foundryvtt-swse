@@ -9106,3 +9106,67 @@ The phase requirement was broader than `rewardEstimate`/`rewardPackage` (credits
 - `node --check` on all changed/new `.js` files: clean.
 
 **PHASE 8D-3C CORRECTION ROUND 2 COMPLETE.** Same branch (`claude/gm-datapad-phase8d3c-jobs-productionization`), same PR (#965). No production-scale hydration performed. Per standing practice: stopping here for independent review / merge decision.
+
+## 199. Architectural requirement: documented Job canonical-mutation boundary (`JobEngine`, deferred to 8D-4)
+
+A combined mutation-SSOT review (prompted by comparing this phase's Job generation work against how `ActorEngine` governs Actor mutation) confirmed `createProceduralJobDraft()`'s "zero canonical mutation" discipline is correct and should NOT change, but found a real project-level gap the review asked to be documented — not fixed — before 8D-3C hydration: **there is currently no dedicated canonical mutation authority for Jobs**, unlike Actors (`ActorEngine`), Factions (`FactionRegistryService`), and Locations (`LocationRegistryService`), each of which already centralizes its own domain's writes. Canonical Job mutation is instead spread across `GMJobBoardSurfaceController`, `HolonetMessengerService`/`_gmCreateJobPosting()`, `HolonetStorage`, and the Faction/Location Job-bridge services calling each other directly — the Holonet transport/presentation layer ends up owning Job business rules by default, not by design.
+
+The review's explicit verdict: **do not build a `JobEngine` now** (that's 8D-4 scope, gated on an explicit Generate → Review → Commit workflow that doesn't exist yet), and **do not build a generic `WorldEngine`** either — a single mutation god-object that knows how to update Actors, complete Jobs, move Locations, change Faction standings, and grant assets would itself be a worse architecture than today's fragmentation. The correct shape is one mutation authority PER DOMAIN, with a shared governance contract, exactly like `ActorEngine` already models for Actors. What 8D-3C owes the future 8D-4 phase, right now, is the documented boundary contract below, so the eventual commit step has an unambiguous target to build against rather than accreting a new special-case write path (the same failure mode that produced today's Job fragmentation in the first place).
+
+### The boundary contract
+
+```text
+JOB GENERATION AUTHORITY (this phase, 8D-3C -- EXISTS)
+  createProceduralJobDraft() / job-bundle.js / job-draft.js
+
+  Owns: draft generation, targeted rerolls, GM authoring
+        (field-authoring API + the objective/reward/reward-suggestion
+        ownership seams round 2 added), draft-shape normalization.
+
+  MUST NOT: persist canonical Job state, transition Job lifecycle,
+            grant rewards, mutate a Faction's standing ledger, mutate
+            an Actor, or publish a Holonet thread. (Already enforced --
+            see job-draft.js's own header HARD RULE, and the canonical-
+            persistence guard test that statically scans for any call
+            to a canonical-persistence entry point.)
+
+JOB CANONICAL MUTATION AUTHORITY (future, 8D-4 -- NOT YET BUILT)
+  JobEngine (scripts/governance/job-engine/, mirroring
+  scripts/governance/actor-engine/'s own layout)
+
+  Owns: JobEngine.createFromDraft(draft) (the GM's explicit "commit
+        this draft" action -- the ONLY path from a Job draft to a
+        canonical Job), JobEngine.update(...), lifecycle transitions
+        (assign/complete/fail/archive), objective-result commit,
+        reward-settlement orchestration, Faction-consequence
+        orchestration (applying the draft's successDelta/failureDelta
+        SUGGESTION to a real Faction standing -- the one explicit,
+        separate GM action job-draft.js's own header already reserves
+        for this authority and no other), canonical validation, the
+        storage transaction itself, hooks/audit.
+
+  Every current and future caller -- GMJobBoardSurfaceController,
+  FactionJobBridgeService, LocationJobBridgeService, Datapad UI,
+  Holonet sockets, and this phase's own future commit step -- routes
+  canonical Job mutation through JobEngine once it exists. None of them
+  call HolonetMessengerService.createJobPosting()/_gmCreateJobPosting()
+  or HolonetStorage directly for a WRITE going forward.
+
+HOLONET STORAGE -- persistence mechanism only, underneath JobEngine.
+HOLONET MESSENGER -- delivery/presentation/messaging orchestration
+  only (already correctly scoped per its own header); it stops being
+  the de facto Job mutation authority once JobEngine exists to take
+  that role over.
+```
+
+### What this changes today
+
+Nothing behaviorally. `job-draft.js`'s header HARD RULE comment was updated to name `JobEngine` (not a direct `HolonetMessengerService` call) as the future commit target, so a future implementer reads the correct destination architecture rather than the stale one. No other file changed. The canonical-persistence guard test's zero-calls assertion remains the enforcement mechanism until `JobEngine` exists to have a first legitimate caller.
+
+### Standing invariant this section establishes
+
+> Every persistent domain has exactly one canonical mutation authority. Generators never mutate. Controllers never mutate. Bridges never mutate. Persistence layers do not decide domain semantics.
+
+Current mapping: Actor/NPC-Actor/owned-Item/ActiveEffect → `ActorEngine`; Faction/Faction-Contact-metadata → `FactionRegistryService`; Location → `LocationRegistryService`; Store transaction → `TransactionEngine`; Assets → `AssetGrantService`; Job → **`JobEngine`, not yet built, this section's documented target**; every generated Location/Faction/NPC/Job draft → no canonical mutation authority at all, by design.
+
+**No code changes beyond the one comment update. This section is documentation only, per the review's own explicit scoping ("not implement JobEngine immediately... require that 8D-3C document the future commit boundary explicitly").**

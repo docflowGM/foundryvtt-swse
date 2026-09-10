@@ -20,11 +20,18 @@
  * too thin for this phase's richer requirements.
  *
  * HARD RULE: this module never creates, posts, or otherwise mutates a
- * canonical Job. Posting a draft is later, explicit GM action through
- * the EXISTING `HolonetMessengerService.createJobPosting()` /
- * `_gmCreateJobPosting()` — this module does not call it and does not
- * duplicate its persistence, id-generation, status-workflow, or
- * Faction-standing-ledger logic.
+ * canonical Job. Committing a finished draft is later, explicit GM
+ * action through the future `JobEngine` canonical-mutation authority
+ * (see docs/audits/gm-datapad-ecosystem-redesign.md §199 -- NOT YET
+ * BUILT, deferred to 8D-4) -- not a direct call from this module, or
+ * from any UI/controller/bridge, to `HolonetMessengerService
+ * .createJobPosting()`/`_gmCreateJobPosting()` or `HolonetStorage`.
+ * Those remain the eventual PERSISTENCE/transport mechanism `JobEngine`
+ * itself will call, exactly like `ActorEngine` sits in front of the
+ * Foundry Document API rather than every caller hitting it directly.
+ * This module does not call them and does not duplicate their
+ * persistence, id-generation, status-workflow, or Faction-standing-
+ * ledger logic.
  *
  * `tier` on an objective draft reuses `objective-economy.js`'s
  * `OBJECTIVE_TIER` verbatim (confirmed identical to the canonical
