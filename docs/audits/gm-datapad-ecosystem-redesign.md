@@ -9170,3 +9170,102 @@ Nothing behaviorally. `job-draft.js`'s header HARD RULE comment was updated to n
 Current mapping: Actor/NPC-Actor/owned-Item/ActiveEffect → `ActorEngine`; Faction/Faction-Contact-metadata → `FactionRegistryService`; Location → `LocationRegistryService`; Store transaction → `TransactionEngine`; Assets → `AssetGrantService`; Job → **`JobEngine`, not yet built, this section's documented target**; every generated Location/Faction/NPC/Job draft → no canonical mutation authority at all, by design.
 
 **No code changes beyond the one comment update. This section is documentation only, per the review's own explicit scoping ("not implement JobEngine immediately... require that 8D-3C document the future commit boundary explicitly").**
+
+## 200. PHASE 8D-4 architecture proposal — `CampaignMutationCoordinator`, a thin cross-domain commit orchestrator (design only, nothing built)
+
+§199 documented the missing per-domain authority (`JobEngine`). A follow-up review asked the next question directly: when a GM commits a *compound* generated bundle — a Location draft, a Faction draft, 3 Contact drafts, and a Job draft that all reference each other by draft id — who sequences those commits, replaces each `draft:x:...` reference with its real canonical id as each piece lands, and decides what happens if step 4 of 5 fails? Today, nobody does; that logic would otherwise leak into the UI/controller layer, which is exactly the failure mode §199 was written to prevent for Jobs specifically. This section captures the proposed answer as the concrete architectural target for **Phase 8D-4 ("Campaign Composition + Commit Orchestration")**, redefining 8D-4's scope precisely. **Nothing in this section is built.** It is a design record to build against, not an implementation — consistent with §199's own "document, don't build yet" scoping.
+
+### The core distinction: orchestrator, not authority
+
+> The orchestrator coordinates mutations. It does not become a mutation authority itself.
+
+`CampaignMutationCoordinator` (the agreed name — preferred over `WorldEngine`/`WorldCommitCoordinator` specifically because "Engine" implies owning the mutation, which this must never do) sits ABOVE the per-domain authorities §199 already establishes (`ActorEngine`, `FactionRegistryService`, `LocationRegistryService`, the future `JobEngine`, `HolonetIntelService`, ...) and calls them in dependency order. It never touches `game.settings.set(...)`, `Actor.createDocuments(...)`, or any other raw persistence primitive itself — every actual write is delegated to the narrowest existing canonical command a domain authority already exposes (`FactionRegistryService.upsertFaction()`, never a hand-rolled `saveRegistry(customArray)` bypass). This is the same relationship §199 draws between `JobEngine` and `HolonetStorage`, one level up.
+
+### Two-stage pattern: `plan()` then `commit()`
+
+```text
+plan()   — PURE, mutation-free: validates the bundle, resolves the
+           dependency graph from draft-id references (already present
+           throughout this ecosystem's draft schemas -- no new
+           reference mechanism needed), detects conflicts, and returns
+           a CommitPlan describing exactly what will be created/linked
+           and in what order. Safe to show the GM as a literal
+           confirmation screen ("4 records will be created, 7
+           relationships will be resolved") before anything is written.
+
+commit(plan) — the only stage that mutates, and only by calling domain
+           authorities through per-domain adapters (below), never
+           directly.
+
+resume(previousResult) — re-drives a partially-completed commit without
+           re-creating already-committed operations, using the
+           resolutionMap (below) to know what already landed.
+```
+
+### `ResolutionMap`: draft id → canonical id, resolved once per commit
+
+The single most load-bearing piece, and the reason this project's existing draft-id discipline (`draft:location:...`/`draft:faction:...`/`draft:npc:...`/`draft:job:...`, the SAME duality pattern `reference-duality.js`/§197 item 2/§198 item 2 already enforce at each domain's own boundary) makes this tractable at all: as each operation commits, its real canonical id (or Actor uuid, for a promoted NPC) is recorded against its draft id, so every LATER operation in the same commit resolves its own draft-id references deterministically — never by name-matching (`game.actors.find(a => a.name === ...)` is explicitly named as the anti-pattern to avoid). A Job draft referencing `draft:npc:C` as its issuer resolves to the real `Actor.AbCd123` the NPC-promotion operation produced two steps earlier in the same plan, with no re-lookup.
+
+### Commit adapters: the coordinator stays domain-ignorant
+
+```text
+commit-adapters/
+    location-commit-adapter.js
+    faction-commit-adapter.js
+    npc-commit-adapter.js
+    job-commit-adapter.js
+    (later, without touching the coordinator: intel/bulletin/store/...)
+```
+
+Each adapter exposes `{ domain, validate(operation, context), execute(operation, context), compensate?(result, context) }` and is the ONLY place that knows a given domain authority's actual method signature. The coordinator itself never hardcodes `upsertLocation(...)` vs `createJob(...)` vs `promote(...)` — it picks an adapter by `operation.domain`, respects `operation.dependsOn` (topologically sorted, not a hardcoded `location(); faction(); npc(); job();` sequence, since a future domain could introduce Location→Location or Faction→Faction dependencies), records the result into the `ResolutionMap`, and reports the outcome. This is what keeps the coordinator "thin" rather than becoming a second god object — same discipline §18 (of the earlier SSOT review, folded into §199) already applied to why `WorldEngine` was rejected.
+
+### Failure is a saga, not a transaction
+
+No real ACID transaction spans Foundry Documents + `game.settings` + `HolonetStorage` + the various domain services, so `commit()` must not pretend otherwise. An adapter may optionally define `compensate(result, context)` (e.g., "creating this Location failed downstream — delete the Location just created"), used only where a domain authority can demonstrably do so safely; otherwise a partial failure is returned explicitly (`{ status: 'partial', completed: [...], failed: { domain, reason }, resolutionMap }`) and left for explicit GM decision (retry the failed step via `resume()`, or keep the already-committed records) — never a silent rollback attempt across systems that were never designed to support one. This is the same "GM sovereignty" principle this ecosystem already applies everywhere else (manual edits surviving regeneration, explicit promotion, explicit reroll) extended to commit-time failure handling.
+
+### Relationship to generation (`CampaignDraftBundle`) — kept strictly separate from commit
+
+```text
+GENERATION                              MUTATION
+
+CampaignComposer                        CampaignMutationCoordinator
+       │                                           │
+       ▼                                           ▼
+CampaignDraftBundle  ─────────────────────►  CommitPlan → commit()
+(locations/factions/npcs/jobs/                     │
+ relationships, all draft-id refs,                 ▼
+ GM-reviewable/editable/rerollable,          Domain authorities
+ exactly like today's single-domain drafts)  (ActorEngine/FactionRegistryService/
+                                               LocationRegistryService/JobEngine/...)
+```
+
+Generation composing a full settlement (a Location + 2 Factions + 5 NPCs + 3 Jobs in one `CampaignDraftBundle`) must never be able to reach the coordinator's commit APIs directly — the same "generators never mutate" invariant §199 already states, extended from single-domain drafts to compound bundles. `WorldGenerator.generateAndCommitEverything()` is named explicitly as the anti-pattern to avoid: generation and commit orchestration stay two separate modules with generation holding no reference to the coordinator at all, so a generation bug cannot become a mutation bug by construction.
+
+### Redefined 8D-4 scope
+
+```text
+PHASE 8D-4 -- Campaign Composition + Commit Orchestration
+  A. CampaignDraftBundle (compound, cross-domain draft container)
+  B. Cross-domain context orchestration (composing B/C/generation
+     modules that already exist per-domain today)
+  C. CampaignMutationCoordinator (plan/commit/resume)
+  D. ResolutionMap
+  E. CommitPlan (+ its GM-facing confirmation-screen shape)
+  F. GM review/commit workflow (the Datapad UI surface)
+  G. Domain-specific commit adapters (one per domain authority,
+     starting with location/faction/npc/job)
+```
+
+### Hard rules for this architecture (to enforce when 8D-4 is actually built)
+
+1. The coordinator never writes Foundry/settings/Holonet state directly — only through domain-authority adapters.
+2. The coordinator never implements domain validation — that stays with each domain authority (`JobEngine` decides what a valid Job is, not the coordinator).
+3. Nothing resolves by visible name (`actors.find(a => a.name === ...)`) — always stable canonical/draft identity via the `ResolutionMap`.
+4. `plan()` is mutation-free; only `commit()` mutates.
+5. Generation code holds no reference to the coordinator's commit APIs.
+6. Domain authorities remain the sole SSOT for mutation semantics within their domain (unchanged from §199).
+7. Partial failure is explicit, reported, and recoverable via `resume()` — never silently swallowed or silently rolled back.
+8. Compensation (`compensate()`) is used only where a domain adapter defines it as safe; otherwise partial commit stands and the GM decides.
+9. Every dependency between operations is expressed as `dependsOn` on the operation itself and topologically sorted — never a hardcoded per-domain call sequence.
+
+**PHASE 8D-4 DESIGN CAPTURED. Nothing implemented — no new files, no code changes this section. Builds directly on §199's `JobEngine` boundary and the existing draft-id/duality discipline threaded through 8D-3A/8D-3B/8D-3C. Per standing practice: stopping here: the shim itself is a future, separately-scoped implementation phase, not part of the current 8D-3C PR.**
