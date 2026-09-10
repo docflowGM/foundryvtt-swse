@@ -58,6 +58,11 @@ export const DIAGNOSTIC_CODE = Object.freeze({
   ISSUER_RESOURCE_MISMATCH: 'issuer-resource-mismatch',
   REWARD_BUDGET_MISMATCH: 'reward-budget-mismatch',
 
+  // PHASE 8D-3C: Job generation context coherence (jobs/job-bundle.js) --
+  // warn only, never auto-"corrected"; an explicit issuer/location target
+  // that conflicts with a supplied jobContext is unusual, not invalid.
+  JOB_CONTEXT_MISMATCH: 'job-context-mismatch',
+
   // Reference integrity
   MISSING_CANONICAL_REFERENCE: 'missing-canonical-reference',
   UNRESOLVED_DRAFT_DEPENDENCY: 'unresolved-draft-dependency',

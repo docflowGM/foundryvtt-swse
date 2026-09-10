@@ -8866,3 +8866,602 @@ The original §193 wording ("only 2 near-duplicate pairs across 5,000+ entries")
 No new test sections were added beyond the five floor assertions folded into the existing hydration-floor block (item 1 above). Full `gm-*.test.mjs` sweep, full rolling suite, full syntax check, `tools/validate-partials.mjs`/`tools/validate-data.js`/`system.json` parse, and the canonical-persistence guard were all re-run clean — see the commit for this round's exact numbers, unchanged from §193's baseline (same catalog counts, same file count, only content-QA edits to existing entries).
 
 **PHASE 8D-3B CONTENT-HYDRATION CORRECTION ROUND COMPLETE.** Same branch (`claude/gm-datapad-phase8d3b-49c10v`), same PR (#964). No architecture reopened, per the review's own explicit scoping. Per standing practice: stopping here for independent review / merge decision.
+
+PR #964 merged (`87d638d68`) after independent review. Phase 8D-3C begins on a fresh branch (`claude/gm-datapad-phase8d3c-jobs-productionization`) off merged `main`, per the explicit instruction not to continue 8D-3C on the 8D-3B branch.
+
+## 195. PHASE 8D-3C — Jobs / Objectives / Complications / Rewards / Opposition Productionization: authority audit + schema decision
+
+Per the phase spec's own explicit requirement ("Produce an authority table BEFORE implementation") and the standing instruction to prove the schema-reuse question from the repository before writing any new schema, this section is a full repository audit of every existing Job-adjacent authority, followed by the resulting schema decision. **No implementation code was written before this section was complete.**
+
+### 195.1 Foundational fact: Jobs are not a Foundry document type
+
+Confirmed by direct inspection of `scripts/holonet/subsystems/holonet-messenger-service.js`: a posted Job is a Holonet Messenger thread (`threadType: 'job'`) whose job data lives as a plain object blob at `thread.metadata.job`. There is no `JobDocument`/`Item`/`JournalEntry` subtype. The sole canonical persistence entry point is `HolonetMessengerService.createJobPosting({actor, title, body, recipientIds, contactRecipientId, rewardCredits, rewardItems, rewardItemUuids, rewardAssetActorIds, attachments, client, issuer, sourceLocation, objectives, briefing, factionConsequences, status})` (confirmed at line 2663), backed by `_gmCreateJobPosting()` (line 2779). This is the ONLY place a Job becomes real. This module already accepts a rich `objectives[]` array today, even though the current wizard UI only ever prefills a single `primaryObjective` string — the persistence layer is already ahead of the UI.
+
+### 195.2 Authority table
+
+| Field / Concept | Existing authority | Canonical or draft-only? | Reusable as-is? | 8D-3C action |
+|---|---|---|---|---|
+| Job persistence | `HolonetMessengerService.createJobPosting()` / `_gmCreateJobPosting()` | Canonical (sole entry point) | Yes, exactly | Generation NEVER calls this. No exceptions. |
+| Job view-model / lifecycle | `GMJobBoardSurfaceService.js` (`normalizeObjective`, objective `status` state machine: open→claimed→submitted→pendingReview→approved/rejected/failed) | Canonical | Yes, as the shape a future (non-8D-3C) hand-off targets | Do not duplicate the status/review lifecycle in the draft; drafts have no status workflow at all. |
+| Job creation prefill draft | `FactionJobBridgeService._normalizeDraft()` / `LocationJobBridgeService._normalizeDraft()` (identical shared shape: `source, issuer{...}, client{...}, title, primaryObjective(single string), briefing, instructions, status, primaryCredits, primaryXp, factionConsequences{...}, location?`) | Canonical-adjacent (wizard prefill, not yet posted) | Partially — this is the natural DOWNSTREAM hand-off target, but it is a single-objective, single-reward shape, too thin for the richer generator | Do not write into or duplicate this shape directly. The generator's draft is deliberately richer; a future (non-8D-3C) conversion step maps the richer draft down onto this prefill shape when a GM chooses to open it in the wizard. |
+| Objective identity/tier | `objective-template.js` (`OBJECTIVE_SLOT_TYPE`, `normalizeObjectiveTemplate`), `objective-economy.js` (`OBJECTIVE_TIER`: primary/secondary/tertiary) | Draft/generator-only, but `tier` values (`primary`/`secondary`/`tertiary`) match the canonical objective's own `tier` field verbatim (confirmed in `GMJobBoardSurfaceService.normalizeObjective()`) | Yes, reuse `OBJECTIVE_TIER` verbatim | Compose, do not reinvent. New: a stable per-objective `draftId` (none exists yet). |
+| Objective difficulty | `objective-economy.js` (`OBJECTIVE_DIFFICULTY`: routine/standard/difficult/severe/extreme) | Draft/generator-only — no canonical difficulty field exists | N/A, this is generator-only by design | Keep as generator-only narrative metadata; never written to the canonical objective (which has no difficulty field). |
+| Reward estimation (credits) | `reward-estimator.js` (`estimateReward()`), `party-capability.js`, `organization-metadata.js` (`scaleResourceMultiplier`, `ISSUER_TYPE_RESOURCE_MULTIPLIER`, `RELATIONSHIP_REWARD_ADJUSTMENT`) | Draft/generator-only, pure functions | Yes, exactly | Compose, do not reinvent. |
+| Reward package (credits vs. material) | `reward-package.js` (`createRewardPackage`, `addMaterialReward`, `createKeepTheTargetPackage`) | Draft/generator-only, pure accounting | Yes, exactly | Compose, do not reinvent. Maps onto canonical `rewardCredits`/`rewardItems`/`rewardItemUuids`/`rewardAssetActorIds` only at a future (non-8D-3C) commit step. |
+| Commodity vocabulary | `data/galactic-commodities.js` (~165 entries, `{id, name, category, tags, legality, rarity, producedBy, demandedBy, scarcityOn}`) | Shared canonical-adjacent catalog (8D-3A) | Yes, `id` values reused verbatim | Reference `commodityId` from this catalog for commodity-flavored reward/objective suggestions; never duplicate the list. |
+| Archetype/tone/legality/visibility vocabulary | `jobs/job-archetype-metadata.js` (`JOB_ARCHETYPE_METADATA`, 14 mission types), `jobs/job-legality-visibility.js` (`JOB_LEGALITY`, `JOB_VISIBILITY`) | Draft/generator-only | Yes, exactly | Compose, do not reinvent (`JOB_ARCHETYPE_METADATA` explicitly must not be duplicated under a new name per the phase spec). |
+| Complications / consequences / twists / urgency | `jobs/job-complication.js` + `data/job-complications.js` (30), `jobs/job-consequence.js` + `data/job-consequences.js` (10/10), `jobs/job-twist.js` + `data/job-twists.js` (22), `jobs/job-urgency.js` (`JOB_URGENCY`) | Draft/generator-only | Yes, exactly | Compose, do not reinvent. Representative catalogs already exist at foundation scale; hydration explicitly deferred past this phase. |
+| Objective constraints | `jobs/objective-constraint.js` + `data/objective-constraints.js` (20+) | Draft/generator-only | Yes, exactly | Compose, do not reinvent. |
+| Mission subject (client/target NPC concept) | `jobs/mission-subject.js` (`pickMissionSubjectArchetype`, `createMissionSubjectDraft` — calls the OLDER `npc/npc-narrative-generator.js`) + `data/mission-subject-archetypes.js` (22+) | Draft/generator-only | Partially — the archetype-only picker (`pickMissionSubjectArchetype()`) is reused as-is; the full-NPC-concept path is redirected (see 195.3) | Reuse `pickMissionSubjectArchetype()` verbatim for lightweight subject flavor; route any FULL NPC concept need through `npc/npc-bundle.js` (current 8D-3B production authority) instead of `npc-narrative-generator.js`. |
+| Opposition (semantic, non-mechanical) | `jobs/opposition-request.js` (`createOppositionRequest()`) | Draft/generator-only, explicitly documents a NOT-YET-BUILT `OppositionCatalogService.resolve()` | Yes, exactly | Compose, do not reinvent. Reuse `suggestedOppositionTags`/`deriveSuggestedOppositionTags` (already shared by the Location and NPC domains) as an `archetypeTags` input rather than inventing a second tag vocabulary. Resolution to real statblocks stays out of scope, per the phase spec. |
+| Rank / command context | `rank-metadata.js` (`COMMAND_TIER`, `ARCHETYPE_RANK_TIER_MAP`, `RANK_TARGET_IMPORTANCE`) | Draft/generator-only, cross-domain shared (already used by Faction/NPC) | Yes, exactly | Reuse for opposition `rankContext` / mission-subject importance; never introduce a level/CL proxy. |
+| Faction Job bias | `Faction.jobDefaults` (`FactionRegistryService.normalizeJobDefaults()`, mirrored verbatim in `faction-draft.js`'s `normalizeJobDefaultsDraft()`: `tone, rewardStyle, objective, briefing, instructions, credits, xp, successDelta, failureDelta, visibility, legality, payStyle, rivalFactionName, rivalSuccessDelta, rivalFailureDelta, consequenceNotes`) | Canonical (real Faction field) | Yes, read-only | Read as a soft bias source for issuer-Faction-driven Job generation; NEVER duplicate this field set under a new name, NEVER write to it. |
+| Faction standing/consequences | `GMJobBoardSurfaceService`'s real `factionConsequences`/`relationshipConsequences` (numeric deltas, `appliedByKey`/`reversedByKey` tracking) | Canonical, real numeric system | No — generation must never touch this | Draft only ever carries a narrative `successDelta`/`failureDelta` SUGGESTION (reusing the `jobDefaults` field names for shape consistency); never applies, never mutates real Faction standing. |
+| Draft identity | `lib/draft-id.js` (`createDraftId('job')` → `draft:job:<hex>`) | Shared cross-domain infrastructure | Yes, exactly | Reuse verbatim for the Job draft itself and any per-objective/per-subject sub-drafts that need stable identity. |
+| GM field authoring (targeted edits/rerolls) | `lib/draft-field-authoring.js` (generic engine) + `npc/npc-field-authoring.js` (thin per-domain wrapper pattern) | Shared cross-domain infrastructure | Yes, exactly, via a NEW thin wrapper | Build `jobs/job-field-authoring.js` mirroring `npc-field-authoring.js`'s pattern (lazy init + scalar mirroring). Do not modify the generic engine. |
+| Weighted random / tags / provenance / diagnostics | `lib/weighted-random.js`, `lib/tag-utils.js`, `provenance.js`, `lib/generator-diagnostics.js` | Shared cross-domain infrastructure | Yes, exactly | Reuse verbatim; add new `DIAGNOSTIC_CODE` entries only for genuinely new mismatch conditions (e.g. `JOB_CONTEXT_MISMATCH`). |
+| Location/Faction/Contact draft cross-reference | `draft:<domain>:<hex>` id scheme + `location-draft.js`/`faction-draft.js`/`npc-concept.js`'s existing canonical-id-first/draft-id-fallback resolution precedent; canonical Job Board's own `resolveIssuerFaction()`/`resolveIssuerContact()`/`resolveJobLocations()` | Both (canonical resolvers exist; draft-side linking precedent exists) | Yes, exactly — same duality pattern, no new resolution mechanism needed | Job draft's `issuerFactionId`/`issuerFactionDraftId`, `issuerContactId`/`issuerContactDraftId`, `locationId`/`locationDraftId` fields follow the identical "real id OR draft id, never both meaning the same thing" convention already established three times over. |
+| Party capability | `party-capability.js` | Draft/generator-only, pure | Yes, exactly | Compose, do not reinvent. |
+
+### 195.3 The NPC-generation-path decision (mission subject / client / opposition figure)
+
+Two NPC-concept generation paths exist: the older `npc/npc-narrative-generator.js` (Phase 8D-2 foundation, thin schema: appearance/personality/mannerisms/motivation/agenda/secret only) — currently called by `jobs/mission-subject.js`'s `createMissionSubjectDraft()` — and the current production authority `npc/npc-bundle.js` (Phase 8D-3B, `createGeneratedNpcConcept()`, the full rich schema).
+
+**Decision**: any Job-composer code path that needs a FULL NPC concept (an issuer contact, a named subject who needs more than an archetype label, an opposition leader worth naming) calls `npc/npc-bundle.js`'s `createGeneratedNpcConcept()` directly — the same current-production path `faction-bundle.js` already uses for Contacts — never `npc-narrative-generator.js`. `mission-subject.js`'s lightweight `pickMissionSubjectArchetype()` (archetype-label-only, no full concept) is still reused as-is for the common case where a Job only needs "a subject archetype," not a fully named NPC. Neither pre-existing file (`mission-subject.js`, `npc-narrative-generator.js`) is modified — `npc-narrative-generator.js` is simply not called by any new 8D-3C code; it remains in place as a Phase 8D-2 file with no other known callers, out of scope to remove in this phase (not a task this phase's spec assigns).
+
+### 195.4 Schema decision (the phase spec's central question)
+
+**None of the canonical Job Board schema is copied into the new draft layer. All of it is reused only as a target shape a future, later, NOT-THIS-PHASE conversion step maps onto — the generator never writes to it.**
+
+A NEW draft layer is required because the canonical shapes are unsuitable for direct reuse during generation, for three concrete reasons this audit surfaced:
+
+1. The canonical objective has a review-workflow LIFECYCLE (`status`, `submittedBy/At`, `reviewedBy/At`, `statusHistory[]`) that has no meaning before a Job is posted — a generated objective is never "claimed" or "submitted."
+2. The canonical `factionConsequences` is a REAL numeric ledger with applied/reversed tracking — generation must only ever SUGGEST a narrative delta, never touch this system (hard rule, restated from the standing GENERATE/SUGGEST/RESOLVE boundary).
+3. The bridge services' shared prefill-draft shape (the nearest existing "draft"-flavored thing) is single-objective/single-reward — deliberately thinner than what this phase's spec requires (multiple rerollable objectives, richer reward composition, opposition/complication/stakes/urgency fields with no canonical equivalent at all).
+
+Therefore: **a new `jobs/job-draft.js` (base shape, mirroring `faction-draft.js`'s pattern: `createJobDraft()`/`updateJobDraft()`) and `jobs/job-bundle.js` (composer + reroll operations, mirroring `factions/faction-bundle.js`'s pattern: `createProceduralJobDraft()` plus targeted reroll wrappers) are the only new schema-bearing files this phase adds.** Every sub-piece they compose (archetype, complications, consequences, twists, urgency, legality/visibility, objective templates/economy, objective constraints, opposition requests, mission subjects, reward estimation/packaging, party capability, commodity references, rank/command context, Faction `jobDefaults` bias) already exists from Phase 8D-1/8D-2 and 8D-3A/8D-3B and is reused verbatim, exactly matching what happened with NPC/Faction in 8D-3B: the real work is composition, not new primitives.
+
+This closes Task #49 (authority audit) and Task #50 (schema decision) together, since the audit's own findings settled the schema question rather than requiring a separate deliberation.
+
+## 196. PHASE 8D-3C — Jobs / Objectives / Complications / Rewards / Opposition Productionization (initial wiring pass, completion report)
+
+Following the authority audit and schema decision in §195, this pass builds the composer and wires it end to end — the "review the wiring first" progression the user explicitly required (audit → schema decision → composer → context wiring → primitives → targeted rerolls/GM sovereignty → cross-domain/determinism/persistence tests → independent review, with production-scale hydration explicitly deferred past this point).
+
+### New files
+
+- `scripts/generation/data/job-stakes.js` (18 entries) / `scripts/generation/data/job-hooks.js` (18 entries) — the two genuinely NEW representative content pools this phase adds (see §195.2's authority table: every other Job primitive already existed from Phase 8D-1/8D-2 and is reused verbatim).
+- `scripts/generation/jobs/job-stake.js` / `scripts/generation/jobs/job-hook.js` — thin wrapper generators over the two pools above, matching every existing `jobs/job-*.js` wrapper's own pattern exactly.
+- `scripts/generation/jobs/job-draft.js` — the base Job/objective draft shape (`createJobDraft()`/`updateJobDraft()`, `createJobObjectiveDraft()`/`updateJobObjectiveDraft()`), mirroring `faction-draft.js`'s pattern. Carries stable `draft:job:<hex>`/`draft:job-objective:<hex>` identity, canonical-id-first/draft-id-fallback issuer and location references, and a `contextTags` field (mirroring `faction-draft.js`'s `doctrine.environmentAffinities`) so targeted reroll wrappers have a natural default tag source.
+- `scripts/generation/jobs/job-field-definitions.js` / `scripts/generation/jobs/job-field-authoring.js` — a thin, Job-specific wrapper over the EXISTING `lib/draft-field-authoring.js` engine (title/hook/stakes/briefing/instructions/secret/notes/gmNotes registered), mirroring `npc/npc-field-authoring.js`'s exact lazy-init + scalar-mirroring pattern. The generic engine itself was not touched.
+- `scripts/generation/jobs/job-bundle.js` — the composer: `createProceduralJobDraft()` plus 18 reroll/regenerate operations (mission type, legality/visibility, urgency, hook, stakes, complications, twist, consequences, reward-only recompute, full regenerate, regenerate-all-objectives, reroll-one-objective, add/remove objective, opposition-only reroll, subject-only reroll). Composes every Phase 8D-1/8D-2 primitive found during the audit (`job-archetype-metadata.js`, `job-legality-visibility.js`, `job-urgency.js`, `job-complication.js`, `job-consequence.js`, `job-twist.js`, `objective-constraint.js`, `mission-subject.js`, `opposition-request.js`, `objective-template.js`/`objective-economy.js`, `reward-estimator.js`/`reward-package.js`, `party-capability.js`) plus `rank-metadata.js`'s existing `rollCommandTier()` for opposition rank context and `data/galactic-commodities.js`'s real `commodityId`s for cargo-flavored objectives — no primitive was duplicated or reinvented. Owns only the few small NEW glue tables with no other home (mission-type roll weights favoring ordinary work, generic non-NPC slot descriptors, template→asset-objective-type map, difficulty→opposition-profile bands), matching `faction-bundle.js`'s own "avoid the procedural god object" discipline.
+- `tests/gm-generation-phase8d3c-jobs-production.test.mjs` — 24 assertion blocks (see below).
+
+### Changed files
+
+- `scripts/generation/lib/generator-diagnostics.js`: added one new diagnostic code, `JOB_CONTEXT_MISMATCH` (`'job-context-mismatch'`), for an explicit `locationId`/`locationDraftId` that conflicts with `jobContext.locationContext`'s own declared identity — mirrors the existing `NPC_LOCATION_CONTEXT_MISMATCH` precedent exactly. `HOSTILE_RELATIONSHIP_NO_NORMAL_JOB` and `ISSUER_RESOURCE_MISMATCH` were already registered (from `reward-estimator.js`'s own pre-existing diagnostics) and are reused verbatim, not duplicated.
+
+### Context wiring (`jobContext`)
+
+`createProceduralJobDraft()` accepts `jobContext: { locationContext, factionContext, contactContext, economyContext, campaignTags }`. `locationContext` reuses the EXACT shape `npc/npc-bundle.js`/`factions/faction-bundle.js` already accept, extended with `suggestedOppositionTags` (already cross-domain shared via `deriveSuggestedOppositionTags()`) and an optional `currentEventHints` array (read-only narrative seed text — never mutates the Location, only appended to the draft's own `notes` as flavor). `factionContext.jobDefaults` reads a real-or-draft Faction's OWN `jobDefaults` (never duplicated) as a soft bias on legality/visibility (50%/80% probability bands, never a hard override) and a direct pass-through for `successDelta`/`failureDelta` (a pure narrative suggestion — this module never applies them to a real Faction's standing). Every context source is additive into one `mergedPreferTags`/`contextTags` array consumed by every weighted pick in the composer, so no single source can monopolize output — proven by test block 9 (Faction bias shifts distribution but never to 100%) and test block 10 (mission-type tag bias shifts distribution but never to 100%).
+
+### Objectives, opposition, and rewards
+
+Each Job gets 1-3 objectives (weighted heavily toward 1, matching "most Jobs should be ordinary work"), each with independent `tier` (`OBJECTIVE_TIER`, reused verbatim — confirmed identical to the canonical objective's own `tier` field) and `difficulty` (`OBJECTIVE_DIFFICULTY`, generator-only, no canonical equivalent) — the two concepts are never merged, matching the phase spec's explicit hard rule. Objective text is rendered through `objective-template.js`'s existing 12 representative fixtures via `renderObjectiveTemplate()`; non-NPC/non-Faction slots (location/facility/ship/cargo/sabotage-target) resolve to a small, new, generator-only descriptive vocabulary (`GENERIC_SLOT_DESCRIPTORS`) — narrative placeholder text, never a claim about a real canonical record. NPC-shaped slots always get `mission-subject.js`'s lightweight archetype label; a full named NPC concept is only generated (soft 40% roll, or explicit `forceNamedSubject`) via `npc/npc-bundle.js`'s `createGeneratedNpcConcept()` — per §195.3's routing decision, never the older `npc-narrative-generator.js`. Opposition is built per-objective via `opposition-request.js`'s existing `createOppositionRequest()`, difficulty-banded into threat/count/leader/reinforcement profiles, with `rankContext` reusing `npc/npc-bundle.js`'s existing `rollCommandTier()` distribution rather than inventing a second one — proven mechanics-free by test block 6 (a static forbidden-key scan: no `level`/`cl`/`bab`/`hp`/`defenses`/`feats`/`xpBudget` field anywhere in a generated opposition request). Rewards flow through the existing `reward-estimator.js`/`reward-package.js` unchanged; a small subset of ship/cargo-flavored templates carry an `assetObjective` whose `referenceId` (when a cargo shipment) is a real `data/galactic-commodities.js` `commodityId`, proven by test block 8.
+
+### Targeted rerolls + GM sovereignty
+
+18 reroll/regenerate operations at every granularity the phase spec asked for: whole-draft regenerate, single-field rerolls (mission type/legality-visibility/urgency/hook/stakes/complications/twist/consequences), reward-only recompute, all-objectives regenerate, single-objective reroll (siblings preserved by object reference, matching `faction-bundle.js`'s `rerollFactionContact()` precedent), add/remove objective (a Job can never drop to zero objectives), and — the finest grain — opposition-only and subject-only rerolls on a single objective that leave every other field of that objective (and every other objective) untouched. GM sovereignty is proven end to end by test block 18: a GM's manually-authored field (via `job-field-authoring.js`) and a GM's manually-rerolled single objective both survive an unrelated reroll (urgency); removing a field clears its scalar mirror (semantic sovereignty, matching the NPC field-authoring precedent) and stays cleared across a further unrelated reroll; restoring brings it back addressable.
+
+### Cross-domain references, determinism, and guards
+
+Issuer (`issuerFactionId`/`issuerFactionDraftId`, `issuerContactId`/`issuerContactDraftId`) and Location (`locationId`/`locationDraftId`) references follow the identical canonical-id-first/draft-id-fallback duality already established three times over — proven by test block 7. Determinism (same seed + same semantic inputs → same semantic facts, `applyVariance: false`) is proven by test block 11. The canonical-persistence guard (test block 23) statically scans every new Job file's actual code (comments stripped) for `createJobPosting`/`_gmCreateJobPosting`/`upsertFaction`/`promoteFactionContactToActor`/`game.actors.create`/`LocationRegistryService.*` — zero matches, confirming no generation code calls a canonical-persistence entry point.
+
+### Tests
+
+`tests/gm-generation-phase8d3c-jobs-production.test.mjs`: 24 assertion blocks covering representative-catalog sanity (no dupes), authority-reuse (import-identity + anti-duplication regex guards against a `JOB_ARCHETYPE_METADATA_V2`/`JOB_ENEMY_TAGS_V2`-style fork), draft identity, tier/difficulty separation, legality/visibility/urgency vocabulary reuse, the no-mechanics opposition guard, cross-domain draft/canonical duality, commodity-reference reuse, Faction `jobDefaults` soft bias, mission-type context weighting (statistically provable, never monopolizing), determinism, reward-package accounting (reusing `reward-package.js`'s own verifier functions, not a reimplementation), both new diagnostic scenarios, five distinct targeted-reroll guarantees (sibling preservation, opposition-only, subject-only, add/remove-with-floor-of-one), the full GM sovereignty walkthrough, field-registry/scalar-field consistency, full regenerate, regenerate-objectives/reward-only recompute, complications/twist/consequences reroll wrappers, and the canonical-persistence guard.
+
+### Full regression
+
+- `gm-*.test.mjs`: **60/60 passed, 0 failed** (59 pre-existing + this phase's new file).
+- `tools/run-rolling-tests.mjs`: **190 passed, 0 failed** (5 pre-existing documented exclusions, unchanged from baseline).
+- `tools/run-rolling-syntax-check.mjs`: **2,449/2,449 clean** (2,440 baseline + 9 new files this phase added).
+- `tools/validate-partials.mjs`: clean (532 `.hbs` files scanned, 218 file-backed partials referenced — unchanged; this phase touched no templates).
+- `tools/validate-data.js`: **PASSED**, 0 errors, 0 warnings — unchanged (this phase touched no game data).
+- `system.json`: parses as valid JSON.
+- **Canonical-persistence guard**: both the automated test (block 23) and a manual re-check found zero calls to any canonical-persistence entry point anywhere in this phase's new files.
+
+### Architecture-freeze / reuse confirmation
+
+Every existing Phase 8D-1/8D-2/8D-3A/8D-3B primitive this phase touched was imported and called, never copied or forked: `job-archetype-metadata.js`, `job-legality-visibility.js`, `job-urgency.js`, `job-complication.js`, `job-consequence.js`, `job-twist.js`, `objective-constraint.js`, `mission-subject.js`, `opposition-request.js`, `objective-template.js`, `objective-economy.js`, `reward-estimator.js`, `reward-package.js`, `party-capability.js`, `organization-metadata.js`, `data/galactic-commodities.js`, `rank-metadata.js`, `npc/npc-bundle.js`, `lib/draft-field-authoring.js`, `lib/weighted-random.js`, `lib/tag-utils.js`, `provenance.js`, `lib/generator-diagnostics.js`, `lib/draft-id.js` are all byte-for-byte unchanged (the one generator-diagnostics.js edit is a pure addition, no existing code touched). `HolonetMessengerService`, `FactionJobBridgeService`, `LocationJobBridgeService`, `GMJobBoardSurfaceService`, and `Faction.jobDefaults`' real normalization are all untouched — this phase reads from the surrounding ecosystem, never writes into it.
+
+### Deferred / intentionally not built in this pass
+
+Per the user's explicit standing instruction ("I would not let Claude immediately build 300 complications and 400 objectives... reviewing the wiring first is much easier"):
+
+- No production-scale hydration. `JOB_STAKES`/`JOB_HOOKS` sit at 18 entries each (target: 50-100 / 150-250); every reused Phase 8D-2 catalog (`JOB_COMPLICATIONS` 30, `JOB_TWISTS` 22, `OBJECTIVE_CONSTRAINTS` 22, `MISSION_SUBJECT_ARCHETYPES` 22, `OBJECTIVE_TEMPLATE_FIXTURES` 12) is unchanged from its Phase 8D-2 foundation size (targets: 250-400 objective templates, 250-400 complications, 200-350 opposition concepts, 200-300 secrets/twists).
+- No new objective-template fixtures were added beyond the 12 already covering rescue/extraction/delivery/sabotage/recovery/investigation/escort/ship-theft/ship-recovery/ship-boarding/faction-rescue/faction-sabotage.
+- No `OppositionCatalogService.resolve()` (turning a semantic opposition request into real statblock UUIDs) — explicitly out of scope per `opposition-request.js`'s own header, unchanged this phase.
+- No commit/hand-off step from a finished Job draft onto `HolonetMessengerService.createJobPosting()` or the bridge services' prefill-draft shape — that hand-off (per §195.4) is future, non-8D-3C work.
+- No UI surface (no Job-draft-editing app/HBS templates) — this phase is the generation layer only, matching every prior Phase 8D generation-only pass before its own UI phase.
+
+**PHASE 8D-3C INITIAL WIRING PASS COMPLETE. Not yet calling this phase complete** — per the user's explicit instruction, stopping here for independent review before any production-scale content hydration. Branch: `claude/gm-datapad-phase8d3c-jobs-productionization`.
+
+## 197. PHASE 8D-3C correction round 1 — context/reference normalization, GM-safe regeneration, opposition-facet decoupling, reward-authority correction, objective/complication invariants (independent review of PR #965's initial head)
+
+An independent review of PR #965's initial head (`4cf7107f9`, CI green, exact-head "Rolling System Validation #196") confirmed the authority audit and overall composition direction were correct, but found 11 real defects — two of them (whole-regeneration discarding the draftId/GM edits; the canonical/draft duality reading nonexistent field names) contradicting the phase's own stated contracts. The review's explicit verdict: correct these on the same branch/PR, do not hydrate. All 11 addressed below, same branch/PR, no separate branches.
+
+### 1. `regenerateJobDraft()` was not GM-safe (the review's clearest blocker)
+
+The original implementation called `createProceduralJobDraft()` wholesale, producing a NEW `draftId` and silently discarding every GM edit — exactly the opposite of "regenerate this Job." Fixed: `regenerateJobDraft()` now preserves the draftId, preserves every `narrativeFields` entry the GM marked `manual` or removed (field-by-field, re-mirrored onto scalars), and preserves a manually-locked `title`/`briefing` (see item 8) — only the GENERATED facts (mission type, legality/visibility/urgency, hook/stakes, objectives, complications, twist, consequences, reward) are rerolled. `createProceduralJobDraft()` remains the "make a wholly new Job" operation; the two are now genuinely distinct, matching the intended `Generate New Job` vs. `Regenerate this Job` split.
+
+### 2 & 3. Cross-domain identity read nonexistent field names; duality not enforced
+
+The original composer read `factionContext?.factionId`/`contactContext?.contactId` — neither matches a real canonical Faction record (`id`), a Faction draft (`draftId`), a canonical Contact (`id`), or an NPC concept draft (`draftId`). Fixed via a new `scripts/generation/jobs/job-context.js`: `resolveJobIssuerFactionContext()`/`resolveJobIssuerContactContext()`/`resolveJobLocationContext()` each accept the REAL shape of whatever object a caller has (verified against `faction-draft.js`, `FactionRegistryService._normalizeFactionRecord()`/`normalizeContact()`, `npc-concept.js`) and enforce the identical explicit/context duality invariant Location already had.
+
+That duality logic itself was extracted into a new shared primitive, `scripts/generation/lib/reference-duality.js`'s `resolveDualityReference()` — `npc/npc-bundle.js`'s own `resolveNpcLocationGenerationContext()` was refactored to delegate to it (a byte-for-byte-behavior-preserving change, re-verified by the full, unmodified 8D-3B test suite passing unchanged) rather than building a second near-identical implementation, per this project's own "avoid duplicate parallel systems" discipline. Actor identity (`issuerContactActorId`/`ActorUuid`/`ActorName`) is now surfaced too — the canonical Job schema's own issuer shape already expects it; the procedural draft previously had no equivalent at all.
+
+`locationId`/`locationDraftId` conflicting simultaneously (the review's concrete example: explicit Location A while `locationContext` describes Location B) is now impossible — `resolveJobLocationContext()` returns exactly one winning ref, mirroring the Location duality invariant 8D-3B already hardened.
+
+### 4 & 5. Location/Faction/Contact context wiring was mostly cosmetic; a conflict was diagnosed but still consumed
+
+Three real defects here, all fixed together via `job-context.js`'s `deriveJobContextTags()`/`resolveJobCurrentEventText()`:
+
+- `locationContext.suggestedJobArchetypeTags` (the REAL mission-type bias signal `planet-hooks.js` already produces) was never read at all — the original composer only folded `locationTags`/`economyTags`/`technologySpecialties` into one generic tag pool, and `rollJobMissionType()`'s bias filter only matches tags that are literally mission-type ids, so the real signal never reached it. Now read explicitly and kept as its own tag set through to the mission-type roll.
+- `locationContext.currentEventHints` (a string array) was checked for, but the real `location-event.js`/`planet-hooks.js` shape is `currentEvents: [{description, severity}]` under a different field name entirely — the seed-note feature was silently dead code. Fixed via `resolveJobCurrentEventText()`, which reads the real shape.
+- A Location/Faction/Contact identity conflict was correctly diagnosed (`JOB_CONTEXT_MISMATCH`) but the conflicting context's tags/bias/current-events were still consumed anyway. Fixed: `createProceduralJobDraft()` and every reroll operation that accepts context now read ONLY the post-`resolveJob*Context()` value (`null` on conflict) for every downstream tag/bias/notes derivation — never the raw input — exactly matching `npc/npc-bundle.js`'s own discipline. Proven by test block 31 (a mismatched context's `currentEvents` seed text never leaks into `notes`).
+
+### 6. A fabricated asset price table violated the reward authority's own explicit contract
+
+The original `ASSET_VALUE_BY_DIFFICULTY` table fed `estimateReward()` an invented number, directly contradicting `reward-estimator.js`/`reward-package.js`'s own documented contract ("the caller resolves a REAL price through a future Store/pricing authority and passes it in"). Removed entirely. `job-draft.js`'s `createJobObjectiveDraft()` now normalizes every `assetObjective` to `{value: null, valueSource: 'unresolved'}` unless a caller explicitly supplies a resolved value; `computeJobReward()` only feeds `estimateReward()` an asset when a REAL resolved value exists, so an unresolved asset objective correctly contributes 0 to the estimate rather than a fabricated figure (test block 32).
+
+### 7. Opposition facets were re-coupled to objective difficulty
+
+`opposition-request.js`'s own header explicitly documents `difficulty`/`threatLevel`/`countBand` as deliberately independent, overlapping facets ("a deadly/horde fight can still be routine difficulty for a high-tier party"). The original `OPPOSITION_PROFILE_BY_DIFFICULTY` map violated exactly that with a 1:1 mapping, and additionally scaled opposition rank's leadership boost by difficulty — an encounter-balancing signal this phase explicitly has no business producing. Fixed: `threatLevel`/`countBand`/`leaderRequirement`/`reinforcementLevel` are now each rolled independently (their own small weighted pools), with no difficulty input at all; `rankContext` uses a flat, neutral leadership boost. Test block 33 proves a routine-difficulty objective can roll deadly opposition.
+
+### 8. `title`/`briefing` went stale after a mission-type/objective reroll
+
+Both were computed once at creation and never refreshed. Fixed by mirroring `npc-concept.js`'s `publicDescriptionSource`/`recomposeNpcPublicDescription()` pattern exactly: `job-draft.js` gained `titleSource`/`briefingSource` (`'derived'`/`'manual'`), and `job-bundle.js` gained `recomposeJobTitle()`/`recomposeJobBriefing()` (no-ops once manually locked) plus `setJobTitle()`/`resetJobTitleToDerived()`/`setJobBriefing()`/`resetJobBriefingToDerived()`. `rerollJobMissionType()` now recomposes `title`; every objective-touching operation that can affect the Primary objective (`rerollJobObjective()`, `removeJobObjective()`, `regenerateJobObjectives()`, a Primary-tier `rerollJobObjectiveSubject()`) now recomposes `briefing`. A GM-locked title/briefing is never overwritten (test block 36). `title`/`briefing` were removed from `JOB_FIELD_DEFINITIONS` (the generic field-authoring registry) since they are COMPOSED fields, not independent free text — mirroring why `npc-concept.js`'s own `publicDescription` is likewise excluded from `NPC_FIELD_DEFINITIONS`.
+
+### 9. Objective invariants: Primary could be non-required; removing Primary could leave none
+
+`createJobObjectiveDraft()` now forces `required: true` for any Primary-tier objective unconditionally — matching the canonical objective's own hard rule, no override possible either direction (test block 34). `removeJobObjective()` now promotes the next remaining objective to Primary/required when the removed one was Primary, so a Job can never end up with zero Primary objectives.
+
+### 10. Complications had no stable per-instance identity
+
+Fixed via `job-draft.js`'s new `createJobComplicationInstance()` (mints a `draft:job-complication:<hex>` id, reference-preserving for an already-normalized instance so an untouched complication survives an unrelated draft update as the exact same object — verified by test block 35), plus new single-instance operations `rerollJobComplication()`/`addJobComplication()`/`removeJobComplication()` alongside the existing whole-list `rerollJobComplications()`. Generation now rolls 0-2 complications (previously always 1-2) — zero is a legitimate, common outcome, matching `planet-hooks.js`'s own "weighted toward fewer" framing for the analogous current-events roll.
+
+### 11. The GM-sovereignty test was much narrower than the walkthrough requested
+
+Rewritten (test block 18) to cover every category the review named: a manual objective rewrite, removing a second (non-Primary) objective, a manual reward edit, adding a custom field, a manual Secret edit, explicit Contact/Location links, a single-instance complication reroll, a single-objective opposition reroll, and GM-safe whole regeneration — each proven to survive every OTHER, unrelated operation in the same walkthrough. Per-objective field-authoring (an individually GM-lockable objective title/description, as opposed to a direct patch) was not built in this round — it was not one of the review's 11 numbered defects, and a whole regenerate is understood to legitimately reroll objective content by design (item 1); the walkthrough tests a direct objective-field edit surviving every UNRELATED operation instead, which is the guarantee actually in scope this round.
+
+### New/changed files this round
+
+- New: `scripts/generation/lib/reference-duality.js` (`resolveDualityReference()`).
+- New: `scripts/generation/jobs/job-context.js` (`resolveJobLocationContext()`, `resolveJobIssuerFactionContext()`, `resolveJobIssuerContactContext()`, `deriveJobContextTags()`, `resolveJobCurrentEventText()`).
+- Changed (surgical, behavior-preserving): `scripts/generation/npc/npc-bundle.js` — `resolveNpcLocationGenerationContext()` now delegates to `resolveDualityReference()`; no other line touched.
+- Changed: `scripts/generation/jobs/job-draft.js` — added `issuerContactActorId`/`ActorUuid`/`ActorName`, `titleSource`/`briefingSource` + `JOB_DERIVED_TEXT_SOURCE`, `createJobComplicationInstance()` (complications now stable-identity instances), `normalizeAssetObjective()` (no fabricated values), Primary-required enforcement.
+- Changed: `scripts/generation/jobs/job-bundle.js` — substantially reworked (see items 1-11 above); full diff is the bulk of this round.
+- Changed: `scripts/generation/jobs/job-field-definitions.js` — `title`/`briefing` removed (now governed by the derived-text-source mechanism instead, see item 8).
+- Changed: `tests/gm-generation-phase8d3c-jobs-production.test.mjs` — grew from 24 to 36 assertion blocks; blocks 18/20 rewritten, blocks 25-36 new.
+
+### Full regression (this correction round)
+
+- `gm-*.test.mjs`: **60/60 passed, 0 failed** (unchanged file count — this round edited existing files plus two genuinely new small modules, both counted).
+- `tools/run-rolling-tests.mjs`: 190 passed, 0 failed (5 pre-existing documented exclusions, unchanged) — includes a clean re-run of the FULL, byte-for-byte-unchanged 8D-3B suite, confirming the `npc-bundle.js` duality refactor introduced zero regression.
+- `tools/run-rolling-syntax-check.mjs`: **2,451/2,451 clean** (2,449 baseline + 2 new files this round added).
+- `tools/validate-partials.mjs` / `tools/validate-data.js` / `system.json`: clean, unchanged (this round touched no templates or game data).
+- Canonical-persistence guard: unchanged, zero matches.
+
+**PHASE 8D-3C CORRECTION ROUND 1 COMPLETE.** Same branch (`claude/gm-datapad-phase8d3c-jobs-productionization`), same PR (#965). No production-scale hydration performed. Per standing practice: stopping here for independent review / merge decision.
+
+## 198. PHASE 8D-3C correction round 2 — whole-regeneration sovereignty, draft-boundary duality, Faction→opposition wiring, meaningful opposition difficulty, narrative reward suggestions, Job Secret generation (independent review of PR #965's round-1 head)
+
+A second independent review of PR #965 (round-1 head `4479252953439b1953f573d1872657ea9cf3fd1d`, CI green, exact-head "Rolling System Validation #197") confirmed round 1 fixed real-shape context reading, context-mismatch suppression, fabricated-price removal, complication identity, and derived-text ownership correctly, but found 8 further wiring gaps and explicitly recommended a second correction round on the same branch/PR, still without hydrating. All 8 addressed below, in the review's own stated order.
+
+### 1. Whole regeneration still discarded a manually-rewritten objective and a manual reward override
+
+`regenerateJobDraft()` preserved the draftId/title/briefing/hook/secret (round 1) but rebuilt a completely fresh objective set and reward package, merging back only the fields round 1 had covered — a GM-rewritten objective's title/description and a manually-overridden `rewardPackage` were both silently discarded. Fixed with two small ownership seams, mirroring `JOB_DERIVED_TEXT_SOURCE` exactly: `createJobObjectiveDraft()` gained `titleSource`/`descriptionSource` (`'derived'`/`'manual'`, defaulting `'derived'` on every freshly-built objective) plus explicit setters `setJobObjectiveTitle()`/`setJobObjectiveDescription()`; `createJobDraft()` gained `rewardSource` (`JOB_REWARD_SOURCE`, `'generated'`/`'manual'`) plus `setJobReward()`/`resetJobRewardToDerived()`. `regenerateJobDraft()` now merges a manually-owned objective's identity + title/description BY POSITION when the objective count is unchanged (skipped on a count change, which has no positional correspondence), and preserves an overridden reward WHOLESALE when `rewardSource === 'manual'`. `rerollJobReward()` remains the one intentional exception — an explicit ask to reroll the reward always wins and resets the source to `'generated'`, exactly like an explicit title/briefing reroll would. Every OTHER reward-affecting operation (objective add/remove/reroll) now routes through a small internal `applyRewardRecompute()` that is a no-op once `rewardSource === 'manual'`.
+
+### 2. The duality rule was enforced by the composer, not by the draft contract itself
+
+`resolveDualityReference()` (round 1) was only ever called from `job-bundle.js`'s composer — `createJobDraft()`/`updateJobDraft()` themselves still accepted a conflicting id/draftId pair for all three refs (`issuerFactionId`/`DraftId`, `issuerContactId`/`DraftId`, `locationId`/`DraftId`) and stored both. Fixed via a thin `normalizeIdDraftIdPair()` wrapper applied directly inside `createJobDraft()`'s return construction, so the invariant now holds at the shape boundary itself — `createJobDraft({locationId:'Location.real', locationDraftId:'draft:location:other'})` now normalizes to canonical-id-wins/draft-id-cleared regardless of caller. Test block 37 proves both `createJobDraft()` and `updateJobDraft()` directly.
+
+### 3. Whole regeneration dropped promoted Actor identity
+
+`regenerateJobDraft()`'s issuer-override object (built from the old draft's `type`/`name`/`factionId`/`factionDraftId`/`contactId`/`contactDraftId`/`scale`/`relationship`) never carried `issuerContactActorId`/`ActorUuid`/`ActorName`, so a promoted Contact→Actor's identity silently disappeared across a regenerate. Fixed: these three fields are now restored from the OLD draft unconditionally after fresh generation, unless the caller explicitly supplies `options.issuer` (an explicit ask to re-resolve the issuer). Test block 18 (step 0 + the strengthened step 10 assertions) proves it end to end.
+
+### 4. Faction context tags derived but never threaded into `oppositionRequest.organizationTags`
+
+`resolveJobIssuerFactionContext()` (round 1) correctly derives Faction identity tags (`archetype`/`organizationFamily`/`type`) into `issuerOrganizationTags`, but every `buildOppositionRequest()` call site still passed `organizationTags: []` — the field existed specifically for this and was never fed. Fixed by threading `draft.issuerOrganizationTags` (or the freshly-resolved `issuerOrganizationTags` at creation) into all five call sites: creation, `regenerateJobObjectives()`, `rerollJobObjective()`, `addJobObjective()`, and `rerollJobObjectiveOpposition()`. A related gap surfaced while writing test block 38: `regenerateJobDraft()`'s item-3 Actor/tag restoration fixed the Job-level `issuerOrganizationTags` scalar but the FRESH objectives underneath it had already been built against the fresh (empty) tags before that restoration ran — so a whole regenerate with no re-supplied `jobContext` still produced untagged opposition requests despite the Job-level field itself being correct. Fixed by re-threading the restored tags into every regenerated objective's `oppositionRequest.organizationTags` directly after the restoration. Test block 38 proves organizationTags reaches opposition requests across all five paths, including whole regeneration.
+
+### 5. Opposition `difficulty` was overcorrected into a permanent default
+
+Round 1 correctly decoupled `threatLevel`/`countBand`/`leaderRequirement`/`reinforcementLevel` from objective `difficulty` (independent, deliberately overlapping facets per `opposition-request.js`'s own documentation), but in doing so `buildOppositionRequest()` stopped passing `difficulty` to `createOppositionRequest()` at all — every generated request silently defaulted to `'standard'` forever, even though `difficulty` is itself a real, independent field on `createOppositionRequest()` with no correlation implied to the other facets. Fixed: `buildOppositionRequest()` now passes the objective's own `difficulty` through as `oppositionRequest.difficulty` while the other four facets remain independently rolled exactly as round 1 left them — independence never meant omission. Test block 39 proves `difficulty` varies across generated objectives and is never stuck at `'standard'`.
+
+### 6. No structured narrative reward-suggestion model existed beyond credits + material assets
+
+The phase requirement was broader than `rewardEstimate`/`rewardPackage` (credits + priced material assets, `reward-estimator.js`/`reward-package.js`, untouched): favor, Faction standing, access, information, transport, safe passage, legal clearance, debt forgiveness, salvage rights, future service, medical treatment, repairs, training, introduction/contact — nothing existed to hydrate those concepts into. Added a representative, semantic-only model: `job-draft.js` gained `JOB_REWARD_SUGGESTION_TYPE` (17 values covering the requested list, plus `'none'` as an explicit pickable "no additional favor" outcome) and `createJobRewardSuggestionInstance()` (stable `draft:job-reward-suggestion:<hex>` identity, reference-preserving like `createJobComplicationInstance()`, `source: 'generated'|'manual'`, optional `commodityId`/`itemTags`/`factionId`/`factionDraftId`). A new representative catalog (`data/job-reward-suggestions.js`, 20 entries) plus picker (`jobs/job-reward-suggestion.js`) reuses the EXISTING commodity authority (`cargo-concept.js`'s `pickCommodityCargo()`) for the `'commodity'` type — never a fabricated `commodityId` — rather than inventing a second commodity-selection mechanism. Most Jobs generate zero suggestions (`rollRewardSuggestionCount()` weights 0 heaviest, matching the existing complication-count doctrine); a `'standing'`-typed pick is linked to a real Faction issuer's ref when one exists, never a Faction-standing mutation. New targeted ops mirror the complication family exactly: `addJobRewardSuggestion()`/`rerollJobRewardSuggestion()`/`removeJobRewardSuggestion()`/`setJobRewardSuggestion()` (the last marking `source: 'manual'`, which both `rerollJobRewardSuggestion()` and whole regeneration then leave untouched). Test block 40 covers the full shape/identity/manual-lock contract; representative pool now, hydrate later, matching every other catalog this phase added.
+
+### 7. Job Secret generation was entirely missing
+
+`secret` existed on the draft and in the field-authoring registry (`multiValue: true`), but `createProceduralJobDraft()` never generated one and no `rerollJobSecret()` existed. A Secret is a distinct concept from a Twist (`job-twists.js`) — a Secret is about a PERSON/PARTY's hidden motive or knowledge (e.g. "the client arranged the target's disappearance"), a Twist recontextualizes the mission itself (e.g. "the target has already moved"). Added a representative catalog (`data/job-secrets.js`, 20 entries, explicitly framed around the client/issuer's hidden motives) plus picker (`jobs/job-secret.js`) and `rerollJobSecret()`, wired into creation alongside hook/stakes. Test block 41 proves generation, reroll, and that the field-authoring survival contract (already covered generically by the `narrativeFields` mechanism) still holds for `secret` specifically.
+
+### 8. Regeneration's context-bias resilience note, and the sovereignty test strengthened for full coverage
+
+`regenerateJobDraft()`'s `preferTags` already defaulted to `options.preferTags ?? draft.contextTags` as of round 1's own fix — re-verified rather than re-fixed, with a new test (block 20's appended assertions) proving a plain `regenerateJobDraft(draft, {rng})` call with no explicit `preferTags` still carries the draft's own persisted `contextTags` bias forward. Per the review's own item 8, the smallest-solution choice was kept: `jobContext` (Faction `jobDefaults`, opposition seed tags) is NOT snapshotted or reconstructed — a caller that wants those to keep influencing regeneration still deliberately re-supplies `jobContext`, unchanged from round 1. Separately, and directly addressing the review's explicit item-8 ask: test block 18 (the full GM-sovereignty walkthrough) was strengthened so its manual-objective-rewrite and manual-reward-edit steps now go through the real ownership-marking setters (`setJobObjectiveTitle()`/`setJobObjectiveDescription()`/`setJobReward()`, not a raw patch that never actually flips the ownership source), a promoted Actor identity and a manual reward suggestion were added to the walkthrough, and the post-whole-regeneration assertions now explicitly check ALL of it — the manually-rewritten objective's title/description AND its `descriptionSource` lock, the manually-overridden reward's credits AND its `rewardSource` lock, the promoted Actor's id/uuid/name, and the manually-authored reward suggestion's text AND its `source` lock — closing the exact hole the review identified (the round-1 test only asserted `draftId`/`hook`/`secret` survived regeneration, never the objective or reward).
+
+### New/changed files this round
+
+- New: `scripts/generation/data/job-secrets.js` (20 entries), `scripts/generation/jobs/job-secret.js`.
+- New: `scripts/generation/data/job-reward-suggestions.js` (20 entries), `scripts/generation/jobs/job-reward-suggestion.js`.
+- Changed: `scripts/generation/jobs/job-draft.js` — `JOB_REWARD_SOURCE`, per-objective `titleSource`/`descriptionSource`, `normalizeIdDraftIdPair()` applied at the `createJobDraft()` boundary, `JOB_REWARD_SUGGESTION_TYPE` + `createJobRewardSuggestionInstance()`, `rewardSuggestions[]` field.
+- Changed: `scripts/generation/jobs/job-bundle.js` — substantially reworked (see items 1-8 above); full diff is the bulk of this round, including the organizationTags re-threading fix surfaced while writing test block 38.
+- Changed: `tests/gm-generation-phase8d3c-jobs-production.test.mjs` — grew from 36 to 41 assertion blocks; blocks 18/20 strengthened, blocks 37-41 new.
+
+### Full regression (this correction round)
+
+- `tests/gm-generation-phase8d3c-jobs-production.test.mjs`: 41/41 assertion blocks passed, re-run 5x clean (randomized-pick blocks re-verified non-flaky).
+- Full `node --test tests/*.test.mjs` (195 files): **190 passed, 5 failed** -- the 5 failures are `force-power-final-integration`/`phase3-force-power-corrections`/`phase4-force-modifier-automation`/`phase5-force-healing-mitigation`/`phase6-force-direct-damage`, pre-existing and unrelated to any file this round touches (an `actor-engine.js` import issue, confirmed identical on the unrelated CSS/progression branch's own regression pass the same day).
+- `node tools/validate-partials.mjs` / `system.json` parse: clean.
+- `node --check` on all changed/new `.js` files: clean.
+
+**PHASE 8D-3C CORRECTION ROUND 2 COMPLETE.** Same branch (`claude/gm-datapad-phase8d3c-jobs-productionization`), same PR (#965). No production-scale hydration performed. Per standing practice: stopping here for independent review / merge decision.
+
+## 199. Architectural requirement: documented Job canonical-mutation boundary (`JobEngine`, deferred to 8D-4)
+
+A combined mutation-SSOT review (prompted by comparing this phase's Job generation work against how `ActorEngine` governs Actor mutation) confirmed `createProceduralJobDraft()`'s "zero canonical mutation" discipline is correct and should NOT change, but found a real project-level gap the review asked to be documented — not fixed — before 8D-3C hydration: **there is currently no dedicated canonical mutation authority for Jobs**, unlike Actors (`ActorEngine`), Factions (`FactionRegistryService`), and Locations (`LocationRegistryService`), each of which already centralizes its own domain's writes. Canonical Job mutation is instead spread across `GMJobBoardSurfaceController`, `HolonetMessengerService`/`_gmCreateJobPosting()`, `HolonetStorage`, and the Faction/Location Job-bridge services calling each other directly — the Holonet transport/presentation layer ends up owning Job business rules by default, not by design.
+
+The review's explicit verdict: **do not build a `JobEngine` now** (that's 8D-4 scope, gated on an explicit Generate → Review → Commit workflow that doesn't exist yet), and **do not build a generic `WorldEngine`** either — a single mutation god-object that knows how to update Actors, complete Jobs, move Locations, change Faction standings, and grant assets would itself be a worse architecture than today's fragmentation. The correct shape is one mutation authority PER DOMAIN, with a shared governance contract, exactly like `ActorEngine` already models for Actors. What 8D-3C owes the future 8D-4 phase, right now, is the documented boundary contract below, so the eventual commit step has an unambiguous target to build against rather than accreting a new special-case write path (the same failure mode that produced today's Job fragmentation in the first place).
+
+### The boundary contract
+
+```text
+JOB GENERATION AUTHORITY (this phase, 8D-3C -- EXISTS)
+  createProceduralJobDraft() / job-bundle.js / job-draft.js
+
+  Owns: draft generation, targeted rerolls, GM authoring
+        (field-authoring API + the objective/reward/reward-suggestion
+        ownership seams round 2 added), draft-shape normalization.
+
+  MUST NOT: persist canonical Job state, transition Job lifecycle,
+            grant rewards, mutate a Faction's standing ledger, mutate
+            an Actor, or publish a Holonet thread. (Already enforced --
+            see job-draft.js's own header HARD RULE, and the canonical-
+            persistence guard test that statically scans for any call
+            to a canonical-persistence entry point.)
+
+JOB CANONICAL MUTATION AUTHORITY (future, 8D-4 -- NOT YET BUILT)
+  JobEngine (scripts/governance/job-engine/, mirroring
+  scripts/governance/actor-engine/'s own layout)
+
+  Owns: JobEngine.createFromDraft(draft) (the GM's explicit "commit
+        this draft" action -- the ONLY path from a Job draft to a
+        canonical Job), JobEngine.update(...), lifecycle transitions
+        (assign/complete/fail/archive), objective-result commit,
+        reward-settlement orchestration, Faction-consequence
+        orchestration (applying the draft's successDelta/failureDelta
+        SUGGESTION to a real Faction standing -- the one explicit,
+        separate GM action job-draft.js's own header already reserves
+        for this authority and no other), canonical validation, the
+        storage transaction itself, hooks/audit.
+
+  Every current and future caller -- GMJobBoardSurfaceController,
+  FactionJobBridgeService, LocationJobBridgeService, Datapad UI,
+  Holonet sockets, and this phase's own future commit step -- routes
+  canonical Job mutation through JobEngine once it exists. None of them
+  call HolonetMessengerService.createJobPosting()/_gmCreateJobPosting()
+  or HolonetStorage directly for a WRITE going forward.
+
+HOLONET STORAGE -- persistence mechanism only, underneath JobEngine.
+HOLONET MESSENGER -- delivery/presentation/messaging orchestration
+  only (already correctly scoped per its own header); it stops being
+  the de facto Job mutation authority once JobEngine exists to take
+  that role over.
+```
+
+### What this changes today
+
+Nothing behaviorally. `job-draft.js`'s header HARD RULE comment was updated to name `JobEngine` (not a direct `HolonetMessengerService` call) as the future commit target, so a future implementer reads the correct destination architecture rather than the stale one. No other file changed. The canonical-persistence guard test's zero-calls assertion remains the enforcement mechanism until `JobEngine` exists to have a first legitimate caller.
+
+### Standing invariant this section establishes
+
+> Every persistent domain has exactly one canonical mutation authority. Generators never mutate. Controllers never mutate. Bridges never mutate. Persistence layers do not decide domain semantics.
+
+Current mapping: Actor/NPC-Actor/owned-Item/ActiveEffect → `ActorEngine`; Faction/Faction-Contact-metadata → `FactionRegistryService`; Location → `LocationRegistryService`; Store transaction → `TransactionEngine`; Assets → `AssetGrantService`; Job → **`JobEngine`, not yet built, this section's documented target**; every generated Location/Faction/NPC/Job draft → no canonical mutation authority at all, by design.
+
+**No code changes beyond the one comment update. This section is documentation only, per the review's own explicit scoping ("not implement JobEngine immediately... require that 8D-3C document the future commit boundary explicitly").**
+
+## 200. PHASE 8D-4 architecture proposal — `CampaignMutationCoordinator`, a thin cross-domain commit orchestrator (design only, nothing built)
+
+§199 documented the missing per-domain authority (`JobEngine`). A follow-up review asked the next question directly: when a GM commits a *compound* generated bundle — a Location draft, a Faction draft, 3 Contact drafts, and a Job draft that all reference each other by draft id — who sequences those commits, replaces each `draft:x:...` reference with its real canonical id as each piece lands, and decides what happens if step 4 of 5 fails? Today, nobody does; that logic would otherwise leak into the UI/controller layer, which is exactly the failure mode §199 was written to prevent for Jobs specifically. This section captures the proposed answer as the concrete architectural target for **Phase 8D-4 ("Campaign Composition + Commit Orchestration")**, redefining 8D-4's scope precisely. **Nothing in this section is built.** It is a design record to build against, not an implementation — consistent with §199's own "document, don't build yet" scoping.
+
+### The core distinction: orchestrator, not authority
+
+> The orchestrator coordinates mutations. It does not become a mutation authority itself.
+
+`CampaignMutationCoordinator` (the agreed name — preferred over `WorldEngine`/`WorldCommitCoordinator` specifically because "Engine" implies owning the mutation, which this must never do) sits ABOVE the per-domain authorities §199 already establishes (`ActorEngine`, `FactionRegistryService`, `LocationRegistryService`, the future `JobEngine`, `HolonetIntelService`, ...) and calls them in dependency order. It never touches `game.settings.set(...)`, `Actor.createDocuments(...)`, or any other raw persistence primitive itself — every actual write is delegated to the narrowest existing canonical command a domain authority already exposes (`FactionRegistryService.upsertFaction()`, never a hand-rolled `saveRegistry(customArray)` bypass). This is the same relationship §199 draws between `JobEngine` and `HolonetStorage`, one level up.
+
+### Two-stage pattern: `plan()` then `commit()`
+
+```text
+plan()   — PURE, mutation-free: validates the bundle, resolves the
+           dependency graph from draft-id references (already present
+           throughout this ecosystem's draft schemas -- no new
+           reference mechanism needed), detects conflicts, and returns
+           a CommitPlan describing exactly what will be created/linked
+           and in what order. Safe to show the GM as a literal
+           confirmation screen ("4 records will be created, 7
+           relationships will be resolved") before anything is written.
+
+commit(plan) — the only stage that mutates, and only by calling domain
+           authorities through per-domain adapters (below), never
+           directly.
+
+resume(previousResult) — re-drives a partially-completed commit without
+           re-creating already-committed operations, using the
+           resolutionMap (below) to know what already landed.
+```
+
+### `ResolutionMap`: draft id → canonical id, resolved once per commit
+
+The single most load-bearing piece, and the reason this project's existing draft-id discipline (`draft:location:...`/`draft:faction:...`/`draft:npc:...`/`draft:job:...`, the SAME duality pattern `reference-duality.js`/§197 item 2/§198 item 2 already enforce at each domain's own boundary) makes this tractable at all: as each operation commits, its real canonical id (or Actor uuid, for a promoted NPC) is recorded against its draft id, so every LATER operation in the same commit resolves its own draft-id references deterministically — never by name-matching (`game.actors.find(a => a.name === ...)` is explicitly named as the anti-pattern to avoid). A Job draft referencing `draft:npc:C` as its issuer resolves to the real `Actor.AbCd123` the NPC-promotion operation produced two steps earlier in the same plan, with no re-lookup.
+
+### Commit adapters: the coordinator stays domain-ignorant
+
+```text
+commit-adapters/
+    location-commit-adapter.js
+    faction-commit-adapter.js
+    npc-commit-adapter.js
+    job-commit-adapter.js
+    (later, without touching the coordinator: intel/bulletin/store/...)
+```
+
+Each adapter exposes `{ domain, validate(operation, context), execute(operation, context), compensate?(result, context) }` and is the ONLY place that knows a given domain authority's actual method signature. The coordinator itself never hardcodes `upsertLocation(...)` vs `createJob(...)` vs `promote(...)` — it picks an adapter by `operation.domain`, respects `operation.dependsOn` (topologically sorted, not a hardcoded `location(); faction(); npc(); job();` sequence, since a future domain could introduce Location→Location or Faction→Faction dependencies), records the result into the `ResolutionMap`, and reports the outcome. This is what keeps the coordinator "thin" rather than becoming a second god object — same discipline §18 (of the earlier SSOT review, folded into §199) already applied to why `WorldEngine` was rejected.
+
+### Failure is a saga, not a transaction
+
+No real ACID transaction spans Foundry Documents + `game.settings` + `HolonetStorage` + the various domain services, so `commit()` must not pretend otherwise. An adapter may optionally define `compensate(result, context)` (e.g., "creating this Location failed downstream — delete the Location just created"), used only where a domain authority can demonstrably do so safely; otherwise a partial failure is returned explicitly (`{ status: 'partial', completed: [...], failed: { domain, reason }, resolutionMap }`) and left for explicit GM decision (retry the failed step via `resume()`, or keep the already-committed records) — never a silent rollback attempt across systems that were never designed to support one. This is the same "GM sovereignty" principle this ecosystem already applies everywhere else (manual edits surviving regeneration, explicit promotion, explicit reroll) extended to commit-time failure handling.
+
+### Relationship to generation (`CampaignDraftBundle`) — kept strictly separate from commit
+
+```text
+GENERATION                              MUTATION
+
+CampaignComposer                        CampaignMutationCoordinator
+       │                                           │
+       ▼                                           ▼
+CampaignDraftBundle  ─────────────────────►  CommitPlan → commit()
+(locations/factions/npcs/jobs/                     │
+ relationships, all draft-id refs,                 ▼
+ GM-reviewable/editable/rerollable,          Domain authorities
+ exactly like today's single-domain drafts)  (ActorEngine/FactionRegistryService/
+                                               LocationRegistryService/JobEngine/...)
+```
+
+Generation composing a full settlement (a Location + 2 Factions + 5 NPCs + 3 Jobs in one `CampaignDraftBundle`) must never be able to reach the coordinator's commit APIs directly — the same "generators never mutate" invariant §199 already states, extended from single-domain drafts to compound bundles. `WorldGenerator.generateAndCommitEverything()` is named explicitly as the anti-pattern to avoid: generation and commit orchestration stay two separate modules with generation holding no reference to the coordinator at all, so a generation bug cannot become a mutation bug by construction.
+
+### Redefined 8D-4 scope
+
+```text
+PHASE 8D-4 -- Campaign Composition + Commit Orchestration
+  A. CampaignDraftBundle (compound, cross-domain draft container)
+  B. Cross-domain context orchestration (composing B/C/generation
+     modules that already exist per-domain today)
+  C. CampaignMutationCoordinator (plan/commit/resume)
+  D. ResolutionMap
+  E. CommitPlan (+ its GM-facing confirmation-screen shape)
+  F. GM review/commit workflow (the Datapad UI surface)
+  G. Domain-specific commit adapters (one per domain authority,
+     starting with location/faction/npc/job)
+```
+
+### Hard rules for this architecture (to enforce when 8D-4 is actually built)
+
+1. The coordinator never writes Foundry/settings/Holonet state directly — only through domain-authority adapters.
+2. The coordinator never implements domain validation — that stays with each domain authority (`JobEngine` decides what a valid Job is, not the coordinator).
+3. Nothing resolves by visible name (`actors.find(a => a.name === ...)`) — always stable canonical/draft identity via the `ResolutionMap`.
+4. `plan()` is mutation-free; only `commit()` mutates.
+5. Generation code holds no reference to the coordinator's commit APIs.
+6. Domain authorities remain the sole SSOT for mutation semantics within their domain (unchanged from §199).
+7. Partial failure is explicit, reported, and recoverable via `resume()` — never silently swallowed or silently rolled back.
+8. Compensation (`compensate()`) is used only where a domain adapter defines it as safe; otherwise partial commit stands and the GM decides.
+9. Every dependency between operations is expressed as `dependsOn` on the operation itself and topologically sorted — never a hardcoded per-domain call sequence.
+
+**PHASE 8D-4 DESIGN CAPTURED. Nothing implemented — no new files, no code changes this section. Builds directly on §199's `JobEngine` boundary and the existing draft-id/duality discipline threaded through 8D-3A/8D-3B/8D-3C. Per standing practice: stopping here: the shim itself is a future, separately-scoped implementation phase, not part of the current 8D-3C PR.**
+
+## 201. PHASE 8D-4 architecture refinement — shared contracts, event bus, adapter registry, and the project-wide extensibility test (design only, nothing built)
+
+§200 established the `CampaignMutationCoordinator` shape. A follow-up review named the underlying goal explicitly — "I can add new domains/features later without turning the codebase into spaghetti" — and refined §200 into a **modular monolith**: strong domain boundaries, one mutation authority per domain (unchanged from §199/§200), thin orchestration, and shared contracts only at the seams between domains, never replacing each domain's own native schema. This section captures that refinement. **Nothing in this section is built — design only, same scoping as §199/§200.**
+
+```text
+                    INTENT
+          UI / Generator / Socket / Workflow
+                      │
+                      ▼
+               APPLICATION LAYER
+          CampaignMutationCoordinator
+                      │
+          ┌───────────┼───────────┐
+          ▼           ▼           ▼
+       DOMAIN       DOMAIN       DOMAIN
+     ActorEngine   JobEngine   Location authority
+          │           │           │
+          └───────────┼───────────┘
+                      ▼
+              PERSISTENCE LAYER
+         Foundry Docs / Settings / Holonet
+```
+
+Events flow back OUTWARD from this stack (below), rather than domains reaching sideways into each other directly.
+
+### Shared contracts (seams only — never a domain-schema replacement)
+
+- **`EntityRef`** — a normalized cross-domain reference shape the coordinator/event-bus/commit-adapters/`ResolutionMap` all speak (`{ domain, refType: 'draft'|'id'|'uuid', value }`), so the coordinator knows exactly one identity convention instead of six. Each domain still stores its own native fields (`locationId`/`locationDraftId`, Actor uuid, etc.) internally and translates at its own adapter boundary — this is NOT a universal-graph rewrite of existing schemas, which stay exactly as §197/§198's `reference-duality.js` discipline already shaped them.
+- **`MutationCommand`** envelope (`{ commandId, correlationId, domain, action, targetRef, payload, source }`) and **`MutationResult`** envelope (`{ ok, commandId, canonicalRef, warnings, events }`) — the envelope is domain-agnostic (gives orchestration logging/resumability/auditing/testing for free); `payload` stays fully domain-specific, so a domain authority is never forced into a shared payload schema.
+- **`CommitAdapterRegistry`** (`CommitAdapterRegistry.register('job', JobCommitAdapter)`) replaces a hardcoded `switch (operation.domain)` inside the coordinator (§200's own adapter concept, now explicit about the registration mechanism) — adding a new persistent domain six months from now (settlement/vehicle/encounter/quest-chain/rumor/resource-node, all named as plausible future examples, none planned yet) means registering one new adapter, never touching the coordinator itself. This is the single highest-leverage extensibility investment in the whole proposal.
+- **`DomainEventBus`** — commands and events are kept strictly separate. A command says "create this Job"; an event says "JobCreated" (`{ type: 'job.created', entityRef, correlationId, metadata }`). `JobEngine` never calls `HolonetIntelService`/`FactionRegistryService`/a notification service/a Bulletin service directly on a lifecycle transition — it emits an event and lets independent handlers (Faction-consequence handler, Home-attention handler, Intel-suggestion handler, notification handler, ...) react. Foundry Hooks get wrapped behind this bus rather than every feature inventing its own ad hoc Hook name, which is the actual mechanism that would otherwise let domains silently reach sideways into each other as the number of domains grows.
+
+### Repositories underneath authorities (future direction, not a refactor of what exists today)
+
+`JobEngine → JobRepository → HolonetStorage`: the engine owns validation/business-invariants/lifecycle/authorization/side-effects; the repository owns only persistence mechanics, which matters most for the v14 migration (persistence format can change without the rest of the system noticing). Explicitly **not** a mandate to refactor `FactionRegistryService`/`LocationRegistryService` into repositories now — both remain reasonable domain authorities as-is (unchanged from §199); this is only the shape to grow into if/when they do.
+
+### Three smaller hardening items, all deferred
+
+- **Schema versioning** — every persisted non-Document record (settings/Holonet/custom metadata) eventually carries `{ schemaVersion, ... }`, with normalize/validate/migrate owned by the domain, never compensated for ad hoc by a UI controller reading an old shape. Foundry `DataModel`s are worth investigating for v14 where they genuinely fit, but schema ownership living with the domain (not the view) is the load-bearing invariant, independent of which mechanism implements it.
+- **Optimistic concurrency** — a `revision` counter so a domain authority can detect a `STALE_WRITE` (GM opens a Job at revision 14, another surface saves revision 15, the stale window's update is rejected rather than silently overwriting) instead of silent last-write-wins. Matters once the Datapad/Messenger/Job Board/Atlas can all touch the same world facts concurrently — not urgent while only one surface writes each domain today.
+- **Architecture enforcement as executable tests, not just documentation** — extending this project's EXISTING mutation-linting philosophy (already applied to Actor mutation paths) to the cross-domain seams §199-201 establish: fail a test if a UI controller imports `HolonetStorage` directly, a generator imports `JobEngine`, Job UI calls `HolonetMessengerService.createJobPosting()` directly instead of through the future `JobEngine`, or any non-authority code calls `actor.update()` directly. This is what turns §199/§200/§201 from documentation GM/devs can drift away from into policy the test suite actually catches drift against.
+
+### `CommitLedger` — pairs with `ResolutionMap`, powers `resume()` and future provenance
+
+Where `ResolutionMap` answers "what canonical id did this draft id resolve to," `CommitLedger` (`{ commitId, correlationId, operations: [{ operationId, domain, status, draftRef, canonicalRef, errorCode? }] }`) is the concrete source of truth `resume()` reads to know which operations already completed in a partially-failed compound commit (§200's own saga-style failure handling, now with an explicit record shape). It also unlocks a genuinely useful future capability with zero extra design cost: "why does this Faction exist? → created by campaign bundle #42, operation #2, GM user, timestamp."
+
+### `plan()` stays strictly pure — enforced, not just stated
+
+Extending §200's own "planning is mutation-free" rule: `plan()` may READ canonical state to validate references but must never create/update/delete/set-flags/set-settings/send-socket-requests under any circumstance. This is what makes it possible to test planning at scale (thousands of synthetic bundle combinations) without touching a real Foundry world, and what lets a GM trust the pre-commit confirmation screen actually describes what `commit()` will do.
+
+### A light CQRS-style split (not full enterprise CQRS)
+
+Command side: domain authorities mutate truth. Query side: surface/view-model services (`GMJobBoardSurfaceService`, `GMLocationsSurfaceService`, and their siblings) read and shape truth for UI, but never become the place Job/Location mutation semantics live — `LocationRegistryService` stays the writer even when `GMLocationsSurfaceService` is the thing a template actually renders from. This distinction already exists informally in the current codebase; this section just names it as a rule to hold as the UI surfaces grow more elaborate, not a new module to build.
+
+### Avoid a generic `update(entity, patch)` orchestration API
+
+Explicitly rejected as the primary domain API shape: `WorldMutationService.update('job', id, patch)` tells a reader nothing about what business process occurred. `JobEngine.complete(...)`/`.assign(...)`/`.completeObjective(...)`/`.setReward(...)`/`.transitionStatus(...)` (semantic commands, mirroring `FactionRegistryService.addContact(...)`/`LocationRegistryService.moveLocation(...)`'s existing shape) each can enforce their own specific invariants (objectives resolved, reward state valid, status transition legal, consequences prepared, events emitted, audit recorded) in a way a generic patch-applier structurally cannot. The thin coordinator works only when domain APIs are commands, not arbitrary patches.
+
+### Five-role module classification (a code-review question, not new code)
+
+| Role | Responsibility | May mutate canonical state? |
+| --- | --- | --- |
+| Generator | Propose facts | No |
+| View/Surface | Present/read state | No |
+| Coordinator | Sequence domain commands | No direct writes |
+| Domain Authority | Enforce invariants + mutate | **Yes** |
+| Repository | Persist/read data | Only on its authority's behalf |
+
+The practical use: when a new file is added, ask which of the five it is. "A little of all of them" is the design smell this table exists to catch in review, the same way §199 already named "generators never mutate, controllers never mutate, bridges never mutate" as a standing invariant — this table is that invariant made checkable per-file.
+
+### Explicitly rejected, still (unchanged verdict from §200, restated for completeness)
+
+A universal `WorldEngine`, a universal `Entity` class, a universal repository for everything, a universal relationship graph replacing domain-native references, a generic CRUD engine, a large dependency-injection container, and a plugin/microservice framework are all named as tempting-but-wrong abstractions for a project of this shape — a Foundry system running as one codebase is correctly served by a well-partitioned modular monolith, not by importing enterprise-scale patterns that solve problems this project doesn't have.
+
+### Priority order for whenever 8D-4 is actually built
+
+```text
+1. EntityRef + ResolutionMap
+2. CommitAdapterRegistry + CampaignMutationCoordinator
+3. DomainEventBus + standardized MutationResult
+```
+
+with the package layout this converges toward (illustrative, NOT a migration target for existing files):
+
+```text
+scripts/
+  contracts/        entity-ref.js, mutation-command.js, mutation-result.js, domain-event.js
+  governance/
+    coordinator/     campaign-mutation-coordinator.js, commit-plan.js, resolution-map.js,
+                      commit-ledger.js, commit-adapter-registry.js
+    actor-engine/     (exists today)
+    job-engine/       (§199 target, not yet built)
+  events/            domain-event-bus.js
+```
+
+Existing domain folders (`locations/`, `allies/` for Factions, `generation/`, `holonet/`) are explicitly NOT reorganized to match this — new architecture converges toward this shape naturally as it's built, no big-bang folder migration.
+
+### The standing test for every future architecture decision
+
+> Can I add a new persistent domain without modifying five existing domains?
+
+A future "procedural settlements" or "generate an entire star system" feature should mean: a new generator, a new draft shape, a new domain mutation authority, a new commit adapter, new event definitions, and one registry call — the coordinator and every existing domain stay untouched. If a future addition can't satisfy that, per this section's own classification table, it's a sign the addition was designed as a patch onto an existing domain rather than a new one.
+
+**PHASE 8D-4 REFINEMENT CAPTURED. Nothing implemented — no new files, no code changes this section, same as §200. This further refines (does not replace) §200's `CampaignMutationCoordinator`/`ResolutionMap`/commit-adapter shape; §199's `JobEngine` boundary is unchanged. Per standing practice: stopping here — this remains a future, separately-scoped implementation phase, not part of the current 8D-3C PR.**
+
+## 202. PHASE 8D-4 stress test — `CampaignEffect`/`CampaignOutcomeResolver`, existence-vs-visibility, and one flagged EXISTING SSOT gap (design only, one item flagged for future hardening, nothing implemented)
+
+A follow-up review walked §200/§201's design against a concrete end-to-end campaign scenario (import a planet → generate a Faction + 2 Contacts + 4 Jobs → pay out a completed Job → decrypt Intel that reveals a Faction and deposits 2,500 credits → generate 4 more worlds/Factions/Contacts/Jobs) specifically to find what the coordinator design alone does NOT answer. It found the underlying storage destinations are mostly already correct — `LocationRegistryService` → Atlas, `FactionRegistryService` → Allies (for both Factions and their Contacts), `TransactionEngine` → a Player Actor's credits, `ActorEngine` for any promoted NPC — but surfaced one genuinely new abstraction gap, three principles worth recording, and one **existing, live** SSOT inconsistency worth flagging (not fixed this pass — see the explicit scoping note at the end of this section). Nothing in this section is built; it refines §200/§201 exactly as §201 refined §200.
+
+### Walkthrough table (this scenario, mapped against current architecture)
+
+| Action | Correct architecture | Current concern |
+| --- | --- | --- |
+| Import planet from Compendium | Import adapter → `LocationRegistryService` → Atlas | Mostly sound already — the Locations UI's Quick Library import already funnels into `LocationRegistryService` rather than treating the Compendium document itself as the campaign Location |
+| Create Faction | `FactionRegistryService` | Authority exists, but canonical identity still has name-derived fallback behavior (see below) |
+| Create 2 Contacts | Faction authority → Allies reads Contacts | Storage/view path is sound (`FactionRegistryService.getAllFactionContacts()` → Allies); visibility semantics need attention (see below) |
+| Create 4 Jobs | Job drafts → future `JobEngine` → Holonet storage | `JobEngine` still missing — unchanged from §199 |
+| Generate recommended payouts | Generator suggests → Job owns reward terms | Sound as draft data (this phase's own `rewardEstimate`/`rewardPackage`/`rewardSuggestions`) |
+| Pay completed Job | `JobEngine` → `TransactionEngine` → Player Actor | Too much of this currently lives inside Holonet Messenger rather than a Job authority |
+| Decrypt Intel | Intel authority emits `intel.decrypted` | The trigger exists; generalized cross-domain consequence orchestration does not |
+| Reveal Faction (as a consequence of decryption) | Coordinator → Faction authority | Missing generalized effect path — this is the gap this section names |
+| Deposit 2,500 credits (as a consequence) | Coordinator → `TransactionEngine` → the decrypting/assigned Player Actor | The current Intel lockbox requires a manual claim rather than an automatic award |
+| Generate 4 more worlds/Factions/Contacts/Jobs | Generator → draft bundle → GM → Coordinator | The architecture is designed for this already (§200/§201); the Coordinator itself just isn't built yet |
+
+Confirmed already-correct today, independent of anything in this section: the credit-reward mechanism itself. A lockbox claim already routes through `HolonetIntelService` → `TransactionEngine.executeCreditAdjustment()` → the Actor, and Item rewards similarly already go through `ActorEngine` — the underlying money-mutation authority is sound. What's missing is ONLY the trigger orchestration around it (below), not the mutation itself.
+
+### The new abstraction: `CampaignEffect` / `CampaignOutcomeResolver`
+
+§201's `DomainEventBus` establishes that a domain emits an event (`intel.decrypted`) rather than calling other domains directly. This section names the piece that was still missing between "an event fired" and "the coordinator executes a mutation": something has to say WHAT should happen as a result, without the triggering domain (Intel) knowing how to do any of it. A `CampaignEffect` describes a desired consequence, declaratively, and never performs the mutation itself:
+
+```js
+{
+  effectId: "effect-intel-382-faction-reveal",
+  trigger: "intel.decrypted",
+  domain: "faction",
+  action: "reveal",
+  targetRef: { domain: "faction", refType: "canonical", value: "faction-abcd" },
+  payload: {}
+}
+```
+
+```js
+{
+  effectId: "effect-intel-382-credit-reward",
+  trigger: "intel.decrypted",
+  domain: "credits",
+  action: "grant",
+  recipientPolicy: "triggeringActor",
+  payload: { amount: 2500 }
+}
+```
+
+`CampaignOutcomeResolver` sits between the event bus and the coordinator: `Intel decrypted → emit domain event → resolve configured CampaignEffects → CampaignMutationCoordinator → the correct domain authority (FactionRegistryService, TransactionEngine, ...)`. The recipient of a credit-grant effect resolves to a real Player **Actor** (the existing reward machinery already targets Actors — Job payouts and lockbox claims both already end at `TransactionEngine.executeCreditAdjustment()` against an Actor record), never merely a Foundry User. The extensibility test this section proposes for the whole effect layer: **when a new possible consequence is added (reveal a Location, add a Contact, unlock a Store, grant an Item, publish a Bulletin, start a skill challenge, trigger a Faction consequence, ...), does the triggering system need to be modified?** The answer must be no — add a new `CampaignEffect` type and its domain handler; Intel itself never learns anything beyond "decryption succeeded."
+
+### Idempotency is a hard requirement for automatic effects, not an optional nicety
+
+A reconnect, a retried socket request, or `intel.decrypted` firing twice must never double-apply a consequence (three credit grants instead of one). Every `CampaignEffect` needs its own `idempotencyKey` (e.g. `"intel-83:decoded:credit-reward"`), checked against §201's own `CommitLedger` before execution — a duplicate event becomes a no-op read (`already applied`), not a re-execution. This is additional, concrete justification for why §201 paired `ResolutionMap` with `CommitLedger` in the first place, now grounded in a scenario where the ledger's absence would cause a real, player-visible bug (double-paid credits) rather than only a theoretical one.
+
+### Existence vs. visibility — a principle to apply across every domain, not just Factions
+
+If the GM already knows a decryption will reveal "the Black Vorn Syndicate," the Faction should already exist canonically (`faction-f92a`) with a `revealState: hidden` the whole time, and the Intel record stores `linkedFactionId: faction-f92a` (a stable relationship seam that already exists on the Intel model today). Decryption then does not CREATE a Faction — it produces a `FactionRevealEffect` transitioning `hidden → known` on a Faction that was real all along. The same distinction — a record can be real to the GM without being visible to players — applies identically to Locations, Contacts, Intel, and Jobs, and should be treated as a standing principle for how `CampaignEffect`'s reveal-type actions work across every domain, not a Faction-specific mechanism.
+
+### One flagged EXISTING inconsistency: name-derived canonical identity in Factions/Contacts
+
+This is the one item in this review that describes CURRENT, LIVE code rather than future design, and is called out separately for that reason. `FactionRegistryService`'s `upsertFaction()` currently falls back to `existing?.id || requestedId || slugify(name)` for canonical Faction identity, and also searches for an existing Faction by name; Contacts similarly fall back to an id derived from `name + role` in their normalizer. This directly contradicts the "display text is not identity" discipline §197/§198's `reference-duality.js` work already established for Job cross-domain references — two unrelated Factions or Contacts sharing a display name (`"Colonial Security Directorate"`, `"Jax Marr — Quartermaster"`) can merge canonical identity that should never have merged, and rename semantics become awkward as a result. The recommended fix (not applied this pass): mint a new Faction/Contact's canonical id independently of its name at creation, keeping name-based search as an interactive UI convenience only, never as mutation identity.
+
+**This item is explicitly NOT fixed in this pass.** `FactionRegistryService` and the Contact normalizer are existing, live production systems this session has not read, audited, or touched, entirely outside `claude/gm-datapad-phase8d3c-jobs-productionization`'s own scope (Job generation) — changing name-fallback identity behavior on a live registry without first auditing every current caller that may depend on the existing merge-by-name behavior would be exactly the kind of unscoped, unreviewed change this project's own operating principles warn against. It is recorded here as a concrete, named action item for a future, separately-scoped correction pass on the Faction/Contact registries specifically (most naturally as prep work before or alongside 8D-4, since the coordinator's own `EntityRef`/`ResolutionMap` design in §201 assumes stable, non-name-derived canonical ids for every domain it touches).
+
+### Per-player discovery visibility — a known, documented, deferred limitation
+
+Allies currently decides Contact player-visibility via `knownToPlayers === true` or a `revealState` in `hinted`/`known`/`compromised` — effectively global visibility shared by the whole party. That's sufficient for a table that shares all discoveries, but insufficient if different player characters should be able to maintain independently different social networks (one player has met a Contact, another hasn't). A future `visibility: { mode: 'party'|'selected-actors'|'public'|'gm-only', actorIds: [...] }` shape (or an Actor→Contact knowledge relationship) is named as the eventual direction, but **explicitly not solved now** — recorded here so Allies' dependence on global `knownToPlayers` is a known, documented tradeoff rather than an accidental one, before more features build on top of it.
+
+### Generation-triggered canonical commits: GM approval (or an explicit automation policy) only, never spontaneous
+
+Should 4 procedurally-generated worlds/Factions/Contacts/Jobs (triggered by, say, a player's Investigation roll) become canonical immediately? Only through the same path §200/§201 already establish: `generation trigger → CampaignDraftBundle → GM review (a "new world content proposed" attention item) → GM accepts → CampaignMutationCoordinator commits`. A future automation policy ("automatically commit generated discovery content") may skip the GM confirmation step, but must still route through the identical coordinator and domain authorities — automation is permitted to skip confirmation, never permitted to skip the architecture itself (i.e., never a generator calling `LocationRegistryService.upsertLocation()` directly, confirmation or not).
+
+### Summary: what this scenario confirms is healthy vs. what's still a gap
+
+```text
+ALREADY HEALTHY (no change needed):
+  Location  → LocationRegistryService → Atlas
+  Contact   → FactionRegistryService  → Allies
+  Credits   → TransactionEngine       → Player Actor
+  NPC Actor → ActorEngine
+
+STILL GAPS:
+  Job canonical mutation authority        MISSING            (§199)
+  CampaignMutationCoordinator             DESIGNED, NOT BUILT (§200/§201)
+  CampaignEffect / Outcome layer          NOT YET FORMALIZED  (this section)
+  Cross-domain idempotency / ledger check NOT BUILT           (this section, builds on §201's CommitLedger)
+  Faction/Contact canonical ID minting    NEEDS HARDENING     (this section, flagged, NOT fixed this pass)
+  Per-player discovery visibility         LIMITED, DEFERRED   (this section)
+```
+
+**PHASE 8D-4 STRESS-TEST REVIEW CAPTURED.** Nothing implemented. Adds `CampaignEffect`/`CampaignOutcomeResolver` and the existence-vs-visibility principle to the §200/§201 design; flags (does not fix) the Faction/Contact name-derived identity issue as a separately-scoped future correction; records per-player visibility as a known deferred limitation. Still a future, separately-scoped implementation phase, not part of the current 8D-3C PR.
