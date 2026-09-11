@@ -182,10 +182,19 @@ async function run() {
   }
 
   // --- 8: commodity reference reuse (never a duplicated commodity list) ---
+  // Trial count raised 40 -> 200 during PHASE 8D-3C hydration: this wiring-
+  // pass test was written against a 12-fixture OBJECTIVE_TEMPLATE_FIXTURES
+  // catalog (2 'recovery'-tagged CARGO-slot templates out of 12), where a
+  // commodity-cargo hit was common within 40 trials. Hydration grew that
+  // catalog to ~250 fixtures across all mission types, so the same two
+  // (now-diluted) CARGO-slot 'recovery' templates are drawn far less often
+  // per trial -- an expected consequence of a larger weighted-random pool,
+  // not a wiring change (empirically ~0 hits at 40 trials, ~6 hits at 200,
+  // against the unchanged production `createProceduralJobDraft()` path).
   {
     const commodityIds = new Set(GALACTIC_COMMODITIES.map((c) => c.id));
     let foundCommodityReference = false;
-    for (let seed = 0; seed < 40; seed++) {
+    for (let seed = 0; seed < 200; seed++) {
       const draft = await createProceduralJobDraft({ rng: makeSeededRng(seed * 13 + 100), missionType: 'recovery' });
       for (const objective of draft.objectives) {
         if (objective.assetObjective?.referenceId) {

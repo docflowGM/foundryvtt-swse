@@ -9465,3 +9465,95 @@ STILL GAPS:
 ```
 
 **PHASE 8D-4 STRESS-TEST REVIEW CAPTURED.** Nothing implemented. Adds `CampaignEffect`/`CampaignOutcomeResolver` and the existence-vs-visibility principle to the §200/§201 design; flags (does not fix) the Faction/Contact name-derived identity issue as a separately-scoped future correction; records per-player visibility as a known deferred limitation. Still a future, separately-scoped implementation phase, not part of the current 8D-3C PR.
+
+## 203. PHASE 8D-3C CONTINUATION — Job production content hydration + phase closure
+
+Starting `main` SHA: `a10a400b1837f7adbc737106da85326358539a14` (PR #966 on top of PR #965's merge, `0cc5df762fabbb771396af1526a3ac8a01f1241a`). Branch: `claude/gm-datapad-phase8d3c-jobs-hydration`. This is a pure content-hydration pass against the frozen 8D-3C wiring §195-198 already built and reviewed — no generator/composer/picker file changed, no new draft field, no new canonical authority, no canonical persistence call added.
+
+### Inventory taken before any file was edited
+
+Every Job-adjacent catalog was inventoried by importing it through the test harness's Foundry-path shim (`tests/helpers/foundry-shim/`) and reading its real exported array/object — not by eyeballing source. Full table:
+
+| Catalog | File | Before | §18-target | Decision |
+| --- | --- | --- | --- | --- |
+| Objective templates | `objective-template.js` (`OBJECTIVE_TEMPLATE_FIXTURES`) | 12 | 250-400 | HYDRATE |
+| Complications | `data/job-complications.js` | 30 | 250-400 | HYDRATE |
+| Reward suggestions | `data/job-reward-suggestions.js` | 20 | 150-250 | HYDRATE |
+| Job stakes | `data/job-stakes.js` | 18 | 50-100 | HYDRATE |
+| Job hooks | `data/job-hooks.js` | 18 | 150-250 | HYDRATE |
+| Job secrets | `data/job-secrets.js` | 20 | 200-300 | HYDRATE |
+| Job twists | `data/job-twists.js` | 22 | *(none specified)* | REUSE, unchanged |
+| Job consequences (success/failure) | `data/job-consequences.js` | 10/10 | *(none specified)* | REUSE, unchanged |
+| Objective constraints | `data/objective-constraints.js` | 22 | *(none specified)* | REUSE, unchanged |
+| Mission-subject archetypes | `data/mission-subject-archetypes.js` | 22 | *(none specified)* | REUSE, unchanged |
+| Intel clue concepts | `data/intel-clue-concepts.js` | 22 | *(none specified)* | REUSE, unchanged |
+| Narrative cargo concepts | `data/cargo-concepts.js` | 11 | *(none specified)* | REUSE, unchanged |
+| Galactic commodities | `data/galactic-commodities.js` | 166 | — | REUSE (already shared/production-scale) |
+| Archetype metadata | `jobs/job-archetype-metadata.js` | 14 mission types | — | REUSE (closed enum, correctly sized) |
+
+Two directional targets from the handoff's own §18 turned out not to correspond to any real catalog or wiring, and were resolved as explicit reuse-not-invent decisions rather than built silently:
+
+- **"Opposition concepts/templates: 200-350."** `opposition-request.js` states directly in its own header that `archetypeTags`/`environmentTags`/`organizationTags` are free text "never validated against any catalog here (no catalog exists yet)" — opposition variety is generated compositionally from an objective template's `oppositionHints`, the Job's archetype, and the issuing Faction's `organizationTags`/Location's `suggestedOppositionTags`, not picked from a flat pool. Per explicit user direction: **no standalone opposition-concept catalog or picker was built.** Instead, opposition diversity was hydrated through the 242 new `OBJECTIVE_TEMPLATE_FIXTURES` entries, 63 of which (~25%) carry distinct `oppositionHints` spanning security guards, military patrols, raiders, pirates, corporate/facility security, checkpoint patrols, syndicate enforcers, and more — proven compositionally (test block 31 below), never by a catalog-size floor.
+- **"Urgency/deadline flavor: 75-125."** `JOB_URGENCY` is a closed 4-value enum (`low`/`moderate`/`urgent`/`critical`) with no narrative-text field anywhere on the Job draft, no catalog, and no picker file — zero existing wiring to hydrate against, unlike every other target which had at least a representative catalog already wired. Per explicit user direction: **dropped from this pass**, recorded here as a real, unwired target rather than silently invented (a new draft field + catalog + picker would be new wiring, out of scope for a hydration-only phase).
+
+### Final counts
+
+| Catalog | Before | After | Target | Within target? |
+| --- | --- | --- | --- | --- |
+| Objective templates | 12 | 254 | 250-400 | Yes |
+| Complications | 30 | 264 | 250-400 | Yes |
+| Reward suggestions | 20 | 156 | 150-250 | Yes |
+| Job stakes | 18 | 56 | 50-100 | Yes |
+| Job hooks | 18 | 156 | 150-250 | Yes |
+| Job secrets | 20 | 203 | 200-300 | Yes |
+
+All six land at or near the low end of their documented range by design (quality-over-count, per the phase spec's own instruction), not by running out of ideas mid-target.
+
+### Content QA methodology
+
+A reusable QA script (`qa.mjs`/`qa-obj.mjs`, run against the real exported arrays through the Foundry-path shim, not against source text) checked every hydrated catalog for: exact-duplicate `value` strings, normalized-duplicate (lowercased/punctuation-stripped) `value` strings, a bag-of-words near-duplicate signal (flagged for manual review, none survived review), blank values, non-positive weights, tags outside the established free-text vocabulary (advisory only — `tag-utils.js` documents tags as intentionally free-text, not a closed enum), and an `"a "`/`"an "` article-agreement regex. For `objective-template.js` specifically, every fixture was round-tripped through the real, unmodified `normalizeObjectiveTemplate()`/`validateObjectiveTemplate()` and checked for `null` (failed validation), duplicate `id`, and duplicate `template` text.
+
+Results: **zero exact duplicates, zero normalized duplicates, zero near-duplicate candidates survived manual review, zero blank values, zero invalid weights, zero `objective-template.js` entries failed schema validation, zero duplicate ids/template text.** One pre-existing grammar defect from the original 8D-3C wiring pass (`"a old contact"` in `job-hooks.js`) was found and fixed during hydration. One QA script false positive was identified and is not a real defect: `"a one-time favor"`/`"a one-off..."`-style constructions trip a naive vowel-letter regex but are correct English (the words start with a consonant *sound* despite a vowel letter).
+
+### Reuse decisions
+
+Every existing Phase 8D-1/8D-2 primitive was reused verbatim, never duplicated: `JOB_ARCHETYPE_METADATA`, objective-template schema/normalizer/validator/renderer, `objective-economy.js`'s tier/difficulty vocabulary, `job-legality-visibility.js`, `job-urgency.js`, `opposition-request.js`'s request shape, `reward-estimator.js`/`reward-package.js`, `cargo-concept.js`'s commodity/narrative split, and `data/galactic-commodities.js` (166 entries, shared with Planet Trade, untouched). No new data file was created; every hydration grew an existing, already-wired catalog in place.
+
+### One pre-existing test adjusted for the larger catalog (not a wiring change)
+
+`tests/gm-generation-phase8d3c-jobs-production.test.mjs` test block 8 (commodity-reference reuse) sampled 40 seeded trials of `createProceduralJobDraft({ missionType: 'recovery' })` expecting at least one to surface a commodity-referencing `assetObjective`. That assumption was calibrated against the original 12-fixture catalog (2 CARGO-slotted `recovery` templates out of 12 — a ~1-in-6 template draw). Hydration grew `recovery`-tagged fixtures to 41 (only 2 still carry a `CARGO` slot), diluting the per-trial hit probability from roughly 1-in-6 to roughly 1-in-20 against the SAME unchanged `createProceduralJobDraft()` production path — an expected statistical consequence of a larger weighted-random pool, not a logic defect. Empirically probed (`probe-commodity.mjs`): 40 trials → 0 hits, 100 → 2, 200 → 6, 400 → 18. The trial count was raised 40 → 200 with an inline comment explaining why; the test still exercises identical production code and still asserts every surfaced `commodityId` is real. No generator, composer, or picker code was touched to make this test pass.
+
+### Tests / validation run
+
+- `tests/gm-generation-phase8d3c-jobs-production.test.mjs`: 41/41 assertion blocks pass (was 40/41 before the trial-count fix above).
+- `tests/gm-generation-phase8d1-foundation.test.mjs`, `phase8d2-foundation`, `phase8d3a-production`, `phase8d3b-production`: all pass, unaffected.
+- `tests/gm-job-assign-actor-persistence-audit.test.mjs`, `gm-job-context-navigation-controller`, `gm-job-ecosystem-view-model`, `gm-job-source-location-identity`: all pass, unaffected.
+- Full suite (`node --test tests/*.test.mjs`, 195 files): **190 pass / 5 fail.** The 5 failures (`force-power-final-integration`, `phase3-force-power-corrections`, `phase4-force-modifier-automation`, `phase5-force-healing-mitigation`, `phase6-force-direct-damage`) were verified independently pre-existing: (a) none reference any file this hydration touched, and (b) `git stash` + re-run on the unmodified working tree reproduces the identical failure on `force-power-final-integration.test.mjs`, confirming it predates this branch.
+- `node tools/run-rolling-syntax-check.mjs`: 2454 files, all pass `node --check`.
+- `node tools/run-rolling-tests.mjs`: 190 passed, 0 failed (of 190 run; the same 5 documented pre-existing failures excluded by the script's own standing exclusion list).
+- `node tools/validate-partials.mjs`: OK, 532 `.hbs` files scanned, 218 file-backed partials referenced.
+- `node tools/validate-data.js`: all checks pass, 0 errors, 0 warnings.
+- `system.json` JSON parse: valid.
+- `node --check` on all 6 changed source files plus the 1 changed test file: all pass.
+- `node tools/check-architecture-boundaries.mjs`: 37 pre-existing findings, all in `scripts/engine/progression/...` — zero findings in any file this hydration touched (confirmed by direct grep against the tool's own output).
+
+### Architecture confirmation (all four expected NONE)
+
+- Canonical persistence calls added: **NONE.**
+- Architecture APIs changed: **NONE** (no generator, composer, picker, or field-authoring file was modified — six `data/`-tier catalog files and one `objective-template.js` fixture array grew; that is the entire production-code diff).
+- Frozen APIs redesigned: **NONE.**
+- New canonical authorities added: **NONE.**
+
+### Explicit deferrals
+
+- `JobEngine` / Phase 8D-4 — not started, per §199-202 (design only).
+- `CampaignMutationCoordinator` / Phase 8D-4 — not started, per §200-201 (design only).
+- `CampaignEffect`/`CampaignOutcomeResolver` / Phase 8D-4 — not started, per §202 (design only).
+- Faction/Contact canonical-ID hardening — not started, remains a separately-scoped pre-8D-4 pass per §202's own flagged item.
+- UI/Job-Board commit orchestration — not started, out of scope for generation-layer hydration.
+- **Opposition concepts/templates catalog** — deliberately not built; opposition variety hydrated compositionally through `objective-template.js`'s `oppositionHints` instead (see above). Revisit only if a future need for a literal flat catalog is demonstrated, not merely because §18's number implied one.
+- **Urgency/deadline flavor catalog** — deliberately not built; zero prior wiring existed. If wanted, it is new-wiring work (a draft field + catalog + picker), explicitly out of scope for a hydration-only phase, and should be scoped and reviewed on its own before being built.
+
+### PHASE 8D-3C completion verdict
+
+**PHASE 8D-3C — JOB PRODUCTIONIZATION IS NOW COMPLETE**, with two explicitly named, deliberately-scoped exceptions carried forward as documented deferrals above (opposition catalog — resolved as "not needed, built compositionally instead," not a gap; urgency-flavor catalog — a genuine unwired gap, explicitly deferred rather than built ad hoc). All six catalogs with real wiring to hydrate against now sit within their documented production-floor targets. Zero architecture changes, zero new canonical authorities, zero canonical persistence calls. Stopping here for independent review, per standing practice — **not merged automatically, 8D-4 not started.**
