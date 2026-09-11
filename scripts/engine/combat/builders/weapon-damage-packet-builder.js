@@ -460,7 +460,7 @@ export function enhanceWeaponDamagePacket(packet = {}, {
 
   const tags = uniqueStrings([
     packet.tags,
-    profiles.map(p => p.tags),
+    profiles.flatMap(p => p.tags),
     'weapon',
     isLightsaberish(weapon) ? 'lightsaber' : null,
     isAutofireCapable(weapon) ? 'autofire-capable' : null
@@ -526,7 +526,7 @@ export function enhanceWeaponDamagePacket(packet = {}, {
     area,
     disposition,
     components,
-    riders: uniqueRiders([packet.riders, profiles.map(p => p.riders)]),
+    riders: uniqueRiders([packet.riders, profiles.flatMap(p => p.riders)]),
     flags: {
       ...(packet.flags ?? {}),
       areaAttack: attack.isArea === true,

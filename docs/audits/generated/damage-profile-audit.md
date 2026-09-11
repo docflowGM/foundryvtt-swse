@@ -9,7 +9,7 @@ Full detail: `damage-profile-audit.json` next to this file.
 | sourceType | total | verified | inferred | manualRequired |
 |---|---|---|---|---|
 | weapon | 7 | 6 | 1 | 0 |
-| vehicleWeapon | 63 | 0 | 17 | 46 |
+| vehicleWeapon | 64 | 0 | 17 | 47 |
 | forcePower | 17 | 3 | 11 | 3 |
 | unarmed | 1 | 1 | 0 | 0 |
 | naturalWeapon | 3 | 3 | 0 | 0 |
@@ -158,7 +158,7 @@ Weapons with area traits: 20 — Force powers with area tags: 13 — vehicle ord
 ## Poison boundary
 
 Poison keeps its own engine/schema and becomes a packet RIDER in a later pass. It is not a damage component and never enters SR/immunity/DR/resistance math. Only type "poison" HP damage with explicit printed-source support may ever become a component.
-(0 poisons scanned; boundary notes only, no implementation this phase.)
+(17 poisons scanned; boundary notes only, no implementation this phase.)
 
 ## Validators
 
