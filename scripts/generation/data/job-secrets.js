@@ -2,7 +2,7 @@
  * PHASE 8D-3C hydration — Job secret pool for `jobs/job-secret.js`.
  *
  * Hydrated from the correction-round-2 20-entry representative catalog
- * to production scale (206 entries, within the phase spec's documented
+ * to production scale (203 entries, within the phase spec's documented
  * 200-300 target). Wiring unchanged — `jobs/job-secret.js`'s picker,
  * `rerollJobSecret()`, and the field-authoring survival contract are
  * untouched; this file only grows the vocabulary they already consume.
@@ -57,7 +57,7 @@ export const JOB_SECRETS = Object.freeze([
   { value: 'the employer is hoping the job fails so they can collect on a separate arrangement', weight: 1, tags: [] },
   { value: 'the client\'s organization forbids this job, and they are acting alone', weight: 2, tags: [] },
   { value: 'the target was once the client\'s closest ally, before something went wrong between them', weight: 1, tags: ['bounty', 'hunt'] },
-  { value: 'the client is stalling for time on a separate matter and this job is the distraction', weight: 1, tags: [] },
+  { value: 'the client has already struck a deal to give up the crew if this job draws the wrong kind of attention', weight: 1, tags: [] },
   { value: 'the employer\'s true identity is protected by someone far more powerful than they appear', weight: 1, tags: [] },
   { value: 'the client has quietly informed the opposition of the crew\'s timeline', weight: 1, tags: ['sabotage', 'assault'] },
 

@@ -2,7 +2,7 @@
  * PHASE 8D-3C hydration — Job stakes pool for `jobs/job-stake.js`.
  *
  * Hydrated from the Phase 8D-3C wiring pass's 18-entry representative
- * catalog to production scale (55 entries, within the phase spec's
+ * catalog to production scale (56 entries, within the phase spec's
  * documented 50-100 target). Wiring unchanged — `jobs/job-stake.js`'s
  * picker and `job-bundle.js`'s composer are untouched; this file only
  * grows the vocabulary they already consume.

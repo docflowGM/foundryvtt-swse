@@ -3,7 +3,7 @@
  * `jobs/job-complication.js`.
  *
  * Hydrated from the Phase 8D-2 foundation's 30-entry representative
- * catalog to production scale (256 entries, within the phase spec's
+ * catalog to production scale (264 entries, within the phase spec's
  * documented 250-400 target). Wiring unchanged — `jobs/job-complication.js`'s
  * picker, `createJobComplicationInstance()`'s stable-identity discipline,
  * and every targeted reroll/add/remove operation are untouched; this
@@ -104,7 +104,7 @@ export const JOB_COMPLICATIONS = Object.freeze([
   { value: 'the crew\'s droid is recognized by its serial number from a prior job', weight: 1, tags: [] },
   { value: 'a local guide or fixer turns out to have their own hidden agenda', weight: 2, tags: [] },
 
-  { value: 'the crew\'s employer is being watched, and contact risks exposing everyone', weight: 2, tags: [] },
+  { value: 'the employer\'s comm channel turns out to be monitored by someone else entirely', weight: 2, tags: [] },
   { value: 'a natural obstacle makes the planned approach route impassable', weight: 1, tags: [] },
   { value: 'the site\'s security was recently upgraded without the client\'s knowledge', weight: 2, tags: ['heist', 'infiltration'] },
   { value: 'a rival crew\'s failed attempt has left evidence that implicates outsiders generally', weight: 1, tags: ['heist', 'sabotage'] },
@@ -180,7 +180,7 @@ export const JOB_COMPLICATIONS = Object.freeze([
   { value: 'the objective is more heavily guarded during this specific window than any other', weight: 2, tags: ['heist', 'assault'] },
   { value: 'a rival crew\'s reputation for sloppy work makes locals suspicious of any outsiders', weight: 1, tags: [] },
   { value: 'the client\'s deadline was based on faulty information from the start', weight: 1, tags: [] },
-  { value: 'a scheduled system update locks the crew out of equipment they were counting on', weight: 1, tags: [] },
+  { value: 'a scheduled system update locks the crew out of gear they can\'t do without', weight: 1, tags: [] },
   { value: 'the target has taken out insurance against exactly this kind of job', weight: 1, tags: ['bounty', 'hunt'] },
   { value: 'a local power broker demands a meeting before allowing the operation to proceed', weight: 1, tags: [] },
   { value: 'the crew\'s contact turns out to be under surveillance by a third party', weight: 2, tags: ['investigation', 'infiltration'] },
@@ -267,7 +267,7 @@ export const JOB_COMPLICATIONS = Object.freeze([
 
   { value: 'the opposition already knows the crew is coming, just not when', weight: 2, tags: ['assault', 'infiltration'] },
   { value: 'a leak inside the crew\'s own supply chain tips off the opposition', weight: 1, tags: [] },
-  { value: 'the opposition has quietly studied the crew\'s past jobs for patterns', weight: 1, tags: [] },
+  { value: 'a former associate of the crew is now working for the opposition', weight: 1, tags: [] },
   { value: 'a captured associate reveals part of the plan under pressure', weight: 2, tags: [] },
   { value: 'the opposition\'s intelligence is better than the client\'s, and it shows', weight: 1, tags: [] },
 

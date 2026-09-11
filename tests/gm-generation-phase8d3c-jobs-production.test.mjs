@@ -4,19 +4,34 @@ import { registerFoundryPathLoader } from './helpers/foundry-shim/register.mjs';
 import { installFoundryShimGlobals } from './helpers/foundry-shim/globals.mjs';
 
 // GM Datapad ecosystem redesign — PHASE 8D-3C: JOBS / OBJECTIVES /
-// COMPLICATIONS / REWARDS / OPPOSITION PRODUCTIONIZATION (initial wiring
-// pass, per §195 of the audit doc).
+// COMPLICATIONS / REWARDS / OPPOSITION PRODUCTIONIZATION.
 //
-// Per the phase spec's own explicit instruction ("I would not let Claude
-// immediately build 300 complications and 400 objectives... reviewing the
-// wiring first is much easier"), this is a WIRING pass, not a hydration
-// pass: representative catalogs only (`data/job-stakes.js`/
-// `data/job-hooks.js`, the two genuinely new primitive vocabularies this
-// phase adds; every other primitive — archetype metadata, legality/
-// visibility, urgency, complications, consequences, twists, objective
-// constraints, mission subjects, opposition requests, objective templates/
-// economy, reward estimator/package, party capability — already existed
-// from Phase 8D-1/8D-2 and is reused verbatim here, never reinvented).
+// This file now covers TWO passes, both on the same frozen wiring:
+//
+// 1. The original WIRING pass (per §195 of the audit doc). Per the phase
+//    spec's own explicit instruction ("I would not let Claude immediately
+//    build 300 complications and 400 objectives... reviewing the wiring
+//    first is much easier"), that pass shipped representative catalogs
+//    only (`data/job-stakes.js`/`data/job-hooks.js`, the two genuinely new
+//    primitive vocabularies the phase adds; every other primitive —
+//    archetype metadata, legality/visibility, urgency, complications,
+//    consequences, twists, objective constraints, mission subjects,
+//    opposition requests, objective templates/economy, reward
+//    estimator/package, party capability — already existed from Phase
+//    8D-1/8D-2 and is reused verbatim, never reinvented). Test blocks 2-41
+//    below are that pass's original assertions, unchanged.
+//
+// 2. The PRODUCTION HYDRATION pass (§203 of the audit doc), which grew six
+//    of those catalogs to production scale against this SAME frozen
+//    wiring — no generator/composer/picker file changed. Test block 1
+//    below was corrected during hydration closure review from a
+//    foundation-scale placeholder (`length >= 15`) into durable
+//    production-floor/uniqueness/SSOT regression guards for all six
+//    hydrated catalogs, so the repository itself -- not merely an audit
+//    paragraph -- guarantees the documented floors going forward. Test
+//    block 8's commodity-reference check was also corrected (see its own
+//    comment) with an accurate fixture-composition claim and a
+//    deterministic structural assertion alongside the seeded smoke test.
 //
 // Authority reuse proved throughout: `job-bundle.js`'s composer imports
 // and calls the SAME functions/objects these tests import directly, so an
@@ -50,9 +65,12 @@ const { JOB_ARCHETYPE_METADATA } = await import('/systems/foundryvtt-swse/script
 const { JOB_LEGALITY, JOB_VISIBILITY } = await import('/systems/foundryvtt-swse/scripts/generation/jobs/job-legality-visibility.js');
 const { JOB_URGENCY } = await import('/systems/foundryvtt-swse/scripts/generation/jobs/job-urgency.js');
 const { OBJECTIVE_TIER, OBJECTIVE_DIFFICULTY, isObjectiveTier, isObjectiveDifficulty } = await import('/systems/foundryvtt-swse/scripts/generation/objective-economy.js');
-const { OBJECTIVE_TEMPLATE_FIXTURES } = await import('/systems/foundryvtt-swse/scripts/generation/objective-template.js');
+const { OBJECTIVE_TEMPLATE_FIXTURES, OBJECTIVE_SLOT_TYPE } = await import('/systems/foundryvtt-swse/scripts/generation/objective-template.js');
 const { JOB_STAKES } = await import('/systems/foundryvtt-swse/scripts/generation/data/job-stakes.js');
 const { JOB_HOOKS } = await import('/systems/foundryvtt-swse/scripts/generation/data/job-hooks.js');
+const { JOB_SECRETS } = await import('/systems/foundryvtt-swse/scripts/generation/data/job-secrets.js');
+const { JOB_COMPLICATIONS } = await import('/systems/foundryvtt-swse/scripts/generation/data/job-complications.js');
+const { JOB_REWARD_SUGGESTIONS } = await import('/systems/foundryvtt-swse/scripts/generation/data/job-reward-suggestions.js');
 const { GALACTIC_COMMODITIES } = await import('/systems/foundryvtt-swse/scripts/generation/data/galactic-commodities.js');
 const { verifyRewardPackageAccounting, verifyKeepTheTargetPackageAccounting } = await import('/systems/foundryvtt-swse/scripts/generation/reward-package.js');
 const { isDraftId, draftIdDomain } = await import('/systems/foundryvtt-swse/scripts/generation/lib/draft-id.js');
@@ -75,16 +93,76 @@ const stubNameProvider = async () => 'Test Subject Name';
 const stubDroidNameProvider = async () => 'TX-1';
 
 async function run() {
-  // --- 1: representative catalogs exist at foundation scale, no dupes ----
+  // --- 1: PRODUCTION-HYDRATION FLOORS (§203) -- durable, not an audit claim
+  // Every hydrated catalog must sit AT LEAST at its documented production
+  // floor, permanently, so a future accidental catalog collapse (a bad
+  // merge, a botched refactor) fails CI instead of silently shipping.
+  // Floors, not ceilings/exact counts -- catalogs are allowed to keep
+  // growing without this test needing to change.
   {
-    assert.ok(JOB_STAKES.length >= 15, `JOB_STAKES should have a representative foundation-scale catalog, got ${JOB_STAKES.length}`);
-    assert.ok(JOB_HOOKS.length >= 15, `JOB_HOOKS should have a representative foundation-scale catalog, got ${JOB_HOOKS.length}`);
-    for (const [name, pool] of [['JOB_STAKES', JOB_STAKES], ['JOB_HOOKS', JOB_HOOKS]]) {
+    const FLOORS = [
+      ['OBJECTIVE_TEMPLATE_FIXTURES', OBJECTIVE_TEMPLATE_FIXTURES, 250],
+      ['JOB_COMPLICATIONS', JOB_COMPLICATIONS, 250],
+      ['JOB_REWARD_SUGGESTIONS', JOB_REWARD_SUGGESTIONS, 150],
+      ['JOB_STAKES', JOB_STAKES, 50],
+      ['JOB_HOOKS', JOB_HOOKS, 150],
+      ['JOB_SECRETS', JOB_SECRETS, 200]
+    ];
+    for (const [name, pool, floor] of FLOORS) {
+      assert.ok(pool.length >= floor, `${name} must have at least ${floor} entries (production floor per §203), got ${pool.length}`);
+    }
+
+    // Normalized-duplicate guard across the five flat {value,...} pools
+    // (lowercased/trimmed -- matches the QA methodology used to hydrate
+    // these catalogs). OBJECTIVE_TEMPLATE_FIXTURES uses `.template`, not
+    // `.value` -- covered separately just below.
+    for (const [name, pool] of FLOORS) {
+      if (name === 'OBJECTIVE_TEMPLATE_FIXTURES') continue;
       const seen = new Set();
       for (const entry of pool) {
         const key = entry.value.trim().toLowerCase();
         assert.ok(!seen.has(key), `${name} has a duplicate entry: "${entry.value}"`);
         seen.add(key);
+      }
+    }
+
+    // OBJECTIVE_TEMPLATE_FIXTURES-specific: unique ids, unique normalized
+    // template text (a duplicate template string is dead content even if
+    // the id differs).
+    {
+      const seenIds = new Set();
+      const seenTemplates = new Set();
+      for (const t of OBJECTIVE_TEMPLATE_FIXTURES) {
+        assert.ok(!seenIds.has(t.id), `OBJECTIVE_TEMPLATE_FIXTURES has a duplicate id: "${t.id}"`);
+        seenIds.add(t.id);
+        const key = t.template.trim().toLowerCase();
+        assert.ok(!seenTemplates.has(key), `OBJECTIVE_TEMPLATE_FIXTURES has duplicate template text (id "${t.id}"): "${t.template}"`);
+        seenTemplates.add(key);
+      }
+    }
+
+    // SSOT guard: every objective template's missionTypes must resolve
+    // against JOB_ARCHETYPE_METADATA -- a typo here would silently create
+    // dead content `fixturesForMissionType()` can never select.
+    {
+      const validMissionTypes = new Set(Object.keys(JOB_ARCHETYPE_METADATA));
+      for (const t of OBJECTIVE_TEMPLATE_FIXTURES) {
+        for (const mt of t.missionTypes) {
+          assert.ok(validMissionTypes.has(mt), `OBJECTIVE_TEMPLATE_FIXTURES entry "${t.id}" has missionType "${mt}" not present in JOB_ARCHETYPE_METADATA (SSOT)`);
+        }
+      }
+    }
+
+    // SSOT guard: every RAW JOB_REWARD_SUGGESTIONS entry's `type` must be a
+    // real JOB_REWARD_SUGGESTION_TYPE value, checked against the raw
+    // catalog directly -- `createJobRewardSuggestionInstance()`'s own
+    // normalizer has a fallback (`isRewardSuggestionType(entry.type) ?
+    // entry.type : JOB_REWARD_SUGGESTION_TYPE.NONE`) that would silently
+    // mask a bad raw type rather than fail loudly.
+    {
+      const validTypes = new Set(Object.values(JOB_REWARD_SUGGESTION_TYPE));
+      for (const entry of JOB_REWARD_SUGGESTIONS) {
+        assert.ok(validTypes.has(entry.type), `JOB_REWARD_SUGGESTIONS entry "${entry.value}" has invalid type "${entry.type}"`);
       }
     }
   }
@@ -182,16 +260,37 @@ async function run() {
   }
 
   // --- 8: commodity reference reuse (never a duplicated commodity list) ---
-  // Trial count raised 40 -> 200 during PHASE 8D-3C hydration: this wiring-
-  // pass test was written against a 12-fixture OBJECTIVE_TEMPLATE_FIXTURES
-  // catalog (2 'recovery'-tagged CARGO-slot templates out of 12), where a
-  // commodity-cargo hit was common within 40 trials. Hydration grew that
-  // catalog to ~250 fixtures across all mission types, so the same two
-  // (now-diluted) CARGO-slot 'recovery' templates are drawn far less often
-  // per trial -- an expected consequence of a larger weighted-random pool,
-  // not a wiring change (empirically ~0 hits at 40 trials, ~6 hits at 200,
-  // against the unchanged production `createProceduralJobDraft()` path).
+  // CORRECTED during the PHASE 8D-3C hydration-closure review: the prior
+  // version of this comment claimed the original 12-fixture catalog had
+  // "2 recovery-tagged CARGO-slot templates" -- checked against the actual
+  // pre-hydration file (`git show a10a400b1:.../objective-template.js`),
+  // that was wrong. Only ONE fixture (`recovery-cargo-wreck`) was both
+  // 'recovery'-tagged and CARGO-slotted; the other CARGO fixture
+  // (`delivery-cargo-local`) is 'delivery'-only. At the current, hydrated
+  // head there are 3 such fixtures (`recovery-cargo-wreck`,
+  // `procure-rare-component`, `recovery-lost-shipment-manifest`), carrying
+  // ~11% of the weighted 'recovery' pool's total weight (25 of 228, per
+  // `cargo-audit.mjs`) against 41 total 'recovery'-tagged fixtures -- still
+  // a real dilution from the original 1-of-a-handful, which is why a
+  // 40-trial sample (calibrated to the 12-fixture catalog) could land on
+  // zero hits post-hydration. Two independent checks replace the old
+  // probability-only assertion: (a) a deterministic structural guarantee
+  // that 'recovery' CARGO-capable templates exist at all, immune to any
+  // future weight rebalancing, and (b) a smaller seeded integration smoke
+  // proving the SAME unchanged `createProceduralJobDraft()` production path
+  // still resolves a real commodity id when a CARGO slot is hit.
   {
+    // (a) Deterministic structural guarantee -- no RNG, never flaky.
+    const recoveryCargoTemplates = OBJECTIVE_TEMPLATE_FIXTURES.filter(
+      (t) => t.missionTypes.includes('recovery') && Object.values(t.slots).some((s) => s.type === OBJECTIVE_SLOT_TYPE.CARGO)
+    );
+    assert.ok(recoveryCargoTemplates.length >= 1, 'at least one recovery-tagged objective template must carry a CARGO slot for commodity-reference generation to be reachable');
+
+    // (b) Seeded integration smoke: prove the resolver still produces a
+    // real GALACTIC_COMMODITIES id when it does fire. 200 trials (not the
+    // original 40) gives comfortable margin against the diluted ~11% share
+    // above while staying a fast, deterministic smoke test, not a
+    // statistical distribution proof.
     const commodityIds = new Set(GALACTIC_COMMODITIES.map((c) => c.id));
     let foundCommodityReference = false;
     for (let seed = 0; seed < 200; seed++) {

@@ -1,12 +1,16 @@
 /**
- * PHASE 8D-1 — objective template schema, normalizer, validator, and a
- * small representative fixture catalog.
+ * Objective template schema, normalizer, validator, renderer, and the
+ * production fixture catalog (254 entries, within the Phase 8D-3C
+ * hydration spec's documented 250-400 target — see §203 of
+ * docs/audits/gm-datapad-ecosystem-redesign.md).
  *
- * This is foundation only: the schema/normalizer/validator/renderer that
- * the eventual ~200-template objective library (Phase 8D-2+) will be
- * built on, plus enough representative templates to prove the contract
- * across rescue/extraction/delivery/sabotage/recovery/investigation/ship
- * theft-recovery/escort. The full catalog is explicitly NOT built here.
+ * PHASE 8D-1 built the schema/normalizer/validator/renderer plus a
+ * 12-fixture representative catalog proving the contract across
+ * rescue/extraction/delivery/sabotage/recovery/investigation/ship
+ * theft-recovery/escort. PHASE 8D-3C hydration grew that to production
+ * scale across all 14 `JOB_ARCHETYPE_METADATA` mission types — wiring
+ * (schema/normalizer/validator/renderer) unchanged throughout; only the
+ * fixture catalog grew.
  *
  * An objective template is generator vocabulary, not a claim that every
  * slot type maps to a canonical Foundry document type — `slots` name
@@ -179,10 +183,13 @@ export function renderObjectiveTemplate(normalizedTemplate, slotValues = {}) {
   return text;
 }
 
-// --- representative fixture catalog (NOT the full ~200-template library) -
-// One or more templates per family named in the phase spec's required
-// coverage list: rescue, extraction, delivery, sabotage, recovery,
-// investigation, ship theft/recovery, escort.
+// --- production fixture catalog (254 entries; see file header) ---------
+// The original PHASE 8D-1 12-fixture set (one or more templates per
+// family in that phase's required coverage list: rescue, extraction,
+// delivery, sabotage, recovery, investigation, ship theft/recovery,
+// escort) plus PHASE 8D-3C's hydration batches, grouped by inline
+// comment markers below, extending coverage across all 14
+// JOB_ARCHETYPE_METADATA mission types.
 const RAW_FIXTURES = [
   {
     id: 'rescue-person-secured-site',
@@ -3129,7 +3136,7 @@ const RAW_FIXTURES = [
   }
 ];
 
-/** Normalized, validated representative fixture catalog (frozen). */
+/** Normalized, validated production fixture catalog (frozen). */
 export const OBJECTIVE_TEMPLATE_FIXTURES = Object.freeze(
   RAW_FIXTURES.map((raw) => Object.freeze(normalizeObjectiveTemplate(raw)))
 );

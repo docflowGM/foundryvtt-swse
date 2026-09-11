@@ -2,7 +2,7 @@
  * PHASE 8D-3C hydration — Job opening-hook pool for `jobs/job-hook.js`.
  *
  * Hydrated from the Phase 8D-3C wiring pass's 18-entry representative
- * catalog to production scale (155 entries, within the phase spec's
+ * catalog to production scale (156 entries, within the phase spec's
  * documented 150-250 target). Wiring unchanged — `jobs/job-hook.js`'s
  * picker and `job-bundle.js`'s composer are untouched; this file only
  * grows the vocabulary they already consume. Fixed one pre-existing
@@ -120,7 +120,7 @@ export const JOB_HOOKS = Object.freeze([
   { value: 'a corporate legal department frames the job as routine risk mitigation', weight: 1, tags: ['legal'] },
   { value: 'the offer is relayed through a protocol droid programmed to reveal nothing else', weight: 2, tags: ['discreet'] },
   { value: 'a fellow freelancer refers the client after turning the job down themselves', weight: 2, tags: [] },
-  { value: 'the crew is approached at a memorial service by someone honoring the deceased\'s wishes', weight: 1, tags: [] },
+  { value: 'the client sends a recorded holo-message instead of meeting in person, unwilling to risk being seen', weight: 1, tags: ['discreet', 'hidden'] },
   { value: 'a sector authority contracts the job out rather than commit its own patrols', weight: 2, tags: ['legal'] },
   { value: 'the client hides the real stakes behind a deliberately boring cover story', weight: 2, tags: ['gray-area'] },
   { value: 'a trusted quartermaster flags the crew as the only outfit equipped for the job', weight: 1, tags: [] },
@@ -164,7 +164,7 @@ export const JOB_HOOKS = Object.freeze([
   { value: 'an aristocratic house\'s steward handles every detail so the family need never be involved directly', weight: 1, tags: ['discreet'] },
   { value: 'a droid repair shop passes along a client\'s request scrawled on the back of an invoice', weight: 1, tags: [] },
   { value: 'the crew is hired after a background check clears them for sensitive corporate work', weight: 2, tags: ['legal'] },
-  { value: 'a criminal syndicate\'s rival tips the crew off to spite the syndicate', weight: 1, tags: ['illegal'] },
+  { value: 'a criminal syndicate recruits the crew directly, bypassing its usual chain of lieutenants', weight: 1, tags: ['illegal'] },
   { value: 'the client hires the crew through a registered escrow service to guarantee payment', weight: 2, tags: ['legal'] },
   { value: 'a passing trader mentions the job almost as an afterthought over a shared meal', weight: 2, tags: [] },
   { value: 'the crew\'s name comes up in a public inquiry and the client reaches out directly', weight: 1, tags: [] },
