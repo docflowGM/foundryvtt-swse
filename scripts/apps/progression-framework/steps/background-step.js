@@ -120,6 +120,21 @@ export class BackgroundStep extends ProgressionStepPlugin {
       }
     }
 
+    // A sheet-launched free single-step add (e.g. dragging a Background
+    // compendium item onto the character sheet) may name the specific
+    // background to adopt via shell._singleStepPreselectId, instead of
+    // leaving the player to re-find it in this picker. Route it through the
+    // exact same commit path a manual card click uses (onItemCommitted) so
+    // skill/language choice prompts, the canonical grant ledger, and the
+    // draftSelections.background write all happen identically to a normal
+    // pick — this must never bypass that authority with a label-only stand-in.
+    if (this._committedBackgroundIds.length === 0
+      && shell?._singleStepMode === true
+      && shell?._singleStepPreselectId
+      && this._allBackgrounds.some(b => b.id === shell._singleStepPreselectId)) {
+      await this.onItemCommitted(shell._singleStepPreselectId, shell);
+    }
+
     // Enable Ask Mentor
     shell.mentor.askMentorEnabled = true;
   }

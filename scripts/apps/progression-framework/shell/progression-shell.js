@@ -257,6 +257,12 @@ export class ProgressionShell extends SWSEApplicationV2 {
     this._singleStepMode = options?.singleStep === true;
     this._singleStepDomain = options?.singleStepDomain || null;
     this._singleStepJob = options?.singleStepJob || null;
+    // Sheet-launched free single-step adds (e.g. dropping a Background
+    // compendium item onto the sheet) may name the specific item to commit
+    // once the step opens, instead of leaving the player to re-find it in
+    // the picker. Steps that support this read it themselves (see
+    // BackgroundStep.onStepEnter) — it is inert for every other step.
+    this._singleStepPreselectId = options?.preselectId || null;
 
     // ═══ PHASE 1: CANONICAL PROGRESSION SESSION ═══
     // Determine subtype based on mode and options (can be overridden by subclasses)

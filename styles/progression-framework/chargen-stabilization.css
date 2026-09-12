@@ -379,8 +379,9 @@
 
 .progression-shell.is-shell-compact .prog-content-row {
   position: relative !important;
+  flex-direction: column !important;
   padding: 4px !important;
-  gap: 0 !important;
+  gap: 4px !important;
 }
 
 .progression-shell.is-shell-compact [data-region="summary-panel"] {
@@ -388,9 +389,10 @@
 }
 
 .progression-shell.is-shell-compact [data-region="work-surface"] {
-  flex: 1 1 100% !important;
+  flex: 1 1 auto !important;
   width: 100% !important;
   min-width: 0 !important;
+  min-height: 0 !important;
   padding: 6px !important;
   border-inline-width: 0 !important;
 }
@@ -432,15 +434,13 @@
 
 .progression-shell.is-shell-compact [data-region="details-panel"] {
   display: flex !important;
-  position: absolute !important;
-  left: 8px !important;
-  right: 8px !important;
-  bottom: 8px !important;
-  width: auto !important;
+  position: relative !important;
+  flex: 0 0 auto !important;
+  width: 100% !important;
   min-width: 0 !important;
   max-width: none !important;
   max-height: min(46%, 360px) !important;
-  z-index: 80 !important;
+  z-index: 1 !important;
   border: 1px solid rgba(80, 220, 255, 0.42) !important;
   background: rgba(3, 11, 20, 0.96) !important;
   box-shadow: 0 0 24px rgba(0, 190, 255, 0.18), inset 0 0 12px rgba(80, 220, 255, 0.08) !important;
@@ -532,9 +532,6 @@
 }
 
 .progression-shell.is-shell-narrow [data-region="details-panel"] {
-  left: 4px !important;
-  right: 4px !important;
-  bottom: 4px !important;
   max-height: 58% !important;
 }
 

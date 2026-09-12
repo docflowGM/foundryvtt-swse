@@ -260,7 +260,14 @@ export class ProgressionReconciliationReportBuilder {
     }
 
     const babRow = audit.rows.find(row => row?.id === 'bab' || row?.type === 'bab');
-    if (babRow && totalLevel > 0) {
+    // Never touch an already-"unavailable" row: canonical class authority
+    // could not resolve BAB for at least one contributing class, and that
+    // must never be recomputed/relabeled into a numeric "+N" — not by
+    // capping a (fabricated) expected value to totalLevel, and not by the
+    // current-vs-expected comparison below silently flipping status back to
+    // "ok" because neither of its numeric branches matched a non-finite
+    // (unavailable) expected value.
+    if (babRow && totalLevel > 0 && babRow.status !== 'unavailable') {
       const rawExpected = Number(babRow.expected ?? babRow.expectedValue);
       const currentBab = Number(babRow.current ?? babRow.currentValue);
       const cappedExpected = Number.isFinite(rawExpected) ? Math.min(rawExpected, totalLevel) : rawExpected;
@@ -284,7 +291,7 @@ export class ProgressionReconciliationReportBuilder {
           babRow.tone = 'warn';
           babRow.needsAttention = true;
           babRow.issue = babRow.statusLabel;
-        } else {
+        } else if (Number.isFinite(cappedExpected)) {
           babRow.status = 'ok';
           babRow.statusLabel = 'OK';
           babRow.tone = 'ok';

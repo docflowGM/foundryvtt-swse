@@ -1036,7 +1036,16 @@ export class FeatStep extends ProgressionStepPlugin {
       const manifest = this._getLevelupManifest(shell);
       const count = Number(manifest?.generalFeat?.count ?? manifest?.generalFeat?.requiredCount ?? 0);
       if (Number.isFinite(count) && count > 0) return Math.max(1, Math.floor(count));
-      return manifest?.generalFeat?.required === true ? 1 : 0;
+      if (manifest?.generalFeat?.required === true) return 1;
+      // A sheet-launched free single-step add ("Add Feat" -> Pick From
+      // Compendium) has no real level-up entitlement to report (there is no
+      // pending level), so the manifest always reports 0/not-required here.
+      // Without this, requiredCount stays 0, Confirm never blocks on an
+      // empty selection, and finalizeSingleStep() rejects the empty pick
+      // after the fact -- the player sees no visible effect from clicking
+      // Confirm. The free-add step still owes exactly one pick.
+      if (shell?._singleStepMode === true) return 1;
+      return 0;
     }
 
     const draft = shell?.progressionSession?.draftSelections || {};
