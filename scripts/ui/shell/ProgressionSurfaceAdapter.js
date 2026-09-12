@@ -75,6 +75,7 @@ export class ProgressionSurfaceAdapter {
         existing._app._singleStepMode = options?.singleStep === true;
         existing._app._singleStepDomain = options?.singleStepDomain || null;
         existing._app._singleStepJob = options?.singleStepJob || null;
+        existing._app._singleStepPreselectId = options?.preselectId || null;
         existing._app._targetStepId = options?.targetStep || options?.targetStepId || options?.currentStep || options?.stepId || existing._app._targetStepId || null;
       }
       await existing._navigateToRequestedStep(options);

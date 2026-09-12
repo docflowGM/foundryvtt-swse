@@ -11,6 +11,7 @@ import { handleSetDarkSideScore } from "/systems/foundryvtt-swse/scripts/sheets/
 import { MentorChatDialog } from "/systems/foundryvtt-swse/scripts/mentor/mentor-chat-dialog.js";
 import { DropResolutionEngine } from "/systems/foundryvtt-swse/scripts/engine/interactions/drop-resolution-engine.js";
 import { AdoptionEngine } from "/systems/foundryvtt-swse/scripts/engine/interactions/adoption-engine.js";
+import { BackgroundRegistry } from "/systems/foundryvtt-swse/scripts/registries/background-registry.js";
 import { AdoptOrAddDialog } from "/systems/foundryvtt-swse/scripts/apps/adopt-or-add-dialog.js";
 import { SWSEDialogV2 } from "/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js";
 import { LightsaberConstructionEngine } from "/systems/foundryvtt-swse/scripts/engine/crafting/lightsaber-construction-engine.js";
@@ -7667,19 +7668,26 @@ const forcePoints = [];
     const data = TextEditor.getDragEventData(event);
     if (!data) return;
 
-    // Check if this is an actor drop
+    // Check if this is an actor drop. Resolved via DropResolutionEngine's
+    // shared normalizer so a compendium drag lacking a top-level `uuid`
+    // (pack + id form) is identified here too, not just a world-document
+    // UUID drag — otherwise a background dropped that way would silently
+    // fall through to the generic resolver below with no chance to match
+    // the background-specific handling right after this.
     let droppedDocument = null;
-    if (data.uuid) {
-      try {
-        droppedDocument = await fromUuid(data.uuid);
-      } catch (err) {
-        // Not a valid UUID, treat as item drop
-      }
+    try {
+      droppedDocument = await DropResolutionEngine.resolveDroppedDocument(data);
+    } catch (err) {
+      // Not a resolvable Foundry document; treat as a normal item drop attempt.
     }
 
     // ACTOR DROP: Check if GM can adopt
     if (droppedDocument && droppedDocument.documentName === 'Actor') {
       return this._handleActorDrop(droppedDocument);
+    }
+
+    if (droppedDocument && droppedDocument.documentName === 'Item' && droppedDocument.type === 'background') {
+      return this._handleBackgroundDrop(droppedDocument);
     }
 
     // ITEM DROP: Use standard resolution
@@ -7701,6 +7709,57 @@ const forcePoints = [];
     } catch (err) {
       // console.error('Drop application failed:', err);
       ui?.notifications?.error?.(`Failed to add dropped item: ${err.message}`);
+    }
+  }
+
+  /**
+   * Handle a Background compendium item dropped on the sheet by routing it
+   * through the same canonical adoption authority the sheet's "Select
+   * Background" gear button (cmd-select-background) already uses —
+   * BackgroundStep's picker/choice flow -> the background grant ledger
+   * builder -> applyCanonicalBackgroundsToActor -> ActorEngine — instead of
+   * DropResolutionEngine's generic item-embed path, which has no rule for
+   * item type "background" at all and, even if it did, could not safely do
+   * more than a label-only `system.background = name` update: a Background
+   * carries mechanical grants/choices (class skills, bonus languages,
+   * passive abilities) that only that authority knows how to install. The
+   * dropped document is resolved to its canonical registry id first so a
+   * stray/custom item cannot silently masquerade as a real background.
+   *
+   * @private
+   * @param {Item} item - the dropped Background item
+   */
+  async _handleBackgroundDrop(item) {
+    const record = await BackgroundRegistry.resolve({
+      _id: item.id ?? item._id ?? null,
+      id: item.system?.id ?? null,
+      slug: item.system?.slug ?? null,
+      name: item.name,
+    });
+
+    if (!record?.id) {
+      ui?.notifications?.warn?.(`"${item.name}" could not be resolved to a canonical background.`);
+      return;
+    }
+
+    try {
+      await this.setSurface('progression', {
+        source: 'sheet-free-add',
+        stepId: 'background',
+        currentStep: 'background',
+        targetStep: 'background',
+        targetStepId: 'background',
+        mode: 'freeAdd',
+        singleStep: true,
+        singleStepDomain: 'background',
+        singleStepJob: 'adopt-background-from-compendium',
+        preselectId: record.id,
+        skipIntro: true,
+        forceFreshAdapter: true,
+      });
+      await this.requestSurfaceRender({ reason: 'background-drop-launch', surfaceId: 'progression' });
+    } catch (err) {
+      ui?.notifications?.error?.(`Failed to open background adoption: ${err.message}`);
     }
   }
 

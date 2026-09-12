@@ -82,6 +82,20 @@ export const ActorEngine = {
       const ids = new Set(plan.delete.items);
       actor.items = (actor.items ?? []).filter(i => !ids.has(i._id) && !ids.has(i.id));
     }
+    // Mirrors the real ActorEngine._applyAddOps(): each `plan.add` bucket key
+    // is a plural embedded-collection name ("items", "effects") that maps to
+    // a singular Foundry embedded document name ("Item", "Effect") by
+    // stripping the trailing 's' and title-casing — see actor-engine.js
+    // (`collection.charAt(0).toUpperCase() + collection.slice(1, -1)`) —
+    // then creates each document via createEmbeddedDocuments(), the same
+    // granular method this fake already implements faithfully (P1-7).
+    if (plan.add) {
+      for (const [collection, documents] of Object.entries(plan.add)) {
+        if (!Array.isArray(documents) || documents.length === 0) continue;
+        const embeddedName = collection.charAt(0).toUpperCase() + collection.slice(1, -1);
+        await this.createEmbeddedDocuments(actor, embeddedName, documents, { source: options.source });
+      }
+    }
     return { success: true };
   },
 
