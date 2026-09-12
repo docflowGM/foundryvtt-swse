@@ -9571,6 +9571,103 @@ None of these required touching `job-bundle.js`, any picker, `job-draft.js`, `jo
 
 Re-ran full validation after the correction pass: `tests/gm-generation-phase8d3c-jobs-production.test.mjs` 41/41 (now including the durable floor/uniqueness/SSOT guards); `phase8d1/8d2/8d3a/8d3b` and `gm-job-*` tests unaffected; full suite 190/195 (same 5 independently-reproduced pre-existing `force-power-*` failures); rolling syntax check 2454/2454; rolling test runner 190/190; `validate-partials`/`validate-data`/`system.json` clean; architecture-boundary check unchanged (37 pre-existing findings, zero in any touched file).
 
+## 204. PRE-8D-4 — FACTION / CONTACT CANONICAL IDENTITY HARDENING
+
+Closes the one item §202 flagged as a live, existing SSOT gap rather than future design: `FactionRegistryService.upsertFaction()`/`upsertFactionContact()` falling back to display-name equality to decide canonical sameness, and new-record id minting (`normalizeContact()`, `_normalizeFactionRecord()`) deriving ids from name(+role) text. Narrow identity-hardening only — no new authority, no Job/Location/Intel architecture change, 8D-4 not started.
+
+**Branch:** `claude/pre8d4-faction-contact-identity-hardening`
+**Starting main SHA:** `238776902a2d31580fcc479124a4a56ce3c5111c` (PR #967 / Phase 8D-3C present at `3bd188abb`; main had since advanced with PR #968 also merged)
+
+### Identity inventory (produced before any file was edited)
+
+Audited every creation/normalization/upsert/delete/lookup/persistence call site across `FactionRegistryService` itself plus every consumer found by grepping for `FactionRegistryService`, `slugify(`, `issuerFactionId`/`issuerContactId`/`*DraftId`, and `linkedFactionId`/`linkedContactId` (42 files). Full per-site table (file, function, operation, id source, name/role fallback, persisted?, canonical/draft, callers, migration risk, classification, recommended action) was printed and reasoned over in the PR description/session transcript before any edit; summarized by classification:
+
+- **MUST HARDEN (4 sites, all in `faction-registry-service.js`):** `upsertFaction()`'s `byName` existing-match fallback; `upsertFactionContact()`'s name-match existing-lookup; `normalizeContact()`'s `slugify(name-role)` new-id fallback; `_normalizeFactionRecord()`'s `slugify(name)` missing-id fallback.
+- **MUST HARDEN, caller-side (1 site):** `approveSuggestedFaction()` called `upsertFaction()` without pre-resolving an existing Faction itself, relying on the shared contract's (now-removed) name-merge to preserve "approve a suggestion that matches a known Faction" behavior.
+- **READ-SIDE NAME SEARCH, kept as-is (2 sites):** `findFaction()`, `findFactionContact()` — legitimate search helpers (§4); callers that use their hits to decide *canonical sameness for a mutation* were the actual bug, not the search functions themselves.
+- **LEGACY COMPATIBILITY, kept as-is (2 sites):** `applyScoreDelta`/`applyJobFactionDelta`/`_applyJobFactionConsequences`'s name-resolve-or-materialize-once behavior (the Job consequence pipeline carries only `factionConsequences.factionName` text, never a canonical id — the one legitimate "no other signal exists" case, and Job architecture is frozen this phase); `_normalizeActorRelationship()`'s `slugify(factionName)` fallback for pre-existing per-actor relationship flag data that may predate dual-field storage (changing it risks breaking old-world Actor↔Faction links that were originally seeded symmetrically from the same name-derived logic).
+- **SAFE, already hardened, no change (confirmed during audit, not this pass's work):** Phase 8D-3C Job generation (`job-context.js`/`job-draft.js`/`job-bundle.js`) already uses explicit id/draftId duality via `resolveDualityReference()`, never a name fallback; `npc-concept.js` stores `factionId` verbatim ("Real canonical references ONLY — empty string when unresolved"); `holonet-intel-service.js`'s `linkedFactionId`/`linkedContactId` resolution is already canonical-id-only with an explicit `resolutionKind: 'canonical-id'` vs `'missing'`, never a name fallback; `FactionJobBridgeService`/`FactionIntelBridgeService`/`LocationJobBridgeService` all thread real `.id` values through into drafts and only use name search for *locating* an object to read, never to decide mutation identity; every GM-facing form (`GMFactionRelationshipSurfaceController`, `GMWorkspaceSurfaceController`, `AlliesSurfaceService`) already passes an explicit id for edits and omits it entirely for new records, so none of them depended on the removed `byName` fallback for correctness.
+- **OUT OF SCOPE, different domain:** `BulletinContactRegistry` (Holonet bulletin-board contacts) is a separate canonical authority from Faction Contacts; not audited in depth, flagged only if a future bug report names it.
+
+### Unsafe patterns found (exact file/function/behavior)
+
+1. `faction-registry-service.js#upsertFaction()` — `const byName = records.find(record => record.name.toLowerCase() === name.toLowerCase()); const existing = byId ?? byName ?? null;` — a Faction with no/unmatched id silently merged into any existing Faction of the same display name.
+2. `faction-registry-service.js#upsertFactionContact()` — `existingContacts.find(contact => contact.id === requestedId || contact.name.toLowerCase() === name.toLowerCase())` — same bug for Contacts, reachable from the GM Factions contact-editor form (`contactPayloadFromForm()` always submits `id: ''` for a new contact).
+3. `faction-registry-service.js#normalizeContact()` — `id: cleanText(record.id || record.contactId) || slugify(\`${name}-${role}\`)` — a brand-new Contact's id was derived from its own mutable display text.
+4. `faction-registry-service.js#_normalizeFactionRecord()` — `id: cleanText(record.id || record.factionId) || slugify(name)` — same for Factions; additionally, two already-persisted legacy records that both lack an `id` and share a name would collide onto the identical derived id on every read.
+5. `faction-registry-service.js#approveSuggestedFaction()` — called `upsertFaction({ id: merged.factionId || '', name: ... })` with no prior `findFaction()` resolution, leaning on (1)'s now-removed fallback to keep attaching an approved player suggestion to a known same-named Faction.
+
+### Implemented policy
+
+- **New Faction id generation:** `randomId()` (the file's existing `foundry.utils.randomID()`/`crypto.randomUUID()`/Math.random fallback helper — reused, not reinvented) whenever no id is supplied. Independent of name, type, scale, planet/system, or array position.
+- **Legacy Faction ids:** untouched. Any record that already carries a non-empty `id`/`factionId` — however it was originally derived, slugify(name) included (e.g. `voren-mining`) — keeps that exact id forever, through any number of renames.
+- **New Contact id generation:** `randomId()` whenever no id is supplied. Independent of name, role, Faction name, Actor name, or array position.
+- **Legacy Contact ids:** same preservation rule as Factions.
+- **Rename:** `upsertFaction({ id, name: newName })` / `upsertFactionContact(factionId, { id, name: newName })` always resolve the target by `id` only and keep that id; a matching (or non-matching) display name is never consulted.
+- **Duplicate names:** fully legal for both Factions and Contacts (including duplicate Contact name+role on the same Faction) — each `upsertFaction`/`upsertFactionContact` call with no id (or an id that does not match any existing record) always creates a new, distinct record. `findFaction()`/`findFactionContact()` name search can still return either/all matches for display/lookup purposes — that remains intentional (§4).
+- **Contact→Actor:** unchanged contract, re-verified rather than redesigned — `promoteFactionContactToActor()`'s "already linked" branch resolves the Actor via `actorId`/`actorUuid` and writes only `actorId`/`actorUuid`/`actorName` back onto the same Contact `id`; renaming the linked Actor updates only the cached `actorName` display field, never the Contact's own identity.
+- **`approveSuggestedFaction()`:** now explicitly resolves `(merged.factionId ? findFaction(merged.factionId) : null) || findFaction(merged.name || merged.factionName)` at the call site itself before calling `upsertFaction()`, preserving its pre-existing "attach to a known same-named Faction" behavior — visibly and auditably, at the one call site that legitimately needs it, rather than inside the shared mutation contract where it silently applied to every caller.
+
+### Migration
+
+- **Schema/version marker:** none existed in the persisted `gmFactionRegistry` world setting, and none was added — §20's "smallest domain-owned seam" standard is met by a single idempotent static method rather than a version-flag framework.
+- **Migration trigger:** new `FactionRegistryService.migrateLegacyIdentities()`, called once from a `Hooks.once('ready', ...)` registered inside `registerFactionRegistrySettings()`, GM-gated (`game.user?.isGM`). Also callable directly (used by the test suite).
+- **Detection:** reads the *raw* persisted registry (not the normalized read-path) and, for each Faction and each of its Contacts, checks whether its `id` is missing OR collides with an id already seen earlier in the same sweep.
+- **Assignment:** any record flagged above gets a fresh `randomId()`, assigned once and persisted via `setSetting()`. Every other record's `id` — including every healthy legacy one — is copied through verbatim, untouched.
+- **Records/references affected:** world-dependent; zero in a healthy world (every id already present and unique). In a world with no missing/colliding ids, the method is a no-op (`{ changed: false }`) and writes nothing.
+- **Ambiguous cases:** two records that are both missing an id and share a display name are not "ambiguous" in the sense of requiring GM input — per §7, nothing is destroyed or mis-attached; each independently gets its own fresh id, which is exactly "assign once" applied to two records that both needed it.
+- **Idempotency:** verified directly — a registry with no missing/colliding ids after one migration pass reports `changed: false` on every subsequent call and never reassigns an id (test 9/10 in the new test file).
+- **Known, accepted limitation (documented, not engineered around):** before `migrateLegacyIdentities()` has run (and persisted) for a given world, a raw record that is missing its `id` entirely gets a fresh `randomId()` on every plain `getRegistry()`/`findFaction()` read, not a value stable across un-persisted reads — this only matters in the narrow pre-migration window for a world whose registry data was hand-seeded/imported without ids in the first place; once migrated (which happens once, early, at `ready`), every subsequent read is stable. Adding a cross-call cache for this narrow window was rejected as unnecessary new state (rule 2/10 — simplicity first, no new global state for one edge case already fully resolved by the migration itself).
+
+### Cross-domain
+
+- **Locations:** `LocationRegistryService` has the identical legacy shape (its own `findLocation()` name-fallback, `slugify(name)` missing-id fallback) but is explicitly frozen this phase (§16) — not touched. Verified instead that `LocationJobBridgeService` (Location→Job draft adapter) threads a real `location.controllingFactionId` straight through to `FactionRegistryService.findFaction()`/the draft's `issuer.factionId`, with no re-derivation from name; a Faction rename is correctly reflected by a later read, resolved through the unchanged id (test 22).
+- **NPCs:** `npc-concept.js` stores `factionId` verbatim, "Real canonical references ONLY — empty string when unresolved" (its own header comment, confirmed, not written by this pass); a later Faction rename cannot affect an already-built draft's stored id, and resolving that id afterward correctly reaches the renamed Faction (test 23).
+- **Jobs:** `FactionJobBridgeService.buildDraftFromFaction()`/`buildDraftFromContact()` thread real `faction.id`/`contact.id` into `issuer.factionId`/`issuer.contactId`; both survive a Faction+Contact rename (test 24/25). The Job *consequence* pipeline (`factionConsequences.factionName`, applied via `holonet-messenger-service.js`) remains the one documented name-keyed exception (see Implemented policy) — Job architecture is frozen this phase (§15) and this is its only identity signal for that one field.
+- **Intel:** `holonet-intel-service.js`'s `linkedFactionId`/`linkedContactId` resolution was already canonical-id-only (confirmed during the audit, not changed); re-proven directly against the hardened registry using the identical id-only resolution shape `gm-contact-actorizer-service.js#intelLinkLabels()` already uses, without pulling the full Intel-service dependency graph into this narrow test file (test 26/27).
+- **Allies:** presentation/query only, as required (§17) — `AlliesSurfaceService`'s `addFaction()`/`saveFaction()` either omit `id` entirely for new Factions or pass an explicit `id` for existing ones; neither depended on the removed `byName` fallback.
+- **Holonet:** messenger-service's job-consequence path covered above under Jobs; no other Holonet code mutates Faction/Contact canonical identity.
+- **Existence vs. visibility (§18):** a Contact's `hidden → known` reveal-state change (`revealState`/`knownToPlayers`) goes through the same id-keyed `upsertFactionContact()` path and never mints a new identity (test 28).
+
+### Tests
+
+New file: `tests/pre8d4-faction-contact-identity-hardening.test.mjs` — all 29 required test-matrix items, executed for real against the unmodified `FactionRegistryService`, `FactionJobBridgeService`, `LocationJobBridgeService`, and `npc-concept.js` (no mocking of production logic; only `game`/`foundry` Foundry-runtime globals are shimmed, via the same `tests/helpers/foundry-shim/` harness `gm-faction-ecosystem-view-model.test.mjs` and siblings already use). 23 labeled assertion-groups, all passing:
+
+- Faction 1-10: new-id independence from name, rename preserves id, duplicate names coexist with independent update/delete-by-id, repeated normalization is stable, a healthy legacy (name-derived) id survives a rename unchanged, missing legacy ids migrate once and idempotently with no cross-record collision.
+- Contact 11-21: new-id independence from name+role, rename+role-change preserves id, duplicate name+role Contacts coexist with independent update/remove-by-id, repeated normalization is stable, missing legacy Contact ids migrate once and idempotently, Contact→Actor linking preserves Contact id, renaming the linked Actor cannot change Contact identity.
+- Cross-domain 22-29: Location/NPC/Job-issuer/Intel-style references all survive a Faction+Contact rename; a visibility/reveal-state change preserves identity; no canonical mutation path resolves "same entity" from display-name (or name+role) equality alone.
+
+Also re-ran, unmodified and all still passing: `tests/gm-faction-ecosystem-view-model.test.mjs`, `gm-job-ecosystem-view-model`, `gm-locations-ecosystem-view-model`, `gm-intel-ecosystem-view-model`, `gm-generation-phase8d3b-production`, `gm-generation-phase8d3c-jobs-production`, `gm-generation-phase8d1-foundation`, `gm-datapad-no-duplicate-handler-regression`, `gm-campaign-context-parity`, `gm-campaign-context-read-only-contract`, `gm-faction-context-navigation-controller`, `gm-workspace-faction-contact-navigation-controller`, `gm-holonet-phase8b-intel-bulletin-privacy`, `gm-holonet-phase8c-bulletin-handoffs`.
+
+### Validators
+
+- `node --check scripts/allies/faction-registry-service.js` / the new test file: pass.
+- `node tools/validate-partials.mjs`: OK, 532 `.hbs` files scanned, 218 file-backed partials referenced — unaffected (no template touched).
+- `node tools/validate-data.js`: all checks pass, 0 errors, 0 warnings — unaffected (no data file touched).
+- `system.json` JSON parse: valid — unaffected.
+- `node tools/run-rolling-tests.mjs` (full suite minus the 5 standing, documented pre-existing `force-power-*` exclusions): **195 passed, 0 failed** (of 195 run — includes the new `pre8d4-faction-contact-identity-hardening.test.mjs`).
+- `node tools/run-rolling-syntax-check.mjs`: 2459 files, all pass `node --check`.
+- `node tools/check-architecture-boundaries.mjs`: 37 pre-existing findings (6 `direct-actor-mutation`, 31 `progression-registry-bypass`), all in `scripts/engine/progression/...` — zero findings in any file this phase touched.
+
+### Architecture tripwires (all expected NONE/NO/YES as specified)
+
+- New canonical authority added: **NONE.**
+- Generic identity framework added: **NONE** (`migrateLegacyIdentities()` is a single domain-owned static method on the existing `FactionRegistryService`, not a reusable/generic migration runner).
+- Name-derived NEW Faction identity: **NONE** (removed).
+- Name+role-derived NEW Contact identity: **NONE** (removed).
+- Existing healthy legacy ids rewritten: **NONE** (verified by test 8 — a `voren-mining`-style legacy id survives a rename unchanged).
+- Rename changes identity: **NO** (verified, tests 3/13-14/22-27).
+- Duplicate display names supported: **YES** (verified, tests 4/10/15/29).
+- Migration idempotent: **YES** (verified, tests 9-10/19).
+
+### Deferrals (unchanged from §199-202)
+
+`JobEngine`, `CampaignMutationCoordinator`, `EntityRef` runtime, `ResolutionMap`, `CommitLedger`, `DomainEventBus`, `CampaignEffect`/`CampaignOutcomeResolver`, the GM commit workflow, and per-player visibility expansion all remain exactly as designed-only in §199-202 — nothing here advances or starts 8D-4.
+
+### Final verdict
+
+**PRE-8D-4 FACTION / CONTACT CANONICAL IDENTITY HARDENING IS COMPLETE.** The §202-flagged SSOT gap is closed: canonical Faction/Contact identity is id-only for every create/update/delete path; display text (name, role) never decides canonical sameness anywhere it previously did; every legacy id, every duplicate-name case, the draft/canonical duality, and every audited cross-domain reference (Location, NPC, Job, Intel, Allies) remain stable across rename. No Job/Location/Intel architecture was modified; no new canonical authority or generic framework was introduced. Stopping here for independent review, per standing practice — **not merged automatically, 8D-4 not started.**
+
 ### PHASE 8D-3C completion verdict
 
 **PHASE 8D-3C — JOB PRODUCTIONIZATION IS NOW COMPLETE**, with two explicitly named, deliberately-scoped exceptions carried forward as documented deferrals above (opposition catalog — resolved as "not needed, built compositionally instead," not a gap; urgency-flavor catalog — a genuine unwired gap, explicitly deferred rather than built ad hoc). All six catalogs with real wiring to hydrate against now sit within their documented production-floor targets, now enforced by durable, committed regression tests rather than an audit-paragraph claim alone (see correction pass above). Zero architecture changes, zero new canonical authorities, zero canonical persistence calls. Stopping here for independent review, per standing practice — **not merged automatically, 8D-4 not started.**
