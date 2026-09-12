@@ -141,7 +141,12 @@ function normalizeContact(record = {}) {
   const revealState = normalizeChoice(record.revealState || (record.knownToPlayers ? 'known' : 'hidden'), CONTACT_REVEAL_VALUES, 'hidden');
   const knownToPlayers = normalizeBoolean(record.knownToPlayers, revealState === 'known' || revealState === 'compromised');
   return {
-    id: cleanText(record.id || record.contactId) || slugify(`${name}-${role}`),
+    // Identity hardening (PRE-8D-4): a Contact's id is never derived from its
+    // display name/role. When no id is supplied this is a brand-new Contact
+    // and gets a fresh, name-independent id so duplicate name+role Contacts
+    // remain distinct records. An id already present (including a legacy
+    // name-derived one) is preserved untouched — stability over cosmetic purity.
+    id: cleanText(record.id || record.contactId) || randomId(),
     name,
     role,
     title: cleanText(record.title || ''),
@@ -258,6 +263,15 @@ export function registerFactionRegistrySettings() {
     type: Object,
     default: []
   });
+  // PRE-8D-4 identity hardening: sweep existing worlds once per ready for any
+  // Faction/Contact record left with a missing or colliding id by the old
+  // name-derived fallback. GM-only, idempotent, no-op once the registry is clean.
+  Hooks.once('ready', () => {
+    if (!game.user?.isGM) return;
+    FactionRegistryService.migrateLegacyIdentities().catch(err => {
+      SWSELogger.warn?.('[FactionRegistryService] Legacy identity migration failed.', err);
+    });
+  });
 }
 
 export class FactionRegistryService {
@@ -296,6 +310,58 @@ export class FactionRegistryService {
     return normalized;
   }
 
+  /**
+   * PRE-8D-4 identity-hardening migration. Detects Faction/Contact records in
+   * the persisted registry that are missing a canonical id, or that collide
+   * on the same id (two records resolving to the same id -- most likely two
+   * legacy no-id records that both fell back to slugify(name) before this
+   * hardening pass), and assigns each a fresh, name-independent id exactly
+   * once. A healthy legacy id (already unique, already persisted -- however
+   * it was originally derived) is never touched. Idempotent: a second call
+   * finds nothing left to migrate and writes nothing.
+   */
+  static async migrateLegacyIdentities() {
+    const raw = safeArray(getSetting());
+    const seenFactionIds = new Set();
+    const migratedFactions = [];
+    const migratedContacts = [];
+    let changed = false;
+
+    const next = raw.map(rawFaction => {
+      const faction = { ...rawFaction };
+      const priorFactionId = cleanText(faction.id || faction.factionId);
+      let factionId = priorFactionId;
+      if (!factionId || seenFactionIds.has(factionId)) {
+        factionId = randomId();
+        migratedFactions.push({ from: priorFactionId || '(missing)', to: factionId, name: cleanText(faction.name) });
+        changed = true;
+      }
+      faction.id = factionId;
+      seenFactionIds.add(factionId);
+
+      const seenContactIds = new Set();
+      faction.contacts = safeArray(faction.contacts).map(rawContact => {
+        const contact = { ...rawContact };
+        const priorContactId = cleanText(contact.id || contact.contactId);
+        let contactId = priorContactId;
+        if (!contactId || seenContactIds.has(contactId)) {
+          contactId = randomId();
+          migratedContacts.push({ factionId, from: priorContactId || '(missing)', to: contactId, name: cleanText(contact.name) });
+          changed = true;
+        }
+        contact.id = contactId;
+        seenContactIds.add(contactId);
+        return contact;
+      });
+      return faction;
+    });
+
+    if (!changed) return { changed: false, migratedFactions: [], migratedContacts: [] };
+    await setSetting(next);
+    Hooks.callAll('swseFactionRegistryIdentityMigrated', { migratedFactions, migratedContacts });
+    return { changed: true, migratedFactions, migratedContacts };
+  }
+
   static findFaction(query = '') {
     const needle = cleanText(query).toLowerCase();
     if (!needle) return null;
@@ -312,10 +378,14 @@ export class FactionRegistryService {
     if (!name) throw new Error('Faction name is required.');
     const records = this.getRegistry();
     const requestedId = cleanText(data.id || data.factionId);
-    const byId = requestedId ? records.find(record => record.id === requestedId) : null;
-    const byName = records.find(record => record.name.toLowerCase() === name.toLowerCase());
-    const existing = byId ?? byName ?? null;
-    const id = existing?.id || requestedId || slugify(name);
+    // Identity hardening (PRE-8D-4): canonical sameness is decided by id ONLY.
+    // A matching display name never implies "this is the same Faction" --
+    // duplicate Faction names are legal and must coexist. Callers that want
+    // find-existing-by-name-or-create semantics (e.g. the Job consequence
+    // pipeline, which only ever carries a factionName) must resolve that
+    // explicitly themselves via findFaction() before calling upsertFaction().
+    const existing = requestedId ? records.find(record => record.id === requestedId) ?? null : null;
+    const id = existing?.id || requestedId || randomId();
     const score = normalizeScore(data.score ?? data.startingScore ?? existing?.score ?? 0);
     const source = this._normalizeSource(data.source || existing?.source || 'gm');
     const historyType = existing ? 'faction-updated' : 'faction-created';
@@ -391,11 +461,14 @@ export class FactionRegistryService {
     const requestedId = cleanText(data.id || data.contactId);
     const name = cleanText(data.name || data.contactName);
     if (!name) throw new Error('Contact name is required.');
-    const existing = existingContacts.find(contact => contact.id === requestedId || contact.name.toLowerCase() === name.toLowerCase()) || null;
+    // Identity hardening (PRE-8D-4): match an existing Contact by id ONLY.
+    // Two Contacts on the same Faction with the same name+role are legal and
+    // must remain distinct records -- a matching name never implies reuse.
+    const existing = requestedId ? existingContacts.find(contact => contact.id === requestedId) ?? null : null;
     const contact = normalizeContact({
       ...existing,
       ...data,
-      id: existing?.id || requestedId || slugify(`${faction.name}-${name}`),
+      id: existing?.id || requestedId || randomId(),
       name,
       updatedAt: nowIso(),
       createdAt: existing?.createdAt || nowIso()
@@ -723,8 +796,16 @@ export class FactionRegistryService {
     const suggestion = records.find(entry => entry.id === factionRecordId || entry.factionId === factionRecordId);
     if (!suggestion) return null;
     const merged = { ...suggestion, ...data };
+    // Identity hardening (PRE-8D-4): resolve an existing Faction by id-or-name
+    // explicitly at this call site (same pattern as addActorRelationship/
+    // applyScoreDelta below) so approving a player suggestion keeps attaching
+    // to an already-known Faction of the same name, exactly as before --
+    // without relying on upsertFaction()'s shared contract to infer that
+    // silently for every caller.
+    const resolvedFaction = (merged.factionId ? this.findFaction(merged.factionId) : null)
+      || this.findFaction(merged.name || merged.factionName);
     const faction = await this.upsertFaction({
-      id: merged.factionId || '',
+      id: merged.factionId || resolvedFaction?.id || '',
       name: merged.name || merged.factionName,
       type: merged.type,
       planetSystem: planetSystemFrom(merged),
@@ -850,7 +931,12 @@ export class FactionRegistryService {
     const source = this._normalizeSource(record.source || 'gm');
     const score = normalizeScore(record.score ?? record.startingScore ?? 0);
     return {
-      id: cleanText(record.id || record.factionId) || slugify(name),
+      // Identity hardening (PRE-8D-4): a truly missing id falls back to a
+      // fresh, name-independent id rather than slugify(name) -- two distinct
+      // legacy records that both lack an id and happen to share a display
+      // name must never collapse onto the same derived id. An id already
+      // present (name-derived legacy ids included) is preserved untouched.
+      id: cleanText(record.id || record.factionId) || randomId(),
       name,
       type: cleanText(record.type || record.kind || 'Faction'),
       planetSystem: planetSystemFrom(record),
