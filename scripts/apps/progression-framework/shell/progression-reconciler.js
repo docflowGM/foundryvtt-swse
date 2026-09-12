@@ -1827,6 +1827,13 @@ export class ProgressionReconciler {
       hp.detail = 'Current HP may be stale after class drops because HP gains are not fully recorded for every level after 1st.';
     }
 
+    // A single fabricated 0 anywhere below would misreport an unresolved
+    // class as "grants +0" instead of "could not be computed". BAB and each
+    // defense key accumulate into a *running sum* while resolution keeps
+    // succeeding, but the moment any contributing class fails to resolve,
+    // the whole stat is permanently downgraded to unavailable (value: null)
+    // for the rest of this computation — mirroring exactly how `hp.status`/
+    // `hp.knownMinimum` above already fail closed to `null`, never `0`.
     let babValue = 0;
     let babStatus = 'ok';
     let babIssue = '';
@@ -1841,13 +1848,22 @@ export class ProgressionReconciler {
       if (bab === null) {
         babStatus = 'unavailable';
         babIssue = `No BAB entry found for ${summary.className} ${classLevel}.`;
-      } else {
+      } else if (babStatus !== 'unavailable') {
         babValue += bab;
       }
 
       const classDefenses = this._readClassDefenseBonuses(summary);
-      for (const key of DEFENSE_KEYS) {
-        defenses[key].value = Math.max(Number(defenses[key].value || 0) || 0, Number(classDefenses[key] || 0) || 0);
+      if (classDefenses === null) {
+        for (const key of DEFENSE_KEYS) {
+          defenses[key].status = 'unavailable';
+          defenses[key].issue = defenses[key].issue
+            || `No class defense data found for ${summary.className || titleCase(summary.classId)} ${classLevel}.`;
+        }
+      } else {
+        for (const key of DEFENSE_KEYS) {
+          if (defenses[key].status === 'unavailable') continue;
+          defenses[key].value = Math.max(Number(defenses[key].value || 0) || 0, Number(classDefenses[key] || 0) || 0);
+        }
       }
 
       classBreakdown.push({
@@ -1855,16 +1871,23 @@ export class ProgressionReconciler {
         className: summary.className || titleCase(summary.classId),
         level: classLevel,
         bab: bab === null ? null : bab,
-        fortitude: Number(classDefenses.fortitude || 0) || 0,
-        reflex: Number(classDefenses.reflex || 0) || 0,
-        will: Number(classDefenses.will || 0) || 0,
+        fortitude: classDefenses === null ? null : (Number(classDefenses.fortitude || 0) || 0),
+        reflex: classDefenses === null ? null : (Number(classDefenses.reflex || 0) || 0),
+        will: classDefenses === null ? null : (Number(classDefenses.will || 0) || 0),
       });
+    }
+
+    for (const key of DEFENSE_KEYS) {
+      if (defenses[key].status === 'unavailable') {
+        defenses[key].value = null;
+        defenses[key].detail = 'Class defense audit requires canonical class defense data for every contributing class.';
+      }
     }
 
     return {
       hp,
       bab: {
-        value: babValue,
+        value: babStatus === 'unavailable' ? null : babValue,
         status: babStatus,
         issue: babIssue,
         detail: 'BAB is additive across all class levels and reads cumulative BAB from each class progression row.',
@@ -2063,10 +2086,25 @@ export class ProgressionReconciler {
     return [];
   }
 
+  /**
+   * Read a class's canonical defense bonuses.
+   *
+   * Returns `null` — not a `{fortitude:0, reflex:0, will:0}` object — when
+   * neither the resolved class model nor the owned item carries a
+   * `defenses` object at all. A normalized canonical class model
+   * (class-normalizer.js) always carries a `defenses` object; its absence
+   * here means canonical class authority could not be resolved for this
+   * summary (e.g. `summary.model` degraded to a thin owned-item/ledger-row
+   * fallback — see resolveClassModel()'s callers), not that the class
+   * legitimately grants +0 to every defense. Callers must treat `null` as
+   * "unavailable", exactly like `_readClassBaseHp()`'s `null` return —
+   * never coerce it to 0.
+   */
   _readClassDefenseBonuses(summary = {}) {
     const model = summary.model || {};
     const item = summary.item || {};
-    const defenses = model?.system?.defenses || model?.defenses || item?.system?.defenses || {};
+    const defenses = model?.system?.defenses || model?.defenses || item?.system?.defenses || null;
+    if (!defenses || typeof defenses !== 'object') return null;
     return {
       fortitude: Number(defenses.fortitude ?? defenses.fort ?? defenses.fortitudeDefense ?? 0) || 0,
       reflex: Number(defenses.reflex ?? defenses.ref ?? defenses.reflexDefense ?? 0) || 0,
