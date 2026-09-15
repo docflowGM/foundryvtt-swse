@@ -509,15 +509,29 @@ export class GMJobBoardSurfaceController {
     const factionLabel = String(factionName || (type === 'faction' ? contactName : 'Independent Job Contacts')).trim();
     if (!factionLabel) return null;
     return mutateShellOnly(this.host, async () => {
-      const faction = FactionRegistryService.findFaction(factionLabel) || await FactionRegistryService.upsertFaction({
-        name: factionLabel,
+      // Identity hardening (PRE-8D-4, correction pass): this is a free-text
+      // "faction name" field with no id widget -- resolveOrCreateFactionByName()
+      // reuses an existing Faction only when the name is unambiguous, and
+      // throws (surfaced to the GM as an error) rather than silently picking
+      // one of several same-named Factions.
+      const faction = await FactionRegistryService.resolveOrCreateFactionByName(factionLabel, {
         type: type === 'faction' ? 'Faction' : 'Organization',
         source: 'job',
         status: 'active',
         historyNote: 'Created from Job Board reusable contact.'
       });
       if (type === 'faction' && factionLabel.toLowerCase() === contactName.toLowerCase()) return { faction, contact: null, savedAsFaction: true };
+      // Reuse the existing reusable Contact record for a repeat "save as
+      // reusable contact" of the same client name on this Faction, rather
+      // than spawning a new duplicate Contact on every save -- but only
+      // when exactly one existing Contact has this exact name; two or more
+      // is ambiguous and this always creates a new, distinct Contact rather
+      // than guessing which one to overwrite.
+      const existingSameName = FactionRegistryService.getFactionContacts(faction.id)
+        .filter(entry => entry.name.toLowerCase() === contactName.toLowerCase());
+      const existingContactId = existingSameName.length === 1 ? existingSameName[0].id : '';
       return FactionRegistryService.upsertFactionContact(faction.id, {
+        id: existingContactId,
         name: contactName,
         role,
         image: clientImage,

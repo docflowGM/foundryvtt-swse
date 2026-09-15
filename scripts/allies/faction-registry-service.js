@@ -80,6 +80,22 @@ function randomId() {
   return foundry?.utils?.randomID?.() || globalThis.crypto?.randomUUID?.() || Math.random().toString(36).slice(2);
 }
 
+/**
+ * Mints a randomId() guaranteed not to collide with anything already in
+ * `reserved` (retrying until it draws a fresh value), then adds it to
+ * `reserved` so a later call against the same set can't repeat it either.
+ * Used by migrateLegacyIdentities() so a newly-minted id can never
+ * accidentally match a healthy, already-persisted id elsewhere in the
+ * registry -- structural collision-safety rather than relying on the
+ * astronomically low probability of randomId() repeating.
+ */
+function mintUniqueId(reserved) {
+  let candidate = randomId();
+  while (reserved.has(candidate)) candidate = randomId();
+  reserved.add(candidate);
+  return candidate;
+}
+
 function slugify(value) {
   const base = cleanText(value).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
   return base || randomId();
@@ -319,47 +335,100 @@ export class FactionRegistryService {
    * once. A healthy legacy id (already unique, already persisted -- however
    * it was originally derived) is never touched. Idempotent: a second call
    * finds nothing left to migrate and writes nothing.
+   *
+   * CORRECTION PASS (independent review of PR #969) hardened this twice over:
+   *
+   * 1. Contact ids are now reserved/claimed in ONE pool GLOBAL across the
+   *    entire registry, not reset per-Faction. Contact identity is a
+   *    single namespace registry-wide (getAllFactionContacts() and every
+   *    id-only consumer, e.g. Location lead reveal, address a Contact by
+   *    its id alone) -- two different Factions' Contacts that both carried
+   *    the same legacy name/role-derived id would previously both survive
+   *    unchanged as long as neither Faction saw the other's Contact id, a
+   *    real cross-Faction collision the old per-Faction Set could miss.
+   * 2. Every pre-existing, non-empty Faction id AND Contact id in the raw
+   *    registry is reserved up front, before minting anything (mintUniqueId()
+   *    above) -- so a record processed early that needs a fresh id can
+   *    never draw the exact id a healthy record LATER in the registry
+   *    already legitimately holds and force that later record into being
+   *    treated as the duplicate instead. This makes "a healthy legacy id is
+   *    never rewritten" a structural guarantee, not merely astronomically
+   *    likely.
+   *
+   * A genuine duplicate non-empty id is intrinsically ambiguous for any
+   * EXISTING external reference (Job/Intel/Location) that already pointed
+   * at that id -- there is no way to know which of the two records it
+   * meant, and this migration does not guess: it keeps the first
+   * occurrence exactly as-is and mints a fresh id only for the later
+   * duplicate, then reports every such case (via the returned `collisions`
+   * array and an SWSELogger warning) rather than pretending the ambiguity
+   * doesn't exist.
    */
   static async migrateLegacyIdentities() {
     const raw = safeArray(getSetting());
-    const seenFactionIds = new Set();
+
+    const reservedFactionIds = new Set();
+    const reservedContactIds = new Set();
+    for (const rawFaction of raw) {
+      const id = cleanText(rawFaction.id || rawFaction.factionId);
+      if (id) reservedFactionIds.add(id);
+      for (const rawContact of safeArray(rawFaction.contacts)) {
+        const contactId = cleanText(rawContact.id || rawContact.contactId);
+        if (contactId) reservedContactIds.add(contactId);
+      }
+    }
+
+    const claimedFactionIds = new Set();
+    const claimedContactIds = new Set();
     const migratedFactions = [];
     const migratedContacts = [];
+    const collisions = [];
     let changed = false;
 
     const next = raw.map(rawFaction => {
       const faction = { ...rawFaction };
       const priorFactionId = cleanText(faction.id || faction.factionId);
       let factionId = priorFactionId;
-      if (!factionId || seenFactionIds.has(factionId)) {
-        factionId = randomId();
+      if (!factionId || claimedFactionIds.has(factionId)) {
+        factionId = mintUniqueId(reservedFactionIds);
         migratedFactions.push({ from: priorFactionId || '(missing)', to: factionId, name: cleanText(faction.name) });
+        if (priorFactionId) collisions.push({ kind: 'faction', duplicateId: priorFactionId, reassignedTo: factionId, name: cleanText(faction.name) });
         changed = true;
       }
       faction.id = factionId;
-      seenFactionIds.add(factionId);
+      claimedFactionIds.add(factionId);
 
-      const seenContactIds = new Set();
       faction.contacts = safeArray(faction.contacts).map(rawContact => {
         const contact = { ...rawContact };
         const priorContactId = cleanText(contact.id || contact.contactId);
         let contactId = priorContactId;
-        if (!contactId || seenContactIds.has(contactId)) {
-          contactId = randomId();
+        if (!contactId || claimedContactIds.has(contactId)) {
+          contactId = mintUniqueId(reservedContactIds);
           migratedContacts.push({ factionId, from: priorContactId || '(missing)', to: contactId, name: cleanText(contact.name) });
+          if (priorContactId) collisions.push({ kind: 'contact', duplicateId: priorContactId, factionId, reassignedTo: contactId, name: cleanText(contact.name) });
           changed = true;
         }
         contact.id = contactId;
-        seenContactIds.add(contactId);
+        claimedContactIds.add(contactId);
         return contact;
       });
       return faction;
     });
 
-    if (!changed) return { changed: false, migratedFactions: [], migratedContacts: [] };
+    if (!changed) return { changed: false, migratedFactions: [], migratedContacts: [], collisions: [] };
+
+    for (const collision of collisions) {
+      SWSELogger.warn?.(
+        `[FactionRegistryService] Identity migration found a duplicate persisted ${collision.kind} id "${collision.duplicateId}"`
+        + ` (name: "${collision.name}") — the first record with that id keeps it; this later one was reassigned to "${collision.reassignedTo}".`
+        + ' Any existing external reference (Job/Intel/Location) that pointed at the duplicated id intending THIS record cannot be'
+        + ' automatically disambiguated and may now resolve to the wrong record — review manually if this world has such references.'
+      );
+    }
+
     await setSetting(next);
-    Hooks.callAll('swseFactionRegistryIdentityMigrated', { migratedFactions, migratedContacts });
-    return { changed: true, migratedFactions, migratedContacts };
+    Hooks.callAll('swseFactionRegistryIdentityMigrated', { migratedFactions, migratedContacts, collisions });
+    return { changed: true, migratedFactions, migratedContacts, collisions };
   }
 
   static findFaction(query = '') {
@@ -371,6 +440,27 @@ export class FactionRegistryService {
       || record.name.toLowerCase() === needle
       || slugify(record.name) === needle
     )) ?? null;
+  }
+
+  /**
+   * PUBLIC counterpart to the private mutation resolvers above, for
+   * external callers that only ever have a free-text Faction name
+   * available (no id widget -- e.g. the Job Board's "save client as
+   * reusable contact" field) and want find-existing-or-create-new
+   * semantics without risking a silent pick among several same-named
+   * Factions. Throws if 2+ Factions already share that exact name -- the
+   * caller must let the GM resolve the ambiguity, never have one chosen
+   * for them.
+   */
+  static async resolveOrCreateFactionByName(name = '', createData = {}) {
+    const cleanName = cleanText(name);
+    if (!cleanName) throw new Error('Faction name is required.');
+    const resolution = this._resolveFactionByUniqueName(cleanName);
+    if (resolution.ambiguous) {
+      throw new Error(`Multiple Factions are named "${cleanName}" — open the Faction editor and pick the intended one, or rename one of them, before continuing.`);
+    }
+    if (resolution.faction) return resolution.faction;
+    return this.upsertFaction({ ...createData, name: cleanName });
   }
 
   static async upsertFaction(data = {}) {
@@ -454,8 +544,77 @@ export class FactionRegistryService {
     return contact ? { faction, contact } : null;
   }
 
+  /**
+   * CORRECTION PASS (independent review of PR #969): resolves an existing
+   * Faction for a CANONICAL MUTATION path -- never a search. findFaction()
+   * stays the flexible, name-capable SEARCH helper for read/display use
+   * (§4); every canonical mutator below resolves through one of the four
+   * methods here instead, so "which Faction does this refer to" is never
+   * decided by silently picking the first of several same-named matches
+   * now that duplicate Faction names are explicitly legal.
+   *
+   * _resolveFactionForMutation(id, name) is the STRICT form for callers
+   * that carry a genuinely separate id field and name field (they may both
+   * be populated with unrelated values, e.g. a stale id alongside a fresh
+   * name during an edit): a non-empty id is authoritative and is never
+   * abandoned in favor of the name, matched or not. Only when no id at all
+   * is supplied does the name get tried -- and only honored when it names
+   * EXACTLY ONE canonical Faction; two or more is ambiguous.
+   *
+   * _resolveFactionByIdOrUniqueName(idOrName) is the PERMISSIVE form for
+   * the handful of callers that only ever have ONE combined string (the
+   * existing `factionId || factionName` pattern already used at several UI
+   * call sites, which is itself already "real id if we had one, else the
+   * name as a last resort" -- never a case where a real id was present but
+   * wrong). It tries the string as an exact id first, then as a name.
+   *
+   * Both return { faction, ambiguous }. ambiguous=true means 2+ candidates
+   * were found by name and none was picked -- never guess.
+   */
+  static _resolveFactionByUniqueName(name = '') {
+    const cleanName = cleanText(name);
+    if (!cleanName) return { faction: null, ambiguous: false };
+    const matches = this.getRegistry().filter(record => record.name.toLowerCase() === cleanName.toLowerCase());
+    if (matches.length === 1) return { faction: matches[0], ambiguous: false };
+    if (matches.length > 1) return { faction: null, ambiguous: true };
+    return { faction: null, ambiguous: false };
+  }
+
+  static _resolveFactionForMutation(id = '', name = '') {
+    const cleanId = cleanText(id);
+    if (cleanId) {
+      const byId = this.getRegistry().find(record => record.id === cleanId);
+      return { faction: byId ?? null, ambiguous: false };
+    }
+    return this._resolveFactionByUniqueName(name);
+  }
+
+  static _resolveFactionByIdOrUniqueName(idOrName = '') {
+    const query = cleanText(idOrName);
+    if (!query) return { faction: null, ambiguous: false };
+    const byId = this.getRegistry().find(record => record.id === query);
+    if (byId) return { faction: byId, ambiguous: false };
+    return this._resolveFactionByUniqueName(query);
+  }
+
+  /** Same PERMISSIVE (id-or-unique-name) policy, scoped to one Faction's Contacts. */
+  static _resolveFactionContactByIdOrUniqueName(faction, idOrName = '') {
+    const query = cleanText(idOrName);
+    if (!faction || !query) return { contact: null, ambiguous: false };
+    const contacts = safeArray(faction.contacts).map(entry => normalizeContact(entry));
+    const byId = contacts.find(contact => contact.id === query);
+    if (byId) return { contact: byId, ambiguous: false };
+    const nameMatches = contacts.filter(contact => contact.name.toLowerCase() === query.toLowerCase());
+    if (nameMatches.length === 1) return { contact: nameMatches[0], ambiguous: false };
+    if (nameMatches.length > 1) return { contact: null, ambiguous: true };
+    return { contact: null, ambiguous: false };
+  }
+
   static async upsertFactionContact(factionId = '', data = {}) {
-    const faction = this.findFaction(factionId || data.factionId || data.factionName);
+    const factionIdQuery = factionId || data.factionId;
+    const resolution = this._resolveFactionForMutation(factionIdQuery, data.factionName);
+    if (resolution.ambiguous) throw new Error(`Multiple Factions are named "${cleanText(data.factionName)}" — specify a Faction id.`);
+    const faction = resolution.faction;
     if (!faction) throw new Error('Faction is required to save a notable NPC/contact.');
     const existingContacts = safeArray(faction.contacts).map(contact => normalizeContact(contact));
     const requestedId = cleanText(data.id || data.contactId);
@@ -483,7 +642,9 @@ export class FactionRegistryService {
   }
 
   static async deleteFactionContact(factionId = '', contactId = '') {
-    const faction = this.findFaction(factionId);
+    const resolution = this._resolveFactionByIdOrUniqueName(factionId);
+    if (resolution.ambiguous) throw new Error(`Multiple Factions are named "${cleanText(factionId)}" — specify a Faction id.`);
+    const faction = resolution.faction;
     const id = cleanText(contactId);
     if (!faction || !id) return false;
     const contacts = safeArray(faction.contacts).map(contact => normalizeContact(contact)).filter(contact => contact.id !== id);
@@ -494,9 +655,14 @@ export class FactionRegistryService {
   }
 
   static async promoteFactionContactToActor(factionId = '', contactId = '') {
-    const found = this.findFactionContact(factionId, contactId);
-    if (!found) throw new Error('Faction contact could not be found.');
-    const { faction, contact } = found;
+    const factionResolution = this._resolveFactionByIdOrUniqueName(factionId);
+    if (factionResolution.ambiguous) throw new Error(`Multiple Factions are named "${cleanText(factionId)}" — specify a Faction id.`);
+    const faction = factionResolution.faction;
+    if (!faction) throw new Error('Faction contact could not be found.');
+    const contactResolution = this._resolveFactionContactByIdOrUniqueName(faction, contactId);
+    if (contactResolution.ambiguous) throw new Error(`Multiple Contacts named "${cleanText(contactId)}" exist on ${faction.name} — specify a Contact id.`);
+    const contact = contactResolution.contact;
+    if (!contact) throw new Error('Faction contact could not be found.');
 
     const existingActor = await resolveActorReference({ uuid: contact.actorUuid, actorId: contact.actorId });
     if (existingActor) {
@@ -574,12 +740,22 @@ export class FactionRegistryService {
 
   static async addActorRelationship({ actor, faction = null, factionId = '', factionName = '', relationshipType = 'known', score = 0, benefits = '', notes = '', gmNotes = '', source = 'gm', status = 'active', history = [] } = {}) {
     if (!actor) throw new Error('Actor is required to add a faction relationship.');
-    const factionRecord = faction
-      || (factionId ? this.findFaction(factionId) : null)
-      || (factionName ? this.findFaction(factionName) : null)
-      || await this.upsertFaction({ id: factionId, name: factionName, source });
+    let factionRecord = faction;
+    if (!factionRecord) {
+      // Identity hardening (PRE-8D-4, correction pass): a stable factionId,
+      // when supplied, is authoritative -- never abandoned for a name match.
+      // Only when no id at all is given does the name get tried, and only
+      // when it is unambiguous (§ _resolveFactionForMutation doc comment).
+      const resolution = this._resolveFactionForMutation(factionId, factionName);
+      if (resolution.ambiguous) throw new Error(`Multiple Factions are named "${cleanText(factionName)}" — specify a Faction id.`);
+      factionRecord = resolution.faction || await this.upsertFaction({ id: factionId, name: factionName, source });
+    }
     const relationships = this.getActorRelationships(actor);
-    const existing = relationships.find(entry => entry.factionId === factionRecord.id || entry.factionName.toLowerCase() === factionRecord.name.toLowerCase());
+    // Match this Actor's existing relationship row by factionId ONLY --
+    // factionRecord.id is always a real, specific, already-disambiguated
+    // canonical id by this point, so a name-equality fallback here could
+    // only ever update the WRONG same-named Faction's relationship row.
+    const existing = relationships.find(entry => entry.factionId === factionRecord.id);
     const nextScore = normalizeScore(score ?? existing?.score ?? factionRecord.score ?? 0);
     const record = this._normalizeActorRelationship({
       ...existing,
@@ -611,7 +787,9 @@ export class FactionRegistryService {
     const relationships = this.getActorRelationships(actor);
     const existing = relationships.find(entry => entry.id === relationshipId || entry.factionId === relationshipId);
     if (!existing) return this.addActorRelationship({ actor, ...data, factionId: data.factionId || relationshipId });
-    const faction = this.findFaction(data.factionId || existing.factionId || data.factionName || existing.factionName)
+    const resolution = this._resolveFactionForMutation(data.factionId || existing.factionId, data.factionName || existing.factionName);
+    if (resolution.ambiguous) throw new Error(`Multiple Factions are named "${cleanText(data.factionName || existing.factionName)}" — specify a Faction id.`);
+    const faction = resolution.faction
       || await this.upsertFaction({ id: data.factionId || existing.factionId, name: data.factionName || existing.factionName, source: data.source || existing.source || 'gm' });
     const updated = this._normalizeActorRelationship({
       ...existing,
@@ -645,10 +823,21 @@ export class FactionRegistryService {
     const value = normalizeScore(delta);
     const factionLabel = cleanText(factionName || factionId);
     if (!factionLabel || !value) return null;
-    const existingFaction = this.findFaction(factionId || factionName);
+    // Identity hardening (PRE-8D-4, correction pass): fail SOFT (return
+    // null + log) rather than throw on an ambiguous same-named Faction --
+    // this runs in a per-actor loop from applyJobFactionDelta(), and a
+    // thrown error here would abort every OTHER actor's unrelated update
+    // in the same batch. A stable factionId, when supplied, is still
+    // authoritative and never abandoned for a name match.
+    const resolution = this._resolveFactionForMutation(factionId, factionName);
+    if (resolution.ambiguous) {
+      SWSELogger.warn?.(`[FactionRegistryService] applyScoreDelta: "${factionLabel}" is ambiguous (multiple Factions share that name) — refusing to guess which one. Supply a Faction id.`);
+      return null;
+    }
+    const existingFaction = resolution.faction;
     const faction = existingFaction || await this.upsertFaction({ id: factionId || '', name: factionLabel, source, historyNote: reason });
     const relationships = this.getActorRelationships(targetActor);
-    const existing = relationships.find(entry => entry.factionId === faction.id || entry.factionName.toLowerCase() === faction.name.toLowerCase());
+    const existing = relationships.find(entry => entry.factionId === faction.id);
     const before = normalizeScore(existing?.score ?? faction.startingScore ?? faction.score ?? 0);
     const after = before + value;
     const historyEntry = {
@@ -796,16 +985,25 @@ export class FactionRegistryService {
     const suggestion = records.find(entry => entry.id === factionRecordId || entry.factionId === factionRecordId);
     if (!suggestion) return null;
     const merged = { ...suggestion, ...data };
-    // Identity hardening (PRE-8D-4): resolve an existing Faction by id-or-name
-    // explicitly at this call site (same pattern as addActorRelationship/
-    // applyScoreDelta below) so approving a player suggestion keeps attaching
-    // to an already-known Faction of the same name, exactly as before --
-    // without relying on upsertFaction()'s shared contract to infer that
-    // silently for every caller.
-    const resolvedFaction = (merged.factionId ? this.findFaction(merged.factionId) : null)
-      || this.findFaction(merged.name || merged.factionName);
+    // Identity hardening (PRE-8D-4): resolve an existing Faction by id-or-
+    // unambiguous-name explicitly at this call site (same pattern as
+    // addActorRelationship/applyScoreDelta) so approving a player
+    // suggestion keeps attaching to an already-known Faction of the same
+    // name, exactly as before -- without relying on upsertFaction()'s
+    // shared contract to infer that silently for every caller.
+    //
+    // CORRECTION PASS (independent review): a name match is only honored
+    // when it names EXACTLY ONE canonical Faction. Two or more same-named
+    // Factions is ambiguous -- the GM approving this suggestion never had
+    // a chance to pick which one, so this now fails loudly (rather than
+    // silently attaching to whichever one findFaction() happened to
+    // return first) and asks the GM to disambiguate before approving.
+    const resolution = this._resolveFactionForMutation(merged.factionId, merged.name || merged.factionName);
+    if (resolution.ambiguous) {
+      throw new Error(`Multiple Factions are named "${cleanText(merged.name || merged.factionName)}" — resolve which one this suggestion refers to (e.g. from the Faction editor) before approving.`);
+    }
     const faction = await this.upsertFaction({
-      id: merged.factionId || resolvedFaction?.id || '',
+      id: merged.factionId || resolution.faction?.id || '',
       name: merged.name || merged.factionName,
       type: merged.type,
       planetSystem: planetSystemFrom(merged),

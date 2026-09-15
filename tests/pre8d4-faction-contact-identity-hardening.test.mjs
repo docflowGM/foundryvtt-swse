@@ -29,6 +29,16 @@ function makeActorsCollection(actorList) {
   return { contents: actorList, get: (id) => byId.get(id), [Symbol.iterator]: () => actorList[Symbol.iterator]() };
 }
 
+function makeFakeActor({ id = 'actor-1', name = 'Test Actor' } = {}) {
+  const flags = new Map();
+  return {
+    id,
+    name,
+    getFlag: (scope, key) => flags.get(`${scope}.${key}`),
+    setFlag: async (scope, key, value) => { flags.set(`${scope}.${key}`, value); return value; }
+  };
+}
+
 function makeStore(seed = {}) {
   const data = new Map(Object.entries(seed));
   return {
@@ -177,7 +187,7 @@ installFreshRegistry();
   assert.equal(again.changed, false, 'migration must be idempotent — nothing left to migrate on a second run');
   const stillAfter = FactionRegistryService.getRegistry();
   assert.deepEqual(stillAfter.map(f => f.id).sort(), idsAfter.sort(), 'a second migration pass must not reassign any id');
-  pass('9/10 — missing legacy ids migrate exactly once, deterministically, and the migration is idempotent');
+  pass('9/10 — missing legacy ids are minted exactly once, persisted, and thereafter stable across reads; the migration itself is idempotent');
 }
 
 // ---------------------------------------------------------------------
@@ -397,9 +407,19 @@ installFreshRegistry();
 }
 
 {
-  // 29. no canonical resolution requires display-name equality -- the
-  // negative-architecture summary check: upsertFaction/upsertFactionContact
-  // with a matching name but no id must never merge into an existing record.
+  // 29. no canonical resolution requires display-name equality, proven here
+  // specifically for the two shared upserts: upsertFaction/
+  // upsertFactionContact with a matching name but no id must never merge
+  // into an existing record. This is ONE piece of the negative-architecture
+  // claim, not the whole of it -- the CORRECTION PASS block below proves
+  // the same invariant for every OTHER canonical mutation path
+  // (addActorRelationship, updateActorRelationship, applyScoreDelta,
+  // approveSuggestedFaction, resolveOrCreateFactionByName,
+  // deleteFactionContact, promoteFactionContactToActor, and the Job
+  // Board/Location Atlas UI callers), each of which independent review
+  // found was still resolving its target through the flexible,
+  // name-capable findFaction()/findFactionContact() SEARCH helpers even
+  // after upsertFaction()/upsertFactionContact() themselves were hardened.
   installFreshRegistry();
   const original = await FactionRegistryService.upsertFaction({ name: 'Trade Federation' });
   const lookalike = await FactionRegistryService.upsertFaction({ name: 'Trade Federation' });
@@ -409,6 +429,283 @@ installFreshRegistry();
   const { contact: c2 } = await FactionRegistryService.upsertFactionContact(original.id, { name: 'Nute Gunray', role: 'Viceroy' });
   assert.notEqual(c1.id, c2.id, 'upsertFactionContact must never resolve "same canonical entity" from name+role equality alone');
   pass('29 — no canonical mutation path resolves identity from display-name (or name+role) equality');
+}
+
+// ---------------------------------------------------------------------
+// CORRECTION PASS (independent review of PR #969) 30-40
+//
+// The first pass hardened upsertFaction()/upsertFactionContact() but left
+// several OTHER canonical mutation paths resolving their target Faction/
+// Contact through the intentionally flexible, name-capable findFaction()/
+// findFactionContact() SEARCH helpers -- unsafe now that duplicate display
+// names are explicitly legal. This block proves the fix: every mutator
+// below now resolves by canonical id when one is available, and only
+// falls back to a display name when it is UNAMBIGUOUS (matches exactly one
+// canonical record) -- two or more same-named candidates is refused
+// outright rather than silently picked.
+// ---------------------------------------------------------------------
+
+{
+  // 30. addActorRelationship must refuse to guess among duplicate
+  // same-named Factions, but must still resolve correctly -- and let a PC
+  // hold DISTINCT relationships with each -- when given an explicit id.
+  installFreshRegistry();
+  const a = await FactionRegistryService.upsertFaction({ name: 'Republic Intelligence' });
+  const b = await FactionRegistryService.upsertFaction({ name: 'Republic Intelligence' });
+  const actor = makeFakeActor({ id: 'pc-1' });
+
+  await assert.rejects(
+    () => FactionRegistryService.addActorRelationship({ actor, factionName: 'Republic Intelligence' }),
+    /Multiple Factions are named/,
+    'addActorRelationship must refuse to guess among duplicate same-named Factions when no id is supplied'
+  );
+
+  const relA = await FactionRegistryService.addActorRelationship({ actor, factionId: a.id, factionName: 'Republic Intelligence' });
+  const relB = await FactionRegistryService.addActorRelationship({ actor, factionId: b.id, factionName: 'Republic Intelligence' });
+  assert.equal(relA.factionId, a.id);
+  assert.equal(relB.factionId, b.id);
+  const relationships = FactionRegistryService.getActorRelationships(actor);
+  assert.equal(relationships.length, 2, 'a PC must be able to hold distinct relationships with two Factions that happen to share a name');
+  assert.notEqual(relationships[0].id, relationships[1].id);
+  pass('30 — addActorRelationship refuses to guess among duplicate same-named Factions; resolves correctly by id and lets a PC hold distinct relationships with each');
+}
+
+{
+  // 31. updateActorRelationship: a stable factionId is always authoritative
+  // and is never abandoned in favor of a (possibly ambiguous) name --
+  // existing.factionId is always populated by the time an existing
+  // relationship row is read (_normalizeActorRelationship's own legacy
+  // fallback, deliberately preserved), so a bare factionName-only update
+  // call correctly keeps updating the SAME Faction it already pointed at
+  // rather than attempting -- and risking -- a fresh name resolution. An
+  // explicit data.factionId still correctly re-targets the relationship
+  // onto a DIFFERENT same-named Faction, proving id always wins over name.
+  installFreshRegistry();
+  const a = await FactionRegistryService.upsertFaction({ name: 'Czerka Corp' });
+  const b = await FactionRegistryService.upsertFaction({ name: 'Czerka Corp' });
+  const actor = makeFakeActor({ id: 'pc-2' });
+  const rel = await FactionRegistryService.addActorRelationship({ actor, factionId: a.id });
+
+  const untouched = await FactionRegistryService.updateActorRelationship(actor, rel.id, { factionName: 'Czerka Corp', notes: 'no explicit id supplied' });
+  assert.equal(untouched.factionId, a.id, 'without an explicit factionId, the update must stay on the relationship\'s already-known Faction (id wins over name) rather than re-resolving by the ambiguous name');
+
+  const updated = await FactionRegistryService.updateActorRelationship(actor, rel.id, { factionId: b.id, notes: 'moved to B by explicit id' });
+  assert.equal(updated.factionId, b.id, 'an explicit id must correctly re-target the relationship onto a DIFFERENT same-named Faction');
+  pass('31 — updateActorRelationship: a stable factionId is always authoritative over name (never re-resolves an already-known relationship by name), and an explicit id correctly re-targets between duplicate same-named Factions');
+}
+
+{
+  // 32. applyScoreDelta must fail SOFT (return null, log a warning) rather
+  // than throw or guess when only a name is available and it is
+  // ambiguous -- this runs in a per-actor loop from applyJobFactionDelta(),
+  // and a thrown error would abort every OTHER actor's unrelated update in
+  // the same job-consequence batch.
+  installFreshRegistry();
+  await FactionRegistryService.upsertFaction({ name: 'Black Sun' });
+  await FactionRegistryService.upsertFaction({ name: 'Black Sun' });
+  const actor = makeFakeActor({ id: 'pc-3' });
+  const result = await FactionRegistryService.applyScoreDelta({ actor, factionName: 'Black Sun', delta: 5, source: 'job' });
+  assert.equal(result, null, 'applyScoreDelta must return null (fail soft), never guess, when the Faction name is ambiguous');
+  assert.equal(FactionRegistryService.getActorRelationships(actor).length, 0, 'no relationship/reputation change may be applied when the target Faction is ambiguous');
+  pass('32 — applyScoreDelta fails safely (no guess, no throw, no data change) when the Faction name is ambiguous');
+}
+
+{
+  // 33. approveSuggestedFaction must never silently attach a player
+  // suggestion to the first of several same-named Factions -- the GM
+  // clicking "Approve" never had a chance to pick which one.
+  const actor = makeFakeActor({ id: 'pc-4' });
+  installFreshRegistry({ actors: [actor] });
+  await FactionRegistryService.upsertFaction({ name: 'Black Sun' });
+  await FactionRegistryService.upsertFaction({ name: 'Black Sun' });
+  await actor.setFlag('foundryvtt-swse', 'factions', [{ id: 'sugg-1', name: 'Black Sun', status: 'pending_approval' }]);
+
+  await assert.rejects(
+    () => FactionRegistryService.approveSuggestedFaction({ actorId: actor.id, factionRecordId: 'sugg-1' }),
+    /Multiple Factions are named/,
+    'approveSuggestedFaction must refuse to guess among duplicate same-named Factions'
+  );
+  pass('33 — approveSuggestedFaction refuses to guess among duplicate same-named Factions when approving a player suggestion');
+}
+
+{
+  // 34. resolveOrCreateFactionByName(): 0 matches creates, exactly 1 match
+  // reuses, 2+ matches refuses to guess. This is the public seam external
+  // callers with only a free-text Faction name (no id widget) use.
+  installFreshRegistry();
+  const created = await FactionRegistryService.resolveOrCreateFactionByName('Offworld Salvage Co', { source: 'job' });
+  assert.ok(created.id, '0 matches must create a new Faction');
+  const reused = await FactionRegistryService.resolveOrCreateFactionByName('Offworld Salvage Co', { source: 'job' });
+  assert.equal(reused.id, created.id, 'exactly 1 unambiguous match must be reused, never duplicated');
+
+  await FactionRegistryService.upsertFaction({ name: 'Black Sun' });
+  await FactionRegistryService.upsertFaction({ name: 'Black Sun' });
+  await assert.rejects(
+    () => FactionRegistryService.resolveOrCreateFactionByName('Black Sun', { source: 'job' }),
+    /Multiple Factions are named/,
+    'resolveOrCreateFactionByName must never silently pick one of several same-named Factions'
+  );
+  pass('34 — resolveOrCreateFactionByName creates on 0 matches, reuses on exactly 1 match, refuses to guess on 2+ matches');
+}
+
+{
+  // 35. upsertFactionContact / deleteFactionContact / promoteFactionContactToActor
+  // must all refuse to guess their parent Faction (or, for promote, the
+  // Contact too) among duplicate same-named candidates, while still
+  // resolving correctly -- and targeting ONLY the intended record -- when
+  // given a real id.
+  const fakeActor = { id: 'exchange-actor-1', name: 'Ralo', uuid: 'Actor.exchange-actor-1' };
+  installFreshRegistry({ actors: [fakeActor] });
+  const a = await FactionRegistryService.upsertFaction({ name: 'Exchange' });
+  const b = await FactionRegistryService.upsertFaction({ name: 'Exchange' });
+
+  await assert.rejects(
+    () => FactionRegistryService.upsertFactionContact('', { factionName: 'Exchange', name: 'Ralo', role: 'Agent' }),
+    /Multiple Factions are named/,
+    'upsertFactionContact must refuse to guess the parent Faction among duplicate same-named Factions'
+  );
+
+  const { contact } = await FactionRegistryService.upsertFactionContact(a.id, { name: 'Ralo', role: 'Agent', actorId: fakeActor.id, actorUuid: fakeActor.uuid });
+  assert.equal(FactionRegistryService.getFactionContacts(a.id).length, 1);
+  assert.equal(FactionRegistryService.getFactionContacts(b.id).length, 0, 'Faction B must be completely untouched by a mutation explicitly targeting Faction A by id');
+
+  await assert.rejects(
+    () => FactionRegistryService.promoteFactionContactToActor('Exchange', contact.id),
+    /Multiple Factions are named/,
+    'promoteFactionContactToActor must refuse to guess the parent Faction among duplicate same-named Factions'
+  );
+  const promoted = await FactionRegistryService.promoteFactionContactToActor(a.id, contact.id);
+  assert.equal(promoted.contact.id, contact.id, 'promoteFactionContactToActor must resolve correctly by real Faction id');
+
+  const { contact: duplicateNameContact } = await FactionRegistryService.upsertFactionContact(a.id, { name: 'Ralo', role: 'Agent' });
+  await assert.rejects(
+    () => FactionRegistryService.promoteFactionContactToActor(a.id, 'Ralo'),
+    /Multiple Contacts named/,
+    'promoteFactionContactToActor must refuse to guess the Contact among duplicate same-named Contacts on the same Faction'
+  );
+
+  await assert.rejects(
+    () => FactionRegistryService.deleteFactionContact('Exchange', contact.id),
+    /Multiple Factions are named/,
+    'deleteFactionContact must refuse to guess the parent Faction among duplicate same-named Factions'
+  );
+  await FactionRegistryService.deleteFactionContact(a.id, contact.id);
+  assert.equal(FactionRegistryService.getFactionContacts(a.id).length, 1, 'only the intended Contact (by id) must be removed');
+  assert.ok(FactionRegistryService.findFactionContact(a.id, duplicateNameContact.id), 'the other same-name Contact must be unaffected');
+  pass('35 — upsertFactionContact/deleteFactionContact/promoteFactionContactToActor all refuse to guess among duplicate same-named Factions/Contacts, and resolve correctly (targeting only the intended record) by real id');
+}
+
+{
+  // 36. migrateLegacyIdentities(): Contact ids are reserved/claimed in ONE
+  // pool GLOBAL across the entire registry, not reset per-Faction -- two
+  // DIFFERENT Factions' Contacts sharing the same legacy id (plausible
+  // under the old name/role-derived id scheme) must both end up with
+  // distinct ids, and the cross-Faction collision must be reported.
+  installFreshRegistry({
+    seed: {
+      gmFactionRegistry: [
+        { id: 'faction-a', name: 'Alderaan Resistance', contacts: [{ id: 'legacy-rider', name: 'Rider', role: 'Scout' }] },
+        { id: 'faction-b', name: 'Corellian Freighters', contacts: [{ id: 'legacy-rider', name: 'Rider', role: 'Pilot' }] }
+      ]
+    }
+  });
+  const migration = await FactionRegistryService.migrateLegacyIdentities();
+  assert.equal(migration.changed, true);
+  assert.equal(migration.collisions.length, 1, 'exactly one cross-Faction duplicate Contact id collision must be reported');
+  assert.equal(migration.collisions[0].kind, 'contact');
+  assert.equal(migration.collisions[0].duplicateId, 'legacy-rider');
+
+  const allContacts = FactionRegistryService.getAllFactionContacts();
+  assert.equal(new Set(allContacts.map(c => c.id)).size, 2, 'cross-Faction duplicate Contact ids must be made globally distinct, not just distinct within each Faction');
+  assert.ok(FactionRegistryService.findFaction('faction-a'));
+  assert.ok(FactionRegistryService.findFaction('faction-b'));
+  pass('36 — migrateLegacyIdentities makes cross-Faction duplicate Contact ids globally unique (one pool registry-wide, not per-Faction) and reports the collision');
+}
+
+{
+  // 37. migration id minting is collision-safe: every pre-existing id is
+  // reserved BEFORE any minting starts, so an attempted mint collision
+  // with a healthy pre-existing id retries rather than letting that
+  // healthy record get treated as the duplicate and rewritten.
+  installFreshRegistry({
+    seed: {
+      gmFactionRegistry: [
+        { name: 'Missing Id Faction', contacts: [] },
+        { id: 'abc123', name: 'Healthy Faction', contacts: [] }
+      ]
+    }
+  });
+  let calls = 0;
+  globalThis.foundry.utils.randomID = () => {
+    calls += 1;
+    return calls === 1 ? 'abc123' : `forced-${calls}`;
+  };
+  const migration = await FactionRegistryService.migrateLegacyIdentities();
+  assert.equal(migration.changed, true);
+  const registry = FactionRegistryService.getRegistry();
+  const healthy = registry.find(f => f.name === 'Healthy Faction');
+  const migrated = registry.find(f => f.name === 'Missing Id Faction');
+  assert.equal(healthy.id, 'abc123', 'the healthy pre-existing id must survive even though the minter FIRST drew the exact same value for the other record');
+  assert.notEqual(migrated.id, 'abc123', 'the missing-id record must never end up with the colliding value');
+  assert.ok(migrated.id, 'the missing-id record must still receive a real minted id');
+  assert.equal(calls, 2, 'the mint must retry exactly once after the forced collision');
+  pass('37 — migration id minting is collision-safe: a forced mint collision with a healthy pre-existing id retries instead of letting the healthy id be treated as the duplicate');
+  globalThis.foundry.utils.randomID = () => `rid-${++ridCounter}`;
+}
+
+{
+  // 38. structural regression guard: GMLocationsSurfaceController's Atlas
+  // lead reveal must resolve revealFactionIds/revealContactIds by exact id
+  // only, never a display-name fallback -- the fields are literally named
+  // "...Ids" and the UI labels the contact field "Reveal Contact ids on
+  // success". (The identity mechanism itself -- exact-id-only resolution --
+  // is already fully proven at the FactionRegistryService level above;
+  // this guards the specific caller independent review flagged, without
+  // importing the full UI controller's heavier render/host dependency
+  // graph into this identity-focused test file.)
+  const fs = await import('node:fs');
+  const locationsControllerSrc = fs.readFileSync(
+    new URL('../scripts/ui/shell/gm/controllers/GMLocationsSurfaceController.js', import.meta.url),
+    'utf8'
+  );
+  assert.ok(!locationsControllerSrc.includes('contact.name === contactId'), 'Atlas lead Contact reveal must never fall back to matching a Contact by display name');
+  assert.match(locationsControllerSrc, /find\(entry => entry\.id === factionId\)/, 'Atlas lead Faction reveal must resolve by exact id only');
+  pass('38 — GMLocationsSurfaceController Atlas lead reveal resolves revealFactionIds/revealContactIds by exact id only, with no display-name fallback (structural regression guard)');
+}
+
+{
+  // 39. functional replica of GMJobBoardSurfaceController#_saveClientAsContact()'s
+  // "reuse the existing same-name reusable Contact instead of duplicating
+  // it" algorithm, proven against the real FactionRegistryService.
+  installFreshRegistry();
+  async function saveClientAsContactLike(factionLabel, contactName) {
+    const faction = await FactionRegistryService.resolveOrCreateFactionByName(factionLabel, { source: 'job' });
+    const existingSameName = FactionRegistryService.getFactionContacts(faction.id)
+      .filter(entry => entry.name.toLowerCase() === contactName.toLowerCase());
+    const existingContactId = existingSameName.length === 1 ? existingSameName[0].id : '';
+    return FactionRegistryService.upsertFactionContact(faction.id, { id: existingContactId, name: contactName, role: 'Job Contact' });
+  }
+  const first = await saveClientAsContactLike('Kuati Drive Yards', 'Moff Rancit');
+  const second = await saveClientAsContactLike('Kuati Drive Yards', 'Moff Rancit');
+  assert.equal(second.contact.id, first.contact.id, 'saving the same reusable client contact twice must reuse the existing Contact record, not spawn a duplicate');
+  assert.equal(FactionRegistryService.getFactionContacts(first.faction.id).length, 1);
+  pass('39 — the Job Board "save client as reusable contact" reuse algorithm updates the existing same-name Contact instead of duplicating it (verified against the real FactionRegistryService)');
+}
+
+{
+  // 40. structural regression guard tying test 39's replica back to the
+  // real caller: _saveClientAsContact must actually use
+  // resolveOrCreateFactionByName() (not FactionRegistryService.findFaction()
+  // directly) and must actually look up/reuse an existing same-name
+  // Contact before calling upsertFactionContact().
+  const fs = await import('node:fs');
+  const jobBoardControllerSrc = fs.readFileSync(
+    new URL('../scripts/ui/shell/gm/controllers/GMJobBoardSurfaceController.js', import.meta.url),
+    'utf8'
+  );
+  assert.ok(jobBoardControllerSrc.includes('FactionRegistryService.resolveOrCreateFactionByName('), '_saveClientAsContact must resolve its free-text Faction name via the ambiguity-safe resolver, not FactionRegistryService.findFaction() directly');
+  assert.ok(jobBoardControllerSrc.includes('existingSameName'), '_saveClientAsContact must look up and reuse an existing same-name Contact rather than always creating a new one');
+  pass('40 — GMJobBoardSurfaceController._saveClientAsContact resolves its Faction via resolveOrCreateFactionByName() and reuses an existing same-name Contact (structural regression guard)');
 }
 
 console.log(`\nPRE-8D-4 Faction/Contact canonical identity hardening: ${passCount} assertions-groups passed.`);
