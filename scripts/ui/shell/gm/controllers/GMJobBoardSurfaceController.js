@@ -537,30 +537,24 @@ export class GMJobBoardSurfaceController {
       }
       if (type === 'faction' && factionLabel.toLowerCase() === contactName.toLowerCase()) return { faction, contact: null, savedAsFaction: true };
 
-      let existingContactId;
+      // Identity hardening (PRE-8D-4, correction pass round 4): an explicit
+      // canonical contactId is authoritative -- update exactly that Contact,
+      // or fail. It must NEVER be silently reinterpreted as "create someone
+      // new" just because it didn't resolve (a stale id, or one that
+      // belongs to a different Faction than the one just resolved). And
+      // when no contactId was ever supplied, this ALWAYS creates a new
+      // Contact -- display text (a name, even tag-gated) no longer decides
+      // canonical Contact sameness anywhere in this method. The proper path
+      // for intentional reuse is the GM selecting a known/reusable Contact
+      // in the wizard, which populates issuerContactId and lands in the
+      // branch above; typing a bare name is, and now always means, "this is
+      // a new Contact."
+      let existingContactId = '';
       if (explicitContactId) {
-        // A real Contact id is already known (the GM picked a known issuer)
-        // -- update exactly that Contact. Never inferred from name.
         const contactResolution = FactionRegistryService.resolveFactionContactForMutation(faction.id, explicitContactId);
         if (contactResolution.ambiguous) throw new Error(`Multiple Contacts match "${explicitContactId}" on ${faction.name} — specify a Contact id.`);
-        existingContactId = contactResolution.contact?.id || '';
-      } else {
-        // LEGACY COMPATIBILITY (narrow, explicit): no canonical Contact id
-        // was ever available -- a purely free-text client save. Reuse an
-        // existing Contact only when it already carries the exact
-        // reusable-contact tags this method itself writes below AND the
-        // name is unambiguous. A same-name match alone is NOT enough: an
-        // ordinary dossier Contact the GM built by hand through the
-        // Faction editor must never be silently overwritten just because a
-        // Job client happens to share its name (CORRECTION PASS round 2 --
-        // display text still must not decide canonical Contact sameness,
-        // even one layer above the registry).
-        const existingReusableSameName = FactionRegistryService.getFactionContacts(faction.id)
-          .filter(entry => entry.name.toLowerCase() === contactName.toLowerCase()
-            && Array.isArray(entry.tags)
-            && entry.tags.includes('job-board')
-            && entry.tags.includes('reusable-contact'));
-        existingContactId = existingReusableSameName.length === 1 ? existingReusableSameName[0].id : '';
+        if (!contactResolution.contact) throw new Error('The selected issuer Contact could not be found on this Faction.');
+        existingContactId = contactResolution.contact.id;
       }
       return FactionRegistryService.upsertFactionContact(faction.id, {
         id: existingContactId,
