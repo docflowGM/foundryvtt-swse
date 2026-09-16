@@ -215,7 +215,16 @@ export class FactionIntelBridgeService {
   static async #linkIntelToContact(factionId = '', contactId = '', id = '') {
     const cleanId = text(id);
     if (!cleanId) return null;
-    const found = FactionRegistryService.findFactionContact(factionId, contactId);
+    // Identity hardening (PRE-8D-4, correction pass round 3): factionId/
+    // contactId here are already-resolved canonical ids (from
+    // resolveContact() above), not free text -- resolve the write-back
+    // target through the ambiguity-safe mutation resolver, not
+    // findFactionContact(), so this can never land on the wrong record via
+    // findFaction()'s name-capable search (e.g. another Faction whose
+    // display name happens to equal this Faction's real id).
+    const resolution = FactionRegistryService.resolveFactionContactForMutation(factionId, contactId);
+    if (resolution.ambiguous) throw new Error(`Multiple ${resolution.ambiguousKind === 'faction' ? 'Factions' : 'Contacts'} match the Intel link target — specify an id.`);
+    const found = resolution.contact ? { faction: resolution.faction, contact: resolution.contact } : null;
     if (!found?.faction || !found?.contact) return null;
     const linkedIntelIds = uniqueStrings([...(found.contact.linkedIntelIds || []), cleanId]);
     return FactionRegistryService.upsertFactionContact(found.faction.id, {

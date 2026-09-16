@@ -724,29 +724,48 @@ installFreshRegistry();
   pass('38 — GMLocationsSurfaceController Atlas lead reveal resolves revealFactionIds/revealContactIds by exact id only, with no display-name fallback (structural regression guard)');
 }
 
-{
-  // 39. functional replica of GMJobBoardSurfaceController#_saveClientAsContact()'s
-  // "reuse the existing same-name reusable Contact instead of duplicating
-  // it" algorithm, proven against the real FactionRegistryService.
-  //
-  // CORRECTION PASS round 2: independent re-review found the first version
-  // of this algorithm (and this test) reused ANY same-name Contact,
-  // including an ordinary dossier Contact the GM built by hand -- display
-  // text deciding canonical sameness again, one layer above the registry.
-  // The fix (and this replica) requires the existing Contact to ALREADY
-  // carry the exact ['job-board', 'reusable-contact'] tags this same
-  // algorithm itself writes, not merely a matching name.
-  installFreshRegistry();
-  async function saveClientAsContactLike(factionLabel, contactName) {
-    const faction = await FactionRegistryService.resolveOrCreateFactionByName(factionLabel, { source: 'job' });
-    const existingReusableSameName = FactionRegistryService.getFactionContacts(faction.id)
-      .filter(entry => entry.name.toLowerCase() === contactName.toLowerCase()
-        && Array.isArray(entry.tags) && entry.tags.includes('job-board') && entry.tags.includes('reusable-contact'));
-    const existingContactId = existingReusableSameName.length === 1 ? existingReusableSameName[0].id : '';
-    return FactionRegistryService.upsertFactionContact(faction.id, { id: existingContactId, name: contactName, role: 'Job Contact', tags: ['job-board', 'reusable-contact'] });
+// Functional replica of GMJobBoardSurfaceController#_saveClientAsContact()'s
+// full round-3 algorithm, proven against the real FactionRegistryService:
+// an explicit factionId/contactId (carried by the contract form once the
+// GM picked a known issuer) is authoritative and used directly; only when
+// neither was ever available (a purely free-text client/faction save) does
+// it fall back to the narrow, explicitly-scoped legacy path (reuse an
+// existing Contact only when it already carries the exact
+// ['job-board', 'reusable-contact'] tags this same algorithm writes AND
+// the name is unambiguous -- never a bare name match, which would let
+// display text decide canonical Contact sameness one layer above the
+// registry).
+async function saveClientAsContactLike({ factionId = '', factionName = '', contactId = '', clientName = '' } = {}) {
+  const explicitFactionId = String(factionId || '').trim();
+  const explicitContactId = String(contactId || '').trim();
+  let faction;
+  if (explicitFactionId) {
+    const factionResolution = FactionRegistryService.resolveFactionForMutation(explicitFactionId);
+    if (factionResolution.ambiguous) throw new Error(`Multiple Factions match "${explicitFactionId}" — specify a Faction id.`);
+    faction = factionResolution.faction;
+    if (!faction) throw new Error('The selected issuer Faction could not be found.');
+  } else {
+    faction = await FactionRegistryService.resolveOrCreateFactionByName(factionName, { source: 'job' });
   }
-  const first = await saveClientAsContactLike('Kuati Drive Yards', 'Moff Rancit');
-  const second = await saveClientAsContactLike('Kuati Drive Yards', 'Moff Rancit');
+  let existingContactId;
+  if (explicitContactId) {
+    const contactResolution = FactionRegistryService.resolveFactionContactForMutation(faction.id, explicitContactId);
+    if (contactResolution.ambiguous) throw new Error(`Multiple Contacts match "${explicitContactId}" on ${faction.name} — specify a Contact id.`);
+    existingContactId = contactResolution.contact?.id || '';
+  } else {
+    const existingReusableSameName = FactionRegistryService.getFactionContacts(faction.id)
+      .filter(entry => entry.name.toLowerCase() === clientName.toLowerCase()
+        && Array.isArray(entry.tags) && entry.tags.includes('job-board') && entry.tags.includes('reusable-contact'));
+    existingContactId = existingReusableSameName.length === 1 ? existingReusableSameName[0].id : '';
+  }
+  return FactionRegistryService.upsertFactionContact(faction.id, { id: existingContactId, name: clientName, role: 'Job Contact', tags: ['job-board', 'reusable-contact'] });
+}
+
+{
+  // 39. the free-text (legacy) path: no canonical id was ever available.
+  installFreshRegistry();
+  const first = await saveClientAsContactLike({ factionName: 'Kuati Drive Yards', clientName: 'Moff Rancit' });
+  const second = await saveClientAsContactLike({ factionName: 'Kuati Drive Yards', clientName: 'Moff Rancit' });
   assert.equal(second.contact.id, first.contact.id, 'saving the SAME reusable client contact twice must reuse the existing tagged Contact record, not spawn a duplicate');
   assert.equal(FactionRegistryService.getFactionContacts(first.faction.id).length, 1);
 
@@ -757,20 +776,22 @@ installFreshRegistry();
   const { contact: dossierContact } = await FactionRegistryService.upsertFactionContact(faction2.id, {
     name: 'Mira', role: 'Intelligence Chief', gmNotes: 'Long-running dossier NPC, not a Job Board contact.'
   });
-  const jobSaved = await saveClientAsContactLike('Exchange', 'Mira');
+  const jobSaved = await saveClientAsContactLike({ factionName: 'Exchange', clientName: 'Mira' });
   assert.notEqual(jobSaved.contact.id, dossierContact.id, 'a Job Board save must never overwrite an ordinary same-name dossier Contact');
   const stillDossier = FactionRegistryService.findFactionContact(faction2.id, dossierContact.id)?.contact;
   assert.equal(stillDossier.gmNotes, 'Long-running dossier NPC, not a Job Board contact.', 'the ordinary dossier Contact must be completely untouched');
   assert.equal(FactionRegistryService.getFactionContacts(faction2.id).length, 2, 'the dossier Contact and the new Job Board reusable Contact must coexist as distinct records');
-  pass('39 — the Job Board "save client as reusable contact" algorithm reuses the SAME already-tagged reusable Contact across repeat saves, but never overwrites an ordinary same-name dossier Contact (verified against the real FactionRegistryService)');
+  pass('39 — the Job Board legacy free-text save path reuses the SAME already-tagged reusable Contact across repeat saves, but never overwrites an ordinary same-name dossier Contact (verified against the real FactionRegistryService)');
 }
 
 {
-  // 40. structural regression guard tying test 39's replica back to the
-  // real caller: _saveClientAsContact must actually use
+  // 40. structural regression guard tying the replica back to the real
+  // caller: _saveClientAsContact must actually use
   // resolveOrCreateFactionByName() (not FactionRegistryService.findFaction()
-  // directly), and its Contact-reuse lookup must require the reusable-
-  // contact tags (not merely a matching name).
+  // directly), and its legacy-path Contact-reuse lookup must require the
+  // reusable-contact tags (not merely a matching name). Also confirms the
+  // caller (the contract-submit handler) now threads issuerFactionId/
+  // issuerContactId through instead of discarding them (round 3).
   const fs = await import('node:fs');
   const jobBoardControllerSrc = fs.readFileSync(
     new URL('../scripts/ui/shell/gm/controllers/GMJobBoardSurfaceController.js', import.meta.url),
@@ -778,8 +799,10 @@ installFreshRegistry();
   );
   assert.ok(jobBoardControllerSrc.includes('FactionRegistryService.resolveOrCreateFactionByName('), '_saveClientAsContact must resolve its free-text Faction name via the ambiguity-safe resolver, not FactionRegistryService.findFaction() directly');
   assert.ok(jobBoardControllerSrc.includes("entry.tags.includes('job-board')") && jobBoardControllerSrc.includes("entry.tags.includes('reusable-contact')"),
-    '_saveClientAsContact must require the reusable-contact tags before reusing an existing Contact, not merely a matching name');
-  pass('40 — GMJobBoardSurfaceController._saveClientAsContact resolves its Faction via resolveOrCreateFactionByName() and only reuses an already-tagged reusable Contact, never an ordinary same-name dossier Contact (structural regression guard)');
+    '_saveClientAsContact must require the reusable-contact tags before reusing an existing Contact via the legacy name-only path');
+  assert.ok(jobBoardControllerSrc.includes("factionId: text('issuerFactionId')") && jobBoardControllerSrc.includes("contactId: text('issuerContactId')"),
+    'the contract-submit handler must pass the real canonical issuerFactionId/issuerContactId into _saveClientAsContact() rather than discarding them');
+  pass('40 — GMJobBoardSurfaceController._saveClientAsContact resolves via resolveOrCreateFactionByName() and only reuses an already-tagged reusable Contact via the legacy path; the caller threads real issuer ids through (structural regression guard)');
 }
 
 {
@@ -814,6 +837,115 @@ installFreshRegistry();
   const resolvedByIntelBridge = FactionIntelBridgeService.resolveFaction(a.id);
   assert.equal(resolvedByIntelBridge.id, a.id, 'FactionIntelBridgeService.resolveFaction() must still resolve correctly by real id');
   pass('41 — GMFactionRelationshipSurfaceController\'s hide-contact resolution and FactionIntelBridgeService.resolveFaction()/resolveContact() both refuse to guess among duplicate same-named Factions/Contacts before mutating');
+}
+
+// ---------------------------------------------------------------------
+// CORRECTION PASS round 3 (independent re-re-review) 42-46
+//
+// Round 2 closed every remaining SEARCH-helper-feeds-a-mutation path, but
+// round 3 found the Job Board's own fix still inferred Contact sameness
+// from a (tag-gated) name match even when the contract form already had
+// the real issuerFactionId/issuerContactId in hand -- and that
+// FactionIntelBridgeService's Contact write-back, though routed through
+// the new ambiguity-safe resolver at the top, still passed already-
+// resolved REAL ids back through it, which was safe in practice but not
+// yet proven against the one theoretical hazard the resolver exists to
+// avoid (another record's NAME colliding with the target's real id).
+// ---------------------------------------------------------------------
+
+{
+  // 42. selecting a known issuer (a real issuerContactId is already in
+  // hand) and saving it for reuse must update EXACTLY that Contact --
+  // never re-derived from name, even though the legacy tag-gated lookup
+  // would have found the same record anyway here.
+  installFreshRegistry();
+  const faction = await FactionRegistryService.upsertFaction({ name: 'Kuati Drive Yards' });
+  const { contact } = await FactionRegistryService.upsertFactionContact(faction.id, { name: 'Moff Rancit', role: 'Contact', tags: ['job-board', 'reusable-contact'] });
+  const saved = await saveClientAsContactLike({ factionId: faction.id, contactId: contact.id, factionName: 'Kuati Drive Yards', clientName: 'Moff Rancit' });
+  assert.equal(saved.contact.id, contact.id, 'an explicit issuerContactId must update exactly that Contact');
+  assert.equal(FactionRegistryService.getFactionContacts(faction.id).length, 1, 'no duplicate must be created when the real Contact id was already known');
+  pass('42 — selecting a known issuer and saving it for reuse updates the exact issuerContactId, never re-derived from name');
+}
+
+{
+  // 43. two distinct Job Board reusable Contacts may share the same name
+  // without either being overwritten: each was originally saved with its
+  // OWN explicit issuerContactId (so they never merge at creation), and a
+  // later FREE-TEXT save (no explicit contactId) of that same name is
+  // ambiguous between them -- so it must create a THIRD distinct Contact
+  // rather than guessing which of the two existing ones to update.
+  installFreshRegistry();
+  const faction = await FactionRegistryService.upsertFaction({ name: 'Zann Consortium' });
+  const { contact: contactOne } = await FactionRegistryService.upsertFactionContact(faction.id, { name: 'Silri', role: 'Contact', tags: ['job-board', 'reusable-contact'] });
+  const { contact: contactTwo } = await FactionRegistryService.upsertFactionContact(faction.id, { name: 'Silri', role: 'Contact', tags: ['job-board', 'reusable-contact'] });
+  assert.notEqual(contactOne.id, contactTwo.id);
+  const thirdSave = await saveClientAsContactLike({ factionId: faction.id, factionName: 'Zann Consortium', clientName: 'Silri' });
+  assert.notEqual(thirdSave.contact.id, contactOne.id, 'an ambiguous free-text save must never silently pick the first of several same-name reusable Contacts');
+  assert.notEqual(thirdSave.contact.id, contactTwo.id, 'an ambiguous free-text save must never silently pick either of several same-name reusable Contacts');
+  assert.equal(FactionRegistryService.getFactionContacts(faction.id).length, 3, 'all three same-name reusable Contacts must coexist as distinct records');
+  pass('43 — two distinct Job Board reusable Contacts may share the same name without either being overwritten; an ambiguous free-text save creates a new, distinct Contact instead of guessing');
+}
+
+{
+  // 44. duplicate same-name Factions do not cause a failure when a real
+  // issuerFactionId is already available -- the explicit id must be used
+  // authoritatively, bypassing the name-ambiguity entirely.
+  installFreshRegistry();
+  const a = await FactionRegistryService.upsertFaction({ name: 'Republic Intelligence' });
+  await FactionRegistryService.upsertFaction({ name: 'Republic Intelligence' });
+  const saved = await saveClientAsContactLike({ factionId: a.id, factionName: 'Republic Intelligence', clientName: 'Agent Kallus' });
+  assert.equal(saved.faction.id, a.id, 'an explicit issuerFactionId must resolve directly to that Faction despite the ambiguous shared name');
+  pass('44 — duplicate same-name Factions do not cause a failure when a real issuerFactionId is already available');
+}
+
+{
+  // 45. Intel write-back regression: another Faction's DISPLAY NAME
+  // literally equals the target Faction's real canonical id, and that
+  // other Faction was created FIRST (earlier in the registry array) --
+  // exactly the ordering hazard old findFaction()'s single combined-
+  // condition .find() (record.id === query || ... || record.name...)
+  // could fall into. #linkIntelToContact() now resolves through
+  // resolveFactionContactForMutation() (exact id checked in its own pass
+  // over the whole array, before any name fallback is even considered),
+  // so the Intel link must land on the correct Faction/Contact regardless
+  // of array order.
+  installFreshRegistry();
+  const decoyFaction = await FactionRegistryService.upsertFaction({ name: 'faction-x' }); // name literally equals the target's future id
+  const targetFaction = await FactionRegistryService.upsertFaction({ id: 'faction-x', name: 'Faction X' });
+  const { contact } = await FactionRegistryService.upsertFactionContact(targetFaction.id, { name: 'Agent', role: 'Handler' });
+  const record = await FactionIntelBridgeService.createDraftFromContact(targetFaction.id, contact.id, {});
+  assert.ok(record?.id, 'creating the Intel draft (and its Contact write-back) must succeed');
+  // Verify via the exact-id-safe resolver, not findFactionContact()/
+  // getFactionContacts() -- both internally call the still-intentionally-
+  // flexible findFaction(), which is the EXACT search helper this test's
+  // decoy Faction is designed to fool (findFaction('faction-x') matches
+  // the decoy's NAME before ever reaching the target's real id, since it
+  // was created first and findFaction() is a single combined-condition
+  // .find() over the whole array). Using it here would just reproduce the
+  // bug in the test's own verification instead of proving the fix.
+  // (the linked value is HolonetIntelService's own metadata id, not
+  // necessarily record.id verbatim -- an unrelated pre-existing detail of
+  // that service; what matters for identity hardening is that a link was
+  // written, and written onto the correct id-targeted Contact.)
+  const linkedContact = FactionRegistryService.resolveFactionContactForMutation(targetFaction.id, contact.id).contact;
+  assert.equal(linkedContact.linkedIntelIds.length, 1, 'the Intel link must land on the correct (id-targeted) Faction\'s Contact');
+  const decoyRegistryEntry = FactionRegistryService.getRegistry().find(entry => entry.id === decoyFaction.id);
+  assert.equal(decoyRegistryEntry.contacts.length, 0, 'the decoy Faction (whose NAME collides with the target\'s real id) must be completely untouched');
+  pass('45 — Intel Contact write-back resolves by exact id even when another Faction\'s display name collides with the target Faction\'s real canonical id and was created first');
+}
+
+{
+  // 46. structural regression guard: #linkIntelToContact() must resolve
+  // through resolveFactionContactForMutation(), not the flexible
+  // findFactionContact() search helper.
+  const fs = await import('node:fs');
+  const intelBridgeSrc = fs.readFileSync(
+    new URL('../scripts/ui/shell/gm/FactionIntelBridgeService.js', import.meta.url),
+    'utf8'
+  );
+  assert.ok(intelBridgeSrc.includes('FactionRegistryService.resolveFactionContactForMutation('), '#linkIntelToContact() must resolve its write-back target via the ambiguity-safe mutation resolver');
+  assert.ok(!/#linkIntelToContact[\s\S]{0,400}FactionRegistryService\.findFactionContact\(/.test(intelBridgeSrc), '#linkIntelToContact() must not fall back to the flexible findFactionContact() search helper');
+  pass('46 — FactionIntelBridgeService#linkIntelToContact() resolves its Contact write-back target via resolveFactionContactForMutation(), never findFactionContact() (structural regression guard)');
 }
 
 console.log(`\nPRE-8D-4 Faction/Contact canonical identity hardening: ${passCount} assertions-groups passed.`);
