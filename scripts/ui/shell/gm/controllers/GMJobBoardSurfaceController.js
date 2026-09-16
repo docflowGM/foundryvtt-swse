@@ -523,13 +523,21 @@ export class GMJobBoardSurfaceController {
       if (type === 'faction' && factionLabel.toLowerCase() === contactName.toLowerCase()) return { faction, contact: null, savedAsFaction: true };
       // Reuse the existing reusable Contact record for a repeat "save as
       // reusable contact" of the same client name on this Faction, rather
-      // than spawning a new duplicate Contact on every save -- but only
-      // when exactly one existing Contact has this exact name; two or more
-      // is ambiguous and this always creates a new, distinct Contact rather
-      // than guessing which one to overwrite.
-      const existingSameName = FactionRegistryService.getFactionContacts(faction.id)
-        .filter(entry => entry.name.toLowerCase() === contactName.toLowerCase());
-      const existingContactId = existingSameName.length === 1 ? existingSameName[0].id : '';
+      // than spawning a new duplicate Contact on every save -- but ONLY
+      // when it is already tagged as a Job Board reusable contact (the
+      // exact tags this same method writes below) AND the name is
+      // unambiguous. A same-name match alone is NOT enough: an ordinary
+      // dossier Contact the GM built by hand through the Faction editor
+      // must never be silently overwritten just because a Job client
+      // happens to share its name (CORRECTION PASS round 2 -- display
+      // text still must not decide canonical Contact sameness, even one
+      // layer above the registry).
+      const existingReusableSameName = FactionRegistryService.getFactionContacts(faction.id)
+        .filter(entry => entry.name.toLowerCase() === contactName.toLowerCase()
+          && Array.isArray(entry.tags)
+          && entry.tags.includes('job-board')
+          && entry.tags.includes('reusable-contact'));
+      const existingContactId = existingReusableSameName.length === 1 ? existingReusableSameName[0].id : '';
       return FactionRegistryService.upsertFactionContact(faction.id, {
         id: existingContactId,
         name: contactName,

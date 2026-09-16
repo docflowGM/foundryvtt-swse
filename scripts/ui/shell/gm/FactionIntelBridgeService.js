@@ -104,21 +104,33 @@ function contactGmNotes(contact = {}, faction = {}) {
 }
 
 export class FactionIntelBridgeService {
+  // Identity hardening (PRE-8D-4, correction pass round 2): resolveFaction()/
+  // resolveContact() feed createDraftFromContact()'s #linkIntelToContact(),
+  // a real Contact mutation (it writes linkedIntelIds back onto the
+  // resolved Contact) -- so resolution here must be ambiguity-safe like any
+  // other mutation-target lookup, not the flexible findFaction()/
+  // findFactionContact() SEARCH helpers this used previously. An already-
+  // resolved object (real .id present) is trusted as-is; a string id/name
+  // goes through FactionRegistryService's PERMISSIVE id-or-unique-name
+  // resolver, which throws on an ambiguous same-named match rather than
+  // silently picking the first one.
   static resolveFaction(factionOrId = '') {
-    return typeof factionOrId === 'object' && factionOrId?.id
-      ? factionOrId
-      : FactionRegistryService.findFaction(factionOrId);
+    if (typeof factionOrId === 'object' && factionOrId?.id) return factionOrId;
+    const resolution = FactionRegistryService.resolveFactionForMutation(factionOrId);
+    if (resolution.ambiguous) throw new Error(`Multiple Factions match "${text(factionOrId)}" — specify a Faction id.`);
+    return resolution.faction;
   }
 
   static resolveContact(factionOrId = '', contactOrId = '') {
     if (typeof contactOrId === 'object' && contactOrId?.id) {
-      const faction = this.resolveFaction(factionOrId) || FactionRegistryService.findFaction(contactOrId.factionId || contactOrId.factionName);
+      const faction = this.resolveFaction(factionOrId) || this.resolveFaction(contactOrId.factionId || contactOrId.factionName);
       return faction ? { faction, contact: contactOrId } : null;
     }
     const faction = this.resolveFaction(factionOrId);
     if (!faction) return null;
-    return FactionRegistryService.findFactionContact(faction.id, contactOrId)
-      || FactionRegistryService.findFactionContact(faction.name, contactOrId);
+    const resolution = FactionRegistryService.resolveFactionContactForMutation(faction.id, contactOrId);
+    if (resolution.ambiguous) throw new Error(`Multiple Contacts match "${text(contactOrId)}" on ${faction.name} — specify a Contact id.`);
+    return resolution.contact ? { faction, contact: resolution.contact } : null;
   }
 
   static async createDraftFromFaction(factionOrId, overrides = {}) {

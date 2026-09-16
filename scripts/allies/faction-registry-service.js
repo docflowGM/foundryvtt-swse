@@ -96,6 +96,22 @@ function mintUniqueId(reserved) {
   return candidate;
 }
 
+/**
+ * Reproduces the EXACT pre-hardening id formula for a raw Faction/Contact
+ * that is missing an id, so migrateLegacyIdentities() can recover the
+ * "old effective identity" an external reference (Location/Intel/Job/Actor
+ * relationship) may already have captured before this hardening pass --
+ * see that method's own doc comment (CORRECTION PASS round 2).
+ */
+function legacyFactionIdCandidate(rawFaction) {
+  return slugify(cleanText(rawFaction.name || rawFaction.factionName || 'Unnamed Faction'));
+}
+function legacyContactIdCandidate(rawContact) {
+  const name = cleanText(rawContact.name || rawContact.contactName || 'Unnamed Contact');
+  const role = cleanText(rawContact.role || rawContact.contactRole || rawContact.title || 'Faction Contact');
+  return slugify(`${name}-${role}`);
+}
+
 function slugify(value) {
   const base = cleanText(value).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
   return base || randomId();
@@ -157,12 +173,21 @@ function normalizeContact(record = {}) {
   const revealState = normalizeChoice(record.revealState || (record.knownToPlayers ? 'known' : 'hidden'), CONTACT_REVEAL_VALUES, 'hidden');
   const knownToPlayers = normalizeBoolean(record.knownToPlayers, revealState === 'known' || revealState === 'compromised');
   return {
-    // Identity hardening (PRE-8D-4): a Contact's id is never derived from its
-    // display name/role. When no id is supplied this is a brand-new Contact
-    // and gets a fresh, name-independent id so duplicate name+role Contacts
-    // remain distinct records. An id already present (including a legacy
-    // name-derived one) is preserved untouched — stability over cosmetic purity.
-    id: cleanText(record.id || record.contactId) || randomId(),
+    // Identity hardening (PRE-8D-4): a NEW Contact (created through
+    // upsertFactionContact(), which always supplies an id explicitly before
+    // calling this function -- see that method) never derives its id from
+    // display name/role; it always gets a fresh randomId() there instead.
+    // This fallback only ever fires for a RAW, never-yet-migrated legacy
+    // Contact record read directly off disk (id genuinely absent in
+    // storage) -- for that case ONLY, recompute the exact legacy formula
+    // pre-hardening code used (slugify(name-role)) rather than a fresh
+    // random value, so an external reference (Location/Intel/Job/Actor
+    // relationship) that already captured THIS record's old effective id
+    // keeps resolving. This is a stability/backward-compat concern, not a
+    // reintroduction of name-derived identity for new records: it is
+    // itself collision-checked and superseded once
+    // migrateLegacyIdentities() persists a real id (CORRECTION PASS round 2).
+    id: cleanText(record.id || record.contactId) || slugify(`${name}-${role}`),
     name,
     role,
     title: cleanText(record.title || ''),
@@ -363,6 +388,27 @@ export class FactionRegistryService {
    * duplicate, then reports every such case (via the returned `collisions`
    * array and an SWSELogger warning) rather than pretending the ambiguity
    * doesn't exist.
+   *
+   * CORRECTION PASS round 2 (independent re-review): a MISSING id is not
+   * given a fresh random id outright anymore. Pre-hardening code always
+   * read a missing Faction/Contact id as slugify(name)/slugify(name-role)
+   * (see _normalizeFactionRecord()/normalizeContact()'s own fallback,
+   * which reproduces the identical formula for the same reason) -- any
+   * external reference (a Location's controllingFactionId, an Intel
+   * record's linkedFactionId, a Job's issuerFactionId, an Actor
+   * relationship's factionId) created by reading THIS record before this
+   * hardening pass shipped would have captured that exact value. Minting
+   * a random id instead would silently orphan every such reference. So a
+   * missing id first tries that EXACT legacy formula as its candidate;
+   * only when the candidate is already reserved/claimed (a genuine
+   * name/role collision between two legacy no-id records, or a collision
+   * with a healthy already-persisted id) does it fall back to
+   * mintUniqueId() -- reported as a real migratedFactions/migratedContacts
+   * entry either way, with `recoveredLegacyIdentity` marking which
+   * happened. New records (through upsertFaction()/upsertFactionContact(),
+   * which always supply an id explicitly and never reach this path) are
+   * completely unaffected -- this is legacy-read compatibility, not a
+   * reintroduction of name-derived identity for anything new.
    */
   static async migrateLegacyIdentities() {
     const raw = safeArray(getSetting());
@@ -389,10 +435,19 @@ export class FactionRegistryService {
       const faction = { ...rawFaction };
       const priorFactionId = cleanText(faction.id || faction.factionId);
       let factionId = priorFactionId;
-      if (!factionId || claimedFactionIds.has(factionId)) {
-        factionId = mintUniqueId(reservedFactionIds);
-        migratedFactions.push({ from: priorFactionId || '(missing)', to: factionId, name: cleanText(faction.name) });
-        if (priorFactionId) collisions.push({ kind: 'faction', duplicateId: priorFactionId, reassignedTo: factionId, name: cleanText(faction.name) });
+      if (!factionId) {
+        const legacyCandidate = legacyFactionIdCandidate(faction);
+        const recoveredLegacyIdentity = !reservedFactionIds.has(legacyCandidate) && !claimedFactionIds.has(legacyCandidate);
+        factionId = recoveredLegacyIdentity ? legacyCandidate : mintUniqueId(reservedFactionIds);
+        if (recoveredLegacyIdentity) reservedFactionIds.add(factionId);
+        migratedFactions.push({ from: '(missing)', to: factionId, name: cleanText(faction.name), recoveredLegacyIdentity });
+        if (!recoveredLegacyIdentity) collisions.push({ kind: 'faction', duplicateId: legacyCandidate, reassignedTo: factionId, name: cleanText(faction.name) });
+        changed = true;
+      } else if (claimedFactionIds.has(factionId)) {
+        const newId = mintUniqueId(reservedFactionIds);
+        migratedFactions.push({ from: factionId, to: newId, name: cleanText(faction.name), recoveredLegacyIdentity: false });
+        collisions.push({ kind: 'faction', duplicateId: factionId, reassignedTo: newId, name: cleanText(faction.name) });
+        factionId = newId;
         changed = true;
       }
       faction.id = factionId;
@@ -402,10 +457,19 @@ export class FactionRegistryService {
         const contact = { ...rawContact };
         const priorContactId = cleanText(contact.id || contact.contactId);
         let contactId = priorContactId;
-        if (!contactId || claimedContactIds.has(contactId)) {
-          contactId = mintUniqueId(reservedContactIds);
-          migratedContacts.push({ factionId, from: priorContactId || '(missing)', to: contactId, name: cleanText(contact.name) });
-          if (priorContactId) collisions.push({ kind: 'contact', duplicateId: priorContactId, factionId, reassignedTo: contactId, name: cleanText(contact.name) });
+        if (!contactId) {
+          const legacyCandidate = legacyContactIdCandidate(contact);
+          const recoveredLegacyIdentity = !reservedContactIds.has(legacyCandidate) && !claimedContactIds.has(legacyCandidate);
+          contactId = recoveredLegacyIdentity ? legacyCandidate : mintUniqueId(reservedContactIds);
+          if (recoveredLegacyIdentity) reservedContactIds.add(contactId);
+          migratedContacts.push({ factionId, from: '(missing)', to: contactId, name: cleanText(contact.name), recoveredLegacyIdentity });
+          if (!recoveredLegacyIdentity) collisions.push({ kind: 'contact', duplicateId: legacyCandidate, factionId, reassignedTo: contactId, name: cleanText(contact.name) });
+          changed = true;
+        } else if (claimedContactIds.has(contactId)) {
+          const newContactId = mintUniqueId(reservedContactIds);
+          migratedContacts.push({ factionId, from: contactId, to: newContactId, name: cleanText(contact.name), recoveredLegacyIdentity: false });
+          collisions.push({ kind: 'contact', duplicateId: contactId, factionId, reassignedTo: newContactId, name: cleanText(contact.name) });
+          contactId = newContactId;
           changed = true;
         }
         contact.id = contactId;
@@ -608,6 +672,32 @@ export class FactionRegistryService {
     if (nameMatches.length === 1) return { contact: nameMatches[0], ambiguous: false };
     if (nameMatches.length > 1) return { contact: null, ambiguous: true };
     return { contact: null, ambiguous: false };
+  }
+
+  /**
+   * CORRECTION PASS round 2 (independent re-review): PUBLIC counterparts to
+   * the two PERMISSIVE private resolvers above, for external callers that
+   * need to safely resolve a Faction/Contact by id-or-unique-name to feed a
+   * SUBSEQUENT mutation (not merely to display something) -- e.g. "read this
+   * Contact's current data so I can toggle its revealState," or "resolve
+   * which Contact an Intel record should link back to." Using the flexible
+   * findFaction()/findFactionContact() SEARCH helpers for that purpose was
+   * exactly the bug this whole phase exists to close, one layer removed:
+   * reading the WRONG same-named record's data is just as unsafe as
+   * mutating it directly by the wrong id. Never guesses among duplicates.
+   */
+  static resolveFactionForMutation(factionIdOrName = '') {
+    return this._resolveFactionByIdOrUniqueName(factionIdOrName);
+  }
+
+  static resolveFactionContactForMutation(factionIdOrName = '', contactIdOrName = '') {
+    const factionResolution = this._resolveFactionByIdOrUniqueName(factionIdOrName);
+    if (factionResolution.ambiguous) return { faction: null, contact: null, ambiguous: true, ambiguousKind: 'faction' };
+    const faction = factionResolution.faction;
+    if (!faction) return { faction: null, contact: null, ambiguous: false };
+    const contactResolution = this._resolveFactionContactByIdOrUniqueName(faction, contactIdOrName);
+    if (contactResolution.ambiguous) return { faction, contact: null, ambiguous: true, ambiguousKind: 'contact' };
+    return { faction, contact: contactResolution.contact, ambiguous: false };
   }
 
   static async upsertFactionContact(factionId = '', data = {}) {
@@ -1129,12 +1219,21 @@ export class FactionRegistryService {
     const source = this._normalizeSource(record.source || 'gm');
     const score = normalizeScore(record.score ?? record.startingScore ?? 0);
     return {
-      // Identity hardening (PRE-8D-4): a truly missing id falls back to a
-      // fresh, name-independent id rather than slugify(name) -- two distinct
-      // legacy records that both lack an id and happen to share a display
-      // name must never collapse onto the same derived id. An id already
-      // present (name-derived legacy ids included) is preserved untouched.
-      id: cleanText(record.id || record.factionId) || randomId(),
+      // Identity hardening (PRE-8D-4): a NEW Faction (created through
+      // upsertFaction(), which always supplies an id explicitly before
+      // calling this function) never derives its id from name; it always
+      // gets a fresh randomId() there instead. This fallback only ever
+      // fires for a RAW, never-yet-migrated legacy Faction record read
+      // directly off disk (id genuinely absent in storage) -- for that
+      // case ONLY, recompute the exact legacy formula pre-hardening code
+      // used (slugify(name)), so an external reference that already
+      // captured this record's old effective id keeps resolving. Two
+      // distinct legacy records that both lack an id and share a name
+      // still can't collapse onto the same id long-term:
+      // migrateLegacyIdentities() (below) detects that exact collision at
+      // persist time and disambiguates it once, permanently
+      // (CORRECTION PASS round 2).
+      id: cleanText(record.id || record.factionId) || slugify(name),
       name,
       type: cleanText(record.type || record.kind || 'Faction'),
       planetSystem: planetSystemFrom(record),

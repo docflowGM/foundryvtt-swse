@@ -70,6 +70,7 @@ const { FactionRegistryService } = await import('/systems/foundryvtt-swse/script
 const { FactionJobBridgeService } = await import('/systems/foundryvtt-swse/scripts/ui/shell/gm/FactionJobBridgeService.js');
 const { LocationJobBridgeService } = await import('/systems/foundryvtt-swse/scripts/ui/shell/gm/LocationJobBridgeService.js');
 const { createNpcConceptDraft, NPC_CONCEPT_KIND } = await import('/systems/foundryvtt-swse/scripts/generation/npc-concept.js');
+const { FactionIntelBridgeService } = await import('/systems/foundryvtt-swse/scripts/ui/shell/gm/FactionIntelBridgeService.js');
 
 let passCount = 0;
 function pass(label) {
@@ -153,6 +154,16 @@ installFreshRegistry();
   // idempotent. Two records share a name AND both lack an id -- the
   // pre-hardening bug this exact pathway used to collide them onto the
   // same slugify(name) id.
+  //
+  // CORRECTION PASS round 2: read-time normalization (getRegistry()) now
+  // deliberately REPRODUCES that old collision-prone slugify(name) value
+  // for a still-unmigrated missing-id record (both Factions below read as
+  // "hutt-cartel" before migration runs) -- this is the exact legacy
+  // formula pre-hardening code always computed, preserved so any EXTERNAL
+  // reference that already captured it (see test 9b below) keeps
+  // resolving. migrateLegacyIdentities() is the one and only place that
+  // disambiguates a genuine collision -- read normalization alone no
+  // longer needs to (and, by design, does not).
   installFreshRegistry({
     seed: {
       gmFactionRegistry: [
@@ -163,23 +174,22 @@ installFreshRegistry();
   });
   const before = FactionRegistryService.getRegistry();
   assert.equal(before.length, 2);
-  assert.notEqual(before[0].id, before[1].id, 'even before an explicit migration pass, read-time normalization must never let two missing-id records collide on the same derived id');
+  assert.equal(before[0].id, 'hutt-cartel', 'an unmigrated missing-id record must read as its exact legacy slugify(name) id');
+  assert.equal(before[1].id, 'hutt-cartel', 'two same-name missing-id records legitimately collide at read time, matching pre-hardening behavior, until migration disambiguates them');
+  const beforeAgain = FactionRegistryService.getRegistry();
+  assert.deepEqual(beforeAgain.map(f => f.id), before.map(f => f.id), 'read normalization is deterministic (slugify(name)) — repeated reads before migration must be stable, not manufacture a different random id each call');
 
   const migration = await FactionRegistryService.migrateLegacyIdentities();
   assert.equal(migration.changed, true, 'a registry with missing ids must report a migration occurred');
   assert.equal(migration.migratedFactions.length, 2, 'both missing-id Factions must be migrated');
+  assert.equal(migration.migratedFactions.filter(m => m.recoveredLegacyIdentity).length, 1, 'exactly one of the two colliding records recovers the shared legacy candidate');
+  assert.equal(migration.collisions.length, 1, 'the genuine name collision between two legacy no-id records must be reported');
 
   const after = FactionRegistryService.getRegistry();
   const idsAfter = after.map(f => f.id);
   assert.equal(new Set(idsAfter).size, 2, 'migrated ids must be unique');
+  assert.ok(idsAfter.includes('hutt-cartel'), 'the first record must keep the recovered legacy id exactly, so any pre-existing external reference to it keeps resolving');
 
-  // Once migrateLegacyIdentities() has PERSISTED an id, it is no longer
-  // "missing" -- every subsequent read must reproduce the exact same id
-  // (the real stability guarantee). Before migration runs, a missing id is
-  // not yet assigned-once-and-persisted, so a bare getRegistry() read (never
-  // itself a mutation) is not required to reproduce the same ephemeral
-  // value call-to-call — only "assign once, persist, stable forever" is
-  // required, and that is what migrateLegacyIdentities() provides.
   const afterAgainRead = FactionRegistryService.getRegistry().map(f => f.id);
   assert.deepEqual(afterAgainRead, idsAfter, 'once persisted, repeated reads must reproduce the exact same migrated id');
 
@@ -187,7 +197,33 @@ installFreshRegistry();
   assert.equal(again.changed, false, 'migration must be idempotent — nothing left to migrate on a second run');
   const stillAfter = FactionRegistryService.getRegistry();
   assert.deepEqual(stillAfter.map(f => f.id).sort(), idsAfter.sort(), 'a second migration pass must not reassign any id');
-  pass('9/10 — missing legacy ids are minted exactly once, persisted, and thereafter stable across reads; the migration itself is idempotent');
+  pass('9/10 — missing legacy ids recover their exact old effective identity when unambiguous (and are minted fresh + reported only on a genuine collision), persisted once and thereafter stable across reads; the migration itself is idempotent');
+}
+
+{
+  // 9b. NEW (correction pass round 2): a pre-existing external reference
+  // (Location.controllingFactionId / Intel.linkedFactionId / Actor
+  // relationship factionId / Job issuerFactionId — all just a plain string
+  // field somewhere else) that was captured under the OLD pre-hardening
+  // read behavior (slugify(name), unambiguous here — only one Faction) must
+  // still resolve correctly after migration runs.
+  installFreshRegistry({
+    seed: { gmFactionRegistry: [{ name: 'Hutt Cartel', contacts: [{ name: 'Ralo', role: 'Fixer' }] }] }
+  });
+  const preMigrationRead = FactionRegistryService.findFaction('hutt-cartel');
+  assert.ok(preMigrationRead, 'the Faction must already be reachable by its legacy effective id before migration (read-time compatibility)');
+  const externalLocationControllingFactionId = preMigrationRead.id; // simulates a Location/Intel/Actor/Job record that captured this value pre-hardening
+  const externalContactId = FactionRegistryService.getFactionContacts(preMigrationRead.id)[0].id;
+
+  await FactionRegistryService.migrateLegacyIdentities();
+
+  const resolvedFaction = FactionRegistryService.findFaction(externalLocationControllingFactionId);
+  assert.ok(resolvedFaction, 'a pre-existing external reference to the old effective Faction id must still resolve after migration');
+  assert.equal(resolvedFaction.name, 'Hutt Cartel');
+  const resolvedContact = FactionRegistryService.findFactionContact(resolvedFaction.id, externalContactId)?.contact;
+  assert.ok(resolvedContact, 'a pre-existing external reference to the old effective Contact id must still resolve after migration');
+  assert.equal(resolvedContact.name, 'Ralo');
+  pass('9b — a pre-existing external reference to a legacy record\'s old effective (unambiguous) id survives migration intact');
 }
 
 // ---------------------------------------------------------------------
@@ -265,19 +301,28 @@ installFreshRegistry();
       ]
     }
   });
+  // CORRECTION PASS round 2: read normalization now reproduces the exact
+  // legacy slugify(name-role) formula, so two same-name+role missing-id
+  // Contacts DO legitimately collide at read time (matching pre-hardening
+  // behavior) until migration disambiguates them — see test 9/10's header
+  // comment for the full rationale.
   const beforeContacts = FactionRegistryService.getFactionContacts('crimson-dawn');
-  assert.notEqual(beforeContacts[0].id, beforeContacts[1].id, 'even before migration, read-time normalization must never collide two missing-id same-name+role Contacts');
+  assert.equal(beforeContacts[0].id, 'dryden-director');
+  assert.equal(beforeContacts[1].id, 'dryden-director', 'two same-name+role missing-id Contacts legitimately collide at read time until migration disambiguates them');
 
   const migration = await FactionRegistryService.migrateLegacyIdentities();
   assert.equal(migration.changed, true);
   assert.equal(migration.migratedContacts.length, 2, 'both missing-id Contacts must be migrated');
+  assert.equal(migration.migratedContacts.filter(m => m.recoveredLegacyIdentity).length, 1, 'exactly one of the two colliding Contacts recovers the shared legacy candidate');
+  assert.equal(migration.collisions.filter(c => c.kind === 'contact').length, 1, 'the genuine name+role collision must be reported');
 
   const afterContacts = FactionRegistryService.getFactionContacts('crimson-dawn');
   assert.equal(new Set(afterContacts.map(c => c.id)).size, 2, 'migrated Contact ids must be unique');
+  assert.ok(afterContacts.some(c => c.id === 'dryden-director'), 'the first Contact must keep the recovered legacy id exactly');
 
   const again = await FactionRegistryService.migrateLegacyIdentities();
   assert.equal(again.changed, false, 'Contact id migration must also be idempotent');
-  pass('19 — missing legacy Contact ids migrate exactly once and idempotently');
+  pass('19 — missing legacy Contact ids recover their exact old effective identity when unambiguous (minted fresh + reported only on a genuine collision), and migrate idempotently');
 }
 
 {
@@ -626,11 +671,16 @@ installFreshRegistry();
   // 37. migration id minting is collision-safe: every pre-existing id is
   // reserved BEFORE any minting starts, so an attempted mint collision
   // with a healthy pre-existing id retries rather than letting that
-  // healthy record get treated as the duplicate and rewritten.
+  // healthy record get treated as the duplicate and rewritten. The
+  // missing-id Faction's NAME is chosen so its recovered-legacy-identity
+  // candidate (slugify(name)) ITSELF collides with the healthy Faction's
+  // real id ("abc123") -- forcing the fallback to mintUniqueId(), whose
+  // own first randomID() draw is then ALSO forced to collide, proving the
+  // retry-on-collision behavior at both layers.
   installFreshRegistry({
     seed: {
       gmFactionRegistry: [
-        { name: 'Missing Id Faction', contacts: [] },
+        { name: 'Abc123', contacts: [] }, // slugify('Abc123') === 'abc123' -- collides with the healthy id below
         { id: 'abc123', name: 'Healthy Faction', contacts: [] }
       ]
     }
@@ -644,12 +694,13 @@ installFreshRegistry();
   assert.equal(migration.changed, true);
   const registry = FactionRegistryService.getRegistry();
   const healthy = registry.find(f => f.name === 'Healthy Faction');
-  const migrated = registry.find(f => f.name === 'Missing Id Faction');
-  assert.equal(healthy.id, 'abc123', 'the healthy pre-existing id must survive even though the minter FIRST drew the exact same value for the other record');
+  const migrated = registry.find(f => f.name === 'Abc123');
+  assert.equal(healthy.id, 'abc123', 'the healthy pre-existing id must survive even though the other record\'s recovered-legacy-identity candidate was the exact same text');
   assert.notEqual(migrated.id, 'abc123', 'the missing-id record must never end up with the colliding value');
-  assert.ok(migrated.id, 'the missing-id record must still receive a real minted id');
-  assert.equal(calls, 2, 'the mint must retry exactly once after the forced collision');
-  pass('37 — migration id minting is collision-safe: a forced mint collision with a healthy pre-existing id retries instead of letting the healthy id be treated as the duplicate');
+  assert.ok(migrated.id, 'the missing-id record must still receive a real id');
+  assert.equal(migration.migratedFactions.find(m => m.name === 'Abc123')?.recoveredLegacyIdentity, false, 'recovering the legacy candidate must be refused once it is found to collide with a healthy id');
+  assert.equal(calls, 2, 'mintUniqueId() must retry exactly once after its own forced collision');
+  pass('37 — migration id minting is collision-safe at both layers: a legacy-candidate collision with a healthy id falls back to mintUniqueId(), whose own forced mint collision also retries rather than letting the healthy id be treated as the duplicate');
   globalThis.foundry.utils.randomID = () => `rid-${++ridCounter}`;
 }
 
@@ -677,35 +728,92 @@ installFreshRegistry();
   // 39. functional replica of GMJobBoardSurfaceController#_saveClientAsContact()'s
   // "reuse the existing same-name reusable Contact instead of duplicating
   // it" algorithm, proven against the real FactionRegistryService.
+  //
+  // CORRECTION PASS round 2: independent re-review found the first version
+  // of this algorithm (and this test) reused ANY same-name Contact,
+  // including an ordinary dossier Contact the GM built by hand -- display
+  // text deciding canonical sameness again, one layer above the registry.
+  // The fix (and this replica) requires the existing Contact to ALREADY
+  // carry the exact ['job-board', 'reusable-contact'] tags this same
+  // algorithm itself writes, not merely a matching name.
   installFreshRegistry();
   async function saveClientAsContactLike(factionLabel, contactName) {
     const faction = await FactionRegistryService.resolveOrCreateFactionByName(factionLabel, { source: 'job' });
-    const existingSameName = FactionRegistryService.getFactionContacts(faction.id)
-      .filter(entry => entry.name.toLowerCase() === contactName.toLowerCase());
-    const existingContactId = existingSameName.length === 1 ? existingSameName[0].id : '';
-    return FactionRegistryService.upsertFactionContact(faction.id, { id: existingContactId, name: contactName, role: 'Job Contact' });
+    const existingReusableSameName = FactionRegistryService.getFactionContacts(faction.id)
+      .filter(entry => entry.name.toLowerCase() === contactName.toLowerCase()
+        && Array.isArray(entry.tags) && entry.tags.includes('job-board') && entry.tags.includes('reusable-contact'));
+    const existingContactId = existingReusableSameName.length === 1 ? existingReusableSameName[0].id : '';
+    return FactionRegistryService.upsertFactionContact(faction.id, { id: existingContactId, name: contactName, role: 'Job Contact', tags: ['job-board', 'reusable-contact'] });
   }
   const first = await saveClientAsContactLike('Kuati Drive Yards', 'Moff Rancit');
   const second = await saveClientAsContactLike('Kuati Drive Yards', 'Moff Rancit');
-  assert.equal(second.contact.id, first.contact.id, 'saving the same reusable client contact twice must reuse the existing Contact record, not spawn a duplicate');
+  assert.equal(second.contact.id, first.contact.id, 'saving the SAME reusable client contact twice must reuse the existing tagged Contact record, not spawn a duplicate');
   assert.equal(FactionRegistryService.getFactionContacts(first.faction.id).length, 1);
-  pass('39 — the Job Board "save client as reusable contact" reuse algorithm updates the existing same-name Contact instead of duplicating it (verified against the real FactionRegistryService)');
+
+  // An ordinary dossier Contact (built by the GM through the Faction
+  // editor, no reusable-contact tags) that merely shares a name must NOT
+  // be silently overwritten by a Job Board save.
+  const faction2 = await FactionRegistryService.upsertFaction({ name: 'Exchange' });
+  const { contact: dossierContact } = await FactionRegistryService.upsertFactionContact(faction2.id, {
+    name: 'Mira', role: 'Intelligence Chief', gmNotes: 'Long-running dossier NPC, not a Job Board contact.'
+  });
+  const jobSaved = await saveClientAsContactLike('Exchange', 'Mira');
+  assert.notEqual(jobSaved.contact.id, dossierContact.id, 'a Job Board save must never overwrite an ordinary same-name dossier Contact');
+  const stillDossier = FactionRegistryService.findFactionContact(faction2.id, dossierContact.id)?.contact;
+  assert.equal(stillDossier.gmNotes, 'Long-running dossier NPC, not a Job Board contact.', 'the ordinary dossier Contact must be completely untouched');
+  assert.equal(FactionRegistryService.getFactionContacts(faction2.id).length, 2, 'the dossier Contact and the new Job Board reusable Contact must coexist as distinct records');
+  pass('39 — the Job Board "save client as reusable contact" algorithm reuses the SAME already-tagged reusable Contact across repeat saves, but never overwrites an ordinary same-name dossier Contact (verified against the real FactionRegistryService)');
 }
 
 {
   // 40. structural regression guard tying test 39's replica back to the
   // real caller: _saveClientAsContact must actually use
   // resolveOrCreateFactionByName() (not FactionRegistryService.findFaction()
-  // directly) and must actually look up/reuse an existing same-name
-  // Contact before calling upsertFactionContact().
+  // directly), and its Contact-reuse lookup must require the reusable-
+  // contact tags (not merely a matching name).
   const fs = await import('node:fs');
   const jobBoardControllerSrc = fs.readFileSync(
     new URL('../scripts/ui/shell/gm/controllers/GMJobBoardSurfaceController.js', import.meta.url),
     'utf8'
   );
   assert.ok(jobBoardControllerSrc.includes('FactionRegistryService.resolveOrCreateFactionByName('), '_saveClientAsContact must resolve its free-text Faction name via the ambiguity-safe resolver, not FactionRegistryService.findFaction() directly');
-  assert.ok(jobBoardControllerSrc.includes('existingSameName'), '_saveClientAsContact must look up and reuse an existing same-name Contact rather than always creating a new one');
-  pass('40 — GMJobBoardSurfaceController._saveClientAsContact resolves its Faction via resolveOrCreateFactionByName() and reuses an existing same-name Contact (structural regression guard)');
+  assert.ok(jobBoardControllerSrc.includes("entry.tags.includes('job-board')") && jobBoardControllerSrc.includes("entry.tags.includes('reusable-contact')"),
+    '_saveClientAsContact must require the reusable-contact tags before reusing an existing Contact, not merely a matching name');
+  pass('40 — GMJobBoardSurfaceController._saveClientAsContact resolves its Faction via resolveOrCreateFactionByName() and only reuses an already-tagged reusable Contact, never an ordinary same-name dossier Contact (structural regression guard)');
+}
+
+{
+  // 41. NEW (correction pass round 2): GMFactionRelationshipSurfaceController's
+  // hide-contact action, and FactionIntelBridgeService.resolveFaction()/
+  // resolveContact() (which feed a real Contact mutation via
+  // #linkIntelToContact()'s linkedIntelIds write-back), must refuse to
+  // guess among duplicate same-named Factions/Contacts rather than reading
+  // -- and then mutating -- whichever one the flexible search helpers
+  // happened to return first.
+  installFreshRegistry();
+  const a = await FactionRegistryService.upsertFaction({ name: 'Republic Intelligence' });
+  const b = await FactionRegistryService.upsertFaction({ name: 'Republic Intelligence' });
+  await FactionRegistryService.upsertFactionContact(a.id, { name: 'Handler', role: 'Case Officer' });
+
+  const ambiguousFaction = FactionRegistryService.resolveFactionForMutation('Republic Intelligence');
+  assert.equal(ambiguousFaction.ambiguous, true, 'resolveFactionForMutation must refuse to guess among duplicate same-named Factions');
+
+  const ambiguousContact = FactionRegistryService.resolveFactionContactForMutation('Republic Intelligence', 'Handler');
+  assert.equal(ambiguousContact.ambiguous, true, 'resolveFactionContactForMutation must refuse to guess the parent Faction among duplicate same-named Factions');
+  assert.equal(ambiguousContact.ambiguousKind, 'faction');
+
+  const unambiguousContact = FactionRegistryService.resolveFactionContactForMutation(a.id, 'Handler');
+  assert.equal(unambiguousContact.ambiguous, false);
+  assert.equal(unambiguousContact.contact.role, 'Case Officer', 'resolving by real Faction id must still correctly find the Contact by unique name');
+
+  assert.throws(
+    () => FactionIntelBridgeService.resolveFaction('Republic Intelligence'),
+    /Multiple Factions match/,
+    'FactionIntelBridgeService.resolveFaction() must refuse to guess among duplicate same-named Factions (it ultimately feeds a Contact mutation via #linkIntelToContact)'
+  );
+  const resolvedByIntelBridge = FactionIntelBridgeService.resolveFaction(a.id);
+  assert.equal(resolvedByIntelBridge.id, a.id, 'FactionIntelBridgeService.resolveFaction() must still resolve correctly by real id');
+  pass('41 — GMFactionRelationshipSurfaceController\'s hide-contact resolution and FactionIntelBridgeService.resolveFaction()/resolveContact() both refuse to guess among duplicate same-named Factions/Contacts before mutating');
 }
 
 console.log(`\nPRE-8D-4 Faction/Contact canonical identity hardening: ${passCount} assertions-groups passed.`);

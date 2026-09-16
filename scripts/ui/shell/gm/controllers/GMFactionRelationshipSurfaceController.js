@@ -330,10 +330,20 @@ export class GMFactionRelationshipSurfaceController {
             return;
 
           case 'hide-contact': {
-            const found = FactionRegistryService.findFactionContact(factionId || factionName, contactId || contactName);
-            if (!found?.contact) throw new Error('The selected contact could not be found.');
-            await this._mutate(() => FactionRegistryService.upsertFactionContact(found.faction.id, {
-              ...found.contact,
+            // Identity hardening (PRE-8D-4, correction pass round 2): this
+            // reads a Contact's current data to feed a subsequent mutation,
+            // not merely to display it -- resolveFactionContactForMutation()
+            // never guesses among duplicate same-named Factions/Contacts the
+            // way findFactionContact() (an intentional SEARCH helper) would.
+            const resolved = FactionRegistryService.resolveFactionContactForMutation(factionId || factionName, contactId || contactName);
+            if (resolved.ambiguous) {
+              throw new Error(resolved.ambiguousKind === 'faction'
+                ? `Multiple Factions are named "${factionName || factionId}" — specify a Faction id.`
+                : `Multiple Contacts are named "${contactName || contactId}" on this Faction — specify a Contact id.`);
+            }
+            if (!resolved.contact) throw new Error('The selected contact could not be found.');
+            await this._mutate(() => FactionRegistryService.upsertFactionContact(resolved.faction.id, {
+              ...resolved.contact,
               revealState: 'hidden',
               knownToPlayers: false
             }), 'gm-faction-hide-contact');
