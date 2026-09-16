@@ -521,11 +521,18 @@ export class GMJobBoardSurfaceController {
       // itself still reuses an existing Faction only when the name is
       // unambiguous and throws rather than silently picking one of several
       // same-named Factions.
+      //
+      // Correction pass round 4 (independent re-re-re-re-review): a
+      // genuinely canonical explicitFactionId must resolve EXACT-ID-ONLY
+      // (resolveFactionByIdForMutation), never through the PERMISSIVE
+      // id-or-unique-name resolveFactionForMutation() -- otherwise a
+      // stale/deleted id that happens to equal some OTHER Faction's
+      // display name would be silently "rescued" by that other Faction
+      // instead of failing, letting display text rescue a failed
+      // canonical-id lookup.
       let faction;
       if (explicitFactionId) {
-        const factionResolution = FactionRegistryService.resolveFactionForMutation(explicitFactionId);
-        if (factionResolution.ambiguous) throw new Error(`Multiple Factions match "${explicitFactionId}" — specify a Faction id.`);
-        faction = factionResolution.faction;
+        faction = FactionRegistryService.resolveFactionByIdForMutation(explicitFactionId);
         if (!faction) throw new Error('The selected issuer Faction could not be found.');
       } else {
         faction = await FactionRegistryService.resolveOrCreateFactionByName(factionLabel, {
@@ -549,10 +556,17 @@ export class GMJobBoardSurfaceController {
       // in the wizard, which populates issuerContactId and lands in the
       // branch above; typing a bare name is, and now always means, "this is
       // a new Contact."
+      //
+      // Correction pass round 4 (independent re-re-re-re-review): resolve
+      // an explicit canonical contactId EXACT-ID-ONLY
+      // (resolveFactionContactByIdsForMutation), never through the
+      // PERMISSIVE resolveFactionContactForMutation() -- a stale/deleted
+      // contactId that happens to equal some OTHER Contact's display name
+      // (on this Faction or, via a stale factionId, another) must fail,
+      // never be rescued by that other Contact's name.
       let existingContactId = '';
       if (explicitContactId) {
-        const contactResolution = FactionRegistryService.resolveFactionContactForMutation(faction.id, explicitContactId);
-        if (contactResolution.ambiguous) throw new Error(`Multiple Contacts match "${explicitContactId}" on ${faction.name} — specify a Contact id.`);
+        const contactResolution = FactionRegistryService.resolveFactionContactByIdsForMutation(faction.id, explicitContactId);
         if (!contactResolution.contact) throw new Error('The selected issuer Contact could not be found on this Faction.');
         existingContactId = contactResolution.contact.id;
       }

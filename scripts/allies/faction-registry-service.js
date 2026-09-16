@@ -700,6 +700,36 @@ export class FactionRegistryService {
     return { faction, contact: contactResolution.contact, ambiguous: false };
   }
 
+  /**
+   * CORRECTION PASS round 4 (independent re-re-re-re-review): EXACT-ID-ONLY
+   * counterparts to the PERMISSIVE resolvers directly above, for callers
+   * that already hold a genuinely canonical id (not a combined id-or-name
+   * input string) and must never let a stale/unresolvable id be silently
+   * "rescued" by a same-named record. resolveFactionForMutation()/
+   * resolveFactionContactForMutation() are id-or-unique-name COMPATIBILITY
+   * resolvers for the handful of legacy/free-text callers that genuinely
+   * only ever have one combined string -- they are intentionally NOT
+   * canonical-id validators, and remain permissive for those callers.
+   * These two methods never fall back to a display-name match under any
+   * circumstance: a non-matching id means "not found," full stop, even if
+   * some other record's NAME happens to equal the queried id string.
+   */
+  static resolveFactionByIdForMutation(factionId = '') {
+    const cleanId = cleanText(factionId);
+    if (!cleanId) return null;
+    return this.getRegistry().find(record => record.id === cleanId) ?? null;
+  }
+
+  static resolveFactionContactByIdsForMutation(factionId = '', contactId = '') {
+    const faction = this.resolveFactionByIdForMutation(factionId);
+    const cleanContactId = cleanText(contactId);
+    if (!faction || !cleanContactId) return { faction: faction ?? null, contact: null };
+    const contact = safeArray(faction.contacts)
+      .map(entry => normalizeContact(entry))
+      .find(entry => entry.id === cleanContactId) ?? null;
+    return { faction, contact };
+  }
+
   static async upsertFactionContact(factionId = '', data = {}) {
     const factionIdQuery = factionId || data.factionId;
     const resolution = this._resolveFactionForMutation(factionIdQuery, data.factionName);

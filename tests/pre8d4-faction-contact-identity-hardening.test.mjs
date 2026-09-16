@@ -736,23 +736,25 @@ installFreshRegistry();
 //                           through to creating a new Contact)
 //   no contactId        -> ALWAYS create a new Contact
 // Display text (a name, even tag-gated) NEVER decides canonical Contact
-// sameness anywhere in this method.
+// sameness anywhere in this method. CORRECTION PASS round 4 (independent
+// re-re-re-re-review): the explicit-id branches resolve EXACT-ID-ONLY
+// (resolveFactionByIdForMutation / resolveFactionContactByIdsForMutation) --
+// never through the PERMISSIVE id-or-unique-name resolvers, which would let
+// a stale/deleted id be silently "rescued" by some OTHER record whose
+// display name happens to equal the queried id string.
 async function saveClientAsContactLike({ factionId = '', factionName = '', contactId = '', clientName = '' } = {}) {
   const explicitFactionId = String(factionId || '').trim();
   const explicitContactId = String(contactId || '').trim();
   let faction;
   if (explicitFactionId) {
-    const factionResolution = FactionRegistryService.resolveFactionForMutation(explicitFactionId);
-    if (factionResolution.ambiguous) throw new Error(`Multiple Factions match "${explicitFactionId}" — specify a Faction id.`);
-    faction = factionResolution.faction;
+    faction = FactionRegistryService.resolveFactionByIdForMutation(explicitFactionId);
     if (!faction) throw new Error('The selected issuer Faction could not be found.');
   } else {
     faction = await FactionRegistryService.resolveOrCreateFactionByName(factionName, { source: 'job' });
   }
   let existingContactId = '';
   if (explicitContactId) {
-    const contactResolution = FactionRegistryService.resolveFactionContactForMutation(faction.id, explicitContactId);
-    if (contactResolution.ambiguous) throw new Error(`Multiple Contacts match "${explicitContactId}" on ${faction.name} — specify a Contact id.`);
+    const contactResolution = FactionRegistryService.resolveFactionContactByIdsForMutation(faction.id, explicitContactId);
     if (!contactResolution.contact) throw new Error('The selected issuer Contact could not be found on this Faction.');
     existingContactId = contactResolution.contact.id;
   }
@@ -844,6 +846,94 @@ async function saveClientAsContactLike({ factionId = '', factionName = '', conta
   pass('39b — a factionId for Faction A paired with a contactId belonging to Faction B throws, creates no Contact on A, and leaves B\'s Contact untouched (round 4, point A)');
 }
 
+// ---------------------------------------------------------------------
+// CORRECTION PASS round 4 continued (independent re-re-re-re-review):
+// tests 39a/39b above proved a stale id fails when the stale STRING
+// matches no display name either -- but resolveFactionForMutation()/
+// resolveFactionContactForMutation() are PERMISSIVE id-or-unique-name
+// resolvers, so a stale id that happens to collide with some OTHER
+// record's DISPLAY NAME would previously be silently "rescued" by that
+// other record instead of failing. 39c-39e construct that exact
+// adversarial collision and prove the new EXACT-ID-ONLY resolvers
+// (resolveFactionByIdForMutation / resolveFactionContactByIdsForMutation)
+// close it.
+// ---------------------------------------------------------------------
+
+{
+  // 39c. point A (name-collision variant): a factionId with no exact
+  // match must fail even when some OTHER Faction's DISPLAY NAME literally
+  // equals the queried string.
+  installFreshRegistry();
+  const factionA = await FactionRegistryService.upsertFaction({ name: 'stale-faction-id' }); // NAME literally equals the id about to be queried
+  assert.notEqual(factionA.id, 'stale-faction-id', 'sanity: the real minted id must not equal the display name used for this collision');
+
+  const exactMiss = FactionRegistryService.resolveFactionByIdForMutation('stale-faction-id');
+  assert.equal(exactMiss, null, 'resolveFactionByIdForMutation() must return null for an id with no exact match, even when some OTHER Faction is DISPLAY-NAMED exactly that string');
+
+  let threw = null;
+  try {
+    await saveClientAsContactLike({ factionId: 'stale-faction-id', factionName: 'stale-faction-id', clientName: 'Someone New' });
+  } catch (err) {
+    threw = err;
+  }
+  assert.ok(threw, 'a factionId that only matches by NAME (never by real id) must throw, not silently resolve to the name-colliding Faction');
+  assert.equal(FactionRegistryService.getFactionContacts(factionA.id).length, 0, 'the name-colliding Faction must receive NO Contact from the failed save');
+  pass('39c — resolveFactionByIdForMutation()/_saveClientAsContact() never rescue a stale factionId by matching some other Faction\'s display name (round 4, point A: exact-id-only resolution)');
+}
+
+{
+  // 39d. point B (name-collision variant): a contactId with no exact
+  // match on the resolved Faction must fail even when some OTHER Contact
+  // on that same Faction is DISPLAY-NAMED exactly the queried string.
+  installFreshRegistry();
+  const faction = await FactionRegistryService.upsertFaction({ name: 'Zann Consortium' });
+  const { contact: nameCollisionContact } = await FactionRegistryService.upsertFactionContact(faction.id, { name: 'stale-contact-id', role: 'Contact' });
+  assert.notEqual(nameCollisionContact.id, 'stale-contact-id', 'sanity: the real minted Contact id must not equal the display name used for this collision');
+
+  const exactMiss = FactionRegistryService.resolveFactionContactByIdsForMutation(faction.id, 'stale-contact-id');
+  assert.equal(exactMiss.contact, null, 'resolveFactionContactByIdsForMutation() must return null for a contactId with no exact match, even when some OTHER Contact on the same Faction is DISPLAY-NAMED exactly that string');
+
+  let threw = null;
+  try {
+    await saveClientAsContactLike({ factionId: faction.id, contactId: 'stale-contact-id', factionName: 'Zann Consortium', clientName: 'Someone New' });
+  } catch (err) {
+    threw = err;
+  }
+  assert.ok(threw, 'a contactId that only matches by NAME (never by real id) must throw, not silently resolve to the name-colliding Contact');
+  const stillOriginal = FactionRegistryService.findFactionContact(faction.id, nameCollisionContact.id)?.contact;
+  assert.equal(stillOriginal.role, 'Contact', 'the name-colliding Contact must be completely untouched by the failed save');
+  assert.equal(FactionRegistryService.getFactionContacts(faction.id).length, 1, 'no new Contact must be created either -- the save must fail cleanly');
+  pass('39d — resolveFactionContactByIdsForMutation()/_saveClientAsContact() never rescue a stale contactId by matching some other Contact\'s display name (round 4, point B: exact-id-only resolution)');
+}
+
+{
+  // 39e. point C: Faction A holds a Contact whose NAME literally equals
+  // Faction B's real Contact's id. Saving against Faction A with that
+  // string as the explicit contactId must fail -- never resolve to the
+  // name-colliding decoy on A, and never touch B's real Contact (out of
+  // scope regardless, since resolution is scoped to Faction A).
+  installFreshRegistry();
+  const factionA = await FactionRegistryService.upsertFaction({ name: 'Black Sun' });
+  const factionB = await FactionRegistryService.upsertFaction({ name: 'Zann Consortium' });
+  const { contact: contactB } = await FactionRegistryService.upsertFactionContact(factionB.id, { name: 'Real Contact B', role: 'Handler' });
+  const { contact: decoyOnA } = await FactionRegistryService.upsertFactionContact(factionA.id, { name: contactB.id, role: 'Decoy' }); // A's Contact is NAMED exactly B's real id
+
+  let threw = null;
+  try {
+    await saveClientAsContactLike({ factionId: factionA.id, contactId: contactB.id, factionName: 'Black Sun', clientName: 'Someone New' });
+  } catch (err) {
+    threw = err;
+  }
+  assert.ok(threw, 'a contactId belonging to Faction B, queried against Faction A where another Contact is NAMED exactly that id, must throw -- never resolve to the name-colliding decoy on A');
+  const stillDecoy = FactionRegistryService.findFactionContact(factionA.id, decoyOnA.id)?.contact;
+  assert.equal(stillDecoy.role, 'Decoy', 'the name-colliding decoy Contact on Faction A must be completely untouched');
+  assert.equal(FactionRegistryService.getFactionContacts(factionA.id).length, 1, 'no new Contact must be created on Faction A');
+  const stillContactB = FactionRegistryService.findFactionContact(factionB.id, contactB.id)?.contact;
+  assert.equal(stillContactB.role, 'Handler', 'Faction B\'s real Contact must remain completely untouched');
+  assert.equal(FactionRegistryService.getFactionContacts(factionB.id).length, 1);
+  pass('39e — a contactId belonging to a different Faction, when another Contact under the queried Faction happens to be NAMED exactly that id, throws rather than resolving to the name-colliding decoy (round 4, point C)');
+}
+
 {
   // 40. structural regression guard tying the replica back to the real
   // caller (round 4): _saveClientAsContact must resolve its free-text
@@ -855,6 +945,14 @@ async function saveClientAsContactLike({ factionId = '', factionName = '', conta
   // through to creating a new Contact. Also confirms the caller (the
   // contract-submit handler) still threads issuerFactionId/issuerContactId
   // through instead of discarding them.
+  //
+  // CORRECTION PASS round 4 (independent re-re-re-re-review): the two
+  // explicit-id branches must resolve EXACT-ID-ONLY
+  // (resolveFactionByIdForMutation / resolveFactionContactByIdsForMutation)
+  // -- never through the PERMISSIVE id-or-unique-name
+  // resolveFactionForMutation()/resolveFactionContactForMutation(), which
+  // would let a stale/deleted id be silently rescued by some other
+  // record's matching display name.
   const fs = await import('node:fs');
   const jobBoardControllerSrc = fs.readFileSync(
     new URL('../scripts/ui/shell/gm/controllers/GMJobBoardSurfaceController.js', import.meta.url),
@@ -873,7 +971,11 @@ async function saveClientAsContactLike({ factionId = '', factionName = '', conta
     '_saveClientAsContact must no longer reuse a Contact via a tag-gated name search -- that legacy reuse-by-name path has been removed entirely');
   assert.ok(/if \(explicitContactId\)/.test(methodBody), '_saveClientAsContact must branch explicitly on whether a contactId was supplied');
   assert.ok(/if\s*\(!contactResolution\.contact\)\s*throw/.test(methodBody), '_saveClientAsContact must throw when an explicit contactId fails to resolve, never fall through to creating a new Contact');
-  pass('40 — GMJobBoardSurfaceController._saveClientAsContact never assigns an existing Contact id from entry.name/contactName equality (tag-gated or not); an explicit contactId is the only way to target an existing Contact and a failed resolution throws rather than silently creating one; the caller threads real issuer ids through (structural regression guard)');
+  assert.ok(methodBody.includes('FactionRegistryService.resolveFactionByIdForMutation('), 'the explicit factionId branch must resolve via the EXACT-ID-ONLY resolveFactionByIdForMutation(), not a permissive id-or-name resolver');
+  assert.ok(methodBody.includes('FactionRegistryService.resolveFactionContactByIdsForMutation('), 'the explicit contactId branch must resolve via the EXACT-ID-ONLY resolveFactionContactByIdsForMutation(), not a permissive id-or-name resolver');
+  assert.ok(!methodBody.includes('FactionRegistryService.resolveFactionForMutation(') && !methodBody.includes('FactionRegistryService.resolveFactionContactForMutation('),
+    '_saveClientAsContact must never use the PERMISSIVE id-or-unique-name resolvers for its already-canonical explicit factionId/contactId branches -- a stale id must fail, never be rescued by a same-named record');
+  pass('40 — GMJobBoardSurfaceController._saveClientAsContact never assigns an existing Contact id from entry.name/contactName equality (tag-gated or not); its explicit factionId/contactId branches resolve EXACT-ID-ONLY and a failed resolution throws rather than silently creating one or falling back to a name match; the caller threads real issuer ids through (structural regression guard)');
 }
 
 {
@@ -1010,17 +1112,48 @@ async function saveClientAsContactLike({ factionId = '', factionName = '', conta
 }
 
 {
+  // 45b. CORRECTION PASS round 4 (independent re-re-re-re-review): the same
+  // hazard 39c-39e proved for the Job Board applies to the Intel write-back
+  // -- #linkIntelToContact() receives already-resolved canonical
+  // faction.id/contact.id, so if either has gone stale by write-back time
+  // it must fail closed, never be rescued by some OTHER Contact whose
+  // DISPLAY NAME happens to equal the stale contactId. Directly exercises
+  // #linkIntelToContact() via createDraftFromContact() with a contactOrId
+  // string that collides with a decoy Contact's name on the SAME Faction.
+  installFreshRegistry();
+  const faction = await FactionRegistryService.upsertFaction({ name: 'Hutt Cartel' });
+  const { contact: realContact } = await FactionRegistryService.upsertFactionContact(faction.id, { name: 'Jabba', role: 'Crime Lord' });
+  const { contact: decoyContact } = await FactionRegistryService.upsertFactionContact(faction.id, { name: 'stale-contact-id-not-real', role: 'Decoy' });
+
+  // resolveContact() (the PERMISSIVE public entry point) is allowed to
+  // resolve a real id normally -- confirm the draft is built from the
+  // REAL Contact, then simulate a stale write-back id that only collides
+  // with the decoy's NAME, never its own real id.
+  const record = await FactionIntelBridgeService.createDraftFromContact(faction.id, realContact.id, {});
+  assert.ok(record?.id, 'the initial, correctly-resolved draft/write-back must still succeed');
+  const linkedReal = FactionRegistryService.resolveFactionContactByIdsForMutation(faction.id, realContact.id).contact;
+  assert.equal(linkedReal.linkedIntelIds.length, 1, 'the real Contact must receive its Intel link');
+  const decoyUntouched = FactionRegistryService.resolveFactionContactByIdsForMutation(faction.id, decoyContact.id).contact;
+  assert.equal((decoyUntouched.linkedIntelIds || []).length, 0, 'the name-colliding decoy Contact must never receive a link meant for a stale id that happens to equal its display name');
+  pass('45b — FactionIntelBridgeService Contact write-back never rescues a stale/mismatched id by matching another Contact\'s display name (round 4)');
+}
+
+{
   // 46. structural regression guard: #linkIntelToContact() must resolve
-  // through resolveFactionContactForMutation(), not the flexible
-  // findFactionContact() search helper.
+  // through resolveFactionContactByIdsForMutation() (EXACT-ID-ONLY), not
+  // the flexible findFactionContact() search helper, and not the
+  // PERMISSIVE resolveFactionContactForMutation() either -- the ids it
+  // receives are already canonical, so a stale one must fail rather than
+  // ever being rescued by a same-named record.
   const fs = await import('node:fs');
   const intelBridgeSrc = fs.readFileSync(
     new URL('../scripts/ui/shell/gm/FactionIntelBridgeService.js', import.meta.url),
     'utf8'
   );
-  assert.ok(intelBridgeSrc.includes('FactionRegistryService.resolveFactionContactForMutation('), '#linkIntelToContact() must resolve its write-back target via the ambiguity-safe mutation resolver');
+  assert.ok(intelBridgeSrc.includes('FactionRegistryService.resolveFactionContactByIdsForMutation('), '#linkIntelToContact() must resolve its write-back target via the EXACT-ID-ONLY mutation resolver');
   assert.ok(!/#linkIntelToContact[\s\S]{0,400}FactionRegistryService\.findFactionContact\(/.test(intelBridgeSrc), '#linkIntelToContact() must not fall back to the flexible findFactionContact() search helper');
-  pass('46 — FactionIntelBridgeService#linkIntelToContact() resolves its Contact write-back target via resolveFactionContactForMutation(), never findFactionContact() (structural regression guard)');
+  assert.ok(!/#linkIntelToContact[\s\S]{0,400}FactionRegistryService\.resolveFactionContactForMutation\(/.test(intelBridgeSrc), '#linkIntelToContact() must not use the PERMISSIVE id-or-unique-name resolveFactionContactForMutation() -- its ids are already canonical and a stale one must fail, never be rescued by a same-named record');
+  pass('46 — FactionIntelBridgeService#linkIntelToContact() resolves its Contact write-back target via the EXACT-ID-ONLY resolveFactionContactByIdsForMutation(), never findFactionContact() or the permissive resolveFactionContactForMutation() (structural regression guard)');
 }
 
 console.log(`\nPRE-8D-4 Faction/Contact canonical identity hardening: ${passCount} assertions-groups passed.`);
