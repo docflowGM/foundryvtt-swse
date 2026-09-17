@@ -538,8 +538,23 @@ export class FactionRegistryService {
     // find-existing-by-name-or-create semantics (e.g. the Job consequence
     // pipeline, which only ever carries a factionName) must resolve that
     // explicitly themselves via findFaction() before calling upsertFaction().
+    //
+    // Identity hardening (PRE-8D-4, correction pass round 6): this is the
+    // authority's own creation/update boundary -- it must not let an
+    // unknown supplied id become the id of a newly-created record. A
+    // caller-chosen id is only ever a REFERENCE to a record that must
+    // already exist ("update exactly this Faction"); it is never
+    // permission to mint a new canonical identity. Omitting the id is the
+    // only way to create -- the authority always mints that id itself.
+    // An audit of every production caller (see PR #969's round-6
+    // correction-pass writeup) found no legitimate case that depends on
+    // create-with-caller-chosen-id, so this is a hard requirement, not an
+    // optional check.
     const existing = requestedId ? records.find(record => record.id === requestedId) ?? null : null;
-    const id = existing?.id || requestedId || randomId();
+    if (requestedId && !existing) {
+      throw new Error(`No Faction exists with id "${requestedId}" — cannot update a record that does not exist. Omit the id to create a new Faction; the registry mints its id.`);
+    }
+    const id = existing?.id || randomId();
     const score = normalizeScore(data.score ?? data.startingScore ?? existing?.score ?? 0);
     const source = this._normalizeSource(data.source || existing?.source || 'gm');
     const historyType = existing ? 'faction-updated' : 'faction-created';
@@ -743,11 +758,19 @@ export class FactionRegistryService {
     // Identity hardening (PRE-8D-4): match an existing Contact by id ONLY.
     // Two Contacts on the same Faction with the same name+role are legal and
     // must remain distinct records -- a matching name never implies reuse.
+    //
+    // Identity hardening (PRE-8D-4, correction pass round 6): same
+    // creation/update boundary as upsertFaction() above -- a caller-chosen
+    // id may only reference an existing Contact, never mint a new one.
+    // Omitting the id is the only way to create; the authority mints it.
     const existing = requestedId ? existingContacts.find(contact => contact.id === requestedId) ?? null : null;
+    if (requestedId && !existing) {
+      throw new Error(`No Contact exists with id "${requestedId}" on ${faction.name} — cannot update a record that does not exist. Omit the id to create a new Contact; the registry mints its id.`);
+    }
     const contact = normalizeContact({
       ...existing,
       ...data,
-      id: existing?.id || requestedId || randomId(),
+      id: existing?.id || randomId(),
       name,
       updatedAt: nowIso(),
       createdAt: existing?.createdAt || nowIso()
@@ -866,9 +889,20 @@ export class FactionRegistryService {
       // when supplied, is authoritative -- never abandoned for a name match.
       // Only when no id at all is given does the name get tried, and only
       // when it is unambiguous (§ _resolveFactionForMutation doc comment).
-      const resolution = this._resolveFactionForMutation(factionId, factionName);
+      const cleanFactionId = cleanText(factionId);
+      const resolution = this._resolveFactionForMutation(cleanFactionId, factionName);
       if (resolution.ambiguous) throw new Error(`Multiple Factions are named "${cleanText(factionName)}" — specify a Faction id.`);
-      factionRecord = resolution.faction || await this.upsertFaction({ id: factionId, name: factionName, source });
+      // Identity hardening (PRE-8D-4, correction pass round 6): an explicit
+      // factionId that fails to resolve must FAIL, never silently
+      // materialize a new Faction under that stale/fabricated id --
+      // upsertFaction() itself now refuses create-with-caller-chosen-id
+      // for exactly this reason. Only a purely name-only call (no id ever
+      // supplied) may create, and does so with no id so the registry mints
+      // one.
+      if (cleanFactionId && !resolution.faction) {
+        throw new Error(`No Faction exists with id "${cleanFactionId}" — cannot add a relationship to a Faction that does not exist.`);
+      }
+      factionRecord = resolution.faction || await this.upsertFaction({ name: factionName, source });
     }
     const relationships = this.getActorRelationships(actor);
     // Match this Actor's existing relationship row by factionId ONLY --
@@ -907,10 +941,19 @@ export class FactionRegistryService {
     const relationships = this.getActorRelationships(actor);
     const existing = relationships.find(entry => entry.id === relationshipId || entry.factionId === relationshipId);
     if (!existing) return this.addActorRelationship({ actor, ...data, factionId: data.factionId || relationshipId });
-    const resolution = this._resolveFactionForMutation(data.factionId || existing.factionId, data.factionName || existing.factionName);
+    const targetFactionId = cleanText(data.factionId || existing.factionId);
+    const resolution = this._resolveFactionForMutation(targetFactionId, data.factionName || existing.factionName);
     if (resolution.ambiguous) throw new Error(`Multiple Factions are named "${cleanText(data.factionName || existing.factionName)}" — specify a Faction id.`);
+    // Identity hardening (PRE-8D-4, correction pass round 6): a resolved
+    // relationship's factionId is a real, already-existing Faction by
+    // construction (addActorRelationship() only ever stores factionRecord.id) --
+    // if it no longer resolves (the Faction was deleted), this must fail
+    // rather than silently resurrect a Faction under that stale id.
+    if (targetFactionId && !resolution.faction) {
+      throw new Error(`No Faction exists with id "${targetFactionId}" — cannot update this Actor relationship to reference a Faction that does not exist.`);
+    }
     const faction = resolution.faction
-      || await this.upsertFaction({ id: data.factionId || existing.factionId, name: data.factionName || existing.factionName, source: data.source || existing.source || 'gm' });
+      || await this.upsertFaction({ name: data.factionName || existing.factionName, source: data.source || existing.source || 'gm' });
     const updated = this._normalizeActorRelationship({
       ...existing,
       ...data,
@@ -949,13 +992,24 @@ export class FactionRegistryService {
     // thrown error here would abort every OTHER actor's unrelated update
     // in the same batch. A stable factionId, when supplied, is still
     // authoritative and never abandoned for a name match.
-    const resolution = this._resolveFactionForMutation(factionId, factionName);
+    const cleanFactionId = cleanText(factionId);
+    const resolution = this._resolveFactionForMutation(cleanFactionId, factionName);
     if (resolution.ambiguous) {
       SWSELogger.warn?.(`[FactionRegistryService] applyScoreDelta: "${factionLabel}" is ambiguous (multiple Factions share that name) — refusing to guess which one. Supply a Faction id.`);
       return null;
     }
+    // Identity hardening (PRE-8D-4, correction pass round 6): consistent
+    // with this method's existing batch-safe fail-SOFT contract -- an
+    // explicit factionId that fails to resolve must not fabricate a new
+    // Faction under that stale id. Only the frozen name-only Job-
+    // consequence compatibility case (no factionId at all) may create,
+    // and does so with no id so the registry mints one.
+    if (cleanFactionId && !resolution.faction) {
+      SWSELogger.warn?.(`[FactionRegistryService] applyScoreDelta: no Faction exists with id "${cleanFactionId}" — refusing to fabricate a new Faction under a stale/unknown id.`);
+      return null;
+    }
     const existingFaction = resolution.faction;
-    const faction = existingFaction || await this.upsertFaction({ id: factionId || '', name: factionLabel, source, historyNote: reason });
+    const faction = existingFaction || await this.upsertFaction({ name: factionLabel, source, historyNote: reason });
     const relationships = this.getActorRelationships(targetActor);
     const existing = relationships.find(entry => entry.factionId === faction.id);
     const before = normalizeScore(existing?.score ?? faction.startingScore ?? faction.score ?? 0);
@@ -1118,12 +1172,22 @@ export class FactionRegistryService {
     // a chance to pick which one, so this now fails loudly (rather than
     // silently attaching to whichever one findFaction() happened to
     // return first) and asks the GM to disambiguate before approving.
-    const resolution = this._resolveFactionForMutation(merged.factionId, merged.name || merged.factionName);
+    const cleanSuggestionFactionId = cleanText(merged.factionId);
+    const resolution = this._resolveFactionForMutation(cleanSuggestionFactionId, merged.name || merged.factionName);
     if (resolution.ambiguous) {
       throw new Error(`Multiple Factions are named "${cleanText(merged.name || merged.factionName)}" — resolve which one this suggestion refers to (e.g. from the Faction editor) before approving.`);
     }
+    // Identity hardening (PRE-8D-4, correction pass round 6): a stale
+    // factionId carried by the suggestion (or supplied in GM edit data)
+    // must never become a new canonical Faction's id. Audited: no
+    // production caller of suggestFaction()/approveSuggestedFaction() ever
+    // sets a factionId that isn't already a real Faction's id, so this is
+    // a hard failure, not a soft fallback.
+    if (cleanSuggestionFactionId && !resolution.faction) {
+      throw new Error(`No Faction exists with id "${cleanSuggestionFactionId}" — this suggestion's Faction reference is stale. Resolve it from the Faction editor before approving.`);
+    }
     const faction = await this.upsertFaction({
-      id: merged.factionId || resolution.faction?.id || '',
+      id: resolution.faction?.id || '',
       name: merged.name || merged.factionName,
       type: merged.type,
       planetSystem: planetSystemFrom(merged),

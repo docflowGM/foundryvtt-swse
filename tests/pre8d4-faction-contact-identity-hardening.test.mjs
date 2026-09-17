@@ -1086,9 +1086,34 @@ async function saveClientAsContactLike({ factionId = '', factionName = '', conta
   // over the whole array, before any name fallback is even considered),
   // so the Intel link must land on the correct Faction/Contact regardless
   // of array order.
-  installFreshRegistry();
-  const decoyFaction = await FactionRegistryService.upsertFaction({ name: 'faction-x' }); // name literally equals the target's future id
-  const targetFaction = await FactionRegistryService.upsertFaction({ id: 'faction-x', name: 'Faction X' });
+  //
+  // CORRECTION PASS round 6 (independent re-re-re-re-re-review):
+  // upsertFaction() no longer accepts a caller-chosen id for a record that
+  // doesn't exist yet (that was itself the round-6 finding), so the
+  // target Faction's deliberately-chosen id "faction-x" is now seeded
+  // directly into the raw registry -- same pattern test 8 already uses --
+  // rather than exercised through the public create path. This still
+  // proves the identical hazard (decoy's NAME colliding with the target's
+  // real id, decoy created first in array order); only the fixture
+  // mechanism changed, per the production authority's own tightened
+  // create/update contract.
+  installFreshRegistry({
+    seed: {
+      gmFactionRegistry: [
+        { id: 'rid-decoy-45', name: 'faction-x', contacts: [] }, // name literally equals the target's real id; seeded FIRST in array order
+        { id: 'faction-x', name: 'Faction X', contacts: [] }
+      ]
+    }
+  });
+  // Fetched via the EXACT-ID-ONLY resolver, not findFaction() -- findFaction()
+  // is the intentionally flexible SEARCH helper this whole test is designed
+  // to fool (findFaction('faction-x') would match the decoy's NAME before
+  // ever reaching the target's real id, since the decoy sorts first in the
+  // array). Using it here to fetch the fixtures would just reproduce the
+  // bug in the test's own setup instead of proving the fix.
+  const decoyFaction = FactionRegistryService.resolveFactionByIdForMutation('rid-decoy-45');
+  const targetFaction = FactionRegistryService.resolveFactionByIdForMutation('faction-x');
+  assert.equal(targetFaction.id, 'faction-x', 'sanity: the exact-id resolver must land on the real target, not the name-colliding decoy');
   const { contact } = await FactionRegistryService.upsertFactionContact(targetFaction.id, { name: 'Agent', role: 'Handler' });
   const record = await FactionIntelBridgeService.createDraftFromContact(targetFaction.id, contact.id, {});
   assert.ok(record?.id, 'creating the Intel draft (and its Contact write-back) must succeed');
@@ -1154,6 +1179,167 @@ async function saveClientAsContactLike({ factionId = '', factionName = '', conta
   assert.ok(!/#linkIntelToContact[\s\S]{0,400}FactionRegistryService\.findFactionContact\(/.test(intelBridgeSrc), '#linkIntelToContact() must not fall back to the flexible findFactionContact() search helper');
   assert.ok(!/#linkIntelToContact[\s\S]{0,400}FactionRegistryService\.resolveFactionContactForMutation\(/.test(intelBridgeSrc), '#linkIntelToContact() must not use the PERMISSIVE id-or-unique-name resolveFactionContactForMutation() -- its ids are already canonical and a stale one must fail, never be rescued by a same-named record');
   pass('46 — FactionIntelBridgeService#linkIntelToContact() resolves its Contact write-back target via the EXACT-ID-ONLY resolveFactionContactByIdsForMutation(), never findFactionContact() or the permissive resolveFactionContactForMutation() (structural regression guard)');
+}
+
+// ---------------------------------------------------------------------
+// CORRECTION PASS round 6 (independent re-re-re-re-re-review): the
+// canonical authority itself, not just its callers, must refuse to let an
+// UNKNOWN supplied id become the id of a newly-created record. Before this
+// round, upsertFaction()/upsertFactionContact() computed
+// `existing?.id || requestedId || randomId()` -- an explicit id that
+// didn't match any existing record fell through to being used AS the new
+// record's id, silently materializing a canonical identity the caller
+// merely guessed at (a stale id, a deleted record's old id, or outright
+// fabricated text). That is the same class of leak rounds 1-5 closed at
+// every CALLER; round 6 closes it at the AUTHORITY's own creation/update
+// boundary, where no caller-level fix can help. New contract:
+//   id supplied, matches an existing record -> update exactly that record
+//   id supplied, matches NOTHING            -> FAIL (never create with it)
+//   no id supplied                          -> CREATE, authority mints id
+// An audit of every production caller (addActorRelationship,
+// updateActorRelationship, applyScoreDelta, approveSuggestedFaction, and
+// every UI/controller upsert call site) found none legitimately depends on
+// create-with-caller-chosen-id, so the four internal fallback call sites
+// that used to pass a possibly-stale id through were tightened to match --
+// no legacy-materialization compatibility seam was needed.
+// ---------------------------------------------------------------------
+
+{
+  // 47. point A: upsertFaction() with an id that matches no existing
+  // Faction must FAIL outright -- never silently create a new Faction
+  // using that caller-supplied id.
+  installFreshRegistry();
+  await assert.rejects(
+    () => FactionRegistryService.upsertFaction({ id: 'does-not-exist', name: 'Test' }),
+    /No Faction exists with id/,
+    'upsertFaction() must refuse to create a new Faction using an unknown caller-supplied id'
+  );
+  assert.equal(FactionRegistryService.getRegistry().length, 0, 'the registry must be completely unchanged after the failed create-with-unknown-id attempt');
+  pass('47 — upsertFaction() with an id matching no existing Faction throws rather than creating a new Faction under that id (round 6, point A)');
+}
+
+{
+  // 48. point B: upsertFactionContact() with an id that matches no
+  // existing Contact on the resolved Faction must FAIL outright -- never
+  // silently create a new Contact using that caller-supplied id.
+  installFreshRegistry();
+  const faction = await FactionRegistryService.upsertFaction({ name: 'Kuati Drive Yards' });
+  await assert.rejects(
+    () => FactionRegistryService.upsertFactionContact(faction.id, { id: 'does-not-exist', name: 'Test Contact' }),
+    /No Contact exists with id/,
+    'upsertFactionContact() must refuse to create a new Contact using an unknown caller-supplied id'
+  );
+  assert.equal(FactionRegistryService.getFactionContacts(faction.id).length, 0, 'no Contact may be created from the failed create-with-unknown-id attempt');
+  pass('48 — upsertFactionContact() with an id matching no existing Contact throws rather than creating a new Contact under that id (round 6, point B)');
+}
+
+{
+  // 49. point C: addActorRelationship() with an explicit factionId that
+  // matches no existing Faction must FAIL -- never silently materialize a
+  // new Faction under that stale/fabricated id. The frozen name-only
+  // creation path (no factionId at all) must still work, and the newly
+  // created Faction must receive an authority-minted id, never the id (or
+  // name text) the caller happened to guess.
+  const actor = makeFakeActor({ id: 'pc-47' });
+  installFreshRegistry({ actors: [actor] });
+  await assert.rejects(
+    () => FactionRegistryService.addActorRelationship({ actor, factionId: 'does-not-exist', factionName: 'Ghost Faction' }),
+    /No Faction exists with id/,
+    'addActorRelationship() must refuse to materialize a new Faction from an explicit factionId that matches nothing'
+  );
+  assert.equal(FactionRegistryService.getRegistry().length, 0, 'no Faction may be created from the failed explicit-factionId attempt');
+  assert.equal(FactionRegistryService.getActorRelationships(actor).length, 0, 'no relationship may be created either');
+
+  const created = await FactionRegistryService.addActorRelationship({ actor, factionName: 'New Contacts Guild' });
+  assert.ok(created.factionId, 'the name-only creation path must still work with no factionId supplied');
+  const mintedFaction = FactionRegistryService.findFaction(created.factionId);
+  assert.notEqual(mintedFaction.id, 'New Contacts Guild', 'the newly created Faction must receive an authority-minted id, never caller-guessed or name-derived text');
+  pass('49 — addActorRelationship() refuses to materialize a Faction from an unresolvable explicit factionId; the name-only creation path still works and mints its own id (round 6, point C)');
+}
+
+{
+  // 50. updateActorRelationship(): a stale explicit factionId on an
+  // EXISTING relationship (the Faction it once pointed to was since
+  // deleted) must FAIL, never silently resurrect a new Faction under that
+  // stale id.
+  const actor = makeFakeActor({ id: 'pc-48' });
+  installFreshRegistry({ actors: [actor] });
+  const faction = await FactionRegistryService.upsertFaction({ name: 'Offworld Mining Guild' });
+  const relationship = await FactionRegistryService.addActorRelationship({ actor, faction, relationshipType: 'known' });
+  await FactionRegistryService.deleteFaction(faction.id);
+
+  await assert.rejects(
+    () => FactionRegistryService.updateActorRelationship(actor, relationship.id, { notes: 'still tracking them' }),
+    /No Faction exists with id/,
+    'updateActorRelationship() must refuse to resurrect a deleted Faction under its old, now-stale id'
+  );
+  assert.equal(FactionRegistryService.getRegistry().length, 0, 'no Faction may be re-created from the stale relationship factionId');
+  pass('50 — updateActorRelationship() refuses to resurrect a deleted Faction from a stale relationship factionId (round 6, point C variant)');
+}
+
+{
+  // 51. point D: applyScoreDelta() with an explicit factionId that
+  // matches no existing Faction must fail SOFT (return null, log),
+  // consistent with this method's existing batch-safe contract -- never
+  // fabricate a new Faction under that stale id.
+  const actor = makeFakeActor({ id: 'pc-49' });
+  installFreshRegistry({ actors: [actor] });
+  const result = await FactionRegistryService.applyScoreDelta({ actor, factionId: 'does-not-exist', factionName: 'Ghost Faction', delta: 5, source: 'job' });
+  assert.equal(result, null, 'applyScoreDelta must fail soft (return null) when the explicit factionId matches no existing Faction');
+  assert.equal(FactionRegistryService.getRegistry().length, 0, 'no Faction may be created from the failed explicit-factionId attempt');
+  assert.equal(FactionRegistryService.getActorRelationships(actor).length, 0, 'no relationship may be created either');
+  pass('51 — applyScoreDelta() fails soft (no Faction created, no relationship created) when the explicit factionId matches no existing Faction (round 6, point D)');
+}
+
+{
+  // 52. point E: approveSuggestedFaction() carrying a stale factionId
+  // (one that matches no existing Faction) must FAIL -- never create a
+  // new Faction under that stale id.
+  const actor = makeFakeActor({ id: 'pc-50' });
+  installFreshRegistry({ actors: [actor] });
+  await actor.setFlag('foundryvtt-swse', 'factions', [{ id: 'sugg-stale', name: 'Stale Suggestion', factionId: 'does-not-exist', status: 'pending_approval' }]);
+  await assert.rejects(
+    () => FactionRegistryService.approveSuggestedFaction({ actorId: actor.id, factionRecordId: 'sugg-stale' }),
+    /No Faction exists with id/,
+    'approveSuggestedFaction() must refuse to create a new Faction from a stale factionId carried by the suggestion'
+  );
+  assert.equal(FactionRegistryService.getRegistry().length, 0, 'no Faction may be created from the stale suggestion factionId');
+  pass('52 — approveSuggestedFaction() refuses to create a Faction from a stale factionId carried by the suggestion (round 6, point E)');
+}
+
+{
+  // 53. point F: the frozen name-only Job-consequence compatibility path
+  // (applyScoreDelta with only a factionName, no factionId) must still
+  // work exactly as before -- and if it needs to create a Faction, that
+  // Faction gets an authority-minted random id, never slug/name/caller-
+  // provided identity.
+  const actor = makeFakeActor({ id: 'pc-51' });
+  installFreshRegistry({ actors: [actor] });
+  const result = await FactionRegistryService.applyScoreDelta({ actor, factionName: 'Offworld Salvage Consortium', delta: 5, source: 'job' });
+  assert.ok(result, 'the name-only Job-consequence creation path must still work with no factionId supplied');
+  const mintedFaction = FactionRegistryService.findFaction(result.factionId);
+  assert.ok(mintedFaction, 'the newly created Faction must be findable by its minted id');
+  assert.notEqual(mintedFaction.id, 'Offworld Salvage Consortium', 'the newly created Faction must receive an authority-minted id, never name-derived or caller-provided text');
+  pass('53 — the frozen name-only Job-consequence path still works and creates its Faction with an authority-minted id (round 6, point F)');
+}
+
+{
+  // 54. structural regression guard: none of the four internal fallback
+  // call sites inside FactionRegistryService may pass a possibly-
+  // unresolved id through to upsertFaction() as a create-with-this-id
+  // request. Also confirms the two authority-level hard failures exist.
+  const fs = await import('node:fs');
+  const registrySrc = fs.readFileSync(
+    new URL('../scripts/allies/faction-registry-service.js', import.meta.url),
+    'utf8'
+  );
+  assert.ok(registrySrc.includes('No Faction exists with id'), 'upsertFaction() must throw when a supplied id matches no existing Faction');
+  assert.ok(registrySrc.includes('No Contact exists with id'), 'upsertFactionContact() must throw when a supplied id matches no existing Contact');
+  assert.ok(!registrySrc.includes('await this.upsertFaction({ id: factionId, name: factionName, source })'), 'addActorRelationship() must no longer pass an unresolved factionId through to upsertFaction()');
+  assert.ok(!registrySrc.includes('id: data.factionId || existing.factionId'), 'updateActorRelationship() must no longer pass an unresolved factionId through to upsertFaction()');
+  assert.ok(!registrySrc.includes("id: factionId || '', name: factionLabel"), 'applyScoreDelta() must no longer pass an unresolved factionId through to upsertFaction()');
+  assert.ok(!registrySrc.includes('id: merged.factionId || resolution.faction?.id'), 'approveSuggestedFaction() must no longer pass an unresolved factionId through to upsertFaction()');
+  pass('54 — none of FactionRegistryService\'s four internal fallback call sites pass a possibly-unresolved id through to upsertFaction(); the authority itself throws on an unknown supplied id at both upsertFaction() and upsertFactionContact() (structural regression guard)');
 }
 
 console.log(`\nPRE-8D-4 Faction/Contact canonical identity hardening: ${passCount} assertions-groups passed.`);
