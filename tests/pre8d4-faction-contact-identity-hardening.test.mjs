@@ -594,11 +594,17 @@ installFreshRegistry();
 }
 
 {
-  // 35. upsertFactionContact / deleteFactionContact / promoteFactionContactToActor
-  // must all refuse to guess their parent Faction (or, for promote, the
-  // Contact too) among duplicate same-named candidates, while still
-  // resolving correctly -- and targeting ONLY the intended record -- when
-  // given a real id.
+  // 35. upsertFactionContact must refuse to guess its parent Faction among
+  // duplicate same-named candidates (it keeps its STRICT id-else-unique-
+  // name contract via _resolveFactionForMutation(), since factionId/
+  // factionName are always genuinely separate structured fields there).
+  //
+  // Round 10 correction: deleteFactionContact()/promoteFactionContactToActor()
+  // are tightened to EXACT-ID-ONLY (see finding 4's caller audit -- no real
+  // caller ever supplies a bare display name to either parameter). So a
+  // display name passed to their factionId/contactId parameters is no
+  // longer "ambiguous among duplicates" -- it simply does not match any
+  // real id and resolves to nothing, same as any other unresolved id.
   const fakeActor = { id: 'exchange-actor-1', name: 'Ralo', uuid: 'Actor.exchange-actor-1' };
   installFreshRegistry({ actors: [fakeActor] });
   const a = await FactionRegistryService.upsertFaction({ name: 'Exchange' });
@@ -616,8 +622,8 @@ installFreshRegistry();
 
   await assert.rejects(
     () => FactionRegistryService.promoteFactionContactToActor('Exchange', contact.id),
-    /Multiple Factions are named/,
-    'promoteFactionContactToActor must refuse to guess the parent Faction among duplicate same-named Factions'
+    /Faction contact could not be found/,
+    'promoteFactionContactToActor must resolve its factionId parameter EXACT-ID-ONLY -- "Exchange" is a display name, not a real id, and must resolve to nothing rather than being treated as an ambiguous id-or-name query'
   );
   const promoted = await FactionRegistryService.promoteFactionContactToActor(a.id, contact.id);
   assert.equal(promoted.contact.id, contact.id, 'promoteFactionContactToActor must resolve correctly by real Faction id');
@@ -625,19 +631,17 @@ installFreshRegistry();
   const { contact: duplicateNameContact } = await FactionRegistryService.upsertFactionContact(a.id, { name: 'Ralo', role: 'Agent' });
   await assert.rejects(
     () => FactionRegistryService.promoteFactionContactToActor(a.id, 'Ralo'),
-    /Multiple Contacts named/,
-    'promoteFactionContactToActor must refuse to guess the Contact among duplicate same-named Contacts on the same Faction'
+    /Faction contact could not be found/,
+    'promoteFactionContactToActor must resolve its contactId parameter EXACT-ID-ONLY -- "Ralo" is a display name, not a real id, and must resolve to nothing rather than being treated as an ambiguous id-or-name query'
   );
 
-  await assert.rejects(
-    () => FactionRegistryService.deleteFactionContact('Exchange', contact.id),
-    /Multiple Factions are named/,
-    'deleteFactionContact must refuse to guess the parent Faction among duplicate same-named Factions'
-  );
+  const deletedByName = await FactionRegistryService.deleteFactionContact('Exchange', contact.id);
+  assert.equal(deletedByName, false, 'deleteFactionContact must resolve its factionId parameter EXACT-ID-ONLY -- "Exchange" is a display name, not a real id, and must resolve to nothing (no deletion) rather than being treated as an ambiguous id-or-name query');
+  assert.ok(FactionRegistryService.findFactionContact(a.id, contact.id), 'the Contact must remain undeleted when the factionId parameter was never a real id');
   await FactionRegistryService.deleteFactionContact(a.id, contact.id);
   assert.equal(FactionRegistryService.getFactionContacts(a.id).length, 1, 'only the intended Contact (by id) must be removed');
   assert.ok(FactionRegistryService.findFactionContact(a.id, duplicateNameContact.id), 'the other same-name Contact must be unaffected');
-  pass('35 — upsertFactionContact/deleteFactionContact/promoteFactionContactToActor all refuse to guess among duplicate same-named Factions/Contacts, and resolve correctly (targeting only the intended record) by real id');
+  pass('35 — upsertFactionContact refuses to guess the parent Faction among duplicate same-named Factions; deleteFactionContact/promoteFactionContactToActor resolve their id parameters EXACT-ID-ONLY (round 10, point 4) and resolve correctly (targeting only the intended record) by real id');
 }
 
 {
@@ -1551,6 +1555,14 @@ async function saveClientAsContactLike({ factionId = '', factionName = '', conta
 // `contactId || contactName` strings, which fed the PERMISSIVE
 // id-or-unique-name resolvers even when a real, separate id field was
 // already in hand.
+//
+// Round 10 update: factionName/contactName are always the SEPARATE,
+// structured name field, never a combined id-or-name string, so once the
+// id field is empty the name field is known BY CONSTRUCTION to be a
+// display name, never an id. These now fall back to the NAME-ONLY
+// resolveFactionByUniqueName()/resolveFactionContactByUniqueName(), never
+// the PERMISSIVE id-or-unique-name resolvers, matching the real
+// controller's round-10 fix.
 function resolveIssuerFactionLike(factionId, factionName) {
   const cleanId = String(factionId || '').trim();
   if (cleanId) {
@@ -1558,7 +1570,7 @@ function resolveIssuerFactionLike(factionId, factionName) {
     if (!faction) throw new Error(`No Faction exists with id "${cleanId}".`);
     return faction;
   }
-  const resolution = FactionRegistryService.resolveFactionForMutation(factionName);
+  const resolution = FactionRegistryService.resolveFactionByUniqueName(factionName);
   if (resolution.ambiguous) throw new Error(`Multiple Factions are named "${factionName}" — specify a Faction id.`);
   if (!resolution.faction) throw new Error('The selected Faction could not be found.');
   return resolution.faction;
@@ -1571,7 +1583,7 @@ function resolveIssuerContactLike(faction, contactId, contactName) {
     if (!result.contact) throw new Error(`No Contact exists with id "${cleanId}" on ${faction.name}.`);
     return result.contact;
   }
-  const resolution = FactionRegistryService.resolveFactionContactForMutation(faction.id, contactName);
+  const resolution = FactionRegistryService.resolveFactionContactByUniqueName(faction.id, contactName);
   if (resolution.ambiguous) throw new Error(`Multiple Contacts are named "${contactName}" on ${faction.name} — specify a Contact id.`);
   if (!resolution.contact) throw new Error('The selected Contact could not be found.');
   return resolution.contact;
@@ -1628,7 +1640,17 @@ function resolveIssuerContactLike(faction, contactId, contactName) {
   assert.ok(controllerSrc.includes('function resolveIssuerContact(faction, contactId, contactName)'), 'the controller must define an exact-id-first resolveIssuerContact() helper');
   assert.ok(!controllerSrc.includes('(factionId || factionName)'), 'the controller must no longer pass a collapsed factionId||factionName call argument anywhere');
   assert.ok(!controllerSrc.includes('(contactId || contactName)'), 'the controller must no longer pass a collapsed contactId||contactName call argument anywhere');
-  pass('65 — GMFactionRelationshipSurfaceController\'s hide/promote/delete/make-job/create-intel/reveal actions resolve via the exact-id-first resolveIssuerFaction()/resolveIssuerContact() helpers, never a collapsed factionId||factionName / contactId||contactName call argument (structural regression guard)');
+  // Round 10: the structured name-field fallback inside these two helpers
+  // must use the NAME-ONLY resolvers, never the PERMISSIVE id-or-name
+  // resolvers -- factionName/contactName here are always a genuinely
+  // separate, structured field, never a combined id-or-name string, so a
+  // Faction/Contact whose real canonical id happens to equal the intended
+  // record's display name must never steal the resolution.
+  assert.ok(controllerSrc.includes('FactionRegistryService.resolveFactionByUniqueName(factionName)'), 'resolveIssuerFaction() must fall back to the NAME-ONLY resolveFactionByUniqueName(), never the permissive id-or-name resolveFactionForMutation()');
+  assert.ok(controllerSrc.includes('FactionRegistryService.resolveFactionContactByUniqueName(faction.id, contactName)'), 'resolveIssuerContact() must fall back to the NAME-ONLY resolveFactionContactByUniqueName(), never the permissive id-or-name resolveFactionContactForMutation()');
+  assert.ok(!controllerSrc.includes('resolveFactionForMutation(factionName)'), 'resolveIssuerFaction() must no longer call the permissive resolveFactionForMutation() on a structured name field');
+  assert.ok(!controllerSrc.includes('resolveFactionContactForMutation(faction.id, contactName)'), 'resolveIssuerContact() must no longer call the permissive resolveFactionContactForMutation() on a structured name field');
+  pass('65 — GMFactionRelationshipSurfaceController\'s hide/promote/delete/make-job/create-intel/reveal actions resolve via the exact-id-first resolveIssuerFaction()/resolveIssuerContact() helpers, never a collapsed factionId||factionName / contactId||contactName call argument, and their structured-name-field fallback uses the NAME-ONLY resolvers rather than the permissive id-or-name ones (structural regression guard, round 7 + round 10)');
 }
 
 // ---------------------------------------------------------------------
@@ -1652,11 +1674,18 @@ function resolveIssuerContactLike(faction, contactId, contactName) {
 // ---------------------------------------------------------------------
 
 {
-  // 67. point 1a: findFaction()'s id pass must be genuinely exact-id-
-  // first, THEN case-insensitive-id-if-unique, THEN name -- not one
-  // combined exact-or-case-insensitive predicate. An earlier Faction
-  // matching only case-insensitively must never shadow a later Faction's
-  // real exact-case id.
+  // 67. point 1a (round 10 supersedes round 8/9): canonical Faction ids
+  // are simply exact-match, case-sensitive -- this system has never
+  // shipped, no persisted data or real caller has ever depended on two
+  // differently-cased id strings being treated as the same canonical
+  // Faction, and canonical ids are always machine-generated. The
+  // "case-insensitive id compatibility" stage rounds 8/9 added between
+  // exact-id and name was removed entirely (see faction-registry-service.js
+  // findFaction()'s round-10 comment). An exact-case id match must always
+  // outrank an earlier record's merely case-insensitive id match, and a
+  // differently-cased id string that matches no record's real name either
+  // must simply be "not found" -- never specially resolved as a
+  // case-insensitive id.
   installFreshRegistry({
     seed: {
       gmFactionRegistry: [
@@ -1668,17 +1697,18 @@ function resolveIssuerContactLike(faction, contactId, contactName) {
   const resolved = FactionRegistryService.findFaction('faction-x-67');
   assert.equal(resolved.id, 'faction-x-67', 'an exact-case id match must always outrank an earlier record\'s merely case-insensitive id match');
   assert.equal(resolved.name, 'Actual Faction 67');
-  // Legacy case-insensitive compatibility must still work when unique.
+  // A differently-cased id that matches no record's display name is
+  // simply not found -- case-insensitive id compatibility no longer exists.
   installFreshRegistry({
     seed: { gmFactionRegistry: [{ id: 'Legacy-ID-67', name: 'Legacy Faction 67', contacts: [] }] }
   });
-  const byCaseInsensitive = FactionRegistryService.findFaction('legacy-id-67');
-  assert.equal(byCaseInsensitive.id, 'Legacy-ID-67', 'unique case-insensitive id compatibility must still resolve correctly when there is no exact-case match');
-  pass('67 — findFaction() resolves an exact-case id match before ever trying case-insensitive id compatibility, even when an earlier record only case-insensitively matches; unique case-insensitive compatibility still works (round 8, point 1)');
+  const byDifferentCase = FactionRegistryService.findFaction('legacy-id-67');
+  assert.equal(byDifferentCase, null, 'canonical ids are case-sensitive -- a differently-cased id string must not resolve as if it were a case-insensitive id match');
+  pass('67 — findFaction() resolves ids exact-case-only, with no case-insensitive-id compatibility stage; an exact-case id match always outranks an earlier record\'s merely case-insensitive id match, and a differently-cased id string that matches no display name resolves to nothing (round 10, point 3)');
 }
 
 {
-  // 68. point 1b: same genuinely-three-pass fix for findFactionContact().
+  // 68. point 1b: same exact-case-only contract for findFactionContact().
   installFreshRegistry({
     seed: {
       gmFactionRegistry: [{
@@ -1694,7 +1724,14 @@ function resolveIssuerContactLike(faction, contactId, contactName) {
   assert.ok(resolved, 'findFactionContact() must resolve a match');
   assert.equal(resolved.contact.id, 'contact-x-68', 'an exact-case Contact id match must always outrank an earlier Contact\'s merely case-insensitive id match');
   assert.equal(resolved.contact.name, 'Actual Contact 68');
-  pass('68 — findFactionContact() resolves an exact-case Contact id match before ever trying case-insensitive id compatibility, even when an earlier Contact only case-insensitively matches (round 8, point 1)');
+  // A differently-cased Contact id that matches no Contact's display name
+  // is simply not found.
+  installFreshRegistry({
+    seed: { gmFactionRegistry: [{ id: 'faction-68b', name: 'Legacy Faction 68', contacts: [{ id: 'Legacy-Contact-68', name: 'Legacy Contact 68' }] }] }
+  });
+  const byDifferentCase = FactionRegistryService.findFactionContact('faction-68b', 'legacy-contact-68');
+  assert.equal(byDifferentCase, null, 'canonical Contact ids are case-sensitive -- a differently-cased id string must not resolve as if it were a case-insensitive id match');
+  pass('68 — findFactionContact() resolves Contact ids exact-case-only, with no case-insensitive-id compatibility stage (round 10, point 3)');
 }
 
 {
@@ -1821,14 +1858,23 @@ function resolveIssuerContactLike(faction, contactId, contactName) {
   // that happens to equal another (unrelated) Faction's display name must
   // never be "rescued" by that Faction. The produced draft must not pair
   // the stale id with a borrowed name from an unrelated record.
+  //
+  // Round 10 correction: an unresolved controllingFactionId must ALSO
+  // never be copied through into `issuer.factionId` verbatim -- that field
+  // means "this is a resolved canonical Faction reference," and a broken
+  // reference must never masquerade as one. The raw broken id survives
+  // only as non-canonical diagnostic provenance on
+  // `metadata.unresolvedControllingFactionId`.
   installFreshRegistry();
   const decoyFaction = await FactionRegistryService.upsertFaction({ name: 'stale-controlling-faction-id-73' });
   void decoyFaction;
   const location = { id: 'loc-73', name: 'Contested Outpost 73', controllingFactionId: 'stale-controlling-faction-id-73', parentLocationId: '' };
   const draft = LocationJobBridgeService.buildDraftFromLocation(location);
   assert.ok(draft, 'a Location with a stale controllingFactionId must still produce a draft (Location-level context alone is enough)');
-  assert.equal(draft.issuer.factionId, 'stale-controlling-faction-id-73', 'the raw controllingFactionId is still copied through verbatim (it is the Location\'s own stored reference, stale or not)');
+  assert.equal(draft.issuer.factionId, '', 'an unresolved controllingFactionId must never be copied through verbatim as a canonical issuer.factionId -- a broken reference must not masquerade as a resolved one');
+  assert.equal(draft.issuer.factionName, '', 'an unresolved controllingFactionId must never carry a factionName either');
   assert.equal(draft.client.factionName, '', 'an unresolved controllingFactionId must NEVER be paired with an unrelated Faction\'s display name -- the name must be empty, not borrowed');
+  assert.equal(draft.metadata.unresolvedControllingFactionId, 'stale-controlling-faction-id-73', 'the raw broken reference must survive only as non-canonical diagnostic provenance, never as issuer.factionId');
   assert.ok(!draft.briefing.includes('stale-controlling-faction-id-73'.replace(/-/g, ' ')), 'sanity: the briefing must not accidentally embed the decoy Faction\'s display name either');
 
   // A genuinely resolvable controllingFactionId must still work correctly.
@@ -1837,7 +1883,8 @@ function resolveIssuerContactLike(faction, contactId, contactName) {
   const draft2 = LocationJobBridgeService.buildDraftFromLocation(location2);
   assert.equal(draft2.issuer.factionId, realFaction.id);
   assert.equal(draft2.client.factionName, 'Real Controlling Faction 73', 'a real, resolvable controllingFactionId must still resolve to its correct Faction name');
-  pass('73 — LocationJobBridgeService resolves controllingFactionId exact-id-only; a stale id never gets paired with an unrelated Faction\'s borrowed display name (round 9, point 1)');
+  assert.equal(draft2.metadata.unresolvedControllingFactionId, '', 'a resolvable controllingFactionId must leave the diagnostic field empty');
+  pass('73 — LocationJobBridgeService resolves controllingFactionId exact-id-only; a stale/broken id never gets copied through as a canonical issuer.factionId nor paired with an unrelated Faction\'s borrowed display name, and survives only as non-canonical diagnostic metadata (round 10, point 1)');
 }
 
 {
@@ -1863,42 +1910,69 @@ function resolveIssuerContactLike(faction, contactId, contactName) {
 }
 
 {
-  // 75. point 3: findFaction()/findFactionContact() must refuse outright
-  // (return null) when the case-insensitive-id pass itself produces 2+
-  // ambiguous candidates -- never fall through to a display-name match,
-  // which could let a completely unrelated THIRD record's name decide
-  // among two id-shaped candidates it has nothing to do with.
+  // 75. point 3 (round 10 supersedes round 9): rounds 8/9 added a
+  // "case-insensitive-id compatibility" stage between exact-id and name
+  // matching, and had to specially refuse ambiguous case-insensitive-id
+  // candidates so they wouldn't fall through to an unrelated third
+  // record's display name. Round 10 removed that stage entirely (no real
+  // caller or persisted data ever depended on it), which eliminates the
+  // ambiguity category itself -- there is no longer a "case-insensitive
+  // id pass" to be ambiguous about. What remains is simply: exact id,
+  // then case-insensitive NAME/slug match. Two ids differing only by
+  // case must never be treated as the same canonical Faction, and a
+  // query matching neither an exact id nor any real display name must
+  // resolve to nothing -- never specially "found" via id case-folding.
   installFreshRegistry({
     seed: {
       gmFactionRegistry: [
         { id: 'ABC-75', name: 'Faction ABC Upper 75', contacts: [] },
-        { id: 'abc-75', name: 'Faction abc Lower 75', contacts: [] },
-        { id: 'unrelated-75', name: 'aBc-75', contacts: [] }
+        { id: 'abc-75', name: 'Faction abc Lower 75', contacts: [] }
       ]
     }
   });
-  const resolved = FactionRegistryService.findFaction('aBc-75');
-  assert.equal(resolved, null, 'an ambiguous case-insensitive id match (2+ candidates) must refuse outright, never fall through to a third, unrelated record\'s display name');
-  pass('75 — findFaction() refuses (returns null) when 2+ candidates match a query case-insensitively by id, rather than falling through to an unrelated record\'s display name (round 9, point 3)');
+  const exactUpper = FactionRegistryService.findFaction('ABC-75');
+  assert.equal(exactUpper.id, 'ABC-75', 'exact-case id match must resolve its own record');
+  const exactLower = FactionRegistryService.findFaction('abc-75');
+  assert.equal(exactLower.id, 'abc-75', 'exact-case id match must resolve its own record, distinct from the differently-cased id');
+  const noMatch = FactionRegistryService.findFaction('ABZ-75');
+  assert.equal(noMatch, null, 'a query matching neither an exact id nor any real display name must resolve to nothing -- there is no case-insensitive-id fallback stage left to "rescue" it');
+  const fs75 = await import('node:fs');
+  const registrySrc75 = fs75.readFileSync(
+    new URL('../scripts/allies/faction-registry-service.js', import.meta.url),
+    'utf8'
+  );
+  const findFactionBody = registrySrc75.slice(registrySrc75.indexOf('static findFaction('), registrySrc75.indexOf('static findFactionContact('));
+  assert.ok(!findFactionBody.includes('idAmbiguous'), 'findFaction() must no longer contain any case-insensitive-id ambiguity machinery (structural regression guard)');
+  pass('75 — findFaction() has no case-insensitive-id compatibility stage; two ids differing only by case are never treated as the same canonical Faction, and a query matching neither an exact id nor a real display name resolves to nothing (round 10, point 3)');
 }
 
 {
-  // 76. same refusal for findFactionContact()'s Contact-level id pass.
+  // 76. same exact-id-then-name-only contract for findFactionContact().
   installFreshRegistry({
     seed: {
       gmFactionRegistry: [{
         id: 'faction-76', name: 'Zann Consortium 76',
         contacts: [
           { id: 'XYZ-76', name: 'Contact XYZ Upper 76' },
-          { id: 'xyz-76', name: 'Contact xyz Lower 76' },
-          { id: 'unrelated-76', name: 'xYz-76' }
+          { id: 'xyz-76', name: 'Contact xyz Lower 76' }
         ]
       }]
     }
   });
-  const resolved = FactionRegistryService.findFactionContact('faction-76', 'xYz-76');
-  assert.equal(resolved, null, 'an ambiguous case-insensitive Contact id match (2+ candidates) must refuse outright, never fall through to an unrelated Contact\'s display name');
-  pass('76 — findFactionContact() refuses (returns null) when 2+ Contacts match a query case-insensitively by id, rather than falling through to an unrelated Contact\'s display name (round 9, point 3)');
+  const exactUpper76 = FactionRegistryService.findFactionContact('faction-76', 'XYZ-76');
+  assert.equal(exactUpper76.contact.id, 'XYZ-76', 'exact-case Contact id match must resolve its own record');
+  const exactLower76 = FactionRegistryService.findFactionContact('faction-76', 'xyz-76');
+  assert.equal(exactLower76.contact.id, 'xyz-76', 'exact-case Contact id match must resolve its own record, distinct from the differently-cased id');
+  const resolved = FactionRegistryService.findFactionContact('faction-76', 'xYz-76-does-not-exist');
+  assert.equal(resolved, null, 'a query matching neither an exact Contact id nor any real Contact display name must resolve to nothing -- there is no case-insensitive-id fallback stage left to "rescue" it');
+  const fs76 = await import('node:fs');
+  const registrySrc76 = fs76.readFileSync(
+    new URL('../scripts/allies/faction-registry-service.js', import.meta.url),
+    'utf8'
+  );
+  const findFactionContactBody = registrySrc76.slice(registrySrc76.indexOf('static findFactionContact('), registrySrc76.indexOf('static findFactionContact(') + 1200);
+  assert.ok(!findFactionContactBody.includes('idAmbiguous'), 'findFactionContact() must no longer contain any case-insensitive-id ambiguity machinery (structural regression guard)');
+  pass('76 — findFactionContact() has no case-insensitive-id compatibility stage; two Contact ids differing only by case are never treated as the same canonical Contact, and a query matching neither an exact id nor a real display name resolves to nothing (round 10, point 3)');
 }
 
 {
@@ -1915,6 +1989,127 @@ function resolveIssuerContactLike(faction, contactId, contactName) {
   const draft = FactionJobBridgeService.buildDraftFromContact(faction.id, 'Mira');
   assert.equal(draft, null, '"Mira" and "mira" must be treated as ambiguous duplicates (case-insensitive name equality, matching the registry\'s own rule) -- a non-empty selector matching both must return null, never arbitrarily pick the exact-case match');
   pass('77 — FactionJobBridgeService\'s Contact name resolution treats display names case-insensitively, matching the registry\'s own rule; "Mira" and "mira" are refused as ambiguous duplicates rather than resolved by exact case (round 9, point 4)');
+}
+
+{
+  // 78. round 10, finding 2 (Job bridge): a structured issuerFilter.factionName
+  // field must resolve NAME-ONLY, even when some OTHER Faction's real
+  // canonical id happens to equal the intended Faction's display name.
+  // Adversarial scenario: Faction A has id "Black Sun" (and an unrelated
+  // display name); Faction B has a real generated id and is actually named
+  // "Black Sun". issuerFilter.factionName = "Black Sun" must resolve to
+  // Faction B, never to Faction A via an id-shaped guess.
+  installFreshRegistry({
+    seed: {
+      gmFactionRegistry: [
+        { id: 'Black Sun', name: 'Decoy Organization 78', contacts: [] },
+        { id: 'real-faction-b-78', name: 'Black Sun', contacts: [] }
+      ]
+    }
+  });
+  const draft = FactionJobBridgeService.buildDraftFromIssuerFilter({ factionName: 'Black Sun' });
+  assert.ok(draft, 'a structured factionName field matching a real Faction display name must build a draft');
+  assert.equal(draft.issuer.factionId, 'real-faction-b-78', 'a structured factionName field must resolve by NAME ONLY -- it must never be tried as an id first, so it must resolve to the Faction actually named "Black Sun", not the unrelated Faction whose id happens to be that string');
+  pass('78 — FactionJobBridgeService.buildDraftFromIssuerFilter()\'s structured factionName field resolves NAME-ONLY; a Faction whose real canonical id equals the intended Faction\'s display name can never steal the resolution (round 10, point 2)');
+}
+
+{
+  // 79. same adversarial scenario for the structured contactName field.
+  // Contact ids are seeded directly (rather than via upsertFactionContact,
+  // which -- correctly, per round 6 -- refuses a caller-chosen id that
+  // does not already exist) to construct the adversarial fixture: a Contact
+  // whose real canonical id happens to equal another Contact's real
+  // display name.
+  installFreshRegistry({
+    seed: {
+      gmFactionRegistry: [{
+        id: 'faction-79', name: 'Zann Consortium 79',
+        contacts: [
+          { id: 'Mira Voss', name: 'Decoy Contact 79' },
+          { id: 'real-contact-79', name: 'Mira Voss' }
+        ]
+      }]
+    }
+  });
+  const draft = FactionJobBridgeService.buildDraftFromIssuerFilter({ factionId: 'faction-79', contactName: 'Mira Voss' });
+  assert.ok(draft, 'a structured contactName field matching a real Contact display name must build a draft');
+  assert.equal(draft.issuer.contactId, 'real-contact-79', 'a structured contactName field must resolve by NAME ONLY -- it must resolve to the Contact actually named "Mira Voss", not the unrelated Contact whose id happens to be that string');
+  pass('79 — FactionJobBridgeService.buildDraftFromIssuerFilter()\'s structured contactName field resolves NAME-ONLY; a Contact whose real canonical id equals the intended Contact\'s display name can never steal the resolution (round 10, point 2)');
+}
+
+{
+  // 80. same adversarial scenario against GMFactionRelationshipSurfaceController's
+  // resolveIssuerFaction() contract (proven via the up-to-date functional
+  // replica resolveIssuerFactionLike(), which now mirrors the real
+  // controller's round-10 fix -- see test 65's structural guard for proof
+  // the real controller source matches this replica).
+  installFreshRegistry({
+    seed: {
+      gmFactionRegistry: [
+        { id: 'Black Sun', name: 'Decoy Organization 80', contacts: [] },
+        { id: 'real-faction-b-80', name: 'Black Sun', contacts: [] }
+      ]
+    }
+  });
+  const resolved = resolveIssuerFactionLike('', 'Black Sun');
+  assert.equal(resolved.id, 'real-faction-b-80', 'resolveIssuerFaction()\'s structured factionName fallback must resolve NAME-ONLY, never guessing the string as an id first');
+  pass('80 — GMFactionRelationshipSurfaceController\'s resolveIssuerFaction() structured factionName fallback resolves NAME-ONLY; a Faction whose real canonical id equals the intended Faction\'s display name can never steal the resolution (round 10, point 2)');
+}
+
+{
+  // 81. same adversarial scenario for resolveIssuerContact()'s structured
+  // contactName fallback. Contact ids are seeded directly (see test 79's
+  // comment for why) to construct a Contact whose real canonical id equals
+  // another Contact's real display name.
+  installFreshRegistry({
+    seed: {
+      gmFactionRegistry: [{
+        id: 'faction-81', name: 'Exchange 81',
+        contacts: [
+          { id: 'Handler Rill', name: 'Decoy Contact 81' },
+          { id: 'real-contact-81', name: 'Handler Rill' }
+        ]
+      }]
+    }
+  });
+  const faction = FactionRegistryService.resolveFactionByIdForMutation('faction-81');
+  const resolved = resolveIssuerContactLike(faction, '', 'Handler Rill');
+  assert.equal(resolved.id, 'real-contact-81', 'resolveIssuerContact()\'s structured contactName fallback must resolve NAME-ONLY, never guessing the string as an id first');
+  pass('81 — GMFactionRelationshipSurfaceController\'s resolveIssuerContact() structured contactName fallback resolves NAME-ONLY; a Contact whose real canonical id equals the intended Contact\'s display name can never steal the resolution (round 10, point 2)');
+}
+
+{
+  // 82. round 10, finding 4: deleteFactionContact()/promoteFactionContactToActor()
+  // are named as if factionId/contactId were canonical ids, but a caller
+  // audit found they still resolved permissively (id-or-unique-name).
+  // Tightening deleteFactionContact() also surfaced (and fixed) a latent
+  // honesty bug in its return value: it previously reported `true`
+  // whenever the Faction resolved, even when no Contact actually matched
+  // contactId and nothing was removed. No
+  // real production caller (GMFactionRelationshipSurfaceController's
+  // delete-contact/promote-contact actions, GMContactActorizerService's
+  // drag-to-actorize path) ever supplies a bare display name to either
+  // parameter -- every real caller already has a genuine canonical id in
+  // hand. Tightened to exact-id-only to match their own parameter names.
+  installFreshRegistry();
+  const faction = await FactionRegistryService.upsertFaction({ name: 'Correction 82' });
+  await FactionRegistryService.upsertFactionContact(faction.id, { name: 'stale-contact-id-82', role: 'Decoy' });
+  const deletedByName = await FactionRegistryService.deleteFactionContact(faction.id, 'stale-contact-id-82');
+  assert.equal(deletedByName, false, 'deleteFactionContact() must resolve the contactId parameter EXACT-ID-ONLY -- a string matching another Contact\'s display name (not a real id) must not delete anything');
+  const stillThere = FactionRegistryService.findFactionContact(faction.id, 'stale-contact-id-82');
+  assert.ok(stillThere, 'the Contact whose NAME merely matched the text passed to deleteFactionContact() must remain undeleted');
+
+  await assert.rejects(
+    () => FactionRegistryService.promoteFactionContactToActor(faction.id, 'stale-contact-id-82'),
+    /Faction contact could not be found/,
+    'promoteFactionContactToActor() must resolve the contactId parameter EXACT-ID-ONLY -- a string matching another Contact\'s display name (not a real id) must throw, never promote that other Contact'
+  );
+
+  // Real, matching ids for both must still work correctly.
+  const { contact: realContact } = await FactionRegistryService.upsertFactionContact(faction.id, { name: 'Real Contact 82' });
+  const deletedById = await FactionRegistryService.deleteFactionContact(faction.id, realContact.id);
+  assert.equal(deletedById, true, 'a real, matching contactId must still delete correctly');
+  pass('82 — deleteFactionContact()/promoteFactionContactToActor() resolve factionId/contactId EXACT-ID-ONLY; no real caller ever supplies a bare display name, so the permissive id-or-unique-name fallback was removed with no loss of real functionality (round 10, point 4)');
 }
 
 console.log(`\nPRE-8D-4 Faction/Contact canonical identity hardening: ${passCount} assertions-groups passed.`);

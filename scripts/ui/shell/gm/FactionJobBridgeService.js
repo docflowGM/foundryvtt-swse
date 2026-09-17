@@ -332,30 +332,35 @@ export class FactionJobBridgeService {
    *
    * When a real, separate id field is populated it resolves EXACT-ID-ONLY
    * (via FactionRegistryService's exact-id resolvers) and fails -- returns
-   * null -- rather than ever falling back to the sibling name field. Only
-   * when the id field is genuinely empty does the unique-name
-   * compatibility path (resolveFactionIdOrUniqueName() /
-   * resolveContactByIdThenName(), both ambiguity-safe) apply. Every
-   * caller that carries this structured shape (GMJobBoardSurfaceService's
-   * filterDraft construction, GMJobBoardSurfaceController's follow-up-
-   * contract handler) routes through this instead of independently
-   * collapsing `factionId || factionName` into one ambiguous string.
+   * null -- rather than ever falling back to the sibling name field.
+   *
+   * Identity hardening (PRE-8D-4, correction pass round 10): when the id
+   * field is empty, the sibling name field is known -- by construction of
+   * this structured shape -- to be a NAME, never an id. Round 8/9 fed it
+   * through `resolveFactionIdOrUniqueName()`/`resolveContactByIdThenName()`,
+   * which try the string as an id FIRST -- the mirror image of the bug
+   * rounds 5-9 closed: a Faction whose real canonical id happens to equal
+   * the INTENDED Faction's display name could steal the resolution. Now
+   * uses `resolveFactionByUniqueName()`/`resolveFactionContactByUniqueName()`
+   * instead -- name-only, never interpreted as an id.
    */
   static buildDraftFromIssuerFilter(filter = {}) {
     const factionId = text(filter?.factionId);
     const factionName = text(filter?.factionName);
+    const factionByName = factionId ? null : FactionRegistryService.resolveFactionByUniqueName(factionName);
     const faction = factionId
       ? FactionRegistryService.resolveFactionByIdForMutation(factionId)
-      : resolveFactionIdOrUniqueName(factionName);
+      : (factionByName.ambiguous ? null : factionByName.faction);
     if (!faction) return null;
 
     const contactId = text(filter?.contactId);
     const contactName = text(filter?.contactName);
     if (!contactId && !contactName) return this.buildDraftFromFaction(faction);
 
+    const contactByName = contactId ? null : FactionRegistryService.resolveFactionContactByUniqueName(faction.id, contactName);
     const contact = contactId
       ? FactionRegistryService.resolveFactionContactByIdsForMutation(faction.id, contactId).contact
-      : resolveContactByIdThenName(faction, contactName);
+      : (contactByName.ambiguous ? null : contactByName.contact);
     if (!contact) return null;
     return this.buildDraftFromContact(faction, contact);
   }

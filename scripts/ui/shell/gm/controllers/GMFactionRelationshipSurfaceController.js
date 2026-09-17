@@ -101,6 +101,18 @@ async function resolveActorForContact({ uuid = '', actorId = '' } = {}) {
  * helpers make that the enforced contract rather than an assumption, and
  * only fall back to name-based resolution when the id field is genuinely
  * empty.
+ *
+ * Identity hardening (PRE-8D-4, correction pass round 10): factionName/
+ * contactName here are always the SEPARATE, structured name field from the
+ * button dataset -- never a combined id-or-name string -- so once the id
+ * field is genuinely empty, the name field is known BY CONSTRUCTION to be
+ * a display name, never an id. Falling back through
+ * `resolveFactionForMutation()`/`resolveFactionContactForMutation()`
+ * (which try the string as an id FIRST) meant a Faction/Contact whose
+ * real canonical id happened to equal the intended row's display name
+ * could steal the resolution. These now fall back to the name-only
+ * `resolveFactionByUniqueName()`/`resolveFactionContactByUniqueName()`
+ * instead, which never interpret the string as an id.
  */
 function resolveIssuerFaction(factionId, factionName) {
   const cleanId = String(factionId || '').trim();
@@ -109,7 +121,7 @@ function resolveIssuerFaction(factionId, factionName) {
     if (!faction) throw new Error(`No Faction exists with id "${cleanId}".`);
     return faction;
   }
-  const resolution = FactionRegistryService.resolveFactionForMutation(factionName);
+  const resolution = FactionRegistryService.resolveFactionByUniqueName(factionName);
   if (resolution.ambiguous) throw new Error(`Multiple Factions are named "${factionName}" — specify a Faction id.`);
   if (!resolution.faction) throw new Error('The selected Faction could not be found.');
   return resolution.faction;
@@ -122,7 +134,7 @@ function resolveIssuerContact(faction, contactId, contactName) {
     if (!result.contact) throw new Error(`No Contact exists with id "${cleanId}" on ${faction.name}.`);
     return result.contact;
   }
-  const resolution = FactionRegistryService.resolveFactionContactForMutation(faction.id, contactName);
+  const resolution = FactionRegistryService.resolveFactionContactByUniqueName(faction.id, contactName);
   if (resolution.ambiguous) throw new Error(`Multiple Contacts are named "${contactName}" on ${faction.name} — specify a Contact id.`);
   if (!resolution.contact) throw new Error('The selected Contact could not be found.');
   return resolution.contact;

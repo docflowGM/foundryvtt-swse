@@ -506,34 +506,28 @@ export class FactionRegistryService {
     // record's real canonical id. A single combined .find() evaluates
     // every OR-branch per record in array order, so an earlier Faction
     // named e.g. "faction-x" would win over a later Faction whose real id
-    // actually IS "faction-x".
+    // actually IS "faction-x". Exact id is always checked first, across
+    // the whole registry; name/slug is only tried once no id matches.
     //
-    // Identity hardening (PRE-8D-4, correction pass round 8): round 7's
-    // own id-pass was ITSELF still one combined `record.id === cleanQuery
-    // || record.id.toLowerCase() === needle` predicate -- so an earlier
-    // Faction matching only case-insensitively could still shadow a later
-    // Faction's real EXACT id (e.g. an earlier "FACTION-X" beating a later
-    // "faction-x"). Genuinely three separate passes over the full
-    // registry now: exact id always wins outright; legacy
-    // case-insensitive id compatibility only when it names exactly ONE
-    // Faction (never guessed among 2+ differently-cased ids); name/slug
-    // only once no id match won at all.
-    //
-    // Identity hardening (PRE-8D-4, correction pass round 9): round 8's
-    // case-insensitive-id pass fell through to the name/slug pass on
-    // EITHER 0 or 2+ matches -- correct for 0 (there is genuinely no id
-    // candidate, so trying a name is the right next step), but wrong for
-    // 2+: an ambiguous ID-shaped query must refuse outright, the same way
-    // every other ambiguity in this file refuses rather than guesses. A
-    // display name must never rescue a query that already matched 2+ ids
-    // case-insensitively -- that would let a THIRD record's name decide
-    // among two ID-shaped candidates it has nothing to do with.
+    // Identity hardening (PRE-8D-4, correction pass round 10): rounds
+    // 8-9 additionally added a "legacy case-insensitive id compatibility"
+    // stage between exact-id and name -- but this system has never
+    // shipped, no persisted world data or real caller has ever depended
+    // on two differently-cased id strings being treated as the same
+    // canonical Faction, and canonical ids are always machine-generated
+    // (randomID()/crypto.randomUUID()/slugify()), never hand-typed in a
+    // way that would plausibly vary only by case. That stage was
+    // speculative compatibility for a hypothetical need with no real
+    // caller or data behind it -- removed rather than reconciled with the
+    // permissive mutation resolvers (which never had it), per the
+    // project's now-explicit policy of not carrying unreleased
+    // intermediate-revision behavior forward as if it were shipped
+    // compatibility. Canonical ids are simply exact-match, case-sensitive,
+    // everywhere in this file now -- one fewer resolution stage, one
+    // fewer place resolvers could disagree.
     const records = this.getRegistry();
     const exactById = records.find(record => record.id === cleanQuery);
     if (exactById) return exactById;
-    const caseInsensitiveIdMatches = records.filter(record => record.id.toLowerCase() === needle);
-    if (caseInsensitiveIdMatches.length === 1) return caseInsensitiveIdMatches[0];
-    if (caseInsensitiveIdMatches.length > 1) return null;
     return records.find(record => record.name.toLowerCase() === needle || slugify(record.name) === needle) ?? null;
   }
 
@@ -659,24 +653,12 @@ export class FactionRegistryService {
     // id-always-outranks-name precedence as findFaction() above, applied
     // to this Faction's Contacts.
     //
-    // Identity hardening (PRE-8D-4, correction pass round 8): same
-    // genuinely-three-pass fix as findFaction() above -- exact id always
-    // wins outright; legacy case-insensitive id compatibility only when
-    // unique; name only once no id match won at all.
-    //
-    // Identity hardening (PRE-8D-4, correction pass round 9): same fix as
-    // findFaction() above -- 2+ case-insensitive id matches must refuse
-    // outright (ambiguous), never fall through to a name match.
+    // Identity hardening (PRE-8D-4, correction pass round 10): the
+    // "legacy case-insensitive id compatibility" stage rounds 8-9 added
+    // here (mirroring findFaction()) was removed for the same reason --
+    // see findFaction()'s own round-10 note. Exact id, then name.
     const contacts = safeArray(faction.contacts).map(entry => normalizeContact(entry));
-    const exactById = contacts.find(entry => entry.id === cleanContactId);
-    let contact = exactById;
-    let idAmbiguous = false;
-    if (!contact) {
-      const caseInsensitiveIdMatches = contacts.filter(entry => entry.id.toLowerCase() === needle);
-      if (caseInsensitiveIdMatches.length === 1) contact = caseInsensitiveIdMatches[0];
-      else if (caseInsensitiveIdMatches.length > 1) idAmbiguous = true;
-    }
-    if (!contact && !idAmbiguous) contact = contacts.find(entry => entry.name.toLowerCase() === needle);
+    const contact = contacts.find(entry => entry.id === cleanContactId) ?? contacts.find(entry => entry.name.toLowerCase() === needle);
     return contact ? { faction, contact } : null;
   }
 
@@ -802,6 +784,37 @@ export class FactionRegistryService {
     return { faction, contact };
   }
 
+  /**
+   * Identity hardening (PRE-8D-4, correction pass round 10): NAME-ONLY
+   * counterparts to the id-or-unique-name PERMISSIVE resolvers above, for
+   * callers that hold a genuinely STRUCTURED, semantically-explicit name
+   * field (e.g. a Job draft's `issuerFilter.factionName`, populated only
+   * when `issuerFilter.factionId` was empty) -- as opposed to one
+   * combined string that might be either an id or a name. Routing an
+   * explicit name field through an id-or-name resolver is the mirror-
+   * image of the bug rounds 5-9 closed: it would let a query the caller
+   * already knows is a NAME be matched against some OTHER record's
+   * canonical id, purely because that id happens to equal the intended
+   * record's display name. These never try the query as an id at all --
+   * case-insensitive display-name equality, refusing to guess among 2+
+   * matches, exactly like the name-matching stage every other resolver
+   * in this file already uses.
+   */
+  static resolveFactionByUniqueName(name = '') {
+    return this._resolveFactionByUniqueName(name);
+  }
+
+  static resolveFactionContactByUniqueName(factionId = '', name = '') {
+    const faction = this.resolveFactionByIdForMutation(factionId);
+    const cleanName = cleanText(name);
+    if (!faction || !cleanName) return { faction: faction ?? null, contact: null, ambiguous: false };
+    const contacts = safeArray(faction.contacts).map(entry => normalizeContact(entry));
+    const nameMatches = contacts.filter(entry => entry.name.toLowerCase() === cleanName.toLowerCase());
+    if (nameMatches.length === 1) return { faction, contact: nameMatches[0], ambiguous: false };
+    if (nameMatches.length > 1) return { faction, contact: null, ambiguous: true };
+    return { faction, contact: null, ambiguous: false };
+  }
+
   static async upsertFactionContact(factionId = '', data = {}) {
     const factionIdQuery = factionId || data.factionId;
     const resolution = this._resolveFactionForMutation(factionIdQuery, data.factionName);
@@ -850,13 +863,31 @@ export class FactionRegistryService {
     return { faction: this.findFaction(faction.id), contact };
   }
 
+  /**
+   * Identity hardening (PRE-8D-4, correction pass round 10): the `factionId`/
+   * `contactId` parameter names here always meant "canonical id" -- but the
+   * implementation still resolved them permissively (exact id, else unique
+   * name). A caller audit found every real production caller
+   * (GMFactionRelationshipSurfaceController's delete-contact action,
+   * GMContactActorizerService's drag-to-actorize path) already supplies a
+   * genuine canonical id sourced from a rendered row's dataset/payload --
+   * none ever supplies a bare display name. This system has never shipped,
+   * so there is no persisted-world caller to protect either. With no real
+   * caller or data requiring the permissive fallback, these are tightened
+   * to match their own parameter names: exact-id-only.
+   *
+   * This also fixes a latent honesty bug in the return value: it
+   * previously reported `true` whenever the Faction resolved, even if no
+   * Contact actually matched `contactId` and nothing was removed. It now
+   * reports `false` (no-op) unless a real Contact was found and removed.
+   */
   static async deleteFactionContact(factionId = '', contactId = '') {
-    const resolution = this._resolveFactionByIdOrUniqueName(factionId);
-    if (resolution.ambiguous) throw new Error(`Multiple Factions are named "${cleanText(factionId)}" — specify a Faction id.`);
-    const faction = resolution.faction;
+    const faction = this.resolveFactionByIdForMutation(factionId);
     const id = cleanText(contactId);
     if (!faction || !id) return false;
-    const contacts = safeArray(faction.contacts).map(contact => normalizeContact(contact)).filter(contact => contact.id !== id);
+    const existingContacts = safeArray(faction.contacts).map(contact => normalizeContact(contact));
+    if (!existingContacts.some(contact => contact.id === id)) return false;
+    const contacts = existingContacts.filter(contact => contact.id !== id);
     const records = this.getRegistry();
     const next = records.map(record => record.id === faction.id ? this._normalizeFactionRecord({ ...record, contacts, updatedAt: nowIso() }) : record);
     await this.saveRegistry(next);
@@ -864,12 +895,9 @@ export class FactionRegistryService {
   }
 
   static async promoteFactionContactToActor(factionId = '', contactId = '') {
-    const factionResolution = this._resolveFactionByIdOrUniqueName(factionId);
-    if (factionResolution.ambiguous) throw new Error(`Multiple Factions are named "${cleanText(factionId)}" — specify a Faction id.`);
-    const faction = factionResolution.faction;
+    const faction = this.resolveFactionByIdForMutation(factionId);
     if (!faction) throw new Error('Faction contact could not be found.');
-    const contactResolution = this._resolveFactionContactByIdOrUniqueName(faction, contactId);
-    if (contactResolution.ambiguous) throw new Error(`Multiple Contacts named "${cleanText(contactId)}" exist on ${faction.name} — specify a Contact id.`);
+    const contactResolution = this.resolveFactionContactByIdsForMutation(faction.id, contactId);
     const contact = contactResolution.contact;
     if (!contact) throw new Error('Faction contact could not be found.');
 
