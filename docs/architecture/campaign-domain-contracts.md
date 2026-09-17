@@ -28,6 +28,7 @@ This table is frozen — a normative statement of who owns what, not a survey of
 | Intel | `HolonetIntelService` | Intel lifecycle/content/links | Faction/Location records |
 | Credits / trade | `TransactionEngine` | Financial/store transactions | Actor/faction narrative metadata |
 | Holonet | transport/presentation | publication/sync/display | Canonical domain facts |
+| Party | future `PartyLedger`/`PartyRecordService` | Party membership, current campaign context, knowledge state, historical interactions (§20) | Canonical state of Contacts, Factions, Locations, Jobs, Intel, or Actors |
 | Generator | none | Draft proposals | Any canonical mutation |
 | Coordinator | future `CampaignMutationCoordinator` | Sequencing multi-domain outcomes | Domain semantics |
 
@@ -68,7 +69,7 @@ A caller with two genuinely separate fields (`factionId` and `factionName`) must
 
 A non-empty selector of any of these types that fails to resolve — not found, or ambiguous among 2+ candidates — always fails outright (`null`/throw, or a documented soft-fail where the caller's own contract requires batch-safety). It is never silently substituted with a broader or different result. Only a genuinely **absent** selector may fall back to a broader, intentional default.
 
-Canonical ids are exact-match, case-sensitive comparisons, full stop. Do not add a "case-insensitive id compatibility" stage on spec: PRE-8D-4 round 8/9 added one, and round 10 removed it again after finding zero real callers or persisted data that needed it (see §22, and the compatibility-burden rule it establishes generally).
+Canonical ids are exact-match, case-sensitive comparisons, full stop. Do not add a "case-insensitive id compatibility" stage on spec: PRE-8D-4 round 8/9 added one, and round 10 removed it again after finding zero real callers or persisted data that needed it (see §23, and the compatibility-burden rule it establishes generally).
 
 ## 5. Creation and mutation contract
 
@@ -429,7 +430,101 @@ Job completion
 
 Keep this modest. A `CampaignEvent` is a durable historical occurrence that may produce multiple domain effects — nothing more. Do not build a general-purpose relationship graph on top of it; that is exactly the kind of speculative framework the top-level project instructions already forbid.
 
-## 20. Per-domain contracts (worked examples)
+## 20. Party Knowledge and Participation
+
+Player/Party records are their own domain — "what has this party actually encountered, learned, visited, done, and who was involved?" — not another copy of Contacts, Factions, Locations, Jobs, or Intel. No other domain quite owns that fact, and none of them should be made to.
+
+Three different things are in play and must not be conflated:
+
+| Thing | What it represents | Authority |
+|---|---|---|
+| User | The human logged into Foundry | Foundry |
+| Actor / PC | The character | `ActorEngine` |
+| Party | The adventuring group and its shared campaign experience | future Party domain (e.g. `PartyLedger`/`PartyRecordService`) |
+
+**The Party domain owns relationships and history, never the referenced things themselves.** The Contact authority owns "Bail Organa exists, Bail is deceased, Bail belongs to the Rebel Alliance." The Party authority owns "the party met Bail, the party knows Bail exists, the party interacted with him three times, the party considers him an ally." These are different facts about the same entity, tracked by different authorities — this is not duplicate authority, it is exactly the kind of separate-but-related fact §1 anticipates:
+
+```js
+{
+  partyId: "party-main",
+  contacts: {
+    "contact-bail": { firstEncounteredAt: "...", lastEncounteredAt: "...", encounterCount: 3, relationship: "ally", known: true }
+  },
+  factions: {
+    "faction-rebel-alliance": { firstEncounteredAt: "...", known: true }
+  },
+  locations: {
+    "location-alderaan": { firstVisitedAt: "...", lastVisitedAt: "...", visitCount: 2 }
+  }
+}
+```
+
+This record never says `contacts["contact-bail"].name = "Bail Organa"` or `.status = "deceased"` — that belongs to the Contact authority; the Party asks it for current truth (per §3/§8).
+
+**Don't store completed Jobs twice here either** (same rule as §17's "no `completedJobs[]` on Faction/Contact/Location"). Prefer `completedJobIds: [...]`, or derive the list entirely via a query against Job history (`JobEngine: give me completed Jobs where partyId === party-main`) and let the Party dossier render it as a projection.
+
+**Party knowledge and individual character knowledge are different, and the schema should leave room for that distinction even before it's fully built out:**
+
+```js
+{
+  contactId: "contact-bail",
+  partyKnowledge: { known: true },
+  characterKnowledge: {
+    "actor-leia": { known: true, familiarity: "family" },
+    "actor-han": { known: true, familiarity: "met-once" },
+    "actor-luke": { known: false }
+  }
+}
+```
+
+**World truth and party knowledge are distinct facts, and one can lag the other** — this is §6's existence-vs-visibility rule applied at the party level, with its own axis: Alderaan can be canonically `destroyed` (Location authority, at 10:00) while the party's knowledge record still says the destruction is unknown to them until they actually receive that Intel (at 14:00). `knownToPlayers`-style flags elsewhere in the codebase remain useful for GM-vs-table visibility; they are not a substitute for "this specific party has actually learned this fact," which is what the Party Knowledge domain tracks.
+
+**Current party location gets one explicit owner, not two.** `PartyState.currentLocationId` is the correct home for it — "the party is currently on Tatooine" is a property of the party, not an intrinsic property of Tatooine — and the Location authority's role is limited to verifying the referenced Location exists. If existing code currently writes this the other way (`LocationRegistryService.setPartyLocation()`), it does not need to be torn out on the strength of this document alone, but any future touch of that seam should converge on a single writer rather than leaving both `Location.activeForParty` and `Party.currentLocationId` able to independently claim the truth.
+
+**Party history should be event-driven**, not a pile of manually-incremented counters scattered through every UI action: `ContactEncountered`, `LocationVisited`, `FactionDiscovered`, `IntelLearned`, `JobAccepted`, `JobCompleted`, `PartyLocationChanged`. Each event updates the Party Ledger; it does not itself own the referenced entity:
+
+```js
+{
+  eventId: "evt-219",
+  type: "contact-encountered",
+  partyId: "party-main",
+  contactId: "contact-bail",
+  locationId: "location-alderaan",
+  actorIds: ["actor-leia", "actor-han"],
+  occurredAt: "..."
+}
+```
+
+**This is a different event stream from a `CampaignEvent` (§19), not the same thing at a different scale.** A `CampaignEvent` says "Alderaan was destroyed" — a world-truth fact. A party history event says "the party learned Alderaan was destroyed" — a party-knowledge fact, which may occur well after the world-truth event, giving proper fog-of-war at the campaign-information level rather than the party automatically knowing everything the moment it becomes canonically true.
+
+**The Party dossier is a projection, exactly like the Job-history dossiers in §17** — current whereabouts, known Contacts/Factions, places visited, Job counts, Intel counts — all resolved live from the owning authorities at render time. None of those canonical records live inside the Party record itself; a Party relationship record carries the reference plus party-specific facts, and, where genuinely useful for history, an explicitly-named snapshot (never treated as identity, per §3/§8):
+
+```js
+{
+  subjectKind: "contact",
+  subjectId: "contact-bail",
+  firstEncounteredAt: "...",
+  lastEncounteredAt: "...",
+  encounterCount: 3,
+  knowledgeState: "known",
+  relationshipState: "ally"
+}
+```
+
+**The Party domain owns exactly four broad categories**, and nothing beyond them:
+
+1. **Membership** — `actorIds`, and optionally membership history later.
+2. **Current state** — `currentLocationId`; `activeJobIds` if not fully derivable from Job history.
+3. **Knowledge** — which Contacts/Factions/Locations/Intel the party has discovered, ideally as relationship records (as above) rather than raw id arrays once any metadata is needed.
+4. **Interaction history** — met-Contact, visited-Location, dealt-with-Faction, completed-Job, learned-Intel events, per the event stream above.
+
+It does **not** own Contact/Faction/Location status, Job outcome, Intel truth, Actor mechanics, credits, or inventory — it references those truths through the domains that do own them.
+
+**The Party Knowledge and Participation Invariant:**
+
+> The Party domain owns the party's membership, current campaign context, knowledge state, and historical interactions with canonical campaign entities. It does not own the canonical state of Contacts, Factions, Locations, Jobs, Intel, or Actors. Party records reference canonical entities exclusively by stable IDs. Current entity state is resolved from the owning authority; historical presentation snapshots may be retained but never determine identity. World truth and party knowledge are distinct: an event may occur before the party learns that it occurred. Party-centered dossiers and histories are projections across canonical domain records, not duplicate copies of those records.
+
+## 21. Per-domain contracts (worked examples)
 
 Every domain gets a short contract of this shape before substantial new work lands in it. Two are worked out fully here as the pattern to copy.
 
@@ -482,9 +577,38 @@ Holonet: transport/presentation only, never a second copy of canonical
          Job state
 ```
 
-Location, Intel, and the Actor/Transaction pair should each get an equivalent short contract, in this same shape, before their next substantial feature — see §22 for the order.
+### Party
 
-## 21. The required architectural test
+```text
+Authority: future PartyLedger/PartyRecordService
+
+Identity: partyId
+
+Membership: actorIds -- who currently belongs to the party
+Current state: currentLocationId (the one owner of "where is the party
+               right now," per §20 -- Location authority only verifies
+               the reference); activeJobIds if not fully derivable from
+               Job history
+
+Knowledge: references to Contact/Faction/Location/Intel ids the party has
+           discovered, as relationship records (firstEncounteredAt,
+           encounterCount, knowledgeState, ...) once any metadata beyond
+           a bare id is needed -- never a duplicated copy of the
+           referenced entity's own fields (name, status, ...)
+
+History: interaction events (contact-encountered, location-visited,
+         faction-discovered, job-completed, intel-learned, ...) drive
+         the Ledger; completed Jobs are referenced by id
+         (completedJobIds) or derived from Job history, never duplicated
+         in full
+
+Does not own: Contact/Faction/Location status, Job outcome, Intel truth,
+              Actor mechanics, credits, inventory -- only references them
+```
+
+Location, Intel, and the Actor/Transaction pair should each get an equivalent short contract, in this same shape, before their next substantial feature — see §24 for the order.
+
+## 22. The required architectural test
 
 For every domain, before shipping non-trivial new behavior in it, answer these two questions in the affirmative for "no":
 
@@ -511,7 +635,7 @@ draft references before commit (per §7)
 
 These adversarial tests catch more real architectural problems than a large happy-path suite — PRE-8D-4's ten review rounds are the empirical evidence for that claim in this specific codebase.
 
-## 22. Compatibility posture
+## 23. Compatibility posture
 
 This codebase's campaign-management systems (Faction/Contact, and everything listed in §2 that has not yet shipped to a released, persisted user world) carry no real backward-compatibility obligation to an intermediate development revision's behavior. PRE-8D-4 round 10 established the operative rule, and it applies to every domain in §2, not only Faction/Contact:
 
@@ -519,12 +643,14 @@ This codebase's campaign-management systems (Faction/Contact, and everything lis
 
 Priority order when a compatibility question comes up: (1) clean canonical identity/lifecycle semantics, (2) minimum future technical debt, (3) the smallest number of resolver/authority contracts necessary, (4) compatibility only where a real currently-persisted datum or an actually-existing production caller requires it. Once any of these domains has shipped to a released user world and carries real persisted data, this section's default flips for that domain: at that point, migration-safety (per the existing `migrateLegacyIdentities()` pattern) becomes mandatory, not optional.
 
-## 23. Rollout order
+## 24. Rollout order
 
 Apply this document to each domain in this order, because each later domain's contract depends on the previous ones already being solid:
 
 ```text
-Faction/Contact → Location → Job → Intel → Actor/Transaction → Coordinator
+Faction/Contact → Location → Job → Intel → Actor/Transaction → Coordinator → Party
 ```
 
 Faction/Contact is the reference implementation (§4–5, and the ten-round correction history in `docs/audits/gm-datapad-ecosystem-redesign.md` §204). Job is the most important domain to do next: it is currently represented partly through Holonet/thread metadata rather than a clean canonical shape, and every other domain's "show me my history" view (§17) depends on Job's contract being resolved first. Before the coordinator consumes Jobs at all, its contract must answer plainly: what exactly is the canonical Job, who owns it, and who is allowed to change its lifecycle? Once that is answered, the coordinator (and by extension the work currently tracked as 8D-4) becomes much safer to build.
+
+Party (§20) comes last deliberately: it references Contact, Faction, Location, Job, and Intel ids directly, so its contract cannot be load-bearing until those five domains already have stable, id-only resolution. Building it earlier risks the same mistake this whole document exists to prevent — a "convenient" Party record quietly becoming a second copy of facts the other five domains already own.
