@@ -30,31 +30,30 @@ function optionLabel(parts = []) {
  * Identity hardening (PRE-8D-4, correction pass round 7): resolves a
  * Contact within one Faction's own `contacts` array by id-or-name, the
  * same flexible READ contract `FactionRegistryService.findFactionContact()`
- * offers -- but this module builds its drafts/filters directly off a raw
- * `faction.contacts` array it already has in hand, rather than re-fetching
- * through the registry, so it needs its own copy of the same precedence
- * rule: a real canonical id must always outrank a display-name match. A
- * single combined `entry.id === query || entry.name === query` (the prior
- * shape here) evaluates both branches per record in array order, so an
- * EARLIER Contact whose NAME equals a LATER Contact's real id would win.
- * Two passes instead: id match across the whole array first, name only
- * once no id matched anything.
+ * offers -- a real canonical id must always outrank a display-name match.
  *
  * Identity hardening (PRE-8D-4, correction pass round 8): the name pass
  * must also refuse to guess among duplicate-name Contacts -- this bridge
  * copies the resolved Contact's CANONICAL id into a persisted Job draft's
- * issuer.contactId, so silently picking the first of two same-named
- * Contacts would stamp the wrong canonical identity into that draft. Two
- * or more name matches (and no id match) resolves to null rather than an
- * arbitrary pick.
+ * issuer.contactId, so silently picking one of two same-named Contacts
+ * would stamp the wrong canonical identity into that draft.
+ *
+ * Identity hardening (PRE-8D-4, correction pass round 9): rather than
+ * duplicate this id-first/unique-name-only/case-insensitive-name policy
+ * locally (round 8's own version compared names case-SENSITIVELY, unlike
+ * the registry's own name-equality rule -- exactly the "subtly different
+ * semantics" a duplicated resolver invites), this now delegates entirely
+ * to `FactionRegistryService.resolveFactionContactForMutation(faction.id,
+ * contactOrId)` -- the registry's own ambiguity-safe, case-insensitive id-
+ * or-unique-name resolver, already reused for the Faction side via
+ * `resolveFactionIdOrUniqueName()` below. One resolver, one semantics,
+ * reused everywhere this bridge needs "id-or-unique-name, never guess."
  */
-function resolveContactByIdThenName(contacts, contactOrId) {
+function resolveContactByIdThenName(faction, contactOrId) {
   const query = text(contactOrId);
   if (!query) return null;
-  const byId = contacts.find(entry => text(entry?.id) === query);
-  if (byId) return byId;
-  const nameMatches = contacts.filter(entry => text(entry?.name) === query);
-  return nameMatches.length === 1 ? nameMatches[0] : null;
+  const resolution = FactionRegistryService.resolveFactionContactForMutation(faction?.id, query);
+  return resolution.ambiguous ? null : resolution.contact;
 }
 
 /**
@@ -219,11 +218,18 @@ export class FactionJobBridgeService {
       ? factionOrId
       : resolveFactionIdOrUniqueName(factionOrId);
     if (!faction) return null;
-    const contacts = Array.isArray(faction.contacts) ? faction.contacts : [];
+    // Identity hardening (PRE-8D-4, correction pass round 9): a NON-EMPTY
+    // contact selector that fails to resolve (not found, OR ambiguous
+    // among duplicate names) must FAIL -- never silently downgrade "build
+    // a Job from this Contact" into "build a Job from the Faction
+    // instead," which changes the caller's requested entity without
+    // telling them. Falling back to a Faction-level draft remains correct
+    // ONLY when no contact selector was ever supplied in the first place.
+    const hadContactSelector = typeof contactOrId === 'object' ? Boolean(contactOrId) : Boolean(text(contactOrId));
     const contact = typeof contactOrId === 'object'
       ? contactOrId
-      : resolveContactByIdThenName(contacts, contactOrId);
-    if (!contact) return this.buildDraftFromFaction(faction);
+      : resolveContactByIdThenName(faction, contactOrId);
+    if (!contact) return hadContactSelector ? null : this.buildDraftFromFaction(faction);
     const factionName = text(faction.name, 'Faction');
     const contactName = text(contact.name, 'Faction Contact');
     const contactRole = text(contact.role || contact.title || 'Contact');
@@ -349,7 +355,7 @@ export class FactionJobBridgeService {
 
     const contact = contactId
       ? FactionRegistryService.resolveFactionContactByIdsForMutation(faction.id, contactId).contact
-      : resolveContactByIdThenName(Array.isArray(faction.contacts) ? faction.contacts : [], contactName);
+      : resolveContactByIdThenName(faction, contactName);
     if (!contact) return null;
     return this.buildDraftFromContact(faction, contact);
   }
@@ -470,11 +476,15 @@ export class FactionJobBridgeService {
       ? factionOrId
       : resolveFactionIdOrUniqueName(factionOrId);
     if (!faction) return null;
-    const contacts = Array.isArray(faction.contacts) ? faction.contacts : [];
+    // Identity hardening (PRE-8D-4, correction pass round 9): same
+    // never-silently-downgrade rule as buildDraftFromContact() above -- a
+    // non-empty contact selector that fails to resolve must fail, not
+    // quietly become a Faction-only filter.
+    const hadContactSelector = typeof contactOrId === 'object' ? Boolean(contactOrId) : Boolean(text(contactOrId));
     const contact = typeof contactOrId === 'object'
       ? contactOrId
-      : resolveContactByIdThenName(contacts, contactOrId);
-    if (!contact) return this.issuerFilterFromFaction(faction);
+      : resolveContactByIdThenName(faction, contactOrId);
+    if (!contact) return hadContactSelector ? null : this.issuerFilterFromFaction(faction);
     return {
       type: 'faction-contact',
       factionId: text(faction.id),

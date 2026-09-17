@@ -18,8 +18,23 @@ function number(value, fallback = 0) {
   return Number.isFinite(numeric) ? numeric : fallback;
 }
 
+/**
+ * Identity hardening (PRE-8D-4, correction pass round 9): `factionId`
+ * here is always a CANONICAL id field (`Location.controllingFactionId` /
+ * `overrides.factionId`), never free text -- so it must resolve
+ * EXACT-ID-ONLY (`resolveFactionByIdForMutation()`), never through the
+ * flexible, name-capable `findFaction()` SEARCH helper. A stale/deleted
+ * controllingFactionId that happened to equal some OTHER Faction's
+ * display name would otherwise be silently "rescued" by that unrelated
+ * Faction -- producing a Job draft whose `issuer.factionId` (the stale
+ * id, copied through verbatim below) and `issuer.factionName` (the
+ * rescued Faction's name) described two different entities. Resolving
+ * exact-id-only means an unresolved id simply yields no name (`''`),
+ * consistent with the id it's paired with, rather than a
+ * mismatched name borrowed from an unrelated record.
+ */
 function findFactionName(factionId = '') {
-  const faction = factionId ? FactionRegistryService.findFaction(factionId) : null;
+  const faction = factionId ? FactionRegistryService.resolveFactionByIdForMutation(factionId) : null;
   return faction?.name || '';
 }
 

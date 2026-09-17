@@ -518,11 +518,22 @@ export class FactionRegistryService {
     // case-insensitive id compatibility only when it names exactly ONE
     // Faction (never guessed among 2+ differently-cased ids); name/slug
     // only once no id match won at all.
+    //
+    // Identity hardening (PRE-8D-4, correction pass round 9): round 8's
+    // case-insensitive-id pass fell through to the name/slug pass on
+    // EITHER 0 or 2+ matches -- correct for 0 (there is genuinely no id
+    // candidate, so trying a name is the right next step), but wrong for
+    // 2+: an ambiguous ID-shaped query must refuse outright, the same way
+    // every other ambiguity in this file refuses rather than guesses. A
+    // display name must never rescue a query that already matched 2+ ids
+    // case-insensitively -- that would let a THIRD record's name decide
+    // among two ID-shaped candidates it has nothing to do with.
     const records = this.getRegistry();
     const exactById = records.find(record => record.id === cleanQuery);
     if (exactById) return exactById;
     const caseInsensitiveIdMatches = records.filter(record => record.id.toLowerCase() === needle);
     if (caseInsensitiveIdMatches.length === 1) return caseInsensitiveIdMatches[0];
+    if (caseInsensitiveIdMatches.length > 1) return null;
     return records.find(record => record.name.toLowerCase() === needle || slugify(record.name) === needle) ?? null;
   }
 
@@ -652,14 +663,20 @@ export class FactionRegistryService {
     // genuinely-three-pass fix as findFaction() above -- exact id always
     // wins outright; legacy case-insensitive id compatibility only when
     // unique; name only once no id match won at all.
+    //
+    // Identity hardening (PRE-8D-4, correction pass round 9): same fix as
+    // findFaction() above -- 2+ case-insensitive id matches must refuse
+    // outright (ambiguous), never fall through to a name match.
     const contacts = safeArray(faction.contacts).map(entry => normalizeContact(entry));
     const exactById = contacts.find(entry => entry.id === cleanContactId);
     let contact = exactById;
+    let idAmbiguous = false;
     if (!contact) {
       const caseInsensitiveIdMatches = contacts.filter(entry => entry.id.toLowerCase() === needle);
-      contact = caseInsensitiveIdMatches.length === 1 ? caseInsensitiveIdMatches[0] : undefined;
+      if (caseInsensitiveIdMatches.length === 1) contact = caseInsensitiveIdMatches[0];
+      else if (caseInsensitiveIdMatches.length > 1) idAmbiguous = true;
     }
-    if (!contact) contact = contacts.find(entry => entry.name.toLowerCase() === needle);
+    if (!contact && !idAmbiguous) contact = contacts.find(entry => entry.name.toLowerCase() === needle);
     return contact ? { faction, contact } : null;
   }
 

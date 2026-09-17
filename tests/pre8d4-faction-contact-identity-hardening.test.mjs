@@ -1538,7 +1538,7 @@ async function saveClientAsContactLike({ factionId = '', factionName = '', conta
     'utf8'
   );
   assert.ok(!bridgeSrc.includes('entry.id === contactOrId || entry.name === contactOrId'), 'FactionJobBridgeService must no longer resolve a Contact via a single combined id-or-name .find() that lets an earlier record\'s name shadow a later record\'s real id');
-  const occurrences = bridgeSrc.split('resolveContactByIdThenName(contacts, contactOrId)').length - 1;
+  const occurrences = bridgeSrc.split('resolveContactByIdThenName(faction, contactOrId)').length - 1;
   assert.ok(occurrences >= 2, 'both buildDraftFromContact() and issuerFilterFromContact() must resolve their Contact via resolveContactByIdThenName()');
   pass('62 — FactionJobBridgeService resolves Contacts via the id-priority-safe resolveContactByIdThenName() helper in both buildDraftFromContact() and issuerFilterFromContact() (structural regression guard)');
 }
@@ -1763,22 +1763,21 @@ function resolveIssuerContactLike(faction, contactId, contactName) {
 }
 
 {
-  // 72. point 3b: same ambiguity-safety for
-  // FactionJobBridgeService.buildDraftFromContact()'s name-only fallback,
-  // for two same-name Contacts on one Faction. When Contact resolution
-  // can't produce a single answer, buildDraftFromContact()'s existing
-  // (unchanged) "Contact not found -> fall back to a Faction-only draft"
-  // behavior applies -- the safety property that matters is that no
-  // arbitrarily-picked Contact's id is ever stamped into the draft, which
-  // a Faction-only draft (no issuer.contactId field at all) satisfies.
+  // 72. point 3b (superseded/tightened by round 9 -- see 72a/72b below):
+  // FactionJobBridgeService.buildDraftFromContact()'s name-only fallback
+  // must refuse to guess among duplicate-name Contacts. Round 8 proved
+  // this by checking the (now-superseded) "silently degrade to a
+  // Faction-only draft" behavior; round 9 tightened the contract further
+  // -- a NON-EMPTY Contact selector that fails to resolve (not found OR
+  // ambiguous) must return null outright, never silently substitute the
+  // Faction. This test now proves the round-9 contract directly; unique
+  // name-only and exact-id lookups (unaffected) still work.
   installFreshRegistry();
   const faction = await FactionRegistryService.upsertFaction({ name: 'Zann Consortium 72' });
   await FactionRegistryService.upsertFactionContact(faction.id, { name: 'Duplicate Name Contact 72', role: 'Handler' });
   await FactionRegistryService.upsertFactionContact(faction.id, { name: 'Duplicate Name Contact 72', role: 'Handler' });
   const draft = FactionJobBridgeService.buildDraftFromContact(faction.id, 'Duplicate Name Contact 72');
-  assert.ok(draft, 'an ambiguous Contact name must still degrade to a usable Faction-level draft, not a hard failure');
-  assert.equal(draft.issuer.type, 'faction', 'an ambiguous Contact name must fall back to a Faction-only draft (never a Contact-level draft carrying an arbitrarily-picked Contact id)');
-  assert.ok(!draft.issuer.contactId, 'a name-only lookup matching 2+ same-named Contacts must never stamp any of their ids into the draft');
+  assert.equal(draft, null, 'a non-empty Contact selector matching 2+ same-named Contacts must return null -- never guess, and never silently substitute a Faction-only draft for the requested Contact');
 
   const { contact: uniqueContact } = await FactionRegistryService.upsertFactionContact(faction.id, { name: 'Unique Name Contact 72', role: 'Handler' });
   const uniqueDraft = FactionJobBridgeService.buildDraftFromContact(faction.id, 'Unique Name Contact 72');
@@ -1789,7 +1788,133 @@ function resolveIssuerContactLike(faction, contactId, contactName) {
   assert.equal(contactsOnFaction.length, 2);
   const exactDraft = FactionJobBridgeService.buildDraftFromContact(faction.id, contactsOnFaction[1].id);
   assert.equal(exactDraft.issuer.contactId, contactsOnFaction[1].id, 'an explicit exact Contact id must still resolve correctly even among duplicate-name Contacts');
-  pass('72 — FactionJobBridgeService.buildDraftFromContact()\'s name-only fallback refuses to guess among duplicate-name Contacts, never stamping an arbitrarily-picked one\'s id into the Job draft; unique name-only and exact-id lookups still work (round 8, point 3)');
+  pass('72 — FactionJobBridgeService.buildDraftFromContact() returns null for a non-empty Contact selector matching 2+ same-named Contacts, never guessing and never silently substituting a Faction-only draft; unique name-only and exact-id lookups still work (round 8/9, point 3)');
+}
+
+// ---------------------------------------------------------------------
+// CORRECTION PASS round 9 (independent re-review of round 8's exact head
+// commit): round 8's fixes were themselves correct, but four further
+// issues surfaced:
+//   1. LocationJobBridgeService still resolved a Location's canonical
+//      controllingFactionId through the flexible, name-capable
+//      findFaction() SEARCH helper -- a stale/deleted id colliding with
+//      an unrelated Faction's display name could still be "rescued,"
+//      producing a Job draft whose issuer.factionId and
+//      issuer.factionName described two different entities
+//   2. buildDraftFromContact()/issuerFilterFromContact() silently
+//      downgraded a NON-EMPTY but unresolved/ambiguous Contact selector
+//      into a Faction-only draft -- safe in the narrow sense that no
+//      wrong Contact id was stamped, but it silently changed the
+//      caller's requested entity without telling them
+//   3. findFaction()/findFactionContact() still fell through to a
+//      display-name match when the case-insensitive-id pass itself
+//      produced 2+ ambiguous candidates, rather than refusing outright
+//   4. FactionJobBridgeService's Contact name-fallback compared names
+//      case-SENSITIVELY, unlike the registry's own case-insensitive
+//      name-equality rule -- "Mira" and "mira" should be ambiguous
+//      duplicates, not two unrelated lookups
+// ---------------------------------------------------------------------
+
+{
+  // 73. point 1: LocationJobBridgeService must resolve a Location's
+  // canonical controllingFactionId EXACT-ID-ONLY -- a stale/deleted id
+  // that happens to equal another (unrelated) Faction's display name must
+  // never be "rescued" by that Faction. The produced draft must not pair
+  // the stale id with a borrowed name from an unrelated record.
+  installFreshRegistry();
+  const decoyFaction = await FactionRegistryService.upsertFaction({ name: 'stale-controlling-faction-id-73' });
+  void decoyFaction;
+  const location = { id: 'loc-73', name: 'Contested Outpost 73', controllingFactionId: 'stale-controlling-faction-id-73', parentLocationId: '' };
+  const draft = LocationJobBridgeService.buildDraftFromLocation(location);
+  assert.ok(draft, 'a Location with a stale controllingFactionId must still produce a draft (Location-level context alone is enough)');
+  assert.equal(draft.issuer.factionId, 'stale-controlling-faction-id-73', 'the raw controllingFactionId is still copied through verbatim (it is the Location\'s own stored reference, stale or not)');
+  assert.equal(draft.client.factionName, '', 'an unresolved controllingFactionId must NEVER be paired with an unrelated Faction\'s display name -- the name must be empty, not borrowed');
+  assert.ok(!draft.briefing.includes('stale-controlling-faction-id-73'.replace(/-/g, ' ')), 'sanity: the briefing must not accidentally embed the decoy Faction\'s display name either');
+
+  // A genuinely resolvable controllingFactionId must still work correctly.
+  const realFaction = await FactionRegistryService.upsertFaction({ name: 'Real Controlling Faction 73' });
+  const location2 = { id: 'loc-73b', name: 'Loyal Outpost 73', controllingFactionId: realFaction.id, parentLocationId: '' };
+  const draft2 = LocationJobBridgeService.buildDraftFromLocation(location2);
+  assert.equal(draft2.issuer.factionId, realFaction.id);
+  assert.equal(draft2.client.factionName, 'Real Controlling Faction 73', 'a real, resolvable controllingFactionId must still resolve to its correct Faction name');
+  pass('73 — LocationJobBridgeService resolves controllingFactionId exact-id-only; a stale id never gets paired with an unrelated Faction\'s borrowed display name (round 9, point 1)');
+}
+
+{
+  // 74. point 2a: buildDraftFromContact()/issuerFilterFromContact() must
+  // return null (never silently substitute a Faction-only result) when a
+  // NON-EMPTY Contact selector simply does not resolve (a stale/unknown
+  // id or name, as opposed to an ambiguous one -- test 72 above already
+  // covers the ambiguous case).
+  installFreshRegistry();
+  const faction = await FactionRegistryService.upsertFaction({ name: 'Offworld Mining Guild 74' });
+  const draft = FactionJobBridgeService.buildDraftFromContact(faction.id, 'does-not-exist-74');
+  assert.equal(draft, null, 'a non-empty Contact selector that resolves to nothing must return null, never silently substitute a Faction-only draft');
+  const filter = FactionJobBridgeService.issuerFilterFromContact(faction.id, 'does-not-exist-74');
+  assert.equal(filter, null, 'issuerFilterFromContact() must have the identical contract: a non-empty unresolved Contact selector returns null, never a Faction-only filter');
+
+  // No selector at all (genuinely free-text Faction-only request) must
+  // still correctly fall back to a Faction-level draft/filter.
+  const facetionOnlyDraft = FactionJobBridgeService.buildDraftFromContact(faction.id, '');
+  assert.equal(facetionOnlyDraft.issuer.type, 'faction', 'when NO Contact selector was ever supplied, a Faction-level draft is the correct, intentional result');
+  const facetionOnlyFilter = FactionJobBridgeService.issuerFilterFromContact(faction.id, '');
+  assert.equal(facetionOnlyFilter.type, 'faction', 'issuerFilterFromContact() must have the identical no-selector-supplied contract');
+  pass('74 — buildDraftFromContact()/issuerFilterFromContact() return null for a non-empty but unresolved Contact selector, never silently substituting a Faction-only result; a genuinely absent selector still correctly falls back to Faction-level (round 9, point 2)');
+}
+
+{
+  // 75. point 3: findFaction()/findFactionContact() must refuse outright
+  // (return null) when the case-insensitive-id pass itself produces 2+
+  // ambiguous candidates -- never fall through to a display-name match,
+  // which could let a completely unrelated THIRD record's name decide
+  // among two id-shaped candidates it has nothing to do with.
+  installFreshRegistry({
+    seed: {
+      gmFactionRegistry: [
+        { id: 'ABC-75', name: 'Faction ABC Upper 75', contacts: [] },
+        { id: 'abc-75', name: 'Faction abc Lower 75', contacts: [] },
+        { id: 'unrelated-75', name: 'aBc-75', contacts: [] }
+      ]
+    }
+  });
+  const resolved = FactionRegistryService.findFaction('aBc-75');
+  assert.equal(resolved, null, 'an ambiguous case-insensitive id match (2+ candidates) must refuse outright, never fall through to a third, unrelated record\'s display name');
+  pass('75 — findFaction() refuses (returns null) when 2+ candidates match a query case-insensitively by id, rather than falling through to an unrelated record\'s display name (round 9, point 3)');
+}
+
+{
+  // 76. same refusal for findFactionContact()'s Contact-level id pass.
+  installFreshRegistry({
+    seed: {
+      gmFactionRegistry: [{
+        id: 'faction-76', name: 'Zann Consortium 76',
+        contacts: [
+          { id: 'XYZ-76', name: 'Contact XYZ Upper 76' },
+          { id: 'xyz-76', name: 'Contact xyz Lower 76' },
+          { id: 'unrelated-76', name: 'xYz-76' }
+        ]
+      }]
+    }
+  });
+  const resolved = FactionRegistryService.findFactionContact('faction-76', 'xYz-76');
+  assert.equal(resolved, null, 'an ambiguous case-insensitive Contact id match (2+ candidates) must refuse outright, never fall through to an unrelated Contact\'s display name');
+  pass('76 — findFactionContact() refuses (returns null) when 2+ Contacts match a query case-insensitively by id, rather than falling through to an unrelated Contact\'s display name (round 9, point 3)');
+}
+
+{
+  // 77. point 4: FactionJobBridgeService's Contact name resolution must
+  // be case-insensitive, matching the registry's own name-equality rule
+  // (resolveFactionContactForMutation() already treats "Mira" and "mira"
+  // as the same ambiguous duplicate) -- a free-text lookup of "Mira" when
+  // both exist must refuse to guess, not silently treat them as two
+  // unrelated names and arbitrarily match one by exact case.
+  installFreshRegistry();
+  const faction = await FactionRegistryService.upsertFaction({ name: 'Zann Consortium 77' });
+  await FactionRegistryService.upsertFactionContact(faction.id, { name: 'Mira', role: 'Handler' });
+  await FactionRegistryService.upsertFactionContact(faction.id, { name: 'mira', role: 'Handler' });
+  const draft = FactionJobBridgeService.buildDraftFromContact(faction.id, 'Mira');
+  assert.equal(draft, null, '"Mira" and "mira" must be treated as ambiguous duplicates (case-insensitive name equality, matching the registry\'s own rule) -- a non-empty selector matching both must return null, never arbitrarily pick the exact-case match');
+  pass('77 — FactionJobBridgeService\'s Contact name resolution treats display names case-insensitively, matching the registry\'s own rule; "Mira" and "mira" are refused as ambiguous duplicates rather than resolved by exact case (round 9, point 4)');
 }
 
 console.log(`\nPRE-8D-4 Faction/Contact canonical identity hardening: ${passCount} assertions-groups passed.`);
