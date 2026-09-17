@@ -506,12 +506,23 @@ export class FactionRegistryService {
     // record's real canonical id. A single combined .find() evaluates
     // every OR-branch per record in array order, so an earlier Faction
     // named e.g. "faction-x" would win over a later Faction whose real id
-    // actually IS "faction-x". Two passes over the full registry instead:
-    // id match (exact, then legacy case-insensitive) always wins first;
-    // name/slug is only ever tried once no id matched anything.
+    // actually IS "faction-x".
+    //
+    // Identity hardening (PRE-8D-4, correction pass round 8): round 7's
+    // own id-pass was ITSELF still one combined `record.id === cleanQuery
+    // || record.id.toLowerCase() === needle` predicate -- so an earlier
+    // Faction matching only case-insensitively could still shadow a later
+    // Faction's real EXACT id (e.g. an earlier "FACTION-X" beating a later
+    // "faction-x"). Genuinely three separate passes over the full
+    // registry now: exact id always wins outright; legacy
+    // case-insensitive id compatibility only when it names exactly ONE
+    // Faction (never guessed among 2+ differently-cased ids); name/slug
+    // only once no id match won at all.
     const records = this.getRegistry();
-    const byId = records.find(record => record.id === cleanQuery || record.id.toLowerCase() === needle);
-    if (byId) return byId;
+    const exactById = records.find(record => record.id === cleanQuery);
+    if (exactById) return exactById;
+    const caseInsensitiveIdMatches = records.filter(record => record.id.toLowerCase() === needle);
+    if (caseInsensitiveIdMatches.length === 1) return caseInsensitiveIdMatches[0];
     return records.find(record => record.name.toLowerCase() === needle || slugify(record.name) === needle) ?? null;
   }
 
@@ -636,9 +647,19 @@ export class FactionRegistryService {
     // Identity hardening (PRE-8D-4, correction pass round 7): same
     // id-always-outranks-name precedence as findFaction() above, applied
     // to this Faction's Contacts.
+    //
+    // Identity hardening (PRE-8D-4, correction pass round 8): same
+    // genuinely-three-pass fix as findFaction() above -- exact id always
+    // wins outright; legacy case-insensitive id compatibility only when
+    // unique; name only once no id match won at all.
     const contacts = safeArray(faction.contacts).map(entry => normalizeContact(entry));
-    const byId = contacts.find(entry => entry.id === cleanContactId || entry.id.toLowerCase() === needle);
-    const contact = byId ?? contacts.find(entry => entry.name.toLowerCase() === needle);
+    const exactById = contacts.find(entry => entry.id === cleanContactId);
+    let contact = exactById;
+    if (!contact) {
+      const caseInsensitiveIdMatches = contacts.filter(entry => entry.id.toLowerCase() === needle);
+      contact = caseInsensitiveIdMatches.length === 1 ? caseInsensitiveIdMatches[0] : undefined;
+    }
+    if (!contact) contact = contacts.find(entry => entry.name.toLowerCase() === needle);
     return contact ? { faction, contact } : null;
   }
 

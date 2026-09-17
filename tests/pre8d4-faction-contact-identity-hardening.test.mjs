@@ -1631,5 +1631,166 @@ function resolveIssuerContactLike(faction, contactId, contactName) {
   pass('65 — GMFactionRelationshipSurfaceController\'s hide/promote/delete/make-job/create-intel/reveal actions resolve via the exact-id-first resolveIssuerFaction()/resolveIssuerContact() helpers, never a collapsed factionId||factionName / contactId||contactName call argument (structural regression guard)');
 }
 
+// ---------------------------------------------------------------------
+// CORRECTION PASS round 8 (independent re-review of round 7's exact head
+// commit): round 7's own fixes were correct, but three further issues
+// surfaced:
+//   1. findFaction()/findFactionContact()'s id pass was ITSELF still one
+//      combined exact-or-case-insensitive predicate, so an earlier
+//      record matching only case-insensitively could shadow a later
+//      record's real EXACT-CASE id
+//   2. GMJobBoardSurfaceService's filterDraft construction, and
+//      GMJobBoardSurfaceController's follow-up-contract handler, both
+//      independently collapsed issuerFilter's separate factionId/
+//      factionName/contactId/contactName fields into one ambiguous
+//      string -- the exact bug round 7 had just removed from the Faction
+//      dossier controller, reintroduced on the Job side
+//   3. FactionJobBridgeService's id-priority fixes (round 7) never made
+//      the NAME fallback ambiguity-safe -- two same-name Factions/
+//      Contacts would still silently resolve to whichever sorts first,
+//      stamping the wrong canonical id into a persisted Job draft
+// ---------------------------------------------------------------------
+
+{
+  // 67. point 1a: findFaction()'s id pass must be genuinely exact-id-
+  // first, THEN case-insensitive-id-if-unique, THEN name -- not one
+  // combined exact-or-case-insensitive predicate. An earlier Faction
+  // matching only case-insensitively must never shadow a later Faction's
+  // real exact-case id.
+  installFreshRegistry({
+    seed: {
+      gmFactionRegistry: [
+        { id: 'FACTION-X-67', name: 'Decoy Faction 67', contacts: [] },
+        { id: 'faction-x-67', name: 'Actual Faction 67', contacts: [] }
+      ]
+    }
+  });
+  const resolved = FactionRegistryService.findFaction('faction-x-67');
+  assert.equal(resolved.id, 'faction-x-67', 'an exact-case id match must always outrank an earlier record\'s merely case-insensitive id match');
+  assert.equal(resolved.name, 'Actual Faction 67');
+  // Legacy case-insensitive compatibility must still work when unique.
+  installFreshRegistry({
+    seed: { gmFactionRegistry: [{ id: 'Legacy-ID-67', name: 'Legacy Faction 67', contacts: [] }] }
+  });
+  const byCaseInsensitive = FactionRegistryService.findFaction('legacy-id-67');
+  assert.equal(byCaseInsensitive.id, 'Legacy-ID-67', 'unique case-insensitive id compatibility must still resolve correctly when there is no exact-case match');
+  pass('67 — findFaction() resolves an exact-case id match before ever trying case-insensitive id compatibility, even when an earlier record only case-insensitively matches; unique case-insensitive compatibility still works (round 8, point 1)');
+}
+
+{
+  // 68. point 1b: same genuinely-three-pass fix for findFactionContact().
+  installFreshRegistry({
+    seed: {
+      gmFactionRegistry: [{
+        id: 'faction-68', name: 'Zann Consortium 68',
+        contacts: [
+          { id: 'CONTACT-X-68', name: 'Decoy Contact 68' },
+          { id: 'contact-x-68', name: 'Actual Contact 68' }
+        ]
+      }]
+    }
+  });
+  const resolved = FactionRegistryService.findFactionContact('faction-68', 'contact-x-68');
+  assert.ok(resolved, 'findFactionContact() must resolve a match');
+  assert.equal(resolved.contact.id, 'contact-x-68', 'an exact-case Contact id match must always outrank an earlier Contact\'s merely case-insensitive id match');
+  assert.equal(resolved.contact.name, 'Actual Contact 68');
+  pass('68 — findFactionContact() resolves an exact-case Contact id match before ever trying case-insensitive id compatibility, even when an earlier Contact only case-insensitively matches (round 8, point 1)');
+}
+
+{
+  // 69. point 2a: GMJobBoardSurfaceService's filterDraft construction
+  // (issuerFilter -> Job draft) must resolve the structured issuerFilter
+  // exact-id-first via FactionJobBridgeService.buildDraftFromIssuerFilter(),
+  // never a collapsed `issuerFilter.factionId || issuerFilter.factionName`
+  // string. Proven directly against buildDraftFromIssuerFilter() (the
+  // real seam GMJobBoardSurfaceService now calls), plus a structural
+  // guard on the service's own source.
+  installFreshRegistry();
+  const decoyFaction = await FactionRegistryService.upsertFaction({ name: 'stale-issuer-faction-69' });
+  const realFaction = await FactionRegistryService.upsertFaction({ name: 'Real Issuer Faction 69' });
+  void decoyFaction;
+  const draftFromStaleId = FactionJobBridgeService.buildDraftFromIssuerFilter({ factionId: 'stale-issuer-faction-69', factionName: 'stale-issuer-faction-69' });
+  assert.equal(draftFromStaleId, null, 'a stale factionId whose text equals another Faction\'s real display name must never build a draft for that other Faction');
+  const draftFromRealId = FactionJobBridgeService.buildDraftFromIssuerFilter({ factionId: realFaction.id, factionName: 'Real Issuer Faction 69' });
+  assert.equal(draftFromRealId.issuer.factionId, realFaction.id, 'a real, matching factionId must still build a correct draft');
+
+  const fs = await import('node:fs');
+  const jobServiceSrc = fs.readFileSync(
+    new URL('../scripts/ui/shell/gm/GMJobBoardSurfaceService.js', import.meta.url),
+    'utf8'
+  );
+  assert.ok(jobServiceSrc.includes('FactionJobBridgeService.buildDraftFromIssuerFilter(issuerFilter)'), 'GMJobBoardSurfaceService must build its filterDraft via buildDraftFromIssuerFilter(), never a collapsed issuerFilter.factionId || issuerFilter.factionName string');
+  assert.ok(!jobServiceSrc.includes('issuerFilter.factionId || issuerFilter.factionName'), 'GMJobBoardSurfaceService must no longer collapse issuerFilter.factionId || issuerFilter.factionName into one call argument');
+  pass('69 — GMJobBoardSurfaceService builds its filterDraft via the exact-id-first buildDraftFromIssuerFilter(), never a collapsed issuerFilter string (round 8, point 2)');
+}
+
+{
+  // 70. point 2b: GMJobBoardSurfaceController's follow-up-contract
+  // handler must resolve the same way -- structural guard, since
+  // exercising the real DOM click handler is out of scope for this
+  // identity-focused test file (the underlying seam,
+  // buildDraftFromIssuerFilter(), is already proven functionally in test
+  // 69 and 39a-style stale-id tests below).
+  const fs = await import('node:fs');
+  const controllerSrc = fs.readFileSync(
+    new URL('../scripts/ui/shell/gm/controllers/GMJobBoardSurfaceController.js', import.meta.url),
+    'utf8'
+  );
+  assert.ok(controllerSrc.includes('FactionJobBridgeService.buildDraftFromIssuerFilter(filter)'), 'the follow-up-contract handler must build its draft via buildDraftFromIssuerFilter(), never a collapsed filter.factionId || filter.factionName string');
+  assert.ok(!controllerSrc.includes('filter.factionId || filter.factionName'), 'the controller must no longer collapse filter.factionId || filter.factionName into one call argument');
+  assert.ok(!controllerSrc.includes('filter.contactId || filter.contactName'), 'the controller must no longer collapse filter.contactId || filter.contactName into one call argument');
+  pass('70 — GMJobBoardSurfaceController\'s follow-up-contract handler builds its draft via the exact-id-first buildDraftFromIssuerFilter(), never a collapsed filter string (round 8, point 2, structural regression guard)');
+}
+
+{
+  // 71. point 3a: FactionJobBridgeService.buildDraftFromFaction()'s
+  // name-only compatibility fallback must refuse to guess among
+  // duplicate-name Factions -- the resolved Faction's canonical id gets
+  // copied into a persisted Job draft's issuer.factionId, so silently
+  // picking the first of two same-named Factions would stamp the wrong
+  // canonical identity into that draft.
+  installFreshRegistry();
+  await FactionRegistryService.upsertFaction({ name: 'Duplicate Name Faction 71' });
+  await FactionRegistryService.upsertFaction({ name: 'Duplicate Name Faction 71' });
+  const draft = FactionJobBridgeService.buildDraftFromFaction('Duplicate Name Faction 71');
+  assert.equal(draft, null, 'a name-only lookup matching 2+ same-named Factions must refuse to guess, never silently pick the first');
+
+  installFreshRegistry();
+  const unique = await FactionRegistryService.upsertFaction({ name: 'Unique Name Faction 71' });
+  const uniqueDraft = FactionJobBridgeService.buildDraftFromFaction('Unique Name Faction 71');
+  assert.equal(uniqueDraft.issuer.factionId, unique.id, 'a genuinely unique name-only lookup must still resolve correctly');
+  pass('71 — FactionJobBridgeService.buildDraftFromFaction()\'s name-only fallback refuses to guess among duplicate-name Factions, never stamping an arbitrarily-picked one\'s id into the Job draft; unique name-only lookup still works (round 8, point 3)');
+}
+
+{
+  // 72. point 3b: same ambiguity-safety for
+  // FactionJobBridgeService.buildDraftFromContact()'s name-only fallback,
+  // for two same-name Contacts on one Faction. When Contact resolution
+  // can't produce a single answer, buildDraftFromContact()'s existing
+  // (unchanged) "Contact not found -> fall back to a Faction-only draft"
+  // behavior applies -- the safety property that matters is that no
+  // arbitrarily-picked Contact's id is ever stamped into the draft, which
+  // a Faction-only draft (no issuer.contactId field at all) satisfies.
+  installFreshRegistry();
+  const faction = await FactionRegistryService.upsertFaction({ name: 'Zann Consortium 72' });
+  await FactionRegistryService.upsertFactionContact(faction.id, { name: 'Duplicate Name Contact 72', role: 'Handler' });
+  await FactionRegistryService.upsertFactionContact(faction.id, { name: 'Duplicate Name Contact 72', role: 'Handler' });
+  const draft = FactionJobBridgeService.buildDraftFromContact(faction.id, 'Duplicate Name Contact 72');
+  assert.ok(draft, 'an ambiguous Contact name must still degrade to a usable Faction-level draft, not a hard failure');
+  assert.equal(draft.issuer.type, 'faction', 'an ambiguous Contact name must fall back to a Faction-only draft (never a Contact-level draft carrying an arbitrarily-picked Contact id)');
+  assert.ok(!draft.issuer.contactId, 'a name-only lookup matching 2+ same-named Contacts must never stamp any of their ids into the draft');
+
+  const { contact: uniqueContact } = await FactionRegistryService.upsertFactionContact(faction.id, { name: 'Unique Name Contact 72', role: 'Handler' });
+  const uniqueDraft = FactionJobBridgeService.buildDraftFromContact(faction.id, 'Unique Name Contact 72');
+  assert.equal(uniqueDraft.issuer.contactId, uniqueContact.id, 'a genuinely unique name-only Contact lookup must still resolve correctly');
+
+  // Exact ids still work even in the presence of duplicate names.
+  const contactsOnFaction = FactionRegistryService.getFactionContacts(faction.id).filter(c => c.name === 'Duplicate Name Contact 72');
+  assert.equal(contactsOnFaction.length, 2);
+  const exactDraft = FactionJobBridgeService.buildDraftFromContact(faction.id, contactsOnFaction[1].id);
+  assert.equal(exactDraft.issuer.contactId, contactsOnFaction[1].id, 'an explicit exact Contact id must still resolve correctly even among duplicate-name Contacts');
+  pass('72 — FactionJobBridgeService.buildDraftFromContact()\'s name-only fallback refuses to guess among duplicate-name Contacts, never stamping an arbitrarily-picked one\'s id into the Job draft; unique name-only and exact-id lookups still work (round 8, point 3)');
+}
+
 console.log(`\nPRE-8D-4 Faction/Contact canonical identity hardening: ${passCount} assertions-groups passed.`);
 console.log('Faction/Contact identity is now id-only for every canonical create/update/delete path; display text (name, role) never decides canonical sameness; legacy ids, duplicate names, draft/canonical duality, and every audited cross-domain reference (Location, NPC, Job, Intel) remain stable across rename.');

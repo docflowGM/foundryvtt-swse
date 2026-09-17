@@ -702,9 +702,13 @@ export class GMJobBoardSurfaceController {
       button.addEventListener('click', async (event) => {
         event.preventDefault();
         const filter = this._issuerFilterFromButton(event.currentTarget);
-        const draft = filter.contactId
-          ? FactionJobBridgeService.buildDraftFromContact(filter.factionId || filter.factionName, filter.contactId || filter.contactName)
-          : FactionJobBridgeService.buildDraftFromFaction(filter.factionId || filter.factionName);
+        // Identity hardening (PRE-8D-4, correction pass round 8):
+        // buildDraftFromIssuerFilter() resolves filter's separate
+        // factionId/factionName/contactId/contactName fields
+        // exact-id-first, never collapsing an id field with its sibling
+        // name field into one ambiguous call argument the way this
+        // handler previously did.
+        const draft = FactionJobBridgeService.buildDraftFromIssuerFilter(filter);
         if (!draft) {
           ui.notifications?.warn?.('Could not build a follow-up contract from that issuer.');
           return;
