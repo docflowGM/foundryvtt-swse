@@ -26,6 +26,27 @@ function optionLabel(parts = []) {
   return parts.map(part => text(part)).filter(Boolean).join(' — ');
 }
 
+/**
+ * Identity hardening (PRE-8D-4, correction pass round 7): resolves a
+ * Contact within one Faction's own `contacts` array by id-or-name, the
+ * same flexible READ contract `FactionRegistryService.findFactionContact()`
+ * offers -- but this module builds its drafts/filters directly off a raw
+ * `faction.contacts` array it already has in hand, rather than re-fetching
+ * through the registry, so it needs its own copy of the same precedence
+ * rule: a real canonical id must always outrank a display-name match. A
+ * single combined `entry.id === query || entry.name === query` (the prior
+ * shape here) evaluates both branches per record in array order, so an
+ * EARLIER Contact whose NAME equals a LATER Contact's real id would win.
+ * Two passes instead: id match across the whole array first, name only
+ * once no id matched anything.
+ */
+function resolveContactByIdThenName(contacts, contactOrId) {
+  const query = text(contactOrId);
+  if (!query) return null;
+  const byId = contacts.find(entry => text(entry?.id) === query);
+  return byId ?? contacts.find(entry => text(entry?.name) === query) ?? null;
+}
+
 function defaultsFor(record = {}, fallback = {}) {
   const source = record?.jobDefaults && typeof record.jobDefaults === 'object'
     ? { ...record.jobDefaults, ...record }
@@ -171,7 +192,7 @@ export class FactionJobBridgeService {
     const contacts = Array.isArray(faction.contacts) ? faction.contacts : [];
     const contact = typeof contactOrId === 'object'
       ? contactOrId
-      : contacts.find(entry => entry.id === contactOrId || entry.name === contactOrId);
+      : resolveContactByIdThenName(contacts, contactOrId);
     if (!contact) return this.buildDraftFromFaction(faction);
     const factionName = text(faction.name, 'Faction');
     const contactName = text(contact.name, 'Faction Contact');
@@ -383,7 +404,7 @@ export class FactionJobBridgeService {
     const contacts = Array.isArray(faction.contacts) ? faction.contacts : [];
     const contact = typeof contactOrId === 'object'
       ? contactOrId
-      : contacts.find(entry => entry.id === contactOrId || entry.name === contactOrId);
+      : resolveContactByIdThenName(contacts, contactOrId);
     if (!contact) return this.issuerFilterFromFaction(faction);
     return {
       type: 'faction-contact',

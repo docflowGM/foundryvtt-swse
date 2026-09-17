@@ -1105,15 +1105,18 @@ async function saveClientAsContactLike({ factionId = '', factionName = '', conta
       ]
     }
   });
-  // Fetched via the EXACT-ID-ONLY resolver, not findFaction() -- findFaction()
-  // is the intentionally flexible SEARCH helper this whole test is designed
-  // to fool (findFaction('faction-x') would match the decoy's NAME before
-  // ever reaching the target's real id, since the decoy sorts first in the
-  // array). Using it here to fetch the fixtures would just reproduce the
-  // bug in the test's own setup instead of proving the fix.
+  // CORRECTION PASS round 7 (independent re-review of round 6): findFaction()
+  // itself was fixed to be id-priority-safe (see test 57) -- it no longer
+  // needs to be avoided here the way this comment previously warned.
+  // Fetched via the EXACT-ID-ONLY resolver regardless, since that remains
+  // the correct tool for "I already have a real id and want it verified";
+  // the assertion right below proves findFaction() is now ALSO safe for
+  // this exact adversarial shape, closing the gap this test's own prior
+  // comment used to document as still-open.
   const decoyFaction = FactionRegistryService.resolveFactionByIdForMutation('rid-decoy-45');
   const targetFaction = FactionRegistryService.resolveFactionByIdForMutation('faction-x');
   assert.equal(targetFaction.id, 'faction-x', 'sanity: the exact-id resolver must land on the real target, not the name-colliding decoy');
+  assert.equal(FactionRegistryService.findFaction('faction-x').id, 'faction-x', 'round 7: findFaction() itself must now also resolve the real id-bearing target, never the name-colliding decoy seeded first in the array');
   const { contact } = await FactionRegistryService.upsertFactionContact(targetFaction.id, { name: 'Agent', role: 'Handler' });
   const record = await FactionIntelBridgeService.createDraftFromContact(targetFaction.id, contact.id, {});
   assert.ok(record?.id, 'creating the Intel draft (and its Contact write-back) must succeed');
@@ -1340,6 +1343,292 @@ async function saveClientAsContactLike({ factionId = '', factionName = '', conta
   assert.ok(!registrySrc.includes("id: factionId || '', name: factionLabel"), 'applyScoreDelta() must no longer pass an unresolved factionId through to upsertFaction()');
   assert.ok(!registrySrc.includes('id: merged.factionId || resolution.faction?.id'), 'approveSuggestedFaction() must no longer pass an unresolved factionId through to upsertFaction()');
   pass('54 — none of FactionRegistryService\'s four internal fallback call sites pass a possibly-unresolved id through to upsertFaction(); the authority itself throws on an unknown supplied id at both upsertFaction() and upsertFactionContact() (structural regression guard)');
+}
+
+// ---------------------------------------------------------------------
+// CORRECTION PASS round 7 (independent re-review of round 6's exact head
+// commit): round 6 closed the authority's create/update boundary, but
+// three further issues surfaced:
+//   1. ordinary create still minted ids via plain randomId(), not the
+//      structurally collision-safe mintUniqueId() migration already uses
+//   2. findFaction()/findFactionContact() (the flexible SEARCH helpers)
+//      could let an EARLIER record's display name shadow a LATER record's
+//      real canonical id, via a single combined .find() predicate
+//   3. a few callers with genuinely SEPARATE id/name fields still
+//      collapsed them into one `id || name` string before resolving,
+//      losing the "a real id field must never fall back to a name match"
+//      distinction one layer above the (now-fixed) search helpers
+// ---------------------------------------------------------------------
+
+{
+  // 55. point 1a: ordinary Faction creation must be structurally
+  // collision-safe (mintUniqueId), not merely "randomID() is
+  // astronomically unlikely to repeat" -- the same standard
+  // migrateLegacyIdentities() already holds itself to. Force the first
+  // randomID() draw for a brand-new Faction to collide with an
+  // already-existing healthy Faction's id.
+  installFreshRegistry();
+  const healthy = await FactionRegistryService.upsertFaction({ name: 'Existing Faction' });
+  let calls = 0;
+  globalThis.foundry.utils.randomID = () => {
+    calls += 1;
+    return calls === 1 ? healthy.id : `forced-faction-${calls}`;
+  };
+  const created = await FactionRegistryService.upsertFaction({ name: 'New Faction' });
+  assert.notEqual(created.id, healthy.id, 'a forced randomID() collision on ordinary creation must never let the new Faction share the existing Faction\'s id');
+  // (Not asserting an exact global call count: upsertFaction() also draws
+  // a separate randomId() for its history-entry id after the canonical id
+  // is minted, an unrelated implementation detail. What matters is that
+  // the id-minting retry produced exactly the next drawn value.)
+  assert.equal(created.id, 'forced-faction-2', 'mintUniqueId() must retry after its own forced collision and use the very next drawn value');
+  const registry = FactionRegistryService.getRegistry();
+  assert.equal(registry.length, 2);
+  assert.equal(new Set(registry.map(r => r.id)).size, 2, 'the registry must contain two structurally unique Faction ids');
+  pass('55 — ordinary Faction creation mints a structurally collision-safe id (mintUniqueId), retrying rather than silently sharing an existing Faction\'s id on a forced randomID() collision (round 7, point 1)');
+  globalThis.foundry.utils.randomID = () => `rid-${++ridCounter}`;
+}
+
+{
+  // 56. point 1b: ordinary Contact creation must be structurally
+  // collision-safe REGISTRY-GLOBALLY -- migrateLegacyIdentities() already
+  // established Contact ids as one pool across every Faction, not merely
+  // unique within the parent Faction. Force the first randomID() draw for
+  // a new Contact on Faction B to collide with an existing Contact's id
+  // on a DIFFERENT Faction (A).
+  installFreshRegistry();
+  const factionA = await FactionRegistryService.upsertFaction({ name: 'Faction A' });
+  const factionB = await FactionRegistryService.upsertFaction({ name: 'Faction B' });
+  const { contact: contactOnA } = await FactionRegistryService.upsertFactionContact(factionA.id, { name: 'Contact On A', role: 'Handler' });
+  let calls = 0;
+  globalThis.foundry.utils.randomID = () => {
+    calls += 1;
+    return calls === 1 ? contactOnA.id : `forced-contact-${calls}`;
+  };
+  const { contact: contactOnB } = await FactionRegistryService.upsertFactionContact(factionB.id, { name: 'Contact On B', role: 'Handler' });
+  assert.notEqual(contactOnB.id, contactOnA.id, 'a forced randomID() collision with another Faction\'s Contact id must never let the new Contact share it');
+  assert.equal(calls, 2, 'mintUniqueId() must retry exactly once after its own forced collision');
+  const allContactIds = FactionRegistryService.getAllFactionContacts().map(c => c.id);
+  assert.equal(new Set(allContactIds).size, allContactIds.length, 'getAllFactionContacts() must report globally unique Contact ids across every Faction');
+  pass('56 — ordinary Contact creation mints a structurally collision-safe id REGISTRY-GLOBALLY (reserving every Contact id across every Faction), retrying rather than silently sharing another Faction\'s Contact id on a forced randomID() collision (round 7, point 1)');
+  globalThis.foundry.utils.randomID = () => `rid-${++ridCounter}`;
+}
+
+{
+  // 57. point 2: findFaction() -- the flexible, intentionally
+  // name-capable SEARCH helper -- must never let an EARLIER record's
+  // DISPLAY NAME shadow a LATER record's real canonical id. A single
+  // combined .find() evaluates every OR-branch per record in array order,
+  // so a decoy Faction named exactly the target's real id, seeded FIRST,
+  // used to win. This is the exact hazard test 45 above had to route
+  // around; after this fix, findFaction() itself is safe.
+  installFreshRegistry({
+    seed: {
+      gmFactionRegistry: [
+        { id: 'decoy-id-57', name: 'faction-x-57', contacts: [] },
+        { id: 'faction-x-57', name: 'Actual Faction 57', contacts: [] }
+      ]
+    }
+  });
+  const resolved = FactionRegistryService.findFaction('faction-x-57');
+  assert.equal(resolved.id, 'faction-x-57', 'findFaction() must resolve the real id-bearing Faction even when an earlier Faction\'s display name equals the queried id');
+  assert.equal(resolved.name, 'Actual Faction 57');
+  const byName = FactionRegistryService.findFaction('Actual Faction 57');
+  assert.equal(byName.id, 'faction-x-57', 'name search must still work once no id matches the query');
+  pass('57 — findFaction() always resolves a real canonical id before ever trying a display-name/slug match, even when an earlier record\'s NAME equals a later record\'s real id (round 7, point 2)');
+}
+
+{
+  // 58. same id-priority precedence, one layer down: findFactionContact()
+  // must never let an EARLIER Contact's DISPLAY NAME shadow a LATER
+  // Contact's real canonical id on the same Faction.
+  installFreshRegistry({
+    seed: {
+      gmFactionRegistry: [{
+        id: 'faction-58', name: 'Zann Consortium',
+        contacts: [
+          { id: 'decoy-contact-58', name: 'contact-x-58' },
+          { id: 'contact-x-58', name: 'Actual Contact 58' }
+        ]
+      }]
+    }
+  });
+  const resolved = FactionRegistryService.findFactionContact('faction-58', 'contact-x-58');
+  assert.ok(resolved, 'findFactionContact() must resolve a match');
+  assert.equal(resolved.contact.id, 'contact-x-58', 'findFactionContact() must resolve the real id-bearing Contact even when an earlier Contact\'s display name equals the queried id');
+  assert.equal(resolved.contact.name, 'Actual Contact 58');
+  const byName = FactionRegistryService.findFactionContact('faction-58', 'Actual Contact 58');
+  assert.equal(byName.contact.id, 'contact-x-58', 'name search must still work once no id matches the query');
+  pass('58 — findFactionContact() always resolves a real canonical Contact id before ever trying a display-name match, even when an earlier Contact\'s NAME equals a later Contact\'s real id (round 7, point 2)');
+}
+
+{
+  // 59. point 3: FactionJobBridgeService.buildDraftFromFaction() accepts
+  // a string and resolves it through findFaction() -- now that
+  // findFaction() itself is id-priority-safe (test 57), the resulting Job
+  // draft's issuer.factionId must reflect the exact target Faction even
+  // when an earlier Faction's display name equals the queried id. Not
+  // merely presentation: this id gets copied into a persisted Job's
+  // issuer fields.
+  installFreshRegistry({
+    seed: {
+      gmFactionRegistry: [
+        { id: 'decoy-id-59', name: 'faction-x-59', contacts: [] },
+        { id: 'faction-x-59', name: 'Actual Faction 59', contacts: [] }
+      ]
+    }
+  });
+  const draft = FactionJobBridgeService.buildDraftFromFaction('faction-x-59');
+  assert.equal(draft.issuer.factionId, 'faction-x-59', 'the Job draft must carry the exact id-bearing Faction\'s id, never the name-colliding decoy\'s');
+  assert.equal(draft.issuer.factionName, 'Actual Faction 59');
+  pass('59 — FactionJobBridgeService.buildDraftFromFaction() resolves the exact id-bearing Faction even when an earlier Faction\'s display name equals the queried id (round 7, point 3)');
+}
+
+{
+  // 60. same hazard one layer down, for FactionJobBridgeService's OWN
+  // Contact-array lookup: buildDraftFromContact() does NOT go through
+  // FactionRegistryService.findFactionContact() -- it resolves against
+  // faction.contacts directly, so it needed its own id-priority fix
+  // (resolveContactByIdThenName()).
+  installFreshRegistry();
+  const faction = await FactionRegistryService.upsertFaction({ name: 'Zann Consortium' });
+  const { contact: decoyContact } = await FactionRegistryService.upsertFactionContact(faction.id, { name: 'will-be-real-id-60', role: 'Decoy' });
+  const { contact: realContact } = await FactionRegistryService.upsertFactionContact(faction.id, { name: 'Real Contact 60', role: 'Handler' });
+  // Rename the decoy (seeded FIRST, so it sorts earlier in the array) so
+  // its NAME now literally equals the real Contact's id -- exactly the
+  // ordering hazard a naive combined id-or-name .find() falls into.
+  await FactionRegistryService.upsertFactionContact(faction.id, { id: decoyContact.id, name: realContact.id, role: 'Decoy' });
+
+  const draft = FactionJobBridgeService.buildDraftFromContact(faction.id, realContact.id);
+  assert.equal(draft.issuer.contactId, realContact.id, 'the Job draft must carry the exact id-bearing Contact\'s id, never the name-colliding decoy\'s');
+  assert.equal(draft.issuer.contactName, 'Real Contact 60');
+  pass('60 — FactionJobBridgeService.buildDraftFromContact() resolves the exact id-bearing Contact even when an earlier Contact\'s display name equals the queried id (round 7, point 3)');
+}
+
+{
+  // 61. LocationJobBridgeService resolves a Location's
+  // controllingFactionId display name through
+  // FactionRegistryService.findFaction() -- inherits the round-7
+  // id-priority fix automatically; proven directly here since this is a
+  // real, if easy-to-miss, cross-domain read path (a Location could
+  // otherwise carry the correct controllingFactionId while its generated
+  // Job draft displayed the WRONG Faction's name).
+  installFreshRegistry({
+    seed: {
+      gmFactionRegistry: [
+        { id: 'decoy-id-61', name: 'faction-x-61', contacts: [] },
+        { id: 'faction-x-61', name: 'Actual Faction 61', contacts: [] }
+      ]
+    }
+  });
+  const location = { id: 'loc-61', name: 'Contested Outpost', controllingFactionId: 'faction-x-61', parentLocationId: '' };
+  const draft = LocationJobBridgeService.buildDraftFromLocation(location);
+  assert.equal(draft.issuer.factionId, 'faction-x-61');
+  assert.equal(draft.client.factionName, 'Actual Faction 61', 'the Location lead must display the exact id-bearing Faction\'s name, never a name-colliding decoy Faction\'s');
+  pass('61 — LocationJobBridgeService resolves a controllingFactionId\'s display name through the id-priority-safe findFaction(), never a name-colliding decoy Faction (round 7, point 3)');
+}
+
+{
+  // 62. structural regression guard: FactionJobBridgeService's own
+  // Contact lookups (buildDraftFromContact, issuerFilterFromContact) must
+  // use the id-priority-safe resolveContactByIdThenName() helper, never
+  // the old single combined `entry.id === X || entry.name === X` pattern.
+  const fs = await import('node:fs');
+  const bridgeSrc = fs.readFileSync(
+    new URL('../scripts/ui/shell/gm/FactionJobBridgeService.js', import.meta.url),
+    'utf8'
+  );
+  assert.ok(!bridgeSrc.includes('entry.id === contactOrId || entry.name === contactOrId'), 'FactionJobBridgeService must no longer resolve a Contact via a single combined id-or-name .find() that lets an earlier record\'s name shadow a later record\'s real id');
+  const occurrences = bridgeSrc.split('resolveContactByIdThenName(contacts, contactOrId)').length - 1;
+  assert.ok(occurrences >= 2, 'both buildDraftFromContact() and issuerFilterFromContact() must resolve their Contact via resolveContactByIdThenName()');
+  pass('62 — FactionJobBridgeService resolves Contacts via the id-priority-safe resolveContactByIdThenName() helper in both buildDraftFromContact() and issuerFilterFromContact() (structural regression guard)');
+}
+
+// Functional replicas of GMFactionRelationshipSurfaceController's
+// resolveIssuerFaction()/resolveIssuerContact() helpers (round 7), proven
+// against the real FactionRegistryService: these replaced the dossier's
+// hide-contact/promote-contact/delete-contact/make-job-*/create-intel-*/
+// reveal-* actions' prior collapsed `factionId || factionName` /
+// `contactId || contactName` strings, which fed the PERMISSIVE
+// id-or-unique-name resolvers even when a real, separate id field was
+// already in hand.
+function resolveIssuerFactionLike(factionId, factionName) {
+  const cleanId = String(factionId || '').trim();
+  if (cleanId) {
+    const faction = FactionRegistryService.resolveFactionByIdForMutation(cleanId);
+    if (!faction) throw new Error(`No Faction exists with id "${cleanId}".`);
+    return faction;
+  }
+  const resolution = FactionRegistryService.resolveFactionForMutation(factionName);
+  if (resolution.ambiguous) throw new Error(`Multiple Factions are named "${factionName}" — specify a Faction id.`);
+  if (!resolution.faction) throw new Error('The selected Faction could not be found.');
+  return resolution.faction;
+}
+
+function resolveIssuerContactLike(faction, contactId, contactName) {
+  const cleanId = String(contactId || '').trim();
+  if (cleanId) {
+    const result = FactionRegistryService.resolveFactionContactByIdsForMutation(faction.id, cleanId);
+    if (!result.contact) throw new Error(`No Contact exists with id "${cleanId}" on ${faction.name}.`);
+    return result.contact;
+  }
+  const resolution = FactionRegistryService.resolveFactionContactForMutation(faction.id, contactName);
+  if (resolution.ambiguous) throw new Error(`Multiple Contacts are named "${contactName}" on ${faction.name} — specify a Contact id.`);
+  if (!resolution.contact) throw new Error('The selected Contact could not be found.');
+  return resolution.contact;
+}
+
+{
+  // 63. point 4: a stale factionId whose TEXT equals another Faction's
+  // real display name must throw, never resolve to that other Faction.
+  installFreshRegistry();
+  const decoy = await FactionRegistryService.upsertFaction({ name: 'stale-faction-id-63' });
+  assert.throws(
+    () => resolveIssuerFactionLike('stale-faction-id-63', ''),
+    /No Faction exists with id/,
+    'a factionId matching no real Faction id must throw, never resolve to another Faction whose NAME happens to equal it'
+  );
+  void decoy;
+
+  const real = await FactionRegistryService.upsertFaction({ name: 'Black Sun' });
+  assert.equal(resolveIssuerFactionLike(real.id, '').id, real.id, 'a real, matching factionId must still resolve correctly');
+  pass('63 — a stale factionId whose text equals another Faction\'s display name throws rather than resolving to that Faction; a real factionId still resolves correctly (round 7, point 4)');
+}
+
+{
+  // 64. same for Contacts: a stale contactId whose TEXT equals another
+  // Contact's display name (on the same Faction) must throw, never
+  // resolve to that other Contact.
+  installFreshRegistry();
+  const faction = await FactionRegistryService.upsertFaction({ name: 'Exchange' });
+  await FactionRegistryService.upsertFactionContact(faction.id, { name: 'stale-contact-id-64', role: 'Decoy' });
+  assert.throws(
+    () => resolveIssuerContactLike(faction, 'stale-contact-id-64', ''),
+    /No Contact exists with id/,
+    'a contactId matching no real Contact id on this Faction must throw, never resolve to another Contact whose NAME happens to equal it'
+  );
+  const { contact: real } = await FactionRegistryService.upsertFactionContact(faction.id, { name: 'Real Contact', role: 'Handler' });
+  assert.equal(resolveIssuerContactLike(faction, real.id, '').id, real.id, 'a real, matching contactId must still resolve correctly');
+  pass('64 — a stale contactId whose text equals another Contact\'s display name throws rather than resolving to that Contact; a real contactId still resolves correctly (round 7, point 4)');
+}
+
+{
+  // 65. structural regression guard: GMFactionRelationshipSurfaceController's
+  // hide-contact/promote-contact/delete-contact/make-job-*/create-intel-*/
+  // reveal-* actions must resolve via resolveIssuerFaction()/
+  // resolveIssuerContact(), never a collapsed `factionId || factionName`
+  // / `contactId || contactName` call argument that used to feed the
+  // PERMISSIVE resolvers (or, for promote/delete, the mutators' own
+  // internal permissive resolution) directly.
+  const fs = await import('node:fs');
+  const controllerSrc = fs.readFileSync(
+    new URL('../scripts/ui/shell/gm/controllers/GMFactionRelationshipSurfaceController.js', import.meta.url),
+    'utf8'
+  );
+  assert.ok(controllerSrc.includes('function resolveIssuerFaction(factionId, factionName)'), 'the controller must define an exact-id-first resolveIssuerFaction() helper');
+  assert.ok(controllerSrc.includes('function resolveIssuerContact(faction, contactId, contactName)'), 'the controller must define an exact-id-first resolveIssuerContact() helper');
+  assert.ok(!controllerSrc.includes('(factionId || factionName)'), 'the controller must no longer pass a collapsed factionId||factionName call argument anywhere');
+  assert.ok(!controllerSrc.includes('(contactId || contactName)'), 'the controller must no longer pass a collapsed contactId||contactName call argument anywhere');
+  pass('65 — GMFactionRelationshipSurfaceController\'s hide/promote/delete/make-job/create-intel/reveal actions resolve via the exact-id-first resolveIssuerFaction()/resolveIssuerContact() helpers, never a collapsed factionId||factionName / contactId||contactName call argument (structural regression guard)');
 }
 
 console.log(`\nPRE-8D-4 Faction/Contact canonical identity hardening: ${passCount} assertions-groups passed.`);

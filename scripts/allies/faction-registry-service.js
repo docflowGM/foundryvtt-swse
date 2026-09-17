@@ -496,14 +496,23 @@ export class FactionRegistryService {
   }
 
   static findFaction(query = '') {
-    const needle = cleanText(query).toLowerCase();
+    const cleanQuery = cleanText(query);
+    const needle = cleanQuery.toLowerCase();
     if (!needle) return null;
-    return this.getRegistry().find(record => (
-      record.id === query
-      || record.id.toLowerCase() === needle
-      || record.name.toLowerCase() === needle
-      || slugify(record.name) === needle
-    )) ?? null;
+    // Identity hardening (PRE-8D-4, correction pass round 7): this stays
+    // the flexible, name-capable SEARCH helper (see the canonical-mutation
+    // resolvers below, which intentionally stay stricter) -- but "flexible"
+    // must never mean an EARLIER record's display name can shadow a LATER
+    // record's real canonical id. A single combined .find() evaluates
+    // every OR-branch per record in array order, so an earlier Faction
+    // named e.g. "faction-x" would win over a later Faction whose real id
+    // actually IS "faction-x". Two passes over the full registry instead:
+    // id match (exact, then legacy case-insensitive) always wins first;
+    // name/slug is only ever tried once no id matched anything.
+    const records = this.getRegistry();
+    const byId = records.find(record => record.id === cleanQuery || record.id.toLowerCase() === needle);
+    if (byId) return byId;
+    return records.find(record => record.name.toLowerCase() === needle || slugify(record.name) === needle) ?? null;
   }
 
   /**
@@ -554,7 +563,15 @@ export class FactionRegistryService {
     if (requestedId && !existing) {
       throw new Error(`No Faction exists with id "${requestedId}" — cannot update a record that does not exist. Omit the id to create a new Faction; the registry mints its id.`);
     }
-    const id = existing?.id || randomId();
+    // Identity hardening (PRE-8D-4, correction pass round 7): a newly
+    // minted Faction id must be structurally collision-safe, not merely
+    // "randomId() is astronomically unlikely to repeat" -- the same
+    // standard migrateLegacyIdentities() already holds itself to via
+    // mintUniqueId(). Reserving every id already in the registry means an
+    // unlucky (or, in tests, stubbed) randomID() draw can never silently
+    // produce two Factions sharing one canonical id between creation and
+    // the next migration sweep.
+    const id = existing?.id || mintUniqueId(new Set(records.map(record => record.id).filter(Boolean)));
     const score = normalizeScore(data.score ?? data.startingScore ?? existing?.score ?? 0);
     const source = this._normalizeSource(data.source || existing?.source || 'gm');
     const historyType = existing ? 'faction-updated' : 'faction-created';
@@ -613,13 +630,15 @@ export class FactionRegistryService {
 
   static findFactionContact(factionId = '', contactId = '') {
     const faction = this.findFaction(factionId);
-    const needle = cleanText(contactId).toLowerCase();
+    const cleanContactId = cleanText(contactId);
+    const needle = cleanContactId.toLowerCase();
     if (!faction || !needle) return null;
-    const contact = safeArray(faction.contacts).map(entry => normalizeContact(entry)).find(entry => (
-      entry.id === contactId
-      || entry.id.toLowerCase() === needle
-      || entry.name.toLowerCase() === needle
-    ));
+    // Identity hardening (PRE-8D-4, correction pass round 7): same
+    // id-always-outranks-name precedence as findFaction() above, applied
+    // to this Faction's Contacts.
+    const contacts = safeArray(faction.contacts).map(entry => normalizeContact(entry));
+    const byId = contacts.find(entry => entry.id === cleanContactId || entry.id.toLowerCase() === needle);
+    const contact = byId ?? contacts.find(entry => entry.name.toLowerCase() === needle);
     return contact ? { faction, contact } : null;
   }
 
@@ -767,10 +786,19 @@ export class FactionRegistryService {
     if (requestedId && !existing) {
       throw new Error(`No Contact exists with id "${requestedId}" on ${faction.name} — cannot update a record that does not exist. Omit the id to create a new Contact; the registry mints its id.`);
     }
+    // Identity hardening (PRE-8D-4, correction pass round 7): same
+    // structural collision-safety as upsertFaction() above, but reserved
+    // registry-GLOBALLY -- migrateLegacyIdentities() already established
+    // Contact ids as one pool across every Faction, not per-Faction, so a
+    // newly minted Contact id must never collide with a Contact on ANY
+    // Faction, not merely this one.
+    const reservedContactIds = new Set(
+      this.getRegistry().flatMap(record => safeArray(record.contacts).map(entry => entry?.id).filter(Boolean))
+    );
     const contact = normalizeContact({
       ...existing,
       ...data,
-      id: existing?.id || randomId(),
+      id: existing?.id || mintUniqueId(reservedContactIds),
       name,
       updatedAt: nowIso(),
       createdAt: existing?.createdAt || nowIso()
