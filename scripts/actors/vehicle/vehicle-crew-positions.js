@@ -4,6 +4,7 @@
  */
 
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { SchemaAdapters } from "/systems/foundryvtt-swse/scripts/utils/schema-adapters.js";
 
 export class VehicleCrewPositions {
   /**
@@ -147,14 +148,10 @@ export class VehicleCrewPositions {
     const skill = this._getCrewActorSkill(actor, skillKey);
     if (!skill) {return 0;}
 
-    // Get ability modifier
-    let abilityBonus = 0;
-    if (skill.ability) {
-      const ability = actor.system.abilities?.[skill.ability];
-      if (ability) {
-        abilityBonus = ability.mod || 0;
-      }
-    }
+    // Get ability modifier. SchemaAdapters.getAbilityMod() is the
+    // canonical authority (docs/systems/ABILITY_SCHEMA_AUTHORITY.md); this
+    // previously read only the legacy system.abilities mirror.
+    const abilityBonus = skill.ability ? SchemaAdapters.getAbilityMod(actor, skill.ability) : 0;
 
     // Get trained bonus
     const trainedBonus = skill.trained ? 5 : 0;

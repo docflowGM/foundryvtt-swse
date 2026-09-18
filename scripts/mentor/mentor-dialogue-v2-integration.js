@@ -18,6 +18,7 @@
 import { MentorVoiceFilterV2 } from "/systems/foundryvtt-swse/scripts/mentor/mentor-voice-filter-v2.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { DSPEngine } from "/systems/foundryvtt-swse/scripts/engine/darkside/dsp-engine.js";
+import { SchemaAdapters } from "/systems/foundryvtt-swse/scripts/utils/schema-adapters.js";
 
 export class MentorDialogueV2Integration {
   /**
@@ -62,7 +63,15 @@ export class MentorDialogueV2Integration {
    */
   static buildAnalysisData(actor, buildIntent, topic) {
     const level = actor.system.level || 1;
-    const abilities = actor.system.abilities || {};
+    // SchemaAdapters is the canonical ability-score authority
+    // (docs/systems/ABILITY_SCHEMA_AUTHORITY.md); this previously passed
+    // the raw, legacy system.abilities mirror straight through, which is
+    // always {base:10, mod:0,...} regardless of the actor's real scores.
+    const abilities = {};
+    for (const key of ['str', 'dex', 'con', 'int', 'wis', 'cha']) {
+      const score = SchemaAdapters.getAbilityScore(actor, key);
+      abilities[key] = { base: score, total: score, mod: SchemaAdapters.getAbilityMod(actor, key) };
+    }
     const dspSaturation = DSPEngine.getSaturation(actor);
 
     const baseData = {
