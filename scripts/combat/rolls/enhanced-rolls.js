@@ -1133,6 +1133,7 @@ export class SWSERoll {
           title: `${skill.label ?? skillKey} Check`,
           rollType: 'skill',
           actor,
+          skillKey,
           showCover: false,
           showConcealment: false
         });

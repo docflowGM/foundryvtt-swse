@@ -645,7 +645,7 @@ function getSkillComponentTotal(actor, skillKey) {
   return abilityMod + halfLevel + trained + focus + misc + species + armor + condition;
 }
 
-function getSkillTotal(actor, skillKey) {
+export function getSkillTotal(actor, skillKey) {
   const key = String(skillKey ?? '');
   if (!key) return 0;
   const componentTotal = getSkillComponentTotal(actor, key);
@@ -897,7 +897,7 @@ function wireRollConfigDialog(html) {
   update();
 }
 
-async function buildRollConfigModel(options = {}) {
+export async function buildRollConfigModel(options = {}) {
   const actor = options.actor ?? null;
   const weapon = options.weapon ?? options.item ?? null;
   const rollType = options.rollType ?? 'attack';
@@ -910,7 +910,30 @@ async function buildRollConfigModel(options = {}) {
   const melee = weapon ? isMeleeWeapon(weapon) : false;
   const combatOptions = weapon ? CombatOptionResolver.summarizeAttackOptions(actor, weapon, { attackType: ranged ? 'ranged' : 'melee' }) : [];
 
-  const baseTotal = Number(options.baseBonus ?? getRollBaseTotal({ actor, weapon, rollType, skillKey, abilityKey, ranged, melee })) || 0;
+  // Skill/force rolls have a single canonical authority: getSkillTotal() via
+  // getRollBaseTotal(). A caller-supplied options.baseBonus that disagrees
+  // with it is almost always stale (e.g. a legacy actor.system.skills[key].total
+  // read that no longer exists on the V2 schema) rather than an intentional
+  // override, and silently trusting it produces a fabricated negative "Other
+  // Bonuses" breakdown row that cancels the real total back to the stale
+  // value (see docs/audits/... skill-roll-dialog-base-authority). Callers
+  // that genuinely need to override the canonical total for a documented
+  // special-case workflow must pass allowBaseBonusOverride: true.
+  const isSkillLikeRoll = rollType === 'skill' || rollType === 'force' || rollType === 'force-power';
+  const canonicalBaseTotal = Number(getRollBaseTotal({ actor, weapon, rollType, skillKey, abilityKey, ranged, melee })) || 0;
+  let baseTotal;
+  if (isSkillLikeRoll && options.allowBaseBonusOverride !== true) {
+    const suppliedBaseBonus = options.baseBonus;
+    if (suppliedBaseBonus !== undefined && suppliedBaseBonus !== null && (Number(suppliedBaseBonus) || 0) !== canonicalBaseTotal) {
+      SWSELogger.warn(
+        `[SWSE RollConfig] Ignoring non-authoritative skill baseBonus for ${actor?.name ?? 'unknown actor'}: ` +
+        `skill.${skillKey || 'useTheForce'} provided=${Number(suppliedBaseBonus) || 0} canonical=${canonicalBaseTotal}`
+      );
+    }
+    baseTotal = canonicalBaseTotal;
+  } else {
+    baseTotal = Number(options.baseBonus ?? canonicalBaseTotal) || 0;
+  }
   const breakdown = [];
   if (rollType === 'skill' || rollType === 'force' || rollType === 'force-power') {
     const key = skillKey || 'useTheForce';
@@ -1611,6 +1634,8 @@ export default {
   RollHistory,
   TalentBonusCache,
   showRollModifiersDialog,
+  buildRollConfigModel,
+  getSkillTotal,
   analyzeCriticalThreat,
   rollCriticalConfirmation,
   rollConcealmentCheck
