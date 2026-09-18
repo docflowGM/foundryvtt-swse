@@ -2112,5 +2112,113 @@ function resolveIssuerContactLike(faction, contactId, contactName) {
   pass('82 — deleteFactionContact()/promoteFactionContactToActor() resolve factionId/contactId EXACT-ID-ONLY; no real caller ever supplies a bare display name, so the permissive id-or-unique-name fallback was removed with no loss of real functionality (round 10, point 4)');
 }
 
+{
+  // 83. campaign-domain-contracts.md closure pass, point 7: findFaction()/
+  // findFactionContact() are documented (campaign-domain-contracts.md §4)
+  // as "genuinely combined id-or-name" resolvers -- exact id first, then a
+  // UNIQUE case-insensitive name match, refusing to guess among 2+
+  // candidates. A caller audit found no real caller depends on
+  // first-match-among-duplicates behavior, so the name/slug fallback is
+  // now ambiguity-safe, matching the documented contract exactly.
+  installFreshRegistry();
+  await FactionRegistryService.upsertFaction({ name: 'Twin Suns Trading Co 83' });
+  await FactionRegistryService.upsertFaction({ name: 'Twin Suns Trading Co 83' });
+  const ambiguousByName = FactionRegistryService.findFaction('Twin Suns Trading Co 83');
+  assert.equal(ambiguousByName, null, 'findFaction() must refuse (return null) rather than silently pick the first of 2+ same-named Factions');
+  const uniqueFaction = await FactionRegistryService.upsertFaction({ name: 'Unique Faction 83' });
+  const uniqueByName = FactionRegistryService.findFaction('Unique Faction 83');
+  assert.equal(uniqueByName?.id, uniqueFaction.id, 'a unique name match must still resolve correctly');
+
+  const contactFaction = await FactionRegistryService.upsertFaction({ name: 'Contact Ambiguity Faction 83' });
+  await FactionRegistryService.upsertFactionContact(contactFaction.id, { name: 'Rook 83' });
+  await FactionRegistryService.upsertFactionContact(contactFaction.id, { name: 'Rook 83' });
+  const ambiguousContact = FactionRegistryService.findFactionContact(contactFaction.id, 'Rook 83');
+  assert.equal(ambiguousContact, null, 'findFactionContact() must refuse (return null) rather than silently pick the first of 2+ same-named Contacts');
+  const { contact: uniqueContact } = await FactionRegistryService.upsertFactionContact(contactFaction.id, { name: 'Unique Contact 83' });
+  const uniqueContactMatch = FactionRegistryService.findFactionContact(contactFaction.id, 'Unique Contact 83');
+  assert.equal(uniqueContactMatch?.contact?.id, uniqueContact.id, 'a unique Contact name match must still resolve correctly');
+  pass('83 — findFaction()/findFactionContact() refuse to guess among 2+ same-named candidates on their name/slug fallback pass, matching the documented normative contract (campaign-domain-contracts.md §4 closure, point 7)');
+}
+
+{
+  // 84. campaign-domain-contracts.md closure pass, point 7 (caller audit
+  // finding): AlliesSurfaceService.saveOrganization()'s
+  // alignedWithFactionId/alignedAgainstFactionId are canonical id fields
+  // (named "FactionId"), but were resolved through the flexible,
+  // name-capable findFaction() before mirroring the organization's
+  // relationship (and score deltas) onto the resolved Faction -- a stale
+  // id that happened to equal an unrelated Faction's display name or slug
+  // would silently mirror onto the WRONG Faction. Proven here via a
+  // functional replica of the fixed resolution step (the real method
+  // additionally depends on ActorEngine for the actor-flag write, out of
+  // scope for this identity-focused harness), plus a structural guard
+  // confirming the real source matches.
+  installFreshRegistry({
+    seed: {
+      gmFactionRegistry: [
+        { id: 'real-faction-84', name: 'stale-aligned-id-84', contacts: [] }
+      ]
+    }
+  });
+  function resolveAlignedFactionLike(alignedFactionId) {
+    return FactionRegistryService.resolveFactionByIdForMutation(alignedFactionId);
+  }
+  const resolved = resolveAlignedFactionLike('stale-aligned-id-84');
+  assert.equal(resolved, null, 'a stale alignedWithFactionId whose TEXT equals another Faction\'s real display name must resolve to nothing -- exact-id-only, never rescued by a name/slug match');
+  const realFaction = FactionRegistryService.resolveFactionByIdForMutation('real-faction-84');
+  const resolvedReal = resolveAlignedFactionLike('real-faction-84');
+  assert.equal(resolvedReal?.id, realFaction.id, 'a real, matching alignedWithFactionId must still resolve correctly');
+
+  const fs84 = await import('node:fs');
+  const alliesSrc = fs84.readFileSync(
+    new URL('../scripts/ui/shell/AlliesSurfaceService.js', import.meta.url),
+    'utf8'
+  );
+  assert.ok(alliesSrc.includes('FactionRegistryService.resolveFactionByIdForMutation(normalized.alignedWithFactionId)'), 'saveOrganization() must resolve alignedWithFactionId via the exact-id-only resolver, never the flexible findFaction() search');
+  assert.ok(alliesSrc.includes('FactionRegistryService.resolveFactionByIdForMutation(normalized.alignedAgainstFactionId)'), 'saveOrganization() must resolve alignedAgainstFactionId via the exact-id-only resolver, never the flexible findFaction() search');
+  assert.ok(!alliesSrc.includes('FactionRegistryService.findFaction(normalized.alignedWithFactionId)'), 'saveOrganization() must no longer resolve alignedWithFactionId through findFaction()');
+  assert.ok(!alliesSrc.includes('FactionRegistryService.findFaction(normalized.alignedAgainstFactionId)'), 'saveOrganization() must no longer resolve alignedAgainstFactionId through findFaction()');
+  pass('84 — AlliesSurfaceService.saveOrganization() resolves alignedWithFactionId/alignedAgainstFactionId EXACT-ID-ONLY; a stale id whose text equals another Faction\'s real display name can no longer mirror the organization\'s relationship onto the wrong Faction (campaign-domain-contracts.md §4 closure, point 7)');
+}
+
+{
+  // 85. campaign-domain-contracts.md closure pass, point 7 (caller audit
+  // finding): GMFactionRelationshipSurfaceService's `registryMissing`
+  // presentational flag collapsed `row.factionId || row.factionName` into
+  // one combined query before calling findFaction() -- a stale factionId
+  // whose text equaled an unrelated Faction's real display name would be
+  // silently "found," wrongly reporting registryMissing: false for a
+  // relationship whose real referenced Faction no longer exists. Proven
+  // via a functional replica of the fixed computation, plus a structural
+  // guard confirming the real source matches.
+  installFreshRegistry({
+    seed: {
+      gmFactionRegistry: [
+        { id: 'real-relationship-faction-85', name: 'stale-relationship-faction-id-85', contacts: [] }
+      ]
+    }
+  });
+  function registryMissingLike(row) {
+    return !(row.factionId
+      ? FactionRegistryService.resolveFactionByIdForMutation(row.factionId)
+      : (row.factionName ? FactionRegistryService.findFaction(row.factionName) : null));
+  }
+  const staleRow = { factionId: 'stale-relationship-faction-id-85', factionName: '' };
+  assert.equal(registryMissingLike(staleRow), true, 'a stale factionId whose text equals another Faction\'s real display name must report registryMissing: true, never be silently "found" via a collapsed factionId||factionName query');
+  const realRow = { factionId: 'real-relationship-faction-85', factionName: '' };
+  assert.equal(registryMissingLike(realRow), false, 'a real, matching factionId must still report registryMissing: false');
+  const legacyNameOnlyRow = { factionId: '', factionName: 'stale-relationship-faction-id-85' };
+  assert.equal(registryMissingLike(legacyNameOnlyRow), false, 'a legacy row with no factionId at all must still fall back to the flexible name search');
+
+  const fs85 = await import('node:fs');
+  const relServiceSrc = fs85.readFileSync(
+    new URL('../scripts/ui/shell/gm/GMFactionRelationshipSurfaceService.js', import.meta.url),
+    'utf8'
+  );
+  assert.ok(!relServiceSrc.includes('findFaction(row.factionId || row.factionName)'), 'GMFactionRelationshipSurfaceService must no longer collapse row.factionId||row.factionName into one findFaction() query');
+  assert.ok(relServiceSrc.includes('FactionRegistryService.resolveFactionByIdForMutation(row.factionId)'), 'GMFactionRelationshipSurfaceService must resolve a present row.factionId via the exact-id-only resolver');
+  pass('85 — GMFactionRelationshipSurfaceService\'s registryMissing flag resolves a present factionId EXACT-ID-ONLY, never a collapsed factionId||factionName query; a stale id whose text equals another Faction\'s real display name is correctly reported missing (campaign-domain-contracts.md §4 closure, point 7)');
+}
+
 console.log(`\nPRE-8D-4 Faction/Contact canonical identity hardening: ${passCount} assertions-groups passed.`);
 console.log('Faction/Contact identity is now id-only for every canonical create/update/delete path; display text (name, role) never decides canonical sameness; legacy ids, duplicate names, draft/canonical duality, and every audited cross-domain reference (Location, NPC, Job, Intel) remain stable across rename.');

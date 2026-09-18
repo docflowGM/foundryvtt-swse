@@ -525,10 +525,24 @@ export class FactionRegistryService {
     // compatibility. Canonical ids are simply exact-match, case-sensitive,
     // everywhere in this file now -- one fewer resolution stage, one
     // fewer place resolvers could disagree.
+    //
+    // Identity hardening (PRE-8D-4, campaign-domain-contracts.md closure
+    // pass): the normative contract (campaign-domain-contracts.md §4)
+    // already documented this as a "genuinely combined id-or-name input"
+    // resolver -- exact id first, then a UNIQUE case-insensitive name
+    // match, refusing to guess among 2+ candidates -- but the name/slug
+    // fallback below was still a plain .find(), silently returning
+    // whichever of several same-named (or slug-colliding) Factions
+    // happened to sort first. A caller audit found no real caller
+    // depends on that first-match behavior (every genuine mutation-
+    // feeding caller either already supplies a real id or has since been
+    // moved onto an exact-id resolver); the name/slug pass is now
+    // ambiguity-safe like every other resolver in this file.
     const records = this.getRegistry();
     const exactById = records.find(record => record.id === cleanQuery);
     if (exactById) return exactById;
-    return records.find(record => record.name.toLowerCase() === needle || slugify(record.name) === needle) ?? null;
+    const nameMatches = records.filter(record => record.name.toLowerCase() === needle || slugify(record.name) === needle);
+    return nameMatches.length === 1 ? nameMatches[0] : null;
   }
 
   /**
@@ -657,9 +671,17 @@ export class FactionRegistryService {
     // "legacy case-insensitive id compatibility" stage rounds 8-9 added
     // here (mirroring findFaction()) was removed for the same reason --
     // see findFaction()'s own round-10 note. Exact id, then name.
+    //
+    // Identity hardening (PRE-8D-4, campaign-domain-contracts.md closure
+    // pass): same ambiguity-safety fix as findFaction() above -- the name
+    // fallback here was still first-match among same-named Contacts on
+    // this Faction. Now requires a unique name match, same as the
+    // documented normative contract.
     const contacts = safeArray(faction.contacts).map(entry => normalizeContact(entry));
-    const contact = contacts.find(entry => entry.id === cleanContactId) ?? contacts.find(entry => entry.name.toLowerCase() === needle);
-    return contact ? { faction, contact } : null;
+    const exactById = contacts.find(entry => entry.id === cleanContactId);
+    if (exactById) return { faction, contact: exactById };
+    const nameMatches = contacts.filter(entry => entry.name.toLowerCase() === needle);
+    return nameMatches.length === 1 ? { faction, contact: nameMatches[0] } : null;
   }
 
   /**

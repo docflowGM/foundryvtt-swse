@@ -28,9 +28,11 @@ This table is frozen — a normative statement of who owns what, not a survey of
 | Intel | `HolonetIntelService` | Intel lifecycle/content/links | Faction/Location records |
 | Credits / trade | `TransactionEngine` | Financial/store transactions | Actor/faction narrative metadata |
 | Holonet | transport/presentation | publication/sync/display | Canonical domain facts |
-| Party | future `PartyLedger`/`PartyRecordService` | Party membership, current campaign context, knowledge state, historical interactions (§20) | Canonical state of Contacts, Factions, Locations, Jobs, Intel, or Actors |
+| Party | future `PartyLedgerService`/`PartyRecordService` | Party membership, current campaign context, knowledge state, historical interactions (§20) | Canonical state of Contacts, Factions, Locations, Jobs, Intel, or Actors |
 | Generator | none | Draft proposals | Any canonical mutation |
 | Coordinator | future `CampaignMutationCoordinator` | Sequencing multi-domain outcomes | Domain semantics |
+| CommitLedger | part of the coordinator | `CampaignEffect` *execution* status only — planned/applied/refused/failed/already-applied (§18) | The target authority's actual current state — that is always canonical, never the ledger's record of whether an effect ran |
+| CampaignHistoryService | future, narrow, standalone from the coordinator | Durable `CampaignEvent` occurrence records only (§19) | The resulting state of any Faction/Contact/Location/Job/Intel/Actor an event references |
 
 If a new feature wants to do something like "update a Contact's location from JobEngine," the authority matrix answers it immediately: JobEngine does not own Contact location, so it must issue a command to the Faction/Contact authority (directly, or via the coordinator for a multi-domain outcome) rather than writing the field itself.
 
@@ -377,7 +379,9 @@ If the index is deleted, it must be fully recoverable by rebuilding from the can
 
 ## 18. Campaign Effects
 
-A Job outcome (or any other domain event) that changes state in another domain does so by producing explicit `CampaignEffect` records, routed through the coordinator (§9), never by the source domain writing the target domain directly:
+A Job outcome (or any other domain event) that changes state in another domain does so by producing explicit `CampaignEffect` records, routed through the coordinator (§9), never by the source domain writing the target domain directly.
+
+**A `CampaignEffect` is an instruction/proposal to change canonical state — it is never itself a second owner of that state.** This needs to be explicit, because the shape below has a `status` field that could easily be misread as a second copy of the target's world-state:
 
 ```js
 {
@@ -392,7 +396,12 @@ A Job outcome (or any other domain event) that changes state in another domain d
 }
 ```
 
-The coordinator does not interpret domain semantics — it hands each effect to its target's authority, which validates and applies it (or refuses it) according to its own rules. Rewards in the narrow sense (credits, items, XP) are a special case of this, not a separate concept:
+Two different things own two different facts here, and they must never be allowed to disagree:
+
+- **The target authority** (`FactionRegistryService`, for this example) owns whether the Red Knives are *actually* destroyed. That is the only place `is this Faction destroyed?` is ever answered from.
+- **The coordinator's CommitLedger** owns the effect's own *execution* status — `planned`, `applied`, `refused`, `failed`, `already-applied`. The `status` field above belongs to the CommitLedger, not to the target authority, and it describes "was this instruction carried out," never "what is the Faction's current status."
+
+If these two facts are ever allowed to be read as interchangeable, the system can end up with `FactionRegistryService` saying `active` while some `CampaignEffect` record still says `destroyed` — the target authority's current state is always canonical; a `CampaignEffect`, applied or not, never overrides it. The coordinator does not interpret domain semantics either way — it hands each effect to its target's authority, which validates and applies it (or refuses it) according to its own rules, and the CommitLedger simply records what happened to the instruction. Rewards in the narrow sense (credits, items, XP) are a special case of this, not a separate concept:
 
 ```text
 Rewards ⊂ Outcome Effects
@@ -440,7 +449,7 @@ Three different things are in play and must not be conflated:
 |---|---|---|
 | User | The human logged into Foundry | Foundry |
 | Actor / PC | The character | `ActorEngine` |
-| Party | The adventuring group and its shared campaign experience | future Party domain (e.g. `PartyLedger`/`PartyRecordService`) |
+| Party | The adventuring group and its shared campaign experience | future Party domain (preferably `PartyLedgerService`, per §20) |
 
 **The Party domain owns relationships and history, never the referenced things themselves.** The Contact authority owns "Bail Organa exists, Bail is deceased, Bail belongs to the Rebel Alliance." The Party authority owns "the party met Bail, the party knows Bail exists, the party interacted with him three times, the party considers him an ally." These are different facts about the same entity, tracked by different authorities — this is not duplicate authority, it is exactly the kind of separate-but-related fact §1 anticipates:
 
@@ -479,7 +488,15 @@ This record never says `contacts["contact-bail"].name = "Bail Organa"` or `.stat
 
 **World truth and party knowledge are distinct facts, and one can lag the other** — this is §6's existence-vs-visibility rule applied at the party level, with its own axis: Alderaan can be canonically `destroyed` (Location authority, at 10:00) while the party's knowledge record still says the destruction is unknown to them until they actually receive that Intel (at 14:00). `knownToPlayers`-style flags elsewhere in the codebase remain useful for GM-vs-table visibility; they are not a substitute for "this specific party has actually learned this fact," which is what the Party Knowledge domain tracks.
 
-**Current party location gets one explicit owner, not two.** `PartyState.currentLocationId` is the correct home for it — "the party is currently on Tatooine" is a property of the party, not an intrinsic property of Tatooine — and the Location authority's role is limited to verifying the referenced Location exists. If existing code currently writes this the other way (`LocationRegistryService.setPartyLocation()`), it does not need to be torn out on the strength of this document alone, but any future touch of that seam should converge on a single writer rather than leaving both `Location.activeForParty` and `Party.currentLocationId` able to independently claim the truth.
+**Current party location gets one explicit owner, not two.** `PartyLedgerService.currentLocationId` is the intended final SSOT for it — "the party is currently on Tatooine" is a property of the party, not an intrinsic property of Tatooine — and the Location authority's role is limited to verifying the referenced Location exists.
+
+The current Locations ecosystem stores this the other way: `LocationRegistryService.setPartyLocation()` and the `Location.activeForParty` flag it maintains (consumed today by `GMCampaignContextService`, `GMLocationsSurfaceService`, `GMIntelSurfaceService`, `GMJobBoardSurfaceService`, and `GMLocationsSurfaceController`). **Treat that as transitional, existing architecture — do not rewrite it as part of this document's own closure pass.** When Party is actually enacted (§24, step 3), that work must:
+
+- audit every `activeForParty` reader and writer (the list above is a starting point, not necessarily exhaustive by then);
+- move canonical current-location ownership to `PartyLedgerService.currentLocationId`;
+- let Location presentation derive "the party is here" from the Party's `currentLocationId` instead of storing it on the Location record;
+- allow no dual-write SSOT once that migration lands — `Location.activeForParty` and `Party.currentLocationId` must never both be independently authoritative at the same time;
+- and, per §23's compatibility posture (this system has not shipped, so the burden of proof is on keeping a seam, not on removing it): do not preserve `Location.activeForParty` as a permanent second authority unless that audit finds a real current dependency that actually requires it going forward. A transitional read-compatibility shim during the migration itself is fine; a second permanent write path is not.
 
 **Party history should be event-driven**, not a pile of manually-incremented counters scattered through every UI action: `ContactEncountered`, `LocationVisited`, `FactionDiscovered`, `IntelLearned`, `JobAccepted`, `JobCompleted`, `PartyLocationChanged`. Each event updates the Party Ledger; it does not itself own the referenced entity:
 
@@ -580,7 +597,7 @@ Holonet: transport/presentation only, never a second copy of canonical
 ### Party
 
 ```text
-Authority: future PartyLedger/PartyRecordService
+Authority: future PartyLedgerService
 
 Identity: partyId
 
@@ -648,9 +665,17 @@ Priority order when a compatibility question comes up: (1) clean canonical ident
 Apply this document to each domain in this order, because each later domain's contract depends on the previous ones already being solid:
 
 ```text
-Faction/Contact → Location → Job → Intel → Actor/Transaction → Coordinator → Party
+Faction/Contact → Location → Party → Job → Intel → Actor/Transaction → Coordinator/History
 ```
 
-Faction/Contact is the reference implementation (§4–5, and the ten-round correction history in `docs/audits/gm-datapad-ecosystem-redesign.md` §204). Job is the most important domain to do next: it is currently represented partly through Holonet/thread metadata rather than a clean canonical shape, and every other domain's "show me my history" view (§17) depends on Job's contract being resolved first. Before the coordinator consumes Jobs at all, its contract must answer plainly: what exactly is the canonical Job, who owns it, and who is allowed to change its lifecycle? Once that is answered, the coordinator (and by extension the work currently tracked as 8D-4) becomes much safer to build.
+This is not implemented as one large follow-up PR — that would immediately violate the separation of authority this document exists to establish. Each domain gets its own contract-enactment work, in this order, as its own change:
 
-Party (§20) comes last deliberately: it references Contact, Faction, Location, Job, and Intel ids directly, so its contract cannot be load-bearing until those five domains already have stable, id-only resolution. Building it earlier risks the same mistake this whole document exists to prevent — a "convenient" Party record quietly becoming a second copy of facts the other five domains already own.
+1. **Faction/Contact** is the reference implementation (§4–5, and the ten-round correction history plus this document's own closure pass in `docs/audits/gm-datapad-ecosystem-redesign.md` §204).
+2. **Location** next: lifecycle/status (§12), archival vs. destruction, exact external references, authority-owned capability predicates, and preparing to move `activeForParty` ownership out of Location (§20).
+3. **Party** (§20) comes before Job, deliberately reordered from an earlier draft of this document that placed it last. Party still references Contact, Faction, Location, and (once it exists) Job/Intel ids, so its own contract cannot be fully load-bearing until those domains have stable id-only resolution — but Job history should know which Party performed a given Job from the moment `JobEngine` is designed, not have `partyId` bolted on after the fact. Enacting Party immediately before Job — canonical `partyId`, member `actorIds`, `currentLocationId`, party knowledge/discovery, encounter facts, with the User ≠ Actor ≠ Party-member distinction from §20 held throughout, and no copied Contact/Faction/Location records — means Job's contract can be written with a real `partyId` reference from day one.
+4. **JobEngine**: one canonical Job SSOT, participant references with roles (§17), `partyId`, lifecycle, durable completion history, proposed outcome effects (§18), Holonet reduced to transport/presentation only.
+5. **Intel**: lifecycle/actionability (§12), world truth vs. party knowledge (§20), canonical links, historical Intel remains addressable.
+6. **Actor/Transaction effects**: rewards become domain-targeted `CampaignEffect`s (§18), never a Job direct write.
+7. **Campaign effects/history/coordinator** last: planning, effect execution, idempotency (§11), the CommitLedger (§18), `CampaignEvent`s via `CampaignHistoryService` (§19), partial-commit recovery, revision checks (§16).
+
+That dependency order is deliberate: building the coordinator before its constituent domains have stable contracts is the same mistake as building Party before the domains it references — a "convenient" shortcut quietly becoming a second copy of facts another domain already owns.
