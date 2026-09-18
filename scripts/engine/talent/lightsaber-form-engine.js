@@ -2,6 +2,7 @@ import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-e
 import { createEffectOnActor } from "/systems/foundryvtt-swse/scripts/core/document-api-v13.js";
 import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
 import { SWSEDialogV2 } from "/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js";
+import { SchemaAdapters } from "/systems/foundryvtt-swse/scripts/utils/schema-adapters.js";
 
 const NS = 'swse';
 const ACTIVE_FORM_FLAG = 'activeLightsaberForm';
@@ -34,21 +35,11 @@ function actorHasTalent(actor, name) {
 
 function actorAbilityMod(actor, ability) {
   const key = String(ability || '').toLowerCase().slice(0, 3);
-  const system = actor?.system ?? {};
-  const candidates = [
-    system.abilities?.[key]?.mod,
-    system.abilities?.[key]?.modifier,
-    system.attributes?.[key]?.mod,
-    system.attributes?.[key]?.modifier,
-    system.stats?.[key]?.mod,
-    system[key]?.mod
-  ];
-  for (const value of candidates) {
-    const n = Number(value);
-    if (Number.isFinite(n)) return n;
-  }
-  const score = Number(system.abilities?.[key]?.value ?? system.attributes?.[key]?.value ?? system.stats?.[key]?.value ?? 10);
-  return Number.isFinite(score) ? Math.floor((score - 10) / 2) : 0;
+  // SchemaAdapters.getAbilityMod() is the canonical ability-modifier
+  // authority (docs/systems/ABILITY_SCHEMA_AUTHORITY.md). The previous
+  // implementation checked the legacy system.abilities mirror before
+  // system.attributes and never consulted system.derived.attributes.
+  return SchemaAdapters.getAbilityMod(actor, key);
 }
 
 function isLightsaberWeapon(weapon) {
