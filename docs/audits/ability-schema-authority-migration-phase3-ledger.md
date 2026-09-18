@@ -191,25 +191,40 @@ reads it.
 | F — dead code | 0 remaining (already removed in Phase 1/2/5) |
 | N/A — different schema (Item documents) | 4 files |
 
-## Recommended next steps (not yet executed)
+## Status
 
-Per the requested subsystem sequence, with priority re-ordered by confirmed
-gameplay impact:
+Rows 1-11 and 5b/5c (13 sites total — combat/rolls, skill-uses,
+progression-shell, Force-power subsystem, talent/feats subsystem) are
+fixed, tested, and committed (see the `Phase 6a`-`Phase 6e` commits on this
+branch). `SchemaAdapters.getAbilityMod()`/`getAbilityScore()` themselves
+were fixed in the `Phase 4/5` commit, which most of the above now delegate
+to directly rather than re-deriving their own ability-lookup logic — this
+also resolved the "duplicate helper proliferation" pattern discovered along
+the way (the same `actorAbilityMod`/"resolve configured Force ability"
+logic had been independently reimplemented in at least 7 files across the
+Force-power and talent/feats subsystems alone).
 
-1. **Combat/rolls (highest impact)** — `enhanced-rolls.js` `rollInitiative()`
-   (live initiative math), `combat-stats-tooltip.js` (display).
-2. **Skill uses** — the six `skill-uses.js` sites.
-3. **Progression UI** — `progression-shell.js`'s ability snapshot.
-4. **Force system** — the five Force-related sites (rows 8-11), including
-   the duplicated Force-training-entitlement helper.
-5. **Talents** — `lightsaber-form-engine.js`, and a deliberate decision (not
-   a silent fix) on `talent-ability-helpers.js`'s documented divergence.
-6. **Feats/skills engine** — `skill-feat-resolver.js`,
-   `feat-grant-entitlement-resolver.js`.
-7. **Chargen/vehicles/store/suggestions** — the remaining lower-impact
-   sites.
-8. Two items need direct source investigation before a fix can be written:
-   `character-actor.js`'s `i.abilities` consumer(s), and every consumer of
-   the `WISDOM_MOD` path-string constant.
-9. Phase 11 doc cleanup: reconcile the stale `progression-finalizer.js` and
-   `character-like-sheet.js` comments identified above.
+## Remaining (not yet executed)
+
+1. **Chargen/vehicles/store/suggestions** — the remaining lower-impact
+   sites: `template-character-creator.js:449` (chargen skill-point
+   calculation), `vehicle-crew-positions.js:153` (crew ability bonus),
+   `store/index.js:110` (NPC "has default scores" heuristic),
+   `shared-suggestion-utilities.js:31` and
+   `AttributeIncreaseScorer.js:242-247` (suggestion-engine inputs),
+   `mentor-dialogue-v2-integration.js:65` (flavor text).
+2. Two items need direct source investigation before a fix can be written:
+   `character-actor.js:327`'s `i.abilities` consumer(s), and every consumer
+   of the `WISDOM_MOD` path-string constant
+   (`engine/progression/engine/suggestion-constants.js:125`).
+3. **`talent-ability-helpers.js`** — the one site whose author explicitly,
+   knowingly chose the reversed order for backward-compatibility reasons.
+   Needs a deliberate decision, not a silent fix — see row 20 above.
+4. Phase 11 doc cleanup: reconcile the stale `progression-finalizer.js` and
+   `character-like-sheet.js` comments identified above, and this document's
+   own header comment in `schema-adapters.js` (already corrected in the
+   Phase 4/5 commit).
+5. Phases 3/4 of the originally-requested plan (repository-wide governance-
+   layer remediation) are not needed — see the Phase 4 conclusion above:
+   the mutation/write side was already correct before this migration
+   started.
