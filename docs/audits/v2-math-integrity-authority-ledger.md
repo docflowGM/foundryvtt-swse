@@ -41,10 +41,16 @@ ledger → derived/static result → sheet/tooltip/roll consumer`.
 
 ## Status
 
-**Phase 0 (no-code-changes audit) — in progress.** This document is being
-filled in as the audit proceeds. See the "First Report" section at the
-bottom for the point-in-time summary required before any broad edits
-begin.
+**Phase 0 (audit) complete. Phase 2 (Gar'ee golden fixture) complete.
+First confirmed-fix batch (3 of 8 confirmed defects) implemented, tested,
+and passing the full rolling suite (210/210).**
+
+Fixed this batch:
+1. Grapple roll formula (`houserule-grapple.js`) now reads canonical `system.derived.grappleBonus`.
+2. Flat-footed Reflex (`defense-calculator.js`) now strips dodge-type bonuses, not just the ability mod.
+3. Damage Threshold (`threshold-engine.js#computeBaseThreshold()`) now agrees with the canonical, feat-rule-aware stored value.
+
+Remaining confirmed defects (HP multiclass formula, Energy Shield ACP, weapon melee/ranged schema, follower-NPC Fortitude, custom-skill armor/condition gap) are queued for the next batch — see each domain section below for status, and the PR description for the full first-report writeup.
 
 ---
 
@@ -78,7 +84,7 @@ BAB/defenses/skills/grapple/attack.
   - `defense-tooltip.js:255` (`getDefenseBreakdown`) — display-only partial resum missing species/state/condition terms; uses `defense.total || subtotal`, authoritative total preferred, but the *displayed breakdown* could fail to sum to the shown total in edge cases (Psychic Citadel, implant penalties).
 - Consumers (B): `character-sheet/context.js:192-199`, `PanelContextBuilder.js:245-403`, `npc-sheet-helpers.js`, `vehicle-context-builder.js`, `character-like-sheet.js:254-330` (`buildEffectiveDefensesViewModel`, applies `CombatStatusResolver.resolveTargetDefense` cover/situational adjustments on top of stored total — legitimate contextual layer, Category C), `rolls/defenses.js:18-22` (marked `DEPRECATED`, reads `.total`), `defense-tooltip.js`.
 
-## Domain: Flat-Footed Reflex — CONFIRMED DEFECT
+## Domain: Flat-Footed Reflex — CONFIRMED DEFECT — **FIXED**
 
 `DefenseCalculator.calculate()` (defense-calculator.js:841-844, 896-912):
 ```js
@@ -91,9 +97,11 @@ This strips only the positive Dexterity modifier from `reflexTotal`. But `reflex
 
 **Classification: CONFIRMED (not merely suspected) — a real SWSE rules-correctness bug**, not an architecture/duplication issue. The code comment at the flat-footed calc only discusses the Dex-penalty nuance and never mentions dodge bonuses, indicating this was never deliberately excluded — an oversight, not a design choice.
 
-Also flag: `rolls/defenses.js:115-117` (`calculateFlatFooted`) reads `system.derived.defenses.flatFooted` (the whole object) rather than `.total` — needs a call-site check for whether this is a live bug or callers destructure `.total` themselves.
+**FIXED**: `_sumPassiveStateDefenseModifiers()` gained an `onlyDodge` filter (reused, not reimplemented), and `flatFootedTotal` now subtracts the dodge-only subtotal alongside the existing ability-mod subtraction. Live-verified against a real Martial-Arts-I-shaped item (dodge bonus correctly stripped) and a non-dodge control case (correctly preserved). See `tests/flat-footed-dodge-bonus-authority.test.mjs`.
 
-## Domain: Damage Threshold — CONFIRMED DEFECT (two independent formulas)
+Also flag (not yet fixed, separate from this): `rolls/defenses.js:115-117` (`calculateFlatFooted`) reads `system.derived.defenses.flatFooted` (the whole object) rather than `.total` — needs a call-site check for whether this is a live bug or callers destructure `.total` themselves.
+
+## Domain: Damage Threshold — CONFIRMED DEFECT (two independent formulas) — **PARTIALLY FIXED**
 
 Storage: `system.derived.damageThreshold` (flat number — NOT `derived.damage.threshold`, per an explicit warning comment in `character-like-sheet.js:985`).
 
@@ -104,6 +112,8 @@ Storage: `system.derived.damageThreshold` (flat number — NOT `derived.damage.t
   - `calculateDamageThreshold()` (:171-205, used by `evaluateThreshold()` — the actual gameplay/combat consumer): defers to `system.derived?.damageThreshold` when the "Enhanced Massive Damage" house rule is OFF (correct), but **recomputes from scratch** (`fortTotal + heroicLevel + sizeMod`, no feat-rule awareness) when the house rule is ON.
 
 **Classification: CONFIRMED.** Any actor with Improved Damage Threshold, a "use Will as base" feat, or any table with `enableEnhancedMassiveDamage` on can see the sheet-displayed Damage Threshold disagree with the value `ThresholdEngine` actually uses to resolve massive-damage/condition-track-shift checks in combat.
+
+**PARTIALLY FIXED**: `computeBaseThreshold()` (and therefore `getDamageThreshold()`, its live consumer via `damage-resolution-engine.js:277`) now prefers the canonical `system.derived.damageThreshold` when finite, falling back to the raw `fort+size` recompute only when derived data isn't yet populated. Live-verified: an actor with a feat-bonus-inclusive stored value of 25 now correctly returns 25 (previously 20). See `tests/damage-threshold-authority.test.mjs`. **Not yet fixed**: `calculateDamageThreshold()`'s separate "Enhanced Massive Damage" house-rule branch (`fortTotal + heroicLevel + sizeMod` when that house rule is ON) still ignores `MetaResourceFeatResolver`'s feat bonuses — left untouched since it's an intentionally different formula (not a duplicate), and reconciling a house-rule-specific formula with feat-rule semantics needs a deliberate decision about intended interaction, not a silent fix. Flagged as a follow-up, not assumed resolved by this batch.
 
 ## Domain: HP / Max HP — CONFIRMED DEFECT (multiclass-relevant; directly affects Gar'ee)
 
@@ -178,15 +188,15 @@ Single canonical writer: `base-actor.js:359` (`system.derived.damage.conditionPe
 - **A (canonical):** `resolveDamageBonus()` (`combat-roll-math.js:567-606`, stock-droid path at 503-565): ½ level, ability, weapon enhancement, rage, Rapid Alchemy, effect-intent, combat-option damage, scoped feat damage.
 - **CONFIRMED — custom weapon damage formulas are respected verbatim, never "corrected."** `scripts/combat/rolls/damage.js:186`: `dmgResult.flags?.stockDamageFormula ?? (weapon.system?.damage ?? '1d6')` — the Item's stored dice string (e.g. `4d12kh3`) is used as-is; the resolver's numeric bonus and talent/force-item dice are appended as separate formula parts, never substituted into or parsed out of the base string. `weapon-data-resolver.js:191` only supplies a fallback (`'1d8'`) when the field is **empty**, never overwrites an existing value. **This directly confirms Gar'ee's Heavy Blaster Rifle `4d12kh3` will survive unmodified** — no repair-toward-default mechanism exists anywhere in this path.
 
-## Domain: Grapple — CONFIRMED DEFECT (roll-time formula diverges from displayed formula)
+## Domain: Grapple — CONFIRMED DEFECT (roll-time formula diverges from displayed formula) — **FIXED (primary live bug)**
 
 Three to four independent implementations, not one:
 - **A (canonical/derived):** `derived-calculator.js:348-357` — `bab.total + max(strMod,dexMod) + sizeMod + speciesGrapple` → `system.derived.grappleBonus`. Matches RAW.
-- **D (guarded duplicate, currently consistent):** `PanelContextBuilder.js:1428-1438` — identical formula, own copy of the size table, used only as a fallback when `derived.grappleBonus` is unset. Numerically consistent today but a second hand-maintained copy that can silently fork from the canonical table on a future edit.
-- **D — CONFIRMED live bug:** `scripts/houserules/houserule-grapple.js:58-60` (`GrappleMechanics.performGrappleCheck()`), the code that actually builds the `1d20 + grappleBonus` roll for the grapple house-rule action: `bab + strMod` **only** — no size modifier, no species bonus, no STR/DEX "better of" comparison (hardcodes STR), and doesn't read `system.derived.grappleBonus` at all. **Classification: CONFIRMED.** Any Small/Large creature, DEX-based grappler, or species with a grapple racial bonus gets a materially wrong number on the actual roll while the sheet displays the correct one. Already tracked as a known gap in `docs/audits/combat-phase-1a-ssot-decision-matrix.md:30` ("Grapple... Keep and later fix RAW seams") — not a fresh regression, but unresolved.
-- A fourth, chargen-preview-only formula exists (`follower-deriver.js:320`, STR mod alone) — lower stakes, scoped to the follower-creation wizard.
+- **D (guarded duplicate, currently consistent, not yet touched):** `PanelContextBuilder.js:1428-1438` — identical formula, own copy of the size table, used only as a fallback when `derived.grappleBonus` is unset. Numerically consistent today but a second hand-maintained copy that can silently fork from the canonical table on a future edit.
+- **D — CONFIRMED live bug — FIXED:** `scripts/houserules/houserule-grapple.js:58-60` (`GrappleMechanics.performGrappleCheck()`), the code that actually builds the `1d20 + grappleBonus` roll for the grapple house-rule action: `bab + strMod` **only** — no size modifier, no species bonus, no STR/DEX "better of" comparison (hardcodes STR), and doesn't read `system.derived.grappleBonus` at all. **Classification: CONFIRMED.** Any Small/Large creature, DEX-based grappler, or species with a grapple racial bonus gets a materially wrong number on the actual roll while the sheet displays the correct one. Already tracked as a known gap in `docs/audits/combat-phase-1a-ssot-decision-matrix.md:30` ("Grapple... Keep and later fix RAW seams") — not a fresh regression, but unresolved until now. **Fixed** to read `system.derived.grappleBonus`, falling back to the old formula only when derived data is unavailable. Live-verified end-to-end through the real async `performGrappleCheck()` pipeline (`RollEngine.safeRoll` mocked to capture the formula string). See `tests/houserule-grapple-authority.test.mjs`.
+- A fourth, chargen-preview-only formula exists (`follower-deriver.js:320`, STR mod alone) — lower stakes, scoped to the follower-creation wizard, not yet touched.
 
-**Gar'ee's certified Grapple = +12 (BAB 7 + DEX +5 + size 0) requires the DEX-vs-STR "better of" comparison** (his DEX +5 > STR +2) — `houserule-grapple.js`'s STR-only formula would compute `7 + 2 = 9` instead, a directly-testable, already-confirmed divergence.
+**Gar'ee's certified Grapple = +12 (BAB 7 + DEX +5 + size 0) requires the DEX-vs-STR "better of" comparison** (his DEX +5 > STR +2) — `houserule-grapple.js`'s STR-only formula previously computed `7 + 2 = 9` instead; now correctly reads the canonical `+12` when available.
 
 ## Domain: Weapon Melee/Ranged Schema — CONFIRMED DEFECT (the "Bluebolt" bug)
 
