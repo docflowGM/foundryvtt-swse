@@ -55,9 +55,18 @@ export class GrappleMechanics {
     const variant = CombatRules.getGrappleVariant();
     const grappleDC = this.getGrappleDC(target);
 
-    // Roll grapple check (typically STR + BAB)
-    const grappleBonus = (grappler.system?.attributes?.bab?.value || 0) +
-                         (grappler.system?.attributes?.str?.mod || 0);
+    // Canonical authority: system.derived.grappleBonus (BAB + best of STR/DEX
+    // + size + species, computed by derived-calculator.js). This previously
+    // reimplemented BAB + STR-only, omitting size modifier and species
+    // bonus and hardcoding STR even for a DEX-based grappler -- see
+    // docs/audits/v2-math-integrity-authority-ledger.md's Grapple domain.
+    // The old formula is kept only as a last-resort fallback for an actor
+    // whose derived data hasn't been computed yet.
+    const derivedGrapple = Number(grappler.system?.derived?.grappleBonus);
+    const grappleBonus = Number.isFinite(derivedGrapple)
+      ? derivedGrapple
+      : (grappler.system?.attributes?.bab?.value || 0) +
+        (grappler.system?.attributes?.str?.mod || 0);
     const roll = await RollEngine.safeRoll(`1d20 + ${grappleBonus}`);
     if (!roll) {
       return { success: false, message: 'Grapple check roll failed' };
