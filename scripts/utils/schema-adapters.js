@@ -40,6 +40,15 @@ import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 const ABILITY_KEYS = new Set(['str', 'dex', 'con', 'int', 'wis', 'cha']);
 
 function numeric(value, fallback = null) {
+  // Number(null) === 0, which is finite -- so without this guard, an
+  // explicit `null` (as opposed to `undefined`) silently resolved to the
+  // real score 0 instead of "no value, use the fallback." This is exactly
+  // the sentinel firstFinite()/scoreToMod() pass around for "not found,"
+  // so scoreToMod(firstFinite([...])) on an all-missing candidate list
+  // returned Math.floor((0-10)/2) = -5 instead of null. Found via
+  // tests/phase-2b-closure-fixes.test.mjs while fixing an unrelated
+  // caller (talent-ability-helpers.js).
+  if (value === null || value === undefined) return fallback;
   const n = Number(value);
   return Number.isFinite(n) ? n : fallback;
 }

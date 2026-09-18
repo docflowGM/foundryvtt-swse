@@ -1,6 +1,17 @@
 import assert from 'node:assert/strict';
-import { getTalentAbilityMod } from '../scripts/engine/talent/talent-ability-helpers.js';
-import { isNpcStatblockMode, isNpcProgressionMode } from '../scripts/actors/npc/npc-mode-adapter.js';
+import { registerFoundryPathLoader } from './helpers/foundry-shim/register.mjs';
+import { installFoundryShimGlobals } from './helpers/foundry-shim/globals.mjs';
+
+// getTalentAbilityMod() now imports SchemaAdapters via an absolute
+// /systems/foundryvtt-swse/... specifier (see
+// docs/audits/ability-schema-authority-migration-phase3-ledger.md row
+// 20 / Phase 6j), which plain Node can't resolve without the
+// foundry-shim path loader registered first.
+registerFoundryPathLoader();
+installFoundryShimGlobals();
+
+const { getTalentAbilityMod } = await import('/systems/foundryvtt-swse/scripts/engine/talent/talent-ability-helpers.js');
+const { isNpcStatblockMode, isNpcProgressionMode } = await import('/systems/foundryvtt-swse/scripts/actors/npc/npc-mode-adapter.js');
 
 // Phase 2B — authority normalization closure pass. Four narrow, evidence-backed
 // fixes landed in this pass; this file verifies what is directly testable
@@ -33,11 +44,18 @@ import { isNpcStatblockMode, isNpcProgressionMode } from '../scripts/actors/npc/
   assert.equal(getTalentAbilityMod(actor, 'wis'), 4);
 }
 {
-  // abilities wins over attributes when derived is absent (matches the
-  // original helpers' priority order — NOT SchemaAdapters.getAbilityMod's,
-  // which checks attributes before abilities)
+  // attributes wins over abilities when derived is absent. This updates a
+  // fail-before-proven defect: getTalentAbilityMod() previously checked
+  // system.abilities before system.attributes (the reverse of this
+  // assertion), with a comment explicitly defending that order as
+  // intentional. See
+  // docs/audits/ability-schema-authority-migration-phase3-ledger.md row 20
+  // and tests/talent-ability-helpers-fail-before-proof.test.mjs for the
+  // fail-before proof showing that order was a real bug, not a deliberate
+  // tradeoff worth preserving. getTalentAbilityMod() now delegates to
+  // SchemaAdapters.getAbilityMod(), whose canonical order this matches.
   const actor = { system: { abilities: { cha: { mod: 3 } }, attributes: { cha: { mod: 5 } } } };
-  assert.equal(getTalentAbilityMod(actor, 'cha'), 3);
+  assert.equal(getTalentAbilityMod(actor, 'cha'), 5);
 }
 {
   // attributes is the last fallback

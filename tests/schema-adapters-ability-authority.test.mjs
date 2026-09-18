@@ -119,4 +119,21 @@ function rawExportActor(overrides = {}) {
   }
 }
 
+// ---------------------------------------------------------------------------
+// Test F — an actor with neither system.attributes nor system.abilities at
+// all (nor derived data) must resolve to modifier 0 (score 10), not -5.
+// Found via tests/phase-2b-closure-fixes.test.mjs while fixing an unrelated
+// caller (talent-ability-helpers.js): numeric()'s fallback logic used
+// `Number(value)`, and Number(null) === 0 is finite, so
+// scoreToMod(firstFinite([...all-missing...])) — which is supposed to
+// signal "no value" via a null sentinel — silently computed
+// Math.floor((0-10)/2) = -5 instead of falling through to the real
+// base/racial/enhancement/temp reconstruction (10 -> mod 0).
+// ---------------------------------------------------------------------------
+{
+  const actor = { system: {} };
+  assert.equal(SchemaAdapters.getAbilityMod(actor, 'str'), 0, 'a totally empty actor must resolve to modifier 0 (score 10), not -5');
+  assert.equal(SchemaAdapters.getAbilityScore(actor, 'str'), 10, 'a totally empty actor must resolve to score 10');
+}
+
 console.log('SchemaAdapters ability-authority guards passed (getAbilityMod/getAbilityScore, Phase 5 of the ability-schema-authority migration).');
