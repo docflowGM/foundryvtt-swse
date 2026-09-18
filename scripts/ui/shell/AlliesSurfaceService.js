@@ -1812,7 +1812,15 @@ export class AlliesSurfaceService {
 
     if (normalized.alignedWithFactionId) {
       try {
-        const faction = FactionRegistryService.findFaction(normalized.alignedWithFactionId);
+        // Identity hardening (PRE-8D-4, campaign-domain-contracts.md
+        // closure pass): alignedWithFactionId is a canonical id field, not
+        // a free-text search query -- resolving it through the flexible,
+        // name-capable findFaction() meant a stale/broken id that happened
+        // to equal an unrelated Faction's display name or slug could
+        // silently mirror this organization's relationship (and score
+        // deltas) onto the WRONG Faction. Exact-id-only, same as every
+        // other canonical-id-field caller in this codebase.
+        const faction = FactionRegistryService.resolveFactionByIdForMutation(normalized.alignedWithFactionId);
         if (faction) {
           const currentRelationship = FactionRegistryService.getActorRelationships(ownerActor)
             .find(entry => entry.factionId === faction.id);
@@ -1846,7 +1854,11 @@ export class AlliesSurfaceService {
 
     if (normalized.alignedAgainstFactionId) {
       try {
-        const faction = FactionRegistryService.findFaction(normalized.alignedAgainstFactionId);
+        // Identity hardening (PRE-8D-4, campaign-domain-contracts.md
+        // closure pass): same fix as alignedWithFactionId above --
+        // alignedAgainstFactionId is a canonical id field and must resolve
+        // exact-id-only, never through the flexible findFaction() search.
+        const faction = FactionRegistryService.resolveFactionByIdForMutation(normalized.alignedAgainstFactionId);
         if (faction) {
           const currentRelationship = FactionRegistryService.getActorRelationships(ownerActor)
             .find(entry => entry.factionId === faction.id);

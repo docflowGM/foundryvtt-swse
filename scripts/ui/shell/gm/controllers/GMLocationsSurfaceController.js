@@ -940,9 +940,15 @@ export class GMLocationsSurfaceController {
       if (revealed) locationCount += 1;
     }
 
+    // Identity hardening (PRE-8D-4, correction pass): revealFactionIds/
+    // revealContactIds are explicitly canonical ids by contract (the field
+    // names say so, and the UI label reads "Reveal Contact ids on
+    // success") -- resolve by exact id ONLY, never a display-name fallback,
+    // now that duplicate Faction/Contact names are explicitly legal.
     let factionCount = 0;
+    const registryForReveal = FactionRegistryService.getRegistry();
     for (const factionId of lead.revealFactionIds || []) {
-      const faction = FactionRegistryService.findFaction(factionId);
+      const faction = registryForReveal.find(entry => entry.id === factionId);
       if (!faction) continue;
       await FactionRegistryService.upsertFaction({ ...faction, status: faction.status || 'active', historyNote: `Revealed by Atlas lead ${lead.factTitle}.` });
       factionCount += 1;
@@ -951,7 +957,7 @@ export class GMLocationsSurfaceController {
     let contactCount = 0;
     const allContacts = FactionRegistryService.getAllFactionContacts?.() || [];
     for (const contactId of lead.revealContactIds || []) {
-      const found = allContacts.find(contact => contact.id === contactId || contact.name === contactId);
+      const found = allContacts.find(contact => contact.id === contactId);
       if (!found) continue;
       await FactionRegistryService.upsertFactionContact(found.factionId, { ...found, revealState: 'known', knownToPlayers: true });
       contactCount += 1;

@@ -971,10 +971,16 @@ export class GMJobBoardSurfaceService {
     const archiveItems = jobs.filter(job => ['paid', 'archived', 'failed'].includes(job.status));
 
     const assetCandidates = assetRewardCandidates();
+    // Identity hardening (PRE-8D-4, correction pass round 8): issuerFilter
+    // carries SEPARATE factionId/factionName/contactId/contactName fields
+    // -- buildDraftFromIssuerFilter() resolves a populated id field
+    // exact-id-only (never falling back to the sibling name field), only
+    // using name-based compatibility when the id field is genuinely
+    // empty. Previously this collapsed `factionId || factionName` /
+    // `contactId || contactName` into one ambiguous string before calling
+    // buildDraftFromFaction()/buildDraftFromContact() directly.
     const filterDraft = issuerFilter
-      ? (issuerFilter.contactId
-        ? FactionJobBridgeService.buildDraftFromContact(issuerFilter.factionId || issuerFilter.factionName, issuerFilter.contactId || issuerFilter.contactName)
-        : FactionJobBridgeService.buildDraftFromFaction(issuerFilter.factionId || issuerFilter.factionName))
+      ? FactionJobBridgeService.buildDraftFromIssuerFilter(issuerFilter)
       : null;
     const pendingDraft = surfaceState.pendingJobDraft || filterDraft || null;
     const knownIssuers = FactionJobBridgeService.buildKnownIssuerOptions({ jobs: allJobs });

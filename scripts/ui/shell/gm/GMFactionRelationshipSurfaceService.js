@@ -294,7 +294,19 @@ export class GMFactionRelationshipSurfaceService {
       ...row,
       scoreClass: scoreClass(row.score),
       scoreLabel: scoreLabel(row.score),
-      registryMissing: !FactionRegistryService.findFaction(row.factionId || row.factionName),
+      // Identity hardening (PRE-8D-4, campaign-domain-contracts.md closure
+      // pass): factionId/factionName are genuinely separate fields here
+      // (per campaign-domain-contracts.md §4), not one combined string --
+      // collapsing them into `row.factionId || row.factionName` before
+      // resolving meant a stale/broken factionId that happened to equal an
+      // unrelated Faction's display name would be silently "found," so
+      // this flag could wrongly report `registryMissing: false` for a
+      // relationship whose real referenced Faction no longer exists. A
+      // real canonical id resolves exact-id-only; only a genuinely absent
+      // id falls back to the flexible name search.
+      registryMissing: !(row.factionId
+        ? FactionRegistryService.resolveFactionByIdForMutation(row.factionId)
+        : (row.factionName ? FactionRegistryService.findFaction(row.factionName) : null)),
       canEdit: !row.isSuggestion
     }));
     const suggestions = FactionRegistryService.getPendingSuggestions().map((row) => ({

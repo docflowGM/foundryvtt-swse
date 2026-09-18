@@ -86,6 +86,60 @@ async function resolveActorForContact({ uuid = '', actorId = '' } = {}) {
   return null;
 }
 
+/**
+ * Identity hardening (PRE-8D-4, correction pass round 7): several dossier
+ * actions below carry SEPARATE factionId/factionName (and contactId/
+ * contactName) fields from the button dataset, rather than one combined
+ * id-or-name string -- and had been collapsing them into `factionId ||
+ * factionName` / `contactId || contactName` before resolving. That
+ * collapse loses the distinction between "this IS a real id reference"
+ * and "this is free text": once a real id field is populated, it must
+ * resolve EXACT-ID-ONLY and fail rather than ever falling back to a name
+ * match. Every dossier action button's factionId/contactId is rendered
+ * directly from the currently-displayed, already-real Faction/Contact
+ * row, so it should always be populated and always resolve -- these two
+ * helpers make that the enforced contract rather than an assumption, and
+ * only fall back to name-based resolution when the id field is genuinely
+ * empty.
+ *
+ * Identity hardening (PRE-8D-4, correction pass round 10): factionName/
+ * contactName here are always the SEPARATE, structured name field from the
+ * button dataset -- never a combined id-or-name string -- so once the id
+ * field is genuinely empty, the name field is known BY CONSTRUCTION to be
+ * a display name, never an id. Falling back through
+ * `resolveFactionForMutation()`/`resolveFactionContactForMutation()`
+ * (which try the string as an id FIRST) meant a Faction/Contact whose
+ * real canonical id happened to equal the intended row's display name
+ * could steal the resolution. These now fall back to the name-only
+ * `resolveFactionByUniqueName()`/`resolveFactionContactByUniqueName()`
+ * instead, which never interpret the string as an id.
+ */
+function resolveIssuerFaction(factionId, factionName) {
+  const cleanId = String(factionId || '').trim();
+  if (cleanId) {
+    const faction = FactionRegistryService.resolveFactionByIdForMutation(cleanId);
+    if (!faction) throw new Error(`No Faction exists with id "${cleanId}".`);
+    return faction;
+  }
+  const resolution = FactionRegistryService.resolveFactionByUniqueName(factionName);
+  if (resolution.ambiguous) throw new Error(`Multiple Factions are named "${factionName}" — specify a Faction id.`);
+  if (!resolution.faction) throw new Error('The selected Faction could not be found.');
+  return resolution.faction;
+}
+
+function resolveIssuerContact(faction, contactId, contactName) {
+  const cleanId = String(contactId || '').trim();
+  if (cleanId) {
+    const result = FactionRegistryService.resolveFactionContactByIdsForMutation(faction.id, cleanId);
+    if (!result.contact) throw new Error(`No Contact exists with id "${cleanId}" on ${faction.name}.`);
+    return result.contact;
+  }
+  const resolution = FactionRegistryService.resolveFactionContactByUniqueName(faction.id, contactName);
+  if (resolution.ambiguous) throw new Error(`Multiple Contacts are named "${contactName}" on ${faction.name} — specify a Contact id.`);
+  if (!resolution.contact) throw new Error('The selected Contact could not be found.');
+  return resolution.contact;
+}
+
 export class GMFactionRelationshipSurfaceController {
   constructor(host) {
     this.host = host;
@@ -227,9 +281,15 @@ export class GMFactionRelationshipSurfaceController {
         switch (action) {
           case 'make-job-faction':
           case 'make-job-contact': {
+            // Identity hardening (PRE-8D-4, correction pass round 7): resolve
+            // via the exact-id-first helpers rather than collapsing
+            // factionId||factionName / contactId||contactName into one
+            // ambiguous string -- a stale factionId/contactId must fail,
+            // never be rescued by some other record's matching display name.
+            const resolvedFaction = resolveIssuerFaction(factionId, factionName);
             const draft = action === 'make-job-contact'
-              ? FactionJobBridgeService.buildDraftFromContact(factionId || factionName, contactId || contactName)
-              : FactionJobBridgeService.buildDraftFromFaction(factionId || factionName);
+              ? FactionJobBridgeService.buildDraftFromContact(resolvedFaction, resolveIssuerContact(resolvedFaction, contactId, contactName))
+              : FactionJobBridgeService.buildDraftFromFaction(resolvedFaction);
             if (!draft) throw new Error('Could not build a contract draft from this dossier.');
             this.host.patchSurfaceState?.('jobs', { pendingJobDraft: draft, openWizard: true, issuerFilter }, { render: false });
             await this.host._navigateTo('jobs');
@@ -258,9 +318,12 @@ export class GMFactionRelationshipSurfaceController {
 
           case 'create-intel-faction':
           case 'create-intel-contact': {
+            // Identity hardening (PRE-8D-4, correction pass round 7): same
+            // exact-id-first resolution as make-job-* above.
+            const resolvedFaction = resolveIssuerFaction(factionId, factionName);
             const record = action === 'create-intel-contact'
-              ? await FactionIntelBridgeService.createDraftFromContact(factionId || factionName, contactId || contactName)
-              : await FactionIntelBridgeService.createDraftFromFaction(factionId || factionName);
+              ? await FactionIntelBridgeService.createDraftFromContact(resolvedFaction, resolveIssuerContact(resolvedFaction, contactId, contactName))
+              : await FactionIntelBridgeService.createDraftFromFaction(resolvedFaction);
             if (!record?.id) throw new Error('Could not create an Intel draft from this dossier.');
             this.host.patchSurfaceState?.('intel', { selectedRecordId: record.id, modal: { type: 'editor', recordId: record.id } }, { render: false });
             await this.host._navigateTo('intel');
@@ -269,9 +332,12 @@ export class GMFactionRelationshipSurfaceController {
 
           case 'reveal-faction':
           case 'reveal-contact': {
+            // Identity hardening (PRE-8D-4, correction pass round 7): same
+            // exact-id-first resolution as make-job-*/create-intel-* above.
+            const resolvedFaction = resolveIssuerFaction(factionId, factionName);
             const record = action === 'reveal-contact'
-              ? await FactionIntelBridgeService.buildContactRevealIntel(factionId || factionName, contactId || contactName)
-              : await FactionIntelBridgeService.buildFactionRevealIntel(factionId || factionName);
+              ? await FactionIntelBridgeService.buildContactRevealIntel(resolvedFaction, resolveIssuerContact(resolvedFaction, contactId, contactName))
+              : await FactionIntelBridgeService.buildFactionRevealIntel(resolvedFaction);
             if (!record?.id) throw new Error('Could not prepare a player reveal from this dossier.');
             this.host.patchSurfaceState?.('intel', { selectedRecordId: record.id, modal: { type: 'editor', recordId: record.id } }, { render: false });
             await this.host._navigateTo('intel');
@@ -330,10 +396,21 @@ export class GMFactionRelationshipSurfaceController {
             return;
 
           case 'hide-contact': {
-            const found = FactionRegistryService.findFactionContact(factionId || factionName, contactId || contactName);
-            if (!found?.contact) throw new Error('The selected contact could not be found.');
-            await this._mutate(() => FactionRegistryService.upsertFactionContact(found.faction.id, {
-              ...found.contact,
+            // Identity hardening (PRE-8D-4, correction pass round 2): this
+            // reads a Contact's current data to feed a subsequent mutation,
+            // not merely to display it.
+            //
+            // Identity hardening (PRE-8D-4, correction pass round 7):
+            // resolveIssuerFaction()/resolveIssuerContact() replace the
+            // prior collapsed `factionId || factionName` / `contactId ||
+            // contactName` strings fed to the PERMISSIVE
+            // resolveFactionContactForMutation() -- a real, populated id
+            // field must resolve exact-id-only and fail rather than ever
+            // being rescued by some other record's matching display name.
+            const resolvedFaction = resolveIssuerFaction(factionId, factionName);
+            const resolvedContact = resolveIssuerContact(resolvedFaction, contactId, contactName);
+            await this._mutate(() => FactionRegistryService.upsertFactionContact(resolvedFaction.id, {
+              ...resolvedContact,
               revealState: 'hidden',
               knownToPlayers: false
             }), 'gm-faction-hide-contact');
@@ -342,8 +419,15 @@ export class GMFactionRelationshipSurfaceController {
           }
 
           case 'promote-contact': {
+            // Identity hardening (PRE-8D-4, correction pass round 7): resolve
+            // exact-id-first, then pass the VERIFIED real ids through --
+            // promoteFactionContactToActor()'s own internal resolvers stay
+            // permissive for other callers, but this call site no longer
+            // depends on that permissiveness.
+            const resolvedFaction = resolveIssuerFaction(factionId, factionName);
+            const resolvedContact = resolveIssuerContact(resolvedFaction, contactId, contactName);
             const result = await this._mutate(
-              () => FactionRegistryService.promoteFactionContactToActor(factionId || factionName, contactId || contactName),
+              () => FactionRegistryService.promoteFactionContactToActor(resolvedFaction.id, resolvedContact.id),
               'gm-faction-promote-contact'
             );
             if (result?.error) throw new Error(result.error);
@@ -381,8 +465,13 @@ export class GMFactionRelationshipSurfaceController {
 
           case 'delete-contact': {
             if (!globalThis.confirm?.(`Delete ${contactName || 'this contact'} from the faction dossier?`)) return;
+            // Identity hardening (PRE-8D-4, correction pass round 7): resolve
+            // the Faction exact-id-first rather than collapsing factionId ||
+            // factionName before deleteFactionContact()'s own permissive
+            // resolution.
+            const resolvedFaction = resolveIssuerFaction(factionId, factionName);
             await this._mutate(
-              () => FactionRegistryService.deleteFactionContact(factionId || factionName, contactId),
+              () => FactionRegistryService.deleteFactionContact(resolvedFaction.id, contactId),
               'gm-faction-delete-contact'
             );
             await this._refresh();

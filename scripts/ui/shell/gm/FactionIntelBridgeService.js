@@ -104,21 +104,33 @@ function contactGmNotes(contact = {}, faction = {}) {
 }
 
 export class FactionIntelBridgeService {
+  // Identity hardening (PRE-8D-4, correction pass round 2): resolveFaction()/
+  // resolveContact() feed createDraftFromContact()'s #linkIntelToContact(),
+  // a real Contact mutation (it writes linkedIntelIds back onto the
+  // resolved Contact) -- so resolution here must be ambiguity-safe like any
+  // other mutation-target lookup, not the flexible findFaction()/
+  // findFactionContact() SEARCH helpers this used previously. An already-
+  // resolved object (real .id present) is trusted as-is; a string id/name
+  // goes through FactionRegistryService's PERMISSIVE id-or-unique-name
+  // resolver, which throws on an ambiguous same-named match rather than
+  // silently picking the first one.
   static resolveFaction(factionOrId = '') {
-    return typeof factionOrId === 'object' && factionOrId?.id
-      ? factionOrId
-      : FactionRegistryService.findFaction(factionOrId);
+    if (typeof factionOrId === 'object' && factionOrId?.id) return factionOrId;
+    const resolution = FactionRegistryService.resolveFactionForMutation(factionOrId);
+    if (resolution.ambiguous) throw new Error(`Multiple Factions match "${text(factionOrId)}" — specify a Faction id.`);
+    return resolution.faction;
   }
 
   static resolveContact(factionOrId = '', contactOrId = '') {
     if (typeof contactOrId === 'object' && contactOrId?.id) {
-      const faction = this.resolveFaction(factionOrId) || FactionRegistryService.findFaction(contactOrId.factionId || contactOrId.factionName);
+      const faction = this.resolveFaction(factionOrId) || this.resolveFaction(contactOrId.factionId || contactOrId.factionName);
       return faction ? { faction, contact: contactOrId } : null;
     }
     const faction = this.resolveFaction(factionOrId);
     if (!faction) return null;
-    return FactionRegistryService.findFactionContact(faction.id, contactOrId)
-      || FactionRegistryService.findFactionContact(faction.name, contactOrId);
+    const resolution = FactionRegistryService.resolveFactionContactForMutation(faction.id, contactOrId);
+    if (resolution.ambiguous) throw new Error(`Multiple Contacts match "${text(contactOrId)}" on ${faction.name} — specify a Contact id.`);
+    return resolution.contact ? { faction, contact: resolution.contact } : null;
   }
 
   static async createDraftFromFaction(factionOrId, overrides = {}) {
@@ -203,7 +215,25 @@ export class FactionIntelBridgeService {
   static async #linkIntelToContact(factionId = '', contactId = '', id = '') {
     const cleanId = text(id);
     if (!cleanId) return null;
-    const found = FactionRegistryService.findFactionContact(factionId, contactId);
+    // Identity hardening (PRE-8D-4, correction pass round 3): factionId/
+    // contactId here are already-resolved canonical ids (from
+    // resolveContact() above), not free text -- resolve the write-back
+    // target through the ambiguity-safe mutation resolver, not
+    // findFactionContact(), so this can never land on the wrong record via
+    // findFaction()'s name-capable search (e.g. another Faction whose
+    // display name happens to equal this Faction's real id).
+    //
+    // Correction pass round 4 (independent re-re-re-re-review):
+    // resolveFactionContactForMutation() is only safe for a caller that
+    // genuinely has a combined id-or-name string -- it is PERMISSIVE and
+    // falls back to a unique display-name match. factionId/contactId here
+    // are ALREADY canonical ids, so the write-back target must resolve
+    // EXACT-ID-ONLY (resolveFactionContactByIdsForMutation): if either id
+    // has gone stale since the initial resolveContact() call, this must
+    // fail closed rather than ever landing on some other record whose
+    // display name happens to equal the stale id.
+    const resolution = FactionRegistryService.resolveFactionContactByIdsForMutation(factionId, contactId);
+    const found = resolution.contact ? { faction: resolution.faction, contact: resolution.contact } : null;
     if (!found?.faction || !found?.contact) return null;
     const linkedIntelIds = uniqueStrings([...(found.contact.linkedIntelIds || []), cleanId]);
     return FactionRegistryService.upsertFactionContact(found.faction.id, {

@@ -502,27 +502,81 @@ export class GMJobBoardSurfaceController {
     this._refreshContractWizardSummary(form);
   }
 
-  async _saveClientAsContact({ factionName = '', clientName = '', clientType = '', clientImage = '', role = 'Job Contact', objective = '', briefing = '', instructions = '', credits = 0, xp = 0, successDelta = 1, failureDelta = -1, rivalFactionName = '', rivalSuccessDelta = -1, rivalFailureDelta = 1, rivalNotes = '', status = 'posted' } = {}) {
+  async _saveClientAsContact({ factionId = '', factionName = '', contactId = '', clientName = '', clientType = '', clientImage = '', role = 'Job Contact', objective = '', briefing = '', instructions = '', credits = 0, xp = 0, successDelta = 1, failureDelta = -1, rivalFactionName = '', rivalSuccessDelta = -1, rivalFailureDelta = 1, rivalNotes = '', status = 'posted' } = {}) {
     const contactName = String(clientName || '').trim();
     if (!contactName) return null;
     const type = String(clientType || '').toLowerCase();
+    const explicitFactionId = String(factionId || '').trim();
+    const explicitContactId = String(contactId || '').trim();
     const factionLabel = String(factionName || (type === 'faction' ? contactName : 'Independent Job Contacts')).trim();
-    if (!factionLabel) return null;
+    if (!factionLabel && !explicitFactionId) return null;
     return mutateShellOnly(this.host, async () => {
-      const faction = FactionRegistryService.findFaction(factionLabel) || await FactionRegistryService.upsertFaction({
-        name: factionLabel,
-        type: type === 'faction' ? 'Faction' : 'Organization',
-        source: 'job',
-        status: 'active',
-        historyNote: 'Created from Job Board reusable contact.'
-      });
+      // Identity hardening (PRE-8D-4, correction pass round 3): when the GM
+      // picked a known issuer, the contract wizard already carries its real
+      // canonical issuerFactionId/issuerContactId (see the caller) -- use
+      // those authoritatively instead of throwing them away and
+      // reconstructing identity from free text. Only when no canonical
+      // Faction id was ever available (a purely free-text client/faction
+      // save) does this fall back to resolveOrCreateFactionByName(), which
+      // itself still reuses an existing Faction only when the name is
+      // unambiguous and throws rather than silently picking one of several
+      // same-named Factions.
+      //
+      // Correction pass round 4 (independent re-re-re-re-review): a
+      // genuinely canonical explicitFactionId must resolve EXACT-ID-ONLY
+      // (resolveFactionByIdForMutation), never through the PERMISSIVE
+      // id-or-unique-name resolveFactionForMutation() -- otherwise a
+      // stale/deleted id that happens to equal some OTHER Faction's
+      // display name would be silently "rescued" by that other Faction
+      // instead of failing, letting display text rescue a failed
+      // canonical-id lookup.
+      let faction;
+      if (explicitFactionId) {
+        faction = FactionRegistryService.resolveFactionByIdForMutation(explicitFactionId);
+        if (!faction) throw new Error('The selected issuer Faction could not be found.');
+      } else {
+        faction = await FactionRegistryService.resolveOrCreateFactionByName(factionLabel, {
+          type: type === 'faction' ? 'Faction' : 'Organization',
+          source: 'job',
+          status: 'active',
+          historyNote: 'Created from Job Board reusable contact.'
+        });
+      }
       if (type === 'faction' && factionLabel.toLowerCase() === contactName.toLowerCase()) return { faction, contact: null, savedAsFaction: true };
+
+      // Identity hardening (PRE-8D-4, correction pass round 4): an explicit
+      // canonical contactId is authoritative -- update exactly that Contact,
+      // or fail. It must NEVER be silently reinterpreted as "create someone
+      // new" just because it didn't resolve (a stale id, or one that
+      // belongs to a different Faction than the one just resolved). And
+      // when no contactId was ever supplied, this ALWAYS creates a new
+      // Contact -- display text (a name, even tag-gated) no longer decides
+      // canonical Contact sameness anywhere in this method. The proper path
+      // for intentional reuse is the GM selecting a known/reusable Contact
+      // in the wizard, which populates issuerContactId and lands in the
+      // branch above; typing a bare name is, and now always means, "this is
+      // a new Contact."
+      //
+      // Correction pass round 4 (independent re-re-re-re-review): resolve
+      // an explicit canonical contactId EXACT-ID-ONLY
+      // (resolveFactionContactByIdsForMutation), never through the
+      // PERMISSIVE resolveFactionContactForMutation() -- a stale/deleted
+      // contactId that happens to equal some OTHER Contact's display name
+      // (on this Faction or, via a stale factionId, another) must fail,
+      // never be rescued by that other Contact's name.
+      let existingContactId = '';
+      if (explicitContactId) {
+        const contactResolution = FactionRegistryService.resolveFactionContactByIdsForMutation(faction.id, explicitContactId);
+        if (!contactResolution.contact) throw new Error('The selected issuer Contact could not be found on this Faction.');
+        existingContactId = contactResolution.contact.id;
+      }
       return FactionRegistryService.upsertFactionContact(faction.id, {
+        id: existingContactId,
         name: contactName,
         role,
         image: clientImage,
         tags: ['job-board', 'reusable-contact'],
-        description: `Reusable Job Board contact for ${factionLabel}.`,
+        description: `Reusable Job Board contact for ${faction.name}.`,
         defaultObjective: objective,
         defaultBriefing: briefing,
         defaultInstructions: instructions,
@@ -648,9 +702,13 @@ export class GMJobBoardSurfaceController {
       button.addEventListener('click', async (event) => {
         event.preventDefault();
         const filter = this._issuerFilterFromButton(event.currentTarget);
-        const draft = filter.contactId
-          ? FactionJobBridgeService.buildDraftFromContact(filter.factionId || filter.factionName, filter.contactId || filter.contactName)
-          : FactionJobBridgeService.buildDraftFromFaction(filter.factionId || filter.factionName);
+        // Identity hardening (PRE-8D-4, correction pass round 8):
+        // buildDraftFromIssuerFilter() resolves filter's separate
+        // factionId/factionName/contactId/contactName fields
+        // exact-id-first, never collapsing an id field with its sibling
+        // name field into one ambiguous call argument the way this
+        // handler previously did.
+        const draft = FactionJobBridgeService.buildDraftFromIssuerFilter(filter);
         if (!draft) {
           ui.notifications?.warn?.('Could not build a follow-up contract from that issuer.');
           return;
@@ -961,6 +1019,13 @@ export class GMJobBoardSurfaceController {
         }
         if (data.get('clientSave') === 'on') {
           await this._saveClientAsContact({
+            // Identity hardening (PRE-8D-4, correction pass round 3): pass
+            // the real canonical issuer ids through when a known issuer was
+            // selected, rather than discarding them and reconstructing
+            // identity from free text (see _saveClientAsContact's own doc
+            // comment).
+            factionId: text('issuerFactionId'),
+            contactId: text('issuerContactId'),
             factionName: text('clientFaction'),
             clientName: text('clientName'),
             clientType: text('clientType'),

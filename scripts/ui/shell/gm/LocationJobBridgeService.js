@@ -18,9 +18,37 @@ function number(value, fallback = 0) {
   return Number.isFinite(numeric) ? numeric : fallback;
 }
 
-function findFactionName(factionId = '') {
-  const faction = factionId ? FactionRegistryService.findFaction(factionId) : null;
-  return faction?.name || '';
+/**
+ * Identity hardening (PRE-8D-4, correction pass round 9): `factionId`
+ * here is always a CANONICAL id field (`Location.controllingFactionId` /
+ * `overrides.factionId`), never free text -- so it must resolve
+ * EXACT-ID-ONLY (`resolveFactionByIdForMutation()`), never through the
+ * flexible, name-capable `findFaction()` SEARCH helper. A stale/deleted
+ * controllingFactionId that happened to equal some OTHER Faction's
+ * display name would otherwise be silently "rescued" by that unrelated
+ * Faction.
+ *
+ * Identity hardening (PRE-8D-4, correction pass round 10): round 9 fixed
+ * the NAME half of this hazard (an unresolved id no longer borrows an
+ * unrelated Faction's name) but `buildDraftFromLocation()` still
+ * independently copied the RAW, possibly-stale controllingFactionId
+ * verbatim into `issuer.factionId` regardless of whether it resolved --
+ * so a broken reference still masqueraded as a valid canonical Job
+ * issuer id. `issuer.factionId` means "this is a resolved canonical
+ * Faction reference"; a Location's broken historical reference is
+ * useful diagnostic provenance, but must never be presented as one.
+ * `resolveControllingFaction()` is now the single resolution the caller
+ * uses to derive BOTH `issuer.factionId` and `issuer.factionName`
+ * together, so they can never disagree about whether the reference
+ * resolved.
+ */
+function resolveControllingFaction(factionId = '') {
+  const cleanId = text(factionId);
+  if (!cleanId) return { id: '', name: '', rawId: '' };
+  const faction = FactionRegistryService.resolveFactionByIdForMutation(cleanId);
+  return faction
+    ? { id: faction.id, name: faction.name, rawId: cleanId }
+    : { id: '', name: '', rawId: cleanId };
 }
 
 function locationChain(location = null) {
@@ -39,7 +67,18 @@ export class LocationJobBridgeService {
   static buildDraftFromLocation(locationOrId, overrides = {}) {
     const location = typeof locationOrId === 'object' ? locationOrId : LocationRegistryService.findLocation(locationOrId);
     if (!location) return null;
-    const factionName = findFactionName(overrides.factionId || location.controllingFactionId);
+    // Identity hardening (PRE-8D-4, correction pass round 10): resolve
+    // the controlling Faction reference ONCE and derive issuer.factionId
+    // AND issuer.factionName from that single resolution, so they can
+    // never disagree about whether the reference actually resolved. A
+    // stale/broken controllingFactionId no longer masquerades as a valid
+    // canonical issuer id -- the Location-lead draft still gets built
+    // (Location context alone is a sufficient Job source), but carries NO
+    // Faction relationship when the reference is broken. The raw broken
+    // id is preserved only as non-canonical diagnostic provenance
+    // (metadata.unresolvedControllingFactionId), never in issuer.factionId.
+    const controllingFaction = resolveControllingFaction(overrides.factionId || location.controllingFactionId);
+    const factionName = controllingFaction.name;
     const chain = locationChain(location) || location.name;
     const title = text(overrides.title || `${location.name} Lead`);
     const objective = text(overrides.objective || `Investigate activity at ${location.name}.`);
@@ -55,7 +94,7 @@ export class LocationJobBridgeService {
         source: 'location-registry',
         locationId: location.id,
         locationName: location.name,
-        factionId: text(overrides.factionId || location.controllingFactionId),
+        factionId: controllingFaction.id,
         factionName,
         name: location.name,
         image: location.image
@@ -74,6 +113,9 @@ export class LocationJobBridgeService {
       primaryCredits: number(overrides.rewardCredits ?? 0, 0),
       primaryXp: number(overrides.rewardXp ?? 0, 0),
       status: text(overrides.status || 'draft'),
+      metadata: {
+        unresolvedControllingFactionId: !controllingFaction.id ? controllingFaction.rawId : ''
+      },
       location: {
         id: location.id,
         name: location.name,
