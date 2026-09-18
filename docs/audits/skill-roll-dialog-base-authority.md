@@ -6,6 +6,22 @@ plus the two callers found to disagree with the canonical skill-total
 resolver. Fixture data is drawn from a real alpha-session actor export
 ("Gar'ee") supplied with the bug report.
 
+This audit covers **two related but independent defects**, fixed by separate
+commits so they stay distinguishable:
+
+- **Defect A — skill-dialog base authority.** A legacy skill-roll caller
+  expected `system.skills[key].total`, a field the V2 schema does not
+  persist, producing `baseBonus: 0`. This is the alpha-reported bug itself.
+- **Defect B — raw ability-modifier fallback authority.** Exposed while
+  building the Gar'ee regression fixture for Defect A: on an actor with no
+  `system.derived` (any raw actor export, or any code path operating on
+  unprepared actor data), `getAbilityModifier()` accepted an inert legacy
+  `system.abilities` stub before ever reconstructing a modifier from the
+  canonical `system.attributes` score, masking a real Dex 20 (+5) as +0.
+  They are related by the broader V2 authority migration — both are
+  "a legacy V2-predecessor field outranking the canonical V2 field" — but
+  they are different code paths with different fixes.
+
 ## Reported symptom
 
 During live alpha testing, every skill roll dialog on one actor showed a
@@ -15,7 +31,7 @@ restored the correct roll. This affected every skill on the actor, not one
 skill specifically, and could not be reproduced afterward under normal
 testing.
 
-## Root cause
+## Root cause — Defect A (skill-dialog base authority)
 
 Two independent callers of `showRollModifiersDialog()` did not obtain their
 base total from the canonical resolver (`getSkillTotal()` in
@@ -90,7 +106,7 @@ Every entry point that already supplied both `skillKey` and `rollType:
 `skillKey`-driven resolution mandatory rather than by changing any of the
 already-correct callers.
 
-## Fix
+## Fix — Defect A
 
 1. `rollSkillWithConfig()` — removed the stale `baseBonus` read entirely,
    added `rollType: 'skill'` alongside the `skillKey` it already passed.
@@ -105,45 +121,59 @@ already-correct callers.
    hatch. `buildRollConfigModel()` and `getSkillTotal()` are now also
    exported, for direct testability.
 
-## Gar'ee findings (raw export vs. live runtime)
+## Root cause — Defect B (raw ability-modifier fallback authority)
 
-The supplied actor export is Foundry **source** data only — it has no
-`system.derived` key at all (derived data, including computed skill totals
-and ability modifiers, is populated by `prepareDerivedData()` at runtime and
-is never serialized into an export). Two consequences, both confirmed by
-running the actual pre-fix and post-fix `roll-config.js` code against
-fixtures built from Gar'ee's real exported fields:
+Inspection of Gar'ee's raw export exposed a second authority defect in
+`getAbilityModifier()`: when no derived layer was present, the resolver
+accepted the inert legacy `system.abilities.<key>.mod` stub before
+reconstructing the modifier from canonical V2 `system.attributes` source
+data. This caused raw Gar'ee to resolve Dex as +0 instead of +5 and Stealth
+as 19 instead of 24.
 
-- `system.skills.stealth.total` is confirmed absent — the legacy
-  `rollSkillWithConfig()` expression evaluates to exactly `0` for Gar'ee, as
-  hypothesized.
-- Running the canonical resolver (`getSkillTotal`) against Gar'ee's **raw
-  export with no derived layer added** does *not* reproduce the live +24
-  Stealth total from the reporting player's screenshot — it resolves to
-  19. This is because `getAbilityModifier()`'s candidate order checks
-  `system.abilities.<key>.mod` (a separate, apparently-inert legacy stub
-  block present on every actor in this schema, with `mod: 0` for every
-  ability regardless of the real score) before falling back to
-  reconstructing a modifier from the real `system.attributes.<key>.base`
-  score. Gar'ee's real Dex is 20 (mod +5); with only raw-export data in
-  hand, the resolver silently reads +0 from the stub instead, giving
-  0(dex) + 4(half level) + 5(trained) + 5(focus) + 5(misc) = 19 instead of
-  24.
-  - This is a **separate, narrower latent issue** from the one this fix
-    addresses, is not part of this change (see Non-goals below), and is not
-    the live alpha bug's mechanism: `scripts/actors/derived/derived-calculator.js`
-    documents `derived.attributes[abilityKey].mod` as the ability-modifier
-    authority, and a live Foundry client always populates
-    `system.derived.attributes` via `prepareDerivedData()` before a player
-    can open any roll dialog. It only becomes visible when code runs
-    against actor data that predates derivation — as in this export, or a
-    stale snapshot/macro operating on `actor.toObject()` instead of the
-    live actor. Flagged here as a prune/follow-up candidate, not fixed.
-  - Once `system.derived.attributes` is present (the live-runtime shape),
-    the same resolver reproduces the screenshot's +24 exactly: dex(+5) +
-    half level(4) + trained(5) + focus(5) + miscMod(5) = 24.
+Audit performed before editing (per the authority audit requirement):
+
+1. **What raw fields are the V2 source of truth for ability scores?**
+   `system.attributes.<key> = {base, racial, enhancement, temp}` — confirmed
+   directly against `template.json`'s `Actor` data model (line ~92) and
+   against `scripts/actors/derived/derived-calculator.js`, which states in
+   its own source comment: *"Canonical stored abilities path is
+   system.attributes.<key>.{base, racial, temp, enhancement}. system.attributes
+   is canonical; system.abilities is a read-only compatibility mirror."*
+2. **What fields are the runtime derived authority for ability modifiers?**
+   `system.derived.attributes.<key>.mod`, computed by `DerivedCalculator` as
+   `Math.floor((base + racial + enhancement + temp - 10) / 2)` and written
+   during `prepareDerivedData()`.
+3. **Is `system.abilities` formally legacy/deprecated?** Yes — it is present
+   in `template.json`'s data model (line ~48, defaulting to
+   `{base:10, racial:0, temp:0, total:10, mod:0}` for every ability on every
+   actor) and is explicitly documented by `derived-calculator.js` as a
+   "read-only compatibility mirror," consulted only via a **whole-block**
+   fallback (`actor.system.attributes || actor.system.abilities || {}`) —
+   never per-key, and never once `system.attributes` exists at all.
+4. **Is there already a shared helper?** `DerivedCalculator`'s own ability
+   loop is the canonical formula, but it lives inside a full actor recompute
+   (BAB, defenses, HP, and a `system.derived.*` write) — too heavy to import
+   for a narrow, read-only lookup. `getAbilityModifier()` now reimplements
+   the *identical* formula (`reconstructAbilityModifierFromScore()`) rather
+   than inventing a competing one, so raw-export and live-runtime data always
+   agree.
+
+The resolver was hardened so derived V2 data remains first authority,
+canonical raw V2 attributes provide the no-derived fallback (reconstructed
+with the identical formula `DerivedCalculator` uses), and legacy
+`system.abilities` is used only when the actor carries no `system.attributes`
+block at all — mirroring `DerivedCalculator`'s own whole-block contract
+rather than a new per-key rule. Every candidate is checked with
+`Number.isFinite`, never truthiness, so a legitimate modifier of `0` is never
+treated as absent.
+
+With this fix, the raw export and live-runtime shape now agree exactly:
+`getSkillTotal(gareeRawExport, 'stealth')` and
+`getSkillTotal(gareeLiveActor, 'stealth')` both resolve to `24`.
 
 ## Fail-before / pass-after proof
+
+### Defect A (skill-dialog base authority)
 
 Ran the actual pre-fix `buildRollConfigModel()` (extracted from git history,
 only re-exported for import — no logic changed) against a Gar'ee-shaped
@@ -181,12 +211,37 @@ breakdown: [
 `Other Bonuses: 5` here is Gar'ee's real `miscMod: 5` — a legitimate
 component, not a fabricated reconciliation artifact.
 
+### Defect B (raw ability-modifier fallback authority)
+
+Same Gar'ee Stealth fixture, but using the **exact raw-export shape** (no
+synthetic `system.derived` added at all) against `getAbilityModifier()`
+before and after its fix:
+
+```
+Gar'ee raw export, BEFORE the Defect B fix:
+  getAbilityModifier(rawGaree, 'dex') = 0   (read from the inert system.abilities stub)
+  getSkillTotal(rawGaree, 'stealth')  = 19  (0 dex + 4 half + 5 trained + 5 focus + 5 misc)
+
+Gar'ee raw export, AFTER the Defect B fix:
+  getAbilityModifier(rawGaree, 'dex') = 5   (reconstructed from system.attributes.dex.base = 20)
+  getSkillTotal(rawGaree, 'stealth')  = 24  (5 dex + 4 half + 5 trained + 5 focus + 5 misc)
+
+Gar'ee live-runtime shape (system.derived.attributes populated), unchanged by this fix:
+  getAbilityModifier(liveGaree, 'dex') = 5
+  getSkillTotal(liveGaree, 'stealth')  = 24
+```
+
+The raw-export and live-runtime numbers now agree exactly. The target
+invariant holds: for ordinary actor data, removing the non-persisted
+`system.derived` layer does not change the skill configurator's result.
+
 ## Tests
 
-`tests/skill-roll-dialog-base-authority.test.mjs` (run via
-`node tools/run-rolling-tests.mjs`, part of the full rolling-system suite —
-196 passed / 0 failed after this change, 5 pre-existing unrelated
-exclusions unchanged):
+`tests/skill-roll-dialog-base-authority.test.mjs` and
+`tests/ability-modifier-authority.test.mjs` (run via
+`node tools/run-rolling-tests.mjs`, part of the full rolling-system suite):
+
+Defect A (`skill-roll-dialog-base-authority.test.mjs`):
 
 - Stale `baseBonus: 0` cannot override the canonical Stealth total.
 - Omitted `baseBonus` resolves canonical.
@@ -203,7 +258,25 @@ exclusions unchanged):
   direct reproduction of the omitted-`skillKey` → Use the Force fallback),
   and no fabricated inverse breakdown row.
 - Fail-before/pass-after proof using Gar'ee's exact raw-export shape and
-  the live-runtime shape, both described above.
+  the live-runtime shape — both now agree at `24` (see Defect B below).
+
+Defect B (`ability-modifier-authority.test.mjs`):
+
+- Test A: raw canonical `system.attributes` beats the legacy `system.abilities`
+  stub (Dex 20 → +5, not the stub's 0).
+- Test B: a legitimate zero modifier (Dex 10 → +0) is preserved, not treated
+  as absent.
+- Test C: a negative modifier (Dex 8 → -1) reconstructs correctly — proves
+  the fix isn't "always prefer the larger/positive number".
+- Test D: live `system.derived.attributes` data (+7) still wins over raw
+  reconstruction (+5) when both are present.
+- Test E: an actor with no `system.attributes` block at all still resolves
+  from the legacy `system.abilities` mirror (+3), preserving old-actor-shape
+  compatibility.
+- Gar'ee multi-ability proof: all six of Gar'ee's real ability scores
+  (STR 14→+2, DEX 20→+5, CON 14→+2, INT 12→+1, WIS 10→+0, CHA 8→-1),
+  covering positive/zero/negative simultaneously, each verified through a
+  representative untrained skill.
 
 ## Runtime/transient assessment
 
@@ -225,6 +298,56 @@ No change to `RollCore`, `ModifierEngine`, skill math, Take 10/Take 20,
 Force Points, Skill Focus, or any other roll type's base-total resolution
 (`attack`/`damage`/`ability`/`initiative` all keep their prior
 `options.baseBonus ?? getRollBaseTotal(...)` behavior — only
-`skill`/`force`/`force-power` were hardened). The `system.abilities` legacy
-stub / ability-modifier fallback-order issue documented above is flagged,
-not fixed, in this pass.
+`skill`/`force`/`force-power` were hardened). No change to SWSE
+ability-score formulas, normal derived-calculation semantics, `ModifierEngine`,
+`RollCore`, actor persistence, ability advancement, chargen, species
+modifiers, or temporary ability mechanics — `getAbilityModifier()`'s fix is a
+resolution-authority/fallback-order correction that reuses
+`DerivedCalculator`'s own existing formula and contract, not a new ability
+system.
+
+`getAbilityModifier()`'s legacy-fallback tier (used only when an actor has no
+`system.attributes` block at all) follows Rule 4 of
+`docs/systems/ABILITY_SCHEMA_AUTHORITY.md` ("`system.abilities` may be read
+only as a compatibility fallback while older actors migrate") rather than
+reintroducing `system.abilities` as a competing authority — it never runs
+when `system.attributes` is present, however incomplete. A dead
+`system.derived.abilities` read tier (not part of the documented contract,
+and written nowhere in the codebase) was also removed from this function
+during this fix, since it was unreachable dead code, not sanctioned
+compatibility behavior.
+
+## Deferred — repository-wide `system.abilities` residue (out of scope for this PR)
+
+Investigating Defect B surfaced a larger, separate finding: `grep -rl
+"system\.abilities" scripts/` matches **68 files**, and
+`scripts/utils/schema-adapters.js` (lines 12-13) contains a doc comment that
+directly contradicts `docs/systems/ABILITY_SCHEMA_AUTHORITY.md` — it
+documents `system.abilities[ABILITY].base` as the "Ability Score
+(Persistent)" path, "writable by progression/actor engine," where the
+authority doc says the persistent path is `system.attributes` and
+`system.abilities` is a legacy-only fallback. Both were verified directly
+(not taken on report) before writing this section.
+
+This is real, but it is **not part of this PR**. The 68 files include some
+of the highest-blast-radius systems in the codebase —
+`governance/actor-engine/actor-engine.js`, `governance/mutation/mutation-boundary-service.js`,
+`apps/progression-framework/shell/progression-finalizer.js`,
+`engine/chargen/CharacterGenerationEngine.js`, the suggestion engine, and the
+droid normalizer among them — every one of which this repo's own test
+harness (`tests/helpers/foundry-shim/`) cannot fully exercise under plain
+Node; most require live Foundry runtime behavior to validate a change with
+confidence. A full read/write classification and remediation pass across
+that surface (which method in `SchemaAdapters` actually writes
+`system.abilities` today and why, which of the 68 sites are migration-only
+vs. active runtime reads vs. dead code, and what — if anything — must move
+to a migration/adaptation boundary per the project's own "Compatibility
+belongs at the edge" principle) is a staged, independently-reviewable
+project in its own right, not a same-PR follow-on to a two-function skill-
+roll bugfix.
+
+**Recommended next step:** a dedicated task/PR scoped specifically to that
+audit, starting from `scripts/utils/schema-adapters.js`'s actual
+implementation (not just its doc comment) to determine whether
+`system.abilities` is genuinely still written anywhere at runtime, before
+any of the 68 sites are touched.

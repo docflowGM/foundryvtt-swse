@@ -39,6 +39,20 @@ import { installFoundryShimGlobals } from './helpers/foundry-shim/globals.mjs';
 // `allowBaseBonusOverride: true`. No caller in this codebase currently needs
 // that escape hatch.
 //
+// A second, independent authority defect (Defect B — see
+// docs/audits/skill-roll-dialog-base-authority.md) was exposed while
+// building the Gar'ee fixture below and is fixed in the same PR, by a
+// separate commit, as its own change to getAbilityModifier():
+// getAbilityModifier() used to accept the legacy, always-{mod:0}
+// `system.abilities` compatibility stub before ever reconstructing a
+// modifier from the canonical `system.attributes` score, whenever no
+// `system.derived.attributes` was present. getAbilityModifier() now follows
+// derived-calculator.js's own documented authority contract ("system.attributes
+// is canonical; system.abilities is a read-only compatibility mirror"):
+// live derived data first, then reconstruction from system.attributes using
+// the identical base+racial+enhancement+temp formula, and system.abilities
+// only when system.attributes is entirely absent.
+//
 // Gar'ee fixture note: the uploaded actor export
 // (fvtt-Actor-garee-*.json) is Foundry's *source* data only — it has no
 // `system.derived` key at all, because derived data (ability modifiers,
@@ -50,13 +64,13 @@ import { installFoundryShimGlobals } from './helpers/foundry-shim/globals.mjs';
 // === {base:20,...} with no .mod; system.abilities is a separate, apparently
 // inert legacy stub actor.system.abilities.*.mod === 0 for every ability
 // regardless of the real score) — used for the "legacy caller reads 0"
-// half of the proof. `gareeLiveActor` additionally carries the
-// system.derived.attributes/skills a live Foundry client actually populates
-// before any player can open a roll dialog (confirmed against
-// scripts/actors/derived/derived-calculator.js, which documents
-// `derived.attributes[abilityKey].mod` as the ability-modifier authority) —
-// used to reproduce the exact +24 Stealth total the reporting player's
-// screenshot showed.
+// half of the proof, and (post Defect-B-fix) now also correctly resolves
+// dex to +5 and Stealth to +24 by reconstructing from system.attributes.
+// `gareeLiveActor` additionally carries the system.derived.attributes/skills
+// a live Foundry client actually populates before any player can open a
+// roll dialog (confirmed against scripts/actors/derived/derived-calculator.js,
+// which documents `derived.attributes[abilityKey].mod` as the ability-modifier
+// authority) — both fixtures now agree exactly.
 
 registerFoundryPathLoader();
 installFoundryShimGlobals({
@@ -365,31 +379,30 @@ const gareeLiveActor = {
   const legacyExpressionResult = gareeRawExportActor.system.skills.stealth?.total || 0;
   assert.equal(legacyExpressionResult, 0, 'precondition: the OLD rollSkillWithConfig() expression evaluates to 0 for Gar\'ee');
 
-  // The canonical resolver, run against the same raw-export-only actor (no
-  // system.derived at all), falls through to component reconstruction.
-  // Ability-modifier resolution in that no-derived-data case pulls from the
-  // legacy, apparently-inert system.abilities stub (mod: 0 for every
-  // ability on every actor in this export) rather than the real
-  // system.attributes scores — a separate, narrower issue than the one this
-  // fix addresses (see the final report's "Gar'ee findings" section). It is
-  // NOT the alpha bug's mechanism (a live client always has
-  // derived.attributes populated before a dialog can open), so this
-  // assertion documents the raw-export-only number honestly rather than
-  // asserting the live-runtime +24 here.
+  // The canonical resolver, run against the raw-export-only actor (no
+  // system.derived at all), now reconstructs the modifier from the
+  // canonical system.attributes score (dex base 20 -> mod +5) rather than
+  // accepting the legacy, inert system.abilities stub (mod: 0 for every
+  // ability on every actor in this schema) — see the companion fix to
+  // getAbilityModifier() in scripts/rolls/roll-config.js and
+  // docs/audits/skill-roll-dialog-base-authority.md's "Defect B" section.
+  // Raw export and live-runtime shape now agree exactly.
   const rawExportCanonical = getSkillTotal(gareeRawExportActor, 'stealth');
   assert.equal(
-    rawExportCanonical, 19,
-    'canonical resolver on the pure raw export (no derived data): dex mod resolves to 0 via the legacy ' +
-    'system.abilities stub, not +5, giving 0(dex) + 4(half) + 5(trained) + 5(focus) + 5(misc) = 19 — ' +
-    'still far closer to correct than the legacy caller\'s flat 0, but not byte-identical to the live +24 ' +
-    'until derived.attributes is populated by prepareDerivedData(), as it always is before a real dialog opens'
+    rawExportCanonical, 24,
+    'canonical resolver on the pure raw export (no derived data) must reconstruct dex mod +5 from ' +
+    'system.attributes.dex.base=20, not accept the legacy system.abilities stub\'s mod:0 — ' +
+    '5(dex) + 4(half) + 5(trained) + 5(focus) + 5(misc) = 24'
   );
   assert.notEqual(rawExportCanonical, legacyExpressionResult, 'the canonical resolver must never agree with the stale legacy 0');
 
   // With derived.attributes present (the live-runtime shape), the canonical
-  // resolver reproduces the screenshot's +24 exactly.
+  // resolver reproduces the screenshot's +24 exactly, and agrees with the
+  // raw-export result above — removing the non-persisted derived layer must
+  // not change the result for ordinary actor data.
   const liveCanonical = getSkillTotal(gareeLiveActor, 'stealth');
   assert.equal(liveCanonical, 24, 'canonical resolver with live-runtime derived data must reproduce the reported +24');
+  assert.equal(rawExportCanonical, liveCanonical, 'raw export and live-runtime shape must agree');
 }
 
 console.log('Skill roll dialog base-authority guards passed (rollSkillWithConfig, SWSERoll.rollSkill, roll-config buildRollConfigModel/getSkillTotal, Gar\'ee fixture).');
