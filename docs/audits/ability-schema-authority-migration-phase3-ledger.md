@@ -26,19 +26,17 @@ comments.
 | Files with ≥1 mention, at Phase 3 start | 68 | `grep -rl "system\.abilities" scripts/` at `069b5c0` |
 | Files with ≥1 mention, current HEAD | 67 | Same, current tree |
 | Actor-runtime-relevant files (excludes 4 Item-schema/N-A files: `drop-handler.js`, `species-grant-ledger-builder.js`, `chargen-shared.js`, `species-registry.js` — see N/A rows below) | 64 | 68 − 4 |
-| **Category C distinct files** | **26** (23 fixed + 3 remaining) | Unique file paths across every Category C table row below, including 2 files found after the original inventory pass (see below) |
-| **Category C distinct functions/sites** | **32** (29 fixed + 3 remaining) | One count per named function/property-lookup expression actually changed or needing a change — see the two lists immediately below. This is the granular count; `skill-uses.js`'s "6 sites" in one file and the Force-cluster's 2-file "row 9" both unpack into their real per-site counts here. |
+| **Category C distinct files** | **27** (all 27 fixed, 0 remaining) | Unique file paths across every Category C table row below, including 3 files found after the original inventory pass (see below) |
+| **Category C distinct functions/sites** | **33** (all 33 fixed, 0 remaining) | One count per named function/property-lookup expression actually changed or needing a change — see the two lists immediately below. This is the granular count; `skill-uses.js`'s "6 sites" in one file and the Force-cluster's 2-file "row 9" both unpack into their real per-site counts here. |
 
-**Fixed functions/sites (29), by file:**
-`enhanced-rolls.js` `SWSERoll.rollInitiative()` (1) · `SWSEInitiative.js` `getActorInitiativeSkillTotal()` (1) · `combat-stats-tooltip.js` `getInitiativeBreakdown()` (1) · `skill-uses.js` (6: target Int-based DC, 2× Con modifier, 3× Con score) · `progression-shell.js` `_buildAbilitySnapshot()` (1) · `lightsaber-form-engine.js` `actorAbilityMod()` (1) · `skill-feat-runtime-patches.js` `actorAbilityMod()` (1) · `combat-option-resolver.js` `actorAbilityMod()` dead-tail cleanup (1) · `skill-feat-resolver.js` (2: `'abilityModifier'` + `'abilityDelta'` formulas) · `feat-grant-entitlement-resolver.js` `getAbilityModifier()` (1) · `force-suite-resolution.js` `getAbilityModifier()` closure (1) · `force-training-entitlement-runtime-patches.js` `getAbilityData()` (1) · `ForceTrainingEngine.js` `getForceAbilityModifier()` (1) · `force-power-engine.js` `_countFromAbilityMod()` (1) · `force-provenance-engine.js` `getConfiguredAbilityMod()` (1) · `template-character-creator.js` `_openSkillTraining()` (1) · `vehicle-crew-positions.js` `_calculateSkillBonus()` (1) · `store/index.js` `getDroidStatblockQuality()` (1) · `shared-suggestion-utilities.js` `extractAbilityScores()` (1) · `AttributeIncreaseScorer.js` `_createHypotheticalActor()` (1) · `mentor-dialogue-v2-integration.js` `buildAnalysisData()` (1) · `mentor-conditional-variants.js` `evaluateCondition('high_ability')` (1, found beyond the original 30-site inventory — see below) · `prerequisite-checker.js` `_checkAbilityRequirement()` (1, found beyond the original 30-site inventory — see below).
+**All 33 Category C functions/sites are now fixed, by file:**
+`enhanced-rolls.js` `SWSERoll.rollInitiative()` (1) · `SWSEInitiative.js` `getActorInitiativeSkillTotal()` (1) · `combat-stats-tooltip.js` `getInitiativeBreakdown()` (1) · `skill-uses.js` (6: target Int-based DC, 2× Con modifier, 3× Con score) · `progression-shell.js` `_buildAbilitySnapshot()` (1) · `lightsaber-form-engine.js` `actorAbilityMod()` (1) · `skill-feat-runtime-patches.js` `actorAbilityMod()` (1) · `combat-option-resolver.js` `actorAbilityMod()` dead-tail cleanup (1) · `skill-feat-resolver.js` (2: `'abilityModifier'` + `'abilityDelta'` formulas) · `feat-grant-entitlement-resolver.js` `getAbilityModifier()` (1) · `force-suite-resolution.js` `getAbilityModifier()` closure (1) · `force-training-entitlement-runtime-patches.js` `getAbilityData()` (1) · `ForceTrainingEngine.js` `getForceAbilityModifier()` (1) · `force-power-engine.js` `_countFromAbilityMod()` (1) · `force-provenance-engine.js` `getConfiguredAbilityMod()` (1) · `template-character-creator.js` `_openSkillTraining()` (1) · `vehicle-crew-positions.js` `_calculateSkillBonus()` (1) · `store/index.js` `getDroidStatblockQuality()` (1) · `shared-suggestion-utilities.js` `extractAbilityScores()` (1) · `AttributeIncreaseScorer.js` `_createHypotheticalActor()` (1) · `mentor-dialogue-v2-integration.js` `buildAnalysisData()` (1) · `character-actor.js` `mirrorIdentity()` (1) · `suggestion-constants.js` `SYSTEM_PATHS.WISDOM_MOD` (1, dead-value correction — see below) · `talent-ability-helpers.js` `getTalentAbilityMod()` (1, fail-before-proof then fixed — see below) · `mentor-conditional-variants.js` `evaluateCondition('high_ability')` (1, found beyond the original 30-site inventory — see below) · `prerequisite-checker.js` `_checkAbilityRequirement()` (1, found beyond the original 30-site inventory — see below) · `starship-maneuver-suggestion-engine.js` `_intelligentSuggest()` (1, found beyond the original 30-site inventory — see below).
 
-**Remaining functions/sites (3), by file:**
-`character-actor.js` (1, pending consumer investigation) · `suggestion-constants.js` (1, pending consumer investigation) · `talent-ability-helpers.js` (1, pending a deliberate author-facing decision, not a silent fix).
-
-**Two additional defects beyond the original 30-site inventory**, both found while implementing the batch above rather than during the initial read-only pass, and both about ability-*score* authority (not `system.abilities` order specifically):
+**Three additional defects beyond the original 30-site inventory**, all found while implementing/investigating the batch above rather than during the initial read-only pass, and all about ability-*score* authority (not `system.abilities` order specifically):
 
 - `scripts/mentor/mentor-conditional-variants.js`'s `evaluateCondition('high_ability', ...)` checked `(a.value || a.total || 10) >= 14` against `actor.system.abilities` — `.value` never exists on that block and `.total` is always the legacy stub's `10`, so this condition could never trigger regardless of the actor's real scores. Not a "wrong order" bug like the other 30 (there was no `system.attributes` read to be out of order with) — a dead-always-false condition. Fixed to use `SchemaAdapters.getAbilityScore()`.
 - `scripts/data/prerequisite-checker.js`'s `_checkAbilityRequirement()` (ability-score feat/talent prerequisites, e.g. "requires Str 13") resolved via `actor.system.attributes[key].total ?? .value ?? actor.system.abilities[key].value ?? 10` — none of the first three candidates ever exist on the real V2 schema (`system.attributes` only has `.base/.racial/.enhancement/.temp`; `system.abilities` has no `.value`), so outside an active draft context every ability-score prerequisite silently evaluated against a hardcoded `10`. Found while verifying `AttributeIncreaseScorer.js`'s hypothetical-actor simulation (row 16) actually influences anything downstream — it didn't, because this function ignored real scores entirely. Fixed to use `SchemaAdapters.getAbilityScore()` as the real-actor fallback (draft/pending state still takes priority, unchanged). Fail-before proof, both actors otherwise identical: a Str 16 actor with the default `system.abilities` stub failed a "requires Str 13" check (10 < 13); post-fix, correctly passes. See `tests/prerequisite-ability-score-authority.test.mjs`.
+- `scripts/engine/progression/engine/starship-maneuver-suggestion-engine.js`'s `_intelligentSuggest()` read `actor.system?.abilities?.wis?.mod || 0` directly for its "boost Deflector maneuvers by Wis mod" starship-maneuver suggestion logic. Found while investigating every consumer of `suggestion-constants.js`'s `WISDOM_MOD` path-string constant (row 19) — that constant itself turned out to have zero consumers anywhere in the repo (confirmed by a repo-wide grep), but the file importing from the same module had this independent, live defect for the same underlying purpose (Wis-based suggestion scoring). Fixed to use `SchemaAdapters.getAbilityMod()`. See `tests/starship-maneuver-suggestion-ability-authority.test.mjs`.
 
 ## Method
 
@@ -173,11 +171,12 @@ during normal gameplay. None of these route through `SchemaAdapters`
 | 15 | `scripts/engine/suggestion/shared-suggestion-utilities.js:40-45` — **FIXED** | Suggestion-engine input data (`extractAbilityScores()`), consumed by `extractAbilityModifiers()` and `findHighestAbility()`. Consolidated onto `SchemaAdapters.getAbilityScore()`. | None (now fixed) |
 | 16 | `scripts/engine/suggestion/AttributeIncreaseScorer.js:242-247` (`_createHypotheticalActor()`) — **FIXED** | "Should I increase this ability" suggestion scoring — built a hypothetical/simulated actor clone by patching `system.abilities.str` etc. directly. Fixed to patch `system.attributes` (the field canonical accessors actually read) and to null out the corresponding `system.derived.attributes` entries, so a live real-actor derived snapshot cannot shadow the hypothetical scores. Paired with row 21 below (`prerequisite-checker.js`) — this simulation had no observable effect until that companion bug was also fixed. | None (now fixed) |
 | 17 | `scripts/mentor/mentor-dialogue-v2-integration.js:70-74` (`buildAnalysisData()`) — **FIXED** | Mentor dialogue flavor-text analysis. Consolidated onto `SchemaAdapters.getAbilityScore()`/`getAbilityMod()`. | None (now fixed) |
-| 18 | `scripts/actors/v2/character-actor.js:327` | Builds an `i.abilities` array on the core V2 character-actor class — **needs Phase-6-time verification of exactly where this output is consumed** before assuming its blast radius. | None |
-| 19 | `scripts/engine/progression/engine/suggestion-constants.js:125` | A path-string constant, `WISDOM_MOD: 'system.abilities.wis.mod'`, consumed elsewhere via a generic property-path reader — **needs Phase-6-time verification of every consumer of this constant.** | N/A (constant, not a direct read) |
-| 20 | `scripts/engine/talent/talent-ability-helpers.js` | Self-documented as intentionally reversed-order ("NOT SchemaAdapters.getAbilityMod() — that helper checks system.attributes before system.abilities, the reverse of this function's priority order, so swapping would be a behavior change for actors whose mirrors have diverged"). Used by lightsaber/consular/sentinel talent actions. **This is known, acknowledged debt, not blind residue — flagged for a deliberate decision rather than a silent fix**, since the original author explicitly reasoned about it. | Wrong order, intentionally |
-| 21 | `scripts/data/prerequisite-checker.js` `_checkAbilityRequirement()` — **FIXED (found beyond original inventory)** | Ability-score feat/talent prerequisite checks (e.g. "requires Str 13"). See the "Two additional defects" note above for the fail-before proof. | Checked only nonexistent fields, silently defaulted to 10 (now fixed) |
-| 22 | `scripts/mentor/mentor-conditional-variants.js` `evaluateCondition('high_ability')` — **FIXED (found beyond original inventory)** | Mentor dialogue-variant selection's "character has a strong ability score" condition. See the "Two additional defects" note above. | Checked only nonexistent `.value`, always-10 `.total` (now fixed) |
+| 18 | `scripts/actors/v2/character-actor.js:327` (`mirrorIdentity()`) — **FIXED** | Builds `system.derived.identity.abilities`. **Verified live before fixing**: `templates/actors/character/v2/partials/skills-panel.hbs` does `{{#each @root.derived.identity.abilities as \|ab\|}}` in two places — real player-facing UI, not dead output. Also verified `SchemaAdapters` is safe to call at this synchronous-inside-`prepareDerivedData` call site (falls through to a fresh `system.attributes` reconstruction when `system.derived.attributes` isn't yet populated for the current cycle) before consolidating onto it. | None (now fixed) |
+| 19 | `scripts/engine/progression/engine/suggestion-constants.js:125` — **FIXED (dead-value correction)** | A path-string constant, `WISDOM_MOD: 'system.abilities.wis.mod'`. **Verified before fixing**: `SYSTEM_PATHS` has zero consumers anywhere in the repo (repo-wide grep) — it is not fed through a generic property-path reader, so there was no resolver mechanism to replace. Genuinely dead code. Corrected its value to the canonical `system.derived.attributes.wis.mod` path anyway, with a comment directing any future consumer to `SchemaAdapters.getAbilityMod()` instead. See row 23 below for the real defect this investigation surfaced in a different file. | N/A (constant, not a direct read; now dead-but-correct) |
+| 20 | `scripts/engine/talent/talent-ability-helpers.js` (`getTalentAbilityMod()`) — **FIXED, fail-before proof performed** | Was self-documented as intentionally reversed-order ("NOT SchemaAdapters.getAbilityMod() — that helper checks system.attributes before system.abilities, the reverse of this function's priority order, so swapping would be a behavior change for actors whose mirrors have diverged"). Used by force-adept/sith/jedi-prestige/consular/sentinel talent actions (all confirmed to pass live, committed actors — no simulation). **Fail-before proof performed per explicit direction that a deliberate historical choice doesn't make an order correct**: a real Dex 20 with no `system.derived` yet resolved to modifier 0 (the stale mirror) instead of +5. The "behavior change" the original comment warned about was the bug. Also found: its own `system.attributes` fallback tier checked a `.mod` field that never exists on the real schema, making that tier permanently dead regardless of order. Consolidated onto `SchemaAdapters.getAbilityMod()`. See `tests/talent-ability-helpers-fail-before-proof.test.mjs`. | Wrong order, intentionally (now fixed) |
+| 21 | `scripts/data/prerequisite-checker.js` `_checkAbilityRequirement()` — **FIXED (found beyond original inventory)** | Ability-score feat/talent prerequisite checks (e.g. "requires Str 13"). See the "Three additional defects" note above for the fail-before proof. | Checked only nonexistent fields, silently defaulted to 10 (now fixed) |
+| 22 | `scripts/mentor/mentor-conditional-variants.js` `evaluateCondition('high_ability')` — **FIXED (found beyond original inventory)** | Mentor dialogue-variant selection's "character has a strong ability score" condition. See the "Three additional defects" note above. | Checked only nonexistent `.value`, always-10 `.total` (now fixed) |
+| 23 | `scripts/engine/progression/engine/starship-maneuver-suggestion-engine.js` `_intelligentSuggest()` — **FIXED (found beyond original inventory)** | Starship-maneuver suggestion's "boost Deflector maneuvers by Wis mod" logic. Found while tracing row 19's `WISDOM_MOD` consumers. See the "Three additional defects" note above. | Read only the stale mirror directly (now fixed) |
 
 Two sites were reviewed and found **not** to be defects on closer reading,
 despite initially looking similar:
@@ -258,7 +257,7 @@ inside functions already covered above, not a distinct dead site.
 |---|---|
 | A — migration-only | 1 file (`phase5-compendium-heal.js`) |
 | B — correct compatibility boundary | ~30 files |
-| C — real defect (fixed + remaining functions/sites) | 32 sites across 26 files (29 fixed, 3 remaining) — see "Definitive counts" above |
+| C — real defect (fixed + remaining functions/sites) | 33 sites across 27 files — **all 33 fixed, 0 remaining** — see "Definitive counts" above |
 | D — active write | 0 confirmed (governance layer already correct) |
 | E — comment/doc only | 3 (stale comments, no runtime effect) |
 | F1 — dead, no tracked callers | 1 (`lightsaber-form-engine.js`, fixed) |
@@ -268,44 +267,48 @@ inside functions already covered above, not a distinct dead site.
 
 ## Status
 
-**29 of 32 Category C functions/sites (23 of 26 files) are fixed, tested,
-and committed** — combat/rolls, skill-uses, progression-shell, Force-power
-subsystem, talent/feats subsystem, and (this pass) chargen/vehicles/store/
-suggestions/mentor, plus two defects found beyond the original inventory
-(`prerequisite-checker.js`, `mentor-conditional-variants.js`) — see the
-`Phase 6a`-`Phase 6g` commits on this branch.
-`SchemaAdapters.getAbilityMod()`/`getAbilityScore()` themselves were fixed
-in the `Phase 4/5` commit, which most of the above now delegate to directly
-rather than re-deriving their own ability-lookup logic — this also
-resolved the "duplicate helper proliferation" pattern discovered along the
-way (the same `actorAbilityMod`/"resolve configured Force ability" logic
-had been independently reimplemented in at least 7 files across the
-Force-power and talent/feats subsystems alone).
+**All 33 of 33 Category C functions/sites (27 of 27 files) are fixed,
+tested, and committed** — combat/rolls, skill-uses, progression-shell,
+Force-power subsystem, talent/feats subsystem, chargen/vehicles/store/
+suggestions/mentor, the character-actor.js identity mirror, and
+talent-ability-helpers.js's deliberately-reversed order (fail-before
+proven, then fixed) — plus three defects found beyond the original
+30-site inventory (`prerequisite-checker.js`, `mentor-conditional-variants.js`,
+`starship-maneuver-suggestion-engine.js`) — see the `Phase 6a`-`Phase 6j`
+commits on this branch. `SchemaAdapters.getAbilityMod()`/`getAbilityScore()`
+themselves were fixed in the `Phase 4/5` commit, which most of the above
+now delegate to directly rather than re-deriving their own ability-lookup
+logic — this also resolved the "duplicate helper proliferation" pattern
+discovered along the way (the same `actorAbilityMod`/"resolve configured
+Force ability" logic had been independently reimplemented in at least 7
+files across the Force-power and talent/feats subsystems alone).
 
-Regression coverage for this pass:
+Regression coverage for the final batch:
 `tests/consumer-batch-ability-authority.test.mjs` (rows 12, 13, 15, 17, 22 —
 live calls — plus source-contract checks for rows 14 and 12's heavier
-sibling file) and `tests/prerequisite-ability-score-authority.test.mjs`
-(rows 16 and 21, with a fail-before/pass-after proof).
+sibling file), `tests/prerequisite-ability-score-authority.test.mjs`
+(rows 16 and 21, fail-before/pass-after), `tests/character-actor-identity-ability-authority.test.mjs`
+(row 18), `tests/starship-maneuver-suggestion-ability-authority.test.mjs`
+(row 23), and `tests/talent-ability-helpers-fail-before-proof.test.mjs`
+(row 20, fail-before/pass-after).
+
+**This completes the ability-schema-authority migration's read-side
+remediation**: every Category C site identified in this ledger, including
+every site discovered mid-implementation, is now fixed. No known runtime
+consumer reads `system.abilities` as a competing or first-checked source
+of ability-score truth for a live Actor.
 
 ## Remaining (not yet executed)
 
-1. Two items need direct source investigation before a fix can be written:
-   `character-actor.js:327`'s `i.abilities` consumer(s), and every consumer
-   of the `WISDOM_MOD` path-string constant
-   (`engine/progression/engine/suggestion-constants.js:125`).
-2. **`talent-ability-helpers.js`** — the one site whose author explicitly,
-   knowingly chose the reversed order for backward-compatibility reasons.
-   Needs a deliberate decision, not a silent fix — see row 20 above.
-3. Phase 11 doc cleanup: reconcile the stale `progression-finalizer.js` and
+1. Phase 11 doc cleanup: reconcile the stale `progression-finalizer.js` and
    `character-like-sheet.js` comments identified above, and this document's
    own header comment in `schema-adapters.js` (already corrected in the
    Phase 4/5 commit).
-4. Phases 3/4 of the originally-requested plan (repository-wide governance-
+2. Phases 3/4 of the originally-requested plan (repository-wide governance-
    layer remediation) are not needed — see the Phase 4 conclusion above:
    the mutation/write side was already correct before this migration
    started.
-5. `scripts/engine/suggestion/shared-suggestion-utilities.js`'s
+3. `scripts/engine/suggestion/shared-suggestion-utilities.js`'s
    `findHighestAbility()` has an independent, pre-existing bug unrelated to
    ability-schema authority (an `Array#reduce` with no initial value, so it
    always returns the first `Object.entries()` key regardless of actual
@@ -313,10 +316,11 @@ sibling file) and `tests/prerequisite-ability-score-authority.test.mjs`
    scope for this migration (it would misbehave identically with correct
    schema data) and intentionally left unfixed; flagged here as a follow-up
    item.
-6. `tools/check-ability-schema-authority.mjs` should be strengthened to flag
+4. `tools/check-ability-schema-authority.mjs` should be strengthened to flag
    new runtime *reads* of `system.abilities` (it currently only flags
    write/bind sites), with an allowlist for migration scripts, the
    `ActorEngine` compatibility boundary, mutation governance, explicit
    import adapters, debug/audit tooling, tests exercising legacy input, and
    Item-schema files whose own `abilities` field is unrelated to Actor
-   authority (see `drop-handler.js` et al. above). Not yet started.
+   authority (see `drop-handler.js` et al. above). Not yet started — see
+   the follow-up commit on this branch.
