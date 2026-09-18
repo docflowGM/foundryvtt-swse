@@ -9,7 +9,10 @@
  * - HP:                      system.hp.value (max: system.hp.max) — ONLY ActorEngine.recomputeHP() writes .max
  * - Damage Threshold:        system.derived.damageThreshold
  * - Force Points:            system.forcePoints.value
- * - Ability Score (Persistent): system.abilities[ABILITY].base (writable by progression/actor engine)
+ * - Ability Score (Persistent): system.attributes[ABILITY].{base,racial,enhancement,temp} — writable by
+ *                            progression/ActorEngine. system.abilities is a legacy, read-only compatibility
+ *                            mirror only (see docs/systems/ABILITY_SCHEMA_AUTHORITY.md) — NOT a persistent
+ *                            source of truth, contrary to what an earlier version of this comment claimed.
  * - Ability Score (Computed): system.derived.attributes[ABILITY].total (read-only, computed by DerivedCalculator)
  * - Ability Modifier:        system.derived.attributes[ABILITY].mod (read-only, computed by DerivedCalculator)
  * - Defense Total:           system.derived.defenses[DEFENSE].total
@@ -44,6 +47,19 @@ function numeric(value, fallback = null) {
 function scoreToMod(value) {
   const score = numeric(value, null);
   return score === null ? null : Math.floor((score - 10) / 2);
+}
+
+// Mirrors scripts/actors/derived/derived-calculator.js's own ability-score
+// formula (base + racial/species + enhancement/misc + temp), so this
+// reconstruction agrees with both DerivedCalculator's live output and
+// scripts/rolls/roll-config.js's independent reconstruction for the same
+// raw ability block.
+function reconstructScoreFromComponents(block = {}) {
+  const base = numeric(block.base, 10);
+  const racial = numeric(block.racial ?? block.species, 0);
+  const enhancement = numeric(block.enhancement ?? block.misc, 0);
+  const temp = numeric(block.temp, 0);
+  return base + racial + enhancement + temp;
 }
 
 function normalizeAbilityKey(ability = '') {
@@ -281,8 +297,29 @@ export class SchemaAdapters {
 
   /**
    * Get ability modifier.
-   * Canonical: system.derived.attributes[ability].mod.
-   * Fallbacks intentionally cover actor sheets while derived hydration is stale.
+   *
+   * Authority order (docs/systems/ABILITY_SCHEMA_AUTHORITY.md):
+   *   1. system.derived.attributes[ability].mod — computed V2 authority, wins
+   *      whenever present (may reflect effects beyond the raw score).
+   *   2. system.attributes[ability] — persistent V2 authority. An explicit
+   *      .mod/.modifier wins if present; otherwise reconstructed from
+   *      base/racial/enhancement/temp using the same formula
+   *      DerivedCalculator uses.
+   *   3. system.abilities[ability] — legacy compatibility mirror, consulted
+   *      ONLY when the actor has no system.attributes block at all (a
+   *      whole-block check, matching DerivedCalculator's own
+   *      `attributes || abilities` fallback — never a per-key competitor to
+   *      system.attributes).
+   * Previously this checked system.abilities[ability].mod in the same tier
+   * as system.attributes[ability].mod (merely ordered after it), and — more
+   * consequentially — checked the legacy abilityData.base *before*
+   * attrs.base in the score-reconstruction fallback. Since system.attributes
+   * never has .mod/.total/.score/.value on the real schema (only .base),
+   * that let the legacy mirror's stale default (e.g. Dex mod +0 for an
+   * actor with a real Dex 20) win over the real score. See
+   * docs/audits/skill-roll-dialog-base-authority.md for the actor export
+   * that exposed this exact defect in the equivalent scripts/rolls/roll-config.js
+   * resolver.
    *
    * @param {Actor} actor
    * @param {string} ability - 'str', 'dex', 'con', 'int', 'wis', 'cha'
@@ -293,48 +330,37 @@ export class SchemaAdapters {
     const normalized = normalizeAbilityKey(ability);
     if (!normalized) return 0;
 
-    const attrs = actor.system?.attributes?.[normalized] ?? {};
+    const derivedAttr = actor.system?.derived?.attributes?.[normalized];
+    if (derivedAttr) {
+      const n = firstFinite([derivedAttr.mod, derivedAttr.modifier]);
+      if (n !== null) return n;
+    }
+
+    const hasCanonicalAttributes = actor.system?.attributes && typeof actor.system.attributes === 'object';
+    if (hasCanonicalAttributes) {
+      const attrs = actor.system.attributes[normalized] ?? {};
+      const explicit = firstFinite([attrs.mod, attrs.modifier]);
+      if (explicit !== null) return explicit;
+      return scoreToMod(reconstructScoreFromComponents(attrs)) ?? 0;
+    }
+
+    // Compatibility fallback only — reached solely for an actor with no
+    // system.attributes block at all.
     const abilityData = actor.system?.abilities?.[normalized] ?? {};
-    const derivedAttr = actor.system?.derived?.attributes?.[normalized] ?? {};
-    const derivedAbility = actor.system?.derived?.abilities?.[normalized] ?? {};
-
-    const direct = firstFinite([
-      derivedAttr.mod,
-      derivedAttr.modifier,
-      derivedAbility.mod,
-      derivedAbility.modifier,
-      attrs.mod,
-      attrs.modifier,
-      abilityData.mod,
-      abilityData.modifier
-    ]);
-    if (direct !== null) return direct;
-
-    const score = firstFinite([
-      derivedAttr.total,
-      derivedAbility.total,
-      attrs.total,
-      attrs.score,
-      attrs.value,
-      abilityData.total,
-      abilityData.score,
-      abilityData.value,
-      abilityData.base,
-      attrs.base
-    ]);
-    const fromScore = scoreToMod(score);
-    if (fromScore !== null) return fromScore;
-
-    const rebuiltScore = Number(attrs.base ?? abilityData.base ?? 10)
-      + Number(attrs.species ?? attrs.racial ?? abilityData.species ?? abilityData.racial ?? 0)
-      + Number(attrs.enhancement ?? attrs.misc ?? abilityData.enhancement ?? abilityData.misc ?? 0)
-      + Number(attrs.temp ?? abilityData.temp ?? 0);
-    return scoreToMod(rebuiltScore) ?? 0;
+    const legacyExplicit = firstFinite([abilityData.mod, abilityData.modifier]);
+    if (legacyExplicit !== null) return legacyExplicit;
+    const legacyScore = firstFinite([abilityData.total, abilityData.score, abilityData.value]);
+    const fromLegacyScore = scoreToMod(legacyScore);
+    if (fromLegacyScore !== null) return fromLegacyScore;
+    return scoreToMod(reconstructScoreFromComponents(abilityData)) ?? 0;
   }
 
   /**
-   * Get ability score total (with all bonuses)
-   * Canonical: system.derived.attributes[ABILITY].total (computed, read-only)
+   * Get ability score total (with all bonuses).
+   * Same authority order as getAbilityMod() above.
+   * Canonical: system.derived.attributes[ABILITY].total (computed, read-only);
+   * falls back to reconstructing from system.attributes, then — only if
+   * system.attributes is entirely absent — system.abilities.
    *
    * @param {Actor} actor
    * @param {string} ability - 'str', 'dex', 'con', 'int', 'wis', 'cha'
@@ -345,29 +371,21 @@ export class SchemaAdapters {
     const normalized = normalizeAbilityKey(ability);
     if (!normalized) return 10;
 
-    const attrs = actor.system?.attributes?.[normalized] ?? {};
+    const derivedAttr = actor.system?.derived?.attributes?.[normalized];
+    if (derivedAttr) {
+      const n = firstFinite([derivedAttr.total]);
+      if (n !== null) return n;
+    }
+
+    const hasCanonicalAttributes = actor.system?.attributes && typeof actor.system.attributes === 'object';
+    if (hasCanonicalAttributes) {
+      return reconstructScoreFromComponents(actor.system.attributes[normalized] ?? {});
+    }
+
     const abilityData = actor.system?.abilities?.[normalized] ?? {};
-    const derivedAttr = actor.system?.derived?.attributes?.[normalized] ?? {};
-    const derivedAbility = actor.system?.derived?.abilities?.[normalized] ?? {};
-
-    const score = firstFinite([
-      derivedAttr.total,
-      derivedAbility.total,
-      attrs.total,
-      attrs.score,
-      attrs.value,
-      abilityData.total,
-      abilityData.score,
-      abilityData.value,
-      abilityData.base,
-      attrs.base
-    ]);
-    if (score !== null) return score;
-
-    return Number(attrs.base ?? abilityData.base ?? 10)
-      + Number(attrs.species ?? attrs.racial ?? abilityData.species ?? abilityData.racial ?? 0)
-      + Number(attrs.enhancement ?? attrs.misc ?? abilityData.enhancement ?? abilityData.misc ?? 0)
-      + Number(attrs.temp ?? abilityData.temp ?? 0);
+    const legacyScore = firstFinite([abilityData.total, abilityData.score, abilityData.value]);
+    if (legacyScore !== null) return legacyScore;
+    return reconstructScoreFromComponents(abilityData);
   }
 
   /**
