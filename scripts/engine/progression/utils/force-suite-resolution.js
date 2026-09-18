@@ -227,7 +227,12 @@ export async function resolveForcePowerEntitlements(shell, actor) {
       const draftMod = explicitDraftMod !== undefined
         ? explicitDraftMod
         : (draftFinalValue !== undefined ? Math.floor(((Number(draftFinalValue) || 10) - 10) / 2) : null);
-      for (const value of [draftMod, pendingMod, system.derived?.attributes?.[alias]?.mod, system.abilities?.[alias]?.mod, system.abilities?.[alias]?.modifier, system.attributes?.[alias]?.mod, system.attributes?.[alias]?.modifier, system.stats?.[alias]?.mod, system.stats?.[alias]?.modifier]) {
+      // Canonical order past draft/pending progression state: derived data,
+      // then system.attributes (persistent V2 authority), then legacy
+      // system.abilities only as a last-resort compatibility fallback
+      // (docs/systems/ABILITY_SCHEMA_AUTHORITY.md) -- system.abilities used
+      // to be checked before system.attributes here.
+      for (const value of [draftMod, pendingMod, system.derived?.attributes?.[alias]?.mod, system.attributes?.[alias]?.mod, system.attributes?.[alias]?.modifier, system.abilities?.[alias]?.mod, system.abilities?.[alias]?.modifier, system.stats?.[alias]?.mod, system.stats?.[alias]?.modifier]) {
         const number = asFiniteNumber(value);
         if (number !== null) return number;
       }
