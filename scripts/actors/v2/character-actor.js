@@ -12,6 +12,7 @@ import { DSPEngine } from "/systems/foundryvtt-swse/scripts/engine/darkside/dsp-
 import { normalizeSkillMap } from "/systems/foundryvtt-swse/scripts/utils/skill-normalization.js";
 import { collectKnownForceSecrets, collectKnownForceTechniques } from "/systems/foundryvtt-swse/scripts/utils/force-knowledge.js";
 import { buildActorItemIndex } from "./actor-item-index.js";
+import { SchemaAdapters } from "/systems/foundryvtt-swse/scripts/utils/schema-adapters.js";
 
 /**
  * Compute the minimal v2-derived fields for Characters.
@@ -318,22 +319,31 @@ function mirrorIdentity(actor, system) {
   i.speed = safeNumber(system.derived?.speed?.walk ?? system.derived?.speed?.total ?? system.speed?.total ?? system.speed?.value ?? system.speed ?? system.movement?.walk ?? system.movement?.speed, 0);
   i.darkSideScore = DSPEngine.getValue(actor);
 
-  // Abilities (total + mod) are already prepared by the legacy data model.
-  // Phase 6: Build as array for template iteration (skills-panel uses #each derived.identity.abilities)
+  // Phase 6: Build as array for template iteration (skills-panel.hbs's
+  // #each @root.derived.identity.abilities renders this live, for every
+  // character-type actor). This mirror runs synchronously inside
+  // prepareDerivedData, before DerivedCalculator's async pass
+  // (base-actor.js's _computeDerivedAsync is fire-and-forget) finishes for
+  // this cycle, so system.derived.attributes here may still be a stale
+  // snapshot from the previous prepare cycle. SchemaAdapters.getAbilityScore()/
+  // getAbilityMod() is the canonical authority
+  // (docs/systems/ABILITY_SCHEMA_AUTHORITY.md) and is safe at this call
+  // site: it already falls through to a synchronously-fresh
+  // system.attributes reconstruction whenever derived data isn't usable,
+  // and only reaches the legacy system.abilities mirror when
+  // system.attributes is entirely absent. This previously read
+  // system.abilities directly, always the legacy stub regardless of the
+  // actor's real scores.
   const ABILITY_KEYS = ['str', 'dex', 'con', 'int', 'wis', 'cha'];
   const ABILITY_LABELS = { 'str': 'Strength', 'dex': 'Dexterity', 'con': 'Constitution', 'int': 'Intelligence', 'wis': 'Wisdom', 'cha': 'Charisma' };
 
   i.abilities = [];
-  const abilities = system.abilities ?? {};
   for (const key of ABILITY_KEYS) {
-    const a = abilities[key] ?? {};
-    const total = safeNumber(a.total ?? a.value ?? a.base, 10);
-    const mod = safeNumber(a.mod, Math.floor((total - 10) / 2));
     i.abilities.push({
       key,
       label: ABILITY_LABELS[key],
-      total,
-      mod
+      total: SchemaAdapters.getAbilityScore(actor, key),
+      mod: SchemaAdapters.getAbilityMod(actor, key)
     });
   }
 
