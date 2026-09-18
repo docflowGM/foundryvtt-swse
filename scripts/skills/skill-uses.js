@@ -12,6 +12,7 @@ import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { RollEngine } from "/systems/foundryvtt-swse/scripts/engine/roll-engine.js";
 import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
 import { CapabilityRegistry } from "/systems/foundryvtt-swse/scripts/engine/capabilities/capability-registry.js";
+import { SchemaAdapters } from "/systems/foundryvtt-swse/scripts/utils/schema-adapters.js";
 
 // ============================================================================
 // JUMP SKILL (STR)
@@ -1222,7 +1223,7 @@ export class PersuasionUses {
     }
 
     const persuasionBonus = actor.system.skills?.persuasion?.total || 0;
-    const targetIntModifier = target.system.abilities?.int?.mod || 0;
+    const targetIntModifier = SchemaAdapters.getAbilityMod(target, 'int');
 
     let dc = 20 - targetIntModifier;
     if (hasPreAgreedSignals) {
@@ -2204,7 +2205,7 @@ export class SwimUses {
     }
 
     const enduranceBonus = actor.system.skills?.endurance?.total || 0;
-    const constitutionModifier = actor.system.abilities?.con?.mod || 0;
+    const constitutionModifier = SchemaAdapters.getAbilityMod(actor, 'con');
 
     const maxRounds = constitutionModifier * roundsHeld;
     const dc = 10 + (5 * Math.max(0, roundsHeld - constitutionModifier));
@@ -2357,7 +2358,7 @@ export class TreatInjuryUses {
     const checkResult = roll.total + treatInjuryBonus;
     const success = checkResult >= dc;
 
-    const constitutionModifier = actor.system.abilities?.con?.mod || 0;
+    const constitutionModifier = SchemaAdapters.getAbilityMod(actor, 'con');
     const hpHealed = success ? Math.max(1, constitutionModifier * targetLevel) : 0;
 
     await SWSEChat.postRoll({
@@ -3118,7 +3119,7 @@ export class UseTheForceUses {
       };
     }
 
-    const constitutionScore = actor.system.abilities?.con?.total || 10;
+    const constitutionScore = SchemaAdapters.getAbilityScore(actor, 'con');
     const dc = 15;
     const roll = await RollEngine.safeRoll('1d20');
     const checkResult = roll.total + useForceBonus;
@@ -3308,7 +3309,7 @@ export class EnduranceUses {
 
   static async holdBreathe(actor, roundsHolding = null) {
     if (!actor) {return { success: false, message: 'Invalid actor' };}
-    const conScore = actor.system.abilities?.con?.total || 10;
+    const conScore = SchemaAdapters.getAbilityScore(actor, 'con');
     const enduranceBonus = actor.system.skills?.endurance?.total || 0;
     if (roundsHolding === null) {
       return { success: true, conScore, roundsWithoutCheck: conScore };
@@ -3334,7 +3335,7 @@ export class EnduranceUses {
   }
 
   static getConScore(actor) {
-    return actor ? actor.system.abilities?.con?.total || 10 : 10;
+    return actor ? SchemaAdapters.getAbilityScore(actor, 'con') : 10;
   }
 }
 
