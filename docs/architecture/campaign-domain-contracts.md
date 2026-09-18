@@ -28,7 +28,7 @@ This table is frozen — a normative statement of who owns what, not a survey of
 | Intel | `HolonetIntelService` | Intel lifecycle/content/links | Faction/Location records |
 | Credits / trade | `TransactionEngine` | Financial/store transactions | Actor/faction narrative metadata |
 | Holonet | transport/presentation | publication/sync/display | Canonical domain facts |
-| Party | future `PartyLedgerService`/`PartyRecordService` | Party membership, current campaign context, knowledge state, historical interactions (§20) | Canonical state of Contacts, Factions, Locations, Jobs, Intel, or Actors |
+| Party | future `PartyLedgerService` | Party membership, current campaign context, knowledge state, historical interactions (§20) | Canonical state of Contacts, Factions, Locations, Jobs, Intel, or Actors |
 | Generator | none | Draft proposals | Any canonical mutation |
 | Coordinator | future `CampaignMutationCoordinator` | Sequencing multi-domain outcomes | Domain semantics |
 | CommitLedger | part of the coordinator | `CampaignEffect` *execution* status only — planned/applied/refused/failed/already-applied (§18) | The target authority's actual current state — that is always canonical, never the ledger's record of whether an effect ran |
@@ -381,27 +381,48 @@ If the index is deleted, it must be fully recoverable by rebuilding from the can
 
 A Job outcome (or any other domain event) that changes state in another domain does so by producing explicit `CampaignEffect` records, routed through the coordinator (§9), never by the source domain writing the target domain directly.
 
-**A `CampaignEffect` is an instruction/proposal to change canonical state — it is never itself a second owner of that state.** This needs to be explicit, because the shape below has a `status` field that could easily be misread as a second copy of the target's world-state:
+**A `CampaignEffect` is an instruction/proposal to change canonical state — it is never itself a second owner of that state, and it must never be structurally mixed with the record of whether that instruction was carried out.** Three separate facts exist here, each with exactly one owner, and none of the three shapes below may borrow another's fields:
+
+```text
+CampaignEffect   — what was requested        (owned by whoever authored the effect, e.g. JobEngine)
+CommitLedgerEntry — what happened when it was attempted   (owned by the coordinator's CommitLedger)
+target authority  — what is canonically true right now     (owned by e.g. FactionRegistryService)
+```
+
+`CampaignEffect` carries intent only — it describes a requested transition that has not (yet, or ever) happened, so its fields are named to say so:
 
 ```js
-{
+CampaignEffect {
   effectId: "job-42:success:effect-3",
   source: { kind: "job", id: "job-42" },
   target: { kind: "faction", id: "red-knives" },
-  operation: "set-status",
-  before: "active",
-  after: "destroyed",
-  reason: "Leadership and headquarters eliminated.",
-  status: "applied"
+  operation: "set-lifecycle-status",
+  expectedBefore: "active",
+  desiredAfter: "destroyed",
+  reason: "Leadership and headquarters eliminated."
 }
 ```
 
-Two different things own two different facts here, and they must never be allowed to disagree:
+It must **never** carry `status`, `actualAfter`, `appliedAt`, or any other execution-result field — `expectedBefore`/`desiredAfter` (not bare `before`/`after`) are the deliberate naming signal that this object is a request, not a receipt.
 
-- **The target authority** (`FactionRegistryService`, for this example) owns whether the Red Knives are *actually* destroyed. That is the only place `is this Faction destroyed?` is ever answered from.
-- **The coordinator's CommitLedger** owns the effect's own *execution* status — `planned`, `applied`, `refused`, `failed`, `already-applied`. The `status` field above belongs to the CommitLedger, not to the target authority, and it describes "was this instruction carried out," never "what is the Faction's current status."
+The execution receipt is a separate shape, owned by the coordinator's CommitLedger, never by the effect itself:
 
-If these two facts are ever allowed to be read as interchangeable, the system can end up with `FactionRegistryService` saying `active` while some `CampaignEffect` record still says `destroyed` — the target authority's current state is always canonical; a `CampaignEffect`, applied or not, never overrides it. The coordinator does not interpret domain semantics either way — it hands each effect to its target's authority, which validates and applies it (or refuses it) according to its own rules, and the CommitLedger simply records what happened to the instruction. Rewards in the narrow sense (credits, items, XP) are a special case of this, not a separate concept:
+```js
+CommitLedgerEntry {
+  effectId: "job-42:success:effect-3",
+  executionStatus: "planned" | "applied" | "refused" | "failed" | "already-applied",
+  actualBefore: "active",
+  actualAfter: "destroyed",
+  targetRevisionBefore: 7,
+  targetRevisionAfter: 8,
+  appliedAt: "...",
+  error: null
+}
+```
+
+(Not every field needs to be populated on every entry — this is the normative shape/seam, not an implementation requirement. `targetRevisionBefore`/`targetRevisionAfter` tie back to §16's revision semantics.)
+
+This split matters because a refused effect is not a contradiction under it, and would be one if `CampaignEffect` carried a `status` field: `CampaignEffect` still says `desiredAfter: "destroyed"` (that was still the request), `CommitLedgerEntry` says `executionStatus: "refused"`, and `FactionRegistryService` may still say `active` — three different facts, each correct on its own terms, none of them lying to the other two. If these three were ever allowed to be read as interchangeable, the system could end up with `FactionRegistryService` saying `active` while some effect-shaped record elsewhere still says `destroyed`. The target authority's current state is always canonical; neither a `CampaignEffect` nor a `CommitLedgerEntry`, however they read, ever overrides it. The coordinator does not interpret domain semantics either way — it hands each effect to its target's authority, which validates and applies it (or refuses it) according to its own rules, and the CommitLedger simply records what happened to the instruction. Rewards in the narrow sense (credits, items, XP) are a special case of this, not a separate concept:
 
 ```text
 Rewards ⊂ Outcome Effects
@@ -409,7 +430,7 @@ Rewards ⊂ Outcome Effects
 
 Credits are an effect targeting the Transaction authority. Faction reputation is an effect targeting the Faction authority. A Contact's death is an effect targeting the Faction/Contact authority (and, if that Contact has been promoted to an Actor, a second, separate effect targeting `ActorEngine` — see §12's note on Contact-vs-Actor status; they mean different things and must not be forced to agree).
 
-**Always store `before`/`after`, not just the resulting value.** This is what lets campaign history say "During 'Break the Red Knives,' the Red Knives changed from Active to Destroyed," and what lets a later GM-driven reversal (`destroyed → reformed`) be recorded as a new transition without losing the original one.
+**Always store a before/after pair, not just the resulting value** — `expectedBefore`/`desiredAfter` on the `CampaignEffect`, `actualBefore`/`actualAfter` on its `CommitLedgerEntry`. This is what lets campaign history say "During 'Break the Red Knives,' the Red Knives changed from Active to Destroyed," and what lets a later GM-driven reversal (`destroyed → reformed`) be recorded as a new transition without losing the original one.
 
 **Outcomes are not binary**, and effects should reflect that. A `FAILURE` might leave the Red Knives active with their reputation raised; a `PARTIAL SUCCESS` might produce `fractured` + `missing` + `contested` across three different effects. Model the actual outcome, not a boolean.
 
