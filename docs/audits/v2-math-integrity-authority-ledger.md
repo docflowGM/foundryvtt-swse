@@ -254,3 +254,83 @@ Beyond the skill/initiative fallbacks already covered above, the sheet-reconstru
 The codebase already has the *right pattern* in exactly one place — `DerivedCalculator`'s skill contribution ledger, which sums named parts, compares the sum against the stored total, and logs a warning on mismatch (`derived-calculator.js:680-733`). **No other domain has this self-checking pattern yet.** The freeze's Phase 13 contribution-ledger contract should generalize this exact mechanism (already proven, already shipping) to BAB, defenses, damage threshold, HP, attack, damage, and grapple, rather than inventing a new architecture.
 
 The single largest, most consistent finding across all 6 audits: **duplicate fallback formulas are pervasive (at least 25+ distinct reimplementation sites found across skills/initiative/defenses/BAB/grapple/attack/condition-track), but the large majority are guarded (only fire when canonical derived data is unavailable) and currently numerically consistent.** The genuinely load-bearing, CONFIRMED-wrong-today defects are a much shorter list — see the First Report below.
+
+---
+
+## Phase 2: Gar'ee golden fixture — live proofs and hand-computed divergences
+
+Two confirmed defects above were reproduced **live, against the real production calculators**, under the `tests/helpers/foundry-shim` harness (not mocked, not reimplemented — the actual `DefenseCalculator`/`ThresholdEngine` classes imported and executed). This is stronger evidence than a code-reading classification alone, so it's recorded here in full with the exact commands and output.
+
+### Live proof 1 — Flat-footed Reflex keeps a dodge bonus (CONFIRMED, executed)
+
+```js
+const actor = {
+  type: 'character',
+  system: {
+    attributes: { dex: { base: 20, racial: 0, enhancement: 0, temp: 0 } },
+    activeEffects: [{ target: 'defense.reflex', value: 3, enabled: true }] // simulates a +3 dodge bonus
+  },
+  items: []
+};
+const result = await DefenseCalculator.calculate(actor, [], {}, {});
+```
+Result: `reflex.total = 18` (10 + dex 5 + dodge 3, correct), `flatFooted.total = 13` (18 − 5, i.e. **only the Dex mod was stripped — the +3 dodge bonus survived into flat-footed**). SWSE RAW: a flat-footed character loses dodge bonuses along with Dex; correct flat-footed here is `10`. **Divergence: +3 (flat-footed Reflex is 3 points too high whenever the character has any dodge-type bonus active).**
+
+### Live proof 2 — Damage Threshold disagrees between DerivedCalculator and ThresholdEngine (CONFIRMED, executed)
+
+```js
+const actor = {
+  system: {
+    size: 'medium',
+    derived: {
+      defenses: { fortitude: { total: 20 } },
+      damageThreshold: 25 // what DerivedCalculator actually stores: fort 20 + Improved Damage Threshold's +5
+    }
+  }
+};
+ThresholdEngine.computeBaseThreshold(actor); // => 20
+```
+`ThresholdEngine`'s combat-time base (20) ignores the Improved Damage Threshold feat bonus that `DerivedCalculator` already folded into the stored/displayed value (25). **Divergence: −5 for any actor with Improved Damage Threshold** (the combat engine under-counts DT relative to what the sheet shows, meaning a hit that should NOT push the character down the condition track could incorrectly trigger a shift in actual play).
+
+### Hand-computed divergence — HP multiclass formula (CONFIRMED by code reading, magnitude computed from the quoted formulas; not independently executed because the live writer, `ActorEngine.recomputeHP`, is faked/mocked under this repo's own test harness — `tests/helpers/foundry-shim/path-loader.mjs` explicitly redirects `actor-engine.js` to a fake for import-safety reasons unrelated to this audit)
+
+Using Gar'ee's certified inputs (Soldier 6 / Scoundrel 2, CON +2, character level 8) against each formula exactly as quoted from source in the HP domain section above:
+
+**Correct RAW multiclass HP** (`HPCalculator`'s algorithm — dead code, but its formula is RAW-correct and independently confirmed by reading `hp-calculator.js`; Soldier hit die = d10, Scoundrel hit die = d6, confirmed live from `PROGRESSION_RULES.classes.Soldier.hitDie === 10` / `.Scoundrel.hitDie === 6`):
+```
+Level 1 (Soldier, first level):     10*3 + 2      = 32
+Levels 2-6 (Soldier, 5 levels):     5 * (10 + 2)  = 60
+Levels 7-8 (Scoundrel, 2 levels):   2 * (6 + 2)   = 16
+                                                     ---
+Total                                              = 108
+```
+
+**`ActorEngine.recomputeHP`'s actual live formula** (quoted from `actor-engine.js:3813-3846` by the audit agent — first-class-item-only): `hpAtFirstLevel + (level-1)*hpPerLevel + conMod*level`, using only Soldier's d10 (assuming `getClasses(actor)[0]` returns Soldier, the first-added class — **needs direct confirmation against Gar'ee's actual item order**, flagged as an open question below):
+```
+hpAtFirstLevel = 10*3 = 30
+hpPerLevel     = floor(10/2)+1 = 6
+newHPMax       = 30 + (8-1)*6 + 2*8 = 30 + 42 + 16 = 88
+```
+
+**Divergence: 108 (correct) vs. 88 (current live formula) = 20 HP undercounted for Gar'ee specifically**, if `getClasses(actor)[0]` returns Soldier. This is the single highest-magnitude confirmed-by-formula defect found in this audit — a 20-point HP discrepancy is not a rounding/display issue, it changes life-or-death outcomes in actual play. **This needs live-Foundry verification against Gar'ee's real persisted `system.hp.max`** before implementation, per the freeze charter's own standard (do not assume; prove via the actual actor) — flagged as the first item in Phase 3 below rather than assumed correct from this hand computation alone.
+
+### Certified/expected values not yet reproducible under this harness
+
+The following golden values from the freeze charter require either (a) real class-progression/compendium data the lightweight test harness doesn't load (`BABCalculator.calculate()` returned `0` for Soldier 6/Scoundrel 2 under this harness — confirmed it needs `class-data-loader.js`'s async pack-data path, not available here), or (b) the live `ActorEngine`/`ModifierEngine` talent-registration pipeline this harness fakes. They are recorded as **targets to verify against the real Foundry runtime**, not fabricated pass/fail results:
+
+| Value | Charter's certified expectation | Status |
+|---|---|---|
+| BAB | +7 | Not reproducible under this harness (needs real class-data pack load); formula read confirms Soldier(full)+Scoundrel(3/4, floor(2*0.75)=1)=7 is consistent with `bab-calculator.js`'s documented algorithm |
+| Grapple | +12 (BAB 7 + DEX +5 + size 0) | `derived-calculator.js`'s formula (BAB+max(STR,DEX)+size+species) would produce this correctly if BAB is correct; **`houserule-grapple.js`'s live roll formula would instead produce BAB+STR-only = 7+2 = 9 — a confirmed, directly-computable 3-point undercount for Gar'ee specifically**, since his build is DEX-based (DEX +5 > STR +2) |
+| Stealth (shield inactive) | +24 | Formula-consistent per `DerivedCalculator`'s skill ledger (dex+halfLevel+trained+focus+misc = 5+4+5+5+5=24); **not independently executed** (needs real derived-skill pipeline) |
+| Stealth (shield active) | +22 | **Not currently producible by any code path** — confirmed above, no Energy Shield ACP implementation exists anywhere |
+| Initiative (shield inactive) | +19 | Formula-consistent (5+4+5+5=19); not independently executed |
+| Initiative (shield active) | +17 | **Not currently producible** — same Energy Shield ACP gap |
+| Knowledge (Tactics) | +10 | Formula-consistent (1+4+5=10), unaffected by ACP per the charter — not independently executed |
+| Use Computer | +10 | Formula-consistent (1+4+5=10) — not independently executed |
+
+### Open questions before implementation (Phase 2 follow-up, not yet answered)
+
+1. Does `ActorAbilityBridge.getClasses(actor)[0]` return Soldier or Scoundrel for Gar'ee specifically? This determines whether the HP divergence computed above (108 vs 88) is the exact real-world number, or whether the actual error is smaller/larger/absent depending on item-creation order. **Needs Gar'ee's real actor export or a live Foundry session to answer — flagged as a stop-condition-adjacent question, not assumed.**
+2. What is Gar'ee's actual current persisted `system.hp.max`? Comparing that stored value against the 108/88 hand computation above would confirm (or rule out) the HP defect's real-world magnitude before any fix is written.
+3. Bluebolt Blaster Pistol's actual persisted item data (the exact contradictory field values) should be captured directly from Gar'ee's actor rather than assumed, to build the Phase 8 golden test fixture precisely.
