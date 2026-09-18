@@ -8,6 +8,33 @@ and `scripts/utils/schema-adapters.js`'s own doc comment. This is the
 read-only inventory pass that document called for, before any of those 68
 files were touched.
 
+## Definitive counts (mechanically reproducible)
+
+Earlier drafts of this document mixed "rows," "sites," and "files" loosely
+(e.g. "20 sites across 18 files" while the table itself used `1a`/`1b`/
+`5b`/`5c` sub-rows and multi-occurrence rows like skill-uses.js's "6
+sites"). These numbers replace that language. Each is reproducible from the
+commands shown; "code occurrence" excludes lines whose first non-whitespace
+characters are `//`, `*`, or `/*` (comments/docstrings), which raw `grep -c`
+does not distinguish and which grew during this migration's own explanatory
+comments.
+
+| Metric | Value | How measured |
+|---|---|---|
+| `system.abilities` raw mentions, `scripts/`, at Phase 3 start (commit `069b5c0`, PR #970's tip) | 156 (106 code + 50 comment/doc) | `git show 069b5c0:<file>` per file under `scripts/`, `grep -c "system\.abilities"`, split by leading `//`/`*` |
+| `system.abilities` raw mentions, `scripts/`, current HEAD | 158 (88 code + 70 comment/doc) | Same command against the working tree. The **total** went up (new explanatory comments this migration added), while **code** occurrences went down 106→88 — the real signal. |
+| Files with ≥1 mention, at Phase 3 start | 68 | `grep -rl "system\.abilities" scripts/` at `069b5c0` |
+| Files with ≥1 mention, current HEAD | 67 | Same, current tree |
+| Actor-runtime-relevant files (excludes 4 Item-schema/N-A files: `drop-handler.js`, `species-grant-ledger-builder.js`, `chargen-shared.js`, `species-registry.js` — see N/A rows below) | 64 | 68 − 4 |
+| **Category C distinct files** | **24** (15 fixed + 9 remaining) | Unique file paths across every Category C table row below |
+| **Category C distinct functions/sites** | **30** (21 fixed + 9 remaining) | One count per named function/property-lookup expression actually changed or needing a change — see the two lists immediately below. This is the granular count; `skill-uses.js`'s "6 sites" in one file and the Force-cluster's 2-file "row 9" both unpack into their real per-site counts here. |
+
+**Fixed functions/sites (21), by file:**
+`enhanced-rolls.js` `SWSERoll.rollInitiative()` (1) · `SWSEInitiative.js` `getActorInitiativeSkillTotal()` (1) · `combat-stats-tooltip.js` `getInitiativeBreakdown()` (1) · `skill-uses.js` (6: target Int-based DC, 2× Con modifier, 3× Con score) · `progression-shell.js` `_buildAbilitySnapshot()` (1) · `lightsaber-form-engine.js` `actorAbilityMod()` (1) · `skill-feat-runtime-patches.js` `actorAbilityMod()` (1) · `combat-option-resolver.js` `actorAbilityMod()` dead-tail cleanup (1) · `skill-feat-resolver.js` (2: `'abilityModifier'` + `'abilityDelta'` formulas) · `feat-grant-entitlement-resolver.js` `getAbilityModifier()` (1) · `force-suite-resolution.js` `getAbilityModifier()` closure (1) · `force-training-entitlement-runtime-patches.js` `getAbilityData()` (1) · `ForceTrainingEngine.js` `getForceAbilityModifier()` (1) · `force-power-engine.js` `_countFromAbilityMod()` (1) · `force-provenance-engine.js` `getConfiguredAbilityMod()` (1).
+
+**Remaining functions/sites (9), by file:**
+`template-character-creator.js` (1) · `vehicle-crew-positions.js` (1) · `store/index.js` (1) · `shared-suggestion-utilities.js` (1) · `AttributeIncreaseScorer.js` (1) · `mentor-dialogue-v2-integration.js` (1) · `character-actor.js` (1, pending consumer investigation) · `suggestion-constants.js` (1, pending consumer investigation) · `talent-ability-helpers.js` (1, pending a deliberate author-facing decision, not a silent fix).
+
 ## Method
 
 Every `system.abilities` occurrence under `scripts/` was read in context
@@ -173,36 +200,77 @@ inventory** — see the Phase 4 conclusion above.
 
 ## Category F — dead code
 
-None conclusively identified in this pass; `scripts/actors/derived/derived-calculator.js`'s
-own `system.derived.abilities` (as opposed to `system.derived.attributes`)
-was already found and removed as dead code from `roll-config.js` and
-`schema-adapters.js` in the Phase 1/2/5 commits — no other file writes or
-reads it.
+An earlier draft of this document said "none conclusively identified,"
+which directly contradicted several already-classified Category C rows
+that are explicitly zero-caller or unconsumed-output. That was a
+classification bug in the document, not a finding that those sites weren't
+dead — corrected here by splitting "dead" into three distinct shapes,
+since they carry different risk and different fix urgency:
+
+- **F1 — no tracked runtime callers at all** (unreachable from any
+  sheet/talent/macro/hook source in the repo, and not exposed on any
+  global): `scripts/engine/talent/lightsaber-form-engine.js`'s
+  `actorAbilityMod()` (Category C row "5"). Confirmed via
+  `grep -rn "actorAbilityMod("` across the whole repo before this
+  function's only caller turned out to be itself (its definition). Fixed
+  anyway in Phase 6e for consistency — lowest-risk kind of dead code to
+  touch, since nothing observable changes either way.
+- **F2 — output currently unconsumed** (the function *is* called, but
+  nothing downstream reads what it produces): `progression-shell.js`'s
+  `_buildAbilitySnapshot()` (Category C row 4). It has one real caller,
+  which assigns its result to `context.abilitySnapshot` — but no `.hbs`
+  template or other code in the repo reads that context key (grepped
+  `templates/` directly). Fixed anyway in Phase 6c since a template could
+  start reading it at any time and the fix is one function.
+- **F3 — no internal callers, but externally reachable via a global/macro
+  surface**: `scripts/combat/rolls/enhanced-rolls.js`'s
+  `SWSERoll.rollInitiative()` (Category C row "1a"). Zero callers in
+  tracked sheet/talent/macro source, but the file does
+  `window.SWSERoll = SWSERoll;`, so it remains callable from the console
+  or a user macro. This is the kind of "dead" that still deserves a fix
+  (defense in depth), unlike F1/F2 where the fix is purely precautionary.
+
+A fourth, narrower thing was also found and is **not** classified above
+since it isn't a whole dead function: `combat-option-resolver.js`'s
+`actorAbilityMod()` (row "5c") already called
+`SchemaAdapters.getAbilityMod()` first, with a wrongly-ordered fallback
+tail after it that could never execute (that accessor never returns
+`null`/`undefined`). Removed as a dead *branch* within a live function,
+not a Category F entry.
+
+`scripts/actors/derived/derived-calculator.js`'s own
+`system.derived.abilities` (as opposed to `system.derived.attributes`) was
+separately found and removed as dead code from `roll-config.js` and
+`schema-adapters.js` in the Phase 1/2/5 commits — no file in the repo
+writes or reads it; not re-listed here since it was a dead *read tier*
+inside functions already covered above, not a distinct dead site.
 
 ## Disposition summary
 
-| Category | Count (scripts/ sites) |
+| Category | Count |
 |---|---|
 | A — migration-only | 1 file (`phase5-compendium-heal.js`) |
 | B — correct compatibility boundary | ~30 files |
-| C — real defect, needs fixing | 20 sites across 18 files |
+| C — real defect (fixed + remaining functions/sites) | 30 sites across 24 files (21 fixed, 9 remaining) — see "Definitive counts" above |
 | D — active write | 0 confirmed (governance layer already correct) |
 | E — comment/doc only | 3 (stale comments, no runtime effect) |
-| F — dead code | 0 remaining (already removed in Phase 1/2/5) |
+| F1 — dead, no tracked callers | 1 (`lightsaber-form-engine.js`, fixed) |
+| F2 — dead, output unconsumed | 1 (`progression-shell.js`, fixed) |
+| F3 — dead internally, externally reachable | 1 (`enhanced-rolls.js`, fixed) |
 | N/A — different schema (Item documents) | 4 files |
 
 ## Status
 
-Rows 1-11 and 5b/5c (13 sites total — combat/rolls, skill-uses,
-progression-shell, Force-power subsystem, talent/feats subsystem) are
-fixed, tested, and committed (see the `Phase 6a`-`Phase 6e` commits on this
-branch). `SchemaAdapters.getAbilityMod()`/`getAbilityScore()` themselves
-were fixed in the `Phase 4/5` commit, which most of the above now delegate
-to directly rather than re-deriving their own ability-lookup logic — this
-also resolved the "duplicate helper proliferation" pattern discovered along
-the way (the same `actorAbilityMod`/"resolve configured Force ability"
-logic had been independently reimplemented in at least 7 files across the
-Force-power and talent/feats subsystems alone).
+**21 of 30 Category C functions/sites (15 of 24 files) are fixed, tested,
+and committed** — combat/rolls, skill-uses, progression-shell, Force-power
+subsystem, talent/feats subsystem (see the `Phase 6a`-`Phase 6e` commits on
+this branch). `SchemaAdapters.getAbilityMod()`/`getAbilityScore()`
+themselves were fixed in the `Phase 4/5` commit, which most of the above
+now delegate to directly rather than re-deriving their own ability-lookup
+logic — this also resolved the "duplicate helper proliferation" pattern
+discovered along the way (the same `actorAbilityMod`/"resolve configured
+Force ability" logic had been independently reimplemented in at least 7
+files across the Force-power and talent/feats subsystems alone).
 
 ## Remaining (not yet executed)
 
