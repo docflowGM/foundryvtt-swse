@@ -35,6 +35,7 @@ import { ForceProvenanceEngine } from "/systems/foundryvtt-swse/scripts/engine/p
 import { FeatRegistry } from "/systems/foundryvtt-swse/scripts/registries/feat-registry.js";
 import { ForceRegistry } from "/systems/foundryvtt-swse/scripts/engine/registries/force-registry.js";
 import { ActorAbilityBridge } from "/systems/foundryvtt-swse/scripts/adapters/ActorAbilityBridge.js";
+import { SchemaAdapters } from "/systems/foundryvtt-swse/scripts/utils/schema-adapters.js";
 
 export class ForcePowerEngine {
   /**
@@ -114,29 +115,12 @@ export class ForcePowerEngine {
     // Use canonical setting to determine which ability modifier to apply
     const forceAbility = String(game.settings?.get('foundryvtt-swse', 'forceTrainingAttribute') || 'wisdom').toLowerCase();
     const abilityKey = forceAbility === 'charisma' || forceAbility === 'cha' ? 'cha' : 'wis';
-    const aliases = abilityKey === 'cha' ? ['cha', 'charisma'] : ['wis', 'wisdom'];
-    const ability = aliases.map((key) => actor.system.abilities?.[key]
-      || actor.system.attributes?.[key]
-      || actor.system.stats?.[key]).find(Boolean) || {};
-    const explicitModifier = Number(ability.mod ?? ability.modifier);
-    let mod = Number.isFinite(explicitModifier) ? Math.floor(explicitModifier) : 0;
-
-    if (!Number.isFinite(explicitModifier)) {
-      let score = Number(ability.score ?? ability.total ?? ability.value);
-      if (!Number.isFinite(score)) {
-        const parts = ['base', 'racial', 'enhancement', 'misc', 'miscMod', 'temp'];
-        let total = 0;
-        let seen = false;
-        for (const part of parts) {
-          const number = Number(ability[part]);
-          if (!Number.isFinite(number)) continue;
-          total += number;
-          seen = true;
-        }
-        score = seen ? total : 10;
-      }
-      mod = Math.floor((score - 10) / 2);
-    }
+    // SchemaAdapters.getAbilityMod() is the canonical ability-modifier
+    // authority (docs/systems/ABILITY_SCHEMA_AUTHORITY.md): derived data,
+    // then system.attributes reconstruction, then system.abilities only as
+    // a last-resort compatibility fallback. The previous implementation
+    // checked the legacy system.abilities mirror before system.attributes.
+    const mod = SchemaAdapters.getAbilityMod(actor, abilityKey);
 
     return Math.max(1, 1 + mod);
   }

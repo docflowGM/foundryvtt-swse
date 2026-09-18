@@ -1,4 +1,5 @@
 import { CLASS_TAG_METADATA } from '/systems/foundryvtt-swse/scripts/data/class-tag-metadata.js';
+import { SchemaAdapters } from '/systems/foundryvtt-swse/scripts/utils/schema-adapters.js';
 
 /**
  * SharedSuggestionUtilities
@@ -24,18 +25,24 @@ import { CLASS_TAG_METADATA } from '/systems/foundryvtt-swse/scripts/data/class-
  * @returns {Object} { str, dex, con, int, wis, cha } - Ability scores
  */
 export function extractAbilityScores(actor) {
-  if (!actor?.system?.abilities) {
+  if (!actor?.system) {
     return { str: 10, dex: 10, con: 10, int: 10, wis: 10, cha: 10 };
   }
 
-  const abilities = actor.system.abilities;
+  // SchemaAdapters.getAbilityScore() is the canonical authority
+  // (docs/systems/ABILITY_SCHEMA_AUTHORITY.md): derived data, then
+  // system.attributes reconstruction (base+racial+enhancement+temp), then
+  // system.abilities only as a last-resort compatibility fallback. The
+  // previous implementation read only system.abilities.<key>.base directly
+  // -- never system.attributes at all, and never accounted for racial/
+  // enhancement/temp bonuses even when reading the right block.
   return {
-    str: abilities.str?.base ?? 10,
-    dex: abilities.dex?.base ?? 10,
-    con: abilities.con?.base ?? 10,
-    int: abilities.int?.base ?? 10,
-    wis: abilities.wis?.base ?? 10,
-    cha: abilities.cha?.base ?? 10
+    str: SchemaAdapters.getAbilityScore(actor, 'str'),
+    dex: SchemaAdapters.getAbilityScore(actor, 'dex'),
+    con: SchemaAdapters.getAbilityScore(actor, 'con'),
+    int: SchemaAdapters.getAbilityScore(actor, 'int'),
+    wis: SchemaAdapters.getAbilityScore(actor, 'wis'),
+    cha: SchemaAdapters.getAbilityScore(actor, 'cha')
   };
 }
 

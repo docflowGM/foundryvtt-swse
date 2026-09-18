@@ -1133,6 +1133,7 @@ export class SWSERoll {
           title: `${skill.label ?? skillKey} Check`,
           rollType: 'skill',
           actor,
+          skillKey,
           showCover: false,
           showConcealment: false
         });
@@ -1477,8 +1478,13 @@ if (!callPreRollHook(ROLL_HOOKS.PRE_INITIATIVE, context)) {
         return { cancelled: true };
       }
 
-      // Read dex mod from abilities (SOVEREIGNTY: single authority)
-      const dexMod = actor.system.abilities?.dex?.mod ?? 0;
+      // SchemaAdapters.getAbilityMod() is the canonical ability-modifier
+      // authority (docs/systems/ABILITY_SCHEMA_AUTHORITY.md). This method
+      // has no callers in the current sheet/talent/macro source (the live
+      // initiative path is CombatEngine.rollInitiative() ->
+      // SWSEInitiative.rollInitiative()), but is exposed on window.SWSERoll
+      // for console/macro use, so it is hardened the same way.
+      const dexMod = SchemaAdapters.getAbilityMod(actor, 'dex');
       const initBonus = actor.system.derived?.initiative?.adjustment ?? actor.system.initiative?.misc ?? 0;
       const total = dexMod + initBonus;
 

@@ -40,12 +40,20 @@ function getAbilityModifier(actor, abilityKey, shell = null) {
     ?? (Number.isFinite(Number(draftAttributes?.baseValues?.[key])) && Number.isFinite(Number(draftAttributes?.speciesMods?.[key]))
       ? Number(draftAttributes.baseValues[key]) + Number(draftAttributes.speciesMods[key])
       : null);
+  // Canonical order past draft state: system.derived.attributes (computed V2
+  // authority), then system.attributes (persistent V2 authority), then
+  // system.abilities only as a legacy compatibility fallback
+  // (docs/systems/ABILITY_SCHEMA_AUTHORITY.md) -- system.abilities used to
+  // be checked before system.attributes, and system.derived.attributes was
+  // never consulted at all.
   const candidates = [
     draftAttributes?.modifiers?.[key],
-    system.abilities?.[key]?.mod,
-    system.abilities?.[key]?.modifier,
+    system.derived?.attributes?.[key]?.mod,
+    system.derived?.attributes?.[key]?.modifier,
     system.attributes?.[key]?.mod,
     system.attributes?.[key]?.modifier,
+    system.abilities?.[key]?.mod,
+    system.abilities?.[key]?.modifier,
     system.stats?.[key]?.mod,
     system.stats?.[key]?.modifier
   ];
@@ -53,8 +61,24 @@ function getAbilityModifier(actor, abilityKey, shell = null) {
     const number = Number(value);
     if (Number.isFinite(number)) return number;
   }
-  const score = Number(draftValue ?? system.attributes?.[key]?.total ?? system.attributes?.[key]?.value ?? system.abilities?.[key]?.value);
-  return Number.isFinite(score) ? Math.floor((score - 10) / 2) : 0;
+  if (Number.isFinite(Number(draftValue))) return Math.floor((Number(draftValue) - 10) / 2);
+
+  // Score reconstruction: system.attributes never carries .total/.value on
+  // the real schema (only .base/.racial/.enhancement/.temp), so the
+  // previous version's `system.attributes?.[key]?.total ?? ...?.value`
+  // fallback could never actually resolve from system.attributes and fell
+  // straight to the legacy system.abilities?.[key]?.value (itself absent on
+  // the real schema too), always returning 0. Reconstruct from whichever
+  // block (canonical attributes, else legacy abilities) is present.
+  const block = system.attributes?.[key] ?? system.abilities?.[key];
+  if (!block) return 0;
+  const explicitTotal = Number(block.total ?? block.value ?? block.score);
+  if (Number.isFinite(explicitTotal)) return Math.floor((explicitTotal - 10) / 2);
+  const base = Number(block.base ?? 10);
+  const racial = Number(block.racial ?? block.species ?? 0);
+  const enhancement = Number(block.enhancement ?? block.misc ?? 0);
+  const temp = Number(block.temp ?? 0);
+  return Math.floor((base + racial + enhancement + temp - 10) / 2);
 }
 
 function getRegisteredSetting(moduleId, key, fallback = null) {

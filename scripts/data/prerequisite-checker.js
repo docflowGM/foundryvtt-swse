@@ -326,12 +326,19 @@ export class PrerequisiteChecker {
             ? Number(draftAttributes.values[abilityKey]) + (Number(draftAttributes?.speciesMods?.[abilityKey]) || 0)
             : null;
 
+        // The previous fallback chain (system.attributes.<key>.total/.value,
+        // system.abilities.<key>.value) checked fields that don't exist
+        // anywhere on the real schema (system.attributes only ever has
+        // .base/.racial/.enhancement/.temp), so it silently evaluated every
+        // ability-score prerequisite against the hardcoded default of 10
+        // whenever no active progression-shell draft applied.
+        // SchemaAdapters.getAbilityScore() is the canonical authority
+        // (docs/systems/ABILITY_SCHEMA_AUTHORITY.md): derived data, then
+        // system.attributes reconstruction, then system.abilities only as a
+        // last-resort compatibility fallback.
         const ability = draftFinal
             ?? draftComputed
-            ?? actor.system?.attributes?.[abilityKey]?.total
-            ?? actor.system?.attributes?.[abilityKey]?.value
-            ?? actor.system?.abilities?.[abilityKey]?.value
-            ?? 10;
+            ?? SchemaAdapters.getAbilityScore(actor, abilityKey);
         const met = Number(ability) >= required;
         return {
             met,

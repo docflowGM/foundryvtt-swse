@@ -13,6 +13,7 @@
  */
 
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { SchemaAdapters } from "/systems/foundryvtt-swse/scripts/utils/schema-adapters.js";
 
 /**
  * Evaluate if a condition is met
@@ -26,9 +27,13 @@ export function evaluateCondition(conditionKey, actor, context = {}) {
 
   switch (conditionKey) {
     case 'high_ability': {
-      // Any ability >= 14
-      const abilities = actor?.system?.abilities || {};
-      return Object.values(abilities).some(a => (a.value || a.total || 10) >= 14);
+      // Any ability >= 14. Previously checked system.abilities.<key>.value
+      // (never exists) / .total (always the legacy stub's 10), so this
+      // condition could never actually trigger regardless of the actor's
+      // real scores. SchemaAdapters.getAbilityScore() is the canonical
+      // authority (docs/systems/ABILITY_SCHEMA_AUTHORITY.md).
+      if (!actor?.system) return false;
+      return ['str', 'dex', 'con', 'int', 'wis', 'cha'].some(key => SchemaAdapters.getAbilityScore(actor, key) >= 14);
     }
 
     case 'archetype_shift': {

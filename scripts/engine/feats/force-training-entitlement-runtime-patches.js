@@ -42,7 +42,10 @@ function getDraftAttributes(actor, shell = null) {
 function getAbilityData(actor, key) {
   const system = actor?.system || {};
   const aliases = key === 'cha' ? ['cha', 'charisma'] : ['wis', 'wisdom'];
-  return aliases.map(alias => system.abilities?.[alias] || system.attributes?.[alias] || system.stats?.[alias]).find(Boolean) || {};
+  // system.attributes is the persistent V2 authority; system.abilities is a
+  // legacy compatibility mirror only (docs/systems/ABILITY_SCHEMA_AUTHORITY.md)
+  // -- it used to be checked first here.
+  return aliases.map(alias => system.attributes?.[alias] || system.abilities?.[alias] || system.stats?.[alias]).find(Boolean) || {};
 }
 
 function getAbilityScore(actor, key, shell = null) {

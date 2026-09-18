@@ -114,7 +114,16 @@ export const ITEM_TYPES = {
   FEAT_TYPE_FORCE: 'force'
 };
 
-// System paths
+// System paths. Verified repo-wide (grep) that SYSTEM_PATHS itself has no
+// current consumers anywhere -- dead code, not a generic-path-reader input.
+// WISDOM_MOD's value was corrected anyway (system.abilities is a legacy,
+// always-{mod:0} compatibility mirror -- docs/systems/ABILITY_SCHEMA_AUTHORITY.md)
+// so it can't silently reintroduce the stale-mirror bug if something starts
+// consuming it later. Note this path string still can't reproduce
+// SchemaAdapters.getAbilityMod()'s system.attributes-reconstruction
+// fallback for an actor with no derived data yet -- a future consumer
+// should call SchemaAdapters.getAbilityMod(actor, 'wis') directly rather
+// than reading this path.
 export const SYSTEM_PATHS = {
   PRESTIGE_CLASS: 'system.swse.prestigeClass',
   BASE_CLASS: 'system.swse.class',
@@ -122,5 +131,5 @@ export const SYSTEM_PATHS = {
   MAX_DARK_SIDE_POINTS: 'system.swse.maxDarkSidePoints',
   INSTITUTION: 'system.swse.institution',
   PILOTING_SKILL: 'system.skills.piloting.bonus',
-  WISDOM_MOD: 'system.abilities.wis.mod'
+  WISDOM_MOD: 'system.derived.attributes.wis.mod'
 };

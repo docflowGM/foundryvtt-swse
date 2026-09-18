@@ -20,6 +20,7 @@
 import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { ActorAbilityBridge } from "/systems/foundryvtt-swse/scripts/adapters/ActorAbilityBridge.js";
+import { SchemaAdapters } from "/systems/foundryvtt-swse/scripts/utils/schema-adapters.js";
 
 export class ForceProvenanceEngine {
   /**
@@ -70,13 +71,19 @@ export class ForceProvenanceEngine {
    * @returns {number} Ability modifier (can be negative)
    */
   static getConfiguredAbilityMod(actor) {
-    if (!actor?.system?.abilities) {
+    if (!actor?.system) {
       return 0;
     }
 
     const forceAbility = game.settings?.get('foundryvtt-swse', 'forceTrainingAttribute') || 'wisdom';
     const abilityKey = forceAbility === 'charisma' ? 'cha' : 'wis';
-    return actor.system.abilities[abilityKey]?.mod ?? 0;
+    // SchemaAdapters.getAbilityMod() is the canonical ability-modifier
+    // authority (docs/systems/ABILITY_SCHEMA_AUTHORITY.md): derived data,
+    // then system.attributes reconstruction, then system.abilities only as
+    // a last-resort compatibility fallback. The previous implementation
+    // required system.abilities to exist just to proceed, and read only
+    // from it -- never system.attributes at all.
+    return SchemaAdapters.getAbilityMod(actor, abilityKey);
   }
 
   /**

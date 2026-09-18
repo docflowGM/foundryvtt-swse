@@ -12,6 +12,7 @@ import { RollEngine } from "/systems/foundryvtt-swse/scripts/engine/roll-engine.
 import { createChatMessage } from "/systems/foundryvtt-swse/scripts/core/document-api-v13.js";
 import { EncounterUseTracker } from "/systems/foundryvtt-swse/scripts/engine/feats/encounter-use-tracker.js";
 import { DSPEngine } from "/systems/foundryvtt-swse/scripts/engine/darkside/dsp-engine.js";
+import { SchemaAdapters } from "/systems/foundryvtt-swse/scripts/utils/schema-adapters.js";
 
 const SKILL_ALIASES = Object.freeze({
   acrobatics: 'acrobatics',
@@ -577,24 +578,18 @@ export class SkillFeatResolver {
       case 'abilityModifier': {
         const ability = String(rule.ability ?? '').toLowerCase().slice(0, 3);
         if (!ability) return 0;
-        const value = getPropertySafe(actor, `system.abilities.${ability}.mod`, null)
-          ?? getPropertySafe(actor, `system.attributes.${ability}.mod`, null)
-          ?? getPropertySafe(actor, `system.derived.attributes.${ability}.mod`, null)
-          ?? 0;
-        return clamp(Number(value) || 0);
+        // SchemaAdapters.getAbilityMod() is the canonical ability-modifier
+        // authority (docs/systems/ABILITY_SCHEMA_AUTHORITY.md). The
+        // previous inline lookup checked system.abilities before
+        // system.attributes/system.derived.attributes.
+        return clamp(SchemaAdapters.getAbilityMod(actor, ability));
       }
       case 'abilityDelta': {
         const from = String(rule.fromAbility ?? '').toLowerCase().slice(0, 3);
         const to = String(rule.toAbility ?? '').toLowerCase().slice(0, 3);
         if (!from || !to) return 0;
-        const fromValue = Number(getPropertySafe(actor, `system.abilities.${from}.mod`, null)
-          ?? getPropertySafe(actor, `system.attributes.${from}.mod`, null)
-          ?? getPropertySafe(actor, `system.derived.attributes.${from}.mod`, null)
-          ?? 0) || 0;
-        const toValue = Number(getPropertySafe(actor, `system.abilities.${to}.mod`, null)
-          ?? getPropertySafe(actor, `system.attributes.${to}.mod`, null)
-          ?? getPropertySafe(actor, `system.derived.attributes.${to}.mod`, null)
-          ?? 0) || 0;
+        const fromValue = SchemaAdapters.getAbilityMod(actor, from);
+        const toValue = SchemaAdapters.getAbilityMod(actor, to);
         const delta = rule.useBetter === false ? (toValue - fromValue) : Math.max(0, toValue - fromValue);
         return clamp(delta);
       }

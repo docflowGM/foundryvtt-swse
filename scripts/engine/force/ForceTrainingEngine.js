@@ -5,6 +5,7 @@
  */
 import { ForceRules } from "/systems/foundryvtt-swse/scripts/engine/force/ForceRules.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { SchemaAdapters } from "/systems/foundryvtt-swse/scripts/utils/schema-adapters.js";
 
 export class ForceTrainingEngine {
   /**
@@ -25,27 +26,13 @@ export class ForceTrainingEngine {
   static getForceAbilityModifier(actor) {
     const attribute = ForceTrainingEngine.getTrainingAttribute();
     const abilityKey = attribute === 'charisma' || attribute === 'cha' ? 'cha' : 'wis';
-    const aliases = abilityKey === 'cha' ? ['cha', 'charisma'] : ['wis', 'wisdom'];
-    const system = actor?.system || {};
-    const ability = aliases.map((key) => system.abilities?.[key] || system.attributes?.[key] || system.stats?.[key]).find(Boolean) || {};
-
-    const explicitModifier = Number(ability.mod ?? ability.modifier);
-    if (Number.isFinite(explicitModifier)) return Math.floor(explicitModifier);
-
-    let score = Number(ability.score ?? ability.total ?? ability.value);
-    if (!Number.isFinite(score)) {
-      const parts = ['base', 'racial', 'enhancement', 'misc', 'miscMod', 'temp'];
-      let total = 0;
-      let seen = false;
-      for (const part of parts) {
-        const number = Number(ability[part]);
-        if (!Number.isFinite(number)) continue;
-        total += number;
-        seen = true;
-      }
-      score = seen ? total : 10;
-    }
-    return Number.isFinite(score) ? Math.floor((score - 10) / 2) : 0;
+    // SchemaAdapters.getAbilityMod() is the canonical ability-modifier
+    // authority (docs/systems/ABILITY_SCHEMA_AUTHORITY.md): derived data,
+    // then system.attributes reconstruction, then system.abilities only as
+    // a last-resort compatibility fallback. The previous implementation
+    // never consulted system.derived.attributes at all and checked the
+    // legacy system.abilities mirror before system.attributes.
+    return SchemaAdapters.getAbilityMod(actor, abilityKey);
   }
 
   /**

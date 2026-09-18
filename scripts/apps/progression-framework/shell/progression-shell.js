@@ -1780,19 +1780,23 @@ export class ProgressionShell extends SWSEApplicationV2 {
   }
 
   /**
-   * Build ability snapshot if actor.system.abilities exists
+   * Build ability snapshot from canonical system.attributes (persistent V2
+   * authority per docs/systems/ABILITY_SCHEMA_AUTHORITY.md), falling back to
+   * the legacy system.abilities mirror only when system.attributes is
+   * entirely absent.
    * @returns {Object|null} { str, dex, con, int, wis, cha } with base values, or null
    */
   _buildAbilitySnapshot() {
-    if (!this.actor?.system?.abilities) return null;
-    const ab = this.actor.system.abilities;
+    const attrs = this.actor?.system?.attributes;
+    const source = (attrs && typeof attrs === 'object') ? attrs : this.actor?.system?.abilities;
+    if (!source) return null;
     return {
-      str: ab.str?.base ?? 10,
-      dex: ab.dex?.base ?? 10,
-      con: ab.con?.base ?? 10,
-      int: ab.int?.base ?? 10,
-      wis: ab.wis?.base ?? 10,
-      cha: ab.cha?.base ?? 10,
+      str: source.str?.base ?? 10,
+      dex: source.dex?.base ?? 10,
+      con: source.con?.base ?? 10,
+      int: source.int?.base ?? 10,
+      wis: source.wis?.base ?? 10,
+      cha: source.cha?.base ?? 10,
     };
   }
 
