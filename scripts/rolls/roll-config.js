@@ -556,47 +556,82 @@ function abilityScoreToMod(value) {
   return Number.isFinite(score) ? Math.floor((score - 10) / 2) : null;
 }
 
+function coerceAbilityComponent(value, fallback) {
+  const number = Number(value);
+  return Number.isFinite(number) ? number : fallback;
+}
+
+// Mirrors scripts/actors/derived/derived-calculator.js's own ability-score
+// formula exactly (base + racial + enhancement + temp, then
+// floor((total-10)/2)), so raw-export data and live-runtime derived data
+// agree on the same actor. Kept as a standalone helper rather than an
+// import from derived-calculator.js because that module performs a full
+// actor recompute (BAB, defenses, HP, ...) and writes system.derived.* —
+// far more than this narrow, read-only reconstruction needs.
+function reconstructAbilityModifierFromScore(abilityBlock) {
+  const base = coerceAbilityComponent(abilityBlock?.base, 10);
+  const racial = coerceAbilityComponent(abilityBlock?.racial ?? abilityBlock?.species, 0);
+  const enhancement = coerceAbilityComponent(abilityBlock?.enhancement ?? abilityBlock?.misc, 0);
+  const temp = coerceAbilityComponent(abilityBlock?.temp, 0);
+  return Math.floor((base + racial + enhancement + temp - 10) / 2);
+}
+
+/**
+ * Ability-modifier authority order, matching the repo's documented V2
+ * contract in docs/systems/ABILITY_SCHEMA_AUTHORITY.md ("Persistent/editable
+ * ability scores are authoritative on system.attributes...; computed ability
+ * totals and modifiers are authoritative on system.derived.attributes...;
+ * system.abilities is retained only as a legacy compatibility mirror/
+ * fallback. New v2 code must not... treat it as the persistent source of
+ * truth.") and scripts/actors/derived/derived-calculator.js's own
+ * implementation of that contract:
+ *   1. system.derived.attributes[key].mod — the computed V2 authority; may
+ *      reflect effects/mechanics beyond the raw score, so it always wins
+ *      when present. (system.derived.abilities does not exist anywhere in
+ *      this codebase as a write target — deliberately not consulted here.)
+ *   2. system.attributes[key] — the persistent V2 authority. An explicit
+ *      .mod/.modifier wins if present (not part of the normal schema, but
+ *      honored if a caller legitimately supplies one); otherwise the
+ *      modifier is reconstructed from base/racial/enhancement/temp using the
+ *      same formula DerivedCalculator uses, so raw actor-export data and
+ *      live-runtime data always agree.
+ *   3. system.abilities[key] — legacy compatibility mirror ONLY, per Rule 4
+ *      of the authority doc ("system.abilities may be read only as a
+ *      compatibility fallback while older actors migrate"). Reached only
+ *      when the actor carries no system.attributes block at all (matching
+ *      DerivedCalculator's own whole-block `attributes || abilities` check,
+ *      not a per-key fallback) — system.attributes existing at all means the
+ *      actor is on the canonical V2 schema and system.abilities must not
+ *      compete with it.
+ * Every candidate is checked for finiteness (Number.isFinite), never
+ * truthiness, so a legitimate modifier of 0 is never treated as "absent".
+ */
 function getAbilityModifier(actor, abilityKey) {
   const key = normalizeAbilityKey(abilityKey);
   if (!key) return 0;
 
-  const attrs = actor?.system?.attributes?.[key] ?? {};
-  const ability = actor?.system?.abilities?.[key] ?? {};
-  const derivedAttr = actor?.system?.derived?.attributes?.[key] ?? {};
-  const derivedAbility = actor?.system?.derived?.abilities?.[key] ?? {};
-
-  const directCandidates = [
-    attrs.mod,
-    attrs.modifier,
-    derivedAttr.mod,
-    derivedAttr.modifier,
-    ability.mod,
-    ability.modifier,
-    derivedAbility.mod,
-    derivedAbility.modifier
-  ];
-  for (const candidate of directCandidates) {
-    const n = Number(candidate);
+  const derivedAttr = actor?.system?.derived?.attributes?.[key];
+  if (derivedAttr) {
+    const n = Number(derivedAttr.mod ?? derivedAttr.modifier);
     if (Number.isFinite(n)) return n;
   }
 
-  const scoreCandidates = [
-    attrs.total,
-    attrs.value,
-    ability.total,
-    ability.value
-  ];
-  for (const candidate of scoreCandidates) {
-    const mod = abilityScoreToMod(candidate);
-    if (mod !== null) return mod;
+  const hasCanonicalAttributes = actor?.system?.attributes && typeof actor.system.attributes === 'object';
+  if (hasCanonicalAttributes) {
+    const attrs = actor.system.attributes[key] ?? {};
+    const explicit = Number(attrs.mod ?? attrs.modifier);
+    if (Number.isFinite(explicit)) return explicit;
+    return reconstructAbilityModifierFromScore(attrs);
   }
 
-  const rebuiltScore = Number(attrs.base ?? ability.base ?? 10)
-    + Number(attrs.racial ?? attrs.species ?? ability.racial ?? ability.species ?? 0)
-    + Number(attrs.enhancement ?? attrs.misc ?? ability.enhancement ?? ability.misc ?? 0)
-    + Number(attrs.temp ?? ability.temp ?? 0);
-  const rebuiltMod = abilityScoreToMod(rebuiltScore);
-  return rebuiltMod ?? 0;
+  // Compatibility fallback only (authority doc Rule 4) — reached only for an
+  // actor with no system.attributes block at all, i.e. genuinely unmigrated.
+  const ability = actor?.system?.abilities?.[key] ?? {};
+  const legacyExplicit = Number(ability.mod ?? ability.modifier);
+  if (Number.isFinite(legacyExplicit)) return legacyExplicit;
+  const legacyScore = abilityScoreToMod(ability.total ?? ability.value);
+  if (legacyScore !== null) return legacyScore;
+  return reconstructAbilityModifierFromScore(ability);
 }
 
 function getSkillData(actor, skillKey) {
@@ -645,7 +680,7 @@ function getSkillComponentTotal(actor, skillKey) {
   return abilityMod + halfLevel + trained + focus + misc + species + armor + condition;
 }
 
-function getSkillTotal(actor, skillKey) {
+export function getSkillTotal(actor, skillKey) {
   const key = String(skillKey ?? '');
   if (!key) return 0;
   const componentTotal = getSkillComponentTotal(actor, key);
@@ -897,7 +932,7 @@ function wireRollConfigDialog(html) {
   update();
 }
 
-async function buildRollConfigModel(options = {}) {
+export async function buildRollConfigModel(options = {}) {
   const actor = options.actor ?? null;
   const weapon = options.weapon ?? options.item ?? null;
   const rollType = options.rollType ?? 'attack';
@@ -910,7 +945,30 @@ async function buildRollConfigModel(options = {}) {
   const melee = weapon ? isMeleeWeapon(weapon) : false;
   const combatOptions = weapon ? CombatOptionResolver.summarizeAttackOptions(actor, weapon, { attackType: ranged ? 'ranged' : 'melee' }) : [];
 
-  const baseTotal = Number(options.baseBonus ?? getRollBaseTotal({ actor, weapon, rollType, skillKey, abilityKey, ranged, melee })) || 0;
+  // Skill/force rolls have a single canonical authority: getSkillTotal() via
+  // getRollBaseTotal(). A caller-supplied options.baseBonus that disagrees
+  // with it is almost always stale (e.g. a legacy actor.system.skills[key].total
+  // read that no longer exists on the V2 schema) rather than an intentional
+  // override, and silently trusting it produces a fabricated negative "Other
+  // Bonuses" breakdown row that cancels the real total back to the stale
+  // value (see docs/audits/... skill-roll-dialog-base-authority). Callers
+  // that genuinely need to override the canonical total for a documented
+  // special-case workflow must pass allowBaseBonusOverride: true.
+  const isSkillLikeRoll = rollType === 'skill' || rollType === 'force' || rollType === 'force-power';
+  const canonicalBaseTotal = Number(getRollBaseTotal({ actor, weapon, rollType, skillKey, abilityKey, ranged, melee })) || 0;
+  let baseTotal;
+  if (isSkillLikeRoll && options.allowBaseBonusOverride !== true) {
+    const suppliedBaseBonus = options.baseBonus;
+    if (suppliedBaseBonus !== undefined && suppliedBaseBonus !== null && (Number(suppliedBaseBonus) || 0) !== canonicalBaseTotal) {
+      SWSELogger.warn(
+        `[SWSE RollConfig] Ignoring non-authoritative skill baseBonus for ${actor?.name ?? 'unknown actor'}: ` +
+        `skill.${skillKey || 'useTheForce'} provided=${Number(suppliedBaseBonus) || 0} canonical=${canonicalBaseTotal}`
+      );
+    }
+    baseTotal = canonicalBaseTotal;
+  } else {
+    baseTotal = Number(options.baseBonus ?? canonicalBaseTotal) || 0;
+  }
   const breakdown = [];
   if (rollType === 'skill' || rollType === 'force' || rollType === 'force-power') {
     const key = skillKey || 'useTheForce';
@@ -1611,6 +1669,8 @@ export default {
   RollHistory,
   TalentBonusCache,
   showRollModifiersDialog,
+  buildRollConfigModel,
+  getSkillTotal,
   analyzeCriticalThreat,
   rollCriticalConfirmation,
   rollConcealmentCheck

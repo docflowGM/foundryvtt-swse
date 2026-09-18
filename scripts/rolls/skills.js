@@ -306,9 +306,10 @@ export async function rollSkillWithConfig(actor, skillKey, options = {}) {
   try {
     return await showRollModifiersDialog({
       actor,
+      rollType: 'skill',
+      skillKey,
       domain: `skill.${skillKey}`,
       title: `Roll ${skillKey}`,
-      baseBonus: actor.system.skills?.[skillKey]?.total || 0,
       defaultOptions: {
         useForcePoint: false,
         take10: false,
