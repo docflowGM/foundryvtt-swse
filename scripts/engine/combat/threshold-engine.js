@@ -87,6 +87,21 @@ export class ThresholdEngine {
     if (!actor) return 0;
 
     const system = actor.system;
+
+    // system.derived.damageThreshold is the canonical, feat-rule-aware
+    // authority (derived-calculator.js): it already folds in
+    // MetaResourceFeatResolver's flat bonus (e.g. Improved Damage
+    // Threshold's +5) and "use Will as base" rules, which a raw
+    // fort+sizeMod recompute here cannot see. Previously this always
+    // recomputed from scratch, silently disagreeing with the
+    // sheet-displayed value for any actor with such a feat. See
+    // docs/audits/v2-math-integrity-authority-ledger.md's Damage
+    // Threshold domain for the live fail-before proof. The raw
+    // fort+sizeMod formula remains as a fallback for when derived data
+    // isn't yet populated.
+    const canonical = Number(system.derived?.damageThreshold);
+    if (Number.isFinite(canonical)) return canonical;
+
     const fort = system.derived?.defenses?.fortitude?.total ?? 10;
 
     // Map size string to threshold bonus (RAW)
