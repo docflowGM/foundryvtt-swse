@@ -24,6 +24,9 @@ installFoundryShimGlobals();
 const { ThresholdEngine } = await import(
   '/systems/foundryvtt-swse/scripts/engine/combat/threshold-engine.js'
 );
+const { ModifierEngine } = await import(
+  '/systems/foundryvtt-swse/scripts/engine/effects/modifiers/ModifierEngine.js'
+);
 
 // ---------------------------------------------------------------------------
 // Test 1 — with system.derived.damageThreshold populated (the normal case
@@ -84,6 +87,66 @@ const { ThresholdEngine } = await import(
     items: []
   };
   assert.equal(ThresholdEngine.computeBaseThreshold(actor), 20, 'must fall back to fort+size when derived.damageThreshold is unavailable');
+}
+
+// ---------------------------------------------------------------------------
+// Test 4 — getDamageThreshold() must NOT double-count a static
+// "defense.damageThreshold" ModifierEngine modifier that's already folded
+// into the canonical system.derived.damageThreshold. DerivedCalculator
+// builds that field via modifierMap['defense.damageThreshold'], and
+// modifierMap comes from ModifierEngine.aggregateAll(), which internally
+// calls the SAME getAllModifiers() this function re-queries -- so
+// re-adding those modifiers on top of the canonical base double-counts
+// them. Fail-before proof (captured before this fix): a stored 25 (fort
+// 20 + a +5 modifier, already included) became 30 once
+// computeBaseThreshold() started returning the canonical value.
+// ---------------------------------------------------------------------------
+{
+  const actor = {
+    system: {
+      size: 'medium',
+      derived: {
+        defenses: { fortitude: { total: 20 } },
+        damageThreshold: 25 // fort 20 + a +5 static modifier, already included
+      }
+    },
+    items: []
+  };
+  const originalGetAllModifiers = ModifierEngine.getAllModifiers;
+  ModifierEngine.getAllModifiers = async () => [
+    { target: 'defense.damageThreshold', value: 5, enabled: true }
+  ];
+  try {
+    const result = await ThresholdEngine.getDamageThreshold(actor, {});
+    assert.equal(result.total, 25, 'must not double-count a static DT modifier already folded into the canonical base (25, not 30)');
+  } finally {
+    ModifierEngine.getAllModifiers = originalGetAllModifiers;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Test 5 — the fallback path (no canonical system.derived.damageThreshold
+// yet) must still correctly apply static ModifierEngine DT modifiers,
+// since in that case they were never included in `base` to begin with.
+// ---------------------------------------------------------------------------
+{
+  const actor = {
+    system: {
+      size: 'medium',
+      derived: { defenses: { fortitude: { total: 20 } } }
+    },
+    items: []
+  };
+  const originalGetAllModifiers = ModifierEngine.getAllModifiers;
+  ModifierEngine.getAllModifiers = async () => [
+    { target: 'defense.damageThreshold', value: 5, enabled: true }
+  ];
+  try {
+    const result = await ThresholdEngine.getDamageThreshold(actor, {});
+    assert.equal(result.total, 25, 'fallback path (no canonical value) must still apply the static modifier once (fort20+size0+modifier5)');
+  } finally {
+    ModifierEngine.getAllModifiers = originalGetAllModifiers;
+  }
 }
 
 console.log('damage-threshold-authority.test.mjs: all assertions passed');
