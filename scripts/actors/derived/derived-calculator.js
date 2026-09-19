@@ -367,14 +367,32 @@ export class DerivedCalculator {
       // Grapple domain for the live proof.
       const strMod = (updates['system.derived.attributes']?.str?.mod) || 0;
       const speciesGrapple = actor.system?.speciesCombatBonuses?.grapple || actor.system?.speciesTraitBonuses?.combat?.grapple || 0;
-      const grappleBonus = computeGrappleBonus({
+      const coreGrappleBonus = computeGrappleBonus({
         bab,
         strMod,
         dexMod,
         sizeMod: getGrappleSizeModifier(actor),
         speciesBonus: speciesGrapple
       });
+      // Static, always-on Grapple contributions beyond the core formula --
+      // e.g. a background's permanent competence bonus (Enslaved's "Grapple
+      // Survivor", +2) -- are layered on exactly once, here, using the same
+      // modifierMap already built above for HP/defenses/BAB/skills/DT.
+      // Mode-gated bonuses (Expert Grappler's GRAPPLE_BONUS rule, Grapple
+      // Resistance) are deliberately NOT included: those are genuinely
+      // contextual (they apply only during a specific kind of grapple
+      // check, per their own authored `mode`/`modes` metadata) and are
+      // added on top of this static total, once, at roll time by
+      // SWSEGrappling._rollGrappleBonus() -- see the Grapple domain
+      // section's static/contextual boundary audit.
+      const grappleStaticModifier = Number(modifierMap['grapple']) || 0;
+      const grappleBonus = coreGrappleBonus + grappleStaticModifier;
       updates['system.derived.grappleBonus'] = grappleBonus;
+      updates['system.derived.grappleBonusParts'] = {
+        core: coreGrappleBonus,
+        staticModifiers: grappleStaticModifier,
+        total: grappleBonus
+      };
 
       // Defenses
       if (defenses.fortitude) {
@@ -993,7 +1011,7 @@ export class DerivedCalculator {
       const allTargets = [
         ...skillTargets,
         'defense.fortitude', 'defense.reflex', 'defense.will',
-        'hp.max', 'bab.total', 'initiative.total'
+        'hp.max', 'bab.total', 'initiative.total', 'grapple'
       ];
       const modifierBreakdown = await ModifierEngine.buildModifierBreakdown(actor, allTargets, { signature: modifierSignature });
 

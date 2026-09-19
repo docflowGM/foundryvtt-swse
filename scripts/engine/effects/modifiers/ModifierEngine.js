@@ -1056,28 +1056,84 @@ export class ModifierEngine {
         }
       }
 
-      // Process flat bonuses
+      // Process flat bonuses. Two record shapes are supported:
+      //  - skill-shaped: { value, applicableSkills: [...] } -- one modifier
+      //    per listed skill (the original, still-supported shape).
+      //  - generic target-shaped: { value, target, bonusType } -- e.g. a
+      //    background's flat bonus to a non-skill target like "grapple"
+      //    (Enslaved's "Grapple Survivor"). Previously silently dropped
+      //    entirely (this loop required applicableSkills on every record,
+      //    so a target-shaped record always failed the guard and was
+      //    skipped) -- see docs/audits/v2-math-integrity-authority-ledger.md's
+      //    Grapple domain, round 4.
+      //
+      // Defensive dedup for the generic shape: BackgroundGrantLedgerBuilder
+      // ._mergeBonuses() now collapses a background's duplicate
+      // mechanicalEffect/specialAbilities representation of the same grant
+      // into one ledger entry at the source, but this reads a persisted
+      // actor flag (flags.swse.backgroundBonuses), not a freshly-built
+      // ledger -- an actor whose backgrounds were materialized before that
+      // fix landed can still carry an already-persisted duplicate pair. The
+      // two representations don't necessarily agree on every field (the
+      // mechanicalEffect-derived copy has no bonusType/abilityId, only the
+      // specialAbilities-derived one does), so identity here is
+      // deliberately narrower than the full record: same background + same
+      // target + same value is treated as the same grant. When duplicates
+      // are found, the entry with the richest metadata (bonusType, then
+      // abilityId) is kept so the resulting modifier's type/source stay
+      // accurate.
       const flatBonuses = backgroundBonuses.flat || [];
+      const genericBonusGroups = new Map();
       for (const bonus of flatBonuses) {
-        if (!bonus || typeof bonus.value !== 'number' || !Array.isArray(bonus.applicableSkills)) {
+        if (!bonus || typeof bonus.value !== 'number') {
           continue;
         }
 
-        for (const skillKey of bonus.applicableSkills) {
-          try {
-            modifiers.push(createModifier({
-              source: ModifierSource.BACKGROUND,
-              sourceId: `background.bonus.flat.${skillKey}`,
-              sourceName: 'Background Bonus',
-              target: `skill.${skillKey}`,
-              type: ModifierType.UNTYPED,
-              value: bonus.value,
-              enabled: true,
-              description: `Background flat bonus: +${bonus.value} to ${skillKey}`
-            }));
-          } catch (err) {
-            swseLogger.warn(`[ModifierEngine] Failed to create background flat bonus:`, err);
+        if (Array.isArray(bonus.applicableSkills)) {
+          for (const skillKey of bonus.applicableSkills) {
+            try {
+              modifiers.push(createModifier({
+                source: ModifierSource.BACKGROUND,
+                sourceId: `background.bonus.flat.${skillKey}`,
+                sourceName: 'Background Bonus',
+                target: `skill.${skillKey}`,
+                type: ModifierType.UNTYPED,
+                value: bonus.value,
+                enabled: true,
+                description: `Background flat bonus: +${bonus.value} to ${skillKey}`
+              }));
+            } catch (err) {
+              swseLogger.warn(`[ModifierEngine] Failed to create background flat bonus:`, err);
+            }
           }
+          continue;
+        }
+
+        if (typeof bonus.target === 'string' && bonus.target && bonus.target !== 'unknown') {
+          const dedupeKey = `${bonus.backgroundId ?? ''}|${bonus.target}|${bonus.value}`;
+          const existing = genericBonusGroups.get(dedupeKey);
+          const richness = (bonus.bonusType ? 2 : 0) + (bonus.abilityId ? 1 : 0);
+          if (!existing || richness > existing.richness) {
+            genericBonusGroups.set(dedupeKey, { bonus, richness });
+          }
+        }
+      }
+
+      for (const { bonus } of genericBonusGroups.values()) {
+        const type = Object.values(ModifierType).includes(bonus.bonusType) ? bonus.bonusType : ModifierType.UNTYPED;
+        try {
+          modifiers.push(createModifier({
+            source: ModifierSource.BACKGROUND,
+            sourceId: `background.bonus.flat.${bonus.abilityId || bonus.backgroundId || bonus.target}`,
+            sourceName: bonus.backgroundName ? `${bonus.backgroundName} Background` : 'Background Bonus',
+            target: bonus.target,
+            type,
+            value: bonus.value,
+            enabled: true,
+            description: bonus.description || `Background flat bonus: +${bonus.value} to ${bonus.target}`
+          }));
+        } catch (err) {
+          swseLogger.warn(`[ModifierEngine] Failed to create background flat bonus:`, err);
         }
       }
     } catch (err) {

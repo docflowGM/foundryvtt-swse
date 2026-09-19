@@ -147,9 +147,18 @@ export class CombatStatsTooltip {
       });
     }
 
-    // Contextual modifiers, if any are ever registered against this target.
-    const modifiers = this._getModifiersForTarget(actor, 'grapple');
-    modifiers.forEach(mod => {
+    // Static, always-on modifiers folded into system.derived.grappleBonus by
+    // DerivedCalculator (e.g. a background's permanent competence bonus --
+    // Enslaved's "Grapple Survivor"). Read from the SAME modifier-breakdown
+    // ledger DerivedCalculator built the canonical total from
+    // (system.derived.modifiers.breakdown.grapple), not independently
+    // re-discovered, so these rows can never disagree with the displayed
+    // total. Deliberately excludes mode-gated contextual bonuses (Expert
+    // Grappler, Grapple Resistance) -- those apply only at roll time and are
+    // not part of this static total; see the Grapple domain's
+    // static/contextual boundary audit.
+    const staticModifierRows = this._getModifiersForTarget(actor, 'grapple');
+    staticModifierRows.forEach(mod => {
       rows.push({
         label: mod.sourceName,
         value: mod.value,
@@ -158,9 +167,15 @@ export class CombatStatsTooltip {
     });
 
     const canonicalTotal = Number(system?.derived?.grappleBonus);
+    // Required invariant: SUM(rows) === total. When the canonical value is
+    // available, `rows` was built from the exact same components that
+    // produced it (core formula terms + the same static-modifier ledger),
+    // so the two can never disagree. The synchronous fallback (before
+    // derived data exists) is core-only, matching resolveGrappleBonus()'s
+    // documented limitation -- see the Grapple domain section.
     const total = Number.isFinite(canonicalTotal)
       ? canonicalTotal
-      : computeGrappleBonus({ bab, strMod, dexMod, sizeMod, speciesBonus }) + modifiers.reduce((sum, m) => sum + m.value, 0);
+      : computeGrappleBonus({ bab, strMod, dexMod, sizeMod, speciesBonus }) + staticModifierRows.reduce((sum, m) => sum + m.value, 0);
 
     return {
       title: 'Grapple',
@@ -242,13 +257,31 @@ export class CombatStatsTooltip {
 
   /**
    * Get modifiers for a specific target.
+   *
+   * DerivedCalculator persists this at system.derived.modifiers.breakdown[target]
+   * as { total, applied, breakdown: [{value, source, sourceName, type,
+   * description}] } (see ModifierEngine.buildModifierBreakdown() /
+   * ModifierUtils.getModifierDetail()) -- NOT at
+   * system.derived.modifiers[target].modifiers, which this previously read.
+   * That meant this always returned [] for every target that called it
+   * (BaseAttackBonus, Grapple, Initiative), regardless of any real
+   * background/feat/talent modifier targeting them. Fixed to read the
+   * actual persisted shape. Note this only populates rows for targets
+   * DerivedCalculator actually includes in its breakdown list (`allTargets`
+   * in derived-calculator.js) -- currently skills, defenses, hp.max,
+   * bab.total, initiative.total, and (as of the Grapple domain's round 4
+   * fix) grapple. BaseAttackBonus's breakdown target ('attack.bonus') and
+   * Initiative's actual target key ('initiative.total', not 'initiative',
+   * which is what getInitiativeBreakdown() queries here) remain unfixed --
+   * both are pre-existing, out-of-scope bugs noted for a future audit, not
+   * introduced or fixed by this pass.
    * @private
    */
   static _getModifiersForTarget(actor, target) {
-    const breakdown = actor.system.derived?.modifiers?.[target];
-    if (breakdown && breakdown.modifiers) {
-      return breakdown.modifiers.map(mod => ({
-        sourceName: mod.description || mod.source,
+    const detail = actor.system.derived?.modifiers?.breakdown?.[target];
+    if (detail && Array.isArray(detail.breakdown)) {
+      return detail.breakdown.map(mod => ({
+        sourceName: mod.sourceName || mod.description || mod.source,
         source: mod.source,
         type: mod.type,
         value: mod.value,
