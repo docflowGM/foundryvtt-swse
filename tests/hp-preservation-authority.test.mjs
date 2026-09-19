@@ -38,8 +38,9 @@ import { installFoundryShimGlobals } from './helpers/foundry-shim/globals.mjs';
 //    Defect A must be fixed first.
 //
 // Real, unmodified production code is used throughout -- actor-engine.js
-// is imported via its literal filesystem path specifically to bypass this
-// repo's own test-harness fake (tests/helpers/foundry-shim/path-loader.mjs's
+// is imported via a plain relative specifier (resolved from this file's own
+// location, portable across checkouts) specifically to bypass this repo's
+// own test-harness fake (tests/helpers/foundry-shim/path-loader.mjs's
 // OVERRIDES map only intercepts the exact absolute
 // /systems/foundryvtt-swse/... specifier), and ClassesDB (normally built
 // from a Foundry compendium pack unavailable under this harness) is
@@ -100,7 +101,7 @@ function gareeShapedActor() {
 // ---------------------------------------------------------------------------
 {
   const { ActorEngine } = await import(
-    '/home/user/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js'
+    new URL('../scripts/governance/actor-engine/actor-engine.js', import.meta.url).href
   );
   const { ClassesDB } = await import(
     '/systems/foundryvtt-swse/scripts/data/classes-db.js'
