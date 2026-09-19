@@ -561,7 +561,7 @@ export class DefenseCalculator {
     return best;
   }
 
-  static _sumPassiveStateDefenseModifiers(actor, profile, defenseType, context = {}) {
+  static _sumPassiveStateDefenseModifiers(actor, profile, defenseType, context = {}, { onlyDodge = false } = {}) {
     try {
       const entries = profile?.passiveStateDefenseModifiers ?? [];
       if (!entries.length) return 0;
@@ -572,6 +572,11 @@ export class DefenseCalculator {
 
       for (const entry of entries) {
         if (!entry.targets.has('defense') && !entry.targets.has(defenseTarget)) continue;
+        // onlyDodge isolates dodge-type modifiers (e.g. Martial Arts I-III's
+        // Reflex dodge bonus) for the flat-footed calculation below -- SWSE
+        // RAW: a flat-footed character loses dodge bonuses along with their
+        // Dexterity bonus, not just the Dexterity bonus.
+        if (onlyDodge && entry.modifier?.type !== 'dodge' && entry.modifier?.bonusType !== 'dodge') continue;
         if (!ModifierEngine.isModifierAllowedInContext(actor, entry.modifier, context, { staticSheet: isStaticSheetContext })) continue;
         if (!evaluateStatePredicates(actor, entry.predicates, context)) continue;
         if (entry.value) stateBonus += entry.value;
@@ -840,8 +845,15 @@ export class DefenseCalculator {
 
     const flatFootedBase = reflexBase;
     // Flat-footed removes a positive Dexterity bonus, but never removes a
-    // Dexterity penalty. SWSE RAW: lose Dex bonus, not Dex penalty.
-    const flatFootedTotal = Math.max(1, reflexTotal - Math.max(0, reflexAbilityMod));
+    // Dexterity penalty. SWSE RAW: lose Dex bonus, not Dex penalty. It also
+    // removes dodge-type bonuses (e.g. Martial Arts I-III's Reflex dodge
+    // bonus) -- these previously survived into flat-footed because they
+    // flow into refStateBonus/reflexTotal like any other Reflex modifier,
+    // and only the ability mod was being stripped. See
+    // docs/audits/v2-math-integrity-authority-ledger.md's Flat-Footed
+    // Reflex domain for the live fail-before proof.
+    const reflexDodgeBonus = this._sumPassiveStateDefenseModifiers(actor, defenseProfile, 'reflex', context, { onlyDodge: true });
+    const flatFootedTotal = Math.max(1, reflexTotal - Math.max(0, reflexAbilityMod) - Math.max(0, reflexDodgeBonus));
 
     return {
       fortitude: {

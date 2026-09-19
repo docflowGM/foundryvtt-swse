@@ -36,6 +36,18 @@ export const DAMAGE_THRESHOLD_SIZE_BONUSES = Object.freeze({
   colossal: 50
 });
 
+export const GRAPPLE_SIZE_MODIFIERS = Object.freeze({
+  fine: -8,
+  diminutive: -4,
+  tiny: -2,
+  small: -1,
+  medium: 0,
+  large: 4,
+  huge: 8,
+  gargantuan: 12,
+  colossal: 16
+});
+
 export function normalizeCombatSize(size) {
   const raw = String(size ?? 'medium').toLowerCase().trim();
   if (raw.includes('colossal')) return 'colossal';
@@ -61,6 +73,78 @@ export function getReflexSizeModifier(actorOrSize) {
 export function getDamageThresholdSizeBonus(actorOrSize) {
   const size = typeof actorOrSize === 'string' ? normalizeCombatSize(actorOrSize) : getActorCombatSize(actorOrSize);
   return DAMAGE_THRESHOLD_SIZE_BONUSES[size] ?? 0;
+}
+
+export function getGrappleSizeModifier(actorOrSize) {
+  const size = typeof actorOrSize === 'string' ? normalizeCombatSize(actorOrSize) : getActorCombatSize(actorOrSize);
+  return GRAPPLE_SIZE_MODIFIERS[size] ?? 0;
+}
+
+/**
+ * The ONLY grapple arithmetic in the codebase: BAB + best of STR/DEX +
+ * size + species. A pure function over already-resolved numeric inputs --
+ * it does not read an actor itself, so it can be called both by
+ * `resolveGrappleBonus()` below (which resolves those inputs from a live
+ * actor via SchemaAdapters) and by `derived-calculator.js`'s own
+ * system.derived.grappleBonus computation (which has its own freshly
+ * computed current-pass BAB/ability/size/species values available
+ * in-closure, some of which may not exist on `actor` itself yet mid-pass).
+ * Previously each of those two call sites independently reimplemented
+ * this exact formula (including a hand-copied size table each) -- see
+ * docs/audits/v2-math-integrity-authority-ledger.md's Grapple domain for
+ * the certification-review finding that flagged the duplication (they
+ * agreed today, but two formulas is the violation the freeze forbids,
+ * agreement or not).
+ *
+ * @param {Object} inputs
+ * @param {number} inputs.bab
+ * @param {number} inputs.strMod
+ * @param {number} inputs.dexMod
+ * @param {number} inputs.sizeMod
+ * @param {number} [inputs.speciesBonus]
+ * @returns {number}
+ */
+export function computeGrappleBonus({ bab, strMod, dexMod, sizeMod, speciesBonus = 0 }) {
+  const safeBab = Number(bab) || 0;
+  const safeStr = Number(strMod) || 0;
+  const safeDex = Number(dexMod) || 0;
+  const safeSize = Number(sizeMod) || 0;
+  const safeSpecies = Number(speciesBonus) || 0;
+  return safeBab + Math.max(safeStr, safeDex) + safeSize + safeSpecies;
+}
+
+/**
+ * Canonical, standalone Grapple bonus resolver for a live actor: resolves
+ * BAB/ability/size/species inputs via SchemaAdapters and the shared size
+ * helper, then delegates to computeGrappleBonus() for the actual math --
+ * so a caller that can't read a pre-computed system.derived.grappleBonus
+ * (e.g. because derived data hasn't been computed yet) has ONE correct
+ * formula to fall back to, instead of an independently-maintained
+ * approximation that can silently omit terms. See
+ * docs/audits/v2-math-integrity-authority-ledger.md's Grapple domain --
+ * scripts/houserules/houserule-grapple.js previously fell back to
+ * BAB + STR only (no size, no species, no best-of-DEX), which was
+ * confirmed wrong for any DEX-based grappler.
+ *
+ * Deliberately NOT used by derived-calculator.js: that pass has its own
+ * freshly computed current-pass values (BAB, ability mods, etc.) that may
+ * not yet be written onto `actor` itself when this runs, so reading them
+ * back off `actor` via SchemaAdapters here could see stale data from the
+ * previous prepare cycle. derived-calculator.js calls
+ * computeGrappleBonus() directly with its own in-closure values instead.
+ *
+ * @param {Actor} actor
+ * @returns {number}
+ */
+export function resolveGrappleBonus(actor) {
+  if (!actor) return 0;
+  return computeGrappleBonus({
+    bab: SchemaAdapters.getBAB(actor),
+    strMod: SchemaAdapters.getAbilityMod(actor, 'str'),
+    dexMod: SchemaAdapters.getAbilityMod(actor, 'dex'),
+    sizeMod: getGrappleSizeModifier(actor),
+    speciesBonus: actor.system?.speciesCombatBonuses?.grapple ?? actor.system?.speciesTraitBonuses?.combat?.grapple ?? 0
+  });
 }
 
 function numeric(value, fallback = 0) {

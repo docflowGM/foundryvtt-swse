@@ -87,6 +87,21 @@ export class ThresholdEngine {
     if (!actor) return 0;
 
     const system = actor.system;
+
+    // system.derived.damageThreshold is the canonical, feat-rule-aware
+    // authority (derived-calculator.js): it already folds in
+    // MetaResourceFeatResolver's flat bonus (e.g. Improved Damage
+    // Threshold's +5) and "use Will as base" rules, which a raw
+    // fort+sizeMod recompute here cannot see. Previously this always
+    // recomputed from scratch, silently disagreeing with the
+    // sheet-displayed value for any actor with such a feat. See
+    // docs/audits/v2-math-integrity-authority-ledger.md's Damage
+    // Threshold domain for the live fail-before proof. The raw
+    // fort+sizeMod formula remains as a fallback for when derived data
+    // isn't yet populated.
+    const canonical = Number(system.derived?.damageThreshold);
+    if (Number.isFinite(canonical)) return canonical;
+
     const fort = system.derived?.defenses?.fortitude?.total ?? 10;
 
     // Map size string to threshold bonus (RAW)
@@ -106,16 +121,34 @@ export class ThresholdEngine {
   static async getDamageThreshold(actor, context = {}) {
     const base = this.computeBaseThreshold(actor);
 
+    // A static "defense.damageThreshold"-targeted ModifierEngine modifier is
+    // already folded into the canonical system.derived.damageThreshold:
+    // DerivedCalculator builds it via modifierMap['defense.damageThreshold'],
+    // and modifierMap itself comes from ModifierEngine.aggregateAll(), which
+    // internally calls the SAME getAllModifiers() this function used to
+    // re-query and re-add on top of `base` -- double-counting it whenever
+    // computeBaseThreshold() returned the canonical value (live fail-before
+    // proof: a stored 25 that already includes a +5 modifier became 30).
+    // See docs/audits/v2-math-integrity-authority-ledger.md's Damage
+    // Threshold domain. Only re-collect these modifiers when
+    // computeBaseThreshold() had to fall back to the raw fort+size formula
+    // (system.derived.damageThreshold not yet populated), where they were
+    // never included in `base` to begin with.
+    const canonicalDT = Number(actor?.system?.derived?.damageThreshold);
+    const usedCanonicalBase = Number.isFinite(canonicalDT);
+
     let modifiers = [];
-    try {
-      const allModifiers = await ModifierEngine.getAllModifiers(actor);
-      modifiers = (allModifiers || []).filter(m => {
-        if (!m || m.enabled === false) return false;
-        const target = String(m.target || '').toLowerCase();
-        return target === 'damagethreshold' || target === 'damage.threshold' || target === 'defense.damagethreshold';
-      });
-    } catch {
-      // ModifierEngine unavailable; use base only
+    if (!usedCanonicalBase) {
+      try {
+        const allModifiers = await ModifierEngine.getAllModifiers(actor);
+        modifiers = (allModifiers || []).filter(m => {
+          if (!m || m.enabled === false) return false;
+          const target = String(m.target || '').toLowerCase();
+          return target === 'damagethreshold' || target === 'damage.threshold' || target === 'defense.damagethreshold';
+        });
+      } catch {
+        // ModifierEngine unavailable; use base only
+      }
     }
 
     const modifierTotal = modifiers.reduce((sum, m) => sum + Number(m.value || 0), 0);
