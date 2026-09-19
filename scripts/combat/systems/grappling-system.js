@@ -19,6 +19,8 @@ import { CombatStatusResolver } from '/systems/foundryvtt-swse/scripts/combat/co
 import { DamageSystem } from '/systems/foundryvtt-swse/scripts/combat/damage-system.js';
 import { ActorEngine } from '/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js';
 import { resolveGrappleBonus } from '/systems/foundryvtt-swse/scripts/engine/combat/combat-stat-rules.js';
+import ModifierUtils from '/systems/foundryvtt-swse/scripts/engine/effects/modifiers/ModifierUtils.js';
+import { ModifierType, ModifierSource, createModifier } from '/systems/foundryvtt-swse/scripts/engine/effects/modifiers/ModifierTypes.js';
 
 function swseNormalizeName(value) {
   return String(value ?? '').trim().toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
@@ -37,21 +39,65 @@ function swseActorHasTalent(actor, name) {
   return swseActorItems(actor).some(item => item?.type === 'talent' && item?.system?.disabled !== true && swseNormalizeName(item.name) === wanted);
 }
 
-function swseTalentGrappleBonus(actor, mode) {
-  let total = 0;
+// Collects this actor's mode-applicable contextual Grapple bonuses
+// (GRAPPLE_BONUS talent/feat rules, RESIST_GRAB_AND_GRAPPLE) as modifier
+// OBJECTS -- not pre-summed numbers -- so they retain their bonus `type`
+// and can be stacking-resolved together with the actor's static Grapple
+// modifiers (system.derived.modifiers.breakdown.grapple.applied) by the
+// SAME shared authority (ModifierUtils.resolveStacking()) everything else
+// in the codebase uses. Math Integrity Freeze review found that summing
+// this to a bare number before combining it with the static total let a
+// contextual competence bonus (e.g. Expert Grappler, +2) stack on top of a
+// same-type static competence bonus (e.g. Enslaved's background bonus,
+// +2) that should have capped the combination at the higher of the two,
+// per this codebase's own competence stacking rule
+// (STACKING_RULES.competence === 'highestOnly') -- see the Grapple domain
+// section of docs/audits/v2-math-integrity-authority-ledger.md.
+function collectContextualGrappleModifiers(actor, mode) {
+  const modifiers = [];
   for (const item of swseActorItems(actor)) {
     if (!['talent', 'feat'].includes(item?.type) || item?.system?.disabled === true) continue;
     const rules = item?.system?.abilityMeta?.grappleRules ?? [];
     if (!Array.isArray(rules)) continue;
+
     for (const rule of rules) {
-      if (rule?.type !== 'GRAPPLE_BONUS') continue;
-      const modes = Array.isArray(rule.modes) ? rule.modes : [rule.mode ?? rule.context].filter(Boolean);
-      if (modes.length && !modes.includes(mode)) continue;
-      const bonus = Number(rule.bonus ?? rule.value ?? 0);
-      if (Number.isFinite(bonus)) total += bonus;
+      if (rule?.type === 'GRAPPLE_BONUS') {
+        const modes = Array.isArray(rule.modes) ? rule.modes : [rule.mode ?? rule.context].filter(Boolean);
+        if (modes.length && !modes.includes(mode)) continue;
+        const value = Number(rule.bonus ?? rule.value ?? 0);
+        if (!Number.isFinite(value) || value === 0) continue;
+        modifiers.push(createModifier({
+          source: item.type === 'talent' ? ModifierSource.TALENT : ModifierSource.FEAT,
+          sourceId: item.id ?? item.name ?? 'grapple-bonus-rule',
+          sourceName: rule.source || item.name || 'Grapple Bonus',
+          target: 'grapple',
+          type: Object.values(ModifierType).includes(rule.bonusType) ? rule.bonusType : ModifierType.UNTYPED,
+          value,
+          enabled: true,
+          description: `${rule.source || item.name || 'Grapple Bonus'}: ${value >= 0 ? '+' : ''}${value} Grapple`
+        }));
+      } else if (rule?.type === 'RESIST_GRAB_AND_GRAPPLE') {
+        if (mode !== 'resistGrab' && mode !== 'resistGrapple') continue;
+        const value = Number(rule.bonus ?? 0);
+        if (!Number.isFinite(value) || value === 0) continue;
+        modifiers.push(createModifier({
+          source: item.type === 'talent' ? ModifierSource.TALENT : ModifierSource.FEAT,
+          sourceId: item.id ?? item.name ?? 'grapple-resistance-rule',
+          sourceName: rule.source || item.name || 'Grapple Resistance',
+          target: 'grapple',
+          // RAW does not label this bonus with a stacking type (unlike
+          // Expert Grappler's explicit "competence"); untyped bonuses
+          // stack with everything, which matches how a feat-granted bonus
+          // with no stated type is otherwise treated in this codebase.
+          type: ModifierType.UNTYPED,
+          value,
+          enabled: true,
+          description: `${rule.source || item.name || 'Grapple Resistance'}: +${value} vs Grab/Grapple`
+        }));
+      }
     }
   }
-  return total;
+  return modifiers;
 }
 
 function swseGrabAttackPenalty(actor) {
@@ -660,16 +706,30 @@ export class SWSEGrappling {
   // grapple-rule bonuses and Grapple Resistance, both of which apply only in
   // specific opposed-check contexts and are not part of the static bonus.
   static async _rollGrappleBonus(actor, context = {}) {
-    const staticGrapple = Number(actor?.system?.derived?.grappleBonus);
-    let bonus = Number.isFinite(staticGrapple) ? staticGrapple : resolveGrappleBonus(actor);
+    // Core (BAB + higher of STR/DEX + size + species) is the one piece
+    // that's never typed and never stacks against anything -- read it
+    // directly from DerivedCalculator's explicit breakdown
+    // (system.derived.grappleBonusParts.core) rather than the combined
+    // total, so static and contextual TYPED modifiers can be resolved
+    // together below instead of the contextual side being added on top of
+    // an already-collapsed static total (which would bypass stacking --
+    // see collectContextualGrappleModifiers()'s comment).
+    const coreGrapple = Number(actor?.system?.derived?.grappleBonusParts?.core);
+    const core = Number.isFinite(coreGrapple) ? coreGrapple : resolveGrappleBonus(actor);
 
-    bonus += swseTalentGrappleBonus(actor, context.mode);
+    // Static modifiers already resolved by ModifierEngine/DerivedCalculator
+    // for this actor's current state (e.g. Enslaved's background
+    // competence bonus). Re-resolving stacking over this set unioned with
+    // the contextual set below is safe: each per-type group is
+    // re-evaluated from scratch, so it doesn't matter that the static side
+    // was already reduced to its own per-type winners.
+    const staticModifiers = actor?.system?.derived?.modifiers?.breakdown?.grapple?.applied ?? [];
+    const contextualModifiers = collectContextualGrappleModifiers(actor, context.mode);
 
-    if (context.mode === 'resistGrapple') {
-      bonus += Number(MetaResourceFeatResolver.getGrappleResistanceBonus(actor, { mode: 'resistGrapple' }) ?? 0) || 0;
-    }
+    const resolved = ModifierUtils.resolveStacking([...staticModifiers, ...contextualModifiers]);
+    const modifierTotal = ModifierUtils.sumModifiers(resolved);
 
-    return bonus;
+    return core + modifierTotal;
   }
 
   static _getUnarmedAttack(actor) {
