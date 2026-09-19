@@ -42,15 +42,33 @@ ledger → derived/static result → sheet/tooltip/roll consumer`.
 ## Status
 
 **Phase 0 (audit) complete. Phase 2 (Gar'ee golden fixture) complete.
-First confirmed-fix batch (3 of 8 confirmed defects) implemented, tested,
-and passing the full rolling suite (210/210).**
+Batch 1 implemented, then certification-corrected after review** (a
+second review pass found real gaps in the first pass's fixes and
+wording — see "Batch 1 certification correction" below). All fixes
+currently in this document are tested and passing the full rolling
+suite.
 
-Fixed this batch:
-1. Grapple roll formula (`houserule-grapple.js`) now reads canonical `system.derived.grappleBonus`.
+Fixed and certified:
+1. Grapple roll formula (`houserule-grapple.js`) now reads canonical `system.derived.grappleBonus`, and its fallback now calls `combat-stat-rules.js#resolveGrappleBonus()` — the same canonical formula, not a second known-wrong one. `getGrappleDC()`'s BAB read also corrected to `SchemaAdapters.getBAB()`.
 2. Flat-footed Reflex (`defense-calculator.js`) now strips dodge-type bonuses, not just the ability mod.
-3. Damage Threshold (`threshold-engine.js#computeBaseThreshold()`) now agrees with the canonical, feat-rule-aware stored value.
+3. Damage Threshold (`threshold-engine.js#computeBaseThreshold()`) now agrees with the canonical, feat-rule-aware stored value, and `getDamageThreshold()` no longer double-counts a static ModifierEngine DT modifier that's already folded into that canonical value.
 
-Remaining confirmed defects (HP multiclass formula, Energy Shield ACP, weapon melee/ranged schema, follower-NPC Fortitude, custom-skill armor/condition gap) are queued for the next batch — see each domain section below for status, and the PR description for the full first-report writeup.
+**Not yet fixed, and explicitly blocked pending a documented authority-contract decision:** HP. Two confirmed defects (a destructive stateless-recompute model incompatible with the real, additive, history-based authority, and a live-reproduced `ReferenceError` that currently makes every value-changing recompute silently fail) — see the HP domain section for the full writeup and the open design questions that must be answered before any code changes there.
+
+Remaining confirmed defects (Energy Shield ACP, weapon melee/ranged schema, follower-NPC Fortitude, custom-skill armor/condition gap) are queued for Batch 2.
+
+## Batch 1 certification correction (post-review)
+
+A review of the first Batch 1 pass found:
+1. The HP "open question" (Gar'ee's first class item) was answerable from evidence already available and had not been checked — resolved to Soldier by tracing `ActorItemIndex`/`ActorAbilityBridge` directly.
+2. The PR/ledger wording claimed a "live-reproduced 20-point HP undercount" — wrong; Gar'ee's persisted `system.hp.max` is 108, not 88. Corrected throughout this document.
+3. A second, more severe HP defect was found and live-confirmed: `recomputeHP()` throws a `ReferenceError` on every value-changing call due to a block-scoping bug, currently masking the first defect from ever manifesting.
+4. HP's real fix requires an authority-contract decision (additive/historical vs. stateless-recompute), not a multiclass-formula patch — explicitly not attempted in this pass.
+5. The Damage Threshold fix introduced a real double-count risk (the canonical base and a re-collected `ModifierEngine` static modifier could both include the same bonus) — found, live-reproduced, and fixed.
+6. The Grapple fix's own fallback path was itself a second, known-wrong formula (BAB+STR-only) — replaced with a shared, canonical `resolveGrappleBonus()` resolver instead of a second reimplementation.
+7. Flat-footed Reflex was reviewed and confirmed sound as-is — no changes.
+
+All six action items are addressed in this document and in the corresponding commits/tests.
 
 ---
 
@@ -113,16 +131,81 @@ Storage: `system.derived.damageThreshold` (flat number — NOT `derived.damage.t
 
 **Classification: CONFIRMED.** Any actor with Improved Damage Threshold, a "use Will as base" feat, or any table with `enableEnhancedMassiveDamage` on can see the sheet-displayed Damage Threshold disagree with the value `ThresholdEngine` actually uses to resolve massive-damage/condition-track-shift checks in combat.
 
-**PARTIALLY FIXED**: `computeBaseThreshold()` (and therefore `getDamageThreshold()`, its live consumer via `damage-resolution-engine.js:277`) now prefers the canonical `system.derived.damageThreshold` when finite, falling back to the raw `fort+size` recompute only when derived data isn't yet populated. Live-verified: an actor with a feat-bonus-inclusive stored value of 25 now correctly returns 25 (previously 20). See `tests/damage-threshold-authority.test.mjs`. **Not yet fixed**: `calculateDamageThreshold()`'s separate "Enhanced Massive Damage" house-rule branch (`fortTotal + heroicLevel + sizeMod` when that house rule is ON) still ignores `MetaResourceFeatResolver`'s feat bonuses — left untouched since it's an intentionally different formula (not a duplicate), and reconciling a house-rule-specific formula with feat-rule semantics needs a deliberate decision about intended interaction, not a silent fix. Flagged as a follow-up, not assumed resolved by this batch.
+**PARTIALLY FIXED**: `computeBaseThreshold()` (and therefore `getDamageThreshold()`, its live consumer via `damage-resolution-engine.js:277`) now prefers the canonical `system.derived.damageThreshold` when finite, falling back to the raw `fort+size` recompute only when derived data isn't yet populated. Live-verified: an actor with a feat-bonus-inclusive stored value of 25 now correctly returns 25 (previously 20). **Not yet fixed**: `calculateDamageThreshold()`'s separate "Enhanced Massive Damage" house-rule branch (`fortTotal + heroicLevel + sizeMod` when that house rule is ON) still ignores `MetaResourceFeatResolver`'s feat bonuses — left untouched since it's an intentionally different formula (not a duplicate), and reconciling a house-rule-specific formula with feat-rule semantics needs a deliberate decision about intended interaction, not a silent fix. Flagged as a follow-up, not assumed resolved by this batch.
 
-## Domain: HP / Max HP — CONFIRMED DEFECT (multiclass-relevant; directly affects Gar'ee)
+**Certification-correction addendum (post-review):** the first pass of this fix introduced a real double-count risk that a second review caught: `getDamageThreshold()` still unconditionally re-collected `ModifierEngine.getAllModifiers(actor)` and summed any `defense.damageThreshold`-targeted modifier on top of `base` — but `base` (once sourced from the canonical `system.derived.damageThreshold`) **already includes** that exact class of modifier, since `DerivedCalculator`'s `modifierMap['defense.damageThreshold']` is itself built from `ModifierEngine.aggregateAll()`, which internally calls the same `getAllModifiers()`. **Live fail-before proof:** a stored canonical value of 25 (fort 20 + a +5 static modifier, already included) became **30** once `computeBaseThreshold()` started returning the canonical value — the exact double-count the review flagged. **Fixed**: `getDamageThreshold()` now only re-collects and re-adds those static modifiers when `computeBaseThreshold()` had to fall back to the raw `fort+size` formula (i.e. when they were never included in `base` to begin with); when the canonical value is used, they're skipped entirely, since they're already inside it. Both cases (canonical-base/no-re-add and fallback-base/re-add) are live-verified. See `tests/damage-threshold-authority.test.mjs` (tests 4-5).
 
-- **Formula 1 (correct multiclass accumulation, DEAD CODE):** `HPCalculator.calculate()` (`scripts/actors/derived/hp-calculator.js:47-95`). Iterates every class-level entry, correctly stacking each class's own hit die per level (nonheroic hitDie forced to 4). Imported into `derived-calculator.js:25` but explicitly never called — comment at :254 states "Do NOT call HPCalculator.calculate() - that is now owned by ActorEngine."
-- **Formula 2 (sole writer of `system.hp.max`):** `ActorEngine.recomputeHP()` (`scripts/governance/actor-engine/actor-engine.js:3781-3894`). Uses **only the actor's first class item** (`ActorAbilityBridge.getClasses(actor)[0]`) and a single overall `system.level` for the entire HP calculation: `hpAtFirstLevel + (level-1)*hpPerLevel + conMod*level + bonusHP + featHPBonus`.
+## Domain: HP / Max HP — TWO CONFIRMED DEFECTS, DEEPER THAN "MULTICLASS" — AUTHORITY CONTRACT REQUIRED BEFORE ANY FIX
 
-**Classification: CONFIRMED divergence, SUSPECTED live-impact** (needs a direct multiclass HP fixture test to confirm the actual numeric error, but the algorithmic difference is proven by reading both implementations). **Gar'ee is Soldier 6 / Scoundrel 2 — exactly the multiclass shape this bug would affect** if `getClasses(actor)[0]` returns Soldier (probably added first) and Scoundrel's own hit die/progression is never consulted for its 2 levels. This needs to be checked directly against Gar'ee's actual persisted `system.hp.max` in Phase 2 (golden fixture).
+**Correction to the original Phase 2 writeup**: this section previously said Gar'ee had "a live-reproduced 20-point HP undercount." That was wrong. Verified directly against Gar'ee's actual actor export: `system.hp.max = 108`, and it is **not** currently sitting at 88 — his real HP was never destructively recomputed. The correct framing, and two genuinely distinct confirmed defects, are below.
 
-Guard comment confirms intended single-writer contract (`actor-engine.js:618`: "[HP SSOT Violation] system.hp.max may only be written by ActorEngine.recomputeHP()") — the contract is fine, the **formula itself** is what's suspect for multiclass actors.
+### Open question resolved: `ActorAbilityBridge.getClasses(actor)[0]` is Soldier for Gar'ee
+
+Traced the actual code (not assumed): `ActorItemIndex.build()` (`scripts/adapters/ActorItemIndex.js:19-99`) populates `index.classes`, a `Map`, first from `system.progression.classLevels` (in array order — Gar'ee's is `[Soldier, Scoundrel]`), then from `actor.items` of type `class` via `addClass(...)` → `index.classes.set(key, ...)` (:90-96). A `Map.set()` on an **already-present key** updates its value but does **not** change its insertion-order position — so regardless of item order, the Map's iteration order stays `[Soldier, Scoundrel]`. `ActorAbilityBridge.getClasses()` (`scripts/adapters/ActorAbilityBridge.js:87-112`) iterates that Map directly with `for (const [classId, classLevel] of index.classes)`. **Confirmed: `getClasses(Gar'ee)[0]` = Soldier.** This is no longer an open question.
+
+### Defect A — CONFIRMED, live-executed: `ActorEngine.recomputeHP()`'s stateless-recompute model is incompatible with the real HP authority
+
+The real, currently-correct HP authority is **`scripts/apps/progression-framework/shell/progression-finalizer.js`**, not `ActorEngine.recomputeHP()`:
+- Chargen (`:1458-1466`): `system.hp.max` = a one-time computed starting HP.
+- Level-up (`:1511-1534`): `nextHpMax = currentHpMax + hpGain`, where `hpGain` is **the player's actual chosen amount for that specific level** (`summary.hpGain`, sourced from whichever method — rolled/average/maximum — was used, recorded verbatim into `system.progression.hpGainHistory` and `lastHpGain`). This is **additive and history-preserving by construction**: each level's class and hit die are correctly used at the moment of that level's gain (confirmed against Gar'ee's own `classLevelHistory`/`hpGainHistory`: level 7 and 8 both show Soldier, hitDie 10, CON mod 2, method "maximum", amount 12, `previousMax: 96 → newMax: 108` — exactly matching `96 + 12 = 108`).
+
+`ActorEngine.recomputeHP()` (`actor-engine.js:3781-3894`) is a **fundamentally different, stateless model**: it discards all of that history and recomputes `hpAtFirstLevel + (level-1)*hpPerLevel + conMod*level + bonusHP + featHPBonus` from scratch, using only the *current* first class item's hit die/progression fields and a flat per-level average (`floor(hitDie/2)+1`) for every level. This is wrong for **any** character with real per-level history, not only multiclass ones — a single-class character who rolled or chose maximum HP at any level would also have that choice silently discarded and replaced with the generic average the instant this function successfully writes.
+
+For Gar'ee specifically (Soldier 6/Scoundrel 2, CON +2, level 8, first class = Soldier per above): `recomputeHP()`'s formula computes `30 + 7*6 + 2*8 = 88`, live-verified against the **real, unmodified** `ActorEngine.recomputeHP()` (imported directly, bypassing this repo's own test-only fake — see Defect B below for how). This would silently overwrite Gar'ee's correct, history-derived 108 with 88 **if it ever successfully ran** — which, per Defect B, it currently cannot.
+
+**Classification: CONFIRMED — a destructive-recomputation defect**, not merely a multiclass-formula gap. Corrected framing: not "Gar'ee currently has 88 HP," but "the live formula would produce 88 from Gar'ee's current data, discarding his legitimate 108."
+
+### Defect B — CONFIRMED, live-executed: `recomputeHP()` throws `ReferenceError` on every value-changing call
+
+Found on direct code reading, then reproduced live against the **real, unmodified** `actor-engine.js` (imported via its literal filesystem path rather than the absolute `/systems/foundryvtt-swse/...` specifier this repo's test harness intercepts and redirects to a fake — see `tests/helpers/foundry-shim/path-loader.mjs`'s `OVERRIDES` map, keyed on that exact specifier string only; a relative/direct-path import bypasses it and loads the genuine file):
+
+```js
+// actor-engine.js:3820-3829
+let conMod = 0;
+if (!isDroid) {
+  const conSrc = actor.system.attributes?.con ?? actor.system.abilities?.con ?? {};
+  const conBase = Number(conSrc.base ?? 10);        // const, block-scoped
+  const conRacial = Number(conSrc.racial ?? 0);      // const, block-scoped
+  const conEnhancement = Number(conSrc.enhancement ?? 0); // const, block-scoped
+  const conTemp = Number(conSrc.temp ?? 0);          // const, block-scoped
+  const conTotal = conBase + conRacial + conEnhancement + conTemp;
+  conMod = Math.floor((conTotal - 10) / 2);
+}
+// ... (newHPMax computed, guardrail check) ...
+// actor-engine.js:3865-3877 — only reached when newHPMax !== currentMax:
+SWSELogger.debug(`ActorEngine.recomputeHP: ${actor.name}`, {
+  ...
+  conTotal: conBase + conRacial + conEnhancement + conTemp,  // <-- out of scope here
+  ...
+});
+```
+
+`conBase`/`conRacial`/`conEnhancement`/`conTemp` are declared with `const` **inside** the `if (!isDroid) { ... }` block and go out of scope when it closes. The debug-log object at line 3870 — reached only on the branch where `newHPMax !== currentMax`, i.e. **every real HP change** — references them anyway. The early-return "no change" branch (`:3850-3862`) only logs `conMod`, so it doesn't crash; only the value-changing branch does.
+
+**Live-executed, real production code, not a reimplementation** (`ClassesDB` — normally built from a Foundry compendium pack unavailable under this harness — was populated directly for the test, matching the exact shape `ActorAbilityBridge.getClasses()` expects, so the *real* `recomputeHP()` ran unmodified end-to-end):
+```
+THREW: ReferenceError - conBase is not defined
+    at Object.recomputeHP (actor-engine.js:3870:19)
+```
+A parallel run with `currentMax` set equal to the computed `newHPMax` (forcing the early-return branch) returned normally with no crash, confirming the scope bug is isolated to the value-changing path.
+
+`recomputeHP()`'s own `catch` block (`:3895-3902`) re-throws (`throw err;`) rather than swallowing, but its two hook call sites (`scripts/governance/actor-engine/hp-recompute-hooks.js:267-271, 311-315`) both wrap the call in their own `try/catch` that only logs and continues. **Net effect: every hook-triggered HP recompute that would actually change a value (level change, CON change, HP-bonus change, a class/HP-affecting item added/updated/deleted) currently throws and is silently swallowed, for every actor in the system, not just multiclass ones.** This is very likely *why* Gar'ee's correct 108 has survived: `progression-finalizer.js` writes it directly (bypassing `recomputeHP()` entirely), and any later hook-triggered recompute attempt crashes before it can overwrite that value with Defect A's wrong formula.
+
+**Classification: CONFIRMED, most severe defect found in this audit to date** — it doesn't just make one formula wrong, it makes the entire HP-recompute pipeline non-functional for its stated purpose, silently, for the whole system.
+
+### Why this is not "just multiclass hit dice" — an authority contract is required before any fix
+
+Per explicit project direction: **do not fix HP by looping through current class levels.** The real authority (`progression-finalizer.js`) is fundamentally **additive/incremental with locked-in historical per-level choices** (rolled, average, or maximum HP, decided once at the moment of that level-up and never revisited). `ActorEngine.recomputeHP()`'s model is **stateless/recompute-from-scratch with a generic per-level average**. These two models cannot be reconciled by "use the right hit die" alone — they disagree in kind, not just in formula. Fixing `recomputeHP()` to iterate real per-class hit dice (matching dead-code `HPCalculator.calculate()`'s already-correct multiclass accumulation) would still discard any level where the player rolled or chose maximum rather than average, silently replacing a real (possibly higher or lower) historical value with a generic one.
+
+A closer read of `MetaResourceFeatResolver.getHitPointMaxBonus()` (`meta-resource-feat-resolver.js:155-170`) shows `featHPBonus` supports both a flat `MAX_BONUS` (e.g. Toughness) and a level-scaling `MAX_BONUS_PER_LEVEL` — genuinely recomputable bonus terms, independent of the locked-in per-level base. This suggests the real fix is architectural, not a formula swap: **separate the locked historical base HP (owned exclusively by `progression-finalizer.js`, append-only, never recomputed) from recomputable bonus deltas (CON-mod-driven `bonusHP`, feat-driven `featHPBonus`) that `recomputeHP()` could legitimately reapply on top of that base without ever reconstructing the base itself.** Today `system.hp.max` is a single merged field with no persisted separation between "locked base" and "last-applied bonus," so implementing this cleanly requires either persisting that separation explicitly or deriving it some other way — an actual design decision, not a one-line fix.
+
+**Per explicit instruction: no HP code change in this pass.** Required before implementation (not yet done):
+1. Decide the persisted-data shape that lets `recomputeHP()` (or its replacement) apply/reapply bonus deltas without ever reconstructing the per-level-accumulated base.
+2. Audit `progression.hpGainHistory`/`classLevelHistory` completeness for **legacy actors** who leveled up before these history fields existed (an actor with `system.hp.max` set but empty/partial `hpGainHistory` needs a defined fallback that doesn't equal "recompute from scratch and silently disagree").
+3. Decide what a genuine CON-score change (as opposed to a level-up) should legitimately do to already-locked-in HP — SWSE RAW does not retroactively rewrite past levels' HP for a CON change; if that's also this codebase's intent, `recomputeHP()`'s `conMod * level` term (which DOES scale retroactively with current level) is itself suspect independent of the multiclass issue.
+4. Fix Defect B (the scope bug) either as part of the larger redesign or as an immediate, narrow, low-risk fix on its own — it's a pure JS scoping bug with no formula ambiguity, unlike Defect A.
+
+Guard comment confirms the intended single-writer *contract* is sound (`actor-engine.js:618`: "[HP SSOT Violation] system.hp.max may only be written by ActorEngine.recomputeHP()") — the problem is that `recomputeHP()` itself doesn't yet implement a model compatible with the real, additive authority `progression-finalizer.js` already correctly uses.
 
 ## Domain: Second Wind — CLEAN, no action needed
 
@@ -188,19 +271,22 @@ Single canonical writer: `base-actor.js:359` (`system.derived.damage.conditionPe
 - **A (canonical):** `resolveDamageBonus()` (`combat-roll-math.js:567-606`, stock-droid path at 503-565): ½ level, ability, weapon enhancement, rage, Rapid Alchemy, effect-intent, combat-option damage, scoped feat damage.
 - **CONFIRMED — custom weapon damage formulas are respected verbatim, never "corrected."** `scripts/combat/rolls/damage.js:186`: `dmgResult.flags?.stockDamageFormula ?? (weapon.system?.damage ?? '1d6')` — the Item's stored dice string (e.g. `4d12kh3`) is used as-is; the resolver's numeric bonus and talent/force-item dice are appended as separate formula parts, never substituted into or parsed out of the base string. `weapon-data-resolver.js:191` only supplies a fallback (`'1d8'`) when the field is **empty**, never overwrites an existing value. **This directly confirms Gar'ee's Heavy Blaster Rifle `4d12kh3` will survive unmodified** — no repair-toward-default mechanism exists anywhere in this path.
 
-## Domain: Grapple — CONFIRMED DEFECT (roll-time formula diverges from displayed formula) — **FIXED (primary live bug)**
+## Domain: Grapple — CONFIRMED DEFECT (roll-time formula diverges from displayed formula) — **FIXED**
 
 Three to four independent implementations, not one:
 - **A (canonical/derived):** `derived-calculator.js:348-357` — `bab.total + max(strMod,dexMod) + sizeMod + speciesGrapple` → `system.derived.grappleBonus`. Matches RAW.
 - **D (guarded duplicate, currently consistent, not yet touched):** `PanelContextBuilder.js:1428-1438` — identical formula, own copy of the size table, used only as a fallback when `derived.grappleBonus` is unset. Numerically consistent today but a second hand-maintained copy that can silently fork from the canonical table on a future edit.
-- **D — CONFIRMED live bug — FIXED:** `scripts/houserules/houserule-grapple.js:58-60` (`GrappleMechanics.performGrappleCheck()`), the code that actually builds the `1d20 + grappleBonus` roll for the grapple house-rule action: `bab + strMod` **only** — no size modifier, no species bonus, no STR/DEX "better of" comparison (hardcodes STR), and doesn't read `system.derived.grappleBonus` at all. **Classification: CONFIRMED.** Any Small/Large creature, DEX-based grappler, or species with a grapple racial bonus gets a materially wrong number on the actual roll while the sheet displays the correct one. Already tracked as a known gap in `docs/audits/combat-phase-1a-ssot-decision-matrix.md:30` ("Grapple... Keep and later fix RAW seams") — not a fresh regression, but unresolved until now. **Fixed** to read `system.derived.grappleBonus`, falling back to the old formula only when derived data is unavailable. Live-verified end-to-end through the real async `performGrappleCheck()` pipeline (`RollEngine.safeRoll` mocked to capture the formula string). See `tests/houserule-grapple-authority.test.mjs`.
+- **D — CONFIRMED live bug — FIXED:** `scripts/houserules/houserule-grapple.js:58-60` (`GrappleMechanics.performGrappleCheck()`), the code that actually builds the `1d20 + grappleBonus` roll for the grapple house-rule action: `bab + strMod` **only** — no size modifier, no species bonus, no STR/DEX "better of" comparison (hardcodes STR), and doesn't read `system.derived.grappleBonus` at all. **Classification: CONFIRMED.** Any Small/Large creature, DEX-based grappler, or species with a grapple racial bonus gets a materially wrong number on the actual roll while the sheet displays the correct one. Already tracked as a known gap in `docs/audits/combat-phase-1a-ssot-decision-matrix.md:30` ("Grapple... Keep and later fix RAW seams") — not a fresh regression, but unresolved until now. **Fixed** to read `system.derived.grappleBonus`. Live-verified end-to-end through the real async `performGrappleCheck()` pipeline (`RollEngine.safeRoll` mocked to capture the formula string). See `tests/houserule-grapple-authority.test.mjs`.
 - A fourth, chargen-preview-only formula exists (`follower-deriver.js:320`, STR mod alone) — lower stakes, scoped to the follower-creation wizard, not yet touched.
+- Related: `getGrappleDC()`'s target-BAB read (`houserule-grapple.js:29`, was `target.system?.attributes?.bab?.value`) is a field this schema never populates (grep-confirmed zero writers anywhere) — always silently read 0, so the DC-scaling-with-target-BAB house rule (`grappleDCBonus`) never actually applied. **Fixed** to `SchemaAdapters.getBAB(target)`.
 
-**Gar'ee's certified Grapple = +12 (BAB 7 + DEX +5 + size 0) requires the DEX-vs-STR "better of" comparison** (his DEX +5 > STR +2) — `houserule-grapple.js`'s STR-only formula previously computed `7 + 2 = 9` instead; now correctly reads the canonical `+12` when available.
+**Gar'ee's certified Grapple = +12 (BAB 7 + DEX +5 + size 0)** requires the DEX-vs-STR "better of" comparison (his DEX +5 > STR +2) — `houserule-grapple.js`'s STR-only formula previously computed `7 + 2 = 9` instead; now correctly reads the canonical `+12` when available.
+
+**Certification-correction addendum (post-review):** the first pass of this fix kept the exact known-wrong BAB+STR-only formula as its own fallback for when `system.derived.grappleBonus` is unavailable — a second review correctly flagged this as "use the right answer normally, but fall back to a known-wrong one," precisely what the freeze charter forbids ("No independent known-wrong fallback... Do not maintain a second formula"). **Fixed**: extracted the canonical formula into `combat-stat-rules.js#resolveGrappleBonus(actor)` (BAB via `SchemaAdapters.getBAB()`, best-of-STR/DEX via `SchemaAdapters.getAbilityMod()`, a new `GRAPPLE_SIZE_MODIFIERS` table matching `derived-calculator.js`'s exact values, and the same species-bonus path) — a standalone, independently-callable resolver, not a competing reimplementation. `houserule-grapple.js`'s fallback now calls this same function, so there is exactly one grapple formula in the codebase, used both ways. Live-verified: `resolveGrappleBonus()` called directly against Gar'ee's build returns 12; the fallback path (no `derived.grappleBonus`) now correctly credits DEX over STR and includes a size modifier the old fallback omitted entirely (a Large creature: BAB 7 + STR +2 + size +4 = 13, verified live). See `tests/houserule-grapple-authority.test.mjs` (tests 2-5).
 
 ## Domain: Weapon Melee/Ranged Schema — CONFIRMED DEFECT (the "Bluebolt" bug)
 
-**Verdict: the reported mechanism is real and reproducible from the code as written**, though not currently present in any shipped compendium/pack data (364 standalone weapon items + ~1989 actor-embedded weapons across all packs checked — zero existing mismatches found). This is a live authoring hazard in the item sheet's write path, reachable through completely normal sheet use (not just direct DB editing).
+**Verdict: the reported mechanism is real, and directly confirmed on a real, currently-played actor.** While not present in any shipped compendium/pack data (364 standalone weapon items + ~1989 actor-embedded weapons across all packs checked — zero mismatches there), Gar'ee's own actor export contains the exact contradiction: his "Bluebolt Blaster Pistol" item has `weaponCategory:"ranged"`, `category:"pistol"`, `proficiency:"pistols"`, `attackAttribute:"dex"` (all correctly ranged) alongside `meleeOrRanged:"melee"` and `ranged:false` (both wrong). This is not a theoretical authoring hazard — it is live, manifested data on a real character, reachable through completely normal sheet use (not just direct DB editing).
 
 **Root cause:** `template.json` defines 5 independent, schema-unlinked fields: `weaponCategory`, `proficiency`, `attackAttribute`, `meleeOrRanged`, `ranged` (legacy boolean). The item sheet's branch-change handler (`scripts/items/swse-item-sheet.js#onMeleeOrRangedChange`, :2351-2365) only (a) sets a client preview flag, (b) repopulates the `weaponCategory` dropdown with `preserveValue:true` — meaning a category string valid in both melee and ranged lists (e.g. `simple`) silently survives a branch flip without actually changing, and (c) re-hydrates range-band fields. It **never touches `system.ranged` or `system.proficiency`, and never re-derives `system.attackAttribute`.** The one branch-aware save-time reconciliation block (`#onSubmitForm`, :2661-2679) only syncs range-band fields, conspicuously omitting `ranged`/`proficiency` — confirming the omission is structural, not incidental. `normalizeItemSystem` (`item-defaults.js`) never reads or writes either field (grep-confirmed zero occurrences).
 
@@ -302,27 +388,19 @@ ThresholdEngine.computeBaseThreshold(actor); // => 20
 ```
 `ThresholdEngine`'s combat-time base (20) ignores the Improved Damage Threshold feat bonus that `DerivedCalculator` already folded into the stored/displayed value (25). **Divergence: −5 for any actor with Improved Damage Threshold** (the combat engine under-counts DT relative to what the sheet shows, meaning a hit that should NOT push the character down the condition track could incorrectly trigger a shift in actual play).
 
-### Hand-computed divergence — HP multiclass formula (CONFIRMED by code reading, magnitude computed from the quoted formulas; not independently executed because the live writer, `ActorEngine.recomputeHP`, is faked/mocked under this repo's own test harness — `tests/helpers/foundry-shim/path-loader.mjs` explicitly redirects `actor-engine.js` to a fake for import-safety reasons unrelated to this audit)
+### HP: corrected against Gar'ee's real actor export, and live-executed against the real `ActorEngine.recomputeHP()`
 
-Using Gar'ee's certified inputs (Soldier 6 / Scoundrel 2, CON +2, character level 8) against each formula exactly as quoted from source in the HP domain section above:
+**This section originally described a "20-point HP undercount" against Gar'ee's live actor. That was wrong and has been corrected** (see the HP domain section above for the full writeup). Gar'ee's actual, current `system.hp.max` is **108** — obtained directly from his real actor export, not hand-derived. He was never destructively recomputed. The finding is that `ActorEngine.recomputeHP()`'s formula **would** produce 88 from his current data, and — separately — currently cannot even complete a value-changing call at all due to a live-confirmed `ReferenceError` (Defect B in the HP domain section). Both were verified by importing and executing the real, unmodified `actor-engine.js` directly (bypassing this repo's test-only fake, which the standard harness entry point redirects to — see `tests/helpers/foundry-shim/path-loader.mjs`), with `ClassesDB` populated directly (it normally builds from a Foundry compendium pack unavailable under this harness) so `ActorAbilityBridge.getClasses()` could resolve a real class item.
 
-**Correct RAW multiclass HP** (`HPCalculator`'s algorithm — dead code, but its formula is RAW-correct and independently confirmed by reading `hp-calculator.js`; Soldier hit die = d10, Scoundrel hit die = d6, confirmed live from `PROGRESSION_RULES.classes.Soldier.hitDie === 10` / `.Scoundrel.hitDie === 6`):
-```
-Level 1 (Soldier, first level):     10*3 + 2      = 32
-Levels 2-6 (Soldier, 5 levels):     5 * (10 + 2)  = 60
-Levels 7-8 (Scoundrel, 2 levels):   2 * (6 + 2)   = 16
-                                                     ---
-Total                                              = 108
-```
+**Correct RAW multiclass HP**, confirmed against Gar'ee's own `progression.hpGainHistory`/`classLevelHistory` (both recorded verbatim in his actor export — his HP is genuinely additive/historical, not something to hand-derive): starting HP + accumulated per-level gains through his actual level-up choices, landing on 108 exactly (his own history shows `previousMax: 96 → newMax: 108` at level 8, `+12` via "maximum" method, Soldier hit die 10 + CON mod 2). `HPCalculator.calculate()`'s dead-code algorithm (`hp-calculator.js`) independently arrives at the same 108 via `10*3+2` (level 1) `+ 5*(10+2)` (Soldier levels 2-6) `+ 2*(6+2)` (Scoundrel levels 7-8) — consistent with, not the source of, the real authority.
 
-**`ActorEngine.recomputeHP`'s actual live formula** (quoted from `actor-engine.js:3813-3846` by the audit agent — first-class-item-only): `hpAtFirstLevel + (level-1)*hpPerLevel + conMod*level`, using only Soldier's d10 (assuming `getClasses(actor)[0]` returns Soldier, the first-added class — **needs direct confirmation against Gar'ee's actual item order**, flagged as an open question below):
+**`ActorEngine.recomputeHP()`'s live formula**, executed for real (not hand-computed) with `ActorAbilityBridge.getClasses(Gar'ee)[0]` confirmed = Soldier (see the HP domain section's "Open question resolved"):
 ```
 hpAtFirstLevel = 10*3 = 30
 hpPerLevel     = floor(10/2)+1 = 6
 newHPMax       = 30 + (8-1)*6 + 2*8 = 30 + 42 + 16 = 88
 ```
-
-**Divergence: 108 (correct) vs. 88 (current live formula) = 20 HP undercounted for Gar'ee specifically**, if `getClasses(actor)[0]` returns Soldier. This is the single highest-magnitude confirmed-by-formula defect found in this audit — a 20-point HP discrepancy is not a rounding/display issue, it changes life-or-death outcomes in actual play. **This needs live-Foundry verification against Gar'ee's real persisted `system.hp.max`** before implementation, per the freeze charter's own standard (do not assume; prove via the actual actor) — flagged as the first item in Phase 3 below rather than assumed correct from this hand computation alone.
+This is what the live function actually returns when the `ReferenceError` doesn't fire (verified in isolation); with it firing (the actual live behavior on any value-changing call), it throws before returning anything, and the calling hooks swallow the error — so in practice `system.hp.max` is never touched by this path at all today, for any actor.
 
 ### Certified/expected values not yet reproducible under this harness
 
@@ -331,7 +409,7 @@ The following golden values from the freeze charter require either (a) real clas
 | Value | Charter's certified expectation | Status |
 |---|---|---|
 | BAB | +7 | Not reproducible under this harness (needs real class-data pack load); formula read confirms Soldier(full)+Scoundrel(3/4, floor(2*0.75)=1)=7 is consistent with `bab-calculator.js`'s documented algorithm |
-| Grapple | +12 (BAB 7 + DEX +5 + size 0) | `derived-calculator.js`'s formula (BAB+max(STR,DEX)+size+species) would produce this correctly if BAB is correct; **`houserule-grapple.js`'s live roll formula would instead produce BAB+STR-only = 7+2 = 9 — a confirmed, directly-computable 3-point undercount for Gar'ee specifically**, since his build is DEX-based (DEX +5 > STR +2) |
+| Grapple | +12 (BAB 7 + DEX +5 + size 0) | `derived-calculator.js`'s formula (BAB+max(STR,DEX)+size+species) would produce this correctly if BAB is correct; **`houserule-grapple.js`'s live roll formula would instead produce BAB+STR-only = 7+2 = 9 — FIXED, and its fallback replaced (see the Grapple domain section)**, live-verified via `resolveGrappleBonus()` (`combat-stat-rules.js`) directly: BAB 7 + DEX +5 + medium size (0) = 12 |
 | Stealth (shield inactive) | +24 | Formula-consistent per `DerivedCalculator`'s skill ledger (dex+halfLevel+trained+focus+misc = 5+4+5+5+5=24); **not independently executed** (needs real derived-skill pipeline) |
 | Stealth (shield active) | +22 | **Not currently producible by any code path** — confirmed above, no Energy Shield ACP implementation exists anywhere |
 | Initiative (shield inactive) | +19 | Formula-consistent (5+4+5+5=19); not independently executed |
@@ -339,8 +417,8 @@ The following golden values from the freeze charter require either (a) real clas
 | Knowledge (Tactics) | +10 | Formula-consistent (1+4+5=10), unaffected by ACP per the charter — not independently executed |
 | Use Computer | +10 | Formula-consistent (1+4+5=10) — not independently executed |
 
-### Open questions before implementation (Phase 2 follow-up, not yet answered)
+### Open questions from the original Phase 2 pass — now resolved
 
-1. Does `ActorAbilityBridge.getClasses(actor)[0]` return Soldier or Scoundrel for Gar'ee specifically? This determines whether the HP divergence computed above (108 vs 88) is the exact real-world number, or whether the actual error is smaller/larger/absent depending on item-creation order. **Needs Gar'ee's real actor export or a live Foundry session to answer — flagged as a stop-condition-adjacent question, not assumed.**
-2. What is Gar'ee's actual current persisted `system.hp.max`? Comparing that stored value against the 108/88 hand computation above would confirm (or rule out) the HP defect's real-world magnitude before any fix is written.
-3. Bluebolt Blaster Pistol's actual persisted item data (the exact contradictory field values) should be captured directly from Gar'ee's actor rather than assumed, to build the Phase 8 golden test fixture precisely.
+1. ~~Does `ActorAbilityBridge.getClasses(actor)[0]` return Soldier or Scoundrel for Gar'ee specifically?~~ **Resolved: Soldier** — traced directly in code (`ActorItemIndex`/`ActorAbilityBridge`, see the HP domain section) and confirmed against Gar'ee's real actor export.
+2. ~~What is Gar'ee's actual current persisted `system.hp.max`?~~ **Resolved: 108** — obtained directly from his real actor export.
+3. ~~Bluebolt Blaster Pistol's actual persisted item data~~ **Resolved: captured directly from Gar'ee's actor export** — see the Weapon Melee/Ranged Schema domain section above for the exact field values, ready to build the Phase 8 golden test fixture precisely.
