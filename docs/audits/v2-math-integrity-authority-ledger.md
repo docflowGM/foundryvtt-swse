@@ -53,7 +53,7 @@ Fixed and certified:
 2. Flat-footed Reflex (`defense-calculator.js`) now strips dodge-type bonuses, not just the ability mod.
 3. Damage Threshold (`threshold-engine.js#computeBaseThreshold()`) now agrees with the canonical, feat-rule-aware stored value, and `getDamageThreshold()` no longer double-counts a static ModifierEngine DT modifier that's already folded into that canonical value.
 
-**Not yet fixed, and explicitly blocked pending a documented authority-contract decision:** HP. Two confirmed defects (a destructive stateless-recompute model incompatible with the real, additive, history-based authority, and a live-reproduced `ReferenceError` that currently makes every value-changing recompute silently fail) — see the HP domain section for the full writeup and the open design questions that must be answered before any code changes there.
+**HP is reclassified, not fixed: Gar'ee's `system.hp.max = 108` is CERTIFIED CORRECT** — it is not a defect and must never be reconstructed from current class/level data. The domain's remaining work is a preservation audit ("prove nothing can corrupt 108"), not a formula fix. Two things stand ready to corrupt it if ever triggered: `ActorEngine.recomputeHP()`'s stateless-recompute model (would compute 88 from Gar'ee's real state) and a live-confirmed `ReferenceError` that currently blocks it from writing at all — fixing the crash alone, without also fixing the reconstruction model, would be actively dangerous. See the HP domain section's "Required preservation proofs" and `tests/hp-preservation-authority.test.mjs`.
 
 Remaining confirmed defects (Energy Shield ACP, weapon melee/ranged schema, follower-NPC Fortitude, custom-skill armor/condition gap) are queued for Batch 2.
 
@@ -135,9 +135,24 @@ Storage: `system.derived.damageThreshold` (flat number — NOT `derived.damage.t
 
 **Certification-correction addendum (post-review):** the first pass of this fix introduced a real double-count risk that a second review caught: `getDamageThreshold()` still unconditionally re-collected `ModifierEngine.getAllModifiers(actor)` and summed any `defense.damageThreshold`-targeted modifier on top of `base` — but `base` (once sourced from the canonical `system.derived.damageThreshold`) **already includes** that exact class of modifier, since `DerivedCalculator`'s `modifierMap['defense.damageThreshold']` is itself built from `ModifierEngine.aggregateAll()`, which internally calls the same `getAllModifiers()`. **Live fail-before proof:** a stored canonical value of 25 (fort 20 + a +5 static modifier, already included) became **30** once `computeBaseThreshold()` started returning the canonical value — the exact double-count the review flagged. **Fixed**: `getDamageThreshold()` now only re-collects and re-adds those static modifiers when `computeBaseThreshold()` had to fall back to the raw `fort+size` formula (i.e. when they were never included in `base` to begin with); when the canonical value is used, they're skipped entirely, since they're already inside it. Both cases (canonical-base/no-re-add and fallback-base/re-add) are live-verified. See `tests/damage-threshold-authority.test.mjs` (tests 4-5).
 
-## Domain: HP / Max HP — TWO CONFIRMED DEFECTS, DEEPER THAN "MULTICLASS" — AUTHORITY CONTRACT REQUIRED BEFORE ANY FIX
+## Domain: HP / Max HP — CURRENT VALUE: CERTIFIED CORRECT. THIS IS A PRESERVATION AUDIT, NOT A FORMULA AUDIT.
 
-**Correction to the original Phase 2 writeup**: this section previously said Gar'ee had "a live-reproduced 20-point HP undercount." That was wrong. Verified directly against Gar'ee's actual actor export: `system.hp.max = 108`, and it is **not** currently sitting at 88 — his real HP was never destructively recomputed. The correct framing, and two genuinely distinct confirmed defects, are below.
+**Second correction to the original Phase 2 writeup** (the first correction, below, already fixed the "20-point undercount" framing — this correction goes further and changes what HP is being audited *for*): Gar'ee's `system.hp.max = 108` is not merely "not currently wrong" — it is **certified correct**, and it must not be treated as something to reconstruct, normalize, or validate against a from-scratch formula at all. 108 is the accumulated result of his real, historical, per-level progression choices (see Defect A below for the exact accounting: starting HP + seven individually-recorded level gains, each using that level's actual class, hit die, and chosen method — rolled/average/maximum). Because those historical choices are real player decisions, **no current-class-and-level summary can safely reconstruct them** — averaging away a chosen "maximum" roll, or assuming a single class's hit die for levels actually gained in a different class, both destroy real information that the persisted history already correctly captured.
+
+**The governing invariant for this domain is therefore:**
+```
+historical progression HP (locked, additive, never recomputed)
+  + current legitimate adjustments (CON-mod rescaling, HP-affecting feats)
+  = system.hp.max
+```
+**not:**
+```
+current classes + current level + generic hit-die average → reconstruct entire HP history
+```
+
+Consequently, this is no longer "fix the HP formula" — it is **"prove nothing can corrupt the certified 108."** The two defects below are reframed accordingly: Defect A is not "HP is sometimes wrong," it is "a specific function's reconstruction model, if it ever runs, computes a wrong value that would corrupt a correct one." Defect B is not "a crash bug to fix in isolation," it is the only thing currently standing between Defect A's reconstruction model and Gar'ee's real actor — removing it without also fixing Defect A would make the system actively worse. See "Required preservation proofs" at the end of this section for what must be demonstrated before any HP code changes, and `tests/hp-preservation-authority.test.mjs` for what has already been proven live.
+
+*(Original first-correction text, kept for the record — the "20-point undercount" framing this superseded):* this section previously said Gar'ee had "a live-reproduced 20-point HP undercount." That was wrong. Verified directly against Gar'ee's actual actor export: `system.hp.max = 108`, and it is **not** currently sitting at 88 — his real HP was never destructively recomputed.
 
 ### Open question resolved: `ActorAbilityBridge.getClasses(actor)[0]` is Soldier for Gar'ee
 
@@ -153,7 +168,7 @@ The real, currently-correct HP authority is **`scripts/apps/progression-framewor
 
 For Gar'ee specifically (Soldier 6/Scoundrel 2, CON +2, level 8, first class = Soldier per above): `recomputeHP()`'s formula computes `30 + 7*6 + 2*8 = 88`, live-verified against the **real, unmodified** `ActorEngine.recomputeHP()` (imported directly, bypassing this repo's own test-only fake — see Defect B below for how). This would silently overwrite Gar'ee's correct, history-derived 108 with 88 **if it ever successfully ran** — which, per Defect B, it currently cannot.
 
-**Classification: CONFIRMED — a destructive-recomputation defect**, not merely a multiclass-formula gap. Corrected framing: not "Gar'ee currently has 88 HP," but "the live formula would produce 88 from Gar'ee's current data, discarding his legitimate 108."
+**Classification: CONFIRMED — `recomputeHP()`'s reconstruction model is the defect; Gar'ee's 108 is not.** Not merely a multiclass-formula gap, and not "Gar'ee currently has 88 HP" — his persisted, certified-correct value remains 108. The finding is precisely and only that this function would produce 88 from his current class/level/CON state if it ever successfully wrote, discarding his legitimate history. **If any function wants to turn Gar'ee into 88, that function is the defect — 108 is not.**
 
 ### Defect B — CONFIRMED, live-executed: `recomputeHP()` throws `ReferenceError` on every value-changing call
 
@@ -199,13 +214,26 @@ Per explicit project direction: **do not fix HP by looping through current class
 
 A closer read of `MetaResourceFeatResolver.getHitPointMaxBonus()` (`meta-resource-feat-resolver.js:155-170`) shows `featHPBonus` supports both a flat `MAX_BONUS` (e.g. Toughness) and a level-scaling `MAX_BONUS_PER_LEVEL` — genuinely recomputable bonus terms, independent of the locked-in per-level base. This suggests the real fix is architectural, not a formula swap: **separate the locked historical base HP (owned exclusively by `progression-finalizer.js`, append-only, never recomputed) from recomputable bonus deltas (CON-mod-driven `bonusHP`, feat-driven `featHPBonus`) that `recomputeHP()` could legitimately reapply on top of that base without ever reconstructing the base itself.** Today `system.hp.max` is a single merged field with no persisted separation between "locked base" and "last-applied bonus," so implementing this cleanly requires either persisting that separation explicitly or deriving it some other way — an actual design decision, not a one-line fix.
 
+Note on item 3 above: SWSE RAW actually *does* say a Constitution modifier change retroactively rescales HP "as if you had that Constitution modifier since 1st level" — so `conMod * level` is not wrong in *kind*, only in combination with a base that (per `hpGainHistory`) already has the *old* CON mod baked into each historical `amount`. Correctly supporting RAW's retroactive-CON rule requires knowing the CON-*free* hit-die-only component of the historical base separately from the applied CON contribution — which isn't persisted separately today. This sharpens, rather than resolves, point 1 above: the required persisted-data shape must separate at least three things — locked hit-die-only history, the CON mod that history should currently be rescaled against, and other recomputable bonus deltas (feats, `hp.bonus`).
+
 **Per explicit instruction: no HP code change in this pass.** Required before implementation (not yet done):
-1. Decide the persisted-data shape that lets `recomputeHP()` (or its replacement) apply/reapply bonus deltas without ever reconstructing the per-level-accumulated base.
+1. Decide the persisted-data shape that lets `recomputeHP()` (or its replacement) apply/reapply bonus deltas — including RAW's retroactive CON rescaling — without ever reconstructing the per-level-accumulated base.
 2. Audit `progression.hpGainHistory`/`classLevelHistory` completeness for **legacy actors** who leveled up before these history fields existed (an actor with `system.hp.max` set but empty/partial `hpGainHistory` needs a defined fallback that doesn't equal "recompute from scratch and silently disagree").
-3. Decide what a genuine CON-score change (as opposed to a level-up) should legitimately do to already-locked-in HP — SWSE RAW does not retroactively rewrite past levels' HP for a CON change; if that's also this codebase's intent, `recomputeHP()`'s `conMod * level` term (which DOES scale retroactively with current level) is itself suspect independent of the multiclass issue.
-4. Fix Defect B (the scope bug) either as part of the larger redesign or as an immediate, narrow, low-risk fix on its own — it's a pure JS scoping bug with no formula ambiguity, unlike Defect A.
+3. Confirm the CON-retroactivity nuance above against this codebase's actual intended house rules (it may already deliberately deviate from RAW here — needs a decision, not an assumption either way).
+4. Fix Defect B (the scope bug) — but **only together with, or after, Defect A**, never in isolation (see the warning at the end of `tests/hp-preservation-authority.test.mjs`): removing the crash alone would unmask Defect A's destructive overwrite for every actor with real per-level history, not just multiclass ones.
 
 Guard comment confirms the intended single-writer *contract* is sound (`actor-engine.js:618`: "[HP SSOT Violation] system.hp.max may only be written by ActorEngine.recomputeHP()") — the problem is that `recomputeHP()` itself doesn't yet implement a model compatible with the real, additive authority `progression-finalizer.js` already correctly uses.
+
+### Required preservation proofs (per explicit project direction — this replaces "fix the formula" as the domain's task)
+
+Since Gar'ee's 108 is certified correct, the HP domain's remaining work is to prove nothing can corrupt it, not to derive it. Required proofs, with current status:
+
+1. **Ordinary derived-data preparation does not change 108.** ✅ Live-proven: `computeCharacterDerived()` never writes `system.hp.max` at all (grep-confirmed zero occurrences in `derived-calculator.js`) — only mirrors the persisted value, read-only, into `system.derived.hp`. Proven idempotent across repeated prepare passes. See `tests/hp-preservation-authority.test.mjs` (test 1).
+2. **Unrelated actor/item mutations do not change 108.** Not yet proven — needs a live-Foundry or fuller-harness test exercising `hp-recompute-hooks.js`'s `needsRecompute`/`itemAffectsHpMax()` gating logic directly (confirm an unrelated field change or a non-HP-affecting item correctly skips calling `recomputeHP()` at all).
+3. **Save/reload does not change 108.** Not yet proven under this lightweight harness — needs live-Foundry verification (no persistence layer to exercise here).
+4. **A legitimate CON change adjusts max HP by the correct level-scaled delta without replacing historical level gains, and is reversible.** Not yet proven, and **cannot be proven yet** — no code currently implements this correctly (see the CON-retroactivity nuance above); this is a design/implementation gap, not a missing test.
+5. **HP feats/species modifiers adjust only the correct component without rebuilding progression HP.** Not yet proven — same status as #4, blocked on the same architectural decision.
+6. **`ActorEngine.recomputeHP()` is inspected only for whether it can accidentally destroy correctly-accumulated HP.** ✅ Done: it can (Defect A, live-verified: computes 88 from Gar'ee's real 108-producing state) and currently doesn't only because it crashes first (Defect B, live-verified). See `tests/hp-preservation-authority.test.mjs` (test 2) and its closing warning about the danger of fixing Defect B alone.
 
 ## Domain: Second Wind — CLEAN, no action needed
 
