@@ -18,7 +18,7 @@ import { GrappleLegalityEngine } from '/systems/foundryvtt-swse/scripts/engine/c
 import { CombatStatusResolver } from '/systems/foundryvtt-swse/scripts/combat/combat-status.js';
 import { DamageSystem } from '/systems/foundryvtt-swse/scripts/combat/damage-system.js';
 import { ActorEngine } from '/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js';
-import { getEffectiveHalfLevel } from '/systems/foundryvtt-swse/scripts/actors/derived/level-split.js';
+import { resolveGrappleBonus } from '/systems/foundryvtt-swse/scripts/engine/combat/combat-stat-rules.js';
 
 function swseNormalizeName(value) {
   return String(value ?? '').trim().toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
@@ -648,18 +648,21 @@ export class SWSEGrappling {
   // Helpers
   // ---------------------------------------------------------------------------
 
+  // Base is the canonical system.derived.grappleBonus (computeGrappleBonus(),
+  // via DerivedCalculator), or the shared resolveGrappleBonus(actor) resolver
+  // when derived data isn't available yet -- never a private reimplementation.
+  // Published SWSE Grapple = BAB + higher of STR/DEX + size modifier; there
+  // is no half-heroic-level term. This function previously added its own
+  // halfLevel term and its own BAB/ability/size/species computation (with a
+  // third, independently-wrong size table) on top of that -- see the Grapple
+  // domain section of docs/audits/v2-math-integrity-authority-ledger.md.
+  // Only genuinely contextual, non-static additions belong here: talent/feat
+  // grapple-rule bonuses and Grapple Resistance, both of which apply only in
+  // specific opposed-check contexts and are not part of the static bonus.
   static async _rollGrappleBonus(actor, context = {}) {
-    const bab = Number(SchemaAdapters.getBAB(actor) ?? 0) || 0;
-    const str = Number(SchemaAdapters.getAbilityMod(actor, 'str') ?? 0) || 0;
-    const dex = Number(SchemaAdapters.getAbilityMod(actor, 'dex') ?? 0) || 0;
-    const ability = context.useDex === true ? dex : Math.max(str, dex);
-    const sizeMod = this._sizeMod(actor.system?.size ?? actor.system?.traits?.size ?? actor.system?.droidSize);
-    const halfLevel = Number(getEffectiveHalfLevel(actor) ?? 0) || 0;
+    const staticGrapple = Number(actor?.system?.derived?.grappleBonus);
+    let bonus = Number.isFinite(staticGrapple) ? staticGrapple : resolveGrappleBonus(actor);
 
-    const speciesCombat = actor.system?.speciesCombatBonuses || actor.system?.speciesTraitBonuses?.combat || {};
-    const speciesGrapple = Number(speciesCombat.grapple ?? 0) || 0;
-
-    let bonus = bab + ability + halfLevel + sizeMod + speciesGrapple;
     bonus += swseTalentGrappleBonus(actor, context.mode);
 
     if (context.mode === 'resistGrapple') {
@@ -667,14 +670,6 @@ export class SWSEGrappling {
     }
 
     return bonus;
-  }
-
-  static _sizeMod(size) {
-    const table = {
-      fine: -16, diminutive: -12, tiny: -8, small: -4,
-      medium: 0, large: 4, huge: 8, gargantuan: 12, colossal: 16
-    };
-    return table[String(size ?? 'medium').toLowerCase()] ?? 0;
   }
 
   static _getUnarmedAttack(actor) {

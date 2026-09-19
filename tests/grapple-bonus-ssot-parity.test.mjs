@@ -29,11 +29,27 @@ import { installFoundryShimGlobals } from './helpers/foundry-shim/globals.mjs';
 // produced -- but the canonical derived value itself has never actually
 // worked until this fix.
 //
-// Required invariant, proven below across 5 input combinations (STR>DEX,
-// DEX>STR, Medium, Large, a species grapple bonus):
+// Round 3 (post-review) extends this to the two live consumers the second
+// review's "four consumers" test didn't reach: the character sheet's
+// displayed Grapple box (PanelContextBuilder.buildResourcesPanel(), which
+// previously reconstructed BAB + best-of-STR/DEX + its own size table +
+// species on its own, and could silently discard a legitimate canonical 0),
+// and the opposed-combat-check engine (SWSEGrappling._rollGrappleBonus(),
+// which previously added its own BAB/ability/size/species computation AND
+// an extra half-heroic-level term the published rule does not have, on top
+// of a THIRD, independently-wrong size table). Both are imported and
+// live-executed here, not source-inspected -- SWSEGrappling's import graph
+// needs two purely structural environment stubs below (an ApplicationV2
+// shape and a `window` global) that satisfy browser-target module-load
+// assumptions; neither stubs any actual rules/game logic.
+//
+// Required invariant, proven below across 6 input combinations (STR>DEX,
+// DEX>STR, Medium, Large, a species grapple bonus, and a legitimate 0):
 //   computeGrappleBonus() === DerivedCalculator's system.derived.grappleBonus
 //                          === resolveGrappleBonus(actor)
 //                          === the grapple roll modifier (houserule-grapple.js)
+//                          === the displayed sheet Grapple box (PanelContextBuilder)
+//                          === SWSEGrappling's opposed-check base (_rollGrappleBonus)
 
 registerFoundryPathLoader();
 installFoundryShimGlobals({
@@ -46,10 +62,23 @@ installFoundryShimGlobals({
   }
 });
 
+// Structural-only stubs so SWSEGrappling's import graph (which transitively
+// pulls in scripts/apps/base/swse-application-v2.js and
+// scripts/combat/rolls/enhanced-rolls.js) can load under plain Node. Neither
+// stub fakes any rules/game logic -- they only satisfy class-extension and
+// browser-global assumptions made at module-load time.
+globalThis.foundry = globalThis.foundry ?? {};
+globalThis.foundry.applications = globalThis.foundry.applications ?? {};
+globalThis.foundry.applications.api = globalThis.foundry.applications.api ?? {
+  ApplicationV2: class {},
+  HandlebarsApplicationMixin: (Base) => class extends Base {}
+};
+globalThis.window = globalThis.window ?? globalThis;
+
 const { DerivedCalculator } = await import(
   '/systems/foundryvtt-swse/scripts/actors/derived/derived-calculator.js'
 );
-const { resolveGrappleBonus, computeGrappleBonus } = await import(
+const { resolveGrappleBonus, computeGrappleBonus, getGrappleSizeModifier } = await import(
   '/systems/foundryvtt-swse/scripts/engine/combat/combat-stat-rules.js'
 );
 const { GrappleMechanics } = await import(
@@ -57,6 +86,12 @@ const { GrappleMechanics } = await import(
 );
 const { RollEngine } = await import(
   '/systems/foundryvtt-swse/scripts/engine/roll-engine.js'
+);
+const { PanelContextBuilder } = await import(
+  '/systems/foundryvtt-swse/scripts/sheets/v2/context/PanelContextBuilder.js'
+);
+const { SWSEGrappling } = await import(
+  '/systems/foundryvtt-swse/scripts/combat/systems/grappling-system.js'
 );
 
 function actorFor({ str, dex, size = 'medium', speciesGrapple = 0 }) {
@@ -100,7 +135,8 @@ const cases = [
   { label: 'DEX > STR, medium size (Gar\'ee-shaped)', str: 14, dex: 20, size: 'medium', speciesGrapple: 0 },
   { label: 'medium size, equal STR/DEX', str: 12, dex: 12, size: 'medium', speciesGrapple: 0 },
   { label: 'large size', str: 14, dex: 10, size: 'large', speciesGrapple: 0 },
-  { label: 'species grapple bonus', str: 14, dex: 10, size: 'medium', speciesGrapple: 4 }
+  { label: 'species grapple bonus', str: 14, dex: 10, size: 'medium', speciesGrapple: 4 },
+  { label: 'legitimate zero grapple bonus (must not be discarded by the sheet box)', str: 10, dex: 10, size: 'medium', speciesGrapple: 0 }
 ];
 
 for (const { label, str, dex, size, speciesGrapple } of cases) {
@@ -110,18 +146,20 @@ for (const { label, str, dex, size, speciesGrapple } of cases) {
   const updates = await DerivedCalculator.computeAll(actor);
   const derivedValue = updates['system.derived.grappleBonus'];
 
-  // Path 2: resolveGrappleBonus(actor), reading a live actor whose
-  // derived BAB has been applied (simulating post-prepare state).
+  // Path 2: resolveGrappleBonus(actor), reading a live actor whose derived
+  // BAB and grappleBonus have been applied (simulating post-prepare state --
+  // this is also the shape PanelContextBuilder and SWSEGrappling see on a
+  // real, already-prepared actor).
   const liveActor = actorFor({ str, dex, size, speciesGrapple });
-  liveActor.system.derived = { bab: updates['system.derived.bab'] ?? 0 };
+  liveActor.system.derived = {
+    bab: updates['system.derived.bab'] ?? 0,
+    grappleBonus: derivedValue
+  };
   const resolvedValue = resolveGrappleBonus(liveActor);
 
   // Path 3: computeGrappleBonus() called directly with the same raw inputs.
   const strMod = Math.floor((str - 10) / 2);
   const dexMod = Math.floor((dex - 10) / 2);
-  const { getGrappleSizeModifier } = await import(
-    '/systems/foundryvtt-swse/scripts/engine/combat/combat-stat-rules.js'
-  );
   const directValue = computeGrappleBonus({
     bab: updates['system.derived.bab'] ?? 0,
     strMod,
@@ -134,10 +172,26 @@ for (const { label, str, dex, size, speciesGrapple } of cases) {
   // the same live actor as path 2.
   const rollValue = await rollFormulaGrappleBonus(liveActor);
 
+  // Path 5: the character sheet's displayed Grapple box
+  // (PanelContextBuilder.buildResourcesPanel().combatMetrics.grappleBonus),
+  // reading the same live, already-prepared actor.
+  const panel = new PanelContextBuilder(liveActor, { isEditable: true }).buildResourcesPanel();
+  const sheetDisplayedValue = panel.combatMetrics.grappleBonus;
+
+  // Path 6: SWSEGrappling's opposed-combat-check base
+  // (_rollGrappleBonus(), the base every Grab/Grapple/Pin/Trip/Throw/Crush/
+  // Escape roll in scripts/combat/systems/grappling-system.js and its
+  // grapple-runtime-patches.js overrides is built on), reading the same
+  // live, already-prepared actor with a neutral mode that adds no
+  // contextual talent/resistance bonuses.
+  const opposedCheckBaseValue = await SWSEGrappling._rollGrappleBonus(liveActor, { mode: 'attackGrapple' });
+
   assert.ok(Number.isFinite(derivedValue), `[${label}] DerivedCalculator's grappleBonus must be a real number, not NaN/undefined`);
   assert.equal(resolvedValue, derivedValue, `[${label}] resolveGrappleBonus() must match DerivedCalculator's grappleBonus`);
   assert.equal(directValue, derivedValue, `[${label}] computeGrappleBonus() must match DerivedCalculator's grappleBonus`);
   assert.equal(rollValue, derivedValue, `[${label}] the actual grapple roll modifier must match DerivedCalculator's grappleBonus`);
+  assert.equal(sheetDisplayedValue, derivedValue, `[${label}] the displayed sheet Grapple box must match DerivedCalculator's grappleBonus, including when it is exactly 0`);
+  assert.equal(opposedCheckBaseValue, derivedValue, `[${label}] SWSEGrappling's opposed-check base must match DerivedCalculator's grappleBonus (no half-level term, no independent size table)`);
 }
 
-console.log('grapple-bonus-ssot-parity.test.mjs: all assertions passed (computeGrappleBonus === DerivedCalculator === resolveGrappleBonus === roll modifier, across 5 input combinations)');
+console.log(`grapple-bonus-ssot-parity.test.mjs: all assertions passed (computeGrappleBonus === DerivedCalculator === resolveGrappleBonus === roll modifier === displayed sheet box === SWSEGrappling opposed-check base, across ${cases.length} input combinations)`);

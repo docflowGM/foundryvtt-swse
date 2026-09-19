@@ -36,16 +36,36 @@ export const DAMAGE_THRESHOLD_SIZE_BONUSES = Object.freeze({
   colossal: 50
 });
 
+// Grapple size modifier table -- Saga Edition Core Rulebook, Grapple check
+// rules (grapple check = 1d20 + BAB + higher of STR/DEX modifier + size
+// modifier). This is a DIFFERENT, larger-magnitude table than
+// REFLEX_SIZE_MODIFIERS above -- grapple size differences swing much more
+// than attack/defense size differences do. Values confirmed independently
+// two ways:
+//   1. Cross-checked against two published creature stat blocks already in
+//      this repo's own compendium data (packs/beasts.db):
+//        Aiwha (Gargantuan): BAB +3, STR 25 (+7 mod), published Grp +25
+//          => size modifier = 25 - 3 - 7 = +15
+//        Bantha (Huge): BAB +2, STR 28 (+9 mod), published Grp +21
+//          => size modifier = 21 - 2 - 9 = +10
+//   2. Independently corroborated by two separate SWSE rules-reference
+//      lookups of the Core Rulebook's grapple size modifier table.
+// Both give the same table: a flat step of 5 per size category, Medium = 0.
+// This replaced an incorrect step-of-4 table (max +/-16) that was never
+// checked against a published stat block -- see the Grapple domain section
+// of docs/audits/v2-math-integrity-authority-ledger.md for the
+// certification-review finding and tests/grapple-size-modifier-book-values.test.mjs
+// for the golden Aiwha/Bantha regression proof.
 export const GRAPPLE_SIZE_MODIFIERS = Object.freeze({
-  fine: -8,
-  diminutive: -4,
-  tiny: -2,
-  small: -1,
+  fine: -20,
+  diminutive: -15,
+  tiny: -10,
+  small: -5,
   medium: 0,
-  large: 4,
-  huge: 8,
-  gargantuan: 12,
-  colossal: 16
+  large: 5,
+  huge: 10,
+  gargantuan: 15,
+  colossal: 20
 });
 
 export function normalizeCombatSize(size) {

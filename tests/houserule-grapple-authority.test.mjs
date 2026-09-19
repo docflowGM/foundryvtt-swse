@@ -122,9 +122,11 @@ const target = { system: { attributes: { bab: { value: 0 } } } };
       }
     }
   };
-  // BAB 7 + STR +2 + large size (+4) = 13
+  // BAB 7 + STR +2 + large size (+5, per the Core Rulebook's Grapple size
+  // modifier table -- see combat-stat-rules.js#GRAPPLE_SIZE_MODIFIERS and
+  // tests/grapple-size-modifier-book-values.test.mjs) = 14
   const formula = await captureRollFormula(grappler, target);
-  assert.equal(formula, '1d20 + 13', 'fallback must include the size modifier (large = +4), which the old formula omitted');
+  assert.equal(formula, '1d20 + 14', 'fallback must include the size modifier (large = +5), which the old formula omitted');
 }
 
 // ---------------------------------------------------------------------------

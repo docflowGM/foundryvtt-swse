@@ -16,6 +16,7 @@
 
 import { TooltipRegistry } from "/systems/foundryvtt-swse/scripts/ui/discovery/tooltip-registry.js";
 import { SchemaAdapters } from "/systems/foundryvtt-swse/scripts/utils/schema-adapters.js";
+import { computeGrappleBonus, getGrappleSizeModifier } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-stat-rules.js";
 
 export class CombatStatsTooltip {
 
@@ -98,7 +99,14 @@ export class CombatStatsTooltip {
 
   /**
    * Get normalized breakdown structure for Grapple bonus.
-   * Grapple = BAB + Strength modifier + size modifier + misc
+   * Grapple = BAB + higher of Strength/Dexterity modifier + size modifier +
+   * species bonus -- see combat-stat-rules.js#computeGrappleBonus(), the
+   * sole grapple arithmetic authority (docs/audits/
+   * v2-math-integrity-authority-ledger.md's Grapple domain). This tooltip
+   * previously recomputed BAB + Strength-only + its own size table (a
+   * fourth, independently-wrong copy of the size table found during that
+   * audit) instead of decomposing the canonical value -- it never credited
+   * a DEX-based grappler and never showed a species bonus row at all.
    * @param {Actor} actor
    * @returns {{title: string, definition: string, rows: Array, total: number}}
    */
@@ -106,25 +114,24 @@ export class CombatStatsTooltip {
     const system = actor.system;
     const bab = SchemaAdapters.getBAB(actor);
     const strMod = SchemaAdapters.getAbilityMod(actor, 'str');
-    const miscMod = system.grapple?.miscMod || 0;
-    const sizeTable = { fine: -8, diminutive: -4, tiny: -2, small: -1, medium: 0, large: 4, huge: 8, gargantuan: 12, colossal: 16 };
-    const sizeMod = sizeTable[String(system.size || 'medium').toLowerCase()] || 0;
+    const dexMod = SchemaAdapters.getAbilityMod(actor, 'dex');
+    const sizeMod = getGrappleSizeModifier(actor);
+    const speciesBonus = Number(system?.speciesCombatBonuses?.grapple ?? system?.speciesTraitBonuses?.combat?.grapple ?? 0) || 0;
 
     const rows = [];
 
-    // Base components
     rows.push({
       label: 'Base Attack Bonus',
       value: bab,
       semantic: 'neutral'
     });
 
+    const usesDex = dexMod > strMod;
     rows.push({
-      label: 'Strength modifier',
-      value: strMod,
-      semantic: strMod > 0 ? 'positive' : (strMod < 0 ? 'negative' : 'neutral')
+      label: usesDex ? 'Dexterity modifier' : 'Strength modifier',
+      value: usesDex ? dexMod : strMod,
+      semantic: (usesDex ? dexMod : strMod) > 0 ? 'positive' : ((usesDex ? dexMod : strMod) < 0 ? 'negative' : 'neutral')
     });
-
 
     rows.push({
       label: 'Size modifier',
@@ -132,16 +139,15 @@ export class CombatStatsTooltip {
       semantic: sizeMod > 0 ? 'positive' : (sizeMod < 0 ? 'negative' : 'neutral')
     });
 
-    // Misc modifier
-    if (miscMod) {
+    if (speciesBonus) {
       rows.push({
-        label: 'Misc',
-        value: miscMod,
-        semantic: miscMod > 0 ? 'positive' : 'negative'
+        label: 'Species bonus',
+        value: speciesBonus,
+        semantic: speciesBonus > 0 ? 'positive' : 'negative'
       });
     }
 
-    // Modifiers
+    // Contextual modifiers, if any are ever registered against this target.
     const modifiers = this._getModifiersForTarget(actor, 'grapple');
     modifiers.forEach(mod => {
       rows.push({
@@ -151,11 +157,14 @@ export class CombatStatsTooltip {
       });
     });
 
-    const total = bab + strMod + sizeMod + miscMod + modifiers.reduce((sum, m) => sum + m.value, 0);
+    const canonicalTotal = Number(system?.derived?.grappleBonus);
+    const total = Number.isFinite(canonicalTotal)
+      ? canonicalTotal
+      : computeGrappleBonus({ bab, strMod, dexMod, sizeMod, speciesBonus }) + modifiers.reduce((sum, m) => sum + m.value, 0);
 
     return {
       title: 'Grapple',
-      definition: 'Your bonus to unarmed melee attacks and grappling. Derived from BAB and Strength.',
+      definition: 'Your bonus to unarmed melee attacks and grappling. Derived from BAB and the higher of Strength or Dexterity.',
       rows,
       total,
       metadata: {
