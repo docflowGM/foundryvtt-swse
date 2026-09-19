@@ -6,6 +6,8 @@
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { RollEngine } from "/systems/foundryvtt-swse/scripts/engine/roll-engine.js";
 import { CombatRules } from "/systems/foundryvtt-swse/scripts/engine/combat/CombatRules.js";
+import { SchemaAdapters } from "/systems/foundryvtt-swse/scripts/utils/schema-adapters.js";
+import { resolveGrappleBonus } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-stat-rules.js";
 
 const NS = 'foundryvtt-swse';
 
@@ -26,7 +28,11 @@ export class GrappleMechanics {
     if (!target) {return 10;}
 
     let baseDC = 10;
-    const targetBAB = target.system?.attributes?.bab?.value || 0;
+    // BAB authority is system.derived.bab (SchemaAdapters.getBAB()), not
+    // system.attributes.bab -- the latter isn't a field this schema
+    // populates, so this always read 0. See
+    // docs/audits/v2-math-integrity-authority-ledger.md's Grapple domain.
+    const targetBAB = SchemaAdapters.getBAB(target);
     baseDC += targetBAB * dcBonus;
 
     return baseDC;
@@ -57,16 +63,18 @@ export class GrappleMechanics {
 
     // Canonical authority: system.derived.grappleBonus (BAB + best of STR/DEX
     // + size + species, computed by derived-calculator.js). This previously
-    // reimplemented BAB + STR-only, omitting size modifier and species
-    // bonus and hardcoding STR even for a DEX-based grappler -- see
-    // docs/audits/v2-math-integrity-authority-ledger.md's Grapple domain.
-    // The old formula is kept only as a last-resort fallback for an actor
-    // whose derived data hasn't been computed yet.
+    // fell back to BAB + STR-only when derived data was unavailable --
+    // omitting size modifier and species bonus and hardcoding STR even for
+    // a DEX-based grappler -- which the Math Integrity Freeze charter
+    // explicitly forbids maintaining as a second, known-wrong formula (see
+    // docs/audits/v2-math-integrity-authority-ledger.md's Grapple domain).
+    // The fallback now calls combat-stat-rules.js#resolveGrappleBonus(),
+    // the SAME formula derived-calculator.js uses, packaged as an
+    // independently-callable resolver, instead of a second reimplementation.
     const derivedGrapple = Number(grappler.system?.derived?.grappleBonus);
     const grappleBonus = Number.isFinite(derivedGrapple)
       ? derivedGrapple
-      : (grappler.system?.attributes?.bab?.value || 0) +
-        (grappler.system?.attributes?.str?.mod || 0);
+      : resolveGrappleBonus(grappler);
     const roll = await RollEngine.safeRoll(`1d20 + ${grappleBonus}`);
     if (!roll) {
       return { success: false, message: 'Grapple check roll failed' };

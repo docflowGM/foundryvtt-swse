@@ -36,6 +36,18 @@ export const DAMAGE_THRESHOLD_SIZE_BONUSES = Object.freeze({
   colossal: 50
 });
 
+export const GRAPPLE_SIZE_MODIFIERS = Object.freeze({
+  fine: -8,
+  diminutive: -4,
+  tiny: -2,
+  small: -1,
+  medium: 0,
+  large: 4,
+  huge: 8,
+  gargantuan: 12,
+  colossal: 16
+});
+
 export function normalizeCombatSize(size) {
   const raw = String(size ?? 'medium').toLowerCase().trim();
   if (raw.includes('colossal')) return 'colossal';
@@ -61,6 +73,40 @@ export function getReflexSizeModifier(actorOrSize) {
 export function getDamageThresholdSizeBonus(actorOrSize) {
   const size = typeof actorOrSize === 'string' ? normalizeCombatSize(actorOrSize) : getActorCombatSize(actorOrSize);
   return DAMAGE_THRESHOLD_SIZE_BONUSES[size] ?? 0;
+}
+
+export function getGrappleSizeModifier(actorOrSize) {
+  const size = typeof actorOrSize === 'string' ? normalizeCombatSize(actorOrSize) : getActorCombatSize(actorOrSize);
+  return GRAPPLE_SIZE_MODIFIERS[size] ?? 0;
+}
+
+/**
+ * Canonical, standalone Grapple bonus resolver: BAB + best of STR/DEX +
+ * size + species. Mirrors derived-calculator.js's own inline
+ * system.derived.grappleBonus computation exactly (same size table, same
+ * best-of-ability comparison, same species-bonus paths) so a caller that
+ * can't read a pre-computed system.derived.grappleBonus (e.g. because
+ * derived data hasn't been computed yet) has ONE correct formula to fall
+ * back to, instead of an independently-maintained approximation that can
+ * silently omit terms. See
+ * docs/audits/v2-math-integrity-authority-ledger.md's Grapple domain --
+ * scripts/houserules/houserule-grapple.js previously fell back to
+ * BAB + STR only (no size, no species, no best-of-DEX), which was
+ * confirmed wrong for any DEX-based grappler.
+ *
+ * @param {Actor} actor
+ * @returns {number}
+ */
+export function resolveGrappleBonus(actor) {
+  if (!actor) return 0;
+  const bab = SchemaAdapters.getBAB(actor);
+  const grappleAbilityMod = Math.max(
+    SchemaAdapters.getAbilityMod(actor, 'str'),
+    SchemaAdapters.getAbilityMod(actor, 'dex')
+  );
+  const sizeMod = getGrappleSizeModifier(actor);
+  const speciesGrapple = actor.system?.speciesCombatBonuses?.grapple ?? actor.system?.speciesTraitBonuses?.combat?.grapple ?? 0;
+  return bab + grappleAbilityMod + sizeMod + speciesGrapple;
 }
 
 function numeric(value, fallback = 0) {
