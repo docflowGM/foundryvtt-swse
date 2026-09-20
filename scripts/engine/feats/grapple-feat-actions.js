@@ -123,7 +123,7 @@ export class GrappleFeatActions {
       case 'bone crusher':
         return actorHasGrappleCapability(actor, 'CONDITION_SHIFT_ON_GRAPPLE_DAMAGE', 'Bone Crusher');
       case 'grapple resistance':
-        return actorHasGrappleCapability(actor, 'RESIST_GRAB_AND_GRAPPLE', 'Grapple Resistance');
+        return actorHasGrappleCapability(actor, 'GRAB_GRAPPLE_RESISTANCE', 'Grapple Resistance');
       case 'pincer':
         return actorHasGrappleCapability(actor, 'PIN_MAINTENANCE_AND_CRUSH', 'Pincer');
       case 'slammer':

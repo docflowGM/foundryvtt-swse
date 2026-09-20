@@ -85,11 +85,22 @@ function rulesForFeat(name) {
   }
 
   if (normalized === 'grapple resistance') {
+    // Grapple Resistance's actual RAW text grants two DIFFERENT bonuses
+    // that happen to share the same value (+5): a Reflex Defense bonus
+    // against incoming Grab/Grapple attacks, and a separate bonus to the
+    // wielder's own opposed Grapple checks. GRAB_GRAPPLE_RESISTANCE keeps
+    // those two channels explicit (reflexBonus/opposedGrappleBonus)
+    // instead of a single overloaded `bonus` field -- see the Grapple
+    // domain section of docs/audits/v2-math-integrity-authority-ledger.md
+    // for why the single-field RESIST_GRAB_AND_GRAPPLE shape this replaced
+    // was a real correctness bug for Grab Back, whose two channels are NOT
+    // the same value (reflexBonus 2, opposedGrappleBonus 0).
     return [{
-      type: 'RESIST_GRAB_AND_GRAPPLE',
+      type: 'GRAB_GRAPPLE_RESISTANCE',
       id: 'grappleResistancePlusFive',
       source: 'Grapple Resistance',
-      bonus: 5,
+      reflexBonus: 5,
+      opposedGrappleBonus: 5,
       modes: ['resistGrab', 'resistGrapple'],
       objectReflexBonus: 5,
       summary: '+5 Reflex Defense against enemy Grab/Grapple attacks, +5 opposed Grapple checks, and +5 Reflex Defense for held/carried objects when attacked.'

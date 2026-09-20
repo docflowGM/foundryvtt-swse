@@ -137,7 +137,20 @@ function resourceRulePatchForFeat(featureName) {
 
 function grappleRulesForFeat(featureName) {
   switch (featureName) {
-    case 'grapple resistance': return [{ type: 'RESIST_GRAB_AND_GRAPPLE', bonus: 5, source: 'Grapple Resistance' }];
+    // GRAB_GRAPPLE_RESISTANCE keeps the Reflex-Defense-vs-incoming-Grab
+    // bonus and the opposed-Grapple-check bonus as separate fields --
+    // Grapple Resistance grants both (coincidentally the same value), but
+    // Grab Back (see below) only grants the Reflex channel. The old
+    // single-field RESIST_GRAB_AND_GRAPPLE shape this replaced let a
+    // Reflex-only bonus incorrectly leak into opposed Grapple checks --
+    // see the Grapple domain section of
+    // docs/audits/v2-math-integrity-authority-ledger.md. This branch is
+    // dormant in practice (compendium items ship with grappleRules
+    // pre-authored, so hasExistingGrappleRules() short-circuits before
+    // this runs), kept only for a bare/legacy item with no grapple
+    // metadata at all -- but it must still emit the correct shape if it
+    // ever does fire.
+    case 'grapple resistance': return [{ type: 'GRAB_GRAPPLE_RESISTANCE', reflexBonus: 5, opposedGrappleBonus: 5, source: 'Grapple Resistance' }];
     case 'pin': return [{ type: 'UNLOCK_GRAPPLE_MANEUVER', maneuver: 'pin', source: 'Pin' }];
     case 'trip': return [{ type: 'UNLOCK_GRAPPLE_MANEUVER', maneuver: 'trip', source: 'Trip' }];
     case 'crush': return [{ type: 'UNLOCK_GRAPPLE_MANEUVER', maneuver: 'crush', source: 'Crush' }];

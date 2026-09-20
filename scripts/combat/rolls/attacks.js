@@ -114,7 +114,16 @@ function resolveTargetContext(options = {}, fallbackTarget = null) {
   const target = fallbackTarget;
   const defenseType = normalizeDefenseKey(ctx?.defenseType || 'reflex');
   const base = getTargetDefense(target, defenseType);
-  return { target, targetName: target?.name ?? '', defenseType, defenseValue: base, mode: target ? 'token' : 'none' };
+  // Purely additive, opt-in adjustment on top of the canonical target
+  // defense value -- e.g. a Grab/Grapple-specific Reflex resistance bonus
+  // (Grapple Resistance, Grab Back) that must be part of the SAME hit
+  // determination this function feeds, not a second, independent
+  // recomputation layered on afterward by the caller. Defaults to 0, so
+  // every existing caller that doesn't pass targetContext.defenseAdjustment
+  // is unaffected.
+  const adjustment = Number(ctx?.defenseAdjustment ?? 0) || 0;
+  const defenseValue = Number.isFinite(base) ? base + adjustment : base;
+  return { target, targetName: target?.name ?? '', defenseType, defenseValue, mode: target ? 'token' : 'none' };
 }
 
 function buildReactionContextForAttack(attacker, defender, weapon, attackTotal) {

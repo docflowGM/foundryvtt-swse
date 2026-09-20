@@ -40,8 +40,9 @@ function swseActorHasTalent(actor, name) {
 }
 
 // Collects this actor's mode-applicable contextual Grapple bonuses
-// (GRAPPLE_BONUS talent/feat rules, RESIST_GRAB_AND_GRAPPLE) as modifier
-// OBJECTS -- not pre-summed numbers -- so they retain their bonus `type`
+// (GRAPPLE_BONUS talent/feat rules, GRAB_GRAPPLE_RESISTANCE's opposed-
+// check channel) as modifier OBJECTS -- not pre-summed numbers -- so they
+// retain their bonus `type`
 // and can be stacking-resolved together with the actor's static Grapple
 // modifiers (system.derived.modifiers.breakdown.grapple.applied) by the
 // SAME shared authority (ModifierUtils.resolveStacking()) everything else
@@ -76,10 +77,21 @@ function collectContextualGrappleModifiers(actor, mode) {
           enabled: true,
           description: `${rule.source || item.name || 'Grapple Bonus'}: ${value >= 0 ? '+' : ''}${value} Grapple`
         }));
-      } else if (rule?.type === 'RESIST_GRAB_AND_GRAPPLE') {
+      } else if (rule?.type === 'GRAB_GRAPPLE_RESISTANCE') {
+        // Opposed-Grapple-check channel ONLY -- the Reflex-Defense-vs-
+        // incoming-Grab/Grapple channel (reflexBonus) is a completely
+        // separate mechanic, consumed by
+        // MetaResourceFeatResolver.getGrappleResistanceBonus() at
+        // attemptGrab() time, never here. Grapple Resistance grants both
+        // (reflexBonus 5, opposedGrappleBonus 5); Grab Back grants only
+        // the Reflex channel (reflexBonus 2, opposedGrappleBonus 0) -- the
+        // old RESIST_GRAB_AND_GRAPPLE shape bundled both into one `bonus`
+        // field, which incorrectly gave Grab Back a +2 to opposed Grapple
+        // checks it does not grant. See the Grapple domain section of
+        // docs/audits/v2-math-integrity-authority-ledger.md.
         if (mode !== 'resistGrab' && mode !== 'resistGrapple') continue;
-        const value = Number(rule.bonus ?? 0);
-        if (!Number.isFinite(value) || value === 0) continue;
+        const value = Number(rule.opposedGrappleBonus ?? 0) || 0;
+        if (value === 0) continue;
         modifiers.push(createModifier({
           source: item.type === 'talent' ? ModifierSource.TALENT : ModifierSource.FEAT,
           sourceId: item.id ?? item.name ?? 'grapple-resistance-rule',
@@ -95,6 +107,14 @@ function collectContextualGrappleModifiers(actor, mode) {
           description: `${rule.source || item.name || 'Grapple Resistance'}: +${value} vs Grab/Grapple`
         }));
       }
+      // Legacy RESIST_GRAB_AND_GRAPPLE shape (pre-dating the channel
+      // split) is deliberately NOT handled here: its single `bonus` field
+      // can't be safely attributed to the opposed-check channel without
+      // risking exactly the over-grant bug this fix closes (e.g. Grab
+      // Back). An already-embedded item still carrying that old shape
+      // conservatively contributes nothing to the opposed-check channel
+      // until it's refreshed from the now-migrated compendium data --
+      // under-granting, never over-granting.
     }
   }
   return modifiers;
@@ -230,12 +250,27 @@ export class SWSEGrappling {
 
     const weapon = this._getUnarmedAttack(attacker);
     const grabPenalty = Number(options.grabPenalty ?? swseGrabAttackPenalty(attacker)) || 0;
+    // Reflex Defense resistance against THIS incoming Grab (Grapple
+    // Resistance's/Grab Back's reflexBonus channel -- never their separate
+    // opposedGrappleBonus channel, which is a different mechanic entirely;
+    // see collectContextualGrappleModifiers()) is fed into the SAME
+    // canonical attack-outcome authority SWSERoll.rollAttack() already
+    // uses (via targetContext.defenseAdjustment), rather than recomputed
+    // as a second, independent hit check afterward. This also fixes a
+    // separate, confirmed defect: the old manual recheck read
+    // target.system.defenses.reflex.total (a field the V2 character
+    // pipeline never populates) with no fallback to the canonical
+    // system.derived.defenses.reflex.total at all, silently collapsing to
+    // a hardcoded 10 for an ordinary V2 PC regardless of their real,
+    // possibly much higher, Reflex Defense.
+    const grappleResistance = Number(MetaResourceFeatResolver.getGrappleResistanceBonus(target, { mode: 'resistGrab' }) ?? 0) || 0;
     const attackResult = await SWSERoll.rollAttack(attacker, weapon, {
       customModifier: grabPenalty,
       maneuver: 'grab',
       actionId: 'grab',
       combatOptions: { grab: true },
       target,
+      targetContext: { defenseType: 'reflex', defenseAdjustment: grappleResistance },
       combatContext: options.combatContext ?? null,
       workflowContext: options.workflowContext ?? options.combatContext ?? null
     });
@@ -243,10 +278,13 @@ export class SWSEGrappling {
     const total = Number(attackResult?.total ?? attackResult?.roll?.total ?? roll?.total ?? 0);
     const d20 = firstD20(roll);
 
-    const baseReflex = Number(target.system?.defenses?.reflex?.total ?? target.system?.defenses?.reflex ?? 10) || 10;
-    const grappleResistance = Number(MetaResourceFeatResolver.getGrappleResistanceBonus(target, { mode: 'resistGrab' }) ?? 0) || 0;
-    const reflex = baseReflex + grappleResistance;
-    const hit = d20 === 20 || (d20 !== 1 && total >= reflex);
+    // reflex (the adjusted defense value the canonical resolver actually
+    // rolled against) and hit both come straight from that resolver's own
+    // outcome -- not recomputed. baseReflex is read separately, purely for
+    // the chat card's "Target Reflex: X (+Y grapple resistance)" display.
+    const reflex = Number(attackResult?.targetReflex ?? 0) || 0;
+    const baseReflex = reflex - grappleResistance;
+    const hit = attackResult?.isHit === true;
 
     const result = { attacker, target, roll, total, d20, reflex, hit, baseReflex, grappleResistance, grabPenalty };
 

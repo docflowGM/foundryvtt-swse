@@ -56,7 +56,13 @@ import { installFoundryShimGlobals } from './helpers/foundry-shim/globals.mjs';
 // `staticSheetPolicy: 'manual_only'` -- genuinely mode-gated, not a
 // permanent trait, and correctly excluded from the static total (it's
 // applied only at roll time). Same for Grapple Resistance
-// (RESIST_GRAB_AND_GRAPPLE, modes: ['resistGrab','resistGrapple']).
+// (RESIST_GRAB_AND_GRAPPLE, modes: ['resistGrab','resistGrapple']) at the
+// time this comment was written -- round 6 replaced that shape with
+// GRAB_GRAPPLE_RESISTANCE ({reflexBonus, opposedGrappleBonus}); see
+// grab-grapple-resistance-channel-split.test.mjs for why (Grab Back's
+// Reflex-only bonus was incorrectly leaking into this opposed-check
+// channel under the old shape) and for that fix's own coverage. The
+// fixtures below use the current, correct shape.
 // Neither may ever double-apply: a source eligible for the static total
 // must never also fire contextually, and vice versa.
 //
@@ -197,6 +203,11 @@ function liveActorFrom(actorSpec, updates) {
 }
 
 function grappleResistanceFeat() {
+  // GRAB_GRAPPLE_RESISTANCE (round 6): the real, current shape -- see
+  // grab-grapple-resistance-channel-split.test.mjs for the full channel-
+  // split coverage (Grapple Resistance grants both reflexBonus and
+  // opposedGrappleBonus; Grab Back grants only reflexBonus). This fixture
+  // only needs the opposed-check channel this file's tests exercise.
   return {
     type: 'feat',
     name: 'Grapple Resistance',
@@ -204,7 +215,7 @@ function grappleResistanceFeat() {
       disabled: false,
       abilityMeta: {
         grappleRules: [
-          { type: 'RESIST_GRAB_AND_GRAPPLE', bonus: 5, source: 'Grapple Resistance' }
+          { type: 'GRAB_GRAPPLE_RESISTANCE', reflexBonus: 5, opposedGrappleBonus: 5, source: 'Grapple Resistance' }
         ]
       }
     }
