@@ -320,6 +320,36 @@ export class GrappleStateEngine {
     return actorHasGrappleState(actor, state);
   }
 
+  // Math Integrity Freeze, round 8: SWSE RAW gives Grabbed/Grappled a real
+  // numeric penalty -- -2 on attack rolls, except attacks with natural
+  // weapons or light weapons -- that round 7's grapple-state cleanup
+  // correctly identified as still missing (the summary text already
+  // described it; nothing computed it). Pinned is deliberately excluded:
+  // a Pinned creature's attacks are already prevented by Pin's own action
+  // legality (evaluateAction()'s 'pinned' branch), so layering a numeric
+  // penalty on top of an already-fully-blocked action would be meaningless
+  // double-gating, not a math fix.
+  //
+  // Reuses this engine's own existing classifyGrappledAttack() -- the same
+  // classifier evaluateAction()'s 'grappled' attack-legality branch already
+  // uses for exactly the same unarmed/natural/light exemption categories --
+  // rather than a second, independently-maintained light/natural weapon
+  // heuristic. No single codebase-wide canonical light/natural-weapon
+  // classifier exists to delegate to instead (a confirmed, separately
+  // flagged gap -- see the ledger's Grapple domain section, addendum 8);
+  // reusing this domain's own established classifier keeps the numeric
+  // penalty and the legality gate from ever disagreeing with each other.
+  //
+  // Presence-based, not effect-count-based: an actor either has the
+  // Grabbed/Grappled category or doesn't (GrappleStateEngine.getState()
+  // already collapses multiple effects to one best state), so this can
+  // never double-apply even if stale/multiple grapple-state effects exist.
+  static getAttackPenalty(actor, weapon) {
+    if (!actorHasGrappleState(actor, 'grabbed') && !actorHasGrappleState(actor, 'grappled')) return 0;
+    const classification = classifyGrappledAttack(actor, { weapon });
+    const exempt = classification.legal === true && classification.known === true;
+    return exempt ? 0 : -2;
+  }
 
   static getRestrictionSummary(actor) {
     const stateInfo = this.getState(actor);
