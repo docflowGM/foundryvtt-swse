@@ -8,7 +8,9 @@
     "automationBoundary": "automate",
     "severity": "high",
     "recommendedPhase": 6,
-    "fixNow": false
+    "fixNow": false,
+    "resolution": "FIXED",
+    "resolutionNotes": "Math Integrity Freeze, Batch 1 round 7. A shared decision authority (resolveOpposedGrappleOutcome(), exported from grappling-system.js) now uses attackerTotal >= defenderTotal, used by both grappleCheck() (also the basis for attemptPin()) and _opposedGrappleForManeuver() (Trip/Throw's shared helper). grappleCheck()'s tie-specific early return (which discarded an already-true attackerWins on a tie) was removed. See docs/audits/v2-math-integrity-authority-ledger.md's Grapple domain, Certification-correction addendum 7, and tests/opposed-grapple-tie-authority.test.mjs."
   },
   {
     "id": "grapple-grabbed-reflex-penalty",
@@ -19,7 +21,9 @@
     "automationBoundary": "automate",
     "severity": "high",
     "recommendedPhase": 6,
-    "fixNow": false
+    "fixNow": false,
+    "resolution": "FIXED",
+    "resolutionNotes": "Math Integrity Freeze, Batch 1 round 7. GrappleStateEngine's Grabbed and Grappled states no longer carry any ActiveEffect changes -- the flat -5 Reflex change is removed entirely, matching the real rule (no Reflex penalty; the -2 attack-roll-except-natural/light-weapon penalty remains a separate, not-yet-automated item, not a Reflex-math defect). See tests/grapple-state-defense-effects.test.mjs. Note the -2 attack penalty itself is still unimplemented and is a genuinely separate, deferred item (not tracked by this ledger entry, which was specifically about the wrong Reflex penalty)."
   },
   {
     "id": "grapple-pinned-condition-track-override",
@@ -30,7 +34,9 @@
     "automationBoundary": "automate",
     "severity": "critical",
     "recommendedPhase": 6,
-    "fixNow": false
+    "fixNow": false,
+    "resolution": "FIXED",
+    "resolutionNotes": "Two parts. The condition-track-override half was already SUPERSEDED before round 7: GrappleStateEngine.advancePair()'s 'pinned' branch carries an explicit comment ('Do not mutate condition track here: Pin is a control state, not CT damage') and does not touch system.conditionTrack at all -- confirmed by direct reading of the current source, not by this evidence's original -10 Reflex/CT-override description (which the code no longer matches; the Reflex value had also already drifted from -10 to -5 by round 6, still wrong in kind). The Reflex half is FIXED in round 7: Pinned no longer applies a flat ActiveEffect change at all -- DefenseCalculator.calculate() now computes a component-aware removal of exactly the actor's positive Dexterity bonus (never a Dex penalty), mirroring the same philosophy already certified for flat-footed Reflex. See docs/audits/v2-math-integrity-authority-ledger.md's Grapple domain, Certification-correction addendum 7, and tests/grapple-state-defense-effects.test.mjs."
   },
   {
     "id": "grapple-escape-state-specificity",
@@ -41,7 +47,9 @@
     "automationBoundary": "assist",
     "severity": "high",
     "recommendedPhase": 6,
-    "fixNow": false
+    "fixNow": false,
+    "resolution": "NON-MATH WORKFLOW DEFERRED",
+    "resolutionNotes": "This entry's own currentEvidence is stale: escapeGrapple() no longer calls grappleCheck() at all -- it routes through dedicated _escapeWithGrapple()/_escapeWithAcrobatics() methods (each with their own opposed-check-vs-a-strict->-comparison, deliberately left unchanged by round 7: unlike initiating a grapple, an ESCAPE attempt is the one already-in-control party's status quo being contested, so a tie correctly favors the grappler retaining control -- not the same 'meets or beats' rule as grapple-opposed-meets-beats above). Whether Grabbed/Grappled/Pinned SHOULD use procedurally different escape mechanics (different skill options, different DCs) per RAW is a genuine, still-open workflow question, not a wrong-number defect -- explicitly left deferred per the round-7 review's own allowance for workflow-only Grapple limitations."
   },
   {
     "id": "grapple-live-routing-unclear",
@@ -52,7 +60,9 @@
     "automationBoundary": "automate",
     "severity": "high",
     "recommendedPhase": 1,
-    "fixNow": false
+    "fixNow": false,
+    "resolution": "NON-MATH WORKFLOW DEFERRED",
+    "resolutionNotes": "A UI/action-metadata routing question (whether visible combat action rows carry resolutionMode/handler metadata linking to SWSEGrappling), not a calculated-number defect. Rounds 1-7 of the Math Integrity Freeze fixed and certified the underlying Grapple arithmetic, static/contextual modifier composition and stacking, the Reflex-vs-opposed-check channel split, opposed-check tie resolution, and the Grab attack's target-defense authority -- all reachable once a caller invokes SWSEGrappling's methods, regardless of which UI affordance does the invoking. Action-row wiring audit is out of scope for this freeze and remains deferred."
   },
   {
     "id": "ion-original-vs-halved-damage",

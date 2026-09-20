@@ -22,6 +22,7 @@ import { getReflexSizeModifier } from "/systems/foundryvtt-swse/scripts/engine/c
 import { ModifierEngine } from "/systems/foundryvtt-swse/scripts/engine/effects/modifiers/ModifierEngine.js";
 import { isEnergyShieldItem, resolveArmorData } from "/systems/foundryvtt-swse/scripts/items/armor-data-resolver.js";
 import { ImplantRules } from "/systems/foundryvtt-swse/scripts/engine/implants/ImplantRules.js";
+import { actorHasGrappleState } from "/systems/foundryvtt-swse/scripts/engine/combat/grapple-state-query.js";
 
 function getActorFeatItems(actor) {
   try {
@@ -804,7 +805,20 @@ export class DefenseCalculator {
       }
     }
     const reflexBase = 10 + reflexLevelTerm + reflexClassBonus + reflexSizeModifier;
-    const reflexTotal = Math.max(1, reflexBase + reflexAbilityMod + reflexMiscBonus + reflexSpeciesBonus + refStateBonus + refAdjust + conditionPenalty);
+    const reflexTotalBeforePin = Math.max(1, reflexBase + reflexAbilityMod + reflexMiscBonus + reflexSpeciesBonus + refStateBonus + refAdjust + conditionPenalty);
+    // Pin (SWSE RAW): a Pinned creature loses its POSITIVE Dexterity bonus
+    // to Reflex Defense -- not a flat universal penalty. This mirrors the
+    // flat-footed treatment's own component-aware Dex-strip immediately
+    // below (never remove a Dex penalty, only a Dex bonus) rather than
+    // adding a second, competing formula. See
+    // docs/audits/v2-math-integrity-authority-ledger.md's Grapple domain
+    // section, "Certification-correction addendum 7". Applied only to the
+    // primary Reflex total -- flatFootedTotal below is computed from this
+    // same pre-Pin baseline since flat-footed already strips positive Dex
+    // on its own; reducing it a second time for an actor that happens to
+    // be both Pinned and flat-footed would double-count the same removal.
+    const pinnedReflexDexReduction = actorHasGrappleState(actor, 'pinned') ? Math.max(0, reflexAbilityMod) : 0;
+    const reflexTotal = Math.max(1, reflexTotalBeforePin - pinnedReflexDexReduction);
 
     const fortDefaultAbility = isDroidActor ? 'str' : 'con';
     // SWSE RAW: nonliving targets without Constitution, including Droids, add STR to Fortitude.
@@ -853,7 +867,11 @@ export class DefenseCalculator {
     // docs/audits/v2-math-integrity-authority-ledger.md's Flat-Footed
     // Reflex domain for the live fail-before proof.
     const reflexDodgeBonus = this._sumPassiveStateDefenseModifiers(actor, defenseProfile, 'reflex', context, { onlyDodge: true });
-    const flatFootedTotal = Math.max(1, reflexTotal - Math.max(0, reflexAbilityMod) - Math.max(0, reflexDodgeBonus));
+    // Computed from reflexTotalBeforePin, not reflexTotal: flat-footed
+    // already strips the positive Dex bonus on its own, so if this actor is
+    // also Pinned (which strips the same Dex bonus from reflexTotal above),
+    // subtracting it again here would double-count the same removal.
+    const flatFootedTotal = Math.max(1, reflexTotalBeforePin - Math.max(0, reflexAbilityMod) - Math.max(0, reflexDodgeBonus));
 
     return {
       fortitude: {
@@ -886,6 +904,12 @@ export class DefenseCalculator {
         sizeModifier: reflexSizeModifier,
         abilityKey: reflexAbilityKey,
         abilityMod: reflexAbilityMod,
+        // Pin removes the positive Dex bonus above from the total -- this
+        // is that removal as an explicit, provable line item (0 unless
+        // Pinned) so base + abilityMod + ... + pinnedDexReduction still
+        // sums to total, rather than total silently diverging from its own
+        // listed parts. See the comment on reflexTotalBeforePin above.
+        pinnedDexReduction: -pinnedReflexDexReduction,
         conditionPenalty
       },
       will: {

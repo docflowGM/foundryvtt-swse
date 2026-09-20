@@ -176,6 +176,25 @@ function resultTotal(roll) {
   return Number(roll?.total ?? roll?.roll?.total ?? 0) || 0;
 }
 
+// Math Integrity Freeze, round 7: SWSE's opposed Grapple check succeeds for
+// the attacker when the attacker's result equals or exceeds the defender's
+// -- the general d20 "meets or beats" rule, not a strict majority win. The
+// pre-round-7 code used a strict `>` and additionally short-circuited ties
+// with no state change at all, so an attacker who tied a defender's check
+// (a common, unremarkable outcome, not an edge case) incorrectly lost every
+// initiating opposed Grapple check: the plain grapple check, Pin (which
+// reuses grappleCheck()), and Trip/Throw (via _opposedGrappleForManeuver()).
+// See docs/audits/combat-phase-0f-grapple-ion-seam-ledger.json's
+// "grapple-opposed-meets-beats" entry (severity: high) and the Grapple
+// domain section of docs/audits/v2-math-integrity-authority-ledger.md for
+// the full history. `isTie` is still reported for narrative/chat-card
+// wording -- it must never gate the outcome.
+export function resolveOpposedGrappleOutcome(attackerTotal, defenderTotal) {
+  const attacker = Number(attackerTotal) || 0;
+  const defender = Number(defenderTotal) || 0;
+  return { attackerWins: attacker >= defender, isTie: attacker === defender };
+}
+
 function escapeHTML(value) {
   return String(value ?? '').replace(/[&<>"']/g, char => ({
     '&': '&amp;',
@@ -324,8 +343,7 @@ export class SWSEGrappling {
     const atkRoll = await globalThis.SWSE.RollEngine.safeRoll(`1d20 + ${atk}`, {}, { domain: 'combat.grapple.attack' });
     const defRoll = await globalThis.SWSE.RollEngine.safeRoll(`1d20 + ${def}`, {}, { domain: 'combat.grapple.defense' });
 
-    const attackerWins = Number(atkRoll.total ?? 0) > Number(defRoll.total ?? 0);
-    const isTie = Number(atkRoll.total ?? 0) === Number(defRoll.total ?? 0);
+    const { attackerWins, isTie } = resolveOpposedGrappleOutcome(atkRoll.total, defRoll.total);
 
     const result = {
       attacker,
@@ -340,8 +358,6 @@ export class SWSEGrappling {
     };
 
     await this._createGrappleCheckMessage(result);
-
-    if (isTie) return result;
 
     if (attackerWins) {
       await GrappleStateEngine.advancePair(attacker, defender, 'grappled', {
@@ -562,7 +578,7 @@ export class SWSEGrappling {
     const def = await this._rollGrappleBonus(defender, { mode: 'resistGrapple' });
     const attackerRoll = await globalThis.SWSE.RollEngine.safeRoll(`1d20 + ${atk}`, {}, { domain: `combat.grapple.${maneuver}` });
     const defenderRoll = await globalThis.SWSE.RollEngine.safeRoll(`1d20 + ${def}`, {}, { domain: `combat.grapple.resist.${maneuver}` });
-    const attackerWins = resultTotal(attackerRoll) > resultTotal(defenderRoll);
+    const { attackerWins, isTie } = resolveOpposedGrappleOutcome(resultTotal(attackerRoll), resultTotal(defenderRoll));
     return {
       attacker,
       defender,
@@ -573,7 +589,7 @@ export class SWSEGrappling {
       attackerBonus: atk,
       defenderBonus: def,
       attackerWins,
-      isTie: resultTotal(attackerRoll) === resultTotal(defenderRoll)
+      isTie
     };
   }
 
@@ -918,7 +934,9 @@ export class SWSEGrappling {
     const { attacker, defender, attackerRoll, defenderRoll, attackerWins, isTie } = result;
     const attackerTotal = Number(attackerRoll?.total ?? 0) || 0;
     const defenderTotal = Number(defenderRoll?.total ?? 0) || 0;
-    const winnerText = isTie ? 'Tie — no state change.' : (attackerWins ? `${attacker.name} wins!` : `${defender.name} wins!`);
+    const winnerText = attackerWins
+      ? `${attacker.name} wins!${isTie ? ' (tie goes to the attacker)' : ''}`
+      : `${defender.name} wins!`;
     const actions = attackerWins
       ? `<div class="swse-chat-card__actions">
           ${this._advancedManeuverButtons(attacker, defender, { includePin: result?.actionId !== 'pin' })}

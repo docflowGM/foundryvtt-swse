@@ -70,10 +70,22 @@ function getFightingDefensivelyAttackPenalty(actor, options = {}) {
   return preparedPenalty <= -5 ? 0 : -5;
 }
 
-function getTargetReflex(actor = null) {
+// Math Integrity Freeze, round 7: system.derived.defenses.<key>.total is
+// the V2 canonical authority (SchemaAdapters.getDefenseTotal() reads only
+// this path). The pre-round-7 order checked the legacy system.defenses.
+// <key>.total FIRST -- a field the V2 pipeline never writes for a prepared
+// character actor, but which can survive as a stale value from an import
+// or a prior sheet edit. Every attack in the game (not just Grapple) reads
+// target defense through this function, so a stale legacy value could beat
+// the real, current, derived defense for any attack. Derived-first, with
+// the legacy field only as a fallback for actor types that genuinely never
+// run the V2 derived pipeline (e.g. bare NPC/vehicle statblocks). See
+// docs/audits/v2-math-integrity-authority-ledger.md's Grapple domain
+// section, "Certification-correction addendum 7".
+export function getTargetReflex(actor = null) {
   if (!actor) return null;
-  const value = actor.system?.defenses?.reflex?.total
-    ?? actor.system?.derived?.defenses?.reflex?.total
+  const value = actor.system?.derived?.defenses?.reflex?.total
+    ?? actor.system?.defenses?.reflex?.total
     ?? actor.system?.defenses?.reflex?.value
     ?? null;
   const number = Number(value);
@@ -88,28 +100,28 @@ function normalizeDefenseKey(value = 'reflex') {
   return 'reflex';
 }
 
-function getTargetDefense(actor = null, defenseType = 'reflex') {
+export function getTargetDefense(actor = null, defenseType = 'reflex') {
   if (!actor) return null;
   const key = normalizeDefenseKey(defenseType);
   if (key === 'dc') return null;
   if (key === 'reflex') return getTargetReflex(actor);
-  const value = actor.system?.defenses?.[key]?.total
-    ?? actor.system?.derived?.defenses?.[key]?.total
+  const value = actor.system?.derived?.defenses?.[key]?.total
+    ?? actor.system?.defenses?.[key]?.total
     ?? actor.system?.defenses?.[key]?.value
     ?? null;
   const n = Number(value);
   return Number.isFinite(n) ? n : null;
 }
 
-function resolveTargetContext(options = {}, fallbackTarget = null) {
+export function resolveTargetContext(options = {}, fallbackTarget = null) {
   const ctx = options.targetContext ?? null;
   const mode = String(ctx?.mode || '').toLowerCase();
   if (mode === 'manual') {
     const value = Number(ctx?.defenseValue);
-    return { target: null, targetName: ctx?.label || 'Manual Target', defenseType: normalizeDefenseKey(ctx?.defenseType || 'reflex'), defenseValue: Number.isFinite(value) ? value + Number(ctx?.coverBonus || 0) : null, mode: 'manual' };
+    return { target: null, targetName: ctx?.label || 'Manual Target', defenseType: normalizeDefenseKey(ctx?.defenseType || 'reflex'), defenseValue: Number.isFinite(value) ? value + Number(ctx?.coverBonus || 0) : null, mode: 'manual', adjustment: 0 };
   }
   if (mode === 'none') {
-    return { target: null, targetName: 'GM adjudication', defenseType: normalizeDefenseKey(ctx?.defenseType || 'reflex'), defenseValue: null, mode: 'none' };
+    return { target: null, targetName: 'GM adjudication', defenseType: normalizeDefenseKey(ctx?.defenseType || 'reflex'), defenseValue: null, mode: 'none', adjustment: 0 };
   }
   const target = fallbackTarget;
   const defenseType = normalizeDefenseKey(ctx?.defenseType || 'reflex');
@@ -120,10 +132,12 @@ function resolveTargetContext(options = {}, fallbackTarget = null) {
   // determination this function feeds, not a second, independent
   // recomputation layered on afterward by the caller. Defaults to 0, so
   // every existing caller that doesn't pass targetContext.defenseAdjustment
-  // is unaffected.
+  // is unaffected. Returned as `adjustment` so callers (see
+  // roll.swseAttackContext.defenseAdjustment below) can report truthfully
+  // what was actually applied, rather than a hardcoded 0.
   const adjustment = Number(ctx?.defenseAdjustment ?? 0) || 0;
   const defenseValue = Number.isFinite(base) ? base + adjustment : base;
-  return { target, targetName: target?.name ?? '', defenseType, defenseValue, mode: target ? 'token' : 'none' };
+  return { target, targetName: target?.name ?? '', defenseType, defenseValue, mode: target ? 'token' : 'none', adjustment };
 }
 
 function buildReactionContextForAttack(attacker, defender, weapon, attackTotal) {
@@ -474,7 +488,7 @@ export async function rollAttack(actor, weapon, options = {}) {
     critMultiplier: attackResult.critMultiplier,
     targetDefenseValue: targetReflex,
     targetDefenseType: resolvedTarget.defenseType ?? null,
-    defenseAdjustment: 0,
+    defenseAdjustment: resolvedTarget.adjustment ?? 0,
     workflowContext: damageWorkflowContext,
     actionId: attackResult.actionId
   };

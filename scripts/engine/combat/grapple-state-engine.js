@@ -1,17 +1,14 @@
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { GrappleLegalityEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/grapple-legality-engine.js";
-import { activeEffectChangeType } from "/systems/foundryvtt-swse/scripts/utils/active-effect-change-utils.js";
+import {
+  normalizeGrappleState as normalizeState,
+  getGrappleEffects as queryGrappleEffects,
+  actorHasGrappleState,
+  getGrappleStateInfo
+} from "/systems/foundryvtt-swse/scripts/engine/combat/grapple-state-query.js";
 
 const GRAPPLE_FLAG_SCOPE = 'swse';
 const GRAPPLE_FLAG_KEY = 'grappleState';
-
-function normalizeState(value) {
-  const key = String(value ?? '').trim().toLowerCase();
-  if (key === 'grab' || key === 'grabbed') return 'grabbed';
-  if (key === 'grapple' || key === 'grappled') return 'grappled';
-  if (key === 'pin' || key === 'pinned') return 'pinned';
-  return null;
-}
 
 function actorId(actor) {
   return actor?.id ?? actor?._id ?? null;
@@ -31,6 +28,31 @@ function escapeHTML(value) {
   }[char]));
 }
 
+// Math Integrity Freeze, round 7: none of these three states carry a
+// generic flat Reflex penalty. The pre-round-7 code applied
+// `system.defenses.reflex.bonus += -5` to all three (via a Foundry
+// ActiveEffect ADD-mode change) -- but that number appears nowhere in the
+// published Grab/Grapple/Pin rules text, and `system.defenses.reflex.bonus`
+// is not even a field DefenseCalculator's canonical Reflex total reads (see
+// docs/audits/v2-math-integrity-authority-ledger.md's Grapple domain
+// section, "Certification-correction addendum 7"). Real baseline effects:
+//   Grabbed:  cannot move; -2 on attack rolls except natural/light weapons.
+//             No Reflex Defense penalty.
+//   Grappled: same baseline restrictions as Grabbed. No Reflex penalty.
+//   Pinned:   loses its POSITIVE Dexterity bonus to Reflex Defense -- a
+//             component-aware reduction, not a flat number (a Dex -1
+//             character loses nothing further; a Dex +5 character loses
+//             exactly 5). This can't be expressed as a static ActiveEffect
+//             ADD change, so it's computed contextually in
+//             DefenseCalculator.calculate() (mirroring the same
+//             component-aware philosophy already used for flat-footed's
+//             own Dex-bonus removal) by querying this engine's own
+//             actorHasGrappleState(actor, 'pinned') via the shared
+//             grapple-state-query.js leaf module. None of these three
+//             states carry an ActiveEffect `changes` payload for Reflex.
+//             The attack-roll penalty (-2 while Grabbed/Grappled, non-
+//             natural/light weapons) is a separate, not-yet-automated
+//             effect -- see the ledger for that flagged, deferred item.
 function stateConfig(state) {
   switch (normalizeState(state)) {
     case 'grabbed':
@@ -38,49 +60,28 @@ function stateConfig(state) {
         state: 'grabbed',
         label: 'Grabbed',
         icon: 'icons/svg/net.svg',
-        summary: 'Grabbed by an opponent. Resolve the next opposed grapple check or escape normally.',
-        changes: [
-          { key: 'system.defenses.reflex.bonus', ...activeEffectChangeType('add'), value: -5 }
-        ]
+        summary: 'Grabbed by an opponent. Cannot move; -2 on attack rolls except natural/light weapons. Resolve the next opposed grapple check or escape normally.',
+        changes: []
       };
     case 'grappled':
       return {
         state: 'grappled',
         label: 'Grappled',
         icon: 'icons/svg/anchor.svg',
-        summary: 'Grappled with an opponent. Movement is denied and attacks are constrained by the grapple rules.',
-        changes: [
-          { key: 'system.defenses.reflex.bonus', ...activeEffectChangeType('add'), value: -5 }
-        ]
+        summary: 'Grappled with an opponent. Same baseline restrictions as Grabbed: cannot move; -2 on attack rolls except natural/light weapons. Movement is denied and attacks are constrained by the grapple rules.',
+        changes: []
       };
     case 'pinned':
       return {
         state: 'pinned',
         label: 'Pinned',
         icon: 'icons/svg/trap.svg',
-        summary: 'Pinned by an opponent. Treat Dexterity bonus to Reflex and available actions according to the Pin rules.',
-        changes: [
-          { key: 'system.defenses.reflex.bonus', ...activeEffectChangeType('add'), value: -5 }
-        ]
+        summary: 'Pinned by an opponent. Loses its positive Dexterity bonus to Reflex Defense; only escape/release actions are available until the pin ends.',
+        changes: []
       };
     default:
       return null;
   }
-}
-
-function grappleFlag(effect) {
-  return effect?.flags?.swse?.[GRAPPLE_FLAG_KEY]
-    ?? (effect?.flags?.swse?.grapple ? { state: effect.flags.swse.grapple, sourceId: effect.flags.swse.source ?? null } : null);
-}
-
-function effectMatches(effect, { sourceActor = null, state = null } = {}) {
-  const flag = grappleFlag(effect);
-  if (!flag) return false;
-  const wantedState = normalizeState(state);
-  if (wantedState && normalizeState(flag.state ?? flag) !== wantedState) return false;
-  const sourceId = actorId(sourceActor);
-  if (sourceId && flag.sourceId && flag.sourceId !== sourceId) return false;
-  return true;
 }
 
 
@@ -308,34 +309,15 @@ export class GrappleStateEngine {
   }
 
   static getGrappleEffects(actor, filters = {}) {
-    const effects = Array.from(actor?.effects ?? []);
-    return effects.filter(effect => effectMatches(effect, filters));
+    return queryGrappleEffects(actor, filters);
   }
 
   static getState(actor) {
-    const effects = this.getGrappleEffects(actor);
-    if (!effects.length) return null;
-    const rank = { grabbed: 1, grappled: 2, pinned: 3 };
-    let best = null;
-    for (const effect of effects) {
-      const flag = grappleFlag(effect);
-      const state = normalizeState(flag?.state ?? flag);
-      if (!state) continue;
-      if (!best || (rank[state] ?? 0) > (rank[best.state] ?? 0)) {
-        best = {
-          state,
-          effect,
-          sourceId: flag?.sourceId ?? effect?.flags?.swse?.source ?? null,
-          sourceName: flag?.sourceName ?? null,
-          targetId: flag?.targetId ?? actorId(actor)
-        };
-      }
-    }
-    return best;
+    return getGrappleStateInfo(actor);
   }
 
   static hasState(actor, state = null) {
-    return this.getGrappleEffects(actor, { state }).length > 0;
+    return actorHasGrappleState(actor, state);
   }
 
 

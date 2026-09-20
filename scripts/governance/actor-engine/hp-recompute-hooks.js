@@ -160,7 +160,14 @@ function grappleRulesForFeat(featureName) {
     case 'pincer': return [{ type: 'PIN_MAINTENANCE_AND_CRUSH', source: 'Pincer' }];
     case 'grappling strike': return [{ type: 'POST_HIT_GRAB_ATTEMPT', action: 'free', source: 'Grappling Strike' }];
     case 'multi grab': return [{ type: 'MULTI_GRAB', maxTargets: 2, source: 'Multi-Grab' }];
-    case 'grab back': return [{ type: 'REACTION_GRAB_BACK', trigger: 'missedGrabOrGrapple', source: 'Grab Back' }];
+    // Round 7: this fallback previously emitted only the reaction rule,
+    // silently dropping Grab Back's +2 Reflex-vs-incoming-Grab bonus for
+    // any bare/legacy item normalized through this dormant path. Matches
+    // the production catalog shape (data/feat-catalog.json) exactly.
+    case 'grab back': return [
+      { type: 'GRAB_GRAPPLE_RESISTANCE', reflexBonus: 2, opposedGrappleBonus: 0, source: 'Grab Back' },
+      { type: 'REACTION_GRAB_BACK', trigger: 'missedGrabOrGrapple', source: 'Grab Back' }
+    ];
     default: return null;
   }
 }
@@ -181,7 +188,7 @@ function weaponDamageRulesForFeature(featureName) {
   }
 }
 
-function featureRuleNormalizationPatch(item) {
+export function featureRuleNormalizationPatch(item) {
   if (!item || !['feat', 'talent'].includes(item.type)) return null;
   const featureName = normalizeFeatureName(item.name);
   const resourceRules = item.system?.abilityMeta?.resourceRules ?? {};
