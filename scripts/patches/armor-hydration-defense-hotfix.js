@@ -15,6 +15,7 @@ import { PanelContextBuilder } from '/systems/foundryvtt-swse/scripts/sheets/v2/
 import { RowTransformers } from '/systems/foundryvtt-swse/scripts/sheets/v2/context/RowTransformers.js';
 import { DefenseCalculator } from '/systems/foundryvtt-swse/scripts/actors/derived/defense-calculator.js';
 import { actorHasArmorProficiencyForArmor, isEnergyShieldItem, resolveArmorData } from '/systems/foundryvtt-swse/scripts/items/armor-data-resolver.js';
+import { resolveArmorUsageEffects } from '/systems/foundryvtt-swse/scripts/engine/effects/armor-usage-resolver.js';
 
 const EFFECT_BUILDER_PARTIAL = 'systems/foundryvtt-swse/templates/dialogs/entity/parts/effect-builder-wizard.hbs';
 
@@ -90,7 +91,12 @@ function effectiveArmorDefenseState(actor, armor) {
 
   const reflexArmorBonus = toNumber(armorData.reflexBonus, 0) + (secondSkin ? 1 : 0);
   const fortitudeArmorBonus = proficient ? toNumber(armorData.fortitudeBonus, 0) + (secondSkin ? 1 : 0) : 0;
-  const maxDexBonus = toNumber(armorData.maxDexBonus, NaN);
+  // resolveArmorData() already normalizes maxDexBonus to either a finite
+  // number or exactly `null` ("uncapped"). Routing it through toNumber()'s
+  // Number(null) === 0 coercion first silently turned "uncapped" into
+  // "capped to +0" here too (Math Integrity Freeze Batch 2A) -- read the
+  // already-normalized value directly instead.
+  const maxDexBonus = armorData.maxDexBonus;
 
   return {
     armorData,
@@ -112,6 +118,29 @@ function correctedReflexLevelTerm(heroicLevel, armorState) {
   return armorBonus;
 }
 
+// Math Integrity Freeze Batch 2A: this hotfix recomputes body-armor Reflex/
+// Fortitude from scratch (see the module doc comment -- a hydration-timing
+// workaround, not a math authority of its own), which would otherwise
+// silently discard DefenseCalculator's own active-Energy-Shield Reflex
+// layer (Max Dex clamp, nonproficiency -5, positive-Dex denial) whenever
+// worn body armor is ALSO present. Folds the same shield adjustment back in
+// rather than letting this hotfix regress to pre-Batch-2A math.
+function activeShieldReflexAdjustment(actor) {
+  const activeEnergyShields = resolveArmorUsageEffects(actor).activeEnergyShields;
+  const maxDexCandidates = activeEnergyShields.map(s => s.maxDexCap).filter(v => Number.isFinite(v));
+  return {
+    maxDexCap: maxDexCandidates.length ? Math.min(...maxDexCandidates) : null,
+    reflexPenalty: activeEnergyShields.reduce((sum, s) => sum + (s.reflexPenalty || 0), 0),
+    denyPositiveDex: activeEnergyShields.some(s => s.denyPositiveDexToReflex)
+  };
+}
+
+function applyShieldAdjustmentToAbilityMod(abilityMod, shieldAdjustment) {
+  let adjusted = abilityMod;
+  if (Number.isFinite(shieldAdjustment.maxDexCap)) adjusted = Math.min(adjusted, shieldAdjustment.maxDexCap);
+  return adjusted;
+}
+
 function applyArmorDefenseCorrectionsToPanel(panel = {}, actor = {}) {
   const armor = findEquippedWornArmor(actor);
   if (!armor || !panel || !Array.isArray(panel.defenses)) return panel;
@@ -124,7 +153,12 @@ function applyArmorDefenseCorrectionsToPanel(panel = {}, actor = {}) {
     const maxDex = armorState.maxDexBonus;
     const effectiveMaxDex = maxDex === null ? null : maxDex + (armorState.armorMastery ? 1 : 0);
     const rawAbilityMod = toNumber(reflex.abilityMod, 0);
-    const abilityMod = effectiveMaxDex === null ? rawAbilityMod : Math.min(rawAbilityMod, effectiveMaxDex);
+    const shieldAdjustment = activeShieldReflexAdjustment(actor);
+    const abilityMod = applyShieldAdjustmentToAbilityMod(
+      effectiveMaxDex === null ? rawAbilityMod : Math.min(rawAbilityMod, effectiveMaxDex),
+      shieldAdjustment
+    );
+    const positiveDexDenied = shieldAdjustment.denyPositiveDex ? Math.max(0, abilityMod) : 0;
     const levelContribution = correctedReflexLevelTerm(heroicLevel, armorState);
     const total = 10
       + levelContribution
@@ -134,7 +168,9 @@ function applyArmorDefenseCorrectionsToPanel(panel = {}, actor = {}) {
       + toNumber(reflex.rulesBonus, 0)
       + toNumber(reflex.sizeModifier, 0)
       + toNumber(reflex.miscMod, 0)
-      + toNumber(reflex.conditionPenalty, 0);
+      + toNumber(reflex.conditionPenalty, 0)
+      + shieldAdjustment.reflexPenalty
+      - positiveDexDenied;
 
     reflex.armorBonus = armorState.reflexArmorBonus;
     reflex.levelContribution = levelContribution;
@@ -143,6 +179,8 @@ function applyArmorDefenseCorrectionsToPanel(panel = {}, actor = {}) {
     reflex.abilityModClass = abilityMod > 0 ? 'mod--positive' : abilityMod < 0 ? 'mod--negative' : 'mod--zero';
     reflex.total = Math.max(1, total);
     reflex.armorSourceName = armor.name || '';
+    reflex.shieldReflexPenalty = shieldAdjustment.reflexPenalty;
+    reflex.shieldDexReduction = -positiveDexDenied;
   }
 
   const fortitude = panel.defenses.find(row => row?.systemKey === 'fortitude' || row?.key === 'fort');
@@ -177,7 +215,12 @@ function applyArmorDefenseCorrectionsToResult(result = {}, actor = {}) {
   const maxDex = armorState.maxDexBonus;
   const effectiveMaxDex = maxDex === null ? null : maxDex + (armorState.armorMastery ? 1 : 0);
   const rawAbilityMod = toNumber(reflex.abilityMod, 0);
-  const abilityMod = effectiveMaxDex === null ? rawAbilityMod : Math.min(rawAbilityMod, effectiveMaxDex);
+  const shieldAdjustment = activeShieldReflexAdjustment(actor);
+  const abilityMod = applyShieldAdjustmentToAbilityMod(
+    effectiveMaxDex === null ? rawAbilityMod : Math.min(rawAbilityMod, effectiveMaxDex),
+    shieldAdjustment
+  );
+  const positiveDexDenied = shieldAdjustment.denyPositiveDex ? Math.max(0, abilityMod) : 0;
   const levelContribution = correctedReflexLevelTerm(heroicLevel, armorState);
   const reflexTotal = 10
     + levelContribution
@@ -188,7 +231,9 @@ function applyArmorDefenseCorrectionsToResult(result = {}, actor = {}) {
     + toNumber(reflex.adjustment, 0)
     + toNumber(reflex.sizeModifier, 0)
     + toNumber(reflex.miscBonus, 0)
-    + toNumber(reflex.conditionPenalty, 0);
+    + toNumber(reflex.conditionPenalty, 0)
+    + shieldAdjustment.reflexPenalty
+    - positiveDexDenied;
 
   result.reflex = {
     ...reflex,
@@ -199,6 +244,8 @@ function applyArmorDefenseCorrectionsToResult(result = {}, actor = {}) {
     levelContribution,
     abilityMod,
     armorSourceName: armor.name || '',
+    shieldReflexPenalty: shieldAdjustment.reflexPenalty,
+    shieldDexReduction: -positiveDexDenied,
   };
 
   if (result.flatFooted) {

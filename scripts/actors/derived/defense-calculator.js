@@ -23,6 +23,7 @@ import { ModifierEngine } from "/systems/foundryvtt-swse/scripts/engine/effects/
 import { isEnergyShieldItem, resolveArmorData } from "/systems/foundryvtt-swse/scripts/items/armor-data-resolver.js";
 import { ImplantRules } from "/systems/foundryvtt-swse/scripts/engine/implants/ImplantRules.js";
 import { actorHasGrappleState } from "/systems/foundryvtt-swse/scripts/engine/combat/grapple-state-query.js";
+import { resolveArmorUsageEffects } from "/systems/foundryvtt-swse/scripts/engine/effects/armor-usage-resolver.js";
 
 function getActorFeatItems(actor) {
   try {
@@ -788,12 +789,39 @@ export class DefenseCalculator {
       reflexArmorBonus += 1;
     }
     if (equippedArmor) {
-      const maxAbilityBonus = Number(equippedArmorStats?.maxDexBonus);
+      // resolveArmorData() returns maxDexBonus as either a finite number or
+      // exactly `null` ("uncapped" -- including the legacy 99/999 sentinel
+      // values it normalizes to null). Number(null) is 0, not NaN, so
+      // wrapping in Number() first silently turned "uncapped" into "capped
+      // to +0", stripping the actor's entire positive Dex bonus. Read the
+      // already-normalized value directly instead.
+      const maxAbilityBonus = equippedArmorStats?.maxDexBonus;
       if (Number.isFinite(maxAbilityBonus)) {
         const effectiveMaxAbilityBonus = armorProficient && hasArmorMastery ? maxAbilityBonus + 1 : maxAbilityBonus;
         reflexAbilityMod = Math.min(reflexAbilityMod, effectiveMaxAbilityBonus);
       }
     }
+
+    // Math Integrity Freeze Batch 2A: active Energy Shields are a separate
+    // layer from body armor, not a replacement for it (a character may wear
+    // both at once). An active shield's own Max Dex restriction applies
+    // independently of any body-armor cap above -- when both apply, the
+    // MORE RESTRICTIVE cap wins, per SWSE RAW. Armor Mastery is a body-armor
+    // talent; it is deliberately NOT extended to shields here (no rule text
+    // supports it). An inactive shield contributes nothing at all.
+    const activeEnergyShields = resolveArmorUsageEffects(actor).activeEnergyShields;
+    for (const shield of activeEnergyShields) {
+      if (Number.isFinite(shield.maxDexCap)) {
+        reflexAbilityMod = Math.min(reflexAbilityMod, shield.maxDexCap);
+      }
+    }
+    // Nonproficiency with an active shield imposes a flat -5 Reflex penalty
+    // (never for body armor, and never while the shield is inactive) and
+    // denies the POSITIVE Dexterity bonus to Reflex -- it never removes a
+    // Dexterity penalty. proficient active shields impose neither.
+    const shieldReflexPenalty = activeEnergyShields.reduce((sum, shield) => sum + (shield.reflexPenalty || 0), 0);
+    const shieldDeniesPositiveDex = activeEnergyShields.some(shield => shield.denyPositiveDexToReflex);
+
     let reflexLevelTerm = heroicLevel;
     if (equippedArmor) {
       if (armorProficient && hasImprovedArmoredDefense) {
@@ -805,7 +833,7 @@ export class DefenseCalculator {
       }
     }
     const reflexBase = 10 + reflexLevelTerm + reflexClassBonus + reflexSizeModifier;
-    const reflexTotalBeforePin = Math.max(1, reflexBase + reflexAbilityMod + reflexMiscBonus + reflexSpeciesBonus + refStateBonus + refAdjust + conditionPenalty);
+    const reflexTotalBeforePin = Math.max(1, reflexBase + reflexAbilityMod + reflexMiscBonus + reflexSpeciesBonus + refStateBonus + refAdjust + conditionPenalty + shieldReflexPenalty);
     // Pin (SWSE RAW): a Pinned creature loses its POSITIVE Dexterity bonus
     // to Reflex Defense -- not a flat universal penalty. This mirrors the
     // flat-footed treatment's own component-aware Dex-strip immediately
@@ -818,7 +846,13 @@ export class DefenseCalculator {
     // on its own; reducing it a second time for an actor that happens to
     // be both Pinned and flat-footed would double-count the same removal.
     const pinnedReflexDexReduction = actorHasGrappleState(actor, 'pinned') ? Math.max(0, reflexAbilityMod) : 0;
-    const reflexTotal = Math.max(1, reflexTotalBeforePin - pinnedReflexDexReduction);
+    // An active nonproficient shield denies the same POSITIVE Dex bonus Pin
+    // does. Both are "deny the bonus", not "deny it twice" -- if an actor is
+    // somehow both Pinned and wearing an active nonproficient shield, only
+    // pinnedReflexDexReduction (identical in value) applies so the bonus is
+    // not subtracted a second time.
+    const shieldReflexDexReduction = (shieldDeniesPositiveDex && pinnedReflexDexReduction === 0) ? Math.max(0, reflexAbilityMod) : 0;
+    const reflexTotal = Math.max(1, reflexTotalBeforePin - pinnedReflexDexReduction - shieldReflexDexReduction);
 
     const fortDefaultAbility = isDroidActor ? 'str' : 'con';
     // SWSE RAW: nonliving targets without Constitution, including Droids, add STR to Fortitude.
@@ -910,6 +944,11 @@ export class DefenseCalculator {
         // sums to total, rather than total silently diverging from its own
         // listed parts. See the comment on reflexTotalBeforePin above.
         pinnedDexReduction: -pinnedReflexDexReduction,
+        // Active-nonproficient-Energy-Shield equivalents of the two Pin line
+        // items immediately above, explicit for the same reason. 0 unless an
+        // active, nonproficient shield is worn.
+        shieldReflexPenalty,
+        shieldDexReduction: -shieldReflexDexReduction,
         conditionPenalty
       },
       will: {

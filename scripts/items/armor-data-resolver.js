@@ -329,7 +329,13 @@ export function resolveArmorData(itemOrSystem = {}) {
   ], null), null);
 
   const armorCheckPenalty = toNumber(firstValue(system, ['armorCheckPenalty', 'checkPenalty', 'armor.checkPenalty'], 0), 0);
-  const speedPenalty = toNumber(firstValue(system, ['speedPenalty', 'armor.speedPenalty'], 0), 0);
+  // Energy Shields never reduce speed (SWSE RAW) -- some shield records have
+  // carried a stale nonzero speedPenalty despite their own description
+  // saying otherwise. Zero it here, at the SSOT, the same way reflexBonus/
+  // fortitudeBonus are zeroed for shields below, so every consumer (store,
+  // entity dialog, suggestion engine, ModifierEngine) is protected even if
+  // a future import reintroduces bad data.
+  const speedPenalty = isShield ? 0 : toNumber(firstValue(system, ['speedPenalty', 'armor.speedPenalty'], 0), 0);
   const perceptionBonus = toNumber(firstValue(system, ['equipmentPerceptionBonus', 'perceptionBonus'], 0), 0);
   const shieldRating = clampNumber(firstValue(system, ['shieldRating', 'sr', 'shield.rating'], 0), 0, { min: 0 });
   const currentSR = clampNumber(firstValue(system, ['currentSR', 'currentSr', 'shield.current'], 0), 0, { min: 0, max: shieldRating || Number.MAX_SAFE_INTEGER });

@@ -21,10 +21,10 @@ import { ConditionEvaluator } from "/systems/foundryvtt-swse/scripts/engine/abil
 import { evaluateStatePredicates } from "/systems/foundryvtt-swse/scripts/engine/abilities/passive/passive-state.js";
 import {
   actorHasArmorProficiencyForArmor,
-  getArmorProficiencyPenalty,
   isEnergyShieldItem,
   resolveArmorData
 } from "/systems/foundryvtt-swse/scripts/items/armor-data-resolver.js";
+import { resolveArmorUsageEffects, ACP_AFFECTED_SKILLS } from "/systems/foundryvtt-swse/scripts/engine/effects/armor-usage-resolver.js";
 import { EffectIntentEngine } from "/systems/foundryvtt-swse/scripts/dialogs/entity-dialog/effect-intent-engine.js";
 import { buildSourceBreakdown, buildModifierLedger } from "/systems/foundryvtt-swse/scripts/engine/effects/modifiers/modifier-breakdown-builder.js";
 import { ActorPerfDiagnostics } from "/systems/foundryvtt-swse/scripts/utils/actor-perf-diagnostics.js";
@@ -1309,19 +1309,28 @@ export class ModifierEngine {
     if (!actor) return modifiers;
 
     try {
+      // Single shared authority for body-armor and active-Energy-Shield ACP
+      // (Math Integrity Freeze Batch 2A). See armor-usage-resolver.js for the
+      // full rule contract: proficiency suppresses ordinary armor's ACP
+      // entirely, but never suppresses an active Energy Shield's ACP -- the
+      // two were previously conflated into one buggy formula here (and
+      // Energy Shields were excluded from it altogether).
+      const armorUsageEffects = resolveArmorUsageEffects(actor);
+
       // Find equipped body armor. Energy shields are armor-backed items, but they
       // contribute SR/activation state rather than armor Reflex/Fortitude bonuses.
       const equippedArmor = actor?.items?.find(i => i.type === 'armor' && i.system?.equipped && !isEnergyShieldItem(i));
 
-      if (!equippedArmor) {
-        return modifiers; // No armor equipped
-      }
+      let armorName = null;
+      let armorType = null;
+      let isProficient = null;
 
+      if (equippedArmor) {
       const armorSystem = equippedArmor.system;
       const armorStats = resolveArmorData(equippedArmor);
-      const armorName = equippedArmor.name || 'Unknown Armor';
+      armorName = equippedArmor.name || 'Unknown Armor';
       const armorId = equippedArmor.id;
-      const armorType = armorStats.armorType || 'light';
+      armorType = armorStats.armorType || 'light';
 
       // ===== ARMOR PROFICIENCY CHECK =====
       // Proficiency can come from stored actor system flags, progression unlock
@@ -1329,7 +1338,7 @@ export class ModifierEngine {
       // ladder as defenses: Heavy covers all, Medium covers Medium/Light, Light
       // covers Light.  Proficiency does not erase base armor check penalty; it
       // only prevents the extra non-proficiency penalty.
-      const isProficient = actorHasArmorProficiencyForArmor(actor, equippedArmor);
+      isProficient = actorHasArmorProficiencyForArmor(actor, equippedArmor);
 
       // ===== TALENT CHECKS =====
       // Talent flags are preferred, but owned talent items remain the SSOT for
@@ -1387,40 +1396,10 @@ export class ModifierEngine {
         }
       }
 
-      // ===== ARMOR CHECK PENALTY (Skills) =====
-      let acpValue = armorStats.armorCheckPenalty || 0;
-      if (!isProficient) {
-        // Apply proficiency penalty if not proficient
-        const proficiencyPenalty = getArmorProficiencyPenalty(armorType);
-        acpValue = acpValue + proficiencyPenalty; // Combine with armor's base penalty
-      }
-
-      // Apply ACP to SWSE affected skills.
-      // Proficiency does not remove the armor's base ACP; it only prevents the
-      // extra non-proficiency penalty above.
-      if (acpValue !== 0) {
-        const acpSkills = [
-          'acrobatics', 'climb', 'endurance', 'initiative', 'jump', 'stealth', 'swim', 'athletics'
-        ];
-
-        for (const skillKey of acpSkills) {
-          try {
-            modifiers.push(createModifier({
-              source: ModifierSource.ITEM,
-              sourceId: armorId,
-              sourceName: `${armorName} (ACP)`,
-              target: `skill.${skillKey}`,
-              type: ModifierType.PENALTY,
-              value: acpValue, // Negative value
-              enabled: true,
-              priority: 25, // After other skill modifiers
-              description: `${armorName} applies ${acpValue} armor check penalty to ${skillKey}`
-            }));
-          } catch (err) {
-            swseLogger.warn(`Failed to create armor ACP modifier for skill.${skillKey}:`, err);
-          }
-        }
-      }
+      // ===== ARMOR CHECK PENALTY (Skills + Attacks) =====
+      // Handled below, after this body-armor-only block, by the shared
+      // armorUsageEffects authority -- it also covers active Energy
+      // Shields, which this equippedArmor lookup deliberately excludes.
 
       // ===== SPEED PENALTY =====
       let speedPenalty = armorSystem.speedPenalty || 0;
@@ -1532,13 +1511,11 @@ export class ModifierEngine {
             }
           }
 
-          // ACP modifier from upgrade (affects all ACP-affected skills)
+          // ACP modifier from upgrade (affects all ACP-affected skills). Uses
+          // the same canonical SWSE affected-skill list as the base armor
+          // ACP below -- do not invent a second, different skill list.
           if (typeof upgradeModifiers.acpModifier === 'number' && upgradeModifiers.acpModifier !== 0) {
-            const acpSkills = [
-              'acrobatics', 'climb', 'escapeArtist', 'jump', 'sleightOfHand', 'stealth', 'swim', 'useRope'
-            ];
-
-            for (const skillKey of acpSkills) {
+            for (const skillKey of ACP_AFFECTED_SKILLS) {
               try {
                 modifiers.push(createModifier({
                   source: ModifierSource.ITEM,
@@ -1577,8 +1554,40 @@ export class ModifierEngine {
           }
         }
       }
+      } // end if (equippedArmor)
 
-      swseLogger.debug(`[ModifierEngine] Registered ${modifiers.length} armor modifiers for ${armorName} (${armorType}, proficient: ${isProficient})`);
+      // ===== ARMOR CHECK PENALTY (Skills + Attacks) =====
+      // Single shared authority (armorUsageEffects, computed above): body
+      // armor's ACP (0 when proficient, the armor's own listed value -- or
+      // the light/medium/heavy category default only when the item carries
+      // none -- when not proficient) and every active Energy Shield's ACP
+      // (which always applies once active, proficient or not). Each
+      // contribution is registered from its own source so the breakdown/
+      // chat diagnostics can show it explicitly (e.g. "Energy Shield (SR 10)
+      // (Armor Check Penalty)") instead of one collapsed number that hides
+      // which item is responsible.
+      for (const part of armorUsageEffects.parts) {
+        if (part.effect !== 'attackAndSkillCheckPenalty' || !part.value) continue;
+        for (const skillKey of ACP_AFFECTED_SKILLS) {
+          try {
+            modifiers.push(createModifier({
+              source: ModifierSource.ITEM,
+              sourceId: part.sourceId,
+              sourceName: part.sourceName,
+              target: `skill.${skillKey}`,
+              type: ModifierType.PENALTY,
+              value: part.value,
+              enabled: true,
+              priority: 25, // After other skill modifiers
+              description: `${part.sourceName} applies ${part.value} armor check penalty to ${skillKey}`
+            }));
+          } catch (err) {
+            swseLogger.warn(`Failed to create armor ACP modifier for skill.${skillKey}:`, err);
+          }
+        }
+      }
+
+      swseLogger.debug(`[ModifierEngine] Registered ${modifiers.length} armor modifiers (${armorName ? `${armorName}, proficient: ${isProficient}` : 'no body armor'}; ${armorUsageEffects.activeEnergyShields.length} active shield(s))`);
 
     } catch (err) {
       swseLogger.warn(`[ModifierEngine] Error collecting armor item modifiers:`, err);

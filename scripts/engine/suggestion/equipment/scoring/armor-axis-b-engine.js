@@ -46,11 +46,16 @@ export class ArmorAxisBEngine {
     const effectiveMaxDex = maxDex === null ? null : maxDex + masteryBonus;
     const dexCapLoss = effectiveMaxDex === null ? 0 : Math.max(0, charDex - effectiveMaxDex);
 
-    // Per current project rule, armor check penalty applies only when the actor
-    // lacks proficiency in the armor type.  Category alone is not an ACP.
+    // Ordinary body armor: proficiency suppresses its ACP entirely. An
+    // Energy Shield's ACP always applies once active, proficient or not
+    // (Math Integrity Freeze Batch 2A) -- this axis previously forced
+    // `proficient = true` for every shield above, which silently zeroed a
+    // shield's ACP here unconditionally.
     const listedAcp = Number(armorStats.armorCheckPenalty || 0) || 0;
     const fallbackAcp = getArmorProficiencyPenalty(category);
-    const armorCheckPenalty = proficient ? 0 : Math.abs(listedAcp || fallbackAcp || 0);
+    const armorCheckPenalty = armorStats.isEnergyShield
+      ? Math.abs(listedAcp || fallbackAcp || 0)
+      : (proficient ? 0 : Math.abs(listedAcp || fallbackAcp || 0));
     const speedPenalty = Math.abs(Number(armorStats.speedPenalty || 0) || 0);
 
     // Character-specific modifier: high DEX amplifies max-Dex pain; high STR
