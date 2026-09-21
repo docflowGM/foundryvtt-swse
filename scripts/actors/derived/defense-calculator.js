@@ -20,7 +20,7 @@ import { getClassData } from "/systems/foundryvtt-swse/scripts/engine/progressio
 import { evaluateStatePredicates } from "/systems/foundryvtt-swse/scripts/engine/abilities/passive/passive-state.js";
 import { getReflexSizeModifier } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-stat-rules.js";
 import { ModifierEngine } from "/systems/foundryvtt-swse/scripts/engine/effects/modifiers/ModifierEngine.js";
-import { isEnergyShieldItem, resolveArmorData } from "/systems/foundryvtt-swse/scripts/items/armor-data-resolver.js";
+import { isEnergyShieldItem, isArmorItemEquipped, resolveArmorData } from "/systems/foundryvtt-swse/scripts/items/armor-data-resolver.js";
 import { ImplantRules } from "/systems/foundryvtt-swse/scripts/engine/implants/ImplantRules.js";
 import { actorHasGrappleState } from "/systems/foundryvtt-swse/scripts/engine/combat/grapple-state-query.js";
 import { resolveArmorUsageEffects } from "/systems/foundryvtt-swse/scripts/engine/effects/armor-usage-resolver.js";
@@ -723,7 +723,7 @@ export class DefenseCalculator {
     // replacement. They grant SR against Energy damage when activated and may
     // impose active-use penalties, but they do not override heroic-level Reflex
     // contribution like worn armor does.
-    const equippedArmor = actor.items?.find(item => item.type === 'armor' && item.system?.equipped && !isEnergyShieldArmor(item)) ?? null;
+    const equippedArmor = actor.items?.find(item => item.type === 'armor' && isArmorItemEquipped(item) && !isEnergyShieldArmor(item)) ?? null;
     const equippedArmorStats = equippedArmor ? resolveArmorData(equippedArmor) : null;
     const armorProficient = equippedArmor ? this._actorHasArmorProficiencyFromProfile(actor, equippedArmor, defenseProfile) : false;
     const hasKnightArmorMastery = defenseProfile.hasKnightArmorMastery;

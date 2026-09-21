@@ -19,6 +19,7 @@ import {
   actorHasArmorProficiencyForType,
   getArmorProficiencyPenalty,
   isEnergyShieldItem,
+  isArmorItemEquipped,
   normalizeArmorType,
   resolveArmorData
 } from "/systems/foundryvtt-swse/scripts/items/armor-data-resolver.js";
@@ -176,7 +177,7 @@ function effectiveArmorCheckPenalty(actor, item, armorData = null, proficient = 
 }
 
 function equippedBodyArmor(actor) {
-  return Array.from(actor?.items ?? []).find(item => item?.type === 'armor' && item?.system?.equipped && !isEnergyShieldItem(item)) ?? null;
+  return Array.from(actor?.items ?? []).find(item => item?.type === 'armor' && isArmorItemEquipped(item) && !isEnergyShieldItem(item)) ?? null;
 }
 
 function simulateBodyArmorContribution(actor, armorItem = null) {

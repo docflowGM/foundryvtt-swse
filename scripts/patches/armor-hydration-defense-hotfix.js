@@ -4,22 +4,38 @@
  * V2 sheet migration guardrails:
  * - The gear Armor Profile must use the same equipped-state semantics as the
  *   inventory rows and must prefer worn armor over equipped energy shields.
- * - DefenseCalculator.calculate() must not miss equipped armor/shields
- *   because an older item marks its equipped state via a legacy/alternate
- *   field shape (system.isEquipped, system.readied, system.equippable.equipped,
- *   flags.swse.equipped) instead of the canonical system.equipped field the
- *   calculator's own equippedArmor lookup reads. Fixed by normalizing that
- *   field, in memory, before every DefenseCalculator.calculate() call --
- *   never by recomputing its output afterward. See normalizeArmorEquipState()
- *   below for the full rationale (Math Integrity Freeze Batch 2A correction).
  * - The Effect Builder partial must be registered before item sheets try to
  *   render the entity dialog effects tab.
+ *
+ * Math Integrity Freeze Batch 2A correction (second pass): this file used to
+ * ALSO patch DefenseCalculator.calculate() -- first to recompute Reflex/
+ * Fortitude from scratch (a shadow defense authority, removed in the first
+ * Batch 2A correction), then, after that removal, to mutate
+ * item.system.equipped in memory before calling the real calculator, to
+ * paper over armor/shield records that mark equipped state via a legacy/
+ * alternate field shape. That mutation-based fix created its own ordering
+ * bug: DerivedCalculator.computeAll() runs ModifierEngine's modifier
+ * collection BEFORE DefenseCalculator.calculate(), so a legacy-equipped
+ * item's ACP/skill modifiers were silently omitted on that pass even though
+ * Defense math (which ran after the mutation) came out correct -- exactly
+ * the kind of order-dependent behavior this freeze exists to eliminate.
+ *
+ * Fixed properly this time: `isArmorItemEquipped()`
+ * (scripts/items/armor-data-resolver.js) is now the single, canonical
+ * equipped-state check, called directly by every consumer that needs it
+ * (armor-usage-resolver.js, ModifierEngine._getItemModifiers(),
+ * DefenseCalculator's own equippedArmor lookup, armor-benefit-simulator.js).
+ * No consumer depends on any other subsystem having run first, and no
+ * mutation of shared actor/item state is needed anywhere. This file's own
+ * `isWornArmor()`/`findEquippedWornArmor()` (used only for the two UI panel
+ * patches below, a display concern unrelated to defense/skill math) now
+ * delegate to that same shared check instead of maintaining a fourth
+ * duplicate copy of the same logic.
  */
 
 import { PanelContextBuilder } from '/systems/foundryvtt-swse/scripts/sheets/v2/context/PanelContextBuilder.js';
 import { RowTransformers } from '/systems/foundryvtt-swse/scripts/sheets/v2/context/RowTransformers.js';
-import { DefenseCalculator } from '/systems/foundryvtt-swse/scripts/actors/derived/defense-calculator.js';
-import { isEnergyShieldItem } from '/systems/foundryvtt-swse/scripts/items/armor-data-resolver.js';
+import { isEnergyShieldItem, isArmorItemEquipped } from '/systems/foundryvtt-swse/scripts/items/armor-data-resolver.js';
 
 const EFFECT_BUILDER_PARTIAL = 'systems/foundryvtt-swse/templates/dialogs/entity/parts/effect-builder-wizard.hbs';
 
@@ -27,7 +43,6 @@ let registered = false;
 let partialRegistrationStarted = false;
 let originalBuildArmorSummaryPanel = null;
 let originalBuildInventoryPanel = null;
-let originalDefenseCalculate = null;
 let effectBuilderFallbackRegistered = false;
 let effectBuilderFullTemplateRegistered = false;
 
@@ -47,73 +62,13 @@ function getLoadTemplatesFunction() {
   return foundry?.applications?.handlebars?.loadTemplates ?? null;
 }
 
-function isTruthyEquipState(value) {
-  if (value === true || Number(value) === 1) return true;
-  if (value && typeof value === 'object' && !Array.isArray(value)) {
-    return isTruthyEquipState(value.value ?? value.current ?? value.active ?? value.equipped ?? value.state);
-  }
-  return ['true', '1', 'yes', 'equipped', 'worn', 'held', 'readied', 'ready', 'on', 'active'].includes(String(value || '').toLowerCase());
-}
-
-function itemIsEquipped(item = {}) {
-  return isTruthyEquipState(item?.system?.equipped)
-    || isTruthyEquipState(item?.system?.isEquipped)
-    || isTruthyEquipState(item?.system?.readied)
-    || isTruthyEquipState(item?.system?.equippable?.equipped)
-    || isTruthyEquipState(item?.flags?.swse?.equipped);
-}
-
 function isWornArmor(item = {}) {
-  return item?.type === 'armor' && itemIsEquipped(item) && !isEnergyShieldItem(item);
+  return item?.type === 'armor' && isArmorItemEquipped(item) && !isEnergyShieldItem(item);
 }
 
 function findEquippedWornArmor(actorOrItems) {
   const items = actorOrItems?.items ? asArray(actorOrItems.items) : asArray(actorOrItems);
   return items.find(isWornArmor) ?? null;
-}
-
-// Math Integrity Freeze Batch 2A correction: this hotfix previously
-// recomputed Reflex/Fortitude from scratch AFTER DefenseCalculator.calculate()
-// already produced the correct answer -- a second, independently-maintained
-// defense authority. Live review against Gar'ee's real actor confirmed that
-// reconstruction was ALREADY wrong on its own terms even before Energy
-// Shields existed: flat-footed Reflex only stripped the positive Dex bonus,
-// not dodge bonuses (Gar'ee: 29 -> 25 instead of the certified 24); an
-// active-nonproficient-shield's Dex denial got applied a second time when
-// also flat-footed; and Pin's positive-Dex-bonus removal
-// (reflex.pinnedDexReduction) was never read at all, so this reconstruction
-// could silently restore the Dex bonus Pin had just removed. Every one of
-// those is a case this file would have had to be taught by hand, forever,
-// as the canonical defense rules keep evolving -- an unsustainable pattern
-// (see docs/audits/v2-math-integrity-authority-ledger.md's Batch 2A
-// correction addendum).
-//
-// The actual problem this hotfix's own doc comment describes is narrower
-// than "recompute the answer": some armor/shield records mark equipped
-// state via a legacy/alternate field (system.isEquipped, system.readied,
-// system.equippable.equipped, flags.swse.equipped) that DefenseCalculator's
-// own equippedArmor lookup (item.system?.equipped only) doesn't recognize,
-// so the canonical calculator would think nothing is equipped and skip
-// armor/shield math entirely. The fix belongs on the INPUT side, not the
-// output side: normalize the equipped-state field DefenseCalculator (and
-// every other canonical consumer -- ModifierEngine, armor-usage-resolver.js
-// -- reading the same actor afterward) actually looks at, then let the one
-// canonical calculator run untouched.
-//
-//   hydration/equip-state normalization -> DefenseCalculator.calculate() -> consumers
-//
-// This mutation is in-memory only (never persisted via actor/item.update()):
-// it only ever sets system.equipped = true when the item is ALREADY equipped
-// by every other looser definition this codebase's own InventoryEngine write
-// path already uses, so it can only correct a false negative, never invent
-// a false positive.
-function normalizeArmorEquipState(actor) {
-  for (const item of asArray(actor?.items)) {
-    if (item?.type !== 'armor') continue;
-    if (!itemIsEquipped(item)) continue;
-    if (item.system?.equipped) continue;
-    if (item.system) item.system.equipped = true;
-  }
 }
 
 function installPanelArmorPatches() {
@@ -144,24 +99,11 @@ function installPanelArmorPatches() {
     };
   }
 
-  // No buildDefensePanel patch: it already reads system.derived.defenses.*
-  // (buildDefensesViewModel() / PanelContextBuilder.js's own
-  // "authoritativeTotal" preference), the same canonical output
-  // DefenseCalculator.calculate() persists there. Once that persisted data
-  // is correct -- guaranteed by normalizeArmorEquipState() below running
-  // before every DefenseCalculator.calculate() call -- the panel needs no
-  // separate correction. Reconstructing Reflex/Fortitude a second time here
-  // was the shadow-authority bug; consuming the canonical output the panel
-  // already prefers is the fix.
-}
-
-function installDefenseCalculatorPatch() {
-  if (originalDefenseCalculate || typeof DefenseCalculator?.calculate !== 'function') return;
-  originalDefenseCalculate = DefenseCalculator.calculate;
-  DefenseCalculator.calculate = async function patchedDefenseCalculate(actor, classLevels = [], options = {}, context = {}) {
-    normalizeArmorEquipState(actor);
-    return originalDefenseCalculate.call(this, actor, classLevels, options, context);
-  };
+  // No buildDefensePanel patch, and no DefenseCalculator.calculate() patch
+  // at all: DefenseCalculator's own equippedArmor lookup now calls
+  // isArmorItemEquipped() directly, so it (and the panel, which already
+  // reads DefenseCalculator's persisted system.derived.defenses.* output)
+  // needs no external correction of any kind.
 }
 
 function installSynchronousEffectBuilderFallback() {
@@ -244,7 +186,6 @@ export function registerArmorHydrationDefenseHotfix() {
   if (registered) return false;
   registered = true;
   installPanelArmorPatches();
-  installDefenseCalculatorPatch();
   scheduleEffectBuilderPartialRegistration();
   return true;
 }

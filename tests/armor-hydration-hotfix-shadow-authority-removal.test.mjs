@@ -34,17 +34,28 @@ import { installFoundryShimGlobals } from './helpers/foundry-shim/globals.mjs';
 //
 // Root architectural cause: the hotfix was a second, independently-
 // maintained Reflex/Fortitude formula, not a consumer of the canonical one.
-// Fixed by removing that reconstruction entirely -- the hotfix now only
-// normalizes armor/shield equipped-state (an input-side, in-memory-only
-// correction for legacy alternate equip-flag shapes) before calling the
-// real, untouched DefenseCalculator.calculate(). This suite proves the
-// invariant that matters: registering the hotfix must never change
-// DefenseCalculator's output for an actor whose armor is already correctly
-// flagged (every fixture below), across every domain this freeze has
+// Fixed by removing that reconstruction entirely.
+//
+// A SECOND pass then found that this hotfix had already been re-purposed
+// (after the first correction) to mutate item.system.equipped in memory
+// before calling DefenseCalculator.calculate(), to recognize legacy
+// alternate equip-flag shapes. That mutation-based fix had its own ordering
+// bug: DerivedCalculator.computeAll() runs ModifierEngine's modifier
+// collection BEFORE DefenseCalculator.calculate(), so a legacy-equipped
+// item's ACP/skill modifiers were silently omitted on the actor's first
+// derived pass even though Defense math (which ran after the mutation)
+// came out correct. Fixed properly by making isArmorItemEquipped()
+// (armor-data-resolver.js) the single canonical equipped-state check,
+// called directly by DefenseCalculator's own equippedArmor lookup (and by
+// ModifierEngine, armor-usage-resolver.js, armor-benefit-simulator.js) --
+// no mutation, no dependency on any other subsystem having run first. This
+// suite now proves two invariants: registering the hotfix (unregistered:
+// it no longer touches DefenseCalculator.calculate() at all) never changes
+// DefenseCalculator's output, across every domain this freeze has
 // certified (ordinary armor, Armored Defense/IAD, flat-footed + dodge, Pin,
-// active proficient/nonproficient shields, body armor + shield together) --
-// and must correctly RECOGNIZE armor that previously would have been
-// invisible to the canonical calculator due to a legacy equip-flag shape.
+// active proficient/nonproficient shields, body armor + shield together);
+// and DefenseCalculator correctly recognizes a legacy alternate equip-flag
+// shape on its own, without any mutation of the actor/item at all.
 
 globalThis.window = globalThis.window || {};
 registerFoundryPathLoader();
@@ -173,9 +184,9 @@ console.log('  [2/4] invariant held across every certified domain (ordinary armo
 
 console.log('  [3/4] fail-before A (Gar\'ee flat-footed dodge), B (shield-denial + flat-footed double-subtraction), C (Pin + body armor) all confirmed fixed OK');
 
-// ─── The hotfix's real remaining job: recognize a legacy alternate ─────────
-//     equip-flag shape DefenseCalculator's own narrow lookup would otherwise
-//     miss entirely (system.equippable.equipped, not system.equipped).
+// ─── DefenseCalculator recognizes a legacy alternate equip-flag shape ──────
+//     on its own (system.equippable.equipped, not system.equipped) --
+//     without any mutation, and whether or not this hotfix is registered.
 
 {
   const legacyShapeArmor = {
@@ -184,11 +195,11 @@ console.log('  [3/4] fail-before A (Gar\'ee flat-footed dodge), B (shield-denial
   };
   const actor = { type: 'character', items: [legacyShapeArmor], effects: [], system: { attributes: { dex: { base: 20, racial: 0, enhancement: 0, temp: 0 } }, abilities: {}, defenses: {}, conditionTrack: { current: 0 } } };
   const result = await DefenseCalculator.calculate(actor, [], {}, {});
-  assert.equal(result.reflex.armorBonus, 4, 'armor equipped only via system.equippable.equipped must still be recognized by the canonical calculator once the hotfix normalizes its equip-state');
+  assert.equal(result.reflex.armorBonus, 4, 'armor equipped only via system.equippable.equipped must be recognized by the canonical calculator\'s own equippedArmor lookup');
   assert.equal(result.reflex.abilityMod, 3, 'that armor\'s own Max Dex (+3) must still apply, proving the FULL armor record was picked up, not just a bare equipped flag');
-  assert.equal(legacyShapeArmor.system.equipped, true, 'the normalization must set the canonical system.equipped field the rest of the codebase (ModifierEngine, armor-usage-resolver.js) also reads');
+  assert.equal(legacyShapeArmor.system.equipped, undefined, 'no mutation: system.equipped must remain untouched -- DefenseCalculator recognizes the legacy shape by calling isArmorItemEquipped() directly, not by anyone rewriting the item first');
 }
 
-console.log('  [4/4] the hotfix\'s real remaining job -- normalizing a legacy alternate equip-flag shape so the canonical calculator (and every other consumer reading system.equipped) recognizes it -- still works OK');
+console.log('  [4/4] DefenseCalculator recognizes a legacy alternate equip-flag shape directly, with no mutation of the actor/item and no dependency on this hotfix at all OK');
 
 console.log('armor-hydration-hotfix-shadow-authority-removal.test.mjs: all assertions passed');

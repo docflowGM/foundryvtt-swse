@@ -42,6 +42,7 @@
 
 import {
   isEnergyShieldItem,
+  isArmorItemEquipped,
   resolveArmorData,
   actorHasArmorProficiencyForArmor,
   getArmorProficiencyPenalty
@@ -65,7 +66,7 @@ function actorItems(actor) {
 }
 
 function resolveBodyArmorContribution(actor) {
-  const item = actorItems(actor).find(i => i?.type === 'armor' && i?.system?.equipped && !isEnergyShieldItem(i));
+  const item = actorItems(actor).find(i => i?.type === 'armor' && isArmorItemEquipped(i) && !isEnergyShieldItem(i));
   if (!item) return null;
 
   const data = resolveArmorData(item);
@@ -147,7 +148,7 @@ export function resolveArmorUsageEffects(actor) {
     });
   }
 
-  const shieldItems = actorItems(actor).filter(i => i?.type === 'armor' && i?.system?.equipped && isEnergyShieldItem(i));
+  const shieldItems = actorItems(actor).filter(i => i?.type === 'armor' && isArmorItemEquipped(i) && isEnergyShieldItem(i));
   const activeEnergyShields = [];
   for (const shieldItem of shieldItems) {
     const contribution = resolveActiveShieldContribution(actor, shieldItem);

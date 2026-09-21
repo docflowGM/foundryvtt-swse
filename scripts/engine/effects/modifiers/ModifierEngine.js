@@ -22,6 +22,7 @@ import { evaluateStatePredicates } from "/systems/foundryvtt-swse/scripts/engine
 import {
   actorHasArmorProficiencyForArmor,
   isEnergyShieldItem,
+  isArmorItemEquipped,
   resolveArmorData
 } from "/systems/foundryvtt-swse/scripts/items/armor-data-resolver.js";
 import { resolveArmorUsageEffects, ACP_AFFECTED_SKILLS } from "/systems/foundryvtt-swse/scripts/engine/effects/armor-usage-resolver.js";
@@ -160,7 +161,17 @@ export class ModifierEngine {
         item?.id ?? item?._id ?? 'no-id',
         item?.type ?? 'unknown',
         item?._stats?.modifiedTime ?? item?._source?._stats?.modifiedTime ?? item?.system?._version ?? '',
-        item?.system?.equipped ?? item?.system?.isEquipped ?? '',
+        // Each legacy/alternate equip-flag shape gets its own slot rather
+        // than being collapsed via `??` -- `??` only skips null/undefined,
+        // so `system.equipped: false, system.isEquipped: true` previously
+        // hashed identically to `system.equipped: false` alone, silently
+        // losing the isEquipped signal (Math Integrity Freeze Batch 2A
+        // correction).
+        item?.system?.equipped ?? '',
+        item?.system?.isEquipped ?? '',
+        item?.system?.readied ?? '',
+        item?.system?.equippable?.equipped ?? '',
+        item?.flags?.swse?.equipped ?? '',
         item?.system?.activated ?? item?.system?.active ?? '',
         item?.system?.quantity ?? '',
         item?.system?.uses?.value ?? item?.system?.ammo?.value ?? ''
@@ -1319,7 +1330,7 @@ export class ModifierEngine {
 
       // Find equipped body armor. Energy shields are armor-backed items, but they
       // contribute SR/activation state rather than armor Reflex/Fortitude bonuses.
-      const equippedArmor = actor?.items?.find(i => i.type === 'armor' && i.system?.equipped && !isEnergyShieldItem(i));
+      const equippedArmor = actor?.items?.find(i => i.type === 'armor' && isArmorItemEquipped(i) && !isEnergyShieldItem(i));
 
       let armorName = null;
       let armorType = null;
