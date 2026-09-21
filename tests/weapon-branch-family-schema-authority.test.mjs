@@ -591,11 +591,116 @@ const bluebolt = {
   }
   ok('weapon-branch-coherence-hotfix.js preCreateItem: real pack-shaped materialization still self-corrects (Bluebolt root cause remains fixed)');
 
+  // ─── 18. Batch 2B correction #3: preCreateItem attack-attribute/branch ───
+  //         provenance. Foundry's DataModel construction merges `data` onto
+  //         template.json's schema BEFORE preCreateItem fires, so
+  //         document.system already contains template-fabricated defaults
+  //         (e.g. attackAttribute:"str") for any field the raw creation
+  //         payload never authored. Treating document.system as genuine
+  //         prior state for a CREATE (as preUpdateItem correctly does for a
+  //         real, previously-persisted UPDATE) mistakes a fabricated
+  //         default for explicit player input -- the same provenance class
+  //         of defect as the original Bluebolt bug, now on attackAttribute
+  //         instead of branch. Reuses this same hotfix module instance's
+  //         registered `handlers` (registerWeaponBranchCoherenceHotfix()'s
+  //         module-level singleton guard means it cannot be re-registered
+  //         against a second, fresh capture within one process).
+
+  function simulateCreate(rawDataSystem) {
+    // Reproduce Foundry's real preCreateItem contract: `document.system` is
+    // ALREADY the DataModel-constructed result (template defaults merged
+    // with whatever the raw payload explicitly supplied) by the time the
+    // hook fires -- exactly what a real Item.create() call hands the hook.
+    const templateDefaults = { weaponCategory: 'melee', proficiency: 'simple', subcategory: 'simple', category: 'simple', attackAttribute: 'str', meleeOrRanged: 'melee', ranged: false };
+    const document = { type: 'weapon', system: { ...templateDefaults, ...rawDataSystem } };
+    document.updateSource = (patch) => { Object.assign(document.system, patch?.system ?? {}); };
+    const data = { type: 'weapon', system: { ...rawDataSystem } };
+    handlers.preCreateItem(document, data, {}, 'test-user');
+    return document.system;
+  }
+
+  // 18a. Ranged create, attackAttribute genuinely omitted -> must default DEX.
+  {
+    const result = simulateCreate({ weaponCategory: 'ranged', proficiency: 'pistols', subcategory: 'pistol', category: 'pistol' });
+    assert.equal(result.weaponCategory, 'ranged', 'branch must resolve to ranged from the authored data');
+    assert.equal(result.meleeOrRanged, 'ranged');
+    assert.equal(result.attackAttribute, 'dex', 'a genuinely omitted attackAttribute on a ranged creation must default to dex, not inherit the template-fabricated melee-shaped "str" default');
+  }
+  ok('preCreateItem: ranged creation with attackAttribute genuinely omitted defaults to dex, not the template-fabricated str');
+
+  // 18b. Melee create, attackAttribute genuinely omitted -> must default STR.
+  {
+    const result = simulateCreate({ weaponCategory: 'melee', subcategory: 'advanced', proficiency: 'advanced-melee' });
+    assert.equal(result.attackAttribute, 'str', 'a genuinely omitted attackAttribute on a melee creation must default to str');
+  }
+  ok('preCreateItem: melee creation with attackAttribute genuinely omitted defaults to str');
+
+  // 18c. Explicit ranged + str: the player's real explicit choice must survive.
+  {
+    const result = simulateCreate({ weaponCategory: 'ranged', subcategory: 'pistol', proficiency: 'pistols', attackAttribute: 'str' });
+    assert.equal(result.attackAttribute, 'str', 'an explicitly authored str on a ranged weapon is a real player choice and must not be overwritten to dex');
+  }
+  ok('preCreateItem: explicit str on a ranged creation is preserved verbatim');
+
+  // 18d. Explicit melee + cha: same, other direction.
+  {
+    const result = simulateCreate({ weaponCategory: 'melee', subcategory: 'lightsaber', attackAttribute: 'cha' });
+    assert.equal(result.attackAttribute, 'cha', 'an explicitly authored cha on a melee weapon is a real player choice and must not be overwritten to str');
+  }
+  ok('preCreateItem: explicit cha on a melee creation is preserved verbatim');
+
+  // 18e. preUpdateItem: a real, previously-persisted attackAttribute IS
+  // genuine prior state (never fabricated) and must survive an
+  // unrelated-field update untouched.
+  {
+    const document = { type: 'weapon', system: { weaponCategory: 'ranged', proficiency: 'pistols', subcategory: 'pistol', category: 'pistol', meleeOrRanged: 'ranged', attackAttribute: 'cha' } };
+    const data = { system: { damage: '4d6' } };
+    handlers.preUpdateItem(document, data, {}, 'test-user');
+    assert.notEqual(data.system?.attackAttribute, 'dex', 'an unrelated-field update on an existing weapon must never re-derive attackAttribute from the branch default');
+  }
+  ok('preUpdateItem: a real persisted attackAttribute survives an unrelated-field update untouched');
+
+  // 18f. preUpdateItem: a same-branch family update must not re-author an
+  // explicit attackAttribute either.
+  {
+    const document = { type: 'weapon', system: { weaponCategory: 'ranged', proficiency: 'pistols', subcategory: 'pistol', category: 'pistol', meleeOrRanged: 'ranged', attackAttribute: 'str' } };
+    const data = { system: { subcategory: 'rifle', proficiency: 'rifles', category: 'rifle' } };
+    handlers.preUpdateItem(document, data, {}, 'test-user');
+    const finalAttackAttribute = data.system?.attackAttribute ?? document.system.attackAttribute;
+    assert.equal(finalAttackAttribute, 'str', 'a same-branch family update (pistol -> rifle) must not silently re-author an explicit attackAttribute choice');
+  }
+  ok('preUpdateItem: a same-branch family/category update does not re-author an explicit attackAttribute');
+
   // Restore the ambient shim state the rest of this file (and any later
   // section, if this were ever appended to) expects.
   installFoundryShimGlobals({
     game: { settings: { get: () => undefined, set: () => {}, settings: { has: () => true } } }
   });
+}
+
+// ─── 17. Batch 2B correction #3: template.json itself must satisfy the new ──
+//         field contract, not just the normalizer that corrects around it.
+//         Parses the REAL template.json (not a fixture) -- the lowest
+//         Foundry DataModel default boundary, which every weapon document
+//         inherits from before any hook or normalizer runs.
+
+{
+  const fs = await import('node:fs');
+  const path = await import('node:path');
+  const templatePath = path.default.resolve(process.cwd(), 'template.json');
+  const template = JSON.parse(fs.default.readFileSync(templatePath, 'utf8'));
+  const weaponDefaults = template?.Item?.weapon ?? {};
+
+  assert.equal(weaponDefaults.weaponCategory, 'melee', 'template.json must declare weaponCategory as a branch literal ("melee"/"ranged"), matching its own meleeOrRanged default -- never a family value like "simple"');
+  assert.equal(weaponDefaults.meleeOrRanged, 'melee', 'template.json\'s branch default must be internally self-consistent');
+  assert.equal(weaponDefaults.subcategory, 'simple', 'template.json must declare the canonical family field (subcategory) directly, not leave it entirely absent');
+  assert.equal(weaponDefaults.category, 'simple', 'template.json\'s category alias must agree with subcategory');
+  assert.equal(weaponDefaults.proficiency, 'simple', 'template.json\'s proficiency alias must remain the real shipped-data-compatible value');
+
+  const resolved = resolveWeaponBranchFamily({ weaponCategory: weaponDefaults.weaponCategory, proficiency: weaponDefaults.proficiency, subcategory: weaponDefaults.subcategory, category: weaponDefaults.category, meleeOrRanged: weaponDefaults.meleeOrRanged });
+  assert.equal(resolved.coherent, true, 'template.json\'s own declared weapon defaults must be internally coherent under the canonical resolver, not merely "happen to resolve correctly by accident of tier fallback"');
+
+  ok('template.json\'s real weapon defaults satisfy the field contract (weaponCategory is a branch literal, subcategory/category/proficiency agree, internally coherent)');
 }
 
 console.log('weapon-branch-family-schema-authority.test.mjs: all assertions passed');

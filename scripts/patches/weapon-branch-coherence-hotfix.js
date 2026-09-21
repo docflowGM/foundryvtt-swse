@@ -56,10 +56,7 @@ const DIFFED_FIELDS = [
   'rangeProfile', 'weaponType', 'attackAttribute'
 ];
 
-function correctedFields(document, data) {
-  const currentSystem = document?.system ?? {};
-  const submittedSystem = data?.system ?? {};
-  const before = { ...currentSystem, ...submittedSystem };
+function correctedFields(currentSystem, submittedSystem, before) {
   const after = normalizeWeaponForWrite(currentSystem, submittedSystem);
   const fields = {};
   for (const field of DIFFED_FIELDS) {
@@ -75,14 +72,34 @@ export function registerWeaponBranchCoherenceHotfix() {
 
   Hooks.on('preCreateItem', (document, data, _options, _userId) => {
     if (document?.type !== 'weapon') return;
-    const fields = correctedFields(document, data);
+    // Batch 2B correction #3: by the time preCreateItem fires, Foundry has
+    // already constructed `document` by merging `data` onto template.json's
+    // schema defaults -- so document.system contains fields like
+    // attackAttribute:"str" the RAW creation payload never authored, purely
+    // because the DataModel had to fill something in. There is no genuine
+    // PRIOR persisted state for a brand-new document (unlike preUpdateItem,
+    // where document.system really was saved earlier), so document.system
+    // must never be treated as "current/authored" state here -- only
+    // data.system (the caller's actual payload) is genuine submitted
+    // intent. Passing an empty currentSystem is what lets
+    // normalizeWeaponForWrite()'s "fill attackAttribute only when genuinely
+    // absent" check see a truly-omitted field as absent, instead of
+    // mistaking the template's fabricated default for an explicit choice
+    // (the same provenance class of defect the original Bluebolt bug was).
+    const submittedSystem = data?.system ?? {};
+    const fields = correctedFields({}, submittedSystem, document?.system ?? {});
     if (fields) document.updateSource?.({ system: fields });
   });
 
   Hooks.on('preUpdateItem', (document, data, _options, _userId) => {
     if (document?.type !== 'weapon') return;
     if (!data?.system) return;
-    const fields = correctedFields(document, data);
+    // For an UPDATE, document.system is real, previously-persisted state --
+    // never a fabricated default -- so it is the genuine "current" side.
+    const currentSystem = document?.system ?? {};
+    const submittedSystem = data.system;
+    const before = { ...currentSystem, ...submittedSystem };
+    const fields = correctedFields(currentSystem, submittedSystem, before);
     if (fields) foundry.utils.mergeObject(data, { system: fields }, { insertKeys: true });
   });
 

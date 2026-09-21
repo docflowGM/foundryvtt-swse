@@ -571,8 +571,10 @@
       "templates": [
         "base"
       ],
-      "weaponCategory": "simple",
+      "weaponCategory": "melee",
       "proficiency": "simple",
+      "subcategory": "simple",
+      "category": "simple",
       "damage": "1d6",
       "damageBonus": "",
       "attackBonus": 0,
