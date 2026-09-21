@@ -556,7 +556,13 @@ export function normalizeItemSystem(type, currentSystem = {}, submittedSystem = 
     // attackAttribute (including one that intentionally differs from the
     // branch default) is always preserved verbatim.
     normalizeWeaponBranchFamily(merged);
-    if (!['str', 'dex'].includes(merged.attackAttribute)) merged.attackAttribute = 'str';
+    // Math Integrity Freeze, Batch 2B correction: the item editor exposes
+    // all six ability keys for attackAttribute (SWSE has feats/talents that
+    // legitimately use CON/INT/WIS/CHA with a weapon, not just STR/DEX) --
+    // this safety-net validation must accept all six, not silently coerce a
+    // real player choice (e.g. CHA) back to STR just because it isn't STR
+    // or DEX. Only a genuinely invalid/garbage value falls back to STR.
+    if (!['str', 'dex', 'con', 'int', 'wis', 'cha'].includes(merged.attackAttribute)) merged.attackAttribute = 'str';
     if (!['energy', 'kinetic', 'sonic', 'ion', 'fire', 'cold', 'acid', 'force', 'stun'].includes(merged.damageType)) {
       merged.damageType = 'energy';
     }

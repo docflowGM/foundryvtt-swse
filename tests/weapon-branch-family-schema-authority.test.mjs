@@ -8,18 +8,23 @@ import { installFoundryShimGlobals } from './helpers/foundry-shim/globals.mjs';
 //
 // Root cause, confirmed against real repository data (not assumed):
 //   - packs/weapons-pistols.db#weapon-bluebolt-blaster-pistol never
-//     declares system.meleeOrRanged. A full pack scan found this true of
-//     100% of shipped weapon records (744/744) -- the field is NEVER
-//     authored in real data.
+//     declares system.meleeOrRanged. A full, deduplicated pack scan found
+//     this true of 100% of shipped weapon records: 193 unique standalone
+//     weapon-catalog records (151 ranged, 42 melee) across packs/weapons*.db,
+//     PLUS 5,766 actor-embedded weapon items across the NPC/heroic/nonheroic
+//     /droid packs -- 5,959 total weapon-type records checked, meleeOrRanged
+//     absent on all of them. (An earlier pass reported "744/604/140" -- that
+//     figure was a counting artifact from an overlapping glob pattern that
+//     processed every packs/weapons*.db file twice; corrected here.)
 //   - template.json's own weapon schema defaults meleeOrRanged to "melee",
 //     which Foundry's DataModel applies unconditionally to any weapon
 //     document (compendium or embedded) whose source omits it -- this is
 //     the confirmed write-time origin of the contradiction, not a JS bug
 //     in any one consumer.
 //   - system.weaponCategory holds a literal "melee"/"ranged" branch value
-//     on 100% of shipped records (604 ranged, 140 melee) -- it is the
-//     reliable, always-authored branch signal in real data, the reverse of
-//     what every pre-existing consumer assumed (meleeOrRanged first).
+//     on 100% of shipped standalone records -- it is the reliable,
+//     always-authored branch signal in real data, the reverse of what
+//     every pre-existing consumer assumed (meleeOrRanged first).
 //
 // This suite proves: the canonical resolver reads real data correctly; at
 // least one previously-misclassifying live production consumer now agrees;
@@ -261,9 +266,9 @@ const bluebolt = {
   ok('Attack-Ability Policy: branch-based default only when absent; explicit player override always preserved; branch classifier ignores attackAttribute entirely');
 }
 
-// ─── 11. Schema-coherence invariant: branch/family/proficiency/subcategory/ ─
-//         range-profile must agree; normalizeWeaponBranchFamily corrects
-//         only the low-trust fields, never the high-trust evidence.
+// ─── 11. Schema-coherence invariant: resolveWeaponBranchFamily() DETECTS ──
+//         every contradictory branch/family combination (read-time,
+//         tolerant -- used everywhere for classification, never mutates).
 
 {
   const cases = [
@@ -279,25 +284,170 @@ const bluebolt = {
     assert.equal(resolved.coherent, false, `${label}: must be flagged as an incoherent combination, not silently accepted`);
     assert.notEqual(expectedBranch, expectFamilyBranch, `${label}: sanity check that this really is a contradiction`);
   }
-  ok('schema-coherence invariant: every contradictory branch/family combination is detected (melee+pistol/rifles/heavy-weapons, ranged+lightsaber/natural)');
+  ok('schema-coherence invariant (read-time detection): every contradictory branch/family combination is detected (melee+pistol/rifles/heavy-weapons, ranged+lightsaber/natural)');
 
   // simple weapon cases remain valid on the appropriate branch
   assert.equal(resolveWeaponBranchFamily({ weaponCategory: 'melee', proficiency: 'simple' }).coherent, true, 'melee + simple must be coherent (simple is branch-ambiguous)');
   assert.equal(resolveWeaponBranchFamily({ weaponCategory: 'ranged', proficiency: 'simple' }).coherent, true, 'ranged + simple must be coherent (simple is branch-ambiguous)');
   ok('simple-proficiency weapons remain valid/coherent on either branch');
+}
 
-  // changing a weapon from ranged -> melee cannot leave pistol/rifle/heavy family fields behind (write-time)
-  const rangedToMelee = { weaponCategory: 'melee', proficiency: 'pistols', ranged: true, attackAttribute: 'dex' };
-  normalizeWeaponBranchFamily(rangedToMelee);
-  assert.equal(rangedToMelee.meleeOrRanged, 'melee', 'the low-trust meleeOrRanged field is corrected to match the high-trust weaponCategory');
-  assert.equal(rangedToMelee.ranged, false, 'the legacy ranged boolean is corrected too');
-  assert.equal(rangedToMelee.proficiency, 'pistols', 'the high-trust proficiency field itself is never rewritten by the normalizer -- that is a data-authoring decision, not this hook\'s job');
-  ok('write-time normalizer corrects only the low-trust branch fields, never the high-trust family evidence');
+// ─── 12. Schema-coherence invariant: normalizeWeaponBranchFamily() ────────
+//         ENFORCES coherence at the write/persistence boundary -- the
+//         reviewer-flagged blocker. Detection alone is insufficient: the
+//         persisted object itself must become fully coherent, for both an
+//         explicit branch-changing update and a branch-only API update that
+//         leaves a stale family field behind. weaponCategory (the resolved
+//         branch) is never second-guessed; every family-bearing field that
+//         disagrees with it is reset to the branch-neutral "simple"
+//         category (the one value valid on both branches in the item
+//         editor's own vocabulary), and range descriptors are cleared.
 
-  // Bluebolt's exact contradictory legacy fixture resolves to ranged/pistols immediately
+{
+  // explicit ranged -> melee update removes/replaces pistol family
+  {
+    const w = { weaponCategory: 'melee', proficiency: 'pistols', subcategory: 'pistol', category: 'pistol' };
+    normalizeWeaponBranchFamily(w);
+    assert.equal(w.proficiency, 'simple', 'pistol proficiency must not survive an explicit melee branch');
+    assert.equal(w.subcategory, 'simple');
+    assert.equal(w.category, 'simple');
+    assert.equal(resolveWeaponBranchFamily(w).coherent, true, 'the persisted object must be fully coherent after normalization');
+  }
+
+  // explicit ranged -> melee update removes/replaces rifle family
+  {
+    const w = { weaponCategory: 'melee', proficiency: 'rifles', subcategory: 'rifle' };
+    normalizeWeaponBranchFamily(w);
+    assert.equal(w.proficiency, 'simple');
+    assert.equal(w.subcategory, 'simple');
+    assert.equal(resolveWeaponBranchFamily(w).coherent, true);
+  }
+
+  // explicit ranged -> melee update removes/replaces heavy-weapons family
+  {
+    const w = { weaponCategory: 'melee', proficiency: 'heavy-weapons', subcategory: 'heavy' };
+    normalizeWeaponBranchFamily(w);
+    assert.equal(w.proficiency, 'simple');
+    assert.equal(w.subcategory, 'simple');
+    assert.equal(resolveWeaponBranchFamily(w).coherent, true);
+  }
+
+  // explicit melee -> ranged update removes/replaces lightsaber family
+  {
+    const w = { weaponCategory: 'ranged', proficiency: 'lightsaber', subcategory: 'lightsaber', rangeProfile: 'melee' };
+    normalizeWeaponBranchFamily(w);
+    assert.equal(w.proficiency, 'simple', 'lightsaber proficiency must not survive an explicit ranged branch');
+    assert.equal(w.subcategory, 'simple');
+    assert.equal(w.rangeProfile, '', 'a stale melee range descriptor must not survive a ranged branch');
+    assert.equal(resolveWeaponBranchFamily(w).coherent, true);
+  }
+
+  // explicit melee -> ranged update removes/replaces natural family
+  {
+    const w = { weaponCategory: 'ranged', proficiency: 'natural' };
+    normalizeWeaponBranchFamily(w);
+    assert.equal(w.proficiency, 'simple', 'natural proficiency must not survive an explicit ranged branch');
+    assert.equal(resolveWeaponBranchFamily(w).coherent, true);
+  }
+
+  ok('explicit branch-changing updates never persist a contradictory family (pistols/rifles/heavy-weapons/lightsaber/natural all corrected)');
+
+  // branch-only API update cannot persist a contradictory family -- the
+  // update payload touches only meleeOrRanged/weaponCategory; the rest of
+  // the candidate object is the actor's EXISTING (stale) system, merged
+  // before normalization runs, exactly as item-defaults.js's real write
+  // path merges current + submitted.
+  {
+    const existing = { weaponCategory: 'ranged', proficiency: 'pistols', subcategory: 'pistol', category: 'pistol', attackAttribute: 'dex' };
+    const branchOnlyUpdate = { weaponCategory: 'melee' };
+    const merged = { ...existing, ...branchOnlyUpdate };
+    normalizeWeaponBranchFamily(merged);
+    assert.equal(merged.proficiency, 'simple', 'a branch-only update must not leave the previous branch\'s family stranded on the merged/persisted object');
+    assert.equal(merged.subcategory, 'simple');
+    assert.equal(merged.category, 'simple');
+    assert.equal(resolveWeaponBranchFamily(merged).coherent, true);
+  }
+  ok('a branch-only API update cannot persist a contradictory family');
+
+  // editor branch + category update persists exactly the intended branch/family
+  {
+    const w = { weaponCategory: 'melee', proficiency: 'lightsaber', subcategory: 'lightsaber' };
+    normalizeWeaponBranchFamily(w);
+    assert.equal(w.proficiency, 'lightsaber', 'a coherent explicit submission (branch + matching family together) must be persisted verbatim, not reset');
+    assert.equal(w.subcategory, 'lightsaber');
+    assert.equal(resolveWeaponBranchFamily(w).coherent, true);
+  }
+  ok('an editor branch+category update that is already coherent persists exactly as submitted, untouched');
+
+  // legacy Bluebolt still READS correctly before migration/edit
   assert.equal(resolveWeaponBranchFamily(bluebolt).branch, 'ranged');
   assert.equal(resolveWeaponBranchFamily(bluebolt).family, 'pistols');
-  ok('Bluebolt\'s exact contradictory legacy fixture resolves to ranged/pistols immediately, no migration required');
+  ok('Bluebolt\'s exact contradictory legacy fixture READS as ranged/pistols immediately, before any edit or migration');
+
+  // editing legacy Bluebolt self-heals the COMPLETE schema, not merely
+  // meleeOrRanged/ranged -- proven by full post-normalization coherence,
+  // not just a before/after diff of one field.
+  {
+    const blueboltClone = JSON.parse(JSON.stringify(bluebolt.system));
+    assert.equal(resolveWeaponBranchFamily(blueboltClone).coherent, false, 'sanity check: the clone starts incoherent, same as the real fixture');
+    normalizeWeaponBranchFamily(blueboltClone);
+    const healed = resolveWeaponBranchFamily(blueboltClone);
+    assert.equal(healed.branch, 'ranged');
+    assert.equal(healed.family, 'pistols');
+    assert.equal(healed.coherent, true, 'the fully persisted, normalized Bluebolt must be internally coherent, not just have meleeOrRanged flipped');
+    assert.equal(blueboltClone.meleeOrRanged, 'ranged');
+    assert.equal(blueboltClone.proficiency, 'pistols', 'already-correct high-trust family evidence is preserved, not reset, when it already agrees with the branch');
+    assert.equal(blueboltClone.subcategory, 'pistol');
+    assert.equal(blueboltClone.category, 'pistol');
+  }
+  ok('editing legacy Bluebolt self-heals the complete schema (verified via full post-normalization coherence, not merely meleeOrRanged)');
+}
+
+// ─── 13. Attack-Ability Policy: all six ability keys, not just STR/DEX ────
+//         (blocker 2) -- the item editor exposes CON/INT/WIS/CHA and the
+//         real combat resolver already consumes them; the write-time
+//         validation safety net must not silently coerce them to STR.
+
+{
+  const { normalizeItemSystem } = await import('/systems/foundryvtt-swse/scripts/items/item-defaults.js');
+  const { getWeaponAttackAbility } = await import('/systems/foundryvtt-swse/scripts/engine/combat/combat-stat-rules.js');
+
+  assert.equal(normalizeItemSystem('weapon', { weaponCategory: 'ranged', proficiency: 'pistols', attackAttribute: 'cha' }, {}).attackAttribute, 'cha', 'ranged + attackAttribute:cha must remain cha');
+  assert.equal(normalizeItemSystem('weapon', { weaponCategory: 'melee', proficiency: 'advanced-melee', attackAttribute: 'int' }, {}).attackAttribute, 'int', 'melee + attackAttribute:int must remain int');
+  assert.equal(normalizeItemSystem('weapon', { weaponCategory: 'ranged', proficiency: 'rifles', attackAttribute: 'wis' }, {}).attackAttribute, 'wis', 'ranged + attackAttribute:wis must remain wis');
+  assert.equal(normalizeItemSystem('weapon', { weaponCategory: 'melee', proficiency: 'lightsaber', attackAttribute: 'con' }, {}).attackAttribute, 'con', 'melee + attackAttribute:con must remain con');
+
+  // save/resave an unrelated field must not mutate any of the six
+  for (const ability of ['str', 'dex', 'con', 'int', 'wis', 'cha']) {
+    const existing = { weaponCategory: 'ranged', proficiency: 'pistols', attackAttribute: ability, damage: '3d6' };
+    const resaved = normalizeItemSystem('weapon', existing, { damage: '4d6' });
+    assert.equal(resaved.attackAttribute, ability, `resaving an unrelated field must preserve attackAttribute:${ability}`);
+  }
+
+  // the real combat resolver actually consumes the persisted explicit
+  // choice, not a branch-inferred default
+  const chaWeapon = { name: 'Test Blade', type: 'weapon', system: { weaponCategory: 'ranged', proficiency: 'pistols', attackAttribute: 'cha' } };
+  assert.equal(getWeaponAttackAbility({}, chaWeapon), 'cha', 'getWeaponAttackAbility() must consume the persisted explicit ability, not silently substitute the ranged branch default (dex)');
+
+  ok('Attack-Ability Policy: all six ability keys (str/dex/con/int/wis/cha) survive the real item normalization/save path and are consumed verbatim by the real combat resolver');
+}
+
+// ─── 14. Base vs. effective light-weapon scope (blocker 3): isLightWeaponForActor ─
+//         is BASE/INTRINSIC only and must NOT implement the Weapon Finesse +
+//         Weapon Focus "treat as Light" combined rule. This is an explicit,
+//         documented non-certification, not a silent gap -- this test
+//         anchors the current honest boundary so a future change to this
+//         behavior is a deliberate, reviewed decision, not an accident.
+
+{
+  // A one-handed Medium weapon for a Medium wielder is not intrinsically
+  // Light, and stays that way even though, under the (unimplemented) SWSE
+  // Combined Feat rule, a character with both Weapon Finesse and Weapon
+  // Focus (this weapon) could choose to treat it as Light in play.
+  const focusedOneHandedSword = { name: 'Focused Vibrosword', system: { size: 'medium', twoHanded: false } };
+  const medium = { system: { size: 'medium' } };
+  assert.equal(isLightWeaponForActor(focusedOneHandedSword, medium), false, 'BASE lightness must stay false for a weapon that is only EFFECTIVELY light via an unimplemented contextual rule -- effective/contextual "treat as light" classification is explicitly not certified by this batch');
+  ok('base/intrinsic light-weapon scope is explicit and does not silently imply the unimplemented Weapon Finesse + Weapon Focus "treat as Light" rule');
 }
 
 console.log('weapon-branch-family-schema-authority.test.mjs: all assertions passed');
