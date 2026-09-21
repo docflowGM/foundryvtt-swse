@@ -77,23 +77,33 @@
             {{/if}}
           </div>
 
-          {{!-- WEAPON: Weapon Category (second selector, filtered by melee/ranged) --}}
+          {{!-- WEAPON: Weapon Family/Category (second selector, filtered by melee/ranged).
+               Batch 2B correction #2: bound to system.subcategory, NOT
+               system.weaponCategory -- weaponCategory is now a pure
+               branch mirror ("melee"/"ranged", matching 100% of shipped
+               pack data's existing convention) and must never again
+               receive a family value from this selector. Option values
+               use the real shipped-data singular vocabulary (pistol,
+               rifle, exotic, heavy, advanced, lightsaber, natural,
+               simple) so a record edited here reads identically to one
+               authored directly in a pack. See weapon-branch-resolver.js
+               for the full field contract. --}}
           {{#if (eq item.type "weapon")}}
           <div class="form-field">
             <label>Category</label>
-            <select name="system.weaponCategory" class="weapon-category-select">
+            <select name="system.subcategory" class="weapon-category-select">
               {{#if (eq system.meleeOrRanged "melee")}}
-              <option value="advanced" {{#if (eq system.weaponCategory "advanced")}}selected{{/if}}>Advanced</option>
-              <option value="lightsaber" {{#if (eq system.weaponCategory "lightsaber")}}selected{{/if}}>Lightsaber</option>
-              <option value="melee-exotic" {{#if (eq system.weaponCategory "melee-exotic")}}selected{{/if}}>Melee Exotic</option>
-              <option value="natural" {{#if (eq system.weaponCategory "natural")}}selected{{/if}}>Natural</option>
-              <option value="simple" {{#if (eq system.weaponCategory "simple")}}selected{{/if}}>Simple</option>
+              <option value="advanced" {{#if (eq system.subcategory "advanced")}}selected{{/if}}>Advanced</option>
+              <option value="lightsaber" {{#if (eq system.subcategory "lightsaber")}}selected{{/if}}>Lightsaber</option>
+              <option value="exotic" {{#if (eq system.subcategory "exotic")}}selected{{/if}}>Melee Exotic</option>
+              <option value="natural" {{#if (eq system.subcategory "natural")}}selected{{/if}}>Natural</option>
+              <option value="simple" {{#if (eq system.subcategory "simple")}}selected{{/if}}>Simple</option>
               {{else}}
-              <option value="heavy" {{#if (eq system.weaponCategory "heavy")}}selected{{/if}}>Heavy</option>
-              <option value="pistols" {{#if (eq system.weaponCategory "pistols")}}selected{{/if}}>Pistols</option>
-              <option value="ranged-exotic" {{#if (eq system.weaponCategory "ranged-exotic")}}selected{{/if}}>Ranged Exotic</option>
-              <option value="rifles" {{#if (eq system.weaponCategory "rifles")}}selected{{/if}}>Rifles</option>
-              <option value="simple" {{#if (eq system.weaponCategory "simple")}}selected{{/if}}>Simple</option>
+              <option value="heavy" {{#if (eq system.subcategory "heavy")}}selected{{/if}}>Heavy</option>
+              <option value="pistol" {{#if (eq system.subcategory "pistol")}}selected{{/if}}>Pistols</option>
+              <option value="exotic" {{#if (eq system.subcategory "exotic")}}selected{{/if}}>Ranged Exotic</option>
+              <option value="rifle" {{#if (eq system.subcategory "rifle")}}selected{{/if}}>Rifles</option>
+              <option value="simple" {{#if (eq system.subcategory "simple")}}selected{{/if}}>Simple</option>
               {{/if}}
             </select>
           </div>
@@ -116,12 +126,12 @@
             </button>
 
             {{#if (eq item.type "weapon")}}
-            {{#if (eq system.weaponCategory "lightsaber")}}
+            {{#if (eq system.subcategory "lightsaber")}}
             <button type="button" class="swse-btn swse-btn--action customize-lightsaber">
               <i class="{{getIconClass 'wand2'}}"></i> Customize Lightsaber
             </button>
             {{/if}}
-            {{#if (and (eq system.meleeOrRanged "ranged") (ne system.weaponCategory "simple"))}}
+            {{#if (and (eq system.meleeOrRanged "ranged") (ne system.subcategory "simple"))}}
             <button type="button" class="swse-btn swse-btn--action customize-blaster">
               <i class="{{getIconClass 'palette'}}"></i> Blaster Color
             </button>

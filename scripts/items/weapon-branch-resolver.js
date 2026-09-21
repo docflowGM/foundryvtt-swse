@@ -370,7 +370,72 @@ const BRANCH_NEUTRAL_FAMILY = 'simple';
 // Family-bearing fields: proficiency-category identifiers. A value here
 // that unambiguously names the OTHER branch's family cannot survive
 // persistence once the branch itself is authoritative-resolved.
+//
+// WRITE_FAMILY_PRIORITY orders these for detecting an EXPLICIT, deliberate
+// family submission (see normalizeWeaponForWrite() below): subcategory is
+// listed first because it is the field the V2 item editor's Category
+// selector actually writes (Batch 2B correction #2 -- see the field
+// contract note above normalizeWeaponForWrite). FAMILY_FIELDS keeps its
+// original order for the unrelated (and unchanged) read-time coherence
+// scan below.
 const FAMILY_FIELDS = ['proficiency', 'subcategory', 'category', 'weaponGroup', 'group'];
+const WRITE_FAMILY_PRIORITY = ['subcategory', 'proficiency', 'category', 'weaponGroup', 'group'];
+
+// Real shipped `subcategory`/`category` vocabulary uses singular, often
+// bare-word spellings (pistol, rifle, heavy, exotic, grenade) that differ
+// from the V2 editor's historical option values (pistols, rifles,
+// ranged-exotic, melee-exotic, advanced-melee) and from `proficiency`'s own
+// compound spellings (pistols, rifles, heavy-weapons, advanced-melee).
+// canonicalSubcategory() reconciles any of these onto the real-data
+// singular spelling, which is what is now persisted to subcategory/category
+// going forward, so this field never accumulates a fourth parallel
+// vocabulary. familyKey()/familyOf() (branch-detection only, unchanged)
+// still separately normalize "heavy" -> "heavy-weapons" purely to look it
+// up in MELEE_FAMILIES/RANGED_FAMILIES -- that internal detection key is
+// never itself persisted anywhere.
+const SUBCATEGORY_CANONICAL_ALIASES = Object.freeze({
+  pistols: 'pistol',
+  rifles: 'rifle',
+  'heavy-weapons': 'heavy',
+  'melee-exotic': 'exotic',
+  'ranged-exotic': 'exotic',
+  'advanced-melee': 'advanced',
+  grenades: 'grenade'
+});
+
+function canonicalSubcategory(rawValue) {
+  const key = normKey(rawValue).replace(/\s+/g, '-');
+  return SUBCATEGORY_CANONICAL_ALIASES[key] ?? key;
+}
+
+// Derives the real shipped `proficiency` spelling from a canonical
+// subcategory value, per branch -- confirmed against a full pack scan of
+// packs/weapons*.db's real proficiency vocabulary (melee: exotic,
+// advanced-melee, simple; ranged: exotic, simple, heavy-weapons, pistols,
+// rifles) plus embedded natural-weapon items (proficiency:"natural"). Any
+// subcategory not listed (a value this batch's editor vocabulary does not
+// expose) falls back to BRANCH_NEUTRAL_FAMILY rather than guessing.
+const PROFICIENCY_ALIAS_FOR_SUBCATEGORY = Object.freeze({
+  melee: {
+    advanced: 'advanced-melee',
+    lightsaber: 'exotic',
+    exotic: 'exotic',
+    natural: 'natural',
+    simple: 'simple'
+  },
+  ranged: {
+    heavy: 'heavy-weapons',
+    pistol: 'pistols',
+    exotic: 'exotic',
+    rifle: 'rifles',
+    grenade: 'simple',
+    simple: 'simple'
+  }
+});
+
+function proficiencyAliasFor(branch, subcategory) {
+  return PROFICIENCY_ALIAS_FOR_SUBCATEGORY[branch]?.[subcategory] ?? BRANCH_NEUTRAL_FAMILY;
+}
 
 // Range-band/weapon-type descriptor fields: branch-specific range-profile
 // identifiers (e.g. "pistols"/"rifles"/"heavy-weapons"/"thrown-weapons").
@@ -389,64 +454,178 @@ function impliedBranchOfDescriptor(value) {
 }
 
 /**
- * Write-time, strict persistence-boundary coherence enforcer. Given a
- * candidate weapon system object representing the FULL intended state for
- * that write (current + submitted, already merged), this makes the
- * PERSISTED result fully coherent -- not just the low-trust fields.
+ * FIELD CONTRACT (Batch 2B correction #2). An independent review found that
+ * `system.weaponCategory` had been carrying two INCOMPATIBLE meanings at
+ * once: 100% of shipped pack data authors it as the literal BASE BRANCH
+ * ("melee"/"ranged"), but the V2 item editor's own Category <select> was
+ * writing FAMILY values into that same field (advanced, lightsaber,
+ * melee-exotic, natural, simple / heavy, pistols, ranged-exotic, rifles,
+ * simple). Because those family values are never a literal "melee"/"ranged"
+ * string, an explicit editor branch change fell through resolveWeaponBranchFamily()'s
+ * tier-1 check to tier-2 family evidence -- read from proficiency/
+ * subcategory/category, none of which were live editor form fields and so
+ * were silently carried over UNCHANGED from the item's prior (other-branch)
+ * state -- which could outvote and silently revert the player's own
+ * just-submitted Branch selection. Confirmed and reproduced exactly in
+ * tests/weapon-branch-family-schema-authority.test.mjs section 15.
  *
- * The resolved branch itself is never second-guessed here (weaponCategory
- * stays the tier-1 authority, exactly as resolveWeaponBranchFamily()
- * ranks it) -- what changes is that every family-bearing field
- * (proficiency/subcategory/category/weaponGroup/group) and range
- * descriptor (rangeProfile/weaponType) that unambiguously names the OTHER
- * branch's family is reset to the branch-neutral "simple" category (or
- * cleared, for range descriptors) rather than left to silently persist a
- * contradiction like `melee` + `pistols`.
+ * The field contract going forward, chosen to require zero pack-data
+ * migration (preserving the convention already authored in all 5,959
+ * shipped weapon-type records):
  *
- * This covers both cases uniformly, by construction, without needing to
- * distinguish "legacy corrupted data" from "an explicit player branch
- * change" as two different code paths: if a family field already agrees
- * with the resolved branch (the common case -- real authored data, or a
- * coherent explicit submission), nothing is touched; if it disagrees
- * (whether because the branch field was just changed out from under it, or
- * because of some other data anomaly), it is corrected. `meleeOrRanged`/
- * the legacy `ranged` boolean are corrected the same way they always were.
- * `attackAttribute` is filled from the branch default ONLY when entirely
- * absent; an explicit value (any of the six ability keys, including one
- * that intentionally differs from the branch default) is always preserved
- * verbatim and never used as branch/family evidence.
+ *   system.meleeOrRanged -- canonical, player-facing BASE BRANCH. The
+ *     editor's Branch <select> writes here; this is the field every
+ *     consumer should ultimately trust.
+ *   system.weaponCategory -- LEGACY/COMPATIBILITY MIRROR of the branch
+ *     only ("melee"/"ranged"), matching every shipped pack record's
+ *     existing convention. No longer independently editable in the V2
+ *     editor; always kept in sync with the resolved branch at write time.
+ *   system.subcategory -- canonical, player-facing WEAPON FAMILY. The
+ *     editor's Category <select> is now bound here (Batch 2B correction
+ *     #2), using the real shipped singular vocabulary (pistol, rifle,
+ *     heavy, exotic, advanced, lightsaber, natural, simple, grenade) via
+ *     canonicalSubcategory().
+ *   system.category -- pure alias, always mirrored from `subcategory`.
+ *   system.proficiency -- pure alias, DERIVED from `subcategory` via
+ *     proficiencyAliasFor(), matching the real proficiency vocabulary every
+ *     other consumer (feat prerequisites, etc.) already expects.
+ *   system.weaponGroup / system.group -- untouched, read-time-only
+ *     evidence; the write-time normalizer never assigns these.
  *
- * Returns the same object, mutated in place, for convenient use in a
- * preCreateItem/preUpdateItem hook or a normalizeItemSystem() merge step.
+ * `resolveWeaponBranchFamily()` (read-time, tolerant, unchanged) still
+ * treats a literal weaponCategory:"melee"/"ranged" as tier-1 evidence --
+ * correct and safe both for un-migrated legacy pack data (where it always
+ * holds branch) and for anything saved through the fixed write boundary
+ * below (where it is now GUARANTEED to always hold branch, never family).
  */
-export function normalizeWeaponBranchFamily(system = {}) {
-  if (!system || typeof system !== 'object') return system;
-  const resolved = resolveWeaponBranchFamily(system);
 
-  system.meleeOrRanged = resolved.branch;
-  if ('ranged' in system) system.ranged = resolved.branch === 'ranged';
+/**
+ * Write-time, explicit-submission-aware persistence boundary.
+ * `currentSystem` is the item's existing persisted state; `submittedSystem`
+ * is ONLY the keys THIS update actually included (a real form submission's
+ * FormData, or an API/macro caller's explicit delta) -- never a pre-merged
+ * blob. This is what lets the normalizer tell "the player just explicitly
+ * changed the Branch selector" apart from "the branch/family fields are
+ * merely being carried forward unchanged from the item's prior state" --
+ * `resolveWeaponBranchFamily()` alone cannot make that distinction once the
+ * two states have already been flattened into one object, because a
+ * genuinely-authored value and a merely-carried-over one are indistinguishable
+ * by that point (this was the exact defect: see the field contract above).
+ *
+ * Precedence:
+ *   BRANCH: a literal "melee"/"ranged" explicitly submitted as `weaponCategory`
+ *     wins first, matching resolveWeaponBranchFamily()'s own tier-1 authority
+ *     (the pack-authored mirror field, reliable on 100% of shipped data);
+ *     otherwise an explicitly submitted `meleeOrRanged` (the editor's own
+ *     live Branch selector) wins. Checking weaponCategory first is what
+ *     keeps materialization/self-heal correct for legacy pack-shaped data,
+ *     where BOTH fields are simultaneously present in the single-object
+ *     entry point below (see normalizeWeaponBranchFamily()) but only
+ *     weaponCategory is trustworthy there -- meleeOrRanged is always absent/
+ *     schema-defaulted garbage in real, never-edited pack data. This does
+ *     NOT reintroduce the original defect for a real two-argument editor
+ *     submission: the V2 editor's Category selector no longer submits
+ *     `weaponCategory` at all (Batch 2B correction #2 repoints it to
+ *     `subcategory`), so a real Branch-only change's `submittedSystem` never
+ *     has both keys competing -- only `meleeOrRanged` is present, and it
+ *     wins by simply being the only literal branch value submitted. Absent
+ *     both, falls back to the tolerant `resolveWeaponBranchFamily()` read
+ *     against the full merged state (materialization, or an update that
+ *     never touches branch at all -- the exact same fallback this function
+ *     always used).
+ *   FAMILY: an explicitly submitted `subcategory` (the editor's own live
+ *     Category selector, per the field contract above) -- or, for API/macro
+ *     callers, any other explicitly submitted family-bearing field -- is
+ *     equally deliberate intent for the new family, canonicalized and
+ *     propagated to subcategory/category/proficiency together. Absent any
+ *     explicit family submission, the EXISTING family fields are preserved
+ *     VERBATIM, untouched, if they already agree with the resolved branch
+ *     (an unrelated-field-only edit must disturb nothing); only reset to
+ *     the branch-neutral fallback when they disagree (legacy corruption, or
+ *     a branch-only update that leaves a stranded other-branch family).
+ *
+ * `meleeOrRanged`/the legacy `ranged` boolean/range-descriptor fields/
+ * `attackAttribute` are all handled exactly as before (attackAttribute is
+ * filled from the branch default ONLY when entirely absent; an explicit
+ * value, any of the six ability keys, is always preserved verbatim).
+ *
+ * `target`, if supplied, is the object actually mutated and returned
+ * (letting a caller like normalizeItemSystem() apply this decision onto its
+ * own already-defaults-merged working object without losing those
+ * defaults); it defaults to a fresh `{...currentSystem, ...submittedSystem}`
+ * when omitted.
+ */
+export function normalizeWeaponForWrite(currentSystem = {}, submittedSystem = {}, target = null) {
+  currentSystem = (currentSystem && typeof currentSystem === 'object') ? currentSystem : {};
+  submittedSystem = (submittedSystem && typeof submittedSystem === 'object') ? submittedSystem : {};
+  const merged = target && typeof target === 'object' ? target : { ...currentSystem, ...submittedSystem };
+  const provenanceState = { ...currentSystem, ...submittedSystem };
 
-  for (const field of FAMILY_FIELDS) {
-    if (!(field in system)) continue;
-    const impliedBranch = familyOf(familyKey(system[field]));
-    if (impliedBranch && impliedBranch !== resolved.branch) {
-      system[field] = BRANCH_NEUTRAL_FAMILY;
+  // BRANCH -- weaponCategory literal checked FIRST (see precedence note
+  // above: this keeps single-object materialization/self-heal correct,
+  // and is harmless for a real two-arg editor submission because the
+  // editor no longer submits weaponCategory at all).
+  const submittedCatLiteral = normKey(submittedSystem.weaponCategory);
+  const submittedMor = normKey(submittedSystem.meleeOrRanged);
+  let branch;
+  if (submittedCatLiteral === 'melee' || submittedCatLiteral === 'ranged') {
+    branch = submittedCatLiteral;
+  } else if (submittedMor === 'melee' || submittedMor === 'ranged') {
+    branch = submittedMor;
+  } else {
+    branch = resolveWeaponBranchFamily(provenanceState).branch;
+  }
+
+  merged.meleeOrRanged = branch;
+  merged.weaponCategory = branch; // legacy/pack-convention branch mirror only -- never family again
+  if ('ranged' in merged) merged.ranged = branch === 'ranged';
+
+  // FAMILY
+  const explicitFamilyField = WRITE_FAMILY_PRIORITY.find((field) => field in submittedSystem);
+  if (explicitFamilyField) {
+    const canonical = canonicalSubcategory(submittedSystem[explicitFamilyField]);
+    const impliedBranch = familyOf(familyKey(canonical));
+    const resolvedFamily = (impliedBranch && impliedBranch !== branch) ? BRANCH_NEUTRAL_FAMILY : (canonical || BRANCH_NEUTRAL_FAMILY);
+    merged.subcategory = resolvedFamily;
+    merged.category = resolvedFamily;
+    merged.proficiency = proficiencyAliasFor(branch, resolvedFamily);
+  } else {
+    for (const field of FAMILY_FIELDS) {
+      if (!(field in merged)) continue;
+      const impliedBranch = familyOf(familyKey(merged[field]));
+      if (impliedBranch && impliedBranch !== branch) {
+        merged[field] = BRANCH_NEUTRAL_FAMILY;
+      }
     }
   }
 
   for (const field of RANGE_DESCRIPTOR_FIELDS) {
-    if (!system[field]) continue;
-    const impliedBranch = impliedBranchOfDescriptor(system[field]);
-    if (impliedBranch && impliedBranch !== resolved.branch) {
-      system[field] = '';
+    if (!merged[field]) continue;
+    const impliedBranch = impliedBranchOfDescriptor(merged[field]);
+    if (impliedBranch && impliedBranch !== branch) {
+      merged[field] = '';
     }
   }
 
-  if (system.attackAttribute === undefined || system.attackAttribute === null || system.attackAttribute === '') {
-    system.attackAttribute = defaultAttackAttributeForBranch(resolved.branch);
+  if (merged.attackAttribute === undefined || merged.attackAttribute === null || merged.attackAttribute === '') {
+    merged.attackAttribute = defaultAttackAttributeForBranch(branch);
   }
 
-  return system;
+  return merged;
+}
+
+/**
+ * Backward-compatible single-object entry point: treats the WHOLE object as
+ * both current and submitted, so every field it contains counts as
+ * deliberately present. This preserves the exact prior external contract
+ * (mutates and returns the same object) for every caller that never had a
+ * current-vs-submitted distinction to make in the first place --
+ * materialization/preCreateItem-style full-object normalization and simple
+ * API-level full-object updates.
+ */
+export function normalizeWeaponBranchFamily(system = {}) {
+  if (!system || typeof system !== 'object') return system;
+  return normalizeWeaponForWrite(system, system, system);
 }
 
 export default {

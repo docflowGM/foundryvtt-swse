@@ -9,7 +9,7 @@
 import { normalizeArmorSystemAliases } from './armor-data-resolver.js';
 import { normalizeEquipmentSystem } from '../engine/equipment/equipment-normalizer.js';
 import { normalizePrereqClauses } from '../dialogs/entity-dialog/prereq-engine.js';
-import { normalizeWeaponBranchFamily } from './weapon-branch-resolver.js';
+import { normalizeWeaponForWrite } from './weapon-branch-resolver.js';
 
 const SYSTEM_ID = 'foundryvtt-swse';
 
@@ -189,7 +189,13 @@ export const BLANK_ITEM_DEFAULTS = Object.freeze({
     gearTemplateSecondary: '',
     templateCost: 0,
     meleeOrRanged: 'melee',
-    weaponCategory: 'simple',
+    // Batch 2B correction #2: weaponCategory is now a pure branch mirror
+    // ("melee"/"ranged", kept in sync with meleeOrRanged) -- the family
+    // placeholder for a truly blank weapon belongs on subcategory/category
+    // instead, matching the field contract in weapon-branch-resolver.js.
+    weaponCategory: 'melee',
+    subcategory: 'simple',
+    category: 'simple',
     damageBonus: 'str',
     criticalRange: '20',
     criticalMultiplier: 'x2',
@@ -555,7 +561,17 @@ export function normalizeItemSystem(type, currentSystem = {}, submittedSystem = 
     // schema-defaulted "melee" (the "Bluebolt" defect). An explicit
     // attackAttribute (including one that intentionally differs from the
     // branch default) is always preserved verbatim.
-    normalizeWeaponBranchFamily(merged);
+    //
+    // Batch 2B correction #2: this MUST use currentSystem/submittedSystem
+    // separately, not the already-flattened `merged` blob -- an independent
+    // review found that flattening first (the original call here) let a
+    // stale, merely-carried-over family field (proficiency/subcategory/
+    // category are not live editor form fields) silently outvote and
+    // revert an explicitly-submitted Branch selector change, because both
+    // looked identical once merged. normalizeWeaponForWrite() receives the
+    // real pre-merge current/submitted split this function already has in
+    // scope, so it can tell deliberate intent apart from stale carryover.
+    normalizeWeaponForWrite(currentSystem, submittedSystem, merged);
     // Math Integrity Freeze, Batch 2B correction: the item editor exposes
     // all six ability keys for attackAttribute (SWSE has feats/talents that
     // legitimately use CON/INT/WIS/CHA with a weapon, not just STR/DEX) --

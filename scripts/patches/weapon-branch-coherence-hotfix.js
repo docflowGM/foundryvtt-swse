@@ -33,18 +33,39 @@
  * Bluebolt) self-heals on its next legitimate edit without a migration.
  */
 
-import { normalizeWeaponBranchFamily } from '/systems/foundryvtt-swse/scripts/items/weapon-branch-resolver.js';
+import { normalizeWeaponForWrite } from '/systems/foundryvtt-swse/scripts/items/weapon-branch-resolver.js';
 
 let registered = false;
 
+// Batch 2B correction #2: an independent review found this hook had the
+// exact same defect the item-sheet save path had -- it flattened
+// document.system + data.system into one blob BEFORE normalizing, so a
+// sparse API/macro-level update (e.g. `item.update({system: {meleeOrRanged:
+// "melee"}})`, touching branch only) could have its explicit branch intent
+// silently outvoted by a stale, merely-carried-over family field from the
+// item's PRIOR state. normalizeWeaponForWrite() now receives document.system
+// (current) and data.system (only the keys THIS update actually submitted)
+// separately, so it can tell deliberate intent apart from stale carryover
+// exactly like the item-sheet path does. This also now diffs and propagates
+// every field the normalizer can touch (previously only meleeOrRanged/
+// ranged/attackAttribute were diffed -- weaponCategory/subcategory/category/
+// proficiency corrections were silently computed and then discarded).
+const DIFFED_FIELDS = [
+  'meleeOrRanged', 'weaponCategory', 'ranged',
+  'subcategory', 'category', 'proficiency', 'weaponGroup', 'group',
+  'rangeProfile', 'weaponType', 'attackAttribute'
+];
+
 function correctedFields(document, data) {
-  const system = { ...(document?.system ?? {}), ...(data?.system ?? {}) };
-  const before = { meleeOrRanged: system.meleeOrRanged, ranged: system.ranged, attackAttribute: system.attackAttribute };
-  normalizeWeaponBranchFamily(system);
+  const currentSystem = document?.system ?? {};
+  const submittedSystem = data?.system ?? {};
+  const before = { ...currentSystem, ...submittedSystem };
+  const after = normalizeWeaponForWrite(currentSystem, submittedSystem);
   const fields = {};
-  if (system.meleeOrRanged !== before.meleeOrRanged) fields.meleeOrRanged = system.meleeOrRanged;
-  if ('ranged' in system && system.ranged !== before.ranged) fields.ranged = system.ranged;
-  if (system.attackAttribute !== before.attackAttribute) fields.attackAttribute = system.attackAttribute;
+  for (const field of DIFFED_FIELDS) {
+    if (!(field in after)) continue;
+    if (after[field] !== before[field]) fields[field] = after[field];
+  }
   return Object.keys(fields).length ? fields : null;
 }
 

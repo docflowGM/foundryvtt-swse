@@ -370,14 +370,24 @@ const bluebolt = {
   ok('a branch-only API update cannot persist a contradictory family');
 
   // editor branch + category update persists exactly the intended branch/family
+  //
+  // Batch 2B correction #2: subcategory is now the canonical, explicitly-
+  // submitted family field (the editor's own live Category selector); an
+  // explicit submission always derives proficiency from it via the real
+  // shipped-data mapping (lightsaber -> proficiency "exotic", confirmed by
+  // a direct pack scan -- real lightsaber records never carry a literal
+  // "lightsaber" proficiency value), so every OTHER consumer that reads
+  // proficiency directly keeps seeing the same vocabulary real data already
+  // uses, not the editor's own family-selector spelling.
   {
-    const w = { weaponCategory: 'melee', proficiency: 'lightsaber', subcategory: 'lightsaber' };
+    const w = { weaponCategory: 'melee', subcategory: 'lightsaber' };
     normalizeWeaponBranchFamily(w);
-    assert.equal(w.proficiency, 'lightsaber', 'a coherent explicit submission (branch + matching family together) must be persisted verbatim, not reset');
-    assert.equal(w.subcategory, 'lightsaber');
+    assert.equal(w.subcategory, 'lightsaber', 'an explicit subcategory submission must be persisted verbatim');
+    assert.equal(w.category, 'lightsaber', 'category must mirror the persisted subcategory');
+    assert.equal(w.proficiency, 'exotic', 'proficiency must be derived to match the real shipped-data vocabulary for this family (lightsabers are proficiency:"exotic" in real data)');
     assert.equal(resolveWeaponBranchFamily(w).coherent, true);
   }
-  ok('an editor branch+category update that is already coherent persists exactly as submitted, untouched');
+  ok('an editor branch+category update persists the explicit family (subcategory) verbatim and derives proficiency to match real shipped-data vocabulary');
 
   // legacy Bluebolt still READS correctly before migration/edit
   assert.equal(resolveWeaponBranchFamily(bluebolt).branch, 'ranged');
@@ -448,6 +458,144 @@ const bluebolt = {
   const medium = { system: { size: 'medium' } };
   assert.equal(isLightWeaponForActor(focusedOneHandedSword, medium), false, 'BASE lightness must stay false for a weapon that is only EFFECTIVELY light via an unimplemented contextual rule -- effective/contextual "treat as light" classification is explicitly not certified by this batch');
   ok('base/intrinsic light-weapon scope is explicit and does not silently imply the unimplemented Weapon Finesse + Weapon Focus "treat as Light" rule');
+}
+
+// ─── 15. Batch 2B correction #2: real editor branch/family schema collision ─
+//         system.weaponCategory has held two incompatible meanings: shipped
+//         pack data authors it as the BASE BRANCH literal ("melee"/"ranged"),
+//         but the V2 item editor's Category <select name="system.weaponCategory">
+//         has been writing FAMILY values into the same field (advanced,
+//         lightsaber, melee-exotic, natural, simple / heavy, pistols,
+//         ranged-exotic, rifles, simple -- see templates/dialogs/entity/
+//         parts/header.hbs). These tests reproduce the ACTUAL payload shape
+//         swse-item-sheet.js's real #onSubmitForm -> sanitizeItemSheetUpdate
+//         -> normalizeItemSystem(type, currentSystem, submittedSystem) path
+//         produces -- current/submitted kept SEPARATE, exactly as the real
+//         save boundary receives them -- not a single pre-merged blob, which
+//         is what let a stale carried-over family field silently outvote an
+//         explicitly-submitted Branch selector change.
+
+{
+  const { normalizeItemSystem } = await import('/systems/foundryvtt-swse/scripts/items/item-defaults.js');
+
+  // Real, never-edited-in-V2 Bluebolt: weaponCategory holds the pack's
+  // literal branch value; proficiency/subcategory/category hold its real
+  // family. This is the item's CURRENT persisted state before any edit.
+  const currentBluebolt = {
+    name: 'Bluebolt Blaster Pistol', damage: '3d8', damageType: 'energy',
+    weaponCategory: 'ranged', proficiency: 'pistols', subcategory: 'pistol', category: 'pistol',
+    meleeOrRanged: 'melee', // schema-defaulted, never authored -- the original root cause
+    attackAttribute: 'dex'
+  };
+
+  // ── 15a. Explicit editor Branch change (Ranged -> Melee) must WIN, even
+  //         though proficiency/subcategory/category are not live editor
+  //         form fields and are therefore NOT part of this submission --
+  //         they are carried over from currentBluebolt, untouched, by the
+  //         real merge. This is the exact mechanism the independent review
+  //         found: the Category <select> rebuilds to the melee option list
+  //         and (when its previous value has no melee match) silently
+  //         resubmits weaponCategory:"advanced" -- a FAMILY value, not a
+  //         branch literal -- so the OLD single-blob resolver fell through
+  //         past tier 1 to tier-2 family evidence (stale proficiency:
+  //         "pistols") and overrode the just-submitted Branch selection
+  //         back to ranged.
+  const rangedToMeleeSubmit = {
+    meleeOrRanged: 'melee',   // the Branch <select>, live, explicitly changed
+    weaponCategory: 'advanced' // the (old, broken) Category <select>'s resubmitted value
+  };
+  const afterBranchChange = normalizeItemSystem('weapon', currentBluebolt, rangedToMeleeSubmit);
+  assert.equal(afterBranchChange.meleeOrRanged, 'melee', 'an explicit editor Branch change to melee must not be silently reverted to ranged by stale carried-over family fields (proficiency/subcategory/category were never resubmitted)');
+  assert.notEqual(afterBranchChange.proficiency, 'pistols', 'the stale ranged-family proficiency must not survive an explicit branch change to melee');
+  assert.notEqual(afterBranchChange.subcategory, 'pistol', 'the stale ranged-family subcategory must not survive an explicit branch change to melee');
+  assert.notEqual(afterBranchChange.category, 'pistol', 'the stale ranged-family category must not survive an explicit branch change to melee');
+
+  // ── 15b. An UNRELATED field edit (rename only) on an already-coherent,
+  //         never-touched Bluebolt must not corrupt anything -- the Branch
+  //         <select> is a live control and always resubmits its current
+  //         (self-healed, correctly "ranged") displayed value even when the
+  //         user only changed the name.
+  const unrelatedEditSubmit = { name: 'Bluebolt Blaster Pistol (Modified)', meleeOrRanged: 'ranged' };
+  const afterUnrelatedEdit = normalizeItemSystem('weapon', currentBluebolt, unrelatedEditSubmit);
+  assert.equal(afterUnrelatedEdit.meleeOrRanged, 'ranged', 'an unrelated field edit must not flip a correctly-ranged weapon to melee');
+  assert.equal(afterUnrelatedEdit.proficiency, 'pistols', 'an unrelated field edit must not disturb an already-coherent proficiency');
+  assert.equal(afterUnrelatedEdit.subcategory, 'pistol', 'an unrelated field edit must not disturb an already-coherent subcategory');
+
+  ok('Batch 2B correction #2: an explicit editor Branch change wins over stale carried-over family evidence, and an unrelated field edit disturbs nothing');
+}
+
+{
+  const { normalizeItemSystem } = await import('/systems/foundryvtt-swse/scripts/items/item-defaults.js');
+
+  // ── 15c. API/macro-level branch-only update (no family field touched at
+  //         all, not even weaponCategory) must reach the same deterministic,
+  //         coherent result: explicit branch wins, stale family is reset,
+  //         never silently overridden back.
+  const currentPistol = {
+    name: 'Heavy Pistol', weaponCategory: 'ranged', proficiency: 'pistols',
+    subcategory: 'pistol', category: 'pistol', meleeOrRanged: 'ranged'
+  };
+  const branchOnlyUpdate = { meleeOrRanged: 'melee' };
+  const afterApiUpdate = normalizeItemSystem('weapon', currentPistol, branchOnlyUpdate);
+  assert.equal(afterApiUpdate.meleeOrRanged, 'melee', 'a branch-only API update must persist the explicit branch');
+  assert.notEqual(afterApiUpdate.proficiency, 'pistols', 'a branch-only API update must not leave a stranded ranged-family proficiency on an explicitly-melee weapon');
+
+  ok('Batch 2B correction #2: a branch-only API/macro update cannot be silently overridden by stale family evidence');
+}
+
+// ─── 16. Batch 2B correction #2: weapon-branch-coherence-hotfix.js's real ──
+//         preCreateItem/preUpdateItem hooks, exercised through the actual
+//         Hooks.on registration path (not a reimplementation), had the same
+//         flatten-then-normalize defect as the item-sheet save path -- and,
+//         separately, only ever diffed/propagated 3 of the fields the
+//         normalizer can correct. Both are proven fixed here.
+
+{
+  const handlers = {};
+  installFoundryShimGlobals({
+    game: { settings: { get: () => undefined, set: () => {}, settings: { has: () => true } } },
+    Hooks: { on: (name, fn) => { handlers[name] = fn; }, once: () => {}, call: () => {}, callAll: () => {} }
+  });
+
+  const { registerWeaponBranchCoherenceHotfix } = await import('/systems/foundryvtt-swse/scripts/patches/weapon-branch-coherence-hotfix.js');
+  const didRegister = registerWeaponBranchCoherenceHotfix();
+  assert.equal(didRegister, true, 'the hotfix must actually register its hooks in this fresh module instance');
+  assert.equal(typeof handlers.preCreateItem, 'function', 'preCreateItem hook must be registered');
+  assert.equal(typeof handlers.preUpdateItem, 'function', 'preUpdateItem hook must be registered');
+
+  // 16a. preUpdateItem: an API/macro-level branch-only update (no family
+  //      field touched at all) must not have its explicit branch intent
+  //      overridden by the item's stale, carried-over ranged family.
+  {
+    const document = {
+      type: 'weapon',
+      system: { weaponCategory: 'ranged', proficiency: 'pistols', subcategory: 'pistol', category: 'pistol', meleeOrRanged: 'ranged' }
+    };
+    const data = { system: { meleeOrRanged: 'melee' } };
+    handlers.preUpdateItem(document, data, {}, 'test-user');
+    assert.equal(data.system.meleeOrRanged, 'melee', 'the hook must persist the explicit branch-only update, not revert it');
+    assert.notEqual(data.system.proficiency, 'pistols', 'the hook must not leave a stranded ranged-family proficiency after an explicit branch change');
+  }
+  ok('weapon-branch-coherence-hotfix.js preUpdateItem: an explicit branch-only update is not overridden by stale family evidence');
+
+  // 16b. preCreateItem: real pack-shaped materialization (the original
+  //      Bluebolt root cause) is still corrected exactly as certified.
+  {
+    const document = { type: 'weapon', system: {} };
+    let capturedFields = null;
+    document.updateSource = (patch) => { capturedFields = patch?.system ?? null; };
+    const data = { type: 'weapon', system: { weaponCategory: 'ranged', proficiency: 'pistols', subcategory: 'pistol', category: 'pistol' } };
+    handlers.preCreateItem(document, data, {}, 'test-user');
+    assert.ok(capturedFields, 'materializing a real pack-shaped ranged weapon must trigger a correction');
+    assert.equal(capturedFields.meleeOrRanged, 'ranged', 'materialization must resolve branch from weaponCategory, not the schema-defaulted meleeOrRanged');
+  }
+  ok('weapon-branch-coherence-hotfix.js preCreateItem: real pack-shaped materialization still self-corrects (Bluebolt root cause remains fixed)');
+
+  // Restore the ambient shim state the rest of this file (and any later
+  // section, if this were ever appended to) expects.
+  installFoundryShimGlobals({
+    game: { settings: { get: () => undefined, set: () => {}, settings: { has: () => true } } }
+  });
 }
 
 console.log('weapon-branch-family-schema-authority.test.mjs: all assertions passed');

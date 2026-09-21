@@ -23,19 +23,26 @@ export const WEAPON_BRANCH_OPTIONS = Object.freeze([
   { value: 'ranged', label: 'Ranged' }
 ]);
 
+// Batch 2B correction #2: values use the real shipped pack-data singular
+// vocabulary (confirmed by a direct scan of packs/weapons*.db) -- pistol
+// (was "pistols"), rifle (was "rifles"), exotic (was "melee-exotic"/
+// "ranged-exotic"). These are canonical `system.subcategory` values now,
+// never `system.weaponCategory` (see weapon-branch-resolver.js's field
+// contract). Labels are unchanged so the editor UI reads the same as
+// before.
 export const MELEE_WEAPON_CATEGORY_OPTIONS = Object.freeze([
   { value: 'advanced', label: 'Advanced' },
   { value: 'lightsaber', label: 'Lightsaber' },
-  { value: 'melee-exotic', label: 'Melee Exotic' },
+  { value: 'exotic', label: 'Melee Exotic' },
   { value: 'natural', label: 'Natural' },
   { value: 'simple', label: 'Simple' }
 ]);
 
 export const RANGED_WEAPON_CATEGORY_OPTIONS = Object.freeze([
   { value: 'heavy', label: 'Heavy' },
-  { value: 'pistols', label: 'Pistols' },
-  { value: 'ranged-exotic', label: 'Ranged Exotic' },
-  { value: 'rifles', label: 'Rifles' },
+  { value: 'pistol', label: 'Pistols' },
+  { value: 'exotic', label: 'Ranged Exotic' },
+  { value: 'rifle', label: 'Rifles' },
   { value: 'simple', label: 'Simple' }
 ]);
 
@@ -141,7 +148,13 @@ function withCustomOption(options, value) {
 export function resolveWeaponData(itemOrSystem = {}) {
   const system = itemOrSystem.system ?? itemOrSystem ?? {};
   const branch = normalizeBranch(itemOrSystem);
-  const category = String(system.weaponCategory ?? system.category ?? 'simple').trim() || 'simple';
+  // Batch 2B correction #2: weaponCategory is now a pure branch mirror
+  // ("melee"/"ranged") -- it must never be read as a family/category
+  // display value again (this line previously showed e.g. "Ranged" as the
+  // weapon's "Group" display label instead of its real family). subcategory
+  // is the canonical family field going forward; category/proficiency stay
+  // as compatibility fallbacks for records not yet touched by the fix.
+  const category = String(system.subcategory ?? system.category ?? system.proficiency ?? 'simple').trim() || 'simple';
   const ranges = normalizeRanges(system);
   const rangeSummary = String(system.range ?? '').trim() || formatRangeSummary(ranges) || (branch === 'melee' ? 'Melee' : 'Unspecified');
   const properties = normalizeProperties(system.properties);

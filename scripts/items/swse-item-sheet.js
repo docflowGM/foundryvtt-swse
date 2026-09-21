@@ -2384,12 +2384,25 @@ export class SWSEItemSheet extends HandlebarsApplicationMixin(ItemSheetV2) {
       const formBranch = form.querySelector('[name="system.meleeOrRanged"]')?.value;
       const branch = formBranch || getWeaponBranch(this.item ?? {});
       if (String(branch || '').toLowerCase() !== 'ranged') return false;
-      const category = form.querySelector('[name="system.weaponCategory"]')?.value ?? this.item?.system?.weaponCategory;
+      // Batch 2B correction #2: the live Category selector now submits
+      // system.subcategory (the canonical family field), not
+      // system.weaponCategory (a pure branch mirror now -- passing the
+      // stale/wrong field here would feed a family lookup with a branch
+      // literal like "ranged" instead of e.g. "pistol").
+      const category = form.querySelector('[name="system.subcategory"]')?.value ?? this.item?.system?.subcategory;
+      // proficiency/category are also overridden here (not just subcategory)
+      // because resolveWeaponBranchFamily()'s family-candidate scan checks
+      // proficiency FIRST -- leaving the item's stale, pre-edit proficiency
+      // in place would win over the live, just-changed Category selection
+      // for this preview lookup, even though subcategory is the more
+      // current signal.
       const rangeData = await WeaponRangeProfileResolver.resolveForWeapon({
         system: {
           ...(this.item?.system ?? {}),
           meleeOrRanged: branch,
-          weaponCategory: category
+          subcategory: category,
+          category,
+          proficiency: category
         }
       });
       if (!rangeData) return false;
