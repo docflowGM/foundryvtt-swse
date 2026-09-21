@@ -4,9 +4,14 @@
  * V2 sheet migration guardrails:
  * - The gear Armor Profile must use the same equipped-state semantics as the
  *   inventory rows and must prefer worn armor over equipped energy shields.
- * - Armor defense display/math must not miss equipped armor because an older
- *   item used an alternate equipped flag shape or because the derived payload
- *   was stale before the armor item was hydrated.
+ * - DefenseCalculator.calculate() must not miss equipped armor/shields
+ *   because an older item marks its equipped state via a legacy/alternate
+ *   field shape (system.isEquipped, system.readied, system.equippable.equipped,
+ *   flags.swse.equipped) instead of the canonical system.equipped field the
+ *   calculator's own equippedArmor lookup reads. Fixed by normalizing that
+ *   field, in memory, before every DefenseCalculator.calculate() call --
+ *   never by recomputing its output afterward. See normalizeArmorEquipState()
+ *   below for the full rationale (Math Integrity Freeze Batch 2A correction).
  * - The Effect Builder partial must be registered before item sheets try to
  *   render the entity dialog effects tab.
  */
@@ -14,8 +19,7 @@
 import { PanelContextBuilder } from '/systems/foundryvtt-swse/scripts/sheets/v2/context/PanelContextBuilder.js';
 import { RowTransformers } from '/systems/foundryvtt-swse/scripts/sheets/v2/context/RowTransformers.js';
 import { DefenseCalculator } from '/systems/foundryvtt-swse/scripts/actors/derived/defense-calculator.js';
-import { actorHasArmorProficiencyForArmor, isEnergyShieldItem, resolveArmorData } from '/systems/foundryvtt-swse/scripts/items/armor-data-resolver.js';
-import { resolveArmorUsageEffects } from '/systems/foundryvtt-swse/scripts/engine/effects/armor-usage-resolver.js';
+import { isEnergyShieldItem } from '/systems/foundryvtt-swse/scripts/items/armor-data-resolver.js';
 
 const EFFECT_BUILDER_PARTIAL = 'systems/foundryvtt-swse/templates/dialogs/entity/parts/effect-builder-wizard.hbs';
 
@@ -23,7 +27,6 @@ let registered = false;
 let partialRegistrationStarted = false;
 let originalBuildArmorSummaryPanel = null;
 let originalBuildInventoryPanel = null;
-let originalBuildDefensePanel = null;
 let originalDefenseCalculate = null;
 let effectBuilderFallbackRegistered = false;
 let effectBuilderFullTemplateRegistered = false;
@@ -31,11 +34,6 @@ let effectBuilderFullTemplateRegistered = false;
 function asArray(value) {
   try { return Array.from(value ?? []); }
   catch (_err) { return []; }
-}
-
-function toNumber(value, fallback = 0) {
-  const number = Number(value);
-  return Number.isFinite(number) ? number : fallback;
 }
 
 function getHandlebarsRuntime() {
@@ -74,214 +72,48 @@ function findEquippedWornArmor(actorOrItems) {
   return items.find(isWornArmor) ?? null;
 }
 
-function actorHasTalent(actor, talentName) {
-  const wanted = String(talentName || '').trim().toLowerCase();
-  if (!wanted) return false;
-  return asArray(actor?.items).some(item => item?.type === 'talent' && String(item?.name || '').trim().toLowerCase() === wanted);
-}
-
-function effectiveArmorDefenseState(actor, armor) {
-  if (!actor || !armor) return null;
-  const armorData = resolveArmorData(armor);
-  const proficient = actorHasArmorProficiencyForArmor(actor, armor);
-  const secondSkin = proficient && actorHasTalent(actor, 'Second Skin');
-  const armoredDefense = proficient && actorHasTalent(actor, 'Armored Defense');
-  const improvedArmoredDefense = proficient && actorHasTalent(actor, 'Improved Armored Defense');
-  const armorMastery = proficient && actorHasTalent(actor, 'Armor Mastery');
-
-  const reflexArmorBonus = toNumber(armorData.reflexBonus, 0) + (secondSkin ? 1 : 0);
-  const fortitudeArmorBonus = proficient ? toNumber(armorData.fortitudeBonus, 0) + (secondSkin ? 1 : 0) : 0;
-  // resolveArmorData() already normalizes maxDexBonus to either a finite
-  // number or exactly `null` ("uncapped"). Routing it through toNumber()'s
-  // Number(null) === 0 coercion first silently turned "uncapped" into
-  // "capped to +0" here too (Math Integrity Freeze Batch 2A) -- read the
-  // already-normalized value directly instead.
-  const maxDexBonus = armorData.maxDexBonus;
-
-  return {
-    armorData,
-    proficient,
-    armoredDefense,
-    improvedArmoredDefense,
-    armorMastery,
-    reflexArmorBonus,
-    fortitudeArmorBonus,
-    maxDexBonus: Number.isFinite(maxDexBonus) ? maxDexBonus : null,
-  };
-}
-
-function correctedReflexLevelTerm(heroicLevel, armorState) {
-  const armorBonus = toNumber(armorState?.reflexArmorBonus, 0);
-  if (!armorState?.proficient) return armorBonus;
-  if (armorState.improvedArmoredDefense) return Math.max(heroicLevel + Math.floor(armorBonus / 2), armorBonus);
-  if (armorState.armoredDefense) return Math.max(heroicLevel, armorBonus);
-  return armorBonus;
-}
-
-// Math Integrity Freeze Batch 2A: this hotfix recomputes body-armor Reflex/
-// Fortitude from scratch (see the module doc comment -- a hydration-timing
-// workaround, not a math authority of its own), which would otherwise
-// silently discard DefenseCalculator's own active-Energy-Shield Reflex
-// layer (Max Dex clamp, nonproficiency -5, positive-Dex denial) whenever
-// worn body armor is ALSO present. Folds the same shield adjustment back in
-// rather than letting this hotfix regress to pre-Batch-2A math.
-function activeShieldReflexAdjustment(actor) {
-  const activeEnergyShields = resolveArmorUsageEffects(actor).activeEnergyShields;
-  const maxDexCandidates = activeEnergyShields.map(s => s.maxDexCap).filter(v => Number.isFinite(v));
-  return {
-    maxDexCap: maxDexCandidates.length ? Math.min(...maxDexCandidates) : null,
-    reflexPenalty: activeEnergyShields.reduce((sum, s) => sum + (s.reflexPenalty || 0), 0),
-    denyPositiveDex: activeEnergyShields.some(s => s.denyPositiveDexToReflex)
-  };
-}
-
-function applyShieldAdjustmentToAbilityMod(abilityMod, shieldAdjustment) {
-  let adjusted = abilityMod;
-  if (Number.isFinite(shieldAdjustment.maxDexCap)) adjusted = Math.min(adjusted, shieldAdjustment.maxDexCap);
-  return adjusted;
-}
-
-function applyArmorDefenseCorrectionsToPanel(panel = {}, actor = {}) {
-  const armor = findEquippedWornArmor(actor);
-  if (!armor || !panel || !Array.isArray(panel.defenses)) return panel;
-  const armorState = effectiveArmorDefenseState(actor, armor);
-  if (!armorState) return panel;
-
-  const reflex = panel.defenses.find(row => row?.systemKey === 'reflex' || row?.key === 'ref');
-  if (reflex) {
-    const heroicLevel = toNumber(reflex.heroicLevel ?? actor?.system?.level, 0);
-    const maxDex = armorState.maxDexBonus;
-    const effectiveMaxDex = maxDex === null ? null : maxDex + (armorState.armorMastery ? 1 : 0);
-    const rawAbilityMod = toNumber(reflex.abilityMod, 0);
-    const shieldAdjustment = activeShieldReflexAdjustment(actor);
-    const abilityMod = applyShieldAdjustmentToAbilityMod(
-      effectiveMaxDex === null ? rawAbilityMod : Math.min(rawAbilityMod, effectiveMaxDex),
-      shieldAdjustment
-    );
-    const positiveDexDenied = shieldAdjustment.denyPositiveDex ? Math.max(0, abilityMod) : 0;
-    const levelContribution = correctedReflexLevelTerm(heroicLevel, armorState);
-    const total = 10
-      + levelContribution
-      + abilityMod
-      + toNumber(reflex.classDef, 0)
-      + toNumber(reflex.speciesBonus, 0)
-      + toNumber(reflex.rulesBonus, 0)
-      + toNumber(reflex.sizeModifier, 0)
-      + toNumber(reflex.miscMod, 0)
-      + toNumber(reflex.conditionPenalty, 0)
-      + shieldAdjustment.reflexPenalty
-      - positiveDexDenied;
-
-    reflex.armorBonus = armorState.reflexArmorBonus;
-    reflex.levelContribution = levelContribution;
-    reflex.armorContribution = levelContribution;
-    reflex.abilityMod = abilityMod;
-    reflex.abilityModClass = abilityMod > 0 ? 'mod--positive' : abilityMod < 0 ? 'mod--negative' : 'mod--zero';
-    reflex.total = Math.max(1, total);
-    reflex.armorSourceName = armor.name || '';
-    reflex.shieldReflexPenalty = shieldAdjustment.reflexPenalty;
-    reflex.shieldDexReduction = -positiveDexDenied;
+// Math Integrity Freeze Batch 2A correction: this hotfix previously
+// recomputed Reflex/Fortitude from scratch AFTER DefenseCalculator.calculate()
+// already produced the correct answer -- a second, independently-maintained
+// defense authority. Live review against Gar'ee's real actor confirmed that
+// reconstruction was ALREADY wrong on its own terms even before Energy
+// Shields existed: flat-footed Reflex only stripped the positive Dex bonus,
+// not dodge bonuses (Gar'ee: 29 -> 25 instead of the certified 24); an
+// active-nonproficient-shield's Dex denial got applied a second time when
+// also flat-footed; and Pin's positive-Dex-bonus removal
+// (reflex.pinnedDexReduction) was never read at all, so this reconstruction
+// could silently restore the Dex bonus Pin had just removed. Every one of
+// those is a case this file would have had to be taught by hand, forever,
+// as the canonical defense rules keep evolving -- an unsustainable pattern
+// (see docs/audits/v2-math-integrity-authority-ledger.md's Batch 2A
+// correction addendum).
+//
+// The actual problem this hotfix's own doc comment describes is narrower
+// than "recompute the answer": some armor/shield records mark equipped
+// state via a legacy/alternate field (system.isEquipped, system.readied,
+// system.equippable.equipped, flags.swse.equipped) that DefenseCalculator's
+// own equippedArmor lookup (item.system?.equipped only) doesn't recognize,
+// so the canonical calculator would think nothing is equipped and skip
+// armor/shield math entirely. The fix belongs on the INPUT side, not the
+// output side: normalize the equipped-state field DefenseCalculator (and
+// every other canonical consumer -- ModifierEngine, armor-usage-resolver.js
+// -- reading the same actor afterward) actually looks at, then let the one
+// canonical calculator run untouched.
+//
+//   hydration/equip-state normalization -> DefenseCalculator.calculate() -> consumers
+//
+// This mutation is in-memory only (never persisted via actor/item.update()):
+// it only ever sets system.equipped = true when the item is ALREADY equipped
+// by every other looser definition this codebase's own InventoryEngine write
+// path already uses, so it can only correct a false negative, never invent
+// a false positive.
+function normalizeArmorEquipState(actor) {
+  for (const item of asArray(actor?.items)) {
+    if (item?.type !== 'armor') continue;
+    if (!itemIsEquipped(item)) continue;
+    if (item.system?.equipped) continue;
+    if (item.system) item.system.equipped = true;
   }
-
-  const fortitude = panel.defenses.find(row => row?.systemKey === 'fortitude' || row?.key === 'fort');
-  if (fortitude) {
-    const total = 10
-      + toNumber(fortitude.levelContribution ?? fortitude.heroicLevel ?? actor?.system?.level, 0)
-      + armorState.fortitudeArmorBonus
-      + toNumber(fortitude.abilityMod, 0)
-      + toNumber(fortitude.classDef, 0)
-      + toNumber(fortitude.speciesBonus, 0)
-      + toNumber(fortitude.rulesBonus, 0)
-      + toNumber(fortitude.sizeModifier, 0)
-      + toNumber(fortitude.miscMod, 0)
-      + toNumber(fortitude.conditionPenalty, 0);
-
-    fortitude.armorBonus = armorState.fortitudeArmorBonus;
-    fortitude.total = Math.max(1, total);
-    fortitude.armorSourceName = armor.name || '';
-  }
-
-  return panel;
-}
-
-function applyArmorDefenseCorrectionsToResult(result = {}, actor = {}) {
-  const armor = findEquippedWornArmor(actor);
-  if (!armor || !result?.reflex) return result;
-  const armorState = effectiveArmorDefenseState(actor, armor);
-  if (!armorState) return result;
-
-  const reflex = result.reflex;
-  const heroicLevel = toNumber(reflex.heroicLevel ?? actor?.system?.level, 0);
-  const maxDex = armorState.maxDexBonus;
-  const effectiveMaxDex = maxDex === null ? null : maxDex + (armorState.armorMastery ? 1 : 0);
-  const rawAbilityMod = toNumber(reflex.abilityMod, 0);
-  const shieldAdjustment = activeShieldReflexAdjustment(actor);
-  const abilityMod = applyShieldAdjustmentToAbilityMod(
-    effectiveMaxDex === null ? rawAbilityMod : Math.min(rawAbilityMod, effectiveMaxDex),
-    shieldAdjustment
-  );
-  const positiveDexDenied = shieldAdjustment.denyPositiveDex ? Math.max(0, abilityMod) : 0;
-  const levelContribution = correctedReflexLevelTerm(heroicLevel, armorState);
-  const reflexTotal = 10
-    + levelContribution
-    + abilityMod
-    + toNumber(reflex.classBonus, 0)
-    + toNumber(reflex.speciesBonus, 0)
-    + toNumber(reflex.stateBonus, 0)
-    + toNumber(reflex.adjustment, 0)
-    + toNumber(reflex.sizeModifier, 0)
-    + toNumber(reflex.miscBonus, 0)
-    + toNumber(reflex.conditionPenalty, 0)
-    + shieldAdjustment.reflexPenalty
-    - positiveDexDenied;
-
-  result.reflex = {
-    ...reflex,
-    total: Math.max(1, reflexTotal),
-    base: 10 + levelContribution + toNumber(reflex.classBonus, 0) + toNumber(reflex.sizeModifier, 0),
-    armorBonus: armorState.reflexArmorBonus,
-    armorContribution: levelContribution,
-    levelContribution,
-    abilityMod,
-    armorSourceName: armor.name || '',
-    shieldReflexPenalty: shieldAdjustment.reflexPenalty,
-    shieldDexReduction: -positiveDexDenied,
-  };
-
-  if (result.flatFooted) {
-    result.flatFooted = {
-      ...result.flatFooted,
-      total: Math.max(1, result.reflex.total - Math.max(0, abilityMod)),
-      base: result.reflex.base,
-      armorBonus: armorState.reflexArmorBonus,
-      armorContribution: levelContribution,
-      levelContribution,
-      abilityMod: 0,
-      armorSourceName: armor.name || '',
-    };
-  }
-
-  if (result.fortitude) {
-    const fortitude = result.fortitude;
-    const fortTotal = 10
-      + toNumber(fortitude.levelContribution ?? fortitude.heroicLevel ?? actor?.system?.level, 0)
-      + armorState.fortitudeArmorBonus
-      + toNumber(fortitude.abilityMod, 0)
-      + toNumber(fortitude.classBonus, 0)
-      + toNumber(fortitude.speciesBonus, 0)
-      + toNumber(fortitude.stateBonus, 0)
-      + toNumber(fortitude.adjustment, 0)
-      + toNumber(fortitude.miscBonus, 0)
-      + toNumber(fortitude.conditionPenalty, 0);
-    result.fortitude = {
-      ...fortitude,
-      total: Math.max(1, fortTotal),
-      armorBonus: armorState.fortitudeArmorBonus,
-      armorSourceName: armor.name || '',
-    };
-  }
-
-  return result;
 }
 
 function installPanelArmorPatches() {
@@ -312,21 +144,23 @@ function installPanelArmorPatches() {
     };
   }
 
-  if (!originalBuildDefensePanel && typeof proto.buildDefensePanel === 'function') {
-    originalBuildDefensePanel = proto.buildDefensePanel;
-    proto.buildDefensePanel = function patchedBuildDefensePanel(...args) {
-      const panel = originalBuildDefensePanel.call(this, ...args);
-      return applyArmorDefenseCorrectionsToPanel(panel, this.actor);
-    };
-  }
+  // No buildDefensePanel patch: it already reads system.derived.defenses.*
+  // (buildDefensesViewModel() / PanelContextBuilder.js's own
+  // "authoritativeTotal" preference), the same canonical output
+  // DefenseCalculator.calculate() persists there. Once that persisted data
+  // is correct -- guaranteed by normalizeArmorEquipState() below running
+  // before every DefenseCalculator.calculate() call -- the panel needs no
+  // separate correction. Reconstructing Reflex/Fortitude a second time here
+  // was the shadow-authority bug; consuming the canonical output the panel
+  // already prefers is the fix.
 }
 
 function installDefenseCalculatorPatch() {
   if (originalDefenseCalculate || typeof DefenseCalculator?.calculate !== 'function') return;
   originalDefenseCalculate = DefenseCalculator.calculate;
   DefenseCalculator.calculate = async function patchedDefenseCalculate(actor, classLevels = [], options = {}, context = {}) {
-    const result = await originalDefenseCalculate.call(this, actor, classLevels, options, context);
-    return applyArmorDefenseCorrectionsToResult(result, actor);
+    normalizeArmorEquipState(actor);
+    return originalDefenseCalculate.call(this, actor, classLevels, options, context);
   };
 }
 

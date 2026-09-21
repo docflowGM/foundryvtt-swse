@@ -81,7 +81,12 @@ function resolveBodyArmorContribution(actor) {
     active: true,
     armorType: data.armorType,
     acp,
-    maxDexCap: Number.isFinite(Number(data.maxDexBonus)) ? Number(data.maxDexBonus) : null
+    // resolveArmorData() already normalizes maxDexBonus to either a finite
+    // number or exactly `null` ("uncapped"). Number(null) is 0, not NaN --
+    // wrapping it in Number() before Number.isFinite() silently turns
+    // "uncapped" into "capped to +0". Read the already-normalized value
+    // directly (Math Integrity Freeze Batch 2A correction).
+    maxDexCap: Number.isFinite(data.maxDexBonus) ? data.maxDexBonus : null
   };
 }
 
@@ -104,7 +109,7 @@ function resolveActiveShieldContribution(actor, item) {
     active: true,
     armorType: shieldRequiredType,
     acp,
-    maxDexCap: Number.isFinite(Number(data.maxDexBonus)) ? Number(data.maxDexBonus) : null,
+    maxDexCap: Number.isFinite(data.maxDexBonus) ? data.maxDexBonus : null,
     reflexPenalty: proficient ? 0 : -5,
     denyPositiveDexToReflex: !proficient
   };

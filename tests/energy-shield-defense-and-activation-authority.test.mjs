@@ -328,19 +328,22 @@ console.log('  [6/8] Gar\'ee real-actor golden case: proficient body armor ACP=0
 
 console.log('  [7/8] combined body-armor + active-shield golden matrix cases (both proficiencies vs shield proficiency missing) OK');
 
-// ─── 8. Regression: armor-hydration-defense-hotfix.js must not silently ───
-//        discard the active-shield Reflex layer when body armor is ALSO
-//        worn. This hotfix wraps DefenseCalculator.calculate() and
-//        recomputes Reflex from scratch for hydration-timing reasons (see
-//        its own module doc comment); before this fix it had no knowledge
-//        of shieldReflexPenalty/shieldDexReduction at all and would
-//        overwrite DefenseCalculator's own (correct) total with one missing
-//        the shield entirely. Also guards a second, related defect this
-//        investigation surfaced in both files: resolveArmorData() reports
-//        an "uncapped" Max Dex as exactly `null`, but Number(null) is 0 (not
-//        NaN) -- wrapping it in Number() before Number.isFinite() silently
-//        turned "uncapped" into "capped to +0", discarding the actor's
-//        entire positive Dex bonus for any armor with no Max Dex limit.
+// ─── 8. Regression: DefenseCalculator's active-shield Reflex layer (body ──
+//        armor ALSO worn) survives armor-hydration-defense-hotfix.js being
+//        registered, and an uncapped body armor's Dex bonus is not silently
+//        zeroed. armor-hydration-defense-hotfix.js no longer reconstructs
+//        Reflex/Fortitude at all (Batch 2A correction -- see
+//        tests/armor-hydration-hotfix-shadow-authority-removal.test.mjs for
+//        the full invariant/fail-before suite covering that removal); it
+//        now only normalizes armor equipped-state before calling the real,
+//        untouched DefenseCalculator.calculate(), so this result is
+//        DefenseCalculator's own canonical output, unmodified. Also guards
+//        a defect this investigation surfaced directly in
+//        DefenseCalculator: resolveArmorData() reports an "uncapped" Max
+//        Dex as exactly `null`, but Number(null) is 0 (not NaN) --
+//        wrapping it in Number() before Number.isFinite() silently turned
+//        "uncapped" into "capped to +0", discarding the actor's entire
+//        positive Dex bonus for any armor with no Max Dex limit.
 
 {
   registerArmorHydrationDefenseHotfix();
@@ -355,11 +358,11 @@ console.log('  [7/8] combined body-armor + active-shield golden matrix cases (bo
   const result = await DefenseCalculator.calculate(actorWithBoth, [], {}, {});
 
   assert.equal(result.reflex.abilityMod, 4, 'uncapped body armor must not silently zero the Dex bonus; the shield\'s own +4 cap must still apply');
-  assert.equal(result.reflex.shieldReflexPenalty, -5, 'the hotfix must preserve the active-nonproficient-shield -5 Reflex penalty, not silently drop it');
-  assert.equal(result.reflex.shieldDexReduction, -4, 'the hotfix must preserve the shield\'s positive-Dex-bonus denial, not silently drop it');
-  assert.equal(result.reflex.total, 10 + 2 /* levelContribution from reflexArmorBonus */ + 4 - 5 - 4, 'the hotfix-recomputed total must still fold in the shield\'s Reflex effects when body armor is also worn');
+  assert.equal(result.reflex.shieldReflexPenalty, -5, 'the active-nonproficient-shield -5 Reflex penalty must survive with the hotfix registered');
+  assert.equal(result.reflex.shieldDexReduction, -4, 'the shield\'s positive-Dex-bonus denial must survive with the hotfix registered');
+  assert.equal(result.reflex.total, 10 + 2 /* levelContribution from reflexArmorBonus */ + 4 - 5 - 4, 'the canonical total must still include the shield\'s Reflex effects when body armor is also worn, with the hotfix registered');
 }
 
-console.log('  [8/8] armor-hydration-defense-hotfix.js preserves the active-shield Reflex layer when body armor is worn too, and no longer zeroes an uncapped body armor\'s Dex bonus OK');
+console.log('  [8/8] DefenseCalculator\'s active-shield Reflex layer (body armor also worn) and the uncapped-Max-Dex fix both survive the hotfix being registered OK');
 
 console.log('energy-shield-defense-and-activation-authority.test.mjs: all assertions passed');

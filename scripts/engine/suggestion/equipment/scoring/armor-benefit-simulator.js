@@ -223,10 +223,15 @@ function simulateBodyArmorContribution(actor, armorItem = null) {
   }
 
   let effectiveDexMod = dexMod;
+  // data.maxDexBonus is already normalized by resolveArmorData() to either
+  // a finite number or exactly `null` ("uncapped"). Number(null) is 0, not
+  // NaN -- wrapping it in Number() before Number.isFinite() silently turned
+  // "uncapped" into "capped to +0" (Math Integrity Freeze Batch 2A
+  // correction). Read the already-normalized value directly.
   const maxDex = data.maxDexBonus;
   let effectiveMaxDexBonus = null;
-  if (Number.isFinite(Number(maxDex))) {
-    effectiveMaxDexBonus = Number(maxDex) + (proficient && talents.armorMastery ? 1 : 0);
+  if (Number.isFinite(maxDex)) {
+    effectiveMaxDexBonus = maxDex + (proficient && talents.armorMastery ? 1 : 0);
     effectiveDexMod = Math.min(dexMod, effectiveMaxDexBonus);
   }
 
@@ -246,7 +251,7 @@ function simulateBodyArmorContribution(actor, armorItem = null) {
     heroicLevel,
     reflexArmorBonus,
     fortitudeArmorBonus,
-    maxDexBonus: Number.isFinite(Number(maxDex)) ? Number(maxDex) : null,
+    maxDexBonus: Number.isFinite(maxDex) ? maxDex : null,
     effectiveMaxDexBonus,
     dexMod,
     effectiveDexMod,
@@ -421,7 +426,10 @@ function evaluateEnergyShield(armor, actor, options = {}) {
   const proficient = isArmorProficient(actor, armor, data);
   const armorCheckPenalty = effectiveArmorCheckPenalty(actor, armor, data, proficient);
   const shieldRating = Math.max(0, number(data.shieldRating, 0));
-  const maxDex = Number.isFinite(Number(data.maxDexBonus)) ? Number(data.maxDexBonus) : null;
+  // data.maxDexBonus is already normalized to a finite number or exactly
+  // `null` ("uncapped") -- do not route it through Number() first (see the
+  // simulateBodyArmorContribution() fix above for why that's unsafe).
+  const maxDex = Number.isFinite(data.maxDexBonus) ? data.maxDexBonus : null;
   const dexMod = getDexMod(actor);
   const dexLostToCap = maxDex === null ? 0 : Math.max(0, dexMod - maxDex);
 
