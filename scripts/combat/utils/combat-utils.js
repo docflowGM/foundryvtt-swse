@@ -1,6 +1,7 @@
 import { ResolutionContext } from '../../engine/resolution/resolution-context.js';
 import { RULES } from '../../engine/execution/rules/rule-enum.js';
 import { getHalfLevelDamageBonus, isMeleeWeapon as isRawMeleeWeapon, isRangedWeapon as isRawRangedWeapon } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-stat-rules.js";
+import { isLightWeaponForActor } from "/systems/foundryvtt-swse/scripts/items/weapon-branch-resolver.js";
 import { ModifierEngine } from "/systems/foundryvtt-swse/scripts/engine/effects/modifiers/ModifierEngine.js";
 import { evaluateStatePredicates } from "/systems/foundryvtt-swse/scripts/engine/abilities/passive/passive-state.js";
 import { resolveAttackBonus, resolveDamageBonus } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-roll-math.js";
@@ -116,30 +117,21 @@ export function getCriticalConfirmBonus(actor, weapon) {
 /* DAMAGE BONUS CALCULATION                                                    */
 /* -------------------------------------------------------------------------- */
 
+// Math Integrity Freeze, Batch 2B: this local isMeleeWeapon previously
+// shadowed the correctly-named isRawMeleeWeapon import above with a
+// range-string-only check that never read meleeOrRanged/weaponCategory at
+// all -- callers of combat-utils.js's isMeleeWeapon got a THIRD, differently
+// -behaved implementation from the one its own import alias suggested was
+// canonical. Both are now the same canonical authority.
+
 /** Determine if a weapon is a melee weapon. */
 export function isMeleeWeapon(weapon) {
-  const range = (weapon.system?.range || '').toLowerCase();
-  return range === 'melee' || range === '';
+  return isRawMeleeWeapon(weapon);
 }
 
-/** Determine if a weapon is a light weapon. */
+/** Determine if a weapon is a light weapon (wielder-size-relative). */
 export function isLightWeapon(weapon, actor) {
-  if (weapon.system?.isLight === true) return true;
-
-  const weaponSize = (weapon.system?.size || '').toLowerCase();
-  const actorSize = (actor.system?.size || 'medium').toLowerCase();
-  const sizeOrder = ['fine', 'diminutive', 'tiny', 'small', 'medium', 'large', 'huge', 'gargantuan', 'colossal'];
-  const actorSizeIndex = sizeOrder.indexOf(actorSize);
-  const weaponSizeIndex = sizeOrder.indexOf(weaponSize);
-
-  if (weaponSizeIndex !== -1 && actorSizeIndex !== -1) return weaponSizeIndex < actorSizeIndex;
-
-  const name = (weapon.name || '').toLowerCase();
-  const lightWeapons = [
-    'knife', 'dagger', 'vibrodagger', 'shiv', 'stiletto',
-    'hold-out', 'holdout', 'derringer', 'pocket pistol'
-  ];
-  return lightWeapons.some(lw => name.includes(lw));
+  return isLightWeaponForActor(weapon, actor ?? {});
 }
 
 /** Determine if a weapon should be wielded two-handed. */
@@ -302,6 +294,5 @@ export function resolveAttackAgainstTarget(attackRoll, target, options = {}) {
 // Keep these raw imports semantically referenced for older utility consumers that
 // inspect this module's helper behavior during transition.
 void getHalfLevelDamageBonus;
-void isRawMeleeWeapon;
 void isRawRangedWeapon;
 void computePassiveStateDamageBonus;

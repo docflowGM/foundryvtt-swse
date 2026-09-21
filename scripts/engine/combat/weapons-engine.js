@@ -9,6 +9,7 @@
 import { SWSELogger as swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { ModifierSource, ModifierType, createModifier } from "/systems/foundryvtt-swse/scripts/engine/effects/modifiers/ModifierTypes.js";
 import { isVehicleWeapon } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-stat-rules.js";
+import { isMeleeWeapon as canonicalIsMeleeWeapon, isLightWeaponForActor } from "/systems/foundryvtt-swse/scripts/items/weapon-branch-resolver.js";
 // Breakdown delegates to the canonical roll-math resolvers so tooltips always
 // reflect the exact same math used by actual attack/damage rolls (attacks.js).
 import { resolveAttackBonus, resolveDamageBonus } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-roll-math.js";
@@ -48,12 +49,19 @@ export class WeaponsEngine {
     return weapon?.system?.traits?.includes(property) === true;
   }
 
+  // Math Integrity Freeze, Batch 2B: both delegated to the canonical
+  // authority. isMeleeWeapon previously read system.combat.range.type, a
+  // field that does not exist anywhere in the schema -- it was always
+  // false, so the Two-Handed Strength bonus below never fired for any
+  // melee weapon in the game. isLightWeapon previously checked a `traits`
+  // array for the literal string 'light', which zero compendium weapons
+  // carry -- also always false.
   static isMeleeWeapon(weapon) {
-    return weapon?.system?.combat?.range?.type === 'melee';
+    return canonicalIsMeleeWeapon(weapon);
   }
 
-  static isLightWeapon(weapon) {
-    return this.getWeaponProperty(weapon, 'light');
+  static isLightWeapon(weapon, actor = null) {
+    return isLightWeaponForActor(weapon, actor ?? {});
   }
 
   static isTwoHandedWeapon(weapon) {
@@ -176,7 +184,7 @@ export class WeaponsEngine {
 
         if (this.isMeleeWeapon(weapon) &&
             this.isTwoHandedWeapon(weapon) &&
-            !this.isLightWeapon(weapon)) {
+            !this.isLightWeapon(weapon, actor)) {
 
           const strMod =
             actor.system?.derived?.abilities?.str?.mod ?? 0;

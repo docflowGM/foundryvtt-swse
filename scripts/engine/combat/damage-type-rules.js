@@ -6,6 +6,8 @@
  * predictable vocabulary for energy/sonic/force/typed damage context.
  */
 
+import { isRangedWeapon as canonicalIsRangedWeapon } from "/systems/foundryvtt-swse/scripts/items/weapon-branch-resolver.js";
+
 function asArray(value) {
   if (Array.isArray(value)) return value;
   if (value === undefined || value === null || value === '') return [];
@@ -214,8 +216,13 @@ export function damageTypesMatch(candidateTypes = [], wantedTypes = []) {
 
 export function damageContextForReaction({ weapon = null, workflowContext = null, options = {} } = {}) {
   const damage = damageTypesFromContext({ weapon, workflowContext, options });
-  const mode = String(weapon?.system?.meleeOrRanged ?? weapon?.system?.weaponRangeType ?? weapon?.system?.category ?? options.attackType ?? '').toLowerCase();
-  const attackType = mode.includes('range') || mode.includes('ranged') ? 'ranged' : 'melee';
+  // Math Integrity Freeze, Batch 2B: options.attackType (a genuine roll-time
+  // context signal) stays first; the weapon fallback is now the canonical
+  // branch authority instead of a raw meleeOrRanged-first read.
+  const explicitMode = String(options.attackType ?? '').toLowerCase();
+  const attackType = explicitMode
+    ? (explicitMode.includes('range') ? 'ranged' : 'melee')
+    : (canonicalIsRangedWeapon(weapon) ? 'ranged' : 'melee');
   return {
     attackType,
     damageType: damage.primary,

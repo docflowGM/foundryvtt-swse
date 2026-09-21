@@ -9,6 +9,7 @@
 import { normalizeArmorSystemAliases } from './armor-data-resolver.js';
 import { normalizeEquipmentSystem } from '../engine/equipment/equipment-normalizer.js';
 import { normalizePrereqClauses } from '../dialogs/entity-dialog/prereq-engine.js';
+import { normalizeWeaponBranchFamily } from './weapon-branch-resolver.js';
 
 const SYSTEM_ID = 'foundryvtt-swse';
 
@@ -160,7 +161,13 @@ export const BLANK_ITEM_DEFAULTS = Object.freeze({
     damage: '1d8',
     damageType: 'energy',
     attackBonus: 0,
-    attackAttribute: 'str',
+    // Math Integrity Freeze, Batch 2B: no static attackAttribute default
+    // here -- normalizeItemSystem() below fills it from the resolved
+    // branch (str for melee, dex for ranged) only when genuinely absent,
+    // via weapon-branch-resolver.js#normalizeWeaponBranchFamily(). This
+    // keeps a blank new weapon (branch defaults to melee) behaving exactly
+    // as before (str) while letting a ranged pack-sourced item get dex
+    // instead of being force-defaulted to str.
     range: 'melee',
     weight: 1,
     cost: 0,
@@ -541,6 +548,14 @@ export function normalizeItemSystem(type, currentSystem = {}, submittedSystem = 
   }
 
   if (safeType === 'weapon') {
+    // Math Integrity Freeze, Batch 2B: enforce branch/family schema
+    // coherence and fill attackAttribute from the branch default only when
+    // it is genuinely absent -- this is the same write-time boundary that
+    // stops a purchased/dropped ranged weapon from persisting a
+    // schema-defaulted "melee" (the "Bluebolt" defect). An explicit
+    // attackAttribute (including one that intentionally differs from the
+    // branch default) is always preserved verbatim.
+    normalizeWeaponBranchFamily(merged);
     if (!['str', 'dex'].includes(merged.attackAttribute)) merged.attackAttribute = 'str';
     if (!['energy', 'kinetic', 'sonic', 'ion', 'fire', 'cold', 'acid', 'force', 'stun'].includes(merged.damageType)) {
       merged.damageType = 'energy';

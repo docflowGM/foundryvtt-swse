@@ -18,6 +18,7 @@
  */
 
 import { SWSELogger as swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { isRangedWeapon as canonicalIsRangedWeapon } from "/systems/foundryvtt-swse/scripts/items/weapon-branch-resolver.js";
 
 
 function settingEnabled(key, fallback = false) {
@@ -45,21 +46,10 @@ function hasTruthyOption(options = {}, key = '') {
     || options?.attackOptions?.[key] === 1;
 }
 
+// Math Integrity Freeze, Batch 2B: delegated to the canonical branch
+// authority instead of a local free-text heuristic.
 function weaponLooksRanged(weapon = null) {
-  const system = weapon?.system ?? {};
-  const fields = [
-    system.meleeOrRanged,
-    system.weaponRangeType,
-    system.weaponType,
-    system.weaponCategory,
-    system.category,
-    system.type,
-    system.range,
-    system.group,
-    system.weaponGroup,
-    weapon?.name
-  ].map(normalizeKey).filter(Boolean);
-  return fields.some(value => value.includes('ranged') || value.includes('pistol') || value.includes('rifle') || value.includes('blaster') || value.includes('bowcaster') || value.includes('slugthrower'));
+  return canonicalIsRangedWeapon(weapon);
 }
 
 function workflowTags(context = {}) {
@@ -447,9 +437,12 @@ export class AmmoSystem {
       return { valid: true, issues }; // Not a weapon
     }
 
-    // Check if ranged weapon
-    const isRanged = weapon.system?.meleeOrRanged === 'ranged' ||
-                     weapon.system?.range !== 'Melee';
+    // Math Integrity Freeze, Batch 2B: delegated to the canonical branch
+    // authority -- the old `meleeOrRanged==='ranged' OR range!=='Melee'`
+    // check was an OR, not a fallback, so it flagged nearly every weapon
+    // (including real melee weapons whose range field isn't literally the
+    // string "Melee") as needing ammunition.
+    const isRanged = canonicalIsRangedWeapon(weapon);
 
     if (isRanged && (!weapon.system?.ammunition?.max || weapon.system.ammunition.max === 0)) {
       issues.push('Ranged weapon has no ammunition configured (max = 0)');

@@ -11,6 +11,7 @@ import { RollEngine } from "/systems/foundryvtt-swse/scripts/engine/roll-engine.
 import { getCriticalConfirmBonus } from "/systems/foundryvtt-swse/scripts/combat/utils/combat-utils.js";
 import { WeaponRangeProfileResolver } from "/systems/foundryvtt-swse/scripts/items/weapon-range-profile-resolver.js";
 import { CombatOptionResolver } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-option-resolver.js";
+import { isRangedWeapon as canonicalIsRangedWeapon, isMeleeWeapon as canonicalIsMeleeWeapon } from "/systems/foundryvtt-swse/scripts/items/weapon-branch-resolver.js";
 
 /* ============================================================================
    ROLL HOOKS SYSTEM
@@ -352,17 +353,16 @@ function fightDefensivelyModeLabel(mode) {
   return 'Default RAW: standard-action stance';
 }
 
+// Math Integrity Freeze, Batch 2B: delegated to the canonical branch
+// authority (scripts/items/weapon-branch-resolver.js) -- this local
+// meleeOrRanged-first precedence misclassified real ranged weapons whose
+// meleeOrRanged is schema-defaulted rather than authored (the "Bluebolt" bug).
 function isRangedWeapon(weapon = {}) {
-  const system = weapon?.system ?? weapon ?? {};
-  const branch = String(system.meleeOrRanged ?? system.weaponRangeType ?? system.rangeType ?? '').toLowerCase();
-  if (branch === 'ranged') return true;
-  if (branch === 'melee') return false;
-  const range = String(system.range ?? '').toLowerCase();
-  return range && range !== 'melee';
+  return canonicalIsRangedWeapon(weapon);
 }
 
 function isMeleeWeapon(weapon = {}) {
-  return !isRangedWeapon(weapon);
+  return canonicalIsMeleeWeapon(weapon);
 }
 
 function weaponProperties(weapon = {}) {

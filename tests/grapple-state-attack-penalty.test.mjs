@@ -167,17 +167,20 @@ console.log('  [5/6] the penalty is presence-based, not effect-count-based: two 
     const virtualWeapon = buildVirtualUnarmedWeapon(baselineAttacker, { name: 'Test Strike' });
     // Same mechanical weapon otherwise (damage formula, attackAttribute,
     // proficiency all unchanged, so the rest of the resolver pipeline is
-    // unaffected) -- only the fields the Grapple classifier actually reads
-    // (name, system.weaponType, system.properties) are overridden so it
-    // sees a normal (non-natural, non-light) weapon, isolating exactly the
-    // variable under test. Leaving system.weaponType:'unarmed' or
-    // properties:['unarmed',...] in place would keep this exempt despite
-    // the renamed weapon, since classifyGrappledAttack() reads those
-    // fields, not just the display name.
+    // unaffected) -- every field the canonical natural/unarmed authority
+    // (scripts/items/weapon-branch-resolver.js) reads is overridden so it
+    // sees a normal (non-natural, non-light, non-unarmed) weapon, isolating
+    // exactly the variable under test. The virtual unarmed weapon template
+    // also sets flags.swse.unarmed and system.isUnarmed, which the
+    // canonical classifier reads directly (more thorough than the old
+    // text-only classifier this test was originally written against) --
+    // both must be cleared too, or this fixture is still an unarmed strike
+    // wearing a Blaster Rifle's name.
     const normalNamedWeapon = {
       ...virtualWeapon,
       name: 'Blaster Rifle',
-      system: { ...virtualWeapon.system, weaponType: 'rifle', properties: ['military'] }
+      flags: { swse: { ...virtualWeapon.flags?.swse, unarmed: false, virtual: false } },
+      system: { ...virtualWeapon.system, weaponType: 'rifle', properties: ['military'], isUnarmed: false, naturalWeapon: false, isNaturalWeapon: false }
     };
 
     const baselineResult = await rollAttack(baselineAttacker, normalNamedWeapon, { suppressChat: true, targetContext: { mode: 'none' } });

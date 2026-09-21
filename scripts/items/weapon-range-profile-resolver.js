@@ -5,6 +5,8 @@
  * data/actor-weapon-ranges.json. Used by item editor and pre-roll config.
  */
 
+import { isMeleeWeapon as isCanonicalMeleeWeapon, resolveWeaponBranchFamily } from '/systems/foundryvtt-swse/scripts/items/weapon-branch-resolver.js';
+
 const ACTOR_RANGE_PATH = 'systems/foundryvtt-swse/data/actor-weapon-ranges.json';
 
 const FALLBACK_PROFILES = [
@@ -33,12 +35,21 @@ function normalizeSlug(value) {
 
 function weaponCategoryCandidate(itemOrSystem = {}) {
   const system = itemOrSystem.system ?? itemOrSystem;
+  // Math Integrity Freeze, Batch 2B: system.weaponCategory holds a literal
+  // "melee"/"ranged" BRANCH value on 100% of this repository's real weapon
+  // data (confirmed by a full pack scan) -- it is not a family/profile name
+  // here, unlike its historical use elsewhere. resolveWeaponBranchFamily()'s
+  // own `family` output (sourced from proficiency/subcategory first) is the
+  // real family signal; weaponCategory is kept only as a last-resort
+  // fallback for any record that genuinely uses it as a family name instead.
+  const resolvedFamily = resolveWeaponBranchFamily(itemOrSystem).family;
   return system?.rangeProfile
     ?? system?.weaponRangeProfile
-    ?? system?.weaponCategory
+    ?? resolvedFamily
     ?? system?.category
     ?? system?.group
     ?? system?.weaponGroup
+    ?? system?.weaponCategory
     ?? '';
 }
 
@@ -70,9 +81,11 @@ export class WeaponRangeProfileResolver {
   }
 
   static async resolveForWeapon(itemOrSystem = {}) {
-    const system = itemOrSystem.system ?? itemOrSystem;
-    const branch = key(system?.meleeOrRanged ?? system?.weaponRangeType ?? system?.rangeType ?? system?.range);
-    if (branch === 'melee' || String(system?.range ?? '').toLowerCase() === 'melee') {
+    // Math Integrity Freeze, Batch 2B: branch gate delegated to the
+    // canonical authority -- the old meleeOrRanged-first read silently
+    // dropped range-band hydration for real ranged weapons whose
+    // meleeOrRanged is schema-defaulted to "melee" (the "Bluebolt" bug).
+    if (isCanonicalMeleeWeapon(itemOrSystem)) {
       return null;
     }
     const profile = await this.getActorProfile(weaponCategoryCandidate(itemOrSystem));

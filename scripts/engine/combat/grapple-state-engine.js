@@ -6,6 +6,10 @@ import {
   actorHasGrappleState,
   getGrappleStateInfo
 } from "/systems/foundryvtt-swse/scripts/engine/combat/grapple-state-query.js";
+import {
+  isNaturalOrUnarmedWeapon as canonicalIsNaturalOrUnarmedWeapon,
+  isLightWeaponForActor as canonicalIsLightWeaponForActor
+} from "/systems/foundryvtt-swse/scripts/items/weapon-branch-resolver.js";
 
 const GRAPPLE_FLAG_SCOPE = 'swse';
 const GRAPPLE_FLAG_KEY = 'grappleState';
@@ -248,6 +252,14 @@ function classifyGrappledAttack(actor, action = {}) {
     return { legal: false, known: true, label: 'Blocked by Grapple', reason: 'This attack is explicitly marked as illegal while Grappled.' };
   }
 
+  // Math Integrity Freeze, Batch 2B: the natural/unarmed/light exemption
+  // axis is delegated to the canonical authority (scripts/items/
+  // weapon-branch-resolver.js) instead of this function's own free-text
+  // legalTerms list, so this classifier can no longer disagree with every
+  // other natural/unarmed/light consumer in the codebase.
+  if (item && (canonicalIsNaturalOrUnarmedWeapon(item) || canonicalIsLightWeaponForActor(item, actor ?? {}))) {
+    return { legal: true, known: true, label: 'Grapple attack legal', reason: 'This attack is marked as unarmed, natural, or light and is compatible with grapple restrictions.' };
+  }
   const legalTerms = ['unarmed', 'natural', 'natural weapon', 'claw', 'bite', 'talon', 'pincer', 'tentacle', 'light', 'light weapon', 'lightsaber-light'];
   if (legalTerms.some(term => text.includes(term))) {
     return { legal: true, known: true, label: 'Grapple attack legal', reason: 'This attack is marked as unarmed, natural, or light and is compatible with grapple restrictions.' };

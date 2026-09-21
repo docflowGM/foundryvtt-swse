@@ -6,6 +6,7 @@ import { getClassLevel, getTotalLevel } from "/systems/foundryvtt-swse/scripts/a
 import { DSPEngine } from "/systems/foundryvtt-swse/scripts/engine/darkside/dsp-engine.js";
 import { openForceAlchemyWorkbench } from "/systems/foundryvtt-swse/scripts/apps/force-alchemy/force-alchemy-workbench-app.js";
 import { getTalentAbilityMod as abilityMod } from "/systems/foundryvtt-swse/scripts/engine/talent/talent-ability-helpers.js";
+import { isMeleeWeapon as canonicalIsMeleeWeapon } from "/systems/foundryvtt-swse/scripts/items/weapon-branch-resolver.js";
 
 const NS = 'swse';
 
@@ -239,13 +240,11 @@ function isBeastActor(actor) {
   return values.includes('beast') || values.includes('mount') || values.includes('creature');
 }
 
+// Math Integrity Freeze, Batch 2B: delegated to the canonical branch
+// authority (scripts/items/weapon-branch-resolver.js).
 function isMeleeWeapon(item) {
   if (!item || item.type !== 'weapon') return false;
-  const system = item.system ?? {};
-  const haystack = [system.weaponType, system.weaponCategory, system.category, system.range, system.rangeProfile, system.subtype, ...(Array.isArray(system.properties) ? system.properties : []), ...(Array.isArray(system.traits) ? system.traits : [])]
-    .map(value => String(value ?? '').toLowerCase())
-    .join(' ');
-  return haystack.includes('melee') || haystack.includes('lightsaber');
+  return canonicalIsMeleeWeapon(item);
 }
 
 function meleeWeaponOptions(actor) {

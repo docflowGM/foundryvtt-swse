@@ -7,6 +7,7 @@
 
 import { SchemaAdapters } from "/systems/foundryvtt-swse/scripts/utils/schema-adapters.js";
 import { getEffectiveHalfLevel } from "/systems/foundryvtt-swse/scripts/actors/derived/level-split.js";
+import { isRangedWeapon as canonicalIsRangedWeapon, isMeleeWeapon as canonicalIsMeleeWeapon } from "/systems/foundryvtt-swse/scripts/items/weapon-branch-resolver.js";
 
 export const SIZE_ORDER = Object.freeze([
   'fine', 'diminutive', 'tiny', 'small', 'medium', 'large', 'huge', 'gargantuan', 'colossal'
@@ -176,70 +177,19 @@ function normalizeSelector(value) {
   return String(value ?? '').trim().toLowerCase().replace(/[^a-z0-9]/g, '');
 }
 
-function weaponBranchText(weapon) {
-  const system = weapon?.system ?? {};
-  const properties = Array.isArray(system.properties) ? system.properties : [];
-  const traits = Array.isArray(system.traits) ? system.traits : [];
-  return [
-    weapon?.name,
-    system.name,
-    system.meleeOrRanged,
-    system.weaponRangeType,
-    system.rangeType,
-    system.range,
-    system.rangeProfile,
-    system.rangeProfileName,
-    system.weaponGroup,
-    system.group,
-    system.weaponCategory,
-    system.category,
-    system.subcategory,
-    system.subtype,
-    system.weaponType,
-    system.type,
-    system.proficiency,
-    system.proficiencyGroup,
-    ...properties,
-    ...traits
-  ].map(value => String(value ?? '').toLowerCase()).join(' ');
-}
-
-function explicitBranch(weapon) {
-  const system = weapon?.system ?? {};
-  const explicit = String(system.meleeOrRanged ?? system.weaponRangeType ?? system.rangeType ?? '').toLowerCase().trim();
-  if (explicit.includes('ranged')) return 'ranged';
-  if (explicit.includes('melee')) return 'melee';
-  return '';
-}
-
+// Math Integrity Freeze, Batch 2B: branch classification is delegated to the
+// single canonical authority (scripts/items/weapon-branch-resolver.js).
+// A full pack scan found system.weaponCategory holds a literal "melee"/
+// "ranged" branch value on 100% of shipped weapon records, while
+// meleeOrRanged is absent on all of them (schema-defaulted, not authored,
+// at materialization time) -- so the old explicitBranch()-first precedence
+// here was proven to misclassify real ranged weapons (the "Bluebolt" bug).
 export function isRangedWeapon(weapon) {
-  const system = weapon?.system ?? {};
-  const branch = explicitBranch(weapon);
-  if (branch === 'ranged') return true;
-  if (branch === 'melee') return false;
-  if (system.ranged === true || system.isRanged === true) return true;
-  if (system.melee === true || system.isMelee === true) return false;
-
-  const range = String(system.range ?? '').toLowerCase().trim();
-  if (range && range !== 'melee' && !range.includes('melee')) return true;
-
-  return /\b(ranged|pistol|pistols|rifle|rifles|carbine|blaster|bowcaster|bow|launcher|grenade|thrown|slugthrower|missile|rocket)\b/.test(weaponBranchText(weapon));
+  return canonicalIsRangedWeapon(weapon);
 }
 
 export function isMeleeWeapon(weapon) {
-  const system = weapon?.system ?? {};
-  const branch = explicitBranch(weapon);
-  if (branch === 'melee') return true;
-  if (branch === 'ranged') return false;
-  if (system.melee === true || system.isMelee === true) return true;
-  if (system.ranged === true || system.isRanged === true) return false;
-  if (system.isUnarmed === true || system.properties?.includes?.('unarmed')) return true;
-
-  const range = String(system.range ?? '').toLowerCase().trim();
-  if (range === 'melee') return true;
-  if (range && range !== 'melee') return false;
-
-  return /\b(melee|unarmed|lightsaber|vibro|staff|pike|sword|knife|blade|club|claw|bite)\b/.test(weaponBranchText(weapon));
+  return canonicalIsMeleeWeapon(weapon);
 }
 
 export function isLightMeleeWeapon(weapon) {

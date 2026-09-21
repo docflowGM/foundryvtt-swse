@@ -7,6 +7,8 @@
  * cards into one stable dialog shape so the template does not guess raw paths.
  */
 
+import { resolveWeaponBranchFamily } from '/systems/foundryvtt-swse/scripts/items/weapon-branch-resolver.js';
+
 const ATTRIBUTE_LABELS = Object.freeze({
   str: 'Strength',
   dex: 'Dexterity',
@@ -69,9 +71,6 @@ export const AVAILABILITY_OPTIONS = Object.freeze([
   { value: 'illegal', label: 'Illegal' }
 ]);
 
-const RANGED_CATEGORIES = new Set(['heavy', 'pistols', 'ranged-exotic', 'rifles']);
-const MELEE_CATEGORIES = new Set(['advanced', 'lightsaber', 'melee-exotic', 'natural']);
-const RANGED_TEXT_RE = /\b(blaster|rifle|pistol|carbine|bowcaster|repeating|launcher|grenade|missile|ranged)\b/i;
 
 function clone(value) {
   if (globalThis.foundry?.utils?.deepClone) return foundry.utils.deepClone(value);
@@ -84,39 +83,14 @@ function toNumber(value, fallback = 0) {
   return Number.isFinite(number) ? number : fallback;
 }
 
+// Math Integrity Freeze, Batch 2B: delegated to the canonical branch
+// authority (scripts/items/weapon-branch-resolver.js), which this
+// function's own conflict-aware design (trusting category/text evidence
+// over an unreliable explicit "melee") helped establish as the right shape
+// -- it is now promoted repository-wide instead of being this dialog's own
+// local copy.
 function normalizeBranch(itemOrSystem = {}) {
-  const system = itemOrSystem.system ?? itemOrSystem ?? {};
-  const explicit = String(system.meleeOrRanged ?? system.weaponRangeType ?? system.rangeType ?? '').trim().toLowerCase();
-  if (explicit === 'ranged' || explicit.includes('ranged')) return 'ranged';
-  if (explicit === 'melee') {
-    const category = String(system.weaponCategory ?? system.category ?? system.weaponGroup ?? system.group ?? '').trim().toLowerCase();
-    const text = [
-      itemOrSystem.name,
-      system.name,
-      system.weaponType,
-      system.weaponGroup,
-      system.rangeProfile,
-      system.rangeProfileName,
-      system.range,
-      category
-    ].map(value => String(value ?? '')).join(' ');
-    if (!MELEE_CATEGORIES.has(category) && (RANGED_CATEGORIES.has(category) || RANGED_TEXT_RE.test(text))) return 'ranged';
-    return 'melee';
-  }
-
-  const category = String(system.weaponCategory ?? system.category ?? system.weaponGroup ?? system.group ?? '').trim().toLowerCase();
-  const text = [
-    itemOrSystem.name,
-    system.name,
-    system.weaponType,
-    system.weaponGroup,
-    system.rangeProfile,
-    system.rangeProfileName,
-    system.range,
-    category
-  ].map(value => String(value ?? '')).join(' ');
-  if (RANGED_CATEGORIES.has(category) || RANGED_TEXT_RE.test(text)) return 'ranged';
-  return 'melee';
+  return resolveWeaponBranchFamily(itemOrSystem).branch;
 }
 
 function normalizeProperties(value) {

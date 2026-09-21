@@ -1,4 +1,8 @@
 import { CombatOptionResolver } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-option-resolver.js";
+import {
+  isLightWeaponForActor as canonicalIsLightWeaponForActor,
+  resolveWeaponBranchFamily as canonicalResolveWeaponBranchFamily
+} from "/systems/foundryvtt-swse/scripts/items/weapon-branch-resolver.js";
 
 let registered = false;
 
@@ -100,15 +104,13 @@ function isTwoHandedWeapon(weapon, context = {}) {
   return /two-handed|twohanded|two-hands|large/.test(text);
 }
 
-function isLightOrLightsaberWeapon(weapon) {
-  const system = weapon?.system ?? {};
-  if (system.light === true || system.isLight === true || system.isLightWeapon === true) return true;
-  const text = weaponText(weapon);
-  return text.includes('light')
-    || text.includes('lightsaber')
-    || text.includes('hold-out')
-    || text.includes('knife')
-    || text.includes('dagger');
+// Math Integrity Freeze, Batch 2B: the "light" half is delegated to the
+// canonical wielder-size-relative authority; the "lightsaber" half now
+// checks the canonical weapon family instead of a raw text match on the
+// word "lightsaber" (which could also match e.g. a "lightsaber pike").
+function isLightOrLightsaberWeapon(weapon, actor = null) {
+  if (canonicalResolveWeaponBranchFamily(weapon).family === 'lightsaber') return true;
+  return canonicalIsLightWeaponForActor(weapon, actor ?? {});
 }
 
 function equippedWeapons(actor) {
@@ -118,7 +120,7 @@ function equippedWeapons(actor) {
 function allEquippedWeaponsAllowFlurry(actor, weapon) {
   const weapons = equippedWeapons(actor);
   const relevant = weapons.length ? weapons : [weapon].filter(Boolean);
-  return relevant.length > 0 && relevant.every(isLightOrLightsaberWeapon);
+  return relevant.length > 0 && relevant.every((item) => isLightOrLightsaberWeapon(item, actor));
 }
 
 function selectedCombatValue(options = {}, id) {

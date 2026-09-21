@@ -1,4 +1,9 @@
 import { EffectiveWeaponQualityResolver } from "/systems/foundryvtt-swse/scripts/engine/combat/effective-weapon-quality-resolver.js";
+import {
+  isLightWeaponForActor as canonicalIsLightWeaponForActor,
+  isNaturalWeaponOnly as canonicalIsNaturalWeaponOnly,
+  isNaturalOrUnarmedWeapon as canonicalIsNaturalOrUnarmedWeapon
+} from "/systems/foundryvtt-swse/scripts/items/weapon-branch-resolver.js";
 
 function normalizeKey(value) {
   return String(value ?? '')
@@ -67,18 +72,18 @@ function isDoubleWeapon(weapon) {
     || text.includes('double-vibroblade');
 }
 
+// Math Integrity Freeze, Batch 2B: delegated to the canonical natural/
+// unarmed authority (scripts/items/weapon-branch-resolver.js), which
+// consolidates this and 3 other near-duplicate implementations.
+// isNaturalWeapon (natural-only) and isUnarmedWeapon (unarmed-strike-text
+// OR natural) stay two distinct predicates here, matching the descriptor's
+// two distinct downstream flags (weaponIsNatural vs weaponIsUnarmed).
 function isNaturalWeapon(weapon) {
-  if (!weapon) return false;
-  if (weapon.flags?.swse?.isNaturalWeapon === true || weapon.flags?.swse?.naturalWeapon === true) return true;
-  if (weapon.system?.naturalWeapon === true || weapon.system?.isNaturalWeapon === true) return true;
-  const text = weaponText(weapon);
-  return /natural-weapon|claw|bite|talon|tusk|horn|tail|slam|gore/.test(text);
+  return canonicalIsNaturalWeaponOnly(weapon);
 }
 
 function isUnarmedWeapon(weapon) {
-  if (!weapon) return false;
-  const text = weaponText(weapon);
-  return text.includes('unarmed') || isNaturalWeapon(weapon);
+  return canonicalIsNaturalOrUnarmedWeapon(weapon);
 }
 
 function effectiveSize(weapon, context = {}) {
@@ -101,20 +106,19 @@ function effectiveSize(weapon, context = {}) {
   return '';
 }
 
-function isLightWeapon(weapon, context = {}) {
+// Math Integrity Freeze, Batch 2B: the wielder-size-relative check (the
+// real SWSE rule) is now delegated to the canonical authority. The
+// active-effect quality resolver and context-supplied effectiveSize checks
+// stay first -- they cover temporary/granted Light Weapon status this
+// domain-specific context knows about that the canonical item/actor-only
+// predicate cannot see.
+function isLightWeapon(weapon, context = {}, actor = null) {
   if (!weapon) return false;
-  if (weapon.system?.light === true || weapon.system?.isLight === true || weapon.system?.isLightWeapon === true) return true;
   const qualities = EffectiveWeaponQualityResolver.resolve(weapon, context);
   if (qualities.has('light') || qualities.has('light-weapon')) return true;
   const size = effectiveSize(weapon, context);
   if (size === 'tiny' || size === 'small') return true;
-  const text = weaponText(weapon);
-  return text.includes('light-weapon')
-    || text.includes('light-melee')
-    || text.includes('knife')
-    || text.includes('dagger')
-    || text.includes('hold-out')
-    || text.includes('short-sword');
+  return canonicalIsLightWeaponForActor(weapon, actor ?? {});
 }
 
 function isProficient(weapon) {
@@ -165,7 +169,7 @@ function dualWeaponPenalty(level, twoWeaponFighting = false) {
   return twoWeaponFighting ? -8 : -10;
 }
 
-function describeWeapon(weapon, role, context = {}) {
+function describeWeapon(weapon, role, context = {}, actor = null) {
   if (!weapon) return null;
   return {
     weapon,
@@ -173,7 +177,7 @@ function describeWeapon(weapon, role, context = {}) {
     name: weapon.name ?? '',
     handRole: role,
     proficient: isProficient(weapon),
-    isLightWeapon: isLightWeapon(weapon, context),
+    isLightWeapon: isLightWeapon(weapon, context, actor),
     isNaturalWeapon: isNaturalWeapon(weapon),
     isUnarmed: isUnarmedWeapon(weapon),
     effectiveSize: effectiveSize(weapon, context),
@@ -191,8 +195,8 @@ export class DualWieldCombatShapeResolver {
     const usingDoubleWeapon = !!primary && doubleWeapon;
     const mode = usingDoubleWeapon ? 'doubleWeapon' : usingTwoWeapons ? 'dualWield' : 'singleWeapon';
 
-    const mainHand = describeWeapon(primary, usingDoubleWeapon ? 'double-primary' : 'main', options);
-    const offHand = describeWeapon(offhand, usingDoubleWeapon ? 'double-secondary' : 'offhand', options);
+    const mainHand = describeWeapon(primary, usingDoubleWeapon ? 'double-primary' : 'main', options, actor);
+    const offHand = describeWeapon(offhand, usingDoubleWeapon ? 'double-secondary' : 'offhand', options, actor);
     const dwmLevel = dualWeaponMasteryLevel(actor);
     const twoWeaponFighting = hasTwoWeaponFighting(actor);
     const proficient = usingDoubleWeapon

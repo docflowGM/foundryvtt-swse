@@ -1,12 +1,17 @@
 import { SchemaAdapters } from '/systems/foundryvtt-swse/scripts/utils/schema-adapters.js';
 import { CombatOptionResolver } from '/systems/foundryvtt-swse/scripts/engine/combat/combat-option-resolver.js';
 import { resolveAttackBonus } from '/systems/foundryvtt-swse/scripts/engine/combat/combat-roll-math.js';
+import {
+  getWeaponBranch as canonicalGetWeaponBranch,
+  defaultAttackAttributeForBranch as canonicalDefaultAttackAttributeForBranch
+} from '/systems/foundryvtt-swse/scripts/items/weapon-branch-resolver.js';
 
 const PATCH_KEY = 'swseAttackDialogCombatCorrectionsV1';
-const RANGED_CATEGORIES = new Set(['heavy', 'pistol', 'pistols', 'rifle', 'rifles', 'ranged', 'ranged-exotic', 'simple-ranged']);
-const MELEE_CATEGORIES = new Set(['advanced', 'advanced-melee', 'lightsaber', 'melee', 'melee-exotic', 'natural', 'simple-melee', 'unarmed']);
+// RANGED_TEXT_RE is still used by formLooksRanged() below, which inspects a
+// raw attack-dialog DOM form, not weapon item data -- a genuinely different
+// purpose from weapon branch classification (now delegated to the
+// canonical authority), so it is kept.
 const RANGED_TEXT_RE = /\b(blaster|rifle|pistol|carbine|bowcaster|slugthrower|launcher|grenade|missile|rocket|ranged)\b/i;
-const MELEE_TEXT_RE = /\b(lightsaber|vibro|sword|blade|knife|staff|pike|spear|club|melee|unarmed|claw|bite)\b/i;
 const FILTERED_ATTACK_OPTION_IDS = new Set([
   'armoreddefense',
   'improvedarmoreddefense',
@@ -42,50 +47,25 @@ function signNumber(value) {
   return `${n >= 0 ? '+' : ''}${n}`;
 }
 
-function weaponText(weapon) {
-  const system = weapon?.system ?? {};
-  const fields = [
-    weapon?.name,
-    system.name,
-    system.meleeOrRanged,
-    system.weaponRangeType,
-    system.rangeType,
-    system.range,
-    system.weaponCategory,
-    system.category,
-    system.weaponGroup,
-    system.group,
-    system.proficiency,
-    system.proficiencyGroup,
-    system.subcategory,
-    system.subtype,
-    system.weaponType,
-    system.type,
-    system.rangeProfile,
-    system.rangeProfileName,
-    ...(Array.isArray(system.properties) ? system.properties : []),
-    ...(Array.isArray(system.traits) ? system.traits : [])
-  ];
-  return fields.map(value => String(value ?? '')).filter(Boolean).join(' ');
-}
-
+// Math Integrity Freeze, Batch 2B: branch inference delegated to the
+// canonical authority (scripts/items/weapon-branch-resolver.js) instead of
+// this file's own independent conflict-aware heuristic (a near-duplicate of
+// weapon-data-resolver.js's old normalizeBranch()).
 function inferWeaponBranch(weapon) {
-  const system = weapon?.system ?? {};
-  const explicit = normalizeKey(system.meleeOrRanged ?? system.weaponRangeType ?? system.rangeType ?? '');
-  const category = normalizeKey(system.weaponCategory ?? system.category ?? system.weaponGroup ?? system.group ?? system.proficiency ?? system.proficiencyGroup ?? '');
-  const text = weaponText(weapon);
-
-  if (explicit === 'ranged' || explicit.includes('ranged')) return 'ranged';
-  if (explicit === 'melee') {
-    if (!MELEE_CATEGORIES.has(category) && (RANGED_CATEGORIES.has(category) || RANGED_TEXT_RE.test(text))) return 'ranged';
-    return 'melee';
-  }
-
-  if (RANGED_CATEGORIES.has(category) || RANGED_TEXT_RE.test(text)) return 'ranged';
-  if (MELEE_CATEGORIES.has(category) || MELEE_TEXT_RE.test(text)) return 'melee';
-  return null;
+  return canonicalGetWeaponBranch(weapon);
 }
 
+// This mutates the live weapon item's in-memory system fields (meleeOrRanged
+// /weaponRangeType/rangeType/range) on every attack-dialog render, which is
+// itself a pre-existing architectural wart this batch does not expand the
+// scope to remove (CombatOptionResolver's own methods, patched below, read
+// those raw fields directly rather than the canonical resolver). Batch 2B
+// fixes it to always write the CORRECT branch instead of a second,
+// independently wrong-precedence one, and stops it violating the explicit
+// Attack-Ability Policy: attackAttribute was previously overwritten to "dex"
+// on ANY ranged weapon whose attackAttribute was already "str" (even an
+// intentional player override) -- attackAttribute must only ever be filled
+// when genuinely absent, never rewritten based on branch.
 function normalizeWeaponForCombat(weapon) {
   const branch = inferWeaponBranch(weapon);
   if (!branch || !weapon?.system) return branch;
@@ -97,13 +77,12 @@ function normalizeWeaponForCombat(weapon) {
     if (branch === 'ranged') {
       const range = String(weapon.system.range ?? '').trim().toLowerCase();
       if (!range || range === 'melee') weapon.system.range = 'ranged';
-      if (!weapon.system.attackAttribute || String(weapon.system.attackAttribute).toLowerCase() === 'str') {
-        weapon.system.attackAttribute = 'dex';
-      }
     } else if (branch === 'melee') {
       const range = String(weapon.system.range ?? '').trim().toLowerCase();
       if (!range || range === 'ranged') weapon.system.range = 'melee';
-      if (!weapon.system.attackAttribute) weapon.system.attackAttribute = 'str';
+    }
+    if (!weapon.system.attackAttribute) {
+      weapon.system.attackAttribute = canonicalDefaultAttackAttributeForBranch(branch);
     }
   } catch (_err) {
     // Some synthetic item system objects can be sealed; inference still returns.

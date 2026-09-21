@@ -1,6 +1,7 @@
 import { registerRuntimeBugfixHotfixes } from '/systems/foundryvtt-swse/scripts/patches/runtime-bugfix-hotfixes.js';
 import { registerProgressionLedgerReconciliationHotfix } from '/systems/foundryvtt-swse/scripts/patches/progression-ledger-reconciliation-hotfix.js';
 import { registerArmorHydrationDefenseHotfix } from '/systems/foundryvtt-swse/scripts/patches/armor-hydration-defense-hotfix.js';
+import { registerWeaponBranchCoherenceHotfix } from '/systems/foundryvtt-swse/scripts/patches/weapon-branch-coherence-hotfix.js';
 import { registerAttackDialogCombatCorrectionsHotfix } from '/systems/foundryvtt-swse/scripts/patches/attack-dialog-combat-corrections-hotfix.js';
 import { registerCombatUiBehaviorHotfixes } from '/systems/foundryvtt-swse/scripts/patches/combat-ui-behavior-hotfix.js';
 import { registerForceSuiteRenderGuardHotfix } from '/systems/foundryvtt-swse/scripts/patches/force-suite-render-guard-hotfix.js';
@@ -21,6 +22,7 @@ import { registerCombatFeatureLegacyActionBridge } from '/systems/foundryvtt-sws
 registerRuntimeBugfixHotfixes();
 registerProgressionLedgerReconciliationHotfix();
 registerArmorHydrationDefenseHotfix();
+registerWeaponBranchCoherenceHotfix();
 registerAttackDialogCombatCorrectionsHotfix();
 registerCombatFeatureLegacyActionBridge();
 registerCombatUiBehaviorHotfixes();
