@@ -125,22 +125,32 @@ export async function computeFinalAttackComposition(actor, weapon, rollOptions =
   // See the Grapple domain section of
   // docs/audits/v2-math-integrity-authority-ledger.md, addendum 8.
   const grappleStatePenalty = GrappleStateEngine.getAttackPenalty(actor, weapon);
-  // Math Integrity Freeze, Attack Bonus round (blocker fix): contextual
-  // tactical bonuses (Charge, Flanking) arrive as typed Modifier objects
-  // (rollOptions.situationalContributions -- built by
-  // roll-config.js#computeAttackSituationalContext, melee-gated per source)
-  // rather than a single anonymous number, so each keeps its source
-  // identity, type, and stacking behavior all the way into the ledger.
-  // ModifierUtils.getModifierDetail() is the project's existing typed-
-  // stacking authority (STACKING_RULES in ModifierTypes.js) -- reused here
-  // rather than inventing attack-specific highest-only logic. A same-type
-  // collision (e.g. two Flanking-typed contributions) is resolved by that
-  // shared authority, not by this file.
+  // Math Integrity Freeze, Attack Bonus round 3 (blocker fix): for a
+  // CHARACTER attack, contextual tactical contributions (Charge, Flanking --
+  // rollOptions.situationalContributions, built by roll-config.js#
+  // computeAttackSituationalContext) are now resolved INSIDE
+  // combat-roll-math.js#resolveAttackBonus(), together with every other
+  // typed/collision-eligible attack contribution (Basic Effect Intent, a
+  // typed combat-option contribution such as Relentless Attack) in ONE
+  // shared ModifierUtils.resolveStacking() pass -- see that function's own
+  // doc comment for the full cross-channel rationale. Re-resolving and
+  // re-adding them here would double-count them, since
+  // attackBonusResolution.total already includes their resolved
+  // contribution. vehicle-attack-math.js's resolvers were NOT part of that
+  // unification (vehicle attack formula is a separate, already-certified
+  // authority, out of this round's scope) and never consume
+  // situationalContributions at all, so a vehicle gunner attack's Charge/
+  // Flanking contributions must still be resolved and added here, exactly
+  // as before this round.
   const situationalContributions = Array.isArray(rollOptions.situationalContributions) ? rollOptions.situationalContributions : [];
-  const situationalDetail = ModifierUtils.getModifierDetail(situationalContributions, 'global.attack');
-  const suppressedSituational = situationalContributions
-    .filter(mod => mod && mod.enabled !== false && !situationalDetail.applied.includes(mod))
-    .map(modifier => ({ modifier, reason: `suppressed: another ${modifier.type} contribution already applies (highestOnly stacking)` }));
+  const situationalDetail = isVehicleAttack
+    ? ModifierUtils.getModifierDetail(situationalContributions, 'global.attack')
+    : { total: 0, applied: [], breakdown: [] };
+  const suppressedSituational = isVehicleAttack
+    ? situationalContributions
+        .filter(mod => mod && mod.enabled !== false && !situationalDetail.applied.includes(mod))
+        .map(modifier => ({ modifier, reason: `suppressed: another ${modifier.type} contribution already applies (highestOnly stacking)` }))
+    : [];
   // Legacy compatibility path: a caller that still passes a raw numeric
   // rollOptions.situationalBonus (instead of typed situationalContributions)
   // is honored as an explicit untyped override, kept separate from the typed
@@ -151,14 +161,15 @@ export async function computeFinalAttackComposition(actor, weapon, rollOptions =
   // additions, clearly separated so a tooltip never claims an invocation-only
   // modifier is part of the static weapon baseline. Vehicle attacks already
   // arrive in full ledger shape from the vehicle resolvers; character
-  // attacks are adapted from the legacy {label: value} map.
+  // attacks are adapted from the legacy {label: value} map, plus the typed
+  // attack-modifier ledger resolveAttackBonus() already built.
   const attackLedgerDomain = isVehicleAttack ? 'vehicle.attack' : 'combat.attack';
   const attackComponentLedger = [
     ...(isVehicleAttack ? attackBonusResolution.ledger : buildLedgerFromComponents(attackBonusResolution.components, 'combat.attack', 'baseline')),
     buildInvocationLedgerEntry('fighting-defensively', 'Fighting Defensively', fightingDefensivelyPenalty, attackLedgerDomain),
     buildInvocationLedgerEntry('grapple-state-penalty', 'Grabbed/Grappled', grappleStatePenalty, attackLedgerDomain),
     buildInvocationLedgerEntry('custom-modifier', 'Custom Modifier', rollOptions.customModifier, attackLedgerDomain),
-    ...buildModifierLedger(situationalDetail.applied, suppressedSituational, attackLedgerDomain),
+    ...(isVehicleAttack ? buildModifierLedger(situationalDetail.applied, suppressedSituational, attackLedgerDomain) : (attackBonusResolution.typedModifierLedger ?? [])),
     buildInvocationLedgerEntry('situational-bonus', 'Situational Bonus (legacy)', legacySituationalBonus, attackLedgerDomain),
     buildInvocationLedgerEntry('sequence-penalty', 'Sequence Penalty', sequencePenalty, attackLedgerDomain)
   ].filter(Boolean);

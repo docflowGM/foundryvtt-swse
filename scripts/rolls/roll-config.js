@@ -1234,20 +1234,30 @@ function readNestedFormEntries(form, prefix) {
 // project's canonical Modifier shape, ModifierTypes.js) rather than pre-
 // summed into a bare number here -- that used to lose source identity,
 // bonus type, and per-rule ledger visibility before the contribution ever
-// reached the final composition, and prevented correct type-aware stacking
-// (computeFinalAttackComposition() resolves these via
-// ModifierUtils.getModifierDetail(), the project's existing typed-stacking
-// authority -- not a new ad hoc formula here).
+// reached the final composition, and prevented correct type-aware stacking.
+// These typed contributions are resolved together with every OTHER
+// typed/collision-eligible attack contribution (Basic Effect Intent
+// modifiers, a typed combat-option contribution such as Relentless Attack)
+// in ONE shared ModifierUtils.resolveStacking() pass inside
+// combat-roll-math.js#resolveAttackBonus() -- not in a second, separately-
+// maintained stacking pass here or in attacks.js. See that function's own
+// doc comment for the full cross-channel rationale.
 //
-// Charge is UNTYPED, not "competence": Powerful Charge's own benefit text
-// (packs/feats.db) reads "When you Charge, you gain an ADDITIONAL +2 bonus
-// on your melee attack roll" -- proving the base Charge bonus and Powerful
-// Charge's bonus are meant to ADD, not collide. A "competence" (highestOnly)
-// typing would have silently suppressed that additional +2, which is
-// wrong per this project's own compendium data. Flanking is melee-only per
-// verified SWSE RAW (a ranged attack never gains a flanking bonus) and
-// uses the new canonical FLANKING type (highestOnly -- a target is either
-// flanked or not, so a second flanking-granting source must not double it).
+// Charge is COMPETENCE, per published SWSE evidence: The Unknown Regions'
+// Mounted Charge rule states a charging attacker gains "a +2 competence
+// bonus to the attack roll," and its Diving Attack rule separately refers
+// to "the competence bonus granted by the charge attack" -- both confirming
+// the ordinary Charge attack bonus is itself typed competence. Powerful
+// Charge's own benefit text (packs/feats.db) reads "When you Charge, you
+// gain an ADDITIONAL +2 bonus on your melee attack roll" -- that additional
+// bonus is a SEPARATE, unnamed-type contribution (CombatOptionResolver's
+// existing untyped `attackModifier: 2` for the powerfulCharge option,
+// unchanged), which stacks with Charge's own competence bonus because
+// untyped always stacks with everything -- it does not mean Charge itself
+// is untyped. Flanking is melee-only per verified SWSE RAW (a ranged attack
+// never gains a flanking bonus) and uses the canonical FLANKING type
+// (highestOnly -- a target is either flanked or not, so a second
+// flanking-granting source must not double it).
 export function computeAttackSituationalContext(form, melee) {
   const charging = form.querySelector('[name="charging"]')?.checked === true;
   const flanking = form.querySelector('[name="flanking"]')?.checked === true;
@@ -1255,7 +1265,7 @@ export function computeAttackSituationalContext(form, melee) {
   if (charging && melee) {
     situationalContributions.push(createModifier({
       source: ModifierSource.CONDITION, sourceId: 'charge', sourceName: 'Charge',
-      target: 'global.attack', type: ModifierType.UNTYPED, value: 2
+      target: 'global.attack', type: ModifierType.COMPETENCE, value: 2
     }));
   }
   if (flanking && melee) {
@@ -1499,15 +1509,21 @@ export async function showRollModifiersDialog(options = {}) {
             //   - Charge and Flanking are no longer pre-summed into a bare
             //     situationalBonus number here at all -- they are emitted as
             //     typed Modifier contributions (situationalContributions)
-            //     and resolved for stacking by the shared
-            //     computeFinalAttackComposition() seam via ModifierUtils,
-            //     the project's existing typed-stacking authority. Flanking
-            //     is SWSE RAW melee-only (a ranged attack never gains it,
-            //     corrected here from the prior unconditional +2) and typed
-            //     FLANKING (highestOnly); Charge is UNTYPED per Powerful
-            //     Charge's own benefit text ("an ADDITIONAL +2"), proving
-            //     the base Charge bonus must stack with, not collide with,
-            //     a feat-granted one.
+            //     and resolved for stacking, TOGETHER with every other
+            //     typed attack contribution (Basic Effect Intent, a typed
+            //     combat option), by the shared
+            //     combat-roll-math.js#resolveAttackBonus() seam via
+            //     ModifierUtils, the project's existing typed-stacking
+            //     authority. Flanking is SWSE RAW melee-only (a ranged
+            //     attack never gains it) and typed FLANKING (highestOnly);
+            //     Charge is COMPETENCE per published SWSE evidence (The
+            //     Unknown Regions' Mounted Charge/Diving Attack rules both
+            //     name the charge attack bonus "competence"). Powerful
+            //     Charge's own "ADDITIONAL +2" remains a separate, unnamed-
+            //     type (untyped) contribution in CombatOptionResolver, so it
+            //     still stacks with Charge's competence bonus -- untyped
+            //     always stacks with everything, regardless of what Charge
+            //     itself is typed.
             Object.assign(result, computeAttackSituationalContext(form, model.melee));
             result.coverBonus = ROLL_MODIFIERS.cover[result.cover]?.value || 0;
             result.missChance = ROLL_MODIFIERS.concealment[result.concealment]?.missChance || 0;

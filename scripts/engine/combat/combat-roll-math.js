@@ -33,6 +33,8 @@ import {
 import { CombatOptionResolver } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-option-resolver.js";
 import { RageEngine } from "/systems/foundryvtt-swse/scripts/engine/species/rage-engine.js";
 import { ModifierEngine } from "/systems/foundryvtt-swse/scripts/engine/effects/modifiers/ModifierEngine.js";
+import { ModifierUtils } from "/systems/foundryvtt-swse/scripts/engine/effects/modifiers/ModifierUtils.js";
+import { buildModifierLedger } from "/systems/foundryvtt-swse/scripts/engine/effects/modifiers/modifier-breakdown-builder.js";
 import { ImplantEffectRules } from "/systems/foundryvtt-swse/scripts/engine/implants/ImplantEffectRules.js";
 import { ScopedCombatFeatResolver } from "/systems/foundryvtt-swse/scripts/engine/feat/scoped-combat-feat-resolver.js";
 import { resolveArmorUsageEffects } from "/systems/foundryvtt-swse/scripts/engine/effects/armor-usage-resolver.js";
@@ -495,7 +497,44 @@ export function resolveAttackBonus(actor, weapon, actionId = null, context = {})
     console.error('[SWSE] Error evaluating PASSIVE/STATE in attack bonus:', err);
   }
 
-  const basicEffectBonus = getBasicEffectIntentBonus(actor, 'global.attack', weapon, context, { rollType: 'attack' });
+  // Math Integrity Freeze, Attack Bonus round 3 (blocker fix): typed,
+  // collision-eligible attack contributions -- Basic Effect Intent
+  // modifiers, situational contextual contributions (Charge, Flanking --
+  // built by roll-config.js#computeAttackSituationalContext and threaded
+  // through here via context.situationalContributions), and any typed
+  // combat-option contribution (Relentless Attack's competence bonus, Prime
+  // Shot's circumstance bonus -- both emitted via attackOptionModifiers.
+  // attackContributions instead of the flat attackBonus number they used to
+  // fold into) -- must resolve stacking TOGETHER, in ONE pass, not as
+  // separately pre-summed numbers added afterward. Previously each was
+  // reduced to a scalar in its own isolated stacking pass (or, for the
+  // combat-option channel, not stacking-resolved at all) before being
+  // summed here, so a same-type collision across channels -- e.g. an Active
+  // Effect's +4 competence bonus and Charge's own +2 competence bonus --
+  // would silently both apply in full (+6) instead of only the higher
+  // winning (+4), per this codebase's own COMPETENCE stacking rule
+  // (STACKING_RULES.competence === 'highestOnly'). Mirrors the identical
+  // fix already shipped for the Grapple domain
+  // (grappling-system.js#_rollGrappleBonus /
+  // collectContextualGrappleModifiers's own doc comment) -- reusing the
+  // same shared authority (ModifierUtils.resolveStacking()), not a new
+  // attack-specific stacking engine.
+  const effectIntentModifiers = ModifierEngine.getEffectIntentModifiersForContext(
+    actor, { context: buildEffectIntentRollContext(weapon, context, { rollType: 'attack' }), includeBroad: true }
+  );
+  const situationalContributions = Array.isArray(context.situationalContributions) ? context.situationalContributions : [];
+  const typedCombatOptionContributions = Array.isArray(attackOptionModifiers.attackContributions) ? attackOptionModifiers.attackContributions : [];
+  const typedAttackModifierPool = ModifierUtils.filterModifiers(
+    [...effectIntentModifiers, ...situationalContributions, ...typedCombatOptionContributions],
+    'global.attack', true
+  );
+  const appliedTypedModifiers = ModifierUtils.resolveStacking(typedAttackModifierPool);
+  const typedModifierTotal = ModifierUtils.sumModifiers(appliedTypedModifiers);
+  const suppressedTypedModifiers = typedAttackModifierPool
+    .filter(mod => !appliedTypedModifiers.includes(mod))
+    .map(modifier => ({ modifier, reason: `suppressed: another ${modifier.type} contribution already applies (highestOnly stacking)` }));
+  const typedModifierLedger = buildModifierLedger(appliedTypedModifiers, suppressedTypedModifiers, 'combat.attack');
+
   const combatOptionBonus = attackOptionModifiers.attackBonus || 0;
   const rageBonus = rageModifiers.attackBonus || 0;
   const sithMod = sithCommanderAttackModifier(actor);
@@ -521,7 +560,7 @@ export function resolveAttackBonus(actor, weapon, actionId = null, context = {})
     flatOverrideValue +
     bab + abilityMod + miscBonus + rangePenalty + firingIntoMeleePenalty + attackPenalty + ctPenalty +
     proficiencyPenalty + talentBonus + stateBonus + combatOptionBonus + rageBonus +
-    sithMod + inquisitionMod + unsettlingMod + rapidAlchemyMod + forceItemMod + basicEffectBonus + scopedFeatBonus +
+    sithMod + inquisitionMod + unsettlingMod + rapidAlchemyMod + forceItemMod + typedModifierTotal + scopedFeatBonus +
     armorAcpPenalty;
 
   const components = {};
@@ -541,14 +580,26 @@ export function resolveAttackBonus(actor, weapon, actionId = null, context = {})
   if (proficiencyPenalty !== 0) components['Proficiency'] = proficiencyPenalty;
   if (talentBonus !== 0) components['Talent'] = talentBonus;
   if (stateBonus !== 0) components['State'] = stateBonus;
-  if (combatOptionBonus !== 0) components['Combat Option'] = combatOptionBonus;
+  // Math Integrity Freeze, Attack Bonus round 3: each active combat
+  // option's own contribution is surfaced by name (already computed by
+  // CombatOptionResolver.collectAttackModifiers()'s breakdown array)
+  // instead of collapsed into one anonymous "Combat Option" number -- e.g.
+  // Powerful Charge keeps its own provenance-bearing row distinct from any
+  // other simultaneously active option. Typed/collision-eligible
+  // contributions (Relentless Attack, Prime Shot) are routed through
+  // attackContributions/typedModifierLedger above instead, and are
+  // deliberately excluded from this loop (their breakdown push was removed
+  // at the source) to avoid a duplicate ledger entry.
+  for (const entry of (attackOptionModifiers.breakdown || [])) {
+    if (entry?.type !== 'attack' || !Number(entry.value)) continue;
+    components[entry.label] = (components[entry.label] ?? 0) + Number(entry.value);
+  }
   if (rageBonus !== 0) components['Rage'] = rageBonus;
   if (sithMod !== 0) components['Sith Commander'] = sithMod;
   if (inquisitionMod !== 0) components['Inquisition'] = inquisitionMod;
   if (unsettlingMod !== 0) components['Unsettling Presence'] = unsettlingMod;
   if (rapidAlchemyMod !== 0) components['Rapid Alchemy'] = rapidAlchemyMod;
   if (forceItemMod !== 0) components['Force Item'] = forceItemMod;
-  if (basicEffectBonus !== 0) components['Effect Intent'] = basicEffectBonus;
   if (scopedFeatBonus !== 0) components['Scoped Feat'] = scopedFeatBonus;
   // Named per-source so an active Energy Shield's ACP is explicit in the
   // chat/breakdown, not hidden inside a collapsed misc number.
@@ -563,7 +614,7 @@ export function resolveAttackBonus(actor, weapon, actionId = null, context = {})
   // into Gunner BAB + Vehicle INT — preserved verbatim so that contract is
   // unaffected by this branch no longer being an unconditional early return.
   const flags = isStockDroidFlat ? { stockDroidFlat: true } : (isNpcFlat ? { npcFlat: true } : {});
-  return { total, components, flags };
+  return { total, components, flags, typedModifierLedger };
 }
 
 // PHASE — Stock-Droid Damage Contract. The damage-side counterpart to the

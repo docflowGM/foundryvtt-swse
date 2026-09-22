@@ -102,7 +102,7 @@ function abilityBlock(mod) {
   return { base: 10 + mod * 2, racial: 0, enhancement: 0, temp: 0 };
 }
 
-function makeActor({ bab = 0, str = 0, dex = 0, cha = 0, type = 'character', items = [], flags = {}, extraSystem = {} } = {}) {
+function makeActor({ bab = 0, str = 0, dex = 0, cha = 0, type = 'character', items = [], flags = {}, extraSystem = {}, effects = [] } = {}) {
   return {
     id: 'test-actor', type, flags,
     system: {
@@ -115,7 +115,26 @@ function makeActor({ bab = 0, str = 0, dex = 0, cha = 0, type = 'character', ite
       ...extraSystem
     },
     items: makeItemsCollection(items),
+    effects,
     getFlag() { return undefined; }
+  };
+}
+
+// A real, minimal Active Effect document shaped for
+// EffectIntentEngine/ModifierEngine to recognize as a broad "self" typed
+// attack-bonus modifier (category:'attack' -> target 'global.attack'),
+// exercised through the REAL getEffectIntentModifiersForContext() ->
+// createModifier() pipeline -- not a hand-built Modifier object standing in
+// for one -- so the cross-channel stacking tests below prove the actual
+// Effect Intent channel, per the independent review's explicit requirement.
+function competenceAttackEffect(value = 4, { id = 'effect-competence-attack', name = 'Inspiring Presence' } = {}) {
+  return {
+    id, name, disabled: false, origin: null,
+    flags: { swse: { effectIntent: {
+      application: 'always', activeState: 'enabled', scope: 'self', operation: 'increase',
+      category: 'attack', target: '', amount: value, bonusType: 'competence', duration: '',
+      transfer: true, filterType: 'all', filterValue: '', conditions: [], note: ''
+    } } }
   };
 }
 
@@ -465,7 +484,7 @@ ok('roll-config.js source: one shared situational-context builder and the shared
     '/systems/foundryvtt-swse/scripts/engine/effects/modifiers/ModifierTypes.js'
   );
   function chargeModifier() {
-    return createModifier({ source: ModifierSource.CONDITION, sourceId: 'charge', sourceName: 'Charge', target: 'global.attack', type: ModifierType.UNTYPED, value: 2 });
+    return createModifier({ source: ModifierSource.CONDITION, sourceId: 'charge', sourceName: 'Charge', target: 'global.attack', type: ModifierType.COMPETENCE, value: 2 });
   }
   function flankingModifier() {
     return createModifier({ source: ModifierSource.CONDITION, sourceId: 'flanking', sourceName: 'Flanking', target: 'global.attack', type: ModifierType.FLANKING, value: 2 });
@@ -490,12 +509,28 @@ ok('roll-config.js source: one shared situational-context builder and the shared
 ok('computeAttackSituationalContext(): every toggle combination matches the verified per-toggle rule (Aim/Point-Blank no longer ungated flat bonuses, Charging melee-only, Flanking melee-only and typed)');
 
 {
-  // BLOCKER B FIX: Charge and Flanking must not flatten into an anonymous
-  // situationalBonus number before reaching the final composition -- each
-  // keeps its own source identity, type, and stacking behavior all the way
-  // into computeFinalAttackComposition()'s attackComponentLedger, resolved
-  // by the project's existing typed-stacking authority (ModifierUtils /
-  // STACKING_RULES in ModifierTypes.js), not attack-specific ad hoc logic.
+  // BLOCKER B FIX (round 3): Charge and Flanking must not flatten into an
+  // anonymous situationalBonus number before reaching the final composition
+  // -- each keeps its own source identity, type, and stacking behavior all
+  // the way into the ledger. Independent review found the round-2 fix
+  // incomplete on two points, both addressed here:
+  //   (a) Charge is typed COMPETENCE, not UNTYPED -- published SWSE
+  //       evidence (The Unknown Regions' Mounted Charge/Diving Attack
+  //       rules) names the charge attack bonus itself "competence."
+  //       Powerful Charge's "ADDITIONAL +2" is a separate, unnamed-type
+  //       (untyped) CombatOptionResolver contribution, not proof Charge
+  //       itself is untyped.
+  //   (b) Every typed/collision-eligible attack contribution -- Basic
+  //       Effect Intent modifiers, situational contributions (Charge,
+  //       Flanking), and a typed combat-option contribution (Relentless
+  //       Attack, Prime Shot) -- must resolve stacking TOGETHER in ONE pass
+  //       inside combat-roll-math.js#resolveAttackBonus(), not as
+  //       separately pre-summed numbers added afterward. This block proves
+  //       that unification directly against resolveAttackBonus() (the
+  //       actual unification point) using a REAL Effect Intent Active
+  //       Effect (not a hand-built Modifier standing in for one), and
+  //       separately proves computeFinalAttackComposition() (what the
+  //       dialog preview and the real roll both call) agrees with it.
   const { computeFinalAttackComposition } = await import('/systems/foundryvtt-swse/scripts/combat/rolls/attacks.js');
   const { computeAttackSituationalContext } = await import('/systems/foundryvtt-swse/scripts/rolls/roll-config.js');
   const { createModifier, ModifierType, ModifierSource } = await import(
@@ -504,41 +539,153 @@ ok('computeAttackSituationalContext(): every toggle combination matches the veri
 
   const actor = makeActor({ bab: 7, str: 2 });
   const weapon = meleeWeapon({ proficient: true });
-  const baseline = await computeFinalAttackComposition(actor, weapon, { attackType: 'melee' });
-  assert.equal(baseline.ok, true);
-  assert.equal(baseline.atkBonus, 9, 'BAB(7) + STR(2), no situational contributions');
+  const baseline = resolveAttackBonus(actor, weapon, null, { attackType: 'melee' });
+  assert.equal(baseline.total, 9, 'BAB(7) + STR(2), no situational contributions');
+  const previewBaseline = await computeFinalAttackComposition(actor, weapon, { attackType: 'melee' });
+  assert.equal(previewBaseline.ok, true);
+  assert.equal(previewBaseline.atkBonus, baseline.total);
 
   function charge() {
-    return createModifier({ source: ModifierSource.CONDITION, sourceId: 'charge', sourceName: 'Charge', target: 'global.attack', type: ModifierType.UNTYPED, value: 2 });
+    return createModifier({ source: ModifierSource.CONDITION, sourceId: 'charge', sourceName: 'Charge', target: 'global.attack', type: ModifierType.COMPETENCE, value: 2 });
   }
   function flanking() {
     return createModifier({ source: ModifierSource.CONDITION, sourceId: 'flanking', sourceName: 'Flanking', target: 'global.attack', type: ModifierType.FLANKING, value: 2 });
   }
 
-  // 1. Charge appears as its own ledger contribution.
-  const chargeOnly = await computeFinalAttackComposition(actor, weapon, { attackType: 'melee', situationalContributions: [charge()] });
-  assert.equal(chargeOnly.atkBonus, baseline.atkBonus + 2, 'a melee Charge contribution adds its +2 to the composition');
-  const chargeEntry = chargeOnly.attackComponentLedger.find(e => e.label === 'Charge');
-  assert.equal(chargeEntry?.value, 2, 'Charge must appear as its OWN named ledger contribution, not folded into an anonymous "Situational Bonus" row');
-  assert.equal(chargeOnly.attackComponentLedger.some(e => e.id === 'situational-bonus'), false, 'no legacy "Situational Bonus" row when only typed contributions were supplied');
+  // 1. Charge alone: +2 COMPETENCE, its own named ledger row.
+  const chargeOnly = resolveAttackBonus(actor, weapon, null, { attackType: 'melee', situationalContributions: [charge()] });
+  assert.equal(chargeOnly.total, baseline.total + 2, 'Charge alone: +2 competence');
+  const chargeRow = chargeOnly.typedModifierLedger.find(e => e.label === 'Charge');
+  assert.equal(chargeRow?.value, 2);
+  assert.equal(chargeRow?.applied, true);
 
-  // 2. Flanking appears as its own ledger contribution.
-  const flankingOnly = await computeFinalAttackComposition(actor, weapon, { attackType: 'melee', situationalContributions: [flanking()] });
-  assert.equal(flankingOnly.atkBonus, baseline.atkBonus + 2, 'a melee Flanking contribution adds its +2 to the composition');
-  const flankingEntry = flankingOnly.attackComponentLedger.find(e => e.label === 'Flanking');
-  assert.equal(flankingEntry?.value, 2, 'Flanking must appear as its OWN named ledger contribution');
+  // Flanking appears as its own ledger contribution too (round-2 proof,
+  // re-verified against the unified pool).
+  const flankingOnly = resolveAttackBonus(actor, weapon, null, { attackType: 'melee', situationalContributions: [flanking()] });
+  assert.equal(flankingOnly.total, baseline.total + 2, 'Flanking alone: +2');
+  const flankingRow = flankingOnly.typedModifierLedger.find(e => e.label === 'Flanking');
+  assert.equal(flankingRow?.value, 2);
 
-  // 3. Charge + Flanking both apply to a legal melee attack and remain
-  // separate contributions.
-  const both = await computeFinalAttackComposition(actor, weapon, { attackType: 'melee', situationalContributions: [charge(), flanking()] });
-  assert.equal(both.atkBonus, baseline.atkBonus + 4, 'Charge(+2) and Flanking(+2) on a legal melee attack: two distinct legal contributions summing to +4');
-  const bothLabels = both.attackComponentLedger.filter(e => e.applied !== false && (e.label === 'Charge' || e.label === 'Flanking')).map(e => e.label);
-  assert.deepEqual(bothLabels.sort(), ['Charge', 'Flanking'], 'Charge and Flanking must remain two separate ledger rows, not one combined "situational" row');
+  // 2. A REAL Active Effect granting +4 competence to global.attack, alone
+  // (no Charge): proves the Effect Intent channel itself, through the
+  // actual getEffectIntentModifiersForContext() -> createModifier()
+  // pipeline, not a hand-built Modifier standing in for it.
+  const actorWithEffect = makeActor({ bab: 7, str: 2, effects: [competenceAttackEffect(4)] });
+  const effectOnly = resolveAttackBonus(actorWithEffect, weapon, null, { attackType: 'melee' });
+  assert.equal(effectOnly.total, baseline.total + 4, 'a real +4 competence Active Effect alone: +4');
+  const effectRow = effectOnly.typedModifierLedger.find(e => e.label === 'Inspiring Presence');
+  assert.equal(effectRow?.value, 4);
 
-  // 4. Ranged Flanking contributes zero -- proven end to end through the
-  // exact pipeline the dialog's live preview and the real roll both use
-  // (form -> computeAttackSituationalContext() -> computeFinalAttackComposition()),
-  // for both branches, so preview and roll are proven to agree in both cases.
+  // 3. THE KEY CROSS-CHANNEL COLLISION PROOF: the same +4 competence Active
+  // Effect PLUS Charge (+2 competence) must resolve to +4 total, NOT +6 --
+  // both are competence-typed and COMPETENCE is highestOnly, so only the
+  // higher of the two applies, regardless of which channel each came from
+  // (a persistent Active Effect vs. a per-roll situational contribution).
+  const effectPlusCharge = resolveAttackBonus(actorWithEffect, weapon, null, { attackType: 'melee', situationalContributions: [charge()] });
+  assert.equal(effectPlusCharge.total, baseline.total + 4, 'Active Effect (+4 competence) + Charge (+2 competence) must resolve to +4, not +6 -- same-type collision across channels, not two separate stacking islands');
+  const collisionRows = effectPlusCharge.typedModifierLedger.filter(e => e.label === 'Inspiring Presence' || e.label === 'Charge');
+  const appliedCollisionRows = collisionRows.filter(e => e.applied !== false);
+  assert.equal(appliedCollisionRows.length, 1, 'exactly one of the two competence-typed contributions applies after stacking resolution');
+  assert.equal(appliedCollisionRows[0].label, 'Inspiring Presence', 'the higher-value competence contribution (the Active Effect) is the one that survives stacking');
+  // 10. Ledger: the suppressed same-type contribution remains VISIBLE, with
+  // applied:false and a stacking reason -- not silently dropped.
+  const suppressedCharge = collisionRows.find(e => e.label === 'Charge');
+  assert.equal(suppressedCharge?.applied, false, 'the suppressed Charge contribution must still appear in the ledger, marked not-applied');
+  assert.ok(String(suppressedCharge?.reason || '').length > 0, 'the suppressed row must carry a stacking reason');
+
+  // 4. Charge + Powerful Charge: base Charge (+2 competence) and Powerful
+  // Charge's own "ADDITIONAL +2" (CombatOptionResolver's untyped
+  // attackModifier, unchanged) are DIFFERENT types, so both apply: +4
+  // total from those two rules, matching Powerful Charge's own RAW text.
+  const powerfulChargeFeatItem = {
+    id: 'feat-powerful-charge', name: 'Powerful Charge', type: 'feat',
+    system: { abilityMeta: { rules: [{ option: 'powerfulCharge' }] } }
+  };
+  const powerfulChargeActor = makeActor({ bab: 7, str: 2, items: [powerfulChargeFeatItem] });
+  const chargeAndPowerful = resolveAttackBonus(powerfulChargeActor, weapon, null, {
+    attackType: 'melee', charge: true, combatOptions: { powerfulCharge: true }, situationalContributions: [charge()]
+  });
+  assert.equal(chargeAndPowerful.total, baseline.total + 4, 'Charge (+2 competence) + Powerful Charge (+2 untyped, different type) = +4');
+  assert.equal(chargeAndPowerful.components['Powerful Charge'], 2, 'Powerful Charge keeps its own named components/ledger row, not collapsed into an anonymous "Combat Option" number');
+  const chargeRowWithPowerful = chargeAndPowerful.typedModifierLedger.find(e => e.label === 'Charge');
+  assert.equal(chargeRowWithPowerful?.applied, true, 'Charge (competence) is not suppressed by Powerful Charge (a different, untyped contribution)');
+
+  // 5. Active Effect (+4 competence) + Charge + Powerful Charge: the
+  // competence collision above still caps at +4 (Effect wins over Charge),
+  // and Powerful Charge's separate untyped +2 still adds on top: +6 total.
+  const powerfulChargeActorWithEffect = makeActor({ bab: 7, str: 2, items: [powerfulChargeFeatItem], effects: [competenceAttackEffect(4)] });
+  const fullStack = resolveAttackBonus(powerfulChargeActorWithEffect, weapon, null, {
+    attackType: 'melee', charge: true, combatOptions: { powerfulCharge: true }, situationalContributions: [charge()]
+  });
+  assert.equal(fullStack.total, baseline.total + 4 + 2, 'Effect (+4 competence, wins the collision) + Powerful Charge (+2 untyped, separate) = +6; Charge itself is suppressed by the higher-value Effect');
+
+  // 6. Flanking + Charge: different types (FLANKING vs COMPETENCE), so both
+  // apply in full.
+  const chargeAndFlanking = resolveAttackBonus(actor, weapon, null, { attackType: 'melee', situationalContributions: [charge(), flanking()] });
+  assert.equal(chargeAndFlanking.total, baseline.total + 4, 'Charge (+2 competence) and Flanking (+2 FLANKING) are different types and both apply: +4');
+
+  // 7. Two FLANKING representations (a hypothetical second flanking-
+  // granting source): only the highest applies -- "you are either flanked
+  // or not" -- via the shared ModifierUtils stacking authority.
+  const strongerFlanking = createModifier({ source: ModifierSource.FEAT, sourceId: 'flank-boost', sourceName: 'Superior Flanking', target: 'global.attack', type: ModifierType.FLANKING, value: 4 });
+  const flankingCollision = resolveAttackBonus(actor, weapon, null, { attackType: 'melee', situationalContributions: [flanking(), strongerFlanking] });
+  assert.equal(flankingCollision.total, baseline.total + 4, 'two FLANKING-typed contributions must not stack -- only the higher (+4) applies');
+  const appliedFlanking = flankingCollision.typedModifierLedger.filter(e => (e.label === 'Flanking' || e.label === 'Superior Flanking') && e.applied !== false);
+  assert.equal(appliedFlanking.length, 1);
+  assert.equal(appliedFlanking[0].label, 'Superior Flanking');
+
+  // 8. Two competence modifiers from two different channels (the Active
+  // Effect vs. a second, higher-value Active Effect): only the highest
+  // applies -- re-verifies item 3's cross-channel result using two
+  // same-channel (both Effect Intent) sources, isolating that the
+  // highestOnly rule is keyed on TYPE, not on which channel a contribution
+  // came from.
+  const actorWithTwoEffects = makeActor({ bab: 7, str: 2, effects: [
+    competenceAttackEffect(4, { id: 'effect-a', name: 'Inspiring Presence' }),
+    competenceAttackEffect(6, { id: 'effect-b', name: 'Battle Meditation' })
+  ] });
+  const twoEffects = resolveAttackBonus(actorWithTwoEffects, weapon, null, { attackType: 'melee' });
+  assert.equal(twoEffects.total, baseline.total + 6, 'two independent competence Active Effects (+4, +6): only the higher (+6) applies');
+  const appliedEffects = twoEffects.typedModifierLedger.filter(e => (e.label === 'Inspiring Presence' || e.label === 'Battle Meditation') && e.applied !== false);
+  assert.equal(appliedEffects.length, 1);
+  assert.equal(appliedEffects[0].label, 'Battle Meditation');
+
+  // 9. One untyped modifier (Powerful Charge) + one competence modifier
+  // (Charge): both apply -- already proven numerically by item 4 above;
+  // re-stated explicitly against the ledger's applied set.
+  const appliedInChargeAndPowerful = chargeAndPowerful.typedModifierLedger.filter(e => e.applied !== false).map(e => e.label);
+  assert.ok(appliedInChargeAndPowerful.includes('Charge'), 'Charge (competence) applies');
+  assert.ok(Object.keys(chargeAndPowerful.components).includes('Powerful Charge'), 'Powerful Charge (untyped, a separate channel) also applies');
+
+  // 11. SUM(applied ledger rows) === final atkBonus, using the FULL
+  // component ledger computeFinalAttackComposition() builds (baseline +
+  // typed pool + invocation-only additions), not just the typed subset --
+  // proven across every scenario above, including the suppressed-row case.
+  const compositionCases = await Promise.all([
+    computeFinalAttackComposition(actor, weapon, { attackType: 'melee', situationalContributions: [charge()] }),
+    computeFinalAttackComposition(actorWithEffect, weapon, { attackType: 'melee' }),
+    computeFinalAttackComposition(actorWithEffect, weapon, { attackType: 'melee', situationalContributions: [charge()] }),
+    computeFinalAttackComposition(powerfulChargeActor, weapon, { attackType: 'melee', charge: true, combatOptions: { powerfulCharge: true }, situationalContributions: [charge()] }),
+    computeFinalAttackComposition(powerfulChargeActorWithEffect, weapon, { attackType: 'melee', charge: true, combatOptions: { powerfulCharge: true }, situationalContributions: [charge()] }),
+    computeFinalAttackComposition(actor, weapon, { attackType: 'melee', situationalContributions: [flanking(), strongerFlanking] }),
+    computeFinalAttackComposition(actorWithTwoEffects, weapon, { attackType: 'melee' })
+  ]);
+  for (const result of compositionCases) {
+    assert.equal(result.ok, true);
+    const ledgerSum = result.attackComponentLedger.filter(e => e.applied !== false).reduce((sum, e) => sum + (Number(e.value) || 0), 0);
+    assert.equal(ledgerSum, result.atkBonus, 'SUM(applied ledger contributions) must equal atkBonus, including when a same-type collision suppressed a contribution');
+  }
+  assert.equal(compositionCases[2].atkBonus, baseline.total + 4, 'computeFinalAttackComposition() (the dialog preview / rollAttack() seam) agrees with resolveAttackBonus() alone on the key collision case');
+  assert.equal(compositionCases[4].atkBonus, baseline.total + 6, 'computeFinalAttackComposition() agrees with resolveAttackBonus() on the full Effect+Charge+PowerfulCharge stack');
+
+  // 12. Dialog preview and actual roll use the SAME resolved modifier set:
+  // computeAttackSituationalContext() (what both the live preview and the
+  // submit handler call) feeds computeFinalAttackComposition() (what both
+  // the live preview and rollAttack() call), which in turn calls
+  // resolveAttackBonus() for its typed pool -- proven end to end for
+  // melee/ranged Flanking, closing the loop from real form state through
+  // to the real roll composition exactly as before, now over the
+  // corrected COMPETENCE-typed Charge.
   function fakeFlankingForm() {
     return { querySelector(selector) {
       const name = selector.match(/name="([^"]+)"/)?.[1];
@@ -547,55 +694,20 @@ ok('computeAttackSituationalContext(): every toggle combination matches the veri
   }
   const meleeContext = computeAttackSituationalContext(fakeFlankingForm(), true);
   const meleeFlankingResult = await computeFinalAttackComposition(actor, weapon, { attackType: 'melee', situationalContributions: meleeContext.situationalContributions });
-  assert.equal(meleeFlankingResult.atkBonus, baseline.atkBonus + 2, 'melee Flanking end-to-end (form -> context -> composition): +2');
+  assert.equal(meleeFlankingResult.atkBonus, baseline.total + 2, 'melee Flanking end-to-end (form -> context -> composition -> resolveAttackBonus): +2');
 
   const rangedActor = makeActor({ bab: 7, dex: 5 });
   const rangedGun = rangedWeapon({ proficient: true });
   const rangedBaseline = await computeFinalAttackComposition(rangedActor, rangedGun, { attackType: 'ranged' });
   const rangedContext = computeAttackSituationalContext(fakeFlankingForm(), false);
   const rangedFlankingResult = await computeFinalAttackComposition(rangedActor, rangedGun, { attackType: 'ranged', situationalContributions: rangedContext.situationalContributions });
-  assert.equal(rangedFlankingResult.atkBonus, rangedBaseline.atkBonus, 'BLOCKER A FIX: ranged Flanking end-to-end (form -> context -> composition): +0, not +2 -- SWSE flanking is melee-only, and the dialog preview and the final roll agree on this (both call the same two functions)');
-
-  // 5. Charge's type participates correctly in a same-type collision with
-  // another same-type attack bonus: two UNTYPED contributions both stack
-  // (untyped is "stack" under STACKING_RULES) -- this is the real RAW case
-  // (packs/feats.db, Powerful Charge: "you gain an additional +2 bonus on
-  // your melee attack roll" when you Charge). Base Charge and Powerful
-  // Charge must ADD, not collide -- proving Charge is correctly typed
-  // UNTYPED rather than a highestOnly type like COMPETENCE, which would
-  // wrongly suppress this real additional bonus.
-  const powerfulCharge = createModifier({ source: ModifierSource.FEAT, sourceId: 'powerful-charge', sourceName: 'Powerful Charge', target: 'global.attack', type: ModifierType.UNTYPED, value: 2 });
-  const chargeStack = await computeFinalAttackComposition(actor, weapon, { attackType: 'melee', situationalContributions: [charge(), powerfulCharge] });
-  assert.equal(chargeStack.atkBonus, baseline.atkBonus + 4, 'base Charge(+2, untyped) and Powerful Charge(+2, untyped) must ADD ("additional +2 bonus" per the feat\'s own RAW text), not collide via highestOnly');
-  const chargeStackLabels = chargeStack.attackComponentLedger.filter(e => e.applied !== false && (e.label === 'Charge' || e.label === 'Powerful Charge')).map(e => e.label);
-  assert.deepEqual(chargeStackLabels.sort(), ['Charge', 'Powerful Charge'], 'both untyped Charge-family contributions must remain visible as separate ledger rows');
-
-  // A genuine SAME-TYPE collision proof: two FLANKING-typed contributions
-  // (e.g. a hypothetical second flanking-granting source) must resolve to
-  // only the highest applying -- "you are either flanked or not" -- via the
-  // shared ModifierUtils stacking authority, not attack-specific ad hoc logic.
-  const strongerFlanking = createModifier({ source: ModifierSource.FEAT, sourceId: 'flank-boost', sourceName: 'Superior Flanking', target: 'global.attack', type: ModifierType.FLANKING, value: 4 });
-  const flankingCollision = await computeFinalAttackComposition(actor, weapon, { attackType: 'melee', situationalContributions: [flanking(), strongerFlanking] });
-  assert.equal(flankingCollision.atkBonus, baseline.atkBonus + 4, 'two FLANKING-typed contributions must not stack -- only the higher (+4) applies (highestOnly)');
-  const appliedFlanking = flankingCollision.attackComponentLedger.filter(e => (e.label === 'Flanking' || e.label === 'Superior Flanking') && e.applied !== false);
-  assert.equal(appliedFlanking.length, 1, 'exactly one flanking-typed contribution applies after stacking resolution');
-  assert.equal(appliedFlanking[0].label, 'Superior Flanking', 'the higher-value flanking-typed contribution is the one that survives stacking');
-
-  // 6. Cross-type Charge(untyped) + Flanking(flanking-typed) stack
-  // correctly -- different types always stack regardless of value, unlike
-  // the same-type collision immediately above.
-  const crossType = await computeFinalAttackComposition(actor, weapon, { attackType: 'melee', situationalContributions: [charge(), strongerFlanking] });
-  assert.equal(crossType.atkBonus, baseline.atkBonus + 2 + 4, 'Charge(untyped, +2) and a FLANKING-typed(+4) contribution are different types and always stack, independent of same-type collision resolution');
-
-  // 7. SUM(applied ledger contributions) === final atkBonus, across every
-  // case in this block, including the collision case where one contribution
-  // was deliberately suppressed by stacking.
-  for (const result of [chargeOnly, flankingOnly, both, meleeFlankingResult, rangedFlankingResult, chargeStack, flankingCollision, crossType]) {
+  assert.equal(rangedFlankingResult.atkBonus, rangedBaseline.atkBonus, 'BLOCKER A FIX (still holds): ranged Flanking end-to-end: +0, not +2 -- SWSE flanking is melee-only');
+  for (const result of [meleeFlankingResult, rangedFlankingResult]) {
     const ledgerSum = result.attackComponentLedger.filter(e => e.applied !== false).reduce((sum, e) => sum + (Number(e.value) || 0), 0);
-    assert.equal(ledgerSum, result.atkBonus, 'SUM(applied ledger contributions) must equal atkBonus, including when a same-type collision suppressed a contribution');
+    assert.equal(ledgerSum, result.atkBonus);
   }
 }
-ok('typed Charge/Flanking contribution architecture: each keeps its own named ledger row, Charge+Flanking stack cross-type, Powerful Charge additively stacks with base Charge per RAW, a genuine same-type Flanking collision resolves via the shared ModifierUtils stacking authority (not ad hoc logic), ranged Flanking is proven zero end-to-end through the dialog/roll shared pipeline, and ledger-sum parity holds throughout');
+ok('unified typed attack-modifier stacking: Charge is COMPETENCE per published SWSE evidence; a real Active Effect competence bonus and Charge correctly collide (only the higher applies, +4 not +6) across what used to be two separate stacking islands; Powerful Charge (untyped) stacks on top regardless; Flanking (a different type) always stacks with Charge; two same-type collisions (Flanking-vs-Flanking, Effect-vs-Effect) both resolve via the shared ModifierUtils authority; suppressed contributions remain visible in the ledger with a reason; ledger-sum parity holds throughout; and the dialog preview / real roll seam (computeFinalAttackComposition) agrees with resolveAttackBonus() in every case');
 
 {
   const { computeFinalAttackComposition } = await import('/systems/foundryvtt-swse/scripts/combat/rolls/attacks.js');

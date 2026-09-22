@@ -1,5 +1,6 @@
 import { CombatOptionResolver } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-option-resolver.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { createModifier, ModifierType, ModifierSource } from "/systems/foundryvtt-swse/scripts/engine/effects/modifiers/ModifierTypes.js";
 
 let registered = false;
 
@@ -231,8 +232,28 @@ function applyPointBlankRiderModifiers(result, actor, weapon, context = {}) {
   result.breakdown ??= [];
   for (const mod of modifiers) {
     if (mod.attackBonus) {
-      result.attackBonus = Number(result.attackBonus ?? 0) + mod.attackBonus;
-      result.breakdown.push({ label: mod.label, value: mod.attackBonus, type: 'attack' });
+      if (mod.bonusType && mod.bonusType !== 'untyped') {
+        // Math Integrity Freeze, Attack Bonus round 3: Prime Shot's own
+        // rule data labels this a CIRCUMSTANCE bonus (stackUnlessSameSource)
+        // -- it must resolve stacking together with any other
+        // circumstance-typed attack contribution in the same shared pass
+        // (combat-roll-math.js#resolveAttackBonus()'s typed attack-modifier
+        // pool), not add as a flat untyped number the way an unlabeled
+        // rider (e.g. the zero-range adjacent rider above, which carries no
+        // bonusType) correctly does. Emitted via attackContributions
+        // instead of result.attackBonus so it is not double-counted.
+        result.attackContributions ??= [];
+        result.attackContributions.push(createModifier({
+          source: ModifierSource.FEAT, sourceId: mod.id ?? mod.source ?? 'point-blank-rider',
+          sourceName: mod.label ?? mod.source ?? 'Point Blank Rider',
+          target: 'global.attack',
+          type: Object.values(ModifierType).includes(mod.bonusType) ? mod.bonusType : ModifierType.UNTYPED,
+          value: mod.attackBonus
+        }));
+      } else {
+        result.attackBonus = Number(result.attackBonus ?? 0) + mod.attackBonus;
+        result.breakdown.push({ label: mod.label, value: mod.attackBonus, type: 'attack' });
+      }
     }
     if (mod.damageExtraWeaponDice) {
       result.damageExtraWeaponDice = Number(result.damageExtraWeaponDice ?? 0) + mod.damageExtraWeaponDice;
