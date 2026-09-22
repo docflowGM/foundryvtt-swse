@@ -7,13 +7,17 @@
  * this used to translate only a subset of the requires-/excludes- fields
  * real records use, silently OMITTING the rest -- an omitted requirement
  * is fail-OPEN ("requires nothing" instead of "requires X"), the opposite
- * of what a gate model must guarantee. Every one of the 24 gate fields
- * confirmed present on real shipped ATTACK_OPTION records (see
+ * of what a gate model must guarantee. Every one of the 28 recognized
+ * gate fields (25 confirmed present on real shipped ATTACK_OPTION
+ * records + 3 proactively-supported compatibility fields -- see
  * ATTACK_OPTION_GATE_FIELD_DISPOSITION in action-definition.js) is now
  * either translated into a real requirement predicate, or explicitly
  * marked externalWorkflow/unsupported -- never silently dropped.
  * validateAttackOptionNormalization() enforces this as a guard any future
- * unrecognized gate field must fail loudly against, not disappear into.
+ * unrecognized gate field must fail loudly against, not disappear into,
+ * and (round 8 correction #3) also reconciles each translated leaf's
+ * actual VALUE against the raw rule's own value, not merely its field
+ * name.
  *
  * This is a PURE function: no actor mutation, no requirement evaluation,
  * no roll math. Its input must already be a strictly-filtered
@@ -96,18 +100,27 @@ function buildRequirements(rule) {
 }
 
 /**
- * Math Integrity Freeze, Attack Bonus round 8 correction #2 (Blocker 1):
- * the lossless-ingestion guard. Confirms every requires-/excludes- field
- * actually present on the raw rule (per getAttackOptionGateFields()) is
- * BOTH a recognized member of ATTACK_OPTION_GATE_FIELD_DISPOSITION AND
- * produced at least one requirement leaf carrying that exact
- * `sourceField` in the normalized definition. Throws with the specific
- * unrecognized/missing field name(s) rather than allowing a gate to
- * vanish silently -- callers (the normalizer itself, and the 136-record
- * audit test) call this immediately after normalizeAttackOptionRule().
+ * Math Integrity Freeze, Attack Bonus round 8 correction #2 (Blocker 1)
+ * and round 8 correction #3 (Issue 5, value-level reconciliation): the
+ * lossless-ingestion guard. Confirms every requires-/excludes- field
+ * actually present on the raw rule (per getAttackOptionGateFields()) is:
+ *   1. a recognized member of ATTACK_OPTION_GATE_FIELD_DISPOSITION;
+ *   2. translated into a requirement leaf carrying that exact
+ *      `sourceField` (field-NAME coverage);
+ *   3. AND that leaf's actual translated VALUE matches what the raw
+ *      field's own content requires (value-level reconciliation).
+ * Correction #2's version only proved (1) and (2) -- a leaf tagged
+ * `sourceField: 'requiresWeaponGroups'` whose `value` had been silently
+ * truncated or altered (by a translation bug, or by anything mutating
+ * the definition after normalization) would still pass, since only the
+ * field NAME was checked against an allowlist, never the value itself.
+ * (3) closes that gap: throws with the specific mismatched field name(s)
+ * rather than allowing a translated-but-wrong requirement to ship as if
+ * it were correct.
  * @param {object} rule
  * @param {import('./action-definition.js').ActionDefinition} definition
- * @throws if any gate field is unrecognized or was not translated
+ * @throws if any gate field is unrecognized, was not translated, or was
+ *   translated with a value that does not reconcile with the raw rule
  */
 export function validateAttackOptionNormalization(rule, definition) {
   const presentFields = getAttackOptionGateFields(rule);
@@ -119,6 +132,13 @@ export function validateAttackOptionNormalization(rule, definition) {
   const uncovered = presentFields.filter(field => !coveredFields.has(field));
   if (uncovered.length) {
     throw new Error(`validateAttackOptionNormalization(): field(s) [${uncovered.join(', ')}] present on "${rule.label ?? rule.option ?? rule.id ?? 'unknown'}" but not translated into any requirement leaf -- an omitted requirement is fail-open, never acceptable`);
+  }
+  const mismatched = presentFields.filter(field => {
+    const node = findGateNode(definition.requirements, field);
+    return node && !gateValueReconciles(field, rule[field], node);
+  });
+  if (mismatched.length) {
+    throw new Error(`validateAttackOptionNormalization(): field(s) [${mismatched.join(', ')}] present on "${rule.label ?? rule.option ?? rule.id ?? 'unknown'}" were translated but the resulting requirement's VALUE does not match the raw rule's own value -- field-name coverage alone is not lossless normalization`);
   }
 }
 
@@ -132,8 +152,83 @@ function collectSourceFields(node, out = []) {
 }
 
 /**
+ * Finds the top-level requirement node tagged with the given raw
+ * `sourceField` name. buildRequirements() always emits gate-derived nodes
+ * as flat entries directly in `requirements.all[]` (never nested inside a
+ * further all/any), so a single linear scan is sufficient and exact --
+ * not a heuristic search.
+ */
+function findGateNode(requirements, field) {
+  return (requirements?.all ?? []).find(node => node.sourceField === field) ?? null;
+}
+
+function normalizedArray(value) {
+  return asArray(value).map(String);
+}
+
+function arraysReconcile(actual, expected) {
+  const a = normalizedArray(actual);
+  const b = normalizedArray(expected);
+  if (a.length !== b.length) return false;
+  const sortedA = [...a].sort();
+  const sortedB = [...b].sort();
+  return sortedA.every((value, index) => value === sortedB[index]);
+}
+
+/**
+ * Math Integrity Freeze, Attack Bonus round 8 correction #3 (Issue 5):
+ * per-field value-level reconciliation. Fields whose leaf carries a
+ * literal, data-independent value (a boolean flag, or a fixed constant
+ * like requiresAutofire's `value: 'autofire'`) have nothing further to
+ * reconcile once field-name coverage is already proven -- their "value"
+ * isn't derived from the raw field's own content, so there's no
+ * translation step that could silently corrupt it. Every field whose
+ * raw content flows into the leaf (an id, a string, or an array) IS
+ * checked here against that same content, independently recomputed from
+ * `rawValue` rather than trusted from the tree that's being validated.
+ */
+function gateValueReconciles(field, rawValue, node) {
+  switch (field) {
+    case 'requiresAttackType':
+      return node.value === String(rawValue).toLowerCase();
+    case 'requiresWeaponGroups':
+    case 'requiresWeaponText':
+    case 'requiresFeatSelectedChoiceMatch':
+    case 'requiresDamageType':
+    case 'requiresTargetType':
+    case 'requiresTargetFeat':
+    case 'requiresTargetTalent':
+    case 'requiresTargetItem':
+    case 'requiresTargetText':
+    case 'requiresRangeBand':
+    case 'requiresContextFlags':
+      return arraysReconcile(node.value, rawValue);
+    case 'requiresOption':
+      return node.value === rawValue;
+    case 'excludesDamageType':
+    case 'excludesWeaponGroups':
+      return arraysReconcile(node.not?.value, rawValue);
+    case 'excludesOptions':
+      return arraysReconcile((node.not?.any ?? []).map(entry => entry.value), rawValue);
+    default:
+      return true;
+  }
+}
+
+/**
+ * Math Integrity Freeze, Attack Bonus round 8 correction #3 (Blocker 1):
+ * `sourceItem` is used ONLY to derive a stable fallback id/name when the
+ * raw rule itself doesn't carry one (`rule.option`/`id`/`key`/`name`/
+ * `label` all absent) -- it is never stored on the returned definition.
+ * The definition is now pure, source-independent content: two different
+ * owned items granting the exact same rule shape for the same logical
+ * action id must normalize to byte-identical definitions, so the
+ * "canonical" one for a given domain:id is never an accident of scan
+ * order. Per-grant provenance (which item granted it, that item's own
+ * raw rule) belongs on ActionEntitlement, built by ActorActionResolver.
+ *
  * @param {object} sourceItem - the actor-owned feat/talent Item this rule
- *   came from
+ *   came from (fallback-naming only, see above)
  * @param {object} rule - a rule already confirmed `type === 'ATTACK_OPTION'`
  *   by CombatOptionResolver.extractAttackOptionRules()
  * @returns {import('./action-definition.js').ActionDefinition}
@@ -144,23 +239,18 @@ export function normalizeAttackOptionRule(sourceItem, rule) {
   const control = ['toggle', 'flag', 'slider', 'passive'].includes(String(rule.control ?? '').toLowerCase())
     ? String(rule.control).toLowerCase()
     : 'toggle';
+  const name = rule.label ?? sourceItem?.name ?? id;
 
   const definition = {
     schemaVersion: ACTION_DEFINITION_SCHEMA_VERSION,
     id,
-    name: rule.label ?? sourceItem?.name ?? id,
+    name,
     domain: 'attack',
-    source: {
-      type: String(sourceItem?.type ?? 'item').toLowerCase(),
-      id: sourceItem?.id ?? null,
-      uuid: sourceItem?.uuid ?? null,
-      name: sourceItem?.name ?? null
-    },
     ownership: { mode: 'source-item' },
     presentation: {
       section: 'attack-options',
       control,
-      label: rule.label ?? sourceItem?.name ?? id
+      label: name
     },
     requirements: buildRequirements(rule),
     economy: { actionType: null },
@@ -170,13 +260,7 @@ export function normalizeAttackOptionRule(sourceItem, rule) {
     // CombatOptionResolver.collectAttackModifiers() rather than
     // reimplementing roll math here (Part N).
     effects: [],
-    tags: ['attack', control].filter(Boolean),
-    // Preserves the original rule verbatim for anything a future
-    // migration step needs that this v1 schema does not yet model -- not
-    // part of the documented schema surface, so no consumer should rely
-    // on it being stable. Never the mechanism that makes gate loss
-    // acceptable -- validateAttackOptionNormalization() is that guard.
-    _legacyRule: rule
+    tags: ['attack', control].filter(Boolean)
   };
 
   validateAttackOptionNormalization(rule, definition);

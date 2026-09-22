@@ -148,6 +148,29 @@ export function targetHasOwnedItem(context = {}, names = [], types = []) {
   } catch (_err) { return false; }
 }
 
+// Math Integrity Freeze, Attack Bonus round 8 correction #3 (Blocker 4):
+// extracted verbatim from CombatOptionResolver.optionAllowedForWeapon()'s
+// inline requiresTargetFlatFooted/requiresTargetDeniedDexBonus checks --
+// these were still duplicated (not delegated) inside
+// ActionAvailabilityEngine after the round 8 correction #2 extraction,
+// and had silently drifted (missing the flatFootedTarget/deniedDexBonus
+// aliases). Byte-for-byte the same condition the certified live resolver
+// evaluates; deliberately NOT composed from one another even though they
+// share sub-conditions, since the live resolver's own two checks are not
+// symmetric (isTargetDeniedDexBonus does not accept flatFootedTarget) --
+// composing them here would silently change certified production
+// behavior, not just extract it.
+export function isTargetFlatFooted(context = {}) {
+  const target = context?.target;
+  return context.targetFlatFooted === true || context.flatFootedTarget === true || target?.system?.derived?.isFlatFooted === true;
+}
+
+export function isTargetDeniedDexBonus(context = {}) {
+  const target = context?.target;
+  return context.targetDeniedDexBonus === true || context.deniedDexBonus === true || context.targetFlatFooted === true
+    || target?.system?.derived?.deniedDexBonus === true || target?.system?.derived?.isFlatFooted === true;
+}
+
 export function weaponSupportsAutofire(weapon, context = {}) {
   if (context.autofire === true || context.attackMode === "autofire") return true;
   const system = weapon?.system ?? {};

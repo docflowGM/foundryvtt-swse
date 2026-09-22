@@ -26,6 +26,21 @@ function compositeKey(domain, id) {
   return `${domain}:${id}`;
 }
 
+/**
+ * Math Integrity Freeze, Attack Bonus round 8 correction #3 (Blocker 1):
+ * ActionDefinition is pure content now (no embedded source/_legacyRule --
+ * see action-definition-normalizer.js), so two independently-normalized
+ * definitions for the same domain:id key are safe to compare structurally.
+ * Exported so ActorActionResolver can reuse the exact same equality
+ * notion for its own multi-source conflict detection, rather than a
+ * second, independently-drifting comparison.
+ */
+export function definitionsContentEqual(a, b) {
+  if (a === b) return true;
+  if (!a || !b) return false;
+  return JSON.stringify(a) === JSON.stringify(b);
+}
+
 export class ActionRegistry {
   #byKey = new Map();
 
@@ -33,8 +48,10 @@ export class ActionRegistry {
    * @param {import('./action-definition.js').ActionDefinition} definition
    * @throws if `id` is missing, `domain` is not a recognized
    *   ACTION_DOMAINS value, or the domain-qualified key is already
-   *   registered with a DIFFERENT definition object -- registration is
-   *   deterministic, never a silent last-write-wins.
+   *   registered with a definition whose CONTENT differs -- registration
+   *   is idempotent for a genuinely identical re-registration (the same
+   *   logical action normalized twice, e.g. from two different granting
+   *   items), but never a silent last-write-wins for a real conflict.
    */
   register(definition) {
     if (!definition || typeof definition !== 'object' || !definition.id) {
@@ -45,8 +62,8 @@ export class ActionRegistry {
     }
     const key = compositeKey(definition.domain, definition.id);
     const existing = this.#byKey.get(key);
-    if (existing && existing !== definition) {
-      throw new Error(`ActionRegistry.register(): duplicate id "${definition.id}" in domain "${definition.domain}" (already registered from ${existing.source?.name ?? 'unknown source'}, now from ${definition.source?.name ?? 'unknown source'})`);
+    if (existing && !definitionsContentEqual(existing, definition)) {
+      throw new Error(`ActionRegistry.register(): conflicting ActionDefinition content for "${key}" -- already registered with different requirements/presentation/economy content`);
     }
     this.#byKey.set(key, definition);
     return definition;

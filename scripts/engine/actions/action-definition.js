@@ -18,6 +18,17 @@
  * @property {string|null} uuid - source item uuid, when known
  * @property {string} name - source item display name
  *
+ * Math Integrity Freeze, Attack Bonus round 8 correction #3 (Blocker 1):
+ * ActionDefinitionSource describes ONE granting item's provenance -- it
+ * belongs on ActionEntitlement (below), never on ActionDefinition itself.
+ * correction #2 already separated the two concepts but left `source` (and
+ * the raw `_legacyRule`) embedded directly in the definition object,
+ * which meant the "canonical" definition for a given domain:id was
+ * actually whichever owned item happened to be scanned first -- an
+ * order-dependent identity, exactly what the definition/entitlement
+ * split was supposed to eliminate. ActionDefinition is now pure,
+ * source-independent content only.
+ *
  * @typedef {Object} ActionDefinitionOwnership
  * @property {string} mode - currently only 'source-item' (owning the
  *   granting feat/talent/item IS the entitlement); reserved for future
@@ -62,7 +73,6 @@
  * @property {string} id - stable, kebab-case, unique within a domain
  * @property {string} name
  * @property {string} domain - one of ACTION_DOMAINS
- * @property {ActionDefinitionSource} source
  * @property {ActionDefinitionOwnership} ownership
  * @property {ActionDefinitionPresentation} presentation
  * @property {RequirementNode} requirements
@@ -91,9 +101,13 @@
  *   for THIS entitlement (an actor with two entitlements to the same
  *   actionKey has two ActionEntitlement records, each with its own
  *   source, never one record with an ambiguous/merged source)
- * @property {Object} configuration - per-grant configuration (e.g. a
- *   selectedChoice value), reserved for future use; empty in this
- *   groundwork round
+ * @property {Object} configuration - per-grant configuration. Carries
+ *   `{ rule }`, the exact raw ATTACK_OPTION rule object this specific
+ *   grant came from -- the per-grant detail (e.g. a differing `max` on a
+ *   slider option) that must NOT be folded into the shared
+ *   ActionDefinition, since two sources granting the same logical
+ *   domain:id action are not guaranteed to configure it identically
+ *   (round 8 correction #3, Blocker 1).
  */
 
 export const ACTION_DEFINITION_SCHEMA_VERSION = 1;
@@ -165,10 +179,21 @@ export const ACTION_REQUIREMENT_PREDICATE_TYPES = Object.freeze([
 
 /**
  * The complete, closed inventory of every requires-/excludes- gate field
- * ever observed on a real, shipped `type: 'ATTACK_OPTION'` record (24
- * fields, verified directly against packs/feats.db + packs/talents.db --
- * see tests/action-authority-groundwork-normalization-audit.test.mjs).
- * Every field here MUST be classified as one of:
+ * this normalizer recognizes: 28 keys total, made up of the 25 fields
+ * actually observed on a real, shipped `type: 'ATTACK_OPTION'` record as
+ * of this round (verified directly against packs/feats.db +
+ * packs/talents.db -- see
+ * tests/action-authority-groundwork-normalization-audit.test.mjs) plus 3
+ * proactively-supported compatibility fields the live
+ * CombatOptionResolver authority already understands but no current
+ * shipped record happens to use yet (requiresTargetTalent,
+ * requiresTargetItem, requiresTargetText). Math Integrity Freeze, Attack
+ * Bonus round 8 correction #3: an earlier round of this doc mistakenly
+ * described this inventory as "24 fields" -- an undercount that
+ * conflated "observed" with "recognized" and didn't even match the
+ * observed count correctly either; corrected here to the true 25
+ * observed + 3 compatibility = 28 breakdown, matching the generated
+ * audit report exactly. Every field here MUST be classified as one of:
  *   'normalized'         - translated into a real requirement predicate
  *   'external-workflow'  - encoded via the externalWorkflow marker
  *   'unsupported'         - encoded via the unsupported marker

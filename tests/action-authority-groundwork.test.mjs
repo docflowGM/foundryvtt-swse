@@ -28,11 +28,15 @@ globalThis.ui = globalThis.ui ?? { notifications: { warn: () => {}, info: () => 
 globalThis.Hooks = globalThis.Hooks ?? { callAll: () => {}, on: () => {} };
 
 const { extractAttackOptionRules, CombatOptionResolver } = await import('/systems/foundryvtt-swse/scripts/engine/combat/combat-option-resolver.js');
-const { normalizeAttackOptionRule } = await import('/systems/foundryvtt-swse/scripts/engine/actions/action-definition-normalizer.js');
+const { normalizeAttackOptionRule, validateAttackOptionNormalization } = await import('/systems/foundryvtt-swse/scripts/engine/actions/action-definition-normalizer.js');
 const { ActionRegistry } = await import('/systems/foundryvtt-swse/scripts/engine/actions/action-registry.js');
 const { ActorActionResolver } = await import('/systems/foundryvtt-swse/scripts/engine/actions/actor-action-resolver.js');
 const { ActionAvailabilityEngine } = await import('/systems/foundryvtt-swse/scripts/engine/actions/action-availability-engine.js');
 const { ACTION_DEFINITION_SCHEMA_VERSION } = await import('/systems/foundryvtt-swse/scripts/engine/actions/action-definition.js');
+
+function syntheticDefinition(requirements, overrides = {}) {
+  return { schemaVersion: 1, id: 'synthetic', name: 'Synthetic', domain: 'attack', ownership: { mode: 'source-item' }, presentation: { section: 'attack-options', control: 'toggle', label: 'Synthetic' }, requirements, economy: { actionType: null }, execution: { kind: 'attack-option', handler: null }, effects: [], tags: [], ...overrides };
+}
 
 let step = 0;
 function ok(label) { step += 1; console.log(`  [${step}] ${label} OK`); }
@@ -98,12 +102,16 @@ function organicTargetActor() { return { id: 'target-organic', name: 'Target Org
   assert.equal(definition.domain, 'attack');
   assert.equal(definition.presentation.control, 'slider');
   assert.deepEqual(definition.requirements.all, [{ type: 'attackType', value: 'melee', sourceField: 'requiresAttackType' }]);
-  assert.equal(definition.source.name, 'Power Attack');
-  assert.equal(definition.source.type, 'feat');
+  // Math Integrity Freeze, Attack Bonus round 8 correction #3 (Blocker 1):
+  // ActionDefinition no longer carries `source` at all -- it is pure,
+  // source-independent content. Provenance now lives exclusively on
+  // ActionEntitlement (see section 15).
+  assert.equal('source' in definition, false, 'ActionDefinition must never carry a specific granting item\'s provenance');
+  assert.equal('_legacyRule' in definition, false, 'ActionDefinition must never carry the raw per-grant rule -- that belongs on ActionEntitlement.configuration.rule');
 
   assert.deepEqual(extractAttackOptionRules(oathOfDutyTalent()), [], 'Oath of Duty (RUNTIME_CONTEXT_REFERENCE) must never reach the normalizer at all -- extractAttackOptionRules() rejects it upstream');
 }
-ok('1/2: a genuine ATTACK_OPTION record (Power Attack) normalizes into a versioned ActionDefinition with the correct id/domain/control/requirements/source; a real non-ATTACK_OPTION record (Oath of Duty) is rejected before normalization is even possible');
+ok('1/2: a genuine ATTACK_OPTION record (Power Attack) normalizes into a versioned, source-independent ActionDefinition with the correct id/domain/control/requirements; a real non-ATTACK_OPTION record (Oath of Duty) is rejected before normalization is even possible');
 
 // ─── 3 — ActionRegistry: domain-qualified, deterministic duplicate-id handling ──
 
@@ -114,8 +122,18 @@ ok('1/2: a genuine ATTACK_OPTION record (Power Attack) normalizes into a version
   assert.equal(registry.get('attack', 'power-attack'), definition);
   assert.doesNotThrow(() => registry.register(definition), 're-registering the SAME definition object must be a no-op, not an error');
 
-  const conflicting = { ...definition, source: { ...definition.source, name: 'A different source' } };
-  assert.throws(() => registry.register(conflicting), /duplicate id/, 'registering a DIFFERENT definition object under the same id in the same domain must throw deterministically, never silently overwrite');
+  // Math Integrity Freeze, Attack Bonus round 8 correction #3 (Blocker 1):
+  // ActionDefinition is now pure content (no embedded source), so a
+  // SEPARATELY-normalized definition with IDENTICAL content (e.g. the
+  // same rule normalized a second time from a different owned item) must
+  // register as idempotent, not throw -- only a genuine CONTENT conflict
+  // is an error now.
+  const identicalContentDefinition = normalizeAttackOptionRule(powerAttackFeat(), extractAttackOptionRules(powerAttackFeat())[0]);
+  assert.notEqual(identicalContentDefinition, definition, 'sanity: this is a distinct object, not the same reference');
+  assert.doesNotThrow(() => registry.register(identicalContentDefinition), 'registering a DIFFERENT object with IDENTICAL content under the same id must be idempotent, not an error -- content equality, not object identity, is what matters now that definitions carry no per-item provenance');
+
+  const conflicting = { ...definition, presentation: { ...definition.presentation, control: 'flag' } };
+  assert.throws(() => registry.register(conflicting), /conflicting ActionDefinition content/, 'registering a definition with genuinely DIFFERENT content under the same id in the same domain must throw deterministically, never silently overwrite');
 
   // Blocker 2: id uniqueness is domain-qualified, not global -- the exact
   // same bare id in a DIFFERENT domain must coexist without conflict.
@@ -125,7 +143,7 @@ ok('1/2: a genuine ATTACK_OPTION record (Power Attack) normalizes into a version
   assert.notEqual(registry.get('attack', 'power-attack'), registry.get('utility', 'power-attack'));
   assert.deepEqual(registry.forDomain('attack').map(d => d.id), ['power-attack'], 'forDomain() must not leak the other domain\'s same-id definition');
 }
-ok('3: ActionRegistry identity is domain-qualified (attack:power-attack and utility:power-attack coexist); register() is idempotent for the same definition and throws deterministically on a genuine same-domain id conflict');
+ok('3: ActionRegistry identity is domain-qualified (attack:power-attack and utility:power-attack coexist); register() is idempotent for content-equal re-registration (even from a different object) and throws deterministically on a genuine same-domain content conflict');
 
 // ─── 4/5 — ActorActionResolver: only actor-owned sources, nothing else ────
 
@@ -170,8 +188,45 @@ ok('4/5: ActorActionResolver.getOwnedActions() returns { definitions, entitlemen
   const entitlementSourceNames = result.entitlements.map(e => e.source.name).sort();
   assert.deepEqual(entitlementSourceNames, ['Martial Arts Mastery (grants Power Attack)', 'Power Attack'], 'each entitlement carries its OWN specific granting source, never a merged/ambiguous one');
   assert.ok(result.entitlements.every(e => e.actionKey.domain === 'attack' && e.actionKey.id === 'power-attack'), 'both entitlements point at the same canonical actionKey');
+  assert.ok(result.entitlements.every(e => e.configuration?.rule?.option === 'powerAttack'), 'each entitlement preserves its own grant-specific raw rule on configuration.rule, rather than discarding it once a canonical definition exists');
 }
 ok('3b: two different owned items granting the same normalized action id produce one canonical ActionDefinition plus two distinct ActionEntitlement records, with no duplicate-definition exception');
+
+// ─── 3c — Blocker 1: divergent configuration between two sources must fail loudly, never silently pick the first ──
+
+{
+  // Two feats that both normalize to the SAME domain:id ("power-attack")
+  // but disagree on a field the v1 schema actually models (attack-type
+  // requirement) -- not producible from the current shipped packs
+  // (deliberately synthetic), proving the resolver no longer silently
+  // keeps whichever source happened to be scanned first when the
+  // resulting definitions genuinely differ.
+  //
+  // NOTE (honest scope limitation, not swept under the rug): the v1
+  // ActionDefinition schema does not yet model slider bounds (`rule.max`)
+  // at all -- see action-definition-normalizer.js. Two sources
+  // disagreeing ONLY on `max` would therefore currently normalize to
+  // IDENTICAL definition content and would NOT be caught by this
+  // conflict check; that gap is documented in the architecture doc
+  // rather than silently assumed fixed by this test.
+  function powerAttackMeleeVariant() {
+    return { id: 'feat-power-attack-melee', name: 'Power Attack (melee source)', type: 'feat', system: { abilityMeta: { rules: [
+      { type: 'ATTACK_OPTION', option: 'powerAttack', label: 'Power Attack', control: 'slider', max: 5, requiresAttackType: 'melee', attackModifierFormula: '-value', damageModifierFormula: 'value' }
+    ] } } };
+  }
+  function powerAttackRangedVariant() {
+    return { id: 'feat-power-attack-ranged', name: 'Power Attack (ranged source)', type: 'feat', system: { abilityMeta: { rules: [
+      { type: 'ATTACK_OPTION', option: 'powerAttack', label: 'Power Attack', control: 'slider', max: 5, requiresAttackType: 'ranged', attackModifierFormula: '-value', damageModifierFormula: 'value' }
+    ] } } };
+  }
+  const actor = makeActor({ items: [powerAttackMeleeVariant(), powerAttackRangedVariant()] });
+  assert.throws(
+    () => ActorActionResolver.getOwnedActions(actor, { domain: 'attack' }),
+    /conflicting ActionDefinition content/,
+    'two sources granting the same logical action id with genuinely DIFFERENT requirement content must fail loudly, never silently keep whichever source was scanned first'
+  );
+}
+ok('3c: two owned items granting the same normalized action id but with divergent requirement content (melee vs ranged) throw a loud, explicit error instead of silently picking the first-scanned source as canonical');
 
 // ─── 6/7/8 — Careful Shot: entitlement is stable; availability changes with Aim ──
 
@@ -253,17 +308,30 @@ ok('12: an unknown requirement predicate type fails closed (never silently treat
 }
 ok('13/14: neither ActorActionResolver/the normalizer nor ActionAvailabilityEngine mutate the source item or the actor');
 
-// ─── 15 — availability result carries source provenance ───────────────────
+// ─── 15 — provenance lives on the entitlement, never on the definition ────
+// Math Integrity Freeze, Attack Bonus round 8 correction #3 (Blocker 1):
+// this used to assert the AVAILABILITY RESULT's definition carried
+// source.name/type/id -- which was only possible because the definition
+// itself embedded one specific granting item's provenance, the exact
+// thing Blocker 1 removed. Provenance now lives exclusively on
+// ActionEntitlement; ActionAvailabilityEngine's result.definition must
+// never carry it.
 
 {
   const actor = makeActor({ items: [carefulShotFeat()] });
-  const [definition] = ActorActionResolver.getOwnedActions(actor, { domain: 'attack' }).definitions;
+  const { definitions, entitlements } = ActorActionResolver.getOwnedActions(actor, { domain: 'attack' });
+  const [definition] = definitions;
+  const [entitlement] = entitlements;
+
+  assert.equal(entitlement.source.name, 'Careful Shot');
+  assert.equal(entitlement.source.type, 'feat');
+  assert.equal(entitlement.source.id, 'feat-careful-shot');
+  assert.deepEqual(entitlement.actionKey, { domain: 'attack', id: definition.id });
+
   const result = ActionAvailabilityEngine.evaluate(definition, { attackType: 'ranged', weapon: rangedWeapon(), aim: true });
-  assert.equal(result.definition.source.name, 'Careful Shot');
-  assert.equal(result.definition.source.type, 'feat');
-  assert.equal(result.definition.source.id, 'feat-careful-shot');
+  assert.equal('source' in result.definition, false, 'ActionAvailabilityEngine\'s result.definition must never carry per-item provenance -- that would reintroduce the order-dependent-identity bug Blocker 1 removed');
 }
-ok('15: the availability result carries the definition\'s full source provenance (name/type/id), not just a bare pass/fail boolean');
+ok('15: source provenance lives exclusively on ActionEntitlement (resolved by ActorActionResolver, one per granting item); the ActionDefinition ActionAvailabilityEngine evaluates never carries it');
 
 // ─── 16 — parity with the live, certified CombatOptionResolver path ───────
 // Not a claim that the dialog is rewired to consume this groundwork layer
@@ -301,10 +369,6 @@ ok('16: for representative options (Careful Shot, Powerful Charge, Rapid Shot), 
 // ─── 17 — Blocker 4: fail-closed attackType (unknown never auto-passes) ───
 
 {
-  function syntheticDefinition(requirements) {
-    return { schemaVersion: 1, id: 'synthetic', name: 'Synthetic', domain: 'attack', source: { type: 'feat', id: null, uuid: null, name: 'Synthetic' }, ownership: { mode: 'source-item' }, presentation: { section: 'attack-options', control: 'toggle', label: 'Synthetic' }, requirements, economy: { actionType: null }, execution: { kind: 'attack-option', handler: null }, effects: [], tags: [] };
-  }
-
   const requiresRanged = syntheticDefinition({ all: [{ type: 'attackType', value: 'ranged' }] });
   // No weapon, no explicit attackType in context -> getAttackType() resolves 'unknown'.
   const result = ActionAvailabilityEngine.evaluate(requiresRanged, {});
@@ -316,9 +380,6 @@ ok('17: Blocker 4 fail-closed semantics -- an unresolvable ("unknown") attack ty
 // ─── 18 — Blocker 4: boolean-tree (all/any/not) provenance ────────────────
 
 {
-  function syntheticDefinition(requirements) {
-    return { schemaVersion: 1, id: 'synthetic', name: 'Synthetic', domain: 'attack', source: { type: 'feat', id: null, uuid: null, name: 'Synthetic' }, ownership: { mode: 'source-item' }, presentation: { section: 'attack-options', control: 'toggle', label: 'Synthetic' }, requirements, economy: { actionType: null }, execution: { kind: 'attack-option', handler: null }, effects: [], tags: [] };
-  }
   const aim = { type: 'context', key: 'aim', value: true };
   const charge = { type: 'context', key: 'charge', value: true };
 
@@ -372,16 +433,176 @@ ok('17: Blocker 4 fail-closed semantics -- an unresolvable ("unknown") attack ty
   }
 
   // (f) nested all/any/not: any(aim, charge) AND NOT(weaponGroup heavy).
+  // weaponGroup is a STRUCTURAL predicate type -- a not(weaponGroup) leaf
+  // (an excludesWeaponGroups-shaped gate) is therefore structural too,
+  // matching CombatOptionResolver's own unconditional excludesWeaponGroups
+  // check. Correction #3 (Blocker 2) makes ANY unmet structural leaf
+  // dominate to 'hidden' regardless of what else is also unmet -- see
+  // section 19 -- so a heavy weapon here (genuinely, structurally
+  // excluded) must hide the option even though Aim/Charge (non-structural,
+  // player-actionable) are also unmet in this same case.
   {
     const def = syntheticDefinition({ all: [{ any: [aim, charge] }, { not: { type: 'weaponGroup', value: ['heavy'] } }] });
     const metCase = ActionAvailabilityEngine.evaluate(def, { aim: true, weapon: { name: 'Vibro Axe', system: { weaponCategory: 'simple' } } });
     assert.equal(metCase.state, 'available', 'nested all/any/not: Aim satisfied, weapon is not heavy -> available');
 
     const unmetCase = ActionAvailabilityEngine.evaluate(def, { aim: false, charge: false, weapon: { name: 'Heavy Repeater', system: { weaponCategory: 'heavy' } } });
-    assert.equal(unmetCase.state, 'disabled', 'nested all/any/not: neither Aim nor Charge, AND weapon is heavy -> disabled, both branches recorded');
-    assert.equal(unmetCase.requirements.length, 3, 'the any[] contributes 2 leaves (aim, charge) plus the not(weaponGroup) contributes 1 -- all three recorded for a nested tree');
+    assert.equal(unmetCase.state, 'hidden', 'nested all/any/not: the weapon is structurally excluded (heavy) -- hidden dominates even though Aim/Charge are also unmet');
+    assert.equal(unmetCase.requirements.length, 3, 'the any[] contributes 2 leaves (aim, charge) plus the not(weaponGroup) contributes 1 -- all three recorded for a nested tree, even though the overall state is hidden');
   }
 }
 ok('18: Blocker 4 boolean-tree provenance -- all[]/any[] evaluate and record every branch (never short-circuited away from the result), not-nodes produce a truthful non-null reason on failure, and nested all/any/not compositions record every leaf correctly');
+
+// ─── 19 — Blocker 2: a structural failure dominates to 'hidden' even when mixed with unsupported/external-workflow ──
+// Math Integrity Freeze, Attack Bonus round 8 correction #3 (Blocker 2):
+// this used to only hide an option when EVERY unmet requirement happened
+// to be structural -- a structurally-impossible option (wrong weapon/
+// attack-type) mixed with a second, non-structural unmet gate surfaced as
+// merely 'disabled' (or even 'external-workflow'), contradicting the live
+// resolver's unconditional attackType/weapon-group exclusion. Real shipped
+// examples: Mighty Swing (requiresAttackType:'melee', requiresSwiftActions:
+// 2) and Improved Disarm (requiresAttackType:'melee', requiresManeuver:
+// 'disarm') both reproduce this exact mixed-failure shape.
+
+{
+  // Mighty Swing-shaped: structural (attackType) + unsupported (swift
+  // actions), evaluated against a ranged weapon.
+  const mightySwingShaped = syntheticDefinition({ all: [
+    { type: 'attackType', value: 'melee', sourceField: 'requiresAttackType' },
+    { type: 'unsupported', sourceField: 'requiresSwiftActions' }
+  ] });
+  const result = ActionAvailabilityEngine.evaluate(mightySwingShaped, { attackType: 'ranged', weapon: rangedWeapon() });
+  assert.equal(result.state, 'hidden', 'Mighty Swing-shaped (melee-only + unsupported swift-action gate) on a ranged weapon must be hidden -- the weapon mismatch alone makes it structurally impossible here, regardless of the separate unsupported gate');
+  assert.equal(result.reason, null);
+}
+ok('19a: a structural failure (wrong attack type) mixed with an unsupported failure still resolves to hidden, matching the Mighty Swing (requiresAttackType:melee + requiresSwiftActions) real record shape');
+
+{
+  // Improved Disarm-shaped: structural (attackType) + external-workflow
+  // (maneuver), evaluated against a ranged weapon.
+  const improvedDisarmShaped = syntheticDefinition({ all: [
+    { type: 'attackType', value: 'melee', sourceField: 'requiresAttackType' },
+    { type: 'externalWorkflow', sourceField: 'requiresManeuver' }
+  ] });
+  const result = ActionAvailabilityEngine.evaluate(improvedDisarmShaped, { attackType: 'ranged', weapon: rangedWeapon() });
+  assert.equal(result.state, 'hidden', 'Improved Disarm-shaped (melee-only + maneuver gate) on a ranged weapon must be hidden -- the weapon mismatch alone makes it structurally impossible here, regardless of the separate external-workflow gate');
+  assert.equal(result.reason, null);
+}
+ok('19b: a structural failure (wrong attack type) mixed with an external-workflow failure still resolves to hidden, matching the Improved Disarm (requiresAttackType:melee + requiresManeuver) real record shape');
+
+{
+  // Sanity: the SAME two definitions on a melee weapon are no longer
+  // structurally blocked, and correctly fall through to
+  // unsupported/external-workflow respectively.
+  const mightySwingShaped = syntheticDefinition({ all: [
+    { type: 'attackType', value: 'melee', sourceField: 'requiresAttackType' },
+    { type: 'unsupported', sourceField: 'requiresSwiftActions' }
+  ] });
+  const onMelee = ActionAvailabilityEngine.evaluate(mightySwingShaped, { attackType: 'melee', weapon: meleeWeapon() });
+  assert.equal(onMelee.state, 'unsupported', 'on a melee weapon, Mighty Swing-shaped is no longer structurally blocked -- the remaining unsupported (swift-action) gate now determines the state');
+}
+ok('19c: with the structural gate satisfied, the same definition correctly falls through to the unsupported state, proving the precedence fix does not just permanently hide the option');
+
+// ─── 20 — Blocker 3: an unknown predicate under `not` must never resolve available ──
+// The reviewer's exact regression case: negating an unrecognized
+// predicate type used to flip "unknown = unmet(false)" into
+// "not(unmet) = met(true)" -- permission by default, exactly backwards
+// from fail-closed. An unknown predicate must be unmet whether it
+// appears positively OR negated.
+
+{
+  const def = syntheticDefinition({ all: [{ not: { type: 'futureUnknownPredicate' } }] });
+  const result = ActionAvailabilityEngine.evaluate(def, {});
+  assert.notEqual(result.state, 'available', 'an unknown predicate type negated by `not` must never resolve the option as available');
+  assert.equal(result.requirements[0].met, false, 'the synthesized not-leaf must report unmet for an unknown inner predicate type');
+}
+ok('20: Blocker 3 fail-closed under negation -- not:{type:\'futureUnknownPredicate\'} never resolves available, closing the exact fail-open gap an independent review found (unknown treated as false, then negated true)');
+
+// ─── 21 — Blocker 4: target flat-footed/denied-Dex alias parity with the live resolver ──
+// The engine used to reimplement these two checks inline and had
+// silently dropped two of CombatOptionResolver's own context aliases
+// (flatFootedTarget for flat-footed, deniedDexBonus for denied-Dex).
+// Both are now delegated to the same shared, extracted functions the
+// live resolver itself calls -- this proves the previously-dropped
+// aliases are honored again.
+
+{
+  const flatFootedDef = syntheticDefinition({ all: [{ type: 'targetFlatFooted', sourceField: 'requiresTargetFlatFooted' }] });
+  const target = organicTargetActor();
+  const result = ActionAvailabilityEngine.evaluate(flatFootedDef, { attackType: 'melee', weapon: meleeWeapon(), target, flatFootedTarget: true });
+  assert.equal(result.state, 'available', 'the flatFootedTarget context alias (dropped by the prior inline reimplementation) must be honored, matching CombatOptionResolver.optionAllowedForWeapon()');
+}
+ok('21a: requiresTargetFlatFooted honors the context.flatFootedTarget alias, matching the live resolver exactly');
+
+{
+  const deniedDexDef = syntheticDefinition({ all: [{ type: 'targetDeniedDex', sourceField: 'requiresTargetDeniedDexBonus' }] });
+  const target = organicTargetActor();
+  const result = ActionAvailabilityEngine.evaluate(deniedDexDef, { attackType: 'melee', weapon: meleeWeapon(), target, deniedDexBonus: true });
+  assert.equal(result.state, 'available', 'the deniedDexBonus context alias (dropped by the prior inline reimplementation) must be honored, matching CombatOptionResolver.optionAllowedForWeapon()');
+}
+ok('21b: requiresTargetDeniedDexBonus honors the context.deniedDexBonus alias, matching the live resolver exactly');
+
+// ─── 22 — Blocker 4: not(any(...)) does not short-circuit and merges inner provenance ──
+// This is the exact shape excludesOptions normalizes into (see
+// action-definition-normalizer.js#buildRequirements). The prior
+// implementation used Array#some() directly on the not(any(...)) branch,
+// which short-circuits after the first successful child, and discarded
+// the inner evaluateNode() calls' leaves entirely instead of merging
+// them into the result's provenance.
+
+{
+  const excludesOptionsShaped = syntheticDefinition({ all: [
+    { not: { any: [
+      { type: 'selectedOption', value: 'optionA' },
+      { type: 'selectedOption', value: 'optionB' },
+      { type: 'selectedOption', value: 'optionC' }
+    ] }, sourceField: 'excludesOptions' }
+  ] });
+
+  // All three excluded options are currently unselected: not(any(false,false,false)) = not(false) = true -> available.
+  // Every inner branch must still be recorded (3 leaves) plus the not-summary leaf (4 total), proving no short-circuit.
+  const noneSelected = ActionAvailabilityEngine.evaluate(excludesOptionsShaped, { selectedOptions: {} });
+  assert.equal(noneSelected.state, 'available');
+  assert.equal(noneSelected.requirements.length, 4, 'not(any(A,B,C)) must record all 3 inner branch leaves plus the not-summary leaf, never short-circuited away');
+
+  // The FIRST excluded option is selected -- if evaluation short-circuited
+  // (Array#some() stopping after the first true), B and C's leaves would
+  // never be evaluated/recorded at all.
+  const firstSelected = ActionAvailabilityEngine.evaluate(excludesOptionsShaped, { selectedOptions: { optionA: true } });
+  assert.equal(firstSelected.state, 'disabled', 'optionA is selected -> the exclusion holds -> the option is blocked');
+  assert.equal(firstSelected.requirements.length, 4, 'even though optionA alone determines the any[] result, optionB and optionC\'s leaves must still be recorded -- proving evaluation does not short-circuit');
+  assert.ok(firstSelected.requirements[3].reason, 'the not-summary leaf must carry a real reason when the exclusion blocks the option');
+}
+ok('22: not(any(...)) (the exact shape excludesOptions normalizes into) evaluates every branch without short-circuiting and merges every inner leaf into the result\'s provenance, not just the not-summary leaf');
+
+// ─── 23 — Issue 5: value-level reconciliation catches a corrupted requirement value ──
+// Math Integrity Freeze, Attack Bonus round 8 correction #3 (Issue 5):
+// correction #2's guard only proved a sourceField NAME appeared
+// somewhere in the tree -- a leaf tagged the right field name but
+// carrying a WRONG/truncated value (a translation bug, or anything
+// mutating the definition after normalization) would still pass. This
+// proves the guard now recomputes and compares the actual VALUE too.
+
+{
+  const rule = { type: 'ATTACK_OPTION', option: 'test-value-reconciliation', control: 'toggle', requiresWeaponGroups: ['rifles', 'heavy'] };
+  const sourceItem = { id: 'feat-fake-value', name: 'Fake Value Feat', type: 'feat' };
+  const definition = normalizeAttackOptionRule(sourceItem, rule);
+  assert.doesNotThrow(() => validateAttackOptionNormalization(rule, definition), 'sanity: the genuine, uncorrupted normalization must pass');
+
+  // Corrupt the already-normalized definition's requirement value in
+  // place, exactly as the independent review specified -- simulating
+  // either a translation bug or a later mutation, not a fresh
+  // normalization run.
+  const corrupted = JSON.parse(JSON.stringify(definition));
+  const node = corrupted.requirements.all.find(n => n.sourceField === 'requiresWeaponGroups');
+  node.value = ['rifles']; // silently dropped 'heavy'
+
+  assert.throws(
+    () => validateAttackOptionNormalization(rule, corrupted),
+    /VALUE does not match/,
+    'a requirement leaf whose value was corrupted after normalization must be caught -- field-NAME coverage alone is not sufficient proof of lossless translation'
+  );
+}
+ok('23: Issue 5 value-level reconciliation -- corrupting a normalized requirement\'s value (while keeping its sourceField name intact) is caught by validateAttackOptionNormalization(), proving the guard checks actual content, not just field-name presence');
 
 console.log('action-authority-groundwork.test.mjs: all assertions passed');

@@ -1,8 +1,8 @@
 # Action Authority Normalization Audit Report
 
-Generated: 2026-09-22T23:08:23.051Z
+Generated: 2026-09-22T23:35:39.090Z
 
-Scope: every real `type: 'ATTACK_OPTION'` record in `packs/feats.db` and `packs/talents.db`, run through `normalizeAttackOptionRule()` + `validateAttackOptionNormalization()` (the lossless-ingestion guard). This proves the CURRENT full dataset normalizes without a single silently-dropped requirement -- it is an audit, not a claim that every normalized definition is wired into a live consumer (none are, in this groundwork round).
+Scope: every real `type: 'ATTACK_OPTION'` record in `packs/feats.db` and `packs/talents.db`, run through `normalizeAttackOptionRule()` + `validateAttackOptionNormalization()` (the lossless-ingestion guard, including round 8 correction #3's value-level reconciliation). This proves the CURRENT full dataset normalizes without a single silently-dropped or silently-altered requirement -- it is an audit, not a claim that every normalized definition is wired into a live consumer (none are, in this groundwork round).
 
 ## Summary
 

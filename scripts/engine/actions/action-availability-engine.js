@@ -28,7 +28,8 @@ import {
   normalizeKey, getAttackType, weaponText, weaponDamageText, weaponMatchesGroup,
   isUnarmedWeapon, isVehicleWeapon, isAreaAttackContext, textMatchesAny,
   targetText, targetHasOwnedItem, getRangeBand, normalizeRangeBand,
-  weaponSupportsAutofire, actorHasFeatSelectedChoiceMatchingWeapon
+  weaponSupportsAutofire, actorHasFeatSelectedChoiceMatchingWeapon,
+  isTargetFlatFooted, isTargetDeniedDexBonus
 } from '/systems/foundryvtt-swse/scripts/engine/combat/weapon-target-gate-classifiers.js';
 
 function resolveTargetActor(context) {
@@ -169,17 +170,23 @@ const PREDICATE_EVALUATORS = {
     const met = textMatchesAny(targetText({ ...context, target }), predicate.value);
     return { met, reason: met ? null : "Target does not meet this option's requirement" };
   },
+  // Math Integrity Freeze, Attack Bonus round 8 correction #3 (Blocker 4):
+  // these used to reimplement the flat-footed/denied-Dex checks inline,
+  // and had silently dropped two of CombatOptionResolver's own aliases
+  // (flatFootedTarget, deniedDexBonus) in the process -- exactly the
+  // drift-risk correction #2 was supposed to eliminate but didn't finish.
+  // Now delegates to the same shared, extracted functions the live
+  // resolver itself calls.
   targetFlatFooted(_predicate, context) {
     const target = resolveTargetActor(context);
     if (!target) return { met: false, reason: 'Requires a target' };
-    const met = context.targetFlatFooted === true || target?.system?.derived?.isFlatFooted === true;
+    const met = isTargetFlatFooted({ ...context, target });
     return { met, reason: met ? null : "Target does not meet this option's requirement" };
   },
   targetDeniedDex(_predicate, context) {
     const target = resolveTargetActor(context);
     if (!target) return { met: false, reason: 'Requires a target' };
-    const met = context.targetDeniedDexBonus === true || context.targetFlatFooted === true
-      || target?.system?.derived?.deniedDexBonus === true || target?.system?.derived?.isFlatFooted === true;
+    const met = isTargetDeniedDexBonus({ ...context, target });
     return { met, reason: met ? null : "Target does not meet this option's requirement" };
   },
   selectedOption(predicate, context) {
@@ -227,26 +234,43 @@ function evaluateNode(node, context, leaves) {
   }
   if (node.not) {
     const sub = node.not;
+    // Math Integrity Freeze, Attack Bonus round 8 correction #3 (Blocker 3,
+    // fail-closed under negation): an UNKNOWN predicate must never let a
+    // `not` wrapper report satisfied. Treating "unknown" as ordinary
+    // `false` and then negating it (met = !false = true) is exactly the
+    // fail-OPEN bug this whole freeze exists to prevent -- it must instead
+    // short-circuit to unmet here, bypassing the negation entirely, so an
+    // unknown predicate is unmet whether it appears positively or negated.
+    if (sub.type && !PREDICATE_EVALUATORS[sub.type]) {
+      console.warn(`[ActionAvailabilityEngine] unknown requirement predicate type "${sub.type}" inside not -- failing closed (not met)`);
+      leaves.push({ type: `not(${sub.type})`, key: null, met: false, reason: `Unknown requirement "${sub.type}"`, structural: false, sourceField: node.sourceField });
+      return false;
+    }
     let innerMet;
     let excludeReason;
     if (sub.type) {
-      const evaluator = PREDICATE_EVALUATORS[sub.type];
-      if (!evaluator) {
-        console.warn(`[ActionAvailabilityEngine] unknown requirement predicate type "${sub.type}" inside not -- failing closed (not met)`);
-        innerMet = false;
-        excludeReason = `Unknown requirement "${sub.type}"`;
-      } else {
-        const result = evaluator(sub, context);
-        innerMet = result.met;
-        excludeReason = EXCLUDE_REASON_BY_TYPE[sub.type] ?? result.reason ?? 'Excluded by current state';
-      }
-    } else if (Array.isArray(sub.any)) {
-      const innerLeaves = [];
-      innerMet = sub.any.some(child => evaluateNode(child, context, innerLeaves));
-      excludeReason = 'Conflicts with a currently selected option';
+      const result = PREDICATE_EVALUATORS[sub.type](sub, context);
+      innerMet = result.met;
+      excludeReason = EXCLUDE_REASON_BY_TYPE[sub.type] ?? result.reason ?? 'Excluded by current state';
     } else {
-      innerMet = evaluateNode(sub, context, []);
-      excludeReason = 'Excluded by current state';
+      // Math Integrity Freeze, Attack Bonus round 8 correction #3 (Blocker
+      // 4, not(any(...)) provenance): the composite (any/all/nested-not)
+      // case used to evaluate into a throwaway leaves array, discarding
+      // every inner leaf's provenance, and used Array#some() directly on
+      // the sub-node list for the `any` case specifically, which
+      // short-circuits (stops evaluating once one child succeeds) --
+      // losing the remaining children's provenance the "never
+      // short-circuits" contract promises. evaluateNode() itself already
+      // fully evaluates every all/any branch via .map() before reducing,
+      // so delegating the whole sub-tree to one evaluateNode() call (any
+      // shape: any/all/nested not) gets that non-short-circuiting
+      // evaluation for free; the only fix needed here is merging its
+      // collected leaves back into this node's own leaves array instead
+      // of discarding them.
+      const innerLeaves = [];
+      innerMet = evaluateNode(sub, context, innerLeaves);
+      leaves.push(...innerLeaves);
+      excludeReason = Array.isArray(sub.any) ? 'Conflicts with a currently selected option' : 'Excluded by current state';
     }
     const met = !innerMet;
     const structural = Boolean(sub.type && STRUCTURAL_PREDICATE_TYPES.has(sub.type));
@@ -288,28 +312,37 @@ export class ActionAvailabilityEngine {
       const active = definition.presentation.control === 'passive';
       return { definition, state: active ? 'passive' : 'available', active, reason: null, requirements: leaves };
     }
+    // Math Integrity Freeze, Attack Bonus round 8 correction #3 (Blocker
+    // 2, state precedence): a structural gate is a fact about the
+    // weapon/attack-type itself -- nothing the player can change in this
+    // dialog makes it pass. CombatOptionResolver.optionAllowedForWeapon()
+    // checks these UNCONDITIONALLY (an early `return false`, never
+    // reached alongside any other gate's evaluation), so an option that
+    // is wrong for the current weapon/attack-type is never shown at all,
+    // regardless of what ELSE is also unmet. This used to only hide the
+    // option when EVERY unmet requirement happened to be structural,
+    // which surfaced a structurally-impossible option as merely
+    // 'disabled' (or even 'external-workflow') whenever a second,
+    // non-structural gate was also unmet -- e.g. Mighty Swing
+    // (requiresAttackType: melee, requiresSwiftActions: 2) on a ranged
+    // weapon reported 'disabled' instead of 'hidden', contradicting both
+    // the live resolver and this file's own documented state model. ANY
+    // unmet structural gate alone is now sufficient to hide the option,
+    // exactly matching the certified authority's own unconditional gate.
+    if (unmet.some(l => l.structural)) {
+      return { definition, state: 'hidden', active: false, reason: null, requirements: leaves };
+    }
     if (unmet.some(l => l.externalWorkflow)) {
       return { definition, state: 'external-workflow', active: false, reason: 'Not available from this dialog', requirements: leaves };
     }
-    if (unmet.some(l => l.unsupported) && unmet.every(l => l.unsupported || l.met)) {
+    if (unmet.length && unmet.every(l => l.unsupported)) {
       return { definition, state: 'unsupported', active: false, reason: 'Not yet supported by this dialog', requirements: leaves };
-    }
-    // If EVERY unmet requirement is structural (a fact about the weapon
-    // itself, not something a player can change in this dialog), the
-    // option can never apply here at all and must not even be shown,
-    // matching CombatOptionResolver.getAvailableAttackOptions()'s
-    // unconditional exclusion for these same gates. A mix of structural
-    // AND toggleable/target unmet requirements still surfaces as
-    // 'disabled' -- the player CAN act on the non-structural ones, even
-    // if the structural one alone would also block it.
-    if (unmet.every(l => l.structural)) {
-      return { definition, state: 'hidden', active: false, reason: null, requirements: leaves };
     }
     return {
       definition,
       state: 'disabled',
       active: false,
-      reason: unmet.filter(l => !l.structural).map(l => l.reason).filter(Boolean).join('; ') || 'Not currently available',
+      reason: unmet.map(l => l.reason).filter(Boolean).join('; ') || 'Not currently available',
       requirements: leaves
     };
   }

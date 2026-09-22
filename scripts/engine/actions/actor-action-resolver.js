@@ -18,21 +18,41 @@
  * actor mutation, computed fresh from the actor's current items every
  * call.
  *
+ * Math Integrity Freeze, Attack Bonus round 8 correction #3 (Blocker 1):
+ * correction #2 stopped short: normalizeAttackOptionRule() still embedded
+ * the granting item's own provenance (`source`, `_legacyRule`) directly
+ * INSIDE the definition object, so "one canonical definition per domain:id"
+ * was only true because this resolver silently kept whichever item's
+ * definition it normalized FIRST and discarded the rest -- order-dependent
+ * identity, exactly the bug the split was meant to remove. The normalizer
+ * no longer embeds any item-specific data in the definition (see its own
+ * doc comment), so two grants of the same domain:id action now produce
+ * byte-identical definitions when they're genuinely the same configuration,
+ * and a REAL divergence (e.g. two sources disagreeing on a slider's `max`)
+ * is now a loud, explicit error here rather than a silent pick -- this
+ * groundwork does not yet support per-grant configuration divergence for
+ * the same logical action id; a future round would need an explicit
+ * grant-normalized/ActionInstance layer to represent that. The
+ * grant-specific raw rule is preserved on each ActionEntitlement's
+ * `configuration.rule` instead of being folded into (or discarded from)
+ * the shared definition.
+ *
  * Math Integrity Freeze, Attack Bonus round 8 correction #1 addendum
  * (groundwork only). Does not evaluate requirements, does not mutate the
  * actor, does not calculate roll math.
  */
 import { CombatOptionResolver, extractAttackOptionRules } from '/systems/foundryvtt-swse/scripts/engine/combat/combat-option-resolver.js';
 import { normalizeAttackOptionRule } from '/systems/foundryvtt-swse/scripts/engine/actions/action-definition-normalizer.js';
+import { definitionsContentEqual } from '/systems/foundryvtt-swse/scripts/engine/actions/action-registry.js';
 
 function actorItems(actor) {
   try { return Array.from(actor?.items ?? []); } catch { return []; }
 }
 
 /** @returns {import('./action-definition.js').ActionEntitlement} */
-function buildEntitlement(actor, definition, sourceItem) {
+function buildEntitlement(actor, actionKey, sourceItem, rule) {
   return {
-    actionKey: { domain: definition.domain, id: definition.id },
+    actionKey,
     actorId: actor?.id ?? null,
     source: {
       type: String(sourceItem?.type ?? 'item').toLowerCase(),
@@ -40,7 +60,7 @@ function buildEntitlement(actor, definition, sourceItem) {
       uuid: sourceItem?.uuid ?? null,
       name: sourceItem?.name ?? null
     },
-    configuration: {}
+    configuration: { rule }
   };
 }
 
@@ -66,13 +86,14 @@ export class ActorActionResolver {
       for (const rule of extractAttackOptionRules(item)) {
         const definition = normalizeAttackOptionRule(item, rule);
         const key = `${definition.domain}:${definition.id}`;
-        let canonical = definitionsByKey.get(key);
-        if (!canonical) {
-          canonical = definition;
-          definitionsByKey.set(key, canonical);
-          registry?.register(canonical);
+        const existing = definitionsByKey.get(key);
+        if (!existing) {
+          definitionsByKey.set(key, definition);
+          registry?.register(definition);
+        } else if (!definitionsContentEqual(existing, definition)) {
+          throw new Error(`ActorActionResolver.getOwnedActions(): conflicting ActionDefinition content for "${key}" -- granted by multiple sources with different rule configuration (e.g. a differing slider max/threshold); this groundwork does not yet support per-grant configuration divergence for the same logical action id`);
         }
-        entitlements.push(buildEntitlement(actor, canonical, item));
+        entitlements.push(buildEntitlement(actor, { domain: definition.domain, id: definition.id }, item, rule));
       }
     }
     return { definitions: Array.from(definitionsByKey.values()), entitlements };

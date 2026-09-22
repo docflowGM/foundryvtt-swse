@@ -1,9 +1,9 @@
 import assert from 'node:assert/strict';
-import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { registerFoundryPathLoader } from './helpers/foundry-shim/register.mjs';
 import { installFoundryShimGlobals } from './helpers/foundry-shim/globals.mjs';
+import { scanAttackOptionNormalization } from '../tools/action-authority-normalization-scan.mjs';
 
 // Math Integrity Freeze, Attack Bonus round 8 correction #2 (Blocker 1,
 // required audit): a table-driven proof across EVERY current
@@ -15,12 +15,18 @@ import { installFoundryShimGlobals } from './helpers/foundry-shim/globals.mjs';
 //   1. it normalizes to schemaVersion 1;
 //   2. every requires*/excludes* gate field on it is recognized in
 //      ATTACK_OPTION_GATE_FIELD_DISPOSITION;
-//   3. every recognized gate field produced a requirement leaf
+//   3. every recognized gate field produced a requirement leaf with a
+//      VALUE that reconciles against the raw rule's own value
 //      (validateAttackOptionNormalization() does not throw) -- i.e.
-//      nothing was silently dropped.
-// Also generates docs/audits/generated/action-authority-normalization-audit-report.{md,json},
-// a coverage report of normalized/external-workflow/unsupported gate
-// counts across the real dataset.
+//      nothing was silently dropped OR silently altered.
+//
+// Math Integrity Freeze, Attack Bonus round 8 correction #3 (test
+// hygiene): this test only computes and asserts. It does NOT write the
+// generated report files -- an earlier version did, which meant simply
+// running the test suite rewrote tracked, timestamped files as a side
+// effect. Run `node tools/report-action-authority-normalization-audit.mjs`
+// deliberately to regenerate
+// docs/audits/generated/action-authority-normalization-audit-report.{md,json}.
 
 const REPO_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 
@@ -28,63 +34,38 @@ registerFoundryPathLoader();
 installFoundryShimGlobals();
 
 const { extractAttackOptionRules } = await import('/systems/foundryvtt-swse/scripts/engine/combat/combat-option-resolver.js');
-const { normalizeAttackOptionRule, getAttackOptionGateFields } = await import('/systems/foundryvtt-swse/scripts/engine/actions/action-definition-normalizer.js');
+const { normalizeAttackOptionRule, getAttackOptionGateFields, validateAttackOptionNormalization } = await import('/systems/foundryvtt-swse/scripts/engine/actions/action-definition-normalizer.js');
 const { ACTION_DEFINITION_SCHEMA_VERSION, ATTACK_OPTION_GATE_FIELD_DISPOSITION } = await import('/systems/foundryvtt-swse/scripts/engine/actions/action-definition.js');
-
-function loadDb(relPath) {
-  const raw = fs.readFileSync(path.join(REPO_ROOT, relPath), 'utf8');
-  return raw.split('\n').filter(Boolean).map(line => JSON.parse(line));
-}
-
-function scanRecords(relPath, itemType) {
-  const records = loadDb(relPath);
-  const out = [];
-  for (const record of records) {
-    for (const rule of extractAttackOptionRules(record)) {
-      out.push({ itemType, itemName: record.name, sourceItem: record, rule });
-    }
-  }
-  return out;
-}
-
-const feats = scanRecords('packs/feats.db', 'feat');
-const talents = scanRecords('packs/talents.db', 'talent');
-const all = [...feats, ...talents];
 
 let step = 0;
 function ok(label) { step += 1; console.log(`  [${step}] ${label} OK`); }
 
+const { all, feats, talents, failures, gateCounts, perFieldCounts } = scanAttackOptionNormalization({
+  repoRoot: REPO_ROOT,
+  extractAttackOptionRules,
+  normalizeAttackOptionRule,
+  getAttackOptionGateFields,
+  gateFieldDisposition: ATTACK_OPTION_GATE_FIELD_DISPOSITION
+});
+
 assert.equal(all.length, 136, `expected exactly 136 real ATTACK_OPTION records (88 feats + 48 talents) as of this audit; found ${all.length} -- if this legitimately changed (new content shipped), update this expectation deliberately rather than silently loosening it`);
 ok(`extractor discovers exactly 136 real ATTACK_OPTION records (${feats.length} feats, ${talents.length} talents)`);
-
-const gateCounts = { normalized: 0, 'external-workflow': 0, unsupported: 0 };
-const perFieldCounts = {};
-const failures = [];
-
-for (const { itemType, itemName, sourceItem, rule } of all) {
-  try {
-    const definition = normalizeAttackOptionRule(sourceItem, rule);
-    assert.equal(definition.schemaVersion, ACTION_DEFINITION_SCHEMA_VERSION, `${itemName}: must normalize to the current schema version`);
-    // normalizeAttackOptionRule() already calls validateAttackOptionNormalization()
-    // internally and throws on any unrecognized/uncovered gate field --
-    // reaching this line without a throw is itself part of the proof.
-    // Tally gate-field dispositions for the coverage report.
-    for (const field of getAttackOptionGateFields(rule)) {
-      const disposition = ATTACK_OPTION_GATE_FIELD_DISPOSITION[field];
-      gateCounts[disposition] = (gateCounts[disposition] ?? 0) + 1;
-      perFieldCounts[field] = (perFieldCounts[field] ?? 0) + 1;
-    }
-  } catch (err) {
-    failures.push({ itemType, itemName, option: rule.option ?? rule.id ?? rule.key ?? rule.name, error: err.message });
-  }
-}
 
 if (failures.length) {
   console.error('Normalization audit failures:');
   for (const f of failures) console.error(`  [${f.itemType}] ${f.itemName} (${f.option}): ${f.error}`);
 }
 assert.equal(failures.length, 0, `${failures.length} of 136 real ATTACK_OPTION record(s) failed lossless normalization -- see logged detail above; zero silent drops is required, not optional`);
-ok('all 136 real records normalize to schemaVersion 1 with zero validateAttackOptionNormalization() failures -- every requires*/excludes* gate field present is either translated into a requirement predicate or explicitly marked external-workflow/unsupported, none silently dropped');
+ok('all 136 real records normalize to schemaVersion 1 with zero validateAttackOptionNormalization() failures -- every requires*/excludes* gate field present is either translated into a requirement predicate (with a value that reconciles against the raw rule) or explicitly marked external-workflow/unsupported, none silently dropped or silently altered');
+
+// Cross-check: every record also independently confirms schemaVersion,
+// since scanAttackOptionNormalization() only proves normalization didn't
+// throw, not the shape of what it produced.
+for (const { sourceItem, rule } of all) {
+  const definition = normalizeAttackOptionRule(sourceItem, rule);
+  assert.equal(definition.schemaVersion, ACTION_DEFINITION_SCHEMA_VERSION);
+}
+ok('every normalized definition carries the current schema version');
 
 // Every field disposition actually observed in the real dataset must be
 // one of the three recognized categories -- defensive re-check beyond
@@ -107,38 +88,22 @@ ok('every requires*/excludes* gate field actually observed in the real 136-recor
 }
 ok('mutation test: an unrecognized future gate field (requiresMountedCombat) is caught by validateAttackOptionNormalization() and fails loudly, proving the guard actually guards');
 
-// ─── generate the coverage report ──────────────────────────────────────────
+// ─── mutation test: a corrupted VALUE on an otherwise-correctly-named leaf must be caught (round 8 correction #3, Issue 5) ──
 
-const generated = new Date().toISOString();
-const lines = [];
-lines.push('# Action Authority Normalization Audit Report');
-lines.push('');
-lines.push(`Generated: ${generated}`);
-lines.push('');
-lines.push('Scope: every real `type: \'ATTACK_OPTION\'` record in `packs/feats.db` and `packs/talents.db`, run through `normalizeAttackOptionRule()` + `validateAttackOptionNormalization()` (the lossless-ingestion guard). This proves the CURRENT full dataset normalizes without a single silently-dropped requirement -- it is an audit, not a claim that every normalized definition is wired into a live consumer (none are, in this groundwork round).');
-lines.push('');
-lines.push('## Summary');
-lines.push('');
-lines.push(`- Total real ATTACK_OPTION records: ${all.length} (feats: ${feats.length}, talents: ${talents.length})`);
-lines.push(`- Records that failed normalization: ${failures.length} (must be 0)`);
-lines.push(`- Gate field occurrences classified NORMALIZED: ${gateCounts.normalized}`);
-lines.push(`- Gate field occurrences classified EXTERNAL-WORKFLOW: ${gateCounts['external-workflow']}`);
-lines.push(`- Gate field occurrences classified UNSUPPORTED: ${gateCounts.unsupported}`);
-lines.push('');
-lines.push('## Per-field occurrence counts');
-lines.push('');
-for (const [field, count] of Object.entries(perFieldCounts).sort((a, b) => b[1] - a[1])) {
-  lines.push(`- \`${field}\` (${ATTACK_OPTION_GATE_FIELD_DISPOSITION[field]}): ${count}`);
+{
+  const rule = { type: 'ATTACK_OPTION', option: 'test-value-mutation', control: 'toggle', requiresRangeBand: ['short', 'medium'] };
+  const sourceItem = { id: 'feat-fake-2', name: 'Fake Range Feat', type: 'feat' };
+  const definition = normalizeAttackOptionRule(sourceItem, rule);
+  const corrupted = JSON.parse(JSON.stringify(definition));
+  const node = corrupted.requirements.all.find(n => n.sourceField === 'requiresRangeBand');
+  node.value = ['long']; // silently swapped to a completely different band
+  assert.throws(
+    () => validateAttackOptionNormalization(rule, corrupted),
+    /VALUE does not match/,
+    'a requirement leaf whose value was corrupted after normalization (field name intact) must be caught -- field-name coverage alone is not lossless normalization'
+  );
 }
-lines.push('');
+ok('mutation test: a corrupted requirement VALUE (sourceField name intact) is caught by validateAttackOptionNormalization(), proving value-level reconciliation, not just field-name coverage');
 
-const outDir = path.join(REPO_ROOT, 'docs/audits/generated');
-fs.mkdirSync(outDir, { recursive: true });
-fs.writeFileSync(path.join(outDir, 'action-authority-normalization-audit-report.md'), lines.join('\n') + '\n');
-fs.writeFileSync(
-  path.join(outDir, 'action-authority-normalization-audit-report.json'),
-  JSON.stringify({ generated, total: all.length, feats: feats.length, talents: talents.length, failures: failures.length, gateCounts, perFieldCounts }, null, 2) + '\n'
-);
-ok(`normalization audit report written: ${all.length} records, ${gateCounts.normalized} normalized + ${gateCounts['external-workflow']} external-workflow + ${gateCounts.unsupported} unsupported gate-field occurrences, 0 silent drops`);
-
+console.log(`normalization audit: ${all.length} records, ${gateCounts.normalized} normalized + ${gateCounts['external-workflow']} external-workflow + ${gateCounts.unsupported} unsupported gate-field occurrences, 0 silent drops`);
 console.log('action-authority-groundwork-normalization-audit.test.mjs: all assertions passed');
