@@ -65,6 +65,84 @@ function forceItemExtraDamageFormula(actor, weapon) {
   return firstWeaponDamageDieFormula(weapon);
 }
 
+/**
+ * Math Integrity Freeze, Attack Bonus round (blocker fix): the single
+ * shared seam for "what is this attack's actual bonus, and its full
+ * contribution ledger" — domain routing (character/vehicle-gunner/
+ * abstract-crew), the baseline resolver call, and every invocation-only
+ * addition (Fighting Defensively, Grabbed/Grappled, custom modifier,
+ * situational bonus, multi/full-attack sequence penalty). rollAttack()
+ * below and the attack dialog's live preview
+ * (attack-dialog-combat-corrections-hotfix.js#syncAttackDialogBase) both
+ * call this SAME function so a displayed preview can never diverge from
+ * what actually gets rolled — no second, independently-maintained
+ * approximation of this composition may exist anywhere else. Pure/no side
+ * effects (no ammo spend, no action-economy cost, no roll) so it is safe
+ * to call from a dialog's live input/change handler on every keystroke.
+ *
+ * @returns {Promise<{ok:true, atkBonus:number, attackDomain:string, isVehicleAttack:boolean, attackBonusResolution:Object, attackComponentLedger:Array, sequencePenalty:number, fightingDefensivelyPenalty:number, grappleStatePenalty:number} | {ok:false, reason:string, domainResolution:Object, attackBonusResolution?:Object}>}
+ */
+export async function computeFinalAttackComposition(actor, weapon, rollOptions = {}) {
+  const domainResolution = resolveAttackDomain({
+    actor,
+    item: weapon,
+    operator: rollOptions.operator ?? null,
+    vehicle: rollOptions.vehicleActor ?? null,
+    sourceContext: { vehicleActor: rollOptions.vehicleActor ?? null, abstractCrewQuality: rollOptions.abstractCrewQuality ?? null }
+  });
+  for (const warning of domainResolution.warnings ?? []) {
+    console.warn(`[SWSE] Attack domain routing: ${warning}`);
+  }
+  if (!domainResolution.ok) {
+    return { ok: false, reason: domainResolution.reason, domainResolution };
+  }
+  const attackDomain = domainResolution.domain;
+  const isVehicleAttack = attackDomain !== 'character';
+  let attackBonusResolution;
+  if (attackDomain === 'vehicle-actor-gunner') {
+    const { gunnerActor, vehicleActor } = domainResolution.normalizedContext;
+    attackBonusResolution = await resolveVehicleAttackBonus(gunnerActor, vehicleActor, weapon, rollOptions);
+  } else if (attackDomain === 'vehicle-abstract-crew') {
+    const { vehicleActor, crewQuality } = domainResolution.normalizedContext;
+    attackBonusResolution = await resolveAbstractCrewAttackBonus(vehicleActor, weapon, crewQuality, rollOptions);
+  } else {
+    attackBonusResolution = resolveAttackBonus(actor, weapon, null, rollOptions);
+  }
+  if (isVehicleAttack) {
+    for (const warning of attackBonusResolution.warnings ?? []) {
+      console.warn(`[SWSE] Vehicle attack formula (${attackDomain}): ${warning}`);
+    }
+    if (attackBonusResolution.error) {
+      return { ok: false, reason: attackBonusResolution.error, domainResolution, attackBonusResolution };
+    }
+  }
+  const sequencePenalty = Number(rollOptions.sequencePenalty ?? 0);
+  const fightingDefensivelyPenalty = getFightingDefensivelyAttackPenalty(actor, rollOptions);
+  // SWSE RAW: -2 on attack rolls while Grabbed/Grappled, except attacks
+  // with natural or light weapons (Pinned is excluded -- its attacks are
+  // already prevented by Pin's own action legality, not merely penalized).
+  // See the Grapple domain section of
+  // docs/audits/v2-math-integrity-authority-ledger.md, addendum 8.
+  const grappleStatePenalty = GrappleStateEngine.getAttackPenalty(actor, weapon);
+  const atkBonus = attackBonusResolution.total + fightingDefensivelyPenalty + grappleStatePenalty + Number(rollOptions.customModifier || 0) + Number(rollOptions.situationalBonus || 0) + sequencePenalty;
+  // Component ledger: baseline (resolver) components plus invocation-only
+  // additions, clearly separated so a tooltip never claims an invocation-only
+  // modifier is part of the static weapon baseline. Vehicle attacks already
+  // arrive in full ledger shape from the vehicle resolvers; character
+  // attacks are adapted from the legacy {label: value} map.
+  const attackLedgerDomain = isVehicleAttack ? 'vehicle.attack' : 'combat.attack';
+  const attackComponentLedger = [
+    ...(isVehicleAttack ? attackBonusResolution.ledger : buildLedgerFromComponents(attackBonusResolution.components, 'combat.attack', 'baseline')),
+    buildInvocationLedgerEntry('fighting-defensively', 'Fighting Defensively', fightingDefensivelyPenalty, attackLedgerDomain),
+    buildInvocationLedgerEntry('grapple-state-penalty', 'Grabbed/Grappled', grappleStatePenalty, attackLedgerDomain),
+    buildInvocationLedgerEntry('custom-modifier', 'Custom Modifier', rollOptions.customModifier, attackLedgerDomain),
+    buildInvocationLedgerEntry('situational-bonus', 'Situational Bonus', rollOptions.situationalBonus, attackLedgerDomain),
+    buildInvocationLedgerEntry('sequence-penalty', 'Sequence Penalty', sequencePenalty, attackLedgerDomain)
+  ].filter(Boolean);
+
+  return { ok: true, atkBonus, attackDomain, isVehicleAttack, attackBonusResolution, attackComponentLedger, sequencePenalty, fightingDefensivelyPenalty, grappleStatePenalty, domainResolution };
+}
+
 function getFightingDefensivelyAttackPenalty(actor, options = {}) {
   const active = options?.fightingDefensively === true || hasFightingDefensivelyEffect(actor);
   if (!active) return 0;
@@ -265,7 +343,6 @@ export async function rollAttack(actor, weapon, options = {}) {
     return null;
   }
 
-  const sequencePenalty = Number(rollOptions.sequencePenalty ?? 0);
   // attack-domain-router.js decides which existing math authority this
   // attack belongs to (character / vehicle-actor-gunner / vehicle-abstract-
   // crew) from normalized actor/item/context — not from which UI button
@@ -273,69 +350,23 @@ export async function rollAttack(actor, weapon, options = {}) {
   // a vehicle actor through the character formula (the pre-Phase-3 defect)
   // just because it didn't go through crew-skill-router.js. The router only
   // selects an authority; the math still lives in combat-roll-math.js /
-  // vehicle-attack-math.js exactly as before.
-  const domainResolution = resolveAttackDomain({
-    actor,
-    item: weapon,
-    operator: rollOptions.operator ?? null,
-    vehicle: rollOptions.vehicleActor ?? null,
-    sourceContext: { vehicleActor: rollOptions.vehicleActor ?? null, abstractCrewQuality: rollOptions.abstractCrewQuality ?? null }
-  });
-  for (const warning of domainResolution.warnings ?? []) {
-    console.warn(`[SWSE] Attack domain routing: ${warning}`);
-  }
-  if (!domainResolution.ok) {
-    await actionOptionSpend?.rollback?.();
-    ui?.notifications?.error?.('Attack could not be resolved: no valid attack-domain context (' + domainResolution.reason + ').');
-    return null;
-  }
-  const attackDomain = domainResolution.domain;
-  const isVehicleAttack = attackDomain !== 'character';
-  let attackBonusResolution;
-  if (attackDomain === 'vehicle-actor-gunner') {
-    const { gunnerActor, vehicleActor } = domainResolution.normalizedContext;
-    attackBonusResolution = await resolveVehicleAttackBonus(gunnerActor, vehicleActor, weapon, rollOptions);
-  } else if (attackDomain === 'vehicle-abstract-crew') {
-    const { vehicleActor, crewQuality } = domainResolution.normalizedContext;
-    attackBonusResolution = await resolveAbstractCrewAttackBonus(vehicleActor, weapon, crewQuality, rollOptions);
-  } else {
-    attackBonusResolution = resolveAttackBonus(actor, weapon, null, rollOptions);
-  }
-  if (isVehicleAttack) {
-    for (const warning of attackBonusResolution.warnings ?? []) {
-      console.warn(`[SWSE] Vehicle attack formula (${attackDomain}): ${warning}`);
-    }
-    if (attackBonusResolution.error) {
+  // vehicle-attack-math.js exactly as before. computeFinalAttackComposition()
+  // is the single shared seam for this — see its own doc comment.
+  const composition = await computeFinalAttackComposition(actor, weapon, rollOptions);
+  if (!composition.ok) {
+    if (composition.attackBonusResolution?.error) {
       if (ammoSpend?.spent) await AmmoSystem.rollbackSpend(actor, weapon, ammoSpend);
       await actionOptionSpend?.rollback?.();
-      ui?.notifications?.error?.(attackBonusResolution.error === 'invalid-vehicle-actor'
+      ui?.notifications?.error?.(composition.reason === 'invalid-vehicle-actor'
         ? 'Vehicle attack could not be resolved: the vehicle actor is missing or invalid, so its Intelligence modifier cannot be sourced.'
         : 'Vehicle attack could not be resolved: no valid gunner/operator actor.');
       return null;
     }
+    await actionOptionSpend?.rollback?.();
+    ui?.notifications?.error?.('Attack could not be resolved: no valid attack-domain context (' + composition.reason + ').');
+    return null;
   }
-  const fightingDefensivelyPenalty = getFightingDefensivelyAttackPenalty(actor, rollOptions);
-  // SWSE RAW: -2 on attack rolls while Grabbed/Grappled, except attacks
-  // with natural or light weapons (Pinned is excluded -- its attacks are
-  // already prevented by Pin's own action legality, not merely penalized).
-  // See the Grapple domain section of
-  // docs/audits/v2-math-integrity-authority-ledger.md, addendum 8.
-  const grappleStatePenalty = GrappleStateEngine.getAttackPenalty(actor, weapon);
-  const atkBonus = attackBonusResolution.total + fightingDefensivelyPenalty + grappleStatePenalty + Number(rollOptions.customModifier || 0) + Number(rollOptions.situationalBonus || 0) + sequencePenalty;
-  // Component ledger: baseline (resolver) components plus invocation-only
-  // additions, clearly separated so a tooltip never claims an invocation-only
-  // modifier is part of the static weapon baseline. Vehicle attacks already
-  // arrive in full ledger shape from the vehicle resolvers; character
-  // attacks are adapted from the legacy {label: value} map.
-  const attackLedgerDomain = isVehicleAttack ? 'vehicle.attack' : 'combat.attack';
-  const attackComponentLedger = [
-    ...(isVehicleAttack ? attackBonusResolution.ledger : buildLedgerFromComponents(attackBonusResolution.components, 'combat.attack', 'baseline')),
-    buildInvocationLedgerEntry('fighting-defensively', 'Fighting Defensively', fightingDefensivelyPenalty, attackLedgerDomain),
-    buildInvocationLedgerEntry('grapple-state-penalty', 'Grabbed/Grappled', grappleStatePenalty, attackLedgerDomain),
-    buildInvocationLedgerEntry('custom-modifier', 'Custom Modifier', rollOptions.customModifier, attackLedgerDomain),
-    buildInvocationLedgerEntry('situational-bonus', 'Situational Bonus', rollOptions.situationalBonus, attackLedgerDomain),
-    buildInvocationLedgerEntry('sequence-penalty', 'Sequence Penalty', sequencePenalty, attackLedgerDomain)
-  ].filter(Boolean);
+  const { atkBonus, attackDomain, isVehicleAttack, attackBonusResolution, attackComponentLedger, sequencePenalty, domainResolution } = composition;
 
   const rollFormula = `1d20 + ${atkBonus}`;
   const roll = await RollEngine.safeRoll(rollFormula, actor?.getRollData?.() ?? {}, { actor, domain: 'combat.attack', context: { weaponId: weapon?.id ?? null } });

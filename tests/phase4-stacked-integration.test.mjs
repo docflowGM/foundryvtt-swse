@@ -24,19 +24,29 @@ const resolverFeat = await readFile(new URL('../scripts/engine/feats/meta-resour
 const bridge = await readFile(new URL('../scripts/ui/chat/chat-interaction-bridge.js', import.meta.url), 'utf8');
 
 const rollAttackBody = attacks.slice(attacks.indexOf('export async function rollAttack('), attacks.indexOf('export async function rollDamage('));
+// Attack Bonus round (blocker fix): domain-context selection, vehicle
+// resolver dispatch, and the atkBonus/ledger construction were extracted
+// verbatim out of rollAttack() into a shared computeFinalAttackComposition()
+// function — reused by both rollAttack() and the attack dialog's live
+// preview, so the two can never disagree (see phase3-vehicle-attack-
+// formula.test.mjs's compositionFnBody checks for the full rationale).
+// rollAttack() itself now only calls that function; the composition checks
+// below were moved to compositionFnBody accordingly.
+const compositionFnBody = attacks.slice(attacks.indexOf('export async function computeFinalAttackComposition'), attacks.indexOf('function getFightingDefensivelyAttackPenalty'));
 
 // 1. Vehicle attack context selection (Phase 4) feeds directly into
 // formula resolution (Phase 3/4) — the router's normalizedContext fields
 // are exactly what the two vehicle resolvers require as parameters.
 assert.match(domainRouter, /normalizedContext: \{ gunnerActor: operator \?\? actor, vehicleActor: contextVehicleActor, weapon: item \}/);
-assert.match(rollAttackBody, /resolveVehicleAttackBonus\(gunnerActor, vehicleActor, weapon, rollOptions\)/);
+assert.match(compositionFnBody, /resolveVehicleAttackBonus\(gunnerActor, vehicleActor, weapon, rollOptions\)/);
 assert.match(domainRouter, /normalizedContext: \{ vehicleActor: actor, weapon: item, crewQuality: abstractCrewQuality \}/);
-assert.match(rollAttackBody, /resolveAbstractCrewAttackBonus\(vehicleActor, weapon, crewQuality, rollOptions\)/);
+assert.match(compositionFnBody, /resolveAbstractCrewAttackBonus\(vehicleActor, weapon, crewQuality, rollOptions\)/);
 
 // 2. Authoritative formula resolution: both vehicle resolvers ultimately
 // feed the SAME atkBonus/rollFormula construction as the character path
 // (Phase 1's canonical seam), not a parallel roll-formula builder.
-assert.match(rollAttackBody, /const atkBonus = attackBonusResolution\.total \+ fightingDefensivelyPenalty/);
+assert.match(compositionFnBody, /const atkBonus = attackBonusResolution\.total \+ fightingDefensivelyPenalty/);
+assert.match(rollAttackBody, /const composition = await computeFinalAttackComposition\(actor, weapon, rollOptions\);/);
 assert.match(rollAttackBody, /const rollFormula = `1d20 \+ \$\{atkBonus\}`;/);
 
 // 3. Modifier resolution: vehicle-domain modifiers resolve through the

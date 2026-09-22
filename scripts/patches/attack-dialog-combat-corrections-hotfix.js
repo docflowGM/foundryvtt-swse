@@ -1,5 +1,4 @@
 import { CombatOptionResolver } from '/systems/foundryvtt-swse/scripts/engine/combat/combat-option-resolver.js';
-import { resolveAttackBonus } from '/systems/foundryvtt-swse/scripts/engine/combat/combat-roll-math.js';
 import {
   getWeaponBranch as canonicalGetWeaponBranch,
   defaultAttackAttributeForBranch as canonicalDefaultAttackAttributeForBranch
@@ -34,11 +33,6 @@ function compactKey(value = '') {
 
 function bool(value) {
   return value === true || value === 'true' || value === 'on' || value === 1 || value === '1';
-}
-
-function signNumber(value) {
-  const n = Number(value) || 0;
-  return `${n >= 0 ? '+' : ''}${n}`;
 }
 
 // Math Integrity Freeze, Batch 2B: branch inference delegated to the
@@ -104,7 +98,8 @@ function normalizeWeaponForCombat(weapon) {
 // duplicate estimator entirely and read the one certified authority
 // (SchemaAdapters.getBAB()) directly wherever this file previously called
 // its own resolveActorBab()/prepareActorBabForRollConfig() -- see
-// syncAttackDialogBase() and patchSWSERollEntrypoints() below.
+// patchSWSERollEntrypoints() below (roll-config.js's dialog preview no
+// longer needs a BAB bootstrap of any kind -- see that file instead).
 
 function optionId(option) {
   return compactKey(option?.id ?? option?.option ?? option?.key ?? option?.name ?? option?.label ?? '');
@@ -229,12 +224,17 @@ function clarifyCoverPanel(form) {
 function patchAimToggle(form) {
   const aim = form.querySelector('[name="aiming"]');
   if (!aim) return;
-  aim.name = 'aimIgnoresCover';
+  // Relabel only -- the checkbox keeps its "aiming" name. It used to be
+  // renamed to "aimIgnoresCover", which silently broke both the submit
+  // handler's data.get('aiming') and the live preview's context.aim lookup
+  // for every ranged attack dialog (the one case Aim actually matters for)
+  // the moment this patch ran, since neither ever looked for the renamed
+  // field.
   const label = nearestLabel(aim);
   const title = label?.querySelector('b');
   const note = label?.querySelector('small');
   if (title) title.textContent = 'Aim';
-  if (note) note.textContent = 'No attack bonus. Aim ignores the target\'s cover bonus on the next ranged attack; checking this sets Target Cover to No Cover.';
+  if (note) note.textContent = 'No direct attack bonus. Enables Careful Shot/Deadeye and other Aim-gated feats/talents; ignores the target\'s cover bonus on the next ranged attack (checking this sets Target Cover to No Cover).';
   aim.addEventListener('change', () => {
     if (!aim.checked) return;
     const cover = form.querySelector('[name="cover"]');
@@ -268,90 +268,24 @@ function patchRangedOnlyRules(form) {
   addBraceAutofireToggle(form);
 }
 
-function findActorForAttackForm(form) {
-  const shell = form.closest('.swse-roll-config-shell') ?? form;
-  const actorName = shell.querySelector('.rcd-header .rcd-actor')?.textContent?.trim();
-  if (!actorName) return null;
-  return game?.actors?.find?.(actor => actor?.name === actorName) ?? null;
-}
-
-function findWeaponForAttackForm(form, actor) {
-  const sourceName = form.querySelector('.swse-roll-config-panel--summary .swse-roll-config-source b')?.textContent?.trim()
-    || form.querySelector('.swse-roll-config-source b')?.textContent?.trim();
-  if (!sourceName || !actor?.items) return null;
-  return Array.from(actor.items).find(item => item?.type === 'weapon' && item?.name === sourceName) ?? null;
-}
-
-function selectedSituationalTotal(form) {
-  let total = 0;
-  for (const name of ['charging', 'flanking', 'higherGround', 'pointBlank']) {
-    if (!form.querySelector(`[name="${name}"]`)?.checked) continue;
-    total += name === 'higherGround' || name === 'pointBlank' ? 1 : 2;
-  }
-  return total;
-}
-
-function replaceText(root, selector, text) {
-  root.querySelector(selector)?.replaceChildren(document.createTextNode(text));
-}
-
-function rebuildBreakdown(form, components, base, custom, situational) {
-  const box = form.querySelector('[data-rcd-breakdown]');
-  if (!box) return;
-  box.replaceChildren();
-  const addRow = (label, value, className = 'rcd-bd-row') => {
-    const row = document.createElement('div');
-    row.className = className;
-    const left = document.createElement('span');
-    left.className = className === 'rcd-bd-total' ? 'rcd-bd-total-label' : 'rcd-bd-label';
-    left.textContent = label;
-    const right = document.createElement('span');
-    right.className = className === 'rcd-bd-total' ? 'rcd-bd-total-val' : 'rcd-bd-val';
-    right.textContent = signNumber(value);
-    if (label === 'Custom') right.dataset.rcdCustomBd = '';
-    if (label === 'Situational') right.dataset.rcdSituationalBd = '';
-    if (className === 'rcd-bd-total') right.dataset.rcdBdTotal = '';
-    row.append(left, right);
-    box.appendChild(row);
-  };
-
-  for (const [label, value] of Object.entries(components || {})) addRow(label, value);
-  addRow('Custom', custom);
-  addRow('Situational', situational);
-  addRow('Total', base + custom + situational, 'rcd-bd-total');
-}
-
-function syncAttackDialogBase(form) {
-  if (!form?.classList?.contains('swse-roll-config-v2')) return;
-  const actor = findActorForAttackForm(form);
-  const weapon = findWeaponForAttackForm(form, actor);
-  if (!actor || !weapon) return;
-
-  const branch = normalizeWeaponForCombat(weapon) || (formLooksRanged(form) ? 'ranged' : 'melee');
-  const resolved = resolveAttackBonus(actor, weapon, null, { attackType: branch, weapon });
-  const base = Number(resolved?.total ?? 0) || 0;
-  const custom = Number(form.querySelector('[name="customModifier"]')?.value ?? 0) || 0;
-  const situational = selectedSituationalTotal(form);
-  const total = base + custom + situational;
-
-  form.dataset.baseTotal = String(base);
-  const shell = form.closest('.swse-roll-config-shell') ?? form;
-  replaceText(shell, '.rcd-formula-text', `1d20 ${signNumber(total)}`);
-  replaceText(shell, '.rcd-formula-base-mod', `base ${signNumber(base)}`);
-  replaceText(form, '.rcd-check-card[data-check-mode="roll"] .rcd-check-total', `1d20 ${signNumber(base)}`);
-  replaceText(form, '[data-rcd-preview-total]', signNumber(total));
-  replaceText(form, '[data-rcd-formula]', `1d20 ${signNumber(total)}`);
-  rebuildBreakdown(form, resolved?.components ?? { 'Canonical Attack': base }, base, custom, situational);
-}
-
-function installCanonicalPreviewSync(form) {
-  if (form.dataset.swseCanonicalAttackPreview === 'true') return;
-  form.dataset.swseCanonicalAttackPreview = 'true';
-  const update = () => setTimeout(() => syncAttackDialogBase(form), 0);
-  form.addEventListener('input', update);
-  form.addEventListener('change', update);
-  update();
-}
+// Math Integrity Freeze, Attack Bonus round (blocker fix): this file used
+// to carry its own SECOND live-preview sync (syncAttackDialogBase/
+// installCanonicalPreviewSync/selectedSituationalTotal/rebuildBreakdown),
+// racing via a MutationObserver + setTimeout(0) against roll-config.js's
+// OWN native preview updater (wireRollConfigDialog's update()) — two
+// independently-computed "preview" numbers for the same dialog, on top of
+// a THIRD divergent formula that used to live in wireRollConfigDialog
+// itself. Worse, this file's copy located the actor/weapon by matching
+// DISPLAYED NAME TEXT in the DOM (findActorForAttackForm/
+// findWeaponForAttackForm) — fragile by construction (duplicate names,
+// i18n, DOM structure changes) — and silently left the wrong number on
+// screen when that lookup failed. roll-config.js now owns a single correct
+// preview (built from the real actor/weapon objects passed in by closure,
+// not DOM text matching), calling the exact same
+// computeFinalAttackComposition() seam the real roll uses — so this file's
+// copy was deleted rather than kept as a "second opinion." The cosmetic
+// DOM patches below (option filtering, ranged-only rules, cover panel
+// copy) are unrelated to attack-bonus math and are unchanged.
 
 function patchRollConfigForm(form) {
   if (!form || form.dataset.swseAttackDialogCombatCorrections === 'true') return;
@@ -361,7 +295,6 @@ function patchRollConfigForm(form) {
   patchDuplicateStaticOptions(form);
   patchRangedOnlyRules(form);
   clarifyCoverPanel(form);
-  installCanonicalPreviewSync(form);
 }
 
 function scanRollConfigForms(root = document) {

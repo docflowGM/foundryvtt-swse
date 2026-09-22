@@ -442,9 +442,33 @@ export function resolveAttackBonus(actor, weapon, actionId = null, context = {})
   // proficiency penalty must not be layered on top of either flat total.
   const proficiencyPenalty = isFlatOverride ? 0 : (proficient ? 0 : -5);
 
+  // Math Integrity Freeze, Attack Bonus round (blocker fix): an NPC's
+  // flatAttackBonus is authored by the importer from the creature's PRINTED
+  // sourcebook attack line (packs/nonheroic.db — e.g. "Goon"/"Dark Jedi"/
+  // "Rodian Black Sun Vigo" all carry a persistent, unselected "Weapon
+  // Focus" feat item alongside a useFlat weapon). A published SWSE
+  // statblock's printed attack bonus already bakes in every PERSISTENT
+  // trait the creature always has -- Weapon Focus, Weapon Specialization,
+  // and similar scoped feat bonuses foremost among them -- unlike genuinely
+  // roll-time/encounter-state modifiers (range, condition track, an
+  // actively toggled combat option) which by definition cannot be baked
+  // into a static number. No importer doc or rules text was found stating
+  // the opposite (a prior audit, docs/audits/rolling-system-alignment-
+  // phase-3.md, independently flagged this exact composition question as
+  // "ambiguous — preserved, not guessed" for the vehicle-formula case).
+  // Layering ScopedCombatFeatResolver's Weapon Focus bonus, or
+  // TalentActionLinker's persistent talent bonus, on top of an NPC's
+  // already-baked flat total would double-count it the moment that NPC's
+  // Weapon Focus selection is ever properly recorded (today it silently
+  // doesn't double-count only because imported NPC feat items happen to
+  // carry no selection for ScopedCombatFeatResolver to match against --
+  // an accident of import data shape, not a guaranteed contract). Both are
+  // therefore suppressed for the NPC-flat branch specifically -- NOT the
+  // stock-droid branch, whose own established composition contract
+  // (already certified in an earlier round) is unchanged here.
   let talentBonus = 0;
   const TalentActionLinker = window.SWSE?.TalentActionLinker;
-  if (actionId && TalentActionLinker?.MAPPING) {
+  if (!isNpcFlat && actionId && TalentActionLinker?.MAPPING) {
     const bonusInfo = TalentActionLinker.calculateBonusForAction(actor, actionId);
     talentBonus = bonusInfo?.value ?? 0;
   }
@@ -479,7 +503,10 @@ export function resolveAttackBonus(actor, weapon, actionId = null, context = {})
   const unsettlingMod = unsettlingPresenceAttackPenalty(actor);
   const rapidAlchemyMod = rapidAlchemyAttackBonus(actor, weapon);
   const forceItemMod = forceItemAttackBonus(actor, weapon);
-  const scopedFeatBonus = ScopedCombatFeatResolver.getBonus(actor, weapon, 'attack', context);
+  // Suppressed for the NPC-flat branch — see the talentBonus comment above
+  // (same "already baked into the printed total" risk; Weapon Focus is the
+  // concrete, data-confirmed case).
+  const scopedFeatBonus = isNpcFlat ? 0 : ScopedCombatFeatResolver.getBonus(actor, weapon, 'attack', context);
 
   // Math Integrity Freeze Batch 2A: worn body armor's Armor Check Penalty
   // (0 when proficient, its own listed value -- or the light/medium/heavy

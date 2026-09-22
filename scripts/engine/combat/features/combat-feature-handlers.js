@@ -260,7 +260,14 @@ export async function executeCombatFeatureMultiattack({ actor, element, featureI
       sourceElement: element,
       showCover: true,
       showConcealment: true,
-      showForcePoint: true
+      showForcePoint: true,
+      // Math Integrity Freeze, Attack Bonus round (blocker fix): this
+      // attack's fixed sequence penalty is already known here, before the
+      // dialog opens -- pass it through so the dialog's live preview
+      // includes it (via the same shared composition seam the roll below
+      // uses), instead of the player seeing one number in the dialog and a
+      // different one in the actual roll below.
+      sequencePenalty: Number(step.finalPenalty ?? 0)
     });
 
     if (!options) {

@@ -283,10 +283,6 @@ function actorHasEquippedPistol(actor) {
   }
 }
 
-function actorIsProficientWithWeapon(weapon) {
-  return weapon?.system?.proficient !== false;
-}
-
 function actorHasTalentNamed(actor, names = []) {
   const wanted = new Set((Array.isArray(names) ? names : [names]).map(normalizeSelector).filter(Boolean));
   if (!wanted.size) return false;
@@ -340,23 +336,28 @@ export function getWeaponAttackAbility(actor, weapon) {
   }
 
   // Noble Fencing Style's rule text ("you can use your Charisma modifier
-  // instead of your Strength modifier") is permissive, not mandatory —
-  // matching Weapon Finesse's own "may use ... instead of" wording. Weapon
-  // Finesse is already implemented (combat-option-resolver.js
-  // collectCombinedFeatModifiers) as a "use the better of the two" delta
-  // that can never leave the character worse off than plain Strength. This
-  // must apply the same useBetter contract instead of an unconditional
-  // swap: without it, a Noble Fencing Style character whose Strength
-  // modifier is higher than their Charisma modifier would be silently
-  // downgraded on every proficient light/lightsaber attack even though the
-  // player never chose that, and the talent's own text never mandates it.
-  const usesNobleFencingStyle = actorHasTalentNamed(actor, 'Noble Fencing Style')
-    && resolved === 'str'
-    && actorIsProficientWithWeapon(weapon)
-    && (isLightsaberWeapon(weapon) || isLightMeleeWeapon(weapon))
-    && SchemaAdapters.getAbilityMod(actor, 'cha') > SchemaAdapters.getAbilityMod(actor, 'str');
-
-  return usesNobleFencingStyle ? 'cha' : resolved;
+  // instead of your Strength modifier") is permissive, not mandatory. This
+  // function's own explicit-attackAttribute handling immediately above is
+  // already the project's one player-owned-attack-ability activation
+  // contract: a player who wants Noble Fencing Style's benefit sets
+  // weapon.system.attackAttribute to 'cha' directly, and that explicit
+  // choice is honored verbatim, for all six abilities, unconditionally.
+  // A prior version of this function instead auto-substituted CHA whenever
+  // the talent, proficiency, and weapon-type conditions matched (first
+  // unconditionally, then gated to only when CHA was mathematically
+  // better) -- both variants rewrote the resolved ability based purely on
+  // owning the talent, with no player activation step, which is exactly
+  // what the already-certified Batch 2B policy forbids: "the player owns
+  // the chosen attack attribute unless a specific implemented rule
+  // explicitly overrides it at roll time." No selected-combat-option,
+  // per-weapon selection, or roll-context flag exists anywhere in the repo
+  // (grepped combat-option-resolver.js's static option table and
+  // roll-config.js) that could serve as that "specific implemented rule";
+  // the only real activation mechanism is the explicit attackAttribute
+  // field this function already reads first. So owning the talent alone
+  // must never change the resolved ability -- only an explicit
+  // attackAttribute: 'cha' does, exactly like every other ability.
+  return resolved;
 }
 
 export function getRangePenalty(weapon, context = {}) {
