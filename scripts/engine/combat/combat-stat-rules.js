@@ -8,6 +8,8 @@
 import { SchemaAdapters } from "/systems/foundryvtt-swse/scripts/utils/schema-adapters.js";
 import { getEffectiveHalfLevel } from "/systems/foundryvtt-swse/scripts/actors/derived/level-split.js";
 import { isRangedWeapon as canonicalIsRangedWeapon, isMeleeWeapon as canonicalIsMeleeWeapon } from "/systems/foundryvtt-swse/scripts/items/weapon-branch-resolver.js";
+import { ModifierSource, ModifierType, createModifier } from "/systems/foundryvtt-swse/scripts/engine/effects/modifiers/ModifierTypes.js";
+import { SWSELogger as swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
 export const SIZE_ORDER = Object.freeze([
   'fine', 'diminutive', 'tiny', 'small', 'medium', 'large', 'huge', 'gargantuan', 'colossal'
@@ -379,6 +381,136 @@ export function getWeaponFlatAttackBonus(weapon) {
 export function getWeaponFlatDamageBonus(weapon) {
   const system = weapon?.system ?? {};
   return numeric(system.flatDamageBonus ?? system.damageFlatBonus ?? system.combat?.damage?.bonus ?? 0, 0);
+}
+
+function pushWeaponModifierSafe(modifiers, data) {
+  try {
+    modifiers.push(createModifier(data));
+  } catch (err) {
+    swseLogger.error(`[CombatStatRules] Skipping invalid weapon modifier (${data?.sourceName ?? data?.sourceId ?? 'unknown source'}):`, err);
+  }
+}
+
+function mapWeaponUpgradeModifierTarget(domain) {
+  const domainMap = {
+    attack: 'attack.bonus',
+    damage: 'damage.melee',
+    defense: 'defense.ref',
+    skill: 'skill.general',
+    force: 'force.bonus'
+  };
+  return domainMap[domain] ?? 'attack.bonus';
+}
+
+// Math Integrity Freeze, Attack Bonus round 4 (found while writing this
+// round's own cross-type stacking tests): the original weapons-engine.js
+// version of this mapping was a narrow allowlist (force/enhancement/
+// untyped/equipment only) that silently downgraded any OTHER canonical
+// bonusType (competence, circumstance, morale, insight, dodge, penalty,
+// armor, restriction, flanking) to UNTYPED -- which would have wrongly let
+// two same-type crystal modifiers both stack instead of correctly
+// colliding. Matches the existing membership-check idiom this project
+// already uses for the identical problem in
+// grappling-system.js#collectContextualGrappleModifiers().
+function mapWeaponUpgradeBonusType(bonusType) {
+  const key = String(bonusType ?? '').toLowerCase().trim();
+  return Object.values(ModifierType).includes(key) ? key : ModifierType.UNTYPED;
+}
+
+/**
+ * Math Integrity Freeze, Attack Bonus round 4 (blocker fix): the single,
+ * weapon-scoped authority for a lightsaber's attunement bonus and its
+ * installed upgrade (crystal) modifiers -- Modifier objects, not pre-summed
+ * numbers, so a stacking-sensitive consumer (combat-roll-math.js#
+ * resolveAttackBonus()'s unified typed pool) can resolve them together with
+ * every other typed attack contribution rather than silently never seeing
+ * them at all.
+ *
+ * This was previously implemented ONLY inside weapons-engine.js (an
+ * actor-wide, all-equipped-weapons collector), which combat-roll-math.js
+ * cannot import without creating a circular dependency (weapons-engine.js
+ * already imports resolveAttackBonus()/resolveDamageBonus() FROM this
+ * file's sibling combat-roll-math.js -- see that file's own header
+ * comment). Centralizing the weapon-scoped logic here, with
+ * WeaponsEngine.getWeaponModifiers() calling it once per equipped weapon
+ * instead of duplicating it, gives both consumers one shared authority
+ * instead of two independently-maintained copies.
+ *
+ * Deliberately does NOT include the weapon's flat enhancement bonus
+ * (system.combat.attack.bonus, already read structurally by
+ * getWeaponFlatAttackBonus() above) or a nonproficiency penalty (already
+ * computed structurally in resolveAttackBonus()) -- those are structural
+ * mirrors of core attack arithmetic, not additional typed contributions,
+ * and including them here would double-count them.
+ *
+ * @param {Actor} actor
+ * @param {Item} weapon - the SPECIFIC weapon being rolled; only this
+ *   weapon's own attunement/upgrades are considered (never another
+ *   equipped weapon's).
+ * @returns {Modifier[]}
+ */
+export function getWeaponAttunementAndUpgradeModifiers(actor, weapon) {
+  const modifiers = [];
+  if (!actor || !weapon || weapon.type !== 'weapon') return modifiers;
+  if (weapon.system?.subtype !== 'lightsaber') return modifiers;
+
+  if (weapon.flags?.swse?.builtBy === actor.id && weapon.flags?.swse?.attunedBy === actor.id) {
+    pushWeaponModifierSafe(modifiers, {
+      source: ModifierSource.ITEM,
+      sourceId: weapon.id,
+      sourceName: `${weapon.name} (Attuned)`,
+      target: 'attack.bonus',
+      type: ModifierType.UNTYPED,
+      value: 1,
+      enabled: true,
+      priority: 45,
+      description: 'Attuned lightsaber bonus'
+    });
+  }
+
+  const installedUpgrades = weapon.system?.installedUpgrades ?? [];
+  if (!installedUpgrades.length) return modifiers;
+
+  const upgrades = installedUpgrades
+    .map(id => actor.items?.get(id))
+    .filter(u => u !== undefined && u.type === 'weaponUpgrade');
+
+  for (const upgrade of upgrades) {
+    const lightsaberData = upgrade.system?.lightsaber;
+    if (!lightsaberData) continue;
+
+    if (Array.isArray(upgrade.system.modifiers)) {
+      for (const mod of upgrade.system.modifiers) {
+        pushWeaponModifierSafe(modifiers, {
+          source: ModifierSource.ITEM,
+          sourceId: upgrade.id,
+          sourceName: `${weapon.name} (${upgrade.name})`,
+          target: mapWeaponUpgradeModifierTarget(mod.domain),
+          type: mod.bonusType ? mapWeaponUpgradeBonusType(mod.bonusType) : ModifierType.UNTYPED,
+          value: mod.value ?? 0,
+          enabled: true,
+          priority: 55,
+          description: `${upgrade.name} modifier`
+        });
+      }
+    }
+
+    if (lightsaberData.damageBonus && lightsaberData.damageBonus > 0) {
+      pushWeaponModifierSafe(modifiers, {
+        source: ModifierSource.ITEM,
+        sourceId: upgrade.id,
+        sourceName: `${weapon.name} (${upgrade.name})`,
+        target: 'damage.melee',
+        type: ModifierType.UNTYPED,
+        value: lightsaberData.damageBonus,
+        enabled: true,
+        priority: 55,
+        description: `${upgrade.name} damage bonus`
+      });
+    }
+  }
+
+  return modifiers;
 }
 
 function normalizeCriticalMultiplier(value, fallback = 2) {

@@ -26,6 +26,7 @@ import {
   getHalfLevelDamageBonus,
   getRangePenalty,
   getWeaponAttackAbility,
+  getWeaponAttunementAndUpgradeModifiers,
   getWeaponFlatAttackBonus,
   getWeaponFlatDamageBonus,
   isVehicleWeapon
@@ -34,6 +35,7 @@ import { CombatOptionResolver } from "/systems/foundryvtt-swse/scripts/engine/co
 import { RageEngine } from "/systems/foundryvtt-swse/scripts/engine/species/rage-engine.js";
 import { ModifierEngine } from "/systems/foundryvtt-swse/scripts/engine/effects/modifiers/ModifierEngine.js";
 import { ModifierUtils } from "/systems/foundryvtt-swse/scripts/engine/effects/modifiers/ModifierUtils.js";
+import { getStackingRule } from "/systems/foundryvtt-swse/scripts/engine/effects/modifiers/ModifierTypes.js";
 import { buildModifierLedger } from "/systems/foundryvtt-swse/scripts/engine/effects/modifiers/modifier-breakdown-builder.js";
 import { ImplantEffectRules } from "/systems/foundryvtt-swse/scripts/engine/implants/ImplantEffectRules.js";
 import { ScopedCombatFeatResolver } from "/systems/foundryvtt-swse/scripts/engine/feat/scoped-combat-feat-resolver.js";
@@ -497,42 +499,85 @@ export function resolveAttackBonus(actor, weapon, actionId = null, context = {})
     console.error('[SWSE] Error evaluating PASSIVE/STATE in attack bonus:', err);
   }
 
-  // Math Integrity Freeze, Attack Bonus round 3 (blocker fix): typed,
+  // Math Integrity Freeze, Attack Bonus round 3-4 (blocker fixes): typed,
   // collision-eligible attack contributions -- Basic Effect Intent
   // modifiers, situational contextual contributions (Charge, Flanking --
   // built by roll-config.js#computeAttackSituationalContext and threaded
-  // through here via context.situationalContributions), and any typed
+  // through here via context.situationalContributions), any typed
   // combat-option contribution (Relentless Attack's competence bonus, Prime
   // Shot's circumstance bonus -- both emitted via attackOptionModifiers.
   // attackContributions instead of the flat attackBonus number they used to
-  // fold into) -- must resolve stacking TOGETHER, in ONE pass, not as
-  // separately pre-summed numbers added afterward. Previously each was
-  // reduced to a scalar in its own isolated stacking pass (or, for the
-  // combat-option channel, not stacking-resolved at all) before being
-  // summed here, so a same-type collision across channels -- e.g. an Active
-  // Effect's +4 competence bonus and Charge's own +2 competence bonus --
-  // would silently both apply in full (+6) instead of only the higher
-  // winning (+4), per this codebase's own COMPETENCE stacking rule
-  // (STACKING_RULES.competence === 'highestOnly'). Mirrors the identical
-  // fix already shipped for the Grapple domain
+  // fold into), and the CURRENT weapon's own typed attack.bonus
+  // contributions (an attuned lightsaber's +1, an installed crystal/
+  // upgrade's attack modifier -- combat-stat-rules.js#
+  // getWeaponAttunementAndUpgradeModifiers(), weapon-scoped so another
+  // equipped weapon's contributions never leak into this roll) -- must
+  // resolve stacking TOGETHER, in ONE pass, not as separately pre-summed
+  // numbers added afterward. Previously each was reduced to a scalar in
+  // its own isolated stacking pass (or, for the combat-option and weapon
+  // channels, not stacking-resolved -- or not even collected -- at all)
+  // before being summed here, so a same-type collision across channels --
+  // e.g. an Active Effect's +4 competence bonus and Charge's own +2
+  // competence bonus -- would silently both apply in full (+6) instead of
+  // only the higher winning (+4), per this codebase's own COMPETENCE
+  // stacking rule (STACKING_RULES.competence === 'highestOnly'). Mirrors
+  // the identical fix already shipped for the Grapple domain
   // (grappling-system.js#_rollGrappleBonus /
   // collectContextualGrappleModifiers's own doc comment) -- reusing the
   // same shared authority (ModifierUtils.resolveStacking()), not a new
   // attack-specific stacking engine.
+  //
+  // Deliberately NOT included here (structural mirrors of core arithmetic
+  // already computed above -- adding them again would double-count them):
+  // the weapon's flat enhancement bonus (system.combat.attack.bonus,
+  // already read by getWeaponFlatAttackBonus() into miscBonus) and the
+  // nonproficiency penalty (already computed into proficiencyPenalty).
+  // getWeaponAttunementAndUpgradeModifiers() intentionally never emits
+  // either of those two.
+  //
+  // Target-alias normalization: this project's Modifier vocabulary has two
+  // historical spellings for an attack-roll bonus target -- 'global.attack'
+  // (Effect Intent, situational, typed combat-option contributions) and
+  // 'attack.bonus' (WeaponsEngine's weapon-sourced modifiers). Both must
+  // resolve stacking in the SAME pass, not two universes keyed by
+  // spelling. Normalized here, in memory only, immediately before
+  // stacking resolution -- the original Modifier objects (and any
+  // persisted item/actor data) are never mutated, and every other field
+  // (source, sourceId, sourceName, type, value, priority) survives
+  // verbatim into the ledger for provenance.
   const effectIntentModifiers = ModifierEngine.getEffectIntentModifiersForContext(
     actor, { context: buildEffectIntentRollContext(weapon, context, { rollType: 'attack' }), includeBroad: true }
   );
   const situationalContributions = Array.isArray(context.situationalContributions) ? context.situationalContributions : [];
   const typedCombatOptionContributions = Array.isArray(attackOptionModifiers.attackContributions) ? attackOptionModifiers.attackContributions : [];
+  const weaponAttackContributions = getWeaponAttunementAndUpgradeModifiers(actor, weapon);
+  const ATTACK_TARGET_ALIASES = new Set(['global.attack', 'attack.bonus']);
+  const normalizeAttackModifierTarget = (mod) => (mod && mod.target !== 'global.attack' && ATTACK_TARGET_ALIASES.has(mod.target))
+    ? { ...mod, target: 'global.attack' }
+    : mod;
   const typedAttackModifierPool = ModifierUtils.filterModifiers(
-    [...effectIntentModifiers, ...situationalContributions, ...typedCombatOptionContributions],
+    [...effectIntentModifiers, ...situationalContributions, ...typedCombatOptionContributions, ...weaponAttackContributions]
+      .map(normalizeAttackModifierTarget),
     'global.attack', true
   );
   const appliedTypedModifiers = ModifierUtils.resolveStacking(typedAttackModifierPool);
   const typedModifierTotal = ModifierUtils.sumModifiers(appliedTypedModifiers);
+  // Math Integrity Freeze, Attack Bonus round 4: the suppression reason
+  // must describe the ACTUAL stacking rule that suppressed this
+  // contribution (per STACKING_RULES[type]), not a hardcoded "highestOnly"
+  // string -- circumstance, for example, uses stackUnlessSameSource, and a
+  // suppressed circumstance contribution must never be mislabeled as
+  // highestOnly.
+  const describeStackingSuppression = (type) => {
+    const rule = getStackingRule(type);
+    if (rule === 'highestOnly') return `suppressed: another ${type} contribution has an equal or higher value and already applies (highestOnly stacking)`;
+    if (rule === 'lowestOnly') return `suppressed: another ${type} contribution has an equal or lower value and already applies (lowestOnly stacking)`;
+    if (rule === 'stackUnlessSameSource') return `suppressed: another ${type} contribution from the same source already applies (stackUnlessSameSource stacking)`;
+    return `suppressed: another ${type} contribution already applies (${rule} stacking)`;
+  };
   const suppressedTypedModifiers = typedAttackModifierPool
     .filter(mod => !appliedTypedModifiers.includes(mod))
-    .map(modifier => ({ modifier, reason: `suppressed: another ${modifier.type} contribution already applies (highestOnly stacking)` }));
+    .map(modifier => ({ modifier, reason: describeStackingSuppression(modifier.type) }));
   const typedModifierLedger = buildModifierLedger(appliedTypedModifiers, suppressedTypedModifiers, 'combat.attack');
 
   const combatOptionBonus = attackOptionModifiers.attackBonus || 0;

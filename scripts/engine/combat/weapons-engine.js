@@ -8,7 +8,7 @@
 
 import { SWSELogger as swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { ModifierSource, ModifierType, createModifier } from "/systems/foundryvtt-swse/scripts/engine/effects/modifiers/ModifierTypes.js";
-import { isVehicleWeapon } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-stat-rules.js";
+import { isVehicleWeapon, getWeaponAttunementAndUpgradeModifiers } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-stat-rules.js";
 import { isMeleeWeapon as canonicalIsMeleeWeapon, isLightWeaponForActor } from "/systems/foundryvtt-swse/scripts/items/weapon-branch-resolver.js";
 // Breakdown delegates to the canonical roll-math resolvers so tooltips always
 // reflect the exact same math used by actual attack/damage rolls (attacks.js).
@@ -135,33 +135,6 @@ export class WeaponsEngine {
           });
         }
 
-        /* ---------------- Attuned Lightsaber Bonus (+1) ---------------- */
-
-        if (weapon.system?.subtype === 'lightsaber' &&
-            weapon.flags?.swse?.builtBy === actor.id &&
-            weapon.flags?.swse?.attunedBy === actor.id) {
-
-          // Math Integrity Freeze: this previously read ModifierSource.WEAPON,
-          // a member that does not exist on the canonical ModifierSource enum
-          // (ModifierTypes.js) -- it evaluated to `undefined`, which
-          // createModifier() correctly rejected as a missing required field.
-          // Every other weapon-sourced modifier in this same function already
-          // uses ModifierSource.ITEM (weapons are Items); this one and the
-          // two lightsaber-upgrade modifiers below now match that existing
-          // convention instead of inventing a new category.
-          this.#pushModifierSafe(modifiers, {
-            source: ModifierSource.ITEM,
-            sourceId: weapon.id,
-            sourceName: `${weapon.name} (Attuned)`,
-            target: 'attack.bonus',
-            type: ModifierType.UNTYPED,
-            value: 1,
-            enabled: true,
-            priority: 45,
-            description: 'Attuned lightsaber bonus'
-          });
-        }
-
         /* ---------------- Proficiency ---------------- */
 
         const proficient = this.isProficientForAttack(actor, weapon);
@@ -260,14 +233,20 @@ export class WeaponsEngine {
           });
         }
 
-        /* ================ LIGHTSABER UPGRADES (Phase 1) ================ */
+        /* ==== ATTUNEMENT + LIGHTSABER UPGRADES (Phase 1) ==== */
 
-        // Phase 1: Safe, data-driven crystal modifiers
-        // Type A: Standard modifiers array
-        // Type B: Damage type override
-        // No conditional logic, no hardcoded crystal names
-
-        this.#gatherLightsaberUpgradeModifiers(weapon, actor, modifiers);
+        // Math Integrity Freeze, Attack Bonus round 4: the attuned-
+        // lightsaber +1 bonus and installed-upgrade (crystal) modifiers are
+        // now built by the shared, weapon-scoped authority in
+        // combat-stat-rules.js (getWeaponAttunementAndUpgradeModifiers()),
+        // not duplicated here -- combat-roll-math.js#resolveAttackBonus()
+        // consumes the exact same function for the current weapon so an
+        // attuned/upgraded lightsaber's attack.bonus contribution actually
+        // reaches the roll, not just this actor-wide sheet/tooltip
+        // collector. See that function's own doc comment for the full
+        // rationale (including why this couldn't simply be imported here
+        // in reverse -- combat-roll-math.js may not import weapons-engine.js).
+        modifiers.push(...getWeaponAttunementAndUpgradeModifiers(actor, weapon));
       }
 
     } catch (err) {
@@ -275,123 +254,6 @@ export class WeaponsEngine {
     }
 
     return modifiers;
-  }
-
-  /**
-   * Phase 1 Crystal Mechanics
-   * Gather and interpret lightsaber upgrade modifiers
-   *
-   * Supports:
-   * - Type A: Standard modifier objects (flat bonuses)
-   * - Type B: Damage type override
-   *
-   * Does NOT support (Phase 2+):
-   * - Conditional triggers
-   * - Crit-only effects
-   * - Force Point interactions
-   *
-   * @private
-   */
-  static #gatherLightsaberUpgradeModifiers(weapon, actor, modifiers) {
-    // Only process lightsabers with upgrades
-    if (weapon.system?.subtype !== 'lightsaber') return;
-
-    const installedUpgrades = weapon.system?.installedUpgrades ?? [];
-    if (!installedUpgrades.length) return;
-
-    // Gather all upgrade items
-    const upgrades = installedUpgrades
-      .map(id => actor.items?.get(id))
-      .filter(u => u !== undefined && u.type === 'weaponUpgrade');
-
-    for (const upgrade of upgrades) {
-      const lightsaberData = upgrade.system?.lightsaber;
-      if (!lightsaberData) continue;
-
-      // ========== TYPE A: Standard Modifiers ==========
-      // Crystals like Ilum, Synthetic, Sigil use standard modifiers array
-      //
-      // Math Integrity Freeze: both createModifier() calls in this method
-      // previously used ModifierSource.WEAPON, a member that does not exist
-      // on the canonical ModifierSource enum (ModifierTypes.js) and so
-      // evaluated to `undefined` -- createModifier() correctly rejected
-      // that as a missing required field, and the resulting throw (per
-      // #pushModifierSafe below) is now isolated to this single
-      // contribution instead of discarding every other equipped weapon's
-      // modifiers in the same collection pass. A lightsaber upgrade is a
-      // Foundry Item, exactly like the weapon it's installed in -- uses
-      // ModifierSource.ITEM, matching every other weapon-sourced modifier
-      // in this file.
-      if (Array.isArray(upgrade.system.modifiers)) {
-        for (const mod of upgrade.system.modifiers) {
-          this.#pushModifierSafe(modifiers, {
-            source: ModifierSource.ITEM,
-            sourceId: upgrade.id,
-            sourceName: `${weapon.name} (${upgrade.name})`,
-            target: this.#mapModifierTarget(mod.domain),
-            type: mod.bonusType ? this.#mapBonusType(mod.bonusType) : ModifierType.UNTYPED,
-            value: mod.value ?? 0,
-            enabled: true,
-            priority: 55, // Crystal modifiers priority
-            description: `${upgrade.name} modifier`
-          });
-        }
-      }
-
-      // ========== TYPE B: Damage Type Override ==========
-      // Crystals like Barab Ingot, Firkraan override damage type
-      // Note: Damage type override is handled separately in damage resolution,
-      // not as a modifier. This documents the intent.
-      if (lightsaberData.damageOverride) {
-        // Damage type is applied during roll evaluation, not as a modifier
-        // This is a structural note only.
-      }
-
-      // ========== TYPE B Basic: Damage Bonus ==========
-      // Some crystals may specify direct damage bonus
-      if (lightsaberData.damageBonus && lightsaberData.damageBonus > 0) {
-        this.#pushModifierSafe(modifiers, {
-          source: ModifierSource.ITEM,
-          sourceId: upgrade.id,
-          sourceName: `${weapon.name} (${upgrade.name})`,
-          target: 'damage.melee',
-          type: ModifierType.UNTYPED,
-          value: lightsaberData.damageBonus,
-          enabled: true,
-          priority: 55,
-          description: `${upgrade.name} damage bonus`
-        });
-      }
-    }
-  }
-
-  /**
-   * Map modifier domain strings to modifier targets
-   * @private
-   */
-  static #mapModifierTarget(domain) {
-    const domainMap = {
-      'attack': 'attack.bonus',
-      'damage': 'damage.melee',
-      'defense': 'defense.ref',
-      'skill': 'skill.general', // Generic fallback
-      'force': 'force.bonus' // If applicable
-    };
-    return domainMap[domain] ?? 'attack.bonus';
-  }
-
-  /**
-   * Map bonus type strings to ModifierType enum
-   * @private
-   */
-  static #mapBonusType(bonusType) {
-    const typeMap = {
-      'force': ModifierType.FORCE,
-      'enhancement': ModifierType.ENHANCEMENT,
-      'untyped': ModifierType.UNTYPED,
-      'equipment': ModifierType.EQUIPMENT
-    };
-    return typeMap[bonusType] ?? ModifierType.UNTYPED;
   }
 
   /* ============================================================
