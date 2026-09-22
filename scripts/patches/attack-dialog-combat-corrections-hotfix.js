@@ -262,8 +262,19 @@ function patchDuplicateStaticOptions(form) {
 
 function patchRangedOnlyRules(form) {
   if (!formLooksRanged(form)) return;
-  removeNamedInput(form, 'charging');
-  removeNamedInput(form, 'flanking');
+  // Math Integrity Freeze, Attack Bonus round 8: this used to unconditionally
+  // strip the Charging/Flanking context checkboxes from every ranged-looking
+  // form via a bare melee/ranged text sniff (formLooksRanged has no idea
+  // whether the actor owns a ranged-charge option like Charging Fire).
+  // roll-config.js's template is now the single authority for whether these
+  // render at all -- it only emits the Charging checkbox when
+  // model.attackContexts.charge is true (which CombatOptionResolver.
+  // getAvailableAttackContexts() sets for a ranged attacker who owns a
+  // requiresCharge option, per the Charging Fire exception) and never emits
+  // Flanking for a ranged attack in the first place. Blindly removing
+  // 'charging' here would tear that exception back out in the live DOM the
+  // instant this hotfix ran, so both removals are deleted; Aim relabeling and
+  // the Brace Autofire toggle are unrelated and unchanged.
   patchAimToggle(form);
   addBraceAutofireToggle(form);
 }
