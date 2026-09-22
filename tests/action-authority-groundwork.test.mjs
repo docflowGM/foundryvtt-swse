@@ -97,7 +97,7 @@ function organicTargetActor() { return { id: 'target-organic', name: 'Target Org
   assert.equal(definition.id, 'power-attack');
   assert.equal(definition.domain, 'attack');
   assert.equal(definition.presentation.control, 'slider');
-  assert.deepEqual(definition.requirements.all, [{ type: 'attackType', value: 'melee' }]);
+  assert.deepEqual(definition.requirements.all, [{ type: 'attackType', value: 'melee', sourceField: 'requiresAttackType' }]);
   assert.equal(definition.source.name, 'Power Attack');
   assert.equal(definition.source.type, 'feat');
 
@@ -105,19 +105,27 @@ function organicTargetActor() { return { id: 'target-organic', name: 'Target Org
 }
 ok('1/2: a genuine ATTACK_OPTION record (Power Attack) normalizes into a versioned ActionDefinition with the correct id/domain/control/requirements/source; a real non-ATTACK_OPTION record (Oath of Duty) is rejected before normalization is even possible');
 
-// ─── 3 — ActionRegistry: deterministic duplicate-id handling ──────────────
+// ─── 3 — ActionRegistry: domain-qualified, deterministic duplicate-id handling ──
 
 {
   const registry = new ActionRegistry();
   const definition = normalizeAttackOptionRule(powerAttackFeat(), extractAttackOptionRules(powerAttackFeat())[0]);
   registry.register(definition);
-  assert.equal(registry.get('power-attack'), definition);
+  assert.equal(registry.get('attack', 'power-attack'), definition);
   assert.doesNotThrow(() => registry.register(definition), 're-registering the SAME definition object must be a no-op, not an error');
 
   const conflicting = { ...definition, source: { ...definition.source, name: 'A different source' } };
-  assert.throws(() => registry.register(conflicting), /duplicate id/, 'registering a DIFFERENT definition object under the same id must throw deterministically, never silently overwrite');
+  assert.throws(() => registry.register(conflicting), /duplicate id/, 'registering a DIFFERENT definition object under the same id in the same domain must throw deterministically, never silently overwrite');
+
+  // Blocker 2: id uniqueness is domain-qualified, not global -- the exact
+  // same bare id in a DIFFERENT domain must coexist without conflict.
+  const otherDomainDefinition = { ...definition, domain: 'utility', requirements: { all: [] } };
+  assert.doesNotThrow(() => registry.register(otherDomainDefinition), 'attack:power-attack and utility:power-attack must coexist -- identity is domain-qualified');
+  assert.equal(registry.get('utility', 'power-attack'), otherDomainDefinition);
+  assert.notEqual(registry.get('attack', 'power-attack'), registry.get('utility', 'power-attack'));
+  assert.deepEqual(registry.forDomain('attack').map(d => d.id), ['power-attack'], 'forDomain() must not leak the other domain\'s same-id definition');
 }
-ok('3: ActionRegistry.register() is idempotent for the same definition and throws deterministically on a genuine id conflict');
+ok('3: ActionRegistry identity is domain-qualified (attack:power-attack and utility:power-attack coexist); register() is idempotent for the same definition and throws deterministically on a genuine same-domain id conflict');
 
 // ─── 4/5 — ActorActionResolver: only actor-owned sources, nothing else ────
 
@@ -125,21 +133,51 @@ ok('3: ActionRegistry.register() is idempotent for the same definition and throw
   const owner = makeActor({ items: [powerAttackFeat(), oathOfDutyTalent()] });
   const nonOwner = makeActor({ items: [oathOfDutyTalent()] });
 
-  const ownerActions = ActorActionResolver.getOwnedActions(owner, { domain: 'attack' });
-  assert.deepEqual(ownerActions.map(d => d.id), ['power-attack'], 'the resolver must return exactly the actor-owned genuine ATTACK_OPTION definitions, never Oath of Duty');
+  const ownerResult = ActorActionResolver.getOwnedActions(owner, { domain: 'attack' });
+  assert.deepEqual(ownerResult.definitions.map(d => d.id), ['power-attack'], 'the resolver must return exactly the actor-owned genuine ATTACK_OPTION definitions, never Oath of Duty');
+  assert.equal(ownerResult.entitlements.length, 1);
+  assert.equal(ownerResult.entitlements[0].source.name, 'Power Attack');
+  assert.deepEqual(ownerResult.entitlements[0].actionKey, { domain: 'attack', id: 'power-attack' });
 
-  const nonOwnerActions = ActorActionResolver.getOwnedActions(nonOwner, { domain: 'attack' });
-  assert.deepEqual(nonOwnerActions, [], 'an actor who does not own Power Attack must receive no Power Attack definition');
+  const nonOwnerResult = ActorActionResolver.getOwnedActions(nonOwner, { domain: 'attack' });
+  assert.deepEqual(nonOwnerResult.definitions, [], 'an actor who does not own Power Attack must receive no Power Attack definition');
+  assert.deepEqual(nonOwnerResult.entitlements, []);
 
-  assert.deepEqual(ActorActionResolver.getOwnedActions(owner, { domain: 'reaction' }), [], 'an unsupported domain returns empty rather than throwing (no normalizer exists for it yet)');
+  const unsupportedDomainResult = ActorActionResolver.getOwnedActions(owner, { domain: 'reaction' });
+  assert.deepEqual(unsupportedDomainResult, { definitions: [], entitlements: [] }, 'an unsupported domain returns empty rather than throwing (no normalizer exists for it yet)');
 }
-ok('4/5: ActorActionResolver.getOwnedActions() returns only definitions actually granted by actor-owned source items; an actor without a feat receives no definition for it');
+ok('4/5: ActorActionResolver.getOwnedActions() returns { definitions, entitlements }: only definitions actually granted by actor-owned source items, each paired with its own entitlement provenance; an actor without a feat receives none of either');
+
+// ─── 3b — Blocker 3: two different sources granting the same logical action ──
+
+{
+  // A second, differently-named feat item that happens to grant the exact
+  // same normalized action id (a realistic future case -- e.g. a talent
+  // and a feat both unlocking "power-attack" -- not producible from the
+  // current shipped packs, so this fixture deliberately constructs it).
+  function secondPowerAttackGrantingFeat() {
+    return { id: 'feat-power-attack-via-talent', name: 'Martial Arts Mastery (grants Power Attack)', type: 'talent', system: { abilityMeta: { rules: [
+      { type: 'ATTACK_OPTION', option: 'powerAttack', label: 'Power Attack', control: 'slider', max: 5, requiresAttackType: 'melee', attackModifierFormula: '-value', damageModifierFormula: 'value' }
+    ] } } };
+  }
+  const actor = makeActor({ items: [powerAttackFeat(), secondPowerAttackGrantingFeat()] });
+  const registry = new ActionRegistry();
+  const result = ActorActionResolver.getOwnedActions(actor, { domain: 'attack', registry });
+
+  assert.equal(result.definitions.length, 1, 'two sources granting the same logical action id must produce exactly ONE canonical ActionDefinition, never two competing ones');
+  assert.equal(registry.forDomain('attack').length, 1, 'the registry must likewise hold exactly one definition for this id -- no duplicate-id exception was thrown');
+  assert.equal(result.entitlements.length, 2, 'the actor must receive TWO separate entitlement records, one per granting source item');
+  const entitlementSourceNames = result.entitlements.map(e => e.source.name).sort();
+  assert.deepEqual(entitlementSourceNames, ['Martial Arts Mastery (grants Power Attack)', 'Power Attack'], 'each entitlement carries its OWN specific granting source, never a merged/ambiguous one');
+  assert.ok(result.entitlements.every(e => e.actionKey.domain === 'attack' && e.actionKey.id === 'power-attack'), 'both entitlements point at the same canonical actionKey');
+}
+ok('3b: two different owned items granting the same normalized action id produce one canonical ActionDefinition plus two distinct ActionEntitlement records, with no duplicate-definition exception');
 
 // ─── 6/7/8 — Careful Shot: entitlement is stable; availability changes with Aim ──
 
 {
   const actor = makeActor({ items: [carefulShotFeat()] });
-  const [definition] = ActorActionResolver.getOwnedActions(actor, { domain: 'attack' });
+  const [definition] = ActorActionResolver.getOwnedActions(actor, { domain: 'attack' }).definitions;
   assert.ok(definition, 'entitlement (ownership) must exist regardless of Aim');
 
   const beforeAim = ActionAvailabilityEngine.evaluate(definition, { attackType: 'ranged', weapon: rangedWeapon(), aim: false });
@@ -155,7 +193,7 @@ ok('6/7/8: Careful Shot\'s entitlement exists before Aim is set; availability is
 
 {
   const actor = makeActor({ items: [powerfulChargeFeat()] });
-  const [definition] = ActorActionResolver.getOwnedActions(actor, { domain: 'attack' });
+  const [definition] = ActorActionResolver.getOwnedActions(actor, { domain: 'attack' }).definitions;
   assert.ok(definition);
   assert.equal(ActionAvailabilityEngine.evaluate(definition, { attackType: 'melee', weapon: meleeWeapon(), charge: false }).state, 'disabled');
   assert.equal(ActionAvailabilityEngine.evaluate(definition, { attackType: 'melee', weapon: meleeWeapon(), charge: true }).state, 'available');
@@ -166,7 +204,7 @@ ok('9: Powerful Charge\'s entitlement is stable regardless of Charge; its availa
 
 {
   const actor = makeActor({ items: [powerAttackFeat()] });
-  const [definition] = ActorActionResolver.getOwnedActions(actor, { domain: 'attack' });
+  const [definition] = ActorActionResolver.getOwnedActions(actor, { domain: 'attack' }).definitions;
   const onRanged = ActionAvailabilityEngine.evaluate(definition, { attackType: 'ranged', weapon: rangedWeapon() });
   assert.equal(onRanged.state, 'hidden', 'a melee-only action on a ranged attack is structurally inapplicable -- hidden, not merely disabled, matching CombatOptionResolver\'s unconditional attackType exclusion');
   assert.equal(onRanged.reason, null, 'a hidden option carries no player-facing reason -- there is nothing the player can do about it here');
@@ -180,7 +218,7 @@ ok('10: a melee-only action (Power Attack) on a ranged attack evaluates to state
 
 {
   const actor = makeActor({ items: [droidHunterFeat()] });
-  const [definition] = ActorActionResolver.getOwnedActions(actor, { domain: 'attack' });
+  const [definition] = ActorActionResolver.getOwnedActions(actor, { domain: 'attack' }).definitions;
   assert.equal(ActionAvailabilityEngine.evaluate(definition, { attackType: 'melee', weapon: meleeWeapon() }).state, 'disabled', 'no target supplied: disabled, not hidden -- selecting a target is something the player can still do');
   assert.equal(ActionAvailabilityEngine.evaluate(definition, { attackType: 'melee', weapon: meleeWeapon(), target: organicTargetActor() }).state, 'disabled');
   // Droid Hunter's control is 'passive' -- a currently-applying passive
@@ -208,7 +246,7 @@ ok('12: an unknown requirement predicate type fails closed (never silently treat
   const item = actor.items[0];
   const itemSnapshotBefore = JSON.stringify(item);
   const actorSnapshotBefore = JSON.stringify({ ...actor, items: undefined });
-  const [definition] = ActorActionResolver.getOwnedActions(actor, { domain: 'attack' });
+  const [definition] = ActorActionResolver.getOwnedActions(actor, { domain: 'attack' }).definitions;
   ActionAvailabilityEngine.evaluate(definition, { attackType: 'ranged', weapon: rangedWeapon(), aim: true });
   assert.equal(JSON.stringify(item), itemSnapshotBefore, 'ActorActionResolver/normalizer must never mutate the source item');
   assert.equal(JSON.stringify({ ...actor, items: undefined }), actorSnapshotBefore, 'ActionAvailabilityEngine must never mutate the actor');
@@ -219,7 +257,7 @@ ok('13/14: neither ActorActionResolver/the normalizer nor ActionAvailabilityEngi
 
 {
   const actor = makeActor({ items: [carefulShotFeat()] });
-  const [definition] = ActorActionResolver.getOwnedActions(actor, { domain: 'attack' });
+  const [definition] = ActorActionResolver.getOwnedActions(actor, { domain: 'attack' }).definitions;
   const result = ActionAvailabilityEngine.evaluate(definition, { attackType: 'ranged', weapon: rangedWeapon(), aim: true });
   assert.equal(result.definition.source.name, 'Careful Shot');
   assert.equal(result.definition.source.type, 'feat');
@@ -246,7 +284,7 @@ ok('15: the availability result carries the definition\'s full source provenance
   ];
   for (const testCase of cases) {
     const actor = makeActor({ items: [testCase.item] });
-    const [definition] = ActorActionResolver.getOwnedActions(actor, { domain: 'attack' });
+    const [definition] = ActorActionResolver.getOwnedActions(actor, { domain: 'attack' }).definitions;
     const groundworkResult = ActionAvailabilityEngine.evaluate(definition, { attackType: testCase.attackType, weapon: testCase.weapon, ...testCase.context });
 
     const liveResult = CombatOptionResolver.getAttackOptionsWithState(actor, testCase.weapon, { attackType: testCase.attackType, ...testCase.context })
@@ -259,5 +297,91 @@ ok('15: the availability result carries the definition\'s full source provenance
   }
 }
 ok('16: for representative options (Careful Shot, Powerful Charge, Rapid Shot), the groundwork ActionAvailabilityEngine\'s available/not-available verdict agrees with the live, certified CombatOptionResolver.getAttackOptionsWithState() for the identical actor/weapon/context -- proving the new layer could consume-replace the dialog\'s current logic without per-feat UI knowledge, without actually rewiring it in this round');
+
+// ─── 17 — Blocker 4: fail-closed attackType (unknown never auto-passes) ───
+
+{
+  function syntheticDefinition(requirements) {
+    return { schemaVersion: 1, id: 'synthetic', name: 'Synthetic', domain: 'attack', source: { type: 'feat', id: null, uuid: null, name: 'Synthetic' }, ownership: { mode: 'source-item' }, presentation: { section: 'attack-options', control: 'toggle', label: 'Synthetic' }, requirements, economy: { actionType: null }, execution: { kind: 'attack-option', handler: null }, effects: [], tags: [] };
+  }
+
+  const requiresRanged = syntheticDefinition({ all: [{ type: 'attackType', value: 'ranged' }] });
+  // No weapon, no explicit attackType in context -> getAttackType() resolves 'unknown'.
+  const result = ActionAvailabilityEngine.evaluate(requiresRanged, {});
+  assert.notEqual(result.state, 'available', 'an unresolvable ("unknown") attack type must NOT satisfy a required attackType predicate -- fail-closed, not permission-by-default');
+  assert.equal(result.requirements[0].met, false);
+}
+ok('17: Blocker 4 fail-closed semantics -- an unresolvable ("unknown") attack type never satisfies a required attackType predicate');
+
+// ─── 18 — Blocker 4: boolean-tree (all/any/not) provenance ────────────────
+
+{
+  function syntheticDefinition(requirements) {
+    return { schemaVersion: 1, id: 'synthetic', name: 'Synthetic', domain: 'attack', source: { type: 'feat', id: null, uuid: null, name: 'Synthetic' }, ownership: { mode: 'source-item' }, presentation: { section: 'attack-options', control: 'toggle', label: 'Synthetic' }, requirements, economy: { actionType: null }, execution: { kind: 'attack-option', handler: null }, effects: [], tags: [] };
+  }
+  const aim = { type: 'context', key: 'aim', value: true };
+  const charge = { type: 'context', key: 'charge', value: true };
+
+  // (a) all, with multiple failures: every leaf is still evaluated and
+  // recorded, not short-circuited away.
+  {
+    const def = syntheticDefinition({ all: [aim, charge] });
+    const result = ActionAvailabilityEngine.evaluate(def, { aim: false, charge: false });
+    assert.equal(result.state, 'disabled');
+    assert.equal(result.requirements.length, 2, 'both failing leaves of an all[] must be recorded, not short-circuited after the first failure');
+    assert.ok(result.requirements.every(r => r.met === false));
+  }
+
+  // (b) any, with one success: met overall, but every branch's leaf is
+  // still recorded for provenance (not just the winning one).
+  {
+    const def = syntheticDefinition({ any: [aim, charge] });
+    const result = ActionAvailabilityEngine.evaluate(def, { aim: false, charge: true });
+    assert.equal(result.state, 'available');
+    assert.equal(result.requirements.length, 2, 'any[] must record both branches\' leaves even though only one needed to succeed');
+    assert.deepEqual(result.requirements.map(r => r.met), [false, true]);
+  }
+
+  // (c) any, with all failures.
+  {
+    const def = syntheticDefinition({ any: [aim, charge] });
+    const result = ActionAvailabilityEngine.evaluate(def, { aim: false, charge: false });
+    assert.equal(result.state, 'disabled');
+    assert.equal(result.requirements.length, 2);
+    assert.ok(result.requirements.every(r => r.met === false));
+  }
+
+  // (d) not, success (the excluded condition does NOT hold -> the option
+  // is available).
+  {
+    const def = syntheticDefinition({ all: [{ not: aim }] });
+    const result = ActionAvailabilityEngine.evaluate(def, { aim: false });
+    assert.equal(result.state, 'available');
+    assert.equal(result.requirements[0].met, true);
+  }
+
+  // (e) not, failure -- the excluded condition DOES hold, and the leaf
+  // must carry a real, non-null reason explaining the exclusion (not a
+  // silent false).
+  {
+    const def = syntheticDefinition({ all: [{ not: aim, sourceField: 'excludesAimForTest' }] });
+    const result = ActionAvailabilityEngine.evaluate(def, { aim: true });
+    assert.equal(result.state, 'disabled');
+    assert.equal(result.requirements[0].met, false);
+    assert.ok(result.requirements[0].reason, 'a failing not-node must carry a truthful, non-null reason explaining why the exclusion blocks the option');
+  }
+
+  // (f) nested all/any/not: any(aim, charge) AND NOT(weaponGroup heavy).
+  {
+    const def = syntheticDefinition({ all: [{ any: [aim, charge] }, { not: { type: 'weaponGroup', value: ['heavy'] } }] });
+    const metCase = ActionAvailabilityEngine.evaluate(def, { aim: true, weapon: { name: 'Vibro Axe', system: { weaponCategory: 'simple' } } });
+    assert.equal(metCase.state, 'available', 'nested all/any/not: Aim satisfied, weapon is not heavy -> available');
+
+    const unmetCase = ActionAvailabilityEngine.evaluate(def, { aim: false, charge: false, weapon: { name: 'Heavy Repeater', system: { weaponCategory: 'heavy' } } });
+    assert.equal(unmetCase.state, 'disabled', 'nested all/any/not: neither Aim nor Charge, AND weapon is heavy -> disabled, both branches recorded');
+    assert.equal(unmetCase.requirements.length, 3, 'the any[] contributes 2 leaves (aim, charge) plus the not(weaponGroup) contributes 1 -- all three recorded for a nested tree');
+  }
+}
+ok('18: Blocker 4 boolean-tree provenance -- all[]/any[] evaluate and record every branch (never short-circuited away from the result), not-nodes produce a truthful non-null reason on failure, and nested all/any/not compositions record every leaf correctly');
 
 console.log('action-authority-groundwork.test.mjs: all assertions passed');
