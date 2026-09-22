@@ -13,6 +13,7 @@ import { WeaponRangeProfileResolver } from "/systems/foundryvtt-swse/scripts/ite
 import { CombatOptionResolver } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-option-resolver.js";
 import { resolveAttackBonus } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-roll-math.js";
 import { isRangedWeapon as canonicalIsRangedWeapon, isMeleeWeapon as canonicalIsMeleeWeapon } from "/systems/foundryvtt-swse/scripts/items/weapon-branch-resolver.js";
+import { createModifier, ModifierType, ModifierSource } from "/systems/foundryvtt-swse/scripts/engine/effects/modifiers/ModifierTypes.js";
 
 /* ============================================================================
    ROLL HOOKS SYSTEM
@@ -913,7 +914,7 @@ function wireRollConfigDialog(html, { actor = null, weapon = null, rollType = 'a
     const custom = Number(form.querySelector('[name="customModifier"]')?.value ?? 0) || 0;
     if (isLiveAttack) {
       const melee = model?.melee ?? false;
-      const { aim, charge, isPointBlank, situationalBonus } = computeAttackSituationalContext(form, melee);
+      const { aim, charge, isPointBlank, situationalContributions } = computeAttackSituationalContext(form, melee);
       const rollOptions = {
         attackType: melee ? 'melee' : 'ranged',
         weapon,
@@ -925,12 +926,13 @@ function wireRollConfigDialog(html, { actor = null, weapon = null, rollType = 'a
         rangeBand: form.querySelector('[name="rangeBand"]')?.value || null,
         fightingDefensively: form.querySelector('[name="fightingDefensively"]')?.checked === true,
         customModifier: custom,
-        situationalBonus,
+        situationalContributions,
         sequencePenalty
       };
       const { computeFinalAttackComposition } = await import('/systems/foundryvtt-swse/scripts/combat/rolls/attacks.js');
       const composition = await computeFinalAttackComposition(actor, weapon, rollOptions);
-      const total = composition.ok ? composition.atkBonus : base + custom + situationalBonus;
+      const previewSituationalTotal = situationalContributions.reduce((sum, m) => sum + (Number(m.value) || 0), 0);
+      const total = composition.ok ? composition.atkBonus : base + custom + previewSituationalTotal;
       form.querySelector('[data-rcd-preview-total]')?.replaceChildren(document.createTextNode(sign(total)));
       form.querySelector('[data-rcd-formula]')?.replaceChildren(document.createTextNode(`1d20 ${sign(total)}`));
       if (composition.ok) rebuildAttackBreakdown(form, composition.attackComponentLedger, total);
@@ -1227,17 +1229,46 @@ function readNestedFormEntries(form, prefix) {
 // (wireRollConfigDialog's update()) and the actual submit handler below --
 // so the two can never disagree about what a checked toggle means. See the
 // submit handler's own comment for the per-toggle rule sourcing.
+//
+// Charge and Flanking are emitted as TYPED contribution objects (the
+// project's canonical Modifier shape, ModifierTypes.js) rather than pre-
+// summed into a bare number here -- that used to lose source identity,
+// bonus type, and per-rule ledger visibility before the contribution ever
+// reached the final composition, and prevented correct type-aware stacking
+// (computeFinalAttackComposition() resolves these via
+// ModifierUtils.getModifierDetail(), the project's existing typed-stacking
+// authority -- not a new ad hoc formula here).
+//
+// Charge is UNTYPED, not "competence": Powerful Charge's own benefit text
+// (packs/feats.db) reads "When you Charge, you gain an ADDITIONAL +2 bonus
+// on your melee attack roll" -- proving the base Charge bonus and Powerful
+// Charge's bonus are meant to ADD, not collide. A "competence" (highestOnly)
+// typing would have silently suppressed that additional +2, which is
+// wrong per this project's own compendium data. Flanking is melee-only per
+// verified SWSE RAW (a ranged attack never gains a flanking bonus) and
+// uses the new canonical FLANKING type (highestOnly -- a target is either
+// flanked or not, so a second flanking-granting source must not double it).
 export function computeAttackSituationalContext(form, melee) {
   const charging = form.querySelector('[name="charging"]')?.checked === true;
   const flanking = form.querySelector('[name="flanking"]')?.checked === true;
-  let situationalBonus = 0;
-  if (charging && melee) situationalBonus += 2;
-  if (flanking) situationalBonus += 2;
+  const situationalContributions = [];
+  if (charging && melee) {
+    situationalContributions.push(createModifier({
+      source: ModifierSource.CONDITION, sourceId: 'charge', sourceName: 'Charge',
+      target: 'global.attack', type: ModifierType.UNTYPED, value: 2
+    }));
+  }
+  if (flanking && melee) {
+    situationalContributions.push(createModifier({
+      source: ModifierSource.CONDITION, sourceId: 'flanking', sourceName: 'Flanking',
+      target: 'global.attack', type: ModifierType.FLANKING, value: 2
+    }));
+  }
   return {
     aim: form.querySelector('[name="aiming"]')?.checked === true,
     charge: charging,
     isPointBlank: form.querySelector('[name="pointBlank"]')?.checked === true,
-    situationalBonus
+    situationalContributions
   };
 }
 
@@ -1465,11 +1496,18 @@ export async function showRollModifiersDialog(options = {}) {
             //     against any SWSE source text or existing authority, so it
             //     is no longer automated; the checkbox is left as a reminder
             //     only, and a GM who wants to grant it uses Custom Modifier.
-            //   - Flanking's flat +2 is left unchanged: it is a genuine
-            //     non-feat-gated SWSE rule and matches this project's
-            //     existing (if minimal) authority for it
-            //     (combat-utils.js#getFlankingBonus), so there is no
-            //     ungated-feat-benefit risk the way Aim/Point-Blank had.
+            //   - Charge and Flanking are no longer pre-summed into a bare
+            //     situationalBonus number here at all -- they are emitted as
+            //     typed Modifier contributions (situationalContributions)
+            //     and resolved for stacking by the shared
+            //     computeFinalAttackComposition() seam via ModifierUtils,
+            //     the project's existing typed-stacking authority. Flanking
+            //     is SWSE RAW melee-only (a ranged attack never gains it,
+            //     corrected here from the prior unconditional +2) and typed
+            //     FLANKING (highestOnly); Charge is UNTYPED per Powerful
+            //     Charge's own benefit text ("an ADDITIONAL +2"), proving
+            //     the base Charge bonus must stack with, not collide with,
+            //     a feat-granted one.
             Object.assign(result, computeAttackSituationalContext(form, model.melee));
             result.coverBonus = ROLL_MODIFIERS.cover[result.cover]?.value || 0;
             result.missChance = ROLL_MODIFIERS.concealment[result.concealment]?.missChance || 0;

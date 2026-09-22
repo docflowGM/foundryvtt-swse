@@ -27,6 +27,13 @@ export const ModifierType = Object.freeze({
   CIRCUMSTANCE: 'circumstance',
   PENALTY: 'penalty',
   DODGE: 'dodge',
+  // Math Integrity Freeze, Attack Bonus round: the SWSE flanking bonus has
+  // no existing canonical type here, and is not a circumstance bonus in
+  // the loose "unless same source" sense -- a target is flanked or it
+  // isn't, from one geometric fact, so a second/third flanking-granting
+  // source must not let it apply twice. highestOnly gives that "flanking
+  // or not" semantics correctly without inventing a new stacking rule.
+  FLANKING: 'flanking',
   DEXTERITY_LOSS: 'dexterityLoss'  // Meta-modifier for special case
 });
 
@@ -43,6 +50,7 @@ export const STACKING_RULES = Object.freeze({
   circumstance: 'stackUnlessSameSource', // Stack unless from same sourceId
   penalty: 'stackUnlessSameSource',      // Stack unless from same sourceId
   dodge: 'stack',                        // All dodge stack
+  flanking: 'highestOnly',               // You are either flanked or not; only the best applies
   dexterityLoss: 'meta'                  // Meta-modifier, special handling
 });
 

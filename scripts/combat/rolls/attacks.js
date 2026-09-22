@@ -19,7 +19,8 @@ import {
   weaponMatchesId
 } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-roll-math.js";
 import { AttackOutcomeResolver } from "/systems/foundryvtt-swse/scripts/engine/combat/attack-outcome-resolver.js";
-import { buildLedgerFromComponents, buildInvocationLedgerEntry } from "/systems/foundryvtt-swse/scripts/engine/effects/modifiers/modifier-breakdown-builder.js";
+import { buildLedgerFromComponents, buildInvocationLedgerEntry, buildModifierLedger } from "/systems/foundryvtt-swse/scripts/engine/effects/modifiers/modifier-breakdown-builder.js";
+import { ModifierUtils } from "/systems/foundryvtt-swse/scripts/engine/effects/modifiers/ModifierUtils.js";
 import { AttackRollDiagnostics } from "/systems/foundryvtt-swse/scripts/engine/combat/attack-roll-diagnostics.js";
 import { resolveVehicleAttackBonus, resolveAbstractCrewAttackBonus } from "/systems/foundryvtt-swse/scripts/engine/combat/vehicle-attack-math.js";
 import { resolveAttackDomain } from "/systems/foundryvtt-swse/scripts/engine/combat/attack-domain-router.js";
@@ -124,7 +125,28 @@ export async function computeFinalAttackComposition(actor, weapon, rollOptions =
   // See the Grapple domain section of
   // docs/audits/v2-math-integrity-authority-ledger.md, addendum 8.
   const grappleStatePenalty = GrappleStateEngine.getAttackPenalty(actor, weapon);
-  const atkBonus = attackBonusResolution.total + fightingDefensivelyPenalty + grappleStatePenalty + Number(rollOptions.customModifier || 0) + Number(rollOptions.situationalBonus || 0) + sequencePenalty;
+  // Math Integrity Freeze, Attack Bonus round (blocker fix): contextual
+  // tactical bonuses (Charge, Flanking) arrive as typed Modifier objects
+  // (rollOptions.situationalContributions -- built by
+  // roll-config.js#computeAttackSituationalContext, melee-gated per source)
+  // rather than a single anonymous number, so each keeps its source
+  // identity, type, and stacking behavior all the way into the ledger.
+  // ModifierUtils.getModifierDetail() is the project's existing typed-
+  // stacking authority (STACKING_RULES in ModifierTypes.js) -- reused here
+  // rather than inventing attack-specific highest-only logic. A same-type
+  // collision (e.g. two Flanking-typed contributions) is resolved by that
+  // shared authority, not by this file.
+  const situationalContributions = Array.isArray(rollOptions.situationalContributions) ? rollOptions.situationalContributions : [];
+  const situationalDetail = ModifierUtils.getModifierDetail(situationalContributions, 'global.attack');
+  const suppressedSituational = situationalContributions
+    .filter(mod => mod && mod.enabled !== false && !situationalDetail.applied.includes(mod))
+    .map(modifier => ({ modifier, reason: `suppressed: another ${modifier.type} contribution already applies (highestOnly stacking)` }));
+  // Legacy compatibility path: a caller that still passes a raw numeric
+  // rollOptions.situationalBonus (instead of typed situationalContributions)
+  // is honored as an explicit untyped override, kept separate from the typed
+  // contributions above rather than treated as their primary semantic source.
+  const legacySituationalBonus = Number(rollOptions.situationalBonus || 0);
+  const atkBonus = attackBonusResolution.total + fightingDefensivelyPenalty + grappleStatePenalty + Number(rollOptions.customModifier || 0) + situationalDetail.total + legacySituationalBonus + sequencePenalty;
   // Component ledger: baseline (resolver) components plus invocation-only
   // additions, clearly separated so a tooltip never claims an invocation-only
   // modifier is part of the static weapon baseline. Vehicle attacks already
@@ -136,7 +158,8 @@ export async function computeFinalAttackComposition(actor, weapon, rollOptions =
     buildInvocationLedgerEntry('fighting-defensively', 'Fighting Defensively', fightingDefensivelyPenalty, attackLedgerDomain),
     buildInvocationLedgerEntry('grapple-state-penalty', 'Grabbed/Grappled', grappleStatePenalty, attackLedgerDomain),
     buildInvocationLedgerEntry('custom-modifier', 'Custom Modifier', rollOptions.customModifier, attackLedgerDomain),
-    buildInvocationLedgerEntry('situational-bonus', 'Situational Bonus', rollOptions.situationalBonus, attackLedgerDomain),
+    ...buildModifierLedger(situationalDetail.applied, suppressedSituational, attackLedgerDomain),
+    buildInvocationLedgerEntry('situational-bonus', 'Situational Bonus (legacy)', legacySituationalBonus, attackLedgerDomain),
     buildInvocationLedgerEntry('sequence-penalty', 'Sequence Penalty', sequencePenalty, attackLedgerDomain)
   ].filter(Boolean);
 
