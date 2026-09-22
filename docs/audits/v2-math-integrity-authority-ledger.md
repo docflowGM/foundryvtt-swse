@@ -728,6 +728,17 @@ Fixed by splitting `correctedFields()`'s notion of "current state" per hook: `pr
 
 Revalidation: `tests/weapon-branch-family-schema-authority.test.mjs` (34/34, including the 2 new sections above), `tests/weapon-branch-classification-authority.test.mjs` (3/3), `tests/grapple-state-attack-penalty.test.mjs` (6/6), `node tools/run-rolling-tests.mjs`, `node tools/run-rolling-syntax-check.mjs` (2500/2500), `node tools/validate-partials.mjs` (532 `.hbs` files scanned, OK), `node tools/validate-data.js` (pass), `node tools/verify-feats-pack-source.mjs` (390/390, unaffected), `system.json` and `template.json` JSON-parse checks (pass), and the repository-wide write-site re-search above (one remaining hit, classified as internal profile vocabulary, not a schema-contract violation).
 
+### Batch 2B final documentation reconciliation
+
+A fifth independent review, checking commit `e4318124c4e5c1d2ee9b19e8dbd0a25c2922918a` directly, found correction #3's runtime fixes correct with no new behavioral defect, and confirmed CI green — but flagged one stale production-source documentation block left over from the module's original authorship: `weapon-branch-coherence-hotfix.js`'s module-level JSDoc still cited the superseded "744/744" pack-scan figure (corrected to 193 standalone + 5,766 embedded = 5,959 in the first correction round, but never updated here), and still claimed the hook "never rewrites the high-trust, deliberately-authored fields (weaponCategory, proficiency, subcategory, category)" — no longer true since correction #2 made `normalizeWeaponForWrite()` intentionally reconcile exactly those fields for coherence (`DIFFED_FIELDS` proves it directly). No production logic was changed; the JSDoc now cites the corrected figures and accurately separates read-time (tolerant, non-mutating) from write-time (coherence-enforcing) authority, plus the create-vs-update provenance distinction from correction #3. `tests/weapon-branch-family-schema-authority.test.mjs` (34/34, unchanged) and the full rolling syntax check (2500/2500) confirm no behavior change.
+
+**Batch 2B final certification, as scoped:**
+
+- **BASE WEAPON BRANCH/FAMILY SCHEMA COHERENCE: CERTIFIED**
+- **ATTACK-ABILITY POLICY: CERTIFIED**
+- **BASE/INTRINSIC LIGHT-WEAPON CLASSIFICATION: CERTIFIED**
+- **EFFECTIVE/CONTEXTUAL TREAT-AS-LIGHT CLASSIFICATION: NOT CERTIFIED** — Flurry of Blows eligibility, dual-wield/Two-Weapon Fighting shape, and the grapple light-weapon exemption still do not recognize a weapon "treated as Light" solely via the Weapon Finesse + Weapon Focus combined feat. This is a documented, pre-existing gap (not a regression introduced by any Batch 2B round), left as its own queued future domain rather than folded into this certification.
+
 ## Domain: Weapon Modifier Source Contract — CONFIRMED DEFECT — **FIXED**
 
 Found live, as a side effect of building a real actor golden-case fixture (Vexa'na Fen'Orr'kess Tessik) to verify the certified Grapple formula against a second, independently-shaped character. Running her real actor export through `DerivedCalculator.computeAll()` threw a caught-but-logged error from `WeaponsEngine.getWeaponModifiers()`: `createModifier: missing required fields: source=undefined, sourceName=Lightsaber (Attuned)...`. Initially misdiagnosed as a data-quality issue on that one item; a follow-up review correctly identified it as a code defect.
