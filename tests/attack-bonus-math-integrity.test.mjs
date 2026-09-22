@@ -744,6 +744,8 @@ ok('unified typed attack-modifier stacking: Charge is COMPETENCE per published S
 // the final roll composition.
 
 {
+  const STANDARD_BASELINE_CRYSTAL_ID = 'lightsaber-crystal-standard-kyber';
+
   function lightsaberWeapon(overrides = {}) {
     return {
       id: overrides.id ?? 'w-saber', name: overrides.name ?? 'Training Saber', type: 'weapon',
@@ -753,6 +755,17 @@ ok('unified typed attack-modifier stacking: Charge is COMPETENCE per published S
       },
       flags: overrides.flags ?? {}
     };
+  }
+
+  // An attuned lightsaber fixture with explicit crystal provenance, matching
+  // the real construction-engine contract (flags.swse.builtBy/attunedBy +
+  // flags.swse.lightsaberConfig.crystalId). `crystalId: undefined` omits
+  // lightsaberConfig entirely (the pre-lightsaberConfig legacy/compatibility
+  // shape); any other value (including STANDARD_BASELINE_CRYSTAL_ID) sets it.
+  function attunedLightsaber({ builderId = 'test-actor', attunerId = builderId, crystalId, modifiers = [], id, name } = {}) {
+    const swseFlags = { builtBy: builderId, attunedBy: attunerId };
+    if (crystalId !== undefined) swseFlags.lightsaberConfig = { crystalId };
+    return lightsaberWeapon({ id, name, modifiers, flags: { swse: swseFlags } });
   }
 
   // Real record shapes copied verbatim from packs/lightsaber-crystals.db
@@ -781,44 +794,72 @@ ok('unified typed attack-modifier stacking: Charge is COMPETENCE per published S
   const baselineSaber = resolveAttackBonus(actor, plainSaber, null, { attackType: 'melee' });
   assert.equal(baselineSaber.total, 9, 'BAB(7) + STR(2), plain unattuned lightsaber with no crystal');
 
-  // 1/2. FAIL-BEFORE proof: an attuned lightsaber's +1 must reach
-  // resolveAttackBonus(); the same weapon un-attuned must not receive it.
-  const attunedActor = makeActor({ bab: 7, str: 2 }); // id 'test-actor', matches builtBy/attunedBy below
-  const attunedSaber = lightsaberWeapon({ flags: { swse: { builtBy: 'test-actor', attunedBy: 'test-actor' } } });
-  const attunedResult = resolveAttackBonus(attunedActor, attunedSaber, null, { attackType: 'melee' });
-  assert.equal(attunedResult.total, baselineSaber.total + 1, 'FAIL-BEFORE FIX: an attuned lightsaber\'s +1 now reaches the attack total');
-  const attunedRow = attunedResult.typedModifierLedger.find(e => e.label === 'Training Saber (Attuned)');
+  // 1-3. Standard Kyber baseline (round 7 blocker 1): the generator's
+  // virtual, no-mechanical-payload crystal (id STANDARD_BASELINE_CRYSTAL_ID)
+  // is the case that earns the ordinary self-built/attuned +1.
+  const standardKyberSaber = attunedLightsaber({ crystalId: STANDARD_BASELINE_CRYSTAL_ID, id: 'w-std-kyber', name: 'Std Kyber Saber' });
+  const standardKyberResult = resolveAttackBonus(actor, standardKyberSaber, null, { attackType: 'melee' });
+  assert.equal(standardKyberResult.total, baselineSaber.total + 1, '1. Standard Kyber: builtBy actor + attunedBy actor => +1');
+  const attunedRow = standardKyberResult.typedModifierLedger.find(e => e.label === 'Std Kyber Saber (Attuned)');
   assert.equal(attunedRow?.value, 1, 'the attunement bonus has its own named ledger row');
-  const unattunedResult = resolveAttackBonus(attunedActor, plainSaber, null, { attackType: 'melee' });
-  assert.equal(unattunedResult.total, baselineSaber.total, 'the same weapon, unattuned, must not receive the +1 (fail path proven, not just the pass path)');
 
-  // 3. Ilum / Mephite / Standard Synthetic (generated-weapon shape: a real
-  // ATTACK_BONUS record on weapon.system.modifiers): +1 exactly once, and
-  // idempotent across repeated invocation.
+  const unattunedKyberSaber = attunedLightsaber({ attunerId: null, crystalId: STANDARD_BASELINE_CRYSTAL_ID, id: 'w-std-kyber-2', name: 'Unattuned Kyber Saber' });
+  const unattunedKyberResult = resolveAttackBonus(actor, unattunedKyberSaber, null, { attackType: 'melee' });
+  assert.equal(unattunedKyberResult.total, baselineSaber.total, '2. Standard Kyber: builtBy actor + attunedBy null => +0');
+
+  const otherActor = { ...makeActor({ bab: 7, str: 2 }), id: 'other-actor' };
+  const rolledByBuilderSaber = attunedLightsaber({ crystalId: STANDARD_BASELINE_CRYSTAL_ID, id: 'w-std-kyber-3', name: 'Wrong Wielder Saber' });
+  const rolledByOtherResult = resolveAttackBonus(otherActor, rolledByBuilderSaber, null, { attackType: 'melee' });
+  assert.equal(rolledByOtherResult.total, baselineSaber.total, '3. Standard Kyber: builtBy actor A + attunedBy actor A, rolled by actor B => +0 (another creature wielding it gets no crystal attack benefit)');
+
+  // 4-6. Ilum / Mephite / Standard Synthetic: attuned creator => exactly
+  // +1 -- NOT +2. FAIL-BEFORE FIX: every prior round added the generic
+  // Attuned +1 AND the crystal's own ATTACK_BONUS +1 unconditionally,
+  // double-counting the identical benefit (JATM: the standard crystal's
+  // benefit IS the +1, an alternate crystal's benefit REPLACES it).
   for (const [crystalName, records] of [['Ilum', REAL_CRYSTAL.ilum], ['Mephite', REAL_CRYSTAL.mephite], ['Standard Synthetic', REAL_CRYSTAL.standardSynthetic]]) {
-    const saber = lightsaberWeapon({ id: `w-${crystalName}`, name: `${crystalName} Saber`, modifiers: records });
+    const saber = attunedLightsaber({ crystalId: `crystal-${crystalName.toLowerCase().replace(/\s+/g, '-')}`, modifiers: records, id: `w-${crystalName}`, name: `${crystalName} Saber` });
     const result = resolveAttackBonus(actor, saber, null, { attackType: 'melee' });
-    assert.equal(result.total, baselineSaber.total + 1, `FAIL-BEFORE FIX: ${crystalName} crystal's real ATTACK_BONUS record now reaches the attack total exactly once`);
+    assert.equal(result.total, baselineSaber.total + 1, `4-6. FAIL-BEFORE FIX: ${crystalName}, attuned creator, is exactly +1 -- NOT +2 (generic attunement +1 and the crystal's own ATTACK_BONUS record are the SAME benefit, not two)`);
     const again = resolveAttackBonus(actor, saber, null, { attackType: 'melee' });
     assert.equal(again.total, result.total, `${crystalName}: repeated invocation must not accumulate the crystal contribution`);
   }
 
-  // Kathracite: its DAMAGE_REDUCTION record must contribute ZERO to attack;
-  // only its ATTACK_BONUS record affects attack. Proves per-record
-  // filtering, not "any record on this weapon counts."
-  const kathraciteSaber = lightsaberWeapon({ modifiers: REAL_CRYSTAL.kathracite });
+  // 7. Kathracite: attuned creator => its attack benefit exactly once. Its
+  // DAMAGE_REDUCTION record must contribute ZERO to attack; only its
+  // ATTACK_BONUS record affects attack, and only that +1 (not +2) applies.
+  const kathraciteSaber = attunedLightsaber({ crystalId: 'crystal-kathracite', modifiers: REAL_CRYSTAL.kathracite, id: 'w-kathracite', name: 'Kathracite Saber' });
   const kathraciteResult = resolveAttackBonus(actor, kathraciteSaber, null, { attackType: 'melee' });
-  assert.equal(kathraciteResult.total, baselineSaber.total + 1, 'Kathracite: DAMAGE_REDUCTION contributes 0 to attack; only its ATTACK_BONUS record (+1) applies');
+  assert.equal(kathraciteResult.total, baselineSaber.total + 1, '7. Kathracite: DAMAGE_REDUCTION contributes 0 to attack; only its ATTACK_BONUS record (+1, exactly once, not +2) applies');
 
-  // 4. MANDATORY negative proofs: every non-(ATTACK_BONUS-with-target-attack)
-  // real crystal record shape must contribute EXACTLY ZERO to the attack
-  // total -- regression tests against the exact class of bug present at the
-  // previously-reviewed head (an absent/unrecognized field defaulting to
-  // 'attack.bonus').
+  // 8. Ilum: same weapon before attunement => +0 (a non-attuned wielder,
+  // including someone other than the builder, gets no crystal attack
+  // benefit); mutate attunedBy to the rolling actor => the very next
+  // resolution reaches +1.
+  const mutatingIlumSaber = attunedLightsaber({ attunerId: null, crystalId: 'crystal-ilum', modifiers: REAL_CRYSTAL.ilum, id: 'w-ilum-mutate', name: 'Mutating Ilum Saber' });
+  const beforeAttunement = resolveAttackBonus(actor, mutatingIlumSaber, null, { attackType: 'melee' });
+  assert.equal(beforeAttunement.total, baselineSaber.total, '8. Ilum, not yet attuned: +0');
+  mutatingIlumSaber.flags.swse.attunedBy = actor.id;
+  const afterAttunement = resolveAttackBonus(actor, mutatingIlumSaber, null, { attackType: 'melee' });
+  assert.equal(afterAttunement.total, baselineSaber.total + 1, '8. Ilum, attunedBy mutated to the rolling actor: the very next resolution reaches +1, no stale caching');
+
+  // 9. Alternate nonattack crystal (Sigil, DAMAGE_BONUS only): attuned
+  // creator => no generic +1. The crystal's own chosen benefit (damage, in
+  // Sigil's case) replaces the standard +1 rather than adding to it, and
+  // Sigil's own record isn't ATTACK_BONUS/CONDITIONAL_ATTACK, so attack
+  // total is exactly the unmodified baseline.
+  const sigilSaber = attunedLightsaber({ crystalId: 'crystal-sigil', modifiers: REAL_CRYSTAL.sigil, id: 'w-sigil', name: 'Sigil Saber' });
+  const sigilResult = resolveAttackBonus(actor, sigilSaber, null, { attackType: 'melee' });
+  assert.equal(sigilResult.total, baselineSaber.total, '9. Sigil (alternate nonattack crystal), attuned creator: no generic +1 -- the crystal\'s own replacement benefit does not regrant the standard bonus');
+
+  // Every other non-(ATTACK_BONUS-with-target-attack) real crystal record
+  // shape must ALSO contribute exactly zero to attack for an ATTUNED
+  // creator specifically (not merely because attunement is absent) --
+  // proving the per-record-type fail-closed filtering independently of the
+  // attunement gate.
   const negativeCrystals = [
     ['Kasha (DEFENSE_BONUS)', REAL_CRYSTAL.kasha],
     ['Jenraux (DEFENSE_BONUS)', REAL_CRYSTAL.jenraux],
-    ['Sigil (DAMAGE_BONUS)', REAL_CRYSTAL.sigil],
     ['Krayt Dragon Pearl (DAMAGE_BONUS)', REAL_CRYSTAL.krayt],
     ['Mantle of the Force (SKILL_BONUS)', REAL_CRYSTAL.mantle],
     ['Ankarres Sapphire (HEALING_BONUS)', REAL_CRYSTAL.ankarres],
@@ -826,30 +867,38 @@ ok('unified typed attack-modifier stacking: Charge is COMPETENCE per published S
     ['Dragite Crystal (CRITICAL_BONUS, string value)', REAL_CRYSTAL.dragite],
     ['Bondar Crystal (DAMAGE_TYPE_CHANGE, string value)', REAL_CRYSTAL.bondar]
   ];
+  let negIndex = 0;
   for (const [label, records] of negativeCrystals) {
-    const saber = lightsaberWeapon({ id: `w-neg-${label}`, name: `${label} Saber`, modifiers: records });
+    negIndex += 1;
+    const saber = attunedLightsaber({ crystalId: `crystal-neg-${negIndex}`, modifiers: records, id: `w-neg-${negIndex}`, name: `${label} Saber` });
     const result = resolveAttackBonus(actor, saber, null, { attackType: 'melee' });
-    assert.equal(result.total, baselineSaber.total, `${label} must contribute ZERO to attack -- never defaults to attack.bonus merely because a target/domain field is absent or unrecognized`);
+    assert.equal(result.total, baselineSaber.total, `${label}, attuned creator, must contribute ZERO to attack -- never defaults to attack.bonus merely because a target/domain field is absent or unrecognized, and never regains the generic +1 for lacking an ATTACK_BONUS record of its own`);
   }
 
-  // 5. Heart of the Guardian / Hurikane: CONDITIONAL_ATTACK records are REAL
-  // attack bonuses. Round 6 automated both against the roll's resolved
-  // target actor (see Section 8b/8c below for the full target-qualification
-  // matrix); this section only proves the fail-closed no-target/unrelated-
-  // context baseline (no targetActor is passed here at all), which still
-  // correctly yields +0 -- an unrelated context flag (targetIsArmored, a
-  // flag this project's resolver never reads) must never accidentally
-  // satisfy the condition by coincidence of naming.
-  const heartSaber = lightsaberWeapon({ modifiers: REAL_CRYSTAL.heart });
+  // 10. Non-attuned wielder of a crystal-bearing saber => +0 regardless of
+  // the crystal (Ilum's own +1 record does not apply to a non-attuned
+  // wielder). Covers "another creature wielding the weapon" generally,
+  // beyond the builder-vs-other-actor case already proven in item 3.
+  const nonAttunedIlumSaber = lightsaberWeapon({ id: 'w-ilum-unattuned', name: 'Unattuned Ilum Saber', modifiers: REAL_CRYSTAL.ilum, flags: {} });
+  const nonAttunedResult = resolveAttackBonus(actor, nonAttunedIlumSaber, null, { attackType: 'melee' });
+  assert.equal(nonAttunedResult.total, baselineSaber.total, '10. A crystal-bearing saber with no builtBy/attunedBy at all (never attuned by anyone): +0, the crystal\'s ATTACK_BONUS record never applies to an unattuned wielder');
+
+  // Heart of the Guardian / Hurikane: CONDITIONAL_ATTACK records require
+  // BOTH attunement AND the target condition (see Section 8b/8c below for
+  // the full target-qualification matrix). This proves attunement alone is
+  // not sufficient -- no resolvable target still yields +0 even for an
+  // attuned creator, and an unrelated context flag never accidentally
+  // satisfies the condition.
+  const heartSaber = attunedLightsaber({ crystalId: 'crystal-heart', modifiers: REAL_CRYSTAL.heart, id: 'w-heart-attuned', name: 'Heart Saber' });
   const heartNoContext = resolveAttackBonus(actor, heartSaber, null, { attackType: 'melee' });
-  assert.equal(heartNoContext.total, baselineSaber.total, 'Heart of the Guardian: no resolvable target -> +0 (fails closed, never guesses)');
+  assert.equal(heartNoContext.total, baselineSaber.total, 'Heart of the Guardian: attuned but no resolvable target -> +0 (fails closed, never guesses)');
   const heartWithUnrelatedContext = resolveAttackBonus(actor, heartSaber, null, { attackType: 'melee', targetIsArmored: true });
   assert.equal(heartWithUnrelatedContext.total, baselineSaber.total, 'Heart of the Guardian: an unrelated context flag must not accidentally satisfy its condition -- still +0');
-  const hurikaneSaber = lightsaberWeapon({ modifiers: REAL_CRYSTAL.hurikane });
+  const hurikaneSaber = attunedLightsaber({ crystalId: 'crystal-hurikane', modifiers: REAL_CRYSTAL.hurikane, id: 'w-hurikane-attuned', name: 'Hurikane Saber' });
   const hurikaneNoContext = resolveAttackBonus(actor, hurikaneSaber, null, { attackType: 'melee' });
-  assert.equal(hurikaneNoContext.total, baselineSaber.total, 'Hurikane: no resolvable target -> +0 (fails closed, never guesses)');
+  assert.equal(hurikaneNoContext.total, baselineSaber.total, 'Hurikane: attuned but no resolvable target -> +0 (fails closed, never guesses)');
 
-  // 6. Weapon enhancement still applies exactly once (the structural
+  // Weapon enhancement still applies exactly once (the structural
   // miscBonus path), never double-counted via the new typed pool -- the
   // typed pool deliberately never emits a mirror of it.
   const enhancedWeapon = meleeWeapon({ proficient: true, combat: { attack: { bonus: 2 } } });
@@ -857,34 +906,37 @@ ok('unified typed attack-modifier stacking: Charge is COMPETENCE per published S
   const enhancedResult = resolveAttackBonus(actor, enhancedWeapon, null, { attackType: 'melee' });
   assert.equal(enhancedResult.total, plainMelee.total + 2, 'weapon enhancement bonus applies exactly once');
 
-  // 7. Nonproficiency still -5 exactly once (the structural
-  // proficiencyPenalty path), never double-counted via the typed pool.
+  // Nonproficiency still -5 exactly once (the structural proficiencyPenalty
+  // path), never double-counted via the typed pool.
   const nonproficientResult = resolveAttackBonus(actor, meleeWeapon({ proficient: false }), null, { attackType: 'melee' });
   assert.equal(nonproficientResult.total, plainMelee.total - 5, 'nonproficiency penalty applies exactly once');
 
-  // 8. Two equipped weapons: Weapon A's attunement/crystal modifiers must
-  // NOT leak into Weapon B's roll. The interpreter reads weapon.system.
-  // modifiers directly off the CURRENT weapon param -- no actor-wide scan --
-  // so this is structurally guaranteed, proven here end to end.
-  const saberA = lightsaberWeapon({ id: 'w-saber-a', name: 'Saber A', flags: { swse: { builtBy: 'test-actor', attunedBy: 'test-actor' } }, modifiers: REAL_CRYSTAL.ilum });
+  // Two equipped weapons: Weapon A's attunement/crystal modifiers must NOT
+  // leak into Weapon B's roll. The interpreter reads weapon.system.modifiers
+  // directly off the CURRENT weapon param -- no actor-wide scan -- so this
+  // is structurally guaranteed, proven here end to end. Saber A (attuned,
+  // Ilum crystal) is exactly +1 (the round-7 fix), not +2.
+  const saberA = attunedLightsaber({ crystalId: 'crystal-ilum', modifiers: REAL_CRYSTAL.ilum, id: 'w-saber-a', name: 'Saber A' });
   const saberB = lightsaberWeapon({ id: 'w-saber-b', name: 'Saber B' });
   const actorTwoWeapons = makeActor({ bab: 7, str: 2 });
   const resultA = resolveAttackBonus(actorTwoWeapons, saberA, null, { attackType: 'melee' });
   const resultB = resolveAttackBonus(actorTwoWeapons, saberB, null, { attackType: 'melee' });
-  assert.equal(resultA.total, baselineSaber.total + 1 /* attuned */ + 1 /* crystal */, 'Saber A (attuned, with its own crystal) receives both of its own contributions');
+  assert.equal(resultA.total, baselineSaber.total + 1, 'Saber A (attuned, Ilum crystal) receives exactly its own +1, not +2');
   assert.equal(resultB.total, baselineSaber.total, 'Saber B (unattuned, no crystal of its own) must NOT receive Saber A\'s attunement or crystal contributions -- no cross-weapon leakage');
 
-  // 9/10. INTERPRETER-CONTRACT tests (explicitly NOT a claim about any
+  // INTERPRETER-CONTRACT tests (explicitly NOT a claim about any
   // currently-shipped crystal -- no real ATTACK_BONUS record in the pack
   // sets bonusType today; these exercise the interpreter's own supported
   // bonusType field and the attack.bonus/global.attack alias-normalization
-  // pass in isolation, using a hypothetical but schema-legal record).
+  // pass in isolation, using a hypothetical but schema-legal record). All
+  // fixtures are attuned, since the interpreter now gates every crystal
+  // record on attunement.
   const { createModifier: makeMod, ModifierType: MType, ModifierSource: MSource } = await import(
     '/systems/foundryvtt-swse/scripts/engine/effects/modifiers/ModifierTypes.js'
   );
   // Same-type collision WITHIN one weapon's own modifiers array.
-  const twoTypedSaber = lightsaberWeapon({
-    id: 'w-saber-typed-collision', name: 'Interpreter Contract Saber',
+  const twoTypedSaber = attunedLightsaber({
+    crystalId: 'crystal-interpreter-contract-1', id: 'w-saber-typed-collision', name: 'Interpreter Contract Saber',
     modifiers: [
       { type: 'ATTACK_BONUS', value: 1, target: 'attack', bonusType: 'competence' },
       { type: 'ATTACK_BONUS', value: 3, target: 'attack', bonusType: 'competence' }
@@ -896,8 +948,8 @@ ok('unified typed attack-modifier stacking: Charge is COMPETENCE per published S
   // Cross-target-alias collision: a competence-typed weapon contribution
   // (target 'attack.bonus') and a competence Active Effect (target
   // 'global.attack') must collide in the SAME stacking universe.
-  const aliasSaber = lightsaberWeapon({
-    id: 'w-saber-alias', name: 'Alias Contract Saber',
+  const aliasSaber = attunedLightsaber({
+    crystalId: 'crystal-interpreter-contract-2', id: 'w-saber-alias', name: 'Alias Contract Saber',
     modifiers: [{ type: 'ATTACK_BONUS', value: 5, target: 'attack', bonusType: 'competence' }]
   });
   const actorAliasPlusEffect = makeActor({ bab: 7, str: 2, effects: [competenceAttackEffect(4, { id: 'effect-x', name: 'Battle Focus' })] });
@@ -909,14 +961,14 @@ ok('unified typed attack-modifier stacking: Charge is COMPETENCE per published S
 
   // Weapon contribution vs Charge, same type, legally can collide.
   const chargeContribution = makeMod({ source: MSource.CONDITION, sourceId: 'charge', sourceName: 'Charge', target: 'global.attack', type: MType.COMPETENCE, value: 2 });
-  const strongAliasSaber = lightsaberWeapon({
-    id: 'w-saber-strong', name: 'Strong Saber',
+  const strongAliasSaber = attunedLightsaber({
+    crystalId: 'crystal-interpreter-contract-3', id: 'w-saber-strong', name: 'Strong Saber',
     modifiers: [{ type: 'ATTACK_BONUS', value: 6, target: 'attack', bonusType: 'competence' }]
   });
   const crystalVsChargeResult = resolveAttackBonus(actor, strongAliasSaber, null, { attackType: 'melee', situationalContributions: [chargeContribution] });
   assert.equal(crystalVsChargeResult.total, baselineSaber.total + 6, 'interpreter contract: weapon contribution (+6 competence) vs Charge (+2 competence): only the higher applies');
 
-  // 11. Truthful suppression reason: a suppressed CIRCUMSTANCE/same-source
+  // Truthful suppression reason: a suppressed CIRCUMSTANCE/same-source
   // contribution (stackUnlessSameSource) must never be mislabeled
   // "highestOnly".
   const circumstanceA = makeMod({ source: MSource.FEAT, sourceId: 'prime-shot', sourceName: 'Prime Shot A', target: 'global.attack', type: MType.CIRCUMSTANCE, value: 1 });
@@ -929,11 +981,11 @@ ok('unified typed attack-modifier stacking: Charge is COMPETENCE per published S
   assert.ok(String(suppressedCircumstance?.reason || '').includes('stackUnlessSameSource'), 'a suppressed circumstance/same-source contribution must cite stackUnlessSameSource');
   assert.ok(!String(suppressedCircumstance?.reason || '').includes('highestOnly'), 'must NOT be mislabeled highestOnly -- the reason must reflect the ACTUAL rule that suppressed it');
 
-  // 12. SUM(applied ledger) === final atk modifier, via the full
+  // SUM(applied ledger) === final atk modifier, via the full
   // computeFinalAttackComposition() pipeline, for the key cases above.
   const { computeFinalAttackComposition: composeForWeaponTests } = await import('/systems/foundryvtt-swse/scripts/combat/rolls/attacks.js');
   const compositionCases = await Promise.all([
-    composeForWeaponTests(attunedActor, attunedSaber, { attackType: 'melee' }),
+    composeForWeaponTests(actor, standardKyberSaber, { attackType: 'melee' }),
     composeForWeaponTests(actor, kathraciteSaber, { attackType: 'melee' }),
     composeForWeaponTests(actor, heartSaber, { attackType: 'melee' }),
     composeForWeaponTests(actorTwoWeapons, saberA, { attackType: 'melee' }),
@@ -951,10 +1003,10 @@ ok('unified typed attack-modifier stacking: Charge is COMPETENCE per published S
   // Dialog preview / real roll parity: computeFinalAttackComposition()
   // (what both call) must agree exactly with resolveAttackBonus() alone
   // for the attunement and alias-collision cases.
-  assert.equal(compositionCases[0].atkBonus, attunedResult.total);
+  assert.equal(compositionCases[0].atkBonus, standardKyberResult.total);
   assert.equal(compositionCases[6].atkBonus, aliasResult.total);
 }
-ok('WeaponsEngine attack.bonus modifiers, generator-native schema (round 5): fail-before/fix proven for attunement and real Ilum/Mephite/Standard-Synthetic ATTACK_BONUS crystal records; Kathracite\'s DAMAGE_REDUCTION contributes zero while its ATTACK_BONUS record applies; every non-attack real crystal record shape (Kasha/Jenraux/Sigil/Krayt/Mantle/Ankarres/Compressed/Dragite/Bondar) contributes exactly zero to attack, including string-valued records that must not throw; Heart of the Guardian/Hurikane CONDITIONAL_ATTACK records fail closed to +0 with no resolvable target (see Section 8b/8c for their round-6 target-qualified automation); weapon enhancement and nonproficiency remain exactly-once structural terms; a second equipped weapon never receives the first weapon\'s attunement/crystal contributions; the interpreter\'s bonusType support and the attack.bonus/global.attack alias normalization are proven via explicitly-labeled interpreter-contract tests, separate from the shipped-crystal RAW tests; a stackUnlessSameSource circumstance suppression is never mislabeled highestOnly; and ledger-sum parity holds throughout, including through the dialog/roll shared composition seam');
+ok('WeaponsEngine attack.bonus modifiers, generator-native schema (round 7): the standard/self-built lightsaber crystal +1 is now attunement-gated end to end and no longer double-counted against a real crystal\'s own ATTACK_BONUS record (Ilum/Mephite/Standard-Synthetic/Kathracite each exactly +1, never +2); the generator\'s virtual Standard Kyber baseline is distinguished from a real named crystal by crystal IDENTITY, not by an empty modifiers array, so an alternate nonattack crystal (Sigil) never regains the generic +1 its own chosen benefit replaced; a non-attuned wielder (the builder\'s attunedBy null, a different actor entirely, or no builtBy/attunedBy at all) receives no crystal attack benefit from any crystal; every non-(ATTACK_BONUS-with-target-attack) real crystal record shape still contributes exactly zero to attack for an ATTUNED creator specifically; Heart of the Guardian/Hurikane CONDITIONAL_ATTACK records fail closed to +0 with no resolvable target even when attuned (see Section 8b/8c for their target-qualification matrix); weapon enhancement and nonproficiency remain exactly-once structural terms; a second equipped weapon never receives the first weapon\'s attunement/crystal contributions; the interpreter\'s bonusType support and the attack.bonus/global.attack alias normalization are proven via explicitly-labeled interpreter-contract tests, separate from the shipped-crystal RAW tests; a stackUnlessSameSource circumstance suppression is never mislabeled highestOnly; and ledger-sum parity holds throughout, including through the dialog/roll shared composition seam');
 
 {
   const { computeFinalAttackComposition } = await import('/systems/foundryvtt-swse/scripts/combat/rolls/attacks.js');
@@ -1276,62 +1328,100 @@ ok('Greater Weapon Focus golden tests: the existing CombatOptionResolver path (n
 ok('ModifierType.FORCE restored with an explicit STACKING_RULES.force = highestOnly entry (SWSE Core Rulebook p.241): two Force contributions collide to only the higher; Force vs competence and Force vs untyped both fully apply as different descriptor types');
 
 // ─── SECTION 8b — Hurikane / Heart of the Guardian target-gated ───────────
-// CONDITIONAL_ATTACK crystals (round 6 blockers 3-4)
+// CONDITIONAL_ATTACK crystals (round 6 blockers 3-4; round 7 correction:
+// both now ALSO require the attacker be attuned to the crystal-bearing
+// saber, Hurikane requires an actual Armor Bonus to Reflex Defense rather
+// than merely "wears an armor-typed item," and Heart requires the target to
+// be both wielding AND have the lightsaber's blade active, not just
+// equipped.)
 
 {
-  function lightsaberWithModifiers(records, overrides = {}) {
+  function attunedConditionalSaber(records, { attuned = true, id, name } = {}) {
     return {
-      id: overrides.id ?? 'w-cond-saber', name: overrides.name ?? 'Conditional Saber', type: 'weapon',
+      id: id ?? 'w-cond-saber', name: name ?? 'Conditional Saber', type: 'weapon',
       system: { weaponCategory: 'melee', proficiency: 'lightsaber', damage: '2d8', subtype: 'lightsaber', modifiers: records },
-      flags: overrides.flags ?? {}
+      flags: { swse: { builtBy: 'test-actor', attunedBy: attuned ? 'test-actor' : null } }
     };
   }
   function targetActorWith(items) { return { id: 'target-actor', items: makeItemsCollection(items) }; }
-  function equippedBodyArmorItem() { return { id: 'armor-1', name: 'Battle Armor', type: 'armor', system: { equipped: true, armorType: 'medium' } }; }
-  function unequippedBodyArmorItem() { return { id: 'armor-2', name: 'Spare Armor', type: 'armor', system: { equipped: false, armorType: 'medium' } }; }
-  function equippedEnergyShieldItem() { return { id: 'shield-1', name: 'Deflector Shield Generator', type: 'armor', system: { equipped: true, armorType: 'shield' } }; }
-  function equippedLightsaberItem(overrides = {}) {
-    return { id: overrides.id ?? 'target-saber', name: overrides.name ?? 'Target Saber', type: 'weapon', system: { subtype: 'lightsaber', equipped: overrides.equipped !== false } };
+  // "vs-armored" fixtures: SWSE's real Hurikane condition is a target with
+  // an ARMOR BONUS TO REFLEX DEFENSE, not merely "wears an armor-typed
+  // item" -- resolveArmorData()'s reflexBonus (system.defenseBonus, the
+  // canonical storage field) must be positive.
+  function positiveReflexArmorItem() { return { id: 'armor-1', name: 'Battle Armor', type: 'armor', system: { equipped: true, armorType: 'medium', defenseBonus: 3 } }; }
+  function unequippedPositiveReflexArmorItem() { return { id: 'armor-2', name: 'Spare Armor', type: 'armor', system: { equipped: false, armorType: 'medium', defenseBonus: 3 } }; }
+  // The real Cortosis Gauntlet (packs/armor.db, id armor-cortosis-gauntlet):
+  // armorType medium, defenseBonus 0 -- equipped armor with NO Reflex bonus,
+  // the mandatory negative regression.
+  function cortosisGauntletItem() { return { id: 'armor-cortosis-gauntlet', name: 'Cortosis Gauntlet', type: 'armor', system: { equipped: true, armorType: 'medium', defenseBonus: 0 } }; }
+  function equippedEnergyShieldItem() { return { id: 'shield-1', name: 'Deflector Shield Generator', type: 'armor', system: { equipped: true, armorType: 'shield', defenseBonus: 5 } }; }
+  // "vs-lightsaber-wielders" fixtures: wielded (equipped) AND activated
+  // (blade ignited) are independent predicates.
+  function targetLightsaberItem(overrides = {}) {
+    return {
+      id: overrides.id ?? 'target-saber', name: overrides.name ?? 'Target Saber', type: 'weapon',
+      system: { subtype: 'lightsaber', equipped: overrides.equipped !== false, activated: overrides.activated !== false }
+    };
   }
 
   const attacker = makeActor({ bab: 7, str: 2 });
   const hurikaneRecord = [{ type: 'CONDITIONAL_ATTACK', value: 2, bonusType: 'force', condition: 'vs-armored' }];
   const heartRecord = [{ type: 'CONDITIONAL_ATTACK', value: 2, bonusType: 'force', condition: 'vs-lightsaber-wielders' }];
-  const hurikaneSaber = lightsaberWithModifiers(hurikaneRecord, { id: 'w-hurikane', name: 'Hurikane Saber' });
-  const heartSaber = lightsaberWithModifiers(heartRecord, { id: 'w-heart', name: 'Heart Saber' });
-  const plainBaseline = resolveAttackBonus(attacker, lightsaberWithModifiers([], { id: 'w-plain2', name: 'Plain Saber 2' }), null, { attackType: 'melee' }).total;
+  const hurikaneSaber = attunedConditionalSaber(hurikaneRecord, { id: 'w-hurikane', name: 'Hurikane Saber' });
+  const heartSaber = attunedConditionalSaber(heartRecord, { id: 'w-heart', name: 'Heart Saber' });
+  // Baseline is deliberately UNATTUNED -- hurikaneSaber/heartSaber never
+  // receive the separate generic standard-crystal +1 either (their own
+  // modifiers array is non-empty, so they defer entirely to their own
+  // CONDITIONAL_ATTACK record; see Section 5b), so this stays a clean
+  // reference point isolating only the conditional +2 under test.
+  const plainBaseline = resolveAttackBonus(attacker, attunedConditionalSaber([], { attuned: false, id: 'w-plain2', name: 'Plain Saber 2' }), null, { attackType: 'melee' }).total;
 
-  // ── Hurikane (vs-armored) ──────────────────────────────────────────────
-  assert.equal(resolveAttackBonus(attacker, hurikaneSaber, null, { attackType: 'melee' }).total, plainBaseline, 'Hurikane: no target => +0');
-  assert.equal(resolveAttackBonus(attacker, hurikaneSaber, null, { attackType: 'melee', targetActor: targetActorWith([]) }).total, plainBaseline, 'Hurikane: target owns no armor => +0');
-  assert.equal(resolveAttackBonus(attacker, hurikaneSaber, null, { attackType: 'melee', targetActor: targetActorWith([unequippedBodyArmorItem()]) }).total, plainBaseline, 'Hurikane: target owns unequipped armor (not worn) => +0');
-  assert.equal(resolveAttackBonus(attacker, hurikaneSaber, null, { attackType: 'melee', targetActor: targetActorWith([equippedBodyArmorItem()]) }).total, plainBaseline + 2, 'Hurikane: target wearing equipped body armor => +2');
-  assert.equal(resolveAttackBonus(attacker, hurikaneSaber, null, { attackType: 'melee', targetActor: targetActorWith([equippedEnergyShieldItem()]) }).total, plainBaseline, 'Hurikane: target with only an equipped Energy Shield (not body armor) => +0');
-  const altFlagArmor = { id: 'armor-alt', name: 'Alt Flag Armor', type: 'armor', system: { readied: true, armorType: 'light' } };
-  assert.equal(resolveAttackBonus(attacker, hurikaneSaber, null, { attackType: 'melee', targetActor: targetActorWith([altFlagArmor]) }).total, plainBaseline + 2, 'Hurikane: alternate certified equipped-armor flag (system.readied) must also qualify => +2');
+  // ── Hurikane (vs-armored: an Armor Bonus to Reflex Defense) ────────────
+  assert.equal(resolveAttackBonus(attacker, hurikaneSaber, null, { attackType: 'melee' }).total, plainBaseline, '1. Hurikane: no target => +0');
+  assert.equal(resolveAttackBonus(attacker, hurikaneSaber, null, { attackType: 'melee', targetActor: targetActorWith([]) }).total, plainBaseline, '2. Hurikane: target owns no armor => +0');
+  assert.equal(resolveAttackBonus(attacker, hurikaneSaber, null, { attackType: 'melee', targetActor: targetActorWith([unequippedPositiveReflexArmorItem()]) }).total, plainBaseline, '3. Hurikane: unequipped positive-Reflex armor (not worn) => +0');
+  assert.equal(resolveAttackBonus(attacker, hurikaneSaber, null, { attackType: 'melee', targetActor: targetActorWith([positiveReflexArmorItem()]) }).total, plainBaseline + 2, '4. Hurikane: equipped body armor with a positive Armor Bonus to Reflex Defense => +2');
+  assert.equal(resolveAttackBonus(attacker, hurikaneSaber, null, { attackType: 'melee', targetActor: targetActorWith([cortosisGauntletItem()]) }).total, plainBaseline, '5/6. Hurikane: equipped Cortosis Gauntlet, Reflex Armor Bonus 0 -- wearing armor alone is not enough => +0');
+  assert.equal(resolveAttackBonus(attacker, hurikaneSaber, null, { attackType: 'melee', targetActor: targetActorWith([equippedEnergyShieldItem()]) }).total, plainBaseline, '7. Hurikane: Energy Shield alone => +0 (not body armor; its own Reflex bonus is also zeroed by resolveArmorData())');
+  const altFlagArmor = { id: 'armor-alt', name: 'Alt Flag Armor', type: 'armor', system: { readied: true, armorType: 'light', defenseBonus: 2 } };
+  assert.equal(resolveAttackBonus(attacker, hurikaneSaber, null, { attackType: 'melee', targetActor: targetActorWith([altFlagArmor]) }).total, plainBaseline + 2, '8. Hurikane: alternate certified equipped-armor flag (system.readied) + a positive Reflex bonus => +2');
+  const mutatingArmor = positiveReflexArmorItem();
+  const mutatingArmorTarget = targetActorWith([mutatingArmor]);
+  assert.equal(resolveAttackBonus(attacker, hurikaneSaber, null, { attackType: 'melee', targetActor: mutatingArmorTarget }).total, plainBaseline + 2, '9. Hurikane: initially equipped, positive Reflex bonus => +2');
+  mutatingArmor.system.equipped = false;
+  assert.equal(resolveAttackBonus(attacker, hurikaneSaber, null, { attackType: 'melee', targetActor: mutatingArmorTarget }).total, plainBaseline, '9. Hurikane: mutation -- unequipping the armor loses the +2 on the very next resolution');
+  const nonAttunedHurikaneSaber = attunedConditionalSaber(hurikaneRecord, { attuned: false, id: 'w-hurikane-unattuned', name: 'Unattuned Hurikane Saber' });
+  assert.equal(resolveAttackBonus(attacker, nonAttunedHurikaneSaber, null, { attackType: 'melee', targetActor: targetActorWith([positiveReflexArmorItem()]) }).total, plainBaseline, '10. Hurikane: attacker not attuned to the saber => +0 regardless of an otherwise-qualifying target');
 
-  // ── Heart of the Guardian (vs-lightsaber-wielders) ─────────────────────
-  assert.equal(resolveAttackBonus(attacker, heartSaber, null, { attackType: 'melee' }).total, plainBaseline, 'Heart: no target => +0');
-  assert.equal(resolveAttackBonus(attacker, heartSaber, null, { attackType: 'melee', targetActor: targetActorWith([equippedLightsaberItem({ equipped: false })]) }).total, plainBaseline, 'Heart: target owns an UNEQUIPPED lightsaber (ownership, not wielding) => +0');
-  const wieldingTarget = targetActorWith([equippedLightsaberItem()]);
-  assert.equal(resolveAttackBonus(attacker, heartSaber, null, { attackType: 'melee', targetActor: wieldingTarget }).total, plainBaseline + 2, 'Heart: target wields an equipped lightsaber => +2');
-  const nonSaberTarget = targetActorWith([{ id: 'target-blaster', name: 'Blaster', type: 'weapon', system: { equipped: true } }]);
-  assert.equal(resolveAttackBonus(attacker, heartSaber, null, { attackType: 'melee', targetActor: nonSaberTarget }).total, plainBaseline, 'Heart: target equips a non-lightsaber weapon => +0');
-  const altEquipSaber = { id: 'target-saber-alt', name: 'Alt Saber', type: 'weapon', system: { subtype: 'lightsaber', readied: true } };
-  assert.equal(resolveAttackBonus(attacker, heartSaber, null, { attackType: 'melee', targetActor: targetActorWith([altEquipSaber]) }).total, plainBaseline + 2, 'Heart: alternate certified equip field (system.readied) also qualifies => +2');
-
-  const mutatingSaber = equippedLightsaberItem({ id: 'mutating-saber' });
-  const mutatingTarget = targetActorWith([mutatingSaber]);
-  assert.equal(resolveAttackBonus(attacker, heartSaber, null, { attackType: 'melee', targetActor: mutatingTarget }).total, plainBaseline + 2, 'Heart: initially equipped => +2');
-  mutatingSaber.system.equipped = false;
-  assert.equal(resolveAttackBonus(attacker, heartSaber, null, { attackType: 'melee', targetActor: mutatingTarget }).total, plainBaseline, 'Heart: mutation test -- unequipping the target\'s lightsaber loses the +2 on the very next resolution');
-
-  const wieldingTargetA = targetActorWith([equippedLightsaberItem({ id: 'saber-a' })]);
+  // ── Heart of the Guardian (vs-lightsaber-wielders: WIELDING an ACTIVE
+  // lightsaber) ────────────────────────────────────────────────────────────
+  assert.equal(resolveAttackBonus(attacker, heartSaber, null, { attackType: 'melee', targetActor: targetActorWith([targetLightsaberItem({ equipped: false, activated: false })]) }).total, plainBaseline, '1. Heart: owned, unequipped, inactive => +0');
+  assert.equal(resolveAttackBonus(attacker, heartSaber, null, { attackType: 'melee', targetActor: targetActorWith([targetLightsaberItem({ equipped: true, activated: false })]) }).total, plainBaseline, '2. Heart: equipped but inactive (blade not ignited) => +0');
+  assert.equal(resolveAttackBonus(attacker, heartSaber, null, { attackType: 'melee', targetActor: targetActorWith([targetLightsaberItem({ equipped: false, activated: true })]) }).total, plainBaseline, '3. Heart: active but not wielded => +0');
+  const wieldingActiveTarget = targetActorWith([targetLightsaberItem({ equipped: true, activated: true })]);
+  assert.equal(resolveAttackBonus(attacker, heartSaber, null, { attackType: 'melee', targetActor: wieldingActiveTarget }).total, plainBaseline + 2, '4. Heart: wielded + active => +2');
+  const nonSaberActiveTarget = targetActorWith([{ id: 'target-blaster', name: 'Blaster', type: 'weapon', system: { equipped: true, activated: true } }]);
+  assert.equal(resolveAttackBonus(attacker, heartSaber, null, { attackType: 'melee', targetActor: nonSaberActiveTarget }).total, plainBaseline, '5. Heart: wielded + active non-lightsaber => +0');
+  const mutatingActivation = targetLightsaberItem({ id: 'mutating-activation-saber', equipped: true, activated: true });
+  const mutatingActivationTarget = targetActorWith([mutatingActivation]);
+  assert.equal(resolveAttackBonus(attacker, heartSaber, null, { attackType: 'melee', targetActor: mutatingActivationTarget }).total, plainBaseline + 2, '6. Heart: initially wielded + active => +2');
+  mutatingActivation.system.activated = false;
+  assert.equal(resolveAttackBonus(attacker, heartSaber, null, { attackType: 'melee', targetActor: mutatingActivationTarget }).total, plainBaseline, '6. Heart: mutation -- deactivating the blade loses the +2 on the very next resolution');
+  const mutatingWield = targetLightsaberItem({ id: 'mutating-wield-saber', equipped: true, activated: true });
+  const mutatingWieldTarget = targetActorWith([mutatingWield]);
+  assert.equal(resolveAttackBonus(attacker, heartSaber, null, { attackType: 'melee', targetActor: mutatingWieldTarget }).total, plainBaseline + 2, '7. Heart: initially wielded + active => +2');
+  mutatingWield.system.equipped = false;
+  assert.equal(resolveAttackBonus(attacker, heartSaber, null, { attackType: 'melee', targetActor: mutatingWieldTarget }).total, plainBaseline, '7. Heart: mutation -- unequipping while still active loses the +2 on the very next resolution');
+  const altEquipActiveSaber = { id: 'target-saber-alt', name: 'Alt Saber', type: 'weapon', system: { subtype: 'lightsaber', readied: true, activated: true } };
+  assert.equal(resolveAttackBonus(attacker, heartSaber, null, { attackType: 'melee', targetActor: targetActorWith([altEquipActiveSaber]) }).total, plainBaseline + 2, '8. Heart: alternate certified wield field (system.readied) + activated => +2');
+  const wieldingTargetA = targetActorWith([targetLightsaberItem({ id: 'saber-a', equipped: true, activated: true })]);
   const unarmedTargetB = targetActorWith([]);
-  assert.equal(resolveAttackBonus(attacker, heartSaber, null, { attackType: 'melee', targetActor: wieldingTargetA }).total, plainBaseline + 2, 'Heart: target A (wielding) => +2');
-  assert.equal(resolveAttackBonus(attacker, heartSaber, null, { attackType: 'melee', targetActor: unarmedTargetB }).total, plainBaseline, 'Heart: target B (no lightsaber), rolled immediately after target A => +0, no leakage between targets');
+  assert.equal(resolveAttackBonus(attacker, heartSaber, null, { attackType: 'melee', targetActor: wieldingTargetA }).total, plainBaseline + 2, '9. Heart: target A (wielding + active) => +2');
+  assert.equal(resolveAttackBonus(attacker, heartSaber, null, { attackType: 'melee', targetActor: unarmedTargetB }).total, plainBaseline, '9. Heart: target B (no lightsaber), rolled immediately after target A => +0, no leakage between targets');
+  const nonAttunedHeartSaber = attunedConditionalSaber(heartRecord, { attuned: false, id: 'w-heart-unattuned', name: 'Unattuned Heart Saber' });
+  assert.equal(resolveAttackBonus(attacker, nonAttunedHeartSaber, null, { attackType: 'melee', targetActor: wieldingActiveTarget }).total, plainBaseline, '10. Heart: attacker not attuned to the saber => +0 regardless of an otherwise-qualifying target');
 }
-ok('Hurikane (vs-armored) and Heart of the Guardian (vs-lightsaber-wielders) CONDITIONAL_ATTACK crystals are now automated against the roll\'s resolved target actor, via the certified armor equipped-state authority and the shared item equipped-state authority combined with canonical lightsaber classification -- fail closed with no target, correctly require WORN armor / WIELDED lightsabers (not mere ownership), exclude an Energy-Shield-only target from "in armor," recognize alternate certified equipped-state flags, react immediately to an equip-state mutation, and never leak state between two different targets');
+ok('Hurikane (vs-armored) and Heart of the Guardian (vs-lightsaber-wielders) CONDITIONAL_ATTACK crystals require the attacker be attuned to the crystal-bearing saber (round 7 correction) in addition to the target condition: Hurikane now checks an actual positive Armor Bonus to Reflex Defense via resolveArmorData() (proven against the real Cortosis Gauntlet, whose Reflex bonus is 0, as the mandatory negative regression) rather than merely "wears an armor-typed item," Energy Shields excluded either way; Heart now requires the target to be BOTH wielding (equipped) AND have the lightsaber\'s blade active (system.activated, independent of token-light visuals), proven with all four combinations of the two predicates plus independent mutation tests for each; alternate certified equip/activation flags are recognized; state never leaks between two different targets; and an attacker who is not attuned to the crystal-bearing saber receives neither bonus regardless of the target');
 
 // ─── SECTION 8c — Force stacking + conditional-crystal matrix (A-H) ───────
 
@@ -1345,15 +1435,19 @@ ok('Hurikane (vs-armored) and Heart of the Guardian (vs-lightsaber-wielders) CON
     return {
       id: overrides.id ?? 'w-matrix-saber', name: overrides.name ?? 'Matrix Saber', type: 'weapon',
       system: { weaponCategory: 'melee', proficiency: 'lightsaber', damage: '2d8', subtype: 'lightsaber', modifiers: records },
-      flags: overrides.flags ?? {}
+      flags: overrides.flags ?? { swse: { builtBy: 'test-actor', attunedBy: 'test-actor' } }
     };
   }
   function targetActorWith(items) { return { id: 'target-actor', items: makeItemsCollection(items) }; }
-  function equippedBodyArmorItem() { return { id: 'armor-1', name: 'Battle Armor', type: 'armor', system: { equipped: true, armorType: 'medium' } }; }
-  function equippedLightsaberItem() { return { id: 'target-saber', name: 'Target Saber', type: 'weapon', system: { subtype: 'lightsaber', equipped: true } }; }
+  function equippedBodyArmorItem() { return { id: 'armor-1', name: 'Battle Armor', type: 'armor', system: { equipped: true, armorType: 'medium', defenseBonus: 3 } }; }
+  function equippedLightsaberItem() { return { id: 'target-saber', name: 'Target Saber', type: 'weapon', system: { subtype: 'lightsaber', equipped: true, activated: true } }; }
 
   const attacker = makeActor({ bab: 7, str: 2 });
-  const baseline = resolveAttackBonus(attacker, lightsaberWithModifiers([]), null, { attackType: 'melee' }).total;
+  // Baseline is deliberately UNATTUNED (no generic self-built +1 of its own)
+  // -- Heart/Hurikane's own conditional +2 Force is what this matrix is
+  // isolating, not the separate standard-crystal attunement bonus (see
+  // Section 5b/8b for that).
+  const baseline = resolveAttackBonus(attacker, lightsaberWithModifiers([], { flags: {} }), null, { attackType: 'melee' }).total;
   const heartRecord = [{ type: 'CONDITIONAL_ATTACK', value: 2, bonusType: 'force', condition: 'vs-lightsaber-wielders' }];
   const hurikaneRecord = [{ type: 'CONDITIONAL_ATTACK', value: 2, bonusType: 'force', condition: 'vs-armored' }];
   const heartSaber = lightsaberWithModifiers(heartRecord, { id: 'matrix-heart' });

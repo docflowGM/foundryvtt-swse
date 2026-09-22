@@ -8,7 +8,7 @@
 import { SchemaAdapters } from "/systems/foundryvtt-swse/scripts/utils/schema-adapters.js";
 import { getEffectiveHalfLevel } from "/systems/foundryvtt-swse/scripts/actors/derived/level-split.js";
 import { isRangedWeapon as canonicalIsRangedWeapon, isMeleeWeapon as canonicalIsMeleeWeapon, isItemEquipped as canonicalIsItemEquipped } from "/systems/foundryvtt-swse/scripts/items/weapon-branch-resolver.js";
-import { isArmorItemEquipped, isEnergyShieldItem } from "/systems/foundryvtt-swse/scripts/items/armor-data-resolver.js";
+import { isArmorItemEquipped, isEnergyShieldItem, resolveArmorData } from "/systems/foundryvtt-swse/scripts/items/armor-data-resolver.js";
 import { ModifierSource, ModifierType, createModifier } from "/systems/foundryvtt-swse/scripts/engine/effects/modifiers/ModifierTypes.js";
 import { SWSELogger as swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
@@ -409,6 +409,50 @@ function mapWeaponUpgradeBonusType(bonusType) {
   return Object.values(ModifierType).includes(key) ? key : ModifierType.UNTYPED;
 }
 
+// Math Integrity Freeze, Attack Bonus round 7: a lightsaber's attunement/
+// crystal attack benefit belongs to its creator ONLY while that creator is
+// attuned to the blade -- ownership or mere possession is not enough, and
+// this must gate BOTH the generic self-built +1 and every crystal
+// ATTACK_BONUS/CONDITIONAL_ATTACK record, not just the generic +1 as prior
+// rounds had it. Resolves both the current and legacy flag scopes (the
+// construction engine writes both `flags.swse` and `flags['foundryvtt-swse']`
+// symmetrically today, but older actor data may carry only one).
+function isSelfBuiltLightsaberAttunedToActor(actor, weapon) {
+  if (!actor || !weapon) return false;
+  const currentFlags = weapon.flags?.swse ?? {};
+  const legacyFlags = weapon.flags?.['foundryvtt-swse'] ?? {};
+  const builtBy = currentFlags.builtBy ?? legacyFlags.builtBy ?? null;
+  const attunedBy = currentFlags.attunedBy ?? legacyFlags.attunedBy ?? null;
+  return builtBy === actor.id && attunedBy === actor.id;
+}
+
+// The generator's virtual, no-mechanical-payload crystal option (selectable
+// in the construction/edit UI to represent "no special crystal"; see
+// lightsaber-construction-engine.js#getDefaultKyberCrystalOption()) -- its
+// id is a stable constant, never a real compendium document id.
+const STANDARD_BASELINE_CRYSTAL_ID = 'lightsaber-crystal-standard-kyber';
+
+// True when the weapon's recorded crystal choice is the standard/no-special-
+// benefit baseline -- the case that earns the generic self-built +1 -- as
+// opposed to a real named crystal whose own records (if any) apply INSTEAD
+// of that +1, never alongside it. Deciding this from crystal IDENTITY
+// (recorded at construction/edit time in `lightsaberConfig.crystalId`)
+// rather than from "the modifiers array happens to be empty" matters
+// because an alternate crystal with no ATTACK_BONUS record (Sigil, Kasha,
+// ...) must NOT regain the +1 its own chosen benefit replaced merely for
+// lacking an attack-relevant record of its own. A weapon with no recorded
+// crystal identity AT ALL (`crystalId` absent) and no modifier records is
+// treated as the same legacy/compatibility case this project's earlier
+// rounds already certified (a self-built lightsaber attuned before
+// `lightsaberConfig` provenance existed) -- gated on an EMPTY modifiers
+// array too, so a real crystal recorded without provenance can never fall
+// into this branch and regrant its own already-interpreted ATTACK_BONUS/
+// CONDITIONAL_ATTACK record a second time as a generic +1.
+function isStandardBaselineLightsaberCrystal(crystalId, weaponModifierRecords) {
+  if (crystalId === STANDARD_BASELINE_CRYSTAL_ID) return true;
+  return crystalId === null && (!Array.isArray(weaponModifierRecords) || weaponModifierRecords.length === 0);
+}
+
 /**
  * Math Integrity Freeze, Attack Bonus round 5 (blocker fix): the single,
  * weapon-scoped authority for a lightsaber's attunement bonus and its
@@ -467,6 +511,32 @@ function mapWeaponUpgradeBonusType(bonusType) {
  * `condition` string on a CONDITIONAL_ATTACK record also fails closed
  * (see CONDITIONAL_ATTACK_CRYSTAL_CONDITIONS below).
  *
+ * ATTUNEMENT GATE + STANDARD-CRYSTAL DOUBLE-COUNT (round 7 correction):
+ * round 6 (and every prior round) added the generic "Attuned lightsaber"
+ * +1 UNCONDITIONALLY for any self-built/attuned weapon, THEN separately
+ * interpreted `ATTACK_BONUS`/`CONDITIONAL_ATTACK` records with no
+ * attunement gate at all -- so an attuned Ilum-crystal saber (Ilum's own
+ * record is `{type:'ATTACK_BONUS', value:1, target:'attack'}`) scored +2,
+ * and a NON-attuned wielder of any crystal-bearing saber still received
+ * the crystal's own ATTACK_BONUS/CONDITIONAL_ATTACK records. Both are
+ * wrong. Per SWSE lightsaber construction: the standard crystal's normal
+ * benefit IS the self-built/attuned +1 -- not a separate bonus alongside
+ * it -- and an alternate crystal's benefit REPLACES that +1 rather than
+ * adding to it; every crystal/accessory attack-relevant benefit applies
+ * only to the creator while attuned. Both the generic +1 and every
+ * `ATTACK_BONUS`/`CONDITIONAL_ATTACK` record below are now gated on
+ * `isSelfBuiltLightsaberAttunedToActor(actor, weapon)`; which of the two
+ * (the generic +1, or the crystal's own recorded benefit) applies is
+ * decided by whether the weapon's recorded crystal is the generator's
+ * virtual standard-baseline crystal (`isStandardBaselineLightsaberCrystal`
+ * below) -- not by "the modifiers array happens to be empty," which would
+ * wrongly regrant +1 to an alternate crystal (Sigil, Kasha, ...) whose own
+ * records simply don't happen to include an ATTACK_BONUS. Accessories are
+ * a separate, independent component slot -- their own records (if any)
+ * still run through the normal per-record loop below regardless of which
+ * crystal was chosen, so a baseline-crystal saber with an attack-relevant
+ * accessory correctly receives both.
+ *
  * This was previously implemented ONLY inside weapons-engine.js (an
  * actor-wide, all-equipped-weapons collector), which combat-roll-math.js
  * cannot import without creating a circular dependency (weapons-engine.js
@@ -496,23 +566,7 @@ export function getWeaponAttunementAndUpgradeModifiers(actor, weapon, { targetAc
   const modifiers = [];
   if (!actor || !weapon || weapon.type !== 'weapon') return modifiers;
   if (weapon.system?.subtype !== 'lightsaber') return modifiers;
-
-  if (weapon.flags?.swse?.builtBy === actor.id && weapon.flags?.swse?.attunedBy === actor.id) {
-    pushWeaponModifierSafe(modifiers, {
-      source: ModifierSource.ITEM,
-      sourceId: weapon.id,
-      sourceName: `${weapon.name} (Attuned)`,
-      target: 'attack.bonus',
-      type: ModifierType.UNTYPED,
-      value: 1,
-      enabled: true,
-      priority: 45,
-      description: 'Attuned lightsaber bonus'
-    });
-  }
-
-  const weaponModifierRecords = Array.isArray(weapon.system?.modifiers) ? weapon.system.modifiers : [];
-  if (!weaponModifierRecords.length) return modifiers;
+  if (!isSelfBuiltLightsaberAttunedToActor(actor, weapon)) return modifiers;
 
   // The crystal/accessory Item's own name is not embedded in the copied
   // modifier record (construction merges every selected component's
@@ -524,6 +578,24 @@ export function getWeaponAttunementAndUpgradeModifiers(actor, weapon, { targetAc
     ?? weapon.flags?.['foundryvtt-swse']?.lightsaberConfig?.crystalId
     ?? null;
   const crystalLabel = (crystalId && actor.items?.get?.(crystalId)?.name) || 'Crystal';
+
+  const weaponModifierRecords = Array.isArray(weapon.system?.modifiers) ? weapon.system.modifiers : [];
+
+  if (isStandardBaselineLightsaberCrystal(crystalId, weaponModifierRecords)) {
+    pushWeaponModifierSafe(modifiers, {
+      source: ModifierSource.ITEM,
+      sourceId: weapon.id,
+      sourceName: `${weapon.name} (Attuned)`,
+      target: 'attack.bonus',
+      type: ModifierType.UNTYPED,
+      value: 1,
+      enabled: true,
+      priority: 45,
+      description: 'Attuned lightsaber bonus (standard crystal)'
+    });
+  }
+
+  if (!weaponModifierRecords.length) return modifiers;
 
   let attackRecordIndex = 0;
   let conditionalRecordIndex = 0;
@@ -586,8 +658,8 @@ export function getWeaponAttunementAndUpgradeModifiers(actor, weapon, { targetAc
 // (no contribution) rather than guessing what it might mean.
 
 const CONDITIONAL_ATTACK_CRYSTAL_CONDITIONS = Object.freeze({
-  'vs-armored': targetActorWearsEquippedBodyArmor,
-  'vs-lightsaber-wielders': targetActorWieldsLightsaber
+  'vs-armored': targetActorHasPositiveReflexArmorBonus,
+  'vs-lightsaber-wielders': targetActorWieldsActiveLightsaber
 });
 
 function targetQualifiesForConditionalAttackCrystal(condition, targetActor) {
@@ -597,29 +669,51 @@ function targetQualifiesForConditionalAttackCrystal(condition, targetActor) {
   return check(targetActor);
 }
 
-// "vs-armored" (Hurikane): the target must be wearing EQUIPPED body armor --
-// the certified armor equipped-state authority
-// (armor-data-resolver.js#isArmorItemEquipped()), the same one Defense math
-// already uses, not a raw system.equipped read. An Energy Shield is stored
-// as an armor-type item too but is not body armor; isEnergyShieldItem()
-// excludes it, since no source evidence found so far says an active shield
-// alone counts as "in armor" for this crystal.
-function targetActorWearsEquippedBodyArmor(targetActor) {
+// "vs-armored" (Hurikane): the real rule is a target with an ARMOR BONUS TO
+// REFLEX DEFENSE, not merely "wearing any armor-typed item." Uses the
+// certified armor equipped-state authority
+// (armor-data-resolver.js#isArmorItemEquipped()) AND the canonical resolved
+// armor data (armor-data-resolver.js#resolveArmorData()) for the actual
+// Reflex bonus value -- never reconstructed inline here. An Energy Shield
+// is stored as an armor-type item too but is not body armor
+// (isEnergyShieldItem() excludes it; resolveArmorData() also zeroes its
+// reflexBonus, so this is a defense-in-depth double exclusion, not a
+// behavior difference). Equipped armor with a zero Reflex bonus (e.g. the
+// Cortosis Gauntlet, worn specifically for its lightsaber-blocking property
+// with no Reflex contribution) correctly does not qualify.
+function targetActorHasPositiveReflexArmorBonus(targetActor) {
   const items = Array.from(targetActor?.items ?? []);
-  return items.some((item) => item?.type === 'armor'
-    && !isEnergyShieldItem(item)
-    && isArmorItemEquipped(item));
+  return items.some((item) => {
+    if (item?.type !== 'armor') return false;
+    if (isEnergyShieldItem(item)) return false;
+    if (!isArmorItemEquipped(item)) return false;
+    return Number(resolveArmorData(item).reflexBonus) > 0;
+  });
 }
 
-// "vs-lightsaber-wielders" (Heart of the Guardian): ownership is not
-// wielding -- the target must currently have an equipped/wielded lightsaber
-// item, via the shared equipped-item-state authority
-// (weapon-branch-resolver.js#isItemEquipped(), promoted from
-// character-actor.js's own prior copy) combined with the canonical
-// lightsaber classification (isLightsaberWeapon() above).
-function targetActorWieldsLightsaber(targetActor) {
+// "vs-lightsaber-wielders" (Heart of the Guardian): the real rule requires
+// the target to be currently WIELDING an ACTIVE lightsaber -- two
+// independent facts, ownership being neither. Wielding reuses the shared
+// equipped-item-state authority (weapon-branch-resolver.js#isItemEquipped(),
+// promoted from character-actor.js's own prior copy) combined with the
+// canonical lightsaber classification (isLightsaberWeapon() above).
+// Activation is deliberately NOT read from
+// WeaponVisualProfileResolver.resolveActiveLightsaber() -- that authority
+// additionally requires emitLight (a token-light VISUAL setting), which a
+// combat rule must never depend on. isItemActivated() below instead mirrors
+// exactly the "current" activation-state read
+// InventoryEngine.toggleActivated() itself uses before flipping it
+// (system.activated, with its own system.active fallback).
+function targetActorWieldsActiveLightsaber(targetActor) {
   const items = Array.from(targetActor?.items ?? []);
-  return items.some((item) => isLightsaberWeapon(item) && canonicalIsItemEquipped(item, targetActor));
+  return items.some((item) => isLightsaberWeapon(item)
+    && canonicalIsItemEquipped(item, targetActor)
+    && isItemActivated(item));
+}
+
+function isItemActivated(item) {
+  const system = item?.system ?? {};
+  return system.activated === true || system.active === true;
 }
 
 function normalizeCriticalMultiplier(value, fallback = 2) {
