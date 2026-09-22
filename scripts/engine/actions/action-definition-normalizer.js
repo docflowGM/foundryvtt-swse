@@ -89,12 +89,26 @@ function buildRequirements(rule) {
     const opts = asArray(rule.excludesOptions);
     all.push({ not: { any: opts.map(value => ({ type: 'selectedOption', value })) }, sourceField: 'excludesOptions' });
   }
-  if (rule.requiresManeuver) add('requiresManeuver', { type: 'externalWorkflow', value: true });
+  // Math Integrity Freeze, Attack Bonus round 8 correction #4 (Blocker 1):
+  // requiresManeuver/requiresSwiftActions used to normalize to a bare
+  // `value: true` marker, discarding the raw field's actual content (the
+  // specific maneuver -- 'disarm', 'grapple' -- or the specific swift-
+  // action count -- 2). That is itself a lossy translation: this
+  // groundwork correctly refuses to EVALUATE either gate (per the
+  // externalWorkflow/unsupported contract below), but "we don't evaluate
+  // it" and "we don't remember what it actually requires" are different
+  // claims, and only the first one is true. `key`/`value` now preserve
+  // the real requirement so a future consumer (or this file's own
+  // validator) can see the exact maneuver/count without re-reading the
+  // raw rule -- this does NOT change evaluation: the externalWorkflow()/
+  // unsupported() predicate evaluators (action-availability-engine.js)
+  // still ignore the predicate entirely and unconditionally fail closed,
+  // never independently calculating swift-action availability.
+  // requiresOpportunityAttack stays a plain boolean marker -- its own
+  // source field IS boolean, so there is no additional value to preserve.
+  if (rule.requiresManeuver) add('requiresManeuver', { type: 'externalWorkflow', key: 'maneuver', value: String(rule.requiresManeuver) });
   if (rule.requiresOpportunityAttack) add('requiresOpportunityAttack', { type: 'externalWorkflow', value: true });
-  // Per explicit reviewer instruction: swift-action cost belongs to the
-  // existing ActionEngine action-economy authority. This groundwork must
-  // never independently calculate swift-action availability.
-  if (rule.requiresSwiftActions) add('requiresSwiftActions', { type: 'unsupported', value: true });
+  if (rule.requiresSwiftActions) add('requiresSwiftActions', { type: 'unsupported', key: 'swiftActions', value: Number(rule.requiresSwiftActions) });
 
   return { all };
 }
@@ -205,6 +219,12 @@ function gateValueReconciles(field, rawValue, node) {
       return arraysReconcile(node.value, rawValue);
     case 'requiresOption':
       return node.value === rawValue;
+    case 'requiresManeuver':
+      // Math Integrity Freeze, Attack Bonus round 8 correction #4 (Blocker 1)
+      return node.value === String(rawValue);
+    case 'requiresSwiftActions':
+      // Math Integrity Freeze, Attack Bonus round 8 correction #4 (Blocker 1)
+      return node.value === Number(rawValue);
     case 'excludesDamageType':
     case 'excludesWeaponGroups':
       return arraysReconcile(node.not?.value, rawValue);
@@ -217,29 +237,51 @@ function gateValueReconciles(field, rawValue, node) {
 
 /**
  * Math Integrity Freeze, Attack Bonus round 8 correction #3 (Blocker 1):
- * `sourceItem` is used ONLY to derive a stable fallback id/name when the
- * raw rule itself doesn't carry one (`rule.option`/`id`/`key`/`name`/
- * `label` all absent) -- it is never stored on the returned definition.
- * The definition is now pure, source-independent content: two different
- * owned items granting the exact same rule shape for the same logical
- * action id must normalize to byte-identical definitions, so the
- * "canonical" one for a given domain:id is never an accident of scan
- * order. Per-grant provenance (which item granted it, that item's own
- * raw rule) belongs on ActionEntitlement, built by ActorActionResolver.
+ * the definition is pure, source-independent content -- `sourceItem` is
+ * never stored on the returned definition. Two different owned items
+ * granting the exact same rule shape for the same logical action id must
+ * normalize to byte-identical definitions, so the "canonical" one for a
+ * given domain:id is never an accident of scan order. Per-grant
+ * provenance (which item granted it, that item's own raw rule) belongs
+ * on ActionEntitlement, built by ActorActionResolver.
+ *
+ * Math Integrity Freeze, Attack Bonus round 8 correction #4 (Blocker 3):
+ * `sourceItem` is no longer consulted for identity AT ALL -- an earlier
+ * version fell back to `sourceItem?.name` and then to the literal string
+ * `'unknown-attack-option'` when the rule itself carried no
+ * option/id/key/name, which meant `ActionDefinition.id` (canonical
+ * identity) could still depend on which item happened to grant it, the
+ * exact class of bug the source-independence fix (Blocker 1 of the prior
+ * correction round) was meant to close everywhere. A rule with no stable
+ * identifier of its own now fails normalization loudly instead of being
+ * silently given a borrowed or placeholder one. Every one of the current
+ * 136 real shipped ATTACK_OPTION records already carries its own
+ * `option`/`id`/`key`/`name` (verified directly against
+ * packs/feats.db + packs/talents.db), so this is not expected to reject
+ * any real record.
  *
  * @param {object} sourceItem - the actor-owned feat/talent Item this rule
- *   came from (fallback-naming only, see above)
+ *   came from. NOT read anywhere in this function's body (round 8
+ *   correction #4, Blocker 3) -- ActionEntitlement provenance is built
+ *   separately by the caller, ActorActionResolver, directly from its own
+ *   `item` reference, not through this parameter. Kept for call-site
+ *   stability rather than removed outright.
  * @param {object} rule - a rule already confirmed `type === 'ATTACK_OPTION'`
  *   by CombatOptionResolver.extractAttackOptionRules()
  * @returns {import('./action-definition.js').ActionDefinition}
+ * @throws if the rule itself carries no stable identifier
+ *   (option/id/key/name all absent)
  */
 export function normalizeAttackOptionRule(sourceItem, rule) {
   const rawId = rule.option ?? rule.id ?? rule.key ?? rule.name ?? '';
-  const id = normalizeKey(rawId) || normalizeKey(sourceItem?.name) || 'unknown-attack-option';
+  const id = normalizeKey(rawId);
+  if (!id) {
+    throw new Error(`normalizeAttackOptionRule(): rule "${rule.label ?? '(unlabeled)'}" has no stable action identifier (option/id/key/name) -- ActionDefinition identity must come from the rule itself, never a fallback to the granting item's name/id/uuid`);
+  }
   const control = ['toggle', 'flag', 'slider', 'passive'].includes(String(rule.control ?? '').toLowerCase())
     ? String(rule.control).toLowerCase()
     : 'toggle';
-  const name = rule.label ?? sourceItem?.name ?? id;
+  const name = rule.label ?? id;
 
   const definition = {
     schemaVersion: ACTION_DEFINITION_SCHEMA_VERSION,

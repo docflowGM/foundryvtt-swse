@@ -28,14 +28,36 @@
  * no longer embeds any item-specific data in the definition (see its own
  * doc comment), so two grants of the same domain:id action now produce
  * byte-identical definitions when they're genuinely the same configuration,
- * and a REAL divergence (e.g. two sources disagreeing on a slider's `max`)
- * is now a loud, explicit error here rather than a silent pick -- this
- * groundwork does not yet support per-grant configuration divergence for
- * the same logical action id; a future round would need an explicit
- * grant-normalized/ActionInstance layer to represent that. The
- * grant-specific raw rule is preserved on each ActionEntitlement's
- * `configuration.rule` instead of being folded into (or discarded from)
- * the shared definition.
+ * and a REAL divergence in content the v1 schema actually models (e.g. two
+ * sources disagreeing on `requiresAttackType`) is now a loud, explicit
+ * error here rather than a silent pick -- this groundwork does not yet
+ * support per-grant configuration divergence for the same logical action
+ * id; a future round would need an explicit grant-normalized/ActionInstance
+ * layer to represent that.
+ *
+ * Math Integrity Freeze, Attack Bonus round 8 correction #4 (documentation
+ * correction, per explicit reviewer request): an earlier version of this
+ * comment cited "two sources disagreeing on a slider's `max`" as an
+ * example of a divergence this conflict check catches -- that was
+ * MISLEADING. `ActionDefinition` v1 does not model slider bounds
+ * (`rule.max`) at all (see `normalizeAttackOptionRule()` -- `max` is
+ * never read), so two sources differing ONLY on `max` normalize to
+ * IDENTICAL definition content and are NOT caught here; that divergence
+ * would currently be silently invisible at the definition level (though
+ * still visible per-grant on each entitlement's own
+ * `configuration.rule.max`, see below). The actual, true contract:
+ * conflict detection covers content the schema actually models
+ * (`requirements`/`presentation`/`economy`/`execution`/`tags`), never
+ * fields v1 doesn't canonicalize yet. Production wiring of any consumer
+ * that needs slider bounds or other not-yet-modeled execution/
+ * presentation properties is forbidden until that configuration is either
+ * explicitly added to the schema or deliberately read through the
+ * entitlement/`ActionInstance` boundary instead.
+ *
+ * The grant-specific raw rule is preserved on each ActionEntitlement's
+ * `configuration.rule` (deep-cloned -- round 8 correction #4, Blocker 4 --
+ * never the source item's own live nested object by reference) instead of
+ * being folded into (or discarded from) the shared definition.
  *
  * Math Integrity Freeze, Attack Bonus round 8 correction #1 addendum
  * (groundwork only). Does not evaluate requirements, does not mutate the
@@ -44,12 +66,24 @@
 import { CombatOptionResolver, extractAttackOptionRules } from '/systems/foundryvtt-swse/scripts/engine/combat/combat-option-resolver.js';
 import { normalizeAttackOptionRule } from '/systems/foundryvtt-swse/scripts/engine/actions/action-definition-normalizer.js';
 import { definitionsContentEqual } from '/systems/foundryvtt-swse/scripts/engine/actions/action-registry.js';
+import { deepClone } from '/systems/foundryvtt-swse/scripts/utils/data-utils.js';
 
 function actorItems(actor) {
   try { return Array.from(actor?.items ?? []); } catch { return []; }
 }
 
-/** @returns {import('./action-definition.js').ActionEntitlement} */
+/**
+ * Math Integrity Freeze, Attack Bonus round 8 correction #4 (Blocker 4):
+ * `rule` is the source Item's own live, nested rule object (read directly
+ * from `item.system.abilityMeta.rules[]` by `extractAttackOptionRules()`)
+ * -- storing it on the entitlement BY REFERENCE would let a caller mutate
+ * `entitlement.configuration.rule` and silently corrupt the actor's real
+ * owned Item data. `deepClone()` (a plain JSON-safe clone, appropriate
+ * here since every ATTACK_OPTION rule field is plain JSON-serializable
+ * data -- no functions, no Dates, no circular references) breaks that
+ * reference before storing.
+ * @returns {import('./action-definition.js').ActionEntitlement}
+ */
 function buildEntitlement(actor, actionKey, sourceItem, rule) {
   return {
     actionKey,
@@ -60,7 +94,7 @@ function buildEntitlement(actor, actionKey, sourceItem, rule) {
       uuid: sourceItem?.uuid ?? null,
       name: sourceItem?.name ?? null
     },
-    configuration: { rule }
+    configuration: { rule: deepClone(rule) }
   };
 }
 
@@ -91,7 +125,7 @@ export class ActorActionResolver {
           definitionsByKey.set(key, definition);
           registry?.register(definition);
         } else if (!definitionsContentEqual(existing, definition)) {
-          throw new Error(`ActorActionResolver.getOwnedActions(): conflicting ActionDefinition content for "${key}" -- granted by multiple sources with different rule configuration (e.g. a differing slider max/threshold); this groundwork does not yet support per-grant configuration divergence for the same logical action id`);
+          throw new Error(`ActorActionResolver.getOwnedActions(): conflicting ActionDefinition content for "${key}" -- granted by multiple sources whose normalized requirements/presentation/economy content genuinely differs (e.g. a differing requiresAttackType); this groundwork does not yet support per-grant configuration divergence for the same logical action id`);
         }
         entitlements.push(buildEntitlement(actor, { domain: definition.domain, id: definition.id }, item, rule));
       }

@@ -605,4 +605,205 @@ ok('22: not(any(...)) (the exact shape excludesOptions normalizes into) evaluate
 }
 ok('23: Issue 5 value-level reconciliation -- corrupting a normalized requirement\'s value (while keeping its sourceField name intact) is caught by validateAttackOptionNormalization(), proving the guard checks actual content, not just field-name presence');
 
+// ─── 24 — Blocker 1: requiresManeuver preserves its exact maneuver value ───
+// Math Integrity Freeze, Attack Bonus round 8 correction #4: the
+// externalWorkflow marker used to discard the raw field's actual content
+// (which maneuver -- 'disarm', 'grapple') -- an omission this freeze's
+// "lossless" standard forbids even for a field the engine deliberately
+// never evaluates.
+
+{
+  const improvedDisarmFeat = () => ({ id: 'feat-improved-disarm', name: 'Improved Disarm', type: 'feat', system: { abilityMeta: { rules: [
+    { type: 'ATTACK_OPTION', option: 'improvedDisarm', label: 'Improved Disarm', control: 'toggle', requiresAttackType: 'melee', requiresManeuver: 'disarm', attackModifier: 5 }
+  ] } } });
+  const [rule] = extractAttackOptionRules(improvedDisarmFeat());
+  const definition = normalizeAttackOptionRule(improvedDisarmFeat(), rule);
+  const node = definition.requirements.all.find(n => n.sourceField === 'requiresManeuver');
+  assert.equal(node.type, 'externalWorkflow');
+  assert.equal(node.key, 'maneuver');
+  assert.equal(node.value, 'disarm', 'the exact maneuver value must be preserved, not collapsed to a bare boolean marker');
+
+  // Mutation test (required by the reviewer): corrupt the preserved value.
+  const corrupted = JSON.parse(JSON.stringify(definition));
+  corrupted.requirements.all.find(n => n.sourceField === 'requiresManeuver').value = 'banthaRush';
+  assert.throws(
+    () => validateAttackOptionNormalization(rule, corrupted),
+    /VALUE does not match/,
+    'requiresManeuver: \'disarm\' normalized/corrupted to \'banthaRush\' must be caught by the value-reconciliation guard'
+  );
+}
+ok('24: Blocker 1 -- requiresManeuver preserves its exact maneuver value (key:\'maneuver\', value:<the real maneuver>) rather than a bare boolean marker, and a corrupted maneuver value is caught by validateAttackOptionNormalization()');
+
+// ─── 25 — Blocker 1: requiresSwiftActions preserves its exact numeric count ──
+
+{
+  const mightySwingFeat = () => ({ id: 'feat-mighty-swing', name: 'Mighty Swing', type: 'feat', system: { abilityMeta: { rules: [
+    { type: 'ATTACK_OPTION', option: 'mightySwing', label: 'Mighty Swing', control: 'toggle', requiresAttackType: 'melee', requiresSwiftActions: 2, damageExtraWeaponDice: 1 }
+  ] } } });
+  const [rule] = extractAttackOptionRules(mightySwingFeat());
+  const definition = normalizeAttackOptionRule(mightySwingFeat(), rule);
+  const node = definition.requirements.all.find(n => n.sourceField === 'requiresSwiftActions');
+  assert.equal(node.type, 'unsupported');
+  assert.equal(node.key, 'swiftActions');
+  assert.equal(node.value, 2, 'the exact swift-action count must be preserved, not collapsed to a bare boolean marker');
+
+  // Mutation test (required by the reviewer): corrupt the preserved value.
+  const corrupted = JSON.parse(JSON.stringify(definition));
+  corrupted.requirements.all.find(n => n.sourceField === 'requiresSwiftActions').value = 3;
+  assert.throws(
+    () => validateAttackOptionNormalization(rule, corrupted),
+    /VALUE does not match/,
+    'requiresSwiftActions: 2 normalized/corrupted to 3 must be caught by the value-reconciliation guard'
+  );
+
+  // Requirement 5/6: the unsupported predicate must still fail closed and
+  // must NOT independently calculate swift-action availability -- the
+  // preserved value/key change nothing about evaluation.
+  const result = ActionAvailabilityEngine.evaluate(definition, { attackType: 'melee', weapon: meleeWeapon() });
+  assert.equal(result.state, 'unsupported', 'preserving the real swift-action count must not change the engine\'s deliberate refusal to evaluate it');
+}
+ok('25: Blocker 1 -- requiresSwiftActions preserves its exact numeric count (key:\'swiftActions\', value:<the real count>) rather than a bare boolean marker, a corrupted count is caught, and evaluation still fails closed without independently calculating swift-action availability');
+
+// ─── 26 — Blocker 2: fail-closed under NESTED negation (not just the direct case) ──
+// Math Integrity Freeze, Attack Bonus round 8 correction #4: correction
+// #3 only fixed `not: { type: 'unknown' }` directly. An unknown predicate
+// NESTED inside a composite (any/all/not) under `not` used to collapse to
+// ordinary boolean `false` during composition, so a `not` wrapping it
+// could still flip that composite `false` into `true` -- permission by
+// default. The tri-state MET/UNMET/UNRESOLVED model closes every nesting
+// depth, not just the top one.
+
+const unknownLeaf = { type: 'futureUnknownPredicate' };
+const knownFalse = { type: 'context', key: 'aim', value: true }; // context.aim will be false below -> UNMET
+const knownTrue = { type: 'context', key: 'charge', value: true }; // context.charge will be true below -> MET
+
+{
+  // positive (un-negated) unknown -- baseline, already covered by section
+  // 12/20, repeated here as part of the required matrix for completeness.
+  const def = syntheticDefinition({ all: [unknownLeaf] });
+  const result = ActionAvailabilityEngine.evaluate(def, {});
+  assert.notEqual(result.state, 'available');
+  assert.ok(result.requirements.length > 0, 'provenance must still include the unknown leaf');
+}
+ok('26a: positive (un-negated) unknown predicate never resolves available (baseline for the matrix)');
+
+{
+  // not(unknown) directly -- already covered by section 20, repeated here
+  // as part of the required matrix.
+  const def = syntheticDefinition({ all: [{ not: unknownLeaf }] });
+  const result = ActionAvailabilityEngine.evaluate(def, {});
+  assert.notEqual(result.state, 'available');
+}
+ok('26b: not(unknown) directly never resolves available (baseline for the matrix)');
+
+{
+  // not(any(unknown, false)) -- the exact case an independent review's
+  // own example targeted: any(UNRESOLVED, UNMET) must be UNRESOLVED (not
+  // UNMET), so not(...) must be UNRESOLVED (not MET), never available.
+  const def = syntheticDefinition({ all: [{ not: { any: [unknownLeaf, knownFalse] } }] });
+  const result = ActionAvailabilityEngine.evaluate(def, { aim: false });
+  assert.notEqual(result.state, 'available', 'not(any(unknown, false)) must NOT be available -- an unresolved branch must not let the enclosing not manufacture permission');
+  assert.ok(result.requirements.length >= 2, 'provenance must include the unknown leaf, the known-false leaf, and the composite not-node information');
+}
+ok('26c: not(any(unknown, false)) never resolves available, closing the exact nested fail-open gap the review identified');
+
+{
+  // not(all(unknown, true)) -- all(UNRESOLVED, MET) must be UNRESOLVED
+  // (not MET, since the unresolved child could have been either), so
+  // not(...) must be UNRESOLVED (not UNMET->MET), never available.
+  const def = syntheticDefinition({ all: [{ not: { all: [unknownLeaf, knownTrue] } }] });
+  const result = ActionAvailabilityEngine.evaluate(def, { charge: true });
+  assert.notEqual(result.state, 'available', 'not(all(unknown, true)) must NOT be available');
+}
+ok('26d: not(all(unknown, true)) never resolves available');
+
+{
+  // not(not(unknown)) -- double negation of an unresolved value must
+  // remain unresolved, never collapse back to MET.
+  const def = syntheticDefinition({ all: [{ not: { not: unknownLeaf } }] });
+  const result = ActionAvailabilityEngine.evaluate(def, {});
+  assert.notEqual(result.state, 'available', 'not(not(unknown)) must NOT be available -- double negation cannot manufacture proof from an unresolved value');
+}
+ok('26e: not(not(unknown)) never resolves available');
+
+{
+  // unknown mixed into a larger nested tree alongside otherwise-fully-met
+  // requirements -- one unresolved leaf anywhere in the tree must still
+  // prevent the whole thing from being available, even when everything
+  // else genuinely is met.
+  const def = syntheticDefinition({ all: [
+    knownTrue,
+    { any: [unknownLeaf, knownFalse] },
+    { not: { type: 'weaponGroup', value: ['heavy'] } }
+  ] });
+  const result = ActionAvailabilityEngine.evaluate(def, { charge: true, aim: false, weapon: { name: 'Vibro Axe', system: { weaponCategory: 'simple' } } });
+  assert.notEqual(result.state, 'available', 'an unresolved leaf anywhere in a larger nested tree must prevent availability, even when every other branch is genuinely met');
+}
+ok('26f: an unknown predicate mixed into a larger nested tree (alongside otherwise-fully-met requirements) still prevents availability');
+
+{
+  // Sanity: existing known all/any/not behavior is unchanged by the
+  // tri-state refactor -- a fully-known, fully-met tree still resolves
+  // available.
+  const def = syntheticDefinition({ all: [
+    knownTrue,
+    { any: [knownFalse, knownTrue] },
+    { not: { type: 'weaponGroup', value: ['heavy'] } }
+  ] });
+  const result = ActionAvailabilityEngine.evaluate(def, { charge: true, aim: false, weapon: { name: 'Vibro Axe', system: { weaponCategory: 'simple' } } });
+  assert.equal(result.state, 'available', 'a fully-known, fully-met nested tree (no unresolved leaves) must still resolve available -- the tri-state refactor must not regress ordinary known-value behavior');
+}
+ok('26g: a fully-known, fully-met nested tree (no unresolved leaves) still resolves available -- known all/any/not behavior is unchanged');
+
+// ─── 27 — Blocker 3: a rule with no stable identifier fails normalization, even when sourceItem.name exists ──
+
+{
+  const namedSourceItem = { id: 'feat-mystery', name: 'Mystery Feat With A Real Name', type: 'feat' };
+  const identifierlessRule = { type: 'ATTACK_OPTION', control: 'toggle', requiresAttackType: 'melee' }; // no option/id/key/name
+  assert.throws(
+    () => normalizeAttackOptionRule(namedSourceItem, identifierlessRule),
+    /no stable action identifier/,
+    'a rule with no option/id/key/name of its own must fail normalization loudly, never silently borrow the granting item\'s name as a fallback identifier'
+  );
+}
+ok('27: a synthetic ATTACK_OPTION rule with no option/id/key/name fails normalization even when sourceItem.name exists -- ActionDefinition identity can never silently fall back to source-item provenance');
+
+// ─── 28 — Blocker 4: ActionEntitlement.configuration.rule is a clone, never the source item's live nested rule by reference ──
+
+{
+  const actor = makeActor({ items: [carefulShotFeat()] });
+  const sourceItem = actor.items[0];
+  const originalRuleSnapshot = JSON.stringify(sourceItem.system.abilityMeta.rules[0]);
+
+  const { entitlements } = ActorActionResolver.getOwnedActions(actor, { domain: 'attack' });
+  assert.equal(entitlements.length, 1);
+  const entitlementRule = entitlements[0].configuration.rule;
+  assert.notEqual(entitlementRule, sourceItem.system.abilityMeta.rules[0], 'entitlement.configuration.rule must be a distinct object, never the same reference as the source item\'s live nested rule');
+
+  // Mutate the entitlement's copy...
+  entitlementRule.attackModifier = 999;
+  entitlementRule.newInjectedField = 'corruption';
+
+  // ...and confirm the actor-owned source item's real rule is untouched.
+  assert.equal(JSON.stringify(sourceItem.system.abilityMeta.rules[0]), originalRuleSnapshot, 'mutating entitlement.configuration.rule must never mutate the actor-owned source item\'s real rule data');
+}
+ok('28: Blocker 4 -- ActionEntitlement.configuration.rule is a deep clone; mutating it after resolution does not corrupt the actor-owned source item\'s live rule data');
+
+// ─── 29 — Blocker 5: content-equal registration preserves the FIRST canonical object ──
+
+{
+  const registry = new ActionRegistry();
+  const first = normalizeAttackOptionRule(powerAttackFeat(), extractAttackOptionRules(powerAttackFeat())[0]);
+  const equivalentSecond = normalizeAttackOptionRule(powerAttackFeat(), extractAttackOptionRules(powerAttackFeat())[0]);
+  assert.notEqual(first, equivalentSecond, 'sanity: two independently normalized objects, not the same reference');
+
+  registry.register(first);
+  const returned = registry.register(equivalentSecond);
+
+  assert.equal(returned, first, 'register() on a content-equal re-registration must return the FIRST canonical object, never the newly-passed equivalent one');
+  assert.equal(registry.get('attack', 'power-attack'), first, 'the registry must continue to hold the FIRST canonical object after a content-equal re-registration, not silently swap it for the second');
+  assert.notEqual(registry.get('attack', 'power-attack'), equivalentSecond);
+}
+ok('29: Blocker 5 -- ActionRegistry.register() preserves the first canonical object on content-equal re-registration; the registry never silently swaps its canonical reference for a later content-equal one');
+
 console.log('action-authority-groundwork.test.mjs: all assertions passed');

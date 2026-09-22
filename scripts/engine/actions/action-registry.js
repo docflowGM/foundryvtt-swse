@@ -34,6 +34,27 @@ function compositeKey(domain, id) {
  * Exported so ActorActionResolver can reuse the exact same equality
  * notion for its own multi-source conflict detection, rather than a
  * second, independently-drifting comparison.
+ *
+ * Math Integrity Freeze, Attack Bonus round 8 correction #4 (documented
+ * assumption, per explicit reviewer request): `JSON.stringify` equality
+ * is order-sensitive for object keys. This is safe ONLY because every
+ * `ActionDefinition` this codebase produces comes from
+ * `normalizeAttackOptionRule()`'s single, fixed object-literal
+ * construction order (`schemaVersion, id, name, domain, ownership,
+ * presentation, requirements, economy, execution, effects, tags`, with
+ * `requirements.all[]`'s entries built in `buildRequirements()`'s own
+ * fixed field-check order) -- two definitions for the same logical
+ * action therefore always serialize identically when their CONTENT is
+ * identical, regardless of which owned item produced them. This is a
+ * deliberate, narrow assumption, not a general-purpose deep-equality
+ * guarantee: a future normalizer (a different domain, or a hand-built
+ * definition) that constructs its object literal with keys in a
+ * different order, or whose array fields carry semantically-unordered
+ * data, would need either matching construction order or a real
+ * order-insensitive comparison -- do not assume this function generalizes
+ * without re-checking that assumption first. A full generic deep-equality
+ * framework is deliberately NOT built in this round; this comment is the
+ * scope boundary such a change would need to revisit.
  */
 export function definitionsContentEqual(a, b) {
   if (a === b) return true;
@@ -46,6 +67,13 @@ export class ActionRegistry {
 
   /**
    * @param {import('./action-definition.js').ActionDefinition} definition
+   * @returns {import('./action-definition.js').ActionDefinition} the
+   *   CANONICAL registered object for this key -- on a content-equal
+   *   re-registration (round 8 correction #4, Blocker 5) this is the
+   *   FIRST object ever registered under this key, not the newly-passed
+   *   one, so canonical identity (`===`) is stable across repeated
+   *   registration from different callers/normalization passes, not just
+   *   canonical CONTENT.
    * @throws if `id` is missing, `domain` is not a recognized
    *   ACTION_DOMAINS value, or the domain-qualified key is already
    *   registered with a definition whose CONTENT differs -- registration
@@ -62,8 +90,14 @@ export class ActionRegistry {
     }
     const key = compositeKey(definition.domain, definition.id);
     const existing = this.#byKey.get(key);
-    if (existing && !definitionsContentEqual(existing, definition)) {
-      throw new Error(`ActionRegistry.register(): conflicting ActionDefinition content for "${key}" -- already registered with different requirements/presentation/economy content`);
+    if (existing) {
+      if (!definitionsContentEqual(existing, definition)) {
+        throw new Error(`ActionRegistry.register(): conflicting ActionDefinition content for "${key}" -- already registered with different requirements/presentation/economy content`);
+      }
+      // Content-equal re-registration is idempotent: the FIRST object
+      // registered under this key remains canonical. Do not overwrite it
+      // with the newly-passed (content-equal but distinct) object.
+      return existing;
     }
     this.#byKey.set(key, definition);
     return definition;

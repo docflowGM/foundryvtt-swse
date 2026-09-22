@@ -209,80 +209,134 @@ const PREDICATE_EVALUATORS = {
   }
 };
 
+// Math Integrity Freeze, Attack Bonus round 8 correction #4 (Blocker 2):
+// a tri-state result model for requirement evaluation. Correction #3
+// fixed only the DIRECT case of an unknown predicate wrapped in `not`
+// (`not: { type: 'unknownType' }`) by special-casing it before the
+// negation ran. That special case did not cover an unknown predicate
+// NESTED inside a composite sub-tree under `not` (e.g.
+// `not: { any: [ unknown, known-false ] }`): the composite evaluation
+// treated the unknown leaf as ordinary boolean `false`, so
+// `any(false, false) = false`, and `not(false) = true` -- permission by
+// default, the exact fail-open failure mode this correction exists to
+// close. Ordinary boolean `true`/`false` cannot distinguish "definitely
+// false" from "unresolvable, so cannot be proven true OR false" once it
+// participates in `all`/`any`/`not` composition -- both looked like
+// plain `false` to a boolean negation. MET/UNMET/UNRESOLVED replaces
+// that boolean with a tri-state value so UNRESOLVED propagates correctly
+// through arbitrary nesting:
+//   NOT(MET)        -> UNMET
+//   NOT(UNMET)       -> MET
+//   NOT(UNRESOLVED) -> UNRESOLVED   (never MET; negation cannot manufacture proof)
+//   ALL: any UNMET child -> UNMET; else any UNRESOLVED child -> UNRESOLVED; else MET
+//   ANY: any MET child -> MET; else any UNRESOLVED child -> UNRESOLVED; else UNMET
+// Only MET counts as "requirement satisfied" -- UNRESOLVED, like UNMET,
+// can never make an option `available`.
+const MET = 'met';
+const UNMET = 'unmet';
+const UNRESOLVED = 'unresolved';
+
+function negateState(state) {
+  if (state === MET) return UNMET;
+  if (state === UNMET) return MET;
+  return UNRESOLVED;
+}
+
+// Matches the pre-tri-state `results.every(Boolean)` exactly for an
+// all-known-values array (including the vacuous `all: []` -> MET case);
+// additionally, any UNRESOLVED child (with no UNMET child) yields
+// UNRESOLVED rather than the unsound MET a plain boolean `.every()` would
+// have given a caller that mapped UNRESOLVED to `true`.
+function allOfStates(states) {
+  if (states.some(s => s === UNMET)) return UNMET;
+  if (states.some(s => s === UNRESOLVED)) return UNRESOLVED;
+  return MET;
+}
+
+// Matches the pre-tri-state `results.length === 0 || results.some(Boolean)`
+// exactly for an all-known-values array (including the vacuous `any: []`
+// -> MET case); additionally, any UNRESOLVED child (with no MET child)
+// yields UNRESOLVED rather than the unsound UNMET a plain boolean
+// `.some()` would have given.
+function anyOfStates(states) {
+  if (states.length === 0) return MET;
+  if (states.some(s => s === MET)) return MET;
+  if (states.some(s => s === UNRESOLVED)) return UNRESOLVED;
+  return UNMET;
+}
+
 /**
  * Math Integrity Freeze, Attack Bonus round 8 correction #2 (Blocker 4,
- * boolean-tree provenance): recursively evaluates a requirements tree
- * (`all`/`any`/`not`, or a leaf predicate), collecting every meaningful
- * leaf evaluation for the result's `requirements` list -- including a
- * synthesized leaf for a `not` node itself, so an excludes* gate that
- * blocks an option produces a real, visible reason rather than a silent
- * true/false. Fails closed: an unknown predicate `type` is treated as NOT
- * met, with a defensive console warning, never as silently satisfied.
- * Every branch of `all`/`any` is evaluated in full (not short-circuited)
- * so every leaf's provenance is collected even when the overall result is
- * already determined.
+ * boolean-tree provenance), hardened in round 8 correction #4 (Blocker 2,
+ * fail-closed under arbitrary nesting): recursively evaluates a
+ * requirements tree (`all`/`any`/`not`, or a leaf predicate), collecting
+ * every meaningful leaf evaluation for the result's `requirements` list
+ * -- including a synthesized leaf for a `not` node itself, so an
+ * excludes* gate that blocks an option produces a real, visible reason
+ * rather than a silent true/false. Returns MET/UNMET/UNRESOLVED (see
+ * above), never a plain boolean, specifically so an unknown predicate's
+ * unresolved status survives arbitrarily deep `all`/`any`/`not` nesting
+ * without ever being able to negate into a false MET. Every branch of
+ * `all`/`any` is evaluated in full (not short-circuited) so every leaf's
+ * provenance is collected even when the overall result is already
+ * determined.
  */
 function evaluateNode(node, context, leaves) {
-  if (!node) return true;
+  if (!node) return MET;
   if (Array.isArray(node.all)) {
     const results = node.all.map(child => evaluateNode(child, context, leaves));
-    return results.every(Boolean);
+    return allOfStates(results);
   }
   if (Array.isArray(node.any)) {
     const results = node.any.map(child => evaluateNode(child, context, leaves));
-    return results.length === 0 || results.some(Boolean);
+    return anyOfStates(results);
   }
   if (node.not) {
     const sub = node.not;
-    // Math Integrity Freeze, Attack Bonus round 8 correction #3 (Blocker 3,
-    // fail-closed under negation): an UNKNOWN predicate must never let a
-    // `not` wrapper report satisfied. Treating "unknown" as ordinary
-    // `false` and then negating it (met = !false = true) is exactly the
-    // fail-OPEN bug this whole freeze exists to prevent -- it must instead
-    // short-circuit to unmet here, bypassing the negation entirely, so an
-    // unknown predicate is unmet whether it appears positively or negated.
-    if (sub.type && !PREDICATE_EVALUATORS[sub.type]) {
-      console.warn(`[ActionAvailabilityEngine] unknown requirement predicate type "${sub.type}" inside not -- failing closed (not met)`);
-      leaves.push({ type: `not(${sub.type})`, key: null, met: false, reason: `Unknown requirement "${sub.type}"`, structural: false, sourceField: node.sourceField });
-      return false;
-    }
-    let innerMet;
+    let innerState;
     let excludeReason;
     if (sub.type) {
-      const result = PREDICATE_EVALUATORS[sub.type](sub, context);
-      innerMet = result.met;
-      excludeReason = EXCLUDE_REASON_BY_TYPE[sub.type] ?? result.reason ?? 'Excluded by current state';
+      const evaluator = PREDICATE_EVALUATORS[sub.type];
+      if (!evaluator) {
+        console.warn(`[ActionAvailabilityEngine] unknown requirement predicate type "${sub.type}" inside not -- failing closed (unresolved, not met)`);
+        innerState = UNRESOLVED;
+        excludeReason = `Unknown requirement "${sub.type}"`;
+      } else {
+        const result = evaluator(sub, context);
+        innerState = result.met ? MET : UNMET;
+        excludeReason = EXCLUDE_REASON_BY_TYPE[sub.type] ?? result.reason ?? 'Excluded by current state';
+      }
     } else {
-      // Math Integrity Freeze, Attack Bonus round 8 correction #3 (Blocker
-      // 4, not(any(...)) provenance): the composite (any/all/nested-not)
-      // case used to evaluate into a throwaway leaves array, discarding
-      // every inner leaf's provenance, and used Array#some() directly on
-      // the sub-node list for the `any` case specifically, which
-      // short-circuits (stops evaluating once one child succeeds) --
-      // losing the remaining children's provenance the "never
-      // short-circuits" contract promises. evaluateNode() itself already
-      // fully evaluates every all/any branch via .map() before reducing,
-      // so delegating the whole sub-tree to one evaluateNode() call (any
-      // shape: any/all/nested not) gets that non-short-circuiting
-      // evaluation for free; the only fix needed here is merging its
-      // collected leaves back into this node's own leaves array instead
-      // of discarding them.
+      // Composite (any/all/nested-not) sub-tree: delegate the whole
+      // sub-tree to one evaluateNode() call so UNRESOLVED correctly
+      // propagates out of arbitrarily deep nesting (this is the fix for
+      // Blocker 2 -- previously this branch's own boolean `innerMet` had
+      // no way to represent "unresolved" once a nested unknown predicate
+      // had already collapsed to plain `false` several levels down).
+      // evaluateNode() itself already fully evaluates every all/any
+      // branch via .map() before reducing, so this also preserves
+      // non-short-circuiting evaluation for free; the collected leaves
+      // are merged back into this node's own leaves array rather than
+      // discarded.
       const innerLeaves = [];
-      innerMet = evaluateNode(sub, context, innerLeaves);
+      innerState = evaluateNode(sub, context, innerLeaves);
       leaves.push(...innerLeaves);
-      excludeReason = Array.isArray(sub.any) ? 'Conflicts with a currently selected option' : 'Excluded by current state';
+      excludeReason = innerState === UNRESOLVED
+        ? 'Cannot be determined (an unresolved requirement is nested inside this exclusion)'
+        : (Array.isArray(sub.any) ? 'Conflicts with a currently selected option' : 'Excluded by current state');
     }
-    const met = !innerMet;
+    const outerState = negateState(innerState);
+    const met = outerState === MET;
     const structural = Boolean(sub.type && STRUCTURAL_PREDICATE_TYPES.has(sub.type));
-    leaves.push({ type: `not(${sub.type ?? 'group'})`, key: null, met, reason: met ? null : excludeReason, structural, sourceField: node.sourceField });
-    return met;
+    leaves.push({ type: `not(${sub.type ?? 'group'})`, key: null, met, reason: met ? null : excludeReason, unresolved: outerState === UNRESOLVED, structural, sourceField: node.sourceField });
+    return outerState;
   }
   if (node.type) {
     const evaluator = PREDICATE_EVALUATORS[node.type];
     if (!evaluator) {
-      console.warn(`[ActionAvailabilityEngine] unknown requirement predicate type "${node.type}" -- failing closed (not met)`);
-      leaves.push({ type: node.type, key: node.key, met: false, reason: `Unknown requirement "${node.type}"`, sourceField: node.sourceField });
-      return false;
+      console.warn(`[ActionAvailabilityEngine] unknown requirement predicate type "${node.type}" -- failing closed (unresolved, not met)`);
+      leaves.push({ type: node.type, key: node.key, met: false, reason: `Unknown requirement "${node.type}"`, unresolved: true, sourceField: node.sourceField });
+      return UNRESOLVED;
     }
     const result = evaluator(node, context);
     leaves.push({
@@ -290,9 +344,9 @@ function evaluateNode(node, context, leaves) {
       externalWorkflow: result.externalWorkflow === true, unsupported: result.unsupported === true,
       structural: STRUCTURAL_PREDICATE_TYPES.has(node.type), sourceField: node.sourceField
     });
-    return result.met;
+    return result.met ? MET : UNMET;
   }
-  return true;
+  return MET;
 }
 
 export class ActionAvailabilityEngine {
@@ -305,7 +359,7 @@ export class ActionAvailabilityEngine {
    */
   static evaluate(definition, context = {}) {
     const leaves = [];
-    const met = evaluateNode(definition.requirements, context, leaves);
+    const met = evaluateNode(definition.requirements, context, leaves) === MET;
     const unmet = leaves.filter(l => !l.met);
 
     if (met) {
