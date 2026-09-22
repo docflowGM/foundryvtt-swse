@@ -1,3 +1,5 @@
+import { isRangedWeapon as canonicalIsRangedWeapon } from "/systems/foundryvtt-swse/scripts/items/weapon-branch-resolver.js";
+
 function normalizeToken(value) {
   return String(value ?? '')
     .trim()
@@ -64,14 +66,14 @@ function weaponMatchesSelectedChoice(item, weapon) {
   });
 }
 
+// Math Integrity Freeze, Batch 2B: delegated to the canonical branch
+// authority. The caller-supplied roll-time context stays first (a
+// legitimate distinct signal for e.g. a thrown-weapon attack resolving as
+// ranged for that one roll without changing the weapon's own identity).
 function isRangedWeapon(weapon, context = {}) {
   if (context.attackType === 'ranged' || context.weaponType === 'ranged') return true;
-  const system = weapon?.system ?? {};
-  const text = [weapon?.name, system.weaponType, system.weaponGroup, system.category, system.type, system.range]
-    .filter(Boolean)
-    .join(' ')
-    .toLowerCase();
-  return system.ranged === true || text.includes('ranged') || text.includes('pistol') || text.includes('rifle') || text.includes('blaster');
+  if (context.attackType === 'melee' || context.weaponType === 'melee') return false;
+  return canonicalIsRangedWeapon(weapon);
 }
 
 function isPointBlankContext(context = {}) {

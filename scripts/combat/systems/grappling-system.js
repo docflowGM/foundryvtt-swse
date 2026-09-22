@@ -18,7 +18,9 @@ import { GrappleLegalityEngine } from '/systems/foundryvtt-swse/scripts/engine/c
 import { CombatStatusResolver } from '/systems/foundryvtt-swse/scripts/combat/combat-status.js';
 import { DamageSystem } from '/systems/foundryvtt-swse/scripts/combat/damage-system.js';
 import { ActorEngine } from '/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js';
-import { getEffectiveHalfLevel } from '/systems/foundryvtt-swse/scripts/actors/derived/level-split.js';
+import { resolveGrappleBonus } from '/systems/foundryvtt-swse/scripts/engine/combat/combat-stat-rules.js';
+import ModifierUtils from '/systems/foundryvtt-swse/scripts/engine/effects/modifiers/ModifierUtils.js';
+import { ModifierType, ModifierSource, createModifier } from '/systems/foundryvtt-swse/scripts/engine/effects/modifiers/ModifierTypes.js';
 
 function swseNormalizeName(value) {
   return String(value ?? '').trim().toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
@@ -37,21 +39,85 @@ function swseActorHasTalent(actor, name) {
   return swseActorItems(actor).some(item => item?.type === 'talent' && item?.system?.disabled !== true && swseNormalizeName(item.name) === wanted);
 }
 
-function swseTalentGrappleBonus(actor, mode) {
-  let total = 0;
+// Collects this actor's mode-applicable contextual Grapple bonuses
+// (GRAPPLE_BONUS talent/feat rules, GRAB_GRAPPLE_RESISTANCE's opposed-
+// check channel) as modifier OBJECTS -- not pre-summed numbers -- so they
+// retain their bonus `type`
+// and can be stacking-resolved together with the actor's static Grapple
+// modifiers (system.derived.modifiers.breakdown.grapple.applied) by the
+// SAME shared authority (ModifierUtils.resolveStacking()) everything else
+// in the codebase uses. Math Integrity Freeze review found that summing
+// this to a bare number before combining it with the static total let a
+// contextual competence bonus (e.g. Expert Grappler, +2) stack on top of a
+// same-type static competence bonus (e.g. Enslaved's background bonus,
+// +2) that should have capped the combination at the higher of the two,
+// per this codebase's own competence stacking rule
+// (STACKING_RULES.competence === 'highestOnly') -- see the Grapple domain
+// section of docs/audits/v2-math-integrity-authority-ledger.md.
+function collectContextualGrappleModifiers(actor, mode) {
+  const modifiers = [];
   for (const item of swseActorItems(actor)) {
     if (!['talent', 'feat'].includes(item?.type) || item?.system?.disabled === true) continue;
     const rules = item?.system?.abilityMeta?.grappleRules ?? [];
     if (!Array.isArray(rules)) continue;
+
     for (const rule of rules) {
-      if (rule?.type !== 'GRAPPLE_BONUS') continue;
-      const modes = Array.isArray(rule.modes) ? rule.modes : [rule.mode ?? rule.context].filter(Boolean);
-      if (modes.length && !modes.includes(mode)) continue;
-      const bonus = Number(rule.bonus ?? rule.value ?? 0);
-      if (Number.isFinite(bonus)) total += bonus;
+      if (rule?.type === 'GRAPPLE_BONUS') {
+        const modes = Array.isArray(rule.modes) ? rule.modes : [rule.mode ?? rule.context].filter(Boolean);
+        if (modes.length && !modes.includes(mode)) continue;
+        const value = Number(rule.bonus ?? rule.value ?? 0);
+        if (!Number.isFinite(value) || value === 0) continue;
+        modifiers.push(createModifier({
+          source: item.type === 'talent' ? ModifierSource.TALENT : ModifierSource.FEAT,
+          sourceId: item.id ?? item.name ?? 'grapple-bonus-rule',
+          sourceName: rule.source || item.name || 'Grapple Bonus',
+          target: 'grapple',
+          type: Object.values(ModifierType).includes(rule.bonusType) ? rule.bonusType : ModifierType.UNTYPED,
+          value,
+          enabled: true,
+          description: `${rule.source || item.name || 'Grapple Bonus'}: ${value >= 0 ? '+' : ''}${value} Grapple`
+        }));
+      } else if (rule?.type === 'GRAB_GRAPPLE_RESISTANCE') {
+        // Opposed-Grapple-check channel ONLY -- the Reflex-Defense-vs-
+        // incoming-Grab/Grapple channel (reflexBonus) is a completely
+        // separate mechanic, consumed by
+        // MetaResourceFeatResolver.getGrappleResistanceBonus() at
+        // attemptGrab() time, never here. Grapple Resistance grants both
+        // (reflexBonus 5, opposedGrappleBonus 5); Grab Back grants only
+        // the Reflex channel (reflexBonus 2, opposedGrappleBonus 0) -- the
+        // old RESIST_GRAB_AND_GRAPPLE shape bundled both into one `bonus`
+        // field, which incorrectly gave Grab Back a +2 to opposed Grapple
+        // checks it does not grant. See the Grapple domain section of
+        // docs/audits/v2-math-integrity-authority-ledger.md.
+        if (mode !== 'resistGrab' && mode !== 'resistGrapple') continue;
+        const value = Number(rule.opposedGrappleBonus ?? 0) || 0;
+        if (value === 0) continue;
+        modifiers.push(createModifier({
+          source: item.type === 'talent' ? ModifierSource.TALENT : ModifierSource.FEAT,
+          sourceId: item.id ?? item.name ?? 'grapple-resistance-rule',
+          sourceName: rule.source || item.name || 'Grapple Resistance',
+          target: 'grapple',
+          // RAW does not label this bonus with a stacking type (unlike
+          // Expert Grappler's explicit "competence"); untyped bonuses
+          // stack with everything, which matches how a feat-granted bonus
+          // with no stated type is otherwise treated in this codebase.
+          type: ModifierType.UNTYPED,
+          value,
+          enabled: true,
+          description: `${rule.source || item.name || 'Grapple Resistance'}: +${value} vs Grab/Grapple`
+        }));
+      }
+      // Legacy RESIST_GRAB_AND_GRAPPLE shape (pre-dating the channel
+      // split) is deliberately NOT handled here: its single `bonus` field
+      // can't be safely attributed to the opposed-check channel without
+      // risking exactly the over-grant bug this fix closes (e.g. Grab
+      // Back). An already-embedded item still carrying that old shape
+      // conservatively contributes nothing to the opposed-check channel
+      // until it's refreshed from the now-migrated compendium data --
+      // under-granting, never over-granting.
     }
   }
-  return total;
+  return modifiers;
 }
 
 function swseGrabAttackPenalty(actor) {
@@ -108,6 +174,25 @@ function actorLabel(actor, fallback = 'Actor') {
 
 function resultTotal(roll) {
   return Number(roll?.total ?? roll?.roll?.total ?? 0) || 0;
+}
+
+// Math Integrity Freeze, round 7: SWSE's opposed Grapple check succeeds for
+// the attacker when the attacker's result equals or exceeds the defender's
+// -- the general d20 "meets or beats" rule, not a strict majority win. The
+// pre-round-7 code used a strict `>` and additionally short-circuited ties
+// with no state change at all, so an attacker who tied a defender's check
+// (a common, unremarkable outcome, not an edge case) incorrectly lost every
+// initiating opposed Grapple check: the plain grapple check, Pin (which
+// reuses grappleCheck()), and Trip/Throw (via _opposedGrappleForManeuver()).
+// See docs/audits/combat-phase-0f-grapple-ion-seam-ledger.json's
+// "grapple-opposed-meets-beats" entry (severity: high) and the Grapple
+// domain section of docs/audits/v2-math-integrity-authority-ledger.md for
+// the full history. `isTie` is still reported for narrative/chat-card
+// wording -- it must never gate the outcome.
+export function resolveOpposedGrappleOutcome(attackerTotal, defenderTotal) {
+  const attacker = Number(attackerTotal) || 0;
+  const defender = Number(defenderTotal) || 0;
+  return { attackerWins: attacker >= defender, isTie: attacker === defender };
 }
 
 function escapeHTML(value) {
@@ -184,12 +269,27 @@ export class SWSEGrappling {
 
     const weapon = this._getUnarmedAttack(attacker);
     const grabPenalty = Number(options.grabPenalty ?? swseGrabAttackPenalty(attacker)) || 0;
+    // Reflex Defense resistance against THIS incoming Grab (Grapple
+    // Resistance's/Grab Back's reflexBonus channel -- never their separate
+    // opposedGrappleBonus channel, which is a different mechanic entirely;
+    // see collectContextualGrappleModifiers()) is fed into the SAME
+    // canonical attack-outcome authority SWSERoll.rollAttack() already
+    // uses (via targetContext.defenseAdjustment), rather than recomputed
+    // as a second, independent hit check afterward. This also fixes a
+    // separate, confirmed defect: the old manual recheck read
+    // target.system.defenses.reflex.total (a field the V2 character
+    // pipeline never populates) with no fallback to the canonical
+    // system.derived.defenses.reflex.total at all, silently collapsing to
+    // a hardcoded 10 for an ordinary V2 PC regardless of their real,
+    // possibly much higher, Reflex Defense.
+    const grappleResistance = Number(MetaResourceFeatResolver.getGrappleResistanceBonus(target, { mode: 'resistGrab' }) ?? 0) || 0;
     const attackResult = await SWSERoll.rollAttack(attacker, weapon, {
       customModifier: grabPenalty,
       maneuver: 'grab',
       actionId: 'grab',
       combatOptions: { grab: true },
       target,
+      targetContext: { defenseType: 'reflex', defenseAdjustment: grappleResistance },
       combatContext: options.combatContext ?? null,
       workflowContext: options.workflowContext ?? options.combatContext ?? null
     });
@@ -197,10 +297,13 @@ export class SWSEGrappling {
     const total = Number(attackResult?.total ?? attackResult?.roll?.total ?? roll?.total ?? 0);
     const d20 = firstD20(roll);
 
-    const baseReflex = Number(target.system?.defenses?.reflex?.total ?? target.system?.defenses?.reflex ?? 10) || 10;
-    const grappleResistance = Number(MetaResourceFeatResolver.getGrappleResistanceBonus(target, { mode: 'resistGrab' }) ?? 0) || 0;
-    const reflex = baseReflex + grappleResistance;
-    const hit = d20 === 20 || (d20 !== 1 && total >= reflex);
+    // reflex (the adjusted defense value the canonical resolver actually
+    // rolled against) and hit both come straight from that resolver's own
+    // outcome -- not recomputed. baseReflex is read separately, purely for
+    // the chat card's "Target Reflex: X (+Y grapple resistance)" display.
+    const reflex = Number(attackResult?.targetReflex ?? 0) || 0;
+    const baseReflex = reflex - grappleResistance;
+    const hit = attackResult?.isHit === true;
 
     const result = { attacker, target, roll, total, d20, reflex, hit, baseReflex, grappleResistance, grabPenalty };
 
@@ -240,8 +343,7 @@ export class SWSEGrappling {
     const atkRoll = await globalThis.SWSE.RollEngine.safeRoll(`1d20 + ${atk}`, {}, { domain: 'combat.grapple.attack' });
     const defRoll = await globalThis.SWSE.RollEngine.safeRoll(`1d20 + ${def}`, {}, { domain: 'combat.grapple.defense' });
 
-    const attackerWins = Number(atkRoll.total ?? 0) > Number(defRoll.total ?? 0);
-    const isTie = Number(atkRoll.total ?? 0) === Number(defRoll.total ?? 0);
+    const { attackerWins, isTie } = resolveOpposedGrappleOutcome(atkRoll.total, defRoll.total);
 
     const result = {
       attacker,
@@ -256,8 +358,6 @@ export class SWSEGrappling {
     };
 
     await this._createGrappleCheckMessage(result);
-
-    if (isTie) return result;
 
     if (attackerWins) {
       await GrappleStateEngine.advancePair(attacker, defender, 'grappled', {
@@ -478,7 +578,7 @@ export class SWSEGrappling {
     const def = await this._rollGrappleBonus(defender, { mode: 'resistGrapple' });
     const attackerRoll = await globalThis.SWSE.RollEngine.safeRoll(`1d20 + ${atk}`, {}, { domain: `combat.grapple.${maneuver}` });
     const defenderRoll = await globalThis.SWSE.RollEngine.safeRoll(`1d20 + ${def}`, {}, { domain: `combat.grapple.resist.${maneuver}` });
-    const attackerWins = resultTotal(attackerRoll) > resultTotal(defenderRoll);
+    const { attackerWins, isTie } = resolveOpposedGrappleOutcome(resultTotal(attackerRoll), resultTotal(defenderRoll));
     return {
       attacker,
       defender,
@@ -489,7 +589,7 @@ export class SWSEGrappling {
       attackerBonus: atk,
       defenderBonus: def,
       attackerWins,
-      isTie: resultTotal(attackerRoll) === resultTotal(defenderRoll)
+      isTie
     };
   }
 
@@ -648,33 +748,42 @@ export class SWSEGrappling {
   // Helpers
   // ---------------------------------------------------------------------------
 
+  // Base is the canonical system.derived.grappleBonus (computeGrappleBonus(),
+  // via DerivedCalculator), or the shared resolveGrappleBonus(actor) resolver
+  // when derived data isn't available yet -- never a private reimplementation.
+  // Published SWSE Grapple = BAB + higher of STR/DEX + size modifier; there
+  // is no half-heroic-level term. This function previously added its own
+  // halfLevel term and its own BAB/ability/size/species computation (with a
+  // third, independently-wrong size table) on top of that -- see the Grapple
+  // domain section of docs/audits/v2-math-integrity-authority-ledger.md.
+  // Only genuinely contextual, non-static additions belong here: talent/feat
+  // grapple-rule bonuses and Grapple Resistance, both of which apply only in
+  // specific opposed-check contexts and are not part of the static bonus.
   static async _rollGrappleBonus(actor, context = {}) {
-    const bab = Number(SchemaAdapters.getBAB(actor) ?? 0) || 0;
-    const str = Number(SchemaAdapters.getAbilityMod(actor, 'str') ?? 0) || 0;
-    const dex = Number(SchemaAdapters.getAbilityMod(actor, 'dex') ?? 0) || 0;
-    const ability = context.useDex === true ? dex : Math.max(str, dex);
-    const sizeMod = this._sizeMod(actor.system?.size ?? actor.system?.traits?.size ?? actor.system?.droidSize);
-    const halfLevel = Number(getEffectiveHalfLevel(actor) ?? 0) || 0;
+    // Core (BAB + higher of STR/DEX + size + species) is the one piece
+    // that's never typed and never stacks against anything -- read it
+    // directly from DerivedCalculator's explicit breakdown
+    // (system.derived.grappleBonusParts.core) rather than the combined
+    // total, so static and contextual TYPED modifiers can be resolved
+    // together below instead of the contextual side being added on top of
+    // an already-collapsed static total (which would bypass stacking --
+    // see collectContextualGrappleModifiers()'s comment).
+    const coreGrapple = Number(actor?.system?.derived?.grappleBonusParts?.core);
+    const core = Number.isFinite(coreGrapple) ? coreGrapple : resolveGrappleBonus(actor);
 
-    const speciesCombat = actor.system?.speciesCombatBonuses || actor.system?.speciesTraitBonuses?.combat || {};
-    const speciesGrapple = Number(speciesCombat.grapple ?? 0) || 0;
+    // Static modifiers already resolved by ModifierEngine/DerivedCalculator
+    // for this actor's current state (e.g. Enslaved's background
+    // competence bonus). Re-resolving stacking over this set unioned with
+    // the contextual set below is safe: each per-type group is
+    // re-evaluated from scratch, so it doesn't matter that the static side
+    // was already reduced to its own per-type winners.
+    const staticModifiers = actor?.system?.derived?.modifiers?.breakdown?.grapple?.applied ?? [];
+    const contextualModifiers = collectContextualGrappleModifiers(actor, context.mode);
 
-    let bonus = bab + ability + halfLevel + sizeMod + speciesGrapple;
-    bonus += swseTalentGrappleBonus(actor, context.mode);
+    const resolved = ModifierUtils.resolveStacking([...staticModifiers, ...contextualModifiers]);
+    const modifierTotal = ModifierUtils.sumModifiers(resolved);
 
-    if (context.mode === 'resistGrapple') {
-      bonus += Number(MetaResourceFeatResolver.getGrappleResistanceBonus(actor, { mode: 'resistGrapple' }) ?? 0) || 0;
-    }
-
-    return bonus;
-  }
-
-  static _sizeMod(size) {
-    const table = {
-      fine: -16, diminutive: -12, tiny: -8, small: -4,
-      medium: 0, large: 4, huge: 8, gargantuan: 12, colossal: 16
-    };
-    return table[String(size ?? 'medium').toLowerCase()] ?? 0;
+    return core + modifierTotal;
   }
 
   static _getUnarmedAttack(actor) {
@@ -825,7 +934,9 @@ export class SWSEGrappling {
     const { attacker, defender, attackerRoll, defenderRoll, attackerWins, isTie } = result;
     const attackerTotal = Number(attackerRoll?.total ?? 0) || 0;
     const defenderTotal = Number(defenderRoll?.total ?? 0) || 0;
-    const winnerText = isTie ? 'Tie — no state change.' : (attackerWins ? `${attacker.name} wins!` : `${defender.name} wins!`);
+    const winnerText = attackerWins
+      ? `${attacker.name} wins!${isTie ? ' (tie goes to the attacker)' : ''}`
+      : `${defender.name} wins!`;
     const actions = attackerWins
       ? `<div class="swse-chat-card__actions">
           ${this._advancedManeuverButtons(attacker, defender, { includePin: result?.actionId !== 'pin' })}

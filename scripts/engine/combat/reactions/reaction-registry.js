@@ -11,6 +11,8 @@
  * - Handlers are defined but not called here
  */
 
+import { isNaturalOrUnarmedWeapon as canonicalIsNaturalOrUnarmedWeapon } from "/systems/foundryvtt-swse/scripts/items/weapon-branch-resolver.js";
+
 export class ReactionRegistry {
   /**
    * Master registry of all reactions
@@ -624,26 +626,11 @@ function swseDefenseTotal(actor, key = 'will') {
   return null;
 }
 
+// Math Integrity Freeze, Batch 2B: delegated to the canonical natural/
+// unarmed authority (scripts/items/weapon-branch-resolver.js).
 function swseIsNaturalOrUnarmedWeapon(item) {
-  if (!item) return false;
-  const system = item.system ?? {};
-  const flags = item.flags?.swse ?? {};
-  if (flags.unarmed === true || flags.naturalWeapon === true || flags.isNaturalWeapon === true) return true;
-  if (system.isUnarmed === true || system.unarmed === true || system.naturalWeapon === true || system.isNaturalWeapon === true) return true;
-  if (system.properties?.naturalWeapon === true || system.properties?.['natural-weapon'] === true) return true;
-  const text = [
-    item.name,
-    system.weaponType,
-    system.weaponGroup,
-    system.group,
-    system.category,
-    system.source,
-    system.sourceType,
-    system.weaponFamily,
-    system.naturalWeaponType,
-    Array.isArray(system.properties) ? system.properties.join(' ') : ''
-  ].map(swseSlug).join(' ');
-  return /unarmed|natural-weapon|claw|bite|talon|tusk|horn|tail|slam|gore/.test(text);
+  if (item?.system?.properties?.naturalWeapon === true || item?.system?.properties?.['natural-weapon'] === true) return true;
+  return canonicalIsNaturalOrUnarmedWeapon(item);
 }
 
 async function swseGetUnarmedFamilyWeapon(actor) {

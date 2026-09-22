@@ -21,6 +21,7 @@
 
 import { isLightsaberWeapon } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-stat-rules.js";
 import { DamageTypeRules } from "/systems/foundryvtt-swse/scripts/engine/combat/damage-type-rules.js";
+import { isNaturalOrUnarmedWeapon as canonicalIsNaturalOrUnarmedWeapon } from "/systems/foundryvtt-swse/scripts/items/weapon-branch-resolver.js";
 
 
 function normalizeKey(value) {
@@ -67,40 +68,14 @@ function contextDamageText(context = {}) {
   return flat.map(normalizeKey).filter(Boolean).join(' ');
 }
 
-function weaponContextText(weapon) {
-  const system = weapon?.system ?? {};
-  const fields = [
-    weapon?.name,
-    system.weaponType,
-    system.weaponGroup,
-    system.group,
-    system.category,
-    system.type,
-    system.subtype,
-    system.source,
-    system.sourceType,
-    system.naturalWeaponType,
-    system.traits,
-    system.properties
-  ];
-  const flat = [];
-  for (const field of fields) {
-    if (Array.isArray(field)) flat.push(...field);
-    else if (field && typeof field === 'object') flat.push(...Object.values(field));
-    else if (field !== undefined && field !== null) flat.push(field);
-  }
-  return flat.map(normalizeKey).filter(Boolean).join(' ');
-}
-
+// Math Integrity Freeze, Batch 2B: delegated to the canonical natural/
+// unarmed authority (scripts/items/weapon-branch-resolver.js). The
+// caller-supplied context override stays first -- it is a distinct,
+// legitimate signal (e.g. an ability explicitly resolving as an unarmed
+// attack this roll) that the item-only canonical predicate cannot see.
 function isUnarmedOrNaturalWeapon(weapon, context = {}) {
   if (context.unarmed === true || context.attackFamily === 'unarmed' || context.naturalWeapon === true) return true;
-  if (!weapon) return false;
-  if (weapon?.flags?.swse?.unarmed === true || weapon?.flags?.swse?.isNaturalWeapon === true || weapon?.flags?.swse?.naturalWeapon === true) return true;
-  const system = weapon?.system ?? {};
-  if (system.isUnarmed === true || system.naturalWeapon === true || system.isNaturalWeapon === true) return true;
-  if (normalizeKey(system.source) === 'species-natural-weapon') return true;
-  const text = weaponContextText(weapon);
-  return /unarmed|natural-weapon|claw|bite|talon|tusk|horn|tail|slam|gore/.test(text);
+  return canonicalIsNaturalOrUnarmedWeapon(weapon);
 }
 
 function ruleAllowsIgnoreDR(rule, weapon, context = {}) {

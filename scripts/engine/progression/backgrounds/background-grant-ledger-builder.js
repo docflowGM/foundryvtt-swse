@@ -254,6 +254,7 @@ export class BackgroundGrantLedgerBuilder {
 
     for (const bg of backgrounds) {
       const mechEffect = bg.mechanicalEffect || {};
+      const bgFlatBonuses = [];
 
       if (mechEffect.type === 'untrained_bonus') {
         // Bonus to untrained skill checks
@@ -264,20 +265,15 @@ export class BackgroundGrantLedgerBuilder {
           applicableSkills: mechEffect.skills || [],
           description: mechEffect.description
         });
-      } else if (mechEffect.type === 'bonus') {
-        // Generic bonus (e.g., grapple checks)
-        flatBonuses.push({
-          backgroundId: bg.id || bg.slug,
-          backgroundName: bg.name,
-          value: mechEffect.value || 2,
-          target: mechEffect.target || 'unknown',
-          description: mechEffect.description
-        });
       }
 
+      // specialAbilities-derived flat bonuses first -- these carry the
+      // richest metadata (abilityId, bonusType), so they're the preferred
+      // representation when a background also duplicates the same grant in
+      // mechanicalEffect (see semantic-identity dedup below).
       for (const ability of bg.specialAbilities || []) {
         if (ability?.type === 'bonus') {
-          flatBonuses.push({
+          bgFlatBonuses.push({
             backgroundId: bg.id || bg.slug,
             backgroundName: bg.name,
             abilityId: ability.id,
@@ -288,6 +284,32 @@ export class BackgroundGrantLedgerBuilder {
           });
         }
       }
+
+      if (mechEffect.type === 'bonus') {
+        // Semantic-identity dedup: a background's mechanicalEffect and one
+        // of its specialAbilities can describe the exact same grant (same
+        // target + value) -- e.g. Enslaved's "Grapple Survivor" is authored
+        // both ways in data/backgrounds.json. Math Integrity Freeze review
+        // found this produced TWO ledger entries for one real grant. Count
+        // it once, keeping the richer specialAbilities-derived entry rather
+        // than adding a second, metadata-poor duplicate from mechanicalEffect.
+        const mechValue = mechEffect.value ?? 2;
+        const mechTarget = mechEffect.target || 'unknown';
+        const isDuplicateOfSpecialAbility = bgFlatBonuses.some(
+          existing => existing.target === mechTarget && existing.value === mechValue
+        );
+        if (!isDuplicateOfSpecialAbility) {
+          bgFlatBonuses.push({
+            backgroundId: bg.id || bg.slug,
+            backgroundName: bg.name,
+            value: mechValue,
+            target: mechTarget,
+            description: mechEffect.description
+          });
+        }
+      }
+
+      flatBonuses.push(...bgFlatBonuses);
     }
 
     return {

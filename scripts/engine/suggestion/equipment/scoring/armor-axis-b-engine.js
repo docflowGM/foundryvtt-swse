@@ -34,23 +34,41 @@ export class ArmorAxisBEngine {
    */
   static computeMobilityCostAxis(armor, charContext) {
     const armorStats = resolveArmorData(armor);
-    const category = armorStats.isEnergyShield ? 'light' : (armorStats.armorType || 'light');
+    // An Energy Shield's own required proficiency category (light/medium/
+    // heavy) comes from its armorProficiencyRequired field via
+    // resolveArmorData().proficiencyRequired -- SR15/20 shields require
+    // Medium, SR25/30 require Heavy. Treating every shield as Light here
+    // (as this axis previously did unconditionally) misclassified those
+    // shields' category band and proficiency check alike.
+    const category = armorStats.isEnergyShield ? (armorStats.proficiencyRequired || 'light') : (armorStats.armorType || 'light');
     const charDex = charContext.attributes?.dex || 0;
     const charStr = charContext.attributes?.str || 0;
-    const proficient = armorStats.isEnergyShield
-      ? true
-      : !!charContext.proficiencies?.[category];
+    const proficient = !!charContext.proficiencies?.[category];
 
-    const maxDex = Number.isFinite(Number(armorStats.maxDexBonus)) ? Number(armorStats.maxDexBonus) : null;
-    const masteryBonus = proficient && charContext.talents?.armorMastery ? 1 : 0;
+    // resolveArmorData() already normalizes maxDexBonus to either a finite
+    // number or exactly `null` ("uncapped"). Number(null) is 0, not NaN --
+    // wrapping it in Number() before Number.isFinite() silently turned
+    // "uncapped" into "capped to +0" here too (Math Integrity Freeze
+    // Batch 2A correction).
+    const maxDex = Number.isFinite(armorStats.maxDexBonus) ? armorStats.maxDexBonus : null;
+    // Armor Mastery is a body-armor talent; the live DefenseCalculator
+    // authority deliberately does not extend its +1 Max Dex to Energy
+    // Shields (no rule text supports it) -- this advisory scoring axis must
+    // not disagree with that ruling.
+    const masteryBonus = !armorStats.isEnergyShield && proficient && charContext.talents?.armorMastery ? 1 : 0;
     const effectiveMaxDex = maxDex === null ? null : maxDex + masteryBonus;
     const dexCapLoss = effectiveMaxDex === null ? 0 : Math.max(0, charDex - effectiveMaxDex);
 
-    // Per current project rule, armor check penalty applies only when the actor
-    // lacks proficiency in the armor type.  Category alone is not an ACP.
+    // Ordinary body armor: proficiency suppresses its ACP entirely. An
+    // Energy Shield's ACP always applies once active, proficient or not
+    // (Math Integrity Freeze Batch 2A) -- this axis previously forced
+    // `proficient = true` for every shield above, which silently zeroed a
+    // shield's ACP here unconditionally.
     const listedAcp = Number(armorStats.armorCheckPenalty || 0) || 0;
     const fallbackAcp = getArmorProficiencyPenalty(category);
-    const armorCheckPenalty = proficient ? 0 : Math.abs(listedAcp || fallbackAcp || 0);
+    const armorCheckPenalty = armorStats.isEnergyShield
+      ? Math.abs(listedAcp || fallbackAcp || 0)
+      : (proficient ? 0 : Math.abs(listedAcp || fallbackAcp || 0));
     const speedPenalty = Math.abs(Number(armorStats.speedPenalty || 0) || 0);
 
     // Character-specific modifier: high DEX amplifies max-Dex pain; high STR

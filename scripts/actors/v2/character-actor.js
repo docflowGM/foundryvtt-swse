@@ -13,6 +13,7 @@ import { normalizeSkillMap } from "/systems/foundryvtt-swse/scripts/utils/skill-
 import { collectKnownForceSecrets, collectKnownForceTechniques } from "/systems/foundryvtt-swse/scripts/utils/force-knowledge.js";
 import { buildActorItemIndex } from "./actor-item-index.js";
 import { SchemaAdapters } from "/systems/foundryvtt-swse/scripts/utils/schema-adapters.js";
+import { isNaturalWeaponOnly as canonicalIsNaturalWeaponOnly } from "/systems/foundryvtt-swse/scripts/items/weapon-branch-resolver.js";
 
 /**
  * Compute the minimal v2-derived fields for Characters.
@@ -132,38 +133,12 @@ function isDroidActorLike(actor) {
     || String(actor?.system?.actorMode ?? '').toLowerCase() === 'droid';
 }
 
-function listTextValues(...values) {
-  const out = [];
-  for (const value of values) {
-    if (Array.isArray(value)) {
-      out.push(...value.map((entry) => String(entry ?? '').trim()).filter(Boolean));
-    } else if (value && typeof value === 'object') {
-      out.push(...Object.values(value).map((entry) => String(entry ?? '').trim()).filter(Boolean));
-    } else {
-      const text = String(value ?? '').trim();
-      if (text) out.push(text);
-    }
-  }
-  return out;
-}
-
+// Math Integrity Freeze, Batch 2B: delegated to the canonical natural/
+// unarmed authority (scripts/items/weapon-branch-resolver.js). alwaysArmed
+// stays a local, distinct flag (an auto-equip behavior, not a classification).
 function isNaturalWeaponItem(item) {
-  const system = item?.system ?? {};
-  const swseFlags = item?.flags?.swse ?? {};
-  if (swseFlags.isNaturalWeapon === true || swseFlags.alwaysArmed === true) return true;
-
-  const naturalFields = listTextValues(
-    system.category,
-    system.subcategory,
-    system.proficiency,
-    system.weaponCategory,
-    system.weaponType,
-    system.source
-  );
-  if (naturalFields.some((value) => value.toLowerCase() === 'natural')) return true;
-
-  const descriptors = listTextValues(system.properties, system.traits, system.tags);
-  return descriptors.some((value) => /natural\s+weapon/i.test(value));
+  if (item?.flags?.swse?.alwaysArmed === true) return true;
+  return canonicalIsNaturalWeaponOnly(item);
 }
 
 function isAutoEquippedNaturalWeapon(item) {

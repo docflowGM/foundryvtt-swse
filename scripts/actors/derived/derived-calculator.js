@@ -35,7 +35,7 @@ import { getEffectiveHalfLevel, getLevelSplit } from "/systems/foundryvtt-swse/s
 import { CANONICAL_SKILL_DEFS, normalizeSkillMap } from "/systems/foundryvtt-swse/scripts/utils/skill-normalization.js";
 import { SkillRules } from "/systems/foundryvtt-swse/scripts/engine/skills/SkillRules.js";
 import { isRankedModeEnabled, deriveTrainedFromRanks } from "/systems/foundryvtt-swse/scripts/engine/skills/ranked-skills-engine.js";
-import { getDamageThresholdSizeBonus } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-stat-rules.js";
+import { getDamageThresholdSizeBonus, getGrappleSizeModifier, computeGrappleBonus } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-stat-rules.js";
 import { DamageTypeRules } from "/systems/foundryvtt-swse/scripts/engine/combat/damage-type-rules.js";
 import { MetaResourceFeatResolver } from "/systems/foundryvtt-swse/scripts/engine/feats/meta-resource-feat-resolver.js";
 import { ActorPerfDiagnostics } from "/systems/foundryvtt-swse/scripts/utils/actor-perf-diagnostics.js";
@@ -348,13 +348,51 @@ export class DerivedCalculator {
       // Grapple Bonus Derived (BAB + max(STR, DEX) + Size + Species bonuses)
       // SWSE: use whichever of STR or DEX modifier is higher
       // ========================================
+      // The actual arithmetic lives in combat-stat-rules.js#computeGrappleBonus()
+      // -- the single grapple formula in the codebase, shared with
+      // resolveGrappleBonus()'s actor-reading fallback used by
+      // houserule-grapple.js. This pass supplies its own freshly computed
+      // current-pass inputs directly (deliberately NOT calling
+      // resolveGrappleBonus(actor), since some of these values --
+      // `bab`, `updates['system.derived.attributes']` -- may not yet be
+      // written onto `actor` itself mid-pass, and re-reading them off
+      // `actor` via SchemaAdapters here could see stale prior-cycle data).
+      // Previously this block also hand-copied its own size table (now
+      // removed -- see getGrappleSizeModifier()) and had an independent
+      // bug: `bab` here is a plain number (BABCalculator.calculate()'s
+      // return type), so the old `bab.total` read undefined, making
+      // system.derived.grappleBonus always NaN. That was silently masked
+      // on the sheet by PanelContextBuilder.js's Number.isFinite() guard
+      // falling back to its own duplicate formula -- see the ledger's
+      // Grapple domain for the live proof.
       const strMod = (updates['system.derived.attributes']?.str?.mod) || 0;
-      const grappleAbilityMod = Math.max(strMod, dexMod);
-      const sizeTable = { 'fine': -8, 'diminutive': -4, 'tiny': -2, 'small': -1, 'medium': 0, 'large': 4, 'huge': 8, 'gargantuan': 12, 'colossal': 16 };
-      const sizeMod = sizeTable[String(actor.system?.size || 'medium').toLowerCase()] || 0;
       const speciesGrapple = actor.system?.speciesCombatBonuses?.grapple || actor.system?.speciesTraitBonuses?.combat?.grapple || 0;
-      const grappleBonus = bab.total + grappleAbilityMod + sizeMod + speciesGrapple;
+      const coreGrappleBonus = computeGrappleBonus({
+        bab,
+        strMod,
+        dexMod,
+        sizeMod: getGrappleSizeModifier(actor),
+        speciesBonus: speciesGrapple
+      });
+      // Static, always-on Grapple contributions beyond the core formula --
+      // e.g. a background's permanent competence bonus (Enslaved's "Grapple
+      // Survivor", +2) -- are layered on exactly once, here, using the same
+      // modifierMap already built above for HP/defenses/BAB/skills/DT.
+      // Mode-gated bonuses (Expert Grappler's GRAPPLE_BONUS rule, Grapple
+      // Resistance) are deliberately NOT included: those are genuinely
+      // contextual (they apply only during a specific kind of grapple
+      // check, per their own authored `mode`/`modes` metadata) and are
+      // added on top of this static total, once, at roll time by
+      // SWSEGrappling._rollGrappleBonus() -- see the Grapple domain
+      // section's static/contextual boundary audit.
+      const grappleStaticModifier = Number(modifierMap['grapple']) || 0;
+      const grappleBonus = coreGrappleBonus + grappleStaticModifier;
       updates['system.derived.grappleBonus'] = grappleBonus;
+      updates['system.derived.grappleBonusParts'] = {
+        core: coreGrappleBonus,
+        staticModifiers: grappleStaticModifier,
+        total: grappleBonus
+      };
 
       // Defenses
       if (defenses.fortitude) {
@@ -973,7 +1011,7 @@ export class DerivedCalculator {
       const allTargets = [
         ...skillTargets,
         'defense.fortitude', 'defense.reflex', 'defense.will',
-        'hp.max', 'bab.total', 'initiative.total'
+        'hp.max', 'bab.total', 'initiative.total', 'grapple'
       ];
       const modifierBreakdown = await ModifierEngine.buildModifierBreakdown(actor, allTargets, { signature: modifierSignature });
 

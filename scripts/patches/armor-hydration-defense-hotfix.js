@@ -4,17 +4,38 @@
  * V2 sheet migration guardrails:
  * - The gear Armor Profile must use the same equipped-state semantics as the
  *   inventory rows and must prefer worn armor over equipped energy shields.
- * - Armor defense display/math must not miss equipped armor because an older
- *   item used an alternate equipped flag shape or because the derived payload
- *   was stale before the armor item was hydrated.
  * - The Effect Builder partial must be registered before item sheets try to
  *   render the entity dialog effects tab.
+ *
+ * Math Integrity Freeze Batch 2A correction (second pass): this file used to
+ * ALSO patch DefenseCalculator.calculate() -- first to recompute Reflex/
+ * Fortitude from scratch (a shadow defense authority, removed in the first
+ * Batch 2A correction), then, after that removal, to mutate
+ * item.system.equipped in memory before calling the real calculator, to
+ * paper over armor/shield records that mark equipped state via a legacy/
+ * alternate field shape. That mutation-based fix created its own ordering
+ * bug: DerivedCalculator.computeAll() runs ModifierEngine's modifier
+ * collection BEFORE DefenseCalculator.calculate(), so a legacy-equipped
+ * item's ACP/skill modifiers were silently omitted on that pass even though
+ * Defense math (which ran after the mutation) came out correct -- exactly
+ * the kind of order-dependent behavior this freeze exists to eliminate.
+ *
+ * Fixed properly this time: `isArmorItemEquipped()`
+ * (scripts/items/armor-data-resolver.js) is now the single, canonical
+ * equipped-state check, called directly by every consumer that needs it
+ * (armor-usage-resolver.js, ModifierEngine._getItemModifiers(),
+ * DefenseCalculator's own equippedArmor lookup, armor-benefit-simulator.js).
+ * No consumer depends on any other subsystem having run first, and no
+ * mutation of shared actor/item state is needed anywhere. This file's own
+ * `isWornArmor()`/`findEquippedWornArmor()` (used only for the two UI panel
+ * patches below, a display concern unrelated to defense/skill math) now
+ * delegate to that same shared check instead of maintaining a fourth
+ * duplicate copy of the same logic.
  */
 
 import { PanelContextBuilder } from '/systems/foundryvtt-swse/scripts/sheets/v2/context/PanelContextBuilder.js';
 import { RowTransformers } from '/systems/foundryvtt-swse/scripts/sheets/v2/context/RowTransformers.js';
-import { DefenseCalculator } from '/systems/foundryvtt-swse/scripts/actors/derived/defense-calculator.js';
-import { actorHasArmorProficiencyForArmor, isEnergyShieldItem, resolveArmorData } from '/systems/foundryvtt-swse/scripts/items/armor-data-resolver.js';
+import { isEnergyShieldItem, isArmorItemEquipped } from '/systems/foundryvtt-swse/scripts/items/armor-data-resolver.js';
 
 const EFFECT_BUILDER_PARTIAL = 'systems/foundryvtt-swse/templates/dialogs/entity/parts/effect-builder-wizard.hbs';
 
@@ -22,19 +43,12 @@ let registered = false;
 let partialRegistrationStarted = false;
 let originalBuildArmorSummaryPanel = null;
 let originalBuildInventoryPanel = null;
-let originalBuildDefensePanel = null;
-let originalDefenseCalculate = null;
 let effectBuilderFallbackRegistered = false;
 let effectBuilderFullTemplateRegistered = false;
 
 function asArray(value) {
   try { return Array.from(value ?? []); }
   catch (_err) { return []; }
-}
-
-function toNumber(value, fallback = 0) {
-  const number = Number(value);
-  return Number.isFinite(number) ? number : fallback;
 }
 
 function getHandlebarsRuntime() {
@@ -48,193 +62,13 @@ function getLoadTemplatesFunction() {
   return foundry?.applications?.handlebars?.loadTemplates ?? null;
 }
 
-function isTruthyEquipState(value) {
-  if (value === true || Number(value) === 1) return true;
-  if (value && typeof value === 'object' && !Array.isArray(value)) {
-    return isTruthyEquipState(value.value ?? value.current ?? value.active ?? value.equipped ?? value.state);
-  }
-  return ['true', '1', 'yes', 'equipped', 'worn', 'held', 'readied', 'ready', 'on', 'active'].includes(String(value || '').toLowerCase());
-}
-
-function itemIsEquipped(item = {}) {
-  return isTruthyEquipState(item?.system?.equipped)
-    || isTruthyEquipState(item?.system?.isEquipped)
-    || isTruthyEquipState(item?.system?.readied)
-    || isTruthyEquipState(item?.system?.equippable?.equipped)
-    || isTruthyEquipState(item?.flags?.swse?.equipped);
-}
-
 function isWornArmor(item = {}) {
-  return item?.type === 'armor' && itemIsEquipped(item) && !isEnergyShieldItem(item);
+  return item?.type === 'armor' && isArmorItemEquipped(item) && !isEnergyShieldItem(item);
 }
 
 function findEquippedWornArmor(actorOrItems) {
   const items = actorOrItems?.items ? asArray(actorOrItems.items) : asArray(actorOrItems);
   return items.find(isWornArmor) ?? null;
-}
-
-function actorHasTalent(actor, talentName) {
-  const wanted = String(talentName || '').trim().toLowerCase();
-  if (!wanted) return false;
-  return asArray(actor?.items).some(item => item?.type === 'talent' && String(item?.name || '').trim().toLowerCase() === wanted);
-}
-
-function effectiveArmorDefenseState(actor, armor) {
-  if (!actor || !armor) return null;
-  const armorData = resolveArmorData(armor);
-  const proficient = actorHasArmorProficiencyForArmor(actor, armor);
-  const secondSkin = proficient && actorHasTalent(actor, 'Second Skin');
-  const armoredDefense = proficient && actorHasTalent(actor, 'Armored Defense');
-  const improvedArmoredDefense = proficient && actorHasTalent(actor, 'Improved Armored Defense');
-  const armorMastery = proficient && actorHasTalent(actor, 'Armor Mastery');
-
-  const reflexArmorBonus = toNumber(armorData.reflexBonus, 0) + (secondSkin ? 1 : 0);
-  const fortitudeArmorBonus = proficient ? toNumber(armorData.fortitudeBonus, 0) + (secondSkin ? 1 : 0) : 0;
-  const maxDexBonus = toNumber(armorData.maxDexBonus, NaN);
-
-  return {
-    armorData,
-    proficient,
-    armoredDefense,
-    improvedArmoredDefense,
-    armorMastery,
-    reflexArmorBonus,
-    fortitudeArmorBonus,
-    maxDexBonus: Number.isFinite(maxDexBonus) ? maxDexBonus : null,
-  };
-}
-
-function correctedReflexLevelTerm(heroicLevel, armorState) {
-  const armorBonus = toNumber(armorState?.reflexArmorBonus, 0);
-  if (!armorState?.proficient) return armorBonus;
-  if (armorState.improvedArmoredDefense) return Math.max(heroicLevel + Math.floor(armorBonus / 2), armorBonus);
-  if (armorState.armoredDefense) return Math.max(heroicLevel, armorBonus);
-  return armorBonus;
-}
-
-function applyArmorDefenseCorrectionsToPanel(panel = {}, actor = {}) {
-  const armor = findEquippedWornArmor(actor);
-  if (!armor || !panel || !Array.isArray(panel.defenses)) return panel;
-  const armorState = effectiveArmorDefenseState(actor, armor);
-  if (!armorState) return panel;
-
-  const reflex = panel.defenses.find(row => row?.systemKey === 'reflex' || row?.key === 'ref');
-  if (reflex) {
-    const heroicLevel = toNumber(reflex.heroicLevel ?? actor?.system?.level, 0);
-    const maxDex = armorState.maxDexBonus;
-    const effectiveMaxDex = maxDex === null ? null : maxDex + (armorState.armorMastery ? 1 : 0);
-    const rawAbilityMod = toNumber(reflex.abilityMod, 0);
-    const abilityMod = effectiveMaxDex === null ? rawAbilityMod : Math.min(rawAbilityMod, effectiveMaxDex);
-    const levelContribution = correctedReflexLevelTerm(heroicLevel, armorState);
-    const total = 10
-      + levelContribution
-      + abilityMod
-      + toNumber(reflex.classDef, 0)
-      + toNumber(reflex.speciesBonus, 0)
-      + toNumber(reflex.rulesBonus, 0)
-      + toNumber(reflex.sizeModifier, 0)
-      + toNumber(reflex.miscMod, 0)
-      + toNumber(reflex.conditionPenalty, 0);
-
-    reflex.armorBonus = armorState.reflexArmorBonus;
-    reflex.levelContribution = levelContribution;
-    reflex.armorContribution = levelContribution;
-    reflex.abilityMod = abilityMod;
-    reflex.abilityModClass = abilityMod > 0 ? 'mod--positive' : abilityMod < 0 ? 'mod--negative' : 'mod--zero';
-    reflex.total = Math.max(1, total);
-    reflex.armorSourceName = armor.name || '';
-  }
-
-  const fortitude = panel.defenses.find(row => row?.systemKey === 'fortitude' || row?.key === 'fort');
-  if (fortitude) {
-    const total = 10
-      + toNumber(fortitude.levelContribution ?? fortitude.heroicLevel ?? actor?.system?.level, 0)
-      + armorState.fortitudeArmorBonus
-      + toNumber(fortitude.abilityMod, 0)
-      + toNumber(fortitude.classDef, 0)
-      + toNumber(fortitude.speciesBonus, 0)
-      + toNumber(fortitude.rulesBonus, 0)
-      + toNumber(fortitude.sizeModifier, 0)
-      + toNumber(fortitude.miscMod, 0)
-      + toNumber(fortitude.conditionPenalty, 0);
-
-    fortitude.armorBonus = armorState.fortitudeArmorBonus;
-    fortitude.total = Math.max(1, total);
-    fortitude.armorSourceName = armor.name || '';
-  }
-
-  return panel;
-}
-
-function applyArmorDefenseCorrectionsToResult(result = {}, actor = {}) {
-  const armor = findEquippedWornArmor(actor);
-  if (!armor || !result?.reflex) return result;
-  const armorState = effectiveArmorDefenseState(actor, armor);
-  if (!armorState) return result;
-
-  const reflex = result.reflex;
-  const heroicLevel = toNumber(reflex.heroicLevel ?? actor?.system?.level, 0);
-  const maxDex = armorState.maxDexBonus;
-  const effectiveMaxDex = maxDex === null ? null : maxDex + (armorState.armorMastery ? 1 : 0);
-  const rawAbilityMod = toNumber(reflex.abilityMod, 0);
-  const abilityMod = effectiveMaxDex === null ? rawAbilityMod : Math.min(rawAbilityMod, effectiveMaxDex);
-  const levelContribution = correctedReflexLevelTerm(heroicLevel, armorState);
-  const reflexTotal = 10
-    + levelContribution
-    + abilityMod
-    + toNumber(reflex.classBonus, 0)
-    + toNumber(reflex.speciesBonus, 0)
-    + toNumber(reflex.stateBonus, 0)
-    + toNumber(reflex.adjustment, 0)
-    + toNumber(reflex.sizeModifier, 0)
-    + toNumber(reflex.miscBonus, 0)
-    + toNumber(reflex.conditionPenalty, 0);
-
-  result.reflex = {
-    ...reflex,
-    total: Math.max(1, reflexTotal),
-    base: 10 + levelContribution + toNumber(reflex.classBonus, 0) + toNumber(reflex.sizeModifier, 0),
-    armorBonus: armorState.reflexArmorBonus,
-    armorContribution: levelContribution,
-    levelContribution,
-    abilityMod,
-    armorSourceName: armor.name || '',
-  };
-
-  if (result.flatFooted) {
-    result.flatFooted = {
-      ...result.flatFooted,
-      total: Math.max(1, result.reflex.total - Math.max(0, abilityMod)),
-      base: result.reflex.base,
-      armorBonus: armorState.reflexArmorBonus,
-      armorContribution: levelContribution,
-      levelContribution,
-      abilityMod: 0,
-      armorSourceName: armor.name || '',
-    };
-  }
-
-  if (result.fortitude) {
-    const fortitude = result.fortitude;
-    const fortTotal = 10
-      + toNumber(fortitude.levelContribution ?? fortitude.heroicLevel ?? actor?.system?.level, 0)
-      + armorState.fortitudeArmorBonus
-      + toNumber(fortitude.abilityMod, 0)
-      + toNumber(fortitude.classBonus, 0)
-      + toNumber(fortitude.speciesBonus, 0)
-      + toNumber(fortitude.stateBonus, 0)
-      + toNumber(fortitude.adjustment, 0)
-      + toNumber(fortitude.miscBonus, 0)
-      + toNumber(fortitude.conditionPenalty, 0);
-    result.fortitude = {
-      ...fortitude,
-      total: Math.max(1, fortTotal),
-      armorBonus: armorState.fortitudeArmorBonus,
-      armorSourceName: armor.name || '',
-    };
-  }
-
-  return result;
 }
 
 function installPanelArmorPatches() {
@@ -265,22 +99,11 @@ function installPanelArmorPatches() {
     };
   }
 
-  if (!originalBuildDefensePanel && typeof proto.buildDefensePanel === 'function') {
-    originalBuildDefensePanel = proto.buildDefensePanel;
-    proto.buildDefensePanel = function patchedBuildDefensePanel(...args) {
-      const panel = originalBuildDefensePanel.call(this, ...args);
-      return applyArmorDefenseCorrectionsToPanel(panel, this.actor);
-    };
-  }
-}
-
-function installDefenseCalculatorPatch() {
-  if (originalDefenseCalculate || typeof DefenseCalculator?.calculate !== 'function') return;
-  originalDefenseCalculate = DefenseCalculator.calculate;
-  DefenseCalculator.calculate = async function patchedDefenseCalculate(actor, classLevels = [], options = {}, context = {}) {
-    const result = await originalDefenseCalculate.call(this, actor, classLevels, options, context);
-    return applyArmorDefenseCorrectionsToResult(result, actor);
-  };
+  // No buildDefensePanel patch, and no DefenseCalculator.calculate() patch
+  // at all: DefenseCalculator's own equippedArmor lookup now calls
+  // isArmorItemEquipped() directly, so it (and the panel, which already
+  // reads DefenseCalculator's persisted system.derived.defenses.* output)
+  // needs no external correction of any kind.
 }
 
 function installSynchronousEffectBuilderFallback() {
@@ -363,7 +186,6 @@ export function registerArmorHydrationDefenseHotfix() {
   if (registered) return false;
   registered = true;
   installPanelArmorPatches();
-  installDefenseCalculatorPatch();
   scheduleEffectBuilderPartialRegistration();
   return true;
 }

@@ -19,6 +19,7 @@ import { openItemCustomization } from "/systems/foundryvtt-swse/scripts/apps/cus
 import { normalizeItemSystem, sanitizeItemSheetUpdate } from "/systems/foundryvtt-swse/scripts/items/item-defaults.js";
 import { WeaponRangeProfileResolver } from "/systems/foundryvtt-swse/scripts/items/weapon-range-profile-resolver.js";
 import { MELEE_WEAPON_CATEGORY_OPTIONS, RANGED_WEAPON_CATEGORY_OPTIONS } from "/systems/foundryvtt-swse/scripts/items/weapon-data-resolver.js";
+import { getWeaponBranch, isRangedWeapon as isCanonicalRangedWeapon } from "/systems/foundryvtt-swse/scripts/items/weapon-branch-resolver.js";
 import { addItemEditorTrace, installItemEditorTrace, summarizeActorItems, summarizeItem } from "/systems/foundryvtt-swse/scripts/debug/item-editor-trace.js";
 import { buildEntityDialogContext } from "/systems/foundryvtt-swse/scripts/dialogs/entity-dialog/context-builder.js";
 import { validateItemData } from "/systems/foundryvtt-swse/scripts/dialogs/entity-dialog/validation.js";
@@ -2373,14 +2374,35 @@ export class SWSEItemSheet extends HandlebarsApplicationMixin(ItemSheetV2) {
     try {
       const form = this.element?.querySelector?.('form.swse-item-editor-form');
       if (!form || this.item?.type !== 'weapon') return false;
-      const branch = form.querySelector('[name="system.meleeOrRanged"]')?.value ?? this.item?.system?.meleeOrRanged;
+      // Math Integrity Freeze, Batch 2B: the live form dropdown value (the
+      // user's current in-progress selection) still wins when present --
+      // that is genuinely authoritative UI state, not a stale read. The
+      // fallback is now the canonical branch authority instead of the raw,
+      // often schema-defaulted meleeOrRanged field, so a freshly-opened
+      // sheet for an already-ranged item (e.g. a real "Bluebolt" case)
+      // shows its range bands immediately, before any manual branch toggle.
+      const formBranch = form.querySelector('[name="system.meleeOrRanged"]')?.value;
+      const branch = formBranch || getWeaponBranch(this.item ?? {});
       if (String(branch || '').toLowerCase() !== 'ranged') return false;
-      const category = form.querySelector('[name="system.weaponCategory"]')?.value ?? this.item?.system?.weaponCategory;
+      // Batch 2B correction #2: the live Category selector now submits
+      // system.subcategory (the canonical family field), not
+      // system.weaponCategory (a pure branch mirror now -- passing the
+      // stale/wrong field here would feed a family lookup with a branch
+      // literal like "ranged" instead of e.g. "pistol").
+      const category = form.querySelector('[name="system.subcategory"]')?.value ?? this.item?.system?.subcategory;
+      // proficiency/category are also overridden here (not just subcategory)
+      // because resolveWeaponBranchFamily()'s family-candidate scan checks
+      // proficiency FIRST -- leaving the item's stale, pre-edit proficiency
+      // in place would win over the live, just-changed Category selection
+      // for this preview lookup, even though subcategory is the more
+      // current signal.
       const rangeData = await WeaponRangeProfileResolver.resolveForWeapon({
         system: {
           ...(this.item?.system ?? {}),
           meleeOrRanged: branch,
-          weaponCategory: category
+          subcategory: category,
+          category,
+          proficiency: category
         }
       });
       if (!rangeData) return false;
@@ -2658,8 +2680,13 @@ export class SWSEItemSheet extends HandlebarsApplicationMixin(ItemSheetV2) {
       // If a ranged weapon does not yet have range-band data, hydrate it from the
       // canonical actor weapon range profiles before sanitizing. Explicit player
       // overrides submitted in the form are preserved.
+      // Math Integrity Freeze, Batch 2B: branch gate delegated to the
+      // canonical authority instead of a raw meleeOrRanged read, so a
+      // submit that doesn't touch meleeOrRanged directly (e.g. renaming a
+      // real ranged item that never had it explicitly set) still hydrates
+      // range bands correctly.
       if ((app.item?.type === 'weapon' || data?.type === 'weapon')
-          && String(data?.system?.meleeOrRanged || app.item?.system?.meleeOrRanged || '').toLowerCase() === 'ranged') {
+          && isCanonicalRangedWeapon({ system: { ...(app.item?.system ?? {}), ...(data?.system ?? {}) } })) {
         const rangeData = await WeaponRangeProfileResolver.resolveForWeapon({
           system: {
             ...(app.item?.system ?? {}),

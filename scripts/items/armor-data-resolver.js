@@ -206,6 +206,43 @@ export function isEnergyShieldItem(itemOrSystem = {}) {
   return /energy[\s_-]*shield/.test(tokens) || (tokens.includes('shield') && hasValue(shieldRating));
 }
 
+function isTruthyEquipState(value) {
+  if (value === true || Number(value) === 1) return true;
+  if (value && typeof value === 'object' && !Array.isArray(value)) {
+    return isTruthyEquipState(value.value ?? value.current ?? value.active ?? value.equipped ?? value.state);
+  }
+  return ['true', '1', 'yes', 'equipped', 'worn', 'held', 'readied', 'ready', 'on', 'active'].includes(String(value || '').toLowerCase());
+}
+
+/**
+ * The single canonical "is this armor/shield item equipped" check.
+ *
+ * Math Integrity Freeze Batch 2A correction: this used to be duplicated as
+ * a narrow `item.system?.equipped` read in armor-usage-resolver.js,
+ * ModifierEngine._getItemModifiers(), and defense-calculator.js's own
+ * equippedArmor lookup -- none of which recognized the legacy/alternate
+ * equip-flag shapes (system.isEquipped, system.readied,
+ * system.equippable.equipped, flags.swse.equipped) a separate hotfix
+ * (armor-hydration-defense-hotfix.js) used to paper over by mutating
+ * system.equipped in memory before DefenseCalculator.calculate() ran.
+ * That mutation created a real ordering bug: DerivedCalculator.computeAll()
+ * runs ModifierEngine's modifier collection BEFORE DefenseCalculator, so a
+ * legacy-equipped item's ACP/skill modifiers were silently omitted on that
+ * pass even though Defense math (which ran after the mutation) came out
+ * correct. Every consumer now calls this function directly instead, so
+ * there is no "whoever runs first" dependency at all.
+ *
+ * @param {Item} item
+ * @returns {boolean}
+ */
+export function isArmorItemEquipped(item = {}) {
+  return isTruthyEquipState(item?.system?.equipped)
+    || isTruthyEquipState(item?.system?.isEquipped)
+    || isTruthyEquipState(item?.system?.readied)
+    || isTruthyEquipState(item?.system?.equippable?.equipped)
+    || isTruthyEquipState(item?.flags?.swse?.equipped);
+}
+
 
 
 export function armorProficiencyRank(value) {
@@ -329,7 +366,13 @@ export function resolveArmorData(itemOrSystem = {}) {
   ], null), null);
 
   const armorCheckPenalty = toNumber(firstValue(system, ['armorCheckPenalty', 'checkPenalty', 'armor.checkPenalty'], 0), 0);
-  const speedPenalty = toNumber(firstValue(system, ['speedPenalty', 'armor.speedPenalty'], 0), 0);
+  // Energy Shields never reduce speed (SWSE RAW) -- some shield records have
+  // carried a stale nonzero speedPenalty despite their own description
+  // saying otherwise. Zero it here, at the SSOT, the same way reflexBonus/
+  // fortitudeBonus are zeroed for shields below, so every consumer (store,
+  // entity dialog, suggestion engine, ModifierEngine) is protected even if
+  // a future import reintroduces bad data.
+  const speedPenalty = isShield ? 0 : toNumber(firstValue(system, ['speedPenalty', 'armor.speedPenalty'], 0), 0);
   const perceptionBonus = toNumber(firstValue(system, ['equipmentPerceptionBonus', 'perceptionBonus'], 0), 0);
   const shieldRating = clampNumber(firstValue(system, ['shieldRating', 'sr', 'shield.rating'], 0), 0, { min: 0 });
   const currentSR = clampNumber(firstValue(system, ['currentSR', 'currentSr', 'shield.current'], 0), 0, { min: 0, max: shieldRating || Number.MAX_SAFE_INTEGER });
@@ -462,6 +505,7 @@ export default {
   ARMOR_STORAGE_CONTRACT,
   normalizeArmorType,
   isEnergyShieldItem,
+  isArmorItemEquipped,
   resolveArmorData,
   buildArmorSystemUpdateData,
   buildArmorSystemData,

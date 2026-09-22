@@ -7,6 +7,8 @@
  * cards into one stable dialog shape so the template does not guess raw paths.
  */
 
+import { resolveWeaponBranchFamily } from '/systems/foundryvtt-swse/scripts/items/weapon-branch-resolver.js';
+
 const ATTRIBUTE_LABELS = Object.freeze({
   str: 'Strength',
   dex: 'Dexterity',
@@ -21,19 +23,26 @@ export const WEAPON_BRANCH_OPTIONS = Object.freeze([
   { value: 'ranged', label: 'Ranged' }
 ]);
 
+// Batch 2B correction #2: values use the real shipped pack-data singular
+// vocabulary (confirmed by a direct scan of packs/weapons*.db) -- pistol
+// (was "pistols"), rifle (was "rifles"), exotic (was "melee-exotic"/
+// "ranged-exotic"). These are canonical `system.subcategory` values now,
+// never `system.weaponCategory` (see weapon-branch-resolver.js's field
+// contract). Labels are unchanged so the editor UI reads the same as
+// before.
 export const MELEE_WEAPON_CATEGORY_OPTIONS = Object.freeze([
   { value: 'advanced', label: 'Advanced' },
   { value: 'lightsaber', label: 'Lightsaber' },
-  { value: 'melee-exotic', label: 'Melee Exotic' },
+  { value: 'exotic', label: 'Melee Exotic' },
   { value: 'natural', label: 'Natural' },
   { value: 'simple', label: 'Simple' }
 ]);
 
 export const RANGED_WEAPON_CATEGORY_OPTIONS = Object.freeze([
   { value: 'heavy', label: 'Heavy' },
-  { value: 'pistols', label: 'Pistols' },
-  { value: 'ranged-exotic', label: 'Ranged Exotic' },
-  { value: 'rifles', label: 'Rifles' },
+  { value: 'pistol', label: 'Pistols' },
+  { value: 'exotic', label: 'Ranged Exotic' },
+  { value: 'rifle', label: 'Rifles' },
   { value: 'simple', label: 'Simple' }
 ]);
 
@@ -69,9 +78,6 @@ export const AVAILABILITY_OPTIONS = Object.freeze([
   { value: 'illegal', label: 'Illegal' }
 ]);
 
-const RANGED_CATEGORIES = new Set(['heavy', 'pistols', 'ranged-exotic', 'rifles']);
-const MELEE_CATEGORIES = new Set(['advanced', 'lightsaber', 'melee-exotic', 'natural']);
-const RANGED_TEXT_RE = /\b(blaster|rifle|pistol|carbine|bowcaster|repeating|launcher|grenade|missile|ranged)\b/i;
 
 function clone(value) {
   if (globalThis.foundry?.utils?.deepClone) return foundry.utils.deepClone(value);
@@ -84,39 +90,14 @@ function toNumber(value, fallback = 0) {
   return Number.isFinite(number) ? number : fallback;
 }
 
+// Math Integrity Freeze, Batch 2B: delegated to the canonical branch
+// authority (scripts/items/weapon-branch-resolver.js), which this
+// function's own conflict-aware design (trusting category/text evidence
+// over an unreliable explicit "melee") helped establish as the right shape
+// -- it is now promoted repository-wide instead of being this dialog's own
+// local copy.
 function normalizeBranch(itemOrSystem = {}) {
-  const system = itemOrSystem.system ?? itemOrSystem ?? {};
-  const explicit = String(system.meleeOrRanged ?? system.weaponRangeType ?? system.rangeType ?? '').trim().toLowerCase();
-  if (explicit === 'ranged' || explicit.includes('ranged')) return 'ranged';
-  if (explicit === 'melee') {
-    const category = String(system.weaponCategory ?? system.category ?? system.weaponGroup ?? system.group ?? '').trim().toLowerCase();
-    const text = [
-      itemOrSystem.name,
-      system.name,
-      system.weaponType,
-      system.weaponGroup,
-      system.rangeProfile,
-      system.rangeProfileName,
-      system.range,
-      category
-    ].map(value => String(value ?? '')).join(' ');
-    if (!MELEE_CATEGORIES.has(category) && (RANGED_CATEGORIES.has(category) || RANGED_TEXT_RE.test(text))) return 'ranged';
-    return 'melee';
-  }
-
-  const category = String(system.weaponCategory ?? system.category ?? system.weaponGroup ?? system.group ?? '').trim().toLowerCase();
-  const text = [
-    itemOrSystem.name,
-    system.name,
-    system.weaponType,
-    system.weaponGroup,
-    system.rangeProfile,
-    system.rangeProfileName,
-    system.range,
-    category
-  ].map(value => String(value ?? '')).join(' ');
-  if (RANGED_CATEGORIES.has(category) || RANGED_TEXT_RE.test(text)) return 'ranged';
-  return 'melee';
+  return resolveWeaponBranchFamily(itemOrSystem).branch;
 }
 
 function normalizeProperties(value) {
@@ -167,7 +148,13 @@ function withCustomOption(options, value) {
 export function resolveWeaponData(itemOrSystem = {}) {
   const system = itemOrSystem.system ?? itemOrSystem ?? {};
   const branch = normalizeBranch(itemOrSystem);
-  const category = String(system.weaponCategory ?? system.category ?? 'simple').trim() || 'simple';
+  // Batch 2B correction #2: weaponCategory is now a pure branch mirror
+  // ("melee"/"ranged") -- it must never be read as a family/category
+  // display value again (this line previously showed e.g. "Ranged" as the
+  // weapon's "Group" display label instead of its real family). subcategory
+  // is the canonical family field going forward; category/proficiency stay
+  // as compatibility fallbacks for records not yet touched by the fix.
+  const category = String(system.subcategory ?? system.category ?? system.proficiency ?? 'simple').trim() || 'simple';
   const ranges = normalizeRanges(system);
   const rangeSummary = String(system.range ?? '').trim() || formatRangeSummary(ranges) || (branch === 'melee' ? 'Melee' : 'Unspecified');
   const properties = normalizeProperties(system.properties);

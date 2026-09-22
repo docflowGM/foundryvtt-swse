@@ -93,7 +93,12 @@ function buildSystemData(type, options = {}) {
     case 'weapon':
       return {
         ...baseSystem('', 'Manual'),
-        weaponCategory: 'simple',
+        // Batch 2B correction #2: weaponCategory is a pure branch mirror
+        // ("melee"/"ranged"); 'simple' is a family value and belongs on
+        // subcategory/category/proficiency instead (weapon-branch-resolver.js).
+        weaponCategory: 'melee',
+        subcategory: 'simple',
+        category: 'simple',
         proficiency: 'simple',
         damage: '1d6',
         damageBonus: '',

@@ -2857,8 +2857,10 @@
       "abilityMeta": {
         "grappleRules": [
           {
-            "type": "RESIST_GRAB_AND_GRAPPLE",
-            "bonus": 5
+            "type": "GRAB_GRAPPLE_RESISTANCE",
+            "reflexBonus": 5,
+            "opposedGrappleBonus": 5,
+            "source": "Grapple Resistance"
           }
         ],
         "status": "grapple_resistance",
@@ -48818,8 +48820,10 @@
         ],
         "grappleRules": [
           {
-            "type": "RESIST_GRAB_AND_GRAPPLE",
-            "bonus": 2,
+            "type": "GRAB_GRAPPLE_RESISTANCE",
+            "reflexBonus": 2,
+            "opposedGrappleBonus": 0,
+            "source": "Grab Back",
             "description": "Gain +2 Reflex Defense against Grab and Grapple attacks."
           }
         ],

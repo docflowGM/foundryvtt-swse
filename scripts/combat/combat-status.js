@@ -7,6 +7,8 @@
  * and future GM controls do not create parallel conditional-math paths.
  */
 
+import { isMeleeWeapon as canonicalIsMeleeWeapon } from "/systems/foundryvtt-swse/scripts/items/weapon-branch-resolver.js";
+
 export const COMBAT_STATUS_FLAG_SCOPE = 'foundryvtt-swse';
 export const COMBAT_STATUS_FLAG_KEY = 'combatStatus';
 
@@ -167,8 +169,12 @@ export const CombatStatusResolver = {
     }
 
     if (reflexDefense && status.prone === true) {
-      const mode = String(context.attackType ?? context.rangeType ?? context.weapon?.system?.meleeOrRanged ?? '').toLowerCase();
-      const melee = mode.includes('melee');
+      // Math Integrity Freeze, Batch 2B: the roll-time attackType/rangeType
+      // context stays first (this is genuinely a per-attack context, not a
+      // weapon-identity read); the weapon fallback is now the canonical
+      // branch authority instead of a raw meleeOrRanged read.
+      const explicitMode = String(context.attackType ?? context.rangeType ?? '').toLowerCase();
+      const melee = explicitMode ? explicitMode.includes('melee') : canonicalIsMeleeWeapon(context.weapon);
       mods.push({ key: 'prone', label: melee ? 'Prone vs Melee' : 'Prone vs Ranged', value: melee ? -5 : 5 });
     }
 

@@ -26,6 +26,7 @@ import { isFeatLikeItem, isForcePowerItem, isPlaceholderSheetItem, isTalentLikeI
 import { addItemEditorTrace, summarizeActorItems } from '/systems/foundryvtt-swse/scripts/debug/item-editor-trace.js';
 import { ImplantRules } from '/systems/foundryvtt-swse/scripts/engine/implants/ImplantRules.js';
 import { buildDarkSidePanelContext } from '/systems/foundryvtt-swse/scripts/sheets/v2/context/dark-side-panel-context.js';
+import { resolveGrappleBonus } from '/systems/foundryvtt-swse/scripts/engine/combat/combat-stat-rules.js';
 
 function safePanelNumber(value, fallback = 0) {
   let candidate = value;
@@ -1421,21 +1422,27 @@ export class PanelContextBuilder {
     const initiativeTotal = Number(derived.skills?.initiative?.total ?? derived.initiative?.total) || 0;
     const perceptionTotal = Number(derived.skills?.perception?.total) || 0;
 
-    // BAB: system.baseAttackBonus is the authoritative editable field
-    // Fallback to derived.bab only if system value not set
-    const bab = Number(system.baseAttackBonus ?? derived.bab) || 0;
+    // BAB: system.derived.bab (BABCalculator, via DerivedCalculator) is the
+    // canonical authority -- see docs/audits/v2-math-integrity-authority-ledger.md's
+    // BAB domain. system.baseAttackBonus is only a legacy/NPC-import field
+    // and is no longer preferred over the computed value; it remains a
+    // last-resort fallback for the brief window before derived data exists.
+    const bab = Number(derived.bab ?? system.baseAttackBonus) || 0;
 
-    const grappleStrMod = Number(derived?.attributes?.str?.mod ?? system?.attributes?.str?.mod ?? system?.abilities?.str?.mod ?? 0) || 0;
-    const grappleDexMod = Number(derived?.attributes?.dex?.mod ?? system?.attributes?.dex?.mod ?? system?.abilities?.dex?.mod ?? 0) || 0;
-    const grappleAbilityMod = Math.max(grappleStrMod, grappleDexMod);
-    const grappleSizeTable = { fine: -8, diminutive: -4, tiny: -2, small: -1, medium: 0, large: 4, huge: 8, gargantuan: 12, colossal: 16 };
-    const grappleSizeMod = grappleSizeTable[String(system?.size ?? system?.traits?.size ?? system?.droidSize ?? 'medium').toLowerCase()] ?? 0;
-    const grappleSpeciesMod = Number(system?.speciesCombatBonuses?.grapple ?? system?.speciesTraitBonuses?.combat?.grapple ?? 0) || 0;
-    const grappleFallback = bab + grappleAbilityMod + grappleSizeMod + grappleSpeciesMod;
+    // Grapple: system.derived.grappleBonus (computeGrappleBonus(), via
+    // DerivedCalculator) is the sole grapple arithmetic authority -- see the
+    // Grapple domain section of docs/audits/v2-math-integrity-authority-ledger.md.
+    // This box previously reconstructed its own BAB + best-of-STR/DEX + size
+    // + species formula (with its own, book-incorrect size table) and used
+    // it whenever the canonical value happened to read as exactly 0, which
+    // could silently discard a legitimately-computed 0. No UI-side rules
+    // math: consume the canonical value whenever it's finite (including 0),
+    // and fall back to the shared resolver -- never a private formula --
+    // only for the brief window before derived data has been computed.
     const grappleCandidate = Number(derived.grappleBonus);
-    const grappleBonus = Number.isFinite(grappleCandidate) && (grappleCandidate !== 0 || grappleFallback === 0)
+    const grappleBonus = Number.isFinite(grappleCandidate)
       ? grappleCandidate
-      : grappleFallback;
+      : resolveGrappleBonus(this.actor);
     const damageThreshold = Number(derived.damageThreshold) || 0;
 
     // HEROIC RESOURCES - engine-owned sources

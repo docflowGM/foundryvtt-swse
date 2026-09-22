@@ -137,7 +137,20 @@ function resourceRulePatchForFeat(featureName) {
 
 function grappleRulesForFeat(featureName) {
   switch (featureName) {
-    case 'grapple resistance': return [{ type: 'RESIST_GRAB_AND_GRAPPLE', bonus: 5, source: 'Grapple Resistance' }];
+    // GRAB_GRAPPLE_RESISTANCE keeps the Reflex-Defense-vs-incoming-Grab
+    // bonus and the opposed-Grapple-check bonus as separate fields --
+    // Grapple Resistance grants both (coincidentally the same value), but
+    // Grab Back (see below) only grants the Reflex channel. The old
+    // single-field RESIST_GRAB_AND_GRAPPLE shape this replaced let a
+    // Reflex-only bonus incorrectly leak into opposed Grapple checks --
+    // see the Grapple domain section of
+    // docs/audits/v2-math-integrity-authority-ledger.md. This branch is
+    // dormant in practice (compendium items ship with grappleRules
+    // pre-authored, so hasExistingGrappleRules() short-circuits before
+    // this runs), kept only for a bare/legacy item with no grapple
+    // metadata at all -- but it must still emit the correct shape if it
+    // ever does fire.
+    case 'grapple resistance': return [{ type: 'GRAB_GRAPPLE_RESISTANCE', reflexBonus: 5, opposedGrappleBonus: 5, source: 'Grapple Resistance' }];
     case 'pin': return [{ type: 'UNLOCK_GRAPPLE_MANEUVER', maneuver: 'pin', source: 'Pin' }];
     case 'trip': return [{ type: 'UNLOCK_GRAPPLE_MANEUVER', maneuver: 'trip', source: 'Trip' }];
     case 'crush': return [{ type: 'UNLOCK_GRAPPLE_MANEUVER', maneuver: 'crush', source: 'Crush' }];
@@ -147,7 +160,14 @@ function grappleRulesForFeat(featureName) {
     case 'pincer': return [{ type: 'PIN_MAINTENANCE_AND_CRUSH', source: 'Pincer' }];
     case 'grappling strike': return [{ type: 'POST_HIT_GRAB_ATTEMPT', action: 'free', source: 'Grappling Strike' }];
     case 'multi grab': return [{ type: 'MULTI_GRAB', maxTargets: 2, source: 'Multi-Grab' }];
-    case 'grab back': return [{ type: 'REACTION_GRAB_BACK', trigger: 'missedGrabOrGrapple', source: 'Grab Back' }];
+    // Round 7: this fallback previously emitted only the reaction rule,
+    // silently dropping Grab Back's +2 Reflex-vs-incoming-Grab bonus for
+    // any bare/legacy item normalized through this dormant path. Matches
+    // the production catalog shape (data/feat-catalog.json) exactly.
+    case 'grab back': return [
+      { type: 'GRAB_GRAPPLE_RESISTANCE', reflexBonus: 2, opposedGrappleBonus: 0, source: 'Grab Back' },
+      { type: 'REACTION_GRAB_BACK', trigger: 'missedGrabOrGrapple', source: 'Grab Back' }
+    ];
     default: return null;
   }
 }
@@ -168,7 +188,7 @@ function weaponDamageRulesForFeature(featureName) {
   }
 }
 
-function featureRuleNormalizationPatch(item) {
+export function featureRuleNormalizationPatch(item) {
   if (!item || !['feat', 'talent'].includes(item.type)) return null;
   const featureName = normalizeFeatureName(item.name);
   const resourceRules = item.system?.abilityMeta?.resourceRules ?? {};

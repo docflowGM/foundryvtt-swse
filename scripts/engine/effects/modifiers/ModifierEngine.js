@@ -21,10 +21,11 @@ import { ConditionEvaluator } from "/systems/foundryvtt-swse/scripts/engine/abil
 import { evaluateStatePredicates } from "/systems/foundryvtt-swse/scripts/engine/abilities/passive/passive-state.js";
 import {
   actorHasArmorProficiencyForArmor,
-  getArmorProficiencyPenalty,
   isEnergyShieldItem,
+  isArmorItemEquipped,
   resolveArmorData
 } from "/systems/foundryvtt-swse/scripts/items/armor-data-resolver.js";
+import { resolveArmorUsageEffects, ACP_AFFECTED_SKILLS } from "/systems/foundryvtt-swse/scripts/engine/effects/armor-usage-resolver.js";
 import { EffectIntentEngine } from "/systems/foundryvtt-swse/scripts/dialogs/entity-dialog/effect-intent-engine.js";
 import { buildSourceBreakdown, buildModifierLedger } from "/systems/foundryvtt-swse/scripts/engine/effects/modifiers/modifier-breakdown-builder.js";
 import { ActorPerfDiagnostics } from "/systems/foundryvtt-swse/scripts/utils/actor-perf-diagnostics.js";
@@ -160,7 +161,17 @@ export class ModifierEngine {
         item?.id ?? item?._id ?? 'no-id',
         item?.type ?? 'unknown',
         item?._stats?.modifiedTime ?? item?._source?._stats?.modifiedTime ?? item?.system?._version ?? '',
-        item?.system?.equipped ?? item?.system?.isEquipped ?? '',
+        // Each legacy/alternate equip-flag shape gets its own slot rather
+        // than being collapsed via `??` -- `??` only skips null/undefined,
+        // so `system.equipped: false, system.isEquipped: true` previously
+        // hashed identically to `system.equipped: false` alone, silently
+        // losing the isEquipped signal (Math Integrity Freeze Batch 2A
+        // correction).
+        item?.system?.equipped ?? '',
+        item?.system?.isEquipped ?? '',
+        item?.system?.readied ?? '',
+        item?.system?.equippable?.equipped ?? '',
+        item?.flags?.swse?.equipped ?? '',
         item?.system?.activated ?? item?.system?.active ?? '',
         item?.system?.quantity ?? '',
         item?.system?.uses?.value ?? item?.system?.ammo?.value ?? ''
@@ -1056,28 +1067,84 @@ export class ModifierEngine {
         }
       }
 
-      // Process flat bonuses
+      // Process flat bonuses. Two record shapes are supported:
+      //  - skill-shaped: { value, applicableSkills: [...] } -- one modifier
+      //    per listed skill (the original, still-supported shape).
+      //  - generic target-shaped: { value, target, bonusType } -- e.g. a
+      //    background's flat bonus to a non-skill target like "grapple"
+      //    (Enslaved's "Grapple Survivor"). Previously silently dropped
+      //    entirely (this loop required applicableSkills on every record,
+      //    so a target-shaped record always failed the guard and was
+      //    skipped) -- see docs/audits/v2-math-integrity-authority-ledger.md's
+      //    Grapple domain, round 4.
+      //
+      // Defensive dedup for the generic shape: BackgroundGrantLedgerBuilder
+      // ._mergeBonuses() now collapses a background's duplicate
+      // mechanicalEffect/specialAbilities representation of the same grant
+      // into one ledger entry at the source, but this reads a persisted
+      // actor flag (flags.swse.backgroundBonuses), not a freshly-built
+      // ledger -- an actor whose backgrounds were materialized before that
+      // fix landed can still carry an already-persisted duplicate pair. The
+      // two representations don't necessarily agree on every field (the
+      // mechanicalEffect-derived copy has no bonusType/abilityId, only the
+      // specialAbilities-derived one does), so identity here is
+      // deliberately narrower than the full record: same background + same
+      // target + same value is treated as the same grant. When duplicates
+      // are found, the entry with the richest metadata (bonusType, then
+      // abilityId) is kept so the resulting modifier's type/source stay
+      // accurate.
       const flatBonuses = backgroundBonuses.flat || [];
+      const genericBonusGroups = new Map();
       for (const bonus of flatBonuses) {
-        if (!bonus || typeof bonus.value !== 'number' || !Array.isArray(bonus.applicableSkills)) {
+        if (!bonus || typeof bonus.value !== 'number') {
           continue;
         }
 
-        for (const skillKey of bonus.applicableSkills) {
-          try {
-            modifiers.push(createModifier({
-              source: ModifierSource.BACKGROUND,
-              sourceId: `background.bonus.flat.${skillKey}`,
-              sourceName: 'Background Bonus',
-              target: `skill.${skillKey}`,
-              type: ModifierType.UNTYPED,
-              value: bonus.value,
-              enabled: true,
-              description: `Background flat bonus: +${bonus.value} to ${skillKey}`
-            }));
-          } catch (err) {
-            swseLogger.warn(`[ModifierEngine] Failed to create background flat bonus:`, err);
+        if (Array.isArray(bonus.applicableSkills)) {
+          for (const skillKey of bonus.applicableSkills) {
+            try {
+              modifiers.push(createModifier({
+                source: ModifierSource.BACKGROUND,
+                sourceId: `background.bonus.flat.${skillKey}`,
+                sourceName: 'Background Bonus',
+                target: `skill.${skillKey}`,
+                type: ModifierType.UNTYPED,
+                value: bonus.value,
+                enabled: true,
+                description: `Background flat bonus: +${bonus.value} to ${skillKey}`
+              }));
+            } catch (err) {
+              swseLogger.warn(`[ModifierEngine] Failed to create background flat bonus:`, err);
+            }
           }
+          continue;
+        }
+
+        if (typeof bonus.target === 'string' && bonus.target && bonus.target !== 'unknown') {
+          const dedupeKey = `${bonus.backgroundId ?? ''}|${bonus.target}|${bonus.value}`;
+          const existing = genericBonusGroups.get(dedupeKey);
+          const richness = (bonus.bonusType ? 2 : 0) + (bonus.abilityId ? 1 : 0);
+          if (!existing || richness > existing.richness) {
+            genericBonusGroups.set(dedupeKey, { bonus, richness });
+          }
+        }
+      }
+
+      for (const { bonus } of genericBonusGroups.values()) {
+        const type = Object.values(ModifierType).includes(bonus.bonusType) ? bonus.bonusType : ModifierType.UNTYPED;
+        try {
+          modifiers.push(createModifier({
+            source: ModifierSource.BACKGROUND,
+            sourceId: `background.bonus.flat.${bonus.abilityId || bonus.backgroundId || bonus.target}`,
+            sourceName: bonus.backgroundName ? `${bonus.backgroundName} Background` : 'Background Bonus',
+            target: bonus.target,
+            type,
+            value: bonus.value,
+            enabled: true,
+            description: bonus.description || `Background flat bonus: +${bonus.value} to ${bonus.target}`
+          }));
+        } catch (err) {
+          swseLogger.warn(`[ModifierEngine] Failed to create background flat bonus:`, err);
         }
       }
     } catch (err) {
@@ -1253,19 +1320,28 @@ export class ModifierEngine {
     if (!actor) return modifiers;
 
     try {
+      // Single shared authority for body-armor and active-Energy-Shield ACP
+      // (Math Integrity Freeze Batch 2A). See armor-usage-resolver.js for the
+      // full rule contract: proficiency suppresses ordinary armor's ACP
+      // entirely, but never suppresses an active Energy Shield's ACP -- the
+      // two were previously conflated into one buggy formula here (and
+      // Energy Shields were excluded from it altogether).
+      const armorUsageEffects = resolveArmorUsageEffects(actor);
+
       // Find equipped body armor. Energy shields are armor-backed items, but they
       // contribute SR/activation state rather than armor Reflex/Fortitude bonuses.
-      const equippedArmor = actor?.items?.find(i => i.type === 'armor' && i.system?.equipped && !isEnergyShieldItem(i));
+      const equippedArmor = actor?.items?.find(i => i.type === 'armor' && isArmorItemEquipped(i) && !isEnergyShieldItem(i));
 
-      if (!equippedArmor) {
-        return modifiers; // No armor equipped
-      }
+      let armorName = null;
+      let armorType = null;
+      let isProficient = null;
 
+      if (equippedArmor) {
       const armorSystem = equippedArmor.system;
       const armorStats = resolveArmorData(equippedArmor);
-      const armorName = equippedArmor.name || 'Unknown Armor';
+      armorName = equippedArmor.name || 'Unknown Armor';
       const armorId = equippedArmor.id;
-      const armorType = armorStats.armorType || 'light';
+      armorType = armorStats.armorType || 'light';
 
       // ===== ARMOR PROFICIENCY CHECK =====
       // Proficiency can come from stored actor system flags, progression unlock
@@ -1273,7 +1349,7 @@ export class ModifierEngine {
       // ladder as defenses: Heavy covers all, Medium covers Medium/Light, Light
       // covers Light.  Proficiency does not erase base armor check penalty; it
       // only prevents the extra non-proficiency penalty.
-      const isProficient = actorHasArmorProficiencyForArmor(actor, equippedArmor);
+      isProficient = actorHasArmorProficiencyForArmor(actor, equippedArmor);
 
       // ===== TALENT CHECKS =====
       // Talent flags are preferred, but owned talent items remain the SSOT for
@@ -1331,40 +1407,10 @@ export class ModifierEngine {
         }
       }
 
-      // ===== ARMOR CHECK PENALTY (Skills) =====
-      let acpValue = armorStats.armorCheckPenalty || 0;
-      if (!isProficient) {
-        // Apply proficiency penalty if not proficient
-        const proficiencyPenalty = getArmorProficiencyPenalty(armorType);
-        acpValue = acpValue + proficiencyPenalty; // Combine with armor's base penalty
-      }
-
-      // Apply ACP to SWSE affected skills.
-      // Proficiency does not remove the armor's base ACP; it only prevents the
-      // extra non-proficiency penalty above.
-      if (acpValue !== 0) {
-        const acpSkills = [
-          'acrobatics', 'climb', 'endurance', 'initiative', 'jump', 'stealth', 'swim', 'athletics'
-        ];
-
-        for (const skillKey of acpSkills) {
-          try {
-            modifiers.push(createModifier({
-              source: ModifierSource.ITEM,
-              sourceId: armorId,
-              sourceName: `${armorName} (ACP)`,
-              target: `skill.${skillKey}`,
-              type: ModifierType.PENALTY,
-              value: acpValue, // Negative value
-              enabled: true,
-              priority: 25, // After other skill modifiers
-              description: `${armorName} applies ${acpValue} armor check penalty to ${skillKey}`
-            }));
-          } catch (err) {
-            swseLogger.warn(`Failed to create armor ACP modifier for skill.${skillKey}:`, err);
-          }
-        }
-      }
+      // ===== ARMOR CHECK PENALTY (Skills + Attacks) =====
+      // Handled below, after this body-armor-only block, by the shared
+      // armorUsageEffects authority -- it also covers active Energy
+      // Shields, which this equippedArmor lookup deliberately excludes.
 
       // ===== SPEED PENALTY =====
       let speedPenalty = armorSystem.speedPenalty || 0;
@@ -1476,13 +1522,11 @@ export class ModifierEngine {
             }
           }
 
-          // ACP modifier from upgrade (affects all ACP-affected skills)
+          // ACP modifier from upgrade (affects all ACP-affected skills). Uses
+          // the same canonical SWSE affected-skill list as the base armor
+          // ACP below -- do not invent a second, different skill list.
           if (typeof upgradeModifiers.acpModifier === 'number' && upgradeModifiers.acpModifier !== 0) {
-            const acpSkills = [
-              'acrobatics', 'climb', 'escapeArtist', 'jump', 'sleightOfHand', 'stealth', 'swim', 'useRope'
-            ];
-
-            for (const skillKey of acpSkills) {
+            for (const skillKey of ACP_AFFECTED_SKILLS) {
               try {
                 modifiers.push(createModifier({
                   source: ModifierSource.ITEM,
@@ -1521,8 +1565,40 @@ export class ModifierEngine {
           }
         }
       }
+      } // end if (equippedArmor)
 
-      swseLogger.debug(`[ModifierEngine] Registered ${modifiers.length} armor modifiers for ${armorName} (${armorType}, proficient: ${isProficient})`);
+      // ===== ARMOR CHECK PENALTY (Skills + Attacks) =====
+      // Single shared authority (armorUsageEffects, computed above): body
+      // armor's ACP (0 when proficient, the armor's own listed value -- or
+      // the light/medium/heavy category default only when the item carries
+      // none -- when not proficient) and every active Energy Shield's ACP
+      // (which always applies once active, proficient or not). Each
+      // contribution is registered from its own source so the breakdown/
+      // chat diagnostics can show it explicitly (e.g. "Energy Shield (SR 10)
+      // (Armor Check Penalty)") instead of one collapsed number that hides
+      // which item is responsible.
+      for (const part of armorUsageEffects.parts) {
+        if (part.effect !== 'attackAndSkillCheckPenalty' || !part.value) continue;
+        for (const skillKey of ACP_AFFECTED_SKILLS) {
+          try {
+            modifiers.push(createModifier({
+              source: ModifierSource.ITEM,
+              sourceId: part.sourceId,
+              sourceName: part.sourceName,
+              target: `skill.${skillKey}`,
+              type: ModifierType.PENALTY,
+              value: part.value,
+              enabled: true,
+              priority: 25, // After other skill modifiers
+              description: `${part.sourceName} applies ${part.value} armor check penalty to ${skillKey}`
+            }));
+          } catch (err) {
+            swseLogger.warn(`Failed to create armor ACP modifier for skill.${skillKey}:`, err);
+          }
+        }
+      }
+
+      swseLogger.debug(`[ModifierEngine] Registered ${modifiers.length} armor modifiers (${armorName ? `${armorName}, proficient: ${isProficient}` : 'no body armor'}; ${armorUsageEffects.activeEnergyShields.length} active shield(s))`);
 
     } catch (err) {
       swseLogger.warn(`[ModifierEngine] Error collecting armor item modifiers:`, err);

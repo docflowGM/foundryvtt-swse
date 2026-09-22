@@ -1,17 +1,18 @@
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { GrappleLegalityEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/grapple-legality-engine.js";
-import { activeEffectChangeType } from "/systems/foundryvtt-swse/scripts/utils/active-effect-change-utils.js";
+import {
+  normalizeGrappleState as normalizeState,
+  getGrappleEffects as queryGrappleEffects,
+  actorHasGrappleState,
+  getGrappleStateInfo
+} from "/systems/foundryvtt-swse/scripts/engine/combat/grapple-state-query.js";
+import {
+  isNaturalOrUnarmedWeapon as canonicalIsNaturalOrUnarmedWeapon,
+  isLightWeaponForActor as canonicalIsLightWeaponForActor
+} from "/systems/foundryvtt-swse/scripts/items/weapon-branch-resolver.js";
 
 const GRAPPLE_FLAG_SCOPE = 'swse';
 const GRAPPLE_FLAG_KEY = 'grappleState';
-
-function normalizeState(value) {
-  const key = String(value ?? '').trim().toLowerCase();
-  if (key === 'grab' || key === 'grabbed') return 'grabbed';
-  if (key === 'grapple' || key === 'grappled') return 'grappled';
-  if (key === 'pin' || key === 'pinned') return 'pinned';
-  return null;
-}
 
 function actorId(actor) {
   return actor?.id ?? actor?._id ?? null;
@@ -31,6 +32,31 @@ function escapeHTML(value) {
   }[char]));
 }
 
+// Math Integrity Freeze, round 7: none of these three states carry a
+// generic flat Reflex penalty. The pre-round-7 code applied
+// `system.defenses.reflex.bonus += -5` to all three (via a Foundry
+// ActiveEffect ADD-mode change) -- but that number appears nowhere in the
+// published Grab/Grapple/Pin rules text, and `system.defenses.reflex.bonus`
+// is not even a field DefenseCalculator's canonical Reflex total reads (see
+// docs/audits/v2-math-integrity-authority-ledger.md's Grapple domain
+// section, "Certification-correction addendum 7"). Real baseline effects:
+//   Grabbed:  cannot move; -2 on attack rolls except natural/light weapons.
+//             No Reflex Defense penalty.
+//   Grappled: same baseline restrictions as Grabbed. No Reflex penalty.
+//   Pinned:   loses its POSITIVE Dexterity bonus to Reflex Defense -- a
+//             component-aware reduction, not a flat number (a Dex -1
+//             character loses nothing further; a Dex +5 character loses
+//             exactly 5). This can't be expressed as a static ActiveEffect
+//             ADD change, so it's computed contextually in
+//             DefenseCalculator.calculate() (mirroring the same
+//             component-aware philosophy already used for flat-footed's
+//             own Dex-bonus removal) by querying this engine's own
+//             actorHasGrappleState(actor, 'pinned') via the shared
+//             grapple-state-query.js leaf module. None of these three
+//             states carry an ActiveEffect `changes` payload for Reflex.
+//             The attack-roll penalty (-2 while Grabbed/Grappled, non-
+//             natural/light weapons) is a separate, not-yet-automated
+//             effect -- see the ledger for that flagged, deferred item.
 function stateConfig(state) {
   switch (normalizeState(state)) {
     case 'grabbed':
@@ -38,49 +64,28 @@ function stateConfig(state) {
         state: 'grabbed',
         label: 'Grabbed',
         icon: 'icons/svg/net.svg',
-        summary: 'Grabbed by an opponent. Resolve the next opposed grapple check or escape normally.',
-        changes: [
-          { key: 'system.defenses.reflex.bonus', ...activeEffectChangeType('add'), value: -5 }
-        ]
+        summary: 'Grabbed by an opponent. Cannot move; -2 on attack rolls except natural/light weapons. Resolve the next opposed grapple check or escape normally.',
+        changes: []
       };
     case 'grappled':
       return {
         state: 'grappled',
         label: 'Grappled',
         icon: 'icons/svg/anchor.svg',
-        summary: 'Grappled with an opponent. Movement is denied and attacks are constrained by the grapple rules.',
-        changes: [
-          { key: 'system.defenses.reflex.bonus', ...activeEffectChangeType('add'), value: -5 }
-        ]
+        summary: 'Grappled with an opponent. Same baseline restrictions as Grabbed: cannot move; -2 on attack rolls except natural/light weapons. Movement is denied and attacks are constrained by the grapple rules.',
+        changes: []
       };
     case 'pinned':
       return {
         state: 'pinned',
         label: 'Pinned',
         icon: 'icons/svg/trap.svg',
-        summary: 'Pinned by an opponent. Treat Dexterity bonus to Reflex and available actions according to the Pin rules.',
-        changes: [
-          { key: 'system.defenses.reflex.bonus', ...activeEffectChangeType('add'), value: -5 }
-        ]
+        summary: 'Pinned by an opponent. Loses its positive Dexterity bonus to Reflex Defense; only escape/release actions are available until the pin ends.',
+        changes: []
       };
     default:
       return null;
   }
-}
-
-function grappleFlag(effect) {
-  return effect?.flags?.swse?.[GRAPPLE_FLAG_KEY]
-    ?? (effect?.flags?.swse?.grapple ? { state: effect.flags.swse.grapple, sourceId: effect.flags.swse.source ?? null } : null);
-}
-
-function effectMatches(effect, { sourceActor = null, state = null } = {}) {
-  const flag = grappleFlag(effect);
-  if (!flag) return false;
-  const wantedState = normalizeState(state);
-  if (wantedState && normalizeState(flag.state ?? flag) !== wantedState) return false;
-  const sourceId = actorId(sourceActor);
-  if (sourceId && flag.sourceId && flag.sourceId !== sourceId) return false;
-  return true;
 }
 
 
@@ -247,6 +252,14 @@ function classifyGrappledAttack(actor, action = {}) {
     return { legal: false, known: true, label: 'Blocked by Grapple', reason: 'This attack is explicitly marked as illegal while Grappled.' };
   }
 
+  // Math Integrity Freeze, Batch 2B: the natural/unarmed/light exemption
+  // axis is delegated to the canonical authority (scripts/items/
+  // weapon-branch-resolver.js) instead of this function's own free-text
+  // legalTerms list, so this classifier can no longer disagree with every
+  // other natural/unarmed/light consumer in the codebase.
+  if (item && (canonicalIsNaturalOrUnarmedWeapon(item) || canonicalIsLightWeaponForActor(item, actor ?? {}))) {
+    return { legal: true, known: true, label: 'Grapple attack legal', reason: 'This attack is marked as unarmed, natural, or light and is compatible with grapple restrictions.' };
+  }
   const legalTerms = ['unarmed', 'natural', 'natural weapon', 'claw', 'bite', 'talon', 'pincer', 'tentacle', 'light', 'light weapon', 'lightsaber-light'];
   if (legalTerms.some(term => text.includes(term))) {
     return { legal: true, known: true, label: 'Grapple attack legal', reason: 'This attack is marked as unarmed, natural, or light and is compatible with grapple restrictions.' };
@@ -308,36 +321,47 @@ export class GrappleStateEngine {
   }
 
   static getGrappleEffects(actor, filters = {}) {
-    const effects = Array.from(actor?.effects ?? []);
-    return effects.filter(effect => effectMatches(effect, filters));
+    return queryGrappleEffects(actor, filters);
   }
 
   static getState(actor) {
-    const effects = this.getGrappleEffects(actor);
-    if (!effects.length) return null;
-    const rank = { grabbed: 1, grappled: 2, pinned: 3 };
-    let best = null;
-    for (const effect of effects) {
-      const flag = grappleFlag(effect);
-      const state = normalizeState(flag?.state ?? flag);
-      if (!state) continue;
-      if (!best || (rank[state] ?? 0) > (rank[best.state] ?? 0)) {
-        best = {
-          state,
-          effect,
-          sourceId: flag?.sourceId ?? effect?.flags?.swse?.source ?? null,
-          sourceName: flag?.sourceName ?? null,
-          targetId: flag?.targetId ?? actorId(actor)
-        };
-      }
-    }
-    return best;
+    return getGrappleStateInfo(actor);
   }
 
   static hasState(actor, state = null) {
-    return this.getGrappleEffects(actor, { state }).length > 0;
+    return actorHasGrappleState(actor, state);
   }
 
+  // Math Integrity Freeze, round 8: SWSE RAW gives Grabbed/Grappled a real
+  // numeric penalty -- -2 on attack rolls, except attacks with natural
+  // weapons or light weapons -- that round 7's grapple-state cleanup
+  // correctly identified as still missing (the summary text already
+  // described it; nothing computed it). Pinned is deliberately excluded:
+  // a Pinned creature's attacks are already prevented by Pin's own action
+  // legality (evaluateAction()'s 'pinned' branch), so layering a numeric
+  // penalty on top of an already-fully-blocked action would be meaningless
+  // double-gating, not a math fix.
+  //
+  // Reuses this engine's own existing classifyGrappledAttack() -- the same
+  // classifier evaluateAction()'s 'grappled' attack-legality branch already
+  // uses for exactly the same unarmed/natural/light exemption categories --
+  // rather than a second, independently-maintained light/natural weapon
+  // heuristic. No single codebase-wide canonical light/natural-weapon
+  // classifier exists to delegate to instead (a confirmed, separately
+  // flagged gap -- see the ledger's Grapple domain section, addendum 8);
+  // reusing this domain's own established classifier keeps the numeric
+  // penalty and the legality gate from ever disagreeing with each other.
+  //
+  // Presence-based, not effect-count-based: an actor either has the
+  // Grabbed/Grappled category or doesn't (GrappleStateEngine.getState()
+  // already collapses multiple effects to one best state), so this can
+  // never double-apply even if stale/multiple grapple-state effects exist.
+  static getAttackPenalty(actor, weapon) {
+    if (!actorHasGrappleState(actor, 'grabbed') && !actorHasGrappleState(actor, 'grappled')) return 0;
+    const classification = classifyGrappledAttack(actor, { weapon });
+    const exempt = classification.legal === true && classification.known === true;
+    return exempt ? 0 : -2;
+  }
 
   static getRestrictionSummary(actor) {
     const stateInfo = this.getState(actor);

@@ -738,9 +738,13 @@ static async createFollower(owner, templateType, grantingTalent = null) {
                 properties: this._uniqueList([...this._choiceArray(weapon.properties), 'Natural']),
                 weaponProperties: { isLight: false, isTwoHanded: false },
                 ammunition: { type: 'none', current: 0, max: 0 },
-                weaponCategory: weapon.weaponCategory || 'natural',
+                // Batch 2B correction #2: weaponCategory is a pure branch
+                // mirror -- natural weapons are always melee. 'natural' is
+                // the FAMILY, which belongs on proficiency/subcategory/category.
+                weaponCategory: 'melee',
                 proficiency: weapon.proficiency || 'natural',
                 subcategory: weapon.subcategory || 'natural',
+                category: weapon.category || weapon.subcategory || 'natural',
                 specialEffects: weapon.specialEffects || '',
                 rangeProfile: weapon.rangeProfile || 'melee',
                 combat: {

@@ -19,6 +19,7 @@ import {
   actorHasArmorProficiencyForType,
   getArmorProficiencyPenalty,
   isEnergyShieldItem,
+  isArmorItemEquipped,
   normalizeArmorType,
   resolveArmorData
 } from "/systems/foundryvtt-swse/scripts/items/armor-data-resolver.js";
@@ -158,15 +159,25 @@ function normalizePenalty(value, fallback = 0) {
 function effectiveArmorCheckPenalty(actor, item, armorData = null, proficient = null) {
   const data = armorData ?? resolveArmorData(item);
   const isProficient = proficient ?? isArmorProficient(actor, item, data);
-  if (isProficient) return 0;
   const requiredType = data.isEnergyShield ? getShieldType(item) : getBodyArmorType(item, data);
   const listedPenalty = normalizePenalty(data.armorCheckPenalty, 0);
   const fallbackPenalty = normalizePenalty(getArmorProficiencyPenalty(requiredType), 0);
-  return listedPenalty || fallbackPenalty;
+  const listedOrFallback = listedPenalty || fallbackPenalty;
+  // An Energy Shield's ACP applies once it is ACTIVE, proficient or not --
+  // proficiency never suppresses it the way it does for ordinary body armor.
+  // This simulator scores a shield as though worn and active (an inactive
+  // shield has no combat effect at all, so scoring it inert would make
+  // every shield score identically to carrying nothing). See
+  // resolveArmorUsageEffects() in armor-usage-resolver.js for the live-actor
+  // equivalent of this rule.
+  if (data.isEnergyShield) return listedOrFallback;
+  // Ordinary body armor: proficiency suppresses its ACP entirely.
+  if (isProficient) return 0;
+  return listedOrFallback;
 }
 
 function equippedBodyArmor(actor) {
-  return Array.from(actor?.items ?? []).find(item => item?.type === 'armor' && item?.system?.equipped && !isEnergyShieldItem(item)) ?? null;
+  return Array.from(actor?.items ?? []).find(item => item?.type === 'armor' && isArmorItemEquipped(item) && !isEnergyShieldItem(item)) ?? null;
 }
 
 function simulateBodyArmorContribution(actor, armorItem = null) {
@@ -213,10 +224,15 @@ function simulateBodyArmorContribution(actor, armorItem = null) {
   }
 
   let effectiveDexMod = dexMod;
+  // data.maxDexBonus is already normalized by resolveArmorData() to either
+  // a finite number or exactly `null` ("uncapped"). Number(null) is 0, not
+  // NaN -- wrapping it in Number() before Number.isFinite() silently turned
+  // "uncapped" into "capped to +0" (Math Integrity Freeze Batch 2A
+  // correction). Read the already-normalized value directly.
   const maxDex = data.maxDexBonus;
   let effectiveMaxDexBonus = null;
-  if (Number.isFinite(Number(maxDex))) {
-    effectiveMaxDexBonus = Number(maxDex) + (proficient && talents.armorMastery ? 1 : 0);
+  if (Number.isFinite(maxDex)) {
+    effectiveMaxDexBonus = maxDex + (proficient && talents.armorMastery ? 1 : 0);
     effectiveDexMod = Math.min(dexMod, effectiveMaxDexBonus);
   }
 
@@ -236,7 +252,7 @@ function simulateBodyArmorContribution(actor, armorItem = null) {
     heroicLevel,
     reflexArmorBonus,
     fortitudeArmorBonus,
-    maxDexBonus: Number.isFinite(Number(maxDex)) ? Number(maxDex) : null,
+    maxDexBonus: Number.isFinite(maxDex) ? maxDex : null,
     effectiveMaxDexBonus,
     dexMod,
     effectiveDexMod,
@@ -411,12 +427,20 @@ function evaluateEnergyShield(armor, actor, options = {}) {
   const proficient = isArmorProficient(actor, armor, data);
   const armorCheckPenalty = effectiveArmorCheckPenalty(actor, armor, data, proficient);
   const shieldRating = Math.max(0, number(data.shieldRating, 0));
-  const maxDex = Number.isFinite(Number(data.maxDexBonus)) ? Number(data.maxDexBonus) : null;
+  // data.maxDexBonus is already normalized to a finite number or exactly
+  // `null` ("uncapped") -- do not route it through Number() first (see the
+  // simulateBodyArmorContribution() fix above for why that's unsafe).
+  const maxDex = Number.isFinite(data.maxDexBonus) ? data.maxDexBonus : null;
   const dexMod = getDexMod(actor);
   const dexLostToCap = maxDex === null ? 0 : Math.max(0, dexMod - maxDex);
 
   let score = shieldRating > 0 ? Math.min(22, 4 + shieldRating * 0.45) : 0;
-  if (!proficient && armorCheckPenalty < 0) score -= Math.min(16, Math.abs(armorCheckPenalty) * 1.5);
+  // Simulated as active: the shield's ACP always applies once active,
+  // proficient or not. Nonproficiency additionally costs a flat -5 Reflex
+  // and the loss of any positive Dex bonus to Reflex, scored as a flat
+  // penalty on top of the shared ACP cost rather than a doubled ACP.
+  if (armorCheckPenalty < 0) score -= Math.min(16, Math.abs(armorCheckPenalty) * 1.5);
+  if (!proficient) score -= 6;
   if (dexLostToCap > 0) score -= Math.min(8, dexLostToCap * 2);
 
   const shieldDelta = { reflexDelta: 0, fortitudeDelta: 0, shieldRating };
@@ -426,7 +450,8 @@ function evaluateEnergyShield(armor, actor, options = {}) {
   const explanations = [];
   if (shieldRating > 0) explanations.push(`Energy shield adds SR ${shieldRating}; it does not replace your body armor Reflex calculation.`);
   else explanations.push('Energy shield listing has no shield rating to evaluate.');
-  if (!proficient) explanations.push(`You are not proficient with ${shieldType} energy shields; its armor check penalty applies (${armorCheckPenalty}).`);
+  if (armorCheckPenalty < 0) explanations.push(`Active, this shield's armor check penalty (${armorCheckPenalty}) applies to attacks and skills whether or not you are proficient.`);
+  if (!proficient) explanations.push(`You are not proficient with ${shieldType} energy shields; while active it also imposes a -5 Reflex penalty and denies any positive Dexterity bonus to Reflex.`);
   if (dexLostToCap > 0) explanations.push(`Shield max Dex cap can restrict your Dexterity bonus by ${dexLostToCap}.`);
   if (value.explanation) explanations.push(value.explanation);
 
@@ -442,7 +467,12 @@ function evaluateEnergyShield(armor, actor, options = {}) {
     maxDexBonus: maxDex,
     dexLostToCap,
     armorCheckPenalty,
+    nonproficiencyReflexPenalty: proficient ? 0 : -5,
+    denyPositiveDexToReflex: !proficient,
+    // resolveArmorData() zeroes speedPenalty for shields at the SSOT (SWSE
+    // RAW: Energy Shields never reduce speed).
     speedPenalty: number(data.speedPenalty, 0),
+    simulatedState: 'active',
     scoreAdjustment: Math.max(-30, Math.min(30, score)),
     value,
     explanations

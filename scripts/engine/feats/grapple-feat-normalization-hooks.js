@@ -28,7 +28,7 @@ function maneuverUnlock(maneuver, source, extra = {}) {
   };
 }
 
-function rulesForFeat(name) {
+export function rulesForFeat(name) {
   const normalized = normalizeName(name);
 
   if (normalized === 'pin') {
@@ -85,11 +85,22 @@ function rulesForFeat(name) {
   }
 
   if (normalized === 'grapple resistance') {
+    // Grapple Resistance's actual RAW text grants two DIFFERENT bonuses
+    // that happen to share the same value (+5): a Reflex Defense bonus
+    // against incoming Grab/Grapple attacks, and a separate bonus to the
+    // wielder's own opposed Grapple checks. GRAB_GRAPPLE_RESISTANCE keeps
+    // those two channels explicit (reflexBonus/opposedGrappleBonus)
+    // instead of a single overloaded `bonus` field -- see the Grapple
+    // domain section of docs/audits/v2-math-integrity-authority-ledger.md
+    // for why the single-field RESIST_GRAB_AND_GRAPPLE shape this replaced
+    // was a real correctness bug for Grab Back, whose two channels are NOT
+    // the same value (reflexBonus 2, opposedGrappleBonus 0).
     return [{
-      type: 'RESIST_GRAB_AND_GRAPPLE',
+      type: 'GRAB_GRAPPLE_RESISTANCE',
       id: 'grappleResistancePlusFive',
       source: 'Grapple Resistance',
-      bonus: 5,
+      reflexBonus: 5,
+      opposedGrappleBonus: 5,
       modes: ['resistGrab', 'resistGrapple'],
       objectReflexBonus: 5,
       summary: '+5 Reflex Defense against enemy Grab/Grapple attacks, +5 opposed Grapple checks, and +5 Reflex Defense for held/carried objects when attacked.'
@@ -172,14 +183,35 @@ function rulesForFeat(name) {
   }
 
   if (normalized === 'grab back') {
-    return [{
-      type: 'REACTION_GRAB_BACK',
-      source: 'Grab Back',
-      trigger: 'enemyFailedGrabOrGrappleAttempt',
-      delegatesTo: 'GrappleFeatActions.grabBack',
-      reactionAdvisory: true,
-      summary: 'Reaction helper for grabbing an enemy after their failed grab/grapple attempt; trigger detection belongs to the reaction workflow.'
-    }];
+    // Grab Back grants TWO semantically separate things: a Reflex-Defense-
+    // vs-incoming-Grab/Grapple bonus (GRAB_GRAPPLE_RESISTANCE's reflexBonus
+    // channel -- see the 'grapple resistance' branch above for why that
+    // type keeps reflexBonus/opposedGrappleBonus separate) and a reaction
+    // to counter-grab on a missed enemy attempt (REACTION_GRAB_BACK). A
+    // seventh Math Integrity Freeze review found this fallback path only
+    // ever emitted the reaction rule, so a bare/legacy Grab Back item
+    // normalized through this hook (rather than sourced from the
+    // compendium, which already ships both) would silently never grant the
+    // +2 Reflex bonus. Do not bundle the reaction into the resistance rule
+    // -- they are two separate array entries, matching the production
+    // catalog shape exactly (see data/feat-catalog.json).
+    return [
+      {
+        type: 'GRAB_GRAPPLE_RESISTANCE',
+        source: 'Grab Back',
+        reflexBonus: 2,
+        opposedGrappleBonus: 0,
+        description: 'Gain +2 Reflex Defense against Grab and Grapple attacks.'
+      },
+      {
+        type: 'REACTION_GRAB_BACK',
+        source: 'Grab Back',
+        trigger: 'enemyFailedGrabOrGrappleAttempt',
+        delegatesTo: 'GrappleFeatActions.grabBack',
+        reactionAdvisory: true,
+        summary: 'Reaction helper for grabbing an enemy after their failed grab/grapple attempt; trigger detection belongs to the reaction workflow.'
+      }
+    ];
   }
 
   if (normalized === 'knock heads') {

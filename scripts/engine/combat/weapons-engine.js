@@ -9,6 +9,7 @@
 import { SWSELogger as swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { ModifierSource, ModifierType, createModifier } from "/systems/foundryvtt-swse/scripts/engine/effects/modifiers/ModifierTypes.js";
 import { isVehicleWeapon } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-stat-rules.js";
+import { isMeleeWeapon as canonicalIsMeleeWeapon, isLightWeaponForActor } from "/systems/foundryvtt-swse/scripts/items/weapon-branch-resolver.js";
 // Breakdown delegates to the canonical roll-math resolvers so tooltips always
 // reflect the exact same math used by actual attack/damage rolls (attacks.js).
 import { resolveAttackBonus, resolveDamageBonus } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-roll-math.js";
@@ -48,12 +49,19 @@ export class WeaponsEngine {
     return weapon?.system?.traits?.includes(property) === true;
   }
 
+  // Math Integrity Freeze, Batch 2B: both delegated to the canonical
+  // authority. isMeleeWeapon previously read system.combat.range.type, a
+  // field that does not exist anywhere in the schema -- it was always
+  // false, so the Two-Handed Strength bonus below never fired for any
+  // melee weapon in the game. isLightWeapon previously checked a `traits`
+  // array for the literal string 'light', which zero compendium weapons
+  // carry -- also always false.
   static isMeleeWeapon(weapon) {
-    return weapon?.system?.combat?.range?.type === 'melee';
+    return canonicalIsMeleeWeapon(weapon);
   }
 
-  static isLightWeapon(weapon) {
-    return this.getWeaponProperty(weapon, 'light');
+  static isLightWeapon(weapon, actor = null) {
+    return isLightWeaponForActor(weapon, actor ?? {});
   }
 
   static isTwoHandedWeapon(weapon) {
@@ -63,6 +71,25 @@ export class WeaponsEngine {
   /* ============================================================
      WEAPON MODIFIERS (STRUCTURED)
   ============================================================ */
+
+  /**
+   * Build and push one modifier, isolating a single malformed contribution
+   * (e.g. an invalid/missing `source`) so it cannot silently erase every
+   * other, unrelated modifier already collected for this actor. Math
+   * Integrity Freeze finding: getWeaponModifiers() previously wrapped its
+   * entire multi-weapon loop in one try/catch, so a single bad
+   * createModifier() call (see the ModifierSource.WEAPON fix below) threw
+   * out of the loop entirely, discarding every modifier from every OTHER
+   * equipped weapon in the same pass, not just the offending one.
+   * @private
+   */
+  static #pushModifierSafe(modifiers, data) {
+    try {
+      modifiers.push(createModifier(data));
+    } catch (err) {
+      swseLogger.error(`[WeaponsEngine] Skipping invalid modifier (${data?.sourceName ?? data?.sourceId ?? 'unknown source'}):`, err);
+    }
+  }
 
   static getWeaponModifiers(actor) {
     const modifiers = [];
@@ -81,7 +108,7 @@ export class WeaponsEngine {
         const enhancementDamage = combat?.damage?.bonus ?? 0;
 
         if (enhancementAttack !== 0) {
-          modifiers.push(createModifier({
+          this.#pushModifierSafe(modifiers, {
             source: ModifierSource.ITEM,
             sourceId: weapon.id,
             sourceName: `${weapon.name} (Enhancement)`,
@@ -91,11 +118,11 @@ export class WeaponsEngine {
             enabled: true,
             priority: 50,
             description: `${weapon.name} enhancement bonus`
-          }));
+          });
         }
 
         if (enhancementDamage !== 0) {
-          modifiers.push(createModifier({
+          this.#pushModifierSafe(modifiers, {
             source: ModifierSource.ITEM,
             sourceId: weapon.id,
             sourceName: `${weapon.name} (Enhancement)`,
@@ -105,7 +132,7 @@ export class WeaponsEngine {
             enabled: true,
             priority: 50,
             description: `${weapon.name} enhancement bonus`
-          }));
+          });
         }
 
         /* ---------------- Attuned Lightsaber Bonus (+1) ---------------- */
@@ -114,8 +141,16 @@ export class WeaponsEngine {
             weapon.flags?.swse?.builtBy === actor.id &&
             weapon.flags?.swse?.attunedBy === actor.id) {
 
-          modifiers.push(createModifier({
-            source: ModifierSource.WEAPON,
+          // Math Integrity Freeze: this previously read ModifierSource.WEAPON,
+          // a member that does not exist on the canonical ModifierSource enum
+          // (ModifierTypes.js) -- it evaluated to `undefined`, which
+          // createModifier() correctly rejected as a missing required field.
+          // Every other weapon-sourced modifier in this same function already
+          // uses ModifierSource.ITEM (weapons are Items); this one and the
+          // two lightsaber-upgrade modifiers below now match that existing
+          // convention instead of inventing a new category.
+          this.#pushModifierSafe(modifiers, {
+            source: ModifierSource.ITEM,
             sourceId: weapon.id,
             sourceName: `${weapon.name} (Attuned)`,
             target: 'attack.bonus',
@@ -124,7 +159,7 @@ export class WeaponsEngine {
             enabled: true,
             priority: 45,
             description: 'Attuned lightsaber bonus'
-          }));
+          });
         }
 
         /* ---------------- Proficiency ---------------- */
@@ -132,7 +167,7 @@ export class WeaponsEngine {
         const proficient = this.isProficientForAttack(actor, weapon);
 
         if (!proficient) {
-          modifiers.push(createModifier({
+          this.#pushModifierSafe(modifiers, {
             source: ModifierSource.ITEM,
             sourceId: weapon.id,
             sourceName: `${weapon.name} (Unproficient)`,
@@ -142,19 +177,19 @@ export class WeaponsEngine {
             enabled: true,
             priority: 10,
             description: 'Weapon proficiency penalty'
-          }));
+          });
         }
 
         /* ---------------- Two-Handed Bonus ---------------- */
 
         if (this.isMeleeWeapon(weapon) &&
             this.isTwoHandedWeapon(weapon) &&
-            !this.isLightWeapon(weapon)) {
+            !this.isLightWeapon(weapon, actor)) {
 
           const strMod =
             actor.system?.derived?.abilities?.str?.mod ?? 0;
 
-          modifiers.push(createModifier({
+          this.#pushModifierSafe(modifiers, {
             source: ModifierSource.ITEM,
             sourceId: weapon.id,
             sourceName: `${weapon.name} (Two-Handed)`,
@@ -164,7 +199,7 @@ export class WeaponsEngine {
             enabled: true,
             priority: 40,
             description: 'Two-handed weapon bonus'
-          }));
+          });
         }
 
         /* ---------------- Dexterous Damage ---------------- */
@@ -181,7 +216,7 @@ export class WeaponsEngine {
           if (dexMod > strMod) {
             const bonus = dexMod - strMod;
 
-            modifiers.push(createModifier({
+            this.#pushModifierSafe(modifiers, {
               source: ModifierSource.TALENT,
               sourceId: 'dexterousDamage',
               sourceName: 'Dexterous Damage',
@@ -191,14 +226,14 @@ export class WeaponsEngine {
               enabled: true,
               priority: 35,
               description: 'Dexterous Damage talent'
-            }));
+            });
           }
         }
 
         /* ---------------- Structured Traits ---------------- */
 
         if (this.getWeaponProperty(weapon, 'keen')) {
-          modifiers.push(createModifier({
+          this.#pushModifierSafe(modifiers, {
             source: ModifierSource.ITEM,
             sourceId: weapon.id,
             sourceName: `${weapon.name} (Keen)`,
@@ -208,11 +243,11 @@ export class WeaponsEngine {
             enabled: true,
             priority: 30,
             description: 'Keen weapon'
-          }));
+          });
         }
 
         if (this.getWeaponProperty(weapon, 'flaming')) {
-          modifiers.push(createModifier({
+          this.#pushModifierSafe(modifiers, {
             source: ModifierSource.ITEM,
             sourceId: weapon.id,
             sourceName: `${weapon.name} (Flaming)`,
@@ -222,7 +257,7 @@ export class WeaponsEngine {
             enabled: true,
             priority: 25,
             description: 'Flaming weapon'
-          }));
+          });
         }
 
         /* ================ LIGHTSABER UPGRADES (Phase 1) ================ */
@@ -275,10 +310,22 @@ export class WeaponsEngine {
 
       // ========== TYPE A: Standard Modifiers ==========
       // Crystals like Ilum, Synthetic, Sigil use standard modifiers array
+      //
+      // Math Integrity Freeze: both createModifier() calls in this method
+      // previously used ModifierSource.WEAPON, a member that does not exist
+      // on the canonical ModifierSource enum (ModifierTypes.js) and so
+      // evaluated to `undefined` -- createModifier() correctly rejected
+      // that as a missing required field, and the resulting throw (per
+      // #pushModifierSafe below) is now isolated to this single
+      // contribution instead of discarding every other equipped weapon's
+      // modifiers in the same collection pass. A lightsaber upgrade is a
+      // Foundry Item, exactly like the weapon it's installed in -- uses
+      // ModifierSource.ITEM, matching every other weapon-sourced modifier
+      // in this file.
       if (Array.isArray(upgrade.system.modifiers)) {
         for (const mod of upgrade.system.modifiers) {
-          modifiers.push(createModifier({
-            source: ModifierSource.WEAPON,
+          this.#pushModifierSafe(modifiers, {
+            source: ModifierSource.ITEM,
             sourceId: upgrade.id,
             sourceName: `${weapon.name} (${upgrade.name})`,
             target: this.#mapModifierTarget(mod.domain),
@@ -287,7 +334,7 @@ export class WeaponsEngine {
             enabled: true,
             priority: 55, // Crystal modifiers priority
             description: `${upgrade.name} modifier`
-          }));
+          });
         }
       }
 
@@ -303,8 +350,8 @@ export class WeaponsEngine {
       // ========== TYPE B Basic: Damage Bonus ==========
       // Some crystals may specify direct damage bonus
       if (lightsaberData.damageBonus && lightsaberData.damageBonus > 0) {
-        modifiers.push(createModifier({
-          source: ModifierSource.WEAPON,
+        this.#pushModifierSafe(modifiers, {
+          source: ModifierSource.ITEM,
           sourceId: upgrade.id,
           sourceName: `${weapon.name} (${upgrade.name})`,
           target: 'damage.melee',
@@ -313,7 +360,7 @@ export class WeaponsEngine {
           enabled: true,
           priority: 55,
           description: `${upgrade.name} damage bonus`
-        }));
+        });
       }
     }
   }

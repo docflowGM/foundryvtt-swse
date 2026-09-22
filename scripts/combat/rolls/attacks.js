@@ -23,6 +23,8 @@ import { buildLedgerFromComponents, buildInvocationLedgerEntry } from "/systems/
 import { AttackRollDiagnostics } from "/systems/foundryvtt-swse/scripts/engine/combat/attack-roll-diagnostics.js";
 import { resolveVehicleAttackBonus, resolveAbstractCrewAttackBonus } from "/systems/foundryvtt-swse/scripts/engine/combat/vehicle-attack-math.js";
 import { resolveAttackDomain } from "/systems/foundryvtt-swse/scripts/engine/combat/attack-domain-router.js";
+import { GrappleStateEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/grapple-state-engine.js";
+import { SchemaAdapters } from "/systems/foundryvtt-swse/scripts/utils/schema-adapters.js";
 
 // ============================================
 // FILE: rolls/attacks.js (Upgraded for SWSE v13+)
@@ -70,16 +72,6 @@ function getFightingDefensivelyAttackPenalty(actor, options = {}) {
   return preparedPenalty <= -5 ? 0 : -5;
 }
 
-function getTargetReflex(actor = null) {
-  if (!actor) return null;
-  const value = actor.system?.defenses?.reflex?.total
-    ?? actor.system?.derived?.defenses?.reflex?.total
-    ?? actor.system?.defenses?.reflex?.value
-    ?? null;
-  const number = Number(value);
-  return Number.isFinite(number) ? number : null;
-}
-
 function normalizeDefenseKey(value = 'reflex') {
   const key = String(value || 'reflex').toLowerCase();
   if (key === 'fort' || key === 'fortitude') return 'fortitude';
@@ -88,33 +80,72 @@ function normalizeDefenseKey(value = 'reflex') {
   return 'reflex';
 }
 
-function getTargetDefense(actor = null, defenseType = 'reflex') {
+// Math Integrity Freeze, round 8: the single target-defense authority for
+// every attack in the game (not just Grapple). Two actor-type contracts,
+// never blended into one fallback chain that "happens to" prioritize
+// correctly:
+//   - a prepared V2 actor (one that has actually run DerivedCalculator):
+//     the canonical SchemaAdapters.getDefenseTotalIfPrepared() value, full
+//     stop -- delegated to, not re-read inline, so this function and
+//     SchemaAdapters can never independently drift on what "prepared"
+//     means.
+//   - a legacy/statblock actor type that genuinely never runs the V2
+//     derived pipeline (SchemaAdapters reports "not prepared", i.e. null):
+//     an explicit, separately-scoped compatibility fallback to the legacy
+//     system.defenses.<key>.total/.value fields. This branch never
+//     competes with prepared derived data -- it only runs when derived is
+//     entirely absent.
+// Round 7 fixed the PRIORITY (derived before legacy) but still read
+// system.derived.defenses.<key>.total inline here, a second copy of what
+// SchemaAdapters.getDefenseTotalIfPrepared() already computes -- correct by
+// coincidence, not by construction. This round removes that duplication.
+// See docs/audits/v2-math-integrity-authority-ledger.md's Grapple domain
+// section, "Certification-correction addendum 8".
+function getTargetDefenseValue(actor, key) {
+  const prepared = SchemaAdapters.getDefenseTotalIfPrepared(actor, key);
+  if (prepared !== null) return prepared;
+  const legacy = actor.system?.defenses?.[key]?.total ?? actor.system?.defenses?.[key]?.value ?? null;
+  const number = Number(legacy);
+  return Number.isFinite(number) ? number : null;
+}
+
+export function getTargetReflex(actor = null) {
+  if (!actor) return null;
+  return getTargetDefenseValue(actor, 'reflex');
+}
+
+export function getTargetDefense(actor = null, defenseType = 'reflex') {
   if (!actor) return null;
   const key = normalizeDefenseKey(defenseType);
   if (key === 'dc') return null;
-  if (key === 'reflex') return getTargetReflex(actor);
-  const value = actor.system?.defenses?.[key]?.total
-    ?? actor.system?.derived?.defenses?.[key]?.total
-    ?? actor.system?.defenses?.[key]?.value
-    ?? null;
-  const n = Number(value);
-  return Number.isFinite(n) ? n : null;
+  return getTargetDefenseValue(actor, key);
 }
 
-function resolveTargetContext(options = {}, fallbackTarget = null) {
+export function resolveTargetContext(options = {}, fallbackTarget = null) {
   const ctx = options.targetContext ?? null;
   const mode = String(ctx?.mode || '').toLowerCase();
   if (mode === 'manual') {
     const value = Number(ctx?.defenseValue);
-    return { target: null, targetName: ctx?.label || 'Manual Target', defenseType: normalizeDefenseKey(ctx?.defenseType || 'reflex'), defenseValue: Number.isFinite(value) ? value + Number(ctx?.coverBonus || 0) : null, mode: 'manual' };
+    return { target: null, targetName: ctx?.label || 'Manual Target', defenseType: normalizeDefenseKey(ctx?.defenseType || 'reflex'), defenseValue: Number.isFinite(value) ? value + Number(ctx?.coverBonus || 0) : null, mode: 'manual', adjustment: 0 };
   }
   if (mode === 'none') {
-    return { target: null, targetName: 'GM adjudication', defenseType: normalizeDefenseKey(ctx?.defenseType || 'reflex'), defenseValue: null, mode: 'none' };
+    return { target: null, targetName: 'GM adjudication', defenseType: normalizeDefenseKey(ctx?.defenseType || 'reflex'), defenseValue: null, mode: 'none', adjustment: 0 };
   }
   const target = fallbackTarget;
   const defenseType = normalizeDefenseKey(ctx?.defenseType || 'reflex');
   const base = getTargetDefense(target, defenseType);
-  return { target, targetName: target?.name ?? '', defenseType, defenseValue: base, mode: target ? 'token' : 'none' };
+  // Purely additive, opt-in adjustment on top of the canonical target
+  // defense value -- e.g. a Grab/Grapple-specific Reflex resistance bonus
+  // (Grapple Resistance, Grab Back) that must be part of the SAME hit
+  // determination this function feeds, not a second, independent
+  // recomputation layered on afterward by the caller. Defaults to 0, so
+  // every existing caller that doesn't pass targetContext.defenseAdjustment
+  // is unaffected. Returned as `adjustment` so callers (see
+  // roll.swseAttackContext.defenseAdjustment below) can report truthfully
+  // what was actually applied, rather than a hardcoded 0.
+  const adjustment = Number(ctx?.defenseAdjustment ?? 0) || 0;
+  const defenseValue = Number.isFinite(base) ? base + adjustment : base;
+  return { target, targetName: target?.name ?? '', defenseType, defenseValue, mode: target ? 'token' : 'none', adjustment };
 }
 
 function buildReactionContextForAttack(attacker, defender, weapon, attackTotal) {
@@ -284,7 +315,13 @@ export async function rollAttack(actor, weapon, options = {}) {
     }
   }
   const fightingDefensivelyPenalty = getFightingDefensivelyAttackPenalty(actor, rollOptions);
-  const atkBonus = attackBonusResolution.total + fightingDefensivelyPenalty + Number(rollOptions.customModifier || 0) + Number(rollOptions.situationalBonus || 0) + sequencePenalty;
+  // SWSE RAW: -2 on attack rolls while Grabbed/Grappled, except attacks
+  // with natural or light weapons (Pinned is excluded -- its attacks are
+  // already prevented by Pin's own action legality, not merely penalized).
+  // See the Grapple domain section of
+  // docs/audits/v2-math-integrity-authority-ledger.md, addendum 8.
+  const grappleStatePenalty = GrappleStateEngine.getAttackPenalty(actor, weapon);
+  const atkBonus = attackBonusResolution.total + fightingDefensivelyPenalty + grappleStatePenalty + Number(rollOptions.customModifier || 0) + Number(rollOptions.situationalBonus || 0) + sequencePenalty;
   // Component ledger: baseline (resolver) components plus invocation-only
   // additions, clearly separated so a tooltip never claims an invocation-only
   // modifier is part of the static weapon baseline. Vehicle attacks already
@@ -294,6 +331,7 @@ export async function rollAttack(actor, weapon, options = {}) {
   const attackComponentLedger = [
     ...(isVehicleAttack ? attackBonusResolution.ledger : buildLedgerFromComponents(attackBonusResolution.components, 'combat.attack', 'baseline')),
     buildInvocationLedgerEntry('fighting-defensively', 'Fighting Defensively', fightingDefensivelyPenalty, attackLedgerDomain),
+    buildInvocationLedgerEntry('grapple-state-penalty', 'Grabbed/Grappled', grappleStatePenalty, attackLedgerDomain),
     buildInvocationLedgerEntry('custom-modifier', 'Custom Modifier', rollOptions.customModifier, attackLedgerDomain),
     buildInvocationLedgerEntry('situational-bonus', 'Situational Bonus', rollOptions.situationalBonus, attackLedgerDomain),
     buildInvocationLedgerEntry('sequence-penalty', 'Sequence Penalty', sequencePenalty, attackLedgerDomain)
@@ -465,7 +503,7 @@ export async function rollAttack(actor, weapon, options = {}) {
     critMultiplier: attackResult.critMultiplier,
     targetDefenseValue: targetReflex,
     targetDefenseType: resolvedTarget.defenseType ?? null,
-    defenseAdjustment: 0,
+    defenseAdjustment: resolvedTarget.adjustment ?? 0,
     workflowContext: damageWorkflowContext,
     actionId: attackResult.actionId
   };

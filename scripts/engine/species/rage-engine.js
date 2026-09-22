@@ -10,6 +10,7 @@
 import { SchemaAdapters } from "/systems/foundryvtt-swse/scripts/utils/schema-adapters.js";
 import { ConditionTrackRules } from "/systems/foundryvtt-swse/scripts/engine/combat/ConditionTrackRules.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
+import { isMeleeWeapon as canonicalIsMeleeWeapon } from "/systems/foundryvtt-swse/scripts/items/weapon-branch-resolver.js";
 
 const RAGE_FLAG_PATH = "swse";
 const RAGE_BASE_BONUS = 2;
@@ -76,6 +77,9 @@ function getConModifier(actor) {
   return 0;
 }
 
+// Math Integrity Freeze, Batch 2B: delegated to the canonical branch
+// authority. The caller-supplied roll-time context stays first (a
+// legitimate distinct signal, not weapon identity).
 function isMeleeWeapon(weapon, context = {}) {
   const explicit = context.attackType ?? context.rangeType ?? context.weaponType;
   if (explicit) {
@@ -83,20 +87,7 @@ function isMeleeWeapon(weapon, context = {}) {
     if (value.includes("melee") || value.includes("unarmed")) return true;
     if (value.includes("ranged") || value.includes("pistol") || value.includes("rifle")) return false;
   }
-
-  const candidates = [
-    weapon?.system?.combat?.range,
-    weapon?.system?.range,
-    weapon?.system?.weaponType,
-    weapon?.system?.weaponGroup,
-    weapon?.system?.category,
-    weapon?.system?.type,
-    weapon?.name
-  ].map(normalizeName);
-
-  if (candidates.some(v => v.includes("melee") || v.includes("lightsaber") || v.includes("unarmed") || v.includes("blade"))) return true;
-  if (candidates.some(v => v.includes("ranged") || v.includes("pistol") || v.includes("rifle") || v.includes("bowcaster") || v.includes("blaster"))) return false;
-  return false;
+  return canonicalIsMeleeWeapon(weapon);
 }
 
 function actorFlag(actor, key, fallback = undefined) {

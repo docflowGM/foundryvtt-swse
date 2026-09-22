@@ -35,6 +35,7 @@ import { RageEngine } from "/systems/foundryvtt-swse/scripts/engine/species/rage
 import { ModifierEngine } from "/systems/foundryvtt-swse/scripts/engine/effects/modifiers/ModifierEngine.js";
 import { ImplantEffectRules } from "/systems/foundryvtt-swse/scripts/engine/implants/ImplantEffectRules.js";
 import { ScopedCombatFeatResolver } from "/systems/foundryvtt-swse/scripts/engine/feat/scoped-combat-feat-resolver.js";
+import { resolveArmorUsageEffects } from "/systems/foundryvtt-swse/scripts/engine/effects/armor-usage-resolver.js";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Internal helpers
@@ -466,11 +467,21 @@ export function resolveAttackBonus(actor, weapon, actionId = null, context = {})
   const forceItemMod = forceItemAttackBonus(actor, weapon);
   const scopedFeatBonus = ScopedCombatFeatResolver.getBonus(actor, weapon, 'attack', context);
 
+  // Math Integrity Freeze Batch 2A: worn body armor's Armor Check Penalty
+  // (0 when proficient, its own listed value -- or the light/medium/heavy
+  // category default when the item carries none -- when not) and every
+  // active Energy Shield's ACP (which always applies once active,
+  // proficient or not) both apply to attack rolls, not just skills. This
+  // was previously missing from attack math entirely.
+  const armorUsageEffects = resolveArmorUsageEffects(actor);
+  const armorAcpPenalty = armorUsageEffects.attackCheckPenalty || 0;
+
   const total =
     (isStockDroidFlat ? stockAttackFlat : 0) +
     bab + abilityMod + miscBonus + rangePenalty + firingIntoMeleePenalty + attackPenalty + ctPenalty +
     proficiencyPenalty + talentBonus + stateBonus + combatOptionBonus + rageBonus +
-    sithMod + inquisitionMod + unsettlingMod + rapidAlchemyMod + forceItemMod + basicEffectBonus + scopedFeatBonus;
+    sithMod + inquisitionMod + unsettlingMod + rapidAlchemyMod + forceItemMod + basicEffectBonus + scopedFeatBonus +
+    armorAcpPenalty;
 
   const components = {};
   if (isStockDroidFlat) {
@@ -496,6 +507,13 @@ export function resolveAttackBonus(actor, weapon, actionId = null, context = {})
   if (forceItemMod !== 0) components['Force Item'] = forceItemMod;
   if (basicEffectBonus !== 0) components['Effect Intent'] = basicEffectBonus;
   if (scopedFeatBonus !== 0) components['Scoped Feat'] = scopedFeatBonus;
+  // Named per-source so an active Energy Shield's ACP is explicit in the
+  // chat/breakdown, not hidden inside a collapsed misc number.
+  for (const part of armorUsageEffects.parts) {
+    if (part.effect === 'attackAndSkillCheckPenalty' && part.value) {
+      components[part.sourceName] = part.value;
+    }
+  }
 
   return { total, components, flags: isStockDroidFlat ? { stockDroidFlat: true } : {} };
 }

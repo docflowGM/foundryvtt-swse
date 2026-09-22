@@ -8,6 +8,7 @@
 
 import { resolveArmorData } from "/systems/foundryvtt-swse/scripts/items/armor-data-resolver.js";
 import { resolveWeaponData } from "/systems/foundryvtt-swse/scripts/items/weapon-data-resolver.js";
+import { resolveWeaponBranchFamily } from "/systems/foundryvtt-swse/scripts/items/weapon-branch-resolver.js";
 import { resolveEquipmentData } from "/systems/foundryvtt-swse/scripts/items/equipment-data-resolver.js";
 import { resolveFeatData } from "/systems/foundryvtt-swse/scripts/items/feat-data-resolver.js";
 import { resolveTalentData } from "/systems/foundryvtt-swse/scripts/items/talent-data-resolver.js";
@@ -104,7 +105,14 @@ function asLabel(value) {
 function getSubtype(item, system) {
   const type = item?.type;
   if (type === 'weapon') {
-    return [system?.meleeOrRanged, system?.weaponCategory].filter(Boolean).map(asLabel).join(' / ');
+    // Math Integrity Freeze, Batch 2B: both halves of this label now come
+    // from the canonical authority -- the raw meleeOrRanged/weaponCategory
+    // fields could previously glue a contradictory or redundant label
+    // together for a real weapon (e.g. "Melee / Ranged" or "Ranged /
+    // Ranged" for "Bluebolt Blaster Pistol", whose weaponCategory field
+    // itself holds a literal branch value, not a family name).
+    const resolved = resolveWeaponBranchFamily({ system });
+    return [asLabel(resolved.branch), asLabel(resolved.family)].filter(Boolean).join(' / ');
   }
   if (type === 'armor') {
     return asLabel(system?.armorType || 'armor');

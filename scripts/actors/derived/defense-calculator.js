@@ -20,8 +20,10 @@ import { getClassData } from "/systems/foundryvtt-swse/scripts/engine/progressio
 import { evaluateStatePredicates } from "/systems/foundryvtt-swse/scripts/engine/abilities/passive/passive-state.js";
 import { getReflexSizeModifier } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-stat-rules.js";
 import { ModifierEngine } from "/systems/foundryvtt-swse/scripts/engine/effects/modifiers/ModifierEngine.js";
-import { isEnergyShieldItem, resolveArmorData } from "/systems/foundryvtt-swse/scripts/items/armor-data-resolver.js";
+import { isEnergyShieldItem, isArmorItemEquipped, resolveArmorData } from "/systems/foundryvtt-swse/scripts/items/armor-data-resolver.js";
 import { ImplantRules } from "/systems/foundryvtt-swse/scripts/engine/implants/ImplantRules.js";
+import { actorHasGrappleState } from "/systems/foundryvtt-swse/scripts/engine/combat/grapple-state-query.js";
+import { resolveArmorUsageEffects } from "/systems/foundryvtt-swse/scripts/engine/effects/armor-usage-resolver.js";
 
 function getActorFeatItems(actor) {
   try {
@@ -561,7 +563,7 @@ export class DefenseCalculator {
     return best;
   }
 
-  static _sumPassiveStateDefenseModifiers(actor, profile, defenseType, context = {}) {
+  static _sumPassiveStateDefenseModifiers(actor, profile, defenseType, context = {}, { onlyDodge = false } = {}) {
     try {
       const entries = profile?.passiveStateDefenseModifiers ?? [];
       if (!entries.length) return 0;
@@ -572,6 +574,11 @@ export class DefenseCalculator {
 
       for (const entry of entries) {
         if (!entry.targets.has('defense') && !entry.targets.has(defenseTarget)) continue;
+        // onlyDodge isolates dodge-type modifiers (e.g. Martial Arts I-III's
+        // Reflex dodge bonus) for the flat-footed calculation below -- SWSE
+        // RAW: a flat-footed character loses dodge bonuses along with their
+        // Dexterity bonus, not just the Dexterity bonus.
+        if (onlyDodge && entry.modifier?.type !== 'dodge' && entry.modifier?.bonusType !== 'dodge') continue;
         if (!ModifierEngine.isModifierAllowedInContext(actor, entry.modifier, context, { staticSheet: isStaticSheetContext })) continue;
         if (!evaluateStatePredicates(actor, entry.predicates, context)) continue;
         if (entry.value) stateBonus += entry.value;
@@ -716,7 +723,7 @@ export class DefenseCalculator {
     // replacement. They grant SR against Energy damage when activated and may
     // impose active-use penalties, but they do not override heroic-level Reflex
     // contribution like worn armor does.
-    const equippedArmor = actor.items?.find(item => item.type === 'armor' && item.system?.equipped && !isEnergyShieldArmor(item)) ?? null;
+    const equippedArmor = actor.items?.find(item => item.type === 'armor' && isArmorItemEquipped(item) && !isEnergyShieldArmor(item)) ?? null;
     const equippedArmorStats = equippedArmor ? resolveArmorData(equippedArmor) : null;
     const armorProficient = equippedArmor ? this._actorHasArmorProficiencyFromProfile(actor, equippedArmor, defenseProfile) : false;
     const hasKnightArmorMastery = defenseProfile.hasKnightArmorMastery;
@@ -782,12 +789,39 @@ export class DefenseCalculator {
       reflexArmorBonus += 1;
     }
     if (equippedArmor) {
-      const maxAbilityBonus = Number(equippedArmorStats?.maxDexBonus);
+      // resolveArmorData() returns maxDexBonus as either a finite number or
+      // exactly `null` ("uncapped" -- including the legacy 99/999 sentinel
+      // values it normalizes to null). Number(null) is 0, not NaN, so
+      // wrapping in Number() first silently turned "uncapped" into "capped
+      // to +0", stripping the actor's entire positive Dex bonus. Read the
+      // already-normalized value directly instead.
+      const maxAbilityBonus = equippedArmorStats?.maxDexBonus;
       if (Number.isFinite(maxAbilityBonus)) {
         const effectiveMaxAbilityBonus = armorProficient && hasArmorMastery ? maxAbilityBonus + 1 : maxAbilityBonus;
         reflexAbilityMod = Math.min(reflexAbilityMod, effectiveMaxAbilityBonus);
       }
     }
+
+    // Math Integrity Freeze Batch 2A: active Energy Shields are a separate
+    // layer from body armor, not a replacement for it (a character may wear
+    // both at once). An active shield's own Max Dex restriction applies
+    // independently of any body-armor cap above -- when both apply, the
+    // MORE RESTRICTIVE cap wins, per SWSE RAW. Armor Mastery is a body-armor
+    // talent; it is deliberately NOT extended to shields here (no rule text
+    // supports it). An inactive shield contributes nothing at all.
+    const activeEnergyShields = resolveArmorUsageEffects(actor).activeEnergyShields;
+    for (const shield of activeEnergyShields) {
+      if (Number.isFinite(shield.maxDexCap)) {
+        reflexAbilityMod = Math.min(reflexAbilityMod, shield.maxDexCap);
+      }
+    }
+    // Nonproficiency with an active shield imposes a flat -5 Reflex penalty
+    // (never for body armor, and never while the shield is inactive) and
+    // denies the POSITIVE Dexterity bonus to Reflex -- it never removes a
+    // Dexterity penalty. proficient active shields impose neither.
+    const shieldReflexPenalty = activeEnergyShields.reduce((sum, shield) => sum + (shield.reflexPenalty || 0), 0);
+    const shieldDeniesPositiveDex = activeEnergyShields.some(shield => shield.denyPositiveDexToReflex);
+
     let reflexLevelTerm = heroicLevel;
     if (equippedArmor) {
       if (armorProficient && hasImprovedArmoredDefense) {
@@ -799,7 +833,26 @@ export class DefenseCalculator {
       }
     }
     const reflexBase = 10 + reflexLevelTerm + reflexClassBonus + reflexSizeModifier;
-    const reflexTotal = Math.max(1, reflexBase + reflexAbilityMod + reflexMiscBonus + reflexSpeciesBonus + refStateBonus + refAdjust + conditionPenalty);
+    const reflexTotalBeforePin = Math.max(1, reflexBase + reflexAbilityMod + reflexMiscBonus + reflexSpeciesBonus + refStateBonus + refAdjust + conditionPenalty + shieldReflexPenalty);
+    // Pin (SWSE RAW): a Pinned creature loses its POSITIVE Dexterity bonus
+    // to Reflex Defense -- not a flat universal penalty. This mirrors the
+    // flat-footed treatment's own component-aware Dex-strip immediately
+    // below (never remove a Dex penalty, only a Dex bonus) rather than
+    // adding a second, competing formula. See
+    // docs/audits/v2-math-integrity-authority-ledger.md's Grapple domain
+    // section, "Certification-correction addendum 7". Applied only to the
+    // primary Reflex total -- flatFootedTotal below is computed from this
+    // same pre-Pin baseline since flat-footed already strips positive Dex
+    // on its own; reducing it a second time for an actor that happens to
+    // be both Pinned and flat-footed would double-count the same removal.
+    const pinnedReflexDexReduction = actorHasGrappleState(actor, 'pinned') ? Math.max(0, reflexAbilityMod) : 0;
+    // An active nonproficient shield denies the same POSITIVE Dex bonus Pin
+    // does. Both are "deny the bonus", not "deny it twice" -- if an actor is
+    // somehow both Pinned and wearing an active nonproficient shield, only
+    // pinnedReflexDexReduction (identical in value) applies so the bonus is
+    // not subtracted a second time.
+    const shieldReflexDexReduction = (shieldDeniesPositiveDex && pinnedReflexDexReduction === 0) ? Math.max(0, reflexAbilityMod) : 0;
+    const reflexTotal = Math.max(1, reflexTotalBeforePin - pinnedReflexDexReduction - shieldReflexDexReduction);
 
     const fortDefaultAbility = isDroidActor ? 'str' : 'con';
     // SWSE RAW: nonliving targets without Constitution, including Droids, add STR to Fortitude.
@@ -840,8 +893,19 @@ export class DefenseCalculator {
 
     const flatFootedBase = reflexBase;
     // Flat-footed removes a positive Dexterity bonus, but never removes a
-    // Dexterity penalty. SWSE RAW: lose Dex bonus, not Dex penalty.
-    const flatFootedTotal = Math.max(1, reflexTotal - Math.max(0, reflexAbilityMod));
+    // Dexterity penalty. SWSE RAW: lose Dex bonus, not Dex penalty. It also
+    // removes dodge-type bonuses (e.g. Martial Arts I-III's Reflex dodge
+    // bonus) -- these previously survived into flat-footed because they
+    // flow into refStateBonus/reflexTotal like any other Reflex modifier,
+    // and only the ability mod was being stripped. See
+    // docs/audits/v2-math-integrity-authority-ledger.md's Flat-Footed
+    // Reflex domain for the live fail-before proof.
+    const reflexDodgeBonus = this._sumPassiveStateDefenseModifiers(actor, defenseProfile, 'reflex', context, { onlyDodge: true });
+    // Computed from reflexTotalBeforePin, not reflexTotal: flat-footed
+    // already strips the positive Dex bonus on its own, so if this actor is
+    // also Pinned (which strips the same Dex bonus from reflexTotal above),
+    // subtracting it again here would double-count the same removal.
+    const flatFootedTotal = Math.max(1, reflexTotalBeforePin - Math.max(0, reflexAbilityMod) - Math.max(0, reflexDodgeBonus));
 
     return {
       fortitude: {
@@ -874,6 +938,17 @@ export class DefenseCalculator {
         sizeModifier: reflexSizeModifier,
         abilityKey: reflexAbilityKey,
         abilityMod: reflexAbilityMod,
+        // Pin removes the positive Dex bonus above from the total -- this
+        // is that removal as an explicit, provable line item (0 unless
+        // Pinned) so base + abilityMod + ... + pinnedDexReduction still
+        // sums to total, rather than total silently diverging from its own
+        // listed parts. See the comment on reflexTotalBeforePin above.
+        pinnedDexReduction: -pinnedReflexDexReduction,
+        // Active-nonproficient-Energy-Shield equivalents of the two Pin line
+        // items immediately above, explicit for the same reason. 0 unless an
+        // active, nonproficient shield is worn.
+        shieldReflexPenalty,
+        shieldDexReduction: -shieldReflexDexReduction,
         conditionPenalty
       },
       will: {

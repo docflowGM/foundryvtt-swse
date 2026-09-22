@@ -88,6 +88,7 @@ import { characterSheetDiagnostics } from "/systems/foundryvtt-swse/scripts/shee
 import { mutateAndRepaint, mutateShellOnly } from "/systems/foundryvtt-swse/scripts/ui/shell/mutate-and-repaint.js";
 // Contract Enforcement: validate sheet architecture at runtime
 import { CharacterSheetContractEnforcer } from "/systems/foundryvtt-swse/scripts/sheets/v2/contract-enforcer.js";
+import { isNaturalWeaponOnly as canonicalIsNaturalWeaponOnly } from "/systems/foundryvtt-swse/scripts/items/weapon-branch-resolver.js";
 import { HouseRuleService } from "/systems/foundryvtt-swse/scripts/engine/system/HouseRuleService.js";
 import { FeatRegistry } from "/systems/foundryvtt-swse/scripts/registries/feat-registry.js";
 import { TalentRegistry } from "/systems/foundryvtt-swse/scripts/registries/talent-registry.js";
@@ -322,38 +323,12 @@ function isDroidActorLikeForCombat(actor) {
     || String(actor?.system?.actorMode ?? '').toLowerCase() === 'droid';
 }
 
-function listTextValuesForCombat(...values) {
-  const out = [];
-  for (const value of values) {
-    if (Array.isArray(value)) {
-      out.push(...value.map((entry) => String(entry ?? '').trim()).filter(Boolean));
-    } else if (value && typeof value === 'object') {
-      out.push(...Object.values(value).map((entry) => String(entry ?? '').trim()).filter(Boolean));
-    } else {
-      const text = String(value ?? '').trim();
-      if (text) out.push(text);
-    }
-  }
-  return out;
-}
-
+// Math Integrity Freeze, Batch 2B: delegated to the canonical natural/
+// unarmed authority (scripts/items/weapon-branch-resolver.js). alwaysArmed
+// stays a local, distinct flag (an auto-equip behavior, not a classification).
 function isNaturalWeaponItemForCombat(item) {
-  const system = item?.system ?? {};
-  const swseFlags = item?.flags?.swse ?? {};
-  if (swseFlags.isNaturalWeapon === true || swseFlags.alwaysArmed === true) return true;
-
-  const naturalFields = listTextValuesForCombat(
-    system.category,
-    system.subcategory,
-    system.proficiency,
-    system.weaponCategory,
-    system.weaponType,
-    system.source
-  );
-  if (naturalFields.some((value) => value.toLowerCase() === 'natural')) return true;
-
-  const descriptors = listTextValuesForCombat(system.properties, system.traits, system.tags);
-  return descriptors.some((value) => /natural\s+weapon/i.test(value));
+  if (item?.flags?.swse?.alwaysArmed === true) return true;
+  return canonicalIsNaturalWeaponOnly(item);
 }
 
 function isAutoEquippedNaturalWeaponForCombat(item, truthy = null) {

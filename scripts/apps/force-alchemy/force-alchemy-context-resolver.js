@@ -13,6 +13,7 @@ import {
   normalizeForceAlchemyKey
 } from "/systems/foundryvtt-swse/scripts/apps/force-alchemy/force-alchemy-data.js";
 import { readForceAlchemyState } from "/systems/foundryvtt-swse/scripts/apps/force-alchemy/force-alchemy-state-service.js";
+import { isMeleeWeapon as canonicalIsMeleeWeapon, resolveWeaponBranchFamily } from "/systems/foundryvtt-swse/scripts/items/weapon-branch-resolver.js";
 
 const FEATURE_ITEM_TYPES = new Set([
   'ability', 'attribute', 'background', 'class', 'class_feature', 'classfeature',
@@ -206,12 +207,17 @@ function isPortable(item) {
   return /weapon|armor|gear|equipment|tool|trinket|amulet|talisman|ring|pendant|object|item/.test(text);
 }
 
+// Math Integrity Freeze, Batch 2B: branch classification delegated to the
+// canonical authority; this domain's deliberate "not a lightsaber" carve
+// -out (Force Alchemy's own rule scope, not a branch-classification bug)
+// is preserved explicitly rather than folded into the branch check.
 function isMeleeWeapon(item) {
   if (!item || isFeatureItem(item)) return false;
   const type = itemTypeToken(item);
   const text = itemCategoryText(item);
   if (type === 'lightsaber' || text.includes('lightsaber')) return false;
-  return type === 'weapon' || type === 'meleeweapon' || /melee|vibro|sword|blade|staff|spear|club|simple weapon|advanced melee|advanced weapon/.test(text);
+  if (resolveWeaponBranchFamily(item).family === 'lightsaber') return false;
+  return canonicalIsMeleeWeapon(item);
 }
 
 function isBattleArmor(item) {

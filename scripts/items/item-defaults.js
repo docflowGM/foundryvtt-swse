@@ -9,6 +9,7 @@
 import { normalizeArmorSystemAliases } from './armor-data-resolver.js';
 import { normalizeEquipmentSystem } from '../engine/equipment/equipment-normalizer.js';
 import { normalizePrereqClauses } from '../dialogs/entity-dialog/prereq-engine.js';
+import { normalizeWeaponForWrite } from './weapon-branch-resolver.js';
 
 const SYSTEM_ID = 'foundryvtt-swse';
 
@@ -160,7 +161,13 @@ export const BLANK_ITEM_DEFAULTS = Object.freeze({
     damage: '1d8',
     damageType: 'energy',
     attackBonus: 0,
-    attackAttribute: 'str',
+    // Math Integrity Freeze, Batch 2B: no static attackAttribute default
+    // here -- normalizeItemSystem() below fills it from the resolved
+    // branch (str for melee, dex for ranged) only when genuinely absent,
+    // via weapon-branch-resolver.js#normalizeWeaponBranchFamily(). This
+    // keeps a blank new weapon (branch defaults to melee) behaving exactly
+    // as before (str) while letting a ranged pack-sourced item get dex
+    // instead of being force-defaulted to str.
     range: 'melee',
     weight: 1,
     cost: 0,
@@ -182,7 +189,13 @@ export const BLANK_ITEM_DEFAULTS = Object.freeze({
     gearTemplateSecondary: '',
     templateCost: 0,
     meleeOrRanged: 'melee',
-    weaponCategory: 'simple',
+    // Batch 2B correction #2: weaponCategory is now a pure branch mirror
+    // ("melee"/"ranged", kept in sync with meleeOrRanged) -- the family
+    // placeholder for a truly blank weapon belongs on subcategory/category
+    // instead, matching the field contract in weapon-branch-resolver.js.
+    weaponCategory: 'melee',
+    subcategory: 'simple',
+    category: 'simple',
     damageBonus: 'str',
     criticalRange: '20',
     criticalMultiplier: 'x2',
@@ -541,7 +554,31 @@ export function normalizeItemSystem(type, currentSystem = {}, submittedSystem = 
   }
 
   if (safeType === 'weapon') {
-    if (!['str', 'dex'].includes(merged.attackAttribute)) merged.attackAttribute = 'str';
+    // Math Integrity Freeze, Batch 2B: enforce branch/family schema
+    // coherence and fill attackAttribute from the branch default only when
+    // it is genuinely absent -- this is the same write-time boundary that
+    // stops a purchased/dropped ranged weapon from persisting a
+    // schema-defaulted "melee" (the "Bluebolt" defect). An explicit
+    // attackAttribute (including one that intentionally differs from the
+    // branch default) is always preserved verbatim.
+    //
+    // Batch 2B correction #2: this MUST use currentSystem/submittedSystem
+    // separately, not the already-flattened `merged` blob -- an independent
+    // review found that flattening first (the original call here) let a
+    // stale, merely-carried-over family field (proficiency/subcategory/
+    // category are not live editor form fields) silently outvote and
+    // revert an explicitly-submitted Branch selector change, because both
+    // looked identical once merged. normalizeWeaponForWrite() receives the
+    // real pre-merge current/submitted split this function already has in
+    // scope, so it can tell deliberate intent apart from stale carryover.
+    normalizeWeaponForWrite(currentSystem, submittedSystem, merged);
+    // Math Integrity Freeze, Batch 2B correction: the item editor exposes
+    // all six ability keys for attackAttribute (SWSE has feats/talents that
+    // legitimately use CON/INT/WIS/CHA with a weapon, not just STR/DEX) --
+    // this safety-net validation must accept all six, not silently coerce a
+    // real player choice (e.g. CHA) back to STR just because it isn't STR
+    // or DEX. Only a genuinely invalid/garbage value falls back to STR.
+    if (!['str', 'dex', 'con', 'int', 'wis', 'cha'].includes(merged.attackAttribute)) merged.attackAttribute = 'str';
     if (!['energy', 'kinetic', 'sonic', 'ion', 'fire', 'cold', 'acid', 'force', 'stun'].includes(merged.damageType)) {
       merged.damageType = 'energy';
     }

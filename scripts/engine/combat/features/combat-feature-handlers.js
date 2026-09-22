@@ -3,6 +3,10 @@ import { rollAttack } from '/systems/foundryvtt-swse/scripts/combat/rolls/attack
 import { buildFullAttackSequence, FULL_ATTACK_PACKAGES, getEquippedWeapons, getWeaponGroup } from '/systems/foundryvtt-swse/scripts/combat/multi-attack.js';
 import { ActionEconomyConsumption } from '/systems/foundryvtt-swse/scripts/engine/combat/action/action-economy-consumption.js';
 import { showRollModifiersDialog } from '/systems/foundryvtt-swse/scripts/rolls/roll-config.js';
+import {
+  isRangedWeapon as canonicalIsRangedWeapon,
+  getWeaponBranch as canonicalGetWeaponBranch
+} from '/systems/foundryvtt-swse/scripts/items/weapon-branch-resolver.js';
 import { COMBAT_FEATURE_ACTIONS } from '/systems/foundryvtt-swse/scripts/engine/combat/features/combat-feature-contract.js';
 import { canonicalCombatFeatureKey, combatFeatureIdForEffect } from '/systems/foundryvtt-swse/scripts/engine/combat/features/combat-feature-classifier.js';
 import {
@@ -145,19 +149,16 @@ function itemFromAnyActor(itemId, actor = null) {
   return null;
 }
 
+// Math Integrity Freeze, Batch 2B: delegated to the canonical branch
+// authority (scripts/items/weapon-branch-resolver.js) -- this gates
+// requiresWeaponBranch combat-feature eligibility, so a misclassified
+// weapon here could wrongly grant or deny a real combat feature.
 function isRangedWeapon(item) {
-  const system = item?.system ?? {};
-  const branch = String(system.meleeOrRanged ?? system.weaponRangeType ?? system.rangeType ?? '').toLowerCase();
-  if (branch === 'ranged') return true;
-  if (branch === 'melee') return false;
-  const range = String(system.range ?? '').toLowerCase();
-  if (range && range !== 'melee') return true;
-  const text = [item?.type, item?.name, system.weaponType, system.weaponGroup, system.weaponCategory, system.proficiency, system.category, system.subcategory].join(' ').toLowerCase();
-  return /ranged|pistol|rifle|blaster|bowcaster|launcher|grenade|heavy/.test(text) && !/lightsaber|melee|vibro|blade|sword|unarmed/.test(text);
+  return canonicalIsRangedWeapon(item);
 }
 
 function weaponBranch(item) {
-  return isRangedWeapon(item) ? 'ranged' : 'melee';
+  return canonicalGetWeaponBranch(item);
 }
 
 function equippedWeaponForSpec(actor, spec = {}) {

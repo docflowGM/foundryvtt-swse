@@ -955,6 +955,18 @@ export class MetaResourceFeatResolver {
   /* GRAPPLE RESISTANCE RULES                */
   /* ---------------------------------------- */
 
+  // Reflex Defense bonus against an incoming Grab/Grapple attack --
+  // GRAB_GRAPPLE_RESISTANCE's `reflexBonus` channel only. This is a
+  // separate channel from a bonus to the wielder's OWN opposed Grapple
+  // checks (`opposedGrappleBonus`, consumed by
+  // grappling-system.js#collectContextualGrappleModifiers() instead) --
+  // Grapple Resistance grants both (coincidentally the same value, +5),
+  // but Grab Back grants only this Reflex channel (+2 reflexBonus,
+  // 0 opposedGrappleBonus). The two were bundled into a single `bonus`
+  // field under the old RESIST_GRAB_AND_GRAPPLE shape, which incorrectly
+  // let Grab Back's Reflex-only bonus also apply to opposed Grapple checks
+  // -- see the Grapple domain section of
+  // docs/audits/v2-math-integrity-authority-ledger.md.
   static getGrappleResistanceBonus(actor, context = {}) {
     if (!actor) return 0;
     const mode = context.mode;
@@ -965,8 +977,15 @@ export class MetaResourceFeatResolver {
       const grappleRules = item?.system?.abilityMeta?.grappleRules ?? [];
       if (Array.isArray(grappleRules)) {
         for (const rule of grappleRules) {
-          if (rule.type === 'RESIST_GRAB_AND_GRAPPLE') {
-            totalBonus += rule.bonus ?? 0;
+          if (rule.type === 'GRAB_GRAPPLE_RESISTANCE') {
+            totalBonus += Number(rule.reflexBonus ?? 0) || 0;
+          } else if (rule.type === 'RESIST_GRAB_AND_GRAPPLE') {
+            // Legacy shape (pre-dating the channel split), possibly still
+            // present on an already-embedded item copied before this fix.
+            // Its single `bonus` field is conservatively treated as
+            // Reflex-only, since that's the one channel both known feats
+            // (Grapple Resistance, Grab Back) actually agree on.
+            totalBonus += Number(rule.bonus ?? 0) || 0;
           }
         }
       }

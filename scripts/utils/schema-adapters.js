@@ -404,6 +404,36 @@ export class SchemaAdapters {
    */
 
   /**
+   * Get the canonical defense total ONLY if this actor has actually run the
+   * V2 derived pipeline for it -- i.e. system.derived.defenses[defense].total
+   * is a real, finite, already-computed number. Returns null (never a
+   * default) when it is not, so a caller can tell "genuinely 0/low value"
+   * apart from "this actor never prepared derived defenses at all" and
+   * decide its own compatibility-fallback contract for the latter (see
+   * attacks.js#getTargetReflex()/getTargetDefense(), the Grapple domain's
+   * Math Integrity Freeze round 8 -- a legacy/statblock actor type that
+   * never runs DerivedCalculator is expected to fall back to a different,
+   * explicitly-scoped legacy field, not silently receive this function's
+   * own default).
+   *
+   * getDefenseTotal() below is the "just give me a number for display"
+   * convenience wrapper over this; new callers that need to distinguish
+   * "prepared" from "not prepared" should call this directly instead of
+   * re-deriving that distinction from getDefenseTotal()'s defaulted return.
+   *
+   * @param {Actor} actor
+   * @param {string} defense - 'reflex', 'fortitude', 'will'
+   * @returns {number|null}
+   */
+  static getDefenseTotalIfPrepared(actor, defense) {
+    if (!actor?.system || !defense) return null;
+    const normalized = defense.toLowerCase();
+    const value = actor.system?.derived?.defenses?.[normalized]?.total;
+    const number = Number(value);
+    return Number.isFinite(number) ? number : null;
+  }
+
+  /**
    * Get defense total (canonical)
    * Canonical: system.derived.defenses[defense].total (phase 1B reconciliation)
    * NOT .value — use .total for derived defenses
@@ -413,9 +443,7 @@ export class SchemaAdapters {
    * @returns {number} Defense total
    */
   static getDefenseTotal(actor, defense) {
-    if (!actor?.system || !defense) return 10;
-    const normalized = defense.toLowerCase();
-    return actor.system?.derived?.defenses?.[normalized]?.total ?? 10;
+    return this.getDefenseTotalIfPrepared(actor, defense) ?? 10;
   }
 
   /**

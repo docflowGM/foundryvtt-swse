@@ -3,6 +3,10 @@ import { rollAttack } from '/systems/foundryvtt-swse/scripts/combat/rolls/attack
 import { buildFullAttackSequence, FULL_ATTACK_PACKAGES, getEquippedWeapons, getWeaponGroup } from '/systems/foundryvtt-swse/scripts/combat/multi-attack.js';
 import { ActionEconomyConsumption } from '/systems/foundryvtt-swse/scripts/engine/combat/action/action-economy-consumption.js';
 import { showRollModifiersDialog } from '/systems/foundryvtt-swse/scripts/rolls/roll-config.js';
+import {
+  isRangedWeapon as canonicalIsRangedWeapon,
+  isMeleeWeapon as canonicalIsMeleeWeapon
+} from '/systems/foundryvtt-swse/scripts/items/weapon-branch-resolver.js';
 
 const CHAT_OUTCOME_PATCH = Symbol.for('swse.combatUiBehaviorHotfix.chatOutcome.v1');
 const DELEGATE_PATCH = Symbol.for('swse.combatUiBehaviorHotfix.delegate.v3');
@@ -291,27 +295,14 @@ function installAttackChatOutcomePatch() {
   SWSEChat[CHAT_OUTCOME_PATCH] = true;
 }
 
+// Math Integrity Freeze, Batch 2B: delegated to the canonical branch
+// authority (scripts/items/weapon-branch-resolver.js).
 function isRangedWeapon(item) {
-  const system = item?.system ?? {};
-  const branch = String(system.meleeOrRanged ?? system.weaponRangeType ?? system.rangeType ?? '').toLowerCase();
-  if (branch === 'ranged') return true;
-  if (branch === 'melee') return false;
-  const range = String(system.range ?? '').toLowerCase();
-  if (range && range !== 'melee') return true;
-  const text = [item?.type, item?.name, system.weaponType, system.weaponGroup, system.weaponCategory, system.proficiency, system.category, system.subcategory].join(' ').toLowerCase();
-  return /ranged|pistol|rifle|blaster|bowcaster|launcher|grenade|heavy/.test(text) && !/lightsaber|melee|vibro|blade|sword|unarmed/.test(text);
+  return canonicalIsRangedWeapon(item);
 }
 
 function isMeleeWeapon(item) {
-  if (isRangedWeapon(item)) return false;
-  const system = item?.system ?? {};
-  const branch = String(system.meleeOrRanged ?? system.weaponRangeType ?? system.rangeType ?? system.range ?? '').toLowerCase();
-  if (branch === 'ranged') return false;
-  if (branch === 'melee') return true;
-  const text = [item?.type, item?.name, system.weaponType, system.weaponGroup, system.weaponCategory, system.proficiency, system.category, system.subcategory].join(' ').toLowerCase();
-  if (text.includes('lightsaber')) return true;
-  if (text.includes('melee')) return true;
-  return false;
+  return canonicalIsMeleeWeapon(item);
 }
 
 function weaponBranch(item) {

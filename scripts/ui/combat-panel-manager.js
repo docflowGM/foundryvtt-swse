@@ -12,6 +12,7 @@ import { SWSELogger as swseLogger } from "/systems/foundryvtt-swse/scripts/utils
 import WeaponTooltip from "/systems/foundryvtt-swse/scripts/ui/weapon-tooltip.js";
 import { RollEngine } from "/systems/foundryvtt-swse/scripts/engine/roll-engine.js";
 import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
+import { getWeaponBranch } from "/systems/foundryvtt-swse/scripts/items/weapon-branch-resolver.js";
 
 export class CombatPanelManager {
   /**
@@ -169,7 +170,10 @@ export class CombatPanelManager {
 
       const weaponTypeEl = card.querySelector('.weapon-type');
       if (weaponTypeEl) {
-        weaponTypeEl.textContent = `(${weapon.system?.meleeOrRanged || 'melee'})`;
+        // Math Integrity Freeze, Batch 2B: label now reflects the
+        // canonical branch authority instead of the raw, often
+        // schema-defaulted meleeOrRanged field.
+        weaponTypeEl.textContent = `(${getWeaponBranch(weapon)})`;
       }
 
       // Update weapon properties

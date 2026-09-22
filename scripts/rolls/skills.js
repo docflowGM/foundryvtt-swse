@@ -16,6 +16,7 @@ import { showRollModifiersDialog } from "/systems/foundryvtt-swse/scripts/rolls/
 import { ImplantEffectRules } from "/systems/foundryvtt-swse/scripts/engine/implants/ImplantEffectRules.js";
 import { TeamFeatRuntime } from "/systems/foundryvtt-swse/scripts/engine/feats/team-feat-runtime-patches.js";
 import { RebellionSpeciesSkillFeatRuntime } from "/systems/foundryvtt-swse/scripts/engine/feats/rebellion-species-skill-feat-runtime-patches.js";
+import { resolveArmorUsageEffects } from "/systems/foundryvtt-swse/scripts/engine/effects/armor-usage-resolver.js";
 
 
 const ATHLETICS_COMPONENT_KEYS = ['acrobatics', 'climb', 'jump', 'swim'];
@@ -296,7 +297,12 @@ export function calculateSkillModifier(actor, skillKey) {
   const abilityMod = attributes[abilityKey]?.mod || 0;
   const trainedBonus = skill.trained ? 5 : 0;
   const focusBonus = skill.focused ? 5 : 0;
-  const armorPenalty = skill.armorCheck ? (actor.system.armorCheckPenalty || 0) : 0;
+  // Math Integrity Freeze Batch 2A: actor.system.armorCheckPenalty is a flat
+  // actor-level field that nothing in this codebase ever writes -- this ACP
+  // term was always silently 0, an SSOT bypass of the real armor/shield ACP
+  // authority (armor-usage-resolver.js), which ModifierEngine's own
+  // skill.<key> modifiers already consume for the live derived-skill total.
+  const armorPenalty = skill.armorCheck ? resolveArmorUsageEffects(actor).skillCheckPenalty : 0;
   const miscMod = skill.miscMod || 0;
 
   return abilityMod + trainedBonus + focusBonus + armorPenalty + miscMod;

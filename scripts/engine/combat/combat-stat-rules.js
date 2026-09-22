@@ -7,6 +7,7 @@
 
 import { SchemaAdapters } from "/systems/foundryvtt-swse/scripts/utils/schema-adapters.js";
 import { getEffectiveHalfLevel } from "/systems/foundryvtt-swse/scripts/actors/derived/level-split.js";
+import { isRangedWeapon as canonicalIsRangedWeapon, isMeleeWeapon as canonicalIsMeleeWeapon } from "/systems/foundryvtt-swse/scripts/items/weapon-branch-resolver.js";
 
 export const SIZE_ORDER = Object.freeze([
   'fine', 'diminutive', 'tiny', 'small', 'medium', 'large', 'huge', 'gargantuan', 'colossal'
@@ -36,6 +37,38 @@ export const DAMAGE_THRESHOLD_SIZE_BONUSES = Object.freeze({
   colossal: 50
 });
 
+// Grapple size modifier table -- Saga Edition Core Rulebook, Grapple check
+// rules (grapple check = 1d20 + BAB + higher of STR/DEX modifier + size
+// modifier). This is a DIFFERENT, larger-magnitude table than
+// REFLEX_SIZE_MODIFIERS above -- grapple size differences swing much more
+// than attack/defense size differences do. Values confirmed independently
+// two ways:
+//   1. Cross-checked against two published creature stat blocks already in
+//      this repo's own compendium data (packs/beasts.db):
+//        Aiwha (Gargantuan): BAB +3, STR 25 (+7 mod), published Grp +25
+//          => size modifier = 25 - 3 - 7 = +15
+//        Bantha (Huge): BAB +2, STR 28 (+9 mod), published Grp +21
+//          => size modifier = 21 - 2 - 9 = +10
+//   2. Independently corroborated by two separate SWSE rules-reference
+//      lookups of the Core Rulebook's grapple size modifier table.
+// Both give the same table: a flat step of 5 per size category, Medium = 0.
+// This replaced an incorrect step-of-4 table (max +/-16) that was never
+// checked against a published stat block -- see the Grapple domain section
+// of docs/audits/v2-math-integrity-authority-ledger.md for the
+// certification-review finding and tests/grapple-size-modifier-book-values.test.mjs
+// for the golden Aiwha/Bantha regression proof.
+export const GRAPPLE_SIZE_MODIFIERS = Object.freeze({
+  fine: -20,
+  diminutive: -15,
+  tiny: -10,
+  small: -5,
+  medium: 0,
+  large: 5,
+  huge: 10,
+  gargantuan: 15,
+  colossal: 20
+});
+
 export function normalizeCombatSize(size) {
   const raw = String(size ?? 'medium').toLowerCase().trim();
   if (raw.includes('colossal')) return 'colossal';
@@ -63,6 +96,78 @@ export function getDamageThresholdSizeBonus(actorOrSize) {
   return DAMAGE_THRESHOLD_SIZE_BONUSES[size] ?? 0;
 }
 
+export function getGrappleSizeModifier(actorOrSize) {
+  const size = typeof actorOrSize === 'string' ? normalizeCombatSize(actorOrSize) : getActorCombatSize(actorOrSize);
+  return GRAPPLE_SIZE_MODIFIERS[size] ?? 0;
+}
+
+/**
+ * The ONLY grapple arithmetic in the codebase: BAB + best of STR/DEX +
+ * size + species. A pure function over already-resolved numeric inputs --
+ * it does not read an actor itself, so it can be called both by
+ * `resolveGrappleBonus()` below (which resolves those inputs from a live
+ * actor via SchemaAdapters) and by `derived-calculator.js`'s own
+ * system.derived.grappleBonus computation (which has its own freshly
+ * computed current-pass BAB/ability/size/species values available
+ * in-closure, some of which may not exist on `actor` itself yet mid-pass).
+ * Previously each of those two call sites independently reimplemented
+ * this exact formula (including a hand-copied size table each) -- see
+ * docs/audits/v2-math-integrity-authority-ledger.md's Grapple domain for
+ * the certification-review finding that flagged the duplication (they
+ * agreed today, but two formulas is the violation the freeze forbids,
+ * agreement or not).
+ *
+ * @param {Object} inputs
+ * @param {number} inputs.bab
+ * @param {number} inputs.strMod
+ * @param {number} inputs.dexMod
+ * @param {number} inputs.sizeMod
+ * @param {number} [inputs.speciesBonus]
+ * @returns {number}
+ */
+export function computeGrappleBonus({ bab, strMod, dexMod, sizeMod, speciesBonus = 0 }) {
+  const safeBab = Number(bab) || 0;
+  const safeStr = Number(strMod) || 0;
+  const safeDex = Number(dexMod) || 0;
+  const safeSize = Number(sizeMod) || 0;
+  const safeSpecies = Number(speciesBonus) || 0;
+  return safeBab + Math.max(safeStr, safeDex) + safeSize + safeSpecies;
+}
+
+/**
+ * Canonical, standalone Grapple bonus resolver for a live actor: resolves
+ * BAB/ability/size/species inputs via SchemaAdapters and the shared size
+ * helper, then delegates to computeGrappleBonus() for the actual math --
+ * so a caller that can't read a pre-computed system.derived.grappleBonus
+ * (e.g. because derived data hasn't been computed yet) has ONE correct
+ * formula to fall back to, instead of an independently-maintained
+ * approximation that can silently omit terms. See
+ * docs/audits/v2-math-integrity-authority-ledger.md's Grapple domain --
+ * scripts/houserules/houserule-grapple.js previously fell back to
+ * BAB + STR only (no size, no species, no best-of-DEX), which was
+ * confirmed wrong for any DEX-based grappler.
+ *
+ * Deliberately NOT used by derived-calculator.js: that pass has its own
+ * freshly computed current-pass values (BAB, ability mods, etc.) that may
+ * not yet be written onto `actor` itself when this runs, so reading them
+ * back off `actor` via SchemaAdapters here could see stale data from the
+ * previous prepare cycle. derived-calculator.js calls
+ * computeGrappleBonus() directly with its own in-closure values instead.
+ *
+ * @param {Actor} actor
+ * @returns {number}
+ */
+export function resolveGrappleBonus(actor) {
+  if (!actor) return 0;
+  return computeGrappleBonus({
+    bab: SchemaAdapters.getBAB(actor),
+    strMod: SchemaAdapters.getAbilityMod(actor, 'str'),
+    dexMod: SchemaAdapters.getAbilityMod(actor, 'dex'),
+    sizeMod: getGrappleSizeModifier(actor),
+    speciesBonus: actor.system?.speciesCombatBonuses?.grapple ?? actor.system?.speciesTraitBonuses?.combat?.grapple ?? 0
+  });
+}
+
 function numeric(value, fallback = 0) {
   const n = Number(value);
   return Number.isFinite(n) ? n : fallback;
@@ -72,70 +177,19 @@ function normalizeSelector(value) {
   return String(value ?? '').trim().toLowerCase().replace(/[^a-z0-9]/g, '');
 }
 
-function weaponBranchText(weapon) {
-  const system = weapon?.system ?? {};
-  const properties = Array.isArray(system.properties) ? system.properties : [];
-  const traits = Array.isArray(system.traits) ? system.traits : [];
-  return [
-    weapon?.name,
-    system.name,
-    system.meleeOrRanged,
-    system.weaponRangeType,
-    system.rangeType,
-    system.range,
-    system.rangeProfile,
-    system.rangeProfileName,
-    system.weaponGroup,
-    system.group,
-    system.weaponCategory,
-    system.category,
-    system.subcategory,
-    system.subtype,
-    system.weaponType,
-    system.type,
-    system.proficiency,
-    system.proficiencyGroup,
-    ...properties,
-    ...traits
-  ].map(value => String(value ?? '').toLowerCase()).join(' ');
-}
-
-function explicitBranch(weapon) {
-  const system = weapon?.system ?? {};
-  const explicit = String(system.meleeOrRanged ?? system.weaponRangeType ?? system.rangeType ?? '').toLowerCase().trim();
-  if (explicit.includes('ranged')) return 'ranged';
-  if (explicit.includes('melee')) return 'melee';
-  return '';
-}
-
+// Math Integrity Freeze, Batch 2B: branch classification is delegated to the
+// single canonical authority (scripts/items/weapon-branch-resolver.js).
+// A full pack scan found system.weaponCategory holds a literal "melee"/
+// "ranged" branch value on 100% of shipped weapon records, while
+// meleeOrRanged is absent on all of them (schema-defaulted, not authored,
+// at materialization time) -- so the old explicitBranch()-first precedence
+// here was proven to misclassify real ranged weapons (the "Bluebolt" bug).
 export function isRangedWeapon(weapon) {
-  const system = weapon?.system ?? {};
-  const branch = explicitBranch(weapon);
-  if (branch === 'ranged') return true;
-  if (branch === 'melee') return false;
-  if (system.ranged === true || system.isRanged === true) return true;
-  if (system.melee === true || system.isMelee === true) return false;
-
-  const range = String(system.range ?? '').toLowerCase().trim();
-  if (range && range !== 'melee' && !range.includes('melee')) return true;
-
-  return /\b(ranged|pistol|pistols|rifle|rifles|carbine|blaster|bowcaster|bow|launcher|grenade|thrown|slugthrower|missile|rocket)\b/.test(weaponBranchText(weapon));
+  return canonicalIsRangedWeapon(weapon);
 }
 
 export function isMeleeWeapon(weapon) {
-  const system = weapon?.system ?? {};
-  const branch = explicitBranch(weapon);
-  if (branch === 'melee') return true;
-  if (branch === 'ranged') return false;
-  if (system.melee === true || system.isMelee === true) return true;
-  if (system.ranged === true || system.isRanged === true) return false;
-  if (system.isUnarmed === true || system.properties?.includes?.('unarmed')) return true;
-
-  const range = String(system.range ?? '').toLowerCase().trim();
-  if (range === 'melee') return true;
-  if (range && range !== 'melee') return false;
-
-  return /\b(melee|unarmed|lightsaber|vibro|staff|pike|sword|knife|blade|club|claw|bite)\b/.test(weaponBranchText(weapon));
+  return canonicalIsMeleeWeapon(weapon);
 }
 
 export function isLightMeleeWeapon(weapon) {
