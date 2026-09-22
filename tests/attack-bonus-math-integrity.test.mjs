@@ -711,21 +711,37 @@ ok('unified typed attack-modifier stacking: Charge is COMPETENCE per published S
 
 // ─── SECTION 5b — WeaponsEngine attack.bonus modifiers (attunement/crystal) ─
 //
-// BLOCKER FIX (round 4): WeaponsEngine.getWeaponModifiers() has always been
-// able to produce canonical Modifier objects targeting 'attack.bonus' -- an
-// attuned self-built lightsaber's +1, and an installed crystal/upgrade's
-// attack modifier -- but resolveAttackBonus()'s round-3 unified typed pool
-// only gathered 'global.attack'-targeted contributions (Effect Intent,
-// situational, typed combat-option). A weapon's own attunement/crystal
-// modifiers never reached an actual attack roll at all, even though
-// WeaponsEngine.getWeaponModifiers() could genuinely produce them (proven
-// by weapons-engine-modifier-source-authority.test.mjs) -- that test proves
-// the modifier CAN be created, not that it reaches a roll. This section
-// proves the full pipeline: WeaponsEngine's producer contract (now
-// centralized in combat-stat-rules.js#getWeaponAttunementAndUpgradeModifiers(),
-// weapon-scoped so it can be imported into combat-roll-math.js without a
-// circular dependency) -> resolveAttackBonus()'s unified pool -> the final
-// roll composition.
+// BLOCKER FIX (round 5, correcting round 4's schema): round 4 modeled a
+// lightsaber crystal as a separate owned `weaponUpgrade` Item referenced via
+// `weapon.system.installedUpgrades` (an id array) carrying a `{domain,
+// bonusType, value}` modifier shape. Neither matches how a lightsaber is
+// actually built. Confirmed directly against
+// `lightsaber-construction-engine.js#createBuiltLightsaber()`/`applyEdits()`:
+// the selected crystal's/accessories' own `system.modifiers` records are
+// copied VERBATIM onto the finished weapon's OWN `system.modifiers` array --
+// no separate owned item, no `installedUpgrades`, is ever populated by that
+// (the only live) construction path. The real compiled
+// `packs/lightsaber-crystals.db` uses a heterogeneous `{type, value, target,
+// bonusType?, condition?, skill?}` rules-record schema (verified directly
+// against the pack, not the older/stale `data/lightsaber-components.json`/
+// `data/lightsaber-items-import.ndjson` reference files) -- confirmed to
+// include ATTACK_BONUS, CONDITIONAL_ATTACK, DAMAGE_BONUS, CONDITIONAL_DAMAGE,
+// DEFENSE_BONUS, ENEMY_PENALTY, SKILL_BONUS, SKILL_MODIFIER, HEALING_BONUS,
+// DAMAGE_TYPE_CHANGE, DAMAGE_REDUCTION, CRITICAL_BONUS,
+// FORCE_POINT_DIE_UPGRADE, REROLL_ABILITY, LIGHT_EMISSION, SENSE_OVERRIDE,
+// ALIGNMENT_REFLECTION, and CRITICAL_FAILURE record types. Ordinary attack
+// crystals (Ilum, Mephite, Standard Synthetic) carry NO `bonusType` at all
+// (untyped, not "force" as round 4 assumed from the stale reference data).
+// `combat-stat-rules.js#getWeaponAttunementAndUpgradeModifiers()` was
+// rewritten to read `weapon.system.modifiers` directly through a fail-closed
+// interpreter: only `type === 'ATTACK_BONUS'` (with its own
+// `target === 'attack'`) ever produces an attack Modifier; every other
+// type -- including `CONDITIONAL_ATTACK`, a genuine attack bonus this
+// project cannot yet verify the condition for -- emits nothing, with no
+// unknown-type-defaults-to-attack fallback. This section proves the full
+// pipeline against REAL pack record shapes: production data
+// -> the fail-closed interpreter -> resolveAttackBonus()'s unified pool ->
+// the final roll composition.
 
 {
   function lightsaberWeapon(overrides = {}) {
@@ -733,55 +749,104 @@ ok('unified typed attack-modifier stacking: Charge is COMPETENCE per published S
       id: overrides.id ?? 'w-saber', name: overrides.name ?? 'Training Saber', type: 'weapon',
       system: {
         weaponCategory: 'melee', proficiency: 'lightsaber', damage: '2d8',
-        subtype: 'lightsaber', installedUpgrades: overrides.installedUpgrades ?? []
+        subtype: 'lightsaber', modifiers: overrides.modifiers ?? []
       },
       flags: overrides.flags ?? {}
     };
   }
-  function crystalUpgrade({ id = 'upgrade-1', name = 'Ilum Crystal', domain = 'attack', bonusType = 'untyped', value = 1 } = {}) {
-    return { id, name, type: 'weaponUpgrade', system: { lightsaber: { color: 'blue' }, modifiers: [{ domain, bonusType, value }] } };
-  }
+
+  // Real record shapes copied verbatim from packs/lightsaber-crystals.db
+  // (parsed and verified directly against the compiled pack, not inferred
+  // from any older reference/import file).
+  const REAL_CRYSTAL = {
+    ilum: [{ type: 'ATTACK_BONUS', value: 1, target: 'attack' }],
+    mephite: [{ type: 'ATTACK_BONUS', value: 1, target: 'attack' }],
+    standardSynthetic: [{ type: 'ATTACK_BONUS', value: 1, target: 'attack' }],
+    kathracite: [{ type: 'DAMAGE_REDUCTION', value: '-1d' }, { type: 'ATTACK_BONUS', value: 1, target: 'attack' }],
+    kasha: [{ type: 'DEFENSE_BONUS', target: 'will', value: 2, bonusType: 'force' }],
+    jenraux: [{ type: 'DEFENSE_BONUS', target: 'block', value: 2, bonusType: 'force' }],
+    sigil: [{ type: 'DAMAGE_BONUS', value: 2, bonusType: 'force', target: 'damage' }],
+    krayt: [{ type: 'DAMAGE_BONUS', value: 3, bonusType: 'force', target: 'damage' }],
+    mantle: [{ type: 'SKILL_BONUS', skill: 'use-the-force', value: 2, bonusType: 'force' }],
+    ankarres: [{ type: 'HEALING_BONUS', value: 2 }],
+    compressed: [{ type: 'ENEMY_PENALTY', target: 'block', value: -2 }],
+    heart: [{ type: 'CONDITIONAL_ATTACK', value: 2, bonusType: 'force', condition: 'vs-lightsaber-wielders' }],
+    hurikane: [{ type: 'CONDITIONAL_ATTACK', value: 2, bonusType: 'force', condition: 'vs-armored' }],
+    dragite: [{ type: 'CRITICAL_BONUS', value: '+1d-sonic' }],
+    bondar: [{ type: 'DAMAGE_TYPE_CHANGE', value: 'stun' }]
+  };
 
   const actor = makeActor({ bab: 7, str: 2 });
   const plainSaber = lightsaberWeapon();
   const baselineSaber = resolveAttackBonus(actor, plainSaber, null, { attackType: 'melee' });
-  assert.equal(baselineSaber.total, 9, 'BAB(7) + STR(2), plain unattuned lightsaber with no upgrades');
+  assert.equal(baselineSaber.total, 9, 'BAB(7) + STR(2), plain unattuned lightsaber with no crystal');
 
   // 1/2. FAIL-BEFORE proof: an attuned lightsaber's +1 must reach
   // resolveAttackBonus(); the same weapon un-attuned must not receive it.
   const attunedActor = makeActor({ bab: 7, str: 2 }); // id 'test-actor', matches builtBy/attunedBy below
   const attunedSaber = lightsaberWeapon({ flags: { swse: { builtBy: 'test-actor', attunedBy: 'test-actor' } } });
   const attunedResult = resolveAttackBonus(attunedActor, attunedSaber, null, { attackType: 'melee' });
-  assert.equal(attunedResult.total, baselineSaber.total + 1, 'FAIL-BEFORE FIX: an attuned lightsaber\'s +1 (WeaponsEngine already produced this modifier; resolveAttackBonus() previously never consumed it) now reaches the attack total');
+  assert.equal(attunedResult.total, baselineSaber.total + 1, 'FAIL-BEFORE FIX: an attuned lightsaber\'s +1 now reaches the attack total');
   const attunedRow = attunedResult.typedModifierLedger.find(e => e.label === 'Training Saber (Attuned)');
   assert.equal(attunedRow?.value, 1, 'the attunement bonus has its own named ledger row');
   const unattunedResult = resolveAttackBonus(attunedActor, plainSaber, null, { attackType: 'melee' });
   assert.equal(unattunedResult.total, baselineSaber.total, 'the same weapon, unattuned, must not receive the +1 (fail path proven, not just the pass path)');
 
-  // 3. Installed attack crystal: its modifier reaches the roll exactly once.
-  const crystal = crystalUpgrade({ id: 'upgrade-1', name: 'Ilum Crystal', domain: 'attack', bonusType: 'untyped', value: 1 });
-  const actorWithCrystal = makeActor({ bab: 7, str: 2, items: [crystal] });
-  const crystalSaber = lightsaberWeapon({ installedUpgrades: ['upgrade-1'] });
-  const crystalResult = resolveAttackBonus(actorWithCrystal, crystalSaber, null, { attackType: 'melee' });
-  assert.equal(crystalResult.total, baselineSaber.total + 1, 'FAIL-BEFORE FIX: an installed crystal\'s attack.bonus modifier now reaches the attack total');
-  const crystalRow = crystalResult.typedModifierLedger.find(e => e.label === 'Training Saber (Ilum Crystal)');
-  assert.equal(crystalRow?.value, 1);
-  // "exactly once": re-invoking must not accumulate (idempotence, matching
-  // the project's existing repeated-invocation invariant for every other
-  // attack-bonus channel).
-  const crystalResultAgain = resolveAttackBonus(actorWithCrystal, crystalSaber, null, { attackType: 'melee' });
-  assert.equal(crystalResultAgain.total, crystalResult.total, 'repeated invocation must not accumulate the crystal contribution');
+  // 3. Ilum / Mephite / Standard Synthetic (generated-weapon shape: a real
+  // ATTACK_BONUS record on weapon.system.modifiers): +1 exactly once, and
+  // idempotent across repeated invocation.
+  for (const [crystalName, records] of [['Ilum', REAL_CRYSTAL.ilum], ['Mephite', REAL_CRYSTAL.mephite], ['Standard Synthetic', REAL_CRYSTAL.standardSynthetic]]) {
+    const saber = lightsaberWeapon({ id: `w-${crystalName}`, name: `${crystalName} Saber`, modifiers: records });
+    const result = resolveAttackBonus(actor, saber, null, { attackType: 'melee' });
+    assert.equal(result.total, baselineSaber.total + 1, `FAIL-BEFORE FIX: ${crystalName} crystal's real ATTACK_BONUS record now reaches the attack total exactly once`);
+    const again = resolveAttackBonus(actor, saber, null, { attackType: 'melee' });
+    assert.equal(again.total, result.total, `${crystalName}: repeated invocation must not accumulate the crystal contribution`);
+  }
 
-  // 4. Two installed upgrade modifiers of the SAME nonstacking type: correct
-  // typed stacking (only the higher applies), not a bare sum.
-  const upgradeA = crystalUpgrade({ id: 'upgrade-a', name: 'Ilum Crystal', bonusType: 'competence', value: 1 });
-  const upgradeB = crystalUpgrade({ id: 'upgrade-b', name: 'Adegan Crystal', bonusType: 'competence', value: 2 });
-  const actorTwoUpgrades = makeActor({ bab: 7, str: 2, items: [upgradeA, upgradeB] });
-  const twoUpgradeSaber = lightsaberWeapon({ installedUpgrades: ['upgrade-a', 'upgrade-b'] });
-  const twoUpgradesResult = resolveAttackBonus(actorTwoUpgrades, twoUpgradeSaber, null, { attackType: 'melee' });
-  assert.equal(twoUpgradesResult.total, baselineSaber.total + 2, 'two competence-typed crystal modifiers on the same weapon: only the higher (+2) applies, not +3');
+  // Kathracite: its DAMAGE_REDUCTION record must contribute ZERO to attack;
+  // only its ATTACK_BONUS record affects attack. Proves per-record
+  // filtering, not "any record on this weapon counts."
+  const kathraciteSaber = lightsaberWeapon({ modifiers: REAL_CRYSTAL.kathracite });
+  const kathraciteResult = resolveAttackBonus(actor, kathraciteSaber, null, { attackType: 'melee' });
+  assert.equal(kathraciteResult.total, baselineSaber.total + 1, 'Kathracite: DAMAGE_REDUCTION contributes 0 to attack; only its ATTACK_BONUS record (+1) applies');
 
-  // 5. Weapon enhancement still applies exactly once (the structural
+  // 4. MANDATORY negative proofs: every non-(ATTACK_BONUS-with-target-attack)
+  // real crystal record shape must contribute EXACTLY ZERO to the attack
+  // total -- regression tests against the exact class of bug present at the
+  // previously-reviewed head (an absent/unrecognized field defaulting to
+  // 'attack.bonus').
+  const negativeCrystals = [
+    ['Kasha (DEFENSE_BONUS)', REAL_CRYSTAL.kasha],
+    ['Jenraux (DEFENSE_BONUS)', REAL_CRYSTAL.jenraux],
+    ['Sigil (DAMAGE_BONUS)', REAL_CRYSTAL.sigil],
+    ['Krayt Dragon Pearl (DAMAGE_BONUS)', REAL_CRYSTAL.krayt],
+    ['Mantle of the Force (SKILL_BONUS)', REAL_CRYSTAL.mantle],
+    ['Ankarres Sapphire (HEALING_BONUS)', REAL_CRYSTAL.ankarres],
+    ['Compressed Crystal (ENEMY_PENALTY)', REAL_CRYSTAL.compressed],
+    ['Dragite Crystal (CRITICAL_BONUS, string value)', REAL_CRYSTAL.dragite],
+    ['Bondar Crystal (DAMAGE_TYPE_CHANGE, string value)', REAL_CRYSTAL.bondar]
+  ];
+  for (const [label, records] of negativeCrystals) {
+    const saber = lightsaberWeapon({ id: `w-neg-${label}`, name: `${label} Saber`, modifiers: records });
+    const result = resolveAttackBonus(actor, saber, null, { attackType: 'melee' });
+    assert.equal(result.total, baselineSaber.total, `${label} must contribute ZERO to attack -- never defaults to attack.bonus merely because a target/domain field is absent or unrecognized`);
+  }
+
+  // 5. Heart of the Guardian / Hurikane: CONDITIONAL_ATTACK records are REAL
+  // attack bonuses, but this project's attack pipeline provides no verified
+  // target-state context (is the target a lightsaber wielder? armored?) at
+  // this layer -- NOT YET AUTOMATED, fails closed to +0 rather than
+  // guessing, even when some unrelated context is present.
+  const heartSaber = lightsaberWeapon({ modifiers: REAL_CRYSTAL.heart });
+  const heartNoContext = resolveAttackBonus(actor, heartSaber, null, { attackType: 'melee' });
+  assert.equal(heartNoContext.total, baselineSaber.total, 'Heart of the Guardian: no verified qualifying context -> +0 (not yet automated, fails closed)');
+  const heartWithUnrelatedContext = resolveAttackBonus(actor, heartSaber, null, { attackType: 'melee', targetIsArmored: true });
+  assert.equal(heartWithUnrelatedContext.total, baselineSaber.total, 'Heart of the Guardian: an unrelated context flag must not accidentally satisfy its condition -- still +0');
+  const hurikaneSaber = lightsaberWeapon({ modifiers: REAL_CRYSTAL.hurikane });
+  const hurikaneNoContext = resolveAttackBonus(actor, hurikaneSaber, null, { attackType: 'melee' });
+  assert.equal(hurikaneNoContext.total, baselineSaber.total, 'Hurikane: no verified qualifying context -> +0 (not yet automated, fails closed)');
+
+  // 6. Weapon enhancement still applies exactly once (the structural
   // miscBonus path), never double-counted via the new typed pool -- the
   // typed pool deliberately never emits a mirror of it.
   const enhancedWeapon = meleeWeapon({ proficient: true, combat: { attack: { bonus: 2 } } });
@@ -789,47 +854,64 @@ ok('unified typed attack-modifier stacking: Charge is COMPETENCE per published S
   const enhancedResult = resolveAttackBonus(actor, enhancedWeapon, null, { attackType: 'melee' });
   assert.equal(enhancedResult.total, plainMelee.total + 2, 'weapon enhancement bonus applies exactly once');
 
-  // 6. Nonproficiency still -5 exactly once (the structural
+  // 7. Nonproficiency still -5 exactly once (the structural
   // proficiencyPenalty path), never double-counted via the typed pool.
   const nonproficientResult = resolveAttackBonus(actor, meleeWeapon({ proficient: false }), null, { attackType: 'melee' });
   assert.equal(nonproficientResult.total, plainMelee.total - 5, 'nonproficiency penalty applies exactly once');
 
-  // 7. Two equipped weapons: Weapon A's attunement/crystal modifiers must
-  // NOT leak into Weapon B's roll -- the collector is weapon-scoped by
-  // construction (it takes ONE weapon, never scans the actor's other
-  // equipped items), proven here end to end.
-  const saberA = lightsaberWeapon({ id: 'w-saber-a', name: 'Saber A', flags: { swse: { builtBy: 'test-actor', attunedBy: 'test-actor' } }, installedUpgrades: ['upgrade-1'] });
+  // 8. Two equipped weapons: Weapon A's attunement/crystal modifiers must
+  // NOT leak into Weapon B's roll. The interpreter reads weapon.system.
+  // modifiers directly off the CURRENT weapon param -- no actor-wide scan --
+  // so this is structurally guaranteed, proven here end to end.
+  const saberA = lightsaberWeapon({ id: 'w-saber-a', name: 'Saber A', flags: { swse: { builtBy: 'test-actor', attunedBy: 'test-actor' } }, modifiers: REAL_CRYSTAL.ilum });
   const saberB = lightsaberWeapon({ id: 'w-saber-b', name: 'Saber B' });
-  const actorTwoWeapons = makeActor({ bab: 7, str: 2, items: [crystal] });
+  const actorTwoWeapons = makeActor({ bab: 7, str: 2 });
   const resultA = resolveAttackBonus(actorTwoWeapons, saberA, null, { attackType: 'melee' });
   const resultB = resolveAttackBonus(actorTwoWeapons, saberB, null, { attackType: 'melee' });
   assert.equal(resultA.total, baselineSaber.total + 1 /* attuned */ + 1 /* crystal */, 'Saber A (attuned, with its own crystal) receives both of its own contributions');
-  assert.equal(resultB.total, baselineSaber.total, 'Saber B (unattuned, no upgrades of its own) must NOT receive Saber A\'s attunement or crystal contributions -- no cross-weapon leakage');
+  assert.equal(resultB.total, baselineSaber.total, 'Saber B (unattuned, no crystal of its own) must NOT receive Saber A\'s attunement or crystal contributions -- no cross-weapon leakage');
 
-  // 8/10. Cross-target-alias collision: a competence-typed crystal
-  // (target 'attack.bonus') and a competence Active Effect (target
-  // 'global.attack') must collide in the SAME stacking universe -- proving
-  // the alias normalization, not just that both individually work.
-  const competenceCrystal = crystalUpgrade({ id: 'upgrade-comp', name: 'Kaiburr Shard', bonusType: 'competence', value: 1 });
-  const compCrystalSaber = lightsaberWeapon({ id: 'w-saber-comp', name: 'Comp Saber', installedUpgrades: ['upgrade-comp'] });
-  const actorCrystalPlusEffect = makeActor({ bab: 7, str: 2, items: [competenceCrystal], effects: [competenceAttackEffect(4, { id: 'effect-x', name: 'Battle Focus' })] });
-  const crystalPlusEffectResult = resolveAttackBonus(actorCrystalPlusEffect, compCrystalSaber, null, { attackType: 'melee' });
-  assert.equal(crystalPlusEffectResult.total, baselineSaber.total + 4, 'a competence-typed crystal (attack.bonus) and a competence Active Effect (global.attack) collide in ONE stacking universe -- only the higher (+4) applies, not +5 -- proving the target-alias normalization');
-  const suppressedCrystalRow = crystalPlusEffectResult.typedModifierLedger.find(e => e.label === 'Comp Saber (Kaiburr Shard)');
-  assert.equal(suppressedCrystalRow?.applied, false, 'the lower-value crystal contribution must remain visible in the ledger, marked not-applied');
-  assert.ok(String(suppressedCrystalRow?.reason || '').includes('highestOnly'), 'a suppressed competence contribution\'s reason must correctly cite highestOnly stacking');
-
-  // 9. Crystal vs Charge, same type, legally can collide: correct
-  // highest-only behavior.
+  // 9/10. INTERPRETER-CONTRACT tests (explicitly NOT a claim about any
+  // currently-shipped crystal -- no real ATTACK_BONUS record in the pack
+  // sets bonusType today; these exercise the interpreter's own supported
+  // bonusType field and the attack.bonus/global.attack alias-normalization
+  // pass in isolation, using a hypothetical but schema-legal record).
   const { createModifier: makeMod, ModifierType: MType, ModifierSource: MSource } = await import(
     '/systems/foundryvtt-swse/scripts/engine/effects/modifiers/ModifierTypes.js'
   );
+  // Same-type collision WITHIN one weapon's own modifiers array.
+  const twoTypedSaber = lightsaberWeapon({
+    id: 'w-saber-typed-collision', name: 'Interpreter Contract Saber',
+    modifiers: [
+      { type: 'ATTACK_BONUS', value: 1, target: 'attack', bonusType: 'competence' },
+      { type: 'ATTACK_BONUS', value: 3, target: 'attack', bonusType: 'competence' }
+    ]
+  });
+  const twoTypedResult = resolveAttackBonus(actor, twoTypedSaber, null, { attackType: 'melee' });
+  assert.equal(twoTypedResult.total, baselineSaber.total + 3, 'interpreter contract: two competence-typed ATTACK_BONUS records on one weapon collide correctly (only the higher, +3, applies), not a bare sum');
+
+  // Cross-target-alias collision: a competence-typed weapon contribution
+  // (target 'attack.bonus') and a competence Active Effect (target
+  // 'global.attack') must collide in the SAME stacking universe.
+  const aliasSaber = lightsaberWeapon({
+    id: 'w-saber-alias', name: 'Alias Contract Saber',
+    modifiers: [{ type: 'ATTACK_BONUS', value: 5, target: 'attack', bonusType: 'competence' }]
+  });
+  const actorAliasPlusEffect = makeActor({ bab: 7, str: 2, effects: [competenceAttackEffect(4, { id: 'effect-x', name: 'Battle Focus' })] });
+  const aliasResult = resolveAttackBonus(actorAliasPlusEffect, aliasSaber, null, { attackType: 'melee' });
+  assert.equal(aliasResult.total, baselineSaber.total + 5, 'interpreter contract: a competence-typed weapon contribution (attack.bonus) and a competence Active Effect (global.attack) collide in ONE stacking universe -- only the higher (+5) applies, not +9 -- proving the target-alias normalization');
+  const suppressedAliasRow = aliasResult.typedModifierLedger.find(e => e.label === 'Battle Focus');
+  assert.equal(suppressedAliasRow?.applied, false, 'the lower-value Effect Intent contribution must remain visible in the ledger, marked not-applied');
+  assert.ok(String(suppressedAliasRow?.reason || '').includes('highestOnly'), 'a suppressed competence contribution\'s reason must correctly cite highestOnly stacking');
+
+  // Weapon contribution vs Charge, same type, legally can collide.
   const chargeContribution = makeMod({ source: MSource.CONDITION, sourceId: 'charge', sourceName: 'Charge', target: 'global.attack', type: MType.COMPETENCE, value: 2 });
-  const strongCrystal = crystalUpgrade({ id: 'upgrade-strong', name: 'Adegan Crystal', bonusType: 'competence', value: 5 });
-  const strongCrystalSaber = lightsaberWeapon({ id: 'w-saber-strong', name: 'Strong Saber', installedUpgrades: ['upgrade-strong'] });
-  const actorStrongCrystal = makeActor({ bab: 7, str: 2, items: [strongCrystal] });
-  const crystalVsChargeResult = resolveAttackBonus(actorStrongCrystal, strongCrystalSaber, null, { attackType: 'melee', situationalContributions: [chargeContribution] });
-  assert.equal(crystalVsChargeResult.total, baselineSaber.total + 5, 'crystal (+5 competence) vs Charge (+2 competence): only the higher (crystal) applies');
+  const strongAliasSaber = lightsaberWeapon({
+    id: 'w-saber-strong', name: 'Strong Saber',
+    modifiers: [{ type: 'ATTACK_BONUS', value: 6, target: 'attack', bonusType: 'competence' }]
+  });
+  const crystalVsChargeResult = resolveAttackBonus(actor, strongAliasSaber, null, { attackType: 'melee', situationalContributions: [chargeContribution] });
+  assert.equal(crystalVsChargeResult.total, baselineSaber.total + 6, 'interpreter contract: weapon contribution (+6 competence) vs Charge (+2 competence): only the higher applies');
 
   // 11. Truthful suppression reason: a suppressed CIRCUMSTANCE/same-source
   // contribution (stackUnlessSameSource) must never be mislabeled
@@ -849,12 +931,13 @@ ok('unified typed attack-modifier stacking: Charge is COMPETENCE per published S
   const { computeFinalAttackComposition: composeForWeaponTests } = await import('/systems/foundryvtt-swse/scripts/combat/rolls/attacks.js');
   const compositionCases = await Promise.all([
     composeForWeaponTests(attunedActor, attunedSaber, { attackType: 'melee' }),
-    composeForWeaponTests(actorWithCrystal, crystalSaber, { attackType: 'melee' }),
-    composeForWeaponTests(actorTwoUpgrades, twoUpgradeSaber, { attackType: 'melee' }),
+    composeForWeaponTests(actor, kathraciteSaber, { attackType: 'melee' }),
+    composeForWeaponTests(actor, heartSaber, { attackType: 'melee' }),
     composeForWeaponTests(actorTwoWeapons, saberA, { attackType: 'melee' }),
     composeForWeaponTests(actorTwoWeapons, saberB, { attackType: 'melee' }),
-    composeForWeaponTests(actorCrystalPlusEffect, compCrystalSaber, { attackType: 'melee' }),
-    composeForWeaponTests(actorStrongCrystal, strongCrystalSaber, { attackType: 'melee', situationalContributions: [chargeContribution] }),
+    composeForWeaponTests(actor, twoTypedSaber, { attackType: 'melee' }),
+    composeForWeaponTests(actorAliasPlusEffect, aliasSaber, { attackType: 'melee' }),
+    composeForWeaponTests(actor, strongAliasSaber, { attackType: 'melee', situationalContributions: [chargeContribution] }),
     composeForWeaponTests(actor, sameSourceWeapon, { attackType: 'melee', situationalContributions: [circumstanceA, circumstanceB] })
   ]);
   for (const result of compositionCases) {
@@ -864,11 +947,11 @@ ok('unified typed attack-modifier stacking: Charge is COMPETENCE per published S
   }
   // Dialog preview / real roll parity: computeFinalAttackComposition()
   // (what both call) must agree exactly with resolveAttackBonus() alone
-  // for the attunement and crystal-collision cases.
+  // for the attunement and alias-collision cases.
   assert.equal(compositionCases[0].atkBonus, attunedResult.total);
-  assert.equal(compositionCases[5].atkBonus, crystalPlusEffectResult.total);
+  assert.equal(compositionCases[6].atkBonus, aliasResult.total);
 }
-ok('WeaponsEngine attack.bonus modifiers (attunement, crystals) now reach resolveAttackBonus() and the final roll: fail-before/fix proven for attunement and an installed crystal; two same-type crystal modifiers correctly resolve to highest-only; weapon enhancement and nonproficiency remain exactly-once structural terms, never double-counted via the typed pool; a second equipped weapon never receives the first weapon\'s attunement/crystal contributions; a crystal (attack.bonus) and an Active Effect (global.attack) correctly collide in one stacking universe (alias normalization); a same-type crystal vs. Charge collision resolves correctly; a stackUnlessSameSource circumstance suppression is never mislabeled highestOnly; and ledger-sum parity holds throughout, including through the dialog/roll shared composition seam');
+ok('WeaponsEngine attack.bonus modifiers, generator-native schema (round 5): fail-before/fix proven for attunement and real Ilum/Mephite/Standard-Synthetic ATTACK_BONUS crystal records; Kathracite\'s DAMAGE_REDUCTION contributes zero while its ATTACK_BONUS record applies; every non-attack real crystal record shape (Kasha/Jenraux/Sigil/Krayt/Mantle/Ankarres/Compressed/Dragite/Bondar) contributes exactly zero to attack, including string-valued records that must not throw; Heart of the Guardian/Hurikane CONDITIONAL_ATTACK records fail closed to +0 (not yet automated); weapon enhancement and nonproficiency remain exactly-once structural terms; a second equipped weapon never receives the first weapon\'s attunement/crystal contributions; the interpreter\'s bonusType support and the attack.bonus/global.attack alias normalization are proven via explicitly-labeled interpreter-contract tests, separate from the shipped-crystal RAW tests; a stackUnlessSameSource circumstance suppression is never mislabeled highestOnly; and ledger-sum parity holds throughout, including through the dialog/roll shared composition seam');
 
 {
   const { computeFinalAttackComposition } = await import('/systems/foundryvtt-swse/scripts/combat/rolls/attacks.js');

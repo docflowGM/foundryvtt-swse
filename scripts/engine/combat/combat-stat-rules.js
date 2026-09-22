@@ -391,18 +391,7 @@ function pushWeaponModifierSafe(modifiers, data) {
   }
 }
 
-function mapWeaponUpgradeModifierTarget(domain) {
-  const domainMap = {
-    attack: 'attack.bonus',
-    damage: 'damage.melee',
-    defense: 'defense.ref',
-    skill: 'skill.general',
-    force: 'force.bonus'
-  };
-  return domainMap[domain] ?? 'attack.bonus';
-}
-
-// Math Integrity Freeze, Attack Bonus round 4 (found while writing this
+// Math Integrity Freeze, Attack Bonus round 4 (found while writing that
 // round's own cross-type stacking tests): the original weapons-engine.js
 // version of this mapping was a narrow allowlist (force/enhancement/
 // untyped/equipment only) that silently downgraded any OTHER canonical
@@ -411,20 +400,67 @@ function mapWeaponUpgradeModifierTarget(domain) {
 // two same-type crystal modifiers both stack instead of correctly
 // colliding. Matches the existing membership-check idiom this project
 // already uses for the identical problem in
-// grappling-system.js#collectContextualGrappleModifiers().
+// grappling-system.js#collectContextualGrappleModifiers(). Still used for
+// the (currently zero, but possible) case of a future ATTACK_BONUS crystal
+// record that does specify an explicit bonusType.
 function mapWeaponUpgradeBonusType(bonusType) {
   const key = String(bonusType ?? '').toLowerCase().trim();
   return Object.values(ModifierType).includes(key) ? key : ModifierType.UNTYPED;
 }
 
 /**
- * Math Integrity Freeze, Attack Bonus round 4 (blocker fix): the single,
+ * Math Integrity Freeze, Attack Bonus round 5 (blocker fix): the single,
  * weapon-scoped authority for a lightsaber's attunement bonus and its
- * installed upgrade (crystal) modifiers -- Modifier objects, not pre-summed
- * numbers, so a stacking-sensitive consumer (combat-roll-math.js#
- * resolveAttackBonus()'s unified typed pool) can resolve them together with
- * every other typed attack contribution rather than silently never seeing
- * them at all.
+ * installed crystal/accessory attack modifiers -- Modifier objects, not
+ * pre-summed numbers, so a stacking-sensitive consumer
+ * (combat-roll-math.js#resolveAttackBonus()'s unified typed pool) can
+ * resolve them together with every other typed attack contribution rather
+ * than silently never seeing them at all.
+ *
+ * GENERATOR-NATIVE SOURCE (round 5 correction): a round-4 version of this
+ * function read `weapon.system.installedUpgrades` (an array of ids
+ * resolved via `actor.items.get()` against separate owned `weaponUpgrade`
+ * items) and a `{domain, bonusType, value}` modifier shape. Neither matches
+ * how a lightsaber is actually built. Confirmed directly against
+ * `lightsaber-construction-engine.js#createBuiltLightsaber()`/
+ * `applyEdits()`: the selected crystal's and accessories' own
+ * `system.modifiers` records are copied VERBATIM onto the finished weapon's
+ * OWN `system.modifiers` array -- no separate owned `weaponUpgrade` item,
+ * no `installedUpgrades` field, ever gets populated by that (the only live)
+ * construction path. `weapon.system.installedUpgrades` does have one live
+ * writer elsewhere (`install-remove-engine.js`, the general, non-lightsaber
+ * slot-upgrade system), but its array holds `{id: randomInstanceId, name,
+ * cost, ...}` display-summary objects, not actor-item references -- a
+ * completely different shape, unrelated to lightsaber crystals, and never
+ * matching the id-lookup this function used to perform either way. The
+ * round-4 shape had no live producer at all; this version reads the real
+ * one.
+ *
+ * FAIL-CLOSED INTERPRETATION (round 5 correction): the real compiled
+ * `packs/lightsaber-crystals.db` is a heterogeneous rules-record schema
+ * (`type` values include ATTACK_BONUS, CONDITIONAL_ATTACK, DAMAGE_BONUS,
+ * CONDITIONAL_DAMAGE, DEFENSE_BONUS, ENEMY_PENALTY, SKILL_BONUS,
+ * SKILL_MODIFIER, HEALING_BONUS, DAMAGE_TYPE_CHANGE, DAMAGE_REDUCTION,
+ * CRITICAL_BONUS, FORCE_POINT_DIE_UPGRADE, REROLL_ABILITY, LIGHT_EMISSION,
+ * SENSE_OVERRIDE, ALIGNMENT_REFLECTION, CRITICAL_FAILURE -- confirmed by
+ * direct inspection, not inferred from the older `data/
+ * lightsaber-components.json`/`lightsaber-items-import.ndjson` reference
+ * files, which use a different, non-authoritative shape). A round-4 helper
+ * defaulted any record with no recognized `domain` to `'attack.bonus'` --
+ * on the REAL schema (which has no `domain` field at all) that would have
+ * silently turned Kasha's +2 Will Defense, Sigil's +2 damage, Mantle's +2
+ * Use the Force, Compressed's -2 enemy Block penalty, and more, into
+ * permanent attack bonuses. Only `type === 'ATTACK_BONUS'` (with its own
+ * `target === 'attack'`) is interpreted as a flat attack Modifier here.
+ * `type === 'CONDITIONAL_ATTACK'` (Heart of the Guardian: +2 vs lightsaber
+ * wielders; Hurikane: +2 vs armored targets) is a REAL attack bonus, but
+ * this project's attack pipeline does not yet provide authoritative,
+ * verified target-state context (e.g. "is the target a lightsaber
+ * wielder," "is the target armored") at this layer -- a known conditional
+ * bonus silently not applying is far safer than a known-wrong permanent
+ * one, so it deliberately emits nothing (NOT YET AUTOMATED) rather than
+ * guessing. Every other `type` is a non-attack effect and emits nothing
+ * for Attack Bonus purposes -- there is no unknown-type fallback.
  *
  * This was previously implemented ONLY inside weapons-engine.js (an
  * actor-wide, all-equipped-weapons collector), which combat-roll-math.js
@@ -444,9 +480,8 @@ function mapWeaponUpgradeBonusType(bonusType) {
  * and including them here would double-count them.
  *
  * @param {Actor} actor
- * @param {Item} weapon - the SPECIFIC weapon being rolled; only this
- *   weapon's own attunement/upgrades are considered (never another
- *   equipped weapon's).
+ * @param {Item} weapon - the SPECIFIC weapon being rolled; reads only this
+ *   weapon's own `system.modifiers` (never another equipped weapon's).
  * @returns {Modifier[]}
  */
 export function getWeaponAttunementAndUpgradeModifiers(actor, weapon) {
@@ -468,46 +503,45 @@ export function getWeaponAttunementAndUpgradeModifiers(actor, weapon) {
     });
   }
 
-  const installedUpgrades = weapon.system?.installedUpgrades ?? [];
-  if (!installedUpgrades.length) return modifiers;
+  const weaponModifierRecords = Array.isArray(weapon.system?.modifiers) ? weapon.system.modifiers : [];
+  if (!weaponModifierRecords.length) return modifiers;
 
-  const upgrades = installedUpgrades
-    .map(id => actor.items?.get(id))
-    .filter(u => u !== undefined && u.type === 'weaponUpgrade');
+  // The crystal/accessory Item's own name is not embedded in the copied
+  // modifier record (construction merges every selected component's
+  // `system.modifiers` into one flat array with no per-record origin tag),
+  // so the best available provenance is the crystal id construction
+  // recorded on the weapon itself -- resolved to a real name when the
+  // crystal is still a resolvable Item, generic otherwise.
+  const crystalId = weapon.flags?.swse?.lightsaberConfig?.crystalId
+    ?? weapon.flags?.['foundryvtt-swse']?.lightsaberConfig?.crystalId
+    ?? null;
+  const crystalLabel = (crystalId && actor.items?.get?.(crystalId)?.name) || 'Crystal';
 
-  for (const upgrade of upgrades) {
-    const lightsaberData = upgrade.system?.lightsaber;
-    if (!lightsaberData) continue;
-
-    if (Array.isArray(upgrade.system.modifiers)) {
-      for (const mod of upgrade.system.modifiers) {
-        pushWeaponModifierSafe(modifiers, {
-          source: ModifierSource.ITEM,
-          sourceId: upgrade.id,
-          sourceName: `${weapon.name} (${upgrade.name})`,
-          target: mapWeaponUpgradeModifierTarget(mod.domain),
-          type: mod.bonusType ? mapWeaponUpgradeBonusType(mod.bonusType) : ModifierType.UNTYPED,
-          value: mod.value ?? 0,
-          enabled: true,
-          priority: 55,
-          description: `${upgrade.name} modifier`
-        });
-      }
+  let attackRecordIndex = 0;
+  for (const record of weaponModifierRecords) {
+    if (!record || typeof record !== 'object') continue;
+    const recordType = String(record.type ?? '').toUpperCase();
+    if (recordType !== 'ATTACK_BONUS') {
+      // CONDITIONAL_ATTACK and every other non-attack rule kind: see the
+      // fail-closed doc comment above. Intentionally no fallback.
+      continue;
     }
-
-    if (lightsaberData.damageBonus && lightsaberData.damageBonus > 0) {
-      pushWeaponModifierSafe(modifiers, {
-        source: ModifierSource.ITEM,
-        sourceId: upgrade.id,
-        sourceName: `${weapon.name} (${upgrade.name})`,
-        target: 'damage.melee',
-        type: ModifierType.UNTYPED,
-        value: lightsaberData.damageBonus,
-        enabled: true,
-        priority: 55,
-        description: `${upgrade.name} damage bonus`
-      });
-    }
+    if (String(record.target ?? '').toLowerCase() !== 'attack') continue;
+    const value = Number(record.value);
+    if (!Number.isFinite(value) || value === 0) continue;
+    attackRecordIndex += 1;
+    const label = attackRecordIndex > 1 ? `${crystalLabel} ${attackRecordIndex}` : crystalLabel;
+    pushWeaponModifierSafe(modifiers, {
+      source: ModifierSource.ITEM,
+      sourceId: `${weapon.id}_attack-bonus-${attackRecordIndex}`,
+      sourceName: `${weapon.name} (${label})`,
+      target: 'attack.bonus',
+      type: record.bonusType ? mapWeaponUpgradeBonusType(record.bonusType) : ModifierType.UNTYPED,
+      value,
+      enabled: true,
+      priority: 55,
+      description: `${label} attack modifier`
+    });
   }
 
   return modifiers;

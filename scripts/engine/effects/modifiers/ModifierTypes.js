@@ -34,19 +34,6 @@ export const ModifierType = Object.freeze({
   // source must not let it apply twice. highestOnly gives that "flanking
   // or not" semantics correctly without inventing a new stacking rule.
   FLANKING: 'flanking',
-  // Math Integrity Freeze, Attack Bonus round 4: WeaponsEngine's lightsaber
-  // upgrade (crystal) modifier builder has documented 'force' as an
-  // acceptable bonusType value since before this round (#mapBonusType's
-  // typeMap) but no corresponding canonical type existed here -- any
-  // upgrade modifier actually tagged bonusType:'force' would fail
-  // createModifier()'s type validation and be silently dropped. No RAW
-  // evidence was found that a Force-crystal's attack bonus should be
-  // capped highest-only against another Force-crystal bonus (a lightsaber
-  // normally carries at most one crystal upgrade slot anyway), so it is
-  // left out of STACKING_RULES below and defaults to 'stack' like any
-  // other undocumented type -- the same "if unnamed, preserve normal
-  // stacking" policy applied throughout this round.
-  FORCE: 'force',
   DEXTERITY_LOSS: 'dexterityLoss'  // Meta-modifier for special case
 });
 
