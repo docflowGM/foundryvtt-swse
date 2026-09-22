@@ -4,26 +4,54 @@
  * Math Integrity Freeze, Batch 2B ("Bluebolt" defect). Confirmed root
  * cause: template.json's weapon schema defaults `meleeOrRanged` to
  * "melee" and `ranged` to `false` for ANY weapon document whose source
- * data omits those fields. A full pack scan found `meleeOrRanged` absent
- * on 100% of shipped weapon records (744/744) -- it is never authored
- * anywhere in this repository's real data, so every purchase, drag-drop,
- * or plain read of a live weapon Document gets those two fields
- * schema-defaulted, unconditionally, regardless of the weapon's real
- * `weaponCategory` (which DOES hold a reliable, always-authored literal
- * "melee"/"ranged" value on 100% of records). This is the confirmed origin
- * of Gar'ee's real Bluebolt Blaster Pistol showing `meleeOrRanged:"melee"`
- * alongside `weaponCategory:"ranged"`.
+ * data omits those fields. A full, deduplicated pack scan found
+ * `meleeOrRanged` absent on 100% of shipped weapon-type records checked --
+ * 193 unique standalone weapon-catalog records (across packs/weapons*.db)
+ * plus 5,766 actor-embedded weapon items (NPC/heroic/nonheroic/droid packs),
+ * 5,959 total -- it is never authored anywhere in this repository's real
+ * data, so every purchase, drag-drop, or plain read of a live weapon
+ * Document gets those two fields schema-defaulted, unconditionally,
+ * regardless of the weapon's real `weaponCategory` (which DOES hold a
+ * reliable, always-authored literal "melee"/"ranged" value on 100% of
+ * standalone records). This is the confirmed origin of Gar'ee's real
+ * Bluebolt Blaster Pistol showing `meleeOrRanged:"melee"` alongside
+ * `weaponCategory:"ranged"`.
  *
  * template.json cannot itself carry conditional logic, so this hook
  * corrects the contradiction at the one boundary that can: immediately
- * before a weapon Item is created or updated. It never rewrites the
- * high-trust, deliberately-authored fields (weaponCategory, proficiency,
- * subcategory, category) that are the actual evidence -- only the
- * low-trust, schema-defaultable ones (meleeOrRanged, the legacy `ranged`
- * boolean), and it fills `attackAttribute` from the branch default ONLY
- * when the field is genuinely absent, preserving any explicit value
- * (including one that intentionally differs from the branch default)
- * verbatim. See scripts/items/weapon-branch-resolver.js.
+ * before a weapon Item is created or updated. See
+ * scripts/items/weapon-branch-resolver.js for the full field contract and
+ * `normalizeWeaponForWrite()`'s precedence rules; the summary as of Batch
+ * 2B correction #3:
+ *
+ * READ-TIME AUTHORITY: existing legacy/source data is interpreted
+ * tolerantly by `resolveWeaponBranchFamily()`, which never mutates
+ * anything -- safe to call against un-migrated pack data at any time.
+ *
+ * WRITE-TIME AUTHORITY: `normalizeWeaponForWrite()` DOES intentionally
+ * reconcile the full persisted schema for coherence -- `weaponCategory`
+ * (kept as a pure branch mirror), `subcategory`/`category`/`proficiency`
+ * (the family and its aliases), `meleeOrRanged`/`ranged`, and
+ * `rangeProfile`/`weaponType` can all be normalized when they disagree
+ * with the resolved branch. This is a deliberate change from Batch 2B's
+ * original round (which only touched the low-trust `meleeOrRanged`/
+ * `ranged` pair) -- an independent review (correction) found that leaving
+ * `weaponCategory`/`proficiency`/`subcategory`/`category` untouched let a
+ * stale, contradictory family value survive an explicit branch change.
+ *
+ * CREATE PROVENANCE (`preCreateItem`, below): only the raw `data.system`
+ * the caller actually supplied counts as authored intent. By hook time,
+ * Foundry has already merged that payload onto template.json's schema, so
+ * `document.system` contains fabricated defaults (e.g. `attackAttribute:
+ * "str"`) for any field the caller never authored -- never genuine prior
+ * player state, since no prior state exists for a brand-new document.
+ *
+ * UPDATE PROVENANCE (`preUpdateItem`, below): `document.system` IS genuine,
+ * previously-persisted state; `data.system` is the sparse delta this
+ * specific update actually submits. `attackAttribute` is filled from the
+ * branch default ONLY when genuinely absent (by either provenance rule
+ * above); an explicit value, including one that intentionally differs from
+ * the branch default, is always preserved verbatim.
  *
  * This is a defense-in-depth companion to every read-time consumer being
  * repointed onto the same canonical resolver directly (so no consumer
