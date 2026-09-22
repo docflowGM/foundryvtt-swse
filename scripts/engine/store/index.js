@@ -107,7 +107,12 @@ function getDroidStatblockQuality(item = {}) {
   if (system.droidSystems || system.droidSystemText || item.doc?.flags?.swse?.droidSystemText) score += 8;
   if (Number(system.costNumeric ?? system.cost ?? item.cost ?? 0) > 0) score += 2;
 
-  const abilities = system.abilities || system.attributes || {};
+  // Canonical ability-score path is system.attributes; system.abilities is
+  // a legacy compatibility mirror (docs/systems/ABILITY_SCHEMA_AUTHORITY.md).
+  // This operates on a droid Item's pack/stat-block data, not a live
+  // Actor, so it stays a direct field-order fix rather than SchemaAdapters
+  // (which reads system.derived data that pack items never have).
+  const abilities = system.attributes || system.abilities || {};
   const stockDefaultAbilityKeys = ['str', 'dex', 'int', 'wis', 'cha'];
   const hasDefaultScores = stockDefaultAbilityKeys.every(key => {
     const block = abilities?.[key] || {};

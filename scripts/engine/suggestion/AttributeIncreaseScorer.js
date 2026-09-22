@@ -231,20 +231,34 @@ function _getIdentityAlignment(allocation, buildIntent = {}, planningProfile = n
  * Create hypothetical actor with modified ability scores
  * @private
  */
-function _createHypotheticalActor(actor, hypotheticalScores) {
-  // Create a shallow copy with modified abilities
-  // Phase 3A: Canonical ability path is .base, not deprecated .value
+export function _createHypotheticalActor(actor, hypotheticalScores) {
+  // Create a shallow copy with modified abilities.
+  // Canonical ability path is system.attributes.<key>.base
+  // (docs/systems/ABILITY_SCHEMA_AUTHORITY.md) -- this used to patch
+  // system.abilities, the legacy read-only compatibility mirror. That
+  // silently stopped affecting anything once downstream consumers
+  // (SchemaAdapters, prerequisite-checker.js's ability-requirement check)
+  // were fixed to prefer system.attributes: the hypothetical override
+  // landed in a field nothing canonical reads anymore. system.derived.attributes
+  // is also cleared for the six abilities so a live, real-score derived
+  // snapshot on the source actor cannot shadow the hypothetical scores --
+  // SchemaAdapters.getAbilityMod()/getAbilityScore() check derived data
+  // before system.attributes.
+  const realAttrs = actor.system?.attributes || {};
+  const attributes = {};
+  const derivedAttributes = {};
+  for (const key of ['str', 'dex', 'con', 'int', 'wis', 'cha']) {
+    attributes[key] = { ...realAttrs[key], base: hypotheticalScores[key] };
+    derivedAttributes[key] = undefined;
+  }
   const hypothetical = {
     ...actor,
     system: {
       ...actor.system,
-      abilities: {
-        str: { ...actor.system.abilities.str, base: hypotheticalScores.str },
-        dex: { ...actor.system.abilities.dex, base: hypotheticalScores.dex },
-        con: { ...actor.system.abilities.con, base: hypotheticalScores.con },
-        int: { ...actor.system.abilities.int, base: hypotheticalScores.int },
-        wis: { ...actor.system.abilities.wis, base: hypotheticalScores.wis },
-        cha: { ...actor.system.abilities.cha, base: hypotheticalScores.cha }
+      attributes,
+      derived: {
+        ...actor.system?.derived,
+        attributes: derivedAttributes
       }
     }
   };

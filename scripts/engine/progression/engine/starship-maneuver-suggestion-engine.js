@@ -10,6 +10,7 @@ import {
   MANEUVER_SCORING,
   MANEUVER_SKILL_THRESHOLDS
 } from "/systems/foundryvtt-swse/scripts/engine/progression/engine/suggestion-constants.js";
+import { SchemaAdapters } from "/systems/foundryvtt-swse/scripts/utils/schema-adapters.js";
 
 export class StarshipManeuverSuggestionEngine {
   static MANEUVER_DIFFICULTY = {
@@ -73,7 +74,10 @@ export class StarshipManeuverSuggestionEngine {
 
     // Get pilot's Piloting skill bonus
     const pilotingSkill = actor.system?.skills?.piloting?.bonus || 0;
-    const wisdomMod = actor.system?.abilities?.wis?.mod || 0;
+    // SchemaAdapters.getAbilityMod() is the canonical authority
+    // (docs/systems/ABILITY_SCHEMA_AUTHORITY.md); this previously read
+    // only the legacy system.abilities mirror, always {mod:0}.
+    const wisdomMod = SchemaAdapters.getAbilityMod(actor, 'wis');
     const hasForceTraining = actor.items?.some(i => i.name === FORCE_IDENTIFIERS.USE_THE_FORCE || i.system?.tags?.includes(FORCE_IDENTIFIERS.FORCE_TRAINED_TAG));
 
     // Score each available maneuver

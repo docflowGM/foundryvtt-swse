@@ -10,6 +10,7 @@ import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-e
 // ============================================
 
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { SchemaAdapters } from "/systems/foundryvtt-swse/scripts/utils/schema-adapters.js";
 import { resolveSkillKey, resolveSkillName } from "/systems/foundryvtt-swse/scripts/utils/skill-resolver.js";
 import CharacterTemplates from "/systems/foundryvtt-swse/scripts/apps/chargen/chargen-templates.js";
 import { ClassesRegistry } from "/systems/foundryvtt-swse/scripts/engine/registries/classes-registry.js";
@@ -445,8 +446,11 @@ async _prepareContext(options) {
     // Get class skills for this template's class
     const classSkills = await this._getClassSkills(template.class);
 
-    // Calculate available skill points (Int mod + class bonus)
-    const intTotal = actor.system.abilities?.int?.total ?? actor.system.attributes?.int?.total ?? 10;
+    // Calculate available skill points (Int mod + class bonus).
+    // SchemaAdapters.getAbilityScore() is the canonical authority
+    // (docs/systems/ABILITY_SCHEMA_AUTHORITY.md); this previously checked
+    // the legacy system.abilities mirror before system.attributes.
+    const intTotal = SchemaAdapters.getAbilityScore(actor, 'int');
     const intMod = Math.floor((intTotal - 10) / 2);
     const classSkillPoints = this._getClassSkillPoints(template.class);
     const totalSkillPoints = Math.max(1, intMod + classSkillPoints);

@@ -14,13 +14,14 @@
 import { RollCore } from "/systems/foundryvtt-swse/scripts/engine/roll/roll-core.js";
 import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
 import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { SchemaAdapters } from "/systems/foundryvtt-swse/scripts/utils/schema-adapters.js";
 
 function numeric(value, fallback = 0) {
   const n = Number(value);
   return Number.isFinite(n) ? n : fallback;
 }
 
-function getActorInitiativeSkillTotal(actor) {
+export function getActorInitiativeSkillTotal(actor) {
   const derivedSkills = actor?.system?.derived?.skills;
   const fromList = Array.isArray(derivedSkills?.list)
     ? derivedSkills.list.find(row => row?.key === 'initiative')
@@ -40,11 +41,14 @@ function getActorInitiativeSkillTotal(actor) {
 
   const skill = actor?.system?.skills?.initiative ?? {};
   const abilityKey = skill.selectedAbility || skill.ability || 'dex';
-  const abilityMod = numeric(
-    actor?.system?.derived?.attributes?.[abilityKey]?.mod
-      ?? actor?.system?.abilities?.[abilityKey]?.mod,
-    0
-  );
+  // SchemaAdapters.getAbilityMod() is the canonical ability-modifier
+  // authority (docs/systems/ABILITY_SCHEMA_AUTHORITY.md): derived data
+  // first, then reconstruction from system.attributes, and system.abilities
+  // only as a last-resort compatibility fallback for an actor with no
+  // system.attributes at all. The previous inline expression here skipped
+  // straight from system.derived.attributes to the legacy system.abilities
+  // mirror, never trying system.attributes[abilityKey].base in between.
+  const abilityMod = numeric(SchemaAdapters.getAbilityMod(actor, abilityKey), 0);
   const halfLevel = numeric(actor?.system?.derived?.identity?.halfLevel, Math.floor(numeric(actor?.system?.level, 1) / 2));
   return abilityMod
     + halfLevel

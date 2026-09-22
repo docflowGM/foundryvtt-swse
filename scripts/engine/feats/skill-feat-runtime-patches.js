@@ -3,6 +3,7 @@ import { SkillFeatRuleResolver } from "/systems/foundryvtt-swse/scripts/engine/s
 import { EncounterUseTracker } from "/systems/foundryvtt-swse/scripts/engine/feats/encounter-use-tracker.js";
 import { MetaResourceFeatResolver } from "/systems/foundryvtt-swse/scripts/engine/feats/meta-resource-feat-resolver.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { SchemaAdapters } from "/systems/foundryvtt-swse/scripts/utils/schema-adapters.js";
 
 let registered = false;
 
@@ -179,13 +180,11 @@ function contextAffirms(value) {
 function actorAbilityMod(actor, ability) {
   const key = String(ability || '').toLowerCase().slice(0, 3);
   if (!key) return 0;
-  const value = actor?.system?.derived?.attributes?.[key]?.mod
-    ?? actor?.system?.abilities?.[key]?.mod
-    ?? actor?.system?.attributes?.[key]?.mod
-    ?? actor?.system?.derived?.abilities?.[key]?.mod
-    ?? 0;
-  const numeric = Number(value);
-  return Number.isFinite(numeric) ? numeric : 0;
+  // SchemaAdapters.getAbilityMod() is the canonical ability-modifier
+  // authority (docs/systems/ABILITY_SCHEMA_AUTHORITY.md). The previous
+  // implementation checked the legacy system.abilities mirror before
+  // system.attributes and had no score-reconstruction fallback at all.
+  return SchemaAdapters.getAbilityMod(actor, key);
 }
 
 function currentActionCost(context = {}) {
