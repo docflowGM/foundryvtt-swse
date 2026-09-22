@@ -550,7 +550,13 @@ export function resolveAttackBonus(actor, weapon, actionId = null, context = {})
   );
   const situationalContributions = Array.isArray(context.situationalContributions) ? context.situationalContributions : [];
   const typedCombatOptionContributions = Array.isArray(attackOptionModifiers.attackContributions) ? attackOptionModifiers.attackContributions : [];
-  const weaponAttackContributions = getWeaponAttunementAndUpgradeModifiers(actor, weapon);
+  // Math Integrity Freeze, Attack Bonus round 6: the SAME target resolver
+  // the rest of this file already exports (getTargetActorFromOptions) is
+  // reused here -- not a second target resolver -- so a CONDITIONAL_ATTACK
+  // crystal (Heart of the Guardian, Hurikane) sees the roll's authoritative
+  // target. No target resolvable at all yields no conditional contribution.
+  const resolvedTargetActor = getTargetActorFromOptions(context);
+  const weaponAttackContributions = getWeaponAttunementAndUpgradeModifiers(actor, weapon, { targetActor: resolvedTargetActor });
   const ATTACK_TARGET_ALIASES = new Set(['global.attack', 'attack.bonus']);
   const normalizeAttackModifierTarget = (mod) => (mod && mod.target !== 'global.attack' && ATTACK_TARGET_ALIASES.has(mod.target))
     ? { ...mod, target: 'global.attack' }

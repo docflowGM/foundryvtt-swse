@@ -7,7 +7,8 @@
 
 import { SchemaAdapters } from "/systems/foundryvtt-swse/scripts/utils/schema-adapters.js";
 import { getEffectiveHalfLevel } from "/systems/foundryvtt-swse/scripts/actors/derived/level-split.js";
-import { isRangedWeapon as canonicalIsRangedWeapon, isMeleeWeapon as canonicalIsMeleeWeapon } from "/systems/foundryvtt-swse/scripts/items/weapon-branch-resolver.js";
+import { isRangedWeapon as canonicalIsRangedWeapon, isMeleeWeapon as canonicalIsMeleeWeapon, isItemEquipped as canonicalIsItemEquipped } from "/systems/foundryvtt-swse/scripts/items/weapon-branch-resolver.js";
+import { isArmorItemEquipped, isEnergyShieldItem } from "/systems/foundryvtt-swse/scripts/items/armor-data-resolver.js";
 import { ModifierSource, ModifierType, createModifier } from "/systems/foundryvtt-swse/scripts/engine/effects/modifiers/ModifierTypes.js";
 import { SWSELogger as swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
@@ -453,14 +454,18 @@ function mapWeaponUpgradeBonusType(bonusType) {
  * permanent attack bonuses. Only `type === 'ATTACK_BONUS'` (with its own
  * `target === 'attack'`) is interpreted as a flat attack Modifier here.
  * `type === 'CONDITIONAL_ATTACK'` (Heart of the Guardian: +2 vs lightsaber
- * wielders; Hurikane: +2 vs armored targets) is a REAL attack bonus, but
- * this project's attack pipeline does not yet provide authoritative,
- * verified target-state context (e.g. "is the target a lightsaber
- * wielder," "is the target armored") at this layer -- a known conditional
- * bonus silently not applying is far safer than a known-wrong permanent
- * one, so it deliberately emits nothing (NOT YET AUTOMATED) rather than
- * guessing. Every other `type` is a non-attack effect and emits nothing
- * for Attack Bonus purposes -- there is no unknown-type fallback.
+ * wielders; Hurikane: +2 vs armored targets) is now automated (round 6):
+ * `resolveAttackBonus()` resolves the roll's authoritative target actor via
+ * its own `getTargetActorFromOptions(context)` call (the SAME target
+ * resolver the rest of the attack pipeline already uses -- no second
+ * resolver invented) and passes it in as `targetActor`. The condition is
+ * evaluated against ONLY that resolved target -- no target resolvable at
+ * all (no `targetActor` argument) always yields no contribution, matching
+ * the dialog's own "fail closed, never guess a target" contract. Every
+ * other `type` is a non-attack effect and emits nothing for Attack Bonus
+ * purposes -- there is no unknown-type fallback, and an unrecognized
+ * `condition` string on a CONDITIONAL_ATTACK record also fails closed
+ * (see CONDITIONAL_ATTACK_CRYSTAL_CONDITIONS below).
  *
  * This was previously implemented ONLY inside weapons-engine.js (an
  * actor-wide, all-equipped-weapons collector), which combat-roll-math.js
@@ -482,9 +487,12 @@ function mapWeaponUpgradeBonusType(bonusType) {
  * @param {Actor} actor
  * @param {Item} weapon - the SPECIFIC weapon being rolled; reads only this
  *   weapon's own `system.modifiers` (never another equipped weapon's).
+ * @param {{targetActor?: Actor|null}} [options] - the roll's resolved
+ *   target actor, for CONDITIONAL_ATTACK crystal records. Omit/null when no
+ *   target is resolvable; conditional contributions then simply don't apply.
  * @returns {Modifier[]}
  */
-export function getWeaponAttunementAndUpgradeModifiers(actor, weapon) {
+export function getWeaponAttunementAndUpgradeModifiers(actor, weapon, { targetActor = null } = {}) {
   const modifiers = [];
   if (!actor || !weapon || weapon.type !== 'weapon') return modifiers;
   if (weapon.system?.subtype !== 'lightsaber') return modifiers;
@@ -518,12 +526,34 @@ export function getWeaponAttunementAndUpgradeModifiers(actor, weapon) {
   const crystalLabel = (crystalId && actor.items?.get?.(crystalId)?.name) || 'Crystal';
 
   let attackRecordIndex = 0;
+  let conditionalRecordIndex = 0;
   for (const record of weaponModifierRecords) {
     if (!record || typeof record !== 'object') continue;
     const recordType = String(record.type ?? '').toUpperCase();
+
+    if (recordType === 'CONDITIONAL_ATTACK') {
+      conditionalRecordIndex += 1;
+      const value = Number(record.value);
+      if (!Number.isFinite(value) || value === 0) continue;
+      if (!targetQualifiesForConditionalAttackCrystal(record.condition, targetActor)) continue;
+      const label = conditionalRecordIndex > 1 ? `${crystalLabel} ${conditionalRecordIndex}` : crystalLabel;
+      pushWeaponModifierSafe(modifiers, {
+        source: ModifierSource.ITEM,
+        sourceId: `${weapon.id}_conditional-attack-${conditionalRecordIndex}`,
+        sourceName: `${weapon.name} (${label})`,
+        target: 'attack.bonus',
+        type: record.bonusType ? mapWeaponUpgradeBonusType(record.bonusType) : ModifierType.UNTYPED,
+        value,
+        enabled: true,
+        priority: 55,
+        description: `${label} attack modifier (${record.condition})`
+      });
+      continue;
+    }
+
     if (recordType !== 'ATTACK_BONUS') {
-      // CONDITIONAL_ATTACK and every other non-attack rule kind: see the
-      // fail-closed doc comment above. Intentionally no fallback.
+      // Every other non-attack rule kind: see the fail-closed doc comment
+      // above. Intentionally no fallback.
       continue;
     }
     if (String(record.target ?? '').toLowerCase() !== 'attack') continue;
@@ -545,6 +575,51 @@ export function getWeaponAttunementAndUpgradeModifiers(actor, weapon) {
   }
 
   return modifiers;
+}
+
+// ─── CONDITIONAL_ATTACK crystal target qualification ───────────────────────
+// Math Integrity Freeze, Attack Bonus round 6: Heart of the Guardian
+// ("vs-lightsaber-wielders") and Hurikane ("vs-armored") are the only two
+// real CONDITIONAL_ATTACK records in packs/lightsaber-crystals.db. Each
+// condition string maps to exactly one qualification check against the
+// resolved target actor; an unrecognized condition string fails closed
+// (no contribution) rather than guessing what it might mean.
+
+const CONDITIONAL_ATTACK_CRYSTAL_CONDITIONS = Object.freeze({
+  'vs-armored': targetActorWearsEquippedBodyArmor,
+  'vs-lightsaber-wielders': targetActorWieldsLightsaber
+});
+
+function targetQualifiesForConditionalAttackCrystal(condition, targetActor) {
+  if (!targetActor) return false;
+  const check = CONDITIONAL_ATTACK_CRYSTAL_CONDITIONS[String(condition ?? '').toLowerCase().trim()];
+  if (!check) return false;
+  return check(targetActor);
+}
+
+// "vs-armored" (Hurikane): the target must be wearing EQUIPPED body armor --
+// the certified armor equipped-state authority
+// (armor-data-resolver.js#isArmorItemEquipped()), the same one Defense math
+// already uses, not a raw system.equipped read. An Energy Shield is stored
+// as an armor-type item too but is not body armor; isEnergyShieldItem()
+// excludes it, since no source evidence found so far says an active shield
+// alone counts as "in armor" for this crystal.
+function targetActorWearsEquippedBodyArmor(targetActor) {
+  const items = Array.from(targetActor?.items ?? []);
+  return items.some((item) => item?.type === 'armor'
+    && !isEnergyShieldItem(item)
+    && isArmorItemEquipped(item));
+}
+
+// "vs-lightsaber-wielders" (Heart of the Guardian): ownership is not
+// wielding -- the target must currently have an equipped/wielded lightsaber
+// item, via the shared equipped-item-state authority
+// (weapon-branch-resolver.js#isItemEquipped(), promoted from
+// character-actor.js's own prior copy) combined with the canonical
+// lightsaber classification (isLightsaberWeapon() above).
+function targetActorWieldsLightsaber(targetActor) {
+  const items = Array.from(targetActor?.items ?? []);
+  return items.some((item) => isLightsaberWeapon(item) && canonicalIsItemEquipped(item, targetActor));
 }
 
 function normalizeCriticalMultiplier(value, fallback = 2) {

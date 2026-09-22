@@ -82,6 +82,35 @@ function isPointBlankContext(context = {}) {
   return band === 'point-blank' || band === 'pointblank';
 }
 
+// Math Integrity Freeze, Attack Bonus round 6: discovered while proving the
+// Greater Weapon Focus + Weapon Focus golden stacking test (+2, per the real
+// packs/feats.db "Weapon Focus" record). This resolver's own
+// 'weapon-focus' branch and CombatOptionResolver.collectAttackModifiers()
+// (via collectModifierRollBonuses() reading item.system.abilityMeta.
+// modifiers) are two INDEPENDENT authorities for the exact same bonus --
+// resolveAttackBonus() adds both (this resolver's total unconditionally,
+// CombatOptionResolver's via attackOptionModifiers.attackBonus), so any
+// actor with the real, current Weapon Focus feat record (which already
+// carries its own abilityMeta.modifiers entry) was silently double-counted
+// (+2 instead of +1) on every attack roll with the selected weapon. This
+// resolver's hardcoded 'weapon-focus' fallback still exists for LEGACY feat
+// items that predate that data-driven record shape (no abilityMeta.modifiers
+// at all) -- see combat-feat-attack-modifier-regression.test.mjs's bare
+// `{ name: 'Weapon Focus', system: { selectedChoice } }` fixture -- so it is
+// gated, not removed: it only fires when the item does NOT already carry a
+// data-driven attack modifier CombatOptionResolver would apply itself.
+// Weapon Specialization's damage bonus (a Damage-domain concern, out of this
+// round's scope) and Point Blank Shot are unaffected.
+function hasDataDrivenAttackModifier(item) {
+  const modifiers = item?.system?.abilityMeta?.modifiers;
+  if (!Array.isArray(modifiers)) return false;
+  return modifiers.some((mod) => {
+    if (!mod || mod.enabled === false) return false;
+    const targets = Array.isArray(mod.target) ? mod.target : [mod.target];
+    return targets.some((t) => t === 'attack' || t === 'attack.bonus');
+  });
+}
+
 function explicitFeatBonus(item, weapon, target, context = {}) {
   const key = featBaseKey(item);
   if (key === 'point-blank-shot') {
@@ -90,7 +119,10 @@ function explicitFeatBonus(item, weapon, target, context = {}) {
   }
 
   if (!weaponMatchesSelectedChoice(item, weapon)) return 0;
-  if (key === 'weapon-focus' && target === 'attack') return 1;
+  if (key === 'weapon-focus' && target === 'attack') {
+    if (hasDataDrivenAttackModifier(item)) return 0;
+    return 1;
+  }
   if (key === 'weapon-specialization' && target === 'damage') return 2;
   return 0;
 }

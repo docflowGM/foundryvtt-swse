@@ -735,11 +735,11 @@ ok('unified typed attack-modifier stacking: Charge is COMPETENCE per published S
 // `combat-stat-rules.js#getWeaponAttunementAndUpgradeModifiers()` was
 // rewritten to read `weapon.system.modifiers` directly through a fail-closed
 // interpreter: only `type === 'ATTACK_BONUS'` (with its own
-// `target === 'attack'`) ever produces an attack Modifier; every other
-// type -- including `CONDITIONAL_ATTACK`, a genuine attack bonus this
-// project cannot yet verify the condition for -- emits nothing, with no
-// unknown-type-defaults-to-attack fallback. This section proves the full
-// pipeline against REAL pack record shapes: production data
+// `target === 'attack'`) ever produces an unconditional attack Modifier;
+// `type === 'CONDITIONAL_ATTACK'` is automated as of round 6 against the
+// roll's resolved target actor (see Section 8b/8c); every other type emits
+// nothing, with no unknown-type-defaults-to-attack fallback. This section
+// proves the full pipeline against REAL pack record shapes: production data
 // -> the fail-closed interpreter -> resolveAttackBonus()'s unified pool ->
 // the final roll composition.
 
@@ -833,18 +833,21 @@ ok('unified typed attack-modifier stacking: Charge is COMPETENCE per published S
   }
 
   // 5. Heart of the Guardian / Hurikane: CONDITIONAL_ATTACK records are REAL
-  // attack bonuses, but this project's attack pipeline provides no verified
-  // target-state context (is the target a lightsaber wielder? armored?) at
-  // this layer -- NOT YET AUTOMATED, fails closed to +0 rather than
-  // guessing, even when some unrelated context is present.
+  // attack bonuses. Round 6 automated both against the roll's resolved
+  // target actor (see Section 8b/8c below for the full target-qualification
+  // matrix); this section only proves the fail-closed no-target/unrelated-
+  // context baseline (no targetActor is passed here at all), which still
+  // correctly yields +0 -- an unrelated context flag (targetIsArmored, a
+  // flag this project's resolver never reads) must never accidentally
+  // satisfy the condition by coincidence of naming.
   const heartSaber = lightsaberWeapon({ modifiers: REAL_CRYSTAL.heart });
   const heartNoContext = resolveAttackBonus(actor, heartSaber, null, { attackType: 'melee' });
-  assert.equal(heartNoContext.total, baselineSaber.total, 'Heart of the Guardian: no verified qualifying context -> +0 (not yet automated, fails closed)');
+  assert.equal(heartNoContext.total, baselineSaber.total, 'Heart of the Guardian: no resolvable target -> +0 (fails closed, never guesses)');
   const heartWithUnrelatedContext = resolveAttackBonus(actor, heartSaber, null, { attackType: 'melee', targetIsArmored: true });
   assert.equal(heartWithUnrelatedContext.total, baselineSaber.total, 'Heart of the Guardian: an unrelated context flag must not accidentally satisfy its condition -- still +0');
   const hurikaneSaber = lightsaberWeapon({ modifiers: REAL_CRYSTAL.hurikane });
   const hurikaneNoContext = resolveAttackBonus(actor, hurikaneSaber, null, { attackType: 'melee' });
-  assert.equal(hurikaneNoContext.total, baselineSaber.total, 'Hurikane: no verified qualifying context -> +0 (not yet automated, fails closed)');
+  assert.equal(hurikaneNoContext.total, baselineSaber.total, 'Hurikane: no resolvable target -> +0 (fails closed, never guesses)');
 
   // 6. Weapon enhancement still applies exactly once (the structural
   // miscBonus path), never double-counted via the new typed pool -- the
@@ -951,7 +954,7 @@ ok('unified typed attack-modifier stacking: Charge is COMPETENCE per published S
   assert.equal(compositionCases[0].atkBonus, attunedResult.total);
   assert.equal(compositionCases[6].atkBonus, aliasResult.total);
 }
-ok('WeaponsEngine attack.bonus modifiers, generator-native schema (round 5): fail-before/fix proven for attunement and real Ilum/Mephite/Standard-Synthetic ATTACK_BONUS crystal records; Kathracite\'s DAMAGE_REDUCTION contributes zero while its ATTACK_BONUS record applies; every non-attack real crystal record shape (Kasha/Jenraux/Sigil/Krayt/Mantle/Ankarres/Compressed/Dragite/Bondar) contributes exactly zero to attack, including string-valued records that must not throw; Heart of the Guardian/Hurikane CONDITIONAL_ATTACK records fail closed to +0 (not yet automated); weapon enhancement and nonproficiency remain exactly-once structural terms; a second equipped weapon never receives the first weapon\'s attunement/crystal contributions; the interpreter\'s bonusType support and the attack.bonus/global.attack alias normalization are proven via explicitly-labeled interpreter-contract tests, separate from the shipped-crystal RAW tests; a stackUnlessSameSource circumstance suppression is never mislabeled highestOnly; and ledger-sum parity holds throughout, including through the dialog/roll shared composition seam');
+ok('WeaponsEngine attack.bonus modifiers, generator-native schema (round 5): fail-before/fix proven for attunement and real Ilum/Mephite/Standard-Synthetic ATTACK_BONUS crystal records; Kathracite\'s DAMAGE_REDUCTION contributes zero while its ATTACK_BONUS record applies; every non-attack real crystal record shape (Kasha/Jenraux/Sigil/Krayt/Mantle/Ankarres/Compressed/Dragite/Bondar) contributes exactly zero to attack, including string-valued records that must not throw; Heart of the Guardian/Hurikane CONDITIONAL_ATTACK records fail closed to +0 with no resolvable target (see Section 8b/8c for their round-6 target-qualified automation); weapon enhancement and nonproficiency remain exactly-once structural terms; a second equipped weapon never receives the first weapon\'s attunement/crystal contributions; the interpreter\'s bonusType support and the attack.bonus/global.attack alias normalization are proven via explicitly-labeled interpreter-contract tests, separate from the shipped-crystal RAW tests; a stackUnlessSameSource circumstance suppression is never mislabeled highestOnly; and ledger-sum parity holds throughout, including through the dialog/roll shared composition seam');
 
 {
   const { computeFinalAttackComposition } = await import('/systems/foundryvtt-swse/scripts/combat/rolls/attacks.js');
@@ -1097,5 +1100,422 @@ ok('multiattack dialog/roll sequence-penalty parity: step.finalPenalty now reach
   }
 }
 ok('live end-to-end: custom modifier / situational bonus / sequence penalty each apply exactly once, and the ledger sums to the actual rolled modifier');
+
+// ─── SECTION 7 — Greater Weapon Focus golden tests (round 6 blocker 1) ────
+//
+// FINDING (round 6): the ledger previously claimed Greater Weapon Focus's
+// generic record (item.system.abilityMeta.modifiers, the SAME data shape as
+// the dead internal PASSIVE/STATE `stateBonus` loop in resolveAttackBonus(),
+// gated by allowLegacyStateAttackBonus with zero live opt-ins) never reached
+// an attack roll. That claim was based on an incomplete investigation:
+// CombatOptionResolver.collectAttackModifiers() ->
+// collectWeaponRuleModifiers() -> collectModifierRollBonuses() is a
+// SEPARATE, ALREADY-LIVE consumption path for the identical data shape,
+// confirmed directly against the actual source
+// (weaponMatchesSelectedChoice() reads item.system.selectedChoice via
+// getSelectedChoiceValues() -- the real persistence contract, not
+// flags.swse.choices.* as the catalog's choiceMeta.storagePath metadata
+// implies). No allowLegacyStateAttackBonus opt-in, no code change, is
+// required -- only this executable proof, per the explicit instruction not
+// to "fix" this by reviving the legacy path. Record shapes below are copied
+// verbatim from packs/talents.db (Greater Weapon Focus generic/Lightsabers/
+// Fira records) and packs/feats.db (Weapon Focus).
+
+{
+  function genericGWFTalent(selectedChoice) {
+    return {
+      id: 'talent-gwf-generic', name: 'Greater Weapon Focus', type: 'talent',
+      system: {
+        executionModel: 'PASSIVE', subType: 'STATE', selectedChoice,
+        abilityMeta: {
+          modifiers: [{ target: 'attack', value: 1, type: 'untyped', predicates: ['attack.weapon-matches-selected-choice'], enabled: true, priority: 500, description: 'Greater Weapon Focus' }]
+        }
+      }
+    };
+  }
+  function weaponFocusFeat(selectedChoice) {
+    return {
+      id: 'feat-weapon-focus', name: 'Weapon Focus', type: 'feat',
+      system: {
+        executionModel: 'PASSIVE', subType: 'STATE', selectedChoice,
+        abilityMeta: {
+          modifiers: [{ target: 'attack.bonus', value: 1, type: 'untyped', predicates: ['attack.weapon-matches-selected-choice'], enabled: true, priority: 500, description: 'Weapon Focus' }]
+        }
+      }
+    };
+  }
+  function gwfLightsabersTalent() {
+    return {
+      id: 'talent-gwf-lightsabers', name: 'Greater Weapon Focus (Lightsabers)', type: 'talent',
+      system: {
+        executionModel: 'PASSIVE', subType: 'STATE',
+        abilityMeta: {
+          rules: [{ type: 'WEAPON_ATTACK_BONUS', weaponGroups: ['lightsabers'], requiresAttackType: 'melee', value: 1, label: 'Greater Weapon Focus (Lightsabers)' }]
+        }
+      }
+    };
+  }
+  function gwfFiraTalent() {
+    return {
+      id: 'talent-gwf-fira', name: 'Greater Weapon Focus (Fira)', type: 'talent',
+      system: {
+        executionModel: 'PASSIVE', subType: 'STATE',
+        abilityMeta: {
+          rules: [{ type: 'ATTACK_OPTION', id: 'greater-weapon-focus-fira', label: 'Greater Weapon Focus (Fira)', control: 'passive', requiresAttackType: 'melee', requiresWeaponText: ['fira'], attackModifier: 1, summary: 'Gain +1 on melee attack rolls with a Fira. This stacks with Weapon Focus (Fira).' }]
+        }
+      }
+    };
+  }
+
+  const noTalentActor = makeActor({ bab: 5, str: 1 });
+  const matchingWeapon = meleeWeapon({ group: 'vibro-axes' });
+  const baseline = resolveAttackBonus(noTalentActor, matchingWeapon, null, { attackType: 'melee' }).total;
+
+  // 1. Generic GWF, matching selectedChoice + matching weapon => +1.
+  const actorMatching = makeActor({ bab: 5, str: 1, items: [genericGWFTalent('vibro-axes')] });
+  const matchingResult = resolveAttackBonus(actorMatching, matchingWeapon, null, { attackType: 'melee' });
+  assert.equal(matchingResult.total, baseline + 1, 'FAIL-BEFORE FIX: Greater Weapon Focus generic record, matching selectedChoice + matching weapon, reaches the attack roll via the existing CombatOptionResolver path -- +1');
+
+  // 2. Same talent, mismatching weapon => +0.
+  const mismatchWeapon = meleeWeapon({ id: 'w-mismatch', name: 'Unrelated Weapon', group: 'unarmed-strikes' });
+  const mismatchBaseline = resolveAttackBonus(noTalentActor, mismatchWeapon, null, { attackType: 'melee' }).total;
+  const mismatchResult = resolveAttackBonus(actorMatching, mismatchWeapon, null, { attackType: 'melee' });
+  assert.equal(mismatchResult.total, mismatchBaseline, 'Greater Weapon Focus must not apply to a weapon outside the selected choice -- +0');
+
+  // 3. Same talent, missing selectedChoice => +0.
+  const actorNoChoice = makeActor({ bab: 5, str: 1, items: [genericGWFTalent(undefined)] });
+  const noChoiceResult = resolveAttackBonus(actorNoChoice, matchingWeapon, null, { attackType: 'melee' });
+  assert.equal(noChoiceResult.total, baseline, 'Greater Weapon Focus with no persisted selectedChoice must not apply -- +0');
+
+  // 4. Weapon Focus (matching) + Greater Weapon Focus (matching): both
+  // apply -- +2 total. Both are distinct untyped flat contributions summed
+  // in CombatOptionResolver's own attackBonus channel (not routed through
+  // the typed stacking pool), so two DIFFERENT feat/talent items -- both
+  // matching -- correctly stack, matching the real Weapon Focus feat
+  // record's own text ("This stacks with Weapon Focus" for the
+  // Lightsabers/Fira variants).
+  const actorBoth = makeActor({ bab: 5, str: 1, items: [genericGWFTalent('vibro-axes'), weaponFocusFeat('vibro-axes')] });
+  const bothResult = resolveAttackBonus(actorBoth, matchingWeapon, null, { attackType: 'melee' });
+  // FAIL-BEFORE FIX (discovered while writing this exact test, not part of
+  // the reviewer's original blocker list): the real Weapon Focus feat
+  // record's own data-driven abilityMeta.modifiers entry (proven above) was
+  // ALSO independently granted by ScopedCombatFeatResolver's separate,
+  // hardcoded 'weapon-focus' name-matching branch -- two authorities for the
+  // identical bonus, both unconditionally summed into resolveAttackBonus()'s
+  // total, silently double-counting Weapon Focus (+2 instead of +1) for any
+  // real character. Fixed narrowly in scoped-combat-feat-resolver.js: that
+  // branch now skips a feat item that already carries a data-driven attack
+  // modifier CombatOptionResolver would apply itself, preserving the legacy
+  // fallback only for feat items that predate that shape. This assertion
+  // (+2, not +3) is the fail-before/fix proof for that discovery.
+  assert.equal(bothResult.total, baseline + 2, 'Weapon Focus + Greater Weapon Focus, both matching: +2 total (GWF explicitly stacks with Weapon Focus; Weapon Focus itself is not double-counted between ScopedCombatFeatResolver and CombatOptionResolver)');
+
+  // 5. Mutation test: selectedChoice changes away from the weapon -> the
+  // very next resolveAttackBonus() call immediately loses exactly +1.
+  actorMatching.items = makeItemsCollection([genericGWFTalent('blaster-pistols')]);
+  const afterMutation = resolveAttackBonus(actorMatching, matchingWeapon, null, { attackType: 'melee' });
+  assert.equal(afterMutation.total, baseline, 'mutation test: changing selectedChoice away from the weapon loses the +1 on the very next resolution, no stale caching');
+
+  // 6/7. Greater Weapon Focus (Lightsabers): real WEAPON_ATTACK_BONUS rule,
+  // melee lightsaber => +1; non-lightsaber => +0.
+  const lightsaberActor = makeActor({ bab: 5, str: 1, items: [gwfLightsabersTalent()] });
+  const testSaber = { id: 'w-test-saber', name: 'Practice Saber', type: 'weapon', system: { weaponCategory: 'melee', proficiency: 'lightsaber', damage: '2d8', subtype: 'lightsaber' } };
+  const saberBaseline = resolveAttackBonus(makeActor({ bab: 5, str: 1 }), testSaber, null, { attackType: 'melee' }).total;
+  const saberResult = resolveAttackBonus(lightsaberActor, testSaber, null, { attackType: 'melee' });
+  assert.equal(saberResult.total, saberBaseline + 1, 'Greater Weapon Focus (Lightsabers): melee lightsaber => +1');
+  const nonSaberResult = resolveAttackBonus(lightsaberActor, matchingWeapon, null, { attackType: 'melee' });
+  assert.equal(nonSaberResult.total, baseline, 'Greater Weapon Focus (Lightsabers): non-lightsaber weapon => +0');
+
+  // 8. Greater Weapon Focus (Fira): real ATTACK_OPTION rule, qualifying
+  // melee Fira => +1; unrelated weapon => +0.
+  const firaActor = makeActor({ bab: 5, str: 1, items: [gwfFiraTalent()] });
+  const firaWeapon = { id: 'w-fira', name: 'Fira', type: 'weapon', system: { weaponCategory: 'melee', proficiency: 'simple', damage: '2d4' } };
+  const firaBaseline = resolveAttackBonus(makeActor({ bab: 5, str: 1 }), firaWeapon, null, { attackType: 'melee' }).total;
+  const firaResult = resolveAttackBonus(firaActor, firaWeapon, null, { attackType: 'melee' });
+  assert.equal(firaResult.total, firaBaseline + 1, 'Greater Weapon Focus (Fira): qualifying melee Fira => +1');
+  const firaUnrelatedResult = resolveAttackBonus(firaActor, matchingWeapon, null, { attackType: 'melee' });
+  assert.equal(firaUnrelatedResult.total, baseline, 'Greater Weapon Focus (Fira): unrelated weapon => +0');
+}
+ok('Greater Weapon Focus golden tests: the existing CombatOptionResolver path (not a revived legacy stateBonus loop) already carries the generic record\'s +1, gated correctly on matching/mismatching/missing selectedChoice, stacks correctly with Weapon Focus, reacts immediately to a selectedChoice mutation, and the Lightsabers/Fira specialized records apply via their own already-live rule types');
+
+// ─── SECTION 8 — Force-bonus stacking (round 6 blocker 2) ─────────────────
+//
+// RAW basis (SWSE Core Rulebook p.241, "Stacking Bonuses"): different
+// descriptors combine; two bonuses of the SAME named/descriptor type use
+// only the higher; unnamed (untyped) bonuses always stack; circumstance and
+// dodge are the ordinary exceptions that stack with themselves too. A named
+// Force bonus is therefore a typed, nonstacking bonus like any other named
+// type -- restored here (ModifierType.FORCE + an EXPLICIT
+// STACKING_RULES.force = 'highestOnly' entry, not the getStackingRule()
+// '|| stack' fallback).
+
+{
+  const { ModifierType: MType, ModifierSource: MSource, STACKING_RULES, createModifier: makeMod } = await import(
+    '/systems/foundryvtt-swse/scripts/engine/effects/modifiers/ModifierTypes.js'
+  );
+  const { ModifierUtils } = await import(
+    '/systems/foundryvtt-swse/scripts/engine/effects/modifiers/ModifierUtils.js'
+  );
+
+  assert.equal(MType.FORCE, 'force', 'ModifierType.FORCE must be restored');
+  assert.equal(STACKING_RULES.force, 'highestOnly', 'STACKING_RULES must carry an EXPLICIT force entry, not rely on the || stack fallback');
+
+  const force2 = makeMod({ source: MSource.ITEM, sourceId: 'crystal-a', sourceName: 'Force A', target: 'global.attack', type: MType.FORCE, value: 2 });
+  const force5 = makeMod({ source: MSource.ITEM, sourceId: 'crystal-b', sourceName: 'Force B', target: 'global.attack', type: MType.FORCE, value: 5 });
+  const forceOnlyResolved = ModifierUtils.resolveStacking([force2, force5]);
+  assert.equal(ModifierUtils.sumModifiers(forceOnlyResolved), 5, '+2 Force + +5 Force => +5 (highestOnly, same descriptor)');
+
+  const competence3 = makeMod({ source: MSource.FEAT, sourceId: 'feat-x', sourceName: 'Competence X', target: 'global.attack', type: MType.COMPETENCE, value: 3 });
+  const forceVsCompetence = ModifierUtils.resolveStacking([force2, competence3]);
+  assert.equal(ModifierUtils.sumModifiers(forceVsCompetence), 5, 'Force + competence: different descriptors, both apply (+2 + +3 = +5)');
+
+  const untyped1 = makeMod({ source: MSource.CONDITION, sourceId: 'cond-x', sourceName: 'Untyped X', target: 'global.attack', type: MType.UNTYPED, value: 1 });
+  const forceVsUntyped = ModifierUtils.resolveStacking([force2, untyped1]);
+  assert.equal(ModifierUtils.sumModifiers(forceVsUntyped), 3, 'Force + untyped: both apply (+2 + +1 = +3)');
+}
+ok('ModifierType.FORCE restored with an explicit STACKING_RULES.force = highestOnly entry (SWSE Core Rulebook p.241): two Force contributions collide to only the higher; Force vs competence and Force vs untyped both fully apply as different descriptor types');
+
+// ─── SECTION 8b — Hurikane / Heart of the Guardian target-gated ───────────
+// CONDITIONAL_ATTACK crystals (round 6 blockers 3-4)
+
+{
+  function lightsaberWithModifiers(records, overrides = {}) {
+    return {
+      id: overrides.id ?? 'w-cond-saber', name: overrides.name ?? 'Conditional Saber', type: 'weapon',
+      system: { weaponCategory: 'melee', proficiency: 'lightsaber', damage: '2d8', subtype: 'lightsaber', modifiers: records },
+      flags: overrides.flags ?? {}
+    };
+  }
+  function targetActorWith(items) { return { id: 'target-actor', items: makeItemsCollection(items) }; }
+  function equippedBodyArmorItem() { return { id: 'armor-1', name: 'Battle Armor', type: 'armor', system: { equipped: true, armorType: 'medium' } }; }
+  function unequippedBodyArmorItem() { return { id: 'armor-2', name: 'Spare Armor', type: 'armor', system: { equipped: false, armorType: 'medium' } }; }
+  function equippedEnergyShieldItem() { return { id: 'shield-1', name: 'Deflector Shield Generator', type: 'armor', system: { equipped: true, armorType: 'shield' } }; }
+  function equippedLightsaberItem(overrides = {}) {
+    return { id: overrides.id ?? 'target-saber', name: overrides.name ?? 'Target Saber', type: 'weapon', system: { subtype: 'lightsaber', equipped: overrides.equipped !== false } };
+  }
+
+  const attacker = makeActor({ bab: 7, str: 2 });
+  const hurikaneRecord = [{ type: 'CONDITIONAL_ATTACK', value: 2, bonusType: 'force', condition: 'vs-armored' }];
+  const heartRecord = [{ type: 'CONDITIONAL_ATTACK', value: 2, bonusType: 'force', condition: 'vs-lightsaber-wielders' }];
+  const hurikaneSaber = lightsaberWithModifiers(hurikaneRecord, { id: 'w-hurikane', name: 'Hurikane Saber' });
+  const heartSaber = lightsaberWithModifiers(heartRecord, { id: 'w-heart', name: 'Heart Saber' });
+  const plainBaseline = resolveAttackBonus(attacker, lightsaberWithModifiers([], { id: 'w-plain2', name: 'Plain Saber 2' }), null, { attackType: 'melee' }).total;
+
+  // ── Hurikane (vs-armored) ──────────────────────────────────────────────
+  assert.equal(resolveAttackBonus(attacker, hurikaneSaber, null, { attackType: 'melee' }).total, plainBaseline, 'Hurikane: no target => +0');
+  assert.equal(resolveAttackBonus(attacker, hurikaneSaber, null, { attackType: 'melee', targetActor: targetActorWith([]) }).total, plainBaseline, 'Hurikane: target owns no armor => +0');
+  assert.equal(resolveAttackBonus(attacker, hurikaneSaber, null, { attackType: 'melee', targetActor: targetActorWith([unequippedBodyArmorItem()]) }).total, plainBaseline, 'Hurikane: target owns unequipped armor (not worn) => +0');
+  assert.equal(resolveAttackBonus(attacker, hurikaneSaber, null, { attackType: 'melee', targetActor: targetActorWith([equippedBodyArmorItem()]) }).total, plainBaseline + 2, 'Hurikane: target wearing equipped body armor => +2');
+  assert.equal(resolveAttackBonus(attacker, hurikaneSaber, null, { attackType: 'melee', targetActor: targetActorWith([equippedEnergyShieldItem()]) }).total, plainBaseline, 'Hurikane: target with only an equipped Energy Shield (not body armor) => +0');
+  const altFlagArmor = { id: 'armor-alt', name: 'Alt Flag Armor', type: 'armor', system: { readied: true, armorType: 'light' } };
+  assert.equal(resolveAttackBonus(attacker, hurikaneSaber, null, { attackType: 'melee', targetActor: targetActorWith([altFlagArmor]) }).total, plainBaseline + 2, 'Hurikane: alternate certified equipped-armor flag (system.readied) must also qualify => +2');
+
+  // ── Heart of the Guardian (vs-lightsaber-wielders) ─────────────────────
+  assert.equal(resolveAttackBonus(attacker, heartSaber, null, { attackType: 'melee' }).total, plainBaseline, 'Heart: no target => +0');
+  assert.equal(resolveAttackBonus(attacker, heartSaber, null, { attackType: 'melee', targetActor: targetActorWith([equippedLightsaberItem({ equipped: false })]) }).total, plainBaseline, 'Heart: target owns an UNEQUIPPED lightsaber (ownership, not wielding) => +0');
+  const wieldingTarget = targetActorWith([equippedLightsaberItem()]);
+  assert.equal(resolveAttackBonus(attacker, heartSaber, null, { attackType: 'melee', targetActor: wieldingTarget }).total, plainBaseline + 2, 'Heart: target wields an equipped lightsaber => +2');
+  const nonSaberTarget = targetActorWith([{ id: 'target-blaster', name: 'Blaster', type: 'weapon', system: { equipped: true } }]);
+  assert.equal(resolveAttackBonus(attacker, heartSaber, null, { attackType: 'melee', targetActor: nonSaberTarget }).total, plainBaseline, 'Heart: target equips a non-lightsaber weapon => +0');
+  const altEquipSaber = { id: 'target-saber-alt', name: 'Alt Saber', type: 'weapon', system: { subtype: 'lightsaber', readied: true } };
+  assert.equal(resolveAttackBonus(attacker, heartSaber, null, { attackType: 'melee', targetActor: targetActorWith([altEquipSaber]) }).total, plainBaseline + 2, 'Heart: alternate certified equip field (system.readied) also qualifies => +2');
+
+  const mutatingSaber = equippedLightsaberItem({ id: 'mutating-saber' });
+  const mutatingTarget = targetActorWith([mutatingSaber]);
+  assert.equal(resolveAttackBonus(attacker, heartSaber, null, { attackType: 'melee', targetActor: mutatingTarget }).total, plainBaseline + 2, 'Heart: initially equipped => +2');
+  mutatingSaber.system.equipped = false;
+  assert.equal(resolveAttackBonus(attacker, heartSaber, null, { attackType: 'melee', targetActor: mutatingTarget }).total, plainBaseline, 'Heart: mutation test -- unequipping the target\'s lightsaber loses the +2 on the very next resolution');
+
+  const wieldingTargetA = targetActorWith([equippedLightsaberItem({ id: 'saber-a' })]);
+  const unarmedTargetB = targetActorWith([]);
+  assert.equal(resolveAttackBonus(attacker, heartSaber, null, { attackType: 'melee', targetActor: wieldingTargetA }).total, plainBaseline + 2, 'Heart: target A (wielding) => +2');
+  assert.equal(resolveAttackBonus(attacker, heartSaber, null, { attackType: 'melee', targetActor: unarmedTargetB }).total, plainBaseline, 'Heart: target B (no lightsaber), rolled immediately after target A => +0, no leakage between targets');
+}
+ok('Hurikane (vs-armored) and Heart of the Guardian (vs-lightsaber-wielders) CONDITIONAL_ATTACK crystals are now automated against the roll\'s resolved target actor, via the certified armor equipped-state authority and the shared item equipped-state authority combined with canonical lightsaber classification -- fail closed with no target, correctly require WORN armor / WIELDED lightsabers (not mere ownership), exclude an Energy-Shield-only target from "in armor," recognize alternate certified equipped-state flags, react immediately to an equip-state mutation, and never leak state between two different targets');
+
+// ─── SECTION 8c — Force stacking + conditional-crystal matrix (A-H) ───────
+
+{
+  const { createModifier: makeMod, ModifierType: MType, ModifierSource: MSource } = await import(
+    '/systems/foundryvtt-swse/scripts/engine/effects/modifiers/ModifierTypes.js'
+  );
+  const { computeFinalAttackComposition } = await import('/systems/foundryvtt-swse/scripts/combat/rolls/attacks.js');
+
+  function lightsaberWithModifiers(records, overrides = {}) {
+    return {
+      id: overrides.id ?? 'w-matrix-saber', name: overrides.name ?? 'Matrix Saber', type: 'weapon',
+      system: { weaponCategory: 'melee', proficiency: 'lightsaber', damage: '2d8', subtype: 'lightsaber', modifiers: records },
+      flags: overrides.flags ?? {}
+    };
+  }
+  function targetActorWith(items) { return { id: 'target-actor', items: makeItemsCollection(items) }; }
+  function equippedBodyArmorItem() { return { id: 'armor-1', name: 'Battle Armor', type: 'armor', system: { equipped: true, armorType: 'medium' } }; }
+  function equippedLightsaberItem() { return { id: 'target-saber', name: 'Target Saber', type: 'weapon', system: { subtype: 'lightsaber', equipped: true } }; }
+
+  const attacker = makeActor({ bab: 7, str: 2 });
+  const baseline = resolveAttackBonus(attacker, lightsaberWithModifiers([]), null, { attackType: 'melee' }).total;
+  const heartRecord = [{ type: 'CONDITIONAL_ATTACK', value: 2, bonusType: 'force', condition: 'vs-lightsaber-wielders' }];
+  const hurikaneRecord = [{ type: 'CONDITIONAL_ATTACK', value: 2, bonusType: 'force', condition: 'vs-armored' }];
+  const heartSaber = lightsaberWithModifiers(heartRecord, { id: 'matrix-heart' });
+  const hurikaneSaber = lightsaberWithModifiers(hurikaneRecord, { id: 'matrix-hurikane' });
+  const wieldingTarget = targetActorWith([equippedLightsaberItem()]);
+  const armoredTarget = targetActorWith([equippedBodyArmorItem()]);
+
+  // A. Heart +2 Force alone, qualified.
+  assert.equal(resolveAttackBonus(attacker, heartSaber, null, { attackType: 'melee', targetActor: wieldingTarget }).total, baseline + 2, 'A. Heart +2 Force alone, qualified => +2');
+
+  // B. Hurikane +2 Force alone, qualified.
+  assert.equal(resolveAttackBonus(attacker, hurikaneSaber, null, { attackType: 'melee', targetActor: armoredTarget }).total, baseline + 2, 'B. Hurikane +2 Force alone, qualified => +2');
+
+  // C. Condition not satisfied -> zero contribution.
+  assert.equal(resolveAttackBonus(attacker, heartSaber, null, { attackType: 'melee', targetActor: armoredTarget }).total, baseline, 'C. Heart vs a non-lightsaber-wielding (armored-only) target => +0');
+  assert.equal(resolveAttackBonus(attacker, hurikaneSaber, null, { attackType: 'melee', targetActor: wieldingTarget }).total, baseline, 'C. Hurikane vs a non-armored (lightsaber-wielding-only) target => +0');
+
+  // D. Qualifying conditional crystal + an unrelated +4 Force attack
+  // contribution => only +4 Force applies (highestOnly).
+  const unrelatedForce4 = makeMod({ source: MSource.EFFECT, sourceId: 'force-buff', sourceName: 'Battle Meditation', target: 'global.attack', type: MType.FORCE, value: 4 });
+  const dResult = resolveAttackBonus(attacker, heartSaber, null, { attackType: 'melee', targetActor: wieldingTarget, situationalContributions: [unrelatedForce4] });
+  assert.equal(dResult.total, baseline + 4, 'D. qualifying Heart (+2 Force) + an unrelated +4 Force contribution: only the higher (+4) applies (highestOnly, same descriptor)');
+
+  // E. qualifying +2 Force crystal + +2 competence: both apply (+4, different types).
+  const competence2 = makeMod({ source: MSource.FEAT, sourceId: 'feat-y', sourceName: 'Competence Y', target: 'global.attack', type: MType.COMPETENCE, value: 2 });
+  const eResult = resolveAttackBonus(attacker, heartSaber, null, { attackType: 'melee', targetActor: wieldingTarget, situationalContributions: [competence2] });
+  assert.equal(eResult.total, baseline + 4, 'E. qualifying +2 Force crystal + +2 competence: both apply (+2 + +2 = +4)');
+
+  // F. qualifying +2 Force crystal + +1 untyped: both apply (+3).
+  const untyped1 = makeMod({ source: MSource.CONDITION, sourceId: 'cond-y', sourceName: 'Untyped Y', target: 'global.attack', type: MType.UNTYPED, value: 1 });
+  const fResult = resolveAttackBonus(attacker, heartSaber, null, { attackType: 'melee', targetActor: wieldingTarget, situationalContributions: [untyped1] });
+  assert.equal(fResult.total, baseline + 3, 'F. qualifying +2 Force crystal + +1 untyped: both apply (+2 + +1 = +3)');
+
+  // G. suppressed Force contribution remains visible in the ledger with
+  // applied:false and a truthful highestOnly reason.
+  const suppressedRow = dResult.typedModifierLedger.find(e => e.applied === false);
+  assert.ok(suppressedRow, 'G. a suppressed Force contribution must remain visible in the ledger');
+  assert.ok(String(suppressedRow.reason || '').includes('highestOnly'), 'G. the suppressed Force contribution\'s reason must truthfully cite highestOnly stacking');
+
+  // H. dialog preview and final composition both see the same
+  // target-conditioned result when target context is available; fails
+  // closed (never guesses a target) when none is resolvable.
+  const withTargetComposition = await computeFinalAttackComposition(attacker, heartSaber, { attackType: 'melee', targetActor: wieldingTarget });
+  assert.equal(withTargetComposition.atkBonus, baseline + 2, 'H. computeFinalAttackComposition() (the shared dialog-preview/roll seam) sees the same target-conditioned Heart contribution as resolveAttackBonus() alone');
+  const withoutTargetComposition = await computeFinalAttackComposition(attacker, heartSaber, { attackType: 'melee' });
+  assert.equal(withoutTargetComposition.atkBonus, baseline, 'H. with no authoritative target resolvable, the shared composition seam fails closed to +0 rather than guessing a target');
+}
+ok('Force stacking + conditional-crystal cross-type matrix (A-H): Heart/Hurikane apply their +2 Force only when target-qualified and zero otherwise; a qualifying conditional crystal collides correctly (highestOnly) with an unrelated Force contribution while remaining visible in the ledger with a truthful suppression reason; competence and untyped contributions of the same value both still fully apply alongside a qualifying Force crystal; and the dialog-preview/roll shared composition seam sees the identical target-conditioned result, failing closed with no target rather than guessing');
+
+// ─── SECTION 9 — Narration attack-path parity (round 6 blocker 5) ────────
+//
+// FAIL-BEFORE defect: rollAttackAndDamageWithNarration() used to call
+// resolveAttackBonus(actor, weapon, null, rollOptions).total directly,
+// bypassing computeFinalAttackComposition() -- the shared seam rollAttack()
+// (the dialog/roll/chat path) and the attack dialog's own live preview both
+// already go through. That silently dropped every invocation-only addition
+// computeFinalAttackComposition() layers on top of the resolver's own total
+// (Fighting Defensively, grapple-state penalty, custom modifier, sequence
+// penalty, a typed contextual modifier) for this exported entry point. No
+// current caller reaches this function (a dormant divergence, not a
+// reproduced player bug), but the freeze does not leave a known alternate
+// attack-roll formula in place. Only the attack side changed; Damage
+// composition is untouched.
+
+{
+  const { rollAttackAndDamageWithNarration, computeFinalAttackComposition } = await import('/systems/foundryvtt-swse/scripts/combat/rolls/attacks.js');
+  const { resolveAttackBonus: rab } = await import('/systems/foundryvtt-swse/scripts/engine/combat/combat-roll-math.js');
+  const { RollEngine } = await import('/systems/foundryvtt-swse/scripts/engine/roll-engine.js');
+  const { createModifier: makeMod } = await import('/systems/foundryvtt-swse/scripts/engine/effects/modifiers/ModifierTypes.js');
+  const { SWSEChat } = await import('/systems/foundryvtt-swse/scripts/chat/swse-chat.js');
+
+  const originalSafeRoll = RollEngine.safeRoll;
+  const originalPostRoll = SWSEChat.postRoll;
+  let capturedAttackFormula = null;
+  RollEngine.safeRoll = async (formula, rollData, opts) => {
+    if (opts?.domain === 'combat.attack') capturedAttackFormula = formula;
+    return { total: 15, formula, dice: [{ results: [{ result: 10 }] }] };
+  };
+  // rollAttackAndDamageWithNarration() (unlike rollAttack()) does not gate
+  // its chat posts behind rollOptions.suppressChat -- unrelated to this
+  // round's attack-bonus fix, so SWSEChat.postRoll (which needs a real
+  // Foundry renderTemplate/ChatMessage runtime this harness doesn't
+  // provide) is stubbed here rather than exercised live.
+  SWSEChat.postRoll = async () => ({ id: 'stub-message' });
+
+  function makeLiveAttacker(name, effects = []) {
+    return {
+      id: name.toLowerCase().replace(/[^a-z0-9]/g, '-'), name, type: 'character', items: [], effects,
+      system: {
+        level: 8, size: 'medium', skills: {}, progression: { classLevels: [] },
+        attributes: { str: { base: 14, racial: 0, enhancement: 0, temp: 0 }, dex: { base: 12, racial: 0, enhancement: 0, temp: 0 } },
+        derived: { bab: 7 },
+        hp: { max: 50, value: 50 }
+      },
+      flags: { swse: {} },
+      getRollData: () => ({})
+    };
+  }
+
+  function extractAtkBonusFromFormula(formula) {
+    const match = String(formula ?? '').match(/^1d20 \+ (-?\d+)$/);
+    return match ? Number(match[1]) : null;
+  }
+
+  try {
+    const weapon = { id: 'w-narration', name: 'Blaster Rifle', type: 'weapon', system: { weaponCategory: 'ranged', proficiency: 'rifles', proficient: true, damage: '3d8' } };
+
+    const cases = [
+      ['plain', {}],
+      ['Fighting Defensively', { fightingDefensively: true }],
+      ['custom modifier', { customModifier: 3 }],
+      ['sequence penalty', { sequencePenalty: -5 }],
+      ['one typed contextual modifier', {
+        situationalContributions: [makeMod({ source: 'condition', sourceId: 'narration-test-mod', sourceName: 'Narration Test Modifier', target: 'global.attack', type: 'competence', value: 2 })]
+      }]
+    ];
+
+    for (const [label, extraOptions] of cases) {
+      const attacker = makeLiveAttacker(`Narration-${label}`);
+      const rollOptions = { suppressChat: true, targetContext: { mode: 'none' }, ...extraOptions };
+
+      capturedAttackFormula = null;
+      await rollAttackAndDamageWithNarration(attacker, weapon, rollOptions);
+      const narrationAtkBonus = extractAtkBonusFromFormula(capturedAttackFormula);
+      assert.ok(narrationAtkBonus !== null, `${label}: narration path must roll a valid "1d20 + N" formula`);
+
+      const expected = await computeFinalAttackComposition(attacker, weapon, rollOptions);
+      assert.equal(expected.ok, true);
+      assert.equal(narrationAtkBonus, expected.atkBonus, `${label}: rollAttackAndDamageWithNarration()'s actual rolled attack bonus must equal computeFinalAttackComposition()'s atkBonus -- the same total normal rollAttack() would use`);
+
+      // Fail-before contrast only for cases that are genuinely
+      // invocation-only additions layered by computeFinalAttackComposition()
+      // on top of resolveAttackBonus()'s own total (Fighting Defensively,
+      // custom modifier, sequence penalty). A typed contextual modifier
+      // (situationalContributions) is resolved INSIDE resolveAttackBonus()
+      // itself, not layered afterward, so it was never actually part of
+      // this bug -- both totals correctly agree for that case already, and
+      // asserting inequality there would be a false expectation, not a
+      // proof.
+      if (['Fighting Defensively', 'custom modifier', 'sequence penalty'].includes(label)) {
+        const oldBuggyTotal = rab(attacker, weapon, null, rollOptions).total;
+        assert.notEqual(oldBuggyTotal, narrationAtkBonus, `${label}: the old resolveAttackBonus()-only total must actually differ from the fixed narration total -- proves this case exercises a real invocation-only addition, not a vacuous comparison`);
+      }
+    }
+
+    // Grapple-state attack penalty case, separately (needs an actor with a
+    // grapple-state effect, not an extraOptions field).
+    const grabbedEffect = { flags: { swse: { grappleState: { state: 'grabbed', sourceId: 'attacker-x' } } } };
+    const grabbedAttacker = makeLiveAttacker('Narration-Grappled', [grabbedEffect]);
+    const grabbedRollOptions = { suppressChat: true, targetContext: { mode: 'none' } };
+    capturedAttackFormula = null;
+    await rollAttackAndDamageWithNarration(grabbedAttacker, weapon, grabbedRollOptions);
+    const grabbedNarrationAtkBonus = extractAtkBonusFromFormula(capturedAttackFormula);
+    const grabbedExpected = await computeFinalAttackComposition(grabbedAttacker, weapon, grabbedRollOptions);
+    assert.equal(grabbedNarrationAtkBonus, grabbedExpected.atkBonus, 'grapple-state attack penalty: rollAttackAndDamageWithNarration() must include the -2 Grabbed/Grappled penalty, matching computeFinalAttackComposition()');
+    const grabbedOldBuggyTotal = rab(grabbedAttacker, weapon, null, grabbedRollOptions).total;
+    assert.notEqual(grabbedOldBuggyTotal, grabbedNarrationAtkBonus, 'grapple-state case: the old resolveAttackBonus()-only total must differ, proving the penalty is a real invocation-only addition');
+  } finally {
+    RollEngine.safeRoll = originalSafeRoll;
+    SWSEChat.postRoll = originalPostRoll;
+  }
+}
+ok('narration attack-path parity (round 6 blocker 5): rollAttackAndDamageWithNarration() now delegates to computeFinalAttackComposition() for its attack bonus -- proven live for Fighting Defensively, grapple-state attack penalty, a custom modifier, a sequence penalty, and a typed contextual modifier, each matching the exact total normal rollAttack() would use, with an explicit fail-before contrast showing the old resolveAttackBonus()-only total actually differed');
 
 console.log('attack-bonus-math-integrity.test.mjs: all assertions passed');

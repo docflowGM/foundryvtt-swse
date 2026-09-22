@@ -720,7 +720,25 @@ export async function rollAttackAndDamageWithNarration(actor, weapon, options = 
   }
 
   const targetName = _firstTargetName();
-  const atkBonus = resolveAttackBonus(actor, weapon, null, rollOptions).total;
+  // Math Integrity Freeze, Attack Bonus round 6: this used to call
+  // resolveAttackBonus(...).total directly, bypassing
+  // computeFinalAttackComposition() -- the shared seam rollAttack() (the
+  // dialog/roll/chat path) and the attack dialog's own live preview both
+  // already go through. That meant this exported entry point silently
+  // dropped every invocation-only addition computeFinalAttackComposition()
+  // layers on top of the resolver's own total (Fighting Defensively,
+  // grapple-state penalty, custom modifier, sequence penalty, the legacy
+  // situationalBonus override) for anyone who called it. No current caller
+  // reaches this function, so it was a dormant divergence, not a
+  // reproduced bug -- but the freeze does not leave a known alternate
+  // attack-roll formula in place for a future caller to find. Only the
+  // attack side changes here; Damage composition below is untouched.
+  const composition = await computeFinalAttackComposition(actor, weapon, rollOptions);
+  if (!composition.ok) {
+    ui?.notifications?.error?.('Attack could not be resolved: no valid attack-domain context (' + composition.reason + ').');
+    return null;
+  }
+  const atkBonus = composition.atkBonus;
   // optionModifiers still needed for die-formula and effect modifiers below.
   const optionModifiers = CombatOptionResolver.collectAttackModifiers(actor, weapon, rollOptions);
   const dmgResult = resolveDamageBonus(actor, weapon, rollOptions);
