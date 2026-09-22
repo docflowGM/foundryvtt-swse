@@ -1,15 +1,18 @@
 {
-  "generated": "2026-09-22T20:12:52.865Z",
+  "generated": "2026-09-22T21:51:38.147Z",
   "total": 136,
   "feats": 88,
   "talents": 48,
+  "reachableFromThisDialog": 118,
   "byClass": {
-    "SELECTABLE": 56,
-    "PASSIVE": 33,
-    "CONTEXT_GATED_SELECTABLE": 17,
-    "SLIDER_VALUE": 3,
-    "METADATA_PRESENT_RUNTIME_INCOMPLETE": 27,
-    "NOT_IMPLEMENTED": 0
+    "SELECTABLE": 58,
+    "PASSIVE": 37,
+    "CONTEXT_GATED_SELECTABLE": 20,
+    "SLIDER": 3,
+    "TARGET_GATED": 8,
+    "EXTERNAL_WORKFLOW_GATED": 10,
+    "RUNTIME_INCOMPLETE": 0,
+    "INVALID_NON_ATTACK_RULE": 0
   },
   "records": [
     {
@@ -18,8 +21,7 @@
       "itemName": "Spray Shot",
       "option": "sprayShot",
       "control": "flag",
-      "classification": "CONTEXT_GATED_SELECTABLE",
-      "unsuppliedGates": []
+      "classification": "CONTEXT_GATED_SELECTABLE"
     },
     {
       "source": "packs/feats.db",
@@ -27,8 +29,7 @@
       "itemName": "Improved Charge",
       "option": "improvedCharge",
       "control": "flag",
-      "classification": "CONTEXT_GATED_SELECTABLE",
-      "unsuppliedGates": []
+      "classification": "CONTEXT_GATED_SELECTABLE"
     },
     {
       "source": "packs/feats.db",
@@ -36,8 +37,7 @@
       "itemName": "Flurry",
       "option": "flurry",
       "control": "toggle",
-      "classification": "SELECTABLE",
-      "unsuppliedGates": []
+      "classification": "SELECTABLE"
     },
     {
       "source": "packs/feats.db",
@@ -45,8 +45,7 @@
       "itemName": "Saber Throw",
       "option": "saberThrow",
       "control": "flag",
-      "classification": "SELECTABLE",
-      "unsuppliedGates": []
+      "classification": "SELECTABLE"
     },
     {
       "source": "packs/feats.db",
@@ -54,8 +53,7 @@
       "itemName": "Burst Fire",
       "option": "burstFire",
       "control": "toggle",
-      "classification": "CONTEXT_GATED_SELECTABLE",
-      "unsuppliedGates": []
+      "classification": "CONTEXT_GATED_SELECTABLE"
     },
     {
       "source": "packs/feats.db",
@@ -63,8 +61,7 @@
       "itemName": "Zero Range",
       "option": "zeroRange",
       "control": "toggle",
-      "classification": "SELECTABLE",
-      "unsuppliedGates": []
+      "classification": "CONTEXT_GATED_SELECTABLE"
     },
     {
       "source": "packs/feats.db",
@@ -72,8 +69,7 @@
       "itemName": "Grazing Shot",
       "option": "grazingShot",
       "control": "flag",
-      "classification": "SELECTABLE",
-      "unsuppliedGates": []
+      "classification": "SELECTABLE"
     },
     {
       "source": "packs/feats.db",
@@ -81,8 +77,7 @@
       "itemName": "Staggering Attack",
       "option": "staggeringAttackMinor",
       "control": "toggle",
-      "classification": "SELECTABLE",
-      "unsuppliedGates": []
+      "classification": "SELECTABLE"
     },
     {
       "source": "packs/feats.db",
@@ -90,8 +85,7 @@
       "itemName": "Staggering Attack",
       "option": "staggeringAttackMajor",
       "control": "toggle",
-      "classification": "SELECTABLE",
-      "unsuppliedGates": []
+      "classification": "SELECTABLE"
     },
     {
       "source": "packs/feats.db",
@@ -99,8 +93,7 @@
       "itemName": "Wrruushi Training",
       "option": "wrruushiFortitudeStrike",
       "control": "toggle",
-      "classification": "SELECTABLE",
-      "unsuppliedGates": []
+      "classification": "SELECTABLE"
     },
     {
       "source": "packs/feats.db",
@@ -108,10 +101,7 @@
       "itemName": "K'tara Training",
       "option": "ktaraFlatFootedStrike",
       "control": "toggle",
-      "classification": "METADATA_PRESENT_RUNTIME_INCOMPLETE",
-      "unsuppliedGates": [
-        "requiresTargetFlatFooted"
-      ]
+      "classification": "TARGET_GATED"
     },
     {
       "source": "packs/feats.db",
@@ -119,10 +109,7 @@
       "itemName": "K'tara Training",
       "option": "ktaraMuteStrike",
       "control": "toggle",
-      "classification": "METADATA_PRESENT_RUNTIME_INCOMPLETE",
-      "unsuppliedGates": [
-        "requiresTargetDeniedDexBonus"
-      ]
+      "classification": "TARGET_GATED"
     },
     {
       "source": "packs/feats.db",
@@ -130,8 +117,7 @@
       "itemName": "Tool Frenzy",
       "option": "toolFrenzy",
       "control": "toggle",
-      "classification": "SELECTABLE",
-      "unsuppliedGates": []
+      "classification": "SELECTABLE"
     },
     {
       "source": "packs/feats.db",
@@ -139,8 +125,7 @@
       "itemName": "Flèche",
       "option": "fleche",
       "control": "toggle",
-      "classification": "CONTEXT_GATED_SELECTABLE",
-      "unsuppliedGates": []
+      "classification": "CONTEXT_GATED_SELECTABLE"
     },
     {
       "source": "packs/feats.db",
@@ -148,8 +133,7 @@
       "itemName": "Justice Seeker",
       "option": "justiceSeeker",
       "control": "passive",
-      "classification": "PASSIVE",
-      "unsuppliedGates": []
+      "classification": "PASSIVE"
     },
     {
       "source": "packs/feats.db",
@@ -157,8 +141,7 @@
       "itemName": "Melee Defense",
       "option": "meleeDefense",
       "control": "slider",
-      "classification": "SLIDER_VALUE",
-      "unsuppliedGates": []
+      "classification": "SLIDER"
     },
     {
       "source": "packs/feats.db",
@@ -166,8 +149,7 @@
       "itemName": "Power Attack",
       "option": "powerAttack",
       "control": "slider",
-      "classification": "SLIDER_VALUE",
-      "unsuppliedGates": []
+      "classification": "SLIDER"
     },
     {
       "source": "packs/feats.db",
@@ -175,10 +157,7 @@
       "itemName": "Destructive Force",
       "option": "destructiveForce",
       "control": "passive",
-      "classification": "METADATA_PRESENT_RUNTIME_INCOMPLETE",
-      "unsuppliedGates": [
-        "requiresTargetType"
-      ]
+      "classification": "TARGET_GATED"
     },
     {
       "source": "packs/feats.db",
@@ -186,8 +165,7 @@
       "itemName": "Maniacal Charge",
       "option": "maniacalCharge",
       "control": "flag",
-      "classification": "CONTEXT_GATED_SELECTABLE",
-      "unsuppliedGates": []
+      "classification": "CONTEXT_GATED_SELECTABLE"
     },
     {
       "source": "packs/feats.db",
@@ -195,10 +173,7 @@
       "itemName": "Opportunistic Shooter",
       "option": "opportunisticShooter",
       "control": "passive",
-      "classification": "METADATA_PRESENT_RUNTIME_INCOMPLETE",
-      "unsuppliedGates": [
-        "requiresOpportunityAttack"
-      ]
+      "classification": "EXTERNAL_WORKFLOW_GATED"
     },
     {
       "source": "packs/feats.db",
@@ -206,8 +181,7 @@
       "itemName": "Separatist Military Training",
       "option": "separatistMilitaryTraining",
       "control": "toggle",
-      "classification": "SELECTABLE",
-      "unsuppliedGates": []
+      "classification": "SELECTABLE"
     },
     {
       "source": "packs/feats.db",
@@ -215,8 +189,7 @@
       "itemName": "Running Attack",
       "option": "runningAttack",
       "control": "flag",
-      "classification": "SELECTABLE",
-      "unsuppliedGates": []
+      "classification": "SELECTABLE"
     },
     {
       "source": "packs/feats.db",
@@ -224,8 +197,7 @@
       "itemName": "Anointed Hunter",
       "option": "anointedHunterThrownMove",
       "control": "passive",
-      "classification": "PASSIVE",
-      "unsuppliedGates": []
+      "classification": "PASSIVE"
     },
     {
       "source": "packs/feats.db",
@@ -233,8 +205,7 @@
       "itemName": "Blaster Barrage",
       "option": "blasterBarrage",
       "control": "passive",
-      "classification": "PASSIVE",
-      "unsuppliedGates": []
+      "classification": "PASSIVE"
     },
     {
       "source": "packs/feats.db",
@@ -242,8 +213,7 @@
       "itemName": "Attack Combo (Fire and Strike)",
       "option": "attackComboFireAndStrike",
       "control": "toggle",
-      "classification": "SELECTABLE",
-      "unsuppliedGates": []
+      "classification": "SELECTABLE"
     },
     {
       "source": "packs/feats.db",
@@ -251,8 +221,7 @@
       "itemName": "Sniper",
       "option": "sniper",
       "control": "passive",
-      "classification": "PASSIVE",
-      "unsuppliedGates": []
+      "classification": "PASSIVE"
     },
     {
       "source": "packs/feats.db",
@@ -260,10 +229,7 @@
       "itemName": "Improved Grapple",
       "option": "improvedGrapple",
       "control": "passive",
-      "classification": "METADATA_PRESENT_RUNTIME_INCOMPLETE",
-      "unsuppliedGates": [
-        "requiresManeuver"
-      ]
+      "classification": "EXTERNAL_WORKFLOW_GATED"
     },
     {
       "source": "packs/feats.db",
@@ -271,10 +237,7 @@
       "itemName": "Wicked Strike",
       "option": "wickedStrike",
       "control": "flag",
-      "classification": "METADATA_PRESENT_RUNTIME_INCOMPLETE",
-      "unsuppliedGates": [
-        "requiresOption"
-      ]
+      "classification": "CONTEXT_GATED_SELECTABLE"
     },
     {
       "source": "packs/feats.db",
@@ -282,10 +245,7 @@
       "itemName": "Droid Hunter",
       "option": "droidHunterDamage",
       "control": "passive",
-      "classification": "METADATA_PRESENT_RUNTIME_INCOMPLETE",
-      "unsuppliedGates": [
-        "requiresTargetType"
-      ]
+      "classification": "TARGET_GATED"
     },
     {
       "source": "packs/feats.db",
@@ -293,10 +253,7 @@
       "itemName": "Droid Hunter",
       "option": "droidHunterIonDamage",
       "control": "passive",
-      "classification": "METADATA_PRESENT_RUNTIME_INCOMPLETE",
-      "unsuppliedGates": [
-        "requiresTargetType"
-      ]
+      "classification": "TARGET_GATED"
     },
     {
       "source": "packs/feats.db",
@@ -304,8 +261,7 @@
       "itemName": "Attack Combo (Melee)",
       "option": "attackComboMelee",
       "control": "toggle",
-      "classification": "SELECTABLE",
-      "unsuppliedGates": []
+      "classification": "SELECTABLE"
     },
     {
       "source": "packs/feats.db",
@@ -313,10 +269,7 @@
       "itemName": "Knife Trick",
       "option": "knifeTrick",
       "control": "passive",
-      "classification": "METADATA_PRESENT_RUNTIME_INCOMPLETE",
-      "unsuppliedGates": [
-        "requiresOpportunityAttack"
-      ]
+      "classification": "EXTERNAL_WORKFLOW_GATED"
     },
     {
       "source": "packs/feats.db",
@@ -324,8 +277,7 @@
       "itemName": "Careful Shot",
       "option": "carefulShot",
       "control": "toggle",
-      "classification": "CONTEXT_GATED_SELECTABLE",
-      "unsuppliedGates": []
+      "classification": "CONTEXT_GATED_SELECTABLE"
     },
     {
       "source": "packs/feats.db",
@@ -333,8 +285,7 @@
       "itemName": "Flood of Fire",
       "option": "floodOfFire",
       "control": "passive",
-      "classification": "PASSIVE",
-      "unsuppliedGates": []
+      "classification": "PASSIVE"
     },
     {
       "source": "packs/feats.db",
@@ -342,8 +293,7 @@
       "itemName": "Swarm",
       "option": "swarm",
       "control": "passive",
-      "classification": "PASSIVE",
-      "unsuppliedGates": []
+      "classification": "PASSIVE"
     },
     {
       "source": "packs/feats.db",
@@ -351,10 +301,7 @@
       "itemName": "Mandalorian Training",
       "option": "mandalorianTrainingChargingFire",
       "control": "passive",
-      "classification": "METADATA_PRESENT_RUNTIME_INCOMPLETE",
-      "unsuppliedGates": [
-        "requiresOption"
-      ]
+      "classification": "PASSIVE"
     },
     {
       "source": "packs/feats.db",
@@ -362,8 +309,7 @@
       "itemName": "Tae-Jitsu Training",
       "option": "taeJitsuCritical",
       "control": "passive",
-      "classification": "PASSIVE",
-      "unsuppliedGates": []
+      "classification": "PASSIVE"
     },
     {
       "source": "packs/feats.db",
@@ -371,10 +317,7 @@
       "itemName": "Hijkata Training",
       "option": "hijkataCounterattack",
       "control": "toggle",
-      "classification": "METADATA_PRESENT_RUNTIME_INCOMPLETE",
-      "unsuppliedGates": [
-        "requiresOpportunityAttack"
-      ]
+      "classification": "EXTERNAL_WORKFLOW_GATED"
     },
     {
       "source": "packs/feats.db",
@@ -382,8 +325,7 @@
       "itemName": "Crossfire",
       "option": "crossfire",
       "control": "passive",
-      "classification": "PASSIVE",
-      "unsuppliedGates": []
+      "classification": "PASSIVE"
     },
     {
       "source": "packs/feats.db",
@@ -391,8 +333,7 @@
       "itemName": "Deadeye",
       "option": "deadeye",
       "control": "toggle",
-      "classification": "CONTEXT_GATED_SELECTABLE",
-      "unsuppliedGates": []
+      "classification": "CONTEXT_GATED_SELECTABLE"
     },
     {
       "source": "packs/feats.db",
@@ -400,8 +341,7 @@
       "itemName": "Deadly Sniper",
       "option": "deadlySniper",
       "control": "passive",
-      "classification": "PASSIVE",
-      "unsuppliedGates": []
+      "classification": "PASSIVE"
     },
     {
       "source": "packs/feats.db",
@@ -409,8 +349,7 @@
       "itemName": "Trench Warrior",
       "option": "trenchWarrior",
       "control": "passive",
-      "classification": "PASSIVE",
-      "unsuppliedGates": []
+      "classification": "PASSIVE"
     },
     {
       "source": "packs/feats.db",
@@ -418,8 +357,7 @@
       "itemName": "Overwhelming Attack",
       "option": "overwhelmingAttack",
       "control": "toggle",
-      "classification": "SELECTABLE",
-      "unsuppliedGates": []
+      "classification": "SELECTABLE"
     },
     {
       "source": "packs/feats.db",
@@ -427,8 +365,7 @@
       "itemName": "Aiming Accuracy",
       "option": "aimingAccuracy",
       "control": "toggle",
-      "classification": "CONTEXT_GATED_SELECTABLE",
-      "unsuppliedGates": []
+      "classification": "CONTEXT_GATED_SELECTABLE"
     },
     {
       "source": "packs/feats.db",
@@ -436,8 +373,7 @@
       "itemName": "Stava Training",
       "option": "stavaTrainingChargeGrab",
       "control": "passive",
-      "classification": "PASSIVE",
-      "unsuppliedGates": []
+      "classification": "PASSIVE"
     },
     {
       "source": "packs/feats.db",
@@ -445,8 +381,7 @@
       "itemName": "Sport Hunter",
       "option": "sportHunterSlugthrowerPistolPointBlank",
       "control": "passive",
-      "classification": "PASSIVE",
-      "unsuppliedGates": []
+      "classification": "PASSIVE"
     },
     {
       "source": "packs/feats.db",
@@ -454,8 +389,7 @@
       "itemName": "Sport Hunter",
       "option": "sportHunterSportingBlasterRifleAim",
       "control": "passive",
-      "classification": "PASSIVE",
-      "unsuppliedGates": []
+      "classification": "PASSIVE"
     },
     {
       "source": "packs/feats.db",
@@ -463,10 +397,7 @@
       "itemName": "Halt",
       "option": "halt",
       "control": "toggle",
-      "classification": "METADATA_PRESENT_RUNTIME_INCOMPLETE",
-      "unsuppliedGates": [
-        "requiresOpportunityAttack"
-      ]
+      "classification": "EXTERNAL_WORKFLOW_GATED"
     },
     {
       "source": "packs/feats.db",
@@ -474,8 +405,7 @@
       "itemName": "Steadying Position",
       "option": "steadyingPosition",
       "control": "flag",
-      "classification": "CONTEXT_GATED_SELECTABLE",
-      "unsuppliedGates": []
+      "classification": "CONTEXT_GATED_SELECTABLE"
     },
     {
       "source": "packs/feats.db",
@@ -483,10 +413,7 @@
       "itemName": "Opportunistic Trickery",
       "option": "opportunisticTrickery",
       "control": "flag",
-      "classification": "METADATA_PRESENT_RUNTIME_INCOMPLETE",
-      "unsuppliedGates": [
-        "requiresOpportunityAttack"
-      ]
+      "classification": "EXTERNAL_WORKFLOW_GATED"
     },
     {
       "source": "packs/feats.db",
@@ -494,10 +421,7 @@
       "itemName": "Cunning Attack",
       "option": "cunningAttack",
       "control": "passive",
-      "classification": "METADATA_PRESENT_RUNTIME_INCOMPLETE",
-      "unsuppliedGates": [
-        "requiresTargetFlatFooted"
-      ]
+      "classification": "TARGET_GATED"
     },
     {
       "source": "packs/feats.db",
@@ -505,8 +429,7 @@
       "itemName": "Power Blast",
       "option": "powerBlast",
       "control": "slider",
-      "classification": "SLIDER_VALUE",
-      "unsuppliedGates": []
+      "classification": "SLIDER"
     },
     {
       "source": "packs/feats.db",
@@ -514,8 +437,7 @@
       "itemName": "Rapid Shot",
       "option": "rapidShot",
       "control": "toggle",
-      "classification": "SELECTABLE",
-      "unsuppliedGates": []
+      "classification": "SELECTABLE"
     },
     {
       "source": "packs/feats.db",
@@ -523,8 +445,7 @@
       "itemName": "Sniper Shot",
       "option": "sniperShot",
       "control": "toggle",
-      "classification": "SELECTABLE",
-      "unsuppliedGates": []
+      "classification": "SELECTABLE"
     },
     {
       "source": "packs/feats.db",
@@ -532,8 +453,7 @@
       "itemName": "Bantha Herder",
       "option": "banthaHerder",
       "control": "passive",
-      "classification": "PASSIVE",
-      "unsuppliedGates": []
+      "classification": "PASSIVE"
     },
     {
       "source": "packs/feats.db",
@@ -541,10 +461,7 @@
       "itemName": "Targeted Area",
       "option": "targetedArea",
       "control": "toggle",
-      "classification": "METADATA_PRESENT_RUNTIME_INCOMPLETE",
-      "unsuppliedGates": [
-        "requiresAreaAttack"
-      ]
+      "classification": "SELECTABLE"
     },
     {
       "source": "packs/feats.db",
@@ -552,8 +469,7 @@
       "itemName": "Slammer",
       "option": "slammer",
       "control": "toggle",
-      "classification": "SELECTABLE",
-      "unsuppliedGates": []
+      "classification": "SELECTABLE"
     },
     {
       "source": "packs/feats.db",
@@ -561,8 +477,7 @@
       "itemName": "Advantageous Attack",
       "option": "advantageousAttack",
       "control": "passive",
-      "classification": "PASSIVE",
-      "unsuppliedGates": []
+      "classification": "PASSIVE"
     },
     {
       "source": "packs/feats.db",
@@ -570,8 +485,7 @@
       "itemName": "Flash and Clear",
       "option": "flashAndClear",
       "control": "passive",
-      "classification": "PASSIVE",
-      "unsuppliedGates": []
+      "classification": "PASSIVE"
     },
     {
       "source": "packs/feats.db",
@@ -579,8 +493,7 @@
       "itemName": "Heavy Hitter",
       "option": "heavyHitter",
       "control": "passive",
-      "classification": "PASSIVE",
-      "unsuppliedGates": []
+      "classification": "PASSIVE"
     },
     {
       "source": "packs/feats.db",
@@ -588,8 +501,7 @@
       "itemName": "Charging Fire",
       "option": "chargingFire",
       "control": "flag",
-      "classification": "CONTEXT_GATED_SELECTABLE",
-      "unsuppliedGates": []
+      "classification": "CONTEXT_GATED_SELECTABLE"
     },
     {
       "source": "packs/feats.db",
@@ -597,8 +509,7 @@
       "itemName": "K'thri Training",
       "option": "kthriSwiftUnarmedAttack",
       "control": "flag",
-      "classification": "SELECTABLE",
-      "unsuppliedGates": []
+      "classification": "SELECTABLE"
     },
     {
       "source": "packs/feats.db",
@@ -606,8 +517,7 @@
       "itemName": "Teräs Käsi Training",
       "option": "terasKasiThreshold",
       "control": "passive",
-      "classification": "PASSIVE",
-      "unsuppliedGates": []
+      "classification": "PASSIVE"
     },
     {
       "source": "packs/feats.db",
@@ -615,10 +525,7 @@
       "itemName": "Rebel Military Training",
       "option": "rebelMilitaryTraining",
       "control": "flag",
-      "classification": "METADATA_PRESENT_RUNTIME_INCOMPLETE",
-      "unsuppliedGates": [
-        "requiresOption"
-      ]
+      "classification": "CONTEXT_GATED_SELECTABLE"
     },
     {
       "source": "packs/feats.db",
@@ -626,8 +533,7 @@
       "itemName": "Attack Combo (Ranged)",
       "option": "attackComboRanged",
       "control": "toggle",
-      "classification": "SELECTABLE",
-      "unsuppliedGates": []
+      "classification": "SELECTABLE"
     },
     {
       "source": "packs/feats.db",
@@ -635,8 +541,7 @@
       "itemName": "Far Shot",
       "option": "farShot",
       "control": "passive",
-      "classification": "PASSIVE",
-      "unsuppliedGates": []
+      "classification": "PASSIVE"
     },
     {
       "source": "packs/feats.db",
@@ -644,8 +549,7 @@
       "itemName": "Mechanical Martial Arts",
       "option": "mechanicalMartialArts",
       "control": "passive",
-      "classification": "PASSIVE",
-      "unsuppliedGates": []
+      "classification": "PASSIVE"
     },
     {
       "source": "packs/feats.db",
@@ -653,10 +557,7 @@
       "itemName": "Improved Opportunistic Trickery",
       "option": "improvedOpportunisticTrickery",
       "control": "flag",
-      "classification": "METADATA_PRESENT_RUNTIME_INCOMPLETE",
-      "unsuppliedGates": [
-        "requiresOpportunityAttack"
-      ]
+      "classification": "EXTERNAL_WORKFLOW_GATED"
     },
     {
       "source": "packs/feats.db",
@@ -664,8 +565,7 @@
       "itemName": "Angled Throw",
       "option": "angledThrow",
       "control": "flag",
-      "classification": "SELECTABLE",
-      "unsuppliedGates": []
+      "classification": "SELECTABLE"
     },
     {
       "source": "packs/feats.db",
@@ -673,8 +573,7 @@
       "itemName": "Precise Shot",
       "option": "preciseShot",
       "control": "flag",
-      "classification": "SELECTABLE",
-      "unsuppliedGates": []
+      "classification": "SELECTABLE"
     },
     {
       "source": "packs/feats.db",
@@ -682,8 +581,7 @@
       "itemName": "Forceful Blast",
       "option": "forcefulBlast",
       "control": "flag",
-      "classification": "SELECTABLE",
-      "unsuppliedGates": []
+      "classification": "SELECTABLE"
     },
     {
       "source": "packs/feats.db",
@@ -691,8 +589,7 @@
       "itemName": "Autofire Assault",
       "option": "autofireAssault",
       "control": "toggle",
-      "classification": "CONTEXT_GATED_SELECTABLE",
-      "unsuppliedGates": []
+      "classification": "CONTEXT_GATED_SELECTABLE"
     },
     {
       "source": "packs/feats.db",
@@ -700,8 +597,7 @@
       "itemName": "Improved Rapid Strike",
       "option": "improvedRapidStrike",
       "control": "toggle",
-      "classification": "SELECTABLE",
-      "unsuppliedGates": []
+      "classification": "SELECTABLE"
     },
     {
       "source": "packs/feats.db",
@@ -709,8 +605,7 @@
       "itemName": "Rapid Strike",
       "option": "rapidStrike",
       "control": "toggle",
-      "classification": "SELECTABLE",
-      "unsuppliedGates": []
+      "classification": "SELECTABLE"
     },
     {
       "source": "packs/feats.db",
@@ -718,8 +613,7 @@
       "itemName": "Hobbling Strike",
       "option": "hobblingStrike",
       "control": "flag",
-      "classification": "SELECTABLE",
-      "unsuppliedGates": []
+      "classification": "SELECTABLE"
     },
     {
       "source": "packs/feats.db",
@@ -727,10 +621,7 @@
       "itemName": "Improved Disarm",
       "option": "improvedDisarm",
       "control": "toggle",
-      "classification": "METADATA_PRESENT_RUNTIME_INCOMPLETE",
-      "unsuppliedGates": [
-        "requiresManeuver"
-      ]
+      "classification": "EXTERNAL_WORKFLOW_GATED"
     },
     {
       "source": "packs/feats.db",
@@ -738,8 +629,7 @@
       "itemName": "Momentum Strike",
       "option": "momentumStrike",
       "control": "passive",
-      "classification": "PASSIVE",
-      "unsuppliedGates": []
+      "classification": "PASSIVE"
     },
     {
       "source": "packs/feats.db",
@@ -747,8 +637,7 @@
       "itemName": "Critical Strike",
       "option": "criticalStrike",
       "control": "toggle",
-      "classification": "SELECTABLE",
-      "unsuppliedGates": []
+      "classification": "SELECTABLE"
     },
     {
       "source": "packs/feats.db",
@@ -756,8 +645,7 @@
       "itemName": "Pistoleer",
       "option": "pistoleerHoldOut",
       "control": "passive",
-      "classification": "PASSIVE",
-      "unsuppliedGates": []
+      "classification": "PASSIVE"
     },
     {
       "source": "packs/feats.db",
@@ -765,8 +653,7 @@
       "itemName": "Bowcaster Marksman",
       "option": "bowcasterMarksman",
       "control": "passive",
-      "classification": "PASSIVE",
-      "unsuppliedGates": []
+      "classification": "PASSIVE"
     },
     {
       "source": "packs/feats.db",
@@ -774,8 +661,7 @@
       "itemName": "Mighty Swing",
       "option": "mightySwing",
       "control": "toggle",
-      "classification": "SELECTABLE",
-      "unsuppliedGates": []
+      "classification": "SELECTABLE"
     },
     {
       "source": "packs/feats.db",
@@ -783,8 +669,7 @@
       "itemName": "Prime Shot",
       "option": "primeShot",
       "control": "passive",
-      "classification": "PASSIVE",
-      "unsuppliedGates": []
+      "classification": "PASSIVE"
     },
     {
       "source": "packs/feats.db",
@@ -792,8 +677,7 @@
       "itemName": "Powerful Charge",
       "option": "powerfulCharge",
       "control": "toggle",
-      "classification": "CONTEXT_GATED_SELECTABLE",
-      "unsuppliedGates": []
+      "classification": "CONTEXT_GATED_SELECTABLE"
     },
     {
       "source": "packs/feats.db",
@@ -801,8 +685,7 @@
       "itemName": "Cornered",
       "option": "cornered",
       "control": "passive",
-      "classification": "PASSIVE",
-      "unsuppliedGates": []
+      "classification": "PASSIVE"
     },
     {
       "source": "packs/feats.db",
@@ -810,8 +693,7 @@
       "itemName": "Echani Training",
       "option": "echaniSingleUnarmedStrike",
       "control": "toggle",
-      "classification": "SELECTABLE",
-      "unsuppliedGates": []
+      "classification": "SELECTABLE"
     },
     {
       "source": "packs/feats.db",
@@ -819,8 +701,7 @@
       "itemName": "Strafe",
       "option": "strafe",
       "control": "flag",
-      "classification": "CONTEXT_GATED_SELECTABLE",
-      "unsuppliedGates": []
+      "classification": "CONTEXT_GATED_SELECTABLE"
     },
     {
       "source": "packs/feats.db",
@@ -828,8 +709,7 @@
       "itemName": "Artillery Shot",
       "option": "artilleryShot",
       "control": "passive",
-      "classification": "PASSIVE",
-      "unsuppliedGates": []
+      "classification": "PASSIVE"
     },
     {
       "source": "packs/feats.db",
@@ -837,8 +717,7 @@
       "itemName": "Autofire Sweep",
       "option": "autofireSweep",
       "control": "flag",
-      "classification": "CONTEXT_GATED_SELECTABLE",
-      "unsuppliedGates": []
+      "classification": "CONTEXT_GATED_SELECTABLE"
     },
     {
       "source": "packs/talents.db",
@@ -846,8 +725,7 @@
       "itemName": "Weapon Shift",
       "option": "weapon-shift-ranged-as-melee",
       "control": "flag",
-      "classification": "SELECTABLE",
-      "unsuppliedGates": []
+      "classification": "SELECTABLE"
     },
     {
       "source": "packs/talents.db",
@@ -855,8 +733,7 @@
       "itemName": "Great Shot",
       "option": "great-shot",
       "control": "passive",
-      "classification": "PASSIVE",
-      "unsuppliedGates": []
+      "classification": "PASSIVE"
     },
     {
       "source": "packs/talents.db",
@@ -864,8 +741,7 @@
       "itemName": "Hailfire",
       "option": "hailfire-pistol-autofire",
       "control": "flag",
-      "classification": "SELECTABLE",
-      "unsuppliedGates": []
+      "classification": "SELECTABLE"
     },
     {
       "source": "packs/talents.db",
@@ -873,8 +749,7 @@
       "itemName": "Starship Raider",
       "option": "starship-raider",
       "control": "passive",
-      "classification": "PASSIVE",
-      "unsuppliedGates": []
+      "classification": "PASSIVE"
     },
     {
       "source": "packs/talents.db",
@@ -882,10 +757,7 @@
       "itemName": "Jedi Hunter",
       "option": "jedi-hunter-force-sensitive",
       "control": "flag",
-      "classification": "METADATA_PRESENT_RUNTIME_INCOMPLETE",
-      "unsuppliedGates": [
-        "requiresTargetFeat"
-      ]
+      "classification": "TARGET_GATED"
     },
     {
       "source": "packs/talents.db",
@@ -893,8 +765,7 @@
       "itemName": "Strength of the Empire",
       "option": "strength-of-the-empire-active",
       "control": "flag",
-      "classification": "SELECTABLE",
-      "unsuppliedGates": []
+      "classification": "SELECTABLE"
     },
     {
       "source": "packs/talents.db",
@@ -902,8 +773,7 @@
       "itemName": "Mandalorian Glory",
       "option": "mandalorian-glory-next-attack",
       "control": "flag",
-      "classification": "SELECTABLE",
-      "unsuppliedGates": []
+      "classification": "SELECTABLE"
     },
     {
       "source": "packs/talents.db",
@@ -911,10 +781,7 @@
       "itemName": "Controlled Burst",
       "option": "controlled-burst",
       "control": "passive",
-      "classification": "METADATA_PRESENT_RUNTIME_INCOMPLETE",
-      "unsuppliedGates": [
-        "requiresOption"
-      ]
+      "classification": "PASSIVE"
     },
     {
       "source": "packs/talents.db",
@@ -922,8 +789,7 @@
       "itemName": "Cantina Brawler",
       "option": "cantinaBrawlerFlanked",
       "control": "toggle",
-      "classification": "SELECTABLE",
-      "unsuppliedGates": []
+      "classification": "SELECTABLE"
     },
     {
       "source": "packs/talents.db",
@@ -931,8 +797,7 @@
       "itemName": "Hammerblow",
       "option": "hammerblow",
       "control": "toggle",
-      "classification": "SELECTABLE",
-      "unsuppliedGates": []
+      "classification": "SELECTABLE"
     },
     {
       "source": "packs/talents.db",
@@ -940,8 +805,7 @@
       "itemName": "Praetoria Vonil",
       "option": "praetoria-vonil-mobile-two-handed-lightsaber",
       "control": "flag",
-      "classification": "SELECTABLE",
-      "unsuppliedGates": []
+      "classification": "SELECTABLE"
     },
     {
       "source": "packs/talents.db",
@@ -949,8 +813,7 @@
       "itemName": "Nonlethal Tactics",
       "option": "nonlethal-tactics-stun",
       "control": "flag",
-      "classification": "SELECTABLE",
-      "unsuppliedGates": []
+      "classification": "SELECTABLE"
     },
     {
       "source": "packs/talents.db",
@@ -958,10 +821,7 @@
       "itemName": "Sucker Punch",
       "option": "suckerPunch",
       "control": "toggle",
-      "classification": "METADATA_PRESENT_RUNTIME_INCOMPLETE",
-      "unsuppliedGates": [
-        "requiresTargetDeniedDexBonus"
-      ]
+      "classification": "TARGET_GATED"
     },
     {
       "source": "packs/talents.db",
@@ -969,8 +829,7 @@
       "itemName": "Target Acquisition",
       "option": "target-acquisition",
       "control": "flag",
-      "classification": "SELECTABLE",
-      "unsuppliedGates": []
+      "classification": "SELECTABLE"
     },
     {
       "source": "packs/talents.db",
@@ -978,8 +837,7 @@
       "itemName": "Hunter's Mark",
       "option": "hunters-mark",
       "control": "flag",
-      "classification": "CONTEXT_GATED_SELECTABLE",
-      "unsuppliedGates": []
+      "classification": "CONTEXT_GATED_SELECTABLE"
     },
     {
       "source": "packs/talents.db",
@@ -987,8 +845,7 @@
       "itemName": "Curved Throw",
       "option": "curved-throw",
       "control": "flag",
-      "classification": "SELECTABLE",
-      "unsuppliedGates": []
+      "classification": "SELECTABLE"
     },
     {
       "source": "packs/talents.db",
@@ -996,8 +853,7 @@
       "itemName": "Power Surge",
       "option": "power-surge-melee",
       "control": "flag",
-      "classification": "SELECTABLE",
-      "unsuppliedGates": []
+      "classification": "SELECTABLE"
     },
     {
       "source": "packs/talents.db",
@@ -1005,8 +861,7 @@
       "itemName": "Stinging Jab",
       "option": "stingingJab",
       "control": "toggle",
-      "classification": "SELECTABLE",
-      "unsuppliedGates": []
+      "classification": "SELECTABLE"
     },
     {
       "source": "packs/talents.db",
@@ -1014,8 +869,7 @@
       "itemName": "Set for Stun",
       "option": "set-for-stun",
       "control": "flag",
-      "classification": "SELECTABLE",
-      "unsuppliedGates": []
+      "classification": "SELECTABLE"
     },
     {
       "source": "packs/talents.db",
@@ -1023,8 +877,7 @@
       "itemName": "Vaapad",
       "option": "vaapad",
       "control": "passive",
-      "classification": "PASSIVE",
-      "unsuppliedGates": []
+      "classification": "PASSIVE"
     },
     {
       "source": "packs/talents.db",
@@ -1032,8 +885,7 @@
       "itemName": "Reap Retribution",
       "option": "reap-retribution-damage",
       "control": "flag",
-      "classification": "SELECTABLE",
-      "unsuppliedGates": []
+      "classification": "SELECTABLE"
     },
     {
       "source": "packs/talents.db",
@@ -1041,8 +893,7 @@
       "itemName": "Hunter's Target",
       "option": "hunters-target",
       "control": "flag",
-      "classification": "SELECTABLE",
-      "unsuppliedGates": []
+      "classification": "SELECTABLE"
     },
     {
       "source": "packs/talents.db",
@@ -1050,10 +901,7 @@
       "itemName": "Expert Grappler",
       "option": "expertGrappler",
       "control": "passive",
-      "classification": "METADATA_PRESENT_RUNTIME_INCOMPLETE",
-      "unsuppliedGates": [
-        "requiresManeuver"
-      ]
+      "classification": "EXTERNAL_WORKFLOW_GATED"
     },
     {
       "source": "packs/talents.db",
@@ -1061,8 +909,7 @@
       "itemName": "Make Do",
       "option": "makeDo",
       "control": "flag",
-      "classification": "SELECTABLE",
-      "unsuppliedGates": []
+      "classification": "SELECTABLE"
     },
     {
       "source": "packs/talents.db",
@@ -1070,8 +917,7 @@
       "itemName": "Mandalorian Ferocity",
       "option": "mandalorian-ferocity-multiattack-damage",
       "control": "flag",
-      "classification": "SELECTABLE",
-      "unsuppliedGates": []
+      "classification": "SELECTABLE"
     },
     {
       "source": "packs/talents.db",
@@ -1079,8 +925,7 @@
       "itemName": "Manipulating Strike",
       "option": "manipulating-strike",
       "control": "flag",
-      "classification": "SELECTABLE",
-      "unsuppliedGates": []
+      "classification": "SELECTABLE"
     },
     {
       "source": "packs/talents.db",
@@ -1088,8 +933,7 @@
       "itemName": "Ambush",
       "option": "disgrace-ambush-target-not-acted",
       "control": "flag",
-      "classification": "SELECTABLE",
-      "unsuppliedGates": []
+      "classification": "SELECTABLE"
     },
     {
       "source": "packs/talents.db",
@@ -1097,8 +941,7 @@
       "itemName": "Silent Takedown",
       "option": "silent-takedown",
       "control": "flag",
-      "classification": "SELECTABLE",
-      "unsuppliedGates": []
+      "classification": "SELECTABLE"
     },
     {
       "source": "packs/talents.db",
@@ -1106,8 +949,7 @@
       "itemName": "Precision Fire",
       "option": "precision-fire",
       "control": "flag",
-      "classification": "CONTEXT_GATED_SELECTABLE",
-      "unsuppliedGates": []
+      "classification": "CONTEXT_GATED_SELECTABLE"
     },
     {
       "source": "packs/talents.db",
@@ -1115,8 +957,7 @@
       "itemName": "Expert Gunner",
       "option": "expert-gunner",
       "control": "passive",
-      "classification": "PASSIVE",
-      "unsuppliedGates": []
+      "classification": "PASSIVE"
     },
     {
       "source": "packs/talents.db",
@@ -1124,8 +965,7 @@
       "itemName": "Gun Club",
       "option": "gun-club-ranged-as-melee",
       "control": "flag",
-      "classification": "SELECTABLE",
-      "unsuppliedGates": []
+      "classification": "SELECTABLE"
     },
     {
       "source": "packs/talents.db",
@@ -1133,10 +973,7 @@
       "itemName": "Twin Shot",
       "option": "twin-shot",
       "control": "passive",
-      "classification": "METADATA_PRESENT_RUNTIME_INCOMPLETE",
-      "unsuppliedGates": [
-        "requiresOption"
-      ]
+      "classification": "PASSIVE"
     },
     {
       "source": "packs/talents.db",
@@ -1144,8 +981,7 @@
       "itemName": "Ambush (Republic Commando)",
       "option": "republic-commando-ambush",
       "control": "flag",
-      "classification": "SELECTABLE",
-      "unsuppliedGates": []
+      "classification": "SELECTABLE"
     },
     {
       "source": "packs/talents.db",
@@ -1153,8 +989,7 @@
       "itemName": "Knowledge is Power",
       "option": "knowledge-is-power",
       "control": "flag",
-      "classification": "SELECTABLE",
-      "unsuppliedGates": []
+      "classification": "SELECTABLE"
     },
     {
       "source": "packs/talents.db",
@@ -1162,8 +997,7 @@
       "itemName": "Sentinel Strike",
       "option": "sentinel-strike-flat-footed-lightsaber",
       "control": "flag",
-      "classification": "SELECTABLE",
-      "unsuppliedGates": []
+      "classification": "SELECTABLE"
     },
     {
       "source": "packs/talents.db",
@@ -1171,8 +1005,7 @@
       "itemName": "Rifle Master",
       "option": "rifle-master-short-range",
       "control": "passive",
-      "classification": "PASSIVE",
-      "unsuppliedGates": []
+      "classification": "PASSIVE"
     },
     {
       "source": "packs/talents.db",
@@ -1180,8 +1013,7 @@
       "itemName": "Devastating Melee Smash",
       "option": "devastatingMeleeSmash",
       "control": "toggle",
-      "classification": "SELECTABLE",
-      "unsuppliedGates": []
+      "classification": "SELECTABLE"
     },
     {
       "source": "packs/talents.db",
@@ -1189,10 +1021,7 @@
       "itemName": "Breach Cover",
       "option": "breach-cover",
       "control": "passive",
-      "classification": "METADATA_PRESENT_RUNTIME_INCOMPLETE",
-      "unsuppliedGates": [
-        "requiresAreaAttack"
-      ]
+      "classification": "PASSIVE"
     },
     {
       "source": "packs/talents.db",
@@ -1200,8 +1029,7 @@
       "itemName": "Knowledge is Strength",
       "option": "knowledge-is-strength",
       "control": "flag",
-      "classification": "SELECTABLE",
-      "unsuppliedGates": []
+      "classification": "SELECTABLE"
     },
     {
       "source": "packs/talents.db",
@@ -1209,8 +1037,7 @@
       "itemName": "Tangle Up",
       "option": "tangle-up",
       "control": "flag",
-      "classification": "SELECTABLE",
-      "unsuppliedGates": []
+      "classification": "SELECTABLE"
     },
     {
       "source": "packs/talents.db",
@@ -1218,8 +1045,7 @@
       "itemName": "Master of the Great Hunt",
       "option": "master-of-the-great-hunt-beast",
       "control": "flag",
-      "classification": "SELECTABLE",
-      "unsuppliedGates": []
+      "classification": "SELECTABLE"
     },
     {
       "source": "packs/talents.db",
@@ -1227,10 +1053,7 @@
       "itemName": "Opportunity Fire",
       "option": "opportunity-fire-rifle",
       "control": "passive",
-      "classification": "METADATA_PRESENT_RUNTIME_INCOMPLETE",
-      "unsuppliedGates": [
-        "requiresOpportunityAttack"
-      ]
+      "classification": "EXTERNAL_WORKFLOW_GATED"
     },
     {
       "source": "packs/talents.db",
@@ -1238,8 +1061,7 @@
       "itemName": "Heavy-Duty Actuators",
       "option": "heavy-duty-actuators",
       "control": "passive",
-      "classification": "PASSIVE",
-      "unsuppliedGates": []
+      "classification": "PASSIVE"
     },
     {
       "source": "packs/talents.db",
@@ -1247,10 +1069,7 @@
       "itemName": "Shellshock",
       "option": "shellshock-area-unaware",
       "control": "flag",
-      "classification": "METADATA_PRESENT_RUNTIME_INCOMPLETE",
-      "unsuppliedGates": [
-        "requiresAreaAttack"
-      ]
+      "classification": "SELECTABLE"
     },
     {
       "source": "packs/talents.db",
@@ -1258,8 +1077,7 @@
       "itemName": "Greater Weapon Focus (Fira)",
       "option": "greater-weapon-focus-fira",
       "control": "passive",
-      "classification": "PASSIVE",
-      "unsuppliedGates": []
+      "classification": "PASSIVE"
     },
     {
       "source": "packs/talents.db",
@@ -1267,10 +1085,7 @@
       "itemName": "Higher Yield",
       "option": "higher-yield",
       "control": "flag",
-      "classification": "METADATA_PRESENT_RUNTIME_INCOMPLETE",
-      "unsuppliedGates": [
-        "requiresAreaAttack"
-      ]
+      "classification": "SELECTABLE"
     },
     {
       "source": "packs/talents.db",
@@ -1278,8 +1093,7 @@
       "itemName": "Invisible Attacker",
       "option": "invisible-attacker",
       "control": "flag",
-      "classification": "SELECTABLE",
-      "unsuppliedGates": []
+      "classification": "SELECTABLE"
     },
     {
       "source": "packs/talents.db",
@@ -1287,8 +1101,7 @@
       "itemName": "Takedown",
       "option": "takedown-charge-prone",
       "control": "flag",
-      "classification": "CONTEXT_GATED_SELECTABLE",
-      "unsuppliedGates": []
+      "classification": "CONTEXT_GATED_SELECTABLE"
     }
   ]
 }

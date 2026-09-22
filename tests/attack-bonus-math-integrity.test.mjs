@@ -473,10 +473,16 @@ ok('roll-config.js source: one shared situational-context builder and the shared
   // checkbox's .checked) -- proving the REAL exported function the dialog
   // uses, not a reimplementation of its logic, against every combination.
   const { computeAttackSituationalContext } = await import('/systems/foundryvtt-swse/scripts/rolls/roll-config.js');
-  function fakeForm(checkedNames = []) {
+  // Math Integrity Freeze, Attack Bonus round 8 correction #1 (Blocker 4):
+  // fieldValues supports a non-checkbox field's .value (e.g. the Range Band
+  // select, which is now the single authority Point Blank derives from --
+  // the separate 'pointBlank' checkbox this fixture used to simulate no
+  // longer exists in the real form at all).
+  function fakeForm(checkedNames = [], fieldValues = {}) {
     const checked = new Set(checkedNames);
     return { querySelector(selector) {
       const name = selector.match(/name="([^"]+)"/)?.[1];
+      if (name in fieldValues) return { value: fieldValues[name] };
       return { checked: checked.has(name) };
     } };
   }
@@ -492,7 +498,7 @@ ok('roll-config.js source: one shared situational-context builder and the shared
 
   assert.deepEqual(computeAttackSituationalContext(fakeForm([]), true), { aim: false, charge: false, isPointBlank: false, situationalContributions: [] }, 'nothing checked: no aim/charge/point-blank context, no typed situational contributions');
   assert.deepEqual(computeAttackSituationalContext(fakeForm(['aiming']), false), { aim: true, charge: false, isPointBlank: false, situationalContributions: [] }, 'Aim alone sets the context flag but contributes zero direct attack bonus');
-  assert.deepEqual(computeAttackSituationalContext(fakeForm(['pointBlank']), false), { aim: false, charge: false, isPointBlank: true, situationalContributions: [] }, 'Point Blank alone sets the range context but contributes zero direct attack bonus (feat-gated, not automatic)');
+  assert.deepEqual(computeAttackSituationalContext(fakeForm([], { rangeBand: 'pointBlank' }), false), { aim: false, charge: false, isPointBlank: true, situationalContributions: [] }, 'Range Band = Point Blank sets the range context but contributes zero direct attack bonus (feat-gated, not automatic); round 8 correction #1 removed the separate pointBlank checkbox entirely -- Range Band is the one authority');
   assert.deepEqual(computeAttackSituationalContext(fakeForm(['charging']), true), { aim: false, charge: true, isPointBlank: false, situationalContributions: [chargeModifier()] }, 'Charging on a melee attack: a typed +2 Charge contribution, plus context.charge=true for Powerful Charge/Charging Fire');
   assert.deepEqual(computeAttackSituationalContext(fakeForm(['charging']), false), { aim: false, charge: true, isPointBlank: false, situationalContributions: [] }, 'Charging on a RANGED attack: context.charge=true (for Charging Fire) but no Charge contribution -- charge only grants +2 to a melee attack');
   // BLOCKER A FIX (was: "Flanking: +2, melee or ranged" -- a false
@@ -599,7 +605,7 @@ ok('computeAttackSituationalContext(): every toggle combination matches the veri
   // total from those two rules, matching Powerful Charge's own RAW text.
   const powerfulChargeFeatItem = {
     id: 'feat-powerful-charge', name: 'Powerful Charge', type: 'feat',
-    system: { abilityMeta: { rules: [{ option: 'powerfulCharge' }] } }
+    system: { abilityMeta: { rules: [{ type: 'ATTACK_OPTION', option: 'powerfulCharge' }] } }
   };
   const powerfulChargeActor = makeActor({ bab: 7, str: 2, items: [powerfulChargeFeatItem] });
   const chargeAndPowerful = resolveAttackBonus(powerfulChargeActor, weapon, null, {

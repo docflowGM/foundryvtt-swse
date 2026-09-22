@@ -779,6 +779,84 @@ Also reviewed and found **not** a conflict: `scripts/patches/combat-ui-behavior-
 
 Per the reviewer's explicit instruction: this round does not begin NPC-flat math and does not begin the Damage domain.
 
+## Domain: Attack Bonus — round 8 correction #1 (independent review held round 8 on four production blockers plus one audit inconsistency)
+
+An independent review of round 8 (head `dca4a91674c79a73b7aa50780accb379587267cc`) accepted the round's general direction in full — domain isolation, the four confirmed-duplicate hardcoded checkboxes' removal, Aim/Charge dynamic gating, the Charging Fire exception, Higher Ground's removal, and the ranged-hotfix fix — but held certification on dynamic option presentation specifically, citing three production blockers and one audit-tool inconsistency, all confirmed by direct source/data inspection before any fix was made.
+
+### Explicit correction to round 8's own certification claims
+
+Round 8 stated "ATTACK dialog dynamic option presentation: CERTIFIED for the toggleable-gate model" and reported a 106/136 reachable count. Both are corrected here, not silently rewritten: the presentation model was built on `CombatOptionResolver.getFeatRules()`, which (Blocker 1 below) admitted non-`ATTACK_OPTION` records into the same pipeline the certification was proven against — the certification's own foundation was unverified at the time it was written. The 106/136 count was also arithmetically wrong (its own displayed buckets summed to 109, not 106) — flagged directly by the reviewer as reason alone to distrust the report pending correction. Neither the domain-isolation nor the duplicate-removal certifications are affected; both were proven independently of `getFeatRules()`'s defect.
+
+### Blocker 1 — `getFeatRules()` admitted non-`ATTACK_OPTION` rules into the attack-option pipeline
+
+Confirmed directly: `pushRule()` accepted `rule.type === 'ATTACK_OPTION' || rule.option || rule.id` — any `abilityMeta.rules` entry carrying an `option` or `id` field, regardless of its own declared type. Scanning the actual compiled packs found 180+ non-`ATTACK_OPTION` rules that also carry an `id` for their own unrelated purposes: 90 `RUNTIME_CONTEXT_REFERENCE`, 44 `TALENT_RULE`, plus `HIT_RIDER`, `CRITICAL_RIDER`, `DEFENSE_BONUS`, `COVER_CONTEXT`, and more. Concretely, Oath of Duty (`RUNTIME_CONTEXT_REFERENCE`), Force Warning and Healing Boost (`TALENT_RULE`) were all one card render away from appearing as "Your Attack Options" checkboxes.
+
+**Fix**: `getFeatRules()` is replaced by an exported `extractAttackOptionRules()` (`scripts/engine/combat/combat-option-resolver.js`) that requires `type === 'ATTACK_OPTION'` strictly for every `abilityMeta.rules` entry. The two dedicated, single-purpose compatibility slots (`abilityMeta.primitives[]`, `abilityMeta.attackOption`) remain supported — no shipped record uses either today, confirmed against every pack — but a primitive still requires its own explicit type, and the singular `attackOption` slot's presence is itself the declaration (never a mixed-type collection), normalized to carry the type explicitly and rejected if it declares a conflicting one.
+
+### Blocker 2 — the coverage-report tool scanned a different population than production, with an arithmetic error on top
+
+The tool's own `type === 'ATTACK_OPTION'`-only scan was, by coincidence, the SAFER of the two populations — but it could never prove it matched what `CombatOptionResolver.getAvailableAttackOptions()` actually consumed, since the two were independently implemented. Its four displayed buckets (56 selectable + 33 passive + 17 context-gated + 3 slider = 109) also did not sum to its claimed "106 reachable."
+
+**Fix**: `tools/report-attack-option-coverage.mjs` now imports `extractAttackOptionRules()` directly from `combat-option-resolver.js` rather than re-parsing packs itself — the report and the production resolver are now provably the same population by construction, not by coincidence. Every total in the report is derived live from the records array (`bucketSum === all.length` is asserted at generation time and throws if it ever disagrees), so the round 8 arithmetic error cannot recur silently.
+
+### Blocker 3 — target-gated options were never actually unreachable; the dialog just never threaded its own target selection into them
+
+Round 8's report classified every `requiresTargetType`/`requiresTargetFeat`/`requiresTargetTalent`/`requiresTargetItem`/`requiresTargetText`/`requiresTargetFlatFooted`/`requiresTargetDeniedDexBonus` option as structurally unreachable ("the dialog never supplies target context"). Confirmed false: the dialog's own "Target Context" panel (`buildTargetPanel()`) already offers Selected Token / Combatant selection, the submit handler already builds a `targetContext` from it, and `CombatOptionResolver.optionAllowedForWeapon()` already implements every one of these gates correctly — `buildRollConfigModel()`'s option-presentation calls simply never passed a resolved target into the context at all (`{ attackType }` only), and the live-preview `update()` function never read the Target Context panel's fields into its own `rollOptions` either (a genuine preview/roll parity gap independent of option presentation, also fixed here).
+
+**Fix**: `combat-option-resolver.js` gains an internal-only `__probeDiscoveryGates` flag (set solely by `getAttackOptionsWithState()`'s existing probe pass, never by a real caller) that lets the seven target gates and `requiresOption` be probe-satisfied for discovery, exactly as Aim/Charge/Autofire already were — so a target-gated option blocked only by an absent/non-qualifying target is now found and given a truthful reason ("Requires a target" vs. "Target does not meet this option's requirement") instead of silently vanishing. `roll-config.js` now resolves the actual target actor via `getTargetActorFromOptions()` — the SAME shared authority the real roll and the submit-time `targetContext` already used (`combat-roll-math.js`), never a second target resolver — and threads it into both `buildRollConfigModel()`'s initial model build (so a token already targeted before the dialog opens is honored on first paint, via that function's own existing `game.user.targets` fallback) and the live `update()`/`rebuildAttackOptionsPanel()` recompute (so changing Selected Token/Combatant re-evaluates option state immediately, via the same form-level `input`/`change` listener that already drives every other live recompute — no new event wiring was needed). `update()`'s `rollOptions` also now carries `targetTokenId`/`targetActorId`, closing the preview/roll target-resolution parity gap for the numeric composition itself (Heart of the Guardian/Hurikane's live preview), not just the option cards.
+
+Concrete effect: Droid Hunter, Jedi Hunter, Cunning Attack, and Sucker Punch move from the old report's "unreachable" bucket to the corrected report's `TARGET_GATED` bucket (8 records total) — reachable, conditionally, on whichever target is selected, exactly as the reviewer described.
+
+### Blocker 4 — Point Blank had two independently-settable authorities for the same fact
+
+Confirmed: the ranged dialog rendered BOTH a Range Band selector (`name="rangeBand"`, with its own `"pointBlank"` option value) AND a separate `name="pointBlank"` checkbox, both feeding the submitted result independently (`rangeBand: data.get('rangeBand')` and `isPointBlank` from the checkbox). A player could produce `rangeBand: 'medium'` with the checkbox still checked — an impossible real-world state — and `ScopedCombatFeatResolver`'s Point Blank Shot gate (`isPointBlankContext()`, which already also independently checks the range band string) would apply the feat's +1 based on the checkbox alone in that case, disagreeing with the selected range.
+
+**Fix**: the checkbox is deleted from the template entirely. `isPointBlank` is now derived in exactly one place, `computeAttackSituationalContext(form, melee)` — the single function both the submit handler and the live preview already shared — via `form.querySelector('[name="rangeBand"]')?.value === 'pointBlank'` (the Range Band select's fixed, closed value space; correctly always false for melee, where the field does not render at all). `getAvailableAttackContexts()` no longer returns a `pointBlank` key at all — Point Blank was never a generic player-toggleable context distinct from the range itself, and is not re-added as one; the reference-only `ROLL_MODIFIERS.situational.pointBlank` label is updated to document the derivation. The backward-compatible `result.situational.pointBlank` field is kept (for any external caller still reading that legacy shape) but now derives from `rangeBand` too, rather than reading a field that no longer exists in the form.
+
+### Option-state model: target and `requiresOption` reasons added (supports Blocker 3)
+
+`unmetToggleableReasons()` now also explains a blocked target gate ("Requires a target" with none selected; "Target does not meet this option's requirement" with one selected that doesn't qualify) and a blocked `requiresOption` gate ("Requires `<id>` to be selected first") — both resolvable from this same dialog's own controls, so both belong in the disabled-with-reason model alongside Aim/Charge/Autofire, not the permanently-unreachable category. `requiresManeuver` and `requiresOpportunityAttack` remain deliberately un-probed and unreasoned — this dialog has no maneuver selector or opportunity-attack/reaction framing at all, so an option gated on either is genuinely, not just presentationally, unreachable from here; exposing it with a checkbox would misrepresent a reaction-only mechanic as an ordinary attack option, which the reviewer explicitly warned against.
+
+### Corrected coverage report
+
+Regenerated via `tools/report-attack-option-coverage.mjs` (now importing `extractAttackOptionRules()` directly): **136 total records** (88 feats, 48 talents; unchanged, confirming Blocker 1's fix did not change what counts as a genuine `ATTACK_OPTION` record, only what leaks in alongside it) —
+
+| Classification | Count |
+|---|---:|
+| SELECTABLE | 58 |
+| PASSIVE | 37 |
+| CONTEXT_GATED_SELECTABLE (Aim/Charge/Autofire/Range Band/`requiresOption`) | 20 |
+| SLIDER | 3 |
+| TARGET_GATED (reachable once a target is selected — Blocker 3) | 8 |
+| EXTERNAL_WORKFLOW_GATED (`requiresManeuver`/`requiresOpportunityAttack` — genuinely unreachable from this dialog) | 10 |
+| RUNTIME_INCOMPLETE | 0 |
+| INVALID_NON_ATTACK_RULE | 0 |
+
+**Reachable from the current attack dialog today (SELECTABLE + PASSIVE + CONTEXT_GATED_SELECTABLE + SLIDER): 118/136** — up from round 8's (arithmetically wrong) claim of 106, both because `requiresAreaAttack`/`requiresOption`/`requiresRangeBand`-gated records were previously miscounted as unreachable (they are weapon-derived or dialog-resolvable, not context gaps) and because the bucket-sum invariant is now enforced at generation time. The 8 `TARGET_GATED` and 10 `EXTERNAL_WORKFLOW_GATED` records are reported separately rather than folded into either "reachable" or a single vague "incomplete" bucket, per the reviewer's explicit classification requirement.
+
+Two gaps discovered in passing but explicitly left unfixed as out of this correction's scope (neither was part of the reviewer's four blockers, and fixing them changes real roll-math gating behavior rather than presentation): three records (`Overwhelming Attack`, `Critical Strike`, `Mighty Swing`) declare `requiresSwiftActions` and one (`Autofire Assault`) declares `excludesOptions`, neither of which `optionAllowedForWeapon()` currently enforces at all — both are therefore effectively unconditional today in the real resolver, which this report's classification does not misrepresent (it reports what the resolver actually gates on) but which is worth a future round's attention.
+
+### Test matrix
+
+New `tests/attack-dialog-context-authority-correction.test.mjs` (7 sections, all passing): rule-type isolation using real Oath of Duty/Force Warning/Healing Boost/Careful Shot record shapes (Blocker 1); a source-guard plus cross-check proving the coverage tool and production resolver share one extraction function (Blocker 2); Droid Hunter and Jedi Hunter's full disabled/no-target → disabled/non-qualifying-target → available progression, plus a `buildRollConfigModel()` wiring proof using `game.user.targets` (Blocker 3, 3 sub-sections); a source-guard proving no `pointBlank` field exists anywhere in `roll-config.js` plus a live `resolveAttackBonus()` proof that Point Blank Shot's +1 applies only at Point Blank range (Blocker 4, 2 sub-sections). `tests/attack-dialog-context-authority.test.mjs`'s three assertions that named the removed `pointBlank` context key are updated in place (still 10/10 passing). `tests/attack-bonus-math-integrity.test.mjs`'s `computeAttackSituationalContext()` toggle-matrix fixture (`fakeForm`) is extended to simulate a select's `.value` (not just a checkbox's `.checked`) for the Range Band field, and its one fixture missing an explicit `type: 'ATTACK_OPTION'` (relying on the very fallback Blocker 1 removed) is corrected — both are pre-existing test-fixture debt this correction's stricter extraction exposed, not new regressions.
+
+### Required validation
+
+All of the above plus every previously-certified test file re-run green: `tests/attack-dialog-context-authority.test.mjs` (10/10), `tests/attack-dialog-context-authority-correction.test.mjs` (7/7, new), `tests/attack-bonus-math-integrity.test.mjs` (34/34), `tests/weapons-engine-modifier-source-authority.test.mjs` (6/6), `tests/lightsaber-accessory-attack-provenance-safety.test.mjs`, `tests/combat-feat-attack-modifier-regression.test.mjs`, `tests/stock-droid-damage-math.test.mjs`. Full validation-suite results recorded in the PR handoff for this correction.
+
+### Updated certification status (this round)
+
+- SHARED roll-config domain isolation: **CERTIFIED** (unchanged)
+- SKILL/FORCE dialog preview parity: **CERTIFIED** (unchanged)
+- ATTACK OPTION DISCOVERY (which records CAN enter the pipeline at all): **CERTIFIED** — `extractAttackOptionRules()` is strictly `type === 'ATTACK_OPTION'`-gated; proven against real leaking records (Oath of Duty, Force Warning, Healing Boost) that a prior pass would have missed.
+- ATTACK OPTION COVERAGE REPORT: **CERTIFIED** — the tool and production resolver are now provably the same extraction population by shared function, not independent implementations; every total is derived from records, with a self-check against silent arithmetic drift.
+- ATTACK dialog dynamic option presentation (target-aware model): **CERTIFIED** — an owned option blocked only by Aim/Charge/Autofire/Range Band/another option/target state now renders disabled-with-reason; a maneuver- or opportunity-attack-gated option correctly remains entirely absent, not misrepresented as a normal checkbox.
+- POINT-BLANK CONTEXT: **CERTIFIED** — one authority (Range Band); the impossible dual-authority state can no longer be produced by this dialog.
+- **ATTACK dialog option completeness: still NOT CERTIFIED (unchanged claim)** — 118/136 records reachable from this dialog; 10 `EXTERNAL_WORKFLOW_GATED` records remain genuinely out of reach (no maneuver/reaction framing exists here) and are not claimed otherwise.
+- **FULL ATTACK BONUS DOMAIN: still NOT CERTIFIED** — presentation-layer only; the NPC statblock sub-domain (round 7's remaining gate) is untouched.
+
+Per the reviewer's explicit instruction: this correction does not begin NPC-flat math and does not begin the Damage domain.
+
 ## Domain: Damage
 
 - **A (canonical):** `resolveDamageBonus()` (`combat-roll-math.js:567-606`, stock-droid path at 503-565): ½ level, ability, weapon enhancement, rage, Rapid Alchemy, effect-intent, combat-option damage, scoped feat damage.

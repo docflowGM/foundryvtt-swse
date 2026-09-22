@@ -140,7 +140,7 @@ function powerfulChargeFeat() {
     const model = await buildRollConfigModel({ actor, rollType, ...extra });
     assert.equal(model.isAttackRoll, false, `${rollType}: isAttackRoll must be false`);
     assert.deepEqual(model.combatOptions, [], `${rollType}: combatOptions must be empty (no actor-owned attack options surfaced)`);
-    assert.deepEqual(model.attackContexts, { aim: false, charge: false, flanking: false, pointBlank: false }, `${rollType}: attackContexts must all be false`);
+    assert.deepEqual(model.attackContexts, { aim: false, charge: false, flanking: false }, `${rollType}: attackContexts must all be false`);
   }
 }
 ok('domain isolation: skill/force/force-power/initiative/ability roll models carry isAttackRoll:false, empty combatOptions, and all-false attackContexts');
@@ -185,12 +185,12 @@ ok('Higher Ground is removed from the template, the submit handler, and attackCo
   const actor = makeActor();
   const meleeModel = await buildRollConfigModel({ actor, rollType: 'attack', weapon: meleeWeapon() });
   assert.equal(meleeModel.isAttackRoll, true);
-  assert.deepEqual(meleeModel.attackContexts, { aim: false, pointBlank: false, flanking: true, charge: true }, 'melee: Flanking and Charge visible, Aim and Point Blank absent');
+  assert.deepEqual(meleeModel.attackContexts, { aim: false, flanking: true, charge: true }, 'melee: Flanking and Charge visible, Aim absent; Point Blank is never a toggleable context (round 8 correction #1, Blocker 4)');
 
   const rangedModel = await buildRollConfigModel({ actor, rollType: 'attack', weapon: rangedWeapon() });
-  assert.deepEqual(rangedModel.attackContexts, { aim: true, pointBlank: true, flanking: false, charge: false }, 'ranged, no Charging Fire owned: Aim and Point Blank visible, Flanking and Charge absent');
+  assert.deepEqual(rangedModel.attackContexts, { aim: true, flanking: false, charge: false }, 'ranged, no Charging Fire owned: Aim visible, Flanking and Charge absent');
 }
-ok('melee weapon shows Flanking/Charge and hides Aim/Point Blank; ranged weapon (no ranged-charge capability owned) shows Aim/Point Blank and hides Flanking/Charge');
+ok('melee weapon shows Flanking/Charge and hides Aim; ranged weapon (no ranged-charge capability owned) shows Aim and hides Flanking/Charge; Point Blank is never a toggleable attackContexts key');
 
 // ─── SECTION 5 — Charge context becomes relevant for a ranged attacker ────
 // who owns Charging Fire, without granting the ordinary melee +2.

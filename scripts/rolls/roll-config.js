@@ -11,7 +11,7 @@ import { RollEngine } from "/systems/foundryvtt-swse/scripts/engine/roll-engine.
 import { getCriticalConfirmBonus } from "/systems/foundryvtt-swse/scripts/combat/utils/combat-utils.js";
 import { WeaponRangeProfileResolver } from "/systems/foundryvtt-swse/scripts/items/weapon-range-profile-resolver.js";
 import { CombatOptionResolver } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-option-resolver.js";
-import { resolveAttackBonus } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-roll-math.js";
+import { resolveAttackBonus, getTargetActorFromOptions } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-roll-math.js";
 import { isRangedWeapon as canonicalIsRangedWeapon, isMeleeWeapon as canonicalIsMeleeWeapon } from "/systems/foundryvtt-swse/scripts/items/weapon-branch-resolver.js";
 import { createModifier, ModifierType, ModifierSource } from "/systems/foundryvtt-swse/scripts/engine/effects/modifiers/ModifierTypes.js";
 
@@ -301,7 +301,16 @@ export const ROLL_MODIFIERS = Object.freeze({
     // automated control at all; a GM who wants to grant a Higher Ground
     // bonus uses Custom Modifier. See the ledger's Round 8 section for the
     // full removal record.
-    pointBlank: { label: 'Point Blank Range (+1 only with Point Blank Shot feat)', value: 0 }
+    //
+    // Math Integrity Freeze, Attack Bonus round 8 correction #1 (Blocker
+    // 4): 'pointBlank' used to be its own separate quick-toggle checkbox,
+    // independently settable from the Range Band selector that already
+    // owns this exact fact -- capable of producing an impossible state
+    // (rangeBand: 'medium' AND the checkbox checked). Point Blank is a
+    // range STATE, not a player toggle; the checkbox is removed and
+    // isPointBlank is now derived in exactly one place
+    // (computeAttackSituationalContext()) from the selected Range Band.
+    pointBlank: { label: 'Point Blank Range (+1 only with Point Blank Shot feat; derived from Range Band, not a separate toggle)', value: 0 }
   }
   // Note: SWSE does not have advantage/disadvantage. Some species have reroll abilities
   // which are handled separately by the SpeciesRerollHandler.
@@ -937,6 +946,16 @@ function wireRollConfigDialog(html, { actor = null, weapon = null, rollType = 'a
     if (isLiveAttack) {
       const melee = model?.melee ?? false;
       const { aim, charge, isPointBlank, situationalContributions } = computeAttackSituationalContext(form, melee);
+      // Math Integrity Freeze, Attack Bonus round 8 correction #1 (Blocker
+      // 3): thread the dialog's own Target Context selection (Selected
+      // Token / Combatant) into the live preview the same way the submit
+      // handler already threads it into targetContext -- previously this
+      // preview never read these fields at all, so it could only ever see
+      // a canvas-targeted token (via getTargetActorFromOptions()'s own
+      // fallback), silently ignoring an explicit Combatant pick and
+      // diverging from what the actual submitted roll would resolve.
+      const targetTokenId = form.querySelector('[name="targetTokenId"]')?.value || null;
+      const targetActorIdField = form.querySelector('[name="targetActorId"]')?.value || null;
       const rollOptions = {
         attackType: melee ? 'melee' : 'ranged',
         weapon,
@@ -946,6 +965,8 @@ function wireRollConfigDialog(html, { actor = null, weapon = null, rollType = 'a
         combatOptions: readNestedFormEntries(form, 'combatOptions'),
         attackOptions: readNestedFormEntries(form, 'attackOptions'),
         rangeBand: form.querySelector('[name="rangeBand"]')?.value || null,
+        targetTokenId,
+        targetActorId: targetActorIdField,
         fightingDefensively: form.querySelector('[name="fightingDefensively"]')?.checked === true,
         customModifier: custom,
         situationalContributions,
@@ -953,6 +974,7 @@ function wireRollConfigDialog(html, { actor = null, weapon = null, rollType = 'a
       };
       const { computeFinalAttackComposition } = await import('/systems/foundryvtt-swse/scripts/combat/rolls/attacks.js');
       const composition = await computeFinalAttackComposition(actor, weapon, rollOptions);
+      const resolvedTargetActor = getTargetActorFromOptions(rollOptions);
       const previewSituationalTotal = situationalContributions.reduce((sum, m) => sum + (Number(m.value) || 0), 0);
       const total = composition.ok ? composition.atkBonus : base + custom + previewSituationalTotal;
       form.querySelector('[data-rcd-preview-total]')?.replaceChildren(document.createTextNode(sign(total)));
@@ -967,7 +989,7 @@ function wireRollConfigDialog(html, { actor = null, weapon = null, rollType = 'a
       // rollOptions.aim/charge/attackOptions.autofire this same update()
       // pass just built for the real composition, so the option-state
       // recompute can never disagree with what the roll itself would see.
-      rebuildAttackOptionsPanel(form, actor, weapon, { attackType: melee ? 'melee' : 'ranged', aim, charge, autofire: rollOptions.attackOptions?.autofire === true, combatOptions: rollOptions.combatOptions, attackOptions: rollOptions.attackOptions });
+      rebuildAttackOptionsPanel(form, actor, weapon, { attackType: melee ? 'melee' : 'ranged', aim, charge, autofire: rollOptions.attackOptions?.autofire === true, combatOptions: rollOptions.combatOptions, attackOptions: rollOptions.attackOptions, target: resolvedTargetActor, targetActor: resolvedTargetActor });
       return;
     }
     // Math Integrity Freeze, Attack Bonus round 8 (Part 1, domain
@@ -1035,25 +1057,39 @@ export async function buildRollConfigModel(options = {}) {
   // Attack Options" cards merely because a weapon happens to be present.
   const isAttackRoll = rollType === 'attack';
   const attackTypeKey = ranged ? 'ranged' : 'melee';
+  // Math Integrity Freeze, Attack Bonus round 8 correction #1 (Blocker 3):
+  // the initial option-card/context render used to pass only
+  // { attackType }, so a target-gated option (Droid Hunter, Jedi Hunter,
+  // Cunning Attack, ...) could never resolve even when a token was already
+  // targeted before the dialog opened. getTargetActorFromOptions({}) is the
+  // SAME shared target-resolution authority the real roll and the
+  // submit-time targetContext already use (combat-roll-math.js) -- calling
+  // it with no fields falls through to its own game.user.targets fallback,
+  // matching selectedTargetRows()'s existing "Selected token" default. No
+  // second target resolver is introduced.
+  const initialTargetActor = isAttackRoll && weapon ? getTargetActorFromOptions({}) : null;
   // getAttackOptionsWithState() (round 8) replaces the plain
   // summarizeAttackOptions() call here: it also surfaces an owned option
   // whose ONLY unmet gate is a player-toggleable context (Aim/Charge/
-  // Autofire) as `state: 'disabled'` with a `reason`, instead of omitting
-  // it outright -- so the dialog can show *why* Careful Shot/Powerful
-  // Charge/Burst Fire aren't selectable yet rather than hiding them as if
-  // they didn't exist. collectAttackModifiers()'s own resolution (the real
-  // roll math) still calls summarizeAttackOptions()/getAvailableAttackOptions()
-  // directly and is completely unaffected by this presentation-only view.
+  // Autofire/target/another option) as `state: 'disabled'` with a
+  // `reason`, instead of omitting it outright -- so the dialog can show
+  // *why* Careful Shot/Powerful Charge/Burst Fire/Droid Hunter aren't
+  // selectable yet rather than hiding them as if they didn't exist.
+  // collectAttackModifiers()'s own resolution (the real roll math) still
+  // calls summarizeAttackOptions()/getAvailableAttackOptions() directly and
+  // is completely unaffected by this presentation-only view.
   const combatOptions = isAttackRoll && weapon
-    ? CombatOptionResolver.getAttackOptionsWithState(actor, weapon, { attackType: attackTypeKey })
+    ? CombatOptionResolver.getAttackOptionsWithState(actor, weapon, { attackType: attackTypeKey, target: initialTargetActor, targetActor: initialTargetActor })
     : [];
-  // Which generic attack-context toggles (Aim/Charge/Flanking/Point Blank)
-  // are relevant to even show, per the melee/ranged split plus the
-  // Charging-Fire-style "charge context is relevant to my ranged attack"
-  // exception (round 8, Part 3).
+  // Which generic attack-context toggles (Aim/Charge/Flanking) are relevant
+  // to even show, per the melee/ranged split plus the Charging-Fire-style
+  // "charge context is relevant to my ranged attack" exception (round 8,
+  // Part 3). Point Blank is deliberately absent -- round 8 correction #1
+  // (Blocker 4) removed it as a toggleable context entirely; it is a range
+  // STATE derived from the Range Band selector, never a second authority.
   const attackContexts = isAttackRoll && weapon
-    ? CombatOptionResolver.getAvailableAttackContexts(actor, weapon, { attackType: attackTypeKey })
-    : { aim: false, charge: false, flanking: false, pointBlank: false };
+    ? CombatOptionResolver.getAvailableAttackContexts(actor, weapon, { attackType: attackTypeKey, target: initialTargetActor, targetActor: initialTargetActor })
+    : { aim: false, charge: false, flanking: false };
 
   // Skill/force rolls have a single canonical authority: getSkillTotal() via
   // getRollBaseTotal(). A caller-supplied options.baseBonus that disagrees
@@ -1351,6 +1387,17 @@ function readNestedFormEntries(form, prefix) {
 export function computeAttackSituationalContext(form, melee) {
   const charging = form.querySelector('[name="charging"]')?.checked === true;
   const flanking = form.querySelector('[name="flanking"]')?.checked === true;
+  // Math Integrity Freeze, Attack Bonus round 8 correction #1 (Blocker 4):
+  // this used to read a separate 'pointBlank' checkbox, independently
+  // settable from the Range Band selector that already records this exact
+  // fact -- capable of producing an impossible combination (Range Band:
+  // Medium, but the checkbox still checked). The Range Band select's fixed
+  // option value for this band is the literal string 'pointBlank' (never
+  // free text), so a direct comparison against the ONE field that records
+  // range is the single authority; no separate control exists to disagree
+  // with it. The field does not render at all for a melee attack, so this
+  // is correctly always false there.
+  const isPointBlank = form.querySelector('[name="rangeBand"]')?.value === 'pointBlank';
   const situationalContributions = [];
   if (charging && melee) {
     situationalContributions.push(createModifier({
@@ -1367,7 +1414,7 @@ export function computeAttackSituationalContext(form, melee) {
   return {
     aim: form.querySelector('[name="aiming"]')?.checked === true,
     charge: charging,
-    isPointBlank: form.querySelector('[name="pointBlank"]')?.checked === true,
+    isPointBlank,
     situationalContributions
   };
 }
@@ -1518,8 +1565,16 @@ export async function showRollModifiersDialog(options = {}) {
               ${model.attackContexts?.aim ? `<label class="swse-roll-config-option"><input type="checkbox" name="aiming" /> <span><b>Aim</b><small>No direct attack bonus. Enables Careful Shot/Deadeye and other Aim-gated feats/talents if you have them.</small></span></label>` : ''}
               ${model.attackContexts?.charge ? `<label class="swse-roll-config-option"><input type="checkbox" name="charging" /> <span><b>Charging</b><small>${_chargingLabel(actor)}</small></span></label>` : ''}
               ${model.attackContexts?.flanking ? `<label class="swse-roll-config-option"><input type="checkbox" name="flanking" /> <span><b>Flanking</b><small>+2 melee attack when applicable.</small></span></label>` : ''}
-              ${model.attackContexts?.pointBlank ? `<label class="swse-roll-config-option"><input type="checkbox" name="pointBlank" /> <span><b>Point Blank Range</b><small>No direct attack bonus by itself. Grants +1 only if you have the Point Blank Shot feat.</small></span></label>` : ''}
             </div>` : ''}
+            <!-- Math Integrity Freeze, Attack Bonus round 8 correction #1
+                 (Blocker 4): no separate Point Blank Range checkbox here.
+                 Point Blank is a range STATE, already owned by the Range
+                 Band selector in the Target Context panel below (which
+                 already offers a "Point Blank" value) -- a second,
+                 independently-settable checkbox could produce an
+                 impossible combination (Range Band: Medium AND Point
+                 Blank checked). isPointBlank is derived from the selected
+                 Range Band in exactly one place, computeAttackSituationalContext(). -->
           </section>
         </main>
         ${buildRollPreviewRail(model)}
@@ -1581,7 +1636,13 @@ export async function showRollModifiersDialog(options = {}) {
                 aiming: data.get('aiming') === 'on',
                 charging: data.get('charging') === 'on',
                 flanking: data.get('flanking') === 'on',
-                pointBlank: data.get('pointBlank') === 'on',
+                // Math Integrity Freeze, Attack Bonus round 8 correction #1
+                // (Blocker 4): derived from Range Band, not a separate
+                // 'pointBlank' form field (removed) -- see
+                // computeAttackSituationalContext(), the single authority
+                // for this fact, called just below via Object.assign for
+                // rollType === 'attack' (result.isPointBlank).
+                pointBlank: (data.get('rangeBand') || null) === 'pointBlank',
                 prone: data.get('prone') === 'on'
               }
             };
