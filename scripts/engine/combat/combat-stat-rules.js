@@ -339,10 +339,22 @@ export function getWeaponAttackAbility(actor, weapon) {
     else resolved = explicit;
   }
 
+  // Noble Fencing Style's rule text ("you can use your Charisma modifier
+  // instead of your Strength modifier") is permissive, not mandatory —
+  // matching Weapon Finesse's own "may use ... instead of" wording. Weapon
+  // Finesse is already implemented (combat-option-resolver.js
+  // collectCombinedFeatModifiers) as a "use the better of the two" delta
+  // that can never leave the character worse off than plain Strength. This
+  // must apply the same useBetter contract instead of an unconditional
+  // swap: without it, a Noble Fencing Style character whose Strength
+  // modifier is higher than their Charisma modifier would be silently
+  // downgraded on every proficient light/lightsaber attack even though the
+  // player never chose that, and the talent's own text never mandates it.
   const usesNobleFencingStyle = actorHasTalentNamed(actor, 'Noble Fencing Style')
     && resolved === 'str'
     && actorIsProficientWithWeapon(weapon)
-    && (isLightsaberWeapon(weapon) || isLightMeleeWeapon(weapon));
+    && (isLightsaberWeapon(weapon) || isLightMeleeWeapon(weapon))
+    && SchemaAdapters.getAbilityMod(actor, 'cha') > SchemaAdapters.getAbilityMod(actor, 'str');
 
   return usesNobleFencingStyle ? 'cha' : resolved;
 }

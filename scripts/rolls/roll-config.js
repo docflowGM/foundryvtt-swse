@@ -11,6 +11,7 @@ import { RollEngine } from "/systems/foundryvtt-swse/scripts/engine/roll-engine.
 import { getCriticalConfirmBonus } from "/systems/foundryvtt-swse/scripts/combat/utils/combat-utils.js";
 import { WeaponRangeProfileResolver } from "/systems/foundryvtt-swse/scripts/items/weapon-range-profile-resolver.js";
 import { CombatOptionResolver } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-option-resolver.js";
+import { resolveAttackBonus } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-roll-math.js";
 import { isRangedWeapon as canonicalIsRangedWeapon, isMeleeWeapon as canonicalIsMeleeWeapon } from "/systems/foundryvtt-swse/scripts/items/weapon-branch-resolver.js";
 
 /* ============================================================================
@@ -700,23 +701,21 @@ export function getSkillTotal(actor, skillKey) {
   return componentTotal;
 }
 
-function getWeaponAttackBonus(actor, weapon) {
-  const system = weapon?.system ?? {};
-  const candidates = [
-    system.attackBonus,
-    system.attack?.bonus,
-    system.equippedAttackBonus,
-    system.derived?.attackBonus,
-    system.derived?.attack?.bonus,
-    weapon?.flags?.swse?.attackBonus
-  ];
-  for (const candidate of candidates) {
-    const n = Number(candidate);
-    if (Number.isFinite(n)) return n;
-  }
-  const ability = isRangedWeapon(weapon) ? 'dex' : 'str';
-  const bab = Number(actor?.system?.derived?.bab?.total ?? actor?.system?.bab?.total ?? actor?.system?.baseAttackBonus ?? 0) || 0;
-  return bab + getAbilityModifier(actor, ability) + (Number(system.enhancementBonus ?? system.attackEnhancement ?? 0) || 0);
+// Math Integrity Freeze, Attack Bonus round: this used to independently
+// reconstruct a 3-term (BAB + ability + enhancement) approximation of the
+// attack bonus, diverging from resolveAttackBonus()'s ~20-term canonical
+// formula (range, proficiency, condition track, combat options, talents,
+// state effects, armor ACP, etc. were all silently absent from the dialog's
+// displayed base). A live DOM hotfix (attack-dialog-combat-corrections-
+// hotfix.js) already overwrote the mis-displayed number after the fact via
+// a MutationObserver, but only when its own actor/weapon lookup (matching
+// displayed name text in the DOM) succeeds — leaving a real, if narrow,
+// "dialog shows a different base than the resolver" parity gap. Delegating
+// to resolveAttackBonus() directly here closes that gap at the source
+// instead of depending on a DOM patch to paper over it after the fact.
+function getWeaponAttackBonus(actor, weapon, context = {}) {
+  if (!weapon) return 0;
+  return resolveAttackBonus(actor, weapon, null, context).total;
 }
 
 function getDamageModifier(weapon) {
@@ -731,7 +730,7 @@ function getDamageModifier(weapon) {
 
 function getRollBaseTotal(model) {
   if (model.rollType === 'skill' || model.rollType === 'force' || model.rollType === 'force-power') return getSkillTotal(model.actor, model.skillKey || 'useTheForce');
-  if (model.rollType === 'attack') return getWeaponAttackBonus(model.actor, model.weapon);
+  if (model.rollType === 'attack') return getWeaponAttackBonus(model.actor, model.weapon, { attackType: model.melee ? 'melee' : 'ranged' });
   if (model.rollType === 'damage') return getDamageModifier(model.weapon);
   if (model.rollType === 'initiative') return getSkillTotal(model.actor, 'initiative');
   return getAbilityModifier(model.actor, model.abilityKey);
@@ -985,13 +984,19 @@ export async function buildRollConfigModel(options = {}) {
     const misc = baseTotal - abilityMod - halfLevel - trained - focus;
     if (misc) breakdown.push({ label: 'Other Bonuses', value: misc });
   } else if (rollType === 'attack') {
-    const bab = Number(actor?.system?.derived?.bab?.total ?? actor?.system?.bab?.total ?? actor?.system?.baseAttackBonus ?? 0) || 0;
-    const ability = ranged ? 'dex' : 'str';
-    const abilityMod = getAbilityModifier(actor, ability);
-    if (bab) breakdown.push({ label: 'Base Attack Bonus', value: bab });
-    if (abilityMod) breakdown.push({ label: `${ability.toUpperCase()} Modifier`, value: abilityMod });
-    const misc = baseTotal - bab - abilityMod;
-    if (misc) breakdown.push({ label: 'Weapon / Other', value: misc });
+    // Same canonical resolver that produced baseTotal (via getRollBaseTotal
+    // -> getWeaponAttackBonus), so the breakdown can never disagree with the
+    // number it is a breakdown of.
+    const attackComponents = weapon ? (resolveAttackBonus(actor, weapon, null, { attackType: melee ? 'melee' : 'ranged' }).components ?? {}) : {};
+    let accounted = 0;
+    for (const [label, value] of Object.entries(attackComponents)) {
+      const n = Number(value) || 0;
+      if (!n) continue;
+      accounted += n;
+      breakdown.push({ label, value: n });
+    }
+    const misc = baseTotal - accounted;
+    if (misc) breakdown.push({ label: 'Other', value: misc });
   } else if (rollType === 'ability') {
     breakdown.push({ label: `${String(abilityKey ?? '').toUpperCase() || 'Ability'} Modifier`, value: baseTotal });
   } else {

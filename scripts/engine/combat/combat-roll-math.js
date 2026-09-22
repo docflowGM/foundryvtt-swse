@@ -381,52 +381,66 @@ export function rapidAlchemyAttackBonus(actor, weapon) {
 // ─────────────────────────────────────────────────────────────────────────────
 
 export function resolveAttackBonus(actor, weapon, actionId = null, context = {}) {
-  if (actor?.type === 'npc' && isNpcStatblockMode(actor)) {
-    const npc = weapon?.flags?.swse?.npc;
-    if (npc?.useFlat === true && Number.isFinite(npc.flatAttackBonus)) {
-      const flat = Number(npc.flatAttackBonus) || 0;
-      return { total: flat, components: { 'NPC Flat': flat }, flags: { npcFlat: true } };
-    }
-  }
-
   // PHASE 3 — Droid Stock-Statblock Authority: a stock-imported droid's
   // integrated weapon Items carry their PUBLISHED attack total in
   // system.attackBonus (see scripts/engine/import/stock-droid-importer-engine.js).
   // getWeaponFlatAttackBonus() below reads that same field as an ordinary
   // flat/enhancement bonus meant to be ADDED to BAB — for a stock droid that
-  // would double-count the entire published total on top of BAB. Mirrors
-  // the NPC statblock-flat pattern immediately above: the published total
-  // REPLACES the BAB + ability + enhancement + proficiency composition
-  // (those are already baked into the printed number), never the whole
-  // roll — every situational/runtime modifier below (range, firing into
-  // melee, condition track, attack penalty, combat options, rage, talents,
-  // state effects, and every scoped/effect-intent bonus) still applies on
-  // top of it, exactly as it would for a normal attack roll. This was
-  // previously an unconditional early `return` that skipped every
-  // situational modifier below it — the doc comment claimed they "still
-  // apply on top of it" while the code did the opposite; this is the
-  // correction. Decision logic for WHETHER a weapon uses the flat total
-  // lives in getStockAttackFlatBonus() (droid-mode-adapter.js) so it stays
-  // a single, unit-testable authority instead of duplicated inline here.
+  // would double-count the entire published total on top of BAB. The
+  // published total REPLACES the BAB + ability + enhancement + proficiency
+  // composition (those are already baked into the printed number), never
+  // the whole roll — every situational/runtime modifier below (range,
+  // firing into melee, condition track, attack penalty, combat options,
+  // rage, talents, state effects, and every scoped/effect-intent bonus)
+  // still applies on top of it, exactly as it would for a normal attack
+  // roll. Decision logic for WHETHER a weapon uses the flat total lives in
+  // getStockAttackFlatBonus() (droid-mode-adapter.js) so it stays a single,
+  // unit-testable authority instead of duplicated inline here.
   const stockAttackFlat = getStockAttackFlatBonus(actor, weapon);
   const isStockDroidFlat = stockAttackFlat !== null;
 
-  const bab = isStockDroidFlat ? 0 : SchemaAdapters.getBAB(actor);
+  // Math Integrity Freeze, Attack Bonus round: an NPC statblock's own
+  // published flat attack total (weapon.flags.swse.npc.{useFlat,
+  // flatAttackBonus}, populated by the NPC importer -- see
+  // packs/nonheroic.db) follows the IDENTICAL contract as the stock-droid
+  // branch immediately above: the printed number replaces BAB + ability +
+  // enhancement + proficiency, never the whole roll. This branch used to be
+  // an unconditional early `return` that skipped every situational
+  // modifier below it (range, firing into melee, condition track, attack
+  // penalty, combat options, rage, talents, state effects, armor ACP) --
+  // the stock-droid branch's own doc comment already asserted it "mirrors
+  // the NPC statblock-flat pattern," but the NPC branch had never actually
+  // been corrected to match. It is folded into the same
+  // isFlatOverride/flatOverrideValue composition below instead of returning
+  // early, so a publicized-statblock NPC's range/condition-track/combat-
+  // option modifiers reach its attack roll exactly like every other actor.
+  let npcAttackFlat = null;
+  if (!isStockDroidFlat && actor?.type === 'npc' && isNpcStatblockMode(actor)) {
+    const npc = weapon?.flags?.swse?.npc;
+    if (npc?.useFlat === true && Number.isFinite(npc.flatAttackBonus)) {
+      npcAttackFlat = Number(npc.flatAttackBonus) || 0;
+    }
+  }
+  const isNpcFlat = npcAttackFlat !== null;
+  const isFlatOverride = isStockDroidFlat || isNpcFlat;
+  const flatOverrideValue = isStockDroidFlat ? stockAttackFlat : (isNpcFlat ? npcAttackFlat : 0);
+
+  const bab = isFlatOverride ? 0 : SchemaAdapters.getBAB(actor);
   const attackOptionModifiers = CombatOptionResolver.collectAttackModifiers(actor, weapon, context);
   const abilityKey = getWeaponAttackAbility(actor, weapon);
-  const abilityMod = isStockDroidFlat ? 0 : (SchemaAdapters.getAbilityMod(actor, abilityKey) + Number(attackOptionModifiers.attackAbilityBonus || 0));
+  const abilityMod = isFlatOverride ? 0 : (SchemaAdapters.getAbilityMod(actor, abilityKey) + Number(attackOptionModifiers.attackAbilityBonus || 0));
 
-  const miscBonus = isStockDroidFlat ? 0 : getWeaponFlatAttackBonus(weapon);
+  const miscBonus = isFlatOverride ? 0 : getWeaponFlatAttackBonus(weapon);
   const rangePenalty = getRangePenalty(weapon, context);
   const firingIntoMeleePenalty = shootingIntoMeleePenalty(actor, context);
   const rageModifiers = RageEngine.collectAttackModifiers(actor, weapon, context);
   const ctPenalty = actor.system?.derived?.damage?.conditionPenalty ?? actor.system?.conditionTrack?.penalty ?? 0;
   const attackPenalty = actor.system?.attackPenalty ?? 0;
   const proficient = actorIsProficientForAttack(actor, weapon);
-  // A stock-statblock droid's published total already assumes proficiency
-  // with its own integrated weapons — a proficiency penalty must not be
-  // layered on top of it.
-  const proficiencyPenalty = isStockDroidFlat ? 0 : (proficient ? 0 : -5);
+  // A stock-statblock droid's or NPC's published total already assumes
+  // whatever proficiency the printed creature has with its own weapon — a
+  // proficiency penalty must not be layered on top of either flat total.
+  const proficiencyPenalty = isFlatOverride ? 0 : (proficient ? 0 : -5);
 
   let talentBonus = 0;
   const TalentActionLinker = window.SWSE?.TalentActionLinker;
@@ -477,7 +491,7 @@ export function resolveAttackBonus(actor, weapon, actionId = null, context = {})
   const armorAcpPenalty = armorUsageEffects.attackCheckPenalty || 0;
 
   const total =
-    (isStockDroidFlat ? stockAttackFlat : 0) +
+    flatOverrideValue +
     bab + abilityMod + miscBonus + rangePenalty + firingIntoMeleePenalty + attackPenalty + ctPenalty +
     proficiencyPenalty + talentBonus + stateBonus + combatOptionBonus + rageBonus +
     sithMod + inquisitionMod + unsettlingMod + rapidAlchemyMod + forceItemMod + basicEffectBonus + scopedFeatBonus +
@@ -486,6 +500,8 @@ export function resolveAttackBonus(actor, weapon, actionId = null, context = {})
   const components = {};
   if (isStockDroidFlat) {
     components['Published Statblock Total'] = stockAttackFlat;
+  } else if (isNpcFlat) {
+    components['NPC Flat'] = npcAttackFlat;
   } else {
     components['BAB'] = bab;
     components[`Ability (${abilityKey.toUpperCase()})`] = abilityMod;
@@ -515,7 +531,12 @@ export function resolveAttackBonus(actor, weapon, actionId = null, context = {})
     }
   }
 
-  return { total, components, flags: isStockDroidFlat ? { stockDroidFlat: true } : {} };
+  // vehicle-attack-math.js's resolveVehicleAttackBonus() branches on
+  // flags.npcFlat to decide whether a gunner's baseline can be decomposed
+  // into Gunner BAB + Vehicle INT — preserved verbatim so that contract is
+  // unaffected by this branch no longer being an unconditional early return.
+  const flags = isStockDroidFlat ? { stockDroidFlat: true } : (isNpcFlat ? { npcFlat: true } : {});
+  return { total, components, flags };
 }
 
 // PHASE — Stock-Droid Damage Contract. The damage-side counterpart to the

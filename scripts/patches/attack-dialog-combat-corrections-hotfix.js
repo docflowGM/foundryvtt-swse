@@ -1,4 +1,3 @@
-import { SchemaAdapters } from '/systems/foundryvtt-swse/scripts/utils/schema-adapters.js';
 import { CombatOptionResolver } from '/systems/foundryvtt-swse/scripts/engine/combat/combat-option-resolver.js';
 import { resolveAttackBonus } from '/systems/foundryvtt-swse/scripts/engine/combat/combat-roll-math.js';
 import {
@@ -35,11 +34,6 @@ function compactKey(value = '') {
 
 function bool(value) {
   return value === true || value === 'true' || value === 'on' || value === 1 || value === '1';
-}
-
-function finiteNumber(value) {
-  const n = Number(value);
-  return Number.isFinite(n) ? n : null;
 }
 
 function signNumber(value) {
@@ -91,101 +85,26 @@ function normalizeWeaponForCombat(weapon) {
   return branch;
 }
 
-function classLevelsFromActor(actor) {
-  const out = [];
-  const push = (name, level) => {
-    const className = String(name ?? '').trim();
-    const lvl = Number(level ?? 0) || 0;
-    if (className && lvl > 0) out.push({ className, level: lvl });
-  };
-
-  const progression = actor?.system?.progression?.classLevels;
-  if (Array.isArray(progression)) {
-    for (const entry of progression) {
-      push(entry?.class ?? entry?.name ?? entry?.className ?? entry?.id ?? entry?.classId, entry?.level ?? entry?.levels ?? entry?.value);
-    }
-  }
-
-  try {
-    for (const item of Array.from(actor?.items ?? [])) {
-      if (item?.type !== 'class') continue;
-      const system = item.system ?? {};
-      push(system.className ?? system.name ?? system.classId ?? item.name, system.level ?? system.levels ?? system.value);
-    }
-  } catch (_err) {
-    // no-op
-  }
-
-  const merged = new Map();
-  for (const entry of out) {
-    const key = compactKey(entry.className);
-    if (!key) continue;
-    merged.set(key, { className: entry.className, level: Math.max(merged.get(key)?.level ?? 0, entry.level) });
-  }
-  return [...merged.values()];
-}
-
-function estimateBabForClass(className, level) {
-  const key = compactKey(className);
-  const lvl = Math.max(0, Number(level) || 0);
-  if (!lvl) return 0;
-
-  if (key === 'nonheroic') {
-    const table = [0, 1, 2, 3, 3, 4, 5, 6, 6, 7, 8, 9, 9, 10, 11, 12, 12, 13, 14, 15];
-    return table[Math.min(table.length, lvl) - 1] ?? 0;
-  }
-
-  if (/soldier|jedi|elite|gunslinger|weaponmaster|duelist|martialarts|brawler|enforcer|bodyguard|knight|master|ace|officer|vanguard/.test(key)) {
-    return lvl;
-  }
-
-  // Saga heroic non-full-BAB classes use the 3/4 attack progression.
-  return Math.floor(lvl * 0.75);
-}
-
-function estimatedBabFromClasses(actor) {
-  const levels = classLevelsFromActor(actor);
-  if (!levels.length) return 0;
-  return levels.reduce((total, entry) => total + estimateBabForClass(entry.className, entry.level), 0);
-}
-
-function resolveActorBab(actor) {
-  const system = actor?.system ?? {};
-  const candidates = [
-    system.derived?.bab,
-    system.derived?.bab?.total,
-    system.derived?.bab?.value,
-    system.bab,
-    system.bab?.total,
-    system.bab?.value,
-    system.baseAttackBonus,
-    system.baseAttack,
-    system.attributes?.bab?.value,
-    system.combat?.bab,
-    system.derived?.combat?.bab
-  ];
-
-  for (const candidate of candidates) {
-    const n = finiteNumber(candidate);
-    if (n !== null && n > 0) return n;
-  }
-
-  return estimatedBabFromClasses(actor);
-}
-
-function prepareActorBabForRollConfig(actor) {
-  const bab = resolveActorBab(actor);
-  if (!actor?.system || !(bab > 0)) return bab || 0;
-  try {
-    actor.system.baseAttackBonus = bab;
-    if (!actor.system.bab || typeof actor.system.bab !== 'object') actor.system.bab = {};
-    actor.system.bab.total = bab;
-    actor.system.bab.value = bab;
-  } catch (_err) {
-    // Dialog fallback only; do not persist or fail rolls if the model is sealed.
-  }
-  return bab;
-}
+// Math Integrity Freeze, Attack Bonus round: this file used to carry its own
+// copy of a class-name/level BAB estimator (classLevelsFromActor/
+// estimateBabForClass/estimatedBabFromClasses/resolveActorBab), gated on
+// `original > 0` rather than `original !== null`. SchemaAdapters.getBAB()
+// (schema-adapters.js) already implements the identical estimator as its
+// own documented not-yet-prepared fallback -- but correctly, treating a
+// legitimately-derived 0 (e.g. a level-1 3/4-BAB-progression character,
+// where floor(1 * 0.75) === 0) as authoritative rather than "missing."
+// Because this file's copy treated ANY non-positive canonical value as
+// missing, it would silently substitute a guessed class-based BAB for a
+// real, correctly-computed zero (or negative) BAB -- and, via
+// patchSchemaAdapters() below, it did so by monkey-patching
+// SchemaAdapters.getBAB() GLOBALLY, reaching the live resolveAttackBonus()
+// roll path for every actor in the game, not just this dialog's preview.
+// That is exactly the "no known-wrong fallback formula" / "one domain, one
+// authority" violation the freeze exists to catch. The fix is to delete the
+// duplicate estimator entirely and read the one certified authority
+// (SchemaAdapters.getBAB()) directly wherever this file previously called
+// its own resolveActorBab()/prepareActorBabForRollConfig() -- see
+// syncAttackDialogBase() and patchSWSERollEntrypoints() below.
 
 function optionId(option) {
   return compactKey(option?.id ?? option?.option ?? option?.key ?? option?.name ?? option?.label ?? '');
@@ -198,18 +117,6 @@ function optionIsPreAttackEligible(option) {
   const label = compactKey(option?.label ?? option?.name ?? '');
   if (FILTERED_ATTACK_OPTION_IDS.has(label)) return false;
   return true;
-}
-
-function patchSchemaAdapters() {
-  if (SchemaAdapters[PATCH_KEY]) return;
-  const originalGetBAB = SchemaAdapters.getBAB;
-  SchemaAdapters.getBAB = function patchedGetBAB(actor) {
-    const original = finiteNumber(originalGetBAB?.call?.(this, actor));
-    if (original !== null && original > 0) return original;
-    const fallback = resolveActorBab(actor);
-    return fallback > 0 ? fallback : (original ?? 0);
-  };
-  SchemaAdapters[PATCH_KEY] = true;
 }
 
 function patchCombatOptionResolver() {
@@ -421,7 +328,6 @@ function syncAttackDialogBase(form) {
   if (!actor || !weapon) return;
 
   const branch = normalizeWeaponForCombat(weapon) || (formLooksRanged(form) ? 'ranged' : 'melee');
-  prepareActorBabForRollConfig(actor);
   const resolved = resolveAttackBonus(actor, weapon, null, { attackType: branch, weapon });
   const base = Number(resolved?.total ?? 0) || 0;
   const custom = Number(form.querySelector('[name="customModifier"]')?.value ?? 0) || 0;
@@ -490,7 +396,6 @@ async function patchSWSERollEntrypoints() {
 
     const originalRollAttack = SWSERoll.rollAttack;
     SWSERoll.rollAttack = async function patchedRollAttack(actor, weapon, options = {}) {
-      prepareActorBabForRollConfig(actor);
       normalizeWeaponForCombat(weapon);
       return originalRollAttack.call(this, actor, weapon, options);
     };
@@ -498,7 +403,6 @@ async function patchSWSERollEntrypoints() {
     const originalRollAutofire = SWSERoll.rollAutofire;
     if (typeof originalRollAutofire === 'function') {
       SWSERoll.rollAutofire = async function patchedRollAutofire(actor, weapon, options = {}) {
-        prepareActorBabForRollConfig(actor);
         normalizeWeaponForCombat(weapon);
         const attackOptions = options.attackOptions ?? {};
         const braced = options.braced === true || bool(attackOptions.braceAutofire) || bool(attackOptions.bracedAutofire);
@@ -515,7 +419,6 @@ async function patchSWSERollEntrypoints() {
 export function registerAttackDialogCombatCorrectionsHotfix() {
   if (globalThis[PATCH_KEY]) return;
   globalThis[PATCH_KEY] = true;
-  patchSchemaAdapters();
   patchCombatOptionResolver();
   installDialogObserver();
   patchSWSERollEntrypoints();
