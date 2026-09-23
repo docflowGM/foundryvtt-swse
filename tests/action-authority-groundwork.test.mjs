@@ -876,4 +876,24 @@ ok('29: Blocker 5 -- ActionRegistry.register() preserves the first canonical obj
 }
 ok('30: round 8 correction #5 -- causal blocker propagation replaces flat "any unmet leaf anywhere" filtering for state classification, matching all 5 required regression cases');
 
+// V2 combat runtime convergence, Phase 3 (136-record reconciliation):
+// `requiresAttackType: 'any'` is a real, shipped value (e.g. Rebel
+// Military Training) meaning "no attack-type restriction," matching
+// CombatOptionResolver.optionAllowedForWeapon()'s own explicit
+// `option.requiresAttackType !== "any"` skip. Before this fix, the
+// attackType predicate did plain value equality (`actual ===
+// normalizeKey(predicate.value)`), which getAttackType()'s 'melee'/
+// 'ranged'/'unknown' vocabulary could never satisfy against literal
+// 'any' -- every such record was permanently 'hidden' regardless of
+// weapon or context. Caught by the 136-record reconciliation suite
+// (tests/action-authority-136-record-reconciliation.test.mjs) before
+// this reached production presentation.
+{
+  const def = syntheticDefinition({ all: [{ type: 'attackType', value: 'any', sourceField: 'requiresAttackType' }] });
+  assert.equal(ActionAvailabilityEngine.evaluate(def, { weapon: meleeWeapon(), attackType: 'melee' }).state, 'available', "requiresAttackType: 'any' must be satisfied by a melee attack");
+  assert.equal(ActionAvailabilityEngine.evaluate(def, { weapon: rangedWeapon(), attackType: 'ranged' }).state, 'available', "requiresAttackType: 'any' must be satisfied by a ranged attack");
+  assert.equal(ActionAvailabilityEngine.evaluate(def, {}).state, 'available', "requiresAttackType: 'any' must be satisfied even with no weapon/context at all -- it is not a restriction");
+}
+ok("31: requiresAttackType: 'any' is a real no-restriction value (matching the certified resolver's own skip), not a literal value the getAttackType() vocabulary could ever equal");
+
 console.log('action-authority-groundwork.test.mjs: all assertions passed');

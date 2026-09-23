@@ -70,7 +70,18 @@ const PREDICATE_EVALUATORS = {
   // -- the prior version treated 'unknown' as automatically met, which is
   // permission by default, not fail-closed. A caller that genuinely
   // cannot resolve an attack type has not proven the requirement met.
+  //
+  // V2 combat runtime convergence, Phase 3 (136-record reconciliation):
+  // `requiresAttackType: 'any'` is a real, shipped value (e.g. Rebel
+  // Military Training) meaning "no attack-type restriction," matching the
+  // certified CombatOptionResolver.optionAllowedForWeapon()'s own explicit
+  // `option.requiresAttackType !== "any"` skip. Value equality would never
+  // match it (getAttackType() only ever returns 'melee'/'ranged'/'unknown',
+  // never literally 'any'), so every such record would incorrectly and
+  // permanently evaluate 'hidden' -- caught by the reconciliation suite
+  // before this had a chance to reach production presentation.
   attackType(predicate, context) {
+    if (normalizeKey(predicate.value) === 'any') return { met: true, reason: null };
     const actual = getAttackType(context.weapon, context);
     const met = actual !== 'unknown' && actual === normalizeKey(predicate.value);
     return { met, reason: met ? null : `Requires a ${predicate.value} attack` };
