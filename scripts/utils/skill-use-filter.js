@@ -436,10 +436,20 @@ export class SkillUseFilter {
    *
    * Two invariants, added after independent review found the first wiring
    * pass safe but incomplete:
-   *  - a `selfTarget` record additionally requires `requiresDroid` actors to
-   *    actually be droids (the droid Endurance check is not a general
-   *    self-restore any actor type can use just because the record is
-   *    flagged selfTarget).
+   *  - a `selfTarget` record defers to `_meetsStructuredRequirements()` --
+   *    the SAME structured-requirement authority `canAccessSkillUse()` uses
+   *    (requiresDroid, requiresShieldGenerator) -- rather than duplicating
+   *    the droid predicate here. A second review round found the resolver
+   *    still had its own narrower `roller?.type !== 'droid'` check even
+   *    after `canAccessSkillUse()` was taught the broader
+   *    `actor.type==='droid' || actor.system.isDroid` identity, so an
+   *    actor eligible under the access gate (and certified eligible by
+   *    that gate's own tests) could pass the roll and then be rejected
+   *    here anyway. One authority now decides both, so availability and
+   *    dispatch cannot drift apart again -- and a shieldless droid that
+   *    somehow bypasses the pre-roll gate is rejected here too, rather
+   *    than reaching ActorEngine.rechargeShields() to merely no-op at
+   *    max 0.
    *  - a non-selfTarget record can NEVER resolve to the roller, even if a
    *    caller mistakenly passes `targetActor: actor` -- this is the
    *    original Mechanics-recharges-the-operator defect, closed at the
@@ -448,8 +458,7 @@ export class SkillUseFilter {
   static resolveShieldRechargeTarget({ roller, skillUse, options = {} }) {
     const selfTarget = SkillUseFilter._readSkillUseField(skillUse, 'selfTarget') === true;
     if (selfTarget) {
-      const requiresDroid = SkillUseFilter._readSkillUseField(skillUse, 'requiresDroid') === true;
-      if (requiresDroid && roller?.type !== 'droid') return null;
+      if (!SkillUseFilter._meetsStructuredRequirements(roller, skillUse)) return null;
       return roller ?? null;
     }
 

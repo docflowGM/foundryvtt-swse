@@ -261,6 +261,64 @@ function fakeActor(id, shields, type = 'character') {
   resetFoundryShimGlobals();
 }
 
+// ── FOURTH correction round: resolveShieldRechargeTarget() must agree with
+// canAccessSkillUse()'s broader droid identity (actor.type==='droid' ||
+// actor.system.isDroid), not the older, narrower roller?.type!=='droid'
+// check. Review found the access gate correctly certified a system.isDroid
+// actor as eligible, but the post-roll resolver still rejected that exact
+// actor after a successful roll -- an authority mismatch between
+// availability and dispatch. Fixed by having resolveShieldRechargeTarget()
+// defer to _meetsStructuredRequirements(), the same authority
+// canAccessSkillUse() uses, instead of duplicating the droid predicate. ──
+
+{
+  installFoundryShimGlobals();
+  // type:'character' + system.isDroid:true -- the exact actor shape the
+  // access-gate tests above already certify as eligible.
+  const isDroidFlagActor = { id: 'flag-droid-1', name: 'flag-droid-1', type: 'character', system: { isDroid: true, shields: { value: 5, max: 20 }, derived: { shield: { current: 5, max: 20, stored: true } } } };
+  const calls = attachRealRechargeShields();
+  await SkillUseFilter._dispatchRestoreShieldRating(isDroidFlagActor, ENDURANCE_RESTORE_SHIELDS, 20, { total: 24 }, {});
+  assert.equal(calls.length, 1, 'a system.isDroid actor certified eligible by canAccessSkillUse must also succeed at post-roll dispatch');
+  assert.equal(calls[0].target, 'flag-droid-1');
+  assert.equal(isDroidFlagActor.system.shields.value, 10);
+  resetFoundryShimGlobals();
+}
+
+{
+  installFoundryShimGlobals();
+  // Same system.isDroid actor, but with no stored shield resource -- must
+  // fail closed at target resolution (requiresShieldGenerator), the same
+  // defense-in-depth canAccessSkillUse's pre-roll gate already provides.
+  const isDroidFlagActorNoShields = { id: 'flag-droid-2', name: 'flag-droid-2', type: 'character', system: { isDroid: true, shields: { value: 0, max: 0 } } };
+  let called = false;
+  FakeActorEngine.rechargeShields = async () => { called = true; };
+  await SkillUseFilter._dispatchRestoreShieldRating(isDroidFlagActorNoShields, ENDURANCE_RESTORE_SHIELDS, 20, { total: 25 }, {});
+  assert.equal(called, false, 'a system.isDroid actor with no stored shield resource must still fail closed at dispatch');
+  resetFoundryShimGlobals();
+}
+
+{
+  // Ordinary type:'droid' behavior is unchanged by this fix.
+  installFoundryShimGlobals();
+  const ordinaryDroid = fakeActor('droid-4', { value: 5, max: 20 }, 'droid');
+  const calls = attachRealRechargeShields();
+  await SkillUseFilter._dispatchRestoreShieldRating(ordinaryDroid, ENDURANCE_RESTORE_SHIELDS, 20, { total: 24 }, {});
+  assert.equal(calls.length, 1);
+  assert.equal(ordinaryDroid.system.shields.value, 10);
+  resetFoundryShimGlobals();
+}
+
+{
+  // An organic actor remains rejected, same as before this fix.
+  installFoundryShimGlobals();
+  const organic = fakeActor('char-3', { value: 5, max: 20 }, 'character');
+  let called = false;
+  FakeActorEngine.rechargeShields = async () => { called = true; };
+  await SkillUseFilter._dispatchRestoreShieldRating(organic, ENDURANCE_RESTORE_SHIELDS, 20, { total: 25 }, {});
+  assert.equal(called, false);
+  resetFoundryShimGlobals();
+}
+
 // ── 3/4. Mechanics Recharge Shields: DC 19/20/25 boundary, vehicle mutated, operator untouched ──
 
 for (const [total, shouldRecharge] of [[19, false], [20, true], [25, true]]) {
