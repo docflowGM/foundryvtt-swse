@@ -18,6 +18,8 @@
 
 import { ForcePointsService } from "/systems/foundryvtt-swse/scripts/engine/force/force-points-service.js";
 import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { ROLL_CONTRIBUTION_KIND, ROLL_TRANSFORM_OPERATION, makeRollContribution } from "/systems/foundryvtt-swse/scripts/engine/roll/expression/roll-contribution-types.js";
+import { applyRollTransforms } from "/systems/foundryvtt-swse/scripts/engine/roll/expression/roll-transform-resolver.js";
 
 export class ForcePointSpendCoordinator {
   /**
@@ -88,7 +90,27 @@ export class ForcePointSpendCoordinator {
 
     const { diceCount, dieSize } = await ForcePointsService.getScalingDice(actor, context);
     const finalDieSize = ForcePointsService.upgradeDieSize(dieSize, dieUpgradeSteps);
-    const forceDice = `${diceCount}${finalDieSize}`;
+
+    // Roll Expression / Transformation Authority migration: "roll N, keep
+    // the highest" used to be a plain `${diceCount}${dieSize}` Roll
+    // followed by a manual Math.max(...) over the raw per-die results.
+    // Foundry's own Roll grammar already has a canonical modifier for
+    // exactly this (keep-highest, "khN") -- applyRollTransforms() compiles
+    // the semantic transform into that syntax so the SAME Roll Foundry
+    // evaluates already reflects only the kept die (diceCount === 1 keeps
+    // the historical plain-die formula unchanged, no transform applied).
+    const transform = diceCount > 1
+      ? [makeRollContribution({
+          kind: ROLL_CONTRIBUTION_KIND.BASE_ROLL_TRANSFORM,
+          operation: ROLL_TRANSFORM_OPERATION.KEEP_HIGHEST,
+          diceCount,
+          keep: 1,
+          sourceId: 'force-point-bonus-die',
+          sourceName: 'Force Point Bonus Die',
+          sourceType: 'forcePoint'
+        })]
+      : [];
+    const { formula: forceDice, ledger: transformLedger } = applyRollTransforms(`1${finalDieSize}`, transform);
 
     let fpRoll;
     try {
@@ -107,9 +129,10 @@ export class ForcePointSpendCoordinator {
       });
     }
 
-    const bonus = diceCount > 1
-      ? Math.max(...(fpRoll.dice?.[0]?.results ?? []).map(r => r.result))
-      : fpRoll.total;
+    // fpRoll.total already reflects only the kept die when a keep-highest
+    // transform was applied (Foundry's own kh1 marks the dropped dice
+    // inactive) -- no post-hoc Math.max() over raw results needed anymore.
+    const bonus = fpRoll.total;
 
     const after = Number.isFinite(Number(spendReceipt?.remaining)) ? Number(spendReceipt.remaining) : Math.max(0, before - actuallySpent);
 
@@ -123,6 +146,7 @@ export class ForcePointSpendCoordinator {
       domain,
       bonus,
       roll: fpRoll,
+      rollTransformLedger: transformLedger,
       diceUsed: forceDice,
       baseDieSize: dieSize,
       dieSize: finalDieSize,

@@ -1625,3 +1625,128 @@ The following golden values from the freeze charter require either (a) real clas
 1. ~~Does `ActorAbilityBridge.getClasses(actor)[0]` return Soldier or Scoundrel for Gar'ee specifically?~~ **Resolved: Soldier** — traced directly in code (`ActorItemIndex`/`ActorAbilityBridge`, see the HP domain section) and confirmed against Gar'ee's real actor export.
 2. ~~What is Gar'ee's actual current persisted `system.hp.max`?~~ **Resolved: 108** — obtained directly from his real actor export.
 3. ~~Bluebolt Blaster Pistol's actual persisted item data~~ **Resolved: captured directly from Gar'ee's actor export** — see the Weapon Melee/Ranged Schema domain section above for the exact field values, ready to build the Phase 8 golden test fixture precisely.
+
+## Domain: Roll Expression / Transformation — **INFRASTRUCTURE IMPLEMENTED AND TESTED**: see `docs/audits/v2-roll-expression-transform-authority.md`
+
+A new math-authority phase, deliberately NOT a patch that widens
+`Modifier.value` to accept strings — the numeric contract
+(`typeof value === 'number'`, `ModifierTypes.js#isValidModifier()`/
+`createModifier()`) stays exactly as strict as it already was, proven
+unchanged by this phase's own test suite.
+
+Establishes a first-class, explicit three-way distinction the whole
+roll-expression surface was previously blurring under one loosely-typed
+`*Formula` naming convention:
+
+- **STATIC MODIFIER** — changes a number. ModifierEngine/ModifierUtils
+  remain the sole authority; untouched.
+- **FORMULA TERM** — adds dice (a Foundry-formula-shaped string, kept as
+  a string until actual Roll execution — never rolled during
+  preparation, never coerced to an average/expected integer, never
+  merged into numeric Modifier stacking).
+- **ROLL TRANSFORM** — changes how the base dice are rolled
+  (keep-highest/lowest, drop, explode, reroll), always compiled to
+  Foundry's own canonical dice-term modifier syntax (`khN`/`klN`/`dhN`/
+  `dlN`/`x`/`xo`/`r`/`ro`) — never a competing SWSE syntax, never a
+  second dice parser.
+
+**Phase A audit** (full inventory in the companion doc's §2 table)
+confirmed the project's actual formula surface was already mostly
+sound: `RollCore`/`RollEngine` already delegate every roll to real
+`new Roll(formula); roll.evaluate()`, and two live producers —
+`RollEngine.rollAbilityScore()`'s `"4d6dl"` and `houserule-mechanics.js`'s
+`baseRoll.formula.replace(/d(\d+)/g, 'd$1x')` exploding-critical
+construction — were **already** using canonical advanced Foundry dice
+syntax correctly, in production, unmodified by this phase. The one
+confirmed live gap was `ForcePointSpendCoordinator.rollAndSpend()`'s
+keep-highest mechanic, which rolled a plain `NdX` and then manually
+computed `Math.max(...)` over the raw per-die results in JS instead of
+using Foundry's own `khN` modifier — fixed (see Migration below).
+`attackModifierFormula`/`damageModifierFormula` (`combat-option-resolver.js`
+and two feat-normalization-hooks files) were confirmed to be a closed
+keyword vocabulary (`"value"`, `"-value"`, `"halfLevel"`,
+`"halfLevelMinusOne"`, `"level"`/`"classLevel"`/`"characterLevel"`/
+`"heroicLevel"`/`"actorLevel"`, `"context.<key>"`) that resolves
+deterministically to a number — never arbitrary Foundry syntax despite
+the field name — and are documented, not reinterpreted; a standalone,
+independently-testable compatibility adapter
+(`legacy-keyword-adapter.js`) now specifies this vocabulary explicitly,
+while `combat-option-resolver.js`'s own certified inline switch remains
+the unchanged Attack/Damage authority for these fields.
+
+**Contracts added** (`scripts/engine/roll/expression/`):
+`roll-contribution-types.js` (the typed `RollContribution` envelope +
+`ROLL_TRANSFORM_OPERATION` enum — deliberately kept out of
+`ModifierTypes.js` so that module's numeric contract is never blurred),
+`roll-formula-validator.js` (delegates entirely to Foundry's own
+`Roll.validate()` — no competing parser), `roll-formula-term-resolver.js`
+(validates/tags/fails-closed per formula-term candidate),
+`roll-transform-resolver.js` (compiles semantic transform operations
+into canonical Foundry syntax; enforces a documented, deterministic,
+**non-combining** conflict policy — exact duplicates collapse, distinct
+conflicting transforms resolve by priority with the loser logged not
+silently dropped, Take 10/20 suppresses every transform), and
+`compose-roll.js` (the pure, execution-free final assembly + preview-
+breakdown step).
+
+**Migrated**: `ForcePointSpendCoordinator.rollAndSpend()`'s keep-highest
+bonus die now compiles to canonical `${diceCount}d${faces}kh1` (e.g.
+`2d6kh1`) via `applyRollTransforms()` instead of a raw `NdX` roll +
+manual `Math.max()`; `diceCount === 1` still produces the identical
+historical plain-die formula with no transform applied. Proven for
+every real `diceCount` the game produces (1/2/3) plus 25 trials each
+for `diceCount` 2 and 3 confirming `Roll.total` always equals the
+maximum of all rolled results.
+
+**Adapted (additive, not rewired)**: `damage-talent-contributions.js`
+gained `resolveTalentDamageFormulaTerms()`, a thin wrapper exposing the
+certified Sneak Attack authority's own dice strings as validated
+`FORMULA_TERM` records — proven byte-identical to the certified
+function's own `bonusDice` output. `resolveDamageComposition()`/
+`buildDamageFormula()`/`resolveTalentDamageContributions()` themselves
+are **unmodified** — Damage SSOT is not reopened by this phase.
+
+**Explicitly deferred, infrastructure-only** (per the authorizing
+command, no production metadata migration performed since none exists
+to migrate without manufacturing a new rule): Attack's own base-d20
+transform composition has no live caller — `composeRoll()` is proven
+against a transformed base + the certified numeric Attack Bonus total
+as inputs, not against a live `resolveAttackBonus()` invocation; Damage's
+`otherDiceTerms` refinement to consume the `FORMULA_TERM` contract
+directly inside `buildDamageFormula()`; Force Item/Inquisition dice
+(already correct, left as-is); any repo-wide feat/talent conversion.
+
+**Foundry-execution boundary** (stated explicitly, not glossed over):
+this repo is a Foundry module, not the Foundry application — the real
+`Roll`/`DiceTerm` classes only exist at runtime inside Foundry itself
+and cannot be executed under this project's Node test harness (the same
+accepted boundary already documented for RollEngine/SWSEChat/AmmoSystem).
+`roll-formula-validator.js` delegates every check to the real
+`Roll.validate()` in production. This phase's own test suite
+(`tests/roll-expression-transform-authority.test.mjs`, 28/28) proves its
+construction/composition/conflict logic against `TestRoll` — an
+explicitly-labeled, test-only structural reproduction of Foundry's
+documented DiceTerm grammar — not a claim that the live Foundry client
+was executed. The strongest available confirmation that this grammar
+works in this project's actual environment is the two already-live
+production producers named above (`"4d6dl"`, the exploding-critical
+construction), neither touched by this phase.
+
+**Also flagged, not fixed** (out of this phase's scope — a pre-existing
+house-rule defect, not a roll-expression-authority gap):
+`houserule-mechanics.js#applyCriticalDamage()`'s `'exploding'` mode
+chains `.evaluate({async:true})` onto the already-resolved return of
+`rollEngine.safeRoll(...)` (a `Roll`, not a thenable exposing
+`.evaluate`) — a likely latent bug in this currently-unwired house rule,
+documented for a future house-rules correction round.
+
+**Validation**: `tests/roll-expression-transform-authority.test.mjs`
+(28/28, new); full existing certified suite set re-run clean
+(`damage-modifier-ssot.test.mjs` 35/35, `stock-droid-damage-math.test.mjs`,
+`force-point-transaction-integrity.test.mjs`,
+`attack-bonus-math-integrity.test.mjs`, `phase4-stacked-integration.test.mjs`,
+`attack-damage-option-context-transport.test.mjs` 18/18); full rolling
+suite 242/242 (5 pre-existing documented exclusions); full syntax sweep
+2529/2529; `tools/check-combat-math-ssot.mjs --strict`,
+`tools/verify-feats-pack-source.mjs`, `validate-data.js`,
+`validate-partials.mjs` all clean.

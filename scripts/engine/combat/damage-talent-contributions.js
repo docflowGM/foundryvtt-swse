@@ -20,6 +20,8 @@
  * damage at all and is deliberately not modeled here.
  */
 
+import { resolveFormulaContributions } from "/systems/foundryvtt-swse/scripts/engine/roll/expression/roll-formula-term-resolver.js";
+
 function countTalentsNamed(actor, name) {
   const wanted = String(name || '').trim().toLowerCase().replace(/[^a-z0-9]+/g, '');
   if (!wanted) return 0;
@@ -57,6 +59,29 @@ export function targetIsDeniedDexForDamage(context = {}) {
     || target?.system?.conditions?.flatFooted === true
     || target?.flags?.swse?.flatFooted === true
     || target?.flags?.['foundryvtt-swse']?.flatFooted === true;
+}
+
+/**
+ * Roll Expression / Transformation Authority adaptation (additive, does
+ * NOT change resolveTalentDamageContributions()'s own behavior or its
+ * existing consumers): wraps that function's already dice-shaped
+ * `bonusDice` strings through the shared FORMULA_TERM validator, so a
+ * caller that wants typed RollContribution records (rather than the
+ * legacy {formula, bonusDice, ...} shape) has a validated, provenance-
+ * tagged view of the same Sneak Attack dice — never re-deriving or
+ * duplicating the dice-count/denied-Dex logic above.
+ */
+export function resolveTalentDamageFormulaTerms(actor, context = {}) {
+  const { bonusDice, breakdown } = resolveTalentDamageContributions(actor, context);
+  return resolveFormulaContributions(bonusDice.map((formula, index) => ({
+    formula,
+    sourceId: 'sneak-attack',
+    sourceName: 'Sneak Attack',
+    sourceType: 'talent',
+    target: 'damage',
+    category: 'bonusDamageDice',
+    detail: breakdown[index]
+  })));
 }
 
 /**
