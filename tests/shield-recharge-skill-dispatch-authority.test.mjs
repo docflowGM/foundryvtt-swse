@@ -62,6 +62,78 @@ assert.equal(SkillUseFilter.getRestoreShieldRatingAmount(ENDURANCE_RESTORE_SHIEL
 assert.equal(SkillUseFilter._readSkillUseField(ENDURANCE_RESTORE_SHIELDS, 'selfTarget'), true);
 assert.equal(SkillUseFilter._readSkillUseField(ENDURANCE_RESTORE_SHIELDS, 'requiresDroid'), true);
 
+// ── THIRD correction round: canAccessSkillUse() must enforce requiresDroid/
+// requiresShieldGenerator itself -- review found these fields were added to
+// real content but never evaluated at the access seam, so an organic actor
+// could see and roll "Restore Shields (Droid)" before being rejected only
+// after a completed roll, and a shieldless droid could too. This is the
+// SAME real _source shape ExtraSkillUseRegistry.getForSkill() actually
+// passes to canAccessSkillUse (`item._source ?? item`), not a stand-in --
+// see getForSkill()'s `const accessSource = item?._source ?? item;`. ──
+
+function actorWithShields(type, shields) {
+  return { type, system: { shields: { ...shields } } };
+}
+
+{
+  const droidWithShields = actorWithShields('droid', { value: 5, max: 20 });
+  const droidDepleted = actorWithShields('droid', { value: 0, max: 20 });
+  const droidNoShields = actorWithShields('droid', { value: 0, max: 0 });
+  const organicWithShields = actorWithShields('character', { value: 5, max: 20 });
+  const droidByFlag = { type: 'character', system: { isDroid: true, shields: { value: 5, max: 20 } } };
+
+  const enduranceSource = ENDURANCE_RESTORE_SHIELDS._source;
+
+  assert.equal(SkillUseFilter.canAccessSkillUse(droidWithShields, enduranceSource), true, 'a droid with a stored shield resource must be able to access the Endurance restore check');
+  assert.equal(SkillUseFilter.canAccessSkillUse(droidDepleted, enduranceSource), true, 'a droid at current SR 0 but max SR > 0 is still equipped -- depletion is not the same as no generator');
+  assert.equal(SkillUseFilter.canAccessSkillUse(droidNoShields, enduranceSource), false, 'a droid with no stored shield resource at all (max 0) must be denied access');
+  assert.equal(SkillUseFilter.canAccessSkillUse(organicWithShields, enduranceSource), false, 'an organic actor must never access the droid-only Endurance restore check, regardless of its own shields');
+  assert.equal(SkillUseFilter.canAccessSkillUse(droidByFlag, enduranceSource), true, 'the system.isDroid convention (used by non-"droid"-typed actors) must also satisfy requiresDroid, matching DerivedCalculator\'s own droid test');
+
+  // Transient Force Shield writes system.derived.shield.current directly
+  // (force-power-effects-engine.js) without ever touching system.shields --
+  // it must not be mistaken for "equipped with an onboard shield generator".
+  const droidWithOnlyForceShield = {
+    type: 'droid',
+    system: { shields: { value: 0, max: 0 }, derived: { shield: { current: 8, max: 8, stored: false } } }
+  };
+  assert.equal(SkillUseFilter.canAccessSkillUse(droidWithOnlyForceShield, enduranceSource), false, 'a transient Force Shield override alone must not satisfy requiresShieldGenerator');
+
+  // Mechanics (no requiresDroid/requiresShieldGenerator) is unaffected by
+  // these new gates -- an organic operator can still access it.
+  assert.equal(SkillUseFilter.canAccessSkillUse(organicWithShields, MECHANICS_RECHARGE_SHIELDS._source), true, 'Mechanics Recharge Shields carries no droid/shield-generator requirement and must remain accessible to organic operators');
+}
+
+// ── getForSkill() end-to-end: the REAL registry method, seeded with REAL
+// normalized items (bypassing only the network-dependent initialize() this
+// harness can't do), actually excludes/includes based on the new gates. ──
+
+{
+  ExtraSkillUseRegistry._items = [MECHANICS_RECHARGE_SHIELDS, ENDURANCE_RESTORE_SHIELDS];
+  ExtraSkillUseRegistry._bySkill = ExtraSkillUseRegistry._groupBySkill(ExtraSkillUseRegistry._items);
+  ExtraSkillUseRegistry._initialized = true;
+
+  const droidWithShields = actorWithShields('droid', { value: 5, max: 20 });
+  const droidDepleted = actorWithShields('droid', { value: 0, max: 20 });
+  const droidNoShields = actorWithShields('droid', { value: 0, max: 0 });
+  const organic = actorWithShields('character', { value: 5, max: 20 });
+
+  const forDroidWithShields = await ExtraSkillUseRegistry.getForSkill('endurance', { actor: droidWithShields });
+  assert.ok(forDroidWithShields.some((u) => u.label === 'Restore Shields (Droid)'), 'getForSkill(endurance) must include Restore Shields for an equipped droid');
+
+  const forDroidDepleted = await ExtraSkillUseRegistry.getForSkill('endurance', { actor: droidDepleted });
+  assert.ok(forDroidDepleted.some((u) => u.label === 'Restore Shields (Droid)'), 'a depleted-but-equipped droid must still see it');
+
+  const forDroidNoShields = await ExtraSkillUseRegistry.getForSkill('endurance', { actor: droidNoShields });
+  assert.ok(!forDroidNoShields.some((u) => u.label === 'Restore Shields (Droid)'), 'a droid with no shield resource must not see it');
+
+  const forOrganic = await ExtraSkillUseRegistry.getForSkill('endurance', { actor: organic });
+  assert.ok(!forOrganic.some((u) => u.label === 'Restore Shields (Droid)'), 'an organic actor must not see it');
+
+  const forOperator = await ExtraSkillUseRegistry.getForSkill('mechanics', { actor: organic });
+  assert.ok(forOperator.some((u) => u.label === 'Recharge shields (trained)'), 'the vehicle route\'s Mechanics record must remain reachable through the same real getForSkill() call');
+}
+
 /** Faithful reimplementation of actor-engine.js:1485-1508, verified line-by-line. */
 function attachRealRechargeShields() {
   const calls = [];

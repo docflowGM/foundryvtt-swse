@@ -49,6 +49,15 @@ export class SkillUseFilter {
   static canAccessSkillUse(actor, skillUse) {
     if (!actor || !skillUse) {return false;}
 
+    // Structured requirement predicates apply regardless of which skill the
+    // use belongs to -- checked before the UTF/generic-skill branches below
+    // so a droid-only, shield-generator-only entry (e.g. the Endurance
+    // shield-restoration check) is never handed to an ineligible actor to
+    // begin with, not merely rejected after a roll.
+    if (!this._meetsStructuredRequirements(actor, skillUse)) {
+      return false;
+    }
+
     // Prefer explicit structured metadata when present. Normalized registry
     // entries carry `system.skill` (and sometimes top-level `skill`) with the
     // authoritative skill key, which is far more reliable than sniffing the
@@ -58,7 +67,7 @@ export class SkillUseFilter {
       return this.canUseTheForce(actor);
     }
     if (structuredSkill) {
-      // Non-UTF skills have no access gate at this layer.
+      // Non-UTF skills have no further access gate at this layer.
       return true;
     }
 
@@ -70,6 +79,51 @@ export class SkillUseFilter {
     }
 
     return true;
+  }
+
+  /**
+   * Structured skill-use entitlement requirements, evaluated at the same
+   * canonical access seam every accessible-uses list and roll dispatch
+   * already goes through (getAllBySkill's filter, canAccessSkillUse's own
+   * callers) -- not a sheet-only filter. Currently supports the two
+   * requirements the droid Endurance shield-restoration record declares;
+   * add more here if future content needs them, rather than duplicating
+   * this check at each call site.
+   * @private
+   */
+  static _meetsStructuredRequirements(actor, skillUse) {
+    if (this._readSkillUseField(skillUse, 'requiresDroid') === true && !this._isDroidActor(actor)) {
+      return false;
+    }
+    if (this._readSkillUseField(skillUse, 'requiresShieldGenerator') === true && !this._hasStoredShieldResource(actor)) {
+      return false;
+    }
+    return true;
+  }
+
+  /** Same droid test DerivedCalculator itself uses (derived-calculator.js:507). */
+  static _isDroidActor(actor) {
+    return actor?.type === 'droid' || actor?.system?.isDroid === true;
+  }
+
+  /**
+   * Whether an actor has a STORED personal shield resource -- the same
+   * condition DerivedCalculator's own shield projection uses to decide
+   * `stored: true` (derived-calculator.js's Shield Rating block: `shieldMax
+   * > 0 || storedValue > 0 || legacyCurrent > 0`, where `shieldMax =
+   * Math.max(storedMax, legacyMax)`). Deliberately does NOT read
+   * `derived.shield.current`, which a transient Force Shield ActiveEffect
+   * can override directly -- that would let a temporary Force power stand
+   * in for "equipped with an onboard shield generator," which it is not.
+   * Same authority as DerivedCalculator, not a second shield SSOT.
+   */
+  static _hasStoredShieldResource(actor) {
+    const shields = actor?.system?.shields || {};
+    const storedMax = Number(shields.max ?? shields.rating ?? 0) || 0;
+    const storedValue = Number(shields.value ?? 0) || 0;
+    const legacyMax = Number(actor?.system?.shieldRating ?? 0) || 0;
+    const legacyCurrent = Number(actor?.system?.currentSR ?? 0) || 0;
+    return storedMax > 0 || storedValue > 0 || legacyMax > 0 || legacyCurrent > 0;
   }
 
   /**

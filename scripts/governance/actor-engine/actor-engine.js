@@ -1472,10 +1472,13 @@ export const ActorEngine = {
    * up to the shield's normal maximum). system.shields is the stored SSOT; this is
    * the ActorEngine mutation primitive for the resource's restore operation.
    *
-   * NOTE: this is the primitive only. Wiring it to the Recharge Shields (Mechanics)
-   * / Restore Shields (Endurance) skill-use actions is a next step — there is no
-   * dispatch surface for those actions yet (only data entries / a Shield Surge
-   * lockout descriptor reference it).
+   * This is the mutation primitive; it does not itself decide who gets recharged.
+   * Both real skill-use records (packs/extraskilluses.db: Mechanics
+   * "Recharge shields (trained)", Endurance "Restore Shields (Droid)") dispatch
+   * here via SkillUseFilter._dispatchRestoreShieldRating() /
+   * resolveShieldRechargeTarget() (scripts/utils/skill-use-filter.js), and the
+   * vehicle crew "Recharge Shields" station action reaches the same dispatch
+   * via crew-skill-router.js's rollVehicleRechargeShields().
    *
    * @param {Actor} actor
    * @param {Object} [options]

@@ -209,7 +209,9 @@
     "restoreShieldRating": 5,
     "selfTarget": true,
     "requiresDroid": true,
-    "requiresShieldGenerator": true
+    "requiresShieldGenerator": true,
+    "sourcebook": "Saga Edition Core Rulebook",
+    "page": 197
   },
   {
     "application": "Regulate power (vehicle)",
