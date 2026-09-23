@@ -239,7 +239,7 @@ export class DarkSidePowers {
 
     for (const dmg of applicableDamages) {
       // Use proper damage application pipeline (ActorEngine + Thresholds)
-      await actor.applyDamage(dmg.damage);
+      await actor.applyDamage(dmg.damage, { type: 'force', source: 'wrath-of-the-dark-side' });
 
       const messageContent = `
         <div class="swse-wrath-damage">
@@ -315,7 +315,7 @@ export class DarkSidePowers {
     const damageAmount = roll.total;
 
     // Use proper damage application pipeline (ActorEngine + Thresholds)
-    await targetToken.actor.applyDamage(damageAmount);
+    await targetToken.actor.applyDamage(damageAmount, { type: 'force', source: 'channel-aggression' });
 
     const chatContent = `
       <div class="swse-channel-aggression">
@@ -1225,7 +1225,7 @@ export class DarkSidePowers {
       const damageAmount = damageRoll.total;
 
       // Use proper damage application pipeline (ActorEngine + Thresholds)
-      await targetActor.applyDamage(damageAmount);
+      await targetActor.applyDamage(damageAmount, { type: 'force', source: 'affliction' });
 
       const chatContent = `
         <div class="swse-affliction-damage">
