@@ -14,83 +14,10 @@ function rapidAlchemyState(actor) {
   return state;
 }
 
-function rapidAlchemyDamageBonus(actor, weapon) {
-  const state = rapidAlchemyState(actor);
-  if (!state?.sacrificePending) return 0;
-  return weaponMatchesId(weapon, state.weaponId) ? Number(state.damageBonus ?? 5) || 5 : 0;
-}
-
 async function clearRapidAlchemyDamageBonus(actor, weapon) {
   const state = rapidAlchemyState(actor);
   if (!state?.sacrificePending || !weaponMatchesId(weapon, state.weaponId)) return;
   await actor?.setFlag?.('swse', 'rapidAlchemy', { ...state, sacrificePending: false, consumedAt: Date.now() });
-}
-
-function forceItemState(weapon) {
-  return weapon?.getFlag?.('swse', 'forceItem') ?? weapon?.flags?.swse?.forceItem ?? null;
-}
-
-function forceItemAttackBonus(actor, weapon) {
-  const state = forceItemState(weapon);
-  if (String(state?.attuned?.actorId ?? '') !== String(actor?.id ?? '')) return 0;
-  return Number(state.attuned.attackBonus ?? 1) || 1;
-}
-
-function firstWeaponDamageDieFormula(weapon) {
-  const formula = String(weapon?.system?.damage ?? weapon?.system?.damageFormula ?? '1d6');
-  const match = formula.match(/(\d*)d(\d+)/i);
-  if (!match) return '';
-  return `1d${match[2]}`;
-}
-
-function forceItemExtraDamageFormula(actor, weapon) {
-  const state = forceItemState(weapon);
-  if (String(state?.empowered?.actorId ?? '') !== String(actor?.id ?? '')) return '';
-  return firstWeaponDamageDieFormula(weapon);
-}
-
-
-function actorHasTalentNamed(actor, names = []) {
-  const wanted = new Set((Array.isArray(names) ? names : [names])
-    .map(name => String(name || '').trim().toLowerCase().replace(/[^a-z0-9]+/g, ''))
-    .filter(Boolean));
-  if (!wanted.size) return false;
-  try {
-    return Array.from(actor?.items ?? []).some(item => {
-      if (item?.type !== 'talent') return false;
-      const key = String(item.name || '').trim().toLowerCase().replace(/[^a-z0-9]+/g, '');
-      return wanted.has(key);
-    });
-  } catch (_err) {
-    return false;
-  }
-}
-
-function actorHasFeatNamed(actor, names = []) {
-  const wanted = new Set((Array.isArray(names) ? names : [names])
-    .map(name => String(name || '').trim().toLowerCase().replace(/[^a-z0-9]+/g, ''))
-    .filter(Boolean));
-  if (!wanted.size) return false;
-  try {
-    return Array.from(actor?.items ?? []).some(item => {
-      if (item?.type !== 'feat') return false;
-      const key = String(item.name || '').trim().toLowerCase().replace(/[^a-z0-9]+/g, '');
-      return wanted.has(key);
-    });
-  } catch (_err) {
-    return false;
-  }
-}
-
-function targetActorFromDamageContext(context = {}) {
-  return context?.target ?? context?.targetActor ?? game?.user?.targets?.first?.()?.actor ?? null;
-}
-
-function inquisitionExtraDamageFormula(actor, weapon, context = {}) {
-  if (!actorHasTalentNamed(actor, 'Inquisition')) return '';
-  const target = targetActorFromDamageContext(context);
-  if (!target || !actorHasFeatNamed(target, 'Force Sensitivity')) return '';
-  return firstWeaponDamageDieFormula(weapon);
 }
 
 import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
@@ -100,25 +27,10 @@ import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
 import { mergeCombatWorkflowContextIntoRollOptions, summarizeCombatWorkflowContext } from "/systems/foundryvtt-swse/scripts/engine/combat/workflow/combat-context-serializer.js";
 import { buildDamagePacket, resolveDamagePacketType } from "/systems/foundryvtt-swse/scripts/engine/combat/damage-packet-builder.js";
 import { damageTypesFromContext } from "/systems/foundryvtt-swse/scripts/engine/combat/damage-type-rules.js";
-import { getCriticalDamageBonus } from "/systems/foundryvtt-swse/scripts/combat/utils/combat-utils.js";
-import { resolveDamageBonus } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-roll-math.js";
+import { resolveDamageComposition, buildDamageFormula } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-roll-math.js";
 import { TalentEffectEngine } from "/systems/foundryvtt-swse/scripts/engine/talent/talent-effect-engine.js";
 import { isNpcStatblockMode } from "/systems/foundryvtt-swse/scripts/actors/npc/npc-mode-adapter.js";
-import { getCriticalMultiplier as getRawCriticalMultiplier, isAreaAttack } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-stat-rules.js";
-/**
- * Compute talent-based damage bonuses (Sneak Attack, Skirmisher, etc.)
- * @param {Actor} actor - The attacking actor
- * @param {Object} context - Attack context {target, weapon, isCritical, aimedThisTurn}
- * @returns {Object} {formula: string, breakdown: Array}
- */
-function computeTalentDamageBonus(actor, context = {}) {
-  try {
-    return TalentEffectEngine.calculateDamageBonus(actor, context);
-  } catch (err) {
-    swseLogger.warn('Failed to calculate talent damage bonus:', err);
-    return { formula: '', bonusDice: [], flatBonus: 0, breakdown: [], notifications: [] };
-  }
-}
+import { isAreaAttack } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-stat-rules.js";
 
 /**
  * Roll damage for a SWSE weapon/power.
@@ -176,67 +88,29 @@ export async function rollDamage(actor, weapon, context = {}) {
   }
 
 
-  const dmgResult = resolveDamageBonus(actor, weapon, {
-    ...rollContext,
-    forceTwoHanded: rollContext.twoHanded || false
-  });
-  // A stock-statblock droid's published damage formula already includes its
-  // own dice — it REPLACES weapon.system.damage rather than being added on
-  // top of it (see resolveStockDroidDamageContract() in combat-roll-math.js).
-  const baseFormula = dmgResult.flags?.stockDamageFormula ?? (weapon.system?.damage ?? '1d6');
-  const dmgBonus = dmgResult.total;
-
-  // Calculate talent-based damage bonuses
-  const talentContext = { ...rollContext, weapon };
-  const talentBonus = computeTalentDamageBonus(actor, talentContext);
-
-  // Build complete formula
-  const formulaParts = [baseFormula];
-  if (dmgBonus !== 0) {
-    formulaParts.push(dmgBonus.toString());
-  }
-  if (talentBonus.formula) {
-    formulaParts.push(talentBonus.formula);
-  }
-
-  const forceItemDamageFormula = forceItemExtraDamageFormula(actor, weapon);
-  if (forceItemDamageFormula) {
-    formulaParts.push(forceItemDamageFormula);
-  }
-
-  const inquisitionDamageFormula = inquisitionExtraDamageFormula(actor, weapon, rollContext);
-  if (inquisitionDamageFormula) {
-    formulaParts.push(inquisitionDamageFormula);
-  }
+  // Canonical Damage SSOT (combat-roll-math.js): resolveDamageComposition()
+  // is the single authority for every dice-shaped and additive damage
+  // contribution (base dice, die-size steps, extra weapon dice, ½ level/
+  // ability/enhancement/rage/effect-intent/combat-option/scoped-feat,
+  // talent dice, Force Item/Inquisition dice, critical multiplier and
+  // critical-only bonus formula). This orchestration wrapper's job is only
+  // to gather workflow context, call composition + buildDamageFormula(),
+  // roll it, and post/consume state — it no longer computes any damage
+  // term itself. This is the actual fix for the confirmed live bug where
+  // Deadeye/Burst Fire/Mighty Swing/Rapid Shot/Rapid Strike/unarmed
+  // die-step contributions were silently dropped on this exact path.
+  const compositionContext = { ...rollContext, weapon, forceTwoHanded: rollContext.twoHanded || false };
+  const composition = resolveDamageComposition(actor, weapon, compositionContext);
 
   // Add Force Point bonus if present
   const fpBonus = rollContext.fpBonus || 0;
-  if (fpBonus !== 0) {
-    formulaParts.push(fpBonus.toString());
-  }
-
   // Add custom modifier if present
   const customModifier = rollContext.customModifier || 0;
-  if (customModifier !== 0) {
-    formulaParts.push(customModifier.toString());
-  }
 
-  let formula = formulaParts.join(' + ');
-
-  // RAW: confirmed critical hits multiply damage; area attacks do not deal
-  // double damage on a critical. Extra critical-only bonuses are appended after
-  // the multiplier so they do not get accidentally multiplied twice.
-  const critMultiplier = Number(rollContext.critMultiplier ?? getRawCriticalMultiplier(weapon, 2)) || 2;
-  if (rollContext.isCritical && !isAreaAttack(weapon, rollContext) && critMultiplier > 1) {
-    formula = `(${formula}) * ${critMultiplier}`;
-  }
-
-  if (rollContext.isCritical) {
-    const critBonusFormula = getCriticalDamageBonus(actor, weapon);
-    if (critBonusFormula) {
-      formula = `${formula} + (${critBonusFormula})`;
-    }
-  }
+  const formula = buildDamageFormula(composition, {
+    extraTerms: [fpBonus !== 0 ? fpBonus : null, customModifier !== 0 ? customModifier : null],
+    isAreaAttack: isAreaAttack(weapon, rollContext)
+  });
 
   const roll = await globalThis.SWSE.RollEngine.safeRoll(formula);
   if (roll) {
@@ -248,8 +122,8 @@ export async function rollDamage(actor, weapon, context = {}) {
   if (rollContext.isCritical) {
     flavor += ` [CRITICAL]`;
   }
-  if (talentBonus.breakdown.length > 0) {
-    flavor += ` (${talentBonus.breakdown.join(', ')})`;
+  if (composition.dice.talentBreakdown.length > 0) {
+    flavor += ` (${composition.dice.talentBreakdown.join(', ')})`;
   }
   if (fpBonus !== 0) {
     flavor += ` [FP: +${fpBonus}]`;
@@ -259,7 +133,7 @@ export async function rollDamage(actor, weapon, context = {}) {
   }
 
   // Show notifications for talent bonuses
-  for (const notification of talentBonus.notifications) {
+  for (const notification of composition.talentNotifications) {
     ui.notifications.info(notification);
   }
 
@@ -274,7 +148,7 @@ export async function rollDamage(actor, weapon, context = {}) {
         weaponId: weapon.id,
         weapon,
         isCritical: rollContext.isCritical === true,
-        critMultiplier,
+        critMultiplier: composition.critical.multiplier,
         workflowContext,
         target: rollContext.target ?? null,
         targetContext: rollContext.targetContext ?? null,

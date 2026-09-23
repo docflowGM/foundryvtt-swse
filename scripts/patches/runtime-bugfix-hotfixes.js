@@ -14,6 +14,7 @@ import { decodeDamageComponents } from "/systems/foundryvtt-swse/scripts/engine/
 import { TalentRegistry } from "/systems/foundryvtt-swse/scripts/registries/talent-registry.js";
 import { TalentEffectEngine } from "/systems/foundryvtt-swse/scripts/engine/talent/talent-effect-engine.js";
 import { RollEngine } from "/systems/foundryvtt-swse/scripts/engine/roll-engine.js";
+import { resolveTalentDamageContributions } from "/systems/foundryvtt-swse/scripts/engine/combat/damage-talent-contributions.js";
 
 const CHAT_LAYOUT_STYLE_ID = 'swse-chat-roll-total-layout-hotfix';
 const ARMOR_SPECIALIST_KEYS = new Set(['armor-specialist', '17cec542331cb4e4']);
@@ -166,59 +167,17 @@ function itemFromActor(actor, itemId, context = {}) {
   return actor.items?.get?.(id) ?? actor.items?.find?.(item => item.id === id || item._id === id) ?? null;
 }
 
-function countTalentsNamed(actor, name) {
-  const wanted = normalizeName(name);
-  if (!wanted) return 0;
-  try {
-    return Array.from(actor?.items ?? []).filter(item => item?.type === 'talent' && normalizeName(item?.name) === wanted).length;
-  } catch (_err) {
-    return 0;
-  }
-}
-
-function damageContextTarget(context = {}) {
-  return context.target?.actor ?? context.targetActor ?? context.target ?? game?.user?.targets?.first?.()?.actor ?? null;
-}
-
-function targetIsDeniedDexForDamage(context = {}) {
-  const target = damageContextTarget(context);
-  return context.sneakAttack === true
-    || context.targetFlatFooted === true
-    || context.flatFootedTarget === true
-    || context.deniedDex === true
-    || context.targetDeniedDex === true
-    || context.attack?.targetFlatFooted === true
-    || context.attack?.targetDeniedDex === true
-    || context.combatContext?.targetFlatFooted === true
-    || context.combatContext?.attack?.targetFlatFooted === true
-    || target?.system?.condition?.flatFooted === true
-    || target?.system?.conditions?.flatFooted === true
-    || target?.flags?.swse?.flatFooted === true
-    || target?.flags?.['foundryvtt-swse']?.flatFooted === true;
-}
-
+// Damage SSOT migration (Damage audit correction #1 §6): this used to be
+// the ONLY implementation of Sneak Attack's damage-dice contribution,
+// existing purely as a load-order-dependent runtime monkey-patch target.
+// The real logic now lives in the neutral, importable
+// damage-talent-contributions.js module, consumed directly by
+// combat-roll-math.js#resolveDamageComposition() (the canonical live
+// path) AND by the compatibility shim below (for any caller still going
+// through TalentEffectEngine.calculateDamageBonus directly) — so there is
+// exactly one implementation, not two that could drift.
 function buildTalentDamageBonusFallback(actor, context = {}) {
-  const bonusDice = [];
-  const breakdown = [];
-  const notifications = [];
-  let flatBonus = 0;
-
-  const sneakAttackCount = countTalentsNamed(actor, 'Sneak Attack');
-  if (sneakAttackCount > 0 && targetIsDeniedDexForDamage(context)) {
-    const formula = `${sneakAttackCount}d6`;
-    bonusDice.push(formula);
-    breakdown.push(`Sneak Attack +${formula}`);
-  }
-
-  const formulaParts = [...bonusDice];
-  if (flatBonus !== 0) formulaParts.push(String(flatBonus));
-  return {
-    formula: formulaParts.join(' + '),
-    bonusDice,
-    flatBonus,
-    breakdown,
-    notifications
-  };
+  return resolveTalentDamageContributions(actor, context);
 }
 
 async function rollDamageFromButton(event, button, message) {

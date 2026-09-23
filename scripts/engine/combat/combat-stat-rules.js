@@ -823,6 +823,17 @@ function isWeaponDamageContext(context = {}) {
  * weapon-backed to avoid double-scaling state/effect damage.
  */
 export function getHalfLevelDamageBonus(actor, item = null, context = {}) {
+  // Damage SSOT migration, vehicle-domain fix: a named gunner firing a
+  // vehicle-mounted weapon reaches this function with `actor` set to the
+  // gunner (see crew-skill-router.js -> attacks.js#rollAttack() ->
+  // damage.js#rollDamage()), never the vehicle. Without this gate the
+  // gunner's own personal half-heroic-level was silently added to vehicle
+  // weapon damage -- a contribution SWSE vehicle/starship weapon damage
+  // does not call for (fixed dice + vehicle-scale multiplier, not a
+  // personal-weapon-style character-scaled formula). Confirmed live via
+  // docs/audits/v2-damage-modifier-authority-audit-correction-1.md §4.
+  const weaponForGate = context.item ?? context.weapon ?? item;
+  if (isVehicleWeapon(weaponForGate)) return 0;
   const level = getEffectiveHalfLevel(actor);
   if (!level) return 0;
   const enriched = { ...context, item: context.item ?? item, weapon: context.weapon ?? item };
@@ -832,6 +843,9 @@ export function getHalfLevelDamageBonus(actor, item = null, context = {}) {
 }
 
 export function getDamageAbilityContribution(actor, weapon) {
+  // Same vehicle-domain fix as getHalfLevelDamageBonus() above: a gunner's
+  // own STR/DEX ability modifier does not apply to vehicle weapon damage.
+  if (isVehicleWeapon(weapon)) return 0;
   const system = weapon?.system ?? {};
   const explicit = String(system.damageBonus ?? system.damageAbility ?? system.combat?.damage?.ability ?? '').toLowerCase();
 

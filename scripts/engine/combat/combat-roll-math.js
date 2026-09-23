@@ -29,7 +29,8 @@ import {
   getWeaponAttunementAndUpgradeModifiers,
   getWeaponFlatAttackBonus,
   getWeaponFlatDamageBonus,
-  isVehicleWeapon
+  isVehicleWeapon,
+  getCriticalMultiplier as getWeaponBaseCriticalMultiplier
 } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-stat-rules.js";
 import { CombatOptionResolver } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-option-resolver.js";
 import { RageEngine } from "/systems/foundryvtt-swse/scripts/engine/species/rage-engine.js";
@@ -40,6 +41,10 @@ import { buildModifierLedger } from "/systems/foundryvtt-swse/scripts/engine/eff
 import { ImplantEffectRules } from "/systems/foundryvtt-swse/scripts/engine/implants/ImplantEffectRules.js";
 import { ScopedCombatFeatResolver } from "/systems/foundryvtt-swse/scripts/engine/feat/scoped-combat-feat-resolver.js";
 import { resolveArmorUsageEffects } from "/systems/foundryvtt-swse/scripts/engine/effects/armor-usage-resolver.js";
+import { ResolutionContext } from "/systems/foundryvtt-swse/scripts/engine/resolution/resolution-context.js";
+import { RULES } from "/systems/foundryvtt-swse/scripts/engine/execution/rules/rule-enum.js";
+import { resolveTalentDamageContributions } from "/systems/foundryvtt-swse/scripts/engine/combat/damage-talent-contributions.js";
+import { collectSharedDamageDiceTerms } from "/systems/foundryvtt-swse/scripts/engine/combat/damage-item-dice-contributions.js";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Internal helpers
@@ -771,4 +776,340 @@ export function resolveDamageBonus(actor, weapon, context = {}) {
   if (scopedFeatDamage !== 0) components['Scoped Feat'] = scopedFeatDamage;
 
   return { total, components, flags: { damageBaseOnly: false } };
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Damage Modifier SSOT — resolveDamageComposition() / buildDamageFormula()
+//
+// Damage audit + Damage audit correction #1
+// (docs/audits/v2-damage-modifier-authority-audit.md,
+// docs/audits/v2-damage-modifier-authority-audit-correction-1.md) confirmed
+// a severe live bug: the production damage-roll path every player reaches
+// (sheet Damage button + post-attack chat-card Damage button, both
+// damage.js#rollDamage()) never applied damageExtraWeaponDice/
+// damageDieStepIncreases/criticalDamageDieStepBonus, while a second,
+// narrower rollDamage() in attacks.js applied them correctly but had no
+// live UI caller for ordinary weapon attacks. This section is the single
+// canonical authority both now delegate to.
+//
+// resolveDamageBonus() above is UNCHANGED and remains the canonical
+// ADDITIVE-ONLY numeric bonus resolver — it does not grow new meaning here.
+// resolveDamageComposition() is a HIGHER-LEVEL seam in the same module that
+// also owns dice-count/die-step/critical composition, which nothing
+// downstream of resolveDamageBonus() previously owned. buildDamageFormula()
+// is the one pure formula-string assembler both damage.js and attacks.js
+// call instead of each hand-rolling `formulaParts.push(...)` independently.
+// ─────────────────────────────────────────────────────────────────────────────
+
+const DAMAGE_DIE_LADDER = [2, 3, 4, 6, 8, 10, 12];
+
+function getPrimaryDamageDieFormula(baseFormula) {
+  const match = String(baseFormula ?? '').match(/(?:^|[^\d])(\d*)d(\d+)/i);
+  if (!match) return null;
+  const sides = Number(match[2]);
+  return Number.isFinite(sides) && sides > 0 ? `d${sides}` : null;
+}
+
+export function buildExtraWeaponDiceFormula(baseFormula, extraDice) {
+  const count = Number(extraDice ?? 0);
+  if (!Number.isFinite(count) || count <= 0) return '';
+  const die = getPrimaryDamageDieFormula(baseFormula);
+  if (!die) return '';
+  return ` + ${count}${die}`;
+}
+
+export function stepDamageDieFormula(baseFormula, steps = 0) {
+  const count = Number(steps ?? 0);
+  if (!Number.isFinite(count) || count === 0) return String(baseFormula ?? '1d6');
+  return String(baseFormula ?? '1d6').replace(/(\d*)d(\d+)/gi, (match, diceCount, sidesText) => {
+    const sides = Number(sidesText);
+    const index = DAMAGE_DIE_LADDER.indexOf(sides);
+    if (index < 0) return match;
+    const nextIndex = Math.max(0, Math.min(DAMAGE_DIE_LADDER.length - 1, index + count));
+    return `${diceCount || '1'}d${DAMAGE_DIE_LADDER[nextIndex]}`;
+  });
+}
+
+// ─── Critical Multiplier SSOT ──────────────────────────────────────────────
+// Damage audit correction #1 §2/main command "CRITICAL MULTIPLIER SSOT":
+// three independent implementations were confirmed before this fix —
+// combat-stat-rules.js#getCriticalMultiplier(weapon, fallback) (weapon-only,
+// no actor/rule awareness — damage.js's standalone path used this),
+// combat-utils.js#getCriticalMultiplier(actor, weapon) (actor/RULES.
+// MODIFY_CRITICAL_MULTIPLIER-aware, but not CombatOptionResolver's own
+// criticalMultiplierMin-aware), and attacks.js#rollAttack()'s own inline
+// Math.max(weapon base, optionModifiers.criticalMultiplierMin) (that
+// resolver-aware, but not RULES.MODIFY_CRITICAL_MULTIPLIER-aware). None
+// considered both rule sources. This is the one function that does, and the
+// only place either duplicate should be called from going forward.
+export function resolveCriticalMultiplier(actor, weapon, context = {}, precomputedOptionModifiers = null) {
+  // A prior attack roll (the chat-card Damage button's live path) already
+  // resolved a canonical multiplier via this same function inside
+  // rollAttack() — reuse it verbatim rather than recomputing, so a
+  // standalone re-derivation can never disagree with the attack that
+  // produced this damage roll. Only a finite, positive number counts as
+  // valid canonical context; anything else falls through to a fresh
+  // resolution (covers the sheet Damage button and any direct
+  // programmatic damage roll, neither of which has a prior attack roll to
+  // borrow from).
+  const carried = Number(context?.critMultiplier);
+  if (Number.isFinite(carried) && carried > 0) return carried;
+
+  let highest = getWeaponBaseCriticalMultiplier(weapon, 2);
+
+  const optionModifiers = precomputedOptionModifiers ?? CombatOptionResolver.collectAttackModifiers(actor, weapon, context);
+  const optionMin = Number(optionModifiers?.criticalMultiplierMin);
+  if (Number.isFinite(optionMin) && optionMin > 0) highest = Math.max(highest, optionMin);
+
+  if (actor) {
+    try {
+      const ctx = new ResolutionContext(actor);
+      const multRules = ctx.getRuleInstances(RULES.MODIFY_CRITICAL_MULTIPLIER);
+      const weaponProf = weapon?.system?.proficiency;
+      for (const rule of multRules) {
+        if (rule.proficiency === weaponProf && Number(rule.multiplier) > 0) {
+          highest = Math.max(highest, Number(rule.multiplier));
+        }
+      }
+    } catch (_err) {
+      // ResolutionContext unavailable (actor without frozen rule snapshots
+      // yet, e.g. a test fixture) — weapon+option-derived multiplier above
+      // still applies; this is not a hard dependency.
+    }
+  }
+
+  return highest;
+}
+
+// ─── Damage target vocabulary unification ──────────────────────────────────
+// Damage audit correction #1 §3/§5: ModifierEngine declares 'global.damage'
+// (ModifierTypes.js VALID_TARGET_PATTERNS) as the canonical damage target,
+// but real pack data (talents.db) uses four historical alias spellings —
+// 'damage' | 'damage.weapon' | 'damage.melee' | 'damage.ranged' — consumed
+// by CombatOptionResolver's own collectModifierRollBonuses(), a second,
+// independent decision point from ModifierEngine's Effect-Intent registry.
+// Normalized here, in memory only, immediately before stacking resolution —
+// mirrors resolveAttackBonus()'s own ATTACK_TARGET_ALIASES normalization
+// for 'global.attack'/'attack.bonus' above. The original Modifier objects
+// (and any persisted item/actor data) are never mutated.
+const DAMAGE_TARGET_ALIASES = new Set(['damage', 'damage.weapon', 'damage.melee', 'damage.ranged', 'global.damage']);
+function normalizeDamageModifierTarget(mod) {
+  return (mod && mod.target !== 'global.damage' && DAMAGE_TARGET_ALIASES.has(mod.target))
+    ? { ...mod, target: 'global.damage' }
+    : mod;
+}
+
+function getDamageEffectIntentModifiers(actor, weapon, context = {}) {
+  try {
+    return ModifierEngine.getEffectIntentModifiersForContext(
+      actor, { context: buildEffectIntentRollContext(weapon, context, { rollType: 'damage' }), includeBroad: true }
+    );
+  } catch (err) {
+    console.warn('[SWSE] Failed to collect damage effect-intent modifiers', err);
+    return [];
+  }
+}
+
+/**
+ * Canonical Damage composition seam. Returns a structured object — not
+ * merely a formula string — so every contribution category stays
+ * distinct and inspectable: a dice-shaped modifier (Deadeye's extra
+ * weapon die, Sneak Attack's Nd6) is never collapsed into the flat
+ * integer total.
+ *
+ * @param {Actor} actor
+ * @param {Item} weapon
+ * @param {Object} [context={}] — same roll-context shape resolveDamageBonus()
+ *   already accepts (target, critical/isCritical, twoHanded, ...).
+ * @returns {{
+ *   bonus: {total:number, components:Object, flags:Object},
+ *   dice: {base:string, extraWeaponDice:number, dieStepIncreases:number,
+ *     criticalDieStepIncreases:number, talentDice:string[], otherDiceTerms:string[]},
+ *   critical: {isCritical:boolean, multiplier:number, bonusFormula:string},
+ *   damageTypes: string[],
+ *   riders: {onHit:Array, onCritical:Array},
+ *   flags: Object,
+ *   ledger: Array
+ * }}
+ */
+export function resolveDamageComposition(actor, weapon, context = {}) {
+  const bonus = resolveDamageBonus(actor, weapon, context);
+  const optionModifiers = CombatOptionResolver.collectAttackModifiers(actor, weapon, context);
+  const isCriticalRoll = context?.critical === true || context?.isCritical === true;
+
+  // ── Dice shape ────────────────────────────────────────────────────────
+  // A stock-statblock droid's published formula (see
+  // resolveStockDroidDamageContract() above) already IS the base dice —
+  // die-step/extra-dice still adjust it (R4-4, preserved verbatim), it is
+  // simply the starting formula instead of weapon.system.damage.
+  const base = bonus.flags?.stockDamageFormula ?? String(weapon?.system?.damage ?? weapon?.system?.damageFormula ?? '1d6');
+  const criticalDieStepIncreases = isCriticalRoll ? Number(optionModifiers.criticalDamageDieStepBonus || 0) : 0;
+  const dieStepIncreases = Number(optionModifiers.damageDieStepIncreases || 0) + criticalDieStepIncreases;
+  // Damage audit correction #1 "COLLAPSE damageExtraWeaponDice /
+  // damageDiceStepBonus DUPLICATE SURFACE": every producer in
+  // CombatOptionResolver already populates both fields with the identical
+  // value (a historical dual-write, not two independent contributions) —
+  // this composition reads ONLY the canonical damageExtraWeaponDice field,
+  // never damageDiceStepBonus, so a source populating both can never be
+  // double-counted.
+  const extraWeaponDice = Number(optionModifiers.damageExtraWeaponDice || 0);
+
+  const talentContributions = resolveTalentDamageContributions(actor, context);
+  const otherDiceTerms = collectSharedDamageDiceTerms(actor, weapon, context);
+
+  // ── Critical state ───────────────────────────────────────────────────
+  const multiplier = resolveCriticalMultiplier(actor, weapon, context, optionModifiers);
+  const bonusFormula = isCriticalRoll ? getCriticalDamageBonusFormula(actor, weapon) : '';
+
+  // ── Typed damage-modifier vocabulary unification ────────────────────
+  // ONE stacking pool for every typed damage contribution this codebase
+  // currently produces (Effect-Intent modifiers + CombatOptionResolver's
+  // own item-authored abilityMeta.modifiers matches), instead of two
+  // independent per-pool stacking decisions that can never see each
+  // other's contributions. Ledger-only today (bonus.total above is left
+  // numerically unchanged for backward compatibility — see the module
+  // header) but proves, via the no-double-application/collision test
+  // matrix, that a future same-typed collision across the two sources
+  // would resolve correctly.
+  const effectIntentDamageModifiers = getDamageEffectIntentModifiers(actor, weapon, context);
+  const typedDamagePool = [...effectIntentDamageModifiers, ...(optionModifiers.damageContributions || [])]
+    .map(normalizeDamageModifierTarget);
+  const filteredTypedPool = ModifierUtils.filterModifiers(typedDamagePool, 'global.damage', true);
+  const appliedTypedModifiers = ModifierUtils.resolveStacking(filteredTypedPool);
+  const suppressedTypedModifiers = filteredTypedPool
+    .filter(mod => !appliedTypedModifiers.includes(mod))
+    .map(modifier => ({ modifier, reason: `suppressed: another ${modifier.type} contribution already applies (${getStackingRule(modifier.type)} stacking)` }));
+  const typedModifierLedger = buildModifierLedger(appliedTypedModifiers, suppressedTypedModifiers, 'combat.damage');
+
+  const ledger = [
+    ...Object.entries(bonus.components || {}).map(([label, value]) => ({
+      id: `bonus-${label}`, label, value: Number(value) || 0, category: 'additive', sourceName: label, applied: true
+    })),
+    ...(dieStepIncreases !== 0 ? [{ id: 'die-step', label: 'Die-Size Step', value: dieStepIncreases, category: 'dieStep', applied: true }] : []),
+    ...(extraWeaponDice !== 0 ? [{ id: 'extra-weapon-dice', label: 'Extra Weapon Dice', value: extraWeaponDice, category: 'extraWeaponDice', applied: true }] : []),
+    ...talentContributions.breakdown.map((label, index) => ({ id: `talent-dice-${index}`, label, value: talentContributions.bonusDice[index] ?? null, category: 'additionalDice', applied: true })),
+    ...otherDiceTerms.map((term, index) => ({ id: `other-dice-${index}`, label: 'Force Item / Inquisition', value: term, category: 'additionalDice', applied: true })),
+    ...(isCriticalRoll ? [{ id: 'critical-multiplier', label: 'Critical Multiplier', value: multiplier, category: 'criticalMultiplier', applied: true }] : []),
+    ...(bonusFormula ? [{ id: 'critical-bonus', label: 'Critical Bonus Formula', value: bonusFormula, category: 'criticalAddition', applied: true }] : []),
+    ...typedModifierLedger
+  ];
+
+  return {
+    bonus,
+    dice: {
+      base,
+      extraWeaponDice,
+      dieStepIncreases,
+      criticalDieStepIncreases,
+      talentDice: talentContributions.bonusDice,
+      talentBreakdown: talentContributions.breakdown,
+      otherDiceTerms
+    },
+    critical: { isCritical: isCriticalRoll, multiplier, bonusFormula },
+    damageTypes: Array.isArray(context.damageTypes) ? context.damageTypes : [],
+    riders: {
+      onHit: optionModifiers.targetEffectsOnHit || [],
+      onCritical: optionModifiers.targetEffectsOnCritical || []
+    },
+    flags: { ...bonus.flags },
+    ledger,
+    talentNotifications: talentContributions.notifications
+  };
+}
+
+// Kept as a private, lazily-imported helper (not a top-level import) to
+// avoid combat-roll-math.js importing combat-utils.js — combat-utils.js
+// already imports resolveAttackBonus/resolveDamageBonus FROM this module,
+// so a static top-level import the other way would be circular. Only the
+// critical-bonus-FORMULA string helper is needed here (getCriticalMultiplier
+// itself is fully reimplemented above as resolveCriticalMultiplier, not
+// borrowed), and it is read-only/pure, so a dynamic import at call time is
+// safe and has no behavioral cost beyond the first call.
+let _getCriticalDamageBonusFormulaFn = null;
+function getCriticalDamageBonusFormula(actor, weapon) {
+  if (!actor || !weapon) return '';
+  try {
+    if (!_getCriticalDamageBonusFormulaFn) {
+      // Synchronous fallback: combat-utils.js's own RULES-based lookup is
+      // trivially reimplementable here without importing the module — it
+      // is exactly the same ResolutionContext/RULES primitives already
+      // imported above, so this stays import-cycle-free.
+      _getCriticalDamageBonusFormulaFn = (a, w) => {
+        try {
+          const ctx = new ResolutionContext(a);
+          const rules = ctx.getRuleInstances(RULES.CRITICAL_DAMAGE_BONUS);
+          const weaponProf = w?.system?.proficiency;
+          const bonuses = rules.filter(rule => rule.proficiency === weaponProf && rule.bonus).map(rule => String(rule.bonus));
+          return bonuses.length > 0 ? bonuses.join(' + ') : '';
+        } catch (_err) {
+          return '';
+        }
+      };
+    }
+    return _getCriticalDamageBonusFormulaFn(actor, weapon) || '';
+  } catch (_err) {
+    return '';
+  }
+}
+
+/**
+ * Pure formula-string assembler. The ONLY production function responsible
+ * for combining base dice, die-size steps, extra weapon dice, additive
+ * numeric damage, talent/special dice, Force Item/Inquisition dice,
+ * critical multiplier, critical-only die-step (already folded into
+ * composition.dice.dieStepIncreases), and the critical bonus formula, in
+ * that order. damage.js#rollDamage() and attacks.js#rollDamage() both call
+ * this instead of each hand-rolling their own formulaParts.push(...) —
+ * this is the actual fix for the confirmed live dice-shape bug, since
+ * there is no longer a second, incomplete builder for a field to be
+ * silently unread by.
+ *
+ * @param {ReturnType<typeof resolveDamageComposition>} composition
+ * @param {Object} [options={}]
+ * @param {Array<string|number>} [options.extraTerms] — invocation-only,
+ *   per-roll additions that are not contribution-producer-sourced (Force
+ *   Point bonus, a UI custom modifier) — these have never been modeled as
+ *   named contributions anywhere in this codebase (mirrors how
+ *   computeFinalAttackComposition() layers Fighting Defensively/custom
+ *   modifier onto resolveAttackBonus() as invocation-only additions rather
+ *   than folding them into the resolver itself).
+ * @param {boolean} [options.isAreaAttack] — RAW: area attacks do not deal
+ *   double damage on a critical.
+ * @returns {string}
+ */
+export function buildDamageFormula(composition, options = {}) {
+  const { extraTerms = [], isAreaAttack: isArea = false } = options;
+  const dice = composition?.dice ?? {};
+
+  const stepped = stepDamageDieFormula(dice.base, dice.dieStepIncreases || 0);
+  const extraDiceFormula = buildExtraWeaponDiceFormula(stepped, dice.extraWeaponDice || 0);
+
+  const parts = [`${stepped}${extraDiceFormula}`];
+
+  const bonusTotal = Number(composition?.bonus?.total || 0);
+  if (bonusTotal !== 0) parts.push(bonusTotal.toString());
+
+  for (const term of dice.talentDice || []) {
+    if (term) parts.push(term);
+  }
+  for (const term of dice.otherDiceTerms || []) {
+    if (term) parts.push(term);
+  }
+  for (const term of extraTerms) {
+    if (term === undefined || term === null || term === '' || term === 0) continue;
+    parts.push(String(term));
+  }
+
+  let formula = parts.join(' + ');
+
+  const isCritical = composition?.critical?.isCritical === true;
+  const multiplier = Number(composition?.critical?.multiplier || 2);
+  if (isCritical && !isArea && multiplier > 1) {
+    formula = `(${formula}) * ${multiplier}`;
+  }
+  if (isCritical && composition?.critical?.bonusFormula) {
+    formula = `${formula} + (${composition.critical.bonusFormula})`;
+  }
+
+  return formula;
 }

@@ -128,21 +128,33 @@ function stockWeapon(overrides = {}) {
   assert.equal(result.components['Enhancement'], 2);
 }
 
-// 7. The base-formula call sites (damage.js, attacks.js) must use the
-// published formula (via flags.stockDamageFormula) as the dice base
-// instead of weapon.system.damage — production-path proof that the
-// contract is actually wired into the roll formula, not just returned
-// and ignored.
+// 7. The base-formula call sites must use the published formula (via
+// flags.stockDamageFormula) as the dice base instead of weapon.system.damage
+// — production-path proof that the contract is actually wired into the
+// roll formula, not just returned and ignored.
+//
+// Damage SSOT migration (docs/audits/v2-damage-modifier-authority-audit.md
+// §18): the contract's enforcement point moved from being read
+// independently inside damage.js/attacks.js's own formula-building code to
+// being read exactly once, canonically, inside
+// combat-roll-math.js#resolveDamageComposition() (`bonus.flags?.
+// stockDamageFormula ?? weapon.system.damage ?? ...`) — both damage.js#
+// rollDamage() and attacks.js's rollAttackAndDamageWithNarration() now call
+// that single function rather than each reading the flag independently, so
+// there is exactly one place left to verify this, not two.
 {
+  const rollMathSource = await (await import('node:fs/promises')).readFile(
+    new URL('../scripts/engine/combat/combat-roll-math.js', import.meta.url), 'utf8'
+  );
+  assert.match(rollMathSource, /bonus\.flags\?\.stockDamageFormula/, 'resolveDamageComposition() must read resolveDamageBonus()\'s stockDamageFormula flag as its dice base');
   const damageSource = await (await import('node:fs/promises')).readFile(
     new URL('../scripts/combat/rolls/damage.js', import.meta.url), 'utf8'
   );
-  assert.match(damageSource, /dmgResult\.flags\?\.stockDamageFormula/, 'damage.js must read resolveDamageBonus()\'s stockDamageFormula flag');
+  assert.match(damageSource, /resolveDamageComposition\(/, 'damage.js#rollDamage() must call the canonical resolveDamageComposition(), which owns the stockDamageFormula contract');
   const attacksSource = await (await import('node:fs/promises')).readFile(
     new URL('../scripts/combat/rolls/attacks.js', import.meta.url), 'utf8'
   );
-  const stockFormulaRefs = (attacksSource.match(/dmgResult\.flags\?\.stockDamageFormula/g) || []).length;
-  assert.equal(stockFormulaRefs, 2, 'attacks.js must consult stockDamageFormula in both rollDamage() and rollAttackAndDamageWithNarration()');
+  assert.match(attacksSource, /resolveDamageComposition\(/, 'attacks.js#rollAttackAndDamageWithNarration() must call the canonical resolveDamageComposition(), which owns the stockDamageFormula contract');
 }
 
 // ---------------------------------------------------------------------

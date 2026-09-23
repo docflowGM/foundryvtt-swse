@@ -1,6 +1,14 @@
 # V2 Damage Modifier Authority Audit
 
-Status: **AUDIT ONLY — no migration, no production code changed.** Produced per an explicit reviewer directive following acceptance of the Attack Bonus / Action Authority groundwork (PR #973, head `eafffa4`). This document establishes the equivalent of the Attack Bonus domain's authority map for Damage, before any Damage SSOT implementation is authorized. Nothing in this document was implemented, deleted, or migrated — every finding below is read-only investigation, cross-checked against real source and real pack data before being asserted.
+Status: **SSOT IMPLEMENTED.** Sections 1-17 below are the original audit
+(read-only investigation, produced before implementation was authorized).
+Section 18 records the authorized implementation itself — the canonical
+Damage Modifier SSOT (`resolveDamageComposition()`/`buildDamageFormula()`
+in `combat-roll-math.js`) and its migration into
+`damage.js#rollDamage()`/`attacks.js` — plus the Phase A closure findings
+that were required to gate it. Phase A closure detail lives in
+`docs/audits/v2-damage-modifier-authority-audit-correction-1.md`; Section
+18 summarizes and finalizes it rather than repeating it in full.
 
 Companion ledger entry: `docs/audits/v2-math-integrity-authority-ledger.md`, "Domain: Damage" section (pointer only — this document is the full record).
 
@@ -408,3 +416,248 @@ None of these tests were written in this audit pass, per the explicit "character
 - The pre-existing `scripts/dev/audit-phase10*-damage-*.mjs` developer scripts (10f/10g/10h/10m/10n) — their names suggest prior internal investigation of adjacent damage-timing/rider/callsite topics; not read in this pass, and may contain directly relevant prior findings worth consulting before implementation begins.
 
 **No implementation, migration, deletion, or production code change was made in this audit.** No NPC-flat work, no Damage Threshold refactor, and no Action Authority production wiring was performed or begun.
+
+---
+
+## 18. SSOT Implementation — Migration Results
+
+Authorized following Correction #1's closure of all six HOLD items
+(`docs/audits/v2-damage-modifier-authority-audit-correction-1.md`).
+Implements the refined 3-function API from that document's §7, superseding
+this document's original §13 "extend `resolveDamageBonus()` directly"
+recommendation.
+
+### 18.1 Phase A closure (final restatement)
+
+All six items are closed with direct source evidence in Correction #1;
+restated here in final form as this document's authoritative record:
+
+- **RIDER_EFFECT / FORCE_POINT_DIE_STEP**: confirmed consumed by zero code
+  anywhere. Out of Damage SSOT scope — unimplemented combat-maneuver
+  side-effects and Force-Point skill/attack die-size mechanics
+  respectively, neither of which is a damage-dice contribution.
+- **ResolutionContext / RULES.\* damage inventory**: closed at exactly 4
+  values (`EXTEND_CRITICAL_RANGE`, `CRITICAL_DAMAGE_BONUS`,
+  `MODIFY_CRITICAL_MULTIPLIER`, `CRITICAL_CONFIRM_BONUS`).
+  `MODIFY_CRITICAL_MULTIPLIER` and `CRITICAL_DAMAGE_BONUS` are now the
+  exclusive, single-reader inputs to `resolveCriticalMultiplier()`/
+  `getCriticalDamageBonusFormula()` in `combat-roll-math.js` (§18.3).
+  `EXTEND_CRITICAL_RANGE`'s confirmed overlap with
+  `CombatOptionResolver`'s own handling is a critical-**range** (attack-side
+  threat range), not critical-**damage**, duplication — correctly out of
+  this migration's scope (attack-side critical-range unification was not
+  authorized in this command).
+- **Damage modifier target vocabulary**: `VALID_TARGET_PATTERNS` confirmed
+  never enforced (dead validation metadata, left as-is — enforcing it now
+  would be an unrelated behavior change). `attack_and_damage` confirmed
+  inert (one "Weakening Strike" record, no roll-time consumer) —
+  **deliberately NOT wired live** in this migration (wiring a previously-
+  inert -5 penalty as suddenly-live would be a SWSE rules-behavior change
+  beyond "fix the confirmed live dice-shape bug," which this project's own
+  standing rules prohibit without explicit instruction). `damage` /
+  `damage.weapon` / `damage.melee` / `damage.ranged` are now normalized
+  in-memory onto `global.damage` at the composition boundary (§18.4).
+- **Vehicle/starship damage boundary**: confirmed to share the live
+  character `resolveDamageComposition()`/`buildDamageFormula()` pipeline
+  via `crew-skill-router.js` → `attacks.js#rollAttack()` →
+  `damage.js#rollDamage()` (not a separate domain). The confirmed bug
+  (gunner half-level/ability leaking onto vehicle weapon damage) is now
+  **fixed** — see §18.6.
+- **Non-feat/talent damage metadata**: repo-wide scan confirmed the
+  feat/talent universe is the complete surface; the newly-discovered
+  `combat-actions.db` is confirmed inert descriptive/UI metadata, not
+  migrated (nothing to migrate).
+- **Sneak Attack / Skirmisher**: Sneak Attack is now a stable, importable
+  production module (`damage-talent-contributions.js`), consumed directly
+  by `resolveDamageComposition()` with zero dependency on
+  `runtime-bugfix-hotfixes.js` having run first (§18.7). Skirmisher
+  confirmed to be an attack-bonus talent — correctly out of Damage scope,
+  not migrated.
+
+### 18.2 Canonical Damage composition contract (as implemented)
+
+`scripts/engine/combat/combat-roll-math.js`:
+
+```js
+resolveDamageBonus(actor, weapon, context)
+  → { total, components, flags }
+  UNCHANGED CONTRACT — every existing consumer's reads are untouched.
+  Gained one behavior change as a side effect of §18.6's vehicle fix: its
+  half-level/ability sub-calls (getHalfLevelDamageBonus/
+  getDamageAbilityContribution in combat-stat-rules.js) now return 0 for a
+  vehicle weapon, for every caller of resolveDamageBonus(), not just the
+  new composition seam.
+
+resolveDamageComposition(actor, weapon, context)
+  → { bonus, dice, critical, damageTypes, riders, flags, ledger, talentNotifications }
+  NEW. Discovers every dice-shaped and critical-shaped contribution in one
+  pass: dice.base/extraWeaponDice/dieStepIncreases/criticalDieStepIncreases/
+  talentDice/talentBreakdown/otherDiceTerms; critical.isCritical/multiplier/
+  bonusFormula; a typed, provenance-preserving ledger.
+
+buildDamageFormula(composition, {extraTerms, isAreaAttack})
+  → string
+  NEW, pure. The one production function that assembles the final formula
+  string — base dice → die-size step → extra weapon dice → additive bonus
+  → talent/other dice terms → invocation-only extraTerms (Force Point
+  bonus, UI custom modifier) → critical multiplier wrap → critical bonus
+  formula appended after the multiplier. damage.js#rollDamage() and
+  attacks.js's rollAttackAndDamageWithNarration() both call this; there is
+  no second formula-assembly function anywhere in the codebase.
+
+resolveCriticalMultiplier(actor, weapon, context, precomputedOptionModifiers)
+  → number
+  NEW. The single critical-multiplier authority (§18.3), replacing three
+  independent prior implementations.
+```
+
+### 18.3 Critical multiplier SSOT
+
+Three prior independent implementations — `combat-stat-rules.js#getCriticalMultiplier(weapon, fallback)`
+(weapon-only), `combat-utils.js#getCriticalMultiplier(actor, weapon)`
+(actor/`RULES.MODIFY_CRITICAL_MULTIPLIER`-aware but not
+`CombatOptionResolver`-aware), and `attacks.js#rollAttack()`'s own inline
+`Math.max(weapon base, optionModifiers.criticalMultiplierMin)`
+(`CombatOptionResolver`-aware but not rule-aware) — are superseded by
+`combat-roll-math.js#resolveCriticalMultiplier()`, which considers the
+weapon's base multiplier, `CombatOptionResolver`'s
+`criticalMultiplierMin`, AND `RULES.MODIFY_CRITICAL_MULTIPLIER` in one
+function. `attacks.js#rollAttack()` now calls it directly.
+`combat-utils.js#getCriticalMultiplier()` and
+`combat-stat-rules.js#getCriticalMultiplier()` are left in place
+(unchanged, still correct for their own narrower semantics) but are no
+longer the source of the value used anywhere in the live damage-roll
+path — reduced to non-authoritative, per the command's "retire/reduce"
+instruction (removing them outright was judged higher-risk than necessary,
+since their other existing callers were out of this migration's scope).
+
+Consumer parity: a prior attack roll's resolved multiplier (`context.critMultiplier`,
+carried through `damageWorkflowContext`) is reused verbatim by a
+chat-card-driven Damage roll — never recomputed — while a standalone
+sheet-Damage-button roll (no prior attack context) computes fresh through
+this same function. Both paths are now rule-aware; previously only the
+attack-card path was (partially — it lacked `RULES.MODIFY_CRITICAL_MULTIPLIER`
+too).
+
+### 18.4 Damage modifier target vocabulary unification
+
+`combat-option-resolver.js#collectModifierRollBonuses()`'s damage branch
+now (a) keeps its existing flat-sum `damageBonus` output unchanged for
+backward compatibility, and (b) additionally emits each matching modifier
+as a typed, `global.damage`-normalized record on a new
+`damageContributions` array, threaded up through
+`collectWeaponRuleModifiers()`/`collectAttackModifiers()` exactly like the
+existing (previously always-empty) `attackContributions` field.
+`resolveDamageComposition()` combines this pool with
+`ModifierEngine.getEffectIntentModifiersForContext()`'s own damage-target
+modifiers (switched from the pre-summed `getEffectIntentModifierTotalForContext()`
+to the individual-record variant, mirroring `resolveAttackBonus()`'s own
+pattern for `global.attack`) into one `ModifierUtils.resolveStacking()`
+pass, surfaced in `composition.ledger`. Golden test 24 proves both
+historical alias spellings (`damage`, `damage.melee`) land in this same
+pool.
+
+### 18.5 damageExtraWeaponDice / damageDiceStepBonus collapse
+
+Every real producer in `CombatOptionResolver` already writes both fields
+to the identical value (a historical dual-write, not two independent
+contributions — confirmed by direct source read). `resolveDamageComposition()`
+reads **only** `damageExtraWeaponDice`, never falling back to
+`damageDiceStepBonus`. Golden test 25 proves a dual-written source
+contributes its extra die exactly once. The dual-write itself was left in
+place in `CombatOptionResolver` (not mass-edited) per the command's "do
+not mass-edit every historical source unless needed" instruction — no
+downstream reader other than the two now-removed hand-rolled formula
+builders (§18.8) ever consumed the second field independently.
+
+### 18.6 Vehicle domain fix
+
+`combat-stat-rules.js#getHalfLevelDamageBonus()` and
+`#getDamageAbilityContribution()` now return `0` for any `isVehicleWeapon()`-
+classified weapon, closing the confirmed live bug (a named gunner's
+personal half-heroic-level and ability modifier were silently added to
+vehicle weapon damage). Golden test 29 proves the gate is vehicle-weapon-
+specific, not actor-specific (the same gunner still receives half-level on
+an ordinary personal weapon in the same test). Vehicle-scale damage
+multiplier (x2/x5/x10) and ion/special damage-type interpretation remain
+unwired at runtime — explicitly out of scope for this migration per the
+authorizing command's own allowance ("we don't necessarily need to
+migrate vehicle damage in the first implementation").
+
+### 18.7 Sneak Attack / TalentEffectEngine
+
+`scripts/engine/combat/damage-talent-contributions.js` is the new, real,
+stable, importable production module (`resolveTalentDamageContributions()`).
+`resolveDamageComposition()` calls it directly. `runtime-bugfix-hotfixes.js`'s
+`buildTalentDamageBonusFallback()` (the compatibility shim backing the
+`TalentEffectEngine.calculateDamageBonus` monkey-patch, kept for any other
+caller of that API) now delegates to the same module instead of
+maintaining its own copy. Golden test 28 proves Sneak Attack damage
+resolves correctly with the runtime hotfix installer never having run.
+
+### 18.8 Force Item / Inquisition dedup
+
+`scripts/engine/combat/damage-item-dice-contributions.js` is the one
+neutral, shared module both `damage.js` (previously) and
+`attacks.js#rollAttackAndDamageWithNarration()` (previously missing
+Inquisition entirely — a confirmed, narrower omission on that dead-code
+path) now consume via `resolveDamageComposition()`'s `dice.otherDiceTerms`.
+
+### 18.9 Roll wrapper roles after migration
+
+- **`damage.js#rollDamage()`**: orchestration only. Gathers workflow
+  context, preserves the NPC-flat and stock-droid branches unchanged, calls
+  `resolveDamageComposition()` + `buildDamageFormula()`, rolls, posts chat,
+  clears Rapid Alchemy state. No damage term is computed locally anymore.
+- **`attacks.js#rollDamage()`**: a thin delegate to `damage.js#rollDamage()`
+  — collapsed into one, per the command's explicit "collapsed into one, or
+  one becomes a thin wrapper of the other" instruction. Its own prior
+  formula-building logic (confirmed divergent AND confirmed missing
+  Inquisition) is removed, not preserved as dead code.
+- **`attacks.js#rollAttackAndDamageWithNarration()`**: confirmed dead (zero
+  live callers), left in place but its damage side now delegates to the
+  same `resolveDamageComposition()`/`buildDamageFormula()` pair, reordered
+  to resolve the attack outcome (and therefore `isCritical`) BEFORE
+  building the damage formula — the old code built its damage formula
+  before the attack roll resolved, so it could never apply a critical
+  multiplier or critical-only die-step at all on this path; a dormant
+  divergence, not a reproduced live bug, now closed as a side effect of
+  delegating rather than opportunistically deleted (per the command's
+  "prefer minimizing scope: delegation is safer than opportunistic
+  deletion").
+
+### 18.10 Tests
+
+`tests/damage-modifier-ssot.test.mjs` — 29 checks: 3 fail-before/pass-after
+proofs (extra weapon dice, die-size step, standalone critical-multiplier
+rule-awareness — each reproducing the confirmed-removed old logic inline
+and proving it produces the wrong result, then proving the new canonical
+path produces the right one), the full golden matrix (ordinary
+melee/ranged, unarmed die-step, half-level/ability/enhancement stacking,
+Deadeye/Burst Fire/Mighty Swing extra dice, item-authored damage modifier,
+Sneak Attack single/multiple-talent dice-shaped stacking, Force
+Item/Inquisition target-gating, critical multiplier/rule-modification/
+critical-only-die-step/bonus-formula-ordering, area-attack critical
+exemption, stock-droid published formula, simultaneous-modifier
+composition, alias normalization, no-double-application, composition
+purity/caller-parity, no-runtime-hotfix-dependency, vehicle-domain
+gating), and structural source-text parity checks proving `damage.js`/
+`attacks.js` actually call the canonical functions (RollEngine/SWSEChat/
+AmmoSystem are not shimmed by this project's Foundry-shim harness, the
+same documented boundary `tests/stock-droid-damage-math.test.mjs` already
+established for this exact file — full end-to-end chat-posting execution
+of `rollDamage()` was not attempted for the same reason it wasn't
+attempted there).
+
+### 18.11 Explicitly not done in this migration
+
+Per the authorizing command's "DO NOT DO" list: `ActionAvailabilityEngine`
+was not wired into Damage; no `ATTACK_OPTION` records were migrated into
+`ActionDefinition` effects; Damage Threshold, HP application, and
+Condition Track were not touched; no unrelated NPC-flat problems were
+fixed; vehicle combat was not redesigned; no damage mechanic was converted
+to declarative data; no legacy system was deleted merely for looking
+redundant (`combat-stat-rules.js#getCriticalMultiplier()`/
+`combat-utils.js#getCriticalMultiplier()` are reduced-to-non-authoritative,
+not deleted); no SWSE rule was changed to make a test pass (`attack_and_damage`
+stayed inert by deliberate choice, not migrated to "make it work").
