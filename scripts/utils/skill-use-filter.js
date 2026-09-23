@@ -303,29 +303,28 @@ export class SkillUseFilter {
   }
 
   /**
-   * Recharge Shields (Mechanics) / Restore Shields (Endurance) are data-only
-   * entries in ExtraSkillUseRegistry (restoreShieldRating: 5, per the Shield
-   * Rating RAW addendum -- CRB p.161, Scavenger's Guide to Droids) with no
-   * prior dispatch surface to ActorEngine.rechargeShields(). This is the
+   * Recharge Shields (Mechanics) / Restore Shields (Droid, Endurance) are
+   * real skill-use records (packs/extraskilluses.db, sourced from
+   * data/extraskilluses.json) carrying a `restoreShieldRating` field, with
+   * no prior dispatch surface to ActorEngine.rechargeShields(). This is the
    * single seam every skill-use roll passes through, so it dispatches here
    * rather than adding sheet-specific mutation.
    *
-   * Restore Shields (Endurance) and Recharge Shields (Mechanics) are NOT the
-   * same shape: Endurance is a droid restoring its own shields (roller ===
-   * target, per `selfTarget: true` on that registry entry); Mechanics is an
-   * operator recharging a vehicle/device's shields (roller !== target). The
-   * generic skill-use dialog this dispatches from (character-like-sheet.js's
-   * _runCanonicalExtraSkillUse -> here) has no established convention for
-   * threading a vehicle/device actor through it today -- the only place a
-   * vehicle actor is known is crew-skill-router.js's rollVehicleCrewSkill(),
-   * which calls rollSkillCheck() directly and does not route through this
-   * generic skill-use path at all. So rather than invent a target picker,
-   * this reads the same `vehicleActor` naming convention crew-skill-router.js
-   * already uses (rollAttack(actor, weapon, { vehicleActor, operator, ... })
-   * at crew-skill-router.js:222) if a caller happens to supply it, with a
-   * generic `targetActor` fallback -- and fails closed with no mutation to
-   * the roller when neither is present, per the explicit RAW distinction
-   * that Mechanics never recharges the operator's own shields.
+   * The two are NOT the same shape: the droid Endurance check is a droid
+   * restoring its own shields (roller === target, `selfTarget: true` +
+   * `requiresDroid: true` on the record); Mechanics is an operator
+   * recharging a vehicle/device's shields (roller !== target, never the
+   * roller itself). The generic skill-use dialog this dispatches from
+   * (character-like-sheet.js's _runCanonicalExtraSkillUse -> here) has no
+   * established convention for threading a vehicle/device actor through it
+   * today -- the only place a vehicle actor is known is
+   * crew-skill-router.js's rollVehicleCrewSkill(), which now calls into
+   * this same dispatch (via rollSkillUseApplication) supplying
+   * `options.vehicleActor`. So rather than invent a second target picker,
+   * this reads that convention (or the generic `targetActor` fallback) and
+   * fails closed with no mutation to the roller when neither is present,
+   * per the explicit RAW distinction that Mechanics never recharges the
+   * operator's own shields.
    * @private
    */
   static async _dispatchRestoreShieldRating(actor, skillUse, dc, roll, options = {}) {
@@ -338,7 +337,7 @@ export class SkillUseFilter {
 
     const target = SkillUseFilter.resolveShieldRechargeTarget({ roller: actor, skillUse, options });
     if (!target) {
-      ui?.notifications?.warn?.(`${skillUse?.name ?? 'Recharge Shields'}: no vehicle or device was specified to recharge.`);
+      ui?.notifications?.warn?.(`${skillUse?.name ?? skillUse?.label ?? 'Recharge Shields'}: no vehicle or device was specified to recharge.`);
       return;
     }
 
@@ -353,14 +352,26 @@ export class SkillUseFilter {
   }
 
   /**
+   * Read a semantic field off a skill-use record regardless of shape: a
+   * plain test-constructed object with the field at top level, or a real
+   * ExtraSkillUseRegistry-normalized object (scripts/utils/extra-skill-use-registry.js
+   * #_normalize) that carries custom compendium/JSON fields under
+   * `_source.system.*` (its `...system` spread preserves any field not
+   * explicitly overridden by normalization).
+   * @private
+   */
+  static _readSkillUseField(skillUse, key) {
+    return skillUse?.[key]
+      ?? skillUse?.system?.[key]
+      ?? skillUse?._source?.system?.[key]
+      ?? skillUse?._source?.[key];
+  }
+
+  /**
    * Pure lookup, exported for unit testing without a full skill-roll pipeline.
    */
   static getRestoreShieldRatingAmount(skillUse) {
-    const amount = Number(
-      skillUse?.restoreShieldRating
-      ?? skillUse?.system?.restoreShieldRating
-      ?? skillUse?._source?.system?.restoreShieldRating
-    );
+    const amount = Number(SkillUseFilter._readSkillUseField(skillUse, 'restoreShieldRating'));
     return Number.isFinite(amount) && amount > 0 ? amount : 0;
   }
 
@@ -368,14 +379,43 @@ export class SkillUseFilter {
    * Pure target resolution, exported for unit testing. Returns the actor
    * whose system.shields should be mutated, or null when none can be
    * truthfully resolved (never guessed).
+   *
+   * Two invariants, added after independent review found the first wiring
+   * pass safe but incomplete:
+   *  - a `selfTarget` record additionally requires `requiresDroid` actors to
+   *    actually be droids (the droid Endurance check is not a general
+   *    self-restore any actor type can use just because the record is
+   *    flagged selfTarget).
+   *  - a non-selfTarget record can NEVER resolve to the roller, even if a
+   *    caller mistakenly passes `targetActor: actor` -- this is the
+   *    original Mechanics-recharges-the-operator defect, closed at the
+   *    resolver level so no future caller can silently reintroduce it.
    */
   static resolveShieldRechargeTarget({ roller, skillUse, options = {} }) {
-    const selfTarget = skillUse?.selfTarget === true
-      || skillUse?.system?.selfTarget === true
-      || skillUse?._source?.system?.selfTarget === true;
-    if (selfTarget) return roller ?? null;
+    const selfTarget = SkillUseFilter._readSkillUseField(skillUse, 'selfTarget') === true;
+    if (selfTarget) {
+      const requiresDroid = SkillUseFilter._readSkillUseField(skillUse, 'requiresDroid') === true;
+      if (requiresDroid && roller?.type !== 'droid') return null;
+      return roller ?? null;
+    }
 
-    return options?.vehicleActor ?? options?.targetActor ?? skillUse?.vehicleActor ?? null;
+    const target = options?.vehicleActor ?? options?.targetActor ?? null;
+    if (!target || target === roller) return null;
+    return target;
+  }
+
+  /**
+   * Find the shield-recharge skill-use record matching a target shape
+   * (self-target droid restoration vs. external vehicle/device recharge)
+   * out of a skill's full extra-use list, without sniffing display labels.
+   * Used by crew-skill-router.js to locate the canonical Mechanics record
+   * for the vehicle crew "Recharge Shields" action.
+   */
+  static findShieldRechargeUse(uses, { selfTarget = false } = {}) {
+    return (uses ?? []).find((use) =>
+      SkillUseFilter.getRestoreShieldRatingAmount(use) > 0
+      && (SkillUseFilter._readSkillUseField(use, 'selfTarget') === true) === selfTarget
+    ) ?? null;
   }
 
   static _parseDc(value) {

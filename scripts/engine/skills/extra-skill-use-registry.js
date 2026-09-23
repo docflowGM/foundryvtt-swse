@@ -1,5 +1,18 @@
 import { SkillRules } from "/systems/foundryvtt-swse/scripts/engine/skills/SkillRules.js";
 
+// NOTE (found during V2 combat runtime convergence, Phase 2): this registry
+// has exactly one importer, scripts/engine/skills/skill-feat-rule-resolver.js
+// (feat-granted extra-skill-use eligibility) -- it is NOT the registry the
+// character sheet's skill-use roll dispatch uses. That is the separate,
+// same-named class in scripts/utils/extra-skill-use-registry.js, which
+// loads real skill-use data from packs/extraskilluses.db /
+// data/extraskilluses.json. SkillUseFilter's shield-recharge dispatch
+// (scripts/utils/skill-use-filter.js) and ActorEngine.rechargeShields()
+// wiring key off THAT registry's records, not the `dc`/`restoreShieldRating`
+// fields on the mechanics.recharge-shields/endurance.restore-shields
+// entries below -- those are inert for that purpose, left as pre-existing
+// feat-eligibility metadata.
+
 function normalizeKey(value = '') {
   return String(value ?? '')
     .trim()

@@ -237,8 +237,13 @@ def populate_extra_skill_uses():
             # Generate ID
             item_id = generate_id()
 
-            # Extract skill key (authoritative routing field)
-            skill_key = extract_skill_key(use_data.get('application', ''))
+            # Extract skill key (authoritative routing field). An explicit
+            # source `skill` field always wins over name-inference -- needed
+            # for entries whose application name would fuzzy-match a
+            # different skill than the one the rule actually uses (e.g. the
+            # droid Endurance shield-restoration check, whose name mentions
+            # "shields" the same way the Mechanics vehicle check does).
+            skill_key = use_data.get('skill') or extract_skill_key(use_data.get('application', ''))
             if not skill_key:
                 print(f"  Warning: Could not determine skill for \"{use_data.get('application', 'UNKNOWN')}\"")
                 missing_skill += 1
@@ -251,8 +256,13 @@ def populate_extra_skill_uses():
                 'skillLabel': get_skill_label(skill_key),
                 'application': use_data.get('application', ''),
 
-                # Access constraints
-                'trainedOnly': extract_trained_only(use_data.get('application', ''), use_data.get('effect', '')),
+                # Access constraints. An explicit source `trainedOnly`
+                # (present or absent as a key) wins over the "(trained)"
+                # text heuristic, for rules like the droid Endurance shield
+                # restoration check that are NOT trained-only even though
+                # their sibling Mechanics check is.
+                'trainedOnly': use_data['trainedOnly'] if 'trainedOnly' in use_data
+                    else extract_trained_only(use_data.get('application', ''), use_data.get('effect', '')),
                 'requiresForceSensitivity': extract_requires_force_sensitivity(skill_key),
 
                 # Action economy
@@ -272,6 +282,15 @@ def populate_extra_skill_uses():
                 'sourcebook': use_data.get('sourcebook', 'Saga Edition'),
                 'page': use_data.get('page') or None
             }
+
+            # Optional structured semantic fields, passed through only when
+            # the source data provides them (e.g. shield-restoration rules).
+            # These are consumed by SkillUseFilter's shield-recharge dispatch
+            # (scripts/utils/skill-use-filter.js) rather than inferred from
+            # `application`/`tags` text at runtime.
+            for optional_field in ('restoreShieldRating', 'selfTarget', 'requiresDroid', 'requiresShieldGenerator'):
+                if optional_field in use_data:
+                    system[optional_field] = use_data[optional_field]
 
             # Normalize DC value (handle string/number variants)
             if isinstance(system['dc'], str):

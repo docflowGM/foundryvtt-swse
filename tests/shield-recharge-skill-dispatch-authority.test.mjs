@@ -1,56 +1,66 @@
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
 import { registerFoundryPathLoader } from './helpers/foundry-shim/register.mjs';
 import { installFoundryShimGlobals, resetFoundryShimGlobals } from './helpers/foundry-shim/globals.mjs';
 
 // V2 combat runtime convergence, Phase 2 (Shields + Damage Reduction).
 //
-// docs/audits/v2-remaining-work.md's Phase 0 re-verification found
-// ActorEngine.rechargeShields(actor, {amount=5}) (actor-engine.js:1485-1508)
-// was a correct primitive with ZERO call sites -- the Recharge Shields
-// (Mechanics) / Restore Shields (Endurance) skill-use entries in
-// ExtraSkillUseRegistry were pure display data. This file exercises the
-// dispatch added at skill-use-filter.js's SkillUseFilter, corrected after
-// independent review of the first wiring pass found two real bugs:
+// This is the SECOND correction round. The first pass (docs/audits/
+// v2-remaining-work.md) built and tested this dispatch against
+// scripts/engine/skills/extra-skill-use-registry.js -- which turned out to
+// have exactly one importer (an unrelated feat-eligibility resolver) and
+// is NEVER what the character sheet's skill-use roll actually consumes.
+// The real registry is scripts/utils/extra-skill-use-registry.js, loading
+// packs/extraskilluses.db (falling back to data/extraskilluses.json). That
+// registry's real "Recharge shields (trained)" record had a real DC 20 all
+// along; what it never had was a `restoreShieldRating` field, a
+// `selfTarget`/`requiresDroid` distinction, or a matching droid Endurance
+// record at all (confirmed by grepping the entire live compendium).
 //
-//   Blocker 1 -- mechanics.recharge-shields had no `dc`, so the dispatcher's
-//   "!Number.isFinite(dc) -> success" fallback (correct for a skill use with
-//   genuinely no DC) incorrectly treated EVERY completed Mechanics roll as
-//   successful. The Combat Skills Summary / Scavenger's Guide to Droids both
-//   give Recharge Shields a DC 20, same as Restore Shields -- so that DC now
-//   lives in the registry entry, not invented, sourced.
-//
-//   Blocker 2 -- the dispatch always recharged the ROLLER's own shields.
-//   That's correct for Endurance/Restore Shields (a droid restores itself),
-//   but wrong for Mechanics/Recharge Shields (an operator recharges a
-//   vehicle or device they do NOT roll as). resolveShieldRechargeTarget()
-//   now distinguishes the two via `selfTarget: true` on the registry entry
-//   (Endurance) vs. an explicit vehicleActor/targetActor in options
-//   (Mechanics) -- reusing crew-skill-router.js's own `vehicleActor` naming
-//   convention (see rollAttack(actor, weapon, { vehicleActor, operator })
-//   at crew-skill-router.js:222) rather than inventing a second target
-//   selector. No vehicle/device resolved -> fail closed, operator untouched.
-//
-// Harness note: this repo's foundry-shim test harness globally redirects
-// every import of actor-engine.js to tests/helpers/foundry-shim/fakes/actor-engine.fake.mjs
-// (see path-loader.mjs) because the real ActorEngine transitively imports
-// most of the engine layer and is too heavy to load under plain Node
-// (confirmed while writing this file -- importing the real module resolves
-// to the fake, with only 7 keys, none of them rechargeShields). That fake's
-// scope is documented as droid-conversion-specific, so rather than widen
-// it, this file attaches a scoped-to-this-test-run reimplementation of
-// rechargeShields onto the SAME cached module object the dispatch code
-// imports (ES module specifiers are cached singletons) -- verified
-// line-by-line against actor-engine.js:1485-1508: +amount capped at max,
-// restored = next - current, max<=0 short-circuits with no mutation. This
-// proves the dispatch wiring, DC gating, and target resolution for real.
+// This file proves the dispatch against the REAL normalized shape: every
+// skillUse fixture below is produced by running the REAL
+// ExtraSkillUseRegistry._normalize() over REAL compendium doc bytes read
+// from packs/extraskilluses.db (not hand-built stand-ins), so a future
+// change to that normalization function that breaks these fields would
+// fail here too.
 
 registerFoundryPathLoader();
 installFoundryShimGlobals();
 
 const { SkillUseFilter } = await import('/systems/foundryvtt-swse/scripts/utils/skill-use-filter.js');
+const { ExtraSkillUseRegistry } = await import('/systems/foundryvtt-swse/scripts/utils/extra-skill-use-registry.js');
 const { ActorEngine: FakeActorEngine } = await import(
   '/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js'
 );
+
+const packDocs = readFileSync(new URL('../packs/extraskilluses.db', import.meta.url), 'utf8')
+  .split('\n')
+  .filter(Boolean)
+  .map((line) => JSON.parse(line));
+
+const mechanicsDoc = packDocs.find((doc) => doc._id === '40d3cef8b9d24639');
+const enduranceDoc = packDocs.find((doc) => doc._id === 'aba9c6329f20406a');
+assert.ok(mechanicsDoc, 'the real Mechanics Recharge Shields record must exist at its stable compendium id');
+assert.ok(enduranceDoc, 'the real Endurance Restore Shields (Droid) record must exist at its stable compendium id');
+
+const MECHANICS_RECHARGE_SHIELDS = ExtraSkillUseRegistry._normalize(mechanicsDoc);
+const ENDURANCE_RESTORE_SHIELDS = ExtraSkillUseRegistry._normalize(enduranceDoc);
+
+// Sanity-check the real data before testing dispatch logic against it --
+// if these ever drift, the failure should point here, not at a confusing
+// dispatch-test failure three layers down.
+assert.equal(MECHANICS_RECHARGE_SHIELDS.skillKey, 'mechanics');
+assert.equal(MECHANICS_RECHARGE_SHIELDS.dc, 20);
+assert.equal(MECHANICS_RECHARGE_SHIELDS.trainedOnly, true);
+assert.equal(SkillUseFilter.getRestoreShieldRatingAmount(MECHANICS_RECHARGE_SHIELDS), 5);
+assert.equal(SkillUseFilter._readSkillUseField(MECHANICS_RECHARGE_SHIELDS, 'selfTarget'), undefined);
+
+assert.equal(ENDURANCE_RESTORE_SHIELDS.skillKey, 'endurance');
+assert.equal(ENDURANCE_RESTORE_SHIELDS.dc, 20);
+assert.equal(ENDURANCE_RESTORE_SHIELDS.trainedOnly, false, 'the droid Endurance check is not trained-only per RAW, unlike its Mechanics sibling');
+assert.equal(SkillUseFilter.getRestoreShieldRatingAmount(ENDURANCE_RESTORE_SHIELDS), 5);
+assert.equal(SkillUseFilter._readSkillUseField(ENDURANCE_RESTORE_SHIELDS, 'selfTarget'), true);
+assert.equal(SkillUseFilter._readSkillUseField(ENDURANCE_RESTORE_SHIELDS, 'requiresDroid'), true);
 
 /** Faithful reimplementation of actor-engine.js:1485-1508, verified line-by-line. */
 function attachRealRechargeShields() {
@@ -77,193 +87,166 @@ function attachRealRechargeShields() {
   return calls;
 }
 
-function fakeActor(id, shields) {
+function fakeActor(id, shields, type = 'character') {
   return {
     id,
     name: id,
+    type,
     system: { shields: { ...shields }, derived: { shield: { current: shields.value, max: shields.max, stored: true } } }
   };
 }
 
-const ENDURANCE_RESTORE_SHIELDS = { id: 'endurance.restore-shields', name: 'Restore Shields', dc: 20, restoreShieldRating: 5, selfTarget: true };
-const MECHANICS_RECHARGE_SHIELDS = { id: 'mechanics.recharge-shields', name: 'Recharge Shields', dc: 20, restoreShieldRating: 5 };
-
-// ── getRestoreShieldRatingAmount: pure lookup, no Foundry dependency ──
+// ── resolveShieldRechargeTarget: pure resolution against real records ──
 
 {
-  assert.equal(SkillUseFilter.getRestoreShieldRatingAmount({ restoreShieldRating: 5 }), 5);
-  assert.equal(SkillUseFilter.getRestoreShieldRatingAmount({ system: { restoreShieldRating: 5 } }), 5);
-  assert.equal(SkillUseFilter.getRestoreShieldRatingAmount({ _source: { system: { restoreShieldRating: 5 } } }), 5);
-  assert.equal(SkillUseFilter.getRestoreShieldRatingAmount({}), 0, 'skill uses with no restoreShieldRating dispatch nothing');
-  assert.equal(SkillUseFilter.getRestoreShieldRatingAmount({ restoreShieldRating: 0 }), 0);
-  assert.equal(SkillUseFilter.getRestoreShieldRatingAmount({ restoreShieldRating: -5 }), 0, 'negative amounts are rejected, not passed through');
-}
+  const droid = fakeActor('droid-1', { value: 5, max: 20 }, 'droid');
+  const organic = fakeActor('char-1', { value: 5, max: 20 }, 'character');
+  const vehicle = fakeActor('vehicle-1', { value: 5, max: 20 }, 'vehicle');
 
-// ── resolveShieldRechargeTarget: pure resolution, no Foundry dependency ──
-
-{
-  const roller = { id: 'roller' };
-  const vehicle = { id: 'vehicle' };
   assert.equal(
-    SkillUseFilter.resolveShieldRechargeTarget({ roller, skillUse: ENDURANCE_RESTORE_SHIELDS, options: {} }),
-    roller,
-    'Endurance (selfTarget) must resolve to the roller'
+    SkillUseFilter.resolveShieldRechargeTarget({ roller: droid, skillUse: ENDURANCE_RESTORE_SHIELDS, options: {} }),
+    droid,
+    'a droid roller resolves to itself for the Endurance self-target record'
   );
   assert.equal(
-    SkillUseFilter.resolveShieldRechargeTarget({ roller, skillUse: MECHANICS_RECHARGE_SHIELDS, options: { vehicleActor: vehicle } }),
+    SkillUseFilter.resolveShieldRechargeTarget({ roller: organic, skillUse: ENDURANCE_RESTORE_SHIELDS, options: {} }),
+    null,
+    'a non-droid roller must fail closed on the requiresDroid Endurance record, never treated as eligible'
+  );
+  assert.equal(
+    SkillUseFilter.resolveShieldRechargeTarget({ roller: organic, skillUse: MECHANICS_RECHARGE_SHIELDS, options: { vehicleActor: vehicle } }),
     vehicle,
-    'Mechanics must resolve to the explicit vehicleActor, not the roller'
+    'Mechanics resolves to the explicit vehicleActor'
   );
   assert.equal(
-    SkillUseFilter.resolveShieldRechargeTarget({ roller, skillUse: MECHANICS_RECHARGE_SHIELDS, options: { targetActor: vehicle } }),
+    SkillUseFilter.resolveShieldRechargeTarget({ roller: organic, skillUse: MECHANICS_RECHARGE_SHIELDS, options: { targetActor: vehicle } }),
     vehicle,
     'Mechanics accepts the generic targetActor fallback too'
   );
   assert.equal(
-    SkillUseFilter.resolveShieldRechargeTarget({ roller, skillUse: MECHANICS_RECHARGE_SHIELDS, options: {} }),
+    SkillUseFilter.resolveShieldRechargeTarget({ roller: organic, skillUse: MECHANICS_RECHARGE_SHIELDS, options: {} }),
     null,
-    'Mechanics with no vehicle/device supplied must fail closed (null), never fall back to the roller'
+    'Mechanics with no vehicle/device supplied fails closed'
+  );
+  // Invariant 1, added after review: a non-self-target record can never
+  // resolve to the roller, even if a future caller mistakenly passes
+  // targetActor: actor -- this is the original defect, closed at the
+  // resolver so it cannot be silently reintroduced.
+  assert.equal(
+    SkillUseFilter.resolveShieldRechargeTarget({ roller: organic, skillUse: MECHANICS_RECHARGE_SHIELDS, options: { targetActor: organic } }),
+    null,
+    'Mechanics must reject a target that aliases the roller, even if explicitly passed'
+  );
+  assert.equal(
+    SkillUseFilter.resolveShieldRechargeTarget({ roller: organic, skillUse: MECHANICS_RECHARGE_SHIELDS, options: { vehicleActor: organic } }),
+    null,
+    'the roller-alias rejection applies to vehicleActor too, not just targetActor'
   );
 }
 
-// ── a skill use with no restoreShieldRating never touches ActorEngine ──
+// ── findShieldRechargeUse: locates the right record by shape, not label text ──
 
 {
-  installFoundryShimGlobals();
-  let called = false;
-  FakeActorEngine.rechargeShields = async () => { called = true; };
-  const actor = fakeActor('roller', { value: 5, max: 20 });
-  await SkillUseFilter._dispatchRestoreShieldRating(actor, { name: 'Jump' }, 15, { total: 20 }, {});
-  assert.equal(called, false, 'no restoreShieldRating on the skill use must never dispatch to rechargeShields');
-  resetFoundryShimGlobals();
+  const uses = [MECHANICS_RECHARGE_SHIELDS, ENDURANCE_RESTORE_SHIELDS];
+  assert.equal(SkillUseFilter.findShieldRechargeUse(uses, { selfTarget: false }), MECHANICS_RECHARGE_SHIELDS);
+  assert.equal(SkillUseFilter.findShieldRechargeUse(uses, { selfTarget: true }), ENDURANCE_RESTORE_SHIELDS);
+  assert.equal(SkillUseFilter.findShieldRechargeUse([], { selfTarget: false }), null);
 }
 
-// ── 1. Endurance Restore Shields: droid rolls 20+ -> droid itself receives +5 ──
+// ── 1/2. Endurance Restore Shields: droid rolls 20+ restores itself; 19 fails ──
 
 {
   installFoundryShimGlobals();
-  const droid = fakeActor('droid-1', { value: 5, max: 20 });
+  const droid = fakeActor('droid-2', { value: 5, max: 20 }, 'droid');
   const calls = attachRealRechargeShields();
   await SkillUseFilter._dispatchRestoreShieldRating(droid, ENDURANCE_RESTORE_SHIELDS, 20, { total: 24 }, {});
   assert.equal(calls.length, 1);
-  assert.equal(calls[0].target, 'droid-1', 'Endurance must recharge the roller itself');
+  assert.equal(calls[0].target, 'droid-2');
   assert.equal(droid.system.shields.value, 10);
   resetFoundryShimGlobals();
 }
 
-// ── 2. Endurance failure: 19 vs DC 20 -> no recharge ──
-
 {
   installFoundryShimGlobals();
-  const droid = fakeActor('droid-2', { value: 5, max: 20 });
+  const droid = fakeActor('droid-3', { value: 5, max: 20 }, 'droid');
   const calls = attachRealRechargeShields();
   await SkillUseFilter._dispatchRestoreShieldRating(droid, ENDURANCE_RESTORE_SHIELDS, 20, { total: 19 }, {});
   assert.equal(calls.length, 0);
-  assert.equal(droid.system.shields.value, 5, 'a failed Endurance check must not recharge the droid');
+  assert.equal(droid.system.shields.value, 5);
   resetFoundryShimGlobals();
 }
 
-// ── 3. Mechanics Recharge Shields: operator rolls 20+ -> vehicle receives +5, operator untouched ──
+// ── 8. Non-droid attempting Endurance Restore Shields fails closed, even on a successful roll ──
 
 {
   installFoundryShimGlobals();
-  const operator = fakeActor('operator-1', { value: 5, max: 20 });
-  const vehicle = fakeActor('vehicle-1', { value: 5, max: 20 });
+  const organic = fakeActor('char-2', { value: 5, max: 20 }, 'character');
+  let called = false;
+  FakeActorEngine.rechargeShields = async () => { called = true; };
+  await SkillUseFilter._dispatchRestoreShieldRating(organic, ENDURANCE_RESTORE_SHIELDS, 20, { total: 25 }, {});
+  assert.equal(called, false, 'a non-droid must never recharge via the droid-only Endurance record');
+  assert.equal(organic.system.shields.value, 5);
+  resetFoundryShimGlobals();
+}
+
+// ── 3/4. Mechanics Recharge Shields: DC 19/20/25 boundary, vehicle mutated, operator untouched ──
+
+for (const [total, shouldRecharge] of [[19, false], [20, true], [25, true]]) {
+  installFoundryShimGlobals();
+  const operator = fakeActor('operator-1', { value: 5, max: 20 }, 'character');
+  const vehicle = fakeActor('vehicle-2', { value: 5, max: 20 }, 'vehicle');
   const calls = attachRealRechargeShields();
-  await SkillUseFilter._dispatchRestoreShieldRating(operator, MECHANICS_RECHARGE_SHIELDS, 20, { total: 20 }, { vehicleActor: vehicle });
-  assert.equal(calls.length, 1);
-  assert.equal(calls[0].target, 'vehicle-1', 'Mechanics must recharge the vehicle, not the operator');
-  assert.equal(vehicle.system.shields.value, 10, 'the vehicle receives the +5');
-  assert.equal(operator.system.shields.value, 5, 'the operator\'s own shields must be completely untouched');
+  await SkillUseFilter._dispatchRestoreShieldRating(operator, MECHANICS_RECHARGE_SHIELDS, 20, { total }, { vehicleActor: vehicle });
+  if (shouldRecharge) {
+    assert.equal(calls.length, 1, `total ${total} vs DC 20 must recharge`);
+    assert.equal(calls[0].target, 'vehicle-2');
+    assert.equal(vehicle.system.shields.value, 10);
+  } else {
+    assert.equal(calls.length, 0, `total ${total} vs DC 20 must not recharge`);
+    assert.equal(vehicle.system.shields.value, 5);
+  }
+  assert.equal(operator.system.shields.value, 5, 'the operator\'s own shields must never change');
   resetFoundryShimGlobals();
 }
 
-// ── DC regression required by review: Mechanics 19/20/25 ──
+// ── 5. Mechanics with no resolvable vehicle/device: fail closed, operator untouched ──
 
 {
   installFoundryShimGlobals();
-  const vehicleFail = fakeActor('vehicle-fail', { value: 5, max: 20 });
-  attachRealRechargeShields();
-  await SkillUseFilter._dispatchRestoreShieldRating(fakeActor('op-a', {}), MECHANICS_RECHARGE_SHIELDS, 20, { total: 19 }, { vehicleActor: vehicleFail });
-  assert.equal(vehicleFail.system.shields.value, 5, 'Mechanics total 19 vs DC 20 must not recharge');
-  resetFoundryShimGlobals();
-}
-
-{
-  installFoundryShimGlobals();
-  const vehicleExact = fakeActor('vehicle-exact', { value: 5, max: 20 });
-  attachRealRechargeShields();
-  await SkillUseFilter._dispatchRestoreShieldRating(fakeActor('op-b', {}), MECHANICS_RECHARGE_SHIELDS, 20, { total: 20 }, { vehicleActor: vehicleExact });
-  assert.equal(vehicleExact.system.shields.value, 10, 'Mechanics total 20 (meets DC exactly) must recharge +5');
-  resetFoundryShimGlobals();
-}
-
-{
-  installFoundryShimGlobals();
-  const vehicleBeat = fakeActor('vehicle-beat', { value: 5, max: 20 });
-  attachRealRechargeShields();
-  await SkillUseFilter._dispatchRestoreShieldRating(fakeActor('op-c', {}), MECHANICS_RECHARGE_SHIELDS, 20, { total: 25 }, { vehicleActor: vehicleBeat });
-  assert.equal(vehicleBeat.system.shields.value, 10, 'Mechanics total 25 (beats DC) must recharge +5');
-  resetFoundryShimGlobals();
-}
-
-// ── 4. Mechanics failure: 19 -> neither operator nor vehicle changes ──
-
-{
-  installFoundryShimGlobals();
-  const operator = fakeActor('operator-2', { value: 5, max: 20 });
-  const vehicle = fakeActor('vehicle-2', { value: 5, max: 20 });
-  attachRealRechargeShields();
-  await SkillUseFilter._dispatchRestoreShieldRating(operator, MECHANICS_RECHARGE_SHIELDS, 20, { total: 19 }, { vehicleActor: vehicle });
-  assert.equal(operator.system.shields.value, 5);
-  assert.equal(vehicle.system.shields.value, 5);
-  resetFoundryShimGlobals();
-}
-
-// ── 5. Mechanics with no resolvable vehicle/device -> fail closed, operator untouched ──
-
-{
-  installFoundryShimGlobals();
-  const operator = fakeActor('operator-3', { value: 5, max: 20 });
+  const operator = fakeActor('operator-2', { value: 5, max: 20 }, 'character');
   let called = false;
   FakeActorEngine.rechargeShields = async () => { called = true; };
   await SkillUseFilter._dispatchRestoreShieldRating(operator, MECHANICS_RECHARGE_SHIELDS, 20, { total: 25 }, {});
-  assert.equal(called, false, 'with no vehicle/device resolvable, ActorEngine.rechargeShields must never be called');
-  assert.equal(operator.system.shields.value, 5, 'the operator must never be recharged as a fallback');
+  assert.equal(called, false);
+  assert.equal(operator.system.shields.value, 5);
   resetFoundryShimGlobals();
 }
 
-// ── 6. Vehicle already at max: successful check produces 0 restored, max preserved ──
+// ── 9. Vehicle already at max SR: successful check, 0 restored, max preserved ──
 
 {
   installFoundryShimGlobals();
-  const operator = fakeActor('operator-4', { value: 0, max: 0 });
-  const vehicle = fakeActor('vehicle-3', { value: 20, max: 20 });
+  const operator = fakeActor('operator-3', { value: 0, max: 0 }, 'character');
+  const vehicle = fakeActor('vehicle-3', { value: 20, max: 20 }, 'vehicle');
   const calls = attachRealRechargeShields();
   await SkillUseFilter._dispatchRestoreShieldRating(operator, MECHANICS_RECHARGE_SHIELDS, 20, { total: 25 }, { vehicleActor: vehicle });
   assert.equal(calls.length, 1);
-  assert.equal(calls[0].restored, 0, 'a vehicle already at max SR must restore 0');
-  assert.equal(vehicle.system.shields.value, 20, 'max must be preserved, never exceeded');
+  assert.equal(calls[0].restored, 0);
+  assert.equal(vehicle.system.shields.value, 20);
   resetFoundryShimGlobals();
 }
 
-// ── 7. Target vehicle/device has no shield resource: clean warning, no mutation ──
+// ── 10. Target vehicle/device has no shield resource: clean warning, no mutation ──
 
 {
   installFoundryShimGlobals();
-  const operator = fakeActor('operator-5', { value: 5, max: 20 });
-  const vehicleNoShield = fakeActor('vehicle-noshield', { value: 0, max: 0 });
+  const operator = fakeActor('operator-4', { value: 5, max: 20 }, 'character');
+  const vehicleNoShield = fakeActor('vehicle-4', { value: 0, max: 0 }, 'vehicle');
   attachRealRechargeShields();
   await SkillUseFilter._dispatchRestoreShieldRating(operator, MECHANICS_RECHARGE_SHIELDS, 20, { total: 25 }, { vehicleActor: vehicleNoShield });
-  assert.equal(vehicleNoShield.system.shields.value, 0, 'a vehicle with no shield resource must not be mutated');
-  assert.equal(operator.system.shields.value, 5, 'and the operator must not be recharged instead');
+  assert.equal(vehicleNoShield.system.shields.value, 0);
+  assert.equal(operator.system.shields.value, 5);
   resetFoundryShimGlobals();
 }
-
-// ── 8. all mutation routes exclusively through ActorEngine.rechargeShields ──
-// (implicit in every case above: the only path to a shields.value write in
-// this file is through attachRealRechargeShields()'s faithful
-// reimplementation of the real primitive; no test mutates system.shields
-// directly to fake success)
 
 console.log('shield-recharge-skill-dispatch-authority: all assertions passed');

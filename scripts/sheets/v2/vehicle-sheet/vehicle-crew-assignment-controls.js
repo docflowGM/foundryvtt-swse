@@ -82,8 +82,9 @@ function bindCrewSkillButtons(vehicle, root, signal) {
       const station = button.dataset.station;
       const skill = button.dataset.skill;
       const weaponId = button.dataset.weaponId;
+      const skillUseId = button.dataset.skillUseId || null;
       if (!station || !skill) return;
-      await rollVehicleCrewSkill(vehicle, station, skill, { weaponId });
+      await rollVehicleCrewSkill(vehicle, station, skill, { weaponId, skillUseId });
     }), { signal });
   });
 }
