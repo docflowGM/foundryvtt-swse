@@ -288,7 +288,7 @@ export class SkillUseFilter {
 
     const dc = this._parseDc(skillUse.dc ?? skillUse.DC ?? skillUse.system?.dc ?? skillUse._source?.system?.dc);
     const { rollSkillCheck } = await import('/systems/foundryvtt-swse/scripts/rolls/skills.js');
-    return await rollSkillCheck(actor, skillKey, {
+    const roll = await rollSkillCheck(actor, skillKey, {
       ...options,
       dc,
       skillUse,
@@ -296,6 +296,49 @@ export class SkillUseFilter {
       useKey: skillUse?.useKey ?? skillUse?.key ?? skillUse?._source?._id ?? null,
       actionType: options?.actionType ?? skillUse?.actionType ?? skillUse?.system?.actionType ?? null
     });
+
+    await this._dispatchRestoreShieldRating(actor, skillUse, dc, roll);
+
+    return roll;
+  }
+
+  /**
+   * Recharge Shields (Mechanics) / Restore Shields (Endurance) are data-only
+   * entries in ExtraSkillUseRegistry (restoreShieldRating: 5, per the Shield
+   * Rating RAW addendum -- CRB p.161, Scavenger's Guide to Droids) with no
+   * prior dispatch surface to ActorEngine.rechargeShields(). This is the
+   * single seam every skill-use roll passes through, so it dispatches here
+   * rather than adding sheet-specific mutation.
+   * @private
+   */
+  static async _dispatchRestoreShieldRating(actor, skillUse, dc, roll) {
+    const amount = SkillUseFilter.getRestoreShieldRatingAmount(skillUse);
+    if (amount <= 0 || !roll) return;
+
+    const total = Number(roll?.total ?? NaN);
+    const success = !Number.isFinite(dc) || (Number.isFinite(total) && total >= dc);
+    if (!success) return;
+
+    const { ActorEngine } = await import('/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js');
+    const result = await ActorEngine.rechargeShields(actor, { amount });
+
+    if (result.max <= 0) {
+      ui?.notifications?.warn?.(`${actor.name} has no shield resource to recharge.`);
+    } else if (result.restored > 0) {
+      ui?.notifications?.info?.(`${actor.name} restores ${result.restored} Shield Rating (${result.current}/${result.max}).`);
+    }
+  }
+
+  /**
+   * Pure lookup, exported for unit testing without a full skill-roll pipeline.
+   */
+  static getRestoreShieldRatingAmount(skillUse) {
+    const amount = Number(
+      skillUse?.restoreShieldRating
+      ?? skillUse?.system?.restoreShieldRating
+      ?? skillUse?._source?.system?.restoreShieldRating
+    );
+    return Number.isFinite(amount) && amount > 0 ? amount : 0;
   }
 
   static _parseDc(value) {
