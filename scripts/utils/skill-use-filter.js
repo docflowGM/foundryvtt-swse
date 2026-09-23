@@ -297,7 +297,7 @@ export class SkillUseFilter {
       actionType: options?.actionType ?? skillUse?.actionType ?? skillUse?.system?.actionType ?? null
     });
 
-    await this._dispatchRestoreShieldRating(actor, skillUse, dc, roll);
+    await this._dispatchRestoreShieldRating(actor, skillUse, dc, roll, options);
 
     return roll;
   }
@@ -309,9 +309,26 @@ export class SkillUseFilter {
    * prior dispatch surface to ActorEngine.rechargeShields(). This is the
    * single seam every skill-use roll passes through, so it dispatches here
    * rather than adding sheet-specific mutation.
+   *
+   * Restore Shields (Endurance) and Recharge Shields (Mechanics) are NOT the
+   * same shape: Endurance is a droid restoring its own shields (roller ===
+   * target, per `selfTarget: true` on that registry entry); Mechanics is an
+   * operator recharging a vehicle/device's shields (roller !== target). The
+   * generic skill-use dialog this dispatches from (character-like-sheet.js's
+   * _runCanonicalExtraSkillUse -> here) has no established convention for
+   * threading a vehicle/device actor through it today -- the only place a
+   * vehicle actor is known is crew-skill-router.js's rollVehicleCrewSkill(),
+   * which calls rollSkillCheck() directly and does not route through this
+   * generic skill-use path at all. So rather than invent a target picker,
+   * this reads the same `vehicleActor` naming convention crew-skill-router.js
+   * already uses (rollAttack(actor, weapon, { vehicleActor, operator, ... })
+   * at crew-skill-router.js:222) if a caller happens to supply it, with a
+   * generic `targetActor` fallback -- and fails closed with no mutation to
+   * the roller when neither is present, per the explicit RAW distinction
+   * that Mechanics never recharges the operator's own shields.
    * @private
    */
-  static async _dispatchRestoreShieldRating(actor, skillUse, dc, roll) {
+  static async _dispatchRestoreShieldRating(actor, skillUse, dc, roll, options = {}) {
     const amount = SkillUseFilter.getRestoreShieldRatingAmount(skillUse);
     if (amount <= 0 || !roll) return;
 
@@ -319,13 +336,19 @@ export class SkillUseFilter {
     const success = !Number.isFinite(dc) || (Number.isFinite(total) && total >= dc);
     if (!success) return;
 
+    const target = SkillUseFilter.resolveShieldRechargeTarget({ roller: actor, skillUse, options });
+    if (!target) {
+      ui?.notifications?.warn?.(`${skillUse?.name ?? 'Recharge Shields'}: no vehicle or device was specified to recharge.`);
+      return;
+    }
+
     const { ActorEngine } = await import('/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js');
-    const result = await ActorEngine.rechargeShields(actor, { amount });
+    const result = await ActorEngine.rechargeShields(target, { amount });
 
     if (result.max <= 0) {
-      ui?.notifications?.warn?.(`${actor.name} has no shield resource to recharge.`);
+      ui?.notifications?.warn?.(`${target.name} has no shield resource to recharge.`);
     } else if (result.restored > 0) {
-      ui?.notifications?.info?.(`${actor.name} restores ${result.restored} Shield Rating (${result.current}/${result.max}).`);
+      ui?.notifications?.info?.(`${target.name} restores ${result.restored} Shield Rating (${result.current}/${result.max}).`);
     }
   }
 
@@ -339,6 +362,20 @@ export class SkillUseFilter {
       ?? skillUse?._source?.system?.restoreShieldRating
     );
     return Number.isFinite(amount) && amount > 0 ? amount : 0;
+  }
+
+  /**
+   * Pure target resolution, exported for unit testing. Returns the actor
+   * whose system.shields should be mutated, or null when none can be
+   * truthfully resolved (never guessed).
+   */
+  static resolveShieldRechargeTarget({ roller, skillUse, options = {} }) {
+    const selfTarget = skillUse?.selfTarget === true
+      || skillUse?.system?.selfTarget === true
+      || skillUse?._source?.system?.selfTarget === true;
+    if (selfTarget) return roller ?? null;
+
+    return options?.vehicleActor ?? options?.targetActor ?? skillUse?.vehicleActor ?? null;
   }
 
   static _parseDc(value) {
