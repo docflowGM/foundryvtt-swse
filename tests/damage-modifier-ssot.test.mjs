@@ -64,6 +64,12 @@ const {
 } = await import('/systems/foundryvtt-swse/scripts/engine/combat/combat-roll-math.js');
 const { CombatOptionResolver } = await import('/systems/foundryvtt-swse/scripts/engine/combat/combat-option-resolver.js');
 const { getCriticalMultiplier: getWeaponOnlyCriticalMultiplier } = await import('/systems/foundryvtt-swse/scripts/engine/combat/combat-stat-rules.js');
+const {
+  summarizeCombatWorkflowContext,
+  encodeCombatWorkflowContext,
+  decodeCombatWorkflowContext,
+  mergeCombatWorkflowContextIntoRollOptions
+} = await import('/systems/foundryvtt-swse/scripts/engine/combat/workflow/combat-context-serializer.js');
 
 let step = 0;
 function ok(label) { step += 1; console.log(`  [${step}] ${label} OK`); }
@@ -520,5 +526,240 @@ ok('parity: damage.js#rollDamage() delegates to the canonical composition/formul
   assert.match(attacksJsSource, /buildDamageFormula\(/, 'attacks.js#rollAttackAndDamageWithNarration() must call the canonical buildDamageFormula()');
 }
 ok('parity: attacks.js#rollDamage() delegates to damage.js; rollAttackAndDamageWithNarration() uses the canonical pair');
+
+// ═══════════════════════════════════════════════════════════════════════════
+// SECTION 4 — Correction round (independent review of 4d05a80/1b93e1a)
+// ═══════════════════════════════════════════════════════════════════════════
+//
+// Three blockers and one hardening item were found by re-inspecting the
+// pushed head directly:
+//
+// Blocker 1 — the attack roll's actual ATTACK_OPTION selection map
+// (combatOptions/attackOptions) was never captured by
+// combat-context-serializer.js at all, only a fixed set of high-level
+// booleans (Aim/Charge/Autofire/...) — so a chat-card-driven Damage roll's
+// CombatOptionResolver.collectAttackModifiers() call could never see that
+// Deadeye/Power Attack/etc. were actually toggled on at attack time, even
+// though resolveDamageComposition()/buildDamageFormula() now correctly
+// read the fields those options populate.
+// Blocker 2 — the typed damage-modifier stacking pool
+// (resolveDamageComposition() built in the first pass) was ledger-only:
+// resolveDamageBonus()'s own additive total still independently summed
+// the SAME contributions without any stacking-rule awareness, so a
+// same-typed collision (e.g. a competence Effect Intent + a competence
+// item-alias modifier) could show "highest applied, other suppressed" in
+// the ledger while the actual rolled total added both in full.
+// Blocker 3 — resolveStockDroidDamageContract() pre-applied
+// damageDieStepIncreases/damageExtraWeaponDice to the published formula,
+// and resolveDamageComposition() then applied them AGAIN generically —
+// a genuine double application for any stock droid with an active
+// die-based combat option.
+// Hardening — resolveCriticalMultiplier() returned a carried
+// context.critMultiplier immediately, before ever consulting the weapon/
+// option/rule sources, so a stale or otherwise-invalid carried value
+// could suppress a currently-active rule-based increase.
+
+function attackFeatWithOption(optionKey, id = `feat-${optionKey}`) {
+  return attackOptionFeat(optionKey, id);
+}
+
+// Blocker 1 — full round-trip: attack roll options -> summarize -> encode
+// -> decode -> merge -> collectAttackModifiers, proving Deadeye and a
+// Power-Attack-shaped slider option both retain their exact
+// selection/value across the SAME transport a chat-card Damage button
+// actually uses (decodeCombatWorkflowContext(button.dataset.workflowContext)
+// -> mergeCombatWorkflowContextIntoRollOptions()).
+{
+  const actor = makeActor({ bab: 5, dex: 3, items: [attackFeatWithOption('deadeye')] });
+  const weapon = rangedWeapon();
+  const attackRollOptions = {
+    aim: true,
+    combatOptions: { deadeye: true, powerAttack: 3 }
+  };
+
+  // What attacks.js#rollAttack() does: summarize the attack roll's own
+  // options into a transport-safe workflow context (this is
+  // damageWorkflowContext in the real code, stamped onto the attack chat
+  // message's flags).
+  const summarized = summarizeCombatWorkflowContext(attackRollOptions, { actor, weapon });
+  assert.deepEqual(summarized.attack.selectedOptions, { deadeye: true, powerAttack: 3 },
+    'summarizeCombatWorkflowContext must capture the attack roll\'s actual option-selection map, not just high-level booleans');
+
+  // What actually gets stored on the chat message / DOM dataset and read
+  // back later (encodeCombatWorkflowContext/decodeCombatWorkflowContext —
+  // the exact pair runtime-bugfix-hotfixes.js#rollDamageFromButton() uses).
+  const encoded = encodeCombatWorkflowContext(summarized);
+  const decoded = decodeCombatWorkflowContext(encoded);
+  assert.deepEqual(decoded.attack.selectedOptions, { deadeye: true, powerAttack: 3 },
+    'selectedOptions must survive an encode/decode round-trip losslessly (boolean AND numeric slider value)');
+
+  // What the Damage button handler does: merge the decoded workflow
+  // context back into fresh roll options.
+  const mergedRollOptions = mergeCombatWorkflowContextIntoRollOptions({}, decoded);
+  assert.deepEqual(mergedRollOptions.combatOptions, { deadeye: true, powerAttack: 3 },
+    'mergeCombatWorkflowContextIntoRollOptions must restore the selection map onto rollOptions.combatOptions');
+  assert.deepEqual(mergedRollOptions.attackOptions, { deadeye: true, powerAttack: 3 },
+    'mergeCombatWorkflowContextIntoRollOptions must also restore it onto rollOptions.attackOptions (CombatOptionResolver reads either)');
+
+  // And finally: CombatOptionResolver, fed ONLY the round-tripped
+  // context (no fresh combatOptions supplied by a caller), must see
+  // Deadeye as genuinely selected, not merely owned/available.
+  const optionModifiers = CombatOptionResolver.collectAttackModifiers(actor, weapon, mergedRollOptions);
+  assert.equal(optionModifiers.damageExtraWeaponDice, 1,
+    'FIXED: Deadeye\'s extra weapon die now survives the full attack -> chat-card -> Damage-button round-trip');
+
+  // A caller-supplied fresh selection (the sheet's own standalone Damage
+  // dialog, which never carries forward attack-time state at all) must
+  // still win over a carried value, never be silently overridden by it.
+  const freshOverride = mergeCombatWorkflowContextIntoRollOptions({ combatOptions: { deadeye: false } }, decoded);
+  assert.deepEqual(freshOverride.combatOptions, { deadeye: false },
+    'a caller-supplied combatOptions must take precedence over a carried attack-time selection, never be silently merged with it');
+}
+ok('Blocker 1 FIXED: attack-option selections (booleans and slider values) survive the full workflow-context transport round-trip');
+
+// Blocker 2 — cross-source typed-damage collision must resolve identically
+// in the ledger AND the actual rolled total: an Effect Intent +4
+// competence damage bonus and an item-authored +2 competence damage-alias
+// modifier must NOT both apply (competence is highestOnly) — the total
+// must be +4, never +6, and the ledger's "suppressed" entry must be the
+// SAME +2 the total excludes.
+{
+  const competenceDamageEffect = {
+    id: 'effect-competence-damage', name: 'Inspiring Presence', disabled: false, origin: null,
+    flags: { swse: { effectIntent: {
+      application: 'always', activeState: 'enabled', scope: 'self', operation: 'increase',
+      category: 'damage', target: '', amount: 4, bonusType: 'competence', duration: '',
+      transfer: true, filterType: 'all', filterValue: '', conditions: [], note: ''
+    } } }
+  };
+  const itemAliasCompetenceModifier = {
+    id: 'talent-damage-competence', name: 'Weapon Specialization (Simple Weapons)', type: 'talent',
+    system: { abilityMeta: { modifiers: [{ target: 'damage', type: 'competence', value: 2, predicates: [] }] } }
+  };
+  const actor = makeActor({ bab: 5, str: 2, items: [itemAliasCompetenceModifier], extraSystem: {} });
+  actor.effects = [competenceDamageEffect];
+  const weapon = meleeWeapon();
+
+  const bonus = resolveDamageBonus(actor, weapon, {});
+  assert.equal(bonus.total, 2 /* STR */ + 4 /* highest competence, NOT 4+2=6 */,
+    'FIXED: competence damage bonuses from two different source paths (Effect Intent + item-authored alias) must resolve highestOnly, not both apply');
+  assert.equal(bonus.components['Effect Intent'], 4, 'the reconciled typed total (4, not 6) is what appears in components');
+
+  const appliedValues = bonus.typedModifierLedger.filter(e => e.applied).map(e => e.value);
+  const suppressedValues = bonus.typedModifierLedger.filter(e => !e.applied).map(e => e.value);
+  assert.deepEqual(appliedValues, [4], 'ledger must show the +4 competence contribution as applied');
+  assert.deepEqual(suppressedValues, [2], 'ledger must show the +2 competence contribution as suppressed — the SAME +2 excluded from the actual total, not a lie');
+
+  // Composition-level parity: buildDamageFormula() must reflect this same
+  // reconciled total, not the old double-counted one.
+  const composition = resolveDamageComposition(actor, weapon, {});
+  const formula = buildDamageFormula(composition);
+  assert.equal(formula, '2d6 + 6', 'formula: base dice + (STR 2 + competence 4) = 2d6 + 6, never 2d6 + 8');
+}
+ok('Blocker 2 FIXED: typed damage stacking (highestOnly competence collision) drives the actual rolled total, not just the ledger');
+
+// Untyped/stackUnlessSameSource/plain-stack sanity checks against the
+// actual total (not merely ledger shape), per the review's explicit
+// requirement to test the real stacking rules, not just alias normalization.
+{
+  // stackUnlessSameSource: two DIFFERENT-source penalty modifiers must
+  // both apply; two penalties from the SAME source must not double.
+  const twoDifferentSourcePenalties = makeActor({ bab: 5, str: 0, items: [
+    { id: 'penalty-a', name: 'Curse A', type: 'talent', system: { abilityMeta: { modifiers: [{ target: 'damage', type: 'penalty', value: -1, predicates: [] }] } } },
+    { id: 'penalty-b', name: 'Curse B', type: 'talent', system: { abilityMeta: { modifiers: [{ target: 'damage', type: 'penalty', value: -1, predicates: [] }] } } }
+  ] });
+  const stacked = resolveDamageBonus(twoDifferentSourcePenalties, meleeWeapon(), {});
+  assert.equal(stacked.components['Effect Intent'], -2, 'stackUnlessSameSource: two different-source penalty contributions must both apply (-1 + -1 = -2)');
+}
+ok('Blocker 2 collision matrix: stackUnlessSameSource resolves against the actual total');
+
+{
+  // untyped: two untyped contributions must both apply (untyped always stacks).
+  const twoUntyped = makeActor({ bab: 5, str: 0, items: [
+    { id: 'untyped-a', name: 'Gadget A', type: 'talent', system: { abilityMeta: { modifiers: [{ target: 'damage', type: 'untyped', value: 1, predicates: [] }] } } },
+    { id: 'untyped-b', name: 'Gadget B', type: 'talent', system: { abilityMeta: { modifiers: [{ target: 'damage', type: 'untyped', value: 1, predicates: [] }] } } }
+  ] });
+  const stacked = resolveDamageBonus(twoUntyped, meleeWeapon(), {});
+  assert.equal(stacked.components['Effect Intent'], 2, 'untyped: two untyped contributions must both apply (1 + 1 = 2, untyped always stacks)');
+}
+ok('Blocker 2 collision matrix: untyped contributions stack freely against the actual total');
+
+// Blocker 3 — stock-droid full-path composition through
+// resolveDamageComposition()/buildDamageFormula() with active die-based
+// combat options, proving no double application of the die-size step or
+// extra weapon die.
+{
+  const droid = {
+    id: 'droid-1', type: 'droid', name: 'Test Droid', items: makeItemsCollection([attackOptionFeat('deadeye')]), flags: {},
+    system: { droidCalculationMode: 'stock-statblock' }, getFlag() { return undefined; }
+  };
+  const stockWeapon = {
+    id: 'w1', name: 'Integrated Blaster', system: { weaponCategory: 'ranged', damage: '1d3', flatDamageBonus: 4 },
+    flags: { swse: { stockDroidAttack: { publishedAttackTotal: 9, publishedDamage: '2d6 + 3', mode: 'stock-statblock', sourceStatblock: true } } }
+  };
+
+  // published only (no active dice modifiers): base stays exactly the
+  // published formula, unstepped.
+  {
+    const composition = resolveDamageComposition(droid, stockWeapon, {});
+    assert.equal(composition.dice.base, '2d6 + 3', 'published-only: dice.base is the raw published formula, unstepped');
+    const formula = buildDamageFormula(composition);
+    assert.equal(formula, '2d6 + 3', 'published-only: final formula matches the published formula exactly, no phantom stepping');
+  }
+
+  // published + extra die (Deadeye toggled on): exactly ONE extra die at
+  // the published (unstepped) size — never stepped twice, never doubled.
+  {
+    const composition = resolveDamageComposition(droid, stockWeapon, { aim: true, combatOptions: { deadeye: true } });
+    assert.equal(composition.dice.base, '2d6 + 3', 'dice.base must stay the raw published formula even with an active extra-die option — die mutation happens exactly once, in buildDamageFormula()');
+    assert.equal(composition.dice.extraWeaponDice, 1);
+    const formula = buildDamageFormula(composition);
+    const extraDiceMatches = formula.match(/\+\s*1d6\b/g) || [];
+    assert.equal(extraDiceMatches.length, 1, 'FIXED: exactly one +1d6 extra-die term, never two (the old double-application bug would have produced two)');
+    // The extra-weapon-die formula step appends after the full stepped
+    // base string (which, for a stock formula, already includes its own
+    // flat modifier as part of that one string) — mathematically
+    // equivalent to, just not term-order-identical with, an ordinary
+    // weapon's dice-then-flat ordering. The count check above is the
+    // actual no-double-application proof; this confirms no OTHER mutation
+    // (a phantom second flat term, a mangled die count) crept in.
+    assert.equal(formula, '2d6 + 3 + 1d6', 'published + extra die composes to exactly this formula, once');
+  }
+
+  // published + die-size step (a WEAPON_DAMAGE_DIE_SIZE_STEP feat rule):
+  // exactly one step, 2d6 -> 2d8, never 2d6 -> 2d10 (double-stepped).
+  {
+    const steppedDroid = {
+      id: 'droid-2', type: 'droid', name: 'Stepped Droid',
+      items: makeItemsCollection([{ id: 'feat-die-size-step', name: 'Improved Weapon Mastery', type: 'feat', system: { abilityMeta: { rules: [{ type: 'WEAPON_DAMAGE_DIE_SIZE_STEP', value: 1 }] } } }]),
+      flags: {}, system: { droidCalculationMode: 'stock-statblock' }, getFlag() { return undefined; }
+    };
+    const composition = resolveDamageComposition(steppedDroid, stockWeapon, {});
+    assert.equal(composition.dice.base, '2d6 + 3', 'dice.base stays unstepped even with an active die-size-step rule');
+    const formula = buildDamageFormula(composition);
+    assert.equal(formula, '2d8 + 3', 'FIXED: exactly one die-size step (2d6 -> 2d8), never double-stepped to 2d10');
+  }
+}
+ok('Blocker 3 FIXED: stock-droid dice modifiers (die-size step, extra weapon die) apply exactly once through the full composition/formula path');
+
+// Hardening — a carried critical multiplier must act as a FLOOR, never
+// suppress a currently-active rule-based increase.
+{
+  const actor = makeActor({ bab: 5, str: 2 });
+  actor._ruleParams = new Map([['MODIFY_CRITICAL_MULTIPLIER', [{ proficiency: 'simple', multiplier: 3 }]]]);
+  const weapon = meleeWeapon();
+
+  // A stale/low carried value (e.g. from an attack rolled before some
+  // rule took effect, or any other arbitrary caller-supplied number)
+  // must NOT suppress the actor's currently-active rule increase.
+  const resolved = resolveCriticalMultiplier(actor, weapon, { critMultiplier: 2 });
+  assert.equal(resolved, 3, 'FIXED: a carried critMultiplier of 2 must not override a currently-active RULES.MODIFY_CRITICAL_MULTIPLIER of 3');
+
+  // A carried value that is itself the highest input still wins (it is a
+  // floor, not ignored).
+  const higherCarried = resolveCriticalMultiplier(actor, weapon, { critMultiplier: 5 });
+  assert.equal(higherCarried, 5, 'a carried value higher than every other source is still honored (max-of, not discarded)');
+}
+ok('Hardening FIXED: carried critical multiplier acts as a floor, never suppresses a current rule-based increase');
 
 console.log(`\nAll ${step} damage-modifier-ssot checks passed.`);

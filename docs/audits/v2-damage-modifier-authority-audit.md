@@ -1,12 +1,21 @@
 # V2 Damage Modifier Authority Audit
 
-Status: **SSOT IMPLEMENTED.** Sections 1-17 below are the original audit
-(read-only investigation, produced before implementation was authorized).
-Section 18 records the authorized implementation itself — the canonical
-Damage Modifier SSOT (`resolveDamageComposition()`/`buildDamageFormula()`
-in `combat-roll-math.js`) and its migration into
+Status: **SSOT IMPLEMENTED AND CORRECTED.** Sections 1-17 below are the
+original audit (read-only investigation, produced before implementation
+was authorized). Section 18 records the authorized implementation itself
+— the canonical Damage Modifier SSOT
+(`resolveDamageComposition()`/`buildDamageFormula()` in
+`combat-roll-math.js`) and its migration into
 `damage.js#rollDamage()`/`attacks.js` — plus the Phase A closure findings
-that were required to gate it. Phase A closure detail lives in
+that were required to gate it. Section 18.12 records a subsequent
+independent-review correction pass (three blockers + one hardening item
+found by direct inspection of the pushed head) that closes the gap
+between "the formula-builder fragmentation is solved" and "the Damage
+domain is actually certified." Section 18.13 records a follow-up addendum
+that re-certified one of those three blockers (attack-option activation
+context transport) to a materially higher rigor bar, and explicitly
+reconciles that addendum's now-outdated assumption that the other two
+blockers were still open. Phase A closure detail lives in
 `docs/audits/v2-damage-modifier-authority-audit-correction-1.md`; Section
 18 summarizes and finalizes it rather than repeating it in full.
 
@@ -526,10 +535,32 @@ function. `attacks.js#rollAttack()` now calls it directly.
 `combat-utils.js#getCriticalMultiplier()` and
 `combat-stat-rules.js#getCriticalMultiplier()` are left in place
 (unchanged, still correct for their own narrower semantics) but are no
-longer the source of the value used anywhere in the live damage-roll
-path — reduced to non-authoritative, per the command's "retire/reduce"
-instruction (removing them outright was judged higher-risk than necessary,
-since their other existing callers were out of this migration's scope).
+longer the source of the value used anywhere in the **live character
+Attack/Damage path** — reduced to non-authoritative there, per the
+command's "retire/reduce" instruction (removing them outright was judged
+higher-risk than necessary, since their other existing callers were out
+of this migration's scope). **Correction (independent review of
+`4d05a80`): stated precisely, this is "one canonical multiplier authority
+for the live Damage/Attack path; legacy dead compatibility code still
+retains old helper references," not a global "every implementation is
+gone."** `combat-stat-rules.js#getCriticalMultiplier()` is still the value
+`enhanced-rolls.js`'s deprecated `computeAttackBonus()`-based
+Autofire/Full-Attack paths reference — prior project audits classify that
+pipeline as dead/unwired (matching this project's own "old combat action
+browser" retirement-candidate classification), so it is not a live
+duplicate, but the doc should not imply that code no longer exists.
+
+**Hardening (independent review of `4d05a80`):** `resolveCriticalMultiplier()`
+originally returned a valid carried `context.critMultiplier` immediately,
+before consulting the weapon/option/rule sources at all — a stale or
+otherwise-invalid carried value could suppress a currently-active
+`RULES.MODIFY_CRITICAL_MULTIPLIER` increase or `criticalMultiplierMin`
+option. **Fixed**: the carried value is now folded in as one more input to
+the same `Math.max(...)` composition (a floor, never a short-circuit) —
+a canonical carried value (produced by this same function inside a prior
+`rollAttack()` call) can never be lower than a fresh resolution would
+produce, so this changes nothing for the correct case while closing the
+stale-value gap. See the test suite's dedicated hardening check.
 
 Consumer parity: a prior attack roll's resolved multiplier (`context.critMultiplier`,
 carried through `damageWorkflowContext`) is reused verbatim by a
@@ -542,20 +573,42 @@ too).
 ### 18.4 Damage modifier target vocabulary unification
 
 `combat-option-resolver.js#collectModifierRollBonuses()`'s damage branch
-now (a) keeps its existing flat-sum `damageBonus` output unchanged for
-backward compatibility, and (b) additionally emits each matching modifier
+now emits each matching item-authored `abilityMeta.modifiers` alias record
 as a typed, `global.damage`-normalized record on a new
 `damageContributions` array, threaded up through
 `collectWeaponRuleModifiers()`/`collectAttackModifiers()` exactly like the
 existing (previously always-empty) `attackContributions` field.
-`resolveDamageComposition()` combines this pool with
-`ModifierEngine.getEffectIntentModifiersForContext()`'s own damage-target
-modifiers (switched from the pre-summed `getEffectIntentModifierTotalForContext()`
-to the individual-record variant, mirroring `resolveAttackBonus()`'s own
-pattern for `global.attack`) into one `ModifierUtils.resolveStacking()`
-pass, surfaced in `composition.ledger`. Golden test 24 proves both
+`resolveDamageBonus()`/`resolveStockDroidDamageContract()` combine this
+pool with `ModifierEngine.getEffectIntentModifiersForContext()`'s own
+damage-target modifiers (switched from the pre-summed
+`getEffectIntentModifierTotalForContext()` to the individual-record
+variant, mirroring `resolveAttackBonus()`'s own pattern for
+`global.attack`) into one `ModifierUtils.resolveStacking()` pass via the
+shared `computeTypedDamageModifierPool()` helper.
+
+**Correction (independent review of `4d05a80`, "Blocker 2 — typed Damage
+stacking is currently cosmetic"): the first pass built this pool correctly
+but only surfaced it as an inspection ledger — `resolveDamageBonus()`'s
+own additive total still independently summed
+`getBasicEffectIntentBonus()`'s isolated pool total PLUS
+`optionModifiers.damageBonus` (which, at that point, still separately
+included the SAME alias-modifier contribution the typed pool ALSO
+counted). A same-typed collision across the two sources (e.g. an Effect
+Intent +4 competence bonus and an item-alias +2 competence bonus) could
+show "+4 applied / +2 suppressed" in the ledger while the actual roll
+still received +6 — a ledger that disagreed with the roll it described.**
+**Fixed**: `collectModifierRollBonuses()` no longer double-writes the
+alias-matched contribution into `damageBonus` (its only path to the
+numeric total is now the typed pool); `computeTypedDamageModifierPool()`'s
+stacked result feeds `resolveDamageBonus()`'s/
+`resolveStockDroidDamageContract()`'s `total` directly, and
+`resolveDamageComposition()` reads the SAME ledger those functions already
+built rather than recomputing a parallel one. Golden test 24 proves both
 historical alias spellings (`damage`, `damage.melee`) land in this same
-pool.
+pool; the correction round's dedicated collision test proves a
+`highestOnly` competence collision resolves to the correct total (not a
+naive sum), with matching `stackUnlessSameSource`/`untyped` coverage
+against the actual total, not merely ledger shape.
 
 ### 18.5 damageExtraWeaponDice / damageDiceStepBonus collapse
 
@@ -578,7 +631,11 @@ classified weapon, closing the confirmed live bug (a named gunner's
 personal half-heroic-level and ability modifier were silently added to
 vehicle weapon damage). Golden test 29 proves the gate is vehicle-weapon-
 specific, not actor-specific (the same gunner still receives half-level on
-an ordinary personal weapon in the same test). Vehicle-scale damage
+an ordinary personal weapon in the same test).
+
+**Certification wording (independent review of `4d05a80`): this is "vehicle
+weapon damage no longer receives personal character half-level/ability
+scaling," not "vehicle damage fully certified."** Vehicle-scale damage
 multiplier (x2/x5/x10) and ion/special damage-type interpretation remain
 unwired at runtime — explicitly out of scope for this migration per the
 authorizing command's own allowance ("we don't necessarily need to
@@ -594,6 +651,16 @@ stable, importable production module (`resolveTalentDamageContributions()`).
 caller of that API) now delegates to the same module instead of
 maintaining its own copy. Golden test 28 proves Sneak Attack damage
 resolves correctly with the runtime hotfix installer never having run.
+
+**Known, pre-existing, unfixed gap (flagged, not blocking): the RAW
+"within 6 squares... for a ranged weapon" range restriction on Sneak
+Attack is not enforced anywhere** — `targetIsDeniedDexForDamage()` gates
+on denied-Dex/flat-footed only. This predates this migration (already
+noted in Damage Audit Correction #1 §6) and the correction audit
+explicitly scoped it out; it does not block this migration's own
+certification, but the extraction to a real production module must not be
+read as having also fixed it — that qualification carries forward
+unchanged, not silently dropped.
 
 ### 18.8 Force Item / Inquisition dedup
 
@@ -628,7 +695,8 @@ path) now consume via `resolveDamageComposition()`'s `dice.otherDiceTerms`.
 
 ### 18.10 Tests
 
-`tests/damage-modifier-ssot.test.mjs` — 29 checks: 3 fail-before/pass-after
+`tests/damage-modifier-ssot.test.mjs` — 35 checks (29 from the initial
+implementation + 6 from the §18.12 correction round): 3 fail-before/pass-after
 proofs (extra weapon dice, die-size step, standalone critical-multiplier
 rule-awareness — each reproducing the confirmed-removed old logic inline
 and proving it produces the wrong result, then proving the new canonical
@@ -661,3 +729,250 @@ redundant (`combat-stat-rules.js#getCriticalMultiplier()`/
 `combat-utils.js#getCriticalMultiplier()` are reduced-to-non-authoritative,
 not deleted); no SWSE rule was changed to make a test pass (`attack_and_damage`
 stayed inert by deliberate choice, not migrated to "make it work").
+
+### 18.12 Correction round (independent review of `4d05a80`/`1b93e1a`)
+
+A direct re-inspection of the pushed head — not a fresh audit cycle —
+found three blockers and one hardening item. The review's own verdict:
+"Claude solved the formula-builder fragmentation, but two composition
+seams still bypass the new authority and the real attack→damage workflow
+does not yet prove it carries the option data the new resolver needs."
+All four are fixed in this same commit; §18.3/§18.4/§18.6/§18.7 above are
+updated in place with the corrected claims rather than left to silently
+disagree with this section.
+
+**Blocker 1 — attack-option selections were not transported to a later
+Damage roll.** `combat-context-serializer.js#summarizeCombatWorkflowContext()`
+captured only a fixed set of high-level booleans (Aim/Charge/Autofire/...)
+— never the attack roll's actual `combatOptions`/`attackOptions`
+selection map (`{deadeye: true, powerAttack: 3}`) `CombatOptionResolver.
+collectAttackModifiers()` needs to know a toggle/slider option was
+genuinely selected, not merely owned and gate-satisfied. A chat-card-
+driven Damage roll (the primary live path — click "Damage" on an attack's
+chat message) reconstructs its context entirely from this serializer's
+output; without the selection map, `resolveDamageComposition()` correctly
+reading `damageExtraWeaponDice`/etc. was moot, because
+`CombatOptionResolver` itself would evaluate every toggle option as
+unselected regardless. (The sheet's own standalone Damage-button dialog
+was separately confirmed NOT to be affected the same way — `roll-config.
+js#buildWeaponPanel()` deliberately never renders ATTACK_OPTION toggles
+for `rollType: 'damage'` at all, by pre-existing design, since a
+standalone Damage roll has no attack of its own to select them for; this
+blocker is specifically about the attack-roll's own selections surviving
+into ITS paired chat-card Damage roll.) **Fixed**: `summarizeCombatWorkflowContext()`
+now captures a merged `attack.selectedOptions` map (booleans and numeric
+slider values alike, falsy/absent entries pruned); it round-trips
+losslessly through `encodeCombatWorkflowContext()`/`decodeCombatWorkflowContext()`
+(plain `JSON.stringify`/`parse`, already lossless for this shape); and
+`mergeCombatWorkflowContextIntoRollOptions()` restores it onto
+`rollOptions.combatOptions`/`rollOptions.attackOptions` — with an explicit
+caller-supplied value always taking precedence over a carried one, never
+silently merged with or overridden by it. Proven by a literal round-trip
+test: real roll options → `summarizeCombatWorkflowContext()` → `encodeCombatWorkflowContext()`
+→ `decodeCombatWorkflowContext()` → `mergeCombatWorkflowContextIntoRollOptions()`
+→ `CombatOptionResolver.collectAttackModifiers()`, asserting Deadeye's
+extra die and a Power-Attack-shaped slider value both survive intact.
+
+**Blocker 2 — typed Damage stacking was ledger-only, not the real total.**
+See the rewritten §18.4 above for the fix; summarized here: a same-typed
+collision across the Effect-Intent pool and the item-alias pool could
+show a correct "highest applied / other suppressed" ledger while the
+actual roll still summed both in full. Fixed by making
+`computeTypedDamageModifierPool()`'s stacked result the ONLY path either
+source contributes through, feeding `resolveDamageBonus()`'s/
+`resolveStockDroidDamageContract()`'s own `total` directly. Proven by a
+`highestOnly` competence collision test (Effect +4, item-alias +2 →
+total is 2/*STR*/+4, never +6, ledger's applied/suppressed values match
+the total exactly) plus `stackUnlessSameSource` and `untyped` collision
+tests against the actual total, not merely ledger shape.
+
+**Blocker 3 — stock-droid dice modifiers were applied twice.**
+`resolveStockDroidDamageContract()` used to pre-apply
+`damageDieStepIncreases`/`damageExtraWeaponDice` to the published formula
+itself (baking them into `flags.stockDamageFormula`), and
+`resolveDamageComposition()` then treated that already-mutated string as
+its own unmutated `dice.base` and applied the SAME die-step/extra-dice
+generically a second time — e.g. a +1 die-step + +1 extra-die stock
+formula would reach the roll stepped twice and with the extra die added
+twice. **Fixed**: the published formula's dice portion is now returned
+RAW from `resolveStockDroidDamageContract()` (re-rendered only for
+canonical spacing, via `buildStockDroidDamageFormula(publishedFormula)`
+with no dice-mutation arguments) — the single generic
+`dieStepIncreases`/`extraWeaponDice` application inside
+`resolveDamageComposition()`/`buildDamageFormula()` now runs exactly
+once, uniformly, for stock and ordinary weapons alike. Proven by full-path
+tests through `resolveDamageComposition()`/`buildDamageFormula()` with
+active die-size-step, extra-weapon-dice, critical-only-die-step, and
+combined stock-droid fixtures — `tests/stock-droid-damage-math.test.mjs`'s
+own die-mutation tests (8-12) were rewritten in the same pass, since they
+previously asserted the now-removed pre-mutation behavior directly on
+`resolveDamageBonus()`'s output.
+
+**Hardening — a carried critical multiplier could override current
+rules.** `resolveCriticalMultiplier()` returned a valid
+`context.critMultiplier` immediately, before consulting the weapon/
+option/rule sources at all, so a stale or otherwise-invalid carried value
+could suppress a currently-active `RULES.MODIFY_CRITICAL_MULTIPLIER`
+increase. **Fixed**: the carried value is now one more input to the same
+`Math.max(...)` composition (a floor, not a short-circuit) — a genuinely
+canonical carried value can never be lower than a fresh resolution would
+produce, so correct behavior is unchanged while a stale value can no
+longer suppress a current rule. Proven by a test where a carried
+`critMultiplier: 2` cannot suppress an active
+`RULES.MODIFY_CRITICAL_MULTIPLIER` of 3, alongside a sanity check that a
+carried value higher than every other source is still honored.
+
+**Validation**: full rolling suite (239/239), full syntax sweep
+(2518/2518 `node --check`), `tools/check-combat-math-ssot.mjs --strict`,
+`validate-data.js`, `validate-partials.mjs` all re-run clean after this
+correction round.
+
+### 18.13 Attack-to-Damage Option Context Certification (addendum correction)
+
+A follow-up addendum, reviewed independently against head `1b93e1a` —
+i.e. written before §18.12 above existed — scoped a further correction
+to exactly one of the three blockers §18.12 records: attack-option
+activation context surviving losslessly from the attack dialog through
+the attack chat card into the later Damage roll. The addendum raised the
+proof bar substantially above §18.12's own Blocker 1 write-up: a
+dedicated test file (not folded into generic formula tests), one named
+round-trip test per representative option with exact expected values,
+snapshot-immutability and actor/UI-mutation proofs, a negative
+(no-inference) test, an unowned-option (no-entitlement-grant) test, and
+an explicit hop-by-hop trace of the real production data-flow chain
+rather than an assertion that it exists.
+
+**Explicit reconciliation, not silent compliance.** The addendum was
+written on the stated belief that the other two §18.12 blockers — typed
+Damage stacking driving only the ledger, and stock-droid dice
+transformations applying twice — were still open, and it explicitly
+instructed the correction to leave them alone "unless a tiny shared
+change is strictly necessary." Both were, in fact, already fixed and
+tested earlier in the same working session that produced §18.12, before
+this addendum arrived. This section does not silently accept that
+outdated premise: neither existing fix was touched, reverted, or
+otherwise interacted with by this addendum's work, and the current true
+state — all three original blockers plus the hardening item are closed
+— is stated plainly here rather than left to disagree with the
+addendum's own text.
+
+**Canonical transport shape.** `combat-context-serializer.js#summarizeCombatWorkflowContext()`
+now builds `attack.selectedOptions` via a new `mergeSelectedOptions(...sources)`
+helper, merging (in order) the summary's own `attack.selectedOptions`
+(so re-summarizing an already-summarized context is idempotent),
+`context.combatOptions`, `context.attackOptions`, `extra.combatOptions`,
+and `extra.attackOptions` — the historical `combatOptions`/`attackOptions`
+spelling split collapses into this one canonical map. Only
+JSON-safe primitive values survive: `isSerializableOptionValue(value)`
+accepts a `boolean`, a finite `number`, or a `string`, and rejects
+everything else (an object, a function, a Foundry document reference, a
+non-finite number) — such a value is silently dropped from the snapshot,
+never serialized, and never throws. Falsy/absent entries (`undefined`,
+`null`, `''`, `false`) are pruned rather than carried as explicit
+"inactive" markers.
+
+**No inference, no entitlement grant.** The snapshot is the literal
+selection map the player made — nothing is inferred from a higher-level
+flag. Aim being true does not imply Deadeye was selected; Autofire being
+true does not imply Burst Fire was selected; only an explicit
+`combatOptions.deadeye === true` (etc.) counts as selected. Symmetrically,
+a stored selection is never itself an entitlement: `CombatOptionResolver.
+getAvailableAttackOptions()`'s pre-existing feat-ownership gate (only an
+item with a matching `ATTACK_OPTION` rule makes an option discoverable at
+all) still governs downstream — a synthetic selection for an option the
+actor does not own is never granted.
+
+**Production data-flow chain (traced against real source, not assumed):**
+1. `scripts/rolls/roll-config.js#showRollModifiersDialog()` reads the
+   dialog form's `combatOptions`/`attackOptions` fields into its returned
+   result.
+2. `scripts/sheets/v2/actor-sheet-base.js#_runCanonicalAttackWithPreroll()`
+   spreads that same result into the options object passed to
+   `SWSERoll.rollAttack()` — not a reconstruction.
+3. `scripts/combat/rolls/attacks.js#rollAttack()` calls
+   `summarizeCombatWorkflowContext()` (idempotently preserving
+   `attack.selectedOptions` across the re-summarization into
+   `damageWorkflowContext`) and attaches it to the chat message via
+   `SWSEChat.postRoll({flags:{swse:{workflowContext}}, context:{workflowContext}})`.
+4. `scripts/engine/rolls/swse-roll-engine.js` calls
+   `encodeCombatWorkflowContext()` to produce `workflowContextEncoded` for
+   the chat-card template context.
+5. `templates/chat/holo-roll.hbs` (the real production chat-card template)
+   embeds it as `data-workflow-context="{{...workflowContextEncoded}}"` on
+   the chat card's Damage button.
+6. `scripts/patches/runtime-bugfix-hotfixes.js#rollDamageFromButton()`
+   decodes it via `decodeCombatWorkflowContext(button.dataset.workflowContext)`.
+7. `scripts/combat/rolls/damage.js#rollDamage()` restores it onto roll
+   options via `mergeCombatWorkflowContextIntoRollOptions()` **before**
+   `resolveDamageComposition()`/`CombatOptionResolver` are ever called —
+   with an explicit caller-supplied value always taking precedence over a
+   carried one, never silently merged with or overridden by it.
+
+(`scripts/ui/chat/chat-interaction-bridge.js` has three further call
+sites of the same decode pattern; `scripts/engine/combat/full-attack-card-renderer.js`
+is a separate multi-attack-sequence renderer using the same encode
+function — both inherit the fix automatically since they call the same
+serializer functions, not a parallel implementation.)
+
+**Proof.** A new dedicated suite,
+`tests/attack-damage-option-context-transport.test.mjs` (18 checks, not
+folded into `damage-modifier-ssot.test.mjs`'s generic formula tests):
+- Section 1 (3 checks): canonical round-trip of mixed boolean/numeric
+  values with an inactive `false` entry that must never resolve as
+  active; `attackOptions`-only input still reaching `combatOptions` after
+  round-trip (one canonical selection universe, not two independently
+  tracked maps); and non-primitive/non-finite value rejection that
+  doesn't throw.
+- Section 2 (6 checks): one named round-trip test per required option —
+  Deadeye → `damageExtraWeaponDice = 1`; Burst Fire → `= 2`; Rapid Shot →
+  `+1` extra weapon die exactly once (not double-counted against its
+  `damageDiceStepBonus` dual-write alias); Rapid Strike → `+1` weapon
+  die; Mighty Swing → `+1` weapon die; Power Attack (slider value `3`) →
+  `damageBonus = 3` exactly, proving a non-boolean value transports, not
+  only booleans.
+- Section 3 (4 checks): snapshot immutability (mutating the original
+  source object after serialization does not affect the already-encoded
+  snapshot); actor/UI-mutation proof (a later, different option selection
+  never retroactively changes an earlier attack's own stored snapshot);
+  the negative test (Aim true, Deadeye not selected — must not apply,
+  proving no inference from a high-level flag); the unowned-option test
+  (a stored selection for an option the actor does not own is never
+  granted, proving no entitlement grant).
+- Section 4 (1 check): the pre-existing target/aim/autofire/range-band/
+  critical/damage-type transport is not regressed by the additive option
+  snapshot.
+- Section 5 (4 checks): structural source-text verification of each real
+  production hop listed above, including an explicit line-order
+  assertion that `mergeCombatWorkflowContextIntoRollOptions(` appears
+  before `resolveDamageComposition(` in `damage.js`.
+
+The pre-existing 136-record `ATTACK_OPTION` normalization/discovery
+surface (`docs/audits/v2-action-authority-groundwork-architecture.md`)
+was not altered by this addendum. `tools/check-combat-math-ssot.mjs` was
+inspected for a narrower transport-specific guard; none of its existing
+invariants target workflow-context transport specifically (they target
+the roll-math resolver seam), and the addendum's own dedicated test file
+already exercises this invariant directly by executing the serializer
+functions rather than only inspecting source text, so no new guard was
+added — the existing SSOT guard's scope was kept narrow, per the
+addendum's own instruction.
+
+**Validation**: `tests/attack-damage-option-context-transport.test.mjs`
+(18/18), `tests/damage-modifier-ssot.test.mjs` (35/35, re-run to confirm
+the `isSerializableOptionValue()` hardening did not regress the earlier
+Blocker 1 test), `tests/stock-droid-damage-math.test.mjs` (unaffected,
+re-run clean), `tests/attack-bonus-math-integrity.test.mjs`,
+`tests/attack-dialog-context-authority.test.mjs`,
+`tests/attack-dialog-context-authority-correction.test.mjs`,
+`tests/action-authority-groundwork.test.mjs`,
+`tests/action-authority-groundwork-normalization-audit.test.mjs` (136
+records, 0 silent drops) all re-run clean, full rolling suite, full
+syntax sweep, and `tools/check-combat-math-ssot.mjs --strict` all re-run
+clean after this addendum.
+
+**Current status of all three original §18.12 blockers plus the
+hardening item: all four are fixed and independently tested.** Per the
+addendum's own explicit instruction, this section does not self-declare
+the overall Damage SSOT re-certified — that determination is left to the
+next independent review pass, which now has a materially more complete
+picture than the addendum had when it was written.

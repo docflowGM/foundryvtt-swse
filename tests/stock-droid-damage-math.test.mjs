@@ -34,7 +34,7 @@ globalThis.window = globalThis.window || {};
 registerFoundryPathLoader();
 installFoundryShimGlobals({ game: { user: { isGM: true, id: 'gm-1' }, combat: null } });
 
-const { resolveDamageBonus, resolveStockDroidDamageContract } = await import('../scripts/engine/combat/combat-roll-math.js');
+const { resolveDamageBonus, resolveStockDroidDamageContract, resolveDamageComposition, buildDamageFormula } = await import('../scripts/engine/combat/combat-roll-math.js');
 
 function explicitStockDroid(overrides = {}) {
   return {
@@ -179,44 +179,89 @@ function actorWithRule(rule, overrides = {}) {
   });
 }
 
+// Damage SSOT correction (docs/audits/v2-damage-modifier-authority-audit.md
+// §18, "Blocker 3 — stock-droid dice modifiers are applied twice"): dice
+// mutation for die-based combat options used to happen TWICE — once here,
+// baked into resolveStockDroidDamageContract()'s own
+// components['Published Statblock Formula']/flags.stockDamageFormula, and
+// again inside resolveDamageComposition()/buildDamageFormula() (which
+// treats that already-mutated string as its own unmutated base and steps/
+// extra-dices it a second time). Fixed by drawing the boundary the
+// project's own additive/dice split already intends:
+// resolveDamageBonus()/resolveStockDroidDamageContract() now ALWAYS
+// return the RAW published formula (only re-rendered for canonical
+// spacing, never stepped or extra-diced) — tests 8-11 below now assert
+// that directly. The actual die-based mutation is proven once, through
+// resolveDamageComposition()/buildDamageFormula(), in tests 8b-11b.
+
 // 8. A die-SIZE step rule (the mechanism Rapid Shot/Rapid Strike/Mighty
-// Swing use) steps the published formula's die size, not its dice count.
+// Swing use) must NOT mutate resolveDamageBonus()'s own published-formula
+// component — that dice mutation now happens exactly once, downstream.
 {
   const droid = actorWithRule({ type: 'WEAPON_DAMAGE_DIE_SIZE_STEP', value: 1 });
   const result = resolveDamageBonus(droid, stockWeapon(), {});
-  assert.equal(result.components['Published Statblock Formula'], '2d8 + 3', 'a die-size-step rule must step 2d6 -> 2d8, not add dice');
-  assert.equal(result.flags.stockDamageFormula, '2d8 + 3');
+  assert.equal(result.components['Published Statblock Formula'], '2d6 + 3', 'resolveDamageBonus() must return the RAW published formula, unstepped, even with an active die-size-step rule');
+  assert.equal(result.flags.stockDamageFormula, '2d6 + 3');
 }
 
-// 9. An extra-weapon-dice rule (the mechanism Deadeye/Burst Fire use) adds
-// a die at the (unstepped, here) size as a separate addend.
+// 8b. The die-size step DOES reach the final formula — exactly once —
+// through resolveDamageComposition()/buildDamageFormula().
+{
+  const droid = actorWithRule({ type: 'WEAPON_DAMAGE_DIE_SIZE_STEP', value: 1 });
+  const composition = resolveDamageComposition(droid, stockWeapon(), {});
+  assert.equal(composition.dice.base, '2d6 + 3', 'composition.dice.base is the raw published formula');
+  assert.equal(buildDamageFormula(composition), '2d8 + 3', 'the final formula steps 2d6 -> 2d8 exactly once');
+}
+
+// 9. An extra-weapon-dice rule (the mechanism Deadeye/Burst Fire use)
+// must NOT mutate resolveDamageBonus()'s own published-formula component.
 {
   const droid = actorWithRule({ type: 'WEAPON_DAMAGE_DIE_STEP', value: 1 });
   const result = resolveDamageBonus(droid, stockWeapon(), {});
-  assert.equal(result.components['Published Statblock Formula'], '2d6 + 1d6 + 3');
+  assert.equal(result.components['Published Statblock Formula'], '2d6 + 3', 'resolveDamageBonus() must return the RAW published formula, with no extra die added, even with an active extra-weapon-dice rule');
 }
 
-// 10. A critical-only die-step rule does NOT affect a non-critical roll.
+// 9b. The extra die DOES reach the final formula — exactly once.
+{
+  const droid = actorWithRule({ type: 'WEAPON_DAMAGE_DIE_STEP', value: 1 });
+  const composition = resolveDamageComposition(droid, stockWeapon(), {});
+  const formula = buildDamageFormula(composition);
+  const extraDiceMatches = formula.match(/\+\s*1d6\b/g) || [];
+  assert.equal(extraDiceMatches.length, 1, 'exactly one extra die term, never two');
+}
+
+// 10. A critical-only die-step rule does NOT affect resolveDamageBonus()'s
+// published-formula component regardless of critical state (it never
+// mutates dice at all anymore).
 {
   const droid = actorWithRule({ type: 'CRITICAL_DAMAGE_DIE_STEP', value: 1 });
   const result = resolveDamageBonus(droid, stockWeapon(), { critical: false });
-  assert.equal(result.components['Published Statblock Formula'], '2d6 + 3', 'a critical-only die-step must not apply to a non-critical roll');
+  assert.equal(result.components['Published Statblock Formula'], '2d6 + 3', 'resolveDamageBonus() never mutates dice, critical or not');
 }
 
-// 11. The SAME critical-only die-step rule DOES apply when the roll
-// context confirms a critical hit (context.critical === true) — proving
-// resolveStockDroidDamageContract() reads the same critical flag
-// attacks.js's rollDamage()/rollAttackAndDamageWithNarration() already
-// pass through as part of rollOptions, mirroring attacks.js's own
-// criticalStepBonus gating for ordinary weapons.
+// 11. The SAME critical-only die-step rule DOES reach composition — exactly
+// once — only on a confirmed critical hit. Checked at the dice.base/
+// dieStepIncreases level (not the final formula string), since a
+// confirmed critical also triggers buildDamageFormula()'s own multiplier
+// wrap — a separate, already-covered concern (tests/damage-modifier-ssot.
+// test.mjs golden 20/21) this test must not conflate with die-stepping.
 {
   const droid = actorWithRule({ type: 'CRITICAL_DAMAGE_DIE_STEP', value: 1 });
-  const result = resolveDamageBonus(droid, stockWeapon(), { critical: true });
-  assert.equal(result.components['Published Statblock Formula'], '2d8 + 3', 'a critical-only die-step must apply on a confirmed critical hit');
+  const nonCritical = resolveDamageComposition(droid, stockWeapon(), { critical: false });
+  assert.equal(nonCritical.dice.base, '2d6 + 3', 'dice.base is always the raw published formula');
+  assert.equal(nonCritical.dice.dieStepIncreases, 0, 'a critical-only die-step must not apply to a non-critical roll');
+  const critical = resolveDamageComposition(droid, stockWeapon(), { critical: true });
+  assert.equal(critical.dice.base, '2d6 + 3', 'dice.base stays raw even on a critical roll');
+  assert.equal(critical.dice.dieStepIncreases, 1, 'a critical-only die-step applies exactly once on a confirmed critical hit');
+  assert.equal(buildDamageFormula({ ...critical, critical: { ...critical.critical, isCritical: false } }), '2d8 + 3',
+    'the die step itself (isolated from the separate critical-multiplier wrap) steps 2d6 -> 2d8 exactly once');
 }
 
 // 12. Die-size step and extra weapon dice compose together correctly:
-// extra dice are added at the ALREADY-stepped size.
+// extra dice are added at the ALREADY-stepped size. resolveDamageBonus()
+// itself still returns the raw formula (dice mutation moved downstream);
+// resolveDamageComposition()/buildDamageFormula() is where both apply,
+// together, exactly once each.
 {
   const droid = actorWithRule({ type: 'WEAPON_DAMAGE_DIE_SIZE_STEP', value: 1 }, {
     items: [
@@ -225,7 +270,20 @@ function actorWithRule(rule, overrides = {}) {
     ]
   });
   const result = resolveDamageBonus(droid, stockWeapon(), {});
-  assert.equal(result.components['Published Statblock Formula'], '2d8 + 1d8 + 3');
+  assert.equal(result.components['Published Statblock Formula'], '2d6 + 3', 'resolveDamageBonus() returns the raw formula even with both a die-size-step AND an extra-dice rule active');
+
+  const composition = resolveDamageComposition(droid, stockWeapon(), {});
+  assert.equal(composition.dice.base, '2d6 + 3');
+  assert.equal(composition.dice.dieStepIncreases, 1);
+  assert.equal(composition.dice.extraWeaponDice, 1);
+  // The extra-weapon-die term appends after the full (already-stepped)
+  // base string — for a stock formula that base already includes its own
+  // flat modifier as one string, so the extra die lands after it rather
+  // than between the dice and the flat term (mathematically identical to
+  // an ordinary weapon's dice-then-flat ordering, just not term-order-
+  // identical with it — see the equivalent note in
+  // tests/damage-modifier-ssot.test.mjs's own Blocker 3 test).
+  assert.equal(buildDamageFormula(composition), '2d8 + 3 + 1d8', 'die-size step and extra weapon dice compose together correctly, exactly once each, through the canonical formula builder');
 }
 
 console.log('Stock-droid damage math tests passed.');

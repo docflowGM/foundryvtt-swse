@@ -253,17 +253,6 @@ function buildEffectIntentRollContext(weapon, options = {}, extra = {}) {
   };
 }
 
-function getBasicEffectIntentBonus(actor, target, weapon, options = {}, extra = {}) {
-  try {
-    return ModifierEngine.getEffectIntentModifierTotalForContext(
-      actor, target, buildEffectIntentRollContext(weapon, options, extra), { includeBroad: true }
-    );
-  } catch (err) {
-    console.warn(`[SWSE] Failed to apply Basic effect intents for ${target}`, err);
-    return 0;
-  }
-}
-
 function actorHpValueForSithEffects(actor) {
   return Number(
     actor?.system?.hp?.value ??
@@ -703,44 +692,42 @@ export function resolveStockDroidDamageContract(actor, weapon, context = {}) {
   const optionModifiers = CombatOptionResolver.collectAttackModifiers(actor, weapon, context);
   const rageMod = RageEngine.collectAttackModifiers(actor, weapon, context).damageBonus || 0;
   const rapidAlchemyMod = rapidAlchemyDamageBonusInternal(actor, weapon);
-  const basicEffectBonus = getBasicEffectIntentBonus(actor, 'global.damage', weapon, context, { rollType: 'damage' });
+  const typedDamagePool = computeTypedDamageModifierPool(actor, weapon, context, optionModifiers);
   const combatOptionDamage = optionModifiers.damageBonus || 0;
   const scopedFeatDamage = ScopedCombatFeatResolver.getBonus(actor, weapon, 'damage', context);
 
-  // R4-4 — die-based situational modifiers (Rapid Shot/Rapid Strike's
-  // damageDieStepBonus, Deadeye/Burst Fire/Mighty Swing's
-  // damageExtraWeaponDice, and — on a confirmed critical hit only —
-  // criticalDamageDieStepBonus) must still adjust the published formula's
-  // DICE portion, exactly as they adjust an ordinary weapon's dice. Only
-  // half-level/ability/enhancement (never die-based) are what the
-  // published total already bakes in and must be withheld. Mirrors
-  // attacks.js's own criticalStepBonus gating: the critical die-step only
-  // applies when this roll is a confirmed critical (context.critical/
-  // context.isCritical), the same flag attacks.js's rollDamage()/
-  // rollAttackAndDamageWithNarration() already pass through as part of
-  // rollOptions.
-  const isCriticalRoll = context?.critical === true || context?.isCritical === true;
-  const dieStepIncreases = Number(optionModifiers.damageDieStepIncreases || 0)
-    + (isCriticalRoll ? Number(optionModifiers.criticalDamageDieStepBonus || 0) : 0);
-  const extraWeaponDice = Number(optionModifiers.damageExtraWeaponDice ?? optionModifiers.damageDiceStepBonus ?? 0);
-  const formula = buildStockDroidDamageFormula(publishedFormula, { dieStepIncreases, extraWeaponDice });
+  // Damage SSOT correction (independent review of 4d05a80, "Blocker 3 —
+  // stock-droid dice modifiers are applied twice"): this used to ALSO
+  // apply damageDieStepIncreases/damageExtraWeaponDice to the published
+  // formula HERE (via buildStockDroidDamageFormula's dice-mutation args),
+  // producing an already-stepped/already-extra-dice'd string that
+  // resolveDamageComposition() then treated as its dice.base and stepped/
+  // extra-dice'd AGAIN in buildDamageFormula() — a genuine double
+  // application (e.g. a +1 die-step + +1 extra die stock formula would
+  // reach the roll stepped twice and with the extra die added twice).
+  // The published formula's dice portion is now returned RAW (only
+  // re-rendered for canonical spacing, never mutated) — the single
+  // generic dieStepIncreases/extraWeaponDice application inside
+  // resolveDamageComposition()/buildDamageFormula() now runs exactly
+  // once, uniformly, for stock and ordinary weapons alike.
+  const formula = buildStockDroidDamageFormula(publishedFormula);
 
-  const situationalTotal = rageMod + rapidAlchemyMod + basicEffectBonus + combatOptionDamage + scopedFeatDamage;
+  const situationalTotal = rageMod + rapidAlchemyMod + typedDamagePool.total + combatOptionDamage + scopedFeatDamage;
 
   const components = { 'Published Statblock Formula': formula };
   if (rageMod !== 0) components['Rage'] = rageMod;
   if (rapidAlchemyMod !== 0) components['Rapid Alchemy'] = rapidAlchemyMod;
-  if (basicEffectBonus !== 0) components['Effect Intent'] = basicEffectBonus;
+  if (typedDamagePool.total !== 0) components['Effect Intent'] = typedDamagePool.total;
   if (combatOptionDamage !== 0) components['Combat Option'] = combatOptionDamage;
   if (scopedFeatDamage !== 0) components['Scoped Feat'] = scopedFeatDamage;
 
-  return { formula, total: situationalTotal, components, flags: { stockDroidFlat: true, stockDamageFormula: formula } };
+  return { formula, total: situationalTotal, components, flags: { stockDroidFlat: true, stockDamageFormula: formula }, typedModifierLedger: typedDamagePool.ledger };
 }
 
 export function resolveDamageBonus(actor, weapon, context = {}) {
   const stockContract = resolveStockDroidDamageContract(actor, weapon, context);
   if (stockContract) {
-    return { total: stockContract.total, components: stockContract.components, flags: stockContract.flags };
+    return { total: stockContract.total, components: stockContract.components, flags: stockContract.flags, typedModifierLedger: stockContract.typedModifierLedger };
   }
 
   const optionModifiers = CombatOptionResolver.collectAttackModifiers(actor, weapon, context);
@@ -759,11 +746,18 @@ export function resolveDamageBonus(actor, weapon, context = {}) {
   const enhancement = getWeaponFlatDamageBonus(weapon);
   const rageMod = RageEngine.collectAttackModifiers(actor, weapon, context).damageBonus || 0;
   const rapidAlchemyMod = rapidAlchemyDamageBonusInternal(actor, weapon);
-  const basicEffectBonus = getBasicEffectIntentBonus(actor, 'global.damage', weapon, context, { rollType: 'damage' });
+  // Damage SSOT correction (independent review of 4d05a80, "Blocker 2"):
+  // the unified typed pool (Effect-Intent damage modifiers + item-authored
+  // abilityMeta.modifiers damage aliases, stacking-resolved together) is
+  // now the ONLY path either contributes through — see
+  // computeTypedDamageModifierPool()'s own header comment. This is the
+  // fix, not merely a ledger; the pool's stacked total is what actually
+  // reaches `total` below, so the ledger can never disagree with the roll.
+  const typedDamagePool = computeTypedDamageModifierPool(actor, weapon, context, optionModifiers);
   const combatOptionDamage = optionModifiers.damageBonus || 0;
   const scopedFeatDamage = ScopedCombatFeatResolver.getBonus(actor, weapon, 'damage', context);
 
-  const total = halfLvl + enhancement + abilityMod + rageMod + rapidAlchemyMod + basicEffectBonus + combatOptionDamage + scopedFeatDamage;
+  const total = halfLvl + enhancement + abilityMod + rageMod + rapidAlchemyMod + typedDamagePool.total + combatOptionDamage + scopedFeatDamage;
 
   const components = {};
   if (halfLvl !== 0) components['½ Level'] = halfLvl;
@@ -771,11 +765,11 @@ export function resolveDamageBonus(actor, weapon, context = {}) {
   if (enhancement !== 0) components['Enhancement'] = enhancement;
   if (rageMod !== 0) components['Rage'] = rageMod;
   if (rapidAlchemyMod !== 0) components['Rapid Alchemy'] = rapidAlchemyMod;
-  if (basicEffectBonus !== 0) components['Effect Intent'] = basicEffectBonus;
+  if (typedDamagePool.total !== 0) components['Effect Intent'] = typedDamagePool.total;
   if (combatOptionDamage !== 0) components['Combat Option'] = combatOptionDamage;
   if (scopedFeatDamage !== 0) components['Scoped Feat'] = scopedFeatDamage;
 
-  return { total, components, flags: { damageBaseOnly: false } };
+  return { total, components, flags: { damageBaseOnly: false }, typedModifierLedger: typedDamagePool.ledger };
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -843,18 +837,6 @@ export function stepDamageDieFormula(baseFormula, steps = 0) {
 // considered both rule sources. This is the one function that does, and the
 // only place either duplicate should be called from going forward.
 export function resolveCriticalMultiplier(actor, weapon, context = {}, precomputedOptionModifiers = null) {
-  // A prior attack roll (the chat-card Damage button's live path) already
-  // resolved a canonical multiplier via this same function inside
-  // rollAttack() — reuse it verbatim rather than recomputing, so a
-  // standalone re-derivation can never disagree with the attack that
-  // produced this damage roll. Only a finite, positive number counts as
-  // valid canonical context; anything else falls through to a fresh
-  // resolution (covers the sheet Damage button and any direct
-  // programmatic damage roll, neither of which has a prior attack roll to
-  // borrow from).
-  const carried = Number(context?.critMultiplier);
-  if (Number.isFinite(carried) && carried > 0) return carried;
-
   let highest = getWeaponBaseCriticalMultiplier(weapon, 2);
 
   const optionModifiers = precomputedOptionModifiers ?? CombatOptionResolver.collectAttackModifiers(actor, weapon, context);
@@ -877,6 +859,23 @@ export function resolveCriticalMultiplier(actor, weapon, context = {}, precomput
       // still applies; this is not a hard dependency.
     }
   }
+
+  // A prior attack roll (the chat-card Damage button's live path) already
+  // resolved a canonical multiplier via this same function inside
+  // rollAttack() — reused as a FLOOR, never returned blindly. Hardening
+  // (independent review of 4d05a80): the original version returned a
+  // finite, positive carried value immediately, before ever consulting
+  // the weapon/option/rule sources above — a stale or otherwise-invalid
+  // carried value could then suppress a currently-active
+  // RULES.MODIFY_CRITICAL_MULTIPLIER increase or criticalMultiplierMin
+  // option that this exact call just computed. Taking the max of the
+  // carried value against every other source keeps the "don't recompute
+  // what the attack roll already resolved" intent (a canonical carried
+  // value can never be LOWER than what a fresh resolution would produce,
+  // since it was produced by this same function) while making a stale/
+  // arbitrary caller-supplied value unable to override current rules.
+  const carried = Number(context?.critMultiplier);
+  if (Number.isFinite(carried) && carried > 0) highest = Math.max(highest, carried);
 
   return highest;
 }
@@ -908,6 +907,34 @@ function getDamageEffectIntentModifiers(actor, weapon, context = {}) {
     console.warn('[SWSE] Failed to collect damage effect-intent modifiers', err);
     return [];
   }
+}
+
+// Damage SSOT correction (independent review of 4d05a80, "Blocker 2 —
+// typed Damage stacking is currently cosmetic"): the first pass built the
+// unified typed pool but only surfaced it as an inspection ledger,
+// leaving resolveDamageBonus()'s own total computed from the OLD,
+// independent, non-stacking-aware sum (getBasicEffectIntentBonus()'s own
+// isolated pool + CombatOptionResolver's now-typed-but-still-separately-
+// summed damageBonus) — so a same-typed collision across the two sources
+// (e.g. an Effect +4 competence bonus and an item-alias +2 competence
+// bonus) could show "+4 applied / +2 suppressed" in the ledger while the
+// actual roll still received +6. This is the ONE place the typed pool is
+// now computed, and its result feeds directly into resolveDamageBonus()'s
+// (and resolveStockDroidDamageContract()'s) own additive total — not a
+// parallel, cosmetic-only computation. Shared so the two additive
+// resolvers can never independently drift on how this pool stacks.
+function computeTypedDamageModifierPool(actor, weapon, context, optionModifiers) {
+  const effectIntentDamageModifiers = getDamageEffectIntentModifiers(actor, weapon, context);
+  const typedDamagePool = [...effectIntentDamageModifiers, ...(optionModifiers?.damageContributions || [])]
+    .map(normalizeDamageModifierTarget);
+  const filteredTypedPool = ModifierUtils.filterModifiers(typedDamagePool, 'global.damage', true);
+  const appliedTypedModifiers = ModifierUtils.resolveStacking(filteredTypedPool);
+  const total = ModifierUtils.sumModifiers(appliedTypedModifiers);
+  const suppressedTypedModifiers = filteredTypedPool
+    .filter(mod => !appliedTypedModifiers.includes(mod))
+    .map(modifier => ({ modifier, reason: `suppressed: another ${modifier.type} contribution already applies (${getStackingRule(modifier.type)} stacking)` }));
+  const ledger = buildModifierLedger(appliedTypedModifiers, suppressedTypedModifiers, 'combat.damage');
+  return { total, appliedTypedModifiers, suppressedTypedModifiers, ledger };
 }
 
 /**
@@ -962,24 +989,16 @@ export function resolveDamageComposition(actor, weapon, context = {}) {
   const bonusFormula = isCriticalRoll ? getCriticalDamageBonusFormula(actor, weapon) : '';
 
   // ── Typed damage-modifier vocabulary unification ────────────────────
-  // ONE stacking pool for every typed damage contribution this codebase
-  // currently produces (Effect-Intent modifiers + CombatOptionResolver's
-  // own item-authored abilityMeta.modifiers matches), instead of two
-  // independent per-pool stacking decisions that can never see each
-  // other's contributions. Ledger-only today (bonus.total above is left
-  // numerically unchanged for backward compatibility — see the module
-  // header) but proves, via the no-double-application/collision test
-  // matrix, that a future same-typed collision across the two sources
-  // would resolve correctly.
-  const effectIntentDamageModifiers = getDamageEffectIntentModifiers(actor, weapon, context);
-  const typedDamagePool = [...effectIntentDamageModifiers, ...(optionModifiers.damageContributions || [])]
-    .map(normalizeDamageModifierTarget);
-  const filteredTypedPool = ModifierUtils.filterModifiers(typedDamagePool, 'global.damage', true);
-  const appliedTypedModifiers = ModifierUtils.resolveStacking(filteredTypedPool);
-  const suppressedTypedModifiers = filteredTypedPool
-    .filter(mod => !appliedTypedModifiers.includes(mod))
-    .map(modifier => ({ modifier, reason: `suppressed: another ${modifier.type} contribution already applies (${getStackingRule(modifier.type)} stacking)` }));
-  const typedModifierLedger = buildModifierLedger(appliedTypedModifiers, suppressedTypedModifiers, 'combat.damage');
+  // Damage SSOT correction (independent review of 4d05a80, "Blocker 2"):
+  // this used to independently recompute the SAME typed stacking pool
+  // resolveDamageBonus() also computed, for ledger display only — a
+  // cosmetic duplicate that could disagree with the numeric total, since
+  // bonus.total was computed from a different, non-stacking-aware sum.
+  // resolveDamageBonus() (and resolveStockDroidDamageContract()) are now
+  // the ONE place this pool is computed, and its stacked result already
+  // feeds bonus.total directly — this just reads the ledger they already
+  // built, rather than rebuilding it a second time.
+  const typedModifierLedger = bonus.typedModifierLedger || [];
 
   const ledger = [
     ...Object.entries(bonus.components || {}).map(([label, value]) => ({
