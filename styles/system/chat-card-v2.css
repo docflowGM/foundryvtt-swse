@@ -961,6 +961,34 @@
   color: var(--swse-chat-v2-text-secondary, var(--swse-text-secondary, #8eb6da));
 }
 
+/* OOC comms — same holo-card chrome as Dialogue, deliberately quieter so it
+   doesn't compete with combat/roll events in the log. */
+.swse-dialogue-card--ooc[data-swse-chat-card-v2="true"] {
+  --rail: var(--swse-chat-v2-text-muted, var(--swse-text-muted, rgba(181, 218, 255, 0.55)));
+  opacity: 0.96;
+}
+.swse-dialogue-card--ooc[data-swse-chat-card-v2="true"]::before { opacity: 0.55; }
+.swse-dialogue-card--ooc[data-swse-chat-card-v2="true"]::after { opacity: 0.06; }
+
+.swse-dialogue-card--ooc .type-chip--ooc {
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.swse-dialogue-card--ooc .swse-ooc-body {
+  padding: 0.65rem 0.75rem 0.75rem;
+  line-height: 1.45;
+}
+
+.swse-dialogue-card--ooc .swse-ooc-body::before {
+  content: "PLAYER COMMS";
+  display: block;
+  font-size: 0.6rem;
+  letter-spacing: 0.12em;
+  opacity: 0.55;
+  margin-bottom: 0.35rem;
+}
+
 .swse-holonet-card {
   --rail: oklch(0.78 0.20 220);
   --signal: var(--swse-success, #00ff88);

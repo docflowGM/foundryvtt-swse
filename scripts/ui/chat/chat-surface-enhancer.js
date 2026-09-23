@@ -53,15 +53,32 @@ function isDialogueStyle(message) {
   return style === styles.IC || style === styles.EMOTE || style === 'ic' || style === 'emote';
 }
 
-function shouldUpgradeDialogue(message, root) {
-  if (!(root instanceof HTMLElement)) return false;
-  if (!isDialogueStyle(message)) return false;
-  if (message?.flags?.swse?.dialogueCard || message?.flags?.swse?.holo || message?.flags?.swse?.holonetCard) return false;
+function isOOCStyle(message) {
+  const style = message?.style ?? message?.type ?? message?.data?.style;
+  const styles = CONST?.CHAT_MESSAGE_STYLES ?? {};
+  return style === styles.OOC || style === 'ooc';
+}
+
+function hasPlainUpgradeableContent(root) {
   if (root.querySelector(SWSE_CHAT_SURFACE_SELECTOR)) return false;
   if (root.querySelector('.dice-roll, .dice-result, button, form, input, select, textarea')) return false;
   const content = root.querySelector('.message-content');
   if (!content || !content.textContent?.trim()) return false;
   return true;
+}
+
+function shouldUpgradeDialogue(message, root) {
+  if (!(root instanceof HTMLElement)) return false;
+  if (!isDialogueStyle(message)) return false;
+  if (message?.flags?.swse?.dialogueCard || message?.flags?.swse?.holo || message?.flags?.swse?.holonetCard) return false;
+  return hasPlainUpgradeableContent(root);
+}
+
+function shouldUpgradeOOC(message, root) {
+  if (!(root instanceof HTMLElement)) return false;
+  if (!isOOCStyle(message)) return false;
+  if (message?.flags?.swse?.dialogueCard || message?.flags?.swse?.oocCard || message?.flags?.swse?.holo || message?.flags?.swse?.holonetCard) return false;
+  return hasPlainUpgradeableContent(root);
 }
 
 function escapeHtml(value = '') {
@@ -103,6 +120,31 @@ function upgradeDialogueMessage(message, root) {
   root.dataset.swseDialogueUpgraded = 'true';
   return true;
 }
+
+function upgradeOOCMessage(message, root) {
+  if (!shouldUpgradeOOC(message, root)) return false;
+  const content = root.querySelector('.message-content');
+  const speakerName = message?.speaker?.alias || message?.alias || game.users?.get?.(message?.user?.id ?? message?.user)?.name || 'Speaker';
+  const originalHtml = content.innerHTML;
+  content.innerHTML = `
+    <div class="swse-chat-card swse-dialogue-card swse-dialogue-card--ooc"
+         data-swse-chat-surface="ooc"
+         data-swse-chat-card-v2="true">
+      <span class="corners" aria-hidden="true">
+        <span class="tl"></span><span class="tr"></span><span class="bl"></span><span class="br"></span>
+      </span>
+      <span class="headtick" aria-hidden="true"></span>
+      <div class="head swse-dialogue-head">
+        <span class="type-chip type-chip--ooc"><span class="dot" aria-hidden="true"></span>OOC</span>
+        <span class="who">${escapeHtml(speakerName)}</span>
+        ${timeLabelForMessage(message) ? `<span class="ts">${escapeHtml(timeLabelForMessage(message))}</span>` : ''}
+      </div>
+      <div class="dialogue-body swse-ooc-body">${originalHtml}</div>
+    </div>`;
+  root.dataset.swseOocUpgraded = 'true';
+  return true;
+}
+
 function ensureLegacyChrome(surface) {
   if (!(surface instanceof HTMLElement)) return;
   if (!surface.querySelector(':scope > .corners')) {
@@ -208,6 +250,7 @@ export function enhanceSWSEChatMessage(message, html) {
   if (!root) return false;
 
   try { upgradeDialogueMessage(message, root); } catch (err) { console.warn('[SWSE Chat] Dialogue card upgrade failed', err); }
+  try { upgradeOOCMessage(message, root); } catch (err) { console.warn('[SWSE Chat] OOC card upgrade failed', err); }
 
   SWSEChatEventBridge.attachMessage(message);
   SWSEChatEventBridge.bindRenderedCard(message, root);
