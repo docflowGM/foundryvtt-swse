@@ -59,11 +59,60 @@ export class ForcePointSpendCoordinator {
       return this._failure({ requested, before, after: before, reason: validation.message, domain });
     }
 
+    const { diceCount, dieSize } = await ForcePointsService.getScalingDice(actor, context);
+    const finalDieSize = ForcePointsService.upgradeDieSize(dieSize, dieUpgradeSteps);
+
+    // Roll Expression / Transformation Authority migration: "roll N, keep
+    // the highest" used to be a plain `${diceCount}${dieSize}` Roll
+    // followed by a manual Math.max(...) over the raw per-die results.
+    // Foundry's own Roll grammar already has a canonical modifier for
+    // exactly this (keep-highest, "khN") -- applyRollTransforms() compiles
+    // the semantic transform into that syntax so the SAME Roll Foundry
+    // evaluates already reflects only the kept die (diceCount === 1 keeps
+    // the historical plain-die formula unchanged, no transform applied).
+    //
+    // This construction/validation happens BEFORE the Force Point is
+    // spent (independent-review correction): applyRollTransforms() has
+    // its own fail-closed policy (an invalid transform silently falls
+    // back to the unmodified base formula), which is correct for a
+    // generic preview/composition API but would otherwise let a Force
+    // Point be spent for a mechanic that quietly degraded to a plain
+    // die. Verifying the transform actually applied BEFORE spending
+    // turns this into a real transaction: validate the mechanic, THEN
+    // pay, THEN execute -- never pay for a composition that failed.
+    const transform = diceCount > 1
+      ? [makeRollContribution({
+          kind: ROLL_CONTRIBUTION_KIND.BASE_ROLL_TRANSFORM,
+          operation: ROLL_TRANSFORM_OPERATION.KEEP_HIGHEST,
+          diceCount,
+          keep: 1,
+          sourceId: 'force-point-bonus-die',
+          sourceName: 'Force Point Bonus Die',
+          sourceType: 'forcePoint'
+        })]
+      : [];
+    const { formula: forceDice, ledger: transformLedger } = applyRollTransforms(`1${finalDieSize}`, transform);
+
+    if (transform.length > 0 && !transformLedger.some(entry => entry.applied === true)) {
+      const compileReason = transformLedger[0]?.reason ?? 'Force Point keep-highest transform failed to compile.';
+      swseLogger.error(`[ForcePointSpendCoordinator] Force Point bonus die construction failed before any spend occurred: ${compileReason}`);
+      return this._failure({
+        requested,
+        before,
+        after: before,
+        reason: `Force Point bonus die construction failed: ${compileReason}`,
+        domain
+      });
+    }
+
     const { ActorEngine } = await import("/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js");
 
     // Spend through the sole mutation authority before rolling, so the bonus
     // can never be granted without payment and can never be double-spent by
-    // a second caller reading a stale "still available" value.
+    // a second caller reading a stale "still available" value. By this
+    // point the exact formula the player is paying for is already
+    // validated -- spending can only be followed by executing that same
+    // formula, never a silently-degraded fallback.
     let spendReceipt;
     try {
       spendReceipt = await ActorEngine.spendForcePoints(actor, requested);
@@ -87,30 +136,6 @@ export class ForcePointSpendCoordinator {
         domain
       });
     }
-
-    const { diceCount, dieSize } = await ForcePointsService.getScalingDice(actor, context);
-    const finalDieSize = ForcePointsService.upgradeDieSize(dieSize, dieUpgradeSteps);
-
-    // Roll Expression / Transformation Authority migration: "roll N, keep
-    // the highest" used to be a plain `${diceCount}${dieSize}` Roll
-    // followed by a manual Math.max(...) over the raw per-die results.
-    // Foundry's own Roll grammar already has a canonical modifier for
-    // exactly this (keep-highest, "khN") -- applyRollTransforms() compiles
-    // the semantic transform into that syntax so the SAME Roll Foundry
-    // evaluates already reflects only the kept die (diceCount === 1 keeps
-    // the historical plain-die formula unchanged, no transform applied).
-    const transform = diceCount > 1
-      ? [makeRollContribution({
-          kind: ROLL_CONTRIBUTION_KIND.BASE_ROLL_TRANSFORM,
-          operation: ROLL_TRANSFORM_OPERATION.KEEP_HIGHEST,
-          diceCount,
-          keep: 1,
-          sourceId: 'force-point-bonus-die',
-          sourceName: 'Force Point Bonus Die',
-          sourceType: 'forcePoint'
-        })]
-      : [];
-    const { formula: forceDice, ledger: transformLedger } = applyRollTransforms(`1${finalDieSize}`, transform);
 
     let fpRoll;
     try {

@@ -52,8 +52,14 @@ export const ROLL_TRANSFORM_OPERATION = Object.freeze({
   DROP_LOWEST: 'dropLowest',
   EXPLODE: 'explode',
   EXPLODE_ONCE: 'explodeOnce',
-  REROLL: 'reroll',
-  REROLL_ONCE: 'rerollOnce'
+  // Foundry's documented reroll grammar has exactly two reroll modifiers:
+  // "r" (reroll once) and "rr" (reroll recursively/repeatedly while the
+  // threshold keeps matching) -- see foundryvtt.com's "Dice Modifiers"
+  // reference. There is no ambiguous bare "reroll" and no "ro" ("explode
+  // once" is "xo"; reroll's single-application form is bare "r", not
+  // "ro" -- an earlier draft of this authority conflated the two).
+  REROLL_ONCE: 'rerollOnce',
+  REROLL_RECURSIVE: 'rerollRecursive'
 });
 
 /**

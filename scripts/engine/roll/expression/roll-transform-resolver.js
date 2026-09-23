@@ -4,7 +4,7 @@
  *
  * Never invents SWSE syntax: every operation below compiles to the exact
  * Foundry dice-term modifier Foundry's own Roll grammar already defines
- * (kh/kl/dh/dl/x/xo/r/ro — see docs/audits/v2-roll-expression-transform-
+ * (kh/kl/dh/dl/x/xo/r/rr — see docs/audits/v2-roll-expression-transform-
  * authority.md's grammar section), and the resulting formula is always
  * re-validated through roll-formula-validator.js (Roll.validate()) before
  * being handed back — a transform this module "applies" is, by
@@ -98,13 +98,16 @@ function compileOperation(baseTerm, transform) {
       const threshold = transform.threshold ? String(transform.threshold) : '';
       return { ok: true, formula: `${diceCount}d${faces}xo${threshold}` };
     }
-    case ROLL_TRANSFORM_OPERATION.REROLL: {
-      if (!transform.threshold) return { ok: false, reason: 'reroll requires an explicit threshold (e.g. "1", "<=2") — no implicit SWSE default is assumed.' };
+    case ROLL_TRANSFORM_OPERATION.REROLL_ONCE: {
+      // Foundry's single-application reroll modifier is bare "r" (not
+      // "ro" -- "ro" does not exist in Foundry's documented grammar;
+      // "xo" is explode-once, a different modifier).
+      if (!transform.threshold) return { ok: false, reason: 'rerollOnce requires an explicit threshold (e.g. "1", "<=2") — no implicit SWSE default is assumed.' };
       return { ok: true, formula: `${diceCount}d${faces}r${transform.threshold}` };
     }
-    case ROLL_TRANSFORM_OPERATION.REROLL_ONCE: {
-      if (!transform.threshold) return { ok: false, reason: 'rerollOnce requires an explicit threshold (e.g. "1", "<=2") — no implicit SWSE default is assumed.' };
-      return { ok: true, formula: `${diceCount}d${faces}ro${transform.threshold}` };
+    case ROLL_TRANSFORM_OPERATION.REROLL_RECURSIVE: {
+      if (!transform.threshold) return { ok: false, reason: 'rerollRecursive requires an explicit threshold (e.g. "1", "<=2") — no implicit SWSE default is assumed.' };
+      return { ok: true, formula: `${diceCount}d${faces}rr${transform.threshold}` };
     }
     default:
       return { ok: false, reason: `Unknown roll-transform operation "${transform.operation}".` };

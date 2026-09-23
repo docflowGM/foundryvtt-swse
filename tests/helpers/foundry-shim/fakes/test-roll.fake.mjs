@@ -12,9 +12,13 @@
  * `validate(formula)` reproduces the well-established, versioned Foundry
  * DiceTerm grammar this repo's roll-expression authority targets — dice
  * terms (`NdX`), the keep/drop modifiers (`kh`/`kl`/`dh`/`dl`, count
- * optional), explode (`x`/`xo`), reroll (`r`/`ro`, with an optional
- * comparison+threshold), plain numbers, `+`/`-` combination, and a single
- * level of parenthesization — structurally, not behaviorally: it is a
+ * optional), explode (`x`/`xo`), reroll (`r` = reroll once, `rr` =
+ * reroll recursively/repeatedly — per foundryvtt.com's "Dice Modifiers"
+ * reference; there is no "ro" modifier in Foundry's documented grammar,
+ * an earlier draft of this shim invented one and has been corrected),
+ * each with an optional comparison+threshold, plain numbers, `+`/`-`
+ * combination, and a single level of parenthesization — structurally,
+ * not behaviorally: it is a
  * syntax-shape check, sufficient to prove this repo's formula-construction
  * code emits well-formed Foundry-grammar strings, but it is NOT a
  * confirmation that the live Foundry client accepts or executes them
@@ -25,7 +29,11 @@
  * Foundry's own RNG/DiceTerm behavior.
  */
 
-const DIE_MOD = String.raw`(?:kh\d*|kl\d*|dh\d*|dl\d*|xo(?:<=|>=|<|>)?\d*|x(?:<=|>=|<|>)?\d*|ro(?:<=|>=|<|>)?\d*|r(?:<=|>=|<|>)?\d*)`;
+// Alternation order matters for the global MOD_SCAN_RE below: the
+// two-letter modifiers ("xo", "rr") must be tried before their
+// single-letter prefixes ("x", "r") so a match like "rr5" is not
+// mis-split into "r" + "r5".
+const DIE_MOD = String.raw`(?:kh\d*|kl\d*|dh\d*|dl\d*|xo(?:<=|>=|<|>)?\d*|x(?:<=|>=|<|>)?\d*|rr(?:<=|>=|<|>)?\d*|r(?:<=|>=|<|>)?\d*)`;
 const DIE_TERM = String.raw`\d+d\d+(?:${DIE_MOD})*`;
 const NUM_TERM = String.raw`\d+(?:\.\d+)?`;
 const ATOM = String.raw`(?:\(\s*${DIE_TERM}\s*\)|${DIE_TERM}|${NUM_TERM})`;
@@ -105,10 +113,12 @@ export class TestRoll {
         this._explode(results, faces, { once: true });
       } else if (lower.startsWith('x')) {
         this._explode(results, faces, { once: false });
-      } else if (lower.startsWith('ro')) {
-        this._reroll(results, faces, lower.slice(2), { once: true });
+      } else if (lower.startsWith('rr')) {
+        // "rr" = reroll recursively/repeatedly while the threshold keeps matching.
+        this._reroll(results, faces, lower.slice(2), { once: false });
       } else if (lower.startsWith('r')) {
-        this._reroll(results, faces, lower.slice(1), { once: false });
+        // "r" = reroll once. There is no "ro" in Foundry's documented grammar.
+        this._reroll(results, faces, lower.slice(1), { once: true });
       }
     }
   }
@@ -144,7 +154,7 @@ export class TestRoll {
       if (threshold(r.result)) {
         r.result = Math.floor(Math.random() * faces) + 1;
         if (!once && threshold(r.result)) {
-          // Unlimited reroll (bare `r`): keep going, bounded to avoid an
+          // Recursive reroll (`rr`): keep going, bounded to avoid an
           // infinite loop in this test-only simulation.
           let guard = 0;
           while (threshold(r.result) && guard < 50) {
@@ -157,7 +167,7 @@ export class TestRoll {
   }
 
   _parseThreshold(text, faces) {
-    if (!text) return value => value === 1; // bare r/ro: no explicit threshold supplied by this repo's callers, default to "reroll a 1" for the test shim only.
+    if (!text) return value => value === 1; // bare r/rr: no explicit threshold supplied by this repo's callers, default to "reroll a 1" for the test shim only.
     const m = /^(<=|>=|<|>)?(\d+)$/.exec(text);
     if (!m) return () => false;
     const [, cmp, numText] = m;

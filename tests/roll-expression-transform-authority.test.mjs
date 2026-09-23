@@ -175,18 +175,29 @@ ok('TRANSFORM 10: keep-lowest compiles to canonical "2d20kl1"');
 }
 ok('TRANSFORM 11: exploding-die transform compiles to canonical "2d8x"');
 
-// 12. supported reroll transform (explicit threshold required — no implicit SWSE default assumed)
+// 12. supported reroll transforms (explicit threshold required — no
+// implicit SWSE default assumed). Foundry's documented reroll grammar
+// has exactly two modifiers: "r" (reroll once) and "rr" (reroll
+// recursively) — there is no "ro" (that was an earlier draft's
+// invented syntax, corrected per independent review).
 {
   const rerollNoThreshold = makeRollContribution({ kind: ROLL_CONTRIBUTION_KIND.BASE_ROLL_TRANSFORM, operation: ROLL_TRANSFORM_OPERATION.REROLL_ONCE, diceCount: 1, sourceName: 'Reroll Talent' });
   const failed = applyRollTransforms('1d20', [rerollNoThreshold]);
   assert.equal(failed.formula, '1d20', 'reroll without an explicit threshold must fail closed, never assume a default');
   assert.equal(failed.ledger[0].applied, false);
 
-  const rerollWithThreshold = makeRollContribution({ kind: ROLL_CONTRIBUTION_KIND.BASE_ROLL_TRANSFORM, operation: ROLL_TRANSFORM_OPERATION.REROLL_ONCE, diceCount: 1, threshold: '1', sourceName: 'Reroll Talent' });
-  const { formula } = applyRollTransforms('1d20', [rerollWithThreshold]);
-  assert.equal(formula, '1d20ro1');
+  const rerollOnceWithThreshold = makeRollContribution({ kind: ROLL_CONTRIBUTION_KIND.BASE_ROLL_TRANSFORM, operation: ROLL_TRANSFORM_OPERATION.REROLL_ONCE, diceCount: 1, threshold: '1', sourceName: 'Reroll Talent' });
+  const { formula: onceFormula } = applyRollTransforms('1d20', [rerollOnceWithThreshold]);
+  assert.equal(onceFormula, '1d20r1', 'reroll-once compiles to Foundry\'s documented "r" modifier, not an invented "ro"');
+  assert.equal(isValidRollFormula(onceFormula), true);
+
+  const rerollRecursiveWithThreshold = makeRollContribution({ kind: ROLL_CONTRIBUTION_KIND.BASE_ROLL_TRANSFORM, operation: ROLL_TRANSFORM_OPERATION.REROLL_RECURSIVE, diceCount: 1, threshold: '1', sourceName: 'Reroll Talent' });
+  const { formula: recursiveFormula } = applyRollTransforms('1d20', [rerollRecursiveWithThreshold]);
+  assert.equal(recursiveFormula, '1d20rr1', 'reroll-recursive compiles to Foundry\'s documented "rr" modifier');
+  assert.equal(isValidRollFormula(recursiveFormula), true);
+  assert.equal(isValidRollFormula('1d20ro1'), false, '"ro" is not a real Foundry modifier and must never validate');
 }
-ok('TRANSFORM 12: reroll-once transform compiles to canonical "1d20ro1" (explicit threshold required)');
+ok('TRANSFORM 12: reroll-once ("r") and reroll-recursive ("rr") compile to Foundry\'s actual documented modifiers (explicit threshold required, no invented "ro")');
 
 // 13. duplicate identical transform handling
 {
@@ -328,8 +339,10 @@ ok('DAMAGE 23: a stock-droid published formula string validates as one FORMULA_T
 // Math.max(...) post-processing enforced, now expressed as canonical
 // Foundry khN syntax that Roll itself resolves, not JS
 // post-processing. This is a direct unit proof of the migrated
-// composition logic; it does not re-exercise ActorEngine/ForcePointsService
-// spend bookkeeping (unchanged, out of this phase's scope).
+// composition logic; ForcePointsService's own scaling-dice rules are
+// unchanged, out of this phase's scope. The transaction-ordering fix
+// (transform validated BEFORE the Force Point is spent) is proven
+// separately immediately below, against the real coordinator source.
 {
   const diceCountOne = makeRollContribution({ kind: ROLL_CONTRIBUTION_KIND.BASE_ROLL_TRANSFORM, operation: ROLL_TRANSFORM_OPERATION.KEEP_HIGHEST, diceCount: 1, keep: 1, sourceName: 'Force Point Bonus Die' });
   const single = applyRollTransforms('1d6', []); // diceCount === 1 -> coordinator passes NO transform at all
@@ -349,6 +362,57 @@ ok('DAMAGE 23: a stock-droid published formula string validates as one FORMULA_T
   }
 }
 ok('FORCE POINT 25: keep-highest transform construction matches ForcePointSpendCoordinator.rollAndSpend()\'s migrated logic for every real diceCount, and Roll-resolved totals always equal the max roll');
+
+// Force Point transaction-ordering proof (independent-review correction):
+// applyRollTransforms() has its own fail-closed policy for a GENERIC
+// caller -- an invalid transform silently degrades to the unmodified
+// base formula. That is correct for a preview/composition API, but
+// ForcePointSpendCoordinator.rollAndSpend() must never spend a Force
+// Point for a keep-highest mechanic that failed to compile: the player
+// would pay for "roll N keep highest" and receive a plain, unmarked
+// single die instead. The coordinator now constructs and validates the
+// transform BEFORE calling ActorEngine.spendForcePoints() at all, and
+// returns a failure receipt (no spend) if it didn't apply.
+{
+  const fs = await import('node:fs');
+  const coordinatorSource = fs.readFileSync(new URL('../scripts/engine/force/force-point-spend-coordinator.js', import.meta.url), 'utf8');
+
+  // 1. Structural proof: the transform-failure gate appears BEFORE the
+  // spend call in source order, not after.
+  const gateIndex = coordinatorSource.indexOf('transform.length > 0 && !transformLedger.some');
+  const spendIndex = coordinatorSource.indexOf('ActorEngine.spendForcePoints(actor, requested)');
+  assert.ok(gateIndex > -1, 'the transform-success gate must exist in the coordinator');
+  assert.ok(spendIndex > -1, 'the spend call must exist in the coordinator');
+  assert.ok(gateIndex < spendIndex, 'the transform-success gate must appear BEFORE the Force Point spend call, never after');
+
+  // 2. Also prove getScalingDice() (which determines diceCount/dieSize,
+  // and therefore whether a transform is even attempted) is called
+  // before the spend, not after -- the whole formula must be known and
+  // validated prior to payment.
+  const scalingDiceIndex = coordinatorSource.indexOf('ForcePointsService.getScalingDice(actor, context)');
+  assert.ok(scalingDiceIndex > -1 && scalingDiceIndex < spendIndex, 'dice-scaling/transform construction must happen before the spend, not after');
+
+  // 3. Logic proof: the exact gate condition production uses
+  // (`transform.length > 0 && !transformLedger.some(entry => entry.applied === true)`)
+  // correctly identifies a real compile failure from applyRollTransforms()
+  // -- proven against an actually-invalid transform (keep >= diceCount,
+  // the same guard compileOperation() enforces for every keep/drop
+  // operation), not a contrived shape.
+  const invalidTransform = [makeRollContribution({ kind: ROLL_CONTRIBUTION_KIND.BASE_ROLL_TRANSFORM, operation: ROLL_TRANSFORM_OPERATION.KEEP_HIGHEST, diceCount: 2, keep: 2, sourceName: 'Force Point Bonus Die' })];
+  const { ledger: failedLedger } = applyRollTransforms('1d6', invalidTransform);
+  const gateWouldBlockSpend = invalidTransform.length > 0 && !failedLedger.some(entry => entry.applied === true);
+  assert.equal(gateWouldBlockSpend, true, 'the production gate condition must correctly detect a real compile failure and block the spend');
+
+  const validTransform = [makeRollContribution({ kind: ROLL_CONTRIBUTION_KIND.BASE_ROLL_TRANSFORM, operation: ROLL_TRANSFORM_OPERATION.KEEP_HIGHEST, diceCount: 2, keep: 1, sourceName: 'Force Point Bonus Die' })];
+  const { ledger: okLedger } = applyRollTransforms('1d6', validTransform);
+  const gateWouldAllowSpend = !(validTransform.length > 0 && !okLedger.some(entry => entry.applied === true));
+  assert.equal(gateWouldAllowSpend, true, 'the production gate condition must never block a spend for a transform that actually compiled');
+
+  const noTransform = [];
+  const gateForNoTransform = noTransform.length > 0 && false;
+  assert.equal(gateForNoTransform, false, 'diceCount === 1 (no transform attempted) must never be blocked by this gate');
+}
+ok('FORCE POINT: transform-validation gate runs before the spend, both structurally (source order) and logically (a real compile failure blocks spend, a real success never does)');
 
 // 26. existing reroll mechanics are not broken (species reroll / houserule
 // exploding-critical paths were not touched by this phase — structural

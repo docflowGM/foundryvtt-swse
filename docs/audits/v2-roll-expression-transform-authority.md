@@ -55,7 +55,7 @@ actual producer/consumer:
 | 9 | `damage-talent-contributions.js#resolveTalentDamageContributions()` (Sneak Attack) | `"${count}d6"` | FORMULA_TERM | **Adapter added this phase** (`resolveTalentDamageFormulaTerms()`) — see §6; core logic untouched |
 | 10 | `damage-item-dice-contributions.js` (Force Item / Inquisition) | dice-term strings | FORMULA_TERM | Untouched, deferred (already correct, no live bug) |
 | 11 | `resolveDamageComposition()`/`buildDamageFormula()` (Damage SSOT) | `dice.base`, `dice.dieStepIncreases`, `dice.extraWeaponDice`, `dice.otherDiceTerms`, critical multiplier wrap | Mixed: base-dice-shape mutation (swap `NdX` → `NdY`, a structural rewrite of the base term, not a Roll-grammar modifier) + FORMULA_TERM (extra dice) + a multiplicative critical wrap | **Not reopened this phase** — Damage SSOT is certified and explicitly off-limits to redesign |
-| 12 | `species-reroll-handler.js` | re-invokes `RollEngine.safeRoll(formula)` a second time with the **same** formula, offers the player the better of two independent full rolls | **RESULT_TRANSFORM / SPECIAL_EXECUTION** — a whole-roll re-execution, not a per-die Foundry `r`/`ro` modifier | Untouched, confirmed still live (§9 proof 26) |
+| 12 | `species-reroll-handler.js` | re-invokes `RollEngine.safeRoll(formula)` a second time with the **same** formula, offers the player the better of two independent full rolls | **RESULT_TRANSFORM / SPECIAL_EXECUTION** — a whole-roll re-execution, not a per-die Foundry `r`/`rr` modifier | Untouched, confirmed still live (§9 proof 26) |
 | 13 | `houserule-mechanics.js#applyCriticalDamage()` `'exploding'` mode | `baseRoll.formula.replace(/d(\d+)/g, 'd$1x')` | **BASE_ROLL_TRANSFORM, already canonical Foundry `x` syntax, already live** | Untouched, confirmed still live (§9 proof 26). **Flagged, not fixed** (out of this phase's scope — a house-rule bug, not a roll-expression-authority gap): this branch chains `.evaluate({async:true})` onto the already-awaited return of `rollEngine.safeRoll(...)`, which resolves to a `Roll` (not a thenable with `.evaluate`) — a likely latent defect in an optional, currently-unwired house rule. Documented for a future house-rules correction round. |
 | 14 | `houserule-mechanics.js#applyCriticalDamage()` `'maxplus'` mode | `await baseRoll.reroll()` — Foundry's own `Roll.prototype.reroll()` API | RESULT_TRANSFORM, real Foundry API, already live | Untouched |
 | 15 | `RIDER_EFFECT` / `FORCE_POINT_DIE_STEP` (attack-option-adapter/attack-primitives system) | rule-type records in `feats.db` | **DEAD/UNWIRED** | Already confirmed by `docs/audits/v2-damage-modifier-authority-audit-correction-1.md` §1 — cross-referenced, not re-audited |
@@ -88,13 +88,16 @@ What **is** confirmed, from two independent angles:
    live, unmodified by this phase, and are the strongest available
    proof that this project's actual Foundry environment accepts this
    grammar — not documentation, a working production code path.
-2. **Foundry's own public, versioned Roll/DiceTerm API**, stable across
-   the version range this project targets: `khN`/`klN` (keep
-   highest/lowest, count optional), `dhN`/`dlN` (drop highest/lowest,
-   count optional), `x`/`xo` (explode / explode once, optional
-   comparison+threshold), `r`/`ro` (reroll / reroll once, comparison+
-   threshold), and standard `+`/`-` arithmetic combination with
-   parenthetical grouping.
+2. **Foundry's own public, versioned Roll/DiceTerm API** (per
+   foundryvtt.com's "Dice Modifiers" reference), stable across the
+   version range this project targets: `khN`/`klN` (keep highest/lowest,
+   count optional), `dhN`/`dlN` (drop highest/lowest, count optional),
+   `x`/`xo` (explode / explode once, optional comparison+threshold),
+   `r`/`rr` (reroll once / reroll recursively — **not** `r`/`ro`; there
+   is no `ro` modifier in Foundry's documented grammar, corrected per
+   independent review of an earlier draft that invented one), each with
+   an optional comparison+threshold, and standard `+`/`-` arithmetic
+   combination with parenthetical grouping.
 
 `roll-formula-validator.js` delegates to `Roll.validate()` for all of
 this — it does not hardcode or reimplement the grammar. This document's
@@ -147,7 +150,9 @@ All under `scripts/engine/roll/expression/`:
   (`staticModifier` / `formulaTerm` / `baseRollTransform` /
   `resultTransform`), `ROLL_TRANSFORM_OPERATION` (`keepHighest` /
   `keepLowest` / `dropHighest` / `dropLowest` / `explode` /
-  `explodeOnce` / `reroll` / `rerollOnce`), `makeRollContribution()`,
+  `explodeOnce` / `rerollOnce` / `rerollRecursive` — matching Foundry's
+  actual `r`/`rr` grammar, not an earlier draft's invented `ro`),
+  `makeRollContribution()`,
   `makeLedgerEntry()`. Deliberately NOT added to `ModifierTypes.js` —
   that module's `Modifier.value: number` contract stays exactly as
   strict as it already was (proven, §9 STATIC 3).
@@ -327,6 +332,65 @@ transformer.
 
 ## 13. Validation
 
-`tests/roll-expression-transform-authority.test.mjs` (28/28) plus the
-full existing certified suite set re-run clean — see the ledger entry
-and STOP/REPORT for exact counts.
+`tests/roll-expression-transform-authority.test.mjs` (28/28, later
+29/29 after §14's correction round — see below) plus the full existing
+certified suite set re-run clean — see the ledger entry and STOP/REPORT
+for exact counts.
+
+## 14. Correction Round — Reroll Grammar and Force Point Transaction Ordering
+
+An independent review of the pushed head held Roll Transform Authority
+certification on two blockers:
+
+**Blocker 1 — invented reroll syntax.** §3's grammar claim originally
+listed `r`/`ro` (reroll / reroll once). Foundry's actual documented
+reroll grammar (foundryvtt.com's "Dice Modifiers" reference) has exactly
+two reroll modifiers: `r` (reroll once) and `rr` (reroll recursively/
+repeatedly) — `ro` does not exist. The defect was self-concealing: the
+test-only `TestRoll` shim (§3, §9's own honesty note) had independently
+invented the same wrong `ro` syntax, so `isValidRollFormula('1d20ro1')`
+returned `true` and the test suite's "reroll-once proof passes" claim
+was validating against a grammar Foundry does not use — exactly the
+risk a fake dice parser creates, even when production correctly
+delegates to `Roll.validate()`.
+
+**Fixed**: `ROLL_TRANSFORM_OPERATION` now defines `REROLL_ONCE` (→ `r`)
+and `REROLL_RECURSIVE` (→ `rr`); the ambiguous bare `REROLL` operation
+was removed. `TestRoll` was corrected to accept `r`/`rr` and explicitly
+reject `ro` — proven directly (`isValidRollFormula('1d20ro1') === false`).
+Every `r`/`ro` reference in this document and the ledger was corrected
+to `r`/`rr`. Production's `roll-formula-validator.js` itself needed no
+change — it was never a second parser, only the test fake's grammar and
+the semantic operation vocabulary it validated needed correcting.
+
+**Blocker 2 — a Force Point could be spent for a transform that failed
+to compile.** `ForcePointSpendCoordinator.rollAndSpend()` spent the
+Force Point before constructing/validating the keep-highest transform.
+`applyRollTransforms()`'s fail-closed policy — correct for a generic
+preview/composition API — silently falls back to the unmodified base
+formula on a compile failure; the coordinator never inspected whether
+its own transform actually applied. A player could theoretically pay
+for `3d6kh1` and receive a plain, un-marked `1d6` with no refund, which
+does not satisfy this authority's own "a malformed formula contribution
+must fail closed... never silently corrupt the transaction" standard.
+
+**Fixed**: `getScalingDice()` and the transform construction/validation
+now run BEFORE `ActorEngine.spendForcePoints()` — a transform that
+doesn't apply returns a failure receipt with no spend at all, turning
+the flow into a real transaction: validate the mechanic → pay → execute
+→ refund only on execution failure (unchanged). Proven structurally
+(the validation gate appears before the spend call in source order) and
+logically (the exact gate condition blocks a real `keep >= diceCount`
+compile failure and never blocks a real success).
+
+**Scope discipline maintained**: Attack Bonus, Damage SSOT, ModifierEngine,
+the FORMULA_TERM architecture, Sneak Attack, and the OOC chat work were
+not reopened for this correction, per the review's own explicit scoping.
+
+**Validation**: `tests/roll-expression-transform-authority.test.mjs`
+grown to 29/29 (corrected reroll proof, added the Force Point
+transaction-ordering proof); full existing certified suite set
+(`force-point-transaction-integrity.test.mjs`,
+`phase4-stacked-integration.test.mjs`, `damage-modifier-ssot.test.mjs`
+35/35, `stock-droid-damage-math.test.mjs`, `attack-bonus-math-integrity.test.mjs`,
+`attack-damage-option-context-transport.test.mjs` 18/18) re-run clean.

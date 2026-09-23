@@ -1647,7 +1647,7 @@ roll-expression surface was previously blurring under one loosely-typed
 - **ROLL TRANSFORM** — changes how the base dice are rolled
   (keep-highest/lowest, drop, explode, reroll), always compiled to
   Foundry's own canonical dice-term modifier syntax (`khN`/`klN`/`dhN`/
-  `dlN`/`x`/`xo`/`r`/`ro`) — never a competing SWSE syntax, never a
+  `dlN`/`x`/`xo`/`r`/`rr`) — never a competing SWSE syntax, never a
   second dice parser.
 
 **Phase A audit** (full inventory in the companion doc's §2 table)
@@ -1750,3 +1750,54 @@ suite 242/242 (5 pre-existing documented exclusions); full syntax sweep
 2529/2529; `tools/check-combat-math-ssot.mjs --strict`,
 `tools/verify-feats-pack-source.mjs`, `validate-data.js`,
 `validate-partials.mjs` all clean.
+
+### Correction round (independent review of `e0383dd` held two blockers on the reroll grammar and the Force Point transaction)
+
+An independent review of the pushed infrastructure accepted the core
+architecture (contribution-type separation, `Modifier.value` staying
+numeric-only, `FORMULA_TERM` authority, production `Roll.validate()`
+delegation, the Sneak Attack adapter, the Force Point `kh1` concept, the
+no-early-randomness design) but held **Roll Transform Authority
+certification** on two blockers, both fixed in this round:
+
+1. **Invented reroll syntax.** The original `ROLL_TRANSFORM_OPERATION`
+   enum defined `REROLL`/`REROLL_ONCE`, compiled to `r`/`ro`. Foundry's
+   actual documented reroll grammar has exactly two modifiers: `r`
+   (reroll once) and `rr` (reroll recursively/repeatedly) — there is no
+   `ro` (that string only ever validated because the test-only `TestRoll`
+   shim had independently invented the same wrong syntax, so CI stayed
+   green against a grammar Foundry does not use). **Fixed**: the enum
+   now defines `REROLL_ONCE` (→ `r`) and `REROLL_RECURSIVE` (→ `rr`);
+   the ambiguous bare `REROLL` operation was removed entirely; `TestRoll`
+   was corrected to accept `r`/`rr` and reject `ro`
+   (`isValidRollFormula('1d20ro1') === false`, proven directly in the
+   test suite); every doc reference to `r`/`ro` was corrected to `r`/`rr`.
+   Production's `roll-formula-validator.js` was never the problem (it
+   already delegated to the real `Roll.validate()` with no competing
+   parser) — only the test fake's invented grammar and the semantic
+   operation names it was validating against needed correcting.
+2. **A Force Point could be spent even if its transform failed to
+   compile.** `ForcePointSpendCoordinator.rollAndSpend()` spent the
+   Force Point, THEN constructed and validated the keep-highest
+   transform; `applyRollTransforms()`'s own fail-closed policy (correct
+   for a generic preview/composition API) would silently fall back to
+   the unmodified base formula on a compile failure, which the
+   coordinator never inspected — a player could theoretically pay for
+   `3d6kh1` and receive a plain `1d6` with no refund. **Fixed**:
+   `getScalingDice()` and the transform construction/validation now
+   happen BEFORE `ActorEngine.spendForcePoints()` is ever called; a
+   transform that didn't apply returns a failure receipt (no spend, no
+   Force Point lost) instead of silently degrading after payment. The
+   existing roll-execution-failure refund path is unchanged. Proven both
+   structurally (the validation gate appears before the spend call in
+   source order) and logically (the exact production gate condition
+   correctly blocks a real compile failure — `keep >= diceCount` — and
+   never blocks a real success).
+
+**Validation (this round)**: `tests/roll-expression-transform-authority.test.mjs`
+grown to 29/29 (added the transaction-ordering proof, corrected the
+reroll-transform proof); full existing certified suite set re-run clean
+again (`force-point-transaction-integrity.test.mjs`,
+`phase4-stacked-integration.test.mjs`, `damage-modifier-ssot.test.mjs`
+35/35, `stock-droid-damage-math.test.mjs`, `attack-bonus-math-integrity.test.mjs`,
+`attack-damage-option-context-transport.test.mjs` 18/18).
