@@ -41,8 +41,22 @@ function resolveTargetActor(context) {
 // one means this option can never apply here at all, matching
 // CombatOptionResolver.optionAllowedForWeapon()'s unconditional (never
 // probed) gates. Used to decide 'hidden' vs 'disabled' below (Part F).
+//
+// V2 combat runtime convergence, Phase 3 (136-record reconciliation,
+// second correction round): 'weaponCapability' (currently only used for
+// requiresAutofire) does NOT belong here. The certified
+// CombatOptionResolver explicitly probes autofire as a toggleable context
+// gate -- ATTACK_OPTION_PROBE_CONTEXT_OVERRIDES sets `autofire: true`
+// alongside `aim`/`charge`, and unmetToggleableReasons() reports "Requires
+// an autofire-capable weapon or autofire mode" (a 'disabled' reason, the
+// same bucket as unmet Aim/Charge) rather than excluding the option
+// entirely. Treating it as structural made every requiresAutofire record
+// permanently 'hidden' whenever autofire wasn't already satisfied, instead
+// of the reachable 'disabled' state legacy reports -- caught by the
+// 136-record reconciliation suite (Flood of Fire, Autofire Assault) before
+// this reached production presentation.
 const STRUCTURAL_PREDICATE_TYPES = new Set([
-  'attackType', 'weaponGroup', 'weaponCapability', 'weaponTextMatch', 'unarmed',
+  'attackType', 'weaponGroup', 'weaponTextMatch', 'unarmed',
   'vehicleWeapon', 'damageType', 'areaAttack', 'areaAttackFlag'
 ]);
 

@@ -896,4 +896,23 @@ ok('30: round 8 correction #5 -- causal blocker propagation replaces flat "any u
 }
 ok("31: requiresAttackType: 'any' is a real no-restriction value (matching the certified resolver's own skip), not a literal value the getAttackType() vocabulary could ever equal");
 
+// V2 combat runtime convergence, Phase 3 (136-record reconciliation,
+// second correction round): requiresAutofire (predicate type
+// 'weaponCapability') was classified STRUCTURAL, so an unmet autofire gate
+// alone caused permanent 'hidden' -- but CombatOptionResolver explicitly
+// treats autofire as a PROBEABLE, toggleable context gate (same bucket as
+// Aim/Charge: ATTACK_OPTION_PROBE_CONTEXT_OVERRIDES sets `autofire: true`;
+// unmetToggleableReasons() reports "Requires an autofire-capable weapon or
+// autofire mode" as a 'disabled' reason, never excluding the option
+// entirely). Caught by the 136-record reconciliation suite (Flood of Fire,
+// Autofire Assault) before this reached production presentation.
+{
+  const def = syntheticDefinition({ all: [{ type: 'weaponCapability', value: 'autofire', sourceField: 'requiresAutofire' }] });
+  const unmet = ActionAvailabilityEngine.evaluate(def, { weapon: rangedWeapon() });
+  assert.equal(unmet.state, 'disabled', 'an unmet requiresAutofire gate alone must be reachable (disabled), not permanently hidden, matching the certified resolver\'s own probeable treatment');
+  const met = ActionAvailabilityEngine.evaluate(def, { weapon: rangedWeapon(), autofire: true });
+  assert.equal(met.state, 'available', 'requiresAutofire is satisfied the same way the certified resolver checks it -- context.autofire === true');
+}
+ok('32: requiresAutofire (weaponCapability) is a toggleable/probeable gate, not structural -- an unmet autofire alone must be disabled, never hidden');
+
 console.log('action-authority-groundwork.test.mjs: all assertions passed');

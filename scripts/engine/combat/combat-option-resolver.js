@@ -38,7 +38,17 @@ const DEFAULT_ATTACK_OPTIONS = {
 
 function scalarText(value) { if (value == null) return ""; if (["string", "number", "boolean"].includes(typeof value)) return String(value); if (typeof value === "object") { for (const key of ["value", "id", "key", "slug", "name", "label", "type"]) if (value[key] != null && value[key] !== value) return scalarText(value[key]); } return ""; }
 function lowerScalar(value) { return scalarText(value).trim().toLowerCase(); }
-function camelize(value) { const key = normalizeKey(value); return key.replace(/-([a-z0-9])/g, (_m, c) => c.toUpperCase()); }
+// Exported (V2 combat runtime convergence, Phase 3, Blocker 2): the
+// presentation adapter must compute the SAME camelCase option id this
+// resolver's own hydrateOption() uses for combatOptions storage keys and
+// form field names -- ActionDefinition.id (action-definition-normalizer.js)
+// deliberately uses the neutral, unrelated kebab-case normalizeKey() for
+// its OWN registry identity instead, so the two ids are NOT
+// interchangeable for a real dialog: reusing this exact function (rather
+// than re-deriving camelCase independently) is the only way the adapter's
+// combatOptions key can actually round-trip with what this dialog reads
+// and writes today.
+export function camelize(value) { const key = normalizeKey(value); return key.replace(/-([a-z0-9])/g, (_m, c) => c.toUpperCase()); }
 // Math Integrity Freeze, Attack Bonus round 8 correction #1 (Blocker 1):
 // this used to accept ANY abilityMeta.rules entry carrying an `option` or
 // `id` field, regardless of its own declared `type` -- real shipped packs
@@ -85,7 +95,11 @@ export function extractAttackOptionRules(item) {
 }
 function getFeatRules(item) { return extractAttackOptionRules(item); }
 function asArray(value) { if (value === undefined || value === null) return []; return Array.isArray(value) ? value : [value]; }
-function actorBAB(actor) { const value = Number(SchemaAdapters.getBAB(actor) ?? actor?.system?.attributes?.bab?.value ?? actor?.system?.bab ?? 0); return Number.isFinite(value) ? Math.max(0, value) : 0; }
+// Exported (V2 combat runtime convergence, Phase 3, Blocker 2): the
+// presentation adapter needs this same BAB read to reproduce
+// hydrateOption()'s slider clamp (min(bab, rule.max)) without maintaining
+// a second, independently-drifting copy of it.
+export function actorBAB(actor) { const value = Number(SchemaAdapters.getBAB(actor) ?? actor?.system?.attributes?.bab?.value ?? actor?.system?.bab ?? 0); return Number.isFinite(value) ? Math.max(0, value) : 0; }
 function actorLevel(actor) { const candidates = [actor?.system?.details?.level, actor?.system?.level, actor?.system?.attributes?.level, actor?.system?.progression?.level, actor?.system?.progression?.characterLevel]; for (const candidate of candidates) { const value = Number(candidate); if (Number.isFinite(value) && value > 0) return value; } return 1; }
 function actorAbilityMod(actor, ability) { const key = String(ability || '').toLowerCase().slice(0, 3); if (!key) return 0; const numeric = Number(SchemaAdapters.getAbilityMod?.(actor, key) ?? 0); return Number.isFinite(numeric) ? numeric : 0; }
 function getRangePenaltyAdjustment(option, context = {}) { if (option.rangePenaltyAdjustment !== "oneStepCloser") return 0; const band = getRangeBand(context); if (band === "short") return 2; if (band === "medium") return 3; if (band === "long") return 5; return 0; }

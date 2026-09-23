@@ -147,8 +147,38 @@ const UNSUPPORTED_FIELDS = ['requiresSwiftActions'];
 
 function hasField(rule, fields) { return fields.some((f) => rule[f] !== undefined && rule[f] !== null && rule[f] !== false); }
 
+// Independent review (second correction round): pin these divergence
+// buckets by exact raw-rule identity, not merely by count -- a count-only
+// assertion cannot tell "record X moved out, record Y moved in" from "no
+// change" if the pack ever shifts. Computed once, directly from
+// packs/feats.db + packs/talents.db, on 2026-09-23 against branch head
+// c2576ad. If this assertion ever fails because the pack legitimately
+// changed, the fix is to consciously update these three sets after
+// re-verifying the new/changed record's classification, never to loosen
+// the assertion back to a count.
+const EXPECTED_EXTERNAL_WORKFLOW_IDS = new Set([
+  'opportunisticShooter', 'improvedGrapple', 'knifeTrick', 'hijkataCounterattack',
+  'halt', 'opportunisticTrickery', 'improvedOpportunisticTrickery', 'improvedDisarm',
+  'expertGrappler', 'opportunity-fire-rifle'
+]);
+const EXPECTED_UNSUPPORTED_IDS = new Set(['overwhelmingAttack', 'criticalStrike', 'mightySwing']);
+const EXPECTED_RANGE_OR_FLAG_PROBE_GAP_IDS = new Set([
+  'zeroRange', 'justiceSeeker', 'separatistMilitaryTraining', 'anointedHunterThrownMove',
+  'floodOfFire', 'crossfire', 'deadlySniper', 'trenchWarrior', 'aimingAccuracy',
+  'sportHunterSlugthrowerPistolPointBlank', 'steadyingPosition', 'advantageousAttack',
+  'autofireAssault', 'hobblingStrike', 'momentumStrike', 'pistoleerHoldOut',
+  'bowcasterMarksman', 'primeShot', 'cornered', 'artilleryShot',
+  'weapon-shift-ranged-as-melee', 'hailfire-pistol-autofire', 'starship-raider',
+  'strength-of-the-empire-active', 'praetoria-vonil-mobile-two-handed-lightsaber',
+  'disgrace-ambush-target-not-acted', 'silent-takedown', 'gun-club-ranged-as-melee',
+  'twin-shot', 'republic-commando-ambush', 'rifle-master-short-range',
+  'shellshock-area-unaware', 'invisible-attacker'
+]);
+
 const mismatches = [];
-const documentedDivergences = { externalWorkflow: 0, unsupported: 0 };
+const actualExternalWorkflowIds = new Set();
+const actualUnsupportedIds = new Set();
+const actualRangeOrFlagProbeGapIds = new Set();
 let agreedAvailable = 0;
 let agreedHiddenOrHiddenLike = 0;
 let agreedDisabled = 0;
@@ -156,7 +186,8 @@ let agreedDisabled = 0;
 for (const { itemType, sourceItem, rule } of records) {
   const label = `${itemType}:${sourceItem.name} (${rule.label ?? rule.option ?? rule.id ?? 'unnamed'})`;
   const definition = normalizeAttackOptionRule(sourceItem, rule);
-  const legacyId = camelize(rule.option ?? rule.id ?? rule.key ?? rule.name);
+  const rawId = rule.option ?? rule.id ?? rule.key ?? rule.name;
+  const legacyId = camelize(rawId);
 
   const weapon = friendlyWeapon(rule);
   const actorItems = [sourceItem];
@@ -184,10 +215,10 @@ for (const { itemType, sourceItem, rule } of records) {
       // engine) gate. Assert the EXPECTED shape rather than skip silently.
       if (hasField(rule, EXTERNAL_WORKFLOW_FIELDS)) {
         assert.equal(newResult.state, 'external-workflow', `${label}: expected external-workflow state for a requiresManeuver/requiresOpportunityAttack record`);
-        documentedDivergences.externalWorkflow += 1;
+        actualExternalWorkflowIds.add(rawId);
       } else {
         assert.equal(newResult.state, 'unsupported', `${label}: expected unsupported state for a requiresSwiftActions record`);
-        documentedDivergences.unsupported += 1;
+        actualUnsupportedIds.add(rawId);
       }
       continue;
     }
@@ -258,10 +289,18 @@ for (const { itemType, sourceItem, rule } of records) {
       // as a documented improvement, not forced to false-agree.
       const hasUnprobedGate = Boolean(rule.requiresRangeBand) || Boolean(rule.requiresContextFlags);
       if (hasUnprobedGate && legacyState === 'not-in-list') {
-        documentedDivergences.legacyRangeOrFlagProbeGap = (documentedDivergences.legacyRangeOrFlagProbeGap || 0) + 1;
+        actualRangeOrFlagProbeGapIds.add(rawId);
       } else if (legacyState !== 'disabled') {
         mismatches.push(`${label} [pass B]: new engine says "disabled" but legacy shows it as "${legacyState}" with toggleable gates unmet`);
       }
+    } else {
+      // Anything other than 'available'/'passive' (structural-only branch,
+      // already handled above) or 'disabled' here is unexpected and must
+      // not be silently ignored -- this exact gap (an uncounted, unasserted
+      // 'hidden' result falling through this else-less chain) is how the
+      // weaponCapability/autofire structural misclassification bug
+      // initially went undetected by this same test.
+      mismatches.push(`${label} [pass B]: new engine unexpectedly says "${newResult.state}" (expected 'disabled' or 'available'/'passive') with toggleable gates unmet in a cold context`);
     }
   }
 
@@ -307,4 +346,17 @@ if (mismatches.length) {
 
 assert.equal(mismatches.length, 0, `${mismatches.length} of ${records.length} records disagree between CombatOptionResolver and ActionAvailabilityEngine presentation (see console output above) -- Action Authority must not replace live presentation until this is zero`);
 
-console.log(`action-authority-136-record-reconciliation: ${records.length} records reconciled, 0 mismatches (${agreedAvailable} agreed-available, ${agreedHiddenOrHiddenLike} agreed-hidden, ${agreedDisabled} agreed-disabled, ${documentedDivergences.externalWorkflow} documented external-workflow divergences, ${documentedDivergences.unsupported} documented unsupported divergences)`);
+function assertExactIdSet(actual, expected, label) {
+  const missing = [...expected].filter((id) => !actual.has(id));
+  const extra = [...actual].filter((id) => !expected.has(id));
+  assert.deepEqual(
+    { missing, extra },
+    { missing: [], extra: [] },
+    `${label}: actual ID set must exactly match the pinned expected set (missing: [${missing.join(', ')}], unexpected extra: [${extra.join(', ')}]) -- update the pinned set in this test only after consciously re-verifying each changed record's classification`
+  );
+}
+assertExactIdSet(actualExternalWorkflowIds, EXPECTED_EXTERNAL_WORKFLOW_IDS, 'external-workflow divergence');
+assertExactIdSet(actualUnsupportedIds, EXPECTED_UNSUPPORTED_IDS, 'unsupported divergence');
+assertExactIdSet(actualRangeOrFlagProbeGapIds, EXPECTED_RANGE_OR_FLAG_PROBE_GAP_IDS, 'legacy rangeBand/contextFlags probe-gap divergence');
+
+console.log(`action-authority-136-record-reconciliation: ${records.length} records reconciled, 0 mismatches (${agreedAvailable} agreed-available, ${agreedHiddenOrHiddenLike} agreed-hidden, ${agreedDisabled} agreed-disabled, ${actualExternalWorkflowIds.size} pinned external-workflow divergences, ${actualUnsupportedIds.size} pinned unsupported divergences, ${actualRangeOrFlagProbeGapIds.size} pinned legacy probe-gap divergences)`);
