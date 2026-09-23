@@ -1,0 +1,39 @@
+{
+  "generated": "2026-09-22T23:49:47.156Z",
+  "total": 136,
+  "feats": 88,
+  "talents": 48,
+  "failures": 0,
+  "gateCounts": {
+    "normalized": 195,
+    "external-workflow": 10,
+    "unsupported": 3
+  },
+  "perFieldCounts": {
+    "requiresAttackType": 68,
+    "requiresAutofire": 7,
+    "requiresCharge": 8,
+    "requiresWeaponGroups": 15,
+    "requiresRangeBand": 4,
+    "requiresUnarmed": 14,
+    "requiresTargetFlatFooted": 2,
+    "requiresTargetDeniedDexBonus": 2,
+    "requiresContextFlags": 29,
+    "requiresTargetType": 3,
+    "requiresOpportunityAttack": 7,
+    "requiresWeaponText": 12,
+    "requiresManeuver": 3,
+    "requiresOption": 5,
+    "excludesAreaAttack": 4,
+    "excludesDamageType": 1,
+    "requiresDamageType": 2,
+    "requiresAim": 7,
+    "requiresSwiftActions": 3,
+    "excludesWeaponGroups": 1,
+    "requiresAreaAttack": 4,
+    "requiresFeatSelectedChoiceMatch": 3,
+    "excludesOptions": 1,
+    "requiresVehicleWeapon": 2,
+    "requiresTargetFeat": 1
+  }
+}

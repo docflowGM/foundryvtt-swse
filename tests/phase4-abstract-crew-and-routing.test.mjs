@@ -103,21 +103,36 @@ assert.doesNotMatch(domainRouter, /new Roll\(|RollEngine\.|RollCore\./);
 // rollAttack() is driven by the router's decision (see
 // phase3-vehicle-attack-formula.test.mjs assertion 21 for the call-site
 // check); confirm the three resolver branches dispatch on domainResolution.domain.
+// Attack Bonus round (blocker fix): this dispatch — along with domain
+// resolution and its failure path — was extracted verbatim out of
+// rollAttack() into a shared computeFinalAttackComposition() function (see
+// phase3-vehicle-attack-formula.test.mjs's own updated compositionFnBody
+// checks for the full rationale: the dialog's live preview now calls the
+// exact same function, so it can never disagree with the real roll).
+// rollAttack() itself now only calls that function and reads its result —
+// verified separately below.
 const rollAttackBody = attacks.slice(attacks.indexOf('export async function rollAttack('), attacks.indexOf('export async function rollDamage('));
-assert.match(rollAttackBody, /if \(attackDomain === 'vehicle-actor-gunner'\) \{/);
-assert.match(rollAttackBody, /\} else if \(attackDomain === 'vehicle-abstract-crew'\) \{/);
-assert.match(rollAttackBody, /attackBonusResolution = resolveAttackBonus\(actor, weapon, null, rollOptions\);/);
+const compositionFnBody = attacks.slice(attacks.indexOf('export async function computeFinalAttackComposition'), attacks.indexOf('function getFightingDefensivelyAttackPenalty'));
+assert.match(rollAttackBody, /const composition = await computeFinalAttackComposition\(actor, weapon, rollOptions\);/);
+assert.match(compositionFnBody, /if \(attackDomain === 'vehicle-actor-gunner'\) \{/);
+assert.match(compositionFnBody, /\} else if \(attackDomain === 'vehicle-abstract-crew'\) \{/);
+assert.match(compositionFnBody, /attackBonusResolution = resolveAttackBonus\(actor, weapon, null, rollOptions\);/);
 
 // 17 (generic routing list): a vehicle weapon never falls back to the
 // vehicle actor's own BAB or the gunner's Dex/Str merely because domain
-// selection failed — a failed domain resolution aborts rollAttack() before
-// any bonus is computed.
-assert.match(rollAttackBody, /if \(!domainResolution\.ok\) \{/);
+// selection failed — a failed domain resolution aborts before any bonus is
+// computed, and rollAttack() propagates that failure without ever reaching
+// a bonus computation of its own.
+assert.match(compositionFnBody, /if \(!domainResolution\.ok\) \{/);
+assert.match(rollAttackBody, /if \(!composition\.ok\) \{/);
 
 // Diagnostics: development visibility into which resolver was selected and
 // why (routing decisions logged, and captured in the AttackRollDiagnostics
 // snapshot alongside a GM-facing report() formatter for runtime verification).
-assert.match(rollAttackBody, /console\.warn\(`\[SWSE\] Attack domain routing: \$\{warning\}`\);/);
+assert.match(compositionFnBody, /console\.warn\(`\[SWSE\] Attack domain routing: \$\{warning\}`\);/);
+// resolverSelected still reads domainResolution.resolver inside rollAttack()
+// itself (via the composition result it destructures) when building the
+// AttackRollDiagnostics snapshot — unchanged by the extraction.
 assert.match(rollAttackBody, /resolverSelected: domainResolution\.resolver,/);
 assert.match(diagnostics, /resolverSelected: snapshot\.resolverSelected/);
 assert.match(diagnostics, /report\(index = -1\) \{/);

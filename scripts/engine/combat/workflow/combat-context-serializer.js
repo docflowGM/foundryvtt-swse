@@ -54,6 +54,57 @@ function uniqueStrings(values = []) {
   return [...new Set(asArray(values).map(value => String(value ?? '').trim()).filter(Boolean))];
 }
 
+// Damage SSOT correction (independent review of 4d05a80/1b93e1a,
+// "Blocker 1 — attack-option selections are not transported to the later
+// Damage roll"): the attack dialog's actual ATTACK_OPTION selection map
+// (Deadeye/Burst Fire/Mighty Swing/Rapid Shot/Rapid Strike toggles, Power
+// Attack's slider value, ...) was never captured by this serializer at
+// all -- only a fixed, hand-enumerated set of high-level booleans (Aim/
+// Charge/Autofire/...) was. CombatOptionResolver.collectAttackModifiers()
+// needs the ORIGINAL selection map (context.combatOptions[id] /
+// context.attackOptions[id]) to know an owned, gate-satisfied option was
+// actually toggled on, not merely available -- losing this map between
+// the attack roll and a later chat-card-driven Damage roll meant every
+// toggle/slider option's damage contribution (Deadeye's extra die, Rapid
+// Shot's, Mighty Swing's, Power Attack's slider damage, ...) silently
+// evaluated to zero on that path, even after resolveDamageComposition()/
+// buildDamageFormula() correctly started reading the fields those options
+// populate. combatOptions and attackOptions are treated as one interchangeable
+// selection universe by CombatOptionResolver itself (selectedValue() reads
+// `options.combatOptions ?? options.attackOptions`), so this serializer merges
+// both into one canonical, losslessly round-tripped map instead of tracking two.
+// Addendum ("ATTACK-OPTION ACTIVATION CONTEXT MUST SURVIVE LOSSLESSLY"):
+// the option snapshot must be plain, workflow-safe primitive data only —
+// boolean (toggle/flag controls), finite number (slider controls like
+// Power Attack's 0-5 value), or string (for any control that genuinely
+// uses one). An object/function/Foundry-document reference is silently
+// dropped rather than serialized, so a caller accidentally passing a live
+// reference through options.combatOptions can never leak an unsafe value
+// into transport-safe (JSON-encodable) workflow context.
+function isSerializableOptionValue(value) {
+  if (typeof value === 'boolean') return true;
+  if (typeof value === 'number') return Number.isFinite(value);
+  if (typeof value === 'string') return true;
+  return false;
+}
+
+function mergeSelectedOptions(...sources) {
+  const merged = {};
+  for (const source of sources) {
+    if (!source || typeof source !== 'object') continue;
+    for (const [key, value] of Object.entries(source)) {
+      // Inactive/absent entries (false, undefined, null, '') may be
+      // omitted — the addendum's own explicit allowance — but every
+      // active/value-bearing selection (true, a nonzero or zero slider
+      // number, a nonempty string) must survive.
+      if (value === undefined || value === null || value === '' || value === false) continue;
+      if (!isSerializableOptionValue(value)) continue;
+      merged[key] = value;
+    }
+  }
+  return merged;
+}
+
 function summarizeRuleData(context = {}, action = {}, extra = {}) {
   const ruleData = {
     ...(context?.ruleData ?? {}),
@@ -144,7 +195,16 @@ export function summarizeCombatWorkflowContext(context = null, extra = {}) {
       isIon: asBool(extra.isIon ?? attack.isIon ?? context.ion ?? ruleData.ion),
       maneuver: extra.maneuver ?? attack.maneuver ?? context.maneuver ?? null,
       rangeBand: extra.rangeBand ?? attack.rangeBand ?? context.rangeBand ?? context.range ?? null,
-      defense: extra.defense ?? attack.defense ?? context.defense ?? null
+      defense: extra.defense ?? attack.defense ?? context.defense ?? null,
+      // Round-trips whatever the attack roll actually had selected —
+      // already-summarized input (attack.selectedOptions) is preserved
+      // across a re-summarize pass, and fresh input (context/extra's own
+      // combatOptions/attackOptions) is captured the first time.
+      selectedOptions: mergeSelectedOptions(
+        attack.selectedOptions,
+        context.combatOptions, context.attackOptions,
+        extra.combatOptions, extra.attackOptions
+      )
     },
     damage: summarizeDamageContext(context, extra),
     resources: {
@@ -216,6 +276,14 @@ export function mergeCombatWorkflowContextIntoRollOptions(options = {}, context 
     maneuver: options.maneuver ?? attack.maneuver ?? null,
     rangeBand: options.rangeBand ?? attack.rangeBand ?? null,
     defense: options.defense ?? attack.defense ?? null,
+    // Blocker 1 fix: restore the attack roll's actual option-selection map
+    // so CombatOptionResolver.collectAttackModifiers() sees the SAME
+    // selections at Damage time as it did at Attack time — a caller-
+    // supplied options.combatOptions/attackOptions (e.g. the sheet's own
+    // fresh Damage-roll dialog submission) always wins over the carried
+    // value, never silently overridden by stale attack-time state.
+    combatOptions: options.combatOptions ?? attack.selectedOptions ?? {},
+    attackOptions: options.attackOptions ?? attack.selectedOptions ?? {},
     damageMode: options.damageMode ?? attack.damageMode ?? null,
     stun: options.stun ?? attack.isStun === true,
     ion: options.ion ?? attack.isIon === true,

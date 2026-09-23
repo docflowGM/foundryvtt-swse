@@ -7,7 +7,10 @@
 
 import { SchemaAdapters } from "/systems/foundryvtt-swse/scripts/utils/schema-adapters.js";
 import { getEffectiveHalfLevel } from "/systems/foundryvtt-swse/scripts/actors/derived/level-split.js";
-import { isRangedWeapon as canonicalIsRangedWeapon, isMeleeWeapon as canonicalIsMeleeWeapon } from "/systems/foundryvtt-swse/scripts/items/weapon-branch-resolver.js";
+import { isRangedWeapon as canonicalIsRangedWeapon, isMeleeWeapon as canonicalIsMeleeWeapon, isItemEquipped as canonicalIsItemEquipped } from "/systems/foundryvtt-swse/scripts/items/weapon-branch-resolver.js";
+import { isArmorItemEquipped, isEnergyShieldItem, resolveArmorData } from "/systems/foundryvtt-swse/scripts/items/armor-data-resolver.js";
+import { ModifierSource, ModifierType, createModifier } from "/systems/foundryvtt-swse/scripts/engine/effects/modifiers/ModifierTypes.js";
+import { SWSELogger as swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
 export const SIZE_ORDER = Object.freeze([
   'fine', 'diminutive', 'tiny', 'small', 'medium', 'large', 'huge', 'gargantuan', 'colossal'
@@ -283,10 +286,6 @@ function actorHasEquippedPistol(actor) {
   }
 }
 
-function actorIsProficientWithWeapon(weapon) {
-  return weapon?.system?.proficient !== false;
-}
-
 function actorHasTalentNamed(actor, names = []) {
   const wanted = new Set((Array.isArray(names) ? names : [names]).map(normalizeSelector).filter(Boolean));
   if (!wanted.size) return false;
@@ -339,12 +338,29 @@ export function getWeaponAttackAbility(actor, weapon) {
     else resolved = explicit;
   }
 
-  const usesNobleFencingStyle = actorHasTalentNamed(actor, 'Noble Fencing Style')
-    && resolved === 'str'
-    && actorIsProficientWithWeapon(weapon)
-    && (isLightsaberWeapon(weapon) || isLightMeleeWeapon(weapon));
-
-  return usesNobleFencingStyle ? 'cha' : resolved;
+  // Noble Fencing Style's rule text ("you can use your Charisma modifier
+  // instead of your Strength modifier") is permissive, not mandatory. This
+  // function's own explicit-attackAttribute handling immediately above is
+  // already the project's one player-owned-attack-ability activation
+  // contract: a player who wants Noble Fencing Style's benefit sets
+  // weapon.system.attackAttribute to 'cha' directly, and that explicit
+  // choice is honored verbatim, for all six abilities, unconditionally.
+  // A prior version of this function instead auto-substituted CHA whenever
+  // the talent, proficiency, and weapon-type conditions matched (first
+  // unconditionally, then gated to only when CHA was mathematically
+  // better) -- both variants rewrote the resolved ability based purely on
+  // owning the talent, with no player activation step, which is exactly
+  // what the already-certified Batch 2B policy forbids: "the player owns
+  // the chosen attack attribute unless a specific implemented rule
+  // explicitly overrides it at roll time." No selected-combat-option,
+  // per-weapon selection, or roll-context flag exists anywhere in the repo
+  // (grepped combat-option-resolver.js's static option table and
+  // roll-config.js) that could serve as that "specific implemented rule";
+  // the only real activation mechanism is the explicit attackAttribute
+  // field this function already reads first. So owning the talent alone
+  // must never change the resolved ability -- only an explicit
+  // attackAttribute: 'cha' does, exactly like every other ability.
+  return resolved;
 }
 
 export function getRangePenalty(weapon, context = {}) {
@@ -366,6 +382,338 @@ export function getWeaponFlatAttackBonus(weapon) {
 export function getWeaponFlatDamageBonus(weapon) {
   const system = weapon?.system ?? {};
   return numeric(system.flatDamageBonus ?? system.damageFlatBonus ?? system.combat?.damage?.bonus ?? 0, 0);
+}
+
+function pushWeaponModifierSafe(modifiers, data) {
+  try {
+    modifiers.push(createModifier(data));
+  } catch (err) {
+    swseLogger.error(`[CombatStatRules] Skipping invalid weapon modifier (${data?.sourceName ?? data?.sourceId ?? 'unknown source'}):`, err);
+  }
+}
+
+// Math Integrity Freeze, Attack Bonus round 4 (found while writing that
+// round's own cross-type stacking tests): the original weapons-engine.js
+// version of this mapping was a narrow allowlist (force/enhancement/
+// untyped/equipment only) that silently downgraded any OTHER canonical
+// bonusType (competence, circumstance, morale, insight, dodge, penalty,
+// armor, restriction, flanking) to UNTYPED -- which would have wrongly let
+// two same-type crystal modifiers both stack instead of correctly
+// colliding. Matches the existing membership-check idiom this project
+// already uses for the identical problem in
+// grappling-system.js#collectContextualGrappleModifiers(). Still used for
+// the (currently zero, but possible) case of a future ATTACK_BONUS crystal
+// record that does specify an explicit bonusType.
+function mapWeaponUpgradeBonusType(bonusType) {
+  const key = String(bonusType ?? '').toLowerCase().trim();
+  return Object.values(ModifierType).includes(key) ? key : ModifierType.UNTYPED;
+}
+
+// Math Integrity Freeze, Attack Bonus round 7: a lightsaber's attunement/
+// crystal attack benefit belongs to its creator ONLY while that creator is
+// attuned to the blade -- ownership or mere possession is not enough, and
+// this must gate BOTH the generic self-built +1 and every crystal
+// ATTACK_BONUS/CONDITIONAL_ATTACK record, not just the generic +1 as prior
+// rounds had it. Resolves both the current and legacy flag scopes (the
+// construction engine writes both `flags.swse` and `flags['foundryvtt-swse']`
+// symmetrically today, but older actor data may carry only one).
+function isSelfBuiltLightsaberAttunedToActor(actor, weapon) {
+  if (!actor || !weapon) return false;
+  const currentFlags = weapon.flags?.swse ?? {};
+  const legacyFlags = weapon.flags?.['foundryvtt-swse'] ?? {};
+  const builtBy = currentFlags.builtBy ?? legacyFlags.builtBy ?? null;
+  const attunedBy = currentFlags.attunedBy ?? legacyFlags.attunedBy ?? null;
+  return builtBy === actor.id && attunedBy === actor.id;
+}
+
+// The generator's virtual, no-mechanical-payload crystal option (selectable
+// in the construction/edit UI to represent "no special crystal"; see
+// lightsaber-construction-engine.js#getDefaultKyberCrystalOption()) -- its
+// id is a stable constant, never a real compendium document id.
+const STANDARD_BASELINE_CRYSTAL_ID = 'lightsaber-crystal-standard-kyber';
+
+// True when the weapon's recorded crystal choice is the standard/no-special-
+// benefit baseline -- the case that earns the generic self-built +1 -- as
+// opposed to a real named crystal whose own records (if any) apply INSTEAD
+// of that +1, never alongside it. Deciding this from crystal IDENTITY
+// (recorded at construction/edit time in `lightsaberConfig.crystalId`)
+// rather than from "the modifiers array happens to be empty" matters
+// because an alternate crystal with no ATTACK_BONUS record (Sigil, Kasha,
+// ...) must NOT regain the +1 its own chosen benefit replaced merely for
+// lacking an attack-relevant record of its own. A weapon with no recorded
+// crystal identity AT ALL (`crystalId` absent) and no modifier records is
+// treated as the same legacy/compatibility case this project's earlier
+// rounds already certified (a self-built lightsaber attuned before
+// `lightsaberConfig` provenance existed) -- gated on an EMPTY modifiers
+// array too, so a real crystal recorded without provenance can never fall
+// into this branch and regrant its own already-interpreted ATTACK_BONUS/
+// CONDITIONAL_ATTACK record a second time as a generic +1.
+function isStandardBaselineLightsaberCrystal(crystalId, weaponModifierRecords) {
+  if (crystalId === STANDARD_BASELINE_CRYSTAL_ID) return true;
+  return crystalId === null && (!Array.isArray(weaponModifierRecords) || weaponModifierRecords.length === 0);
+}
+
+/**
+ * Math Integrity Freeze, Attack Bonus round 5 (blocker fix): the single,
+ * weapon-scoped authority for a lightsaber's attunement bonus and its
+ * installed crystal/accessory attack modifiers -- Modifier objects, not
+ * pre-summed numbers, so a stacking-sensitive consumer
+ * (combat-roll-math.js#resolveAttackBonus()'s unified typed pool) can
+ * resolve them together with every other typed attack contribution rather
+ * than silently never seeing them at all.
+ *
+ * GENERATOR-NATIVE SOURCE (round 5 correction): a round-4 version of this
+ * function read `weapon.system.installedUpgrades` (an array of ids
+ * resolved via `actor.items.get()` against separate owned `weaponUpgrade`
+ * items) and a `{domain, bonusType, value}` modifier shape. Neither matches
+ * how a lightsaber is actually built. Confirmed directly against
+ * `lightsaber-construction-engine.js#createBuiltLightsaber()`/
+ * `applyEdits()`: the selected crystal's and accessories' own
+ * `system.modifiers` records are copied VERBATIM onto the finished weapon's
+ * OWN `system.modifiers` array -- no separate owned `weaponUpgrade` item,
+ * no `installedUpgrades` field, ever gets populated by that (the only live)
+ * construction path. `weapon.system.installedUpgrades` does have one live
+ * writer elsewhere (`install-remove-engine.js`, the general, non-lightsaber
+ * slot-upgrade system), but its array holds `{id: randomInstanceId, name,
+ * cost, ...}` display-summary objects, not actor-item references -- a
+ * completely different shape, unrelated to lightsaber crystals, and never
+ * matching the id-lookup this function used to perform either way. The
+ * round-4 shape had no live producer at all; this version reads the real
+ * one.
+ *
+ * FAIL-CLOSED INTERPRETATION (round 5 correction): the real compiled
+ * `packs/lightsaber-crystals.db` is a heterogeneous rules-record schema
+ * (`type` values include ATTACK_BONUS, CONDITIONAL_ATTACK, DAMAGE_BONUS,
+ * CONDITIONAL_DAMAGE, DEFENSE_BONUS, ENEMY_PENALTY, SKILL_BONUS,
+ * SKILL_MODIFIER, HEALING_BONUS, DAMAGE_TYPE_CHANGE, DAMAGE_REDUCTION,
+ * CRITICAL_BONUS, FORCE_POINT_DIE_UPGRADE, REROLL_ABILITY, LIGHT_EMISSION,
+ * SENSE_OVERRIDE, ALIGNMENT_REFLECTION, CRITICAL_FAILURE -- confirmed by
+ * direct inspection, not inferred from the older `data/
+ * lightsaber-components.json`/`lightsaber-items-import.ndjson` reference
+ * files, which use a different, non-authoritative shape). A round-4 helper
+ * defaulted any record with no recognized `domain` to `'attack.bonus'` --
+ * on the REAL schema (which has no `domain` field at all) that would have
+ * silently turned Kasha's +2 Will Defense, Sigil's +2 damage, Mantle's +2
+ * Use the Force, Compressed's -2 enemy Block penalty, and more, into
+ * permanent attack bonuses. Only `type === 'ATTACK_BONUS'` (with its own
+ * `target === 'attack'`) is interpreted as a flat attack Modifier here.
+ * `type === 'CONDITIONAL_ATTACK'` (Heart of the Guardian: +2 vs lightsaber
+ * wielders; Hurikane: +2 vs armored targets) is now automated (round 6):
+ * `resolveAttackBonus()` resolves the roll's authoritative target actor via
+ * its own `getTargetActorFromOptions(context)` call (the SAME target
+ * resolver the rest of the attack pipeline already uses -- no second
+ * resolver invented) and passes it in as `targetActor`. The condition is
+ * evaluated against ONLY that resolved target -- no target resolvable at
+ * all (no `targetActor` argument) always yields no contribution, matching
+ * the dialog's own "fail closed, never guess a target" contract. Every
+ * other `type` is a non-attack effect and emits nothing for Attack Bonus
+ * purposes -- there is no unknown-type fallback, and an unrecognized
+ * `condition` string on a CONDITIONAL_ATTACK record also fails closed
+ * (see CONDITIONAL_ATTACK_CRYSTAL_CONDITIONS below).
+ *
+ * ATTUNEMENT GATE + STANDARD-CRYSTAL DOUBLE-COUNT (round 7 correction):
+ * round 6 (and every prior round) added the generic "Attuned lightsaber"
+ * +1 UNCONDITIONALLY for any self-built/attuned weapon, THEN separately
+ * interpreted `ATTACK_BONUS`/`CONDITIONAL_ATTACK` records with no
+ * attunement gate at all -- so an attuned Ilum-crystal saber (Ilum's own
+ * record is `{type:'ATTACK_BONUS', value:1, target:'attack'}`) scored +2,
+ * and a NON-attuned wielder of any crystal-bearing saber still received
+ * the crystal's own ATTACK_BONUS/CONDITIONAL_ATTACK records. Both are
+ * wrong. Per SWSE lightsaber construction: the standard crystal's normal
+ * benefit IS the self-built/attuned +1 -- not a separate bonus alongside
+ * it -- and an alternate crystal's benefit REPLACES that +1 rather than
+ * adding to it; every crystal/accessory attack-relevant benefit applies
+ * only to the creator while attuned. Both the generic +1 and every
+ * `ATTACK_BONUS`/`CONDITIONAL_ATTACK` record below are now gated on
+ * `isSelfBuiltLightsaberAttunedToActor(actor, weapon)`; which of the two
+ * (the generic +1, or the crystal's own recorded benefit) applies is
+ * decided by whether the weapon's recorded crystal is the generator's
+ * virtual standard-baseline crystal (`isStandardBaselineLightsaberCrystal`
+ * below) -- not by "the modifiers array happens to be empty," which would
+ * wrongly regrant +1 to an alternate crystal (Sigil, Kasha, ...) whose own
+ * records simply don't happen to include an ATTACK_BONUS. Accessories are
+ * a separate, independent component slot -- their own records (if any)
+ * still run through the normal per-record loop below regardless of which
+ * crystal was chosen, so a baseline-crystal saber with an attack-relevant
+ * accessory correctly receives both.
+ *
+ * This was previously implemented ONLY inside weapons-engine.js (an
+ * actor-wide, all-equipped-weapons collector), which combat-roll-math.js
+ * cannot import without creating a circular dependency (weapons-engine.js
+ * already imports resolveAttackBonus()/resolveDamageBonus() FROM this
+ * file's sibling combat-roll-math.js -- see that file's own header
+ * comment). Centralizing the weapon-scoped logic here, with
+ * WeaponsEngine.getWeaponModifiers() calling it once per equipped weapon
+ * instead of duplicating it, gives both consumers one shared authority
+ * instead of two independently-maintained copies.
+ *
+ * Deliberately does NOT include the weapon's flat enhancement bonus
+ * (system.combat.attack.bonus, already read structurally by
+ * getWeaponFlatAttackBonus() above) or a nonproficiency penalty (already
+ * computed structurally in resolveAttackBonus()) -- those are structural
+ * mirrors of core attack arithmetic, not additional typed contributions,
+ * and including them here would double-count them.
+ *
+ * @param {Actor} actor
+ * @param {Item} weapon - the SPECIFIC weapon being rolled; reads only this
+ *   weapon's own `system.modifiers` (never another equipped weapon's).
+ * @param {{targetActor?: Actor|null}} [options] - the roll's resolved
+ *   target actor, for CONDITIONAL_ATTACK crystal records. Omit/null when no
+ *   target is resolvable; conditional contributions then simply don't apply.
+ * @returns {Modifier[]}
+ */
+export function getWeaponAttunementAndUpgradeModifiers(actor, weapon, { targetActor = null } = {}) {
+  const modifiers = [];
+  if (!actor || !weapon || weapon.type !== 'weapon') return modifiers;
+  if (weapon.system?.subtype !== 'lightsaber') return modifiers;
+  if (!isSelfBuiltLightsaberAttunedToActor(actor, weapon)) return modifiers;
+
+  // The crystal/accessory Item's own name is not embedded in the copied
+  // modifier record (construction merges every selected component's
+  // `system.modifiers` into one flat array with no per-record origin tag),
+  // so the best available provenance is the crystal id construction
+  // recorded on the weapon itself -- resolved to a real name when the
+  // crystal is still a resolvable Item, generic otherwise.
+  const crystalId = weapon.flags?.swse?.lightsaberConfig?.crystalId
+    ?? weapon.flags?.['foundryvtt-swse']?.lightsaberConfig?.crystalId
+    ?? null;
+  const crystalLabel = (crystalId && actor.items?.get?.(crystalId)?.name) || 'Crystal';
+
+  const weaponModifierRecords = Array.isArray(weapon.system?.modifiers) ? weapon.system.modifiers : [];
+
+  if (isStandardBaselineLightsaberCrystal(crystalId, weaponModifierRecords)) {
+    pushWeaponModifierSafe(modifiers, {
+      source: ModifierSource.ITEM,
+      sourceId: weapon.id,
+      sourceName: `${weapon.name} (Attuned)`,
+      target: 'attack.bonus',
+      type: ModifierType.UNTYPED,
+      value: 1,
+      enabled: true,
+      priority: 45,
+      description: 'Attuned lightsaber bonus (standard crystal)'
+    });
+  }
+
+  if (!weaponModifierRecords.length) return modifiers;
+
+  let attackRecordIndex = 0;
+  let conditionalRecordIndex = 0;
+  for (const record of weaponModifierRecords) {
+    if (!record || typeof record !== 'object') continue;
+    const recordType = String(record.type ?? '').toUpperCase();
+
+    if (recordType === 'CONDITIONAL_ATTACK') {
+      conditionalRecordIndex += 1;
+      const value = Number(record.value);
+      if (!Number.isFinite(value) || value === 0) continue;
+      if (!targetQualifiesForConditionalAttackCrystal(record.condition, targetActor)) continue;
+      const label = conditionalRecordIndex > 1 ? `${crystalLabel} ${conditionalRecordIndex}` : crystalLabel;
+      pushWeaponModifierSafe(modifiers, {
+        source: ModifierSource.ITEM,
+        sourceId: `${weapon.id}_conditional-attack-${conditionalRecordIndex}`,
+        sourceName: `${weapon.name} (${label})`,
+        target: 'attack.bonus',
+        type: record.bonusType ? mapWeaponUpgradeBonusType(record.bonusType) : ModifierType.UNTYPED,
+        value,
+        enabled: true,
+        priority: 55,
+        description: `${label} attack modifier (${record.condition})`
+      });
+      continue;
+    }
+
+    if (recordType !== 'ATTACK_BONUS') {
+      // Every other non-attack rule kind: see the fail-closed doc comment
+      // above. Intentionally no fallback.
+      continue;
+    }
+    if (String(record.target ?? '').toLowerCase() !== 'attack') continue;
+    const value = Number(record.value);
+    if (!Number.isFinite(value) || value === 0) continue;
+    attackRecordIndex += 1;
+    const label = attackRecordIndex > 1 ? `${crystalLabel} ${attackRecordIndex}` : crystalLabel;
+    pushWeaponModifierSafe(modifiers, {
+      source: ModifierSource.ITEM,
+      sourceId: `${weapon.id}_attack-bonus-${attackRecordIndex}`,
+      sourceName: `${weapon.name} (${label})`,
+      target: 'attack.bonus',
+      type: record.bonusType ? mapWeaponUpgradeBonusType(record.bonusType) : ModifierType.UNTYPED,
+      value,
+      enabled: true,
+      priority: 55,
+      description: `${label} attack modifier`
+    });
+  }
+
+  return modifiers;
+}
+
+// ─── CONDITIONAL_ATTACK crystal target qualification ───────────────────────
+// Math Integrity Freeze, Attack Bonus round 6: Heart of the Guardian
+// ("vs-lightsaber-wielders") and Hurikane ("vs-armored") are the only two
+// real CONDITIONAL_ATTACK records in packs/lightsaber-crystals.db. Each
+// condition string maps to exactly one qualification check against the
+// resolved target actor; an unrecognized condition string fails closed
+// (no contribution) rather than guessing what it might mean.
+
+const CONDITIONAL_ATTACK_CRYSTAL_CONDITIONS = Object.freeze({
+  'vs-armored': targetActorHasPositiveReflexArmorBonus,
+  'vs-lightsaber-wielders': targetActorWieldsActiveLightsaber
+});
+
+function targetQualifiesForConditionalAttackCrystal(condition, targetActor) {
+  if (!targetActor) return false;
+  const check = CONDITIONAL_ATTACK_CRYSTAL_CONDITIONS[String(condition ?? '').toLowerCase().trim()];
+  if (!check) return false;
+  return check(targetActor);
+}
+
+// "vs-armored" (Hurikane): the real rule is a target with an ARMOR BONUS TO
+// REFLEX DEFENSE, not merely "wearing any armor-typed item." Uses the
+// certified armor equipped-state authority
+// (armor-data-resolver.js#isArmorItemEquipped()) AND the canonical resolved
+// armor data (armor-data-resolver.js#resolveArmorData()) for the actual
+// Reflex bonus value -- never reconstructed inline here. An Energy Shield
+// is stored as an armor-type item too but is not body armor
+// (isEnergyShieldItem() excludes it; resolveArmorData() also zeroes its
+// reflexBonus, so this is a defense-in-depth double exclusion, not a
+// behavior difference). Equipped armor with a zero Reflex bonus (e.g. the
+// Cortosis Gauntlet, worn specifically for its lightsaber-blocking property
+// with no Reflex contribution) correctly does not qualify.
+function targetActorHasPositiveReflexArmorBonus(targetActor) {
+  const items = Array.from(targetActor?.items ?? []);
+  return items.some((item) => {
+    if (item?.type !== 'armor') return false;
+    if (isEnergyShieldItem(item)) return false;
+    if (!isArmorItemEquipped(item)) return false;
+    return Number(resolveArmorData(item).reflexBonus) > 0;
+  });
+}
+
+// "vs-lightsaber-wielders" (Heart of the Guardian): the real rule requires
+// the target to be currently WIELDING an ACTIVE lightsaber -- two
+// independent facts, ownership being neither. Wielding reuses the shared
+// equipped-item-state authority (weapon-branch-resolver.js#isItemEquipped(),
+// promoted from character-actor.js's own prior copy) combined with the
+// canonical lightsaber classification (isLightsaberWeapon() above).
+// Activation is deliberately NOT read from
+// WeaponVisualProfileResolver.resolveActiveLightsaber() -- that authority
+// additionally requires emitLight (a token-light VISUAL setting), which a
+// combat rule must never depend on. isItemActivated() below instead mirrors
+// exactly the "current" activation-state read
+// InventoryEngine.toggleActivated() itself uses before flipping it
+// (system.activated, with its own system.active fallback).
+function targetActorWieldsActiveLightsaber(targetActor) {
+  const items = Array.from(targetActor?.items ?? []);
+  return items.some((item) => isLightsaberWeapon(item)
+    && canonicalIsItemEquipped(item, targetActor)
+    && isItemActivated(item));
+}
+
+function isItemActivated(item) {
+  const system = item?.system ?? {};
+  return system.activated === true || system.active === true;
 }
 
 function normalizeCriticalMultiplier(value, fallback = 2) {
@@ -475,6 +823,17 @@ function isWeaponDamageContext(context = {}) {
  * weapon-backed to avoid double-scaling state/effect damage.
  */
 export function getHalfLevelDamageBonus(actor, item = null, context = {}) {
+  // Damage SSOT migration, vehicle-domain fix: a named gunner firing a
+  // vehicle-mounted weapon reaches this function with `actor` set to the
+  // gunner (see crew-skill-router.js -> attacks.js#rollAttack() ->
+  // damage.js#rollDamage()), never the vehicle. Without this gate the
+  // gunner's own personal half-heroic-level was silently added to vehicle
+  // weapon damage -- a contribution SWSE vehicle/starship weapon damage
+  // does not call for (fixed dice + vehicle-scale multiplier, not a
+  // personal-weapon-style character-scaled formula). Confirmed live via
+  // docs/audits/v2-damage-modifier-authority-audit-correction-1.md §4.
+  const weaponForGate = context.item ?? context.weapon ?? item;
+  if (isVehicleWeapon(weaponForGate)) return 0;
   const level = getEffectiveHalfLevel(actor);
   if (!level) return 0;
   const enriched = { ...context, item: context.item ?? item, weapon: context.weapon ?? item };
@@ -484,6 +843,9 @@ export function getHalfLevelDamageBonus(actor, item = null, context = {}) {
 }
 
 export function getDamageAbilityContribution(actor, weapon) {
+  // Same vehicle-domain fix as getHalfLevelDamageBonus() above: a gunner's
+  // own STR/DEX ability modifier does not apply to vehicle weapon damage.
+  if (isVehicleWeapon(weapon)) return 0;
   const system = weapon?.system ?? {};
   const explicit = String(system.damageBonus ?? system.damageAbility ?? system.combat?.damage?.ability ?? '').toLowerCase();
 

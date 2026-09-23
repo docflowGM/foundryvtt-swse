@@ -1,5 +1,6 @@
 import { CombatOptionResolver } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-option-resolver.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { createModifier, ModifierType, ModifierSource } from "/systems/foundryvtt-swse/scripts/engine/effects/modifiers/ModifierTypes.js";
 
 let registered = false;
 
@@ -108,12 +109,24 @@ function patchCombatOptionResolver() {
       if (!state) return result;
       if (!actorHasMatchingRelentlessAttack(actor, weapon)) return result;
       const value = Number(state.attackBonus ?? state.bonus ?? 2) || 2;
-      result.attackBonus = (result.attackBonus || 0) + value;
+      // Math Integrity Freeze, Attack Bonus round 3: Relentless Attack's own
+      // rule data (remaining-weapon-armor-feat-normalization-hooks.js's
+      // relentlessAttackRule()) labels this bonus COMPETENCE. It must
+      // resolve stacking together with any other competence-typed attack
+      // contribution (Charge, an Active Effect's competence bonus, etc.) in
+      // ONE shared pass, not add as a flat untyped number the way the rest
+      // of this resolver's options correctly do (see
+      // combat-roll-math.js#resolveAttackBonus()'s typed attack-modifier
+      // pool). Emitted via attackContributions instead of result.attackBonus
+      // so it is not double-counted once combat-roll-math.js consumes it.
+      result.attackContributions ??= [];
+      result.attackContributions.push(createModifier({
+        source: ModifierSource.FEAT, sourceId: 'relentless-attack', sourceName: 'Relentless Attack',
+        target: 'global.attack', type: ModifierType.COMPETENCE, value
+      }));
       result.flags ??= {};
       result.flags.relentlessAttackBonus = true;
       result.flags.relentlessAttackBonusType = 'competence';
-      result.breakdown ??= [];
-      result.breakdown.push({ label: 'Relentless Attack (competence)', value, type: 'attack' });
       return result;
     } catch (err) {
       SWSELogger.warn('[RelentlessAttackRuntime] Failed to apply follow-up bonus', { error: err });

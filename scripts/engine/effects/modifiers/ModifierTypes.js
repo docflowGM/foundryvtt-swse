@@ -27,7 +27,24 @@ export const ModifierType = Object.freeze({
   CIRCUMSTANCE: 'circumstance',
   PENALTY: 'penalty',
   DODGE: 'dodge',
-  DEXTERITY_LOSS: 'dexterityLoss'  // Meta-modifier for special case
+  // Math Integrity Freeze, Attack Bonus round: the SWSE flanking bonus has
+  // no existing canonical type here, and is not a circumstance bonus in
+  // the loose "unless same source" sense -- a target is flanked or it
+  // isn't, from one geometric fact, so a second/third flanking-granting
+  // source must not let it apply twice. highestOnly gives that "flanking
+  // or not" semantics correctly without inventing a new stacking rule.
+  FLANKING: 'flanking',
+  DEXTERITY_LOSS: 'dexterityLoss',  // Meta-modifier for special case
+  // Math Integrity Freeze, Attack Bonus round 6: SWSE Core Rulebook p.241
+  // "Stacking Bonuses" -- named/descriptor bonuses (Force included) do not
+  // stack with themselves unless a rule says otherwise; only untyped,
+  // circumstance, and dodge bonuses stack freely by default. A Force bonus
+  // is a typed, nonstacking bonus like any other named bonus type; this is
+  // restored (round 4 added it without a stacking rule, round 5 reverted
+  // it entirely pending that RAW citation) with its own explicit
+  // STACKING_RULES entry below rather than relying on getStackingRule()'s
+  // '|| stack' fallback.
+  FORCE: 'force'
 });
 
 /**
@@ -43,7 +60,9 @@ export const STACKING_RULES = Object.freeze({
   circumstance: 'stackUnlessSameSource', // Stack unless from same sourceId
   penalty: 'stackUnlessSameSource',      // Stack unless from same sourceId
   dodge: 'stack',                        // All dodge stack
-  dexterityLoss: 'meta'                  // Meta-modifier, special handling
+  flanking: 'highestOnly',               // You are either flanked or not; only the best applies
+  dexterityLoss: 'meta',                 // Meta-modifier, special handling
+  force: 'highestOnly'                   // SWSE Core Rulebook p.241: named bonuses (Force) don't stack with themselves
 });
 
 /**

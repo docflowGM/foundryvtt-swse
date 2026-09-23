@@ -33,6 +33,21 @@ import { installFoundryShimGlobals } from './helpers/foundry-shim/globals.mjs';
 // #pushModifierSafe() helper that catches and logs a single malformed
 // contribution without affecting any other modifier, from the same
 // weapon or a different one.
+//
+// Math Integrity Freeze, Attack Bonus round 5: sections 3-5 below were
+// rewritten. The round-4 fixtures modeled a lightsaber crystal as a
+// separate owned `weaponUpgrade` Item referenced via
+// `weapon.system.installedUpgrades` (an array of item ids) with a
+// `{domain, bonusType, value}` modifier shape -- neither matches how a
+// lightsaber is actually built. Confirmed directly against
+// `lightsaber-construction-engine.js`: the selected crystal's/accessories'
+// own `system.modifiers` records are copied VERBATIM onto the finished
+// weapon's OWN `system.modifiers` array; no separate owned item or
+// `installedUpgrades` field is ever populated by that (the only live)
+// construction path, and the real compiled `packs/lightsaber-crystals.db`
+// uses a `{type, value, target}` rules-record shape (e.g. Ilum Crystal:
+// `{type:'ATTACK_BONUS', value:1, target:'attack'}`), not `{domain,
+// bonusType}`. These fixtures now match that real, generator-native shape.
 
 registerFoundryPathLoader();
 installFoundryShimGlobals();
@@ -76,7 +91,7 @@ function equippedWeapon(overrides = {}) {
       equippable: { equipped: true },
       combat: overrides.combat ?? {},
       subtype: overrides.subtype,
-      installedUpgrades: overrides.installedUpgrades ?? []
+      modifiers: overrides.modifiers ?? []
     }
   };
 }
@@ -110,61 +125,88 @@ console.log('  [1/6] ordinary equipped weapon: produces a valid modifier with ca
 
 console.log('  [2/6] attuned lightsaber: the +1 bonus is created with ModifierSource.ITEM, the fixed defect OK');
 
-// ─── 3. Lightsaber with a modifier-producing upgrade ──────────────────────
+// ─── 3. Lightsaber with a real (Ilum-shaped) crystal attack modifier ──────
+//
+// Math Integrity Freeze, Attack Bonus round 7: a crystal's own ATTACK_BONUS
+// record only applies to its CREATOR while ATTUNED (builtBy === actor.id
+// && attunedBy === actor.id) -- ownership/possession alone is not enough,
+// and a non-attuned wielder must not receive the identical crystal record's
+// own defect this round fixes for weapon.js's own actorWith(...) caller.
 
 {
-  const upgrade = { id: 'upgrade-1', name: 'Ilum Crystal', type: 'weaponUpgrade', system: { lightsaber: { color: 'blue' }, modifiers: [{ domain: 'damage', bonusType: 'enhancement', value: 1 }] } };
-  const weapon = equippedWeapon({ name: 'Plain Saber', subtype: 'lightsaber', installedUpgrades: ['upgrade-1'] });
-  const modifiers = WeaponsEngine.getWeaponModifiers(actorWith([weapon, upgrade]));
-  const upgradeModifier = modifiers.find(m => m.sourceId === 'upgrade-1');
-  assert.ok(upgradeModifier, 'a lightsaber upgrade with a standard modifiers array must produce a modifier');
-  assertValidModifier(upgradeModifier, 'lightsaber upgrade');
-  assert.equal(upgradeModifier.source, ModifierSource.ITEM, 'the upgrade modifier must use ModifierSource.ITEM, not the nonexistent ModifierSource.WEAPON');
-}
-
-console.log('  [3/6] lightsaber with a modifier-producing upgrade: produces a valid modifier with canonical source OK');
-
-// ─── 4. Attuned lightsaber + upgrade together: both present ──────────────
-
-{
-  const upgrade = { id: 'upgrade-2', name: 'Sigil Crystal', type: 'weaponUpgrade', system: { lightsaber: { color: 'yellow', damageBonus: 2 } } };
   const weapon = equippedWeapon({
-    name: 'Attuned Upgraded Saber', subtype: 'lightsaber', installedUpgrades: ['upgrade-2'],
-    flags: { swse: { builtBy: 'test-actor', attunedBy: 'test-actor' } }
+    name: 'Plain Saber', subtype: 'lightsaber',
+    modifiers: [{ type: 'ATTACK_BONUS', value: 1, target: 'attack' }],
+    flags: { swse: { builtBy: 'test-actor', attunedBy: 'test-actor', lightsaberConfig: { crystalId: 'crystal-ilum' } } }
   });
-  const modifiers = WeaponsEngine.getWeaponModifiers(actorWith([weapon, upgrade]));
-  const attuned = modifiers.find(m => m.sourceName === 'Attuned Upgraded Saber (Attuned)');
-  const upgradeModifier = modifiers.find(m => m.sourceId === 'upgrade-2');
-  assert.ok(attuned, 'the attuned bonus must still be present alongside an upgrade modifier');
-  assert.ok(upgradeModifier, 'the upgrade damage-bonus modifier must be present alongside the attuned bonus');
-  for (const mod of [attuned, upgradeModifier]) assertValidModifier(mod, 'attuned + upgraded lightsaber');
+  const crystalItem = { id: 'crystal-ilum', name: 'Ilum Crystal', type: 'weaponUpgrade' };
+  const modifiers = WeaponsEngine.getWeaponModifiers(actorWith([weapon, crystalItem]));
+  const upgradeModifier = modifiers.find(m => m.target === 'attack.bonus');
+  assert.ok(upgradeModifier, 'a real ATTACK_BONUS crystal record on weapon.system.modifiers must produce a modifier for its attuned creator');
+  assertValidModifier(upgradeModifier, 'lightsaber crystal');
+  assert.equal(upgradeModifier.source, ModifierSource.ITEM);
+  assert.equal(upgradeModifier.value, 1);
+  assert.match(upgradeModifier.sourceName, /Ilum Crystal/, 'the crystal Item\'s own name is resolved from lightsaberConfig.crystalId for provenance when available');
+  // FAIL-BEFORE FIX: only ONE modifier reaches attack (the crystal's own
+  // record) -- NOT a second, separate generic "Attuned" +1 alongside it.
+  // JATM: the standard crystal's benefit IS the +1; a real named crystal's
+  // benefit REPLACES it, never adds to it.
+  const genericAttunedModifier = modifiers.find(m => m.sourceName === 'Plain Saber (Attuned)');
+  assert.ok(!genericAttunedModifier, 'a real named crystal\'s own ATTACK_BONUS record must not ALSO receive the separate generic Attuned +1 -- that would double-count the identical benefit');
 }
 
-console.log('  [4/6] attuned lightsaber + upgrade together: both modifiers present and valid OK');
+console.log('  [3/6] lightsaber with a real ATTACK_BONUS crystal record: produces exactly one modifier for its attuned creator, not a second generic Attuned bonus alongside it OK');
 
-// ─── 5. Multiple equipped weapons where the first produces an invalid ─────
-//        modifier (a malformed upgrade value, a realistic bad-data case,
-//        not the specific bug already fixed above) must not erase the
-//        second weapon's unrelated, valid modifier.
+// ─── 4. Non-attuned wielder of the same crystal-bearing saber: +0 ────────
+//
+// FAIL-BEFORE proof for the round-7 fix's other half: the SAME crystal
+// record that correctly produces a modifier for its attuned creator (case
+// 3) must produce NOTHING for a wielder who is not attuned to it.
 
 {
-  const malformedUpgrade = { id: 'upgrade-bad', name: 'Corrupted Crystal', type: 'weaponUpgrade', system: { lightsaber: { color: 'unknown' }, modifiers: [{ domain: 'attack', bonusType: 'untyped', value: 'not-a-number' }] } };
-  const weaponA = equippedWeapon({ id: 'weapon-a', name: 'Weapon A', subtype: 'lightsaber', installedUpgrades: ['upgrade-bad'], combat: { attack: { bonus: 3 } } });
+  const weapon = equippedWeapon({
+    name: 'Unattuned Saber', subtype: 'lightsaber',
+    modifiers: [{ type: 'ATTACK_BONUS', value: 1, target: 'attack' }],
+    flags: { swse: { lightsaberConfig: { crystalId: 'crystal-ilum' } } }
+  });
+  const crystalItem = { id: 'crystal-ilum', name: 'Ilum Crystal', type: 'weaponUpgrade' };
+  const modifiers = WeaponsEngine.getWeaponModifiers(actorWith([weapon, crystalItem]));
+  const upgradeModifier = modifiers.find(m => m.target === 'attack.bonus');
+  assert.ok(!upgradeModifier, 'a crystal ATTACK_BONUS record must not apply to a non-attuned wielder, even though the same weapon shape produces a modifier for its attuned creator (case 3)');
+}
+
+console.log('  [4/6] the identical crystal record produces NO modifier for a non-attuned wielder OK');
+
+// ─── 5. Multiple equipped weapons where the first has a malformed ────────
+//        modifier record (a realistic bad-data case, not the specific bug
+//        already fixed above) must not erase the second weapon's
+//        unrelated, valid modifier. The fail-closed interpreter validates
+//        the value BEFORE ever constructing a Modifier, so a malformed
+//        record is cleanly skipped rather than thrown and caught -- this
+//        proves the same weapon-isolation guarantee via that updated path.
+
+{
+  const weaponA = equippedWeapon({
+    id: 'weapon-a', name: 'Weapon A', subtype: 'lightsaber',
+    modifiers: [{ type: 'ATTACK_BONUS', value: 'not-a-number', target: 'attack' }],
+    combat: { attack: { bonus: 3 } },
+    flags: { swse: { builtBy: 'test-actor', attunedBy: 'test-actor', lightsaberConfig: { crystalId: 'crystal-malformed' } } }
+  });
   const weaponB = equippedWeapon({ id: 'weapon-b', name: 'Weapon B', combat: { attack: { bonus: 2 } } });
 
-  const modifiers = WeaponsEngine.getWeaponModifiers(actorWith([weaponA, weaponB, malformedUpgrade]));
+  const modifiers = WeaponsEngine.getWeaponModifiers(actorWith([weaponA, weaponB]));
 
   const weaponAEnhancement = modifiers.find(m => m.sourceName === 'Weapon A (Enhancement)');
   const weaponBEnhancement = modifiers.find(m => m.sourceName === 'Weapon B (Enhancement)');
-  const badModifier = modifiers.find(m => m.sourceId === 'upgrade-bad');
+  const badModifier = modifiers.find(m => m.sourceId?.startsWith?.('weapon-a_attack-bonus'));
 
-  assert.ok(weaponAEnhancement, "Weapon A's own valid enhancement modifier (collected before its malformed upgrade) must survive");
-  assert.ok(weaponBEnhancement, "Weapon B's valid modifier must survive Weapon A's malformed upgrade -- this is the exact defect: the old single-try/catch-around-the-whole-loop design would have aborted the loop before Weapon B was ever processed");
-  assert.ok(!badModifier, 'the malformed upgrade modifier itself must be skipped, not silently coerced into something invalid');
+  assert.ok(weaponAEnhancement, "Weapon A's own valid enhancement modifier (collected before its malformed crystal record) must survive");
+  assert.ok(weaponBEnhancement, "Weapon B's valid modifier must survive Weapon A's malformed crystal record -- this is the exact defect: the old single-try/catch-around-the-whole-loop design would have aborted the loop before Weapon B was ever processed");
+  assert.ok(!badModifier, 'the malformed crystal record itself must be skipped, not silently coerced into something invalid');
   for (const mod of modifiers) assertValidModifier(mod, 'multi-weapon malformed-contribution isolation');
 }
 
-console.log('  [5/6] multiple equipped weapons, first with a malformed upgrade modifier: the malformed contribution is skipped, all unrelated valid modifiers (including the second weapon\'s) survive OK');
+console.log('  [5/6] multiple equipped weapons, first with a malformed crystal modifier record: the malformed contribution is skipped, all unrelated valid modifiers (including the second weapon\'s) survive OK');
 
 // ─── 6. Every modifier across every scenario above satisfies the full ─────
 //        required invariant (already asserted per-case above via

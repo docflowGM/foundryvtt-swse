@@ -11,7 +11,9 @@ import { RollEngine } from "/systems/foundryvtt-swse/scripts/engine/roll-engine.
 import { getCriticalConfirmBonus } from "/systems/foundryvtt-swse/scripts/combat/utils/combat-utils.js";
 import { WeaponRangeProfileResolver } from "/systems/foundryvtt-swse/scripts/items/weapon-range-profile-resolver.js";
 import { CombatOptionResolver } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-option-resolver.js";
+import { resolveAttackBonus, getTargetActorFromOptions } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-roll-math.js";
 import { isRangedWeapon as canonicalIsRangedWeapon, isMeleeWeapon as canonicalIsMeleeWeapon } from "/systems/foundryvtt-swse/scripts/items/weapon-branch-resolver.js";
+import { createModifier, ModifierType, ModifierSource } from "/systems/foundryvtt-swse/scripts/engine/effects/modifiers/ModifierTypes.js";
 
 /* ============================================================================
    ROLL HOOKS SYSTEM
@@ -279,14 +281,36 @@ export const ROLL_MODIFIERS = Object.freeze({
     total: { label: 'Total Concealment (50%)', missChance: 50 }
   },
 
-  // Situational modifiers
+  // Situational modifiers. Not consulted by the actual dialog render/submit
+  // logic below (which computes these against real context/feat gating via
+  // CombatOptionResolver/ScopedCombatFeatResolver) -- kept only as
+  // reference labels, so they describe the SAME verified rules those paths
+  // apply rather than the flat, ungated numbers this project used to add.
   situational: {
-    aiming: { label: 'Aiming (+2)', value: 2 },
-    charging: { label: 'Charging (+2 attack, -2 Ref)', attackValue: 2, reflexPenalty: -2 },
-    flanking: { label: 'Flanking (+2)', value: 2 },
+    aiming: { label: 'Aim (no direct attack bonus; enables Aim-gated feats/talents)', value: 0 },
+    charging: { label: 'Charging (+2 melee attack, -2 Ref; ranged requires Charging Fire, no bonus)', attackValue: 2, reflexPenalty: -2 },
+    flanking: { label: 'Flanking (+2 melee)', value: 2 },
     prone: { label: 'Prone (-2 melee, +2 ranged)', meleeValue: -2, rangedValue: 2 },
-    higherGround: { label: 'Higher Ground (+1)', value: 1 },
-    pointBlank: { label: 'Point Blank Shot (+1)', value: 1 }
+    // Math Integrity Freeze, Attack Bonus round 8: 'higherGround' was
+    // removed. It was already documented above (and in the quick-toggle
+    // label it used to drive) as "not automated; unverified rule" -- no
+    // SWSE source text or existing project authority was ever found to
+    // justify it -- yet the dialog still rendered an automated checkbox for
+    // it and the non-attack live-preview fallback (since removed) granted
+    // it a flat +1 regardless. An unverified rule has no business being an
+    // automated control at all; a GM who wants to grant a Higher Ground
+    // bonus uses Custom Modifier. See the ledger's Round 8 section for the
+    // full removal record.
+    //
+    // Math Integrity Freeze, Attack Bonus round 8 correction #1 (Blocker
+    // 4): 'pointBlank' used to be its own separate quick-toggle checkbox,
+    // independently settable from the Range Band selector that already
+    // owns this exact fact -- capable of producing an impossible state
+    // (rangeBand: 'medium' AND the checkbox checked). Point Blank is a
+    // range STATE, not a player toggle; the checkbox is removed and
+    // isPointBlank is now derived in exactly one place
+    // (computeAttackSituationalContext()) from the selected Range Band.
+    pointBlank: { label: 'Point Blank Range (+1 only with Point Blank Shot feat; derived from Range Band, not a separate toggle)', value: 0 }
   }
   // Note: SWSE does not have advantage/disadvantage. Some species have reroll abilities
   // which are handled separately by the SpeciesRerollHandler.
@@ -496,19 +520,32 @@ function formatBandChip(label, band) {
   return `<span class="swse-roll-config-chip"><b>${escapeHTML(label)}</b> ${escapeHTML(band.min)}-${escapeHTML(band.max)} ${mod ? `(${mod})` : ''}</span>`;
 }
 
+// Math Integrity Freeze, Attack Bonus round 8 (Part 5, option visibility
+// state model): an option arriving here from getAttackOptionsWithState()
+// carries `state: 'disabled'` and a human `reason` (e.g. "Requires Aim")
+// when the actor owns it and it otherwise applies to this weapon/attack
+// type, but a player-toggleable context gate (Aim/Charge/Autofire) is not
+// yet checked -- rendered visibly disabled with that reason, rather than
+// omitted as if the actor didn't own it at all. `state`/`reason` are
+// absent for callers still passing a plain summarizeAttackOptions() list
+// (this function's original contract), which is preserved unchanged.
 function optionCard(option) {
   const id = escapeHTML(option.id);
   const label = escapeHTML(option.label ?? option.id);
   const summary = escapeHTML(option.summary ?? option.warning ?? '');
+  const gateDisabled = option.state === 'disabled';
+  const disabledAttr = (option.disabled || gateDisabled) ? 'disabled' : '';
+  const reasonHTML = gateDisabled && option.reason ? `<small class="swse-roll-config-option-reason">${escapeHTML(option.reason)}</small>` : '';
+  const cardClass = gateDisabled ? 'swse-roll-config-option swse-roll-config-option--gated' : 'swse-roll-config-option';
   if (option.control === 'slider') {
-    return `<label class="swse-roll-config-option swse-roll-config-option--slider">
-      <span><b>${label}</b>${summary ? `<small>${summary}</small>` : ''}</span>
-      <input type="number" name="combatOptions.${id}" min="${Number(option.min ?? 0)}" max="${Number(option.max ?? 0)}" step="${Number(option.step ?? 1)}" value="${Number(option.value ?? 0)}" ${option.disabled ? 'disabled' : ''}/>
+    return `<label class="${cardClass} swse-roll-config-option--slider" data-rcd-option-id="${id}">
+      <span><b>${label}</b>${summary ? `<small>${summary}</small>` : ''}${reasonHTML}</span>
+      <input type="number" name="combatOptions.${id}" min="${Number(option.min ?? 0)}" max="${Number(option.max ?? 0)}" step="${Number(option.step ?? 1)}" value="${Number(option.value ?? 0)}" ${disabledAttr}/>
     </label>`;
   }
-  return `<label class="swse-roll-config-option">
-    <input type="checkbox" name="combatOptions.${id}" ${option.checked ? 'checked' : ''} ${option.disabled ? 'disabled' : ''}/>
-    <span><b>${label}</b>${summary ? `<small>${summary}</small>` : ''}</span>
+  return `<label class="${cardClass}" data-rcd-option-id="${id}">
+    <input type="checkbox" name="combatOptions.${id}" ${option.checked ? 'checked' : ''} ${disabledAttr}/>
+    <span><b>${label}</b>${summary ? `<small>${summary}</small>` : ''}${reasonHTML}</span>
   </label>`;
 }
 
@@ -700,23 +737,21 @@ export function getSkillTotal(actor, skillKey) {
   return componentTotal;
 }
 
-function getWeaponAttackBonus(actor, weapon) {
-  const system = weapon?.system ?? {};
-  const candidates = [
-    system.attackBonus,
-    system.attack?.bonus,
-    system.equippedAttackBonus,
-    system.derived?.attackBonus,
-    system.derived?.attack?.bonus,
-    weapon?.flags?.swse?.attackBonus
-  ];
-  for (const candidate of candidates) {
-    const n = Number(candidate);
-    if (Number.isFinite(n)) return n;
-  }
-  const ability = isRangedWeapon(weapon) ? 'dex' : 'str';
-  const bab = Number(actor?.system?.derived?.bab?.total ?? actor?.system?.bab?.total ?? actor?.system?.baseAttackBonus ?? 0) || 0;
-  return bab + getAbilityModifier(actor, ability) + (Number(system.enhancementBonus ?? system.attackEnhancement ?? 0) || 0);
+// Math Integrity Freeze, Attack Bonus round: this used to independently
+// reconstruct a 3-term (BAB + ability + enhancement) approximation of the
+// attack bonus, diverging from resolveAttackBonus()'s ~20-term canonical
+// formula (range, proficiency, condition track, combat options, talents,
+// state effects, armor ACP, etc. were all silently absent from the dialog's
+// displayed base). A live DOM hotfix (attack-dialog-combat-corrections-
+// hotfix.js) already overwrote the mis-displayed number after the fact via
+// a MutationObserver, but only when its own actor/weapon lookup (matching
+// displayed name text in the DOM) succeeds — leaving a real, if narrow,
+// "dialog shows a different base than the resolver" parity gap. Delegating
+// to resolveAttackBonus() directly here closes that gap at the source
+// instead of depending on a DOM patch to paper over it after the fact.
+function getWeaponAttackBonus(actor, weapon, context = {}) {
+  if (!weapon) return 0;
+  return resolveAttackBonus(actor, weapon, null, context).total;
 }
 
 function getDamageModifier(weapon) {
@@ -731,7 +766,7 @@ function getDamageModifier(weapon) {
 
 function getRollBaseTotal(model) {
   if (model.rollType === 'skill' || model.rollType === 'force' || model.rollType === 'force-power') return getSkillTotal(model.actor, model.skillKey || 'useTheForce');
-  if (model.rollType === 'attack') return getWeaponAttackBonus(model.actor, model.weapon);
+  if (model.rollType === 'attack') return getWeaponAttackBonus(model.actor, model.weapon, { attackType: model.melee ? 'melee' : 'ranged' });
   if (model.rollType === 'damage') return getDamageModifier(model.weapon);
   if (model.rollType === 'initiative') return getSkillTotal(model.actor, 'initiative');
   return getAbilityModifier(model.actor, model.abilityKey);
@@ -885,24 +920,96 @@ function buildRollPreviewRail(model) {
   </aside>`;
 }
 
-function wireRollConfigDialog(html) {
+function wireRollConfigDialog(html, { actor = null, weapon = null, rollType = 'attack', model = null, sequencePenalty = 0 } = {}) {
   const root = html?.[0] ?? html;
   const form = root?.querySelector?.('.swse-roll-config-v2');
   if (!form) return;
   const shell = form.closest('.swse-roll-config-shell') ?? form;
   const base = Number(form.dataset.baseTotal ?? 0) || 0;
   const sign = value => `${value >= 0 ? '+' : ''}${value}`;
-  const update = () => {
+  const isLiveAttack = rollType === 'attack' && !!actor && !!weapon;
+  // Math Integrity Freeze, Attack Bonus round (blocker fix): this used to
+  // recompute a bare situational number from the same ungated flat
+  // +2/+2/+1/+1 arithmetic the submit handler also used to have, entirely
+  // independently of attack-dialog-combat-corrections-hotfix.js's OWN
+  // separate DOM-patch preview sync (which called resolveAttackBonus()
+  // with minimal context and a fragile DOM-name-matching actor/weapon
+  // lookup) -- three independently-computed "preview" numbers for one
+  // dialog. For an attack roll with a real actor+weapon, this now calls
+  // the exact same computeFinalAttackComposition() seam rollAttack() uses,
+  // via the full context computeAttackSituationalContext()/
+  // readNestedFormEntries() build from the live form state, so the preview
+  // can never diverge from what Roll actually produces. The hotfix's
+  // separate sync mechanism was removed accordingly (see that file).
+  const update = async () => {
     const custom = Number(form.querySelector('[name="customModifier"]')?.value ?? 0) || 0;
-    let situational = 0;
-    for (const name of ['aiming','charging','flanking','higherGround','pointBlank']) {
-      if (form.querySelector(`[name="${name}"]`)?.checked) {
-        situational += name === 'higherGround' || name === 'pointBlank' ? 1 : 2;
-      }
+    if (isLiveAttack) {
+      const melee = model?.melee ?? false;
+      const { aim, charge, isPointBlank, situationalContributions } = computeAttackSituationalContext(form, melee);
+      // Math Integrity Freeze, Attack Bonus round 8 correction #1 (Blocker
+      // 3): thread the dialog's own Target Context selection (Selected
+      // Token / Combatant) into the live preview the same way the submit
+      // handler already threads it into targetContext -- previously this
+      // preview never read these fields at all, so it could only ever see
+      // a canvas-targeted token (via getTargetActorFromOptions()'s own
+      // fallback), silently ignoring an explicit Combatant pick and
+      // diverging from what the actual submitted roll would resolve.
+      const targetTokenId = form.querySelector('[name="targetTokenId"]')?.value || null;
+      const targetActorIdField = form.querySelector('[name="targetActorId"]')?.value || null;
+      const rollOptions = {
+        attackType: melee ? 'melee' : 'ranged',
+        weapon,
+        aim,
+        charge,
+        isPointBlank,
+        combatOptions: readNestedFormEntries(form, 'combatOptions'),
+        attackOptions: readNestedFormEntries(form, 'attackOptions'),
+        rangeBand: form.querySelector('[name="rangeBand"]')?.value || null,
+        targetTokenId,
+        targetActorId: targetActorIdField,
+        fightingDefensively: form.querySelector('[name="fightingDefensively"]')?.checked === true,
+        customModifier: custom,
+        situationalContributions,
+        sequencePenalty
+      };
+      const { computeFinalAttackComposition } = await import('/systems/foundryvtt-swse/scripts/combat/rolls/attacks.js');
+      const composition = await computeFinalAttackComposition(actor, weapon, rollOptions);
+      const resolvedTargetActor = getTargetActorFromOptions(rollOptions);
+      const previewSituationalTotal = situationalContributions.reduce((sum, m) => sum + (Number(m.value) || 0), 0);
+      const total = composition.ok ? composition.atkBonus : base + custom + previewSituationalTotal;
+      form.querySelector('[data-rcd-preview-total]')?.replaceChildren(document.createTextNode(sign(total)));
+      form.querySelector('[data-rcd-formula]')?.replaceChildren(document.createTextNode(`1d20 ${sign(total)}`));
+      if (composition.ok) rebuildAttackBreakdown(form, composition.attackComponentLedger, total);
+      // Math Integrity Freeze, Attack Bonus round 8 (Part 7, live context
+      // recomputation): checking Aim/Charge (or an Autofire-capable weapon
+      // mode) must immediately unlock the "Your Attack Options" cards that
+      // were only waiting on that context -- Careful Shot goes from
+      // "disabled: Requires Aim" to selectable the instant Aim is checked,
+      // without needing to close and reopen the dialog. Reads the SAME
+      // rollOptions.aim/charge/attackOptions.autofire this same update()
+      // pass just built for the real composition, so the option-state
+      // recompute can never disagree with what the roll itself would see.
+      rebuildAttackOptionsPanel(form, actor, weapon, { attackType: melee ? 'melee' : 'ranged', aim, charge, autofire: rollOptions.attackOptions?.autofire === true, combatOptions: rollOptions.combatOptions, attackOptions: rollOptions.attackOptions, target: resolvedTargetActor, targetActor: resolvedTargetActor });
+      return;
     }
-    const total = base + custom + situational;
+    // Math Integrity Freeze, Attack Bonus round 8 (Part 1, domain
+    // isolation): this used to re-read the SAME 'aiming'/'charging'/
+    // 'flanking'/'higherGround'/'pointBlank' fields the attack-only Quick
+    // Toggles panel wrote to, and add a flat +2/+1 per checked box to
+    // EVERY non-attack roll's preview -- Skill, Force, Ability, Damage,
+    // etc. all included, even though the panel that produced those field
+    // names no longer renders at all for a non-attack roll (see the
+    // template above, now gated on model.isAttackRoll) and the ACTUAL
+    // roll (rollSkill() and friends) never consumed those fields in the
+    // first place. That meant a non-attack dialog's own live preview could
+    // show a total the real roll would never produce (e.g. a Stealth
+    // check preview inflated by a bogus "Charging +2"). There is no
+    // situational contribution for a non-attack roll here any more; the
+    // preview is exactly base + custom, matching what rollSkill()/friends
+    // actually compute.
+    const total = base + custom;
     form.querySelector('[data-rcd-custom-bd]')?.replaceChildren(document.createTextNode(sign(custom)));
-    form.querySelector('[data-rcd-situational-bd]')?.replaceChildren(document.createTextNode(sign(situational)));
+    form.querySelector('[data-rcd-situational-bd]')?.replaceChildren(document.createTextNode(sign(0)));
     form.querySelector('[data-rcd-bd-total]')?.replaceChildren(document.createTextNode(sign(total)));
     form.querySelector('[data-rcd-preview-total]')?.replaceChildren(document.createTextNode(sign(total)));
     form.querySelector('[data-rcd-formula]')?.replaceChildren(document.createTextNode(`1d20 ${sign(total)}`));
@@ -943,7 +1050,46 @@ export async function buildRollConfigModel(options = {}) {
   const rangeProfile = weapon ? await buildWeaponRangeProfile(weapon) : null;
   const ranged = weapon ? isRangedWeapon(weapon) : false;
   const melee = weapon ? isMeleeWeapon(weapon) : false;
-  const combatOptions = weapon ? CombatOptionResolver.summarizeAttackOptions(actor, weapon, { attackType: ranged ? 'ranged' : 'melee' }) : [];
+  // Math Integrity Freeze, Attack Bonus round 8 (Part 1, domain isolation):
+  // actor-owned combat options and the generic attack-context authority are
+  // an ATTACK-only concept -- a Damage roll passes the same weapon but must
+  // not inherit Aim/Charge/Flanking/Point-Blank controls or "Unlocked
+  // Attack Options" cards merely because a weapon happens to be present.
+  const isAttackRoll = rollType === 'attack';
+  const attackTypeKey = ranged ? 'ranged' : 'melee';
+  // Math Integrity Freeze, Attack Bonus round 8 correction #1 (Blocker 3):
+  // the initial option-card/context render used to pass only
+  // { attackType }, so a target-gated option (Droid Hunter, Jedi Hunter,
+  // Cunning Attack, ...) could never resolve even when a token was already
+  // targeted before the dialog opened. getTargetActorFromOptions({}) is the
+  // SAME shared target-resolution authority the real roll and the
+  // submit-time targetContext already use (combat-roll-math.js) -- calling
+  // it with no fields falls through to its own game.user.targets fallback,
+  // matching selectedTargetRows()'s existing "Selected token" default. No
+  // second target resolver is introduced.
+  const initialTargetActor = isAttackRoll && weapon ? getTargetActorFromOptions({}) : null;
+  // getAttackOptionsWithState() (round 8) replaces the plain
+  // summarizeAttackOptions() call here: it also surfaces an owned option
+  // whose ONLY unmet gate is a player-toggleable context (Aim/Charge/
+  // Autofire/target/another option) as `state: 'disabled'` with a
+  // `reason`, instead of omitting it outright -- so the dialog can show
+  // *why* Careful Shot/Powerful Charge/Burst Fire/Droid Hunter aren't
+  // selectable yet rather than hiding them as if they didn't exist.
+  // collectAttackModifiers()'s own resolution (the real roll math) still
+  // calls summarizeAttackOptions()/getAvailableAttackOptions() directly and
+  // is completely unaffected by this presentation-only view.
+  const combatOptions = isAttackRoll && weapon
+    ? CombatOptionResolver.getAttackOptionsWithState(actor, weapon, { attackType: attackTypeKey, target: initialTargetActor, targetActor: initialTargetActor })
+    : [];
+  // Which generic attack-context toggles (Aim/Charge/Flanking) are relevant
+  // to even show, per the melee/ranged split plus the Charging-Fire-style
+  // "charge context is relevant to my ranged attack" exception (round 8,
+  // Part 3). Point Blank is deliberately absent -- round 8 correction #1
+  // (Blocker 4) removed it as a toggleable context entirely; it is a range
+  // STATE derived from the Range Band selector, never a second authority.
+  const attackContexts = isAttackRoll && weapon
+    ? CombatOptionResolver.getAvailableAttackContexts(actor, weapon, { attackType: attackTypeKey, target: initialTargetActor, targetActor: initialTargetActor })
+    : { aim: false, charge: false, flanking: false };
 
   // Skill/force rolls have a single canonical authority: getSkillTotal() via
   // getRollBaseTotal(). A caller-supplied options.baseBonus that disagrees
@@ -985,13 +1131,19 @@ export async function buildRollConfigModel(options = {}) {
     const misc = baseTotal - abilityMod - halfLevel - trained - focus;
     if (misc) breakdown.push({ label: 'Other Bonuses', value: misc });
   } else if (rollType === 'attack') {
-    const bab = Number(actor?.system?.derived?.bab?.total ?? actor?.system?.bab?.total ?? actor?.system?.baseAttackBonus ?? 0) || 0;
-    const ability = ranged ? 'dex' : 'str';
-    const abilityMod = getAbilityModifier(actor, ability);
-    if (bab) breakdown.push({ label: 'Base Attack Bonus', value: bab });
-    if (abilityMod) breakdown.push({ label: `${ability.toUpperCase()} Modifier`, value: abilityMod });
-    const misc = baseTotal - bab - abilityMod;
-    if (misc) breakdown.push({ label: 'Weapon / Other', value: misc });
+    // Same canonical resolver that produced baseTotal (via getRollBaseTotal
+    // -> getWeaponAttackBonus), so the breakdown can never disagree with the
+    // number it is a breakdown of.
+    const attackComponents = weapon ? (resolveAttackBonus(actor, weapon, null, { attackType: melee ? 'melee' : 'ranged' }).components ?? {}) : {};
+    let accounted = 0;
+    for (const [label, value] of Object.entries(attackComponents)) {
+      const n = Number(value) || 0;
+      if (!n) continue;
+      accounted += n;
+      breakdown.push({ label, value: n });
+    }
+    const misc = baseTotal - accounted;
+    if (misc) breakdown.push({ label: 'Other', value: misc });
   } else if (rollType === 'ability') {
     breakdown.push({ label: `${String(abilityKey ?? '').toUpperCase() || 'Ability'} Modifier`, value: baseTotal });
   } else {
@@ -1013,10 +1165,27 @@ export async function buildRollConfigModel(options = {}) {
     hasStunSetting: weaponHasStunSetting(weapon),
     stunOnly: weaponIsStunOnly(weapon),
     damageModeChoices: buildDamageModeChoices(weapon),
-    hasBurstFire: actorHasNamedItem(actor, ['Burst Fire']),
-    hasRapidShot: actorHasNamedItem(actor, ['Rapid Shot']),
-    hasPowerAttack: actorHasNamedItem(actor, ['Power Attack']),
-    hasFlurry: actorHasNamedItem(actor, ['Flurry', 'Rapid Strike']),
+    // Math Integrity Freeze, Attack Bonus round 8 (Part 8, duplicate
+    // audit): hasBurstFire/hasRapidShot/hasPowerAttack/hasFlurry were
+    // removed. Each backed a hand-coded checkbox that duplicated an
+    // ATTACK_OPTION record already live through CombatOptionResolver
+    // (confirmed directly against packs/feats.db: Burst Fire ->
+    // option:'burstFire', Rapid Shot -> option:'rapidShot', Power Attack ->
+    // option:'powerAttack', Flurry -> option:'flurry' -- all already
+    // rendered as "Unlocked Attack Options" cards). Worse than mere
+    // duplication: the hardcoded Flurry checkbox submitted under
+    // attackOptions.flurry regardless of which of the two differently-
+    // named feats (Flurry, requiresWeaponGroups light/lightsaber only; or
+    // Rapid Strike, option:'rapidStrike', no weapon restriction) the actor
+    // actually owned, so an actor with only Rapid Strike checking that box
+    // would submit the wrong field entirely (never reaching
+    // combatOptions.rapidStrike) while an actor with only Flurry on a
+    // non-light/lightsaber weapon would incorrectly receive its bonus with
+    // no weapon-group check at all -- the hardcoded control bypassed
+    // optionAllowedForWeapon()'s gates entirely, unlike the dynamic cards.
+    // Double Strike/Triple Attack are unaffected and kept below: they are
+    // the full-round multiattack sequencer (combat-feature-handlers.js), a
+    // separate subsystem with no ATTACK_OPTION metadata equivalent.
     hasDoubleStrike: actorHasNamedItem(actor, ['Double Strike', 'Double Attack']),
     hasTripleStrike: actorHasNamedItem(actor, ['Triple Strike', 'Triple Attack']),
     trainedAcrobatics: isSkillTrained(actor, 'acrobatics'),
@@ -1026,6 +1195,8 @@ export async function buildRollConfigModel(options = {}) {
     combatantRows: combatantRows(),
     rangeProfile,
     combatOptions,
+    attackContexts,
+    isAttackRoll,
     baseTotal,
     breakdown,
     accentRgb: getRollAccent({ rollType, ranged, skillKey, abilityKey }),
@@ -1087,21 +1258,26 @@ function buildWeaponPanel(model) {
   const rangeChips = model.rangeProfile?.ranges
     ? [formatBandChip('PB', model.rangeProfile.ranges.pb), formatBandChip('Short', model.rangeProfile.ranges.short), formatBandChip('Medium', model.rangeProfile.ranges.medium), formatBandChip('Long', model.rangeProfile.ranges.long)].filter(Boolean).join('')
     : '';
+  // Math Integrity Freeze, Attack Bonus round 8 (Part 1/Part 8): actor-
+  // owned attack options, Autofire mode, and Melee Grip are ATTACK-only
+  // concepts -- a Damage roll passes the same weapon (for its damage
+  // profile/mode) but must not inherit them. The four hardcoded duplicate
+  // checkboxes (Burst Fire, Rapid Shot, Power Attack, Flurry/Rapid Strike)
+  // are gone entirely -- each is now surfaced correctly, with proper
+  // weapon-group/attack-type gating, through the dynamic "Attack Options"
+  // cards below (see the model.hasBurstFire etc. removal comment in
+  // buildRollConfigModel for the exact defect this closes).
   const optionCards = model.combatOptions.map(optionCard).join('');
-  const rangedPanel = model.ranged ? `<div class="swse-roll-config-subpanel">
+  const rangedPanel = (model.isAttackRoll && model.ranged) ? `<div class="swse-roll-config-subpanel">
       <h5>Ranged Options</h5>
       ${rangeChips ? `<div class="swse-roll-config-chips">${rangeChips}</div>` : ''}
       <label class="swse-roll-config-option"><input type="checkbox" name="attackOptions.autofire" ${model.supportsAutofire ? '' : 'disabled'} /> <span><b>Autofire</b><small>${model.supportsAutofire ? 'Weapon supports autofire.' : 'Unavailable for this weapon.'}</small></span></label>
-      <label class="swse-roll-config-option"><input type="checkbox" name="attackOptions.burstFire" ${(model.supportsAutofire && model.hasBurstFire) ? '' : 'disabled'} /> <span><b>Burst Fire</b><small>${model.hasBurstFire ? 'Unlocked by feat.' : 'Requires Burst Fire.'}</small></span></label>
-      <label class="swse-roll-config-option"><input type="checkbox" name="attackOptions.rapidShot" ${model.hasRapidShot ? '' : 'disabled'} /> <span><b>Rapid Shot</b><small>${model.hasRapidShot ? '-2 attack, +1 damage die.' : 'Requires Rapid Shot.'}</small></span></label>
     </div>` : '';
   const meleeAttackOptions = [
-    model.hasPowerAttack ? `<label class="swse-roll-config-option"><input type="checkbox" name="attackOptions.powerAttack" /> <span><b>Power Attack</b><small>Trade accuracy for damage.</small></span></label>` : '',
-    model.hasFlurry ? `<label class="swse-roll-config-option"><input type="checkbox" name="attackOptions.flurry" /> <span><b>Flurry / Rapid Strike</b><small>Unlocked melee multi-strike option.</small></span></label>` : '',
     model.hasDoubleStrike ? `<label class="swse-roll-config-option"><input type="checkbox" name="attackOptions.doubleStrike" /> <span><b>Double Strike</b><small>Full-round multiattack.</small></span></label>` : '',
     model.hasTripleStrike ? `<label class="swse-roll-config-option"><input type="checkbox" name="attackOptions.tripleStrike" /> <span><b>Triple Strike</b><small>Full-round multiattack.</small></span></label>` : ''
   ].filter(Boolean).join('');
-  const meleePanel = model.melee ? `<div class="swse-roll-config-subpanel">
+  const meleePanel = (model.isAttackRoll && model.melee) ? `<div class="swse-roll-config-subpanel">
       <h5>Melee Options</h5>
       <label>Grip
         <select name="grip">
@@ -1130,7 +1306,7 @@ function buildWeaponPanel(model) {
     <div class="swse-roll-config-source"><b>${escapeHTML(model.weaponName)}</b><span>${model.ranged ? 'Ranged' : 'Melee'} · ${escapeHTML(model.weapon?.system?.weaponCategory ?? model.weapon?.system?.rangeProfileName ?? '')}</span></div>
     ${damageModePanel}
     ${rangedPanel}${meleePanel}
-    ${optionCards ? `<div class="swse-roll-config-subpanel"><h5>Unlocked Attack Options</h5>${optionCards}</div>` : ''}
+    ${(model.isAttackRoll && optionCards) ? `<div class="swse-roll-config-subpanel" data-rcd-attack-options><h5>Your Attack Options</h5>${optionCards}</div>` : ''}
   </section>`;
 }
 
@@ -1173,6 +1349,127 @@ function readNestedFormEntries(form, prefix) {
   return out;
 }
 
+// Math Integrity Freeze, Attack Bonus round (blocker fix): the ONE place
+// that turns the Aim/Charging/Flanking/Higher Ground/Point Blank quick
+// toggles into roll context, shared by both the live dialog preview
+// (wireRollConfigDialog's update()) and the actual submit handler below --
+// so the two can never disagree about what a checked toggle means. See the
+// submit handler's own comment for the per-toggle rule sourcing.
+//
+// Charge and Flanking are emitted as TYPED contribution objects (the
+// project's canonical Modifier shape, ModifierTypes.js) rather than pre-
+// summed into a bare number here -- that used to lose source identity,
+// bonus type, and per-rule ledger visibility before the contribution ever
+// reached the final composition, and prevented correct type-aware stacking.
+// These typed contributions are resolved together with every OTHER
+// typed/collision-eligible attack contribution (Basic Effect Intent
+// modifiers, a typed combat-option contribution such as Relentless Attack)
+// in ONE shared ModifierUtils.resolveStacking() pass inside
+// combat-roll-math.js#resolveAttackBonus() -- not in a second, separately-
+// maintained stacking pass here or in attacks.js. See that function's own
+// doc comment for the full cross-channel rationale.
+//
+// Charge is COMPETENCE, per published SWSE evidence: The Unknown Regions'
+// Mounted Charge rule states a charging attacker gains "a +2 competence
+// bonus to the attack roll," and its Diving Attack rule separately refers
+// to "the competence bonus granted by the charge attack" -- both confirming
+// the ordinary Charge attack bonus is itself typed competence. Powerful
+// Charge's own benefit text (packs/feats.db) reads "When you Charge, you
+// gain an ADDITIONAL +2 bonus on your melee attack roll" -- that additional
+// bonus is a SEPARATE, unnamed-type contribution (CombatOptionResolver's
+// existing untyped `attackModifier: 2` for the powerfulCharge option,
+// unchanged), which stacks with Charge's own competence bonus because
+// untyped always stacks with everything -- it does not mean Charge itself
+// is untyped. Flanking is melee-only per verified SWSE RAW (a ranged attack
+// never gains a flanking bonus) and uses the canonical FLANKING type
+// (highestOnly -- a target is either flanked or not, so a second
+// flanking-granting source must not double it).
+export function computeAttackSituationalContext(form, melee) {
+  const charging = form.querySelector('[name="charging"]')?.checked === true;
+  const flanking = form.querySelector('[name="flanking"]')?.checked === true;
+  // Math Integrity Freeze, Attack Bonus round 8 correction #1 (Blocker 4):
+  // this used to read a separate 'pointBlank' checkbox, independently
+  // settable from the Range Band selector that already records this exact
+  // fact -- capable of producing an impossible combination (Range Band:
+  // Medium, but the checkbox still checked). The Range Band select's fixed
+  // option value for this band is the literal string 'pointBlank' (never
+  // free text), so a direct comparison against the ONE field that records
+  // range is the single authority; no separate control exists to disagree
+  // with it. The field does not render at all for a melee attack, so this
+  // is correctly always false there.
+  const isPointBlank = form.querySelector('[name="rangeBand"]')?.value === 'pointBlank';
+  const situationalContributions = [];
+  if (charging && melee) {
+    situationalContributions.push(createModifier({
+      source: ModifierSource.CONDITION, sourceId: 'charge', sourceName: 'Charge',
+      target: 'global.attack', type: ModifierType.COMPETENCE, value: 2
+    }));
+  }
+  if (flanking && melee) {
+    situationalContributions.push(createModifier({
+      source: ModifierSource.CONDITION, sourceId: 'flanking', sourceName: 'Flanking',
+      target: 'global.attack', type: ModifierType.FLANKING, value: 2
+    }));
+  }
+  return {
+    aim: form.querySelector('[name="aiming"]')?.checked === true,
+    charge: charging,
+    isPointBlank,
+    situationalContributions
+  };
+}
+
+// Rebuilds the dialog's breakdown box from a real attack contribution
+// ledger (the same shape computeFinalAttackComposition()/rollAttack()
+// produce) instead of a hand-assembled {label:value} map, so the preview
+// can never show a component the actual roll wouldn't.
+function rebuildAttackBreakdown(form, ledgerEntries, total) {
+  const box = form.querySelector('[data-rcd-breakdown]');
+  if (!box) return;
+  box.replaceChildren();
+  const sign = value => `${value >= 0 ? '+' : ''}${value}`;
+  const addRow = (label, value, className = 'rcd-bd-row') => {
+    const row = document.createElement('div');
+    row.className = className;
+    const left = document.createElement('span');
+    left.className = className === 'rcd-bd-total' ? 'rcd-bd-total-label' : 'rcd-bd-label';
+    left.textContent = label;
+    const right = document.createElement('span');
+    right.className = className === 'rcd-bd-total' ? 'rcd-bd-total-val' : 'rcd-bd-val';
+    right.textContent = sign(value);
+    row.append(left, right);
+    box.appendChild(row);
+  };
+  for (const entry of ledgerEntries || []) {
+    if (entry?.applied === false) continue;
+    const value = Number(entry?.value) || 0;
+    if (!value) continue;
+    addRow(entry.label ?? entry.sourceName ?? entry.id ?? 'Modifier', value);
+  }
+  addRow('Total', total, 'rcd-bd-total');
+}
+
+// Math Integrity Freeze, Attack Bonus round 8 (Part 7, live context
+// recomputation): rebuilds the "Your Attack Options" cards from a fresh
+// CombatOptionResolver.getAttackOptionsWithState() call against the
+// CURRENT form state, so toggling Aim/Charge/Autofire immediately updates
+// which owned options are selectable vs. disabled-with-reason, without
+// closing and reopening the dialog. Reads combatOptions/attackOptions from
+// the passed context (the same values this update() pass already read from
+// the form), so a value the player just set is preserved across the
+// rebuild rather than reset.
+function rebuildAttackOptionsPanel(form, actor, weapon, context) {
+  const container = form.querySelector('[data-rcd-attack-options]');
+  if (!container || !actor || !weapon) return;
+  const options = CombatOptionResolver.getAttackOptionsWithState(actor, weapon, context);
+  if (!options.length) {
+    container.remove();
+    return;
+  }
+  const cards = options.map(optionCard).join('');
+  container.innerHTML = `<h5>Your Attack Options</h5>${cards}`;
+}
+
 /**
  * Return the charging situational label, adjusted for combined feats.
  * Dodge + Charging Fire (KotOR CG): charging Reflex penalty is -1 instead of -2.
@@ -1212,7 +1509,18 @@ export async function showRollModifiersDialog(options = {}) {
     weapon,
     showCover = true,
     showConcealment = true,
-    showForcePoint = true
+    showForcePoint = true,
+    // Math Integrity Freeze, Attack Bonus round (blocker fix): a Double/
+    // Triple Attack (combat-feature-handlers.js#executeCombatFeatureMultiattack)
+    // used to open this dialog with no knowledge of that attack's
+    // sequence penalty at all -- the penalty was only computed and passed
+    // to rollAttack() AFTER the dialog closed, so the dialog's displayed
+    // preview and the actual roll could show two different numbers for
+    // the exact same attack. A caller that already knows an attack's fixed
+    // sequence penalty (multiattack, at minimum) now passes it in so the
+    // live preview includes it via the same shared composition seam the
+    // real roll uses.
+    sequencePenalty = 0
   } = options;
 
   const model = await buildRollConfigModel({ ...options, title, rollType, actor, weapon });
@@ -1252,14 +1560,21 @@ export async function showRollModifiersDialog(options = {}) {
               <label>Custom Modifier<input type="number" name="customModifier" value="0" /></label>
               <label>Note<input type="text" name="rollNote" placeholder="Optional GM/player note" /></label>
             </div>
-            ${rollType !== 'initiative' ? `<div class="swse-roll-config-subpanel">
-              <h5>Quick Toggles</h5>
-              ${model.melee ? '' : `<label class="swse-roll-config-option"><input type="checkbox" name="aiming" /> <span><b>Aiming</b><small>+2 attack when the action applies.</small></span></label>`}
-              <label class="swse-roll-config-option"><input type="checkbox" name="charging" /> <span><b>Charging</b><small>${_chargingLabel(actor)}</small></span></label>
-              <label class="swse-roll-config-option"><input type="checkbox" name="flanking" /> <span><b>Flanking</b><small>+2 melee attack when applicable.</small></span></label>
-              ${model.melee ? '' : `<label class="swse-roll-config-option"><input type="checkbox" name="higherGround" /> <span><b>Higher Ground</b><small>+1 when applicable.</small></span></label>`}
-              ${model.melee ? '' : `<label class="swse-roll-config-option"><input type="checkbox" name="pointBlank" /> <span><b>Point Blank</b><small>+1 attack/damage in close range.</small></span></label>`}
+            ${model.isAttackRoll ? `<div class="swse-roll-config-subpanel" data-rcd-attack-context>
+              <h5>Attack Context</h5>
+              ${model.attackContexts?.aim ? `<label class="swse-roll-config-option"><input type="checkbox" name="aiming" /> <span><b>Aim</b><small>No direct attack bonus. Enables Careful Shot/Deadeye and other Aim-gated feats/talents if you have them.</small></span></label>` : ''}
+              ${model.attackContexts?.charge ? `<label class="swse-roll-config-option"><input type="checkbox" name="charging" /> <span><b>Charging</b><small>${_chargingLabel(actor)}</small></span></label>` : ''}
+              ${model.attackContexts?.flanking ? `<label class="swse-roll-config-option"><input type="checkbox" name="flanking" /> <span><b>Flanking</b><small>+2 melee attack when applicable.</small></span></label>` : ''}
             </div>` : ''}
+            <!-- Math Integrity Freeze, Attack Bonus round 8 correction #1
+                 (Blocker 4): no separate Point Blank Range checkbox here.
+                 Point Blank is a range STATE, already owned by the Range
+                 Band selector in the Target Context panel below (which
+                 already offers a "Point Blank" value) -- a second,
+                 independently-settable checkbox could produce an
+                 impossible combination (Range Band: Medium AND Point
+                 Blank checked). isPointBlank is derived from the selected
+                 Range Band in exactly one place, computeAttackSituationalContext(). -->
           </section>
         </main>
         ${buildRollPreviewRail(model)}
@@ -1321,17 +1636,74 @@ export async function showRollModifiersDialog(options = {}) {
                 aiming: data.get('aiming') === 'on',
                 charging: data.get('charging') === 'on',
                 flanking: data.get('flanking') === 'on',
-                higherGround: data.get('higherGround') === 'on',
-                pointBlank: data.get('pointBlank') === 'on',
+                // Math Integrity Freeze, Attack Bonus round 8 correction #1
+                // (Blocker 4): derived from Range Band, not a separate
+                // 'pointBlank' form field (removed) -- see
+                // computeAttackSituationalContext(), the single authority
+                // for this fact, called just below via Object.assign for
+                // rollType === 'attack' (result.isPointBlank).
+                pointBlank: (data.get('rangeBand') || null) === 'pointBlank',
                 prone: data.get('prone') === 'on'
               }
             };
-            result.situationalBonus = 0;
-            if (result.situational.aiming) result.situationalBonus += 2;
-            if (result.situational.charging) result.situationalBonus += 2;
-            if (result.situational.flanking) result.situationalBonus += 2;
-            if (result.situational.higherGround) result.situationalBonus += 1;
-            if (result.situational.pointBlank) result.situationalBonus += 1;
+            // Math Integrity Freeze, Attack Bonus round (blocker fix): these
+            // toggles used to flatten straight into a bare situationalBonus
+            // number, bypassing CombatOptionResolver/ScopedCombatFeatResolver
+            // entirely -- a second, independent contextual-attack authority.
+            // Corrected per-toggle against verified RAW/existing engines:
+            //   - Aim grants no direct attack bonus by itself; it only
+            //     enables Aim-gated feats/talents (Careful Shot, Deadeye,
+            //     etc.), so it now sets context.aim = true (the exact flag
+            //     CombatOptionResolver's requiresAim gate already reads) and
+            //     contributes nothing to situationalBonus. Previously no
+            //     bridge existed from this dialog to that flag at all, so
+            //     those feats/talents could never activate from here.
+            // - Point Blank Shot's +1 is feat-gated (ScopedCombatFeatResolver
+            //     already implements this rule); the checkbox now only
+            //     supplies the point-blank-range CONTEXT
+            //     (isPointBlank: true) that resolver already checks for, so
+            //     an actor without the feat correctly gets +0, not a free +1.
+            //   - Charging's universal (non-feat) +2 melee attack bonus is
+            //     real SWSE RAW, but only for a melee attack -- a charge
+            //     ending in a ranged attack instead requires the Charging
+            //     Fire talent, whose own CombatOptionResolver option
+            //     explicitly suppresses this same bonus
+            //     (suppresses: ["chargeAttackBonus"]). The flat +2 is now
+            //     melee-only; charge: true is always set so Powerful
+            //     Charge/Charging Fire (both already context.charge-gated in
+            //     CombatOptionResolver) can activate correctly.
+            //   - Higher Ground is not a rule this project found verified
+            //     against any SWSE source text or existing authority, so it
+            //     is no longer automated; the checkbox is left as a reminder
+            //     only, and a GM who wants to grant it uses Custom Modifier.
+            //   - Charge and Flanking are no longer pre-summed into a bare
+            //     situationalBonus number here at all -- they are emitted as
+            //     typed Modifier contributions (situationalContributions)
+            //     and resolved for stacking, TOGETHER with every other
+            //     typed attack contribution (Basic Effect Intent, a typed
+            //     combat option), by the shared
+            //     combat-roll-math.js#resolveAttackBonus() seam via
+            //     ModifierUtils, the project's existing typed-stacking
+            //     authority. Flanking is SWSE RAW melee-only (a ranged
+            //     attack never gains it) and typed FLANKING (highestOnly);
+            //     Charge is COMPETENCE per published SWSE evidence (The
+            //     Unknown Regions' Mounted Charge/Diving Attack rules both
+            //     name the charge attack bonus "competence"). Powerful
+            //     Charge's own "ADDITIONAL +2" remains a separate, unnamed-
+            //     type (untyped) contribution in CombatOptionResolver, so it
+            //     still stacks with Charge's competence bonus -- untyped
+            //     always stacks with everything, regardless of what Charge
+            //     itself is typed.
+            // Math Integrity Freeze, Attack Bonus round 8 (Part 1, domain
+            // isolation): computeAttackSituationalContext() reads
+            // charging/flanking form fields that only exist at all when
+            // this is an attack roll (the Attack Context panel above is
+            // now gated on model.isAttackRoll) -- calling it unconditionally
+            // for every roll type was harmless in practice ONLY because no
+            // non-attack roll ever consumed result.situationalContributions,
+            // an implicit invariant nothing enforced. Gated explicitly so
+            // this dependency can never become load-bearing by accident.
+            if (rollType === 'attack') Object.assign(result, computeAttackSituationalContext(form, model.melee));
             result.coverBonus = ROLL_MODIFIERS.cover[result.cover]?.value || 0;
             result.missChance = ROLL_MODIFIERS.concealment[result.concealment]?.missChance || 0;
             resolve(result);
@@ -1340,7 +1712,7 @@ export async function showRollModifiersDialog(options = {}) {
         cancel: { icon: '<i class="fa-solid fa-times"></i>', label: 'Cancel', callback: () => resolve(null) }
       },
       default: 'roll',
-      render: html => wireRollConfigDialog(html)
+      render: html => wireRollConfigDialog(html, { actor, weapon, rollType, model, sequencePenalty })
     }, {
       id: 'swse-roll-configurator-v2',
       classes: ['swse-roll-config-dialog-v2'],

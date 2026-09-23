@@ -628,6 +628,118 @@ export function normalizeWeaponBranchFamily(system = {}) {
   return normalizeWeaponForWrite(system, system, system);
 }
 
+// ─── Shared item equipped/wielded-state authority ──────────────────────────
+// Math Integrity Freeze, Attack Bonus round 6: promoted verbatim from
+// character-actor.js's own isItemEquipped() (its only prior copy), so both
+// the character sheet's own item mirroring and target-conditioned combat
+// modifiers (e.g. Heart of the Guardian's vs-lightsaber-wielders check,
+// which needs to know whether a TARGET actor's lightsaber is currently
+// equipped, not merely owned) answer "is this item equipped/wielded" from
+// one place instead of drifting apart. character-actor.js now delegates
+// to isItemEquipped() below rather than keeping its own copy.
+
+export function isTruthyEquipState(value) {
+  if (value === true || Number(value) === 1) return true;
+  if (value && typeof value === 'object') {
+    return isTruthyEquipState(value.value ?? value.current ?? value.active ?? value.equipped ?? value.state);
+  }
+  if (typeof value === 'string') {
+    return ['true', '1', 'yes', 'equipped', 'worn', 'held', 'readied', 'ready', 'on', 'active', 'natural'].includes(value.toLowerCase());
+  }
+  return false;
+}
+
+function isDroidActorLike(actor) {
+  return String(actor?.type ?? '').toLowerCase() === 'droid'
+    || actor?.system?.isDroid === true
+    || String(actor?.system?.actorMode ?? '').toLowerCase() === 'droid';
+}
+
+function isAutoEquippedNaturalWeapon(item) {
+  const swseFlags = item?.flags?.swse ?? {};
+  return isNaturalWeaponOnly(item)
+    && (isTruthyEquipState(swseFlags.autoEquipped) || swseFlags.alwaysArmed === true);
+}
+
+// Narrow weapon-classification predicate, used only to gate the integrated-
+// droid-weapon equip check below -- an exact copy of character-actor.js's
+// own (separately retained, unrelated-purpose) isAttackItem()/
+// hasWeaponDamageProfile() logic, duplicated here rather than imported so
+// this module stays a dependency-free leaf (character-actor.js's copy also
+// backs its own item-mirroring scan, which is out of this promotion's scope).
+function hasWeaponDamageProfileLike(item) {
+  const system = item?.system ?? {};
+  return [
+    system.damage,
+    system.damageFormula,
+    system.damageRoll,
+    system.formula,
+    system.weapon?.damage,
+    system.attack?.damage,
+    system.rolls?.damage
+  ].find((value) => value !== undefined && value !== null && value !== '') !== undefined;
+}
+
+function isAttackItemLike(item) {
+  if (!item) return false;
+  if (['weapon', 'lightsaber'].includes(item.type)) return true;
+  if (!hasWeaponDamageProfileLike(item)) return false;
+
+  const system = item.system ?? {};
+  const text = [
+    item.type,
+    item.name,
+    system.type,
+    system.itemType,
+    system.category,
+    system.itemCategory,
+    system.equipmentType,
+    system.weaponType,
+    system.weaponCategory,
+    system.weaponGroup,
+    system.group,
+    system.subtype
+  ].filter(Boolean).join(' ').toLowerCase();
+
+  return /weapon|lightsaber|blaster|rifle|pistol|melee|ranged|thrown|grenade|simple|advanced|heavy/.test(text);
+}
+
+function isIntegratedDroidWeapon(item, actor) {
+  if (!isDroidActorLike(actor) || !item) return false;
+  const system = item.system ?? {};
+  return isAttackItemLike(item)
+    && (isTruthyEquipState(system.integrated)
+      || isTruthyEquipState(system.droidIntegrated)
+      || isTruthyEquipState(item?.flags?.swse?.integrated));
+}
+
+/**
+ * Canonical "is this item currently equipped/wielded" authority. Recognizes
+ * every equip-state shape live in the codebase (system.equipped,
+ * system.isEquipped, system.active, system.readied,
+ * system.equippable.equipped, system.equippable.active,
+ * system.activation.active, flags.swse.equipped), plus auto-equipped
+ * natural weapons and integrated droid weapons.
+ *
+ * @param {object} item
+ * @param {object|null} actor - required only to resolve integrated droid
+ *   weapons; omit when the actor context isn't relevant/available.
+ * @returns {boolean}
+ */
+export function isItemEquipped(item, actor = null) {
+  const system = item?.system ?? {};
+  return isTruthyEquipState(system.equipped)
+    || isTruthyEquipState(system.isEquipped)
+    || isTruthyEquipState(system.active)
+    || isTruthyEquipState(system.readied)
+    || isTruthyEquipState(system.equippable?.equipped)
+    || isTruthyEquipState(system.equippable?.active)
+    || isTruthyEquipState(system.activation?.active)
+    || isTruthyEquipState(item?.flags?.swse?.equipped)
+    || isAutoEquippedNaturalWeapon(item)
+    || isIntegratedDroidWeapon(item, actor);
+}
+
 export default {
   resolveWeaponBranchFamily,
   getWeaponBranch,
@@ -637,5 +749,7 @@ export default {
   isNaturalWeaponOnly,
   isNaturalOrUnarmedWeapon,
   defaultAttackAttributeForBranch,
-  normalizeWeaponBranchFamily
+  normalizeWeaponBranchFamily,
+  isTruthyEquipState,
+  isItemEquipped
 };

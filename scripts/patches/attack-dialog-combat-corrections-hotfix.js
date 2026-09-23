@@ -1,6 +1,4 @@
-import { SchemaAdapters } from '/systems/foundryvtt-swse/scripts/utils/schema-adapters.js';
 import { CombatOptionResolver } from '/systems/foundryvtt-swse/scripts/engine/combat/combat-option-resolver.js';
-import { resolveAttackBonus } from '/systems/foundryvtt-swse/scripts/engine/combat/combat-roll-math.js';
 import {
   getWeaponBranch as canonicalGetWeaponBranch,
   defaultAttackAttributeForBranch as canonicalDefaultAttackAttributeForBranch
@@ -35,16 +33,6 @@ function compactKey(value = '') {
 
 function bool(value) {
   return value === true || value === 'true' || value === 'on' || value === 1 || value === '1';
-}
-
-function finiteNumber(value) {
-  const n = Number(value);
-  return Number.isFinite(n) ? n : null;
-}
-
-function signNumber(value) {
-  const n = Number(value) || 0;
-  return `${n >= 0 ? '+' : ''}${n}`;
 }
 
 // Math Integrity Freeze, Batch 2B: branch inference delegated to the
@@ -91,101 +79,27 @@ function normalizeWeaponForCombat(weapon) {
   return branch;
 }
 
-function classLevelsFromActor(actor) {
-  const out = [];
-  const push = (name, level) => {
-    const className = String(name ?? '').trim();
-    const lvl = Number(level ?? 0) || 0;
-    if (className && lvl > 0) out.push({ className, level: lvl });
-  };
-
-  const progression = actor?.system?.progression?.classLevels;
-  if (Array.isArray(progression)) {
-    for (const entry of progression) {
-      push(entry?.class ?? entry?.name ?? entry?.className ?? entry?.id ?? entry?.classId, entry?.level ?? entry?.levels ?? entry?.value);
-    }
-  }
-
-  try {
-    for (const item of Array.from(actor?.items ?? [])) {
-      if (item?.type !== 'class') continue;
-      const system = item.system ?? {};
-      push(system.className ?? system.name ?? system.classId ?? item.name, system.level ?? system.levels ?? system.value);
-    }
-  } catch (_err) {
-    // no-op
-  }
-
-  const merged = new Map();
-  for (const entry of out) {
-    const key = compactKey(entry.className);
-    if (!key) continue;
-    merged.set(key, { className: entry.className, level: Math.max(merged.get(key)?.level ?? 0, entry.level) });
-  }
-  return [...merged.values()];
-}
-
-function estimateBabForClass(className, level) {
-  const key = compactKey(className);
-  const lvl = Math.max(0, Number(level) || 0);
-  if (!lvl) return 0;
-
-  if (key === 'nonheroic') {
-    const table = [0, 1, 2, 3, 3, 4, 5, 6, 6, 7, 8, 9, 9, 10, 11, 12, 12, 13, 14, 15];
-    return table[Math.min(table.length, lvl) - 1] ?? 0;
-  }
-
-  if (/soldier|jedi|elite|gunslinger|weaponmaster|duelist|martialarts|brawler|enforcer|bodyguard|knight|master|ace|officer|vanguard/.test(key)) {
-    return lvl;
-  }
-
-  // Saga heroic non-full-BAB classes use the 3/4 attack progression.
-  return Math.floor(lvl * 0.75);
-}
-
-function estimatedBabFromClasses(actor) {
-  const levels = classLevelsFromActor(actor);
-  if (!levels.length) return 0;
-  return levels.reduce((total, entry) => total + estimateBabForClass(entry.className, entry.level), 0);
-}
-
-function resolveActorBab(actor) {
-  const system = actor?.system ?? {};
-  const candidates = [
-    system.derived?.bab,
-    system.derived?.bab?.total,
-    system.derived?.bab?.value,
-    system.bab,
-    system.bab?.total,
-    system.bab?.value,
-    system.baseAttackBonus,
-    system.baseAttack,
-    system.attributes?.bab?.value,
-    system.combat?.bab,
-    system.derived?.combat?.bab
-  ];
-
-  for (const candidate of candidates) {
-    const n = finiteNumber(candidate);
-    if (n !== null && n > 0) return n;
-  }
-
-  return estimatedBabFromClasses(actor);
-}
-
-function prepareActorBabForRollConfig(actor) {
-  const bab = resolveActorBab(actor);
-  if (!actor?.system || !(bab > 0)) return bab || 0;
-  try {
-    actor.system.baseAttackBonus = bab;
-    if (!actor.system.bab || typeof actor.system.bab !== 'object') actor.system.bab = {};
-    actor.system.bab.total = bab;
-    actor.system.bab.value = bab;
-  } catch (_err) {
-    // Dialog fallback only; do not persist or fail rolls if the model is sealed.
-  }
-  return bab;
-}
+// Math Integrity Freeze, Attack Bonus round: this file used to carry its own
+// copy of a class-name/level BAB estimator (classLevelsFromActor/
+// estimateBabForClass/estimatedBabFromClasses/resolveActorBab), gated on
+// `original > 0` rather than `original !== null`. SchemaAdapters.getBAB()
+// (schema-adapters.js) already implements the identical estimator as its
+// own documented not-yet-prepared fallback -- but correctly, treating a
+// legitimately-derived 0 (e.g. a level-1 3/4-BAB-progression character,
+// where floor(1 * 0.75) === 0) as authoritative rather than "missing."
+// Because this file's copy treated ANY non-positive canonical value as
+// missing, it would silently substitute a guessed class-based BAB for a
+// real, correctly-computed zero (or negative) BAB -- and, via
+// patchSchemaAdapters() below, it did so by monkey-patching
+// SchemaAdapters.getBAB() GLOBALLY, reaching the live resolveAttackBonus()
+// roll path for every actor in the game, not just this dialog's preview.
+// That is exactly the "no known-wrong fallback formula" / "one domain, one
+// authority" violation the freeze exists to catch. The fix is to delete the
+// duplicate estimator entirely and read the one certified authority
+// (SchemaAdapters.getBAB()) directly wherever this file previously called
+// its own resolveActorBab()/prepareActorBabForRollConfig() -- see
+// patchSWSERollEntrypoints() below (roll-config.js's dialog preview no
+// longer needs a BAB bootstrap of any kind -- see that file instead).
 
 function optionId(option) {
   return compactKey(option?.id ?? option?.option ?? option?.key ?? option?.name ?? option?.label ?? '');
@@ -198,18 +112,6 @@ function optionIsPreAttackEligible(option) {
   const label = compactKey(option?.label ?? option?.name ?? '');
   if (FILTERED_ATTACK_OPTION_IDS.has(label)) return false;
   return true;
-}
-
-function patchSchemaAdapters() {
-  if (SchemaAdapters[PATCH_KEY]) return;
-  const originalGetBAB = SchemaAdapters.getBAB;
-  SchemaAdapters.getBAB = function patchedGetBAB(actor) {
-    const original = finiteNumber(originalGetBAB?.call?.(this, actor));
-    if (original !== null && original > 0) return original;
-    const fallback = resolveActorBab(actor);
-    return fallback > 0 ? fallback : (original ?? 0);
-  };
-  SchemaAdapters[PATCH_KEY] = true;
 }
 
 function patchCombatOptionResolver() {
@@ -322,12 +224,17 @@ function clarifyCoverPanel(form) {
 function patchAimToggle(form) {
   const aim = form.querySelector('[name="aiming"]');
   if (!aim) return;
-  aim.name = 'aimIgnoresCover';
+  // Relabel only -- the checkbox keeps its "aiming" name. It used to be
+  // renamed to "aimIgnoresCover", which silently broke both the submit
+  // handler's data.get('aiming') and the live preview's context.aim lookup
+  // for every ranged attack dialog (the one case Aim actually matters for)
+  // the moment this patch ran, since neither ever looked for the renamed
+  // field.
   const label = nearestLabel(aim);
   const title = label?.querySelector('b');
   const note = label?.querySelector('small');
   if (title) title.textContent = 'Aim';
-  if (note) note.textContent = 'No attack bonus. Aim ignores the target\'s cover bonus on the next ranged attack; checking this sets Target Cover to No Cover.';
+  if (note) note.textContent = 'No direct attack bonus. Enables Careful Shot/Deadeye and other Aim-gated feats/talents; ignores the target\'s cover bonus on the next ranged attack (checking this sets Target Cover to No Cover).';
   aim.addEventListener('change', () => {
     if (!aim.checked) return;
     const cover = form.querySelector('[name="cover"]');
@@ -355,97 +262,41 @@ function patchDuplicateStaticOptions(form) {
 
 function patchRangedOnlyRules(form) {
   if (!formLooksRanged(form)) return;
-  removeNamedInput(form, 'charging');
-  removeNamedInput(form, 'flanking');
+  // Math Integrity Freeze, Attack Bonus round 8: this used to unconditionally
+  // strip the Charging/Flanking context checkboxes from every ranged-looking
+  // form via a bare melee/ranged text sniff (formLooksRanged has no idea
+  // whether the actor owns a ranged-charge option like Charging Fire).
+  // roll-config.js's template is now the single authority for whether these
+  // render at all -- it only emits the Charging checkbox when
+  // model.attackContexts.charge is true (which CombatOptionResolver.
+  // getAvailableAttackContexts() sets for a ranged attacker who owns a
+  // requiresCharge option, per the Charging Fire exception) and never emits
+  // Flanking for a ranged attack in the first place. Blindly removing
+  // 'charging' here would tear that exception back out in the live DOM the
+  // instant this hotfix ran, so both removals are deleted; Aim relabeling and
+  // the Brace Autofire toggle are unrelated and unchanged.
   patchAimToggle(form);
   addBraceAutofireToggle(form);
 }
 
-function findActorForAttackForm(form) {
-  const shell = form.closest('.swse-roll-config-shell') ?? form;
-  const actorName = shell.querySelector('.rcd-header .rcd-actor')?.textContent?.trim();
-  if (!actorName) return null;
-  return game?.actors?.find?.(actor => actor?.name === actorName) ?? null;
-}
-
-function findWeaponForAttackForm(form, actor) {
-  const sourceName = form.querySelector('.swse-roll-config-panel--summary .swse-roll-config-source b')?.textContent?.trim()
-    || form.querySelector('.swse-roll-config-source b')?.textContent?.trim();
-  if (!sourceName || !actor?.items) return null;
-  return Array.from(actor.items).find(item => item?.type === 'weapon' && item?.name === sourceName) ?? null;
-}
-
-function selectedSituationalTotal(form) {
-  let total = 0;
-  for (const name of ['charging', 'flanking', 'higherGround', 'pointBlank']) {
-    if (!form.querySelector(`[name="${name}"]`)?.checked) continue;
-    total += name === 'higherGround' || name === 'pointBlank' ? 1 : 2;
-  }
-  return total;
-}
-
-function replaceText(root, selector, text) {
-  root.querySelector(selector)?.replaceChildren(document.createTextNode(text));
-}
-
-function rebuildBreakdown(form, components, base, custom, situational) {
-  const box = form.querySelector('[data-rcd-breakdown]');
-  if (!box) return;
-  box.replaceChildren();
-  const addRow = (label, value, className = 'rcd-bd-row') => {
-    const row = document.createElement('div');
-    row.className = className;
-    const left = document.createElement('span');
-    left.className = className === 'rcd-bd-total' ? 'rcd-bd-total-label' : 'rcd-bd-label';
-    left.textContent = label;
-    const right = document.createElement('span');
-    right.className = className === 'rcd-bd-total' ? 'rcd-bd-total-val' : 'rcd-bd-val';
-    right.textContent = signNumber(value);
-    if (label === 'Custom') right.dataset.rcdCustomBd = '';
-    if (label === 'Situational') right.dataset.rcdSituationalBd = '';
-    if (className === 'rcd-bd-total') right.dataset.rcdBdTotal = '';
-    row.append(left, right);
-    box.appendChild(row);
-  };
-
-  for (const [label, value] of Object.entries(components || {})) addRow(label, value);
-  addRow('Custom', custom);
-  addRow('Situational', situational);
-  addRow('Total', base + custom + situational, 'rcd-bd-total');
-}
-
-function syncAttackDialogBase(form) {
-  if (!form?.classList?.contains('swse-roll-config-v2')) return;
-  const actor = findActorForAttackForm(form);
-  const weapon = findWeaponForAttackForm(form, actor);
-  if (!actor || !weapon) return;
-
-  const branch = normalizeWeaponForCombat(weapon) || (formLooksRanged(form) ? 'ranged' : 'melee');
-  prepareActorBabForRollConfig(actor);
-  const resolved = resolveAttackBonus(actor, weapon, null, { attackType: branch, weapon });
-  const base = Number(resolved?.total ?? 0) || 0;
-  const custom = Number(form.querySelector('[name="customModifier"]')?.value ?? 0) || 0;
-  const situational = selectedSituationalTotal(form);
-  const total = base + custom + situational;
-
-  form.dataset.baseTotal = String(base);
-  const shell = form.closest('.swse-roll-config-shell') ?? form;
-  replaceText(shell, '.rcd-formula-text', `1d20 ${signNumber(total)}`);
-  replaceText(shell, '.rcd-formula-base-mod', `base ${signNumber(base)}`);
-  replaceText(form, '.rcd-check-card[data-check-mode="roll"] .rcd-check-total', `1d20 ${signNumber(base)}`);
-  replaceText(form, '[data-rcd-preview-total]', signNumber(total));
-  replaceText(form, '[data-rcd-formula]', `1d20 ${signNumber(total)}`);
-  rebuildBreakdown(form, resolved?.components ?? { 'Canonical Attack': base }, base, custom, situational);
-}
-
-function installCanonicalPreviewSync(form) {
-  if (form.dataset.swseCanonicalAttackPreview === 'true') return;
-  form.dataset.swseCanonicalAttackPreview = 'true';
-  const update = () => setTimeout(() => syncAttackDialogBase(form), 0);
-  form.addEventListener('input', update);
-  form.addEventListener('change', update);
-  update();
-}
+// Math Integrity Freeze, Attack Bonus round (blocker fix): this file used
+// to carry its own SECOND live-preview sync (syncAttackDialogBase/
+// installCanonicalPreviewSync/selectedSituationalTotal/rebuildBreakdown),
+// racing via a MutationObserver + setTimeout(0) against roll-config.js's
+// OWN native preview updater (wireRollConfigDialog's update()) — two
+// independently-computed "preview" numbers for the same dialog, on top of
+// a THIRD divergent formula that used to live in wireRollConfigDialog
+// itself. Worse, this file's copy located the actor/weapon by matching
+// DISPLAYED NAME TEXT in the DOM (findActorForAttackForm/
+// findWeaponForAttackForm) — fragile by construction (duplicate names,
+// i18n, DOM structure changes) — and silently left the wrong number on
+// screen when that lookup failed. roll-config.js now owns a single correct
+// preview (built from the real actor/weapon objects passed in by closure,
+// not DOM text matching), calling the exact same
+// computeFinalAttackComposition() seam the real roll uses — so this file's
+// copy was deleted rather than kept as a "second opinion." The cosmetic
+// DOM patches below (option filtering, ranged-only rules, cover panel
+// copy) are unrelated to attack-bonus math and are unchanged.
 
 function patchRollConfigForm(form) {
   if (!form || form.dataset.swseAttackDialogCombatCorrections === 'true') return;
@@ -455,7 +306,6 @@ function patchRollConfigForm(form) {
   patchDuplicateStaticOptions(form);
   patchRangedOnlyRules(form);
   clarifyCoverPanel(form);
-  installCanonicalPreviewSync(form);
 }
 
 function scanRollConfigForms(root = document) {
@@ -490,7 +340,6 @@ async function patchSWSERollEntrypoints() {
 
     const originalRollAttack = SWSERoll.rollAttack;
     SWSERoll.rollAttack = async function patchedRollAttack(actor, weapon, options = {}) {
-      prepareActorBabForRollConfig(actor);
       normalizeWeaponForCombat(weapon);
       return originalRollAttack.call(this, actor, weapon, options);
     };
@@ -498,7 +347,6 @@ async function patchSWSERollEntrypoints() {
     const originalRollAutofire = SWSERoll.rollAutofire;
     if (typeof originalRollAutofire === 'function') {
       SWSERoll.rollAutofire = async function patchedRollAutofire(actor, weapon, options = {}) {
-        prepareActorBabForRollConfig(actor);
         normalizeWeaponForCombat(weapon);
         const attackOptions = options.attackOptions ?? {};
         const braced = options.braced === true || bool(attackOptions.braceAutofire) || bool(attackOptions.bracedAutofire);
@@ -515,7 +363,6 @@ async function patchSWSERollEntrypoints() {
 export function registerAttackDialogCombatCorrectionsHotfix() {
   if (globalThis[PATCH_KEY]) return;
   globalThis[PATCH_KEY] = true;
-  patchSchemaAdapters();
   patchCombatOptionResolver();
   installDialogObserver();
   patchSWSERollEntrypoints();

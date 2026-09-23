@@ -56,11 +56,27 @@ function walk(dir, out = []) {
 const problems = [];
 
 // Invariant 1: roll path delegates to resolvers.
+//
+// Damage Modifier SSOT (docs/audits/v2-damage-modifier-authority-audit.md
+// §18): attacks.js#rollDamage() is now a thin delegate to
+// damage.js#rollDamage(), and rollAttackAndDamageWithNarration() calls
+// resolveDamageComposition() instead of resolveDamageBonus() directly.
+// Both are still the canonical seam (combat-roll-math.js) —
+// resolveDamageComposition() calls resolveDamageBonus() internally, and
+// damage.js's own rollDamage() (which this file now delegates to) also
+// calls resolveDamageComposition(). Accept any of these as proof the roll
+// path has not forked onto an independent formula.
 const attacks = read(ROLL_PATH);
-for (const fn of ['resolveAttackBonus', 'resolveDamageBonus']) {
-  if (!attacks.includes(`${fn}(`)) {
-    problems.push(`Roll path ${ROLL_PATH} does not call ${fn}() — combat math may have forked.`);
-  }
+const damageRollPath = read('scripts/combat/rolls/damage.js');
+if (!attacks.includes('resolveAttackBonus(')) {
+  problems.push(`Roll path ${ROLL_PATH} does not call resolveAttackBonus() — combat math may have forked.`);
+}
+const damageDelegatesToCanonicalSeam =
+  attacks.includes('resolveDamageBonus(') ||
+  attacks.includes('resolveDamageComposition(') ||
+  (attacks.includes('canonicalRollDamage(') && damageRollPath.includes('resolveDamageComposition('));
+if (!damageDelegatesToCanonicalSeam) {
+  problems.push(`Roll path ${ROLL_PATH} does not call resolveDamageBonus()/resolveDamageComposition(), nor delegate to damage.js's own canonical call — combat math may have forked.`);
 }
 
 // Invariant 2: breakdown path delegates to resolvers.

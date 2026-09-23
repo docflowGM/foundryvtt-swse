@@ -13,13 +13,16 @@ import { damageContextForReaction, damageTypesFromContext } from "/systems/found
 // tooltips/breakdowns always reflect the same formula as actual rolls.
 import {
   resolveAttackBonus,
-  resolveDamageBonus,
-  getTargetActorFromOptions,
-  rapidAlchemyState,
-  weaponMatchesId
+  resolveDamageComposition,
+  buildDamageFormula,
+  resolveCriticalMultiplier,
+  getTargetActorFromOptions
 } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-roll-math.js";
+import { rollDamage as canonicalRollDamage } from "/systems/foundryvtt-swse/scripts/combat/rolls/damage.js";
+import { isAreaAttack } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-stat-rules.js";
 import { AttackOutcomeResolver } from "/systems/foundryvtt-swse/scripts/engine/combat/attack-outcome-resolver.js";
-import { buildLedgerFromComponents, buildInvocationLedgerEntry } from "/systems/foundryvtt-swse/scripts/engine/effects/modifiers/modifier-breakdown-builder.js";
+import { buildLedgerFromComponents, buildInvocationLedgerEntry, buildModifierLedger } from "/systems/foundryvtt-swse/scripts/engine/effects/modifiers/modifier-breakdown-builder.js";
+import { ModifierUtils } from "/systems/foundryvtt-swse/scripts/engine/effects/modifiers/ModifierUtils.js";
 import { AttackRollDiagnostics } from "/systems/foundryvtt-swse/scripts/engine/combat/attack-roll-diagnostics.js";
 import { resolveVehicleAttackBonus, resolveAbstractCrewAttackBonus } from "/systems/foundryvtt-swse/scripts/engine/combat/vehicle-attack-math.js";
 import { resolveAttackDomain } from "/systems/foundryvtt-swse/scripts/engine/combat/attack-domain-router.js";
@@ -42,27 +45,115 @@ function hasFightingDefensivelyEffect(actor) {
   return Array.from(actor?.effects ?? []).some(effect => effect?.flags?.swse?.combatAction === 'fighting-defensively');
 }
 
-async function clearRapidAlchemyDamageBonus(actor, weapon) {
-  const state = rapidAlchemyState(actor);
-  if (!state?.sacrificePending || !weaponMatchesId(weapon, state.weaponId)) return;
-  await actor?.setFlag?.('swse', 'rapidAlchemy', { ...state, sacrificePending: false, consumedAt: Date.now() });
-}
+/**
+ * Math Integrity Freeze, Attack Bonus round (blocker fix): the single
+ * shared seam for "what is this attack's actual bonus, and its full
+ * contribution ledger" — domain routing (character/vehicle-gunner/
+ * abstract-crew), the baseline resolver call, and every invocation-only
+ * addition (Fighting Defensively, Grabbed/Grappled, custom modifier,
+ * situational bonus, multi/full-attack sequence penalty). rollAttack()
+ * below and the attack dialog's live preview
+ * (attack-dialog-combat-corrections-hotfix.js#syncAttackDialogBase) both
+ * call this SAME function so a displayed preview can never diverge from
+ * what actually gets rolled — no second, independently-maintained
+ * approximation of this composition may exist anywhere else. Pure/no side
+ * effects (no ammo spend, no action-economy cost, no roll) so it is safe
+ * to call from a dialog's live input/change handler on every keystroke.
+ *
+ * @returns {Promise<{ok:true, atkBonus:number, attackDomain:string, isVehicleAttack:boolean, attackBonusResolution:Object, attackComponentLedger:Array, sequencePenalty:number, fightingDefensivelyPenalty:number, grappleStatePenalty:number} | {ok:false, reason:string, domainResolution:Object, attackBonusResolution?:Object}>}
+ */
+export async function computeFinalAttackComposition(actor, weapon, rollOptions = {}) {
+  const domainResolution = resolveAttackDomain({
+    actor,
+    item: weapon,
+    operator: rollOptions.operator ?? null,
+    vehicle: rollOptions.vehicleActor ?? null,
+    sourceContext: { vehicleActor: rollOptions.vehicleActor ?? null, abstractCrewQuality: rollOptions.abstractCrewQuality ?? null }
+  });
+  for (const warning of domainResolution.warnings ?? []) {
+    console.warn(`[SWSE] Attack domain routing: ${warning}`);
+  }
+  if (!domainResolution.ok) {
+    return { ok: false, reason: domainResolution.reason, domainResolution };
+  }
+  const attackDomain = domainResolution.domain;
+  const isVehicleAttack = attackDomain !== 'character';
+  let attackBonusResolution;
+  if (attackDomain === 'vehicle-actor-gunner') {
+    const { gunnerActor, vehicleActor } = domainResolution.normalizedContext;
+    attackBonusResolution = await resolveVehicleAttackBonus(gunnerActor, vehicleActor, weapon, rollOptions);
+  } else if (attackDomain === 'vehicle-abstract-crew') {
+    const { vehicleActor, crewQuality } = domainResolution.normalizedContext;
+    attackBonusResolution = await resolveAbstractCrewAttackBonus(vehicleActor, weapon, crewQuality, rollOptions);
+  } else {
+    attackBonusResolution = resolveAttackBonus(actor, weapon, null, rollOptions);
+  }
+  if (isVehicleAttack) {
+    for (const warning of attackBonusResolution.warnings ?? []) {
+      console.warn(`[SWSE] Vehicle attack formula (${attackDomain}): ${warning}`);
+    }
+    if (attackBonusResolution.error) {
+      return { ok: false, reason: attackBonusResolution.error, domainResolution, attackBonusResolution };
+    }
+  }
+  const sequencePenalty = Number(rollOptions.sequencePenalty ?? 0);
+  const fightingDefensivelyPenalty = getFightingDefensivelyAttackPenalty(actor, rollOptions);
+  // SWSE RAW: -2 on attack rolls while Grabbed/Grappled, except attacks
+  // with natural or light weapons (Pinned is excluded -- its attacks are
+  // already prevented by Pin's own action legality, not merely penalized).
+  // See the Grapple domain section of
+  // docs/audits/v2-math-integrity-authority-ledger.md, addendum 8.
+  const grappleStatePenalty = GrappleStateEngine.getAttackPenalty(actor, weapon);
+  // Math Integrity Freeze, Attack Bonus round 3 (blocker fix): for a
+  // CHARACTER attack, contextual tactical contributions (Charge, Flanking --
+  // rollOptions.situationalContributions, built by roll-config.js#
+  // computeAttackSituationalContext) are now resolved INSIDE
+  // combat-roll-math.js#resolveAttackBonus(), together with every other
+  // typed/collision-eligible attack contribution (Basic Effect Intent, a
+  // typed combat-option contribution such as Relentless Attack) in ONE
+  // shared ModifierUtils.resolveStacking() pass -- see that function's own
+  // doc comment for the full cross-channel rationale. Re-resolving and
+  // re-adding them here would double-count them, since
+  // attackBonusResolution.total already includes their resolved
+  // contribution. vehicle-attack-math.js's resolvers were NOT part of that
+  // unification (vehicle attack formula is a separate, already-certified
+  // authority, out of this round's scope) and never consume
+  // situationalContributions at all, so a vehicle gunner attack's Charge/
+  // Flanking contributions must still be resolved and added here, exactly
+  // as before this round.
+  const situationalContributions = Array.isArray(rollOptions.situationalContributions) ? rollOptions.situationalContributions : [];
+  const situationalDetail = isVehicleAttack
+    ? ModifierUtils.getModifierDetail(situationalContributions, 'global.attack')
+    : { total: 0, applied: [], breakdown: [] };
+  const suppressedSituational = isVehicleAttack
+    ? situationalContributions
+        .filter(mod => mod && mod.enabled !== false && !situationalDetail.applied.includes(mod))
+        .map(modifier => ({ modifier, reason: `suppressed: another ${modifier.type} contribution already applies (highestOnly stacking)` }))
+    : [];
+  // Legacy compatibility path: a caller that still passes a raw numeric
+  // rollOptions.situationalBonus (instead of typed situationalContributions)
+  // is honored as an explicit untyped override, kept separate from the typed
+  // contributions above rather than treated as their primary semantic source.
+  const legacySituationalBonus = Number(rollOptions.situationalBonus || 0);
+  const atkBonus = attackBonusResolution.total + fightingDefensivelyPenalty + grappleStatePenalty + Number(rollOptions.customModifier || 0) + situationalDetail.total + legacySituationalBonus + sequencePenalty;
+  // Component ledger: baseline (resolver) components plus invocation-only
+  // additions, clearly separated so a tooltip never claims an invocation-only
+  // modifier is part of the static weapon baseline. Vehicle attacks already
+  // arrive in full ledger shape from the vehicle resolvers; character
+  // attacks are adapted from the legacy {label: value} map, plus the typed
+  // attack-modifier ledger resolveAttackBonus() already built.
+  const attackLedgerDomain = isVehicleAttack ? 'vehicle.attack' : 'combat.attack';
+  const attackComponentLedger = [
+    ...(isVehicleAttack ? attackBonusResolution.ledger : buildLedgerFromComponents(attackBonusResolution.components, 'combat.attack', 'baseline')),
+    buildInvocationLedgerEntry('fighting-defensively', 'Fighting Defensively', fightingDefensivelyPenalty, attackLedgerDomain),
+    buildInvocationLedgerEntry('grapple-state-penalty', 'Grabbed/Grappled', grappleStatePenalty, attackLedgerDomain),
+    buildInvocationLedgerEntry('custom-modifier', 'Custom Modifier', rollOptions.customModifier, attackLedgerDomain),
+    ...(isVehicleAttack ? buildModifierLedger(situationalDetail.applied, suppressedSituational, attackLedgerDomain) : (attackBonusResolution.typedModifierLedger ?? [])),
+    buildInvocationLedgerEntry('situational-bonus', 'Situational Bonus (legacy)', legacySituationalBonus, attackLedgerDomain),
+    buildInvocationLedgerEntry('sequence-penalty', 'Sequence Penalty', sequencePenalty, attackLedgerDomain)
+  ].filter(Boolean);
 
-function forceItemState(weapon) {
-  return weapon?.getFlag?.('swse', 'forceItem') ?? weapon?.flags?.swse?.forceItem ?? null;
-}
-
-function firstWeaponDamageDieFormula(weapon) {
-  const formula = String(weapon?.system?.damage ?? weapon?.system?.damageFormula ?? '1d6');
-  const match = formula.match(/(\d*)d(\d+)/i);
-  if (!match) return '';
-  return `1d${match[2]}`;
-}
-
-function forceItemExtraDamageFormula(actor, weapon) {
-  const state = forceItemState(weapon);
-  if (String(state?.empowered?.actorId ?? '') !== String(actor?.id ?? '')) return '';
-  return firstWeaponDamageDieFormula(weapon);
+  return { ok: true, atkBonus, attackDomain, isVehicleAttack, attackBonusResolution, attackComponentLedger, sequencePenalty, fightingDefensivelyPenalty, grappleStatePenalty, domainResolution };
 }
 
 function getFightingDefensivelyAttackPenalty(actor, options = {}) {
@@ -185,34 +276,11 @@ function buildReactionContextForAttack(attacker, defender, weapon, attackTotal) 
   };
 }
 
-function getPrimaryDamageDieFormula(baseFormula) {
-  const match = String(baseFormula ?? '').match(/(?:^|[^\d])(\d*)d(\d+)/i);
-  if (!match) return null;
-  const sides = Number(match[2]);
-  return Number.isFinite(sides) && sides > 0 ? `d${sides}` : null;
-}
-
-function buildExtraWeaponDiceFormula(baseFormula, extraDice) {
-  const count = Number(extraDice ?? 0);
-  if (!Number.isFinite(count) || count <= 0) return '';
-  const die = getPrimaryDamageDieFormula(baseFormula);
-  if (!die) return '';
-  return ` + ${count}${die}`;
-}
-
-const DAMAGE_DIE_LADDER = [2, 3, 4, 6, 8, 10, 12];
-
-function stepDamageDieFormula(baseFormula, steps = 0) {
-  const count = Number(steps ?? 0);
-  if (!Number.isFinite(count) || count === 0) return String(baseFormula ?? '1d6');
-  return String(baseFormula ?? '1d6').replace(/(\d*)d(\d+)/gi, (match, diceCount, sidesText) => {
-    const sides = Number(sidesText);
-    const index = DAMAGE_DIE_LADDER.indexOf(sides);
-    if (index < 0) return match;
-    const nextIndex = Math.max(0, Math.min(DAMAGE_DIE_LADDER.length - 1, index + count));
-    return `${diceCount || '1'}d${DAMAGE_DIE_LADDER[nextIndex]}`;
-  });
-}
+// Damage SSOT migration: die-size-step/extra-weapon-dice formula assembly
+// now lives in exactly one place (combat-roll-math.js#buildDamageFormula(),
+// which internally reuses the canonical stepDamageDieFormula()/
+// buildExtraWeaponDiceFormula()) — this file's own former copies are
+// removed rather than left as unused dead code.
 
 /**
  * Roll an attack with a weapon using SWSE rules.
@@ -265,7 +333,6 @@ export async function rollAttack(actor, weapon, options = {}) {
     return null;
   }
 
-  const sequencePenalty = Number(rollOptions.sequencePenalty ?? 0);
   // attack-domain-router.js decides which existing math authority this
   // attack belongs to (character / vehicle-actor-gunner / vehicle-abstract-
   // crew) from normalized actor/item/context — not from which UI button
@@ -273,69 +340,23 @@ export async function rollAttack(actor, weapon, options = {}) {
   // a vehicle actor through the character formula (the pre-Phase-3 defect)
   // just because it didn't go through crew-skill-router.js. The router only
   // selects an authority; the math still lives in combat-roll-math.js /
-  // vehicle-attack-math.js exactly as before.
-  const domainResolution = resolveAttackDomain({
-    actor,
-    item: weapon,
-    operator: rollOptions.operator ?? null,
-    vehicle: rollOptions.vehicleActor ?? null,
-    sourceContext: { vehicleActor: rollOptions.vehicleActor ?? null, abstractCrewQuality: rollOptions.abstractCrewQuality ?? null }
-  });
-  for (const warning of domainResolution.warnings ?? []) {
-    console.warn(`[SWSE] Attack domain routing: ${warning}`);
-  }
-  if (!domainResolution.ok) {
-    await actionOptionSpend?.rollback?.();
-    ui?.notifications?.error?.('Attack could not be resolved: no valid attack-domain context (' + domainResolution.reason + ').');
-    return null;
-  }
-  const attackDomain = domainResolution.domain;
-  const isVehicleAttack = attackDomain !== 'character';
-  let attackBonusResolution;
-  if (attackDomain === 'vehicle-actor-gunner') {
-    const { gunnerActor, vehicleActor } = domainResolution.normalizedContext;
-    attackBonusResolution = await resolveVehicleAttackBonus(gunnerActor, vehicleActor, weapon, rollOptions);
-  } else if (attackDomain === 'vehicle-abstract-crew') {
-    const { vehicleActor, crewQuality } = domainResolution.normalizedContext;
-    attackBonusResolution = await resolveAbstractCrewAttackBonus(vehicleActor, weapon, crewQuality, rollOptions);
-  } else {
-    attackBonusResolution = resolveAttackBonus(actor, weapon, null, rollOptions);
-  }
-  if (isVehicleAttack) {
-    for (const warning of attackBonusResolution.warnings ?? []) {
-      console.warn(`[SWSE] Vehicle attack formula (${attackDomain}): ${warning}`);
-    }
-    if (attackBonusResolution.error) {
+  // vehicle-attack-math.js exactly as before. computeFinalAttackComposition()
+  // is the single shared seam for this — see its own doc comment.
+  const composition = await computeFinalAttackComposition(actor, weapon, rollOptions);
+  if (!composition.ok) {
+    if (composition.attackBonusResolution?.error) {
       if (ammoSpend?.spent) await AmmoSystem.rollbackSpend(actor, weapon, ammoSpend);
       await actionOptionSpend?.rollback?.();
-      ui?.notifications?.error?.(attackBonusResolution.error === 'invalid-vehicle-actor'
+      ui?.notifications?.error?.(composition.reason === 'invalid-vehicle-actor'
         ? 'Vehicle attack could not be resolved: the vehicle actor is missing or invalid, so its Intelligence modifier cannot be sourced.'
         : 'Vehicle attack could not be resolved: no valid gunner/operator actor.');
       return null;
     }
+    await actionOptionSpend?.rollback?.();
+    ui?.notifications?.error?.('Attack could not be resolved: no valid attack-domain context (' + composition.reason + ').');
+    return null;
   }
-  const fightingDefensivelyPenalty = getFightingDefensivelyAttackPenalty(actor, rollOptions);
-  // SWSE RAW: -2 on attack rolls while Grabbed/Grappled, except attacks
-  // with natural or light weapons (Pinned is excluded -- its attacks are
-  // already prevented by Pin's own action legality, not merely penalized).
-  // See the Grapple domain section of
-  // docs/audits/v2-math-integrity-authority-ledger.md, addendum 8.
-  const grappleStatePenalty = GrappleStateEngine.getAttackPenalty(actor, weapon);
-  const atkBonus = attackBonusResolution.total + fightingDefensivelyPenalty + grappleStatePenalty + Number(rollOptions.customModifier || 0) + Number(rollOptions.situationalBonus || 0) + sequencePenalty;
-  // Component ledger: baseline (resolver) components plus invocation-only
-  // additions, clearly separated so a tooltip never claims an invocation-only
-  // modifier is part of the static weapon baseline. Vehicle attacks already
-  // arrive in full ledger shape from the vehicle resolvers; character
-  // attacks are adapted from the legacy {label: value} map.
-  const attackLedgerDomain = isVehicleAttack ? 'vehicle.attack' : 'combat.attack';
-  const attackComponentLedger = [
-    ...(isVehicleAttack ? attackBonusResolution.ledger : buildLedgerFromComponents(attackBonusResolution.components, 'combat.attack', 'baseline')),
-    buildInvocationLedgerEntry('fighting-defensively', 'Fighting Defensively', fightingDefensivelyPenalty, attackLedgerDomain),
-    buildInvocationLedgerEntry('grapple-state-penalty', 'Grabbed/Grappled', grappleStatePenalty, attackLedgerDomain),
-    buildInvocationLedgerEntry('custom-modifier', 'Custom Modifier', rollOptions.customModifier, attackLedgerDomain),
-    buildInvocationLedgerEntry('situational-bonus', 'Situational Bonus', rollOptions.situationalBonus, attackLedgerDomain),
-    buildInvocationLedgerEntry('sequence-penalty', 'Sequence Penalty', sequencePenalty, attackLedgerDomain)
-  ].filter(Boolean);
+  const { atkBonus, attackDomain, isVehicleAttack, attackBonusResolution, attackComponentLedger, sequencePenalty, domainResolution } = composition;
 
   const rollFormula = `1d20 + ${atkBonus}`;
   const roll = await RollEngine.safeRoll(rollFormula, actor?.getRollData?.() ?? {}, { actor, domain: 'combat.attack', context: { weaponId: weapon?.id ?? null } });
@@ -348,7 +369,17 @@ export async function rollAttack(actor, weapon, options = {}) {
   const targetReflex = resolvedTarget.defenseValue;
   const d20 = roll?.dice?.[0]?.results?.[0]?.result ?? null;
   const criticalThreshold = Number(optionModifiers.criticalThreatNaturalMin ?? 20);
-  const critMultiplier = Math.max(Number(weapon.system?.critMultiplier ?? weapon.system?.criticalMultiplier ?? 2) || 2, Number(optionModifiers.criticalMultiplierMin ?? 0) || 0);
+  // Damage SSOT migration ("CRITICAL MULTIPLIER SSOT"): this used to be an
+  // inline Math.max(weapon base, optionModifiers.criticalMultiplierMin)
+  // that never considered RULES.MODIFY_CRITICAL_MULTIPLIER (the actor/
+  // rule-aware source combat-utils.js's own getCriticalMultiplier() reads,
+  // independently, without knowing about CombatOptionResolver's own
+  // criticalMultiplierMin) — see docs/audits/v2-damage-modifier-authority-
+  // audit-correction-1.md §2. resolveCriticalMultiplier() is now the one
+  // function that considers both sources; the resolved value below is
+  // carried forward into damageWorkflowContext so a later Damage-button
+  // click reuses this exact multiplier instead of re-deriving it.
+  const critMultiplier = resolveCriticalMultiplier(actor, weapon, rollOptions, optionModifiers);
   // AttackOutcomeResolver is the single authority for hit/critical/natural-1/
   // natural-20 interpretation — chat, damage workflow, rerolls, and reactions
   // all read from this same outcome object rather than re-deriving it.
@@ -553,59 +584,20 @@ export async function rollAttack(actor, weapon, options = {}) {
 
 /**
  * Roll damage for a weapon.
+ *
+ * Damage SSOT migration ("ROLL WRAPPERS BECOME ORCHESTRATION ONLY"): this
+ * used to be a second, independent damage-formula builder — confirmed
+ * divergent from damage.js#rollDamage() (it read die-step/extra-dice
+ * fields damage.js's live path silently dropped, but it was ALSO missing
+ * the Inquisition extra-die contribution damage.js's version has). Per the
+ * command's explicit instruction ("There must not be two Damage formulas
+ * afterward... collapsed into one, or one becomes a thin wrapper of the
+ * other"), this is now a thin delegate to the single canonical
+ * damage.js#rollDamage() — same composition, same formula, same chat
+ * card — rather than a second hand-maintained approximation of it.
  */
 export async function rollDamage(actor, weapon, options = {}) {
-  const rollOptions = mergeCombatWorkflowContextIntoRollOptions(options, options?.combatContext ?? options?.workflowContext ?? null);
-  if (!actor || !weapon) {
-    ui.notifications.error('Missing actor or weapon for damage roll.');
-    return null;
-  }
-
-  const workflowContext = summarizeCombatWorkflowContext(rollOptions.combatContext ?? rollOptions.workflowContext ?? rollOptions, {
-    actor,
-    weapon,
-    target: rollOptions.target ?? null,
-    isCritical: rollOptions?.critical === true || rollOptions?.isCritical === true,
-    damageMode: rollOptions.damageMode ?? null,
-    damageType: rollOptions.damageType ?? null,
-    isStun: rollOptions.stun === true || rollOptions.damageMode === 'stun',
-    isIon: rollOptions.ion === true,
-    contextTags: rollOptions.damageMode === 'stun' || rollOptions.stun === true ? ['stun'] : []
-  });
-  // optionModifiers is still needed for die-formula modifiers (damageDieStepIncreases,
-  // damageExtraWeaponDice, criticalDamageDieStepBonus). The flat dmgBonus comes
-  // from the canonical resolver which already incorporates optionModifiers.damageBonus.
-  const optionModifiers = CombatOptionResolver.collectAttackModifiers(actor, weapon, rollOptions);
-  const dmgResult = resolveDamageBonus(actor, weapon, rollOptions);
-  const dmgBonus = dmgResult.total;
-
-  // A stock-statblock droid's published damage formula already includes its
-  // own dice and REPLACES weapon.system.damage (see
-  // resolveStockDroidDamageContract() in combat-roll-math.js) — it is a
-  // fixed printed value, not subject to die-count/step increases.
-  let formula;
-  if (dmgResult.flags?.stockDamageFormula) {
-    formula = dmgBonus !== 0 ? `${dmgResult.flags.stockDamageFormula} + ${dmgBonus}` : dmgResult.flags.stockDamageFormula;
-  } else {
-    const criticalStepBonus = (rollOptions?.critical === true || rollOptions?.isCritical === true) ? Number(optionModifiers.criticalDamageDieStepBonus || 0) : 0;
-    const base = stepDamageDieFormula(weapon.system?.damage ?? weapon.damage ?? '1d6', (optionModifiers.damageDieStepIncreases ?? 0) + criticalStepBonus);
-    const extraDiceFormula = buildExtraWeaponDiceFormula(base, optionModifiers.damageExtraWeaponDice ?? optionModifiers.damageDiceStepBonus ?? 0);
-    formula = `${base}${extraDiceFormula} + ${dmgBonus}`;
-  }
-
-  const roll = await RollEngine.safeRoll(formula, actor?.getRollData?.() ?? {}, { actor, domain: 'combat.damage', context: { weaponId: weapon?.id ?? null } });
-
-  await SWSEChat.postRoll({
-    roll,
-    actor,
-    flavor: `${weapon.name} Damage (${formula})`,
-    flags: { swse: { damageRoll: true, weaponId: weapon.id, workflowContext } },
-    context: { type: 'damage', weaponId: weapon.id, weapon, workflowContext, target: rollOptions.target ?? null, damageType: resolveDamagePacketType({ weapon, workflowContext, options: rollOptions }), sourceElement: rollOptions?.sourceElement ?? null, companionSource: rollOptions?.companionSource ?? null, sheet: rollOptions?.sheet ?? null, showRollCompanion: rollOptions?.showRollCompanion !== false, targetContext: rollOptions?.targetContext ?? null }
-  });
-
-  await clearRapidAlchemyDamageBonus(actor, weapon);
-
-  return roll;
+  return canonicalRollDamage(actor, weapon, options);
 }
 
 /**
@@ -655,11 +647,27 @@ export async function rollAttackAndDamageWithNarration(actor, weapon, options = 
   }
 
   const targetName = _firstTargetName();
-  const atkBonus = resolveAttackBonus(actor, weapon, null, rollOptions).total;
+  // Math Integrity Freeze, Attack Bonus round 6: this used to call
+  // resolveAttackBonus(...).total directly, bypassing
+  // computeFinalAttackComposition() -- the shared seam rollAttack() (the
+  // dialog/roll/chat path) and the attack dialog's own live preview both
+  // already go through. That meant this exported entry point silently
+  // dropped every invocation-only addition computeFinalAttackComposition()
+  // layers on top of the resolver's own total (Fighting Defensively,
+  // grapple-state penalty, custom modifier, sequence penalty, the legacy
+  // situationalBonus override) for anyone who called it. No current caller
+  // reaches this function, so it was a dormant divergence, not a
+  // reproduced bug -- but the freeze does not leave a known alternate
+  // attack-roll formula in place for a future caller to find. Only the
+  // attack side changes here; Damage composition below is untouched.
+  const composition = await computeFinalAttackComposition(actor, weapon, rollOptions);
+  if (!composition.ok) {
+    ui?.notifications?.error?.('Attack could not be resolved: no valid attack-domain context (' + composition.reason + ').');
+    return null;
+  }
+  const atkBonus = composition.atkBonus;
   // optionModifiers still needed for die-formula and effect modifiers below.
   const optionModifiers = CombatOptionResolver.collectAttackModifiers(actor, weapon, rollOptions);
-  const dmgResult = resolveDamageBonus(actor, weapon, rollOptions);
-  const dmgBonus = dmgResult.total;
   const workflowContext = summarizeCombatWorkflowContext(rollOptions.combatContext ?? rollOptions.workflowContext ?? null, { actor, weapon });
   const actionOptionSpend = await spendCoreAttackOptionCosts(actor, weapon, rollOptions);
   if (actionOptionSpend?.allowed === false || actionOptionSpend?.permitted === false) {
@@ -681,29 +689,14 @@ export async function rollAttackAndDamageWithNarration(actor, weapon, options = 
   }
 
   const rollFormula = `1d20 + ${atkBonus}`;
-  // See rollDamage() above: a stock-statblock droid's published damage
-  // formula replaces weapon.system.damage rather than adding to it.
-  let dmgFormula;
-  if (dmgResult.flags?.stockDamageFormula) {
-    dmgFormula = dmgBonus !== 0 ? `${dmgResult.flags.stockDamageFormula} + ${dmgBonus}` : dmgResult.flags.stockDamageFormula;
-  } else {
-    const dmgBase = stepDamageDieFormula(weapon.system?.damage ?? weapon.damage ?? '1d6', optionModifiers.damageDieStepIncreases ?? 0);
-    const dmgExtraDice = buildExtraWeaponDiceFormula(dmgBase, optionModifiers.damageExtraWeaponDice ?? optionModifiers.damageDiceStepBonus ?? 0);
-    dmgFormula = `${dmgBase}${dmgExtraDice} + ${dmgBonus}`;
-  }
-
   const attackRoll = await RollEngine.safeRoll(rollFormula, actor?.getRollData?.() ?? {}, { actor, domain: 'combat.attack', context: { weaponId: weapon?.id ?? null } });
-  const damageRoll = await RollEngine.safeRoll(dmgFormula, actor?.getRollData?.() ?? {}, { actor, domain: 'combat.damage' });
-
-  const atkTotal = attackRoll?.total;
-  const dmgTotal = damageRoll?.total;
 
   // Post attack roll card
   const target = getTargetActorFromOptions(rollOptions);
   const targetReflex = getTargetReflex(target);
   const attackD20 = attackRoll?.dice?.[0]?.results?.[0]?.result ?? null;
   const attackCritThreshold = Number(optionModifiers.criticalThreatNaturalMin ?? 20);
-  const attackCritMultiplier = Math.max(Number(weapon.system?.critMultiplier ?? weapon.system?.criticalMultiplier ?? 2) || 2, Number(optionModifiers.criticalMultiplierMin ?? 0) || 0);
+  const attackCritMultiplier = resolveCriticalMultiplier(actor, weapon, rollOptions, optionModifiers);
   // Same AttackOutcomeResolver used by rollAttack(), so narration and this
   // combined attack+damage path agree on natural-1/natural-20/critical rules.
   const outcome = AttackOutcomeResolver.resolve({
@@ -715,6 +708,26 @@ export async function rollAttackAndDamageWithNarration(actor, weapon, options = 
   });
   const isHit = outcome.hit;
   const isCritical = outcome.critical;
+
+  // Damage SSOT migration ("ROLL WRAPPERS BECOME ORCHESTRATION ONLY" /
+  // "Resolve rollAttackAndDamageWithNarration() dead damage path"): this
+  // used to build its damage formula BEFORE the attack roll resolved
+  // isCritical, so the old code could never apply a critical multiplier or
+  // critical-only die-step to this path's damage roll at all — confirmed
+  // dead code (zero live callers, per the original Damage audit), so this
+  // was a dormant divergence, not a reproduced live bug. Reordered so the
+  // canonical composition is resolved AFTER the attack outcome is known,
+  // matching how the live rollAttack() -> rollDamage() two-step flow
+  // already sequences things, and delegating to the same
+  // resolveDamageComposition()/buildDamageFormula() seam instead of a
+  // third hand-rolled formula builder.
+  const damageContext = { ...rollOptions, target, isCritical, critMultiplier: attackCritMultiplier };
+  const damageComposition = resolveDamageComposition(actor, weapon, damageContext);
+  const dmgFormula = buildDamageFormula(damageComposition, { isAreaAttack: isAreaAttack(weapon, damageContext) });
+  const damageRoll = await RollEngine.safeRoll(dmgFormula, actor?.getRollData?.() ?? {}, { actor, domain: 'combat.damage' });
+
+  const atkTotal = attackRoll?.total;
+  const dmgTotal = damageRoll?.total;
   const reactionContext = buildReactionContextForAttack(actor, target, weapon, attackRoll.total);
   const attackRerollOptions = MetaResourceFeatResolver.buildAttackRerollChatOptions(actor, weapon, attackRoll, {
     ...rollOptions,

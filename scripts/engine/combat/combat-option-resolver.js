@@ -1,9 +1,21 @@
 import { SchemaAdapters } from "/systems/foundryvtt-swse/scripts/utils/schema-adapters.js";
 import {
-  isRangedWeapon as canonicalIsRangedWeapon,
-  isNaturalWeaponOnly as canonicalIsNaturalWeaponOnly,
-  isNaturalOrUnarmedWeapon as canonicalIsNaturalOrUnarmedWeapon
+  isNaturalWeaponOnly as canonicalIsNaturalWeaponOnly
 } from "/systems/foundryvtt-swse/scripts/items/weapon-branch-resolver.js";
+// Math Integrity Freeze, Attack Bonus round 8 correction #2 (Blocker 4):
+// these were previously private copies defined in this file; extracted
+// verbatim (pure move, no behavior change) into a neutral shared module so
+// the groundwork Action Authority (ActionAvailabilityEngine) can delegate
+// to the SAME classification logic instead of maintaining a second,
+// independently-drifting implementation.
+import {
+  normalizeKey, getAttackType, normalizeRangeBand, getRangeBand, contextManeuver,
+  weaponText, weaponDamageText, isVehicleWeapon, targetText, targetHasOwnedItem,
+  weaponMatchesGroup, textMatchesAny, isUnarmedWeapon, isAreaAttackContext,
+  weaponSupportsAutofire, actorItems, getSelectedChoiceValues,
+  weaponMatchesSelectedChoice, actorHasFeatSelectedChoiceMatchingWeapon,
+  isTargetFlatFooted, isTargetDeniedDexBonus
+} from "/systems/foundryvtt-swse/scripts/engine/combat/weapon-target-gate-classifiers.js";
 
 const ATTACK_OPTION_RULE = "ATTACK_OPTION";
 
@@ -24,49 +36,104 @@ const DEFAULT_ATTACK_OPTIONS = {
   mightySwing: { id: "mightySwing", label: "Mighty Swing", control: "toggle", requiresAttackType: "melee", requiresSwiftActions: 2, damageExtraWeaponDice: 1, summary: "Spend two swift actions to add one weapon die to your next melee attack." }
 };
 
-function normalizeKey(value) { return String(value ?? "").trim().replace(/([a-z0-9])([A-Z])/g, "$1-$2").replace(/[\s_]+/g, "-").replace(/[^a-zA-Z0-9-]/g, "").toLowerCase(); }
 function scalarText(value) { if (value == null) return ""; if (["string", "number", "boolean"].includes(typeof value)) return String(value); if (typeof value === "object") { for (const key of ["value", "id", "key", "slug", "name", "label", "type"]) if (value[key] != null && value[key] !== value) return scalarText(value[key]); } return ""; }
 function lowerScalar(value) { return scalarText(value).trim().toLowerCase(); }
 function camelize(value) { const key = normalizeKey(value); return key.replace(/-([a-z0-9])/g, (_m, c) => c.toUpperCase()); }
-// Math Integrity Freeze, Batch 2B: the weapon-identity fallback is
-// delegated to the canonical branch authority (previously an independent
-// text-heuristic list here never checked weaponCategory -- the one field
-// proven 100% reliable in real data -- and got Bluebolt-shaped weapons
-// right only by the accident of "pistol" appearing in system.category text).
-function getAttackType(weapon, context = {}) { const explicit = context.attackType ?? context.rangeType ?? context.weaponType; if (explicit) { const normalized = normalizeKey(explicit); if (normalized.includes("ranged")) return "ranged"; if (normalized.includes("melee")) return "melee"; } if (!weapon) return "unknown"; return canonicalIsRangedWeapon(weapon) ? "ranged" : "melee"; }
-function getFeatRules(item) { const meta = item?.system?.abilityMeta ?? {}; const rules = []; const pushRule = (rule) => { if (!rule || typeof rule !== "object") return; if (rule.type === ATTACK_OPTION_RULE || rule.option || rule.id) rules.push(rule); }; if (Array.isArray(meta.rules)) meta.rules.forEach(pushRule); if (Array.isArray(meta.primitives)) for (const primitive of meta.primitives) { if (primitive?.type === ATTACK_OPTION_RULE) pushRule(primitive.data ?? primitive); if (primitive?.data?.option || primitive?.data?.id) pushRule(primitive.data); } if (meta.attackOption) pushRule(meta.attackOption); return rules; }
-function actorItems(actor) { try { return Array.from(actor?.items ?? []); } catch { return []; } }
+// Math Integrity Freeze, Attack Bonus round 8 correction #1 (Blocker 1):
+// this used to accept ANY abilityMeta.rules entry carrying an `option` or
+// `id` field, regardless of its own declared `type` -- real shipped packs
+// carry 180+ non-ATTACK_OPTION rules (RUNTIME_CONTEXT_REFERENCE, TALENT_
+// RULE, HIT_RIDER, CRITICAL_RIDER, ZONE_ATTACK_PENALTY, DEFENSE_BONUS, ...)
+// that also happen to carry an `id` for THEIR OWN unrelated purposes --
+// Oath of Duty, Force Warning, Healing Boost, Enhance Cover, and dozens
+// more were all silently eligible to render as "Your Attack Options"
+// checkboxes. Only an explicit `type: 'ATTACK_OPTION'` may enter this
+// pipeline. abilityMeta.primitives[]/abilityMeta.attackOption remain
+// supported as dedicated, single-purpose compatibility slots (no shipped
+// record uses either today -- verified against every pack), but a
+// primitive still requires its own explicit ATTACK_OPTION type, and the
+// singular `attackOption` slot's presence is itself the declaration (it is
+// not a mixed-type collection like `rules`) -- it is normalized to carry
+// the type explicitly, and rejected outright if it declares a conflicting
+// one. This is the one shared extraction contract; the coverage-report
+// tool (tools/report-attack-option-coverage.mjs) imports it directly
+// rather than re-implementing its own parser, so the two can never
+// disagree about what counts as a generic ATTACK_OPTION record.
+export function extractAttackOptionRules(item) {
+  const meta = item?.system?.abilityMeta ?? {};
+  const rules = [];
+  const pushIfAttackOption = (rule) => {
+    if (!rule || typeof rule !== "object") return;
+    if (rule.type !== ATTACK_OPTION_RULE) return;
+    rules.push(rule);
+  };
+  if (Array.isArray(meta.rules)) meta.rules.forEach(pushIfAttackOption);
+  if (Array.isArray(meta.primitives)) {
+    for (const primitive of meta.primitives) {
+      if (primitive?.type !== ATTACK_OPTION_RULE) continue;
+      const data = primitive.data && typeof primitive.data === "object" ? primitive.data : primitive;
+      pushIfAttackOption(data.type === ATTACK_OPTION_RULE ? data : { ...data, type: ATTACK_OPTION_RULE });
+    }
+  }
+  if (meta.attackOption && typeof meta.attackOption === "object") {
+    const declaredType = meta.attackOption.type;
+    if (declaredType === undefined || declaredType === ATTACK_OPTION_RULE) {
+      pushIfAttackOption(declaredType === ATTACK_OPTION_RULE ? meta.attackOption : { ...meta.attackOption, type: ATTACK_OPTION_RULE });
+    }
+  }
+  return rules;
+}
+function getFeatRules(item) { return extractAttackOptionRules(item); }
 function asArray(value) { if (value === undefined || value === null) return []; return Array.isArray(value) ? value : [value]; }
 function actorBAB(actor) { const value = Number(SchemaAdapters.getBAB(actor) ?? actor?.system?.attributes?.bab?.value ?? actor?.system?.bab ?? 0); return Number.isFinite(value) ? Math.max(0, value) : 0; }
 function actorLevel(actor) { const candidates = [actor?.system?.details?.level, actor?.system?.level, actor?.system?.attributes?.level, actor?.system?.progression?.level, actor?.system?.progression?.characterLevel]; for (const candidate of candidates) { const value = Number(candidate); if (Number.isFinite(value) && value > 0) return value; } return 1; }
 function actorAbilityMod(actor, ability) { const key = String(ability || '').toLowerCase().slice(0, 3); if (!key) return 0; const numeric = Number(SchemaAdapters.getAbilityMod?.(actor, key) ?? 0); return Number.isFinite(numeric) ? numeric : 0; }
-function normalizeRangeBand(value) { const key = normalizeKey(value); if (key === "pointblank" || key === "point-blank" || key === "close") return "point-blank"; if (["short", "medium", "long"].includes(key)) return key; return key || ""; }
-function getRangeBand(context = {}) { return normalizeRangeBand(context.rangeBand ?? context.rangeCategory ?? context.range ?? ""); }
 function getRangePenaltyAdjustment(option, context = {}) { if (option.rangePenaltyAdjustment !== "oneStepCloser") return 0; const band = getRangeBand(context); if (band === "short") return 2; if (band === "medium") return 3; if (band === "long") return 5; return 0; }
-function contextManeuver(context = {}) { return normalizeKey(context.maneuver ?? context.attackManeuver ?? context.combatManeuver ?? context.actionId ?? context.actionType ?? ""); }
-function weaponText(weapon) { const system = weapon?.system ?? {}; const fields = [weapon?.name, system.weaponType, system.weaponGroup, system.group, system.category, system.type, system.subtype, system.itemType, system.sourceType, system.traits?.join?.(" "), system.properties?.join?.(" ")]; return fields.map(value => normalizeKey(value)).filter(Boolean).join(" "); }
-function isVehicleWeapon(weapon, context = {}) { if (context.vehicleWeapon === true || context.starshipWeapon === true || context.weaponSystem === true) return true; const system = weapon?.system ?? {}; if (system.vehicleWeapon === true || system.starshipWeapon === true || system.weaponSystem === true) return true; const text = weaponText(weapon); return text.includes('vehicle-weapon') || text.includes('starship-weapon') || text.includes('weapon-system') || text.includes('turbolaser') || text.includes('laser-cannon') || text.includes('ion-cannon') || text.includes('proton-torpedo') || text.includes('concussion-missile'); }
-function weaponDamageText(weapon) { const system = weapon?.system ?? {}; const fields = [system.damageType, system.damage?.type, system.damageTypes, system.traits, system.properties, weapon?.name]; const flat = []; for (const field of fields) { if (Array.isArray(field)) flat.push(...field); else if (field && typeof field === "object") flat.push(...Object.values(field)); else if (field !== undefined && field !== null) flat.push(field); } return flat.map(value => normalizeKey(value)).filter(Boolean).join(" "); }
-function targetText(context = {}) { const target = context?.target ?? context?.targetActor ?? null; const system = target?.system ?? {}; const itemNames = []; try { for (const item of Array.from(target?.items ?? [])) { if (item?.name) itemNames.push(item.name); if (item?.system?.slug) itemNames.push(item.system.slug); if (item?.flags?.swse?.id) itemNames.push(item.flags.swse.id); } } catch (_err) {} const fields = [target?.type, target?.name, system.species, system.species?.name, system.species?.value, system.details?.species, system.details?.creatureType, system.actorType, system.vehicleType, ...(Array.isArray(system.traits) ? system.traits : []), ...itemNames]; return fields.map(value => normalizeKey(value)).filter(Boolean).join(" "); }
-function targetHasOwnedItem(context = {}, names = [], types = []) { const target = context?.target ?? context?.targetActor ?? null; const wanted = (Array.isArray(names) ? names : [names]).map(normalizeKey).filter(Boolean); if (!target || !wanted.length) return false; const allowedTypes = (Array.isArray(types) ? types : [types]).map(normalizeKey).filter(Boolean); try { return Array.from(target.items ?? []).some(item => { if (!item) return false; if (allowedTypes.length && !allowedTypes.includes(normalizeKey(item.type))) return false; const itemText = [item.name, item.system?.slug, item.flags?.swse?.id].map(normalizeKey).join(" "); return wanted.some(value => itemText.includes(value)); }); } catch (_err) { return false; } }
-function weaponMatchesGroup(weapon, groups = [], context = {}) { const wanted = (Array.isArray(groups) ? groups : [groups]).map(normalizeKey).filter(Boolean); if (!wanted.length) return false; const haystack = weaponText(weapon); const attackType = getAttackType(weapon, context); return wanted.some(group => { if (!group) return false; if (haystack.includes(group)) return true; if ((group.includes("simple") && group.includes("melee")) && haystack.includes("simple") && attackType === "melee") return true; if ((group.includes("simple") && group.includes("ranged")) && haystack.includes("simple") && attackType === "ranged") return true; if (group.includes("lightsaber") && haystack.includes("lightsaber")) return true; if (group.includes("unarmed") && isUnarmedWeapon(weapon, context)) return true; return false; }); }
-function textMatchesAny(haystack, values = []) { const wanted = (Array.isArray(values) ? values : [values]).map(normalizeKey).filter(Boolean); if (!wanted.length) return false; const text = String(haystack || ""); return wanted.some(value => text.includes(value)); }
 // Math Integrity Freeze, Batch 2B: delegated to the canonical natural/
 // unarmed authority (scripts/items/weapon-branch-resolver.js).
 function isNaturalWeapon(weapon) { if (!weapon) return false; if (weapon?.system?.properties?.naturalWeapon === true || weapon?.system?.properties?.["natural-weapon"] === true) return true; return canonicalIsNaturalWeaponOnly(weapon); }
-function isUnarmedWeapon(weapon, context = {}) { if (context.unarmed === true || context.attackFamily === "unarmed" || context.naturalWeapon === true) return true; return canonicalIsNaturalOrUnarmedWeapon(weapon); }
-function isAreaAttackContext(weapon, context = {}) { if (context.areaAttack === true || context.isAreaAttack === true || context.attackMode === "area") return true; const system = weapon?.system ?? {}; if (system.areaAttack === true || system.isAreaAttack === true || system.burst === true || system.splash === true) return true; const text = [weaponText(weapon), system.attackType, system.area, system.damageType, system.damage?.type, system.traits?.join?.(" "), system.properties?.join?.(" ")].map(value => normalizeKey(value)).filter(Boolean).join(" "); return /area|burst|splash|cone|line|radius|explosive|grenade/.test(text); }
-function flattenChoiceValues(value, results = []) { if (!value) return results; if (Array.isArray(value)) { for (const entry of value) flattenChoiceValues(entry, results); return results; } if (typeof value === "string") { results.push(value); return results; } if (typeof value === "object") { for (const key of ["value", "id", "group", "weapon", "weaponGroup", "label", "name", "choice", "selected"]) if (value[key]) flattenChoiceValues(value[key], results); if (Array.isArray(value.targets)) flattenChoiceValues(value.targets, results); } return results; }
-function getSelectedChoiceValues(item, context = {}) { const values = []; flattenChoiceValues(context.selectedChoice, values); flattenChoiceValues(context.selectedChoices, values); flattenChoiceValues(item?.system?.selectedChoice, values); flattenChoiceValues(item?.system?.selectedChoices, values); flattenChoiceValues(item?.system?.choiceMeta?.selectedChoice, values); return [...new Set(values.map(String).map(v => v.trim()).filter(Boolean))]; }
-function weaponMatchesSelectedChoice(item, weapon, context = {}) { const choices = getSelectedChoiceValues(item, context); if (!choices.length) return false; return choices.some(choice => weaponMatchesGroup(weapon, choice, context)); }
-function actorHasFeatSelectedChoiceMatchingWeapon(actor, featNames = [], weapon, context = {}) { const wanted = (Array.isArray(featNames) ? featNames : [featNames]).map(normalizeKey).filter(Boolean); if (!wanted.length) return false; for (const item of actorItems(actor)) { if (!wanted.includes(normalizeKey(item?.name))) continue; if (weaponMatchesSelectedChoice(item, weapon, context)) return true; } return false; }
 function isPointBlankContext(context = {}) { return context.pointBlankRange === true || context.isPointBlank === true || getRangeBand(context) === "point-blank"; }
 function modifierAppliesToWeaponRoll(item, modifier, weapon, context = {}) { if (!modifier || modifier.enabled === false) return false; const predicates = Array.isArray(modifier.predicates) ? modifier.predicates : []; for (const predicate of predicates) { switch (predicate) { case "attack.weapon-matches-selected-choice": if (!weaponMatchesSelectedChoice(item, weapon, context)) return false; break; case "attack.with-ranged": if (getAttackType(weapon, context) !== "ranged") return false; break; case "attack.with-melee": if (getAttackType(weapon, context) !== "melee") return false; break; case "range.within-point-blank": if (!isPointBlankContext(context)) return false; break; default: return false; } } return true; }
-function collectModifierRollBonuses(item, weapon, context = {}) { const result = { attackBonus: 0, damageBonus: 0, breakdown: [] }; const modifiers = item?.system?.abilityMeta?.modifiers; if (!Array.isArray(modifiers)) return result; for (const modifier of modifiers) { if (!modifierAppliesToWeaponRoll(item, modifier, weapon, context)) continue; const value = Number(modifier.value ?? 0); if (!Number.isFinite(value) || value === 0) continue; const targets = Array.isArray(modifier.target) ? modifier.target : [modifier.target]; for (const target of targets.map(t => String(t || ""))) { if (target === "attack" || target === "attack.bonus") { const selectedChoiceOnly = (modifier.predicates || []).includes("attack.weapon-matches-selected-choice"); if (!selectedChoiceOnly) continue; result.attackBonus += value; result.breakdown.push({ label: modifier.description || item.name, value, type: "attack" }); } else if (["damage", "damage.weapon", "damage.ranged", "damage.melee"].includes(target)) { result.damageBonus += value; result.breakdown.push({ label: modifier.description || item.name, value, type: "damage" }); } } } return result; }
+// Damage SSOT migration (Damage audit correction #1 §3/§5, main command
+// §"MODIFIERENGINE DAMAGE SSOT"): the damage branch below used to be a
+// naive `+=` sum with no stacking-rule awareness at all -- two same-typed
+// damage modifiers (e.g. two competence bonuses, RAW highestOnly) would
+// both apply in full instead of only the higher winning, exactly the class
+// of bug already fixed for the attack.bonus/global.attack channel in the
+// Attack Bonus domain's own round 3-4 work. `result.damageBonus` is left
+// populated exactly as before (unchanged numeric contract for any existing
+// consumer reading it directly), but each matching modifier is ALSO now
+// resolved through ModifierUtils.resolveStacking() and surfaced as typed
+// records on `result.damageContributions`, normalized onto ONE canonical
+// target ('global.damage') regardless of which of the four historical
+// alias spellings ('damage' | 'damage.weapon' | 'damage.melee' |
+// 'damage.ranged') the source record used -- so a future same-typed
+// collision across aliases stacks correctly instead of being invisible to
+// itself, and resolveDamageComposition() in combat-roll-math.js can fold
+// this pool into the SAME stacking pass as ModifierEngine's own
+// Effect-Intent damage modifiers instead of two independent decisions.
+const DAMAGE_TARGET_ALIASES = new Set(["damage", "damage.weapon", "damage.ranged", "damage.melee"]);
+function collectModifierRollBonuses(item, weapon, context = {}) { const result = { attackBonus: 0, damageBonus: 0, damageContributions: [], breakdown: [] }; const modifiers = item?.system?.abilityMeta?.modifiers; if (!Array.isArray(modifiers)) return result; let damageRecordIndex = 0; for (const modifier of modifiers) { if (!modifierAppliesToWeaponRoll(item, modifier, weapon, context)) continue; const value = Number(modifier.value ?? 0); if (!Number.isFinite(value) || value === 0) continue; const targets = Array.isArray(modifier.target) ? modifier.target : [modifier.target]; for (const target of targets.map(t => String(t || ""))) { if (target === "attack" || target === "attack.bonus") { const selectedChoiceOnly = (modifier.predicates || []).includes("attack.weapon-matches-selected-choice"); if (!selectedChoiceOnly) continue; result.attackBonus += value; result.breakdown.push({ label: modifier.description || item.name, value, type: "attack" }); } else if (DAMAGE_TARGET_ALIASES.has(target)) {
+    // Damage SSOT correction (independent review of 4d05a80, "Blocker 2 —
+    // typed Damage stacking is currently cosmetic"): this branch used to
+    // ALSO add `value` into result.damageBonus (a naive, non-stacking-
+    // aware sum) in addition to emitting the typed damageContributions
+    // record below — meaning a same-typed collision between this source
+    // and an Effect-Intent damage modifier would resolve correctly in the
+    // typed ledger (highest wins) while the actual rolled total still
+    // added both in full. damageBonus is left untouched here; this
+    // contribution's ONLY path to the numeric total is now the typed
+    // pool that resolveDamageBonus()/resolveStockDroidDamageContract()
+    // stack-resolve (see combat-roll-math.js), so the ledger's "applied"
+    // verdict and the actual roll can never disagree.
+    result.breakdown.push({ label: modifier.description || item.name, value, type: "damage" });
+    damageRecordIndex += 1;
+    result.damageContributions.push({ id: `${item.id ?? item.name ?? 'modifier'}_damage-${damageRecordIndex}`, source: "item", sourceId: item.id ?? null, sourceName: modifier.description || item.name, target: "global.damage", type: modifier.type || "untyped", value, enabled: true, priority: Number(modifier.priority ?? 500), description: modifier.description || item.name });
+  } } } return result; }
 function ruleAppliesToWeapon(rule, item, weapon, context = {}) { if (!rule || rule.enabled === false) return false; if (rule.selectedChoice === true && !weaponMatchesSelectedChoice(item, weapon, context)) return false; if (rule.weaponGroups && !weaponMatchesGroup(weapon, rule.weaponGroups, context)) return false; if (rule.groups && !weaponMatchesGroup(weapon, rule.groups, context)) return false; if (rule.requiresWeaponGroups && !weaponMatchesGroup(weapon, rule.requiresWeaponGroups, context)) return false; if (rule.requiresWeaponText && !textMatchesAny(weaponText(weapon), rule.requiresWeaponText)) return false; if (rule.weaponText && !textMatchesAny(weaponText(weapon), rule.weaponText)) return false; if (rule.requiresAttackType && getAttackType(weapon, context) !== String(rule.requiresAttackType).toLowerCase()) return false; if (rule.requiresDamageType && !textMatchesAny(weaponDamageText(weapon), rule.requiresDamageType)) return false; if (rule.excludesDamageType && textMatchesAny(weaponDamageText(weapon), rule.excludesDamageType)) return false; return true; }
 
 function collectWeaponRuleModifiers(actor, weapon, context = {}) {
-  const result = { attackBonus: 0, attackAbilityBonus: 0, damageBonus: 0, damageExtraWeaponDice: 0, damageDiceStepBonus: 0, damageDieStepIncreases: 0, criticalDamageDieStepBonus: 0, criticalThreatNaturalMin: null, criticalMultiplierMin: null, targetEffectsOnHit: [], targetEffectsOnCritical: [], flags: {}, breakdown: [] };
+  const result = { attackBonus: 0, attackAbilityBonus: 0, damageBonus: 0, damageContributions: [], damageExtraWeaponDice: 0, damageDiceStepBonus: 0, damageDieStepIncreases: 0, criticalDamageDieStepBonus: 0, criticalThreatNaturalMin: null, criticalMultiplierMin: null, targetEffectsOnHit: [], targetEffectsOnCritical: [], flags: {}, breakdown: [] };
   const appliedStackingKeys = new Set();
   for (const item of actorItems(actor)) {
     const rules = item?.system?.abilityMeta?.rules;
@@ -124,23 +191,145 @@ function collectWeaponRuleModifiers(actor, weapon, context = {}) {
         default: break;
       }
     }
-    const modifierRollBonuses = collectModifierRollBonuses(item, weapon, context); result.attackBonus += modifierRollBonuses.attackBonus || 0; result.damageBonus += modifierRollBonuses.damageBonus || 0; result.breakdown.push(...(modifierRollBonuses.breakdown || []));
+    const modifierRollBonuses = collectModifierRollBonuses(item, weapon, context); result.attackBonus += modifierRollBonuses.attackBonus || 0; result.damageBonus += modifierRollBonuses.damageBonus || 0; result.damageContributions.push(...(modifierRollBonuses.damageContributions || [])); result.breakdown.push(...(modifierRollBonuses.breakdown || []));
   }
   return result;
 }
 
 function collectCombinedFeatModifiers(actor, weapon, context = {}) { const result = { attackAbilityBonus: 0, breakdown: [], flags: {} }; if (!actor || !weapon) return result; const weaponGroup = lowerScalar(weapon?.system?.weaponCategory ?? weapon?.system?.type ?? ''); const alreadyCoveredByWF = weaponGroup === 'light' || weaponGroup === 'light-melee' || weaponGroup === 'lightsaber' || weaponMatchesGroup(weapon, ['light', 'light-melee', 'lightsaber'], context); if (alreadyCoveredByWF) return result; const hasWF = actorItems(actor).some(i => String(i?.type ?? '').toLowerCase() === 'feat' && String(i?.name ?? '').trim().toLowerCase() === 'weapon finesse'); if (!hasWF) return result; if (!actorHasFeatSelectedChoiceMatchingWeapon(actor, ['weapon focus'], weapon, context)) return result; const traits = Array.isArray(weapon?.system?.traits) ? weapon.system.traits.map(t => String(t?.name ?? t ?? '').toLowerCase()) : []; if (traits.includes('two-handed') || traits.includes('twohanded')) return result; if (weaponGroup === 'heavy' || weaponGroup === 'vehicle') return result; const delta = Math.max(0, actorAbilityMod(actor, 'dex') - actorAbilityMod(actor, 'str')); if (!delta) return result; result.attackAbilityBonus = delta; result.flags._attackAbilitySubstitutionValue = delta; result.flags._attackAbilitySubstitutionSource = 'Weapon Focus + Weapon Finesse (combined feat)'; result.breakdown.push({ label: 'Weapon Focus + Weapon Finesse (combined feat)', value: delta, type: 'attackAbilitySubstitution' }); return result; }
-function weaponSupportsAutofire(weapon, context = {}) { if (context.autofire === true || context.attackMode === "autofire") return true; const system = weapon?.system ?? {}; if (system.autofire === true || system.properties?.autofire === true) return true; const text = [system.fireMode, system.properties?.join?.(" "), system.traits?.join?.(" "), weapon?.name].map(value => String(value ?? "").toLowerCase()).join(" "); return text.includes("autofire"); }
-function optionAllowedForWeapon(option, actor, weapon, context = {}) { const attackType = getAttackType(weapon, context); if (option.requiresAttackType && option.requiresAttackType !== "any" && attackType !== "unknown" && attackType !== option.requiresAttackType) return false; if (option.requiresManeuver && contextManeuver(context) !== normalizeKey(option.requiresManeuver)) return false; if (option.requiresAim && context.aim !== true) return false; if (option.requiresCharge && context.charge !== true) return false; if (option.requiresAutofire && !weaponSupportsAutofire(weapon, context)) return false; if (option.requiresUnarmed && !isUnarmedWeapon(weapon, context)) return false; if (option.requiresWeaponGroups && !weaponMatchesGroup(weapon, option.requiresWeaponGroups, context)) return false; if (option.requiresWeaponText && !textMatchesAny(weaponText(weapon), option.requiresWeaponText)) return false; if (option.requiresVehicleWeapon && !isVehicleWeapon(weapon, context)) return false; if (option.requiresFeatSelectedChoiceMatch && !actorHasFeatSelectedChoiceMatchingWeapon(actor, option.requiresFeatSelectedChoiceMatch, weapon, context)) return false; if (option.requiresDamageType && !textMatchesAny(weaponDamageText(weapon), option.requiresDamageType)) return false; if (option.excludesDamageType && textMatchesAny(weaponDamageText(weapon), option.excludesDamageType)) return false; if (option.requiresTargetType && !textMatchesAny(targetText(context), option.requiresTargetType)) return false; if (option.requiresTargetFeat && !targetHasOwnedItem(context, option.requiresTargetFeat, ['feat'])) return false; if (option.requiresTargetTalent && !targetHasOwnedItem(context, option.requiresTargetTalent, ['talent'])) return false; if (option.requiresTargetItem && !targetHasOwnedItem(context, option.requiresTargetItem)) return false; if (option.requiresTargetText && !textMatchesAny(targetText(context), option.requiresTargetText)) return false; if (option.requiresOption) { const combat = context?.combatOptions ?? context?.attackOptions ?? {}; if (!combat?.[option.requiresOption]) return false; } if (option.requiresRangeBand) { const allowed = Array.isArray(option.requiresRangeBand) ? option.requiresRangeBand : [option.requiresRangeBand]; const band = getRangeBand(context); if (!allowed.map(normalizeRangeBand).includes(band)) return false; } if (option.requiresContextFlags) { const required = Array.isArray(option.requiresContextFlags) ? option.requiresContextFlags : [option.requiresContextFlags]; const flags = new Set([...(Array.isArray(context.flags) ? context.flags : []), ...(Array.isArray(context.contextFlags) ? context.contextFlags : [])].map(String)); for (const flag of required.map(String)) if (context[flag] !== true && !flags.has(flag)) return false; } if (option.requiresTargetFlatFooted) { const target = context?.target; const flatFooted = context.targetFlatFooted === true || context.flatFootedTarget === true || target?.system?.derived?.isFlatFooted === true; if (!flatFooted) return false; } if (option.requiresTargetDeniedDexBonus) { const target = context?.target; const deniedDex = context.targetDeniedDexBonus === true || context.deniedDexBonus === true || context.targetFlatFooted === true || target?.system?.derived?.deniedDexBonus === true || target?.system?.derived?.isFlatFooted === true; if (!deniedDex) return false; } if (option.requiresOpportunityAttack && context.opportunityAttack !== true && context.attackOfOpportunity !== true && context.isAttackOfOpportunity !== true) return false; if (option.requiresAreaAttack && !isAreaAttackContext(weapon, context)) return false; if (option.excludesWeaponGroups && weaponMatchesGroup(weapon, option.excludesWeaponGroups, context)) return false; if (option.excludesAreaAttack && (context.isAreaAttack === true || context.areaAttack === true || weapon?.system?.areaAttack === true || weapon?.system?.isAreaAttack === true)) return false; return true; }
+// Math Integrity Freeze, Attack Bonus round 8 correction #1 (Blocker 3/
+// option-state model expansion): getAttackOptionsWithState()'s discovery
+// probe forces the three simple boolean context gates (aim/charge/
+// autofire/isPointBlank) true via ATTACK_OPTION_PROBE_CONTEXT_OVERRIDES,
+// but target-state gates (requiresTargetType/Feat/Talent/Item/Text/
+// FlatFooted/DeniedDexBonus) and requiresOption cannot be probe-satisfied
+// the same way -- they inspect a real target actor or another option's
+// live value, not a flat boolean. This internal-only flag (set SOLELY by
+// getAttackOptionsWithState()'s probe pass below, never by a real caller)
+// tells this function to treat those specific gates as satisfied for
+// DISCOVERY purposes only, so an option blocked ONLY by one of them is
+// found (and can be given a truthful "Requires a target" / "Requires X to
+// be selected first" reason) rather than vanishing as if unowned. Every
+// other gate (weapon group, attack type, weapon text, ...) is NEVER
+// bypassed by this flag -- an option genuinely wrong for this weapon still
+// never appears, probe or not.
+function optionAllowedForWeapon(option, actor, weapon, context = {}) { const probingDiscoveryGates = context.__probeDiscoveryGates === true; const attackType = getAttackType(weapon, context); if (option.requiresAttackType && option.requiresAttackType !== "any" && attackType !== "unknown" && attackType !== option.requiresAttackType) return false; if (option.requiresManeuver && contextManeuver(context) !== normalizeKey(option.requiresManeuver)) return false; if (option.requiresAim && context.aim !== true) return false; if (option.requiresCharge && context.charge !== true) return false; if (option.requiresAutofire && !weaponSupportsAutofire(weapon, context)) return false; if (option.requiresUnarmed && !isUnarmedWeapon(weapon, context)) return false; if (option.requiresWeaponGroups && !weaponMatchesGroup(weapon, option.requiresWeaponGroups, context)) return false; if (option.requiresWeaponText && !textMatchesAny(weaponText(weapon), option.requiresWeaponText)) return false; if (option.requiresVehicleWeapon && !isVehicleWeapon(weapon, context)) return false; if (option.requiresFeatSelectedChoiceMatch && !actorHasFeatSelectedChoiceMatchingWeapon(actor, option.requiresFeatSelectedChoiceMatch, weapon, context)) return false; if (option.requiresDamageType && !textMatchesAny(weaponDamageText(weapon), option.requiresDamageType)) return false; if (option.excludesDamageType && textMatchesAny(weaponDamageText(weapon), option.excludesDamageType)) return false; if (!probingDiscoveryGates && option.requiresTargetType && !textMatchesAny(targetText(context), option.requiresTargetType)) return false; if (!probingDiscoveryGates && option.requiresTargetFeat && !targetHasOwnedItem(context, option.requiresTargetFeat, ['feat'])) return false; if (!probingDiscoveryGates && option.requiresTargetTalent && !targetHasOwnedItem(context, option.requiresTargetTalent, ['talent'])) return false; if (!probingDiscoveryGates && option.requiresTargetItem && !targetHasOwnedItem(context, option.requiresTargetItem)) return false; if (!probingDiscoveryGates && option.requiresTargetText && !textMatchesAny(targetText(context), option.requiresTargetText)) return false; if (!probingDiscoveryGates && option.requiresOption) { const combat = context?.combatOptions ?? context?.attackOptions ?? {}; if (!combat?.[option.requiresOption]) return false; } if (option.requiresRangeBand) { const allowed = Array.isArray(option.requiresRangeBand) ? option.requiresRangeBand : [option.requiresRangeBand]; const band = getRangeBand(context); if (!allowed.map(normalizeRangeBand).includes(band)) return false; } if (option.requiresContextFlags) { const required = Array.isArray(option.requiresContextFlags) ? option.requiresContextFlags : [option.requiresContextFlags]; const flags = new Set([...(Array.isArray(context.flags) ? context.flags : []), ...(Array.isArray(context.contextFlags) ? context.contextFlags : [])].map(String)); for (const flag of required.map(String)) if (context[flag] !== true && !flags.has(flag)) return false; } if (!probingDiscoveryGates && option.requiresTargetFlatFooted && !isTargetFlatFooted(context)) return false; if (!probingDiscoveryGates && option.requiresTargetDeniedDexBonus && !isTargetDeniedDexBonus(context)) return false; if (option.requiresOpportunityAttack && context.opportunityAttack !== true && context.attackOfOpportunity !== true && context.isAttackOfOpportunity !== true) return false; if (option.requiresAreaAttack && !isAreaAttackContext(weapon, context)) return false; if (option.excludesWeaponGroups && weaponMatchesGroup(weapon, option.excludesWeaponGroups, context)) return false; if (option.excludesAreaAttack && (context.isAreaAttack === true || context.areaAttack === true || weapon?.system?.areaAttack === true || weapon?.system?.isAreaAttack === true)) return false; return true; }
 function hydrateOption(raw, actor, weapon, context = {}) { const id = camelize(raw.option ?? raw.id ?? raw.key ?? raw.name); const defaults = DEFAULT_ATTACK_OPTIONS[id] ?? {}; const merged = foundry?.utils?.mergeObject ? foundry.utils.mergeObject(foundry.utils.deepClone(defaults), raw, { inplace: false }) : { ...defaults, ...raw }; merged.id = id; merged.label = merged.label ?? raw.label ?? id; merged.control = merged.control ?? raw.inputType ?? "toggle"; merged.attackType = getAttackType(weapon, context); if (merged.control === "slider") { const bab = actorBAB(actor); const ruleMax = Number(merged.max ?? merged.maximum ?? 5); merged.min = Number(merged.min ?? 0); merged.max = Math.max(0, Math.min(bab, Number.isFinite(ruleMax) ? ruleMax : bab)); merged.step = Number(merged.step ?? 1); merged.value = Math.max(merged.min, Math.min(Number(context?.combatOptions?.[id] ?? context?.attackOptions?.[id] ?? 0), merged.max)); merged.disabled = merged.max <= 0; } else if (merged.control === "toggle") merged.checked = Boolean(context?.combatOptions?.[id] ?? context?.attackOptions?.[id]); if (merged.requiresAim && !context?.aim) merged.warning = merged.warning ?? "Requires Aim."; if (merged.requiresCharge && !context?.charge) merged.warning = merged.warning ?? "Requires a charge context."; if (merged.requiresManeuver && contextManeuver(context) !== normalizeKey(merged.requiresManeuver)) merged.warning = merged.warning ?? `Requires ${merged.requiresManeuver}.`; if (merged.requiresAutofire && !weaponSupportsAutofire(weapon, context)) merged.warning = merged.warning ?? "Requires an autofire-capable weapon or autofire attack mode."; if (merged.control === "passive") { merged.checked = true; merged.value = 1; } return merged; }
 function selectedValue(options, id) { const combat = options?.combatOptions ?? options?.attackOptions ?? {}; const value = combat?.[id]; if (value === undefined || value === null || value === false || value === "") return 0; if (value === true) return 1; const numeric = Number(value); return Number.isFinite(numeric) ? numeric : 0; }
+
+// Math Integrity Freeze, Attack Bonus round 8: probe context used to
+// DISCOVER an owned option whose only blocking gate is one of the
+// player-toggleable ones (Aim/Charge/Autofire) -- assuming every such gate
+// is satisfied surfaces every option the actor could possibly reach from
+// this dialog, without inventing eligibility for weapon-group/attack-type/
+// target mismatches (those gates are NOT probed, so an option genuinely
+// wrong for this weapon/attack-type/target never appears at all, satisfying
+// "actor does NOT own it / it can never apply here: do not show it").
+const ATTACK_OPTION_PROBE_CONTEXT_OVERRIDES = Object.freeze({ aim: true, charge: true, autofire: true, isPointBlank: true, __probeDiscoveryGates: true });
+
+// Human-readable reasons for the gates a player can resolve from THIS
+// dialog: the three simple boolean toggles (Aim/Charge/Autofire), a
+// target-state gate (now resolvable via the Target Context panel -- round
+// 8 correction #1, Blocker 3), and requiresOption (another combat option's
+// live value, also submitted from this same form). Any other unmet
+// requirement (weapon group, attack type, maneuver, opportunity-attack,
+// ...) is NOT reasoned here -- those options never reach this function at
+// all, since they are excluded by the (unprobed) gates in
+// optionAllowedForWeapon() before this runs.
+function unmetToggleableReasons(option, weapon, context) {
+  const reasons = [];
+  if (option.requiresAim && context.aim !== true) reasons.push('Requires Aim');
+  if (option.requiresCharge && context.charge !== true) reasons.push('Requires Charge');
+  if (option.requiresAutofire && !weaponSupportsAutofire(weapon, context)) reasons.push('Requires an autofire-capable weapon or autofire mode');
+  const hasTargetGate = option.requiresTargetType || option.requiresTargetFeat || option.requiresTargetTalent
+    || option.requiresTargetItem || option.requiresTargetText || option.requiresTargetFlatFooted || option.requiresTargetDeniedDexBonus;
+  if (hasTargetGate) {
+    const target = context?.target ?? context?.targetActor ?? null;
+    reasons.push(target ? "Target does not meet this option's requirement" : 'Requires a target');
+  }
+  if (option.requiresOption) {
+    const combat = context?.combatOptions ?? context?.attackOptions ?? {};
+    if (!combat?.[option.requiresOption]) reasons.push(`Requires ${option.requiresOption} to be selected first`);
+  }
+  return reasons;
+}
 
 export class CombatOptionResolver {
   static getAvailableAttackOptions(actor, weapon, context = {}) { const options = []; for (const item of actorItems(actor)) for (const rule of getFeatRules(item)) { const option = hydrateOption(rule, actor, weapon, context); if (!option?.id) continue; if (!optionAllowedForWeapon(option, actor, weapon, context)) continue; option.sourceItemId = item.id; option.sourceName = item.name; if (!options.some(existing => existing.id === option.id)) options.push(option); } return options.sort((a, b) => String(a.label).localeCompare(String(b.label))); }
   static summarizeAttackOptions(actor, weapon, options = {}) { const available = this.getAvailableAttackOptions(actor, weapon, options); return available.map(option => { const value = option.control === "passive" ? 1 : selectedValue(options, option.id); return { ...option, selectedValue: value, active: option.control === "passive" || value > 0 || (option.control === "flag" && Boolean(options?.combatOptions?.[option.id])) }; }); }
-  static collectAttackModifiers(actor, weapon, options = {}) { const active = this.summarizeAttackOptions(actor, weapon, options); const result = { attackBonus: 0, attackAbilityBonus: 0, damageBonus: 0, damageDiceStepBonus: 0, damageExtraWeaponDice: 0, damageDieStepIncreases: 0, ammunitionCost: 0, defenseModifiers: [], targetEffectsOnHit: [], criticalThreatNaturalMin: null, criticalMultiplierMin: null, criticalDamageDieStepBonus: 0, targetDefenseType: null, targetEffectsOnCritical: [], flags: {}, breakdown: [] };
+
+  /**
+   * Math Integrity Freeze, Attack Bonus round 8 (Attack Context + Dynamic
+   * Combat Option Presentation Authority): getAvailableAttackOptions()
+   * silently omits an owned option the instant ONE unmet context gate
+   * (Aim/Charge/Autofire) fails, indistinguishable from the actor simply
+   * not owning it or the weapon being wrong for it. A player who owns
+   * Careful Shot never sees it at all before checking Aim, with no
+   * indication it exists. This returns every option the actor could reach
+   * from the current weapon/attack-type (the real, always-enforced gates),
+   * annotated with a presentation `state` ('available' | 'disabled') and,
+   * when disabled, a human `reason` naming exactly which toggleable
+   * context gate (Aim/Charge/Autofire) is still unmet -- so the dialog can
+   * show it rather than hide it.
+   * @returns {Array} options with `.state` and `.reason` (null when available)
+   */
+  static getAttackOptionsWithState(actor, weapon, context = {}) {
+    const probeContext = { ...context, ...ATTACK_OPTION_PROBE_CONTEXT_OVERRIDES };
+    const probed = this.getAvailableAttackOptions(actor, weapon, probeContext);
+    const availableIds = new Set(this.getAvailableAttackOptions(actor, weapon, context).map(o => o.id));
+    return probed.map(option => {
+      if (availableIds.has(option.id)) return { ...option, state: 'available', reason: null };
+      const reasons = unmetToggleableReasons(option, weapon, context);
+      // Every probed-but-unavailable option must be explained by a
+      // toggleable gate -- if none applies, the probe and the real
+      // evaluation disagreed for a reason this function doesn't model
+      // (a defensive fallback, not expected to fire in practice).
+      return { ...option, state: 'disabled', reason: reasons.join('; ') || 'Not currently available' };
+    });
+  }
+
+  /**
+   * Math Integrity Freeze, Attack Bonus round 8: which of the generic,
+   * non-feat-gated attack CONTEXT toggles (Aim, Charge, Flanking) are
+   * relevant to show for this actor + weapon. The base SWSE rule is a
+   * straight melee/ranged split (Aim is ranged-only; Flanking is
+   * melee-only), EXCEPT Charge: the ordinary melee Charge +2 is melee-only,
+   * but the CHARGE CONTEXT ITSELF also matters for a ranged attacker who
+   * owns something like Charging Fire (requiresAttackType: 'ranged',
+   * requiresCharge: true) -- "is Charge context meaningful" is therefore a
+   * different question from "does the ordinary melee Charge +2 apply," and
+   * must not be collapsed into one boolean. Detected by probing whether ANY
+   * currently-reachable option (ignoring the charge gate itself, via
+   * getAttackOptionsWithState's probe) declares requiresCharge -- not by
+   * hardcoding "Charging Fire" by name, so any future ranged-charge option
+   * is picked up the same way.
+   *
+   * Math Integrity Freeze, Attack Bonus round 8 correction #1 (Blocker 4):
+   * Point Blank is NOT a player-toggleable generic context -- it is a range
+   * STATE, already owned by the Range Band selector (which the ranged
+   * dialog already renders and already offers a "Point Blank" value for).
+   * A separate toggleable pointBlank context here would be a second,
+   * independently-settable authority for the same fact, capable of
+   * producing an impossible combination (rangeBand: 'medium' AND
+   * isPointBlank: true). This method therefore no longer advertises
+   * pointBlank at all; callers derive isPointBlank from the selected range
+   * band (normalizeRangeBand(rangeBand) === 'point-blank'), the one place
+   * that fact is recorded.
+   * @returns {{aim: boolean, charge: boolean, flanking: boolean}}
+   */
+  static getAvailableAttackContexts(actor, weapon, context = {}) {
+    const attackType = getAttackType(weapon, context);
+    const reachable = this.getAttackOptionsWithState(actor, weapon, context);
+    const chargeRelevantForRanged = attackType !== 'melee' && reachable.some(o => o.requiresCharge === true);
+    return {
+      aim: attackType === 'ranged',
+      flanking: attackType === 'melee',
+      charge: attackType === 'melee' || chargeRelevantForRanged
+    };
+  }
+  static collectAttackModifiers(actor, weapon, options = {}) { const active = this.summarizeAttackOptions(actor, weapon, options); const result = { attackBonus: 0, attackAbilityBonus: 0, damageBonus: 0, damageContributions: [], damageDiceStepBonus: 0, damageExtraWeaponDice: 0, damageDieStepIncreases: 0, ammunitionCost: 0, defenseModifiers: [], targetEffectsOnHit: [], criticalThreatNaturalMin: null, criticalMultiplierMin: null, criticalDamageDieStepBonus: 0, targetDefenseType: null, targetEffectsOnCritical: [], flags: {}, breakdown: [], attackContributions: [] };
     for (const option of active) { const value = option.control === "passive" ? 1 : option.selectedValue; const flagActive = option.control === "flag" ? Boolean(options?.combatOptions?.[option.id] ?? options?.attackOptions?.[option.id]) : true; if (option.control === "flag" && !flagActive) continue; if (option.control !== "flag" && option.control !== "passive" && value <= 0) continue; let attack = 0; if (Number.isFinite(Number(option.attackModifier))) attack += Number(option.attackModifier) * value; if (option.attackModifierFormula === "-value") attack -= value; if (option.attackModifierFormula === "heroicLevel") attack += actorLevel(actor) * value; if (option.attackModifierFormula === "halfLevel") attack += Math.floor(actorLevel(actor) / 2) * value; if (typeof option.attackModifierFormula === "string" && option.attackModifierFormula.startsWith("context.")) { const key = option.attackModifierFormula.slice("context.".length); const contextValue = Number(options?.[key] ?? options?.combatOptions?.[key] ?? options?.attackOptions?.[key] ?? 0); if (Number.isFinite(contextValue)) { const max = Number(option.maxContextValue ?? option.max ?? contextValue); const multiplier = Number(option.contextMultiplier ?? 1); attack += Math.max(0, Math.min(contextValue, Number.isFinite(max) ? max : contextValue)) * multiplier; } } attack += getRangePenaltyAdjustment(option, options); if (option.attackAbilityBonus) { const abilityRule = option.attackAbilityBonus; const ability = String(abilityRule.ability ?? abilityRule.key ?? 'str').toLowerCase().slice(0, 3); const multiplier = Number(abilityRule.multiplier ?? 1) || 1; const minimum = Number(abilityRule.minimum ?? 0) || 0; const abilityValue = Math.max(minimum, actorAbilityMod(actor, ability) * multiplier); if (Number.isFinite(abilityValue) && abilityValue !== 0) attack += abilityValue * value; } if (attack) { result.attackBonus += attack; result.breakdown.push({ label: option.label, value: attack, type: "attack" }); } let damage = 0; if (Number.isFinite(Number(option.damageModifier))) damage += Number(option.damageModifier) * value; if (option.damageModifierFormula === "value") damage += value; if (option.damageModifierFormula === "halfLevel") damage += Math.floor(actorLevel(actor) / 2) * value; if (option.damageModifierFormula === "halfLevelMinusOne") damage += Math.max(0, Math.floor(actorLevel(actor) / 2) - 1) * value; if (["level", "classLevel", "characterLevel", "heroicLevel", "actorLevel"].includes(option.damageModifierFormula)) damage += actorLevel(actor) * value; if (typeof option.damageModifierFormula === "string" && option.damageModifierFormula.startsWith("context.")) { const key = option.damageModifierFormula.slice("context.".length); const contextValue = Number(options?.[key] ?? options?.combatOptions?.[key] ?? options?.attackOptions?.[key] ?? 0); if (Number.isFinite(contextValue)) damage += contextValue * value; } if (option.damageAbilityBonus) { const abilityRule = option.damageAbilityBonus; const ability = String(abilityRule.ability ?? abilityRule.key ?? 'str').toLowerCase().slice(0, 3); const multiplier = Number(abilityRule.multiplier ?? 1) || 1; const minimum = Number(abilityRule.minimum ?? 0) || 0; const abilityValue = Math.max(minimum, actorAbilityMod(actor, ability) * multiplier); if (Number.isFinite(abilityValue) && abilityValue !== 0) damage += abilityValue * value; } if (damage) { result.damageBonus += damage; result.breakdown.push({ label: option.label, value: damage, type: "damage" }); } const extraWeaponDice = Number(option.damageExtraWeaponDice ?? option.damageDiceStepBonus ?? 0) * value; if (extraWeaponDice) { result.damageExtraWeaponDice += extraWeaponDice; result.damageDiceStepBonus += extraWeaponDice; result.breakdown.push({ label: `${option.label} extra weapon dice`, value: extraWeaponDice, type: "damageExtraWeaponDice" }); } const ammunitionCost = Number(option.ammunitionCost ?? option.ammoCost ?? 0) * value; if (Number.isFinite(ammunitionCost) && ammunitionCost > 0) { result.ammunitionCost += ammunitionCost; result.breakdown.push({ label: `${option.label} ammunition`, value: ammunitionCost, type: "ammunitionCost" }); } if (option.defenseModifier && value > 0) { const defenseValue = Number(option.defenseModifier.value ?? value); const defense = { ...option.defenseModifier, value: Number.isFinite(defenseValue) ? defenseValue : value }; result.defenseModifiers.push(defense); result.breakdown.push({ label: `${option.label} ${defense.target ?? "defense"}`, value, type: "defense" }); } if (Array.isArray(option.targetEffectsOnHit) && value > 0) for (const effect of option.targetEffectsOnHit) { const resolved = { ...effect, sourceOption: option.id, sourceName: option.label }; if (typeof resolved.valueFormula === "string" && resolved.valueFormula === "selectedValue") resolved.value = value; if (typeof resolved.valueFormula === "string" && resolved.valueFormula === "negativeSelectedValue") resolved.value = -Math.abs(value); result.targetEffectsOnHit.push(resolved); } const criticalThreshold = Number(option.criticalThreatNaturalMin ?? option.criticalThreatMin ?? 0); if (Number.isFinite(criticalThreshold) && criticalThreshold > 1) { result.criticalThreatNaturalMin = result.criticalThreatNaturalMin ? Math.min(result.criticalThreatNaturalMin, criticalThreshold) : criticalThreshold; result.breakdown.push({ label: `${option.label} critical threshold`, value: criticalThreshold, type: "criticalThreatNaturalMin" }); } const criticalMultiplierMin = Number(option.criticalMultiplierMin ?? option.critMultiplierMin ?? 0); if (Number.isFinite(criticalMultiplierMin) && criticalMultiplierMin > 0) result.criticalMultiplierMin = Math.max(result.criticalMultiplierMin || 0, criticalMultiplierMin); const criticalDamageStep = Number(option.criticalDamageDieStepBonus ?? 0) * value; if (Number.isFinite(criticalDamageStep) && criticalDamageStep !== 0) result.criticalDamageDieStepBonus += criticalDamageStep; if (Array.isArray(option.targetEffectsOnCritical)) result.targetEffectsOnCritical.push(...option.targetEffectsOnCritical.map(effect => ({ ...effect, sourceOption: option.id, sourceName: option.label }))); if (option.targetDefenseType) result.targetDefenseType = String(option.targetDefenseType).toLowerCase(); if (option.suppressDamageAbilityAndLevel === true || option.damageMode === "baseOnly") { result.flags.damageBaseOnly = true; result.breakdown.push({ label: `${option.label} base damage only`, value: 0, type: "damageMode" }); } if (Array.isArray(option.suppresses)) for (const suppressed of option.suppresses) result.flags[`suppresses.${suppressed}`] = true; if (option.control === "flag") result.flags[option.id] = true; }
-    const ruleModifiers = collectWeaponRuleModifiers(actor, weapon, options); result.attackBonus += ruleModifiers.attackBonus || 0; result.attackAbilityBonus += ruleModifiers.attackAbilityBonus || 0; result.damageBonus += ruleModifiers.damageBonus || 0; result.damageExtraWeaponDice += ruleModifiers.damageExtraWeaponDice || 0; result.damageDiceStepBonus += ruleModifiers.damageDiceStepBonus || 0; result.damageDieStepIncreases += ruleModifiers.damageDieStepIncreases || 0; result.criticalDamageDieStepBonus += ruleModifiers.criticalDamageDieStepBonus || 0; if (ruleModifiers.criticalThreatNaturalMin) result.criticalThreatNaturalMin = result.criticalThreatNaturalMin ? Math.min(result.criticalThreatNaturalMin, ruleModifiers.criticalThreatNaturalMin) : ruleModifiers.criticalThreatNaturalMin; result.criticalMultiplierMin = Math.max(result.criticalMultiplierMin || 0, ruleModifiers.criticalMultiplierMin || 0) || null; result.targetEffectsOnHit.push(...(ruleModifiers.targetEffectsOnHit || [])); result.targetEffectsOnCritical.push(...(ruleModifiers.targetEffectsOnCritical || [])); result.breakdown.push(...(ruleModifiers.breakdown || [])); Object.assign(result.flags, ruleModifiers.flags || {}); const combinedMods = collectCombinedFeatModifiers(actor, weapon, options); const alreadySubstituted = Number(result.flags._attackAbilitySubstitutionValue || 0); const combinedDelta = combinedMods.attackAbilityBonus || 0; if (combinedDelta > alreadySubstituted) { result.attackAbilityBonus += combinedDelta - alreadySubstituted; result.breakdown.push(...(combinedMods.breakdown || [])); Object.assign(result.flags, combinedMods.flags || {}); } return result; }
+    const ruleModifiers = collectWeaponRuleModifiers(actor, weapon, options); result.attackBonus += ruleModifiers.attackBonus || 0; result.attackAbilityBonus += ruleModifiers.attackAbilityBonus || 0; result.damageBonus += ruleModifiers.damageBonus || 0; result.damageContributions.push(...(ruleModifiers.damageContributions || [])); result.damageExtraWeaponDice += ruleModifiers.damageExtraWeaponDice || 0; result.damageDiceStepBonus += ruleModifiers.damageDiceStepBonus || 0; result.damageDieStepIncreases += ruleModifiers.damageDieStepIncreases || 0; result.criticalDamageDieStepBonus += ruleModifiers.criticalDamageDieStepBonus || 0; if (ruleModifiers.criticalThreatNaturalMin) result.criticalThreatNaturalMin = result.criticalThreatNaturalMin ? Math.min(result.criticalThreatNaturalMin, ruleModifiers.criticalThreatNaturalMin) : ruleModifiers.criticalThreatNaturalMin; result.criticalMultiplierMin = Math.max(result.criticalMultiplierMin || 0, ruleModifiers.criticalMultiplierMin || 0) || null; result.targetEffectsOnHit.push(...(ruleModifiers.targetEffectsOnHit || [])); result.targetEffectsOnCritical.push(...(ruleModifiers.targetEffectsOnCritical || [])); result.breakdown.push(...(ruleModifiers.breakdown || [])); Object.assign(result.flags, ruleModifiers.flags || {}); const combinedMods = collectCombinedFeatModifiers(actor, weapon, options); const alreadySubstituted = Number(result.flags._attackAbilitySubstitutionValue || 0); const combinedDelta = combinedMods.attackAbilityBonus || 0; if (combinedDelta > alreadySubstituted) { result.attackAbilityBonus += combinedDelta - alreadySubstituted; result.breakdown.push(...(combinedMods.breakdown || [])); Object.assign(result.flags, combinedMods.flags || {}); } return result; }
 }
 
 export default CombatOptionResolver;

@@ -124,17 +124,29 @@ assert.match(math, /Suppressed modifiers are still shown \(applied: false, with 
 
 // 15. Invalid gunner/vehicle actors return a structured failure — total 0,
 // empty ledger, explicit error code — never a silent substitution.
+// Attack Bonus round (blocker fix): rollAttack()'s domain-resolution/
+// vehicle-bonus-dispatch/error-detection block was extracted verbatim into
+// a shared computeFinalAttackComposition() function (called by both
+// rollAttack() and the attack dialog's live preview, so the two can never
+// disagree — see attacks.js's own doc comment on that function) — so
+// `attackBonusResolution.error` detection now lives there, and rollAttack()
+// itself reads the extracted result's `.reason`/`.attackBonusResolution`
+// fields instead of the raw local variables it used to close over directly.
+const compositionFnBody = attacks.slice(attacks.indexOf('export async function computeFinalAttackComposition'), attacks.indexOf('function getFightingDefensivelyAttackPenalty'));
 assert.match(math, /return \{ total: 0, ledger: \[\], warnings, error: 'invalid-gunner-actor' \};/);
 assert.match(math, /return \{ total: 0, ledger: \[\], warnings, error: 'invalid-vehicle-actor' \};/);
-assert.match(attacks, /if \(attackBonusResolution\.error\) \{/);
-assert.match(attacks, /ui\?\.notifications\?\.error\?\.\(attackBonusResolution\.error === 'invalid-vehicle-actor'/);
+assert.match(compositionFnBody, /if \(attackBonusResolution\.error\) \{/);
+assert.match(compositionFnBody, /return \{ ok: false, reason: attackBonusResolution\.error, domainResolution, attackBonusResolution \};/);
+assert.match(attacks, /ui\?\.notifications\?\.error\?\.\(composition\.reason === 'invalid-vehicle-actor'/);
 
 // 18. Chat, AttackOutcomeResolver, and the damage workflow all consume the
 // same atkBonus/roll.total regardless of vehicle vs character attack — the
 // branch only changes how attackBonusResolution is computed, not how roll,
 // outcome, or chat posting consume it downstream.
 const rollAttackBody = attacks.slice(attacks.indexOf('export async function rollAttack('), attacks.indexOf('export async function rollDamage('));
-assert.match(rollAttackBody, /const isVehicleAttack = attackDomain !== 'character';/);
+assert.match(compositionFnBody, /const isVehicleAttack = attackDomain !== 'character';/);
+assert.match(rollAttackBody, /const composition = await computeFinalAttackComposition\(actor, weapon, rollOptions\);/);
+assert.match(rollAttackBody, /const \{ atkBonus, attackDomain, isVehicleAttack, attackBonusResolution, attackComponentLedger, sequencePenalty, domainResolution \} = composition;/);
 assert.match(rollAttackBody, /const outcome = AttackOutcomeResolver\.resolve\(\{\s*\n\s*naturalD20: d20,\s*\n\s*total: roll\.total,/);
 // Only one AttackOutcomeResolver.resolve call and one SWSEChat.postRoll call
 // exist in rollAttack — i.e. no vehicle-specific fork downstream of the
@@ -154,15 +166,18 @@ assert.doesNotMatch(resolver, /resolveVehicleAttackBonus/);
 // 20. Vehicle attacks still flow through the same transaction/rollback
 // structure as Phase 1/2 (ammo + action-option rollback on failure) — the
 // new vehicle-formula error branch rolls back exactly like the pre-existing
-// ammoSpend-failure branch.
-assert.match(rollAttackBody, /if \(attackBonusResolution\.error\) \{\s*\n\s*if \(ammoSpend\?\.spent\) await AmmoSystem\.rollbackSpend\(actor, weapon, ammoSpend\);\s*\n\s*await actionOptionSpend\?\.rollback\?\.\(\);/);
+// ammoSpend-failure branch. rollAttack() detects the extracted failure via
+// composition.attackBonusResolution?.error rather than a raw local
+// attackBonusResolution it no longer has direct access to.
+assert.match(rollAttackBody, /if \(composition\.attackBonusResolution\?\.error\) \{\s*\n\s*if \(ammoSpend\?\.spent\) await AmmoSystem\.rollbackSpend\(actor, weapon, ammoSpend\);\s*\n\s*await actionOptionSpend\?\.rollback\?\.\(\);/);
 
 // 21 (Phase 4 addendum). attack-domain-router.js is the single place that
 // decides character vs vehicle-actor-gunner vs vehicle-abstract-crew — the
-// resolver dispatch in rollAttack() is driven by its result, not by
-// independently re-deriving vehicle-ness from rollOptions.
-assert.match(rollAttackBody, /const domainResolution = resolveAttackDomain\(\{/);
-assert.match(rollAttackBody, /if \(!domainResolution\.ok\) \{/);
+// resolver dispatch (now inside computeFinalAttackComposition(), called by
+// rollAttack()) is driven by its result, not by independently re-deriving
+// vehicle-ness from rollOptions.
+assert.match(compositionFnBody, /const domainResolution = resolveAttackDomain\(\{/);
+assert.match(compositionFnBody, /if \(!domainResolution\.ok\) \{/);
 assert.match(attacks, /import \{ resolveAttackDomain \} from "\/systems\/foundryvtt-swse\/scripts\/engine\/combat\/attack-domain-router\.js";/);
 
 console.log('Phase 3 vehicle attack formula guards passed (20/20 required properties mapped; updated for Phase 4 abstract-crew/router changes).');

@@ -13,7 +13,7 @@ import { normalizeSkillMap } from "/systems/foundryvtt-swse/scripts/utils/skill-
 import { collectKnownForceSecrets, collectKnownForceTechniques } from "/systems/foundryvtt-swse/scripts/utils/force-knowledge.js";
 import { buildActorItemIndex } from "./actor-item-index.js";
 import { SchemaAdapters } from "/systems/foundryvtt-swse/scripts/utils/schema-adapters.js";
-import { isNaturalWeaponOnly as canonicalIsNaturalWeaponOnly } from "/systems/foundryvtt-swse/scripts/items/weapon-branch-resolver.js";
+import { isItemEquipped as canonicalIsItemEquipped } from "/systems/foundryvtt-swse/scripts/items/weapon-branch-resolver.js";
 
 /**
  * Compute the minimal v2-derived fields for Characters.
@@ -116,58 +116,13 @@ function safeNumber(value, fallback = 0) {
   return Number.isFinite(n) ? n : fallback;
 }
 
-function isTruthyEquipState(value) {
-  if (value === true || Number(value) === 1) return true;
-  if (value && typeof value === 'object') {
-    return isTruthyEquipState(value.value ?? value.current ?? value.active ?? value.equipped ?? value.state);
-  }
-  if (typeof value === 'string') {
-    return ['true', '1', 'yes', 'equipped', 'worn', 'held', 'readied', 'ready', 'on', 'active', 'natural'].includes(value.toLowerCase());
-  }
-  return false;
-}
-
-function isDroidActorLike(actor) {
-  return String(actor?.type ?? '').toLowerCase() === 'droid'
-    || actor?.system?.isDroid === true
-    || String(actor?.system?.actorMode ?? '').toLowerCase() === 'droid';
-}
-
-// Math Integrity Freeze, Batch 2B: delegated to the canonical natural/
-// unarmed authority (scripts/items/weapon-branch-resolver.js). alwaysArmed
-// stays a local, distinct flag (an auto-equip behavior, not a classification).
-function isNaturalWeaponItem(item) {
-  if (item?.flags?.swse?.alwaysArmed === true) return true;
-  return canonicalIsNaturalWeaponOnly(item);
-}
-
-function isAutoEquippedNaturalWeapon(item) {
-  const swseFlags = item?.flags?.swse ?? {};
-  return isNaturalWeaponItem(item)
-    && (isTruthyEquipState(swseFlags.autoEquipped) || swseFlags.alwaysArmed === true);
-}
-
-function isIntegratedDroidWeapon(item, actor) {
-  if (!isDroidActorLike(actor) || !item) return false;
-  const system = item.system ?? {};
-  return isAttackItem(item)
-    && (isTruthyEquipState(system.integrated)
-      || isTruthyEquipState(system.droidIntegrated)
-      || isTruthyEquipState(item?.flags?.swse?.integrated));
-}
-
+// Math Integrity Freeze, Attack Bonus round 6: delegated to the shared
+// equipped/wielded-state authority (scripts/items/weapon-branch-resolver.js,
+// promoted from this file's own prior copy) so target-conditioned combat
+// modifiers (e.g. Heart of the Guardian) answer the same question this
+// sheet-mirroring pass does, from one place.
 function isItemEquipped(item, actor = null) {
-  const system = item?.system ?? {};
-  return isTruthyEquipState(system.equipped)
-    || isTruthyEquipState(system.isEquipped)
-    || isTruthyEquipState(system.active)
-    || isTruthyEquipState(system.readied)
-    || isTruthyEquipState(system.equippable?.equipped)
-    || isTruthyEquipState(system.equippable?.active)
-    || isTruthyEquipState(system.activation?.active)
-    || isTruthyEquipState(item?.flags?.swse?.equipped)
-    || isAutoEquippedNaturalWeapon(item)
-    || isIntegratedDroidWeapon(item, actor);
+  return canonicalIsItemEquipped(item, actor);
 }
 
 function firstDefined(...values) {
