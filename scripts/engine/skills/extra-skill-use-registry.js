@@ -1,5 +1,18 @@
 import { SkillRules } from "/systems/foundryvtt-swse/scripts/engine/skills/SkillRules.js";
 
+// NOTE (found during V2 combat runtime convergence, Phase 2): this registry
+// has exactly one importer, scripts/engine/skills/skill-feat-rule-resolver.js
+// (feat-granted extra-skill-use eligibility) -- it is NOT the registry the
+// character sheet's skill-use roll dispatch uses. That is the separate,
+// same-named class in scripts/utils/extra-skill-use-registry.js, which
+// loads real skill-use data from packs/extraskilluses.db /
+// data/extraskilluses.json. SkillUseFilter's shield-recharge dispatch
+// (scripts/utils/skill-use-filter.js) and ActorEngine.rechargeShields()
+// wiring key off THAT registry's records, not the `dc`/`restoreShieldRating`
+// fields on the mechanics.recharge-shields/endurance.restore-shields
+// entries below -- those are inert for that purpose, left as pre-existing
+// feat-eligibility metadata.
+
 function normalizeKey(value = '') {
   return String(value ?? '')
     .trim()
@@ -42,9 +55,9 @@ const BASE_EXTRA_SKILL_USES = [
   { id: 'mechanics.disable-device', key: 'disable-device', skill: 'mechanics', name: 'Disable Device', actionCost: 'varies', tags: ['technical', 'mechanics'] },
   { id: 'mechanics.jury-rig', key: 'jury-rig', skill: 'mechanics', name: 'Jury-Rig', actionCost: 'full-round', trainedOnly: true, dc: 25, tags: ['technical', 'mechanics', 'repair'] },
   { id: 'mechanics.repair-droid', key: 'repair-droid', skill: 'mechanics', name: 'Repair Droid', actionCost: '1 hour', trainedOnly: true, tags: ['technical', 'mechanics', 'repair', 'droid'] },
-  { id: 'mechanics.recharge-shields', key: 'recharge-shields', skill: 'mechanics', name: 'Recharge Shields', actionCost: 'three-swift-actions', trainedOnly: true, tags: ['technical', 'mechanics', 'vehicle', 'shields'] },
+  { id: 'mechanics.recharge-shields', key: 'recharge-shields', skill: 'mechanics', name: 'Recharge Shields', actionCost: 'three-swift-actions', trainedOnly: true, dc: 20, restoreShieldRating: 5, tags: ['technical', 'mechanics', 'vehicle', 'shields'] },
   { id: 'mechanics.reroute-power', key: 'reroute-power', skill: 'mechanics', name: 'Reroute Power', actionCost: 'three-swift-actions', trainedOnly: true, tags: ['technical', 'mechanics', 'vehicle', 'power'] },
-  { id: 'endurance.restore-shields', key: 'restore-shields', skill: 'endurance', name: 'Restore Shields', actionCost: 'three-swift-actions', dc: 20, restoreShieldRating: 5, tags: ['droid', 'endurance', 'shields'] },
+  { id: 'endurance.restore-shields', key: 'restore-shields', skill: 'endurance', name: 'Restore Shields', actionCost: 'three-swift-actions', dc: 20, restoreShieldRating: 5, selfTarget: true, tags: ['droid', 'endurance', 'shields'] },
   { id: 'treat-injury.surgery', key: 'surgery', skill: 'treatInjury', name: 'Surgery', actionCost: '1 hour', trainedOnly: true, tags: ['medical', 'treat-injury', 'surgery'] },
   { id: 'treat-injury.install-cybernetic-device', key: 'install-cybernetic-device', skill: 'treatInjury', name: 'Install Cybernetic Device', actionCost: '1 hour', trainedOnly: true, dc: 20, tags: ['medical', 'treat-injury', 'surgery', 'cybernetics'] },
   { id: 'treat-injury.install-bio-implant', key: 'install-bio-implant', skill: 'treatInjury', name: 'Install Bio-Implant', actionCost: '1 hour', trainedOnly: true, dc: 20, tags: ['medical', 'treat-injury', 'surgery', 'bio-implant'] }

@@ -23,7 +23,13 @@ const STATION_SKILLS = {
   ],
   shields: [
     { key: 'mechanics', label: 'Mechanics', use: 'Modulate Shields' },
-    { key: 'useComputer', label: 'Use Computer', use: 'Route Shields' }
+    { key: 'useComputer', label: 'Use Computer', use: 'Route Shields' },
+    // Explicit canonical identity (not label-sniffed) so the button click
+    // handler routes to rollVehicleRechargeShields() rather than the
+    // generic Mechanics skill check. See resolveShieldRechargeTarget() in
+    // skill-use-filter.js for why this must recharge the vehicle, not the
+    // operator's own shields.
+    { key: 'mechanics', label: 'Mechanics', use: 'Recharge Shields', skillUseId: 'mechanics.recharge-shields' }
   ],
   commander: [
     { key: 'knowledgeTactics', label: 'Knowledge (Tactics)', use: 'Command' },
@@ -246,6 +252,10 @@ export async function rollVehicleCrewSkill(vehicle, stationKey, skillKey, option
     return { roll: abstractRoll, actor: vehicle, fallback: false, abstractCrew: true, stationKey, skillKey: normalizedSkill, weapon };
   }
 
+  if (options.skillUseId === 'mechanics.recharge-shields') {
+    return rollVehicleRechargeShields(vehicle, stationKey, stationLabel, resolution, options);
+  }
+
   if (actor) {
     const result = await rollSkillCheck(actor, normalizedSkill, {
       ...options,
@@ -262,4 +272,66 @@ export async function rollVehicleCrewSkill(vehicle, stationKey, skillKey, option
   }
 
   return rollFallback(vehicle, stationKey, normalizedSkill, options);
+}
+
+/**
+ * Recharge Shields (Mechanics): the operator recharges the VEHICLE's
+ * shields, never their own -- see SkillUseFilter.resolveShieldRechargeTarget()
+ * for the full RAW rationale. This routes through the SAME canonical
+ * mechanics.recharge-shields skill-use record and dispatch seam the
+ * character-sheet skill-use menu uses (ExtraSkillUseRegistry +
+ * SkillUseFilter.rollSkillUseApplication) rather than a second, standalone
+ * roll implementation -- one data definition, multiple surfaces.
+ *
+ * Named crew only: this repo has no established trained-skill policy for
+ * abstract Crew Quality (rollFallback()'s flat bonus has no "trained"
+ * concept at all), and Recharge Shields is trained-only per RAW, so
+ * abstract/unassigned crew fails closed for this action specifically
+ * rather than silently treating Crew Quality as satisfying training. The
+ * ordinary abstract-crew fallback for every OTHER station skill is
+ * untouched.
+ * @private
+ */
+async function rollVehicleRechargeShields(vehicle, stationKey, stationLabel, resolution, options) {
+  const actor = resolution.actor;
+
+  if (!actor) {
+    ui?.notifications?.warn?.(`${stationLabel} station on ${vehicle.name} has no assigned crew member -- Recharge Shields requires a named, trained operator (abstract Crew Quality has no defined Mechanics training).`);
+    return { actor: null, fallback: false, stationKey, skillKey: 'mechanics', abstractCrewBlocked: true };
+  }
+
+  const [{ ExtraSkillUseRegistry }, { SkillUseFilter }] = await Promise.all([
+    import('/systems/foundryvtt-swse/scripts/utils/extra-skill-use-registry.js'),
+    import('/systems/foundryvtt-swse/scripts/utils/skill-use-filter.js')
+  ]);
+
+  const uses = await ExtraSkillUseRegistry.getForSkill('mechanics', { actor, includeInaccessible: true });
+  const skillUse = SkillUseFilter.findShieldRechargeUse(uses, { selfTarget: false });
+  if (!skillUse) {
+    ui?.notifications?.warn?.('Recharge Shields is not available (no matching skill-use data found).');
+    return { actor, fallback: false, stationKey, skillKey: 'mechanics', missingSkillUse: true };
+  }
+
+  // The generic skill-use dialog enforces trainedOnly at the caller
+  // (character-like-sheet.js's _runCanonicalExtraSkillUse), not inside
+  // SkillUseFilter.rollSkillUseApplication itself -- this vehicle path
+  // calls rollSkillUseApplication directly, so it must enforce it itself
+  // for this specific trained-only action. (The broader gap -- that
+  // rollSkillUseApplication does not enforce trainedOnly for any skill use
+  // -- is recorded in the ledger, not fixed repo-wide here.)
+  if (skillUse.trainedOnly && actor.system?.skills?.mechanics?.trained !== true) {
+    ui?.notifications?.warn?.(`${actor.name} is not trained in Mechanics and cannot attempt Recharge Shields.`);
+    return { actor, fallback: false, stationKey, skillKey: 'mechanics', trainingBlocked: true };
+  }
+
+  const roll = await SkillUseFilter.rollSkillUseApplication(actor, skillUse, {
+    ...options,
+    vehicleActor: vehicle,
+    sourceType: 'vehicle',
+    sourceLabel: `${vehicle.name} ${stationLabel}`,
+    vehicleName: vehicle.name,
+    crewPosition: stationKey
+  });
+
+  return { roll, actor, fallback: false, stationKey, skillKey: 'mechanics', vehicleActor: vehicle };
 }

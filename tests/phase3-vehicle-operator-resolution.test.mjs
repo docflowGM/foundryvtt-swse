@@ -36,7 +36,12 @@ const template = await readFile(new URL('../templates/actors/vehicle/v2/partials
 assert.match(template, /data-action="vehicle-crew-skill"/);
 assert.match(controls, /import \{ rollVehicleCrewSkill \} from "\/systems\/foundryvtt-swse\/scripts\/sheets\/v2\/vehicle-sheet\/crew-skill-router\.js"/);
 assert.match(controls, /querySelectorAll\('\[data-action="vehicle-crew-skill"\]'\)/);
-assert.match(controls, /rollVehicleCrewSkill\(vehicle, station, skill, \{ weaponId \}\)/);
+// V2 combat runtime convergence, Phase 2: the call now also threads an
+// explicit skillUseId (read from the button's data-skill-use-id) so the
+// Recharge Shields action can be routed by stable identity instead of
+// label-sniffing -- see resolveShieldRechargeTarget() in
+// skill-use-filter.js and docs/audits/v2-remaining-work.md.
+assert.match(controls, /rollVehicleCrewSkill\(vehicle, station, skill, \{ weaponId, skillUseId \}\)/);
 assert.match(characterSheet, /bindVehicleCrewAssignmentControls\(this, root, \{ signal \}\)/);
 assert.match(characterSheet, /_wireVehicleActorModeEvents\(root, signal\)/);
 

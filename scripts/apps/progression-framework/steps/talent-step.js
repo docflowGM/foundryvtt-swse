@@ -291,9 +291,39 @@ export class TalentStep extends ProgressionStepPlugin {
       // directly. shell.render() itself already reads _pendingScrollSnapshots
       // (progression-shell.js), so the scroll-restoration data path is
       // unchanged — only render ownership moved to requestRender().
+      //
+      // This helper is for non-focus repaints only (search/filter, view-mode,
+      // Fit, center, tree exit) — it deliberately does NOT dirty 'details',
+      // since none of those operations change what the details rail shows.
+      // Any focus change must use _renderFocusPreservingScroll() below instead.
       shell._pendingScrollSnapshots = this._captureStepScroll(shell);
       shell.requestRender?.({ preserveScroll: true, reason: 'talent-step:render-preserving-scroll', regions: ['work-surface', 'utility'] });
     }
+  }
+
+  /**
+   * The one render call every talent-focus path must use. A focus change
+   * (list card, graph node, tree card, keyboard) only ever needs the
+   * newly-focused row's visual state (work-surface) and the details rail to
+   * repaint — never 'utility' (the search/filter header is untouched by
+   * focus). Using the plain _renderPreservingScroll() for a focus change is
+   * exactly the bug this helper exists to prevent: that helper never dirties
+   * 'details', so the right rail silently keeps showing stale/empty content
+   * after focus moves. Mirrors ProgressionShell._onFocusItem()'s own
+   * unconditional inclusion of 'details' for the generic focus-item path.
+   */
+  _renderFocusPreservingScroll(shell) {
+    if (shell) {
+      shell._pendingScrollSnapshots = this._captureStepScroll(shell);
+      shell.requestRender?.({ preserveScroll: true, reason: 'talent-step:render-focus-preserving-scroll', regions: ['work-surface', 'details'] });
+    }
+  }
+
+  /** Single entry point for "the player focused talent X" — every click/keyboard path funnels through here so there is exactly one render call per interaction. */
+  _focusTalentAndRender(talentId, shell) {
+    if (!talentId) return;
+    this._focusedTalentId = talentId;
+    this._renderFocusPreservingScroll(shell);
   }
 
   // ---------------------------------------------------------------------------
@@ -479,10 +509,7 @@ export class TalentStep extends ProgressionStepPlugin {
 
         case 'focus-talent': {
           const talentId = target?.dataset?.talentId || target?.closest('[data-talent-id]')?.dataset?.talentId;
-          if (talentId) {
-            this._focusedTalentId = talentId;
-            this._renderPreservingScroll(shell);
-          }
+          this._focusTalentAndRender(talentId, shell);
           return true;
         }
 
@@ -536,15 +563,11 @@ export class TalentStep extends ProgressionStepPlugin {
     shell.element.addEventListener('prog:utility:search', onSearch, { signal });
 
 
-    // Wire tree card focus (Stage 1)
-    const treeCards = shell.element.querySelectorAll('[data-action="focus-tree"]');
-    treeCards.forEach(card => {
-      card.addEventListener('click', (e) => {
-        e.preventDefault();
-        const treeId = card.dataset.treeId;
-        this._focusTree(treeId, shell);
-      }, { signal });
-    });
+    // Tree card focus (Stage 1) is wired generically by the shell's
+    // delegated [data-action] click dispatch (ProgressionShell#_wirePluginActions
+    // -> handleAction('focus-tree', ...) -> this._focusTree()) — no separate
+    // click listener here. Attaching one too caused every tree-card click to
+    // schedule two focus renders for the same interaction.
 
     // Wire tree card enter (Stage 1 → Stage 2)
     const treeEnters = shell.element.querySelectorAll('[data-action="enter-tree"]');
@@ -594,19 +617,20 @@ export class TalentStep extends ProgressionStepPlugin {
       }, { signal });
     });
 
-    // Wire talent row focus (Stage 2)
+    // Wire talent row focus (Stage 2) -- KEYBOARD ONLY. Mouse clicks are
+    // already handled by the shell's delegated [data-action] click dispatch
+    // (ProgressionShell#_wirePluginActions -> handleAction('focus-talent', ...)
+    // -> this._focusTalentAndRender()); these rows are `role="button"` divs
+    // with no native keydown-to-click activation, so Enter/Space still needs
+    // an explicit listener here. A separate click listener used to duplicate
+    // the delegated one, scheduling two focus renders per click.
     const talentNodes = shell.element.querySelectorAll('[data-action="focus-talent"]');
     talentNodes.forEach(node => {
-      const focusTalent = (e) => {
-        if (e?.target?.closest?.('button')) return;
-        e.preventDefault();
-        const talentId = node.dataset.talentId;
-        this._focusedTalentId = talentId;
-        this._renderPreservingScroll(shell);
-      };
-      node.addEventListener('click', focusTalent, { signal });
       node.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter' || e.key === ' ') focusTalent(e);
+        if (e?.target?.closest?.('button')) return;
+        if (e.key !== 'Enter' && e.key !== ' ') return;
+        e.preventDefault();
+        this._focusTalentAndRender(node.dataset.talentId, shell);
       }, { signal });
     });
   }
@@ -633,20 +657,25 @@ export class TalentStep extends ProgressionStepPlugin {
             focusedTalentId: this._focusedTalentId,
             onFocus: async (talentId) => {
               await this.onItemFocused(talentId, shell);
-              this._renderPreservingScroll(shell);
+              this._renderFocusPreservingScroll(shell);
             },
             onCommit: async (talentId) => {
               await this.onItemCommitted(this._resolveTalentFocusId(talentId), shell);
             }
           });
 
+          // Fallback only: each graph node's own click listener
+          // (talent-tree-progression-renderer.js's handleFocus) already calls
+          // stopPropagation(), so this canvas-level listener does not
+          // normally see that click at all. Kept, and kept correct, for any
+          // node-rendering path that does not attach its own listener.
           canvas.addEventListener('click', async (event) => {
             const node = event.target?.closest?.('.prog-talent-orb-node[data-node-id]');
             if (!node || !canvas.contains(node)) return;
             event.preventDefault();
             event.stopPropagation();
             await this.onItemFocused(node.dataset.nodeId, shell);
-            this._renderPreservingScroll(shell);
+            this._renderFocusPreservingScroll(shell);
           }, { signal: this._renderAbort?.signal });
 
           canvas.addEventListener('dblclick', async (event) => {
@@ -694,7 +723,10 @@ export class TalentStep extends ProgressionStepPlugin {
   _focusTree(treeId, shell, { speak = true } = {}) {
     this._focusedTreeId = treeId;
     if (speak) this._speakTreeMentorCommentary(treeId, shell);
-    this._renderPreservingScroll(shell);
+    // Tree-browser focus, like talent focus, changes what renderDetailsPanel()
+    // shows (see its `this._stage === 'browser'` branch reading
+    // `this._focusedTreeId`) — must dirty 'details', not just the tree list.
+    this._renderFocusPreservingScroll(shell);
   }
 
   _speakTreeMentorCommentary(treeId, shell) {
@@ -761,7 +793,10 @@ export class TalentStep extends ProgressionStepPlugin {
     this._focusedTalentItem = null;
     this._lastGraphNodeStates = {};
 
-    this._renderPreservingScroll(shell);
+    // Resets focus (nulls it) as well as the stage -- the details rail must
+    // repaint too, or it keeps showing whatever was focused in the tree
+    // browser stage.
+    this._renderFocusPreservingScroll(shell);
   }
 
   _exitTree(shell) {
@@ -776,7 +811,10 @@ export class TalentStep extends ProgressionStepPlugin {
     this._centerGraphAfterRender = false;
     this._prereqNavigationBanner = null;
 
-    this._renderPreservingScroll(shell);
+    // Same reasoning as _enterTree(): stage + focus both reset, so details
+    // must repaint (it falls back to the tree-browser's _focusedTreeId
+    // branch, which may itself be stale/empty without this).
+    this._renderFocusPreservingScroll(shell);
   }
 
   // ---------------------------------------------------------------------------
@@ -3055,8 +3093,9 @@ export class TalentStep extends ProgressionStepPlugin {
           slotType: this._slotType,
         });
         ui?.notifications?.warn?.(`${talent?.name || 'That talent'} is already selected or known.`);
-        this._focusedTalentId = talentId;
-        this._renderPreservingScroll(shell);
+        // Also a focus change (the blocked talent becomes focused) -- same
+        // details-rail requirement as every other focus path above.
+        this._focusTalentAndRender(talentId, shell);
         return;
       }
 

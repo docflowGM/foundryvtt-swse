@@ -193,9 +193,25 @@
   },
   {
     "application": "Recharge shields (trained)",
+    "skill": "mechanics",
     "DC": 20,
     "time": "3 swift actions",
-    "effect": "Retemplates/apps/store 5 SR on success"
+    "effect": "Restore 5 SR to the vehicle or device being operated, up to its normal maximum.",
+    "restoreShieldRating": 5
+  },
+  {
+    "application": "Restore Shields (Droid)",
+    "skill": "endurance",
+    "trainedOnly": false,
+    "DC": 20,
+    "time": "3 swift actions",
+    "effect": "Restore 5 SR to the droid's own onboard shield generator, up to its normal maximum.",
+    "restoreShieldRating": 5,
+    "selfTarget": true,
+    "requiresDroid": true,
+    "requiresShieldGenerator": true,
+    "sourcebook": "Saga Edition Core Rulebook",
+    "page": 197
   },
   {
     "application": "Regulate power (vehicle)",

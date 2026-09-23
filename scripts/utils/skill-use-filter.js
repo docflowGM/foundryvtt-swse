@@ -49,6 +49,15 @@ export class SkillUseFilter {
   static canAccessSkillUse(actor, skillUse) {
     if (!actor || !skillUse) {return false;}
 
+    // Structured requirement predicates apply regardless of which skill the
+    // use belongs to -- checked before the UTF/generic-skill branches below
+    // so a droid-only, shield-generator-only entry (e.g. the Endurance
+    // shield-restoration check) is never handed to an ineligible actor to
+    // begin with, not merely rejected after a roll.
+    if (!this._meetsStructuredRequirements(actor, skillUse)) {
+      return false;
+    }
+
     // Prefer explicit structured metadata when present. Normalized registry
     // entries carry `system.skill` (and sometimes top-level `skill`) with the
     // authoritative skill key, which is far more reliable than sniffing the
@@ -58,7 +67,7 @@ export class SkillUseFilter {
       return this.canUseTheForce(actor);
     }
     if (structuredSkill) {
-      // Non-UTF skills have no access gate at this layer.
+      // Non-UTF skills have no further access gate at this layer.
       return true;
     }
 
@@ -70,6 +79,51 @@ export class SkillUseFilter {
     }
 
     return true;
+  }
+
+  /**
+   * Structured skill-use entitlement requirements, evaluated at the same
+   * canonical access seam every accessible-uses list and roll dispatch
+   * already goes through (getAllBySkill's filter, canAccessSkillUse's own
+   * callers) -- not a sheet-only filter. Currently supports the two
+   * requirements the droid Endurance shield-restoration record declares;
+   * add more here if future content needs them, rather than duplicating
+   * this check at each call site.
+   * @private
+   */
+  static _meetsStructuredRequirements(actor, skillUse) {
+    if (this._readSkillUseField(skillUse, 'requiresDroid') === true && !this._isDroidActor(actor)) {
+      return false;
+    }
+    if (this._readSkillUseField(skillUse, 'requiresShieldGenerator') === true && !this._hasStoredShieldResource(actor)) {
+      return false;
+    }
+    return true;
+  }
+
+  /** Same droid test DerivedCalculator itself uses (derived-calculator.js:507). */
+  static _isDroidActor(actor) {
+    return actor?.type === 'droid' || actor?.system?.isDroid === true;
+  }
+
+  /**
+   * Whether an actor has a STORED personal shield resource -- the same
+   * condition DerivedCalculator's own shield projection uses to decide
+   * `stored: true` (derived-calculator.js's Shield Rating block: `shieldMax
+   * > 0 || storedValue > 0 || legacyCurrent > 0`, where `shieldMax =
+   * Math.max(storedMax, legacyMax)`). Deliberately does NOT read
+   * `derived.shield.current`, which a transient Force Shield ActiveEffect
+   * can override directly -- that would let a temporary Force power stand
+   * in for "equipped with an onboard shield generator," which it is not.
+   * Same authority as DerivedCalculator, not a second shield SSOT.
+   */
+  static _hasStoredShieldResource(actor) {
+    const shields = actor?.system?.shields || {};
+    const storedMax = Number(shields.max ?? shields.rating ?? 0) || 0;
+    const storedValue = Number(shields.value ?? 0) || 0;
+    const legacyMax = Number(actor?.system?.shieldRating ?? 0) || 0;
+    const legacyCurrent = Number(actor?.system?.currentSR ?? 0) || 0;
+    return storedMax > 0 || storedValue > 0 || legacyMax > 0 || legacyCurrent > 0;
   }
 
   /**
@@ -288,7 +342,7 @@ export class SkillUseFilter {
 
     const dc = this._parseDc(skillUse.dc ?? skillUse.DC ?? skillUse.system?.dc ?? skillUse._source?.system?.dc);
     const { rollSkillCheck } = await import('/systems/foundryvtt-swse/scripts/rolls/skills.js');
-    return await rollSkillCheck(actor, skillKey, {
+    const roll = await rollSkillCheck(actor, skillKey, {
       ...options,
       dc,
       skillUse,
@@ -296,6 +350,135 @@ export class SkillUseFilter {
       useKey: skillUse?.useKey ?? skillUse?.key ?? skillUse?._source?._id ?? null,
       actionType: options?.actionType ?? skillUse?.actionType ?? skillUse?.system?.actionType ?? null
     });
+
+    await this._dispatchRestoreShieldRating(actor, skillUse, dc, roll, options);
+
+    return roll;
+  }
+
+  /**
+   * Recharge Shields (Mechanics) / Restore Shields (Droid, Endurance) are
+   * real skill-use records (packs/extraskilluses.db, sourced from
+   * data/extraskilluses.json) carrying a `restoreShieldRating` field, with
+   * no prior dispatch surface to ActorEngine.rechargeShields(). This is the
+   * single seam every skill-use roll passes through, so it dispatches here
+   * rather than adding sheet-specific mutation.
+   *
+   * The two are NOT the same shape: the droid Endurance check is a droid
+   * restoring its own shields (roller === target, `selfTarget: true` +
+   * `requiresDroid: true` on the record); Mechanics is an operator
+   * recharging a vehicle/device's shields (roller !== target, never the
+   * roller itself). The generic skill-use dialog this dispatches from
+   * (character-like-sheet.js's _runCanonicalExtraSkillUse -> here) has no
+   * established convention for threading a vehicle/device actor through it
+   * today -- the only place a vehicle actor is known is
+   * crew-skill-router.js's rollVehicleCrewSkill(), which now calls into
+   * this same dispatch (via rollSkillUseApplication) supplying
+   * `options.vehicleActor`. So rather than invent a second target picker,
+   * this reads that convention (or the generic `targetActor` fallback) and
+   * fails closed with no mutation to the roller when neither is present,
+   * per the explicit RAW distinction that Mechanics never recharges the
+   * operator's own shields.
+   * @private
+   */
+  static async _dispatchRestoreShieldRating(actor, skillUse, dc, roll, options = {}) {
+    const amount = SkillUseFilter.getRestoreShieldRatingAmount(skillUse);
+    if (amount <= 0 || !roll) return;
+
+    const total = Number(roll?.total ?? NaN);
+    const success = !Number.isFinite(dc) || (Number.isFinite(total) && total >= dc);
+    if (!success) return;
+
+    const target = SkillUseFilter.resolveShieldRechargeTarget({ roller: actor, skillUse, options });
+    if (!target) {
+      ui?.notifications?.warn?.(`${skillUse?.name ?? skillUse?.label ?? 'Recharge Shields'}: no vehicle or device was specified to recharge.`);
+      return;
+    }
+
+    const { ActorEngine } = await import('/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js');
+    const result = await ActorEngine.rechargeShields(target, { amount });
+
+    if (result.max <= 0) {
+      ui?.notifications?.warn?.(`${target.name} has no shield resource to recharge.`);
+    } else if (result.restored > 0) {
+      ui?.notifications?.info?.(`${target.name} restores ${result.restored} Shield Rating (${result.current}/${result.max}).`);
+    }
+  }
+
+  /**
+   * Read a semantic field off a skill-use record regardless of shape: a
+   * plain test-constructed object with the field at top level, or a real
+   * ExtraSkillUseRegistry-normalized object (scripts/utils/extra-skill-use-registry.js
+   * #_normalize) that carries custom compendium/JSON fields under
+   * `_source.system.*` (its `...system` spread preserves any field not
+   * explicitly overridden by normalization).
+   * @private
+   */
+  static _readSkillUseField(skillUse, key) {
+    return skillUse?.[key]
+      ?? skillUse?.system?.[key]
+      ?? skillUse?._source?.system?.[key]
+      ?? skillUse?._source?.[key];
+  }
+
+  /**
+   * Pure lookup, exported for unit testing without a full skill-roll pipeline.
+   */
+  static getRestoreShieldRatingAmount(skillUse) {
+    const amount = Number(SkillUseFilter._readSkillUseField(skillUse, 'restoreShieldRating'));
+    return Number.isFinite(amount) && amount > 0 ? amount : 0;
+  }
+
+  /**
+   * Pure target resolution, exported for unit testing. Returns the actor
+   * whose system.shields should be mutated, or null when none can be
+   * truthfully resolved (never guessed).
+   *
+   * Two invariants, added after independent review found the first wiring
+   * pass safe but incomplete:
+   *  - a `selfTarget` record defers to `_meetsStructuredRequirements()` --
+   *    the SAME structured-requirement authority `canAccessSkillUse()` uses
+   *    (requiresDroid, requiresShieldGenerator) -- rather than duplicating
+   *    the droid predicate here. A second review round found the resolver
+   *    still had its own narrower `roller?.type !== 'droid'` check even
+   *    after `canAccessSkillUse()` was taught the broader
+   *    `actor.type==='droid' || actor.system.isDroid` identity, so an
+   *    actor eligible under the access gate (and certified eligible by
+   *    that gate's own tests) could pass the roll and then be rejected
+   *    here anyway. One authority now decides both, so availability and
+   *    dispatch cannot drift apart again -- and a shieldless droid that
+   *    somehow bypasses the pre-roll gate is rejected here too, rather
+   *    than reaching ActorEngine.rechargeShields() to merely no-op at
+   *    max 0.
+   *  - a non-selfTarget record can NEVER resolve to the roller, even if a
+   *    caller mistakenly passes `targetActor: actor` -- this is the
+   *    original Mechanics-recharges-the-operator defect, closed at the
+   *    resolver level so no future caller can silently reintroduce it.
+   */
+  static resolveShieldRechargeTarget({ roller, skillUse, options = {} }) {
+    const selfTarget = SkillUseFilter._readSkillUseField(skillUse, 'selfTarget') === true;
+    if (selfTarget) {
+      if (!SkillUseFilter._meetsStructuredRequirements(roller, skillUse)) return null;
+      return roller ?? null;
+    }
+
+    const target = options?.vehicleActor ?? options?.targetActor ?? null;
+    if (!target || target === roller) return null;
+    return target;
+  }
+
+  /**
+   * Find the shield-recharge skill-use record matching a target shape
+   * (self-target droid restoration vs. external vehicle/device recharge)
+   * out of a skill's full extra-use list, without sniffing display labels.
+   * Used by crew-skill-router.js to locate the canonical Mechanics record
+   * for the vehicle crew "Recharge Shields" action.
+   */
+  static findShieldRechargeUse(uses, { selfTarget = false } = {}) {
+    return (uses ?? []).find((use) =>
+      SkillUseFilter.getRestoreShieldRatingAmount(use) > 0
+      && (SkillUseFilter._readSkillUseField(use, 'selfTarget') === true) === selfTarget
+    ) ?? null;
   }
 
   static _parseDc(value) {

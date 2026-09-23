@@ -876,4 +876,43 @@ ok('29: Blocker 5 -- ActionRegistry.register() preserves the first canonical obj
 }
 ok('30: round 8 correction #5 -- causal blocker propagation replaces flat "any unmet leaf anywhere" filtering for state classification, matching all 5 required regression cases');
 
+// V2 combat runtime convergence, Phase 3 (136-record reconciliation):
+// `requiresAttackType: 'any'` is a real, shipped value (e.g. Rebel
+// Military Training) meaning "no attack-type restriction," matching
+// CombatOptionResolver.optionAllowedForWeapon()'s own explicit
+// `option.requiresAttackType !== "any"` skip. Before this fix, the
+// attackType predicate did plain value equality (`actual ===
+// normalizeKey(predicate.value)`), which getAttackType()'s 'melee'/
+// 'ranged'/'unknown' vocabulary could never satisfy against literal
+// 'any' -- every such record was permanently 'hidden' regardless of
+// weapon or context. Caught by the 136-record reconciliation suite
+// (tests/action-authority-136-record-reconciliation.test.mjs) before
+// this reached production presentation.
+{
+  const def = syntheticDefinition({ all: [{ type: 'attackType', value: 'any', sourceField: 'requiresAttackType' }] });
+  assert.equal(ActionAvailabilityEngine.evaluate(def, { weapon: meleeWeapon(), attackType: 'melee' }).state, 'available', "requiresAttackType: 'any' must be satisfied by a melee attack");
+  assert.equal(ActionAvailabilityEngine.evaluate(def, { weapon: rangedWeapon(), attackType: 'ranged' }).state, 'available', "requiresAttackType: 'any' must be satisfied by a ranged attack");
+  assert.equal(ActionAvailabilityEngine.evaluate(def, {}).state, 'available', "requiresAttackType: 'any' must be satisfied even with no weapon/context at all -- it is not a restriction");
+}
+ok("31: requiresAttackType: 'any' is a real no-restriction value (matching the certified resolver's own skip), not a literal value the getAttackType() vocabulary could ever equal");
+
+// V2 combat runtime convergence, Phase 3 (136-record reconciliation,
+// second correction round): requiresAutofire (predicate type
+// 'weaponCapability') was classified STRUCTURAL, so an unmet autofire gate
+// alone caused permanent 'hidden' -- but CombatOptionResolver explicitly
+// treats autofire as a PROBEABLE, toggleable context gate (same bucket as
+// Aim/Charge: ATTACK_OPTION_PROBE_CONTEXT_OVERRIDES sets `autofire: true`;
+// unmetToggleableReasons() reports "Requires an autofire-capable weapon or
+// autofire mode" as a 'disabled' reason, never excluding the option
+// entirely). Caught by the 136-record reconciliation suite (Flood of Fire,
+// Autofire Assault) before this reached production presentation.
+{
+  const def = syntheticDefinition({ all: [{ type: 'weaponCapability', value: 'autofire', sourceField: 'requiresAutofire' }] });
+  const unmet = ActionAvailabilityEngine.evaluate(def, { weapon: rangedWeapon() });
+  assert.equal(unmet.state, 'disabled', 'an unmet requiresAutofire gate alone must be reachable (disabled), not permanently hidden, matching the certified resolver\'s own probeable treatment');
+  const met = ActionAvailabilityEngine.evaluate(def, { weapon: rangedWeapon(), autofire: true });
+  assert.equal(met.state, 'available', 'requiresAutofire is satisfied the same way the certified resolver checks it -- context.autofire === true');
+}
+ok('32: requiresAutofire (weaponCapability) is a toggleable/probeable gate, not structural -- an unmet autofire alone must be disabled, never hidden');
+
 console.log('action-authority-groundwork.test.mjs: all assertions passed');

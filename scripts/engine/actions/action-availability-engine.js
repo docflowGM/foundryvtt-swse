@@ -41,8 +41,22 @@ function resolveTargetActor(context) {
 // one means this option can never apply here at all, matching
 // CombatOptionResolver.optionAllowedForWeapon()'s unconditional (never
 // probed) gates. Used to decide 'hidden' vs 'disabled' below (Part F).
+//
+// V2 combat runtime convergence, Phase 3 (136-record reconciliation,
+// second correction round): 'weaponCapability' (currently only used for
+// requiresAutofire) does NOT belong here. The certified
+// CombatOptionResolver explicitly probes autofire as a toggleable context
+// gate -- ATTACK_OPTION_PROBE_CONTEXT_OVERRIDES sets `autofire: true`
+// alongside `aim`/`charge`, and unmetToggleableReasons() reports "Requires
+// an autofire-capable weapon or autofire mode" (a 'disabled' reason, the
+// same bucket as unmet Aim/Charge) rather than excluding the option
+// entirely. Treating it as structural made every requiresAutofire record
+// permanently 'hidden' whenever autofire wasn't already satisfied, instead
+// of the reachable 'disabled' state legacy reports -- caught by the
+// 136-record reconciliation suite (Flood of Fire, Autofire Assault) before
+// this reached production presentation.
 const STRUCTURAL_PREDICATE_TYPES = new Set([
-  'attackType', 'weaponGroup', 'weaponCapability', 'weaponTextMatch', 'unarmed',
+  'attackType', 'weaponGroup', 'weaponTextMatch', 'unarmed',
   'vehicleWeapon', 'damageType', 'areaAttack', 'areaAttackFlag'
 ]);
 
@@ -70,7 +84,18 @@ const PREDICATE_EVALUATORS = {
   // -- the prior version treated 'unknown' as automatically met, which is
   // permission by default, not fail-closed. A caller that genuinely
   // cannot resolve an attack type has not proven the requirement met.
+  //
+  // V2 combat runtime convergence, Phase 3 (136-record reconciliation):
+  // `requiresAttackType: 'any'` is a real, shipped value (e.g. Rebel
+  // Military Training) meaning "no attack-type restriction," matching the
+  // certified CombatOptionResolver.optionAllowedForWeapon()'s own explicit
+  // `option.requiresAttackType !== "any"` skip. Value equality would never
+  // match it (getAttackType() only ever returns 'melee'/'ranged'/'unknown',
+  // never literally 'any'), so every such record would incorrectly and
+  // permanently evaluate 'hidden' -- caught by the reconciliation suite
+  // before this had a chance to reach production presentation.
   attackType(predicate, context) {
+    if (normalizeKey(predicate.value) === 'any') return { met: true, reason: null };
     const actual = getAttackType(context.weapon, context);
     const met = actual !== 'unknown' && actual === normalizeKey(predicate.value);
     return { met, reason: met ? null : `Requires a ${predicate.value} attack` };
