@@ -266,30 +266,44 @@ function anyOfStates(states) {
 }
 
 /**
- * Math Integrity Freeze, Attack Bonus round 8 correction #2 (Blocker 4,
- * boolean-tree provenance), hardened in round 8 correction #4 (Blocker 2,
- * fail-closed under arbitrary nesting): recursively evaluates a
- * requirements tree (`all`/`any`/`not`, or a leaf predicate), collecting
- * every meaningful leaf evaluation for the result's `requirements` list
- * -- including a synthesized leaf for a `not` node itself, so an
- * excludes* gate that blocks an option produces a real, visible reason
- * rather than a silent true/false. Returns MET/UNMET/UNRESOLVED (see
- * above), never a plain boolean, specifically so an unknown predicate's
- * unresolved status survives arbitrarily deep `all`/`any`/`not` nesting
- * without ever being able to negate into a false MET. Every branch of
- * `all`/`any` is evaluated in full (not short-circuited) so every leaf's
- * provenance is collected even when the overall result is already
- * determined.
+ * Math Integrity Freeze, Attack Bonus round 8 correction #5 (causal
+ * blocker propagation): `leaves` (mutated in place, unchanged contract)
+ * is FULL diagnostic provenance -- every branch evaluated, never
+ * short-circuited, exactly as before. `blockers` (the new return field)
+ * is the SUBSET of those leaves that actually caused THIS node's own
+ * state to be non-MET, following the boolean tree's own causal
+ * structure -- not merely "every leaf anywhere in the tree that happened
+ * to evaluate false." An independent review found `evaluate()` state
+ * classification (hidden/external-workflow/unsupported/disabled) had
+ * been filtering the flat, undifferentiated `leaves` list instead: a
+ * structural leaf that failed inside an `any()` branch whose SIBLING
+ * succeeded still got counted as if it were an active blocker, wrongly
+ * forcing `hidden` even though that `any()` was genuinely satisfied
+ * through the other branch. Propagation rules:
+ *   - a leaf/not-node's own blockers: `[]` if its own state is MET,
+ *     otherwise `[itself]` (a `not` node's inner detail stays in
+ *     `leaves` for diagnostics but is NOT re-exposed as a blocker of the
+ *     `not` node itself -- the `not` node's own synthesized leaf IS the
+ *     blocker, representing why the exclusion failed, one level up).
+ *   - `all`: every child's blockers are unioned in, regardless of that
+ *     child's state -- a MET child's own blockers are already `[]` by
+ *     construction, so this needs no extra branching.
+ *   - `any`: if the combined state is MET (i.e. at least one child was
+ *     MET), blockers is `[]` -- none of the failed siblings blocked
+ *     anything, since the `any()` itself succeeded. Otherwise every
+ *     child's blockers are unioned in (every branch genuinely
+ *     contributed to the `any()`'s own failure).
  */
 function evaluateNode(node, context, leaves) {
-  if (!node) return MET;
+  if (!node) return { state: MET, blockers: [] };
   if (Array.isArray(node.all)) {
     const results = node.all.map(child => evaluateNode(child, context, leaves));
-    return allOfStates(results);
+    return { state: allOfStates(results.map(r => r.state)), blockers: results.flatMap(r => r.blockers) };
   }
   if (Array.isArray(node.any)) {
     const results = node.any.map(child => evaluateNode(child, context, leaves));
-    return anyOfStates(results);
+    const state = anyOfStates(results.map(r => r.state));
+    return { state, blockers: state === MET ? [] : results.flatMap(r => r.blockers) };
   }
   if (node.not) {
     const sub = node.not;
@@ -309,17 +323,19 @@ function evaluateNode(node, context, leaves) {
     } else {
       // Composite (any/all/nested-not) sub-tree: delegate the whole
       // sub-tree to one evaluateNode() call so UNRESOLVED correctly
-      // propagates out of arbitrarily deep nesting (this is the fix for
-      // Blocker 2 -- previously this branch's own boolean `innerMet` had
-      // no way to represent "unresolved" once a nested unknown predicate
-      // had already collapsed to plain `false` several levels down).
-      // evaluateNode() itself already fully evaluates every all/any
-      // branch via .map() before reducing, so this also preserves
-      // non-short-circuiting evaluation for free; the collected leaves
-      // are merged back into this node's own leaves array rather than
-      // discarded.
+      // propagates out of arbitrarily deep nesting (round 8 correction
+      // #4, Blocker 2). evaluateNode() itself already fully evaluates
+      // every all/any branch via .map() before reducing, so this also
+      // preserves non-short-circuiting evaluation for free; the
+      // collected leaves are merged back into this node's own leaves
+      // array (full diagnostics), but the inner result's own `blockers`
+      // are deliberately discarded here -- round 8 correction #5: the
+      // NOT node's own synthesized leaf (below) is what represents why
+      // this exclusion failed to its parent, not a re-exposure of the
+      // inner sub-tree's blockers one level up.
       const innerLeaves = [];
-      innerState = evaluateNode(sub, context, innerLeaves);
+      const innerResult = evaluateNode(sub, context, innerLeaves);
+      innerState = innerResult.state;
       leaves.push(...innerLeaves);
       excludeReason = innerState === UNRESOLVED
         ? 'Cannot be determined (an unresolved requirement is nested inside this exclusion)'
@@ -328,25 +344,28 @@ function evaluateNode(node, context, leaves) {
     const outerState = negateState(innerState);
     const met = outerState === MET;
     const structural = Boolean(sub.type && STRUCTURAL_PREDICATE_TYPES.has(sub.type));
-    leaves.push({ type: `not(${sub.type ?? 'group'})`, key: null, met, reason: met ? null : excludeReason, unresolved: outerState === UNRESOLVED, structural, sourceField: node.sourceField });
-    return outerState;
+    const notLeaf = { type: `not(${sub.type ?? 'group'})`, key: null, met, reason: met ? null : excludeReason, unresolved: outerState === UNRESOLVED, structural, sourceField: node.sourceField };
+    leaves.push(notLeaf);
+    return { state: outerState, blockers: met ? [] : [notLeaf] };
   }
   if (node.type) {
     const evaluator = PREDICATE_EVALUATORS[node.type];
     if (!evaluator) {
       console.warn(`[ActionAvailabilityEngine] unknown requirement predicate type "${node.type}" -- failing closed (unresolved, not met)`);
-      leaves.push({ type: node.type, key: node.key, met: false, reason: `Unknown requirement "${node.type}"`, unresolved: true, sourceField: node.sourceField });
-      return UNRESOLVED;
+      const leaf = { type: node.type, key: node.key, met: false, reason: `Unknown requirement "${node.type}"`, unresolved: true, sourceField: node.sourceField };
+      leaves.push(leaf);
+      return { state: UNRESOLVED, blockers: [leaf] };
     }
     const result = evaluator(node, context);
-    leaves.push({
+    const leaf = {
       type: node.type, key: node.key, met: result.met, reason: result.reason,
       externalWorkflow: result.externalWorkflow === true, unsupported: result.unsupported === true,
       structural: STRUCTURAL_PREDICATE_TYPES.has(node.type), sourceField: node.sourceField
-    });
-    return result.met ? MET : UNMET;
+    };
+    leaves.push(leaf);
+    return { state: result.met ? MET : UNMET, blockers: result.met ? [] : [leaf] };
   }
-  return MET;
+  return { state: MET, blockers: [] };
 }
 
 export class ActionAvailabilityEngine {
@@ -359,8 +378,8 @@ export class ActionAvailabilityEngine {
    */
   static evaluate(definition, context = {}) {
     const leaves = [];
-    const met = evaluateNode(definition.requirements, context, leaves) === MET;
-    const unmet = leaves.filter(l => !l.met);
+    const { state: rootState, blockers } = evaluateNode(definition.requirements, context, leaves);
+    const met = rootState === MET;
 
     if (met) {
       const active = definition.presentation.control === 'passive';
@@ -383,20 +402,35 @@ export class ActionAvailabilityEngine {
     // the live resolver and this file's own documented state model. ANY
     // unmet structural gate alone is now sufficient to hide the option,
     // exactly matching the certified authority's own unconditional gate.
-    if (unmet.some(l => l.structural)) {
+    //
+    // Math Integrity Freeze, Attack Bonus round 8 correction #5: this
+    // classification now reads `blockers` (the causally-relevant subset
+    // evaluateNode() computed by following the all/any/not tree's own
+    // structure), never the flat `leaves` array. An independent review
+    // found that filtering the flat leaves list conflated "evaluated
+    // somewhere in the tree for diagnostics" with "actually caused the
+    // root to fail": a structural leaf that failed inside an `any()`
+    // branch whose SIBLING succeeded still got counted as if it were an
+    // active blocker, wrongly forcing `hidden` even though that `any()`
+    // was genuinely satisfied through the other branch. `blockers` is
+    // guaranteed empty exactly when `met` is true, and otherwise contains
+    // only the leaves that genuinely contributed to `rootState` not being
+    // MET -- `leaves` (returned as `requirements` below) still exposes
+    // every evaluated branch for full UI diagnostics, unchanged.
+    if (blockers.some(l => l.structural)) {
       return { definition, state: 'hidden', active: false, reason: null, requirements: leaves };
     }
-    if (unmet.some(l => l.externalWorkflow)) {
+    if (blockers.some(l => l.externalWorkflow)) {
       return { definition, state: 'external-workflow', active: false, reason: 'Not available from this dialog', requirements: leaves };
     }
-    if (unmet.length && unmet.every(l => l.unsupported)) {
+    if (blockers.length && blockers.every(l => l.unsupported)) {
       return { definition, state: 'unsupported', active: false, reason: 'Not yet supported by this dialog', requirements: leaves };
     }
     return {
       definition,
       state: 'disabled',
       active: false,
-      reason: unmet.map(l => l.reason).filter(Boolean).join('; ') || 'Not currently available',
+      reason: blockers.map(l => l.reason).filter(Boolean).join('; ') || 'Not currently available',
       requirements: leaves
     };
   }

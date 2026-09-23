@@ -806,4 +806,74 @@ ok('28: Blocker 4 -- ActionEntitlement.configuration.rule is a deep clone; mutat
 }
 ok('29: Blocker 5 -- ActionRegistry.register() preserves the first canonical object on content-equal re-registration; the registry never silently swaps its canonical reference for a later content-equal one');
 
+// ─── 30 — Blocker (round 8 correction #5): causal blocker propagation, not flat "any failed leaf anywhere" ──
+// Math Integrity Freeze, Attack Bonus round 8 correction #5: an
+// independent review found evaluate() classified state from a FLAT list
+// of every unmet leaf ANYWHERE in the tree, including leaves inside an
+// any() branch whose SIBLING succeeded. A structural failure on the
+// losing side of a satisfied any() must not force `hidden`; only leaves
+// that actually caused the root's own failure ("blockers") may drive
+// state classification. `leaves`/`requirements` (full diagnostics) must
+// still expose every evaluated branch, unchanged.
+
+{
+  const structuralFalse = { type: 'weaponGroup', value: ['heavy'] }; // fails against a non-heavy weapon
+  const externalFalse = { type: 'externalWorkflow' }; // always met:false
+  const unsupportedFalse = { type: 'unsupported' }; // always met:false
+  const contextTrue = { type: 'context', key: 'aim', value: true };
+  const contextFalse = { type: 'context', key: 'charge', value: true };
+  const nonHeavyWeapon = { name: 'Vibro Axe', system: { weaponCategory: 'simple' } };
+
+  // (a) a failed STRUCTURAL alternative inside a satisfied any() must not hide the option.
+  {
+    const def = syntheticDefinition({ all: [{ any: [structuralFalse, contextTrue] }, contextFalse] });
+    const result = ActionAvailabilityEngine.evaluate(def, { aim: true, charge: false, weapon: nonHeavyWeapon });
+    assert.equal(result.state, 'disabled', 'a structural failure on the losing side of a satisfied any() must not force hidden -- the any() succeeded through Aim, so the only real blocker is Charge');
+    assert.equal(result.reason, 'Requires Charge');
+    assert.equal(result.requirements.length, 3, 'full diagnostic provenance must still include all 3 evaluated leaves (weaponGroup, aim, charge), even though only Charge is a blocker');
+  }
+  ok('30a: a failed structural alternative inside a satisfied any() does not dominate to hidden -- only the genuinely blocking Charge gate does, and disabled with the correct reason results');
+
+  // (b) a failed EXTERNAL-WORKFLOW alternative inside a satisfied any() must not dominate.
+  {
+    const def = syntheticDefinition({ all: [{ any: [externalFalse, contextTrue] }, contextFalse] });
+    const result = ActionAvailabilityEngine.evaluate(def, { aim: true, charge: false });
+    assert.equal(result.state, 'disabled', 'a failed external-workflow alternative on the losing side of a satisfied any() must not force external-workflow -- the any() succeeded through Aim');
+    assert.equal(result.reason, 'Requires Charge');
+  }
+  ok('30b: a failed external-workflow alternative inside a satisfied any() does not dominate to external-workflow');
+
+  // (c) a failed UNSUPPORTED alternative inside a satisfied any() must not dominate.
+  {
+    const def = syntheticDefinition({ all: [{ any: [unsupportedFalse, contextTrue] }, contextFalse] });
+    const result = ActionAvailabilityEngine.evaluate(def, { aim: true, charge: false });
+    assert.equal(result.state, 'disabled', 'a failed unsupported alternative on the losing side of a satisfied any() must not force unsupported -- the any() succeeded through Aim');
+    assert.equal(result.reason, 'Requires Charge');
+  }
+  ok('30c: a failed unsupported alternative inside a satisfied any() does not dominate to unsupported');
+
+  // (d) when EVERY alternative in the any() genuinely fails, a structural
+  // branch among them DOES now legitimately participate in the failure --
+  // this is a deliberate state-policy decision (matching the existing
+  // "structural impossibility dominates" philosophy), not an accident of
+  // flattening, and is explicitly tested rather than assumed.
+  {
+    const def = syntheticDefinition({ any: [structuralFalse, contextFalse] });
+    const result = ActionAvailabilityEngine.evaluate(def, { charge: false, weapon: nonHeavyWeapon });
+    assert.equal(result.state, 'hidden', 'when every alternative of an any() genuinely fails, a structural branch among them legitimately contributes to hidden -- this is real participation in failure, not flattening artifact');
+  }
+  ok('30d: when every alternative of an any() fails (none succeed), a structural branch among them legitimately drives hidden -- a deliberate, tested state-policy decision');
+
+  // (e) a successful any() retains full diagnostics for BOTH branches even
+  // though the failed one contributed no blocker.
+  {
+    const def = syntheticDefinition({ any: [structuralFalse, contextTrue] });
+    const result = ActionAvailabilityEngine.evaluate(def, { aim: true, weapon: nonHeavyWeapon });
+    assert.equal(result.state, 'available');
+    assert.equal(result.requirements.length, 2, 'both the failed structural branch and the succeeding Aim branch must still be recorded as full diagnostic leaves, even though the option is available');
+  }
+  ok('30e: a successful any() resolves available while still retaining full diagnostic provenance for its failed sibling branch');
+}
+ok('30: round 8 correction #5 -- causal blocker propagation replaces flat "any unmet leaf anywhere" filtering for state classification, matching all 5 required regression cases');
+
 console.log('action-authority-groundwork.test.mjs: all assertions passed');
