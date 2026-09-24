@@ -22,6 +22,17 @@ export class HouseRuleTalentCombination {
     }
   }
 
+  /**
+   * Public accessor for the live house-rule mode. Callers that cache the
+   * output of processBlockDeflectCombination() (e.g. TalentStep's per-tree
+   * talent cache) must fold this into their cache identity — the mode can
+   * change at any time a GM edits the setting, independent of any tree/actor
+   * revision the caller's own key already tracks.
+   */
+  static getBlockDeflectMode() {
+    return this._blockDeflectMode();
+  }
+
   static _nameKey(value) {
     return String(value || '')
       .toLowerCase()
