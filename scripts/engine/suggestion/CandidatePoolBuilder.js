@@ -13,6 +13,7 @@ import { AbilityEngine } from "/systems/foundryvtt-swse/scripts/engine/abilities
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { TalentCandidateEnricher } from "/systems/foundryvtt-swse/scripts/engine/suggestion/TalentCandidateEnricher.js";
 import { logSuggestionTrace } from "/systems/foundryvtt-swse/scripts/engine/suggestion/suggestion-trace-controls.js";
+import { getDerivedGeneration } from "/systems/foundryvtt-swse/scripts/actors/derived/derived-generation.js";
 
 
 function stableCandidateStringify(value, depth = 0) {
@@ -55,7 +56,17 @@ export class CandidatePoolBuilder {
     const itemSignature = Array.from(actor?.items ?? [])
       .map(item => `${item?.id ?? item?._id ?? 'no-id'}:${item?.type ?? 'unknown'}:${item?._stats?.modifiedTime ?? item?._source?._stats?.modifiedTime ?? item?.system?._version ?? ''}`)
       .join('|');
-    return [actor?.id ?? 'no-id', actor?.type ?? 'unknown', actorRevision ?? 'no-revision', actor?.items?.size ?? 0, itemSignature].join('::');
+    // This cache sits in FRONT of AbilityEngine.canAcquire() (see
+    // _filterHeroicFeats()/_filterTalentCandidates()): a cache HIT here never
+    // re-consults AbilityEngine at all. AbilityEngine's own acquisition cache
+    // already folds in the shared runtime-only derived-generation stamp (see
+    // derived-generation.js) so a legality answer can't survive a real
+    // system.derived correction on an unchanged actor/item revision -- but
+    // that fix is invisible to callers if THIS cache, one layer up, still
+    // serves a filtered candidate list computed before the correction. Same
+    // generation must be observed here too, or the two caches can disagree.
+    const derivedGeneration = getDerivedGeneration(actor);
+    return [actor?.id ?? 'no-id', actor?.type ?? 'unknown', actorRevision ?? 'no-revision', actor?.items?.size ?? 0, derivedGeneration, itemSignature].join('::');
   }
 
   static _slotCacheSignature(slotContext) {

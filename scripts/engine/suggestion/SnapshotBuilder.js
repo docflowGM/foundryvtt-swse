@@ -38,6 +38,7 @@
 
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { buildEquipmentLoadoutProfile } from "/systems/foundryvtt-swse/scripts/engine/suggestion/equipment-loadout-profile.js";
+import { SchemaAdapters } from "/systems/foundryvtt-swse/scripts/utils/schema-adapters.js";
 
 export class SnapshotBuilder {
   /**
@@ -149,13 +150,16 @@ export class SnapshotBuilder {
   // ─────────────────────────────────────────────────────────────
 
   static _extractAbilityScore(actor, ability) {
-    const attr = actor?.system?.attributes?.[ability];
-    const ab = actor?.system?.abilities?.[ability];
-    for (const value of [attr?.total, attr?.value, attr?.score, attr, ab?.total, ab?.value, ab?.score, ab]) {
-      const n = Number(value);
-      if (Number.isFinite(n) && n > 0) return n;
-    }
-    return 0;
+    // The canonical schema is system.attributes.<key> = {base, racial,
+    // enhancement, temp} -- there is no .total/.value/.score field on that
+    // object, so checking for one and falling through to the legacy
+    // system.abilities mirror (which a modern, canonical-schema-only actor
+    // never populates) silently collapsed every real score to 0.
+    // SchemaAdapters.getAbilityScore() is the same canonical authority
+    // PrerequisiteChecker and DefenseCalculator already use: derived
+    // total, then canonical-component reconstruction, then the legacy
+    // mirror only as a last resort.
+    return SchemaAdapters.getAbilityScore(actor, ability);
   }
 
   static _extractEquipmentSnapshot(actor) {

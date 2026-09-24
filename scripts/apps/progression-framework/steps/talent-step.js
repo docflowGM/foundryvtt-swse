@@ -1330,9 +1330,16 @@ export class TalentStep extends ProgressionStepPlugin {
   async _getTalentsForTreeCached(tree, actor) {
     const key = tree?.id || tree?.sourceId || tree?.name;
     if (!key) return [];
-    if (this._treeTalentCache.has(key)) return this._treeTalentCache.get(key) || [];
+    // _getTalentsForTree() post-processes tree membership through the live
+    // blockDeflectTalents house-rule setting (HouseRuleTalentCombination
+    // .processBlockDeflectCombination()). A GM can flip that setting while
+    // this exact tree is already cached under `key` alone, so the mode must
+    // be part of the cache identity — see docs/audits/
+    // v2-runtime-cache-coherency-audit.md, "TalentStep Block/Deflect cache".
+    const cacheKey = `${key}::${HouseRuleTalentCombination.getBlockDeflectMode()}`;
+    if (this._treeTalentCache.has(cacheKey)) return this._treeTalentCache.get(cacheKey) || [];
     const talents = await this._getTalentsForTree(tree, actor);
-    this._treeTalentCache.set(key, talents || []);
+    this._treeTalentCache.set(cacheKey, talents || []);
     return talents || [];
   }
 

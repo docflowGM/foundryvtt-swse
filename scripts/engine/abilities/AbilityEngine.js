@@ -45,6 +45,7 @@ import { PrerequisiteChecker } from "/systems/foundryvtt-swse/scripts/data/prere
 import { PRESTIGE_PREREQUISITES } from "/systems/foundryvtt-swse/scripts/data/prestige-prerequisites.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { getDroidAcquisitionBlockReason, getOrganicDroidAcquisitionBlockReason } from "/systems/foundryvtt-swse/scripts/engine/progression/droids/droid-progression-guards.js";
+import { getDerivedGeneration } from "/systems/foundryvtt-swse/scripts/actors/derived/derived-generation.js";
 
 function emitAbilityTrace(label, payload = {}) {
   // Only emit trace logs when debug mode is enabled
@@ -106,7 +107,18 @@ export class AbilityEngine {
       .join('|');
 
     if (revision) {
-      return [actor?.id ?? actor?._id ?? 'no-id', actor?.type ?? 'unknown', revision, actor?.items?.size ?? actor?.items?.length ?? 0, itemSignature].join('::');
+      // PrerequisiteChecker's ability-score path (SchemaAdapters.getAbilityScore())
+      // prefers system.derived.attributes[key].total when present. That field is
+      // written asynchronously by SWSEV2BaseActor._computeDerivedAsync() /
+      // ActorEngine._applyDerivedUpdates() and can lag behind (or be corrected
+      // after) an ActiveEffect-driven ability change that never touches the
+      // actor's persisted revision or item set — the same category of gap fixed
+      // for the panel view-model cache (docs/audits/
+      // v2-derived-panel-cache-coherency.md). Folding in the shared runtime-only
+      // derived-generation stamp means a legality verdict computed against a
+      // stale derived snapshot cannot survive the correction landing.
+      const derivedGeneration = getDerivedGeneration(actor);
+      return [actor?.id ?? actor?._id ?? 'no-id', actor?.type ?? 'unknown', revision, actor?.items?.size ?? actor?.items?.length ?? 0, derivedGeneration, itemSignature].join('::');
     }
 
     // Projection/test actors may not have Foundry revision metadata. Fall back
