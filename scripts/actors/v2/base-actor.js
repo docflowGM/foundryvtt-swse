@@ -2,6 +2,7 @@
 import { SWSEActorBase } from "/systems/foundryvtt-swse/scripts/actors/base/swse-actor-base.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { DerivedCalculator } from "/systems/foundryvtt-swse/scripts/actors/derived/derived-calculator.js";
+import { stampDerivedGeneration, getDerivedAppliedSignature } from "/systems/foundryvtt-swse/scripts/actors/derived/derived-generation.js";
 import { AbilityExecutionCoordinator } from "/systems/foundryvtt-swse/scripts/engine/abilities/ability-execution-coordinator.js";
 import { computeCharacterDerived } from "/systems/foundryvtt-swse/scripts/actors/v2/character-actor.js";
 import { computeNpcDerived } from "/systems/foundryvtt-swse/scripts/actors/v2/npc-actor.js";
@@ -133,9 +134,22 @@ export class SWSEV2BaseActor extends SWSEActorBase {
     // revision during sheet repaint/point-edit flows. Coalesce identical async
     // derived requests so one small field edit does not fan out into repeated
     // DerivedCalculator passes and follow-up renders for unchanged inputs.
+    //
+    // The in-flight check is instance-level by design: it only needs to
+    // coalesce concurrent calls made against this same actor instance.  The
+    // "already applied" check is deliberately destination-anchored
+    // (getDerivedAppliedSignature reads system.derived.meta.appliedSignature,
+    // not an actor-instance flag): Foundry can reconstruct/reset system.derived
+    // during a later prepareData() cycle without changing the actor's
+    // persisted source signature, and an instance-level "I applied S once"
+    // flag cannot tell that apart from "the destination still holds S's
+    // result." Reading the marker back off the live destination means a reset
+    // destination naturally reports no applied signature, so this falls
+    // through to DerivedCalculator.computeAll() below -- which is cheap here
+    // since DerivedCalculator's own result cache still holds S's output.
     if (signature) {
       if (this._swseDerivedAsyncInFlightSignature === signature) return;
-      if (this._swseDerivedAsyncAppliedSignature === signature) return;
+      if (getDerivedAppliedSignature(this) === signature) return;
       this._swseDerivedAsyncInFlightSignature = signature;
     }
 
@@ -163,7 +177,12 @@ export class SWSEV2BaseActor extends SWSEActorBase {
         }
       }
 
-      if (signature) this._swseDerivedAsyncAppliedSignature = signature;
+      // Record which signature the CURRENT destination now reflects,
+      // regardless of whether this pass changed anything -- this is what lets
+      // the entry check above safely skip a genuinely redundant reapplication
+      // while still catching a destination that was reset out from under it.
+      system.derived.meta ??= {};
+      if (signature) system.derived.meta.appliedSignature = signature;
 
       // DerivedCalculator.computeAll() is the authoritative, already-modified
       // derived snapshot. It already folds in static/passive modifiers, so no
@@ -175,7 +194,11 @@ export class SWSEV2BaseActor extends SWSEActorBase {
         return;
       }
 
-      system.derived.meta ??= {};
+      // Stamp a fresh runtime-only derived generation so panel/view-model
+      // caches keyed off it (see actor-sheet-base.js's
+      // _buildPanelViewModelCacheSignature) invalidate on this correction
+      // even though the persisted actor/item revision never changed.
+      stampDerivedGeneration(this, system, signature);
       system.derived.meta.lastAsyncRecalcMs = Date.now();
 
       // Foundry does not await prepareDerivedData(). Without a follow-up render,

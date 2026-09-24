@@ -4,6 +4,7 @@ import { applyActorUpdateAtomic } from "/systems/foundryvtt-swse/scripts/utils/a
 import { MutationInterceptor } from "/systems/foundryvtt-swse/scripts/governance/mutation/MutationInterceptor.js";
 import { determineLevelFromXP } from "/systems/foundryvtt-swse/scripts/engine/shared/xp-system.js";
 import { DerivedCalculator } from "/systems/foundryvtt-swse/scripts/actors/derived/derived-calculator.js";
+import { stampDerivedGeneration } from "/systems/foundryvtt-swse/scripts/actors/derived/derived-generation.js";
 import { MutationApplicationError } from "/systems/foundryvtt-swse/scripts/governance/mutation/mutation-errors.js";
 import { PrerequisiteIntegrityChecker } from "/systems/foundryvtt-swse/scripts/governance/integrity/prerequisite-integrity-checker.js";
 import { PreflightValidator } from "/systems/foundryvtt-swse/scripts/governance/enforcement/preflight-validator.js";
@@ -99,9 +100,11 @@ export const ActorEngine = {
    *
    * @param {Actor} actor
    * @param {Object} updates - Flat update object returned by DerivedCalculator.computeAll()
+   * @param {string|null} [signature] - the DerivedCalculator source signature
+   *   this update bundle corresponds to, if the caller already computed it.
    * @private
    */
-  _applyDerivedUpdates(actor, updates) {
+  _applyDerivedUpdates(actor, updates, signature = null) {
     if (!actor?.system || !updates || typeof updates !== 'object') return;
 
     const expanded = foundry.utils.expandObject(updates);
@@ -127,6 +130,14 @@ export const ActorEngine = {
       overwrite: true,
       recursive: true
     });
+
+    // Stamp the same runtime-only derived-generation authority
+    // SWSEV2BaseActor._computeDerivedAsync() uses (see derived-generation.js)
+    // so panel/view-model caches invalidate correctly regardless of which of
+    // the two derived-write paths actually applied the update. A single
+    // shared stamp keeps both paths on one coherent invalidation authority
+    // instead of two counters that could drift out of sync.
+    stampDerivedGeneration(actor, actor.system, signature);
   },
 
   /**
@@ -225,8 +236,9 @@ export const ActorEngine = {
         if (observabilityEnabled) {
           SWSELogger.debug(`[RECOMPUTE] DerivedCalculator.computeAll() starting...`, { actor: actor.name });
         }
-        const derivedUpdates = await DerivedCalculator.computeAll(actor);
-        this._applyDerivedUpdates(actor, derivedUpdates);
+        const recalcAllSignature = DerivedCalculator.getActorComputeSignature(actor);
+        const derivedUpdates = await DerivedCalculator.computeAll(actor, { signature: recalcAllSignature });
+        this._applyDerivedUpdates(actor, derivedUpdates, recalcAllSignature);
         if (observabilityEnabled) {
           SWSELogger.debug(`[RECOMPUTE] DerivedCalculator.computeAll() completed`, {
             actor: actor.name,
@@ -2485,8 +2497,9 @@ export const ActorEngine = {
         SWSELogger.debug(`[PROGRESSION] Triggering derived recalculation`);
 
         // Step 1: Compute all derived values
-        const progressionDerivedUpdates = await DerivedCalculator.computeAll(actor);
-        this._applyDerivedUpdates(actor, progressionDerivedUpdates);
+        const progressionSignature = DerivedCalculator.getActorComputeSignature(actor);
+        const progressionDerivedUpdates = await DerivedCalculator.computeAll(actor, { signature: progressionSignature });
+        this._applyDerivedUpdates(actor, progressionDerivedUpdates, progressionSignature);
 
         // Step 2: no separate modifier-bundle pass. DerivedCalculator.computeAll()
         // already includes static/passive modifiers. A second pass double-counts

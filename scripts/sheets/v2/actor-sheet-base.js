@@ -2120,6 +2120,17 @@ export class SWSEV2ActorSheetBase extends
       ].join(':'))
       .join('|');
 
+    // Persisted actor/item revisions do not change when SWSEV2BaseActor
+    // ._computeDerivedAsync() or ActorEngine._applyDerivedUpdates() land an
+    // authoritative system.derived.* snapshot after the sheet's first,
+    // pre-async render — Foundry does not bump _stats.modifiedTime for that
+    // in-memory mutation. Without observing the runtime-only derived
+    // generation stamped by those two write paths (see derived-generation.js),
+    // a panel cached from that early, pre-async render (e.g. defensePanel
+    // showing 10/10/10 with zeroed rows) would survive the corrective render
+    // that follows once DerivedCalculator's real output lands.
+    const derivedGeneration = actor?.system?.derived?.meta?.generation ?? 0;
+
     return [
       actor?.id ?? 'no-actor',
       actor?.type ?? 'unknown',
@@ -2128,6 +2139,7 @@ export class SWSEV2ActorSheetBase extends
       this.isEditable === true ? 'editable' : 'readonly',
       this._helpLevel ?? '',
       this._shellSurface ?? 'sheet',
+      derivedGeneration,
       itemSignature
     ].join('::');
   }
