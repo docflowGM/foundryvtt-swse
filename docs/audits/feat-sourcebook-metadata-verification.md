@@ -656,3 +656,56 @@ The most serious issue here is not taxonomy but **content contamination**: Long 
 | The Unknown Regions | 21 |
 | Jedi Academy Training Manual | 5 |
 | **Total source entries reviewed** | **199** |
+
+
+# Phase 8 — Scavenger's Guide to Droids
+
+## Source-set reconciliation
+
+The Scavenger's Guide to Droids feat table publishes **17 feats**, and the repository has exactly **17** records attributed to this source. In this book the name/source set matches cleanly; the remaining problems are description fidelity, taxonomy, and mechanics.
+
+Published set:
+
+Aiming Accuracy, Damage Conversion, Distracting Droid, Droid Focus, Droid Shield Mastery, Erratic Target, Ion Shielding, Logic Upgrade: Skill Swap, Mechanical Martial Arts, Multi-Targeting, Pincer, Pinpoint Accuracy, Sensor Link, Shield Surge, Slammer, Tool Frenzy, Turn and Burn.
+
+## Per-feat verification
+
+| Feat | Findings | Status |
+|---|---|---|
+| Aiming Accuracy | Current description omits “proficient with weapon” from the prerequisite line, though the benefit later mentions a proficient weapon. Source requires Droid, Point Blank Shot, Precise Shot, **and proficiency with weapon**. Metadata captures full-round Aim and +5, but does not visibly preserve next-round same-target/LOS/proficiency state. | `DESCRIPTION_ERROR`, `MECHANICS_PARTIAL` |
+| Damage Conversion | Description and threshold conversion metadata are faithful: non-area/non-ion/non-Force hit exceeding DT can trade the CT step for +10 damage, increasing by +5 each subsequent use that encounter. | `CORRECT` |
+| Distracting Droid | Description and action metadata preserve standard action, Persuasion vs Will, 6 squares, see/hear qualification, lost move action, success-by-10 flat-footed rider, and mind-affecting nature. | `CORRECT` |
+| Droid Focus | Description is faithful. Selected droid degree, +1 listed skills, and +1 defenses are represented. Repeat selections for different droid degrees and nonstacking behavior should be confirmed in progression rather than inferred from the single-choice payload. | `MECHANICS_PARTIAL` pending repeat-selection certification |
+| Droid Shield Mastery | Description and action metadata correctly preserve automatic shield-recharge check success, +5 SR restoration cap, and two-swift-action recharge. Recovery/Survival taxonomy is wrong; this belongs in Droid / Shields & Systems. | `TAXONOMY_ERROR`; mechanics `CORRECT` |
+| Erratic Target | Description is faithful and current GM-managed resolution is appropriate for movement sacrifice after actual token movement. Droid Systems is acceptable but Combat/Defense is a stronger mechanical subfamily. | `CORRECT` / taxonomy refinement only |
+| Ion Shielding | Description and damage-resolution concept are faithful: qualifying pre-halving ion damage causes only -1 CT instead of the normal -2. | `CORRECT` |
+| **Logic Upgrade: Skill Swap** | **Major mechanics contradiction.** Source does **not** make the selected untrained skill trained. As a full-round action the droid temporarily swaps one trained skill for the chosen untrained skill: it loses the original trained benefit while swapped, the new skill is **still untrained**, cannot use trained-only options, and is rolled at normal untrained half-level + ability. Current metadata permanently treats the selected untrained skill as trained through progression. Current description (“Swap a Trained Skill for an Untrained Skill on the fly”) is too abbreviated to expose this decisive distinction. | `MECHANICS_ERROR`, `DESCRIPTION_ERROR`, `WRONG_OWNER` |
+| Mechanical Martial Arts | Description is faithful. Main unarmed-hit -5 melee attack/damage rider is represented, but source special clause changes duration against an **organic enemy struck during an AoO** to the start of that enemy's next turn. Current payload uses the normal “start of your next turn” duration universally. | `MECHANICS_PARTIAL` |
+| Multi-Targeting | Source prerequisite includes proficiency with the weapon; current description lists only Droid and Int 13. Aim persistence across rounds and attacks against other targets are represented, but proficiency is not visibly gated. | `DESCRIPTION_ERROR`, `MECHANICS_PARTIAL` |
+| Pincer | Description and Pin-maintenance/swift follow-up/Crush rider metadata are faithful. | `CORRECT` |
+| Pinpoint Accuracy | The **summary table and detailed feat text conflict internally**: the table says the feat moves the target -1 CT, while the detailed Benefit says a target damaged using Aiming Accuracy cannot Recover until end of its next turn. Current record follows the detailed feat text. Preserve this as an explicit source discrepancy rather than silently “correcting” to the table. | `SOURCE_REVIEW`; current detailed-text implementation is internally defensible |
+| Sensor Link | Description and assisted/manual metadata preserve swift sensor broadcast, 24-square range, Aid Another Perception without LOS, and mutual-Sensor-Link +2 Perception concept. | `CORRECT` |
+| Shield Surge | Description and reaction metadata are faithful: after SR reduction, trade remaining SR one-for-one to reduce vehicle damage, with data-link requirement and one-round Recharge Shields lockout. | `CORRECT` |
+| Slammer | Description is faithful. Runtime option correctly models the extra Strength contribution and persistent-condition-on-DT rider, but does not visibly encode the source special clause that Crush increases Slammer unarmed damage by one die. | `MECHANICS_PARTIAL` |
+| Tool Frenzy | Description is faithful. +2 attack and -2 Reflex through end of next turn are represented, but source specifically requires **nonweapon tool appendages**, uses the highest-rated appendage's damage die, and excludes true melee/ranged weapons. Current broad weapon-group matching does not prove all those restrictions. | `MECHANICS_PARTIAL` |
+| Turn and Burn | Description is faithful. Current action metadata captures the improved Withdraw movement but omits the source's Force Point reaction to an enemy ending movement adjacent to the droid. Force/Force Point is therefore also the wrong primary taxonomy; it is a droid mobility/withdraw feat with an optional FP reaction. | `MECHANICS_PARTIAL`, `TAXONOMY_ERROR` |
+
+## Scavenger's Guide conclusion
+
+This is the cleanest source-provenance set audited so far, but it contains one of the most consequential runtime errors: **Logic Upgrade: Skill Swap is implemented as permanent training when RAW explicitly says the swapped-in skill remains untrained**. This is exactly the kind of problem a metadata-only census would miss because the record looks “implemented.”
+
+---
+
+## Audit progress after Phase 8
+
+| Source | Published feat entries reviewed |
+|---|---:|
+| Saga Edition Core Rulebook | 64 |
+| Clone Wars Campaign Guide | 21 |
+| Galaxy at War | 42 |
+| The Force Unleashed Campaign Guide | 20 |
+| Galaxy of Intrigue | 26 |
+| The Unknown Regions | 21 |
+| Jedi Academy Training Manual | 5 |
+| Scavenger's Guide to Droids | 17 |
+| **Total source entries reviewed** | **216** |
