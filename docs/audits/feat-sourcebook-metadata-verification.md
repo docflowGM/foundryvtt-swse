@@ -870,3 +870,18 @@ Printed p. 20 expressly distinguishes these cases, which later combat certificat
 These are restrictions on existing feat application, not extra records. No new engines or forced automation are proposed.
 
 **Cumulative source-entry count:** 264 + 4 = **268**. This remains coverage of source entries, not a unique-record completion figure.
+
+---
+
+# Phase 12 — Threats of the Galaxy
+
+This book **does publish new feats in sidebars**, despite lacking a conventional feat chapter in its contents. Absence from a feat table is not proof that a feat is absent from a book. Verified directly from rendered uploaded pages: **A Few Maneuvers p. 64**, **Suppression Fire p. 91**, and **Momentum Strike / Mounted Defense p. 127** (PDF pages 65, 92 and 128). All four pack records have the correct book but incorrect page fields (20/21), hence all receive `SOURCE_ERROR`.
+
+| Feat / pack ID | Printed page | Findings | Mechanical owner | Other status |
+|---|---:|---|---|---|
+| A Few Maneuvers / `b3dfdfd783cf16be` | 64 | Description and metadata match +2 **dodge** vehicle Reflex while piloting a Colossal-or-smaller vehicle, plus missile/torpedo self-destruction when missing by 5+. Preserve piloting/vehicle context for both benefits. Dodge and Vehicular Combat eligibility is not structured. | Vehicle / Starship Runtime + Progression; vehicle defense | `MECHANICS_PARTIAL` for structured eligibility/consumer context certification; effect description `CORRECT` |
+| Suppression Fire / `b3984239e21c64ca` | 91 | Description faithful. Metadata captures Aid Another suppression, attack versus Will, fear/mind-affecting tags and next-turn cover obligation, but **omits immunity for targets of equal or higher character level**. Prerequisites Strength 13, Burst Fire and heavy-weapon proficiency are not structured. Cover selection is correctly left to table adjudication. | Combat Runtime + UI-Assisted / GM Adjudication | `MECHANICS_PARTIAL` |
+| Momentum Strike / `cf278001c780f3f9` | 127 | Description and melee +1 die payload agree with riding a beast/speeder bike after it moved at least its speed that turn. Context must allow passenger **or** pilot and specifically qualifying mount/speeder, not every vehicle. Pilot-or-Ride training is unstructured. Primary family should include mounted melee combat, not just Pilot maneuvers. | Combat Runtime + Vehicle / Starship Runtime / mount handling | `MECHANICS_PARTIAL`, `TAXONOMY_ERROR` |
+| Mounted Defense / `acb7efcc70769b9f` | 127 | Description and explicitly manual redirection capture once/encounter and timing after attack result but before damage/effects. Preserve passenger-or-pilot use and beast/speeder restriction. Pilot-or-Ride training is not structured. Mounted defensive reaction is a better primary family than Pilot maneuvers alone. | Action & Reaction Runtime + UI-Assisted / GM Adjudication | `MECHANICS_PARTIAL` (eligibility/context certification), `TAXONOMY_ERROR`; manual handling appropriate |
+
+**Cumulative source-entry count:** 268 + 4 = **272**. No additional copy is created for a feat merely because NPCs also use it. This sidebar check also explains why the three unresolved JATM-tagged records should remain `SOURCE_REVIEW`, not be declared nonexistent solely because they are absent from that book's general feat section.
