@@ -840,3 +840,33 @@ Inspected `scripts/engine/customization/tech-specialist-modification-service.js`
 - Signature Device and Superior Tech have real customization capability metadata despite older deferred/scaffold summaries. Do not mistake the stale summary for the current capability, and do not mistake a capability flag for complete procedural certification.
 
 **Cumulative source-entry count:** 237 + 27 = **264**, with overlaps and one unresolved same-name/source collision. No pack or runtime edits.
+
+---
+
+# Phase 11 — Starships of the Galaxy
+
+## Source-set reconciliation
+
+Uploaded Starships of the Galaxy, printed pp. **19–21** (PDF pp. 20–22), was OCR-indexed; the full new-feat text on pp. 20–21 was visually inspected. There are **four new feats**, all present in the pack. Three carry this book's source; **Tech Specialist** incorrectly claims Core Rulebook p. 88. The other three incorrectly claim p. 30. All four require `SOURCE_ERROR` corrections.
+
+The discussion on pp. 19–20 about applying existing Core feats to vehicles is **not** a set of newly published feat identities. It explains some of the current misplaced vehicle taxonomy, but does not justify making ordinary combat feats primarily vehicle feats.
+
+| Feat / pack ID | Printed page | Findings | Owner / taxonomy | Other status |
+|---|---:|---|---|---|
+| Starship Designer / `e9147ce66a783fbb` | 20 | Base description preserves the design check/time, helper rule, nonstandard-modification exemption, custom modification cost/check/time, retry escalation, maximum three modifications per system, and stacking. Its appended Jedi Counseling discussion is labeled as a separate web source but has not been independently certified here. Current `punted_to_gm_player` metadata provides no procedure support; **manual-by-rule is an acceptable ceiling** for custom designs, but should expose the concrete procedure. Prerequisites Tech Specialist + trained Mechanics are not structured. | Garage / Vehicle & Droid Customization + Downtime / Procedure; Starship Design, with GM adjudication where appropriate | `SOURCE_REVIEW` for web appendix; `MECHANICS_PARTIAL` for eligibility/procedure representation; `TAXONOMY_ERROR` (GM / Metadata describes handling, not feat purpose) |
+| Starship Tactics / `376d805d1b73f7e6` | 20 | Base count `max(1, 1 + wisdomModifier)` is correct. Description omits the **permanent Wisdom-modifier increase granting additional maneuvers per copy of the feat**. Repeat acquisition and repeated selection of the same maneuver are allowed; metadata does not prove these lifecycle rules. Source-described Vehicular Combat + trained Pilot prerequisites are not structured. Gunnery Specialist exception in description is a separately sourced Clone Wars extension (Phase 2), not part of this printed feat; keep its provenance distinct. | Progression / Character Building + Vehicle / Starship Runtime | `DESCRIPTION_ERROR`, `MECHANICS_PARTIAL` |
+| Tactical Genius / `da8e272f5dae09b9` | 21 | Description and resource rule agree: natural 20 on an attack schedules recovery of all spent maneuvers **at round end**, not immediately. Do not silently narrow the trigger to a maneuver/Pilot roll. Starship Tactics, Vehicular Combat, trained Pilot are present in prose but not structured. | Vehicle / Starship Runtime + Progression | `MECHANICS_PARTIAL` (eligibility representation); effect metadata `CORRECT` |
+| Tech Specialist / `42e2404790756700` | 21 | Base description is faithful, including one job at a time, pricing, time, DC 20, no Take 10/20, failure costs, assistance and resale value. Existing customization service is the real implementation owner, as traced in Phase 10; stale deferred summaries conflict with current capabilities. It immediately completes the transaction and does not itself model the full downtime procedure. Trait category matching also fails to express all cross-category clarifications without separate handling. No current consumer check proves Selective Fire's prohibition for burst/splash weapons. Appended Scum clarification text requires its own source-page verification; do not label it homebrew merely because it is not on this page. | Workbench / Equipment Customization + Garage + Downtime / Procedure | `MECHANICS_PARTIAL`, `TAXONOMY_ERROR`, `WRONG_OWNER` for pure GM/reference classification, `UNSUPPORTED_METADATA` for stale deferred summary; `SOURCE_REVIEW` for unverified appendix |
+
+## Cross-book application constraints
+
+Printed p. 20 expressly distinguishes these cases, which later combat certification should preserve:
+
+- Vehicle weapons do not qualify for Dual Weapon Mastery because they are not wielded one-handed.
+- Improved Defenses does not improve a vehicle's defenses through its pilot/commander; Dodge can apply to a piloted vehicle as specified.
+- Double/Triple Attack and Weapon Focus with heavy weapons can apply to vehicle weapons.
+- Far Shot, Point Blank Shot and Rapid Shot have a separate restriction for a missile/torpedo's later attack after an initial miss.
+
+These are restrictions on existing feat application, not extra records. No new engines or forced automation are proposed.
+
+**Cumulative source-entry count:** 264 + 4 = **268**. This remains coverage of source entries, not a unique-record completion figure.
