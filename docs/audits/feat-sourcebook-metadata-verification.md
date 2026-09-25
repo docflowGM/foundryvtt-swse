@@ -554,3 +554,105 @@ This source reinforces two audit rules:
 | The Force Unleashed Campaign Guide | 20 |
 | Galaxy of Intrigue | 26 |
 | **Total source entries reviewed** | **173** |
+
+
+# Phase 6 — The Unknown Regions
+
+## Source-set reconciliation
+
+The Unknown Regions Chapter 1 feat table publishes **21 feats**. The repository has **20** records tagged exactly `Unknown Regions`.
+
+The sole missing provenance match is **Mounted Combat**, which the repository currently labels `Saga Edition Core Rulebook`. The feat text and table in The Unknown Regions establish this version as an Unknown Regions feat.
+
+No extra rows are currently tagged Unknown Regions beyond the published 20 matching names.
+
+## Per-feat verification
+
+| Feat | Findings | Status |
+|---|---|---|
+| Acrobatic Ally | Description is materially faithful, including shared initiative, adjacency, DC 20 Acrobatics, standard action, destination, failure-prone consequence, turn ending, and possible AoOs. Current action metadata captures only the headline movement stunt; it omits shared initiative, starting adjacency, failure consequences, turn-ending behavior, and AoO exposure. | `MECHANICS_PARTIAL` |
+| Acrobatic Dodge | Description is faithful. Reaction metadata captures once/encounter move after missed melee attack, but not the requirement to be aware of the attacker or the special second use by spending a Force Point. Force/Force Point primary taxonomy overweights an optional recharge clause; this is principally defensive mobility/reaction. | `MECHANICS_PARTIAL`, `TAXONOMY_ERROR` |
+| Combat Trickery | Description is faithful. Metadata captures two swift actions and Deception but omits check vs target Will, “flat-footed against your next attack before end of next turn,” and the Force Point extension through encounter end. Force primary taxonomy again follows an optional Force Point extension rather than the feat’s core Deception combat trick. | `MECHANICS_PARTIAL`, `TAXONOMY_ERROR` |
+| Elder's Knowledge | Description is faithful. Substitution family is represented, but source limit is once per encounter and that limit is not visible in the inspected substitution metadata. | `MECHANICS_PARTIAL` |
+| Frightening Cleave | Description is faithful. Explicit GM-managed handling is reasonable for LOS/radius/multiple enemies/stacking. Skills/Social primary taxonomy is misleading; this is a Cleave-triggered combat/fear rider. | `TAXONOMY_ERROR` |
+| Grab Back | Description and metadata preserve +2 Reflex vs Grab/Grapple, reaction counter-grab, and qualifying Grapple feat substitution. | `CORRECT` |
+| Halt | Description is faithful. Main AoO -> compare same roll to Grapple -> stop/prone and DT -> lose remaining actions sequence is represented. Metadata should be source-certified for selected Weapon Focus choice, one-size-larger cap, and the special rule ending an in-progress charge; those clauses are not all explicit in the inspected payload. | `MECHANICS_PARTIAL` |
+| Heavy Hitter | Description and attack-margin damage / threshold rider are represented well. Current Vehicle Defense subbucket is wrong; this is vehicle/heavy-weapon gunnery offense. | `TAXONOMY_ERROR` |
+| Hold Together | Description is faithful. Current generic action metadata omits reaction timing, Force Point cost, requirement that the character be riding in or piloting the vehicle, Colossal-or-smaller size limit, and delayed application specifically until end of round. Force primary taxonomy follows the resource spent rather than the vehicle-damage rule. | `MECHANICS_PARTIAL`, `TAXONOMY_ERROR` |
+| Hyperblazer | Description and astrogation/mapping reductions are represented well. Stray `grapple` tag is unsupported. | `CORRECT` mechanics; tag cleanup |
+| Improved Sleight of Hand | Description is faithful. Metadata is too generic: source requires a swift Deception check before Stealth, opposing Perception must exceed **both** results, hidden weapon must be two size categories smaller, initial simultaneous draw/palm has its own action treatment, drawing includes a free Stealth check, and re-palming after use is a swift action. | `MECHANICS_PARTIAL` |
+| Improvised Weapon Mastery | Description is faithful. Current metadata correctly marks itself partial: improvised-as-simple proficiency is represented, while +1d6 damage and Simple Weapon feat/talent interaction remain manual. | `MECHANICS_PARTIAL` |
+| Instinctive Attack | Source prerequisite is **proficient with weapon used, living character (not a droid)**. Current description lists only “Cannot be a Droid” under Prerequisites and moves proficiency into the Effect sentence. Reroll/keep-better behavior and applying the Force Point die to the better result are faithful in description; metadata captures the reroll but must enforce proficiency and preserve Force Point result application. | `DESCRIPTION_ERROR`, `MECHANICS_PARTIAL` |
+| Instinctive Defense | Description and Force Point -> +2 all defenses as free action on own turn until next turn are faithfully represented. | `CORRECT` |
+| Intimidator | Description is faithful. Metadata captures -5 skills/-2 attacks but omits the condition that the user remain in the target’s line of sight, the vehicle see/detect clause, and the explicit incompatibility with Maniacal Charge. Force taxonomy is wrong; Use the Force is merely one skill affected by the general penalty. | `MECHANICS_PARTIAL`, `TAXONOMY_ERROR` |
+| Maniacal Charge | Description is faithful and action metadata preserves the core charge/Intimidate/AoO/flat-footed/incompatibility behavior. Stray `rage` and `resource_spend` tags are unsupported. | `CORRECT` mechanics; secondary tag cleanup |
+| **Mounted Combat** | Current source is wrong. Description is highly faithful: DC 20 Ride swift action to increase living mount speed by 2; failure moves mount -1 CT; cannot Take 10; subsequent attempts require DC 20 Endurance; plus once/round reaction Ride check to negate weapon hit against rider or mount. Current metadata implements **only the reaction half**. | `SOURCE_ERROR`, `MECHANICS_PARTIAL`, `TAXONOMY_ERROR` |
+| **Nikto Survival** | Description is faithful and choice/native-environment concept is represented. **Mechanical error:** source says reroll Survival and take the **better** result; current `skillRerolls` metadata says `outcome: keepSecond`. | `MECHANICS_ERROR` |
+| Targeted Area | Current description omits source prerequisite Weapon Proficiency in the selected weapon and lists only BAB +5. Metadata models +5 area damage but does not visibly preserve the proficient-weapon gate, single selected target among those hit, or “before Evasion” timing. | `DESCRIPTION_ERROR`, `MECHANICS_PARTIAL` |
+| Trample | Description is faithful. Metadata captures mounted-charge trample attack against enemies whose squares are traversed and mount Strength damage. Skills/Training primary taxonomy follows the Ride prerequisite rather than the mounted-combat action. | `TAXONOMY_ERROR`; mechanics broadly `CORRECT` |
+| Wilderness First Aid | Description is faithful. Current metadata reduces the rule to an equipment waiver, omitting once/day DC 20 Survival check, use of Basic Survival, duration until end of day, and GM-adjustable environmental DC. | `MECHANICS_PARTIAL` |
+
+## Unknown Regions conclusion
+
+This book strongly reinforces the distinction between **description fidelity** and **runtime completeness**. Many descriptions are nearly source-perfect, but their `abilityMeta` payloads only encode a headline effect and omit failure cases, resource costs, limits, or secondary procedures.
+
+---
+
+# Phase 7 — Jedi Academy Training Manual
+
+## Source-set reconciliation
+
+The explicit **FEATS** section beginning on printed page 23 contains **five published feats**:
+
+- Follow Through
+- Force Regimen Mastery
+- Long Haft Strike
+- Relentless Attack
+- Unswerving Resolve
+
+All five records exist and are attributed to Jedi Academy Training Manual.
+
+However, the repository has **eight** records tagged to this source. The following three are **not entries in the book's feat section** and therefore cannot retain Jedi Academy feat provenance without another supporting source location:
+
+- Fast Surge
+- Keen Force Mind
+- Intuitive Initiative
+
+Their rules may exist elsewhere in the wider Saga corpus, but this audit does not treat the current JATM source field as proven merely because the record says so.
+
+## Per-feat verification
+
+| Feat | Findings | Status |
+|---|---|---|
+| Follow Through | Description is faithful. Main drop-target-with-melee -> move up to Speed once/turn rider is represented. The source’s special interaction allowing that movement **before** the extra Cleave attack is present in the description but absent from the inspected rule payload. Character/Hit Points taxonomy follows the trigger, not the effect; this is combat movement/extra-attack sequencing. | `MECHANICS_PARTIAL`, `TAXONOMY_ERROR` |
+| Force Regimen Mastery | Description is faithful: Force Sensitivity + trained Use the Force; learn 1 + Wisdom modifier regimens, minimum 1; repeatable; permanent Wisdom increases grant additional regimens per copies of the feat. Current owner is wrongly GM/Source Reference; this is Force progression. Metadata refers to a “configured Force Training ability modifier” rather than source-specific Wisdom and does not prove all repeat/persistent-Wisdom clauses. | `MECHANICS_PARTIAL`, `TAXONOMY_ERROR`, `WRONG_OWNER` |
+| **Long Haft Strike** | **Major description contamination.** Canonical source prerequisite is “Proficient with weapon used,” and the benefit is limited to lightsaber pike or long-handle lightsaber being treated as a double weapon. Current description says prerequisite None and appends a large block explicitly labeled **Homebrew Long Haft Strike Data**, including generalized oversized melee weapons and extra damage tables not present in this source feat. The runtime WEAPON_PROPERTY_OVERRIDE correctly reflects the canonical weapon-property benefit but does not visibly enforce proficiency. | `DESCRIPTION_ERROR`, `MECHANICS_PARTIAL` |
+| Relentless Attack | Source prerequisites are proficiency with weapon used **and** Double Attack with weapon used. Current description omits proficiency. Source then grants +2 competence to the next attack against the same missed target before end of next turn and permits repeat selections for different weapon groups/exotic weapons. Current metadata captures only the persistent weapon choice, not the miss-triggered bonus/duration/target or repeat-selection behavior. Weapon Proficiency subbucket is also wrong. | `DESCRIPTION_ERROR`, `MECHANICS_PARTIAL`, `TAXONOMY_ERROR` |
+| Unswerving Resolve | Description is faithful. Temporary Force Point trigger and expiration are represented, but source explicitly denies the benefit if the character **negates** the contingent fear/mind-affecting effect rather than simply resisting/failing to be affected; that exclusion is not explicit in inspected metadata. | `MECHANICS_PARTIAL` |
+
+### Unsupported JATM source assignments
+
+| Record | Current content | Audit |
+|---|---|---|
+| Fast Surge | Second Wind becomes free action on own turn | Not in JATM feat section; `SOURCE_REVIEW` / current `source` unsupported |
+| Keen Force Mind | +2 Use the Force to activate mind-affecting Force powers | Not in JATM feat section; `SOURCE_REVIEW` / current `source` unsupported |
+| Intuitive Initiative | Initiative reroll record | Not in JATM feat section; `SOURCE_REVIEW` / current `source` unsupported |
+
+## Jedi Academy conclusion
+
+The most serious issue here is not taxonomy but **content contamination**: Long Haft Strike contains an explicitly homebrew extension inside the canonical feat description. Canonical content and optional/homebrew data need separate records or separate clearly noncanonical extension metadata; they should never be merged into the source description.
+
+---
+
+## Audit progress after Phase 7
+
+| Source | Published feat entries reviewed |
+|---|---:|
+| Saga Edition Core Rulebook | 64 |
+| Clone Wars Campaign Guide | 21 |
+| Galaxy at War | 42 |
+| The Force Unleashed Campaign Guide | 20 |
+| Galaxy of Intrigue | 26 |
+| The Unknown Regions | 21 |
+| Jedi Academy Training Manual | 5 |
+| **Total source entries reviewed** | **199** |
