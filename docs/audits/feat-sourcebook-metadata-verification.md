@@ -759,3 +759,27 @@ All 20 KOTOR-tagged records have incorrect nonzero `system.page` values (current
 - All corrections remain a specification. No feat-pack or runtime code was changed.
 
 **Cumulative source-entry count:** 216 + 21 = **237** (includes cross-book overlap; not 237 unique certified pack records).
+
+---
+
+# Errata authority addendum — supersedes conflicting earlier findings
+
+**Do not implement a correction from an earlier phase when the following official errata supersedes it.** Uploaded book scans are primary evidence for their printing; publisher errata and official clarifications must also be applied. A difference from a scan is not automatically homebrew or a defect. The earlier phases are preserved for traceability, not treated as immutable conclusions.
+
+The following sources were retrieved on 2026-09-25. They are archived copies of Wizards of the Coast's original errata pages, hosted by a third party, with the original Wizards article URLs and publication/update information retained:
+
+- [Core Rulebook, updated October 2008](https://swse.xphilesrealm.com/Errata/SWRGP-Errata.pdf), original article `wizards.com/default.asp?x=starwars/article/sagaederrata`.
+- [KOTOR, updated January 2009](https://swse.xphilesrealm.com/Errata/Knights%20of%20the%20Old%20Republic.pdf), original article `wizards.com/default.asp?x=starwars/article/KOTORerrata`.
+- [Scum and Villainy, updated January 2009](https://www.swse.xphilesrealm.com/Errata/Scum&villiany.pdf), original article `wizards.com/default.asp?x=starwars/article/SnVerrata`.
+
+## Corrections to this ledger
+
+| Record / prior finding | Errata-aware disposition |
+|---|---|
+| **Acrobatic Strike** / `419a502e59264382`, Phase 1 proposed +5 | **Retract that numeric `MECHANICS_ERROR` finding.** Core errata p. 82 changes the benefit to **+2 competence**. The current description and rider preserve that value, trigger, target, and end-of-turn limit correctly. Retain Core provenance and combat-mobility taxonomy corrections. **Do not change +2 to +5.** |
+| Burst Fire, Phase 1 suspicious clauses | Core errata changes proficiency requirements and specifies a larger penalty with insufficient Strength when using nonvehicle weapons. Those additions are not inherently contamination. Revalidate against errata before editing them. |
+| Implant Training / `ce009e054ef1681f`, Phase 9 unresolved table/detail discrepancy | KOTOR errata explicitly replaces the Will-defense table summary with the extra-CT-step protection. The table no longer supports `SUPPRESS_IMPLANT_WILL_PENALTY`; mark that added grant `UNSUPPORTED_METADATA` and `MECHANICS_ERROR` relative to the corrected feat. Current description's added -2 Will Normal clause also needs correction/source justification. CT protection remains correct. |
+| Sniper Shot / `94fc90a53d747f84`, Phase 9 | KOTOR clarification confirms the attack bonus persists across attacks through the start of the user's next turn. The pack's duration-wide description is supported. |
+| Weapon Focus + Weapon Finesse combination, KOTOR p. 31 | Official clarification removes the purpose-only restriction from the light-weapon treatment. Preserve that when combination support is audited. |
+
+**Review boundary:** This is a targeted errata reconciliation, not a claim that every prior sourcebook finding has received a complete errata pass. Earlier source-entry totals describe coverage, not certified final records. Remaining errata/source conflicts stay `SOURCE_REVIEW` until checked.
