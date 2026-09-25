@@ -492,3 +492,65 @@ The highest-value next books for provenance resolution are:
 - **Jedi Academy Training Manual** — likely resolves additional Force / tradition / lightsaber-oriented rows.
 - **The Unknown Regions** — has a clean 21-feat table and will help resolve several currently generic or misattributed records.
 - Remaining campaign guides and supplements, followed by a final duplicate/missing-content reconciliation over all 390 records.
+
+
+# Phase 5 — Galaxy of Intrigue
+
+## Source-set reconciliation
+
+Galaxy of Intrigue Chapter 1 publishes **26 feats**. All 26 names exist in the repository. Twenty-five already identify `Galaxy of Intrigue` as their source; **Forceful Recovery** is incorrectly attributed to `The Force Unleashed Campaign Guide`.
+
+Published feat set:
+
+Adaptable Talent, Bone Crusher, Brilliant Defense, Channel Rage, Cut the Red Tape, Demoralizing Strike, Disturbing Presence, Expert Briber, Flèche, Forceful Recovery, Grazing Shot, Hobbling Strike, Improved Opportunistic Trickery, Indomitable Personality, Master of Disguise, Meat Shield, Opportunistic Trickery, Recurring Success, Resolute Stance, Sadistic Strike, Silver Tongue, Skill Challenge: Catastrophic Avoidance, Skill Challenge: Last Resort, Skill Challenge: Recovery, Stand Tall, Wookiee Grip.
+
+## Per-feat verification
+
+| Feat | Findings | Status |
+|---|---|---|
+| Adaptable Talent | Description is faithful. Current metadata summary says “choose one owned talent,” but the source choice is a talent you **do not necessarily own**: it must be one you qualify for from a class you possess. The feat also needs the once/day/6-hours-rest swap workflow, cannot swap out a talent that is prerequisite to another owned talent, and permits swapping back after another 6 hours. Social/Intrigue is not the mechanical owner; this is progression/talent-loadout state. | `MECHANICS_ERROR`, `TAXONOMY_ERROR`, `WRONG_OWNER` |
+| Bone Crusher | Description is faithful. Primary Social/Intrigue taxonomy is wrong; this is a grapple/condition-track combat rider. Existing metadata identifies the CT rider but does not expose a strong explicit rule payload in the inspected record. | `TAXONOMY_ERROR`, `MECHANICS_PARTIAL` |
+| Brilliant Defense | Description and reaction metadata are faithful: once/encounter, reaction, add Int modifier to Reflex until start of next turn. Social/Intrigue is a thematic book grouping, not the best mechanical taxonomy; Defense/Reaction is. | `TAXONOMY_ERROR`; mechanics `CORRECT` |
+| Channel Rage | Description is faithful. Source is once/day, replaces entering Rage, grants +5 Will until encounter end, and counts as the rage use for that day. Current metadata captures alternate +5 Will mode but does not visibly encode once/day, duration, or resource consumption. Social/Intrigue taxonomy is wrong; Combat/Rage or Recovery/Will is closer. | `MECHANICS_PARTIAL`, `TAXONOMY_ERROR` |
+| Cut the Red Tape | Description is faithful. Knowledge (bureaucracy) substitution is modeled, but the inspected metadata does not visibly encode the source’s considered-trained status for Gather Information or the reroll substitution. | `MECHANICS_PARTIAL` |
+| Demoralizing Strike | Description is faithful and metadata summary matches the AoO-damage -> free Persuasion Intimidate trigger. | `CORRECT` |
+| Disturbing Presence | Description and DC 15 Deception movement rule, doubled square cost, and no-AoO effect are represented. | `CORRECT` |
+| Expert Briber | Detailed source text states the Haggle application and a DC reduction of 10; the table summary uses broader bribery language. Current metadata applies the -10 to both Haggle and Bribery. This is a **source-text ambiguity inside the book**; do not expand beyond the detailed Benefit without an errata decision. | `SOURCE_REVIEW`, `UNSUPPORTED_METADATA` caution for generic Bribery application |
+| Flèche | Description and once/encounter charge natural-17+ critical rule are faithfully represented. Social/Intrigue taxonomy is wrong; this is a charge/combat attack option. | `TAXONOMY_ERROR` |
+| Forceful Recovery | Description and Second Wind -> regain one expended Force power are faithful. Current source is wrong; Galaxy of Intrigue is the published source. Recovery/Second Wind is a good mechanical owner despite Force prerequisites. | `SOURCE_ERROR`; mechanics `CORRECT` |
+| Grazing Shot | Description and second-target/6-square/LOS/split-damage/fail-no-damage sequence are represented well. Social/Intrigue taxonomy is wrong; this is ranged multi-target combat. | `TAXONOMY_ERROR` |
+| Hobbling Strike | Description and trade-extra-damage-for--1-Speed-until-encounter-end rule are faithful. Multiattack/Dual Weapon subbucket is too narrow because Sneak Attack is also a valid source. | `TAXONOMY_ERROR`; mechanics `CORRECT` |
+| Improved Opportunistic Trickery | Description is faithful. Metadata captures the once/turn sacrifice of a provoked AoO for -5 Reflex through end of target’s next turn, though the ATTACK_OPTION/targetEffectsOnHit shape is semantically awkward because no hit occurs. | `CORRECT` in spirit; runtime representation should be reviewed under reaction/AoO authority |
+| Indomitable Personality | Description and reaction behavior are faithful. Social/Intrigue is thematically plausible but Defense/Reaction is the mechanical owner. | `CORRECT` mechanics; `TAXONOMY_ERROR` if taxonomy is mechanical-first |
+| Master of Disguise | Source gives +5 insight to Deception for **Deceptive Appearance or forged document**, and rushed creation is only -2 instead of -10. Current description mentions +5 only for Deceptive Appearance; current metadata does include forged document, but no inspected rule encodes the rush-penalty override. | `DESCRIPTION_ERROR`, `MECHANICS_PARTIAL` |
+| Meat Shield | Description and soft-cover defensive rule are faithful. Current Droid/Droid Shields taxonomy is wrong; droids are merely one possible soft-cover provider. | `TAXONOMY_ERROR` |
+| Opportunistic Trickery | Description is faithful. Metadata captures the once/turn sacrificed AoO and -2 Reflex for the following round. As with the improved version, ATTACK_OPTION is an awkward owner for a sacrificed reaction. | `CORRECT` in spirit; reaction/AoO owner review |
+| Recurring Success | Description is faithful. Metadata captures only the required choice of once/encounter feat or talent. It does not visibly grant the additional use, enforce that the choice normally is once/encounter, or support multiple selections choosing different abilities. This is progression/resource-usage logic, not Social/Intrigue. | `MECHANICS_PARTIAL`, `TAXONOMY_ERROR`, `WRONG_OWNER` |
+| Resolute Stance | Description and +2 / +5 morale Will branches are represented faithfully. Command/Morale classification is reasonable. | `CORRECT` |
+| **Sadistic Strike** | Description is faithful, but metadata is wrong. The source moves **all opponents within line of sight** -1 CT until encounter end after a coup de grace to a helpless creature. Current rule says “move the target -1 CT,” turning an area fear-like consequence into a single-target effect. | `MECHANICS_ERROR` |
+| Silver Tongue | Description and standard-action Intimidate/Change Attitude rule are faithful. | `CORRECT` |
+| Skill Challenge: Catastrophic Avoidance | Current description is too vague to preserve the important rule. Source: catastrophic failure threshold becomes failure by **15+ instead of 10+**, and a catastrophic failure accrues **one failure instead of two**. Current manual metadata only says frequency/severity is reduced. Skill Challenge is the correct owner. | `DESCRIPTION_ERROR`, `MECHANICS_PARTIAL` |
+| Skill Challenge: Last Resort | Current description says reroll a “third failed Skill Check,” which is broadly in spirit but omits the precise trigger: once per skill challenge, when you or an ally **accrues a third failure** that would normally end the challenge, that character rerolls the attempt and keeps the better result. | `DESCRIPTION_ERROR`, `MECHANICS_PARTIAL` |
+| Skill Challenge: Recovery | Description is a faithful concise summary: once per skill challenge, treat it as having the Recovery effect even if it normally does not. Current manual Skill Challenge owner is appropriate. | `CORRECT` |
+| Stand Tall | Description and manual/context metadata preserve once/encounter, taking damage, allied creatures within 6 squares and LOS, reaction, and single attack against the attacker. | `CORRECT` |
+| **Wookiee Grip** | Name-based taxonomy error: the feat has **no Wookiee prerequisite**; source prerequisite is Str 13. Current Species/Species Traits classification is unsupported. Mechanics are also incomplete: source allows a proficient two-handed weapon in one hand **at -2 on attacks**; current rule grants one-handed handling but omits the -2 attack penalty. | `TAXONOMY_ERROR`, `MECHANICS_PARTIAL` |
+
+## Galaxy of Intrigue conclusion
+
+This source reinforces two audit rules:
+
+1. A sourcebook’s theme is not automatically the feat’s mechanical taxonomy. Many feats printed in an intrigue book are still combat, defense, grapple, or progression rules.
+2. Description fidelity must include **mechanically decisive clauses**, not just a thematic summary. The Skill Challenge feats show where an overly compressed description stops being sufficient for rules use.
+
+---
+
+## Audit progress after Phase 5
+
+| Source | Published feat entries reviewed |
+|---|---:|
+| Saga Edition Core Rulebook | 64 |
+| Clone Wars Campaign Guide | 21 |
+| Galaxy at War | 42 |
+| The Force Unleashed Campaign Guide | 20 |
+| Galaxy of Intrigue | 26 |
+| **Total source entries reviewed** | **173** |
